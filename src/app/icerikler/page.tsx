@@ -68,6 +68,15 @@ export default function ContentsPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [success, setSuccess] = useState(false);
 
+  // Önizleme Modalı State'leri
+  const [previewDoc, setPreviewDoc] = useState<any>(null);
+
+  // Düzenleme Modalı State'leri (Admin)
+  const [editDoc, setEditDoc] = useState<any>(null);
+  const [editFormData, setEditFormData] = useState<any>({});
+  const [isEditing, setIsEditing] = useState(false);
+  const [editSuccess, setEditSuccess] = useState(false);
+
   const router = useRouter();
 
   const loadDocuments = async () => {
@@ -398,27 +407,18 @@ export default function ContentsPage() {
                     </div>
 
                     <div className="flex gap-2">
-                      {content.video_url ? (
-                        <motion.button
-                          whileHover={{ scale: 1.02 }}
-                          whileTap={{ scale: 0.98 }}
-                          onClick={() => setShowVideo(getYouTubeId(content.video_url))}
-                          className="flex-1 py-2 bg-gradient-to-r from-red-500/20 to-orange-500/20 text-red-300 font-semibold rounded-lg hover:from-red-500/30 hover:to-orange-500/30 transition-all flex items-center justify-center gap-2"
-                        >
-                          <Zap className="w-4 h-4" />
-                          İzle
-                        </motion.button>
-                      ) : (
-                        <motion.button
-                          whileHover={{ scale: 1.02 }}
-                          whileTap={{ scale: 0.98 }}
-                          onClick={() => window.open(content.file_url, '_blank')}
-                          className="flex-1 py-2 bg-gradient-to-r from-purple-500/20 to-pink-500/20 text-purple-300 font-semibold rounded-lg hover:from-purple-500/30 hover:to-pink-500/30 transition-all flex items-center justify-center gap-2"
-                        >
-                          <Download className="w-4 h-4" />
-                          İndir
-                        </motion.button>
-                      )}
+                      <motion.button
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setPreviewDoc(content);
+                        }}
+                        className="flex-1 py-2 bg-gradient-to-r from-purple-500/20 to-pink-500/20 text-purple-300 font-semibold rounded-lg hover:from-purple-500/30 hover:to-pink-500/30 transition-all flex items-center justify-center gap-2"
+                      >
+                        <Eye className="w-4 h-4" />
+                        Önizle
+                      </motion.button>
                       <motion.button
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
@@ -438,7 +438,9 @@ export default function ContentsPage() {
                             whileTap={{ scale: 0.95 }}
                             onClick={(e) => {
                               e.stopPropagation();
-                              window.location.href = '/admin?edit=' + content.id;
+                              setEditDoc(content);
+                              setEditFormData({ ...content });
+                              setIsEditing(false);
                             }}
                             className="px-3 py-2 bg-slate-700/50 hover:bg-blue-600 text-slate-300 rounded-lg transition-colors"
                           >
@@ -515,59 +517,378 @@ export default function ContentsPage() {
                       </div>
                     </div>
 
-                    {content.video_url ? (
+                    <motion.button
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      onClick={() => setPreviewDoc(content)}
+                      className="px-6 py-2 bg-gradient-to-r from-purple-500 to-pink-500 text-white font-semibold rounded-xl hover:from-purple-600 hover:to-pink-600 transition-all flex items-center gap-2 flex-shrink-0"
+                    >
+                      <Eye className="w-4 h-4" />
+                      Önizle
+                    </motion.button>
+                    {user?.isAdmin && (
+                      <>
                         <motion.button
                           whileHover={{ scale: 1.05 }}
                           whileTap={{ scale: 0.95 }}
-                          onClick={() => setShowVideo(getYouTubeId(content.video_url))}
-                          className="px-6 py-2 bg-gradient-to-r from-red-500 to-orange-500 text-white font-semibold rounded-xl hover:from-red-600 hover:to-orange-600 transition-all flex items-center gap-2 flex-shrink-0"
+                          onClick={() => {
+                            setEditDoc(content);
+                            setEditFormData({ ...content });
+                            setIsEditing(false);
+                          }}
+                          className="px-3 py-2 bg-slate-700 hover:bg-blue-600 text-white rounded-lg transition-colors"
                         >
-                          <Zap className="w-4 h-4" />
-                          İzle
+                          <Edit3 className="w-4 h-4" />
                         </motion.button>
-                      ) : (
                         <motion.button
                           whileHover={{ scale: 1.05 }}
                           whileTap={{ scale: 0.95 }}
-                          onClick={() => window.open(content.file_url, '_blank')}
-                          className="px-6 py-2 bg-gradient-to-r from-purple-500 to-pink-500 text-white font-semibold rounded-xl hover:from-purple-600 hover:to-pink-600 transition-all flex items-center gap-2 flex-shrink-0"
+                          onClick={async () => {
+                            if (confirm('Bu içeriği silmek istediğinize emin misiniz?')) {
+                              await supabase.from('documents').delete().eq('id', content.id);
+                              setDocuments(documents.filter(d => d.id !== content.id));
+                            }
+                          }}
+                          className="px-3 py-2 bg-slate-700 hover:bg-red-600 text-white rounded-lg transition-colors"
                         >
-                          <Download className="w-4 h-4" />
-                          İndir
+                          <Trash2 className="w-4 h-4" />
                         </motion.button>
-                      )}
-                      {user?.isAdmin && (
-                        <>
-                          <motion.button
-                            whileHover={{ scale: 1.05 }}
-                            whileTap={{ scale: 0.95 }}
-                            onClick={() => window.location.href = '/admin?edit=' + content.id}
-                            className="px-3 py-2 bg-slate-700 hover:bg-blue-600 text-white rounded-lg transition-colors"
-                          >
-                            <Edit3 className="w-4 h-4" />
-                          </motion.button>
-                          <motion.button
-                            whileHover={{ scale: 1.05 }}
-                            whileTap={{ scale: 0.95 }}
-                            onClick={async () => {
-                              if (confirm('Bu içeriği silmek istediğinize emin misiniz?')) {
-                                await supabase.from('documents').delete().eq('id', content.id);
-                                setDocuments(documents.filter(d => d.id !== content.id));
+                      </>
+                    )}
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* --- Önizleme Modalı --- */}
+      <AnimatePresence>
+        {previewDoc && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-6"
+            onClick={() => setPreviewDoc(null)}
+          >
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              onClick={(e) => e.stopPropagation()}
+              className="glass rounded-3xl p-6 w-full max-w-5xl max-h-[90vh] flex flex-col"
+            >
+              <div className="flex items-center justify-between mb-4">
+                <div>
+                  <h3 className="text-xl font-bold text-white">{previewDoc.title}</h3>
+                  <p className="text-slate-400 text-sm">{previewDoc.description}</p>
+                </div>
+                <button onClick={() => setPreviewDoc(null)} className="text-slate-400 hover:text-white">
+                  <X className="w-6 h-6" />
+                </button>
+              </div>
+              
+              <div className="flex-1 overflow-hidden rounded-xl bg-slate-900 min-h-[60vh]">
+                {previewDoc.file_url?.endsWith('.pdf') ? (
+                  <iframe
+                    src={previewDoc.file_url}
+                    className="w-full h-full min-h-[60vh]"
+                    title={previewDoc.title}
+                  />
+                ) : previewDoc.file_url ? (
+                  <div className="flex flex-col items-center justify-center h-full min-h-[60vh] text-center p-8">
+                    <FileText className="w-24 h-24 text-slate-500 mb-4" />
+                    <p className="text-white text-lg font-semibold mb-2">Dosya Önizlemesi</p>
+                    <p className="text-slate-400 mb-6">Bu dosya türü önizlenemiyor</p>
+                    <a
+                      href={previewDoc.file_url}
+                      download
+                      onClick={async () => {
+                        await supabase.from('documents').update({ downloads: (previewDoc.downloads || 0) + 1 }).eq('id', previewDoc.id);
+                        setDocuments(documents.map(d => d.id === previewDoc.id ? { ...d, downloads: (d.downloads || 0) + 1 } : d));
+                        setPreviewDoc({ ...previewDoc, downloads: (previewDoc.downloads || 0) + 1 });
+                      }}
+                      className="px-6 py-3 bg-gradient-to-r from-purple-500 to-pink-500 text-white font-semibold rounded-xl hover:from-purple-600 hover:to-pink-600 transition-all flex items-center gap-2"
+                    >
+                      <Download className="w-5 h-5" />
+                      İndir ve Görüntüle
+                    </a>
+                  </div>
+                ) : (
+                  <div className="flex flex-col items-center justify-center h-full min-h-[60vh] text-center p-8">
+                    <p className="text-slate-400">Dosya bulunamadı</p>
+                  </div>
+                )}
+              </div>
+
+              <div className="flex items-center justify-between mt-4 pt-4 border-t border-slate-700">
+                <div className="flex items-center gap-4 text-slate-400 text-sm">
+                  <span className="flex items-center gap-1">
+                    <Eye className="w-4 h-4" />
+                    {previewDoc.views || 0} görüntülenme
+                  </span>
+                  <span className="flex items-center gap-1">
+                    <Download className="w-4 h-4" />
+                    {previewDoc.downloads || 0} indirme
+                  </span>
+                </div>
+                <a
+                  href={previewDoc.file_url}
+                  download
+                  onClick={async () => {
+                    await supabase.from('documents').update({ downloads: (previewDoc.downloads || 0) + 1 }).eq('id', previewDoc.id);
+                    setDocuments(documents.map(d => d.id === previewDoc.id ? { ...d, downloads: (d.downloads || 0) + 1 } : d));
+                  }}
+                  className="px-4 py-2 bg-purple-500 hover:bg-purple-600 text-white rounded-lg transition-colors flex items-center gap-2"
+                >
+                  <Download className="w-4 h-4" />
+                  İndir
+                </a>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* --- Düzenleme Modalı (Admin) --- */}
+      <AnimatePresence>
+        {editDoc && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-6"
+            onClick={() => setEditDoc(null)}
+          >
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              onClick={(e) => e.stopPropagation()}
+              className="glass rounded-3xl p-8 w-full max-w-2xl max-h-[90vh] overflow-y-auto relative"
+            >
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-2xl font-bold text-white flex items-center gap-2">
+                  <Edit3 className="w-6 h-6 text-blue-400" />
+                  İçeriği Düzenle
+                </h2>
+                <button onClick={() => setEditDoc(null)} className="text-slate-400 hover:text-white">
+                  <X className="w-6 h-6" />
+                </button>
+              </div>
+
+              {editSuccess ? (
+                <motion.div
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1 }}
+                  className="text-center py-12"
+                >
+                  <div className="w-20 h-20 mx-auto mb-4 rounded-full bg-gradient-to-br from-green-400 to-emerald-500 flex items-center justify-center">
+                    <Check className="w-10 h-10 text-white" />
+                  </div>
+                  <h3 className="text-2xl font-bold text-white mb-2">Güncellendi!</h3>
+                  <p className="text-slate-400">İçeriğiniz başarıyla güncellendi.</p>
+                </motion.div>
+              ) : (
+                <form onSubmit={async (e) => {
+                  e.preventDefault();
+                  setIsEditing(true);
+                  
+                  const { data, error } = await supabase
+                    .from('documents')
+                    .update(editFormData)
+                    .eq('id', editDoc.id)
+                    .select();
+                  
+                  if (error) {
+                    alert('Güncelleme hatası: ' + error.message);
+                    setIsEditing(false);
+                    return;
+                  }
+                  
+                  if (data) {
+                    setDocuments(documents.map(d => d.id === editDoc.id ? data[0] : d));
+                  }
+                  
+                  setIsEditing(false);
+                  setEditSuccess(true);
+                  setTimeout(() => {
+                    setEditDoc(null);
+                    setEditSuccess(false);
+                  }, 1500);
+                }} className="space-y-5">
+                  <div>
+                    <label className="block text-slate-300 mb-2 text-sm">Başlık</label>
+                    <input
+                      type="text"
+                      required
+                      value={editFormData.title || ''}
+                      onChange={(e) => setEditFormData({ ...editFormData, title: e.target.value })}
+                      className="w-full bg-slate-800/50 border border-slate-700 rounded-xl px-4 py-3 text-white 
+                               focus:outline-none focus:border-blue-500 transition-colors"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-slate-300 mb-2 text-sm">Kategori</label>
+                    <select
+                      required
+                      value={editFormData.type || ''}
+                      onChange={(e) => setEditFormData({ ...editFormData, type: e.target.value })}
+                      className="w-full bg-slate-800/50 border border-slate-700 rounded-xl px-4 py-3 text-white 
+                               focus:outline-none focus:border-blue-500 transition-colors"
+                    >
+                      <option value="worksheet">Çalışma Kağıdı</option>
+                      <option value="test">Yaprak Test / Deneme</option>
+                      <option value="game">Oyun / Uygulama</option>
+                      <option value="ders-notlari">Ders Notları</option>
+                      <option value="ders-videolari">Ders Videoları</option>
+                      <option value="programlar">Programlar</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="block text-slate-300 mb-2 text-sm">Açıklama</label>
+                    <textarea
+                      required
+                      rows={3}
+                      value={editFormData.description || ''}
+                      onChange={(e) => setEditFormData({ ...editFormData, description: e.target.value })}
+                      className="w-full bg-slate-800/50 border border-slate-700 rounded-xl px-4 py-3 text-white 
+                               focus:outline-none focus:border-blue-500 transition-colors resize-none"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-slate-300 mb-2 text-sm">Dosya Linki</label>
+                    <input
+                      type="url"
+                      value={editFormData.file_url || ''}
+                      onChange={(e) => setEditFormData({ ...editFormData, file_url: e.target.value })}
+                      className="w-full bg-slate-800/50 border border-slate-700 rounded-xl px-4 py-3 text-white 
+                               focus:outline-none focus:border-blue-500 transition-colors"
+                      placeholder="https://drive.google.com/..."
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-slate-300 mb-2 text-sm">YouTube Video URL</label>
+                    <input
+                      type="url"
+                      value={editFormData.video_url || ''}
+                      onChange={(e) => setEditFormData({ ...editFormData, video_url: e.target.value })}
+                      className="w-full bg-slate-800/50 border border-slate-700 rounded-xl px-4 py-3 text-white 
+                               focus:outline-none focus:border-blue-500 transition-colors"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-slate-300 mb-2 text-sm">Yeni Dosya Yükle</label>
+                    <div className="relative">
+                      <input
+                        type="file"
+                        accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.zip,.rar,.exe,.mp4,.avi,.mov"
+                        onChange={async (e) => {
+                          const file = e.target.files?.[0];
+                          if (file) {
+                            setIsEditing(true);
+                            const fileName = `${Date.now()}_${file.name}`;
+                            const { data, error } = await supabase.storage
+                              .from('documents')
+                              .upload(fileName, file);
+                            
+                            if (error) {
+                              alert('Dosya yüklenemedi: ' + error.message);
+                              setIsEditing(false);
+                            } else {
+                              const { data: urlData } = supabase.storage
+                                .from('documents')
+                                .getPublicUrl(fileName);
+                              setEditFormData({ ...editFormData, file_url: urlData.publicUrl, file_name: file.name });
+                              setIsEditing(false);
+                            }
+                          }
+                        }}
+                        className="hidden"
+                        id="edit-file-upload"
+                      />
+                      <label 
+                        htmlFor="edit-file-upload"
+                        className="flex items-center justify-center gap-2 w-full bg-slate-800/50 border border-slate-700 border-dashed rounded-xl px-4 py-6 text-slate-400 cursor-pointer hover:bg-slate-800 hover:border-blue-500 transition-colors"
+                      >
+                        <Upload className="w-5 h-5" />
+                        <span>{editFormData.file_name || 'Yeni dosya seç (opsiyonel)'}</span>
+                      </label>
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-slate-300 mb-2 text-sm">Hedef Sınıflar</label>
+                    <div className="flex flex-wrap gap-2">
+                      {[5, 6, 7, 8, 9, 10, 11, 12].map((grade) => (
+                        <label key={grade} className="flex items-center gap-2 px-3 py-2 glass rounded-lg cursor-pointer hover:bg-white/10">
+                          <input
+                            type="checkbox"
+                            checked={editFormData.grade?.includes(grade) || false}
+                            onChange={(e) => {
+                              const grades = editFormData.grade || [];
+                              if (e.target.checked) {
+                                setEditFormData({ ...editFormData, grade: [...grades, grade] });
+                              } else {
+                                setEditFormData({ ...editFormData, grade: grades.filter((g: number) => g !== grade) });
                               }
                             }}
-                            className="px-3 py-2 bg-slate-700 hover:bg-red-600 text-white rounded-lg transition-colors"
-                          >
-                            <Trash2 className="w-4 h-4" />
-                          </motion.button>
-                        </>
-                      )}
+                            className="w-4 h-4 accent-blue-500"
+                          />
+                          <span className="text-white text-sm">{grade}. Sınıf</span>
+                        </label>
+                      ))}
+                      <label className="flex items-center gap-2 px-3 py-2 glass rounded-lg cursor-pointer hover:bg-white/10">
+                        <input
+                          type="checkbox"
+                          checked={editFormData.grade?.includes('Mezun') || false}
+                          onChange={(e) => {
+                            const grades = editFormData.grade || [];
+                            if (e.target.checked) {
+                              setEditFormData({ ...editFormData, grade: [...grades, 'Mezun'] });
+                            } else {
+                              setEditFormData({ ...editFormData, grade: grades.filter((g: string | number) => g !== 'Mezun') });
+                            }
+                          }}
+                          className="w-4 h-4 accent-blue-500"
+                        />
+                        <span className="text-white text-sm">Mezun</span>
+                      </label>
                     </div>
-                  </motion.div>
-                ))}
-              </div>
-            )}
-          </div>
-        </div>
+                  </div>
+
+                  <motion.button
+                    type="submit"
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    disabled={isEditing}
+                    className="w-full py-4 bg-gradient-to-r from-blue-500 to-cyan-500 text-white font-semibold rounded-xl hover:from-blue-600 hover:to-cyan-600 transition-all shadow-lg shadow-blue-500/25 flex items-center justify-center gap-2"
+                  >
+                    {isEditing ? (
+                      <>
+                        <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                        Güncelleniyor...
+                      </>
+                    ) : (
+                      <>
+                        <Check className="w-5 h-5" />
+                        Güncelle
+                      </>
+                    )}
+                  </motion.button>
+                </form>
+              )}
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* --- Hızlı İçerik Ekle Modalı --- */}
       <AnimatePresence>
