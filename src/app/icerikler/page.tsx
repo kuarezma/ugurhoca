@@ -419,6 +419,23 @@ export default function ContentsPage() {
                         <Eye className="w-4 h-4" />
                         Önizle
                       </motion.button>
+                      {content.file_url && (
+                        <motion.button
+                          whileHover={{ scale: 1.05 }}
+                          whileTap={{ scale: 0.95 }}
+                          onClick={async (e) => {
+                            e.stopPropagation();
+                            if (content.file_url) {
+                              window.open(content.file_url, '_blank');
+                              await supabase.from('documents').update({ downloads: (content.downloads || 0) + 1 }).eq('id', content.id);
+                              setDocuments(documents.map(d => d.id === content.id ? { ...d, downloads: (d.downloads || 0) + 1 } : d));
+                            }
+                          }}
+                          className="px-3 py-2 bg-gradient-to-r from-green-500/20 to-emerald-500/20 text-green-300 font-semibold rounded-lg hover:from-green-500/30 hover:to-emerald-500/30 transition-all"
+                        >
+                          <Download className="w-4 h-4" />
+                        </motion.button>
+                      )}
                       <motion.button
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
@@ -526,6 +543,20 @@ export default function ContentsPage() {
                       <Eye className="w-4 h-4" />
                       Önizle
                     </motion.button>
+                    {content.file_url && (
+                      <motion.button
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                        onClick={async () => {
+                          window.open(content.file_url, '_blank');
+                          await supabase.from('documents').update({ downloads: (content.downloads || 0) + 1 }).eq('id', content.id);
+                          setDocuments(documents.map(d => d.id === content.id ? { ...d, downloads: (d.downloads || 0) + 1 } : d));
+                        }}
+                        className="px-4 py-2 bg-gradient-to-r from-green-500 to-emerald-500 text-white font-semibold rounded-xl hover:from-green-600 hover:to-emerald-600 transition-all flex items-center gap-2 flex-shrink-0"
+                      >
+                        <Download className="w-4 h-4" />
+                      </motion.button>
+                    )}
                     {user?.isAdmin && (
                       <>
                         <motion.button
