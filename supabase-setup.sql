@@ -1,4 +1,101 @@
 -- ============================================
+-- announcements Tablosu
+-- ============================================
+CREATE TABLE IF NOT EXISTS public.announcements (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  title TEXT NOT NULL,
+  content TEXT,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT now()
+);
+
+ALTER TABLE public.announcements ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "announcements_select" ON public.announcements
+  FOR SELECT USING (true);
+
+CREATE POLICY "announcements_insert" ON public.announcements
+  FOR INSERT WITH CHECK (true);
+
+CREATE POLICY "announcements_delete" ON public.announcements
+  FOR DELETE USING (true);
+
+-- ============================================
+-- documents Tablosu
+-- ============================================
+CREATE TABLE IF NOT EXISTS public.documents (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  title TEXT NOT NULL,
+  description TEXT,
+  type TEXT,
+  file_url TEXT,
+  file_name TEXT,
+  grade INTEGER[],
+  is_admin_only BOOLEAN DEFAULT false,
+  video_url TEXT,
+  downloads INTEGER DEFAULT 0,
+  views INTEGER DEFAULT 0,
+  rating DECIMAL(2,1) DEFAULT 0,
+  is_new BOOLEAN DEFAULT false,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT now()
+);
+
+ALTER TABLE public.documents ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "documents_select" ON public.documents
+  FOR SELECT USING (true);
+
+CREATE POLICY "documents_insert" ON public.documents
+  FOR INSERT WITH CHECK (true);
+
+CREATE POLICY "documents_delete" ON public.documents
+  FOR DELETE USING (true);
+
+-- ============================================
+-- profiles Tablosu (varsa ekleme)
+-- ============================================
+-- Bu tablo Auth tarafından otomatik oluşturulur
+-- Eğer yoksa ekleyin:
+
+-- CREATE TABLE IF NOT EXISTS public.profiles (
+--   id UUID REFERENCES auth.users NOT NULL PRIMARY KEY,
+--   name TEXT,
+--   email TEXT,
+--   grade INTEGER,
+--   is_private_student BOOLEAN DEFAULT false,
+--   created_at TIMESTAMP WITH TIME ZONE DEFAULT now()
+-- );
+
+-- ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
+
+-- CREATE POLICY "profiles_select" ON public.profiles
+--   FOR SELECT USING (true);
+
+-- CREATE POLICY "profiles_update" ON public.profiles
+--   FOR UPDATE USING (true);
+
+-- ============================================
+-- assignments Tablosu
+-- ============================================
+CREATE TABLE IF NOT EXISTS public.assignments (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  title TEXT NOT NULL,
+  description TEXT,
+  student_id UUID,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT now()
+);
+
+ALTER TABLE public.assignments ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "assignments_select" ON public.assignments
+  FOR SELECT USING (true);
+
+CREATE POLICY "assignments_insert" ON public.assignments
+  FOR INSERT WITH CHECK (true);
+
+CREATE POLICY "assignments_delete" ON public.assignments
+  FOR DELETE USING (true);
+
+-- ============================================
 -- shared_documents Tablosu
 -- ============================================
 CREATE TABLE IF NOT EXISTS public.shared_documents (
@@ -14,14 +111,11 @@ CREATE TABLE IF NOT EXISTS public.shared_documents (
   created_at TIMESTAMP WITH TIME ZONE DEFAULT now()
 );
 
--- RLS (Satır Seviyesi Güvenlik)
 ALTER TABLE public.shared_documents ENABLE ROW LEVEL SECURITY;
 
--- Herkes okuyabilir
 CREATE POLICY "shared_documents_select" ON public.shared_documents
   FOR SELECT USING (true);
 
--- Admin ekleme yapabilir
 CREATE POLICY "shared_documents_insert" ON public.shared_documents
   FOR INSERT WITH CHECK (true);
 
@@ -38,17 +132,13 @@ CREATE TABLE IF NOT EXISTS public.notifications (
   created_at TIMESTAMP WITH TIME ZONE DEFAULT now()
 );
 
--- RLS (Satır Seviyesi Güvenlik)
 ALTER TABLE public.notifications ENABLE ROW LEVEL SECURITY;
 
--- Kullanıcı kendi bildirimlerini okuyabilir
-CREATE POLICY "notifications_own_select" ON public.notifications
-  FOR SELECT USING (auth.uid() = user_id);
+CREATE POLICY "notifications_select" ON public.notifications
+  FOR SELECT USING (true);
 
--- Admin bildirim ekleyebilir
-CREATE POLICY "notifications_admin_insert" ON public.notifications
+CREATE POLICY "notifications_insert" ON public.notifications
   FOR INSERT WITH CHECK (true);
 
--- Kullanıcı kendi bildirimlerini güncelleyebilir
-CREATE POLICY "notifications_own_update" ON public.notifications
-  FOR UPDATE USING (auth.uid() = user_id);
+CREATE POLICY "notifications_update" ON public.notifications
+  FOR UPDATE USING (true);
