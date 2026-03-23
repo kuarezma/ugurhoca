@@ -232,7 +232,7 @@ export default function AdminPage() {
         setAnnouncements([data[0], ...announcements]);
         
         // Tüm kullanıcılara bildirim gönder
-        const allStudents = allUsers.filter(u => !u.isAdmin);
+        const allStudents = allUsers.filter(u => u.email !== 'admin@ugurhoca.com');
         const notificationInserts = allStudents.map(student => ({
           user_id: student.id,
           title: 'Yeni Duyuru',
@@ -540,7 +540,7 @@ export default function AdminPage() {
                 className="space-y-4"
               >
                 <div className="flex justify-between items-center">
-                  <p className="text-slate-400">{allUsers.filter(u => !u.isAdmin).length} öğrenci</p>
+                  <p className="text-slate-400">{allUsers.filter(u => u.email !== 'admin@ugurhoca.com').length} öğrenci</p>
                   <motion.button
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
@@ -551,13 +551,13 @@ export default function AdminPage() {
                     Yenile
                   </motion.button>
                 </div>
-                {allUsers.filter(u => !u.isAdmin).length === 0 ? (
+                {allUsers.filter(u => u.email !== 'admin@ugurhoca.com').length === 0 ? (
                   <div className="glass rounded-2xl p-12 text-center">
                     <Users className="w-16 h-16 mx-auto mb-4 text-slate-500" />
                     <p className="text-slate-400">Henüz kullanıcı yok</p>
                   </div>
                 ) : (
-                  allUsers.filter(u => !u.isAdmin).map((u, i) => (
+                  allUsers.filter(u => u.email !== 'admin@ugurhoca.com').map((u, i) => (
                     <motion.div
                       key={u.id}
                       initial={{ opacity: 0, y: 20 }}
@@ -736,7 +736,7 @@ export default function AdminPage() {
                     <p className="text-slate-300 mb-3">Mevcut durum:</p>
                     <div className="grid grid-cols-4 gap-3">
                       {[5, 6, 7, 8, 9, 10, 11, 12, 'Mezun'].map(grade => {
-                        const count = allUsers.filter(u => u.grade === grade && !u.isAdmin).length;
+                        const count = allUsers.filter(u => u.grade === grade && u.email !== 'admin@ugurhoca.com').length;
                         return (
                           <div key={grade} className="bg-slate-800/50 rounded-lg p-3 text-center">
                             <div className="text-2xl font-bold text-white">{count}</div>
@@ -1055,7 +1055,7 @@ export default function AdminPage() {
                                focus:outline-none focus:border-rose-500 transition-colors"
                     >
                       <option value="">Öğrenci seçin</option>
-                      {allUsers.filter(u => !u.isAdmin).map(student => (
+                      {allUsers.filter(u => u.email !== 'admin@ugurhoca.com').map(student => (
                         <option key={student.id} value={student.id}>
                           {student.name || student.email} - {student.grade === 'Mezun' ? 'Mezun' : `${student.grade}. Sınıf`}
                         </option>
