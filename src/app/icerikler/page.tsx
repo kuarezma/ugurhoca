@@ -51,7 +51,7 @@ export default function ContentsPage() {
   const [user, setUser] = useState<any>(null);
   const [documents, setDocuments] = useState<any[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedGrade, setSelectedGrade] = useState<number | 'all'>('all');
+  const [selectedGrade, setSelectedGrade] = useState<number | 'all' | 'Mezun'>('all');
   const [selectedType, setSelectedType] = useState<string>('all');
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [showVideo, setShowVideo] = useState<string | null>(null);
@@ -124,7 +124,7 @@ export default function ContentsPage() {
 
   const filteredContents = documents.filter(content => {
     const matchesSearch = content.title.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesGrade = selectedGrade === 'all' || content.grade?.includes(selectedGrade);
+    const matchesGrade = selectedGrade === 'all' || selectedGrade === 'Mezun' || content.grade?.includes(selectedGrade);
     const matchesType = selectedType === 'all' || content.type === selectedType;
     return matchesSearch && matchesGrade && matchesType;
   });

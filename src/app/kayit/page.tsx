@@ -215,6 +215,7 @@ export default function RegisterPage() {
                       {[5, 6, 7, 8, 9, 10, 11, 12].map(grade => (
                         <option key={grade} value={grade}>{grade}. Sınıf</option>
                       ))}
+                      <option value="Mezun">Mezun</option>
                     </select>
                   </div>
                 </motion.div>

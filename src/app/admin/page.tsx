@@ -655,12 +655,12 @@ export default function AdminPage() {
                   <div className="mb-6">
                     <p className="text-slate-300 mb-3">Mevcut durum:</p>
                     <div className="grid grid-cols-4 gap-3">
-                      {[5, 6, 7, 8, 9, 10, 11, 12].map(grade => {
+                      {[5, 6, 7, 8, 9, 10, 11, 12, 'Mezun'].map(grade => {
                         const count = allUsers.filter(u => u.grade === grade && !u.isAdmin).length;
                         return (
                           <div key={grade} className="bg-slate-800/50 rounded-lg p-3 text-center">
                             <div className="text-2xl font-bold text-white">{count}</div>
-                            <div className="text-xs text-slate-400">{grade}. Sınıf</div>
+                            <div className="text-xs text-slate-400">{grade === 'Mezun' ? 'Mezun' : `${grade}. Sınıf`}</div>
                           </div>
                         );
                       })}
@@ -681,7 +681,7 @@ export default function AdminPage() {
                       const currentYear = new Date().getFullYear();
                       
                       for (const u of allUsers) {
-                        if (u.isAdmin || u.grade >= 12) continue;
+                        if (u.isAdmin || u.grade >= 12 || u.grade === 'Mezun') continue;
                         await supabase.from('profiles').update({ grade: u.grade + 1 }).eq('id', u.id);
                       }
                       
@@ -788,7 +788,7 @@ export default function AdminPage() {
                     <label className="block text-slate-300 mb-2 text-sm">Sınıf</label>
                     <select
                       value={formData.grade || ''}
-                      onChange={(e) => setFormData({ ...formData, grade: parseInt(e.target.value) })}
+                      onChange={(e) => setFormData({ ...formData, grade: e.target.value === 'Mezun' ? 'Mezun' : parseInt(e.target.value) })}
                       className="w-full bg-slate-800/50 border border-slate-700 rounded-xl px-4 py-3 text-white 
                                focus:outline-none focus:border-green-500 transition-colors"
                     >
@@ -801,6 +801,7 @@ export default function AdminPage() {
                       <option value="10">10. Sınıf</option>
                       <option value="11">11. Sınıf</option>
                       <option value="12">12. Sınıf</option>
+                      <option value="Mezun">Mezun</option>
                     </select>
                   </div>
                   <motion.button
@@ -865,7 +866,7 @@ export default function AdminPage() {
                     <select
                       required
                       value={formData.grade || ''}
-                      onChange={(e) => setFormData({ ...formData, grade: parseInt(e.target.value) })}
+                      onChange={(e) => setFormData({ ...formData, grade: e.target.value === 'Mezun' ? 'Mezun' : parseInt(e.target.value) })}
                       className="w-full bg-slate-800/50 border border-slate-700 rounded-xl px-4 py-3 text-white 
                                focus:outline-none focus:border-amber-500 transition-colors"
                     >
@@ -878,6 +879,7 @@ export default function AdminPage() {
                       <option value="10">10. Sınıf</option>
                       <option value="11">11. Sınıf</option>
                       <option value="12">12. Sınıf</option>
+                      <option value="Mezun">Mezun</option>
                     </select>
                   </div>
                   <motion.button
