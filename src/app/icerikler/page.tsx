@@ -6,7 +6,8 @@ import Link from 'next/link';
 import { 
   Calculator, BookOpen, Gamepad2, FileText, Upload, 
   Search, Filter, ArrowLeft, Download, Eye, 
-  Clock, Users, Star, Zap, Grid, List, X, Plus, Check, Video
+  Clock, Users, Star, Zap, Grid, List, X, Plus,
+  ClipboardList, Heart, Share2, MessageCircle, Bookmark, Check
 } from 'lucide-react';
 import { AnimatePresence } from 'framer-motion';
 import { useRouter } from 'next/navigation';
@@ -346,27 +347,40 @@ export default function ContentsPage() {
                       {content.title}
                     </h3>
 
-                    <div className="flex items-center gap-4 text-xs text-slate-400 mb-4">
-                      <span className="flex items-center gap-1">
-                        <Eye className="w-3 h-3" />
-                        {content.views}
-                      </span>
-                      <span className="flex items-center gap-1">
+                    <div className="flex items-center gap-3 text-xs text-slate-400 mb-4">
+                      <button 
+                        onClick={async (e) => {
+                          e.stopPropagation();
+                          if (content.file_url) {
+                            window.open(content.file_url, '_blank');
+                            await supabase.from('documents').update({ downloads: (content.downloads || 0) + 1 }).eq('id', content.id);
+                          }
+                        }}
+                        className="flex items-center gap-1 hover:text-purple-400 transition-colors"
+                      >
                         <Download className="w-3 h-3" />
-                        {content.downloads}
-                      </span>
-                      <span className="flex items-center gap-1 text-yellow-400">
-                        <Star className="w-3 h-3 fill-current" />
-                        {content.rating}
-                      </span>
+                        {content.downloads || 0}
+                      </button>
+                      <button 
+                        onClick={async (e) => {
+                          e.stopPropagation();
+                          await supabase.from('documents').update({ views: (content.views || 0) + 1 }).eq('id', content.id);
+                          setDocuments(documents.map(d => d.id === content.id ? { ...d, views: (d.views || 0) + 1 } : d));
+                        }}
+                        className="flex items-center gap-1 hover:text-purple-400 transition-colors"
+                      >
+                        <Eye className="w-3 h-3" />
+                        {content.views || 0}
+                      </button>
                     </div>
 
-                    {content.video_url ? (
+                    <div className="flex gap-2">
+                      {content.video_url ? (
                         <motion.button
                           whileHover={{ scale: 1.02 }}
                           whileTap={{ scale: 0.98 }}
                           onClick={() => setShowVideo(getYouTubeId(content.video_url))}
-                          className="w-full py-2 bg-gradient-to-r from-red-500/20 to-orange-500/20 text-red-300 font-semibold rounded-lg hover:from-red-500/30 hover:to-orange-500/30 transition-all flex items-center justify-center gap-2"
+                          className="flex-1 py-2 bg-gradient-to-r from-red-500/20 to-orange-500/20 text-red-300 font-semibold rounded-lg hover:from-red-500/30 hover:to-orange-500/30 transition-all flex items-center justify-center gap-2"
                         >
                           <Zap className="w-4 h-4" />
                           İzle
@@ -375,12 +389,26 @@ export default function ContentsPage() {
                         <motion.button
                           whileHover={{ scale: 1.02 }}
                           whileTap={{ scale: 0.98 }}
-                          className="w-full py-2 bg-gradient-to-r from-purple-500/20 to-pink-500/20 text-purple-300 font-semibold rounded-lg hover:from-purple-500/30 hover:to-pink-500/30 transition-all flex items-center justify-center gap-2"
+                          onClick={() => window.open(content.file_url, '_blank')}
+                          className="flex-1 py-2 bg-gradient-to-r from-purple-500/20 to-pink-500/20 text-purple-300 font-semibold rounded-lg hover:from-purple-500/30 hover:to-pink-500/30 transition-all flex items-center justify-center gap-2"
                         >
                           <Download className="w-4 h-4" />
                           İndir
                         </motion.button>
                       )}
+                      <motion.button
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          navigator.clipboard.writeText(window.location.origin + '/icerikler?id=' + content.id);
+                          alert('Link kopyalandı!');
+                        }}
+                        className="px-3 py-2 bg-slate-700/50 hover:bg-slate-700 text-slate-300 rounded-lg transition-colors"
+                      >
+                        <Share2 className="w-4 h-4" />
+                      </motion.button>
+                    </div>
                   </div>
                 </motion.div>
               ))}
