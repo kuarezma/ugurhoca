@@ -56,6 +56,11 @@ export default function ContentsPage() {
   const [selectedType, setSelectedType] = useState<string>('all');
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [showVideo, setShowVideo] = useState<string | null>(null);
+  const [likedDocs, setLikedDocs] = useState<Set<string>>(new Set());
+  const [favorites, setFavorites] = useState<Set<string>>(new Set());
+  const [showComments, setShowComments] = useState<string | null>(null);
+  const [comments, setComments] = useState<any[]>([]);
+  const [newComment, setNewComment] = useState('');
 
   // Yeni İçerik Ekle Modalı (Hızlı Ekleme) State'leri
   const [showModal, setShowModal] = useState(false);
@@ -351,9 +356,26 @@ export default function ContentsPage() {
                       <button 
                         onClick={async (e) => {
                           e.stopPropagation();
+                          if (likedDocs.has(content.id)) {
+                            setLikedDocs(prev => { const n = new Set(prev); n.delete(content.id); return n; });
+                            await supabase.from('documents').update({ likes: Math.max(0, (content.likes || 0) - 1) }).eq('id', content.id);
+                          } else {
+                            setLikedDocs(prev => new Set([...prev, content.id]));
+                            await supabase.from('documents').update({ likes: (content.likes || 0) + 1 }).eq('id', content.id);
+                          }
+                        }}
+                        className={`flex items-center gap-1 transition-colors ${likedDocs.has(content.id) ? 'text-red-400' : 'hover:text-red-400'}`}
+                      >
+                        <Heart className={`w-3 h-3 ${likedDocs.has(content.id) ? 'fill-current' : ''}`} />
+                        {content.likes || 0}
+                      </button>
+                      <button 
+                        onClick={async (e) => {
+                          e.stopPropagation();
                           if (content.file_url) {
                             window.open(content.file_url, '_blank');
                             await supabase.from('documents').update({ downloads: (content.downloads || 0) + 1 }).eq('id', content.id);
+                            setDocuments(documents.map(d => d.id === content.id ? { ...d, downloads: (d.downloads || 0) + 1 } : d));
                           }
                         }}
                         className="flex items-center gap-1 hover:text-purple-400 transition-colors"
@@ -364,13 +386,14 @@ export default function ContentsPage() {
                       <button 
                         onClick={async (e) => {
                           e.stopPropagation();
-                          await supabase.from('documents').update({ views: (content.views || 0) + 1 }).eq('id', content.id);
-                          setDocuments(documents.map(d => d.id === content.id ? { ...d, views: (d.views || 0) + 1 } : d));
+                          setShowComments(content.id);
+                          const { data } = await supabase.from('comments').select('*').eq('document_id', content.id).order('created_at', { ascending: false });
+                          if (data) setComments(data);
                         }}
                         className="flex items-center gap-1 hover:text-purple-400 transition-colors"
                       >
-                        <Eye className="w-3 h-3" />
-                        {content.views || 0}
+                        <MessageCircle className="w-3 h-3" />
+                        {content.comments_count || 0}
                       </button>
                     </div>
 
@@ -742,6 +765,80 @@ export default function ContentsPage() {
                   allowFullScreen
                 />
               </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {showComments && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-6"
+            onClick={() => setShowComments(null)}
+          >
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              onClick={(e) => e.stopPropagation()}
+              className="glass rounded-3xl p-6 w-full max-w-lg max-h-[80vh] overflow-hidden flex flex-col"
+            >
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-xl font-bold text-white">Yorumlar</h3>
+                <button onClick={() => setShowComments(null)} className="text-slate-400 hover:text-white">
+                  <X className="w-6 h-6" />
+                </button>
+              </div>
+              
+              <div className="flex-1 overflow-y-auto space-y-3 mb-4">
+                {comments.length === 0 ? (
+                  <p className="text-slate-400 text-center py-8">Henüz yorum yok. İlk yorumu sen yap!</p>
+                ) : (
+                  comments.map(comment => (
+                    <div key={comment.id} className="bg-slate-800/50 rounded-lg p-3">
+                      <div className="flex items-center gap-2 mb-1">
+                        <span className="text-white font-medium text-sm">{comment.user_name || 'Anonim'}</span>
+                        <span className="text-slate-500 text-xs">{new Date(comment.created_at).toLocaleDateString('tr-TR')}</span>
+                      </div>
+                      <p className="text-slate-300 text-sm">{comment.content}</p>
+                    </div>
+                  ))
+                )}
+              </div>
+
+              <form onSubmit={async (e) => {
+                e.preventDefault();
+                if (!newComment.trim()) return;
+                const { data } = await supabase.from('comments').insert([{
+                  document_id: showComments,
+                  user_id: user?.id,
+                  user_name: user?.name || 'Anonim',
+                  content: newComment
+                }]).select();
+                if (data) {
+                  setComments([data[0], ...comments]);
+                  setNewComment('');
+                  const doc = documents.find(d => d.id === showComments);
+                  if (doc) {
+                    await supabase.from('documents').update({ comments_count: (doc.comments_count || 0) + 1 }).eq('id', showComments);
+                    setDocuments(documents.map(d => d.id === showComments ? { ...d, comments_count: (d.comments_count || 0) + 1 } : d));
+                  }
+                }
+              }} className="flex gap-2">
+                <input
+                  type="text"
+                  value={newComment}
+                  onChange={(e) => setNewComment(e.target.value)}
+                  placeholder="Yorum yaz..."
+                  className="flex-1 bg-slate-800 border border-slate-700 rounded-lg px-4 py-2 text-white placeholder-slate-400 focus:outline-none focus:border-purple-500"
+                />
+                <button type="submit" className="px-4 py-2 bg-purple-500 text-white rounded-lg hover:bg-purple-600 transition-colors">
+                  Gönder
+                </button>
+              </form>
             </motion.div>
           </motion.div>
         )}
