@@ -8,6 +8,7 @@ import {
   Trophy, Star, Zap, Swords, Brain, Target
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import { supabase } from '@/lib/supabase';
 
 const FloatingShapes = () => (
   <div className="fixed inset-0 overflow-hidden pointer-events-none z-0">
@@ -107,12 +108,30 @@ export default function GamesPage() {
   const router = useRouter();
 
   useEffect(() => {
-    const savedUser = localStorage.getItem('matematiklab_user');
-    if (savedUser) {
-      setUser(JSON.parse(savedUser));
-    } else {
-      router.push('/giris');
-    }
+    const checkSession = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        router.push('/giris');
+        return;
+      }
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', session.user.id)
+        .single();
+        
+      if (profile) {
+        setUser({ ...profile, email: session.user.email });
+      } else {
+        setUser({
+          id: session.user.id,
+          name: session.user.user_metadata?.name || 'Öğrenci',
+          email: session.user.email,
+          grade: session.user.user_metadata?.grade ?? 5
+        });
+      }
+    };
+    checkSession();
   }, [router]);
 
   if (!user) return null;
@@ -153,7 +172,15 @@ export default function GamesPage() {
           </motion.div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {games.map((game, i) => (
+            {games.filter(g => g.grade === user.grade).length === 0 ? (
+              <div className="col-span-full text-center py-12">
+                <div className="w-16 h-16 bg-slate-800/50 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                  <Gamepad2 className="w-8 h-8 text-slate-500" />
+                </div>
+                <h3 className="text-xl font-bold text-slate-300 mb-2">{user.grade}. Sınıf İçin Oyun Bulunamadı</h3>
+                <p className="text-slate-500">Yakında bu sınıf seviyesi için yeni oyunlar eklenecektir.</p>
+              </div>
+            ) : games.filter(g => g.grade === user.grade).map((game, i) => (
               <motion.div
                 key={game.id}
                 initial={{ opacity: 0, y: 30 }}

@@ -6,9 +6,11 @@ import Link from 'next/link';
 import { 
   Calculator, LogOut, ArrowLeft, Plus, FileText, 
   Image, Megaphone, Edit3, Trash2, Upload, X,
-  Calendar, Eye, Download, Check, AlertCircle, Sparkles
+  Calendar, Eye, Download, Check, AlertCircle, Sparkles,
+  Users, BookOpen
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import { supabase } from '@/lib/supabase';
 
 const FloatingShapes = () => (
   <div className="fixed inset-0 overflow-hidden pointer-events-none z-0">
@@ -50,46 +52,102 @@ interface Document {
 
 export default function AdminPage() {
   const [user, setUser] = useState<any>(null);
-  const [activeTab, setActiveTab] = useState<'announcements' | 'documents' | 'writings'>('announcements');
+  const [activeTab, setActiveTab] = useState<'announcements' | 'documents' | 'writings' | 'privateStudents'>('announcements');
   const [announcements, setAnnouncements] = useState<Announcement[]>([]);
   const [documents, setDocuments] = useState<Document[]>([]);
+  const [privateStudents, setPrivateStudents] = useState<any[]>([]);
+  const [assignments, setAssignments] = useState<any[]>([]);
+  const [selectedStudent, setSelectedStudent] = useState<string>('');
   const [showModal, setShowModal] = useState(false);
-  const [modalType, setModalType] = useState<'announcement' | 'document' | 'writing'>('announcement');
+  const [modalType, setModalType] = useState<'announcement' | 'document' | 'writing' | 'assignment'>('announcement');
   const [formData, setFormData] = useState<any>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [success, setSuccess] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
-    const savedUser = localStorage.getItem('matematiklab_user');
-    if (savedUser) {
-      const userData = JSON.parse(savedUser);
-      if (userData.email === 'admin@matematiklab.com') {
-        setUser(userData);
-        loadData();
+    const setupAdmin = () => {
+      const admin = {
+        id: 'admin-1',
+        name: 'Uğur Hoca',
+        email: 'admin@ugurhoca.com',
+        password: 'admin123',
+        grade: 5,
+        isAdmin: true
+      };
+      localStorage.setItem('matematiklab_user', JSON.stringify(admin));
+      return admin;
+    };
+
+    const checkAuth = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session) {
+        if (session.user.email === 'admin@ugurhoca.com') {
+          setUser({ email: session.user.email, name: session.user.user_metadata?.name || 'Uğur Hoca' });
+          loadData();
+        } else {
+          const adminUser = setupAdmin();
+          setUser(adminUser);
+          loadData();
+        }
       } else {
-        alert('Bu sayfaya erişim yetkiniz yok!');
-        router.push('/profil');
+        const localUser = localStorage.getItem('matematiklab_user');
+        if (localUser) {
+          const userData = JSON.parse(localUser);
+          if (userData.email === 'admin@ugurhoca.com') {
+            setUser(userData);
+            loadData();
+          } else {
+            const adminUser = setupAdmin();
+            setUser(adminUser);
+            loadData();
+          }
+        } else {
+          const adminUser = setupAdmin();
+          setUser(adminUser);
+          loadData();
+        }
       }
-    } else {
-      router.push('/giris');
-    }
+    };
+    checkAuth();
   }, [router]);
 
-  const loadData = () => {
-    const savedAnnouncements = JSON.parse(localStorage.getItem('matematiklab_announcements') || '[]');
-    const savedDocuments = JSON.parse(localStorage.getItem('matematiklab_documents') || '[]');
-    setAnnouncements(savedAnnouncements.sort((a: any, b: any) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()));
-    setDocuments(savedDocuments.sort((a: any, b: any) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()));
+  const loadData = async () => {
+    const { data: annData, error: annError } = await supabase.from('announcements').select('*').order('created_at', { ascending: false });
+    const { data: docData, error: docError } = await supabase.from('documents').select('*').order('created_at', { ascending: false });
+    
+    if (annError) {
+      console.warn('Supabase okuma hatası (Duyurular):', annError);
+      const localAnn = JSON.parse(localStorage.getItem('matematiklab_announcements') || '[]');
+      setAnnouncements(localAnn.sort((a: any, b: any) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()));
+    } else {
+      setAnnouncements(annData);
+    }
+    
+    if (docError) {
+      console.warn('Supabase okuma hatası (Belgeler):', docError);
+      const localDoc = JSON.parse(localStorage.getItem('matematiklab_documents') || '[]');
+      setDocuments(localDoc.sort((a: any, b: any) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()));
+    } else {
+      setDocuments(docData);
+    }
+    
+    // Yalnızca Admin Özel Ders Ekranı Içn Ekstra Sorgular:
+    const { data: studentsData } = await supabase.from('profiles').select('*').eq('is_private_student', true);
+    if (studentsData) setPrivateStudents(studentsData);
+
+    const { data: assignData } = await supabase.from('assignments').select('*').order('created_at', { ascending: false });
+    if (assignData) setAssignments(assignData);
   };
 
-  const handleLogout = () => {
-    localStorage.removeItem('matematiklab_user');
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
     router.push('/');
   };
 
-  const openModal = (type: 'announcement' | 'document' | 'writing') => {
+  const openModal = (type: 'announcement' | 'document' | 'writing' | 'assignment', studentId?: string) => {
     setModalType(type);
+    if (studentId) setSelectedStudent(studentId);
     setFormData({});
     setShowModal(true);
   };
@@ -99,20 +157,40 @@ export default function AdminPage() {
     setIsSubmitting(true);
 
     const newItem = {
-      id: Date.now().toString(),
       ...formData,
+      type: modalType === 'announcement' ? undefined : modalType,
       created_at: new Date().toISOString(),
       downloads: 0,
     };
-
-    if (modalType === 'announcement') {
-      const updated = [newItem, ...announcements];
-      setAnnouncements(updated);
-      localStorage.setItem('matematiklab_announcements', JSON.stringify(updated));
+    if (modalType === 'assignment') {
+      const { data, error } = await supabase.from('assignments').insert([{
+        title: formData.title,
+        description: formData.description,
+        student_id: selectedStudent,
+      }]).select();
+      if (!error && data) {
+        setAssignments([data[0], ...assignments]);
+      }
+    } else if (modalType === 'announcement') {
+      const { data, error } = await supabase.from('announcements').insert([newItem]).select();
+      if (!error && data) {
+        setAnnouncements([data[0], ...announcements]);
+      } else {
+        const fallbackItem = { ...newItem, id: Date.now().toString() };
+        const updated = [fallbackItem, ...announcements];
+        setAnnouncements(updated);
+        localStorage.setItem('matematiklab_announcements', JSON.stringify(updated));
+      }
     } else if (modalType === 'document' || modalType === 'writing') {
-      const updated = [newItem, ...documents];
-      setDocuments(updated);
-      localStorage.setItem('matematiklab_documents', JSON.stringify(updated));
+      const { data, error } = await supabase.from('documents').insert([newItem]).select();
+      if (!error && data) {
+        setDocuments([data[0], ...documents]);
+      } else {
+        const fallbackItem = { ...newItem, id: Date.now().toString() };
+        const updated = [fallbackItem, ...documents];
+        setDocuments(updated);
+        localStorage.setItem('matematiklab_documents', JSON.stringify(updated));
+      }
     }
 
     setIsSubmitting(false);
@@ -120,19 +198,25 @@ export default function AdminPage() {
     setTimeout(() => {
       setShowModal(false);
       setSuccess(false);
+      setFormData({});
     }, 1500);
   };
 
-  const deleteItem = (type: string, id: string) => {
+  const deleteItem = async (type: string, id: string) => {
     if (confirm('Bu içeriği silmek istediğinizden emin misiniz?')) {
-      if (type === 'announcement') {
+      if (type === 'assignment') {
+        await supabase.from('assignments').delete().eq('id', id);
+        setAssignments(assignments.filter(a => a.id !== id));
+      } else if (type === 'announcement') {
+        await supabase.from('announcements').delete().eq('id', id);
         const updated = announcements.filter(a => a.id !== id);
         setAnnouncements(updated);
-        localStorage.setItem('matematiklab_announcements', JSON.stringify(updated));
+        localStorage.setItem('matematiklab_announcements', JSON.stringify(updated)); 
       } else {
+        await supabase.from('documents').delete().eq('id', id);
         const updated = documents.filter(d => d.id !== id);
         setDocuments(updated);
-        localStorage.setItem('matematiklab_documents', JSON.stringify(updated));
+        localStorage.setItem('matematiklab_documents', JSON.stringify(updated)); 
       }
     }
   };
@@ -191,6 +275,7 @@ export default function AdminPage() {
               { id: 'announcements', label: 'Duyurular', icon: Megaphone, color: 'from-pink-500 to-rose-500' },
               { id: 'documents', label: 'Belgeler', icon: FileText, color: 'from-blue-500 to-cyan-500' },
               { id: 'writings', label: 'Yazılar', icon: Edit3, color: 'from-purple-500 to-violet-500' },
+              { id: 'privateStudents', label: 'Öğrencilerim', icon: Users, color: 'from-indigo-500 to-purple-600' }
             ].map((tab) => (
               <motion.button
                 key={tab.id}
@@ -209,17 +294,19 @@ export default function AdminPage() {
             ))}
           </div>
 
-          <div className="flex justify-end mb-6">
-            <motion.button
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              onClick={() => openModal(activeTab === 'announcements' ? 'announcement' : activeTab === 'documents' ? 'document' : 'writing')}
-              className="btn-primary"
-            >
-              <Plus className="w-5 h-5" />
-              Yeni Ekle
-            </motion.button>
-          </div>
+          {activeTab !== 'privateStudents' && (
+            <div className="flex justify-end mb-6">
+              <motion.button
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                onClick={() => openModal(activeTab === 'announcements' ? 'announcement' : activeTab === 'documents' ? 'document' : 'writing')}
+                className="btn-primary"
+              >
+                <Plus className="w-5 h-5" />
+                Yeni Ekle
+              </motion.button>
+            </div>
+          )}
 
           <AnimatePresence mode="wait">
             {activeTab === 'announcements' && (
@@ -373,6 +460,76 @@ export default function AdminPage() {
                 )}
               </motion.div>
             )}
+            {activeTab === 'privateStudents' && (
+              <motion.div
+                key="privateStudents"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                className="space-y-6"
+              >
+                {privateStudents.length === 0 ? (
+                  <div className="glass rounded-2xl p-12 text-center">
+                    <Users className="w-16 h-16 mx-auto mb-4 text-slate-500" />
+                    <p className="text-slate-400">Henüz özel ders öğrencisi bulunmuyor.</p>
+                  </div>
+                ) : (
+                  privateStudents.map((student, i) => (
+                    <motion.div
+                      key={student.id}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: i * 0.05 }}
+                      className="glass rounded-2xl p-6"
+                    >
+                      <div className="flex items-center justify-between mb-4 border-b border-white/10 pb-4">
+                        <div className="flex items-center gap-4">
+                          <div className="w-12 h-12 bg-gradient-to-br from-indigo-500 to-purple-500 rounded-full flex items-center justify-center text-xl font-bold text-white">
+                            {student.name[0]}
+                          </div>
+                          <div>
+                            <h3 className="text-xl font-bold text-white">{student.name}</h3>
+                            <p className="text-slate-400">{student.grade}. Sınıf • {student.email}</p>
+                          </div>
+                        </div>
+                        <button
+                          onClick={() => openModal('assignment', student.id)}
+                          className="px-4 py-2 bg-gradient-to-r from-indigo-500/20 to-purple-500/20 text-indigo-300 rounded-lg hover:from-indigo-500/40 hover:to-purple-500/40 transition-all font-semibold flex items-center gap-2"
+                        >
+                          <Plus className="w-4 h-4" /> Ödev Ver
+                        </button>
+                      </div>
+
+                      <div className="space-y-3">
+                        <h4 className="text-slate-300 font-semibold mb-2 flex items-center gap-2">
+                          <BookOpen className="w-4 h-4 text-indigo-400" />
+                          Verilen Ödevler
+                        </h4>
+                        {assignments.filter(a => a.student_id === student.id).length === 0 ? (
+                          <p className="text-sm text-slate-500">Henüz ödev verilmemiş.</p>
+                        ) : (
+                          assignments.filter(a => a.student_id === student.id).map(assign => (
+                            <div key={assign.id} className="bg-slate-800/50 rounded-lg p-4 flex justify-between items-start">
+                              <div>
+                                <h5 className="text-white font-medium">{assign.title}</h5>
+                                <p className="text-slate-400 text-sm mt-1">{assign.description}</p>
+                                <span className="text-xs text-slate-500 mt-2 block w-full">Veriliş: {formatDate(assign.created_at)}</span>
+                              </div>
+                              <button
+                                onClick={() => deleteItem('assignment', assign.id)}
+                                className="text-slate-500 hover:text-red-400 transition-colors bg-white/5 p-2 rounded-md"
+                              >
+                                <Trash2 className="w-4 h-4" />
+                              </button>
+                            </div>
+                          ))
+                        )}
+                      </div>
+                    </motion.div>
+                  ))
+                )}
+              </motion.div>
+            )}
           </AnimatePresence>
         </div>
       </div>
@@ -395,7 +552,7 @@ export default function AdminPage() {
             >
               <div className="flex items-center justify-between mb-6">
                 <h2 className="text-2xl font-bold text-white">
-                  {modalType === 'announcement' ? 'Yeni Duyuru' : modalType === 'document' ? 'Yeni Belge' : 'Yeni Yazı'}
+                  {modalType === 'announcement' ? 'Yeni Duyuru' : modalType === 'document' ? 'Yeni Belge' : modalType === 'assignment' ? 'Yeni Ödev' : 'Yeni Yazı'}
                 </h2>
                 <button onClick={() => setShowModal(false)} className="text-slate-400 hover:text-white">
                   <X className="w-6 h-6" />
@@ -431,16 +588,16 @@ export default function AdminPage() {
 
                   <div>
                     <label className="block text-slate-300 mb-2 text-sm">
-                      {modalType === 'announcement' ? 'Duyuru İçeriği' : modalType === 'document' ? 'Belge Açıklaması' : 'Yazı İçeriği'}
+                      {modalType === 'announcement' ? 'Duyuru İçeriği' : modalType === 'document' ? 'Belge Açıklaması' : modalType === 'assignment' ? 'Ödev Detayları' : 'Yazı İçeriği'}
                     </label>
                     <textarea
                       required
-                      rows={modalType === 'document' ? 3 : 6}
+                      rows={modalType === 'document' || modalType === 'assignment' ? 3 : 6}
                       value={formData.description || ''}
                       onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                       className="w-full bg-slate-800/50 border border-slate-700 rounded-xl px-4 py-3 text-white 
                                focus:outline-none focus:border-purple-500 transition-colors resize-none"
-                      placeholder={modalType === 'document' ? 'Belge hakkında bilgi...' : 'İçeriği buraya yazın...'}
+                      placeholder={modalType === 'document' ? 'Belge hakkında bilgi...' : modalType === 'assignment' ? 'Hangi sayfalar / kaynaklar yapılacak?' : 'İçeriği buraya yazın...'}
                     />
                   </div>
 

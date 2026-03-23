@@ -1,9 +1,11 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
-import { Calculator, Eye, EyeOff, ArrowLeft, CheckCircle2 } from 'lucide-react';
+import { Calculator, Eye, EyeOff, ArrowLeft, CheckCircle2, GraduationCap } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { supabase } from '@/lib/supabase';
 
 const FloatingShapes = () => (
   <div className="fixed inset-0 overflow-hidden pointer-events-none z-0">
@@ -43,13 +45,21 @@ export default function RegisterPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
+  const router = useRouter();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const isAdminEmail = formData.email === 'admin@ugurhoca.com' || formData.email === 'admin@matematiklab.com';
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
 
-    if (!formData.name || !formData.email || !formData.password || !formData.grade) {
+    if (!formData.name || !formData.email || !formData.password || !formData.confirmPassword) {
       setError('Lütfen tüm alanları doldurun');
+      return;
+    }
+
+    if (!isAdminEmail && !formData.grade) {
+      setError('Lütfen sınıf düzeyinizi seçin');
       return;
     }
 
@@ -63,25 +73,45 @@ export default function RegisterPage() {
       return;
     }
 
-    const users = JSON.parse(localStorage.getItem('matematiklab_users') || '[]');
-    if (users.find((u: any) => u.email === formData.email)) {
-      setError('Bu e-posta adresi zaten kayıtlı');
-      return;
+    try {
+      const isAdmin = formData.email === 'admin@ugurhoca.com' || formData.email === 'admin@matematiklab.com';
+      const userGrade = isAdmin ? 0 : parseInt(formData.grade);
+      const isPrivate = formData.password.toLowerCase() === 'ozelders' || formData.password.toLowerCase() === 'özelders';
+      const { data, error: signUpError } = await supabase.auth.signUp({
+        email: formData.email,
+        password: formData.password,
+        options: {
+          data: {
+            name: formData.name,
+            grade: userGrade,
+            is_private_student: isPrivate,
+          }
+        }
+      });
+
+      if (signUpError) throw signUpError;
+      
+      if (data.user) {
+        const { error: profileError } = await supabase.from('profiles').upsert({
+          id: data.user.id,
+          name: formData.name,
+          email: formData.email,
+          grade: userGrade,
+          is_private_student: isPrivate,
+          created_at: new Date().toISOString(),
+        });
+        if (profileError && profileError.code !== '42P01') {
+          console.error('Profile update error:', profileError);
+        }
+      }
+
+      setSuccess(true);
+      setTimeout(() => {
+        router.push('/profil');
+      }, 2000);
+    } catch (err: any) {
+      setError(err.message || 'Kayıt olurken bir hata oluştu');
     }
-
-    const newUser = {
-      id: Date.now().toString(),
-      name: formData.name,
-      email: formData.email,
-      password: formData.password,
-      grade: parseInt(formData.grade),
-      createdAt: new Date().toISOString(),
-    };
-
-    users.push(newUser);
-    localStorage.setItem('matematiklab_users', JSON.stringify(users));
-    localStorage.setItem('matematiklab_user', JSON.stringify(newUser));
-    setSuccess(true);
   };
 
   if (success) {
@@ -161,25 +191,35 @@ export default function RegisterPage() {
               />
             </div>
 
-            <div>
-              <label className="block text-slate-300 mb-2 text-sm">Sınıf Seviyesi</label>
-              <select
-                value={formData.grade}
-                onChange={(e) => setFormData({ ...formData, grade: e.target.value })}
-                className="w-full bg-slate-800/50 border border-slate-700 rounded-xl px-4 py-3 text-white 
-                         focus:outline-none focus:border-purple-500 transition-colors"
-              >
-                <option value="">Sınıf seçin</option>
-                <option value="5">5. Sınıf</option>
-                <option value="6">6. Sınıf</option>
-                <option value="7">7. Sınıf</option>
-                <option value="8">8. Sınıf</option>
-                <option value="9">9. Sınıf</option>
-                <option value="10">10. Sınıf</option>
-                <option value="11">11. Sınıf</option>
-                <option value="12">12. Sınıf</option>
-              </select>
-            </div>
+            <AnimatePresence>
+              {!isAdminEmail && (
+                <motion.div
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: 'auto' }}
+                  exit={{ opacity: 0, height: 0 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  <label className="block text-slate-300 mb-2 font-medium">Sınıf Düzeyi</label>
+                  <div className="relative">
+                    <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                      <GraduationCap className="h-5 w-5 text-slate-400 group-focus-within:text-purple-400 transition-colors" />
+                    </div>
+                    <select
+                      required
+                      value={formData.grade}
+                      onChange={(e) => setFormData({ ...formData, grade: e.target.value })}
+                      className="w-full bg-slate-800/50 border border-slate-700 rounded-xl pl-12 pr-4 py-3 text-white 
+                               focus:outline-none focus:border-purple-500 focus:bg-slate-800 transition-all appearance-none"
+                    >
+                      <option value="" disabled>Sınıfınızı seçin</option>
+                      {[5, 6, 7, 8, 9, 10, 11, 12].map(grade => (
+                        <option key={grade} value={grade}>{grade}. Sınıf</option>
+                      ))}
+                    </select>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
 
             <div>
               <label className="block text-slate-300 mb-2 text-sm">Şifre</label>

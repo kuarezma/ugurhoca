@@ -9,6 +9,8 @@ import {
   Sparkles, Zap, Trophy, Users, Star, Play,
   Megaphone, Calendar
 } from 'lucide-react';
+import { supabase } from '@/lib/supabase';
+import { useRouter } from 'next/navigation';
 
 const FloatingShapes = () => (
   <div className="fixed inset-0 overflow-hidden pointer-events-none z-0">
@@ -135,15 +137,35 @@ export default function HomePage() {
   const [announcements, setAnnouncements] = useState<any[]>([]);
 
   useEffect(() => {
-    const savedUser = localStorage.getItem('matematiklab_user');
-    if (savedUser) setUser(JSON.parse(savedUser));
+    const checkSession = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session) {
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('*')
+          .eq('id', session.user.id)
+          .single();
+          
+        if (profile) {
+          setUser({ ...profile, email: session.user.email });
+        } else {
+          setUser({
+            id: session.user.id,
+            name: session.user.user_metadata?.name || 'Öğrenci',
+            email: session.user.email,
+            grade: session.user.user_metadata?.grade || 5
+          });
+        }
+      }
+    };
+    checkSession();
     
     const savedAnnouncements = JSON.parse(localStorage.getItem('matematiklab_announcements') || '[]');
     setAnnouncements(savedAnnouncements.sort((a: any, b: any) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()));
   }, []);
 
-  const handleLogout = () => {
-    localStorage.removeItem('matematiklab_user');
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
     setUser(null);
     window.location.href = '/';
   };

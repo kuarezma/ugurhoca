@@ -6,9 +6,10 @@ import Link from 'next/link';
 import { 
   Calculator, BookOpen, Gamepad2, FileText, Upload, 
   LogOut, ArrowLeft, Award, Clock, TrendingUp, Settings,
-  ChevronRight, Zap, Trophy, Target, Megaphone, Calendar, Edit3
+  ChevronRight, Zap, Trophy, Target, Megaphone, Calendar, Edit3, Users
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import { supabase } from '@/lib/supabase';
 
 const FloatingShapes = () => (
   <div className="fixed inset-0 overflow-hidden pointer-events-none z-0">
@@ -44,26 +45,55 @@ export default function ProfilePage() {
   const [loading, setLoading] = useState(true);
   const [announcements, setAnnouncements] = useState<any[]>([]);
   const [adminDocs, setAdminDocs] = useState<any[]>([]);
+  const [assignments, setAssignments] = useState<any[]>([]);
   const router = useRouter();
 
   useEffect(() => {
-    const savedUser = localStorage.getItem('matematiklab_user');
-    if (savedUser) {
-      setUser(JSON.parse(savedUser));
-    } else {
-      router.push('/giris');
+    const loadData = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      
+      if (!session) {
+        router.push('/giris');
+        return;
+      }
+      
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', session.user.id)
+        .single();
+        
+      if (profile) {
+        setUser({ ...profile, email: session.user.email });
+      } else {
+        setUser({
+          id: session.user.id,
+          name: session.user.user_metadata?.name || 'Öğrenci',
+          email: session.user.email,
+          grade: session.user.user_metadata?.grade ?? 5,
+          is_private_student: session.user.user_metadata?.is_private_student || false
+        });
+      }
+      
+      const { data: asmts } = await supabase
+        .from('assignments')
+        .select('*')
+        .eq('student_id', session.user.id)
+        .order('created_at', { ascending: false });
+      if (asmts) setAssignments(asmts);
+      
+      const savedAnnouncements = JSON.parse(localStorage.getItem('matematiklab_announcements') || '[]');
+      const savedDocs = JSON.parse(localStorage.getItem('matematiklab_documents') || '[]');
+      setAnnouncements(savedAnnouncements.sort((a: any, b: any) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()));
+      setAdminDocs(savedDocs.sort((a: any, b: any) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()));
+      
+      setLoading(false);
     }
-    
-    const savedAnnouncements = JSON.parse(localStorage.getItem('matematiklab_announcements') || '[]');
-    const savedDocs = JSON.parse(localStorage.getItem('matematiklab_documents') || '[]');
-    setAnnouncements(savedAnnouncements.sort((a: any, b: any) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()));
-    setAdminDocs(savedDocs.sort((a: any, b: any) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()));
-    
-    setLoading(false);
+    loadData();
   }, [router]);
 
-  const handleLogout = () => {
-    localStorage.removeItem('matematiklab_user');
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
     router.push('/');
   };
 
@@ -143,7 +173,9 @@ export default function ProfilePage() {
                 <p className="text-slate-400">{user.email}</p>
                 <div className="mt-4 inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-purple-500/20 to-pink-500/20 rounded-full">
                   <Award className="w-5 h-5 text-purple-400" />
-                  <span className="text-purple-300 font-semibold">{user.grade}. Sınıf</span>
+                  <span className="text-purple-300 font-semibold">
+                    {user.grade === 0 ? 'Yönetici' : `${user.grade}. Sınıf`}
+                  </span>
                 </div>
               </div>
 
@@ -191,7 +223,7 @@ export default function ProfilePage() {
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-2xl font-bold text-white flex items-center gap-3">
                 <BookOpen className="w-6 h-6 text-purple-400" />
-                {user.grade}. Sınıf İçerikleri
+                {user.grade === 0 ? 'Tüm İçerikler' : `${user.grade}. Sınıf İçerikleri`}
               </h2>
               <Link href="/icerikler" className="text-purple-400 hover:text-purple-300 flex items-center gap-1">
                 Tümünü Gör <ChevronRight className="w-4 h-4" />
@@ -241,6 +273,44 @@ export default function ProfilePage() {
               ))}
             </div>
           </motion.div>
+
+          {user?.is_private_student && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.7 }}
+              className="mt-12"
+            >
+              <h2 className="text-2xl font-bold text-white mb-6 flex items-center gap-3">
+                <BookOpen className="w-6 h-6 text-indigo-400" />
+                Özel Ders Ödevlerim
+              </h2>
+              {assignments.length === 0 ? (
+                <div className="glass rounded-2xl p-8 text-center">
+                  <BookOpen className="w-12 h-12 text-slate-500 mx-auto mb-3" />
+                  <p className="text-slate-400">Harika gidiyorsun! Şu an bekleyen ödevin yok.</p>
+                </div>
+              ) : (
+                <div className="grid md:grid-cols-2 gap-4">
+                  {assignments.map((asmt, i) => (
+                    <motion.div
+                      key={asmt.id}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.8 + i * 0.1 }}
+                      className="glass rounded-xl p-5 border-l-4 border-indigo-500 card-hover"
+                    >
+                      <h3 className="text-lg font-bold text-white mb-2">{asmt.title}</h3>
+                      <p className="text-slate-300 text-sm mb-3">{asmt.description}</p>
+                      <div className="text-xs text-slate-500 font-medium">
+                        Veriliş: {new Date(asmt.created_at).toLocaleDateString('tr-TR')}
+                      </div>
+                    </motion.div>
+                  ))}
+                </div>
+              )}
+            </motion.div>
+          )}
 
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -347,7 +417,7 @@ export default function ProfilePage() {
             </motion.div>
           )}
 
-          {user.email === 'admin@matematiklab.com' && (
+          {(user.email === 'admin@matematiklab.com' || user.email === 'admin@ugurhoca.com') && (
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}

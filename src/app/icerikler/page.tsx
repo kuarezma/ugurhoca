@@ -9,6 +9,7 @@ import {
   Clock, Users, Star, Zap, Grid, List
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import { supabase } from '@/lib/supabase';
 
 const FloatingShapes = () => (
   <div className="fixed inset-0 overflow-hidden pointer-events-none z-0">
@@ -54,12 +55,33 @@ export default function ContentsPage() {
   const router = useRouter();
 
   useEffect(() => {
-    const savedUser = localStorage.getItem('matematiklab_user');
-    if (savedUser) {
-      setUser(JSON.parse(savedUser));
-    } else {
-      router.push('/giris');
-    }
+    const checkSession = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        router.push('/giris');
+        return;
+      }
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', session.user.id)
+        .single();
+        
+      if (profile) {
+        setUser({ ...profile, email: session.user.email });
+        setSelectedGrade(profile.grade);
+      } else {
+        const fallbackGrade = session.user.user_metadata?.grade ?? 5;
+        setUser({
+          id: session.user.id,
+          name: session.user.user_metadata?.name || 'Öğrenci',
+          email: session.user.email,
+          grade: fallbackGrade
+        });
+        setSelectedGrade(fallbackGrade === 0 ? 'all' : fallbackGrade);
+      }
+    };
+    checkSession();
   }, [router]);
 
   const getTypeIcon = (type: string) => {

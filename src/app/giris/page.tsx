@@ -5,6 +5,7 @@ import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { Calculator, Eye, EyeOff, ArrowLeft } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import { supabase } from '@/lib/supabase';
 
 const FloatingShapes = () => (
   <div className="fixed inset-0 overflow-hidden pointer-events-none z-0">
@@ -43,13 +44,16 @@ export default function LoginPage() {
   const router = useRouter();
 
   useEffect(() => {
-    const user = localStorage.getItem('matematiklab_user');
-    if (user) {
-      router.push('/profil');
-    }
+    const checkSession = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session) {
+        router.push('/profil');
+      }
+    };
+    checkSession();
   }, [router]);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
 
@@ -58,18 +62,24 @@ export default function LoginPage() {
       return;
     }
 
-    const users = JSON.parse(localStorage.getItem('matematiklab_users') || '[]');
-    const user = users.find(
-      (u: any) => u.email === formData.email && u.password === formData.password
-    );
+    try {
+      const { data, error: signInError } = await supabase.auth.signInWithPassword({
+        email: formData.email,
+        password: formData.password,
+      });
 
-    if (!user) {
-      setError('E-posta veya şifre hatalı');
-      return;
+      if (signInError) throw signInError;
+
+      router.push('/profil');
+    } catch (err: any) {
+      if (err.message === 'Invalid login credentials') {
+        setError('E-posta veya şifre hatalı');
+      } else if (err.message === 'Email not confirmed') {
+        setError('E-posta onayı bekleniyor. Supabase panelinden doğrulama zorunluluğunu kapatmalısınız.');
+      } else {
+        setError('Giriş başarısız: ' + err.message);
+      }
     }
-
-    localStorage.setItem('matematiklab_user', JSON.stringify(user));
-    router.push('/profil');
   };
 
   return (
