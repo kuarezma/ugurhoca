@@ -202,6 +202,7 @@ export default function HomePage() {
   const [documents, setDocuments] = useState<any[]>([]);
   const [assignments, setAssignments] = useState<any[]>([]);
   const [userAssignments, setUserAssignments] = useState<any[]>([]);
+  const [dismissedAssignments, setDismissedAssignments] = useState<Set<string>>(new Set());
 
   useEffect(() => {
     const checkSession = async () => {
@@ -264,6 +265,15 @@ export default function HomePage() {
     setUserAssignments(allAssignments);
   };
 
+  const handleDismissAssignment = async (assignment: any) => {
+    if (assignment.source === 'shared') {
+      await supabase.from('shared_documents').delete().eq('id', assignment.id);
+    } else if (assignment.source === 'notification') {
+      await supabase.from('notifications').delete().eq('id', assignment.id);
+    }
+    setDismissedAssignments(prev => new Set([...prev, assignment.id]));
+  };
+
   const handleLogout = async () => {
     await supabase.auth.signOut();
     setUser(null);
@@ -276,7 +286,7 @@ export default function HomePage() {
       <Navbar user={user} onLogout={handleLogout} />
       
       <div className="pt-14">
-        {user && userAssignments.length > 0 && (
+        {user && userAssignments.filter(a => !dismissedAssignments.has(a.id)).length > 0 && (
           <section className="px-4 py-6 sm:py-8">
             <div className="max-w-6xl mx-auto">
               <motion.div
@@ -288,13 +298,27 @@ export default function HomePage() {
                 <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-orange-500/30 to-red-500/30 rounded-full blur-3xl" />
                 
                 <div className="relative bg-slate-900/80 backdrop-blur-xl border border-orange-500/30 rounded-3xl p-6 sm:p-8">
-                  <div className="flex items-start gap-4">
+                  <button
+                    onClick={() => {
+                      userAssignments.forEach(a => {
+                        if (!dismissedAssignments.has(a.id)) {
+                          handleDismissAssignment(a);
+                        }
+                      });
+                    }}
+                    className="absolute top-4 right-4 p-2 text-slate-400 hover:text-white hover:bg-white/10 rounded-lg transition-colors"
+                    title="Tümünü gizle"
+                  >
+                    <X className="w-5 h-5" />
+                  </button>
+                  
+                  <div className="flex items-start gap-4 pr-8">
                     <div className="relative flex-shrink-0">
                       <div className="w-14 h-14 bg-gradient-to-br from-orange-500 to-red-500 rounded-2xl flex items-center justify-center">
                         <Bell className="w-7 h-7 text-white" />
                       </div>
                       <span className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 text-white text-xs font-bold rounded-full flex items-center justify-center animate-pulse">
-                        {userAssignments.length}
+                        {userAssignments.filter(a => !dismissedAssignments.has(a.id)).length}
                       </span>
                     </div>
                     
@@ -303,35 +327,41 @@ export default function HomePage() {
                         Sana Gönderilen Ödevler
                       </h2>
                       <p className="text-slate-400 text-sm mb-4">
-                        Uğur Hoca sana {userAssignments.length} tane ödev/materyal gönderdi!
+                        Uğur Hoca sana {userAssignments.filter(a => !dismissedAssignments.has(a.id)).length} tane ödev/materyal gönderdi!
                       </p>
                       
                       <div className="space-y-3">
-                        {userAssignments.slice(0, 3).map((assignment, i) => (
+                        {userAssignments.filter(a => !dismissedAssignments.has(a.id)).slice(0, 3).map((assignment, i) => (
                           <motion.div
                             key={assignment.id}
                             initial={{ opacity: 0, x: -10 }}
                             animate={{ opacity: 1, x: 0 }}
                             transition={{ delay: i * 0.1 }}
-                            className="flex items-center gap-3 bg-slate-800/50 rounded-xl p-3 hover:bg-slate-800/70 transition-colors cursor-pointer group"
-                            onClick={() => {
-                              if (assignment.file_url) {
-                                window.open(assignment.file_url, '_blank');
-                              } else if (assignment.message) {
-                                alert(assignment.message);
-                              }
-                            }}
+                            className="flex items-center gap-3 bg-slate-800/50 rounded-xl p-3 hover:bg-slate-800/70 transition-colors group"
                           >
-                            <div className="w-10 h-10 bg-gradient-to-br from-orange-500/50 to-red-500/50 rounded-lg flex items-center justify-center flex-shrink-0">
-                              <FileText className="w-5 h-5 text-orange-300" />
-                            </div>
-                            <div className="flex-1 min-w-0">
-                              <h4 className="text-white font-medium truncate group-hover:text-orange-300 transition-colors">
-                                {assignment.document_title || assignment.title || 'Ödev'}
-                              </h4>
-                              <p className="text-slate-400 text-xs truncate">
-                                {assignment.message || assignment.content || 'Materyali incele ve çöz'}
-                              </p>
+                            <div 
+                              className="flex-1 min-w-0 cursor-pointer"
+                              onClick={() => {
+                                if (assignment.file_url) {
+                                  window.open(assignment.file_url, '_blank');
+                                } else if (assignment.message) {
+                                  alert(assignment.message);
+                                }
+                              }}
+                            >
+                              <div className="flex items-center gap-3">
+                                <div className="w-10 h-10 bg-gradient-to-br from-orange-500/50 to-red-500/50 rounded-lg flex items-center justify-center flex-shrink-0">
+                                  <FileText className="w-5 h-5 text-orange-300" />
+                                </div>
+                                <div className="flex-1 min-w-0">
+                                  <h4 className="text-white font-medium truncate group-hover:text-orange-300 transition-colors">
+                                    {assignment.document_title || assignment.title || 'Ödev'}
+                                  </h4>
+                                  <p className="text-slate-400 text-xs truncate">
+                                    {assignment.message || assignment.content || 'Materyali incele ve çöz'}
+                                  </p>
+                                </div>
+                              </div>
                             </div>
                             <div className="flex items-center gap-2">
                               {assignment.file_url && (
@@ -343,17 +373,27 @@ export default function HomePage() {
                               <span className="text-slate-500 text-xs">
                                 {new Date(assignment.created_at).toLocaleDateString('tr-TR', { day: 'numeric', month: 'short' })}
                               </span>
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleDismissAssignment(assignment);
+                                }}
+                                className="p-1.5 text-slate-500 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-colors"
+                                title="Kaldır"
+                              >
+                                <X className="w-4 h-4" />
+                              </button>
                             </div>
                           </motion.div>
                         ))}
                       </div>
                       
-                      {userAssignments.length > 3 && (
+                      {userAssignments.filter(a => !dismissedAssignments.has(a.id)).length > 3 && (
                         <Link 
                           href="/profil"
                           className="inline-flex items-center gap-2 mt-4 text-orange-400 hover:text-orange-300 text-sm font-medium transition-colors"
                         >
-                          Tüm ödevleri gör ({userAssignments.length})
+                          Tüm ödevleri gör ({userAssignments.filter(a => !dismissedAssignments.has(a.id)).length})
                           <ChevronRight className="w-4 h-4" />
                         </Link>
                       )}
