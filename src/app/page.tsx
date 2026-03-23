@@ -6,7 +6,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Calculator, BookOpen, Gamepad2, FileText, Upload, 
   LogIn, UserPlus, LogOut, Menu, X, ChevronDown,
-  Sparkles, Zap, Trophy, Users, Star, Play
+  Sparkles, Zap, Trophy, Users, Star, Play,
+  Megaphone, Calendar, ArrowRight
 } from 'lucide-react';
 
 const FloatingShapes = () => (
@@ -147,10 +148,14 @@ const Navbar = ({ user, onLogout }: { user: any; onLogout: () => void }) => {
 
 export default function HomePage() {
   const [user, setUser] = useState<any>(null);
+  const [announcements, setAnnouncements] = useState<any[]>([]);
 
   useEffect(() => {
     const savedUser = localStorage.getItem('matematiklab_user');
     if (savedUser) setUser(JSON.parse(savedUser));
+    
+    const savedAnnouncements = JSON.parse(localStorage.getItem('matematiklab_announcements') || '[]');
+    setAnnouncements(savedAnnouncements.sort((a: any, b: any) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()));
   }, []);
 
   const handleLogout = () => {
@@ -279,6 +284,63 @@ export default function HomePage() {
           </div>
         </div>
       </section>
+
+      {announcements.length > 0 && (
+        <section className="py-20 px-6 bg-slate-900/30">
+          <div className="container mx-auto">
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="mb-12"
+            >
+              <div className="flex items-center gap-3 mb-2">
+                <Megaphone className="w-8 h-8 text-pink-400" />
+                <h2 className="text-4xl md:text-5xl font-bold">
+                  <span className="bg-gradient-to-r from-pink-400 to-rose-400 bg-clip-text text-transparent">
+                    Duyurular
+                  </span>
+                </h2>
+              </div>
+              <p className="text-slate-400 text-lg">Uğur Hoca'dan önemli bilgiler</p>
+            </motion.div>
+
+            <div className="grid gap-6">
+              {announcements.slice(0, 3).map((announcement, i) => (
+                <motion.div
+                  key={announcement.id}
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: i * 0.1 }}
+                  className="glass rounded-2xl p-6 card-hover"
+                >
+                  <div className="flex items-start gap-4">
+                    <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-pink-500 to-rose-500 flex items-center justify-center flex-shrink-0">
+                      <Megaphone className="w-6 h-6 text-white" />
+                    </div>
+                    <div className="flex-1">
+                      <div className="flex items-center gap-3 mb-2">
+                        <h3 className="text-xl font-bold text-white">{announcement.title}</h3>
+                        <span className="px-3 py-1 bg-pink-500/20 text-pink-400 text-xs font-semibold rounded-full">
+                          Yeni
+                        </span>
+                      </div>
+                      <p className="text-slate-300 mb-3">{announcement.content}</p>
+                      <div className="flex items-center gap-2 text-slate-400 text-sm">
+                        <Calendar className="w-4 h-4" />
+                        {new Date(announcement.created_at).toLocaleDateString('tr-TR', { 
+                          day: 'numeric', month: 'long', year: 'numeric' 
+                        })}
+                      </div>
+                    </div>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
 
       <section className="py-20 px-6">
         <div className="container mx-auto">
