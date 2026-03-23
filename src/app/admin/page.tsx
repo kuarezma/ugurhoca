@@ -87,10 +87,11 @@ export default function AdminPage() {
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [selectedStudent, setSelectedStudent] = useState<string>('');
   const [showModal, setShowModal] = useState(false);
-  const [modalType, setModalType] = useState<'announcement' | 'document' | 'writing' | 'assignment' | 'editUser' | 'student' | 'sendDoc'>('announcement');
+  const [modalType, setModalType] = useState<'announcement' | 'document' | 'writing' | 'assignment' | 'editUser' | 'student' | 'sendDoc' | 'editDocument'>('announcement');
   const [formData, setFormData] = useState<any>({});
   const [selectedDoc, setSelectedDoc] = useState<any>(null);
   const [editingUser, setEditingUser] = useState<any>(null);
+  const [editingDoc, setEditingDoc] = useState<any>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [success, setSuccess] = useState(false);
   const router = useRouter();
@@ -443,12 +444,25 @@ export default function AdminPage() {
                           <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center">
                             <FileText className="w-6 h-6 text-white" />
                           </div>
-                          <button
-                            onClick={() => deleteItem('document', doc.id)}
-                            className="p-2 text-slate-400 hover:text-red-400 transition-colors"
-                          >
-                            <Trash2 className="w-5 h-5" />
-                          </button>
+                          <div className="flex gap-2">
+                            <button
+                              onClick={() => {
+                                setEditingDoc(doc);
+                                setFormData(doc);
+                                setModalType('editDocument');
+                                setShowModal(true);
+                              }}
+                              className="p-2 text-slate-400 hover:text-blue-400 transition-colors"
+                            >
+                              <Edit3 className="w-5 h-5" />
+                            </button>
+                            <button
+                              onClick={() => deleteItem('document', doc.id)}
+                              className="p-2 text-slate-400 hover:text-red-400 transition-colors"
+                            >
+                              <Trash2 className="w-5 h-5" />
+                            </button>
+                          </div>
                         </div>
                         <h3 className="text-lg font-bold text-white mb-2">{doc.title}</h3>
                         <p className="text-slate-400 text-sm mb-4 line-clamp-2">{doc.description}</p>
@@ -892,7 +906,7 @@ export default function AdminPage() {
             >
               <div className="flex items-center justify-between mb-6">
                 <h2 className="text-2xl font-bold text-white">
-                  {modalType === 'announcement' ? 'Yeni Duyuru' : modalType === 'document' ? 'Yeni Belge' : modalType === 'assignment' ? 'Yeni Ödev' : modalType === 'student' ? 'Yeni Öğrenci' : modalType === 'editUser' ? 'Kullanıcı Düzenle' : modalType === 'sendDoc' ? 'Belge Gönder' : 'Yeni Yazı'}
+                  {modalType === 'announcement' ? 'Yeni Duyuru' : modalType === 'document' ? 'Yeni Belge' : modalType === 'editDocument' ? 'Belge Düzenle' : modalType === 'assignment' ? 'Yeni Ödev' : modalType === 'student' ? 'Yeni Öğrenci' : modalType === 'editUser' ? 'Kullanıcı Düzenle' : modalType === 'sendDoc' ? 'Belge Gönder' : 'Yeni Yazı'}
                 </h2>
                 <button onClick={() => { setShowModal(false); setEditingUser(null); }} className="text-slate-400 hover:text-white">
                   <X className="w-6 h-6" />
@@ -1062,6 +1076,101 @@ export default function AdminPage() {
                         Gönder
                       </>
                     )}
+                  </motion.button>
+                </form>
+              ) : modalType === 'editDocument' ? (
+                <form onSubmit={async (e) => {
+                  e.preventDefault();
+                  setIsSubmitting(true);
+                  
+                  const { error } = await supabase
+                    .from('documents')
+                    .update({
+                      title: formData.title,
+                      description: formData.description,
+                      type: formData.type,
+                      file_url: formData.file_url,
+                      video_url: formData.video_url,
+                    })
+                    .eq('id', editingDoc.id);
+                  
+                  if (!error) {
+                    setSuccess(true);
+                    setDocuments(documents.map(d => d.id === editingDoc.id ? { ...d, ...formData } : d));
+                    setTimeout(() => {
+                      setShowModal(false);
+                      setSuccess(false);
+                      setFormData({});
+                      setEditingDoc(null);
+                    }, 1500);
+                  }
+                  setIsSubmitting(false);
+                }} className="space-y-5">
+                  <div>
+                    <label className="block text-slate-300 mb-2 text-sm">Başlık</label>
+                    <input
+                      type="text"
+                      required
+                      value={formData.title || ''}
+                      onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                      className="w-full bg-slate-800/50 border border-slate-700 rounded-xl px-4 py-3 text-white 
+                               focus:outline-none focus:border-blue-500 transition-colors"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-slate-300 mb-2 text-sm">Açıklama</label>
+                    <textarea
+                      rows={3}
+                      value={formData.description || ''}
+                      onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                      className="w-full bg-slate-800/50 border border-slate-700 rounded-xl px-4 py-3 text-white 
+                               focus:outline-none focus:border-blue-500 transition-colors resize-none"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-slate-300 mb-2 text-sm">Kategori</label>
+                    <select
+                      value={formData.type || ''}
+                      onChange={(e) => setFormData({ ...formData, type: e.target.value })}
+                      className="w-full bg-slate-800/50 border border-slate-700 rounded-xl px-4 py-3 text-white 
+                               focus:outline-none focus:border-blue-500 transition-colors"
+                    >
+                      <option value="">Kategori seçin</option>
+                      <option value="ders-notlari">Ders Notları</option>
+                      <option value="yaprak-test">Yaprak Test</option>
+                      <option value="ders-videolari">Ders Videoları</option>
+                      <option value="deneme">Deneme</option>
+                      <option value="programlar">Programlar</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-slate-300 mb-2 text-sm">Dosya Linki</label>
+                    <input
+                      type="url"
+                      value={formData.file_url || ''}
+                      onChange={(e) => setFormData({ ...formData, file_url: e.target.value })}
+                      className="w-full bg-slate-800/50 border border-slate-700 rounded-xl px-4 py-3 text-white 
+                               focus:outline-none focus:border-blue-500 transition-colors"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-slate-300 mb-2 text-sm">YouTube URL</label>
+                    <input
+                      type="url"
+                      value={formData.video_url || ''}
+                      onChange={(e) => setFormData({ ...formData, video_url: e.target.value })}
+                      className="w-full bg-slate-800/50 border border-slate-700 rounded-xl px-4 py-3 text-white 
+                               focus:outline-none focus:border-blue-500 transition-colors"
+                    />
+                  </div>
+                  <motion.button
+                    type="submit"
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    disabled={isSubmitting}
+                    className="w-full py-4 bg-gradient-to-r from-blue-500 to-cyan-500 text-white font-semibold rounded-xl hover:from-blue-600 hover:to-cyan-600 transition-all flex items-center justify-center gap-2"
+                  >
+                    {isSubmitting ? 'Kaydediliyor...' : 'Kaydet'}
                   </motion.button>
                 </form>
               ) : modalType === 'student' ? (
