@@ -6,7 +6,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Calculator, BookOpen, Gamepad2, FileText, ClipboardList,
   LogIn, LogOut, Menu, X, Play, Video, Brain,
-  ChevronRight, Clock, Star, Lock
+  ChevronRight, Clock, Star, Lock, AppWindow
 } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 
@@ -80,6 +80,16 @@ const categories = [
     bgColor: 'bg-yellow-500/10',
     borderColor: 'border-yellow-500/30',
     href: '/oyunlar'
+  },
+  { 
+    id: 'programlar', 
+    icon: AppWindow, 
+    title: 'Programlar', 
+    desc: 'Eğitim uygulamaları',
+    color: 'from-teal-500 to-cyan-500',
+    bgColor: 'bg-teal-500/10',
+    borderColor: 'border-teal-500/30',
+    href: '/icerikler?type=programlar'
   },
 ];
 
@@ -250,7 +260,7 @@ export default function HomePage() {
               </p>
             </motion.div>
 
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4">
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-3 xl:grid-cols-6 gap-3 sm:gap-4">
               {categories.map((cat, i) => (
                 <motion.div
                   key={cat.id}

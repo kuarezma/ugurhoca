@@ -848,6 +848,7 @@ export default function AdminPage() {
                         <option value="yaprak-test">Yaprak Test</option>
                         <option value="ders-videolari">Ders Videoları</option>
                         <option value="deneme">Deneme</option>
+                        <option value="programlar">Programlar</option>
                       </select>
                     </div>
                   )}
