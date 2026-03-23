@@ -868,6 +868,30 @@ export default function AdminPage() {
                         />
                       </div>
                       <div>
+                        <label className="block text-slate-300 mb-2 text-sm">YouTube Video URL</label>
+                        <input
+                          type="url"
+                          value={formData.video_url || ''}
+                          onChange={(e) => setFormData({ ...formData, video_url: e.target.value })}
+                          className="w-full bg-slate-800/50 border border-slate-700 rounded-xl px-4 py-3 text-white 
+                                   focus:outline-none focus:border-purple-500 transition-colors"
+                          placeholder="https://www.youtube.com/watch?v=..."
+                        />
+                      </div>
+                      <div className="flex items-center gap-3">
+                        <input
+                          type="checkbox"
+                          id="is_admin_only"
+                          checked={formData.is_admin_only || false}
+                          onChange={(e) => setFormData({ ...formData, is_admin_only: e.target.checked })}
+                          className="w-5 h-5 accent-red-500"
+                        />
+                        <label htmlFor="is_admin_only" className="text-slate-300 cursor-pointer">
+                          <span className="font-semibold text-red-400">Sadece Bana Özel</span>
+                          <span className="text-slate-400 text-sm ml-2">(Diğer kullanıcılar göremez)</span>
+                        </label>
+                      </div>
+                      <div>
                         <label className="block text-slate-300 mb-2 text-sm">Hedef Sınıflar</label>
                         <div className="flex flex-wrap gap-2">
                           {[5, 6, 7, 8, 9, 10, 11, 12].map((grade) => (

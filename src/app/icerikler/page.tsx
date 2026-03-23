@@ -6,8 +6,9 @@ import Link from 'next/link';
 import { 
   Calculator, BookOpen, Gamepad2, FileText, Upload, 
   Search, Filter, ArrowLeft, Download, Eye, 
-  Clock, Users, Star, Zap, Grid, List
+  Clock, Users, Star, Zap, Grid, List, X, Lock
 } from 'lucide-react';
+import { AnimatePresence } from 'framer-motion';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 
@@ -48,11 +49,26 @@ const allContents = [
 
 export default function ContentsPage() {
   const [user, setUser] = useState<any>(null);
+  const [documents, setDocuments] = useState<any[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedGrade, setSelectedGrade] = useState<number | 'all'>('all');
   const [selectedType, setSelectedType] = useState<string>('all');
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
+  const [showVideo, setShowVideo] = useState<string | null>(null);
   const router = useRouter();
+
+  const isAdmin = user?.email === 'admin@ugurhoca.com' || user?.email === 'admin@matematiklab.com';
+
+  useEffect(() => {
+    const loadDocuments = async () => {
+      const { data } = await supabase.from('documents').select('*').order('created_at', { ascending: false });
+      if (data) {
+        const filtered = isAdmin ? data : data.filter((d: any) => !d.is_admin_only);
+        setDocuments(filtered);
+      }
+    };
+    if (user) loadDocuments();
+  }, [user, isAdmin]);
 
   useEffect(() => {
     const checkSession = async () => {
@@ -111,12 +127,18 @@ export default function ContentsPage() {
     }
   };
 
-  const filteredContents = allContents.filter(content => {
+  const filteredContents = documents.filter(content => {
     const matchesSearch = content.title.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesGrade = selectedGrade === 'all' || content.grade === selectedGrade;
+    const matchesGrade = selectedGrade === 'all' || content.grade?.includes(selectedGrade);
     const matchesType = selectedType === 'all' || content.type === selectedType;
     return matchesSearch && matchesGrade && matchesType;
   });
+
+  const getYouTubeId = (url: string) => {
+    const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
+    const match = url.match(regExp);
+    return match && match[2].length === 11 ? match[2] : null;
+  };
 
   if (!user) return null;
 
@@ -253,7 +275,13 @@ export default function ContentsPage() {
                             Yeni
                           </span>
                         )}
-                        <span className="text-xs text-slate-400">{content.grade}. Sınıf</span>
+                        {isAdmin && content.is_admin_only && (
+                          <span className="px-2 py-0.5 bg-red-500/20 text-red-400 text-xs font-semibold rounded-full flex items-center gap-1">
+                            <Lock className="w-3 h-3" />
+                            Özel
+                          </span>
+                        )}
+                        <span className="text-xs text-slate-400">{content.grade?.join(', ') || 'Tümü'}</span>
                       </div>
                     </div>
                     
@@ -276,14 +304,26 @@ export default function ContentsPage() {
                       </span>
                     </div>
 
-                    <motion.button
-                      whileHover={{ scale: 1.02 }}
-                      whileTap={{ scale: 0.98 }}
-                      className="w-full py-2 bg-gradient-to-r from-purple-500/20 to-pink-500/20 text-purple-300 font-semibold rounded-lg hover:from-purple-500/30 hover:to-pink-500/30 transition-all flex items-center justify-center gap-2"
-                    >
-                      <Download className="w-4 h-4" />
-                      İndir
-                    </motion.button>
+                    {content.video_url ? (
+                        <motion.button
+                          whileHover={{ scale: 1.02 }}
+                          whileTap={{ scale: 0.98 }}
+                          onClick={() => setShowVideo(getYouTubeId(content.video_url))}
+                          className="w-full py-2 bg-gradient-to-r from-red-500/20 to-orange-500/20 text-red-300 font-semibold rounded-lg hover:from-red-500/30 hover:to-orange-500/30 transition-all flex items-center justify-center gap-2"
+                        >
+                          <Zap className="w-4 h-4" />
+                          İzle
+                        </motion.button>
+                      ) : (
+                        <motion.button
+                          whileHover={{ scale: 1.02 }}
+                          whileTap={{ scale: 0.98 }}
+                          className="w-full py-2 bg-gradient-to-r from-purple-500/20 to-pink-500/20 text-purple-300 font-semibold rounded-lg hover:from-purple-500/30 hover:to-pink-500/30 transition-all flex items-center justify-center gap-2"
+                        >
+                          <Download className="w-4 h-4" />
+                          İndir
+                        </motion.button>
+                      )}
                   </div>
                 </motion.div>
               ))}
@@ -316,13 +356,19 @@ export default function ContentsPage() {
                             Yeni
                           </span>
                         )}
+                        {isAdmin && content.is_admin_only && (
+                          <span className="px-2 py-0.5 bg-red-500/20 text-red-400 text-xs font-semibold rounded-full flex items-center gap-1 flex-shrink-0">
+                            <Lock className="w-3 h-3" />
+                            Özel
+                          </span>
+                        )}
                       </div>
                       <div className="flex items-center gap-4 text-sm text-slate-400">
                         <span className="flex items-center gap-1">
                           <BookOpen className="w-4 h-4" />
                           {getTypeLabel(content.type)}
                         </span>
-                        <span>{content.grade}. Sınıf</span>
+                        <span>{content.grade?.join(', ') || 'Tümü'}</span>
                         <span className="flex items-center gap-1">
                           <Eye className="w-4 h-4" />
                           {content.views}
@@ -338,14 +384,26 @@ export default function ContentsPage() {
                       </div>
                     </div>
 
-                    <motion.button
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                      className="px-6 py-2 bg-gradient-to-r from-purple-500 to-pink-500 text-white font-semibold rounded-xl hover:from-purple-600 hover:to-pink-600 transition-all flex items-center gap-2 flex-shrink-0"
-                    >
-                      <Download className="w-4 h-4" />
-                      İndir
-                    </motion.button>
+                    {content.video_url ? (
+                        <motion.button
+                          whileHover={{ scale: 1.05 }}
+                          whileTap={{ scale: 0.95 }}
+                          onClick={() => setShowVideo(getYouTubeId(content.video_url))}
+                          className="px-6 py-2 bg-gradient-to-r from-red-500 to-orange-500 text-white font-semibold rounded-xl hover:from-red-600 hover:to-orange-600 transition-all flex items-center gap-2 flex-shrink-0"
+                        >
+                          <Zap className="w-4 h-4" />
+                          İzle
+                        </motion.button>
+                      ) : (
+                        <motion.button
+                          whileHover={{ scale: 1.05 }}
+                          whileTap={{ scale: 0.95 }}
+                          className="px-6 py-2 bg-gradient-to-r from-purple-500 to-pink-500 text-white font-semibold rounded-xl hover:from-purple-600 hover:to-pink-600 transition-all flex items-center gap-2 flex-shrink-0"
+                        >
+                          <Download className="w-4 h-4" />
+                          İndir
+                        </motion.button>
+                      )}
                   </div>
                 </motion.div>
               ))}
@@ -354,7 +412,40 @@ export default function ContentsPage() {
         </div>
       </div>
 
-
+      <AnimatePresence>
+        {showVideo && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-6"
+            onClick={() => setShowVideo(null)}
+          >
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              onClick={(e) => e.stopPropagation()}
+              className="w-full max-w-4xl"
+            >
+              <button
+                onClick={() => setShowVideo(null)}
+                className="absolute top-4 right-4 w-10 h-10 bg-white/20 rounded-full flex items-center justify-center text-white hover:bg-white/30 transition-colors"
+              >
+                <X className="w-6 h-6" />
+              </button>
+              <div className="aspect-video rounded-2xl overflow-hidden">
+                <iframe
+                  src={`https://www.youtube.com/embed/${showVideo}?autoplay=1`}
+                  className="w-full h-full"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                />
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </main>
   );
 }
