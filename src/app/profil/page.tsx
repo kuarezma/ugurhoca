@@ -57,6 +57,7 @@ export default function ProfilePage() {
         return;
       }
       
+      const isAdmin = session.user.email === 'admin@ugurhoca.com';
       const { data: profile } = await supabase
         .from('profiles')
         .select('*')
@@ -64,14 +65,15 @@ export default function ProfilePage() {
         .single();
         
       if (profile) {
-        setUser({ ...profile, email: session.user.email });
+        setUser({ ...profile, email: session.user.email, isAdmin });
       } else {
         setUser({
           id: session.user.id,
           name: session.user.user_metadata?.name || 'Öğrenci',
           email: session.user.email,
           grade: session.user.user_metadata?.grade ?? 5,
-          is_private_student: session.user.user_metadata?.is_private_student || false
+          is_private_student: session.user.user_metadata?.is_private_student || false,
+          isAdmin
         });
       }
       
@@ -171,11 +173,18 @@ export default function ProfilePage() {
               <div className="text-center md:text-left flex-1">
                 <h1 className="text-3xl font-bold text-white mb-2">{user.name}</h1>
                 <p className="text-slate-400">{user.email}</p>
-                <div className="mt-4 inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-purple-500/20 to-pink-500/20 rounded-full">
-                  <Award className="w-5 h-5 text-purple-400" />
-                  <span className="text-purple-300 font-semibold">
-                    {user.grade === 0 ? 'Yönetici' : `${user.grade}. Sınıf`}
-                  </span>
+                <div className="mt-4 flex items-center gap-2 flex-wrap">
+                  {user.isAdmin ? (
+                    <div className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-orange-500/20 to-red-500/20 rounded-full">
+                      <Award className="w-5 h-5 text-orange-400" />
+                      <span className="text-orange-300 font-semibold">Yönetici</span>
+                    </div>
+                  ) : (
+                    <div className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-purple-500/20 to-pink-500/20 rounded-full">
+                      <Award className="w-5 h-5 text-purple-400" />
+                      <span className="text-purple-300 font-semibold">{user.grade}. Sınıf</span>
+                    </div>
+                  )}
                 </div>
               </div>
 
@@ -417,7 +426,7 @@ export default function ProfilePage() {
             </motion.div>
           )}
 
-          {(user.email === 'admin@matematiklab.com' || user.email === 'admin@ugurhoca.com') && (
+          {user.isAdmin && (
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}

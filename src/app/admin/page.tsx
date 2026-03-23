@@ -52,15 +52,17 @@ interface Document {
 
 export default function AdminPage() {
   const [user, setUser] = useState<any>(null);
-  const [activeTab, setActiveTab] = useState<'announcements' | 'documents' | 'writings' | 'privateStudents'>('announcements');
+  const [activeTab, setActiveTab] = useState<'announcements' | 'documents' | 'writings' | 'users'>('announcements');
   const [announcements, setAnnouncements] = useState<Announcement[]>([]);
   const [documents, setDocuments] = useState<Document[]>([]);
+  const [allUsers, setAllUsers] = useState<any[]>([]);
   const [privateStudents, setPrivateStudents] = useState<any[]>([]);
   const [assignments, setAssignments] = useState<any[]>([]);
   const [selectedStudent, setSelectedStudent] = useState<string>('');
   const [showModal, setShowModal] = useState(false);
-  const [modalType, setModalType] = useState<'announcement' | 'document' | 'writing' | 'assignment'>('announcement');
+  const [modalType, setModalType] = useState<'announcement' | 'document' | 'writing' | 'assignment' | 'editUser'>('announcement');
   const [formData, setFormData] = useState<any>({});
+  const [editingUser, setEditingUser] = useState<any>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [success, setSuccess] = useState(false);
   const router = useRouter();
@@ -132,9 +134,9 @@ export default function AdminPage() {
       setDocuments(docData);
     }
     
-    // Yalnızca Admin Özel Ders Ekranı Içn Ekstra Sorgular:
-    const { data: studentsData } = await supabase.from('profiles').select('*').eq('is_private_student', true);
-    if (studentsData) setPrivateStudents(studentsData);
+    // Tüm kullanıcıları getir
+    const { data: usersData } = await supabase.from('profiles').select('*').order('created_at', { ascending: false });
+    if (usersData) setAllUsers(usersData);
 
     const { data: assignData } = await supabase.from('assignments').select('*').order('created_at', { ascending: false });
     if (assignData) setAssignments(assignData);
@@ -275,7 +277,7 @@ export default function AdminPage() {
               { id: 'announcements', label: 'Duyurular', icon: Megaphone, color: 'from-pink-500 to-rose-500' },
               { id: 'documents', label: 'Belgeler', icon: FileText, color: 'from-blue-500 to-cyan-500' },
               { id: 'writings', label: 'Yazılar', icon: Edit3, color: 'from-purple-500 to-violet-500' },
-              { id: 'privateStudents', label: 'Öğrencilerim', icon: Users, color: 'from-indigo-500 to-purple-600' }
+              { id: 'users', label: 'Kullanıcılar', icon: Users, color: 'from-green-500 to-emerald-500' }
             ].map((tab) => (
               <motion.button
                 key={tab.id}
@@ -294,7 +296,7 @@ export default function AdminPage() {
             ))}
           </div>
 
-          {activeTab !== 'privateStudents' && (
+          {activeTab !== 'users' && (
             <div className="flex justify-end mb-6">
               <motion.button
                 whileHover={{ scale: 1.02 }}
@@ -460,70 +462,52 @@ export default function AdminPage() {
                 )}
               </motion.div>
             )}
-            {activeTab === 'privateStudents' && (
+
+            {activeTab === 'users' && (
               <motion.div
-                key="privateStudents"
+                key="users"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -20 }}
-                className="space-y-6"
+                className="space-y-4"
               >
-                {privateStudents.length === 0 ? (
+                {allUsers.length === 0 ? (
                   <div className="glass rounded-2xl p-12 text-center">
                     <Users className="w-16 h-16 mx-auto mb-4 text-slate-500" />
-                    <p className="text-slate-400">Henüz özel ders öğrencisi bulunmuyor.</p>
+                    <p className="text-slate-400">Henüz kullanıcı yok</p>
                   </div>
                 ) : (
-                  privateStudents.map((student, i) => (
+                  allUsers.map((u, i) => (
                     <motion.div
-                      key={student.id}
+                      key={u.id}
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: i * 0.05 }}
-                      className="glass rounded-2xl p-6"
+                      className="glass rounded-2xl p-5 card-hover"
                     >
-                      <div className="flex items-center justify-between mb-4 border-b border-white/10 pb-4">
+                      <div className="flex items-center justify-between">
                         <div className="flex items-center gap-4">
-                          <div className="w-12 h-12 bg-gradient-to-br from-indigo-500 to-purple-500 rounded-full flex items-center justify-center text-xl font-bold text-white">
-                            {student.name[0]}
+                          <div className="w-12 h-12 bg-gradient-to-br from-green-500 to-emerald-500 rounded-full flex items-center justify-center text-xl font-bold text-white">
+                            {u.name?.[0] || '?'}
                           </div>
                           <div>
-                            <h3 className="text-xl font-bold text-white">{student.name}</h3>
-                            <p className="text-slate-400">{student.grade}. Sınıf • {student.email}</p>
+                            <h3 className="text-lg font-bold text-white">{u.name || 'İsimsiz'}</h3>
+                            <p className="text-slate-400 text-sm">{u.email}</p>
+                            <p className="text-slate-500 text-xs mt-1">Sınıf: {u.grade || 'Belirtilmemiş'} • Kayıt: {u.created_at ? formatDate(u.created_at) : 'Bilinmiyor'}</p>
                           </div>
                         </div>
                         <button
-                          onClick={() => openModal('assignment', student.id)}
-                          className="px-4 py-2 bg-gradient-to-r from-indigo-500/20 to-purple-500/20 text-indigo-300 rounded-lg hover:from-indigo-500/40 hover:to-purple-500/40 transition-all font-semibold flex items-center gap-2"
+                          onClick={() => {
+                            setEditingUser(u);
+                            setFormData({ name: u.name || '', grade: u.grade || 5 });
+                            setModalType('editUser');
+                            setShowModal(true);
+                          }}
+                          className="px-4 py-2 bg-gradient-to-r from-green-500/20 to-emerald-500/20 text-green-300 rounded-lg hover:from-green-500/40 hover:to-emerald-500/40 transition-all font-semibold flex items-center gap-2"
                         >
-                          <Plus className="w-4 h-4" /> Ödev Ver
+                          <Edit3 className="w-4 h-4" />
+                          Düzenle
                         </button>
-                      </div>
-
-                      <div className="space-y-3">
-                        <h4 className="text-slate-300 font-semibold mb-2 flex items-center gap-2">
-                          <BookOpen className="w-4 h-4 text-indigo-400" />
-                          Verilen Ödevler
-                        </h4>
-                        {assignments.filter(a => a.student_id === student.id).length === 0 ? (
-                          <p className="text-sm text-slate-500">Henüz ödev verilmemiş.</p>
-                        ) : (
-                          assignments.filter(a => a.student_id === student.id).map(assign => (
-                            <div key={assign.id} className="bg-slate-800/50 rounded-lg p-4 flex justify-between items-start">
-                              <div>
-                                <h5 className="text-white font-medium">{assign.title}</h5>
-                                <p className="text-slate-400 text-sm mt-1">{assign.description}</p>
-                                <span className="text-xs text-slate-500 mt-2 block w-full">Veriliş: {formatDate(assign.created_at)}</span>
-                              </div>
-                              <button
-                                onClick={() => deleteItem('assignment', assign.id)}
-                                className="text-slate-500 hover:text-red-400 transition-colors bg-white/5 p-2 rounded-md"
-                              >
-                                <Trash2 className="w-4 h-4" />
-                              </button>
-                            </div>
-                          ))
-                        )}
                       </div>
                     </motion.div>
                   ))
@@ -552,9 +536,9 @@ export default function AdminPage() {
             >
               <div className="flex items-center justify-between mb-6">
                 <h2 className="text-2xl font-bold text-white">
-                  {modalType === 'announcement' ? 'Yeni Duyuru' : modalType === 'document' ? 'Yeni Belge' : modalType === 'assignment' ? 'Yeni Ödev' : 'Yeni Yazı'}
+                  {modalType === 'announcement' ? 'Yeni Duyuru' : modalType === 'document' ? 'Yeni Belge' : modalType === 'assignment' ? 'Yeni Ödev' : modalType === 'editUser' ? 'Kullanıcı Düzenle' : 'Yeni Yazı'}
                 </h2>
-                <button onClick={() => setShowModal(false)} className="text-slate-400 hover:text-white">
+                <button onClick={() => { setShowModal(false); setEditingUser(null); }} className="text-slate-400 hover:text-white">
                   <X className="w-6 h-6" />
                 </button>
               </div>
@@ -569,8 +553,72 @@ export default function AdminPage() {
                     <Check className="w-10 h-10 text-white" />
                   </div>
                   <h3 className="text-2xl font-bold text-white mb-2">Başarılı!</h3>
-                  <p className="text-slate-400">İçeriğiniz eklendi</p>
+                  <p className="text-slate-400">{modalType === 'editUser' ? 'Kullanıcı güncellendi' : 'İçeriğiniz eklendi'}</p>
                 </motion.div>
+              ) : modalType === 'editUser' ? (
+                <form onSubmit={async (e) => {
+                  e.preventDefault();
+                  setIsSubmitting(true);
+                  
+                  if (editingUser) {
+                    const { error } = await supabase
+                      .from('profiles')
+                      .update({ name: formData.name, grade: formData.grade })
+                      .eq('id', editingUser.id);
+                    
+                    if (!error) {
+                      setSuccess(true);
+                      loadData();
+                      setTimeout(() => {
+                        setShowModal(false);
+                        setEditingUser(null);
+                        setSuccess(false);
+                      }, 1500);
+                    }
+                  }
+                  setIsSubmitting(false);
+                }} className="space-y-5">
+                  <div>
+                    <label className="block text-slate-300 mb-2 text-sm">Ad Soyad</label>
+                    <input
+                      type="text"
+                      required
+                      value={formData.name || ''}
+                      onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                      className="w-full bg-slate-800/50 border border-slate-700 rounded-xl px-4 py-3 text-white 
+                               focus:outline-none focus:border-green-500 transition-colors"
+                      placeholder="Adını girin..."
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-slate-300 mb-2 text-sm">Sınıf</label>
+                    <select
+                      value={formData.grade || ''}
+                      onChange={(e) => setFormData({ ...formData, grade: parseInt(e.target.value) })}
+                      className="w-full bg-slate-800/50 border border-slate-700 rounded-xl px-4 py-3 text-white 
+                               focus:outline-none focus:border-green-500 transition-colors"
+                    >
+                      <option value="">Sınıf seçin</option>
+                      <option value="5">5. Sınıf</option>
+                      <option value="6">6. Sınıf</option>
+                      <option value="7">7. Sınıf</option>
+                      <option value="8">8. Sınıf</option>
+                      <option value="9">9. Sınıf</option>
+                      <option value="10">10. Sınıf</option>
+                      <option value="11">11. Sınıf</option>
+                      <option value="12">12. Sınıf</option>
+                    </select>
+                  </div>
+                  <motion.button
+                    type="submit"
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    disabled={isSubmitting}
+                    className="w-full py-4 bg-gradient-to-r from-green-500 to-emerald-500 text-white font-semibold rounded-xl hover:from-green-600 hover:to-emerald-600 transition-all flex items-center justify-center gap-2"
+                  >
+                    {isSubmitting ? 'Kaydediliyor...' : 'Kaydet'}
+                  </motion.button>
+                </form>
               ) : (
                 <form onSubmit={handleSubmit} className="space-y-5">
                   <div>
