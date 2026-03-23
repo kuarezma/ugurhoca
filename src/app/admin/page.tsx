@@ -833,6 +833,25 @@ export default function AdminPage() {
                     />
                   </div>
 
+                  {modalType === 'document' && (
+                    <div>
+                      <label className="block text-slate-300 mb-2 text-sm">Kategori</label>
+                      <select
+                        required
+                        value={formData.type || ''}
+                        onChange={(e) => setFormData({ ...formData, type: e.target.value })}
+                        className="w-full bg-slate-800/50 border border-slate-700 rounded-xl px-4 py-3 text-white 
+                                 focus:outline-none focus:border-purple-500 transition-colors"
+                      >
+                        <option value="">Kategori seçin</option>
+                        <option value="ders-notlari">Ders Notları</option>
+                        <option value="yaprak-test">Yaprak Test</option>
+                        <option value="ders-videolari">Ders Videoları</option>
+                        <option value="deneme">Deneme</option>
+                      </select>
+                    </div>
+                  )}
+
                   <div>
                     <label className="block text-slate-300 mb-2 text-sm">
                       {modalType === 'announcement' ? 'Duyuru İçeriği' : modalType === 'document' ? 'Belge Açıklaması' : modalType === 'assignment' ? 'Ödev Detayları' : 'Yazı İçeriği'}
