@@ -617,6 +617,22 @@ export default function ContentsPage() {
                           <span className="text-white text-sm">{grade}. Sınıf</span>
                         </label>
                       ))}
+                      <label className="flex items-center gap-2 px-3 py-2 glass rounded-lg cursor-pointer hover:bg-white/10">
+                        <input
+                          type="checkbox"
+                          checked={formData.grade?.includes('Mezun') || false}
+                          onChange={(e) => {
+                            const grades = formData.grade || [];
+                            if (e.target.checked) {
+                              setFormData({ ...formData, grade: [...grades, 'Mezun'] });
+                            } else {
+                              setFormData({ ...formData, grade: grades.filter((g: string | number) => g !== 'Mezun') });
+                            }
+                          }}
+                          className="w-4 h-4 accent-purple-500"
+                        />
+                        <span className="text-white text-sm">Mezun</span>
+                      </label>
                     </div>
                   </div>
 
