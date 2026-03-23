@@ -871,11 +871,50 @@ export default function AdminPage() {
                   {modalType === 'document' && (
                     <>
                       <div>
-                        <label className="block text-slate-300 mb-2 text-sm">Dosya URL (Google Drive, vb.)</label>
+                        <label className="block text-slate-300 mb-2 text-sm">Dosya Yükle (PDF, Word, vb.)</label>
+                        <div className="relative">
+                          <input
+                            type="file"
+                            accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.zip,.rar"
+                            onChange={async (e) => {
+                              const file = e.target.files?.[0];
+                              if (file) {
+                                setIsSubmitting(true);
+                                const fileName = `${Date.now()}_${file.name}`;
+                                const { data, error } = await supabase.storage
+                                  .from('documents')
+                                  .upload(fileName, file);
+                                
+                                if (error) {
+                                  alert('Dosya yüklenemedi: ' + error.message);
+                                } else {
+                                  const { data: urlData } = supabase.storage
+                                    .from('documents')
+                                    .getPublicUrl(fileName);
+                                  setFormData({ ...formData, file_url: urlData.publicUrl, file_name: file.name });
+                                }
+                                setIsSubmitting(false);
+                              }
+                            }}
+                            className="hidden"
+                            id="file-upload"
+                          />
+                          <label 
+                            htmlFor="file-upload"
+                            className="flex items-center justify-center gap-2 w-full bg-slate-800/50 border border-slate-700 border-dashed rounded-xl px-4 py-6 text-slate-400 cursor-pointer hover:bg-slate-800 hover:border-purple-500 transition-colors"
+                          >
+                            <Upload className="w-5 h-5" />
+                            <span>{formData.file_name || 'Dosya seç veya buraya sürükle'}</span>
+                          </label>
+                        </div>
+                      </div>
+                      <div className="text-center text-slate-500 text-sm">veya</div>
+                      <div>
+                        <label className="block text-slate-300 mb-2 text-sm">Link (Google Drive, vb.)</label>
                         <input
                           type="url"
                           value={formData.file_url || ''}
-                          onChange={(e) => setFormData({ ...formData, file_url: e.target.value })}
+                          onChange={(e) => setFormData({ ...formData, file_url: e.target.value, file_name: '' })}
                           className="w-full bg-slate-800/50 border border-slate-700 rounded-xl px-4 py-3 text-white 
                                    focus:outline-none focus:border-purple-500 transition-colors"
                           placeholder="https://drive.google.com/..."
