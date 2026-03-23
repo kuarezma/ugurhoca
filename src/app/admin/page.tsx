@@ -425,6 +425,37 @@ export default function AdminPage() {
                 exit={{ opacity: 0, y: -20 }}
                 className="space-y-4"
               >
+                <div className="flex justify-between items-center">
+                  <h3 className="text-lg font-bold text-white">Tüm İçerikler ({documents.length})</h3>
+                  <button
+                    onClick={async () => {
+                      if (!confirm('Eski içeriklerin kategori türlerini güncellemek istediğinize emin misiniz?\n\n• worksheet → Yaprak Test\n• test → Deneme\n• game → Oyun\n• document → Yaprak Test\n• writing → Ders Notları')) return;
+                      
+                      const updates = [
+                        { old: 'worksheet', new: 'yaprak-test' },
+                        { old: 'document', new: 'yaprak-test' },
+                        { old: 'test', new: 'deneme' },
+                        { old: 'game', new: 'oyunlar' },
+                        { old: 'writing', new: 'ders-notlari' },
+                      ];
+                      
+                      let updated = 0;
+                      for (const u of updates) {
+                        const { data, error } = await supabase
+                          .from('documents')
+                          .update({ type: u.new })
+                          .eq('type', u.old);
+                        if (!error) updated++;
+                      }
+                      
+                      alert(`${updated} kategori güncellendi!`);
+                      loadData();
+                    }}
+                    className="px-4 py-2 bg-yellow-500/20 border border-yellow-500/30 text-yellow-400 rounded-lg hover:bg-yellow-500/30 transition-colors text-sm font-medium"
+                  >
+                    Kategorileri Güncelle
+                  </button>
+                </div>
                 {documents.length === 0 ? (
                   <div className="glass rounded-2xl p-12 text-center">
                     <FileText className="w-16 h-16 mx-auto mb-4 text-slate-500" />
@@ -433,17 +464,20 @@ export default function AdminPage() {
                 ) : (
                   documents.map((doc, i) => {
                     const typeColors: Record<string, string> = {
-                      'worksheet': 'from-blue-500 to-cyan-500',
-                      'test': 'from-purple-500 to-pink-500',
-                      'game': 'from-orange-500 to-red-500',
+                      'yaprak-test': 'from-blue-500 to-cyan-500',
+                      'deneme': 'from-purple-500 to-pink-500',
+                      'oyunlar': 'from-orange-500 to-red-500',
                       'ders-notlari': 'from-green-500 to-emerald-500',
                       'ders-videolari': 'from-red-500 to-orange-500',
                       'programlar': 'from-cyan-500 to-blue-500',
+                      'worksheet': 'from-blue-500 to-cyan-500',
+                      'test': 'from-purple-500 to-pink-500',
+                      'game': 'from-orange-500 to-red-500',
                     };
                     const typeLabels: Record<string, string> = {
-                      'worksheet': 'Çalışma Kağıdı',
-                      'test': 'Test / Deneme',
-                      'game': 'Oyun',
+                      'yaprak-test': 'Yaprak Test',
+                      'deneme': 'Deneme',
+                      'oyunlar': 'Oyun',
                       'ders-notlari': 'Ders Notları',
                       'ders-videolari': 'Ders Videoları',
                       'programlar': 'Programlar',
