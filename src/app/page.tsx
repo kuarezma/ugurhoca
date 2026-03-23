@@ -294,30 +294,37 @@ export default function HomePage() {
 
               <div className="space-y-3">
                 {documents.map((doc, i) => (
-                  <motion.div
+                  <a
                     key={doc.id}
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: i * 0.05 }}
-                    className="bg-white/5 border border-white/10 rounded-xl p-4 hover:bg-white/10 transition-colors"
+                    href={doc.file_url || doc.video_url || '#'}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="block"
                   >
-                    <div className="flex items-center gap-4">
-                      <div className={`w-10 h-10 rounded-lg bg-gradient-to-br ${categories.find(c => c.id === doc.type)?.color || 'from-slate-500 to-slate-600'} flex items-center justify-center flex-shrink-0`}>
-                        {(() => {
-                          const Icon = categories.find(c => c.id === doc.type)?.icon || FileText;
-                          return <Icon className="w-5 h-5 text-white" />;
-                        })()}
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <h3 className="text-white font-medium truncate">{doc.title}</h3>
-                        <div className="flex items-center gap-3 text-xs text-slate-400 mt-1">
-                          <span className="capitalize">{doc.type}</span>
-                          {doc.grade && <span>{doc.grade.join(', ')}. Sınıf</span>}
+                    <motion.div
+                      initial={{ opacity: 0, x: -20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: i * 0.05 }}
+                      className="bg-white/5 border border-white/10 rounded-xl p-4 hover:bg-white/10 transition-colors cursor-pointer"
+                    >
+                      <div className="flex items-center gap-4">
+                        <div className={`w-10 h-10 rounded-lg bg-gradient-to-br ${categories.find(c => c.id === doc.type)?.color || 'from-slate-500 to-slate-600'} flex items-center justify-center flex-shrink-0`}>
+                          {(() => {
+                            const Icon = categories.find(c => c.id === doc.type)?.icon || FileText;
+                            return <Icon className="w-5 h-5 text-white" />;
+                          })()}
                         </div>
+                        <div className="flex-1 min-w-0">
+                          <h3 className="text-white font-medium truncate">{doc.title}</h3>
+                          <div className="flex items-center gap-3 text-xs text-slate-400 mt-1">
+                            <span className="capitalize">{doc.type}</span>
+                            {doc.grade && <span>{doc.grade.join(', ')}. Sınıf</span>}
+                          </div>
+                        </div>
+                        <ChevronRight className="w-5 h-5 text-slate-500" />
                       </div>
-                      <ChevronRight className="w-5 h-5 text-slate-500" />
-                    </div>
-                  </motion.div>
+                    </motion.div>
+                  </a>
                 ))}
               </div>
             </div>

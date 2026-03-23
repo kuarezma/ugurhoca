@@ -7,7 +7,7 @@ import {
   Calculator, BookOpen, Gamepad2, FileText, Upload, 
   Search, Filter, ArrowLeft, Download, Eye, 
   Clock, Users, Star, Zap, Grid, List, X, Plus,
-  ClipboardList, Heart, Share2, MessageCircle, Bookmark, Check
+  ClipboardList, Heart, Share2, MessageCircle, Bookmark, Check, Edit3, Trash2
 } from 'lucide-react';
 import { AnimatePresence } from 'framer-motion';
 import { useRouter } from 'next/navigation';
@@ -431,6 +431,35 @@ export default function ContentsPage() {
                       >
                         <Share2 className="w-4 h-4" />
                       </motion.button>
+                      {user?.isAdmin && (
+                        <>
+                          <motion.button
+                            whileHover={{ scale: 1.05 }}
+                            whileTap={{ scale: 0.95 }}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              window.location.href = '/admin?edit=' + content.id;
+                            }}
+                            className="px-3 py-2 bg-slate-700/50 hover:bg-blue-600 text-slate-300 rounded-lg transition-colors"
+                          >
+                            <Edit3 className="w-4 h-4" />
+                          </motion.button>
+                          <motion.button
+                            whileHover={{ scale: 1.05 }}
+                            whileTap={{ scale: 0.95 }}
+                            onClick={async (e) => {
+                              e.stopPropagation();
+                              if (confirm('Bu içeriği silmek istediğinize emin misiniz?')) {
+                                await supabase.from('documents').delete().eq('id', content.id);
+                                setDocuments(documents.filter(d => d.id !== content.id));
+                              }
+                            }}
+                            className="px-3 py-2 bg-slate-700/50 hover:bg-red-600 text-slate-300 rounded-lg transition-colors"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </motion.button>
+                        </>
+                      )}
                     </div>
                   </div>
                 </motion.div>
@@ -500,19 +529,45 @@ export default function ContentsPage() {
                         <motion.button
                           whileHover={{ scale: 1.05 }}
                           whileTap={{ scale: 0.95 }}
+                          onClick={() => window.open(content.file_url, '_blank')}
                           className="px-6 py-2 bg-gradient-to-r from-purple-500 to-pink-500 text-white font-semibold rounded-xl hover:from-purple-600 hover:to-pink-600 transition-all flex items-center gap-2 flex-shrink-0"
                         >
                           <Download className="w-4 h-4" />
                           İndir
                         </motion.button>
                       )}
-                  </div>
-                </motion.div>
-              ))}
-            </div>
-          )}
+                      {user?.isAdmin && (
+                        <>
+                          <motion.button
+                            whileHover={{ scale: 1.05 }}
+                            whileTap={{ scale: 0.95 }}
+                            onClick={() => window.location.href = '/admin?edit=' + content.id}
+                            className="px-3 py-2 bg-slate-700 hover:bg-blue-600 text-white rounded-lg transition-colors"
+                          >
+                            <Edit3 className="w-4 h-4" />
+                          </motion.button>
+                          <motion.button
+                            whileHover={{ scale: 1.05 }}
+                            whileTap={{ scale: 0.95 }}
+                            onClick={async () => {
+                              if (confirm('Bu içeriği silmek istediğinize emin misiniz?')) {
+                                await supabase.from('documents').delete().eq('id', content.id);
+                                setDocuments(documents.filter(d => d.id !== content.id));
+                              }
+                            }}
+                            className="px-3 py-2 bg-slate-700 hover:bg-red-600 text-white rounded-lg transition-colors"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </motion.button>
+                        </>
+                      )}
+                    </div>
+                  </motion.div>
+                ))}
+              </div>
+            )}
+          </div>
         </div>
-      </div>
 
       {/* --- Hızlı İçerik Ekle Modalı --- */}
       <AnimatePresence>
