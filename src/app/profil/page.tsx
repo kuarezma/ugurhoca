@@ -68,6 +68,11 @@ export default function ProfilePage() {
       }
       
       const isAdmin = session.user.email === 'admin@ugurhoca.com';
+      if (isAdmin) {
+        router.push('/admin');
+        return;
+      }
+
       const { data: profile } = await supabase
         .from('profiles')
         .select('*')
@@ -86,28 +91,26 @@ export default function ProfilePage() {
         });
       }
       
-      if (!isAdmin) {
-        const { data: notifData } = await supabase
-          .from('notifications')
-          .select('*')
-          .eq('user_id', session.user.id)
-          .order('created_at', { ascending: false });
-        if (notifData) setNotifications(notifData);
-        
-        const { data: sharedData } = await supabase
-          .from('shared_documents')
-          .select('*')
-          .eq('student_id', session.user.id)
-          .order('created_at', { ascending: false });
-        if (sharedData) setSharedDocs(sharedData);
-        
-        const { data: asmtData } = await supabase
-          .from('assignments')
-          .select('*')
-          .eq('student_id', session.user.id)
-          .order('created_at', { ascending: false });
-        if (asmtData) setAssignments(asmtData);
-      }
+      const { data: notifData } = await supabase
+        .from('notifications')
+        .select('*')
+        .eq('user_id', session.user.id)
+        .order('created_at', { ascending: false });
+      if (notifData) setNotifications(notifData);
+      
+      const { data: sharedData } = await supabase
+        .from('shared_documents')
+        .select('*')
+        .eq('student_id', session.user.id)
+        .order('created_at', { ascending: false });
+      if (sharedData) setSharedDocs(sharedData);
+      
+      const { data: asmtData } = await supabase
+        .from('assignments')
+        .select('*')
+        .eq('student_id', session.user.id)
+        .order('created_at', { ascending: false });
+      if (asmtData) setAssignments(asmtData);
       
       setLoading(false);
     }
