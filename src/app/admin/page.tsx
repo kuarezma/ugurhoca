@@ -263,6 +263,9 @@ export default function AdminPage() {
       if (type === 'assignment') {
         await supabase.from('assignments').delete().eq('id', id);
         setAssignments(assignments.filter(a => a.id !== id));
+      } else if (type === 'shared_document') {
+        await supabase.from('shared_documents').delete().eq('id', id);
+        setSharedDocs(sharedDocs.filter(d => d.id !== id));
       } else if (type === 'announcement') {
         await supabase.from('announcements').delete().eq('id', id);
         const updated = announcements.filter(a => a.id !== id);
@@ -274,6 +277,38 @@ export default function AdminPage() {
         setDocuments(updated);
         localStorage.setItem('matematiklab_documents', JSON.stringify(updated)); 
       }
+    }
+  };
+
+  const editAssignment = async (assignment: any) => {
+    const title = prompt('Ödev başlığı', assignment.title || '');
+    if (title === null) return;
+    const description = prompt('Ödev açıklaması', assignment.description || '');
+    if (description === null) return;
+
+    const { error } = await supabase
+      .from('assignments')
+      .update({ title, description })
+      .eq('id', assignment.id);
+
+    if (!error) {
+      setAssignments(assignments.map(a => a.id === assignment.id ? { ...a, title, description } : a));
+    }
+  };
+
+  const editSharedDocument = async (doc: any) => {
+    const document_title = prompt('Belge başlığı', doc.document_title || '');
+    if (document_title === null) return;
+    const file_url = prompt('Belge bağlantısı', doc.file_url || '');
+    if (file_url === null) return;
+
+    const { error } = await supabase
+      .from('shared_documents')
+      .update({ document_title, file_url })
+      .eq('id', doc.id);
+
+    if (!error) {
+      setSharedDocs(sharedDocs.map(d => d.id === doc.id ? { ...d, document_title, file_url } : d));
     }
   };
 
@@ -905,7 +940,7 @@ export default function AdminPage() {
                     ) : (
                       <div className="space-y-3">
                         {sharedDocs.map(doc => (
-                          <div key={doc.id} className="bg-slate-800/50 rounded-lg p-4 flex items-center justify-between">
+                          <div key={doc.id} className="bg-slate-800/50 rounded-lg p-4 flex items-center justify-between gap-3">
                             <div className="flex items-center gap-3">
                               <div className="w-10 h-10 bg-rose-500/20 rounded-lg flex items-center justify-center">
                                 <FileText className="w-5 h-5 text-rose-400" />
@@ -915,9 +950,17 @@ export default function AdminPage() {
                                 <p className="text-slate-400 text-sm">{doc.student_name}</p>
                               </div>
                             </div>
-                            <span className={`px-2 py-1 rounded-full text-xs ${doc.is_read ? 'bg-green-500/20 text-green-400' : 'bg-yellow-500/20 text-yellow-400'}`}>
-                              {doc.is_read ? 'Görüldü' : 'Bekliyor'}
-                            </span>
+                            <div className="flex items-center gap-2">
+                              <span className={`px-2 py-1 rounded-full text-xs ${doc.is_read ? 'bg-green-500/20 text-green-400' : 'bg-yellow-500/20 text-yellow-400'}`}>
+                                {doc.is_read ? 'Görüldü' : 'Bekliyor'}
+                              </span>
+                              <button onClick={() => editSharedDocument(doc)} className="text-slate-400 hover:text-blue-400 transition-colors" title="Düzenle">
+                                <Edit3 className="w-4 h-4" />
+                              </button>
+                              <button onClick={() => deleteItem('shared_document', doc.id)} className="text-slate-400 hover:text-red-400 transition-colors" title="Sil">
+                                <Trash2 className="w-4 h-4" />
+                              </button>
+                            </div>
                           </div>
                         ))}
                       </div>
@@ -937,12 +980,22 @@ export default function AdminPage() {
                           <div key={asmt.id} className="bg-slate-800/50 rounded-lg p-4">
                             <div className="flex items-center justify-between mb-2">
                               <p className="text-white font-medium">{asmt.title}</p>
-                              <button 
-                                onClick={() => deleteItem('assignment', asmt.id)}
-                                className="text-slate-400 hover:text-red-400"
-                              >
-                                <Trash2 className="w-4 h-4" />
-                              </button>
+                              <div className="flex items-center gap-2">
+                                <button 
+                                  onClick={() => editAssignment(asmt)}
+                                  className="text-slate-400 hover:text-blue-400"
+                                  title="Düzenle"
+                                >
+                                  <Edit3 className="w-4 h-4" />
+                                </button>
+                                <button 
+                                  onClick={() => deleteItem('assignment', asmt.id)}
+                                  className="text-slate-400 hover:text-red-400"
+                                  title="Sil"
+                                >
+                                  <Trash2 className="w-4 h-4" />
+                                </button>
+                              </div>
                             </div>
                             <p className="text-slate-400 text-sm">{asmt.description}</p>
                           </div>
