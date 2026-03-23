@@ -7,7 +7,8 @@ import {
   Calculator, LogOut, ArrowLeft, Plus, FileText, 
   Image, Megaphone, Edit3, Trash2, Upload, X,
   Calendar, Eye, Download, Check, AlertCircle, Sparkles,
-  Users, BookOpen, RefreshCw, GraduationCap
+  Users, BookOpen, RefreshCw, GraduationCap, Send, Bell,
+  UserCheck, ClipboardList
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
@@ -45,23 +46,50 @@ interface Document {
   description: string;
   type: string;
   file_url: string;
+  file_name?: string;
   grade: number[];
   downloads: number;
   created_at: string;
 }
 
+interface SharedDoc {
+  id: string;
+  document_id: string;
+  student_id: string;
+  student_name: string;
+  student_email: string;
+  document_title: string;
+  document_type: string;
+  file_url: string;
+  is_read: boolean;
+  created_at: string;
+}
+
+interface Notification {
+  id: string;
+  user_id: string;
+  title: string;
+  message: string;
+  type: 'document' | 'assignment' | 'general';
+  is_read: boolean;
+  created_at: string;
+}
+
 export default function AdminPage() {
   const [user, setUser] = useState<any>(null);
-  const [activeTab, setActiveTab] = useState<'announcements' | 'documents' | 'writings' | 'users' | 'privateStudents' | 'gradeUpdate'>('announcements');
+  const [activeTab, setActiveTab] = useState<'announcements' | 'documents' | 'writings' | 'users' | 'privateStudents' | 'gradeUpdate' | 'assignments'>('announcements');
   const [announcements, setAnnouncements] = useState<Announcement[]>([]);
   const [documents, setDocuments] = useState<Document[]>([]);
   const [allUsers, setAllUsers] = useState<any[]>([]);
   const [privateStudents, setPrivateStudents] = useState<any[]>([]);
   const [assignments, setAssignments] = useState<any[]>([]);
+  const [sharedDocs, setSharedDocs] = useState<SharedDoc[]>([]);
+  const [notifications, setNotifications] = useState<Notification[]>([]);
   const [selectedStudent, setSelectedStudent] = useState<string>('');
   const [showModal, setShowModal] = useState(false);
-  const [modalType, setModalType] = useState<'announcement' | 'document' | 'writing' | 'assignment' | 'editUser' | 'student'>('announcement');
+  const [modalType, setModalType] = useState<'announcement' | 'document' | 'writing' | 'assignment' | 'editUser' | 'student' | 'sendDoc'>('announcement');
   const [formData, setFormData] = useState<any>({});
+  const [selectedDoc, setSelectedDoc] = useState<any>(null);
   const [editingUser, setEditingUser] = useState<any>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [success, setSuccess] = useState(false);
@@ -138,6 +166,14 @@ export default function AdminPage() {
 
     const { data: assignData } = await supabase.from('assignments').select('*').order('created_at', { ascending: false });
     if (assignData) setAssignments(assignData);
+
+    // Paylaşılan belgeleri getir
+    const { data: sharedData } = await supabase.from('shared_documents').select('*').order('created_at', { ascending: false });
+    if (sharedData) setSharedDocs(sharedData);
+
+    // Bildirimleri getir
+    const { data: notifData } = await supabase.from('notifications').select('*').order('created_at', { ascending: false });
+    if (notifData) setNotifications(notifData);
   };
 
   const handleLogout = async () => {
@@ -145,9 +181,10 @@ export default function AdminPage() {
     router.push('/');
   };
 
-  const openModal = (type: 'announcement' | 'document' | 'writing' | 'assignment' | 'student', studentId?: string) => {
+  const openModal = (type: 'announcement' | 'document' | 'writing' | 'assignment' | 'student' | 'sendDoc', studentId?: string, doc?: any) => {
     setModalType(type);
     if (studentId) setSelectedStudent(studentId);
+    if (doc) setSelectedDoc(doc);
     setFormData({});
     setShowModal(true);
   };
@@ -170,6 +207,14 @@ export default function AdminPage() {
       }]).select();
       if (!error && data) {
         setAssignments([data[0], ...assignments]);
+        
+        const student = allUsers.find(u => u.id === selectedStudent);
+        await supabase.from('notifications').insert([{
+          user_id: selectedStudent,
+          title: 'Yeni Ödev',
+          message: `"${formData.title}" başlıklı yeni bir ödeviniz var.`,
+          type: 'assignment',
+        }]);
       }
     } else if (modalType === 'announcement') {
       const { data, error } = await supabase.from('announcements').insert([newItem]).select();
@@ -277,7 +322,8 @@ export default function AdminPage() {
               { id: 'writings', label: 'Yazılar', icon: Edit3, color: 'from-purple-500 to-violet-500' },
               { id: 'users', label: 'Kullanıcılar', icon: Users, color: 'from-green-500 to-emerald-500' },
               { id: 'privateStudents', label: 'Öğrencilerim', icon: BookOpen, color: 'from-amber-500 to-orange-500' },
-              { id: 'gradeUpdate', label: 'Sınıf Güncelle', icon: RefreshCw, color: 'from-teal-500 to-cyan-500' }
+              { id: 'gradeUpdate', label: 'Sınıf Güncelle', icon: RefreshCw, color: 'from-teal-500 to-cyan-500' },
+              { id: 'assignments', label: 'Ödevlendirme', icon: ClipboardList, color: 'from-rose-500 to-pink-500' }
             ].map((tab) => (
               <motion.button
                 key={tab.id}
@@ -296,7 +342,7 @@ export default function AdminPage() {
             ))}
           </div>
 
-          {activeTab !== 'users' && activeTab !== 'gradeUpdate' && (
+          {activeTab !== 'users' && activeTab !== 'gradeUpdate' && activeTab !== 'assignments' && (
             <div className="flex justify-end mb-6">
               <motion.button
                 whileHover={{ scale: 1.02 }}
@@ -708,6 +754,101 @@ export default function AdminPage() {
                 </div>
               </motion.div>
             )}
+
+            {activeTab === 'assignments' && (
+              <motion.div
+                key="assignments"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                className="space-y-6"
+              >
+                <div className="flex flex-col sm:flex-row gap-4 justify-between items-start sm:items-center mb-6">
+                  <div>
+                    <h2 className="text-2xl font-bold text-white mb-1">Ödevlendirme</h2>
+                    <p className="text-slate-400">Belge gönder veya ödev ver</p>
+                  </div>
+                  <div className="flex gap-3">
+                    <motion.button
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
+                      onClick={() => openModal('sendDoc')}
+                      className="btn-primary"
+                    >
+                      <Send className="w-5 h-5" />
+                      Belge Gönder
+                    </motion.button>
+                    <motion.button
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
+                      onClick={() => openModal('assignment')}
+                      className="btn-primary"
+                    >
+                      <Plus className="w-5 h-5" />
+                      Ödev Ver
+                    </motion.button>
+                  </div>
+                </div>
+
+                <div className="grid md:grid-cols-2 gap-6">
+                  <div className="glass rounded-2xl p-6">
+                    <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
+                      <Send className="w-5 h-5 text-rose-400" />
+                      Gönderilen Belgeler
+                    </h3>
+                    {sharedDocs.length === 0 ? (
+                      <p className="text-slate-400 text-center py-8">Henüz belge gönderilmedi</p>
+                    ) : (
+                      <div className="space-y-3">
+                        {sharedDocs.map(doc => (
+                          <div key={doc.id} className="bg-slate-800/50 rounded-lg p-4 flex items-center justify-between">
+                            <div className="flex items-center gap-3">
+                              <div className="w-10 h-10 bg-rose-500/20 rounded-lg flex items-center justify-center">
+                                <FileText className="w-5 h-5 text-rose-400" />
+                              </div>
+                              <div>
+                                <p className="text-white font-medium">{doc.document_title}</p>
+                                <p className="text-slate-400 text-sm">{doc.student_name}</p>
+                              </div>
+                            </div>
+                            <span className={`px-2 py-1 rounded-full text-xs ${doc.is_read ? 'bg-green-500/20 text-green-400' : 'bg-yellow-500/20 text-yellow-400'}`}>
+                              {doc.is_read ? 'Görüldü' : 'Bekliyor'}
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="glass rounded-2xl p-6">
+                    <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
+                      <ClipboardList className="w-5 h-5 text-purple-400" />
+                      Ödevler
+                    </h3>
+                    {assignments.length === 0 ? (
+                      <p className="text-slate-400 text-center py-8">Henüz ödev verilmedi</p>
+                    ) : (
+                      <div className="space-y-3">
+                        {assignments.map(asmt => (
+                          <div key={asmt.id} className="bg-slate-800/50 rounded-lg p-4">
+                            <div className="flex items-center justify-between mb-2">
+                              <p className="text-white font-medium">{asmt.title}</p>
+                              <button 
+                                onClick={() => deleteItem('assignment', asmt.id)}
+                                className="text-slate-400 hover:text-red-400"
+                              >
+                                <Trash2 className="w-4 h-4" />
+                              </button>
+                            </div>
+                            <p className="text-slate-400 text-sm">{asmt.description}</p>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </motion.div>
+            )}
           </AnimatePresence>
         </div>
       </div>
@@ -730,7 +871,7 @@ export default function AdminPage() {
             >
               <div className="flex items-center justify-between mb-6">
                 <h2 className="text-2xl font-bold text-white">
-                  {modalType === 'announcement' ? 'Yeni Duyuru' : modalType === 'document' ? 'Yeni Belge' : modalType === 'assignment' ? 'Yeni Ödev' : modalType === 'student' ? 'Yeni Öğrenci' : modalType === 'editUser' ? 'Kullanıcı Düzenle' : 'Yeni Yazı'}
+                  {modalType === 'announcement' ? 'Yeni Duyuru' : modalType === 'document' ? 'Yeni Belge' : modalType === 'assignment' ? 'Yeni Ödev' : modalType === 'student' ? 'Yeni Öğrenci' : modalType === 'editUser' ? 'Kullanıcı Düzenle' : modalType === 'sendDoc' ? 'Belge Gönder' : 'Yeni Yazı'}
                 </h2>
                 <button onClick={() => { setShowModal(false); setEditingUser(null); }} className="text-slate-400 hover:text-white">
                   <X className="w-6 h-6" />
@@ -812,6 +953,94 @@ export default function AdminPage() {
                     className="w-full py-4 bg-gradient-to-r from-green-500 to-emerald-500 text-white font-semibold rounded-xl hover:from-green-600 hover:to-emerald-600 transition-all flex items-center justify-center gap-2"
                   >
                     {isSubmitting ? 'Kaydediliyor...' : 'Kaydet'}
+                  </motion.button>
+                </form>
+              ) : modalType === 'sendDoc' ? (
+                <form onSubmit={async (e) => {
+                  e.preventDefault();
+                  setIsSubmitting(true);
+                  
+                  const selectedStudentUser = allUsers.find(u => u.id === formData.student_id);
+                  
+                  const { data, error } = await supabase.from('shared_documents').insert([{
+                    document_id: selectedDoc?.id || formData.document_id,
+                    student_id: formData.student_id,
+                    student_name: selectedStudentUser?.name || 'Öğrenci',
+                    student_email: selectedStudentUser?.email || '',
+                    document_title: selectedDoc?.title || formData.document_title,
+                    document_type: selectedDoc?.type || 'document',
+                    file_url: selectedDoc?.file_url || formData.file_url,
+                  }]).select();
+                  
+                  if (!error && data) {
+                    setSharedDocs([data[0], ...sharedDocs]);
+                    
+                    await supabase.from('notifications').insert([{
+                      user_id: formData.student_id,
+                      title: 'Yeni Belge',
+                      message: `"${selectedDoc?.title || formData.document_title}" başlıklı bir belge gönderildi.`,
+                      type: 'document',
+                    }]);
+                    
+                    setSuccess(true);
+                    setTimeout(() => {
+                      setShowModal(false);
+                      setSuccess(false);
+                      setFormData({});
+                      setSelectedDoc(null);
+                    }, 1500);
+                  }
+                  setIsSubmitting(false);
+                }} className="space-y-5">
+                  <div>
+                    <label className="block text-slate-300 mb-2 text-sm">Belge Seç</label>
+                    <select
+                      required
+                      value={formData.document_id || ''}
+                      onChange={(e) => {
+                        const doc = documents.find(d => d.id === e.target.value);
+                        setFormData({ ...formData, document_id: e.target.value });
+                        if (doc) setSelectedDoc(doc);
+                      }}
+                      className="w-full bg-slate-800/50 border border-slate-700 rounded-xl px-4 py-3 text-white 
+                               focus:outline-none focus:border-rose-500 transition-colors"
+                    >
+                      <option value="">Belge seçin</option>
+                      {documents.map(doc => (
+                        <option key={doc.id} value={doc.id}>{doc.title}</option>
+                      ))}
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-slate-300 mb-2 text-sm">Öğrenci Seç</label>
+                    <select
+                      required
+                      value={formData.student_id || ''}
+                      onChange={(e) => setFormData({ ...formData, student_id: e.target.value })}
+                      className="w-full bg-slate-800/50 border border-slate-700 rounded-xl px-4 py-3 text-white 
+                               focus:outline-none focus:border-rose-500 transition-colors"
+                    >
+                      <option value="">Öğrenci seçin</option>
+                      {allUsers.filter(u => !u.isAdmin).map(student => (
+                        <option key={student.id} value={student.id}>
+                          {student.name || student.email} - {student.grade === 'Mezun' ? 'Mezun' : `${student.grade}. Sınıf`}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  <motion.button
+                    type="submit"
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    disabled={isSubmitting}
+                    className="w-full py-4 bg-gradient-to-r from-rose-500 to-pink-500 text-white font-semibold rounded-xl hover:from-rose-600 hover:to-pink-600 transition-all flex items-center justify-center gap-2"
+                  >
+                    {isSubmitting ? 'Gönderiliyor...' : (
+                      <>
+                        <Send className="w-5 h-5" />
+                        Gönder
+                      </>
+                    )}
                   </motion.button>
                 </form>
               ) : modalType === 'student' ? (

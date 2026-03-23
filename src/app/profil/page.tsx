@@ -4,7 +4,8 @@ import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { 
-  Calculator, LogOut, ArrowLeft, Settings, ChevronRight, Shield
+  Calculator, LogOut, ArrowLeft, Settings, ChevronRight, Shield, Bell,
+  FileText, ClipboardList, BookOpen, Check
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
@@ -29,9 +30,32 @@ const FloatingShapes = () => (
   </div>
 );
 
+interface Notification {
+  id: string;
+  user_id: string;
+  title: string;
+  message: string;
+  type: 'document' | 'assignment' | 'general';
+  is_read: boolean;
+  created_at: string;
+}
+
+interface SharedDoc {
+  id: string;
+  document_title: string;
+  document_type: string;
+  file_url: string;
+  is_read: boolean;
+  created_at: string;
+}
+
 export default function ProfilePage() {
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [notifications, setNotifications] = useState<Notification[]>([]);
+  const [sharedDocs, setSharedDocs] = useState<SharedDoc[]>([]);
+  const [assignments, setAssignments] = useState<any[]>([]);
+  const [showNotifications, setShowNotifications] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
@@ -62,10 +86,38 @@ export default function ProfilePage() {
         });
       }
       
+      if (!isAdmin) {
+        const { data: notifData } = await supabase
+          .from('notifications')
+          .select('*')
+          .eq('user_id', session.user.id)
+          .order('created_at', { ascending: false });
+        if (notifData) setNotifications(notifData);
+        
+        const { data: sharedData } = await supabase
+          .from('shared_documents')
+          .select('*')
+          .eq('student_id', session.user.id)
+          .order('created_at', { ascending: false });
+        if (sharedData) setSharedDocs(sharedData);
+        
+        const { data: asmtData } = await supabase
+          .from('assignments')
+          .select('*')
+          .eq('student_id', session.user.id)
+          .order('created_at', { ascending: false });
+        if (asmtData) setAssignments(asmtData);
+      }
+      
       setLoading(false);
     }
     loadData();
   }, [router]);
+
+  const markAsRead = async (id: string) => {
+    await supabase.from('notifications').update({ is_read: true }).eq('id', id);
+    setNotifications(notifications.map(n => n.id === id ? { ...n, is_read: true } : n));
+  };
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
@@ -86,6 +138,8 @@ export default function ProfilePage() {
 
   if (!user) return null;
 
+  const unreadCount = notifications.filter(n => !n.is_read).length;
+
   return (
     <main className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-900 to-slate-800">
       <FloatingShapes />
@@ -94,15 +148,26 @@ export default function ProfilePage() {
         <div className="max-w-6xl mx-auto px-4">
           <div className="flex justify-between items-center h-14">
             <Link href="/" className="flex items-center gap-2">
-              <div className="w-9 h-9 bg-gradient-to-br from-orange-500 to-red-500 rounded-lg flex items-center justify-center">
-                <Calculator className="w-5 h-5 text-white" />
-              </div>
-              <span className="text-lg font-bold bg-gradient-to-r from-orange-400 to-red-400 bg-clip-text text-transparent">
-                Uğur Hoca Matematik
+              <img src="/uğur.jpeg" alt="Uğur Hoca" className="w-9 h-9 rounded-lg object-cover" />
+              <span className="text-lg font-bold text-white">
+                Uğur Hoca
               </span>
             </Link>
 
             <div className="flex items-center gap-4">
+              {!user.isAdmin && (
+                <button 
+                  onClick={() => setShowNotifications(!showNotifications)}
+                  className="relative text-slate-400 hover:text-white transition-colors"
+                >
+                  <Bell className="w-5 h-5" />
+                  {unreadCount > 0 && (
+                    <span className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 rounded-full text-xs text-white flex items-center justify-center">
+                      {unreadCount}
+                    </span>
+                  )}
+                </button>
+              )}
               <Link href="/" className="text-slate-400 hover:text-white transition-colors text-sm flex items-center gap-1">
                 <ArrowLeft className="w-4 h-4" />
                 Ana Sayfa
@@ -114,6 +179,50 @@ export default function ProfilePage() {
           </div>
         </div>
       </nav>
+
+      {showNotifications && !user.isAdmin && (
+        <motion.div 
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="fixed top-14 right-4 w-80 bg-slate-800 border border-slate-700 rounded-2xl shadow-2xl z-50 max-h-96 overflow-y-auto"
+        >
+          <div className="p-4 border-b border-slate-700 flex items-center justify-between">
+            <h3 className="text-white font-bold">Bildirimler</h3>
+            <span className="text-xs text-slate-400">{unreadCount} okunmamış</span>
+          </div>
+          {notifications.length === 0 ? (
+            <p className="text-slate-400 text-center py-8">Henüz bildirim yok</p>
+          ) : (
+            <div className="divide-y divide-slate-700">
+              {notifications.map(notif => (
+                <div 
+                  key={notif.id} 
+                  className={`p-4 hover:bg-slate-700/50 transition-colors ${!notif.is_read ? 'bg-slate-700/30' : ''}`}
+                >
+                  <div className="flex items-start justify-between gap-2">
+                    <div className="flex-1">
+                      <p className="text-white font-medium text-sm">{notif.title}</p>
+                      <p className="text-slate-400 text-xs mt-1">{notif.message}</p>
+                      <p className="text-slate-500 text-xs mt-2">
+                        {new Date(notif.created_at).toLocaleDateString('tr-TR')}
+                      </p>
+                    </div>
+                    {!notif.is_read && (
+                      <button 
+                        onClick={() => markAsRead(notif.id)}
+                        className="p-1 text-green-400 hover:text-green-300"
+                        title="Okundu işaretle"
+                      >
+                        <Check className="w-4 h-4" />
+                      </button>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </motion.div>
+      )}
 
       <div className="pt-14 pb-12 px-4">
         <div className="max-w-6xl mx-auto">
@@ -133,43 +242,130 @@ export default function ProfilePage() {
               <div className="text-center sm:text-left flex-1">
                 <h1 className="text-2xl font-bold text-white mb-1">{user.name}</h1>
                 <p className="text-slate-400 text-sm">{user.email}</p>
-                <div className="mt-3">
-                  <span className="inline-flex items-center gap-2 px-4 py-1.5 bg-gradient-to-r from-orange-500/20 to-red-500/20 rounded-full">
-                    <Shield className="w-4 h-4 text-orange-400" />
-                    <span className="text-orange-300 font-semibold text-sm">Yönetici</span>
-                  </span>
+                <div className="mt-3 flex items-center gap-2">
+                  {user.isAdmin ? (
+                    <span className="inline-flex items-center gap-2 px-4 py-1.5 bg-gradient-to-r from-orange-500/20 to-red-500/20 rounded-full">
+                      <Shield className="w-4 h-4 text-orange-400" />
+                      <span className="text-orange-300 font-semibold text-sm">Yönetici</span>
+                    </span>
+                  ) : (
+                    <span className="inline-flex items-center gap-2 px-4 py-1.5 bg-gradient-to-r from-indigo-500/20 to-purple-500/20 rounded-full">
+                      <BookOpen className="w-4 h-4 text-indigo-400" />
+                      <span className="text-indigo-300 font-semibold text-sm">
+                        {user.grade === 'Mezun' ? 'Mezun' : `${user.grade}. Sınıf`}
+                      </span>
+                    </span>
+                  )}
                 </div>
               </div>
             </div>
           </motion.div>
 
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
-          >
-            <h2 className="text-xl font-bold text-white mb-4">Yönetim Alanı</h2>
-            
-            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-              <Link 
-                href="/admin"
-                className="bg-white/5 border border-white/10 rounded-2xl p-6 hover:bg-white/10 hover:border-orange-500/50 transition-all group"
-              >
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-orange-500 to-red-500 flex items-center justify-center">
-                      <Settings className="w-6 h-6 text-white" />
+          {user.isAdmin ? (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2 }}
+            >
+              <h2 className="text-xl font-bold text-white mb-4">Yönetim Alanı</h2>
+              <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                <Link 
+                  href="/admin"
+                  className="bg-white/5 border border-white/10 rounded-2xl p-6 hover:bg-white/10 hover:border-orange-500/50 transition-all group"
+                >
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-4">
+                      <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-orange-500 to-red-500 flex items-center justify-center">
+                        <Settings className="w-6 h-6 text-white" />
+                      </div>
+                      <div>
+                        <h3 className="text-white font-bold">Admin Paneli</h3>
+                        <p className="text-slate-400 text-sm">Duyuru ve içerik yönetimi</p>
+                      </div>
                     </div>
-                    <div>
-                      <h3 className="text-white font-bold">Admin Paneli</h3>
-                      <p className="text-slate-400 text-sm">Duyuru ve içerik yönetimi</p>
-                    </div>
+                    <ChevronRight className="w-5 h-5 text-slate-500 group-hover:text-orange-400 transition-colors" />
                   </div>
-                  <ChevronRight className="w-5 h-5 text-slate-500 group-hover:text-orange-400 transition-colors" />
-                </div>
-              </Link>
+                </Link>
+              </div>
+            </motion.div>
+          ) : (
+            <div className="space-y-6">
+              {(sharedDocs.length > 0 || assignments.length > 0) && (
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.2 }}
+                >
+                  <h2 className="text-xl font-bold text-white mb-4">Gelen Belgeler</h2>
+                  {sharedDocs.length > 0 && (
+                    <div className="grid sm:grid-cols-2 gap-4 mb-6">
+                      {sharedDocs.map(doc => (
+                        <a 
+                          key={doc.id}
+                          href={doc.file_url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="bg-white/5 border border-white/10 rounded-xl p-4 hover:bg-white/10 transition-colors flex items-center gap-4"
+                        >
+                          <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${doc.is_read ? 'bg-slate-700' : 'bg-indigo-500/20'}`}>
+                            <FileText className={`w-5 h-5 ${doc.is_read ? 'text-slate-400' : 'text-indigo-400'}`} />
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <p className="text-white font-medium truncate">{doc.document_title}</p>
+                            <p className="text-slate-400 text-sm">
+                              {new Date(doc.created_at).toLocaleDateString('tr-TR')}
+                            </p>
+                          </div>
+                          {!doc.is_read && (
+                            <span className="px-2 py-1 bg-indigo-500/20 text-indigo-400 text-xs rounded-full">Yeni</span>
+                          )}
+                        </a>
+                      ))}
+                    </div>
+                  )}
+                </motion.div>
+              )}
+
+              {assignments.length > 0 && (
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.3 }}
+                >
+                  <h2 className="text-xl font-bold text-white mb-4">Ödevlerim</h2>
+                  <div className="space-y-3">
+                    {assignments.map(asmt => (
+                      <div 
+                        key={asmt.id}
+                        className="bg-white/5 border border-white/10 rounded-xl p-4 flex items-start gap-4"
+                      >
+                        <div className="w-10 h-10 rounded-lg bg-purple-500/20 flex items-center justify-center flex-shrink-0">
+                          <ClipboardList className="w-5 h-5 text-purple-400" />
+                        </div>
+                        <div className="flex-1">
+                          <p className="text-white font-medium">{asmt.title}</p>
+                          <p className="text-slate-400 text-sm mt-1">{asmt.description}</p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </motion.div>
+              )}
+
+              {notifications.length === 0 && sharedDocs.length === 0 && assignments.length === 0 && (
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.2 }}
+                  className="text-center py-12"
+                >
+                  <Bell className="w-16 h-16 mx-auto mb-4 text-slate-600" />
+                  <p className="text-slate-400">Henüz bir şey yok</p>
+                  <p className="text-slate-500 text-sm mt-2">Uğur Hoca size belge veya ödev gönderdiğinde burada görünecek</p>
+                </motion.div>
+              )}
             </div>
-          </motion.div>
+          )}
         </div>
       </div>
     </main>
