@@ -161,17 +161,17 @@ export default function AdminPage() {
     // Bildirimleri getir
     const { data: notifData } = await supabase.from('notifications').select('*').order('created_at', { ascending: false });
     if (notifData) setNotifications(notifData);
-
-    // Gerçek zamanlı abonelik - yeni kullanıcıları anında gör
-    supabase.channel('profiles_changes')
-      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'profiles' }, (payload) => {
-        const newUser = payload.new;
-        if (!newUser.isAdmin) {
-          setAllUsers(prev => [newUser, ...prev]);
-        }
-      })
-      .subscribe();
   };
+
+  // Her 5 saniyede kullanıcıları yenile
+  useEffect(() => {
+    const interval = setInterval(async () => {
+      const { data } = await supabase.from('profiles').select('*').order('created_at', { ascending: false });
+      if (data) setAllUsers(data);
+    }, 5000);
+    
+    return () => clearInterval(interval);
+  }, []);
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
