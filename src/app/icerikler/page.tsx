@@ -5,7 +5,7 @@ import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { 
-  Calculator, BookOpen, Gamepad2, FileText, Upload, 
+  Calculator, BookOpen, Gamepad2, FileText, Upload, Play,
   Search, Filter, ArrowLeft, Download, Eye, 
   Clock, Users, Star, Zap, Grid, List, X, Plus,
   ClipboardList, Heart, Share2, MessageCircle, Bookmark, Check, Edit3, Trash2
@@ -204,6 +204,8 @@ function ContentsPageInner() {
     const match = url.match(regExp);
     return match && match[2].length === 11 ? match[2] : null;
   };
+
+  const previewVideoId = previewDoc?.video_url ? getYouTubeId(previewDoc.video_url) : null;
 
   const handleTypeChange = useCallback((type: string) => {
     setSelectedType(type);
@@ -474,8 +476,8 @@ function ContentsPageInner() {
                         }}
                         className="flex-1 py-2 bg-gradient-to-r from-purple-500/20 to-pink-500/20 text-purple-300 font-semibold rounded-lg hover:from-purple-500/30 hover:to-pink-500/30 transition-all flex items-center justify-center gap-2"
                       >
-                        <Eye className="w-4 h-4" />
-                        Önizle
+                        {content.type === 'ders-videolari' ? <Play className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                        {content.type === 'ders-videolari' ? 'İzle' : 'Önizle'}
                       </motion.button>
                       {content.file_url && (
                         <motion.button
@@ -598,8 +600,8 @@ function ContentsPageInner() {
                       onClick={() => setPreviewDoc(content)}
                       className="px-6 py-2 bg-gradient-to-r from-purple-500 to-pink-500 text-white font-semibold rounded-xl hover:from-purple-600 hover:to-pink-600 transition-all flex items-center gap-2 flex-shrink-0"
                     >
-                      <Eye className="w-4 h-4" />
-                      Önizle
+                      {content.type === 'ders-videolari' ? <Play className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                      {content.type === 'ders-videolari' ? 'İzle' : 'Önizle'}
                     </motion.button>
                     {content.file_url && (
                       <motion.button
@@ -680,11 +682,27 @@ function ContentsPageInner() {
               </div>
               
               <div className="flex-1 overflow-hidden rounded-xl bg-slate-900 min-h-[60vh]">
-                {previewDoc.file_url?.endsWith('.pdf') ? (
+                {previewDoc.type === 'ders-videolari' && previewVideoId ? (
+                  <iframe
+                    src={`https://www.youtube.com/embed/${previewVideoId}`}
+                    className="w-full h-full min-h-[60vh]"
+                    title={previewDoc.title}
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
+                  />
+                ) : previewDoc.file_url?.endsWith('.pdf') ? (
                   <iframe
                     src={previewDoc.file_url}
                     className="w-full h-full min-h-[60vh]"
                     title={previewDoc.title}
+                  />
+                ) : previewDoc.video_url ? (
+                  <iframe
+                    src={`https://www.youtube.com/embed/${getYouTubeId(previewDoc.video_url)}`}
+                    className="w-full h-full min-h-[60vh]"
+                    title={previewDoc.title}
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
                   />
                 ) : previewDoc.file_url ? (
                   <div className="flex flex-col items-center justify-center h-full min-h-[60vh] text-center p-8">
