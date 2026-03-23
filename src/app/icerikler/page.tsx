@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { 
   Calculator, BookOpen, Gamepad2, FileText, Upload, 
   Search, Filter, ArrowLeft, Download, Eye, 
-  Clock, Users, Star, Zap, Grid, List, X, Lock
+  Clock, Users, Star, Zap, Grid, List, X
 } from 'lucide-react';
 import { AnimatePresence } from 'framer-motion';
 import { useRouter } from 'next/navigation';
@@ -57,18 +57,13 @@ export default function ContentsPage() {
   const [showVideo, setShowVideo] = useState<string | null>(null);
   const router = useRouter();
 
-  const isAdmin = user?.email === 'admin@ugurhoca.com' || user?.email === 'admin@matematiklab.com';
-
   useEffect(() => {
     const loadDocuments = async () => {
       const { data } = await supabase.from('documents').select('*').order('created_at', { ascending: false });
-      if (data) {
-        const filtered = isAdmin ? data : data.filter((d: any) => !d.is_admin_only);
-        setDocuments(filtered);
-      }
+      if (data) setDocuments(data);
     };
     if (user) loadDocuments();
-  }, [user, isAdmin]);
+  }, [user]);
 
   useEffect(() => {
     const checkSession = async () => {
@@ -275,12 +270,6 @@ export default function ContentsPage() {
                             Yeni
                           </span>
                         )}
-                        {isAdmin && content.is_admin_only && (
-                          <span className="px-2 py-0.5 bg-red-500/20 text-red-400 text-xs font-semibold rounded-full flex items-center gap-1">
-                            <Lock className="w-3 h-3" />
-                            Özel
-                          </span>
-                        )}
                         <span className="text-xs text-slate-400">{content.grade?.join(', ') || 'Tümü'}</span>
                       </div>
                     </div>
@@ -354,12 +343,6 @@ export default function ContentsPage() {
                         {content.isNew && (
                           <span className="px-2 py-0.5 bg-green-500/20 text-green-400 text-xs font-semibold rounded-full flex-shrink-0">
                             Yeni
-                          </span>
-                        )}
-                        {isAdmin && content.is_admin_only && (
-                          <span className="px-2 py-0.5 bg-red-500/20 text-red-400 text-xs font-semibold rounded-full flex items-center gap-1 flex-shrink-0">
-                            <Lock className="w-3 h-3" />
-                            Özel
                           </span>
                         )}
                       </div>
