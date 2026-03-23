@@ -149,22 +149,22 @@ export default function ContentsPage() {
   const getTypeColor = (type: string) => {
     const mapped = typeMapping[type] || type;
     switch (mapped) {
-      case 'worksheet': return 'from-blue-500 to-cyan-500';
-      case 'test': return 'from-purple-500 to-pink-500';
-      case 'game': return 'from-orange-500 to-red-500';
-      case 'ders-notlari': return 'from-blue-500 to-cyan-500';
+      case 'yaprak-test': return 'from-blue-500 to-cyan-500';
+      case 'deneme': return 'from-purple-500 to-pink-500';
+      case 'oyunlar': return 'from-orange-500 to-red-500';
+      case 'ders-notlari': return 'from-green-500 to-emerald-500';
       case 'ders-videolari': return 'from-red-500 to-orange-500';
       case 'programlar': return 'from-cyan-500 to-blue-500';
-      default: return 'from-green-500 to-emerald-500';
+      default: return 'from-slate-500 to-slate-600';
     }
   };
 
   const getTypeLabel = (type: string) => {
     const mapped = typeMapping[type] || type;
     switch (mapped) {
-      case 'worksheet': return 'Çalışma Kağıdı';
-      case 'test': return 'Test / Deneme';
-      case 'game': return 'Oyun';
+      case 'yaprak-test': return 'Yaprak Test';
+      case 'deneme': return 'Deneme';
+      case 'oyunlar': return 'Oyun';
       case 'ders-notlari': return 'Ders Notları';
       case 'ders-videolari': return 'Ders Videoları';
       case 'programlar': return 'Programlar';
@@ -174,16 +174,16 @@ export default function ContentsPage() {
 
   const typeMapping: Record<string, string> = {
     'ders-notlari': 'ders-notlari',
-    'yaprak-test': 'worksheet',
+    'yaprak-test': 'yaprak-test',
     'ders-videolari': 'ders-videolari',
     'video': 'ders-videolari',
-    'deneme': 'test',
+    'deneme': 'deneme',
     'test': 'test',
-    'worksheet': 'worksheet',
-    'oyunlar': 'game',
-    'game': 'game',
+    'worksheet': 'yaprak-test',
+    'oyunlar': 'oyunlar',
+    'game': 'oyunlar',
     'programlar': 'programlar',
-    'document': 'worksheet',
+    'document': 'yaprak-test',
     'writing': 'ders-notlari',
   };
 
@@ -270,9 +270,9 @@ export default function ContentsPage() {
             <div>
               <h1 className="text-4xl font-bold text-white mb-2">
                 {selectedType === 'all' ? 'İçerikler' : 
-                 selectedType === 'worksheet' ? 'Çalışma Kağıtları' :
-                 selectedType === 'test' ? 'Test ve Denemeler' :
-                 selectedType === 'game' ? 'Oyunlar' :
+                 selectedType === 'yaprak-test' ? 'Yaprak Testler' :
+                 selectedType === 'deneme' ? 'Denemeler' :
+                 selectedType === 'oyunlar' ? 'Oyunlar' :
                  selectedType === 'ders-notlari' ? 'Ders Notları' :
                  selectedType === 'ders-videolari' ? 'Ders Videoları' :
                  selectedType === 'programlar' ? 'Programlar' : 'İçerikler'}
@@ -286,7 +286,7 @@ export default function ContentsPage() {
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={() => {
-                  setFormData({ type: selectedType !== 'all' ? selectedType : 'worksheet', grade: [selectedGrade !== 'all' && selectedGrade !== 'Mezun' ? Number(selectedGrade) : user.grade] });
+                  setFormData({ type: selectedType !== 'all' ? selectedType : 'yaprak-test', grade: [selectedGrade !== 'all' && selectedGrade !== 'Mezun' ? Number(selectedGrade) : user.grade] });
                   setShowModal(true);
                 }}
                 className="px-6 py-3 bg-gradient-to-r from-purple-500 to-pink-500 text-white font-semibold rounded-xl hover:from-purple-600 hover:to-pink-600 transition-all shadow-lg flex items-center gap-2"
@@ -337,9 +337,9 @@ export default function ContentsPage() {
                            focus:outline-none focus:border-purple-500 transition-colors"
                 >
                   <option value="all">Tüm Türler</option>
-                  <option value="worksheet">Çalışma Kağıdı</option>
-                  <option value="test">Test / Deneme</option>
-                  <option value="game">Oyun</option>
+                  <option value="yaprak-test">Yaprak Test</option>
+                  <option value="deneme">Deneme</option>
+                  <option value="oyunlar">Oyun</option>
                   <option value="ders-notlari">Ders Notları</option>
                   <option value="ders-videolari">Ders Videoları</option>
                   <option value="programlar">Programlar</option>
@@ -816,9 +816,9 @@ export default function ContentsPage() {
                       className="w-full bg-slate-800/50 border border-slate-700 rounded-xl px-4 py-3 text-white 
                                focus:outline-none focus:border-blue-500 transition-colors"
                     >
-                      <option value="worksheet">Çalışma Kağıdı</option>
-                      <option value="test">Yaprak Test / Deneme</option>
-                      <option value="game">Oyun / Uygulama</option>
+                      <option value="yaprak-test">Yaprak Test</option>
+                      <option value="deneme">Deneme</option>
+                      <option value="oyunlar">Oyun / Uygulama</option>
                       <option value="ders-notlari">Ders Notları</option>
                       <option value="ders-videolari">Ders Videoları</option>
                       <option value="programlar">Programlar</option>
@@ -1030,9 +1030,9 @@ export default function ContentsPage() {
                                focus:outline-none focus:border-purple-500 transition-colors"
                     >
                       <option value="">Kategori seçin</option>
-                      <option value="worksheet">Çalışma Kağıdı</option>
-                      <option value="test">Yaprak Test / Deneme</option>
-                      <option value="game">Oyun / Uygulama</option>
+                      <option value="yaprak-test">Yaprak Test</option>
+                      <option value="deneme">Deneme</option>
+                      <option value="oyunlar">Oyun / Uygulama</option>
                       <option value="ders-notlari">Ders Notları</option>
                       <option value="ders-videolari">Ders Videoları</option>
                       <option value="programlar">Programlar</option>
