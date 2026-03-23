@@ -102,6 +102,7 @@ const recentContents = [
 
 const Navbar = ({ user, onLogout }: { user: any; onLogout: () => void }) => {
   const [isOpen, setIsOpen] = useState(false);
+  const profileHref = user?.isAdmin ? '/admin' : '/profil';
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-slate-900/95 backdrop-blur-lg border-b border-slate-800/50">
@@ -129,7 +130,7 @@ const Navbar = ({ user, onLogout }: { user: any; onLogout: () => void }) => {
           <div className="hidden md:flex items-center gap-3">
             {user ? (
               <>
-                <Link href="/profil" className="flex items-center gap-2 text-white">
+                <Link href={profileHref} className="flex items-center gap-2 text-white">
                   <div className="w-8 h-8 bg-gradient-to-br from-indigo-500 to-purple-500 rounded-full flex items-center justify-center font-bold text-sm">
                     {user.name?.[0] || '?'}
                   </div>
@@ -179,7 +180,7 @@ const Navbar = ({ user, onLogout }: { user: any; onLogout: () => void }) => {
               <div className="border-t border-slate-700 pt-3 mt-3">
                 {user ? (
                   <>
-                    <Link href="/profil" className="block text-slate-300 hover:text-white py-2">Profil</Link>
+                    <Link href={profileHref} className="block text-slate-300 hover:text-white py-2">{user.isAdmin ? 'Admin Panel' : 'Profil'}</Link>
                     <button onClick={onLogout} className="text-red-400 py-2">Çıkış</button>
                   </>
                 ) : (

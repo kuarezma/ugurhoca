@@ -100,6 +100,7 @@ export default function TestsPage() {
   const [showResult, setShowResult] = useState(false);
   const [quizStarted, setQuizStarted] = useState(false);
   const router = useRouter();
+  const profileHref = user?.isAdmin ? '/admin' : '/profil';
 
   useEffect(() => {
     const checkSession = async () => {
@@ -379,7 +380,7 @@ export default function TestsPage() {
       
       <nav className="fixed top-0 left-0 right-0 z-50 glass py-4 px-6">
         <div className="container mx-auto flex justify-between items-center">
-          <Link href="/profil" className="flex items-center gap-3">
+          <Link href={profileHref} className="flex items-center gap-3">
             <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl flex items-center justify-center">
               <Calculator className="w-6 h-6 text-white" />
             </div>
@@ -388,9 +389,9 @@ export default function TestsPage() {
             </span>
           </Link>
 
-          <Link href="/profil" className="text-slate-300 hover:text-white flex items-center gap-2">
+          <Link href={profileHref} className="text-slate-300 hover:text-white flex items-center gap-2">
             <ArrowLeft className="w-5 h-5" />
-            Profil
+            {user.isAdmin ? 'Admin Panel' : 'Profil'}
           </Link>
         </div>
       </nav>
