@@ -77,17 +77,20 @@ const GameCard = ({ game, onClick }: { game: any; onClick: () => void }) => (
   </motion.div>
 );
 
-const NumberHunter = ({ onScore }: { onScore: (score: number) => void }) => {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
+const MultiplicationRace = ({ onScore }: { onScore: (score: number) => void }) => {
   const [gameState, setGameState] = useState<'idle' | 'playing' | 'ended'>('idle');
   const [score, setScore] = useState(0);
-  const [timeLeft, setTimeLeft] = useState(30);
-  const [target, setTarget] = useState({ x: 0, y: 0, value: 0 });
-  const [particles, setParticles] = useState<any[]>([]);
-  const [numbers, setNumbers] = useState<any[]>([]);
+  const [level, setLevel] = useState(1);
+  const [table, setTable] = useState(2);
+  const [problem, setProblem] = useState({ a: 0, b: 0, answer: 0 });
+  const [options, setOptions] = useState<number[]>([]);
+  const [selected, setSelected] = useState<number | null>(null);
+  const [timeLeft, setTimeLeft] = useState(60);
   const [streak, setStreak] = useState(0);
-  const requestRef = useRef<number | null>(null);
-  
+  const [progress, setProgress] = useState(0);
+  const [tablesCompleted, setTablesCompleted] = useState<number[]>([]);
+  const inputRef = useRef<HTMLInputElement>(null);
+
   useEffect(() => {
     if (gameState !== 'playing') return;
     const timer = setInterval(() => {
@@ -103,70 +106,76 @@ const NumberHunter = ({ onScore }: { onScore: (score: number) => void }) => {
     return () => clearInterval(timer);
   }, [gameState, score, onScore]);
 
-  useEffect(() => {
-    if (gameState === 'playing') {
-      const canvas = canvasRef.current;
-      if (!canvas) return;
-      const ctx = canvas.getContext('2d');
-      if (!ctx) return;
-
-      const spawnNumber = () => {
-        const value = Math.floor(Math.random() * 20) + 1;
-        setNumbers(nums => [
-          ...nums.slice(-8),
-          {
-            id: Date.now(),
-            x: Math.random() * (canvas.width - 100) + 50,
-            y: Math.random() * (canvas.height - 100) + 50,
-            value,
-            scale: 0,
-            color: ['#f97316', '#ec4899', '#06b6d4', '#8b5cf6', '#10b981'][Math.floor(Math.random() * 5)],
-          }
-        ]);
-        setTarget({ x: canvas.width / 2, y: 50, value: Math.floor(Math.random() * 50) + 10 });
-      };
-
-      spawnNumber();
-      const spawnInterval = setInterval(spawnNumber, 2000);
-      return () => clearInterval(spawnInterval);
+  const generateProblem = useCallback(() => {
+    const b = table;
+    const a = Math.floor(Math.random() * 10) + 1;
+    const answer = a * b;
+    
+    const wrongAnswers = new Set<number>();
+    while (wrongAnswers.size < 3) {
+      const offset = Math.floor(Math.random() * 10) - 5;
+      const wrong = answer + (offset === 0 ? 1 : offset);
+      if (wrong !== answer && wrong > 0 && wrong <= 100) {
+        wrongAnswers.add(wrong);
+      }
     }
-  }, [gameState]);
+
+    setProblem({ a, b, answer });
+    setOptions([answer, ...Array.from(wrongAnswers)].sort(() => Math.random() - 0.5));
+    setSelected(null);
+    setProgress(p => p + 10);
+  }, [table]);
 
   useEffect(() => {
-    if (gameState !== 'playing') return;
-    const animate = () => {
-      setNumbers(nums => nums.map(n => ({
-        ...n,
-        scale: Math.min(n.scale + 0.05, 1),
-        y: n.y - 0.5,
-      })).filter(n => n.y > -50));
-      requestRef.current = requestAnimationFrame(animate);
-    };
-    requestRef.current = requestAnimationFrame(animate);
-    return () => {
-      if (requestRef.current !== null) cancelAnimationFrame(requestRef.current);
-    };
-  }, [gameState]);
+    if (gameState === 'playing') generateProblem();
+  }, [gameState, generateProblem]);
 
-  const handleClick = (num: any) => {
-    if (num.value === target.value) {
+  const handleSelect = (opt: number) => {
+    if (selected !== null) return;
+    setSelected(opt);
+    
+    if (opt === problem.answer) {
       setStreak(s => s + 1);
-      const bonus = streak > 2 ? 50 : 0;
-      setScore(s => s + 10 + bonus);
-      setParticles(p => [...p, { x: num.x, y: num.y, color: num.color, id: Date.now() }]);
-      setTimeout(() => setParticles(p => p.filter(particle => particle.id !== Date.now())), 1000);
-      setTarget({ x: Math.random() * 200 + 100, y: 50, value: Math.floor(Math.random() * 50) + 10 });
+      const bonus = streak > 4 ? 15 : streak > 2 ? 5 : 0;
+      setScore(s => s + 10 * level + bonus);
+      
+      if (progress >= 90) {
+        setTablesCompleted(tc => [...tc, table]);
+        if (table < 9 + level) {
+          setTable(t => t + 1);
+        } else if (level < 5) {
+          setLevel(lv => lv + 1);
+          setTable(level + 2);
+        }
+        setProgress(0);
+      }
+      
+      setTimeout(() => {
+        generateProblem();
+        inputRef.current?.focus();
+      }, 500);
     } else {
       setStreak(0);
+      setTimeout(() => {
+        setSelected(null);
+      }, 800);
     }
   };
 
   const startGame = () => {
     setGameState('playing');
     setScore(0);
-    setTimeLeft(30);
+    setLevel(1);
+    setTable(2);
+    setTimeLeft(60);
     setStreak(0);
-    setNumbers([]);
+    setProgress(0);
+    setTablesCompleted([]);
+  };
+
+  const getTableColor = (t: number) => {
+    const colors = ['#f97316', '#ec4899', '#06b6d4', '#8b5cf6', '#10b981', '#f59e0b', '#ef4444', '#6366f1', '#14b8a6', '#a855f7'];
+    return colors[t - 1] || '#8b5cf6';
   };
 
   if (gameState === 'idle') {
@@ -178,22 +187,36 @@ const NumberHunter = ({ onScore }: { onScore: (score: number) => void }) => {
       >
         <div className="mb-8">
           <motion.div
-            animate={{ rotate: [0, 10, -10, 0] }}
+            animate={{ 
+              scale: [1, 1.05, 1],
+              rotate: [0, 5, -5, 0]
+            }}
             transition={{ duration: 2, repeat: Infinity }}
-            className="w-32 h-32 mx-auto mb-6 bg-gradient-to-br from-orange-500 to-red-500 rounded-3xl flex items-center justify-center"
+            className="w-32 h-32 mx-auto mb-6 bg-gradient-to-br from-pink-500 to-purple-500 rounded-3xl flex items-center justify-center shadow-lg"
+            style={{
+              boxShadow: '0 0 60px rgba(236, 72, 153, 0.4)',
+            }}
           >
-            <Target className="w-16 h-16 text-white" />
+            <span className="text-5xl font-bold text-white">×</span>
           </motion.div>
-          <h2 className="text-3xl font-bold text-white mb-4">Sayı Avcısı</h2>
+          <h2 className="text-3xl font-bold text-white mb-4">Çarpım Tablosu Yarışı</h2>
           <p className="text-slate-400 mb-6 max-w-md mx-auto">
-            Ekran üzerinde sayılar belirecek! Hedef sayıyı bul ve tıkla. 30 saniyede en yüksek skoru yap!
+            Çarpım tablosunu hızlıca öğren! Her seviyede yeni bir tablo açılıyor. 60 saniyede kaç tablo bitirebileceksin?
           </p>
+          <div className="flex flex-wrap justify-center gap-2 mb-6">
+            {[2, 3, 4, 5, 6, 7, 8, 9].map(t => (
+              <span key={t} className="px-3 py-1 rounded-full text-white font-bold" style={{ backgroundColor: getTableColor(t) }}>
+                {t}×
+              </span>
+            ))}
+          </div>
         </div>
         <motion.button
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
           onClick={startGame}
-          className="px-8 py-4 bg-gradient-to-r from-orange-500 to-red-500 text-white font-bold rounded-2xl text-xl shadow-lg shadow-orange-500/30"
+          className="px-8 py-4 bg-gradient-to-r from-pink-500 to-purple-500 text-white font-bold rounded-2xl text-xl shadow-lg"
+          style={{ boxShadow: '0 0 40px rgba(236, 72, 153, 0.4)' }}
         >
           <Play className="w-6 h-6 inline mr-2" />
           Oyunu Başlat
@@ -210,20 +233,27 @@ const NumberHunter = ({ onScore }: { onScore: (score: number) => void }) => {
         className="text-center"
       >
         <motion.div
-          animate={{ rotate: 360 }}
-          transition={{ duration: 1 }}
-          className="w-32 h-32 mx-auto mb-6 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full flex items-center justify-center"
+          animate={{ 
+            rotate: [0, 10, -10, 0],
+            scale: [1, 1.1, 1]
+          }}
+          transition={{ duration: 0.5, repeat: Infinity }}
+          className="w-32 h-32 mx-auto mb-6 bg-gradient-to-br from-green-400 to-emerald-500 rounded-full flex items-center justify-center"
+          style={{ boxShadow: '0 0 60px rgba(16, 185, 129, 0.4)' }}
         >
           <Trophy className="w-16 h-16 text-white" />
         </motion.div>
         <h2 className="text-3xl font-bold text-white mb-2">Süre Doldu!</h2>
-        <p className="text-5xl font-bold text-yellow-400 mb-4">{score} Puan</p>
-        <p className="text-slate-400 mb-8">Tebrikler! Devamke.</p>
+        <p className="text-5xl font-bold text-green-400 mb-2">{score} Puan</p>
+        <p className="text-slate-400 mb-2">{tablesCompleted.length} tablo tamamladın!</p>
+        <p className="text-slate-500 mb-8">
+          {tablesCompleted.length > 0 && `Tamamlanan tablolar: ${tablesCompleted.join(', ')}`}
+        </p>
         <motion.button
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
           onClick={startGame}
-          className="px-8 py-4 bg-gradient-to-r from-purple-500 to-pink-500 text-white font-bold rounded-2xl text-xl"
+          className="px-8 py-4 bg-gradient-to-r from-pink-500 to-purple-500 text-white font-bold rounded-2xl text-xl"
         >
           <RotateCcw className="w-6 h-6 inline mr-2" />
           Tekrar Oyna
@@ -233,69 +263,112 @@ const NumberHunter = ({ onScore }: { onScore: (score: number) => void }) => {
   }
 
   return (
-    <div className="relative">
-      <div className="absolute top-4 left-4 right-4 flex justify-between items-center z-10">
+    <div className="max-w-xl mx-auto">
+      <div className="flex justify-between items-center mb-6">
         <div className="px-4 py-2 bg-black/50 backdrop-blur-sm rounded-xl text-white font-bold">
-          Puan: <span className="text-yellow-400">{score}</span>
+          Puan: <span className="text-green-400">{score}</span>
         </div>
-        <div className="px-4 py-2 bg-black/50 backdrop-blur-sm rounded-xl text-white font-bold flex items-center gap-2">
-          <Sparkles className="w-5 h-5 text-orange-400" />
+        <div className="px-4 py-2 bg-black/50 backdrop-blur-sm rounded-xl text-white font-bold">
+          Seviye {level}
+        </div>
+        <div className="px-4 py-2 bg-black/50 backdrop-blur-sm rounded-xl text-white font-bold">
           {timeLeft}s
         </div>
-        {streak > 2 && (
-          <div className="px-4 py-2 bg-gradient-to-r from-orange-500 to-red-500 rounded-xl text-white font-bold flex items-center gap-2 animate-pulse">
-            <Flame className="w-5 h-5" />
-            {streak}x Kombo!
-          </div>
-        )}
-      </div>
-      
-      <div className="absolute top-20 left-1/2 -translate-x-1/2 px-6 py-3 bg-gradient-to-r from-purple-500 to-pink-500 rounded-2xl text-white font-bold text-2xl shadow-lg shadow-purple-500/30 z-10">
-        Hedef: {target.value}
       </div>
 
-      <canvas
-        ref={canvasRef}
-        width={800}
-        height={500}
-        className="w-full rounded-2xl bg-gradient-to-br from-slate-900 to-slate-800 cursor-pointer"
-        onClick={(e) => {
-          const rect = e.currentTarget.getBoundingClientRect();
-          const x = (e.clientX - rect.left) * (800 / rect.width);
-          const y = (e.clientY - rect.top) * (500 / rect.height);
-          numbers.forEach(num => {
-            const dist = Math.sqrt((x - num.x) ** 2 + (y - num.y) ** 2);
-            if (dist < 40) handleClick(num);
-          });
+      <div className="flex justify-center gap-2 mb-6">
+        {[2, 3, 4, 5, 6, 7, 8, 9].map(t => (
+          <motion.div
+            key={t}
+            whileHover={{ scale: 1.1 }}
+            className="w-12 h-12 rounded-xl flex items-center justify-center text-white font-bold text-lg"
+            style={{
+              backgroundColor: tablesCompleted.includes(t) ? '#22c55e' : getTableColor(t),
+              opacity: table === t ? 1 : tablesCompleted.includes(t) ? 0.5 : 0.3,
+              boxShadow: table === t ? `0 0 20px ${getTableColor(t)}` : 'none',
+            }}
+          >
+            {t}
+          </motion.div>
+        ))}
+      </div>
+
+      <div className="mb-4">
+        <div className="h-3 bg-slate-700 rounded-full overflow-hidden">
+          <motion.div
+            className="h-full rounded-full"
+            initial={{ width: 0 }}
+            animate={{ width: `${progress}%` }}
+            style={{ backgroundColor: getTableColor(table) }}
+          />
+        </div>
+        <p className="text-center text-slate-400 text-sm mt-2">
+          {table} çarpım tablosu: %{Math.round(progress)}
+        </p>
+      </div>
+
+      <motion.div
+        key={`${problem.answer}-${table}`}
+        initial={{ scale: 0.8, opacity: 0, rotateX: 90 }}
+        animate={{ scale: 1, opacity: 1, rotateX: 0 }}
+        className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-3xl p-8 mb-8 text-center"
+        style={{
+          boxShadow: `0 0 40px ${getTableColor(table)}33`,
         }}
-      />
-
-      {numbers.map(num => (
+      >
         <motion.div
-          key={num.id}
-          initial={{ scale: 0 }}
-          animate={{ scale: num.scale, y: num.y }}
-          className="absolute w-16 h-16 rounded-full flex items-center justify-center text-white font-bold text-2xl shadow-lg cursor-pointer"
-          style={{
-            left: num.x,
-            top: num.y,
-            background: `linear-gradient(135deg, ${num.color}, ${num.color}88)`,
-            boxShadow: `0 0 30px ${num.color}66`,
-          }}
+          animate={selected === problem.answer ? { scale: [1, 1.1, 1] } : {}}
+          className="text-7xl font-bold text-white mb-4"
         >
-          {num.value}
+          {problem.a} <span style={{ color: getTableColor(table) }}>×</span> {problem.b}
         </motion.div>
-      ))}
+        <div className="text-slate-400 text-2xl">= ?</div>
+        
+        {streak > 4 && (
+          <motion.div
+            initial={{ y: 20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            className="mt-4 text-orange-400 font-bold text-lg"
+          >
+            🔥 {streak} Doğru! Harika gidiyorsun!
+          </motion.div>
+        )}
+      </motion.div>
 
-      {particles.map(p => (
+      <div className="grid grid-cols-2 gap-4">
+        {options.map((opt, i) => (
+          <motion.button
+            key={i}
+            whileHover={{ scale: selected === null ? 1.05 : 1 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={() => handleSelect(opt)}
+            disabled={selected !== null}
+            initial={{ scale: 0, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ delay: i * 0.1 }}
+            className={`py-6 rounded-2xl text-3xl font-bold transition-all ${
+              selected === opt
+                ? opt === problem.answer
+                  ? 'bg-green-500 text-white scale-110'
+                  : 'bg-red-500 text-white'
+                : 'bg-gradient-to-br from-slate-700 to-slate-800 text-white hover:from-slate-600 hover:to-slate-700'
+            }`}
+          >
+            {opt}
+          </motion.button>
+        ))}
+      </div>
+
+      {tablesCompleted.length > 0 && (
         <motion.div
-          key={p.id}
-          initial={{ scale: 0, opacity: 1 }}
-          animate={{ scale: 3, opacity: 0 }}
-          className="absolute w-4 h-4 rounded-full"
-          style={{ left: p.x, top: p.y, background: p.color }}
-        />
-      ))}
+          initial={{ y: 20, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          className="mt-8 p-4 bg-green-500/20 border border-green-500/30 rounded-xl text-center"
+        >
+          <p className="text-green-400 font-bold">🎉 Tamamlanan Tablolar!</p>
+          <p className="text-white text-xl font-bold">{tablesCompleted.join(', ')}</p>
+        </motion.div>
+      )}
     </div>
   );
 };
@@ -761,14 +834,14 @@ const ColorMath = ({ onScore }: { onScore: (score: number) => void }) => {
 const games = [
   {
     id: 1,
-    title: 'Sayı Avcısı',
-    description: 'Hedef sayıyı bul ve tıkla!',
+    title: 'Çarpım Tablosu',
+    description: 'Çarpım tablosunu hızlıca öğren!',
     grade: '5-8',
     rating: 4.9,
     difficulty: 'Kolay',
-    color: 'from-orange-500 to-red-500',
-    icon: Target,
-    component: NumberHunter,
+    color: 'from-pink-500 to-purple-500',
+    icon: Brain,
+    component: MultiplicationRace,
   },
   {
     id: 2,
