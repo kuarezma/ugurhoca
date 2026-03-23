@@ -1,8 +1,9 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback, Suspense } from 'react';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
+import { useSearchParams } from 'next/navigation';
 import { 
   Calculator, BookOpen, Gamepad2, FileText, Upload, 
   Search, Filter, ArrowLeft, Download, Eye, 
@@ -48,7 +49,7 @@ const allContents = [
   { id: 12, title: 'Matematikmemory', type: 'game', grade: 6, downloads: 389, views: 1920, rating: 4.6, isNew: true },
 ];
 
-export default function ContentsPage() {
+function ContentsPageInner() {
   const [user, setUser] = useState<any>(null);
   const [documents, setDocuments] = useState<any[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
@@ -78,19 +79,19 @@ export default function ContentsPage() {
   const [editSuccess, setEditSuccess] = useState(false);
 
   const router = useRouter();
-  const searchParams = typeof window !== 'undefined' ? new URLSearchParams(window.location.search) : new URLSearchParams();
+  const searchParams = useSearchParams();
   const typeFromUrl = searchParams.get('type') || 'all';
 
   const loadDocuments = async () => {
-      const { data } = await supabase.from('documents').select('*').order('created_at', { ascending: false });
-      if (data) setDocuments(data);
-    };
+    const { data } = await supabase.from('documents').select('*').order('created_at', { ascending: false });
+    if (data) setDocuments(data);
+  };
 
   useEffect(() => {
-    if (typeFromUrl !== 'all') {
+    if (typeFromUrl && typeFromUrl !== 'all') {
       setSelectedType(typeFromUrl);
     }
-  }, []);
+  }, [typeFromUrl]);
 
   useEffect(() => {
     const checkSession = async () => {
@@ -202,6 +203,17 @@ export default function ContentsPage() {
     const match = url.match(regExp);
     return match && match[2].length === 11 ? match[2] : null;
   };
+
+  const handleTypeChange = useCallback((type: string) => {
+    setSelectedType(type);
+    const url = new URL(window.location.href);
+    if (type === 'all') {
+      url.searchParams.delete('type');
+    } else {
+      url.searchParams.set('type', type);
+    }
+    window.history.pushState({}, '', url.toString());
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -332,7 +344,7 @@ export default function ContentsPage() {
 
                 <select
                   value={selectedType}
-                  onChange={(e) => setSelectedType(e.target.value)}
+                  onChange={(e) => handleTypeChange(e.target.value)}
                   className="bg-slate-800/50 border border-slate-700 rounded-xl px-4 py-3 text-white 
                            focus:outline-none focus:border-purple-500 transition-colors"
                 >
@@ -1296,5 +1308,13 @@ export default function ContentsPage() {
         )}
       </AnimatePresence>
     </main>
+  );
+}
+
+export default function ContentsPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-slate-900 flex items-center justify-center"><div className="animate-spin w-8 h-8 border-4 border-purple-500 border-t-transparent rounded-full" /></div>}>
+      <ContentsPageInner />
+    </Suspense>
   );
 }
