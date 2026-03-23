@@ -52,7 +52,7 @@ interface Document {
 
 export default function AdminPage() {
   const [user, setUser] = useState<any>(null);
-  const [activeTab, setActiveTab] = useState<'announcements' | 'documents' | 'writings' | 'users'>('announcements');
+  const [activeTab, setActiveTab] = useState<'announcements' | 'documents' | 'writings' | 'users' | 'privateStudents'>('announcements');
   const [announcements, setAnnouncements] = useState<Announcement[]>([]);
   const [documents, setDocuments] = useState<Document[]>([]);
   const [allUsers, setAllUsers] = useState<any[]>([]);
@@ -60,7 +60,7 @@ export default function AdminPage() {
   const [assignments, setAssignments] = useState<any[]>([]);
   const [selectedStudent, setSelectedStudent] = useState<string>('');
   const [showModal, setShowModal] = useState(false);
-  const [modalType, setModalType] = useState<'announcement' | 'document' | 'writing' | 'assignment' | 'editUser'>('announcement');
+  const [modalType, setModalType] = useState<'announcement' | 'document' | 'writing' | 'assignment' | 'editUser' | 'student'>('announcement');
   const [formData, setFormData] = useState<any>({});
   const [editingUser, setEditingUser] = useState<any>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -138,6 +138,10 @@ export default function AdminPage() {
     const { data: usersData } = await supabase.from('profiles').select('*').order('created_at', { ascending: false });
     if (usersData) setAllUsers(usersData);
 
+    // Özel ders öğrencilerini getir
+    const { data: studentsData } = await supabase.from('profiles').select('*').eq('is_private_student', true);
+    if (studentsData) setPrivateStudents(studentsData);
+
     const { data: assignData } = await supabase.from('assignments').select('*').order('created_at', { ascending: false });
     if (assignData) setAssignments(assignData);
   };
@@ -147,7 +151,7 @@ export default function AdminPage() {
     router.push('/');
   };
 
-  const openModal = (type: 'announcement' | 'document' | 'writing' | 'assignment', studentId?: string) => {
+  const openModal = (type: 'announcement' | 'document' | 'writing' | 'assignment' | 'student', studentId?: string) => {
     setModalType(type);
     if (studentId) setSelectedStudent(studentId);
     setFormData({});
@@ -277,7 +281,8 @@ export default function AdminPage() {
               { id: 'announcements', label: 'Duyurular', icon: Megaphone, color: 'from-pink-500 to-rose-500' },
               { id: 'documents', label: 'Belgeler', icon: FileText, color: 'from-blue-500 to-cyan-500' },
               { id: 'writings', label: 'Yazılar', icon: Edit3, color: 'from-purple-500 to-violet-500' },
-              { id: 'users', label: 'Kullanıcılar', icon: Users, color: 'from-green-500 to-emerald-500' }
+              { id: 'users', label: 'Kullanıcılar', icon: Users, color: 'from-green-500 to-emerald-500' },
+              { id: 'privateStudents', label: 'Öğrencilerim', icon: BookOpen, color: 'from-amber-500 to-orange-500' }
             ].map((tab) => (
               <motion.button
                 key={tab.id}
@@ -514,6 +519,111 @@ export default function AdminPage() {
                 )}
               </motion.div>
             )}
+
+            {activeTab === 'privateStudents' && (
+              <motion.div
+                key="privateStudents"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                className="space-y-6"
+              >
+                <div className="flex justify-between items-center mb-6">
+                  <div>
+                    <h2 className="text-2xl font-bold text-white mb-1">Özel Ders Öğrencilerim</h2>
+                    <p className="text-slate-400">Bireysel öğrencilerinizi ve ödevlerini yönetin</p>
+                  </div>
+                  <motion.button
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    onClick={() => openModal('student')}
+                    className="btn-primary"
+                  >
+                    <Plus className="w-5 h-5" />
+                    Yeni Öğrenci Ekle
+                  </motion.button>
+                </div>
+
+                {privateStudents.length === 0 ? (
+                  <div className="glass rounded-2xl p-12 text-center">
+                    <BookOpen className="w-16 h-16 mx-auto mb-4 text-slate-500" />
+                    <p className="text-slate-400 mb-4">Henüz özel ders öğrenciniz yok</p>
+                    <p className="text-slate-500 text-sm">Öğrenci eklemek için profil sayfasından "Özel Ders Öğrencisi" seçeneğini kullanın</p>
+                  </div>
+                ) : (
+                  <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {privateStudents.map((student, i) => {
+                      const studentAssignments = assignments.filter(a => a.student_id === student.id);
+                      return (
+                        <motion.div
+                          key={student.id}
+                          initial={{ opacity: 0, y: 20 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ delay: i * 0.05 }}
+                          className="glass rounded-2xl overflow-hidden card-hover"
+                        >
+                          <div className="h-2 bg-gradient-to-r from-amber-500 to-orange-500" />
+                          <div className="p-6">
+                            <div className="flex items-center gap-4 mb-4">
+                              <div className="w-14 h-14 bg-gradient-to-br from-amber-500 to-orange-500 rounded-full flex items-center justify-center text-xl font-bold text-white">
+                                {student.name?.[0] || '?'}
+                              </div>
+                              <div>
+                                <h3 className="text-lg font-bold text-white">{student.name || 'İsimsiz'}</h3>
+                                <p className="text-slate-400 text-sm">{student.email}</p>
+                              </div>
+                            </div>
+                            
+                            <div className="mb-4">
+                              <div className="flex items-center justify-between text-sm mb-2">
+                                <span className="text-slate-400">Ödevler</span>
+                                <span className="text-amber-400 font-semibold">{studentAssignments.length} adet</span>
+                              </div>
+                              <div className="w-full bg-slate-700 rounded-full h-2">
+                                <div 
+                                  className="bg-gradient-to-r from-amber-500 to-orange-500 h-2 rounded-full"
+                                  style={{ width: `${Math.min(100, studentAssignments.length * 20)}%` }}
+                                />
+                              </div>
+                            </div>
+
+                            <div className="space-y-2">
+                              {studentAssignments.slice(0, 3).map(assign => (
+                                <div key={assign.id} className="flex items-center justify-between bg-slate-800/50 rounded-lg px-3 py-2">
+                                  <span className="text-slate-300 text-sm truncate flex-1">{assign.title}</span>
+                                  <button
+                                    onClick={() => deleteItem('assignment', assign.id)}
+                                    className="p-1 text-slate-400 hover:text-red-400 transition-colors"
+                                  >
+                                    <Trash2 className="w-4 h-4" />
+                                  </button>
+                                </div>
+                              ))}
+                              {studentAssignments.length > 3 && (
+                                <p className="text-slate-500 text-xs text-center">+{studentAssignments.length - 3} ödev daha</p>
+                              )}
+                            </div>
+
+                            <motion.button
+                              whileHover={{ scale: 1.02 }}
+                              whileTap={{ scale: 0.98 }}
+                              onClick={() => {
+                                setSelectedStudent(student.id);
+                                openModal('assignment');
+                              }}
+                              className="w-full mt-4 py-2 bg-gradient-to-r from-amber-500/20 to-orange-500/20 text-amber-300 rounded-lg hover:from-amber-500/40 hover:to-orange-500/40 transition-all font-semibold flex items-center justify-center gap-2"
+                            >
+                              <Plus className="w-4 h-4" />
+                              Ödev Ekle
+                            </motion.button>
+                          </div>
+                        </motion.div>
+                      );
+                    })}
+                  </div>
+                )}
+              </motion.div>
+            )}
           </AnimatePresence>
         </div>
       </div>
@@ -536,7 +646,7 @@ export default function AdminPage() {
             >
               <div className="flex items-center justify-between mb-6">
                 <h2 className="text-2xl font-bold text-white">
-                  {modalType === 'announcement' ? 'Yeni Duyuru' : modalType === 'document' ? 'Yeni Belge' : modalType === 'assignment' ? 'Yeni Ödev' : modalType === 'editUser' ? 'Kullanıcı Düzenle' : 'Yeni Yazı'}
+                  {modalType === 'announcement' ? 'Yeni Duyuru' : modalType === 'document' ? 'Yeni Belge' : modalType === 'assignment' ? 'Yeni Ödev' : modalType === 'student' ? 'Yeni Öğrenci' : modalType === 'editUser' ? 'Kullanıcı Düzenle' : 'Yeni Yazı'}
                 </h2>
                 <button onClick={() => { setShowModal(false); setEditingUser(null); }} className="text-slate-400 hover:text-white">
                   <X className="w-6 h-6" />
@@ -619,8 +729,103 @@ export default function AdminPage() {
                     {isSubmitting ? 'Kaydediliyor...' : 'Kaydet'}
                   </motion.button>
                 </form>
+              ) : modalType === 'student' ? (
+                <form onSubmit={async (e) => {
+                  e.preventDefault();
+                  setIsSubmitting(true);
+                  
+                  const { data, error } = await supabase.from('profiles').insert([{
+                    name: formData.name,
+                    email: formData.email,
+                    grade: formData.grade,
+                    is_private_student: true
+                  }]).select();
+                  
+                  if (!error && data) {
+                    setPrivateStudents([data[0], ...privateStudents]);
+                    setSuccess(true);
+                    setTimeout(() => {
+                      setShowModal(false);
+                      setSuccess(false);
+                      setFormData({});
+                    }, 1500);
+                  }
+                  setIsSubmitting(false);
+                }} className="space-y-5">
+                  <div>
+                    <label className="block text-slate-300 mb-2 text-sm">Öğrenci Adı</label>
+                    <input
+                      type="text"
+                      required
+                      value={formData.name || ''}
+                      onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                      className="w-full bg-slate-800/50 border border-slate-700 rounded-xl px-4 py-3 text-white 
+                               focus:outline-none focus:border-amber-500 transition-colors"
+                      placeholder="Ad Soyad"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-slate-300 mb-2 text-sm">E-posta</label>
+                    <input
+                      type="email"
+                      required
+                      value={formData.email || ''}
+                      onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                      className="w-full bg-slate-800/50 border border-slate-700 rounded-xl px-4 py-3 text-white 
+                               focus:outline-none focus:border-amber-500 transition-colors"
+                      placeholder="ogrenci@email.com"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-slate-300 mb-2 text-sm">Sınıf</label>
+                    <select
+                      required
+                      value={formData.grade || ''}
+                      onChange={(e) => setFormData({ ...formData, grade: parseInt(e.target.value) })}
+                      className="w-full bg-slate-800/50 border border-slate-700 rounded-xl px-4 py-3 text-white 
+                               focus:outline-none focus:border-amber-500 transition-colors"
+                    >
+                      <option value="">Sınıf seçin</option>
+                      <option value="5">5. Sınıf</option>
+                      <option value="6">6. Sınıf</option>
+                      <option value="7">7. Sınıf</option>
+                      <option value="8">8. Sınıf</option>
+                      <option value="9">9. Sınıf</option>
+                      <option value="10">10. Sınıf</option>
+                      <option value="11">11. Sınıf</option>
+                      <option value="12">12. Sınıf</option>
+                    </select>
+                  </div>
+                  <motion.button
+                    type="submit"
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    disabled={isSubmitting}
+                    className="w-full py-4 bg-gradient-to-r from-amber-500 to-orange-500 text-white font-semibold rounded-xl hover:from-amber-600 hover:to-orange-600 transition-all flex items-center justify-center gap-2"
+                  >
+                    {isSubmitting ? 'Ekleniyor...' : 'Öğrenci Ekle'}
+                  </motion.button>
+                </form>
               ) : (
                 <form onSubmit={handleSubmit} className="space-y-5">
+                  {modalType === 'assignment' && (
+                    <div>
+                      <label className="block text-slate-300 mb-2 text-sm">Öğrenci Seç</label>
+                      <select
+                        required
+                        value={selectedStudent}
+                        onChange={(e) => setSelectedStudent(e.target.value)}
+                        className="w-full bg-slate-800/50 border border-slate-700 rounded-xl px-4 py-3 text-white 
+                                 focus:outline-none focus:border-purple-500 transition-colors"
+                      >
+                        <option value="">Öğrenci seçin</option>
+                        {privateStudents.map(s => (
+                          <option key={s.id} value={s.id}>{s.name || s.email}</option>
+                        ))}
+                      </select>
+                    </div>
+                  )}
+
                   <div>
                     <label className="block text-slate-300 mb-2 text-sm">Başlık</label>
                     <input
