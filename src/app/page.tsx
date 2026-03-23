@@ -6,7 +6,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Calculator, BookOpen, Gamepad2, FileText, ClipboardList,
   LogIn, LogOut, Menu, X, Play, Video, Brain,
-  ChevronRight, Clock, Star, Lock, AppWindow
+  ChevronRight, Clock, Star, Lock, AppWindow,
+  Bell, Download, AlertCircle
 } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 
@@ -199,6 +200,8 @@ const Navbar = ({ user, onLogout }: { user: any; onLogout: () => void }) => {
 export default function HomePage() {
   const [user, setUser] = useState<any>(null);
   const [documents, setDocuments] = useState<any[]>([]);
+  const [assignments, setAssignments] = useState<any[]>([]);
+  const [userAssignments, setUserAssignments] = useState<any[]>([]);
 
   useEffect(() => {
     const checkSession = async () => {
@@ -212,13 +215,16 @@ export default function HomePage() {
         
         if (profile) {
           setUser({ ...profile, email: session.user.email });
+          loadUserAssignments(session.user.id);
         } else {
+          const grade = session.user.user_metadata?.grade || 5;
           setUser({
             id: session.user.id,
             name: session.user.user_metadata?.name || 'Öğrenci',
             email: session.user.email,
-            grade: session.user.user_metadata?.grade || 5
+            grade: grade
           });
+          loadUserAssignments(session.user.id);
         }
       }
     };
@@ -229,7 +235,34 @@ export default function HomePage() {
       if (data) setDocuments(data);
     };
     loadDocuments();
+
+    const loadAllAssignments = async () => {
+      const { data } = await supabase.from('assignments').select('*').order('created_at', { ascending: false });
+      if (data) setAssignments(data);
+    };
+    loadAllAssignments();
   }, []);
+
+  const loadUserAssignments = async (userId: string) => {
+    const { data: sharedDocs } = await supabase
+      .from('shared_documents')
+      .select('*')
+      .eq('student_id', userId)
+      .order('created_at', { ascending: false });
+    
+    const { data: notifs } = await supabase
+      .from('notifications')
+      .select('*')
+      .eq('user_id', userId)
+      .order('created_at', { ascending: false });
+    
+    const allAssignments = [
+      ...(sharedDocs || []).map(d => ({ ...d, source: 'shared' })),
+      ...(notifs || []).filter(n => n.type === 'assignment' || n.type === 'document').map(n => ({ ...n, source: 'notification' }))
+    ];
+    
+    setUserAssignments(allAssignments);
+  };
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
@@ -243,6 +276,95 @@ export default function HomePage() {
       <Navbar user={user} onLogout={handleLogout} />
       
       <div className="pt-14">
+        {user && userAssignments.length > 0 && (
+          <section className="px-4 py-6 sm:py-8">
+            <div className="max-w-6xl mx-auto">
+              <motion.div
+                initial={{ opacity: 0, y: -20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="relative overflow-hidden"
+              >
+                <div className="absolute inset-0 bg-gradient-to-r from-orange-500/20 via-red-500/20 to-pink-500/20 rounded-3xl" />
+                <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-orange-500/30 to-red-500/30 rounded-full blur-3xl" />
+                
+                <div className="relative bg-slate-900/80 backdrop-blur-xl border border-orange-500/30 rounded-3xl p-6 sm:p-8">
+                  <div className="flex items-start gap-4">
+                    <div className="relative flex-shrink-0">
+                      <div className="w-14 h-14 bg-gradient-to-br from-orange-500 to-red-500 rounded-2xl flex items-center justify-center">
+                        <Bell className="w-7 h-7 text-white" />
+                      </div>
+                      <span className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 text-white text-xs font-bold rounded-full flex items-center justify-center animate-pulse">
+                        {userAssignments.length}
+                      </span>
+                    </div>
+                    
+                    <div className="flex-1 min-w-0">
+                      <h2 className="text-xl sm:text-2xl font-bold text-white mb-1">
+                        Sana Gönderilen Ödevler
+                      </h2>
+                      <p className="text-slate-400 text-sm mb-4">
+                        Uğur Hoca sana {userAssignments.length} tane ödev/materyal gönderdi!
+                      </p>
+                      
+                      <div className="space-y-3">
+                        {userAssignments.slice(0, 3).map((assignment, i) => (
+                          <motion.div
+                            key={assignment.id}
+                            initial={{ opacity: 0, x: -10 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{ delay: i * 0.1 }}
+                            className="flex items-center gap-3 bg-slate-800/50 rounded-xl p-3 hover:bg-slate-800/70 transition-colors cursor-pointer group"
+                            onClick={() => {
+                              if (assignment.file_url) {
+                                window.open(assignment.file_url, '_blank');
+                              } else if (assignment.message) {
+                                alert(assignment.message);
+                              }
+                            }}
+                          >
+                            <div className="w-10 h-10 bg-gradient-to-br from-orange-500/50 to-red-500/50 rounded-lg flex items-center justify-center flex-shrink-0">
+                              <FileText className="w-5 h-5 text-orange-300" />
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <h4 className="text-white font-medium truncate group-hover:text-orange-300 transition-colors">
+                                {assignment.document_title || assignment.title || 'Ödev'}
+                              </h4>
+                              <p className="text-slate-400 text-xs truncate">
+                                {assignment.message || assignment.content || 'Materyali incele ve çöz'}
+                              </p>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              {assignment.file_url && (
+                                <span className="px-2 py-1 bg-green-500/20 text-green-400 text-xs font-medium rounded-lg flex items-center gap-1">
+                                  <Download className="w-3 h-3" />
+                                  İndir
+                                </span>
+                              )}
+                              <span className="text-slate-500 text-xs">
+                                {new Date(assignment.created_at).toLocaleDateString('tr-TR', { day: 'numeric', month: 'short' })}
+                              </span>
+                            </div>
+                          </motion.div>
+                        ))}
+                      </div>
+                      
+                      {userAssignments.length > 3 && (
+                        <Link 
+                          href="/profil"
+                          className="inline-flex items-center gap-2 mt-4 text-orange-400 hover:text-orange-300 text-sm font-medium transition-colors"
+                        >
+                          Tüm ödevleri gör ({userAssignments.length})
+                          <ChevronRight className="w-4 h-4" />
+                        </Link>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
+            </div>
+          </section>
+        )}
+        
         <section className="px-4 py-8 sm:py-12">
           <div className="max-w-6xl mx-auto">
             <motion.div
