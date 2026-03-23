@@ -64,17 +64,25 @@ export default function ContentsPage() {
 
   const router = useRouter();
 
-  useEffect(() => {
-    const loadDocuments = async () => {
+  const loadDocuments = async () => {
       const { data } = await supabase.from('documents').select('*').order('created_at', { ascending: false });
       if (data) setDocuments(data);
     };
-    if (user) loadDocuments();
-  }, [user]);
 
   useEffect(() => {
     const checkSession = async () => {
       const { data: { session } } = await supabase.auth.getSession();
+      
+      const localUser = localStorage.getItem('matematiklab_user');
+      if (localUser) {
+        const userData = JSON.parse(localUser);
+        if (userData.email === 'admin@ugurhoca.com') {
+          setUser({ ...userData, isAdmin: true });
+          loadDocuments();
+          return;
+        }
+      }
+      
       if (!session) {
         router.push('/giris');
         return;
@@ -101,6 +109,7 @@ export default function ContentsPage() {
         });
         setSelectedGrade(fallbackGrade === 0 ? 'all' : fallbackGrade);
       }
+      loadDocuments();
     };
     checkSession();
   }, [router]);
