@@ -88,26 +88,20 @@ export default function AdminPage() {
           setUser({ email: session.user.email, name: session.user.user_metadata?.name || 'Uğur Hoca' });
           loadData();
         } else {
-          const adminUser = setupAdmin();
-          setUser(adminUser);
-          loadData();
+          router.push('/');
         }
       } else {
         const localUser = localStorage.getItem('matematiklab_user');
         if (localUser) {
           const userData = JSON.parse(localUser);
-          if (userData.email === 'admin@ugurhoca.com') {
+          if (userData.email === 'admin@ugurhoca.com' && userData.isAdmin) {
             setUser(userData);
             loadData();
           } else {
-            const adminUser = setupAdmin();
-            setUser(adminUser);
-            loadData();
+            router.push('/');
           }
         } else {
-          const adminUser = setupAdmin();
-          setUser(adminUser);
-          loadData();
+          router.push('/');
         }
       }
     };
