@@ -78,11 +78,19 @@ export default function ContentsPage() {
   const [editSuccess, setEditSuccess] = useState(false);
 
   const router = useRouter();
+  const searchParams = typeof window !== 'undefined' ? new URLSearchParams(window.location.search) : new URLSearchParams();
+  const typeFromUrl = searchParams.get('type') || 'all';
 
   const loadDocuments = async () => {
       const { data } = await supabase.from('documents').select('*').order('created_at', { ascending: false });
       if (data) setDocuments(data);
     };
+
+  useEffect(() => {
+    if (typeFromUrl !== 'all') {
+      setSelectedType(typeFromUrl);
+    }
+  }, []);
 
   useEffect(() => {
     const checkSession = async () => {
@@ -156,10 +164,22 @@ export default function ContentsPage() {
     }
   };
 
+  const typeMapping: Record<string, string> = {
+    'ders-notlari': 'ders-notlari',
+    'yaprak-test': 'worksheet',
+    'ders-videolari': 'ders-videolari',
+    'deneme': 'test',
+    'oyunlar': 'game',
+    'programlar': 'programlar',
+    'video': 'ders-videolari',
+  };
+
+  const mappedType = typeMapping[selectedType] || selectedType;
+
   const filteredContents = documents.filter(content => {
     const matchesSearch = content.title.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesGrade = selectedGrade === 'all' || selectedGrade === 'Mezun' || content.grade?.includes(selectedGrade);
-    const matchesType = selectedType === 'all' || content.type === selectedType;
+    const matchesType = mappedType === 'all' || content.type === mappedType;
     return matchesSearch && matchesGrade && matchesType;
   });
 
@@ -234,9 +254,17 @@ export default function ContentsPage() {
             className="mb-8 flex flex-col md:flex-row justify-between items-start md:items-center gap-4"
           >
             <div>
-              <h1 className="text-4xl font-bold text-white mb-2">İçerikler</h1>
+              <h1 className="text-4xl font-bold text-white mb-2">
+                {selectedType === 'all' ? 'İçerikler' : 
+                 selectedType === 'worksheet' ? 'Çalışma Kağıtları' :
+                 selectedType === 'test' ? 'Test ve Denemeler' :
+                 selectedType === 'game' ? 'Oyunlar' :
+                 selectedType === 'ders-notlari' ? 'Ders Notları' :
+                 selectedType === 'ders-videolari' ? 'Ders Videoları' :
+                 selectedType === 'programlar' ? 'Programlar' : 'İçerikler'}
+              </h1>
               <p className="text-slate-400">
-                {user.grade}. sınıf için tüm çalışma kağıtları, testler ve oyunlar
+                {selectedType === 'all' ? `${user.grade}. sınıf için tüm içerikler` : 'Seçili kategorideki içerikler'}
               </p>
             </div>
             {user.isAdmin && (
@@ -296,8 +324,11 @@ export default function ContentsPage() {
                 >
                   <option value="all">Tüm Türler</option>
                   <option value="worksheet">Çalışma Kağıdı</option>
-                  <option value="test">Test</option>
+                  <option value="test">Test / Deneme</option>
                   <option value="game">Oyun</option>
+                  <option value="ders-notlari">Ders Notları</option>
+                  <option value="ders-videolari">Ders Videoları</option>
+                  <option value="programlar">Programlar</option>
                 </select>
 
                 <div className="flex glass rounded-xl overflow-hidden">
