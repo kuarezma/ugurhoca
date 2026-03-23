@@ -290,7 +290,7 @@ export default function AdminPage() {
       
       <nav className="fixed top-0 left-0 right-0 z-50 glass py-4 px-6">
         <div className="container mx-auto flex justify-between items-center">
-          <Link href="/profil" className="flex items-center gap-3">
+          <Link href="/" className="flex items-center gap-3">
             <div className="w-10 h-10 bg-gradient-to-br from-orange-500 to-red-500 rounded-xl flex items-center justify-center">
               <Calculator className="w-6 h-6 text-white" />
             </div>
