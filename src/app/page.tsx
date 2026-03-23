@@ -107,10 +107,8 @@ const Navbar = ({ user, onLogout }: { user: any; onLogout: () => void }) => {
       <div className="max-w-6xl mx-auto px-4">
         <div className="flex justify-between items-center h-14">
           <Link href="/" className="flex items-center gap-2">
-            <div className="w-9 h-9 bg-gradient-to-br from-indigo-500 to-purple-500 rounded-lg flex items-center justify-center">
-              <Calculator className="w-5 h-5 text-white" />
-            </div>
-            <span className="text-lg font-bold bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">
+            <img src="/uğur.jpeg" alt="Uğur Hoca" className="w-9 h-9 rounded-lg object-cover" />
+            <span className="text-lg font-bold text-white">
               Uğur Hoca
             </span>
           </Link>
@@ -356,7 +354,7 @@ export default function HomePage() {
               </div>
               <span className="font-bold text-white">Uğur Hoca Matematik</span>
             </div>
-            <p className="text-slate-500 text-xs">© 2025 Uğur Hoca Matematik</p>
+            <p className="text-slate-500 text-xs">© 2026 Uğur Hoca Matematik, tüm hakları saklıdır.</p>
           </div>
         </footer>
       </div>
