@@ -51,7 +51,7 @@ const Navbar = ({ user, onLogout }: { user: any; onLogout: () => void }) => {
               <Calculator className="w-5 h-5 text-white" />
             </div>
             <span className="text-xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
-              MatematikLab
+              Uğur Hoca Matematik
             </span>
           </Link>
 
@@ -204,7 +204,7 @@ export default function HomePage() {
 
               <h1 className="text-5xl sm:text-6xl lg:text-7xl font-black mb-6">
                 <span className="bg-gradient-to-r from-purple-400 via-pink-400 to-orange-400 bg-clip-text text-transparent">
-                  MatematikLab
+                  Uğur Hoca Matematik
                 </span>
               </h1>
               
@@ -333,9 +333,9 @@ export default function HomePage() {
               <div className="w-8 h-8 bg-gradient-to-br from-purple-500 to-pink-500 rounded-lg flex items-center justify-center">
                 <Calculator className="w-4 h-4 text-white" />
               </div>
-              <span className="font-bold text-white">MatematikLab</span>
+              <span className="font-bold text-white">Uğur Hoca Matematik</span>
             </div>
-            <p className="text-slate-500 text-sm">© 2024 MatematikLab. Tüm hakları saklıdır.</p>
+            <p className="text-slate-500 text-sm">© 2024 Uğur Hoca Matematik. Tüm hakları saklıdır.</p>
           </div>
         </footer>
       </div>

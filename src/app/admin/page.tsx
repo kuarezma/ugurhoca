@@ -239,7 +239,7 @@ export default function AdminPage() {
               <Calculator className="w-6 h-6 text-white" />
             </div>
             <span className="text-xl font-bold bg-gradient-to-r from-orange-400 to-red-400 bg-clip-text text-transparent">
-              MatematikLab
+              Uğur Hoca Matematik
             </span>
           </Link>
 
