@@ -164,8 +164,17 @@ export default function ContentsPage() {
       downloads: 0,
     };
 
+    console.log('Kaydedilecek veri:', newItem);
     const { data, error } = await supabase.from('documents').insert([newItem]).select();
-    if (!error && data) {
+    console.log('Sonuç:', data, 'Hata:', error);
+    
+    if (error) {
+      alert('Kaydetme hatası: ' + error.message);
+      setIsSubmitting(false);
+      return;
+    }
+    
+    if (data) {
       setDocuments([data[0], ...documents]);
     }
 
@@ -551,19 +560,23 @@ export default function ContentsPage() {
                           if (file) {
                             setIsSubmitting(true);
                             const fileName = `${Date.now()}_${file.name}`;
+                            console.log('Dosya yükleniyor:', fileName);
                             const { data, error } = await supabase.storage
                               .from('documents')
                               .upload(fileName, file);
+                            console.log('Yükleme sonucu:', data, error);
                             
                             if (error) {
                               alert('Dosya yüklenemedi: ' + error.message);
+                              setIsSubmitting(false);
                             } else {
                               const { data: urlData } = supabase.storage
                                 .from('documents')
                                 .getPublicUrl(fileName);
+                              console.log('Dosya URL:', urlData.publicUrl);
                               setFormData({ ...formData, file_url: urlData.publicUrl, file_name: file.name });
+                              setIsSubmitting(false);
                             }
-                            setIsSubmitting(false);
                           }
                         }}
                         className="hidden"
