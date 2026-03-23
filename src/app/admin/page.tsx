@@ -230,6 +230,18 @@ export default function AdminPage() {
       const { data, error } = await supabase.from('announcements').insert([newItem]).select();
       if (!error && data) {
         setAnnouncements([data[0], ...announcements]);
+        
+        // Tüm kullanıcılara bildirim gönder
+        const allStudents = allUsers.filter(u => !u.isAdmin);
+        const notificationInserts = allStudents.map(student => ({
+          user_id: student.id,
+          title: 'Yeni Duyuru',
+          message: formData.title,
+          type: 'general',
+        }));
+        if (notificationInserts.length > 0) {
+          await supabase.from('notifications').insert(notificationInserts);
+        }
       } else {
         const fallbackItem = { ...newItem, id: Date.now().toString() };
         const updated = [fallbackItem, ...announcements];
@@ -527,13 +539,25 @@ export default function AdminPage() {
                 exit={{ opacity: 0, y: -20 }}
                 className="space-y-4"
               >
-                {allUsers.length === 0 ? (
+                <div className="flex justify-between items-center">
+                  <p className="text-slate-400">{allUsers.filter(u => !u.isAdmin).length} öğrenci</p>
+                  <motion.button
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    onClick={loadData}
+                    className="px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-slate-300 hover:text-white transition-colors text-sm flex items-center gap-2"
+                  >
+                    <RefreshCw className="w-4 h-4" />
+                    Yenile
+                  </motion.button>
+                </div>
+                {allUsers.filter(u => !u.isAdmin).length === 0 ? (
                   <div className="glass rounded-2xl p-12 text-center">
                     <Users className="w-16 h-16 mx-auto mb-4 text-slate-500" />
                     <p className="text-slate-400">Henüz kullanıcı yok</p>
                   </div>
                 ) : (
-                  allUsers.map((u, i) => (
+                  allUsers.filter(u => !u.isAdmin).map((u, i) => (
                     <motion.div
                       key={u.id}
                       initial={{ opacity: 0, y: 20 }}
