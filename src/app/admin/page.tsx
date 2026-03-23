@@ -1213,11 +1213,11 @@ export default function AdminPage() {
                   {modalType === 'document' && (
                     <>
                       <div>
-                        <label className="block text-slate-300 mb-2 text-sm">Dosya Yükle (PDF, Word, vb.)</label>
+                        <label className="block text-slate-300 mb-2 text-sm">Dosya Yükle (PDF, EXE, MP4 vb.)</label>
                         <div className="relative">
                           <input
                             type="file"
-                            accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.zip,.rar"
+                            accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.zip,.rar,.exe,.mp4,.avi,.mov"
                             onChange={async (e) => {
                               const file = e.target.files?.[0];
                               if (file) {
@@ -1246,7 +1246,7 @@ export default function AdminPage() {
                             className="flex items-center justify-center gap-2 w-full bg-slate-800/50 border border-slate-700 border-dashed rounded-xl px-4 py-6 text-slate-400 cursor-pointer hover:bg-slate-800 hover:border-purple-500 transition-colors"
                           >
                             <Upload className="w-5 h-5" />
-                            <span>{formData.file_name || 'Dosya seç veya buraya sürükle'}</span>
+                            <span>{formData.file_name || 'Dosya seç (PDF, EXE, MP4...) veya buraya sürükle'}</span>
                           </label>
                         </div>
                       </div>

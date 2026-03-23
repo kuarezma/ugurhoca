@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { 
   Calculator, BookOpen, Gamepad2, FileText, Upload, 
   Search, Filter, ArrowLeft, Download, Eye, 
-  Clock, Users, Star, Zap, Grid, List, X
+  Clock, Users, Star, Zap, Grid, List, X, Plus, Check, Video
 } from 'lucide-react';
 import { AnimatePresence } from 'framer-motion';
 import { useRouter } from 'next/navigation';
@@ -55,6 +55,13 @@ export default function ContentsPage() {
   const [selectedType, setSelectedType] = useState<string>('all');
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [showVideo, setShowVideo] = useState<string | null>(null);
+
+  // Yeni İçerik Ekle Modalı (Hızlı Ekleme) State'leri
+  const [showModal, setShowModal] = useState(false);
+  const [formData, setFormData] = useState<any>({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [success, setSuccess] = useState(false);
+
   const router = useRouter();
 
   useEffect(() => {
@@ -78,8 +85,10 @@ export default function ContentsPage() {
         .eq('id', session.user.id)
         .single();
         
+      const isAdmin = session.user.email === 'admin@ugurhoca.com';
+
       if (profile) {
-        setUser({ ...profile, email: session.user.email });
+        setUser({ ...profile, email: session.user.email, isAdmin });
         setSelectedGrade(profile.grade);
       } else {
         const fallbackGrade = session.user.user_metadata?.grade ?? 5;
@@ -87,7 +96,8 @@ export default function ContentsPage() {
           id: session.user.id,
           name: session.user.user_metadata?.name || 'Öğrenci',
           email: session.user.email,
-          grade: fallbackGrade
+          grade: fallbackGrade,
+          isAdmin
         });
         setSelectedGrade(fallbackGrade === 0 ? 'all' : fallbackGrade);
       }
@@ -135,6 +145,30 @@ export default function ContentsPage() {
     return match && match[2].length === 11 ? match[2] : null;
   };
 
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+
+    const newItem = {
+      ...formData,
+      created_at: new Date().toISOString(),
+      downloads: 0,
+    };
+
+    const { data, error } = await supabase.from('documents').insert([newItem]).select();
+    if (!error && data) {
+      setDocuments([data[0], ...documents]);
+    }
+
+    setIsSubmitting(false);
+    setSuccess(true);
+    setTimeout(() => {
+      setShowModal(false);
+      setSuccess(false);
+      setFormData({});
+    }, 1500);
+  };
+
   if (!user) return null;
 
   return (
@@ -164,12 +198,28 @@ export default function ContentsPage() {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="mb-8"
+            className="mb-8 flex flex-col md:flex-row justify-between items-start md:items-center gap-4"
           >
-            <h1 className="text-4xl font-bold text-white mb-2">İçerikler</h1>
-            <p className="text-slate-400">
-              {user.grade}. sınıf için tüm çalışma kağıtları, testler ve oyunlar
-            </p>
+            <div>
+              <h1 className="text-4xl font-bold text-white mb-2">İçerikler</h1>
+              <p className="text-slate-400">
+                {user.grade}. sınıf için tüm çalışma kağıtları, testler ve oyunlar
+              </p>
+            </div>
+            {user.isAdmin && (
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={() => {
+                  setFormData({ type: selectedType !== 'all' ? selectedType : 'worksheet', grade: [selectedGrade !== 'all' && selectedGrade !== 'Mezun' ? Number(selectedGrade) : user.grade] });
+                  setShowModal(true);
+                }}
+                className="px-6 py-3 bg-gradient-to-r from-purple-500 to-pink-500 text-white font-semibold rounded-xl hover:from-purple-600 hover:to-pink-600 transition-all shadow-lg flex items-center gap-2"
+              >
+                <Plus className="w-5 h-5" />
+                Hızlı İçerik Ekle
+              </motion.button>
+            )}
           </motion.div>
 
           <motion.div
@@ -394,6 +444,207 @@ export default function ContentsPage() {
           )}
         </div>
       </div>
+
+      {/* --- Hızlı İçerik Ekle Modalı --- */}
+      <AnimatePresence>
+        {showModal && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-6"
+            onClick={() => setShowModal(false)}
+          >
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              onClick={(e) => e.stopPropagation()}
+              className="glass rounded-3xl p-8 w-full max-w-2xl max-h-[90vh] overflow-y-auto relative"
+            >
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-2xl font-bold text-white flex items-center gap-2">
+                  <Upload className="w-6 h-6 text-purple-400" />
+                  Yeni İçerik Ekle
+                </h2>
+                <button onClick={() => setShowModal(false)} className="text-slate-400 hover:text-white">
+                  <X className="w-6 h-6" />
+                </button>
+              </div>
+
+              {success ? (
+                <motion.div
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1 }}
+                  className="text-center py-12"
+                >
+                  <div className="w-20 h-20 mx-auto mb-4 rounded-full bg-gradient-to-br from-green-400 to-emerald-500 flex items-center justify-center">
+                    <Check className="w-10 h-10 text-white" />
+                  </div>
+                  <h3 className="text-2xl font-bold text-white mb-2">Başarılı!</h3>
+                  <p className="text-slate-400">İçeriğiniz anında eklendi ve yayınlandı.</p>
+                </motion.div>
+              ) : (
+                <form onSubmit={handleSubmit} className="space-y-5">
+                  <div>
+                    <label className="block text-slate-300 mb-2 text-sm">Başlık</label>
+                    <input
+                      type="text"
+                      required
+                      value={formData.title || ''}
+                      onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                      className="w-full bg-slate-800/50 border border-slate-700 rounded-xl px-4 py-3 text-white 
+                               focus:outline-none focus:border-purple-500 transition-colors"
+                      placeholder="Başlık girin..."
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-slate-300 mb-2 text-sm">Kategori</label>
+                    <select
+                      required
+                      value={formData.type || ''}
+                      onChange={(e) => setFormData({ ...formData, type: e.target.value })}
+                      className="w-full bg-slate-800/50 border border-slate-700 rounded-xl px-4 py-3 text-white 
+                               focus:outline-none focus:border-purple-500 transition-colors"
+                    >
+                      <option value="">Kategori seçin</option>
+                      <option value="worksheet">Çalışma Kağıdı</option>
+                      <option value="test">Yaprak Test / Deneme</option>
+                      <option value="game">Oyun / Uygulama</option>
+                      <option value="ders-notlari">Ders Notları</option>
+                      <option value="ders-videolari">Ders Videoları</option>
+                      <option value="programlar">Programlar</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="block text-slate-300 mb-2 text-sm">Açıklama</label>
+                    <textarea
+                      required
+                      rows={3}
+                      value={formData.description || ''}
+                      onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                      className="w-full bg-slate-800/50 border border-slate-700 rounded-xl px-4 py-3 text-white 
+                               focus:outline-none focus:border-purple-500 transition-colors resize-none"
+                      placeholder="İçerik hakkında bilgi..."
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-slate-300 mb-2 text-sm">Dosya Yükle (PDF, EXE, MP4 vb.)</label>
+                    <div className="relative">
+                      <input
+                        type="file"
+                        accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.zip,.rar,.exe,.mp4,.avi,.mov"
+                        onChange={async (e) => {
+                          const file = e.target.files?.[0];
+                          if (file) {
+                            setIsSubmitting(true);
+                            const fileName = `${Date.now()}_${file.name}`;
+                            const { data, error } = await supabase.storage
+                              .from('documents')
+                              .upload(fileName, file);
+                            
+                            if (error) {
+                              alert('Dosya yüklenemedi: ' + error.message);
+                            } else {
+                              const { data: urlData } = supabase.storage
+                                .from('documents')
+                                .getPublicUrl(fileName);
+                              setFormData({ ...formData, file_url: urlData.publicUrl, file_name: file.name });
+                            }
+                            setIsSubmitting(false);
+                          }
+                        }}
+                        className="hidden"
+                        id="quick-file-upload"
+                      />
+                      <label 
+                        htmlFor="quick-file-upload"
+                        className="flex items-center justify-center gap-2 w-full bg-slate-800/50 border border-slate-700 border-dashed rounded-xl px-4 py-6 text-slate-400 cursor-pointer hover:bg-slate-800 hover:border-purple-500 transition-colors"
+                      >
+                        <Upload className="w-5 h-5" />
+                        <span>{formData.file_name || 'Dosya seç (PDF, EXE, MP4...) veya buraya sürükle'}</span>
+                      </label>
+                    </div>
+                  </div>
+
+                  <div className="text-center text-slate-500 text-sm">veya</div>
+
+                  <div>
+                    <label className="block text-slate-300 mb-2 text-sm">Tıkla/İndir Linki (Google Drive vb.)</label>
+                    <input
+                      type="url"
+                      value={formData.file_url || ''}
+                      onChange={(e) => setFormData({ ...formData, file_url: e.target.value, file_name: '' })}
+                      className="w-full bg-slate-800/50 border border-slate-700 rounded-xl px-4 py-3 text-white 
+                               focus:outline-none focus:border-purple-500 transition-colors"
+                      placeholder="https://drive.google.com/..."
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-slate-300 mb-2 text-sm">YouTube Video URL</label>
+                    <input
+                      type="url"
+                      value={formData.video_url || ''}
+                      onChange={(e) => setFormData({ ...formData, video_url: e.target.value })}
+                      className="w-full bg-slate-800/50 border border-slate-700 rounded-xl px-4 py-3 text-white 
+                               focus:outline-none focus:border-purple-500 transition-colors"
+                      placeholder="https://www.youtube.com/watch?v=..."
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-slate-300 mb-2 text-sm">Hedef Sınıflar</label>
+                    <div className="flex flex-wrap gap-2">
+                      {[5, 6, 7, 8, 9, 10, 11, 12].map((grade) => (
+                        <label key={grade} className="flex items-center gap-2 px-3 py-2 glass rounded-lg cursor-pointer hover:bg-white/10">
+                          <input
+                            type="checkbox"
+                            checked={formData.grade?.includes(grade) || false}
+                            onChange={(e) => {
+                              const grades = formData.grade || [];
+                              if (e.target.checked) {
+                                setFormData({ ...formData, grade: [...grades, grade] });
+                              } else {
+                                setFormData({ ...formData, grade: grades.filter((g: number) => g !== grade) });
+                              }
+                            }}
+                            className="w-4 h-4 accent-purple-500"
+                          />
+                          <span className="text-white text-sm">{grade}. Sınıf</span>
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+
+                  <motion.button
+                    type="submit"
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    disabled={isSubmitting}
+                    className="w-full py-4 bg-gradient-to-r from-purple-500 to-pink-500 text-white font-semibold rounded-xl hover:from-purple-600 hover:to-pink-600 transition-all shadow-lg shadow-purple-500/25 flex items-center justify-center gap-2"
+                  >
+                    {isSubmitting ? (
+                      <>
+                        <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                        Ekleniyor...
+                      </>
+                    ) : (
+                      <>
+                        <Upload className="w-5 h-5" />
+                        Hızlı Yayınla
+                      </>
+                    )}
+                  </motion.button>
+                </form>
+              )}
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       <AnimatePresence>
         {showVideo && (
