@@ -109,62 +109,30 @@ export default function AdminPage() {
       return admin;
     };
 
-    const checkAuth = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      
-      if (session) {
-        if (session.user.email === 'admin@ugurhoca.com') {
-          setUser({ email: session.user.email, name: session.user.user_metadata?.name || 'Uğur Hoca' });
+    const checkAuth = () => {
+      const localUser = localStorage.getItem('matematiklab_user');
+      if (localUser) {
+        const userData = JSON.parse(localUser);
+        if (userData.email === 'admin@ugurhoca.com') {
+          setUser(userData);
           loadData();
-        } else {
-          router.push('/');
-        }
-      } else {
-        const localUser = localStorage.getItem('matematiklab_user');
-        if (localUser) {
-          const userData = JSON.parse(localUser);
-          if (userData.email === 'admin@ugurhoca.com' && userData.isAdmin) {
-            setUser(userData);
-            loadData();
-          } else {
-            router.push('/');
-          }
-        } else {
-          router.push('/');
+          return;
         }
       }
+      router.push('/');
     };
     checkAuth();
   }, [router]);
 
   const loadData = async () => {
-    console.log('loadData başladı...');
+    const { data: annData } = await supabase.from('announcements').select('*').order('created_at', { ascending: false });
+    setAnnouncements(annData || []);
     
-    const { data: annData, error: annError } = await supabase.from('announcements').select('*').order('created_at', { ascending: false });
-    console.log('Duyurular:', annData, 'Hata:', annError);
-    
-    if (annError) {
-      console.warn('Supabase okuma hatası (Duyurular):', annError);
-      const localAnn = JSON.parse(localStorage.getItem('matematiklab_announcements') || '[]');
-      setAnnouncements(localAnn.sort((a: any, b: any) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()));
-    } else {
-      setAnnouncements(annData || []);
-    }
-    
-    const { data: docData, error: docError } = await supabase.from('documents').select('*').order('created_at', { ascending: false });
-    console.log('Belgeler:', docData, 'Hata:', docError);
-    
-    if (docError) {
-      console.warn('Supabase okuma hatası (Belgeler):', docError);
-      const localDoc = JSON.parse(localStorage.getItem('matematiklab_documents') || '[]');
-      setDocuments(localDoc.sort((a: any, b: any) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()));
-    } else {
-      setDocuments(docData || []);
-    }
+    const { data: docData } = await supabase.from('documents').select('*').order('created_at', { ascending: false });
+    setDocuments(docData || []);
     
     // Tüm kullanıcıları getir
-    const { data: usersData, error: usersError } = await supabase.from('profiles').select('*').order('created_at', { ascending: false });
-    console.log('Kullanıcılar:', usersData, 'Hata:', usersError);
+    const { data: usersData } = await supabase.from('profiles').select('*').order('created_at', { ascending: false });
     if (usersData) setAllUsers(usersData);
 
     // Özel ders öğrencilerini getir
