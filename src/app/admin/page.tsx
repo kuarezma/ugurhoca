@@ -110,16 +110,28 @@ export default function AdminPage() {
     };
 
     const checkAuth = () => {
-      const localUser = localStorage.getItem('matematiklab_user');
-      if (localUser) {
-        const userData = JSON.parse(localUser);
-        if (userData.email === 'admin@ugurhoca.com') {
-          setUser(userData);
-          loadData();
-          return;
-        }
+      let localUser = localStorage.getItem('matematiklab_user');
+      
+      if (!localUser) {
+        const admin = {
+          id: 'admin-1',
+          name: 'Uğur Hoca',
+          email: 'admin@ugurhoca.com',
+          password: 'admin123',
+          grade: 5,
+          isAdmin: true
+        };
+        localStorage.setItem('matematiklab_user', JSON.stringify(admin));
+        localUser = JSON.stringify(admin);
       }
-      router.push('/');
+      
+      const userData = JSON.parse(localUser);
+      if (userData.email === 'admin@ugurhoca.com') {
+        setUser(userData);
+        loadData();
+      } else {
+        router.push('/');
+      }
     };
     checkAuth();
   }, [router]);
