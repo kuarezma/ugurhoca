@@ -49,6 +49,7 @@ interface Document {
   file_name?: string;
   grade: number[];
   downloads: number;
+  views?: number;
   created_at: string;
 }
 
@@ -422,29 +423,75 @@ export default function AdminPage() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -20 }}
-                className="grid md:grid-cols-2 lg:grid-cols-3 gap-6"
+                className="space-y-4"
               >
-                {documents.filter(d => d.type === 'document').length === 0 ? (
-                  <div className="col-span-full glass rounded-2xl p-12 text-center">
+                {documents.length === 0 ? (
+                  <div className="glass rounded-2xl p-12 text-center">
                     <FileText className="w-16 h-16 mx-auto mb-4 text-slate-500" />
-                    <p className="text-slate-400">Henüz belge yok</p>
+                    <p className="text-slate-400">Henüz içerik yok</p>
                   </div>
                 ) : (
-                  documents.filter(d => d.type === 'document').map((doc, i) => (
-                    <motion.div
-                      key={doc.id}
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: i * 0.05 }}
-                      className="glass rounded-2xl overflow-hidden card-hover"
-                    >
-                      <div className="h-2 bg-gradient-to-r from-blue-500 to-cyan-500" />
-                      <div className="p-6">
-                        <div className="flex items-start justify-between mb-4">
-                          <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center">
-                            <FileText className="w-6 h-6 text-white" />
+                  documents.map((doc, i) => {
+                    const typeColors: Record<string, string> = {
+                      'worksheet': 'from-blue-500 to-cyan-500',
+                      'test': 'from-purple-500 to-pink-500',
+                      'game': 'from-orange-500 to-red-500',
+                      'ders-notlari': 'from-green-500 to-emerald-500',
+                      'ders-videolari': 'from-red-500 to-orange-500',
+                      'programlar': 'from-cyan-500 to-blue-500',
+                    };
+                    const typeLabels: Record<string, string> = {
+                      'worksheet': 'Çalışma Kağıdı',
+                      'test': 'Test / Deneme',
+                      'game': 'Oyun',
+                      'ders-notlari': 'Ders Notları',
+                      'ders-videolari': 'Ders Videoları',
+                      'programlar': 'Programlar',
+                    };
+                    return (
+                      <motion.div
+                        key={doc.id}
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: i * 0.05 }}
+                        className="glass rounded-2xl p-6 card-hover"
+                      >
+                        <div className="flex items-start justify-between">
+                          <div className="flex items-center gap-4 flex-1">
+                            <div className={`w-14 h-14 rounded-xl bg-gradient-to-br ${typeColors[doc.type] || 'from-slate-500 to-slate-600'} flex items-center justify-center flex-shrink-0`}>
+                              <FileText className="w-7 h-7 text-white" />
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-center gap-3 mb-1">
+                                <h3 className="text-lg font-bold text-white truncate">{doc.title}</h3>
+                                <span className={`px-3 py-1 bg-gradient-to-r ${typeColors[doc.type] || 'from-slate-500 to-slate-600'} rounded-full text-white text-xs font-semibold flex-shrink-0`}>
+                                  {typeLabels[doc.type] || doc.type}
+                                </span>
+                              </div>
+                              <p className="text-slate-400 text-sm line-clamp-1">{doc.description}</p>
+                              <div className="flex items-center gap-4 mt-2 text-xs text-slate-500">
+                                <span className="flex items-center gap-1">
+                                  <Calendar className="w-3 h-3" />
+                                  {formatDate(doc.created_at)}
+                                </span>
+                                <span className="flex items-center gap-1">
+                                  <Download className="w-3 h-3" />
+                                  {doc.downloads || 0} indirme
+                                </span>
+                                <span className="flex items-center gap-1">
+                                  <Eye className="w-3 h-3" />
+                                  {doc.views || 0} görüntülenme
+                                </span>
+                                {doc.grade && (
+                                  <span className="flex items-center gap-1">
+                                    <GraduationCap className="w-3 h-3" />
+                                    {Array.isArray(doc.grade) ? doc.grade.join(', ') : doc.grade}. Sınıf
+                                  </span>
+                                )}
+                              </div>
+                            </div>
                           </div>
-                          <div className="flex gap-2">
+                          <div className="flex gap-2 ml-4">
                             <button
                               onClick={() => {
                                 setEditingDoc(doc);
@@ -464,21 +511,9 @@ export default function AdminPage() {
                             </button>
                           </div>
                         </div>
-                        <h3 className="text-lg font-bold text-white mb-2">{doc.title}</h3>
-                        <p className="text-slate-400 text-sm mb-4 line-clamp-2">{doc.description}</p>
-                        <div className="flex items-center justify-between text-sm text-slate-400">
-                          <span className="flex items-center gap-1">
-                            <Calendar className="w-4 h-4" />
-                            {formatDate(doc.created_at)}
-                          </span>
-                          <span className="flex items-center gap-1">
-                            <Download className="w-4 h-4" />
-                            {doc.downloads}
-                          </span>
-                        </div>
-                      </div>
-                    </motion.div>
-                  ))
+                      </motion.div>
+                    );
+                  })
                 )}
               </motion.div>
             )}
