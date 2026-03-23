@@ -1307,6 +1307,22 @@ export default function AdminPage() {
                               <span className="text-white text-sm">{grade}. Sınıf</span>
                             </label>
                           ))}
+                          <label className="flex items-center gap-2 px-3 py-2 glass rounded-lg cursor-pointer hover:bg-white/10">
+                            <input
+                              type="checkbox"
+                              checked={formData.grades?.includes('Mezun') || false}
+                              onChange={(e) => {
+                                const grades = formData.grades || [];
+                                if (e.target.checked) {
+                                  setFormData({ ...formData, grades: [...grades, 'Mezun'] });
+                                } else {
+                                  setFormData({ ...formData, grades: grades.filter((g: string | number) => g !== 'Mezun') });
+                                }
+                              }}
+                              className="w-4 h-4 accent-purple-500"
+                            />
+                            <span className="text-white text-sm">Mezun</span>
+                          </label>
                         </div>
                       </div>
                     </>
