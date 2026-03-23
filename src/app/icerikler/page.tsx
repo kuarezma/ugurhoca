@@ -147,19 +147,27 @@ export default function ContentsPage() {
   };
 
   const getTypeColor = (type: string) => {
-    switch (type) {
+    const mapped = typeMapping[type] || type;
+    switch (mapped) {
       case 'worksheet': return 'from-blue-500 to-cyan-500';
       case 'test': return 'from-purple-500 to-pink-500';
       case 'game': return 'from-orange-500 to-red-500';
+      case 'ders-notlari': return 'from-blue-500 to-cyan-500';
+      case 'ders-videolari': return 'from-red-500 to-orange-500';
+      case 'programlar': return 'from-cyan-500 to-blue-500';
       default: return 'from-green-500 to-emerald-500';
     }
   };
 
   const getTypeLabel = (type: string) => {
-    switch (type) {
+    const mapped = typeMapping[type] || type;
+    switch (mapped) {
       case 'worksheet': return 'Çalışma Kağıdı';
-      case 'test': return 'Test';
+      case 'test': return 'Test / Deneme';
       case 'game': return 'Oyun';
+      case 'ders-notlari': return 'Ders Notları';
+      case 'ders-videolari': return 'Ders Videoları';
+      case 'programlar': return 'Programlar';
       default: return type;
     }
   };
@@ -168,10 +176,15 @@ export default function ContentsPage() {
     'ders-notlari': 'ders-notlari',
     'yaprak-test': 'worksheet',
     'ders-videolari': 'ders-videolari',
-    'deneme': 'test',
-    'oyunlar': 'game',
-    'programlar': 'programlar',
     'video': 'ders-videolari',
+    'deneme': 'test',
+    'test': 'test',
+    'worksheet': 'worksheet',
+    'oyunlar': 'game',
+    'game': 'game',
+    'programlar': 'programlar',
+    'document': 'worksheet',
+    'writing': 'ders-notlari',
   };
 
   const mappedType = typeMapping[selectedType] || selectedType;
@@ -179,7 +192,8 @@ export default function ContentsPage() {
   const filteredContents = documents.filter(content => {
     const matchesSearch = content.title.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesGrade = selectedGrade === 'all' || selectedGrade === 'Mezun' || content.grade?.includes(selectedGrade);
-    const matchesType = mappedType === 'all' || content.type === mappedType;
+    const contentType = typeMapping[content.type] || content.type;
+    const matchesType = mappedType === 'all' || contentType === mappedType;
     return matchesSearch && matchesGrade && matchesType;
   });
 
