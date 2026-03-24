@@ -1,11 +1,11 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { 
   Calculator, LogOut, ArrowLeft, Settings, ChevronRight, Shield, Bell,
-  FileText, ClipboardList, BookOpen, Check
+  FileText, ClipboardList, BookOpen
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
@@ -56,6 +56,8 @@ export default function ProfilePage() {
   const [sharedDocs, setSharedDocs] = useState<SharedDoc[]>([]);
   const [assignments, setAssignments] = useState<any[]>([]);
   const [showNotifications, setShowNotifications] = useState(false);
+  const docsRef = useRef<HTMLHeadingElement | null>(null);
+  const assignmentsRef = useRef<HTMLHeadingElement | null>(null);
   const router = useRouter();
 
   useEffect(() => {
@@ -120,6 +122,23 @@ export default function ProfilePage() {
   const markAsRead = async (id: string) => {
     await supabase.from('notifications').update({ is_read: true }).eq('id', id);
     setNotifications(notifications.map(n => n.id === id ? { ...n, is_read: true } : n));
+  };
+
+  const handleNotificationClick = async (notif: Notification) => {
+    if (!notif.is_read) {
+      await markAsRead(notif.id);
+    }
+
+    setShowNotifications(false);
+
+    if (notif.type === 'document') {
+      docsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      return;
+    }
+
+    if (notif.type === 'assignment') {
+      assignmentsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
   };
 
   const handleLogout = async () => {
@@ -187,7 +206,7 @@ export default function ProfilePage() {
         <motion.div 
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
-          className="fixed top-14 right-4 w-80 bg-slate-800 border border-slate-700 rounded-2xl shadow-2xl z-50 max-h-96 overflow-y-auto"
+          className="fixed top-14 left-4 right-4 sm:left-auto sm:right-4 sm:w-80 bg-slate-800 border border-slate-700 rounded-2xl shadow-2xl z-50 max-h-96 overflow-y-auto"
         >
           <div className="p-4 border-b border-slate-700 flex items-center justify-between">
             <h3 className="text-white font-bold">Bildirimler</h3>
@@ -198,29 +217,29 @@ export default function ProfilePage() {
           ) : (
             <div className="divide-y divide-slate-700">
               {notifications.map(notif => (
-                <div 
+                <button 
                   key={notif.id} 
-                  className={`p-4 hover:bg-slate-700/50 transition-colors ${!notif.is_read ? 'bg-slate-700/30' : ''}`}
+                  onClick={() => handleNotificationClick(notif)}
+                  className={`w-full text-left p-4 hover:bg-slate-700/50 transition-colors ${!notif.is_read ? 'bg-slate-700/30' : ''}`}
                 >
-                  <div className="flex items-start justify-between gap-2">
-                    <div className="flex-1">
-                      <p className="text-white font-medium text-sm">{notif.title}</p>
-                      <p className="text-slate-400 text-xs mt-1">{notif.message}</p>
-                      <p className="text-slate-500 text-xs mt-2">
-                        {new Date(notif.created_at).toLocaleDateString('tr-TR')}
-                      </p>
+                    <div className="flex items-start justify-between gap-2">
+                      <div className="flex-1">
+                        <p className="text-white font-medium text-sm">{notif.title}</p>
+                        <p className="text-slate-400 text-xs mt-1">{notif.message}</p>
+                        <span className="inline-flex mt-2 px-2 py-0.5 rounded-full bg-white/5 text-slate-300 text-[11px]">
+                          {notif.type === 'assignment' ? 'Ödev' : notif.type === 'document' ? 'Belge' : 'Genel'}
+                        </span>
+                        <p className="text-slate-500 text-xs mt-2">
+                          {new Date(notif.created_at).toLocaleDateString('tr-TR')}
+                        </p>
+                      </div>
+                      {!notif.is_read ? (
+                        <span className="mt-1 text-green-400 text-xs font-semibold">Aç</span>
+                      ) : (
+                        <ChevronRight className="w-4 h-4 mt-1 text-slate-500" />
+                      )}
                     </div>
-                    {!notif.is_read && (
-                      <button 
-                        onClick={() => markAsRead(notif.id)}
-                        className="p-1 text-green-400 hover:text-green-300"
-                        title="Okundu işaretle"
-                      >
-                        <Check className="w-4 h-4" />
-                      </button>
-                    )}
-                  </div>
-                </div>
+                  </button>
               ))}
             </div>
           )}
@@ -299,7 +318,7 @@ export default function ProfilePage() {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.2 }}
                 >
-                  <h2 className="text-xl font-bold text-white mb-4">Gelen Belgeler</h2>
+                  <h2 ref={docsRef} className="text-xl font-bold text-white mb-4">Gelen Belgeler</h2>
                   {sharedDocs.length > 0 && (
                     <div className="grid sm:grid-cols-2 gap-4 mb-6">
                       {sharedDocs.map(doc => (
@@ -335,7 +354,7 @@ export default function ProfilePage() {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.3 }}
                 >
-                  <h2 className="text-xl font-bold text-white mb-4">Ödevlerim</h2>
+                  <h2 ref={assignmentsRef} className="text-xl font-bold text-white mb-4">Ödevlerim</h2>
                   <div className="space-y-3">
                     {assignments.map(asmt => (
                       <div 
