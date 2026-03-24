@@ -363,6 +363,88 @@ export default function HomePage() {
       )}
       
       <div className="pt-4 md:pt-14">
+        <section className="px-4 py-8 sm:py-12">
+          <div className="max-w-6xl mx-auto">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="mb-8"
+            >
+              <h1 className="text-3xl sm:text-4xl font-bold text-white mb-2">
+                Ne Çalışmak İstiyorsun?
+              </h1>
+              <p className="text-slate-400">
+                Hızlı erişim için kategoriyi seç
+              </p>
+            </motion.div>
+
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-3 xl:grid-cols-6 gap-3 sm:gap-4">
+              {categories.map((cat, i) => (
+                <motion.div
+                  key={cat.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: i * 0.05 }}
+                >
+                  <Link 
+                    href={cat.href}
+                    className={`block ${cat.bgColor} border ${cat.borderColor} rounded-2xl p-5 sm:p-6 text-center hover:scale-105 transition-transform`}
+                  >
+                    <div className={`w-12 h-12 sm:w-14 sm:h-14 mx-auto mb-3 rounded-2xl bg-gradient-to-br ${cat.color} flex items-center justify-center`}>
+                      <cat.icon className="w-6 h-6 sm:w-7 sm:h-7 text-white" />
+                    </div>
+                    <h3 className="text-white font-bold text-sm sm:text-base mb-1">{cat.title}</h3>
+                    <p className="text-slate-400 text-xs hidden sm:block">{cat.desc}</p>
+                  </Link>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {announcements.length > 0 && (
+          <section className="px-4 py-3 sm:py-6">
+            <div className="max-w-6xl mx-auto">
+              <div className="flex items-center justify-between mb-4">
+                <div>
+                  <h2 className="text-lg sm:text-2xl font-bold text-white">Haberler</h2>
+                  <p className="text-slate-400 text-sm">Kısa duyuru başlıkları. Detay için tıkla.</p>
+                </div>
+              </div>
+
+              <div className="flex gap-4 overflow-x-auto pb-2 md:grid md:grid-cols-2 xl:grid-cols-4 md:overflow-visible md:pb-0">
+                {announcements.map((item, i) => {
+                  const images = item.image_urls?.length ? item.image_urls : item.image_url ? [item.image_url] : [];
+                  return (
+                    <motion.button
+                      key={item.id}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: i * 0.05 }}
+                      onClick={() => setSelectedAnnouncement(item)}
+                      className="text-left glass rounded-2xl overflow-hidden hover:scale-[1.01] transition-transform min-w-[82vw] sm:min-w-[46vw] md:min-w-0 md:w-full"
+                    >
+                      {images[0] && (
+                        <div className="h-32 sm:h-36 overflow-hidden">
+                          <img src={proxiedImageSrc(images[0])} alt={item.title} className="w-full h-full object-cover" />
+                        </div>
+                      )}
+                      <div className="p-3 sm:p-4">
+                        <div className="flex items-center gap-2 mb-2 text-xs text-slate-400">
+                          <Bell className="w-4 h-4 text-pink-400" />
+                          {new Date(item.created_at).toLocaleDateString('tr-TR', { day: 'numeric', month: 'short' })}
+                        </div>
+                        <h3 className="text-sm sm:text-base text-white font-bold line-clamp-2 mb-1 sm:mb-2">{item.title}</h3>
+                        <p className="text-slate-400 text-xs sm:text-sm line-clamp-2">{item.content}</p>
+                      </div>
+                    </motion.button>
+                  );
+                })}
+              </div>
+            </div>
+          </section>
+        )}
+
         {user && userAssignments.filter(a => !dismissedAssignments.has(a.id)).length > 0 && (
           <section className="px-4 py-6 sm:py-8">
             <div className="max-w-6xl mx-auto">
@@ -481,116 +563,6 @@ export default function HomePage() {
             </div>
           </section>
         )}
-
-        {announcements.length > 0 && (
-          <section className="px-4 pt-2 lg:hidden">
-            <div className="max-w-6xl mx-auto">
-              <motion.button
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                onClick={() => setSelectedAnnouncement(announcements[0])}
-                className="w-full text-left glass rounded-2xl p-4 border border-pink-500/20 shadow-lg shadow-pink-500/10"
-              >
-                <div className="flex items-start gap-3">
-                  <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-pink-500 to-rose-500 flex items-center justify-center flex-shrink-0">
-                    <Bell className="w-5 h-5 text-white" />
-                  </div>
-                  <div className="min-w-0 flex-1">
-                    <div className="flex items-center gap-2 mb-1 text-[11px] text-pink-300">
-                      <span className="px-2 py-0.5 rounded-full bg-pink-500/20">Son Haber</span>
-                      <span>{new Date(announcements[0].created_at).toLocaleDateString('tr-TR', { day: 'numeric', month: 'short' })}</span>
-                    </div>
-                    <h3 className="text-white font-semibold text-sm leading-5 line-clamp-2">{announcements[0].title}</h3>
-                    <p className="text-slate-400 text-xs mt-1 line-clamp-1">Dokun ve haberi aç</p>
-                  </div>
-                  <ChevronRight className="w-5 h-5 text-slate-500 flex-shrink-0 mt-1" />
-                </div>
-              </motion.button>
-            </div>
-          </section>
-        )}
-
-        {announcements.length > 0 && (
-          <section className="px-4 py-3 sm:py-6">
-            <div className="max-w-6xl mx-auto">
-              <div className="flex items-center justify-between mb-4">
-                <div>
-                  <h2 className="text-lg sm:text-2xl font-bold text-white">Haberler</h2>
-                  <p className="text-slate-400 text-sm">Kısa duyuru başlıkları. Detay için tıkla.</p>
-                </div>
-              </div>
-
-              <div className="flex gap-4 overflow-x-auto pb-2 md:grid md:grid-cols-2 xl:grid-cols-4 md:overflow-visible md:pb-0">
-                {announcements.map((item, i) => {
-                  const images = item.image_urls?.length ? item.image_urls : item.image_url ? [item.image_url] : [];
-                  return (
-                    <motion.button
-                      key={item.id}
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: i * 0.05 }}
-                      onClick={() => setSelectedAnnouncement(item)}
-                      className="text-left glass rounded-2xl overflow-hidden hover:scale-[1.01] transition-transform min-w-[82vw] sm:min-w-[46vw] md:min-w-0 md:w-full"
-                    >
-                      {images[0] && (
-                        <div className="h-32 sm:h-36 overflow-hidden">
-                          <img src={proxiedImageSrc(images[0])} alt={item.title} className="w-full h-full object-cover" />
-                        </div>
-                      )}
-                      <div className="p-3 sm:p-4">
-                        <div className="flex items-center gap-2 mb-2 text-xs text-slate-400">
-                          <Bell className="w-4 h-4 text-pink-400" />
-                          {new Date(item.created_at).toLocaleDateString('tr-TR', { day: 'numeric', month: 'short' })}
-                        </div>
-                        <h3 className="text-sm sm:text-base text-white font-bold line-clamp-2 mb-1 sm:mb-2">{item.title}</h3>
-                        <p className="text-slate-400 text-xs sm:text-sm line-clamp-2">{item.content}</p>
-                      </div>
-                    </motion.button>
-                  );
-                })}
-              </div>
-            </div>
-          </section>
-        )}
-        
-        <section className="px-4 py-8 sm:py-12">
-          <div className="max-w-6xl mx-auto">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="mb-8"
-            >
-              <h1 className="text-3xl sm:text-4xl font-bold text-white mb-2">
-                Ne Çalışmak İstiyorsun?
-              </h1>
-              <p className="text-slate-400">
-                Hızlı erişim için kategoriyi seç
-              </p>
-            </motion.div>
-
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-3 xl:grid-cols-6 gap-3 sm:gap-4">
-              {categories.map((cat, i) => (
-                <motion.div
-                  key={cat.id}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: i * 0.05 }}
-                >
-                  <Link 
-                    href={cat.href}
-                    className={`block ${cat.bgColor} border ${cat.borderColor} rounded-2xl p-5 sm:p-6 text-center hover:scale-105 transition-transform`}
-                  >
-                    <div className={`w-12 h-12 sm:w-14 sm:h-14 mx-auto mb-3 rounded-2xl bg-gradient-to-br ${cat.color} flex items-center justify-center`}>
-                      <cat.icon className="w-6 h-6 sm:w-7 sm:h-7 text-white" />
-                    </div>
-                    <h3 className="text-white font-bold text-sm sm:text-base mb-1">{cat.title}</h3>
-                    <p className="text-slate-400 text-xs hidden sm:block">{cat.desc}</p>
-                  </Link>
-                </motion.div>
-              ))}
-            </div>
-          </div>
-        </section>
 
         {documents.length > 0 && (
           <section className="px-4 py-8 sm:py-12">
