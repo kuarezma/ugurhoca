@@ -235,6 +235,12 @@ export default function HomePage() {
     }
   };
 
+  const proxiedImageSrc = (url?: string) => {
+    if (!url) return '';
+    if (/^https?:\/\//i.test(url)) return `/api/image-proxy?url=${encodeURIComponent(url)}`;
+    return url;
+  };
+
   useEffect(() => {
     const checkSession = async () => {
       const { data: { session } } = await supabase.auth.getSession();
@@ -479,7 +485,7 @@ export default function HomePage() {
                     >
                       {images[0] && (
                         <div className="h-40 overflow-hidden">
-                          <img src={images[0]} alt={item.title} className="w-full h-full object-cover" />
+                          <img src={proxiedImageSrc(images[0])} alt={item.title} className="w-full h-full object-cover" />
                         </div>
                       )}
                       <div className="p-4">
@@ -637,12 +643,12 @@ export default function HomePage() {
               onClick={(e) => e.stopPropagation()}
               className="w-full max-w-5xl max-h-[90vh] overflow-y-auto rounded-3xl bg-slate-900 border border-slate-700 shadow-2xl"
             >
-              {(selectedAnnouncement.image_urls?.length || selectedAnnouncement.image_url) && (
+                      {(selectedAnnouncement.image_urls?.length || selectedAnnouncement.image_url) && (
                 <div className="grid md:grid-cols-2 gap-0">
                   <div className="bg-slate-950 p-2">
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                       {(selectedAnnouncement.image_urls?.length ? selectedAnnouncement.image_urls : [selectedAnnouncement.image_url]).filter(Boolean).map((img: string, idx: number) => (
-                        <img key={idx} src={img} alt={selectedAnnouncement.title} className="w-full h-56 object-cover rounded-xl" />
+                        <img key={idx} src={proxiedImageSrc(img)} alt={selectedAnnouncement.title} className="w-full h-56 object-cover rounded-xl" />
                       ))}
                     </div>
                   </div>

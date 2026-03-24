@@ -38,6 +38,12 @@ const AnnouncementGallery = ({ images, title }: { images: string[]; title: strin
   const [resolvedImages, setResolvedImages] = useState<string[]>(images);
   const hasMultiple = images.length > 1;
 
+  const proxiedImageSrc = (url?: string) => {
+    if (!url) return '';
+    if (/^https?:\/\//i.test(url)) return `/api/image-proxy?url=${encodeURIComponent(url)}`;
+    return url;
+  };
+
   useEffect(() => {
     const resolveYandexImageUrl = async (url: string) => {
       if (!url) return url;
@@ -60,7 +66,7 @@ const AnnouncementGallery = ({ images, title }: { images: string[]; title: strin
   return (
     <div className="relative min-h-[320px] bg-slate-900">
       <img
-        src={resolvedImages[current] || images[current]}
+        src={proxiedImageSrc(resolvedImages[current] || images[current])}
         alt={title}
         className="absolute inset-0 w-full h-full object-cover"
       />
