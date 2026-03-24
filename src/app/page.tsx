@@ -229,6 +229,12 @@ export default function HomePage() {
     return ExternalLink;
   };
 
+  const isNewContent = (createdAt?: string) => {
+    if (!createdAt) return false;
+    const diffDays = (Date.now() - new Date(createdAt).getTime()) / (1000 * 60 * 60 * 24);
+    return diffDays <= 7;
+  };
+
   const resolveYandexImageUrl = async (url: string) => {
     if (!url) return url;
     if (!/disk\.yandex|yadi\.sk/i.test(url)) return url;
@@ -287,14 +293,26 @@ export default function HomePage() {
 
     try {
       const adminId = await extractAdminId();
-      const attachmentText = supportAttachments.length
-        ? `\n\nEkler:\n${supportAttachments.map((a, i) => `${i + 1}. ${a.name} - ${a.url}`).join('\n')}`
-        : '';
+      const payload = {
+        sender_id: user.id,
+        sender_name: user.name || 'Öğrenci',
+        sender_email: user.email || '',
+        text: supportMessage.trim(),
+        attachments: supportAttachments,
+        created_at: new Date().toISOString(),
+      };
 
       await supabase.from('notifications').insert([{ 
         user_id: adminId,
         title: `${user.name || 'Bir öğrenci'} sana yazdı`,
-        message: `${supportMessage.trim()}${attachmentText}`,
+        message: JSON.stringify(payload),
+        type: 'message',
+      }]);
+
+      await supabase.from('notifications').insert([{ 
+        user_id: user.id,
+        title: 'Mesajın teslim edildi',
+        message: 'Mesajın Uğur Hoca’ya ulaştı.',
         type: 'message',
       }]);
 
@@ -476,8 +494,11 @@ export default function HomePage() {
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: i * 0.05 }}
                       onClick={() => setSelectedAnnouncement(item)}
-                      className="text-left glass rounded-2xl overflow-hidden hover:scale-[1.01] transition-transform min-w-[82vw] sm:min-w-[46vw] md:min-w-0 md:w-full"
+                      className="relative text-left glass rounded-2xl overflow-hidden hover:scale-[1.01] transition-transform min-w-[82vw] sm:min-w-[46vw] md:min-w-0 md:w-full"
                     >
+                      {isNewContent(item.created_at) && (
+                        <span className="absolute top-3 right-3 z-10 px-2 py-1 rounded-full bg-pink-500 text-white text-[10px] font-bold shadow-lg">Yeni</span>
+                      )}
                       {images[0] && (
                         <div className="h-32 sm:h-36 overflow-hidden">
                           <img src={proxiedImageSrc(images[0])} alt={item.title} className="w-full h-full object-cover" />
@@ -678,8 +699,11 @@ export default function HomePage() {
                       initial={{ opacity: 0, x: -20 }}
                       animate={{ opacity: 1, x: 0 }}
                       transition={{ delay: i * 0.05 }}
-                      className="bg-white/5 border border-white/10 rounded-xl p-4 hover:bg-white/10 transition-colors cursor-pointer"
+                      className="relative bg-white/5 border border-white/10 rounded-xl p-4 hover:bg-white/10 transition-colors cursor-pointer"
                     >
+                      {isNewContent(doc.created_at) && (
+                        <span className="absolute top-3 right-3 px-2 py-1 rounded-full bg-indigo-500 text-white text-[10px] font-bold">Yeni</span>
+                      )}
                       <div className="flex items-center gap-4">
                         <div className={`w-10 h-10 rounded-lg bg-gradient-to-br ${categories.find(c => c.id === doc.type)?.color || 'from-slate-500 to-slate-600'} flex items-center justify-center flex-shrink-0`}>
                           {(() => {

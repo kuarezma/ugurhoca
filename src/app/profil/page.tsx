@@ -35,7 +35,7 @@ interface Notification {
   user_id: string;
   title: string;
   message: string;
-  type: 'document' | 'assignment' | 'general';
+  type: 'document' | 'assignment' | 'general' | 'message';
   is_read: boolean;
   created_at: string;
 }
@@ -57,6 +57,7 @@ export default function ProfilePage() {
   const [assignments, setAssignments] = useState<any[]>([]);
   const [showNotifications, setShowNotifications] = useState(false);
   const [selectedAssignment, setSelectedAssignment] = useState<any>(null);
+  const [selectedMessage, setSelectedMessage] = useState<Notification | null>(null);
   const docsRef = useRef<HTMLHeadingElement | null>(null);
   const assignmentsRef = useRef<HTMLHeadingElement | null>(null);
   const router = useRouter();
@@ -151,6 +152,11 @@ export default function ProfilePage() {
       }
 
       assignmentsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      return;
+    }
+
+    if (notif.type === 'message') {
+      setSelectedMessage(notif);
     }
   };
 
@@ -182,6 +188,16 @@ export default function ProfilePage() {
         iconWrap: 'bg-sky-500/15 text-sky-300',
         badge: 'bg-sky-500/15 text-sky-200',
         status: 'Görülmedi',
+      };
+    }
+
+    if (notif.type === 'message') {
+      return {
+        wrapper: 'border-indigo-500/30 bg-indigo-500/10 hover:bg-indigo-500/15',
+        icon: Clock3,
+        iconWrap: 'bg-indigo-500/15 text-indigo-300',
+        badge: 'bg-indigo-500/15 text-indigo-200',
+        status: 'Mesaj',
       };
     }
 
@@ -468,6 +484,46 @@ export default function ProfilePage() {
                     <div className="mt-6 flex justify-end">
                       <button
                         onClick={() => setSelectedAssignment(null)}
+                        className="px-4 py-2 rounded-xl bg-white/10 text-white font-medium hover:bg-white/15 transition-colors"
+                      >
+                        Kapat
+                      </button>
+                    </div>
+                  </motion.div>
+                </motion.div>
+              )}
+
+              {selectedMessage && (
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  className="fixed inset-0 z-[100] bg-black/80 backdrop-blur-sm flex items-center justify-center p-4"
+                  onClick={() => setSelectedMessage(null)}
+                >
+                  <motion.div
+                    initial={{ scale: 0.96, opacity: 0, y: 12 }}
+                    animate={{ scale: 1, opacity: 1, y: 0 }}
+                    exit={{ scale: 0.96, opacity: 0, y: 12 }}
+                    onClick={(e) => e.stopPropagation()}
+                    className="w-full max-w-lg rounded-3xl bg-slate-900 border border-slate-700 shadow-2xl p-6 sm:p-8"
+                  >
+                    <div className="flex items-start justify-between gap-4 mb-4">
+                      <div>
+                        <p className="text-xs uppercase tracking-[0.2em] text-indigo-300 mb-2">Mesaj</p>
+                        <h3 className="text-2xl font-bold text-white">{selectedMessage.title}</h3>
+                      </div>
+                      <button
+                        onClick={() => setSelectedMessage(null)}
+                        className="text-slate-400 hover:text-white"
+                      >
+                        <ChevronRight className="w-6 h-6 rotate-45" />
+                      </button>
+                    </div>
+                    <p className="text-slate-300 whitespace-pre-line leading-relaxed">{selectedMessage.message}</p>
+                    <div className="mt-6 flex justify-end">
+                      <button
+                        onClick={() => setSelectedMessage(null)}
                         className="px-4 py-2 rounded-xl bg-white/10 text-white font-medium hover:bg-white/15 transition-colors"
                       >
                         Kapat

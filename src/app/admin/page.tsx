@@ -164,6 +164,7 @@ export default function AdminPage() {
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [showNotifications, setShowNotifications] = useState(false);
   const [selectedNotification, setSelectedNotification] = useState<Notification | null>(null);
+  const [replyText, setReplyText] = useState('');
   const [selectedStudent, setSelectedStudent] = useState<string>('');
   const [showModal, setShowModal] = useState(false);
   const [modalType, setModalType] = useState<'announcement' | 'editAnnouncement' | 'document' | 'writing' | 'assignment' | 'editUser' | 'student' | 'sendDoc' | 'editDocument'>('announcement');
@@ -438,18 +439,60 @@ export default function AdminPage() {
 
   const unreadNotifications = notifications.filter(n => !n.is_read);
 
+  const parseMessagePayload = (notification: Notification | null) => {
+    if (!notification) return null;
+    try {
+      const parsed = JSON.parse(notification.message);
+      if (parsed && typeof parsed === 'object' && parsed.text) return parsed;
+    } catch {}
+    return null;
+  };
+
+  const getNotificationBody = (notification: Notification | null) => {
+    const payload = parseMessagePayload(notification);
+    return payload?.text || notification?.message || '';
+  };
+
   const markNotificationAsRead = async (notification: Notification) => {
     if (!notification.is_read) {
       await supabase.from('notifications').update({ is_read: true }).eq('id', notification.id);
       setNotifications(prev => prev.map(n => n.id === notification.id ? { ...n, is_read: true } : n));
+
+      if (notification.type === 'message') {
+        const payload = parseMessagePayload(notification);
+        if (payload?.sender_id) {
+          await supabase.from('notifications').insert([{ 
+            user_id: payload.sender_id,
+            title: 'Mesajın okundu',
+            message: 'Uğur Hoca mesajını okudu.',
+            type: 'message',
+          }]);
+        }
+      }
     }
     setSelectedNotification(notification);
     setShowNotifications(false);
+    setReplyText('');
   };
 
   const extractUrls = (text: string) => text.match(/https?:\/\/[^\s<>"]+/g) || [];
 
-  const studentMessages = notifications.filter(n => n.type === 'message');
+  const studentMessages = notifications.filter(n => n.type === 'message' && user && n.user_id === user.id);
+
+  const sendReply = async () => {
+    const payload = parseMessagePayload(selectedNotification);
+    if (!selectedNotification || !payload?.sender_id || !replyText.trim()) return;
+
+    await supabase.from('notifications').insert([{ 
+      user_id: payload.sender_id,
+      title: 'Uğur Hoca cevapladı',
+      message: replyText.trim(),
+      type: 'message',
+    }]);
+
+    setReplyText('');
+    alert('Cevap gönderildi.');
+  };
 
   if (!user) return null;
 
@@ -525,7 +568,7 @@ export default function AdminPage() {
                           {notif.is_read ? 'Görüldü' : 'Yeni'}
                         </span>
                       </div>
-                      <p className="text-slate-400 text-xs mt-1 line-clamp-2 whitespace-pre-line">{notif.message}</p>
+                        <p className="text-slate-400 text-xs mt-1 line-clamp-2 whitespace-pre-line">{getNotificationBody(notif)}</p>
                       <p className="text-slate-500 text-[11px] mt-2">{new Date(notif.created_at).toLocaleDateString('tr-TR')}</p>
                     </div>
                   </div>
@@ -563,23 +606,44 @@ export default function AdminPage() {
                 </button>
               </div>
               <div className="p-5 space-y-4">
-                <p className="text-slate-200 whitespace-pre-line leading-relaxed">{selectedNotification.message}</p>
-                {extractUrls(selectedNotification.message).length > 0 && (
+                <p className="text-slate-200 whitespace-pre-line leading-relaxed">{getNotificationBody(selectedNotification)}</p>
+                {parseMessagePayload(selectedNotification)?.attachments?.length > 0 && (
                   <div className="space-y-2">
                     <p className="text-sm font-semibold text-white">Ekler</p>
                     <div className="flex flex-wrap gap-2">
-                      {extractUrls(selectedNotification.message).map((url) => (
+                      {parseMessagePayload(selectedNotification).attachments.map((file: any) => (
                         <a
-                          key={url}
-                          href={url}
+                          key={file.url}
+                          href={file.url}
                           target="_blank"
                           rel="noreferrer"
                           className="inline-flex items-center gap-2 px-3 py-2 rounded-xl bg-white/5 border border-white/10 text-slate-200 hover:bg-white/10 transition-colors"
                         >
                           <Paperclip className="w-4 h-4" />
-                          Ek dosyayı aç
+                          {file.name}
                         </a>
                       ))}
+                    </div>
+                  </div>
+                )}
+                {selectedNotification.type === 'message' && parseMessagePayload(selectedNotification)?.sender_id && (
+                  <div className="space-y-3 pt-4 border-t border-slate-700">
+                    <label className="block text-slate-300 text-sm">Cevap yaz</label>
+                    <textarea
+                      rows={4}
+                      value={replyText}
+                      onChange={(e) => setReplyText(e.target.value)}
+                      className="w-full bg-slate-800/60 border border-slate-700 rounded-2xl px-4 py-3 text-white placeholder:text-slate-500 focus:outline-none focus:border-indigo-500 transition-colors resize-none"
+                      placeholder="Öğrenciye cevap yaz..."
+                    />
+                    <div className="flex justify-end">
+                      <button
+                        onClick={sendReply}
+                        className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-indigo-500 to-purple-500 px-4 py-2 text-white font-semibold hover:from-indigo-600 hover:to-purple-600 transition-all"
+                      >
+                        <Send className="w-4 h-4" />
+                        Gönder
+                      </button>
                     </div>
                   </div>
                 )}
@@ -1126,13 +1190,13 @@ export default function AdminPage() {
                             {notif.is_read ? 'Görüldü' : 'Yeni'}
                           </span>
                         </div>
-                        <p className="text-slate-300 text-sm line-clamp-4 whitespace-pre-line mb-4">{notif.message}</p>
-                        {extractUrls(notif.message).length > 0 && (
+                        <p className="text-slate-300 text-sm line-clamp-4 whitespace-pre-line mb-4">{getNotificationBody(notif)}</p>
+                        {parseMessagePayload(notif)?.attachments?.length > 0 && (
                           <div className="flex flex-wrap gap-2">
-                            {extractUrls(notif.message).map((url) => (
-                              <span key={url} className="inline-flex items-center gap-2 px-2 py-1 rounded-lg bg-white/5 border border-white/10 text-slate-300 text-xs">
+                            {parseMessagePayload(notif).attachments.map((file: any) => (
+                              <span key={file.url} className="inline-flex items-center gap-2 px-2 py-1 rounded-lg bg-white/5 border border-white/10 text-slate-300 text-xs">
                                 <Paperclip className="w-3.5 h-3.5" />
-                                Ek var
+                                {file.name}
                               </span>
                             ))}
                           </div>
