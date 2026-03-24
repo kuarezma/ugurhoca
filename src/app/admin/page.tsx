@@ -158,9 +158,10 @@ export default function AdminPage() {
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [selectedStudent, setSelectedStudent] = useState<string>('');
   const [showModal, setShowModal] = useState(false);
-  const [modalType, setModalType] = useState<'announcement' | 'document' | 'writing' | 'assignment' | 'editUser' | 'student' | 'sendDoc' | 'editDocument'>('announcement');
+  const [modalType, setModalType] = useState<'announcement' | 'editAnnouncement' | 'document' | 'writing' | 'assignment' | 'editUser' | 'student' | 'sendDoc' | 'editDocument'>('announcement');
   const [formData, setFormData] = useState<any>({});
   const [selectedDoc, setSelectedDoc] = useState<any>(null);
+  const [editingAnnouncement, setEditingAnnouncement] = useState<any>(null);
   const [editingUser, setEditingUser] = useState<any>(null);
   const [editingDoc, setEditingDoc] = useState<any>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -250,7 +251,7 @@ export default function AdminPage() {
     router.push('/');
   };
 
-  const openModal = (type: 'announcement' | 'document' | 'writing' | 'assignment' | 'student' | 'sendDoc', studentId?: string, doc?: any) => {
+  const openModal = (type: 'announcement' | 'editAnnouncement' | 'document' | 'writing' | 'assignment' | 'student' | 'sendDoc', studentId?: string, doc?: any) => {
     setModalType(type);
     if (studentId) setSelectedStudent(studentId);
     if (doc) setSelectedDoc(doc);
@@ -314,6 +315,30 @@ export default function AdminPage() {
       } else {
         const fallbackItem = { ...newItem, id: Date.now().toString() };
         const updated = [fallbackItem, ...announcements];
+        setAnnouncements(updated);
+        localStorage.setItem('matematiklab_announcements', JSON.stringify(updated));
+      }
+    } else if (modalType === 'editAnnouncement') {
+      const { error } = await supabase
+        .from('announcements')
+        .update({
+          title: formData.title,
+          content: formData.description,
+          image_url: imageUrls[0] || formData.image_url || '',
+          image_urls: imageUrls.length ? imageUrls : [],
+          link_url: formData.link_url || '',
+        })
+        .eq('id', editingAnnouncement.id);
+
+      if (!error) {
+        const updated = announcements.map(a => a.id === editingAnnouncement.id ? {
+          ...a,
+          title: formData.title,
+          content: formData.description,
+          image_url: imageUrls[0] || formData.image_url || '',
+          image_urls: imageUrls.length ? imageUrls : [],
+          link_url: formData.link_url || '',
+        } : a);
         setAnnouncements(updated);
         localStorage.setItem('matematiklab_announcements', JSON.stringify(updated));
       }
@@ -526,12 +551,30 @@ export default function AdminPage() {
                             <h3 className="text-xl font-bold text-white mb-2">{announcement.title}</h3>
                             <p className="text-slate-300">{announcement.content}</p>
                           </div>
-                          <button
-                            onClick={() => deleteItem('announcement', announcement.id)}
-                            className="p-2 text-slate-400 hover:text-red-400 transition-colors"
-                          >
-                            <Trash2 className="w-5 h-5" />
-                          </button>
+                            <div className="flex items-center gap-2">
+                              <button
+                                onClick={() => {
+                                  setEditingAnnouncement(announcement);
+                                  setFormData({
+                                    title: announcement.title,
+                                    description: announcement.content,
+                                    image_urls: (announcement.image_urls?.length ? announcement.image_urls : announcement.image_url ? [announcement.image_url] : []).join('\n'),
+                                    link_url: announcement.link_url || '',
+                                  });
+                                  setModalType('editAnnouncement');
+                                  setShowModal(true);
+                                }}
+                                className="p-2 text-slate-400 hover:text-blue-400 transition-colors"
+                              >
+                                <Edit3 className="w-5 h-5" />
+                              </button>
+                              <button
+                                onClick={() => deleteItem('announcement', announcement.id)}
+                                className="p-2 text-slate-400 hover:text-red-400 transition-colors"
+                              >
+                                <Trash2 className="w-5 h-5" />
+                              </button>
+                            </div>
                         </div>
                       </div>
                     </motion.div>
@@ -1116,7 +1159,7 @@ export default function AdminPage() {
             >
               <div className="flex items-center justify-between mb-6">
                 <h2 className="text-2xl font-bold text-white">
-                  {modalType === 'announcement' ? 'Yeni Duyuru' : modalType === 'document' ? 'Yeni Belge' : modalType === 'editDocument' ? 'Belge Düzenle' : modalType === 'assignment' ? 'Yeni Ödev' : modalType === 'student' ? 'Yeni Öğrenci' : modalType === 'editUser' ? 'Kullanıcı Düzenle' : modalType === 'sendDoc' ? 'Belge Gönder' : 'Yeni Yazı'}
+                  {modalType === 'announcement' ? 'Yeni Duyuru' : modalType === 'editAnnouncement' ? 'Duyuru Düzenle' : modalType === 'document' ? 'Yeni Belge' : modalType === 'editDocument' ? 'Belge Düzenle' : modalType === 'assignment' ? 'Yeni Ödev' : modalType === 'student' ? 'Yeni Öğrenci' : modalType === 'editUser' ? 'Kullanıcı Düzenle' : modalType === 'sendDoc' ? 'Belge Gönder' : 'Yeni Yazı'}
                 </h2>
                 <button onClick={() => { setShowModal(false); setEditingUser(null); }} className="text-slate-400 hover:text-white">
                   <X className="w-6 h-6" />
@@ -1494,7 +1537,7 @@ export default function AdminPage() {
                     />
                   </div>
 
-                  {modalType === 'announcement' && (
+                  {(modalType === 'announcement' || modalType === 'editAnnouncement') && (
                     <div>
                       <label className="block text-slate-300 mb-2 text-sm">Görsel Linkleri</label>
                       <textarea
@@ -1509,7 +1552,7 @@ export default function AdminPage() {
                     </div>
                   )}
 
-                  {modalType === 'announcement' && (
+                  {(modalType === 'announcement' || modalType === 'editAnnouncement') && (
                     <div>
                       <label className="block text-slate-300 mb-2 text-sm">Detay Linki</label>
                       <input
@@ -1546,7 +1589,7 @@ export default function AdminPage() {
 
                   <div>
                     <label className="block text-slate-300 mb-2 text-sm">
-                      {modalType === 'announcement' ? 'Duyuru İçeriği' : modalType === 'document' ? 'Belge Açıklaması' : modalType === 'assignment' ? 'Ödev Detayları' : 'Yazı İçeriği'}
+                      {modalType === 'announcement' || modalType === 'editAnnouncement' ? 'Duyuru İçeriği' : modalType === 'document' ? 'Belge Açıklaması' : modalType === 'assignment' ? 'Ödev Detayları' : 'Yazı İçeriği'}
                     </label>
                     <textarea
                       required
