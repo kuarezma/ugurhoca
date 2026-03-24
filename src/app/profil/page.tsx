@@ -5,7 +5,7 @@ import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { 
   Calculator, LogOut, ArrowLeft, Settings, ChevronRight, Shield, Bell,
-  FileText, ClipboardList, BookOpen
+  FileText, ClipboardList, BookOpen, CheckCircle2, Clock3
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
@@ -154,6 +154,46 @@ export default function ProfilePage() {
     }
   };
 
+  const getNotificationStyle = (notif: Notification) => {
+    if (notif.is_read) {
+      return {
+        wrapper: 'border-slate-700/60 bg-slate-700/20 hover:bg-slate-700/35',
+        icon: CheckCircle2,
+        iconWrap: 'bg-emerald-500/15 text-emerald-400',
+        badge: 'bg-emerald-500/15 text-emerald-300',
+        status: 'Görüldü',
+      };
+    }
+
+    if (notif.type === 'assignment') {
+      return {
+        wrapper: 'border-amber-500/30 bg-amber-500/10 hover:bg-amber-500/15',
+        icon: Clock3,
+        iconWrap: 'bg-amber-500/15 text-amber-300',
+        badge: 'bg-amber-500/15 text-amber-200',
+        status: 'Görülmedi',
+      };
+    }
+
+    if (notif.type === 'document') {
+      return {
+        wrapper: 'border-sky-500/30 bg-sky-500/10 hover:bg-sky-500/15',
+        icon: Clock3,
+        iconWrap: 'bg-sky-500/15 text-sky-300',
+        badge: 'bg-sky-500/15 text-sky-200',
+        status: 'Görülmedi',
+      };
+    }
+
+    return {
+      wrapper: 'border-pink-500/20 bg-pink-500/10 hover:bg-pink-500/15',
+      icon: Clock3,
+      iconWrap: 'bg-pink-500/15 text-pink-300',
+      badge: 'bg-pink-500/15 text-pink-200',
+      status: 'Görülmedi',
+    };
+  };
+
   const handleLogout = async () => {
     await supabase.auth.signOut();
     router.push('/');
@@ -230,14 +270,26 @@ export default function ProfilePage() {
           ) : (
             <div className="divide-y divide-slate-700">
               {notifications.map(notif => (
+                (() => {
+                  const style = getNotificationStyle(notif);
+                  const Icon = style.icon;
+                  return (
                 <button 
                   key={notif.id} 
                   onClick={() => handleNotificationClick(notif)}
-                  className={`w-full text-left p-4 hover:bg-slate-700/50 transition-colors ${!notif.is_read ? 'bg-slate-700/30' : ''}`}
+                  className={`w-full text-left p-4 transition-colors border-l-4 ${style.wrapper}`}
                 >
                     <div className="flex items-start justify-between gap-2">
-                      <div className="flex-1">
-                        <p className="text-white font-medium text-sm">{notif.title}</p>
+                      <div className={`w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 ${style.iconWrap}`}>
+                        <Icon className="w-5 h-5" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-start justify-between gap-2">
+                          <p className="text-white font-medium text-sm">{notif.title}</p>
+                          <span className={`px-2 py-0.5 rounded-full text-[11px] font-semibold whitespace-nowrap ${style.badge}`}>
+                            {style.status}
+                          </span>
+                        </div>
                         <p className="text-slate-400 text-xs mt-1">{notif.message}</p>
                         <span className="inline-flex mt-2 px-2 py-0.5 rounded-full bg-white/5 text-slate-300 text-[11px]">
                           {notif.type === 'assignment' ? 'Ödev' : notif.type === 'document' ? 'Belge' : 'Genel'}
@@ -246,13 +298,11 @@ export default function ProfilePage() {
                           {new Date(notif.created_at).toLocaleDateString('tr-TR')}
                         </p>
                       </div>
-                      {!notif.is_read ? (
-                        <span className="mt-1 text-green-400 text-xs font-semibold">Aç</span>
-                      ) : (
-                        <ChevronRight className="w-4 h-4 mt-1 text-slate-500" />
-                      )}
+                      <ChevronRight className={`w-4 h-4 mt-1 ${notif.is_read ? 'text-emerald-400' : 'text-amber-300'}`} />
                     </div>
                   </button>
+                  );
+                })()
               ))}
             </div>
           )}
