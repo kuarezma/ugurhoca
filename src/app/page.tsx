@@ -207,6 +207,14 @@ export default function HomePage() {
   const [announcements, setAnnouncements] = useState<any[]>([]);
   const [selectedAnnouncement, setSelectedAnnouncement] = useState<any>(null);
 
+  const getAnnouncementLinkLabel = (url?: string) => {
+    if (!url) return 'Detaya Git';
+    const lower = url.toLowerCase();
+    if (lower.includes('.pdf')) return 'PDF Aç';
+    if (lower.includes('drive.google') || lower.includes('yadi.sk') || lower.includes('disk.yandex')) return 'Dosyayı Aç';
+    return 'Siteye Git';
+  };
+
   useEffect(() => {
     const checkSession = async () => {
       const { data: { session } } = await supabase.auth.getSession();
@@ -621,7 +629,7 @@ export default function HomePage() {
                         rel="noreferrer"
                         className="inline-flex items-center gap-2 mt-6 px-4 py-2 rounded-xl bg-gradient-to-r from-indigo-500 to-purple-500 text-white font-semibold hover:from-indigo-600 hover:to-purple-600 transition-colors"
                       >
-                        Detaya Git
+                        {getAnnouncementLinkLabel(selectedAnnouncement.link_url)}
                         <ChevronRight className="w-4 h-4" />
                       </a>
                     )}
@@ -647,7 +655,7 @@ export default function HomePage() {
                       rel="noreferrer"
                       className="inline-flex items-center gap-2 mt-6 px-4 py-2 rounded-xl bg-gradient-to-r from-indigo-500 to-purple-500 text-white font-semibold hover:from-indigo-600 hover:to-purple-600 transition-colors"
                     >
-                      Detaya Git
+                      {getAnnouncementLinkLabel(selectedAnnouncement.link_url)}
                       <ChevronRight className="w-4 h-4" />
                     </a>
                   )}
