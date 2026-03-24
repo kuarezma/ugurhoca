@@ -1,13 +1,14 @@
 'use client';
 
 import Link from 'next/link';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, type FormEvent } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Calculator, BookOpen, Gamepad2, FileText, ClipboardList,
   LogIn, LogOut, Menu, X, Play, Video, Brain,
   ChevronRight, Clock, Star, Lock, AppWindow,
-  Bell, Download, AlertCircle, ExternalLink, FileText as FileDoc, FolderOpen
+  Bell, Download, AlertCircle, ExternalLink, FileText as FileDoc, FolderOpen,
+  MessageSquareText, Paperclip, Send, Upload, Image as ImageIcon
 } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 
@@ -207,6 +208,10 @@ export default function HomePage() {
   const [dismissedAssignments, setDismissedAssignments] = useState<Set<string>>(new Set());
   const [announcements, setAnnouncements] = useState<any[]>([]);
   const [selectedAnnouncement, setSelectedAnnouncement] = useState<any>(null);
+  const [supportMessage, setSupportMessage] = useState('');
+  const [supportAttachments, setSupportAttachments] = useState<{ name: string; url: string; kind: 'image' | 'file' }[]>([]);
+  const [supportSending, setSupportSending] = useState(false);
+  const [supportSent, setSupportSent] = useState(false);
 
   const getAnnouncementLinkLabel = (url?: string) => {
     if (!url) return 'Detaya Git';
@@ -240,6 +245,68 @@ export default function HomePage() {
     if (!url) return '';
     if (/^https?:\/\//i.test(url)) return `/api/image-proxy?url=${encodeURIComponent(url)}`;
     return url;
+  };
+
+  const extractAdminId = async () => {
+    const { data } = await supabase
+      .from('profiles')
+      .select('id')
+      .eq('email', 'admin@ugurhoca.com')
+      .single();
+
+    return data?.id || 'admin-1';
+  };
+
+  const uploadSupportAttachments = async (files: FileList | null) => {
+    if (!files?.length) return;
+
+    const uploads = await Promise.all(Array.from(files).map(async (file) => {
+      const fileName = `support_${Date.now()}_${Math.random().toString(36).slice(2)}_${file.name}`;
+      const { data, error } = await supabase.storage.from('documents').upload(fileName, file, { upsert: false });
+
+      if (error) throw error;
+
+      const { data: urlData } = supabase.storage.from('documents').getPublicUrl(data.path);
+      const kind: 'image' | 'file' = file.type.startsWith('image/') ? 'image' : 'file';
+      return { name: file.name, url: urlData.publicUrl, kind };
+    }));
+
+    setSupportAttachments(prev => [...prev, ...uploads]);
+  };
+
+  const removeSupportAttachment = (index: number) => {
+    setSupportAttachments(prev => prev.filter((_, i) => i !== index));
+  };
+
+  const handleSupportSubmit = async (e: FormEvent) => {
+    e.preventDefault();
+    if (!user || user.isAdmin) return;
+    if (!supportMessage.trim() && supportAttachments.length === 0) return;
+
+    setSupportSending(true);
+
+    try {
+      const adminId = await extractAdminId();
+      const attachmentText = supportAttachments.length
+        ? `\n\nEkler:\n${supportAttachments.map((a, i) => `${i + 1}. ${a.name} - ${a.url}`).join('\n')}`
+        : '';
+
+      await supabase.from('notifications').insert([{ 
+        user_id: adminId,
+        title: `${user.name || 'Bir öğrenci'} sana yazdı`,
+        message: `${supportMessage.trim()}${attachmentText}`,
+        type: 'message',
+      }]);
+
+      setSupportMessage('');
+      setSupportAttachments([]);
+      setSupportSent(true);
+      setTimeout(() => setSupportSent(false), 2500);
+    } catch (error) {
+      alert('Mesaj gönderilemedi. Lütfen tekrar dene.');
+    } finally {
+      setSupportSending(false);
+    }
   };
 
   useEffect(() => {
@@ -658,6 +725,109 @@ export default function HomePage() {
             </div>
           </section>
         )}
+
+        <section className="px-4 py-8 sm:py-12">
+          <div className="max-w-6xl mx-auto">
+            <div className="relative overflow-hidden rounded-3xl border border-indigo-500/20 bg-gradient-to-br from-slate-900/90 via-slate-900/80 to-slate-800/90 backdrop-blur-xl">
+              <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(99,102,241,0.18),transparent_30%),radial-gradient(circle_at_bottom_left,rgba(236,72,153,0.14),transparent_30%)]" />
+              <div className="relative p-6 sm:p-8">
+                <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6 mb-6">
+                  <div className="max-w-2xl">
+                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/15 text-indigo-300 text-xs font-semibold mb-3">
+                      <MessageSquareText className="w-4 h-4" />
+                      Uğur Hoca'ya Yaz
+                    </div>
+                    <h2 className="text-2xl sm:text-3xl font-bold text-white mb-2">Sorunu yaz, belge veya resim ekle</h2>
+                    <p className="text-slate-400 text-sm sm:text-base">Mesajın ve eklerin doğrudan bana bildirim olarak gelir.</p>
+                  </div>
+                  {user && !user.isAdmin && (
+                    <div className="flex items-center gap-2 text-xs text-slate-400">
+                      <Paperclip className="w-4 h-4" />
+                      PDF, resim ve kısa not gönderebilirsin
+                    </div>
+                  )}
+                </div>
+
+                {user && !user.isAdmin ? (
+                  <form onSubmit={handleSupportSubmit} className="space-y-4">
+                    <div>
+                      <label className="block text-slate-300 mb-2 text-sm">Mesajın</label>
+                      <textarea
+                        rows={5}
+                        value={supportMessage}
+                        onChange={(e) => setSupportMessage(e.target.value)}
+                        placeholder="Uğur Hoca, ..."
+                        className="w-full bg-slate-800/60 border border-slate-700 rounded-2xl px-4 py-3 text-white placeholder:text-slate-500 focus:outline-none focus:border-indigo-500 transition-colors resize-none"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-slate-300 mb-2 text-sm">Belge / Resim Ekle</label>
+                      <input
+                        type="file"
+                        multiple
+                        accept="image/*,.pdf,.doc,.docx"
+                        className="hidden"
+                        id="support-upload"
+                        onChange={async (e) => {
+                          if (e.target.files?.length) {
+                            try {
+                              await uploadSupportAttachments(e.target.files);
+                              e.target.value = '';
+                            } catch {
+                              alert('Dosya yüklenemedi.');
+                            }
+                          }
+                        }}
+                      />
+                      <label
+                        htmlFor="support-upload"
+                        className="flex items-center justify-center gap-2 w-full rounded-2xl border border-dashed border-slate-700 bg-slate-800/50 px-4 py-5 text-slate-300 hover:bg-slate-800 hover:border-indigo-500 transition-colors cursor-pointer"
+                      >
+                        <Upload className="w-5 h-5" />
+                        Resim veya belge seç
+                      </label>
+                    </div>
+
+                    {supportAttachments.length > 0 && (
+                      <div className="flex flex-wrap gap-2">
+                        {supportAttachments.map((file, index) => (
+                          <div key={`${file.url}-${index}`} className="flex items-center gap-2 px-3 py-2 rounded-xl bg-white/5 border border-white/10 text-sm text-slate-200">
+                            {file.kind === 'image' ? <ImageIcon className="w-4 h-4 text-pink-300" /> : <FileDoc className="w-4 h-4 text-sky-300" />}
+                            <span className="max-w-[180px] truncate">{file.name}</span>
+                            <button type="button" onClick={() => removeSupportAttachment(index)} className="text-slate-400 hover:text-white">×</button>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+
+                    <div className="flex flex-col sm:flex-row sm:items-center gap-3 justify-between">
+                      <p className="text-xs text-slate-500">Gönderdiğin mesaj anında bildirim olarak iletilir.</p>
+                      <button
+                        type="submit"
+                        disabled={supportSending}
+                        className="inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-indigo-500 to-purple-500 px-5 py-3 text-white font-semibold hover:from-indigo-600 hover:to-purple-600 transition-all disabled:opacity-60"
+                      >
+                        <Send className="w-4 h-4" />
+                        {supportSending ? 'Gönderiliyor...' : 'Gönder'}
+                      </button>
+                    </div>
+
+                    {supportSent && (
+                      <div className="rounded-2xl border border-emerald-500/20 bg-emerald-500/10 px-4 py-3 text-emerald-300 text-sm">
+                        Mesajın gönderildi.
+                      </div>
+                    )}
+                  </form>
+                ) : (
+                  <div className="rounded-2xl border border-white/10 bg-white/5 p-5 text-slate-300">
+                    Mesaj göndermek için giriş yapman gerekiyor.
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        </section>
 
         <footer className="px-4 py-6 border-t border-slate-800/50 mt-8">
           <div className="max-w-6xl mx-auto text-center">

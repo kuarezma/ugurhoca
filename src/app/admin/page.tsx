@@ -8,7 +8,7 @@ import {
   Image, Megaphone, Edit3, Trash2, Upload, X,
   Calendar, Eye, Download, Check, AlertCircle, Sparkles,
   Users, BookOpen, RefreshCw, GraduationCap, Send, Bell,
-  UserCheck, ClipboardList
+  UserCheck, ClipboardList, MessageSquareText, Paperclip
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
@@ -147,7 +147,7 @@ interface Notification {
   user_id: string;
   title: string;
   message: string;
-  type: 'document' | 'assignment' | 'general';
+  type: 'document' | 'assignment' | 'general' | 'message';
   is_read: boolean;
   created_at: string;
 }
@@ -162,6 +162,8 @@ export default function AdminPage() {
   const [assignments, setAssignments] = useState<any[]>([]);
   const [sharedDocs, setSharedDocs] = useState<SharedDoc[]>([]);
   const [notifications, setNotifications] = useState<Notification[]>([]);
+  const [showNotifications, setShowNotifications] = useState(false);
+  const [selectedNotification, setSelectedNotification] = useState<Notification | null>(null);
   const [selectedStudent, setSelectedStudent] = useState<string>('');
   const [showModal, setShowModal] = useState(false);
   const [modalType, setModalType] = useState<'announcement' | 'editAnnouncement' | 'document' | 'writing' | 'assignment' | 'editUser' | 'student' | 'sendDoc' | 'editDocument'>('announcement');
@@ -434,6 +436,19 @@ export default function AdminPage() {
     return date.toLocaleDateString('tr-TR', { day: 'numeric', month: 'long', year: 'numeric' });
   };
 
+  const unreadNotifications = notifications.filter(n => !n.is_read);
+
+  const markNotificationAsRead = async (notification: Notification) => {
+    if (!notification.is_read) {
+      await supabase.from('notifications').update({ is_read: true }).eq('id', notification.id);
+      setNotifications(prev => prev.map(n => n.id === notification.id ? { ...n, is_read: true } : n));
+    }
+    setSelectedNotification(notification);
+    setShowNotifications(false);
+  };
+
+  const extractUrls = (text: string) => text.match(/https?:\/\/[^\s<>"]+/g) || [];
+
   if (!user) return null;
 
   return (
@@ -452,6 +467,17 @@ export default function AdminPage() {
           </Link>
 
           <div className="flex items-center gap-2 sm:gap-4">
+            <button
+              onClick={() => setShowNotifications(v => !v)}
+              className="relative p-2 text-slate-300 hover:text-white transition-colors"
+            >
+              <Bell className="w-5 h-5" />
+              {unreadNotifications.length > 0 && (
+                <span className="absolute -top-0.5 -right-0.5 w-5 h-5 bg-red-500 rounded-full text-[10px] text-white flex items-center justify-center font-bold">
+                  {unreadNotifications.length}
+                </span>
+              )}
+            </button>
             <span className="hidden md:block px-4 py-2 bg-orange-500/20 text-orange-400 rounded-full text-sm font-semibold">
               Admin Paneli
             </span>
@@ -462,6 +488,104 @@ export default function AdminPage() {
           </div>
         </div>
       </nav>
+
+      {showNotifications && (
+        <motion.div
+          initial={{ opacity: 0, y: -8 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="fixed top-16 right-4 left-4 sm:left-auto sm:w-[420px] z-50 max-h-[70vh] overflow-y-auto rounded-3xl border border-slate-700 bg-slate-900/95 backdrop-blur-xl shadow-2xl"
+        >
+          <div className="flex items-center justify-between p-4 border-b border-slate-700">
+            <div>
+              <h3 className="text-white font-bold">Bildirimler</h3>
+              <p className="text-slate-400 text-xs">Öğrenci mesajları ve istekler</p>
+            </div>
+            <span className="text-xs text-slate-400">{unreadNotifications.length} okunmamış</span>
+          </div>
+          {notifications.length === 0 ? (
+            <p className="text-slate-400 text-center py-8">Henüz bildirim yok</p>
+          ) : (
+            <div className="divide-y divide-slate-700/70">
+              {notifications.map((notif) => (
+                <button
+                  key={notif.id}
+                  onClick={() => markNotificationAsRead(notif)}
+                  className={`w-full text-left p-4 transition-colors hover:bg-white/5 ${notif.is_read ? 'bg-slate-800/40' : 'bg-indigo-500/10'}`}
+                >
+                  <div className="flex items-start gap-3">
+                    <div className={`w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 ${notif.is_read ? 'bg-emerald-500/15 text-emerald-300' : 'bg-indigo-500/15 text-indigo-300'}`}>
+                      {notif.type === 'message' ? <MessageSquareText className="w-5 h-5" /> : <Bell className="w-5 h-5" />}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-start justify-between gap-2">
+                        <p className="text-white font-medium text-sm">{notif.title}</p>
+                        <span className={`px-2 py-0.5 rounded-full text-[10px] font-semibold whitespace-nowrap ${notif.is_read ? 'bg-emerald-500/15 text-emerald-300' : 'bg-amber-500/15 text-amber-200'}`}>
+                          {notif.is_read ? 'Görüldü' : 'Yeni'}
+                        </span>
+                      </div>
+                      <p className="text-slate-400 text-xs mt-1 line-clamp-2 whitespace-pre-line">{notif.message}</p>
+                      <p className="text-slate-500 text-[11px] mt-2">{new Date(notif.created_at).toLocaleDateString('tr-TR')}</p>
+                    </div>
+                  </div>
+                </button>
+              ))}
+            </div>
+          )}
+        </motion.div>
+      )}
+
+      <AnimatePresence>
+        {selectedNotification && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[100] bg-black/75 backdrop-blur-sm flex items-center justify-center p-4"
+            onClick={() => setSelectedNotification(null)}
+          >
+            <motion.div
+              initial={{ opacity: 0, scale: 0.96, y: 10 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.96, y: 10 }}
+              onClick={(e) => e.stopPropagation()}
+              className="w-full max-w-2xl rounded-3xl border border-slate-700 bg-slate-900 shadow-2xl overflow-hidden"
+            >
+              <div className="p-5 border-b border-slate-700 flex items-start justify-between gap-4">
+                <div>
+                  <p className="text-xs uppercase tracking-[0.2em] text-indigo-300 mb-2">Öğrenci Mesajı</p>
+                  <h3 className="text-2xl font-bold text-white">{selectedNotification.title}</h3>
+                  <p className="text-slate-500 text-sm mt-1">{new Date(selectedNotification.created_at).toLocaleDateString('tr-TR')}</p>
+                </div>
+                <button onClick={() => setSelectedNotification(null)} className="text-slate-400 hover:text-white">
+                  <X className="w-6 h-6" />
+                </button>
+              </div>
+              <div className="p-5 space-y-4">
+                <p className="text-slate-200 whitespace-pre-line leading-relaxed">{selectedNotification.message}</p>
+                {extractUrls(selectedNotification.message).length > 0 && (
+                  <div className="space-y-2">
+                    <p className="text-sm font-semibold text-white">Ekler</p>
+                    <div className="flex flex-wrap gap-2">
+                      {extractUrls(selectedNotification.message).map((url) => (
+                        <a
+                          key={url}
+                          href={url}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="inline-flex items-center gap-2 px-3 py-2 rounded-xl bg-white/5 border border-white/10 text-slate-200 hover:bg-white/10 transition-colors"
+                        >
+                          <Paperclip className="w-4 h-4" />
+                          Ek dosyayı aç
+                        </a>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       <div className="pt-20 sm:pt-24 px-4 sm:px-6">
         <div className="container mx-auto">
