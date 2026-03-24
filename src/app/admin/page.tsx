@@ -154,7 +154,7 @@ interface Notification {
 
 export default function AdminPage() {
   const [user, setUser] = useState<any>(null);
-  const [activeTab, setActiveTab] = useState<'announcements' | 'documents' | 'writings' | 'users' | 'privateStudents' | 'gradeUpdate' | 'assignments'>('announcements');
+  const [activeTab, setActiveTab] = useState<'announcements' | 'documents' | 'writings' | 'users' | 'privateStudents' | 'messages' | 'gradeUpdate' | 'assignments'>('announcements');
   const [announcements, setAnnouncements] = useState<Announcement[]>([]);
   const [documents, setDocuments] = useState<Document[]>([]);
   const [allUsers, setAllUsers] = useState<any[]>([]);
@@ -449,6 +449,8 @@ export default function AdminPage() {
 
   const extractUrls = (text: string) => text.match(/https?:\/\/[^\s<>"]+/g) || [];
 
+  const studentMessages = notifications.filter(n => n.type === 'message');
+
   if (!user) return null;
 
   return (
@@ -610,6 +612,7 @@ export default function AdminPage() {
               { id: 'writings', label: 'Yazılar', icon: Edit3, color: 'from-purple-500 to-violet-500' },
               { id: 'users', label: 'Kullanıcılar', icon: Users, color: 'from-green-500 to-emerald-500' },
               { id: 'privateStudents', label: 'Öğrencilerim', icon: BookOpen, color: 'from-amber-500 to-orange-500' },
+              { id: 'messages', label: 'Mesajlar', icon: MessageSquareText, color: 'from-indigo-500 to-purple-500' },
               { id: 'gradeUpdate', label: 'Sınıf Güncelle', icon: RefreshCw, color: 'from-teal-500 to-cyan-500' },
               { id: 'assignments', label: 'Ödevlendirme', icon: ClipboardList, color: 'from-rose-500 to-pink-500' }
             ].map((tab) => (
@@ -1070,6 +1073,72 @@ export default function AdminPage() {
                         </motion.div>
                       );
                     })}
+                  </div>
+                )}
+              </motion.div>
+            )}
+
+            {activeTab === 'messages' && (
+              <motion.div
+                key="messages"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                className="space-y-6"
+              >
+                <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-6">
+                  <div>
+                    <h2 className="text-2xl font-bold text-white mb-1">Öğrenci Mesajları</h2>
+                    <p className="text-slate-400 text-sm sm:text-base">Uğur Hoca'ya yazılan mesajlar ve ekler</p>
+                  </div>
+                  <div className="flex items-center gap-2 text-sm text-slate-400">
+                    <MessageSquareText className="w-4 h-4" />
+                    {studentMessages.length} mesaj
+                  </div>
+                </div>
+
+                {studentMessages.length === 0 ? (
+                  <div className="glass rounded-2xl p-8 sm:p-12 text-center">
+                    <MessageSquareText className="w-16 h-16 mx-auto mb-4 text-slate-500" />
+                    <p className="text-slate-400">Henüz öğrenci mesajı yok</p>
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
+                    {studentMessages.map((notif) => (
+                      <motion.button
+                        key={notif.id}
+                        whileHover={{ scale: 1.01 }}
+                        whileTap={{ scale: 0.99 }}
+                        onClick={() => markNotificationAsRead(notif)}
+                        className={`text-left glass rounded-2xl p-5 border transition-all ${notif.is_read ? 'border-emerald-500/20' : 'border-indigo-500/30'}`}
+                      >
+                        <div className="flex items-start justify-between gap-3 mb-3">
+                          <div className="flex items-center gap-3 min-w-0">
+                            <div className={`w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0 ${notif.is_read ? 'bg-emerald-500/15 text-emerald-300' : 'bg-indigo-500/15 text-indigo-300'}`}>
+                              <MessageSquareText className="w-5 h-5" />
+                            </div>
+                            <div className="min-w-0">
+                              <p className="text-white font-semibold truncate">{notif.title}</p>
+                              <p className="text-slate-500 text-xs">{new Date(notif.created_at).toLocaleDateString('tr-TR')}</p>
+                            </div>
+                          </div>
+                          <span className={`px-2 py-0.5 rounded-full text-[10px] font-semibold ${notif.is_read ? 'bg-emerald-500/15 text-emerald-300' : 'bg-amber-500/15 text-amber-200'}`}>
+                            {notif.is_read ? 'Görüldü' : 'Yeni'}
+                          </span>
+                        </div>
+                        <p className="text-slate-300 text-sm line-clamp-4 whitespace-pre-line mb-4">{notif.message}</p>
+                        {extractUrls(notif.message).length > 0 && (
+                          <div className="flex flex-wrap gap-2">
+                            {extractUrls(notif.message).map((url) => (
+                              <span key={url} className="inline-flex items-center gap-2 px-2 py-1 rounded-lg bg-white/5 border border-white/10 text-slate-300 text-xs">
+                                <Paperclip className="w-3.5 h-3.5" />
+                                Ek var
+                              </span>
+                            ))}
+                          </div>
+                        )}
+                      </motion.button>
+                    ))}
                   </div>
                 )}
               </motion.div>
