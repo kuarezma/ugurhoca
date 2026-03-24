@@ -201,6 +201,7 @@ const Navbar = ({ user, onLogout }: { user: any; onLogout: () => void }) => {
 export default function HomePage() {
   const [user, setUser] = useState<any>(null);
   const [documents, setDocuments] = useState<any[]>([]);
+  const [writings, setWritings] = useState<any[]>([]);
   const [assignments, setAssignments] = useState<any[]>([]);
   const [userAssignments, setUserAssignments] = useState<any[]>([]);
   const [dismissedAssignments, setDismissedAssignments] = useState<Set<string>>(new Set());
@@ -273,6 +274,12 @@ export default function HomePage() {
       if (data) setDocuments(data);
     };
     loadDocuments();
+
+    const loadWritings = async () => {
+      const { data } = await supabase.from('documents').select('*').eq('type', 'writing').order('created_at', { ascending: false }).limit(4);
+      if (data) setWritings(data);
+    };
+    loadWritings();
 
     const loadAllAssignments = async () => {
       const { data } = await supabase.from('assignments').select('*').order('created_at', { ascending: false });
@@ -560,6 +567,43 @@ export default function HomePage() {
                   </div>
                 </div>
               </motion.div>
+            </div>
+          </section>
+        )}
+
+        {writings.length > 0 && (
+          <section className="px-4 py-3 sm:py-6">
+            <div className="max-w-6xl mx-auto">
+              <div className="flex items-center justify-between mb-4">
+                <div>
+                  <h2 className="text-lg sm:text-2xl font-bold text-white">Yazılar</h2>
+                  <p className="text-slate-400 text-sm">Kısa yazılar ve paylaşımlar.</p>
+                </div>
+                <Link href="/icerikler?type=writing" className="text-purple-400 hover:text-purple-300 text-sm font-medium flex items-center gap-1">
+                  Tümünü Gör <ChevronRight className="w-4 h-4" />
+                </Link>
+              </div>
+
+              <div className="flex gap-4 overflow-x-auto pb-2 md:grid md:grid-cols-2 xl:grid-cols-4 md:overflow-visible md:pb-0">
+                {writings.map((writing, i) => (
+                  <motion.button
+                    key={writing.id}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: i * 0.05 }}
+                    className="text-left glass rounded-2xl overflow-hidden hover:scale-[1.01] transition-transform min-w-[82vw] sm:min-w-[46vw] md:min-w-0 md:w-full"
+                  >
+                    <div className="p-4 sm:p-5">
+                      <div className="flex items-center gap-2 mb-2 text-xs text-slate-400">
+                        <Bell className="w-4 h-4 text-purple-400" />
+                        {new Date(writing.created_at).toLocaleDateString('tr-TR', { day: 'numeric', month: 'short' })}
+                      </div>
+                      <h3 className="text-sm sm:text-base text-white font-bold line-clamp-2 mb-2">{writing.title}</h3>
+                      <p className="text-slate-400 text-xs sm:text-sm line-clamp-4 whitespace-pre-wrap">{writing.description}</p>
+                    </div>
+                  </motion.button>
+                ))}
+              </div>
             </div>
           </section>
         )}
