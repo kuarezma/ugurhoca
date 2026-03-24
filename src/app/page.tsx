@@ -462,6 +462,34 @@ export default function HomePage() {
         )}
 
         {announcements.length > 0 && (
+          <section className="px-4 pt-2 lg:hidden">
+            <div className="max-w-6xl mx-auto">
+              <motion.button
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                onClick={() => setSelectedAnnouncement(announcements[0])}
+                className="w-full text-left glass rounded-2xl p-4 border border-pink-500/20 shadow-lg shadow-pink-500/10"
+              >
+                <div className="flex items-start gap-3">
+                  <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-pink-500 to-rose-500 flex items-center justify-center flex-shrink-0">
+                    <Bell className="w-5 h-5 text-white" />
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <div className="flex items-center gap-2 mb-1 text-[11px] text-pink-300">
+                      <span className="px-2 py-0.5 rounded-full bg-pink-500/20">Son Haber</span>
+                      <span>{new Date(announcements[0].created_at).toLocaleDateString('tr-TR', { day: 'numeric', month: 'short' })}</span>
+                    </div>
+                    <h3 className="text-white font-semibold text-sm leading-5 line-clamp-2">{announcements[0].title}</h3>
+                    <p className="text-slate-400 text-xs mt-1 line-clamp-1">Dokun ve haberi aç</p>
+                  </div>
+                  <ChevronRight className="w-5 h-5 text-slate-500 flex-shrink-0 mt-1" />
+                </div>
+              </motion.button>
+            </div>
+          </section>
+        )}
+
+        {announcements.length > 0 && (
           <section className="px-4 py-3 sm:py-6">
             <div className="max-w-6xl mx-auto">
               <div className="flex items-center justify-between mb-4">
