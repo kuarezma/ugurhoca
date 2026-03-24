@@ -347,8 +347,8 @@ export default function HomePage() {
     <main className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-900 to-slate-800">
       <FloatingShapes />
       <Navbar user={user} onLogout={handleLogout} />
-      <div className="pt-6 md:pt-14">
-        <section className="px-4 pt-6 pb-8 sm:py-12">
+      <div style={{ paddingTop: 'calc(4.75rem + env(safe-area-inset-top))' }} className="md:pt-14">
+        <section className="px-4 pt-4 pb-8 sm:py-12">
           <div className="max-w-6xl mx-auto">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
