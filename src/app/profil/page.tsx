@@ -56,6 +56,7 @@ export default function ProfilePage() {
   const [sharedDocs, setSharedDocs] = useState<SharedDoc[]>([]);
   const [assignments, setAssignments] = useState<any[]>([]);
   const [showNotifications, setShowNotifications] = useState(false);
+  const [selectedAssignment, setSelectedAssignment] = useState<any>(null);
   const docsRef = useRef<HTMLHeadingElement | null>(null);
   const assignmentsRef = useRef<HTMLHeadingElement | null>(null);
   const router = useRouter();
@@ -132,11 +133,23 @@ export default function ProfilePage() {
     setShowNotifications(false);
 
     if (notif.type === 'document') {
+      const doc = sharedDocs[0];
+      if (doc?.file_url) {
+        window.open(doc.file_url, '_blank', 'noopener,noreferrer');
+        return;
+      }
+
       docsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
       return;
     }
 
     if (notif.type === 'assignment') {
+      const assignment = assignments[0];
+      if (assignment) {
+        setSelectedAssignment(assignment);
+        return;
+      }
+
       assignmentsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
   };
@@ -371,6 +384,46 @@ export default function ProfilePage() {
                       </div>
                     ))}
                   </div>
+                </motion.div>
+              )}
+
+              {selectedAssignment && (
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  className="fixed inset-0 z-[100] bg-black/80 backdrop-blur-sm flex items-center justify-center p-4"
+                  onClick={() => setSelectedAssignment(null)}
+                >
+                  <motion.div
+                    initial={{ scale: 0.96, opacity: 0, y: 12 }}
+                    animate={{ scale: 1, opacity: 1, y: 0 }}
+                    exit={{ scale: 0.96, opacity: 0, y: 12 }}
+                    onClick={(e) => e.stopPropagation()}
+                    className="w-full max-w-lg rounded-3xl bg-slate-900 border border-slate-700 shadow-2xl p-6 sm:p-8"
+                  >
+                    <div className="flex items-start justify-between gap-4 mb-4">
+                      <div>
+                        <p className="text-xs uppercase tracking-[0.2em] text-purple-300 mb-2">Ödev</p>
+                        <h3 className="text-2xl font-bold text-white">{selectedAssignment.title}</h3>
+                      </div>
+                      <button
+                        onClick={() => setSelectedAssignment(null)}
+                        className="text-slate-400 hover:text-white"
+                      >
+                        <ChevronRight className="w-6 h-6 rotate-45" />
+                      </button>
+                    </div>
+                    <p className="text-slate-300 whitespace-pre-line leading-relaxed">{selectedAssignment.description || 'Ayrıntı bulunmuyor.'}</p>
+                    <div className="mt-6 flex justify-end">
+                      <button
+                        onClick={() => setSelectedAssignment(null)}
+                        className="px-4 py-2 rounded-xl bg-white/10 text-white font-medium hover:bg-white/15 transition-colors"
+                      >
+                        Kapat
+                      </button>
+                    </div>
+                  </motion.div>
                 </motion.div>
               )}
 
