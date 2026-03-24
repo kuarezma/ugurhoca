@@ -322,7 +322,9 @@ export default function HomePage() {
     
     const allAssignments = [
       ...(sharedDocs || []).map(d => ({ ...d, source: 'shared' })),
-      ...(notifs || []).filter(n => n.type === 'assignment' || n.type === 'document').map(n => ({ ...n, source: 'notification' }))
+      ...(notifs || [])
+        .filter(n => (n.type === 'assignment' || n.type === 'document') && !n.is_read)
+        .map(n => ({ ...n, source: 'notification' }))
     ];
     
     setUserAssignments(allAssignments);
