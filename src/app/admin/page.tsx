@@ -211,7 +211,11 @@ export default function AdminPage() {
 
   const loadData = async () => {
     const { data: annData } = await supabase.from('announcements').select('*').order('created_at', { ascending: false });
-    setAnnouncements(annData || []);
+    const localAnnouncements = JSON.parse(localStorage.getItem('matematiklab_announcements') || '[]');
+    const mergedAnnouncements = [...(annData || []), ...localAnnouncements]
+      .filter((item, index, self) => index === self.findIndex((t) => t.id === item.id))
+      .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+    setAnnouncements(mergedAnnouncements);
     
     const { data: docData } = await supabase.from('documents').select('*').order('created_at', { ascending: false });
     setDocuments(docData || []);
@@ -318,6 +322,7 @@ export default function AdminPage() {
         setAnnouncements(updated);
         localStorage.setItem('matematiklab_announcements', JSON.stringify(updated));
       }
+      loadData();
     } else if (modalType === 'editAnnouncement') {
       const { error } = await supabase
         .from('announcements')
@@ -342,6 +347,7 @@ export default function AdminPage() {
         setAnnouncements(updated);
         localStorage.setItem('matematiklab_announcements', JSON.stringify(updated));
       }
+      loadData();
     } else if (modalType === 'document' || modalType === 'writing') {
       const { data, error } = await supabase.from('documents').insert([newItem]).select();
       if (!error && data) {
@@ -466,7 +472,7 @@ export default function AdminPage() {
             <p className="text-slate-400">Hoş geldiniz, Uğur Hoca!</p>
           </motion.div>
 
-          <div className="flex flex-wrap gap-4 mb-8">
+          <div className="flex flex-wrap gap-3 md:gap-4 mb-8 overflow-x-auto pb-2 md:pb-0">
             {[
               { id: 'announcements', label: 'Duyurular', icon: Megaphone, color: 'from-pink-500 to-rose-500' },
               { id: 'documents', label: 'Belgeler', icon: FileText, color: 'from-blue-500 to-cyan-500' },
