@@ -462,16 +462,16 @@ export default function HomePage() {
         )}
 
         {announcements.length > 0 && (
-          <section className="px-4 py-4 sm:py-6">
+          <section className="px-4 py-3 sm:py-6">
             <div className="max-w-6xl mx-auto">
               <div className="flex items-center justify-between mb-4">
                 <div>
-                  <h2 className="text-xl sm:text-2xl font-bold text-white">Haberler</h2>
+                  <h2 className="text-lg sm:text-2xl font-bold text-white">Haberler</h2>
                   <p className="text-slate-400 text-sm">Kısa duyuru başlıkları. Detay için tıkla.</p>
                 </div>
               </div>
 
-              <div className="grid md:grid-cols-2 xl:grid-cols-4 gap-4">
+              <div className="flex gap-4 overflow-x-auto pb-2 md:grid md:grid-cols-2 xl:grid-cols-4 md:overflow-visible md:pb-0">
                 {announcements.map((item, i) => {
                   const images = item.image_urls?.length ? item.image_urls : item.image_url ? [item.image_url] : [];
                   return (
@@ -481,20 +481,20 @@ export default function HomePage() {
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: i * 0.05 }}
                       onClick={() => setSelectedAnnouncement(item)}
-                      className="text-left glass rounded-2xl overflow-hidden hover:scale-[1.01] transition-transform"
+                      className="text-left glass rounded-2xl overflow-hidden hover:scale-[1.01] transition-transform min-w-[82vw] sm:min-w-[46vw] md:min-w-0 md:w-full"
                     >
                       {images[0] && (
-                        <div className="h-40 overflow-hidden">
+                        <div className="h-32 sm:h-36 overflow-hidden">
                           <img src={proxiedImageSrc(images[0])} alt={item.title} className="w-full h-full object-cover" />
                         </div>
                       )}
-                      <div className="p-4">
+                      <div className="p-3 sm:p-4">
                         <div className="flex items-center gap-2 mb-2 text-xs text-slate-400">
                           <Bell className="w-4 h-4 text-pink-400" />
                           {new Date(item.created_at).toLocaleDateString('tr-TR', { day: 'numeric', month: 'short' })}
                         </div>
-                        <h3 className="text-white font-bold line-clamp-2 mb-2">{item.title}</h3>
-                        <p className="text-slate-400 text-sm line-clamp-2">{item.content}</p>
+                        <h3 className="text-sm sm:text-base text-white font-bold line-clamp-2 mb-1 sm:mb-2">{item.title}</h3>
+                        <p className="text-slate-400 text-xs sm:text-sm line-clamp-2">{item.content}</p>
                       </div>
                     </motion.button>
                   );
