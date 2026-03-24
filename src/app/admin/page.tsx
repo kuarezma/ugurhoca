@@ -220,11 +220,7 @@ export default function AdminPage() {
 
   const loadData = async () => {
     const { data: annData } = await supabase.from('announcements').select('*').order('created_at', { ascending: false });
-    const localAnnouncements = JSON.parse(localStorage.getItem('matematiklab_announcements') || '[]');
-    const mergedAnnouncements = [...(annData || []), ...localAnnouncements]
-      .filter((item, index, self) => index === self.findIndex((t) => t.id === item.id))
-      .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
-    setAnnouncements(mergedAnnouncements);
+    setAnnouncements((annData || []).sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()));
     
     const { data: docData } = await supabase.from('documents').select('*').order('created_at', { ascending: false });
     setDocuments(docData || []);
@@ -326,10 +322,7 @@ export default function AdminPage() {
           await supabase.from('notifications').insert(notificationInserts);
         }
       } else {
-        const fallbackItem = { ...newItem, id: Date.now().toString() };
-        const updated = [fallbackItem, ...announcements];
-        setAnnouncements(updated);
-        localStorage.setItem('matematiklab_announcements', JSON.stringify(updated));
+        alert('Duyuru kaydedilemedi. Lütfen tekrar deneyin.');
       }
       loadData();
     } else if (modalType === 'editAnnouncement') {
@@ -354,7 +347,6 @@ export default function AdminPage() {
           link_url: formData.link_url || '',
         } : a);
         setAnnouncements(updated);
-        localStorage.setItem('matematiklab_announcements', JSON.stringify(updated));
       }
       loadData();
     } else if (modalType === 'document' || modalType === 'writing') {
@@ -362,10 +354,7 @@ export default function AdminPage() {
       if (!error && data) {
         setDocuments([data[0], ...documents]);
       } else {
-        const fallbackItem = { ...newItem, id: Date.now().toString() };
-        const updated = [fallbackItem, ...documents];
-        setDocuments(updated);
-        localStorage.setItem('matematiklab_documents', JSON.stringify(updated));
+        alert('Belge kaydedilemedi. Lütfen tekrar deneyin.');
       }
     }
 
@@ -388,14 +377,10 @@ export default function AdminPage() {
         setSharedDocs(sharedDocs.filter(d => d.id !== id));
       } else if (type === 'announcement') {
         await supabase.from('announcements').delete().eq('id', id);
-        const updated = announcements.filter(a => a.id !== id);
-        setAnnouncements(updated);
-        localStorage.setItem('matematiklab_announcements', JSON.stringify(updated)); 
+        setAnnouncements(announcements.filter(a => a.id !== id));
       } else {
         await supabase.from('documents').delete().eq('id', id);
-        const updated = documents.filter(d => d.id !== id);
-        setDocuments(updated);
-        localStorage.setItem('matematiklab_documents', JSON.stringify(updated)); 
+        setDocuments(documents.filter(d => d.id !== id));
       }
     }
   };

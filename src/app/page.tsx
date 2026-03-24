@@ -374,8 +374,7 @@ export default function HomePage() {
 
     const loadAnnouncements = async () => {
       const { data } = await supabase.from('announcements').select('*').order('created_at', { ascending: false }).limit(4);
-      const localAnnouncements = JSON.parse(localStorage.getItem('matematiklab_announcements') || '[]');
-      const merged = [...(data || []), ...localAnnouncements].sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()).slice(0, 4);
+      const merged = [...(data || [])].sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()).slice(0, 4);
 
       const normalized = await Promise.all(merged.map(async (item) => {
         const images = item.image_urls?.length ? item.image_urls : item.image_url ? [item.image_url] : [];
