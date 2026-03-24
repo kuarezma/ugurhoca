@@ -369,8 +369,8 @@ export default function HomePage() {
         </section>
       )}
       
-      <div className="pt-8 md:pt-14">
-        <section className="px-4 pt-4 pb-8 sm:py-12">
+      <div className="pt-20 md:pt-14">
+        <section className="px-4 pt-6 pb-8 sm:py-12">
           <div className="max-w-6xl mx-auto">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
