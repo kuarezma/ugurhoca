@@ -347,7 +347,36 @@ export default function HomePage() {
     <main className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-900 to-slate-800">
       <FloatingShapes />
       <Navbar user={user} onLogout={handleLogout} />
-      <div style={{ paddingTop: 'calc(4.75rem + env(safe-area-inset-top))' }} className="md:pt-14">
+      {announcements.length > 0 && (
+        <section className="md:hidden sticky top-16 z-40 px-4 pt-3">
+          <motion.button
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            onClick={() => setSelectedAnnouncement(announcements[0])}
+            className="w-full text-left rounded-2xl overflow-hidden border border-pink-500/30 shadow-xl shadow-pink-500/10 bg-gradient-to-r from-pink-500/15 via-rose-500/10 to-indigo-500/15 backdrop-blur-xl"
+          >
+            <div className="flex items-stretch gap-3 p-3">
+              <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-pink-500 to-rose-500 flex items-center justify-center flex-shrink-0 shadow-lg shadow-pink-500/20 overflow-hidden">
+                {announcements[0].image_url ? (
+                  <img src={proxiedImageSrc(announcements[0].image_url)} alt={announcements[0].title} className="w-full h-full object-cover" />
+                ) : (
+                  <Bell className="w-5 h-5 text-white" />
+                )}
+              </div>
+              <div className="min-w-0 flex-1">
+                <div className="flex items-center gap-2 mb-1 text-[11px] uppercase tracking-wide text-pink-200">
+                  <span className="px-2 py-0.5 rounded-full bg-pink-500/20">Son Haber</span>
+                  <span>{new Date(announcements[0].created_at).toLocaleDateString('tr-TR', { day: 'numeric', month: 'short' })}</span>
+                </div>
+                <p className="text-white text-sm font-semibold leading-5 line-clamp-2">{announcements[0].title}</p>
+                <p className="text-slate-300 text-xs mt-1 line-clamp-1">Dokun ve haberi aç</p>
+              </div>
+              <ChevronRight className="w-5 h-5 text-slate-300 flex-shrink-0 self-center" />
+            </div>
+          </motion.button>
+        </section>
+      )}
+      <div className="pt-4 md:pt-14">
         <section className="px-4 pt-4 pb-8 sm:py-12">
           <div className="max-w-6xl mx-auto">
             <motion.div
