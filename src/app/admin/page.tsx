@@ -37,6 +37,7 @@ interface Announcement {
   id: string;
   title: string;
   content: string;
+  image_url?: string;
   created_at: string;
 }
 
@@ -423,29 +424,61 @@ export default function AdminPage() {
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: i * 0.05 }}
-                      className="glass rounded-2xl p-6 card-hover"
+                      className="glass rounded-2xl overflow-hidden card-hover"
                     >
-                      <div className="flex items-start justify-between">
-                        <div className="flex-1">
-                          <div className="flex items-center gap-3 mb-3">
-                            <span className="px-3 py-1 bg-gradient-to-r from-pink-500 to-rose-500 rounded-full text-white text-xs font-semibold">
-                              Duyuru
-                            </span>
-                            <span className="text-slate-400 text-sm flex items-center gap-1">
-                              <Calendar className="w-4 h-4" />
-                              {formatDate(announcement.created_at)}
-                            </span>
+                      {announcement.image_url ? (
+                        <div className="relative min-h-[320px] bg-slate-900">
+                          <img
+                            src={announcement.image_url}
+                            alt={announcement.title}
+                            className="absolute inset-0 w-full h-full object-cover"
+                          />
+                          <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/35 to-black/10" />
+                          <button
+                            onClick={() => deleteItem('announcement', announcement.id)}
+                            className="absolute top-4 right-4 p-2 bg-black/40 backdrop-blur-sm text-white/80 hover:text-red-400 rounded-lg transition-colors"
+                          >
+                            <Trash2 className="w-5 h-5" />
+                          </button>
+                          <div className="absolute bottom-0 left-0 right-0 p-6">
+                            <div className="flex items-center gap-3 mb-3">
+                              <span className="px-3 py-1 bg-gradient-to-r from-pink-500 to-rose-500 rounded-full text-white text-xs font-semibold">
+                                Haber
+                              </span>
+                              <span className="text-slate-200 text-sm flex items-center gap-1">
+                                <Calendar className="w-4 h-4" />
+                                {formatDate(announcement.created_at)}
+                              </span>
+                            </div>
+                            <h3 className="text-2xl font-bold text-white mb-2">{announcement.title}</h3>
+                            <p className="text-slate-200 leading-relaxed">{announcement.content}</p>
                           </div>
-                          <h3 className="text-xl font-bold text-white mb-2">{announcement.title}</h3>
-                          <p className="text-slate-300">{announcement.content}</p>
                         </div>
-                        <button
-                          onClick={() => deleteItem('announcement', announcement.id)}
-                          className="p-2 text-slate-400 hover:text-red-400 transition-colors"
-                        >
-                          <Trash2 className="w-5 h-5" />
-                        </button>
-                      </div>
+                      ) : (
+                        <div className="p-6">
+                          <div className="flex items-start justify-between">
+                            <div className="flex-1">
+                              <div className="flex items-center gap-3 mb-3">
+                                <span className="px-3 py-1 bg-gradient-to-r from-pink-500 to-rose-500 rounded-full text-white text-xs font-semibold">
+                                  Duyuru
+                                </span>
+                                <span className="text-slate-400 text-sm flex items-center gap-1">
+                                  <Calendar className="w-4 h-4" />
+                                  {formatDate(announcement.created_at)}
+                                </span>
+                              </div>
+                              <h3 className="text-xl font-bold text-white mb-2">{announcement.title}</h3>
+                              <p className="text-slate-300">{announcement.content}</p>
+                            </div>
+                            <button
+                              onClick={() => deleteItem('announcement', announcement.id)}
+                              className="p-2 text-slate-400 hover:text-red-400 transition-colors"
+                            >
+                              <Trash2 className="w-5 h-5" />
+                            </button>
+                          </div>
+                        </div>
+                      )}
                     </motion.div>
                   ))
                 )}
@@ -1405,6 +1438,21 @@ export default function AdminPage() {
                       placeholder="Başlık girin..."
                     />
                   </div>
+
+                  {modalType === 'announcement' && (
+                    <div>
+                      <label className="block text-slate-300 mb-2 text-sm">Görsel URL</label>
+                      <input
+                        type="url"
+                        value={formData.image_url || ''}
+                        onChange={(e) => setFormData({ ...formData, image_url: e.target.value })}
+                        className="w-full bg-slate-800/50 border border-slate-700 rounded-xl px-4 py-3 text-white 
+                                 focus:outline-none focus:border-pink-500 transition-colors"
+                        placeholder="Yandex Disk görsel linki"
+                      />
+                      <p className="text-xs text-slate-500 mt-2">Yalnızca doğrudan açılan görsel linki kullan.</p>
+                    </div>
+                  )}
 
                   {modalType === 'document' && (
                     <div>
