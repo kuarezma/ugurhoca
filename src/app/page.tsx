@@ -362,8 +362,8 @@ export default function HomePage() {
         </section>
       )}
       
-      <div className="pt-4 md:pt-14">
-        <section className="px-4 py-8 sm:py-12">
+      <div className="pt-8 md:pt-14">
+        <section className="px-4 pt-4 pb-8 sm:py-12">
           <div className="max-w-6xl mx-auto">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -403,7 +403,7 @@ export default function HomePage() {
         </section>
 
         {announcements.length > 0 && (
-          <section className="px-4 py-3 sm:py-6">
+          <section className="px-4 pt-2 pb-3 sm:py-6">
             <div className="max-w-6xl mx-auto">
               <div className="flex items-center justify-between mb-4">
                 <div>
