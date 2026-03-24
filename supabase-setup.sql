@@ -6,6 +6,7 @@ CREATE TABLE IF NOT EXISTS public.announcements (
   title TEXT NOT NULL,
   content TEXT,
   image_url TEXT,
+  image_urls TEXT[],
   created_at TIMESTAMP WITH TIME ZONE DEFAULT now()
 );
 

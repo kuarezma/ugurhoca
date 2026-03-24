@@ -33,11 +33,59 @@ const FloatingShapes = () => (
   </div>
 );
 
+const AnnouncementGallery = ({ images, title }: { images: string[]; title: string }) => {
+  const [current, setCurrent] = useState(0);
+  const hasMultiple = images.length > 1;
+
+  return (
+    <div className="relative min-h-[320px] bg-slate-900">
+      <img
+        src={images[current]}
+        alt={title}
+        className="absolute inset-0 w-full h-full object-cover"
+      />
+      <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/35 to-black/10" />
+      {hasMultiple && (
+        <>
+          <button
+            onClick={(e) => { e.stopPropagation(); setCurrent((prev) => (prev - 1 + images.length) % images.length); }}
+            className="absolute left-4 top-1/2 -translate-y-1/2 px-3 py-2 rounded-full bg-black/40 text-white/90 hover:bg-black/60"
+          >
+            ‹
+          </button>
+          <button
+            onClick={(e) => { e.stopPropagation(); setCurrent((prev) => (prev + 1) % images.length); }}
+            className="absolute right-4 top-1/2 -translate-y-1/2 px-3 py-2 rounded-full bg-black/40 text-white/90 hover:bg-black/60"
+          >
+            ›
+          </button>
+        </>
+      )}
+      <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between gap-3">
+        <div className="flex items-center gap-2 flex-wrap">
+          {images.map((_, i) => (
+            <button
+              key={i}
+              onClick={(e) => { e.stopPropagation(); setCurrent(i); }}
+              className={`h-2.5 rounded-full transition-all ${i === current ? 'w-8 bg-white' : 'w-2.5 bg-white/50'}`}
+              aria-label={`Görsel ${i + 1}`}
+            />
+          ))}
+        </div>
+        <span className="px-2 py-1 rounded-full bg-black/40 text-white text-xs">
+          {current + 1}/{images.length}
+        </span>
+      </div>
+    </div>
+  );
+};
+
 interface Announcement {
   id: string;
   title: string;
   content: string;
   image_url?: string;
+  image_urls?: string[];
   created_at: string;
 }
 
@@ -193,11 +241,20 @@ export default function AdminPage() {
     e.preventDefault();
     setIsSubmitting(true);
 
+    const imageUrls = modalType === 'announcement'
+      ? String(formData.image_urls || '')
+          .split('\n')
+          .map((url: string) => url.trim())
+          .filter(Boolean)
+      : [];
+
     const newItem = {
       ...formData,
       type: modalType === 'announcement' ? undefined : modalType,
       created_at: new Date().toISOString(),
       downloads: 0,
+      image_url: modalType === 'announcement' ? (imageUrls[0] || formData.image_url || '') : formData.image_url,
+      image_urls: modalType === 'announcement' ? imageUrls : formData.image_urls,
     };
     if (modalType === 'assignment') {
       const { data, error } = await supabase.from('assignments').insert([{
@@ -426,59 +483,35 @@ export default function AdminPage() {
                       transition={{ delay: i * 0.05 }}
                       className="glass rounded-2xl overflow-hidden card-hover"
                     >
-                      {announcement.image_url ? (
-                        <div className="relative min-h-[320px] bg-slate-900">
-                          <img
-                            src={announcement.image_url}
-                            alt={announcement.title}
-                            className="absolute inset-0 w-full h-full object-cover"
-                          />
-                          <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/35 to-black/10" />
-                          <button
-                            onClick={() => deleteItem('announcement', announcement.id)}
-                            className="absolute top-4 right-4 p-2 bg-black/40 backdrop-blur-sm text-white/80 hover:text-red-400 rounded-lg transition-colors"
-                          >
-                            <Trash2 className="w-5 h-5" />
-                          </button>
-                          <div className="absolute bottom-0 left-0 right-0 p-6">
+                      {(announcement.image_urls?.length || announcement.image_url) ? (
+                        <AnnouncementGallery
+                          images={announcement.image_urls?.length ? announcement.image_urls : [announcement.image_url as string]}
+                          title={announcement.title}
+                        />
+                      ) : null}
+                      <div className="p-6">
+                        <div className="flex items-start justify-between gap-4">
+                          <div className="flex-1">
                             <div className="flex items-center gap-3 mb-3">
                               <span className="px-3 py-1 bg-gradient-to-r from-pink-500 to-rose-500 rounded-full text-white text-xs font-semibold">
                                 Haber
                               </span>
-                              <span className="text-slate-200 text-sm flex items-center gap-1">
+                              <span className="text-slate-400 text-sm flex items-center gap-1">
                                 <Calendar className="w-4 h-4" />
                                 {formatDate(announcement.created_at)}
                               </span>
                             </div>
-                            <h3 className="text-2xl font-bold text-white mb-2">{announcement.title}</h3>
-                            <p className="text-slate-200 leading-relaxed">{announcement.content}</p>
+                            <h3 className="text-xl font-bold text-white mb-2">{announcement.title}</h3>
+                            <p className="text-slate-300">{announcement.content}</p>
                           </div>
+                          <button
+                            onClick={() => deleteItem('announcement', announcement.id)}
+                            className="p-2 text-slate-400 hover:text-red-400 transition-colors"
+                          >
+                            <Trash2 className="w-5 h-5" />
+                          </button>
                         </div>
-                      ) : (
-                        <div className="p-6">
-                          <div className="flex items-start justify-between">
-                            <div className="flex-1">
-                              <div className="flex items-center gap-3 mb-3">
-                                <span className="px-3 py-1 bg-gradient-to-r from-pink-500 to-rose-500 rounded-full text-white text-xs font-semibold">
-                                  Duyuru
-                                </span>
-                                <span className="text-slate-400 text-sm flex items-center gap-1">
-                                  <Calendar className="w-4 h-4" />
-                                  {formatDate(announcement.created_at)}
-                                </span>
-                              </div>
-                              <h3 className="text-xl font-bold text-white mb-2">{announcement.title}</h3>
-                              <p className="text-slate-300">{announcement.content}</p>
-                            </div>
-                            <button
-                              onClick={() => deleteItem('announcement', announcement.id)}
-                              className="p-2 text-slate-400 hover:text-red-400 transition-colors"
-                            >
-                              <Trash2 className="w-5 h-5" />
-                            </button>
-                          </div>
-                        </div>
-                      )}
+                      </div>
                     </motion.div>
                   ))
                 )}
@@ -1441,16 +1474,16 @@ export default function AdminPage() {
 
                   {modalType === 'announcement' && (
                     <div>
-                      <label className="block text-slate-300 mb-2 text-sm">Görsel URL</label>
-                      <input
-                        type="url"
-                        value={formData.image_url || ''}
-                        onChange={(e) => setFormData({ ...formData, image_url: e.target.value })}
+                      <label className="block text-slate-300 mb-2 text-sm">Görsel Linkleri</label>
+                      <textarea
+                        rows={4}
+                        value={formData.image_urls || ''}
+                        onChange={(e) => setFormData({ ...formData, image_urls: e.target.value })}
                         className="w-full bg-slate-800/50 border border-slate-700 rounded-xl px-4 py-3 text-white 
-                                 focus:outline-none focus:border-pink-500 transition-colors"
-                        placeholder="Yandex Disk görsel linki"
+                                 focus:outline-none focus:border-pink-500 transition-colors resize-none"
+                        placeholder={`Her satıra bir Yandex görsel linki yapıştır\nhttps://.../foto1.jpg\nhttps://.../foto2.jpg`}
                       />
-                      <p className="text-xs text-slate-500 mt-2">Yalnızca doğrudan açılan görsel linki kullan.</p>
+                      <p className="text-xs text-slate-500 mt-2">Her satıra 1 görsel linki gir. İlk görsel kapak olur.</p>
                     </div>
                   )}
 
