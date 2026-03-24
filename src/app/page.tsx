@@ -227,7 +227,7 @@ export default function HomePage() {
     if (!url) return url;
     if (!/disk\.yandex|yadi\.sk/i.test(url)) return url;
     try {
-      const res = await fetch(`https://cloud-api.yandex.net/v1/disk/public/resources/download?public_key=${encodeURIComponent(url)}`);
+      const res = await fetch(`/api/yandex-resolve?url=${encodeURIComponent(url)}`);
       const data = await res.json();
       return data?.href || url;
     } catch {
