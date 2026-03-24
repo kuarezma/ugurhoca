@@ -204,6 +204,8 @@ export default function HomePage() {
   const [assignments, setAssignments] = useState<any[]>([]);
   const [userAssignments, setUserAssignments] = useState<any[]>([]);
   const [dismissedAssignments, setDismissedAssignments] = useState<Set<string>>(new Set());
+  const [announcements, setAnnouncements] = useState<any[]>([]);
+  const [selectedAnnouncement, setSelectedAnnouncement] = useState<any>(null);
 
   useEffect(() => {
     const checkSession = async () => {
@@ -243,6 +245,12 @@ export default function HomePage() {
       if (data) setAssignments(data);
     };
     loadAllAssignments();
+
+    const loadAnnouncements = async () => {
+      const { data } = await supabase.from('announcements').select('*').order('created_at', { ascending: false }).limit(4);
+      if (data) setAnnouncements(data);
+    };
+    loadAnnouncements();
   }, []);
 
   const loadUserAssignments = async (userId: string) => {
@@ -405,6 +413,49 @@ export default function HomePage() {
             </div>
           </section>
         )}
+
+        {announcements.length > 0 && (
+          <section className="px-4 py-4 sm:py-6">
+            <div className="max-w-6xl mx-auto">
+              <div className="flex items-center justify-between mb-4">
+                <div>
+                  <h2 className="text-xl sm:text-2xl font-bold text-white">Haberler</h2>
+                  <p className="text-slate-400 text-sm">Kısa duyuru başlıkları. Detay için tıkla.</p>
+                </div>
+              </div>
+
+              <div className="grid md:grid-cols-2 xl:grid-cols-4 gap-4">
+                {announcements.map((item, i) => {
+                  const images = item.image_urls?.length ? item.image_urls : item.image_url ? [item.image_url] : [];
+                  return (
+                    <motion.button
+                      key={item.id}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: i * 0.05 }}
+                      onClick={() => setSelectedAnnouncement(item)}
+                      className="text-left glass rounded-2xl overflow-hidden hover:scale-[1.01] transition-transform"
+                    >
+                      {images[0] && (
+                        <div className="h-40 overflow-hidden">
+                          <img src={images[0]} alt={item.title} className="w-full h-full object-cover" />
+                        </div>
+                      )}
+                      <div className="p-4">
+                        <div className="flex items-center gap-2 mb-2 text-xs text-slate-400">
+                          <Bell className="w-4 h-4 text-pink-400" />
+                          {new Date(item.created_at).toLocaleDateString('tr-TR', { day: 'numeric', month: 'short' })}
+                        </div>
+                        <h3 className="text-white font-bold line-clamp-2 mb-2">{item.title}</h3>
+                        <p className="text-slate-400 text-sm line-clamp-2">{item.content}</p>
+                      </div>
+                    </motion.button>
+                  );
+                })}
+              </div>
+            </div>
+          </section>
+        )}
         
         <section className="px-4 py-8 sm:py-12">
           <div className="max-w-6xl mx-auto">
@@ -528,6 +579,63 @@ export default function HomePage() {
           </div>
         </footer>
       </div>
+
+      <AnimatePresence>
+        {selectedAnnouncement && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[100] bg-black/80 backdrop-blur-sm flex items-center justify-center p-4"
+            onClick={() => setSelectedAnnouncement(null)}
+          >
+            <motion.div
+              initial={{ scale: 0.95, opacity: 0, y: 20 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.95, opacity: 0, y: 20 }}
+              onClick={(e) => e.stopPropagation()}
+              className="w-full max-w-5xl max-h-[90vh] overflow-y-auto rounded-3xl bg-slate-900 border border-slate-700 shadow-2xl"
+            >
+              {(selectedAnnouncement.image_urls?.length || selectedAnnouncement.image_url) && (
+                <div className="grid md:grid-cols-2 gap-0">
+                  <div className="bg-slate-950 p-2">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                      {(selectedAnnouncement.image_urls?.length ? selectedAnnouncement.image_urls : [selectedAnnouncement.image_url]).filter(Boolean).map((img: string, idx: number) => (
+                        <img key={idx} src={img} alt={selectedAnnouncement.title} className="w-full h-56 object-cover rounded-xl" />
+                      ))}
+                    </div>
+                  </div>
+                  <div className="p-6 sm:p-8">
+                    <div className="flex items-center justify-between mb-4">
+                      <span className="px-3 py-1 rounded-full bg-pink-500/20 text-pink-300 text-xs font-semibold">Haber</span>
+                      <button onClick={() => setSelectedAnnouncement(null)} className="text-slate-400 hover:text-white">
+                        <X className="w-6 h-6" />
+                      </button>
+                    </div>
+                    <h2 className="text-2xl sm:text-3xl font-bold text-white mb-3">{selectedAnnouncement.title}</h2>
+                    <p className="text-slate-300 leading-relaxed whitespace-pre-line">{selectedAnnouncement.content}</p>
+                    <p className="text-slate-500 text-sm mt-6">{new Date(selectedAnnouncement.created_at).toLocaleDateString('tr-TR')}</p>
+                  </div>
+                </div>
+              )}
+
+              {!selectedAnnouncement.image_urls?.length && !selectedAnnouncement.image_url && (
+                <div className="p-6 sm:p-8">
+                  <div className="flex items-center justify-between mb-4">
+                    <span className="px-3 py-1 rounded-full bg-pink-500/20 text-pink-300 text-xs font-semibold">Haber</span>
+                    <button onClick={() => setSelectedAnnouncement(null)} className="text-slate-400 hover:text-white">
+                      <X className="w-6 h-6" />
+                    </button>
+                  </div>
+                  <h2 className="text-2xl sm:text-3xl font-bold text-white mb-3">{selectedAnnouncement.title}</h2>
+                  <p className="text-slate-300 leading-relaxed whitespace-pre-line">{selectedAnnouncement.content}</p>
+                  <p className="text-slate-500 text-sm mt-6">{new Date(selectedAnnouncement.created_at).toLocaleDateString('tr-TR')}</p>
+                </div>
+              )}
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </main>
   );
 }
