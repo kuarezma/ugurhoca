@@ -341,7 +341,7 @@ export default function HomePage() {
       <FloatingShapes />
       <Navbar user={user} onLogout={handleLogout} />
       {announcements.length > 0 && (
-        <div className="md:hidden fixed left-0 right-0 top-16 z-40 px-4">
+        <section className="md:hidden px-4 pt-4">
           <motion.button
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
@@ -359,10 +359,10 @@ export default function HomePage() {
               <ChevronRight className="w-5 h-5 text-slate-500 flex-shrink-0" />
             </div>
           </motion.button>
-        </div>
+        </section>
       )}
       
-      <div className="pt-28 md:pt-14">
+      <div className="pt-4 md:pt-14">
         {user && userAssignments.filter(a => !dismissedAssignments.has(a.id)).length > 0 && (
           <section className="px-4 py-6 sm:py-8">
             <div className="max-w-6xl mx-auto">
