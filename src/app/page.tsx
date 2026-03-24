@@ -348,7 +348,7 @@ export default function HomePage() {
       <FloatingShapes />
       <Navbar user={user} onLogout={handleLogout} />
       {announcements.length > 0 && (
-        <section className="md:hidden sticky top-16 z-40 px-4 pt-3">
+        <section className="md:hidden relative z-40 px-4 pt-3">
           <motion.button
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
@@ -376,7 +376,7 @@ export default function HomePage() {
           </motion.button>
         </section>
       )}
-      <div className="pt-4 md:pt-14">
+      <div className="pt-[calc(5.75rem+env(safe-area-inset-top))] md:pt-14">
         <section className="px-4 pt-4 pb-8 sm:py-12">
           <div className="max-w-6xl mx-auto">
             <motion.div
