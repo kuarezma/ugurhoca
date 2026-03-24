@@ -7,7 +7,7 @@ import {
   Calculator, BookOpen, Gamepad2, FileText, ClipboardList,
   LogIn, LogOut, Menu, X, Play, Video, Brain,
   ChevronRight, Clock, Star, Lock, AppWindow,
-  Bell, Download, AlertCircle
+  Bell, Download, AlertCircle, ExternalLink, FileText as FileDoc, FolderOpen
 } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 
@@ -213,6 +213,14 @@ export default function HomePage() {
     if (lower.includes('.pdf')) return 'PDF Aç';
     if (lower.includes('drive.google') || lower.includes('yadi.sk') || lower.includes('disk.yandex')) return 'Dosyayı Aç';
     return 'Siteye Git';
+  };
+
+  const getAnnouncementLinkIcon = (url?: string) => {
+    if (!url) return ExternalLink;
+    const lower = url.toLowerCase();
+    if (lower.includes('.pdf')) return FileDoc;
+    if (lower.includes('drive.google') || lower.includes('yadi.sk') || lower.includes('disk.yandex')) return FolderOpen;
+    return ExternalLink;
   };
 
   useEffect(() => {
@@ -623,15 +631,21 @@ export default function HomePage() {
                     <h2 className="text-2xl sm:text-3xl font-bold text-white mb-3">{selectedAnnouncement.title}</h2>
                     <p className="text-slate-300 leading-relaxed whitespace-pre-line">{selectedAnnouncement.content}</p>
                     {selectedAnnouncement.link_url && (
+                      (() => {
+                        const LinkIcon = getAnnouncementLinkIcon(selectedAnnouncement.link_url);
+                        return (
                       <a
                         href={selectedAnnouncement.link_url}
                         target="_blank"
                         rel="noreferrer"
                         className="inline-flex items-center gap-2 mt-6 px-4 py-2 rounded-xl bg-gradient-to-r from-indigo-500 to-purple-500 text-white font-semibold hover:from-indigo-600 hover:to-purple-600 transition-colors"
                       >
+                        <LinkIcon className="w-4 h-4" />
                         {getAnnouncementLinkLabel(selectedAnnouncement.link_url)}
                         <ChevronRight className="w-4 h-4" />
                       </a>
+                        );
+                      })()
                     )}
                     <p className="text-slate-500 text-sm mt-6">{new Date(selectedAnnouncement.created_at).toLocaleDateString('tr-TR')}</p>
                   </div>
@@ -649,15 +663,21 @@ export default function HomePage() {
                   <h2 className="text-2xl sm:text-3xl font-bold text-white mb-3">{selectedAnnouncement.title}</h2>
                   <p className="text-slate-300 leading-relaxed whitespace-pre-line">{selectedAnnouncement.content}</p>
                   {selectedAnnouncement.link_url && (
+                    (() => {
+                      const LinkIcon = getAnnouncementLinkIcon(selectedAnnouncement.link_url);
+                      return (
                     <a
                       href={selectedAnnouncement.link_url}
                       target="_blank"
                       rel="noreferrer"
                       className="inline-flex items-center gap-2 mt-6 px-4 py-2 rounded-xl bg-gradient-to-r from-indigo-500 to-purple-500 text-white font-semibold hover:from-indigo-600 hover:to-purple-600 transition-colors"
                     >
+                      <LinkIcon className="w-4 h-4" />
                       {getAnnouncementLinkLabel(selectedAnnouncement.link_url)}
                       <ChevronRight className="w-4 h-4" />
                     </a>
+                      );
+                    })()
                   )}
                   <p className="text-slate-500 text-sm mt-6">{new Date(selectedAnnouncement.created_at).toLocaleDateString('tr-TR')}</p>
                 </div>
