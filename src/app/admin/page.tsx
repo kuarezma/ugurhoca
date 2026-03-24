@@ -283,15 +283,13 @@ export default function AdminPage() {
       ? {
           title: formData.title,
           content: formData.description,
-          image_url: imageUrls[0] || formData.image_url || '',
-          image_urls: imageUrls,
-          link_url: formData.link_url || '',
-          created_at: new Date().toISOString(),
+          ...(imageUrls[0] ? { image_url: imageUrls[0] } : {}),
+          ...(imageUrls.length ? { image_urls: imageUrls } : {}),
+          ...(formData.link_url ? { link_url: formData.link_url } : {}),
         }
       : {
           ...formData,
           type: modalType,
-          created_at: new Date().toISOString(),
           downloads: 0,
         };
     if (modalType === 'assignment') {
@@ -328,7 +326,7 @@ export default function AdminPage() {
           await supabase.from('notifications').insert(notificationInserts);
         }
       } else {
-        console.error('Announcement insert failed:', error);
+        console.error('Announcement insert failed:', error, newItem);
         alert(error?.message ? `Duyuru kaydedilemedi: ${error.message}` : 'Duyuru kaydedilemedi. Lütfen tekrar deneyin.');
       }
       loadData();
