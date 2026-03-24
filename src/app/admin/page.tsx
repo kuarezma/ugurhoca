@@ -440,45 +440,46 @@ export default function AdminPage() {
     <main className="min-h-screen gradient-bg pb-20">
       <FloatingShapes />
       
-      <nav className="fixed top-0 left-0 right-0 z-50 glass py-4 px-6">
-        <div className="container mx-auto flex justify-between items-center">
+      <nav className="fixed top-0 left-0 right-0 z-50 glass py-3 px-4 sm:py-4 sm:px-6">
+        <div className="container mx-auto flex items-center justify-between gap-3">
           <Link href="/" className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-gradient-to-br from-orange-500 to-red-500 rounded-xl flex items-center justify-center">
-              <Calculator className="w-6 h-6 text-white" />
+            <div className="w-9 h-9 sm:w-10 sm:h-10 bg-gradient-to-br from-orange-500 to-red-500 rounded-xl flex items-center justify-center flex-shrink-0">
+              <Calculator className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
             </div>
-            <span className="text-xl font-bold bg-gradient-to-r from-orange-400 to-red-400 bg-clip-text text-transparent">
+            <span className="text-sm sm:text-xl font-bold bg-gradient-to-r from-orange-400 to-red-400 bg-clip-text text-transparent leading-tight">
               Uğur Hoca Matematik
             </span>
           </Link>
 
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2 sm:gap-4">
             <span className="hidden md:block px-4 py-2 bg-orange-500/20 text-orange-400 rounded-full text-sm font-semibold">
               Admin Paneli
             </span>
-            <button onClick={handleLogout} className="btn-secondary text-sm">
+            <button onClick={handleLogout} className="btn-secondary text-xs sm:text-sm px-3 py-2 sm:px-4 sm:py-2">
               <LogOut className="w-4 h-4" />
-              Çıkış
+              <span className="hidden sm:inline">Çıkış</span>
             </button>
           </div>
         </div>
       </nav>
 
-      <div className="pt-24 px-6">
+      <div className="pt-20 sm:pt-24 px-4 sm:px-6">
         <div className="container mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="mb-8"
+            className="mb-6 sm:mb-8"
           >
-            <Link href="/profil" className="text-slate-400 hover:text-white flex items-center gap-2 mb-4">
+            <Link href="/profil" className="text-slate-400 hover:text-white inline-flex items-center gap-2 mb-4 text-sm sm:text-base">
               <ArrowLeft className="w-5 h-5" />
               Profil'e Dön
             </Link>
-            <h1 className="text-4xl font-bold text-white mb-2">Admin Paneli</h1>
-            <p className="text-slate-400">Hoş geldiniz, Uğur Hoca!</p>
+            <h1 className="text-2xl sm:text-4xl font-bold text-white mb-2">Admin Paneli</h1>
+            <p className="text-slate-400 text-sm sm:text-base">Hoş geldiniz, Uğur Hoca!</p>
           </motion.div>
 
-          <div className="flex flex-wrap gap-3 md:gap-4 mb-8 overflow-x-auto pb-2 md:pb-0">
+          <div className="sticky top-16 z-40 -mx-4 sm:mx-0 mb-6 sm:mb-8 px-4 sm:px-0 py-3 sm:py-0 bg-slate-950/70 sm:bg-transparent backdrop-blur-xl sm:backdrop-blur-none border-b border-white/5 sm:border-0">
+            <div className="flex flex-nowrap gap-2 sm:gap-4 overflow-x-auto pb-2 sm:pb-0 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
             {[
               { id: 'announcements', label: 'Duyurular', icon: Megaphone, color: 'from-pink-500 to-rose-500' },
               { id: 'documents', label: 'Belgeler', icon: FileText, color: 'from-blue-500 to-cyan-500' },
@@ -493,25 +494,26 @@ export default function AdminPage() {
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
                 onClick={() => setActiveTab(tab.id as any)}
-                className={`px-6 py-4 rounded-2xl flex items-center gap-3 transition-all ${
+                className={`px-4 py-3 sm:px-6 sm:py-4 rounded-2xl flex items-center gap-2 sm:gap-3 transition-all whitespace-nowrap shrink-0 ${
                   activeTab === tab.id
                     ? `bg-gradient-to-r ${tab.color} text-white shadow-lg`
                     : 'glass text-slate-300 hover:text-white'
                 }`}
               >
-                <tab.icon className="w-6 h-6" />
-                <span className="font-semibold">{tab.label}</span>
+                <tab.icon className="w-5 h-5 sm:w-6 sm:h-6" />
+                <span className="font-semibold text-sm sm:text-base">{tab.label}</span>
               </motion.button>
             ))}
+            </div>
           </div>
 
           {activeTab !== 'users' && activeTab !== 'gradeUpdate' && activeTab !== 'assignments' && (
-            <div className="flex justify-end mb-6">
+            <div className="flex justify-stretch sm:justify-end mb-6">
               <motion.button
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
                 onClick={() => openModal(activeTab === 'announcements' ? 'announcement' : activeTab === 'documents' ? 'document' : 'writing')}
-                className="btn-primary"
+                className="btn-primary w-full sm:w-auto justify-center"
               >
                 <Plus className="w-5 h-5" />
                 Yeni Ekle
@@ -529,7 +531,7 @@ export default function AdminPage() {
                 className="space-y-4"
               >
                 {announcements.length === 0 ? (
-                  <div className="glass rounded-2xl p-12 text-center">
+                  <div className="glass rounded-2xl p-8 sm:p-12 text-center">
                     <Megaphone className="w-16 h-16 mx-auto mb-4 text-slate-500" />
                     <p className="text-slate-400">Henüz duyuru yok</p>
                   </div>
@@ -540,18 +542,18 @@ export default function AdminPage() {
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: i * 0.05 }}
-                      className="glass rounded-2xl overflow-hidden card-hover"
-                    >
+                       className="glass rounded-2xl overflow-hidden card-hover"
+                     >
                       {(announcement.image_urls?.length || announcement.image_url) ? (
                         <AnnouncementGallery
                           images={announcement.image_urls?.length ? announcement.image_urls : [announcement.image_url as string]}
                           title={announcement.title}
                         />
                       ) : null}
-                      <div className="p-6">
-                        <div className="flex items-start justify-between gap-4">
-                          <div className="flex-1">
-                            <div className="flex items-center gap-3 mb-3">
+                       <div className="p-4 sm:p-6">
+                         <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
+                           <div className="flex-1">
+                             <div className="flex items-center gap-2 sm:gap-3 mb-3 flex-wrap">
                               <span className="px-3 py-1 bg-gradient-to-r from-pink-500 to-rose-500 rounded-full text-white text-xs font-semibold">
                                 Haber
                               </span>
@@ -563,7 +565,7 @@ export default function AdminPage() {
                             <h3 className="text-xl font-bold text-white mb-2">{announcement.title}</h3>
                             <p className="text-slate-300">{announcement.content}</p>
                           </div>
-                            <div className="flex items-center gap-2">
+                           <div className="flex items-center gap-2 self-start sm:self-auto flex-wrap sm:flex-nowrap">
                               <button
                                 onClick={() => {
                                   setEditingAnnouncement(announcement);
@@ -852,16 +854,16 @@ export default function AdminPage() {
                 exit={{ opacity: 0, y: -20 }}
                 className="space-y-6"
               >
-                <div className="flex justify-between items-center mb-6">
+                 <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-6">
                   <div>
                     <h2 className="text-2xl font-bold text-white mb-1">Özel Ders Öğrencilerim</h2>
-                    <p className="text-slate-400">Bireysel öğrencilerinizi ve ödevlerini yönetin</p>
+                    <p className="text-slate-400 text-sm sm:text-base">Bireysel öğrencilerinizi ve ödevlerini yönetin</p>
                   </div>
                   <motion.button
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
                     onClick={() => openModal('student')}
-                    className="btn-primary"
+                    className="btn-primary w-full sm:w-auto justify-center"
                   >
                     <Plus className="w-5 h-5" />
                     Yeni Öğrenci Ekle
@@ -869,13 +871,13 @@ export default function AdminPage() {
                 </div>
 
                 {privateStudents.length === 0 ? (
-                  <div className="glass rounded-2xl p-12 text-center">
+                  <div className="glass rounded-2xl p-8 sm:p-12 text-center">
                     <BookOpen className="w-16 h-16 mx-auto mb-4 text-slate-500" />
                     <p className="text-slate-400 mb-4">Henüz özel ders öğrenciniz yok</p>
                     <p className="text-slate-500 text-sm">Öğrenci eklemek için profil sayfasından "Özel Ders Öğrencisi" seçeneğini kullanın</p>
                   </div>
                 ) : (
-                  <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
                     {privateStudents.map((student, i) => {
                       const studentAssignments = assignments.filter(a => a.student_id === student.id);
                       return (
@@ -884,19 +886,19 @@ export default function AdminPage() {
                           initial={{ opacity: 0, y: 20 }}
                           animate={{ opacity: 1, y: 0 }}
                           transition={{ delay: i * 0.05 }}
-                          className="glass rounded-2xl overflow-hidden card-hover"
-                        >
-                          <div className="h-2 bg-gradient-to-r from-amber-500 to-orange-500" />
-                          <div className="p-6">
-                            <div className="flex items-center gap-4 mb-4">
-                              <div className="w-14 h-14 bg-gradient-to-br from-amber-500 to-orange-500 rounded-full flex items-center justify-center text-xl font-bold text-white">
-                                {student.name?.[0] || '?'}
-                              </div>
-                              <div>
-                                <h3 className="text-lg font-bold text-white">{student.name || 'İsimsiz'}</h3>
-                                <p className="text-slate-400 text-sm">{student.email}</p>
-                              </div>
-                            </div>
+                           className="glass rounded-2xl overflow-hidden card-hover"
+                         >
+                            <div className="h-2 bg-gradient-to-r from-amber-500 to-orange-500" />
+                            <div className="p-4 sm:p-6">
+                             <div className="flex items-center gap-4 mb-4">
+                               <div className="w-12 h-12 sm:w-14 sm:h-14 bg-gradient-to-br from-amber-500 to-orange-500 rounded-full flex items-center justify-center text-lg sm:text-xl font-bold text-white">
+                                 {student.name?.[0] || '?'}
+                               </div>
+                               <div>
+                                 <h3 className="text-lg font-bold text-white">{student.name || 'İsimsiz'}</h3>
+                                 <p className="text-slate-400 text-sm break-all">{student.email}</p>
+                               </div>
+                             </div>
                             
                             <div className="mb-4">
                               <div className="flex items-center justify-between text-sm mb-2">
@@ -935,8 +937,8 @@ export default function AdminPage() {
                                 setSelectedStudent(student.id);
                                 openModal('assignment');
                               }}
-                              className="w-full mt-4 py-2 bg-gradient-to-r from-amber-500/20 to-orange-500/20 text-amber-300 rounded-lg hover:from-amber-500/40 hover:to-orange-500/40 transition-all font-semibold flex items-center justify-center gap-2"
-                            >
+                                  className="w-full mt-4 py-2 bg-gradient-to-r from-amber-500/20 to-orange-500/20 text-amber-300 rounded-lg hover:from-amber-500/40 hover:to-orange-500/40 transition-all font-semibold flex items-center justify-center gap-2"
+                              >
                               <Plus className="w-4 h-4" />
                               Ödev Ekle
                             </motion.button>
@@ -1049,14 +1051,14 @@ export default function AdminPage() {
                 <div className="flex flex-col sm:flex-row gap-4 justify-between items-start sm:items-center mb-6">
                   <div>
                     <h2 className="text-2xl font-bold text-white mb-1">Ödevlendirme</h2>
-                    <p className="text-slate-400">Belge gönder veya ödev ver</p>
+                    <p className="text-slate-400 text-sm sm:text-base">Belge gönder veya ödev ver</p>
                   </div>
-                  <div className="flex gap-3">
+                   <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
                     <motion.button
                       whileHover={{ scale: 1.02 }}
                       whileTap={{ scale: 0.98 }}
                       onClick={() => openModal('sendDoc')}
-                      className="btn-primary"
+                       className="btn-primary w-full sm:w-auto justify-center"
                     >
                       <Send className="w-5 h-5" />
                       Belge Gönder
@@ -1065,7 +1067,7 @@ export default function AdminPage() {
                       whileHover={{ scale: 1.02 }}
                       whileTap={{ scale: 0.98 }}
                       onClick={() => openModal('assignment')}
-                      className="btn-primary"
+                       className="btn-primary w-full sm:w-auto justify-center"
                     >
                       <Plus className="w-5 h-5" />
                       Ödev Ver
@@ -1073,8 +1075,8 @@ export default function AdminPage() {
                   </div>
                 </div>
 
-                <div className="grid md:grid-cols-2 gap-6">
-                  <div className="glass rounded-2xl p-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
+                  <div className="glass rounded-2xl p-4 sm:p-6">
                     <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
                       <Send className="w-5 h-5 text-rose-400" />
                       Gönderilen Belgeler
@@ -1084,17 +1086,17 @@ export default function AdminPage() {
                     ) : (
                       <div className="space-y-3">
                         {sharedDocs.map(doc => (
-                          <div key={doc.id} className="bg-slate-800/50 rounded-lg p-4 flex items-center justify-between gap-3">
-                            <div className="flex items-center gap-3">
+                          <div key={doc.id} className="bg-slate-800/50 rounded-lg p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                            <div className="flex items-center gap-3 min-w-0">
                               <div className="w-10 h-10 bg-rose-500/20 rounded-lg flex items-center justify-center">
                                 <FileText className="w-5 h-5 text-rose-400" />
                               </div>
                               <div>
-                                <p className="text-white font-medium">{doc.document_title}</p>
-                                <p className="text-slate-400 text-sm">{doc.student_name}</p>
+                                <p className="text-white font-medium break-words">{doc.document_title}</p>
+                                <p className="text-slate-400 text-sm break-all">{doc.student_name}</p>
                               </div>
                             </div>
-                            <div className="flex items-center gap-2">
+                            <div className="flex items-center gap-2 self-end sm:self-auto">
                               <span className={`px-2 py-1 rounded-full text-xs ${doc.is_read ? 'bg-green-500/20 text-green-400' : 'bg-yellow-500/20 text-yellow-400'}`}>
                                 {doc.is_read ? 'Görüldü' : 'Bekliyor'}
                               </span>
@@ -1111,7 +1113,7 @@ export default function AdminPage() {
                     )}
                   </div>
 
-                  <div className="glass rounded-2xl p-6">
+                  <div className="glass rounded-2xl p-4 sm:p-6">
                     <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
                       <ClipboardList className="w-5 h-5 text-purple-400" />
                       Ödevler
@@ -1122,9 +1124,9 @@ export default function AdminPage() {
                       <div className="space-y-3">
                         {assignments.map(asmt => (
                           <div key={asmt.id} className="bg-slate-800/50 rounded-lg p-4">
-                            <div className="flex items-center justify-between mb-2">
-                              <p className="text-white font-medium">{asmt.title}</p>
-                              <div className="flex items-center gap-2">
+                            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-2">
+                              <p className="text-white font-medium break-words">{asmt.title}</p>
+                              <div className="flex items-center gap-2 self-start sm:self-auto">
                                 <button 
                                   onClick={() => editAssignment(asmt)}
                                   className="text-slate-400 hover:text-blue-400"
@@ -1695,7 +1697,7 @@ export default function AdminPage() {
                         <label className="block text-slate-300 mb-2 text-sm">Hedef Sınıflar</label>
                         <div className="flex flex-wrap gap-2">
                           {[5, 6, 7, 8, 9, 10, 11, 12].map((grade) => (
-                            <label key={grade} className="flex items-center gap-2 px-3 py-2 glass rounded-lg cursor-pointer hover:bg-white/10">
+                            <label key={grade} className="flex items-center gap-2 px-3 py-2 glass rounded-lg cursor-pointer hover:bg-white/10 min-w-[calc(50%-0.25rem)] sm:min-w-0">
                               <input
                                 type="checkbox"
                                 checked={formData.grades?.includes(grade) || false}
@@ -1712,7 +1714,7 @@ export default function AdminPage() {
                               <span className="text-white text-sm">{grade}. Sınıf</span>
                             </label>
                           ))}
-                          <label className="flex items-center gap-2 px-3 py-2 glass rounded-lg cursor-pointer hover:bg-white/10">
+                          <label className="flex items-center gap-2 px-3 py-2 glass rounded-lg cursor-pointer hover:bg-white/10 min-w-[calc(50%-0.25rem)] sm:min-w-0">
                             <input
                               type="checkbox"
                               checked={formData.grades?.includes('Mezun') || false}
