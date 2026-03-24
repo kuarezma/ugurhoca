@@ -223,6 +223,18 @@ export default function HomePage() {
     return ExternalLink;
   };
 
+  const resolveYandexImageUrl = async (url: string) => {
+    if (!url) return url;
+    if (!/disk\.yandex|yadi\.sk/i.test(url)) return url;
+    try {
+      const res = await fetch(`https://cloud-api.yandex.net/v1/disk/public/resources/download?public_key=${encodeURIComponent(url)}`);
+      const data = await res.json();
+      return data?.href || url;
+    } catch {
+      return url;
+    }
+  };
+
   useEffect(() => {
     const checkSession = async () => {
       const { data: { session } } = await supabase.auth.getSession();
@@ -266,7 +278,18 @@ export default function HomePage() {
       const { data } = await supabase.from('announcements').select('*').order('created_at', { ascending: false }).limit(4);
       const localAnnouncements = JSON.parse(localStorage.getItem('matematiklab_announcements') || '[]');
       const merged = [...(data || []), ...localAnnouncements].sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()).slice(0, 4);
-      setAnnouncements(merged);
+
+      const normalized = await Promise.all(merged.map(async (item) => {
+        const images = item.image_urls?.length ? item.image_urls : item.image_url ? [item.image_url] : [];
+        const resolvedImageUrls = await Promise.all(images.map(resolveYandexImageUrl));
+        return {
+          ...item,
+          image_url: resolvedImageUrls[0] || item.image_url,
+          image_urls: resolvedImageUrls.length > 0 ? resolvedImageUrls : item.image_urls,
+        };
+      }));
+
+      setAnnouncements(normalized);
     };
     loadAnnouncements();
   }, []);

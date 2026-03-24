@@ -35,12 +35,32 @@ const FloatingShapes = () => (
 
 const AnnouncementGallery = ({ images, title }: { images: string[]; title: string }) => {
   const [current, setCurrent] = useState(0);
+  const [resolvedImages, setResolvedImages] = useState<string[]>(images);
   const hasMultiple = images.length > 1;
+
+  useEffect(() => {
+    const resolveYandexImageUrl = async (url: string) => {
+      if (!url) return url;
+      if (!/disk\.yandex|yadi\.sk/i.test(url)) return url;
+      try {
+        const res = await fetch(`https://cloud-api.yandex.net/v1/disk/public/resources/download?public_key=${encodeURIComponent(url)}`);
+        const data = await res.json();
+        return data?.href || url;
+      } catch {
+        return url;
+      }
+    };
+
+    (async () => {
+      const normalized = await Promise.all(images.map(resolveYandexImageUrl));
+      setResolvedImages(normalized);
+    })();
+  }, [images]);
 
   return (
     <div className="relative min-h-[320px] bg-slate-900">
       <img
-        src={images[current]}
+        src={resolvedImages[current] || images[current]}
         alt={title}
         className="absolute inset-0 w-full h-full object-cover"
       />
@@ -48,13 +68,13 @@ const AnnouncementGallery = ({ images, title }: { images: string[]; title: strin
       {hasMultiple && (
         <>
           <button
-            onClick={(e) => { e.stopPropagation(); setCurrent((prev) => (prev - 1 + images.length) % images.length); }}
+            onClick={(e) => { e.stopPropagation(); setCurrent((prev) => (prev - 1 + resolvedImages.length) % resolvedImages.length); }}
             className="absolute left-4 top-1/2 -translate-y-1/2 px-3 py-2 rounded-full bg-black/40 text-white/90 hover:bg-black/60"
           >
             ‹
           </button>
           <button
-            onClick={(e) => { e.stopPropagation(); setCurrent((prev) => (prev + 1) % images.length); }}
+            onClick={(e) => { e.stopPropagation(); setCurrent((prev) => (prev + 1) % resolvedImages.length); }}
             className="absolute right-4 top-1/2 -translate-y-1/2 px-3 py-2 rounded-full bg-black/40 text-white/90 hover:bg-black/60"
           >
             ›
@@ -63,7 +83,7 @@ const AnnouncementGallery = ({ images, title }: { images: string[]; title: strin
       )}
       <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between gap-3">
         <div className="flex items-center gap-2 flex-wrap">
-          {images.map((_, i) => (
+          {resolvedImages.map((_, i) => (
             <button
               key={i}
               onClick={(e) => { e.stopPropagation(); setCurrent(i); }}
@@ -73,7 +93,7 @@ const AnnouncementGallery = ({ images, title }: { images: string[]; title: strin
           ))}
         </div>
         <span className="px-2 py-1 rounded-full bg-black/40 text-white text-xs">
-          {current + 1}/{images.length}
+          {current + 1}/{resolvedImages.length}
         </span>
       </div>
     </div>
