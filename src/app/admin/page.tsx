@@ -685,14 +685,15 @@ export default function AdminPage() {
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
                 onClick={() => setActiveTab(tab.id as any)}
-                className={`px-4 py-3 sm:px-6 sm:py-4 rounded-2xl flex items-center gap-2 sm:gap-3 transition-all whitespace-nowrap shrink-0 ${
+                className={`relative overflow-hidden px-4 py-3 sm:px-6 sm:py-4 rounded-2xl flex items-center gap-2 sm:gap-3 transition-all whitespace-nowrap shrink-0 border shadow-lg ${
                   activeTab === tab.id
-                    ? `bg-gradient-to-r ${tab.color} text-white shadow-lg`
-                    : 'glass text-slate-300 hover:text-white'
+                    ? `bg-gradient-to-r ${tab.color} text-white border-white/20 shadow-${tab.color.includes('pink') ? 'pink' : tab.color.includes('blue') ? 'cyan' : tab.color.includes('green') ? 'emerald' : 'violet'}-500/30`
+                    : `bg-slate-900/60 border-white/10 text-slate-300 hover:text-white hover:border-white/20 hover:bg-white/10`
                 }`}
               >
+                {activeTab === tab.id && <span className="absolute inset-0 bg-white/10 pointer-events-none" />}
                 <tab.icon className="w-5 h-5 sm:w-6 sm:h-6" />
-                <span className="font-semibold text-sm sm:text-base">{tab.label}</span>
+                <span className="relative font-semibold text-sm sm:text-base">{tab.label}</span>
               </motion.button>
             ))}
             </div>
