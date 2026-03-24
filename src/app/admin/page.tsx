@@ -86,6 +86,7 @@ interface Announcement {
   content: string;
   image_url?: string;
   image_urls?: string[];
+  link_url?: string;
   created_at: string;
 }
 
@@ -255,6 +256,7 @@ export default function AdminPage() {
       downloads: 0,
       image_url: modalType === 'announcement' ? (imageUrls[0] || formData.image_url || '') : formData.image_url,
       image_urls: modalType === 'announcement' ? imageUrls : formData.image_urls,
+      link_url: modalType === 'announcement' ? formData.link_url || '' : formData.link_url,
     };
     if (modalType === 'assignment') {
       const { data, error } = await supabase.from('assignments').insert([{
@@ -1484,6 +1486,21 @@ export default function AdminPage() {
                         placeholder={`Her satıra bir Yandex görsel linki yapıştır\nhttps://.../foto1.jpg\nhttps://.../foto2.jpg`}
                       />
                       <p className="text-xs text-slate-500 mt-2">Her satıra 1 görsel linki gir. İlk görsel kapak olur.</p>
+                    </div>
+                  )}
+
+                  {modalType === 'announcement' && (
+                    <div>
+                      <label className="block text-slate-300 mb-2 text-sm">Detay Linki</label>
+                      <input
+                        type="url"
+                        value={formData.link_url || ''}
+                        onChange={(e) => setFormData({ ...formData, link_url: e.target.value })}
+                        className="w-full bg-slate-800/50 border border-slate-700 rounded-xl px-4 py-3 text-white 
+                                 focus:outline-none focus:border-pink-500 transition-colors"
+                        placeholder="PDF ya da site linki"
+                      />
+                      <p className="text-xs text-slate-500 mt-2">PDF, site veya başka bir detay bağlantısı ekleyebilirsin.</p>
                     </div>
                   )}
 

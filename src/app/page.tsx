@@ -614,6 +614,17 @@ export default function HomePage() {
                     </div>
                     <h2 className="text-2xl sm:text-3xl font-bold text-white mb-3">{selectedAnnouncement.title}</h2>
                     <p className="text-slate-300 leading-relaxed whitespace-pre-line">{selectedAnnouncement.content}</p>
+                    {selectedAnnouncement.link_url && (
+                      <a
+                        href={selectedAnnouncement.link_url}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="inline-flex items-center gap-2 mt-6 px-4 py-2 rounded-xl bg-gradient-to-r from-indigo-500 to-purple-500 text-white font-semibold hover:from-indigo-600 hover:to-purple-600 transition-colors"
+                      >
+                        Detaya Git
+                        <ChevronRight className="w-4 h-4" />
+                      </a>
+                    )}
                     <p className="text-slate-500 text-sm mt-6">{new Date(selectedAnnouncement.created_at).toLocaleDateString('tr-TR')}</p>
                   </div>
                 </div>
@@ -629,6 +640,17 @@ export default function HomePage() {
                   </div>
                   <h2 className="text-2xl sm:text-3xl font-bold text-white mb-3">{selectedAnnouncement.title}</h2>
                   <p className="text-slate-300 leading-relaxed whitespace-pre-line">{selectedAnnouncement.content}</p>
+                  {selectedAnnouncement.link_url && (
+                    <a
+                      href={selectedAnnouncement.link_url}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="inline-flex items-center gap-2 mt-6 px-4 py-2 rounded-xl bg-gradient-to-r from-indigo-500 to-purple-500 text-white font-semibold hover:from-indigo-600 hover:to-purple-600 transition-colors"
+                    >
+                      Detaya Git
+                      <ChevronRight className="w-4 h-4" />
+                    </a>
+                  )}
                   <p className="text-slate-500 text-sm mt-6">{new Date(selectedAnnouncement.created_at).toLocaleDateString('tr-TR')}</p>
                 </div>
               )}
