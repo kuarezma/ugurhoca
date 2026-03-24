@@ -273,7 +273,7 @@ export default function AdminPage() {
     e.preventDefault();
     setIsSubmitting(true);
 
-    const imageUrls = modalType === 'announcement'
+    const imageUrls = modalType === 'announcement' || modalType === 'editAnnouncement'
       ? String(formData.image_urls || '')
           .split('\n')
           .map((url: string) => url.trim())
@@ -285,9 +285,9 @@ export default function AdminPage() {
       type: modalType === 'announcement' ? undefined : modalType,
       created_at: new Date().toISOString(),
       downloads: 0,
-      image_url: modalType === 'announcement' ? (imageUrls[0] || formData.image_url || '') : formData.image_url,
-      image_urls: modalType === 'announcement' ? imageUrls : formData.image_urls,
-      link_url: modalType === 'announcement' ? formData.link_url || '' : formData.link_url,
+      image_url: (modalType === 'announcement' || modalType === 'editAnnouncement') ? (imageUrls[0] || formData.image_url || '') : formData.image_url,
+      image_urls: (modalType === 'announcement' || modalType === 'editAnnouncement') ? imageUrls : formData.image_urls,
+      link_url: (modalType === 'announcement' || modalType === 'editAnnouncement') ? formData.link_url || '' : formData.link_url,
     };
     if (modalType === 'assignment') {
       const { data, error } = await supabase.from('assignments').insert([{
@@ -571,6 +571,7 @@ export default function AdminPage() {
                                     title: announcement.title,
                                     description: announcement.content,
                                     image_urls: (announcement.image_urls?.length ? announcement.image_urls : announcement.image_url ? [announcement.image_url] : []).join('\n'),
+                                    image_url: announcement.image_url || '',
                                     link_url: announcement.link_url || '',
                                   });
                                   setModalType('editAnnouncement');
