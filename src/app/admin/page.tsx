@@ -279,15 +279,21 @@ export default function AdminPage() {
           .filter(Boolean)
       : [];
 
-    const newItem = {
-      ...formData,
-      type: modalType === 'announcement' ? undefined : modalType,
-      created_at: new Date().toISOString(),
-      downloads: 0,
-      image_url: (modalType === 'announcement' || modalType === 'editAnnouncement') ? (imageUrls[0] || formData.image_url || '') : formData.image_url,
-      image_urls: (modalType === 'announcement' || modalType === 'editAnnouncement') ? imageUrls : formData.image_urls,
-      link_url: (modalType === 'announcement' || modalType === 'editAnnouncement') ? formData.link_url || '' : formData.link_url,
-    };
+    const newItem = modalType === 'announcement' || modalType === 'editAnnouncement'
+      ? {
+          title: formData.title,
+          content: formData.description,
+          image_url: imageUrls[0] || formData.image_url || '',
+          image_urls: imageUrls,
+          link_url: formData.link_url || '',
+          created_at: new Date().toISOString(),
+        }
+      : {
+          ...formData,
+          type: modalType,
+          created_at: new Date().toISOString(),
+          downloads: 0,
+        };
     if (modalType === 'assignment') {
       const { data, error } = await supabase.from('assignments').insert([{
         title: formData.title,
@@ -322,7 +328,8 @@ export default function AdminPage() {
           await supabase.from('notifications').insert(notificationInserts);
         }
       } else {
-        alert('Duyuru kaydedilemedi. Lütfen tekrar deneyin.');
+        console.error('Announcement insert failed:', error);
+        alert(error?.message ? `Duyuru kaydedilemedi: ${error.message}` : 'Duyuru kaydedilemedi. Lütfen tekrar deneyin.');
       }
       loadData();
     } else if (modalType === 'editAnnouncement') {
