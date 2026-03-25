@@ -460,13 +460,13 @@ function ContentsPageInner() {
                   className="glass rounded-3xl overflow-hidden border border-white/10 card-hover group"
                 >
                   <div className={`h-2 bg-gradient-to-r ${getTypeColor(content.type)}`} />
-                  <div className="p-5 sm:p-6">
-                    <div className="flex items-start justify-between gap-3 mb-5">
+                  <div className="p-4 sm:p-6">
+                    <div className="flex items-start justify-between gap-2 sm:gap-3 mb-4 sm:mb-5">
                       {content.file_url && /drive\.google\.com/i.test(content.file_url) ? (
                         <img
                           src={`/api/image-proxy?url=${encodeURIComponent(content.file_url)}`}
                           alt={content.title}
-                          className="w-14 h-14 rounded-xl object-cover border border-white/10"
+                           className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl object-cover border border-white/10"
                           onError={(e) => {
                             const target = e.target as HTMLImageElement;
                             target.style.display = 'none';
@@ -474,10 +474,10 @@ function ContentsPageInner() {
                           }}
                         />
                       ) : null}
-                      <div className={`w-14 h-14 rounded-xl bg-gradient-to-br ${getTypeColor(content.type)} flex items-center justify-center ${content.file_url && /drive\.google\.com/i.test(content.file_url) ? 'hidden' : ''}`}>
+                      <div className={`w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-gradient-to-br ${getTypeColor(content.type)} flex items-center justify-center ${content.file_url && /drive\.google\.com/i.test(content.file_url) ? 'hidden' : ''}`}>
                         {(() => {
                           const Icon = getTypeIcon(content.type);
-                          return <Icon className="w-7 h-7 text-white" />;
+                          return <Icon className="w-6 h-6 sm:w-7 sm:h-7 text-white" />;
                         })()}
                       </div>
                       <div className="flex flex-wrap justify-end gap-2">
@@ -505,7 +505,7 @@ function ContentsPageInner() {
 
                     <div className="border-t border-white/10 my-4" />
 
-                    <div className="flex items-center gap-4 text-slate-400 text-sm mb-4">
+                    <div className="flex flex-wrap items-center gap-2 sm:gap-4 text-slate-400 text-xs sm:text-sm mb-4">
                       <div className="flex items-center gap-2 min-w-0">
                         <Users className="w-4 h-4" />
                         <span className="truncate">{content.author || content.owner_name || 'Uğur Hoca'}</span>
@@ -516,7 +516,7 @@ function ContentsPageInner() {
                       </div>
                     </div>
 
-                    <div className="flex items-center gap-6 text-sm text-slate-300 mb-5">
+                    <div className="flex flex-wrap items-center gap-4 sm:gap-6 text-sm text-slate-300 mb-4 sm:mb-5">
                       <button 
                         onClick={async (e) => {
                           e.stopPropagation();
@@ -565,7 +565,7 @@ function ContentsPageInner() {
                       </button>
                     </div>
 
-                    <div className="flex items-center gap-3">
+                    <div className="flex flex-wrap items-center gap-2 sm:gap-3">
                       <motion.button
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
@@ -602,7 +602,7 @@ function ContentsPageInner() {
                               setDocuments(documents.map(d => d.id === content.id ? { ...d, downloads: (d.downloads || 0) + 1 } : d));
                             }
                           }}
-                          className="px-5 py-3 bg-gradient-to-r from-indigo-500 to-cyan-500 text-white font-semibold rounded-2xl hover:from-indigo-600 hover:to-cyan-600 transition-all shadow-lg shadow-cyan-500/20 flex items-center gap-2"
+                          className="basis-full sm:basis-auto px-5 py-2.5 sm:py-3 bg-gradient-to-r from-indigo-500 to-cyan-500 text-white font-semibold rounded-2xl hover:from-indigo-600 hover:to-cyan-600 transition-all shadow-lg shadow-cyan-500/20 flex items-center justify-center gap-2"
                         >
                           <Download className="w-4 h-4" /> İndir
                         </motion.button>
@@ -651,16 +651,16 @@ function ContentsPageInner() {
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: i * 0.05 }}
-                  className="glass rounded-3xl border border-white/10 p-5 sm:p-6 card-hover group"
+                  className="glass rounded-3xl border border-white/10 p-4 sm:p-6 card-hover group"
                 >
                   <div className="space-y-4">
-                    <div className="flex items-start justify-between gap-3">
+                    <div className="flex items-start justify-between gap-2 sm:gap-3">
                       <div className="flex items-center gap-3 min-w-0">
                         {content.file_url && /drive\.google\.com/i.test(content.file_url) ? (
                           <img
                             src={`/api/image-proxy?url=${encodeURIComponent(content.file_url)}`}
                             alt={content.title}
-                            className="w-14 h-14 rounded-xl object-cover border border-white/10 flex-shrink-0"
+                            className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl object-cover border border-white/10 flex-shrink-0"
                             onError={(e) => {
                               const target = e.target as HTMLImageElement;
                               target.style.display = 'none';
@@ -668,10 +668,10 @@ function ContentsPageInner() {
                             }}
                           />
                         ) : null}
-                        <div className={`w-14 h-14 rounded-xl bg-gradient-to-br ${getTypeColor(content.type)} flex items-center justify-center flex-shrink-0 ${content.file_url && /drive\.google\.com/i.test(content.file_url) ? 'hidden' : ''}`}>
+                        <div className={`w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-gradient-to-br ${getTypeColor(content.type)} flex items-center justify-center flex-shrink-0 ${content.file_url && /drive\.google\.com/i.test(content.file_url) ? 'hidden' : ''}`}>
                           {(() => {
                             const Icon = getTypeIcon(content.type);
-                            return <Icon className="w-7 h-7 text-white" />;
+                            return <Icon className="w-6 h-6 sm:w-7 sm:h-7 text-white" />;
                           })()}
                         </div>
                         <div className="min-w-0">
@@ -740,7 +740,7 @@ function ContentsPageInner() {
                       </div>
                     </div>
 
-                    <div className="flex items-center gap-3">
+                    <div className="flex flex-wrap items-center gap-2 sm:gap-3">
                       <motion.button
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
@@ -749,7 +749,7 @@ function ContentsPageInner() {
                           navigator.clipboard.writeText(window.location.origin + '/icerikler?id=' + content.id);
                           alert('Link kopyalandı!');
                         }}
-                        className="w-11 h-11 rounded-full bg-slate-800/70 border border-white/10 text-slate-300 hover:text-white flex items-center justify-center transition-colors"
+                        className="w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-slate-800/70 border border-white/10 text-slate-300 hover:text-white flex items-center justify-center transition-colors"
                       >
                         <Share2 className="w-5 h-5" />
                       </motion.button>
@@ -757,7 +757,7 @@ function ContentsPageInner() {
                         whileHover={{ scale: 1.02 }}
                         whileTap={{ scale: 0.98 }}
                         onClick={() => setPreviewDoc(content)}
-                        className="flex-1 min-w-[180px] py-3 bg-slate-800/70 border border-white/10 text-slate-100 font-semibold rounded-2xl hover:bg-slate-700/70 transition-all flex items-center justify-center gap-2"
+                        className="flex-1 min-w-[130px] sm:min-w-[180px] py-2.5 sm:py-3 bg-slate-800/70 border border-white/10 text-slate-100 font-semibold rounded-2xl hover:bg-slate-700/70 transition-all flex items-center justify-center gap-2"
                       >
                         {content.type === 'ders-videolari' ? <Play className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                         {content.type === 'ders-videolari' ? 'İzle' : 'Önizle'}
@@ -771,7 +771,7 @@ function ContentsPageInner() {
                             await supabase.from('documents').update({ downloads: (content.downloads || 0) + 1 }).eq('id', content.id);
                             setDocuments(documents.map(d => d.id === content.id ? { ...d, downloads: (d.downloads || 0) + 1 } : d));
                           }}
-                          className="px-5 py-3 bg-gradient-to-r from-indigo-500 to-cyan-500 text-white font-semibold rounded-2xl hover:from-indigo-600 hover:to-cyan-600 transition-all shadow-lg shadow-cyan-500/20 flex items-center gap-2"
+                          className="basis-full sm:basis-auto px-5 py-2.5 sm:py-3 bg-gradient-to-r from-indigo-500 to-cyan-500 text-white font-semibold rounded-2xl hover:from-indigo-600 hover:to-cyan-600 transition-all shadow-lg shadow-cyan-500/20 flex items-center justify-center gap-2"
                         >
                           <Download className="w-4 h-4" /> İndir
                         </motion.button>
