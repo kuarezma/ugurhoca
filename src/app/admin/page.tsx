@@ -435,8 +435,6 @@ export default function AdminPage() {
     return date.toLocaleDateString('tr-TR', { day: 'numeric', month: 'long', year: 'numeric' });
   };
 
-  const unreadNotifications = notifications.filter(n => !n.is_read);
-
   const parseMessagePayload = (notification: Notification | null) => {
     if (!notification) return null;
     try {
@@ -445,6 +443,21 @@ export default function AdminPage() {
     } catch {}
     return null;
   };
+
+  const adminProfileIds = (allUsers || [])
+    .filter((u) => u.email === 'admin@ugurhoca.com' || u.email === 'admin@matematiklab.com')
+    .map((u) => u.id)
+    .filter(Boolean);
+
+  const adminTargetIds = new Set([user?.id, ...adminProfileIds].filter(Boolean));
+
+  const isIncomingAdminMessage = (n: Notification) => {
+    if (n.type !== 'message') return false;
+    if (!adminTargetIds.has(n.user_id)) return false;
+    return !!parseMessagePayload(n);
+  };
+
+  const unreadNotifications = notifications.filter((n) => isIncomingAdminMessage(n) && !n.is_read);
 
   const getNotificationBody = (notification: Notification | null) => {
     const payload = parseMessagePayload(notification);
@@ -502,7 +515,7 @@ export default function AdminPage() {
 
   const extractUrls = (text: string) => text.match(/https?:\/\/[^\s<>"]+/g) || [];
 
-  const studentMessages = notifications.filter(n => n.type === 'message' && user && n.user_id === user.id);
+  const studentMessages = notifications.filter((n) => isIncomingAdminMessage(n));
 
   const applyModerationAction = async (action: 'block' | 'mute' | 'report') => {
     const payload = parseMessagePayload(selectedNotification);
