@@ -603,51 +603,65 @@ const ColorMath = ({ onScore }: { onScore: (score: number) => void }) => {
   const [score, setScore] = useState(0);
   const [lives, setLives] = useState(3);
   const [round, setRound] = useState(0);
-  const [question, setQuestion] = useState({ text: '', answer: true });
-  const [timeLeft, setTimeLeft] = useState(10);
+  const [question, setQuestion] = useState({ word: '', fontColor: '', askedColor: '', answer: true });
+  const [timeLeft, setTimeLeft] = useState(8);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
+
+  const getRoundTime = useCallback((roundNumber: number) => {
+    return Math.max(4, 8 - Math.floor((roundNumber - 1) / 3));
+  }, []);
 
   const generateQuestion = useCallback(() => {
     const colors = ['Kırmızı', 'Mavi', 'Yeşil', 'Sarı', 'Mor', 'Turuncu'];
-    const numColors = colors.length;
-    const num1 = Math.floor(Math.random() * numColors);
-    let num2 = Math.floor(Math.random() * numColors);
-    while (num2 === num1) num2 = Math.floor(Math.random() * numColors);
-    
-    const textColor = colors[num1];
-    const bgColor = colors[num2];
-    const isCorrect = textColor === bgColor;
-    const isTrue = Math.random() > 0.5;
-    
+    const word = colors[Math.floor(Math.random() * colors.length)];
+    const fontColor = colors[Math.floor(Math.random() * colors.length)];
+
+    const isTrueQuestion = Math.random() > 0.5;
+    const askedColor = isTrueQuestion
+      ? fontColor
+      : colors.filter((c) => c !== fontColor)[Math.floor(Math.random() * (colors.length - 1))];
+
     setQuestion({
-      text: `Yazı ${isTrue ? textColor : bgColor}`,
-      answer: isTrue ? isCorrect : !isCorrect
+      word,
+      fontColor,
+      askedColor,
+      answer: askedColor === fontColor,
     });
-    setTimeLeft(10);
-    setRound(r => r + 1);
   }, []);
+
+  const advanceRound = useCallback(() => {
+    setRound((r) => {
+      const nextRound = r + 1;
+      setTimeLeft(getRoundTime(nextRound));
+      return nextRound;
+    });
+    generateQuestion();
+  }, [generateQuestion, getRoundTime]);
 
   useEffect(() => {
     if (gameState === 'playing') {
       timerRef.current = setInterval(() => {
         setTimeLeft(t => {
           if (t <= 1) {
-            setLives(l => {
+            let gameOver = false;
+            setLives((l) => {
               if (l <= 1) {
+                gameOver = true;
                 setGameState('ended');
                 onScore(score);
+                return 0;
               }
               return l - 1;
             });
-            generateQuestion();
-            return 10;
+            if (!gameOver) advanceRound();
+            return 0;
           }
           return t - 1;
         });
       }, 1000);
       return () => clearInterval(timerRef.current!);
     }
-  }, [gameState, generateQuestion, onScore, score]);
+  }, [advanceRound, gameState, onScore, score]);
 
   const handleAnswer = (answer: boolean) => {
     if (answer === question.answer) {
@@ -661,7 +675,7 @@ const ColorMath = ({ onScore }: { onScore: (score: number) => void }) => {
         return l - 1;
       });
     }
-    generateQuestion();
+    advanceRound();
   };
 
   const startGame = () => {
@@ -669,7 +683,8 @@ const ColorMath = ({ onScore }: { onScore: (score: number) => void }) => {
     setScore(0);
     setLives(3);
     setRound(0);
-    generateQuestion();
+    setTimeLeft(getRoundTime(1));
+    advanceRound();
   };
 
   const colorMap: Record<string, string> = {
@@ -679,15 +694,6 @@ const ColorMath = ({ onScore }: { onScore: (score: number) => void }) => {
     'Sarı': 'text-yellow-400',
     'Mor': 'text-purple-500',
     'Turuncu': 'text-orange-500',
-  };
-
-  const bgColorMap: Record<string, string> = {
-    'Kırmızı': 'bg-red-500',
-    'Mavi': 'bg-blue-500',
-    'Yeşil': 'bg-green-500',
-    'Sarı': 'bg-yellow-400',
-    'Mor': 'bg-purple-500',
-    'Turuncu': 'bg-orange-500',
   };
 
   if (gameState === 'idle') {
@@ -754,8 +760,7 @@ const ColorMath = ({ onScore }: { onScore: (score: number) => void }) => {
     );
   }
 
-  const words = question.text.split(' ');
-  const targetWord = words[words.length - 1];
+  const currentRoundTime = getRoundTime(Math.max(round, 1));
 
   return (
     <div className="max-w-2xl mx-auto">
@@ -784,17 +789,18 @@ const ColorMath = ({ onScore }: { onScore: (score: number) => void }) => {
         animate={{ scale: 1, opacity: 1 }}
         className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-3xl p-12 mb-8 text-center"
       >
-        <p className="text-5xl font-bold mb-8">
-          {words.slice(0, -1).join(' ')}
+        <p className="text-3xl sm:text-4xl font-bold mb-8 text-slate-200">
+          Yazının rengi <span className="text-cyan-300">{question.askedColor}</span> mi?
         </p>
         <motion.p
-          key={targetWord}
+          key={`${question.word}-${question.fontColor}-${round}`}
           initial={{ scale: 0.5, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
-          className={`text-7xl font-bold ${colorMap[targetWord] || 'text-white'}`}
+          className={`text-7xl font-bold ${colorMap[question.fontColor] || 'text-white'}`}
         >
-          {targetWord}
+          {question.word}
         </motion.p>
+        <p className="text-slate-500 mt-6 text-sm">Kelimeyi değil yazı rengini takip et.</p>
       </motion.div>
 
       <div className="mb-6">
@@ -802,8 +808,8 @@ const ColorMath = ({ onScore }: { onScore: (score: number) => void }) => {
           <motion.div
             className="h-full bg-gradient-to-r from-green-500 to-emerald-500"
             initial={{ width: '100%' }}
-            animate={{ width: `${(timeLeft / 10) * 100}%` }}
-            style={{ width: `${(timeLeft / 10) * 100}%` }}
+            animate={{ width: `${(timeLeft / currentRoundTime) * 100}%` }}
+            style={{ width: `${(timeLeft / currentRoundTime) * 100}%` }}
           />
         </div>
         <p className="text-center text-slate-400 mt-2">{timeLeft} saniye</p>
