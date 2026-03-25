@@ -434,7 +434,7 @@ export default function HomePage() {
               </p>
             </motion.div>
 
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-7 gap-3 sm:gap-4">
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-3 2xl:grid-cols-6 gap-3 sm:gap-4">
               {categories.map((cat, i) => (
                 <motion.div
                   key={cat.id}
@@ -444,10 +444,10 @@ export default function HomePage() {
                 >
                   <Link 
                     href={cat.href}
-                    className={`block ${cat.bgColor} border ${cat.borderColor} rounded-2xl p-5 sm:p-6 text-center hover:scale-105 transition-transform`}
+                    className={`block ${cat.bgColor} border ${cat.borderColor} rounded-2xl p-5 sm:p-7 lg:p-8 xl:p-6 text-center hover:scale-105 transition-transform`}
                   >
-                    <div className={`w-12 h-12 sm:w-14 sm:h-14 mx-auto mb-3 rounded-2xl bg-gradient-to-br ${cat.color} flex items-center justify-center`}>
-                      <cat.icon className="w-6 h-6 sm:w-7 sm:h-7 text-white" />
+                    <div className={`w-14 h-14 sm:w-16 sm:h-16 mx-auto mb-3 rounded-2xl bg-gradient-to-br ${cat.color} flex items-center justify-center`}>
+                      <cat.icon className="w-7 h-7 sm:w-8 sm:h-8 text-white" />
                     </div>
                     <h3 className="text-white font-bold text-sm sm:text-base mb-1">{cat.title}</h3>
                     <p className="text-slate-400 text-xs hidden sm:block">{cat.desc}</p>
