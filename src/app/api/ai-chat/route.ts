@@ -34,6 +34,45 @@ const extractReplyText = (data: any): string => {
   return '';
 };
 
+const extractFromRawText = (raw: string): string => {
+  const text = raw.trim();
+  if (!text) return '';
+
+  if (text.startsWith('{') || text.startsWith('[')) {
+    try {
+      const parsed = JSON.parse(text);
+      return extractReplyText(parsed);
+    } catch {
+      return '';
+    }
+  }
+
+  if (text.includes('data:')) {
+    const lines = text
+      .split('\n')
+      .map((l) => l.trim())
+      .filter((l) => l.startsWith('data:'));
+
+    for (let i = lines.length - 1; i >= 0; i -= 1) {
+      const payload = lines[i].replace(/^data:\s*/, '');
+      if (!payload || payload === '[DONE]') continue;
+      try {
+        const parsed = JSON.parse(payload);
+        const content = extractReplyText(parsed);
+        if (content) return content;
+      } catch {
+        continue;
+      }
+    }
+  }
+
+  if (text.length > 0) {
+    return text;
+  }
+
+  return '';
+};
+
 const SYSTEM_PROMPT = `Sen Uğur Hoca Matematik platformunun Türkçe eğitim asistanısın.
 
 Hedeflerin:
@@ -88,20 +127,32 @@ export async function POST(request: Request) {
     }),
   });
 
-  const data = await response.json().catch(() => null);
+  const raw = await response.text();
+  let data: any = null;
+  try {
+    data = raw ? JSON.parse(raw) : null;
+  } catch {
+    data = null;
+  }
 
   if (!response.ok) {
     return NextResponse.json(
-      { error: data?.error?.message || 'AI yanıt üretilemedi.' },
+      {
+        error:
+          data?.error?.message ||
+          `AI yanıt üretilemedi. HTTP ${response.status}. ${raw?.slice(0, 180) || ''}`,
+      },
       { status: 500 }
     );
   }
 
-  const content = extractReplyText(data);
+  const content = extractReplyText(data) || extractFromRawText(raw);
   if (!content) {
     const debugShape = data && typeof data === 'object' ? Object.keys(data).slice(0, 8) : [];
     return NextResponse.json(
-      { error: `AI yanıtı boş geldi. Dönen alanlar: ${debugShape.join(', ') || 'yok'}` },
+      {
+        error: `AI yanıtı boş geldi. Dönen alanlar: ${debugShape.join(', ') || 'yok'}. Ham yanıt: ${raw?.slice(0, 180) || 'boş'}`,
+      },
       { status: 500 }
     );
   }
