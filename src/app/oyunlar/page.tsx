@@ -837,6 +837,495 @@ const ColorMath = ({ onScore }: { onScore: (score: number) => void }) => {
   );
 };
 
+const mathTerms = [
+  'ÇARPIM', 'BÖLÜM', 'FAKTÖRİYEL', 'POLİNOM', 'EŞİTSİZLİK', 'FONKSİYON', 'PERMÜTASYON', 'KOMBİNASYON', 'ORAN', 'ORANTI',
+  'KESİR', 'PAYDA', 'PAY', 'DOĞRU', 'DÜZLEM', 'AÇI', 'KÖŞEGEN', 'ÇEMBER', 'DAİRE', 'YARIÇAP',
+  'ÇAP', 'TEĞET', 'ALAN', 'ÇEVRE', 'YÜKSEKLİK', 'TABAN', 'KENAR', 'KÖŞE', 'AÇIORTAY', 'Kenarortay',
+  'ASAL', 'POZİTİF', 'NEGATİF', 'TAMSAYI', 'DOĞALSayi', 'RASYONEL', 'İRRASYONEL', 'REEL', 'KÜME', 'ELEMEN',
+  'KESİŞİM', 'BİRLEŞİM', 'FARK', 'TÜMLEME', 'ALT KÜME', 'BOŞ KÜME', 'EVrensel', 'ARİTMETİK', 'CEBİR', 'GEOMETRİ',
+  'İSTATİSTİK', 'ORTAÇEMBER', 'YÜKSEKLİK', 'ÖTELEME', 'DÖNÜŞÜM', 'SİMETRİ', 'ÜÇGEN', 'DÖRTGEN', 'BEŞGEN', 'ALTIGEN',
+  'PARALEL', 'DİK', 'EĞİK', 'AÇI', 'TÜM', 'YAN', 'TERS', 'DÜZ AÇI', 'DAR AÇI', 'GENİŞ AÇI',
+  'ÖKLİT', 'PİSAGOR', 'THALES', 'SİNÜS', 'KOSİNÜS', 'TANJANT', 'KOTANJANT', 'SEKANT', 'KOSEKANT',
+  'LOGARİTMA', 'ÜSTEL', 'POZİTİF', 'NEGATİF', 'SIFIR', 'BİR', 'İKİ', 'ÜÇ', 'ONDALIK', 'TAMSAYI',
+  'DENKLEM', 'EŞİTSİZLİK', 'SİSTEM', 'MATRİS', 'DETERMİNANT', 'VEKTÖR', 'SKALER', 'DİZİ', 'SERİ', 'LİMİT',
+];
+
+const Hangman = ({ onScore }: { onScore: (score: number) => void }) => {
+  const [gameState, setGameState] = useState<'idle' | 'playing' | 'won' | 'lost'>('idle');
+  const [word, setWord] = useState('');
+  const [guessed, setGuessed] = useState<Set<string>>(new Set());
+  const [score, setScore] = useState(0);
+  const [round, setRound] = useState(1);
+  const [hint, setHint] = useState('');
+
+  const maxWrong = 6;
+
+  const startGame = () => {
+    const idx = Math.floor(Math.random() * mathTerms.length);
+    setWord(mathTerms[idx]);
+    setGuessed(new Set());
+    setScore(0);
+    setRound(1);
+    setHint('');
+    setGameState('playing');
+  };
+
+  const getDisplay = () =>
+    word.split('').map(c => guessed.has(c) ? c : '_').join(' ');
+
+  const isWon = word.split('').every(c => guessed.has(c));
+  const isLost = [...guessed].filter(c => !word.includes(c)).length >= maxWrong;
+
+  const handleGuess = (letter: string) => {
+    if (guessed.has(letter) || gameState !== 'playing') return;
+    const newGuessed = new Set(guessed);
+    newGuessed.add(letter);
+    setGuessed(newGuessed);
+
+    if (isWon) {
+      setScore(s => s + (maxWrong - [...guessed].filter(c => !word.includes(c)).length) * 10 + 50);
+      setTimeout(() => {
+        setRound(r => r + 1);
+        const idx = Math.floor(Math.random() * mathTerms.length);
+        setWord(mathTerms[idx]);
+        setGuessed(new Set());
+      }, 1500);
+    }
+    if (isLost) {
+      setGameState('lost');
+      onScore(score);
+    }
+  };
+
+  useEffect(() => {
+    if (isWon && gameState === 'playing') {
+      setGameState('won');
+      setTimeout(() => {
+        setGameState('playing');
+      }, 1500);
+    }
+  }, [isWon, gameState]);
+
+  const wrongCount = [...guessed].filter(c => !word.includes(c)).length;
+
+  const parts = [
+    <line key="base" x1="10" y1="140" x2="60" y2="140" strokeWidth="3" />,
+    <line key="pole" x1="35" y1="140" x2="35" y2="10" strokeWidth="3" />,
+    <line key="top" x1="35" y1="10" x2="80" y2="10" strokeWidth="3" />,
+    <line key="rope" x1="80" y1="10" x2="80" y2="30" strokeWidth="3" />,
+  ];
+  const bodyParts = [
+    <circle key="head" cx="80" cy="40" r="10" strokeWidth="3" fill="none" />,
+    <line key="body" x1="80" y1="50" x2="80" y2="85" strokeWidth="3" />,
+    <line key="larm" x1="80" y1="60" x2="65" y2="75" strokeWidth="3" />,
+    <line key="rarm" x1="80" y1="60" x2="95" y2="75" strokeWidth="3" />,
+    <line key="lleg" x1="80" y1="85" x2="65" y2="110" strokeWidth="3" />,
+    <line key="rleg" x1="80" y1="85" x2="95" y2="110" strokeWidth="3" />,
+  ];
+
+  if (gameState === 'idle') {
+    return (
+      <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="text-center">
+        <div className="mb-8">
+          <motion.div
+            animate={{ y: [0, -10, 0] }}
+            transition={{ duration: 2, repeat: Infinity }}
+            className="w-32 h-32 mx-auto mb-6 bg-gradient-to-br from-indigo-500 to-purple-500 rounded-3xl flex items-center justify-center"
+          >
+            <span className="text-5xl">🔤</span>
+          </motion.div>
+          <h2 className="text-3xl font-bold text-white mb-4">Matematik Adam Asmaca</h2>
+          <p className="text-slate-400 mb-6 max-w-md mx-auto">
+            Matematik terimlerini tahmin et! Her yanlış tahmin bir parça kaybettirir. 6 yanlış hakkın var!
+          </p>
+        </div>
+        <motion.button
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          onClick={startGame}
+          className="px-8 py-4 bg-gradient-to-r from-indigo-500 to-purple-500 text-white font-bold rounded-2xl text-xl shadow-lg"
+        >
+          <Play className="w-6 h-6 inline mr-2" />Oyunu Başlat
+        </motion.button>
+      </motion.div>
+    );
+  }
+
+  if (gameState === 'lost') {
+    return (
+      <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="text-center">
+        <motion.div animate={{ scale: [1, 1.2, 1] }} transition={{ duration: 0.5 }}
+          className="w-32 h-32 mx-auto mb-6 bg-gradient-to-br from-red-500 to-orange-500 rounded-full flex items-center justify-center">
+          <span className="text-5xl">💀</span>
+        </motion.div>
+        <h2 className="text-3xl font-bold text-white mb-2">Kaybettin!</h2>
+        <p className="text-2xl text-white mb-2">Doğru cevap: <span className="text-yellow-400 font-bold">{word}</span></p>
+        <p className="text-4xl font-bold text-green-400 mb-6">{score} Puan</p>
+        <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} onClick={startGame}
+          className="px-8 py-4 bg-gradient-to-r from-indigo-500 to-purple-500 text-white font-bold rounded-2xl text-xl">
+          <RotateCcw className="w-6 h-6 inline mr-2" />Tekrar Oyna
+        </motion.button>
+      </motion.div>
+    );
+  }
+
+  return (
+    <div className="max-w-xl mx-auto">
+      <div className="flex justify-between items-center mb-6">
+        <div className="px-4 py-2 bg-black/50 backdrop-blur-sm rounded-xl text-white font-bold">
+          Puan: <span className="text-green-400">{score}</span>
+        </div>
+        <div className="px-4 py-2 bg-black/50 backdrop-blur-sm rounded-xl text-white font-bold">
+          Tur {round}
+        </div>
+        <div className="px-4 py-2 bg-black/50 backdrop-blur-sm rounded-xl text-white font-bold">
+          Kalan: {maxWrong - wrongCount} ❌
+        </div>
+      </div>
+
+      <div className="flex justify-center mb-6">
+        <svg width="150" height="150" className="text-slate-300">
+          {parts.map((p, i) => i < wrongCount ? p : <g key={i} />)}
+          {bodyParts.map((p, i) => i < wrongCount - 1 ? p : <g key={i} />)}
+        </svg>
+      </div>
+
+      <motion.div
+        animate={gameState === 'won' ? { scale: [1, 1.05, 1] } : {}}
+        className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-3xl p-8 mb-8 text-center"
+      >
+        <div className="text-5xl font-bold text-white tracking-widest mb-4">
+          {getDisplay()}
+        </div>
+        {gameState === 'won' && (
+          <p className="text-green-400 font-bold text-xl">🎉 Doğru bildin!</p>
+        )}
+      </motion.div>
+
+      <div className="flex flex-wrap justify-center gap-2 mb-6">
+        {'ABCÇDEFGĞHIİJKLMNOÖPRSŞTUÜVYZ'.split('').map(letter => (
+          <motion.button
+            key={letter}
+            whileHover={{ scale: guessed.has(letter) ? 1 : 1.1 }}
+            whileTap={{ scale: 0.9 }}
+            onClick={() => handleGuess(letter)}
+            disabled={guessed.has(letter) || gameState !== 'playing'}
+            className={`w-10 h-10 rounded-xl font-bold text-lg transition-all ${
+              guessed.has(letter)
+                ? word.includes(letter)
+                  ? 'bg-green-500 text-white'
+                  : 'bg-red-500/40 text-red-300'
+                : 'bg-gradient-to-br from-slate-700 to-slate-800 text-white hover:from-slate-600 hover:to-slate-700'
+            }`}
+          >
+            {letter}
+          </motion.button>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+const NumberPuzzle = ({ onScore }: { onScore: (score: number) => void }) => {
+  const [gameState, setGameState] = useState<'idle' | 'playing' | 'ended'>('idle');
+  const [score, setScore] = useState(0);
+  const [level, setLevel] = useState(1);
+  const [problem, setProblem] = useState<{ text: string; blanks: number[]; answer: number; hint: string }>({ text: '', blanks: [], answer: 0, hint: '' });
+  const [input, setInput] = useState('');
+  const [timeLeft, setTimeLeft] = useState(90);
+  const [streak, setStreak] = useState(0);
+  const [feedback, setFeedback] = useState<'correct' | 'wrong' | null>(null);
+
+  useEffect(() => {
+    if (gameState !== 'playing') return;
+    const timer = setInterval(() => {
+      setTimeLeft(t => {
+        if (t <= 1) { setGameState('ended'); onScore(score); return 0; }
+        return t - 1;
+      });
+    }, 1000);
+    return () => clearInterval(timer);
+  }, [gameState, score, onScore]);
+
+  const generateProblem = useCallback(() => {
+    const templates = [
+      () => { const a = Math.floor(Math.random() * 20) + 5; const b = Math.floor(Math.random() * 20) + 5; return { text: `${a} + ${b} = ?`, blanks: [a + b], answer: a + b, hint: `${a} + ${b}` }; },
+      () => { const a = Math.floor(Math.random() * 30) + 10; const b = Math.floor(Math.random() * Math.min(a, 20)) + 1; return { text: `${a} - ${b} = ?`, blanks: [a - b], answer: a - b, hint: `${a} - ${b}` }; },
+      () => { const a = Math.floor(Math.random() * 12) + 2; const b = Math.floor(Math.random() * 12) + 2; return { text: `${a} × ${b} = ?`, blanks: [a * b], answer: a * b, hint: `${a} × ${b}` }; },
+      () => { const b = Math.floor(Math.random() * 10) + 2; const ans = Math.floor(Math.random() * 10) + 1; const a = b * ans; return { text: `${a} ÷ ${b} = ?`, blanks: [ans], answer: ans, hint: `${a} ÷ ${b}` }; },
+      () => { const a = Math.floor(Math.random() * 50) + 10; const b = Math.floor(Math.random() * 50) + 10; return { text: `${a} + ${b} + ? = ${a + b + 10}`, blanks: [10], answer: 10, hint: `Eksik sayıyı bul` }; },
+      () => { const n = Math.floor(Math.random() * 5) + 2; const ans = Math.pow(n, 2); return { text: `${n}² = ?`, blanks: [ans], answer: ans, hint: `Karesini al` }; },
+      () => { const n = Math.floor(Math.random() * 5) + 2; const ans = Math.pow(n, 3); return { text: `${n}³ = ?`, blanks: [ans], answer: ans, hint: `Küpünü al` }; },
+      () => { const n = Math.floor(Math.random() * 10) + 2; return { text: `√${n * n} = ?`, blanks: [n], answer: n, hint: `Karekök al` }; },
+      () => { const a = Math.floor(Math.random() * 10) + 2; const b = Math.floor(Math.random() * 10) + 2; const c = a + b; return { text: `? + ${b} = ${c}`, blanks: [a], answer: a, hint: `${c} - ${b}` }; },
+      () => { const a = Math.floor(Math.random() * 20) + 10; const b = Math.floor(Math.random() * 10) + 5; return { text: `(${a} + ${b}) × 2 = ?`, blanks: [(a + b) * 2], answer: (a + b) * 2, hint: `Önce parantez, sonra çarp` }; },
+    ];
+    const template = templates[Math.floor(Math.random() * templates.length)]();
+    setProblem(template);
+    setInput('');
+    setFeedback(null);
+  }, []);
+
+  useEffect(() => {
+    if (gameState === 'playing') generateProblem();
+  }, [gameState, level, generateProblem]);
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!input.trim()) return;
+    const val = parseInt(input.trim());
+    if (val === problem.answer) {
+      const bonus = streak > 4 ? 15 : streak > 2 ? 5 : 0;
+      setScore(s => s + 10 * level + bonus);
+      setStreak(s => s + 1);
+      if (score >= level * 80) setLevel(l => Math.min(l + 1, 10));
+      setFeedback('correct');
+      setTimeout(generateProblem, 800);
+    } else {
+      setStreak(0);
+      setFeedback('wrong');
+      setTimeout(() => setFeedback(null), 1000);
+    }
+  };
+
+  const startGame = () => { setGameState('playing'); setScore(0); setLevel(1); setTimeLeft(90); setStreak(0); };
+
+  if (gameState === 'idle') {
+    return (
+      <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="text-center">
+        <div className="mb-8">
+          <motion.div animate={{ rotate: [0, 10, -10, 0] }} transition={{ duration: 2, repeat: Infinity }}
+            className="w-32 h-32 mx-auto mb-6 bg-gradient-to-br from-amber-500 to-orange-500 rounded-3xl flex items-center justify-center">
+            <span className="text-5xl">🔢</span>
+          </motion.div>
+          <h2 className="text-3xl font-bold text-white mb-4">Sayı Bulmaca</h2>
+          <p className="text-slate-400 mb-6 max-w-md mx-auto">
+            Eksik sayıyı bul! Dört işlem, kare, küp, karekök... 90 saniyede en yüksek skoru yap!
+          </p>
+        </div>
+        <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} onClick={startGame}
+          className="px-8 py-4 bg-gradient-to-r from-amber-500 to-orange-500 text-white font-bold rounded-2xl text-xl shadow-lg">
+          <Play className="w-6 h-6 inline mr-2" />Oyunu Başlat
+        </motion.button>
+      </motion.div>
+    );
+  }
+
+  if (gameState === 'ended') {
+    return (
+      <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="text-center">
+        <motion.div animate={{ scale: [1, 1.2, 1] }} transition={{ duration: 0.5 }}
+          className="w-32 h-32 mx-auto mb-6 bg-gradient-to-br from-green-400 to-emerald-500 rounded-full flex items-center justify-center">
+          <Trophy className="w-16 h-16 text-white" />
+        </motion.div>
+        <h2 className="text-3xl font-bold text-white mb-2">Süre Doldu!</h2>
+        <p className="text-5xl font-bold text-green-400 mb-2">{score} Puan</p>
+        <p className="text-slate-400 mb-8">Seviye {level}'e ulaştın!</p>
+        <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} onClick={startGame}
+          className="px-8 py-4 bg-gradient-to-r from-amber-500 to-orange-500 text-white font-bold rounded-2xl text-xl">
+          <RotateCcw className="w-6 h-6 inline mr-2" />Tekrar Oyna
+        </motion.button>
+      </motion.div>
+    );
+  }
+
+  return (
+    <div className="max-w-xl mx-auto">
+      <div className="flex justify-between items-center mb-6">
+        <div className="px-4 py-2 bg-black/50 backdrop-blur-sm rounded-xl text-white font-bold">
+          Puan: <span className="text-green-400">{score}</span>
+        </div>
+        <div className="px-4 py-2 bg-black/50 backdrop-blur-sm rounded-xl text-white font-bold">
+          Seviye <span className="text-amber-400">{level}</span>
+        </div>
+        <div className="px-4 py-2 bg-black/50 backdrop-blur-sm rounded-xl text-white font-bold">
+          {timeLeft}s
+        </div>
+      </div>
+
+      <motion.div
+        animate={feedback === 'correct' ? { scale: [1, 1.05, 1] } : feedback === 'wrong' ? { x: [-10, 10, -10, 10, 0] } : {}}
+        className={`bg-gradient-to-br from-slate-800 to-slate-900 rounded-3xl p-8 mb-6 text-center border-2 transition-colors ${
+          feedback === 'correct' ? 'border-green-500' : feedback === 'wrong' ? 'border-red-500' : 'border-slate-700'
+        }`}
+      >
+        <p className="text-5xl font-bold text-white mb-2">{problem.text}</p>
+        <p className="text-slate-500 text-sm mt-2">{problem.hint}</p>
+        {feedback === 'correct' && <p className="text-green-400 font-bold text-xl mt-3">✓ Doğru!</p>}
+        {feedback === 'wrong' && <p className="text-red-400 font-bold text-xl mt-3">✗ Yanlış! Doğru cevap: {problem.answer}</p>}
+      </motion.div>
+
+      {streak > 3 && (
+        <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }}
+          className="mb-4 px-4 py-2 bg-orange-500/20 border border-orange-500/30 rounded-xl text-center">
+          <span className="text-orange-400 font-bold">🔥 {streak} Kombo!</span>
+        </motion.div>
+      )}
+
+      <form onSubmit={handleSubmit} className="flex gap-3">
+        <input
+          type="number"
+          value={input}
+          onChange={e => setInput(e.target.value)}
+          placeholder="Cevabını yaz..."
+          autoFocus
+          className="flex-1 bg-slate-800 border border-slate-700 rounded-2xl px-6 py-4 text-white text-2xl font-bold text-center focus:outline-none focus:border-amber-500 transition-colors"
+        />
+        <motion.button type="submit" whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
+          className="px-8 py-4 bg-gradient-to-r from-amber-500 to-orange-500 text-white font-bold rounded-2xl text-xl">
+          Gönder
+        </motion.button>
+      </form>
+    </div>
+  );
+};
+
+const MemoryGame = ({ onScore }: { onScore: (score: number) => void }) => {
+  const symbols = ['+', '−', '×', '÷', '=', '%', '²', '³', '√', 'π', 'Δ', '∑', '∫', '∞', '≠', '≈'];
+  const [cards, setCards] = useState<{ id: number; symbol: string; flipped: boolean; matched: boolean }[]>([]);
+  const [selected, setSelected] = useState<number[]>([]);
+  const [moves, setMoves] = useState(0);
+  const [gameState, setGameState] = useState<'idle' | 'playing' | 'won'>('idle');
+  const [timeLeft, setTimeLeft] = useState(60);
+  const [score, setScore] = useState(0);
+
+  useEffect(() => {
+    if (gameState !== 'playing') return;
+    const timer = setInterval(() => {
+      setTimeLeft(t => { if (t <= 1) { setGameState('idle'); onScore(score); return 0; } return t - 1; });
+    }, 1000);
+    return () => clearInterval(timer);
+  }, [gameState, score, onScore]);
+
+  const initGame = () => {
+    const pairs = [...symbols.slice(0, 8)].flatMap((s, i) => [
+      { id: i * 2, symbol: s, flipped: false, matched: false },
+      { id: i * 2 + 1, symbol: s, flipped: false, matched: false },
+    ]);
+    setCards(pairs.sort(() => Math.random() - 0.5));
+    setSelected([]);
+    setMoves(0);
+    setScore(0);
+    setTimeLeft(60);
+    setGameState('playing');
+  };
+
+  const startGame = () => { initGame(); };
+
+  useEffect(() => {
+    if (selected.length === 2) {
+      const [a, b] = selected;
+      if (cards[a].symbol === cards[b].symbol) {
+        const newCards = cards.map((c, i) =>
+          i === a || i === b ? { ...c, matched: true } : c
+        );
+        setCards(newCards);
+        setScore(s => s + 20);
+        setSelected([]);
+        if (newCards.every(c => c.matched)) {
+          const bonus = Math.max(0, (timeLeft - moves) * 2);
+          setScore(s => s + bonus);
+          setTimeout(() => setGameState('won'), 500);
+        }
+      } else {
+        setTimeout(() => {
+          setCards(cards.map((c, i) => i === a || i === b ? { ...c, flipped: false } : c));
+          setSelected([]);
+        }, 800);
+      }
+      setMoves(m => m + 1);
+    }
+  }, [selected, cards]);
+
+  useEffect(() => {
+    if (cards.length > 0 && cards.every(c => c.matched) && gameState === 'playing') {
+      const bonus = Math.max(0, (timeLeft - moves) * 2);
+      setScore(s => s + bonus);
+      setTimeout(() => setGameState('won'), 500);
+    }
+  }, [cards, gameState]);
+
+  if (gameState === 'idle') {
+    return (
+      <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="text-center">
+        <div className="mb-8">
+          <motion.div animate={{ rotate: [0, 360] }} transition={{ duration: 3, repeat: Infinity, ease: 'linear' }}
+            className="w-32 h-32 mx-auto mb-6 bg-gradient-to-br from-emerald-500 to-teal-500 rounded-3xl flex items-center justify-center">
+            <span className="text-5xl">🧠</span>
+          </motion.div>
+          <h2 className="text-3xl font-bold text-white mb-4">Matematik Memory</h2>
+          <p className="text-slate-400 mb-6 max-w-md mx-auto">
+            Eşleşen sembolleri bul! Tüm çiftleri bulunca süre bonusu kazan. 60 saniyen var!
+          </p>
+        </div>
+        <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} onClick={startGame}
+          className="px-8 py-4 bg-gradient-to-r from-emerald-500 to-teal-500 text-white font-bold rounded-2xl text-xl shadow-lg">
+          <Play className="w-6 h-6 inline mr-2" />Oyunu Başlat
+        </motion.button>
+      </motion.div>
+    );
+  }
+
+  if (gameState === 'won') {
+    return (
+      <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="text-center">
+        <motion.div animate={{ scale: [1, 1.2, 1] }} transition={{ duration: 0.5 }}
+          className="w-32 h-32 mx-auto mb-6 bg-gradient-to-br from-yellow-400 to-amber-500 rounded-full flex items-center justify-center">
+          <Trophy className="w-16 h-16 text-white" />
+        </motion.div>
+        <h2 className="text-3xl font-bold text-white mb-2">Tebrikler!</h2>
+        <p className="text-slate-400 mb-2">{moves} hamlede tamamladın!</p>
+        <p className="text-5xl font-bold text-yellow-400 mb-6">{score} Puan</p>
+        <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} onClick={startGame}
+          className="px-8 py-4 bg-gradient-to-r from-emerald-500 to-teal-500 text-white font-bold rounded-2xl text-xl">
+          <RotateCcw className="w-6 h-6 inline mr-2" />Tekrar Oyna
+        </motion.button>
+      </motion.div>
+    );
+  }
+
+  return (
+    <div className="max-w-lg mx-auto">
+      <div className="flex justify-between items-center mb-6">
+        <div className="px-4 py-2 bg-black/50 backdrop-blur-sm rounded-xl text-white font-bold">
+          Puan: <span className="text-green-400">{score}</span>
+        </div>
+        <div className="px-4 py-2 bg-black/50 backdrop-blur-sm rounded-xl text-white font-bold">
+          Hamle: {moves}
+        </div>
+        <div className="px-4 py-2 bg-black/50 backdrop-blur-sm rounded-xl text-white font-bold">
+          {timeLeft}s
+        </div>
+      </div>
+
+      <div className="grid grid-cols-4 gap-3">
+        {cards.map((card, i) => (
+          <motion.button
+            key={card.id}
+            whileHover={{ scale: card.matched || card.flipped ? 1 : 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={() => {
+              if (card.flipped || card.matched || selected.length >= 2) return;
+              setCards(cards.map((c, idx) => idx === i ? { ...c, flipped: true } : c));
+              setSelected([...selected, i]);
+            }}
+            disabled={card.matched}
+            className={`aspect-square rounded-2xl text-3xl font-bold flex items-center justify-center transition-all ${
+              card.matched
+                ? 'bg-green-500/40 text-green-300'
+                : card.flipped
+                ? 'bg-gradient-to-br from-indigo-500 to-purple-500 text-white shadow-lg'
+                : 'bg-gradient-to-br from-slate-700 to-slate-800 text-slate-400 hover:from-slate-600 hover:to-slate-700'
+            }`}
+          >
+            {card.flipped || card.matched ? card.symbol : '?'}
+          </motion.button>
+        ))}
+      </div>
+    </div>
+  );
+};
+
 const games = [
   {
     id: 1,
@@ -870,6 +1359,39 @@ const games = [
     color: 'from-cyan-500 to-blue-500',
     icon: Sparkles,
     component: ColorMath,
+  },
+  {
+    id: 4,
+    title: 'Matematik Adam Asmaca',
+    description: 'Matematik terimlerini tahmin et!',
+    grade: '5-8',
+    rating: 4.8,
+    difficulty: 'Orta',
+    color: 'from-indigo-500 to-purple-500',
+    icon: Target,
+    component: Hangman,
+  },
+  {
+    id: 5,
+    title: 'Sayı Bulmaca',
+    description: 'Eksik sayıyı bul, puan topla!',
+    grade: '5-8',
+    rating: 4.6,
+    difficulty: 'Orta',
+    color: 'from-amber-500 to-orange-500',
+    icon: Zap,
+    component: NumberPuzzle,
+  },
+  {
+    id: 6,
+    title: 'Matematik Memory',
+    description: 'Eşleşen sembolleri bul!',
+    grade: '5-8',
+    rating: 4.9,
+    difficulty: 'Kolay',
+    color: 'from-emerald-500 to-teal-500',
+    icon: Brain,
+    component: MemoryGame,
   },
 ];
 
