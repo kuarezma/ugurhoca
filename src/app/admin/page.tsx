@@ -8,7 +8,7 @@ import {
   Image, Megaphone, Edit3, Trash2, Upload, X,
   Calendar, Eye, Download, Check, AlertCircle, Sparkles,
   Users, BookOpen, RefreshCw, GraduationCap, Send, Bell,
-  UserCheck, ClipboardList, MessageSquareText, Paperclip
+  UserCheck, ClipboardList, MessageSquareText, Paperclip, Ban, VolumeX, Flag
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
@@ -147,12 +147,13 @@ interface Notification {
   user_id: string;
   title: string;
   message: string;
-  type: 'document' | 'assignment' | 'general' | 'message';
+  type: 'document' | 'assignment' | 'general' | 'message' | 'moderation' | 'report';
   is_read: boolean;
   created_at: string;
 }
 
 export default function AdminPage() {
+  const RETENTION_DAYS = 180;
   const [user, setUser] = useState<any>(null);
   const [activeTab, setActiveTab] = useState<'announcements' | 'documents' | 'writings' | 'users' | 'privateStudents' | 'messages' | 'gradeUpdate' | 'assignments'>('announcements');
   const [announcements, setAnnouncements] = useState<Announcement[]>([]);
@@ -239,6 +240,13 @@ export default function AdminPage() {
     // Paylaşılan belgeleri getir
     const { data: sharedData } = await supabase.from('shared_documents').select('*').order('created_at', { ascending: false });
     if (sharedData) setSharedDocs(sharedData);
+
+    const retentionCutoff = new Date(Date.now() - RETENTION_DAYS * 24 * 60 * 60 * 1000).toISOString();
+    await supabase
+      .from('notifications')
+      .delete()
+      .in('type', ['message', 'moderation', 'report'])
+      .lt('created_at', retentionCutoff);
 
     // Bildirimleri getir
     const { data: notifData } = await supabase.from('notifications').select('*').order('created_at', { ascending: false });
@@ -443,6 +451,33 @@ export default function AdminPage() {
     return payload?.text || notification?.message || '';
   };
 
+  const parseModerationPayload = (notification: Notification | null) => {
+    if (!notification || notification.type !== 'moderation') return null;
+    try {
+      const parsed = JSON.parse(notification.message);
+      if (parsed && typeof parsed === 'object' && parsed.sender_id && parsed.action) return parsed;
+    } catch {}
+    return null;
+  };
+
+  const getSenderActionStatus = (senderId?: string) => {
+    if (!senderId) return { blocked: false, muted: false };
+
+    for (const n of notifications) {
+      const mod = parseModerationPayload(n);
+      if (!mod || mod.sender_id !== senderId) continue;
+
+      if (mod.action === 'block') return { blocked: true, muted: false, expires_at: null };
+
+      if (mod.action === 'mute') {
+        const active = mod.expires_at && new Date(mod.expires_at).getTime() > Date.now();
+        if (active) return { blocked: false, muted: true, expires_at: mod.expires_at };
+      }
+    }
+
+    return { blocked: false, muted: false };
+  };
+
   const markNotificationAsRead = async (notification: Notification) => {
     if (!notification.is_read) {
       await supabase.from('notifications').update({ is_read: true }).eq('id', notification.id);
@@ -468,6 +503,56 @@ export default function AdminPage() {
   const extractUrls = (text: string) => text.match(/https?:\/\/[^\s<>"]+/g) || [];
 
   const studentMessages = notifications.filter(n => n.type === 'message' && user && n.user_id === user.id);
+
+  const applyModerationAction = async (action: 'block' | 'mute' | 'report') => {
+    const payload = parseMessagePayload(selectedNotification);
+    if (!selectedNotification || !payload?.sender_id) return;
+
+    const reason = prompt(
+      action === 'report'
+        ? 'Rapor notu (opsiyonel)'
+        : action === 'mute'
+          ? 'Sessize alma nedeni (opsiyonel)'
+          : 'Engelleme nedeni (opsiyonel)',
+      ''
+    ) || '';
+
+    const moderationPayload = {
+      sender_id: payload.sender_id,
+      sender_name: payload.sender_name || '',
+      sender_email: payload.sender_email || '',
+      action,
+      reason,
+      created_at: new Date().toISOString(),
+      expires_at: action === 'mute' ? new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString() : null,
+      source_notification_id: selectedNotification.id,
+    };
+
+    await supabase.from('notifications').insert([
+      {
+        user_id: user.id,
+        title: action === 'report' ? 'Mesaj raporlandı' : action === 'mute' ? 'Öğrenci sessize alındı' : 'Öğrenci engellendi',
+        message: JSON.stringify(moderationPayload),
+        type: action === 'report' ? 'report' : 'moderation',
+      },
+    ]);
+
+    if (action !== 'report') {
+      await supabase.from('notifications').insert([
+        {
+          user_id: payload.sender_id,
+          title: action === 'mute' ? 'Mesaj gönderimi geçici kapatıldı' : 'Mesaj gönderiminiz engellendi',
+          message: action === 'mute'
+            ? '7 gün boyunca Uğur Hoca\'ya mesaj gönderemezsiniz.'
+            : 'Mesaj gönderim hakkınız kaldırıldı.',
+          type: 'message',
+        },
+      ]);
+    }
+
+    await loadData();
+    alert(action === 'report' ? 'Mesaj raporlandı.' : action === 'mute' ? 'Öğrenci 7 gün sessize alındı.' : 'Öğrenci engellendi.');
+  };
 
   const sendReply = async () => {
     const payload = parseMessagePayload(selectedNotification);
@@ -597,6 +682,25 @@ export default function AdminPage() {
               </div>
               <div className="p-5 space-y-4">
                 <p className="text-slate-200 whitespace-pre-line leading-relaxed">{getNotificationBody(selectedNotification)}</p>
+                {parseMessagePayload(selectedNotification)?.metadata && (
+                  <div className="rounded-xl bg-slate-800/60 border border-slate-700 p-3 text-xs text-slate-300 space-y-1">
+                    <p>IP: {parseMessagePayload(selectedNotification)?.metadata?.ip || 'unknown'}</p>
+                    <p className="truncate">Cihaz: {parseMessagePayload(selectedNotification)?.metadata?.user_agent || 'unknown'}</p>
+                    <p>Zaman: {new Date(parseMessagePayload(selectedNotification)?.created_at || selectedNotification.created_at).toLocaleString('tr-TR')}</p>
+                  </div>
+                )}
+                {parseMessagePayload(selectedNotification)?.sender_id && (
+                  <div className="flex flex-wrap items-center gap-2">
+                    {getSenderActionStatus(parseMessagePayload(selectedNotification)?.sender_id).blocked && (
+                      <span className="px-2 py-1 rounded-full text-[11px] bg-red-500/20 text-red-300">Bu kullanıcı engelli</span>
+                    )}
+                    {getSenderActionStatus(parseMessagePayload(selectedNotification)?.sender_id).muted && (
+                      <span className="px-2 py-1 rounded-full text-[11px] bg-amber-500/20 text-amber-300">
+                        Sessizde (bitiş: {new Date(getSenderActionStatus(parseMessagePayload(selectedNotification)?.sender_id).expires_at).toLocaleDateString('tr-TR')})
+                      </span>
+                    )}
+                  </div>
+                )}
                 {parseMessagePayload(selectedNotification)?.attachments?.length > 0 && (
                   <div className="space-y-2">
                     <p className="text-sm font-semibold text-white">Ekler</p>
@@ -618,6 +722,29 @@ export default function AdminPage() {
                 )}
                 {selectedNotification.type === 'message' && parseMessagePayload(selectedNotification)?.sender_id && (
                   <div className="space-y-3 pt-4 border-t border-slate-700">
+                    <div className="flex flex-wrap gap-2">
+                      <button
+                        onClick={() => applyModerationAction('report')}
+                        className="inline-flex items-center gap-2 rounded-xl bg-slate-700/60 px-3 py-2 text-slate-200 hover:bg-slate-700"
+                      >
+                        <Flag className="w-4 h-4" />
+                        Raporla
+                      </button>
+                      <button
+                        onClick={() => applyModerationAction('mute')}
+                        className="inline-flex items-center gap-2 rounded-xl bg-amber-500/20 px-3 py-2 text-amber-300 hover:bg-amber-500/30"
+                      >
+                        <VolumeX className="w-4 h-4" />
+                        7 Gün Sessize Al
+                      </button>
+                      <button
+                        onClick={() => applyModerationAction('block')}
+                        className="inline-flex items-center gap-2 rounded-xl bg-red-500/20 px-3 py-2 text-red-300 hover:bg-red-500/30"
+                      >
+                        <Ban className="w-4 h-4" />
+                        Engelle
+                      </button>
+                    </div>
                     <label className="block text-slate-300 text-sm">Cevap yaz</label>
                     <textarea
                       rows={4}
@@ -1145,6 +1272,7 @@ export default function AdminPage() {
                   <div>
                     <h2 className="text-2xl font-bold text-white mb-1">Öğrenci Mesajları</h2>
                     <p className="text-slate-400 text-sm sm:text-base">Uğur Hoca'ya yazılan mesajlar ve ekler</p>
+                    <p className="text-slate-500 text-xs mt-1">Kayıt saklama politikası: mesaj logları {RETENTION_DAYS} gün tutulur.</p>
                   </div>
                   <div className="flex items-center gap-2 text-sm text-slate-400">
                     <MessageSquareText className="w-4 h-4" />
@@ -1175,6 +1303,9 @@ export default function AdminPage() {
                             <div className="min-w-0">
                               <p className="text-white font-semibold truncate">{notif.title}</p>
                               <p className="text-slate-500 text-xs">{new Date(notif.created_at).toLocaleDateString('tr-TR')}</p>
+                              {parseMessagePayload(notif)?.metadata?.ip && (
+                                <p className="text-slate-500 text-[11px]">IP: {parseMessagePayload(notif)?.metadata?.ip}</p>
+                              )}
                             </div>
                           </div>
                           <span className={`px-2 py-0.5 rounded-full text-[10px] font-semibold ${notif.is_read ? 'bg-emerald-500/15 text-emerald-300' : 'bg-amber-500/15 text-amber-200'}`}>

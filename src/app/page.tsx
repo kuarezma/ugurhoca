@@ -253,16 +253,6 @@ export default function HomePage() {
     return url;
   };
 
-  const extractAdminId = async () => {
-    const { data } = await supabase
-      .from('profiles')
-      .select('id')
-      .eq('email', 'admin@ugurhoca.com')
-      .single();
-
-    return data?.id || 'admin-1';
-  };
-
   const uploadSupportAttachments = async (files: FileList | null) => {
     if (!files?.length) return;
 
@@ -292,36 +282,31 @@ export default function HomePage() {
     setSupportSending(true);
 
     try {
-      const adminId = await extractAdminId();
       const payload = {
         sender_id: user.id,
         sender_name: user.name || 'Öğrenci',
         sender_email: user.email || '',
         text: supportMessage.trim(),
         attachments: supportAttachments,
-        created_at: new Date().toISOString(),
       };
 
-      await supabase.from('notifications').insert([{ 
-        user_id: adminId,
-        title: `${user.name || 'Bir öğrenci'} sana yazdı`,
-        message: JSON.stringify(payload),
-        type: 'message',
-      }]);
+      const res = await fetch('/api/support-message', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
 
-      await supabase.from('notifications').insert([{ 
-        user_id: user.id,
-        title: 'Mesajın teslim edildi',
-        message: 'Mesajın Uğur Hoca’ya ulaştı.',
-        type: 'message',
-      }]);
+      if (!res.ok) {
+        const data = await res.json().catch(() => null);
+        throw new Error(data?.error || 'Mesaj gönderilemedi.');
+      }
 
       setSupportMessage('');
       setSupportAttachments([]);
       setSupportSent(true);
       setTimeout(() => setSupportSent(false), 2500);
-    } catch (error) {
-      alert('Mesaj gönderilemedi. Lütfen tekrar dene.');
+    } catch (error: any) {
+      alert(error?.message || 'Mesaj gönderilemedi. Lütfen tekrar dene.');
     } finally {
       setSupportSending(false);
     }
