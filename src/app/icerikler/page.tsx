@@ -936,7 +936,7 @@ function ContentsPageInner() {
                     <div className="relative">
                       <input
                         type="file"
-                        accept={editFormData.type === 'ders-notlari' ? undefined : '.pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.zip,.rar,.exe,.mp4,.avi,.mov'}
+                        accept={undefined}
                         onChange={async (e) => {
                           const file = e.target.files?.[0];
                           if (file) {
@@ -1124,11 +1124,11 @@ function ContentsPageInner() {
                   </div>
 
                   <div>
-                    <label className="block text-slate-300 mb-2 text-sm">{formData.type === 'ders-notlari' ? 'Dosya Yükle (Tüm dosya türleri)' : 'Dosya Yükle (PDF, EXE, MP4 vb.)'}</label>
+                    <label className="block text-slate-300 mb-2 text-sm">Dosya Yükle (Tüm dosya türleri)</label>
                     <div className="relative">
                       <input
                         type="file"
-                        accept={formData.type === 'ders-notlari' ? undefined : '.pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.zip,.rar,.exe,.mp4,.avi,.mov'}
+                        accept={undefined}
                         onChange={async (e) => {
                           const file = e.target.files?.[0];
                           if (file) {
