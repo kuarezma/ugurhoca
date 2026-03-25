@@ -73,6 +73,24 @@ const extractFromRawText = (raw: string): string => {
   return '';
 };
 
+const buildLocalCoachReply = (prompt: string) => {
+  const p = prompt.toLowerCase();
+
+  if (p.includes('odak') || p.includes('dikkat')) {
+    return `Odaklanma için kısa bir plan yapalım:\n\n1) 25 dakika tek konu + 5 dakika mola (Pomodoro)\n2) Telefonu farklı odada tut\n3) Her oturumdan önce tek hedef yaz: "Bu 25 dakikada şu 10 soruyu çözeceğim"\n4) Oturum bitince 2 dakikada mini tekrar yap\n\nİstersen buna göre bugün için saat saat çalışma planı da çıkarabilirim.`;
+  }
+
+  if (p.includes('kaygı') || p.includes('stres') || p.includes('heyecan')) {
+    return `Sınav kaygısı için hızlı uygulanabilir yöntem:\n\n- 4-4 nefes: 4 sn nefes al, 4 sn ver (2 dakika)\n- İlk 3 dakika kolay sorularla başla\n- Takıldığın soruyu işaretleyip geç\n- Kendine cümle: "Tüm soruları değil, sıradaki soruyu çözeceğim"\n\nİstersen sana sınavdan önceki gece ve sınav sabahı için 10 maddelik hazır rutin de vereyim.`;
+  }
+
+  if (p.includes('plan') || p.includes('program')) {
+    return `Örnek 45 dakikalık matematik oturumu:\n\n- 0-5 dk: konu özeti\n- 5-25 dk: orta seviye 10 soru\n- 25-35 dk: zor 4 soru\n- 35-42 dk: yanlış analizi\n- 42-45 dk: kısa tekrar notu\n\nBunu haftalık plana çevirmemi istersen sınıfını ve hedefini yaz.`;
+  }
+
+  return `Harika soru. Bunu birlikte adım adım çözelim:\n\n- Önce konunun kısa özetini çıkaralım\n- Sonra 3 örnek soru çözelim\n- En sonda mini tekrar planı yapalım\n\nİstersen bana konuyu yaz (ör. "çarpanlara ayırma"), seviyene göre anlatayım.`;
+};
+
 const SYSTEM_PROMPT = `Sen Uğur Hoca Matematik platformunun Türkçe eğitim asistanısın.
 
 Hedeflerin:
@@ -113,19 +131,25 @@ export async function POST(request: Request) {
     headers.Authorization = `Bearer ${apiKey}`;
   }
 
-  const response = await fetch(apiUrl, {
-    method: 'POST',
-    headers,
-    body: JSON.stringify({
-      model,
-      temperature: 0.7,
-      max_tokens: 700,
-      messages: [
-        { role: 'system', content: SYSTEM_PROMPT },
-        ...safeMessages,
-      ],
-    }),
-  });
+  let response: Response;
+  try {
+    response = await fetch(apiUrl, {
+      method: 'POST',
+      headers,
+      body: JSON.stringify({
+        model,
+        temperature: 0.7,
+        max_tokens: 700,
+        messages: [
+          { role: 'system', content: SYSTEM_PROMPT },
+          ...safeMessages,
+        ],
+      }),
+    });
+  } catch {
+    const lastUserMessage = [...safeMessages].reverse().find((m) => m.role === 'user')?.content || '';
+    return NextResponse.json({ reply: buildLocalCoachReply(lastUserMessage), source: 'local-fallback' });
+  }
 
   const raw = await response.text();
   let data: any = null;
@@ -136,25 +160,22 @@ export async function POST(request: Request) {
   }
 
   if (!response.ok) {
-    return NextResponse.json(
-      {
-        error:
-          data?.error?.message ||
-          `AI yanıt üretilemedi. HTTP ${response.status}. ${raw?.slice(0, 180) || ''}`,
-      },
-      { status: 500 }
-    );
+    const lastUserMessage = [...safeMessages].reverse().find((m) => m.role === 'user')?.content || '';
+    if (response.status === 404 || response.status === 401 || response.status === 403) {
+      return NextResponse.json({ reply: buildLocalCoachReply(lastUserMessage), source: 'local-fallback' });
+    }
+
+    return NextResponse.json({
+      reply: buildLocalCoachReply(lastUserMessage),
+      source: 'local-fallback',
+      warning: data?.error?.message || `AI servis hatası (HTTP ${response.status})`,
+    });
   }
 
   const content = extractReplyText(data) || extractFromRawText(raw);
   if (!content) {
-    const debugShape = data && typeof data === 'object' ? Object.keys(data).slice(0, 8) : [];
-    return NextResponse.json(
-      {
-        error: `AI yanıtı boş geldi. Dönen alanlar: ${debugShape.join(', ') || 'yok'}. Ham yanıt: ${raw?.slice(0, 180) || 'boş'}`,
-      },
-      { status: 500 }
-    );
+    const lastUserMessage = [...safeMessages].reverse().find((m) => m.role === 'user')?.content || '';
+    return NextResponse.json({ reply: buildLocalCoachReply(lastUserMessage), source: 'local-fallback' });
   }
 
   return NextResponse.json({ reply: content });
