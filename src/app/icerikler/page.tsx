@@ -450,7 +450,7 @@ function ContentsPageInner() {
           </motion.div>
 
           {viewMode === 'grid' ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 xl:[grid-template-columns:repeat(auto-fit,minmax(460px,1fr))] gap-7">
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-7">
               {filteredContents.map((content, i) => (
                 <motion.div
                   key={content.id}
@@ -480,7 +480,19 @@ function ContentsPageInner() {
                           return <Icon className="w-6 h-6 sm:w-7 sm:h-7 text-white" />;
                         })()}
                       </div>
-                      <div className="flex flex-wrap justify-end gap-2">
+                      <div className="flex flex-wrap justify-end items-center gap-2">
+                        <motion.button
+                          whileHover={{ scale: 1.05 }}
+                          whileTap={{ scale: 0.95 }}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            navigator.clipboard.writeText(window.location.origin + '/icerikler?id=' + content.id);
+                            alert('Link kopyalandı!');
+                          }}
+                          className="w-9 h-9 rounded-full bg-slate-800/70 border border-white/10 text-slate-300 hover:text-white flex items-center justify-center transition-colors"
+                        >
+                          <Share2 className="w-4 h-4" />
+                        </motion.button>
                         <span className="px-3 py-1 rounded-full bg-rose-500/15 text-rose-300 text-xs font-semibold border border-rose-400/20">
                           {getContentKindLabel(content)}
                         </span>
@@ -566,18 +578,6 @@ function ContentsPageInner() {
                     </div>
 
                     <div className="flex flex-wrap items-center gap-2 sm:gap-3">
-                      <motion.button
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          navigator.clipboard.writeText(window.location.origin + '/icerikler?id=' + content.id);
-                          alert('Link kopyalandı!');
-                        }}
-                        className="w-11 h-11 rounded-full bg-slate-800/70 border border-white/10 text-slate-300 hover:text-white flex items-center justify-center transition-colors"
-                      >
-                        <Share2 className="w-5 h-5" />
-                      </motion.button>
                       <motion.button
                         whileHover={{ scale: 1.02 }}
                         whileTap={{ scale: 0.98 }}
@@ -681,7 +681,19 @@ function ContentsPageInner() {
                           <p className="text-slate-400">{getTypeLabel(content.type)}</p>
                         </div>
                       </div>
-                      <div className="flex flex-wrap justify-end gap-2">
+                      <div className="flex flex-wrap justify-end items-center gap-2">
+                        <motion.button
+                          whileHover={{ scale: 1.05 }}
+                          whileTap={{ scale: 0.95 }}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            navigator.clipboard.writeText(window.location.origin + '/icerikler?id=' + content.id);
+                            alert('Link kopyalandı!');
+                          }}
+                          className="w-9 h-9 rounded-full bg-slate-800/70 border border-white/10 text-slate-300 hover:text-white flex items-center justify-center transition-colors"
+                        >
+                          <Share2 className="w-4 h-4" />
+                        </motion.button>
                         <span className="px-3 py-1 rounded-full bg-rose-500/15 text-rose-300 text-xs font-semibold border border-rose-400/20">
                           {getContentKindLabel(content)}
                         </span>
@@ -741,18 +753,6 @@ function ContentsPageInner() {
                     </div>
 
                     <div className="flex flex-wrap items-center gap-2 sm:gap-3">
-                      <motion.button
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          navigator.clipboard.writeText(window.location.origin + '/icerikler?id=' + content.id);
-                          alert('Link kopyalandı!');
-                        }}
-                        className="w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-slate-800/70 border border-white/10 text-slate-300 hover:text-white flex items-center justify-center transition-colors"
-                      >
-                        <Share2 className="w-5 h-5" />
-                      </motion.button>
                       <motion.button
                         whileHover={{ scale: 1.02 }}
                         whileTap={{ scale: 0.98 }}
