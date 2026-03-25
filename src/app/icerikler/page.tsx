@@ -128,7 +128,7 @@ function ContentsPageInner() {
 
       if (profile) {
         setUser({ ...profile, email: session.user.email, isAdmin });
-        setSelectedGrade(normalizeGrade(profile.grade));
+        setSelectedGrade(isAdmin ? 'all' : normalizeGrade(profile.grade));
       } else {
         const fallbackGrade = session.user.user_metadata?.grade ?? 5;
         setUser({
@@ -138,7 +138,7 @@ function ContentsPageInner() {
           grade: fallbackGrade,
           isAdmin
         });
-        setSelectedGrade(normalizeGrade(fallbackGrade));
+        setSelectedGrade(isAdmin ? 'all' : normalizeGrade(fallbackGrade));
       }
       loadDocuments();
     };
@@ -201,6 +201,7 @@ function ContentsPageInner() {
     const matchesSearch = content.title.toLowerCase().includes(searchTerm.toLowerCase());
     const grades = Array.isArray(content.grade) ? content.grade.map((g: any) => String(g)) : [];
     const matchesGrade =
+      user?.isAdmin ||
       selectedGrade === 'all' ||
       grades.length === 0 ||
       grades.includes(String(selectedGrade));
