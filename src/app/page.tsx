@@ -93,16 +93,6 @@ const categories = [
     borderColor: 'border-teal-500/30',
     href: '/icerikler?type=programlar'
   },
-  {
-    id: 'ai',
-    icon: Brain,
-    title: 'Yapay Zeka Koçu',
-    desc: 'Soru sor, öğren, plan yap',
-    color: 'from-indigo-500 to-cyan-500',
-    bgColor: 'bg-indigo-500/10',
-    borderColor: 'border-indigo-500/30',
-    href: '/ai'
-  },
 ];
 
 const recentContents = [
