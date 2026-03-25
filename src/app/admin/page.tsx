@@ -168,12 +168,15 @@ export default function AdminPage() {
   const [replyText, setReplyText] = useState('');
   const [selectedStudent, setSelectedStudent] = useState<string>('');
   const [showModal, setShowModal] = useState(false);
-  const [modalType, setModalType] = useState<'announcement' | 'editAnnouncement' | 'document' | 'writing' | 'assignment' | 'editUser' | 'student' | 'sendDoc' | 'editDocument'>('announcement');
+  const [modalType, setModalType] = useState<'announcement' | 'editAnnouncement' | 'document' | 'writing' | 'assignment' | 'editUser' | 'student' | 'sendDoc' | 'editDocument' | 'adminMessage'>('announcement');
   const [formData, setFormData] = useState<any>({});
   const [selectedDoc, setSelectedDoc] = useState<any>(null);
   const [editingAnnouncement, setEditingAnnouncement] = useState<any>(null);
   const [editingUser, setEditingUser] = useState<any>(null);
   const [editingDoc, setEditingDoc] = useState<any>(null);
+  const [adminMsgRecipient, setAdminMsgRecipient] = useState<any>(null);
+  const [adminMsgTitle, setAdminMsgTitle] = useState('');
+  const [adminMsgText, setAdminMsgText] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [success, setSuccess] = useState(false);
   const router = useRouter();
@@ -1185,6 +1188,19 @@ export default function AdminPage() {
                           <Edit3 className="w-4 h-4" />
                           Düzenle
                         </button>
+                        <button
+                          onClick={() => {
+                            setAdminMsgRecipient(u);
+                            setAdminMsgTitle('');
+                            setAdminMsgText('');
+                            setModalType('adminMessage');
+                            setShowModal(true);
+                          }}
+                          className="px-4 py-2 bg-gradient-to-r from-purple-500/20 to-pink-500/20 text-purple-300 rounded-lg hover:from-purple-500/40 hover:to-pink-500/40 transition-all font-semibold flex items-center gap-2"
+                        >
+                          <Send className="w-4 h-4" />
+                          Mesaj Yaz
+                        </button>
                       </div>
                     </motion.div>
                   ))
@@ -1602,7 +1618,7 @@ export default function AdminPage() {
             >
               <div className="flex items-center justify-between mb-6">
                 <h2 className="text-2xl font-bold text-white">
-                  {modalType === 'announcement' ? 'Yeni Duyuru' : modalType === 'editAnnouncement' ? 'Duyuru Düzenle' : modalType === 'document' ? 'Yeni Belge' : modalType === 'editDocument' ? 'Belge Düzenle' : modalType === 'assignment' ? 'Yeni Ödev' : modalType === 'student' ? 'Yeni Öğrenci' : modalType === 'editUser' ? 'Kullanıcı Düzenle' : modalType === 'sendDoc' ? 'Belge Gönder' : 'Yeni Yazı'}
+                  {modalType === 'announcement' ? 'Yeni Duyuru' : modalType === 'editAnnouncement' ? 'Duyuru Düzenle' : modalType === 'document' ? 'Yeni Belge' : modalType === 'editDocument' ? 'Belge Düzenle' : modalType === 'assignment' ? 'Yeni Ödev' : modalType === 'student' ? 'Yeni Öğrenci' : modalType === 'editUser' ? 'Kullanıcı Düzenle' : modalType === 'sendDoc' ? 'Belge Gönder' : modalType === 'adminMessage' ? 'Öğrenciye Mesaj Yaz' : 'Yeni Yazı'}
                 </h2>
                 <button onClick={() => { setShowModal(false); setEditingUser(null); }} className="text-slate-400 hover:text-white">
                   <X className="w-6 h-6" />
@@ -1765,6 +1781,87 @@ export default function AdminPage() {
                     whileTap={{ scale: 0.98 }}
                     disabled={isSubmitting}
                     className="w-full py-4 bg-gradient-to-r from-rose-500 to-pink-500 text-white font-semibold rounded-xl hover:from-rose-600 hover:to-pink-600 transition-all flex items-center justify-center gap-2"
+                  >
+                    {isSubmitting ? 'Gönderiliyor...' : (
+                      <>
+                        <Send className="w-5 h-5" />
+                        Gönder
+                      </>
+                    )}
+                  </motion.button>
+                </form>
+              ) : modalType === 'adminMessage' ? (
+                <form onSubmit={async (e) => {
+                  e.preventDefault();
+                  if (!adminMsgRecipient) return;
+                  setIsSubmitting(true);
+                  try {
+                    await fetch('/api/admin-message', {
+                      method: 'POST',
+                      headers: { 'Content-Type': 'application/json' },
+                      body: JSON.stringify({
+                        student_id: adminMsgRecipient.id,
+                        student_name: adminMsgRecipient.name,
+                        title: adminMsgTitle || 'Uğur Hoca\'dan Mesaj',
+                        message: adminMsgText,
+                        sender_id: 'admin',
+                        sender_name: 'Uğur Hoca',
+                      }),
+                    });
+                    setSuccess(true);
+                    setTimeout(() => {
+                      setShowModal(false);
+                      setSuccess(false);
+                      setAdminMsgRecipient(null);
+                      setAdminMsgTitle('');
+                      setAdminMsgText('');
+                    }, 1500);
+                  } catch {
+                    alert('Mesaj gönderilemedi.');
+                  } finally {
+                    setIsSubmitting(false);
+                  }
+                }} className="space-y-5">
+                  {adminMsgRecipient && (
+                    <div className="flex items-center gap-3 p-3 rounded-xl bg-white/5 border border-white/10">
+                      <div className="w-10 h-10 bg-gradient-to-br from-green-500 to-emerald-500 rounded-full flex items-center justify-center text-lg font-bold text-white">
+                        {adminMsgRecipient.name?.[0] || '?'}
+                      </div>
+                      <div>
+                        <p className="text-white font-semibold">{adminMsgRecipient.name || 'İsimsiz'}</p>
+                        <p className="text-slate-400 text-xs">{adminMsgRecipient.email}</p>
+                      </div>
+                    </div>
+                  )}
+                  <div>
+                    <label className="block text-slate-300 mb-2 text-sm">Başlık</label>
+                    <input
+                      type="text"
+                      value={adminMsgTitle}
+                      onChange={(e) => setAdminMsgTitle(e.target.value)}
+                      className="w-full bg-slate-800/50 border border-slate-700 rounded-xl px-4 py-3 text-white 
+                               focus:outline-none focus:border-purple-500 transition-colors"
+                      placeholder="Mesaj başlığı..."
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-slate-300 mb-2 text-sm">Mesaj</label>
+                    <textarea
+                      required
+                      value={adminMsgText}
+                      onChange={(e) => setAdminMsgText(e.target.value)}
+                      rows={5}
+                      className="w-full bg-slate-800/50 border border-slate-700 rounded-xl px-4 py-3 text-white 
+                               focus:outline-none focus:border-purple-500 transition-colors resize-none"
+                      placeholder="Öğrenciye mesajınızı yazın..."
+                    />
+                  </div>
+                  <motion.button
+                    type="submit"
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    disabled={isSubmitting || !adminMsgText.trim()}
+                    className="w-full py-4 bg-gradient-to-r from-purple-500 to-pink-500 text-white font-semibold rounded-xl hover:from-purple-600 hover:to-pink-600 transition-all flex items-center justify-center gap-2 disabled:opacity-60"
                   >
                     {isSubmitting ? 'Gönderiliyor...' : (
                       <>

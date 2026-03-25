@@ -36,7 +36,7 @@ const FloatingShapes = () => (
 
 export default function LoginPage() {
   const [formData, setFormData] = useState({
-    login: '',
+    username: '',
     password: '',
   });
   const [showPassword, setShowPassword] = useState(false);
@@ -57,37 +57,31 @@ export default function LoginPage() {
     e.preventDefault();
     setError('');
 
-    if (!formData.login || !formData.password) {
+    if (!formData.username || !formData.password) {
       setError('Lütfen tüm alanları doldurun');
       return;
     }
 
     try {
-      let loginEmail = formData.login.trim();
+      const { data: profileMatches, error: profileError } = await supabase
+        .from('profiles')
+        .select('email')
+        .ilike('name', formData.username.trim());
 
-      if (!loginEmail.includes('@')) {
-        const { data: profileMatches, error: profileError } = await supabase
-          .from('profiles')
-          .select('email')
-          .ilike('name', loginEmail);
+      if (profileError) throw profileError;
 
-        if (profileError) throw profileError;
+      if (!profileMatches || profileMatches.length === 0) {
+        setError('Kullanıcı adı bulunamadı');
+        return;
+      }
 
-        if (!profileMatches || profileMatches.length === 0) {
-          setError('Kullanıcı adı bulunamadı');
-          return;
-        }
-
-        if (profileMatches.length > 1) {
-          setError('Bu kullanıcı adı birden fazla hesapta var. E-posta ile giriş yapın.');
-          return;
-        }
-
-        loginEmail = profileMatches[0].email;
+      if (profileMatches.length > 1) {
+        setError('Bu kullanıcı adı birden fazla hesapta var. Admin ile iletişime geçin.');
+        return;
       }
 
       const { data, error: signInError } = await supabase.auth.signInWithPassword({
-        email: loginEmail,
+        email: profileMatches[0].email,
         password: formData.password,
       });
 
@@ -96,9 +90,9 @@ export default function LoginPage() {
       router.push('/profil');
     } catch (err: any) {
       if (err.message === 'Invalid login credentials') {
-          setError('Kullanıcı adı/e-posta veya şifre hatalı');
+          setError('Kullanıcı adı veya şifre hatalı');
       } else if (err.message === 'Email not confirmed') {
-        setError('E-posta onayı bekleniyor. Supabase panelinden doğrulama zorunluluğunu kapatmalısınız.');
+        setError('E-posta onayı bekleniyor.');
       } else {
         setError('Giriş başarısız: ' + err.message);
       }
@@ -135,14 +129,14 @@ export default function LoginPage() {
 
           <form onSubmit={handleSubmit} className="space-y-5">
             <div>
-              <label className="block text-slate-300 mb-2 text-sm">Kullanıcı adı veya e-posta</label>
+              <label className="block text-slate-300 mb-2 text-sm">Kullanıcı Adı</label>
               <input
                 type="text"
-                value={formData.login}
-                onChange={(e) => setFormData({ ...formData, login: e.target.value })}
+                value={formData.username}
+                onChange={(e) => setFormData({ ...formData, username: e.target.value })}
                 className="w-full bg-slate-800/50 border border-slate-700 rounded-xl px-4 py-3 text-white 
                          focus:outline-none focus:border-purple-500 transition-colors"
-                placeholder="kullaniciadi veya ornek@email.com"
+                placeholder="kullaniciadi"
               />
             </div>
 
