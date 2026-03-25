@@ -307,7 +307,7 @@ function ContentsPageInner() {
         </div>
       </nav>
 
-      <div className="pt-24 px-4 sm:px-6 xl:px-8">
+      <div className="pt-32 sm:pt-36 px-4 sm:px-6 xl:px-8">
         <div className="max-w-[1760px] mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
