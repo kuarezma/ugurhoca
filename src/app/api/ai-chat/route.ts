@@ -21,15 +21,9 @@ Kurallar:
 `;
 
 export async function POST(request: Request) {
-  const apiKey = process.env.OPENAI_API_KEY;
-  const model = process.env.OPENAI_MODEL || 'big-pickle';
-
-  if (!apiKey) {
-    return NextResponse.json(
-      { error: 'OPENAI_API_KEY eksik. Ortam değişkenine ekleyin.' },
-      { status: 500 }
-    );
-  }
+  const apiKey = process.env.OPENCODE_API_KEY || '';
+  const model = process.env.OPENCODE_MODEL || 'big-pickle';
+  const apiUrl = process.env.OPENCODE_API_URL || 'https://api.opencode.ai/v1/chat/completions';
 
   const body = await request.json().catch(() => null);
   const rawMessages = Array.isArray(body?.messages) ? body.messages : [];
@@ -43,12 +37,17 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: 'Mesaj bulunamadı.' }, { status: 400 });
   }
 
-  const response = await fetch('https://api.openai.com/v1/chat/completions', {
+  const headers: Record<string, string> = {
+    'Content-Type': 'application/json',
+  };
+
+  if (apiKey) {
+    headers.Authorization = `Bearer ${apiKey}`;
+  }
+
+  const response = await fetch(apiUrl, {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${apiKey}`,
-    },
+    headers,
     body: JSON.stringify({
       model,
       temperature: 0.7,
