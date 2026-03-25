@@ -171,7 +171,7 @@ function ContentsPageInner() {
     const mapped = typeMapping[type] || type;
     switch (mapped) {
       case 'yaprak-test': return 'Yaprak Test';
-      case 'deneme': return 'Deneme';
+      case 'deneme': return 'Deneme-Sınav';
       case 'oyunlar': return 'Oyun';
       case 'ders-notlari': return 'Ders Notları';
       case 'ders-videolari': return 'Ders Videoları';
@@ -297,7 +297,7 @@ function ContentsPageInner() {
               <h1 className="text-4xl font-bold text-white mb-2">
                 {selectedType === 'all' ? 'İçerikler' : 
                  selectedType === 'yaprak-test' ? 'Yaprak Testler' :
-                 selectedType === 'deneme' ? 'Denemeler' :
+                 selectedType === 'deneme' ? 'Deneme-Sınavlar' :
                  selectedType === 'oyunlar' ? 'Oyunlar' :
                  selectedType === 'ders-notlari' ? 'Ders Notları' :
                  selectedType === 'ders-videolari' ? 'Ders Videoları' :
@@ -393,7 +393,7 @@ function ContentsPageInner() {
                 >
                   <option value="all">Tüm Türler</option>
                   <option value="yaprak-test">Yaprak Test</option>
-                  <option value="deneme">Deneme</option>
+                  <option value="deneme">Deneme-Sınav</option>
                   <option value="oyunlar">Oyun</option>
                   <option value="ders-notlari">Ders Notları</option>
                   <option value="ders-videolari">Ders Videoları</option>
@@ -888,7 +888,7 @@ function ContentsPageInner() {
                                focus:outline-none focus:border-blue-500 transition-colors"
                     >
                       <option value="yaprak-test">Yaprak Test</option>
-                      <option value="deneme">Deneme</option>
+                      <option value="deneme">Deneme-Sınav</option>
                       <option value="oyunlar">Oyun / Uygulama</option>
                       <option value="ders-notlari">Ders Notları</option>
                       <option value="ders-videolari">Ders Videoları</option>
@@ -1102,7 +1102,7 @@ function ContentsPageInner() {
                     >
                       <option value="">Kategori seçin</option>
                       <option value="yaprak-test">Yaprak Test</option>
-                      <option value="deneme">Deneme</option>
+                      <option value="deneme">Deneme-Sınav</option>
                       <option value="oyunlar">Oyun / Uygulama</option>
                       <option value="ders-notlari">Ders Notları</option>
                       <option value="ders-videolari">Ders Videoları</option>

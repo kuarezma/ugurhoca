@@ -66,7 +66,7 @@ const categories = [
   { 
     id: 'deneme', 
     icon: FileText, 
-    title: 'Deneme', 
+    title: 'Deneme-Sınav', 
     desc: 'Sınav simulasyonları',
     color: 'from-green-500 to-emerald-500',
     bgColor: 'bg-green-500/10',

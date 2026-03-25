@@ -792,7 +792,7 @@ export default function AdminPage() {
                   <h3 className="text-lg font-bold text-white">Tüm İçerikler ({documents.length})</h3>
                   <button
                     onClick={async () => {
-                      if (!confirm('Eski içeriklerin kategori türlerini güncellemek istediğinize emin misiniz?\n\n• worksheet → Yaprak Test\n• test → Deneme\n• game → Oyun\n• document → Yaprak Test\n• writing → Ders Notları')) return;
+                      if (!confirm('Eski içeriklerin kategori türlerini güncellemek istediğinize emin misiniz?\n\n• worksheet → Yaprak Test\n• test → Deneme-Sınav\n• game → Oyun\n• document → Yaprak Test\n• writing → Ders Notları')) return;
                       
                       const updates = [
                         { old: 'worksheet', new: 'yaprak-test' },
@@ -839,7 +839,7 @@ export default function AdminPage() {
                     };
                     const typeLabels: Record<string, string> = {
                       'yaprak-test': 'Yaprak Test',
-                      'deneme': 'Deneme',
+                      'deneme': 'Deneme-Sınav',
                       'oyunlar': 'Oyun',
                       'ders-notlari': 'Ders Notları',
                       'ders-videolari': 'Ders Videoları',
@@ -1655,7 +1655,7 @@ export default function AdminPage() {
                       <option value="ders-notlari">Ders Notları</option>
                       <option value="yaprak-test">Yaprak Test</option>
                       <option value="ders-videolari">Ders Videoları</option>
-                      <option value="deneme">Deneme</option>
+                      <option value="deneme">Deneme-Sınav</option>
                       <option value="programlar">Programlar</option>
                     </select>
                   </div>
@@ -1844,7 +1844,7 @@ export default function AdminPage() {
                         <option value="ders-notlari">Ders Notları</option>
                         <option value="yaprak-test">Yaprak Test</option>
                         <option value="ders-videolari">Ders Videoları</option>
-                        <option value="deneme">Deneme</option>
+                        <option value="deneme">Deneme-Sınav</option>
                         <option value="programlar">Programlar</option>
                       </select>
                     </div>
