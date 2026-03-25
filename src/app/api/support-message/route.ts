@@ -118,8 +118,8 @@ export async function POST(request: Request) {
       const truncatedText = emailText.length > 200 ? emailText.slice(0, 200) + '...' : emailText;
       
       await resend.emails.send({
-        from: 'Uğur Hoca Matematik <onboarding@resend.dev>',
-        to: ['admin@ugurhoca.com'],
+        from: 'Uğur Hoca Matematik <noreply@resend.dev>',
+        to: ['yasayanugur@gmail.com'],
         subject: `📩 Yeni mesaj: ${senderName || 'Bir öğrenci'}`,
         html: `
           <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
