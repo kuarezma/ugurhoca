@@ -293,7 +293,9 @@ function ContentsPageInner() {
                  selectedType === 'programlar' ? 'Programlar' : 'İçerikler'}
               </h1>
               <p className="text-slate-400">
-                {selectedType === 'all' ? `${user.grade}. sınıf için tüm içerikler` : 'Seçili kategorideki içerikler'}
+                {selectedType === 'all'
+                  ? (selectedGrade === 'all' ? 'Tüm sınıflar için içerikler' : `${selectedGrade}. sınıf için tüm içerikler`)
+                  : (selectedGrade === 'all' ? 'Seçili kategoride, tüm sınıflardaki içerikler' : 'Seçili kategorideki içerikler')}
               </p>
             </div>
             {user.isAdmin && (
@@ -334,7 +336,16 @@ function ContentsPageInner() {
               <div className="flex gap-3 flex-wrap">
                 <select
                   value={selectedGrade}
-                  onChange={(e) => setSelectedGrade(e.target.value === 'all' ? 'all' : parseInt(e.target.value))}
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    if (value === 'all') {
+                      setSelectedGrade('all');
+                    } else if (value === 'Mezun') {
+                      setSelectedGrade('Mezun');
+                    } else {
+                      setSelectedGrade(parseInt(value));
+                    }
+                  }}
                   className="bg-slate-800/50 border border-slate-700 rounded-xl px-4 py-3 text-white 
                            focus:outline-none focus:border-purple-500 transition-colors"
                 >
@@ -343,7 +354,25 @@ function ContentsPageInner() {
                   <option value={6}>6. Sınıf</option>
                   <option value={7}>7. Sınıf</option>
                   <option value={8}>8. Sınıf</option>
+                  <option value={9}>9. Sınıf</option>
+                  <option value={10}>10. Sınıf</option>
+                  <option value={11}>11. Sınıf</option>
+                  <option value={12}>12. Sınıf</option>
+                  <option value="Mezun">Mezun</option>
                 </select>
+
+                {!user.isAdmin && (
+                  <button
+                    onClick={() => setSelectedGrade(selectedGrade === 'all' ? user.grade : 'all')}
+                    className={`px-4 py-3 rounded-xl border text-sm font-semibold transition-colors ${
+                      selectedGrade === 'all'
+                        ? 'bg-emerald-500/20 border-emerald-500/30 text-emerald-300'
+                        : 'bg-slate-800/50 border-slate-700 text-slate-300 hover:text-white'
+                    }`}
+                  >
+                    {selectedGrade === 'all' ? 'Tüm Sınıflar Açık' : 'Diğer Sınıfları da Göster'}
+                  </button>
+                )}
 
                 <select
                   value={selectedType}
