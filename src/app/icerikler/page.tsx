@@ -450,7 +450,7 @@ function ContentsPageInner() {
           </motion.div>
 
           {viewMode === 'grid' ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 xl:[grid-template-columns:repeat(auto-fit,minmax(420px,1fr))] gap-7">
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:[grid-template-columns:repeat(auto-fit,minmax(460px,1fr))] gap-7">
               {filteredContents.map((content, i) => (
                 <motion.div
                   key={content.id}
