@@ -37,7 +37,6 @@ const FloatingShapes = () => (
 export default function RegisterPage() {
   const [formData, setFormData] = useState({
     name: '',
-    email: '',
     password: '',
     confirmPassword: '',
     grade: '',
@@ -47,19 +46,27 @@ export default function RegisterPage() {
   const [success, setSuccess] = useState(false);
   const router = useRouter();
 
-  const isAdminEmail = formData.email === 'admin@ugurhoca.com' || formData.email === 'admin@matematiklab.com';
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
 
-    if (!formData.name || !formData.email || !formData.password || !formData.confirmPassword) {
-      setError('Lütfen tüm alanları doldurun');
+    if (!formData.name.trim()) {
+      setError('Lütfen adınızı ve soyadınızı girin');
       return;
     }
 
-    if (!isAdminEmail && !formData.grade) {
+    if (formData.name.trim().split(' ').length < 2) {
+      setError('Lütfen hem adınızı hem soyadınızı girin');
+      return;
+    }
+
+    if (!formData.grade) {
       setError('Lütfen sınıf düzeyinizi seçin');
+      return;
+    }
+
+    if (!formData.password) {
+      setError('Lütfen şifre girin');
       return;
     }
 
@@ -74,15 +81,17 @@ export default function RegisterPage() {
     }
 
     try {
-      const isAdmin = formData.email === 'admin@ugurhoca.com' || formData.email === 'admin@matematiklab.com';
-      const userGrade = isAdmin ? 0 : parseInt(formData.grade);
+      const nameSlug = formData.name.trim().toLowerCase().replace(/\s+/g, '_').replace(/[^a-z0-9_]/g, '');
+      const fakeEmail = `${nameSlug}_${Date.now()}@ugurhoca.local`;
+      const userGrade = parseInt(formData.grade);
       const isPrivate = formData.password.toLowerCase() === 'ozelders' || formData.password.toLowerCase() === 'özelders';
+
       const { data, error: signUpError } = await supabase.auth.signUp({
-        email: formData.email,
+        email: fakeEmail,
         password: formData.password,
         options: {
           data: {
-            name: formData.name,
+            name: formData.name.trim(),
             grade: userGrade,
             is_private_student: isPrivate,
           }
@@ -90,19 +99,16 @@ export default function RegisterPage() {
       });
 
       if (signUpError) throw signUpError;
-      
+
       if (data.user) {
-        const { error: profileError } = await supabase.from('profiles').upsert({
+        await supabase.from('profiles').upsert({
           id: data.user.id,
-          name: formData.name,
-          email: formData.email,
+          name: formData.name.trim(),
+          email: fakeEmail,
           grade: userGrade,
           is_private_student: isPrivate,
           created_at: new Date().toISOString(),
         });
-        if (profileError && profileError.code !== '42P01') {
-          console.error('Profile update error:', profileError);
-        }
       }
 
       setSuccess(true);
@@ -171,67 +177,48 @@ export default function RegisterPage() {
               <label className="block text-slate-300 mb-2 text-sm">Ad Soyad</label>
               <input
                 type="text"
+                required
                 value={formData.name}
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                 className="w-full bg-slate-800/50 border border-slate-700 rounded-xl px-4 py-3 text-white 
                          focus:outline-none focus:border-purple-500 transition-colors"
-                placeholder="Adınızı girin"
+                placeholder="Adınız Soyadınız"
               />
             </div>
 
             <div>
-              <label className="block text-slate-300 mb-2 text-sm">E-posta</label>
-              <input
-                type="email"
-                value={formData.email}
-                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                className="w-full bg-slate-800/50 border border-slate-700 rounded-xl px-4 py-3 text-white 
-                         focus:outline-none focus:border-purple-500 transition-colors"
-                placeholder="ornek@email.com"
-              />
-            </div>
-
-            <AnimatePresence>
-              {!isAdminEmail && (
-                <motion.div
-                  initial={{ opacity: 0, height: 0 }}
-                  animate={{ opacity: 1, height: 'auto' }}
-                  exit={{ opacity: 0, height: 0 }}
-                  transition={{ duration: 0.2 }}
+              <label className="block text-slate-300 mb-2 font-medium">Sınıf Düzeyi</label>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                  <GraduationCap className="h-5 w-5 text-slate-400" />
+                </div>
+                <select
+                  required
+                  value={formData.grade}
+                  onChange={(e) => setFormData({ ...formData, grade: e.target.value })}
+                  className="w-full bg-slate-800/50 border border-slate-700 rounded-xl pl-12 pr-4 py-3 text-white 
+                           focus:outline-none focus:border-purple-500 focus:bg-slate-800 transition-all appearance-none"
                 >
-                  <label className="block text-slate-300 mb-2 font-medium">Sınıf Düzeyi</label>
-                  <div className="relative">
-                    <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                      <GraduationCap className="h-5 w-5 text-slate-400 group-focus-within:text-purple-400 transition-colors" />
-                    </div>
-                    <select
-                      required
-                      value={formData.grade}
-                      onChange={(e) => setFormData({ ...formData, grade: e.target.value })}
-                      className="w-full bg-slate-800/50 border border-slate-700 rounded-xl pl-12 pr-4 py-3 text-white 
-                               focus:outline-none focus:border-purple-500 focus:bg-slate-800 transition-all appearance-none"
-                    >
-                      <option value="" disabled>Sınıfınızı seçin</option>
-                      {[5, 6, 7, 8, 9, 10, 11, 12].map(grade => (
-                        <option key={grade} value={grade}>{grade}. Sınıf</option>
-                      ))}
-                      <option value="Mezun">Mezun</option>
-                    </select>
-                  </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
+                  <option value="" disabled>Seçiniz</option>
+                  {[5, 6, 7, 8, 9, 10, 11, 12].map(grade => (
+                    <option key={grade} value={grade}>{grade}. Sınıf</option>
+                  ))}
+                  <option value="Mezun">Mezun</option>
+                </select>
+              </div>
+            </div>
 
             <div>
               <label className="block text-slate-300 mb-2 text-sm">Şifre</label>
               <div className="relative">
                 <input
                   type={showPassword ? 'text' : 'password'}
+                  required
                   value={formData.password}
                   onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                   className="w-full bg-slate-800/50 border border-slate-700 rounded-xl px-4 py-3 text-white 
                            focus:outline-none focus:border-purple-500 transition-colors pr-12"
-                  placeholder="••••••••"
+                  placeholder="En az 6 karakter"
                 />
                 <button
                   type="button"
@@ -247,11 +234,12 @@ export default function RegisterPage() {
               <label className="block text-slate-300 mb-2 text-sm">Şifre Tekrar</label>
               <input
                 type="password"
+                required
                 value={formData.confirmPassword}
                 onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
                 className="w-full bg-slate-800/50 border border-slate-700 rounded-xl px-4 py-3 text-white 
                          focus:outline-none focus:border-purple-500 transition-colors"
-                placeholder="••••••••"
+                placeholder="Şifrenizi tekrar girin"
               />
             </div>
 

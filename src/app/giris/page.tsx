@@ -62,6 +62,11 @@ export default function LoginPage() {
       return;
     }
 
+    if (formData.username.trim().split(' ').length < 2) {
+      setError('Lütfen ad ve soyad girin (örn: Ahmet Yılmaz)');
+      return;
+    }
+
     try {
       const { data: profileMatches, error: profileError } = await supabase
         .from('profiles')
