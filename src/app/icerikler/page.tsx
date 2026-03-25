@@ -289,8 +289,8 @@ function ContentsPageInner() {
     <main className="min-h-screen gradient-bg pb-20">
       <FloatingShapes />
       
-      <nav className="fixed top-0 left-0 right-0 z-50 glass py-4 px-6">
-        <div className="container mx-auto flex justify-between items-center">
+      <nav className="fixed top-0 left-0 right-0 z-50 glass py-4 px-4 sm:px-6 xl:px-8">
+        <div className="max-w-[1760px] mx-auto flex justify-between items-center">
           <Link href="/" className="flex items-center gap-3">
             <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl flex items-center justify-center">
               <Calculator className="w-6 h-6 text-white" />
@@ -307,8 +307,8 @@ function ContentsPageInner() {
         </div>
       </nav>
 
-      <div className="pt-24 px-6">
-        <div className="container mx-auto">
+      <div className="pt-24 px-4 sm:px-6 xl:px-8">
+        <div className="max-w-[1760px] mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -450,7 +450,7 @@ function ContentsPageInner() {
           </motion.div>
 
           {viewMode === 'grid' ? (
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:[grid-template-columns:repeat(auto-fit,minmax(420px,1fr))] gap-7">
               {filteredContents.map((content, i) => (
                 <motion.div
                   key={content.id}
