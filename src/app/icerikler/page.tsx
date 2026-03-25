@@ -83,6 +83,12 @@ function ContentsPageInner() {
   const profileHref = user?.isAdmin ? '/admin' : '/profil';
   const typeFromUrl = searchParams.get('type') || 'all';
 
+  const normalizeGrade = (value: any): number | 'all' | 'Mezun' => {
+    if (value === 'Mezun') return 'Mezun';
+    const n = Number(value);
+    return Number.isFinite(n) && n > 0 ? n : 'all';
+  };
+
   const loadDocuments = async () => {
     const { data } = await supabase.from('documents').select('*').order('created_at', { ascending: false });
     if (data) setDocuments(data);
@@ -122,7 +128,7 @@ function ContentsPageInner() {
 
       if (profile) {
         setUser({ ...profile, email: session.user.email, isAdmin });
-        setSelectedGrade(profile.grade);
+        setSelectedGrade(normalizeGrade(profile.grade));
       } else {
         const fallbackGrade = session.user.user_metadata?.grade ?? 5;
         setUser({
@@ -132,7 +138,7 @@ function ContentsPageInner() {
           grade: fallbackGrade,
           isAdmin
         });
-        setSelectedGrade(fallbackGrade === 0 ? 'all' : fallbackGrade);
+        setSelectedGrade(normalizeGrade(fallbackGrade));
       }
       loadDocuments();
     };
@@ -193,7 +199,11 @@ function ContentsPageInner() {
 
   const filteredContents = documents.filter(content => {
     const matchesSearch = content.title.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesGrade = selectedGrade === 'all' || selectedGrade === 'Mezun' || content.grade?.includes(selectedGrade);
+    const grades = Array.isArray(content.grade) ? content.grade.map((g: any) => String(g)) : [];
+    const matchesGrade =
+      selectedGrade === 'all' ||
+      grades.length === 0 ||
+      grades.includes(String(selectedGrade));
     const contentType = typeMapping[content.type] || content.type;
     const matchesType = mappedType === 'all' || contentType === mappedType;
     return matchesSearch && matchesGrade && matchesType;
