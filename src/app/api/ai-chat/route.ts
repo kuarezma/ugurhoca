@@ -5,6 +5,35 @@ type ChatMessage = {
   content: string;
 };
 
+const extractReplyText = (data: any): string => {
+  const c1 = data?.choices?.[0]?.message?.content;
+  if (typeof c1 === 'string' && c1.trim()) return c1.trim();
+
+  if (Array.isArray(c1)) {
+    const joined = c1
+      .map((part: any) => {
+        if (typeof part === 'string') return part;
+        if (typeof part?.text === 'string') return part.text;
+        if (typeof part?.content === 'string') return part.content;
+        return '';
+      })
+      .join('')
+      .trim();
+    if (joined) return joined;
+  }
+
+  const c2 = data?.message?.content;
+  if (typeof c2 === 'string' && c2.trim()) return c2.trim();
+
+  const c3 = data?.output?.[0]?.content?.[0]?.text;
+  if (typeof c3 === 'string' && c3.trim()) return c3.trim();
+
+  const c4 = data?.response?.output_text;
+  if (typeof c4 === 'string' && c4.trim()) return c4.trim();
+
+  return '';
+};
+
 const SYSTEM_PROMPT = `Sen Uğur Hoca Matematik platformunun Türkçe eğitim asistanısın.
 
 Hedeflerin:
@@ -68,9 +97,13 @@ export async function POST(request: Request) {
     );
   }
 
-  const content = data?.choices?.[0]?.message?.content;
-  if (!content || typeof content !== 'string') {
-    return NextResponse.json({ error: 'AI yanıtı boş geldi.' }, { status: 500 });
+  const content = extractReplyText(data);
+  if (!content) {
+    const debugShape = data && typeof data === 'object' ? Object.keys(data).slice(0, 8) : [];
+    return NextResponse.json(
+      { error: `AI yanıtı boş geldi. Dönen alanlar: ${debugShape.join(', ') || 'yok'}` },
+      { status: 500 }
+    );
   }
 
   return NextResponse.json({ reply: content });
