@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
+import { Resend } from 'resend';
 
 const RETENTION_DAYS = 180;
 
@@ -107,6 +108,39 @@ export async function POST(request: Request) {
 
   if (adminInsertError) {
     return NextResponse.json({ error: adminInsertError.message }, { status: 500 });
+  }
+
+  const resendApiKey = process.env.RESEND_API_KEY;
+  if (resendApiKey) {
+    try {
+      const resend = new Resend(resendApiKey);
+      const emailText = text || (attachments.length > 0 ? `[Dosya eki: ${attachments.map((a: any) => a.name).join(', ')}]` : '');
+      const truncatedText = emailText.length > 200 ? emailText.slice(0, 200) + '...' : emailText;
+      
+      await resend.emails.send({
+        from: 'Uğur Hoca Matematik <onboarding@resend.dev>',
+        to: ['admin@ugurhoca.com'],
+        subject: `📩 Yeni mesaj: ${senderName || 'Bir öğrenci'}`,
+        html: `
+          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+            <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 20px; border-radius: 12px 12px 0 0;">
+              <h1 style="color: white; margin: 0; font-size: 20px;">📩 Yeni Mesaj Aldınız</h1>
+            </div>
+            <div style="background: #f8fafc; padding: 24px; border: 1px solid #e2e8f0; border-top: none; border-radius: 0 0 12px 12px;">
+              <p style="margin: 0 0 8px; color: #64748b; font-size: 14px;"><strong>Öğrenci:</strong> ${senderName || 'İsimsiz'}</p>
+              ${senderEmail ? `<p style="margin: 0 0 16px; color: #64748b; font-size: 14px;"><strong>E-posta:</strong> ${senderEmail}</p>` : '<br/>'}
+              <div style="background: white; border: 1px solid #e2e8f0; border-radius: 8px; padding: 16px; margin-bottom: 16px;">
+                <p style="margin: 0; color: #1e293b; font-size: 15px; line-height: 1.6;">${truncatedText.replace(/\n/g, '<br/>')}</p>
+              </div>
+              ${attachments.length > 0 ? `<p style="color: #64748b; font-size: 13px; margin-bottom: 16px;"><strong>Ekler:</strong> ${attachments.map((a: any) => a.name).join(', ')}</p>` : ''}
+              <a href="https://ugurhoca.com/admin" style="display: inline-block; background: #667eea; color: white; text-decoration: none; padding: 12px 24px; border-radius: 8px; font-weight: bold;">Admin Panele Git</a>
+            </div>
+          </div>
+        `,
+      });
+    } catch (emailError) {
+      console.error('Email gonderilemedi:', emailError);
+    }
   }
 
   await supabase.from('notifications').insert([
