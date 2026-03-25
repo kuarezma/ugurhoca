@@ -289,7 +289,7 @@ export default function AdminPage() {
         }
       : {
           ...formData,
-          type: modalType,
+          type: modalType === 'document' ? formData.type : modalType,
           downloads: 0,
         };
     if (modalType === 'assignment') {
