@@ -180,6 +180,13 @@ function ContentsPageInner() {
     }
   };
 
+  const getContentKindLabel = (content: any) => {
+    const mapped = typeMapping[content?.type] || content?.type;
+    if (mapped === 'ders-videolari' || content?.video_url) return 'Video';
+    if (typeof content?.file_url === 'string' && content.file_url.toLowerCase().includes('.pdf')) return 'PDF';
+    return 'Dosya';
+  };
+
   const typeMapping: Record<string, string> = {
     'ders-notlari': 'ders-notlari',
     'yaprak-test': 'yaprak-test',
@@ -475,7 +482,7 @@ function ContentsPageInner() {
                       </div>
                       <div className="flex flex-wrap justify-end gap-2">
                         <span className="px-3 py-1 rounded-full bg-rose-500/15 text-rose-300 text-xs font-semibold border border-rose-400/20">
-                          {content.file_url?.toLowerCase().includes('.pdf') ? 'PDF' : 'Dosya'}
+                          {getContentKindLabel(content)}
                         </span>
                         <span className="px-3 py-1 rounded-full bg-indigo-500/15 text-indigo-300 text-xs font-semibold border border-indigo-400/20">
                           {Array.isArray(content.grade) && content.grade.length > 0 ? `${content.grade[0]}. Sınıf` : 'Tüm Sınıflar'}
@@ -578,7 +585,7 @@ function ContentsPageInner() {
                           e.stopPropagation();
                           setPreviewDoc(content);
                         }}
-                        className="flex-1 py-3 bg-slate-800/70 border border-white/10 text-slate-100 font-semibold rounded-2xl hover:bg-slate-700/70 transition-all flex items-center justify-center gap-2"
+                        className="flex-1 min-w-[150px] py-3 bg-slate-800/70 border border-white/10 text-slate-100 font-semibold rounded-2xl hover:bg-slate-700/70 transition-all flex items-center justify-center gap-2"
                       >
                         {content.type === 'ders-videolari' ? <Play className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                         {content.type === 'ders-videolari' ? 'İzle' : 'Önizle'}
@@ -625,9 +632,9 @@ function ContentsPageInner() {
                                 setDocuments(documents.filter(d => d.id !== content.id));
                               }
                             }}
-                            className="px-3 py-2 bg-slate-700/50 hover:bg-red-600 text-slate-300 rounded-lg transition-colors"
+                            className="px-3 py-2 bg-red-500/20 hover:bg-red-600 text-red-200 rounded-lg transition-colors"
                           >
-                            <Trash2 className="w-4 h-4" />
+                            <Trash2 className="w-4 h-4" /> Sil
                           </motion.button>
                         </>
                       )}
@@ -676,7 +683,7 @@ function ContentsPageInner() {
                       </div>
                       <div className="flex flex-wrap justify-end gap-2">
                         <span className="px-3 py-1 rounded-full bg-rose-500/15 text-rose-300 text-xs font-semibold border border-rose-400/20">
-                          {content.file_url?.toLowerCase().includes('.pdf') ? 'PDF' : 'Dosya'}
+                          {getContentKindLabel(content)}
                         </span>
                         <span className="px-3 py-1 rounded-full bg-indigo-500/15 text-indigo-300 text-xs font-semibold border border-indigo-400/20">
                           {Array.isArray(content.grade) && content.grade.length > 0 ? `${content.grade[0]}. Sınıf` : 'Tüm Sınıflar'}
@@ -750,7 +757,7 @@ function ContentsPageInner() {
                         whileHover={{ scale: 1.02 }}
                         whileTap={{ scale: 0.98 }}
                         onClick={() => setPreviewDoc(content)}
-                        className="flex-1 py-3 bg-slate-800/70 border border-white/10 text-slate-100 font-semibold rounded-2xl hover:bg-slate-700/70 transition-all flex items-center justify-center gap-2"
+                        className="flex-1 min-w-[180px] py-3 bg-slate-800/70 border border-white/10 text-slate-100 font-semibold rounded-2xl hover:bg-slate-700/70 transition-all flex items-center justify-center gap-2"
                       >
                         {content.type === 'ders-videolari' ? <Play className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                         {content.type === 'ders-videolari' ? 'İzle' : 'Önizle'}
@@ -792,9 +799,9 @@ function ContentsPageInner() {
                                 setDocuments(documents.filter(d => d.id !== content.id));
                               }
                             }}
-                            className="px-3 py-2 bg-slate-700/50 hover:bg-red-600 text-slate-300 rounded-lg transition-colors"
+                            className="px-3 py-2 bg-red-500/20 hover:bg-red-600 text-red-200 rounded-lg transition-colors"
                           >
-                            <Trash2 className="w-4 h-4" />
+                            <Trash2 className="w-4 h-4" /> Sil
                           </motion.button>
                         </>
                       )}
