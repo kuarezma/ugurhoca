@@ -825,32 +825,32 @@ export default function AdminPage() {
             <p className="text-slate-400 text-sm sm:text-base">Hoş geldiniz, Uğur Hoca!</p>
           </motion.div>
 
-          <div className="sticky top-16 z-40 -mx-4 sm:mx-0 mb-6 sm:mb-8 px-4 sm:px-0 py-3 sm:py-0 bg-slate-950/70 sm:bg-transparent backdrop-blur-xl sm:backdrop-blur-none border-b border-white/5 sm:border-0">
-          <div className="flex flex-nowrap gap-2 sm:gap-4 overflow-x-auto pb-2 sm:pb-0 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden bg-slate-950/95 border border-white/10 rounded-3xl p-2 shadow-lg shadow-black/20">
+          <div className="sticky top-16 z-40 -mx-4 sm:mx-0 mb-6 sm:mb-8 px-4 sm:px-0 py-3 sm:py-0">
+          <div className="flex flex-nowrap gap-1.5 sm:gap-3 overflow-x-auto pb-2 sm:pb-0 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
             {[
-              { id: 'announcements', label: 'Duyurular', icon: Megaphone, color: 'from-pink-500 to-rose-500' },
-              { id: 'documents', label: 'Belgeler', icon: FileText, color: 'from-blue-500 to-cyan-500' },
-              { id: 'writings', label: 'Yazılar', icon: Edit3, color: 'from-purple-500 to-violet-500' },
-              { id: 'users', label: 'Kullanıcılar', icon: Users, color: 'from-green-500 to-emerald-500' },
-              { id: 'privateStudents', label: 'Öğrencilerim', icon: BookOpen, color: 'from-amber-500 to-orange-500' },
-              { id: 'messages', label: 'Mesajlar', icon: MessageSquareText, color: 'from-indigo-500 to-purple-500' },
-              { id: 'gradeUpdate', label: 'Sınıf Güncelle', icon: RefreshCw, color: 'from-teal-500 to-cyan-500' },
-              { id: 'assignments', label: 'Ödevlendirme', icon: ClipboardList, color: 'from-rose-500 to-pink-500' }
+              { id: 'announcements', label: 'Duyurular', shortLabel: 'Duy.', icon: Megaphone, color: 'from-pink-500 to-rose-500' },
+              { id: 'documents', label: 'Belgeler', shortLabel: 'Bel.', icon: FileText, color: 'from-blue-500 to-cyan-500' },
+              { id: 'writings', label: 'Yazılar', shortLabel: 'Yazı', icon: Edit3, color: 'from-purple-500 to-violet-500' },
+              { id: 'users', label: 'Kullanıcılar', shortLabel: 'Kull.', icon: Users, color: 'from-green-500 to-emerald-500' },
+              { id: 'privateStudents', label: 'Öğrencilerim', shortLabel: 'Öğr.', icon: BookOpen, color: 'from-amber-500 to-orange-500' },
+              { id: 'messages', label: 'Mesajlar', shortLabel: 'Msj.', icon: MessageSquareText, color: 'from-indigo-500 to-purple-500' },
+              { id: 'gradeUpdate', label: 'Sınıf Güncelle', shortLabel: 'Sınıf', icon: RefreshCw, color: 'from-teal-500 to-cyan-500' },
+              { id: 'assignments', label: 'Ödevlendirme', shortLabel: 'Ödev', icon: ClipboardList, color: 'from-rose-500 to-pink-500' }
             ].map((tab) => (
               <motion.button
                 key={tab.id}
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
                 onClick={() => setActiveTab(tab.id as any)}
-                className={`relative overflow-hidden px-4 py-3 sm:px-6 sm:py-4 rounded-2xl flex items-center gap-2 sm:gap-3 transition-all whitespace-nowrap shrink-0 border shadow-lg ${
+                className={`relative overflow-hidden px-3 py-2.5 sm:px-5 sm:py-3.5 rounded-xl flex items-center gap-1.5 sm:gap-2.5 transition-all whitespace-nowrap shrink-0 border shadow-md ${
                   activeTab === tab.id
                     ? `bg-gradient-to-r ${tab.color} text-white border-white/20 shadow-${tab.color.includes('pink') ? 'pink' : tab.color.includes('blue') ? 'cyan' : tab.color.includes('green') ? 'emerald' : 'violet'}-500/30`
-                    : `bg-slate-900/60 border-white/10 text-slate-300 hover:text-white hover:border-white/20 hover:bg-white/10`
+                    : `bg-slate-900/80 border-white/10 text-slate-300 hover:text-white hover:border-white/20 hover:bg-slate-800/80`
                 }`}
               >
                 {activeTab === tab.id && <span className="absolute inset-0 bg-white/10 pointer-events-none" />}
-                <tab.icon className="w-5 h-5 sm:w-6 sm:h-6" />
-                <span className="relative font-semibold text-sm sm:text-base">{tab.label}</span>
+                <tab.icon className="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0" />
+                <span className="relative font-semibold text-[11px] sm:text-sm">{activeTab === tab.id ? tab.label : tab.shortLabel}</span>
               </motion.button>
             ))}
             </div>
