@@ -606,7 +606,7 @@ export default function AdminPage() {
     <main className="min-h-screen gradient-bg pb-20">
       <FloatingShapes />
       
-      <nav className="fixed top-0 left-0 right-0 z-50 glass py-3 px-4 sm:py-4 sm:px-6">
+      <nav className="fixed top-0 left-0 right-0 z-50 bg-slate-950/95 backdrop-blur-md border-b border-white/10 py-3 px-4 sm:py-4 sm:px-6 shadow-lg shadow-black/20">
         <div className="container mx-auto flex items-center justify-between gap-3">
           <Link href="/" className="flex items-center gap-3">
             <div className="w-9 h-9 sm:w-10 sm:h-10 bg-gradient-to-br from-orange-500 to-red-500 rounded-xl flex items-center justify-center flex-shrink-0">
@@ -826,7 +826,7 @@ export default function AdminPage() {
           </motion.div>
 
           <div className="sticky top-16 z-40 -mx-4 sm:mx-0 mb-6 sm:mb-8 px-4 sm:px-0 py-3 sm:py-0 bg-slate-950/70 sm:bg-transparent backdrop-blur-xl sm:backdrop-blur-none border-b border-white/5 sm:border-0">
-            <div className="flex flex-nowrap gap-2 sm:gap-4 overflow-x-auto pb-2 sm:pb-0 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+          <div className="flex flex-nowrap gap-2 sm:gap-4 overflow-x-auto pb-2 sm:pb-0 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden bg-slate-950/95 border border-white/10 rounded-3xl p-2 shadow-lg shadow-black/20">
             {[
               { id: 'announcements', label: 'Duyurular', icon: Megaphone, color: 'from-pink-500 to-rose-500' },
               { id: 'documents', label: 'Belgeler', icon: FileText, color: 'from-blue-500 to-cyan-500' },
