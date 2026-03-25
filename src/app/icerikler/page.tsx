@@ -6,8 +6,8 @@ import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { 
   Calculator, BookOpen, Gamepad2, FileText, Upload, Play,
-  Search, Filter, ArrowLeft, Download, Eye, 
-  Clock, Users, Star, Zap, Grid, List, X, Plus,
+  Search, Filter, ArrowLeft, Download, Eye,
+  Calendar, Users, Star, Zap, Grid, List, X, Plus,
   ClipboardList, Heart, Share2, MessageCircle, Bookmark, Check, Edit3, Trash2
 } from 'lucide-react';
 import { AnimatePresence } from 'framer-motion';
@@ -450,16 +450,16 @@ function ContentsPageInner() {
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: i * 0.05 }}
-                  className="glass rounded-2xl overflow-hidden card-hover group"
+                  className="glass rounded-3xl overflow-hidden border border-white/10 card-hover group"
                 >
                   <div className={`h-2 bg-gradient-to-r ${getTypeColor(content.type)}`} />
-                  <div className="p-5">
-                    <div className="flex items-start justify-between mb-3">
+                  <div className="p-5 sm:p-6">
+                    <div className="flex items-start justify-between gap-3 mb-5">
                       {content.file_url && /drive\.google\.com/i.test(content.file_url) ? (
                         <img
                           src={`/api/image-proxy?url=${encodeURIComponent(content.file_url)}`}
                           alt={content.title}
-                          className="w-10 h-10 rounded-lg object-cover border border-white/10"
+                          className="w-14 h-14 rounded-xl object-cover border border-white/10"
                           onError={(e) => {
                             const target = e.target as HTMLImageElement;
                             target.style.display = 'none';
@@ -467,27 +467,49 @@ function ContentsPageInner() {
                           }}
                         />
                       ) : null}
-                      <div className={`w-10 h-10 rounded-lg bg-gradient-to-br ${getTypeColor(content.type)} flex items-center justify-center ${content.file_url && /drive\.google\.com/i.test(content.file_url) ? 'hidden' : ''}`}>
+                      <div className={`w-14 h-14 rounded-xl bg-gradient-to-br ${getTypeColor(content.type)} flex items-center justify-center ${content.file_url && /drive\.google\.com/i.test(content.file_url) ? 'hidden' : ''}`}>
                         {(() => {
                           const Icon = getTypeIcon(content.type);
-                          return <Icon className="w-5 h-5 text-white" />;
+                          return <Icon className="w-7 h-7 text-white" />;
                         })()}
                       </div>
-                      <div className="flex flex-col items-end gap-1">
+                      <div className="flex flex-wrap justify-end gap-2">
+                        <span className="px-3 py-1 rounded-full bg-rose-500/15 text-rose-300 text-xs font-semibold border border-rose-400/20">
+                          {content.file_url?.toLowerCase().includes('.pdf') ? 'PDF' : 'Dosya'}
+                        </span>
+                        <span className="px-3 py-1 rounded-full bg-indigo-500/15 text-indigo-300 text-xs font-semibold border border-indigo-400/20">
+                          {Array.isArray(content.grade) && content.grade.length > 0 ? `${content.grade[0]}. Sınıf` : 'Tüm Sınıflar'}
+                        </span>
+                        <span className="px-3 py-1 rounded-full bg-amber-500/15 text-amber-300 text-xs font-semibold border border-amber-400/20">
+                          {getTypeLabel(content.type)}
+                        </span>
                         {content.isNew && (
-                          <span className="px-2 py-0.5 bg-green-500/20 text-green-400 text-xs font-semibold rounded-full">
+                          <span className="px-3 py-1 rounded-full bg-emerald-500/15 text-emerald-300 text-xs font-semibold border border-emerald-400/20">
                             Yeni
                           </span>
                         )}
-                        <span className="text-xs text-slate-400">{content.grade?.join(', ') || 'Tümü'}</span>
                       </div>
                     </div>
-                    
-                    <h3 className="text-base font-bold text-white mb-3 line-clamp-2 group-hover:text-purple-300 transition-colors">
+
+                    <h3 className="text-2xl font-bold text-white mb-2 line-clamp-2 group-hover:text-cyan-300 transition-colors">
                       {content.title}
                     </h3>
+                    <p className="text-slate-400 text-base mb-4 line-clamp-1">{getTypeLabel(content.type)}</p>
 
-                    <div className="flex items-center gap-3 text-xs text-slate-400 mb-4">
+                    <div className="border-t border-white/10 my-4" />
+
+                    <div className="flex items-center gap-4 text-slate-400 text-sm mb-4">
+                      <div className="flex items-center gap-2 min-w-0">
+                        <Users className="w-4 h-4" />
+                        <span className="truncate">{content.author || content.owner_name || 'Uğur Hoca'}</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Calendar className="w-4 h-4" />
+                        <span>{content.created_at ? new Date(content.created_at).toLocaleDateString('tr-TR', { day: '2-digit', month: 'short', year: 'numeric' }) : '-'}</span>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-6 text-sm text-slate-300 mb-5">
                       <button 
                         onClick={async (e) => {
                           e.stopPropagation();
@@ -499,11 +521,15 @@ function ContentsPageInner() {
                             await supabase.from('documents').update({ likes: (content.likes || 0) + 1 }).eq('id', content.id);
                           }
                         }}
-                        className={`flex items-center gap-1 transition-colors ${likedDocs.has(content.id) ? 'text-red-400' : 'hover:text-red-400'}`}
+                        className={`flex items-center gap-1.5 transition-colors ${likedDocs.has(content.id) ? 'text-red-400' : 'hover:text-red-400'}`}
                       >
-                        <Heart className={`w-3 h-3 ${likedDocs.has(content.id) ? 'fill-current' : ''}`} />
+                        <Heart className={`w-5 h-5 ${likedDocs.has(content.id) ? 'fill-current' : ''}`} />
                         {content.likes || 0}
                       </button>
+                      <div className="flex items-center gap-1.5 text-amber-300">
+                        <Star className="w-5 h-5 fill-current" />
+                        {Math.round(content.rating || 0)}
+                      </div>
                       <button 
                         onClick={async (e) => {
                           e.stopPropagation();
@@ -513,9 +539,9 @@ function ContentsPageInner() {
                             setDocuments(documents.map(d => d.id === content.id ? { ...d, downloads: (d.downloads || 0) + 1 } : d));
                           }
                         }}
-                        className="flex items-center gap-1 hover:text-purple-400 transition-colors"
+                        className="flex items-center gap-1.5 hover:text-cyan-300 transition-colors"
                       >
-                        <Download className="w-3 h-3" />
+                        <Download className="w-5 h-5" />
                         {content.downloads || 0}
                       </button>
                       <button 
@@ -525,14 +551,26 @@ function ContentsPageInner() {
                           const { data } = await supabase.from('comments').select('*').eq('document_id', content.id).order('created_at', { ascending: false });
                           if (data) setComments(data);
                         }}
-                        className="flex items-center gap-1 hover:text-purple-400 transition-colors"
+                        className="flex items-center gap-1.5 hover:text-cyan-300 transition-colors"
                       >
-                        <MessageCircle className="w-3 h-3" />
+                        <MessageCircle className="w-5 h-5" />
                         {content.comments_count || 0}
                       </button>
                     </div>
 
-                    <div className="flex gap-2">
+                    <div className="flex items-center gap-3">
+                      <motion.button
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          navigator.clipboard.writeText(window.location.origin + '/icerikler?id=' + content.id);
+                          alert('Link kopyalandı!');
+                        }}
+                        className="w-11 h-11 rounded-full bg-slate-800/70 border border-white/10 text-slate-300 hover:text-white flex items-center justify-center transition-colors"
+                      >
+                        <Share2 className="w-5 h-5" />
+                      </motion.button>
                       <motion.button
                         whileHover={{ scale: 1.02 }}
                         whileTap={{ scale: 0.98 }}
@@ -540,7 +578,7 @@ function ContentsPageInner() {
                           e.stopPropagation();
                           setPreviewDoc(content);
                         }}
-                        className="flex-1 py-2 bg-gradient-to-r from-purple-500/20 to-pink-500/20 text-purple-300 font-semibold rounded-lg hover:from-purple-500/30 hover:to-pink-500/30 transition-all flex items-center justify-center gap-2"
+                        className="flex-1 py-3 bg-slate-800/70 border border-white/10 text-slate-100 font-semibold rounded-2xl hover:bg-slate-700/70 transition-all flex items-center justify-center gap-2"
                       >
                         {content.type === 'ders-videolari' ? <Play className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                         {content.type === 'ders-videolari' ? 'İzle' : 'Önizle'}
@@ -557,23 +595,11 @@ function ContentsPageInner() {
                               setDocuments(documents.map(d => d.id === content.id ? { ...d, downloads: (d.downloads || 0) + 1 } : d));
                             }
                           }}
-                          className="px-3 py-2 bg-gradient-to-r from-green-500/20 to-emerald-500/20 text-green-300 font-semibold rounded-lg hover:from-green-500/30 hover:to-emerald-500/30 transition-all"
+                          className="px-5 py-3 bg-gradient-to-r from-indigo-500 to-cyan-500 text-white font-semibold rounded-2xl hover:from-indigo-600 hover:to-cyan-600 transition-all shadow-lg shadow-cyan-500/20 flex items-center gap-2"
                         >
-                          <Download className="w-4 h-4" />
+                          <Download className="w-4 h-4" /> İndir
                         </motion.button>
                       )}
-                      <motion.button
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          navigator.clipboard.writeText(window.location.origin + '/icerikler?id=' + content.id);
-                          alert('Link kopyalandı!');
-                        }}
-                        className="px-3 py-2 bg-slate-700/50 hover:bg-slate-700 text-slate-300 rounded-lg transition-colors"
-                      >
-                        <Share2 className="w-4 h-4" />
-                      </motion.button>
                       {user?.isAdmin && (
                         <>
                           <motion.button
@@ -618,100 +644,161 @@ function ContentsPageInner() {
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: i * 0.05 }}
-                  className="glass rounded-2xl p-5 card-hover group"
+                  className="glass rounded-3xl border border-white/10 p-5 sm:p-6 card-hover group"
                 >
-                  <div className="flex items-center gap-4">
-                    <div className={`w-14 h-14 rounded-xl bg-gradient-to-br ${getTypeColor(content.type)} flex items-center justify-center flex-shrink-0`}>
-                      {(() => {
-                        const Icon = getTypeIcon(content.type);
-                        return <Icon className="w-7 h-7 text-white" />;
-                      })()}
-                    </div>
-                    
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2 mb-1">
-                        <h3 className="text-lg font-bold text-white group-hover:text-purple-300 transition-colors truncate">
-                          {content.title}
-                        </h3>
+                  <div className="space-y-4">
+                    <div className="flex items-start justify-between gap-3">
+                      <div className="flex items-center gap-3 min-w-0">
+                        {content.file_url && /drive\.google\.com/i.test(content.file_url) ? (
+                          <img
+                            src={`/api/image-proxy?url=${encodeURIComponent(content.file_url)}`}
+                            alt={content.title}
+                            className="w-14 h-14 rounded-xl object-cover border border-white/10 flex-shrink-0"
+                            onError={(e) => {
+                              const target = e.target as HTMLImageElement;
+                              target.style.display = 'none';
+                              target.nextElementSibling?.classList.remove('hidden');
+                            }}
+                          />
+                        ) : null}
+                        <div className={`w-14 h-14 rounded-xl bg-gradient-to-br ${getTypeColor(content.type)} flex items-center justify-center flex-shrink-0 ${content.file_url && /drive\.google\.com/i.test(content.file_url) ? 'hidden' : ''}`}>
+                          {(() => {
+                            const Icon = getTypeIcon(content.type);
+                            return <Icon className="w-7 h-7 text-white" />;
+                          })()}
+                        </div>
+                        <div className="min-w-0">
+                          <h3 className="text-2xl font-bold text-white group-hover:text-cyan-300 transition-colors truncate">
+                            {content.title}
+                          </h3>
+                          <p className="text-slate-400">{getTypeLabel(content.type)}</p>
+                        </div>
+                      </div>
+                      <div className="flex flex-wrap justify-end gap-2">
+                        <span className="px-3 py-1 rounded-full bg-rose-500/15 text-rose-300 text-xs font-semibold border border-rose-400/20">
+                          {content.file_url?.toLowerCase().includes('.pdf') ? 'PDF' : 'Dosya'}
+                        </span>
+                        <span className="px-3 py-1 rounded-full bg-indigo-500/15 text-indigo-300 text-xs font-semibold border border-indigo-400/20">
+                          {Array.isArray(content.grade) && content.grade.length > 0 ? `${content.grade[0]}. Sınıf` : 'Tüm Sınıflar'}
+                        </span>
                         {content.isNew && (
-                          <span className="px-2 py-0.5 bg-green-500/20 text-green-400 text-xs font-semibold rounded-full flex-shrink-0">
+                          <span className="px-3 py-1 rounded-full bg-emerald-500/15 text-emerald-300 text-xs font-semibold border border-emerald-400/20">
                             Yeni
                           </span>
                         )}
                       </div>
-                      <div className="flex items-center gap-4 text-sm text-slate-400">
-                        <span className="flex items-center gap-1">
-                          <BookOpen className="w-4 h-4" />
-                          {getTypeLabel(content.type)}
-                        </span>
-                        <span>{content.grade?.join(', ') || 'Tümü'}</span>
-                        <span className="flex items-center gap-1">
-                          <Eye className="w-4 h-4" />
-                          {content.views}
-                        </span>
-                        <span className="flex items-center gap-1">
-                          <Download className="w-4 h-4" />
-                          {content.downloads}
-                        </span>
-                        <span className="flex items-center gap-1 text-yellow-400">
-                          <Star className="w-4 h-4 fill-current" />
-                          {content.rating}
-                        </span>
+                    </div>
+
+                    <div className="border-t border-white/10" />
+
+                    <div className="flex flex-wrap items-center gap-4 text-sm text-slate-400">
+                      <div className="flex items-center gap-2">
+                        <Users className="w-4 h-4" />
+                        <span>{content.author || content.owner_name || 'Uğur Hoca'}</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Calendar className="w-4 h-4" />
+                        <span>{content.created_at ? new Date(content.created_at).toLocaleDateString('tr-TR', { day: '2-digit', month: 'short', year: 'numeric' }) : '-'}</span>
                       </div>
                     </div>
 
-                    <motion.button
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                      onClick={() => setPreviewDoc(content)}
-                      className="px-6 py-2 bg-gradient-to-r from-purple-500 to-pink-500 text-white font-semibold rounded-xl hover:from-purple-600 hover:to-pink-600 transition-all flex items-center gap-2 flex-shrink-0"
-                    >
-                      {content.type === 'ders-videolari' ? <Play className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                      {content.type === 'ders-videolari' ? 'İzle' : 'Önizle'}
-                    </motion.button>
-                    {content.file_url && (
+                    <div className="flex items-center gap-6 text-sm text-slate-300">
+                      <button
+                        onClick={async (e) => {
+                          e.stopPropagation();
+                          if (likedDocs.has(content.id)) {
+                            setLikedDocs(prev => { const n = new Set(prev); n.delete(content.id); return n; });
+                            await supabase.from('documents').update({ likes: Math.max(0, (content.likes || 0) - 1) }).eq('id', content.id);
+                          } else {
+                            setLikedDocs(prev => new Set([...prev, content.id]));
+                            await supabase.from('documents').update({ likes: (content.likes || 0) + 1 }).eq('id', content.id);
+                          }
+                        }}
+                        className={`flex items-center gap-1.5 transition-colors ${likedDocs.has(content.id) ? 'text-red-400' : 'hover:text-red-400'}`}
+                      >
+                        <Heart className={`w-5 h-5 ${likedDocs.has(content.id) ? 'fill-current' : ''}`} />
+                        {content.likes || 0}
+                      </button>
+                      <div className="flex items-center gap-1.5 text-amber-300">
+                        <Star className="w-5 h-5 fill-current" />
+                        {Math.round(content.rating || 0)}
+                      </div>
+                      <div className="flex items-center gap-1.5 hover:text-cyan-300 transition-colors">
+                        <MessageCircle className="w-5 h-5" />
+                        {content.comments_count || 0}
+                      </div>
+                      <div className="flex items-center gap-1.5 hover:text-cyan-300 transition-colors">
+                        <Download className="w-5 h-5" />
+                        {content.downloads || 0}
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-3">
                       <motion.button
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
-                        onClick={async () => {
-                          window.open(content.file_url, '_blank');
-                          await supabase.from('documents').update({ downloads: (content.downloads || 0) + 1 }).eq('id', content.id);
-                          setDocuments(documents.map(d => d.id === content.id ? { ...d, downloads: (d.downloads || 0) + 1 } : d));
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          navigator.clipboard.writeText(window.location.origin + '/icerikler?id=' + content.id);
+                          alert('Link kopyalandı!');
                         }}
-                        className="px-4 py-2 bg-gradient-to-r from-green-500 to-emerald-500 text-white font-semibold rounded-xl hover:from-green-600 hover:to-emerald-600 transition-all flex items-center gap-2 flex-shrink-0"
+                        className="w-11 h-11 rounded-full bg-slate-800/70 border border-white/10 text-slate-300 hover:text-white flex items-center justify-center transition-colors"
                       >
-                        <Download className="w-4 h-4" />
+                        <Share2 className="w-5 h-5" />
                       </motion.button>
-                    )}
-                    {user?.isAdmin && (
-                      <>
-                        <motion.button
-                          whileHover={{ scale: 1.05 }}
-                          whileTap={{ scale: 0.95 }}
-                          onClick={() => {
-                            setEditDoc(content);
-                            setEditFormData({ ...content });
-                            setIsEditing(false);
-                          }}
-                          className="px-3 py-2 bg-slate-700 hover:bg-blue-600 text-white rounded-lg transition-colors"
-                        >
-                          <Edit3 className="w-4 h-4" />
-                        </motion.button>
+                      <motion.button
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
+                        onClick={() => setPreviewDoc(content)}
+                        className="flex-1 py-3 bg-slate-800/70 border border-white/10 text-slate-100 font-semibold rounded-2xl hover:bg-slate-700/70 transition-all flex items-center justify-center gap-2"
+                      >
+                        {content.type === 'ders-videolari' ? <Play className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                        {content.type === 'ders-videolari' ? 'İzle' : 'Önizle'}
+                      </motion.button>
+                      {content.file_url && (
                         <motion.button
                           whileHover={{ scale: 1.05 }}
                           whileTap={{ scale: 0.95 }}
                           onClick={async () => {
-                            if (confirm('Bu içeriği silmek istediğinize emin misiniz?')) {
-                              await supabase.from('documents').delete().eq('id', content.id);
-                              setDocuments(documents.filter(d => d.id !== content.id));
-                            }
+                            window.open(content.file_url, '_blank');
+                            await supabase.from('documents').update({ downloads: (content.downloads || 0) + 1 }).eq('id', content.id);
+                            setDocuments(documents.map(d => d.id === content.id ? { ...d, downloads: (d.downloads || 0) + 1 } : d));
                           }}
-                          className="px-3 py-2 bg-slate-700 hover:bg-red-600 text-white rounded-lg transition-colors"
+                          className="px-5 py-3 bg-gradient-to-r from-indigo-500 to-cyan-500 text-white font-semibold rounded-2xl hover:from-indigo-600 hover:to-cyan-600 transition-all shadow-lg shadow-cyan-500/20 flex items-center gap-2"
                         >
-                          <Trash2 className="w-4 h-4" />
+                          <Download className="w-4 h-4" /> İndir
                         </motion.button>
-                      </>
-                    )}
+                      )}
+                      {user?.isAdmin && (
+                        <>
+                          <motion.button
+                            whileHover={{ scale: 1.05 }}
+                            whileTap={{ scale: 0.95 }}
+                            onClick={() => {
+                              setEditDoc(content);
+                              setEditFormData({ ...content });
+                              setIsEditing(false);
+                            }}
+                            className="px-3 py-2 bg-slate-700/50 hover:bg-blue-600 text-slate-300 rounded-lg transition-colors"
+                          >
+                            <Edit3 className="w-4 h-4" />
+                          </motion.button>
+                          <motion.button
+                            whileHover={{ scale: 1.05 }}
+                            whileTap={{ scale: 0.95 }}
+                            onClick={async () => {
+                              if (confirm('Bu içeriği silmek istediğinize emin misiniz?')) {
+                                await supabase.from('documents').delete().eq('id', content.id);
+                                setDocuments(documents.filter(d => d.id !== content.id));
+                              }
+                            }}
+                            className="px-3 py-2 bg-slate-700/50 hover:bg-red-600 text-slate-300 rounded-lg transition-colors"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </motion.button>
+                        </>
+                      )}
+                    </div>
                   </div>
                 </motion.div>
               ))}
