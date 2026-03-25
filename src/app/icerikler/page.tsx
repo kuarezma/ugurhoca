@@ -216,7 +216,21 @@ function ContentsPageInner() {
     return match && match[2].length === 11 ? match[2] : null;
   };
 
+  const getDriveId = (url: string) => {
+    if (!url) return null;
+    const patterns = [
+      /drive\.google\.com\/file\/d\/([^/?]+)/,
+      /drive\.google\.com\/open\?id=([^&]+)/,
+    ];
+    for (const pattern of patterns) {
+      const match = url.match(pattern);
+      if (match) return match[1];
+    }
+    return null;
+  };
+
   const previewVideoId = previewDoc?.video_url ? getYouTubeId(previewDoc.video_url) : null;
+  const driveId = previewDoc?.file_url ? getDriveId(previewDoc.file_url) : null;
 
   const handleTypeChange = useCallback((type: string) => {
     setSelectedType(type);
@@ -441,7 +455,19 @@ function ContentsPageInner() {
                   <div className={`h-2 bg-gradient-to-r ${getTypeColor(content.type)}`} />
                   <div className="p-5">
                     <div className="flex items-start justify-between mb-3">
-                      <div className={`w-10 h-10 rounded-lg bg-gradient-to-br ${getTypeColor(content.type)} flex items-center justify-center`}>
+                      {content.file_url && /drive\.google\.com/i.test(content.file_url) ? (
+                        <img
+                          src={`/api/image-proxy?url=${encodeURIComponent(content.file_url)}`}
+                          alt={content.title}
+                          className="w-10 h-10 rounded-lg object-cover border border-white/10"
+                          onError={(e) => {
+                            const target = e.target as HTMLImageElement;
+                            target.style.display = 'none';
+                            target.nextElementSibling?.classList.remove('hidden');
+                          }}
+                        />
+                      ) : null}
+                      <div className={`w-10 h-10 rounded-lg bg-gradient-to-br ${getTypeColor(content.type)} flex items-center justify-center ${content.file_url && /drive\.google\.com/i.test(content.file_url) ? 'hidden' : ''}`}>
                         {(() => {
                           const Icon = getTypeIcon(content.type);
                           return <Icon className="w-5 h-5 text-white" />;
@@ -735,6 +761,13 @@ function ContentsPageInner() {
                     src={previewDoc.file_url}
                     className="w-full h-full min-h-[60vh]"
                     title={previewDoc.title}
+                  />
+                ) : driveId ? (
+                  <iframe
+                    src={`https://drive.google.com/file/d/${driveId}/preview`}
+                    className="w-full h-full min-h-[60vh]"
+                    title={previewDoc.title}
+                    allow="autoplay"
                   />
                 ) : previewDoc.video_url ? (
                   <iframe
