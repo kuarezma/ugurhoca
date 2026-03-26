@@ -981,6 +981,7 @@ export default function AdminPage() {
                         { old: 'test', new: 'deneme' },
                         { old: 'game', new: 'oyunlar' },
                         { old: 'writing', new: 'ders-notuari-kitaplar' },
+                        { old: 'ders-notlari', new: 'ders-notuari-kitaplar' },
                       ];
                       
                       let updated = 0;
@@ -1012,6 +1013,7 @@ export default function AdminPage() {
                       'deneme': 'from-purple-500 to-pink-500',
                       'oyunlar': 'from-orange-500 to-red-500',
                       'ders-notuari-kitaplar': 'from-green-500 to-emerald-500',
+                      'ders-notlari': 'from-green-500 to-emerald-500',
                       'ders-videolari': 'from-red-500 to-orange-500',
                       'programlar': 'from-cyan-500 to-blue-500',
                       'worksheet': 'from-blue-500 to-cyan-500',
@@ -1023,6 +1025,7 @@ export default function AdminPage() {
                       'deneme': 'Deneme-Sınav',
                       'oyunlar': 'Oyun',
                       'ders-notuari-kitaplar': 'Ders Notları-Kitaplar',
+                      'ders-notlari': 'Ders Notları-Kitaplar',
                       'ders-videolari': 'Ders Videoları',
                       'programlar': 'Programlar',
                     };

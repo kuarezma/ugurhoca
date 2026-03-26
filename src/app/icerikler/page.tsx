@@ -161,6 +161,7 @@ function ContentsPageInner() {
       case 'deneme': return 'from-purple-500 to-pink-500';
       case 'oyunlar': return 'from-orange-500 to-red-500';
       case 'ders-notuari-kitaplar': return 'from-green-500 to-emerald-500';
+      case 'ders-notlari': return 'from-green-500 to-emerald-500';
       case 'ders-videolari': return 'from-red-500 to-orange-500';
       case 'programlar': return 'from-cyan-500 to-blue-500';
       default: return 'from-slate-500 to-slate-600';
@@ -174,6 +175,7 @@ function ContentsPageInner() {
       case 'deneme': return 'Deneme-Sınav';
       case 'oyunlar': return 'Oyun';
       case 'ders-notuari-kitaplar': return 'Ders Notları-Kitaplar';
+      case 'ders-notlari': return 'Ders Notları-Kitaplar';
       case 'ders-videolari': return 'Ders Videoları';
       case 'programlar': return 'Programlar';
       default: return type;
@@ -189,6 +191,7 @@ function ContentsPageInner() {
 
   const typeMapping: Record<string, string> = {
     'ders-notuari-kitaplar': 'ders-notuari-kitaplar',
+    'ders-notlari': 'ders-notuari-kitaplar',
     'yaprak-test': 'yaprak-test',
     'ders-videolari': 'ders-videolari',
     'video': 'ders-videolari',
