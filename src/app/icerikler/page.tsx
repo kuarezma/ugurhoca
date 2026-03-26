@@ -313,7 +313,7 @@ function ContentsPageInner() {
 
           <Link href={profileHref} className="text-slate-300 hover:text-white flex items-center gap-2">
             <ArrowLeft className="w-5 h-5" />
-            {user.isAdmin ? 'Admin Panel' : 'Profil'}
+            {user?.isAdmin ? 'Admin Panel' : 'Profil'}
           </Link>
         </div>
       </nav>

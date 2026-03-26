@@ -873,8 +873,7 @@ const Hangman = ({ onScore }: { onScore: (score: number) => void }) => {
   const getDisplay = () =>
     word.split('').map(c => guessed.has(c) ? c : '_').join(' ');
 
-  const isWon = word.split('').every(c => guessed.has(c));
-  const isLost = [...guessed].filter(c => !word.includes(c)).length >= maxWrong;
+  const wrongCount = [...guessed].filter(c => !word.includes(c)).length;
 
   const handleGuess = (letter: string) => {
     if (guessed.has(letter) || gameState !== 'playing') return;
@@ -882,45 +881,44 @@ const Hangman = ({ onScore }: { onScore: (score: number) => void }) => {
     newGuessed.add(letter);
     setGuessed(newGuessed);
 
-    if (isWon) {
-      setScore(s => s + (maxWrong - [...guessed].filter(c => !word.includes(c)).length) * 10 + 50);
+    const newWon = word.split('').every(c => newGuessed.has(c));
+    const newWrongCount = [...newGuessed].filter(c => !word.includes(c)).length;
+    const newLost = newWrongCount >= maxWrong;
+
+    if (newWon) {
+      setScore(s => s + (maxWrong - newWrongCount) * 10 + 50);
+      setGameState('won');
       setTimeout(() => {
         setRound(r => r + 1);
         const idx = Math.floor(Math.random() * mathTerms.length);
         setWord(mathTerms[idx]);
         setGuessed(new Set());
+        setGameState('playing');
       }, 1500);
     }
-    if (isLost) {
+    if (newLost) {
       setGameState('lost');
       onScore(score);
     }
   };
 
-  useEffect(() => {
-    if (isWon && gameState === 'playing') {
-      setGameState('won');
-      setTimeout(() => {
-        setGameState('playing');
-      }, 1500);
-    }
-  }, [isWon, gameState]);
+  // Win/loss detection is now handled directly in handleGuess
 
-  const wrongCount = [...guessed].filter(c => !word.includes(c)).length;
+  // wrongCount is defined above near handleGuess
 
   const parts = [
-    <line key="base" x1="10" y1="140" x2="60" y2="140" strokeWidth="3" />,
-    <line key="pole" x1="35" y1="140" x2="35" y2="10" strokeWidth="3" />,
-    <line key="top" x1="35" y1="10" x2="80" y2="10" strokeWidth="3" />,
-    <line key="rope" x1="80" y1="10" x2="80" y2="30" strokeWidth="3" />,
+    <line key="base" x1="10" y1="140" x2="60" y2="140" stroke="currentColor" strokeWidth="3" />,
+    <line key="pole" x1="35" y1="140" x2="35" y2="10" stroke="currentColor" strokeWidth="3" />,
+    <line key="top" x1="35" y1="10" x2="80" y2="10" stroke="currentColor" strokeWidth="3" />,
+    <line key="rope" x1="80" y1="10" x2="80" y2="30" stroke="currentColor" strokeWidth="3" />,
   ];
   const bodyParts = [
-    <circle key="head" cx="80" cy="40" r="10" strokeWidth="3" fill="none" />,
-    <line key="body" x1="80" y1="50" x2="80" y2="85" strokeWidth="3" />,
-    <line key="larm" x1="80" y1="60" x2="65" y2="75" strokeWidth="3" />,
-    <line key="rarm" x1="80" y1="60" x2="95" y2="75" strokeWidth="3" />,
-    <line key="lleg" x1="80" y1="85" x2="65" y2="110" strokeWidth="3" />,
-    <line key="rleg" x1="80" y1="85" x2="95" y2="110" strokeWidth="3" />,
+    <circle key="head" cx="80" cy="40" r="10" stroke="currentColor" strokeWidth="3" fill="none" />,
+    <line key="body" x1="80" y1="50" x2="80" y2="85" stroke="currentColor" strokeWidth="3" />,
+    <line key="larm" x1="80" y1="60" x2="65" y2="75" stroke="currentColor" strokeWidth="3" />,
+    <line key="rarm" x1="80" y1="60" x2="95" y2="75" stroke="currentColor" strokeWidth="3" />,
+    <line key="lleg" x1="80" y1="85" x2="65" y2="110" stroke="currentColor" strokeWidth="3" />,
+    <line key="rleg" x1="80" y1="85" x2="95" y2="110" stroke="currentColor" strokeWidth="3" />,
   ];
 
   if (gameState === 'idle') {
@@ -1237,13 +1235,7 @@ const MemoryGame = ({ onScore }: { onScore: (score: number) => void }) => {
     }
   }, [selected, cards]);
 
-  useEffect(() => {
-    if (cards.length > 0 && cards.every(c => c.matched) && gameState === 'playing') {
-      const bonus = Math.max(0, (timeLeft - moves) * 2);
-      setScore(s => s + bonus);
-      setTimeout(() => setGameState('won'), 500);
-    }
-  }, [cards, gameState]);
+  // Duplicate win detection removed — already handled in the selected useEffect above
 
   if (gameState === 'idle') {
     return (
