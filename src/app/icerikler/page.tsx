@@ -1172,7 +1172,7 @@ function ContentsPageInner() {
 
       {/* --- Hızlı İçerik Ekle Modalı --- */}
       <AnimatePresence>
-        {showModal && (
+        {showModal && user?.isAdmin && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
