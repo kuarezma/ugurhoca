@@ -110,7 +110,7 @@ const Navbar = ({ user, onLogout }: { user: any; onLogout: () => void }) => {
       <div className="max-w-6xl mx-auto px-4">
         <div className="flex justify-between items-center h-14">
           <Link href="/" className="flex items-center gap-2">
-            <img src="/uğur.jpeg" alt="Uğur Hoca" className="w-9 h-9 rounded-lg object-cover" />
+            <img src="/ugur.jpeg" alt="Uğur Hoca" className="w-9 h-9 rounded-lg object-cover" />
             <span className="text-lg font-bold text-white">
               Uğur Hoca
             </span>
