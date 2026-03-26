@@ -292,6 +292,8 @@ function ContentsPageInner() {
     }
     return true;
   };
+
+  return (
     <main className="min-h-screen gradient-bg pb-20">
       <FloatingShapes />
       
