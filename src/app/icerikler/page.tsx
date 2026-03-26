@@ -96,6 +96,8 @@ function ContentsPageInner() {
   useEffect(() => {
     if (typeFromUrl && typeFromUrl !== 'all') {
       setSelectedType(typeFromUrl);
+    } else if (typeFromUrl === 'all') {
+      setSelectedType('all');
     }
   }, [typeFromUrl]);
 
@@ -203,6 +205,7 @@ function ContentsPageInner() {
   const mappedType = typeMapping[selectedType] || selectedType;
 
   const filteredContents = documents.filter(content => {
+    if (!content || !content.title) return false;
     const matchesSearch = content.title.toLowerCase().includes(searchTerm.toLowerCase());
     const grades = Array.isArray(content.grade) ? content.grade.map((g: any) => String(g)) : [];
     const matchesGrade =

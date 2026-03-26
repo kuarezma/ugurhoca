@@ -41,7 +41,7 @@ const categories = [
     color: 'from-blue-500 to-cyan-500',
     bgColor: 'bg-blue-500/10',
     borderColor: 'border-blue-500/30',
-    href: '/icerikler?type=ders-notu'
+    href: '/icerikler?type=ders-notlari'
   },
   { 
     id: 'yaprak-test', 
@@ -61,7 +61,7 @@ const categories = [
     color: 'from-red-500 to-orange-500',
     bgColor: 'bg-red-500/10',
     borderColor: 'border-red-500/30',
-    href: '/icerikler?type=video'
+    href: '/icerikler?type=ders-videolari'
   },
   { 
     id: 'deneme', 
