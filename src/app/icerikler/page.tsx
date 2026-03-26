@@ -1470,36 +1470,42 @@ function ContentsPageInner() {
                 )}
               </div>
 
-              <form onSubmit={async (e) => {
-                e.preventDefault();
-                if (!newComment.trim()) return;
-                const { data } = await supabase.from('comments').insert([{
-                  document_id: showComments,
-                  user_id: user?.id,
-                  user_name: user?.name || 'Anonim',
-                  content: newComment
-                }]).select();
-                if (data) {
-                  setComments([data[0], ...comments]);
-                  setNewComment('');
-                  const doc = documents.find(d => d.id === showComments);
-                  if (doc) {
-                    await supabase.from('documents').update({ comments_count: (doc.comments_count || 0) + 1 }).eq('id', showComments);
-                    setDocuments(documents.map(d => d.id === showComments ? { ...d, comments_count: (d.comments_count || 0) + 1 } : d));
+              {user ? (
+                <form onSubmit={async (e) => {
+                  e.preventDefault();
+                  if (!newComment.trim()) return;
+                  const { data } = await supabase.from('comments').insert([{
+                    document_id: showComments,
+                    user_id: user?.id,
+                    user_name: user?.name || 'Anonim',
+                    content: newComment
+                  }]).select();
+                  if (data) {
+                    setComments([data[0], ...comments]);
+                    setNewComment('');
+                    const doc = documents.find(d => d.id === showComments);
+                    if (doc) {
+                      await supabase.from('documents').update({ comments_count: (doc.comments_count || 0) + 1 }).eq('id', showComments);
+                      setDocuments(documents.map(d => d.id === showComments ? { ...d, comments_count: (d.comments_count || 0) + 1 } : d));
+                    }
                   }
-                }
-              }} className="flex gap-2">
-                <input
-                  type="text"
-                  value={newComment}
-                  onChange={(e) => setNewComment(e.target.value)}
-                  placeholder="Yorum yaz..."
-                  className="flex-1 bg-slate-800 border border-slate-700 rounded-lg px-4 py-2 text-white placeholder-slate-400 focus:outline-none focus:border-purple-500"
-                />
-                <button type="submit" className="px-4 py-2 bg-purple-500 text-white rounded-lg hover:bg-purple-600 transition-colors">
-                  Gönder
-                </button>
-              </form>
+                }} className="flex gap-2">
+                  <input
+                    type="text"
+                    value={newComment}
+                    onChange={(e) => setNewComment(e.target.value)}
+                    placeholder="Yorum yaz..."
+                    className="flex-1 bg-slate-800 border border-slate-700 rounded-lg px-4 py-2 text-white placeholder-slate-400 focus:outline-none focus:border-purple-500"
+                  />
+                  <button type="submit" className="px-4 py-2 bg-purple-500 text-white rounded-lg hover:bg-purple-600 transition-colors">
+                    Gönder
+                  </button>
+                </form>
+              ) : (
+                <div className="text-center py-3 text-slate-400 text-sm">
+                  Yorum yapmak için <a href="/giris" className="text-purple-400 hover:text-purple-300 font-semibold">giriş yapın</a>.
+                </div>
+              )}
             </motion.div>
           </motion.div>
         )}
