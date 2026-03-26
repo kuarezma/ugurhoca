@@ -34,14 +34,14 @@ const FloatingShapes = () => (
 
 const categories = [
   { 
-    id: 'ders-notlari', 
+    id: 'ders-notuari-kitaplar', 
     icon: BookOpen, 
-    title: 'Ders Notları', 
+    title: 'Ders Notları-Kitaplar', 
     desc: 'Konu anlatımları ve özetler',
     color: 'from-blue-500 to-cyan-500',
     bgColor: 'bg-blue-500/10',
     borderColor: 'border-blue-500/30',
-    href: '/icerikler?type=ders-notlari'
+    href: '/icerikler?type=ders-notuari-kitaplar'
   },
   { 
     id: 'yaprak-test', 

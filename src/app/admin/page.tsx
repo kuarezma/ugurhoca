@@ -973,14 +973,14 @@ export default function AdminPage() {
                   <h3 className="text-lg font-bold text-white">Tüm İçerikler ({documents.length})</h3>
                   <button
                     onClick={async () => {
-                      if (!confirm('Eski içeriklerin kategori türlerini güncellemek istediğinize emin misiniz?\n\n• worksheet → Yaprak Test\n• test → Deneme-Sınav\n• game → Oyun\n• document → Yaprak Test\n• writing → Ders Notları')) return;
+                      if (!confirm('Eski içeriklerin kategori türlerini güncellemek istediğinize emin misiniz?\n\n• worksheet → Yaprak Test\n• test → Deneme-Sınav\n• game → Oyun\n• document → Yaprak Test\n• writing → Ders Notları-Kitaplar')) return;
                       
                       const updates = [
                         { old: 'worksheet', new: 'yaprak-test' },
                         { old: 'document', new: 'yaprak-test' },
                         { old: 'test', new: 'deneme' },
                         { old: 'game', new: 'oyunlar' },
-                        { old: 'writing', new: 'ders-notlari' },
+                        { old: 'writing', new: 'ders-notuari-kitaplar' },
                       ];
                       
                       let updated = 0;
@@ -1011,7 +1011,7 @@ export default function AdminPage() {
                       'yaprak-test': 'from-blue-500 to-cyan-500',
                       'deneme': 'from-purple-500 to-pink-500',
                       'oyunlar': 'from-orange-500 to-red-500',
-                      'ders-notlari': 'from-green-500 to-emerald-500',
+                      'ders-notuari-kitaplar': 'from-green-500 to-emerald-500',
                       'ders-videolari': 'from-red-500 to-orange-500',
                       'programlar': 'from-cyan-500 to-blue-500',
                       'worksheet': 'from-blue-500 to-cyan-500',
@@ -1022,7 +1022,7 @@ export default function AdminPage() {
                       'yaprak-test': 'Yaprak Test',
                       'deneme': 'Deneme-Sınav',
                       'oyunlar': 'Oyun',
-                      'ders-notlari': 'Ders Notları',
+                      'ders-notuari-kitaplar': 'Ders Notları-Kitaplar',
                       'ders-videolari': 'Ders Videoları',
                       'programlar': 'Programlar',
                     };
@@ -1943,7 +1943,7 @@ export default function AdminPage() {
                                focus:outline-none focus:border-blue-500 transition-colors"
                     >
                       <option value="">Kategori seçin</option>
-                      <option value="ders-notlari">Ders Notları</option>
+                      <option value="ders-notuari-kitaplar">Ders Notları-Kitaplar</option>
                       <option value="yaprak-test">Yaprak Test</option>
                       <option value="ders-videolari">Ders Videoları</option>
                       <option value="deneme">Deneme-Sınav</option>
@@ -2132,7 +2132,7 @@ export default function AdminPage() {
                                  focus:outline-none focus:border-purple-500 transition-colors"
                       >
                         <option value="">Kategori seçin</option>
-                        <option value="ders-notlari">Ders Notları</option>
+                        <option value="ders-notuari-kitaplar">Ders Notları-Kitaplar</option>
                         <option value="yaprak-test">Yaprak Test</option>
                         <option value="ders-videolari">Ders Videoları</option>
                         <option value="deneme">Deneme-Sınav</option>

@@ -160,7 +160,7 @@ function ContentsPageInner() {
       case 'yaprak-test': return 'from-blue-500 to-cyan-500';
       case 'deneme': return 'from-purple-500 to-pink-500';
       case 'oyunlar': return 'from-orange-500 to-red-500';
-      case 'ders-notlari': return 'from-green-500 to-emerald-500';
+      case 'ders-notuari-kitaplar': return 'from-green-500 to-emerald-500';
       case 'ders-videolari': return 'from-red-500 to-orange-500';
       case 'programlar': return 'from-cyan-500 to-blue-500';
       default: return 'from-slate-500 to-slate-600';
@@ -173,7 +173,7 @@ function ContentsPageInner() {
       case 'yaprak-test': return 'Yaprak Test';
       case 'deneme': return 'Deneme-Sınav';
       case 'oyunlar': return 'Oyun';
-      case 'ders-notlari': return 'Ders Notları';
+      case 'ders-notuari-kitaplar': return 'Ders Notları-Kitaplar';
       case 'ders-videolari': return 'Ders Videoları';
       case 'programlar': return 'Programlar';
       default: return type;
@@ -188,7 +188,7 @@ function ContentsPageInner() {
   };
 
   const typeMapping: Record<string, string> = {
-    'ders-notlari': 'ders-notlari',
+    'ders-notuari-kitaplar': 'ders-notuari-kitaplar',
     'yaprak-test': 'yaprak-test',
     'ders-videolari': 'ders-videolari',
     'video': 'ders-videolari',
@@ -199,7 +199,7 @@ function ContentsPageInner() {
     'game': 'oyunlar',
     'programlar': 'programlar',
     'document': 'yaprak-test',
-    'writing': 'ders-notlari',
+    'writing': 'ders-notuari-kitaplar',
   };
 
   const mappedType = typeMapping[selectedType] || selectedType;
@@ -331,7 +331,7 @@ function ContentsPageInner() {
                  selectedType === 'yaprak-test' ? 'Yaprak Testler' :
                  selectedType === 'deneme' ? 'Deneme-Sınavlar' :
                  selectedType === 'oyunlar' ? 'Oyunlar' :
-                 selectedType === 'ders-notlari' ? 'Ders Notları' :
+                 selectedType === 'ders-notuari-kitaplar' ? 'Ders Notları-Kitaplar' :
                  selectedType === 'ders-videolari' ? 'Ders Videoları' :
                  selectedType === 'programlar' ? 'Programlar' : 'İçerikler'}
               </h1>
@@ -427,7 +427,7 @@ function ContentsPageInner() {
                   <option value="yaprak-test">Yaprak Test</option>
                   <option value="deneme">Deneme-Sınav</option>
                   <option value="oyunlar">Oyun</option>
-                  <option value="ders-notlari">Ders Notları</option>
+                  <option value="ders-notuari-kitaplar">Ders Notları-Kitaplar</option>
                   <option value="ders-videolari">Ders Videoları</option>
                   <option value="programlar">Programlar</option>
                 </select>
@@ -1028,7 +1028,7 @@ function ContentsPageInner() {
                       <option value="yaprak-test">Yaprak Test</option>
                       <option value="deneme">Deneme-Sınav</option>
                       <option value="oyunlar">Oyun / Uygulama</option>
-                      <option value="ders-notlari">Ders Notları</option>
+                      <option value="ders-notuari-kitaplar">Ders Notları-Kitaplar</option>
                       <option value="ders-videolari">Ders Videoları</option>
                       <option value="programlar">Programlar</option>
                     </select>
@@ -1242,7 +1242,7 @@ function ContentsPageInner() {
                       <option value="yaprak-test">Yaprak Test</option>
                       <option value="deneme">Deneme-Sınav</option>
                       <option value="oyunlar">Oyun / Uygulama</option>
-                      <option value="ders-notlari">Ders Notları</option>
+                      <option value="ders-notuari-kitaplar">Ders Notları-Kitaplar</option>
                       <option value="ders-videolari">Ders Videoları</option>
                       <option value="programlar">Programlar</option>
                     </select>
