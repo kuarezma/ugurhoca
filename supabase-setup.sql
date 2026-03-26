@@ -145,3 +145,57 @@ CREATE POLICY "notifications_insert" ON public.notifications
 
 CREATE POLICY "notifications_update" ON public.notifications
   FOR UPDATE USING (true);
+
+-- ============================================
+-- note_categories Tablosu
+-- ============================================
+CREATE TABLE IF NOT EXISTS public.note_categories (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE NOT NULL,
+  name TEXT NOT NULL,
+  color TEXT DEFAULT '#8b5cf6',
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT now()
+);
+
+ALTER TABLE public.note_categories ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "note_categories_select" ON public.note_categories
+  FOR SELECT USING (true);
+
+CREATE POLICY "note_categories_insert" ON public.note_categories
+  FOR INSERT WITH CHECK (auth.uid() = user_id);
+
+CREATE POLICY "note_categories_update" ON public.note_categories
+  FOR UPDATE USING (auth.uid() = user_id);
+
+CREATE POLICY "note_categories_delete" ON public.note_categories
+  FOR DELETE USING (auth.uid() = user_id);
+
+-- ============================================
+-- notes Tablosu
+-- ============================================
+CREATE TABLE IF NOT EXISTS public.notes (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE NOT NULL,
+  title TEXT,
+  content TEXT NOT NULL,
+  category TEXT,
+  tags TEXT[] DEFAULT '{}',
+  is_pinned BOOLEAN DEFAULT false,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT now(),
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT now()
+);
+
+ALTER TABLE public.notes ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "notes_select" ON public.notes
+  FOR SELECT USING (auth.uid() = user_id);
+
+CREATE POLICY "notes_insert" ON public.notes
+  FOR INSERT WITH CHECK (auth.uid() = user_id);
+
+CREATE POLICY "notes_update" ON public.notes
+  FOR UPDATE USING (auth.uid() = user_id);
+
+CREATE POLICY "notes_delete" ON public.notes
+  FOR DELETE USING (auth.uid() = user_id);
