@@ -80,7 +80,6 @@ function ContentsPageInner() {
 
   const router = useRouter();
   const searchParams = useSearchParams();
-  const profileHref = user?.isAdmin ? '/admin' : '/profil';
   const typeFromUrl = searchParams.get('type') || 'all';
 
   const normalizeGrade = (value: any): number | 'all' | 'Mezun' => {
@@ -101,6 +100,7 @@ function ContentsPageInner() {
   }, [typeFromUrl]);
 
   useEffect(() => {
+    loadDocuments();
     const checkSession = async () => {
       const { data: { session } } = await supabase.auth.getSession();
       
@@ -109,13 +109,12 @@ function ContentsPageInner() {
         const userData = JSON.parse(localUser);
         if (userData.email === 'admin@ugurhoca.com') {
           setUser({ ...userData, isAdmin: true });
-          loadDocuments();
           return;
         }
       }
       
       if (!session) {
-        router.push('/giris');
+        setUser(null);
         return;
       }
       const { data: profile } = await supabase
@@ -140,10 +139,9 @@ function ContentsPageInner() {
         });
         setSelectedGrade(isAdmin ? 'all' : normalizeGrade(fallbackGrade));
       }
-      loadDocuments();
     };
     checkSession();
-  }, [router]);
+  }, []);
 
   const getTypeIcon = (type: string) => {
     switch (type) {
@@ -283,9 +281,17 @@ function ContentsPageInner() {
     }, 1500);
   };
 
-  if (!user) return null;
+  const profileHref = user?.isAdmin ? '/admin' : user ? '/profil' : '/giris';
 
-  return (
+  const requireLogin = () => {
+    if (!user) {
+      if (confirm('Bu işlem için giriş yapmanız gerekiyor. Giriş sayfasına yönlendirileceksiniz.')) {
+        router.push('/giris');
+      }
+      return false;
+    }
+    return true;
+  };
     <main className="min-h-screen gradient-bg pb-20">
       <FloatingShapes />
       
@@ -330,12 +336,12 @@ function ContentsPageInner() {
                   : (selectedGrade === 'all' ? 'Seçili kategoride, tüm sınıflardaki içerikler' : 'Seçili kategorideki içerikler')}
               </p>
             </div>
-            {user.isAdmin && (
+            {user?.isAdmin && (
               <motion.button
                 whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
+                whileTap={{ scale: 0.98 }}
                 onClick={() => {
-                  setFormData({ type: selectedType !== 'all' ? selectedType : 'yaprak-test', grade: [selectedGrade !== 'all' && selectedGrade !== 'Mezun' ? Number(selectedGrade) : user.grade] });
+                  setFormData({ type: selectedType !== 'all' ? selectedType : 'yaprak-test', grade: [selectedGrade !== 'all' && selectedGrade !== 'Mezun' ? Number(selectedGrade) : (user?.grade ?? 5)] });
                   setShowModal(true);
                 }}
                 className="px-6 py-3 bg-gradient-to-r from-purple-500 to-pink-500 text-white font-semibold rounded-xl hover:from-purple-600 hover:to-pink-600 transition-all shadow-lg flex items-center gap-2"
@@ -393,9 +399,9 @@ function ContentsPageInner() {
                   <option value="Mezun">Mezun</option>
                 </select>
 
-                {!user.isAdmin && (
+                {user && !user.isAdmin && (
                   <button
-                    onClick={() => setSelectedGrade(selectedGrade === 'all' ? user.grade : 'all')}
+                    onClick={() => setSelectedGrade(selectedGrade === 'all' ? (user.grade ?? 'all') : 'all')}
                     className={`px-4 py-3 rounded-xl border text-sm font-semibold transition-colors ${
                       selectedGrade === 'all'
                         ? 'bg-emerald-500/20 border-emerald-500/30 text-emerald-300'
