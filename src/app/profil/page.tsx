@@ -10,6 +10,7 @@ import {
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import NotesSection from '@/components/NotesSection';
+import UserStatistics from '@/components/UserStatistics';
 
 const FloatingShapes = () => (
   <div className="fixed inset-0 overflow-hidden pointer-events-none z-0">
@@ -368,6 +369,16 @@ export default function ProfilePage() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.15 }}
+            >
+              <UserStatistics userId={user.id} userCreatedAt={user.created_at} />
+            </motion.div>
+          )}
+
+          {!user.isAdmin && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2 }}
             >
               <NotesSection userId={user.id} />
             </motion.div>

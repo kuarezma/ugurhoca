@@ -8,10 +8,12 @@ import {
   Image, Megaphone, Edit3, Trash2, Upload, X,
   Calendar, Eye, Download, Check, AlertCircle, Sparkles,
   Users, BookOpen, RefreshCw, GraduationCap, Send, Bell,
-  UserCheck, ClipboardList, MessageSquareText, Paperclip, Ban, VolumeX, Flag
+  UserCheck, ClipboardList, MessageSquareText, Paperclip, Ban, VolumeX, Flag,
+  BarChart3
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
+import AdminStatistics from '@/components/AdminStatistics';
 
 const FloatingShapes = () => (
   <div className="fixed inset-0 overflow-hidden pointer-events-none z-0">
@@ -155,7 +157,7 @@ interface Notification {
 export default function AdminPage() {
   const RETENTION_DAYS = 180;
   const [user, setUser] = useState<any>(null);
-  const [activeTab, setActiveTab] = useState<'announcements' | 'documents' | 'writings' | 'users' | 'privateStudents' | 'messages' | 'gradeUpdate' | 'assignments'>('announcements');
+  const [activeTab, setActiveTab] = useState<'statistics' | 'announcements' | 'documents' | 'writings' | 'users' | 'privateStudents' | 'messages' | 'gradeUpdate' | 'assignments'>('statistics');
   const [announcements, setAnnouncements] = useState<Announcement[]>([]);
   const [documents, setDocuments] = useState<Document[]>([]);
   const [allUsers, setAllUsers] = useState<any[]>([]);
@@ -828,6 +830,7 @@ export default function AdminPage() {
           <div className="sticky top-16 z-40 -mx-4 sm:mx-0 mb-6 sm:mb-8 px-4 sm:px-0 py-3 sm:py-0">
           <div className="flex flex-nowrap gap-1.5 sm:gap-3 overflow-x-auto pb-2 sm:pb-0 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
             {[
+              { id: 'statistics', label: 'İstatistikler', shortLabel: 'İstat.', icon: BarChart3, color: 'from-emerald-500 to-teal-500' },
               { id: 'announcements', label: 'Duyurular', shortLabel: 'Duy.', icon: Megaphone, color: 'from-pink-500 to-rose-500' },
               { id: 'documents', label: 'Belgeler', shortLabel: 'Bel.', icon: FileText, color: 'from-blue-500 to-cyan-500' },
               { id: 'writings', label: 'Yazılar', shortLabel: 'Yazı', icon: Edit3, color: 'from-purple-500 to-violet-500' },
@@ -856,7 +859,7 @@ export default function AdminPage() {
             </div>
           </div>
 
-          {activeTab !== 'users' && activeTab !== 'gradeUpdate' && activeTab !== 'assignments' && (
+          {activeTab !== 'statistics' && activeTab !== 'users' && activeTab !== 'gradeUpdate' && activeTab !== 'assignments' && (
             <div className="flex justify-stretch sm:justify-end mb-6">
               <motion.button
                 whileHover={{ scale: 1.02 }}
@@ -871,6 +874,17 @@ export default function AdminPage() {
           )}
 
           <AnimatePresence mode="wait">
+            {activeTab === 'statistics' && (
+              <motion.div
+                key="statistics"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+              >
+                <AdminStatistics />
+              </motion.div>
+            )}
+
             {activeTab === 'announcements' && (
               <motion.div
                 key="announcements"
