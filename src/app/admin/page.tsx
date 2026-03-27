@@ -973,15 +973,15 @@ export default function AdminPage() {
                   <h3 className="text-lg font-bold text-white">Tüm İçerikler ({documents.length})</h3>
                   <button
                     onClick={async () => {
-                      if (!confirm('Eski içeriklerin kategori türlerini güncellemek istediğinize emin misiniz?\n\n• worksheet → Yaprak Test\n• test → Deneme-Sınav\n• game → Oyun\n• document → Yaprak Test\n• writing → Ders Notları-Kitaplar')) return;
+                      if (!confirm('Eski içeriklerin kategori türlerini güncellemek istediğinize emin misiniz?\n\n• worksheet → Yaprak Test\n• test → Sınav\n• game → Oyunlar\n• document → Yaprak Test\n• writing → Ders Notları\n• ders-notuari-kitaplar → Ders Notları\n• deneme → Deneme')) return;
                       
                       const updates = [
                         { old: 'worksheet', new: 'yaprak-test' },
                         { old: 'document', new: 'yaprak-test' },
-                        { old: 'test', new: 'deneme' },
+                        { old: 'test', new: 'sinav' },
                         { old: 'game', new: 'oyunlar' },
-                        { old: 'writing', new: 'ders-notuari-kitaplar' },
-                        { old: 'ders-notlari', new: 'ders-notuari-kitaplar' },
+                        { old: 'writing', new: 'ders-notlari' },
+                        { old: 'ders-notuari-kitaplar', new: 'ders-notlari' },
                       ];
                       
                       let updated = 0;
@@ -1009,24 +1009,27 @@ export default function AdminPage() {
                 ) : (
                   documents.map((doc, i) => {
                     const typeColors: Record<string, string> = {
-                      'yaprak-test': 'from-blue-500 to-cyan-500',
-                      'deneme': 'from-purple-500 to-pink-500',
-                      'oyunlar': 'from-orange-500 to-red-500',
-                      'ders-notuari-kitaplar': 'from-green-500 to-emerald-500',
-                      'ders-notlari': 'from-green-500 to-emerald-500',
+                      'ders-notlari': 'from-blue-500 to-cyan-500',
+                      'kitaplar': 'from-indigo-500 to-violet-500',
+                      'yaprak-test': 'from-purple-500 to-pink-500',
                       'ders-videolari': 'from-red-500 to-orange-500',
-                      'programlar': 'from-cyan-500 to-blue-500',
-                      'worksheet': 'from-blue-500 to-cyan-500',
-                      'test': 'from-purple-500 to-pink-500',
-                      'game': 'from-orange-500 to-red-500',
+                      'deneme': 'from-green-500 to-emerald-500',
+                      'sinav': 'from-teal-500 to-cyan-500',
+                      'oyunlar': 'from-yellow-500 to-amber-500',
+                      'programlar': 'from-pink-500 to-rose-500',
+                      'worksheet': 'from-purple-500 to-pink-500',
+                      'test': 'from-teal-500 to-cyan-500',
+                      'game': 'from-yellow-500 to-amber-500',
+                      'ders-notuari-kitaplar': 'from-green-500 to-emerald-500',
                     };
                     const typeLabels: Record<string, string> = {
+                      'ders-notlari': 'Ders Notları',
+                      'kitaplar': 'Kitaplar',
                       'yaprak-test': 'Yaprak Test',
-                      'deneme': 'Deneme-Sınav',
-                      'oyunlar': 'Oyun',
-                      'ders-notuari-kitaplar': 'Ders Notları-Kitaplar',
-                      'ders-notlari': 'Ders Notları-Kitaplar',
                       'ders-videolari': 'Ders Videoları',
+                      'deneme': 'Deneme',
+                      'sinav': 'Sınav',
+                      'oyunlar': 'Oyun',
                       'programlar': 'Programlar',
                     };
                     return (
@@ -1946,10 +1949,12 @@ export default function AdminPage() {
                                focus:outline-none focus:border-blue-500 transition-colors"
                     >
                       <option value="">Kategori seçin</option>
-                      <option value="ders-notuari-kitaplar">Ders Notları-Kitaplar</option>
+                      <option value="ders-notlari">Ders Notları</option>
+                      <option value="kitaplar">Kitaplar</option>
                       <option value="yaprak-test">Yaprak Test</option>
                       <option value="ders-videolari">Ders Videoları</option>
-                      <option value="deneme">Deneme-Sınav</option>
+                      <option value="deneme">Deneme</option>
+                      <option value="sinav">Sınav</option>
                       <option value="programlar">Programlar</option>
                     </select>
                   </div>
@@ -2135,10 +2140,12 @@ export default function AdminPage() {
                                  focus:outline-none focus:border-purple-500 transition-colors"
                       >
                         <option value="">Kategori seçin</option>
-                        <option value="ders-notuari-kitaplar">Ders Notları-Kitaplar</option>
+                        <option value="ders-notlari">Ders Notları</option>
+                        <option value="kitaplar">Kitaplar</option>
                         <option value="yaprak-test">Yaprak Test</option>
                         <option value="ders-videolari">Ders Videoları</option>
-                        <option value="deneme">Deneme-Sınav</option>
+                        <option value="deneme">Deneme</option>
+                        <option value="sinav">Sınav</option>
                         <option value="programlar">Programlar</option>
                       </select>
                     </div>

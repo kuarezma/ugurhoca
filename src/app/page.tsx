@@ -34,14 +34,24 @@ const FloatingShapes = () => (
 
 const categories = [
   { 
-    id: 'ders-notuari-kitaplar', 
+    id: 'ders-notlari', 
     icon: BookOpen, 
-    title: 'Ders Notları-Kitaplar', 
+    title: 'Ders Notları', 
     desc: 'Konu anlatımları ve özetler',
     color: 'from-blue-500 to-cyan-500',
     bgColor: 'bg-blue-500/10',
     borderColor: 'border-blue-500/30',
-    href: '/icerikler?type=ders-notuari-kitaplar'
+    href: '/icerikler?type=ders-notlari'
+  },
+  { 
+    id: 'kitaplar', 
+    icon: BookOpen, 
+    title: 'Kitaplar', 
+    desc: 'Kitap önerileri ve pdf\'leri',
+    color: 'from-indigo-500 to-violet-500',
+    bgColor: 'bg-indigo-500/10',
+    borderColor: 'border-indigo-500/30',
+    href: '/icerikler?type=kitaplar'
   },
   { 
     id: 'yaprak-test', 
@@ -66,12 +76,22 @@ const categories = [
   { 
     id: 'deneme', 
     icon: FileText, 
-    title: 'Deneme-Sınav', 
-    desc: 'Sınav simulasyonları',
+    title: 'Deneme', 
+    desc: 'Deneme sınavları',
     color: 'from-green-500 to-emerald-500',
     bgColor: 'bg-green-500/10',
     borderColor: 'border-green-500/30',
     href: '/icerikler?type=deneme'
+  },
+  { 
+    id: 'sinav', 
+    icon: ClipboardList, 
+    title: 'Sınav', 
+    desc: 'Sınavlar ve testler',
+    color: 'from-teal-500 to-cyan-500',
+    bgColor: 'bg-teal-500/10',
+    borderColor: 'border-teal-500/30',
+    href: '/icerikler?type=sinav'
   },
   { 
     id: 'oyunlar', 
@@ -88,9 +108,9 @@ const categories = [
     icon: AppWindow, 
     title: 'Programlar', 
     desc: 'Eğitim uygulamaları',
-    color: 'from-teal-500 to-cyan-500',
-    bgColor: 'bg-teal-500/10',
-    borderColor: 'border-teal-500/30',
+    color: 'from-pink-500 to-rose-500',
+    bgColor: 'bg-pink-500/10',
+    borderColor: 'border-pink-500/30',
     href: '/icerikler?type=programlar'
   },
 ];
@@ -434,7 +454,7 @@ export default function HomePage() {
               </p>
             </motion.div>
 
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-3 2xl:grid-cols-6 gap-3 sm:gap-4">
+            <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-4 gap-3 sm:gap-4">
               {categories.map((cat, i) => (
                 <motion.div
                   key={cat.id}
@@ -444,7 +464,7 @@ export default function HomePage() {
                 >
                   <Link 
                     href={cat.href}
-                    className={`block ${cat.bgColor} border ${cat.borderColor} rounded-2xl p-5 sm:p-7 lg:p-8 xl:p-6 text-center hover:scale-105 transition-transform`}
+                    className={`block ${cat.bgColor} border ${cat.borderColor} rounded-2xl p-5 sm:p-7 lg:p-6 text-center hover:scale-105 transition-transform`}
                   >
                     <div className={`w-14 h-14 sm:w-16 sm:h-16 mx-auto mb-3 rounded-2xl bg-gradient-to-br ${cat.color} flex items-center justify-center`}>
                       <cat.icon className="w-7 h-7 sm:w-8 sm:h-8 text-white" />
