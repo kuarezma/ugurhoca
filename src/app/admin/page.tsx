@@ -368,7 +368,12 @@ export default function AdminPage() {
       }
       loadData();
     } else if (modalType === 'document' || modalType === 'writing') {
-      const { data, error } = await supabase.from('documents').insert([newItem]).select();
+      const documentItem = {
+        ...newItem,
+        answer_key_text: formData.answer_key_text || null,
+        solution_url: formData.solution_url || null,
+      };
+      const { data, error } = await supabase.from('documents').insert([documentItem]).select();
       if (!error && data) {
         setDocuments([data[0], ...documents]);
       } else {
@@ -1904,6 +1909,8 @@ export default function AdminPage() {
                       type: formData.type,
                       file_url: formData.file_url,
                       video_url: formData.video_url,
+                      answer_key_text: formData.answer_key_text || null,
+                      solution_url: formData.solution_url || null,
                     })
                     .eq('id', editingDoc.id);
                   
@@ -1977,6 +1984,31 @@ export default function AdminPage() {
                       className="w-full bg-slate-800/50 border border-slate-700 rounded-xl px-4 py-3 text-white 
                                focus:outline-none focus:border-blue-500 transition-colors"
                     />
+                  </div>
+                  <div>
+                    <label className="block text-slate-300 mb-2 text-sm">Cevap Anahtarı (Metin)</label>
+                    <textarea
+                      value={formData.answer_key_text || ''}
+                      onChange={(e) => setFormData({ ...formData, answer_key_text: e.target.value })}
+                      rows={3}
+                      className="w-full bg-slate-800/50 border border-slate-700 rounded-xl px-4 py-3 text-white 
+                               focus:outline-none focus:border-green-500 transition-colors resize-none"
+                      placeholder="Cevap anahtarını buraya yazın... (opsiyonel)"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-slate-300 mb-2 text-sm">Çözüm PDF (Drive Link)</label>
+                    <input
+                      type="url"
+                      value={formData.solution_url || ''}
+                      onChange={(e) => setFormData({ ...formData, solution_url: e.target.value })}
+                      className="w-full bg-slate-800/50 border border-slate-700 rounded-xl px-4 py-3 text-white 
+                               focus:outline-none focus:border-green-500 transition-colors"
+                      placeholder="https://drive.google.com/... (çözümlü PDF varsa)"
+                    />
+                    {formData.solution_url && (
+                      <p className="text-green-400 text-xs mt-1">ÇÖZÜMLÜ badge'i otomatik eklenecek</p>
+                    )}
                   </div>
                   <motion.button
                     type="submit"
@@ -2228,6 +2260,31 @@ export default function AdminPage() {
                                    focus:outline-none focus:border-purple-500 transition-colors"
                           placeholder="https://www.youtube.com/watch?v=..."
                         />
+                      </div>
+                      <div>
+                        <label className="block text-slate-300 mb-2 text-sm">Cevap Anahtarı (Metin)</label>
+                        <textarea
+                          value={formData.answer_key_text || ''}
+                          onChange={(e) => setFormData({ ...formData, answer_key_text: e.target.value })}
+                          rows={3}
+                          className="w-full bg-slate-800/50 border border-slate-700 rounded-xl px-4 py-3 text-white 
+                                   focus:outline-none focus:border-green-500 transition-colors resize-none"
+                          placeholder="Cevap anahtarını buraya yazın... (opsiyonel)"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-slate-300 mb-2 text-sm">Çözüm PDF (Drive Link)</label>
+                        <input
+                          type="url"
+                          value={formData.solution_url || ''}
+                          onChange={(e) => setFormData({ ...formData, solution_url: e.target.value })}
+                          className="w-full bg-slate-800/50 border border-slate-700 rounded-xl px-4 py-3 text-white 
+                                   focus:outline-none focus:border-green-500 transition-colors"
+                          placeholder="https://drive.google.com/... (çözümlü PDF varsa)"
+                        />
+                        {formData.solution_url && (
+                          <p className="text-green-400 text-xs mt-1">ÇÖZÜMLÜ badge'i otomatik eklenecek</p>
+                        )}
                       </div>
                       <div className="flex items-center gap-3">
                         <input

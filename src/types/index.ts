@@ -21,6 +21,8 @@ export interface Content {
   downloads: number;
   createdAt: Date;
   authorId: string;
+  answer_key_text?: string;
+  solution_url?: string;
 }
 
 export interface Quiz {

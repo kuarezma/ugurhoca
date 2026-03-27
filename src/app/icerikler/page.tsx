@@ -8,7 +8,7 @@ import {
   Calculator, BookOpen, Gamepad2, FileText, Upload, Play,
   Search, Filter, ArrowLeft, Download, Eye,
   Calendar, Users, Star, Zap, Grid, List, X, Plus,
-  ClipboardList, Heart, Share2, MessageCircle, Bookmark, Check, Edit3, Trash2
+  ClipboardList, Heart, Share2, MessageCircle, Bookmark, Check, Edit3, Trash2, Key
 } from 'lucide-react';
 import { AnimatePresence } from 'framer-motion';
 import { useRouter } from 'next/navigation';
@@ -71,6 +71,7 @@ function ContentsPageInner() {
 
   // Önizleme Modalı State'leri
   const [previewDoc, setPreviewDoc] = useState<any>(null);
+  const [showAnswerKey, setShowAnswerKey] = useState(false);
 
   // Düzenleme Modalı State'leri (Admin)
   const [editDoc, setEditDoc] = useState<any>(null);
@@ -529,6 +530,11 @@ function ContentsPageInner() {
                             Yeni
                           </span>
                         )}
+                        {content.solution_url && (
+                          <span className="px-3 py-1 rounded-full bg-green-500/15 text-green-300 text-xs font-semibold border border-green-400/30">
+                            ÇÖZÜMLÜ
+                          </span>
+                        )}
                       </div>
                     </div>
 
@@ -929,20 +935,64 @@ function ContentsPageInner() {
                     <Download className="w-4 h-4" />
                     {previewDoc.downloads || 0} indirme
                   </span>
+                  {previewDoc.answer_key_text && (
+                    <span className="px-2 py-1 bg-green-500/20 text-green-300 rounded-lg text-xs font-medium">
+                      Cevap Anahtarı Var
+                    </span>
+                  )}
                 </div>
-                <a
-                  href={previewDoc.file_url}
-                  download
-                  onClick={async () => {
-                    await supabase.from('documents').update({ downloads: (previewDoc.downloads || 0) + 1 }).eq('id', previewDoc.id);
-                    setDocuments(documents.map(d => d.id === previewDoc.id ? { ...d, downloads: (d.downloads || 0) + 1 } : d));
-                  }}
-                  className="px-4 py-2 bg-purple-500 hover:bg-purple-600 text-white rounded-lg transition-colors flex items-center gap-2"
-                >
-                  <Download className="w-4 h-4" />
-                  İndir
-                </a>
+                <div className="flex items-center gap-3">
+                  {previewDoc.answer_key_text && (
+                    <button
+                      onClick={() => setShowAnswerKey(!showAnswerKey)}
+                      className="px-4 py-2 bg-green-500/20 hover:bg-green-500/30 text-green-300 border border-green-500/30 rounded-lg transition-colors flex items-center gap-2"
+                    >
+                      <Key className="w-4 h-4" />
+                      Cevap Anahtarı
+                    </button>
+                  )}
+                  {previewDoc.solution_url && (
+                    <a
+                      href={previewDoc.solution_url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg transition-colors flex items-center gap-2"
+                    >
+                      <FileText className="w-4 h-4" />
+                      Çözüm PDF
+                    </a>
+                  )}
+                  <a
+                    href={previewDoc.file_url}
+                    download
+                    onClick={async () => {
+                      await supabase.from('documents').update({ downloads: (previewDoc.downloads || 0) + 1 }).eq('id', previewDoc.id);
+                      setDocuments(documents.map(d => d.id === previewDoc.id ? { ...d, downloads: (d.downloads || 0) + 1 } : d));
+                    }}
+                    className="px-4 py-2 bg-purple-500 hover:bg-purple-600 text-white rounded-lg transition-colors flex items-center gap-2"
+                  >
+                    <Download className="w-4 h-4" />
+                    İndir
+                  </a>
+                </div>
               </div>
+              
+              {showAnswerKey && previewDoc.answer_key_text && (
+                <motion.div
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: 'auto' }}
+                  exit={{ opacity: 0, height: 0 }}
+                  className="mt-4 p-4 bg-green-500/10 border border-green-500/30 rounded-xl"
+                >
+                  <h4 className="text-green-300 font-semibold mb-2 flex items-center gap-2">
+                    <Key className="w-4 h-4" />
+                    Cevap Anahtarı
+                  </h4>
+                  <pre className="text-slate-300 text-sm whitespace-pre-wrap font-mono">
+                    {previewDoc.answer_key_text}
+                  </pre>
+                </motion.div>
+              )}
             </motion.div>
           </motion.div>
         )}

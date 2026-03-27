@@ -39,6 +39,8 @@ CREATE TABLE IF NOT EXISTS public.documents (
   views INTEGER DEFAULT 0,
   rating DECIMAL(2,1) DEFAULT 0,
   is_new BOOLEAN DEFAULT false,
+  answer_key_text TEXT,
+  solution_url TEXT,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT now()
 );
 
