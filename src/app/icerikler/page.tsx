@@ -1396,6 +1396,33 @@ function ContentsPageInner() {
                   </div>
 
                   <div>
+                    <label className="block text-slate-300 mb-2 text-sm">Cevap Anahtarı (Metin)</label>
+                    <textarea
+                      value={formData.answer_key_text || ''}
+                      onChange={(e) => setFormData({ ...formData, answer_key_text: e.target.value })}
+                      rows={3}
+                      className="w-full bg-slate-800/50 border border-slate-700 rounded-xl px-4 py-3 text-white 
+                               focus:outline-none focus:border-green-500 transition-colors resize-none"
+                      placeholder="Cevap anahtarını buraya yazın... (opsiyonel)"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-slate-300 mb-2 text-sm">Çözüm PDF (Drive Link)</label>
+                    <input
+                      type="url"
+                      value={formData.solution_url || ''}
+                      onChange={(e) => setFormData({ ...formData, solution_url: e.target.value })}
+                      className="w-full bg-slate-800/50 border border-slate-700 rounded-xl px-4 py-3 text-white 
+                               focus:outline-none focus:border-green-500 transition-colors"
+                      placeholder="https://drive.google.com/... (çözümlü PDF varsa)"
+                    />
+                    {formData.solution_url && (
+                      <p className="text-green-400 text-xs mt-1">ÇÖZÜMLÜ badge'i otomatik eklenecek</p>
+                    )}
+                  </div>
+
+                  <div>
                     <label className="block text-slate-300 mb-2 text-sm">Hedef Sınıflar</label>
                     <div className="flex flex-wrap gap-2">
                       {[5, 6, 7, 8, 9, 10, 11, 12].map((grade) => (
