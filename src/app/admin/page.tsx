@@ -16,26 +16,6 @@ import { supabase } from '@/lib/supabase';
 import AdminStatistics from '@/components/AdminStatistics';
 import FloatingShapes from '@/components/FloatingShapes';
 
-const FloatingShapes = () => (
-  <div className="fixed inset-0 overflow-hidden pointer-events-none z-0">
-    {[...Array(8)].map((_, i) => (
-      <motion.div
-        key={i}
-        className="absolute rounded-full opacity-10"
-        style={{
-          width: Math.random() * 150 + 80,
-          height: Math.random() * 150 + 80,
-          background: ['#f97316', '#ec4899', '#06b6d4', '#8b5cf6'][i % 4],
-          left: `${Math.random() * 100}%`,
-          top: `${Math.random() * 100}%`,
-        }}
-        animate={{ y: [0, -30, 0], rotate: [0, 180, 360] }}
-        transition={{ duration: Math.random() * 4 + 3, repeat: Infinity }}
-      />
-    ))}
-  </div>
-);
-
 const AnnouncementGallery = ({ images, title }: { images: string[]; title: string }) => {
   const [current, setCurrent] = useState(0);
   const [resolvedImages, setResolvedImages] = useState<string[]>(images);
