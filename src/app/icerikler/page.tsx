@@ -516,10 +516,33 @@ function ContentsPageInner() {
             className="flex items-center gap-2 mb-6"
           >
             <Filter className="w-5 h-5 text-slate-400" />
-            <span className="text-slate-400">{filteredContents.length} içerik bulundu</span>
+            {loading ? (
+              <span className="text-slate-400">Yükleniyor...</span>
+            ) : (
+              <span className="text-slate-400">{filteredContents.length} içerik bulundu</span>
+            )}
           </motion.div>
 
-          {viewMode === 'grid' ? (
+          {loading && documents.length === 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-7">
+              {[...Array(6)].map((_, i) => (
+                <div key={i} className="glass rounded-3xl overflow-hidden border border-white/10">
+                  <div className="h-2 bg-slate-700 animate-pulse" />
+                  <div className="p-4 sm:p-6 space-y-4">
+                    <div className="flex items-start gap-3">
+                      <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-slate-700 animate-pulse" />
+                      <div className="flex-1 space-y-2">
+                        <div className="h-4 bg-slate-700 rounded w-3/4 animate-pulse" />
+                        <div className="h-3 bg-slate-700 rounded w-1/2 animate-pulse" />
+                      </div>
+                    </div>
+                    <div className="h-6 bg-slate-700 rounded w-full animate-pulse" />
+                    <div className="h-4 bg-slate-700 rounded w-2/3 animate-pulse" />
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : viewMode === 'grid' ? (
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-7">
               {filteredContents.map((content, i) => (
                 <motion.div
@@ -890,6 +913,12 @@ function ContentsPageInner() {
           {loading && (
             <div className="flex justify-center py-8">
               <div className="w-8 h-8 border-4 border-purple-500 border-t-transparent rounded-full animate-spin" />
+            </div>
+          )}
+          
+          {loading && documents.length > 0 && (
+            <div className="flex items-center justify-center py-8">
+              <div className="w-8 h-8 border-2 border-purple-500 border-t-transparent rounded-full animate-spin" />
             </div>
           )}
           
