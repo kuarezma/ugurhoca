@@ -195,6 +195,26 @@ function ContentsPageInner() {
     checkSession();
   }, []);
 
+  useEffect(() => {
+    const saved = localStorage.getItem('favorites');
+    if (saved) {
+      try {
+        setFavorites(new Set(JSON.parse(saved)));
+      } catch {}
+    }
+  }, []);
+
+  const toggleFavorite = (docId: string) => {
+    const next = new Set(favorites);
+    if (next.has(docId)) {
+      next.delete(docId);
+    } else {
+      next.add(docId);
+    }
+    setFavorites(next);
+    localStorage.setItem('favorites', JSON.stringify([...next]));
+  };
+
   const getTypeIcon = (type: string) => {
     switch (type) {
       case 'worksheet': return BookOpen;
@@ -673,6 +693,16 @@ function ContentsPageInner() {
                         <MessageCircle className="w-5 h-5" />
                         {content.comments_count || 0}
                       </button>
+                      <button 
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          toggleFavorite(content.id);
+                        }}
+                        className={`flex items-center gap-1.5 transition-colors ${favorites.has(content.id) ? 'text-amber-400' : 'hover:text-amber-400'}`}
+                      >
+                        <Star className={`w-5 h-5 ${favorites.has(content.id) ? 'fill-current' : ''}`} />
+                        {favorites.has(content.id) ? 'Favorilerden Çıkar' : 'Favorilere Ekle'}
+                      </button>
                     </div>
 
                     <div className="flex flex-wrap items-center gap-2 sm:gap-3">
@@ -848,6 +878,16 @@ function ContentsPageInner() {
                         <Download className="w-5 h-5" />
                         {content.downloads || 0}
                       </div>
+                      <button 
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          toggleFavorite(content.id);
+                        }}
+                        className={`flex items-center gap-1.5 transition-colors ${favorites.has(content.id) ? 'text-amber-400' : 'hover:text-amber-400'}`}
+                      >
+                        <Star className={`w-5 h-5 ${favorites.has(content.id) ? 'fill-current' : ''}`} />
+                        {favorites.has(content.id) ? 'Favorilerden Çıkar' : 'Favorilere Ekle'}
+                      </button>
                     </div>
 
                     <div className="flex flex-wrap items-center gap-2 sm:gap-3">
