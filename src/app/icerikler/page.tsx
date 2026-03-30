@@ -650,13 +650,15 @@ function ContentsPageInner() {
                       <button 
                         onClick={async (e) => {
                           e.stopPropagation();
-                          if (likedDocs.has(content.id)) {
+                          const isLiked = likedDocs.has(content.id);
+                          if (isLiked) {
                             setLikedDocs(prev => { const n = new Set(prev); n.delete(content.id); return n; });
                             await supabase.from('documents').update({ likes: Math.max(0, (content.likes || 0) - 1) }).eq('id', content.id);
                           } else {
                             setLikedDocs(prev => new Set([...prev, content.id]));
                             await supabase.from('documents').update({ likes: (content.likes || 0) + 1 }).eq('id', content.id);
                           }
+                          setDocuments(documents.map(d => d.id === content.id ? { ...d, likes: isLiked ? Math.max(0, (d.likes || 0) - 1) : (d.likes || 0) + 1 } : d));
                         }}
                         className={`flex items-center gap-1.5 transition-colors ${likedDocs.has(content.id) ? 'text-red-400' : 'hover:text-red-400'}`}
                       >
@@ -849,13 +851,15 @@ function ContentsPageInner() {
                       <button
                         onClick={async (e) => {
                           e.stopPropagation();
-                          if (likedDocs.has(content.id)) {
+                          const isLiked = likedDocs.has(content.id);
+                          if (isLiked) {
                             setLikedDocs(prev => { const n = new Set(prev); n.delete(content.id); return n; });
                             await supabase.from('documents').update({ likes: Math.max(0, (content.likes || 0) - 1) }).eq('id', content.id);
                           } else {
                             setLikedDocs(prev => new Set([...prev, content.id]));
                             await supabase.from('documents').update({ likes: (content.likes || 0) + 1 }).eq('id', content.id);
                           }
+                          setDocuments(documents.map(d => d.id === content.id ? { ...d, likes: isLiked ? Math.max(0, (d.likes || 0) - 1) : (d.likes || 0) + 1 } : d));
                         }}
                         className={`flex items-center gap-1.5 transition-colors ${likedDocs.has(content.id) ? 'text-red-400' : 'hover:text-red-400'}`}
                       >
@@ -866,10 +870,20 @@ function ContentsPageInner() {
                         <MessageCircle className="w-5 h-5" />
                         {content.comments_count || 0}
                       </div>
-                      <div className="flex items-center gap-1.5 hover:text-cyan-300 transition-colors">
+                      <button 
+                        onClick={async (e) => {
+                          e.stopPropagation();
+                          if (content.file_url) {
+                            window.open(content.file_url, '_blank');
+                            await supabase.from('documents').update({ downloads: (content.downloads || 0) + 1 }).eq('id', content.id);
+                            setDocuments(documents.map(d => d.id === content.id ? { ...d, downloads: (d.downloads || 0) + 1 } : d));
+                          }
+                        }}
+                        className="flex items-center gap-1.5 hover:text-cyan-300 transition-colors"
+                      >
                         <Download className="w-5 h-5" />
                         {content.downloads || 0}
-                      </div>
+                      </button>
                       <button 
                         onClick={(e) => {
                           e.stopPropagation();
