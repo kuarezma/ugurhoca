@@ -40,6 +40,7 @@ interface Notification {
   type: 'document' | 'assignment' | 'general' | 'message';
   is_read: boolean;
   created_at: string;
+  metadata?: { image_url?: string; sender_name?: string } | null;
 }
 
 interface SharedDoc {
