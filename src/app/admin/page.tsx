@@ -160,6 +160,8 @@ export default function AdminPage() {
   const [adminMsgRecipient, setAdminMsgRecipient] = useState<any>(null);
   const [adminMsgTitle, setAdminMsgTitle] = useState('');
   const [adminMsgText, setAdminMsgText] = useState('');
+  const [adminMsgImageUrl, setAdminMsgImageUrl] = useState('');
+  const [adminMsgImagePreview, setAdminMsgImagePreview] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [success, setSuccess] = useState(false);
   const router = useRouter();
@@ -497,6 +499,24 @@ export default function AdminPage() {
   const extractUrls = (text: string) => text.match(/https?:\/\/[^\s<>"]+/g) || [];
 
   const studentMessages = notifications.filter((n) => isIncomingAdminMessage(n));
+
+  const groupedMessages = studentMessages.reduce((acc, msg) => {
+    const payload = parseMessagePayload(msg);
+    const senderId = payload?.sender_id || msg.id;
+    if (!acc[senderId]) {
+      acc[senderId] = [];
+    }
+    acc[senderId].push(msg);
+    return acc;
+  }, {} as Record<string, typeof studentMessages>);
+
+  const sortedGroupIds = Object.keys(groupedMessages).sort((a, b) => {
+    const aMsgs = groupedMessages[a];
+    const bMsgs = groupedMessages[b];
+    const aTime = new Date(aMsgs[0].created_at).getTime();
+    const bTime = new Date(bMsgs[0].created_at).getTime();
+    return bTime - aTime;
+  });
 
   const applyModerationAction = async (action: 'block' | 'mute' | 'report') => {
     const payload = parseMessagePayload(selectedNotification);
@@ -1325,7 +1345,7 @@ export default function AdminPage() {
                   </div>
                   <div className="flex items-center gap-2 text-sm text-slate-400">
                     <MessageSquareText className="w-4 h-4" />
-                    {studentMessages.length} mesaj
+                    {sortedGroupIds.length} konuşma • {studentMessages.length} mesaj
                   </div>
                 </div>
 
@@ -1336,44 +1356,57 @@ export default function AdminPage() {
                   </div>
                 ) : (
                   <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
-                    {studentMessages.map((notif) => (
-                      <motion.button
-                        key={notif.id}
-                        whileHover={{ scale: 1.01 }}
-                        whileTap={{ scale: 0.99 }}
-                        onClick={() => markNotificationAsRead(notif)}
-                        className={`text-left glass rounded-2xl p-5 border transition-all ${notif.is_read ? 'border-emerald-500/20' : 'border-indigo-500/30'}`}
-                      >
-                        <div className="flex items-start justify-between gap-3 mb-3">
-                          <div className="flex items-center gap-3 min-w-0">
-                            <div className={`w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0 ${notif.is_read ? 'bg-emerald-500/15 text-emerald-300' : 'bg-indigo-500/15 text-indigo-300'}`}>
-                              <MessageSquareText className="w-5 h-5" />
+                    {sortedGroupIds.map((senderId) => {
+                      const msgs = groupedMessages[senderId];
+                      const lastMsg = msgs[0];
+                      const payload = parseMessagePayload(lastMsg);
+                      const hasUnread = msgs.some(m => !m.is_read);
+                      const senderName = payload?.sender_name || 'İsimsiz';
+                      
+                      return (
+                        <motion.button
+                          key={senderId}
+                          whileHover={{ scale: 1.01 }}
+                          whileTap={{ scale: 0.99 }}
+                          onClick={() => markNotificationAsRead(lastMsg)}
+                          className={`text-left glass rounded-2xl p-5 border transition-all ${hasUnread ? 'border-indigo-500/30' : 'border-emerald-500/20'}`}
+                        >
+                          <div className="flex items-start justify-between gap-3 mb-3">
+                            <div className="flex items-center gap-3 min-w-0">
+                              <div className={`w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0 ${hasUnread ? 'bg-indigo-500/15 text-indigo-300' : 'bg-emerald-500/15 text-emerald-300'}`}>
+                                <MessageSquareText className="w-5 h-5" />
+                              </div>
+                              <div className="min-w-0">
+                                <p className="text-white font-semibold truncate">{senderName}</p>
+                                <p className="text-slate-500 text-xs">{msgs.length} mesaj • {new Date(lastMsg.created_at).toLocaleDateString('tr-TR')}</p>
+                              </div>
                             </div>
-                            <div className="min-w-0">
-                              <p className="text-white font-semibold truncate">{notif.title}</p>
-                              <p className="text-slate-500 text-xs">{new Date(notif.created_at).toLocaleDateString('tr-TR')}</p>
-                              {parseMessagePayload(notif)?.metadata?.ip && (
-                                <p className="text-slate-500 text-[11px]">IP: {parseMessagePayload(notif)?.metadata?.ip}</p>
-                              )}
+                            <div className="flex items-center gap-2">
+                              <span className={`px-2 py-0.5 rounded-full text-[10px] font-semibold ${hasUnread ? 'bg-amber-500/15 text-amber-200' : 'bg-emerald-500/15 text-emerald-300'}`}>
+                                {hasUnread ? 'Yanıt Bekliyor' : 'Tamamlandı'}
+                              </span>
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  deleteMessage(lastMsg.id);
+                                }}
+                                className="p-1.5 rounded-lg bg-red-500/15 text-red-300 hover:bg-red-500/25"
+                                title="Tümünü sil"
+                              >
+                                <Trash2 className="w-3.5 h-3.5" />
+                              </button>
                             </div>
                           </div>
-                          <div className="flex items-center gap-2">
-                            <span className={`px-2 py-0.5 rounded-full text-[10px] font-semibold ${notif.is_read ? 'bg-emerald-500/15 text-emerald-300' : 'bg-amber-500/15 text-amber-200'}`}>
-                              {notif.is_read ? 'Görüldü' : 'Yeni'}
-                            </span>
-                            <button
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                deleteMessage(notif.id);
-                              }}
-                              className="p-1.5 rounded-lg bg-red-500/15 text-red-300 hover:bg-red-500/25"
-                              title="Mesajı sil"
-                            >
-                              <Trash2 className="w-3.5 h-3.5" />
-                            </button>
+                          <div className="space-y-1 mb-2">
+                            {msgs.slice(0, 3).map((msg, idx) => (
+                              <div key={msg.id} className="text-slate-300 text-sm line-clamp-2 whitespace-pre-line border-l-2 border-white/10 pl-2">
+                                {getNotificationBody(msg)}
+                              </div>
+                            ))}
+                            {msgs.length > 3 && (
+                              <p className="text-slate-500 text-xs">+{msgs.length - 3} mesaj daha</p>
+                            )}
                           </div>
-                        </div>
-                        <p className="text-slate-300 text-sm line-clamp-4 whitespace-pre-line mb-4">{getNotificationBody(notif)}</p>
                         {parseMessagePayload(notif)?.attachments?.length > 0 && (
                           <div className="flex flex-wrap gap-2">
                             {parseMessagePayload(notif).attachments.map((file: any) => (
@@ -1800,6 +1833,7 @@ export default function AdminPage() {
                         student_name: adminMsgRecipient.name,
                         title: adminMsgTitle || 'Uğur Hoca\'dan Mesaj',
                         message: adminMsgText,
+                        image_url: adminMsgImageUrl || null,
                         sender_id: 'admin',
                         sender_name: 'Uğur Hoca',
                       }),
@@ -1811,6 +1845,8 @@ export default function AdminPage() {
                       setAdminMsgRecipient(null);
                       setAdminMsgTitle('');
                       setAdminMsgText('');
+                      setAdminMsgImageUrl('');
+                      setAdminMsgImagePreview(null);
                     }, 1500);
                   } catch {
                     alert('Mesaj gönderilemedi.');
@@ -1839,6 +1875,59 @@ export default function AdminPage() {
                                focus:outline-none focus:border-purple-500 transition-colors"
                       placeholder="Mesaj başlığı..."
                     />
+                  </div>
+                  <div>
+                    <label className="block text-slate-300 mb-2 text-sm">Resim (Opsiyonel)</label>
+                    <div className="relative">
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={async (e) => {
+                          const file = e.target.files?.[0];
+                          if (file) {
+                            const fileName = `admin_msg_${Date.now()}_${file.name}`;
+                            const { data, error } = await supabase.storage
+                              .from('documents')
+                              .upload(fileName, file);
+                            
+                            if (!error && data) {
+                              const { data: urlData } = supabase.storage
+                                .from('documents')
+                                .getPublicUrl(fileName);
+                              setAdminMsgImageUrl(urlData.publicUrl);
+                              setAdminMsgImagePreview(URL.createObjectURL(file));
+                            }
+                          }
+                        }}
+                        className="hidden"
+                        id="admin-msg-image"
+                      />
+                      <label 
+                        htmlFor="admin-msg-image"
+                        className="flex items-center justify-center gap-2 w-full bg-slate-800/50 border border-slate-700 border-dashed rounded-xl px-4 py-4 text-slate-400 cursor-pointer hover:bg-slate-800 hover:border-purple-500 transition-colors"
+                      >
+                        <Image className="w-5 h-5" />
+                        <span>Resim seç veya sürükle</span>
+                      </label>
+                    </div>
+                    {adminMsgImagePreview && (
+                      <div className="mt-3 relative inline-block">
+                        <img 
+                          src={adminMsgImagePreview} 
+                          alt="Önizleme" 
+                          className="max-h-32 rounded-lg border border-white/10"
+                        />
+                        <button
+                          onClick={() => {
+                            setAdminMsgImageUrl('');
+                            setAdminMsgImagePreview(null);
+                          }}
+                          className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 rounded-full flex items-center justify-center text-white hover:bg-red-600"
+                        >
+                          <X className="w-4 h-4" />
+                        </button>
+                      </div>
+                    )}
                   </div>
                   <div>
                     <label className="block text-slate-300 mb-2 text-sm">Mesaj</label>

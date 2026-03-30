@@ -21,9 +21,9 @@ export async function POST(request: Request) {
     }
 
     const body = await request.json().catch(() => null);
-    const { student_id, student_name, title, message, sender_id, sender_name } = body || {};
+    const { student_id, student_name, title, message, sender_id, sender_name, image_url } = body || {};
 
-    if (!student_id || (!message?.trim() && !title?.trim())) {
+    if (!student_id || (!message?.trim() && !title?.trim() && !image_url)) {
       return NextResponse.json({ error: 'Eksik alanlar.' }, { status: 400 });
     }
 
@@ -43,6 +43,7 @@ export async function POST(request: Request) {
         ip,
         user_agent: userAgent,
         sent_at: new Date().toISOString(),
+        image_url: image_url || null,
       },
     };
 

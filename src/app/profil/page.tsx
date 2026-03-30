@@ -542,6 +542,15 @@ export default function ProfilePage() {
                         <ChevronRight className="w-6 h-6 rotate-45" />
                       </button>
                     </div>
+                    {selectedMessage.metadata && typeof selectedMessage.metadata === 'object' && 'image_url' in selectedMessage.metadata && selectedMessage.metadata.image_url && (
+                      <div className="mb-4">
+                        <img 
+                          src={selectedMessage.metadata.image_url} 
+                          alt="Mesaj resmi" 
+                          className="max-h-64 rounded-lg border border-white/10"
+                        />
+                      </div>
+                    )}
                     <p className="text-slate-300 whitespace-pre-line leading-relaxed">{selectedMessage.message}</p>
                     <div className="mt-6 flex justify-end">
                       <button
