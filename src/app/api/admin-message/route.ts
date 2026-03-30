@@ -46,12 +46,6 @@ export async function POST(request: Request) {
       },
     };
 
-    const { createClient } = await import('@supabase/supabase-js');
-    const supabase = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-    );
-
     const { error } = await supabase.from('notifications').insert(notification);
 
     if (error) {
