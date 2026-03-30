@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback, Suspense } from 'react';
+import { useState, useEffect, useCallback, Suspense, useRef } from 'react';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
@@ -79,6 +79,14 @@ function ContentsPageInner() {
   const [isEditing, setIsEditing] = useState(false);
   const [editSuccess, setEditSuccess] = useState(false);
 
+  // Pagination State
+  const [page, setPage] = useState(1);
+  const [loading, setLoading] = useState(false);
+  const [hasMore, setHasMore] = useState(true);
+  const [totalCount, setTotalCount] = useState(0);
+  const PAGE_SIZE = 10;
+  const loadMoreRef = useRef<HTMLDivElement>(null);
+
   const router = useRouter();
   const searchParams = useSearchParams();
   const typeFromUrl = searchParams.get('type') || 'all';
@@ -89,9 +97,31 @@ function ContentsPageInner() {
     return Number.isFinite(n) && n > 0 ? n : 'all';
   };
 
-  const loadDocuments = async () => {
-    const { data } = await supabase.from('documents').select('*').order('created_at', { ascending: false });
-    if (data) setDocuments(data);
+  const loadDocuments = async (pageNum: number = 1, append: boolean = false) => {
+    setLoading(true);
+    const from = (pageNum - 1) * PAGE_SIZE;
+    const to = from + PAGE_SIZE - 1;
+    
+    const { count } = await supabase
+      .from('documents')
+      .select('*', { count: 'exact', head: true });
+    
+    const { data } = await supabase
+      .from('documents')
+      .select('*')
+      .order('created_at', { ascending: false })
+      .range(from, to);
+      
+    if (data) {
+      if (append) {
+        setDocuments(prev => [...prev, ...data]);
+      } else {
+        setDocuments(data);
+      }
+      setHasMore(data.length === PAGE_SIZE);
+    }
+    setTotalCount(count || 0);
+    setLoading(false);
   };
 
   useEffect(() => {
@@ -104,6 +134,25 @@ function ContentsPageInner() {
 
   useEffect(() => {
     loadDocuments();
+  }, []);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver((entries) => {
+      if (entries[0].isIntersecting && hasMore && !loading) {
+        const nextPage = page + 1;
+        setPage(nextPage);
+        loadDocuments(nextPage, true);
+      }
+    });
+    
+    if (loadMoreRef.current) {
+      observer.observe(loadMoreRef.current);
+    }
+    
+    return () => observer.disconnect();
+  }, [hasMore, loading, page]);
+
+  useEffect(() => {
     const checkSession = async () => {
       const { data: { session } } = await supabase.auth.getSession();
       
@@ -839,6 +888,20 @@ function ContentsPageInner() {
               ))}
             </div>
           )}
+
+          {loading && (
+            <div className="flex justify-center py-8">
+              <div className="w-8 h-8 border-4 border-purple-500 border-t-transparent rounded-full animate-spin" />
+            </div>
+          )}
+          
+          {!hasMore && documents.length > 0 && (
+            <p className="text-center text-slate-400 py-8">
+              Tüm içerikler yüklendi ({totalCount} içerik)
+            </p>
+          )}
+          
+          <div ref={loadMoreRef} className="h-10" />
         </div>
       </div>
 
