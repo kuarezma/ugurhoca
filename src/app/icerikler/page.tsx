@@ -663,10 +663,6 @@ function ContentsPageInner() {
                         <Heart className={`w-5 h-5 ${likedDocs.has(content.id) ? 'fill-current' : ''}`} />
                         {content.likes || 0}
                       </button>
-                      <div className="flex items-center gap-1.5 text-amber-300">
-                        <Star className="w-5 h-5 fill-current" />
-                        {Math.round(content.rating || 0)}
-                      </div>
                       <button 
                         onClick={async (e) => {
                           e.stopPropagation();
@@ -866,10 +862,6 @@ function ContentsPageInner() {
                         <Heart className={`w-5 h-5 ${likedDocs.has(content.id) ? 'fill-current' : ''}`} />
                         {content.likes || 0}
                       </button>
-                      <div className="flex items-center gap-1.5 text-amber-300">
-                        <Star className="w-5 h-5 fill-current" />
-                        {Math.round(content.rating || 0)}
-                      </div>
                       <div className="flex items-center gap-1.5 hover:text-cyan-300 transition-colors">
                         <MessageCircle className="w-5 h-5" />
                         {content.comments_count || 0}
