@@ -1407,9 +1407,9 @@ export default function AdminPage() {
                               <p className="text-slate-500 text-xs">+{msgs.length - 3} mesaj daha</p>
                             )}
                           </div>
-                          {parseMessagePayload(notif)?.attachments?.length > 0 && (
+                          {parseMessagePayload(msg)?.attachments?.length > 0 && (
                             <div className="flex flex-wrap gap-2">
-                              {parseMessagePayload(notif).attachments.map((file: any) => (
+                              {parseMessagePayload(msg).attachments.map((file: any) => (
                                 <span key={file.url} className="inline-flex items-center gap-2 px-2 py-1 rounded-lg bg-white/5 border border-white/10 text-slate-300 text-xs">
                                   <Paperclip className="w-3.5 h-3.5" />
                                   {file.name}
