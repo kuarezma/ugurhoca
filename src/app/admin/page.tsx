@@ -1408,7 +1408,8 @@ export default function AdminPage() {
                             )}
                           </div>
                         </motion.button>
-                      ))}
+                      );
+                    })}
                   </div>
                 )}
               </motion.div>
