@@ -2,6 +2,24 @@ import { NextResponse } from 'next/server';
 
 export async function POST(request: Request) {
   try {
+    const { createClient } = await import('@supabase/supabase-js');
+    const supabase = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+    );
+
+    // Session kontrolü
+    const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+    if (sessionError || !session) {
+      return NextResponse.json({ error: 'Oturum açmanız gerekiyor.' }, { status: 401 });
+    }
+
+    // Admin kontrolü
+    const adminEmails = ['admin@ugurhoca.com', 'admin@matematiklab.com'];
+    if (!adminEmails.includes(session.user.email || '')) {
+      return NextResponse.json({ error: 'Yetkiniz yok.' }, { status: 403 });
+    }
+
     const body = await request.json().catch(() => null);
     const { student_id, student_name, title, message, sender_id, sender_name } = body || {};
 

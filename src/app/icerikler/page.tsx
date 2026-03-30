@@ -318,9 +318,7 @@ function ContentsPageInner() {
       downloads: 0,
     };
 
-    console.log('Kaydedilecek veri:', newItem);
     const { data, error } = await supabase.from('documents').insert([newItem]).select();
-    console.log('Sonuç:', data, 'Hata:', error);
     
     if (error) {
       alert('Kaydetme hatası: ' + error.message);
@@ -1400,11 +1398,9 @@ function ContentsPageInner() {
                           if (file) {
                             setIsSubmitting(true);
                             const fileName = `${Date.now()}_${file.name}`;
-                            console.log('Dosya yükleniyor:', fileName);
                             const { data, error } = await supabase.storage
                               .from('documents')
                               .upload(fileName, file);
-                            console.log('Yükleme sonucu:', data, error);
                             
                             if (error) {
                               alert('Dosya yüklenemedi: ' + error.message);
@@ -1413,7 +1409,6 @@ function ContentsPageInner() {
                               const { data: urlData } = supabase.storage
                                 .from('documents')
                                 .getPublicUrl(fileName);
-                              console.log('Dosya URL:', urlData.publicUrl);
                               setFormData({ ...formData, file_url: urlData.publicUrl, file_name: file.name });
                               setIsSubmitting(false);
                             }

@@ -14,6 +14,7 @@ import {
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import AdminStatistics from '@/components/AdminStatistics';
+import FloatingShapes from '@/components/FloatingShapes';
 
 const FloatingShapes = () => (
   <div className="fixed inset-0 overflow-hidden pointer-events-none z-0">
@@ -184,42 +185,32 @@ export default function AdminPage() {
   const router = useRouter();
 
   useEffect(() => {
-    const setupAdmin = () => {
-      const admin = {
-        id: 'admin-1',
+    const checkAuth = async () => {
+      // Supabase session kontrolü
+      const { data: { session } } = await supabase.auth.getSession();
+      
+      if (!session?.user) {
+        router.push('/giris');
+        return;
+      }
+
+      // Admin email kontrolü
+      const adminEmails = ['admin@ugurhoca.com', 'admin@matematiklab.com'];
+      if (!adminEmails.includes(session.user.email || '')) {
+        router.push('/');
+        return;
+      }
+
+      const adminUser = {
+        id: session.user.id,
         name: 'Uğur Hoca',
-        email: 'admin@ugurhoca.com',
-        password: 'admin123',
+        email: session.user.email,
         grade: 5,
         isAdmin: true
       };
-      localStorage.setItem('matematiklab_user', JSON.stringify(admin));
-      return admin;
-    };
-
-    const checkAuth = () => {
-      let localUser = localStorage.getItem('matematiklab_user');
       
-      if (!localUser) {
-        const admin = {
-          id: 'admin-1',
-          name: 'Uğur Hoca',
-          email: 'admin@ugurhoca.com',
-          password: 'admin123',
-          grade: 5,
-          isAdmin: true
-        };
-        localStorage.setItem('matematiklab_user', JSON.stringify(admin));
-        localUser = JSON.stringify(admin);
-      }
-      
-      const userData = JSON.parse(localUser);
-      if (userData.email === 'admin@ugurhoca.com') {
-        setUser(userData);
-        loadData();
-      } else {
-        router.push('/');
-      }
+      setUser(adminUser);
+      loadData();
     };
     checkAuth();
   }, [router]);

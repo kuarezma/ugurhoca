@@ -31,6 +31,12 @@ export async function POST(request: Request) {
 
   const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
+  // Session kontrolü
+  const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+  if (sessionError || !session) {
+    return NextResponse.json({ error: 'Oturum açmanız gerekiyor.' }, { status: 401 });
+  }
+
   const body = await request.json().catch(() => null);
   const senderId = body?.sender_id as string | undefined;
   const senderName = body?.sender_name as string | undefined;
