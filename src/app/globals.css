@@ -24,10 +24,10 @@
 
 html[data-theme='light'] {
   color-scheme: light;
-  --bg: #f8fafc;
+  --bg: #ffffff;
   --bg-elevated: #ffffff;
-  --bg-soft: rgba(255, 255, 255, 0.88);
-  --bg-muted: rgba(148, 163, 184, 0.14);
+  --bg-soft: rgba(255, 255, 255, 0.96);
+  --bg-muted: rgba(148, 163, 184, 0.12);
   --text: #0f172a;
   --text-strong: #020617;
   --text-muted: #475569;
@@ -79,6 +79,10 @@ body {
 
 .gradient-bg {
   background: linear-gradient(135deg, var(--bg) 0%, color-mix(in srgb, var(--bg) 85%, #4f46e5) 50%, var(--bg) 100%);
+}
+
+html[data-theme='light'] .gradient-bg {
+  background: #ffffff;
 }
 
 .glass {
@@ -182,9 +186,9 @@ html[data-theme='light'] [class*='bg-white/15'] {
 html[data-theme='light'] [class*='from-slate-900'],
 html[data-theme='light'] [class*='via-slate-900'],
 html[data-theme='light'] [class*='to-slate-800'] {
-  --tw-gradient-from: #f8fafc var(--tw-gradient-from-position) !important;
-  --tw-gradient-via: #eef2ff var(--tw-gradient-via-position) !important;
-  --tw-gradient-to: #e2e8f0 var(--tw-gradient-to-position) !important;
+  --tw-gradient-from: #ffffff var(--tw-gradient-from-position) !important;
+  --tw-gradient-via: #ffffff var(--tw-gradient-via-position) !important;
+  --tw-gradient-to: #ffffff var(--tw-gradient-to-position) !important;
 }
 
 html[data-theme='light'] [class*='shadow-black/'],

@@ -455,7 +455,7 @@ export default function HomePage() {
   return (
     <main className={`min-h-screen ${
       isLight
-        ? 'bg-gradient-to-br from-slate-50 via-indigo-50 to-slate-100'
+        ? 'bg-white'
         : 'bg-gradient-to-br from-slate-900 via-slate-900 to-slate-800'
     }`}>
       <FloatingShapes />
@@ -468,10 +468,10 @@ export default function HomePage() {
               animate={{ opacity: 1, y: 0 }}
               className="mb-8"
             >
-              <h1 className="text-3xl sm:text-4xl font-bold text-white mb-2">
+              <h1 className={`text-3xl sm:text-4xl font-bold mb-2 ${isLight ? 'text-slate-900' : 'text-white'}`}>
                 Ne Çalışmak İstiyorsun?
               </h1>
-              <p className="text-slate-400">
+              <p className={isLight ? 'text-slate-600' : 'text-slate-400'}>
                 Hızlı erişim için kategoriyi seç
               </p>
             </motion.div>
@@ -486,13 +486,17 @@ export default function HomePage() {
                 >
                   <Link 
                     href={cat.href}
-                    className={`block ${cat.bgColor} border ${cat.borderColor} rounded-2xl p-5 sm:p-7 lg:p-6 text-center hover:scale-105 transition-transform`}
+                    className={`block border rounded-2xl p-5 sm:p-7 lg:p-6 text-center transition-all ${
+                      isLight
+                        ? 'bg-white border-slate-200 shadow-sm hover:shadow-md hover:-translate-y-0.5'
+                        : `${cat.bgColor} ${cat.borderColor} hover:scale-105`
+                    }`}
                   >
                     <div className={`w-14 h-14 sm:w-16 sm:h-16 mx-auto mb-3 rounded-2xl bg-gradient-to-br ${cat.color} flex items-center justify-center`}>
                       <cat.icon className="w-7 h-7 sm:w-8 sm:h-8 text-white" />
                     </div>
-                    <h3 className="text-white font-bold text-sm sm:text-base mb-1">{cat.title}</h3>
-                    <p className="text-slate-400 text-xs hidden sm:block">{cat.desc}</p>
+                    <h3 className={`font-bold text-sm sm:text-base mb-1 ${isLight ? 'text-slate-900' : 'text-white'}`}>{cat.title}</h3>
+                    <p className={`text-xs hidden sm:block ${isLight ? 'text-slate-600' : 'text-slate-400'}`}>{cat.desc}</p>
                   </Link>
                 </motion.div>
               ))}
@@ -505,8 +509,8 @@ export default function HomePage() {
             <div className="max-w-6xl mx-auto">
               <div className="flex items-center justify-between mb-4">
                 <div>
-                  <h2 className="text-lg sm:text-2xl font-bold text-white">Haberler</h2>
-                  <p className="text-slate-400 text-sm">Kısa duyuru başlıkları. Detay için tıkla.</p>
+                  <h2 className={`text-lg sm:text-2xl font-bold ${isLight ? 'text-slate-900' : 'text-white'}`}>Haberler</h2>
+                  <p className={`text-sm ${isLight ? 'text-slate-600' : 'text-slate-400'}`}>Kısa duyuru başlıkları. Detay için tıkla.</p>
                 </div>
               </div>
 
@@ -520,7 +524,11 @@ export default function HomePage() {
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: i * 0.05 }}
                       onClick={() => setSelectedAnnouncement(item)}
-                      className="relative text-left glass rounded-2xl overflow-hidden hover:scale-[1.01] transition-transform min-w-[82vw] sm:min-w-[46vw] md:min-w-0 md:w-full"
+                      className={`relative text-left rounded-2xl overflow-hidden transition-all min-w-[82vw] sm:min-w-[46vw] md:min-w-0 md:w-full ${
+                        isLight
+                          ? 'bg-white border border-slate-200 shadow-sm hover:shadow-md hover:-translate-y-0.5'
+                          : 'glass hover:scale-[1.01]'
+                      }`}
                     >
                       {isNewContent(item.created_at) && (
                         <span className="absolute top-3 right-3 z-10 px-2 py-1 rounded-full bg-pink-500 text-white text-[10px] font-bold shadow-lg">Yeni</span>
@@ -531,12 +539,12 @@ export default function HomePage() {
                         </div>
                       )}
                       <div className="p-3 sm:p-4">
-                        <div className="flex items-center gap-2 mb-2 text-xs text-slate-400">
+                        <div className={`flex items-center gap-2 mb-2 text-xs ${isLight ? 'text-slate-500' : 'text-slate-400'}`}>
                           <Bell className="w-4 h-4 text-pink-400" />
                           {new Date(item.created_at).toLocaleDateString('tr-TR', { day: 'numeric', month: 'short' })}
                         </div>
-                        <h3 className="text-sm sm:text-base text-white font-bold line-clamp-2 mb-1 sm:mb-2">{item.title}</h3>
-                        <p className="text-slate-400 text-xs sm:text-sm line-clamp-2">{item.content}</p>
+                        <h3 className={`text-sm sm:text-base font-bold line-clamp-2 mb-1 sm:mb-2 ${isLight ? 'text-slate-900' : 'text-white'}`}>{item.title}</h3>
+                        <p className={`text-xs sm:text-sm line-clamp-2 ${isLight ? 'text-slate-600' : 'text-slate-400'}`}>{item.content}</p>
                       </div>
                     </motion.button>
                   );
@@ -670,8 +678,8 @@ export default function HomePage() {
             <div className="max-w-6xl mx-auto">
               <div className="flex items-center justify-between mb-4">
                 <div>
-                  <h2 className="text-lg sm:text-2xl font-bold text-white">Yazılar</h2>
-                  <p className="text-slate-400 text-sm">Kısa yazılar ve paylaşımlar.</p>
+                  <h2 className={`text-lg sm:text-2xl font-bold ${isLight ? 'text-slate-900' : 'text-white'}`}>Yazılar</h2>
+                  <p className={`text-sm ${isLight ? 'text-slate-600' : 'text-slate-400'}`}>Kısa yazılar ve paylaşımlar.</p>
                 </div>
                 <Link href="/icerikler?type=writing" className="text-purple-400 hover:text-purple-300 text-sm font-medium flex items-center gap-1">
                   Tümünü Gör <ChevronRight className="w-4 h-4" />
@@ -685,15 +693,19 @@ export default function HomePage() {
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: i * 0.05 }}
-                    className="text-left glass rounded-2xl overflow-hidden hover:scale-[1.01] transition-transform min-w-[82vw] sm:min-w-[46vw] md:min-w-0 md:w-full"
+                    className={`text-left rounded-2xl overflow-hidden transition-all min-w-[82vw] sm:min-w-[46vw] md:min-w-0 md:w-full ${
+                      isLight
+                        ? 'bg-white border border-slate-200 shadow-sm hover:shadow-md hover:-translate-y-0.5'
+                        : 'glass hover:scale-[1.01]'
+                    }`}
                   >
                     <div className="p-4 sm:p-5">
-                      <div className="flex items-center gap-2 mb-2 text-xs text-slate-400">
+                      <div className={`flex items-center gap-2 mb-2 text-xs ${isLight ? 'text-slate-500' : 'text-slate-400'}`}>
                         <Bell className="w-4 h-4 text-purple-400" />
                         {new Date(writing.created_at).toLocaleDateString('tr-TR', { day: 'numeric', month: 'short' })}
                       </div>
-                      <h3 className="text-sm sm:text-base text-white font-bold line-clamp-2 mb-2">{writing.title}</h3>
-                      <p className="text-slate-400 text-xs sm:text-sm line-clamp-4 whitespace-pre-wrap">{writing.description}</p>
+                      <h3 className={`text-sm sm:text-base font-bold line-clamp-2 mb-2 ${isLight ? 'text-slate-900' : 'text-white'}`}>{writing.title}</h3>
+                      <p className={`text-xs sm:text-sm line-clamp-4 whitespace-pre-wrap ${isLight ? 'text-slate-600' : 'text-slate-400'}`}>{writing.description}</p>
                     </div>
                   </motion.button>
                 ))}
@@ -706,7 +718,7 @@ export default function HomePage() {
           <section className="px-4 py-8 sm:py-12">
             <div className="max-w-6xl mx-auto">
               <div className="flex items-center justify-between mb-6">
-                <h2 className="text-xl sm:text-2xl font-bold text-white">Son Eklenenler</h2>
+                <h2 className={`text-xl sm:text-2xl font-bold ${isLight ? 'text-slate-900' : 'text-white'}`}>Son Eklenenler</h2>
                 <Link href="/icerikler" className="text-indigo-400 hover:text-indigo-300 text-sm font-medium flex items-center gap-1">
                   Tümünü Gör <ChevronRight className="w-4 h-4" />
                 </Link>
@@ -725,7 +737,11 @@ export default function HomePage() {
                       initial={{ opacity: 0, x: -20 }}
                       animate={{ opacity: 1, x: 0 }}
                       transition={{ delay: i * 0.05 }}
-                      className="relative bg-white/5 border border-white/10 rounded-xl p-4 hover:bg-white/10 transition-colors cursor-pointer"
+                      className={`relative rounded-xl p-4 transition-all cursor-pointer ${
+                        isLight
+                          ? 'bg-white border border-slate-200 shadow-sm hover:shadow-md hover:border-slate-300'
+                          : 'bg-white/5 border border-white/10 hover:bg-white/10'
+                      }`}
                     >
                       {isNewContent(doc.created_at) && (
                         <span className="absolute top-3 right-3 px-2 py-1 rounded-full bg-indigo-500 text-white text-[10px] font-bold">Yeni</span>
@@ -738,8 +754,8 @@ export default function HomePage() {
                           })()}
                         </div>
                         <div className="flex-1 min-w-0">
-                          <h3 className="text-white font-medium truncate">{doc.title}</h3>
-                          <div className="flex items-center gap-3 text-xs text-slate-400 mt-1">
+                          <h3 className={`font-medium truncate ${isLight ? 'text-slate-900' : 'text-white'}`}>{doc.title}</h3>
+                          <div className={`flex items-center gap-3 text-xs mt-1 ${isLight ? 'text-slate-600' : 'text-slate-400'}`}>
                             <span className="capitalize">{doc.type}</span>
                             {doc.grade && <span>{doc.grade.join(', ')}. Sınıf</span>}
                           </div>
@@ -757,14 +773,18 @@ export default function HomePage() {
         {!user && (
           <section className="px-4 py-12 sm:py-16">
             <div className="max-w-6xl mx-auto">
-              <div className="bg-gradient-to-r from-indigo-500/20 to-purple-500/20 border border-indigo-500/20 rounded-3xl p-6 sm:p-8 text-center">
+              <div className={`border rounded-3xl p-6 sm:p-8 text-center ${
+                isLight
+                  ? 'bg-slate-50 border-slate-200'
+                  : 'bg-gradient-to-r from-indigo-500/20 to-purple-500/20 border-indigo-500/20'
+              }`}>
                 <div className="w-14 h-14 mx-auto mb-4 bg-gradient-to-br from-indigo-500 to-purple-500 rounded-2xl flex items-center justify-center">
                   <Brain className="w-7 h-7 text-white" />
                 </div>
-                <h2 className="text-xl sm:text-2xl font-bold text-white mb-2">
+                <h2 className={`text-xl sm:text-2xl font-bold mb-2 ${isLight ? 'text-slate-900' : 'text-white'}`}>
                   Hemen Başla, Ücretsiz!
                 </h2>
-                <p className="text-slate-300 mb-6 max-w-md mx-auto">
+                <p className={`mb-6 max-w-md mx-auto ${isLight ? 'text-slate-600' : 'text-slate-300'}`}>
                   Tüm içeriklere erişmek için kayıt ol. Sadece 30 saniye!
                 </p>
                 <Link href="/kayit" className="inline-flex items-center gap-2 bg-gradient-to-r from-indigo-500 to-purple-500 text-white font-semibold px-6 py-3 rounded-xl hover:from-indigo-600 hover:to-purple-600 transition-all">
@@ -778,7 +798,11 @@ export default function HomePage() {
 
         <section className="px-4 py-8 sm:py-12">
           <div className="max-w-6xl mx-auto">
-            <div className="relative overflow-hidden rounded-3xl border border-indigo-500/20 bg-gradient-to-br from-slate-900/90 via-slate-900/80 to-slate-800/90 backdrop-blur-xl">
+            <div className={`relative overflow-hidden rounded-3xl border backdrop-blur-xl ${
+              isLight
+                ? 'border-slate-200 bg-white shadow-sm'
+                : 'border-indigo-500/20 bg-gradient-to-br from-slate-900/90 via-slate-900/80 to-slate-800/90'
+            }`}>
               <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(99,102,241,0.18),transparent_30%),radial-gradient(circle_at_bottom_left,rgba(236,72,153,0.14),transparent_30%)]" />
               <div className="relative p-6 sm:p-8">
                 <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6 mb-6">
@@ -787,11 +811,11 @@ export default function HomePage() {
                       <MessageSquareText className="w-4 h-4" />
                       Uğur Hoca'ya Yaz
                     </div>
-                    <h2 className="text-2xl sm:text-3xl font-bold text-white mb-2">Sorunu yaz, belge veya resim ekle</h2>
-                    <p className="text-slate-400 text-sm sm:text-base">Mesajın ve eklerin doğrudan bana bildirim olarak gelir.</p>
+                    <h2 className={`text-2xl sm:text-3xl font-bold mb-2 ${isLight ? 'text-slate-900' : 'text-white'}`}>Sorunu yaz, belge veya resim ekle</h2>
+                    <p className={`text-sm sm:text-base ${isLight ? 'text-slate-600' : 'text-slate-400'}`}>Mesajın ve eklerin doğrudan bana bildirim olarak gelir.</p>
                   </div>
                   {user && !user.isAdmin && (
-                    <div className="flex items-center gap-2 text-xs text-slate-400">
+                    <div className={`flex items-center gap-2 text-xs ${isLight ? 'text-slate-600' : 'text-slate-400'}`}>
                       <Paperclip className="w-4 h-4" />
                       PDF, resim ve kısa not gönderebilirsin
                     </div>
@@ -801,18 +825,22 @@ export default function HomePage() {
                 {user && !user.isAdmin ? (
                   <form onSubmit={handleSupportSubmit} className="space-y-4">
                     <div>
-                      <label className="block text-slate-300 mb-2 text-sm">Mesajın</label>
+                      <label className={`block mb-2 text-sm ${isLight ? 'text-slate-700' : 'text-slate-300'}`}>Mesajın</label>
                       <textarea
                         rows={5}
                         value={supportMessage}
                         onChange={(e) => setSupportMessage(e.target.value)}
                         placeholder="Uğur Hoca, ..."
-                        className="w-full bg-slate-800/60 border border-slate-700 rounded-2xl px-4 py-3 text-white placeholder:text-slate-500 focus:outline-none focus:border-indigo-500 transition-colors resize-none"
+                        className={`w-full rounded-2xl px-4 py-3 focus:outline-none focus:border-indigo-500 transition-colors resize-none ${
+                          isLight
+                            ? 'bg-white border border-slate-300 text-slate-900 placeholder:text-slate-400'
+                            : 'bg-slate-800/60 border border-slate-700 text-white placeholder:text-slate-500'
+                        }`}
                       />
                     </div>
 
                     <div>
-                      <label className="block text-slate-300 mb-2 text-sm">Belge / Resim Ekle</label>
+                      <label className={`block mb-2 text-sm ${isLight ? 'text-slate-700' : 'text-slate-300'}`}>Belge / Resim Ekle</label>
                       <input
                         type="file"
                         multiple
@@ -832,7 +860,11 @@ export default function HomePage() {
                       />
                       <label
                         htmlFor="support-upload"
-                        className="flex items-center justify-center gap-2 w-full rounded-2xl border border-dashed border-slate-700 bg-slate-800/50 px-4 py-5 text-slate-300 hover:bg-slate-800 hover:border-indigo-500 transition-colors cursor-pointer"
+                        className={`flex items-center justify-center gap-2 w-full rounded-2xl border border-dashed px-4 py-5 transition-colors cursor-pointer ${
+                          isLight
+                            ? 'border-slate-300 bg-slate-50 text-slate-700 hover:bg-slate-100 hover:border-indigo-500'
+                            : 'border-slate-700 bg-slate-800/50 text-slate-300 hover:bg-slate-800 hover:border-indigo-500'
+                        }`}
                       >
                         <Upload className="w-5 h-5" />
                         Resim veya belge seç
@@ -842,7 +874,11 @@ export default function HomePage() {
                     {supportAttachments.length > 0 && (
                       <div className="flex flex-wrap gap-2">
                         {supportAttachments.map((file, index) => (
-                          <div key={`${file.url}-${index}`} className="flex items-center gap-2 px-3 py-2 rounded-xl bg-white/5 border border-white/10 text-sm text-slate-200">
+                          <div key={`${file.url}-${index}`} className={`flex items-center gap-2 px-3 py-2 rounded-xl border text-sm ${
+                            isLight
+                              ? 'bg-slate-50 border-slate-200 text-slate-700'
+                              : 'bg-white/5 border-white/10 text-slate-200'
+                          }`}>
                             {file.kind === 'image' ? <ImageIcon className="w-4 h-4 text-pink-300" /> : <FileDoc className="w-4 h-4 text-sky-300" />}
                             <span className="max-w-[180px] truncate">{file.name}</span>
                             <button type="button" onClick={() => removeSupportAttachment(index)} className="text-slate-400 hover:text-white">×</button>
@@ -852,7 +888,7 @@ export default function HomePage() {
                     )}
 
                     <div className="flex flex-col sm:flex-row sm:items-center gap-3 justify-between">
-                      <p className="text-xs text-slate-500">Gönderdiğin mesaj anında bildirim olarak iletilir.</p>
+                      <p className={`text-xs ${isLight ? 'text-slate-600' : 'text-slate-500'}`}>Gönderdiğin mesaj anında bildirim olarak iletilir.</p>
                       <button
                         type="submit"
                         disabled={supportSending}
@@ -870,7 +906,7 @@ export default function HomePage() {
                     )}
                   </form>
                 ) : (
-                  <div className="rounded-2xl border border-white/10 bg-white/5 p-5 text-slate-300">
+                  <div className={`rounded-2xl border p-5 ${isLight ? 'border-slate-200 bg-slate-50 text-slate-700' : 'border-white/10 bg-white/5 text-slate-300'}`}>
                     Mesaj göndermek için giriş yapman gerekiyor.
                   </div>
                 )}
@@ -879,15 +915,15 @@ export default function HomePage() {
           </div>
         </section>
 
-        <footer className="px-4 py-6 border-t border-slate-800/50 mt-8">
+        <footer className={`px-4 py-6 border-t mt-8 ${isLight ? 'border-slate-200' : 'border-slate-800/50'}`}>
           <div className="max-w-6xl mx-auto text-center">
             <div className="flex items-center justify-center gap-2 mb-3">
               <div className="w-7 h-7 bg-gradient-to-br from-indigo-500 to-purple-500 rounded-lg flex items-center justify-center">
                 <Calculator className="w-4 h-4 text-white" />
               </div>
-              <span className="font-bold text-white">Uğur Hoca Matematik</span>
+              <span className={`font-bold ${isLight ? 'text-slate-900' : 'text-white'}`}>Uğur Hoca Matematik</span>
             </div>
-            <p className="text-slate-500 text-xs">© 2026 Uğur Hoca Matematik, tüm hakları saklıdır.</p>
+            <p className={`text-xs ${isLight ? 'text-slate-600' : 'text-slate-500'}`}>© 2026 Uğur Hoca Matematik, tüm hakları saklıdır.</p>
           </div>
         </footer>
       </div>
