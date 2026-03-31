@@ -11,6 +11,7 @@ import {
   MessageSquareText, Paperclip, Send, Upload, Image as ImageIcon
 } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
+import { ThemeToggle } from '@/components/ThemeToggle';
 
 const FloatingShapes = () => (
   <div className="fixed inset-0 overflow-hidden pointer-events-none z-0">
@@ -149,6 +150,7 @@ const Navbar = ({ user, onLogout }: { user: any; onLogout: () => void }) => {
           </div>
 
           <div className="hidden md:flex items-center gap-3">
+            <ThemeToggle compact />
             {user ? (
               <>
                 <Link href={profileHref} className="flex items-center gap-2 text-white">
@@ -199,6 +201,9 @@ const Navbar = ({ user, onLogout }: { user: any; onLogout: () => void }) => {
                 </Link>
               ))}
               <div className="border-t border-slate-700 pt-3 mt-3">
+                <div className="mb-3">
+                  <ThemeToggle className="w-full justify-center" />
+                </div>
                 {user ? (
                   <>
                     <Link href={profileHref} className="block text-slate-300 hover:text-white py-2">{user.isAdmin ? 'Admin Panel' : 'Profil'}</Link>
