@@ -601,7 +601,7 @@ export default function AdminPage() {
   if (!user) return null;
 
   return (
-    <main className="min-h-screen gradient-bg pb-20">
+    <main className="admin-page min-h-screen gradient-bg pb-20">
       <FloatingShapes />
       
       <nav className="fixed top-0 left-0 right-0 z-50 bg-slate-950/95 backdrop-blur-md border-b border-white/10 py-3 px-4 sm:py-4 sm:px-6 shadow-lg shadow-black/20">

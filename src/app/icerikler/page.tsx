@@ -372,7 +372,7 @@ function ContentsPageInner() {
   };
 
   return (
-    <main className="min-h-screen gradient-bg pb-20">
+    <main className="icerikler-page min-h-screen gradient-bg pb-20">
       <FloatingShapes />
       
       <nav className="fixed top-0 left-0 right-0 z-50 bg-[#0b1220]/95 backdrop-blur-md border-b border-white/10 py-4 px-4 sm:px-6 xl:px-8">
