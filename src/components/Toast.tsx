@@ -60,13 +60,13 @@ export function ToastProvider({ children }: { children: ReactNode }) {
                 initial={{ opacity: 0, x: 50, scale: 0.9 }}
                 animate={{ opacity: 1, x: 0, scale: 1 }}
                 exit={{ opacity: 0, x: 50, scale: 0.9 }}
-                className={`flex items-center gap-3 px-4 py-3 rounded-xl border ${colors[toast.type]} max-w-sm shadow-lg backdrop-blur-lg theme-surface`}
+                className={`flex items-center gap-3 px-4 py-3 rounded-xl border ${colors[toast.type]} max-w-sm shadow-lg backdrop-blur-lg`}
               >
                 <Icon className="w-5 h-5 flex-shrink-0" />
                 <p className="text-sm font-medium flex-1">{toast.message}</p>
                 <button
                   onClick={() => removeToast(toast.id)}
-                  className="hover:opacity-70 transition-opacity"
+                  className="rounded-md p-1 hover:bg-black/10 dark:hover:bg-white/10 transition-colors"
                 >
                   <X className="w-4 h-4" />
                 </button>
