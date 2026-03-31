@@ -401,7 +401,7 @@ function ContentsPageInner() {
             className="mb-8 flex flex-col md:flex-row justify-between items-start md:items-center gap-4"
           >
             <div>
-              <h1 className="text-4xl font-bold text-white mb-2">
+              <h1 className="text-2xl sm:text-4xl font-bold tracking-tight text-white mb-2">
                 {selectedType === 'all' ? 'İçerikler' : 
                  selectedType === 'yaprak-test' ? 'Yaprak Testler' :
                  selectedType === 'deneme' ? 'Denemeler' :
@@ -412,7 +412,7 @@ function ContentsPageInner() {
                  selectedType === 'ders-videolari' ? 'Ders Videoları' :
                  selectedType === 'programlar' ? 'Programlar' : 'İçerikler'}
               </h1>
-              <p className="text-slate-400">
+              <p className="text-sm sm:text-base text-slate-400 max-w-2xl leading-relaxed">
                 {selectedType === 'all'
                   ? (selectedGrade === 'all' ? 'Tüm sınıflar için içerikler' : `${selectedGrade}. sınıf için tüm içerikler`)
                   : (selectedGrade === 'all' ? 'Seçili kategoride, tüm sınıflardaki içerikler' : 'Seçili kategorideki içerikler')}
@@ -426,7 +426,7 @@ function ContentsPageInner() {
                   setFormData({ type: selectedType !== 'all' ? selectedType : 'yaprak-test', grade: [selectedGrade !== 'all' && selectedGrade !== 'Mezun' ? Number(selectedGrade) : (user?.grade ?? 5)] });
                   setShowModal(true);
                 }}
-                className="px-6 py-3 bg-gradient-to-r from-purple-500 to-pink-500 text-white font-semibold rounded-xl hover:from-purple-600 hover:to-pink-600 transition-all shadow-lg flex items-center gap-2"
+                className="w-full sm:w-auto px-4 sm:px-6 py-2.5 sm:py-3 bg-gradient-to-r from-purple-500 to-pink-500 text-sm sm:text-base text-white font-semibold rounded-2xl hover:from-purple-600 hover:to-pink-600 transition-all shadow-lg flex items-center justify-center gap-2"
               >
                 <Plus className="w-5 h-5" />
                 Hızlı İçerik Ekle
@@ -438,7 +438,7 @@ function ContentsPageInner() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
-            className="glass rounded-2xl p-6 mb-8"
+            className="glass rounded-2xl p-4 sm:p-6 mb-8"
           >
             <div className="flex flex-col lg:flex-row gap-4">
               <div className="flex-1 relative">
@@ -448,7 +448,7 @@ function ContentsPageInner() {
                   placeholder="İçerik ara..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full bg-slate-800/50 border border-slate-700 rounded-xl pl-12 pr-4 py-3 text-white 
+                  className="w-full bg-slate-800/50 border border-slate-700 rounded-xl pl-12 pr-4 py-3 text-sm sm:text-base text-white 
                            focus:outline-none focus:border-purple-500 transition-colors"
                 />
               </div>
@@ -466,7 +466,7 @@ function ContentsPageInner() {
                       setSelectedGrade(parseInt(value));
                     }
                   }}
-                  className="bg-slate-800/50 border border-slate-700 rounded-xl px-4 py-3 text-white 
+                   className="bg-slate-800/50 border border-slate-700 rounded-xl px-4 py-3 text-sm sm:text-base text-white 
                            focus:outline-none focus:border-purple-500 transition-colors"
                 >
                   <option value="all">Tüm Sınıflar</option>
@@ -497,7 +497,7 @@ function ContentsPageInner() {
                 <select
                   value={selectedType}
                   onChange={(e) => handleTypeChange(e.target.value)}
-                  className="bg-slate-800/50 border border-slate-700 rounded-xl px-4 py-3 text-white 
+                   className="bg-slate-800/50 border border-slate-700 rounded-xl px-4 py-3 text-sm sm:text-base text-white 
                            focus:outline-none focus:border-purple-500 transition-colors"
                 >
                   <option value="all">Tüm Türler</option>
@@ -577,9 +577,9 @@ function ContentsPageInner() {
                     <div className="flex items-start justify-between gap-2 sm:gap-3 mb-4 sm:mb-5">
                       {content.file_url && /drive\.google\.com/i.test(content.file_url) ? (
                         <img
-                          src={`/api/image-proxy?url=${encodeURIComponent(content.file_url)}`}
-                          alt={content.title}
-                           className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl object-cover border border-white/10"
+                           src={`/api/image-proxy?url=${encodeURIComponent(content.file_url)}`}
+                           alt={content.title}
+                            className="w-11 h-11 sm:w-14 sm:h-14 rounded-xl object-cover border border-white/10"
                           onError={(e) => {
                             const target = e.target as HTMLImageElement;
                             target.style.display = 'none';
@@ -587,13 +587,13 @@ function ContentsPageInner() {
                           }}
                         />
                       ) : null}
-                      <div className={`w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-gradient-to-br ${getTypeColor(content.type)} flex items-center justify-center ${content.file_url && /drive\.google\.com/i.test(content.file_url) ? 'hidden' : ''}`}>
+                      <div className={`w-11 h-11 sm:w-14 sm:h-14 rounded-xl bg-gradient-to-br ${getTypeColor(content.type)} flex items-center justify-center ${content.file_url && /drive\.google\.com/i.test(content.file_url) ? 'hidden' : ''}`}>
                         {(() => {
                           const Icon = getTypeIcon(content.type);
-                          return <Icon className="w-6 h-6 sm:w-7 sm:h-7 text-white" />;
+                          return <Icon className="w-5 h-5 sm:w-7 sm:h-7 text-white" />;
                         })()}
                       </div>
-                      <div className="flex flex-wrap justify-end items-center gap-2">
+                      <div className="flex flex-wrap justify-end items-center gap-1.5 sm:gap-2">
                         <motion.button
                           whileHover={{ scale: 1.05 }}
                           whileTap={{ scale: 0.95 }}
@@ -602,40 +602,40 @@ function ContentsPageInner() {
                             navigator.clipboard.writeText(window.location.origin + '/icerikler?id=' + content.id);
                             alert('Link kopyalandı!');
                           }}
-                          className="w-9 h-9 rounded-full bg-slate-800/70 border border-white/10 text-slate-300 hover:text-white flex items-center justify-center transition-colors"
+                           className="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-slate-800/70 border border-white/10 text-slate-300 hover:text-white flex items-center justify-center transition-colors"
                         >
                           <Share2 className="w-4 h-4" />
                         </motion.button>
-                        <span className="px-3 py-1 rounded-full bg-rose-500/15 text-rose-300 text-xs font-semibold border border-rose-400/20">
+                        <span className="px-2.5 sm:px-3 py-1 rounded-full bg-rose-500/15 text-rose-300 text-[10px] sm:text-xs font-semibold border border-rose-400/20">
                           {getContentKindLabel(content)}
                         </span>
-                        <span className="px-3 py-1 rounded-full bg-indigo-500/15 text-indigo-300 text-xs font-semibold border border-indigo-400/20">
+                        <span className="px-2.5 sm:px-3 py-1 rounded-full bg-indigo-500/15 text-indigo-300 text-[10px] sm:text-xs font-semibold border border-indigo-400/20">
                           {Array.isArray(content.grade) && content.grade.length > 0 ? `${content.grade[0]}. Sınıf` : 'Tüm Sınıflar'}
                         </span>
-                        <span className="px-3 py-1 rounded-full bg-amber-500/15 text-amber-300 text-xs font-semibold border border-amber-400/20">
+                        <span className="px-2.5 sm:px-3 py-1 rounded-full bg-amber-500/15 text-amber-300 text-[10px] sm:text-xs font-semibold border border-amber-400/20">
                           {getTypeLabel(content.type)}
                         </span>
                         {content.isNew && (
-                          <span className="px-3 py-1 rounded-full bg-emerald-500/15 text-emerald-300 text-xs font-semibold border border-emerald-400/20">
+                          <span className="px-2.5 sm:px-3 py-1 rounded-full bg-emerald-500/15 text-emerald-300 text-[10px] sm:text-xs font-semibold border border-emerald-400/20">
                             Yeni
                           </span>
                         )}
                         {content.solution_url && (
-                          <span className="px-3 py-1 rounded-full bg-green-500/15 text-green-300 text-xs font-semibold border border-green-400/30">
+                          <span className="px-2.5 sm:px-3 py-1 rounded-full bg-green-500/15 text-green-300 text-[10px] sm:text-xs font-semibold border border-green-400/30">
                             ÇÖZÜMLÜ
                           </span>
                         )}
                       </div>
                     </div>
 
-                    <h3 className="text-2xl font-bold text-white mb-2 line-clamp-2 group-hover:text-cyan-300 transition-colors">
+                    <h3 className="text-lg sm:text-2xl font-bold leading-tight text-white mb-2 line-clamp-2 group-hover:text-cyan-300 transition-colors">
                       {content.title}
                     </h3>
-                    <p className="text-slate-400 text-base mb-4 line-clamp-1">{getTypeLabel(content.type)}</p>
+                    <p className="text-slate-400 text-sm sm:text-base mb-4 line-clamp-1">{getTypeLabel(content.type)}</p>
 
                     <div className="border-t border-white/10 my-4" />
 
-                    <div className="flex flex-wrap items-center gap-2 sm:gap-4 text-slate-400 text-xs sm:text-sm mb-4">
+                    <div className="flex flex-wrap items-center gap-2 sm:gap-4 text-slate-400 text-[11px] sm:text-sm mb-4">
                       <div className="flex items-center gap-2 min-w-0">
                         <Users className="w-4 h-4" />
                         <span className="truncate">{content.author || content.owner_name || 'Uğur Hoca'}</span>
@@ -646,7 +646,7 @@ function ContentsPageInner() {
                       </div>
                     </div>
 
-                    <div className="flex flex-wrap items-center gap-4 sm:gap-6 text-sm text-slate-300 mb-4 sm:mb-5">
+                    <div className="flex flex-wrap items-center gap-3 sm:gap-6 text-xs sm:text-sm text-slate-300 mb-4 sm:mb-5">
                       <button 
                         onClick={async (e) => {
                           e.stopPropagation();
@@ -699,7 +699,8 @@ function ContentsPageInner() {
                         className={`flex items-center gap-1.5 transition-colors ${favorites.has(content.id) ? 'text-amber-400' : 'hover:text-amber-400'}`}
                       >
                         <Star className={`w-5 h-5 ${favorites.has(content.id) ? 'fill-current' : ''}`} />
-                        {favorites.has(content.id) ? 'Favorilerden Çıkar' : 'Favorilere Ekle'}
+                        <span className="sm:hidden">{favorites.has(content.id) ? 'Çıkar' : 'Favori'}</span>
+                        <span className="hidden sm:inline">{favorites.has(content.id) ? 'Favorilerden Çıkar' : 'Favorilere Ekle'}</span>
                       </button>
                     </div>
 
@@ -711,7 +712,7 @@ function ContentsPageInner() {
                           e.stopPropagation();
                           setPreviewDoc(content);
                         }}
-                        className="flex-1 min-w-[150px] py-3 bg-slate-800/70 border border-white/10 text-slate-100 font-semibold rounded-2xl hover:bg-slate-700/70 transition-all flex items-center justify-center gap-2"
+                        className="flex-1 min-w-[130px] sm:min-w-[150px] py-2.5 sm:py-3 bg-slate-800/70 border border-white/10 text-sm sm:text-base text-slate-100 font-semibold rounded-2xl hover:bg-slate-700/70 transition-all flex items-center justify-center gap-2"
                       >
                         {content.type === 'ders-videolari' ? <Play className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                         {content.type === 'ders-videolari' ? 'İzle' : 'Önizle'}
@@ -728,7 +729,7 @@ function ContentsPageInner() {
                               setDocuments(documents.map(d => d.id === content.id ? { ...d, downloads: (d.downloads || 0) + 1 } : d));
                             }
                           }}
-                          className="basis-full sm:basis-auto px-5 py-2.5 sm:py-3 bg-gradient-to-r from-indigo-500 to-cyan-500 text-white font-semibold rounded-2xl hover:from-indigo-600 hover:to-cyan-600 transition-all shadow-lg shadow-cyan-500/20 flex items-center justify-center gap-2"
+                          className="basis-full sm:basis-auto px-4 sm:px-5 py-2.5 sm:py-3 bg-gradient-to-r from-indigo-500 to-cyan-500 text-sm sm:text-base text-white font-semibold rounded-2xl hover:from-indigo-600 hover:to-cyan-600 transition-all shadow-lg shadow-cyan-500/20 flex items-center justify-center gap-2"
                         >
                           <Download className="w-4 h-4" /> İndir
                         </motion.button>
@@ -786,7 +787,7 @@ function ContentsPageInner() {
                           <img
                             src={`/api/image-proxy?url=${encodeURIComponent(content.file_url)}`}
                             alt={content.title}
-                            className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl object-cover border border-white/10 flex-shrink-0"
+                            className="w-11 h-11 sm:w-14 sm:h-14 rounded-xl object-cover border border-white/10 flex-shrink-0"
                             onError={(e) => {
                               const target = e.target as HTMLImageElement;
                               target.style.display = 'none';
@@ -794,20 +795,20 @@ function ContentsPageInner() {
                             }}
                           />
                         ) : null}
-                        <div className={`w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-gradient-to-br ${getTypeColor(content.type)} flex items-center justify-center flex-shrink-0 ${content.file_url && /drive\.google\.com/i.test(content.file_url) ? 'hidden' : ''}`}>
+                        <div className={`w-11 h-11 sm:w-14 sm:h-14 rounded-xl bg-gradient-to-br ${getTypeColor(content.type)} flex items-center justify-center flex-shrink-0 ${content.file_url && /drive\.google\.com/i.test(content.file_url) ? 'hidden' : ''}`}>
                           {(() => {
                             const Icon = getTypeIcon(content.type);
-                            return <Icon className="w-6 h-6 sm:w-7 sm:h-7 text-white" />;
+                            return <Icon className="w-5 h-5 sm:w-7 sm:h-7 text-white" />;
                           })()}
                         </div>
                         <div className="min-w-0">
-                          <h3 className="text-2xl font-bold text-white group-hover:text-cyan-300 transition-colors truncate">
+                          <h3 className="text-lg sm:text-2xl font-bold leading-tight text-white group-hover:text-cyan-300 transition-colors truncate">
                             {content.title}
                           </h3>
-                          <p className="text-slate-400">{getTypeLabel(content.type)}</p>
+                          <p className="text-sm sm:text-base text-slate-400">{getTypeLabel(content.type)}</p>
                         </div>
                       </div>
-                      <div className="flex flex-wrap justify-end items-center gap-2">
+                      <div className="flex flex-wrap justify-end items-center gap-1.5 sm:gap-2">
                         <motion.button
                           whileHover={{ scale: 1.05 }}
                           whileTap={{ scale: 0.95 }}
@@ -816,18 +817,18 @@ function ContentsPageInner() {
                             navigator.clipboard.writeText(window.location.origin + '/icerikler?id=' + content.id);
                             alert('Link kopyalandı!');
                           }}
-                          className="w-9 h-9 rounded-full bg-slate-800/70 border border-white/10 text-slate-300 hover:text-white flex items-center justify-center transition-colors"
+                           className="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-slate-800/70 border border-white/10 text-slate-300 hover:text-white flex items-center justify-center transition-colors"
                         >
                           <Share2 className="w-4 h-4" />
                         </motion.button>
-                        <span className="px-3 py-1 rounded-full bg-rose-500/15 text-rose-300 text-xs font-semibold border border-rose-400/20">
+                        <span className="px-2.5 sm:px-3 py-1 rounded-full bg-rose-500/15 text-rose-300 text-[10px] sm:text-xs font-semibold border border-rose-400/20">
                           {getContentKindLabel(content)}
                         </span>
-                        <span className="px-3 py-1 rounded-full bg-indigo-500/15 text-indigo-300 text-xs font-semibold border border-indigo-400/20">
+                        <span className="px-2.5 sm:px-3 py-1 rounded-full bg-indigo-500/15 text-indigo-300 text-[10px] sm:text-xs font-semibold border border-indigo-400/20">
                           {Array.isArray(content.grade) && content.grade.length > 0 ? `${content.grade[0]}. Sınıf` : 'Tüm Sınıflar'}
                         </span>
                         {content.isNew && (
-                          <span className="px-3 py-1 rounded-full bg-emerald-500/15 text-emerald-300 text-xs font-semibold border border-emerald-400/20">
+                          <span className="px-2.5 sm:px-3 py-1 rounded-full bg-emerald-500/15 text-emerald-300 text-[10px] sm:text-xs font-semibold border border-emerald-400/20">
                             Yeni
                           </span>
                         )}
@@ -836,7 +837,7 @@ function ContentsPageInner() {
 
                     <div className="border-t border-white/10" />
 
-                    <div className="flex flex-wrap items-center gap-4 text-sm text-slate-400">
+                    <div className="flex flex-wrap items-center gap-3 sm:gap-4 text-[11px] sm:text-sm text-slate-400">
                       <div className="flex items-center gap-2">
                         <Users className="w-4 h-4" />
                         <span>{content.author || content.owner_name || 'Uğur Hoca'}</span>
@@ -847,7 +848,7 @@ function ContentsPageInner() {
                       </div>
                     </div>
 
-                    <div className="flex items-center gap-6 text-sm text-slate-300">
+                    <div className="flex flex-wrap items-center gap-3 sm:gap-6 text-xs sm:text-sm text-slate-300">
                       <button
                         onClick={async (e) => {
                           e.stopPropagation();
@@ -892,7 +893,8 @@ function ContentsPageInner() {
                         className={`flex items-center gap-1.5 transition-colors ${favorites.has(content.id) ? 'text-amber-400' : 'hover:text-amber-400'}`}
                       >
                         <Star className={`w-5 h-5 ${favorites.has(content.id) ? 'fill-current' : ''}`} />
-                        {favorites.has(content.id) ? 'Favorilerden Çıkar' : 'Favorilere Ekle'}
+                        <span className="sm:hidden">{favorites.has(content.id) ? 'Çıkar' : 'Favori'}</span>
+                        <span className="hidden sm:inline">{favorites.has(content.id) ? 'Favorilerden Çıkar' : 'Favorilere Ekle'}</span>
                       </button>
                     </div>
 
@@ -901,7 +903,7 @@ function ContentsPageInner() {
                         whileHover={{ scale: 1.02 }}
                         whileTap={{ scale: 0.98 }}
                         onClick={() => setPreviewDoc(content)}
-                        className="flex-1 min-w-[130px] sm:min-w-[180px] py-2.5 sm:py-3 bg-slate-800/70 border border-white/10 text-slate-100 font-semibold rounded-2xl hover:bg-slate-700/70 transition-all flex items-center justify-center gap-2"
+                        className="flex-1 min-w-[120px] sm:min-w-[180px] py-2.5 sm:py-3 bg-slate-800/70 border border-white/10 text-sm sm:text-base text-slate-100 font-semibold rounded-2xl hover:bg-slate-700/70 transition-all flex items-center justify-center gap-2"
                       >
                         {content.type === 'ders-videolari' ? <Play className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                         {content.type === 'ders-videolari' ? 'İzle' : 'Önizle'}
@@ -915,7 +917,7 @@ function ContentsPageInner() {
                             await supabase.from('documents').update({ downloads: (content.downloads || 0) + 1 }).eq('id', content.id);
                             setDocuments(documents.map(d => d.id === content.id ? { ...d, downloads: (d.downloads || 0) + 1 } : d));
                           }}
-                          className="basis-full sm:basis-auto px-5 py-2.5 sm:py-3 bg-gradient-to-r from-indigo-500 to-cyan-500 text-white font-semibold rounded-2xl hover:from-indigo-600 hover:to-cyan-600 transition-all shadow-lg shadow-cyan-500/20 flex items-center justify-center gap-2"
+                          className="basis-full sm:basis-auto px-4 sm:px-5 py-2.5 sm:py-3 bg-gradient-to-r from-indigo-500 to-cyan-500 text-sm sm:text-base text-white font-semibold rounded-2xl hover:from-indigo-600 hover:to-cyan-600 transition-all shadow-lg shadow-cyan-500/20 flex items-center justify-center gap-2"
                         >
                           <Download className="w-4 h-4" /> İndir
                         </motion.button>
