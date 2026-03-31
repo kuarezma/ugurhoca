@@ -453,9 +453,9 @@ export default function HomePage() {
   };
 
   return (
-    <main className={`min-h-screen ${
+    <main className={`relative min-h-screen ${
       isLight
-        ? 'bg-white'
+        ? 'bg-white light-atmosphere'
         : 'bg-gradient-to-br from-slate-900 via-slate-900 to-slate-800'
     }`}>
       <FloatingShapes />
@@ -466,12 +466,12 @@ export default function HomePage() {
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              className="mb-8"
+              className={`mb-8 ${isLight ? 'light-section p-6 sm:p-8' : ''}`}
             >
-              <h1 className={`text-3xl sm:text-4xl font-bold mb-2 ${isLight ? 'text-slate-900' : 'text-white'}`}>
+              <h1 className={`text-3xl sm:text-4xl font-bold mb-2 ${isLight ? 'light-text-strong' : 'text-white'}`}>
                 Ne Çalışmak İstiyorsun?
               </h1>
-              <p className={isLight ? 'text-slate-600' : 'text-slate-400'}>
+              <p className={isLight ? 'light-text-muted' : 'text-slate-400'}>
                 Hızlı erişim için kategoriyi seç
               </p>
             </motion.div>
@@ -488,7 +488,7 @@ export default function HomePage() {
                     href={cat.href}
                     className={`block border rounded-2xl p-5 sm:p-7 lg:p-6 text-center transition-all ${
                       isLight
-                        ? 'bg-white border-slate-200 shadow-sm hover:shadow-md hover:-translate-y-0.5'
+                        ? 'light-card hover:-translate-y-0.5'
                         : `${cat.bgColor} ${cat.borderColor} hover:scale-105`
                     }`}
                   >
@@ -506,11 +506,11 @@ export default function HomePage() {
 
         {announcements.length > 0 && (
           <section className="px-4 pt-2 pb-3 sm:py-6">
-            <div className="max-w-6xl mx-auto">
+            <div className={`max-w-6xl mx-auto ${isLight ? 'light-section p-5 sm:p-6' : ''}`}>
               <div className="flex items-center justify-between mb-4">
                 <div>
-                  <h2 className={`text-lg sm:text-2xl font-bold ${isLight ? 'text-slate-900' : 'text-white'}`}>Haberler</h2>
-                  <p className={`text-sm ${isLight ? 'text-slate-600' : 'text-slate-400'}`}>Kısa duyuru başlıkları. Detay için tıkla.</p>
+                  <h2 className={`text-lg sm:text-2xl font-bold ${isLight ? 'light-text-strong' : 'text-white'}`}>Haberler</h2>
+                  <p className={`text-sm ${isLight ? 'light-text-muted' : 'text-slate-400'}`}>Kısa duyuru başlıkları. Detay için tıkla.</p>
                 </div>
               </div>
 
@@ -526,7 +526,7 @@ export default function HomePage() {
                       onClick={() => setSelectedAnnouncement(item)}
                       className={`relative text-left rounded-2xl overflow-hidden transition-all min-w-[82vw] sm:min-w-[46vw] md:min-w-0 md:w-full ${
                         isLight
-                          ? 'bg-white border border-slate-200 shadow-sm hover:shadow-md hover:-translate-y-0.5'
+                          ? 'light-card hover:-translate-y-0.5'
                           : 'glass hover:scale-[1.01]'
                       }`}
                     >
@@ -562,10 +562,10 @@ export default function HomePage() {
                 animate={{ opacity: 1, y: 0 }}
                 className="relative overflow-hidden"
               >
-                <div className="absolute inset-0 bg-gradient-to-r from-orange-500/20 via-red-500/20 to-pink-500/20 rounded-3xl" />
-                <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-orange-500/30 to-red-500/30 rounded-full blur-3xl" />
+                <div className={`absolute inset-0 rounded-3xl ${isLight ? 'bg-gradient-to-r from-amber-100/70 via-rose-100/60 to-pink-100/60' : 'bg-gradient-to-r from-orange-500/20 via-red-500/20 to-pink-500/20'}`} />
+                <div className={`absolute top-0 right-0 w-32 h-32 rounded-full blur-3xl ${isLight ? 'bg-gradient-to-br from-amber-300/45 to-rose-300/35' : 'bg-gradient-to-br from-orange-500/30 to-red-500/30'}`} />
                 
-                <div className="relative bg-slate-900/80 backdrop-blur-xl border border-orange-500/30 rounded-3xl p-6 sm:p-8">
+                <div className={`relative backdrop-blur-xl border rounded-3xl p-6 sm:p-8 ${isLight ? 'bg-white/90 border-amber-200 shadow-[0_20px_44px_rgba(251,146,60,0.18)]' : 'bg-slate-900/80 border-orange-500/30'}`}>
                   <button
                     onClick={() => {
                       userAssignments.forEach(a => {
@@ -574,7 +574,7 @@ export default function HomePage() {
                         }
                       });
                     }}
-                    className="absolute top-4 right-4 p-2 text-slate-400 hover:text-white hover:bg-white/10 rounded-lg transition-colors"
+                    className={`absolute top-4 right-4 p-2 rounded-lg transition-colors ${isLight ? 'text-slate-600 hover:text-slate-900 hover:bg-slate-100' : 'text-slate-400 hover:text-white hover:bg-white/10'}`}
                     title="Tümünü gizle"
                   >
                     <X className="w-5 h-5" />
@@ -591,10 +591,10 @@ export default function HomePage() {
                     </div>
                     
                     <div className="flex-1 min-w-0">
-                      <h2 className="text-xl sm:text-2xl font-bold text-white mb-1">
+                      <h2 className={`text-xl sm:text-2xl font-bold mb-1 ${isLight ? 'light-text-strong' : 'text-white'}`}>
                         Sana Gönderilen Ödevler
                       </h2>
-                      <p className="text-slate-400 text-sm mb-4">
+                      <p className={`text-sm mb-4 ${isLight ? 'light-text-muted' : 'text-slate-400'}`}>
                         Uğur Hoca sana {userAssignments.filter(a => !dismissedAssignments.has(a.id)).length} tane ödev/materyal gönderdi!
                       </p>
                       
@@ -605,7 +605,7 @@ export default function HomePage() {
                             initial={{ opacity: 0, x: -10 }}
                             animate={{ opacity: 1, x: 0 }}
                             transition={{ delay: i * 0.1 }}
-                            className="flex items-center gap-3 bg-slate-800/50 rounded-xl p-3 hover:bg-slate-800/70 transition-colors group"
+                            className={`flex items-center gap-3 rounded-xl p-3 transition-colors group ${isLight ? 'bg-slate-50 border border-slate-200 hover:bg-slate-100' : 'bg-slate-800/50 hover:bg-slate-800/70'}`}
                           >
                             <div 
                               className="flex-1 min-w-0 cursor-pointer"
@@ -622,10 +622,10 @@ export default function HomePage() {
                                   <FileText className="w-5 h-5 text-orange-300" />
                                 </div>
                                 <div className="flex-1 min-w-0">
-                                  <h4 className="text-white font-medium truncate group-hover:text-orange-300 transition-colors">
+                                  <h4 className={`font-medium truncate transition-colors ${isLight ? 'text-slate-900 group-hover:text-amber-700' : 'text-white group-hover:text-orange-300'}`}>
                                     {assignment.document_title || assignment.title || 'Ödev'}
                                   </h4>
-                                  <p className="text-slate-400 text-xs truncate">
+                                  <p className={`text-xs truncate ${isLight ? 'text-slate-600' : 'text-slate-400'}`}>
                                     {assignment.message || assignment.content || 'Materyali incele ve çöz'}
                                   </p>
                                 </div>
@@ -675,11 +675,11 @@ export default function HomePage() {
 
         {writings.length > 0 && (
           <section className="px-4 py-3 sm:py-6">
-            <div className="max-w-6xl mx-auto">
+            <div className={`max-w-6xl mx-auto ${isLight ? 'light-section p-5 sm:p-6' : ''}`}>
               <div className="flex items-center justify-between mb-4">
                 <div>
-                  <h2 className={`text-lg sm:text-2xl font-bold ${isLight ? 'text-slate-900' : 'text-white'}`}>Yazılar</h2>
-                  <p className={`text-sm ${isLight ? 'text-slate-600' : 'text-slate-400'}`}>Kısa yazılar ve paylaşımlar.</p>
+                  <h2 className={`text-lg sm:text-2xl font-bold ${isLight ? 'light-text-strong' : 'text-white'}`}>Yazılar</h2>
+                  <p className={`text-sm ${isLight ? 'light-text-muted' : 'text-slate-400'}`}>Kısa yazılar ve paylaşımlar.</p>
                 </div>
                 <Link href="/icerikler?type=writing" className="text-purple-400 hover:text-purple-300 text-sm font-medium flex items-center gap-1">
                   Tümünü Gör <ChevronRight className="w-4 h-4" />
@@ -695,7 +695,7 @@ export default function HomePage() {
                     transition={{ delay: i * 0.05 }}
                     className={`text-left rounded-2xl overflow-hidden transition-all min-w-[82vw] sm:min-w-[46vw] md:min-w-0 md:w-full ${
                       isLight
-                        ? 'bg-white border border-slate-200 shadow-sm hover:shadow-md hover:-translate-y-0.5'
+                        ? 'light-card hover:-translate-y-0.5'
                         : 'glass hover:scale-[1.01]'
                     }`}
                   >
@@ -716,9 +716,9 @@ export default function HomePage() {
 
         {documents.length > 0 && (
           <section className="px-4 py-8 sm:py-12">
-            <div className="max-w-6xl mx-auto">
+            <div className={`max-w-6xl mx-auto ${isLight ? 'light-section p-5 sm:p-6' : ''}`}>
               <div className="flex items-center justify-between mb-6">
-                <h2 className={`text-xl sm:text-2xl font-bold ${isLight ? 'text-slate-900' : 'text-white'}`}>Son Eklenenler</h2>
+                <h2 className={`text-xl sm:text-2xl font-bold ${isLight ? 'light-text-strong' : 'text-white'}`}>Son Eklenenler</h2>
                 <Link href="/icerikler" className="text-indigo-400 hover:text-indigo-300 text-sm font-medium flex items-center gap-1">
                   Tümünü Gör <ChevronRight className="w-4 h-4" />
                 </Link>
@@ -739,7 +739,7 @@ export default function HomePage() {
                       transition={{ delay: i * 0.05 }}
                       className={`relative rounded-xl p-4 transition-all cursor-pointer ${
                         isLight
-                          ? 'bg-white border border-slate-200 shadow-sm hover:shadow-md hover:border-slate-300'
+                          ? 'light-card hover:border-slate-300'
                           : 'bg-white/5 border border-white/10 hover:bg-white/10'
                       }`}
                     >
@@ -775,7 +775,7 @@ export default function HomePage() {
             <div className="max-w-6xl mx-auto">
               <div className={`border rounded-3xl p-6 sm:p-8 text-center ${
                 isLight
-                  ? 'bg-slate-50 border-slate-200'
+                  ? 'light-soft-panel shadow-[0_18px_42px_rgba(99,102,241,0.14)]'
                   : 'bg-gradient-to-r from-indigo-500/20 to-purple-500/20 border-indigo-500/20'
               }`}>
                 <div className="w-14 h-14 mx-auto mb-4 bg-gradient-to-br from-indigo-500 to-purple-500 rounded-2xl flex items-center justify-center">
@@ -800,7 +800,7 @@ export default function HomePage() {
           <div className="max-w-6xl mx-auto">
             <div className={`relative overflow-hidden rounded-3xl border backdrop-blur-xl ${
               isLight
-                ? 'border-slate-200 bg-white shadow-sm'
+                ? 'light-section'
                 : 'border-indigo-500/20 bg-gradient-to-br from-slate-900/90 via-slate-900/80 to-slate-800/90'
             }`}>
               <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(99,102,241,0.18),transparent_30%),radial-gradient(circle_at_bottom_left,rgba(236,72,153,0.14),transparent_30%)]" />
@@ -915,7 +915,7 @@ export default function HomePage() {
           </div>
         </section>
 
-        <footer className={`px-4 py-6 border-t mt-8 ${isLight ? 'border-slate-200' : 'border-slate-800/50'}`}>
+        <footer className={`px-4 py-6 border-t mt-8 ${isLight ? 'border-slate-200 bg-slate-50/70 backdrop-blur-sm' : 'border-slate-800/50'}`}>
           <div className="max-w-6xl mx-auto text-center">
             <div className="flex items-center justify-center gap-2 mb-3">
               <div className="w-7 h-7 bg-gradient-to-br from-indigo-500 to-purple-500 rounded-lg flex items-center justify-center">
