@@ -12,6 +12,7 @@ import {
 } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import { ThemeToggle } from '@/components/ThemeToggle';
+import { useTheme } from '@/components/ThemeProvider';
 
 const FloatingShapes = () => (
   <div className="fixed inset-0 overflow-hidden pointer-events-none z-0">
@@ -124,15 +125,21 @@ const recentContents = [
 
 const Navbar = ({ user, onLogout }: { user: any; onLogout: () => void }) => {
   const [isOpen, setIsOpen] = useState(false);
+  const { theme } = useTheme();
+  const isLight = theme === 'light';
   const profileHref = user?.isAdmin ? '/admin' : '/profil';
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 bg-slate-900/95 backdrop-blur-lg border-b border-slate-800/50">
+    <nav className={`fixed top-0 left-0 right-0 z-50 backdrop-blur-lg border-b ${
+      isLight
+        ? 'bg-white/90 border-slate-200/90 shadow-sm shadow-slate-200/80'
+        : 'bg-slate-900/95 border-slate-800/50'
+    }`}>
       <div className="max-w-6xl mx-auto px-4">
         <div className="flex justify-between items-center h-14">
           <Link href="/" className="flex items-center gap-2">
             <img src="/ugur.jpeg" alt="Uğur Hoca" className="w-9 h-9 rounded-lg object-cover" />
-            <span className="text-lg font-bold text-white">
+            <span className={`text-lg font-bold ${isLight ? 'text-slate-900' : 'text-white'}`}>
               Uğur Hoca
             </span>
           </Link>
@@ -142,7 +149,9 @@ const Navbar = ({ user, onLogout }: { user: any; onLogout: () => void }) => {
               <Link 
                 key={cat.id} 
                 href={cat.href}
-                className="text-slate-400 hover:text-white transition-colors text-sm font-medium"
+                className={`transition-colors text-sm font-medium ${
+                  isLight ? 'text-slate-600 hover:text-slate-900' : 'text-slate-400 hover:text-white'
+                }`}
               >
                 {cat.title}
               </Link>
@@ -153,19 +162,19 @@ const Navbar = ({ user, onLogout }: { user: any; onLogout: () => void }) => {
             <ThemeToggle compact />
             {user ? (
               <>
-                <Link href={profileHref} className="flex items-center gap-2 text-white">
+                <Link href={profileHref} className={`flex items-center gap-2 ${isLight ? 'text-slate-900' : 'text-white'}`}>
                   <div className="w-8 h-8 bg-gradient-to-br from-indigo-500 to-purple-500 rounded-full flex items-center justify-center font-bold text-sm">
                     {user.name?.[0] || '?'}
                   </div>
                   <span className="font-medium">{user.name?.split(' ')[0]}</span>
                 </Link>
-                <button onClick={onLogout} className="text-slate-400 hover:text-white transition-colors ml-2">
+                <button onClick={onLogout} className={`transition-colors ml-2 ${isLight ? 'text-slate-500 hover:text-slate-900' : 'text-slate-400 hover:text-white'}`}>
                   <LogOut className="w-5 h-5" />
                 </button>
               </>
             ) : (
               <>
-                <Link href="/giris" className="text-slate-300 hover:text-white transition-colors text-sm font-medium">
+                <Link href="/giris" className={`transition-colors text-sm font-medium ${isLight ? 'text-slate-700 hover:text-slate-900' : 'text-slate-300 hover:text-white'}`}>
                   Giriş
                 </Link>
                 <Link href="/kayit" className="bg-gradient-to-r from-indigo-500 to-purple-500 text-white px-4 py-2 rounded-lg font-semibold hover:from-indigo-600 hover:to-purple-600 transition-all text-sm">
@@ -187,31 +196,33 @@ const Navbar = ({ user, onLogout }: { user: any; onLogout: () => void }) => {
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
-            className="md:hidden bg-slate-900 border-t border-slate-800"
+            className={`md:hidden border-t ${isLight ? 'bg-white border-slate-200' : 'bg-slate-900 border-slate-800'}`}
           >
             <div className="px-4 py-4 space-y-2">
               {categories.map(cat => (
                 <Link 
                   key={cat.id} 
                   href={cat.href}
-                  className="flex items-center gap-3 text-slate-300 hover:text-white py-2 px-3 rounded-lg hover:bg-white/5"
+                  className={`flex items-center gap-3 py-2 px-3 rounded-lg transition-colors ${
+                    isLight ? 'text-slate-700 hover:text-slate-900 hover:bg-slate-100' : 'text-slate-300 hover:text-white hover:bg-white/5'
+                  }`}
                 >
                   <cat.icon className="w-5 h-5" />
                   {cat.title}
                 </Link>
               ))}
-              <div className="border-t border-slate-700 pt-3 mt-3">
+              <div className={`border-t pt-3 mt-3 ${isLight ? 'border-slate-200' : 'border-slate-700'}`}>
                 <div className="mb-3">
                   <ThemeToggle className="w-full justify-center" />
                 </div>
                 {user ? (
                   <>
-                    <Link href={profileHref} className="block text-slate-300 hover:text-white py-2">{user.isAdmin ? 'Admin Panel' : 'Profil'}</Link>
+                    <Link href={profileHref} className={`block py-2 ${isLight ? 'text-slate-700 hover:text-slate-900' : 'text-slate-300 hover:text-white'}`}>{user.isAdmin ? 'Admin Panel' : 'Profil'}</Link>
                     <button onClick={onLogout} className="text-red-400 py-2">Çıkış</button>
                   </>
                 ) : (
                   <>
-                    <Link href="/giris" className="block text-slate-300 hover:text-white py-2">Giriş</Link>
+                    <Link href="/giris" className={`block py-2 ${isLight ? 'text-slate-700 hover:text-slate-900' : 'text-slate-300 hover:text-white'}`}>Giriş</Link>
                     <Link href="/kayit" className="block bg-gradient-to-r from-indigo-500 to-purple-500 text-white text-center py-2 rounded-lg font-semibold mt-2">Kayıt Ol</Link>
                   </>
                 )}
@@ -225,6 +236,8 @@ const Navbar = ({ user, onLogout }: { user: any; onLogout: () => void }) => {
 };
 
 export default function HomePage() {
+  const { theme } = useTheme();
+  const isLight = theme === 'light';
   const [user, setUser] = useState<any>(null);
   const [documents, setDocuments] = useState<any[]>([]);
   const [writings, setWritings] = useState<any[]>([]);
@@ -440,7 +453,11 @@ export default function HomePage() {
   };
 
   return (
-    <main className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-900 to-slate-800">
+    <main className={`min-h-screen ${
+      isLight
+        ? 'bg-gradient-to-br from-slate-50 via-indigo-50 to-slate-100'
+        : 'bg-gradient-to-br from-slate-900 via-slate-900 to-slate-800'
+    }`}>
       <FloatingShapes />
       <Navbar user={user} onLogout={handleLogout} />
       <div className="pt-[calc(3.5rem+env(safe-area-inset-top))] md:pt-14">
