@@ -105,7 +105,7 @@ export default function LoginPage() {
   };
 
   return (
-    <main className="min-h-screen gradient-bg flex items-center justify-center p-6">
+    <main className="giris-page min-h-screen gradient-bg flex items-center justify-center p-6">
       <FloatingShapes />
       
       <motion.div

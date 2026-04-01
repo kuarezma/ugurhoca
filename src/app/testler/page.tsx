@@ -186,7 +186,7 @@ export default function TestsPage() {
     const question = questions[currentQuestion];
 
     return (
-      <main className="min-h-screen gradient-bg flex items-center justify-center p-6">
+      <main className="testler-page min-h-screen gradient-bg flex items-center justify-center p-6">
         <FloatingShapes />
         
         <motion.div
@@ -293,7 +293,7 @@ export default function TestsPage() {
     const questions = quizQuestions[selectedQuiz.id as keyof typeof quizQuestions] || [];
 
     return (
-      <main className="min-h-screen gradient-bg flex items-center justify-center p-6">
+      <main className="testler-page min-h-screen gradient-bg flex items-center justify-center p-6">
         <FloatingShapes />
         
         <motion.div
@@ -375,7 +375,7 @@ export default function TestsPage() {
   }
 
   return (
-    <main className="min-h-screen gradient-bg pb-20">
+    <main className="testler-page min-h-screen gradient-bg pb-20">
       <FloatingShapes />
       
       <nav className="fixed top-0 left-0 right-0 z-50 glass py-4 px-6">

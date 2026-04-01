@@ -1430,7 +1430,7 @@ export default function GamesPage() {
   if (selectedGame) {
     const GameComponent = selectedGame.component;
     return (
-      <main className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-900 to-slate-800">
+      <main className="oyunlar-page min-h-screen bg-gradient-to-br from-slate-900 via-slate-900 to-slate-800">
         <FloatingParticles />
         
         <nav className="fixed top-0 left-0 right-0 z-50 glass py-4 px-6">
@@ -1461,7 +1461,7 @@ export default function GamesPage() {
   }
 
   return (
-    <main className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-900 to-slate-800 pb-20">
+    <main className="oyunlar-page min-h-screen bg-gradient-to-br from-slate-900 via-slate-900 to-slate-800 pb-20">
       <FloatingParticles />
       
       <nav className="fixed top-0 left-0 right-0 z-50 glass py-4 px-6">

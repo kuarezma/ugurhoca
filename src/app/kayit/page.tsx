@@ -122,7 +122,7 @@ export default function RegisterPage() {
 
   if (success) {
     return (
-      <main className="min-h-screen gradient-bg flex items-center justify-center p-6">
+      <main className="kayit-page min-h-screen gradient-bg flex items-center justify-center p-6">
         <FloatingShapes />
         <motion.div
           initial={{ scale: 0.8, opacity: 0 }}
@@ -145,7 +145,7 @@ export default function RegisterPage() {
   }
 
   return (
-    <main className="min-h-screen gradient-bg flex items-center justify-center p-6">
+    <main className="kayit-page min-h-screen gradient-bg flex items-center justify-center p-6">
       <FloatingShapes />
       
       <motion.div

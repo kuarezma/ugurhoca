@@ -220,7 +220,7 @@ export default function ProfilePage() {
 
   if (loading) {
     return (
-      <main className="min-h-screen gradient-bg flex items-center justify-center">
+      <main className="profil-page min-h-screen gradient-bg flex items-center justify-center">
         <motion.div
           animate={{ rotate: 360 }}
           transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
@@ -235,7 +235,7 @@ export default function ProfilePage() {
   const unreadCount = notifications.filter(n => !n.is_read).length;
 
   return (
-    <main className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-900 to-slate-800">
+    <main className="profil-page min-h-screen bg-gradient-to-br from-slate-900 via-slate-900 to-slate-800">
       <FloatingShapes />
       
       <nav className="fixed top-0 left-0 right-0 z-50 bg-slate-900/95 backdrop-blur-lg border-b border-slate-800/50">
