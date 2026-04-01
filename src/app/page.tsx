@@ -504,7 +504,7 @@ export default function HomePage() {
               ))}
             </div>
 
-            <div className="mt-5 grid gap-3 lg:grid-cols-2">
+            <div className="mx-auto mt-4 grid max-w-3xl gap-2 sm:grid-cols-2">
               {featuredExams.filter((exam) => exam.featured).map((exam) => (
                 <ExamCountdown key={exam.id} exam={exam} isLight={isLight} />
               ))}
