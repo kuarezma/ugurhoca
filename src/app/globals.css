@@ -92,9 +92,9 @@ html[data-theme='light'] .gradient-bg {
 }
 
 html[data-theme='light'] nav.fixed.top-0.left-0.right-0.z-50 {
-  background-color: rgba(255, 255, 255, 0.96) !important;
-  border-color: var(--border) !important;
-  box-shadow: 0 8px 24px rgba(148, 163, 184, 0.16);
+  background: linear-gradient(120deg, rgba(238, 242, 255, 0.95) 0%, rgba(248, 250, 252, 0.94) 45%, rgba(253, 242, 248, 0.92) 100%) !important;
+  border-color: rgba(148, 163, 184, 0.32) !important;
+  box-shadow: 0 10px 28px rgba(99, 102, 241, 0.14);
 }
 
 html[data-theme='light'] [class*='bg-black/80'] {
@@ -543,9 +543,9 @@ html[data-theme='light'] .admin-page [class*='fixed'][class*='bg-slate-900/95'],
 html[data-theme='light'] .admin-page [class*='fixed'][class*='bg-slate-950/95'],
 html[data-theme='light'] .admin-page [class*='fixed'][class*='bg-[#0b1220]/95'],
 html[data-theme='light'] .icerikler-page [class*='fixed'][class*='bg-[#0b1220]/95'] {
-  background-color: rgba(255, 255, 255, 0.96) !important;
-  border-color: var(--border-soft) !important;
-  box-shadow: 0 10px 24px rgba(148, 163, 184, 0.15);
+  background: linear-gradient(120deg, rgba(238, 242, 255, 0.95) 0%, rgba(248, 250, 252, 0.94) 45%, rgba(253, 242, 248, 0.92) 100%) !important;
+  border-color: rgba(148, 163, 184, 0.34) !important;
+  box-shadow: 0 10px 28px rgba(99, 102, 241, 0.14);
 }
 
 html[data-theme='light'] .icerikler-page [class*='hover:text-white']:hover,
@@ -637,9 +637,9 @@ html[data-theme='light'] .oyunlar-page [class*='border-white/20'] {
 
 html[data-theme='light'] .profil-page [class*='fixed'][class*='bg-slate-900/95'],
 html[data-theme='light'] .testler-page [class*='fixed'][class*='bg-slate-900/95'] {
-  background-color: rgba(255, 255, 255, 0.96) !important;
-  border-color: var(--border-soft) !important;
-  box-shadow: 0 10px 24px rgba(148, 163, 184, 0.15);
+  background: linear-gradient(120deg, rgba(238, 242, 255, 0.95) 0%, rgba(248, 250, 252, 0.94) 45%, rgba(253, 242, 248, 0.92) 100%) !important;
+  border-color: rgba(148, 163, 184, 0.34) !important;
+  box-shadow: 0 10px 28px rgba(99, 102, 241, 0.14);
 }
 
 html[data-theme='light'] .profil-page [class*='bg-black/'],
