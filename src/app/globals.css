@@ -248,6 +248,17 @@ html[data-theme='dark'] .light-atmosphere::after {
   box-shadow: 0 14px 30px rgba(99, 102, 241, 0.32);
 }
 
+.btn-primary:focus-visible,
+.btn-secondary:focus-visible,
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 2px solid rgba(99, 102, 241, 0.55);
+  outline-offset: 2px;
+}
+
 .btn-secondary {
   display: inline-flex;
   align-items: center;
@@ -653,4 +664,52 @@ html[data-theme='light'] .oyunlar-page [class*='bg-black/40'][class*='text-white
 html[data-theme='light'] .oyunlar-page [class*='bg-black/50'][class*='text-white'],
 html[data-theme='light'] .oyunlar-page [class*='bg-black/60'][class*='text-white'] {
   color: #0f172a !important;
+}
+
+html[data-theme='light'] .admin-page h1,
+html[data-theme='light'] .admin-page h2,
+html[data-theme='light'] .admin-page h3,
+html[data-theme='light'] .icerikler-page h1,
+html[data-theme='light'] .icerikler-page h2,
+html[data-theme='light'] .icerikler-page h3,
+html[data-theme='light'] .profil-page h1,
+html[data-theme='light'] .profil-page h2,
+html[data-theme='light'] .profil-page h3,
+html[data-theme='light'] .giris-page h1,
+html[data-theme='light'] .kayit-page h1,
+html[data-theme='light'] .testler-page h1,
+html[data-theme='light'] .oyunlar-page h1,
+html[data-theme='light'] .oyunlar-page h2 {
+  letter-spacing: -0.015em;
+}
+
+html[data-theme='light'] .admin-page [class*='rounded-3xl'],
+html[data-theme='light'] .icerikler-page [class*='rounded-3xl'],
+html[data-theme='light'] .profil-page [class*='rounded-3xl'],
+html[data-theme='light'] .testler-page [class*='rounded-3xl'],
+html[data-theme='light'] .oyunlar-page [class*='rounded-3xl'] {
+  box-shadow: 0 12px 30px rgba(148, 163, 184, 0.13);
+}
+
+html[data-theme='light'] .admin-page [class*='transition-'],
+html[data-theme='light'] .icerikler-page [class*='transition-'],
+html[data-theme='light'] .profil-page [class*='transition-'],
+html[data-theme='light'] .testler-page [class*='transition-'],
+html[data-theme='light'] .oyunlar-page [class*='transition-'] {
+  transition-duration: 180ms !important;
+  transition-timing-function: cubic-bezier(0.2, 0.8, 0.2, 1) !important;
+}
+
+@media (max-width: 640px) {
+  html[data-theme='light'] .admin-page,
+  html[data-theme='light'] .icerikler-page,
+  html[data-theme='light'] .profil-page,
+  html[data-theme='light'] .giris-page,
+  html[data-theme='light'] .kayit-page,
+  html[data-theme='light'] .testler-page,
+  html[data-theme='light'] .oyunlar-page {
+    background:
+      radial-gradient(circle at 8% -8%, rgba(99, 102, 241, 0.08), transparent 34%),
+      linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+  }
 }
