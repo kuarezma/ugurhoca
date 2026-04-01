@@ -32,7 +32,7 @@ export const featuredExams: FeaturedExam[] = [
     provider: 'OSYM',
     targetDate: '2026-06-20T10:15:00+03:00',
     dateLabel: '20 Haziran 2026 Cumartesi 10:15',
-    accent: 'from-violet-500 via-fuchsia-500 to-pink-500',
+    accent: 'from-violet-500 via-fuchsia-500 to-orange-400',
     featured: true,
     category: 'central',
     subItems: [
