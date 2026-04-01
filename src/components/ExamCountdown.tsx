@@ -64,15 +64,17 @@ export function ExamCountdown({ exam, isLight }: ExamCountdownProps) {
         'relative overflow-hidden rounded-3xl border p-4 sm:p-5 transition-all',
         isLight
           ? 'light-card shadow-[0_18px_42px_rgba(99,102,241,0.16)]'
-          : 'glass border-white/10',
+          : 'glass border-white/10 bg-gradient-to-br from-slate-900/90 via-slate-900/85 to-slate-800/90',
       ].join(' ')}
     >
+      <div className={`absolute -top-12 -right-10 h-28 w-28 rounded-full bg-gradient-to-br ${exam.accent} opacity-20 blur-3xl`} />
+      <div className={`absolute -bottom-10 -left-8 h-24 w-24 rounded-full bg-gradient-to-br ${exam.accent} opacity-15 blur-3xl`} />
       <div className={`absolute inset-x-0 top-0 h-1.5 bg-gradient-to-r ${exam.accent}`} />
 
       <div className="relative flex items-start justify-between gap-4 mb-4">
         <div>
           <div className="flex items-center gap-2 mb-2">
-            <span className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[11px] font-bold uppercase tracking-[0.16em] ${isLight ? 'light-pill' : 'bg-white/10 text-slate-200 border border-white/10'}`}>
+            <span className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[11px] font-bold uppercase tracking-[0.16em] ${isLight ? 'border border-white/60 bg-gradient-to-r from-white to-slate-50 text-slate-700 shadow-sm' : 'bg-white/10 text-slate-200 border border-white/10'}`}>
               <Clock3 className="w-3.5 h-3.5" />
               {exam.provider}
             </span>
@@ -97,17 +99,17 @@ export function ExamCountdown({ exam, isLight }: ExamCountdownProps) {
             className={[
               'rounded-2xl border px-2.5 py-3 text-center',
               isLight
-                ? 'bg-slate-50 border-slate-200'
+                ? 'border-white/70 bg-gradient-to-br from-white via-slate-50 to-indigo-50/80 shadow-sm'
                 : 'bg-white/5 border-white/10',
             ].join(' ')}
           >
-            <div className={`text-xl sm:text-2xl font-black leading-none ${isLight ? 'text-slate-950' : 'text-white'}`}>{item.value}</div>
+            <div className={`text-xl sm:text-2xl font-black leading-none ${isLight ? 'bg-gradient-to-br from-slate-950 via-indigo-700 to-fuchsia-600 bg-clip-text text-transparent' : 'text-white'}`}>{item.value}</div>
             <div className={`mt-2 text-[11px] font-semibold uppercase tracking-[0.2em] ${isLight ? 'text-slate-500' : 'text-slate-400'}`}>{item.label}</div>
           </div>
         ))}
       </div>
 
-      <div className={['rounded-2xl border p-3.5', isLight ? 'light-soft-panel' : 'bg-white/5 border-white/10'].join(' ')}>
+      <div className={['rounded-2xl border p-3.5', isLight ? 'border-indigo-100 bg-gradient-to-r from-indigo-50 via-white to-pink-50/80 shadow-sm' : 'bg-white/5 border-white/10'].join(' ')}>
         <div className={`text-sm font-semibold ${isLight ? 'text-slate-900' : 'text-white'}`}>Sinav Tarihi</div>
         <div className={`mt-1 text-sm ${isLight ? 'text-slate-600' : 'text-slate-400'}`}>{exam.dateLabel}</div>
 
