@@ -13,6 +13,8 @@ import {
 import { supabase } from '@/lib/supabase';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { useTheme } from '@/components/ThemeProvider';
+import { ExamCountdown } from '@/components/ExamCountdown';
+import { featuredExams } from '@/lib/examDates';
 
 const FloatingShapes = () => (
   <div className="fixed inset-0 overflow-hidden pointer-events-none z-0">
@@ -474,6 +476,12 @@ export default function HomePage() {
               <p className={isLight ? 'light-text-muted' : 'text-slate-400'}>
                 Hızlı erişim için kategoriyi seç
               </p>
+
+              <div className="mt-6 grid gap-4 lg:grid-cols-2">
+                {featuredExams.filter((exam) => exam.featured).map((exam) => (
+                  <ExamCountdown key={exam.id} exam={exam} isLight={isLight} />
+                ))}
+              </div>
             </motion.div>
 
             <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-4 gap-3 sm:gap-4">
