@@ -228,6 +228,57 @@ html[data-theme='dark'] .light-atmosphere::after {
   color: #475569;
 }
 
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  border-radius: 0.9rem;
+  padding: 0.65rem 1.1rem;
+  font-weight: 700;
+  color: #ffffff;
+  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 52%, #ec4899 100%);
+  border: 1px solid rgba(99, 102, 241, 0.28);
+  box-shadow: 0 10px 26px rgba(99, 102, 241, 0.28);
+  transition: transform 0.16s ease, box-shadow 0.16s ease, filter 0.16s ease;
+}
+
+.btn-primary:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.02);
+  box-shadow: 0 14px 30px rgba(99, 102, 241, 0.32);
+}
+
+.btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  border-radius: 0.8rem;
+  border: 1px solid rgba(148, 163, 184, 0.28);
+  padding: 0.55rem 0.95rem;
+  font-weight: 600;
+  color: #0f172a;
+  background: rgba(248, 250, 252, 0.9);
+  transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+
+.btn-secondary:hover {
+  background: #f1f5f9;
+  border-color: rgba(100, 116, 139, 0.36);
+}
+
+html[data-theme='dark'] .btn-secondary {
+  color: #e2e8f0;
+  background: rgba(30, 41, 59, 0.7);
+  border-color: rgba(148, 163, 184, 0.3);
+}
+
+html[data-theme='dark'] .btn-secondary:hover {
+  color: #ffffff;
+  background: rgba(51, 65, 85, 0.82);
+  border-color: rgba(148, 163, 184, 0.42);
+}
+
 html[data-theme='light'] [class*='text-white'] {
   color: var(--text-strong) !important;
 }
@@ -583,4 +634,23 @@ html[data-theme='light'] .testler-page [class*='fixed'][class*='bg-slate-900/95'
 html[data-theme='light'] .profil-page [class*='bg-black/'],
 html[data-theme='light'] .oyunlar-page [class*='bg-black/'] {
   backdrop-filter: blur(10px);
+}
+
+html[data-theme='light'] .admin-page [class*='bg-black/40'],
+html[data-theme='light'] .admin-page [class*='bg-black/50'],
+html[data-theme='light'] .admin-page [class*='bg-black/60'],
+html[data-theme='light'] .oyunlar-page [class*='bg-black/40'],
+html[data-theme='light'] .oyunlar-page [class*='bg-black/50'],
+html[data-theme='light'] .oyunlar-page [class*='bg-black/60'] {
+  background-color: rgba(255, 255, 255, 0.84) !important;
+  border-color: var(--border-soft) !important;
+}
+
+html[data-theme='light'] .admin-page [class*='bg-black/40'][class*='text-white'],
+html[data-theme='light'] .admin-page [class*='bg-black/50'][class*='text-white'],
+html[data-theme='light'] .admin-page [class*='bg-black/60'][class*='text-white'],
+html[data-theme='light'] .oyunlar-page [class*='bg-black/40'][class*='text-white'],
+html[data-theme='light'] .oyunlar-page [class*='bg-black/50'][class*='text-white'],
+html[data-theme='light'] .oyunlar-page [class*='bg-black/60'][class*='text-white'] {
+  color: #0f172a !important;
 }
