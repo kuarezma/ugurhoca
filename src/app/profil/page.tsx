@@ -233,6 +233,15 @@ export default function ProfilePage() {
   if (!user) return null;
 
   const unreadCount = notifications.filter(n => !n.is_read).length;
+  const numericGrade = Number(user.grade);
+  const isMiddleSchool = Number.isFinite(numericGrade) && numericGrade >= 5 && numericGrade <= 8;
+  const wizardHref = isMiddleSchool ? '/programlar/lgs' : '/programlar/yks';
+  const wizardTitle = isMiddleSchool
+    ? 'LGS Puan ve Lise Hedef Sihirbazi'
+    : 'YKS Puan ve Universite Tercih Sihirbazi';
+  const wizardSubtitle = isMiddleSchool
+    ? 'Netlerini gir, puanini hesapla ve lise hedeflerini gor.'
+    : 'TYT/AYT hesapla, universite hedef listeni olustur.';
 
   return (
     <main className="profil-page min-h-screen bg-gradient-to-br from-slate-900 via-slate-900 to-slate-800">
@@ -382,6 +391,34 @@ export default function ProfilePage() {
               transition={{ delay: 0.2 }}
             >
               <NotesSection userId={user.id} />
+            </motion.div>
+          )}
+
+          {!user.isAdmin && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.25 }}
+              className="mt-6"
+            >
+              <Link
+                href={wizardHref}
+                className="group relative block overflow-hidden rounded-3xl border border-indigo-500/30 bg-gradient-to-r from-indigo-500/15 via-purple-500/15 to-pink-500/15 p-6 hover:border-indigo-400/60 transition-all"
+              >
+                <div className="absolute -right-10 -top-10 h-28 w-28 rounded-full bg-gradient-to-br from-indigo-500/35 to-pink-500/25 blur-3xl" />
+                <div className="relative flex items-center justify-between gap-4">
+                  <div className="flex items-center gap-4">
+                    <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-indigo-500 to-fuchsia-500 flex items-center justify-center shadow-lg">
+                      <Calculator className="w-6 h-6 text-white" />
+                    </div>
+                    <div>
+                      <p className="text-white font-black text-lg">{wizardTitle}</p>
+                      <p className="text-slate-300 text-sm mt-1">{wizardSubtitle}</p>
+                    </div>
+                  </div>
+                  <ChevronRight className="w-6 h-6 text-indigo-300 group-hover:text-white transition-colors" />
+                </div>
+              </Link>
             </motion.div>
           )}
 

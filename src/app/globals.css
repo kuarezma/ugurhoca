@@ -571,7 +571,8 @@ html[data-theme='light'] .profil-page,
 html[data-theme='light'] .giris-page,
 html[data-theme='light'] .kayit-page,
 html[data-theme='light'] .testler-page,
-html[data-theme='light'] .oyunlar-page {
+html[data-theme='light'] .oyunlar-page,
+html[data-theme='light'] .programlar-page {
   background:
     radial-gradient(circle at 6% -10%, rgba(99, 102, 241, 0.09), transparent 34%),
     radial-gradient(circle at 94% 2%, rgba(236, 72, 153, 0.07), transparent 30%),
@@ -582,7 +583,8 @@ html[data-theme='light'] .profil-page .glass,
 html[data-theme='light'] .giris-page .glass,
 html[data-theme='light'] .kayit-page .glass,
 html[data-theme='light'] .testler-page .glass,
-html[data-theme='light'] .oyunlar-page .glass {
+html[data-theme='light'] .oyunlar-page .glass,
+html[data-theme='light'] .programlar-page .glass {
   background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%) !important;
   border-color: var(--border-soft) !important;
   box-shadow: 0 14px 34px rgba(148, 163, 184, 0.14) !important;
@@ -602,7 +604,10 @@ html[data-theme='light'] .testler-page [class*='bg-slate-800/'],
 html[data-theme='light'] .testler-page [class*='bg-slate-700/'],
 html[data-theme='light'] .oyunlar-page [class*='bg-slate-900/'],
 html[data-theme='light'] .oyunlar-page [class*='bg-slate-800/'],
-html[data-theme='light'] .oyunlar-page [class*='bg-slate-700/'] {
+html[data-theme='light'] .oyunlar-page [class*='bg-slate-700/'],
+html[data-theme='light'] .programlar-page [class*='bg-slate-900/'],
+html[data-theme='light'] .programlar-page [class*='bg-slate-800/'],
+html[data-theme='light'] .programlar-page [class*='bg-slate-700/'] {
   background-color: #f8fafc !important;
 }
 
@@ -610,7 +615,8 @@ html[data-theme='light'] .profil-page [class*='text-slate-300'],
 html[data-theme='light'] .giris-page [class*='text-slate-300'],
 html[data-theme='light'] .kayit-page [class*='text-slate-300'],
 html[data-theme='light'] .testler-page [class*='text-slate-300'],
-html[data-theme='light'] .oyunlar-page [class*='text-slate-300'] {
+html[data-theme='light'] .oyunlar-page [class*='text-slate-300'],
+html[data-theme='light'] .programlar-page [class*='text-slate-300'] {
   color: #334155 !important;
 }
 
@@ -618,7 +624,8 @@ html[data-theme='light'] .profil-page [class*='text-slate-400'],
 html[data-theme='light'] .giris-page [class*='text-slate-400'],
 html[data-theme='light'] .kayit-page [class*='text-slate-400'],
 html[data-theme='light'] .testler-page [class*='text-slate-400'],
-html[data-theme='light'] .oyunlar-page [class*='text-slate-400'] {
+html[data-theme='light'] .oyunlar-page [class*='text-slate-400'],
+html[data-theme='light'] .programlar-page [class*='text-slate-400'] {
   color: #475569 !important;
 }
 
@@ -631,7 +638,9 @@ html[data-theme='light'] .kayit-page [class*='border-white/20'],
 html[data-theme='light'] .testler-page [class*='border-white/10'],
 html[data-theme='light'] .testler-page [class*='border-white/20'],
 html[data-theme='light'] .oyunlar-page [class*='border-white/10'],
-html[data-theme='light'] .oyunlar-page [class*='border-white/20'] {
+html[data-theme='light'] .oyunlar-page [class*='border-white/20'],
+html[data-theme='light'] .programlar-page [class*='border-white/10'],
+html[data-theme='light'] .programlar-page [class*='border-white/20'] {
   border-color: var(--border-soft) !important;
 }
 
@@ -679,7 +688,10 @@ html[data-theme='light'] .giris-page h1,
 html[data-theme='light'] .kayit-page h1,
 html[data-theme='light'] .testler-page h1,
 html[data-theme='light'] .oyunlar-page h1,
-html[data-theme='light'] .oyunlar-page h2 {
+html[data-theme='light'] .oyunlar-page h2,
+html[data-theme='light'] .programlar-page h1,
+html[data-theme='light'] .programlar-page h2,
+html[data-theme='light'] .programlar-page h3 {
   letter-spacing: -0.015em;
 }
 
@@ -687,7 +699,8 @@ html[data-theme='light'] .admin-page [class*='rounded-3xl'],
 html[data-theme='light'] .icerikler-page [class*='rounded-3xl'],
 html[data-theme='light'] .profil-page [class*='rounded-3xl'],
 html[data-theme='light'] .testler-page [class*='rounded-3xl'],
-html[data-theme='light'] .oyunlar-page [class*='rounded-3xl'] {
+html[data-theme='light'] .oyunlar-page [class*='rounded-3xl'],
+html[data-theme='light'] .programlar-page [class*='rounded-3xl'] {
   box-shadow: 0 12px 30px rgba(148, 163, 184, 0.13);
 }
 
@@ -695,7 +708,8 @@ html[data-theme='light'] .admin-page [class*='transition-'],
 html[data-theme='light'] .icerikler-page [class*='transition-'],
 html[data-theme='light'] .profil-page [class*='transition-'],
 html[data-theme='light'] .testler-page [class*='transition-'],
-html[data-theme='light'] .oyunlar-page [class*='transition-'] {
+html[data-theme='light'] .oyunlar-page [class*='transition-'],
+html[data-theme='light'] .programlar-page [class*='transition-'] {
   transition-duration: 180ms !important;
   transition-timing-function: cubic-bezier(0.2, 0.8, 0.2, 1) !important;
 }
@@ -707,7 +721,8 @@ html[data-theme='light'] .oyunlar-page [class*='transition-'] {
   html[data-theme='light'] .giris-page,
   html[data-theme='light'] .kayit-page,
   html[data-theme='light'] .testler-page,
-  html[data-theme='light'] .oyunlar-page {
+  html[data-theme='light'] .oyunlar-page,
+  html[data-theme='light'] .programlar-page {
     background:
       radial-gradient(circle at 8% -8%, rgba(99, 102, 241, 0.08), transparent 34%),
       linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);

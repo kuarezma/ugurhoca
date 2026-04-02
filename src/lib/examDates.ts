@@ -12,6 +12,7 @@ export type FeaturedExam = {
   accent: string;
   featured: boolean;
   category: 'central' | 'scholarship' | 'school';
+  toolHref?: string;
   subItems?: ExamSubItem[];
 };
 
@@ -25,6 +26,7 @@ export const featuredExams: FeaturedExam[] = [
     accent: 'from-cyan-500 via-blue-500 to-indigo-500',
     featured: true,
     category: 'central',
+    toolHref: '/programlar/lgs',
   },
   {
     id: 'yks-2026',
@@ -35,6 +37,7 @@ export const featuredExams: FeaturedExam[] = [
     accent: 'from-violet-500 via-fuchsia-500 to-orange-400',
     featured: true,
     category: 'central',
+    toolHref: '/programlar/yks',
     subItems: [
       {
         label: 'TYT',

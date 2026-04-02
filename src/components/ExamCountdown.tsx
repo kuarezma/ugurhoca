@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import { useEffect, useMemo, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Clock, Clock3 } from 'lucide-react';
@@ -158,6 +159,19 @@ export function ExamCountdown({ exam, isLight }: ExamCountdownProps) {
               </div>
             ))}
           </div>
+        ) : null}
+
+        {exam.toolHref ? (
+          <Link
+            href={exam.toolHref}
+            className={`mt-2.5 inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[10px] font-bold ${
+              isLight
+                ? 'bg-white text-slate-700 ring-1 ring-indigo-100'
+                : 'bg-white/15 text-white ring-1 ring-white/10'
+            }`}
+          >
+            Puan Hesapla
+          </Link>
         ) : null}
       </div>
     </motion.div>

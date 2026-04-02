@@ -115,7 +115,7 @@ const categories = [
     color: 'from-pink-500 to-rose-500',
     bgColor: 'bg-pink-500/10',
     borderColor: 'border-pink-500/30',
-    href: '/icerikler?type=programlar'
+    href: '/programlar'
   },
 ];
 
