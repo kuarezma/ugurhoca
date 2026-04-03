@@ -4,7 +4,11 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start"
+    "start": "next start",
+    "import:lgs": "node scripts/import-lgs-targets.mjs",
+    "import:yks": "node scripts/import-yks-targets.mjs",
+    "import:lgs:dry": "node scripts/import-lgs-targets.mjs --dry-run",
+    "import:yks:dry": "node scripts/import-yks-targets.mjs --dry-run"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.99.3",
