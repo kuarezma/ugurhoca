@@ -319,33 +319,50 @@ export default function HomePage() {
     if (!user || user.isAdmin) return;
     if (!supportMessage.trim() && supportAttachments.length === 0) return;
 
+    if (!user.id) {
+      alert('Oturum bilgisi bulunamadı. Lütfen tekrar giriş yap.');
+      return;
+    }
+
     setSupportSending(true);
 
     try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session?.user?.id) {
+        alert('Oturum süresi dolmuş. Lütfen tekrar giriş yap.');
+        setSupportSending(false);
+        return;
+      }
+
       const payload = {
-        sender_id: user.id,
+        sender_id: session.user.id,
         sender_name: user.name || 'Öğrenci',
-        sender_email: user.email || '',
+        sender_email: user.email || session.user.email || '',
         text: supportMessage.trim(),
         attachments: supportAttachments,
       };
 
       const res = await fetch('/api/support-message', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${session.access_token}`,
+        },
         body: JSON.stringify(payload),
       });
 
+      const responseData = await res.json().catch(() => null);
+
       if (!res.ok) {
-        const data = await res.json().catch(() => null);
-        throw new Error(data?.error || 'Mesaj gönderilemedi.');
+        throw new Error(responseData?.error || `Sunucu hatası (${res.status}).`);
       }
 
       setSupportMessage('');
       setSupportAttachments([]);
       setSupportSent(true);
-      setTimeout(() => setSupportSent(false), 2500);
+      setTimeout(() => setSupportSent(false), 3000);
     } catch (error: any) {
+      console.error('Support message error:', error);
       alert(error?.message || 'Mesaj gönderilemedi. Lütfen tekrar dene.');
     } finally {
       setSupportSending(false);

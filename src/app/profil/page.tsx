@@ -11,6 +11,7 @@ import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import NotesSection from '@/components/NotesSection';
 import UserStatistics from '@/components/UserStatistics';
+import ChangePasswordForm from '@/components/ChangePasswordForm';
 
 const FloatingShapes = () => (
   <div className="fixed inset-0 overflow-hidden pointer-events-none z-0">
@@ -75,10 +76,6 @@ export default function ProfilePage() {
       }
       
       const isAdmin = session.user.email === 'admin@ugurhoca.com';
-      if (isAdmin) {
-        router.push('/admin');
-        return;
-      }
 
       const { data: profile } = await supabase
         .from('profiles')
@@ -422,11 +419,23 @@ export default function ProfilePage() {
             </motion.div>
           )}
 
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3 }}
+            className="mt-6"
+          >
+            <div className="bg-white/5 border border-white/10 rounded-3xl p-6 sm:p-8">
+              <ChangePasswordForm />
+            </div>
+          </motion.div>
+
           {user.isAdmin ? (
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2 }}
+              transition={{ delay: 0.35 }}
+              className="mt-6"
             >
               <h2 className="text-xl font-bold text-white mb-4">Yönetim Alanı</h2>
               <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">

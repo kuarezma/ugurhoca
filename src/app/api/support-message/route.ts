@@ -31,9 +31,21 @@ export async function POST(request: Request) {
 
   const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
-  // Session kontrolü
-  const { data: { session }, error: sessionError } = await supabase.auth.getSession();
-  if (sessionError || !session) {
+  const authHeader = request.headers.get('authorization');
+  const accessToken = authHeader?.startsWith('Bearer ')
+    ? authHeader.slice(7).trim()
+    : '';
+
+  if (!accessToken) {
+    return NextResponse.json({ error: 'Oturum açmanız gerekiyor.' }, { status: 401 });
+  }
+
+  const {
+    data: { user },
+    error: userError,
+  } = await supabase.auth.getUser(accessToken);
+
+  if (userError || !user?.id) {
     return NextResponse.json({ error: 'Oturum açmanız gerekiyor.' }, { status: 401 });
   }
 
@@ -46,6 +58,10 @@ export async function POST(request: Request) {
 
   if (!senderId || (!text && attachments.length === 0)) {
     return NextResponse.json({ error: 'Mesaj içeriği eksik.' }, { status: 400 });
+  }
+
+  if (senderId !== user.id) {
+    return NextResponse.json({ error: 'Geçersiz istek.' }, { status: 403 });
   }
 
   const { data: admin } = await supabase
