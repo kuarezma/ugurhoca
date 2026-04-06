@@ -6,6 +6,7 @@ import {
   useRef,
   useState,
 } from 'react';
+import dynamic from 'next/dynamic';
 import { AnimatePresence, motion } from 'framer-motion';
 import {
   MessageCircle,
@@ -15,12 +16,17 @@ import {
 } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import {
-  ChatLogin,
   CHAT_USER_STORAGE_KEY,
-  type ChatSessionUser,
-} from '@/components/ChatLogin';
+  UGURHOCA_CHAT_MESSAGES_KEY,
+} from '@/lib/chat-constants';
+import type { ChatSessionUser } from '@/components/ChatLogin';
 
-const MESSAGES_KEY = 'ugurhoca_chat_messages';
+const ChatLoginLazy = dynamic(
+  () =>
+    import('@/components/ChatLogin').then((mod) => ({ default: mod.ChatLogin })),
+  { ssr: false }
+);
+
 const TAG_TEXT = '@Uğur Hoca';
 const BROADCAST_TAG = 'ugurhoca-chat-tag';
 
@@ -35,7 +41,7 @@ type ChatMessage = {
 function loadMessages(): ChatMessage[] {
   if (typeof window === 'undefined') return [];
   try {
-    const raw = sessionStorage.getItem(MESSAGES_KEY);
+    const raw = sessionStorage.getItem(UGURHOCA_CHAT_MESSAGES_KEY);
     if (!raw) return [];
     const parsed = JSON.parse(raw) as ChatMessage[];
     return Array.isArray(parsed) ? parsed : [];
@@ -45,7 +51,7 @@ function loadMessages(): ChatMessage[] {
 }
 
 function saveMessages(next: ChatMessage[]) {
-  sessionStorage.setItem(MESSAGES_KEY, JSON.stringify(next));
+  sessionStorage.setItem(UGURHOCA_CHAT_MESSAGES_KEY, JSON.stringify(next));
 }
 
 export function ChatBubble() {
@@ -72,7 +78,7 @@ export function ChatBubble() {
   }, []);
 
   useEffect(() => {
-    if (!mounted) return;
+    if (!mounted || typeof window === 'undefined') return;
     try {
       const raw = sessionStorage.getItem(CHAT_USER_STORAGE_KEY);
       if (raw) setUser(JSON.parse(raw) as ChatSessionUser);
@@ -189,8 +195,9 @@ export function ChatBubble() {
   }, [open, markActivity]);
 
   useEffect(() => {
+    if (!mounted) return;
     listEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [messages, open]);
+  }, [messages, open, mounted]);
 
   const deleteMessage = (id: string) => {
     const next = messages.filter((m) => m.id !== id);
@@ -242,6 +249,10 @@ export function ChatBubble() {
     }
   };
 
+  if (!mounted) {
+    return null;
+  }
+
   const panelBody = !user ? (
     <div className="flex h-full min-h-0 flex-col">
       <div className="flex shrink-0 items-center border-b border-[var(--border)] px-3 py-2.5">
@@ -256,7 +267,7 @@ export function ChatBubble() {
         </button>
       </div>
       <div className="min-h-0 flex-1 overflow-y-auto">
-        <ChatLogin
+        <ChatLoginLazy
           onSuccess={(u) => {
             setUser(u);
             setMessages(loadMessages());
@@ -368,8 +379,6 @@ export function ChatBubble() {
     </div>
   );
 
-  if (!mounted) return null;
-
   return (
     <>
       <motion.button
@@ -405,3 +414,5 @@ export function ChatBubble() {
     </>
   );
 }
+
+export default ChatBubble;

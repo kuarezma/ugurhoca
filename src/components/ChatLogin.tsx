@@ -5,8 +5,7 @@ import { motion } from 'framer-motion';
 import { LogIn, Loader2 } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import { computeChatDisplayName } from '@/lib/chat-display-name';
-
-export const CHAT_USER_STORAGE_KEY = 'chat_user';
+import { CHAT_USER_STORAGE_KEY } from '@/lib/chat-constants';
 
 export type ChatSessionUser = {
   tc_number: string;
