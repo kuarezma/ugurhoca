@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Providers } from "@/components/Providers";
+import { ChatBubble } from "@/components/ChatBubble";
 import { THEME_STORAGE_KEY } from "@/components/theme-constants";
 import "./globals.css";
 
@@ -43,6 +44,7 @@ export default function RootLayout({
       </head>
       <body>
         <Providers>{children}</Providers>
+        <ChatBubble />
       </body>
     </html>
   );
