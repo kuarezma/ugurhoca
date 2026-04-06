@@ -1,0 +1,34 @@
+{
+  "name": "matematik-platform",
+  "version": "1.0.0",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "import:lgs": "node scripts/import-lgs-targets.mjs",
+    "import:yks": "node scripts/import-yks-targets.mjs",
+    "import:lgs:dry": "node scripts/import-lgs-targets.mjs --dry-run",
+    "import:yks:dry": "node scripts/import-yks-targets.mjs --dry-run"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.99.3",
+    "clsx": "^2.1.1",
+    "dotenv": "^17.3.1",
+    "framer-motion": "^12.38.0",
+    "lucide-react": "^0.577.0",
+    "next": "^16.2.1",
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4",
+    "resend": "^6.9.4",
+    "tailwind-merge": "^3.5.0"
+  },
+  "devDependencies": {
+    "@types/node": "^25.5.0",
+    "@types/react": "^19.2.14",
+    "autoprefixer": "^10.4.27",
+    "postcss": "^8.5.8",
+    "tailwindcss": "^3.4.19",
+    "typescript": "^5.9.3",
+    "vercel": "^50.35.0"
+  }
+}
