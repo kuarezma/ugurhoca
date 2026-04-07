@@ -3,6 +3,8 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { LogIn, Loader2 } from 'lucide-react';
+import { supabase } from '@/lib/supabase';
+import { computeChatDisplayName } from '@/lib/chat-display-name';
 import { CHAT_USER_STORAGE_KEY } from '@/lib/chat-constants';
 
 export type ChatSessionUser = {
@@ -39,41 +41,34 @@ export function ChatLogin({ onSuccess }: Props) {
       return;
     }
 
+    const display_name = computeChatDisplayName(name);
     setLoading(true);
     try {
-      const res = await fetch('/api/chat-register', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ tc_number: tc, full_name: name }),
-      });
-      const data = (await res.json().catch(() => ({}))) as {
-        error?: string;
-        user?: ChatSessionUser;
+      const { error: upsertError } = await supabase.from('chat_users').upsert(
+        {
+          tc_number: tc,
+          full_name: name,
+          display_name,
+          updated_at: new Date().toISOString(),
+        },
+        { onConflict: 'tc_number' }
+      );
+      if (upsertError) throw upsertError;
+
+      const user: ChatSessionUser = {
+        tc_number: tc,
+        full_name: name,
+        display_name,
       };
-
-      if (!res.ok) {
-        setError(data.error || `Sunucu hatası (${res.status}).`);
-        return;
-      }
-
-      if (!data.user) {
-        setError('Beklenmeyen yanıt.');
-        return;
-      }
-
-      const user = data.user;
       sessionStorage.setItem(CHAT_USER_STORAGE_KEY, JSON.stringify(user));
       onSuccess(user);
     } catch (err) {
       console.error(err);
-      const msg =
-        err &&
-        typeof err === 'object' &&
-        'message' in err &&
-        typeof (err as { message: unknown }).message === 'string'
-          ? (err as { message: string }).message
-          : 'Giriş sırasında beklenmeyen bir hata oluştu.';
-      setError(msg);
+      setError(
+        err instanceof Error
+          ? err.message
+          : 'Giriş sırasında bir hata oluştu. Supabase tablosunu kontrol edin.'
+      );
     } finally {
       setLoading(false);
     }

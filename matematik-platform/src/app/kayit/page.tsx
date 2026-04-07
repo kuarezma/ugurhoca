@@ -6,6 +6,11 @@ import Link from 'next/link';
 import { Calculator, Eye, EyeOff, ArrowLeft, CheckCircle2, GraduationCap } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
+import {
+  formatSignupError,
+  normalizeFullNameForMatch,
+  studentLoginEmail,
+} from '@/lib/student-identity';
 
 const FloatingShapes = () => (
   <div className="fixed inset-0 overflow-hidden pointer-events-none z-0">
@@ -81,42 +86,85 @@ export default function RegisterPage() {
     }
 
     try {
-      const nameSlug = formData.name.trim().toLowerCase().replace(/\s+/g, '_').replace(/[^a-z0-9_]/g, '');
-      const fakeEmail = `${nameSlug}_${Date.now()}@ugurhoca.local`;
-      const userGrade = parseInt(formData.grade);
-      const isPrivate = formData.password.toLowerCase() === 'ozelders' || formData.password.toLowerCase() === 'özelders';
+      const displayName = formData.name.trim();
+      const nameNormalized = normalizeFullNameForMatch(displayName);
+      let fakeEmail: string;
+      try {
+        fakeEmail = studentLoginEmail(displayName);
+      } catch {
+        setError('Ad soyadı geçerli değil.');
+        return;
+      }
+
+      const userGrade =
+        formData.grade === 'Mezun'
+          ? 0
+          : Number.parseInt(formData.grade, 10);
+      const gradeValue = Number.isNaN(userGrade) ? 0 : userGrade;
+      const isPrivate =
+        formData.password.toLowerCase() === 'ozelders' ||
+        formData.password.toLowerCase() === 'özelders';
+
+      const { data: existingByEmail } = await supabase
+        .from('profiles')
+        .select('id')
+        .eq('email', fakeEmail)
+        .maybeSingle();
+
+      if (existingByEmail) {
+        setError(
+          'Bu ad soyad ile zaten hesap var. Giriş sayfasından deneyin.'
+        );
+        return;
+      }
+
+      const { data: existingByNorm, error: normErr } = await supabase
+        .from('profiles')
+        .select('id')
+        .eq('name_normalized', nameNormalized)
+        .maybeSingle();
+
+      if (normErr) throw normErr;
+      if (existingByNorm) {
+        setError(
+          'Bu ad soyad ile zaten hesap var. Giriş sayfasından deneyin.'
+        );
+        return;
+      }
 
       const { data, error: signUpError } = await supabase.auth.signUp({
         email: fakeEmail,
         password: formData.password,
         options: {
           data: {
-            name: formData.name.trim(),
-            grade: userGrade,
+            name: displayName,
+            grade: gradeValue,
             is_private_student: isPrivate,
-          }
-        }
+          },
+        },
       });
 
       if (signUpError) throw signUpError;
 
       if (data.user) {
-        await supabase.from('profiles').upsert({
+        const { error: profileErr } = await supabase.from('profiles').upsert({
           id: data.user.id,
-          name: formData.name.trim(),
+          name: displayName,
+          name_normalized: nameNormalized,
           email: fakeEmail,
-          grade: userGrade,
+          grade: gradeValue,
           is_private_student: isPrivate,
           created_at: new Date().toISOString(),
         });
+        if (profileErr) throw profileErr;
       }
 
       setSuccess(true);
       setTimeout(() => {
         router.push('/profil');
       }, 2000);
-    } catch (err: any) {
-      setError(err.message || 'Kayıt olurken bir hata oluştu');
+    } catch (err: unknown) {
+      setError(formatSignupError(err));
     }
   };
 
@@ -178,12 +226,16 @@ export default function RegisterPage() {
               <input
                 type="text"
                 required
+                autoComplete="name"
                 value={formData.name}
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                 className="w-full bg-slate-800/50 border border-slate-700 rounded-xl px-4 py-3 text-white 
                          focus:outline-none focus:border-purple-500 transition-colors"
                 placeholder="Adınız Soyadınız"
               />
+              <p className="mt-1.5 text-xs text-slate-500">
+                Büyük/küçük harf fark etmez; girişte aynı ad soyadı kullanın.
+              </p>
             </div>
 
             <div>

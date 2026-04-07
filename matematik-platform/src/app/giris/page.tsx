@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { Calculator, Eye, EyeOff, ArrowLeft } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
+import { normalizeFullNameForMatch } from '@/lib/student-identity';
 
 const FloatingShapes = () => (
   <div className="fixed inset-0 overflow-hidden pointer-events-none z-0">
@@ -36,7 +37,7 @@ const FloatingShapes = () => (
 
 export default function LoginPage() {
   const [formData, setFormData] = useState({
-    username: '',
+    fullName: '',
     password: '',
   });
   const [showPassword, setShowPassword] = useState(false);
@@ -57,35 +58,52 @@ export default function LoginPage() {
     e.preventDefault();
     setError('');
 
-    if (!formData.username || !formData.password) {
+    if (!formData.fullName || !formData.password) {
       setError('Lütfen tüm alanları doldurun');
       return;
     }
 
-    if (formData.username.trim().split(' ').length < 2) {
+    const displayName = formData.fullName.trim();
+    if (displayName.split(/\s+/).length < 2) {
       setError('Lütfen ad ve soyad girin (örn: Ahmet Yılmaz)');
       return;
     }
 
+    const nameNormalized = normalizeFullNameForMatch(displayName);
+
     try {
-      const { data: profileMatches, error: profileError } = await supabase
+      const { data: byNorm, error: normError } = await supabase
         .from('profiles')
         .select('email')
-        .ilike('name', formData.username.trim());
+        .eq('name_normalized', nameNormalized);
 
-      if (profileError) throw profileError;
+      if (normError) throw normError;
+
+      let profileMatches = byNorm ?? [];
+
+      if (profileMatches.length === 0) {
+        const { data: legacy, error: legacyError } = await supabase
+          .from('profiles')
+          .select('email')
+          .ilike('name', displayName);
+
+        if (legacyError) throw legacyError;
+        profileMatches = legacy ?? [];
+      }
 
       if (!profileMatches || profileMatches.length === 0) {
-        setError('Kullanıcı adı bulunamadı');
+        setError('Bu ad soyad ile kayıtlı hesap bulunamadı.');
         return;
       }
 
       if (profileMatches.length > 1) {
-        setError('Bu kullanıcı adı birden fazla hesapta var. Admin ile iletişime geçin.');
+        setError(
+          'Bu ad soyad birden fazla hesapta görünüyor. Lütfen yönetici ile iletişime geçin.'
+        );
         return;
       }
 
-      const { data, error: signInError } = await supabase.auth.signInWithPassword({
+      const { error: signInError } = await supabase.auth.signInWithPassword({
         email: profileMatches[0].email,
         password: formData.password,
       });
@@ -95,7 +113,7 @@ export default function LoginPage() {
       router.push('/profil');
     } catch (err: any) {
       if (err.message === 'Invalid login credentials') {
-          setError('Kullanıcı adı veya şifre hatalı');
+        setError('Ad soyad veya şifre hatalı');
       } else if (err.message === 'Email not confirmed') {
         setError('E-posta onayı bekleniyor.');
       } else {
@@ -134,15 +152,21 @@ export default function LoginPage() {
 
           <form onSubmit={handleSubmit} className="space-y-5">
             <div>
-              <label className="block text-slate-300 mb-2 text-sm">Kullanıcı Adı</label>
+              <label className="block text-slate-300 mb-2 text-sm">Ad Soyad</label>
               <input
                 type="text"
-                value={formData.username}
-                onChange={(e) => setFormData({ ...formData, username: e.target.value })}
+                autoComplete="name"
+                value={formData.fullName}
+                onChange={(e) =>
+                  setFormData({ ...formData, fullName: e.target.value })
+                }
                 className="w-full bg-slate-800/50 border border-slate-700 rounded-xl px-4 py-3 text-white 
                          focus:outline-none focus:border-purple-500 transition-colors"
-                placeholder="kullaniciadi"
+                placeholder="Örn: Ahmet Yılmaz"
               />
+              <p className="mt-1.5 text-xs text-slate-500">
+                Kayıt olurken yazdığınız ad soyad ile aynı olmalı. Büyük/küçük harf fark etmez.
+              </p>
             </div>
 
             <div>

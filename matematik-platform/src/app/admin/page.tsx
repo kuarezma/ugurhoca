@@ -13,6 +13,7 @@ import {
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
+import { normalizeFullNameForMatch } from '@/lib/student-identity';
 import AdminStatistics from '@/components/AdminStatistics';
 import FloatingShapes from '@/components/FloatingShapes';
 
@@ -2078,6 +2079,7 @@ export default function AdminPage() {
                   
                   const { data, error } = await supabase.from('profiles').insert([{
                     name: formData.name,
+                    name_normalized: normalizeFullNameForMatch(String(formData.name ?? '')),
                     email: formData.email,
                     grade: formData.grade,
                     is_private_student: true
