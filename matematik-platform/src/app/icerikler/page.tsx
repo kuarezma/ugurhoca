@@ -97,20 +97,47 @@ function ContentsPageInner() {
     return Number.isFinite(n) && n > 0 ? n : 'all';
   };
 
-  const loadDocuments = async (pageNum: number = 1, append: boolean = false) => {
+  const loadDocuments = async (pageNum: number = 1, append: boolean = false, gradeFilter?: number | 'all' | 'Mezun', typeFilter?: string) => {
     setLoading(true);
     const from = (pageNum - 1) * PAGE_SIZE;
     const to = from + PAGE_SIZE - 1;
     
-    const { count } = await supabase
+    let query = supabase
       .from('documents')
       .select('*', { count: 'exact', head: true });
     
-    const { data } = await supabase
+    // Apply grade filter
+    if (gradeFilter && gradeFilter !== 'all') {
+      query = query.contains('grade', [gradeFilter]);
+    }
+    
+    // Apply type filter
+    if (typeFilter && typeFilter !== 'all') {
+      const mappedType = typeMapping[typeFilter] || typeFilter;
+      query = query.eq('type', mappedType);
+    }
+    
+    const { count } = await query;
+    
+    query = supabase
       .from('documents')
       .select('*')
-      .order('created_at', { ascending: false })
-      .range(from, to);
+      .order('created_at', { ascending: false });
+    
+    // Apply grade filter to data query
+    if (gradeFilter && gradeFilter !== 'all') {
+      query = query.contains('grade', [gradeFilter]);
+    }
+    
+    // Apply type filter to data query
+    if (typeFilter && typeFilter !== 'all') {
+      const mappedType = typeMapping[typeFilter] || typeFilter;
+      query = query.eq('type', mappedType);
+    }
+    
+    query = query.range(from, to);
+    
+    const { data } = await query;
       
     if (data) {
       if (append) {
@@ -137,11 +164,17 @@ function ContentsPageInner() {
   }, []);
 
   useEffect(() => {
+    // Reload documents when filters change
+    setPage(1);
+    loadDocuments(1, false, selectedGrade, selectedType);
+  }, [selectedGrade, selectedType]);
+
+  useEffect(() => {
     const observer = new IntersectionObserver((entries) => {
       if (entries[0].isIntersecting && hasMore && !loading) {
         const nextPage = page + 1;
         setPage(nextPage);
-        loadDocuments(nextPage, true);
+        loadDocuments(nextPage, true, selectedGrade, selectedType);
       }
     });
     
@@ -150,7 +183,7 @@ function ContentsPageInner() {
     }
     
     return () => observer.disconnect();
-  }, [hasMore, loading, page]);
+  }, [hasMore, loading, page, selectedGrade, selectedType]);
 
   useEffect(() => {
     const checkSession = async () => {
@@ -284,15 +317,7 @@ function ContentsPageInner() {
   const filteredContents = documents.filter(content => {
     if (!content || !content.title) return false;
     const matchesSearch = content.title.toLowerCase().includes(searchTerm.toLowerCase());
-    const grades = Array.isArray(content.grade) ? content.grade.map((g: any) => String(g)) : [];
-    const matchesGrade =
-      user?.isAdmin ||
-      selectedGrade === 'all' ||
-      grades.length === 0 ||
-      grades.includes(String(selectedGrade));
-    const contentType = typeMapping[content.type] || content.type;
-    const matchesType = mappedType === 'all' || contentType === mappedType;
-    return matchesSearch && matchesGrade && matchesType;
+    return matchesSearch;
   });
 
   const getYouTubeId = (url: string) => {
