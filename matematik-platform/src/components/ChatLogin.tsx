@@ -53,7 +53,14 @@ export function ChatLogin({ onSuccess }: Props) {
         },
         { onConflict: 'tc_number' }
       );
-      if (upsertError) throw upsertError;
+      if (upsertError) {
+        console.error(upsertError);
+        setError(
+          upsertError.message ||
+            'Kayıt yapılamadı. Supabase’de public.chat_users tablosu ve RLS politikaları tanımlı mı kontrol edin (SQL: supabase/migrations/20260406120000_chat_users.sql).'
+        );
+        return;
+      }
 
       const user: ChatSessionUser = {
         tc_number: tc,
@@ -64,11 +71,14 @@ export function ChatLogin({ onSuccess }: Props) {
       onSuccess(user);
     } catch (err) {
       console.error(err);
-      setError(
-        err instanceof Error
-          ? err.message
-          : 'Giriş sırasında bir hata oluştu. Supabase tablosunu kontrol edin.'
-      );
+      const msg =
+        err &&
+        typeof err === 'object' &&
+        'message' in err &&
+        typeof (err as { message: unknown }).message === 'string'
+          ? (err as { message: string }).message
+          : 'Giriş sırasında beklenmeyen bir hata oluştu.';
+      setError(msg);
     } finally {
       setLoading(false);
     }
