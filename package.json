@@ -1,0 +1,10 @@
+{
+  "name": "ugurhoca",
+  "private": true,
+  "description": "Repo kökü; Next.js uygulaması matematik-platform/ altında",
+  "scripts": {
+    "build": "npm run build --prefix matematik-platform",
+    "dev": "npm run dev --prefix matematik-platform",
+    "start": "npm run start --prefix matematik-platform"
+  }
+}
