@@ -1,12 +1,8 @@
 import type { Metadata } from "next";
-import dynamic from "next/dynamic";
 import { Providers } from "@/components/Providers";
+import { ChatBubbleLoader } from "@/components/ChatBubbleLoader";
 import { THEME_STORAGE_KEY } from "@/components/theme-constants";
 import "./globals.css";
-
-const ChatBubble = dynamic(() => import("@/components/ChatBubble"), {
-  ssr: false,
-});
 
 export const metadata: Metadata = {
   title: "Uğur Hoca Matematik - Matematik Öğrenme Platformu",
@@ -48,7 +44,7 @@ export default function RootLayout({
       </head>
       <body>
         <Providers>{children}</Providers>
-        <ChatBubble />
+        <ChatBubbleLoader />
       </body>
     </html>
   );

@@ -333,3 +333,27 @@ ON CONFLICT (year, program_code) DO UPDATE SET
   base_score = EXCLUDED.base_score,
   source_url_osym = EXCLUDED.source_url_osym,
   source_url_yokatlas = EXCLUDED.source_url_yokatlas;
+
+-- ============================================
+-- chat_users (sohbet girişi — ChatLogin upsert)
+-- Ayrıca: supabase/migrations/20260406120000_chat_users.sql
+-- ============================================
+CREATE TABLE IF NOT EXISTS public.chat_users (
+  tc_number TEXT PRIMARY KEY,
+  full_name TEXT NOT NULL,
+  display_name TEXT NOT NULL,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+
+ALTER TABLE public.chat_users ENABLE ROW LEVEL SECURITY;
+
+DROP POLICY IF EXISTS "chat_users_select" ON public.chat_users;
+DROP POLICY IF EXISTS "chat_users_insert" ON public.chat_users;
+DROP POLICY IF EXISTS "chat_users_update" ON public.chat_users;
+
+CREATE POLICY "chat_users_select" ON public.chat_users FOR SELECT USING (true);
+CREATE POLICY "chat_users_insert" ON public.chat_users FOR INSERT WITH CHECK (true);
+CREATE POLICY "chat_users_update" ON public.chat_users FOR UPDATE USING (true) WITH CHECK (true);
+
+GRANT SELECT, INSERT, UPDATE ON public.chat_users TO anon, authenticated;
