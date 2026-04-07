@@ -18,3 +18,6 @@ drop policy if exists "chat_users_update" on public.chat_users;
 create policy "chat_users_select" on public.chat_users for select using (true);
 create policy "chat_users_insert" on public.chat_users for insert with check (true);
 create policy "chat_users_update" on public.chat_users for update using (true) with check (true);
+
+-- Bazı projelerde anon/authenticated için tablo izni açıkça gerekir
+grant select, insert, update on public.chat_users to anon, authenticated;

@@ -355,3 +355,5 @@ DROP POLICY IF EXISTS "chat_users_update" ON public.chat_users;
 CREATE POLICY "chat_users_select" ON public.chat_users FOR SELECT USING (true);
 CREATE POLICY "chat_users_insert" ON public.chat_users FOR INSERT WITH CHECK (true);
 CREATE POLICY "chat_users_update" ON public.chat_users FOR UPDATE USING (true) WITH CHECK (true);
+
+GRANT SELECT, INSERT, UPDATE ON public.chat_users TO anon, authenticated;

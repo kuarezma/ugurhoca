@@ -3,8 +3,6 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { LogIn, Loader2 } from 'lucide-react';
-import { supabase } from '@/lib/supabase';
-import { computeChatDisplayName } from '@/lib/chat-display-name';
 import { CHAT_USER_STORAGE_KEY } from '@/lib/chat-constants';
 
 export type ChatSessionUser = {
@@ -41,32 +39,29 @@ export function ChatLogin({ onSuccess }: Props) {
       return;
     }
 
-    const display_name = computeChatDisplayName(name);
     setLoading(true);
     try {
-      const { error: upsertError } = await supabase.from('chat_users').upsert(
-        {
-          tc_number: tc,
-          full_name: name,
-          display_name,
-          updated_at: new Date().toISOString(),
-        },
-        { onConflict: 'tc_number' }
-      );
-      if (upsertError) {
-        console.error(upsertError);
-        setError(
-          upsertError.message ||
-            'Kayıt yapılamadı. Supabase’de public.chat_users tablosu ve RLS politikaları tanımlı mı kontrol edin (SQL: supabase/migrations/20260406120000_chat_users.sql).'
-        );
+      const res = await fetch('/api/chat-register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ tc_number: tc, full_name: name }),
+      });
+      const data = (await res.json().catch(() => ({}))) as {
+        error?: string;
+        user?: ChatSessionUser;
+      };
+
+      if (!res.ok) {
+        setError(data.error || `Sunucu hatası (${res.status}).`);
         return;
       }
 
-      const user: ChatSessionUser = {
-        tc_number: tc,
-        full_name: name,
-        display_name,
-      };
+      if (!data.user) {
+        setError('Beklenmeyen yanıt.');
+        return;
+      }
+
+      const user = data.user;
       sessionStorage.setItem(CHAT_USER_STORAGE_KEY, JSON.stringify(user));
       onSuccess(user);
     } catch (err) {
