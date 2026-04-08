@@ -134,7 +134,7 @@ export function ChatBubble() {
       if (!raw) return;
       try {
         const parsed = JSON.parse(raw) as ChatSessionUser;
-        if (!isAdminTc(parsed.tc_number)) return;
+        if (!isAdminTc(parsed.school_number)) return;
         if (
           typeof data?.text === 'string' &&
           data.text.includes(TAG_TEXT) &&
@@ -176,7 +176,7 @@ export function ChatBubble() {
     if (!mounted || !user) return;
 
     const channel = supabase.channel('ugurhoca-chat-presence', {
-      config: { presence: { key: user.tc_number } },
+      config: { presence: { key: user.school_number } },
     });
 
     channel
@@ -184,7 +184,7 @@ export function ChatBubble() {
       .subscribe(async (status) => {
         if (status === 'SUBSCRIBED') {
           await channel.track({
-            tc: user.tc_number,
+            tc: user.school_number,
             display_name: user.display_name,
             last_seen: Date.now(),
           });
@@ -204,7 +204,7 @@ export function ChatBubble() {
         recomputeOnline(channel);
       } else {
         await channel.track({
-          tc: user.tc_number,
+          tc: user.school_number,
           display_name: user.display_name,
           last_seen: Date.now(),
         });
