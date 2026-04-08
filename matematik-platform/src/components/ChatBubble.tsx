@@ -432,62 +432,76 @@ export function ChatBubble() {
     <div className="flex h-full min-h-0 flex-col">
       <div className="flex shrink-0 items-center gap-2 border-b border-[var(--border)] px-3 py-2.5">
         <h2 className="text-sm font-semibold text-[var(--text-strong)]">Sohbet</h2>
-        <span className="rounded-full bg-[var(--bg-muted)] px-2 py-0.5 text-[11px] font-medium text-[var(--text-muted)]">
-          {onlineCount} kişi çevrimiçi
+        <span className="rounded-full bg-emerald-500/10 px-2.5 py-0.5 text-[11px] font-bold text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 flex items-center gap-1.5">
+          <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+          {onlineCount} çevrimiçi
         </span>
         <button
           type="button"
           onClick={() => setOpen(false)}
-          className="ml-auto rounded-lg p-1.5 text-[var(--text-muted)] transition hover:bg-[var(--bg-muted)] hover:text-[var(--text)]"
+          className="ml-auto rounded-full p-2 text-[var(--text-muted)] transition-colors hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-[var(--text)]"
           aria-label="Kapat"
         >
           <X className="h-4 w-4" />
         </button>
       </div>
 
-      <div className="min-h-0 flex-1 space-y-2 overflow-y-auto px-3 py-2">
+      <div className="min-h-0 flex-1 space-y-3 overflow-y-auto px-4 py-4 custom-scrollbar bg-slate-50/50 dark:bg-slate-900/50">
         {messages.length === 0 && (
           <p className="text-center text-xs text-[var(--text-muted)]">
             Henüz mesaj yok. Merhaba deyin 👋
           </p>
         )}
-        {messages.map((m) => {
-          const mineAdmin = isAdminTc(m.sender_tc);
-          return (
-            <div
-              key={m.id}
-              className={`flex w-full ${mineAdmin ? 'justify-end' : 'justify-start'}`}
-            >
-              <div
-                className={`max-w-[85%] rounded-2xl px-3 py-2 text-sm shadow-sm ${
-                  mineAdmin
-                    ? 'rounded-br-md bg-gradient-to-br from-indigo-600 to-violet-600 text-white'
-                    : 'rounded-bl-md bg-[var(--bg-muted)] text-[var(--text)]'
-                }`}
+        <AnimatePresence>
+          {messages.map((m) => {
+            const mineAdmin = isAdminTc(m.sender_tc);
+            const timeString = new Date(m.ts).toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' });
+            
+            return (
+              <motion.div
+                key={m.id}
+                initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                layout
+                className={`flex w-full mb-1 ${mineAdmin ? 'justify-end' : 'justify-start'}`}
               >
-                {!mineAdmin && (
-                  <p className="mb-1 text-[10px] font-semibold uppercase tracking-wide text-[var(--text-soft)]">
-                    {m.display_name}
-                  </p>
-                )}
-                {mineAdmin && (
-                  <div className="mb-1 flex items-center justify-between gap-2">
-                    <p className="text-[10px] font-semibold text-white/90">{m.display_name}</p>
-                    <button
-                      type="button"
-                      onClick={() => deleteMessage(m.id)}
-                      className="rounded p-0.5 text-white/80 hover:bg-white/10 hover:text-white"
-                      aria-label="Mesajı sil"
-                    >
-                      <Trash2 className="h-3.5 w-3.5" />
-                    </button>
+                <div
+                  className={`relative max-w-[85%] px-4 py-2 text-[15px] shadow-sm backdrop-blur-md ${
+                    mineAdmin
+                      ? 'rounded-2xl rounded-tr-sm bg-gradient-to-br from-indigo-500/90 to-violet-600/90 text-white border border-indigo-400/30'
+                      : 'rounded-2xl rounded-tl-sm bg-slate-100/80 dark:bg-slate-800/80 text-slate-900 dark:text-slate-100 border border-slate-200/50 dark:border-slate-700/50'
+                  }`}
+                  style={{ boxShadow: '0 4px 15px rgba(0, 0, 0, 0.05)' }}
+                >
+                  {!mineAdmin && (
+                    <p className="mb-0.5 text-[10px] font-bold tracking-wide text-indigo-500 dark:text-indigo-400">
+                      ~ {m.display_name}
+                    </p>
+                  )}
+                  {mineAdmin && (
+                    <div className="mb-0.5 flex items-center justify-between gap-4">
+                      <p className="text-[10px] font-bold text-white/70">~ Sen</p>
+                      <button
+                        type="button"
+                        onClick={() => deleteMessage(m.id)}
+                        className="rounded p-0.5 text-white/50 hover:bg-white/10 hover:text-white transition-colors"
+                        aria-label="Mesajı sil"
+                      >
+                        <Trash2 className="h-3 w-3" />
+                      </button>
+                    </div>
+                  )}
+                  <div className="flex flex-col">
+                    <p className="whitespace-pre-wrap break-words leading-relaxed">{m.text}</p>
+                    <span className={`text-[9px] font-medium self-end mt-1 ${mineAdmin ? 'text-white/60' : 'text-slate-400 dark:text-slate-500'}`}>
+                      {timeString} {mineAdmin && '✓✓'}
+                    </span>
                   </div>
-                )}
-                <p className="whitespace-pre-wrap break-words leading-relaxed">{m.text}</p>
-              </div>
-            </div>
-          );
-        })}
+                </div>
+              </motion.div>
+            );
+          })}
+        </AnimatePresence>
         <div ref={listEndRef} />
       </div>
 

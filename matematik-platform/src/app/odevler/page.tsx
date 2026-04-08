@@ -23,6 +23,8 @@ export default function OdevlerPage() {
   const [uploading, setUploading] = useState<string | null>(null);
   const [selectedAssignment, setSelectedAssignment] = useState<any>(null);
   const [comment, setComment] = useState('');
+  const [isDragging, setIsDragging] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState<number | null>(null);
 
   useEffect(() => {
     const fetchUserAndAssignments = async () => {
@@ -91,19 +93,25 @@ export default function OdevlerPage() {
       const fileName = `${user.id}/${assignmentId}_${Date.now()}.${fileExt}`;
       const filePath = `${fileName}`;
 
-      // 1. Dosyayı yükle
+      // Fake progress animation for better UX
+      setUploadProgress(10);
+      const progressInterval = setInterval(() => {
+        setUploadProgress(prev => prev && prev < 90 ? prev + Math.random() * 15 : prev);
+      }, 300);
+
       const { error: uploadError } = await supabase.storage
         .from('submissions')
         .upload(filePath, file);
 
+      clearInterval(progressInterval);
       if (uploadError) throw uploadError;
+      
+      setUploadProgress(100);
 
-      // 2. URL'i al
       const { data: { publicUrl } } = supabase.storage
         .from('submissions')
         .getPublicUrl(filePath);
 
-      // 3. Veritabanına kaydet
       const { data: submissionData, error: dbError } = await supabase
         .from('assignment_submissions')
         .insert([{
@@ -118,17 +126,40 @@ export default function OdevlerPage() {
 
       if (dbError) throw dbError;
 
-      // Local state güncelle
-      setSubmissions(prev => ({ ...prev, [assignmentId]: submissionData }));
-      setSelectedAssignment(null);
-      setComment('');
+      setTimeout(() => {
+        setSubmissions(prev => ({ ...prev, [assignmentId]: submissionData }));
+        setSelectedAssignment(null);
+        setComment('');
+        setUploadProgress(null);
+      }, 500);
       
     } catch (error: any) {
       console.error('Yükleme hatası:', error);
       alert('Ödev yüklenirken bir hata oluştu: ' + error.message);
+      setUploadProgress(null);
     } finally {
       setUploading(null);
     }
+  };
+
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(true);
+  };
+
+  const handleDragLeave = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(false);
+  };
+
+  const handleDrop = (e: React.DragEvent, assignmentId: string) => {
+    e.preventDefault();
+    setIsDragging(false);
+    
+    if (uploading) return;
+    
+    const file = e.dataTransfer.files?.[0];
+    if (file) handleFileUpload(assignmentId, file);
   };
 
   if (loading) {
@@ -361,21 +392,44 @@ export default function OdevlerPage() {
                     />
                     <label
                       htmlFor="file-upload"
-                      className={`flex flex-col items-center justify-center gap-3 p-8 border-2 border-dashed rounded-3xl cursor-pointer transition-all ${
+                      onDragOver={handleDragOver}
+                      onDragLeave={handleDragLeave}
+                      onDrop={(e) => handleDrop(e, selectedAssignment.id)}
+                      className={`relative overflow-hidden flex flex-col items-center justify-center gap-3 p-8 border-2 border-dashed rounded-3xl cursor-pointer transition-all duration-300 ${
                         uploading 
-                          ? 'opacity-50 pointer-events-none' 
-                          : 'border-slate-700 hover:border-indigo-500/50 hover:bg-indigo-500/5'
+                          ? 'opacity-80 pointer-events-none border-indigo-500/30'
+                          : isDragging
+                            ? 'border-indigo-500 bg-indigo-500/10 scale-[1.02]' 
+                            : 'border-slate-700 hover:border-indigo-500/50 hover:bg-slate-800/50'
                       }`}
                     >
-                      <div className="w-12 h-12 rounded-full bg-slate-800 flex items-center justify-center">
+                      {/* Upload Progress Bar Background */}
+                      {uploadProgress !== null && (
+                        <div 
+                           className="absolute bottom-0 left-0 h-1 bg-indigo-500 transition-all duration-300 ease-out z-0"
+                           style={{ width: `${Math.min(uploadProgress, 100)}%` }}
+                        />
+                      )}
+                      
+                      <div className={`w-14 h-14 rounded-2xl flex items-center justify-center transition-all duration-300 z-10 ${isDragging ? 'bg-indigo-500 shadow-lg shadow-indigo-500/30 scale-110' : 'bg-slate-800 border border-slate-700'}`}>
                         {uploading ? (
-                          <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                          <div className="flex items-center gap-1">
+                             <div className="w-1.5 h-1.5 rounded-full bg-indigo-400 animate-bounce" style={{ animationDelay: '0ms' }} />
+                             <div className="w-1.5 h-1.5 rounded-full bg-indigo-400 animate-bounce" style={{ animationDelay: '150ms' }} />
+                             <div className="w-1.5 h-1.5 rounded-full bg-indigo-400 animate-bounce" style={{ animationDelay: '300ms' }} />
+                          </div>
                         ) : (
-                          <Upload className="w-6 h-6 text-slate-300" />
+                          <Upload className={`w-6 h-6 ${isDragging ? 'text-white' : 'text-slate-300'}`} />
                         )}
                       </div>
-                      <div className="text-center">
-                        <p className="text-sm font-bold text-white mb-1">Dosya Seç veya Sürükle</p>
+                      <div className="text-center z-10">
+                        <p className={`font-bold mb-1 ${isDragging ? 'text-indigo-400 text-base' : 'text-white text-sm'}`}>
+                          {uploading 
+                            ? `Yükleniyor... ${Math.round(uploadProgress || 0)}%` 
+                            : isDragging 
+                              ? 'Buraya Bırak' 
+                              : 'Dosyayı Sürükle veya Seç'}
+                        </p>
                         <p className="text-xs text-slate-500">PDF, JPG veya PNG (Max 5MB)</p>
                       </div>
                     </label>

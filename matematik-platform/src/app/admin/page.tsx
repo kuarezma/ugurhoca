@@ -9,7 +9,7 @@ import {
   Calendar, Eye, Download, Check, CheckCircle2, AlertCircle, Sparkles,
   Users, BookOpen, RefreshCw, GraduationCap, Send, Bell,
   UserCheck, ClipboardList, MessageSquareText, Paperclip, Ban, VolumeX, Flag,
-  BarChart3, Clock, ChevronRight
+  BarChart3, Clock, ChevronRight, Star
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
@@ -2635,54 +2635,70 @@ export default function AdminPage() {
                   {modalType === 'addQuestion' && (
                     <>
                       <div>
-                        <label className="block text-slate-300 mb-2 text-sm">Soru</label>
+                        <label className="block text-slate-300 mb-2 font-bold uppercase tracking-wider text-xs">Soru Metni</label>
                         <textarea
                           required
                           rows={3}
                           value={formData.question || ''}
                           onChange={(e) => setFormData({ ...formData, question: e.target.value })}
-                          className="w-full bg-slate-800/50 border border-slate-700 rounded-xl px-4 py-3 text-white
-                                   focus:outline-none focus:border-violet-500 transition-colors resize-none"
+                          className="w-full bg-slate-800/50 border border-slate-700/50 rounded-2xl px-4 py-4 text-white
+                                   focus:outline-none focus:ring-2 focus:ring-violet-500 transition-all resize-none shadow-inner"
                           placeholder="Soruyu buraya yazın..."
                         />
                       </div>
+                      
+                      {/* Şıklar - Modern UX */}
                       <div>
-                        <label className="block text-slate-300 mb-2 text-sm">Şıklar (Her satıra bir şık)</label>
-                        <textarea
-                          required
-                          rows={4}
-                          value={formData.options?.join('\n') || ''}
-                          onChange={(e) => setFormData({ ...formData, options: e.target.value.split('\n').filter(Boolean) })}
-                          className="w-full bg-slate-800/50 border border-slate-700 rounded-xl px-4 py-3 text-white
-                                   focus:outline-none focus:border-violet-500 transition-colors resize-none"
-                          placeholder="A) 5&#10;B) 10&#10;C) 15&#10;D) 20"
-                        />
+                        <label className="block text-slate-300 mb-3 font-bold uppercase tracking-wider text-xs">Şıklar ve Doğru Cevap</label>
+                        <div className="space-y-3">
+                          {[0, 1, 2, 3].map((index) => {
+                            const optionLetters = ['A', 'B', 'C', 'D'];
+                            const isCorrect = formData.correct_index === index;
+                            
+                            return (
+                              <div key={index} className={`flex items-center gap-3 p-2 rounded-2xl border transition-all ${isCorrect ? 'border-emerald-500/50 bg-emerald-500/10' : 'border-slate-700/50 bg-slate-800/30'}`}>
+                                <div className="pl-3 pr-1">
+                                  <input 
+                                    type="radio" 
+                                    name="correct_option" 
+                                    checked={isCorrect}
+                                    onChange={() => setFormData({ ...formData, correct_index: index })}
+                                    className="w-5 h-5 accent-emerald-500 cursor-pointer"
+                                    required
+                                  />
+                                </div>
+                                <div className={`w-8 h-8 rounded-xl flex items-center justify-center font-bold text-sm shrink-0 ${isCorrect ? 'bg-emerald-500 text-white shadow-lg shadow-emerald-500/20' : 'bg-slate-700 text-slate-300'}`}>
+                                  {optionLetters[index]}
+                                </div>
+                                <input
+                                  type="text"
+                                  required
+                                  value={formData.options?.[index] || ''}
+                                  onChange={(e) => {
+                                    const newOptions = [...(formData.options || ['', '', '', ''])];
+                                    newOptions[index] = e.target.value;
+                                    setFormData({ ...formData, options: newOptions });
+                                  }}
+                                  className="flex-1 bg-transparent border-none text-white focus:outline-none focus:ring-0 placeholder:text-slate-500 text-sm py-2"
+                                  placeholder={`${optionLetters[index]} Şıkkını girin...`}
+                                />
+                              </div>
+                            );
+                          })}
+                        </div>
                       </div>
+
                       <div>
-                        <label className="block text-slate-300 mb-2 text-sm">Doğru Şık (0-3)</label>
-                        <select
-                          required
-                          value={formData.correct_index ?? ''}
-                          onChange={(e) => setFormData({ ...formData, correct_index: parseInt(e.target.value) })}
-                          className="w-full bg-slate-800/50 border border-slate-700 rounded-xl px-4 py-3 text-white
-                                   focus:outline-none focus:border-violet-500 transition-colors"
-                        >
-                          <option value="">Doğru şıkkı seçin</option>
-                          <option value="0">A</option>
-                          <option value="1">B</option>
-                          <option value="2">C</option>
-                          <option value="3">D</option>
-                        </select>
-                      </div>
-                      <div>
-                        <label className="block text-slate-300 mb-2 text-sm">Açıklama (Opsiyonel)</label>
+                        <label className="block text-amber-500 mb-2 font-bold uppercase tracking-wider text-xs flex items-center gap-1 mt-4">
+                          <AlertCircle className="w-3.5 h-3.5" /> Çözüm / Açıklama (Opsiyonel)
+                        </label>
                         <textarea
                           rows={2}
                           value={formData.explanation || ''}
                           onChange={(e) => setFormData({ ...formData, explanation: e.target.value })}
-                          className="w-full bg-slate-800/50 border border-slate-700 rounded-xl px-4 py-3 text-white
-                                   focus:outline-none focus:border-violet-500 transition-colors resize-none"
-                          placeholder="Cevabın nedenini açıklayın..."
+                          className="w-full bg-slate-800/50 border border-slate-700/50 rounded-2xl px-4 py-3 text-white
+                                   focus:outline-none focus:ring-2 focus:ring-amber-500 transition-all resize-none"
+                          placeholder="Öğrenci soruyu yanlış yaptığında göreceği açıklama..."
                         />
                       </div>
                     </>
@@ -2933,17 +2949,56 @@ export default function AdminPage() {
                           </div>
                         )}
 
-                        <div className="flex flex-col sm:flex-row gap-3 pt-2">
-                          <div className="flex-1">
+                        <div className="flex flex-col sm:flex-row gap-3 pt-2 items-start sm:items-center">
+                          <div className="flex-1 w-full relative">
                             <input
                               type="text"
                               placeholder="Geri bildirim yazın..."
                               defaultValue={sub.feedback || ''}
                               id={`feedback-${sub.id}`}
-                              className="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-indigo-500 transition-colors"
+                              className="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2.5 pl-11 text-sm text-white focus:outline-none focus:border-indigo-500 transition-colors"
                             />
+                            <MessageSquareText className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
                           </div>
-                          <div className="flex gap-2">
+                          
+                          <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto mt-2 sm:mt-0">
+                            {/* Star Rating Section */}
+                            <div className="flex items-center justify-center p-2 bg-slate-800 border border-slate-700 rounded-xl">
+                              {[1, 2, 3, 4, 5].map((star) => {
+                                const currentGradeObj = document.getElementById(`grade-${sub.id}`) as HTMLInputElement;
+                                const currentGrade = currentGradeObj ? parseInt(currentGradeObj.value) || 0 : sub.grade || 0;
+                                const isFilled = currentGrade >= star * 20;
+                                
+                                return (
+                                  <button
+                                    key={star}
+                                    type="button"
+                                    onClick={(e) => {
+                                      e.preventDefault();
+                                      const gradeInput = document.getElementById(`grade-${sub.id}`) as HTMLInputElement;
+                                      if (gradeInput) gradeInput.value = (star * 20).toString();
+                                      // Trigger re-render of stars manually or let React handle if we bound it to state
+                                      // For now simple dom update approach:
+                                      e.currentTarget.parentElement?.querySelectorAll('svg').forEach((svg, i) => {
+                                         if (i < star) {
+                                           svg.classList.add('text-amber-400', 'fill-amber-400');
+                                           svg.classList.remove('text-slate-600');
+                                         } else {
+                                           svg.classList.remove('text-amber-400', 'fill-amber-400');
+                                           svg.classList.add('text-slate-600');
+                                         }
+                                      });
+                                    }}
+                                    className="p-1 hover:scale-110 transition-transform"
+                                  >
+                                    <Star className={`w-5 h-5 transition-colors ${
+                                      isFilled ? 'text-amber-400 fill-amber-400' : 'text-slate-600'
+                                    }`} />
+                                  </button>
+                                );
+                              })}
+                            </div>
+                            
                             <input
                               type="number"
                               placeholder="Not"
@@ -2951,18 +3006,19 @@ export default function AdminPage() {
                               min="0"
                               defaultValue={sub.grade || 100}
                               id={`grade-${sub.id}`}
-                              className="w-20 bg-slate-800 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-center text-white focus:outline-none focus:border-indigo-500 transition-colors"
+                              className="w-full sm:w-20 bg-slate-800 border border-slate-700 rounded-xl px-4 py-2.5 text-sm font-bold text-center text-white focus:outline-none focus:border-indigo-500 transition-colors"
                             />
+                            
                             <button
                               onClick={() => {
                                 const fb = (document.getElementById(`feedback-${sub.id}`) as HTMLInputElement)?.value;
                                 const gr = (document.getElementById(`grade-${sub.id}`) as HTMLInputElement)?.value;
                                 updateSubmission(sub.id, parseInt(gr), fb);
                               }}
-                              className="px-6 py-2.5 bg-emerald-500 hover:bg-emerald-600 text-white text-sm font-bold rounded-xl transition-all shadow-lg shadow-emerald-500/20 flex items-center gap-2"
+                              className="w-full sm:w-auto px-6 py-2.5 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white text-sm font-bold rounded-xl transition-all shadow-lg shadow-emerald-500/20 flex items-center justify-center gap-2"
                             >
-                              <Check className="w-4 h-4" />
-                              Kaydet
+                              <CheckCircle2 className="w-4 h-4" />
+                              Puanla
                             </button>
                           </div>
                         </div>

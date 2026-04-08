@@ -6,9 +6,10 @@ import Link from 'next/link';
 import { 
   Calculator, FileText, Clock, Trophy, ArrowLeft,
   CheckCircle2, XCircle, ChevronRight, Play, RotateCcw,
-  Zap, Target, Star
+  Zap, Target, Star, AlertCircle
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import confetti from 'canvas-confetti';
 import { supabase } from '@/lib/supabase';
 import { Quiz, QuizQuestion } from '@/types/quiz';
 
@@ -43,10 +44,39 @@ export default function TestsPage() {
   const [quizzes, setQuizzes] = useState<Quiz[]>([]);
   const [quizQuestions, setQuizQuestions] = useState<QuizQuestion[]>([]);
   const [startTime, setStartTime] = useState<number | null>(null);
+  const [timeLeft, setTimeLeft] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
   const profileHref = user?.isAdmin ? '/admin' : '/profil';
+
+  // Timer Effect
+  useEffect(() => {
+    if (quizStarted && !showResult && timeLeft !== null && timeLeft > 0) {
+      const timer = setInterval(() => {
+        setTimeLeft(prev => (prev !== null && prev > 0 ? prev - 1 : 0));
+      }, 1000);
+      return () => clearInterval(timer);
+    } else if (timeLeft === 0 && quizStarted && !showResult) {
+      setShowResult(true);
+      saveQuizResult();
+    }
+  }, [quizStarted, showResult, timeLeft]);
+
+  // Confetti Effect
+  useEffect(() => {
+    if (showResult && quizQuestions.length > 0) {
+      const finalScore = calculateScore();
+      if (finalScore >= 80) {
+        confetti({
+          particleCount: 150,
+          spread: 80,
+          origin: { y: 0.6 },
+          colors: ['#8b5cf6', '#ec4899', '#06b6d4', '#f97316', '#10b981']
+        });
+      }
+    }
+  }, [showResult]);
 
   useEffect(() => {
     const checkSession = async () => {
@@ -133,6 +163,7 @@ export default function TestsPage() {
     setSelectedAnswer(null);
     setShowResult(false);
     setStartTime(Date.now());
+    setTimeLeft(quiz.time_limit * 60);
   };
 
   const selectAnswer = (index: number) => {
@@ -187,6 +218,13 @@ export default function TestsPage() {
     setSelectedAnswer(null);
     setShowResult(false);
     setStartTime(null);
+    setTimeLeft(null);
+  };
+
+  const formatTime = (seconds: number) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
   };
 
   const getDifficultyColor = (difficulty: string) => {
@@ -214,13 +252,17 @@ export default function TestsPage() {
         >
           <div className="glass rounded-3xl p-8">
             <div className="flex items-center justify-between mb-8">
-              <button onClick={resetQuiz} className="text-slate-400 hover:text-white flex items-center gap-2">
+              <button onClick={resetQuiz} className="text-slate-400 hover:text-white flex items-center gap-2 transition-colors">
                 <ArrowLeft className="w-5 h-5" />
                 Çıkış
               </button>
-              <div className="flex items-center gap-2 text-slate-400">
+              <div className={`flex items-center gap-2 px-4 py-2 rounded-full font-bold transition-all ${
+                timeLeft !== null && timeLeft <= 30 
+                  ? 'bg-red-500/20 text-red-500 animate-pulse' 
+                  : 'bg-slate-800/50 text-slate-300'
+              }`}>
                 <Clock className="w-5 h-5" />
-                <span>{selectedQuiz.time_limit} dk</span>
+                <span>{timeLeft !== null ? formatTime(timeLeft) : ''}</span>
               </div>
             </div>
 
@@ -339,29 +381,76 @@ export default function TestsPage() {
             </motion.div>
 
             <h2 className="text-4xl font-bold text-white mb-2">
-              {score >= 70 ? 'Tebrikler!' : score >= 40 ? 'İyi Deneme!' : 'Bir Dahaki Sefere!'}
+              {score >= 80 ? 'Harika Çıkardın!' : score >= 60 ? 'Tebrikler!' : score >= 40 ? 'Daha İyisini Yapabilirsin!' : 'Pratiğe Devam!'}
             </h2>
             
-            <div className="text-7xl font-black mb-4 bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
+            <div className={`text-7xl font-black mb-4 bg-gradient-to-r bg-clip-text text-transparent ${
+                score >= 80 ? 'from-green-400 to-emerald-400' :
+                score >= 40 ? 'from-amber-400 to-orange-400' :
+                'from-red-400 to-pink-400'
+            }`}>
               {score}%
             </div>
 
-            <p className="text-slate-400 mb-8">
-              {score >= 70 ? 'Harika bir performans!' : score >= 40 ? 'Biraz daha pratik yapmalısın.' : 'Konuyu tekrar çalışmanı öneririz.'}
-            </p>
-
             <div className="grid grid-cols-2 gap-4 mb-8">
-              <div className="bg-slate-800/50 rounded-xl p-4">
-                <div className="text-3xl font-bold text-green-400">
+              <div className="bg-emerald-500/10 border border-emerald-500/20 rounded-2xl p-4">
+                <div className="text-4xl font-black text-emerald-400 mb-1">
                   {Object.values(answers).filter((a, i) => a === quizQuestions[i]?.correct_index).length}
                 </div>
-                <div className="text-slate-400">Doğru</div>
+                <div className="text-emerald-500/80 font-bold uppercase text-xs tracking-wider">Doğru</div>
               </div>
-              <div className="bg-slate-800/50 rounded-xl p-4">
-                <div className="text-3xl font-bold text-red-400">
+              <div className="bg-red-500/10 border border-red-500/20 rounded-2xl p-4">
+                <div className="text-4xl font-black text-red-400 mb-1">
                   {Object.values(answers).filter((a, i) => a !== quizQuestions[i]?.correct_index).length}
                 </div>
-                <div className="text-slate-400">Yanlış</div>
+                <div className="text-red-500/80 font-bold uppercase text-xs tracking-wider">Yanlış</div>
+              </div>
+            </div>
+
+            <div className="text-left bg-slate-800/30 border border-slate-700/50 rounded-2xl p-6 mb-8 max-h-[400px] overflow-y-auto custom-scrollbar">
+              <h3 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
+                <Target className="w-5 h-5 text-purple-400" /> Sınav Analizi
+              </h3>
+              <div className="space-y-4">
+                {quizQuestions.map((q, index) => {
+                  const userAnswer = answers[index];
+                  const isCorrect = userAnswer === q.correct_index;
+                  const isUnanswered = userAnswer === undefined || userAnswer === null;
+
+                  return (
+                    <div key={index} className={`p-4 rounded-xl border ${isCorrect ? 'bg-emerald-500/5 border-emerald-500/20' : 'bg-red-500/5 border-red-500/20'}`}>
+                      <div className="flex items-start justify-between gap-4 mb-2">
+                        <p className={`font-semibold text-sm ${isCorrect ? 'text-emerald-300' : 'text-red-300'}`}>
+                          {index + 1}. {q.question}
+                        </p>
+                        {isCorrect ? <CheckCircle2 className="w-5 h-5 text-emerald-400 shrink-0" /> : <XCircle className="w-5 h-5 text-red-400 shrink-0" />}
+                      </div>
+                      
+                      <div className="space-y-2 mt-3">
+                        <div className="flex items-center gap-2 text-sm text-slate-300">
+                          <span className="opacity-50 w-20 text-xs uppercase tracking-wider">Cevabın:</span>
+                          <span className={`font-medium px-2 py-0.5 rounded ${isCorrect ? 'bg-emerald-500/20 text-emerald-200' : 'bg-red-500/20 text-red-200'}`}>
+                             {isUnanswered ? 'Boş Bırakıldı' : q.options[userAnswer]}
+                          </span>
+                        </div>
+                        {!isCorrect && (
+                          <div className="flex items-center gap-2 text-sm text-slate-300">
+                            <span className="opacity-50 w-20 text-xs uppercase tracking-wider">Doğrusu:</span>
+                            <span className="font-medium px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-200">
+                              {q.options[q.correct_index]}
+                            </span>
+                          </div>
+                        )}
+                        {q.explanation && (
+                          <div className="mt-3 p-3 bg-slate-900/50 rounded-lg text-xs text-slate-400 flex items-start gap-2">
+                            <AlertCircle className="w-4 h-4 text-amber-500 shrink-0 mt-0.5" />
+                            <p>{q.explanation}</p>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
             </div>
 
@@ -370,7 +459,7 @@ export default function TestsPage() {
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={() => startQuiz(selectedQuiz)}
-                className="flex-1 py-4 bg-gradient-to-r from-purple-500 to-pink-500 text-white font-semibold rounded-xl flex items-center justify-center gap-2"
+                className="flex-1 py-4 bg-gradient-to-r from-purple-500 to-pink-500 text-white font-semibold rounded-xl flex items-center justify-center gap-2 shadow-lg shadow-purple-500/20"
               >
                 <RotateCcw className="w-5 h-5" />
                 Tekrar Dene
@@ -379,10 +468,10 @@ export default function TestsPage() {
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={resetQuiz}
-                className="flex-1 py-4 glass text-white font-semibold rounded-xl flex items-center justify-center gap-2"
+                className="flex-1 py-4 bg-slate-800 hover:bg-slate-700 text-white font-semibold rounded-xl flex items-center justify-center gap-2 transition-colors"
               >
                 <ArrowLeft className="w-5 h-5" />
-                Geri Dön
+                Testlere Dön
               </motion.button>
             </div>
           </div>
