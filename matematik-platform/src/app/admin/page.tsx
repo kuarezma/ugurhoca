@@ -493,6 +493,20 @@ export default function AdminPage() {
     }, 1500);
   };
 
+  const togglePrivateStudent = async (userId: string, isCurrentlyPrivate: boolean) => {
+    const { error } = await supabase
+      .from('profiles')
+      .update({ is_private_student: !isCurrentlyPrivate })
+      .eq('id', userId);
+    
+    if (!error) {
+      alert(`Öğrenci "Özel Ders" listesinden ${isCurrentlyPrivate ? 'çıkarıldı' : 'eklendi'}.`);
+      loadData();
+    } else {
+      alert('İşlem başarısız: ' + error.message);
+    }
+  };
+
   const deleteItem = async (type: string, id: string) => {
     if (confirm('Bu içeriği silmek istediğinizden emin misiniz?')) {
       if (type === 'assignment') {
@@ -1331,8 +1345,13 @@ export default function AdminPage() {
                     >
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-4">
-                          <div className="w-12 h-12 bg-gradient-to-br from-green-500 to-emerald-500 rounded-full flex items-center justify-center text-xl font-bold text-white">
+                          <div className="w-12 h-12 bg-gradient-to-br from-green-500 to-emerald-500 rounded-full flex items-center justify-center text-xl font-bold text-white relative">
                             {u.name?.[0] || '?'}
+                            {u.is_private_student && (
+                              <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-gradient-to-r from-amber-400 to-orange-500 rounded-full flex items-center justify-center border-2 border-[var(--bg-elevated)] shadow-sm">
+                                <Star className="w-3 h-3 text-white fill-white" />
+                              </div>
+                            )}
                           </div>
                           <div>
                             <h3 className="text-lg font-bold text-white">{u.name || 'İsimsiz'}</h3>
@@ -1340,6 +1359,20 @@ export default function AdminPage() {
                             <p className="text-slate-500 text-xs mt-1">Sınıf: {u.grade || 'Belirtilmemiş'} • Kayıt: {u.created_at ? formatDate(u.created_at) : 'Bilinmiyor'}</p>
                           </div>
                         </div>
+                        <div className="flex items-center gap-2 flex-wrap justify-end">
+                          <button
+                            onClick={() => togglePrivateStudent(u.id, u.is_private_student || false)}
+                            className={`px-3 py-2 sm:px-4 sm:py-2 text-xs sm:text-sm rounded-lg transition-all font-semibold flex items-center gap-2 ${
+                              u.is_private_student 
+                                ? 'bg-amber-500/10 text-amber-500 hover:bg-amber-500/20 border border-amber-500/20'
+                                : 'bg-slate-800 text-slate-300 hover:bg-slate-700 border border-slate-700'
+                            }`}
+                          >
+                            <Star className={`w-4 h-4 ${u.is_private_student ? 'fill-amber-500' : ''}`} />
+                            <span className="hidden sm:inline">
+                              {u.is_private_student ? 'Özel Dersten Çıkar' : 'Özel Derse Ekle'}
+                            </span>
+                          </button>
                         <button
                           onClick={() => {
                             setEditingUser(u);
@@ -1366,10 +1399,11 @@ export default function AdminPage() {
                           Mesaj Yaz
                         </button>
                       </div>
-                    </motion.div>
-                  ))
-                )}
-              </motion.div>
+                    </div>
+                  </motion.div>
+                ))
+              )}
+            </motion.div>
             )}
 
             {activeTab === 'privateStudents' && (
