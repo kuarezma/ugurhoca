@@ -149,6 +149,9 @@ export default function AdminPage() {
   const [quizzes, setQuizzes] = useState<any[]>([]);
   const [selectedQuiz, setSelectedQuiz] = useState<any>(null);
   const [quizQuestions, setQuizQuestions] = useState<any[]>([]);
+  const [chatRooms, setChatRooms] = useState<any[]>([]);
+  const [activeChatRoom, setActiveChatRoom] = useState<any>(null);
+  const [chatMessages, setChatMessages] = useState<any[]>([]);
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [showNotifications, setShowNotifications] = useState(false);
   const [selectedNotification, setSelectedNotification] = useState<Notification | null>(null);
@@ -227,6 +230,13 @@ export default function AdminPage() {
     const { data: quizData } = await supabase.from('quizzes').select('*').order('created_at', { ascending: false });
     if (quizData) setQuizzes(quizData);
 
+    // Chat odalarını getir
+    const { data: rooms } = await supabase
+      .from('chat_rooms')
+      .select('*, chat_room_members(*)')
+      .order('updated_at', { ascending: false });
+    if (rooms) setChatRooms(rooms);
+
     const retentionCutoff = new Date(Date.now() - RETENTION_DAYS * 24 * 60 * 60 * 1000).toISOString();
     await supabase
       .from('notifications')
@@ -252,6 +262,30 @@ export default function AdminPage() {
   const handleLogout = async () => {
     await supabase.auth.signOut();
     router.push('/');
+  };
+
+  const loadChatMessages = async (roomId: string) => {
+    const { data } = await supabase
+      .from('chat_messages')
+      .select('*')
+      .eq('room_id', roomId)
+      .order('ts', { ascending: true });
+    if (data) setChatMessages(data);
+  };
+
+  const sendChatMessage = async (roomId: string, text: string) => {
+    if (!text.trim()) return;
+    const { error } = await supabase.from('chat_messages').insert([{
+      room_id: roomId,
+      sender_tc: 'admin',
+      display_name: 'Uğur Hoca',
+      text: text.trim(),
+      ts: Date.now()
+    }]);
+    if (!error) {
+      setReplyText('');
+      loadChatMessages(roomId);
+    }
   };
 
   const openModal = (type: 'announcement' | 'editAnnouncement' | 'document' | 'writing' | 'assignment' | 'student' | 'sendDoc' | 'quiz' | 'editQuiz' | 'addQuestion', studentId?: string, doc?: any) => {
@@ -1415,79 +1449,130 @@ export default function AdminPage() {
                 exit={{ opacity: 0, y: -20 }}
                 className="space-y-6"
               >
-                <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-6">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
                   <div>
-                    <h2 className="text-2xl font-bold text-white mb-1">Öğrenci Mesajları</h2>
-                    <p className="text-slate-400 text-sm sm:text-base">Uğur Hoca'ya yazılan mesajlar ve ekler</p>
-                    <p className="text-slate-500 text-xs mt-1">Kayıt saklama politikası: mesaj logları {RETENTION_DAYS} gün tutulur.</p>
+                    <h2 className="text-2xl font-bold text-white mb-1">Sohbetler</h2>
+                    <p className="text-slate-400 text-sm sm:text-base">Öğrencilerle yapılan canlı sohbetler</p>
                   </div>
                   <div className="flex items-center gap-2 text-sm text-slate-400">
                     <MessageSquareText className="w-4 h-4" />
-                    {sortedGroupIds.length} konuşma • {studentMessages.length} mesaj
+                    {chatRooms.length} aktif oda
                   </div>
                 </div>
 
-                {studentMessages.length === 0 ? (
+                {chatRooms.length === 0 ? (
                   <div className="glass rounded-2xl p-8 sm:p-12 text-center">
                     <MessageSquareText className="w-16 h-16 mx-auto mb-4 text-slate-500" />
-                    <p className="text-slate-400">Henüz öğrenci mesajı yok</p>
+                    <p className="text-slate-400">Henüz sohbet başlatılmadı</p>
                   </div>
                 ) : (
-                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
-                    {sortedGroupIds.map((senderId) => {
-                      const msgs = groupedMessages[senderId];
-                      const lastMsg = msgs[0];
-                      const payload = parseMessagePayload(lastMsg);
-                      const hasUnread = msgs.some(m => !m.is_read);
-                      const senderName = payload?.sender_name || 'İsimsiz';
-                      
-                      return (
-                        <motion.button
-                          key={senderId}
-                          whileHover={{ scale: 1.01 }}
-                          whileTap={{ scale: 0.99 }}
-                          onClick={() => markNotificationAsRead(lastMsg)}
-                          className={`text-left glass rounded-2xl p-5 border transition-all ${hasUnread ? 'border-indigo-500/30' : 'border-emerald-500/20'}`}
-                        >
-                          <div className="flex items-start justify-between gap-3 mb-3">
-                            <div className="flex items-center gap-3 min-w-0">
-                              <div className={`w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0 ${hasUnread ? 'bg-indigo-500/15 text-indigo-300' : 'bg-emerald-500/15 text-emerald-300'}`}>
-                                <MessageSquareText className="w-5 h-5" />
+                  <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    {/* Odalar Listesi */}
+                    <div className="lg:col-span-1 space-y-3 max-h-[600px] overflow-y-auto pr-2">
+                      {chatRooms.map((room) => {
+                        const isActive = activeChatRoom?.id === room.id;
+                        const studentName = room.name || 'Öğrenci';
+                        
+                        return (
+                          <button
+                            key={room.id}
+                            onClick={() => {
+                              setActiveChatRoom(room);
+                              loadChatMessages(room.id);
+                            }}
+                            className={`w-full text-left p-4 rounded-xl border transition-all ${
+                              isActive 
+                                ? 'bg-indigo-500/20 border-indigo-500/50 shadow-lg shadow-indigo-500/10' 
+                                : 'glass border-white/5 hover:bg-white/5'
+                            }`}
+                          >
+                            <div className="flex items-center gap-3">
+                              <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${isActive ? 'bg-indigo-500 text-white' : 'bg-slate-800 text-slate-400'}`}>
+                                <Users className="w-5 h-5" />
                               </div>
                               <div className="min-w-0">
-                                <p className="text-white font-semibold truncate">{senderName}</p>
-                                <p className="text-slate-500 text-xs">{msgs.length} mesaj • {new Date(lastMsg.created_at).toLocaleDateString('tr-TR')}</p>
+                                <p className="text-sm font-bold text-white truncate">{studentName}</p>
+                                <p className="text-[10px] text-slate-500">{new Date(room.updated_at).toLocaleString('tr-TR')}</p>
                               </div>
                             </div>
-                            <div className="flex items-center gap-2">
-                              <span className={`px-2 py-0.5 rounded-full text-[10px] font-semibold ${hasUnread ? 'bg-amber-500/15 text-amber-200' : 'bg-emerald-500/15 text-emerald-300'}`}>
-                                {hasUnread ? 'Yanıt Bekliyor' : 'Tamamlandı'}
-                              </span>
-                              <button
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  deleteMessage(lastMsg.id);
+                          </button>
+                        );
+                      })}
+                    </div>
+
+                    {/* Mesajlasma Alani */}
+                    <div className="lg:col-span-2 flex flex-col h-[600px] glass rounded-2xl overflow-hidden border border-white/5">
+                      {activeChatRoom ? (
+                        <>
+                          <div className="p-4 border-b border-white/10 bg-white/5 flex items-center justify-between">
+                            <div className="flex items-center gap-3">
+                              <div className="w-8 h-8 rounded-full bg-indigo-500 flex items-center justify-center text-xs font-bold text-white">
+                                {activeChatRoom.name?.[0] || 'Ö'}
+                              </div>
+                              <span className="text-white font-semibold text-sm">{activeChatRoom.name}</span>
+                            </div>
+                            <button onClick={async () => {
+                                if (confirm('Bu odayı silmek istediğinizden emin misiniz?')) {
+                                  await supabase.from('chat_rooms').delete().eq('id', activeChatRoom.id);
+                                  setActiveChatRoom(null);
+                                  loadData();
+                                }
+                              }} className="p-2 text-slate-400 hover:text-red-400 transition-colors">
+                              <Trash2 className="w-4 h-4" />
+                            </button>
+                          </div>
+                          
+                          <div className="flex-1 overflow-y-auto p-4 space-y-3">
+                            {chatMessages.map((msg: any) => {
+                              const isAdmin = msg.sender_tc === 'admin';
+                              return (
+                                <div key={msg.id} className={`flex ${isAdmin ? 'justify-end' : 'justify-start'}`}>
+                                  <div className={`max-w-[80%] p-3 rounded-2xl text-sm ${
+                                    isAdmin 
+                                      ? 'bg-indigo-600 text-white rounded-tr-none' 
+                                      : 'bg-slate-800 text-slate-300 rounded-tl-none border border-white/5'
+                                  }`}>
+                                    {!isAdmin && <p className="text-[10px] font-bold text-indigo-400 mb-1">{msg.display_name}</p>}
+                                    <p className="whitespace-pre-wrap">{msg.text}</p>
+                                    <p className={`text-[9px] mt-1 text-right ${isAdmin ? 'text-white/60' : 'text-slate-500'}`}>
+                                      {new Date(msg.ts).toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' })}
+                                    </p>
+                                  </div>
+                                </div>
+                              );
+                            })}
+                          </div>
+
+                          <div className="p-4 bg-slate-900/50 border-t border-white/10">
+                            <div className="flex gap-2">
+                              <textarea
+                                value={replyText}
+                                onChange={(e) => setReplyText(e.target.value)}
+                                onKeyDown={(e) => {
+                                  if (e.key === 'Enter' && !e.shiftKey) {
+                                    e.preventDefault();
+                                    sendChatMessage(activeChatRoom.id, replyText);
+                                  }
                                 }}
-                                className="p-1.5 rounded-lg bg-red-500/15 text-red-300 hover:bg-red-500/25"
-                                title="Tümünü sil"
+                                placeholder="Mesajınızı yazın..."
+                                className="flex-1 bg-slate-800 border border-white/10 rounded-xl px-4 py-2 text-sm text-white focus:outline-none focus:border-indigo-500 h-10 resize-none"
+                              />
+                              <button
+                                onClick={() => sendChatMessage(activeChatRoom.id, replyText)}
+                                className="w-10 h-10 bg-indigo-500 rounded-xl flex items-center justify-center text-white hover:bg-indigo-600 transition-colors"
                               >
-                                <Trash2 className="w-3.5 h-3.5" />
+                                <Send className="w-5 h-5" />
                               </button>
                             </div>
                           </div>
-                          <div className="space-y-1 mb-2">
-                            {msgs.slice(0, 3).map((msg, idx) => (
-                              <div key={msg.id} className="text-slate-300 text-sm line-clamp-2 whitespace-pre-line border-l-2 border-white/10 pl-2">
-                                {getNotificationBody(msg)}
-                              </div>
-                            ))}
-                            {msgs.length > 3 && (
-                              <p className="text-slate-500 text-xs">+{msgs.length - 3} mesaj daha</p>
-                            )}
-                          </div>
-                        </motion.button>
-                      );
-                    })}
+                        </>
+                      ) : (
+                        <div className="flex-1 flex flex-col items-center justify-center text-slate-500">
+                          <MessageSquareText className="w-12 h-12 mb-4 opacity-20" />
+                          <p className="text-sm">Konuşma seçmek için soldan bir oda seçin</p>
+                        </div>
+                      )}
+                    </div>
                   </div>
                 )}
               </motion.div>

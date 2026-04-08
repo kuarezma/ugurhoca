@@ -10,6 +10,7 @@ import {
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
+import { Quiz, QuizQuestion } from '@/types/quiz';
 
 const FloatingShapes = () => (
   <div className="fixed inset-0 overflow-hidden pointer-events-none z-0">
@@ -32,16 +33,18 @@ const FloatingShapes = () => (
 );
 
 export default function TestsPage() {
-  const [user, setUser] = useState<any>(null);
-  const [selectedQuiz, setSelectedQuiz] = useState<any>(null);
+  const [user, setUser] = useState<any>(null); // Profil tipi genel bir tip olduğu için şimdilik any kalabilir veya User eklenebilir
+  const [selectedQuiz, setSelectedQuiz] = useState<Quiz | null>(null);
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
   const [answers, setAnswers] = useState<{ [key: number]: number }>({});
   const [showResult, setShowResult] = useState(false);
   const [quizStarted, setQuizStarted] = useState(false);
-  const [quizzes, setQuizzes] = useState<any[]>([]);
-  const [quizQuestions, setQuizQuestions] = useState<any[]>([]);
+  const [quizzes, setQuizzes] = useState<Quiz[]>([]);
+  const [quizQuestions, setQuizQuestions] = useState<QuizQuestion[]>([]);
+  const [startTime, setStartTime] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const router = useRouter();
   const profileHref = user?.isAdmin ? '/admin' : '/profil';
 
@@ -75,34 +78,61 @@ export default function TestsPage() {
   useEffect(() => {
     const loadQuizzes = async () => {
       if (!user) return;
-      const { data } = await supabase
-        .from('quizzes')
-        .select('*')
-        .eq('is_active', true)
-        .order('created_at', { ascending: false });
-      if (data) setQuizzes(data);
-      setLoading(false);
+      try {
+        setLoading(true);
+        const { data, error: quizError } = await supabase
+          .from('quizzes')
+          .select('*')
+          .eq('is_active', true)
+          .order('created_at', { ascending: false });
+        
+        if (quizError) throw quizError;
+        if (data) setQuizzes(data);
+      } catch (err: any) {
+        console.error('Testler yüklenirken hata:', err);
+        setError('Testler yüklenemedi. Lütfen sayfayı yenileyin.');
+      } finally {
+        setLoading(false);
+      }
     };
     loadQuizzes();
   }, [user]);
 
   const loadQuizQuestions = async (quizId: string) => {
-    const { data } = await supabase
-      .from('quiz_questions')
-      .select('*')
-      .eq('quiz_id', quizId)
-      .order('question_order', { ascending: true });
-    if (data) setQuizQuestions(data);
+    try {
+      const { data, error: qError } = await supabase
+        .from('quiz_questions')
+        .select('*')
+        .eq('quiz_id', quizId)
+        .order('question_order', { ascending: true });
+      
+      if (qError) throw qError;
+      if (data) {
+        if (data.length === 0) {
+          throw new Error('Bu teste henüz soru eklenmemiş.');
+        }
+        setQuizQuestions(data);
+        return true;
+      }
+      return false;
+    } catch (err: any) {
+      console.error('Sorular yüklenirken hata:', err);
+      alert(err.message || 'Sorular yüklenemedi.');
+      return false;
+    }
   };
 
-  const startQuiz = async (quiz: any) => {
+  const startQuiz = async (quiz: Quiz) => {
+    const success = await loadQuizQuestions(quiz.id);
+    if (!success) return;
+
     setSelectedQuiz(quiz);
-    await loadQuizQuestions(quiz.id);
     setQuizStarted(true);
     setCurrentQuestion(0);
     setAnswers({});
     setSelectedAnswer(null);
     setShowResult(false);
+    setStartTime(Date.now());
   };
 
   const selectAnswer = (index: number) => {
@@ -121,24 +151,32 @@ export default function TestsPage() {
   };
 
   const calculateScore = () => {
+    if (quizQuestions.length === 0) return 0;
     let correct = 0;
-    quizQuestions.forEach((q: any, i: number) => {
+    quizQuestions.forEach((q, i: number) => {
       if (answers[i] === q.correct_index) correct++;
     });
     return Math.round((correct / quizQuestions.length) * 100);
   };
 
   const saveQuizResult = async () => {
-    if (!user || !selectedQuiz) return;
+    if (!user || !selectedQuiz || !startTime) return;
     const score = calculateScore();
-    await supabase.from('quiz_results').insert([{
-      user_id: user.id,
-      quiz_id: selectedQuiz.id,
-      score,
-      total_questions: quizQuestions.length,
-      answers,
-      time_spent: 0,
-    }]);
+    const timeSpent = Math.round((Date.now() - startTime) / 1000); // saniye
+
+    try {
+      const { error: saveError } = await supabase.from('quiz_results').insert([{
+        user_id: user.id,
+        quiz_id: selectedQuiz.id,
+        score,
+        total_questions: quizQuestions.length,
+        answers,
+        time_spent: timeSpent,
+      }]);
+      if (saveError) throw saveError;
+    } catch (err) {
+      console.error('Sonuç kaydedilirken hata:', err);
+    }
   };
 
   const resetQuiz = () => {
@@ -148,6 +186,7 @@ export default function TestsPage() {
     setAnswers({});
     setSelectedAnswer(null);
     setShowResult(false);
+    setStartTime(null);
   };
 
   const getDifficultyColor = (difficulty: string) => {
@@ -181,7 +220,7 @@ export default function TestsPage() {
               </button>
               <div className="flex items-center gap-2 text-slate-400">
                 <Clock className="w-5 h-5" />
-                <span>{selectedQuiz.time} dk</span>
+                <span>{selectedQuiz.time_limit} dk</span>
               </div>
             </div>
 

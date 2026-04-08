@@ -32,27 +32,21 @@ const BROADCAST_TAG = 'ugurhoca-chat-tag';
 
 type ChatMessage = {
   id: string;
+  room_id: string;
+  sender_tc: string;
+  display_name: string;
   text: string;
-  senderTc: string;
-  displayName: string;
   ts: number;
+  created_at?: string;
 };
 
-function loadMessages(): ChatMessage[] {
-  if (typeof window === 'undefined') return [];
-  try {
-    const raw = sessionStorage.getItem(UGURHOCA_CHAT_MESSAGES_KEY);
-    if (!raw) return [];
-    const parsed = JSON.parse(raw) as ChatMessage[];
-    return Array.isArray(parsed) ? parsed : [];
-  } catch {
-    return [];
-  }
-}
+type ChatRoom = {
+  id: string;
+  name: string;
+  is_private: boolean;
+};
 
-function saveMessages(next: ChatMessage[]) {
-  sessionStorage.setItem(UGURHOCA_CHAT_MESSAGES_KEY, JSON.stringify(next));
-}
+// sessionStorage yükleme/kaydetme fonksiyonları kaldırıldı, veritabanı kullanılacak.
 
 export function ChatBubble() {
   const [mounted, setMounted] = useState(false);
@@ -60,6 +54,7 @@ export function ChatBubble() {
   const [isAdmin, setIsAdmin] = useState(false);
   const [open, setOpen] = useState(false);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
+  const [activeRoom, setActiveRoom] = useState<ChatRoom | null>(null);
   const [input, setInput] = useState('');
   const [onlineCount, setOnlineCount] = useState(0);
   const [loading, setLoading] = useState(true);
@@ -67,6 +62,7 @@ export function ChatBubble() {
   const presenceTickRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const broadcastRef = useRef<BroadcastChannel | null>(null);
   const listEndRef = useRef<HTMLDivElement | null>(null);
+  const realtimeChannelRef = useRef<ReturnType<typeof supabase.channel> | null>(null);
 
   const isAdminTc = useCallback(
     (tc: string) => isAdmin,
@@ -121,8 +117,119 @@ export function ChatBubble() {
     };
     
     checkAdminAndSetUser();
-    setMessages(loadMessages());
   }, [mounted]);
+
+  const initRoomAndMessages = useCallback(async (u: ChatSessionUser) => {
+    if (u.school_number === 'admin') return; // Admin için farklı bir mantık gerekebilir
+
+    try {
+      setLoading(true);
+      // 1. Odayı bul veya oluştur
+      let room: ChatRoom | null = null;
+      
+      const { data: memberData } = await supabase
+        .from('chat_room_members')
+        .select('room_id, chat_rooms(*)')
+        .eq('user_tc', u.school_number)
+        .single();
+
+      if (memberData?.chat_rooms) {
+        // Supabase bazen join sonuçlarını dizi olarak dönebilir, güvenli atama yapıyoruz.
+        const chatRoomData = Array.isArray(memberData.chat_rooms) 
+          ? memberData.chat_rooms[0] 
+          : memberData.chat_rooms;
+        room = chatRoomData as unknown as ChatRoom;
+      } else {
+        // Oda oluştur
+        const { data: newRoom, error: roomError } = await supabase
+          .from('chat_rooms')
+          .insert([{ name: `${u.display_name} - Sohbet`, is_private: true }])
+          .select()
+          .single();
+
+        if (roomError) throw roomError;
+        room = newRoom;
+
+        // Kendini ekle
+        await supabase
+          .from('chat_room_members')
+          .insert([{ room_id: room?.id, user_tc: u.school_number }]);
+          
+        // Uğur Hoca'yı da ekleyebiliriz (opsiyonel, admin zaten RLS ile görüyor)
+      }
+
+      setActiveRoom(room);
+
+      // 2. Mesajları yükle
+      if (room) {
+        const { data: msgs } = await supabase
+          .from('chat_messages')
+          .select('*')
+          .eq('room_id', room.id)
+          .order('ts', { ascending: true })
+          .limit(100);
+        
+        if (msgs) {
+          const formattedMsgs: ChatMessage[] = msgs.map(m => ({
+            id: m.id,
+            room_id: m.room_id,
+            sender_tc: m.sender_tc,
+            display_name: m.display_name,
+            text: m.text,
+            ts: Number(m.ts)
+          }));
+          setMessages(formattedMsgs);
+        }
+      }
+    } catch (err) {
+      console.error('Sohbet başlatma hatası:', err);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (mounted && user) {
+      initRoomAndMessages(user);
+    }
+  }, [mounted, user, initRoomAndMessages]);
+
+  // Realtime Aboneliği
+  useEffect(() => {
+    if (!activeRoom) return;
+
+    const channel = supabase
+      .channel(`room-${activeRoom.id}`)
+      .on(
+        'postgres_changes',
+        {
+          event: 'INSERT',
+          schema: 'public',
+          table: 'chat_messages',
+          filter: `room_id=eq.${activeRoom.id}`,
+        },
+        (payload) => {
+          const newMsg = payload.new as any;
+          setMessages((prev) => {
+            if (prev.find((m) => m.id === newMsg.id)) return prev;
+            return [...prev, {
+              id: newMsg.id,
+              room_id: newMsg.room_id,
+              sender_tc: newMsg.sender_tc,
+              display_name: newMsg.display_name,
+              text: newMsg.text,
+              ts: Number(newMsg.ts)
+            }];
+          });
+        }
+      )
+      .subscribe();
+
+    realtimeChannelRef.current = channel;
+    return () => {
+      void channel.unsubscribe();
+    };
+  }, [activeRoom]);
 
   useEffect(() => {
     if (!mounted || typeof BroadcastChannel === 'undefined') return;
@@ -234,43 +341,41 @@ export function ChatBubble() {
     listEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages, open, mounted]);
 
-  const deleteMessage = (id: string) => {
-    const next = messages.filter((m) => m.id !== id);
-    setMessages(next);
-    saveMessages(next);
-    markActivity();
+  const deleteMessage = async (id: string) => {
+    try {
+      await supabase.from('chat_messages').delete().eq('id', id);
+      setMessages((prev) => prev.filter((m) => m.id !== id));
+      markActivity();
+    } catch (err) {
+      console.error('Silme hatası:', err);
+    }
   };
 
-  const sendMessage = () => {
-    if (!user) return;
+  const sendMessage = async () => {
+    if (!user || !activeRoom) return;
     const text = input.trim();
     if (!text) return;
 
-    const msg: ChatMessage = {
-      id:
-        typeof crypto !== 'undefined' && crypto.randomUUID
-          ? crypto.randomUUID()
-          : `${Date.now()}-${Math.random()}`,
-      text,
-      senderTc: user.school_number,
-      displayName: user.display_name,
-      ts: Date.now(),
-    };
-    const next = [...messages, msg];
-    setMessages(next);
-    saveMessages(next);
-    setInput('');
-    markActivity();
+    const ts = Date.now();
+    const tempId = crypto.randomUUID?.() || `${ts}-${Math.random()}`;
 
-    if (text.includes(TAG_TEXT)) {
-      broadcastRef.current?.postMessage({
-        text,
-        senderDisplay: user.display_name,
-      });
-      if (isAdminTc(user.school_number) && Notification.permission === 'granted') {
-        new Notification('Uğur Hoca Sohbet', {
-          body: 'Mesajınızda @Uğur Hoca geçiyor.',
-          tag: 'ugurhoca-self-tag',
+    // Optimistik güncelleme (isteğe bağlı, şimdilik doğrudan insert)
+    const { error } = await supabase.from('chat_messages').insert([{
+      room_id: activeRoom.id,
+      sender_tc: user.school_number,
+      display_name: user.display_name,
+      text,
+      ts
+    }]);
+
+    if (!error) {
+      setInput('');
+      markActivity();
+      
+      if (text.includes(TAG_TEXT)) {
+        broadcastRef.current?.postMessage({
+          text,
+          senderDisplay: user.display_name,
         });
       }
     }
@@ -317,7 +422,7 @@ export function ChatBubble() {
           onSuccess={(u) => {
             setUser(u);
             setIsAdmin(false);
-            setMessages(loadMessages());
+            initRoomAndMessages(u);
             markActivity();
           }}
         />
@@ -347,7 +452,7 @@ export function ChatBubble() {
           </p>
         )}
         {messages.map((m) => {
-          const mineAdmin = isAdminTc(m.senderTc);
+          const mineAdmin = isAdminTc(m.sender_tc);
           return (
             <div
               key={m.id}
@@ -362,12 +467,12 @@ export function ChatBubble() {
               >
                 {!mineAdmin && (
                   <p className="mb-1 text-[10px] font-semibold uppercase tracking-wide text-[var(--text-soft)]">
-                    {m.displayName}
+                    {m.display_name}
                   </p>
                 )}
                 {mineAdmin && (
                   <div className="mb-1 flex items-center justify-between gap-2">
-                    <p className="text-[10px] font-semibold text-white/90">{m.displayName}</p>
+                    <p className="text-[10px] font-semibold text-white/90">{m.display_name}</p>
                     <button
                       type="button"
                       onClick={() => deleteMessage(m.id)}
