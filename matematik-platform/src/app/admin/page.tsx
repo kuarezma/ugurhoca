@@ -9,7 +9,7 @@ import {
   Calendar, Eye, Download, Check, CheckCircle2, AlertCircle, Sparkles,
   Users, BookOpen, RefreshCw, GraduationCap, Send, Bell,
   UserCheck, ClipboardList, MessageSquareText, Paperclip, Ban, VolumeX, Flag,
-  BarChart3
+  BarChart3, Clock, ChevronRight
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
@@ -147,6 +147,12 @@ export default function AdminPage() {
   const [assignments, setAssignments] = useState<any[]>([]);
   const [sharedDocs, setSharedDocs] = useState<SharedDoc[]>([]);
   const [quizzes, setQuizzes] = useState<any[]>([]);
+  const [submissions, setSubmissions] = useState<any[]>([]);
+  const [selectedAssignmentSubmissions, setSelectedAssignmentSubmissions] = useState<any[]>([]);
+  const [showSubmissionsModal, setShowSubmissionsModal] = useState(false);
+  const [activeAssignment, setActiveAssignment] = useState<any>(null);
+  const [feedback, setFeedback] = useState('');
+  const [submissionGrade, setSubmissionGrade] = useState<number>(100);
   const [selectedQuiz, setSelectedQuiz] = useState<any>(null);
   const [quizQuestions, setQuizQuestions] = useState<any[]>([]);
   const [chatRooms, setChatRooms] = useState<any[]>([]);
@@ -203,6 +209,34 @@ export default function AdminPage() {
     };
     checkAuth();
   }, [router]);
+
+  const loadSubmissions = async (assignmentId: string) => {
+    const { data, error } = await supabase
+      .from('assignment_submissions')
+      .select('*')
+      .eq('assignment_id', assignmentId)
+      .order('submitted_at', { ascending: false });
+    
+    if (data) {
+      setSelectedAssignmentSubmissions(data);
+    }
+  };
+
+  const updateSubmission = async (submissionId: string, grade: number, feedback: string) => {
+    const { error } = await supabase
+      .from('assignment_submissions')
+      .update({ 
+        grade, 
+        feedback, 
+        status: 'reviewed' 
+      })
+      .eq('id', submissionId);
+    
+    if (!error) {
+      if (activeAssignment) loadSubmissions(activeAssignment.id);
+      alert('Değerlendirme kaydedildi.');
+    }
+  };
 
   const loadData = async () => {
     const { data: annData } = await supabase.from('announcements').select('*').order('created_at', { ascending: false });
@@ -333,7 +367,9 @@ export default function AdminPage() {
       const { data, error } = await supabase.from('assignments').insert([{
         title: formData.title,
         description: formData.description,
-        student_id: selectedStudent,
+        student_id: selectedStudent || null,
+        grade: formData.grade || null,
+        due_date: formData.due_date || null
       }]).select();
       if (!error && data) {
         setAssignments([data[0], ...assignments]);
@@ -1752,8 +1788,24 @@ export default function AdminPage() {
                         {assignments.map(asmt => (
                           <div key={asmt.id} className="bg-slate-800/50 rounded-lg p-4">
                             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-2">
-                              <p className="text-white font-medium break-words">{asmt.title}</p>
+                              <div>
+                                <p className="text-white font-medium break-words">{asmt.title}</p>
+                                <p className="text-[10px] text-slate-500">
+                                  {asmt.grade ? `${asmt.grade}. Sınıf` : 'Özel'} • 
+                                  Son: {asmt.due_date ? new Date(asmt.due_date).toLocaleDateString('tr-TR') : 'Belirtilmedi'}
+                                </p>
+                              </div>
                               <div className="flex items-center gap-2 self-start sm:self-auto">
+                                <button 
+                                  onClick={() => {
+                                    setActiveAssignment(asmt);
+                                    loadSubmissions(asmt.id);
+                                    setShowSubmissionsModal(true);
+                                  }}
+                                  className="px-2 py-1 bg-indigo-500/20 text-indigo-400 text-xs font-bold rounded hover:bg-indigo-500/30 transition-colors"
+                                >
+                                  Teslimatlar
+                                </button>
                                 <button 
                                   onClick={() => editAssignment(asmt)}
                                   className="text-slate-400 hover:text-blue-400"
@@ -1770,7 +1822,7 @@ export default function AdminPage() {
                                 </button>
                               </div>
                             </div>
-                            <p className="text-slate-400 text-sm">{asmt.description}</p>
+                            <p className="text-slate-400 text-sm line-clamp-2">{asmt.description}</p>
                           </div>
                         ))}
                       </div>
@@ -2396,20 +2448,46 @@ export default function AdminPage() {
               ) : (
                 <form onSubmit={handleSubmit} className="space-y-5">
                   {modalType === 'assignment' && (
-                    <div>
-                      <label className="block text-slate-300 mb-2 text-sm">Öğrenci Seç</label>
-                      <select
-                        required
-                        value={selectedStudent}
-                        onChange={(e) => setSelectedStudent(e.target.value)}
-                        className="w-full bg-slate-800/50 border border-slate-700 rounded-xl px-4 py-3 text-white 
-                                 focus:outline-none focus:border-purple-500 transition-colors"
-                      >
-                        <option value="">Öğrenci seçin</option>
-                        {privateStudents.map(s => (
-                          <option key={s.id} value={s.id}>{s.name || s.email}</option>
-                        ))}
-                      </select>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-slate-300 mb-2 text-sm">Öğrenci (Özel)</label>
+                        <select
+                          value={selectedStudent}
+                          onChange={(e) => setSelectedStudent(e.target.value)}
+                          className="w-full bg-slate-800/50 border border-slate-700 rounded-xl px-4 py-3 text-white 
+                                   focus:outline-none focus:border-purple-500 transition-colors"
+                        >
+                          <option value="">İsteğe bağlı seçim</option>
+                          {privateStudents.map(s => (
+                            <option key={s.id} value={s.id}>{s.name || s.email}</option>
+                          ))}
+                        </select>
+                      </div>
+                      <div>
+                        <label className="block text-slate-300 mb-2 text-sm">Sınıf (Genel)</label>
+                        <select
+                          value={formData.grade || ''}
+                          onChange={(e) => setFormData({ ...formData, grade: e.target.value ? parseInt(e.target.value) : null })}
+                          className="w-full bg-slate-800/50 border border-slate-700 rounded-xl px-4 py-3 text-white 
+                                   focus:outline-none focus:border-purple-500 transition-colors"
+                        >
+                          <option value="">Sınıf seçin</option>
+                          {[5,6,7,8,9,10,11,12].map(g => (
+                            <option key={g} value={g}>{g}. Sınıf</option>
+                          ))}
+                          <option value="Mezun">Mezun</option>
+                        </select>
+                      </div>
+                      <div className="sm:col-span-2">
+                        <label className="block text-slate-300 mb-2 text-sm">Teslim Tarihi</label>
+                        <input
+                          type="datetime-local"
+                          value={formData.due_date || ''}
+                          onChange={(e) => setFormData({ ...formData, due_date: e.target.value })}
+                          className="w-full bg-slate-800/50 border border-slate-700 rounded-xl px-4 py-3 text-white 
+                                   focus:outline-none focus:border-purple-500 transition-colors"
+                        />
+                      </div>
                     </div>
                   )}
 
@@ -2779,6 +2857,123 @@ export default function AdminPage() {
         )}
       </AnimatePresence>
 
-    </main>
-  );
+      {/* Ödev Teslimatları Modalı */}
+      <AnimatePresence>
+          {showSubmissionsModal && activeAssignment && (
+            <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                onClick={() => setShowSubmissionsModal(false)}
+                className="absolute inset-0 bg-slate-950/90 backdrop-blur-md"
+              />
+              <motion.div
+                initial={{ opacity: 0, scale: 0.95, y: 20 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.95, y: 20 }}
+                className="relative w-full max-w-4xl max-h-[90vh] glass rounded-3xl p-6 sm:p-8 flex flex-col overflow-hidden"
+              >
+                <div className="flex items-center justify-between mb-6">
+                  <div className="flex items-center gap-4">
+                    <div className="w-12 h-12 bg-indigo-500 rounded-2xl flex items-center justify-center">
+                      <ClipboardList className="w-6 h-6 text-white" />
+                    </div>
+                    <div>
+                      <h2 className="text-2xl font-bold text-white leading-tight">{activeAssignment.title}</h2>
+                      <p className="text-slate-400 text-sm">Teslim Edilen Ödevler ({selectedAssignmentSubmissions.length})</p>
+                    </div>
+                  </div>
+                  <button onClick={() => setShowSubmissionsModal(false)} className="p-2 text-slate-400 hover:text-white transition-colors">
+                    <X className="w-6 h-6" />
+                  </button>
+                </div>
+
+                <div className="flex-1 overflow-y-auto space-y-4 pr-2 custom-scrollbar">
+                  {selectedAssignmentSubmissions.length === 0 ? (
+                    <div className="text-center py-20 bg-white/5 rounded-3xl border border-white/5">
+                      <Clock className="w-12 h-12 mx-auto mb-4 text-slate-600" />
+                      <p className="text-slate-400">Henüz teslimat yapılmadı</p>
+                    </div>
+                  ) : (
+                    selectedAssignmentSubmissions.map((sub: any) => (
+                      <div key={sub.id} className="glass p-5 rounded-2xl border border-white/5 space-y-4">
+                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                          <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 bg-gradient-to-br from-indigo-500 to-purple-500 rounded-xl flex items-center justify-center font-bold text-white">
+                              {sub.student_name?.[0] || 'Ö'}
+                            </div>
+                            <div>
+                              <p className="text-white font-bold">{sub.student_name}</p>
+                              <p className="text-slate-500 text-[10px]">{new Date(sub.submitted_at).toLocaleString('tr-TR')}</p>
+                            </div>
+                          </div>
+                          <div className="flex items-center gap-3">
+                            <a 
+                              href={sub.file_url} 
+                              target="_blank" 
+                              rel="noopener noreferrer"
+                              className="px-4 py-2 bg-indigo-500 hover:bg-indigo-600 text-white text-xs font-bold rounded-xl flex items-center gap-2 transition-all shadow-lg shadow-indigo-500/20"
+                            >
+                              <FileText className="w-4 h-4" />
+                              Dosyayı İncele
+                            </a>
+                            <span className={`px-3 py-1.5 rounded-lg text-xs font-bold ${
+                              sub.status === 'reviewed' ? 'bg-emerald-500/20 text-emerald-400' : 'bg-amber-500/20 text-amber-400'
+                            }`}>
+                              {sub.status === 'reviewed' ? `Puan: ${sub.grade}` : 'Bekliyor'}
+                            </span>
+                          </div>
+                        </div>
+
+                        {sub.comment && (
+                          <div className="bg-white/5 p-3 rounded-xl border border-white/5">
+                            <p className="text-xs text-slate-500 mb-1 font-bold uppercase tracking-wider">Öğrenci Notu</p>
+                            <p className="text-sm text-slate-300 italic">"{sub.comment}"</p>
+                          </div>
+                        )}
+
+                        <div className="flex flex-col sm:flex-row gap-3 pt-2">
+                          <div className="flex-1">
+                            <input
+                              type="text"
+                              placeholder="Geri bildirim yazın..."
+                              defaultValue={sub.feedback || ''}
+                              id={`feedback-${sub.id}`}
+                              className="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-indigo-500 transition-colors"
+                            />
+                          </div>
+                          <div className="flex gap-2">
+                            <input
+                              type="number"
+                              placeholder="Not"
+                              max="100"
+                              min="0"
+                              defaultValue={sub.grade || 100}
+                              id={`grade-${sub.id}`}
+                              className="w-20 bg-slate-800 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-center text-white focus:outline-none focus:border-indigo-500 transition-colors"
+                            />
+                            <button
+                              onClick={() => {
+                                const fb = (document.getElementById(`feedback-${sub.id}`) as HTMLInputElement)?.value;
+                                const gr = (document.getElementById(`grade-${sub.id}`) as HTMLInputElement)?.value;
+                                updateSubmission(sub.id, parseInt(gr), fb);
+                              }}
+                              className="px-6 py-2.5 bg-emerald-500 hover:bg-emerald-600 text-white text-sm font-bold rounded-xl transition-all shadow-lg shadow-emerald-500/20 flex items-center gap-2"
+                            >
+                              <Check className="w-4 h-4" />
+                              Kaydet
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    ))
+                  )}
+                </div>
+              </motion.div>
+            </div>
+          )}
+        </AnimatePresence>
+      </main>
+    );
 }

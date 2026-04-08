@@ -683,7 +683,7 @@ export default function HomePage() {
                       
                       {userAssignments.filter(a => !dismissedAssignments.has(a.id)).length > 3 && (
                         <Link 
-                          href="/profil"
+                          href="/odevler"
                           className="inline-flex items-center gap-2 mt-4 text-orange-400 hover:text-orange-300 text-sm font-medium transition-colors"
                         >
                           Tüm ödevleri gör ({userAssignments.filter(a => !dismissedAssignments.has(a.id)).length})
