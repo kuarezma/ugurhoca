@@ -60,6 +60,15 @@ Bu dosya, depo ve Vercel/Supabase ile ilgili yapılan ana işleri özetler (Nisa
 
 ---
 
+## 8. İlerleme Takibi Dashboard (Özellik 4)
+
+- **Veritabanı:** `study_sessions`, `user_progress` ve `study_goals` tabloları oluşturuldu. `20260408180000_progress_tracking.sql` migration dosyası eklendi. Tüm tablolar RLS ile öğrenciye özel sınırlandırıldı.
+- **Arayüz (UI):** `src/app/ilerleme/page.tsx` sayfası eklendi. `recharts` kütüphanesi NPM ile projeye kuruldu.
+- **Bileşenler:** Haftalık saat hedefleri paneli, gün/çalışma süresi grafiği, "Mastery" konulu yetkinlik gösterge barları ve Öğrenci Çalışma Girişi formu yapıldı.
+- **Entegrasyon:** `src/app/profil/page.tsx` sayfasına "Dashboard'a Git" yönlendirme kartı yerleştirildi.
+
+---
+
 ## 7. Geliştirme Planı (Nisan 2026)
 
 **Durum:** 8 yeni özellik belirlendi, implementasyon planı oluşturuldu.
@@ -75,7 +84,7 @@ Bu dosya, depo ve Vercel/Supabase ile ilgili yapılan ana işleri özetler (Nisa
 1. Test Sistemi ([x] Tamamlandı)
 2. Sohbet Geçmişi ([x] Tamamlandı)
 3. Ödev Teslim Sistemi ([x] Tamamlandı)
-4. İlerleme Takibi ([ ] Bekliyor)
+4. İlerleme Takibi ([x] Tamamlandı)
 5. Oyun Çeşitliliği ([ ] Bekliyor)
 6. E-posta Bildirimleri ([ ] Bekliyor)
 7. PDF Export ([ ] Bekliyor)
@@ -83,4 +92,4 @@ Bu dosya, depo ve Vercel/Supabase ile ilgili yapılan ana işleri özetler (Nisa
 
 **Detaylı Plan:** `/Users/ugurmac/.windsurf/plans/matematik-platform-gelistirme-348677.md`
 
-*Son güncelleme: Özellik 1, 7 ve 3 tamamlandı (8 Nisan 2026).*
+*Son güncelleme: Özellik 1, 3, 4 ve 7 tamamlandı (8 Nisan 2026).*

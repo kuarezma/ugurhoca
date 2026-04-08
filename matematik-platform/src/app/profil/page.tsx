@@ -5,7 +5,7 @@ import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { 
   Calculator, LogOut, ArrowLeft, Settings, ChevronRight, Shield, Bell,
-  FileText, ClipboardList, BookOpen, CheckCircle2, Clock3
+  FileText, ClipboardList, BookOpen, CheckCircle2, Clock3, BarChart3
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
@@ -422,6 +422,40 @@ export default function ProfilePage() {
                     </div>
                   </div>
                   <ChevronRight className="w-6 h-6 text-indigo-300 group-hover:text-white transition-colors" />
+                </div>
+              </Link>
+            </motion.div>
+          )}
+
+          {!user.isAdmin && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.22 }}
+              className="mt-6 mb-6"
+            >
+              <Link
+                href="/ilerleme"
+                className="group relative block overflow-hidden rounded-3xl border border-blue-500/30 bg-gradient-to-r from-blue-500/15 via-cyan-500/15 to-teal-500/15 p-6 hover:border-blue-400/60 transition-all"
+              >
+                <div className="absolute -left-10 -bottom-10 h-32 w-32 rounded-full bg-gradient-to-tr from-blue-500/35 to-teal-500/25 blur-3xl opacity-50 group-hover:opacity-100 transition-opacity" />
+                <div className="relative flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                  <div className="flex items-center gap-4">
+                    <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center shadow-lg shadow-blue-500/20">
+                      <BarChart3 className="w-7 h-7 text-white" />
+                    </div>
+                    <div>
+                      <div className="flex items-center gap-2 mb-1">
+                        <p className="text-white font-black text-xl">İlerleme Takibi</p>
+                        <span className="px-2 py-0.5 bg-blue-500 text-white text-[10px] font-bold uppercase tracking-wider rounded-md">YENİ</span>
+                      </div>
+                      <p className="text-slate-300 text-sm">Haftalık çalışma hedeflerini gör, konu yetkinlik durumunu analiz et.</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2 text-blue-300 font-semibold group-hover:text-white transition-colors">
+                    Dashboard'a Git
+                    <ChevronRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
+                  </div>
                 </div>
               </Link>
             </motion.div>
