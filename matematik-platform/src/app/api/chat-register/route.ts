@@ -21,25 +21,26 @@ export async function POST(request: Request) {
   }
 
   const body = (await request.json().catch(() => null)) as {
-    tc_number?: string;
     full_name?: string;
+    grade?: number;
+    school_number?: string;
   } | null;
 
-  const tc =
-    typeof body?.tc_number === 'string'
-      ? body.tc_number.replace(/\D/g, '').slice(0, 11)
-      : '';
-  const fullName =
-    typeof body?.full_name === 'string' ? body.full_name.trim() : '';
+  const fullName = typeof body?.full_name === 'string' ? body.full_name.trim() : '';
+  const grade = typeof body?.grade === 'number' ? body.grade : null;
+  const schoolNumber = typeof body?.school_number === 'string' ? body.school_number.trim() : '';
 
-  if (tc.length !== 11) {
+  if (!grade || grade < 1 || grade > 12) {
     return NextResponse.json(
-      { error: 'TC kimlik numarası 11 haneli olmalıdır.' },
+      { error: 'Sınıf 1-12 arasında olmalıdır.' },
       { status: 400 }
     );
   }
   if (!fullName) {
     return NextResponse.json({ error: 'İsim soyisim girin.' }, { status: 400 });
+  }
+  if (!schoolNumber) {
+    return NextResponse.json({ error: 'Okul numarası girin.' }, { status: 400 });
   }
 
   const display_name = computeChatDisplayName(fullName);
@@ -50,12 +51,13 @@ export async function POST(request: Request) {
 
   const { error } = await supabase.from('chat_users').upsert(
     {
-      tc_number: tc,
       full_name: fullName,
+      grade: grade,
+      school_number: schoolNumber,
       display_name,
       updated_at: new Date().toISOString(),
     },
-    { onConflict: 'tc_number' }
+    { onConflict: 'full_name,grade,school_number' }
   );
 
   if (error) {
@@ -69,8 +71,9 @@ export async function POST(request: Request) {
   return NextResponse.json({
     ok: true,
     user: {
-      tc_number: tc,
       full_name: fullName,
+      grade: grade,
+      school_number: schoolNumber,
       display_name,
     },
   });

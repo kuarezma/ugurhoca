@@ -6,8 +6,9 @@ import { LogIn, Loader2 } from 'lucide-react';
 import { CHAT_USER_STORAGE_KEY } from '@/lib/chat-constants';
 
 export type ChatSessionUser = {
-  tc_number: string;
   full_name: string;
+  grade: number;
+  school_number: string;
   display_name: string;
 };
 
@@ -16,26 +17,35 @@ type Props = {
 };
 
 export function ChatLogin({ onSuccess }: Props) {
-  const [tc, setTc] = useState('');
   const [fullName, setFullName] = useState('');
+  const [grade, setGrade] = useState('');
+  const [schoolNumber, setSchoolNumber] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const handleTcChange = (v: string) => {
-    const digits = v.replace(/\D/g, '').slice(0, 11);
-    setTc(digits);
+  const handleGradeChange = (v: string) => {
+    const digits = v.replace(/\D/g, '').slice(0, 2);
+    setGrade(digits);
+  };
+
+  const handleSchoolNumberChange = (v: string) => {
+    setSchoolNumber(v);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
-    if (tc.length !== 11) {
-      setError('TC kimlik numarası 11 haneli olmalıdır.');
+    if (!grade || parseInt(grade) < 1 || parseInt(grade) > 12) {
+      setError('Sınıf 1-12 arasında olmalıdır.');
       return;
     }
     const name = fullName.trim();
     if (!name) {
       setError('İsim soyisim girin.');
+      return;
+    }
+    if (!schoolNumber.trim()) {
+      setError('Okul numarası girin.');
       return;
     }
 
@@ -44,7 +54,11 @@ export function ChatLogin({ onSuccess }: Props) {
       const res = await fetch('/api/chat-register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ tc_number: tc, full_name: name }),
+        body: JSON.stringify({ 
+          full_name: name, 
+          grade: parseInt(grade), 
+          school_number: schoolNumber.trim() 
+        }),
       });
       const data = (await res.json().catch(() => ({}))) as {
         error?: string;
@@ -91,17 +105,29 @@ export function ChatLogin({ onSuccess }: Props) {
       <form onSubmit={handleSubmit} className="flex flex-col gap-3">
         <div>
           <label className="mb-1 block text-xs font-medium text-[var(--text-muted)]">
-            TC kimlik no
+            Sınıf
           </label>
           <input
             type="text"
             inputMode="numeric"
             autoComplete="off"
-            maxLength={11}
-            value={tc}
-            onChange={(e) => handleTcChange(e.target.value)}
+            maxLength={2}
+            value={grade}
+            onChange={(e) => handleGradeChange(e.target.value)}
             className="w-full rounded-xl border border-[var(--border)] bg-[var(--bg-soft)] px-3 py-2.5 text-sm text-[var(--text)] outline-none ring-violet-500/30 placeholder:text-[var(--text-soft)] focus:ring-2"
-            placeholder="11 haneli TC"
+            placeholder="1-12"
+          />
+        </div>
+        <div>
+          <label className="mb-1 block text-xs font-medium text-[var(--text-muted)]">
+            Okul Numarası
+          </label>
+          <input
+            type="text"
+            value={schoolNumber}
+            onChange={(e) => handleSchoolNumberChange(e.target.value)}
+            className="w-full rounded-xl border border-[var(--border)] bg-[var(--bg-soft)] px-3 py-2.5 text-sm text-[var(--text)] outline-none ring-violet-500/30 placeholder:text-[var(--text-soft)] focus:ring-2"
+            placeholder="Okul numaranız"
           />
         </div>
         <div>

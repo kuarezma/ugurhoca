@@ -57,20 +57,20 @@ function saveMessages(next: ChatMessage[]) {
 export function ChatBubble() {
   const [mounted, setMounted] = useState(false);
   const [user, setUser] = useState<ChatSessionUser | null>(null);
+  const [isAdmin, setIsAdmin] = useState(false);
   const [open, setOpen] = useState(false);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState('');
   const [onlineCount, setOnlineCount] = useState(0);
+  const [loading, setLoading] = useState(true);
   const lastActivityRef = useRef(Date.now());
   const presenceTickRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const broadcastRef = useRef<BroadcastChannel | null>(null);
   const listEndRef = useRef<HTMLDivElement | null>(null);
 
-  const adminTc = process.env.NEXT_PUBLIC_CHAT_ADMIN_TC ?? '';
-
   const isAdminTc = useCallback(
-    (tc: string) => !!adminTc && tc === adminTc,
-    [adminTc]
+    (tc: string) => isAdmin,
+    [isAdmin]
   );
 
   useEffect(() => {
@@ -79,13 +79,48 @@ export function ChatBubble() {
 
   useEffect(() => {
     if (!mounted || typeof window === 'undefined') return;
-    try {
-      const raw = sessionStorage.getItem(CHAT_USER_STORAGE_KEY);
-      if (raw) setUser(JSON.parse(raw) as ChatSessionUser);
-      else setUser(null);
-    } catch {
-      setUser(null);
-    }
+    
+    const checkAdminAndSetUser = async () => {
+      setLoading(true);
+      
+      try {
+        // Check if user is admin
+        const { data: { session } } = await supabase.auth.getSession();
+        const adminEmails = ['admin@ugurhoca.com', 'admin@matematiklab.com'];
+        
+        if (session?.user && adminEmails.includes(session.user.email || '')) {
+          // Auto-login for admin
+          const adminUser: ChatSessionUser = {
+            full_name: 'Uğur Hoca',
+            grade: 0,
+            school_number: 'admin',
+            display_name: 'Uğur Hoca'
+          };
+          setUser(adminUser);
+          setIsAdmin(true);
+          sessionStorage.setItem(CHAT_USER_STORAGE_KEY, JSON.stringify(adminUser));
+        } else {
+          // Check for existing student session
+          const raw = sessionStorage.getItem(CHAT_USER_STORAGE_KEY);
+          if (raw) {
+            const sessionUser = JSON.parse(raw) as ChatSessionUser;
+            setUser(sessionUser);
+            setIsAdmin(false);
+          } else {
+            setUser(null);
+            setIsAdmin(false);
+          }
+        }
+      } catch (error) {
+        console.error('Auth check failed:', error);
+        setUser(null);
+        setIsAdmin(false);
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    checkAdminAndSetUser();
     setMessages(loadMessages());
   }, [mounted]);
 
@@ -217,7 +252,7 @@ export function ChatBubble() {
           ? crypto.randomUUID()
           : `${Date.now()}-${Math.random()}`,
       text,
-      senderTc: user.tc_number,
+      senderTc: user.school_number,
       displayName: user.display_name,
       ts: Date.now(),
     };
@@ -232,7 +267,7 @@ export function ChatBubble() {
         text,
         senderDisplay: user.display_name,
       });
-      if (isAdminTc(user.tc_number) && Notification.permission === 'granted') {
+      if (isAdminTc(user.school_number) && Notification.permission === 'granted') {
         new Notification('Uğur Hoca Sohbet', {
           body: 'Mesajınızda @Uğur Hoca geçiyor.',
           tag: 'ugurhoca-self-tag',
@@ -253,6 +288,17 @@ export function ChatBubble() {
     return null;
   }
 
+  if (loading) {
+    return (
+      <div className="fixed bottom-4 right-4 z-50">
+        <div className="flex items-center gap-2 rounded-full bg-white/90 backdrop-blur-sm border border-slate-200 px-4 py-2 shadow-lg">
+          <div className="w-4 h-4 border-2 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+          <span className="text-sm text-slate-600">Yükleniyor...</span>
+        </div>
+      </div>
+    );
+  }
+
   const panelBody = !user ? (
     <div className="flex h-full min-h-0 flex-col">
       <div className="flex shrink-0 items-center border-b border-[var(--border)] px-3 py-2.5">
@@ -270,6 +316,7 @@ export function ChatBubble() {
         <ChatLoginLazy
           onSuccess={(u) => {
             setUser(u);
+            setIsAdmin(false);
             setMessages(loadMessages());
             markActivity();
           }}

@@ -50,4 +50,30 @@ Bu dosya, depo ve Vercel/Supabase ile ilgili yapılan ana işleri özetler (Nisa
 
 ---
 
-*Son güncelleme: iletişim özeti `progress.md` olarak kaydedildi.*
+## 7. Geliştirme Planı (Nisan 2026)
+
+**Durum:** 8 yeni özellik belirlendi, implementasyon planı oluşturuldu.
+
+**Özellikler:**
+1. **Test Sistemi Veritabanı Entegrasyonu** - quizzes, quiz_questions, quiz_results tabloları
+2. **Oyun Çeşitliliği** - games, game_scores tabloları + 4 yeni oyun (Division, Fraction, Equation, Geometry)
+3. **İlerleme Takibi Dashboard** - user_progress, study_sessions tabloları + /ilerleme sayfası
+4. **E-posta Bildirimleri** - Supabase auth entegrasyonu (doğrulama, şifre sıfırlama, duyuru bildirimleri)
+5. **PWA Desteği** - manifest.json, service worker, offline support
+6. **PDF Export** - notlar, test sonuçları, ilerleme raporları için PDF indirme
+7. **Sohbet Geçmişi Supabase'de Saklama** - chat_messages, chat_rooms, chat_room_members tabloları
+8. **Ödev Teslim Sistemi** - assignment_submissions tablosu + dosya yükleme + Storage entegrasyonu
+
+**Implementasyon Sırası:**
+1. Test Sistemi (öncelik 1)
+2. Sohbet Geçmişi (öncelik 2)
+3. Ödev Teslim Sistemi (öncelik 3)
+4. İlerleme Takibi (öncelik 4)
+5. Oyun Çeşitliliği (öncelik 5)
+6. E-posta Bildirimleri (öncelik 6)
+7. PDF Export (öncelik 7)
+8. PWA Desteği (öncelik 8)
+
+**Detaylı Plan:** `/Users/ugurmac/.windsurf/plans/matematik-platform-gelistirme-348677.md`
+
+*Son güncelleme: Geliştirme planı eklendi (8 özellik).*

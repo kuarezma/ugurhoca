@@ -31,66 +31,6 @@ const FloatingShapes = () => (
   </div>
 );
 
-const sampleQuizzes = [
-  { 
-    id: 1, 
-    title: 'Rasyonel Sayılar Testi', 
-    grade: 7, 
-    questions: 10, 
-    time: 15, 
-    difficulty: 'Orta',
-    description: 'Rasyonel sayılar konusundaki bilginizi test edin',
-    completed: false,
-    bestScore: null
-  },
-  { 
-    id: 2, 
-    title: 'Üslü Sayılar Deneme', 
-    grade: 8, 
-    questions: 15, 
-    time: 20, 
-    difficulty: 'Zor',
-    description: 'Üslü sayılar ve köklü sayılar',
-    completed: true,
-    bestScore: 85
-  },
-  { 
-    id: 3, 
-    title: 'Cebirsel İfadeler Quiz', 
-    grade: 6, 
-    questions: 8, 
-    time: 10, 
-    difficulty: 'Kolay',
-    description: 'Cebirsel ifadeler ve denklemler',
-    completed: false,
-    bestScore: null
-  },
-];
-
-const quizQuestions = {
-  1: [
-    { id: 1, question: '3/4 + 1/2 işleminin sonucu kaçtır?', options: ['5/4', '4/6', '3/8', '1'], correct: 0 },
-    { id: 2, question: 'Aşağıdakilerden hangisi rasyonel sayıdır?', options: ['√2', 'π', '0.333...', '√5'], correct: 2 },
-    { id: 3, question: '-3/5 sayısının çarpmaya göre tersi nedir?', options: ['5/3', '-5/3', '3/5', '-3/5'], correct: 1 },
-    { id: 4, question: '2/3 ÷ 4/9 işleminin sonucu kaçtır?', options: ['3/2', '8/27', '6/12', '1/2'], correct: 0 },
-    { id: 5, question: '1/2 + 1/3 + 1/6 işleminin sonucu kaçtır?', options: ['1', '6/11', '3/6', '2/3'], correct: 0 },
-  ],
-  2: [
-    { id: 1, question: '2³ + 3² işleminin sonucu kaçtır?', options: ['17', '15', '19', '11'], correct: 0 },
-    { id: 2, question: '5⁰ + 3⁰ işleminin sonucu kaçtır?', options: ['8', '2', '1', '0'], correct: 1 },
-    { id: 3, question: '4³ × 4² işleminin sonucu kaçtır?', options: ['4⁵', '4⁶', '4⁴', '16⁵'], correct: 0 },
-    { id: 4, question: '√144 + √81 işleminin sonucu kaçtır?', options: ['21', '23', '19', '15'], correct: 0 },
-    { id: 5, question: '2⁴ ÷ 2² işleminin sonucu kaçtır?', options: ['2²', '2⁶', '2⁸', '1'], correct: 0 },
-  ],
-  3: [
-    { id: 1, question: '3x + 5 = 14 denkleminin çözümü nedir?', options: ['x = 3', 'x = 5', 'x = 4', 'x = 2'], correct: 0 },
-    { id: 2, question: '2x - 7 = 9 denkleminin çözümü nedir?', options: ['x = 6', 'x = 8', 'x = 7', 'x = 5'], correct: 1 },
-    { id: 3, question: 'x + 4 = 10 denkleminin çözümü nedir?', options: ['x = 6', 'x = 7', 'x = 5', 'x = 4'], correct: 0 },
-    { id: 4, question: '5x = 25 denkleminin çözümü nedir?', options: ['x = 6', 'x = 4', 'x = 5', 'x = 3'], correct: 2 },
-    { id: 5, question: 'x/3 = 6 denkleminin çözümü nedir?', options: ['x = 18', 'x = 20', 'x = 15', 'x = 12'], correct: 0 },
-  ],
-};
-
 export default function TestsPage() {
   const [user, setUser] = useState<any>(null);
   const [selectedQuiz, setSelectedQuiz] = useState<any>(null);
@@ -99,6 +39,9 @@ export default function TestsPage() {
   const [answers, setAnswers] = useState<{ [key: number]: number }>({});
   const [showResult, setShowResult] = useState(false);
   const [quizStarted, setQuizStarted] = useState(false);
+  const [quizzes, setQuizzes] = useState<any[]>([]);
+  const [quizQuestions, setQuizQuestions] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
   const router = useRouter();
   const profileHref = user?.isAdmin ? '/admin' : '/profil';
 
@@ -114,7 +57,7 @@ export default function TestsPage() {
         .select('*')
         .eq('id', session.user.id)
         .single();
-        
+
       if (profile) {
         setUser({ ...profile, email: session.user.email });
       } else {
@@ -129,8 +72,32 @@ export default function TestsPage() {
     checkSession();
   }, [router]);
 
-  const startQuiz = (quiz: any) => {
+  useEffect(() => {
+    const loadQuizzes = async () => {
+      if (!user) return;
+      const { data } = await supabase
+        .from('quizzes')
+        .select('*')
+        .eq('is_active', true)
+        .order('created_at', { ascending: false });
+      if (data) setQuizzes(data);
+      setLoading(false);
+    };
+    loadQuizzes();
+  }, [user]);
+
+  const loadQuizQuestions = async (quizId: string) => {
+    const { data } = await supabase
+      .from('quiz_questions')
+      .select('*')
+      .eq('quiz_id', quizId)
+      .order('question_order', { ascending: true });
+    if (data) setQuizQuestions(data);
+  };
+
+  const startQuiz = async (quiz: any) => {
     setSelectedQuiz(quiz);
+    await loadQuizQuestions(quiz.id);
     setQuizStarted(true);
     setCurrentQuestion(0);
     setAnswers({});
@@ -144,21 +111,34 @@ export default function TestsPage() {
   };
 
   const nextQuestion = () => {
-    if (currentQuestion < (quizQuestions[selectedQuiz.id as keyof typeof quizQuestions]?.length || 0) - 1) {
+    if (currentQuestion < quizQuestions.length - 1) {
       setCurrentQuestion(currentQuestion + 1);
       setSelectedAnswer(answers[currentQuestion + 1] !== undefined ? answers[currentQuestion + 1] : null);
     } else {
       setShowResult(true);
+      saveQuizResult();
     }
   };
 
   const calculateScore = () => {
-    const questions = quizQuestions[selectedQuiz.id as keyof typeof quizQuestions] || [];
     let correct = 0;
-    questions.forEach((q, i) => {
-      if (answers[i] === q.correct) correct++;
+    quizQuestions.forEach((q: any, i: number) => {
+      if (answers[i] === q.correct_index) correct++;
     });
-    return Math.round((correct / questions.length) * 100);
+    return Math.round((correct / quizQuestions.length) * 100);
+  };
+
+  const saveQuizResult = async () => {
+    if (!user || !selectedQuiz) return;
+    const score = calculateScore();
+    await supabase.from('quiz_results').insert([{
+      user_id: user.id,
+      quiz_id: selectedQuiz.id,
+      score,
+      total_questions: quizQuestions.length,
+      answers,
+      time_spent: 0,
+    }]);
   };
 
   const resetQuiz = () => {
@@ -182,8 +162,7 @@ export default function TestsPage() {
   if (!user) return null;
 
   if (selectedQuiz && quizStarted && !showResult) {
-    const questions = quizQuestions[selectedQuiz.id as keyof typeof quizQuestions] || [];
-    const question = questions[currentQuestion];
+    const question = quizQuestions[currentQuestion];
 
     return (
       <main className="testler-page min-h-screen gradient-bg flex items-center justify-center p-6">
@@ -209,18 +188,18 @@ export default function TestsPage() {
             <div className="mb-8">
               <div className="flex items-center justify-between mb-4">
                 <span className="text-purple-400 font-semibold">
-                  Soru {currentQuestion + 1} / {questions.length}
+                  Soru {currentQuestion + 1} / {quizQuestions.length}
                 </span>
                 <span className={`px-3 py-1 rounded-full bg-gradient-to-r ${getDifficultyColor(selectedQuiz.difficulty)} text-white text-sm font-semibold`}>
                   {selectedQuiz.difficulty}
                 </span>
               </div>
-              
+
               <div className="h-2 bg-slate-700 rounded-full overflow-hidden">
                 <motion.div
                   className="h-full bg-gradient-to-r from-purple-500 to-pink-500"
                   initial={{ width: '0%' }}
-                  animate={{ width: `${((currentQuestion + 1) / questions.length) * 100}%` }}
+                  animate={{ width: `${((currentQuestion + 1) / quizQuestions.length) * 100}%` }}
                   transition={{ duration: 0.3 }}
                 />
               </div>
@@ -239,7 +218,7 @@ export default function TestsPage() {
                 </h2>
 
                 <div className="space-y-4">
-                  {question.options.map((option, i) => (
+                  {question.options.map((option: string, i: number) => (
                     <motion.button
                       key={i}
                       whileHover={{ scale: 1.02 }}
@@ -270,7 +249,7 @@ export default function TestsPage() {
                   : 'bg-slate-700 text-slate-500 cursor-not-allowed'
               }`}
             >
-              {currentQuestion < questions.length - 1 ? (
+              {currentQuestion < quizQuestions.length - 1 ? (
                 <>
                   Sonraki Soru
                   <ChevronRight className="w-5 h-5" />
@@ -290,7 +269,6 @@ export default function TestsPage() {
 
   if (selectedQuiz && showResult) {
     const score = calculateScore();
-    const questions = quizQuestions[selectedQuiz.id as keyof typeof quizQuestions] || [];
 
     return (
       <main className="testler-page min-h-screen gradient-bg flex items-center justify-center p-6">
@@ -336,13 +314,13 @@ export default function TestsPage() {
             <div className="grid grid-cols-2 gap-4 mb-8">
               <div className="bg-slate-800/50 rounded-xl p-4">
                 <div className="text-3xl font-bold text-green-400">
-                  {Object.values(answers).filter((a, i) => a === questions[i]?.correct).length}
+                  {Object.values(answers).filter((a, i) => a === quizQuestions[i]?.correct_index).length}
                 </div>
                 <div className="text-slate-400">Doğru</div>
               </div>
               <div className="bg-slate-800/50 rounded-xl p-4">
                 <div className="text-3xl font-bold text-red-400">
-                  {Object.values(answers).filter((a, i) => a !== questions[i]?.correct).length}
+                  {Object.values(answers).filter((a, i) => a !== quizQuestions[i]?.correct_index).length}
                 </div>
                 <div className="text-slate-400">Yanlış</div>
               </div>
@@ -410,7 +388,11 @@ export default function TestsPage() {
           </motion.div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {sampleQuizzes.filter(q => q.grade === user.grade).length === 0 ? (
+            {loading ? (
+              <div className="col-span-full text-center py-12">
+                <p className="text-slate-400">Yükleniyor...</p>
+              </div>
+            ) : quizzes.filter((q: any) => q.grade === user.grade).length === 0 ? (
               <div className="col-span-full text-center py-12">
                 <div className="w-16 h-16 bg-slate-800/50 rounded-2xl flex items-center justify-center mx-auto mb-4">
                   <FileText className="w-8 h-8 text-slate-500" />
@@ -418,7 +400,7 @@ export default function TestsPage() {
                 <h3 className="text-xl font-bold text-slate-300 mb-2">{user.grade}. Sınıf İçin Test Bulunamadı</h3>
                 <p className="text-slate-500">Yakında bu sınıf seviyesi için yeni testler eklenecektir.</p>
               </div>
-            ) : sampleQuizzes.filter(q => q.grade === user.grade).map((quiz, i) => (
+            ) : quizzes.filter((q: any) => q.grade === user.grade).map((quiz: any, i: number) => (
               <motion.div
                 key={quiz.id}
                 initial={{ opacity: 0, y: 20 }}
@@ -432,12 +414,6 @@ export default function TestsPage() {
                     <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center">
                       <FileText className="w-7 h-7 text-white" />
                     </div>
-                    {quiz.bestScore && (
-                      <div className="flex items-center gap-1 text-yellow-400">
-                        <Star className="w-5 h-5 fill-current" />
-                        <span className="font-bold">{quiz.bestScore}%</span>
-                      </div>
-                    )}
                   </div>
 
                   <h3 className="text-xl font-bold text-white mb-2">{quiz.title}</h3>
@@ -445,39 +421,22 @@ export default function TestsPage() {
 
                   <div className="flex items-center gap-4 text-sm text-slate-400 mb-6">
                     <span className="flex items-center gap-1">
-                      <FileText className="w-4 h-4" />
-                      {quiz.questions} soru
-                    </span>
-                    <span className="flex items-center gap-1">
                       <Clock className="w-4 h-4" />
-                      {quiz.time} dk
+                      {quiz.time_limit} dk
                     </span>
                     <span>{quiz.grade}. Sınıf</span>
+                    <span>{quiz.difficulty}</span>
                   </div>
 
-                  {quiz.completed ? (
-                    <div className="flex gap-2">
-                      <motion.button
-                        whileHover={{ scale: 1.02 }}
-                        whileTap={{ scale: 0.98 }}
-                        onClick={() => startQuiz(quiz)}
-                        className="flex-1 py-3 bg-gradient-to-r from-purple-500 to-pink-500 text-white font-semibold rounded-xl flex items-center justify-center gap-2"
-                      >
-                        <RotateCcw className="w-4 h-4" />
-                        Tekrar Çöz
-                      </motion.button>
-                    </div>
-                  ) : (
-                    <motion.button
-                      whileHover={{ scale: 1.02 }}
-                      whileTap={{ scale: 0.98 }}
-                      onClick={() => startQuiz(quiz)}
-                      className="w-full py-3 bg-gradient-to-r from-purple-500 to-pink-500 text-white font-semibold rounded-xl flex items-center justify-center gap-2 glow-button"
-                    >
-                      <Play className="w-4 h-4" />
-                      Başla
-                    </motion.button>
-                  )}
+                  <motion.button
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    onClick={() => startQuiz(quiz)}
+                    className="w-full py-3 bg-gradient-to-r from-purple-500 to-pink-500 text-white font-semibold rounded-xl flex items-center justify-center gap-2 glow-button"
+                  >
+                    <Play className="w-4 h-4" />
+                    Başla
+                  </motion.button>
                 </div>
               </motion.div>
             ))}

@@ -59,6 +59,7 @@ export default function ProfilePage() {
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [sharedDocs, setSharedDocs] = useState<SharedDoc[]>([]);
   const [assignments, setAssignments] = useState<any[]>([]);
+  const [quizResults, setQuizResults] = useState<any[]>([]);
   const [showNotifications, setShowNotifications] = useState(false);
   const [selectedAssignment, setSelectedAssignment] = useState<any>(null);
   const [selectedMessage, setSelectedMessage] = useState<Notification | null>(null);
@@ -115,7 +116,14 @@ export default function ProfilePage() {
         .eq('student_id', session.user.id)
         .order('created_at', { ascending: false });
       if (asmtData) setAssignments(asmtData);
-      
+
+      const { data: quizData } = await supabase
+        .from('quiz_results')
+        .select('*, quizzes(title, difficulty, grade)')
+        .eq('user_id', session.user.id)
+        .order('completed_at', { ascending: false });
+      if (quizData) setQuizResults(quizData);
+
       setLoading(false);
     }
     loadData();
@@ -515,6 +523,38 @@ export default function ProfilePage() {
                         <div className="flex-1">
                           <p className="text-white font-medium">{asmt.title}</p>
                           <p className="text-slate-400 text-sm mt-1">{asmt.description}</p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </motion.div>
+              )}
+
+              {quizResults.length > 0 && (
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.4 }}
+                >
+                  <h2 className="text-xl font-bold text-white mb-4">Test Sonuçlarım</h2>
+                  <div className="space-y-3">
+                    {quizResults.map((result: any) => (
+                      <div
+                        key={result.id}
+                        className="bg-white/5 border border-white/10 rounded-xl p-4 flex items-start gap-4"
+                      >
+                        <div className="w-10 h-10 rounded-lg bg-violet-500/20 flex items-center justify-center flex-shrink-0">
+                          <CheckCircle2 className="w-5 h-5 text-violet-400" />
+                        </div>
+                        <div className="flex-1">
+                          <p className="text-white font-medium">{result.quizzes?.title || 'Test'}</p>
+                          <div className="flex items-center gap-3 text-slate-400 text-sm mt-1">
+                            <span>{result.score}%</span>
+                            <span>•</span>
+                            <span>{result.total_questions} soru</span>
+                            <span>•</span>
+                            <span>{new Date(result.completed_at).toLocaleDateString('tr-TR')}</span>
+                          </div>
                         </div>
                       </div>
                     ))}

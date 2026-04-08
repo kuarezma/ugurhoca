@@ -3,10 +3,10 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
-import { 
-  Calculator, LogOut, ArrowLeft, Plus, FileText, 
+import {
+  Calculator, LogOut, ArrowLeft, Plus, FileText,
   Image, Megaphone, Edit3, Trash2, Upload, X,
-  Calendar, Eye, Download, Check, AlertCircle, Sparkles,
+  Calendar, Eye, Download, Check, CheckCircle2, AlertCircle, Sparkles,
   Users, BookOpen, RefreshCw, GraduationCap, Send, Bell,
   UserCheck, ClipboardList, MessageSquareText, Paperclip, Ban, VolumeX, Flag,
   BarChart3
@@ -139,20 +139,23 @@ interface Notification {
 export default function AdminPage() {
   const RETENTION_DAYS = 180;
   const [user, setUser] = useState<any>(null);
-  const [activeTab, setActiveTab] = useState<'statistics' | 'announcements' | 'documents' | 'writings' | 'users' | 'privateStudents' | 'messages' | 'gradeUpdate' | 'assignments'>('statistics');
+  const [activeTab, setActiveTab] = useState<'statistics' | 'announcements' | 'documents' | 'writings' | 'users' | 'privateStudents' | 'messages' | 'gradeUpdate' | 'assignments' | 'quizzes'>('statistics');
   const [announcements, setAnnouncements] = useState<Announcement[]>([]);
   const [documents, setDocuments] = useState<Document[]>([]);
   const [allUsers, setAllUsers] = useState<any[]>([]);
   const [privateStudents, setPrivateStudents] = useState<any[]>([]);
   const [assignments, setAssignments] = useState<any[]>([]);
   const [sharedDocs, setSharedDocs] = useState<SharedDoc[]>([]);
+  const [quizzes, setQuizzes] = useState<any[]>([]);
+  const [selectedQuiz, setSelectedQuiz] = useState<any>(null);
+  const [quizQuestions, setQuizQuestions] = useState<any[]>([]);
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [showNotifications, setShowNotifications] = useState(false);
   const [selectedNotification, setSelectedNotification] = useState<Notification | null>(null);
   const [replyText, setReplyText] = useState('');
   const [selectedStudent, setSelectedStudent] = useState<string>('');
   const [showModal, setShowModal] = useState(false);
-  const [modalType, setModalType] = useState<'announcement' | 'editAnnouncement' | 'document' | 'writing' | 'assignment' | 'editUser' | 'student' | 'sendDoc' | 'editDocument' | 'adminMessage'>('announcement');
+  const [modalType, setModalType] = useState<'announcement' | 'editAnnouncement' | 'document' | 'writing' | 'assignment' | 'editUser' | 'student' | 'sendDoc' | 'editDocument' | 'adminMessage' | 'quiz' | 'editQuiz' | 'addQuestion'>('announcement');
   const [formData, setFormData] = useState<any>({});
   const [selectedDoc, setSelectedDoc] = useState<any>(null);
   const [editingAnnouncement, setEditingAnnouncement] = useState<any>(null);
@@ -220,6 +223,10 @@ export default function AdminPage() {
     const { data: sharedData } = await supabase.from('shared_documents').select('*').order('created_at', { ascending: false });
     if (sharedData) setSharedDocs(sharedData);
 
+    // Quiz'leri getir
+    const { data: quizData } = await supabase.from('quizzes').select('*').order('created_at', { ascending: false });
+    if (quizData) setQuizzes(quizData);
+
     const retentionCutoff = new Date(Date.now() - RETENTION_DAYS * 24 * 60 * 60 * 1000).toISOString();
     await supabase
       .from('notifications')
@@ -247,12 +254,21 @@ export default function AdminPage() {
     router.push('/');
   };
 
-  const openModal = (type: 'announcement' | 'editAnnouncement' | 'document' | 'writing' | 'assignment' | 'student' | 'sendDoc', studentId?: string, doc?: any) => {
+  const openModal = (type: 'announcement' | 'editAnnouncement' | 'document' | 'writing' | 'assignment' | 'student' | 'sendDoc' | 'quiz' | 'editQuiz' | 'addQuestion', studentId?: string, doc?: any) => {
     setModalType(type);
     if (studentId) setSelectedStudent(studentId);
     if (doc) setSelectedDoc(doc);
     setFormData({});
     setShowModal(true);
+  };
+
+  const loadQuizQuestions = async (quizId: string) => {
+    const { data } = await supabase
+      .from('quiz_questions')
+      .select('*')
+      .eq('quiz_id', quizId)
+      .order('question_order', { ascending: true });
+    if (data) setQuizQuestions(data);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -353,6 +369,49 @@ export default function AdminPage() {
       } else {
         alert('Belge kaydedilemedi. Lütfen tekrar deneyin.');
       }
+    } else if (modalType === 'quiz') {
+      const { data, error } = await supabase.from('quizzes').insert([{
+        title: formData.title,
+        grade: formData.grade,
+        time_limit: formData.time_limit,
+        difficulty: formData.difficulty,
+        description: formData.description,
+        is_active: true,
+      }]).select();
+      if (!error && data) {
+        setQuizzes([data[0], ...quizzes]);
+      } else {
+        alert('Test kaydedilemedi. Lütfen tekrar deneyin.');
+      }
+    } else if (modalType === 'editQuiz') {
+      const { error } = await supabase
+        .from('quizzes')
+        .update({
+          title: formData.title,
+          grade: formData.grade,
+          time_limit: formData.time_limit,
+          difficulty: formData.difficulty,
+          description: formData.description,
+          is_active: formData.is_active,
+        })
+        .eq('id', selectedQuiz.id);
+      if (!error) {
+        setQuizzes(quizzes.map(q => q.id === selectedQuiz.id ? { ...q, ...formData } : q));
+      }
+    } else if (modalType === 'addQuestion') {
+      const { data, error } = await supabase.from('quiz_questions').insert([{
+        quiz_id: selectedQuiz.id,
+        question: formData.question,
+        options: formData.options,
+        correct_index: formData.correct_index,
+        question_order: quizQuestions.length,
+        explanation: formData.explanation,
+      }]).select();
+      if (!error && data) {
+        setQuizQuestions([...quizQuestions, data[0]]);
+      } else {
+        alert('Soru eklenemedi. Lütfen tekrar deneyin.');
+      }
     }
 
     setIsSubmitting(false);
@@ -375,6 +434,9 @@ export default function AdminPage() {
       } else if (type === 'announcement') {
         await supabase.from('announcements').delete().eq('id', id);
         setAnnouncements(announcements.filter(a => a.id !== id));
+      } else if (type === 'quiz') {
+        await supabase.from('quizzes').delete().eq('id', id);
+        setQuizzes(quizzes.filter(q => q.id !== id));
       } else {
         await supabase.from('documents').delete().eq('id', id);
         setDocuments(documents.filter(d => d.id !== id));
@@ -835,7 +897,8 @@ export default function AdminPage() {
               { id: 'privateStudents', label: 'Öğrencilerim', shortLabel: 'Öğr.', icon: BookOpen, color: 'from-amber-500 to-orange-500' },
               { id: 'messages', label: 'Mesajlar', shortLabel: 'Msj.', icon: MessageSquareText, color: 'from-indigo-500 to-purple-500' },
               { id: 'gradeUpdate', label: 'Sınıf Güncelle', shortLabel: 'Sınıf', icon: RefreshCw, color: 'from-teal-500 to-cyan-500' },
-              { id: 'assignments', label: 'Ödevlendirme', shortLabel: 'Ödev', icon: ClipboardList, color: 'from-rose-500 to-pink-500' }
+              { id: 'assignments', label: 'Ödevlendirme', shortLabel: 'Ödev', icon: ClipboardList, color: 'from-rose-500 to-pink-500' },
+              { id: 'quizzes', label: 'Testler', shortLabel: 'Test', icon: CheckCircle2, color: 'from-violet-500 to-purple-500' }
             ].map((tab) => (
               <motion.button
                 key={tab.id}
@@ -856,7 +919,7 @@ export default function AdminPage() {
             </div>
           </div>
 
-          {activeTab !== 'statistics' && activeTab !== 'users' && activeTab !== 'gradeUpdate' && activeTab !== 'assignments' && (
+          {activeTab !== 'statistics' && activeTab !== 'users' && activeTab !== 'gradeUpdate' && activeTab !== 'assignments' && activeTab !== 'quizzes' && (
             <div className="flex justify-stretch sm:justify-end mb-6">
               <motion.button
                 whileHover={{ scale: 1.02 }}
@@ -866,6 +929,20 @@ export default function AdminPage() {
               >
                 <Plus className="w-5 h-5" />
                 Yeni Ekle
+              </motion.button>
+            </div>
+          )}
+
+          {activeTab === 'quizzes' && (
+            <div className="flex justify-stretch sm:justify-end mb-6 gap-3">
+              <motion.button
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                onClick={() => openModal('quiz')}
+                className="btn-primary w-full sm:w-auto justify-center"
+              >
+                <Plus className="w-5 h-5" />
+                Yeni Test
               </motion.button>
             </div>
           )}
@@ -1617,6 +1694,86 @@ export default function AdminPage() {
                 </div>
               </motion.div>
             )}
+
+            {activeTab === 'quizzes' && (
+              <motion.div
+                key="quizzes"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                className="space-y-6"
+              >
+                <div>
+                  <h2 className="text-2xl font-bold text-white mb-1">Testler</h2>
+                  <p className="text-slate-400 text-sm sm:text-base">Matematik testlerini yönet</p>
+                </div>
+
+                {quizzes.length === 0 ? (
+                  <div className="glass rounded-2xl p-8 sm:p-12 text-center">
+                    <CheckCircle2 className="w-16 h-16 mx-auto mb-4 text-slate-500" />
+                    <p className="text-slate-400">Henüz test yok</p>
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {quizzes.map((quiz: any) => (
+                      <div key={quiz.id} className="glass rounded-2xl p-4 sm:p-6">
+                        <div className="flex items-start justify-between mb-3">
+                          <div>
+                            <h3 className="text-lg font-bold text-white mb-1">{quiz.title}</h3>
+                            <div className="flex items-center gap-2 text-sm text-slate-400">
+                              <span>{quiz.grade}. Sınıf</span>
+                              <span>•</span>
+                              <span>{quiz.difficulty}</span>
+                              <span>•</span>
+                              <span>{quiz.time_limit} dk</span>
+                            </div>
+                          </div>
+                          {!quiz.is_active && (
+                            <span className="px-2 py-1 bg-slate-700/50 text-slate-400 rounded-full text-xs">Pasif</span>
+                          )}
+                        </div>
+                        {quiz.description && (
+                          <p className="text-slate-400 text-sm mb-4">{quiz.description}</p>
+                        )}
+                        <div className="flex items-center gap-2">
+                          <motion.button
+                            whileHover={{ scale: 1.02 }}
+                            whileTap={{ scale: 0.98 }}
+                            onClick={() => {
+                              setSelectedQuiz(quiz);
+                              setFormData(quiz);
+                              openModal('editQuiz');
+                            }}
+                            className="flex-1 py-2 bg-slate-700/50 text-white rounded-lg text-sm font-medium hover:bg-slate-700 transition-colors"
+                          >
+                            Düzenle
+                          </motion.button>
+                          <motion.button
+                            whileHover={{ scale: 1.02 }}
+                            whileTap={{ scale: 0.98 }}
+                            onClick={() => {
+                              setSelectedQuiz(quiz);
+                              loadQuizQuestions(quiz.id);
+                              openModal('addQuestion');
+                            }}
+                            className="flex-1 py-2 bg-violet-500/20 text-violet-400 rounded-lg text-sm font-medium hover:bg-violet-500/30 transition-colors"
+                          >
+                            Soru Ekle
+                          </motion.button>
+                          <button
+                            onClick={() => deleteItem('quiz', quiz.id)}
+                            className="p-2 text-slate-400 hover:text-red-400 transition-colors"
+                            title="Sil"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </motion.div>
+            )}
           </AnimatePresence>
         </div>
       </div>
@@ -1639,7 +1796,7 @@ export default function AdminPage() {
             >
               <div className="flex items-center justify-between mb-6">
                 <h2 className="text-2xl font-bold text-white">
-                  {modalType === 'announcement' ? 'Yeni Duyuru' : modalType === 'editAnnouncement' ? 'Duyuru Düzenle' : modalType === 'document' ? 'Yeni Belge' : modalType === 'editDocument' ? 'Belge Düzenle' : modalType === 'assignment' ? 'Yeni Ödev' : modalType === 'student' ? 'Yeni Öğrenci' : modalType === 'editUser' ? 'Kullanıcı Düzenle' : modalType === 'sendDoc' ? 'Belge Gönder' : modalType === 'adminMessage' ? 'Öğrenciye Mesaj Yaz' : 'Yeni Yazı'}
+                  {modalType === 'announcement' ? 'Yeni Duyuru' : modalType === 'editAnnouncement' ? 'Duyuru Düzenle' : modalType === 'document' ? 'Yeni Belge' : modalType === 'editDocument' ? 'Belge Düzenle' : modalType === 'assignment' ? 'Yeni Ödev' : modalType === 'student' ? 'Yeni Öğrenci' : modalType === 'editUser' ? 'Kullanıcı Düzenle' : modalType === 'sendDoc' ? 'Belge Gönder' : modalType === 'adminMessage' ? 'Öğrenciye Mesaj Yaz' : modalType === 'quiz' ? 'Yeni Test' : modalType === 'editQuiz' ? 'Test Düzenle' : modalType === 'addQuestion' ? 'Soru Ekle' : 'Yeni Yazı'}
                 </h2>
                 <button onClick={() => { setShowModal(false); setEditingUser(null); }} className="text-slate-400 hover:text-white">
                   <X className="w-6 h-6" />
@@ -2238,18 +2395,135 @@ export default function AdminPage() {
 
                   <div>
                     <label className="block text-slate-300 mb-2 text-sm">
-                      {modalType === 'announcement' || modalType === 'editAnnouncement' ? 'Duyuru İçeriği' : modalType === 'document' ? 'Belge Açıklaması' : modalType === 'assignment' ? 'Ödev Detayları' : 'Yazı İçeriği'}
+                      {modalType === 'announcement' || modalType === 'editAnnouncement' ? 'Duyuru İçeriği' : modalType === 'document' ? 'Belge Açıklaması' : modalType === 'assignment' ? 'Ödev Detayları' : modalType === 'quiz' || modalType === 'editQuiz' ? 'Test Açıklaması' : 'Yazı İçeriği'}
                     </label>
                     <textarea
-                      required
-                      rows={modalType === 'document' || modalType === 'assignment' ? 3 : 6}
+                      required={modalType !== 'quiz' && modalType !== 'editQuiz'}
+                      rows={modalType === 'document' || modalType === 'assignment' || modalType === 'quiz' || modalType === 'editQuiz' ? 3 : 6}
                       value={formData.description || ''}
                       onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                      className="w-full bg-slate-800/50 border border-slate-700 rounded-xl px-4 py-3 text-white 
+                      className="w-full bg-slate-800/50 border border-slate-700 rounded-xl px-4 py-3 text-white
                                focus:outline-none focus:border-purple-500 transition-colors resize-none"
-                      placeholder={modalType === 'document' ? 'Belge hakkında bilgi...' : modalType === 'assignment' ? 'Hangi sayfalar / kaynaklar yapılacak?' : 'İçeriği buraya yazın...'}
+                      placeholder={modalType === 'document' ? 'Belge hakkında bilgi...' : modalType === 'assignment' ? 'Hangi sayfalar / kaynaklar yapılacak?' : modalType === 'quiz' || modalType === 'editQuiz' ? 'Test hakkında bilgi...' : 'İçeriği buraya yazın...'}
                     />
                   </div>
+
+                  {modalType === 'quiz' || modalType === 'editQuiz' ? (
+                    <>
+                      <div>
+                        <label className="block text-slate-300 mb-2 text-sm">Sınıf</label>
+                        <select
+                          required
+                          value={formData.grade || ''}
+                          onChange={(e) => setFormData({ ...formData, grade: parseInt(e.target.value) })}
+                          className="w-full bg-slate-800/50 border border-slate-700 rounded-xl px-4 py-3 text-white
+                                   focus:outline-none focus:border-violet-500 transition-colors"
+                        >
+                          <option value="">Sınıf seçin</option>
+                          {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map(grade => (
+                            <option key={grade} value={grade}>{grade}. Sınıf</option>
+                          ))}
+                        </select>
+                      </div>
+                      <div>
+                        <label className="block text-slate-300 mb-2 text-sm">Süre (Dakika)</label>
+                        <input
+                          type="number"
+                          required
+                          min="1"
+                          value={formData.time_limit || ''}
+                          onChange={(e) => setFormData({ ...formData, time_limit: parseInt(e.target.value) })}
+                          className="w-full bg-slate-800/50 border border-slate-700 rounded-xl px-4 py-3 text-white
+                                   focus:outline-none focus:border-violet-500 transition-colors"
+                          placeholder="Örn: 15"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-slate-300 mb-2 text-sm">Zorluk Seviyesi</label>
+                        <select
+                          required
+                          value={formData.difficulty || ''}
+                          onChange={(e) => setFormData({ ...formData, difficulty: e.target.value })}
+                          className="w-full bg-slate-800/50 border border-slate-700 rounded-xl px-4 py-3 text-white
+                                   focus:outline-none focus:border-violet-500 transition-colors"
+                        >
+                          <option value="">Zorluk seçin</option>
+                          <option value="Kolay">Kolay</option>
+                          <option value="Orta">Orta</option>
+                          <option value="Zor">Zor</option>
+                        </select>
+                      </div>
+                      {modalType === 'editQuiz' && (
+                        <div>
+                          <label className="flex items-center gap-2 text-slate-300 mb-2 text-sm cursor-pointer">
+                            <input
+                              type="checkbox"
+                              checked={formData.is_active || false}
+                              onChange={(e) => setFormData({ ...formData, is_active: e.target.checked })}
+                              className="w-4 h-4 rounded border-slate-600"
+                            />
+                            Aktif
+                          </label>
+                        </div>
+                      )}
+                    </>
+                  ) : null}
+
+                  {modalType === 'addQuestion' && (
+                    <>
+                      <div>
+                        <label className="block text-slate-300 mb-2 text-sm">Soru</label>
+                        <textarea
+                          required
+                          rows={3}
+                          value={formData.question || ''}
+                          onChange={(e) => setFormData({ ...formData, question: e.target.value })}
+                          className="w-full bg-slate-800/50 border border-slate-700 rounded-xl px-4 py-3 text-white
+                                   focus:outline-none focus:border-violet-500 transition-colors resize-none"
+                          placeholder="Soruyu buraya yazın..."
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-slate-300 mb-2 text-sm">Şıklar (Her satıra bir şık)</label>
+                        <textarea
+                          required
+                          rows={4}
+                          value={formData.options?.join('\n') || ''}
+                          onChange={(e) => setFormData({ ...formData, options: e.target.value.split('\n').filter(Boolean) })}
+                          className="w-full bg-slate-800/50 border border-slate-700 rounded-xl px-4 py-3 text-white
+                                   focus:outline-none focus:border-violet-500 transition-colors resize-none"
+                          placeholder="A) 5&#10;B) 10&#10;C) 15&#10;D) 20"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-slate-300 mb-2 text-sm">Doğru Şık (0-3)</label>
+                        <select
+                          required
+                          value={formData.correct_index ?? ''}
+                          onChange={(e) => setFormData({ ...formData, correct_index: parseInt(e.target.value) })}
+                          className="w-full bg-slate-800/50 border border-slate-700 rounded-xl px-4 py-3 text-white
+                                   focus:outline-none focus:border-violet-500 transition-colors"
+                        >
+                          <option value="">Doğru şıkkı seçin</option>
+                          <option value="0">A</option>
+                          <option value="1">B</option>
+                          <option value="2">C</option>
+                          <option value="3">D</option>
+                        </select>
+                      </div>
+                      <div>
+                        <label className="block text-slate-300 mb-2 text-sm">Açıklama (Opsiyonel)</label>
+                        <textarea
+                          rows={2}
+                          value={formData.explanation || ''}
+                          onChange={(e) => setFormData({ ...formData, explanation: e.target.value })}
+                          className="w-full bg-slate-800/50 border border-slate-700 rounded-xl px-4 py-3 text-white
+                                   focus:outline-none focus:border-violet-500 transition-colors resize-none"
+                          placeholder="Cevabın nedenini açıklayın..."
+                        />
+                      </div>
+                    </>
+                  )}
 
                   {modalType === 'document' && (
                     <>
