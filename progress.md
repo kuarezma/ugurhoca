@@ -85,7 +85,7 @@ Bu dosya, depo ve Vercel/Supabase ile ilgili yapılan ana işleri özetler (Nisa
 2. Sohbet Geçmişi ([x] Tamamlandı)
 3. Ödev Teslim Sistemi ([x] Tamamlandı)
 4. İlerleme Takibi ([x] Tamamlandı)
-5. Oyun Çeşitliliği ([ ] Bekliyor)
+5. Oyun Çeşitliliği ([x] Tamamlandı)
 6. E-posta Bildirimleri ([ ] Bekliyor)
 7. PDF Export ([ ] Bekliyor)
 8. PWA Desteği ([ ] Bekliyor)
@@ -112,5 +112,14 @@ Bu paket ile platformun UX/UI kalitesi artırılmış, oyunlaştırma ve animasy
 - **Tasarım Dili Desteği:** `ChatBubble` baloncuklarına **Glassmorphism** stili uygulandı. `backdrop-blur` ile şık ve fütüristik bir iPhone (iMessage) deneyimi kazandırıldı.
 - **Animasyon:** Gelen ve giden mesajlar ekrana çıkarken yaylanma (Spring effect) sunmak üzere framer motion ile `motion.div` nesnesine çevrildi.
 - **Yardımcı Ekstralar:** Her sohbet içeriğinin sol-alt köşesine mesaj saati ("14:35") ve Admin yetkili okunduğunu ifade eden ("✓✓") özellikleri bağlandı.
+- **Hata Giderme (Sohbet Odaları):** Admin panelinde eskiyen "Sohbetler" bölümündeki oda görüntüleme (Updated_at order) hatası, sorunsuz Supabase optimizasyonu ile düzeltildi ve Admin mesajlarına tam işlevsellik katıldı.
 
-*Son güncelleme: İlerleme Takibi (Özellik 4) ile birlikte Özellik 1, Özellik 3 ve Özellik 7'nin V2 uyarlamaları da kusursuz şekilde tamamlandı ve Push edildi.*
+### 9.4 Oyun Çeşitliliği & Liderlik Tablosu (Gamification V2)
+- **Veritabanı (game_scores):** `oyunlar/page.tsx` adresinde yer alan tüm mini oyunlardan kazanılan skorlar asenkron olarak veritabanına atılmaya başlandı.
+- **Dinamik Liderlik (Leaderboard):** Oyun Sayfasına şık kupalar ve harika gradient efektleriyle süslenmiş bir **"Global Liderlik Tablosu"** entegre edildi. Dünyada en çok puan toplayan öğrenciler, madalya renkleriyle (Altın, Gümüş, Bronz) listelenmektedir.
+
+### 9.5 Bildirim Merkezi UX İyileştirmeleri (V2)
+- **Akıllı İkonlar ve Zaman:** Uğur Hoca'ya yazılan ve Uğur Hoca'dan gelen mesaj bildirimleri (`header` altındaki çan ikonu) tipografik Glassmorphism arayüzüne kavuştu. Kelime okuması yapan algoritmalarla (Okundu, cevapladı, teslim edildi) dinamik ikonlar atanarak, "1 saat önce" formatıyla zevkli bir görünüm sunuldu.
+- **Duyuru Kartları:** "Duyuru Ekle/Sil" bölümündeki `announcement` bloklarına `animate-pulse` destekli "Yayında" ibaresi ve resim kapaklarıyla modern bir Premium liste tasarımı giydirildi.
+
+*Son güncelleme: Tüm planlanmış V2 (UX/UI Premium) iyileştirmeleri ve Özellik 2 (Oyun Çeşitliliği/Leaderboard) entegrasyonu kusursuz şekilde tamamlandı ve canlıya (main) push edildi.*
