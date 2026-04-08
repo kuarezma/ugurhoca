@@ -50,6 +50,16 @@ Bu dosya, depo ve Vercel/Supabase ile ilgili yapılan ana işleri özetler (Nisa
 
 ---
 
+## 7. Ödev Teslim Sistemi (Özellik 3)
+
+- **Veritabanı:** `assignments` tablosu güncellendi (`due_date`, `grade`); `assignment_submissions` tablosu eklendi. SQL: `matematik-platform/supabase/migrations/20260408170000_assignment_submissions.sql`.
+- **Storage:** `submissions` bucket'ı oluşturuldu. Öğrenciler için `insert/select` (kendi klasörleri), Admin için tam `select` yetkisi tanımlandı.
+- **Öğrenci UI:** `src/app/odevler/page.tsx`. Ödev listeleme, detay görme, PDF/Görsel yükleme ve geri bildirim takibi.
+- **Admin UI:** `src/app/admin/page.tsx`. Sınıf bazlı ödev atama, teslimatları inceleme, puanlama (0-100) ve yorum yapma ekranı.
+- **Entegrasyon:** Ana sayfadaki ödev bildirimleri yeni ödev sayfasına bağlandı.
+
+---
+
 ## 7. Geliştirme Planı (Nisan 2026)
 
 **Durum:** 8 yeni özellik belirlendi, implementasyon planı oluşturuldu.
