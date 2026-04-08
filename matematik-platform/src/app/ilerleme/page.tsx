@@ -4,11 +4,12 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
-  BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell 
+  BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell,
+  Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis
 } from 'recharts';
 import { 
-  ArrowLeft, Target, Flame, Brain, TrendingUp, Calendar, 
-  Clock, Plus, X, Video, BookOpen, PenTool, CheckCircle2
+  ArrowLeft, Target, Flame, Brain, Calendar, 
+  Plus, X, Video, BookOpen, PenTool, CheckCircle2, Award
 } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import { ThemeToggle } from '@/components/ThemeToggle';
@@ -29,6 +30,7 @@ export default function IlerlemePage() {
   const [sessions, setSessions] = useState<any[]>([]);
   const [progressData, setProgressData] = useState<any[]>([]);
   const [goal, setGoal] = useState<any>(null);
+  const [badges, setBadges] = useState<any[]>([]);
   
   // Modal states
   const [showAddModal, setShowAddModal] = useState(false);
@@ -54,17 +56,18 @@ export default function IlerlemePage() {
       .eq('id', session.user.id)
       .single();
       
-    setUser(profile || { id: session.user.id, name: 'Öğrenci', email: session.user.email });
+    setUser(profile || { id: session.user.id, name: 'Öğrenci', email: session.user.email, current_streak: 0 });
 
-    // Verileri çek
-    const [sessionsRes, progressRes, goalRes] = await Promise.all([
+    const [sessionsRes, progressRes, goalRes, badgesRes] = await Promise.all([
       supabase.from('study_sessions').select('*').eq('user_id', session.user.id).order('date', { ascending: false }),
       supabase.from('user_progress').select('*').eq('user_id', session.user.id).order('mastery_level', { ascending: false }),
-      supabase.from('study_goals').select('*').eq('user_id', session.user.id)
+      supabase.from('study_goals').select('*').eq('user_id', session.user.id),
+      supabase.from('user_badges').select('*').eq('user_id', session.user.id).order('earned_at', { ascending: false })
     ]);
 
     setSessions(sessionsRes.data || []);
     setProgressData(progressRes.data || []);
+    setBadges(badgesRes.data || []);
     
     // Geçerli haftanın hedefini bul veya varsayılan oluştur
     const today = new Date();
@@ -92,7 +95,6 @@ export default function IlerlemePage() {
     try {
       const durationNum = parseInt(duration);
       
-      // 1. Session kaydet
       const { error: sessionError } = await supabase.from('study_sessions').insert([{
         user_id: user.id,
         activity_type: activityType,
@@ -103,7 +105,6 @@ export default function IlerlemePage() {
       
       if (sessionError) throw sessionError;
 
-      // 2. Progress güncelle (Basit bir formül: Her 10 dk çalışma %2 artırır (max 100))
       const existingProgress = progressData.find(p => p.topic === selectedTopic);
       const masteryIncrement = Math.min(100, Math.floor(durationNum / 5));
       const newMastery = Math.min(100, (existingProgress?.mastery_level || 0) + masteryIncrement);
@@ -119,6 +120,9 @@ export default function IlerlemePage() {
       
       if (progressError) throw progressError;
 
+      // Streak güncellemesi manual sessionda client'tan da verilebilir, tetikleyici yapsa daha iyi ama burası da basitçe streak'i simule edebilir.
+      // (Supabase trigger yaparsa asıl sağlamdır).
+      
       setShowAddModal(false);
       setDuration('');
       setSelectedTopic('');
@@ -140,13 +144,12 @@ export default function IlerlemePage() {
     );
   }
 
-  // Hafta verilerini grafik için hazırla
   const getWeeklyChartData = () => {
     const days = ['Pzt', 'Sal', 'Çar', 'Per', 'Cum', 'Cmt', 'Paz'];
     const data = days.map(d => ({ name: d, duration: 0 }));
     
     const today = new Date();
-    const dayOfWeek = today.getDay() === 0 ? 6 : today.getDay() - 1; // 0=Pzt
+    const dayOfWeek = today.getDay() === 0 ? 6 : today.getDay() - 1; 
     const startOfWeek = new Date(today);
     startOfWeek.setDate(today.getDate() - dayOfWeek);
     startOfWeek.setHours(0,0,0,0);
@@ -168,8 +171,20 @@ export default function IlerlemePage() {
   const currentWeekTotal = chartData.reduce((acc, curr) => acc + curr.duration, 0);
   const goalPercentage = Math.min(100, Math.round((currentWeekTotal / goal.target_duration) * 100));
   
-  const weakTopics = progressData.filter(p => p.mastery_level < 50);
-  const strongTopics = progressData.filter(p => p.mastery_level >= 80);
+  // Radar data hazırlama: Sadece bir kez veya daha fazla çalışılmış top 6 konu
+  const radarData = [...progressData].slice(0, 6).map(p => ({
+    subject: p.topic.split(' ')[0], // İlk kelimesini al ekrana sığsın
+    A: p.mastery_level,
+    fullMark: 100,
+  }));
+  
+  // Eğre yetersiz veri varsa Dummy radar
+  const displayRadarData = radarData.length > 2 ? radarData : [
+    { subject: 'Çarpanlar', A: 20, fullMark: 100 },
+    { subject: 'Üslü', A: 40, fullMark: 100 },
+    { subject: 'Köklü', A: 10, fullMark: 100 },
+    { subject: 'Olasılık', A: 0, fullMark: 100 },
+  ];
 
   return (
     <main className={`min-h-screen pb-20 ${isLight ? 'bg-slate-50' : 'bg-slate-900'}`}>
@@ -178,7 +193,13 @@ export default function IlerlemePage() {
           <Link href="/profil" className="flex items-center gap-2 text-slate-400 hover:text-indigo-400 font-medium">
             <ArrowLeft className="w-5 h-5" /> Geri Dön
           </Link>
-          <ThemeToggle compact />
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-orange-500/10 border border-orange-500/20">
+              <Flame className="w-5 h-5 text-orange-500" />
+              <span className={`font-bold ${isLight ? 'text-slate-700' : 'text-slate-200'}`}>{user.current_streak || 0} Gün</span>
+            </div>
+            <ThemeToggle compact />
+          </div>
         </div>
       </header>
 
@@ -218,7 +239,7 @@ export default function IlerlemePage() {
                     </p>
                   </div>
                   <div className="text-right">
-                    <p className={`text-4xl font-black ${goalPercentage >= 100 ? 'text-emerald-500' : isLight ? 'text-orange-500' : 'text-orange-400'}`}>
+                    <p className={`text-4xl font-black flex items-center gap-2 ${goalPercentage >= 100 ? 'text-emerald-500' : isLight ? 'text-orange-500' : 'text-orange-400'}`}>
                       %{goalPercentage}
                     </p>
                   </div>
@@ -237,19 +258,42 @@ export default function IlerlemePage() {
             </div>
           </motion.div>
 
-          {/* Quick Stat */}
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className={`rounded-3xl p-6 sm:p-8 flex flex-col justify-center border ${isLight ? 'bg-gradient-to-br from-indigo-50 to-blue-50 border-indigo-100' : 'bg-gradient-to-br from-indigo-900/40 to-blue-900/40 border-indigo-500/20'}`}>
-            <div className={`w-12 h-12 rounded-2xl flex items-center justify-center mb-4 ${isLight ? 'bg-indigo-100 text-indigo-600' : 'bg-indigo-500/20 text-indigo-400'}`}>
-              <Flame className="w-6 h-6" />
+          {/* Quick Stat (Rozetler Paneli Olarak Değiştirildi) */}
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className={`rounded-3xl p-6 sm:p-8 flex flex-col border ${isLight ? 'bg-gradient-to-br from-indigo-50 to-blue-50 border-indigo-100' : 'bg-gradient-to-br from-indigo-900/40 to-blue-900/40 border-indigo-500/20'}`}>
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-2">
+                <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${isLight ? 'bg-indigo-100 text-indigo-600' : 'bg-indigo-500/20 text-indigo-400'}`}>
+                  <Award className="w-4 h-4" />
+                </div>
+                <h3 className={`text-sm font-bold uppercase tracking-wider ${isLight ? 'text-indigo-900/70' : 'text-indigo-200/70'}`}>Rozetlerim</h3>
+              </div>
+              <span className={`text-xl font-black ${isLight ? 'text-indigo-900' : 'text-white'}`}>{badges.length}</span>
             </div>
-            <h3 className={`text-sm font-bold uppercase tracking-wider mb-1 ${isLight ? 'text-indigo-900/50' : 'text-indigo-200/50'}`}>Toplam Çalışma</h3>
-            <p className={`text-3xl font-black ${isLight ? 'text-indigo-900' : 'text-white'}`}>
-              {sessions.reduce((acc, curr) => acc + curr.duration, 0)} <span className="text-lg font-medium opacity-50">dk</span>
-            </p>
+            
+            {badges.length === 0 ? (
+              <div className="flex-1 flex flex-col items-center justify-center text-center opacity-50">
+                <Target className={`w-8 h-8 mb-2 ${isLight ? 'text-indigo-900/50' : 'text-indigo-200/50'}`} />
+                <p className={`text-xs font-semibold ${isLight ? 'text-indigo-900/60' : 'text-indigo-200/60'}`}>Test çöz rozet kazan!</p>
+              </div>
+            ) : (
+              <div className="flex-1 grid grid-cols-2 gap-2 mt-2">
+                {badges.slice(0,4).map(badge => (
+                  <div key={badge.id} className="relative group cursor-pointer">
+                    <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-orange-400 to-yellow-500 flex items-center justify-center shadow-lg shadow-orange-500/20">
+                      <Award className="w-6 h-6 text-white" />
+                    </div>
+                    {/* Tooltip */}
+                    <div className="absolute opacity-0 group-hover:opacity-100 bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 bg-slate-800 text-white text-[10px] whitespace-nowrap rounded font-medium transition-opacity pointer-events-none z-10">
+                      {badge.badge_name}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
           </motion.div>
         </div>
 
-        {/* Ana İçerik Grid */}
+        {/* Ana İçerik Grid (BarChart ve RadarChart Bir Arada) */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           
           {/* Bar Grafiği */}
@@ -277,38 +321,49 @@ export default function IlerlemePage() {
             </div>
           </motion.div>
 
-          {/* Konu Yetkinlikleri */}
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }} className={`rounded-3xl p-6 border ${isLight ? 'bg-white border-slate-200' : 'bg-slate-800/50 border-slate-700'} flex flex-col max-h-[400px]`}>
-            <div className="flex items-center gap-2 mb-6">
+          {/* Yetkinlik Radar Grafiği */}
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }} className={`rounded-3xl p-6 border ${isLight ? 'bg-white border-slate-200' : 'bg-slate-800/50 border-slate-700'} flex flex-col`}>
+            <div className="flex items-center gap-2 mb-2">
               <Brain className={`w-5 h-5 ${isLight ? 'text-pink-500' : 'text-pink-400'}`} />
-              <h2 className={`font-bold text-lg ${isLight ? 'text-slate-900' : 'text-white'}`}>Konu Yeterliliği</h2>
+              <h2 className={`font-bold text-lg ${isLight ? 'text-slate-900' : 'text-white'}`}>Matematik Becerisi Ağı</h2>
             </div>
             
-            {progressData.length === 0 ? (
-              <div className="flex-1 flex flex-col items-center justify-center text-center opacity-50">
-                <Brain className="w-12 h-12 mb-3 grayscale" />
-                <p>Henüz bir çalışma kaydın yok.<br/>Ekledikçe burada göreceksin.</p>
-              </div>
-            ) : (
-              <div className="flex-1 overflow-y-auto pr-2 custom-scrollbar space-y-4">
-                {progressData.map(prog => (
-                  <div key={prog.id} className="relative">
-                    <div className="flex justify-between text-sm mb-1">
-                      <span className={`font-medium ${isLight ? 'text-slate-700' : 'text-slate-300'}`}>{prog.topic}</span>
-                      <span className={`font-bold ${prog.mastery_level > 70 ? 'text-emerald-500' : prog.mastery_level < 40 ? 'text-red-500' : 'text-amber-500'}`}>%{prog.mastery_level}</span>
-                    </div>
-                    <div className={`h-2.5 w-full rounded-full ${isLight ? 'bg-slate-100' : 'bg-slate-900'}`}>
-                      <div 
-                        className={`h-full rounded-full ${prog.mastery_level > 70 ? 'bg-emerald-500' : prog.mastery_level < 40 ? 'bg-red-500' : 'bg-amber-500'}`}
-                        style={{ width: `${prog.mastery_level}%` }}
-                      />
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
+            <div className="h-64 w-full flex-1">
+               <ResponsiveContainer width="100%" height="100%">
+                <RadarChart cx="50%" cy="50%" outerRadius="70%" data={displayRadarData}>
+                  <PolarGrid stroke={isLight ? '#e2e8f0' : '#334155'} />
+                  <PolarAngleAxis dataKey="subject" tick={{ fill: isLight ? '#475569' : '#94a3b8', fontSize: 10, fontWeight: 600 }} />
+                  <PolarRadiusAxis angle={30} domain={[0, 100]} tick={false} axisLine={false} />
+                  <Radar name="Yetkinlik" dataKey="A" stroke="#8b5cf6" strokeWidth={2} fill="#8b5cf6" fillOpacity={isLight ? 0.3 : 0.4} />
+                  <Tooltip wrapperStyle={{ outline: 'none' }} contentStyle={{ backgroundColor: isLight ? '#fff' : '#0f172a', border: 'none', borderRadius: '12px' }} />
+                </RadarChart>
+              </ResponsiveContainer>
+            </div>
           </motion.div>
         </div>
+
+        {/* Mevcut Geleneksel Konu Çubuğu Barı (Optional, Alta alındı detay için) */}
+        {progressData.length > 0 && (
+           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }} className={`rounded-3xl p-6 border ${isLight ? 'bg-white border-slate-200' : 'bg-slate-800/50 border-slate-700'}`}>
+            <h2 className={`font-bold text-lg mb-6 ${isLight ? 'text-slate-900' : 'text-white'}`}>Detaylı Konu İlerlemesi</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4">
+              {progressData.map(prog => (
+                <div key={prog.id} className="relative">
+                  <div className="flex justify-between text-sm mb-1">
+                    <span className={`font-medium ${isLight ? 'text-slate-700' : 'text-slate-300'}`}>{prog.topic}</span>
+                    <span className={`font-bold ${prog.mastery_level > 80 ? 'text-emerald-500' : prog.mastery_level < 40 ? 'text-red-500' : 'text-amber-500'}`}>%{prog.mastery_level}</span>
+                  </div>
+                  <div className={`h-2.5 w-full rounded-full ${isLight ? 'bg-slate-100' : 'bg-slate-900'}`}>
+                    <div 
+                      className={`h-full rounded-full ${prog.mastery_level > 80 ? 'bg-emerald-500' : prog.mastery_level < 40 ? 'bg-red-500' : 'bg-amber-500'}`}
+                      style={{ width: `${prog.mastery_level}%` }}
+                    />
+                  </div>
+                </div>
+              ))}
+             </div>
+           </motion.div>
+        )}
       </div>
 
       {/* Çalışma Ekle Modalı */}

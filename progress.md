@@ -60,11 +60,11 @@ Bu dosya, depo ve Vercel/Supabase ile ilgili yapılan ana işleri özetler (Nisa
 
 ---
 
-## 8. İlerleme Takibi Dashboard (Özellik 4)
+## 8. İlerleme Takibi Dashboard (Özellik 4) & V2 Oyunlaştırma
 
-- **Veritabanı:** `study_sessions`, `user_progress` ve `study_goals` tabloları oluşturuldu. `20260408180000_progress_tracking.sql` migration dosyası eklendi. Tüm tablolar RLS ile öğrenciye özel sınırlandırıldı.
+- **Veritabanı:** `study_sessions`, `user_progress` ve `study_goals` tabloları oluşturuldu. V2 eklentisi ile `profiles` tablosuna `current_streak` (Gün serisi) eklendi, `user_badges` oluşturuldu. `20260408190000_gamification_triggers.sql` otomasyon trigger'ı entegre edildi, test çözüldüğünde progress otomatik artıyor.
 - **Arayüz (UI):** `src/app/ilerleme/page.tsx` sayfası eklendi. `recharts` kütüphanesi NPM ile projeye kuruldu.
-- **Bileşenler:** Haftalık saat hedefleri paneli, gün/çalışma süresi grafiği, "Mastery" konulu yetkinlik gösterge barları ve Öğrenci Çalışma Girişi formu yapıldı.
+- **Bileşenler:** Haftalık saat hedefleri paneli, gün/çalışma süresi grafiği. V2 ile beraber **Matematik Becerisi Ağı (Radar Chart)**, **Rozetler (Badge Shelf)** ve **Alev Serisi (Streak)** eklendi.
 - **Entegrasyon:** `src/app/profil/page.tsx` sayfasına "Dashboard'a Git" yönlendirme kartı yerleştirildi.
 
 ---
