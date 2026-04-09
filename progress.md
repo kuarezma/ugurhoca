@@ -206,3 +206,72 @@ Claude ile yapılan tam proje incelemesinde tespit edilen sorunlar ve uygulanan 
 | Form `autoComplete` eksiklikleri (diğer sayfalar) | Minor; tüm formlarda uygulanacak |
 
 *Son güncelleme: 9 Nisan 2026 — Kapsamlı güvenlik ve kod kalitesi incelemesi tamamlandı ve push edildi.*
+
+---
+
+## 13. Chat Sistemi Yeniden Yazımı ve Bildirim Gizliliği (9 Nisan 2026)
+
+### 13.1 Chat Baloncuğu — Tam Yeniden Yazım
+
+- **Eski sistem:** Öğrenciler `ChatLogin` ile sohbet odasına girip yazabiliyordu.
+- **Yeni sistem:** Chat baloncuğu tamamen admin-only araç olarak yeniden yazıldı.
+  - Öğrenciler baloncuğu hiç görmüyor (`!isAdmin` → `return null`)
+  - Admin açınca öğrenci support mesajları gelen kutusu olarak açılıyor
+  - Mesaj açılınca otomatik `is_read: true` yapılıyor
+  - Öğrenciye sadece `"Uğur Hoca mesajını gördü"` bildirimi gönderiliyor (içerik yok, type: `message-read`)
+  - "Cevapla" butonu: `admin-message` route'u üzerinden sadece o öğrenciye gidiyor
+  - Okunmamış mesaj sayısı buton üzerinde kırmızı rozet ile gösteriliyor
+  - `ChatLogin`, `ChatLoginLazy`, presence, BroadcastChannel, chat_messages Supabase mantığı tamamen kaldırıldı
+
+### 13.2 Bildirim Gizliliği
+
+**support-message/route.ts:**
+- Öğrenciye gönderilen `"Mesajın teslim edildi"` bildirimi kaldırıldı
+- Öğrenci mesaj gönderince kendi bildirim kuyrucunda hiçbir şey görünmüyor
+
+**admin/page.tsx — 4 kritik düzeltme:**
+- `loadData`: Önceden TÜM kullanıcıların bildirimleri çekiliyordu (user_id filtresi yoktu). Artık sadece adminin kendi `user_id`'sine göre filtreleniyor.
+- Bildirim dropdown listesi: `notifications.map(...)` → `notifications.filter(isIncomingAdminMessage).map(...)` — sadece gerçek öğrenci mesajları görünüyor.
+- `markNotificationAsRead`: `type: 'message'` → `type: 'message-read'`, mesaj içeriği boş, başlık `"Uğur Hoca mesajını gördü"`.
+- `sendReply`: `type: 'message'` → `type: 'admin-message'`, `profil/page.tsx`'in yeni tip işleyicisiyle uyumlu.
+
+**profil/page.tsx:**
+- `Notification` tipine `'admin-message' | 'message-read'` eklendi
+- `getNotificationStyle`: yeni tipler için mor (admin-message) ve yeşil (message-read) stiller eklendi
+- `handleNotificationClick`: `'admin-message'` → modal açılır (cevap içeriği gösterilir); `'message-read'` → sadece okundu işareti, modal yok
+- Bildirim listesinde `message-read` tipi için içerik satırı gizlendi
+- Tip etiketleri: "Uğur Hoca'dan" / "Okundu bildirimi"
+
+### 13.3 Vercel Build Hataları — Düzeltmeler
+
+- `next.config.js`: `turbopack.root: __dirname` kaldırıldı → Vercel `outputFileTracingRoot` çakışması giderildi
+- `package.json`: `"vercel": "^50.35.0"` devDependency'den kaldırıldı → `tar` deprecation uyarısı giderildi, 3.600 satır package-lock temizlendi
+- `ChatBubble.tsx` build hatası: Agent'ın markdown çıktısı yanlışlıkla dosyaya yazılmıştı, düzeltildi
+
+### 13.4 Veritabanı Güvenliği — notifications RLS
+
+- `notifications` tablosuna Supabase RLS politikaları eklendi:
+  - `SELECT`: sadece `auth.uid() = user_id` olan satırlar görünür
+  - `INSERT`: herkes ekleyebilir (admin mesaj, support mesajı)
+  - `UPDATE` / `DELETE`: sadece kendi bildirimi
+- Migration: `supabase/migrations/20260410010000_notifications_rls.sql`
+- SQL Editor'da uygulandı ve Git'e push edildi
+
+### 13.5 Gizlilik Akışı — Yeni Sistem
+
+```
+Öğrenci "Bize Yaz" formundan mesaj yazar
+  → Admin gelen kutusuna (notifications type=message) düşer
+  → Admin e-postasına bildirim gider
+  → Öğrenci bildirim kuyrucunda HİÇBİR ŞEY görmez
+
+Admin chat baloncuğundan mesajı açar
+  → DB'de is_read: true yapılır
+  → Öğrenciye "Uğur Hoca mesajını gördü" gider (içerik YOK)
+
+Admin "Cevapla" der ve cevap yazar
+  → Sadece o öğrenciye "Uğur Hoca yazdı" + cevap içeriği gider
+  → Başka öğrenciler göremez (RLS + user_id filtresi)
+```
+
+*Son güncelleme: 9 Nisan 2026 — Chat sistemi yeniden yazıldı, bildirim gizliliği ve Supabase RLS tamamlandı.*

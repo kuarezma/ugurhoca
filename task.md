@@ -107,6 +107,44 @@ Bu dosya, projenin tamamlanmış ve devam eden görevlerini özetler.
 - [x] `announcements` ve `documents` tablosu RLS sıkılaştırıldı (yeni migration: `20260410000000_fix_announcements_rls.sql`)
 - [x] `.env.example` gerçek URL'den temizlendi, `RESEND_API_KEY` ve `ADMIN_EMAILS` eklendi
 
+### 13. Chat Sistemi Yeniden Yazımı ve Gizlilik (9 Nisan 2026)
+
+**Chat Baloncuğu (ChatBubble.tsx) — Tam Yeniden Yazım:**
+- [x] Öğrenci chat login tamamen kaldırıldı (`ChatLogin`, `chat_users`, presence, BroadcastChannel)
+- [x] Sadece admin görebilir — diğer kullanıcılar için `null` döner
+- [x] Admin gelen kutusu: öğrenci support mesajlarını listeler (type='message')
+- [x] Mesaj açılınca otomatik DB'de `is_read: true` yapılır
+- [x] Mesaj açılınca öğrenciye `type='message-read'`, `message=''` bildirimi gider (içerik YOK)
+- [x] "Cevapla" butonu: `/api/admin-message` üzerinden sadece o öğrenciye gider
+- [x] Okunmamış rozet sayacı eklendi
+
+**Gizlilik — support-message/route.ts:**
+- [x] Öğrenciye gönderilen "Mesajın teslim edildi" bildirimi kaldırıldı
+- [x] Öğrenci mesaj gönderdikten sonra hiçbir bildirim almıyor
+
+**Profil Sayfası Bildirim Güncellemesi (profil/page.tsx):**
+- [x] `Notification` tipine `'admin-message' | 'message-read'` eklendi
+- [x] `'message-read'` tipinde mesaj içeriği gösterilmiyor (sadece "Uğur Hoca mesajını gördü" başlığı)
+- [x] `'admin-message'` tipinde admin cevabı tam gösteriliyor
+- [x] Bildirim etiketleri: "Uğur Hoca'dan" / "Okundu bildirimi" eklendi
+
+**Admin Panel Bildirim Düzeltmesi (admin/page.tsx):**
+- [x] `loadData`: `notifications` artık sadece admin `user_id`'sine göre filtreleniyor
+- [x] Bildirim listesi `notifications.filter(isIncomingAdminMessage)` ile sadece gerçek öğrenci mesajları gösteriliyor
+- [x] `markNotificationAsRead`: type `'message-read'`, title `'Uğur Hoca mesajını gördü'`, message `''`
+- [x] `sendReply`: type `'admin-message'`, title `'Uğur Hoca yazdı'` — profil/page.tsx ile uyumlu
+
+**Veritabanı Güvenliği:**
+- [x] `notifications` tablosuna RLS politikaları eklendi (migration: `20260410010000_notifications_rls.sql`)
+  - SELECT: Sadece kendi `user_id`'li bildirimleri görebilir
+  - INSERT: Herkes yapabilir (admin mesaj, support mesajı)
+  - UPDATE/DELETE: Sadece kendi bildirimi
+
+**Build Düzeltmeleri:**
+- [x] `next.config.js` — `turbopack.root` kaldırıldı (Vercel `outputFileTracingRoot` çakışması)
+- [x] `package.json` — gereksiz `vercel` devDependency kaldırıldı (tar uyarısı giderildi)
+- [x] `ChatBubble.tsx` build hatası — sona yapışan markdown metni temizlendi
+
 **Kod Kalitesi:**
 - [x] `User` tipinden `password` alanı kaldırıldı (güvenlik anti-pattern)
 - [x] `giris/page.tsx` — inline `FloatingShapes` kaldırıldı, global bileşen import edildi, `autoComplete` ve `err: unknown` düzeltildi
@@ -138,4 +176,4 @@ Bu dosya, projenin tamamlanmış ve devam eden görevlerini özetler.
 
 ---
 
-*Son güncelleme: 9 Nisan 2026 — Kapsamlı güvenlik ve kod kalitesi incelemesi tamamlandı ve push edildi*
+*Son güncelleme: 9 Nisan 2026 — Chat sistemi yeniden yazıldı, gizlilik ve güvenlik tamamlandı, push edildi*
