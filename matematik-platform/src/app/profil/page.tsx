@@ -1,17 +1,28 @@
-'use client';
+"use client";
 
-import { useState, useEffect, useRef } from 'react';
-import { motion } from 'framer-motion';
-import Link from 'next/link';
-import { 
-  Calculator, LogOut, ArrowLeft, Settings, ChevronRight, Shield, Bell,
-  FileText, ClipboardList, BookOpen, CheckCircle2, Clock3, BarChart3
-} from 'lucide-react';
-import { useRouter } from 'next/navigation';
-import { supabase } from '@/lib/supabase';
-import NotesSection from '@/components/NotesSection';
-import UserStatistics from '@/components/UserStatistics';
-import ChangePasswordForm from '@/components/ChangePasswordForm';
+import { useState, useEffect, useRef } from "react";
+import { motion } from "framer-motion";
+import Link from "next/link";
+import {
+  Calculator,
+  LogOut,
+  ArrowLeft,
+  Settings,
+  ChevronRight,
+  Shield,
+  Bell,
+  FileText,
+  ClipboardList,
+  BookOpen,
+  CheckCircle2,
+  Clock3,
+  BarChart3,
+} from "lucide-react";
+import { useRouter } from "next/navigation";
+import { supabase } from "@/lib/supabase";
+import NotesSection from "@/components/NotesSection";
+import UserStatistics from "@/components/UserStatistics";
+import ChangePasswordForm from "@/components/ChangePasswordForm";
 
 const FloatingShapes = () => (
   <div className="fixed inset-0 overflow-hidden pointer-events-none z-0">
@@ -22,12 +33,19 @@ const FloatingShapes = () => (
         style={{
           width: 80,
           height: 80,
-          background: ['#f97316', '#ec4899', '#06b6d4', '#10b981', '#8b5cf6', '#6366f1'][i],
+          background: [
+            "#f97316",
+            "#ec4899",
+            "#06b6d4",
+            "#10b981",
+            "#8b5cf6",
+            "#6366f1",
+          ][i],
           left: `${(i * 18) % 90}%`,
           top: `${(i * 15) % 85}%`,
         }}
         animate={{ y: [0, -20, 0] }}
-        transition={{ duration: 4 + i, repeat: Infinity, ease: 'easeInOut' }}
+        transition={{ duration: 4 + i, repeat: Infinity, ease: "easeInOut" }}
       />
     ))}
   </div>
@@ -38,7 +56,13 @@ interface Notification {
   user_id: string;
   title: string;
   message: string;
-  type: 'document' | 'assignment' | 'general' | 'message';
+  type:
+    | "document"
+    | "assignment"
+    | "general"
+    | "message"
+    | "admin-message"
+    | "message-read";
   is_read: boolean;
   created_at: string;
   metadata?: { image_url?: string; sender_name?: string } | null;
@@ -62,76 +86,82 @@ export default function ProfilePage() {
   const [quizResults, setQuizResults] = useState<any[]>([]);
   const [showNotifications, setShowNotifications] = useState(false);
   const [selectedAssignment, setSelectedAssignment] = useState<any>(null);
-  const [selectedMessage, setSelectedMessage] = useState<Notification | null>(null);
+  const [selectedMessage, setSelectedMessage] = useState<Notification | null>(
+    null,
+  );
   const docsRef = useRef<HTMLHeadingElement | null>(null);
   const assignmentsRef = useRef<HTMLHeadingElement | null>(null);
   const router = useRouter();
 
   useEffect(() => {
     const loadData = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+
       if (!session) {
-        router.push('/giris');
+        router.push("/giris");
         return;
       }
-      
-      const isAdmin = session.user.email === 'admin@ugurhoca.com';
+
+      const isAdmin = session.user.email === "admin@ugurhoca.com";
 
       const { data: profile } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('id', session.user.id)
+        .from("profiles")
+        .select("*")
+        .eq("id", session.user.id)
         .single();
-        
+
       if (profile) {
         setUser({ ...profile, email: session.user.email, isAdmin });
       } else {
         setUser({
           id: session.user.id,
-          name: session.user.user_metadata?.name || 'Öğrenci',
+          name: session.user.user_metadata?.name || "Öğrenci",
           email: session.user.email,
           grade: session.user.user_metadata?.grade ?? 5,
-          isAdmin
+          isAdmin,
         });
       }
-      
+
       const { data: notifData } = await supabase
-        .from('notifications')
-        .select('*')
-        .eq('user_id', session.user.id)
-        .order('created_at', { ascending: false });
+        .from("notifications")
+        .select("*")
+        .eq("user_id", session.user.id)
+        .order("created_at", { ascending: false });
       if (notifData) setNotifications(notifData);
-      
+
       const { data: sharedData } = await supabase
-        .from('shared_documents')
-        .select('*')
-        .eq('student_id', session.user.id)
-        .order('created_at', { ascending: false });
+        .from("shared_documents")
+        .select("*")
+        .eq("student_id", session.user.id)
+        .order("created_at", { ascending: false });
       if (sharedData) setSharedDocs(sharedData);
-      
+
       const { data: asmtData } = await supabase
-        .from('assignments')
-        .select('*')
-        .eq('student_id', session.user.id)
-        .order('created_at', { ascending: false });
+        .from("assignments")
+        .select("*")
+        .eq("student_id", session.user.id)
+        .order("created_at", { ascending: false });
       if (asmtData) setAssignments(asmtData);
 
       const { data: quizData } = await supabase
-        .from('quiz_results')
-        .select('*, quizzes(title, difficulty, grade)')
-        .eq('user_id', session.user.id)
-        .order('completed_at', { ascending: false });
+        .from("quiz_results")
+        .select("*, quizzes(title, difficulty, grade)")
+        .eq("user_id", session.user.id)
+        .order("completed_at", { ascending: false });
       if (quizData) setQuizResults(quizData);
 
       setLoading(false);
-    }
+    };
     loadData();
   }, [router]);
 
   const markAsRead = async (id: string) => {
-    await supabase.from('notifications').update({ is_read: true }).eq('id', id);
-    setNotifications(notifications.map(n => n.id === id ? { ...n, is_read: true } : n));
+    await supabase.from("notifications").update({ is_read: true }).eq("id", id);
+    setNotifications(
+      notifications.map((n) => (n.id === id ? { ...n, is_read: true } : n)),
+    );
   };
 
   const handleNotificationClick = async (notif: Notification) => {
@@ -141,86 +171,118 @@ export default function ProfilePage() {
 
     setShowNotifications(false);
 
-    if (notif.type === 'document') {
+    if (notif.type === "document") {
       const doc = sharedDocs[0];
       if (doc?.file_url) {
-        window.open(doc.file_url, '_blank', 'noopener,noreferrer');
+        window.open(doc.file_url, "_blank", "noopener,noreferrer");
         return;
       }
 
-      docsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      docsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
       return;
     }
 
-    if (notif.type === 'assignment') {
+    if (notif.type === "assignment") {
       const assignment = assignments[0];
       if (assignment) {
         setSelectedAssignment(assignment);
         return;
       }
 
-      assignmentsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      assignmentsRef.current?.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
       return;
     }
 
-    if (notif.type === 'message') {
+    if (notif.type === "message") {
       setSelectedMessage(notif);
+      return;
     }
+
+    if (notif.type === "admin-message") {
+      setSelectedMessage(notif);
+      return;
+    }
+
+    // 'message-read' → sadece okundu işaretle, modal açma
   };
 
   const getNotificationStyle = (notif: Notification) => {
     if (notif.is_read) {
       return {
-        wrapper: 'border-slate-700/60 bg-slate-700/20 hover:bg-slate-700/35',
+        wrapper: "border-slate-700/60 bg-slate-700/20 hover:bg-slate-700/35",
         icon: CheckCircle2,
-        iconWrap: 'bg-emerald-500/15 text-emerald-400',
-        badge: 'bg-emerald-500/15 text-emerald-300',
-        status: 'Görüldü',
+        iconWrap: "bg-emerald-500/15 text-emerald-400",
+        badge: "bg-emerald-500/15 text-emerald-300",
+        status: "Görüldü",
       };
     }
 
-    if (notif.type === 'assignment') {
+    if (notif.type === "assignment") {
       return {
-        wrapper: 'border-amber-500/30 bg-amber-500/10 hover:bg-amber-500/15',
+        wrapper: "border-amber-500/30 bg-amber-500/10 hover:bg-amber-500/15",
         icon: Clock3,
-        iconWrap: 'bg-amber-500/15 text-amber-300',
-        badge: 'bg-amber-500/15 text-amber-200',
-        status: 'Görülmedi',
+        iconWrap: "bg-amber-500/15 text-amber-300",
+        badge: "bg-amber-500/15 text-amber-200",
+        status: "Görülmedi",
       };
     }
 
-    if (notif.type === 'document') {
+    if (notif.type === "document") {
       return {
-        wrapper: 'border-sky-500/30 bg-sky-500/10 hover:bg-sky-500/15',
+        wrapper: "border-sky-500/30 bg-sky-500/10 hover:bg-sky-500/15",
         icon: Clock3,
-        iconWrap: 'bg-sky-500/15 text-sky-300',
-        badge: 'bg-sky-500/15 text-sky-200',
-        status: 'Görülmedi',
+        iconWrap: "bg-sky-500/15 text-sky-300",
+        badge: "bg-sky-500/15 text-sky-200",
+        status: "Görülmedi",
       };
     }
 
-    if (notif.type === 'message') {
+    if (notif.type === "message") {
       return {
-        wrapper: 'border-indigo-500/30 bg-indigo-500/10 hover:bg-indigo-500/15',
+        wrapper: "border-indigo-500/30 bg-indigo-500/10 hover:bg-indigo-500/15",
         icon: Clock3,
-        iconWrap: 'bg-indigo-500/15 text-indigo-300',
-        badge: 'bg-indigo-500/15 text-indigo-200',
-        status: 'Mesaj',
+        iconWrap: "bg-indigo-500/15 text-indigo-300",
+        badge: "bg-indigo-500/15 text-indigo-200",
+        status: "Mesaj",
+      };
+    }
+
+    if (notif.type === "admin-message") {
+      return {
+        wrapper: "border-violet-500/30 bg-violet-500/10 hover:bg-violet-500/15",
+        icon: Bell,
+        iconWrap: "bg-violet-500/15 text-violet-300",
+        badge: "bg-violet-500/15 text-violet-200",
+        status: "Uğur Hoca",
+      };
+    }
+
+    if (notif.type === "message-read") {
+      return {
+        wrapper:
+          "border-emerald-500/20 bg-emerald-500/5 hover:bg-emerald-500/10",
+        icon: CheckCircle2,
+        iconWrap: "bg-emerald-500/10 text-emerald-400",
+        badge: "bg-emerald-500/10 text-emerald-300",
+        status: "Görüldü",
       };
     }
 
     return {
-      wrapper: 'border-pink-500/20 bg-pink-500/10 hover:bg-pink-500/15',
+      wrapper: "border-pink-500/20 bg-pink-500/10 hover:bg-pink-500/15",
       icon: Clock3,
-      iconWrap: 'bg-pink-500/15 text-pink-300',
-      badge: 'bg-pink-500/15 text-pink-200',
-      status: 'Görülmedi',
+      iconWrap: "bg-pink-500/15 text-pink-300",
+      badge: "bg-pink-500/15 text-pink-200",
+      status: "Görülmedi",
     };
   };
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
-    router.push('/');
+    router.push("/");
   };
 
   if (loading) {
@@ -228,7 +290,7 @@ export default function ProfilePage() {
       <main className="profil-page min-h-screen gradient-bg flex items-center justify-center">
         <motion.div
           animate={{ rotate: 360 }}
-          transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
+          transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
           className="w-16 h-16 border-4 border-orange-500 border-t-transparent rounded-full"
         />
       </main>
@@ -237,34 +299,37 @@ export default function ProfilePage() {
 
   if (!user) return null;
 
-  const unreadCount = notifications.filter(n => !n.is_read).length;
+  const unreadCount = notifications.filter((n) => !n.is_read).length;
   const numericGrade = Number(user.grade);
-  const isMiddleSchool = Number.isFinite(numericGrade) && numericGrade >= 5 && numericGrade <= 8;
-  const wizardHref = isMiddleSchool ? '/programlar/lgs' : '/programlar/yks';
+  const isMiddleSchool =
+    Number.isFinite(numericGrade) && numericGrade >= 5 && numericGrade <= 8;
+  const wizardHref = isMiddleSchool ? "/programlar/lgs" : "/programlar/yks";
   const wizardTitle = isMiddleSchool
-    ? 'LGS Puan ve Lise Hedef Sihirbazi'
-    : 'YKS Puan ve Universite Tercih Sihirbazi';
+    ? "LGS Puan ve Lise Hedef Sihirbazi"
+    : "YKS Puan ve Universite Tercih Sihirbazi";
   const wizardSubtitle = isMiddleSchool
-    ? 'Netlerini gir, puanini hesapla ve lise hedeflerini gor.'
-    : 'TYT/AYT hesapla, universite hedef listeni olustur.';
+    ? "Netlerini gir, puanini hesapla ve lise hedeflerini gor."
+    : "TYT/AYT hesapla, universite hedef listeni olustur.";
 
   return (
     <main className="profil-page min-h-screen bg-gradient-to-br from-slate-900 via-slate-900 to-slate-800">
       <FloatingShapes />
-      
+
       <nav className="fixed top-0 left-0 right-0 z-50 bg-slate-900/95 backdrop-blur-lg border-b border-slate-800/50">
         <div className="max-w-6xl mx-auto px-4">
           <div className="flex justify-between items-center h-14">
             <Link href="/" className="flex items-center gap-2">
-              <img src="/ugur.jpeg" alt="Uğur Hoca" className="w-9 h-9 rounded-lg object-cover" />
-              <span className="text-lg font-bold text-white">
-                Uğur Hoca
-              </span>
+              <img
+                src="/ugur.jpeg"
+                alt="Uğur Hoca"
+                className="w-9 h-9 rounded-lg object-cover"
+              />
+              <span className="text-lg font-bold text-white">Uğur Hoca</span>
             </Link>
 
             <div className="flex items-center gap-4">
               {!user.isAdmin && (
-                <button 
+                <button
                   onClick={() => setShowNotifications(!showNotifications)}
                   className="relative text-slate-400 hover:text-white transition-colors"
                 >
@@ -276,11 +341,17 @@ export default function ProfilePage() {
                   )}
                 </button>
               )}
-              <Link href="/" className="text-slate-400 hover:text-white transition-colors text-sm flex items-center gap-1">
+              <Link
+                href="/"
+                className="text-slate-400 hover:text-white transition-colors text-sm flex items-center gap-1"
+              >
                 <ArrowLeft className="w-4 h-4" />
                 Ana Sayfa
               </Link>
-              <button onClick={handleLogout} className="text-slate-400 hover:text-white transition-colors">
+              <button
+                onClick={handleLogout}
+                className="text-slate-400 hover:text-white transition-colors"
+              >
                 <LogOut className="w-5 h-5" />
               </button>
             </div>
@@ -289,54 +360,80 @@ export default function ProfilePage() {
       </nav>
 
       {showNotifications && !user.isAdmin && (
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
           className="fixed top-14 left-4 right-4 sm:left-auto sm:right-4 sm:w-80 bg-slate-800 border border-slate-700 rounded-2xl shadow-2xl z-50 max-h-96 overflow-y-auto"
         >
           <div className="p-4 border-b border-slate-700 flex items-center justify-between">
             <h3 className="text-white font-bold">Bildirimler</h3>
-            <span className="text-xs text-slate-400">{unreadCount} okunmamış</span>
+            <span className="text-xs text-slate-400">
+              {unreadCount} okunmamış
+            </span>
           </div>
           {notifications.length === 0 ? (
-            <p className="text-slate-400 text-center py-8">Henüz bildirim yok</p>
+            <p className="text-slate-400 text-center py-8">
+              Henüz bildirim yok
+            </p>
           ) : (
             <div className="divide-y divide-slate-700">
-              {notifications.map(notif => (
+              {notifications.map((notif) =>
                 (() => {
                   const style = getNotificationStyle(notif);
                   const Icon = style.icon;
                   return (
-                <button 
-                  key={notif.id} 
-                  onClick={() => handleNotificationClick(notif)}
-                  className={`w-full text-left p-4 transition-colors border-l-4 ${style.wrapper}`}
-                >
-                    <div className="flex items-start justify-between gap-2">
-                      <div className={`w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 ${style.iconWrap}`}>
-                        <Icon className="w-5 h-5" />
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-start justify-between gap-2">
-                          <p className="text-white font-medium text-sm">{notif.title}</p>
-                          <span className={`px-2 py-0.5 rounded-full text-[11px] font-semibold whitespace-nowrap ${style.badge}`}>
-                            {style.status}
-                          </span>
+                    <button
+                      key={notif.id}
+                      onClick={() => handleNotificationClick(notif)}
+                      className={`w-full text-left p-4 transition-colors border-l-4 ${style.wrapper}`}
+                    >
+                      <div className="flex items-start justify-between gap-2">
+                        <div
+                          className={`w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 ${style.iconWrap}`}
+                        >
+                          <Icon className="w-5 h-5" />
                         </div>
-                        <p className="text-slate-400 text-xs mt-1">{notif.message}</p>
-                        <span className="inline-flex mt-2 px-2 py-0.5 rounded-full bg-white/5 text-slate-300 text-[11px]">
-                          {notif.type === 'assignment' ? 'Ödev' : notif.type === 'document' ? 'Belge' : 'Genel'}
-                        </span>
-                        <p className="text-slate-500 text-xs mt-2">
-                          {new Date(notif.created_at).toLocaleDateString('tr-TR')}
-                        </p>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-start justify-between gap-2">
+                            <p className="text-white font-medium text-sm">
+                              {notif.title}
+                            </p>
+                            <span
+                              className={`px-2 py-0.5 rounded-full text-[11px] font-semibold whitespace-nowrap ${style.badge}`}
+                            >
+                              {style.status}
+                            </span>
+                          </div>
+                          {notif.type !== "message-read" && notif.message && (
+                            <p className="text-slate-400 text-xs mt-1 line-clamp-2">
+                              {notif.message}
+                            </p>
+                          )}
+                          <span className="inline-flex mt-2 px-2 py-0.5 rounded-full bg-white/5 text-slate-300 text-[11px]">
+                            {notif.type === "assignment"
+                              ? "Ödev"
+                              : notif.type === "document"
+                                ? "Belge"
+                                : notif.type === "admin-message"
+                                  ? "Uğur Hoca'dan"
+                                  : notif.type === "message-read"
+                                    ? "Okundu bildirimi"
+                                    : "Genel"}
+                          </span>
+                          <p className="text-slate-500 text-xs mt-2">
+                            {new Date(notif.created_at).toLocaleDateString(
+                              "tr-TR",
+                            )}
+                          </p>
+                        </div>
+                        <ChevronRight
+                          className={`w-4 h-4 mt-1 ${notif.is_read ? "text-emerald-400" : "text-amber-300"}`}
+                        />
                       </div>
-                      <ChevronRight className={`w-4 h-4 mt-1 ${notif.is_read ? 'text-emerald-400' : 'text-amber-300'}`} />
-                    </div>
-                  </button>
+                    </button>
                   );
-                })()
-              ))}
+                })(),
+              )}
             </div>
           )}
         </motion.div>
@@ -354,23 +451,29 @@ export default function ProfilePage() {
                 className="w-20 h-20 bg-gradient-to-br from-orange-500 to-red-500 rounded-full flex items-center justify-center text-3xl font-bold text-white"
                 whileHover={{ scale: 1.05 }}
               >
-                {user.name?.[0] || '?'}
+                {user.name?.[0] || "?"}
               </motion.div>
-              
+
               <div className="text-center sm:text-left flex-1">
-                <h1 className="text-2xl font-bold text-white mb-1">{user.name}</h1>
+                <h1 className="text-2xl font-bold text-white mb-1">
+                  {user.name}
+                </h1>
                 <p className="text-slate-400 text-sm">{user.email}</p>
                 <div className="mt-3 flex items-center gap-2">
                   {user.isAdmin ? (
                     <span className="inline-flex items-center gap-2 px-4 py-1.5 bg-gradient-to-r from-orange-500/20 to-red-500/20 rounded-full">
                       <Shield className="w-4 h-4 text-orange-400" />
-                      <span className="text-orange-300 font-semibold text-sm">Yönetici</span>
+                      <span className="text-orange-300 font-semibold text-sm">
+                        Yönetici
+                      </span>
                     </span>
                   ) : (
                     <span className="inline-flex items-center gap-2 px-4 py-1.5 bg-gradient-to-r from-indigo-500/20 to-purple-500/20 rounded-full">
                       <BookOpen className="w-4 h-4 text-indigo-400" />
                       <span className="text-indigo-300 font-semibold text-sm">
-                        {user.grade === 'Mezun' ? 'Mezun' : `${user.grade}. Sınıf`}
+                        {user.grade === "Mezun"
+                          ? "Mezun"
+                          : `${user.grade}. Sınıf`}
                       </span>
                     </span>
                   )}
@@ -385,7 +488,10 @@ export default function ProfilePage() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.15 }}
             >
-              <UserStatistics userId={user.id} userCreatedAt={user.created_at} />
+              <UserStatistics
+                userId={user.id}
+                userCreatedAt={user.created_at}
+              />
             </motion.div>
           )}
 
@@ -417,8 +523,12 @@ export default function ProfilePage() {
                       <Calculator className="w-6 h-6 text-white" />
                     </div>
                     <div>
-                      <p className="text-white font-black text-lg">{wizardTitle}</p>
-                      <p className="text-slate-300 text-sm mt-1">{wizardSubtitle}</p>
+                      <p className="text-white font-black text-lg">
+                        {wizardTitle}
+                      </p>
+                      <p className="text-slate-300 text-sm mt-1">
+                        {wizardSubtitle}
+                      </p>
                     </div>
                   </div>
                   <ChevronRight className="w-6 h-6 text-indigo-300 group-hover:text-white transition-colors" />
@@ -446,10 +556,17 @@ export default function ProfilePage() {
                     </div>
                     <div>
                       <div className="flex items-center gap-2 mb-1">
-                        <p className="text-white font-black text-xl">İlerleme Takibi</p>
-                        <span className="px-2 py-0.5 bg-blue-500 text-white text-[10px] font-bold uppercase tracking-wider rounded-md">YENİ</span>
+                        <p className="text-white font-black text-xl">
+                          İlerleme Takibi
+                        </p>
+                        <span className="px-2 py-0.5 bg-blue-500 text-white text-[10px] font-bold uppercase tracking-wider rounded-md">
+                          YENİ
+                        </span>
                       </div>
-                      <p className="text-slate-300 text-sm">Haftalık çalışma hedeflerini gör, konu yetkinlik durumunu analiz et.</p>
+                      <p className="text-slate-300 text-sm">
+                        Haftalık çalışma hedeflerini gör, konu yetkinlik
+                        durumunu analiz et.
+                      </p>
                     </div>
                   </div>
                   <div className="flex items-center gap-2 text-blue-300 font-semibold group-hover:text-white transition-colors">
@@ -479,9 +596,11 @@ export default function ProfilePage() {
               transition={{ delay: 0.35 }}
               className="mt-6"
             >
-              <h2 className="text-xl font-bold text-white mb-4">Yönetim Alanı</h2>
+              <h2 className="text-xl font-bold text-white mb-4">
+                Yönetim Alanı
+              </h2>
               <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                <Link 
+                <Link
                   href="/admin"
                   className="bg-white/5 border border-white/10 rounded-2xl p-6 hover:bg-white/10 hover:border-orange-500/50 transition-all group"
                 >
@@ -492,7 +611,9 @@ export default function ProfilePage() {
                       </div>
                       <div>
                         <h3 className="text-white font-bold">Admin Paneli</h3>
-                        <p className="text-slate-400 text-sm">Duyuru ve içerik yönetimi</p>
+                        <p className="text-slate-400 text-sm">
+                          Duyuru ve içerik yönetimi
+                        </p>
                       </div>
                     </div>
                     <ChevronRight className="w-5 h-5 text-slate-500 group-hover:text-orange-400 transition-colors" />
@@ -508,28 +629,43 @@ export default function ProfilePage() {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.2 }}
                 >
-                  <h2 ref={docsRef} className="text-xl font-bold text-white mb-4">Gelen Belgeler</h2>
+                  <h2
+                    ref={docsRef}
+                    className="text-xl font-bold text-white mb-4"
+                  >
+                    Gelen Belgeler
+                  </h2>
                   {sharedDocs.length > 0 && (
                     <div className="grid sm:grid-cols-2 gap-4 mb-6">
-                      {sharedDocs.map(doc => (
-                        <a 
+                      {sharedDocs.map((doc) => (
+                        <a
                           key={doc.id}
                           href={doc.file_url}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="bg-white/5 border border-white/10 rounded-xl p-4 hover:bg-white/10 transition-colors flex items-center gap-4"
                         >
-                          <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${doc.is_read ? 'bg-slate-700' : 'bg-indigo-500/20'}`}>
-                            <FileText className={`w-5 h-5 ${doc.is_read ? 'text-slate-400' : 'text-indigo-400'}`} />
+                          <div
+                            className={`w-10 h-10 rounded-lg flex items-center justify-center ${doc.is_read ? "bg-slate-700" : "bg-indigo-500/20"}`}
+                          >
+                            <FileText
+                              className={`w-5 h-5 ${doc.is_read ? "text-slate-400" : "text-indigo-400"}`}
+                            />
                           </div>
                           <div className="flex-1 min-w-0">
-                            <p className="text-white font-medium truncate">{doc.document_title}</p>
+                            <p className="text-white font-medium truncate">
+                              {doc.document_title}
+                            </p>
                             <p className="text-slate-400 text-sm">
-                              {new Date(doc.created_at).toLocaleDateString('tr-TR')}
+                              {new Date(doc.created_at).toLocaleDateString(
+                                "tr-TR",
+                              )}
                             </p>
                           </div>
                           {!doc.is_read && (
-                            <span className="px-2 py-1 bg-indigo-500/20 text-indigo-400 text-xs rounded-full">Yeni</span>
+                            <span className="px-2 py-1 bg-indigo-500/20 text-indigo-400 text-xs rounded-full">
+                              Yeni
+                            </span>
                           )}
                         </a>
                       ))}
@@ -544,10 +680,15 @@ export default function ProfilePage() {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.3 }}
                 >
-                  <h2 ref={assignmentsRef} className="text-xl font-bold text-white mb-4">Ödevlerim</h2>
+                  <h2
+                    ref={assignmentsRef}
+                    className="text-xl font-bold text-white mb-4"
+                  >
+                    Ödevlerim
+                  </h2>
                   <div className="space-y-3">
-                    {assignments.map(asmt => (
-                      <div 
+                    {assignments.map((asmt) => (
+                      <div
                         key={asmt.id}
                         className="bg-white/5 border border-white/10 rounded-xl p-4 flex items-start gap-4"
                       >
@@ -556,7 +697,9 @@ export default function ProfilePage() {
                         </div>
                         <div className="flex-1">
                           <p className="text-white font-medium">{asmt.title}</p>
-                          <p className="text-slate-400 text-sm mt-1">{asmt.description}</p>
+                          <p className="text-slate-400 text-sm mt-1">
+                            {asmt.description}
+                          </p>
                         </div>
                       </div>
                     ))}
@@ -570,7 +713,9 @@ export default function ProfilePage() {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.4 }}
                 >
-                  <h2 className="text-xl font-bold text-white mb-4">Test Sonuçlarım</h2>
+                  <h2 className="text-xl font-bold text-white mb-4">
+                    Test Sonuçlarım
+                  </h2>
                   <div className="space-y-3">
                     {quizResults.map((result: any) => (
                       <div
@@ -581,13 +726,19 @@ export default function ProfilePage() {
                           <CheckCircle2 className="w-5 h-5 text-violet-400" />
                         </div>
                         <div className="flex-1">
-                          <p className="text-white font-medium">{result.quizzes?.title || 'Test'}</p>
+                          <p className="text-white font-medium">
+                            {result.quizzes?.title || "Test"}
+                          </p>
                           <div className="flex items-center gap-3 text-slate-400 text-sm mt-1">
                             <span>{result.score}%</span>
                             <span>•</span>
                             <span>{result.total_questions} soru</span>
                             <span>•</span>
-                            <span>{new Date(result.completed_at).toLocaleDateString('tr-TR')}</span>
+                            <span>
+                              {new Date(result.completed_at).toLocaleDateString(
+                                "tr-TR",
+                              )}
+                            </span>
                           </div>
                         </div>
                       </div>
@@ -613,8 +764,12 @@ export default function ProfilePage() {
                   >
                     <div className="flex items-start justify-between gap-4 mb-4">
                       <div>
-                        <p className="text-xs uppercase tracking-[0.2em] text-purple-300 mb-2">Ödev</p>
-                        <h3 className="text-2xl font-bold text-white">{selectedAssignment.title}</h3>
+                        <p className="text-xs uppercase tracking-[0.2em] text-purple-300 mb-2">
+                          Ödev
+                        </p>
+                        <h3 className="text-2xl font-bold text-white">
+                          {selectedAssignment.title}
+                        </h3>
                       </div>
                       <button
                         onClick={() => setSelectedAssignment(null)}
@@ -623,7 +778,9 @@ export default function ProfilePage() {
                         <ChevronRight className="w-6 h-6 rotate-45" />
                       </button>
                     </div>
-                    <p className="text-slate-300 whitespace-pre-line leading-relaxed">{selectedAssignment.description || 'Ayrıntı bulunmuyor.'}</p>
+                    <p className="text-slate-300 whitespace-pre-line leading-relaxed">
+                      {selectedAssignment.description || "Ayrıntı bulunmuyor."}
+                    </p>
                     <div className="mt-6 flex justify-end">
                       <button
                         onClick={() => setSelectedAssignment(null)}
@@ -653,8 +810,12 @@ export default function ProfilePage() {
                   >
                     <div className="flex items-start justify-between gap-4 mb-4">
                       <div>
-                        <p className="text-xs uppercase tracking-[0.2em] text-indigo-300 mb-2">Mesaj</p>
-                        <h3 className="text-2xl font-bold text-white">{selectedMessage.title}</h3>
+                        <p className="text-xs uppercase tracking-[0.2em] text-indigo-300 mb-2">
+                          Mesaj
+                        </p>
+                        <h3 className="text-2xl font-bold text-white">
+                          {selectedMessage.title}
+                        </h3>
                       </div>
                       <button
                         onClick={() => setSelectedMessage(null)}
@@ -663,16 +824,21 @@ export default function ProfilePage() {
                         <ChevronRight className="w-6 h-6 rotate-45" />
                       </button>
                     </div>
-                    {selectedMessage.metadata && typeof selectedMessage.metadata === 'object' && 'image_url' in selectedMessage.metadata && selectedMessage.metadata.image_url && (
-                      <div className="mb-4">
-                        <img 
-                          src={selectedMessage.metadata.image_url} 
-                          alt="Mesaj resmi" 
-                          className="max-h-64 rounded-lg border border-white/10"
-                        />
-                      </div>
-                    )}
-                    <p className="text-slate-300 whitespace-pre-line leading-relaxed">{selectedMessage.message}</p>
+                    {selectedMessage.metadata &&
+                      typeof selectedMessage.metadata === "object" &&
+                      "image_url" in selectedMessage.metadata &&
+                      selectedMessage.metadata.image_url && (
+                        <div className="mb-4">
+                          <img
+                            src={selectedMessage.metadata.image_url}
+                            alt="Mesaj resmi"
+                            className="max-h-64 rounded-lg border border-white/10"
+                          />
+                        </div>
+                      )}
+                    <p className="text-slate-300 whitespace-pre-line leading-relaxed">
+                      {selectedMessage.message}
+                    </p>
                     <div className="mt-6 flex justify-end">
                       <button
                         onClick={() => setSelectedMessage(null)}
@@ -685,18 +851,23 @@ export default function ProfilePage() {
                 </motion.div>
               )}
 
-              {notifications.length === 0 && sharedDocs.length === 0 && assignments.length === 0 && (
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.2 }}
-                  className="text-center py-12"
-                >
-                  <Bell className="w-16 h-16 mx-auto mb-4 text-slate-600" />
-                  <p className="text-slate-400">Henüz bir şey yok</p>
-                  <p className="text-slate-500 text-sm mt-2">Uğur Hoca size belge veya ödev gönderdiğinde burada görünecek</p>
-                </motion.div>
-              )}
+              {notifications.length === 0 &&
+                sharedDocs.length === 0 &&
+                assignments.length === 0 && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.2 }}
+                    className="text-center py-12"
+                  >
+                    <Bell className="w-16 h-16 mx-auto mb-4 text-slate-600" />
+                    <p className="text-slate-400">Henüz bir şey yok</p>
+                    <p className="text-slate-500 text-sm mt-2">
+                      Uğur Hoca size belge veya ödev gönderdiğinde burada
+                      görünecek
+                    </p>
+                  </motion.div>
+                )}
             </div>
           )}
         </div>
