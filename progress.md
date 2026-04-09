@@ -146,3 +146,17 @@ Bu paket ile platformun UX/UI kalitesi artırılmış, oyunlaştırma ve animasy
 - **Install Banner:** `src/components/InstallPrompt.tsx` — Framer Motion spring animasyonu, 7 günlük dismiss, turuncu glassmorphism banner.
 
 *Son güncelleme: `npm run build` — Sıfır TypeScript/ESLint hatası. Tüm 20 sayfa başarıyla compile edildi.*
+
+---
+
+## 11. Toplu Soru İçe Aktar (Özellik 9 — Nisan 2026)
+
+- **Kütüphane:** `xlsx` (SheetJS) — Excel dosya okuma ve şablon oluşturma.
+- **Utility:** `src/lib/question-import.ts` — `parseExcelFile()` ve `downloadExcelTemplate()` fonksiyonları. İki sekme: "Test Bilgileri" (title, grade, time_limit, difficulty, description) ve "Sorular" (question, options A-D, correct_answer A/B/C/D, explanation).
+- **API Route:** `src/app/api/import-questions/route.ts` — POST endpoint. Sunucu tarafı validasyon, yeni quiz oluşturma, batch insert (maksimum 30 soru), Supabase service role key ile güvenli veri girişi.
+- **Admin UI:** `src/app/admin/page.tsx` — "Toplu Yükle" butonu (emerald gradient), modal UI ile Excel şablonu indirme, drag & drop upload, önizleme (meta + sorular + hata gösterimi), kaydet butonu.
+- **Modal Başlık:** "Toplu Soru İçe Aktar" — modal başlığına eklendi.
+- **handleSubmit:** `importQuestions` case'i eklendi — API'ye POST isteği gönderir, yeni quiz'i state'e ekler.
+- **Build:** Başarılı, sıfır TypeScript hatası.
+
+*Son güncelleme: Toplu Soru İçe Aktar özelliği tamamen tamamlandı ve canlıya push edildi (commit 00522e3).*
