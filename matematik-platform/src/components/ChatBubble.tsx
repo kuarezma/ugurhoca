@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import { useCallback, useEffect, useState } from 'react';
-import { AnimatePresence, motion } from 'framer-motion';
+import { useCallback, useEffect, useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
 import {
   MessageCircle,
   X,
@@ -9,10 +9,10 @@ import {
   ChevronDown,
   ChevronUp,
   CheckCheck,
-} from 'lucide-react';
-import { supabase } from '@/lib/supabase';
+} from "lucide-react";
+import { supabase } from "@/lib/supabase";
 
-const ADMIN_EMAILS = ['admin@ugurhoca.com', 'admin@matematiklab.com'];
+const ADMIN_EMAILS = ["admin@ugurhoca.com", "admin@matematiklab.com"];
 
 type ParsedPayload = {
   sender_id: string;
@@ -48,7 +48,7 @@ export function ChatBubble() {
   const [loading, setLoading] = useState(true);
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [replyingTo, setReplyingTo] = useState<InboxMessage | null>(null);
-  const [replyText, setReplyText] = useState('');
+  const [replyText, setReplyText] = useState("");
   const [sendingReply, setSendingReply] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
 
@@ -66,7 +66,7 @@ export function ChatBubble() {
       const {
         data: { session },
       } = await supabase.auth.getSession();
-      if (session?.user && ADMIN_EMAILS.includes(session.user.email ?? '')) {
+      if (session?.user && ADMIN_EMAILS.includes(session.user.email ?? "")) {
         setIsAdmin(true);
         setAdminUserId(session.user.id);
         await loadMessages(session.user.id);
@@ -80,11 +80,11 @@ export function ChatBubble() {
 
   const loadMessages = useCallback(async (userId: string) => {
     const { data } = await supabase
-      .from('notifications')
-      .select('*')
-      .eq('user_id', userId)
-      .eq('type', 'message')
-      .order('created_at', { ascending: false })
+      .from("notifications")
+      .select("*")
+      .eq("user_id", userId)
+      .eq("type", "message")
+      .order("created_at", { ascending: false })
       .limit(60);
 
     if (data) {
@@ -101,34 +101,31 @@ export function ChatBubble() {
     }
   }, []);
 
-  const markAsRead = useCallback(
-    async (msg: InboxMessage) => {
-      if (msg.is_read) return;
+  const markAsRead = useCallback(async (msg: InboxMessage) => {
+    if (msg.is_read) return;
 
-      // DB'de okundu yap
-      await supabase
-        .from('notifications')
-        .update({ is_read: true })
-        .eq('id', msg.id);
+    // DB'de okundu yap
+    await supabase
+      .from("notifications")
+      .update({ is_read: true })
+      .eq("id", msg.id);
 
-      // Öğrenciye sadece "Uğur Hoca mesajını gördü" bildir — içerik YOK
-      if (msg.parsed?.sender_id) {
-        await supabase.from('notifications').insert({
-          user_id: msg.parsed.sender_id,
-          title: 'Uğur Hoca mesajını gördü',
-          message: '',
-          type: 'message-read',
-          is_read: false,
-        });
-      }
+    // Öğrenciye sadece "Uğur Hoca mesajını gördü" bildir — içerik YOK
+    if (msg.parsed?.sender_id) {
+      await supabase.from("notifications").insert({
+        user_id: msg.parsed.sender_id,
+        title: "Uğur Hoca mesajını gördü",
+        message: "",
+        type: "message-read",
+        is_read: false,
+      });
+    }
 
-      setMessages((prev) =>
-        prev.map((m) => (m.id === msg.id ? { ...m, is_read: true } : m))
-      );
-      setUnreadCount((prev) => Math.max(0, prev - 1));
-    },
-    []
-  );
+    setMessages((prev) =>
+      prev.map((m) => (m.id === msg.id ? { ...m, is_read: true } : m)),
+    );
+    setUnreadCount((prev) => Math.max(0, prev - 1));
+  }, []);
 
   const handleExpand = async (msg: InboxMessage) => {
     const next = expandedId === msg.id ? null : msg.id;
@@ -139,7 +136,7 @@ export function ChatBubble() {
     }
     if (!next) {
       setReplyingTo(null);
-      setReplyText('');
+      setReplyText("");
     }
   };
 
@@ -150,19 +147,19 @@ export function ChatBubble() {
       const {
         data: { session },
       } = await supabase.auth.getSession();
-      await fetch('/api/admin-message', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      await fetch("/api/admin-message", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           student_id: replyingTo.parsed.sender_id,
           student_name: replyingTo.parsed.sender_name,
-          title: 'Uğur Hoca yazdı',
+          title: "Uğur Hoca yazdı",
           message: replyText.trim(),
-          sender_id: session?.user?.id ?? 'admin',
-          sender_name: 'Uğur Hoca',
+          sender_id: session?.user?.id ?? "admin",
+          sender_name: "Uğur Hoca",
         }),
       });
-      setReplyText('');
+      setReplyText("");
       setReplyingTo(null);
     } finally {
       setSendingReply(false);
@@ -187,7 +184,7 @@ export function ChatBubble() {
         <MessageCircle className="h-7 w-7" strokeWidth={2} />
         {unreadCount > 0 && (
           <span className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-[11px] font-bold text-white">
-            {unreadCount > 9 ? '9+' : unreadCount}
+            {unreadCount > 9 ? "9+" : unreadCount}
           </span>
         )}
       </motion.button>
@@ -199,9 +196,9 @@ export function ChatBubble() {
             initial={{ opacity: 0, y: 24, scale: 0.96 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 16, scale: 0.98 }}
-            transition={{ type: 'spring', stiffness: 380, damping: 28 }}
+            transition={{ type: "spring", stiffness: 380, damping: 28 }}
             className="fixed bottom-24 right-6 z-[100] flex h-[560px] w-[400px] max-h-[calc(100vh-7rem)] flex-col overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--bg-elevated)] shadow-2xl"
-            style={{ boxShadow: '0 25px 50px var(--shadow, rgba(0,0,0,0.25))' }}
+            style={{ boxShadow: "0 25px 50px var(--shadow, rgba(0,0,0,0.25))" }}
           >
             {/* Başlık */}
             <div className="flex shrink-0 items-center gap-2 border-b border-[var(--border)] px-4 py-3">
@@ -227,7 +224,7 @@ export function ChatBubble() {
                     setOpen(false);
                     setExpandedId(null);
                     setReplyingTo(null);
-                    setReplyText('');
+                    setReplyText("");
                   }}
                   className="rounded-lg p-1.5 text-[var(--text-muted)] transition hover:bg-[var(--bg-muted)]"
                   aria-label="Kapat"
@@ -251,7 +248,7 @@ export function ChatBubble() {
                   <div
                     key={msg.id}
                     className={`border-b border-[var(--border)] transition-colors ${
-                      !msg.is_read ? 'bg-violet-500/5' : ''
+                      !msg.is_read ? "bg-violet-500/5" : ""
                     }`}
                   >
                     <button
@@ -260,15 +257,15 @@ export function ChatBubble() {
                       className="flex w-full items-start gap-3 px-4 py-3 text-left hover:bg-[var(--bg-soft)] transition-colors"
                     >
                       <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-violet-500 to-fuchsia-500 text-[13px] font-bold text-white shadow-sm">
-                        {(msg.parsed?.sender_name || '?')[0]?.toUpperCase()}
+                        {(msg.parsed?.sender_name || "?")[0]?.toUpperCase()}
                       </div>
                       <div className="min-w-0 flex-1">
                         <div className="flex items-center gap-2">
                           <span
                             className={`truncate text-sm font-semibold ${
                               !msg.is_read
-                                ? 'text-[var(--text-strong)]'
-                                : 'text-[var(--text)]'
+                                ? "text-[var(--text-strong)]"
+                                : "text-[var(--text)]"
                             }`}
                           >
                             {msg.parsed?.sender_name || msg.title}
@@ -281,14 +278,14 @@ export function ChatBubble() {
                           )}
                         </div>
                         <p className="mt-0.5 line-clamp-1 text-xs text-[var(--text-muted)]">
-                          {msg.parsed?.text || '—'}
+                          {msg.parsed?.text || "—"}
                         </p>
                         <p className="mt-0.5 text-[10px] text-[var(--text-soft,#64748b)]">
-                          {new Date(msg.created_at).toLocaleString('tr-TR', {
-                            day: 'numeric',
-                            month: 'short',
-                            hour: '2-digit',
-                            minute: '2-digit',
+                          {new Date(msg.created_at).toLocaleString("tr-TR", {
+                            day: "numeric",
+                            month: "short",
+                            hour: "2-digit",
+                            minute: "2-digit",
                           })}
                         </p>
                       </div>
@@ -304,14 +301,14 @@ export function ChatBubble() {
                       {expandedId === msg.id && (
                         <motion.div
                           initial={{ height: 0, opacity: 0 }}
-                          animate={{ height: 'auto', opacity: 1 }}
+                          animate={{ height: "auto", opacity: 1 }}
                           exit={{ height: 0, opacity: 0 }}
                           transition={{ duration: 0.18 }}
                           className="overflow-hidden"
                         >
                           <div className="space-y-3 px-4 pb-4">
                             <p className="whitespace-pre-wrap rounded-xl bg-[var(--bg-soft)] px-4 py-3 text-sm leading-relaxed text-[var(--text)]">
-                              {msg.parsed?.text || '—'}
+                              {msg.parsed?.text || "—"}
                             </p>
 
                             {/* Ekler */}
@@ -348,7 +345,7 @@ export function ChatBubble() {
                                     type="button"
                                     onClick={() => {
                                       setReplyingTo(null);
-                                      setReplyText('');
+                                      setReplyText("");
                                     }}
                                     className="flex-1 rounded-xl border border-[var(--border)] px-3 py-2 text-xs font-medium text-[var(--text-muted)] hover:bg-[var(--bg-muted)] transition-colors"
                                   >
@@ -361,7 +358,9 @@ export function ChatBubble() {
                                     className="flex-1 inline-flex items-center justify-center gap-1.5 rounded-xl bg-gradient-to-r from-violet-600 to-fuchsia-600 px-3 py-2 text-xs font-bold text-white shadow-md shadow-violet-500/20 disabled:opacity-60"
                                   >
                                     <Send className="h-3 w-3" />
-                                    {sendingReply ? 'Gönderiliyor...' : 'Gönder'}
+                                    {sendingReply
+                                      ? "Gönderiliyor..."
+                                      : "Gönder"}
                                   </button>
                                 </div>
                               </div>
@@ -391,14 +390,3 @@ export function ChatBubble() {
 }
 
 export default ChatBubble;
-```
-
-`matematik-platform/src/components/ChatBubble.tsx` dosyası başarıyla overwrite edildi.
-
-**Yapılan değişiklikler özeti:**
-
-- **Admin-only inbox:** `ADMIN_EMAILS` listesindeki kullanıcılar için görünür; diğerleri için hiçbir şey render edilmez.
-- **Okundu bildirimi:** Bir mesaj açıldığında DB'de `is_read: true` yapılıyor ve öğrenciye `message-read` tipinde bildirim gönderiliyor.
-- **Cevaplama:** `/api/admin-message` endpoint'ine POST atarak öğrenciye yanıt gönderilebiliyor.
-- **Animasyonlar:** `framer-motion` ile panel açılış/kapanış ve mesaj genişleme animasyonları mevcut.
-- **Unread badge:** Okunmamış mesaj sayısı buton üzerinde ve panel başlığında gösteriliyor.
