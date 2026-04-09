@@ -165,7 +165,7 @@ export default function AdminPage() {
   const [replyText, setReplyText] = useState('');
   const [selectedStudent, setSelectedStudent] = useState<string>('');
   const [showModal, setShowModal] = useState(false);
-  const [modalType, setModalType] = useState<'announcement' | 'editAnnouncement' | 'document' | 'writing' | 'assignment' | 'editUser' | 'student' | 'sendDoc' | 'editDocument' | 'adminMessage' | 'quiz' | 'editQuiz' | 'addQuestion'>('announcement');
+  const [modalType, setModalType] = useState<'announcement' | 'editAnnouncement' | 'document' | 'writing' | 'assignment' | 'editUser' | 'student' | 'sendDoc' | 'editDocument' | 'adminMessage' | 'quiz' | 'editQuiz' | 'addQuestion' | 'importQuestions'>('announcement');
   const [formData, setFormData] = useState<any>({});
   const [selectedDoc, setSelectedDoc] = useState<any>(null);
   const [editingAnnouncement, setEditingAnnouncement] = useState<any>(null);
@@ -329,7 +329,7 @@ export default function AdminPage() {
     }
   };
 
-  const openModal = (type: 'announcement' | 'editAnnouncement' | 'document' | 'writing' | 'assignment' | 'student' | 'sendDoc' | 'quiz' | 'editQuiz' | 'addQuestion', studentId?: string, doc?: any) => {
+  const openModal = (type: 'announcement' | 'editAnnouncement' | 'document' | 'writing' | 'assignment' | 'student' | 'sendDoc' | 'quiz' | 'editQuiz' | 'addQuestion' | 'importQuestions', studentId?: string, doc?: any) => {
     setModalType(type);
     if (studentId) setSelectedStudent(studentId);
     if (doc) setSelectedDoc(doc);
@@ -488,6 +488,23 @@ export default function AdminPage() {
         setQuizQuestions([...quizQuestions, data[0]]);
       } else {
         alert('Soru eklenemedi. Lütfen tekrar deneyin.');
+      }
+    } else if (modalType === 'importQuestions') {
+      const response = await fetch('/api/import-questions', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          meta: formData.importResult.meta,
+          questions: formData.importResult.valid,
+        }),
+      });
+      if (response.ok) {
+        const { quiz } = await response.json();
+        setQuizzes([quiz, ...quizzes]);
+        alert('Test ve sorular başarıyla kaydedildi!');
+      } else {
+        const error = await response.json();
+        alert('Kayıt başarısız: ' + error.message);
       }
     }
 
@@ -1107,6 +1124,15 @@ export default function AdminPage() {
               >
                 <Plus className="w-5 h-5" />
                 Yeni Test
+              </motion.button>
+              <motion.button
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                onClick={() => openModal('importQuestions')}
+                className="bg-gradient-to-r from-emerald-500 to-teal-500 text-white px-4 py-2.5 rounded-xl flex items-center gap-2 hover:opacity-95 transition-opacity w-full sm:w-auto justify-center"
+              >
+                <Upload className="w-5 h-5" />
+                Toplu Yükle
               </motion.button>
             </div>
           )}
@@ -2104,7 +2130,7 @@ export default function AdminPage() {
             >
               <div className="flex items-center justify-between mb-6">
                 <h2 className="text-2xl font-bold text-white">
-                  {modalType === 'announcement' ? 'Yeni Duyuru' : modalType === 'editAnnouncement' ? 'Duyuru Düzenle' : modalType === 'document' ? 'Yeni Belge' : modalType === 'editDocument' ? 'Belge Düzenle' : modalType === 'assignment' ? 'Yeni Ödev' : modalType === 'student' ? 'Yeni Öğrenci' : modalType === 'editUser' ? 'Kullanıcı Düzenle' : modalType === 'sendDoc' ? 'Belge Gönder' : modalType === 'adminMessage' ? 'Öğrenciye Mesaj Yaz' : modalType === 'quiz' ? 'Yeni Test' : modalType === 'editQuiz' ? 'Test Düzenle' : modalType === 'addQuestion' ? 'Soru Ekle' : 'Yeni Yazı'}
+                  {modalType === 'announcement' ? 'Yeni Duyuru' : modalType === 'editAnnouncement' ? 'Duyuru Düzenle' : modalType === 'document' ? 'Yeni Belge' : modalType === 'editDocument' ? 'Belge Düzenle' : modalType === 'assignment' ? 'Yeni Ödev' : modalType === 'student' ? 'Yeni Öğrenci' : modalType === 'editUser' ? 'Kullanıcı Düzenle' : modalType === 'sendDoc' ? 'Belge Gönder' : modalType === 'adminMessage' ? 'Öğrenciye Mesaj Yaz' : modalType === 'quiz' ? 'Yeni Test' : modalType === 'editQuiz' ? 'Test Düzenle' : modalType === 'addQuestion' ? 'Soru Ekle' : modalType === 'importQuestions' ? 'Toplu Soru İçe Aktar' : 'Yeni Yazı'}
                 </h2>
                 <button onClick={() => { setShowModal(false); setEditingUser(null); }} className="text-slate-400 hover:text-white">
                   <X className="w-6 h-6" />
@@ -2872,6 +2898,112 @@ export default function AdminPage() {
                           placeholder="Öğrenci soruyu yanlış yaptığında göreceği açıklama..."
                         />
                       </div>
+                    </>
+                  )}
+
+                  {modalType === 'importQuestions' && (
+                    <>
+                      <div className="space-y-4">
+                        <div className="flex items-center gap-3 p-4 bg-emerald-500/10 border border-emerald-500/30 rounded-xl">
+                          <Download className="w-5 h-5 text-emerald-400" />
+                          <div className="flex-1">
+                            <h3 className="text-white font-semibold mb-1">Excel Şablonu İndir</h3>
+                            <p className="text-slate-400 text-sm">Test bilgileri ve sorular için şablon dosyası</p>
+                          </div>
+                          <button
+                            onClick={() => {
+                              const { downloadExcelTemplate } = require('@/lib/question-import');
+                              downloadExcelTemplate();
+                            }}
+                            className="bg-emerald-500 hover:bg-emerald-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors"
+                          >
+                            İndir
+                          </button>
+                        </div>
+
+                        <div className="border-2 border-dashed border-slate-700 rounded-xl p-8 text-center hover:border-emerald-500/50 transition-colors">
+                          <input
+                            type="file"
+                            accept=".xlsx"
+                            onChange={async (e) => {
+                              const file = e.target.files?.[0];
+                              if (file) {
+                                const { parseExcelFile } = require('@/lib/question-import');
+                                try {
+                                  const buffer = await file.arrayBuffer();
+                                  const result = parseExcelFile(buffer);
+                                  setFormData({ ...formData, importResult: result });
+                                } catch (error: any) {
+                                  alert('Excel dosyası okunamadı: ' + error.message);
+                                }
+                              }
+                            }}
+                            className="hidden"
+                            id="excel-upload"
+                          />
+                          <label
+                            htmlFor="excel-upload"
+                            className="cursor-pointer"
+                          >
+                            <Upload className="w-12 h-12 mx-auto text-slate-500 mb-3" />
+                            <p className="text-slate-300 font-medium mb-1">Excel dosyasını buraya sürükleyin</p>
+                            <p className="text-slate-500 text-sm">veya dosya seçmek için tıklayın (.xlsx)</p>
+                          </label>
+                        </div>
+
+                        {formData.importResult && (
+                          <div className="space-y-3">
+                            <div className="flex items-center justify-between p-3 bg-slate-800/50 rounded-lg">
+                              <div>
+                                <p className="text-white font-medium">{formData.importResult.meta.title}</p>
+                                <p className="text-slate-400 text-sm">
+                                  {formData.importResult.meta.grade}. Sınıf • {formData.importResult.meta.difficulty} • {formData.importResult.meta.time_limit} dk
+                                </p>
+                              </div>
+                              <span className="text-emerald-400 font-bold">{formData.importResult.valid.length} soru</span>
+                            </div>
+
+                            {formData.importResult.errors.length > 0 && (
+                              <div className="p-3 bg-red-500/10 border border-red-500/30 rounded-lg">
+                                <p className="text-red-400 text-sm font-medium mb-2">
+                                  {formData.importResult.errors.length} hata bulundu:
+                                </p>
+                                <ul className="text-red-300 text-xs space-y-1">
+                                  {formData.importResult.errors.map((err: any, idx: number) => (
+                                    <li key={idx}>Satır {err.row}: {err.message}</li>
+                                  ))}
+                                </ul>
+                              </div>
+                            )}
+
+                            <div className="max-h-40 overflow-y-auto space-y-1">
+                              {formData.importResult.valid.slice(0, 10).map((q: any, idx: number) => (
+                                <div key={idx} className="p-2 bg-slate-800/30 rounded text-xs">
+                                  <p className="text-slate-300 truncate">{q.question}</p>
+                                  <p className="text-emerald-400 text-xs mt-1">Doğru: {['A', 'B', 'C', 'D'][q.correct_index]}</p>
+                                </div>
+                              ))}
+                              {formData.importResult.valid.length > 10 && (
+                                <p className="text-slate-500 text-xs text-center">
+                                  ... ve {formData.importResult.valid.length - 10} soru daha
+                                </p>
+                              )}
+                            </div>
+                          </div>
+                        )}
+                      </div>
+
+                      {formData.importResult && (
+                        <motion.button
+                          type="submit"
+                          whileHover={{ scale: 1.02 }}
+                          whileTap={{ scale: 0.98 }}
+                          disabled={isSubmitting}
+                          className="w-full py-4 bg-gradient-to-r from-emerald-500 to-teal-500 text-white font-semibold rounded-xl hover:from-emerald-600 hover:to-teal-600 transition-all flex items-center justify-center gap-2 disabled:opacity-60"
+                        >
+                          {isSubmitting ? 'Kaydediliyor...' : `${formData.importResult.valid.length} Soruyu Kaydet`}
+                        </motion.button>
+                      )}
                     </>
                   )}
 
