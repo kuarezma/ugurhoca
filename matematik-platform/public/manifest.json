@@ -1,0 +1,43 @@
+{
+  "name": "Uğur Hoca Matematik",
+  "short_name": "Uğur Hoca",
+  "description": "Testler, oyunlar, ödevler ve daha fazlasıyla matematik öğren!",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#0f172a",
+  "theme_color": "#f97316",
+  "orientation": "portrait-primary",
+  "lang": "tr",
+  "categories": ["education"],
+  "icons": [
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Testler",
+      "short_name": "Testler",
+      "description": "Online matematik testleri çöz",
+      "url": "/testler",
+      "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Oyunlar",
+      "short_name": "Oyunlar",
+      "description": "Matematik oyunları oyna",
+      "url": "/oyunlar",
+      "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }]
+    }
+  ]
+}

@@ -9,11 +9,12 @@ import {
 } from 'recharts';
 import { 
   ArrowLeft, Target, Flame, Brain, Calendar, 
-  Plus, X, Video, BookOpen, PenTool, CheckCircle2, Award
+  Plus, X, Video, BookOpen, PenTool, CheckCircle2, Award, Download
 } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { useTheme } from '@/components/ThemeProvider';
+import { downloadProgressPDF } from '@/lib/pdf-export';
 
 const TOPICS = [
   'Çarpanlar ve Katlar', 'Üslü İfadeler', 'Kareköklü İfadeler', 
@@ -31,6 +32,7 @@ export default function IlerlemePage() {
   const [progressData, setProgressData] = useState<any[]>([]);
   const [goal, setGoal] = useState<any>(null);
   const [badges, setBadges] = useState<any[]>([]);
+  const [pdfLoading, setPdfLoading] = useState(false);
   
   // Modal states
   const [showAddModal, setShowAddModal] = useState(false);
@@ -198,12 +200,30 @@ export default function IlerlemePage() {
               <Flame className="w-5 h-5 text-orange-500" />
               <span className={`font-bold ${isLight ? 'text-slate-700' : 'text-slate-200'}`}>{user.current_streak || 0} Gün</span>
             </div>
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={async () => { setPdfLoading(true); await downloadProgressPDF(); setPdfLoading(false); }}
+              disabled={pdfLoading}
+              title="Gelişim Raporunu PDF İndir"
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full border font-semibold text-sm transition-all disabled:opacity-50 ${
+                isLight
+                  ? 'border-emerald-200 bg-emerald-50 text-emerald-700 hover:bg-emerald-100'
+                  : 'border-emerald-500/30 bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20'
+              }`}
+            >
+              {pdfLoading
+                ? <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
+                : <Download className="w-4 h-4" />
+              }
+              <span className="hidden sm:inline">{pdfLoading ? 'Hazırlanıyor...' : 'PDF'}</span>
+            </motion.button>
             <ThemeToggle compact />
           </div>
         </div>
       </header>
 
-      <div className="max-w-6xl mx-auto px-4 py-8 space-y-6">
+      <div id="ilerleme-pdf-content" className="max-w-6xl mx-auto px-4 py-8 space-y-6">
         
         {/* Başlık ve Çalışma Ekle */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">

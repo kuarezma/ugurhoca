@@ -87,8 +87,8 @@ Bu dosya, depo ve Vercel/Supabase ile ilgili yapılan ana işleri özetler (Nisa
 4. İlerleme Takibi ([x] Tamamlandı)
 5. Oyun Çeşitliliği ([x] Tamamlandı)
 6. E-posta Bildirimleri ([ ] Bekliyor)
-7. PDF Export ([ ] Bekliyor)
-8. PWA Desteği ([ ] Bekliyor)
+7. PDF Export ([x] Tamamlandı)
+8. PWA Desteği ([x] Tamamlandı)
 
 **Detaylı Plan:** `/Users/ugurmac/.windsurf/plans/matematik-platform-gelistirme-348677.md`
 
@@ -123,3 +123,26 @@ Bu paket ile platformun UX/UI kalitesi artırılmış, oyunlaştırma ve animasy
 - **Duyuru Kartları:** "Duyuru Ekle/Sil" bölümündeki `announcement` bloklarına `animate-pulse` destekli "Yayında" ibaresi ve resim kapaklarıyla modern bir Premium liste tasarımı giydirildi.
 
 *Son güncelleme: Tüm planlanmış V2 (UX/UI Premium) iyileştirmeleri ve Özellik 2 (Oyun Çeşitliliği/Leaderboard) entegrasyonu kusursuz şekilde tamamlandı ve canlıya (main) push edildi.*
+
+---
+
+## 10. PDF Export & PWA Desteği (Özellik 7 & 8 — Nisan 2026)
+
+### 10.1 PDF Export
+
+- **Kütüphane:** `jspdf` + `html2canvas` — DOM'u screenshot alarak PDF'e dönüştürme.
+- **Utility:** `src/lib/pdf-export.ts` — tek bir `generatePDF(elementId, filename)` fonksiyonu; çok sayfalı destek, Türkçe karakter, Uğur Hoca markalı footer.
+- **Test PDF:** `/testler` sınav bitiş ekranında "Sınav Raporunu PDF İndir" butonu. Soru analizi ve doğru/yanlış sayısı dahil.
+- **İlerleme PDF:** `/ilerleme` header'ında "PDF" butonu. Haftalık grafik, radar ve konu yoğunluğu tablosu.
+- **Admin PDF:** `/admin` Öğrenciler sekmesinde "PDF İndir" butonu — tüm kayıtlı öğrenci listesi.
+
+### 10.2 PWA Desteği
+
+- **İkonlar:** Matematiksel kalkulatör + mezuniyet şapkası (512×512 ve 192×192) `public/` klasörüne eklendi.
+- **Manifest:** `public/manifest.json` — standalone display, Türkçe, orange theme, kısayollar (Testler, Oyunlar).
+- **Service Worker:** `public/sw.js` — cache-first statik dosyalar, network-first navigasyon, API hataları için offline yanıt.
+- **Offline Sayfası:** `public/offline.html` — dark glassmorphism tasarım, markalı.
+- **Layout:** `manifest`, `apple-touch-icon`, `theme-color` meta tag ve SW register script eklendi.
+- **Install Banner:** `src/components/InstallPrompt.tsx` — Framer Motion spring animasyonu, 7 günlük dismiss, turuncu glassmorphism banner.
+
+*Son güncelleme: `npm run build` — Sıfır TypeScript/ESLint hatası. Tüm 20 sayfa başarıyla compile edildi.*

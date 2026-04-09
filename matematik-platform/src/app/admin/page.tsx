@@ -16,6 +16,7 @@ import { supabase } from '@/lib/supabase';
 import { normalizeFullNameForMatch } from '@/lib/student-identity';
 import AdminStatistics from '@/components/AdminStatistics';
 import FloatingShapes from '@/components/FloatingShapes';
+import { downloadStudentListPDF } from '@/lib/pdf-export';
 
 const AnnouncementGallery = ({ images, title }: { images: string[]; title: string }) => {
   const [current, setCurrent] = useState(0);
@@ -177,6 +178,7 @@ export default function AdminPage() {
   const [adminMsgImagePreview, setAdminMsgImagePreview] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [success, setSuccess] = useState(false);
+  const [pdfStudentsLoading, setPdfStudentsLoading] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
@@ -1437,15 +1439,30 @@ export default function AdminPage() {
               >
                 <div className="flex justify-between items-center">
                   <p className="text-slate-400">{allUsers.filter(u => u.email !== 'admin@ugurhoca.com').length} öğrenci</p>
-                  <motion.button
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                    onClick={loadData}
-                    className="px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-slate-300 hover:text-white transition-colors text-sm flex items-center gap-2"
-                  >
-                    <RefreshCw className="w-4 h-4" />
-                    Yenile
-                  </motion.button>
+                  <div className="flex items-center gap-2">
+                    <motion.button
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
+                      onClick={async () => { setPdfStudentsLoading(true); await downloadStudentListPDF(); setPdfStudentsLoading(false); }}
+                      disabled={pdfStudentsLoading}
+                      className="px-4 py-2 bg-emerald-500/10 border border-emerald-500/20 rounded-lg text-emerald-400 hover:text-emerald-300 hover:bg-emerald-500/20 transition-colors text-sm flex items-center gap-2 disabled:opacity-50"
+                    >
+                      {pdfStudentsLoading
+                        ? <div className="w-4 h-4 border-2 border-emerald-400 border-t-transparent rounded-full animate-spin" />
+                        : <Download className="w-4 h-4" />
+                      }
+                      {pdfStudentsLoading ? 'PDF Hazırlanıyor...' : 'PDF İndir'}
+                    </motion.button>
+                    <motion.button
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
+                      onClick={loadData}
+                      className="px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-slate-300 hover:text-white transition-colors text-sm flex items-center gap-2"
+                    >
+                      <RefreshCw className="w-4 h-4" />
+                      Yenile
+                    </motion.button>
+                  </div>
                 </div>
                 {allUsers.filter(u => u.email !== 'admin@ugurhoca.com').length === 0 ? (
                   <div className="glass rounded-2xl p-12 text-center">
@@ -1453,7 +1470,8 @@ export default function AdminPage() {
                     <p className="text-slate-400">Henüz kullanıcı yok</p>
                   </div>
                 ) : (
-                  allUsers.filter(u => u.email !== 'admin@ugurhoca.com').map((u, i) => (
+                  <div id="admin-student-list-pdf" className="space-y-4">
+                  {allUsers.filter(u => u.email !== 'admin@ugurhoca.com').map((u, i) => (
                     <motion.div
                       key={u.id}
                       initial={{ opacity: 0, y: 20 }}
@@ -1519,7 +1537,8 @@ export default function AdminPage() {
                       </div>
                     </div>
                   </motion.div>
-                ))
+                  ))}
+                  </div>
               )}
             </motion.div>
             )}

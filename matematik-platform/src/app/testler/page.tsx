@@ -6,12 +6,13 @@ import Link from 'next/link';
 import { 
   Calculator, FileText, Clock, Trophy, ArrowLeft,
   CheckCircle2, XCircle, ChevronRight, Play, RotateCcw,
-  Zap, Target, Star, AlertCircle
+  Zap, Target, Star, AlertCircle, Download
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import confetti from 'canvas-confetti';
 import { supabase } from '@/lib/supabase';
 import { Quiz, QuizQuestion } from '@/types/quiz';
+import { downloadQuizPDF } from '@/lib/pdf-export';
 
 const FloatingShapes = () => (
   <div className="fixed inset-0 overflow-hidden pointer-events-none z-0">
@@ -47,6 +48,7 @@ export default function TestsPage() {
   const [timeLeft, setTimeLeft] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [pdfLoading, setPdfLoading] = useState(false);
   const router = useRouter();
   const profileHref = user?.isAdmin ? '/admin' : '/profil';
 
@@ -351,6 +353,12 @@ export default function TestsPage() {
   if (selectedQuiz && showResult) {
     const score = calculateScore();
 
+    const handleDownloadPDF = async () => {
+      setPdfLoading(true);
+      await downloadQuizPDF(selectedQuiz.title);
+      setPdfLoading(false);
+    };
+
     return (
       <main className="testler-page min-h-screen gradient-bg flex items-center justify-center p-6">
         <FloatingShapes />
@@ -360,7 +368,7 @@ export default function TestsPage() {
           animate={{ opacity: 1, scale: 1 }}
           className="w-full max-w-2xl relative z-10"
         >
-          <div className="glass rounded-3xl p-8 text-center">
+          <div id="quiz-result-pdf" className="glass rounded-3xl p-8 text-center">
             <motion.div
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
@@ -475,6 +483,25 @@ export default function TestsPage() {
               </motion.button>
             </div>
           </div>
+
+          {/* PDF İndir butonu — container dışında (PDF'e dahil edilmez) */}
+          <motion.button
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.4 }}
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+            onClick={handleDownloadPDF}
+            disabled={pdfLoading}
+            className="w-full mt-4 py-3.5 rounded-2xl border border-white/10 bg-white/5 hover:bg-white/10 text-white font-semibold flex items-center justify-center gap-2.5 transition-all disabled:opacity-50"
+          >
+            {pdfLoading ? (
+              <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+            ) : (
+              <Download className="w-5 h-5 text-emerald-400" />
+            )}
+            {pdfLoading ? 'PDF Hazırlanıyor...' : 'Sınav Raporunu PDF İndir'}
+          </motion.button>
         </motion.div>
       </main>
     );
