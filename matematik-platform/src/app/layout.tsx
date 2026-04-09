@@ -6,9 +6,23 @@ import { THEME_STORAGE_KEY } from "@/components/theme-constants";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Uğur Hoca Matematik - Matematik Öğrenme Platformu",
-  description: "Çalışma kağıtları, testler, oyunlar ve daha fazlasıyla matematik öğrenmeyi keşfet!",
-  keywords: ["matematik", "ders", "test", "sorular", "lgs", "yks", "çözüm", "egitim"],
+  title: {
+    default: "Uğur Hoca Matematik - Matematik Öğrenme Platformu",
+    template: "%s | Uğur Hoca Matematik",
+  },
+  description:
+    "Çalışma kağıtları, testler, oyunlar ve daha fazlasıyla matematik öğrenmeyi keşfet!",
+  keywords: [
+    "matematik",
+    "ders",
+    "test",
+    "sorular",
+    "lgs",
+    "yks",
+    "çözüm",
+    "egitim",
+    "uğur hoca",
+  ],
   authors: [{ name: "Uğur Hoca" }],
   manifest: "/manifest.json",
   appleWebApp: {
@@ -18,20 +32,26 @@ export const metadata: Metadata = {
   },
   openGraph: {
     title: "Uğur Hoca Matematik",
-    description: "Çalışma kağıtları, testler, oyunlar ve daha fazlasıyla matematik öğrenmeyi keşfet!",
+    description:
+      "Çalışma kağıtları, testler, oyunlar ve daha fazlasıyla matematik öğrenmeyi keşfet!",
     type: "website",
     locale: "tr_TR",
-    alternateLocale: "en_US",
-    siteName: "Uğur Hoca",
+    siteName: "Uğur Hoca Matematik",
+    url: "https://ugurhoca.com",
   },
   twitter: {
     card: "summary_large_image",
     title: "Uğur Hoca Matematik",
-    description: "Çalışma kağıtları, testler, oyunlar ve daha fazlasıyla matematik öğrenmeyi keşfet!",
+    description:
+      "Çalışma kağıtları, testler, oyunlar ve daha fazlasıyla matematik öğrenmeyi keşfet!",
   },
   robots: {
     index: true,
     follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+    },
   },
 };
 

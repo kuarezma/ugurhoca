@@ -1,12 +1,20 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
-import { 
-  Users, FileText, StickyNote, ClipboardList, 
-  Calendar, TrendingUp, Activity, Award, Download, Eye
-} from 'lucide-react';
-import { supabase } from '@/lib/supabase';
+import React, { useState, useEffect } from "react";
+import { motion } from "framer-motion";
+import {
+  Users,
+  FileText,
+  StickyNote,
+  ClipboardList,
+  Calendar,
+  TrendingUp,
+  Activity,
+  Award,
+  Download,
+  Eye,
+} from "lucide-react";
+import { supabase } from "@/lib/supabase";
 
 interface SiteStats {
   totalUsers: number;
@@ -23,7 +31,7 @@ interface SiteStats {
 export default function AdminStatistics() {
   const [stats, setStats] = useState<SiteStats | null>(null);
   const [loading, setLoading] = useState(true);
-  const [timeRange, setTimeRange] = useState<'week' | 'month' | 'all'>('all');
+  const [timeRange, setTimeRange] = useState<"week" | "month" | "all">("all");
 
   useEffect(() => {
     loadStats();
@@ -31,58 +39,60 @@ export default function AdminStatistics() {
 
   const loadStats = async () => {
     setLoading(true);
-    
+
     const now = new Date();
-    let dateFilter = '';
-    
-    if (timeRange === 'week') {
+    let dateFilter = "";
+
+    if (timeRange === "week") {
       const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
       dateFilter = weekAgo.toISOString();
-    } else if (timeRange === 'month') {
+    } else if (timeRange === "month") {
       const monthAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
       dateFilter = monthAgo.toISOString();
     }
 
-    const [
-      usersRes, 
-      docsRes, 
-      notesRes, 
-      assignmentsRes,
-      announcementsRes
-    ] = await Promise.all([
-      supabase.from('profiles').select('*', { count: 'exact' }),
-      supabase.from('documents').select('*', { count: 'exact' }),
-      supabase.from('notes').select('*', { count: 'exact' }),
-      supabase.from('assignments').select('*', { count: 'exact' }),
-      supabase.from('announcements').select('*'),
-    ]);
+    const [usersRes, docsRes, notesRes, assignmentsRes, announcementsRes] =
+      await Promise.all([
+        supabase.from("profiles").select("*", { count: "exact" }),
+        supabase.from("documents").select("*", { count: "exact" }),
+        supabase.from("notes").select("*", { count: "exact" }),
+        supabase.from("assignments").select("*", { count: "exact" }),
+        supabase.from("announcements").select("*"),
+      ]);
 
     const users = usersRes.data || [];
     const documents = docsRes.data || [];
-    
-    const nonAdminUsers = users.filter(u => 
-      u.email !== 'admin@ugurhoca.com' && u.email !== 'admin@matematiklab.com'
+
+    const nonAdminUsers = users.filter(
+      (u) =>
+        u.email !== "admin@ugurhoca.com" &&
+        u.email !== "admin@matematiklab.com",
     );
-    
+
     const gradeCounts: Record<string, number> = {};
-    nonAdminUsers.forEach(u => {
-      const grade = u.grade === 'Mezun' ? 'Mezun' : `${u.grade}. Sınıf`;
+    nonAdminUsers.forEach((u) => {
+      const grade = u.grade === "Mezun" ? "Mezun" : `${u.grade}. Sınıf`;
       gradeCounts[grade] = (gradeCounts[grade] || 0) + 1;
     });
-    
+
     const usersByGrade = Object.entries(gradeCounts)
       .map(([grade, count]) => ({ grade, count }))
       .sort((a, b) => {
-        if (a.grade === 'Mezun') return 1;
-        if (b.grade === 'Mezun') return -1;
+        if (a.grade === "Mezun") return 1;
+        if (b.grade === "Mezun") return -1;
         return parseInt(a.grade) - parseInt(b.grade);
       });
 
-    const totalDownloads = documents.reduce((sum, d) => sum + (d.downloads || 0), 0);
+    const totalDownloads = documents.reduce(
+      (sum, d) => sum + (d.downloads || 0),
+      0,
+    );
     const totalViews = documents.reduce((sum, d) => sum + (d.views || 0), 0);
 
-    const recentSignups = dateFilter 
-      ? nonAdminUsers.filter(u => new Date(u.created_at) >= new Date(dateFilter)).length
+    const recentSignups = dateFilter
+      ? nonAdminUsers.filter(
+          (u) => new Date(u.created_at) >= new Date(dateFilter),
+        ).length
       : 0;
 
     setStats({
@@ -94,9 +104,9 @@ export default function AdminStatistics() {
       totalViews,
       usersByGrade,
       recentSignups,
-      mostActiveDay: '-',
+      mostActiveDay: "-",
     });
-    
+
     setLoading(false);
   };
 
@@ -118,17 +128,21 @@ export default function AdminStatistics() {
           <p className="text-slate-400 text-sm mt-1">Platformun genel durumu</p>
         </div>
         <div className="flex gap-2">
-          {(['week', 'month', 'all'] as const).map((range) => (
+          {(["week", "month", "all"] as const).map((range) => (
             <button
               key={range}
               onClick={() => setTimeRange(range)}
               className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
                 timeRange === range
-                  ? 'bg-purple-500 text-white'
-                  : 'bg-white/5 text-slate-400 hover:text-white hover:bg-white/10'
+                  ? "bg-purple-500 text-white"
+                  : "bg-white/5 text-slate-400 hover:text-white hover:bg-white/10"
               }`}
             >
-              {range === 'week' ? '7 Gün' : range === 'month' ? '30 Gün' : 'Tümü'}
+              {range === "week"
+                ? "7 Gün"
+                : range === "month"
+                  ? "30 Gün"
+                  : "Tümü"}
             </button>
           ))}
         </div>
@@ -140,7 +154,7 @@ export default function AdminStatistics() {
           label="Toplam Kullanıcı"
           value={stats.totalUsers}
           color="from-blue-500 to-cyan-500"
-          subtext={`${stats.recentSignups} yeni (${timeRange === 'week' ? '7 gün' : timeRange === 'month' ? '30 gün' : 'tüm zaman'})`}
+          subtext={`${stats.recentSignups} yeni (${timeRange === "week" ? "7 gün" : timeRange === "month" ? "30 gün" : "tüm zaman"})`}
         />
         <StatCard
           icon={FileText}
@@ -172,7 +186,6 @@ export default function AdminStatistics() {
           value={stats.totalDownloads}
           color="from-teal-500 to-cyan-500"
           iconColor="text-teal-400"
-          showTrend
         />
         <StatCard
           icon={Eye}
@@ -180,7 +193,6 @@ export default function AdminStatistics() {
           value={stats.totalViews}
           color="from-indigo-500 to-purple-500"
           iconColor="text-indigo-400"
-          showTrend
         />
         <StatCard
           icon={Activity}
@@ -193,7 +205,11 @@ export default function AdminStatistics() {
         <StatCard
           icon={Award}
           label="İçerik Kalitesi"
-          value={Math.round((stats.totalDownloads / Math.max(stats.totalDocuments, 1)) * 10) / 10}
+          value={
+            Math.round(
+              (stats.totalDownloads / Math.max(stats.totalDocuments, 1)) * 10,
+            ) / 10
+          }
           color="from-amber-500 to-yellow-500"
           iconColor="text-amber-400"
           subtext="ort. indirme/belge"
@@ -219,11 +235,14 @@ export default function AdminStatistics() {
             </motion.div>
           ))}
         </div>
-        
+
         <div className="mt-6">
           <div className="flex items-end gap-1 h-24">
             {stats.usersByGrade.map(({ grade, count }, i) => {
-              const maxCount = Math.max(...stats.usersByGrade.map(g => g.count), 1);
+              const maxCount = Math.max(
+                ...stats.usersByGrade.map((g) => g.count),
+                1,
+              );
               const height = (count / maxCount) * 100;
               return (
                 <motion.div
@@ -241,7 +260,7 @@ export default function AdminStatistics() {
             {stats.usersByGrade.map(({ grade }) => (
               <div key={grade} className="flex-1 text-center">
                 <span className="text-[10px] text-slate-500 truncate block">
-                  {grade.replace('. Sınıf', '')}
+                  {grade.replace(". Sınıf", "")}
                 </span>
               </div>
             ))}
@@ -256,19 +275,24 @@ export default function AdminStatistics() {
             Son Kayıtlar
           </h3>
           <div className="space-y-3">
-            {[...stats.usersByGrade.reduce((acc, g) => acc.concat(
-              Array(g.count).fill(g.grade)
-            ), [] as string[])].slice(0, 5).map((grade, i) => (
-              <div key={i} className="flex items-center gap-3">
-                <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-full flex items-center justify-center text-white text-sm font-bold">
-                  {i + 1}
+            {[
+              ...stats.usersByGrade.reduce(
+                (acc, g) => acc.concat(Array(g.count).fill(g.grade)),
+                [] as string[],
+              ),
+            ]
+              .slice(0, 5)
+              .map((grade, i) => (
+                <div key={i} className="flex items-center gap-3">
+                  <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-full flex items-center justify-center text-white text-sm font-bold">
+                    {i + 1}
+                  </div>
+                  <div className="flex-1">
+                    <div className="h-2 bg-slate-700 rounded-full w-full" />
+                  </div>
+                  <span className="text-xs text-slate-400">{grade}</span>
                 </div>
-                <div className="flex-1">
-                  <div className="h-2 bg-slate-700 rounded-full w-full" />
-                </div>
-                <span className="text-xs text-slate-400">{grade}</span>
-              </div>
-            ))}
+              ))}
           </div>
         </div>
 
@@ -281,13 +305,17 @@ export default function AdminStatistics() {
             <div className="flex items-center justify-between">
               <span className="text-slate-400">Kullanıcı/Belge Oranı</span>
               <span className="text-white font-semibold">
-                {(stats.totalUsers / Math.max(stats.totalDocuments, 1)).toFixed(1)}
+                {(stats.totalUsers / Math.max(stats.totalDocuments, 1)).toFixed(
+                  1,
+                )}
               </span>
             </div>
             <div className="flex items-center justify-between">
               <span className="text-slate-400">Belge Başına Ort. İndirme</span>
               <span className="text-white font-semibold">
-                {Math.round(stats.totalDownloads / Math.max(stats.totalDocuments, 1))}
+                {Math.round(
+                  stats.totalDownloads / Math.max(stats.totalDocuments, 1),
+                )}
               </span>
             </div>
             <div className="flex items-center justify-between">
@@ -299,7 +327,12 @@ export default function AdminStatistics() {
             <div className="flex items-center justify-between">
               <span className="text-slate-400">Etkinlik Oranı</span>
               <span className="text-white font-semibold">
-                {((stats.totalNotes + stats.totalAssignments) / Math.max(stats.totalUsers, 1) * 100).toFixed(0)}%
+                {(
+                  ((stats.totalNotes + stats.totalAssignments) /
+                    Math.max(stats.totalUsers, 1)) *
+                  100
+                ).toFixed(0)}
+                %
               </span>
             </div>
           </div>
@@ -309,23 +342,21 @@ export default function AdminStatistics() {
   );
 }
 
-function StatCard({ 
-  icon: Icon, 
-  label, 
-  value, 
-  color, 
+function StatCard({
+  icon: Icon,
+  label,
+  value,
+  color,
   subtext,
-  iconColor = 'text-white',
-  showTrend = false,
-  suffix = ''
-}: { 
-  icon: any; 
-  label: string; 
-  value: number; 
-  color: string; 
+  iconColor = "text-white",
+  suffix = "",
+}: {
+  icon: React.ComponentType<{ className?: string }>;
+  label: string;
+  value: number;
+  color: string;
   subtext?: string;
   iconColor?: string;
-  showTrend?: boolean;
   suffix?: string;
 }) {
   return (
@@ -335,23 +366,19 @@ function StatCard({
       className="glass rounded-2xl p-5 card-hover"
     >
       <div className="flex items-start justify-between">
-        <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${color} flex items-center justify-center`}>
+        <div
+          className={`w-12 h-12 rounded-xl bg-gradient-to-br ${color} flex items-center justify-center`}
+        >
           <Icon className={`w-6 h-6 ${iconColor}`} />
         </div>
-        {showTrend && (
-          <span className="px-2 py-1 bg-green-500/20 text-green-400 text-xs rounded-full font-medium">
-            +12%
-          </span>
-        )}
       </div>
       <div className="mt-4">
         <p className="text-3xl font-bold text-white">
-          {value.toLocaleString('tr-TR')}{suffix}
+          {value.toLocaleString("tr-TR")}
+          {suffix}
         </p>
         <p className="text-slate-400 text-sm mt-1">{label}</p>
-        {subtext && (
-          <p className="text-slate-500 text-xs mt-1">{subtext}</p>
-        )}
+        {subtext && <p className="text-slate-500 text-xs mt-1">{subtext}</p>}
       </div>
     </motion.div>
   );

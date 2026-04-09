@@ -160,3 +160,49 @@ Bu paket ile platformun UX/UI kalitesi artırılmış, oyunlaştırma ve animasy
 - **Build:** Başarılı, sıfır TypeScript hatası.
 
 *Son güncelleme: Toplu Soru İçe Aktar özelliği tamamen tamamlandı ve canlıya push edildi (commit 00522e3).*
+
+---
+
+## 12. Kapsamlı Kod İncelemesi ve Güvenlik Düzeltmeleri (9 Nisan 2026)
+
+Claude ile yapılan tam proje incelemesinde tespit edilen sorunlar ve uygulanan düzeltmeler.
+
+### 12.1 Kritik Güvenlik Düzeltmeleri
+
+- **`src/lib/supabase.ts`:** Hardcoded fallback (`|| 'your_supabase_anon_key_here'`) kaldırıldı; `!` non-null assertion ile değiştirildi.
+- **`src/app/api/admin-message/route.ts`:** Anon key yerine `SUPABASE_SERVICE_ROLE_KEY` ile ayrı admin client oluşturuldu. Admin e-postaları `ADMIN_EMAILS` env değişkenine taşındı (hardcode kaldırıldı).
+- **`supabase/migrations/20260410000000_fix_announcements_rls.sql`:** `announcements` ve `documents` tablolarının `INSERT`/`DELETE`/`UPDATE` politikaları sıkılaştırıldı — sadece admin e-postaları yetkili.
+- **`.env.example`:** Gerçek Supabase proje URL'si placeholder ile değiştirildi; `RESEND_API_KEY` ve `ADMIN_EMAILS` satırları eklendi.
+
+### 12.2 Orta Öncelikli Düzeltmeler
+
+- **`src/types/index.ts`:** `User` interface'inden `password` alanı kaldırıldı (güvenlik anti-pattern).
+- **`src/app/giris/page.tsx`:** Inline `FloatingShapes` tanımı kaldırıldı, `@/components/FloatingShapes` import edildi. `autoComplete="current-password"` eklendi. `err: any` → `unknown` düzeltildi.
+- **`src/app/kayit/page.tsx`:** Inline `FloatingShapes` tanımı kaldırıldı, global bileşen import edildi. `autoComplete="new-password"` eklendi. Hata animasyonuna `AnimatePresence` eklendi.
+- **`src/components/ChangePasswordForm.tsx`:** Mevcut şifre doğrulama alanı eklendi; `showCurrent` → `showConfirm` yeniden adlandırıldı; `err: any` → `unknown` düzeltildi.
+- **`src/components/ExamCountdown.tsx`:** Türkçe karakter eksiklikleri giderildi ("Gun"→"Gün", "Sinav gerceklesti"→"Sınav gerçekleşti", "Hazirlik zamani"→"Hazırlık zamanı").
+- **`src/app/programlar/page.tsx`:** Tüm ASCII Türkçe metinler düzeltildi ("Sihirbazi Ac"→"Sihirbazı Aç", "icin"→"için" vb.).
+- **`src/components/AdminStatistics.tsx`:** Sahte "+12%" trend göstergesi ve `showTrend` prop'u kaldırıldı; `icon: any` → `React.ComponentType` tipi kullanıldı.
+- **`test-supabase.js`:** Debug dosyası silindi; `.gitignore`'a eklendi.
+- **`tailwind.config.ts`:** `darkMode: ['class', '[data-theme="dark"]']` eklendi.
+- **`next.config.js`:** 4 güvenlik HTTP başlığı (X-Frame-Options, X-Content-Type-Options, X-XSS-Protection, Referrer-Policy) ve `images.remotePatterns` eklendi.
+- **`src/app/layout.tsx`:** `alternateLocale: "en_US"` kaldırıldı; `title.template` eklendi; `openGraph.url` ve `googleBot` robots kuralı eklendi.
+
+### 12.3 Yeni Dosyalar / Özellikler
+
+- **`src/app/robots.ts`:** `/robots.txt` endpoint'i — `/admin/` ve `/api/` crawl'dan hariç, sitemap URL'i tanımlı.
+- **`src/app/sitemap.ts`:** `/sitemap.xml` endpoint'i — 11 public sayfa listelendi, SEO için priority ve changeFrequency ayarlandı.
+- **`public/sw.js`:** `CACHE_VERSION = '2'` sabiti eklendi — deployment'larda cache invalidation kontrollü.
+- **`supabase/migrations/20260410000000_fix_announcements_rls.sql`:** Yeni migration dosyası oluşturuldu.
+
+### 12.4 Henüz Ertelenen Konular (Sonraki Sprint)
+
+| Konu | Neden Ertelendi |
+|------|-----------------|
+| `chat_room_members` `user_tc` / `school_number` tutarsızlığı | Chat sistemi yeniden yazımı gerektirir |
+| `UserStatistics` → `shared_documents` tablosu | Tablo tanımı gözden geçirilmeli |
+| `AdminStatistics` "Son Kayıtlar" sahte veri | Gerçek `created_at` sorgusu yazılacak |
+| Şifremi Unuttum akışı | Resend e-posta entegrasyonu ile birlikte yapılacak |
+| Form `autoComplete` eksiklikleri (diğer sayfalar) | Minor; tüm formlarda uygulanacak |
+
+*Son güncelleme: 9 Nisan 2026 — Kapsamlı güvenlik ve kod kalitesi incelemesi tamamlandı ve push edildi.*

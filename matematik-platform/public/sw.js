@@ -1,40 +1,41 @@
-const CACHE_NAME = 'ugur-hoca-v1';
-const OFFLINE_URL = '/offline.html';
+const CACHE_VERSION = "2";
+const CACHE_NAME = `ugur-hoca-v${CACHE_VERSION}`;
+const OFFLINE_URL = "/offline.html";
 
 const STATIC_ASSETS = [
-  '/',
-  '/offline.html',
-  '/manifest.json',
-  '/icon-192.png',
-  '/icon-512.png',
+  "/",
+  "/offline.html",
+  "/manifest.json",
+  "/icon-192.png",
+  "/icon-512.png",
 ];
 
 // ─── Install ────────────────────────────────────────────────────────────────
-self.addEventListener('install', (event) => {
+self.addEventListener("install", (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
       return cache.addAll(STATIC_ASSETS);
-    })
+    }),
   );
   self.skipWaiting();
 });
 
 // ─── Activate ───────────────────────────────────────────────────────────────
-self.addEventListener('activate', (event) => {
+self.addEventListener("activate", (event) => {
   event.waitUntil(
     caches.keys().then((cacheNames) => {
       return Promise.all(
         cacheNames
           .filter((name) => name !== CACHE_NAME)
-          .map((name) => caches.delete(name))
+          .map((name) => caches.delete(name)),
       );
-    })
+    }),
   );
   self.clients.claim();
 });
 
 // ─── Fetch ──────────────────────────────────────────────────────────────────
-self.addEventListener('fetch', (event) => {
+self.addEventListener("fetch", (event) => {
   const { request } = event;
   const url = new URL(request.url);
 
@@ -42,20 +43,23 @@ self.addEventListener('fetch', (event) => {
   if (url.origin !== location.origin) return;
 
   // API isteklerini her zaman network'ten al
-  if (url.pathname.startsWith('/api/')) {
+  if (url.pathname.startsWith("/api/")) {
     event.respondWith(
       fetch(request).catch(() => {
         return new Response(
-          JSON.stringify({ error: 'Çevrimdışısınız. Lütfen internet bağlantınızı kontrol edin.' }),
-          { headers: { 'Content-Type': 'application/json' }, status: 503 }
+          JSON.stringify({
+            error:
+              "Çevrimdışısınız. Lütfen internet bağlantınızı kontrol edin.",
+          }),
+          { headers: { "Content-Type": "application/json" }, status: 503 },
         );
-      })
+      }),
     );
     return;
   }
 
   // Navigasyon istekleri: Network-first, hata varsa offline sayfası
-  if (request.mode === 'navigate') {
+  if (request.mode === "navigate") {
     event.respondWith(
       fetch(request)
         .then((response) => {
@@ -66,7 +70,7 @@ self.addEventListener('fetch', (event) => {
         })
         .catch(() => {
           return caches.match(OFFLINE_URL);
-        })
+        }),
     );
     return;
   }
@@ -78,12 +82,12 @@ self.addEventListener('fetch', (event) => {
 
       return fetch(request).then((response) => {
         // Sadece başarılı cevapları cache'e ekle
-        if (response && response.status === 200 && response.type === 'basic') {
+        if (response && response.status === 200 && response.type === "basic") {
           const clone = response.clone();
           caches.open(CACHE_NAME).then((cache) => cache.put(request, clone));
         }
         return response;
       });
-    })
+    }),
   );
 });

@@ -1,3 +1,7 @@
+# Test/debug scripts
+test-supabase.js
+test-*.js
+
 # Dependencies
 node_modules/
 

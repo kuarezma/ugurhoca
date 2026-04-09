@@ -2,7 +2,6 @@ export interface User {
   id: string;
   name: string;
   email: string;
-  password: string;
   grade: number;
   avatar?: string;
   createdAt: Date;
@@ -12,7 +11,7 @@ export interface Content {
   id: string;
   title: string;
   description: string;
-  type: 'worksheet' | 'test' | 'game' | 'app' | 'file';
+  type: "worksheet" | "test" | "game" | "app" | "file";
   grade: number[];
   subject: string;
   url?: string;

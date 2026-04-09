@@ -1,44 +1,68 @@
-import { NextResponse } from 'next/server';
-import { createClient } from '@supabase/supabase-js';
+import { NextResponse } from "next/server";
+import { createClient } from "@supabase/supabase-js";
+
+const ADMIN_EMAILS = (
+  process.env.ADMIN_EMAILS ?? "admin@ugurhoca.com,admin@matematiklab.com"
+)
+  .split(",")
+  .map((e) => e.trim());
 
 export async function POST(request: Request) {
   try {
-    const supabase = createClient(
+    const anonClient = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     );
 
-    // Session kontrolü
-    const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+    const {
+      data: { session },
+      error: sessionError,
+    } = await anonClient.auth.getSession();
     if (sessionError || !session) {
-      return NextResponse.json({ error: 'Oturum açmanız gerekiyor.' }, { status: 401 });
+      return NextResponse.json(
+        { error: "Oturum açmanız gerekiyor." },
+        { status: 401 },
+      );
     }
 
-    // Admin kontrolü
-    const adminEmails = ['admin@ugurhoca.com', 'admin@matematiklab.com'];
-    if (!adminEmails.includes(session.user.email || '')) {
-      return NextResponse.json({ error: 'Yetkiniz yok.' }, { status: 403 });
+    if (!ADMIN_EMAILS.includes(session.user.email ?? "")) {
+      return NextResponse.json({ error: "Yetkiniz yok." }, { status: 403 });
     }
+
+    const adminClient = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.SUPABASE_SERVICE_ROLE_KEY!,
+    );
 
     const body = await request.json().catch(() => null);
-    const { student_id, student_name, title, message, sender_id, sender_name, image_url } = body || {};
+    const {
+      student_id,
+      student_name,
+      title,
+      message,
+      sender_id,
+      sender_name,
+      image_url,
+    } = body || {};
 
     if (!student_id || (!message?.trim() && !title?.trim() && !image_url)) {
-      return NextResponse.json({ error: 'Eksik alanlar.' }, { status: 400 });
+      return NextResponse.json({ error: "Eksik alanlar." }, { status: 400 });
     }
 
-    const ip = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || 'unknown';
-    const userAgent = request.headers.get('user-agent') || 'unknown';
+    const ip =
+      request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ||
+      "unknown";
+    const userAgent = request.headers.get("user-agent") || "unknown";
 
     const notification = {
       user_id: student_id,
-      title: title?.trim() || 'Uğur Hoca\'dan Mesaj',
+      title: title?.trim() || "Uğur Hoca'dan Mesaj",
       message: message?.trim(),
-      type: 'admin-message',
+      type: "admin-message",
       is_read: false,
       metadata: {
-        sender_id: sender_id || 'admin',
-        sender_name: sender_name || 'Uğur Hoca',
+        sender_id: sender_id || "admin",
+        sender_name: sender_name || "Uğur Hoca",
         student_name,
         ip,
         user_agent: userAgent,
@@ -47,16 +71,21 @@ export async function POST(request: Request) {
       },
     };
 
-    const { error } = await supabase.from('notifications').insert(notification);
+    const { error } = await adminClient
+      .from("notifications")
+      .insert(notification);
 
     if (error) {
-      console.error('Admin message error:', error);
-      return NextResponse.json({ error: 'Mesaj gönderilemedi.' }, { status: 500 });
+      console.error("Admin message error:", error);
+      return NextResponse.json(
+        { error: "Mesaj gönderilemedi." },
+        { status: 500 },
+      );
     }
 
     return NextResponse.json({ success: true });
   } catch (err) {
-    console.error('Admin message route error:', err);
-    return NextResponse.json({ error: 'Sunucu hatası.' }, { status: 500 });
+    console.error("Admin message route error:", err);
+    return NextResponse.json({ error: "Sunucu hatası." }, { status: 500 });
   }
 }

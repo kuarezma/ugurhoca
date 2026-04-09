@@ -1,54 +1,30 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
-import Link from 'next/link';
-import { Calculator, Eye, EyeOff, ArrowLeft } from 'lucide-react';
-import { useRouter } from 'next/navigation';
-import { supabase } from '@/lib/supabase';
-import { normalizeFullNameForMatch } from '@/lib/student-identity';
-
-const FloatingShapes = () => (
-  <div className="fixed inset-0 overflow-hidden pointer-events-none z-0">
-    {[...Array(15)].map((_, i) => (
-      <motion.div
-        key={i}
-        className="absolute rounded-full opacity-10"
-        style={{
-          width: Math.random() * 150 + 100,
-          height: Math.random() * 150 + 100,
-          background: ['#8b5cf6', '#ec4899', '#06b6d4'][i % 3],
-          left: `${Math.random() * 100}%`,
-          top: `${Math.random() * 100}%`,
-        }}
-        animate={{
-          y: [0, -50, 0],
-          rotate: [0, 180, 360],
-        }}
-        transition={{
-          duration: Math.random() * 5 + 5,
-          repeat: Infinity,
-          ease: 'easeInOut',
-        }}
-      />
-    ))}
-  </div>
-);
+import { useState, useEffect } from "react";
+import { motion } from "framer-motion";
+import Link from "next/link";
+import { Calculator, Eye, EyeOff, ArrowLeft } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { supabase } from "@/lib/supabase";
+import { normalizeFullNameForMatch } from "@/lib/student-identity";
+import FloatingShapes from "@/components/FloatingShapes";
 
 export default function LoginPage() {
   const [formData, setFormData] = useState({
-    fullName: '',
-    password: '',
+    fullName: "",
+    password: "",
   });
   const [showPassword, setShowPassword] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
   const router = useRouter();
 
   useEffect(() => {
     const checkSession = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
       if (session) {
-        router.push('/profil');
+        router.push("/profil");
       }
     };
     checkSession();
@@ -56,16 +32,16 @@ export default function LoginPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError('');
+    setError("");
 
     if (!formData.fullName || !formData.password) {
-      setError('Lütfen tüm alanları doldurun');
+      setError("Lütfen tüm alanları doldurun");
       return;
     }
 
     const displayName = formData.fullName.trim();
     if (displayName.split(/\s+/).length < 2) {
-      setError('Lütfen ad ve soyad girin (örn: Ahmet Yılmaz)');
+      setError("Lütfen ad ve soyad girin (örn: Ahmet Yılmaz)");
       return;
     }
 
@@ -73,9 +49,9 @@ export default function LoginPage() {
 
     try {
       const { data: byNorm, error: normError } = await supabase
-        .from('profiles')
-        .select('email')
-        .eq('name_normalized', nameNormalized);
+        .from("profiles")
+        .select("email")
+        .eq("name_normalized", nameNormalized);
 
       if (normError) throw normError;
 
@@ -83,22 +59,22 @@ export default function LoginPage() {
 
       if (profileMatches.length === 0) {
         const { data: legacy, error: legacyError } = await supabase
-          .from('profiles')
-          .select('email')
-          .ilike('name', displayName);
+          .from("profiles")
+          .select("email")
+          .ilike("name", displayName);
 
         if (legacyError) throw legacyError;
         profileMatches = legacy ?? [];
       }
 
       if (!profileMatches || profileMatches.length === 0) {
-        setError('Bu ad soyad ile kayıtlı hesap bulunamadı.');
+        setError("Bu ad soyad ile kayıtlı hesap bulunamadı.");
         return;
       }
 
       if (profileMatches.length > 1) {
         setError(
-          'Bu ad soyad birden fazla hesapta görünüyor. Lütfen yönetici ile iletişime geçin.'
+          "Bu ad soyad birden fazla hesapta görünüyor. Lütfen yönetici ile iletişime geçin.",
         );
         return;
       }
@@ -110,22 +86,23 @@ export default function LoginPage() {
 
       if (signInError) throw signInError;
 
-      router.push('/profil');
-    } catch (err: any) {
-      if (err.message === 'Invalid login credentials') {
-        setError('Ad soyad veya şifre hatalı');
-      } else if (err.message === 'Email not confirmed') {
-        setError('E-posta onayı bekleniyor.');
+      router.push("/profil");
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : String(err);
+      if (msg === "Invalid login credentials") {
+        setError("Ad soyad veya şifre hatalı");
+      } else if (msg === "Email not confirmed") {
+        setError("E-posta onayı bekleniyor.");
       } else {
-        setError('Giriş başarısız: ' + err.message);
+        setError("Giriş başarısız: " + msg);
       }
     }
   };
 
   return (
     <main className="giris-page min-h-screen gradient-bg flex items-center justify-center p-6">
-      <FloatingShapes />
-      
+      <FloatingShapes count={12} />
+
       <motion.div
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
@@ -152,7 +129,9 @@ export default function LoginPage() {
 
           <form onSubmit={handleSubmit} className="space-y-5">
             <div>
-              <label className="block text-slate-300 mb-2 text-sm">Ad Soyad</label>
+              <label className="block text-slate-300 mb-2 text-sm">
+                Ad Soyad
+              </label>
               <input
                 type="text"
                 autoComplete="name"
@@ -160,12 +139,13 @@ export default function LoginPage() {
                 onChange={(e) =>
                   setFormData({ ...formData, fullName: e.target.value })
                 }
-                className="w-full bg-slate-800/50 border border-slate-700 rounded-xl px-4 py-3 text-white 
+                className="w-full bg-slate-800/50 border border-slate-700 rounded-xl px-4 py-3 text-white
                          focus:outline-none focus:border-purple-500 transition-colors"
                 placeholder="Örn: Ahmet Yılmaz"
               />
               <p className="mt-1.5 text-xs text-slate-500">
-                Kayıt olurken yazdığınız ad soyad ile aynı olmalı. Büyük/küçük harf fark etmez.
+                Kayıt olurken yazdığınız ad soyad ile aynı olmalı. Büyük/küçük
+                harf fark etmez.
               </p>
             </div>
 
@@ -173,10 +153,13 @@ export default function LoginPage() {
               <label className="block text-slate-300 mb-2 text-sm">Şifre</label>
               <div className="relative">
                 <input
-                  type={showPassword ? 'text' : 'password'}
+                  type={showPassword ? "text" : "password"}
+                  autoComplete="current-password"
                   value={formData.password}
-                  onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                  className="w-full bg-slate-800/50 border border-slate-700 rounded-xl px-4 py-3 text-white 
+                  onChange={(e) =>
+                    setFormData({ ...formData, password: e.target.value })
+                  }
+                  className="w-full bg-slate-800/50 border border-slate-700 rounded-xl px-4 py-3 text-white
                            focus:outline-none focus:border-purple-500 transition-colors pr-12"
                   placeholder="••••••••"
                 />
@@ -185,7 +168,11 @@ export default function LoginPage() {
                   onClick={() => setShowPassword(!showPassword)}
                   className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white"
                 >
-                  {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                  {showPassword ? (
+                    <EyeOff className="w-5 h-5" />
+                  ) : (
+                    <Eye className="w-5 h-5" />
+                  )}
                 </button>
               </div>
             </div>
@@ -204,7 +191,7 @@ export default function LoginPage() {
               type="submit"
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
-              className="w-full bg-gradient-to-r from-purple-500 to-pink-500 text-white font-semibold py-4 
+              className="w-full bg-gradient-to-r from-purple-500 to-pink-500 text-white font-semibold py-4
                        rounded-xl hover:from-purple-600 hover:to-pink-600 transition-all glow-button"
             >
               Giriş Yap
@@ -212,8 +199,11 @@ export default function LoginPage() {
           </form>
 
           <p className="text-center text-slate-400 mt-6">
-            Hesabın yok mu?{' '}
-            <Link href="/kayit" className="text-purple-400 hover:text-purple-300 font-semibold">
+            Hesabın yok mu?{" "}
+            <Link
+              href="/kayit"
+              className="text-purple-400 hover:text-purple-300 font-semibold"
+            >
               Kayıt ol
             </Link>
           </p>

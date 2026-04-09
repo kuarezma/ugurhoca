@@ -1,6 +1,7 @@
 import type { Config } from "tailwindcss";
 
 const config: Config = {
+  darkMode: ["class", '[data-theme="dark"]'],
   content: [
     "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
@@ -51,27 +52,27 @@ const config: Config = {
           pink: "#ec4899",
           orange: "#f97316",
           cyan: "#06b6d4",
-        }
+        },
       },
       animation: {
-        'float': 'float 3s ease-in-out infinite',
-        'pulse-glow': 'pulse-glow 2s ease-in-out infinite',
-        'bounce-slow': 'bounce 2s ease-in-out infinite',
-        'spin-slow': 'spin 3s linear infinite',
-        'gradient': 'gradient 8s ease infinite',
+        float: "float 3s ease-in-out infinite",
+        "pulse-glow": "pulse-glow 2s ease-in-out infinite",
+        "bounce-slow": "bounce 2s ease-in-out infinite",
+        "spin-slow": "spin 3s linear infinite",
+        gradient: "gradient 8s ease infinite",
       },
       keyframes: {
         float: {
-          '0%, 100%': { transform: 'translateY(0)' },
-          '50%': { transform: 'translateY(-20px)' },
+          "0%, 100%": { transform: "translateY(0)" },
+          "50%": { transform: "translateY(-20px)" },
         },
-        'pulse-glow': {
-          '0%, 100%': { boxShadow: '0 0 20px rgba(139, 92, 246, 0.5)' },
-          '50%': { boxShadow: '0 0 40px rgba(139, 92, 246, 0.8)' },
+        "pulse-glow": {
+          "0%, 100%": { boxShadow: "0 0 20px rgba(139, 92, 246, 0.5)" },
+          "50%": { boxShadow: "0 0 40px rgba(139, 92, 246, 0.8)" },
         },
         gradient: {
-          '0%, 100%': { backgroundPosition: '0% 50%' },
-          '50%': { backgroundPosition: '100% 50%' },
+          "0%, 100%": { backgroundPosition: "0% 50%" },
+          "50%": { backgroundPosition: "100% 50%" },
         },
       },
     },
