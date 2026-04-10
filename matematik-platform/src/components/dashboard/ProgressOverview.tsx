@@ -17,34 +17,34 @@ export default function ProgressOverview({
   focusTopic,
   detailHref,
 }: DashboardProgressOverviewProps) {
-  const items = [
+  const stats = [
     {
       label: "Çalışma Serisi",
       value: `${streak} gün`,
       icon: Flame,
-      text: "text-orange-300",
-      bg: "bg-orange-500/15",
+      color: "text-orange-400",
+      bg: "bg-orange-400/10",
     },
     {
       label: "Bu Hafta",
       value: `${weeklyMinutes} dk`,
       icon: Target,
-      text: "text-cyan-300",
-      bg: "bg-cyan-500/15",
+      color: "text-cyan-400",
+      bg: "bg-cyan-400/10",
     },
     {
       label: "Son Test",
-      value: latestScore !== null ? `%${latestScore}` : "Henüz yok",
+      value: latestScore !== null ? `%${latestScore}` : "Yok",
       icon: Trophy,
-      text: "text-emerald-300",
-      bg: "bg-emerald-500/15",
+      color: "text-emerald-400",
+      bg: "bg-emerald-400/10",
     },
     {
-      label: "Odak Konu",
-      value: focusTopic || strongTopic || "Çalışma ekle",
+      label: "Odak",
+      value: focusTopic || strongTopic || "-",
       icon: BarChart3,
-      text: "text-violet-300",
-      bg: "bg-violet-500/15",
+      color: "text-violet-400",
+      bg: "bg-violet-400/10",
     },
   ];
 
@@ -52,55 +52,49 @@ export default function ProgressOverview({
     <motion.section
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: 0.12 }}
-      className="rounded-3xl border border-white/10 bg-white/5 p-6 sm:p-7"
+      transition={{ delay: 0.1 }}
+      className="flex flex-col rounded-3xl border border-white/10 bg-white/5 p-6 sm:p-8"
     >
-      <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+      <div className="flex items-center justify-between gap-4 mb-8">
         <div>
-          <h2 className="text-2xl font-bold text-white">İlerleme Özeti</h2>
-          <p className="mt-1 text-sm text-slate-400">
-            Gelişimini tek bakışta gör, detay için ilerleme ekranına geç.
-          </p>
+          <h2 className="text-xl font-bold text-white">İlerleme Özeti</h2>
+          <p className="mt-1 text-sm text-white/50">Haftalık çalışma gelişimin</p>
         </div>
         <Link
           href={detailHref}
-          className="inline-flex items-center gap-2 rounded-xl bg-white/10 px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-white/15"
+          className="group flex h-10 w-10 items-center justify-center rounded-full bg-white/10 transition-colors hover:bg-white/20"
         >
-          Detaylı Analiz
-          <ArrowUpRight className="h-4 w-4" />
+          <ArrowUpRight className="h-5 w-5 text-white transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
         </Link>
       </div>
 
-      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        {items.map((item) => (
-          <div
-            key={item.label}
-            className="rounded-2xl border border-white/10 bg-white/5 p-4"
-          >
-            <div className={`mb-3 flex h-10 w-10 items-center justify-center rounded-xl ${item.bg}`}>
-              <item.icon className={`h-5 w-5 ${item.text}`} />
+      <div className="grid grid-cols-2 gap-x-4 gap-y-6 mb-8">
+        {stats.map((item) => (
+          <div key={item.label} className="flex items-center gap-3">
+            <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${item.bg}`}>
+              <item.icon className={`h-5 w-5 ${item.color}`} />
             </div>
-            <p className="text-sm text-slate-400">{item.label}</p>
-            <p className="mt-1 text-lg font-bold text-white">{item.value}</p>
+            <div className="min-w-0">
+              <p className="truncate text-xs font-medium text-white/50 uppercase tracking-wider">{item.label}</p>
+              <p className="truncate text-base font-bold text-white mt-0.5">{item.value}</p>
+            </div>
           </div>
         ))}
       </div>
 
-      <div className="mt-5 grid gap-3 lg:grid-cols-2">
-        <div className="rounded-2xl border border-emerald-500/20 bg-emerald-500/10 p-4">
-          <p className="text-xs font-bold uppercase tracking-[0.18em] text-emerald-300">
-            Güçlü Alan
-          </p>
-          <p className="mt-2 text-white">
-            {strongTopic || "Henüz yeterli veri yok. Düzenli çalışma ekledikçe burada güçlendiğin konular görünecek."}
+      <div className="mt-auto space-y-3">
+        <div className="flex flex-col rounded-2xl bg-gradient-to-r from-emerald-500/10 to-transparent p-4 border border-emerald-500/10 relative overflow-hidden">
+          <div className="absolute top-0 right-0 h-full w-1/2 bg-gradient-to-l from-emerald-500/5 to-transparent blur-xl"></div>
+          <p className="text-[10px] font-bold uppercase tracking-widest text-emerald-400 mb-1">Güçlü Alan</p>
+          <p className="text-sm font-medium text-white/90">
+            {strongTopic || "Veri toplanıyor..."}
           </p>
         </div>
-        <div className="rounded-2xl border border-amber-500/20 bg-amber-500/10 p-4">
-          <p className="text-xs font-bold uppercase tracking-[0.18em] text-amber-300">
-            Tekrar Önerisi
-          </p>
-          <p className="mt-2 text-white">
-            {focusTopic || "Şu an belirgin bir eksik alan görünmüyor. İstersen ilerleme sayfasından yeni çalışma ekleyebilirsin."}
+        <div className="flex flex-col rounded-2xl bg-gradient-to-r from-amber-500/10 to-transparent p-4 border border-amber-500/10 relative overflow-hidden">
+          <div className="absolute top-0 right-0 h-full w-1/2 bg-gradient-to-l from-amber-500/5 to-transparent blur-xl"></div>
+          <p className="text-[10px] font-bold uppercase tracking-widest text-amber-400 mb-1">Tekrar Önerisi</p>
+          <p className="text-sm font-medium text-white/90">
+            {focusTopic || "Şu an eksiğin görünmüyor."}
           </p>
         </div>
       </div>

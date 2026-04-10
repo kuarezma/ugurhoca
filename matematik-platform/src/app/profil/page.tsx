@@ -22,7 +22,6 @@ import DashboardHero from "@/components/dashboard/DashboardHero";
 import QuickActionGrid, {
   quickActionIcons,
 } from "@/components/dashboard/QuickActionGrid";
-import ContinueCard from "@/components/dashboard/ContinueCard";
 import ProgressOverview from "@/components/dashboard/ProgressOverview";
 import MessageSummaryCard from "@/components/dashboard/MessageSummaryCard";
 import RecentResults from "@/components/dashboard/RecentResults";
@@ -681,19 +680,25 @@ export default function ProfilePage() {
               </div>
             </motion.section>
           ) : (
-            <div className="space-y-6">
+            <div className="space-y-8">
               <DashboardHero
                 user={user}
-                pendingAssignments={pendingAssignments.length}
-                unreadCount={unreadCount}
-                availableQuizCount={availableQuizzes.length}
-                weeklyMinutes={weeklyMinutes}
+                continueState={continueState}
               />
 
-              <QuickActionGrid items={quickActionItems} />
+              <div className="mx-auto">
+                <QuickActionGrid items={quickActionItems} />
+              </div>
 
-              <div className="grid gap-6 xl:grid-cols-[1.2fr,0.8fr]">
-                <ContinueCard state={continueState} />
+              <div className="grid gap-6 lg:grid-cols-2">
+                <ProgressOverview
+                  streak={user.current_streak || 0}
+                  weeklyMinutes={weeklyMinutes}
+                  latestScore={latestQuizScore}
+                  strongTopic={strongTopic}
+                  focusTopic={focusTopic}
+                  detailHref="/ilerleme"
+                />
                 <MessageSummaryCard
                   unreadCount={unreadCount}
                   latestTitle={latestNotification?.title || null}
@@ -708,16 +713,7 @@ export default function ProfilePage() {
                 />
               </div>
 
-              <ProgressOverview
-                streak={user.current_streak || 0}
-                weeklyMinutes={weeklyMinutes}
-                latestScore={latestQuizScore}
-                strongTopic={strongTopic}
-                focusTopic={focusTopic}
-                detailHref="/ilerleme"
-              />
-
-              <div className="grid gap-6 xl:grid-cols-[1.05fr,0.95fr]">
+              <div className="grid gap-6 lg:grid-cols-2">
                 <RecentResults results={quizResults} />
                 <RecentDocuments documents={sharedDocs} />
               </div>

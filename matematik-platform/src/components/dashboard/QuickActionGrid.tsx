@@ -21,43 +21,35 @@ interface QuickActionGridProps {
 
 export default function QuickActionGrid({ items }: QuickActionGridProps) {
   return (
-    <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+    <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
       {items.map((item, index) => (
-        <motion.article
+        <motion.button
+          type="button"
+          onClick={item.onAction}
           key={item.title}
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
           transition={{ delay: 0.05 * index }}
-          className={`group rounded-3xl border border-white/10 bg-gradient-to-br ${item.accentClass} p-5`}
+          className={`group flex items-center justify-between rounded-2xl border border-white/5 bg-gradient-to-r ${item.accentClass.replace('to-', 'to-transparent')} p-4 text-left transition-all hover:bg-white/5 hover:border-white/20`}
         >
-          <div className="mb-4 flex items-start justify-between gap-3">
-            <div className={`flex h-12 w-12 items-center justify-center rounded-2xl ${item.iconClass}`}>
-              <item.icon className="h-6 w-6 text-white" />
+          <div className="flex items-center gap-4">
+            <div className={`relative flex h-12 w-12 items-center justify-center rounded-xl bg-white/5 border border-white/10 group-hover:scale-110 transition-transform ${item.iconClass}`}>
+              <item.icon className="h-5 w-5 text-white" />
             </div>
-            <div className="text-right">
-              {item.badge ? (
-                <div className="mb-2 inline-flex rounded-full bg-white/10 px-2 py-1 text-[10px] font-bold uppercase tracking-[0.16em] text-white">
-                  {item.badge}
-                </div>
-              ) : null}
-              <div className="text-2xl font-black text-white">{item.stat}</div>
+            <div>
+              <h2 className="text-base font-bold text-white group-hover:text-emerald-300 transition-colors">{item.title}</h2>
+              <div className="flex items-center gap-2 mt-0.5">
+                <span className="text-sm font-semibold text-white/90">{item.stat}</span>
+                {item.badge ? (
+                  <span className="rounded bg-white/10 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider text-white/70">
+                    {item.badge}
+                  </span>
+                ) : null}
+              </div>
             </div>
           </div>
-
-          <h2 className="text-lg font-bold text-white">{item.title}</h2>
-          <p className="mt-2 min-h-[44px] text-sm text-slate-300">
-            {item.description}
-          </p>
-
-          <button
-            type="button"
-            onClick={item.onAction}
-            className="mt-5 inline-flex items-center gap-2 rounded-xl bg-white/10 px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-white/15"
-          >
-            {item.actionLabel}
-            <ChevronRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
-          </button>
-        </motion.article>
+          <ChevronRight className="h-5 w-5 text-white/30 transition-all group-hover:text-white group-hover:translate-x-1" />
+        </motion.button>
       ))}
     </section>
   );

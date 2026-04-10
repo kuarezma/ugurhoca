@@ -1,15 +1,12 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Bell, BookOpen, ClipboardList, Sparkles } from "lucide-react";
-import { StudentProfile } from "@/types/dashboard";
+import { BookOpen, ChevronRight, Sparkles } from "lucide-react";
+import { StudentProfile, ContinueState } from "@/types/dashboard";
 
 interface DashboardHeroProps {
   user: StudentProfile;
-  pendingAssignments: number;
-  unreadCount: number;
-  availableQuizCount: number;
-  weeklyMinutes: number;
+  continueState: ContinueState;
 }
 
 const formatGradeLabel = (grade: number | string) =>
@@ -17,94 +14,69 @@ const formatGradeLabel = (grade: number | string) =>
 
 export default function DashboardHero({
   user,
-  pendingAssignments,
-  unreadCount,
-  availableQuizCount,
-  weeklyMinutes,
+  continueState,
 }: DashboardHeroProps) {
   return (
     <motion.section
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className="relative overflow-hidden rounded-3xl border border-white/10 bg-white/5 p-6 sm:p-8"
+      className={`relative overflow-hidden rounded-[2.5rem] border border-white/10 bg-gradient-to-br ${continueState.accentClass} p-8 sm:p-12 shadow-2xl`}
     >
-      <div className="absolute -right-12 -top-12 h-32 w-32 rounded-full bg-gradient-to-br from-orange-500/30 to-fuchsia-500/25 blur-3xl" />
-      <div className="absolute -left-10 bottom-0 h-28 w-28 rounded-full bg-gradient-to-br from-indigo-500/25 to-cyan-500/20 blur-3xl" />
+      <div className="absolute -right-12 -top-12 h-64 w-64 rounded-full bg-white/10 blur-3xl" />
+      <div className="absolute -left-10 bottom-0 h-48 w-48 rounded-full bg-black/10 blur-3xl" />
 
-      <div className="relative flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
-        <div className="flex items-center gap-5">
+      <div className="relative flex flex-col gap-8 lg:flex-row lg:items-center lg:justify-between">
+        <div className="flex items-center gap-6">
           <motion.div
-            whileHover={{ scale: 1.04 }}
-            className="flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-br from-orange-500 to-red-500 text-3xl font-bold text-white"
+            whileHover={{ scale: 1.05 }}
+            className="flex h-24 w-24 flex-shrink-0 items-center justify-center rounded-3xl bg-gradient-to-br from-white/20 to-white/5 border border-white/20 shadow-xl backdrop-blur-md text-4xl font-bold text-white relative"
           >
             {user.name?.[0] || "?"}
+            <div className="absolute -bottom-2 -right-2 flex items-center justify-center rounded-full bg-emerald-500 w-6 h-6 border-2 border-slate-900"></div>
           </motion.div>
 
           <div>
-            <div className="mb-2 inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1 text-[11px] font-bold uppercase tracking-[0.18em] text-slate-200">
-              <Sparkles className="h-3.5 w-3.5 text-amber-300" />
+            <div className="mb-3 inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-1.5 text-xs font-bold uppercase tracking-[0.2em] text-white backdrop-blur-md border border-white/5">
+              <Sparkles className="h-4 w-4 text-amber-300" />
               Öğrenci Dashboard
             </div>
-            <h1 className="text-2xl font-bold text-white sm:text-3xl">
+            <h1 className="text-3xl font-black text-white sm:text-4xl drop-shadow-sm">
               Hoş geldin, {user.name?.split(" ")[0] || "Öğrenci"}
             </h1>
-            <p className="mt-1 text-sm text-slate-400 sm:text-base">
-              İçeriklerine, görevlerine ve gelişimine tek yerden ulaş.
-            </p>
-            <div className="mt-3 inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-indigo-500/20 to-purple-500/20 px-4 py-1.5">
-              <BookOpen className="h-4 w-4 text-indigo-300" />
-              <span className="text-sm font-semibold text-indigo-200">
+            <div className="mt-4 flex flex-wrap items-center gap-3">
+              <div className="inline-flex items-center gap-2 rounded-full bg-black/20 px-4 py-1.5 text-sm font-semibold text-white/90 backdrop-blur-sm">
+                <BookOpen className="h-4 w-4 text-white/70" />
                 {formatGradeLabel(user.grade)}
-              </span>
+              </div>
+              <div className="inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-1.5 text-sm font-medium text-white/80 backdrop-blur-sm">
+                🔥 {user.current_streak || 0} Günlük Seri
+              </div>
             </div>
           </div>
         </div>
 
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 lg:w-[440px]">
-          {[
-            {
-              label: "Bekleyen Ödev",
-              value: pendingAssignments,
-              icon: ClipboardList,
-              accent: "from-purple-500/20 to-fuchsia-500/20",
-              text: "text-purple-200",
-            },
-            {
-              label: "Yeni Bildirim",
-              value: unreadCount,
-              icon: Bell,
-              accent: "from-indigo-500/20 to-cyan-500/20",
-              text: "text-indigo-200",
-            },
-            {
-              label: "Uygun Test",
-              value: availableQuizCount,
-              icon: BookOpen,
-              accent: "from-emerald-500/20 to-teal-500/20",
-              text: "text-emerald-200",
-            },
-            {
-              label: "Bu Hafta",
-              value: `${weeklyMinutes} dk`,
-              icon: Sparkles,
-              accent: "from-amber-500/20 to-orange-500/20",
-              text: "text-amber-200",
-            },
-          ].map((item) => (
-            <div
-              key={item.label}
-              className={`rounded-2xl border border-white/10 bg-gradient-to-br ${item.accent} p-3`}
-            >
-              <div className="mb-2 flex items-center justify-between">
-                <item.icon className={`h-4 w-4 ${item.text}`} />
-                <span className={`text-lg font-black ${item.text}`}>
-                  {item.value}
-                </span>
-              </div>
-              <p className="text-xs text-slate-300">{item.label}</p>
-            </div>
-          ))}
-        </div>
+        <motion.div 
+          initial={{ opacity: 0, x: 20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ delay: 0.2 }}
+          className="rounded-3xl border border-white/10 bg-black/20 p-6 backdrop-blur-md sm:w-[400px]"
+        >
+          <div className="mb-2 text-xs font-bold uppercase tracking-widest text-white/60">
+            Sıradaki Adım
+          </div>
+          <h2 className="text-xl font-bold text-white mb-2">{continueState.title}</h2>
+          <p className="text-sm text-white/70 mb-5 leading-relaxed">
+            {continueState.description}
+          </p>
+          <button
+            type="button"
+            onClick={continueState.onAction}
+            className="group w-full inline-flex items-center justify-center gap-2 rounded-xl bg-white text-slate-900 px-5 py-3 text-sm font-bold transition-all hover:bg-slate-100 hover:scale-[1.02]"
+          >
+            {continueState.actionLabel}
+            <ChevronRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+          </button>
+        </motion.div>
       </div>
     </motion.section>
   );
