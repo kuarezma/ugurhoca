@@ -6,6 +6,7 @@ export interface StudentProfile {
   isAdmin: boolean;
   created_at?: string;
   current_streak?: number | null;
+  avatar_id?: string | null;
 }
 
 export type DashboardNotificationType =

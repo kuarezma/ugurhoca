@@ -7,6 +7,7 @@ import { StudentProfile, ContinueState } from "@/types/dashboard";
 interface DashboardHeroProps {
   user: StudentProfile;
   continueState: ContinueState;
+  onAvatarClick?: () => void;
 }
 
 const formatGradeLabel = (grade: number | string) =>
@@ -27,13 +28,22 @@ export default function DashboardHero({
 
       <div className="relative flex flex-col gap-8 lg:flex-row lg:items-center lg:justify-between">
         <div className="flex items-center gap-6">
-          <motion.div
+          <motion.button
+            type="button"
+            onClick={onAvatarClick}
             whileHover={{ scale: 1.05 }}
-            className="flex h-24 w-24 flex-shrink-0 items-center justify-center rounded-3xl bg-gradient-to-br from-white/20 to-white/5 border border-white/20 shadow-xl backdrop-blur-md text-4xl font-bold text-white relative"
+            className="group flex h-24 w-24 flex-shrink-0 items-center justify-center rounded-3xl bg-gradient-to-br from-white/20 to-white/5 border border-white/20 shadow-xl backdrop-blur-md text-4xl font-bold text-white relative transition-all"
           >
-            {user.name?.[0] || "?"}
+            {user.avatar_id ? (
+              <span className="text-5xl">{user.avatar_id}</span>
+            ) : (
+              <span>{user.name?.[0] || "?"}</span>
+            )}
+            <div className="absolute inset-0 rounded-3xl bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
+              <span className="text-xs font-bold text-white uppercase tracking-wider">Değiştir</span>
+            </div>
             <div className="absolute -bottom-2 -right-2 flex items-center justify-center rounded-full bg-emerald-500 w-6 h-6 border-2 border-slate-900"></div>
-          </motion.div>
+          </motion.button>
 
           <div>
             <div className="mb-3 inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-1.5 text-xs font-bold uppercase tracking-[0.2em] text-white backdrop-blur-md border border-white/5">
@@ -59,7 +69,7 @@ export default function DashboardHero({
           initial={{ opacity: 0, x: 20 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ delay: 0.2 }}
-          className="rounded-3xl border border-white/10 bg-black/20 p-6 backdrop-blur-md sm:w-[400px]"
+          className="w-full sm:max-w-md rounded-3xl border border-white/10 bg-black/20 p-6 backdrop-blur-md"
         >
           <div className="mb-2 text-xs font-bold uppercase tracking-widest text-white/60">
             Sıradaki Adım

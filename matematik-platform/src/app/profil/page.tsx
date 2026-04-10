@@ -27,6 +27,7 @@ import MessageSummaryCard from "@/components/dashboard/MessageSummaryCard";
 import RecentResults from "@/components/dashboard/RecentResults";
 import RecentDocuments from "@/components/dashboard/RecentDocuments";
 import DashboardSettings from "@/components/dashboard/DashboardSettings";
+import AvatarSelectionModal from "@/components/dashboard/AvatarSelectionModal";
 import type {
   ContinueState,
   DashboardAssignment,
@@ -81,6 +82,7 @@ export default function ProfilePage() {
     useState<DashboardAssignment | null>(null);
   const [selectedMessage, setSelectedMessage] =
     useState<DashboardNotification | null>(null);
+  const [isAvatarModalOpen, setIsAvatarModalOpen] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
@@ -507,6 +509,19 @@ export default function ProfilePage() {
     setShowNotifications(true);
   };
 
+  const handleAvatarSelect = async (avatar: string) => {
+    if (!user) return;
+    
+    // Optimistic UI update
+    setUser({ ...user, avatar_id: avatar });
+    
+    // Save to DB
+    await supabase
+      .from("profiles")
+      .update({ avatar_id: avatar })
+      .eq("id", user.id);
+  };
+
   if (loading) {
     return (
       <main className="profil-page min-h-screen gradient-bg flex items-center justify-center">
@@ -680,13 +695,14 @@ export default function ProfilePage() {
               </div>
             </motion.section>
           ) : (
-            <div className="space-y-8">
+            <div className="space-y-8 w-full max-w-full overflow-hidden">
               <DashboardHero
                 user={user}
                 continueState={continueState}
+                onAvatarClick={() => setIsAvatarModalOpen(true)}
               />
 
-              <div className="mx-auto">
+              <div className="mx-auto w-full max-w-full">
                 <QuickActionGrid items={quickActionItems} />
               </div>
 
@@ -721,6 +737,13 @@ export default function ProfilePage() {
               <NotesSection userId={user.id} />
 
               <DashboardSettings />
+
+              <AvatarSelectionModal
+                isOpen={isAvatarModalOpen}
+                onClose={() => setIsAvatarModalOpen(false)}
+                onSelect={handleAvatarSelect}
+                currentAvatar={user.avatar_id}
+              />
             </div>
           )}
         </div>
