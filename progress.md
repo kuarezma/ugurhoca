@@ -275,3 +275,48 @@ Admin "Cevapla" der ve cevap yazar
 ```
 
 *Son güncelleme: 9 Nisan 2026 — Chat sistemi yeniden yazıldı, bildirim gizliliği ve Supabase RLS tamamlandı.*
+
+---
+
+## 14. Öğrenci Dashboard Profesyonelleştirme (10 Nisan 2026)
+
+### 14.1 Dashboard Yapısı
+
+- **Ana merkez:** `matematik-platform/src/app/profil/page.tsx` öğrenci için gerçek dashboard akışına dönüştürüldü.
+- **Karar:** Mevcut görsel dil korundu; renk paleti, glassmorphism hissi, kart dili ve tema davranışı değiştirilmeden yalnızca bilgi mimarisi yenilendi.
+- **Yeni sıralama:** Karşılama alanı, hızlı işlem kartları, “devam et” alanı, mesaj özeti, kısa ilerleme özeti, son test sonuçları, son belgeler, notlar ve en altta ayarlar.
+- **Davranış:** Dashboard kartları pasif özet olmaktan çıkarıldı; testler, ödevler, ilerleme ve mesajlar için doğrudan aksiyon başlatan yapıya geçirildi.
+
+### 14.2 Yeni Dashboard Bileşenleri
+
+- **Yeni klasör:** `matematik-platform/src/components/dashboard/`
+- **Eklenen bileşenler:**
+  - `DashboardHero.tsx`
+  - `QuickActionGrid.tsx`
+  - `ContinueCard.tsx`
+  - `ProgressOverview.tsx`
+  - `MessageSummaryCard.tsx`
+  - `RecentResults.tsx`
+  - `RecentDocuments.tsx`
+  - `DashboardSettings.tsx`
+- **Yeni tip dosyası:** `matematik-platform/src/types/dashboard.ts`
+- **Amaç:** `profil/page.tsx` içindeki büyük render akışı sunum odaklı alt bileşenlere bölündü; dashboard için ayrı tip katmanı tanımlandı.
+
+### 14.3 Öğrenci Akışı ve Öncelik Mantığı
+
+- **Hızlı erişim kartları:** Testler, Ödevler, İlerleme ve Mesajlar üst seviyeye taşındı.
+- **Devam et alanı:** Öncelik sırası şu şekilde kuruldu:
+  1. teslim edilmemiş ödev
+  2. uygun test
+  3. okunmamış mesaj / bildirim
+  4. ilerleme ekranına yönlendirme
+- **İlerleme özeti:** `profil` içinde kısa özet gösterilirken, detay ekranı olarak `/ilerleme` korunmaya devam etti.
+- **Alt bölümler:** Belgeler ve test sonuçları kısa liste formatına çekildi; not alma alanı kaldırılmadı, ancak dashboard’ın alt bölümüne taşındı. Şifre değiştirme / ayarlar en alta alındı.
+
+### 14.4 Doğrulama
+
+- **Build:** `npm run build` yeniden çalıştırıldı ve temiz geçti.
+- **Kapsam:** Dashboard refactor yalnızca öğrenci profil deneyimini yeniden düzenledi; route yapısı, veritabanı şeması ve public API sözleşmeleri değiştirilmedi.
+- **Sonuç:** Öğrenci giriş yaptığında `/profil` artık daha net, aksiyon odaklı ve düzenli bir çalışma merkezi olarak davranıyor.
+
+*Son güncelleme: 10 Nisan 2026 — Öğrenci dashboard fazı tamamlandı ve kayıt altına alındı.*
