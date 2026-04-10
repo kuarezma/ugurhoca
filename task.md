@@ -167,13 +167,18 @@ Bu dosya, projenin tamamlanmış ve devam eden görevlerini özetler.
 - [x] `src/app/profil/page.tsx` öğrenci dashboard akışına dönüştürüldü
 - [x] Üst bölüm karşılama + bugünkü durum yapısına çevrildi
 - [x] Hızlı erişim kartları eklendi: testler, ödevler, ilerleme, mesajlar
-- [x] “Devam et” alanı ve öncelik mantığı eklendi
-- [x] Kısa ilerleme özeti dashboard’a taşındı, `/ilerleme` detay sayfası korundu
+- [x] "Devam et" alanı ve öncelik mantığı eklendi
+- [x] Kısa ilerleme özeti dashboard'a taşındı, `/ilerleme` detay sayfası korundu
 - [x] Son test sonuçları ve son belgeler özet bloklara dönüştürüldü
 - [x] Notlar alta taşındı, ayarlar/şifre değiştirme en alta alındı
 - [x] `src/components/dashboard/` altında yeni bileşenler oluşturuldu
 - [x] `src/types/dashboard.ts` eklendi
 - [x] Build başarılı
+
+### 15. Chat Balonunu Öğrencilerden Gizleme (10 Nisan 2026)
+- [x] `ChatBubbleLoader` layout.tsx'ten kaldırıldı
+- [x] `ChatBubbleLoader` admin/page.tsx'e eklendi
+- [x] Artık sadece admin sayfasında chat balonu görünecek
 
 ## Bekleyen Görevler
 

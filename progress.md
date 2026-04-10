@@ -320,3 +320,16 @@ Admin "Cevapla" der ve cevap yazar
 - **Sonuç:** Öğrenci giriş yaptığında `/profil` artık daha net, aksiyon odaklı ve düzenli bir çalışma merkezi olarak davranıyor.
 
 *Son güncelleme: 10 Nisan 2026 — Öğrenci dashboard fazı tamamlandı ve kayıt altına alındı.*
+
+---
+
+## 15. Chat Balonunu Öğrencilerden Gizleme (10 Nisan 2026)
+
+### 15.1 Güvenlik İyileştirmesi
+
+- **Sorun:** ChatBubbleLoader layout.tsx'te yükleniyordu, bu sayede tüm sayfalarda (öğrenciler dahil) yükleniyordu. ChatBubble bileşeni içinde admin kontrolü olsa da, bileşenin kendisi yükleniyordu.
+- **Çözüm:** ChatBubbleLoader layout.tsx'ten tamamen kaldırıldı (hem import hem body kısmından).
+- **Admin Sayfası:** ChatBubbleLoader sadece admin/page.tsx'e eklendi, böylece sadece admin sayfasında chat balonu görünecek.
+- **Sonuç:** Öğrenciler artık hiçbir sayfada chat balonunu göremeyecek, sadece adminler (/admin) görebilecek.
+
+*Son güncelleme: 10 Nisan 2026 — Chat balonu öğrencilerden gizlendi.*

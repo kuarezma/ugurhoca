@@ -50,6 +50,7 @@ import { normalizeFullNameForMatch } from "@/lib/student-identity";
 import AdminStatistics from "@/components/AdminStatistics";
 import FloatingShapes from "@/components/FloatingShapes";
 import { downloadStudentListPDF } from "@/lib/pdf-export";
+import { ChatBubbleLoader } from "@/components/ChatBubbleLoader";
 
 const AnnouncementGallery = ({
   images,
@@ -4500,6 +4501,7 @@ export default function AdminPage() {
           </div>
         )}
       </AnimatePresence>
+      <ChatBubbleLoader />
     </main>
   );
 }

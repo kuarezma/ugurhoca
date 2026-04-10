@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { Providers } from "@/components/Providers";
-import { ChatBubbleLoader } from "@/components/ChatBubbleLoader";
 import InstallPrompt from "@/components/InstallPrompt";
 import { THEME_STORAGE_KEY } from "@/components/theme-constants";
 import "./globals.css";
@@ -79,7 +78,6 @@ export default function RootLayout({
       </head>
       <body>
         <Providers>{children}</Providers>
-        <ChatBubbleLoader />
         <InstallPrompt />
       </body>
     </html>
