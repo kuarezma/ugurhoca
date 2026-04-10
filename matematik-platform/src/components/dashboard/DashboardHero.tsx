@@ -16,6 +16,7 @@ const formatGradeLabel = (grade: number | string) =>
 export default function DashboardHero({
   user,
   continueState,
+  onAvatarClick,
 }: DashboardHeroProps) {
   return (
     <motion.section
