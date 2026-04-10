@@ -1,96 +1,87 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import {
-  Calculator,
-  LogOut,
   ArrowLeft,
-  Settings,
-  ChevronRight,
-  Shield,
   Bell,
-  FileText,
-  ClipboardList,
-  BookOpen,
   CheckCircle2,
+  ChevronRight,
   Clock3,
-  BarChart3,
+  FileText,
+  LogOut,
+  Settings,
+  Shield,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
+import FloatingShapes from "@/components/FloatingShapes";
 import NotesSection from "@/components/NotesSection";
-import UserStatistics from "@/components/UserStatistics";
-import ChangePasswordForm from "@/components/ChangePasswordForm";
+import DashboardHero from "@/components/dashboard/DashboardHero";
+import QuickActionGrid, {
+  quickActionIcons,
+} from "@/components/dashboard/QuickActionGrid";
+import ContinueCard from "@/components/dashboard/ContinueCard";
+import ProgressOverview from "@/components/dashboard/ProgressOverview";
+import MessageSummaryCard from "@/components/dashboard/MessageSummaryCard";
+import RecentResults from "@/components/dashboard/RecentResults";
+import RecentDocuments from "@/components/dashboard/RecentDocuments";
+import DashboardSettings from "@/components/dashboard/DashboardSettings";
+import type {
+  ContinueState,
+  DashboardAssignment,
+  DashboardDocument,
+  DashboardNotification,
+  DashboardQuizResult,
+  DashboardQuizSummary,
+  DashboardSubmission,
+  StudentProfile,
+} from "@/types/dashboard";
 
-const FloatingShapes = () => (
-  <div className="fixed inset-0 overflow-hidden pointer-events-none z-0">
-    {[...Array(6)].map((_, i) => (
-      <motion.div
-        key={i}
-        className="absolute rounded-full opacity-5"
-        style={{
-          width: 80,
-          height: 80,
-          background: [
-            "#f97316",
-            "#ec4899",
-            "#06b6d4",
-            "#10b981",
-            "#8b5cf6",
-            "#6366f1",
-          ][i],
-          left: `${(i * 18) % 90}%`,
-          top: `${(i * 15) % 85}%`,
-        }}
-        animate={{ y: [0, -20, 0] }}
-        transition={{ duration: 4 + i, repeat: Infinity, ease: "easeInOut" }}
-      />
-    ))}
-  </div>
-);
-
-interface Notification {
+type ProgressRow = {
   id: string;
-  user_id: string;
-  title: string;
-  message: string;
-  type:
-    | "document"
-    | "assignment"
-    | "general"
-    | "message"
-    | "admin-message"
-    | "message-read";
-  is_read: boolean;
-  created_at: string;
-  metadata?: { image_url?: string; sender_name?: string } | null;
-}
+  topic: string;
+  mastery_level: number;
+};
 
-interface SharedDoc {
+type StudySessionRow = {
   id: string;
-  document_title: string;
-  document_type: string;
-  file_url: string;
-  is_read: boolean;
-  created_at: string;
-}
+  duration: number;
+  date: string;
+};
+
+type NotificationStyle = {
+  wrapper: string;
+  icon: typeof Clock3;
+  iconWrap: string;
+  badge: string;
+  status: string;
+};
+
+const formatGradeLabel = (grade: number | string) =>
+  grade === "Mezun" ? "Mezun" : `${grade}. Sınıf`;
 
 export default function ProfilePage() {
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<StudentProfile | null>(null);
   const [loading, setLoading] = useState(true);
-  const [notifications, setNotifications] = useState<Notification[]>([]);
-  const [sharedDocs, setSharedDocs] = useState<SharedDoc[]>([]);
-  const [assignments, setAssignments] = useState<any[]>([]);
-  const [quizResults, setQuizResults] = useState<any[]>([]);
-  const [showNotifications, setShowNotifications] = useState(false);
-  const [selectedAssignment, setSelectedAssignment] = useState<any>(null);
-  const [selectedMessage, setSelectedMessage] = useState<Notification | null>(
-    null,
+  const [notifications, setNotifications] = useState<DashboardNotification[]>(
+    [],
   );
-  const docsRef = useRef<HTMLHeadingElement | null>(null);
-  const assignmentsRef = useRef<HTMLHeadingElement | null>(null);
+  const [sharedDocs, setSharedDocs] = useState<DashboardDocument[]>([]);
+  const [assignments, setAssignments] = useState<DashboardAssignment[]>([]);
+  const [submissions, setSubmissions] = useState<DashboardSubmission[]>([]);
+  const [quizResults, setQuizResults] = useState<DashboardQuizResult[]>([]);
+  const [availableQuizzes, setAvailableQuizzes] = useState<
+    DashboardQuizSummary[]
+  >([]);
+  const [studySessions, setStudySessions] = useState<StudySessionRow[]>([]);
+  const [progressRows, setProgressRows] = useState<ProgressRow[]>([]);
+  const [showNotifications, setShowNotifications] = useState(false);
+  const [selectedAssignment, setSelectedAssignment] =
+    useState<DashboardAssignment | null>(null);
+  const [selectedMessage, setSelectedMessage] =
+    useState<DashboardNotification | null>(null);
   const router = useRouter();
 
   useEffect(() => {
@@ -112,105 +103,165 @@ export default function ProfilePage() {
         .eq("id", session.user.id)
         .single();
 
-      if (profile) {
-        setUser({ ...profile, email: session.user.email, isAdmin });
-      } else {
-        setUser({
-          id: session.user.id,
-          name: session.user.user_metadata?.name || "Öğrenci",
-          email: session.user.email,
-          grade: session.user.user_metadata?.grade ?? 5,
-          isAdmin,
-        });
+      const nextUser: StudentProfile = profile
+        ? { ...profile, email: session.user.email, isAdmin }
+        : {
+            id: session.user.id,
+            name: session.user.user_metadata?.name || "Öğrenci",
+            email: session.user.email || "",
+            grade: session.user.user_metadata?.grade ?? 5,
+            isAdmin,
+            current_streak: 0,
+          };
+
+      setUser(nextUser);
+
+      if (isAdmin) {
+        setLoading(false);
+        return;
       }
 
-      const { data: notifData } = await supabase
-        .from("notifications")
-        .select("*")
-        .eq("user_id", session.user.id)
-        .order("created_at", { ascending: false });
-      if (notifData) setNotifications(notifData);
+      const gradeValue =
+        typeof nextUser.grade === "number" || typeof nextUser.grade === "string"
+          ? nextUser.grade
+          : 5;
 
-      const { data: sharedData } = await supabase
-        .from("shared_documents")
-        .select("*")
-        .eq("student_id", session.user.id)
-        .order("created_at", { ascending: false });
-      if (sharedData) setSharedDocs(sharedData);
+      const gradeClause =
+        typeof gradeValue === "string"
+          ? `grade.eq.${gradeValue},student_id.eq.${nextUser.id}`
+          : `grade.eq.${Number(gradeValue)},student_id.eq.${nextUser.id}`;
 
-      const { data: asmtData } = await supabase
+      const numericGrade = Number(gradeValue);
+
+      const assignmentsQuery = supabase
         .from("assignments")
         .select("*")
-        .eq("student_id", session.user.id)
+        .or(gradeClause)
         .order("created_at", { ascending: false });
-      if (asmtData) setAssignments(asmtData);
 
-      const { data: quizData } = await supabase
-        .from("quiz_results")
-        .select("*, quizzes(title, difficulty, grade)")
-        .eq("user_id", session.user.id)
-        .order("completed_at", { ascending: false });
-      if (quizData) setQuizResults(quizData);
+      const availableQuizzesQuery = Number.isFinite(numericGrade)
+        ? supabase
+            .from("quizzes")
+            .select("id, title, difficulty, grade, time_limit")
+            .eq("is_active", true)
+            .eq("grade", numericGrade)
+            .order("created_at", { ascending: false })
+        : supabase
+            .from("quizzes")
+            .select("id, title, difficulty, grade, time_limit")
+            .eq("is_active", true)
+            .order("created_at", { ascending: false });
 
+      const [
+        notifRes,
+        sharedDocsRes,
+        assignmentsRes,
+        submissionsRes,
+        quizResultsRes,
+        availableQuizzesRes,
+        studySessionsRes,
+        progressRes,
+      ] = await Promise.all([
+        supabase
+          .from("notifications")
+          .select("*")
+          .eq("user_id", session.user.id)
+          .order("created_at", { ascending: false }),
+        supabase
+          .from("shared_documents")
+          .select("*")
+          .eq("student_id", session.user.id)
+          .order("created_at", { ascending: false }),
+        assignmentsQuery,
+        supabase
+          .from("assignment_submissions")
+          .select("*")
+          .eq("student_id", session.user.id),
+        supabase
+          .from("quiz_results")
+          .select("*, quizzes(title, difficulty, grade)")
+          .eq("user_id", session.user.id)
+          .order("completed_at", { ascending: false }),
+        availableQuizzesQuery,
+        supabase
+          .from("study_sessions")
+          .select("id, duration, date")
+          .eq("user_id", session.user.id)
+          .order("date", { ascending: false })
+          .limit(30),
+        supabase
+          .from("user_progress")
+          .select("id, topic, mastery_level")
+          .eq("user_id", session.user.id)
+          .order("mastery_level", { ascending: false }),
+      ]);
+
+      setNotifications((notifRes.data || []) as DashboardNotification[]);
+      setSharedDocs((sharedDocsRes.data || []) as DashboardDocument[]);
+      setAssignments((assignmentsRes.data || []) as DashboardAssignment[]);
+      setSubmissions((submissionsRes.data || []) as DashboardSubmission[]);
+      setQuizResults((quizResultsRes.data || []) as DashboardQuizResult[]);
+      setAvailableQuizzes(
+        (availableQuizzesRes.data || []) as DashboardQuizSummary[],
+      );
+      setStudySessions((studySessionsRes.data || []) as StudySessionRow[]);
+      setProgressRows((progressRes.data || []) as ProgressRow[]);
       setLoading(false);
     };
+
     loadData();
   }, [router]);
 
   const markAsRead = async (id: string) => {
     await supabase.from("notifications").update({ is_read: true }).eq("id", id);
-    setNotifications(
-      notifications.map((n) => (n.id === id ? { ...n, is_read: true } : n)),
+    setNotifications((prev) =>
+      prev.map((notification) =>
+        notification.id === id
+          ? { ...notification, is_read: true }
+          : notification,
+      ),
     );
   };
 
-  const handleNotificationClick = async (notif: Notification) => {
-    if (!notif.is_read) {
-      await markAsRead(notif.id);
+  const handleNotificationClick = async (notification: DashboardNotification) => {
+    if (!notification.is_read) {
+      await markAsRead(notification.id);
     }
 
     setShowNotifications(false);
 
-    if (notif.type === "document") {
+    if (notification.type === "document") {
       const doc = sharedDocs[0];
       if (doc?.file_url) {
         window.open(doc.file_url, "_blank", "noopener,noreferrer");
         return;
       }
-
-      docsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+      router.push("/icerikler");
       return;
     }
 
-    if (notif.type === "assignment") {
-      const assignment = assignments[0];
-      if (assignment) {
-        setSelectedAssignment(assignment);
+    if (notification.type === "assignment") {
+      const pendingAssignment = pendingAssignments[0] || assignments[0];
+      if (pendingAssignment) {
+        setSelectedAssignment(pendingAssignment);
         return;
       }
-
-      assignmentsRef.current?.scrollIntoView({
-        behavior: "smooth",
-        block: "start",
-      });
+      router.push("/odevler");
       return;
     }
 
-    if (notif.type === "message") {
-      setSelectedMessage(notif);
-      return;
+    if (
+      notification.type === "message" ||
+      notification.type === "admin-message"
+    ) {
+      setSelectedMessage(notification);
     }
-
-    if (notif.type === "admin-message") {
-      setSelectedMessage(notif);
-      return;
-    }
-
-    // 'message-read' → sadece okundu işaretle, modal açma
   };
 
-  const getNotificationStyle = (notif: Notification) => {
-    if (notif.is_read) {
+  const getNotificationStyle = (
+    notification: DashboardNotification,
+  ): NotificationStyle => {
+    if (notification.is_read) {
       return {
         wrapper: "border-slate-700/60 bg-slate-700/20 hover:bg-slate-700/35",
         icon: CheckCircle2,
@@ -220,37 +271,27 @@ export default function ProfilePage() {
       };
     }
 
-    if (notif.type === "assignment") {
+    if (notification.type === "assignment") {
       return {
         wrapper: "border-amber-500/30 bg-amber-500/10 hover:bg-amber-500/15",
         icon: Clock3,
         iconWrap: "bg-amber-500/15 text-amber-300",
         badge: "bg-amber-500/15 text-amber-200",
-        status: "Görülmedi",
+        status: "Ödev",
       };
     }
 
-    if (notif.type === "document") {
+    if (notification.type === "document") {
       return {
         wrapper: "border-sky-500/30 bg-sky-500/10 hover:bg-sky-500/15",
         icon: Clock3,
         iconWrap: "bg-sky-500/15 text-sky-300",
         badge: "bg-sky-500/15 text-sky-200",
-        status: "Görülmedi",
+        status: "Belge",
       };
     }
 
-    if (notif.type === "message") {
-      return {
-        wrapper: "border-indigo-500/30 bg-indigo-500/10 hover:bg-indigo-500/15",
-        icon: Clock3,
-        iconWrap: "bg-indigo-500/15 text-indigo-300",
-        badge: "bg-indigo-500/15 text-indigo-200",
-        status: "Mesaj",
-      };
-    }
-
-    if (notif.type === "admin-message") {
+    if (notification.type === "admin-message") {
       return {
         wrapper: "border-violet-500/30 bg-violet-500/10 hover:bg-violet-500/15",
         icon: Bell,
@@ -260,23 +301,23 @@ export default function ProfilePage() {
       };
     }
 
-    if (notif.type === "message-read") {
+    if (notification.type === "message-read") {
       return {
         wrapper:
           "border-emerald-500/20 bg-emerald-500/5 hover:bg-emerald-500/10",
         icon: CheckCircle2,
         iconWrap: "bg-emerald-500/10 text-emerald-400",
         badge: "bg-emerald-500/10 text-emerald-300",
-        status: "Görüldü",
+        status: "Okundu",
       };
     }
 
     return {
-      wrapper: "border-pink-500/20 bg-pink-500/10 hover:bg-pink-500/15",
+      wrapper: "border-indigo-500/30 bg-indigo-500/10 hover:bg-indigo-500/15",
       icon: Clock3,
-      iconWrap: "bg-pink-500/15 text-pink-300",
-      badge: "bg-pink-500/15 text-pink-200",
-      status: "Görülmedi",
+      iconWrap: "bg-indigo-500/15 text-indigo-300",
+      badge: "bg-indigo-500/15 text-indigo-200",
+      status: "Mesaj",
     };
   };
 
@@ -285,13 +326,195 @@ export default function ProfilePage() {
     router.push("/");
   };
 
+  const unreadCount = notifications.filter(
+    (notification) => !notification.is_read,
+  ).length;
+  const pendingAssignments = useMemo(() => {
+    const submittedAssignmentIds = new Set(
+      submissions.map((submission) => submission.assignment_id),
+    );
+    return assignments.filter(
+      (assignment) => !submittedAssignmentIds.has(assignment.id),
+    );
+  }, [assignments, submissions]);
+
+  const weeklyMinutes = useMemo(() => {
+    const cutoff = new Date();
+    cutoff.setDate(cutoff.getDate() - 7);
+    cutoff.setHours(0, 0, 0, 0);
+
+    return studySessions.reduce((total, session) => {
+      const sessionDate = new Date(session.date);
+      return sessionDate >= cutoff ? total + Number(session.duration || 0) : total;
+    }, 0);
+  }, [studySessions]);
+
+  const latestQuizScore = quizResults[0]?.score ?? null;
+  const strongTopic = progressRows[0]?.topic ?? null;
+  const focusTopic =
+    [...progressRows]
+      .reverse()
+      .find((row) => row.mastery_level < 60)?.topic ?? null;
+  const latestNotification = notifications[0] || null;
+  const unreadMessageNotification =
+    notifications.find(
+      (notification) =>
+        !notification.is_read &&
+        (notification.type === "message" ||
+          notification.type === "admin-message"),
+    ) || null;
+
+  const continueState: ContinueState = useMemo(() => {
+    if (pendingAssignments.length > 0) {
+      return {
+        kind: "assignment",
+        title: "Bekleyen ödevin var",
+        description: `${
+          pendingAssignments[0].title
+        } ödevini tamamlayıp teslim etmeyi unutma.`,
+        actionLabel: "Ödeve Git",
+        onAction: () => router.push("/odevler"),
+        accentClass: "from-purple-500/20 via-fuchsia-500/15 to-pink-500/15",
+      };
+    }
+
+    if (availableQuizzes.length > 0) {
+      return {
+        kind: "quiz",
+        title: "Yeni test seni bekliyor",
+        description: `${
+          availableQuizzes[0].title
+        } testiyle çalışmana hemen devam edebilirsin.`,
+        actionLabel: "Teste Başla",
+        onAction: () => router.push("/testler"),
+        accentClass: "from-emerald-500/20 via-teal-500/15 to-cyan-500/15",
+      };
+    }
+
+    if (unreadMessageNotification) {
+      return {
+        kind: "message",
+        title: "Yeni bir mesajın var",
+        description:
+          unreadMessageNotification.title ||
+          "Dashboard’dan mesajlarını ve bildirimlerini kontrol et.",
+        actionLabel: "Mesajı Aç",
+        onAction: () => handleNotificationClick(unreadMessageNotification),
+        accentClass: "from-indigo-500/20 via-violet-500/15 to-fuchsia-500/15",
+      };
+    }
+
+    return {
+      kind: "progress",
+      title: "İlerlemeni güncel tut",
+      description:
+        "Çalışma ekleyerek gelişim ekranındaki haftalık özetini daha anlamlı hale getir.",
+      actionLabel: "İlerlemeye Git",
+      onAction: () => router.push("/ilerleme"),
+      accentClass: "from-blue-500/20 via-cyan-500/15 to-teal-500/15",
+    };
+  }, [availableQuizzes, pendingAssignments, router, unreadMessageNotification]);
+
+  const quickActionItems = useMemo(
+    () => [
+      {
+        title: "Testler",
+        description:
+          availableQuizzes[0]?.title ||
+          "Sınıfına uygun testleri çözerek kendini dene.",
+        stat: `${availableQuizzes.length}`,
+        accentClass:
+          "from-emerald-500/20 via-teal-500/15 to-cyan-500/10",
+        iconClass: "bg-emerald-500/30",
+        actionLabel: "Testlere Git",
+        onAction: () => router.push("/testler"),
+        badge: availableQuizzes.length > 0 ? "Uygun" : undefined,
+        icon: quickActionIcons.tests,
+      },
+      {
+        title: "Ödevler",
+        description:
+          pendingAssignments[0]?.title ||
+          "Teslim edilmesi gereken ödevlerini buradan takip et.",
+        stat: `${pendingAssignments.length}`,
+        accentClass:
+          "from-purple-500/20 via-fuchsia-500/15 to-pink-500/10",
+        iconClass: "bg-purple-500/30",
+        actionLabel: "Ödevlere Git",
+        onAction: () => router.push("/odevler"),
+        badge: pendingAssignments.length > 0 ? "Bekliyor" : undefined,
+        icon: quickActionIcons.assignments,
+      },
+      {
+        title: "İlerleme",
+        description:
+          strongTopic || focusTopic
+            ? `Konu durumunu gözden geçir: ${strongTopic || focusTopic}`
+            : "Haftalık çalışma ve konu gelişimini tek bakışta incele.",
+        stat: `${user?.current_streak || 0} gün`,
+        accentClass: "from-blue-500/20 via-cyan-500/15 to-sky-500/10",
+        iconClass: "bg-blue-500/30",
+        actionLabel: "İlerlemeyi Aç",
+        onAction: () => router.push("/ilerleme"),
+        badge: "Seri",
+        icon: quickActionIcons.progress,
+      },
+      {
+        title: "Mesajlar",
+        description:
+          latestNotification?.title ||
+          "Uğur Hoca’dan gelen mesaj ve bildirimlerini buradan kontrol et.",
+        stat: `${unreadCount}`,
+        accentClass:
+          "from-indigo-500/20 via-violet-500/15 to-fuchsia-500/10",
+        iconClass: "bg-indigo-500/30",
+        actionLabel: "Bildirimi Aç",
+        onAction: () => {
+          if (unreadMessageNotification) {
+            handleNotificationClick(unreadMessageNotification);
+            return;
+          }
+          setShowNotifications(true);
+        },
+        badge: unreadCount > 0 ? "Yeni" : undefined,
+        icon: quickActionIcons.messages,
+      },
+    ],
+    [
+      availableQuizzes,
+      focusTopic,
+      handleNotificationClick,
+      latestNotification?.title,
+      pendingAssignments,
+      router,
+      strongTopic,
+      unreadCount,
+      unreadMessageNotification,
+      user?.current_streak,
+    ],
+  );
+
+  const openLatestMessage = () => {
+    if (unreadMessageNotification) {
+      handleNotificationClick(unreadMessageNotification);
+      return;
+    }
+
+    if (latestNotification) {
+      handleNotificationClick(latestNotification);
+      return;
+    }
+
+    setShowNotifications(true);
+  };
+
   if (loading) {
     return (
       <main className="profil-page min-h-screen gradient-bg flex items-center justify-center">
         <motion.div
           animate={{ rotate: 360 }}
           transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-          className="w-16 h-16 border-4 border-orange-500 border-t-transparent rounded-full"
+          className="h-16 w-16 rounded-full border-4 border-orange-500 border-t-transparent"
         />
       </main>
     );
@@ -299,62 +522,50 @@ export default function ProfilePage() {
 
   if (!user) return null;
 
-  const unreadCount = notifications.filter((n) => !n.is_read).length;
-  const numericGrade = Number(user.grade);
-  const isMiddleSchool =
-    Number.isFinite(numericGrade) && numericGrade >= 5 && numericGrade <= 8;
-  const wizardHref = isMiddleSchool ? "/programlar/lgs" : "/programlar/yks";
-  const wizardTitle = isMiddleSchool
-    ? "LGS Puan ve Lise Hedef Sihirbazi"
-    : "YKS Puan ve Universite Tercih Sihirbazi";
-  const wizardSubtitle = isMiddleSchool
-    ? "Netlerini gir, puanini hesapla ve lise hedeflerini gor."
-    : "TYT/AYT hesapla, universite hedef listeni olustur.";
-
   return (
     <main className="profil-page min-h-screen bg-gradient-to-br from-slate-900 via-slate-900 to-slate-800">
-      <FloatingShapes />
+      <FloatingShapes count={6} />
 
-      <nav className="fixed top-0 left-0 right-0 z-50 bg-slate-900/95 backdrop-blur-lg border-b border-slate-800/50">
-        <div className="max-w-6xl mx-auto px-4">
-          <div className="flex justify-between items-center h-14">
-            <Link href="/" className="flex items-center gap-2">
-              <img
-                src="/ugur.jpeg"
-                alt="Uğur Hoca"
-                className="w-9 h-9 rounded-lg object-cover"
-              />
-              <span className="text-lg font-bold text-white">Uğur Hoca</span>
-            </Link>
+      <nav className="fixed left-0 right-0 top-0 z-50 border-b border-slate-800/50 bg-slate-900/95 backdrop-blur-lg">
+        <div className="mx-auto flex h-14 max-w-6xl items-center justify-between px-4">
+          <Link href="/" className="flex items-center gap-2">
+            <img
+              src="/ugur.jpeg"
+              alt="Uğur Hoca"
+              className="h-9 w-9 rounded-lg object-cover"
+            />
+            <span className="text-lg font-bold text-white">Uğur Hoca</span>
+          </Link>
 
-            <div className="flex items-center gap-4">
-              {!user.isAdmin && (
-                <button
-                  onClick={() => setShowNotifications(!showNotifications)}
-                  className="relative text-slate-400 hover:text-white transition-colors"
-                >
-                  <Bell className="w-5 h-5" />
-                  {unreadCount > 0 && (
-                    <span className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 rounded-full text-xs text-white flex items-center justify-center">
-                      {unreadCount}
-                    </span>
-                  )}
-                </button>
-              )}
-              <Link
-                href="/"
-                className="text-slate-400 hover:text-white transition-colors text-sm flex items-center gap-1"
-              >
-                <ArrowLeft className="w-4 h-4" />
-                Ana Sayfa
-              </Link>
+          <div className="flex items-center gap-4">
+            {!user.isAdmin && (
               <button
-                onClick={handleLogout}
-                className="text-slate-400 hover:text-white transition-colors"
+                type="button"
+                onClick={() => setShowNotifications((prev) => !prev)}
+                className="relative text-slate-400 transition-colors hover:text-white"
               >
-                <LogOut className="w-5 h-5" />
+                <Bell className="h-5 w-5" />
+                {unreadCount > 0 && (
+                  <span className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-xs text-white">
+                    {unreadCount}
+                  </span>
+                )}
               </button>
-            </div>
+            )}
+            <Link
+              href="/"
+              className="flex items-center gap-1 text-sm text-slate-400 transition-colors hover:text-white"
+            >
+              <ArrowLeft className="h-4 w-4" />
+              Ana Sayfa
+            </Link>
+            <button
+              type="button"
+              onClick={handleLogout}
+              className="text-slate-400 transition-colors hover:text-white"
+            >
+              <LogOut className="h-5 w-5" />
+            </button>
           </div>
         </div>
       </nav>
@@ -363,515 +574,275 @@ export default function ProfilePage() {
         <motion.div
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
-          className="fixed top-14 left-4 right-4 sm:left-auto sm:right-4 sm:w-80 bg-slate-800 border border-slate-700 rounded-2xl shadow-2xl z-50 max-h-96 overflow-y-auto"
+          className="fixed left-4 right-4 top-14 z-50 max-h-96 overflow-y-auto rounded-2xl border border-slate-700 bg-slate-800 shadow-2xl sm:left-auto sm:right-4 sm:w-80"
         >
-          <div className="p-4 border-b border-slate-700 flex items-center justify-between">
-            <h3 className="text-white font-bold">Bildirimler</h3>
+          <div className="flex items-center justify-between border-b border-slate-700 p-4">
+            <h3 className="font-bold text-white">Bildirimler</h3>
             <span className="text-xs text-slate-400">
               {unreadCount} okunmamış
             </span>
           </div>
           {notifications.length === 0 ? (
-            <p className="text-slate-400 text-center py-8">
+            <p className="py-8 text-center text-slate-400">
               Henüz bildirim yok
             </p>
           ) : (
             <div className="divide-y divide-slate-700">
-              {notifications.map((notif) =>
-                (() => {
-                  const style = getNotificationStyle(notif);
-                  const Icon = style.icon;
-                  return (
-                    <button
-                      key={notif.id}
-                      onClick={() => handleNotificationClick(notif)}
-                      className={`w-full text-left p-4 transition-colors border-l-4 ${style.wrapper}`}
-                    >
-                      <div className="flex items-start justify-between gap-2">
-                        <div
-                          className={`w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 ${style.iconWrap}`}
-                        >
-                          <Icon className="w-5 h-5" />
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-start justify-between gap-2">
-                            <p className="text-white font-medium text-sm">
-                              {notif.title}
-                            </p>
-                            <span
-                              className={`px-2 py-0.5 rounded-full text-[11px] font-semibold whitespace-nowrap ${style.badge}`}
-                            >
-                              {style.status}
-                            </span>
-                          </div>
-                          {notif.type !== "message-read" && notif.message && (
-                            <p className="text-slate-400 text-xs mt-1 line-clamp-2">
-                              {notif.message}
-                            </p>
-                          )}
-                          <span className="inline-flex mt-2 px-2 py-0.5 rounded-full bg-white/5 text-slate-300 text-[11px]">
-                            {notif.type === "assignment"
-                              ? "Ödev"
-                              : notif.type === "document"
-                                ? "Belge"
-                                : notif.type === "admin-message"
-                                  ? "Uğur Hoca'dan"
-                                  : notif.type === "message-read"
-                                    ? "Okundu bildirimi"
-                                    : "Genel"}
-                          </span>
-                          <p className="text-slate-500 text-xs mt-2">
-                            {new Date(notif.created_at).toLocaleDateString(
-                              "tr-TR",
-                            )}
-                          </p>
-                        </div>
-                        <ChevronRight
-                          className={`w-4 h-4 mt-1 ${notif.is_read ? "text-emerald-400" : "text-amber-300"}`}
-                        />
+              {notifications.map((notification) => {
+                const style = getNotificationStyle(notification);
+                const Icon = style.icon;
+
+                return (
+                  <button
+                    key={notification.id}
+                    type="button"
+                    onClick={() => handleNotificationClick(notification)}
+                    className={`w-full border-l-4 p-4 text-left transition-colors ${style.wrapper}`}
+                  >
+                    <div className="flex items-start justify-between gap-2">
+                      <div
+                        className={`flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl ${style.iconWrap}`}
+                      >
+                        <Icon className="h-5 w-5" />
                       </div>
-                    </button>
-                  );
-                })(),
-              )}
+                      <div className="min-w-0 flex-1">
+                        <div className="flex items-start justify-between gap-2">
+                          <p className="text-sm font-medium text-white">
+                            {notification.title}
+                          </p>
+                          <span
+                            className={`whitespace-nowrap rounded-full px-2 py-0.5 text-[11px] font-semibold ${style.badge}`}
+                          >
+                            {style.status}
+                          </span>
+                        </div>
+                        {notification.type !== "message-read" &&
+                        notification.message ? (
+                          <p className="mt-1 line-clamp-2 text-xs text-slate-400">
+                            {notification.message}
+                          </p>
+                        ) : null}
+                        <p className="mt-2 text-xs text-slate-500">
+                          {new Date(notification.created_at).toLocaleDateString(
+                            "tr-TR",
+                          )}
+                        </p>
+                      </div>
+                      <ChevronRight
+                        className={`mt-1 h-4 w-4 ${
+                          notification.is_read
+                            ? "text-emerald-400"
+                            : "text-amber-300"
+                        }`}
+                      />
+                    </div>
+                  </button>
+                );
+              })}
             </div>
           )}
         </motion.div>
       )}
 
-      <div className="pt-14 pb-12 px-4">
-        <div className="max-w-6xl mx-auto">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="bg-white/5 border border-white/10 rounded-3xl p-8 mb-8"
-          >
-            <div className="flex flex-col sm:flex-row items-center gap-6">
-              <motion.div
-                className="w-20 h-20 bg-gradient-to-br from-orange-500 to-red-500 rounded-full flex items-center justify-center text-3xl font-bold text-white"
-                whileHover={{ scale: 1.05 }}
-              >
-                {user.name?.[0] || "?"}
-              </motion.div>
-
-              <div className="text-center sm:text-left flex-1">
-                <h1 className="text-2xl font-bold text-white mb-1">
-                  {user.name}
-                </h1>
-                <p className="text-slate-400 text-sm">{user.email}</p>
-                <div className="mt-3 flex items-center gap-2">
-                  {user.isAdmin ? (
-                    <span className="inline-flex items-center gap-2 px-4 py-1.5 bg-gradient-to-r from-orange-500/20 to-red-500/20 rounded-full">
-                      <Shield className="w-4 h-4 text-orange-400" />
-                      <span className="text-orange-300 font-semibold text-sm">
+      <div className="px-4 pb-12 pt-20">
+        <div className="mx-auto max-w-6xl">
+          {user.isAdmin ? (
+            <motion.section
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="rounded-3xl border border-white/10 bg-white/5 p-8"
+            >
+              <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
+                <div className="flex items-center gap-5">
+                  <div className="flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-br from-orange-500 to-red-500 text-3xl font-bold text-white">
+                    {user.name?.[0] || "?"}
+                  </div>
+                  <div>
+                    <h1 className="text-2xl font-bold text-white">
+                      {user.name}
+                    </h1>
+                    <p className="mt-1 text-sm text-slate-400">{user.email}</p>
+                    <div className="mt-3 inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-orange-500/20 to-red-500/20 px-4 py-1.5">
+                      <Shield className="h-4 w-4 text-orange-400" />
+                      <span className="text-sm font-semibold text-orange-300">
                         Yönetici
                       </span>
-                    </span>
-                  ) : (
-                    <span className="inline-flex items-center gap-2 px-4 py-1.5 bg-gradient-to-r from-indigo-500/20 to-purple-500/20 rounded-full">
-                      <BookOpen className="w-4 h-4 text-indigo-400" />
-                      <span className="text-indigo-300 font-semibold text-sm">
-                        {user.grade === "Mezun"
-                          ? "Mezun"
-                          : `${user.grade}. Sınıf`}
-                      </span>
-                    </span>
-                  )}
-                </div>
-              </div>
-            </div>
-          </motion.div>
-
-          {!user.isAdmin && (
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.15 }}
-            >
-              <UserStatistics
-                userId={user.id}
-                userCreatedAt={user.created_at}
-              />
-            </motion.div>
-          )}
-
-          {!user.isAdmin && (
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2 }}
-            >
-              <NotesSection userId={user.id} />
-            </motion.div>
-          )}
-
-          {!user.isAdmin && (
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.25 }}
-              className="mt-6"
-            >
-              <Link
-                href={wizardHref}
-                className="group relative block overflow-hidden rounded-3xl border border-indigo-500/30 bg-gradient-to-r from-indigo-500/15 via-purple-500/15 to-pink-500/15 p-6 hover:border-indigo-400/60 transition-all"
-              >
-                <div className="absolute -right-10 -top-10 h-28 w-28 rounded-full bg-gradient-to-br from-indigo-500/35 to-pink-500/25 blur-3xl" />
-                <div className="relative flex items-center justify-between gap-4">
-                  <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-indigo-500 to-fuchsia-500 flex items-center justify-center shadow-lg">
-                      <Calculator className="w-6 h-6 text-white" />
-                    </div>
-                    <div>
-                      <p className="text-white font-black text-lg">
-                        {wizardTitle}
-                      </p>
-                      <p className="text-slate-300 text-sm mt-1">
-                        {wizardSubtitle}
-                      </p>
                     </div>
                   </div>
-                  <ChevronRight className="w-6 h-6 text-indigo-300 group-hover:text-white transition-colors" />
                 </div>
-              </Link>
-            </motion.div>
-          )}
 
-          {!user.isAdmin && (
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.22 }}
-              className="mt-6 mb-6"
-            >
-              <Link
-                href="/ilerleme"
-                className="group relative block overflow-hidden rounded-3xl border border-blue-500/30 bg-gradient-to-r from-blue-500/15 via-cyan-500/15 to-teal-500/15 p-6 hover:border-blue-400/60 transition-all"
-              >
-                <div className="absolute -left-10 -bottom-10 h-32 w-32 rounded-full bg-gradient-to-tr from-blue-500/35 to-teal-500/25 blur-3xl opacity-50 group-hover:opacity-100 transition-opacity" />
-                <div className="relative flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                  <div className="flex items-center gap-4">
-                    <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center shadow-lg shadow-blue-500/20">
-                      <BarChart3 className="w-7 h-7 text-white" />
-                    </div>
-                    <div>
-                      <div className="flex items-center gap-2 mb-1">
-                        <p className="text-white font-black text-xl">
-                          İlerleme Takibi
-                        </p>
-                        <span className="px-2 py-0.5 bg-blue-500 text-white text-[10px] font-bold uppercase tracking-wider rounded-md">
-                          YENİ
-                        </span>
-                      </div>
-                      <p className="text-slate-300 text-sm">
-                        Haftalık çalışma hedeflerini gör, konu yetkinlik
-                        durumunu analiz et.
-                      </p>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-2 text-blue-300 font-semibold group-hover:text-white transition-colors">
-                    Dashboard'a Git
-                    <ChevronRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
-                  </div>
-                </div>
-              </Link>
-            </motion.div>
-          )}
-
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3 }}
-            className="mt-6"
-          >
-            <div className="bg-white/5 border border-white/10 rounded-3xl p-6 sm:p-8">
-              <ChangePasswordForm />
-            </div>
-          </motion.div>
-
-          {user.isAdmin ? (
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.35 }}
-              className="mt-6"
-            >
-              <h2 className="text-xl font-bold text-white mb-4">
-                Yönetim Alanı
-              </h2>
-              <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
                 <Link
                   href="/admin"
-                  className="bg-white/5 border border-white/10 rounded-2xl p-6 hover:bg-white/10 hover:border-orange-500/50 transition-all group"
+                  className="inline-flex items-center gap-2 rounded-2xl bg-white/10 px-5 py-3 font-semibold text-white transition-colors hover:bg-white/15"
                 >
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-4">
-                      <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-orange-500 to-red-500 flex items-center justify-center">
-                        <Settings className="w-6 h-6 text-white" />
-                      </div>
-                      <div>
-                        <h3 className="text-white font-bold">Admin Paneli</h3>
-                        <p className="text-slate-400 text-sm">
-                          Duyuru ve içerik yönetimi
-                        </p>
-                      </div>
-                    </div>
-                    <ChevronRight className="w-5 h-5 text-slate-500 group-hover:text-orange-400 transition-colors" />
-                  </div>
+                  <Settings className="h-5 w-5" />
+                  Admin Paneline Git
                 </Link>
               </div>
-            </motion.div>
+            </motion.section>
           ) : (
             <div className="space-y-6">
-              {(sharedDocs.length > 0 || assignments.length > 0) && (
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.2 }}
-                >
-                  <h2
-                    ref={docsRef}
-                    className="text-xl font-bold text-white mb-4"
-                  >
-                    Gelen Belgeler
-                  </h2>
-                  {sharedDocs.length > 0 && (
-                    <div className="grid sm:grid-cols-2 gap-4 mb-6">
-                      {sharedDocs.map((doc) => (
-                        <a
-                          key={doc.id}
-                          href={doc.file_url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="bg-white/5 border border-white/10 rounded-xl p-4 hover:bg-white/10 transition-colors flex items-center gap-4"
-                        >
-                          <div
-                            className={`w-10 h-10 rounded-lg flex items-center justify-center ${doc.is_read ? "bg-slate-700" : "bg-indigo-500/20"}`}
-                          >
-                            <FileText
-                              className={`w-5 h-5 ${doc.is_read ? "text-slate-400" : "text-indigo-400"}`}
-                            />
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <p className="text-white font-medium truncate">
-                              {doc.document_title}
-                            </p>
-                            <p className="text-slate-400 text-sm">
-                              {new Date(doc.created_at).toLocaleDateString(
-                                "tr-TR",
-                              )}
-                            </p>
-                          </div>
-                          {!doc.is_read && (
-                            <span className="px-2 py-1 bg-indigo-500/20 text-indigo-400 text-xs rounded-full">
-                              Yeni
-                            </span>
-                          )}
-                        </a>
-                      ))}
-                    </div>
-                  )}
-                </motion.div>
-              )}
+              <DashboardHero
+                user={user}
+                pendingAssignments={pendingAssignments.length}
+                unreadCount={unreadCount}
+                availableQuizCount={availableQuizzes.length}
+                weeklyMinutes={weeklyMinutes}
+              />
 
-              {assignments.length > 0 && (
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.3 }}
-                >
-                  <h2
-                    ref={assignmentsRef}
-                    className="text-xl font-bold text-white mb-4"
-                  >
-                    Ödevlerim
-                  </h2>
-                  <div className="space-y-3">
-                    {assignments.map((asmt) => (
-                      <div
-                        key={asmt.id}
-                        className="bg-white/5 border border-white/10 rounded-xl p-4 flex items-start gap-4"
-                      >
-                        <div className="w-10 h-10 rounded-lg bg-purple-500/20 flex items-center justify-center flex-shrink-0">
-                          <ClipboardList className="w-5 h-5 text-purple-400" />
-                        </div>
-                        <div className="flex-1">
-                          <p className="text-white font-medium">{asmt.title}</p>
-                          <p className="text-slate-400 text-sm mt-1">
-                            {asmt.description}
-                          </p>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </motion.div>
-              )}
+              <QuickActionGrid items={quickActionItems} />
 
-              {quizResults.length > 0 && (
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.4 }}
-                >
-                  <h2 className="text-xl font-bold text-white mb-4">
-                    Test Sonuçlarım
-                  </h2>
-                  <div className="space-y-3">
-                    {quizResults.map((result: any) => (
-                      <div
-                        key={result.id}
-                        className="bg-white/5 border border-white/10 rounded-xl p-4 flex items-start gap-4"
-                      >
-                        <div className="w-10 h-10 rounded-lg bg-violet-500/20 flex items-center justify-center flex-shrink-0">
-                          <CheckCircle2 className="w-5 h-5 text-violet-400" />
-                        </div>
-                        <div className="flex-1">
-                          <p className="text-white font-medium">
-                            {result.quizzes?.title || "Test"}
-                          </p>
-                          <div className="flex items-center gap-3 text-slate-400 text-sm mt-1">
-                            <span>{result.score}%</span>
-                            <span>•</span>
-                            <span>{result.total_questions} soru</span>
-                            <span>•</span>
-                            <span>
-                              {new Date(result.completed_at).toLocaleDateString(
-                                "tr-TR",
-                              )}
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </motion.div>
-              )}
+              <div className="grid gap-6 xl:grid-cols-[1.2fr,0.8fr]">
+                <ContinueCard state={continueState} />
+                <MessageSummaryCard
+                  unreadCount={unreadCount}
+                  latestTitle={latestNotification?.title || null}
+                  latestMessage={
+                    latestNotification?.message ||
+                    latestNotification?.metadata?.sender_name ||
+                    null
+                  }
+                  notifications={notifications}
+                  onOpenPanel={() => setShowNotifications(true)}
+                  onOpenLatest={openLatestMessage}
+                />
+              </div>
 
-              {selectedAssignment && (
-                <motion.div
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  className="fixed inset-0 z-[100] bg-black/80 backdrop-blur-sm flex items-center justify-center p-4"
-                  onClick={() => setSelectedAssignment(null)}
-                >
-                  <motion.div
-                    initial={{ scale: 0.96, opacity: 0, y: 12 }}
-                    animate={{ scale: 1, opacity: 1, y: 0 }}
-                    exit={{ scale: 0.96, opacity: 0, y: 12 }}
-                    onClick={(e) => e.stopPropagation()}
-                    className="w-full max-w-lg rounded-3xl bg-slate-900 border border-slate-700 shadow-2xl p-6 sm:p-8"
-                  >
-                    <div className="flex items-start justify-between gap-4 mb-4">
-                      <div>
-                        <p className="text-xs uppercase tracking-[0.2em] text-purple-300 mb-2">
-                          Ödev
-                        </p>
-                        <h3 className="text-2xl font-bold text-white">
-                          {selectedAssignment.title}
-                        </h3>
-                      </div>
-                      <button
-                        onClick={() => setSelectedAssignment(null)}
-                        className="text-slate-400 hover:text-white"
-                      >
-                        <ChevronRight className="w-6 h-6 rotate-45" />
-                      </button>
-                    </div>
-                    <p className="text-slate-300 whitespace-pre-line leading-relaxed">
-                      {selectedAssignment.description || "Ayrıntı bulunmuyor."}
-                    </p>
-                    <div className="mt-6 flex justify-end">
-                      <button
-                        onClick={() => setSelectedAssignment(null)}
-                        className="px-4 py-2 rounded-xl bg-white/10 text-white font-medium hover:bg-white/15 transition-colors"
-                      >
-                        Kapat
-                      </button>
-                    </div>
-                  </motion.div>
-                </motion.div>
-              )}
+              <ProgressOverview
+                streak={user.current_streak || 0}
+                weeklyMinutes={weeklyMinutes}
+                latestScore={latestQuizScore}
+                strongTopic={strongTopic}
+                focusTopic={focusTopic}
+                detailHref="/ilerleme"
+              />
 
-              {selectedMessage && (
-                <motion.div
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  className="fixed inset-0 z-[100] bg-black/80 backdrop-blur-sm flex items-center justify-center p-4"
-                  onClick={() => setSelectedMessage(null)}
-                >
-                  <motion.div
-                    initial={{ scale: 0.96, opacity: 0, y: 12 }}
-                    animate={{ scale: 1, opacity: 1, y: 0 }}
-                    exit={{ scale: 0.96, opacity: 0, y: 12 }}
-                    onClick={(e) => e.stopPropagation()}
-                    className="w-full max-w-lg rounded-3xl bg-slate-900 border border-slate-700 shadow-2xl p-6 sm:p-8"
-                  >
-                    <div className="flex items-start justify-between gap-4 mb-4">
-                      <div>
-                        <p className="text-xs uppercase tracking-[0.2em] text-indigo-300 mb-2">
-                          Mesaj
-                        </p>
-                        <h3 className="text-2xl font-bold text-white">
-                          {selectedMessage.title}
-                        </h3>
-                      </div>
-                      <button
-                        onClick={() => setSelectedMessage(null)}
-                        className="text-slate-400 hover:text-white"
-                      >
-                        <ChevronRight className="w-6 h-6 rotate-45" />
-                      </button>
-                    </div>
-                    {selectedMessage.metadata &&
-                      typeof selectedMessage.metadata === "object" &&
-                      "image_url" in selectedMessage.metadata &&
-                      selectedMessage.metadata.image_url && (
-                        <div className="mb-4">
-                          <img
-                            src={selectedMessage.metadata.image_url}
-                            alt="Mesaj resmi"
-                            className="max-h-64 rounded-lg border border-white/10"
-                          />
-                        </div>
-                      )}
-                    <p className="text-slate-300 whitespace-pre-line leading-relaxed">
-                      {selectedMessage.message}
-                    </p>
-                    <div className="mt-6 flex justify-end">
-                      <button
-                        onClick={() => setSelectedMessage(null)}
-                        className="px-4 py-2 rounded-xl bg-white/10 text-white font-medium hover:bg-white/15 transition-colors"
-                      >
-                        Kapat
-                      </button>
-                    </div>
-                  </motion.div>
-                </motion.div>
-              )}
+              <div className="grid gap-6 xl:grid-cols-[1.05fr,0.95fr]">
+                <RecentResults results={quizResults} />
+                <RecentDocuments documents={sharedDocs} />
+              </div>
 
-              {notifications.length === 0 &&
-                sharedDocs.length === 0 &&
-                assignments.length === 0 && (
-                  <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.2 }}
-                    className="text-center py-12"
-                  >
-                    <Bell className="w-16 h-16 mx-auto mb-4 text-slate-600" />
-                    <p className="text-slate-400">Henüz bir şey yok</p>
-                    <p className="text-slate-500 text-sm mt-2">
-                      Uğur Hoca size belge veya ödev gönderdiğinde burada
-                      görünecek
-                    </p>
-                  </motion.div>
-                )}
+              <NotesSection userId={user.id} />
+
+              <DashboardSettings />
             </div>
           )}
         </div>
       </div>
+
+      {selectedAssignment && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 p-4 backdrop-blur-sm"
+          onClick={() => setSelectedAssignment(null)}
+        >
+          <motion.div
+            initial={{ scale: 0.96, opacity: 0, y: 12 }}
+            animate={{ scale: 1, opacity: 1, y: 0 }}
+            exit={{ scale: 0.96, opacity: 0, y: 12 }}
+            onClick={(event) => event.stopPropagation()}
+            className="w-full max-w-lg rounded-3xl border border-slate-700 bg-slate-900 p-6 shadow-2xl sm:p-8"
+          >
+            <div className="mb-4 flex items-start justify-between gap-4">
+              <div>
+                <p className="mb-2 text-xs uppercase tracking-[0.2em] text-purple-300">
+                  Ödev
+                </p>
+                <h3 className="text-2xl font-bold text-white">
+                  {selectedAssignment.title}
+                </h3>
+              </div>
+              <button
+                type="button"
+                onClick={() => setSelectedAssignment(null)}
+                className="text-slate-400 hover:text-white"
+              >
+                <ChevronRight className="h-6 w-6 rotate-45" />
+              </button>
+            </div>
+            <p className="whitespace-pre-line leading-relaxed text-slate-300">
+              {selectedAssignment.description || "Ayrıntı bulunmuyor."}
+            </p>
+            <div className="mt-6 flex justify-between gap-3">
+              <button
+                type="button"
+                onClick={() => router.push("/odevler")}
+                className="rounded-xl bg-purple-500 px-4 py-2 text-white transition-colors hover:bg-purple-600"
+              >
+                Ödev Sayfasına Git
+              </button>
+              <button
+                type="button"
+                onClick={() => setSelectedAssignment(null)}
+                className="rounded-xl bg-white/10 px-4 py-2 font-medium text-white transition-colors hover:bg-white/15"
+              >
+                Kapat
+              </button>
+            </div>
+          </motion.div>
+        </motion.div>
+      )}
+
+      {selectedMessage && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 p-4 backdrop-blur-sm"
+          onClick={() => setSelectedMessage(null)}
+        >
+          <motion.div
+            initial={{ scale: 0.96, opacity: 0, y: 12 }}
+            animate={{ scale: 1, opacity: 1, y: 0 }}
+            exit={{ scale: 0.96, opacity: 0, y: 12 }}
+            onClick={(event) => event.stopPropagation()}
+            className="w-full max-w-lg rounded-3xl border border-slate-700 bg-slate-900 p-6 shadow-2xl sm:p-8"
+          >
+            <div className="mb-4 flex items-start justify-between gap-4">
+              <div>
+                <p className="mb-2 text-xs uppercase tracking-[0.2em] text-indigo-300">
+                  Mesaj
+                </p>
+                <h3 className="text-2xl font-bold text-white">
+                  {selectedMessage.title}
+                </h3>
+              </div>
+              <button
+                type="button"
+                onClick={() => setSelectedMessage(null)}
+                className="text-slate-400 hover:text-white"
+              >
+                <ChevronRight className="h-6 w-6 rotate-45" />
+              </button>
+            </div>
+
+            {selectedMessage.metadata?.image_url ? (
+              <div className="mb-4">
+                <img
+                  src={selectedMessage.metadata.image_url}
+                  alt="Mesaj resmi"
+                  className="max-h-64 rounded-lg border border-white/10"
+                />
+              </div>
+            ) : null}
+
+            <p className="whitespace-pre-line leading-relaxed text-slate-300">
+              {selectedMessage.message || "Bu bildirim için ek içerik yok."}
+            </p>
+            <div className="mt-6 flex justify-end">
+              <button
+                type="button"
+                onClick={() => setSelectedMessage(null)}
+                className="rounded-xl bg-white/10 px-4 py-2 font-medium text-white transition-colors hover:bg-white/15"
+              >
+                Kapat
+              </button>
+            </div>
+          </motion.div>
+        </motion.div>
+      )}
     </main>
   );
 }
