@@ -48,7 +48,7 @@ create index if not exists idx_chat_room_members_user_tc on public.chat_room_mem
 
 -- CHAT_ROOMS POLİTİKALARI
 create policy "admin_rooms_all" on public.chat_rooms for all using (
-  (select email from auth.users where id = auth.uid()) in ('admin@ugurhoca.com', 'admin@matematiklab.com')
+  (select email from auth.users where id = auth.uid()) in ('admin@ugurhoca.com')
 );
 
 create policy "member_rooms_select" on public.chat_rooms for select using (
@@ -61,7 +61,7 @@ create policy "member_rooms_select" on public.chat_rooms for select using (
 
 -- CHAT_ROOM_MEMBERS POLİTİKALARI
 create policy "admin_members_all" on public.chat_room_members for all using (
-  (select email from auth.users where id = auth.uid()) in ('admin@ugurhoca.com', 'admin@matematiklab.com')
+  (select email from auth.users where id = auth.uid()) in ('admin@ugurhoca.com')
 );
 
 create policy "member_members_select" on public.chat_room_members for select using (
@@ -70,7 +70,7 @@ create policy "member_members_select" on public.chat_room_members for select usi
 
 -- CHAT_MESSAGES POLİTİKALARI
 create policy "admin_messages_all" on public.chat_messages for all using (
-  (select email from auth.users where id = auth.uid()) in ('admin@ugurhoca.com', 'admin@matematiklab.com')
+  (select email from auth.users where id = auth.uid()) in ('admin@ugurhoca.com')
 );
 
 create policy "member_messages_select" on public.chat_messages for select using (

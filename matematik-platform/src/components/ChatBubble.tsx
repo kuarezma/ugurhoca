@@ -11,8 +11,7 @@ import {
   CheckCheck,
 } from "lucide-react";
 import { supabase } from "@/lib/supabase";
-
-const ADMIN_EMAILS = ["admin@ugurhoca.com", "admin@matematiklab.com"];
+import { isAdminEmail } from "@/lib/admin";
 
 type ParsedPayload = {
   sender_id: string;
@@ -66,7 +65,7 @@ export function ChatBubble() {
       const {
         data: { session },
       } = await supabase.auth.getSession();
-      if (session?.user && ADMIN_EMAILS.includes(session.user.email ?? "")) {
+      if (session?.user && isAdminEmail(session.user.email)) {
         setIsAdmin(true);
         setAdminUserId(session.user.id);
         await loadMessages(session.user.id);

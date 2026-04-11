@@ -15,6 +15,7 @@ import {
   Eye,
 } from "lucide-react";
 import { supabase } from "@/lib/supabase";
+import { isAdminEmail } from "@/lib/admin";
 
 interface SiteStats {
   totalUsers: number;
@@ -63,11 +64,7 @@ export default function AdminStatistics() {
     const users = usersRes.data || [];
     const documents = docsRes.data || [];
 
-    const nonAdminUsers = users.filter(
-      (u) =>
-        u.email !== "admin@ugurhoca.com" &&
-        u.email !== "admin@matematiklab.com",
-    );
+    const nonAdminUsers = users.filter((u) => !isAdminEmail(u.email));
 
     const gradeCounts: Record<string, number> = {};
     nonAdminUsers.forEach((u) => {

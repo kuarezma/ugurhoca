@@ -24,7 +24,7 @@ CREATE POLICY "study_sessions_insert_own" ON public.study_sessions
 
 DROP POLICY IF EXISTS "study_sessions_admin_all" ON public.study_sessions;
 CREATE POLICY "study_sessions_admin_all" ON public.study_sessions
-    FOR ALL USING (auth.jwt() ->> 'email' IN ('admin@ugurhoca.com', 'admin@matematiklab.com'));
+    FOR ALL USING (auth.jwt() ->> 'email' IN ('admin@ugurhoca.com'));
 
 -- ============================================
 -- 2. user_progress (Kullanıcı Konu İlerlemesi)
@@ -57,7 +57,7 @@ CREATE POLICY "user_progress_update_own" ON public.user_progress
 
 DROP POLICY IF EXISTS "user_progress_admin_all" ON public.user_progress;
 CREATE POLICY "user_progress_admin_all" ON public.user_progress
-    FOR ALL USING (auth.jwt() ->> 'email' IN ('admin@ugurhoca.com', 'admin@matematiklab.com'));
+    FOR ALL USING (auth.jwt() ->> 'email' IN ('admin@ugurhoca.com'));
 
 -- ============================================
 -- 3. study_goals (Bağımsız Haftalık Hedefler)
@@ -88,4 +88,4 @@ CREATE POLICY "study_goals_update_own" ON public.study_goals
 
 DROP POLICY IF EXISTS "study_goals_admin_all" ON public.study_goals;
 CREATE POLICY "study_goals_admin_all" ON public.study_goals
-    FOR ALL USING (auth.jwt() ->> 'email' IN ('admin@ugurhoca.com', 'admin@matematiklab.com'));
+    FOR ALL USING (auth.jwt() ->> 'email' IN ('admin@ugurhoca.com'));

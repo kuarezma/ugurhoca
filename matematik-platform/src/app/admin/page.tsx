@@ -46,6 +46,7 @@ import {
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
+import { ADMIN_EMAIL, isAdminEmail } from "@/lib/admin";
 import { normalizeFullNameForMatch } from "@/lib/student-identity";
 import AdminStatistics from "@/components/AdminStatistics";
 import FloatingShapes from "@/components/FloatingShapes";
@@ -285,8 +286,7 @@ export default function AdminPage() {
       }
 
       // Admin email kontrolü
-      const adminEmails = ["admin@ugurhoca.com", "admin@matematiklab.com"];
-      if (!adminEmails.includes(session.user.email || "")) {
+      if (!isAdminEmail(session.user.email)) {
         router.push("/");
         return;
       }
@@ -561,7 +561,7 @@ export default function AdminPage() {
 
         // Tüm kullanıcılara bildirim gönder
         const allStudents = allUsers.filter(
-          (u) => u.email !== "admin@ugurhoca.com",
+          (u) => u.email !== ADMIN_EMAIL,
         );
         const notificationInserts = allStudents.map((student) => ({
           user_id: student.id,
@@ -808,11 +808,7 @@ export default function AdminPage() {
   };
 
   const adminProfileIds = (allUsers || [])
-    .filter(
-      (u) =>
-        u.email === "admin@ugurhoca.com" ||
-        u.email === "admin@matematiklab.com",
-    )
+    .filter((u) => isAdminEmail(u.email))
     .map((u) => u.id)
     .filter(Boolean);
 
@@ -1939,7 +1935,7 @@ export default function AdminPage() {
                 <div className="flex justify-between items-center">
                   <p className="text-slate-400">
                     {
-                      allUsers.filter((u) => u.email !== "admin@ugurhoca.com")
+                      allUsers.filter((u) => u.email !== ADMIN_EMAIL)
                         .length
                     }{" "}
                     öğrenci
@@ -1974,7 +1970,7 @@ export default function AdminPage() {
                     </motion.button>
                   </div>
                 </div>
-                {allUsers.filter((u) => u.email !== "admin@ugurhoca.com")
+                {allUsers.filter((u) => u.email !== ADMIN_EMAIL)
                   .length === 0 ? (
                   <div className="glass rounded-2xl p-12 text-center">
                     <Users className="w-16 h-16 mx-auto mb-4 text-slate-500" />
@@ -1983,7 +1979,7 @@ export default function AdminPage() {
                 ) : (
                   <div id="admin-student-list-pdf" className="space-y-4">
                     {allUsers
-                      .filter((u) => u.email !== "admin@ugurhoca.com")
+                      .filter((u) => u.email !== ADMIN_EMAIL)
                       .map((u, i) => (
                         <motion.div
                           key={u.id}
@@ -2440,7 +2436,7 @@ export default function AdminPage() {
                         const count = allUsers.filter(
                           (u) =>
                             u.grade === grade &&
-                            u.email !== "admin@ugurhoca.com",
+                            u.email !== ADMIN_EMAIL,
                         ).length;
                         return (
                           <div
@@ -3033,7 +3029,7 @@ export default function AdminPage() {
                     >
                       <option value="">Öğrenci seçin</option>
                       {allUsers
-                        .filter((u) => u.email !== "admin@ugurhoca.com")
+                        .filter((u) => u.email !== ADMIN_EMAIL)
                         .map((student) => (
                           <option key={student.id} value={student.id}>
                             {student.name || student.email} -{" "}

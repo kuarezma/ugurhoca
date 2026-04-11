@@ -13,6 +13,7 @@ import {
 import { AnimatePresence } from 'framer-motion';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
+import { isAdminEmail } from '@/lib/admin';
 
 const FloatingShapes = () => (
   <div className="fixed inset-0 overflow-hidden pointer-events-none z-0">
@@ -192,7 +193,7 @@ function ContentsPageInner() {
       const localUser = localStorage.getItem('matematiklab_user');
       if (localUser) {
         const userData = JSON.parse(localUser);
-        if (userData.email === 'admin@ugurhoca.com') {
+        if (isAdminEmail(userData.email)) {
           setUser({ ...userData, isAdmin: true });
           return;
         }
@@ -208,7 +209,7 @@ function ContentsPageInner() {
         .eq('id', session.user.id)
         .single();
         
-      const isAdmin = session.user.email === 'admin@ugurhoca.com';
+      const isAdmin = isAdminEmail(session.user.email);
 
       if (profile) {
         setUser({ ...profile, email: session.user.email, isAdmin });

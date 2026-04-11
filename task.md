@@ -180,6 +180,31 @@ Bu dosya, projenin tamamlanmış ve devam eden görevlerini özetler.
 - [x] `ChatBubbleLoader` admin/page.tsx'e eklendi
 - [x] Artık sadece admin sayfasında chat balonu görünecek
 
+### 16. Premium Öğrenci Dashboard UI/UX İyileştirmesi (10 Nisan 2026)
+- [x] `DashboardHero` devasa, modern glassmorphism banner'a çevrildi ve `ContinueCard` Hero'ya CTA (Call to Action) olarak dahil edildi.
+- [x] `QuickActionGrid` büyük kartlardan zarif ve ince yatay düğmelere çevrildi, hiyerarşi rahatlatıldı.
+- [x] `ProgressOverview` içi içe kutular yerine saf "Apple benzeri" estetik ve ikon bazlı inline metinlere dönüştürüldü.
+- [x] Karmaşık layout gridleri düzgün 2 sütunlu sade, temiz sayfa akışlarına çekildi.
+
+### 17. Avatar Seçimi ve Kusursuz Mobil Optimizasyon (10 Nisan 2026)
+- [x] `profiles` tablosuna `avatar_id` eklendi ve migration yazıldı.
+- [x] Kullanıcılara 16 adet yüksek kaliteli emoji içeren `AvatarSelectionModal` tasarlandı.
+- [x] `layout.tsx` içine Next.js native `viewport` eklenerek cihazların pinch-to-zoom (büyütme/küçültme) yapması PWA kalitesi için engellendi.
+- [x] Mobilde yatay scroll sorunlarına sebep olan taşmalar (overflow) `DashboardHero` içindeki `w-full sm:max-w-md` esnek genişliklerle çözüldü.
+
+### 18. Tek Admin Hesabı ve Giriş Bilgisi Standardizasyonu (11 Nisan 2026)
+- [x] Admin hesabı tek e-posta ile sınırlandı: `admin@ugurhoca.com`
+- [x] `admin@matematiklab.com` kod tabanından kaldırıldı
+- [x] Ortak admin yardımcı modülü eklendi: `src/lib/admin.ts`
+- [x] `admin/page.tsx`, `profil/page.tsx`, `icerikler/page.tsx`, `ChatBubble.tsx`, `AdminStatistics.tsx`, `api/admin-message/route.ts` tek admin kaynağına bağlandı
+- [x] `.env.example` içindeki `ADMIN_EMAILS` tek admin hesabına indirildi
+- [x] Eski çift-admin RLS referansları migration dosyalarında tek hesaba güncellendi
+- [x] Yeni migration eklendi: `supabase/migrations/20260411110000_single_admin_email.sql`
+- [x] Supabase Auth admin kullanıcısı güncellendi: `admin@ugurhoca.com`
+- [x] Admin profil kaydı güncellendi: `name = Uğur Hoca`, `name_normalized = uğur hoca`
+- [x] Admin şifresi güncellendi: `19051989`
+- [x] `npm run build` başarılı
+
 ## Bekleyen Görevler
 
 ### Chat Sistemi Refactor
@@ -193,4 +218,4 @@ Bu dosya, projenin tamamlanmış ve devam eden görevlerini özetler.
 
 ---
 
-*Son güncelleme: 9 Nisan 2026 — Chat sistemi yeniden yazıldı, gizlilik ve güvenlik tamamlandı, push edildi*
+*Son güncelleme: 11 Nisan 2026 — Tek admin hesabı standardize edildi, giriş bilgileri güncellendi, build doğrulandı*

@@ -333,3 +333,73 @@ Admin "Cevapla" der ve cevap yazar
 - **Sonuç:** Öğrenciler artık hiçbir sayfada chat balonunu göremeyecek, sadece adminler (/admin) görebilecek.
 
 *Son güncelleme: 10 Nisan 2026 — Chat balonu öğrencilerden gizlendi.*
+
+---
+
+## 16. Premium Öğrenci Dashboard UI/UX İyileştirmesi (10 Nisan 2026)
+
+### 16.1 Tasarım Revizyonu ve Glassmorphism
+
+- **Sorun:** Dashboard üzerinde yer alan devasa kutular (`ContinueCard`, çok sayıda stat box, ağır arka plan okumaları) nedeniyle bilgi mimarisi "karışık" ve biraz yorucu bir his uyandırıyordu.
+- **Çözüm:** Apple esintili, çok daha temiz ve ferah bir dizayna geçiş yapıldı.
+- **Detaylar:**
+  1. `DashboardHero` bileşeni sıfırdan yazılarak sayfanın üst tarafını kapsayan büyük bir, "Glassmorphism" odaklı şık bir panele dönüştürüldü.
+  2. `ContinueCard` karmaşıklığı giderildi. Sıradaki eylemi ("Hemen Test Çöz", "Sıradaki Ödev" vb.) dikte eden buton, bağımsız bir kart olarak yer kaplamak yerine **Hero bileşeninin içine entegre edildi** ve harika bir UX kazandırıldı.
+  3. `QuickActionGrid` büyük bloklardan, yatay okuma sağlayan, `hover` sırasında şık geçişler (transition/scale) barındıran tek boyutlu şık sıralara küçültüldü. Ekranda yer kazancı maksimize edildi.
+  4. `ProgressOverview`, `MessageSummaryCard`, `RecentResults` gibi diğer Dashboard widgetleri temiz grid yapısıyla `lg:grid-cols-2` sistemine mükemmel oturtuldu. Kutuların içindeki ağır renk ayrımları, minimal ikon ve renk kullanımlarına geçirildi.
+- **Sonuç:** Dashboard artık premium, çok daha düzenli, ve Uğur Hoca öğrencileri için kullanımı çok "kullanışlı" (usable) bir alana evrildi.
+
+*Son güncelleme: 10 Nisan 2026 — Premium Öğrenci Dashboard UI/UX fazı tamamlandı ve kod Push edildi.*
+
+---
+
+## 17. Avatar Seçimi ve Kusursuz Mobil Optimizasyon (PWA) (10 Nisan 2026)
+
+### 17.1 Avatar Sistemi
+
+- **Tablo Güncellemesi:** Supabase `profiles` tablosuna `avatar_id` adında metin bazlı yeni nesne eklentisi yapılmıştır (Migration `20260410020000_profile_avatars.sql`).
+- **Görsel Değişim:** İsmin baş harfi yerine, eğlenceli ve yüksek hızlı 16 adet standart Avatar (Emoji destekli) seçeneğinin bulunduğu `AvatarSelectionModal` tasarlandı.
+- **Entegrasyon:** Kullanıcı modal menüsünden simgeye tıkladığı an optimistik olarak anında ekrana yansır ve arkada DB'yi HTTP servisi ile günceller.
+
+### 17.2 Native Optimizasyon (Sıfır Taşma - Sürekli Tam Ekran Hissi)
+
+- **Native Büyütme Yasaları:** `layout.tsx` dosyasına Next.js native `viewport` parametresi verilerek ekranın pinch-to-zoom (yakınlaştırma / uzaklaştırma) yapması PWA kalitesini sarsmaması adına kökünden iptal edildi. `userScalable: false`.
+- **Taşma Engelleri (Horizontal Scroll BugFix):** Android işletim sistemlerinde UI'ı sağa kaydıran sert kutu limitasyonları (örn: `w-[400px]`), ekran boyutuna göre esneyebilen `w-full sm:max-w-md` fluid yapılarıyla temizlendi. Öğrenciler ceplerindeki eski telefonlarla dahi profesyonel bir deneyim yaşayacaklar!
+
+*Son güncelleme: 10 Nisan 2026 — Avatar ve Native Mobil optimizasyonları Push edildi.*
+
+---
+
+## 18. Tek Admin Hesabı ve Giriş Bilgilerinin Standardizasyonu (11 Nisan 2026)
+
+### 18.1 Kod Tarafı
+
+- **Tek kaynak:** `matematik-platform/src/lib/admin.ts` eklendi. `ADMIN_EMAIL = 'admin@ugurhoca.com'` ve `isAdminEmail()` yardımcıları tanımlandı.
+- **Bağlanan dosyalar:** `src/app/admin/page.tsx`, `src/app/profil/page.tsx`, `src/app/icerikler/page.tsx`, `src/components/ChatBubble.tsx`, `src/components/AdminStatistics.tsx`, `src/app/api/admin-message/route.ts` artık aynı admin kaynağını kullanıyor.
+- **Temizlik:** `admin@matematiklab.com` referansları kod tabanından tamamen kaldırıldı.
+
+### 18.2 Supabase ve Yetki Politikaları
+
+- **Env örneği:** `.env.example` içindeki `ADMIN_EMAILS` değeri tek hesaba indirildi: `admin@ugurhoca.com`
+- **Geçmiş migration dosyaları:** Çift admin e-posta listeleri tek admin hesabına düşürüldü.
+- **Yeni migration:** `matematik-platform/supabase/migrations/20260411110000_single_admin_email.sql`
+  - mevcut canlı policy'leri yeniden oluşturarak tek admin hesabını yetkili bırakır
+  - quiz, quiz_questions, chat, submissions, progress, badges, announcements ve documents policy'lerini kapsar
+
+### 18.3 Gerçek Admin Hesabı Güncellemesi
+
+- **Auth kullanıcısı:** Supabase Auth üzerinde admin kullanıcı güncellendi
+  - e-posta: `admin@ugurhoca.com`
+  - şifre: `19051989`
+- **Profil kaydı:** `profiles` tablosunda admin profili güncellendi
+  - `name = Uğur Hoca`
+  - `name_normalized = uğur hoca`
+  - `email = admin@ugurhoca.com`
+
+### 18.4 Doğrulama
+
+- **Build:** `npm run build` temiz geçti
+- **Giriş testi:** `admin@ugurhoca.com / 19051989` ile Supabase Auth giriş doğrulandı
+- **Not:** Bu ortamda `supabase` CLI kurulu olmadığı için yeni migration dosyası yalnızca repoya eklendi; canlı policy push işlemi Git akışından ayrı olarak uygulanmalı
+
+*Son güncelleme: 11 Nisan 2026 — Admin hesabı tek e-postaya indirildi, şifre güncellendi ve giriş doğrulandı.*

@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
+import { isAdminEmail } from "@/lib/admin";
 import FloatingShapes from "@/components/FloatingShapes";
 import NotesSection from "@/components/NotesSection";
 import DashboardHero from "@/components/dashboard/DashboardHero";
@@ -96,7 +97,7 @@ export default function ProfilePage() {
         return;
       }
 
-      const isAdmin = session.user.email === "admin@ugurhoca.com";
+      const isAdmin = isAdminEmail(session.user.email);
 
       const { data: profile } = await supabase
         .from("profiles")

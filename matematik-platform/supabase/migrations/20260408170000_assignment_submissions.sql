@@ -36,7 +36,7 @@ CREATE POLICY "submissions_insert_own" ON public.assignment_submissions
 DROP POLICY IF EXISTS "submissions_admin_all" ON public.assignment_submissions;
 CREATE POLICY "submissions_admin_all" ON public.assignment_submissions
     FOR ALL USING (
-        auth.jwt() ->> 'email' IN ('admin@ugurhoca.com', 'admin@matematiklab.com')
+        auth.jwt() ->> 'email' IN ('admin@ugurhoca.com')
     );
 
 -- ============================================
@@ -67,5 +67,5 @@ CREATE POLICY "submissions_student_select" ON storage.objects
 CREATE POLICY "submissions_admin_select" ON storage.objects
     FOR SELECT USING (
         bucket_id = 'submissions' AND 
-        (auth.jwt() ->> 'email' IN ('admin@ugurhoca.com', 'admin@matematiklab.com'))
+        (auth.jwt() ->> 'email' IN ('admin@ugurhoca.com'))
     );

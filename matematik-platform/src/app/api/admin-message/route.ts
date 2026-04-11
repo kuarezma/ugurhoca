@@ -1,11 +1,6 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
-
-const ADMIN_EMAILS = (
-  process.env.ADMIN_EMAILS ?? "admin@ugurhoca.com,admin@matematiklab.com"
-)
-  .split(",")
-  .map((e) => e.trim());
+import { ADMIN_EMAILS } from "@/lib/admin";
 
 export async function POST(request: Request) {
   try {

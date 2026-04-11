@@ -26,7 +26,7 @@ CREATE POLICY "user_badges_select_own" ON public.user_badges
 
 DROP POLICY IF EXISTS "user_badges_admin_all" ON public.user_badges;
 CREATE POLICY "user_badges_admin_all" ON public.user_badges
-    FOR ALL USING (auth.jwt() ->> 'email' IN ('admin@ugurhoca.com', 'admin@matematiklab.com'));
+    FOR ALL USING (auth.jwt() ->> 'email' IN ('admin@ugurhoca.com'));
 
 -- ============================================
 -- 3. Otomasyon: Test Bitirince Çalışan Tetikleyici
