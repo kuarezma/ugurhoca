@@ -26,6 +26,7 @@ export const loadInitialContentDocuments = async (
   const from = (page - 1) * pageSize;
   const to = from + pageSize - 1;
   const serverSupabase = createServerSupabaseClient();
+  const normalizedTypeFilter = CONTENT_TYPE_MAPPING[typeFilter] || typeFilter;
 
   let countQuery = serverSupabase
     .from('documents')
@@ -36,13 +37,8 @@ export const loadInitialContentDocuments = async (
   }
 
   if (typeFilter !== 'all') {
-    countQuery = countQuery.eq(
-      'type',
-      CONTENT_TYPE_MAPPING[typeFilter] || typeFilter,
-    );
+    countQuery = countQuery.eq('type', normalizedTypeFilter);
   }
-
-  const { count } = await countQuery;
 
   let dataQuery = serverSupabase
     .from('documents')
@@ -54,13 +50,13 @@ export const loadInitialContentDocuments = async (
   }
 
   if (typeFilter !== 'all') {
-    dataQuery = dataQuery.eq(
-      'type',
-      CONTENT_TYPE_MAPPING[typeFilter] || typeFilter,
-    );
+    dataQuery = dataQuery.eq('type', normalizedTypeFilter);
   }
 
-  const { data } = await dataQuery.range(from, to);
+  const [{ count }, { data }] = await Promise.all([
+    countQuery,
+    dataQuery.range(from, to),
+  ]);
 
   return {
     count: count || 0,

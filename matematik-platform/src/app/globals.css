@@ -54,6 +54,7 @@ html[data-theme='light'] {
 
 html {
   scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
 }
 
 body {
@@ -64,6 +65,17 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+:where(
+  a[href],
+  button,
+  [role='button'],
+  summary,
+  label
+) {
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
 }
 
 ::-webkit-scrollbar {
@@ -740,5 +752,53 @@ html[data-theme='light'] .programlar-page [class*='transition-'] {
     background:
       radial-gradient(circle at 8% -8%, rgba(99, 102, 241, 0.08), transparent 34%),
       linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+  }
+}
+
+@media (hover: none) and (pointer: coarse) {
+  .card-hover:hover,
+  .light-card:hover,
+  .btn-primary:hover,
+  .btn-secondary:hover,
+  .glow-button:hover,
+  a:hover,
+  button:hover,
+  [role='button']:hover {
+    transform: none !important;
+  }
+
+  .card-hover:hover,
+  .light-card:hover,
+  .btn-primary:hover,
+  .glow-button:hover {
+    filter: none !important;
+  }
+
+  .card-hover:hover,
+  .light-card:hover,
+  .glow-button:hover {
+    box-shadow: inherit !important;
+  }
+
+  :where(
+    a[href],
+    button,
+    [role='button'],
+    summary,
+    .card-hover,
+    .light-card,
+    .btn-primary,
+    .btn-secondary,
+    .glow-button
+  ) {
+    transition-duration: 120ms !important;
+  }
+
+  [class*='hover:scale']:hover,
+  [class*='hover:-translate']:hover,
+  [class*='group-hover:scale-'],
+  [class*='group-hover:translate-'],
+  [class*='group-hover:-translate-'] {
+    transform: none !important;
   }
 }

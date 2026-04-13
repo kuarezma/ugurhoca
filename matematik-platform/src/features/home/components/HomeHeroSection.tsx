@@ -1,16 +1,52 @@
 'use client';
 
+import { useEffect } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { ExamCountdown } from '@/components/ExamCountdown';
 import { featuredExams } from '@/lib/examDates';
-import { HOME_CATEGORIES } from '@/features/home/constants';
+import {
+  HOME_CATEGORIES,
+  HOME_CONTENT_PREFETCH_HREFS,
+} from '@/features/home/constants';
 
 type HomeHeroSectionProps = {
   isLight: boolean;
 };
 
 export function HomeHeroSection({ isLight }: HomeHeroSectionProps) {
+  const router = useRouter();
+
+  useEffect(() => {
+    const prefetchTargets = () => {
+      HOME_CONTENT_PREFETCH_HREFS.forEach((href) => {
+        router.prefetch(href);
+      });
+    };
+
+    const requestIdleCallbackFn = window.requestIdleCallback?.bind(window);
+    const cancelIdleCallbackFn = window.cancelIdleCallback?.bind(window);
+
+    if (requestIdleCallbackFn) {
+      const idleCallbackId = requestIdleCallbackFn(() => {
+        prefetchTargets();
+      }, {
+        timeout: 1200,
+      });
+
+      return () => {
+        cancelIdleCallbackFn?.(idleCallbackId);
+      };
+    }
+
+    const timeoutId = globalThis.setTimeout(prefetchTargets, 250);
+
+    return () => {
+      globalThis.clearTimeout(timeoutId);
+    };
+  }, [router]);
+
   return (
     <section className="px-4 pt-4 pb-8 sm:py-12">
       <div className="max-w-6xl mx-auto">
