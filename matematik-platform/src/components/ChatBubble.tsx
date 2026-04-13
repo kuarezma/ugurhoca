@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import { isAdminEmail } from "@/lib/admin";
+import { getClientSession } from "@/lib/auth-client";
 
 type ParsedPayload = {
   sender_id: string;
@@ -55,28 +56,6 @@ export function ChatBubble() {
     setMounted(true);
   }, []);
 
-  useEffect(() => {
-    if (!mounted) return;
-    checkAdmin();
-  }, [mounted]);
-
-  const checkAdmin = async () => {
-    try {
-      const {
-        data: { session },
-      } = await supabase.auth.getSession();
-      if (session?.user && isAdminEmail(session.user.email)) {
-        setIsAdmin(true);
-        setAdminUserId(session.user.id);
-        await loadMessages(session.user.id);
-      }
-    } catch {
-      // silently ignore
-    } finally {
-      setLoading(false);
-    }
-  };
-
   const loadMessages = useCallback(async (userId: string) => {
     const { data } = await supabase
       .from("notifications")
@@ -99,6 +78,26 @@ export function ChatBubble() {
       setUnreadCount(formatted.filter((m) => !m.is_read).length);
     }
   }, []);
+
+  const checkAdmin = useCallback(async () => {
+    try {
+      const session = await getClientSession();
+      if (session?.user && isAdminEmail(session.user.email)) {
+        setIsAdmin(true);
+        setAdminUserId(session.user.id);
+        await loadMessages(session.user.id);
+      }
+    } catch {
+      // silently ignore
+    } finally {
+      setLoading(false);
+    }
+  }, [loadMessages]);
+
+  useEffect(() => {
+    if (!mounted) return;
+    checkAdmin();
+  }, [checkAdmin, mounted]);
 
   const markAsRead = useCallback(async (msg: InboxMessage) => {
     if (msg.is_read) return;
@@ -143,9 +142,7 @@ export function ChatBubble() {
     if (!replyingTo?.parsed?.sender_id || !replyText.trim()) return;
     setSendingReply(true);
     try {
-      const {
-        data: { session },
-      } = await supabase.auth.getSession();
+      const session = await getClientSession();
       await fetch("/api/admin-message", {
         method: "POST",
         headers: { "Content-Type": "application/json" },

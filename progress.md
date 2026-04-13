@@ -2,6 +2,19 @@
 
 Bu dosya, depo ve Vercel/Supabase ile ilgili yapılan ana işleri özetler (Nisan 2026).
 
+## 0. Profesyonelleştirme ve Stabilizasyon Sprinti (13 Nisan 2026)
+
+- **Hedef:** Kod tabanını profesyonel, daha stabil ve bakımı kolay hale getirmek; dağınık sayfa dosyalarını feature bazlı yapıya taşımak; kalite kapılarını netleştirmek.
+- **Repo standardizasyonu:** Tek uygulama kökü `matematik-platform/` olarak netleştirildi. Yinelenen `vercel.json` ve kök `package-lock.json` kaldırıldı. Kök ve uygulama içi `package.json` script'leri ortak standarda çekildi.
+- **Kalite kapıları:** Flat ESLint, Prettier, Vitest ve GitHub Actions CI eklendi. `lint`, `test` ve `build` hattı düzenli doğrulama akışına bağlandı.
+- **Mimari refactor:** `src/features/*` altında feature tabanlı yapı kuruldu. `src/app/*/page.tsx` dosyaları ince wrapper haline getirildi; veri erişimi, iş kuralları ve büyük JSX blokları container, hook, query ve component katmanlarına ayrıldı.
+- **En büyük ekranlar:** `admin`, `home`, `content`, `games`, `profile`, `progress`, `assignments`, `quizzes` ve `programs` tarafında büyük dosyalar sistematik şekilde bölündü. Özellikle `admin` tarafındaki modal, bildirim ve CRUD zincirleri ayrı hook ve bileşenlere taşındı.
+- **Tip ve API sertleştirme:** Ortak domain tipleri, `route-schemas`, `api-response`, `env.server`, `auth-client`, `supabase/client`, `supabase/server` modülleri eklendi. `chat-register`, `support-message` ve `import-questions` route'ları test ve şema doğrulaması ile sıkılaştırıldı.
+- **Veri yükleme optimizasyonu:** `/icerikler`, `/testler`, `/odevler`, `/profil`, `/ilerleme` sayfalarına auth-aware SSR preload, request dedup ve hafif cache/hydration akışları eklendi. Bu sayede ilk yükleme daha hızlı ve daha az tekrar fetch ile çalışıyor.
+- **Görsel medya hattı:** Google Drive ve doğrudan görsel URL'leri için merkezi bir çözüm eklendi. Drive bağlantıları thumbnail URL'ye normalize edildi; `image-proxy` sadece gerçek fallback gereken durumlarda devreye giriyor.
+- **Safari / cache düzeltmeleri:** Safari tarafında görülen eski shell yüklenmesi tespit edildi. `color-mix()` için fallback eklendi, development ortamında stale service worker cache'leri unregister + cache delete akışı ile temizlendi, `/_next/` asset'leri service worker cache-first hattından çıkarıldı.
+- **Teslim kriteri güncellemesi:** Bundan sonraki UI düzenlemelerinde sadece Chrome değil, Safari, mobil, tablet ve masaüstü davranışı da açık kabul kriteri olarak takip edilecek.
+
 ## 1. Depo yapısı: tek kaynak
 
 - **Durum:** Aynı Next.js uygulaması hem depo kökünde hem `matematik-platform/` altında çiftlenmişti.

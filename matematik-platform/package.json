@@ -4,6 +4,12 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "test": "vitest run --coverage",
     "start": "next start",
     "import:lgs": "node scripts/import-lgs-targets.mjs",
     "import:yks": "node scripts/import-yks-targets.mjs",
@@ -31,9 +37,23 @@
     "@types/canvas-confetti": "^1.9.0",
     "@types/node": "^25.5.0",
     "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "@vitest/coverage-v8": "^4.0.8",
+    "@eslint/js": "^9.39.1",
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.0",
     "autoprefixer": "^10.4.27",
+    "eslint": "^9.39.1",
+    "eslint-config-next": "^16.2.1",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-unused-imports": "^4.3.0",
+    "jsdom": "^27.0.1",
     "postcss": "^8.5.8",
+    "prettier": "^3.6.2",
     "tailwindcss": "^3.4.19",
-    "typescript": "^5.9.3"
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.46.2",
+    "vitest": "^4.0.8",
+    "zod": "^4.1.12"
   }
 }

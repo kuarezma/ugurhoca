@@ -205,11 +205,30 @@ Bu dosya, projenin tamamlanmış ve devam eden görevlerini özetler.
 - [x] Admin şifresi güncellendi: `19051989`
 - [x] `npm run build` başarılı
 
+### 19. Profesyonelleştirme ve Stabilizasyon Sprinti (13 Nisan 2026)
+- [x] Depo kökü `matematik-platform/` etrafında netleştirildi; yinelenen `vercel.json` ve kök `package-lock.json` kaldırıldı
+- [x] Standart script seti tanımlandı: `dev`, `build`, `start`, `typecheck`, `lint`, `lint:fix`, `format`, `format:check`, `test`
+- [x] Kalite kapıları eklendi: Flat ESLint, Prettier, Vitest ve GitHub Actions CI
+- [x] `src/features/*` tabanlı feature yapısı kuruldu; `src/app/*/page.tsx` dosyaları ince wrapper/container modeline geçirildi
+- [x] `admin`, `home`, `content`, `games`, `profile`, `progress`, `assignments`, `quizzes` ve `programs` ekranları modüler bileşen/hook/query katmanına ayrıldı
+- [x] `admin` ekranındaki büyük modal, bildirim ve CRUD akışları ayrı bileşen/hook/query katmanlarına taşındı
+- [x] Auth ve veri erişimi standardize edildi: `env.server`, `auth-client`, `supabase/client`, `supabase/server`, ortak route schema ve API response helper'ları eklendi
+- [x] `support-message`, `import-questions` ve `chat-register` route'ları şema doğrulaması ve testlerle sertleştirildi
+- [x] `/icerikler`, `/testler`, `/odevler`, `/profil`, `/ilerleme` için auth-aware SSR preload ve request dedup/caching akışları eklendi
+- [x] Görsel yükleme hattı sadeleştirildi; Google Drive linkleri thumbnail URL'ye normalize edildi, `image-proxy` yalnızca gerçek fallback durumlarında kullanılır hale getirildi
+- [x] Safari/dev cache problemi düzeltildi; `color-mix()` fallback'leri eklendi, development ortamında stale service worker cache temizliği tanımlandı
+- [x] `npm run lint`, `npm run test`, `npm run build` doğrulamaları ile sprint tamamlandı
+
 ## Bekleyen Görevler
 
 ### Chat Sistemi Refactor
 - [ ] `chat_room_members` tablosundaki `user_tc` / `school_number` tutarsızlığı giderilecek
 - [ ] `UserStatistics` bileşenindeki `shared_documents` tablosu tanımı gözden geçirilecek
+
+### Tarayıcı / Cihaz Regresyon Kapısı
+- [ ] Chrome, Safari, mobil Safari, tablet ve masaüstü için ekran bazlı görsel kontrol listesi oluşturulacak
+- [ ] Kritik sayfalar için screenshot baseline veya otomatik browser regression akışı eklenecek
+- [ ] PWA / service worker davranışı production ve local ortam için ayrı kabul kriterleriyle netleştirilecek
 
 ### UX İyileştirmeleri
 - [ ] `AdminStatistics` "Son Kayıtlar" bölümüne gerçek `created_at` sorgusu yazılacak
@@ -218,4 +237,4 @@ Bu dosya, projenin tamamlanmış ve devam eden görevlerini özetler.
 
 ---
 
-*Son güncelleme: 11 Nisan 2026 — Tek admin hesabı standardize edildi, giriş bilgileri güncellendi, build doğrulandı*
+*Son güncelleme: 13 Nisan 2026 — Profesyonelleştirme/stabilizasyon sprinti, SSR preload, Safari cache düzeltmeleri ve kalite kapıları kayda geçirildi*

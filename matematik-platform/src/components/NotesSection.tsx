@@ -1,12 +1,12 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   StickyNote, Plus, Search, X, Edit2, Trash2, Pin, PinOff,
-  Bold, Italic, Underline, Heading1, List, ListOrdered, Link as LinkIcon,
-  Tag, Folder, Calendar, Clock
+  Bold, Italic, Underline, Heading1, List, ListOrdered, Link as LinkIcon, Folder, Clock
 } from 'lucide-react';
+import type { LucideIcon } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import { Note, NoteCategory } from '@/types/index';
 
@@ -42,11 +42,7 @@ export default function NotesSection({ userId }: NotesSectionProps) {
   const [showCategoryInput, setShowCategoryInput] = useState(false);
   const editorRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    loadData();
-  }, [userId]);
-
-  const loadData = async () => {
+  const loadData = useCallback(async () => {
     setLoading(true);
     const [notesRes, categoriesRes] = await Promise.all([
       supabase.from('notes').select('*').eq('user_id', userId).order('is_pinned', { ascending: false }).order('updated_at', { ascending: false }),
@@ -55,7 +51,11 @@ export default function NotesSection({ userId }: NotesSectionProps) {
     if (notesRes.data) setNotes(notesRes.data);
     if (categoriesRes.data) setCategories(categoriesRes.data);
     setLoading(false);
-  };
+  }, [userId]);
+
+  useEffect(() => {
+    loadData();
+  }, [loadData]);
 
   const allTags = [...new Set(notes.flatMap(n => n.tags))].filter(Boolean);
 
@@ -493,7 +493,15 @@ export default function NotesSection({ userId }: NotesSectionProps) {
   );
 }
 
-function ToolbarButton({ icon: Icon, title, onClick }: { icon: any; title: string; onClick: () => void }) {
+function ToolbarButton({
+  icon: Icon,
+  title,
+  onClick,
+}: {
+  icon: LucideIcon;
+  title: string;
+  onClick: () => void;
+}) {
   return (
     <button
       onClick={onClick}

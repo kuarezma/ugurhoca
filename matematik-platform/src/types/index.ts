@@ -1,47 +1,3 @@
-export interface User {
-  id: string;
-  name: string;
-  email: string;
-  grade: number;
-  avatar?: string;
-  createdAt: Date;
-}
-
-export interface Content {
-  id: string;
-  title: string;
-  description: string;
-  type: "worksheet" | "test" | "game" | "app" | "file";
-  grade: number[];
-  subject: string;
-  url?: string;
-  fileUrl?: string;
-  thumbnail?: string;
-  downloads: number;
-  createdAt: Date;
-  authorId: string;
-  answer_key_text?: string;
-  solution_url?: string;
-}
-
-export interface Quiz {
-  id: string;
-  title: string;
-  questions: Question[];
-  grade: number;
-  timeLimit?: number;
-}
-
-export interface Question {
-  id: string;
-  question: string;
-  options: string[];
-  correctAnswer: number;
-  explanation?: string;
-}
-
-export type GradeLevel = 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12;
-
 export interface Note {
   id: string;
   user_id: string;
@@ -61,3 +17,5 @@ export interface NoteCategory {
   color: string;
   created_at: string;
 }
+
+export * from './domain';

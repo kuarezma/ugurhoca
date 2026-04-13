@@ -1,18 +1,5 @@
 import { NextResponse } from 'next/server';
-
-const extractDriveId = (url: string): string | null => {
-  const patterns = [
-    /drive\.google\.com\/file\/d\/([^/?]+)/,
-    /drive\.google\.com\/open\?id=([^&]+)/,
-    /drive\.google\.com\/thumbnail\?id=([^&]+)/,
-    /drive\.google\.com\/[^?]*id=([^&/?]+)/,
-  ];
-  for (const pattern of patterns) {
-    const match = url.match(pattern);
-    if (match) return match[1];
-  }
-  return null;
-};
+import { getGoogleDriveThumbnailUrl } from '@/lib/image-url';
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
@@ -25,15 +12,13 @@ export async function GET(request: Request) {
   let fetchUrl = url;
 
   if (/drive\.google\.com/i.test(url)) {
-    const driveId = extractDriveId(url);
-    if (driveId) {
-      fetchUrl = `https://drive.google.com/thumbnail?id=${driveId}&sz=w800`;
-    }
+    fetchUrl = getGoogleDriveThumbnailUrl(url);
   }
 
   try {
     const res = await fetch(fetchUrl, {
       cache: 'no-store',
+      signal: AbortSignal.timeout(7000),
       headers: {
         'User-Agent': 'Mozilla/5.0',
         'Accept': 'image/*,*/*;q=0.8',
@@ -45,6 +30,14 @@ export async function GET(request: Request) {
     }
 
     const contentType = res.headers.get('content-type') || 'image/jpeg';
+
+    if (!contentType.startsWith('image/')) {
+      return NextResponse.json(
+        { error: 'Fetched resource is not an image' },
+        { status: 415 },
+      );
+    }
+
     const buffer = await res.arrayBuffer();
 
     return new NextResponse(buffer, {

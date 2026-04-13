@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import {
   Users,
@@ -34,11 +34,7 @@ export default function AdminStatistics() {
   const [loading, setLoading] = useState(true);
   const [timeRange, setTimeRange] = useState<"week" | "month" | "all">("all");
 
-  useEffect(() => {
-    loadStats();
-  }, [timeRange]);
-
-  const loadStats = async () => {
+  const loadStats = useCallback(async () => {
     setLoading(true);
 
     const now = new Date();
@@ -52,13 +48,11 @@ export default function AdminStatistics() {
       dateFilter = monthAgo.toISOString();
     }
 
-    const [usersRes, docsRes, notesRes, assignmentsRes, announcementsRes] =
-      await Promise.all([
+    const [usersRes, docsRes, notesRes, assignmentsRes] = await Promise.all([
         supabase.from("profiles").select("*", { count: "exact" }),
         supabase.from("documents").select("*", { count: "exact" }),
         supabase.from("notes").select("*", { count: "exact" }),
         supabase.from("assignments").select("*", { count: "exact" }),
-        supabase.from("announcements").select("*"),
       ]);
 
     const users = usersRes.data || [];
@@ -105,7 +99,11 @@ export default function AdminStatistics() {
     });
 
     setLoading(false);
-  };
+  }, [timeRange]);
+
+  useEffect(() => {
+    loadStats();
+  }, [loadStats]);
 
   if (loading) {
     return (

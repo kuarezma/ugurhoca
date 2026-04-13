@@ -1,13 +1,12 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import { 
   Calendar, FileText, StickyNote, Clock, TrendingUp,
   Award, CheckCircle2
 } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
-import { Note } from '@/types/index';
 
 interface UserStats {
   totalNotes: number;
@@ -30,11 +29,7 @@ export default function UserStatistics({ userId, userCreatedAt }: UserStatistics
   const [stats, setStats] = useState<UserStats | null>(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    loadStats();
-  }, [userId]);
-
-  const loadStats = async () => {
+  const loadStats = useCallback(async () => {
     setLoading(true);
 
     const [notesRes, sharedDocsRes, assignmentsRes] = await Promise.all([
@@ -73,7 +68,11 @@ export default function UserStatistics({ userId, userCreatedAt }: UserStatistics
     });
 
     setLoading(false);
-  };
+  }, [userCreatedAt, userId]);
+
+  useEffect(() => {
+    loadStats();
+  }, [loadStats]);
 
   if (loading) {
     return (

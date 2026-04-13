@@ -2,14 +2,15 @@
   "name": "ugurhoca",
   "private": true,
   "description": "Repo kökü; Next.js uygulaması matematik-platform/ altında",
-  "dependencies": {
-    "next": "^16.2.1",
-    "react": "^19.2.4",
-    "react-dom": "^19.2.4"
-  },
   "scripts": {
     "build": "npm run build --prefix matematik-platform",
     "dev": "npm run dev --prefix matematik-platform",
-    "start": "npm run start --prefix matematik-platform"
+    "format": "npm run format --prefix matematik-platform",
+    "format:check": "npm run format:check --prefix matematik-platform",
+    "lint": "npm run lint --prefix matematik-platform",
+    "lint:fix": "npm run lint:fix --prefix matematik-platform",
+    "start": "npm run start --prefix matematik-platform",
+    "test": "npm run test --prefix matematik-platform",
+    "typecheck": "npm run typecheck --prefix matematik-platform"
   }
 }

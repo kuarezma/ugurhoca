@@ -6,6 +6,7 @@ import Link from "next/link";
 import { Calculator, Eye, EyeOff, ArrowLeft } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
+import { getClientSession } from "@/lib/auth-client";
 import { normalizeFullNameForMatch } from "@/lib/student-identity";
 import FloatingShapes from "@/components/FloatingShapes";
 
@@ -20,9 +21,7 @@ export default function LoginPage() {
 
   useEffect(() => {
     const checkSession = async () => {
-      const {
-        data: { session },
-      } = await supabase.auth.getSession();
+      const session = await getClientSession();
       if (session) {
         router.push("/profil");
       }

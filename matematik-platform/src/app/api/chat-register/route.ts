@@ -1,80 +1,38 @@
-import { NextResponse } from 'next/server';
-import { createClient } from '@supabase/supabase-js';
-import { computeChatDisplayName } from '@/lib/chat-display-name';
+import { apiError, apiOk } from '@/lib/api-response';
+import { chatRegisterSchema } from '@/lib/route-schemas';
+import { createServiceRoleClient } from '@/lib/supabase/server';
+import {
+  buildChatUser,
+  registerChatUser,
+} from '@/features/chat/server/registerChatUser';
 
-/**
- * Sohbet girişi: tarayıcıdan RLS/anon yerine service role ile upsert.
- * Vercel’de SUPABASE_SERVICE_ROLE_KEY tanımlı olmalı (sunucu only, NEXT_PUBLIC değil).
- */
 export async function POST(request: Request) {
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  const body = await request.json().catch(() => null);
+  const parsed = chatRegisterSchema.safeParse(body);
 
-  if (!url || !serviceKey) {
-    return NextResponse.json(
-      {
-        error:
-          'Sunucu yapılandırması eksik: Vercel’e SUPABASE_SERVICE_ROLE_KEY ekleyin (Settings → Environment Variables).',
-      },
-      { status: 503 }
+  if (!parsed.success) {
+    return apiError(parsed.error.issues[0]?.message || 'Geçersiz istek.', 400);
+  }
+
+  try {
+    const supabase = createServiceRoleClient();
+    const user = buildChatUser(
+      parsed.data.full_name,
+      parsed.data.grade,
+      parsed.data.school_number,
     );
-  }
 
-  const body = (await request.json().catch(() => null)) as {
-    full_name?: string;
-    grade?: number;
-    school_number?: string;
-  } | null;
+    await registerChatUser(supabase, user);
 
-  const fullName = typeof body?.full_name === 'string' ? body.full_name.trim() : '';
-  const grade = typeof body?.grade === 'number' ? body.grade : null;
-  const schoolNumber = typeof body?.school_number === 'string' ? body.school_number.trim() : '';
-
-  if (!grade || grade < 1 || grade > 12) {
-    return NextResponse.json(
-      { error: 'Sınıf 1-12 arasında olmalıdır.' },
-      { status: 400 }
-    );
-  }
-  if (!fullName) {
-    return NextResponse.json({ error: 'İsim soyisim girin.' }, { status: 400 });
-  }
-  if (!schoolNumber) {
-    return NextResponse.json({ error: 'Okul numarası girin.' }, { status: 400 });
-  }
-
-  const display_name = computeChatDisplayName(fullName);
-
-  const supabase = createClient(url, serviceKey, {
-    auth: { persistSession: false, autoRefreshToken: false },
-  });
-
-  const { error } = await supabase.from('chat_users').upsert(
-    {
-      full_name: fullName,
-      grade: grade,
-      school_number: schoolNumber,
-      display_name,
-      updated_at: new Date().toISOString(),
-    },
-    { onConflict: 'full_name,grade,school_number' }
-  );
-
-  if (error) {
+    return apiOk({ ok: true, user });
+  } catch (error) {
     console.error('chat-register upsert', error);
-    return NextResponse.json(
-      { error: error.message || 'Veritabanına yazılamadı. chat_users tablosunu kontrol edin.' },
-      { status: 500 }
+    return apiError(
+      error instanceof Error
+        ? error.message
+        : 'Veritabanına yazılamadı. chat_users tablosunu kontrol edin.',
+      500,
+      'chat_register_failed',
     );
   }
-
-  return NextResponse.json({
-    ok: true,
-    user: {
-      full_name: fullName,
-      grade: grade,
-      school_number: schoolNumber,
-      display_name,
-    },
-  });
 }

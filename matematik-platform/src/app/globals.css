@@ -80,11 +80,29 @@ body {
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(180deg, color-mix(in srgb, var(--scrollbar-thumb-start) 80%, white), color-mix(in srgb, var(--scrollbar-thumb-end) 80%, white));
+  background: linear-gradient(180deg, #a78bfa, #f472b6);
 }
 
 .gradient-bg {
-  background: linear-gradient(135deg, var(--bg) 0%, color-mix(in srgb, var(--bg) 85%, #4f46e5) 50%, var(--bg) 100%);
+  background: linear-gradient(135deg, var(--bg) 0%, #312e81 50%, var(--bg) 100%);
+}
+
+.theme-toggle:hover {
+  background: var(--bg-elevated);
+}
+
+@supports (background: color-mix(in srgb, white 80%, black)) {
+  ::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, color-mix(in srgb, var(--scrollbar-thumb-start) 80%, white), color-mix(in srgb, var(--scrollbar-thumb-end) 80%, white));
+  }
+
+  .gradient-bg {
+    background: linear-gradient(135deg, var(--bg) 0%, color-mix(in srgb, var(--bg) 85%, #4f46e5) 50%, var(--bg) 100%);
+  }
+
+  .theme-toggle:hover {
+    background: color-mix(in srgb, var(--bg-soft) 88%, var(--bg-elevated));
+  }
 }
 
 html[data-theme='light'] .gradient-bg {
@@ -147,10 +165,6 @@ html[data-theme='light'] [class*='bg-black/40'] {
   background: var(--bg-soft);
   color: var(--text-strong);
   border-color: var(--border-strong);
-}
-
-.theme-toggle:hover {
-  background: color-mix(in srgb, var(--bg-soft) 88%, var(--bg-elevated));
 }
 
 .theme-surface {

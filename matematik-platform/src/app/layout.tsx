@@ -61,13 +61,18 @@ export const viewport: Viewport = {
   userScalable: false,
 };
 
+const serviceWorkerBootstrap =
+  process.env.NODE_ENV === "production"
+    ? `if('serviceWorker' in navigator){window.addEventListener('load',function(){navigator.serviceWorker.register('/sw.js').catch(function(){});});}`
+    : `if('serviceWorker' in navigator){window.addEventListener('load',async function(){try{var marker='__ugurhoca_sw_reset__';var hasReset=sessionStorage.getItem(marker)==='1';var registrations=await navigator.serviceWorker.getRegistrations();await Promise.all(registrations.map(function(registration){return registration.unregister();}));if('caches' in window){var cacheNames=await caches.keys();await Promise.all(cacheNames.filter(function(name){return name.indexOf('ugur-hoca-v')===0;}).map(function(name){return caches.delete(name);}));}if(!hasReset){sessionStorage.setItem(marker,'1');window.location.reload();}}catch(e){}});}`;
+
 export default function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
   return (
-    <html lang="tr" suppressHydrationWarning>
+    <html lang="tr" suppressHydrationWarning data-scroll-behavior="smooth">
       <head>
         <script
           dangerouslySetInnerHTML={{
@@ -79,7 +84,7 @@ export default function RootLayout({
         <meta name="theme-color" content="#f97316" />
         <script
           dangerouslySetInnerHTML={{
-            __html: `if('serviceWorker' in navigator){window.addEventListener('load',function(){navigator.serviceWorker.register('/sw.js').catch(function(){});});}`,
+            __html: serviceWorkerBootstrap,
           }}
         />
       </head>

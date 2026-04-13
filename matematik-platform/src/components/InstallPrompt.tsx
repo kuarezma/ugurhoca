@@ -7,8 +7,14 @@ import { Download, X, Smartphone } from 'lucide-react';
 const DISMISS_KEY = 'uh-install-dismissed';
 const DISMISS_DURATION_MS = 7 * 24 * 60 * 60 * 1000; // 7 gün
 
+type BeforeInstallPromptEvent = Event & {
+  prompt: () => Promise<void>;
+  userChoice: Promise<{ outcome: 'accepted' | 'dismissed' }>;
+};
+
 export default function InstallPrompt() {
-  const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
+  const [deferredPrompt, setDeferredPrompt] =
+    useState<BeforeInstallPromptEvent | null>(null);
   const [show, setShow] = useState(false);
   const [installing, setInstalling] = useState(false);
 
@@ -22,7 +28,7 @@ export default function InstallPrompt() {
 
     const handler = (e: Event) => {
       e.preventDefault();
-      setDeferredPrompt(e);
+      setDeferredPrompt(e as BeforeInstallPromptEvent);
       // Küçük bekleme: kullanıcıya sayfayı önce görme şansı ver
       setTimeout(() => setShow(true), 3500);
     };

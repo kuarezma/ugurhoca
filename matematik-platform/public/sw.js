@@ -42,6 +42,12 @@ self.addEventListener("fetch", (event) => {
   // Yalnızca aynı origin isteklerini ele al
   if (url.origin !== location.origin) return;
 
+  // Next asset'lerini cache-first çalıştırma; stale chunk'lar özellikle
+  // development ve Safari'de eski UI shell'ini tutabiliyor.
+  if (url.pathname.startsWith("/_next/")) {
+    return;
+  }
+
   // API isteklerini her zaman network'ten al
   if (url.pathname.startsWith("/api/")) {
     event.respondWith(

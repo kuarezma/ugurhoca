@@ -23,6 +23,9 @@ export interface ImportResult {
   errors: { row: number; message: string }[];
 }
 
+type MetaRow = [string?, string?];
+type QuestionSheetRow = Record<string, string | number | undefined>;
+
 const CORRECT_MAP: Record<string, number> = { A: 0, B: 1, C: 2, D: 3 };
 const VALID_DIFFICULTIES = ['Kolay', 'Orta', 'Zor'];
 
@@ -38,7 +41,7 @@ export function parseExcelFile(buffer: ArrayBuffer): ImportResult {
     );
   }
 
-  const metaRows: any[][] = XLSX.utils.sheet_to_json(metaSheet, {
+  const metaRows = XLSX.utils.sheet_to_json<MetaRow>(metaSheet, {
     header: 1,
     defval: '',
   });
@@ -72,7 +75,9 @@ export function parseExcelFile(buffer: ArrayBuffer): ImportResult {
     );
   }
 
-  const rawRows: any[] = XLSX.utils.sheet_to_json(soruSheet, { defval: '' });
+  const rawRows = XLSX.utils.sheet_to_json<QuestionSheetRow>(soruSheet, {
+    defval: '',
+  });
 
   const valid: ParsedQuestion[] = [];
   const errors: { row: number; message: string }[] = [];
