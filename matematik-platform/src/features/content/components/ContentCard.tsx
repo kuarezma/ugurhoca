@@ -79,12 +79,12 @@ export default function ContentCard({
       : null;
 
   const actionButtons = (
-    <div className="flex flex-wrap items-center gap-2 sm:gap-3">
+    <div className="grid w-full grid-cols-1 gap-2 sm:flex sm:flex-wrap sm:items-center sm:gap-3">
       <motion.button
         whileHover={{ scale: 1.02 }}
         whileTap={{ scale: 0.98 }}
         onClick={() => onPreview(content)}
-        className={`flex-1 py-2.5 sm:py-3 bg-slate-800/70 border border-white/10 text-sm sm:text-base text-slate-100 font-semibold rounded-2xl hover:bg-slate-700/70 transition-all flex items-center justify-center gap-2 ${viewMode === 'grid' ? 'min-w-[130px] sm:min-w-[150px]' : 'min-w-[120px] sm:min-w-[180px]'}`}
+        className={`flex w-full items-center justify-center gap-2 rounded-2xl border border-white/10 bg-slate-800/70 px-4 py-2.5 text-xs font-semibold text-slate-100 transition-all hover:bg-slate-700/70 sm:flex-1 sm:py-3 sm:text-base ${viewMode === 'grid' ? 'sm:min-w-[150px]' : 'sm:min-w-[180px]'}`}
       >
         {content.type === 'ders-videolari' ? (
           <Play className="w-4 h-4" />
@@ -98,18 +98,18 @@ export default function ContentCard({
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
           onClick={() => onDownload(content)}
-          className="basis-full sm:basis-auto px-4 sm:px-5 py-2.5 sm:py-3 bg-gradient-to-r from-indigo-500 to-cyan-500 text-sm sm:text-base text-white font-semibold rounded-2xl hover:from-indigo-600 hover:to-cyan-600 transition-all shadow-lg shadow-cyan-500/20 flex items-center justify-center gap-2"
+          className="flex w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-indigo-500 to-cyan-500 px-4 py-2.5 text-xs font-semibold text-white transition-all shadow-lg shadow-cyan-500/20 hover:from-indigo-600 hover:to-cyan-600 sm:w-auto sm:px-5 sm:py-3 sm:text-base"
         >
           <Download className="w-4 h-4" /> İndir
         </motion.button>
       )}
       {user?.isAdmin && (
-        <>
+        <div className="flex items-center gap-2 sm:contents">
           <motion.button
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             onClick={() => onEdit(content)}
-            className="px-3 py-2 bg-slate-700/50 hover:bg-blue-600 text-slate-300 rounded-lg transition-colors"
+            className="flex flex-1 items-center justify-center rounded-xl bg-slate-700/50 px-3 py-2 text-slate-300 transition-colors hover:bg-blue-600 sm:flex-none sm:rounded-lg"
           >
             <Edit3 className="w-4 h-4" />
           </motion.button>
@@ -117,22 +117,22 @@ export default function ContentCard({
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             onClick={() => onDelete(content)}
-            className="px-3 py-2 bg-red-600/35 hover:bg-red-600 text-red-100 rounded-lg transition-colors border border-red-400/40"
+            className="flex flex-1 items-center justify-center rounded-xl border border-red-400/40 bg-red-600/35 px-3 py-2 text-red-100 transition-colors hover:bg-red-600 sm:flex-none sm:rounded-lg"
           >
             <Trash2 className="w-4 h-4" />
           </motion.button>
-        </>
+        </div>
       )}
     </div>
   );
 
   const statsBar = (
     <div
-      className={`flex flex-wrap items-center gap-3 ${viewMode === 'grid' ? 'sm:gap-6' : 'sm:gap-4'} text-xs sm:text-sm text-slate-300 ${viewMode === 'grid' ? 'mb-4 sm:mb-5' : ''}`}
+      className={`grid grid-cols-2 gap-2 text-[11px] text-slate-300 sm:flex sm:flex-wrap sm:items-center ${viewMode === 'grid' ? 'sm:gap-6' : 'sm:gap-4'} sm:text-sm ${viewMode === 'grid' ? 'mb-4 sm:mb-5' : ''}`}
     >
       <button
         onClick={() => onToggleLike(content)}
-        className={`flex items-center gap-1.5 transition-colors ${isLiked ? 'text-red-400' : 'hover:text-red-400'}`}
+        className={`flex min-w-0 items-center justify-center gap-1.5 rounded-xl bg-slate-800/40 px-2.5 py-2 transition-colors sm:justify-start sm:rounded-none sm:bg-transparent sm:px-0 sm:py-0 ${isLiked ? 'text-red-400' : 'hover:text-red-400'}`}
       >
         <Heart className={`w-5 h-5 ${isLiked ? 'fill-current' : ''}`} />
         {content.likes || 0}
@@ -140,13 +140,13 @@ export default function ContentCard({
       {viewMode === 'grid' ? (
         <button
           onClick={() => onOpenComments(content)}
-          className="flex items-center gap-1.5 hover:text-cyan-300 transition-colors"
+          className="flex min-w-0 items-center justify-center gap-1.5 rounded-xl bg-slate-800/40 px-2.5 py-2 transition-colors hover:text-cyan-300 sm:justify-start sm:rounded-none sm:bg-transparent sm:px-0 sm:py-0"
         >
           <MessageCircle className="w-5 h-5" />
           {content.comments_count || 0}
         </button>
       ) : (
-        <div className="flex items-center gap-1.5 hover:text-cyan-300 transition-colors">
+        <div className="flex min-w-0 items-center justify-center gap-1.5 rounded-xl bg-slate-800/40 px-2.5 py-2 transition-colors hover:text-cyan-300 sm:justify-start sm:rounded-none sm:bg-transparent sm:px-0 sm:py-0">
           <MessageCircle className="w-5 h-5" />
           {content.comments_count || 0}
         </div>
@@ -154,7 +154,7 @@ export default function ContentCard({
       {viewMode === 'grid' && (
         <button
           onClick={() => onDownload(content)}
-          className="flex items-center gap-1.5 hover:text-cyan-300 transition-colors"
+          className="flex min-w-0 items-center justify-center gap-1.5 rounded-xl bg-slate-800/40 px-2.5 py-2 transition-colors hover:text-cyan-300 sm:justify-start sm:rounded-none sm:bg-transparent sm:px-0 sm:py-0"
         >
           <Download className="w-5 h-5" />
           {content.downloads || 0}
@@ -162,7 +162,7 @@ export default function ContentCard({
       )}
       <button
         onClick={() => onToggleFavorite(content.id)}
-        className={`flex items-center gap-1.5 transition-colors ${isFavorite ? 'text-amber-400' : 'hover:text-amber-400'}`}
+        className={`col-span-2 flex min-w-0 items-center justify-center gap-1.5 rounded-xl bg-slate-800/40 px-2.5 py-2 transition-colors sm:col-auto sm:justify-start sm:rounded-none sm:bg-transparent sm:px-0 sm:py-0 ${isFavorite ? 'text-amber-400' : 'hover:text-amber-400'}`}
       >
         <Star className={`w-5 h-5 ${isFavorite ? 'fill-current' : ''}`} />
         <span className="sm:hidden">{isFavorite ? 'Çıkar' : 'Favori'}</span>
@@ -210,7 +210,7 @@ export default function ContentCard({
                 </p>
               </div>
             </div>
-            <div className="flex flex-wrap justify-end items-center gap-1.5 sm:gap-2">
+            <div className="flex max-w-[48%] flex-wrap justify-end gap-1.5 sm:max-w-none sm:items-center sm:gap-2">
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
@@ -280,7 +280,7 @@ export default function ContentCard({
           >
             <ContentTypeIcon type={content.type} />
           </div>
-          <div className="flex flex-wrap justify-end items-center gap-1.5 sm:gap-2">
+          <div className="flex max-w-[52%] flex-wrap justify-end gap-1.5 sm:max-w-none sm:items-center sm:gap-2">
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}

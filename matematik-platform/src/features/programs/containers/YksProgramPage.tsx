@@ -1,19 +1,28 @@
 'use client';
 
-import Link from 'next/link';
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { motion } from 'framer-motion';
 import {
-  ArrowLeft,
   ChevronRight,
   Filter,
   Info,
   MapPin,
-  Sparkles,
   Target,
 } from 'lucide-react';
 import { useTheme } from '@/components/ThemeProvider';
-import { supabase } from '@/lib/supabase';
+import { ProgramBackLink } from '@/features/programs/components/ProgramBackLink';
+import { ProgramStepTabs } from '@/features/programs/components/ProgramStepTabs';
+import { ProgramWizardHeader } from '@/features/programs/components/ProgramWizardHeader';
+import { useYksProgramTargets } from '@/features/programs/hooks/useYksProgramTargets';
+import type {
+  ProgramStep,
+  ProgramTargetLevel,
+} from '@/features/programs/types';
+import {
+  clampProgramValue,
+  getProgramLevelBadgeLabel,
+  getProgramLevelTone,
+} from '@/features/programs/utils';
 import {
   calculateYksScore,
   classifyYksTarget,
@@ -24,80 +33,22 @@ import {
   type YksSubjectKey,
 } from '@/lib/examCalculators';
 
-type TargetLevel = 'iddiali' | 'dengeli' | 'guvenli';
-
-type YksProgramTarget = {
-  id: string;
-  year: number;
-  program_code: string;
-  university_name: string;
-  university_type: string;
-  faculty_or_school: string | null;
-  program_name: string;
-  level: 'lisans' | 'onlisans';
-  city: string;
-  score_type: YksScoreType;
-  teaching_type: string | null;
-  scholarship_rate: number | null;
-  instruction_language: string | null;
-  quota_total: number | null;
-  base_rank: number | null;
-  base_score: number | null;
-  source_url_osym: string | null;
-  source_url_yokatlas: string | null;
+const levelSectionLabels: Record<ProgramTargetLevel, string> = {
+  iddiali: 'Iddiali Hedefler',
+  dengeli: 'Dengeli Hedefler',
+  guvenli: 'Guvenli Hedefler',
 };
-
-const levelMeta: Record<TargetLevel, { label: string; card: string; badge: string }> = {
-  iddiali: {
-    label: 'Iddiali Hedefler',
-    card: 'border-rose-300/70 bg-rose-50/60',
-    badge: 'bg-rose-500/20 text-rose-700',
-  },
-  dengeli: {
-    label: 'Dengeli Hedefler',
-    card: 'border-amber-300/70 bg-amber-50/60',
-    badge: 'bg-amber-500/20 text-amber-700',
-  },
-  guvenli: {
-    label: 'Guvenli Hedefler',
-    card: 'border-emerald-300/70 bg-emerald-50/60',
-    badge: 'bg-emerald-500/20 text-emerald-700',
-  },
-};
-
-const darkLevelMeta: Record<TargetLevel, { card: string; badge: string }> = {
-  iddiali: {
-    card: 'border-rose-500/30 bg-rose-500/10',
-    badge: 'bg-rose-500/20 text-rose-200',
-  },
-  dengeli: {
-    card: 'border-amber-500/30 bg-amber-500/10',
-    badge: 'bg-amber-500/20 text-amber-200',
-  },
-  guvenli: {
-    card: 'border-emerald-500/30 bg-emerald-500/10',
-    badge: 'bg-emerald-500/20 text-emerald-200',
-  },
-};
-
-function clamp(value: number, min: number, max: number) {
-  return Math.min(max, Math.max(min, value));
-}
 
 export default function YksWizardPage() {
   const { theme } = useTheme();
   const isLight = theme === 'light';
+  const { dataYear, error, loading, programs } = useYksProgramTargets();
 
   const [step, setStep] = useState<1 | 2 | 3>(1);
   const [inputs, setInputs] = useState(createInitialYksInputs());
   const [scoreType, setScoreType] = useState<YksScoreType>('SAY');
   const [obp, setObp] = useState(85);
   const [manualRank, setManualRank] = useState('');
-
-  const [programs, setPrograms] = useState<YksProgramTarget[]>([]);
-  const [dataYear, setDataYear] = useState<number>(2025);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
 
   const [query, setQuery] = useState('');
   const [level, setLevel] = useState<'all' | 'lisans' | 'onlisans'>('all');
@@ -106,73 +57,7 @@ export default function YksWizardPage() {
   const [teachingType, setTeachingType] = useState('all');
   const [language, setLanguage] = useState('all');
   const [scholarship, setScholarship] = useState<'all' | 'none' | 'partial' | 'full'>('all');
-  const [preferredLevel, setPreferredLevel] = useState<'all' | TargetLevel>('all');
-
-  useEffect(() => {
-    let active = true;
-
-    const loadPrograms = async () => {
-      setLoading(true);
-      setError('');
-
-      const preferredYear = 2026;
-      let selectedYear = preferredYear;
-
-      const preferred = await supabase
-        .from('yks_program_targets')
-        .select('*')
-        .eq('year', preferredYear)
-        .order('base_rank', { ascending: true });
-
-      if (preferred.error) {
-        if (active) {
-          setError('YKS program verileri okunamadi. Lütfen veritabani tablosunu kontrol et.');
-          setPrograms([]);
-          setLoading(false);
-        }
-        return;
-      }
-
-      let rows = (preferred.data || []) as YksProgramTarget[];
-
-      if (!rows.length) {
-        const latestYearQuery = await supabase
-          .from('yks_program_targets')
-          .select('year')
-          .order('year', { ascending: false })
-          .limit(1);
-
-        const latestYear = latestYearQuery.data?.[0]?.year;
-
-        if (latestYear) {
-          selectedYear = latestYear;
-          const latestRowsQuery = await supabase
-            .from('yks_program_targets')
-            .select('*')
-            .eq('year', latestYear)
-            .order('base_rank', { ascending: true });
-
-          rows = (latestRowsQuery.data || []) as YksProgramTarget[];
-        }
-      }
-
-      if (!active) return;
-
-      setPrograms(rows);
-      setDataYear(selectedYear);
-      setLoading(false);
-
-      if (!rows.length) {
-        setError('YKS hedef program verisi bulunamadi. Supabase tablosuna resmi veriler yuklenmeli.');
-      }
-    };
-
-    loadPrograms();
-
-    return () => {
-      active = false;
-    };
-  }, []);
+  const [preferredLevel, setPreferredLevel] = useState<'all' | ProgramTargetLevel>('all');
 
   const yksResult = useMemo(() => calculateYksScore(inputs, scoreType, obp), [inputs, scoreType, obp]);
 
@@ -246,7 +131,7 @@ export default function YksWizardPage() {
     const targetFiltered =
       preferredLevel === 'all' ? withLevels : withLevels.filter((program) => program.targetLevel === preferredLevel);
 
-    const order: Record<TargetLevel, number> = { iddiali: 0, dengeli: 1, guvenli: 2 };
+    const order: Record<ProgramTargetLevel, number> = { iddiali: 0, dengeli: 1, guvenli: 2 };
 
     return targetFiltered.sort((a, b) => {
       const levelDiff = order[a.targetLevel] - order[b.targetLevel];
@@ -294,10 +179,10 @@ export default function YksWizardPage() {
       const next = { ...current };
 
       if (field === 'correct') {
-        next.correct = clamp(value, 0, meta.questions);
-        next.wrong = clamp(next.wrong, 0, meta.questions - next.correct);
+        next.correct = clampProgramValue(value, 0, meta.questions);
+        next.wrong = clampProgramValue(next.wrong, 0, meta.questions - next.correct);
       } else {
-        next.wrong = clamp(value, 0, meta.questions - next.correct);
+        next.wrong = clampProgramValue(value, 0, meta.questions - next.correct);
       }
 
       return {
@@ -307,7 +192,7 @@ export default function YksWizardPage() {
     });
   };
 
-  const steps = [
+  const steps: ProgramStep[] = [
     { id: 1 as const, title: 'Puan Hesapla' },
     { id: 2 as const, title: 'Tercih Filtreleri' },
     { id: 3 as const, title: 'Program Onerileri' },
@@ -316,60 +201,33 @@ export default function YksWizardPage() {
   return (
     <main className="programlar-page min-h-screen gradient-bg px-4 pb-12 pt-16 sm:px-6 sm:pt-20">
       <div className="mx-auto max-w-6xl">
-        <Link
-          href="/programlar"
-          className={`mb-5 inline-flex items-center gap-2 text-sm font-semibold transition-colors ${
-            isLight ? 'text-slate-700 hover:text-slate-950' : 'text-slate-300 hover:text-white'
-          }`}
-        >
-          <ArrowLeft className="h-4 w-4" />
-          Programlar Merkezine Don
-        </Link>
+        <ProgramBackLink isLight={isLight} />
 
         <motion.section
           initial={{ opacity: 0, y: 18 }}
           animate={{ opacity: 1, y: 0 }}
           className={`rounded-3xl border p-5 sm:p-7 ${isLight ? 'light-section' : 'glass border-white/10'}`}
         >
-          <div className="mb-6 flex flex-wrap items-start justify-between gap-4">
-            <div>
-              <div className="mb-2 inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-violet-500 via-fuchsia-500 to-orange-400 px-3 py-1 text-[11px] font-bold uppercase tracking-[0.18em] text-white">
-                <Sparkles className="h-3.5 w-3.5" />
-                YKS Tercih Sihirbazi
-              </div>
-              <h1 className={`text-2xl font-black sm:text-4xl ${isLight ? 'light-text-strong' : 'text-white'}`}>
-                YKS Puan Hesaplama ve Universite Tercih Sihirbazi
-              </h1>
-              <p className={`mt-3 max-w-3xl text-sm sm:text-base ${isLight ? 'light-text-muted' : 'text-slate-300'}`}>
-                TYT / SAY / EA / SOZ puan tahmini yapilir. Sonra gercek veritabanindaki universiteler filtrelenerek hedef
-                seviyene uygun secenekler listelenir. Sonuclar kaydedilmez.
-              </p>
-            </div>
+          <ProgramWizardHeader
+            badgeClassName="bg-gradient-to-r from-violet-500 via-fuchsia-500 to-orange-400"
+            badgeLabel="YKS Tercih Sihirbazi"
+            dataYear={dataYear}
+            description="TYT / SAY / EA / SOZ puan tahmini yapilir. Sonra gercek veritabanindaki universiteler filtrelenerek hedef seviyene uygun secenekler listelenir. Sonuclar kaydedilmez."
+            isLight={isLight}
+            title="YKS Puan Hesaplama ve Universite Tercih Sihirbazi"
+          />
 
-            <div className={`rounded-2xl border px-4 py-3 text-sm ${isLight ? 'bg-slate-50 border-slate-200 text-slate-700' : 'bg-white/5 border-white/10 text-slate-200'}`}>
-              Veri Yili: <span className="font-bold">{dataYear}</span>
-            </div>
-          </div>
-
-          <div className="mb-6 grid gap-2 sm:grid-cols-3">
-            {steps.map((item) => (
-              <button
-                key={item.id}
-                type="button"
-                onClick={() => setStep(item.id)}
-                className={`rounded-2xl border px-4 py-3 text-left transition-all ${
-                  step === item.id
-                    ? 'bg-gradient-to-r from-violet-500 via-fuchsia-500 to-orange-400 text-white border-transparent shadow-lg'
-                    : isLight
-                      ? 'bg-white border-slate-200 text-slate-700 hover:border-fuchsia-300'
-                      : 'bg-white/5 border-white/10 text-slate-300 hover:border-fuchsia-400/50'
-                }`}
-              >
-                <div className="text-xs font-bold uppercase tracking-[0.2em]">Adim {item.id}</div>
-                <div className="mt-1 text-sm font-semibold">{item.title}</div>
-              </button>
-            ))}
-          </div>
+          <ProgramStepTabs
+            activeStep={step}
+            activeStepClassName="bg-gradient-to-r from-violet-500 via-fuchsia-500 to-orange-400 text-white border-transparent shadow-lg"
+            inactiveStepClassName={
+              isLight
+                ? 'bg-white border-slate-200 text-slate-700 hover:border-fuchsia-300'
+                : 'bg-white/5 border-white/10 text-slate-300 hover:border-fuchsia-400/50'
+            }
+            onStepChange={setStep}
+            steps={steps}
+          />
 
           {step === 1 && (
             <div className="space-y-5">
@@ -454,7 +312,9 @@ export default function YksWizardPage() {
                     min={50}
                     max={100}
                     value={obp}
-                    onChange={(event) => setObp(clamp(Number(event.target.value) || 50, 50, 100))}
+                    onChange={(event) =>
+                      setObp(clampProgramValue(Number(event.target.value) || 50, 50, 100))
+                    }
                     className={`w-full rounded-xl border px-3 py-2 text-sm font-semibold ${
                       isLight ? 'bg-slate-50 border-slate-200 text-slate-900' : 'bg-slate-900/70 border-white/10 text-white'
                     }`}
@@ -616,7 +476,9 @@ export default function YksWizardPage() {
 
                 <select
                   value={preferredLevel}
-                  onChange={(event) => setPreferredLevel(event.target.value as 'all' | TargetLevel)}
+                  onChange={(event) =>
+                    setPreferredLevel(event.target.value as 'all' | ProgramTargetLevel)
+                  }
                   className={`rounded-xl border px-3 py-2 text-sm ${
                     isLight ? 'bg-slate-50 border-slate-200 text-slate-900' : 'bg-slate-900/70 border-white/10 text-white'
                   }`}
@@ -686,28 +548,34 @@ export default function YksWizardPage() {
               )}
 
               {!loading && !error && evaluatedPrograms.length > 0 &&
-                (preferredLevel === 'all' ? (['iddiali', 'dengeli', 'guvenli'] as TargetLevel[]) : [preferredLevel]).map((targetLevel) => {
-                  const items = grouped[targetLevel as TargetLevel];
+                (preferredLevel === 'all'
+                  ? (['iddiali', 'dengeli', 'guvenli'] as ProgramTargetLevel[])
+                  : [preferredLevel]
+                ).map((targetLevel) => {
+                  const items = grouped[targetLevel];
                   if (!items?.length) return null;
+
+                  const levelTone = getProgramLevelTone(targetLevel, isLight);
 
                   return (
                     <section key={targetLevel} className="space-y-3">
                       <div className="flex items-center justify-between">
-                        <h2 className={`text-lg font-bold ${isLight ? 'text-slate-900' : 'text-white'}`}>{levelMeta[targetLevel as TargetLevel].label}</h2>
-                        <span className={`rounded-full px-3 py-1 text-xs font-bold ${isLight ? levelMeta[targetLevel as TargetLevel].badge : darkLevelMeta[targetLevel as TargetLevel].badge}`}>
+                        <h2 className={`text-lg font-bold ${isLight ? 'text-slate-900' : 'text-white'}`}>
+                          {levelSectionLabels[targetLevel]}
+                        </h2>
+                        <span className={`rounded-full px-3 py-1 text-xs font-bold ${levelTone.badge}`}>
                           {items.length} program
                         </span>
                       </div>
 
                       <div className="grid gap-3 md:grid-cols-2">
                         {items.map((program) => {
-                          const lightClass = levelMeta[program.targetLevel].card;
-                          const darkClass = darkLevelMeta[program.targetLevel].card;
+                          const tone = getProgramLevelTone(program.targetLevel, isLight);
 
                           return (
                             <article
                               key={program.id}
-                              className={`rounded-2xl border p-4 ${isLight ? lightClass : darkClass}`}
+                              className={`rounded-2xl border p-4 ${tone.card}`}
                             >
                               <div className="flex items-start justify-between gap-3">
                                 <div>
@@ -721,8 +589,8 @@ export default function YksWizardPage() {
                                   </p>
                                 </div>
 
-                                <span className={`rounded-full px-2 py-1 text-[11px] font-bold ${isLight ? levelMeta[program.targetLevel].badge : darkLevelMeta[program.targetLevel].badge}`}>
-                                  {program.targetLevel === 'iddiali' ? 'Iddiali' : program.targetLevel === 'dengeli' ? 'Dengeli' : 'Guvenli'}
+                                <span className={`rounded-full px-2 py-1 text-[11px] font-bold ${tone.badge}`}>
+                                  {getProgramLevelBadgeLabel(program.targetLevel)}
                                 </span>
                               </div>
 

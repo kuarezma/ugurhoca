@@ -102,6 +102,6 @@ export const HOME_CATEGORIES: HomeCategory[] = [
   },
 ];
 
-export const HOME_CONTENT_PREFETCH_HREFS = HOME_CATEGORIES.filter((category) =>
-  category.href.startsWith('/icerikler'),
-).map((category) => category.href);
+export const HOME_ROUTE_PREFETCH_HREFS = HOME_CATEGORIES.map(
+  (category) => category.href,
+);

@@ -1,19 +1,28 @@
 'use client';
 
-import Link from 'next/link';
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { motion } from 'framer-motion';
 import {
-  ArrowLeft,
   ChevronRight,
   Filter,
   Info,
   MapPin,
-  Sparkles,
   Target,
 } from 'lucide-react';
 import { useTheme } from '@/components/ThemeProvider';
-import { supabase } from '@/lib/supabase';
+import { ProgramBackLink } from '@/features/programs/components/ProgramBackLink';
+import { ProgramStepTabs } from '@/features/programs/components/ProgramStepTabs';
+import { ProgramWizardHeader } from '@/features/programs/components/ProgramWizardHeader';
+import { useLgsSchoolTargets } from '@/features/programs/hooks/useLgsSchoolTargets';
+import type {
+  ProgramStep,
+  ProgramTargetLevel,
+} from '@/features/programs/types';
+import {
+  clampProgramValue,
+  getProgramLevelBadgeLabel,
+  getProgramLevelTone,
+} from '@/features/programs/utils';
 import {
   calculateLgsScore,
   classifyLgsTarget,
@@ -22,73 +31,19 @@ import {
   type LgsSubjectKey,
 } from '@/lib/examCalculators';
 
-type TargetLevel = 'iddiali' | 'dengeli' | 'guvenli';
-
-type LgsSchoolTarget = {
-  id: string;
-  year: number;
-  school_name: string;
-  province: string;
-  district: string;
-  school_type: string;
-  placement_mode: string;
-  instruction_language: string;
-  boarding: boolean;
-  prep_class: boolean;
-  base_score: number;
-  national_percentile: number | null;
-  quota_total: number | null;
-  source_url: string | null;
-  source_year: number | null;
+const levelSectionLabels: Record<ProgramTargetLevel, string> = {
+  iddiali: 'Iddiali Hedef',
+  dengeli: 'Dengeli Hedef',
+  guvenli: 'Guvenli Hedef',
 };
-
-const levelMeta: Record<TargetLevel, { label: string; card: string; badge: string }> = {
-  iddiali: {
-    label: 'Iddiali Hedef',
-    card: 'border-rose-300/70 bg-rose-50/60',
-    badge: 'bg-rose-500/20 text-rose-700',
-  },
-  dengeli: {
-    label: 'Dengeli Hedef',
-    card: 'border-amber-300/70 bg-amber-50/60',
-    badge: 'bg-amber-500/20 text-amber-700',
-  },
-  guvenli: {
-    label: 'Guvenli Hedef',
-    card: 'border-emerald-300/70 bg-emerald-50/60',
-    badge: 'bg-emerald-500/20 text-emerald-700',
-  },
-};
-
-const darkLevelMeta: Record<TargetLevel, { card: string; badge: string }> = {
-  iddiali: {
-    card: 'border-rose-500/30 bg-rose-500/10',
-    badge: 'bg-rose-500/20 text-rose-200',
-  },
-  dengeli: {
-    card: 'border-amber-500/30 bg-amber-500/10',
-    badge: 'bg-amber-500/20 text-amber-200',
-  },
-  guvenli: {
-    card: 'border-emerald-500/30 bg-emerald-500/10',
-    badge: 'bg-emerald-500/20 text-emerald-200',
-  },
-};
-
-function clamp(value: number, min: number, max: number) {
-  return Math.min(max, Math.max(min, value));
-}
 
 export default function LgsWizardPage() {
   const { theme } = useTheme();
   const isLight = theme === 'light';
+  const { dataYear, error, loading, schools } = useLgsSchoolTargets();
 
   const [step, setStep] = useState<1 | 2 | 3>(1);
   const [inputs, setInputs] = useState(createInitialLgsInputs());
-  const [schools, setSchools] = useState<LgsSchoolTarget[]>([]);
-  const [dataYear, setDataYear] = useState<number>(2026);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
 
   const [query, setQuery] = useState('');
   const [province, setProvince] = useState('all');
@@ -96,73 +51,7 @@ export default function LgsWizardPage() {
   const [schoolType, setSchoolType] = useState('all');
   const [language, setLanguage] = useState('all');
   const [boarding, setBoarding] = useState<'all' | 'yes' | 'no'>('all');
-  const [preferredLevel, setPreferredLevel] = useState<'all' | TargetLevel>('all');
-
-  useEffect(() => {
-    let active = true;
-
-    const loadSchools = async () => {
-      setLoading(true);
-      setError('');
-
-      const preferredYear = 2026;
-      let selectedYear = preferredYear;
-
-      const preferred = await supabase
-        .from('lgs_school_targets')
-        .select('*')
-        .eq('year', preferredYear)
-        .order('base_score', { ascending: false });
-
-      if (preferred.error) {
-        if (active) {
-          setError('LGS okul verileri okunamadi. Lütfen veritabani tablosunu kontrol et.');
-          setSchools([]);
-          setLoading(false);
-        }
-        return;
-      }
-
-      let rows = (preferred.data || []) as LgsSchoolTarget[];
-
-      if (!rows.length) {
-        const latestYearQuery = await supabase
-          .from('lgs_school_targets')
-          .select('year')
-          .order('year', { ascending: false })
-          .limit(1);
-
-        const latestYear = latestYearQuery.data?.[0]?.year;
-
-        if (latestYear) {
-          selectedYear = latestYear;
-          const latestRowsQuery = await supabase
-            .from('lgs_school_targets')
-            .select('*')
-            .eq('year', latestYear)
-            .order('base_score', { ascending: false });
-
-          rows = (latestRowsQuery.data || []) as LgsSchoolTarget[];
-        }
-      }
-
-      if (!active) return;
-
-      setSchools(rows);
-      setDataYear(selectedYear);
-      setLoading(false);
-
-      if (!rows.length) {
-        setError('LGS hedef okul verisi bulunamadi. Supabase tablosuna resmi veriler yuklenmeli.');
-      }
-    };
-
-    loadSchools();
-
-    return () => {
-      active = false;
-    };
-  }, []);
+  const [preferredLevel, setPreferredLevel] = useState<'all' | ProgramTargetLevel>('all');
 
   const lgsResult = useMemo(() => calculateLgsScore(inputs), [inputs]);
 
@@ -220,7 +109,7 @@ export default function LgsWizardPage() {
     const targetFiltered =
       preferredLevel === 'all' ? withLevels : withLevels.filter((school) => school.level === preferredLevel);
 
-    const levelOrder: Record<TargetLevel, number> = { iddiali: 0, dengeli: 1, guvenli: 2 };
+    const levelOrder: Record<ProgramTargetLevel, number> = { iddiali: 0, dengeli: 1, guvenli: 2 };
 
     return targetFiltered.sort((a, b) => {
       const levelDiff = levelOrder[a.level] - levelOrder[b.level];
@@ -250,10 +139,10 @@ export default function LgsWizardPage() {
       const next = { ...current };
 
       if (field === 'correct') {
-        next.correct = clamp(value, 0, meta.questions);
-        next.wrong = clamp(next.wrong, 0, meta.questions - next.correct);
+        next.correct = clampProgramValue(value, 0, meta.questions);
+        next.wrong = clampProgramValue(next.wrong, 0, meta.questions - next.correct);
       } else {
-        next.wrong = clamp(value, 0, meta.questions - next.correct);
+        next.wrong = clampProgramValue(value, 0, meta.questions - next.correct);
       }
 
       return {
@@ -263,7 +152,7 @@ export default function LgsWizardPage() {
     });
   };
 
-  const steps = [
+  const steps: ProgramStep[] = [
     { id: 1 as const, title: 'Puan Hesapla' },
     { id: 2 as const, title: 'Hedef Filtreleri' },
     { id: 3 as const, title: 'Lise Onerileri' },
@@ -272,60 +161,33 @@ export default function LgsWizardPage() {
   return (
     <main className="programlar-page min-h-screen gradient-bg px-4 pb-12 pt-16 sm:px-6 sm:pt-20">
       <div className="mx-auto max-w-6xl">
-        <Link
-          href="/programlar"
-          className={`mb-5 inline-flex items-center gap-2 text-sm font-semibold transition-colors ${
-            isLight ? 'text-slate-700 hover:text-slate-950' : 'text-slate-300 hover:text-white'
-          }`}
-        >
-          <ArrowLeft className="h-4 w-4" />
-          Programlar Merkezine Don
-        </Link>
+        <ProgramBackLink isLight={isLight} />
 
         <motion.section
           initial={{ opacity: 0, y: 18 }}
           animate={{ opacity: 1, y: 0 }}
           className={`rounded-3xl border p-5 sm:p-7 ${isLight ? 'light-section' : 'glass border-white/10'}`}
         >
-          <div className="mb-6 flex flex-wrap items-start justify-between gap-4">
-            <div>
-              <div className="mb-2 inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-cyan-500 via-blue-500 to-indigo-500 px-3 py-1 text-[11px] font-bold uppercase tracking-[0.18em] text-white">
-                <Sparkles className="h-3.5 w-3.5" />
-                LGS 2026 Sihirbazi
-              </div>
-              <h1 className={`text-2xl font-black sm:text-4xl ${isLight ? 'light-text-strong' : 'text-white'}`}>
-                LGS Puan Hesaplama ve Lise Hedef Belirleme
-              </h1>
-              <p className={`mt-3 max-w-3xl text-sm sm:text-base ${isLight ? 'light-text-muted' : 'text-slate-300'}`}>
-                13 Haziran 2026 baz alinarak tahmini LGS puani hesaplanir. Ardindan gercek veritabanindaki hedef lise
-                verilerine gore iddiali, dengeli ve guvenli secenekler listelenir.
-              </p>
-            </div>
+          <ProgramWizardHeader
+            badgeClassName="bg-gradient-to-r from-cyan-500 via-blue-500 to-indigo-500"
+            badgeLabel="LGS 2026 Sihirbazi"
+            dataYear={dataYear}
+            description="13 Haziran 2026 baz alinarak tahmini LGS puani hesaplanir. Ardindan gercek veritabanindaki hedef lise verilerine gore iddiali, dengeli ve guvenli secenekler listelenir."
+            isLight={isLight}
+            title="LGS Puan Hesaplama ve Lise Hedef Belirleme"
+          />
 
-            <div className={`rounded-2xl border px-4 py-3 text-sm ${isLight ? 'bg-slate-50 border-slate-200 text-slate-700' : 'bg-white/5 border-white/10 text-slate-200'}`}>
-              Veri Yili: <span className="font-bold">{dataYear}</span>
-            </div>
-          </div>
-
-          <div className="mb-6 grid gap-2 sm:grid-cols-3">
-            {steps.map((item) => (
-              <button
-                key={item.id}
-                type="button"
-                onClick={() => setStep(item.id)}
-                className={`rounded-2xl border px-4 py-3 text-left transition-all ${
-                  step === item.id
-                    ? 'bg-gradient-to-r from-indigo-500 to-fuchsia-500 text-white border-transparent shadow-lg'
-                    : isLight
-                      ? 'bg-white border-slate-200 text-slate-700 hover:border-indigo-300'
-                      : 'bg-white/5 border-white/10 text-slate-300 hover:border-indigo-400/50'
-                }`}
-              >
-                <div className="text-xs font-bold uppercase tracking-[0.2em]">Adim {item.id}</div>
-                <div className="mt-1 text-sm font-semibold">{item.title}</div>
-              </button>
-            ))}
-          </div>
+          <ProgramStepTabs
+            activeStep={step}
+            activeStepClassName="bg-gradient-to-r from-indigo-500 to-fuchsia-500 text-white border-transparent shadow-lg"
+            inactiveStepClassName={
+              isLight
+                ? 'bg-white border-slate-200 text-slate-700 hover:border-indigo-300'
+                : 'bg-white/5 border-white/10 text-slate-300 hover:border-indigo-400/50'
+            }
+            onStepChange={setStep}
+            steps={steps}
+          />
 
           {step === 1 && (
             <div className="space-y-5">
@@ -513,7 +375,9 @@ export default function LgsWizardPage() {
 
                   <select
                     value={preferredLevel}
-                    onChange={(event) => setPreferredLevel(event.target.value as 'all' | TargetLevel)}
+                    onChange={(event) =>
+                      setPreferredLevel(event.target.value as 'all' | ProgramTargetLevel)
+                    }
                     className={`rounded-xl border px-3 py-2 text-sm ${
                       isLight ? 'bg-slate-50 border-slate-200 text-slate-900' : 'bg-slate-900/70 border-white/10 text-white'
                     }`}
@@ -582,28 +446,34 @@ export default function LgsWizardPage() {
               )}
 
               {!loading && !error && evaluatedSchools.length > 0 &&
-                (preferredLevel === 'all' ? (['iddiali', 'dengeli', 'guvenli'] as TargetLevel[]) : [preferredLevel]).map((level) => {
-                  const items = grouped[level as TargetLevel];
+                (preferredLevel === 'all'
+                  ? (['iddiali', 'dengeli', 'guvenli'] as ProgramTargetLevel[])
+                  : [preferredLevel]
+                ).map((level) => {
+                  const items = grouped[level];
                   if (!items?.length) return null;
+
+                  const levelTone = getProgramLevelTone(level, isLight);
 
                   return (
                     <section key={level} className="space-y-3">
                       <div className="flex items-center justify-between">
-                        <h2 className={`text-lg font-bold ${isLight ? 'text-slate-900' : 'text-white'}`}>{levelMeta[level as TargetLevel].label}</h2>
-                        <span className={`rounded-full px-3 py-1 text-xs font-bold ${isLight ? levelMeta[level as TargetLevel].badge : darkLevelMeta[level as TargetLevel].badge}`}>
+                        <h2 className={`text-lg font-bold ${isLight ? 'text-slate-900' : 'text-white'}`}>
+                          {levelSectionLabels[level]}
+                        </h2>
+                        <span className={`rounded-full px-3 py-1 text-xs font-bold ${levelTone.badge}`}>
                           {items.length} okul
                         </span>
                       </div>
 
                       <div className="grid gap-3 md:grid-cols-2">
                         {items.map((school) => {
-                          const lightClass = levelMeta[school.level].card;
-                          const darkClass = darkLevelMeta[school.level].card;
+                          const tone = getProgramLevelTone(school.level, isLight);
 
                           return (
                             <article
                               key={school.id}
-                              className={`rounded-2xl border p-4 ${isLight ? lightClass : darkClass}`}
+                              className={`rounded-2xl border p-4 ${tone.card}`}
                             >
                               <div className="flex items-start justify-between gap-3">
                                 <div>
@@ -613,8 +483,8 @@ export default function LgsWizardPage() {
                                     {school.province} / {school.district}
                                   </p>
                                 </div>
-                                <span className={`rounded-full px-2 py-1 text-[11px] font-bold ${isLight ? levelMeta[school.level].badge : darkLevelMeta[school.level].badge}`}>
-                                  {school.level === 'iddiali' ? 'Iddiali' : school.level === 'dengeli' ? 'Dengeli' : 'Guvenli'}
+                                <span className={`rounded-full px-2 py-1 text-[11px] font-bold ${tone.badge}`}>
+                                  {getProgramLevelBadgeLabel(school.level)}
                                 </span>
                               </div>
 

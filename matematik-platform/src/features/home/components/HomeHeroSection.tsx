@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useCallback, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
@@ -8,7 +8,7 @@ import { ExamCountdown } from '@/components/ExamCountdown';
 import { featuredExams } from '@/lib/examDates';
 import {
   HOME_CATEGORIES,
-  HOME_CONTENT_PREFETCH_HREFS,
+  HOME_ROUTE_PREFETCH_HREFS,
 } from '@/features/home/constants';
 
 type HomeHeroSectionProps = {
@@ -17,11 +17,17 @@ type HomeHeroSectionProps = {
 
 export function HomeHeroSection({ isLight }: HomeHeroSectionProps) {
   const router = useRouter();
+  const prefetchHref = useCallback(
+    (href: string) => {
+      router.prefetch(href);
+    },
+    [router],
+  );
 
   useEffect(() => {
     const prefetchTargets = () => {
-      HOME_CONTENT_PREFETCH_HREFS.forEach((href) => {
-        router.prefetch(href);
+      HOME_ROUTE_PREFETCH_HREFS.forEach((href) => {
+        prefetchHref(href);
       });
     };
 
@@ -45,7 +51,7 @@ export function HomeHeroSection({ isLight }: HomeHeroSectionProps) {
     return () => {
       globalThis.clearTimeout(timeoutId);
     };
-  }, [router]);
+  }, [prefetchHref]);
 
   return (
     <section className="px-4 pt-4 pb-8 sm:py-12">
@@ -77,6 +83,8 @@ export function HomeHeroSection({ isLight }: HomeHeroSectionProps) {
             >
               <Link
                 href={category.href}
+                onMouseEnter={() => prefetchHref(category.href)}
+                onTouchStart={() => prefetchHref(category.href)}
                 className={`block border rounded-2xl p-5 sm:p-7 lg:p-6 text-center transition-all ${
                   isLight
                     ? 'light-card hover:-translate-y-0.5'
