@@ -26,4 +26,11 @@ export const createBrowserSupabaseClient = () => {
   return browserClient;
 };
 
-export const supabase = createBrowserSupabaseClient();
+export const supabase = new Proxy({} as SupabaseClient, {
+  get(_target, property) {
+    const client = createBrowserSupabaseClient();
+    const value = client[property as keyof SupabaseClient];
+
+    return typeof value === 'function' ? value.bind(client) : value;
+  },
+});
