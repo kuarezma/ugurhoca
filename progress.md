@@ -13,6 +13,8 @@ Bu dosya, depo ve Vercel/Supabase ile ilgili yapılan ana işleri özetler (Nisa
 - **Veri yükleme optimizasyonu:** `/icerikler`, `/testler`, `/odevler`, `/profil`, `/ilerleme` sayfalarına auth-aware SSR preload, request dedup ve hafif cache/hydration akışları eklendi. Bu sayede ilk yükleme daha hızlı ve daha az tekrar fetch ile çalışıyor.
 - **Görsel medya hattı:** Google Drive ve doğrudan görsel URL'leri için merkezi bir çözüm eklendi. Drive bağlantıları thumbnail URL'ye normalize edildi; `image-proxy` sadece gerçek fallback gereken durumlarda devreye giriyor.
 - **Safari / cache düzeltmeleri:** Safari tarafında görülen eski shell yüklenmesi tespit edildi. `color-mix()` için fallback eklendi, development ortamında stale service worker cache'leri unregister + cache delete akışı ile temizlendi, `/_next/` asset'leri service worker cache-first hattından çıkarıldı.
+- **CI build sertleştirmesi:** GitHub Actions tarafında `NEXT_PUBLIC_SUPABASE_*` değişkenleri yokken build'in düşmesine neden olan eager browser client init kaldırıldı. `src/lib/supabase/client.ts` lazy proxy modeline çevrildi; böylece CI temiz ortamda da build geçiyor.
+- **İçerik listeleme düzeltmesi:** `/icerikler` sayfasında ilk yükleme `5` kayıt olacak şekilde pagination standardize edildi. Infinite scroll reset bug'ı giderildi, append sırasında duplicate engellendi ve `hasMore` hesabı toplam kayıt sayısına göre düzeltildi.
 - **Teslim kriteri güncellemesi:** Bundan sonraki UI düzenlemelerinde sadece Chrome değil, Safari, mobil, tablet ve masaüstü davranışı da açık kabul kriteri olarak takip edilecek.
 
 ## 1. Depo yapısı: tek kaynak

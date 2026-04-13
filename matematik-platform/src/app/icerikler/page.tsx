@@ -1,4 +1,5 @@
 import ContentsPage from '@/features/content/containers/ContentsPage';
+import { CONTENT_PAGE_SIZE } from '@/features/content/constants';
 import {
   getInitialContentGradeFilter,
   loadInitialContentDocuments,
@@ -19,7 +20,7 @@ export default async function IceriklerPage({
 
   const initialData = await loadInitialContentDocuments(
     1,
-    10,
+    CONTENT_PAGE_SIZE,
     initialGrade,
     initialType,
   );

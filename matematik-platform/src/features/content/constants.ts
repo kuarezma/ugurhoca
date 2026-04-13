@@ -7,6 +7,8 @@ import {
 } from 'lucide-react';
 import type { ContentDocument } from '@/types';
 
+export const CONTENT_PAGE_SIZE = 5;
+
 export const CONTENT_TYPE_OPTIONS = [
   { value: 'ders-notlari', label: 'Ders Notları' },
   { value: 'kitaplar', label: 'Kitaplar' },

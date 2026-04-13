@@ -19,7 +19,10 @@ import ContentCommentsModal from '@/features/content/components/ContentCommentsM
 import ContentEditModal from '@/features/content/components/ContentEditModal';
 import ContentPreviewModal from '@/features/content/components/ContentPreviewModal';
 import ContentQuickAddModal from '@/features/content/components/ContentQuickAddModal';
-import { CONTENT_TYPE_OPTIONS } from '@/features/content/constants';
+import {
+  CONTENT_PAGE_SIZE,
+  CONTENT_TYPE_OPTIONS,
+} from '@/features/content/constants';
 import {
   createContentDocument,
   createDocumentComment,
@@ -45,7 +48,6 @@ import {
 } from '@/features/content/utils';
 import type { ContentDocument } from '@/types';
 
-const PAGE_SIZE = 10;
 const GRADE_OPTIONS = [5, 6, 7, 8, 9, 10, 11, 12] as const;
 
 type ContentsPageProps = {
@@ -89,7 +91,9 @@ function ContentsPageInner({
   const [editSuccess, setEditSuccess] = useState(false);
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(false);
-  const [hasMore, setHasMore] = useState(initialDocuments.length === PAGE_SIZE);
+  const [hasMore, setHasMore] = useState(
+    initialDocuments.length < initialTotalCount,
+  );
   const [totalCount, setTotalCount] = useState(initialTotalCount);
   const [authResolved, setAuthResolved] = useState(false);
   const loadMoreRef = useRef<HTMLDivElement>(null);
@@ -129,7 +133,7 @@ function ContentsPageInner({
       try {
         const { count, documents: nextDocuments } = await loadContentDocuments(
           pageNum,
-          PAGE_SIZE,
+          CONTENT_PAGE_SIZE,
           gradeFilter,
           typeFilter,
         );
@@ -140,13 +144,22 @@ function ContentsPageInner({
 
         if (nextDocuments.length > 0) {
           if (append) {
-            setDocuments((current) => [...current, ...nextDocuments]);
+            setDocuments((current) => {
+              const existingIds = new Set(current.map((document) => document.id));
+              const dedupedIncoming = nextDocuments.filter(
+                (document) => !existingIds.has(document.id),
+              );
+              return [...current, ...dedupedIncoming];
+            });
           } else {
             setDocuments(nextDocuments);
           }
-          setHasMore(nextDocuments.length === PAGE_SIZE);
+
+          setHasMore(pageNum * CONTENT_PAGE_SIZE < count);
         } else if (!append) {
           setDocuments([]);
+          setHasMore(false);
+        } else {
           setHasMore(false);
         }
 
@@ -161,7 +174,7 @@ function ContentsPageInner({
   );
 
   useEffect(() => {
-    seedContentDocumentCache(1, PAGE_SIZE, initialGrade, initialType, {
+    seedContentDocumentCache(1, CONTENT_PAGE_SIZE, initialGrade, initialType, {
       count: initialTotalCount,
       documents: initialDocuments,
     });
@@ -178,15 +191,12 @@ function ContentsPageInner({
       return;
     }
 
-    if (
-      page === 1 &&
-      selectedGrade === initialGrade &&
-      selectedType === initialType
-    ) {
+    if (selectedGrade === initialGrade && selectedType === initialType) {
+      setPage(1);
       loadRequestIdRef.current += 1;
       setDocuments(initialDocuments);
       setTotalCount(initialTotalCount);
-      setHasMore(initialDocuments.length === PAGE_SIZE);
+      setHasMore(initialDocuments.length < initialTotalCount);
       setLoading(false);
       return;
     }
@@ -200,7 +210,6 @@ function ContentsPageInner({
     initialTotalCount,
     initialType,
     loadDocuments,
-    page,
     selectedGrade,
     selectedType,
   ]);
@@ -210,13 +219,18 @@ function ContentsPageInner({
       return;
     }
 
-    const observer = new IntersectionObserver((entries) => {
-      if (entries[0]?.isIntersecting && hasMore && !loading) {
-        const nextPage = page + 1;
-        setPage(nextPage);
-        void loadDocuments(nextPage, true, selectedGrade, selectedType);
-      }
-    });
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0]?.isIntersecting && hasMore && !loading) {
+          const nextPage = page + 1;
+          setPage(nextPage);
+          void loadDocuments(nextPage, true, selectedGrade, selectedType);
+        }
+      },
+      {
+        rootMargin: '400px 0px',
+      },
+    );
 
     const target = loadMoreRef.current;
     if (target) {

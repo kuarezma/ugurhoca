@@ -217,6 +217,8 @@ Bu dosya, projenin tamamlanmış ve devam eden görevlerini özetler.
 - [x] `/icerikler`, `/testler`, `/odevler`, `/profil`, `/ilerleme` için auth-aware SSR preload ve request dedup/caching akışları eklendi
 - [x] Görsel yükleme hattı sadeleştirildi; Google Drive linkleri thumbnail URL'ye normalize edildi, `image-proxy` yalnızca gerçek fallback durumlarında kullanılır hale getirildi
 - [x] Safari/dev cache problemi düzeltildi; `color-mix()` fallback'leri eklendi, development ortamında stale service worker cache temizliği tanımlandı
+- [x] GitHub Actions build hotfix uygulandı; public Supabase env değişkenleri CI ortamında yokken build kırılmaması için browser client lazy init hale getirildi
+- [x] `/icerikler` listeleme akışı düzeltildi; ilk yükleme `5` içerik, aşağı indikçe sonraki `5` kayıt gelecek şekilde infinite scroll ve `hasMore` mantığı onarıldı
 - [x] `npm run lint`, `npm run test`, `npm run build` doğrulamaları ile sprint tamamlandı
 
 ## Bekleyen Görevler
@@ -237,4 +239,4 @@ Bu dosya, projenin tamamlanmış ve devam eden görevlerini özetler.
 
 ---
 
-*Son güncelleme: 13 Nisan 2026 — Profesyonelleştirme/stabilizasyon sprinti, SSR preload, Safari cache düzeltmeleri ve kalite kapıları kayda geçirildi*
+*Son güncelleme: 13 Nisan 2026 — CI build hotfix'i ve `/icerikler` infinite scroll düzeltmesi dahil olmak üzere sprint çıktıları güncellendi*
