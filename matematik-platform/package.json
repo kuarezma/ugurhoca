@@ -11,6 +11,8 @@
     "format:check": "prettier --check .",
     "test": "vitest run --coverage",
     "start": "next start",
+    "fetch:lgs": "python3 scripts/fetch-lgs-targets.py",
+    "fetch:yks": "python3 scripts/fetch-yks-targets.py",
     "import:lgs": "node scripts/import-lgs-targets.mjs",
     "import:yks": "node scripts/import-yks-targets.mjs",
     "import:lgs:dry": "node scripts/import-lgs-targets.mjs --dry-run",

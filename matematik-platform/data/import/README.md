@@ -2,8 +2,21 @@
 
 This folder contains JSON snapshots used by the import scripts:
 
+- `lgs_school_targets_2025.json`
+- `lgs_school_targets_2024.json`
 - `lgs_school_targets_2026.json`
 - `yks_program_targets_2025.json`
+
+## Refresh source snapshots
+
+```bash
+npm run fetch:lgs
+npm run fetch:yks
+```
+
+`fetch:lgs` scrapes the province pages under `https://tabanpuanlari.tr/lise` and produces a 2025 LGS snapshot.
+
+`fetch:yks` pulls the 2025 YOK Atlas preference wizard tables for `TYT`, `SAY`, `EA` and `SOZ` directly from `yokatlas.yok.gov.tr`.
 
 ## Run in dry mode
 
@@ -31,7 +44,7 @@ npm run import:yks
 Examples:
 
 ```bash
-npm run import:lgs -- --file=data/import/lgs_school_targets_2026.json --truncate
+npm run import:lgs -- --file=data/import/lgs_school_targets_2025.json --truncate
 npm run import:yks -- --year=2025 --dry-run
 ```
 

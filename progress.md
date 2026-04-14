@@ -19,6 +19,18 @@ Bu dosya, depo ve Vercel/Supabase ile ilgili yapılan ana işleri özetler (Nisa
 
 ## 1. Depo yapısı: tek kaynak
 
+## 0.1. Program Verisi Yenileme (14 Nisan 2026)
+
+- **Hedef:** `programlar` ekranında öğrencilerin daha geniş ve güncel okul/program havuzu görmesini sağlamak.
+- **LGS kaynağı yenilendi:** [tabanpuanlari.tr/lise](https://tabanpuanlari.tr/lise) ve il sayfaları temel alınarak yeni scraper yazıldı. Kaynak sayfalar 2026 başlığı taşısa da il detay tabloları açıkça `LGS 2025 sonuçlarına göre` veri verdiği için, 14 Nisan 2026 itibarıyla kullanılabilecek en güncel tam yerleştirme verisi 2025 olarak alındı.
+- **LGS snapshot:** `scripts/fetch-lgs-targets.py` ile `data/import/lgs_school_targets_2025.json` üretildi. Çıktı: `81 il`, `2407 okul`.
+- **YKS snapshot:** `scripts/fetch-yks-targets.py` ile YÖK Atlas lisans ve önlisans tercih sihirbazlarından `data/import/yks_program_targets_2025.json` üretildi. Çıktı: `20925 program`; dağılım `SAY 5653`, `EA 3987`, `SOZ 1948`, `TYT 9337`.
+- **DB güncellemesi:** Supabase'e 2025 LGS ve 2025 YKS verileri yeniden yüklendi. Eski eksik `2026` LGS placeholder verisi kod tarafından artık tercih edilmiyor.
+- **Sorgu mantığı:** `src/features/programs/queries.ts` içinde LGS tarafına "tam yıl" fallback mantığı eklendi. Eğer tercih edilen yıl eksik veri içeriyorsa, en güncel dolu yıl otomatik seçiliyor.
+- **DX / bakım:** `package.json` içine `fetch:lgs` ve `fetch:yks` script'leri eklendi; `data/import/README.md` yeni veri akışına göre güncellendi.
+- **Kullanıcı görünürlüğü:** `programlar` ekranına veri kapsamı özeti eklendi; toplam il/şehir ve kayıt sayısı ekranda net görülebilir hale getirildi.
+- **Doğrulama:** `npm run typecheck`, `npm run lint`, `npm run build` başarılı.
+
 - **Durum:** Aynı Next.js uygulaması hem depo kökünde hem `matematik-platform/` altında çiftlenmişti.
 - **Karar:** Tek kaynak **`matematik-platform/`**; kökteki yinelenen `src/`, `package.json` vb. kaldırıldı.
 - **Geri dönüş:** Git etiketi `backup/pre-consolidation-2026-04-06` (konsolidasyon öncesi commit).

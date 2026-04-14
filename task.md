@@ -218,6 +218,16 @@ Bu dosya, projenin tamamlanmış ve devam eden görevlerini özetler.
 - [x] Görsel yükleme hattı sadeleştirildi; Google Drive linkleri thumbnail URL'ye normalize edildi, `image-proxy` yalnızca gerçek fallback durumlarında kullanılır hale getirildi
 - [x] Safari/dev cache problemi düzeltildi; `color-mix()` fallback'leri eklendi, development ortamında stale service worker cache temizliği tanımlandı
 - [x] GitHub Actions build hotfix uygulandı; public Supabase env değişkenleri CI ortamında yokken build kırılmaması için browser client lazy init hale getirildi
+
+### 20. Program Verisi Yenileme ve Kapsam Artışı (14 Nisan 2026)
+- [x] LGS veri kaynağı `tabanpuanlari.tr/lise` olarak yenilendi
+- [x] `scripts/fetch-lgs-targets.py` eklendi; 81 il ve 2407 okul içeren 2025 snapshot üretildi
+- [x] `scripts/fetch-yks-targets.py` eklendi; YÖK Atlas lisans ve önlisans kaynaklarından 2025 snapshot üretildi
+- [x] `data/import/lgs_school_targets_2025.json` ve `data/import/yks_program_targets_2025.json` güncellendi
+- [x] LGS import varsayılanı 2025 tam veriye alındı
+- [x] `/programlar/lgs` sorgusu, eksik 2026 placeholder veri yerine tam yılı otomatik seçer hale getirildi
+- [x] Supabase'e tam LGS ve YKS verisi yeniden yüklendi
+- [x] `programlar` ekranına veri kapsamı özeti eklendi; toplam il/şehir ve kayıt sayısı kullanıcıya görünür hale getirildi
 - [x] `/icerikler` listeleme akışı düzeltildi; ilk yükleme `5` içerik, aşağı indikçe sonraki `5` kayıt gelecek şekilde infinite scroll ve `hasMore` mantığı onarıldı
 - [x] `npm run lint`, `npm run test`, `npm run build` doğrulamaları ile sprint tamamlandı
 

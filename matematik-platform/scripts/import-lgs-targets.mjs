@@ -57,7 +57,7 @@ async function run() {
 
   const filePath = args.file
     ? rootPath(String(args.file))
-    : rootPath('data/import/lgs_school_targets_2026.json');
+    : rootPath('data/import/lgs_school_targets_2025.json');
 
   const rawRows = await loadJsonArray(filePath);
   const dedup = new Map();

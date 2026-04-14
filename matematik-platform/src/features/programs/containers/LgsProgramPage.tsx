@@ -60,6 +60,11 @@ export default function LgsWizardPage() {
     [schools]
   );
 
+  const totalDistrictCount = useMemo(
+    () => new Set(schools.map((school) => `${school.province}::${school.district}`)).size,
+    [schools]
+  );
+
   const districts = useMemo(() => {
     const filtered = province === 'all' ? schools : schools.filter((school) => school.province === province);
     return Array.from(new Set(filtered.map((school) => school.district))).sort((a, b) => a.localeCompare(b, 'tr'));
@@ -391,6 +396,12 @@ export default function LgsWizardPage() {
 
                 <div className={`mt-4 rounded-2xl border p-3 text-sm ${isLight ? 'bg-slate-50 border-slate-200 text-slate-700' : 'bg-white/5 border-white/10 text-slate-300'}`}>
                   Filtreye uygun okul sayisi: <span className="font-bold">{evaluatedSchools.length}</span>
+                </div>
+
+                <div className={`mt-3 rounded-2xl border p-3 text-sm ${isLight ? 'bg-indigo-50 border-indigo-100 text-slate-700' : 'bg-indigo-500/10 border-indigo-400/20 text-slate-200'}`}>
+                  Veritabani kapsami: <span className="font-bold">{provinces.length} il</span>,{' '}
+                  <span className="font-bold">{totalDistrictCount} ilce</span>,{' '}
+                  <span className="font-bold">{schools.length} okul</span>
                 </div>
 
                 <div className="mt-4 flex flex-wrap gap-2">

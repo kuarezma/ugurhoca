@@ -73,6 +73,11 @@ export default function YksWizardPage() {
     [programs]
   );
 
+  const universityCount = useMemo(
+    () => new Set(programs.map((program) => program.university_name)).size,
+    [programs]
+  );
+
   const universityTypes = useMemo(
     () => Array.from(new Set(programs.map((program) => program.university_type))).sort((a, b) => a.localeCompare(b, 'tr')),
     [programs]
@@ -492,6 +497,12 @@ export default function YksWizardPage() {
 
               <div className={`mt-4 rounded-2xl border p-3 text-sm ${isLight ? 'bg-slate-50 border-slate-200 text-slate-700' : 'bg-white/5 border-white/10 text-slate-300'}`}>
                 Filtreye uygun program sayisi: <span className="font-bold">{evaluatedPrograms.length}</span>
+              </div>
+
+              <div className={`mt-3 rounded-2xl border p-3 text-sm ${isLight ? 'bg-fuchsia-50 border-fuchsia-100 text-slate-700' : 'bg-fuchsia-500/10 border-fuchsia-400/20 text-slate-200'}`}>
+                Veritabani kapsami: <span className="font-bold">{cities.length} sehir</span>,{' '}
+                <span className="font-bold">{universityCount} universite</span>,{' '}
+                <span className="font-bold">{programs.length} program</span>
               </div>
 
               <div className="mt-4 flex flex-wrap gap-2">
