@@ -17,6 +17,25 @@ Bu dosya, depo ve Vercel/Supabase ile ilgili yapılan ana işleri özetler (Nisa
 - **İçerik listeleme düzeltmesi:** `/icerikler` sayfasında ilk yükleme `5` kayıt olacak şekilde pagination standardize edildi. Infinite scroll reset bug'ı giderildi, append sırasında duplicate engellendi ve `hasMore` hesabı toplam kayıt sayısına göre düzeltildi.
 - **Teslim kriteri güncellemesi:** Bundan sonraki UI düzenlemelerinde sadece Chrome değil, Safari, mobil, tablet ve masaüstü davranışı da açık kabul kriteri olarak takip edilecek.
 
+## 0.2. Kategori Geçişlerini Hızlandırma (14 Nisan 2026)
+
+- **Hedef:** Ana sayfadaki içerik kategorilerine basıldığında `/icerikler` geçişini hissedilir biçimde hızlandırmak.
+- **Yeni endpoint:** `src/app/api/content-prefetch/route.ts` eklendi. Endpoint `type` parametresi alıyor, auth snapshot üzerinden grade çözüyor ve ilk sayfa içerik listesini standart API sözleşmesiyle döndürüyor.
+- **Server cache:** `src/features/content/server.ts` içinde `/icerikler` ilk sayfa yüklemesi için `60 saniye` TTL'li kısa süreli cache eklendi. Cache anahtarı `page + pageSize + grade + type`.
+- **Client seed akışı:** `src/features/content/queries.ts` içine prefetch helper eklendi. Endpoint'ten gelen veri mevcut content cache'ine seed ediliyor; aynı kategoriye geçerken client ilk sayfayı ağ çağrısı yapmadan açabiliyor.
+- **Ana sayfa prefetch:** `src/features/home/components/HomeHeroSection.tsx` artık route prefetch yanında veri prefetch de yapıyor. Ana sayfa idle durumda tüm içerik kategorilerinin ilk sayfasını arka planda hazırlıyor; hover/touch anında ilgili kategori için prefetch hemen tetikleniyor.
+- **Gerçek ölçüm:** `GET /api/content-prefetch?type=yaprak-test` isteği sıcak cache'te yaklaşık `954ms -> 7ms` seviyesine indi.
+- **Testler:** `src/app/api/content-prefetch/route.test.ts` ve `src/features/content/queries.test.ts` eklendi. `npm run lint`, `npm run test`, `npm run build` başarılı.
+
+## 0.3. LGS Listeleme Stabilizasyonu (14 Nisan 2026)
+
+- **Sorun:** `/programlar/lgs` ekranında çok yıllı veri ve büyük kayıt hacmi nedeniyle yıl seçimi ve okul görünürlüğü kararsız hale gelmişti; bazı durumlarda `2021` yılına düşüyor veya okul listesi boş görünüyordu.
+- **Yıl seçimi düzeltmesi:** `src/features/programs/queries.ts` içinde Supabase listeleme sorguları sayfalı hale getirildi. Böylece `lgs_school_targets` ve `yks_program_targets` tablolarında ilk `1000` satırla sınırlı yanlış yıl seçimi ortadan kalktı.
+- **Server route yükleme:** `src/app/api/lgs-targets/route.ts` ve `src/features/programs/server.ts` eklendi. LGS verisi artık client'ta doğrudan Supabase'den değil, server tarafında hazırlanmış ve gruplanmış payload ile geliyor.
+- **UI sonucu:** Üst kart bilgileri en güncel tam veri yılı olan `2025` üzerinden hesaplanıyor; alt tarihçe bloğu `2021, 2022, 2023, 2024, 2025` yıllarını yan yana gösteriyor.
+- **Kapsam:** Sadece sınavla öğrenci alan okullar (`placement_mode = central`) listeleniyor. Tüm illerdeki uygun okullar geri getirildi ve büyük liste tarayıcıyı yormasın diye kademeli gösterim eklendi.
+- **Doğrulama:** Endpoint canlı kontrolde `dataYear: 2025`, `historyYears: 2021-2025`, `schoolCount: 2644` döndürdü. `npm run lint` ve `npm run build` geçti.
+
 ## 1. Depo yapısı: tek kaynak
 
 ## 0.1. Program Verisi Yenileme (14 Nisan 2026)
@@ -149,7 +168,7 @@ Bu paket ile platformun UX/UI kalitesi artırılmış, oyunlaştırma ve animasy
 - **Akıllı İkonlar ve Zaman:** Uğur Hoca'ya yazılan ve Uğur Hoca'dan gelen mesaj bildirimleri (`header` altındaki çan ikonu) tipografik Glassmorphism arayüzüne kavuştu. Kelime okuması yapan algoritmalarla (Okundu, cevapladı, teslim edildi) dinamik ikonlar atanarak, "1 saat önce" formatıyla zevkli bir görünüm sunuldu.
 - **Duyuru Kartları:** "Duyuru Ekle/Sil" bölümündeki `announcement` bloklarına `animate-pulse` destekli "Yayında" ibaresi ve resim kapaklarıyla modern bir Premium liste tasarımı giydirildi.
 
-*Son güncelleme: Tüm planlanmış V2 (UX/UI Premium) iyileştirmeleri ve Özellik 2 (Oyun Çeşitliliği/Leaderboard) entegrasyonu kusursuz şekilde tamamlandı ve canlıya (main) push edildi.*
+*Son güncelleme: 14 Nisan 2026 — kategori geçiş hızlandırması ve LGS listeleme stabilizasyonu dahil edilerek ilerleme özeti güncellendi.*
 
 ---
 

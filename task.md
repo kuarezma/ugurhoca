@@ -222,13 +222,16 @@ Bu dosya, projenin tamamlanmış ve devam eden görevlerini özetler.
 ### 20. Program Verisi Yenileme ve Kapsam Artışı (14 Nisan 2026)
 - [x] LGS veri kaynağı `tabanpuanlari.tr/lise` olarak yenilendi
 - [x] `scripts/fetch-lgs-targets.py` eklendi; 81 il ve 2407 okul içeren 2025 snapshot üretildi
+- [x] 2021-2025 çok yıllı LGS snapshot akışı oluşturuldu; okul kartlarında son 5 yıl yüzdelik ve taban puan görünür hale getirildi
 - [x] `scripts/fetch-yks-targets.py` eklendi; YÖK Atlas lisans ve önlisans kaynaklarından 2025 snapshot üretildi
 - [x] `data/import/lgs_school_targets_2025.json` ve `data/import/yks_program_targets_2025.json` güncellendi
 - [x] LGS import varsayılanı 2025 tam veriye alındı
 - [x] `/programlar/lgs` sorgusu, eksik 2026 placeholder veri yerine tam yılı otomatik seçer hale getirildi
 - [x] Supabase'e tam LGS ve YKS verisi yeniden yüklendi
 - [x] `programlar` ekranına veri kapsamı özeti eklendi; toplam il/şehir ve kayıt sayısı kullanıcıya görünür hale getirildi
+- [x] `/programlar/lgs` veri yüklemesi server route üzerinden stabilize edildi; üst veri yılı `2025`, alt geçmiş bloğu `2021-2025`, sınavla öğrenci alan okullar güvenli şekilde geri getirildi
 - [x] `/icerikler` listeleme akışı düzeltildi; ilk yükleme `5` içerik, aşağı indikçe sonraki `5` kayıt gelecek şekilde infinite scroll ve `hasMore` mantığı onarıldı
+- [x] Ana sayfadaki kategori geçişleri hızlandırıldı; `/api/content-prefetch` endpoint'i, `60s` server cache ve home kategori veri prefetch akışı eklendi
 - [x] `npm run lint`, `npm run test`, `npm run build` doğrulamaları ile sprint tamamlandı
 
 ## Bekleyen Görevler
@@ -249,4 +252,4 @@ Bu dosya, projenin tamamlanmış ve devam eden görevlerini özetler.
 
 ---
 
-*Son güncelleme: 13 Nisan 2026 — CI build hotfix'i ve `/icerikler` infinite scroll düzeltmesi dahil olmak üzere sprint çıktıları güncellendi*
+*Son güncelleme: 14 Nisan 2026 — LGS server-route düzeltmesi ve kategori geçiş hızlandırması dahil olmak üzere sprint çıktıları güncellendi*
