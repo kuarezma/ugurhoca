@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { motion } from 'framer-motion';
 import {
   ChevronRight,
@@ -39,6 +39,14 @@ const levelSectionLabels: Record<ProgramTargetLevel, string> = {
   guvenli: 'Guvenli Hedef',
 };
 
+const INITIAL_VISIBLE_SCHOOL_COUNT = 24;
+
+const createInitialVisibleSchoolCounts = (): Record<ProgramTargetLevel, number> => ({
+  iddiali: INITIAL_VISIBLE_SCHOOL_COUNT,
+  dengeli: INITIAL_VISIBLE_SCHOOL_COUNT,
+  guvenli: INITIAL_VISIBLE_SCHOOL_COUNT,
+});
+
 export default function LgsWizardPage() {
   const { theme } = useTheme();
   const isLight = theme === 'light';
@@ -54,6 +62,9 @@ export default function LgsWizardPage() {
   const [language, setLanguage] = useState('all');
   const [boarding, setBoarding] = useState<'all' | 'yes' | 'no'>('all');
   const [preferredLevel, setPreferredLevel] = useState<'all' | ProgramTargetLevel>('all');
+  const [visibleSchoolCounts, setVisibleSchoolCounts] = useState<Record<ProgramTargetLevel, number>>(
+    createInitialVisibleSchoolCounts(),
+  );
 
   const lgsResult = useMemo(() => calculateLgsScore(inputs), [inputs]);
   const orderedHistoryYears = useMemo(
@@ -85,7 +96,7 @@ export default function LgsWizardPage() {
 
         const latestRow = sortedRows.find((row) => row.year === dataYear) || sortedRows[0];
 
-        if (!latestRow) {
+        if (!latestRow || latestRow.placement_mode !== 'central') {
           return null;
         }
 
@@ -195,6 +206,17 @@ export default function LgsWizardPage() {
     }),
     [evaluatedSchools]
   );
+
+  useEffect(() => {
+    setVisibleSchoolCounts(createInitialVisibleSchoolCounts());
+  }, [boarding, dataYear, district, language, preferredLevel, province, query, schoolType, schools.length]);
+
+  const showMoreSchools = (level: ProgramTargetLevel) => {
+    setVisibleSchoolCounts((prev) => ({
+      ...prev,
+      [level]: prev[level] + INITIAL_VISIBLE_SCHOOL_COUNT,
+    }));
+  };
 
   const updateSubjectInput = (subjectKey: LgsSubjectKey, field: 'correct' | 'wrong', rawValue: string) => {
     const meta = lgsSubjects.find((subject) => subject.key === subjectKey);
@@ -535,6 +557,7 @@ export default function LgsWizardPage() {
                 ).map((level) => {
                   const items = grouped[level];
                   if (!items?.length) return null;
+                  const visibleItems = items.slice(0, visibleSchoolCounts[level]);
 
                   const levelTone = getProgramLevelTone(level, isLight);
 
@@ -550,7 +573,7 @@ export default function LgsWizardPage() {
                       </div>
 
                       <div className="grid gap-3 md:grid-cols-2">
-                        {items.map((school) => {
+                        {visibleItems.map((school) => {
                           const tone = getProgramLevelTone(school.level, isLight);
 
                           return (
@@ -635,6 +658,22 @@ export default function LgsWizardPage() {
                           );
                         })}
                       </div>
+
+                      {items.length > visibleItems.length ? (
+                        <div className="flex justify-center">
+                          <button
+                            type="button"
+                            onClick={() => showMoreSchools(level)}
+                            className={`rounded-xl border px-4 py-2 text-sm font-semibold ${
+                              isLight
+                                ? 'bg-white border-slate-200 text-slate-700'
+                                : 'bg-white/5 border-white/10 text-slate-200'
+                            }`}
+                          >
+                            Daha Fazla Goster ({visibleItems.length}/{items.length})
+                          </button>
+                        </div>
+                      ) : null}
                     </section>
                   );
                 })}
