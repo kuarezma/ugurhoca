@@ -80,6 +80,12 @@ describe('POST /api/admin-announcements', () => {
       }),
     );
 
+    expect(response).toBeDefined();
+
+    if (!response) {
+      throw new Error('Expected response to be defined.');
+    }
+
     expect(response.status).toBe(200);
     expect(getServerAccessToken).toHaveBeenCalledTimes(1);
     expect(createServerSupabaseClient).toHaveBeenCalledWith('cookie-token');
