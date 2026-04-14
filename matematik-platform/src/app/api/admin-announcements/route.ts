@@ -1,5 +1,6 @@
 import { apiError, apiOk } from '@/lib/api-response';
 import { isAdminEmail } from '@/lib/admin';
+import { getServerAccessToken } from '@/lib/auth-snapshot.server';
 import {
   adminAnnouncementCreateSchema,
   adminAnnouncementDeleteSchema,
@@ -10,18 +11,18 @@ import {
   createServiceRoleClient,
 } from '@/lib/supabase/server';
 
-const getAccessToken = (request: Request) => {
+const getAccessToken = async (request: Request) => {
   const authHeader = request.headers.get('authorization');
 
   if (!authHeader?.startsWith('Bearer ')) {
-    return '';
+    return (await getServerAccessToken()) ?? '';
   }
 
   return authHeader.slice(7).trim();
 };
 
 const requireAdmin = async (request: Request) => {
-  const accessToken = getAccessToken(request);
+  const accessToken = await getAccessToken(request);
 
   if (!accessToken) {
     return { error: apiError('Oturum açmanız gerekiyor.', 401, 'missing_access_token') };

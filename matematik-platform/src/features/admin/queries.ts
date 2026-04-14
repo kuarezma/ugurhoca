@@ -32,20 +32,18 @@ const requestAdminAnnouncementRoute = async <TResult>(
   body: Record<string, unknown>,
 ) => {
   const session = await getClientSession();
+  const headers: Record<string, string> = {
+    'Content-Type': 'application/json',
+  };
 
-  if (!session?.access_token) {
-    return {
-      data: null as TResult | null,
-      error: { message: 'Oturum açmanız gerekiyor.' } as RouteErrorLike,
-    };
+  if (session?.access_token) {
+    headers.Authorization = `Bearer ${session.access_token}`;
   }
 
   const response = await fetch('/api/admin-announcements', {
     body: JSON.stringify(body),
-    headers: {
-      Authorization: `Bearer ${session.access_token}`,
-      'Content-Type': 'application/json',
-    },
+    credentials: 'same-origin',
+    headers,
     method,
   });
 
