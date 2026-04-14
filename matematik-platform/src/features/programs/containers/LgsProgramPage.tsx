@@ -610,7 +610,7 @@ export default function LgsWizardPage() {
 
                               <div className={`mt-4 rounded-2xl border p-3 ${isLight ? 'bg-white/70 border-white/80' : 'bg-black/10 border-white/10'}`}>
                                 <div className={`mb-2 text-[11px] font-bold uppercase tracking-[0.16em] ${isLight ? 'text-slate-500' : 'text-slate-400'}`}>
-                                  Son 5 Yil Yuzdelik ve Taban Puan
+                                  {orderedHistoryYears.join(', ')} Yuzdelik ve Taban Puan
                                 </div>
                                 <div className="grid grid-cols-5 gap-2">
                                   {orderedHistoryYears.map((year) => {
