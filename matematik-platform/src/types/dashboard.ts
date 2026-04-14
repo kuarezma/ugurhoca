@@ -10,12 +10,12 @@ export interface StudentProfile {
 }
 
 export type DashboardNotificationType =
-  | "document"
-  | "assignment"
-  | "general"
-  | "message"
-  | "admin-message"
-  | "message-read";
+  | 'document'
+  | 'assignment'
+  | 'general'
+  | 'message'
+  | 'admin-message'
+  | 'message-read';
 
 export interface DashboardNotification {
   id: string;
@@ -53,6 +53,10 @@ export interface DashboardSubmission {
   student_id: string;
   submitted_at?: string | null;
   status?: string | null;
+  grade?: number | null;
+  feedback?: string | null;
+  comment?: string | null;
+  file_url?: string | null;
 }
 
 export interface DashboardQuizResult {
@@ -74,6 +78,74 @@ export interface DashboardQuizSummary {
   grade: number;
   time_limit?: number;
 }
+
+export type DashboardActionType =
+  | 'go-assignments'
+  | 'go-tests'
+  | 'go-progress'
+  | 'open-assignment'
+  | 'open-document'
+  | 'open-notification';
+
+export interface DashboardAction {
+  type: DashboardActionType;
+  assignmentId?: string;
+  notificationId?: string;
+  url?: string;
+}
+
+export interface DashboardTask {
+  id: string;
+  title: string;
+  description: string;
+  actionLabel: string;
+  badge: string;
+  meta: string;
+  accentClass: string;
+  action: DashboardAction;
+}
+
+export interface DashboardGoalDay {
+  label: string;
+  minutes: number;
+  isToday?: boolean;
+}
+
+export interface DashboardGoalSnapshot {
+  weekStart: string;
+  targetMinutes: number;
+  completedMinutes: number;
+  remainingMinutes: number;
+  progressPercent: number;
+  activeDays: number;
+  days: DashboardGoalDay[];
+}
+
+export interface DashboardBadge {
+  id: string;
+  name: string;
+  icon: string;
+  earnedAt?: string | null;
+}
+
+export type DashboardUpdateType = 'message' | 'feedback' | 'document';
+
+export interface DashboardUpdateItem {
+  id: string;
+  title: string;
+  description: string;
+  badge: string;
+  createdAt: string;
+  type: DashboardUpdateType;
+  actionLabel: string;
+  action: DashboardAction;
+}
+
+export type DashboardNotificationFilter =
+  | 'all'
+  | 'messages'
+  | 'assignments'
+  | 'documents';
 
 export interface ProgressSummaryProps {
   streak: number;
@@ -98,13 +170,4 @@ export interface QuickActionCardProps {
   actionLabel: string;
   onAction: () => void;
   badge?: string;
-}
-
-export interface ContinueState {
-  kind: "assignment" | "quiz" | "message" | "progress";
-  title: string;
-  description: string;
-  actionLabel: string;
-  onAction: () => void;
-  accentClass: string;
 }

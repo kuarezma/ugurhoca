@@ -5,28 +5,33 @@ Bu dosya, projenin tamamlanmış ve devam eden görevlerini özetler.
 ## Tamamlanan Görevler
 
 ### 1. Depo Yapısı Konsolidasyonu
+
 - [x] Depo kökündeki yinelenen dosyalar kaldırıldı
 - [x] Tek kaynak `matematik-platform/` olarak belirlendi
 - [x] Git etiketi `backup/pre-consolidation-2026-04-06` oluşturuldu
 - [x] Bozuk ref `refs/heads/main 2` silindi
 
 ### 2. Sohbet Balonu (ChatBubble)
+
 - [x] Next.js 16 uyumlu `ChatBubbleLoader` eklendi
 - [x] `ChatBubble.tsx`, `ChatLogin.tsx`, `ChatBubbleLoader.tsx` oluşturuldu
 - [x] Sabitler `src/lib/chat-constants.ts`'e taşındı
 
 ### 3. Sohbet Girişi ve Supabase
+
 - [x] `chat_users` tablosu oluşturuldu
 - [x] RLS politikaları eklendi
 - [x] `POST /api/chat-register` API route'u oluşturuldu
 - [x] `SUPABASE_SERVICE_ROLE_KEY` Vercel'e eklendi
 
 ### 4. Vercel Deploy
+
 - [x] Kök `package.json` oluşturuldu
 - [x] Kök `vercel.json` yapılandırıldı
 - [x] Vercel deploy başarılı
 
 ### 5. Ödev Teslim Sistemi
+
 - [x] `assignments` tablosu güncellendi
 - [x] `assignment_submissions` tablosu oluşturuldu
 - [x] `submissions` storage bucket'ı oluşturuldu
@@ -34,6 +39,7 @@ Bu dosya, projenin tamamlanmış ve devam eden görevlerini özetler.
 - [x] Admin UI ödev inceleme ekranı eklendi
 
 ### 6. İlerleme Takibi Dashboard
+
 - [x] `study_sessions`, `user_progress`, `study_goals` tabloları oluşturuldu
 - [x] `user_badges` tablosu oluşturuldu
 - [x] `profiles` tablosuna `current_streak` eklendi
@@ -43,6 +49,7 @@ Bu dosya, projenin tamamlanmış ve devam eden görevlerini özetler.
 - [x] Gamification trigger'ı entegre edildi
 
 ### 7. Test Sistemi
+
 - [x] `quizzes`, `quiz_questions`, `quiz_results` tabloları oluşturuldu
 - [x] RLS politikaları eklendi
 - [x] Süre takibi eklendi
@@ -56,11 +63,13 @@ Bu dosya, projenin tamamlanmış ve devam eden görevlerini özetler.
 - [x] LGS/YKS hedef import script'leri entegre edildi
 
 ### 8. Sohbet Geçmişi Supabase'de Saklama
+
 - [x] `chat_messages`, `chat_rooms`, `chat_room_members` tabloları oluşturuldu
 - [x] Realtime entegrasyonu yapıldı
 - [x] Admin Panel UI eklendi
 
 ### 9. Premium Mükemmelleştirmeler (V2)
+
 - [x] Test Sistemi V2 (konfeti, zaman sayacı, analiz arayüzü)
 - [x] Ödev Teslim V2 (drag & drop, yükleme çubuğu, star rating)
 - [x] Sohbet V2 (glassmorphism, animasyon, mesaj saati, okundu işareti)
@@ -68,6 +77,7 @@ Bu dosya, projenin tamamlanmış ve devam eden görevlerini özetler.
 - [x] Bildirim Merkezi UX İyileştirmeleri (akıllı ikonlar, duyuru kartları)
 
 ### 10. PDF Export & PWA Desteği
+
 - [x] `jspdf` + `html2canvas` kuruldu
 - [x] `src/lib/pdf-export.ts` utility oluşturuldu
 - [x] Test PDF export eklendi
@@ -80,6 +90,7 @@ Bu dosya, projenin tamamlanmış ve devam eden görevlerini özetler.
 - [x] Install Prompt banner eklendi
 
 ### 11. Toplu Soru İçe Aktar
+
 - [x] `xlsx` paketi kuruldu
 - [x] `src/lib/question-import.ts` utility oluşturuldu
 - [x] `src/app/api/import-questions/route.ts` API route oluşturuldu
@@ -94,6 +105,7 @@ Bu dosya, projenin tamamlanmış ve devam eden görevlerini özetler.
 ## Devam Eden Görevler
 
 ### E-posta Bildirimleri
+
 - [ ] E-posta gönderme servisi entegrasyonu
 - [ ] Bildirim şablonları oluşturma
 - [ ] Admin panelinde bildirim ayarları
@@ -101,6 +113,7 @@ Bu dosya, projenin tamamlanmış ve devam eden görevlerini özetler.
 ### 12. Kapsamlı Kod İncelemesi ve Güvenlik Paketi (9 Nisan 2026)
 
 **Kritik Güvenlik:**
+
 - [x] `src/lib/supabase.ts` — fallback placeholder kaldırıldı, `!` non-null assertion eklendi
 - [x] `api/admin-message/route.ts` — anon key yerine service role key kullanımına geçildi
 - [x] Admin e-postaları `ADMIN_EMAILS` env değişkenine taşındı (hardcode kaldırıldı)
@@ -110,6 +123,7 @@ Bu dosya, projenin tamamlanmış ve devam eden görevlerini özetler.
 ### 13. Chat Sistemi Yeniden Yazımı ve Gizlilik (9 Nisan 2026)
 
 **Chat Baloncuğu (ChatBubble.tsx) — Tam Yeniden Yazım:**
+
 - [x] Öğrenci chat login tamamen kaldırıldı (`ChatLogin`, `chat_users`, presence, BroadcastChannel)
 - [x] Sadece admin görebilir — diğer kullanıcılar için `null` döner
 - [x] Admin gelen kutusu: öğrenci support mesajlarını listeler (type='message')
@@ -119,33 +133,39 @@ Bu dosya, projenin tamamlanmış ve devam eden görevlerini özetler.
 - [x] Okunmamış rozet sayacı eklendi
 
 **Gizlilik — support-message/route.ts:**
+
 - [x] Öğrenciye gönderilen "Mesajın teslim edildi" bildirimi kaldırıldı
 - [x] Öğrenci mesaj gönderdikten sonra hiçbir bildirim almıyor
 
 **Profil Sayfası Bildirim Güncellemesi (profil/page.tsx):**
+
 - [x] `Notification` tipine `'admin-message' | 'message-read'` eklendi
 - [x] `'message-read'` tipinde mesaj içeriği gösterilmiyor (sadece "Uğur Hoca mesajını gördü" başlığı)
 - [x] `'admin-message'` tipinde admin cevabı tam gösteriliyor
 - [x] Bildirim etiketleri: "Uğur Hoca'dan" / "Okundu bildirimi" eklendi
 
 **Admin Panel Bildirim Düzeltmesi (admin/page.tsx):**
+
 - [x] `loadData`: `notifications` artık sadece admin `user_id`'sine göre filtreleniyor
 - [x] Bildirim listesi `notifications.filter(isIncomingAdminMessage)` ile sadece gerçek öğrenci mesajları gösteriliyor
 - [x] `markNotificationAsRead`: type `'message-read'`, title `'Uğur Hoca mesajını gördü'`, message `''`
 - [x] `sendReply`: type `'admin-message'`, title `'Uğur Hoca yazdı'` — profil/page.tsx ile uyumlu
 
 **Veritabanı Güvenliği:**
+
 - [x] `notifications` tablosuna RLS politikaları eklendi (migration: `20260410010000_notifications_rls.sql`)
   - SELECT: Sadece kendi `user_id`'li bildirimleri görebilir
   - INSERT: Herkes yapabilir (admin mesaj, support mesajı)
   - UPDATE/DELETE: Sadece kendi bildirimi
 
 **Build Düzeltmeleri:**
+
 - [x] `next.config.js` — `turbopack.root` kaldırıldı (Vercel `outputFileTracingRoot` çakışması)
 - [x] `package.json` — gereksiz `vercel` devDependency kaldırıldı (tar uyarısı giderildi)
 - [x] `ChatBubble.tsx` build hatası — sona yapışan markdown metni temizlendi
 
 **Kod Kalitesi:**
+
 - [x] `User` tipinden `password` alanı kaldırıldı (güvenlik anti-pattern)
 - [x] `giris/page.tsx` — inline `FloatingShapes` kaldırıldı, global bileşen import edildi, `autoComplete` ve `err: unknown` düzeltildi
 - [x] `kayit/page.tsx` — inline `FloatingShapes` kaldırıldı, global bileşen import edildi, `autoComplete` ve `AnimatePresence` eklendi
@@ -159,11 +179,13 @@ Bu dosya, projenin tamamlanmış ve devam eden görevlerini özetler.
 - [x] `layout.tsx` — gereksiz `alternateLocale` kaldırıldı, `title.template`, `openGraph.url`, `googleBot` eklendi
 
 **Yeni Dosyalar:**
+
 - [x] `src/app/robots.ts` — `/robots.txt` endpoint'i oluşturuldu
 - [x] `src/app/sitemap.ts` — `/sitemap.xml` endpoint'i oluşturuldu (11 sayfa)
 - [x] `public/sw.js` — `CACHE_VERSION` sabiti eklendi, cache invalidation kontrollü
 
 ### 14. Öğrenci Dashboard Profesyonelleştirme (10 Nisan 2026)
+
 - [x] `src/app/profil/page.tsx` öğrenci dashboard akışına dönüştürüldü
 - [x] Üst bölüm karşılama + bugünkü durum yapısına çevrildi
 - [x] Hızlı erişim kartları eklendi: testler, ödevler, ilerleme, mesajlar
@@ -176,23 +198,27 @@ Bu dosya, projenin tamamlanmış ve devam eden görevlerini özetler.
 - [x] Build başarılı
 
 ### 15. Chat Balonunu Öğrencilerden Gizleme (10 Nisan 2026)
+
 - [x] `ChatBubbleLoader` layout.tsx'ten kaldırıldı
 - [x] `ChatBubbleLoader` admin/page.tsx'e eklendi
 - [x] Artık sadece admin sayfasında chat balonu görünecek
 
 ### 16. Premium Öğrenci Dashboard UI/UX İyileştirmesi (10 Nisan 2026)
+
 - [x] `DashboardHero` devasa, modern glassmorphism banner'a çevrildi ve `ContinueCard` Hero'ya CTA (Call to Action) olarak dahil edildi.
 - [x] `QuickActionGrid` büyük kartlardan zarif ve ince yatay düğmelere çevrildi, hiyerarşi rahatlatıldı.
 - [x] `ProgressOverview` içi içe kutular yerine saf "Apple benzeri" estetik ve ikon bazlı inline metinlere dönüştürüldü.
 - [x] Karmaşık layout gridleri düzgün 2 sütunlu sade, temiz sayfa akışlarına çekildi.
 
 ### 17. Avatar Seçimi ve Kusursuz Mobil Optimizasyon (10 Nisan 2026)
+
 - [x] `profiles` tablosuna `avatar_id` eklendi ve migration yazıldı.
 - [x] Kullanıcılara 16 adet yüksek kaliteli emoji içeren `AvatarSelectionModal` tasarlandı.
 - [x] `layout.tsx` içine Next.js native `viewport` eklenerek cihazların pinch-to-zoom (büyütme/küçültme) yapması PWA kalitesi için engellendi.
 - [x] Mobilde yatay scroll sorunlarına sebep olan taşmalar (overflow) `DashboardHero` içindeki `w-full sm:max-w-md` esnek genişliklerle çözüldü.
 
 ### 18. Tek Admin Hesabı ve Giriş Bilgisi Standardizasyonu (11 Nisan 2026)
+
 - [x] Admin hesabı tek e-posta ile sınırlandı: `admin@ugurhoca.com`
 - [x] `admin@matematiklab.com` kod tabanından kaldırıldı
 - [x] Ortak admin yardımcı modülü eklendi: `src/lib/admin.ts`
@@ -206,6 +232,7 @@ Bu dosya, projenin tamamlanmış ve devam eden görevlerini özetler.
 - [x] `npm run build` başarılı
 
 ### 19. Profesyonelleştirme ve Stabilizasyon Sprinti (13 Nisan 2026)
+
 - [x] Depo kökü `matematik-platform/` etrafında netleştirildi; yinelenen `vercel.json` ve kök `package-lock.json` kaldırıldı
 - [x] Standart script seti tanımlandı: `dev`, `build`, `start`, `typecheck`, `lint`, `lint:fix`, `format`, `format:check`, `test`
 - [x] Kalite kapıları eklendi: Flat ESLint, Prettier, Vitest ve GitHub Actions CI
@@ -220,6 +247,7 @@ Bu dosya, projenin tamamlanmış ve devam eden görevlerini özetler.
 - [x] GitHub Actions build hotfix uygulandı; public Supabase env değişkenleri CI ortamında yokken build kırılmaması için browser client lazy init hale getirildi
 
 ### 20. Program Verisi Yenileme ve Kapsam Artışı (14 Nisan 2026)
+
 - [x] LGS veri kaynağı `tabanpuanlari.tr/lise` olarak yenilendi
 - [x] `scripts/fetch-lgs-targets.py` eklendi; 81 il ve 2407 okul içeren 2025 snapshot üretildi
 - [x] 2021-2025 çok yıllı LGS snapshot akışı oluşturuldu; okul kartlarında son 5 yıl yüzdelik ve taban puan görünür hale getirildi
@@ -234,22 +262,37 @@ Bu dosya, projenin tamamlanmış ve devam eden görevlerini özetler.
 - [x] Ana sayfadaki kategori geçişleri hızlandırıldı; `/api/content-prefetch` endpoint'i, `60s` server cache ve home kategori veri prefetch akışı eklendi
 - [x] `npm run lint`, `npm run test`, `npm run build` doğrulamaları ile sprint tamamlandı
 
+### 21. Öğrenci Dashboard V2 ve Profil Fotoğrafı Yükleme (15 Nisan 2026)
+
+- [x] `/profil` ekranı öğrenci odaklı günlük merkez yapısına taşındı
+- [x] "Bugünkü Plan", büyük haftalık hedef kartı, motivasyon paneli ve düşük görünürlüklü "Kısa Güncellemeler" alanı eklendi
+- [x] Dashboard görev önceliği için ortak view-model katmanı eklendi: `src/features/profile/utils/dashboard-view-model.ts`
+- [x] `notifications` ve `assignment_submissions` için realtime dashboard güncellemesi eklendi
+- [x] Bildirim kartına filtreler ve `Tümünü Okundu Yap` aksiyonu eklendi
+- [x] Emoji avatar sistemine ek olarak profil fotoğrafı yükleme desteği eklendi
+- [x] Yüklenen profil görselleri istemci tarafında **500 KB** altına sıkıştırılacak şekilde ayarlandı
+- [x] Yeni storage migration eklendi: `supabase/migrations/20260415010000_profile_avatar_uploads.sql`
+- [x] `npm run lint`, `npm run test`, `npm run build` doğrulamaları başarılı
+
 ## Bekleyen Görevler
 
 ### Chat Sistemi Refactor
+
 - [ ] `chat_room_members` tablosundaki `user_tc` / `school_number` tutarsızlığı giderilecek
 - [ ] `UserStatistics` bileşenindeki `shared_documents` tablosu tanımı gözden geçirilecek
 
 ### Tarayıcı / Cihaz Regresyon Kapısı
+
 - [ ] Chrome, Safari, mobil Safari, tablet ve masaüstü için ekran bazlı görsel kontrol listesi oluşturulacak
 - [ ] Kritik sayfalar için screenshot baseline veya otomatik browser regression akışı eklenecek
 - [ ] PWA / service worker davranışı production ve local ortam için ayrı kabul kriterleriyle netleştirilecek
 
 ### UX İyileştirmeleri
+
 - [ ] `AdminStatistics` "Son Kayıtlar" bölümüne gerçek `created_at` sorgusu yazılacak
 - [ ] Şifremi Unuttum akışı (Resend e-posta entegrasyonu ile birlikte)
 - [ ] Tüm form sayfalarında `autoComplete` attribute eksiklikleri giderilecek
 
 ---
 
-*Son güncelleme: 14 Nisan 2026 — LGS server-route düzeltmesi ve kategori geçiş hızlandırması dahil olmak üzere sprint çıktıları güncellendi*
+_Son güncelleme: 15 Nisan 2026 — Dashboard V2 ve profil fotoğrafı yükleme/sıkıştırma akışı dahil edilerek görev listesi güncellendi._

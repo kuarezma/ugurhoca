@@ -1,6 +1,7 @@
 import type { Session } from '@supabase/supabase-js';
 import { isAdminEmail } from '@/lib/admin';
 import { supabase } from '@/lib/supabase/client';
+import { resolveCurrentGoal } from '@/features/progress/utils';
 import type {
   DashboardAssignment,
   DashboardDocument,
@@ -15,6 +16,15 @@ import type {
   ProfileProgressRow,
   ProfileStudySessionRow,
 } from '@/features/profile/types';
+import {
+  normalizeDashboardBadges,
+  type DashboardBadgeRow,
+} from '@/features/profile/utils/dashboard-view-model';
+import {
+  buildProfileAvatarPath,
+  compressProfileAvatar,
+  PROFILE_AVATAR_BUCKET,
+} from '@/features/profile/utils/avatar-upload';
 
 export const resolveClientProfileUser = async (
   session: Session,
@@ -52,6 +62,8 @@ export const loadClientProfileDashboardCollections = async (
     return {
       assignments: [],
       availableQuizzes: [],
+      badges: [],
+      goal: null,
       notifications: [],
       progressRows: [],
       quizResults: [],
@@ -101,6 +113,8 @@ export const loadClientProfileDashboardCollections = async (
     availableQuizzesRes,
     studySessionsRes,
     progressRes,
+    goalRes,
+    badgesRes,
   ] = await Promise.all([
     supabase
       .from('notifications')
@@ -134,12 +148,26 @@ export const loadClientProfileDashboardCollections = async (
       .select('id, topic, mastery_level')
       .eq('user_id', user.id)
       .order('mastery_level', { ascending: false }),
+    supabase
+      .from('study_goals')
+      .select('target_duration, week_start')
+      .eq('user_id', user.id),
+    supabase
+      .from('user_badges')
+      .select('id, badge_name, icon_name, earned_at')
+      .eq('user_id', user.id)
+      .order('earned_at', { ascending: false })
+      .limit(6),
   ]);
 
   return {
     assignments: (assignmentsRes.data || []) as DashboardAssignment[],
-    availableQuizzes:
-      (availableQuizzesRes.data || []) as DashboardQuizSummary[],
+    availableQuizzes: (availableQuizzesRes.data ||
+      []) as DashboardQuizSummary[],
+    badges: normalizeDashboardBadges(
+      (badgesRes.data || []) as DashboardBadgeRow[],
+    ),
+    goal: resolveCurrentGoal(goalRes.data || []),
     notifications: (notifRes.data || []) as DashboardNotification[],
     progressRows: (progressRes.data || []) as ProfileProgressRow[],
     quizResults: (quizResultsRes.data || []) as DashboardQuizResult[],
@@ -153,6 +181,41 @@ export const markProfileNotificationAsRead = async (id: string) => {
   await supabase.from('notifications').update({ is_read: true }).eq('id', id);
 };
 
+export const markProfileNotificationsAsRead = async (ids: string[]) => {
+  if (ids.length === 0) {
+    return;
+  }
+
+  await supabase.from('notifications').update({ is_read: true }).in('id', ids);
+};
+
 export const updateProfileAvatar = async (userId: string, avatarId: string) => {
-  await supabase.from('profiles').update({ avatar_id: avatarId }).eq('id', userId);
+  await supabase
+    .from('profiles')
+    .update({ avatar_id: avatarId })
+    .eq('id', userId);
+};
+
+export const uploadProfileAvatar = async (userId: string, file: File) => {
+  const compressedAvatar = await compressProfileAvatar(file);
+  const avatarPath = buildProfileAvatarPath(userId);
+  const { error: uploadError } = await supabase.storage
+    .from(PROFILE_AVATAR_BUCKET)
+    .upload(avatarPath, compressedAvatar, {
+      cacheControl: '3600',
+      contentType: 'image/jpeg',
+      upsert: true,
+    });
+
+  if (uploadError) {
+    throw uploadError;
+  }
+
+  const {
+    data: { publicUrl },
+  } = supabase.storage.from(PROFILE_AVATAR_BUCKET).getPublicUrl(avatarPath);
+
+  await updateProfileAvatar(userId, publicUrl);
+
+  return publicUrl;
 };

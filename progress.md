@@ -78,15 +78,15 @@ Bu dosya, depo ve Vercel/Supabase ile ilgili yapılan ana işleri özetler (Nisa
 
 ## 5. Önemli dosya yolları
 
-| Konu | Yol |
-|------|-----|
-| Uygulama kökü | `matematik-platform/` |
-| Sohbet API | `matematik-platform/src/app/api/chat-register/route.ts` |
-| Sohbet UI | `matematik-platform/src/components/ChatBubble.tsx`, `ChatLogin.tsx`, `ChatBubbleLoader.tsx` |
-| Sabitler | `matematik-platform/src/lib/chat-constants.ts` |
-| DB migration | `matematik-platform/supabase/migrations/20260406120000_chat_users.sql` |
-| Geniş kurulum SQL | `matematik-platform/supabase-setup.sql` (sonunda `chat_users` bloğu) |
-| Kök Vercel / npm | `vercel.json`, `package.json` (depo kökü) |
+| Konu              | Yol                                                                                         |
+| ----------------- | ------------------------------------------------------------------------------------------- |
+| Uygulama kökü     | `matematik-platform/`                                                                       |
+| Sohbet API        | `matematik-platform/src/app/api/chat-register/route.ts`                                     |
+| Sohbet UI         | `matematik-platform/src/components/ChatBubble.tsx`, `ChatLogin.tsx`, `ChatBubbleLoader.tsx` |
+| Sabitler          | `matematik-platform/src/lib/chat-constants.ts`                                              |
+| DB migration      | `matematik-platform/supabase/migrations/20260406120000_chat_users.sql`                      |
+| Geniş kurulum SQL | `matematik-platform/supabase-setup.sql` (sonunda `chat_users` bloğu)                        |
+| Kök Vercel / npm  | `vercel.json`, `package.json` (depo kökü)                                                   |
 
 ## 6. Canlı site kontrol listesi
 
@@ -120,13 +120,15 @@ Bu dosya, depo ve Vercel/Supabase ile ilgili yapılan ana işleri özetler (Nisa
 **Durum:** 8 yeni özellik belirlendi, implementasyon planı oluşturuldu.
 
 **Özellikler:**
+
 1. **Test Sistemi Veritabanı Entegrasyonu** - [TAMAMLANDI] quizzes, quiz_questions, quiz_results tabloları + RLS + Süre Takibi
-...
-7. **Sohbet Geçmişi Supabase'de Saklama** - [TAMAMLANDI] chat_messages, chat_rooms, chat_room_members tabloları + Realtime + Admin Panel UI
-...
-8. **Ödev Teslim Sistemi** - [TAMAMLANDI] assignment_submissions tablosu + dosya yükleme + Storage entegrasyonu
+   ...
+2. **Sohbet Geçmişi Supabase'de Saklama** - [TAMAMLANDI] chat_messages, chat_rooms, chat_room_members tabloları + Realtime + Admin Panel UI
+   ...
+3. **Ödev Teslim Sistemi** - [TAMAMLANDI] assignment_submissions tablosu + dosya yükleme + Storage entegrasyonu
 
 **Implementasyon Sırası:**
+
 1. Test Sistemi ([x] Tamamlandı)
 2. Sohbet Geçmişi ([x] Tamamlandı)
 3. Ödev Teslim Sistemi ([x] Tamamlandı)
@@ -145,30 +147,35 @@ Bu dosya, depo ve Vercel/Supabase ile ilgili yapılan ana işleri özetler (Nisa
 Bu paket ile platformun UX/UI kalitesi artırılmış, oyunlaştırma ve animasyon detaylarıyla öğrenci motivasyonunu en üst seviyeye taşıyacak geliştirmeler eklenmiştir. Tamamı başarıyla deploy edilmiştir.
 
 ### 9.1 Test Sistemi V2 (Gamified Quiz)
+
 - **Görsel Şölen:** `canvas-confetti` NPM paketi entegre edildi. Testlerde **80** ve üzeri alınan puanlarda ekranı kaplayan konfeti animasyonu devreye giriyor.
 - **Odak/Stres:** Test bitimine **son 30 saniye** kala yanıp sönen (`animate-pulse`) kırmızı zaman sayacı eklendi.
 - **Sınav İncelemesi:** Sınav bitiminde öğrenciye sunulan analiz arayüzü yenilendi. Kullanıcıya doğru ve yanlış yanıtların yanında açıklama sunan çok şık uyarı (`Alert`) stilleri kullanıldı.
 - **Admin Paneli:** Soru ekleme formu (`addQuestion`) tamamen modernleştirildi. A, B, C, D seçenekleri ayrı formlarda harika bir UI ile girilirken yanlarında yeşil Radyo butonlar, ve açıklama formu yer alıyor.
 
 ### 9.2 Ödev Teslim V2 (Modern Drag & Drop)
+
 - **Öğrenci Deneyimi:** Dosya yükleme ekranı, sıradan `input file` özelliğinden **Sürükle-Bırak** formuna dönüştürüldü. Ayrıca, sunucuya dosya gönderilirken dolan canlı bir Yükleme Çubuğu eklendi.
 - **Admin İncelemesi (Star Rating):** Öğretmenin ödevleri incelediği arayüze 1'den 5'e kadar puan veren 5'li Geri Bildirim Yıldızlama eklendi.
 
 ### 9.3 Sohbet V2 (Premium Chat)
+
 - **Tasarım Dili Desteği:** `ChatBubble` baloncuklarına **Glassmorphism** stili uygulandı. `backdrop-blur` ile şık ve fütüristik bir iPhone (iMessage) deneyimi kazandırıldı.
 - **Animasyon:** Gelen ve giden mesajlar ekrana çıkarken yaylanma (Spring effect) sunmak üzere framer motion ile `motion.div` nesnesine çevrildi.
 - **Yardımcı Ekstralar:** Her sohbet içeriğinin sol-alt köşesine mesaj saati ("14:35") ve Admin yetkili okunduğunu ifade eden ("✓✓") özellikleri bağlandı.
 - **Hata Giderme (Sohbet Odaları):** Admin panelinde eskiyen "Sohbetler" bölümündeki oda görüntüleme (Updated_at order) hatası, sorunsuz Supabase optimizasyonu ile düzeltildi ve Admin mesajlarına tam işlevsellik katıldı.
 
 ### 9.4 Oyun Çeşitliliği & Liderlik Tablosu (Gamification V2)
+
 - **Veritabanı (game_scores):** `oyunlar/page.tsx` adresinde yer alan tüm mini oyunlardan kazanılan skorlar asenkron olarak veritabanına atılmaya başlandı.
 - **Dinamik Liderlik (Leaderboard):** Oyun Sayfasına şık kupalar ve harika gradient efektleriyle süslenmiş bir **"Global Liderlik Tablosu"** entegre edildi. Dünyada en çok puan toplayan öğrenciler, madalya renkleriyle (Altın, Gümüş, Bronz) listelenmektedir.
 
 ### 9.5 Bildirim Merkezi UX İyileştirmeleri (V2)
+
 - **Akıllı İkonlar ve Zaman:** Uğur Hoca'ya yazılan ve Uğur Hoca'dan gelen mesaj bildirimleri (`header` altındaki çan ikonu) tipografik Glassmorphism arayüzüne kavuştu. Kelime okuması yapan algoritmalarla (Okundu, cevapladı, teslim edildi) dinamik ikonlar atanarak, "1 saat önce" formatıyla zevkli bir görünüm sunuldu.
 - **Duyuru Kartları:** "Duyuru Ekle/Sil" bölümündeki `announcement` bloklarına `animate-pulse` destekli "Yayında" ibaresi ve resim kapaklarıyla modern bir Premium liste tasarımı giydirildi.
 
-*Son güncelleme: 14 Nisan 2026 — kategori geçiş hızlandırması ve LGS listeleme stabilizasyonu dahil edilerek ilerleme özeti güncellendi.*
+_Son güncelleme: 14 Nisan 2026 — kategori geçiş hızlandırması ve LGS listeleme stabilizasyonu dahil edilerek ilerleme özeti güncellendi._
 
 ---
 
@@ -191,7 +198,7 @@ Bu paket ile platformun UX/UI kalitesi artırılmış, oyunlaştırma ve animasy
 - **Layout:** `manifest`, `apple-touch-icon`, `theme-color` meta tag ve SW register script eklendi.
 - **Install Banner:** `src/components/InstallPrompt.tsx` — Framer Motion spring animasyonu, 7 günlük dismiss, turuncu glassmorphism banner.
 
-*Son güncelleme: `npm run build` — Sıfır TypeScript/ESLint hatası. Tüm 20 sayfa başarıyla compile edildi.*
+_Son güncelleme: `npm run build` — Sıfır TypeScript/ESLint hatası. Tüm 20 sayfa başarıyla compile edildi._
 
 ---
 
@@ -205,7 +212,7 @@ Bu paket ile platformun UX/UI kalitesi artırılmış, oyunlaştırma ve animasy
 - **handleSubmit:** `importQuestions` case'i eklendi — API'ye POST isteği gönderir, yeni quiz'i state'e ekler.
 - **Build:** Başarılı, sıfır TypeScript hatası.
 
-*Son güncelleme: Toplu Soru İçe Aktar özelliği tamamen tamamlandı ve canlıya push edildi (commit 00522e3).*
+_Son güncelleme: Toplu Soru İçe Aktar özelliği tamamen tamamlandı ve canlıya push edildi (commit 00522e3)._
 
 ---
 
@@ -243,15 +250,15 @@ Claude ile yapılan tam proje incelemesinde tespit edilen sorunlar ve uygulanan 
 
 ### 12.4 Henüz Ertelenen Konular (Sonraki Sprint)
 
-| Konu | Neden Ertelendi |
-|------|-----------------|
-| `chat_room_members` `user_tc` / `school_number` tutarsızlığı | Chat sistemi yeniden yazımı gerektirir |
-| `UserStatistics` → `shared_documents` tablosu | Tablo tanımı gözden geçirilmeli |
-| `AdminStatistics` "Son Kayıtlar" sahte veri | Gerçek `created_at` sorgusu yazılacak |
-| Şifremi Unuttum akışı | Resend e-posta entegrasyonu ile birlikte yapılacak |
-| Form `autoComplete` eksiklikleri (diğer sayfalar) | Minor; tüm formlarda uygulanacak |
+| Konu                                                         | Neden Ertelendi                                    |
+| ------------------------------------------------------------ | -------------------------------------------------- |
+| `chat_room_members` `user_tc` / `school_number` tutarsızlığı | Chat sistemi yeniden yazımı gerektirir             |
+| `UserStatistics` → `shared_documents` tablosu                | Tablo tanımı gözden geçirilmeli                    |
+| `AdminStatistics` "Son Kayıtlar" sahte veri                  | Gerçek `created_at` sorgusu yazılacak              |
+| Şifremi Unuttum akışı                                        | Resend e-posta entegrasyonu ile birlikte yapılacak |
+| Form `autoComplete` eksiklikleri (diğer sayfalar)            | Minor; tüm formlarda uygulanacak                   |
 
-*Son güncelleme: 9 Nisan 2026 — Kapsamlı güvenlik ve kod kalitesi incelemesi tamamlandı ve push edildi.*
+_Son güncelleme: 9 Nisan 2026 — Kapsamlı güvenlik ve kod kalitesi incelemesi tamamlandı ve push edildi._
 
 ---
 
@@ -272,16 +279,19 @@ Claude ile yapılan tam proje incelemesinde tespit edilen sorunlar ve uygulanan 
 ### 13.2 Bildirim Gizliliği
 
 **support-message/route.ts:**
+
 - Öğrenciye gönderilen `"Mesajın teslim edildi"` bildirimi kaldırıldı
 - Öğrenci mesaj gönderince kendi bildirim kuyrucunda hiçbir şey görünmüyor
 
 **admin/page.tsx — 4 kritik düzeltme:**
+
 - `loadData`: Önceden TÜM kullanıcıların bildirimleri çekiliyordu (user_id filtresi yoktu). Artık sadece adminin kendi `user_id`'sine göre filtreleniyor.
 - Bildirim dropdown listesi: `notifications.map(...)` → `notifications.filter(isIncomingAdminMessage).map(...)` — sadece gerçek öğrenci mesajları görünüyor.
 - `markNotificationAsRead`: `type: 'message'` → `type: 'message-read'`, mesaj içeriği boş, başlık `"Uğur Hoca mesajını gördü"`.
 - `sendReply`: `type: 'message'` → `type: 'admin-message'`, `profil/page.tsx`'in yeni tip işleyicisiyle uyumlu.
 
 **profil/page.tsx:**
+
 - `Notification` tipine `'admin-message' | 'message-read'` eklendi
 - `getNotificationStyle`: yeni tipler için mor (admin-message) ve yeşil (message-read) stiller eklendi
 - `handleNotificationClick`: `'admin-message'` → modal açılır (cevap içeriği gösterilir); `'message-read'` → sadece okundu işareti, modal yok
@@ -320,7 +330,7 @@ Admin "Cevapla" der ve cevap yazar
   → Başka öğrenciler göremez (RLS + user_id filtresi)
 ```
 
-*Son güncelleme: 9 Nisan 2026 — Chat sistemi yeniden yazıldı, bildirim gizliliği ve Supabase RLS tamamlandı.*
+_Son güncelleme: 9 Nisan 2026 — Chat sistemi yeniden yazıldı, bildirim gizliliği ve Supabase RLS tamamlandı._
 
 ---
 
@@ -365,7 +375,7 @@ Admin "Cevapla" der ve cevap yazar
 - **Kapsam:** Dashboard refactor yalnızca öğrenci profil deneyimini yeniden düzenledi; route yapısı, veritabanı şeması ve public API sözleşmeleri değiştirilmedi.
 - **Sonuç:** Öğrenci giriş yaptığında `/profil` artık daha net, aksiyon odaklı ve düzenli bir çalışma merkezi olarak davranıyor.
 
-*Son güncelleme: 10 Nisan 2026 — Öğrenci dashboard fazı tamamlandı ve kayıt altına alındı.*
+_Son güncelleme: 10 Nisan 2026 — Öğrenci dashboard fazı tamamlandı ve kayıt altına alındı._
 
 ---
 
@@ -378,7 +388,7 @@ Admin "Cevapla" der ve cevap yazar
 - **Admin Sayfası:** ChatBubbleLoader sadece admin/page.tsx'e eklendi, böylece sadece admin sayfasında chat balonu görünecek.
 - **Sonuç:** Öğrenciler artık hiçbir sayfada chat balonunu göremeyecek, sadece adminler (/admin) görebilecek.
 
-*Son güncelleme: 10 Nisan 2026 — Chat balonu öğrencilerden gizlendi.*
+_Son güncelleme: 10 Nisan 2026 — Chat balonu öğrencilerden gizlendi._
 
 ---
 
@@ -395,7 +405,7 @@ Admin "Cevapla" der ve cevap yazar
   4. `ProgressOverview`, `MessageSummaryCard`, `RecentResults` gibi diğer Dashboard widgetleri temiz grid yapısıyla `lg:grid-cols-2` sistemine mükemmel oturtuldu. Kutuların içindeki ağır renk ayrımları, minimal ikon ve renk kullanımlarına geçirildi.
 - **Sonuç:** Dashboard artık premium, çok daha düzenli, ve Uğur Hoca öğrencileri için kullanımı çok "kullanışlı" (usable) bir alana evrildi.
 
-*Son güncelleme: 10 Nisan 2026 — Premium Öğrenci Dashboard UI/UX fazı tamamlandı ve kod Push edildi.*
+_Son güncelleme: 10 Nisan 2026 — Premium Öğrenci Dashboard UI/UX fazı tamamlandı ve kod Push edildi._
 
 ---
 
@@ -412,7 +422,7 @@ Admin "Cevapla" der ve cevap yazar
 - **Native Büyütme Yasaları:** `layout.tsx` dosyasına Next.js native `viewport` parametresi verilerek ekranın pinch-to-zoom (yakınlaştırma / uzaklaştırma) yapması PWA kalitesini sarsmaması adına kökünden iptal edildi. `userScalable: false`.
 - **Taşma Engelleri (Horizontal Scroll BugFix):** Android işletim sistemlerinde UI'ı sağa kaydıran sert kutu limitasyonları (örn: `w-[400px]`), ekran boyutuna göre esneyebilen `w-full sm:max-w-md` fluid yapılarıyla temizlendi. Öğrenciler ceplerindeki eski telefonlarla dahi profesyonel bir deneyim yaşayacaklar!
 
-*Son güncelleme: 10 Nisan 2026 — Avatar ve Native Mobil optimizasyonları Push edildi.*
+_Son güncelleme: 10 Nisan 2026 — Avatar ve Native Mobil optimizasyonları Push edildi._
 
 ---
 
@@ -448,4 +458,29 @@ Admin "Cevapla" der ve cevap yazar
 - **Giriş testi:** `admin@ugurhoca.com / 19051989` ile Supabase Auth giriş doğrulandı
 - **Not:** Bu ortamda `supabase` CLI kurulu olmadığı için yeni migration dosyası yalnızca repoya eklendi; canlı policy push işlemi Git akışından ayrı olarak uygulanmalı
 
-*Son güncelleme: 11 Nisan 2026 — Admin hesabı tek e-postaya indirildi, şifre güncellendi ve giriş doğrulandı.*
+_Son güncelleme: 11 Nisan 2026 — Admin hesabı tek e-postaya indirildi, şifre güncellendi ve giriş doğrulandı._
+
+---
+
+## 19. Öğrenci Dashboard V2 ve Profil Fotoğrafı Yükleme (15 Nisan 2026)
+
+### 19.1 Öğrenci Odaklı Dashboard V2
+
+- **Yapı değişimi:** `/profil` ekranı pasif özet sayfasından öğrenci odaklı günlük merkeze dönüştürüldü. Hero alanı, haftalık hedef görünümü, "Bugünkü Plan", motivasyon paneli, kısa güncellemeler ve filtrelenebilir bildirim kartı ile yeniden kurgulandı.
+- **View-model katmanı:** `src/features/profile/utils/dashboard-view-model.ts` eklendi. Görev önceliği, haftalık hedef özeti, motivasyon metni ve kısa güncellemeler hem SSR preload hem client hydration için tek noktadan türetiliyor.
+- **Realtime davranış:** `useProfileDashboardData` içine `notifications` ve `assignment_submissions` abonelikleri eklenerek yeni bildirimler ve değerlendirilen ödevler tam sayfa yenilemeden dashboard'a düşer hale getirildi.
+
+### 19.2 Profil Fotoğrafı Yükleme ve Sıkıştırma
+
+- **Avatar sistemi genişletildi:** `AvatarSelectionModal` artık yalnızca emoji değil, öğrencinin kendi profil fotoğrafını da kabul ediyor. Emoji avatarları geriye dönük uyumlu kaldı; yüklenen görseller aynı `avatar_id` alanında public URL olarak saklanıyor.
+- **Sıkıştırma akışı:** `src/features/profile/utils/avatar-upload.ts` eklendi. Seçilen görsel istemci tarafında canvas ile yeniden boyutlandırılıp JPEG'e çevrilerek **500 KB** altına sıkıştırılıyor. Kullanıcı talebindeki `500 GB` ifadesi web profil görseli için anlamlı olmadığından uygulamada pratik üst sınır olarak `500 KB` kullanıldı.
+- **Storage entegrasyonu:** Yeni migration `matematik-platform/supabase/migrations/20260415010000_profile_avatar_uploads.sql` ile public `avatars` bucket'ı ve kullanıcı bazlı upload/update/delete politikaları eklendi. Dosyalar kullanıcı klasöründe deterministik yol ile (`<userId>/profile-avatar.jpg`) overwrite edilerek tutuluyor.
+- **Arayüz entegrasyonu:** `DashboardHero` hem emoji hem yüklenen görsel avatarı gösterecek şekilde güncellendi. Modal içinde mevcut avatar önizlemesi, yükleme durumu ve sıkıştırma bilgisi yer alıyor.
+
+### 19.3 Doğrulama
+
+- **Lint:** `npm run lint --prefix matematik-platform`
+- **Test:** `npm run test --prefix matematik-platform`
+- **Build:** `npm run build --prefix matematik-platform`
+
+_Son güncelleme: 15 Nisan 2026 — Dashboard V2 ve profil fotoğrafı yükleme/sıkıştırma akışı eklendi._

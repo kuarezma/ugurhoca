@@ -1,7 +1,11 @@
 import 'server-only';
 
-import { getServerAccessToken, getServerAuthSnapshot } from '@/lib/auth-snapshot.server';
+import {
+  getServerAccessToken,
+  getServerAuthSnapshot,
+} from '@/lib/auth-snapshot.server';
 import { createServerSupabaseClient } from '@/lib/supabase/server';
+import { resolveCurrentGoal } from '@/features/progress/utils';
 import type {
   DashboardAssignment,
   DashboardDocument,
@@ -16,6 +20,10 @@ import type {
   ProfileProgressRow,
   ProfileStudySessionRow,
 } from '@/features/profile/types';
+import {
+  normalizeDashboardBadges,
+  type DashboardBadgeRow,
+} from '@/features/profile/utils/dashboard-view-model';
 
 export const loadInitialProfileDashboardData =
   async (): Promise<InitialProfileDashboardData> => {
@@ -28,6 +36,8 @@ export const loadInitialProfileDashboardData =
       return {
         assignments: [],
         availableQuizzes: [],
+        badges: [],
+        goal: null,
         isHydrated: false,
         notifications: [],
         progressRows: [],
@@ -43,6 +53,8 @@ export const loadInitialProfileDashboardData =
       return {
         assignments: [],
         availableQuizzes: [],
+        badges: [],
+        goal: null,
         isHydrated: false,
         notifications: [],
         progressRows: [],
@@ -78,6 +90,8 @@ export const loadInitialProfileDashboardData =
       return {
         assignments: [],
         availableQuizzes: [],
+        badges: [],
+        goal: null,
         isHydrated: true,
         notifications: [],
         progressRows: [],
@@ -129,6 +143,8 @@ export const loadInitialProfileDashboardData =
       availableQuizzesRes,
       studySessionsRes,
       progressRes,
+      goalRes,
+      badgesRes,
     ] = await Promise.all([
       supabase
         .from('notifications')
@@ -162,12 +178,26 @@ export const loadInitialProfileDashboardData =
         .select('id, topic, mastery_level')
         .eq('user_id', user.id)
         .order('mastery_level', { ascending: false }),
+      supabase
+        .from('study_goals')
+        .select('target_duration, week_start')
+        .eq('user_id', user.id),
+      supabase
+        .from('user_badges')
+        .select('id, badge_name, icon_name, earned_at')
+        .eq('user_id', user.id)
+        .order('earned_at', { ascending: false })
+        .limit(6),
     ]);
 
     return {
       assignments: (assignmentsRes.data || []) as DashboardAssignment[],
-      availableQuizzes:
-        (availableQuizzesRes.data || []) as DashboardQuizSummary[],
+      availableQuizzes: (availableQuizzesRes.data ||
+        []) as DashboardQuizSummary[],
+      badges: normalizeDashboardBadges(
+        (badgesRes.data || []) as DashboardBadgeRow[],
+      ),
+      goal: resolveCurrentGoal(goalRes.data || []),
       isHydrated: true,
       notifications: (notifRes.data || []) as DashboardNotification[],
       progressRows: (progressRes.data || []) as ProfileProgressRow[],

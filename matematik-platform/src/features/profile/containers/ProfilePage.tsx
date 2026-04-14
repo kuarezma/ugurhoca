@@ -10,13 +10,16 @@ import { signOutClient } from '@/lib/auth-client';
 import FloatingShapes from '@/components/FloatingShapes';
 import NotesSection from '@/components/NotesSection';
 import DashboardHero from '@/components/dashboard/DashboardHero';
+import MessageSummaryCard from '@/components/dashboard/MessageSummaryCard';
+import MotivationPanel from '@/components/dashboard/MotivationPanel';
+import ProgressOverview from '@/components/dashboard/ProgressOverview';
 import QuickActionGrid, {
   quickActionIcons,
 } from '@/components/dashboard/QuickActionGrid';
-import ProgressOverview from '@/components/dashboard/ProgressOverview';
-import MessageSummaryCard from '@/components/dashboard/MessageSummaryCard';
-import RecentResults from '@/components/dashboard/RecentResults';
+import QuickUpdatesPanel from '@/components/dashboard/QuickUpdatesPanel';
 import RecentDocuments from '@/components/dashboard/RecentDocuments';
+import RecentResults from '@/components/dashboard/RecentResults';
+import TodayPlanCard from '@/components/dashboard/TodayPlanCard';
 import DashboardSettings from '@/components/dashboard/DashboardSettings';
 import AvatarSelectionModal from '@/components/dashboard/AvatarSelectionModal';
 import AssignmentDetailModal from '@/features/profile/components/AssignmentDetailModal';
@@ -25,12 +28,15 @@ import ProfileNotificationsPanel from '@/features/profile/components/ProfileNoti
 import { useProfileDashboardData } from '@/features/profile/hooks/useProfileDashboardData';
 import {
   updateProfileAvatar,
+  uploadProfileAvatar,
 } from '@/features/profile/queries';
 import type { InitialProfileDashboardData } from '@/features/profile/types';
+import { buildProfileDashboardViewModel } from '@/features/profile/utils/dashboard-view-model';
 import type {
-  ContinueState,
+  DashboardAction,
   DashboardAssignment,
   DashboardNotification,
+  DashboardUpdateItem,
 } from '@/types/dashboard';
 
 type ProfilePageProps = {
@@ -48,7 +54,10 @@ export default function ProfilePage({ initialData }: ProfilePageProps) {
   const {
     assignments,
     availableQuizzes,
+    badges,
+    goal,
     loading,
+    markAllAsRead,
     markAsRead,
     notifications,
     progressRows,
@@ -68,36 +77,49 @@ export default function ProfilePage({ initialData }: ProfilePageProps) {
   const unreadCount = notifications.filter(
     (notification) => !notification.is_read,
   ).length;
-
-  const pendingAssignments = useMemo(() => {
-    const submittedAssignmentIds = new Set(
-      submissions.map((submission) => submission.assignment_id),
-    );
-
-    return assignments.filter(
-      (assignment) => !submittedAssignmentIds.has(assignment.id),
-    );
-  }, [assignments, submissions]);
-
-  const weeklyMinutes = useMemo(() => {
-    const cutoff = new Date();
-    cutoff.setDate(cutoff.getDate() - 7);
-    cutoff.setHours(0, 0, 0, 0);
-
-    return studySessions.reduce((total, session) => {
-      const sessionDate = new Date(session.date);
-      return sessionDate >= cutoff
-        ? total + Number(session.duration || 0)
-        : total;
-    }, 0);
-  }, [studySessions]);
-
-  const latestQuizScore = quizResults[0]?.score ?? null;
-  const strongTopic = progressRows[0]?.topic ?? null;
-  const focusTopic =
-    [...progressRows].reverse().find((row) => row.mastery_level < 60)?.topic ??
-    null;
   const latestNotification = notifications[0] || null;
+
+  const {
+    focusTopic,
+    goalSnapshot,
+    latestQuizScore,
+    motivationMessage,
+    pendingAssignments,
+    primaryTask,
+    recentBadges,
+    strongTopic,
+    tasks,
+    updates,
+  } = useMemo(
+    () =>
+      buildProfileDashboardViewModel({
+        assignments,
+        availableQuizzes,
+        badges,
+        goal,
+        notifications,
+        progressRows,
+        quizResults,
+        sharedDocs,
+        studySessions,
+        submissions,
+        user,
+      }),
+    [
+      assignments,
+      availableQuizzes,
+      badges,
+      goal,
+      notifications,
+      progressRows,
+      quizResults,
+      sharedDocs,
+      studySessions,
+      submissions,
+      user,
+    ],
+  );
+
   const unreadMessageNotification =
     notifications.find(
       (notification) =>
@@ -115,91 +137,90 @@ export default function ProfilePage({ initialData }: ProfilePageProps) {
       setShowNotifications(false);
 
       if (notification.type === 'document') {
-        const doc = sharedDocs[0];
-        if (doc?.file_url) {
-          window.open(doc.file_url, '_blank', 'noopener,noreferrer');
+        const latestUnreadDocument =
+          sharedDocs.find((document) => !document.is_read) || sharedDocs[0];
+
+        if (latestUnreadDocument?.file_url) {
+          window.open(
+            latestUnreadDocument.file_url,
+            '_blank',
+            'noopener,noreferrer',
+          );
           return;
         }
+
         router.push('/icerikler');
         return;
       }
 
       if (notification.type === 'assignment') {
         const pendingAssignment = pendingAssignments[0] || assignments[0];
+
         if (pendingAssignment) {
           setSelectedAssignment(pendingAssignment);
           return;
         }
+
         router.push('/odevler');
         return;
       }
 
-      if (
-        notification.type === 'message' ||
-        notification.type === 'admin-message'
-      ) {
-        setSelectedMessage(notification);
-      }
+      setSelectedMessage(notification);
     },
     [assignments, markAsRead, pendingAssignments, router, sharedDocs],
   );
 
-  const continueState: ContinueState = useMemo(() => {
-    if (pendingAssignments.length > 0) {
-      return {
-        kind: 'assignment',
-        title: 'Bekleyen ödevin var',
-        description: `${
-          pendingAssignments[0].title
-        } ödevini tamamlayıp teslim etmeyi unutma.`,
-        actionLabel: 'Ödeve Git',
-        onAction: () => router.push('/odevler'),
-        accentClass: 'from-purple-500/20 via-fuchsia-500/15 to-pink-500/15',
-      };
-    }
+  const handleDashboardAction = useCallback(
+    (action: DashboardAction) => {
+      if (action.type === 'go-assignments') {
+        router.push('/odevler');
+        return;
+      }
 
-    if (availableQuizzes.length > 0) {
-      return {
-        kind: 'quiz',
-        title: 'Yeni test seni bekliyor',
-        description: `${
-          availableQuizzes[0].title
-        } testiyle çalışmana hemen devam edebilirsin.`,
-        actionLabel: 'Teste Başla',
-        onAction: () => router.push('/testler'),
-        accentClass: 'from-emerald-500/20 via-teal-500/15 to-cyan-500/15',
-      };
-    }
+      if (action.type === 'go-tests') {
+        router.push('/testler');
+        return;
+      }
 
-    if (unreadMessageNotification) {
-      return {
-        kind: 'message',
-        title: 'Yeni bir mesajın var',
-        description:
-          unreadMessageNotification.title ||
-          'Dashboard’dan mesajlarını ve bildirimlerini kontrol et.',
-        actionLabel: 'Mesajı Aç',
-        onAction: () => handleNotificationClick(unreadMessageNotification),
-        accentClass: 'from-indigo-500/20 via-violet-500/15 to-fuchsia-500/15',
-      };
-    }
+      if (action.type === 'go-progress') {
+        router.push('/ilerleme');
+        return;
+      }
 
-    return {
-      kind: 'progress',
-      title: 'İlerlemeni güncel tut',
-      description:
-        'Çalışma ekleyerek gelişim ekranındaki haftalık özetini daha anlamlı hale getir.',
-      actionLabel: 'İlerlemeye Git',
-      onAction: () => router.push('/ilerleme'),
-      accentClass: 'from-blue-500/20 via-cyan-500/15 to-teal-500/15',
-    };
-  }, [
-    availableQuizzes,
-    handleNotificationClick,
-    pendingAssignments,
-    router,
-    unreadMessageNotification,
-  ]);
+      if (action.type === 'open-assignment') {
+        const targetAssignment = assignments.find(
+          (assignment) => assignment.id === action.assignmentId,
+        );
+
+        if (targetAssignment) {
+          setSelectedAssignment(targetAssignment);
+          return;
+        }
+
+        router.push('/odevler');
+        return;
+      }
+
+      if (action.type === 'open-notification') {
+        const targetNotification = notifications.find(
+          (notification) => notification.id === action.notificationId,
+        );
+
+        if (targetNotification) {
+          void handleNotificationClick(targetNotification);
+          return;
+        }
+
+        setShowNotifications(true);
+        return;
+      }
+
+      if (action.type === 'open-document' && action.url) {
+        window.open(action.url, '_blank', 'noopener,noreferrer');
+      }
+    },
+    [assignments, handleNotificationClick, notifications, router],
+  );
 
   const quickActionItems = useMemo(
     () => [
@@ -222,8 +243,8 @@ export default function ProfilePage({ initialData }: ProfilePageProps) {
           pendingAssignments[0]?.title ||
           'Teslim edilmesi gereken ödevlerini buradan takip et.',
         stat: `${pendingAssignments.length}`,
-        accentClass: 'from-purple-500/20 via-fuchsia-500/15 to-pink-500/10',
-        iconClass: 'bg-purple-500/30',
+        accentClass: 'from-orange-500/20 via-amber-500/15 to-yellow-500/10',
+        iconClass: 'bg-orange-500/30',
         actionLabel: 'Ödevlere Git',
         onAction: () => router.push('/odevler'),
         badge: pendingAssignments.length > 0 ? 'Bekliyor' : undefined,
@@ -233,30 +254,31 @@ export default function ProfilePage({ initialData }: ProfilePageProps) {
         title: 'İlerleme',
         description:
           strongTopic || focusTopic
-            ? `Konu durumunu gözden geçir: ${strongTopic || focusTopic}`
-            : 'Haftalık çalışma ve konu gelişimini tek bakışta incele.',
-        stat: `${user?.current_streak || 0} gün`,
+            ? `Bu hafta odağını ${focusTopic || strongTopic} çevresinde tut.`
+            : 'Haftalık hedef ve konu akışını tek ekranda incele.',
+        stat: `%${goalSnapshot.progressPercent}`,
         accentClass: 'from-blue-500/20 via-cyan-500/15 to-sky-500/10',
         iconClass: 'bg-blue-500/30',
         actionLabel: 'İlerlemeyi Aç',
         onAction: () => router.push('/ilerleme'),
-        badge: 'Seri',
+        badge: 'Hafta',
         icon: quickActionIcons.progress,
       },
       {
         title: 'Mesajlar',
         description:
           latestNotification?.title ||
-          'Uğur Hoca’dan gelen mesaj ve bildirimlerini buradan kontrol et.',
+          'Bildirim akışından yeni mesaj ve belge sinyallerini kontrol et.',
         stat: `${unreadCount}`,
         accentClass: 'from-indigo-500/20 via-violet-500/15 to-fuchsia-500/10',
         iconClass: 'bg-indigo-500/30',
-        actionLabel: 'Bildirimi Aç',
+        actionLabel: 'Akışı Aç',
         onAction: () => {
           if (unreadMessageNotification) {
-            handleNotificationClick(unreadMessageNotification);
+            void handleNotificationClick(unreadMessageNotification);
             return;
           }
+
           setShowNotifications(true);
         },
         badge: unreadCount > 0 ? 'Yeni' : undefined,
@@ -266,6 +288,7 @@ export default function ProfilePage({ initialData }: ProfilePageProps) {
     [
       availableQuizzes,
       focusTopic,
+      goalSnapshot.progressPercent,
       handleNotificationClick,
       latestNotification?.title,
       pendingAssignments,
@@ -273,30 +296,32 @@ export default function ProfilePage({ initialData }: ProfilePageProps) {
       strongTopic,
       unreadCount,
       unreadMessageNotification,
-      user?.current_streak,
     ],
   );
-
-  const openLatestMessage = () => {
-    if (unreadMessageNotification) {
-      handleNotificationClick(unreadMessageNotification);
-      return;
-    }
-
-    if (latestNotification) {
-      handleNotificationClick(latestNotification);
-      return;
-    }
-
-    setShowNotifications(true);
-  };
 
   const handleAvatarSelect = async (avatar: string) => {
     if (!user) return;
 
+    const previousAvatar = user.avatar_id;
     setUser({ ...user, avatar_id: avatar });
 
-    await updateProfileAvatar(user.id, avatar);
+    try {
+      await updateProfileAvatar(user.id, avatar);
+    } catch (error) {
+      setUser({ ...user, avatar_id: previousAvatar });
+      throw error;
+    }
+  };
+
+  const handleAvatarUpload = async (file: File) => {
+    if (!user) return;
+
+    const nextAvatarUrl = await uploadProfileAvatar(user.id, file);
+    setUser({ ...user, avatar_id: nextAvatarUrl });
+  };
+
+  const handleUpdateSelect = (item: DashboardUpdateItem) => {
+    handleDashboardAction(item.action);
   };
 
   if (loading) {
@@ -367,7 +392,9 @@ export default function ProfilePage({ initialData }: ProfilePageProps) {
         <ProfileNotificationsPanel
           notifications={notifications}
           unreadCount={unreadCount}
-          onNotificationClick={handleNotificationClick}
+          onNotificationClick={(notification) => {
+            void handleNotificationClick(notification);
+          }}
         />
       )}
 
@@ -408,39 +435,63 @@ export default function ProfilePage({ initialData }: ProfilePageProps) {
               </div>
             </motion.section>
           ) : (
-            <div className="space-y-8 w-full max-w-full overflow-hidden">
+            <div className="w-full max-w-full space-y-8 overflow-hidden">
               <DashboardHero
-                user={user}
-                continueState={continueState}
+                goalSnapshot={goalSnapshot}
+                latestScore={latestQuizScore}
                 onAvatarClick={() => setIsAvatarModalOpen(true)}
+                onPrimaryAction={() => {
+                  if (primaryTask) {
+                    handleDashboardAction(primaryTask.action);
+                    return;
+                  }
+
+                  router.push('/ilerleme');
+                }}
+                primaryTask={primaryTask}
+                user={user}
               />
 
               <div className="mx-auto w-full max-w-full">
                 <QuickActionGrid items={quickActionItems} />
               </div>
 
-              <div className="grid gap-6 lg:grid-cols-2">
+              <div className="grid gap-6 xl:grid-cols-[0.95fr_1.05fr]">
+                <TodayPlanCard
+                  tasks={tasks}
+                  onSelectTask={(task) => handleDashboardAction(task.action)}
+                />
                 <ProgressOverview
-                  streak={user.current_streak || 0}
-                  weeklyMinutes={weeklyMinutes}
+                  detailHref="/ilerleme"
+                  focusTopic={focusTopic}
+                  goalSnapshot={goalSnapshot}
                   latestScore={latestQuizScore}
                   strongTopic={strongTopic}
-                  focusTopic={focusTopic}
-                  detailHref="/ilerleme"
-                />
-                <MessageSummaryCard
-                  unreadCount={unreadCount}
-                  latestTitle={latestNotification?.title || null}
-                  latestMessage={
-                    latestNotification?.message ||
-                    latestNotification?.metadata?.sender_name ||
-                    null
-                  }
-                  notifications={notifications}
-                  onOpenPanel={() => setShowNotifications(true)}
-                  onOpenLatest={openLatestMessage}
                 />
               </div>
+
+              <div className="grid gap-6 lg:grid-cols-2">
+                <MotivationPanel
+                  badges={recentBadges}
+                  latestScore={latestQuizScore}
+                  message={motivationMessage}
+                  streak={user.current_streak || 0}
+                />
+                <MessageSummaryCard
+                  notifications={notifications}
+                  onMarkAllAsRead={markAllAsRead}
+                  onOpenNotification={(notification) => {
+                    void handleNotificationClick(notification);
+                  }}
+                  onOpenPanel={() => setShowNotifications(true)}
+                  unreadCount={unreadCount}
+                />
+              </div>
+
+              <QuickUpdatesPanel
+                updates={updates}
+                onSelectUpdate={handleUpdateSelect}
+              />
 
               <div className="grid gap-6 lg:grid-cols-2">
                 <RecentResults results={quizResults} />
@@ -455,6 +506,7 @@ export default function ProfilePage({ initialData }: ProfilePageProps) {
                 isOpen={isAvatarModalOpen}
                 onClose={() => setIsAvatarModalOpen(false)}
                 onSelect={handleAvatarSelect}
+                onUpload={handleAvatarUpload}
                 currentAvatar={user.avatar_id}
               />
             </div>

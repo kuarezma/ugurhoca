@@ -1,6 +1,7 @@
 import type { Clock3 } from 'lucide-react';
 import type {
   DashboardAssignment,
+  DashboardBadge,
   DashboardDocument,
   DashboardNotification,
   DashboardQuizResult,
@@ -8,6 +9,7 @@ import type {
   DashboardSubmission,
   StudentProfile,
 } from '@/types/dashboard';
+import type { StudyGoal } from '@/features/progress/types';
 
 export type ProfileProgressRow = {
   id: string;
@@ -32,6 +34,8 @@ export type ProfileNotificationStyle = {
 export type ProfileDashboardData = {
   assignments: DashboardAssignment[];
   availableQuizzes: DashboardQuizSummary[];
+  badges: DashboardBadge[];
+  goal: StudyGoal | null;
   isHydrated: boolean;
   notifications: DashboardNotification[];
   progressRows: ProfileProgressRow[];
