@@ -56,6 +56,10 @@ export default function LgsWizardPage() {
   const [preferredLevel, setPreferredLevel] = useState<'all' | ProgramTargetLevel>('all');
 
   const lgsResult = useMemo(() => calculateLgsScore(inputs), [inputs]);
+  const orderedHistoryYears = useMemo(
+    () => [...historyYears].sort((left, right) => left - right),
+    [historyYears],
+  );
 
   const groupedSchools = useMemo<LgsSchoolWithHistory[]>(() => {
     const grouped = new Map<string, typeof schools>();
@@ -465,9 +469,9 @@ export default function LgsWizardPage() {
                   Veritabani kapsami: <span className="font-bold">{provinces.length} il</span>,{' '}
                   <span className="font-bold">{totalDistrictCount} ilce</span>,{' '}
                   <span className="font-bold">{groupedSchools.length} okul</span>
-                  {historyYears.length ? (
+                  {orderedHistoryYears.length ? (
                     <>
-                      , <span className="font-bold">{historyYears.length} yil trendi</span> ({historyYears.join(', ')})
+                      , <span className="font-bold">{orderedHistoryYears.length} yil trendi</span> ({orderedHistoryYears.join(', ')})
                     </>
                   ) : null}
                 </div>
@@ -608,14 +612,14 @@ export default function LgsWizardPage() {
                                 <div className={`mb-2 text-[11px] font-bold uppercase tracking-[0.16em] ${isLight ? 'text-slate-500' : 'text-slate-400'}`}>
                                   Son 5 Yil Yuzdelik ve Taban Puan
                                 </div>
-                                <div className="grid gap-2 sm:grid-cols-5">
-                                  {historyYears.map((year) => {
+                                <div className="grid grid-cols-5 gap-2">
+                                  {orderedHistoryYears.map((year) => {
                                     const point = school.history.find((entry) => entry.year === year);
 
                                     return (
                                       <div
                                         key={year}
-                                        className={`rounded-xl border px-3 py-2 text-[11px] ${isLight ? 'bg-slate-50 border-slate-200 text-slate-700' : 'bg-white/5 border-white/10 text-slate-200'}`}
+                                        className={`rounded-xl border px-2 py-2 text-[10px] sm:px-3 sm:text-[11px] ${isLight ? 'bg-slate-50 border-slate-200 text-slate-700' : 'bg-white/5 border-white/10 text-slate-200'}`}
                                       >
                                         <div className={`font-bold ${isLight ? 'text-slate-900' : 'text-white'}`}>{year}</div>
                                         <div className="mt-1">Puan: {point ? point.base_score.toFixed(2) : '-'}</div>
