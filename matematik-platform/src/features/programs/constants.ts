@@ -1,5 +1,8 @@
 import type { ProgramTargetLevel, ProgramLevelTone } from '@/features/programs/types';
 
+export const MINIMUM_FULL_LGS_ROW_COUNT = 200;
+export const MINIMUM_FULL_YKS_ROW_COUNT = 1000;
+
 export const PROGRAM_LEVEL_TONES: Record<ProgramTargetLevel, ProgramLevelTone> = {
   iddiali: {
     darkBadge: 'bg-rose-500/20 text-rose-200',

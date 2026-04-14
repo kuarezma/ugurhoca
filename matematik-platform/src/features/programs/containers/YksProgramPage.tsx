@@ -20,6 +20,7 @@ import type {
 } from '@/features/programs/types';
 import {
   clampProgramValue,
+  formatProgramOptionLabel,
   getProgramLevelBadgeLabel,
   getProgramLevelTone,
 } from '@/features/programs/utils';
@@ -217,6 +218,7 @@ export default function YksWizardPage() {
             badgeClassName="bg-gradient-to-r from-violet-500 via-fuchsia-500 to-orange-400"
             badgeLabel="YKS Tercih Sihirbazi"
             dataYear={dataYear}
+            dataYearNote={dataYear < 2026 ? 'En guncel tam tercih verisi kullaniliyor.' : undefined}
             description="TYT / SAY / EA / SOZ puan tahmini yapilir. Sonra gercek veritabanindaki universiteler filtrelenerek hedef seviyene uygun secenekler listelenir. Sonuclar kaydedilmez."
             isLight={isLight}
             title="YKS Puan Hesaplama ve Universite Tercih Sihirbazi"
@@ -416,7 +418,7 @@ export default function YksWizardPage() {
                   <option value="all">Tum Sehirler</option>
                   {cities.map((item) => (
                     <option key={item} value={item}>
-                      {item}
+                      {formatProgramOptionLabel(item)}
                     </option>
                   ))}
                 </select>
@@ -431,7 +433,7 @@ export default function YksWizardPage() {
                   <option value="all">Tum Universite Tipleri</option>
                   {universityTypes.map((item) => (
                     <option key={item} value={item}>
-                      {item}
+                      {formatProgramOptionLabel(item)}
                     </option>
                   ))}
                 </select>
@@ -446,7 +448,7 @@ export default function YksWizardPage() {
                   <option value="all">Tum Ogretim Turleri</option>
                   {teachingTypes.map((item) => (
                     <option key={item} value={item}>
-                      {item}
+                      {formatProgramOptionLabel(item)}
                     </option>
                   ))}
                 </select>
@@ -461,7 +463,7 @@ export default function YksWizardPage() {
                   <option value="all">Tum Diller</option>
                   {languages.map((item) => (
                     <option key={item} value={item}>
-                      {item}
+                      {formatProgramOptionLabel(item)}
                     </option>
                   ))}
                 </select>
@@ -596,7 +598,7 @@ export default function YksWizardPage() {
                                   <p className={`mt-1 text-sm font-semibold ${isLight ? 'text-slate-700' : 'text-slate-200'}`}>{program.program_name}</p>
                                   <p className={`mt-1 inline-flex items-center gap-1 text-xs ${isLight ? 'text-slate-600' : 'text-slate-300'}`}>
                                     <MapPin className="h-3.5 w-3.5" />
-                                    {program.city}
+                                    {formatProgramOptionLabel(program.city)}
                                   </p>
                                 </div>
 
@@ -619,7 +621,7 @@ export default function YksWizardPage() {
                               <div className={`mt-3 flex flex-wrap gap-2 text-[11px] ${isLight ? 'text-slate-700' : 'text-slate-200'}`}>
                                 <span className={`rounded-full px-2 py-1 ${isLight ? 'bg-white/80' : 'bg-white/10'}`}>{program.score_type}</span>
                                 <span className={`rounded-full px-2 py-1 ${isLight ? 'bg-white/80' : 'bg-white/10'}`}>{program.level === 'lisans' ? 'Lisans' : 'Onlisans'}</span>
-                                <span className={`rounded-full px-2 py-1 ${isLight ? 'bg-white/80' : 'bg-white/10'}`}>{program.university_type}</span>
+                                <span className={`rounded-full px-2 py-1 ${isLight ? 'bg-white/80' : 'bg-white/10'}`}>{formatProgramOptionLabel(program.university_type)}</span>
                                 <span className={`rounded-full px-2 py-1 ${isLight ? 'bg-white/80' : 'bg-white/10'}`}>
                                   Burs: %{program.scholarship_rate || 0}
                                 </span>

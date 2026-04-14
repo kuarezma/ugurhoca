@@ -4,6 +4,7 @@ type ProgramWizardHeaderProps = {
   badgeClassName: string;
   badgeLabel: string;
   dataYear: number;
+  dataYearNote?: string;
   description: string;
   isLight: boolean;
   title: string;
@@ -13,6 +14,7 @@ export function ProgramWizardHeader({
   badgeClassName,
   badgeLabel,
   dataYear,
+  dataYearNote,
   description,
   isLight,
   title,
@@ -50,6 +52,11 @@ export function ProgramWizardHeader({
         }`}
       >
         Veri Yili: <span className="font-bold">{dataYear}</span>
+        {dataYearNote ? (
+          <div className={`mt-1 text-[11px] ${isLight ? 'text-slate-500' : 'text-slate-400'}`}>
+            {dataYearNote}
+          </div>
+        ) : null}
       </div>
     </div>
   );

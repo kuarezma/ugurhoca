@@ -20,6 +20,7 @@ import type {
 } from '@/features/programs/types';
 import {
   clampProgramValue,
+  formatProgramOptionLabel,
   getProgramLevelBadgeLabel,
   getProgramLevelTone,
 } from '@/features/programs/utils';
@@ -177,6 +178,7 @@ export default function LgsWizardPage() {
             badgeClassName="bg-gradient-to-r from-cyan-500 via-blue-500 to-indigo-500"
             badgeLabel="LGS 2026 Sihirbazi"
             dataYear={dataYear}
+            dataYearNote={dataYear < 2026 ? 'En guncel tam yerlestirme verisi kullaniliyor.' : undefined}
             description="13 Haziran 2026 baz alinarak tahmini LGS puani hesaplanir. Ardindan gercek veritabanindaki hedef lise verilerine gore iddiali, dengeli ve guvenli secenekler listelenir."
             isLight={isLight}
             title="LGS Puan Hesaplama ve Lise Hedef Belirleme"
@@ -316,7 +318,7 @@ export default function LgsWizardPage() {
                     <option value="all">Tum Iller</option>
                     {provinces.map((item) => (
                       <option key={item} value={item}>
-                        {item}
+                        {formatProgramOptionLabel(item)}
                       </option>
                     ))}
                   </select>
@@ -331,7 +333,7 @@ export default function LgsWizardPage() {
                     <option value="all">Tum Ilceler</option>
                     {districts.map((item) => (
                       <option key={item} value={item}>
-                        {item}
+                        {formatProgramOptionLabel(item)}
                       </option>
                     ))}
                   </select>
@@ -346,7 +348,7 @@ export default function LgsWizardPage() {
                     <option value="all">Tum Okul Turleri</option>
                     {schoolTypes.map((item) => (
                       <option key={item} value={item}>
-                        {item}
+                        {formatProgramOptionLabel(item)}
                       </option>
                     ))}
                   </select>
@@ -361,7 +363,7 @@ export default function LgsWizardPage() {
                     <option value="all">Tum Diller</option>
                     {languages.map((item) => (
                       <option key={item} value={item}>
-                        {item}
+                        {formatProgramOptionLabel(item)}
                       </option>
                     ))}
                   </select>
@@ -491,7 +493,7 @@ export default function LgsWizardPage() {
                                   <h3 className={`text-sm font-black sm:text-base ${isLight ? 'text-slate-900' : 'text-white'}`}>{school.school_name}</h3>
                                   <p className={`mt-1 inline-flex items-center gap-1 text-xs ${isLight ? 'text-slate-600' : 'text-slate-300'}`}>
                                     <MapPin className="h-3.5 w-3.5" />
-                                    {school.province} / {school.district}
+                                    {formatProgramOptionLabel(school.province)} / {formatProgramOptionLabel(school.district)}
                                   </p>
                                 </div>
                                 <span className={`rounded-full px-2 py-1 text-[11px] font-bold ${tone.badge}`}>
@@ -514,8 +516,8 @@ export default function LgsWizardPage() {
                               </div>
 
                               <div className={`mt-3 flex flex-wrap gap-2 text-[11px] ${isLight ? 'text-slate-700' : 'text-slate-200'}`}>
-                                <span className={`rounded-full px-2 py-1 ${isLight ? 'bg-white/80' : 'bg-white/10'}`}>{school.school_type}</span>
-                                <span className={`rounded-full px-2 py-1 ${isLight ? 'bg-white/80' : 'bg-white/10'}`}>{school.instruction_language}</span>
+                                <span className={`rounded-full px-2 py-1 ${isLight ? 'bg-white/80' : 'bg-white/10'}`}>{formatProgramOptionLabel(school.school_type)}</span>
+                                <span className={`rounded-full px-2 py-1 ${isLight ? 'bg-white/80' : 'bg-white/10'}`}>{formatProgramOptionLabel(school.instruction_language)}</span>
                                 <span className={`rounded-full px-2 py-1 ${isLight ? 'bg-white/80' : 'bg-white/10'}`}>
                                   {school.boarding ? 'Pansiyonlu' : 'Pansiyonsuz'}
                                 </span>
