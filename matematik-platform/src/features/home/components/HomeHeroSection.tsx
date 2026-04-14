@@ -4,9 +4,7 @@ import { useCallback, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
-import { ExamCountdown } from '@/components/ExamCountdown';
 import { prefetchContentDocuments } from '@/features/content/queries';
-import { featuredExams } from '@/lib/examDates';
 import {
   HOME_CATEGORIES,
   HOME_CONTENT_PREFETCH_TYPES,
@@ -134,14 +132,6 @@ export function HomeHeroSection({ isLight }: HomeHeroSectionProps) {
               </Link>
             </motion.div>
           ))}
-        </div>
-
-        <div className="mx-auto mt-4 grid max-w-3xl gap-2 sm:grid-cols-2">
-          {featuredExams
-            .filter((exam) => exam.featured)
-            .map((exam) => (
-              <ExamCountdown key={exam.id} exam={exam} isLight={isLight} />
-            ))}
         </div>
       </div>
     </section>

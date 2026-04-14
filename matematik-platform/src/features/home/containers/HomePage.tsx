@@ -5,6 +5,7 @@ import FloatingShapes from '@/components/FloatingShapes';
 import { HomeAnnouncementModal } from '@/features/home/components/HomeAnnouncementModal';
 import { HomeAnnouncementsSection } from '@/features/home/components/HomeAnnouncementsSection';
 import { HomeAssignmentsSection } from '@/features/home/components/HomeAssignmentsSection';
+import { HomeExamCountdownSection } from '@/features/home/components/HomeExamCountdownSection';
 import { HomeFooter } from '@/features/home/components/HomeFooter';
 import { HomeGuestCtaSection } from '@/features/home/components/HomeGuestCtaSection';
 import { HomeHeroSection } from '@/features/home/components/HomeHeroSection';
@@ -55,6 +56,7 @@ export default function HomePage() {
           isLight={isLight}
           onSelectAnnouncement={setSelectedAnnouncement}
         />
+        <HomeExamCountdownSection isLight={isLight} />
         <HomeAssignmentsSection
           assignments={visibleAssignments}
           isLight={isLight}
