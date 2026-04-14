@@ -8,6 +8,8 @@ import type {
   YksProgramTarget,
 } from '@/features/programs/types';
 
+const PROGRAM_QUERY_PAGE_SIZE = 1000;
+
 type ProgramLoadResult<T> = {
   dataYear: number;
   error: string;
@@ -15,12 +17,47 @@ type ProgramLoadResult<T> = {
   rows: T[];
 };
 
+type QueryError = {
+  message: string;
+};
+
+async function fetchAllProgramRows<T>(
+  queryFactory: (
+    from: number,
+    to: number,
+  ) => PromiseLike<{ data: T[] | null; error: QueryError | null }>,
+): Promise<{ data: T[]; error: QueryError | null }> {
+  const rows: T[] = [];
+  let from = 0;
+
+  while (true) {
+    const to = from + PROGRAM_QUERY_PAGE_SIZE - 1;
+    const { data, error } = await queryFactory(from, to);
+
+    if (error) {
+      return { data: rows, error };
+    }
+
+    const page = data ?? [];
+    rows.push(...page);
+
+    if (page.length < PROGRAM_QUERY_PAGE_SIZE) {
+      return { data: rows, error: null };
+    }
+
+    from += PROGRAM_QUERY_PAGE_SIZE;
+  }
+}
+
 export async function loadYksProgramTargets(
   preferredYear = 2026,
 ): Promise<ProgramLoadResult<YksProgramTarget>> {
-  const yearListQuery = await supabase
-    .from('yks_program_targets')
-    .select('year');
+  const yearListQuery = await fetchAllProgramRows<{ year: number }>((from, to) =>
+    supabase
+      .from('yks_program_targets')
+      .select('year')
+      .range(from, to),
+  );
 
   if (yearListQuery.error) {
     return {
@@ -56,11 +93,14 @@ export async function loadYksProgramTargets(
           (year) => (counts.get(year) ?? 0) >= MINIMUM_FULL_YKS_ROW_COUNT,
         ) ?? availableYears[0];
 
-  const selectedRowsQuery = await supabase
-    .from('yks_program_targets')
-    .select('*')
-    .eq('year', selectedYear)
-    .order('base_rank', { ascending: true });
+  const selectedRowsQuery = await fetchAllProgramRows<YksProgramTarget>((from, to) =>
+    supabase
+      .from('yks_program_targets')
+      .select('*')
+      .eq('year', selectedYear)
+      .order('base_rank', { ascending: true })
+      .range(from, to),
+  );
 
   if (selectedRowsQuery.error) {
     return {
@@ -85,9 +125,12 @@ export async function loadYksProgramTargets(
 export async function loadLgsSchoolTargets(
   preferredYear = 2026,
 ): Promise<ProgramLoadResult<LgsSchoolTarget>> {
-  const yearListQuery = await supabase
-    .from('lgs_school_targets')
-    .select('year');
+  const yearListQuery = await fetchAllProgramRows<{ year: number }>((from, to) =>
+    supabase
+      .from('lgs_school_targets')
+      .select('year')
+      .range(from, to),
+  );
 
   if (yearListQuery.error) {
     return {
@@ -124,12 +167,15 @@ export async function loadLgsSchoolTargets(
     .filter((year) => year <= selectedYear)
     .slice(0, 5);
 
-  const selectedRowsQuery = await supabase
-    .from('lgs_school_targets')
-    .select('*')
-    .in('year', historyYears)
-    .order('year', { ascending: false })
-    .order('base_score', { ascending: false });
+  const selectedRowsQuery = await fetchAllProgramRows<LgsSchoolTarget>((from, to) =>
+    supabase
+      .from('lgs_school_targets')
+      .select('*')
+      .in('year', historyYears)
+      .order('year', { ascending: false })
+      .order('base_score', { ascending: false })
+      .range(from, to),
+  );
 
   if (selectedRowsQuery.error) {
     return {
