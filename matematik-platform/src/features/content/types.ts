@@ -1,6 +1,15 @@
 import type { AppUser, Comment, ContentDocument, GradeValue } from '@/types';
 
 export type ContentGradeFilter = number | 'all' | 'Mezun';
+export type ContentDocumentsPayload = {
+  count: number;
+  documents: ContentDocument[];
+};
+
+export type ContentPrefetchPayload = ContentDocumentsPayload & {
+  grade: ContentGradeFilter;
+  type: string;
+};
 
 export type ContentPageUser = AppUser;
 

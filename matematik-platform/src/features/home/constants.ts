@@ -12,6 +12,7 @@ export type HomeCategory = {
   bgColor: string;
   borderColor: string;
   color: string;
+  contentType?: string;
   desc: string;
   href: string;
   icon: LucideIcon;
@@ -24,6 +25,7 @@ export const HOME_CATEGORIES: HomeCategory[] = [
     bgColor: 'bg-blue-500/10',
     borderColor: 'border-blue-500/30',
     color: 'from-blue-500 to-cyan-500',
+    contentType: 'ders-notlari',
     desc: 'Konu anlatımları ve özetler',
     href: '/icerikler?type=ders-notlari',
     icon: BookOpen,
@@ -34,6 +36,7 @@ export const HOME_CATEGORIES: HomeCategory[] = [
     bgColor: 'bg-indigo-500/10',
     borderColor: 'border-indigo-500/30',
     color: 'from-indigo-500 to-violet-500',
+    contentType: 'kitaplar',
     desc: 'Kitap önerileri ve pdf\'leri',
     href: '/icerikler?type=kitaplar',
     icon: BookOpen,
@@ -44,6 +47,7 @@ export const HOME_CATEGORIES: HomeCategory[] = [
     bgColor: 'bg-purple-500/10',
     borderColor: 'border-purple-500/30',
     color: 'from-purple-500 to-pink-500',
+    contentType: 'yaprak-test',
     desc: 'Bol soru, bol pratik',
     href: '/icerikler?type=yaprak-test',
     icon: ClipboardList,
@@ -54,6 +58,7 @@ export const HOME_CATEGORIES: HomeCategory[] = [
     bgColor: 'bg-red-500/10',
     borderColor: 'border-red-500/30',
     color: 'from-red-500 to-orange-500',
+    contentType: 'ders-videolari',
     desc: 'Video anlatımlar',
     href: '/icerikler?type=ders-videolari',
     icon: Video,
@@ -64,6 +69,7 @@ export const HOME_CATEGORIES: HomeCategory[] = [
     bgColor: 'bg-green-500/10',
     borderColor: 'border-green-500/30',
     color: 'from-green-500 to-emerald-500',
+    contentType: 'deneme',
     desc: 'Deneme sınavları',
     href: '/icerikler?type=deneme',
     icon: FileText,
@@ -74,6 +80,7 @@ export const HOME_CATEGORIES: HomeCategory[] = [
     bgColor: 'bg-teal-500/10',
     borderColor: 'border-teal-500/30',
     color: 'from-teal-500 to-cyan-500',
+    contentType: 'sinav',
     desc: 'Sınavlar ve testler',
     href: '/icerikler?type=sinav',
     icon: ClipboardList,
@@ -104,4 +111,8 @@ export const HOME_CATEGORIES: HomeCategory[] = [
 
 export const HOME_ROUTE_PREFETCH_HREFS = HOME_CATEGORIES.map(
   (category) => category.href,
+);
+
+export const HOME_CONTENT_PREFETCH_TYPES = HOME_CATEGORIES.flatMap(
+  (category) => (category.contentType ? [category.contentType] : []),
 );

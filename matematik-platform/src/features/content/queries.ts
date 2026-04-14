@@ -4,18 +4,18 @@ import { supabase } from '@/lib/supabase/client';
 import type { Comment, ContentDocument } from '@/types';
 import type {
   ContentComment,
+  ContentDocumentsPayload,
   ContentFormState,
   ContentGradeFilter,
   ContentPageUser,
+  ContentPrefetchPayload,
 } from '@/features/content/types';
-import { CONTENT_TYPE_MAPPING } from '@/features/content/constants';
+import {
+  CONTENT_PAGE_SIZE,
+  CONTENT_TYPE_MAPPING,
+} from '@/features/content/constants';
 
-const CONTENT_DOCUMENT_CACHE_TTL_MS = 30_000;
-
-type ContentDocumentsPayload = {
-  count: number;
-  documents: ContentDocument[];
-};
+const CONTENT_DOCUMENT_CACHE_TTL_MS = 60_000;
 
 type ContentDocumentCacheEntry = {
   payload: ContentDocumentsPayload;
@@ -26,6 +26,14 @@ const contentDocumentCache = new Map<string, ContentDocumentCacheEntry>();
 const pendingContentDocumentRequests = new Map<
   string,
   Promise<ContentDocumentsPayload>
+>();
+const contentPrefetchCache = new Map<
+  string,
+  { grade: ContentGradeFilter; timestamp: number }
+>();
+const pendingContentPrefetchRequests = new Map<
+  string,
+  Promise<ContentPrefetchPayload>
 >();
 
 const getContentDocumentCacheKey = (
@@ -38,6 +46,8 @@ const getContentDocumentCacheKey = (
 export const clearContentDocumentCache = () => {
   contentDocumentCache.clear();
   pendingContentDocumentRequests.clear();
+  contentPrefetchCache.clear();
+  pendingContentPrefetchRequests.clear();
 };
 
 export const seedContentDocumentCache = (
@@ -58,6 +68,79 @@ export const seedContentDocumentCache = (
     payload,
     timestamp: Date.now(),
   });
+};
+
+export const prefetchContentDocuments = async (typeFilter: string) => {
+  const normalizedType =
+    typeof typeFilter === 'string' && typeFilter.length > 0 ? typeFilter : 'all';
+  const prefetched = contentPrefetchCache.get(normalizedType);
+
+  if (prefetched) {
+    const cacheKey = getContentDocumentCacheKey(
+      1,
+      CONTENT_PAGE_SIZE,
+      prefetched.grade,
+      normalizedType,
+    );
+    const cached = contentDocumentCache.get(cacheKey);
+
+    if (cached && Date.now() - cached.timestamp < CONTENT_DOCUMENT_CACHE_TTL_MS) {
+      return {
+        ...cached.payload,
+        grade: prefetched.grade,
+        type: normalizedType,
+      };
+    }
+  }
+
+  const pendingRequest = pendingContentPrefetchRequests.get(normalizedType);
+
+  if (pendingRequest) {
+    return pendingRequest;
+  }
+
+  const request = (async () => {
+    const response = await fetch(
+      `/api/content-prefetch?type=${encodeURIComponent(normalizedType)}`,
+      {
+        credentials: 'same-origin',
+      },
+    );
+    const payload = (await response.json().catch(() => null)) as
+      | { data?: ContentPrefetchPayload; error?: { message?: string } }
+      | null;
+
+    if (!response.ok || !payload?.data) {
+      throw new Error(
+        payload?.error?.message || 'Icerik on hazirligi yuklenemedi.',
+      );
+    }
+
+    seedContentDocumentCache(
+      1,
+      CONTENT_PAGE_SIZE,
+      payload.data.grade,
+      payload.data.type,
+      {
+        count: payload.data.count,
+        documents: payload.data.documents,
+      },
+    );
+    contentPrefetchCache.set(payload.data.type, {
+      grade: payload.data.grade,
+      timestamp: Date.now(),
+    });
+
+    return payload.data;
+  })();
+
+  pendingContentPrefetchRequests.set(normalizedType, request);
+
+  try {
+    return await request;
+  } finally {
+    pendingContentPrefetchRequests.delete(normalizedType);
+  }
 };
 
 export const loadContentDocuments = async (

@@ -5,9 +5,11 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { ExamCountdown } from '@/components/ExamCountdown';
+import { prefetchContentDocuments } from '@/features/content/queries';
 import { featuredExams } from '@/lib/examDates';
 import {
   HOME_CATEGORIES,
+  HOME_CONTENT_PREFETCH_TYPES,
   HOME_ROUTE_PREFETCH_HREFS,
 } from '@/features/home/constants';
 
@@ -23,12 +25,27 @@ export function HomeHeroSection({ isLight }: HomeHeroSectionProps) {
     },
     [router],
   );
+  const prefetchCategory = useCallback(
+    (href: string, contentType?: string) => {
+      prefetchHref(href);
+
+      if (contentType) {
+        void prefetchContentDocuments(contentType).catch(() => undefined);
+      }
+    },
+    [prefetchHref],
+  );
 
   useEffect(() => {
     const prefetchTargets = () => {
       HOME_ROUTE_PREFETCH_HREFS.forEach((href) => {
         prefetchHref(href);
       });
+      void Promise.allSettled(
+        HOME_CONTENT_PREFETCH_TYPES.map((type) =>
+          prefetchContentDocuments(type),
+        ),
+      );
     };
 
     const requestIdleCallbackFn = window.requestIdleCallback?.bind(window);
@@ -83,8 +100,12 @@ export function HomeHeroSection({ isLight }: HomeHeroSectionProps) {
             >
               <Link
                 href={category.href}
-                onMouseEnter={() => prefetchHref(category.href)}
-                onTouchStart={() => prefetchHref(category.href)}
+                onMouseEnter={() =>
+                  prefetchCategory(category.href, category.contentType)
+                }
+                onTouchStart={() =>
+                  prefetchCategory(category.href, category.contentType)
+                }
                 className={`block border rounded-2xl p-5 sm:p-7 lg:p-6 text-center transition-all ${
                   isLight
                     ? 'light-card hover:-translate-y-0.5'
