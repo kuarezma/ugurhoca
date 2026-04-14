@@ -84,6 +84,13 @@ export type EvaluatedLgsSchoolTarget = LgsSchoolWithHistory & {
   baseScore: number;
 };
 
+export type LgsSchoolPageData = {
+  dataYear: number;
+  error: string;
+  historyYears: number[];
+  schools: LgsSchoolWithHistory[];
+};
+
 export type ProgramLevelTone = {
   darkBadge: string;
   darkCard: string;

@@ -72,56 +72,10 @@ export default function LgsWizardPage() {
     [historyYears],
   );
 
-  const groupedSchools = useMemo<LgsSchoolWithHistory[]>(() => {
-    const grouped = new Map<string, typeof schools>();
-
-    for (const row of schools) {
-      const key = `${row.school_name}::${row.province}::${row.district}`;
-      const current = grouped.get(key) || [];
-      current.push(row);
-      grouped.set(key, current);
-    }
-
-    return [...grouped.values()]
-      .map((rows) => {
-        const sortedRows = [...rows].sort((a, b) => b.year - a.year);
-        const history = sortedRows
-          .map((row) => ({
-            year: row.year,
-            base_score: row.base_score,
-            national_percentile: row.national_percentile,
-            quota_total: row.quota_total,
-            source_url: row.source_url,
-          }));
-
-        const latestRow = sortedRows.find((row) => row.year === dataYear) || sortedRows[0];
-
-        if (!latestRow || latestRow.placement_mode !== 'central') {
-          return null;
-        }
-
-        return {
-          district: latestRow.district,
-          history,
-          instruction_language: latestRow.instruction_language,
-          latest_year: latestRow.year,
-          placement_mode: latestRow.placement_mode,
-          prep_class: latestRow.prep_class,
-          province: latestRow.province,
-          quota_total: latestRow.quota_total,
-          school_name: latestRow.school_name,
-          school_type: latestRow.school_type,
-          source_url: latestRow.source_url,
-          source_year: latestRow.source_year,
-          base_score: latestRow.base_score,
-          boarding: latestRow.boarding,
-          id: latestRow.id,
-          national_percentile: latestRow.national_percentile,
-        };
-      })
-      .filter((school): school is LgsSchoolWithHistory => school !== null)
-      .sort((a, b) => b.base_score - a.base_score);
-  }, [dataYear, schools]);
+  const groupedSchools = useMemo<LgsSchoolWithHistory[]>(
+    () => schools,
+    [schools],
+  );
 
   const provinces = useMemo(
     () => Array.from(new Set(groupedSchools.map((school) => school.province))).sort((a, b) => a.localeCompare(b, 'tr')),
@@ -486,6 +440,18 @@ export default function LgsWizardPage() {
                 <div className={`mt-4 rounded-2xl border p-3 text-sm ${isLight ? 'bg-slate-50 border-slate-200 text-slate-700' : 'bg-white/5 border-white/10 text-slate-300'}`}>
                   Filtreye uygun okul sayisi: <span className="font-bold">{evaluatedSchools.length}</span>
                 </div>
+
+                {error ? (
+                  <div
+                    className={`mt-3 rounded-2xl border p-3 text-sm ${
+                      isLight
+                        ? 'bg-rose-50 border-rose-200 text-rose-700'
+                        : 'bg-rose-500/10 border-rose-500/30 text-rose-200'
+                    }`}
+                  >
+                    {error}
+                  </div>
+                ) : null}
 
                 <div className={`mt-3 rounded-2xl border p-3 text-sm ${isLight ? 'bg-indigo-50 border-indigo-100 text-slate-700' : 'bg-indigo-500/10 border-indigo-400/20 text-slate-200'}`}>
                   Veritabani kapsami: <span className="font-bold">{provinces.length} il</span>,{' '}
