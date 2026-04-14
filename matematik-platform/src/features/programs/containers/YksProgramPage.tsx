@@ -15,6 +15,7 @@ import { ProgramStepTabs } from '@/features/programs/components/ProgramStepTabs'
 import { ProgramWizardHeader } from '@/features/programs/components/ProgramWizardHeader';
 import { useYksProgramTargets } from '@/features/programs/hooks/useYksProgramTargets';
 import type {
+  ProgramLocationScope,
   ProgramStep,
   ProgramTargetLevel,
 } from '@/features/programs/types';
@@ -23,6 +24,8 @@ import {
   formatProgramOptionLabel,
   getProgramLevelBadgeLabel,
   getProgramLevelTone,
+  isInternationalProgramLocation,
+  matchesProgramLocationScope,
 } from '@/features/programs/utils';
 import {
   calculateYksScore,
@@ -53,6 +56,7 @@ export default function YksWizardPage() {
 
   const [query, setQuery] = useState('');
   const [level, setLevel] = useState<'all' | 'lisans' | 'onlisans'>('all');
+  const [locationScope, setLocationScope] = useState<ProgramLocationScope>('all');
   const [city, setCity] = useState('all');
   const [universityType, setUniversityType] = useState('all');
   const [teachingType, setTeachingType] = useState('all');
@@ -70,8 +74,25 @@ export default function YksWizardPage() {
   const activeRank = normalizedManualRank || yksResult.estimatedRank;
 
   const cities = useMemo(
-    () => Array.from(new Set(programs.map((program) => program.city))).sort((a, b) => a.localeCompare(b, 'tr')),
-    [programs]
+    () =>
+      Array.from(
+        new Set(
+          programs
+            .map((program) => program.city)
+            .filter((programCity) => matchesProgramLocationScope(programCity, locationScope)),
+        ),
+      ).sort((a, b) => a.localeCompare(b, 'tr')),
+    [locationScope, programs],
+  );
+
+  const domesticCityCount = useMemo(
+    () => new Set(programs.map((program) => program.city).filter((programCity) => !isInternationalProgramLocation(programCity))).size,
+    [programs],
+  );
+
+  const internationalLocationCount = useMemo(
+    () => new Set(programs.map((program) => program.city).filter((programCity) => isInternationalProgramLocation(programCity))).size,
+    [programs],
   );
 
   const universityCount = useMemo(
@@ -100,6 +121,7 @@ export default function YksWizardPage() {
     const filtered = programs.filter((program) => {
       if (program.score_type !== scoreType) return false;
       if (level !== 'all' && program.level !== level) return false;
+      if (!matchesProgramLocationScope(program.city, locationScope)) return false;
       if (city !== 'all' && program.city !== city) return false;
       if (universityType !== 'all' && program.university_type !== universityType) return false;
       if (teachingType !== 'all' && program.teaching_type !== teachingType) return false;
@@ -154,6 +176,7 @@ export default function YksWizardPage() {
     city,
     language,
     level,
+    locationScope,
     preferredLevel,
     programs,
     query,
@@ -409,6 +432,21 @@ export default function YksWizardPage() {
                 </select>
 
                 <select
+                  value={locationScope}
+                  onChange={(event) => {
+                    setLocationScope(event.target.value as ProgramLocationScope);
+                    setCity('all');
+                  }}
+                  className={`rounded-xl border px-3 py-2 text-sm ${
+                    isLight ? 'bg-slate-50 border-slate-200 text-slate-900' : 'bg-slate-900/70 border-white/10 text-white'
+                  }`}
+                >
+                  <option value="all">Tum Konumlar</option>
+                  <option value="domestic">Turkiye</option>
+                  <option value="international">Yurt Disi</option>
+                </select>
+
+                <select
                   value={city}
                   onChange={(event) => setCity(event.target.value)}
                   className={`rounded-xl border px-3 py-2 text-sm ${
@@ -502,7 +540,8 @@ export default function YksWizardPage() {
               </div>
 
               <div className={`mt-3 rounded-2xl border p-3 text-sm ${isLight ? 'bg-fuchsia-50 border-fuchsia-100 text-slate-700' : 'bg-fuchsia-500/10 border-fuchsia-400/20 text-slate-200'}`}>
-                Veritabani kapsami: <span className="font-bold">{cities.length} sehir</span>,{' '}
+                Veritabani kapsami: <span className="font-bold">{domesticCityCount} Turkiye sehri</span>,{' '}
+                <span className="font-bold">{internationalLocationCount} yurt disi konumu</span>,{' '}
                 <span className="font-bold">{universityCount} universite</span>,{' '}
                 <span className="font-bold">{programs.length} program</span>
               </div>

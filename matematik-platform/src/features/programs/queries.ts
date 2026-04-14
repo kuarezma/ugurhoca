@@ -11,6 +11,7 @@ import type {
 type ProgramLoadResult<T> = {
   dataYear: number;
   error: string;
+  historyYears?: number[];
   rows: T[];
 };
 
@@ -119,16 +120,22 @@ export async function loadLgsSchoolTargets(
       : availableYears.find((year) => (counts.get(year) ?? 0) >= MINIMUM_FULL_LGS_ROW_COUNT) ??
         availableYears[0];
 
+  const historyYears = availableYears
+    .filter((year) => year <= selectedYear)
+    .slice(0, 5);
+
   const selectedRowsQuery = await supabase
     .from('lgs_school_targets')
     .select('*')
-    .eq('year', selectedYear)
+    .in('year', historyYears)
+    .order('year', { ascending: false })
     .order('base_score', { ascending: false });
 
   if (selectedRowsQuery.error) {
     return {
       dataYear: selectedYear,
       error: 'LGS okul verileri okunamadi. Lutfen veritabani tablosunu kontrol et.',
+      historyYears,
       rows: [],
     };
   }
@@ -140,6 +147,7 @@ export async function loadLgsSchoolTargets(
     error: rows.length
       ? ''
       : 'LGS hedef okul verisi bulunamadi. Supabase tablosuna resmi veriler yuklenmeli.',
+    historyYears,
     rows,
   };
 }

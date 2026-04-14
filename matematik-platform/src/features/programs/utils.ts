@@ -4,7 +4,10 @@ import {
   PROGRAM_LEVEL_BADGE_LABELS,
   PROGRAM_LEVEL_TONES,
 } from '@/features/programs/constants';
-import type { ProgramTargetLevel } from '@/features/programs/types';
+import type {
+  ProgramLocationScope,
+  ProgramTargetLevel,
+} from '@/features/programs/types';
 
 export function clampProgramValue(value: number, min: number, max: number) {
   return Math.min(max, Math.max(min, value));
@@ -47,4 +50,37 @@ export function formatProgramOptionLabel(value: string) {
 
 export function getMinimumFullProgramRowCount(kind: 'lgs' | 'yks') {
   return kind === 'lgs' ? MINIMUM_FULL_LGS_ROW_COUNT : MINIMUM_FULL_YKS_ROW_COUNT;
+}
+
+const INTERNATIONAL_LOCATION_KEYWORDS = [
+  'YURT DIŞI',
+  'KKTC',
+  'AZERBAYCAN',
+  'KIRGIZİSTAN',
+  'BOSNA',
+  'MAKEDONYA',
+  'KAZAKİSTAN',
+  'KIBRIS',
+];
+
+export function isInternationalProgramLocation(value: string) {
+  const normalized = value.trim().toLocaleUpperCase('tr');
+
+  if (!normalized) {
+    return false;
+  }
+
+  return INTERNATIONAL_LOCATION_KEYWORDS.some((keyword) => normalized.includes(keyword));
+}
+
+export function matchesProgramLocationScope(
+  value: string,
+  scope: ProgramLocationScope,
+) {
+  if (scope === 'all') {
+    return true;
+  }
+
+  const isInternational = isInternationalProgramLocation(value);
+  return scope === 'international' ? isInternational : !isInternational;
 }

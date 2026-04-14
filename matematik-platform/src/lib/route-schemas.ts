@@ -50,3 +50,28 @@ export const supportMessageSchema = z
       path: ['text'],
     },
   );
+
+const adminAnnouncementPayloadSchema = z.object({
+  content: z.string().trim().nullable().optional(),
+  image_url: z.string().trim().url().optional(),
+  image_urls: z.array(z.string().trim().url()).default([]),
+  link_url: z.string().trim().url().optional(),
+  title: z.string().trim().min(1, 'Duyuru başlığı gerekli.'),
+});
+
+export const adminAnnouncementCreateSchema = z.object({
+  announcement: adminAnnouncementPayloadSchema,
+  recipient_user_ids: z.array(z.string().uuid()).default([]),
+});
+
+export const adminAnnouncementUpdateSchema = z.object({
+  announcement_id: z.string().uuid(),
+  updates: adminAnnouncementPayloadSchema.partial().refine(
+    (payload) => Object.keys(payload).length > 0,
+    { message: 'Güncellenecek en az bir alan gerekli.' },
+  ),
+});
+
+export const adminAnnouncementDeleteSchema = z.object({
+  announcement_id: z.string().uuid(),
+});

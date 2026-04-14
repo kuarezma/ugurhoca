@@ -5,6 +5,7 @@ import type {
 } from '@/lib/examCalculators';
 
 export type ProgramTargetLevel = 'iddiali' | 'dengeli' | 'guvenli';
+export type ProgramLocationScope = 'all' | 'domestic' | 'international';
 
 export type ProgramStepId = 1 | 2 | 3;
 
@@ -56,7 +57,28 @@ export type LgsSchoolTarget = {
   source_year: number | null;
 };
 
-export type EvaluatedLgsSchoolTarget = LgsSchoolTarget & {
+export type LgsSchoolHistoryPoint = {
+  year: number;
+  base_score: number;
+  national_percentile: number | null;
+  quota_total: number | null;
+  source_url: string | null;
+};
+
+export type LgsSchoolWithHistory = Omit<
+  LgsSchoolTarget,
+  'year' | 'base_score' | 'national_percentile' | 'quota_total' | 'source_url' | 'source_year'
+> & {
+  latest_year: number;
+  base_score: number;
+  national_percentile: number | null;
+  quota_total: number | null;
+  source_url: string | null;
+  source_year: number | null;
+  history: LgsSchoolHistoryPoint[];
+};
+
+export type EvaluatedLgsSchoolTarget = LgsSchoolWithHistory & {
   level: ProgramTargetLevel;
   delta: number;
   baseScore: number;

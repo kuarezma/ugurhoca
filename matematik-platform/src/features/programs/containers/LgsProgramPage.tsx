@@ -15,6 +15,7 @@ import { ProgramStepTabs } from '@/features/programs/components/ProgramStepTabs'
 import { ProgramWizardHeader } from '@/features/programs/components/ProgramWizardHeader';
 import { useLgsSchoolTargets } from '@/features/programs/hooks/useLgsSchoolTargets';
 import type {
+  LgsSchoolWithHistory,
   ProgramStep,
   ProgramTargetLevel,
 } from '@/features/programs/types';
@@ -41,7 +42,7 @@ const levelSectionLabels: Record<ProgramTargetLevel, string> = {
 export default function LgsWizardPage() {
   const { theme } = useTheme();
   const isLight = theme === 'light';
-  const { dataYear, error, loading, schools } = useLgsSchoolTargets();
+  const { dataYear, error, historyYears, loading, schools } = useLgsSchoolTargets();
 
   const [step, setStep] = useState<1 | 2 | 3>(1);
   const [inputs, setInputs] = useState(createInitialLgsInputs());
@@ -56,41 +57,99 @@ export default function LgsWizardPage() {
 
   const lgsResult = useMemo(() => calculateLgsScore(inputs), [inputs]);
 
+  const groupedSchools = useMemo<LgsSchoolWithHistory[]>(() => {
+    const grouped = new Map<string, typeof schools>();
+
+    for (const row of schools) {
+      const key = `${row.school_name}::${row.province}::${row.district}`;
+      const current = grouped.get(key) || [];
+      current.push(row);
+      grouped.set(key, current);
+    }
+
+    return [...grouped.values()]
+      .map((rows) => {
+        const sortedRows = [...rows].sort((a, b) => b.year - a.year);
+        const history = sortedRows
+          .map((row) => ({
+            year: row.year,
+            base_score: row.base_score,
+            national_percentile: row.national_percentile,
+            quota_total: row.quota_total,
+            source_url: row.source_url,
+          }));
+
+        const latestRow = sortedRows.find((row) => row.year === dataYear) || sortedRows[0];
+
+        if (!latestRow) {
+          return null;
+        }
+
+        return {
+          district: latestRow.district,
+          history,
+          instruction_language: latestRow.instruction_language,
+          latest_year: latestRow.year,
+          placement_mode: latestRow.placement_mode,
+          prep_class: latestRow.prep_class,
+          province: latestRow.province,
+          quota_total: latestRow.quota_total,
+          school_name: latestRow.school_name,
+          school_type: latestRow.school_type,
+          source_url: latestRow.source_url,
+          source_year: latestRow.source_year,
+          base_score: latestRow.base_score,
+          boarding: latestRow.boarding,
+          id: latestRow.id,
+          national_percentile: latestRow.national_percentile,
+        };
+      })
+      .filter((school): school is LgsSchoolWithHistory => school !== null)
+      .sort((a, b) => b.base_score - a.base_score);
+  }, [dataYear, schools]);
+
   const provinces = useMemo(
-    () => Array.from(new Set(schools.map((school) => school.province))).sort((a, b) => a.localeCompare(b, 'tr')),
-    [schools]
+    () => Array.from(new Set(groupedSchools.map((school) => school.province))).sort((a, b) => a.localeCompare(b, 'tr')),
+    [groupedSchools]
   );
 
   const totalDistrictCount = useMemo(
-    () => new Set(schools.map((school) => `${school.province}::${school.district}`)).size,
-    [schools]
+    () => new Set(groupedSchools.map((school) => `${school.province}::${school.district}`)).size,
+    [groupedSchools]
   );
 
   const districts = useMemo(() => {
-    const filtered = province === 'all' ? schools : schools.filter((school) => school.province === province);
+    const filtered = province === 'all' ? groupedSchools : groupedSchools.filter((school) => school.province === province);
     return Array.from(new Set(filtered.map((school) => school.district))).sort((a, b) => a.localeCompare(b, 'tr'));
-  }, [province, schools]);
+  }, [groupedSchools, province]);
 
   const schoolTypes = useMemo(
-    () => Array.from(new Set(schools.map((school) => school.school_type))).sort((a, b) => a.localeCompare(b, 'tr')),
-    [schools]
+    () => Array.from(new Set(groupedSchools.map((school) => school.school_type))).sort((a, b) => a.localeCompare(b, 'tr')),
+    [groupedSchools]
+  );
+
+  const hasBoardingData = useMemo(
+    () => groupedSchools.some((school) => school.boarding),
+    [groupedSchools],
   );
 
   const languages = useMemo(
-    () => Array.from(new Set(schools.map((school) => school.instruction_language).filter(Boolean))).sort((a, b) => a.localeCompare(b, 'tr')),
-    [schools]
+    () => Array.from(new Set(groupedSchools.map((school) => school.instruction_language).filter(Boolean))).sort((a, b) => a.localeCompare(b, 'tr')),
+    [groupedSchools]
   );
 
   const evaluatedSchools = useMemo(() => {
     const loweredQuery = query.trim().toLocaleLowerCase('tr');
 
-    const filtered = schools.filter((school) => {
+    const filtered = groupedSchools.filter((school) => {
       if (province !== 'all' && school.province !== province) return false;
       if (district !== 'all' && school.district !== district) return false;
       if (schoolType !== 'all' && school.school_type !== schoolType) return false;
       if (language !== 'all' && school.instruction_language !== language) return false;
-      if (boarding === 'yes' && !school.boarding) return false;
-      if (boarding === 'no' && school.boarding) return false;
+      if (hasBoardingData) {
+        if (boarding === 'yes' && !school.boarding) return false;
+        if (boarding === 'no' && school.boarding) return false;
+      }
 
       if (loweredQuery) {
         const joined = `${school.school_name} ${school.province} ${school.district} ${school.school_type}`.toLocaleLowerCase('tr');
@@ -122,7 +181,7 @@ export default function LgsWizardPage() {
       if (levelDiff !== 0) return levelDiff;
       return Math.abs(a.delta) - Math.abs(b.delta);
     });
-  }, [district, language, lgsResult.estimatedScore, preferredLevel, province, query, schoolType, schools, boarding]);
+  }, [boarding, district, groupedSchools, hasBoardingData, language, lgsResult.estimatedScore, preferredLevel, province, query, schoolType]);
 
   const grouped = useMemo(
     () => ({
@@ -368,17 +427,19 @@ export default function LgsWizardPage() {
                     ))}
                   </select>
 
-                  <select
-                    value={boarding}
-                    onChange={(event) => setBoarding(event.target.value as 'all' | 'yes' | 'no')}
-                    className={`rounded-xl border px-3 py-2 text-sm ${
-                      isLight ? 'bg-slate-50 border-slate-200 text-slate-900' : 'bg-slate-900/70 border-white/10 text-white'
-                    }`}
-                  >
-                    <option value="all">Pansiyon Durumu (Hepsi)</option>
-                    <option value="yes">Pansiyonlu</option>
-                    <option value="no">Pansiyonsuz</option>
-                  </select>
+                  {hasBoardingData ? (
+                    <select
+                      value={boarding}
+                      onChange={(event) => setBoarding(event.target.value as 'all' | 'yes' | 'no')}
+                      className={`rounded-xl border px-3 py-2 text-sm ${
+                        isLight ? 'bg-slate-50 border-slate-200 text-slate-900' : 'bg-slate-900/70 border-white/10 text-white'
+                      }`}
+                    >
+                      <option value="all">Pansiyon Durumu (Hepsi)</option>
+                      <option value="yes">Pansiyonlu</option>
+                      <option value="no">Pansiyonsuz</option>
+                    </select>
+                  ) : null}
 
                   <select
                     value={preferredLevel}
@@ -403,7 +464,12 @@ export default function LgsWizardPage() {
                 <div className={`mt-3 rounded-2xl border p-3 text-sm ${isLight ? 'bg-indigo-50 border-indigo-100 text-slate-700' : 'bg-indigo-500/10 border-indigo-400/20 text-slate-200'}`}>
                   Veritabani kapsami: <span className="font-bold">{provinces.length} il</span>,{' '}
                   <span className="font-bold">{totalDistrictCount} ilce</span>,{' '}
-                  <span className="font-bold">{schools.length} okul</span>
+                  <span className="font-bold">{groupedSchools.length} okul</span>
+                  {historyYears.length ? (
+                    <>
+                      , <span className="font-bold">{historyYears.length} yil trendi</span> ({historyYears.join(', ')})
+                    </>
+                  ) : null}
                 </div>
 
                 <div className="mt-4 flex flex-wrap gap-2">
@@ -513,17 +579,53 @@ export default function LgsWizardPage() {
                                     {school.delta.toFixed(2)}
                                   </div>
                                 </div>
+                                <div className={`rounded-xl border px-3 py-2 ${isLight ? 'bg-white/80 border-white/70' : 'bg-black/20 border-white/10'}`}>
+                                  <div className={isLight ? 'text-slate-500' : 'text-slate-400'}>Son Yuzdelik</div>
+                                  <div className={`font-black ${isLight ? 'text-slate-900' : 'text-white'}`}>
+                                    {school.national_percentile !== null ? `%${school.national_percentile.toFixed(2)}` : '-'}
+                                  </div>
+                                </div>
+                                <div className={`rounded-xl border px-3 py-2 ${isLight ? 'bg-white/80 border-white/70' : 'bg-black/20 border-white/10'}`}>
+                                  <div className={isLight ? 'text-slate-500' : 'text-slate-400'}>Baz Yil</div>
+                                  <div className={`font-black ${isLight ? 'text-slate-900' : 'text-white'}`}>{school.latest_year}</div>
+                                </div>
                               </div>
 
                               <div className={`mt-3 flex flex-wrap gap-2 text-[11px] ${isLight ? 'text-slate-700' : 'text-slate-200'}`}>
                                 <span className={`rounded-full px-2 py-1 ${isLight ? 'bg-white/80' : 'bg-white/10'}`}>{formatProgramOptionLabel(school.school_type)}</span>
                                 <span className={`rounded-full px-2 py-1 ${isLight ? 'bg-white/80' : 'bg-white/10'}`}>{formatProgramOptionLabel(school.instruction_language)}</span>
-                                <span className={`rounded-full px-2 py-1 ${isLight ? 'bg-white/80' : 'bg-white/10'}`}>
-                                  {school.boarding ? 'Pansiyonlu' : 'Pansiyonsuz'}
-                                </span>
+                                {hasBoardingData && school.boarding ? (
+                                  <span className={`rounded-full px-2 py-1 ${isLight ? 'bg-white/80' : 'bg-white/10'}`}>
+                                    Pansiyonlu
+                                  </span>
+                                ) : null}
                                 {school.quota_total ? (
                                   <span className={`rounded-full px-2 py-1 ${isLight ? 'bg-white/80' : 'bg-white/10'}`}>Kontenjan: {school.quota_total}</span>
                                 ) : null}
+                              </div>
+
+                              <div className={`mt-4 rounded-2xl border p-3 ${isLight ? 'bg-white/70 border-white/80' : 'bg-black/10 border-white/10'}`}>
+                                <div className={`mb-2 text-[11px] font-bold uppercase tracking-[0.16em] ${isLight ? 'text-slate-500' : 'text-slate-400'}`}>
+                                  Son 5 Yil Yuzdelik ve Taban Puan
+                                </div>
+                                <div className="grid gap-2 sm:grid-cols-5">
+                                  {historyYears.map((year) => {
+                                    const point = school.history.find((entry) => entry.year === year);
+
+                                    return (
+                                      <div
+                                        key={year}
+                                        className={`rounded-xl border px-3 py-2 text-[11px] ${isLight ? 'bg-slate-50 border-slate-200 text-slate-700' : 'bg-white/5 border-white/10 text-slate-200'}`}
+                                      >
+                                        <div className={`font-bold ${isLight ? 'text-slate-900' : 'text-white'}`}>{year}</div>
+                                        <div className="mt-1">Puan: {point ? point.base_score.toFixed(2) : '-'}</div>
+                                        <div>
+                                          Yuzdelik: {point && point.national_percentile !== null ? `%${point.national_percentile.toFixed(2)}` : '-'}
+                                        </div>
+                                      </div>
+                                    );
+                                  })}
+                                </div>
                               </div>
                             </article>
                           );

@@ -23,6 +23,52 @@ type ResolveAdminAuthResult =
   | { status: 'ok'; session: Session; user: AdminUser }
   | { status: 'unauthenticated' | 'unauthorized' };
 
+type RouteErrorLike = {
+  message: string;
+};
+
+const requestAdminAnnouncementRoute = async <TResult>(
+  method: 'POST' | 'PATCH' | 'DELETE',
+  body: Record<string, unknown>,
+) => {
+  const session = await getClientSession();
+
+  if (!session?.access_token) {
+    return {
+      data: null as TResult | null,
+      error: { message: 'Oturum açmanız gerekiyor.' } as RouteErrorLike,
+    };
+  }
+
+  const response = await fetch('/api/admin-announcements', {
+    body: JSON.stringify(body),
+    headers: {
+      Authorization: `Bearer ${session.access_token}`,
+      'Content-Type': 'application/json',
+    },
+    method,
+  });
+
+  const payload = (await response.json().catch(() => null)) as
+    | { data?: TResult; error?: { message?: string } }
+    | null;
+
+  if (!response.ok) {
+    return {
+      data: null as TResult | null,
+      error: {
+        message:
+          payload?.error?.message || 'Duyuru işlemi sırasında bir hata oluştu.',
+      } as RouteErrorLike,
+    };
+  }
+
+  return {
+    data: (payload?.data as TResult | undefined) ?? null,
+    error: null,
+  };
+};
+
 export const resolveAdminAuth = async (): Promise<ResolveAdminAuthResult> => {
   const session = await getClientSession();
 
@@ -332,24 +378,10 @@ export const createAdminAnnouncement = async ({
   };
   recipientUserIds: string[];
 }) => {
-  const { data, error } = await supabase
-    .from('announcements')
-    .insert([announcement])
-    .select()
-    .single();
-
-  if (!error && recipientUserIds.length > 0) {
-    await supabase.from('notifications').insert(
-      recipientUserIds.map((userId) => ({
-        user_id: userId,
-        title: 'Yeni Duyuru',
-        message: announcement.title,
-        type: 'general',
-      })),
-    );
-  }
-
-  return { data: (data as AdminAnnouncement | null) ?? null, error };
+  return requestAdminAnnouncementRoute<AdminAnnouncement>('POST', {
+    announcement,
+    recipient_user_ids: recipientUserIds,
+  });
 };
 
 export const updateAdminAnnouncement = async (
@@ -362,7 +394,10 @@ export const updateAdminAnnouncement = async (
     title?: string | null;
   },
 ) => {
-  return supabase.from('announcements').update(updates).eq('id', announcementId);
+  return requestAdminAnnouncementRoute<AdminAnnouncement>('PATCH', {
+    announcement_id: announcementId,
+    updates,
+  });
 };
 
 export const createAdminDocument = async (
@@ -478,7 +513,9 @@ export const deleteAdminEntity = async (
   }
 
   if (type === 'announcement') {
-    return supabase.from('announcements').delete().eq('id', id);
+    return requestAdminAnnouncementRoute<{ ok: true }>('DELETE', {
+      announcement_id: id,
+    });
   }
 
   if (type === 'quiz') {

@@ -7,6 +7,7 @@ import type { LgsSchoolTarget } from '@/features/programs/types';
 export function useLgsSchoolTargets(preferredYear = 2026) {
   const [dataYear, setDataYear] = useState(preferredYear);
   const [error, setError] = useState('');
+  const [historyYears, setHistoryYears] = useState<number[]>([]);
   const [loading, setLoading] = useState(true);
   const [schools, setSchools] = useState<LgsSchoolTarget[]>([]);
 
@@ -26,6 +27,7 @@ export function useLgsSchoolTargets(preferredYear = 2026) {
       setSchools(result.rows);
       setDataYear(result.dataYear);
       setError(result.error);
+      setHistoryYears(result.historyYears || []);
       setLoading(false);
     };
 
@@ -39,6 +41,7 @@ export function useLgsSchoolTargets(preferredYear = 2026) {
   return {
     dataYear,
     error,
+    historyYears,
     loading,
     schools,
   };
