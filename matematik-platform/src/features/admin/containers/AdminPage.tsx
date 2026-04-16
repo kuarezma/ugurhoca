@@ -343,16 +343,7 @@ export default function AdminPage() {
     }
 
     void loadStudentProfile(activeStudentProfileId);
-  }, [
-    activeStudentProfileId,
-    activeStudentProfileUser?.created_at,
-    activeStudentProfileUser?.current_streak,
-    activeStudentProfileUser?.email,
-    activeStudentProfileUser?.grade,
-    activeStudentProfileUser?.is_private_student,
-    activeStudentProfileUser?.name,
-    loadStudentProfile,
-  ]);
+  }, [activeStudentProfileId, activeStudentProfileUser, loadStudentProfile]);
 
   const handleLogout = async () => {
     await signOutClient();

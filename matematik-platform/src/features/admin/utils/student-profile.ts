@@ -1,5 +1,4 @@
 import type {
-  DashboardAssignment,
   DashboardQuizResult,
   DashboardSubmission,
 } from '@/types/dashboard';
