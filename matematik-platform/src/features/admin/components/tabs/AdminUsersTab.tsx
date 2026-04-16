@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Download, Edit3, RefreshCw, Send, Star, Users } from "lucide-react";
+import { Download, Edit3, Eye, RefreshCw, Send, Star, Users } from "lucide-react";
 import type { AdminUser } from "@/features/admin/types";
 
 type AdminUsersTabProps = {
@@ -10,6 +10,7 @@ type AdminUsersTabProps = {
   onEditUser: (user: AdminUser) => void;
   onRefresh: () => Promise<void> | void;
   onSendMessage: (user: AdminUser) => void;
+  onViewProfile: (user: AdminUser) => Promise<void> | void;
   onTogglePrivateStudent: (
     userId: string,
     isCurrentlyPrivate: boolean,
@@ -24,6 +25,7 @@ export default function AdminUsersTab({
   onEditUser,
   onRefresh,
   onSendMessage,
+  onViewProfile,
   onTogglePrivateStudent,
   pdfStudentsLoading,
   students,
@@ -125,6 +127,13 @@ export default function AdminUsersTab({
                         ? "Özel Dersten Çıkar"
                         : "Özel Derse Ekle"}
                     </span>
+                  </button>
+                  <button
+                    onClick={() => onViewProfile(user)}
+                    className="px-4 py-2 bg-gradient-to-r from-cyan-500/20 to-blue-500/20 text-cyan-300 rounded-lg hover:from-cyan-500/40 hover:to-blue-500/40 transition-all font-semibold flex items-center gap-2"
+                  >
+                    <Eye className="w-4 h-4" />
+                    Profili Gör
                   </button>
                   <button
                     onClick={() => onEditUser(user)}

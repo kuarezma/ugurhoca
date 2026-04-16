@@ -28,6 +28,7 @@ import { ChatBubbleLoader } from "@/components/ChatBubbleLoader";
 import AdminMainModal from "@/features/admin/components/AdminMainModal";
 import AdminNotificationDetailModal from "@/features/admin/components/AdminNotificationDetailModal";
 import AdminNotificationsPanel from "@/features/admin/components/AdminNotificationsPanel";
+import AdminStudentProfileDrawer from "@/features/admin/components/AdminStudentProfileDrawer";
 import AdminSubmissionsModal from "@/features/admin/components/AdminSubmissionsModal";
 import AdminTabPanels from "@/features/admin/components/AdminTabPanels";
 import { useAdminListActions } from "@/features/admin/hooks/useAdminListActions";
@@ -39,6 +40,7 @@ import {
   loadAdminChatMessages,
   loadAdminDashboardData,
   loadAdminQuizQuestions,
+  loadAdminStudentProfile,
   refreshAdminUsers as refreshAdminUsersQuery,
   resolveAdminAuth,
   sendAdminChatMessage,
@@ -57,6 +59,7 @@ import type {
   AdminQuiz as Quiz,
   AdminQuizQuestion as QuizQuestion,
   AdminSharedDocument as SharedDoc,
+  AdminStudentProfileData,
   AdminSubmission as Submission,
   AdminUser,
 } from "@/features/admin/types";
@@ -79,6 +82,13 @@ export default function AdminPage() {
   const [activeChatRoom, setActiveChatRoom] = useState<ChatRoom | null>(null);
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
   const [notifications, setNotifications] = useState<Notification[]>([]);
+  const [activeStudentProfileId, setActiveStudentProfileId] = useState<string | null>(null);
+  const [activeStudentProfileData, setActiveStudentProfileData] =
+    useState<AdminStudentProfileData | null>(null);
+  const [activeStudentProfileError, setActiveStudentProfileError] =
+    useState<string | null>(null);
+  const [activeStudentProfileLoading, setActiveStudentProfileLoading] =
+    useState(false);
   const [pdfStudentsLoading, setPdfStudentsLoading] = useState(false);
   const router = useRouter();
   const {
@@ -127,6 +137,32 @@ export default function AdminPage() {
     }
 
     setAllUsers(await refreshAdminUsersQuery());
+  }, []);
+  const activeStudentProfileUser = activeStudentProfileId
+    ? allUsers.find((currentUser) => currentUser.id === activeStudentProfileId) || null
+    : null;
+
+  const loadStudentProfile = useCallback(async (studentId: string) => {
+    setActiveStudentProfileLoading(true);
+    setActiveStudentProfileError(null);
+
+    try {
+      const data = await loadAdminStudentProfile(studentId);
+
+      if (!data) {
+        setActiveStudentProfileError("Öğrenci profili bulunamadı.");
+        setActiveStudentProfileData(null);
+      } else {
+        setActiveStudentProfileData(data);
+      }
+    } catch (error) {
+      const message =
+        error instanceof Error ? error.message : "Profil verileri yüklenemedi.";
+      setActiveStudentProfileError(`Profil yüklenemedi: ${message}`);
+      setActiveStudentProfileData(null);
+    } finally {
+      setActiveStudentProfileLoading(false);
+    }
   }, []);
 
   const loadSubmissions = async (assignmentId: string) => {
@@ -301,6 +337,23 @@ export default function AdminPage() {
     };
   }, [refreshUsers]);
 
+  useEffect(() => {
+    if (!activeStudentProfileId || !activeStudentProfileUser) {
+      return;
+    }
+
+    void loadStudentProfile(activeStudentProfileId);
+  }, [
+    activeStudentProfileId,
+    activeStudentProfileUser?.created_at,
+    activeStudentProfileUser?.current_streak,
+    activeStudentProfileUser?.email,
+    activeStudentProfileUser?.grade,
+    activeStudentProfileUser?.is_private_student,
+    activeStudentProfileUser?.name,
+    loadStudentProfile,
+  ]);
+
   const handleLogout = async () => {
     await signOutClient();
     router.push("/");
@@ -356,6 +409,23 @@ export default function AdminPage() {
     setSelectedQuiz(quiz);
     await loadQuizQuestions(quiz.id);
     openModal("addQuestion");
+  };
+
+  const handleOpenStudentProfile = async (studentProfile: AdminUser) => {
+    setActiveStudentProfileData(null);
+    setActiveStudentProfileError(null);
+    setActiveStudentProfileId(studentProfile.id);
+
+    if (studentProfile.id === activeStudentProfileId) {
+      await loadStudentProfile(studentProfile.id);
+    }
+  };
+
+  const handleCloseStudentProfile = () => {
+    setActiveStudentProfileId(null);
+    setActiveStudentProfileData(null);
+    setActiveStudentProfileError(null);
+    setActiveStudentProfileLoading(false);
   };
 
   const handleOpenSubmissions = async (assignment: Assignment) => {
@@ -651,6 +721,7 @@ export default function AdminPage() {
             onShowSubmissions={handleOpenSubmissions}
             onTogglePrivateStudent={togglePrivateStudent}
             onUpdateGrades={handleUpdateGrades}
+            onViewStudentProfile={handleOpenStudentProfile}
             pdfStudentsLoading={pdfStudentsLoading}
             privateStudents={privateStudents}
             quizzes={quizzes}
@@ -695,6 +766,19 @@ export default function AdminPage() {
             setSelectedStudent={setSelectedStudent}
             studentUsers={studentUsers}
             success={success}
+          />
+        )}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {activeStudentProfileId && (
+          <AdminStudentProfileDrawer
+            data={activeStudentProfileData}
+            error={activeStudentProfileError}
+            formatDate={formatDate}
+            isLoading={activeStudentProfileLoading}
+            onClose={handleCloseStudentProfile}
+            student={activeStudentProfileUser}
           />
         )}
       </AnimatePresence>

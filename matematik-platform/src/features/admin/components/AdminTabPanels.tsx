@@ -77,6 +77,7 @@ type AdminTabPanelsProps = {
     isCurrentlyPrivate: boolean,
   ) => Promise<void> | void;
   onUpdateGrades: () => Promise<void> | void;
+  onViewStudentProfile: (user: AdminUser) => Promise<void> | void;
   pdfStudentsLoading: boolean;
   privateStudents: AdminUser[];
   quizzes: AdminQuiz[];
@@ -126,6 +127,7 @@ export default function AdminTabPanels({
   onShowSubmissions,
   onTogglePrivateStudent,
   onUpdateGrades,
+  onViewStudentProfile,
   pdfStudentsLoading,
   privateStudents,
   quizzes,
@@ -183,6 +185,7 @@ export default function AdminTabPanels({
           onRefresh={onRefreshUsers}
           onSendMessage={onSendAdminMessage}
           onTogglePrivateStudent={onTogglePrivateStudent}
+          onViewProfile={onViewStudentProfile}
           pdfStudentsLoading={pdfStudentsLoading}
           students={studentUsers}
         />
