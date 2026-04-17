@@ -216,6 +216,11 @@ body {
   animation: sparkle var(--sparkle-duration, 2.8s) ease-in-out infinite;
 }
 
+.defer-section {
+  content-visibility: auto;
+  contain-intrinsic-size: 1px 720px;
+}
+
 :where(
   a[href],
   button,

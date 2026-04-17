@@ -20,7 +20,7 @@ export function HomeRecentDocumentsSection({
   }
 
   return (
-    <section className="px-4 py-8 sm:py-12">
+    <section className="defer-section px-4 py-8 sm:py-12">
       <div
         className={`max-w-6xl mx-auto ${isLight ? 'light-section p-5 sm:p-6' : ''}`}
       >

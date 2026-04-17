@@ -9,7 +9,7 @@ type HomeFooterProps = {
 export function HomeFooter({ isLight }: HomeFooterProps) {
   return (
     <footer
-      className={`px-4 py-6 border-t mt-8 ${
+      className={`defer-section px-4 py-6 border-t mt-8 ${
         isLight
           ? 'border-slate-200 bg-slate-50/70 backdrop-blur-sm'
           : 'border-slate-800/50'

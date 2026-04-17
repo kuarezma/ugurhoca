@@ -9,7 +9,7 @@ type HomeGuestCtaSectionProps = {
 
 export function HomeGuestCtaSection({ isLight }: HomeGuestCtaSectionProps) {
   return (
-    <section className="px-4 py-12 sm:py-16">
+    <section className="defer-section px-4 py-12 sm:py-16">
       <div className="max-w-6xl mx-auto">
         <div
           className={`border rounded-3xl p-6 sm:p-8 text-center ${
