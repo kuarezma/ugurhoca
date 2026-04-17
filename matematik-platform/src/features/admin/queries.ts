@@ -3,6 +3,16 @@ import { ADMIN_EMAIL, isAdminEmail } from '@/lib/admin';
 import { normalizeFullNameForMatch } from '@/lib/student-identity';
 import { getClientSession } from '@/lib/auth-client';
 import { supabase } from '@/lib/supabase/client';
+import {
+  buildWorksheetDescription,
+  DEFAULT_WORKSHEET_OUTCOME,
+  getWorksheetGradeValue,
+  getWorksheetOrder,
+  getWorksheetOutcomeLabel,
+  getWorksheetVisibleDescription,
+  isWorksheetType,
+  prepareWorksheetDocumentPayload,
+} from '@/features/content/worksheet';
 import type {
   AdminAnnouncement,
   AdminAssignment,
@@ -405,15 +415,24 @@ export const createAdminDocument = async (
     downloads?: number;
     file_url?: string | null;
     grade?: AdminDocument['grade'];
+    learning_outcome?: string | null;
     solution_url?: string | null;
     title?: string | null;
     type?: string | null;
     video_url?: string | null;
+    worksheet_order?: number | null;
   },
 ) => {
+  const nextDocument = await prepareWorksheetDocumentPayload(document);
+  const {
+    learning_outcome: _learning_outcome,
+    worksheet_order: _worksheet_order,
+    ...persistedDocument
+  } =
+    nextDocument;
   const { data, error } = await supabase
     .from('documents')
-    .insert([document])
+    .insert([persistedDocument])
     .select()
     .single();
 
@@ -426,13 +445,82 @@ export const updateAdminDocument = async (
     answer_key_text?: string | null;
     description?: string | null;
     file_url?: string | null;
+    grade?: AdminDocument['grade'];
+    learning_outcome?: string | null;
     solution_url?: string | null;
     title?: string | null;
     type?: string | null;
     video_url?: string | null;
+    worksheet_order?: number | null;
   },
 ) => {
-  return supabase.from('documents').update(updates).eq('id', documentId);
+  const nextUpdates = isWorksheetType(updates.type)
+    ? {
+        ...updates,
+        description: buildWorksheetDescription({
+          description: updates.description,
+          order: getWorksheetOrder({
+            description: updates.description || null,
+            title: updates.title || '',
+          }),
+          outcome: updates.learning_outcome?.trim() || DEFAULT_WORKSHEET_OUTCOME,
+        }),
+      }
+    : updates;
+  const {
+    learning_outcome: _learning_outcome,
+    worksheet_order: _worksheet_order,
+    ...persistedUpdates
+  } = nextUpdates;
+
+  return supabase.from('documents').update(persistedUpdates).eq('id', documentId);
+};
+
+const gradesAreEqual = (
+  left?: AdminDocument['grade'],
+  right?: AdminDocument['grade'],
+) => JSON.stringify(left ?? []) === JSON.stringify(right ?? []);
+
+export const migrateLegacyWorksheetDocuments = async (
+  documents: AdminDocument[],
+) => {
+  const worksheetDocuments = documents.filter((document) =>
+    isWorksheetType(document.type),
+  );
+
+  let updated = 0;
+
+  for (const document of worksheetDocuments) {
+    const grade = getWorksheetGradeValue(document.grade);
+    const outcome = getWorksheetOutcomeLabel(document);
+    const nextDescription = buildWorksheetDescription({
+      description: getWorksheetVisibleDescription(document),
+      order: getWorksheetOrder(document),
+      outcome,
+    });
+    const nextGrade = grade ? [grade] : document.grade;
+
+    if (
+      nextDescription === (document.description || '') &&
+      gradesAreEqual(nextGrade, document.grade)
+    ) {
+      continue;
+    }
+
+    const { error } = await supabase
+      .from('documents')
+      .update({
+        description: nextDescription,
+        grade: nextGrade,
+      })
+      .eq('id', document.id);
+
+    if (!error) {
+      updated += 1;
+    }
+  }
+
+  return updated;
 };
 
 export const createAdminQuiz = async (quiz: {

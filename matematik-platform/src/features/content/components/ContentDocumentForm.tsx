@@ -3,6 +3,10 @@ import type { ChangeEvent, FormEvent } from 'react';
 import { Check, Upload } from 'lucide-react';
 import { CONTENT_TYPE_OPTIONS } from '@/features/content/constants';
 import type { ContentFormState } from '@/features/content/types';
+import {
+  isWorksheetType,
+  WORKSHEET_GRADE_OPTIONS,
+} from '@/features/content/worksheet';
 
 type Accent = 'purple' | 'blue';
 
@@ -39,8 +43,6 @@ const BUTTON_CLASS: Record<Accent, string> = {
     'from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 shadow-purple-500/25',
 };
 
-const GRADES = [5, 6, 7, 8, 9, 10, 11, 12] as const;
-
 export default function ContentDocumentForm({
   accent,
   fileInputId,
@@ -52,6 +54,8 @@ export default function ContentDocumentForm({
   submitLabel,
   submittingLabel,
 }: ContentDocumentFormProps) {
+  const isWorksheet = isWorksheetType(formData.type);
+
   const updateGrades = (grade: number | 'Mezun', checked: boolean) => {
     const nextGrades = formData.grade || [];
 
@@ -67,17 +71,25 @@ export default function ContentDocumentForm({
 
   return (
     <form onSubmit={onSubmit} className="space-y-5">
-      <div>
-        <label className="block text-slate-300 mb-2 text-sm">Başlık</label>
-        <input
-          type="text"
-          required
-          value={formData.title || ''}
-          onChange={(event) => onChange({ title: event.target.value })}
-          className={`w-full bg-slate-800/50 border border-slate-700 rounded-xl px-4 py-3 text-white transition-colors ${FIELD_FOCUS_CLASS[accent]} focus:outline-none`}
-          placeholder="Başlık girin..."
-        />
-      </div>
+      {isWorksheet ? (
+        <div className="rounded-2xl border border-purple-400/20 bg-purple-500/10 px-4 py-3 text-sm text-purple-100">
+          Yaprak testlerde başlık otomatik verilir. Yeni yükleme sırayla
+          <span className="font-semibold"> Test - 1, Test - 2 </span>
+          şeklinde adlandırılır.
+        </div>
+      ) : (
+        <div>
+          <label className="block text-slate-300 mb-2 text-sm">Başlık</label>
+          <input
+            type="text"
+            required
+            value={formData.title || ''}
+            onChange={(event) => onChange({ title: event.target.value })}
+            className={`w-full bg-slate-800/50 border border-slate-700 rounded-xl px-4 py-3 text-white transition-colors ${FIELD_FOCUS_CLASS[accent]} focus:outline-none`}
+            placeholder="Başlık girin..."
+          />
+        </div>
+      )}
 
       <div>
         <label className="block text-slate-300 mb-2 text-sm">Kategori</label>
@@ -107,6 +119,49 @@ export default function ContentDocumentForm({
           placeholder="İçerik hakkında bilgi..."
         />
       </div>
+
+      {isWorksheet && (
+        <>
+          <div>
+            <label className="block text-slate-300 mb-2 text-sm">
+              Sınıf Düzeyi
+            </label>
+            <select
+              required
+              value={formData.grade?.[0] || ''}
+              onChange={(event) =>
+                onChange({
+                  grade: event.target.value
+                    ? [event.target.value === 'Mezun' ? 'Mezun' : Number(event.target.value)]
+                    : [],
+                })
+              }
+              className={`w-full bg-slate-800/50 border border-slate-700 rounded-xl px-4 py-3 text-white transition-colors ${FIELD_FOCUS_CLASS[accent]} focus:outline-none`}
+            >
+              <option value="">Sınıf düzeyi seçin</option>
+              {WORKSHEET_GRADE_OPTIONS.map((grade) => (
+                <option key={String(grade)} value={grade}>
+                  {grade === 'Mezun' ? grade : `${grade}. Sınıf`}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div>
+            <label className="block text-slate-300 mb-2 text-sm">Kazanım</label>
+            <input
+              type="text"
+              required
+              value={formData.learning_outcome || ''}
+              onChange={(event) =>
+                onChange({ learning_outcome: event.target.value })
+              }
+              className={`w-full bg-slate-800/50 border border-slate-700 rounded-xl px-4 py-3 text-white transition-colors ${FIELD_FOCUS_CLASS[accent]} focus:outline-none`}
+              placeholder="Örn. Doğal sayılarla dört işlem"
+            />
+          </div>
+        </>
+      )}
 
       <div>
         <label className="block text-slate-300 mb-2 text-sm">
@@ -193,36 +248,40 @@ export default function ContentDocumentForm({
         )}
       </div>
 
-      <div>
-        <label className="block text-slate-300 mb-2 text-sm">
-          Hedef Sınıflar
-        </label>
-        <div className="flex flex-wrap gap-2">
-          {GRADES.map((grade) => (
-            <label
-              key={grade}
-              className="flex items-center gap-2 px-3 py-2 glass rounded-lg cursor-pointer hover:bg-white/10"
-            >
+      {!isWorksheet && (
+        <div>
+          <label className="block text-slate-300 mb-2 text-sm">
+            Hedef Sınıflar
+          </label>
+          <div className="flex flex-wrap gap-2">
+            {WORKSHEET_GRADE_OPTIONS.filter((grade) => grade !== 'Mezun').map(
+              (grade) => (
+                <label
+                  key={grade}
+                  className="flex items-center gap-2 px-3 py-2 glass rounded-lg cursor-pointer hover:bg-white/10"
+                >
+                  <input
+                    type="checkbox"
+                    checked={formData.grade?.includes(grade) || false}
+                    onChange={(event) => updateGrades(grade, event.target.checked)}
+                    className={`w-4 h-4 ${CHECKBOX_ACCENT_CLASS[accent]}`}
+                  />
+                  <span className="text-white text-sm">{grade}. Sınıf</span>
+                </label>
+              ),
+            )}
+            <label className="flex items-center gap-2 px-3 py-2 glass rounded-lg cursor-pointer hover:bg-white/10">
               <input
                 type="checkbox"
-                checked={formData.grade?.includes(grade) || false}
-                onChange={(event) => updateGrades(grade, event.target.checked)}
+                checked={formData.grade?.includes('Mezun') || false}
+                onChange={(event) => updateGrades('Mezun', event.target.checked)}
                 className={`w-4 h-4 ${CHECKBOX_ACCENT_CLASS[accent]}`}
               />
-              <span className="text-white text-sm">{grade}. Sınıf</span>
+              <span className="text-white text-sm">Mezun</span>
             </label>
-          ))}
-          <label className="flex items-center gap-2 px-3 py-2 glass rounded-lg cursor-pointer hover:bg-white/10">
-            <input
-              type="checkbox"
-              checked={formData.grade?.includes('Mezun') || false}
-              onChange={(event) => updateGrades('Mezun', event.target.checked)}
-              className={`w-4 h-4 ${CHECKBOX_ACCENT_CLASS[accent]}`}
-            />
-            <span className="text-white text-sm">Mezun</span>
-          </label>
+          </div>
         </div>
-      </div>
+      )}
 
       <motion.button
         type="submit"

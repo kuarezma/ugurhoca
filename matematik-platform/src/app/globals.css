@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -171,6 +171,46 @@ html[data-theme='light'] [class*='bg-black/40'] {
 
 .glow-button:hover {
   box-shadow: 0 0 30px rgba(139, 92, 246, 0.6);
+}
+
+@keyframes worksheet-unit-line-glow {
+  0%,
+  100% {
+    opacity: 0.45;
+    transform: scaleX(0.96);
+    filter: brightness(0.9);
+  }
+  50% {
+    opacity: 1;
+    transform: scaleX(1);
+    filter: brightness(1.35);
+  }
+}
+
+.worksheet-unit-line {
+  position: relative;
+  overflow: hidden;
+}
+
+.worksheet-unit-line::after {
+  content: '';
+  position: absolute;
+  inset: -1px 0;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.14) 18%,
+    rgba(253, 224, 71, 0.95) 50%,
+    rgba(255, 255, 255, 0.14) 82%,
+    transparent 100%
+  );
+  box-shadow: 0 0 20px rgba(250, 204, 21, 0.65);
+  animation: worksheet-unit-line-glow 1.05s ease-in-out infinite;
+}
+
+.worksheet-outcome-title {
+  font-family: 'Space Grotesk', 'Poppins', sans-serif;
+  letter-spacing: 0.01em;
 }
 
 .theme-toggle {

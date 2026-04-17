@@ -202,6 +202,7 @@ export default function AdminPage() {
     editSharedDocument,
     handleDeleteChatRoom,
     handleDownloadStudentsPdf,
+    handleMigrateWorksheetDocuments,
     handleRefreshDocumentCategories,
     handleUpdateGrades,
     studentUsers,
@@ -639,9 +640,10 @@ export default function AdminPage() {
             onEditAssignment={editAssignment}
             onEditDocument={openEditDocument}
             onEditQuiz={handleEditQuiz}
-            onEditSharedDocument={editSharedDocument}
-            onEditUser={openEditUser}
-            onRefreshDocumentCategories={handleRefreshDocumentCategories}
+          onEditSharedDocument={editSharedDocument}
+          onEditUser={openEditUser}
+          onMigrateWorksheets={handleMigrateWorksheetDocuments}
+          onRefreshDocumentCategories={handleRefreshDocumentCategories}
             onRefreshUsers={loadData}
             onReplyTextChange={setReplyText}
             onSelectChatRoom={handleSelectChatRoom}

@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion';
 import { Download, Eye, FileText, Key, X } from 'lucide-react';
 import { getDriveId, getYouTubeId } from '@/features/content/utils';
+import { getWorksheetVisibleDescription } from '@/features/content/worksheet';
 import type { ContentDocument } from '@/types';
 
 type ContentPreviewModalProps = {
@@ -18,6 +19,7 @@ export default function ContentPreviewModal({
   previewDoc,
   showAnswerKey,
 }: ContentPreviewModalProps) {
+  const visibleDescription = getWorksheetVisibleDescription(previewDoc);
   const previewVideoId = previewDoc.video_url
     ? getYouTubeId(previewDoc.video_url)
     : null;
@@ -44,7 +46,7 @@ export default function ContentPreviewModal({
               {previewDoc.title}
             </h3>
             <p className="line-clamp-2 text-xs text-slate-400 sm:text-sm">
-              {previewDoc.description}
+              {visibleDescription}
             </p>
           </div>
           <button

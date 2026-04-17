@@ -192,10 +192,12 @@ export function useAdminModalSubmitHandlers({
         downloads: 0,
         file_url: formData.file_url,
         grade: formData.grades,
+        learning_outcome: formData.learning_outcome || null,
         solution_url: formData.solution_url || null,
         title: formData.title,
         type: modalType === "document" ? formData.type : modalType,
         video_url: formData.video_url,
+        worksheet_order: formData.worksheet_order || null,
       };
       const { data, error } = await createAdminDocument(documentItem);
 
@@ -409,10 +411,13 @@ export function useAdminModalSubmitHandlers({
       answer_key_text: formData.answer_key_text || null,
       description: formData.description,
       file_url: formData.file_url,
+      grade: formData.grades,
+      learning_outcome: formData.learning_outcome || null,
       solution_url: formData.solution_url || null,
       title: formData.title,
       type: formData.type,
       video_url: formData.video_url,
+      worksheet_order: formData.worksheet_order || null,
     });
 
     if (!error) {
@@ -426,11 +431,16 @@ export function useAdminModalSubmitHandlers({
                 description:
                   formData.description ?? document.description ?? null,
                 file_url: formData.file_url ?? document.file_url ?? null,
+                grade: formData.grades ?? document.grade,
+                learning_outcome:
+                  formData.learning_outcome ?? document.learning_outcome ?? null,
                 solution_url:
                   formData.solution_url ?? document.solution_url ?? null,
                 title: formData.title ?? document.title,
                 type: formData.type ?? document.type,
                 video_url: formData.video_url ?? document.video_url ?? null,
+                worksheet_order:
+                  formData.worksheet_order ?? document.worksheet_order ?? null,
               }
             : document,
         ),

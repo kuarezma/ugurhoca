@@ -8,6 +8,10 @@ import {
   type AdminFormUpdate,
   type AdminModalSubmitHandler,
 } from "@/features/admin/components/modal/shared";
+import {
+  isWorksheetType,
+  WORKSHEET_GRADE_OPTIONS,
+} from "@/features/content/worksheet";
 
 type AdminEditDocumentFormProps = {
   editingDoc: Document | null;
@@ -24,19 +28,27 @@ export default function AdminEditDocumentForm({
   onSubmit,
   updateFormData,
 }: AdminEditDocumentFormProps) {
+  const isWorksheet = isWorksheetType(formData.type);
+
   return (
     <form onSubmit={onSubmit} className="space-y-5">
-      <div>
-        <label className="block text-slate-300 mb-2 text-sm">Başlık</label>
-        <input
-          type="text"
-          required
-          value={formData.title || ""}
-          onChange={(event) => updateFormData({ title: event.target.value })}
-          className="w-full bg-slate-800/50 border border-slate-700 rounded-xl px-4 py-3 text-white
+      {isWorksheet ? (
+        <div className="rounded-2xl border border-cyan-400/20 bg-cyan-500/10 px-4 py-3 text-sm text-cyan-100">
+          Yaprak test başlığı otomatik sıraya göre verilir.
+        </div>
+      ) : (
+        <div>
+          <label className="block text-slate-300 mb-2 text-sm">Başlık</label>
+          <input
+            type="text"
+            required
+            value={formData.title || ""}
+            onChange={(event) => updateFormData({ title: event.target.value })}
+            className="w-full bg-slate-800/50 border border-slate-700 rounded-xl px-4 py-3 text-white
                    focus:outline-none focus:border-blue-500 transition-colors"
-        />
-      </div>
+          />
+        </div>
+      )}
       <div>
         <label className="block text-slate-300 mb-2 text-sm">Açıklama</label>
         <textarea
@@ -63,6 +75,52 @@ export default function AdminEditDocumentForm({
           ))}
         </select>
       </div>
+      {isWorksheet && (
+        <>
+          <div>
+            <label className="block text-slate-300 mb-2 text-sm">
+              Sınıf Düzeyi
+            </label>
+            <select
+              value={formData.grades?.[0] || ""}
+              onChange={(event) =>
+                updateFormData({
+                  grades: event.target.value
+                    ? [
+                        event.target.value === "Mezun"
+                          ? "Mezun"
+                          : Number(event.target.value),
+                      ]
+                    : [],
+                })
+              }
+              className="w-full bg-slate-800/50 border border-slate-700 rounded-xl px-4 py-3 text-white
+                   focus:outline-none focus:border-blue-500 transition-colors"
+            >
+              <option value="">Sınıf düzeyi seçin</option>
+              {WORKSHEET_GRADE_OPTIONS.map((grade) => (
+                <option key={String(grade)} value={grade}>
+                  {grade === "Mezun" ? grade : `${grade}. Sınıf`}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div>
+            <label className="block text-slate-300 mb-2 text-sm">
+              Kazanım
+            </label>
+            <input
+              type="text"
+              value={formData.learning_outcome || ""}
+              onChange={(event) =>
+                updateFormData({ learning_outcome: event.target.value })
+              }
+              className="w-full bg-slate-800/50 border border-slate-700 rounded-xl px-4 py-3 text-white
+                   focus:outline-none focus:border-blue-500 transition-colors"
+            />
+          </div>
+        </>
+      )}
       <div>
         <label className="block text-slate-300 mb-2 text-sm">Dosya Linki</label>
         <input

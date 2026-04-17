@@ -18,6 +18,7 @@ import {
   type AdminFormUpdate,
   type AdminModalSubmitHandler,
 } from "@/features/admin/components/modal/shared";
+import { isWorksheetType } from "@/features/content/worksheet";
 
 type AdminGenericContentFormProps = {
   formData: AdminFormState;
@@ -48,6 +49,9 @@ export default function AdminGenericContentForm({
   selectedStudent,
   updateFormData,
 }: AdminGenericContentFormProps) {
+  const isWorksheetDocument =
+    modalType === "document" && isWorksheetType(formData.type);
+
   return (
     <form onSubmit={onSubmit} className="space-y-5">
       {modalType === "assignment" && (
@@ -60,18 +64,20 @@ export default function AdminGenericContentForm({
         />
       )}
 
-      <div>
-        <label className="block text-slate-300 mb-2 text-sm">Başlık</label>
-        <input
-          type="text"
-          required
-          value={formData.title || ""}
-          onChange={(event) => updateFormData({ title: event.target.value })}
-          className="w-full bg-slate-800/50 border border-slate-700 rounded-xl px-4 py-3 text-white
+      {!isWorksheetDocument && (
+        <div>
+          <label className="block text-slate-300 mb-2 text-sm">Başlık</label>
+          <input
+            type="text"
+            required
+            value={formData.title || ""}
+            onChange={(event) => updateFormData({ title: event.target.value })}
+            className="w-full bg-slate-800/50 border border-slate-700 rounded-xl px-4 py-3 text-white
                    focus:outline-none focus:border-purple-500 transition-colors"
-          placeholder="Başlık girin..."
-        />
-      </div>
+            placeholder="Başlık girin..."
+          />
+        </div>
+      )}
 
       {(modalType === "announcement" || modalType === "editAnnouncement") && (
         <AdminAnnouncementFields

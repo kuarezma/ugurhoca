@@ -105,6 +105,7 @@ export type AdminFormState = {
   importResult?: ImportResult | null;
   is_active?: boolean;
   is_admin_only?: boolean;
+  learning_outcome?: string | null;
   link_url?: string | null;
   name?: string | null;
   options?: string[];
@@ -117,4 +118,5 @@ export type AdminFormState = {
   title?: string | null;
   type?: string | null;
   video_url?: string | null;
+  worksheet_order?: number | null;
 };

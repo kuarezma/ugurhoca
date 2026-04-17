@@ -7,6 +7,7 @@ import {
   advanceAdminUserGrades,
   deleteAdminChatRoom,
   deleteAdminEntity,
+  migrateLegacyWorksheetDocuments,
   refreshAdminDocumentCategories,
   toggleAdminPrivateStudent,
   updateAdminAssignment,
@@ -192,6 +193,20 @@ export function useAdminListActions({
     await loadData();
   };
 
+  const handleMigrateWorksheetDocuments = async () => {
+    if (
+      !confirm(
+        "Eski yaprak test kayıtları kazanım klasörlerine göre düzenlensin mi?\n\nBu işlem mevcut yaprak test açıklamalarına gizli kazanım bilgisi ekler ve sınıf alanındaki hatalı 0 değerlerini temizler.",
+      )
+    ) {
+      return;
+    }
+
+    const updated = await migrateLegacyWorksheetDocuments(documents);
+    alert(`${updated} yaprak test kaydı geçiş aracından geçirildi.`);
+    await loadData();
+  };
+
   const handleDeleteChatRoom = async (room: AdminChatRoom) => {
     if (!confirm("Bu odayı silmek istediğinizden emin misiniz?")) {
       return;
@@ -230,6 +245,7 @@ export function useAdminListActions({
     editSharedDocument,
     handleDeleteChatRoom,
     handleDownloadStudentsPdf,
+    handleMigrateWorksheetDocuments,
     handleRefreshDocumentCategories,
     handleUpdateGrades,
     studentUsers,

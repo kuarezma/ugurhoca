@@ -46,6 +46,8 @@ export interface ContentDocument {
   author?: string | null;
   owner_name?: string | null;
   subject?: string | null;
+  learning_outcome?: string | null;
+  worksheet_order?: number | null;
   [key: string]: unknown;
 }
 

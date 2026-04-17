@@ -14,6 +14,14 @@ import {
   CONTENT_PAGE_SIZE,
   CONTENT_TYPE_MAPPING,
 } from '@/features/content/constants';
+import {
+  buildWorksheetDescription,
+  DEFAULT_WORKSHEET_OUTCOME,
+  getWorksheetOrder,
+  isWorksheetType,
+  prepareWorksheetDocumentPayload,
+  sortWorksheetDocuments,
+} from '@/features/content/worksheet';
 
 const CONTENT_DOCUMENT_CACHE_TTL_MS = 60_000;
 
@@ -264,11 +272,14 @@ export const resolveContentUser = async () => {
 };
 
 export const createContentDocument = async (payload: ContentFormState) => {
+  const nextPayload = await prepareWorksheetDocumentPayload(payload);
+  const { learning_outcome: _learning_outcome, worksheet_order: _worksheet_order, ...persistedPayload } =
+    nextPayload as ContentFormState;
   const { data, error } = await supabase
     .from('documents')
     .insert([
       {
-        ...payload,
+        ...persistedPayload,
         created_at: new Date().toISOString(),
         downloads: 0,
       },
@@ -306,9 +317,24 @@ export const updateContentDocument = async (
   documentId: string,
   payload: ContentFormState,
 ) => {
+  const nextPayload = isWorksheetType(payload.type)
+    ? {
+        ...payload,
+        description: buildWorksheetDescription({
+          description: payload.description,
+          order: getWorksheetOrder({
+            description: payload.description || null,
+            title: payload.title || '',
+          }),
+          outcome: payload.learning_outcome?.trim() || DEFAULT_WORKSHEET_OUTCOME,
+        }),
+      }
+    : payload;
+  const { learning_outcome: _learning_outcome, worksheet_order: _worksheet_order, ...persistedPayload } =
+    nextPayload as ContentFormState;
   const { data, error } = await supabase
     .from('documents')
-    .update(payload)
+    .update(persistedPayload)
     .eq('id', documentId)
     .select();
 
@@ -345,6 +371,26 @@ export const updateDocumentMetric = async (
   }
 
   clearContentDocumentCache();
+};
+
+export const loadWorksheetDocumentsByGrade = async (
+  grade: ContentGradeFilter,
+) => {
+  if (grade === 'all') {
+    return [] as ContentDocument[];
+  }
+
+  const { data, error } = await supabase
+    .from('documents')
+    .select('*')
+    .eq('type', 'yaprak-test')
+    .contains('grade', [grade]);
+
+  if (error) {
+    throw error;
+  }
+
+  return sortWorksheetDocuments((data || []) as ContentDocument[]);
 };
 
 export const loadDocumentComments = async (documentId: string) => {

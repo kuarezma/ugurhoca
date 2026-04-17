@@ -26,6 +26,7 @@ import {
   getContentAuthorLabel,
   getContentPrimaryGradeLabel,
 } from '@/features/content/utils';
+import { getWorksheetVisibleDescription } from '@/features/content/worksheet';
 import { getGoogleDriveThumbnailUrl } from '@/lib/image-url';
 import type { ContentPageUser } from '@/features/content/types';
 import type { ContentDocument } from '@/types';
@@ -70,6 +71,7 @@ export default function ContentCard({
   user,
   viewMode,
 }: ContentCardProps) {
+  const visibleDescription = getWorksheetVisibleDescription(content);
   const isDriveImage =
     typeof content.file_url === 'string' &&
     /drive\.google\.com/i.test(content.file_url);
@@ -239,6 +241,12 @@ export default function ContentCard({
 
           <div className="border-t border-white/10" />
 
+          {visibleDescription ? (
+            <p className="text-slate-400 text-sm sm:text-base line-clamp-2">
+              {visibleDescription}
+            </p>
+          ) : null}
+
           <div className="flex flex-wrap items-center gap-3 sm:gap-4 text-[11px] sm:text-sm text-slate-400">
             <div className="flex items-center gap-2">
               <Users className="w-4 h-4" />
@@ -318,8 +326,8 @@ export default function ContentCard({
         <h3 className="text-lg sm:text-2xl font-bold leading-tight text-white mb-2 line-clamp-2 group-hover:text-cyan-300 transition-colors">
           {content.title}
         </h3>
-        <p className="text-slate-400 text-sm sm:text-base mb-4 line-clamp-1">
-          {getContentTypeLabel(content.type)}
+        <p className="text-slate-400 text-sm sm:text-base mb-4 line-clamp-2">
+          {visibleDescription || getContentTypeLabel(content.type)}
         </p>
 
         <div className="border-t border-white/10 my-4" />

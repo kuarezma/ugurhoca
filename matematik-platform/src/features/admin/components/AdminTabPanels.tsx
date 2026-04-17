@@ -64,6 +64,7 @@ type AdminTabPanelsProps = {
     document: AdminSharedDocument,
   ) => Promise<void> | void;
   onEditUser: (user: AdminUser) => void;
+  onMigrateWorksheets: () => Promise<void> | void;
   onRefreshDocumentCategories: () => Promise<void> | void;
   onRefreshUsers: () => Promise<void> | void;
   onReplyTextChange: (value: string) => void;
@@ -117,6 +118,7 @@ export default function AdminTabPanels({
   onEditQuiz,
   onEditSharedDocument,
   onEditUser,
+  onMigrateWorksheets,
   onRefreshDocumentCategories,
   onRefreshUsers,
   onReplyTextChange,
@@ -163,6 +165,7 @@ export default function AdminTabPanels({
           formatDate={formatDate}
           onDelete={onDeleteDocument}
           onEdit={onEditDocument}
+          onMigrateWorksheets={onMigrateWorksheets}
           onRefreshCategories={onRefreshDocumentCategories}
         />
       )}

@@ -5,6 +5,10 @@ import {
   PRIVATE_STUDENT_GRADES,
   type AdminFormUpdate,
 } from "@/features/admin/components/modal/shared";
+import {
+  isWorksheetType,
+  WORKSHEET_GRADE_OPTIONS,
+} from "@/features/content/worksheet";
 
 type AdminDocumentFieldsProps = {
   formData: AdminFormState;
@@ -19,6 +23,8 @@ export default function AdminDocumentFields({
   onToggleDocumentGrade,
   updateFormData,
 }: AdminDocumentFieldsProps) {
+  const isWorksheet = isWorksheetType(formData.type);
+
   return (
     <>
       <div>
@@ -130,36 +136,93 @@ export default function AdminDocumentFields({
         </label>
       </div>
       <div>
-        <label className="block text-slate-300 mb-2 text-sm">Hedef Sınıflar</label>
-        <div className="flex flex-wrap gap-2">
-          {PRIVATE_STUDENT_GRADES.map((grade) => (
-            <label
-              key={grade}
-              className="flex items-center gap-2 px-3 py-2 glass rounded-lg cursor-pointer hover:bg-white/10 min-w-[calc(50%-0.25rem)] sm:min-w-0"
-            >
-              <input
-                type="checkbox"
-                checked={formData.grades?.includes(grade) || false}
+        {isWorksheet ? (
+          <div className="space-y-4">
+            <div className="rounded-2xl border border-purple-400/20 bg-purple-500/10 px-4 py-3 text-sm text-purple-100">
+              Yaprak testler otomatik olarak sıradaki isimle kaydedilir.
+            </div>
+            <div>
+              <label className="block text-slate-300 mb-2 text-sm">
+                Sınıf Düzeyi
+              </label>
+              <select
+                required
+                value={formData.grades?.[0] || ""}
                 onChange={(event) =>
-                  onToggleDocumentGrade(grade, event.target.checked)
+                  updateFormData({
+                    grades: event.target.value
+                      ? [
+                          event.target.value === "Mezun"
+                            ? "Mezun"
+                            : Number(event.target.value),
+                        ]
+                      : [],
+                  })
                 }
-                className="w-4 h-4 accent-purple-500"
+                className="w-full bg-slate-800/50 border border-slate-700 rounded-xl px-4 py-3 text-white
+                   focus:outline-none focus:border-purple-500 transition-colors"
+              >
+                <option value="">Sınıf düzeyi seçin</option>
+                {WORKSHEET_GRADE_OPTIONS.map((grade) => (
+                  <option key={String(grade)} value={grade}>
+                    {grade === "Mezun" ? grade : `${grade}. Sınıf`}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <label className="block text-slate-300 mb-2 text-sm">
+                Kazanım
+              </label>
+              <input
+                type="text"
+                required
+                value={formData.learning_outcome || ""}
+                onChange={(event) =>
+                  updateFormData({ learning_outcome: event.target.value })
+                }
+                className="w-full bg-slate-800/50 border border-slate-700 rounded-xl px-4 py-3 text-white
+                   focus:outline-none focus:border-purple-500 transition-colors"
+                placeholder="Örn. Cebirsel ifadelerle işlemler"
               />
-              <span className="text-white text-sm">{grade}. Sınıf</span>
+            </div>
+          </div>
+        ) : (
+          <>
+            <label className="block text-slate-300 mb-2 text-sm">
+              Hedef Sınıflar
             </label>
-          ))}
-          <label className="flex items-center gap-2 px-3 py-2 glass rounded-lg cursor-pointer hover:bg-white/10 min-w-[calc(50%-0.25rem)] sm:min-w-0">
-            <input
-              type="checkbox"
-              checked={formData.grades?.includes("Mezun") || false}
-              onChange={(event) =>
-                onToggleDocumentGrade("Mezun", event.target.checked)
-              }
-              className="w-4 h-4 accent-purple-500"
-            />
-            <span className="text-white text-sm">Mezun</span>
-          </label>
-        </div>
+            <div className="flex flex-wrap gap-2">
+              {PRIVATE_STUDENT_GRADES.map((grade) => (
+                <label
+                  key={grade}
+                  className="flex items-center gap-2 px-3 py-2 glass rounded-lg cursor-pointer hover:bg-white/10 min-w-[calc(50%-0.25rem)] sm:min-w-0"
+                >
+                  <input
+                    type="checkbox"
+                    checked={formData.grades?.includes(grade) || false}
+                    onChange={(event) =>
+                      onToggleDocumentGrade(grade, event.target.checked)
+                    }
+                    className="w-4 h-4 accent-purple-500"
+                  />
+                  <span className="text-white text-sm">{grade}. Sınıf</span>
+                </label>
+              ))}
+              <label className="flex items-center gap-2 px-3 py-2 glass rounded-lg cursor-pointer hover:bg-white/10 min-w-[calc(50%-0.25rem)] sm:min-w-0">
+                <input
+                  type="checkbox"
+                  checked={formData.grades?.includes("Mezun") || false}
+                  onChange={(event) =>
+                    onToggleDocumentGrade("Mezun", event.target.checked)
+                  }
+                  className="w-4 h-4 accent-purple-500"
+                />
+                <span className="text-white text-sm">Mezun</span>
+              </label>
+            </div>
+          </>
+        )}
       </div>
     </>
   );

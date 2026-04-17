@@ -21,10 +21,12 @@ export type ContentFormState = Partial<
     | 'answer_key_text'
     | 'description'
     | 'file_url'
+    | 'learning_outcome'
     | 'solution_url'
     | 'title'
     | 'type'
     | 'video_url'
+    | 'worksheet_order'
   >
 > & {
   file_name?: string;
