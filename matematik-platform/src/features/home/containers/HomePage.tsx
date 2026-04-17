@@ -1,6 +1,7 @@
 'use client';
 
 import dynamic from 'next/dynamic';
+import DeferredFloatingShapes from '@/components/DeferredFloatingShapes';
 import { useTheme } from '@/components/ThemeProvider';
 import { HomeAnnouncementsSection } from '@/features/home/components/HomeAnnouncementsSection';
 import { HomeAssignmentsSection } from '@/features/home/components/HomeAssignmentsSection';
@@ -14,11 +15,6 @@ import { HomeSupportSection } from '@/features/home/components/HomeSupportSectio
 import { HomeWritingsSection } from '@/features/home/components/HomeWritingsSection';
 import { useHomePageData } from '@/features/home/hooks/useHomePageData';
 import type { InitialHomePageData } from '@/features/home/types';
-
-const FloatingShapes = dynamic(() => import('@/components/FloatingShapes'), {
-  ssr: false,
-  loading: () => null,
-});
 
 const HomeAnnouncementModal = dynamic(
   () =>
@@ -66,7 +62,7 @@ export default function HomePage({ initialData }: HomePageProps) {
           : 'bg-gradient-to-br from-slate-900 via-slate-900 to-slate-800'
       }`}
     >
-      <FloatingShapes />
+      <DeferredFloatingShapes />
       <HomeNavbar user={user} onLogout={handleLogout} />
       <div className="pt-[calc(3.5rem+env(safe-area-inset-top))] md:pt-14">
         <HomeHeroSection isLight={isLight} />

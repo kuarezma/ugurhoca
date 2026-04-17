@@ -7,7 +7,7 @@ import Link from 'next/link';
 import { ArrowLeft, Bell, LogOut, Settings, Shield } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { signOutClient } from '@/lib/auth-client';
-import FloatingShapes from '@/components/FloatingShapes';
+import DeferredFloatingShapes from '@/components/DeferredFloatingShapes';
 import NotesSection from '@/components/NotesSection';
 import DashboardHero from '@/components/dashboard/DashboardHero';
 import MessageSummaryCard from '@/components/dashboard/MessageSummaryCard';
@@ -340,7 +340,7 @@ export default function ProfilePage({ initialData }: ProfilePageProps) {
 
   return (
     <main className="profil-page min-h-screen bg-gradient-to-br from-slate-900 via-slate-900 to-slate-800">
-      <FloatingShapes count={6} />
+      <DeferredFloatingShapes count={6} />
 
       <nav className="fixed left-0 right-0 top-0 z-50 border-b border-slate-800/50 bg-slate-900/95 backdrop-blur-lg">
         <div className="mx-auto flex h-14 max-w-6xl items-center justify-between px-4">

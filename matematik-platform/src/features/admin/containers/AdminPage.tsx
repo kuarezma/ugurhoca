@@ -23,7 +23,7 @@ import {
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { signOutClient } from "@/lib/auth-client";
-import FloatingShapes from "@/components/FloatingShapes";
+import DeferredFloatingShapes from "@/components/DeferredFloatingShapes";
 import { ChatBubbleLoader } from "@/components/ChatBubbleLoader";
 import AdminMainModal from "@/features/admin/components/AdminMainModal";
 import AdminNotificationDetailModal from "@/features/admin/components/AdminNotificationDetailModal";
@@ -432,7 +432,7 @@ export default function AdminPage() {
 
   return (
     <main className="admin-page min-h-screen gradient-bg pb-20">
-      <FloatingShapes />
+      <DeferredFloatingShapes />
 
       <nav className="fixed top-0 left-0 right-0 z-50 bg-slate-950/95 backdrop-blur-md border-b border-white/10 py-3 px-4 sm:py-4 sm:px-6 shadow-lg shadow-black/20">
         <div className="container mx-auto flex items-center justify-between gap-3">

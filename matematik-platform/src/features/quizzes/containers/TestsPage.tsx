@@ -11,7 +11,7 @@ import {
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import { getClientSession } from '@/lib/auth-client';
-import FloatingShapes from '@/components/FloatingShapes';
+import DeferredFloatingShapes from '@/components/DeferredFloatingShapes';
 import { Quiz, QuizQuestion } from '@/types/quiz';
 import type { AppUser } from '@/types';
 type TestsPageProps = {
@@ -266,7 +266,7 @@ export default function TestsPage({
 
     return (
       <main className="testler-page min-h-screen gradient-bg flex items-center justify-center p-6">
-        <FloatingShapes />
+        <DeferredFloatingShapes />
         
         <motion.div
           initial={{ opacity: 0, scale: 0.95 }}
@@ -386,7 +386,7 @@ export default function TestsPage({
 
     return (
       <main className="testler-page min-h-screen gradient-bg flex items-center justify-center p-6">
-        <FloatingShapes />
+        <DeferredFloatingShapes />
         
         <motion.div
           initial={{ opacity: 0, scale: 0.8 }}
@@ -534,7 +534,7 @@ export default function TestsPage({
 
   return (
     <main className="testler-page min-h-screen gradient-bg pb-20">
-      <FloatingShapes />
+      <DeferredFloatingShapes />
       
       <nav className="fixed top-0 left-0 right-0 z-50 glass py-4 px-6">
         <div className="container mx-auto flex justify-between items-center">

@@ -8,7 +8,7 @@ import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 import { getClientSession } from "@/lib/auth-client";
 import { normalizeFullNameForMatch } from "@/lib/student-identity";
-import FloatingShapes from "@/components/FloatingShapes";
+import DeferredFloatingShapes from "@/components/DeferredFloatingShapes";
 
 export default function LoginPage() {
   const [formData, setFormData] = useState({
@@ -100,7 +100,7 @@ export default function LoginPage() {
 
   return (
     <main className="giris-page min-h-screen gradient-bg flex items-center justify-center p-6">
-      <FloatingShapes count={12} />
+      <DeferredFloatingShapes count={12} />
 
       <motion.div
         initial={{ opacity: 0, y: 30 }}

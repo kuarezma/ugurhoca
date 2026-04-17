@@ -18,7 +18,7 @@ import {
   normalizeFullNameForMatch,
   studentLoginEmail,
 } from "@/lib/student-identity";
-import FloatingShapes from "@/components/FloatingShapes";
+import DeferredFloatingShapes from "@/components/DeferredFloatingShapes";
 
 export default function RegisterPage() {
   const [formData, setFormData] = useState({
@@ -146,7 +146,7 @@ export default function RegisterPage() {
   if (success) {
     return (
       <main className="kayit-page min-h-screen gradient-bg flex items-center justify-center p-6">
-        <FloatingShapes count={15} />
+        <DeferredFloatingShapes count={15} />
         <motion.div
           initial={{ scale: 0.8, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
@@ -171,7 +171,7 @@ export default function RegisterPage() {
 
   return (
     <main className="kayit-page min-h-screen gradient-bg flex items-center justify-center p-6">
-      <FloatingShapes count={15} />
+      <DeferredFloatingShapes count={15} />
 
       <motion.div
         initial={{ opacity: 0, y: 30 }}
