@@ -17,18 +17,25 @@ import {
   sendSupportMessage,
   uploadSupportFiles,
 } from '@/features/home/queries';
+import type { InitialHomePageData } from '@/features/home/types';
 
-export const useHomePageData = () => {
+export const useHomePageData = (initialData?: InitialHomePageData) => {
   const [user, setUser] = useState<AppUser | null>(null);
-  const [documents, setDocuments] = useState<ContentDocument[]>([]);
-  const [writings, setWritings] = useState<ContentDocument[]>([]);
+  const [documents, setDocuments] = useState<ContentDocument[]>(
+    initialData?.documents ?? [],
+  );
+  const [writings, setWritings] = useState<ContentDocument[]>(
+    initialData?.writings ?? [],
+  );
   const [userAssignments, setUserAssignments] = useState<
     SharedDocumentAssignment[]
   >([]);
   const [dismissedAssignments, setDismissedAssignments] = useState<Set<string>>(
     new Set(),
   );
-  const [announcements, setAnnouncements] = useState<Announcement[]>([]);
+  const [announcements, setAnnouncements] = useState<Announcement[]>(
+    initialData?.announcements ?? [],
+  );
   const [selectedAnnouncement, setSelectedAnnouncement] =
     useState<Announcement | null>(null);
   const [supportMessage, setSupportMessage] = useState('');
@@ -42,18 +49,25 @@ export const useHomePageData = () => {
     let isDisposed = false;
 
     const loadPage = async () => {
-      const [profileResult, feed] = await Promise.all([
-        getCurrentUserProfile({ redirectToLogin: false }),
-        fetchHomeFeed(),
-      ]);
+      const profilePromise = getCurrentUserProfile({ redirectToLogin: false });
+
+      if (!initialData?.isHydrated) {
+        const feed = await fetchHomeFeed();
+
+        if (isDisposed) {
+          return;
+        }
+
+        setDocuments(feed.documents);
+        setWritings(feed.writings);
+        setAnnouncements(feed.announcements);
+      }
+
+      const profileResult = await profilePromise;
 
       if (isDisposed) {
         return;
       }
-
-      setDocuments(feed.documents);
-      setWritings(feed.writings);
-      setAnnouncements(feed.announcements);
 
       if (!profileResult) {
         setUser(null);
@@ -77,7 +91,7 @@ export const useHomePageData = () => {
     return () => {
       isDisposed = true;
     };
-  }, []);
+  }, [initialData?.isHydrated]);
 
   const visibleAssignments = userAssignments.filter(
     (assignment) => !dismissedAssignments.has(assignment.id),

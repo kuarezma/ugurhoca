@@ -13,6 +13,7 @@ import { HomeRecentDocumentsSection } from '@/features/home/components/HomeRecen
 import { HomeSupportSection } from '@/features/home/components/HomeSupportSection';
 import { HomeWritingsSection } from '@/features/home/components/HomeWritingsSection';
 import { useHomePageData } from '@/features/home/hooks/useHomePageData';
+import type { InitialHomePageData } from '@/features/home/types';
 
 const FloatingShapes = dynamic(() => import('@/components/FloatingShapes'), {
   ssr: false,
@@ -29,7 +30,11 @@ const HomeAnnouncementModal = dynamic(
   },
 );
 
-export default function HomePage() {
+type HomePageProps = {
+  initialData?: InitialHomePageData;
+};
+
+export default function HomePage({ initialData }: HomePageProps) {
   const { theme } = useTheme();
   const isLight = theme === 'light';
   const {
@@ -51,7 +56,7 @@ export default function HomePage() {
     user,
     visibleAssignments,
     writings,
-  } = useHomePageData();
+  } = useHomePageData(initialData);
 
   return (
     <main
