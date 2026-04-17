@@ -1,8 +1,7 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import Link from "next/link";
+import { useState } from 'react';
+import Link from 'next/link';
 import {
   Calculator,
   Eye,
@@ -10,59 +9,59 @@ import {
   ArrowLeft,
   CheckCircle2,
   GraduationCap,
-} from "lucide-react";
-import { useRouter } from "next/navigation";
-import { supabase } from "@/lib/supabase";
+} from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { supabase } from '@/lib/supabase';
 import {
   formatSignupError,
   normalizeFullNameForMatch,
   studentLoginEmail,
-} from "@/lib/student-identity";
-import FloatingShapes from "@/components/FloatingShapes";
+} from '@/lib/student-identity';
+import DeferredFloatingShapes from '@/components/DeferredFloatingShapes';
 
 export default function RegisterPage() {
   const [formData, setFormData] = useState({
-    name: "",
-    password: "",
-    confirmPassword: "",
-    grade: "",
+    name: '',
+    password: '',
+    confirmPassword: '',
+    grade: '',
   });
   const [showPassword, setShowPassword] = useState(false);
-  const [error, setError] = useState("");
+  const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
   const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError("");
+    setError('');
 
     if (!formData.name.trim()) {
-      setError("Lütfen adınızı ve soyadınızı girin");
+      setError('Lütfen adınızı ve soyadınızı girin');
       return;
     }
 
-    if (formData.name.trim().split(" ").length < 2) {
-      setError("Lütfen hem adınızı hem soyadınızı girin");
+    if (formData.name.trim().split(' ').length < 2) {
+      setError('Lütfen hem adınızı hem soyadınızı girin');
       return;
     }
 
     if (!formData.grade) {
-      setError("Lütfen sınıf düzeyinizi seçin");
+      setError('Lütfen sınıf düzeyinizi seçin');
       return;
     }
 
     if (!formData.password) {
-      setError("Lütfen şifre girin");
+      setError('Lütfen şifre girin');
       return;
     }
 
     if (formData.password !== formData.confirmPassword) {
-      setError("Şifreler eşleşmiyor");
+      setError('Şifreler eşleşmiyor');
       return;
     }
 
     if (formData.password.length < 6) {
-      setError("Şifre en az 6 karakter olmalı");
+      setError('Şifre en az 6 karakter olmalı');
       return;
     }
 
@@ -73,37 +72,37 @@ export default function RegisterPage() {
       try {
         fakeEmail = studentLoginEmail(displayName);
       } catch {
-        setError("Ad soyadı geçerli değil.");
+        setError('Ad soyadı geçerli değil.');
         return;
       }
 
       const userGrade =
-        formData.grade === "Mezun" ? 0 : Number.parseInt(formData.grade, 10);
+        formData.grade === 'Mezun' ? 0 : Number.parseInt(formData.grade, 10);
       const gradeValue = Number.isNaN(userGrade) ? 0 : userGrade;
       const isPrivate =
-        formData.password.toLowerCase() === "ozelders" ||
-        formData.password.toLowerCase() === "özelders";
+        formData.password.toLowerCase() === 'ozelders' ||
+        formData.password.toLowerCase() === 'özelders';
 
       const { data: existingByEmail } = await supabase
-        .from("profiles")
-        .select("id")
-        .eq("email", fakeEmail)
+        .from('profiles')
+        .select('id')
+        .eq('email', fakeEmail)
         .maybeSingle();
 
       if (existingByEmail) {
-        setError("Bu ad soyad ile zaten hesap var. Giriş sayfasından deneyin.");
+        setError('Bu ad soyad ile zaten hesap var. Giriş sayfasından deneyin.');
         return;
       }
 
       const { data: existingByNorm, error: normErr } = await supabase
-        .from("profiles")
-        .select("id")
-        .eq("name_normalized", nameNormalized)
+        .from('profiles')
+        .select('id')
+        .eq('name_normalized', nameNormalized)
         .maybeSingle();
 
       if (normErr) throw normErr;
       if (existingByNorm) {
-        setError("Bu ad soyad ile zaten hesap var. Giriş sayfasından deneyin.");
+        setError('Bu ad soyad ile zaten hesap var. Giriş sayfasından deneyin.');
         return;
       }
 
@@ -122,7 +121,7 @@ export default function RegisterPage() {
       if (signUpError) throw signUpError;
 
       if (data.user) {
-        const { error: profileErr } = await supabase.from("profiles").upsert({
+        const { error: profileErr } = await supabase.from('profiles').upsert({
           id: data.user.id,
           name: displayName,
           name_normalized: nameNormalized,
@@ -136,7 +135,7 @@ export default function RegisterPage() {
 
       setSuccess(true);
       setTimeout(() => {
-        router.push("/profil");
+        router.push('/profil');
       }, 2000);
     } catch (err: unknown) {
       setError(formatSignupError(err));
@@ -146,38 +145,25 @@ export default function RegisterPage() {
   if (success) {
     return (
       <main className="kayit-page min-h-screen gradient-bg flex items-center justify-center p-6">
-        <FloatingShapes count={15} />
-        <motion.div
-          initial={{ scale: 0.8, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          className="glass rounded-3xl p-12 text-center max-w-md w-full relative z-10"
-        >
-          <motion.div
-            initial={{ scale: 0 }}
-            animate={{ scale: 1 }}
-            transition={{ delay: 0.2, type: "spring" }}
-            className="w-20 h-20 bg-gradient-to-br from-green-400 to-emerald-500 rounded-full flex items-center justify-center mx-auto mb-6"
-          >
+        <DeferredFloatingShapes count={15} />
+        <div className="glass rounded-3xl p-12 text-center max-w-md w-full relative z-10 animate-fade-up">
+          <div className="animate-pulse-soft w-20 h-20 bg-gradient-to-br from-green-400 to-emerald-500 rounded-full flex items-center justify-center mx-auto mb-6">
             <CheckCircle2 className="w-10 h-10 text-white" />
-          </motion.div>
+          </div>
           <h2 className="text-3xl font-bold text-white mb-4">Başarılı!</h2>
           <p className="text-slate-300 mb-8">
             Hesabınız oluşturuldu. Yönlendiriliyorsunuz...
           </p>
-        </motion.div>
+        </div>
       </main>
     );
   }
 
   return (
     <main className="kayit-page min-h-screen gradient-bg flex items-center justify-center p-6">
-      <FloatingShapes count={15} />
+      <DeferredFloatingShapes count={15} />
 
-      <motion.div
-        initial={{ opacity: 0, y: 30 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="w-full max-w-md relative z-10"
-      >
+      <div className="w-full max-w-md relative z-10 animate-fade-up">
         <Link
           href="/"
           className="inline-flex items-center gap-2 text-slate-300 hover:text-white mb-8 transition-colors"
@@ -253,7 +239,7 @@ export default function RegisterPage() {
               <label className="block text-slate-300 mb-2 text-sm">Şifre</label>
               <div className="relative">
                 <input
-                  type={showPassword ? "text" : "password"}
+                  type={showPassword ? 'text' : 'password'}
                   required
                   autoComplete="new-password"
                   value={formData.password}
@@ -296,32 +282,24 @@ export default function RegisterPage() {
               />
             </div>
 
-            <AnimatePresence>
-              {error && (
-                <motion.div
-                  initial={{ opacity: 0, y: -10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -10 }}
-                  className="bg-red-500/20 border border-red-500/50 rounded-xl px-4 py-3 text-red-400 text-sm"
-                >
-                  {error}
-                </motion.div>
-              )}
-            </AnimatePresence>
+            {error && (
+              <div className="animate-fade-in bg-red-500/20 border border-red-500/50 rounded-xl px-4 py-3 text-red-400 text-sm">
+                {error}
+              </div>
+            )}
 
-            <motion.button
+            <button
               type="submit"
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
               className="w-full bg-gradient-to-r from-purple-500 to-pink-500 text-white font-semibold py-4
-                       rounded-xl hover:from-purple-600 hover:to-pink-600 transition-all glow-button"
+                       rounded-xl hover:from-purple-600 hover:to-pink-600 transition-all duration-200
+                       hover:scale-[1.02] active:scale-[0.98] glow-button"
             >
               Kayıt Ol
-            </motion.button>
+            </button>
           </form>
 
           <p className="text-center text-slate-400 mt-6">
-            Zaten hesabın var mı?{" "}
+            Zaten hesabın var mı?{' '}
             <Link
               href="/giris"
               className="text-purple-400 hover:text-purple-300 font-semibold"
@@ -330,7 +308,7 @@ export default function RegisterPage() {
             </Link>
           </p>
         </div>
-      </motion.div>
+      </div>
     </main>
   );
 }
