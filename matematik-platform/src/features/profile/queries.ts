@@ -215,7 +215,9 @@ export const uploadProfileAvatar = async (userId: string, file: File) => {
     data: { publicUrl },
   } = supabase.storage.from(PROFILE_AVATAR_BUCKET).getPublicUrl(avatarPath);
 
-  await updateProfileAvatar(userId, publicUrl);
+  const cacheBustedUrl = `${publicUrl}?v=${Date.now()}`;
 
-  return publicUrl;
+  await updateProfileAvatar(userId, cacheBustedUrl);
+
+  return cacheBustedUrl;
 };
