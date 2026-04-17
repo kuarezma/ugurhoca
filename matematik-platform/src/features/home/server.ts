@@ -2,6 +2,7 @@ import 'server-only';
 
 import type { Announcement, ContentDocument } from '@/types';
 import { createServerSupabaseClient } from '@/lib/supabase/server';
+import { hasSupabasePublicEnv } from '@/lib/env.server';
 import type { InitialHomePageData } from '@/features/home/types';
 
 const resolveServerYandexImageUrl = async (url: string) => {
@@ -57,6 +58,15 @@ const resolveAnnouncementImages = async (announcement: Announcement) => {
 
 export const loadInitialHomePageData =
   async (): Promise<InitialHomePageData> => {
+    if (!hasSupabasePublicEnv()) {
+      return {
+        announcements: [],
+        documents: [],
+        isHydrated: false,
+        writings: [],
+      };
+    }
+
     const supabase = createServerSupabaseClient();
 
     const [documentsResponse, writingsResponse, announcementsResponse] =

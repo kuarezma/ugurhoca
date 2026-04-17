@@ -10,6 +10,12 @@ const readEnv = (name: string) => {
   return value;
 };
 
+const readOptionalEnv = (name: string) => process.env[name] || '';
+
+export const hasSupabasePublicEnv = () =>
+  readOptionalEnv('NEXT_PUBLIC_SUPABASE_URL').length > 0 &&
+  readOptionalEnv('NEXT_PUBLIC_SUPABASE_ANON_KEY').length > 0;
+
 export const getSupabasePublicEnv = () => ({
   url: readEnv('NEXT_PUBLIC_SUPABASE_URL'),
   anonKey: readEnv('NEXT_PUBLIC_SUPABASE_ANON_KEY'),
