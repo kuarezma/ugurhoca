@@ -3,6 +3,12 @@ export const PROFILE_AVATAR_MAX_LABEL = '500 KB';
 export const PROFILE_AVATAR_ACCEPT =
   'image/png,image/jpeg,image/webp,image/avif';
 export const PROFILE_AVATAR_BUCKET = 'avatars';
+const SUPPORTED_AVATAR_TYPES = new Set([
+  'image/png',
+  'image/jpeg',
+  'image/webp',
+  'image/avif',
+]);
 
 const MAX_AVATAR_DIMENSION = 1200;
 const QUALITY_STEPS = [0.92, 0.86, 0.8, 0.74, 0.68, 0.62, 0.56, 0.5, 0.44];
@@ -54,6 +60,12 @@ export const compressProfileAvatar = async (
 ) => {
   if (!file.type.startsWith('image/')) {
     throw new Error('Lütfen geçerli bir görsel dosyası seçin.');
+  }
+
+  if (!SUPPORTED_AVATAR_TYPES.has(file.type)) {
+    throw new Error(
+      'Şimdilik JPG, PNG, WEBP veya AVIF destekleniyor. iPhone HEIC fotoğraflarını önce JPG/PNG olarak kaydedin.',
+    );
   }
 
   const image = await loadImageFromFile(file);
