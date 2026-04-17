@@ -1,7 +1,7 @@
 'use client';
 
 import { useTheme } from '@/components/ThemeProvider';
-import FloatingShapes from '@/components/FloatingShapes';
+import DeferredFloatingShapes from '@/components/DeferredFloatingShapes';
 import { HomeAnnouncementModal } from '@/features/home/components/HomeAnnouncementModal';
 import { HomeAnnouncementsSection } from '@/features/home/components/HomeAnnouncementsSection';
 import { HomeAssignmentsSection } from '@/features/home/components/HomeAssignmentsSection';
@@ -14,8 +14,19 @@ import { HomeRecentDocumentsSection } from '@/features/home/components/HomeRecen
 import { HomeSupportSection } from '@/features/home/components/HomeSupportSection';
 import { HomeWritingsSection } from '@/features/home/components/HomeWritingsSection';
 import { useHomePageData } from '@/features/home/hooks/useHomePageData';
+import type { Announcement, ContentDocument } from '@/types';
 
-export default function HomePage() {
+type HomePageProps = {
+  initialAnnouncements?: Announcement[];
+  initialDocuments?: ContentDocument[];
+  initialWritings?: ContentDocument[];
+};
+
+export default function HomePage({
+  initialAnnouncements = [],
+  initialDocuments = [],
+  initialWritings = [],
+}: HomePageProps) {
   const { theme } = useTheme();
   const isLight = theme === 'light';
   const {
@@ -37,7 +48,11 @@ export default function HomePage() {
     user,
     visibleAssignments,
     writings,
-  } = useHomePageData();
+  } = useHomePageData({
+    initialAnnouncements,
+    initialDocuments,
+    initialWritings,
+  });
 
   return (
     <main
@@ -47,7 +62,7 @@ export default function HomePage() {
           : 'bg-gradient-to-br from-slate-900 via-slate-900 to-slate-800'
       }`}
     >
-      <FloatingShapes />
+      <DeferredFloatingShapes />
       <HomeNavbar user={user} onLogout={handleLogout} />
       <div className="pt-[calc(3.5rem+env(safe-area-inset-top))] md:pt-14">
         <HomeHeroSection isLight={isLight} />

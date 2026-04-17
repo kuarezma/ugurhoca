@@ -19,7 +19,7 @@ import {
   Download,
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { supabase } from '@/lib/supabase';
+import { supabase } from '@/lib/supabase/client';
 import { getClientSession } from '@/lib/auth-client';
 import DeferredFloatingShapes from '@/components/DeferredFloatingShapes';
 import { Quiz, QuizQuestion } from '@/types/quiz';

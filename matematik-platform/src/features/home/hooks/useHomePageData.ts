@@ -18,17 +18,27 @@ import {
   uploadSupportFiles,
 } from '@/features/home/queries';
 
-export const useHomePageData = () => {
+type UseHomePageDataOptions = {
+  initialAnnouncements?: Announcement[];
+  initialDocuments?: ContentDocument[];
+  initialWritings?: ContentDocument[];
+};
+
+export const useHomePageData = ({
+  initialAnnouncements = [],
+  initialDocuments = [],
+  initialWritings = [],
+}: UseHomePageDataOptions = {}) => {
   const [user, setUser] = useState<AppUser | null>(null);
-  const [documents, setDocuments] = useState<ContentDocument[]>([]);
-  const [writings, setWritings] = useState<ContentDocument[]>([]);
+  const [documents, setDocuments] = useState<ContentDocument[]>(initialDocuments);
+  const [writings, setWritings] = useState<ContentDocument[]>(initialWritings);
   const [userAssignments, setUserAssignments] = useState<
     SharedDocumentAssignment[]
   >([]);
   const [dismissedAssignments, setDismissedAssignments] = useState<Set<string>>(
     new Set(),
   );
-  const [announcements, setAnnouncements] = useState<Announcement[]>([]);
+  const [announcements, setAnnouncements] = useState<Announcement[]>(initialAnnouncements);
   const [selectedAnnouncement, setSelectedAnnouncement] =
     useState<Announcement | null>(null);
   const [supportMessage, setSupportMessage] = useState('');
@@ -42,18 +52,27 @@ export const useHomePageData = () => {
     let isDisposed = false;
 
     const loadPage = async () => {
+      // If we have server-side initial data, only fetch user + assignments
+      const hasInitialData =
+        initialDocuments.length > 0 ||
+        initialWritings.length > 0 ||
+        initialAnnouncements.length > 0;
+
       const [profileResult, feed] = await Promise.all([
         getCurrentUserProfile({ redirectToLogin: false }),
-        fetchHomeFeed(),
+        hasInitialData ? null : fetchHomeFeed(),
       ]);
 
       if (isDisposed) {
         return;
       }
 
-      setDocuments(feed.documents);
-      setWritings(feed.writings);
-      setAnnouncements(feed.announcements);
+      // Only update feed data if we fetched it client-side (no server data available)
+      if (feed) {
+        setDocuments(feed.documents);
+        setWritings(feed.writings);
+        setAnnouncements(feed.announcements);
+      }
 
       if (!profileResult) {
         setUser(null);
@@ -77,6 +96,7 @@ export const useHomePageData = () => {
     return () => {
       isDisposed = true;
     };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const visibleAssignments = userAssignments.filter(

@@ -6,7 +6,7 @@ import {
   Calendar, FileText, StickyNote, Clock, TrendingUp,
   Award, CheckCircle2
 } from 'lucide-react';
-import { supabase } from '@/lib/supabase';
+import { supabase } from '@/lib/supabase/client';
 
 interface UserStats {
   totalNotes: number;

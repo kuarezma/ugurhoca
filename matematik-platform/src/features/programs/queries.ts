@@ -1,4 +1,4 @@
-import { supabase } from '@/lib/supabase';
+import { supabase } from '@/lib/supabase/client';
 import {
   MINIMUM_FULL_LGS_ROW_COUNT,
   MINIMUM_FULL_YKS_ROW_COUNT,

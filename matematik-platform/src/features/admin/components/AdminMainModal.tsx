@@ -3,7 +3,7 @@
 import { motion } from 'framer-motion';
 import type { ChangeEvent, Dispatch, SetStateAction } from 'react';
 import { X } from 'lucide-react';
-import { supabase } from '@/lib/supabase';
+import { supabase } from '@/lib/supabase/client';
 import AdminEditDocumentForm from '@/features/admin/components/modal/AdminEditDocumentForm';
 import AdminEditUserForm from '@/features/admin/components/modal/AdminEditUserForm';
 import AdminGenericContentForm from '@/features/admin/components/modal/AdminGenericContentForm';

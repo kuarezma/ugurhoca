@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { Key, Eye, EyeOff, CheckCircle2, AlertCircle } from "lucide-react";
-import { supabase } from "@/lib/supabase";
+import { supabase } from "@/lib/supabase/client";
 
 type ChangePasswordFormProps = {
   isLight?: boolean;

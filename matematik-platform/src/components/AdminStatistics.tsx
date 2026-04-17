@@ -13,7 +13,7 @@ import {
   Download,
   Eye,
 } from 'lucide-react';
-import { supabase } from '@/lib/supabase';
+import { supabase } from '@/lib/supabase/client';
 import { isAdminEmail } from '@/lib/admin';
 
 interface SiteStats {

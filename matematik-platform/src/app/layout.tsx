@@ -1,8 +1,16 @@
 import type { Metadata, Viewport } from "next";
+import { Poppins } from "next/font/google";
 import { Providers } from "@/components/Providers";
 import InstallPrompt from "@/components/InstallPrompt";
 import { THEME_STORAGE_KEY } from "@/components/theme-constants";
 import "./globals.css";
+
+const poppins = Poppins({
+  subsets: ["latin", "latin-ext"],
+  weight: ["300", "400", "500", "600", "700", "800", "900"],
+  display: "swap",
+  variable: "--font-poppins",
+});
 
 export const metadata: Metadata = {
   title: {
@@ -88,7 +96,7 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body>
+      <body className={poppins.variable}>
         <Providers>{children}</Providers>
         <InstallPrompt />
       </body>

@@ -1,4 +1,4 @@
-const CACHE_VERSION = "2";
+const CACHE_VERSION = "3-20260418";
 const CACHE_NAME = `ugur-hoca-v${CACHE_VERSION}`;
 const OFFLINE_URL = "/offline.html";
 

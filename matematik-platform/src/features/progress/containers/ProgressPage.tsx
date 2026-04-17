@@ -11,7 +11,7 @@ import {
   ArrowLeft, Target, Flame, Brain, Calendar, 
   Plus, X, Video, BookOpen, PenTool, CheckCircle2, Award, Download
 } from 'lucide-react';
-import { supabase } from '@/lib/supabase';
+import { supabase } from '@/lib/supabase/client';
 import { getClientSession } from '@/lib/auth-client';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { useTheme } from '@/components/ThemeProvider';
