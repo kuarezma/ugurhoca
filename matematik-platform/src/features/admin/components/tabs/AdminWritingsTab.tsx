@@ -1,8 +1,7 @@
-"use client";
+'use client';
 
-import { motion } from "framer-motion";
-import { Calendar, Edit3, Trash2 } from "lucide-react";
-import type { AdminDocument } from "@/features/admin/types";
+import { Calendar, Edit3, Trash2 } from 'lucide-react';
+import type { AdminDocument } from '@/features/admin/types';
 
 type AdminWritingsTabProps = {
   formatDate: (dateString?: string | null) => string;
@@ -16,13 +15,7 @@ export default function AdminWritingsTab({
   writings,
 }: AdminWritingsTabProps) {
   return (
-    <motion.div
-      key="writings"
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -20 }}
-      className="space-y-4"
-    >
+    <div className="space-y-4 animate-fade-up">
       {writings.length === 0 ? (
         <div className="glass rounded-2xl p-12 text-center">
           <Edit3 className="w-16 h-16 mx-auto mb-4 text-slate-500" />
@@ -30,12 +23,10 @@ export default function AdminWritingsTab({
         </div>
       ) : (
         writings.map((writing, index) => (
-          <motion.div
+          <div
             key={writing.id}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: index * 0.05 }}
-            className="glass rounded-2xl p-6 card-hover"
+            className="glass rounded-2xl p-6 card-hover animate-slide-up"
+            style={{ animationDelay: `${index * 50}ms` }}
           >
             <div className="flex items-start justify-between">
               <div className="flex-1">
@@ -62,9 +53,9 @@ export default function AdminWritingsTab({
                 <Trash2 className="w-5 h-5" />
               </button>
             </div>
-          </motion.div>
+          </div>
         ))
       )}
-    </motion.div>
+    </div>
   );
 }

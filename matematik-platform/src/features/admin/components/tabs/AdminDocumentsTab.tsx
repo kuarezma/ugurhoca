@@ -1,6 +1,5 @@
-"use client";
+'use client';
 
-import { motion } from "framer-motion";
 import {
   Calendar,
   Download,
@@ -9,15 +8,12 @@ import {
   FileText,
   GraduationCap,
   Trash2,
-} from "lucide-react";
+} from 'lucide-react';
 import {
   ADMIN_DOCUMENT_TYPE_COLORS,
   ADMIN_DOCUMENT_TYPE_LABELS,
-} from "@/features/admin/constants";
-import type {
-  AdminDocument,
-  AdminFormState,
-} from "@/features/admin/types";
+} from '@/features/admin/constants';
+import type { AdminDocument, AdminFormState } from '@/features/admin/types';
 
 type AdminDocumentsTabProps = {
   documents: AdminDocument[];
@@ -35,13 +31,7 @@ export default function AdminDocumentsTab({
   onRefreshCategories,
 }: AdminDocumentsTabProps) {
   return (
-    <motion.div
-      key="documents"
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -20 }}
-      className="space-y-4"
-    >
+    <div className="space-y-4 animate-fade-up">
       <div className="flex justify-between items-center">
         <h3 className="text-lg font-bold text-white">
           Tüm İçerikler ({documents.length})
@@ -61,19 +51,17 @@ export default function AdminDocumentsTab({
         </div>
       ) : (
         documents.map((document, index) => (
-          <motion.div
+          <div
             key={document.id}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: index * 0.05 }}
-            className="glass rounded-2xl p-6 card-hover"
+            className="glass rounded-2xl p-6 card-hover animate-slide-up"
+            style={{ animationDelay: `${index * 50}ms` }}
           >
             <div className="flex items-start justify-between">
               <div className="flex items-center gap-4 flex-1">
                 <div
                   className={`w-14 h-14 rounded-xl bg-gradient-to-br ${
                     ADMIN_DOCUMENT_TYPE_COLORS[document.type] ||
-                    "from-slate-500 to-slate-600"
+                    'from-slate-500 to-slate-600'
                   } flex items-center justify-center flex-shrink-0`}
                 >
                   <FileText className="w-7 h-7 text-white" />
@@ -86,10 +74,11 @@ export default function AdminDocumentsTab({
                     <span
                       className={`px-3 py-1 bg-gradient-to-r ${
                         ADMIN_DOCUMENT_TYPE_COLORS[document.type] ||
-                        "from-slate-500 to-slate-600"
+                        'from-slate-500 to-slate-600'
                       } rounded-full text-white text-xs font-semibold flex-shrink-0`}
                     >
-                      {ADMIN_DOCUMENT_TYPE_LABELS[document.type] || document.type}
+                      {ADMIN_DOCUMENT_TYPE_LABELS[document.type] ||
+                        document.type}
                     </span>
                   </div>
                   <p className="text-slate-400 text-sm line-clamp-1">
@@ -112,7 +101,7 @@ export default function AdminDocumentsTab({
                       <span className="flex items-center gap-1">
                         <GraduationCap className="w-3 h-3" />
                         {Array.isArray(document.grade)
-                          ? document.grade.join(", ")
+                          ? document.grade.join(', ')
                           : document.grade}
                         . Sınıf
                       </span>
@@ -124,13 +113,13 @@ export default function AdminDocumentsTab({
                 <button
                   onClick={() =>
                     onEdit(document, {
-                      answer_key_text: document.answer_key_text ?? "",
-                      description: document.description ?? "",
-                      file_url: document.file_url ?? "",
-                      solution_url: document.solution_url ?? "",
+                      answer_key_text: document.answer_key_text ?? '',
+                      description: document.description ?? '',
+                      file_url: document.file_url ?? '',
+                      solution_url: document.solution_url ?? '',
                       title: document.title,
                       type: document.type,
-                      video_url: document.video_url ?? "",
+                      video_url: document.video_url ?? '',
                     })
                   }
                   className="p-2 text-slate-400 hover:text-blue-400 transition-colors"
@@ -145,9 +134,9 @@ export default function AdminDocumentsTab({
                 </button>
               </div>
             </div>
-          </motion.div>
+          </div>
         ))
       )}
-    </motion.div>
+    </div>
   );
 }
