@@ -21,7 +21,6 @@ import {
 export const useHomePageData = () => {
   const [user, setUser] = useState<AppUser | null>(null);
   const [documents, setDocuments] = useState<ContentDocument[]>([]);
-  const [writings, setWritings] = useState<ContentDocument[]>([]);
   const [userAssignments, setUserAssignments] = useState<
     SharedDocumentAssignment[]
   >([]);
@@ -52,7 +51,6 @@ export const useHomePageData = () => {
       }
 
       setDocuments(feed.documents);
-      setWritings(feed.writings);
       setAnnouncements(feed.announcements);
 
       if (!profileResult) {
@@ -205,6 +203,5 @@ export const useHomePageData = () => {
     uploadSupportAttachments,
     user,
     visibleAssignments,
-    writings,
   };
 };

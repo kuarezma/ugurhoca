@@ -12,7 +12,6 @@ import { HomeHeroSection } from '@/features/home/components/HomeHeroSection';
 import { HomeNavbar } from '@/features/home/components/HomeNavbar';
 import { HomeRecentDocumentsSection } from '@/features/home/components/HomeRecentDocumentsSection';
 import { HomeSupportSection } from '@/features/home/components/HomeSupportSection';
-import { HomeWritingsSection } from '@/features/home/components/HomeWritingsSection';
 import { useHomePageData } from '@/features/home/hooks/useHomePageData';
 
 export default function HomePage() {
@@ -36,7 +35,6 @@ export default function HomePage() {
     uploadSupportAttachments,
     user,
     visibleAssignments,
-    writings,
   } = useHomePageData();
 
   return (
@@ -63,7 +61,6 @@ export default function HomePage() {
           onDismissAll={handleDismissAllAssignments}
           onDismissAssignment={handleDismissAssignment}
         />
-        <HomeWritingsSection isLight={isLight} writings={writings} />
         <HomeRecentDocumentsSection documents={documents} isLight={isLight} />
         {!user && <HomeGuestCtaSection isLight={isLight} />}
         <HomeSupportSection
