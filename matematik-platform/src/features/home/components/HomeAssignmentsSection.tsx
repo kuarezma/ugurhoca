@@ -1,7 +1,6 @@
 'use client';
 
 import Link from 'next/link';
-import { motion } from 'framer-motion';
 import { Bell, ChevronRight, X } from 'lucide-react';
 import type { SharedDocumentAssignment } from '@/types';
 import { HomeAssignmentsList } from '@/features/home/components/assignments/HomeAssignmentsList';
@@ -26,11 +25,7 @@ export function HomeAssignmentsSection({
   return (
     <section className="px-4 py-6 sm:py-8">
       <div className="max-w-6xl mx-auto">
-        <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="relative overflow-hidden"
-        >
+        <div className="animate-fade-up relative overflow-hidden">
           <div
             className={`absolute inset-0 rounded-3xl ${
               isLight
@@ -112,7 +107,7 @@ export function HomeAssignmentsSection({
               </div>
             </div>
           </div>
-        </motion.div>
+        </div>
       </div>
     </section>
   );

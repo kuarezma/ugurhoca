@@ -2,7 +2,6 @@
 
 /* eslint-disable @next/next/no-img-element -- announcement modal renders dynamic remote images */
 
-import { AnimatePresence, motion } from 'framer-motion';
 import {
   ChevronRight,
   ExternalLink,
@@ -66,6 +65,10 @@ export function HomeAnnouncementModal({
   announcement,
   onClose,
 }: HomeAnnouncementModalProps) {
+  if (!announcement) {
+    return null;
+  }
+
   const images =
     announcement?.image_urls?.length && Array.isArray(announcement.image_urls)
       ? announcement.image_urls
@@ -74,96 +77,84 @@ export function HomeAnnouncementModal({
         : [];
 
   return (
-    <AnimatePresence>
-      {announcement && (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          className="fixed inset-0 z-[100] bg-black/80 backdrop-blur-sm flex items-center justify-center p-4"
-          onClick={onClose}
-        >
-          <motion.div
-            initial={{ scale: 0.95, opacity: 0, y: 20 }}
-            animate={{ scale: 1, opacity: 1, y: 0 }}
-            exit={{ scale: 0.95, opacity: 0, y: 20 }}
-            onClick={(event) => event.stopPropagation()}
-            className="w-full max-w-5xl max-h-[90vh] overflow-y-auto rounded-3xl bg-slate-900 border border-slate-700 shadow-2xl"
-          >
-            {images.length > 0 ? (
-              <div className="grid md:grid-cols-2 gap-0">
-                <div className="bg-slate-950 p-2">
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                    {images
-                      .filter(
-                        (image): image is string => typeof image === 'string',
-                      )
-                      .map((image, index) => (
-                        <img
-                          key={index}
-                          src={proxiedImageSrc(image)}
-                          alt={announcement.title}
-                          className="w-full h-56 object-cover rounded-xl"
-                        />
-                      ))}
-                  </div>
-                </div>
-                <div className="p-6 sm:p-8">
-                  <div className="flex items-center justify-between mb-4">
-                    <span className="px-3 py-1 rounded-full bg-pink-500/20 text-pink-300 text-xs font-semibold">
-                      Haber
-                    </span>
-                    <button
-                      onClick={onClose}
-                      className="text-slate-400 hover:text-white"
-                    >
-                      <X className="w-6 h-6" />
-                    </button>
-                  </div>
-                  <h2 className="text-2xl sm:text-3xl font-bold text-white mb-3">
-                    {announcement.title}
-                  </h2>
-                  <p className="text-slate-300 leading-relaxed whitespace-pre-line">
-                    {announcement.content}
-                  </p>
-                  {renderAnnouncementLink(announcement)}
-                  <p className="text-slate-500 text-sm mt-6">
-                    {new Date(announcement.created_at).toLocaleDateString(
-                      'tr-TR',
-                    )}
-                  </p>
-                </div>
+    <div
+      className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 p-4 backdrop-blur-sm animate-fade-in"
+      onClick={onClose}
+    >
+      <div
+        onClick={(event) => event.stopPropagation()}
+        className="animate-slide-up max-h-[90vh] w-full max-w-5xl overflow-y-auto rounded-3xl border border-slate-700 bg-slate-900 shadow-2xl"
+      >
+        {images.length > 0 ? (
+          <div className="grid gap-0 md:grid-cols-2">
+            <div className="bg-slate-950 p-2">
+              <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+                {images
+                  .filter(
+                    (image): image is string => typeof image === 'string',
+                  )
+                  .map((image, index) => (
+                    <img
+                      key={index}
+                      src={proxiedImageSrc(image)}
+                      alt={announcement.title}
+                      loading="lazy"
+                      decoding="async"
+                      className="h-56 w-full rounded-xl object-cover"
+                    />
+                  ))}
               </div>
-            ) : (
-              <div className="p-6 sm:p-8">
-                <div className="flex items-center justify-between mb-4">
-                  <span className="px-3 py-1 rounded-full bg-pink-500/20 text-pink-300 text-xs font-semibold">
-                    Haber
-                  </span>
-                  <button
-                    onClick={onClose}
-                    className="text-slate-400 hover:text-white"
-                  >
-                    <X className="w-6 h-6" />
-                  </button>
-                </div>
-                <h2 className="text-2xl sm:text-3xl font-bold text-white mb-3">
-                  {announcement.title}
-                </h2>
-                <p className="text-slate-300 leading-relaxed whitespace-pre-line">
-                  {announcement.content}
-                </p>
-                {renderAnnouncementLink(announcement)}
-                <p className="text-slate-500 text-sm mt-6">
-                  {new Date(announcement.created_at).toLocaleDateString(
-                    'tr-TR',
-                  )}
-                </p>
+            </div>
+            <div className="p-6 sm:p-8">
+              <div className="mb-4 flex items-center justify-between">
+                <span className="rounded-full bg-pink-500/20 px-3 py-1 text-xs font-semibold text-pink-300">
+                  Haber
+                </span>
+                <button
+                  onClick={onClose}
+                  className="text-slate-400 hover:text-white"
+                >
+                  <X className="h-6 w-6" />
+                </button>
               </div>
-            )}
-          </motion.div>
-        </motion.div>
-      )}
-    </AnimatePresence>
+              <h2 className="mb-3 text-2xl font-bold text-white sm:text-3xl">
+                {announcement.title}
+              </h2>
+              <p className="whitespace-pre-line leading-relaxed text-slate-300">
+                {announcement.content}
+              </p>
+              {renderAnnouncementLink(announcement)}
+              <p className="mt-6 text-sm text-slate-500">
+                {new Date(announcement.created_at).toLocaleDateString('tr-TR')}
+              </p>
+            </div>
+          </div>
+        ) : (
+          <div className="p-6 sm:p-8">
+            <div className="mb-4 flex items-center justify-between">
+              <span className="rounded-full bg-pink-500/20 px-3 py-1 text-xs font-semibold text-pink-300">
+                Haber
+              </span>
+              <button
+                onClick={onClose}
+                className="text-slate-400 hover:text-white"
+              >
+                <X className="h-6 w-6" />
+              </button>
+            </div>
+            <h2 className="mb-3 text-2xl font-bold text-white sm:text-3xl">
+              {announcement.title}
+            </h2>
+            <p className="whitespace-pre-line leading-relaxed text-slate-300">
+              {announcement.content}
+            </p>
+            {renderAnnouncementLink(announcement)}
+            <p className="mt-6 text-sm text-slate-500">
+              {new Date(announcement.created_at).toLocaleDateString('tr-TR')}
+            </p>
+          </div>
+        )}
+      </div>
+    </div>
   );
 }

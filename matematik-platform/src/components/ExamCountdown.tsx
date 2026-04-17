@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
-import { motion } from "framer-motion";
 import { Clock, Clock3 } from "lucide-react";
 import type { FeaturedExam } from "@/lib/examDates";
 
@@ -63,32 +62,30 @@ export function ExamCountdown({ exam, isLight }: ExamCountdownProps) {
   }, [timeLeft]);
 
   return (
-    <motion.div
-      whileHover={{ y: -3, scale: 1.01 }}
-      transition={{ duration: 0.18, ease: "easeOut" }}
+    <div
       className={[
-        "relative overflow-hidden rounded-[26px] border p-3 sm:p-3.5 transition-all",
+        "relative overflow-hidden rounded-[26px] border p-3 sm:p-3.5 transition-transform duration-200 hover:-translate-y-0.5",
         isLight
           ? "light-card shadow-[0_14px_30px_rgba(99,102,241,0.14)]"
           : "glass border-white/10 bg-gradient-to-br from-slate-950/95 via-slate-900/92 to-slate-800/90 shadow-[0_20px_48px_rgba(15,23,42,0.42)]",
       ].join(" ")}
     >
-      <motion.div
-        animate={{
-          scale: [1, 1.08, 1],
-          opacity: isLight ? [0.18, 0.26, 0.18] : [0.26, 0.36, 0.26],
+      <div
+        className={`animate-pulse-soft absolute -top-10 -right-8 h-24 w-24 rounded-full bg-gradient-to-br ${exam.accent} blur-3xl`}
+        aria-hidden="true"
+        style={{
+          ['--pulse-duration' as string]: '4.8s',
+          ['--pulse-opacity-start' as string]: isLight ? '0.18' : '0.26',
+          ['--pulse-opacity-end' as string]: isLight ? '0.26' : '0.36',
         }}
-        transition={{ duration: 4.8, repeat: Infinity, ease: "easeInOut" }}
-        className={`absolute -top-10 -right-8 h-24 w-24 rounded-full bg-gradient-to-br ${exam.accent} blur-3xl`}
       />
-      <motion.div
-        animate={{
-          x: [0, 4, 0],
-          y: [0, -4, 0],
-          opacity: isLight ? [0.14, 0.22, 0.14] : [0.22, 0.3, 0.22],
+      <div
+        className={`animate-drift-xy absolute -bottom-10 -left-8 h-20 w-20 rounded-full bg-gradient-to-br ${exam.accent} blur-3xl`}
+        style={{
+          ['--drift-duration' as string]: '5.6s',
+          ['--drift-opacity-start' as string]: isLight ? '0.14' : '0.22',
+          ['--drift-opacity-end' as string]: isLight ? '0.22' : '0.3',
         }}
-        transition={{ duration: 5.6, repeat: Infinity, ease: "easeInOut" }}
-        className={`absolute -bottom-10 -left-8 h-20 w-20 rounded-full bg-gradient-to-br ${exam.accent} blur-3xl`}
       />
       {!isLight && (
         <div
@@ -99,21 +96,14 @@ export function ExamCountdown({ exam, isLight }: ExamCountdownProps) {
         className={`absolute inset-x-0 top-0 h-1.5 bg-gradient-to-r ${exam.accent}`}
       />
       {[0, 1, 2].map((index) => (
-        <motion.span
+        <span
           key={index}
           aria-hidden="true"
-          animate={{
-            y: [0, -5, 0],
-            scale: [1, 1.15, 1],
-            opacity: [0.35, 0.8, 0.35],
+          className={`animate-sparkle absolute rounded-full bg-gradient-to-br ${exam.accent} ${index === 0 ? "right-14 top-3 h-1.5 w-1.5" : index === 1 ? "right-8 top-8 h-2 w-2" : "left-4 top-5 h-1.5 w-1.5"}`}
+          style={{
+            animationDelay: `${index * 0.25}s`,
+            ['--sparkle-duration' as string]: `${2.6 + index * 0.35}s`,
           }}
-          transition={{
-            duration: 2.6 + index * 0.35,
-            repeat: Infinity,
-            ease: "easeInOut",
-            delay: index * 0.25,
-          }}
-          className={`absolute rounded-full bg-gradient-to-br ${exam.accent} ${index === 0 ? "right-14 top-3 h-1.5 w-1.5" : index === 1 ? "right-8 top-8 h-2 w-2" : "left-4 top-5 h-1.5 w-1.5"}`}
         />
       ))}
 
@@ -139,13 +129,12 @@ export function ExamCountdown({ exam, isLight }: ExamCountdownProps) {
           </h3>
         </div>
 
-        <motion.div
-          animate={{ y: [0, -4, 0], rotate: [0, 4, 0, -4, 0] }}
-          transition={{ duration: 3.8, repeat: Infinity, ease: "easeInOut" }}
-          className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br ${exam.accent} shadow-lg`}
+        <div
+          className={`animate-icon-bob flex h-9 w-9 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br ${exam.accent} shadow-lg`}
+          style={{ ['--icon-duration' as string]: '3.8s' }}
         >
           <Clock className="h-4.5 w-4.5 text-white" />
-        </motion.div>
+        </div>
       </div>
 
       <div className="relative mt-3 grid grid-cols-3 gap-2">
@@ -154,21 +143,18 @@ export function ExamCountdown({ exam, isLight }: ExamCountdownProps) {
           { label: "Saat", value: formatUnit(timeLeft.hours) },
           { label: "Dakika", value: formatUnit(timeLeft.minutes) },
         ].map((item, index) => (
-          <motion.div
+          <div
             key={item.label}
-            animate={{ y: [0, -2, 0] }}
-            transition={{
-              duration: 2.8,
-              repeat: Infinity,
-              ease: "easeInOut",
-              delay: index * 0.18,
-            }}
             className={[
-              "rounded-2xl border px-2 py-2.5 text-center",
+              "animate-bob-soft rounded-2xl border px-2 py-2.5 text-center",
               isLight
                 ? "border-white/75 bg-gradient-to-br from-white via-slate-50 to-indigo-50/80 shadow-sm"
                 : "bg-gradient-to-br from-white/12 via-white/8 to-transparent border-white/10 backdrop-blur-sm",
             ].join(" ")}
+            style={{
+              animationDelay: `${index * 0.18}s`,
+              ['--bob-duration' as string]: '2.8s',
+            }}
           >
             <div
               className={`text-lg sm:text-xl font-black leading-none ${isLight ? "bg-gradient-to-br from-slate-950 via-indigo-700 to-fuchsia-600 bg-clip-text text-transparent" : "bg-gradient-to-br from-white via-cyan-200 to-fuchsia-300 bg-clip-text text-transparent"}`}
@@ -180,7 +166,7 @@ export function ExamCountdown({ exam, isLight }: ExamCountdownProps) {
             >
               {item.label}
             </div>
-          </motion.div>
+          </div>
         ))}
       </div>
 
@@ -234,6 +220,6 @@ export function ExamCountdown({ exam, isLight }: ExamCountdownProps) {
           </Link>
         ) : null}
       </div>
-    </motion.div>
+    </div>
   );
 }

@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
 import { Download, X, Smartphone } from 'lucide-react';
 
 const DISMISS_KEY = 'uh-install-dismissed';
@@ -55,87 +54,80 @@ export default function InstallPrompt() {
     localStorage.setItem(DISMISS_KEY, String(Date.now()));
   };
 
+  if (!show) {
+    return null;
+  }
+
   return (
-    <AnimatePresence>
-      {show && (
-        <motion.div
-          initial={{ y: 120, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          exit={{ y: 120, opacity: 0 }}
-          transition={{ type: 'spring', stiffness: 280, damping: 24 }}
-          className="fixed bottom-6 left-4 right-4 sm:left-auto sm:right-6 sm:w-[380px] z-[200]"
-        >
-          {/* Glow effect */}
-          <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-orange-500/20 to-red-500/10 blur-xl pointer-events-none" />
+    <div className="fixed bottom-6 left-4 right-4 z-[200] animate-slide-up sm:left-auto sm:right-6 sm:w-[380px]">
+      <div className="pointer-events-none absolute inset-0 rounded-2xl bg-gradient-to-r from-orange-500/20 to-red-500/10 blur-xl" />
 
-          <div
-            className="relative rounded-2xl overflow-hidden border border-white/10"
-            style={{
-              background: 'linear-gradient(135deg, rgba(15,23,42,0.95) 0%, rgba(30,41,59,0.95) 100%)',
-              backdropFilter: 'blur(20px)',
-              WebkitBackdropFilter: 'blur(20px)',
-              boxShadow: '0 20px 60px rgba(0,0,0,0.6), 0 0 0 1px rgba(249,115,22,0.15)',
-            }}
-          >
-            {/* Top accent line */}
-            <div className="h-0.5 w-full bg-gradient-to-r from-orange-500 via-red-500 to-orange-500" />
+      <div
+        className="relative overflow-hidden rounded-2xl border border-white/10"
+        style={{
+          background:
+            'linear-gradient(135deg, rgba(15,23,42,0.95) 0%, rgba(30,41,59,0.95) 100%)',
+          backdropFilter: 'blur(20px)',
+          WebkitBackdropFilter: 'blur(20px)',
+          boxShadow:
+            '0 20px 60px rgba(0,0,0,0.6), 0 0 0 1px rgba(249,115,22,0.15)',
+        }}
+      >
+        <div className="h-0.5 w-full bg-gradient-to-r from-orange-500 via-red-500 to-orange-500" />
 
-            <div className="p-5">
-              <div className="flex items-start gap-4">
-                {/* Icon */}
-                <div className="flex-shrink-0 w-14 h-14 rounded-2xl bg-gradient-to-br from-orange-500 to-red-500 flex items-center justify-center shadow-lg shadow-orange-500/30">
-                  <Smartphone className="w-7 h-7 text-white" />
-                </div>
+        <div className="p-5">
+          <div className="flex items-start gap-4">
+            <div className="flex h-14 w-14 flex-shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-orange-500 to-red-500 shadow-lg shadow-orange-500/30">
+              <Smartphone className="h-7 w-7 text-white" />
+            </div>
 
-                {/* Content */}
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-start justify-between gap-2">
-                    <div>
-                      <p className="text-white font-bold text-base leading-tight">Uygulamayı Kur</p>
-                      <p className="text-slate-400 text-sm mt-0.5">Uğur Hoca Matematik</p>
-                    </div>
-                    <button
-                      onClick={handleDismiss}
-                      className="flex-shrink-0 p-1 text-slate-500 hover:text-slate-300 transition-colors rounded-lg hover:bg-white/5"
-                    >
-                      <X className="w-4 h-4" />
-                    </button>
-                  </div>
-
-                  <p className="text-slate-400 text-xs mt-2 leading-relaxed">
-                    Ana ekranına ekle — hızlı erişim, daha iyi deneyim.
+            <div className="min-w-0 flex-1">
+              <div className="flex items-start justify-between gap-2">
+                <div>
+                  <p className="text-base font-bold leading-tight text-white">
+                    Uygulamayı Kur
                   </p>
-
-                  {/* Buttons */}
-                  <div className="flex gap-2 mt-4">
-                    <motion.button
-                      whileHover={{ scale: 1.03 }}
-                      whileTap={{ scale: 0.97 }}
-                      onClick={handleInstall}
-                      disabled={installing}
-                      className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-orange-500 to-red-500 text-white font-semibold text-sm shadow-md shadow-orange-500/25 disabled:opacity-60 transition-opacity"
-                    >
-                      {installing ? (
-                        <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                      ) : (
-                        <Download className="w-4 h-4" />
-                      )}
-                      {installing ? 'Kuruluyor...' : 'Kur'}
-                    </motion.button>
-
-                    <button
-                      onClick={handleDismiss}
-                      className="px-4 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 text-slate-400 hover:text-white font-medium text-sm transition-colors"
-                    >
-                      Şimdi Değil
-                    </button>
-                  </div>
+                  <p className="mt-0.5 text-sm text-slate-400">
+                    Uğur Hoca Matematik
+                  </p>
                 </div>
+                <button
+                  onClick={handleDismiss}
+                  className="flex-shrink-0 rounded-lg p-1 text-slate-500 transition-colors hover:bg-white/5 hover:text-slate-300"
+                >
+                  <X className="h-4 w-4" />
+                </button>
+              </div>
+
+              <p className="mt-2 text-xs leading-relaxed text-slate-400">
+                Ana ekranına ekle, hızlı erişim ve daha akıcı deneyim kazan.
+              </p>
+
+              <div className="mt-4 flex gap-2">
+                <button
+                  onClick={handleInstall}
+                  disabled={installing}
+                  className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-orange-500 to-red-500 px-4 py-2.5 text-sm font-semibold text-white shadow-md shadow-orange-500/25 transition-transform transition-opacity hover:scale-[1.02] disabled:opacity-60"
+                >
+                  {installing ? (
+                    <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                  ) : (
+                    <Download className="h-4 w-4" />
+                  )}
+                  {installing ? 'Kuruluyor...' : 'Kur'}
+                </button>
+
+                <button
+                  onClick={handleDismiss}
+                  className="rounded-xl bg-white/5 px-4 py-2.5 text-sm font-medium text-slate-400 transition-colors hover:bg-white/10 hover:text-white"
+                >
+                  Şimdi Değil
+                </button>
               </div>
             </div>
           </div>
-        </motion.div>
-      )}
-    </AnimatePresence>
+        </div>
+      </div>
+    </div>
   );
 }

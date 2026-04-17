@@ -15,7 +15,6 @@ import { supabase } from '@/lib/supabase';
 import { getClientSession } from '@/lib/auth-client';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { useTheme } from '@/components/ThemeProvider';
-import { downloadProgressPDF } from '@/lib/pdf-export';
 import type { AppUser } from '@/types';
 import type { InitialProgressPageData } from '@/features/progress/server';
 import type {
@@ -265,6 +264,17 @@ export default function IlerlemePage({ initialData }: ProgressPageProps) {
     { subject: 'Olasılık', A: 0, fullMark: 100 },
   ];
 
+  const handleDownloadProgressPdf = async () => {
+    setPdfLoading(true);
+
+    try {
+      const { downloadProgressPDF } = await import('@/lib/pdf-export');
+      await downloadProgressPDF();
+    } finally {
+      setPdfLoading(false);
+    }
+  };
+
   return (
     <main className={`min-h-screen pb-20 ${isLight ? 'bg-slate-50' : 'bg-slate-900'}`}>
       <header className={`sticky top-0 z-40 backdrop-blur-lg border-b ${isLight ? 'bg-white/80 border-slate-200' : 'bg-slate-900/80 border-slate-800'}`}>
@@ -280,7 +290,7 @@ export default function IlerlemePage({ initialData }: ProgressPageProps) {
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              onClick={async () => { setPdfLoading(true); await downloadProgressPDF(); setPdfLoading(false); }}
+              onClick={handleDownloadProgressPdf}
               disabled={pdfLoading}
               title="Gelişim Raporunu PDF İndir"
               className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full border font-semibold text-sm transition-all disabled:opacity-50 ${

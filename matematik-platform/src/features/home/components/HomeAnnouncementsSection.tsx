@@ -2,7 +2,6 @@
 
 /* eslint-disable @next/next/no-img-element -- announcement cards render dynamic remote images */
 
-import { motion } from 'framer-motion';
 import { Bell } from 'lucide-react';
 import type { Announcement } from '@/types';
 import { isNewContent, proxiedImageSrc } from '@/features/home/queries';
@@ -56,17 +55,15 @@ export function HomeAnnouncementsSection({
                   : [];
 
             return (
-              <motion.button
+              <button
                 key={item.id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.05 }}
                 onClick={() => onSelectAnnouncement(item)}
-                className={`relative text-left rounded-2xl overflow-hidden transition-all min-w-[82vw] sm:min-w-[46vw] md:min-w-0 md:w-full ${
+                className={`animate-fade-up relative text-left rounded-2xl overflow-hidden transition-all min-w-[82vw] sm:min-w-[46vw] md:min-w-0 md:w-full ${
                   isLight
                     ? 'light-card hover:-translate-y-0.5'
                     : 'glass hover:scale-[1.01]'
                 }`}
+                style={{ animationDelay: `${index * 0.05}s` }}
               >
                 {isNewContent(item.created_at) && (
                   <span className="absolute top-3 right-3 z-10 px-2 py-1 rounded-full bg-pink-500 text-white text-[10px] font-bold shadow-lg">
@@ -78,6 +75,8 @@ export function HomeAnnouncementsSection({
                     <img
                       src={proxiedImageSrc(images[0])}
                       alt={item.title}
+                      loading="lazy"
+                      decoding="async"
                       className="w-full h-full object-cover"
                     />
                   </div>
@@ -109,7 +108,7 @@ export function HomeAnnouncementsSection({
                     {item.content}
                   </p>
                 </div>
-              </motion.button>
+              </button>
             );
           })}
         </div>

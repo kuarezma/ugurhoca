@@ -1,8 +1,7 @@
 'use client';
 
+import dynamic from 'next/dynamic';
 import { useTheme } from '@/components/ThemeProvider';
-import FloatingShapes from '@/components/FloatingShapes';
-import { HomeAnnouncementModal } from '@/features/home/components/HomeAnnouncementModal';
 import { HomeAnnouncementsSection } from '@/features/home/components/HomeAnnouncementsSection';
 import { HomeAssignmentsSection } from '@/features/home/components/HomeAssignmentsSection';
 import { HomeExamCountdownSection } from '@/features/home/components/HomeExamCountdownSection';
@@ -14,6 +13,21 @@ import { HomeRecentDocumentsSection } from '@/features/home/components/HomeRecen
 import { HomeSupportSection } from '@/features/home/components/HomeSupportSection';
 import { HomeWritingsSection } from '@/features/home/components/HomeWritingsSection';
 import { useHomePageData } from '@/features/home/hooks/useHomePageData';
+
+const FloatingShapes = dynamic(() => import('@/components/FloatingShapes'), {
+  ssr: false,
+  loading: () => null,
+});
+
+const HomeAnnouncementModal = dynamic(
+  () =>
+    import('@/features/home/components/HomeAnnouncementModal').then(
+      (module) => module.HomeAnnouncementModal,
+    ),
+  {
+    loading: () => null,
+  },
+);
 
 export default function HomePage() {
   const { theme } = useTheme();

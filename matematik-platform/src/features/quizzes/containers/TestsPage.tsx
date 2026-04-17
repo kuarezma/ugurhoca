@@ -9,12 +9,10 @@ import {
   Zap, Target, AlertCircle, Download
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import confetti from 'canvas-confetti';
 import { supabase } from '@/lib/supabase';
 import { getClientSession } from '@/lib/auth-client';
 import FloatingShapes from '@/components/FloatingShapes';
 import { Quiz, QuizQuestion } from '@/types/quiz';
-import { downloadQuizPDF } from '@/lib/pdf-export';
 import type { AppUser } from '@/types';
 type TestsPageProps = {
   initialQuizzes?: Quiz[];
@@ -221,12 +219,16 @@ export default function TestsPage({
     if (showResult && quizQuestions.length > 0) {
       const finalScore = calculateScore();
       if (finalScore >= 80) {
-        confetti({
-          particleCount: 150,
-          spread: 80,
-          origin: { y: 0.6 },
-          colors: ['#8b5cf6', '#ec4899', '#06b6d4', '#f97316', '#10b981']
-        });
+        void import('canvas-confetti')
+          .then(({ default: confetti }) =>
+            confetti({
+              particleCount: 150,
+              spread: 80,
+              origin: { y: 0.6 },
+              colors: ['#8b5cf6', '#ec4899', '#06b6d4', '#f97316', '#10b981']
+            }),
+          )
+          .catch(() => undefined);
       }
     }
   }, [calculateScore, quizQuestions.length, showResult]);
@@ -374,8 +376,12 @@ export default function TestsPage({
 
     const handleDownloadPDF = async () => {
       setPdfLoading(true);
-      await downloadQuizPDF(selectedQuiz.title);
-      setPdfLoading(false);
+      try {
+        const { downloadQuizPDF } = await import('@/lib/pdf-export');
+        await downloadQuizPDF(selectedQuiz.title);
+      } finally {
+        setPdfLoading(false);
+      }
     };
 
     return (

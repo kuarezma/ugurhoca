@@ -1,8 +1,16 @@
 import type { Metadata, Viewport } from "next";
+import { Poppins } from "next/font/google";
+import DeferredInstallPrompt from "@/components/DeferredInstallPrompt";
 import { Providers } from "@/components/Providers";
-import InstallPrompt from "@/components/InstallPrompt";
 import { THEME_STORAGE_KEY } from "@/components/theme-constants";
 import "./globals.css";
+
+const poppins = Poppins({
+  subsets: ["latin", "latin-ext"],
+  weight: ["300", "400", "500", "600", "700", "800", "900"],
+  display: "swap",
+  variable: "--font-sans",
+});
 
 export const metadata: Metadata = {
   title: {
@@ -72,7 +80,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="tr" suppressHydrationWarning data-scroll-behavior="smooth">
+    <html
+      lang="tr"
+      suppressHydrationWarning
+      data-scroll-behavior="smooth"
+      className={poppins.variable}
+    >
       <head>
         <script
           dangerouslySetInnerHTML={{
@@ -90,7 +103,7 @@ export default function RootLayout({
       </head>
       <body>
         <Providers>{children}</Providers>
-        <InstallPrompt />
+        <DeferredInstallPrompt />
       </body>
     </html>
   );

@@ -1,7 +1,6 @@
 import type { ChangeEvent } from "react";
 import { motion } from "framer-motion";
 import { Download, Upload } from "lucide-react";
-import { downloadExcelTemplate } from "@/lib/question-import";
 import type { AdminFormState } from "@/features/admin/types";
 import { OPTION_LETTERS } from "@/features/admin/components/modal/shared";
 
@@ -18,6 +17,11 @@ export default function AdminQuestionImportFields({
   isSubmitting,
   onQuestionImportUpload,
 }: AdminQuestionImportFieldsProps) {
+  const handleDownloadTemplate = async () => {
+    const { downloadExcelTemplate } = await import("@/lib/question-import");
+    downloadExcelTemplate();
+  };
+
   return (
     <>
       <div className="space-y-4">
@@ -33,7 +37,7 @@ export default function AdminQuestionImportFields({
           </div>
           <button
             type="button"
-            onClick={downloadExcelTemplate}
+            onClick={handleDownloadTemplate}
             className="bg-emerald-500 hover:bg-emerald-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors"
           >
             İndir

@@ -1,7 +1,6 @@
 'use client';
 
 import Link from 'next/link';
-import { motion } from 'framer-motion';
 import { Bell, ChevronRight } from 'lucide-react';
 import type { ContentDocument } from '@/types';
 
@@ -50,16 +49,14 @@ export function HomeWritingsSection({
 
         <div className="flex gap-4 overflow-x-auto pb-2 md:grid md:grid-cols-2 xl:grid-cols-4 md:overflow-visible md:pb-0">
           {writings.map((writing, index) => (
-            <motion.button
+            <button
               key={writing.id}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.05 }}
-              className={`text-left rounded-2xl overflow-hidden transition-all min-w-[82vw] sm:min-w-[46vw] md:min-w-0 md:w-full ${
+              className={`animate-fade-up text-left rounded-2xl overflow-hidden transition-all min-w-[82vw] sm:min-w-[46vw] md:min-w-0 md:w-full ${
                 isLight
                   ? 'light-card hover:-translate-y-0.5'
                   : 'glass hover:scale-[1.01]'
               }`}
+              style={{ animationDelay: `${index * 0.05}s` }}
             >
               <div className="p-4 sm:p-5">
                 <div
@@ -90,7 +87,7 @@ export function HomeWritingsSection({
                   {writing.description}
                 </p>
               </div>
-            </motion.button>
+            </button>
           ))}
         </div>
       </div>
