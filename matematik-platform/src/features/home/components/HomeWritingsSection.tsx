@@ -30,18 +30,18 @@ export function HomeWritingsSection({
                 isLight ? 'light-text-strong' : 'text-white'
               }`}
             >
-              Yazılar
+              Yaprak Test
             </h2>
             <p
               className={`text-sm ${
                 isLight ? 'light-text-muted' : 'text-slate-400'
               }`}
             >
-              Kısa yazılar ve paylaşımlar.
+              Yüklediğiniz doküman ve testler.
             </p>
           </div>
           <Link
-            href="/icerikler?type=writing"
+            href="/icerikler?type=ders-notlari"
             className="text-purple-400 hover:text-purple-300 text-sm font-medium flex items-center gap-1"
           >
             Tümünü Gör <ChevronRight className="w-4 h-4" />

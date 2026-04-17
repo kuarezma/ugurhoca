@@ -10,9 +10,9 @@ import type { ContentDocument } from '@/types';
 export const CONTENT_PAGE_SIZE = 5;
 
 export const CONTENT_TYPE_OPTIONS = [
-  { value: 'ders-notlari', label: 'Ders Notları' },
+  { value: 'ders-notlari', label: 'Yaprak Test' },
   { value: 'kitaplar', label: 'Kitaplar' },
-  { value: 'yaprak-test', label: 'Yaprak Test' },
+  { value: 'yaprak-test', label: 'Kazanımlar' },
   { value: 'ders-videolari', label: 'Ders Videoları' },
   { value: 'deneme', label: 'Deneme' },
   { value: 'sinav', label: 'Sınav' },
@@ -79,11 +79,11 @@ export const getContentTypeColor = (type: string) => {
 export const getContentTypeLabel = (type: string) => {
   switch (CONTENT_TYPE_MAPPING[type] || type) {
     case 'ders-notlari':
-      return 'Ders Notları';
+      return 'Yaprak Test';
     case 'kitaplar':
       return 'Kitaplar';
     case 'yaprak-test':
-      return 'Yaprak Test';
+      return 'Kazanımlar';
     case 'ders-videolari':
       return 'Ders Videoları';
     case 'deneme':
@@ -97,6 +97,16 @@ export const getContentTypeLabel = (type: string) => {
     default:
       return type;
   }
+};
+
+export const getContentTypeQueryTypes = (type: string) => {
+  const normalizedType = CONTENT_TYPE_MAPPING[type] || type;
+
+  if (normalizedType === 'ders-notlari') {
+    return ['ders-notlari', 'writing', 'yaprak-test'];
+  }
+
+  return [normalizedType];
 };
 
 export const getContentKindLabel = (content: ContentDocument) => {

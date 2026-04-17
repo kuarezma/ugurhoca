@@ -41,7 +41,7 @@ export const fetchHomeWritings = async () => {
   const { data } = await supabase
     .from('documents')
     .select('*')
-    .eq('type', 'writing')
+    .in('type', ['ders-notlari', 'writing', 'yaprak-test'])
     .order('created_at', { ascending: false })
     .limit(4);
 

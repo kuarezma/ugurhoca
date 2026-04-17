@@ -13,6 +13,7 @@ import type {
 import {
   CONTENT_PAGE_SIZE,
   CONTENT_TYPE_MAPPING,
+  getContentTypeQueryTypes,
 } from '@/features/content/constants';
 import {
   buildWorksheetDescription,
@@ -22,6 +23,7 @@ import {
   prepareWorksheetDocumentPayload,
   sortWorksheetDocuments,
 } from '@/features/content/worksheet';
+import { sortContentDocumentsByNewest } from '@/features/content/utils';
 
 const CONTENT_DOCUMENT_CACHE_TTL_MS = 60_000;
 
@@ -179,6 +181,7 @@ export const loadContentDocuments = async (
     const from = (page - 1) * pageSize;
     const to = from + pageSize - 1;
     const normalizedTypeFilter = CONTENT_TYPE_MAPPING[typeFilter] || typeFilter;
+    const queryTypes = getContentTypeQueryTypes(normalizedTypeFilter);
 
     let countQuery = supabase
       .from('documents')
@@ -189,7 +192,10 @@ export const loadContentDocuments = async (
     }
 
     if (typeFilter !== 'all') {
-      countQuery = countQuery.eq('type', normalizedTypeFilter);
+      countQuery =
+        queryTypes.length === 1
+          ? countQuery.eq('type', queryTypes[0])
+          : countQuery.in('type', queryTypes);
     }
 
     let dataQuery = supabase
@@ -202,7 +208,10 @@ export const loadContentDocuments = async (
     }
 
     if (typeFilter !== 'all') {
-      dataQuery = dataQuery.eq('type', normalizedTypeFilter);
+      dataQuery =
+        queryTypes.length === 1
+          ? dataQuery.eq('type', queryTypes[0])
+          : dataQuery.in('type', queryTypes);
     }
 
     const [{ count }, { data }] = await Promise.all([
@@ -212,7 +221,9 @@ export const loadContentDocuments = async (
 
     const payload = {
       count: count || 0,
-      documents: (data || []) as ContentDocument[],
+      documents: sortContentDocumentsByNewest(
+        (data || []) as ContentDocument[],
+      ),
     };
 
     seedContentDocumentCache(page, pageSize, gradeFilter, typeFilter, payload);

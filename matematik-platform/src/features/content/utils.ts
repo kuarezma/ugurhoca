@@ -53,10 +53,22 @@ export const getContentPrimaryGradeLabel = (content: ContentDocument) => {
 export const getContentAuthorLabel = (content: ContentDocument) =>
   content.author || content.owner_name || 'Uğur Hoca';
 
+export const sortContentDocumentsByNewest = (documents: ContentDocument[]) =>
+  [...documents].sort((left, right) => {
+    const leftTime = left.created_at ? new Date(left.created_at).getTime() : 0;
+    const rightTime = right.created_at ? new Date(right.created_at).getTime() : 0;
+
+    if (leftTime !== rightTime) {
+      return rightTime - leftTime;
+    }
+
+    return right.title.localeCompare(left.title, 'tr');
+  });
+
 export const getContentPageTitle = (selectedType: string) => {
   switch (selectedType) {
     case 'yaprak-test':
-      return 'Yaprak Testler';
+      return 'Kazanımlar';
     case 'deneme':
       return 'Denemeler';
     case 'sinav':
@@ -64,7 +76,7 @@ export const getContentPageTitle = (selectedType: string) => {
     case 'oyunlar':
       return 'Oyunlar';
     case 'ders-notlari':
-      return 'Ders Notları';
+      return 'Yaprak Test';
     case 'kitaplar':
       return 'Kitaplar';
     case 'ders-videolari':

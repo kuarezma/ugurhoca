@@ -7,8 +7,14 @@ import type {
   ContentDocumentsPayload,
   ContentGradeFilter,
 } from '@/features/content/types';
-import { CONTENT_TYPE_MAPPING } from '@/features/content/constants';
-import { normalizeContentGrade } from '@/features/content/utils';
+import {
+  CONTENT_TYPE_MAPPING,
+  getContentTypeQueryTypes,
+} from '@/features/content/constants';
+import {
+  normalizeContentGrade,
+  sortContentDocumentsByNewest,
+} from '@/features/content/utils';
 
 const CONTENT_SERVER_CACHE_TTL_MS = 60_000;
 
@@ -46,6 +52,7 @@ export const loadInitialContentDocuments = async (
   const to = from + pageSize - 1;
   const serverSupabase = createServerSupabaseClient();
   const normalizedTypeFilter = CONTENT_TYPE_MAPPING[typeFilter] || typeFilter;
+  const queryTypes = getContentTypeQueryTypes(normalizedTypeFilter);
   const cacheKey = getServerContentCacheKey(
     page,
     pageSize,
@@ -71,7 +78,10 @@ export const loadInitialContentDocuments = async (
   }
 
   if (typeFilter !== 'all') {
-    countQuery = countQuery.eq('type', normalizedTypeFilter);
+    countQuery =
+      queryTypes.length === 1
+        ? countQuery.eq('type', queryTypes[0])
+        : countQuery.in('type', queryTypes);
   }
 
   let dataQuery = serverSupabase
@@ -84,7 +94,10 @@ export const loadInitialContentDocuments = async (
   }
 
   if (typeFilter !== 'all') {
-    dataQuery = dataQuery.eq('type', normalizedTypeFilter);
+    dataQuery =
+      queryTypes.length === 1
+        ? dataQuery.eq('type', queryTypes[0])
+        : dataQuery.in('type', queryTypes);
   }
 
   const [{ count }, { data }] = await Promise.all([
@@ -94,7 +107,9 @@ export const loadInitialContentDocuments = async (
 
   const payload = {
     count: count || 0,
-    documents: (data || []) as ContentDocument[],
+    documents: sortContentDocumentsByNewest(
+      (data || []) as ContentDocument[],
+    ),
   };
 
   if (useCache) {
