@@ -1,16 +1,6 @@
-"use client";
+'use client';
 
-import { AnimatePresence, motion } from "framer-motion";
-import AdminStatistics from "@/components/AdminStatistics";
-import AdminAnnouncementsTab from "@/features/admin/components/tabs/AdminAnnouncementsTab";
-import AdminAssignmentsTab from "@/features/admin/components/tabs/AdminAssignmentsTab";
-import AdminDocumentsTab from "@/features/admin/components/tabs/AdminDocumentsTab";
-import AdminGradeUpdateTab from "@/features/admin/components/tabs/AdminGradeUpdateTab";
-import AdminMessagesTab from "@/features/admin/components/tabs/AdminMessagesTab";
-import AdminPrivateStudentsTab from "@/features/admin/components/tabs/AdminPrivateStudentsTab";
-import AdminQuizzesTab from "@/features/admin/components/tabs/AdminQuizzesTab";
-import AdminUsersTab from "@/features/admin/components/tabs/AdminUsersTab";
-import AdminWritingsTab from "@/features/admin/components/tabs/AdminWritingsTab";
+import dynamic from 'next/dynamic';
 import type {
   AdminActiveTab,
   AdminAnnouncement,
@@ -22,7 +12,65 @@ import type {
   AdminQuiz,
   AdminSharedDocument,
   AdminUser,
-} from "@/features/admin/types";
+} from '@/features/admin/types';
+
+function AdminPanelLoading() {
+  return (
+    <div className="glass rounded-3xl p-8 text-center animate-fade-in">
+      <div className="mx-auto h-10 w-10 rounded-full border-2 border-orange-400 border-t-transparent animate-spin" />
+      <p className="mt-4 text-sm text-slate-400">Sekme yükleniyor...</p>
+    </div>
+  );
+}
+
+const AdminStatistics = dynamic(() => import('@/components/AdminStatistics'), {
+  loading: () => <AdminPanelLoading />,
+});
+
+const AdminAnnouncementsTab = dynamic(
+  () => import('@/features/admin/components/tabs/AdminAnnouncementsTab'),
+  { loading: () => <AdminPanelLoading /> },
+);
+
+const AdminAssignmentsTab = dynamic(
+  () => import('@/features/admin/components/tabs/AdminAssignmentsTab'),
+  { loading: () => <AdminPanelLoading /> },
+);
+
+const AdminDocumentsTab = dynamic(
+  () => import('@/features/admin/components/tabs/AdminDocumentsTab'),
+  { loading: () => <AdminPanelLoading /> },
+);
+
+const AdminGradeUpdateTab = dynamic(
+  () => import('@/features/admin/components/tabs/AdminGradeUpdateTab'),
+  { loading: () => <AdminPanelLoading /> },
+);
+
+const AdminMessagesTab = dynamic(
+  () => import('@/features/admin/components/tabs/AdminMessagesTab'),
+  { loading: () => <AdminPanelLoading /> },
+);
+
+const AdminPrivateStudentsTab = dynamic(
+  () => import('@/features/admin/components/tabs/AdminPrivateStudentsTab'),
+  { loading: () => <AdminPanelLoading /> },
+);
+
+const AdminQuizzesTab = dynamic(
+  () => import('@/features/admin/components/tabs/AdminQuizzesTab'),
+  { loading: () => <AdminPanelLoading /> },
+);
+
+const AdminUsersTab = dynamic(
+  () => import('@/features/admin/components/tabs/AdminUsersTab'),
+  { loading: () => <AdminPanelLoading /> },
+);
+
+const AdminWritingsTab = dynamic(
+  () => import('@/features/admin/components/tabs/AdminWritingsTab'),
+  { loading: () => <AdminPanelLoading /> },
+);
 
 type AdminTabPanelsProps = {
   activeChatRoom: AdminChatRoom | null;
@@ -60,9 +108,7 @@ type AdminTabPanelsProps = {
     nextFormData: AdminFormState,
   ) => void;
   onEditQuiz: (quiz: AdminQuiz) => void;
-  onEditSharedDocument: (
-    document: AdminSharedDocument,
-  ) => Promise<void> | void;
+  onEditSharedDocument: (document: AdminSharedDocument) => Promise<void> | void;
   onEditUser: (user: AdminUser) => void;
   onRefreshDocumentCategories: () => Promise<void> | void;
   onRefreshUsers: () => Promise<void> | void;
@@ -134,114 +180,119 @@ export default function AdminTabPanels({
   studentUsers,
   writings,
 }: AdminTabPanelsProps) {
+  if (activeTab === 'statistics') {
+    return <AdminStatistics />;
+  }
+
+  if (activeTab === 'announcements') {
+    return (
+      <AdminAnnouncementsTab
+        announcements={announcements}
+        formatDate={formatDate}
+        onCreate={onCreateAnnouncement}
+        onDelete={onDeleteAnnouncement}
+        onEdit={onEditAnnouncement}
+      />
+    );
+  }
+
+  if (activeTab === 'documents') {
+    return (
+      <AdminDocumentsTab
+        documents={documents}
+        formatDate={formatDate}
+        onDelete={onDeleteDocument}
+        onEdit={onEditDocument}
+        onRefreshCategories={onRefreshDocumentCategories}
+      />
+    );
+  }
+
+  if (activeTab === 'writings') {
+    return (
+      <AdminWritingsTab
+        formatDate={formatDate}
+        onDelete={onDeleteWriting}
+        writings={writings}
+      />
+    );
+  }
+
+  if (activeTab === 'users') {
+    return (
+      <AdminUsersTab
+        formatDate={formatDate}
+        onDownloadPdf={onDownloadStudentsPdf}
+        onEditUser={onEditUser}
+        onRefresh={onRefreshUsers}
+        onSendMessage={onSendAdminMessage}
+        onTogglePrivateStudent={onTogglePrivateStudent}
+        pdfStudentsLoading={pdfStudentsLoading}
+        students={studentUsers}
+      />
+    );
+  }
+
+  if (activeTab === 'privateStudents') {
+    return (
+      <AdminPrivateStudentsTab
+        assignments={assignments}
+        onCreateAssignment={onCreateAssignmentForStudent}
+        onCreateStudent={onCreatePrivateStudent}
+        onDeleteAssignment={onDeleteAssignment}
+        students={privateStudents}
+      />
+    );
+  }
+
+  if (activeTab === 'messages') {
+    return (
+      <AdminMessagesTab
+        activeChatRoom={activeChatRoom}
+        chatMessages={chatMessages}
+        chatRooms={chatRooms}
+        onDeleteRoom={onDeleteChatRoom}
+        onReplyTextChange={onReplyTextChange}
+        onSelectRoom={onSelectChatRoom}
+        onSendMessage={onSendChatMessage}
+        replyText={replyText}
+      />
+    );
+  }
+
+  if (activeTab === 'gradeUpdate') {
+    return (
+      <AdminGradeUpdateTab
+        isSubmitting={isSubmitting}
+        lastGradeUpdate={lastGradeUpdate}
+        onUpdateGrades={onUpdateGrades}
+        users={studentUsers}
+      />
+    );
+  }
+
+  if (activeTab === 'assignments') {
+    return (
+      <AdminAssignmentsTab
+        assignments={assignments}
+        onDeleteAssignment={onDeleteAssignment}
+        onDeleteSharedDocument={onDeleteSharedDocument}
+        onEditAssignment={onEditAssignment}
+        onEditSharedDocument={onEditSharedDocument}
+        onOpenAssignmentModal={onCreateAssignment}
+        onOpenSendDocumentModal={onCreateSendDocument}
+        onOpenSubmissions={onShowSubmissions}
+        sharedDocs={sharedDocs}
+      />
+    );
+  }
+
   return (
-    <AnimatePresence mode="wait">
-      {activeTab === "statistics" && (
-        <motion.div
-          key="statistics"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -20 }}
-        >
-          <AdminStatistics />
-        </motion.div>
-      )}
-
-      {activeTab === "announcements" && (
-        <AdminAnnouncementsTab
-          announcements={announcements}
-          formatDate={formatDate}
-          onCreate={onCreateAnnouncement}
-          onDelete={onDeleteAnnouncement}
-          onEdit={onEditAnnouncement}
-        />
-      )}
-
-      {activeTab === "documents" && (
-        <AdminDocumentsTab
-          documents={documents}
-          formatDate={formatDate}
-          onDelete={onDeleteDocument}
-          onEdit={onEditDocument}
-          onRefreshCategories={onRefreshDocumentCategories}
-        />
-      )}
-
-      {activeTab === "writings" && (
-        <AdminWritingsTab
-          formatDate={formatDate}
-          onDelete={onDeleteWriting}
-          writings={writings}
-        />
-      )}
-
-      {activeTab === "users" && (
-        <AdminUsersTab
-          formatDate={formatDate}
-          onDownloadPdf={onDownloadStudentsPdf}
-          onEditUser={onEditUser}
-          onRefresh={onRefreshUsers}
-          onSendMessage={onSendAdminMessage}
-          onTogglePrivateStudent={onTogglePrivateStudent}
-          pdfStudentsLoading={pdfStudentsLoading}
-          students={studentUsers}
-        />
-      )}
-
-      {activeTab === "privateStudents" && (
-        <AdminPrivateStudentsTab
-          assignments={assignments}
-          onCreateAssignment={onCreateAssignmentForStudent}
-          onCreateStudent={onCreatePrivateStudent}
-          onDeleteAssignment={onDeleteAssignment}
-          students={privateStudents}
-        />
-      )}
-
-      {activeTab === "messages" && (
-        <AdminMessagesTab
-          activeChatRoom={activeChatRoom}
-          chatMessages={chatMessages}
-          chatRooms={chatRooms}
-          onDeleteRoom={onDeleteChatRoom}
-          onReplyTextChange={onReplyTextChange}
-          onSelectRoom={onSelectChatRoom}
-          onSendMessage={onSendChatMessage}
-          replyText={replyText}
-        />
-      )}
-
-      {activeTab === "gradeUpdate" && (
-        <AdminGradeUpdateTab
-          isSubmitting={isSubmitting}
-          lastGradeUpdate={lastGradeUpdate}
-          onUpdateGrades={onUpdateGrades}
-          users={studentUsers}
-        />
-      )}
-
-      {activeTab === "assignments" && (
-        <AdminAssignmentsTab
-          assignments={assignments}
-          onDeleteAssignment={onDeleteAssignment}
-          onDeleteSharedDocument={onDeleteSharedDocument}
-          onEditAssignment={onEditAssignment}
-          onEditSharedDocument={onEditSharedDocument}
-          onOpenAssignmentModal={onCreateAssignment}
-          onOpenSendDocumentModal={onCreateSendDocument}
-          onOpenSubmissions={onShowSubmissions}
-          sharedDocs={sharedDocs}
-        />
-      )}
-
-      {activeTab === "quizzes" && (
-        <AdminQuizzesTab
-          onAddQuestion={onAddQuizQuestion}
-          onDeleteQuiz={onDeleteQuiz}
-          onEditQuiz={onEditQuiz}
-          quizzes={quizzes}
-        />
-      )}
-    </AnimatePresence>
+    <AdminQuizzesTab
+      onAddQuestion={onAddQuizQuestion}
+      onDeleteQuiz={onDeleteQuiz}
+      onEditQuiz={onEditQuiz}
+      quizzes={quizzes}
+    />
   );
 }

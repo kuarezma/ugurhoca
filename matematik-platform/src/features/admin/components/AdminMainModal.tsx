@@ -1,30 +1,27 @@
-"use client";
+'use client';
 
-import { motion } from "framer-motion";
-import type { ChangeEvent, Dispatch, SetStateAction } from "react";
-import { X } from "lucide-react";
-import { supabase } from "@/lib/supabase";
-import {
-  parseExcelFile,
-} from "@/lib/question-import";
-import AdminEditDocumentForm from "@/features/admin/components/modal/AdminEditDocumentForm";
-import AdminEditUserForm from "@/features/admin/components/modal/AdminEditUserForm";
-import AdminGenericContentForm from "@/features/admin/components/modal/AdminGenericContentForm";
-import AdminMessageForm from "@/features/admin/components/modal/AdminMessageForm";
-import AdminModalSuccessState from "@/features/admin/components/modal/AdminModalSuccessState";
-import AdminSendDocumentForm from "@/features/admin/components/modal/AdminSendDocumentForm";
-import AdminStudentForm from "@/features/admin/components/modal/AdminStudentForm";
+import { motion } from 'framer-motion';
+import type { ChangeEvent, Dispatch, SetStateAction } from 'react';
+import { X } from 'lucide-react';
+import { supabase } from '@/lib/supabase';
+import AdminEditDocumentForm from '@/features/admin/components/modal/AdminEditDocumentForm';
+import AdminEditUserForm from '@/features/admin/components/modal/AdminEditUserForm';
+import AdminGenericContentForm from '@/features/admin/components/modal/AdminGenericContentForm';
+import AdminMessageForm from '@/features/admin/components/modal/AdminMessageForm';
+import AdminModalSuccessState from '@/features/admin/components/modal/AdminModalSuccessState';
+import AdminSendDocumentForm from '@/features/admin/components/modal/AdminSendDocumentForm';
+import AdminStudentForm from '@/features/admin/components/modal/AdminStudentForm';
 import {
   getModalTitle,
   type AdminFormUpdate,
   type AdminModalSubmitHandler,
-} from "@/features/admin/components/modal/shared";
+} from '@/features/admin/components/modal/shared';
 import type {
   AdminDocument as Document,
   AdminFormState,
   AdminModalType,
   AdminUser,
-} from "@/features/admin/types";
+} from '@/features/admin/types';
 
 type AdminMainModalProps = {
   adminMsgImagePreview: string | null;
@@ -103,7 +100,7 @@ export default function AdminMainModal({
   };
 
   const clearAdminMessageImage = () => {
-    setAdminMsgImageUrl("");
+    setAdminMsgImageUrl('');
     setAdminMsgImagePreview(null);
   };
 
@@ -115,16 +112,16 @@ export default function AdminMainModal({
 
     const fileName = `admin_msg_${Date.now()}_${file.name}`;
     const { data, error } = await supabase.storage
-      .from("documents")
+      .from('documents')
       .upload(fileName, file);
 
     if (error || !data) {
-      alert("Resim yüklenemedi.");
+      alert('Resim yüklenemedi.');
       return;
     }
 
     const { data: urlData } = supabase.storage
-      .from("documents")
+      .from('documents')
       .getPublicUrl(fileName);
     setAdminMsgImageUrl(urlData.publicUrl);
     setAdminMsgImagePreview(URL.createObjectURL(file));
@@ -138,12 +135,13 @@ export default function AdminMainModal({
 
     try {
       const buffer = await file.arrayBuffer();
+      const { parseExcelFile } = await import('@/lib/question-import');
       const result = parseExcelFile(buffer);
       updateFormData({ importResult: result });
     } catch (error) {
       alert(
-        "Excel dosyası okunamadı: " +
-          (error instanceof Error ? error.message : "Bilinmeyen hata"),
+        'Excel dosyası okunamadı: ' +
+          (error instanceof Error ? error.message : 'Bilinmeyen hata'),
       );
     }
   };
@@ -155,17 +153,17 @@ export default function AdminMainModal({
     setIsSubmitting(true);
     const fileName = `${Date.now()}_${file.name}`;
     const { error } = await supabase.storage
-      .from("documents")
+      .from('documents')
       .upload(fileName, file);
 
     if (error) {
-      alert("Dosya yüklenemedi: " + error.message);
+      alert('Dosya yüklenemedi: ' + error.message);
       setIsSubmitting(false);
       return;
     }
 
     const { data: urlData } = supabase.storage
-      .from("documents")
+      .from('documents')
       .getPublicUrl(fileName);
     updateFormData({
       file_name: file.name,
@@ -174,7 +172,7 @@ export default function AdminMainModal({
     setIsSubmitting(false);
   };
 
-  const toggleDocumentGrade = (grade: number | "Mezun", checked: boolean) => {
+  const toggleDocumentGrade = (grade: number | 'Mezun', checked: boolean) => {
     const grades = formData.grades || [];
 
     if (checked) {
@@ -193,7 +191,7 @@ export default function AdminMainModal({
     }
 
     switch (modalType) {
-      case "editUser":
+      case 'editUser':
         return (
           <AdminEditUserForm
             editingUser={editingUser}
@@ -203,7 +201,7 @@ export default function AdminMainModal({
             updateFormData={updateFormData}
           />
         );
-      case "sendDoc":
+      case 'sendDoc':
         return (
           <AdminSendDocumentForm
             documents={documents}
@@ -216,7 +214,7 @@ export default function AdminMainModal({
             updateFormData={updateFormData}
           />
         );
-      case "adminMessage":
+      case 'adminMessage':
         return (
           <AdminMessageForm
             adminMsgImagePreview={adminMsgImagePreview}
@@ -231,7 +229,7 @@ export default function AdminMainModal({
             setAdminMsgTitle={setAdminMsgTitle}
           />
         );
-      case "editDocument":
+      case 'editDocument':
         return (
           <AdminEditDocumentForm
             editingDoc={editingDoc}
@@ -241,7 +239,7 @@ export default function AdminMainModal({
             updateFormData={updateFormData}
           />
         );
-      case "student":
+      case 'student':
         return (
           <AdminStudentForm
             formData={formData}

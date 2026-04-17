@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import { useState, useEffect, useCallback } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import Link from "next/link";
+import dynamic from 'next/dynamic';
+import { useState, useEffect, useCallback } from 'react';
+import Link from 'next/link';
 import {
   Calculator,
   LogOut,
@@ -20,20 +20,14 @@ import {
   ClipboardList,
   MessageSquareText,
   BarChart3,
-} from "lucide-react";
-import { useRouter } from "next/navigation";
-import { signOutClient } from "@/lib/auth-client";
-import FloatingShapes from "@/components/FloatingShapes";
-import { ChatBubbleLoader } from "@/components/ChatBubbleLoader";
-import AdminMainModal from "@/features/admin/components/AdminMainModal";
-import AdminNotificationDetailModal from "@/features/admin/components/AdminNotificationDetailModal";
-import AdminNotificationsPanel from "@/features/admin/components/AdminNotificationsPanel";
-import AdminSubmissionsModal from "@/features/admin/components/AdminSubmissionsModal";
-import AdminTabPanels from "@/features/admin/components/AdminTabPanels";
-import { useAdminListActions } from "@/features/admin/hooks/useAdminListActions";
-import { useAdminModalState } from "@/features/admin/hooks/useAdminModalState";
-import { useAdminModalSubmitHandlers } from "@/features/admin/hooks/useAdminModalSubmitHandlers";
-import { useAdminNotifications } from "@/features/admin/hooks/useAdminNotifications";
+} from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { signOutClient } from '@/lib/auth-client';
+import DeferredFloatingShapes from '@/components/DeferredFloatingShapes';
+import { useAdminListActions } from '@/features/admin/hooks/useAdminListActions';
+import { useAdminModalState } from '@/features/admin/hooks/useAdminModalState';
+import { useAdminModalSubmitHandlers } from '@/features/admin/hooks/useAdminModalSubmitHandlers';
+import { useAdminNotifications } from '@/features/admin/hooks/useAdminNotifications';
 import {
   loadAdminAssignmentSubmissions,
   loadAdminChatMessages,
@@ -43,7 +37,7 @@ import {
   resolveAdminAuth,
   sendAdminChatMessage,
   updateAdminSubmissionReview,
-} from "@/features/admin/queries";
+} from '@/features/admin/queries';
 import type {
   AdminActiveTab,
   AdminAnnouncement as Announcement,
@@ -59,12 +53,54 @@ import type {
   AdminSharedDocument as SharedDoc,
   AdminSubmission as Submission,
   AdminUser,
-} from "@/features/admin/types";
+} from '@/features/admin/types';
+
+const ChatBubbleLoader = dynamic(
+  () =>
+    import('@/components/ChatBubbleLoader').then(
+      (module) => module.ChatBubbleLoader,
+    ),
+  { loading: () => null },
+);
+
+const AdminMainModal = dynamic(
+  () => import('@/features/admin/components/AdminMainModal'),
+  { loading: () => null },
+);
+
+const AdminNotificationDetailModal = dynamic(
+  () => import('@/features/admin/components/AdminNotificationDetailModal'),
+  { loading: () => null },
+);
+
+const AdminNotificationsPanel = dynamic(
+  () => import('@/features/admin/components/AdminNotificationsPanel'),
+  { loading: () => null },
+);
+
+const AdminSubmissionsModal = dynamic(
+  () => import('@/features/admin/components/AdminSubmissionsModal'),
+  { loading: () => null },
+);
+
+const AdminTabPanels = dynamic(
+  () => import('@/features/admin/components/AdminTabPanels'),
+  {
+    loading: () => (
+      <div className="glass rounded-3xl p-8 text-center animate-fade-in">
+        <div className="mx-auto h-10 w-10 rounded-full border-2 border-orange-400 border-t-transparent animate-spin" />
+        <p className="mt-4 text-sm text-slate-400">
+          Admin paneli yükleniyor...
+        </p>
+      </div>
+    ),
+  },
+);
 
 export default function AdminPage() {
   const RETENTION_DAYS = 180;
   const [user, setUser] = useState<AdminUser | null>(null);
-  const [activeTab, setActiveTab] = useState<AdminActiveTab>("statistics");
+  const [activeTab, setActiveTab] = useState<AdminActiveTab>('statistics');
   const [announcements, setAnnouncements] = useState<Announcement[]>([]);
   const [documents, setDocuments] = useState<Document[]>([]);
   const [allUsers, setAllUsers] = useState<AdminUser[]>([]);
@@ -122,7 +158,10 @@ export default function AdminPage() {
   } = useAdminModalState();
 
   const refreshUsers = useCallback(async () => {
-    if (typeof document !== "undefined" && document.visibilityState !== "visible") {
+    if (
+      typeof document !== 'undefined' &&
+      document.visibilityState !== 'visible'
+    ) {
       return;
     }
 
@@ -148,7 +187,7 @@ export default function AdminPage() {
 
     if (!error) {
       if (activeAssignment) loadSubmissions(activeAssignment.id);
-      alert("Değerlendirme kaydedildi.");
+      alert('Değerlendirme kaydedildi.');
     }
   };
 
@@ -164,11 +203,14 @@ export default function AdminPage() {
     setNotifications(data.notifications);
   }, []);
 
-  const loadData = useCallback(async (adminUserId?: string | null) => {
-    applyDashboardData(
-      await loadAdminDashboardData(RETENTION_DAYS, adminUserId ?? user?.id),
-    );
-  }, [RETENTION_DAYS, applyDashboardData, user?.id]);
+  const loadData = useCallback(
+    async (adminUserId?: string | null) => {
+      applyDashboardData(
+        await loadAdminDashboardData(RETENTION_DAYS, adminUserId ?? user?.id),
+      );
+    },
+    [RETENTION_DAYS, applyDashboardData, user?.id],
+  );
 
   const {
     applyModerationAction,
@@ -270,8 +312,8 @@ export default function AdminPage() {
     const checkAuth = async () => {
       const authResult = await resolveAdminAuth();
 
-      if (authResult.status !== "ok") {
-        router.push(authResult.status === "unauthenticated" ? "/giris" : "/");
+      if (authResult.status !== 'ok') {
+        router.push(authResult.status === 'unauthenticated' ? '/giris' : '/');
         return;
       }
 
@@ -288,22 +330,22 @@ export default function AdminPage() {
     }, 30000);
 
     const handleVisibilityChange = () => {
-      if (document.visibilityState === "visible") {
+      if (document.visibilityState === 'visible') {
         void refreshUsers();
       }
     };
 
-    document.addEventListener("visibilitychange", handleVisibilityChange);
+    document.addEventListener('visibilitychange', handleVisibilityChange);
 
     return () => {
       clearInterval(interval);
-      document.removeEventListener("visibilitychange", handleVisibilityChange);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
     };
   }, [refreshUsers]);
 
   const handleLogout = async () => {
     await signOutClient();
-    router.push("/");
+    router.push('/');
   };
 
   const loadChatMessages = async (roomId: string) => {
@@ -314,7 +356,7 @@ export default function AdminPage() {
     if (!text.trim()) return;
     const { error } = await sendAdminChatMessage(roomId, text);
     if (!error) {
-      setReplyText("");
+      setReplyText('');
       loadChatMessages(roomId);
     }
   };
@@ -324,17 +366,17 @@ export default function AdminPage() {
   };
 
   const formatDate = (dateString?: string | null) => {
-    if (!dateString) return "Bilinmiyor";
+    if (!dateString) return 'Bilinmiyor';
     const date = new Date(dateString);
-    return date.toLocaleDateString("tr-TR", {
-      day: "numeric",
-      month: "long",
-      year: "numeric",
+    return date.toLocaleDateString('tr-TR', {
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric',
     });
   };
 
   const getQuizFormState = (quiz: Quiz): AdminFormState => ({
-    description: quiz.description ?? "",
+    description: quiz.description ?? '',
     difficulty: quiz.difficulty,
     grade: quiz.grade,
     is_active: quiz.is_active ?? true,
@@ -343,9 +385,9 @@ export default function AdminPage() {
   });
 
   const lastGradeUpdate =
-    typeof window === "undefined"
+    typeof window === 'undefined'
       ? null
-      : localStorage.getItem("lastGradeUpdate");
+      : localStorage.getItem('lastGradeUpdate');
 
   const handleSelectChatRoom = async (room: ChatRoom) => {
     setActiveChatRoom(room);
@@ -355,7 +397,7 @@ export default function AdminPage() {
   const handleAddQuizQuestion = async (quiz: Quiz) => {
     setSelectedQuiz(quiz);
     await loadQuizQuestions(quiz.id);
-    openModal("addQuestion");
+    openModal('addQuestion');
   };
 
   const handleOpenSubmissions = async (assignment: Assignment) => {
@@ -371,7 +413,7 @@ export default function AdminPage() {
 
   return (
     <main className="admin-page min-h-screen gradient-bg pb-20">
-      <FloatingShapes />
+      <DeferredFloatingShapes />
 
       <nav className="fixed top-0 left-0 right-0 z-50 bg-slate-950/95 backdrop-blur-md border-b border-white/10 py-3 px-4 sm:py-4 sm:px-6 shadow-lg shadow-black/20">
         <div className="container mx-auto flex items-center justify-between gap-3">
@@ -421,31 +463,25 @@ export default function AdminPage() {
         />
       )}
 
-      <AnimatePresence>
-        {selectedNotification && (
-          <AdminNotificationDetailModal
-            getMetadataText={getMetadataText}
-            getNotificationBody={getNotificationBody}
-            notification={selectedNotification}
-            onClose={() => setSelectedNotification(null)}
-            onDelete={deleteMessage}
-            onModerationAction={applyModerationAction}
-            onReplyTextChange={setReplyText}
-            onSendReply={sendReply}
-            payload={selectedNotificationPayload}
-            replyText={replyText}
-            status={selectedNotificationStatus}
-          />
-        )}
-      </AnimatePresence>
+      {selectedNotification && (
+        <AdminNotificationDetailModal
+          getMetadataText={getMetadataText}
+          getNotificationBody={getNotificationBody}
+          notification={selectedNotification}
+          onClose={() => setSelectedNotification(null)}
+          onDelete={deleteMessage}
+          onModerationAction={applyModerationAction}
+          onReplyTextChange={setReplyText}
+          onSendReply={sendReply}
+          payload={selectedNotificationPayload}
+          replyText={replyText}
+          status={selectedNotificationStatus}
+        />
+      )}
 
       <div className="pt-20 sm:pt-24 px-4 sm:px-6">
         <div className="container mx-auto">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="mb-6 sm:mb-8"
-          >
+          <div className="mb-6 sm:mb-8 animate-fade-up">
             <Link
               href="/profil"
               className="text-slate-400 hover:text-white inline-flex items-center gap-2 mb-4 text-sm sm:text-base"
@@ -459,90 +495,88 @@ export default function AdminPage() {
             <p className="text-slate-400 text-sm sm:text-base">
               Hoş geldiniz, Uğur Hoca!
             </p>
-          </motion.div>
+          </div>
 
           <div className="sticky top-16 z-40 -mx-4 sm:mx-0 mb-6 sm:mb-8 px-4 sm:px-0 py-3 sm:py-0">
             <div className="flex flex-nowrap gap-1.5 sm:gap-3 overflow-x-auto pb-2 sm:pb-0 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
               {[
                 {
-                  id: "statistics",
-                  label: "İstatistikler",
-                  shortLabel: "İstat.",
+                  id: 'statistics',
+                  label: 'İstatistikler',
+                  shortLabel: 'İstat.',
                   icon: BarChart3,
-                  color: "from-emerald-500 to-teal-500",
+                  color: 'from-emerald-500 to-teal-500',
                 },
                 {
-                  id: "announcements",
-                  label: "Duyurular",
-                  shortLabel: "Duy.",
+                  id: 'announcements',
+                  label: 'Duyurular',
+                  shortLabel: 'Duy.',
                   icon: Megaphone,
-                  color: "from-pink-500 to-rose-500",
+                  color: 'from-pink-500 to-rose-500',
                 },
                 {
-                  id: "documents",
-                  label: "Belgeler",
-                  shortLabel: "Bel.",
+                  id: 'documents',
+                  label: 'Belgeler',
+                  shortLabel: 'Bel.',
                   icon: FileText,
-                  color: "from-blue-500 to-cyan-500",
+                  color: 'from-blue-500 to-cyan-500',
                 },
                 {
-                  id: "writings",
-                  label: "Yazılar",
-                  shortLabel: "Yazı",
+                  id: 'writings',
+                  label: 'Yazılar',
+                  shortLabel: 'Yazı',
                   icon: Edit3,
-                  color: "from-purple-500 to-violet-500",
+                  color: 'from-purple-500 to-violet-500',
                 },
                 {
-                  id: "users",
-                  label: "Kullanıcılar",
-                  shortLabel: "Kull.",
+                  id: 'users',
+                  label: 'Kullanıcılar',
+                  shortLabel: 'Kull.',
                   icon: Users,
-                  color: "from-green-500 to-emerald-500",
+                  color: 'from-green-500 to-emerald-500',
                 },
                 {
-                  id: "privateStudents",
-                  label: "Öğrencilerim",
-                  shortLabel: "Öğr.",
+                  id: 'privateStudents',
+                  label: 'Öğrencilerim',
+                  shortLabel: 'Öğr.',
                   icon: BookOpen,
-                  color: "from-amber-500 to-orange-500",
+                  color: 'from-amber-500 to-orange-500',
                 },
                 {
-                  id: "messages",
-                  label: "Mesajlar",
-                  shortLabel: "Msj.",
+                  id: 'messages',
+                  label: 'Mesajlar',
+                  shortLabel: 'Msj.',
                   icon: MessageSquareText,
-                  color: "from-indigo-500 to-purple-500",
+                  color: 'from-indigo-500 to-purple-500',
                 },
                 {
-                  id: "gradeUpdate",
-                  label: "Sınıf Güncelle",
-                  shortLabel: "Sınıf",
+                  id: 'gradeUpdate',
+                  label: 'Sınıf Güncelle',
+                  shortLabel: 'Sınıf',
                   icon: RefreshCw,
-                  color: "from-teal-500 to-cyan-500",
+                  color: 'from-teal-500 to-cyan-500',
                 },
                 {
-                  id: "assignments",
-                  label: "Ödevlendirme",
-                  shortLabel: "Ödev",
+                  id: 'assignments',
+                  label: 'Ödevlendirme',
+                  shortLabel: 'Ödev',
                   icon: ClipboardList,
-                  color: "from-rose-500 to-pink-500",
+                  color: 'from-rose-500 to-pink-500',
                 },
                 {
-                  id: "quizzes",
-                  label: "Testler",
-                  shortLabel: "Test",
+                  id: 'quizzes',
+                  label: 'Testler',
+                  shortLabel: 'Test',
                   icon: CheckCircle2,
-                  color: "from-violet-500 to-purple-500",
+                  color: 'from-violet-500 to-purple-500',
                 },
               ].map((tab) => (
-                <motion.button
+                <button
                   key={tab.id}
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
                   onClick={() => setActiveTab(tab.id as AdminActiveTab)}
-                  className={`relative overflow-hidden px-3 py-2.5 sm:px-5 sm:py-3.5 rounded-xl flex items-center gap-1.5 sm:gap-2.5 transition-all whitespace-nowrap shrink-0 border shadow-md ${
+                  className={`relative overflow-hidden px-3 py-2.5 sm:px-5 sm:py-3.5 rounded-xl flex items-center gap-1.5 sm:gap-2.5 transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] whitespace-nowrap shrink-0 border shadow-md ${
                     activeTab === tab.id
-                      ? `bg-gradient-to-r ${tab.color} text-white border-white/20 shadow-${tab.color.includes("pink") ? "pink" : tab.color.includes("blue") ? "cyan" : tab.color.includes("green") ? "emerald" : "violet"}-500/30`
+                      ? `bg-gradient-to-r ${tab.color} text-white border-white/20 shadow-${tab.color.includes('pink') ? 'pink' : tab.color.includes('blue') ? 'cyan' : tab.color.includes('green') ? 'emerald' : 'violet'}-500/30`
                       : `bg-slate-900/80 border-white/10 text-slate-300 hover:text-white hover:border-white/20 hover:bg-slate-800/80`
                   }`}
                 >
@@ -553,57 +587,51 @@ export default function AdminPage() {
                   <span className="relative font-semibold text-[11px] sm:text-sm">
                     {activeTab === tab.id ? tab.label : tab.shortLabel}
                   </span>
-                </motion.button>
+                </button>
               ))}
             </div>
           </div>
 
-          {activeTab !== "statistics" &&
-            activeTab !== "users" &&
-            activeTab !== "gradeUpdate" &&
-            activeTab !== "assignments" &&
-            activeTab !== "quizzes" && (
+          {activeTab !== 'statistics' &&
+            activeTab !== 'users' &&
+            activeTab !== 'gradeUpdate' &&
+            activeTab !== 'assignments' &&
+            activeTab !== 'quizzes' && (
               <div className="flex justify-stretch sm:justify-end mb-6">
-                <motion.button
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
+                <button
                   onClick={() =>
                     openModal(
-                      activeTab === "announcements"
-                        ? "announcement"
-                        : activeTab === "documents"
-                          ? "document"
-                          : "writing",
+                      activeTab === 'announcements'
+                        ? 'announcement'
+                        : activeTab === 'documents'
+                          ? 'document'
+                          : 'writing',
                     )
                   }
                   className="btn-primary w-full sm:w-auto justify-center"
                 >
                   <Plus className="w-5 h-5" />
                   Yeni Ekle
-                </motion.button>
+                </button>
               </div>
             )}
 
-          {activeTab === "quizzes" && (
+          {activeTab === 'quizzes' && (
             <div className="flex justify-stretch sm:justify-end mb-6 gap-3">
-              <motion.button
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                onClick={() => openModal("quiz")}
+              <button
+                onClick={() => openModal('quiz')}
                 className="btn-primary w-full sm:w-auto justify-center"
               >
                 <Plus className="w-5 h-5" />
                 Yeni Test
-              </motion.button>
-              <motion.button
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                onClick={() => openModal("importQuestions")}
-                className="bg-gradient-to-r from-emerald-500 to-teal-500 text-white px-4 py-2.5 rounded-xl flex items-center gap-2 hover:opacity-95 transition-opacity w-full sm:w-auto justify-center"
+              </button>
+              <button
+                onClick={() => openModal('importQuestions')}
+                className="bg-gradient-to-r from-emerald-500 to-teal-500 text-white px-4 py-2.5 rounded-xl flex items-center gap-2 hover:opacity-95 transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] w-full sm:w-auto justify-center"
               >
                 <Upload className="w-5 h-5" />
                 Toplu Yükle
-              </motion.button>
+              </button>
             </div>
           )}
 
@@ -619,21 +647,21 @@ export default function AdminPage() {
             isSubmitting={isSubmitting}
             lastGradeUpdate={lastGradeUpdate}
             onAddQuizQuestion={handleAddQuizQuestion}
-            onCreateAnnouncement={() => openModal("announcement")}
-            onCreateAssignment={() => openModal("assignment")}
+            onCreateAnnouncement={() => openModal('announcement')}
+            onCreateAssignment={() => openModal('assignment')}
             onCreateAssignmentForStudent={(studentId) =>
-              openModal("assignment", studentId)
+              openModal('assignment', studentId)
             }
-            onCreatePrivateStudent={() => openModal("student")}
-            onCreateQuiz={() => openModal("quiz")}
-            onCreateSendDocument={() => openModal("sendDoc")}
-            onDeleteAnnouncement={(id) => deleteItem("announcement", id)}
-            onDeleteAssignment={(id) => deleteItem("assignment", id)}
+            onCreatePrivateStudent={() => openModal('student')}
+            onCreateQuiz={() => openModal('quiz')}
+            onCreateSendDocument={() => openModal('sendDoc')}
+            onDeleteAnnouncement={(id) => deleteItem('announcement', id)}
+            onDeleteAssignment={(id) => deleteItem('assignment', id)}
             onDeleteChatRoom={handleDeleteChatRoom}
-            onDeleteDocument={(id) => deleteItem("document", id)}
-            onDeleteQuiz={(id) => deleteItem("quiz", id)}
-            onDeleteSharedDocument={(id) => deleteItem("shared_document", id)}
-            onDeleteWriting={(id) => deleteItem("writing", id)}
+            onDeleteDocument={(id) => deleteItem('document', id)}
+            onDeleteQuiz={(id) => deleteItem('quiz', id)}
+            onDeleteSharedDocument={(id) => deleteItem('shared_document', id)}
+            onDeleteWriting={(id) => deleteItem('writing', id)}
             onDownloadStudentsPdf={handleDownloadStudentsPdf}
             onEditAnnouncement={openEditAnnouncement}
             onEditAssignment={editAssignment}
@@ -647,7 +675,7 @@ export default function AdminPage() {
             onSelectChatRoom={handleSelectChatRoom}
             onSendAdminMessage={openAdminMessage}
             onSendChatMessage={sendChatMessage}
-            onShowImportQuestions={() => openModal("importQuestions")}
+            onShowImportQuestions={() => openModal('importQuestions')}
             onShowSubmissions={handleOpenSubmissions}
             onTogglePrivateStudent={togglePrivateStudent}
             onUpdateGrades={handleUpdateGrades}
@@ -662,54 +690,49 @@ export default function AdminPage() {
         </div>
       </div>
 
-      <AnimatePresence>
-        {showModal && (
-          <AdminMainModal
-            adminMsgImagePreview={adminMsgImagePreview}
-            adminMsgRecipient={adminMsgRecipient}
-            adminMsgText={adminMsgText}
-            adminMsgTitle={adminMsgTitle}
-            documents={documents}
-            editingDoc={editingDoc}
-            editingUser={editingUser}
-            formData={formData}
-            isSubmitting={isSubmitting}
-            modalType={modalType}
-            onAdminMessageSubmit={handleAdminMessageSubmit}
-            onClose={resetModalState}
-            onEditDocumentSubmit={handleEditDocumentSubmit}
-            onEditUserSubmit={handleEditUserSubmit}
-            onGenericSubmit={handleSubmit}
-            onSendDocSubmit={handleSendDocSubmit}
-            onStudentSubmit={handleStudentSubmit}
-            privateStudents={privateStudents}
-            selectedDoc={selectedDoc}
-            selectedStudent={selectedStudent}
-            setAdminMsgImagePreview={setAdminMsgImagePreview}
-            setAdminMsgImageUrl={setAdminMsgImageUrl}
-            setAdminMsgText={setAdminMsgText}
-            setAdminMsgTitle={setAdminMsgTitle}
-            setFormData={setFormData}
-            setIsSubmitting={setIsSubmitting}
-            setSelectedDoc={setSelectedDoc}
-            setSelectedStudent={setSelectedStudent}
-            studentUsers={studentUsers}
-            success={success}
-          />
-        )}
-      </AnimatePresence>
+      {showModal && (
+        <AdminMainModal
+          adminMsgImagePreview={adminMsgImagePreview}
+          adminMsgRecipient={adminMsgRecipient}
+          adminMsgText={adminMsgText}
+          adminMsgTitle={adminMsgTitle}
+          documents={documents}
+          editingDoc={editingDoc}
+          editingUser={editingUser}
+          formData={formData}
+          isSubmitting={isSubmitting}
+          modalType={modalType}
+          onAdminMessageSubmit={handleAdminMessageSubmit}
+          onClose={resetModalState}
+          onEditDocumentSubmit={handleEditDocumentSubmit}
+          onEditUserSubmit={handleEditUserSubmit}
+          onGenericSubmit={handleSubmit}
+          onSendDocSubmit={handleSendDocSubmit}
+          onStudentSubmit={handleStudentSubmit}
+          privateStudents={privateStudents}
+          selectedDoc={selectedDoc}
+          selectedStudent={selectedStudent}
+          setAdminMsgImagePreview={setAdminMsgImagePreview}
+          setAdminMsgImageUrl={setAdminMsgImageUrl}
+          setAdminMsgText={setAdminMsgText}
+          setAdminMsgTitle={setAdminMsgTitle}
+          setFormData={setFormData}
+          setIsSubmitting={setIsSubmitting}
+          setSelectedDoc={setSelectedDoc}
+          setSelectedStudent={setSelectedStudent}
+          studentUsers={studentUsers}
+          success={success}
+        />
+      )}
 
-      {/* Ödev Teslimatları Modalı */}
-      <AnimatePresence>
-        {showSubmissionsModal && activeAssignment && (
-          <AdminSubmissionsModal
-            assignment={activeAssignment}
-            onClose={closeSubmissionsModal}
-            onUpdateSubmission={updateSubmission}
-            submissions={selectedAssignmentSubmissions}
-          />
-        )}
-      </AnimatePresence>
+      {showSubmissionsModal && activeAssignment && (
+        <AdminSubmissionsModal
+          assignment={activeAssignment}
+          onClose={closeSubmissionsModal}
+          onUpdateSubmission={updateSubmission}
+          submissions={selectedAssignmentSubmissions}
+        />
+      )}
       <ChatBubbleLoader />
     </main>
   );
