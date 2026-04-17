@@ -1,8 +1,7 @@
-"use client";
+'use client';
 
-import { motion } from "framer-motion";
-import { CheckCircle2, Trash2 } from "lucide-react";
-import type { AdminQuiz } from "@/features/admin/types";
+import { CheckCircle2, Trash2 } from 'lucide-react';
+import type { AdminQuiz } from '@/features/admin/types';
 
 type AdminQuizzesTabProps = {
   onAddQuestion: (quiz: AdminQuiz) => Promise<void> | void;
@@ -18,13 +17,7 @@ export default function AdminQuizzesTab({
   quizzes,
 }: AdminQuizzesTabProps) {
   return (
-    <motion.div
-      key="quizzes"
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -20 }}
-      className="space-y-6"
-    >
+    <div className="space-y-6 animate-fade-up">
       <div>
         <h2 className="text-2xl font-bold text-white mb-1">Testler</h2>
         <p className="text-slate-400 text-sm sm:text-base">
@@ -39,8 +32,12 @@ export default function AdminQuizzesTab({
         </div>
       ) : (
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {quizzes.map((quiz) => (
-            <div key={quiz.id} className="glass rounded-2xl p-4 sm:p-6">
+          {quizzes.map((quiz, index) => (
+            <div
+              key={quiz.id}
+              className="glass rounded-2xl p-4 sm:p-6 animate-slide-up"
+              style={{ animationDelay: `${index * 50}ms` }}
+            >
               <div className="flex items-start justify-between mb-3">
                 <div>
                   <h3 className="text-lg font-bold text-white mb-1">
@@ -61,25 +58,23 @@ export default function AdminQuizzesTab({
                 )}
               </div>
               {quiz.description && (
-                <p className="text-slate-400 text-sm mb-4">{quiz.description}</p>
+                <p className="text-slate-400 text-sm mb-4">
+                  {quiz.description}
+                </p>
               )}
               <div className="flex items-center gap-2">
-                <motion.button
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
+                <button
                   onClick={() => onEditQuiz(quiz)}
-                  className="flex-1 py-2 bg-slate-700/50 text-white rounded-lg text-sm font-medium hover:bg-slate-700 transition-colors"
+                  className="flex-1 py-2 bg-slate-700/50 text-white rounded-lg text-sm font-medium hover:bg-slate-700 transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]"
                 >
                   Düzenle
-                </motion.button>
-                <motion.button
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
+                </button>
+                <button
                   onClick={() => onAddQuestion(quiz)}
-                  className="flex-1 py-2 bg-violet-500/20 text-violet-400 rounded-lg text-sm font-medium hover:bg-violet-500/30 transition-colors"
+                  className="flex-1 py-2 bg-violet-500/20 text-violet-400 rounded-lg text-sm font-medium hover:bg-violet-500/30 transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]"
                 >
                   Soru Ekle
-                </motion.button>
+                </button>
                 <button
                   onClick={() => onDeleteQuiz(quiz.id)}
                   className="p-2 text-slate-400 hover:text-red-400 transition-colors"
@@ -92,6 +87,6 @@ export default function AdminQuizzesTab({
           ))}
         </div>
       )}
-    </motion.div>
+    </div>
   );
 }

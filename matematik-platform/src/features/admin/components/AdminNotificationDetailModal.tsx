@@ -1,19 +1,10 @@
-"use client";
+'use client';
 
-import { motion } from "framer-motion";
-import {
-  Ban,
-  Flag,
-  Paperclip,
-  Send,
-  Trash2,
-  VolumeX,
-  X,
-} from "lucide-react";
+import { Ban, Flag, Paperclip, Send, Trash2, VolumeX, X } from 'lucide-react';
 import type {
   AdminNotification,
   ModerationPayload,
-} from "@/features/admin/types";
+} from '@/features/admin/types';
 
 type SenderActionStatus = {
   blocked: boolean;
@@ -23,13 +14,11 @@ type SenderActionStatus = {
 
 type AdminNotificationDetailModalProps = {
   getMetadataText: (value: unknown) => string;
-  getNotificationBody: (
-    notification: AdminNotification | null,
-  ) => string;
+  getNotificationBody: (notification: AdminNotification | null) => string;
   notification: AdminNotification;
   onClose: () => void;
   onDelete: (notificationId: string) => void;
-  onModerationAction: (action: "block" | "mute" | "report") => void;
+  onModerationAction: (action: 'block' | 'mute' | 'report') => void;
   onReplyTextChange: (value: string) => void;
   onSendReply: () => void;
   payload: ModerationPayload | null;
@@ -51,19 +40,13 @@ export default function AdminNotificationDetailModal({
   status,
 }: AdminNotificationDetailModalProps) {
   return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      className="fixed inset-0 z-[100] bg-black/75 backdrop-blur-sm flex items-center justify-center p-4"
+    <div
+      className="fixed inset-0 z-[100] bg-black/75 backdrop-blur-sm flex items-center justify-center p-4 animate-fade-in"
       onClick={onClose}
     >
-      <motion.div
-        initial={{ opacity: 0, scale: 0.96, y: 10 }}
-        animate={{ opacity: 1, scale: 1, y: 0 }}
-        exit={{ opacity: 0, scale: 0.96, y: 10 }}
+      <div
         onClick={(event) => event.stopPropagation()}
-        className="w-full max-w-2xl rounded-3xl border border-slate-700 bg-slate-900 shadow-2xl overflow-hidden"
+        className="w-full max-w-2xl rounded-3xl border border-slate-700 bg-slate-900 shadow-2xl overflow-hidden animate-fade-up"
       >
         <div className="p-5 border-b border-slate-700 flex items-start justify-between gap-4">
           <div>
@@ -74,7 +57,7 @@ export default function AdminNotificationDetailModal({
               {notification.title}
             </h3>
             <p className="text-slate-500 text-sm mt-1">
-              {new Date(notification.created_at).toLocaleDateString("tr-TR")}
+              {new Date(notification.created_at).toLocaleDateString('tr-TR')}
             </p>
           </div>
           <div className="flex items-center gap-2">
@@ -85,7 +68,10 @@ export default function AdminNotificationDetailModal({
               <Trash2 className="w-4 h-4" />
               Sil
             </button>
-            <button onClick={onClose} className="text-slate-400 hover:text-white">
+            <button
+              onClick={onClose}
+              className="text-slate-400 hover:text-white"
+            >
               <X className="w-6 h-6" />
             </button>
           </div>
@@ -101,10 +87,10 @@ export default function AdminNotificationDetailModal({
                 Cihaz: {getMetadataText(payload.metadata.user_agent)}
               </p>
               <p>
-                Zaman:{" "}
+                Zaman:{' '}
                 {new Date(
                   payload.created_at || notification.created_at,
-                ).toLocaleString("tr-TR")}
+                ).toLocaleString('tr-TR')}
               </p>
             </div>
           )}
@@ -117,8 +103,8 @@ export default function AdminNotificationDetailModal({
               )}
               {status.muted && status.expires_at && (
                 <span className="px-2 py-1 rounded-full text-[11px] bg-amber-500/20 text-amber-300">
-                  Sessizde (bitiş:{" "}
-                  {new Date(status.expires_at).toLocaleDateString("tr-TR")})
+                  Sessizde (bitiş:{' '}
+                  {new Date(status.expires_at).toLocaleDateString('tr-TR')})
                 </span>
               )}
             </div>
@@ -142,24 +128,24 @@ export default function AdminNotificationDetailModal({
               </div>
             </div>
           )}
-          {notification.type === "message" && payload?.sender_id && (
+          {notification.type === 'message' && payload?.sender_id && (
             <div className="space-y-3 pt-4 border-t border-slate-700">
               <div className="flex flex-wrap gap-2">
                 <button
-                  onClick={() => onModerationAction("report")}
+                  onClick={() => onModerationAction('report')}
                   className="inline-flex items-center gap-2 rounded-xl bg-slate-700/60 px-3 py-2 text-slate-200 hover:bg-slate-700"
                 >
                   <Flag className="w-4 h-4" />
                   Raporla
                 </button>
                 <button
-                  onClick={() => onModerationAction("mute")}
+                  onClick={() => onModerationAction('mute')}
                   className="inline-flex items-center gap-2 rounded-xl bg-amber-500/20 px-3 py-2 text-amber-300 hover:bg-amber-500/30"
                 >
                   <VolumeX className="w-4 h-4" />7 Gün Sessize Al
                 </button>
                 <button
-                  onClick={() => onModerationAction("block")}
+                  onClick={() => onModerationAction('block')}
                   className="inline-flex items-center gap-2 rounded-xl bg-red-500/20 px-3 py-2 text-red-300 hover:bg-red-500/30"
                 >
                   <Ban className="w-4 h-4" />
@@ -186,7 +172,7 @@ export default function AdminNotificationDetailModal({
             </div>
           )}
         </div>
-      </motion.div>
-    </motion.div>
+      </div>
+    </div>
   );
 }
