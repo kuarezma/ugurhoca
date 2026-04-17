@@ -64,6 +64,61 @@ const GRADE_OPTIONS = [5, 6, 7, 8, 9, 10, 11, 12] as const;
 
 type WorksheetGradeSelection = number | 'Mezun';
 
+const WORKSHEET_GRADE_CARD_STYLES: Record<
+  WorksheetGradeSelection,
+  {
+    border: string;
+    folder: string;
+    surface: string;
+  }
+> = {
+  5: {
+    border: 'border-emerald-400/30 hover:border-emerald-300/55',
+    folder: 'from-emerald-400 to-teal-500',
+    surface: 'bg-emerald-500/10 hover:bg-emerald-500/15',
+  },
+  6: {
+    border: 'border-sky-400/30 hover:border-sky-300/55',
+    folder: 'from-sky-400 to-cyan-500',
+    surface: 'bg-sky-500/10 hover:bg-sky-500/15',
+  },
+  7: {
+    border: 'border-violet-400/30 hover:border-violet-300/55',
+    folder: 'from-violet-400 to-fuchsia-500',
+    surface: 'bg-violet-500/10 hover:bg-violet-500/15',
+  },
+  8: {
+    border: 'border-rose-400/30 hover:border-rose-300/55',
+    folder: 'from-rose-400 to-pink-500',
+    surface: 'bg-rose-500/10 hover:bg-rose-500/15',
+  },
+  9: {
+    border: 'border-amber-400/30 hover:border-amber-300/55',
+    folder: 'from-amber-400 to-orange-500',
+    surface: 'bg-amber-500/10 hover:bg-amber-500/15',
+  },
+  10: {
+    border: 'border-lime-400/30 hover:border-lime-300/55',
+    folder: 'from-lime-400 to-green-500',
+    surface: 'bg-lime-500/10 hover:bg-lime-500/15',
+  },
+  11: {
+    border: 'border-blue-400/30 hover:border-blue-300/55',
+    folder: 'from-blue-400 to-indigo-500',
+    surface: 'bg-blue-500/10 hover:bg-blue-500/15',
+  },
+  12: {
+    border: 'border-red-400/30 hover:border-red-300/55',
+    folder: 'from-red-400 to-rose-500',
+    surface: 'bg-red-500/10 hover:bg-red-500/15',
+  },
+  Mezun: {
+    border: 'border-slate-300/30 hover:border-slate-200/55',
+    folder: 'from-slate-300 to-slate-500',
+    surface: 'bg-slate-400/10 hover:bg-slate-400/15',
+  },
+};
+
 const WORKSHEET_UNIT_LABELS: Record<number, Record<string, string>> = {
   5: {
     'MAT.5.1': 'Sayılar ve Nicelikler',
@@ -1150,9 +1205,11 @@ function ContentsPageInner({
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: index * 0.04 }}
                     onClick={() => void loadWorksheetGradeDocuments(grade)}
-                    className="text-left rounded-3xl border border-purple-500/20 bg-purple-500/10 p-5 sm:p-6 transition-all hover:-translate-y-1 hover:border-purple-400/40 hover:bg-purple-500/15"
+                    className={`rounded-3xl border p-5 text-center transition-all hover:-translate-y-1 sm:p-6 ${WORKSHEET_GRADE_CARD_STYLES[grade].border} ${WORKSHEET_GRADE_CARD_STYLES[grade].surface}`}
                   >
-                    <div className="mb-5 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-purple-500 to-pink-500">
+                    <div
+                      className={`mx-auto mb-5 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br ${WORKSHEET_GRADE_CARD_STYLES[grade].folder}`}
+                    >
                       <Layers3 className="h-7 w-7 text-white" />
                     </div>
                     <h3 className="text-lg font-bold text-white">
