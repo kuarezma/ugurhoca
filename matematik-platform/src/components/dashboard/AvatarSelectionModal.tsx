@@ -12,7 +12,7 @@ import {
 } from '@/features/profile/utils/avatar-upload';
 import { useAccessibleModal } from '@/hooks/useAccessibleModal';
 
-export const AVATAR_LIST = [
+const AVATAR_LIST = [
   '🦊',
   '🦁',
   '🐼',
