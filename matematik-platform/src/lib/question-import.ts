@@ -1,6 +1,6 @@
 import ExcelJS from 'exceljs';
 
-export const MAX_QUESTIONS = 30;
+const MAX_QUESTIONS = 30;
 
 export interface ParsedQuestion {
   question: string;

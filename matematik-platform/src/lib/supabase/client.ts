@@ -4,7 +4,7 @@ let browserClient:
   | SupabaseClient
   | undefined;
 
-export const createBrowserSupabaseClient = () => {
+const createBrowserSupabaseClient = () => {
   if (browserClient) {
     return browserClient;
   }

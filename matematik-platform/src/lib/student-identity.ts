@@ -27,7 +27,7 @@ export function normalizeFullNameForMatch(input: string): string {
 }
 
 /** @ugurhoca.local için yerel kısım: normalize ad + ASCII slug. */
-export function slugForStudentEmailLocalPart(displayName: string): string {
+function slugForStudentEmailLocalPart(displayName: string): string {
   const normalized = normalizeFullNameForMatch(displayName);
   let ascii = '';
   for (const ch of normalized) {

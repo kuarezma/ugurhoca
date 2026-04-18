@@ -39,7 +39,7 @@ function parsePayload(raw: string): ParsedPayload | null {
   }
 }
 
-export function ChatBubble() {
+function ChatBubble() {
   const [mounted, setMounted] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
   const [adminUserId, setAdminUserId] = useState<string | null>(null);
