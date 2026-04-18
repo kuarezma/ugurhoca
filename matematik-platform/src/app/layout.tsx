@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Poppins, Space_Grotesk } from "next/font/google";
+import { Poppins } from "next/font/google";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import InstallPrompt from "@/components/InstallPrompt";
 import { Providers } from "@/components/Providers";
@@ -11,13 +11,6 @@ const poppins = Poppins({
   subsets: ["latin", "latin-ext"],
   weight: ["500", "600", "700", "900"],
   variable: "--font-poppins",
-  display: "swap",
-});
-
-const spaceGrotesk = Space_Grotesk({
-  subsets: ["latin", "latin-ext"],
-  weight: ["400", "500", "700"],
-  variable: "--font-space-grotesk",
   display: "swap",
 });
 
@@ -105,7 +98,7 @@ export default function RootLayout({
       lang="tr"
       suppressHydrationWarning
       data-scroll-behavior="smooth"
-      className={`${poppins.variable} ${spaceGrotesk.variable}`}
+      className={poppins.variable}
     >
       <head>
         <script
