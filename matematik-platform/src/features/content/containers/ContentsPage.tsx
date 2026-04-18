@@ -188,6 +188,18 @@ const splitWorksheetOutcomeHeading = (outcome: string) => {
   };
 };
 
+const SUPPORTED_WORKSHEET_QUICK_ADD_GRADES = Object.keys(
+  WORKSHEET_OUTCOME_CATALOG,
+)
+  .map((grade) => Number(grade))
+  .sort((left, right) => left - right);
+
+const normalizeWorksheetQuickAddGrade = (grade?: GradeValue | null) =>
+  typeof grade === 'number' &&
+  SUPPORTED_WORKSHEET_QUICK_ADD_GRADES.includes(grade)
+    ? grade
+    : SUPPORTED_WORKSHEET_QUICK_ADD_GRADES[0];
+
 type ContentsPageProps = {
   initialDocuments?: ContentDocument[];
   initialGrade?: ContentGradeFilter;
@@ -633,13 +645,15 @@ function ContentsPageInner({
   );
 
   const handleQuickAddOpen = useCallback(() => {
-    const defaultWorksheetGrade =
+    const preferredWorksheetGrade =
       selectedWorksheetGrade ||
-      (selectedGrade !== 'all' ? (selectedGrade as GradeValue) : user?.grade || 5);
+      (selectedGrade !== 'all' ? (selectedGrade as GradeValue) : user?.grade);
+    const defaultWorksheetGrade =
+      normalizeWorksheetQuickAddGrade(preferredWorksheetGrade);
 
     setFormData({
       type: selectedType !== 'all' ? selectedType : 'yaprak-test',
-      grade: isWorksheetBrowser ? [defaultWorksheetGrade] : [defaultWorksheetGrade],
+      grade: [defaultWorksheetGrade],
       learning_outcome: isWorksheetBrowser ? selectedWorksheetOutcome || '' : '',
     });
     setShowModal(true);
@@ -688,6 +702,41 @@ function ContentsPageInner({
   const handleQuickAddSubmit = useCallback(
     async (event: React.FormEvent<HTMLFormElement>) => {
       event.preventDefault();
+
+      if (isSubmitting) {
+        return;
+      }
+
+      if (isWorksheetType(formData.type)) {
+        const selectedWorksheetGrade = formData.grade?.[0];
+
+        if (
+          typeof selectedWorksheetGrade !== 'number' ||
+          !SUPPORTED_WORKSHEET_QUICK_ADD_GRADES.includes(selectedWorksheetGrade)
+        ) {
+          window.alert(
+            'Yaprak test için desteklenen bir sınıf düzeyi seçmelisiniz.',
+          );
+          return;
+        }
+
+        if (!formData.learning_outcome?.trim()) {
+          window.alert('Yaprak test için bir kazanım seçmelisiniz.');
+          return;
+        }
+      }
+
+      if (
+        !formData.file_url?.trim() &&
+        !formData.video_url?.trim() &&
+        !formData.solution_url?.trim()
+      ) {
+        window.alert(
+          'En az bir dosya, bağlantı veya video URL alanı doldurmalısınız.',
+        );
+        return;
+      }
+
       setIsSubmitting(true);
 
       try {
@@ -723,7 +772,7 @@ function ContentsPageInner({
         setIsSubmitting(false);
       }
     },
-    [formData, refreshSelectedWorksheetGrade, selectedWorksheetGrade],
+    [formData, isSubmitting, refreshSelectedWorksheetGrade, selectedWorksheetGrade],
   );
 
   const handleOpenEdit = useCallback((content: ContentDocument) => {

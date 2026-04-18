@@ -44,6 +44,10 @@ const BUTTON_CLASS: Record<Accent, string> = {
     'from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 shadow-purple-500/25',
 };
 
+const WORKSHEET_FORM_GRADE_OPTIONS = Object.keys(WORKSHEET_OUTCOME_CATALOG)
+  .map((grade) => Number(grade))
+  .sort((left, right) => left - right);
+
 export default function ContentDocumentForm({
   accent,
   fileInputId,
@@ -146,12 +150,15 @@ export default function ContentDocumentForm({
               className={`w-full bg-slate-800/50 border border-slate-700 rounded-xl px-4 py-3 text-white transition-colors ${FIELD_FOCUS_CLASS[accent]} focus:outline-none`}
             >
               <option value="">Sınıf düzeyi seçin</option>
-              {WORKSHEET_GRADE_OPTIONS.map((grade) => (
+              {WORKSHEET_FORM_GRADE_OPTIONS.map((grade) => (
                 <option key={String(grade)} value={grade}>
-                  {grade === 'Mezun' ? grade : `${grade}. Sınıf`}
+                  {grade}. Sınıf
                 </option>
               ))}
             </select>
+            <p className="mt-2 text-xs text-slate-400">
+              Yaprak test hızlı ekleme şu anda kataloglu sınıflar için desteklenir.
+            </p>
           </div>
 
           <div>
