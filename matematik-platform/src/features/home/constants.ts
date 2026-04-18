@@ -13,7 +13,6 @@ export type HomeCategory = {
   borderColor: string;
   color: string;
   contentType?: string;
-  desc: string;
   href: string;
   icon: LucideIcon;
   id: string;
@@ -26,7 +25,6 @@ export const HOME_CATEGORIES: HomeCategory[] = [
     borderColor: 'border-blue-500/30',
     color: 'from-blue-500 to-cyan-500',
     contentType: 'ders-notlari',
-    desc: 'Yüklediğiniz doküman ve testler',
     href: '/icerikler?type=ders-notlari',
     icon: BookOpen,
     id: 'ders-notlari',
@@ -37,7 +35,6 @@ export const HOME_CATEGORIES: HomeCategory[] = [
     borderColor: 'border-indigo-500/30',
     color: 'from-indigo-500 to-violet-500',
     contentType: 'kitaplar',
-    desc: 'Kitap önerileri ve pdf\'leri',
     href: '/icerikler?type=kitaplar',
     icon: BookOpen,
     id: 'kitaplar',
@@ -48,7 +45,6 @@ export const HOME_CATEGORIES: HomeCategory[] = [
     borderColor: 'border-purple-500/30',
     color: 'from-purple-500 to-pink-500',
     contentType: 'yaprak-test',
-    desc: 'Sınıf ve ünite bazlı kazanım klasörleri',
     href: '/icerikler?type=yaprak-test',
     icon: ClipboardList,
     id: 'yaprak-test',
@@ -59,7 +55,6 @@ export const HOME_CATEGORIES: HomeCategory[] = [
     borderColor: 'border-red-500/30',
     color: 'from-red-500 to-orange-500',
     contentType: 'ders-videolari',
-    desc: 'Video anlatımlar',
     href: '/icerikler?type=ders-videolari',
     icon: Video,
     id: 'ders-videolari',
@@ -70,7 +65,6 @@ export const HOME_CATEGORIES: HomeCategory[] = [
     borderColor: 'border-green-500/30',
     color: 'from-green-500 to-emerald-500',
     contentType: 'deneme',
-    desc: 'Deneme sınavları',
     href: '/icerikler?type=deneme',
     icon: FileText,
     id: 'deneme',
@@ -81,7 +75,6 @@ export const HOME_CATEGORIES: HomeCategory[] = [
     borderColor: 'border-teal-500/30',
     color: 'from-teal-500 to-cyan-500',
     contentType: 'sinav',
-    desc: 'Sınavlar ve testler',
     href: '/icerikler?type=sinav',
     icon: ClipboardList,
     id: 'sinav',
@@ -91,7 +84,6 @@ export const HOME_CATEGORIES: HomeCategory[] = [
     bgColor: 'bg-yellow-500/10',
     borderColor: 'border-yellow-500/30',
     color: 'from-yellow-500 to-amber-500',
-    desc: 'Eğlenirken öğren',
     href: '/oyunlar',
     icon: Gamepad2,
     id: 'oyunlar',
@@ -101,7 +93,6 @@ export const HOME_CATEGORIES: HomeCategory[] = [
     bgColor: 'bg-pink-500/10',
     borderColor: 'border-pink-500/30',
     color: 'from-pink-500 to-rose-500',
-    desc: 'Eğitim uygulamaları',
     href: '/programlar',
     icon: AppWindow,
     id: 'programlar',

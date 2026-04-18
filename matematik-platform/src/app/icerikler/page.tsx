@@ -1,9 +1,16 @@
+import type { Metadata } from 'next';
 import ContentsPage from '@/features/content/containers/ContentsPage';
 import { CONTENT_PAGE_SIZE } from '@/features/content/constants';
 import {
   getInitialContentGradeFilter,
   loadInitialContentDocuments,
 } from '@/features/content/server';
+
+export const metadata: Metadata = {
+  title: 'İçerikler',
+  description:
+    'Çalışma kağıtları, ders notları, videolar ve dokümanları sınıf ve türe göre keşfet.',
+};
 
 type IceriklerPageProps = {
   searchParams?: Promise<Record<string, string | string[] | undefined>>;

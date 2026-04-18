@@ -17,19 +17,6 @@ async function fetchHomeDocumentsServer(
   return (data || []) as ContentDocument[];
 }
 
-async function fetchHomeWritingsServer(
-  supabase: ReturnType<typeof createServerSupabaseClient>,
-) {
-  const { data } = await supabase
-    .from('documents')
-    .select('*')
-    .in('type', ['ders-notlari', 'writing', 'yaprak-test'])
-    .order('created_at', { ascending: false })
-    .limit(4);
-
-  return (data || []) as ContentDocument[];
-}
-
 async function fetchAnnouncementsServer(
   supabase: ReturnType<typeof createServerSupabaseClient>,
 ) {
@@ -54,15 +41,26 @@ async function fetchAnnouncementsServer(
           : item.image_url
             ? [item.image_url]
             : [];
-      const resolvedImageUrls = await Promise.all(
-        images.map((u) => resolveYandexPublicDownloadUrl(u)),
-      );
+
+      if (images.length === 0) {
+        return item;
+      }
+
+      // Yalnızca kart önizlemesi için ilk görseli çöz; TTFB’yi kısaltır.
+      // Modal’daki ek görseller istemcide çözülür.
+      const resolvedFirst = await resolveYandexPublicDownloadUrl(images[0]);
+
+      if (item.image_urls?.length && Array.isArray(item.image_urls)) {
+        return {
+          ...item,
+          image_url: resolvedFirst || item.image_url,
+          image_urls: [resolvedFirst, ...item.image_urls.slice(1)],
+        };
+      }
 
       return {
         ...item,
-        image_url: resolvedImageUrls[0] || item.image_url,
-        image_urls:
-          resolvedImageUrls.length > 0 ? resolvedImageUrls : item.image_urls,
+        image_url: resolvedFirst || item.image_url,
       };
     }),
   );
@@ -71,11 +69,14 @@ async function fetchAnnouncementsServer(
 export async function loadInitialHomeFeed(): Promise<HomeInitialFeed> {
   const supabase = createServerSupabaseClient();
 
-  const [documents, writings, announcements] = await Promise.all([
+  const [documents, announcements] = await Promise.all([
     fetchHomeDocumentsServer(supabase),
-    fetchHomeWritingsServer(supabase),
     fetchAnnouncementsServer(supabase),
   ]);
 
-  return { announcements, documents, writings };
+  return {
+    announcements,
+    documents,
+    writings: [],
+  };
 }

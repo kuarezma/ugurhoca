@@ -15,7 +15,7 @@ type DeferredFloatingShapesProps = {
 
 export default function DeferredFloatingShapes({
   count = 6,
-  delayMs = 180,
+  delayMs = 80,
 }: DeferredFloatingShapesProps) {
   const [shouldRender, setShouldRender] = useState(false);
 

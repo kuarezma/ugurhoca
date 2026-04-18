@@ -116,19 +116,12 @@ export function HomeHeroSection({ isLight }: HomeHeroSectionProps) {
                   <category.icon className="w-7 h-7 sm:w-8 sm:h-8 text-white" />
                 </div>
                 <h3
-                  className={`font-bold text-sm sm:text-base mb-1 ${
+                  className={`font-bold text-sm sm:text-base ${
                     isLight ? 'text-slate-900' : 'text-white'
                   }`}
                 >
                   {category.title}
                 </h3>
-                <p
-                  className={`text-xs hidden sm:block ${
-                    isLight ? 'text-slate-600' : 'text-slate-400'
-                  }`}
-                >
-                  {category.desc}
-                </p>
               </Link>
             </motion.div>
           ))}

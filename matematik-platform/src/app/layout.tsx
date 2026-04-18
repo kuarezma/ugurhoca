@@ -19,7 +19,10 @@ const spaceGrotesk = Space_Grotesk({
   display: "swap",
 });
 
+const siteUrl = "https://ugurhoca.com";
+
 export const metadata: Metadata = {
+  metadataBase: new URL(siteUrl),
   title: {
     default: "Uğur Hoca Matematik - Matematik Öğrenme Platformu",
     template: "%s | Uğur Hoca Matematik",
@@ -51,7 +54,7 @@ export const metadata: Metadata = {
     type: "website",
     locale: "tr_TR",
     siteName: "Uğur Hoca Matematik",
-    url: "https://ugurhoca.com",
+    url: siteUrl,
   },
   twitter: {
     card: "summary_large_image",
@@ -95,6 +98,20 @@ export default function RootLayout({
     >
       <head>
         <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "EducationalOrganization",
+              name: "Uğur Hoca Matematik",
+              url: siteUrl,
+              description:
+                "Çalışma kağıtları, testler, oyunlar ve daha fazlasıyla matematik öğrenme platformu.",
+              inLanguage: "tr-TR",
+            }),
+          }}
+        />
+        <script
           dangerouslySetInnerHTML={{
             __html: `(function(){try{var theme=localStorage.getItem('${THEME_STORAGE_KEY}');var nextTheme=theme==='light'?'light':'dark';document.documentElement.dataset.theme=nextTheme;document.documentElement.classList.add(nextTheme);}catch(e){document.documentElement.dataset.theme='dark';document.documentElement.classList.add('dark');}})();`,
           }}
@@ -109,7 +126,14 @@ export default function RootLayout({
         />
       </head>
       <body>
-        <Providers>{children}</Providers>
+        <a href="#ana-icerik" className="skip-link">
+          Ana içeriğe geç
+        </a>
+        <Providers>
+          <div id="ana-icerik" tabIndex={-1}>
+            {children}
+          </div>
+        </Providers>
         <InstallPrompt />
       </body>
     </html>

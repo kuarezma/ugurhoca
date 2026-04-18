@@ -33,4 +33,5 @@ next-env.d.ts
 
 # Misc
 coverage/
+bundle-reports/
 .nyc_output/

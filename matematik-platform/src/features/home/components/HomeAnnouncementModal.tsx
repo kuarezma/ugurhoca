@@ -1,7 +1,7 @@
 'use client';
 
-/* eslint-disable @next/next/no-img-element -- announcement modal renders dynamic remote images */
-
+import { useEffect, useState } from 'react';
+import Image from 'next/image';
 import { AnimatePresence, motion } from 'framer-motion';
 import {
   ChevronRight,
@@ -14,6 +14,7 @@ import type { Announcement } from '@/types';
 import {
   getAnnouncementLinkLabel,
   proxiedImageSrc,
+  resolveYandexImageUrl,
 } from '@/features/home/queries';
 
 type HomeAnnouncementModalProps = {
@@ -66,12 +67,49 @@ export function HomeAnnouncementModal({
   announcement,
   onClose,
 }: HomeAnnouncementModalProps) {
-  const images =
+  const rawImages =
     announcement?.image_urls?.length && Array.isArray(announcement.image_urls)
       ? announcement.image_urls
       : announcement?.image_url
         ? [announcement.image_url]
         : [];
+
+  const [resolvedImages, setResolvedImages] = useState<string[]>([]);
+
+  useEffect(() => {
+    if (!announcement) {
+      setResolvedImages([]);
+      return;
+    }
+
+    const urls =
+      announcement.image_urls?.length && Array.isArray(announcement.image_urls)
+        ? announcement.image_urls
+        : announcement.image_url
+          ? [announcement.image_url]
+          : [];
+
+    if (urls.length === 0) {
+      setResolvedImages([]);
+      return;
+    }
+
+    let cancelled = false;
+
+    void Promise.all(urls.map((u) => resolveYandexImageUrl(u))).then(
+      (resolved) => {
+        if (!cancelled) {
+          setResolvedImages(resolved);
+        }
+      },
+    );
+
+    return () => {
+      cancelled = true;
+    };
+  }, [announcement]);
+
+  const images = resolvedImages.length > 0 ? resolvedImages : rawImages;
 
   return (
     <AnimatePresence>
@@ -82,6 +120,7 @@ export function HomeAnnouncementModal({
           exit={{ opacity: 0 }}
           className="fixed inset-0 z-[100] bg-black/80 backdrop-blur-sm flex items-center justify-center p-4"
           onClick={onClose}
+          role="presentation"
         >
           <motion.div
             initial={{ scale: 0.95, opacity: 0, y: 20 }}
@@ -89,6 +128,9 @@ export function HomeAnnouncementModal({
             exit={{ scale: 0.95, opacity: 0, y: 20 }}
             onClick={(event) => event.stopPropagation()}
             className="w-full max-w-5xl max-h-[90vh] overflow-y-auto rounded-3xl bg-slate-900 border border-slate-700 shadow-2xl"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="duyuru-baslik"
           >
             {images.length > 0 ? (
               <div className="grid md:grid-cols-2 gap-0">
@@ -99,12 +141,19 @@ export function HomeAnnouncementModal({
                         (image): image is string => typeof image === 'string',
                       )
                       .map((image, index) => (
-                        <img
+                        <div
                           key={index}
-                          src={proxiedImageSrc(image)}
-                          alt={announcement.title}
-                          className="w-full h-56 object-cover rounded-xl"
-                        />
+                          className="relative h-56 w-full overflow-hidden rounded-xl"
+                        >
+                          <Image
+                            src={proxiedImageSrc(image)}
+                            alt={`${announcement.title} — görsel ${index + 1}`}
+                            fill
+                            className="object-cover"
+                            sizes="(max-width: 768px) 100vw, 400px"
+                            unoptimized
+                          />
+                        </div>
                       ))}
                   </div>
                 </div>
@@ -114,13 +163,18 @@ export function HomeAnnouncementModal({
                       Haber
                     </span>
                     <button
+                      type="button"
                       onClick={onClose}
                       className="text-slate-400 hover:text-white"
+                      aria-label="Kapat"
                     >
                       <X className="w-6 h-6" />
                     </button>
                   </div>
-                  <h2 className="text-2xl sm:text-3xl font-bold text-white mb-3">
+                  <h2
+                    id="duyuru-baslik"
+                    className="text-2xl sm:text-3xl font-bold text-white mb-3"
+                  >
                     {announcement.title}
                   </h2>
                   <p className="text-slate-300 leading-relaxed whitespace-pre-line">
@@ -135,19 +189,24 @@ export function HomeAnnouncementModal({
                 </div>
               </div>
             ) : (
-              <div className="p-6 sm:p-8">
+                <div className="p-6 sm:p-8">
                 <div className="flex items-center justify-between mb-4">
                   <span className="px-3 py-1 rounded-full bg-pink-500/20 text-pink-300 text-xs font-semibold">
                     Haber
                   </span>
                   <button
+                    type="button"
                     onClick={onClose}
                     className="text-slate-400 hover:text-white"
+                    aria-label="Kapat"
                   >
                     <X className="w-6 h-6" />
                   </button>
                 </div>
-                <h2 className="text-2xl sm:text-3xl font-bold text-white mb-3">
+                <h2
+                  id="duyuru-baslik"
+                  className="text-2xl sm:text-3xl font-bold text-white mb-3"
+                >
                   {announcement.title}
                 </h2>
                 <p className="text-slate-300 leading-relaxed whitespace-pre-line">

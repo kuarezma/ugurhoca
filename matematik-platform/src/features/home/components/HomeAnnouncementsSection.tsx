@@ -1,7 +1,6 @@
 'use client';
 
-/* eslint-disable @next/next/no-img-element -- announcement cards render dynamic remote images */
-
+import Image from 'next/image';
 import { motion } from 'framer-motion';
 import { Bell } from 'lucide-react';
 import type { Announcement } from '@/types';
@@ -74,11 +73,14 @@ export function HomeAnnouncementsSection({
                   </span>
                 )}
                 {images[0] && (
-                  <div className="h-32 sm:h-36 overflow-hidden">
-                    <img
+                  <div className="relative h-32 w-full overflow-hidden sm:h-36">
+                    <Image
                       src={proxiedImageSrc(images[0])}
-                      alt={item.title}
-                      className="w-full h-full object-cover"
+                      alt=""
+                      fill
+                      className="object-cover"
+                      sizes="(max-width: 768px) 82vw, (max-width: 1280px) 50vw, 25vw"
+                      unoptimized
                     />
                   </div>
                 )}

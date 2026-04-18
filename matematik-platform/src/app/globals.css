@@ -840,3 +840,28 @@ html[data-theme='light'] .programlar-page [class*='transition-'] {
     transform: none !important;
   }
 }
+
+/* Klavye: “Ana içeriğe geç” bağlantısı (WCAG 2.4.1) */
+.skip-link {
+  position: absolute;
+  left: -9999px;
+  top: 0;
+  z-index: 9999;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  background-color: #4f46e5;
+  color: #fff;
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.skip-link:focus {
+  left: 1rem;
+  top: 1rem;
+}
+
+.skip-link:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 2px;
+}

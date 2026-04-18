@@ -93,4 +93,11 @@ CI’da lint, typecheck, test; kritik akış testleri.
 - **Yandex çözümlemesi**: Ortak `resolveYandexPublicDownloadUrl` (`lib/yandex-public-download.ts`), API route ile aynı mantık.
 - **PDF chunk’ları**: `downloadProgressPDF` ve `downloadStudentListPDF` dinamik `import()` (Progress + Admin).
 
-Sonraki adımlar: Lighthouse / gerçek cihaz ölçümü, `next/image` + `sizes` turu, a11y/SEO (Sütun C–D), güvenlik başlıkları ve yasal sayfalar (içerik onayıyla).
+**Faz 3 (Sütun C–D) — uygulandı (özet)**
+
+- **`next/image`**: Ana sayfa duyuru kartları ve duyuru modalı; `sizes` + `unoptimized` (dinamik uzak URL’ler için güvenli yol).
+- **SEO**: Kök `metadataBase`; sayfa/segment `metadata` (İçerikler, Testler, Programlar, Oyunlar, vb.); giriş/kayıt ve panel sayfalarında `noindex` uygun rotalar.
+- **JSON-LD**: Kök layout’ta `EducationalOrganization` şeması.
+- **Erişilebilirlik**: “Ana içeriğe geç” (`skip-link`); duyuru modalında `role="dialog"`, `aria-labelledby`, kapat `aria-label`.
+
+Sonraki adımlar: Lighthouse / gerçek cihaz ölçümü, diğer sayfalarda `img`→`next/image`, güvenlik başlıkları (HSTS/CSP üretimde test), yasal sayfalar (içerik onayıyla).
