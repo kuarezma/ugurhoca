@@ -2,12 +2,6 @@ import { z } from 'zod';
 
 const difficultySchema = z.enum(['Kolay', 'Orta', 'Zor']);
 
-export const chatRegisterSchema = z.object({
-  full_name: z.string().trim().min(1, 'İsim soyisim girin.'),
-  grade: z.number().int().min(1, 'Sınıf 1-12 arasında olmalıdır.').max(12),
-  school_number: z.string().trim().min(1, 'Okul numarası girin.'),
-});
-
 export const quizImportSchema = z.object({
   meta: z.object({
     description: z.string().optional().default(''),

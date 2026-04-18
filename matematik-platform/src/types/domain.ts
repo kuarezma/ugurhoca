@@ -190,10 +190,3 @@ export interface SupportAttachment {
   url: string;
   kind: 'image' | 'file';
 }
-
-export interface ChatUser {
-  full_name: string;
-  grade: number;
-  school_number: string;
-  display_name: string;
-}

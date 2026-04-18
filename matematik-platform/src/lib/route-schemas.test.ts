@@ -1,20 +1,6 @@
-import {
-  chatRegisterSchema,
-  quizImportSchema,
-  supportMessageSchema,
-} from '@/lib/route-schemas';
+import { quizImportSchema, supportMessageSchema } from '@/lib/route-schemas';
 
 describe('route-schemas', () => {
-  it('accepts a valid chat registration payload', () => {
-    const parsed = chatRegisterSchema.safeParse({
-      full_name: 'Ayşe Demir',
-      grade: 8,
-      school_number: '123',
-    });
-
-    expect(parsed.success).toBe(true);
-  });
-
   it('rejects an empty support message without attachments', () => {
     const parsed = supportMessageSchema.safeParse({
       attachments: [],
