@@ -70,7 +70,7 @@ export function HomeHeroSection({ isLight }: HomeHeroSectionProps) {
                 className={`block border rounded-2xl p-5 sm:p-7 lg:p-6 text-center transition-all ${
                   isLight
                     ? 'light-card hover:-translate-y-0.5'
-                    : `${category.bgColor} ${category.borderColor} hover:scale-105`
+                    : `${category.bgColor} ${category.borderColor} hover:-translate-y-0.5 hover:border-white/15`
                 }`}
               >
                 <div

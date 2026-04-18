@@ -18,21 +18,21 @@ interface FloatingShapesProps {
 export default function FloatingShapes({ count = 6 }: FloatingShapesProps) {
   return (
     <div
-      className="fixed inset-0 overflow-hidden pointer-events-none z-0"
+      className="absolute inset-x-0 top-0 h-[34rem] overflow-hidden pointer-events-none z-0"
       aria-hidden="true"
     >
       {[...Array(count)].map((_, i) => (
         <div
           key={i}
-          className="animate-float-y absolute rounded-full opacity-5"
+          className="animate-float-y absolute rounded-full opacity-[0.045] blur-2xl"
           style={{
-            width: 80,
-            height: 80,
+            width: 112,
+            height: 112,
             background: COLORS[i % COLORS.length],
-            left: `${(i * 18) % 90}%`,
-            top: `${(i * 15) % 85}%`,
-            animationDelay: `${i * 0.18}s`,
-            ['--float-duration' as string]: `${4 + i}s`,
+            left: `${10 + ((i * 22) % 74)}%`,
+            top: `${(i * 14) % 52}%`,
+            animationDelay: `${i * 0.22}s`,
+            ['--float-duration' as string]: `${7 + i * 1.4}s`,
           }}
         />
       ))}

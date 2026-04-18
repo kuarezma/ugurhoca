@@ -23,7 +23,7 @@ export function HomeAssignmentsSection({
   }
 
   return (
-    <section className="px-4 py-6 sm:py-8">
+    <section className="defer-section px-4 py-6 sm:py-8">
       <div className="max-w-6xl mx-auto">
         <div className="animate-fade-up relative overflow-hidden">
           <div

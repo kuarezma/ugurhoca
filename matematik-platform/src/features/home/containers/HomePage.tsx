@@ -66,7 +66,7 @@ export default function HomePage({ initialFeed }: HomePageProps) {
 
   return (
     <main
-      className={`relative min-h-screen ${
+      className={`home-page relative min-h-screen ${
         isLight
           ? 'bg-white light-atmosphere'
           : 'bg-gradient-to-br from-slate-900 via-slate-900 to-slate-800'

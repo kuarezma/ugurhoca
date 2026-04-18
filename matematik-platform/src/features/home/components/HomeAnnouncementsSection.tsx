@@ -60,7 +60,7 @@ export function HomeAnnouncementsSection({
                 className={`animate-fade-up relative text-left rounded-2xl overflow-hidden transition-all min-w-[82vw] sm:min-w-[46vw] md:min-w-0 md:w-full ${
                   isLight
                     ? 'light-card hover:-translate-y-0.5'
-                    : 'glass hover:scale-[1.01]'
+                    : 'glass hover:-translate-y-0.5'
                 }`}
                 style={{ animationDelay: `${index * 0.05}s` }}
               >
