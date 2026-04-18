@@ -1,15 +1,21 @@
 'use client';
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell,
-  Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis
-} from 'recharts';
-import { 
-  ArrowLeft, Target, Flame, Brain, Calendar, 
-  Plus, X, Video, BookOpen, PenTool, CheckCircle2, Award, Download
+import {
+  ArrowLeft,
+  Target,
+  Flame,
+  Plus,
+  X,
+  Video,
+  BookOpen,
+  PenTool,
+  CheckCircle2,
+  Award,
+  Download,
 } from 'lucide-react';
 import { supabase } from '@/lib/supabase/client';
 import { getClientSession } from '@/lib/auth-client';
@@ -29,6 +35,23 @@ import {
   prependStudySession,
   resolveCurrentGoal,
 } from '@/features/progress/utils';
+import type { RadarChartPoint } from '@/features/progress/components/ProgressCharts';
+
+const ProgressCharts = dynamic(
+  () =>
+    import('@/features/progress/components/ProgressCharts').then(
+      (m) => m.ProgressCharts,
+    ),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2" aria-hidden>
+        <div className="h-80 min-h-[16rem] animate-pulse rounded-3xl border border-slate-700/40 bg-slate-800/25" />
+        <div className="h-80 min-h-[16rem] animate-pulse rounded-3xl border border-slate-700/40 bg-slate-800/25" />
+      </div>
+    ),
+  },
+);
 
 type ProgressPageProps = {
   initialData?: InitialProgressPageData;
@@ -257,12 +280,15 @@ export default function IlerlemePage({ initialData }: ProgressPageProps) {
   }));
   
   // Eğre yetersiz veri varsa Dummy radar
-  const displayRadarData = radarData.length > 2 ? radarData : [
-    { subject: 'Çarpanlar', A: 20, fullMark: 100 },
-    { subject: 'Üslü', A: 40, fullMark: 100 },
-    { subject: 'Köklü', A: 10, fullMark: 100 },
-    { subject: 'Olasılık', A: 0, fullMark: 100 },
-  ];
+  const displayRadarData: RadarChartPoint[] =
+    radarData.length > 2
+      ? radarData
+      : [
+          { subject: 'Çarpanlar', A: 20, fullMark: 100 },
+          { subject: 'Üslü', A: 40, fullMark: 100 },
+          { subject: 'Köklü', A: 10, fullMark: 100 },
+          { subject: 'Olasılık', A: 0, fullMark: 100 },
+        ];
 
   const handleDownloadProgressPdf = async () => {
     setPdfLoading(true);
@@ -411,54 +437,11 @@ export default function IlerlemePage({ initialData }: ProgressPageProps) {
           </motion.div>
         </div>
 
-        {/* Ana İçerik Grid (BarChart ve RadarChart Bir Arada) */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          
-          {/* Bar Grafiği */}
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className={`rounded-3xl p-6 border ${isLight ? 'bg-white border-slate-200' : 'bg-slate-800/50 border-slate-700'}`}>
-            <div className="flex items-center gap-2 mb-6">
-              <Calendar className={`w-5 h-5 ${isLight ? 'text-blue-500' : 'text-blue-400'}`} />
-              <h2 className={`font-bold text-lg ${isLight ? 'text-slate-900' : 'text-white'}`}>Haftalık Analiz</h2>
-            </div>
-            <div className="h-64 w-full">
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={chartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
-                  <XAxis dataKey="name" stroke={isLight ? '#94a3b8' : '#64748b'} fontSize={12} tickLine={false} axisLine={false} />
-                  <YAxis stroke={isLight ? '#94a3b8' : '#64748b'} fontSize={12} tickLine={false} axisLine={false} />
-                  <Tooltip 
-                    cursor={{ fill: isLight ? '#f1f5f9' : '#1e293b' }}
-                    contentStyle={{ backgroundColor: isLight ? '#fff' : '#0f172a', border: 'none', borderRadius: '12px', color: isLight ? '#000' : '#fff' }} 
-                  />
-                  <Bar dataKey="duration" radius={[6, 6, 6, 6]}>
-                    {chartData.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={entry.duration > 0 ? (isLight ? '#6366f1' : '#818cf8') : (isLight ? '#e2e8f0' : '#334155')} />
-                    ))}
-                  </Bar>
-                </BarChart>
-              </ResponsiveContainer>
-            </div>
-          </motion.div>
-
-          {/* Yetkinlik Radar Grafiği */}
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }} className={`rounded-3xl p-6 border ${isLight ? 'bg-white border-slate-200' : 'bg-slate-800/50 border-slate-700'} flex flex-col`}>
-            <div className="flex items-center gap-2 mb-2">
-              <Brain className={`w-5 h-5 ${isLight ? 'text-pink-500' : 'text-pink-400'}`} />
-              <h2 className={`font-bold text-lg ${isLight ? 'text-slate-900' : 'text-white'}`}>Matematik Becerisi Ağı</h2>
-            </div>
-            
-            <div className="h-64 w-full flex-1">
-               <ResponsiveContainer width="100%" height="100%">
-                <RadarChart cx="50%" cy="50%" outerRadius="70%" data={displayRadarData}>
-                  <PolarGrid stroke={isLight ? '#e2e8f0' : '#334155'} />
-                  <PolarAngleAxis dataKey="subject" tick={{ fill: isLight ? '#475569' : '#94a3b8', fontSize: 10, fontWeight: 600 }} />
-                  <PolarRadiusAxis angle={30} domain={[0, 100]} tick={false} axisLine={false} />
-                  <Radar name="Yetkinlik" dataKey="A" stroke="#8b5cf6" strokeWidth={2} fill="#8b5cf6" fillOpacity={isLight ? 0.3 : 0.4} />
-                  <Tooltip wrapperStyle={{ outline: 'none' }} contentStyle={{ backgroundColor: isLight ? '#fff' : '#0f172a', border: 'none', borderRadius: '12px' }} />
-                </RadarChart>
-              </ResponsiveContainer>
-            </div>
-          </motion.div>
-        </div>
+        <ProgressCharts
+          isLight={isLight}
+          chartData={chartData}
+          displayRadarData={displayRadarData}
+        />
 
         {/* Mevcut Geleneksel Konu Çubuğu Barı (Optional, Alta alındı detay için) */}
         {progressData.length > 0 && (

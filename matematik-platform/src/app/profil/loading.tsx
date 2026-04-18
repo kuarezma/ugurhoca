@@ -1,5 +1,5 @@
 import RouteLoadingShell from '@/components/RouteLoadingShell';
 
-export default function Loading() {
+export default function ProfilLoading() {
   return <RouteLoadingShell />;
 }

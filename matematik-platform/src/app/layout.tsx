@@ -21,6 +21,18 @@ const spaceGrotesk = Space_Grotesk({
 
 const siteUrl = "https://ugurhoca.com";
 
+function getSupabasePreconnectOrigin(): string | null {
+  const raw = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  if (!raw) {
+    return null;
+  }
+  try {
+    return new URL(raw).origin;
+  } catch {
+    return null;
+  }
+}
+
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
@@ -89,6 +101,8 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const supabaseOrigin = getSupabasePreconnectOrigin();
+
   return (
     <html
       lang="tr"
@@ -116,6 +130,12 @@ export default function RootLayout({
             __html: `(function(){try{var theme=localStorage.getItem('${THEME_STORAGE_KEY}');var nextTheme=theme==='light'?'light':'dark';document.documentElement.dataset.theme=nextTheme;document.documentElement.classList.add(nextTheme);}catch(e){document.documentElement.dataset.theme='dark';document.documentElement.classList.add('dark');}})();`,
           }}
         />
+        {supabaseOrigin ? (
+          <>
+            <link rel="dns-prefetch" href={supabaseOrigin} />
+            <link rel="preconnect" href={supabaseOrigin} crossOrigin="anonymous" />
+          </>
+        ) : null}
         {/* PWA */}
         <link rel="apple-touch-icon" href="/icon-192.png" />
         <meta name="theme-color" content="#f97316" />

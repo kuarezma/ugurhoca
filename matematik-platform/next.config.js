@@ -12,6 +12,7 @@ const nextConfig = {
       'lucide-react',
       'framer-motion',
       '@supabase/supabase-js',
+      'recharts',
     ],
   },
   async headers() {
