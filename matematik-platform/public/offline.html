@@ -104,6 +104,13 @@
     }
     .btn:hover { transform: translateY(-2px); box-shadow: 0 12px 24px rgba(249,115,22,0.35); }
     .btn:active { transform: translateY(0); }
+
+    .status {
+      margin-top: 1rem;
+      font-size: 0.85rem;
+      color: #cbd5e1;
+      min-height: 1.4rem;
+    }
   </style>
 </head>
 <body>
@@ -120,15 +127,60 @@
     <div class="icon-ring">📡</div>
 
     <h1>Çevrimdışısın</h1>
-    <p>Şu anda internet bağlantın yok. Bağlantı kurulduğunda platformumuza tekrar giriş yapabilirsin.</p>
+    <p>Bağlantı varsa bu ekran eski önbellekten geliyor olabilir. Sayfa açılır açılmaz uygulama önbelleğini temizleyip gerçek siteye dönmeyi deniyoruz.</p>
 
     <div class="tip-box">
       💡 <strong>İpucu:</strong> Uygulamayı telefona kurduğunda, önceden yüklenen sayfalar çevrimdışında da çalışmaya devam eder!
     </div>
 
-    <button class="btn" onclick="window.location.reload()">
+    <button class="btn" onclick="goOnline()">
       🔄 Tekrar Dene
     </button>
+
+    <div class="status" id="status" aria-live="polite"></div>
   </div>
+
+  <script>
+    const statusEl = document.getElementById('status');
+
+    function setStatus(message) {
+      if (statusEl) {
+        statusEl.textContent = message;
+      }
+    }
+
+    async function clearOfflineShell() {
+      if ('serviceWorker' in navigator) {
+        const registrations = await navigator.serviceWorker.getRegistrations();
+        await Promise.all(registrations.map((registration) => registration.unregister()));
+      }
+
+      if ('caches' in window) {
+        const cacheNames = await caches.keys();
+        await Promise.all(
+          cacheNames
+            .filter((name) => name.indexOf('ugur-hoca-v') === 0)
+            .map((name) => caches.delete(name)),
+        );
+      }
+    }
+
+    async function goOnline() {
+      setStatus('Önbellek temizleniyor...');
+
+      try {
+        await clearOfflineShell();
+      } catch (error) {
+        setStatus('Önbellek temizlenemedi. Sayfa yine de yenileniyor...');
+      }
+
+      setStatus('Gerçek siteye dönülüyor...');
+      window.location.replace('/');
+    }
+
+    window.addEventListener('load', function () {
+      void goOnline();
+    });
+  </script>
 </body>
 </html>

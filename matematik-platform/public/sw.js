@@ -1,99 +1,38 @@
-const CACHE_VERSION = "3-20260418";
-const CACHE_NAME = `ugur-hoca-v${CACHE_VERSION}`;
-const OFFLINE_URL = "/offline.html";
+const CACHE_PREFIX = "ugur-hoca-v";
 
-const STATIC_ASSETS = [
-  "/",
-  "/offline.html",
-  "/manifest.json",
-  "/icon-192.png",
-  "/icon-512.png",
-];
+async function clearUgurHocaCaches() {
+  const cacheNames = await caches.keys();
 
-// ─── Install ────────────────────────────────────────────────────────────────
-self.addEventListener("install", (event) => {
-  event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => {
-      return cache.addAll(STATIC_ASSETS);
-    }),
+  await Promise.all(
+    cacheNames
+      .filter((name) => name.startsWith(CACHE_PREFIX))
+      .map((name) => caches.delete(name)),
   );
-  self.skipWaiting();
+}
+
+self.addEventListener("install", (event) => {
+  event.waitUntil(self.skipWaiting());
 });
 
-// ─── Activate ───────────────────────────────────────────────────────────────
 self.addEventListener("activate", (event) => {
   event.waitUntil(
-    caches.keys().then((cacheNames) => {
-      return Promise.all(
-        cacheNames
-          .filter((name) => name !== CACHE_NAME)
-          .map((name) => caches.delete(name)),
-      );
-    }),
+    (async () => {
+      await clearUgurHocaCaches();
+      await self.clients.claim();
+      await self.registration.unregister();
+
+      const clients = await self.clients.matchAll({
+        includeUncontrolled: true,
+        type: "window",
+      });
+
+      for (const client of clients) {
+        client.postMessage({ type: "UGUR_HOCA_SW_DISABLED" });
+      }
+    })(),
   );
-  self.clients.claim();
 });
 
-// ─── Fetch ──────────────────────────────────────────────────────────────────
-self.addEventListener("fetch", (event) => {
-  const { request } = event;
-  const url = new URL(request.url);
-
-  // Yalnızca aynı origin isteklerini ele al
-  if (url.origin !== location.origin) return;
-
-  // Next asset'lerini cache-first çalıştırma; stale chunk'lar özellikle
-  // development ve Safari'de eski UI shell'ini tutabiliyor.
-  if (url.pathname.startsWith("/_next/")) {
-    return;
-  }
-
-  // API isteklerini her zaman network'ten al
-  if (url.pathname.startsWith("/api/")) {
-    event.respondWith(
-      fetch(request).catch(() => {
-        return new Response(
-          JSON.stringify({
-            error:
-              "Çevrimdışısınız. Lütfen internet bağlantınızı kontrol edin.",
-          }),
-          { headers: { "Content-Type": "application/json" }, status: 503 },
-        );
-      }),
-    );
-    return;
-  }
-
-  // Navigasyon istekleri: Network-first, hata varsa offline sayfası
-  if (request.mode === "navigate") {
-    event.respondWith(
-      fetch(request)
-        .then((response) => {
-          // Başarılı cevabı cache'e de yaz
-          const clone = response.clone();
-          caches.open(CACHE_NAME).then((cache) => cache.put(request, clone));
-          return response;
-        })
-        .catch(() => {
-          return caches.match(OFFLINE_URL);
-        }),
-    );
-    return;
-  }
-
-  // Statik dosyalar: Cache-first
-  event.respondWith(
-    caches.match(request).then((cached) => {
-      if (cached) return cached;
-
-      return fetch(request).then((response) => {
-        // Sadece başarılı cevapları cache'e ekle
-        if (response && response.status === 200 && response.type === "basic") {
-          const clone = response.clone();
-          caches.open(CACHE_NAME).then((cache) => cache.put(request, clone));
-        }
-        return response;
-      });
-    }),
-  );
+self.addEventListener("fetch", () => {
+  // PWA katmanı geçici olarak kapatıldı. İstekleri tarayıcı ve Next.js yönetsin.
 });
