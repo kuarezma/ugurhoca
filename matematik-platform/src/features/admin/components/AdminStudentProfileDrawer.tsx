@@ -113,10 +113,6 @@ export default function AdminStudentProfileDrawer({
               <span>{student?.email || data?.student.email || "-"}</span>
               <span>•</span>
               <span>{formatGradeLabel(student?.grade || data?.student.grade)}</span>
-              <span>•</span>
-              <span>
-                {student?.is_private_student ? "Özel ders öğrencisi" : "Genel öğrenci"}
-              </span>
             </div>
             <p className="mt-2 text-xs text-slate-500">
               Kayıt: {formatDate(student?.created_at || data?.student.created_at)}

@@ -1,6 +1,5 @@
 import type { Session } from '@supabase/supabase-js';
 import { ADMIN_EMAIL, isAdminEmail } from '@/lib/admin';
-import { normalizeFullNameForMatch } from '@/lib/student-identity';
 import { getClientSession } from '@/lib/auth-client';
 import { supabase } from '@/lib/supabase/client';
 import {
@@ -18,8 +17,6 @@ import { resolveCurrentGoal } from '@/features/progress/utils';
 import type {
   AdminAnnouncement,
   AdminAssignment,
-  AdminChatRoom,
-  AdminChatMessage,
   AdminDashboardData,
   AdminDocument,
   AdminNotification,
@@ -131,21 +128,17 @@ export const loadAdminDashboardData = async (
     announcementsRes,
     documentsRes,
     allUsersRes,
-    privateStudentsRes,
     assignmentsRes,
     sharedDocsRes,
     quizzesRes,
-    chatRoomsRes,
     notificationsRes,
   ] = await Promise.all([
     supabase.from('announcements').select('*').order('created_at', { ascending: false }),
     supabase.from('documents').select('*').order('created_at', { ascending: false }),
     supabase.from('profiles').select('*').order('created_at', { ascending: false }),
-    supabase.from('profiles').select('*').eq('is_private_student', true),
     supabase.from('assignments').select('*').order('created_at', { ascending: false }),
     supabase.from('shared_documents').select('*').order('created_at', { ascending: false }),
     supabase.from('quizzes').select('*').order('created_at', { ascending: false }),
-    supabase.from('chat_rooms').select('*').order('created_at', { ascending: false }),
     adminUserId
       ? supabase
           .from('notifications')
@@ -155,12 +148,6 @@ export const loadAdminDashboardData = async (
       : Promise.resolve({ data: [], error: null }),
   ]);
 
-  const chatRooms =
-    chatRoomsRes.error &&
-    chatRoomsRes.error.message.includes("Could not find the table 'public.chat_rooms'")
-      ? []
-      : (chatRoomsRes.data || []);
-
   return {
     allUsers: (allUsersRes.data || []) as AdminUser[],
     announcements: ((announcementsRes.data || []) as AdminDashboardData['announcements']).sort(
@@ -169,10 +156,8 @@ export const loadAdminDashboardData = async (
         new Date(left.created_at || 0).getTime(),
     ),
     assignments: (assignmentsRes.data || []) as AdminDashboardData['assignments'],
-    chatRooms: chatRooms as AdminDashboardData['chatRooms'],
     documents: (documentsRes.data || []) as AdminDashboardData['documents'],
     notifications: (notificationsRes.data || []) as AdminDashboardData['notifications'],
-    privateStudents: (privateStudentsRes.data || []) as AdminDashboardData['privateStudents'],
     quizzes: (quizzesRes.data || []) as AdminDashboardData['quizzes'],
     sharedDocs: (sharedDocsRes.data || []) as AdminDashboardData['sharedDocs'],
   };
@@ -300,28 +285,6 @@ export const updateAdminSubmissionReview = async (
     .eq('id', submissionId);
 };
 
-export const loadAdminChatMessages = async (roomId: string) => {
-  const { data } = await supabase
-    .from('chat_messages')
-    .select('*')
-    .eq('room_id', roomId)
-    .order('ts', { ascending: true });
-
-  return (data || []) as AdminChatMessage[];
-};
-
-export const sendAdminChatMessage = async (roomId: string, text: string) => {
-  return supabase.from('chat_messages').insert([
-    {
-      room_id: roomId,
-      sender_tc: 'admin',
-      display_name: 'Uğur Hoca',
-      text: text.trim(),
-      ts: Date.now(),
-    },
-  ]);
-};
-
 export const markAdminNotificationAsRead = async (
   notification: AdminNotification,
   senderId?: string,
@@ -426,10 +389,6 @@ export const sendAdminNotificationReply = async (
 
 export const deleteAdminNotification = async (notificationId: string) => {
   return supabase.from('notifications').delete().eq('id', notificationId);
-};
-
-export const deleteAdminChatRoom = async (roomId: AdminChatRoom['id']) => {
-  return supabase.from('chat_rooms').delete().eq('id', roomId);
 };
 
 export const createAdminAssignment = async ({
@@ -676,16 +635,6 @@ export const createAdminQuizQuestion = async (question: {
   return { data: (data as AdminQuizQuestion | null) ?? null, error };
 };
 
-export const toggleAdminPrivateStudent = async (
-  userId: string,
-  isCurrentlyPrivate: boolean,
-) => {
-  return supabase
-    .from('profiles')
-    .update({ is_private_student: !isCurrentlyPrivate })
-    .eq('id', userId);
-};
-
 export const deleteAdminEntity = async (
   type: 'assignment' | 'shared_document' | 'announcement' | 'quiz' | 'document',
   id: string,
@@ -789,32 +738,6 @@ export const createAdminSharedDocument = async ({
   }
 
   return { data: (data as AdminSharedDocument | null) ?? null, error };
-};
-
-export const createAdminPrivateStudent = async ({
-  email,
-  grade,
-  name,
-}: {
-  email?: string | null;
-  grade?: AdminUser['grade'] | null;
-  name?: string | null;
-}) => {
-  const { data, error } = await supabase
-    .from('profiles')
-    .insert([
-      {
-        email,
-        grade,
-        is_private_student: true,
-        name,
-        name_normalized: normalizeFullNameForMatch(String(name ?? '')),
-      },
-    ])
-    .select()
-    .single();
-
-  return { data: (data as AdminUser | null) ?? null, error };
 };
 
 export const refreshAdminDocumentCategories = async () => {

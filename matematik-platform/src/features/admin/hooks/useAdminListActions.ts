@@ -5,18 +5,15 @@ import { useToast } from "@/components/Toast";
 import { ADMIN_EMAIL } from "@/lib/admin";
 import {
   advanceAdminUserGrades,
-  deleteAdminChatRoom,
   deleteAdminEntity,
   migrateLegacyWorksheetDocuments,
   refreshAdminDocumentCategories,
-  toggleAdminPrivateStudent,
   updateAdminAssignment,
   updateAdminSharedDocument,
 } from "@/features/admin/queries";
 import type {
   AdminAnnouncement,
   AdminAssignment,
-  AdminChatRoom,
   AdminDocument,
   AdminQuiz,
   AdminSharedDocument,
@@ -29,7 +26,6 @@ type UseAdminListActionsOptions = {
   assignments: AdminAssignment[];
   documents: AdminDocument[];
   loadData: (adminUserId?: string | null) => Promise<void>;
-  setActiveChatRoom: Dispatch<SetStateAction<AdminChatRoom | null>>;
   setAnnouncements: Dispatch<SetStateAction<AdminAnnouncement[]>>;
   setAssignments: Dispatch<SetStateAction<AdminAssignment[]>>;
   setDocuments: Dispatch<SetStateAction<AdminDocument[]>>;
@@ -47,7 +43,6 @@ export function useAdminListActions({
   assignments,
   documents,
   loadData,
-  setActiveChatRoom,
   setAnnouncements,
   setAssignments,
   setDocuments,
@@ -60,9 +55,6 @@ export function useAdminListActions({
 }: UseAdminListActionsOptions) {
   const { showToast } = useToast();
   const studentUsers = allUsers.filter((user) => user.email !== ADMIN_EMAIL);
-  const writingDocuments = documents.filter(
-    (document) => document.type === "writing",
-  );
 
   const handleDownloadStudentsPdf = async () => {
     setPdfStudentsLoading(true);
@@ -71,23 +63,6 @@ export function useAdminListActions({
       await downloadStudentListPDF();
     } finally {
       setPdfStudentsLoading(false);
-    }
-  };
-
-  const togglePrivateStudent = async (
-    userId: string,
-    isCurrentlyPrivate: boolean,
-  ) => {
-    const { error } = await toggleAdminPrivateStudent(userId, isCurrentlyPrivate);
-
-    if (!error) {
-      showToast(
-        "success",
-        `Öğrenci "Özel Ders" listesinden ${isCurrentlyPrivate ? "çıkarıldı" : "eklendi"}.`,
-      );
-      await loadData();
-    } else {
-      showToast("error", "İşlem başarısız: " + error.message);
     }
   };
 
@@ -213,16 +188,6 @@ export function useAdminListActions({
     await loadData();
   };
 
-  const handleDeleteChatRoom = async (room: AdminChatRoom) => {
-    if (!confirm("Bu odayı silmek istediğinizden emin misiniz?")) {
-      return;
-    }
-
-    await deleteAdminChatRoom(room.id);
-    setActiveChatRoom(null);
-    await loadData();
-  };
-
   const handleUpdateGrades = async () => {
     if (
       !confirm(
@@ -249,13 +214,10 @@ export function useAdminListActions({
     deleteItem,
     editAssignment,
     editSharedDocument,
-    handleDeleteChatRoom,
     handleDownloadStudentsPdf,
     handleMigrateWorksheetDocuments,
     handleRefreshDocumentCategories,
     handleUpdateGrades,
     studentUsers,
-    togglePrivateStudent,
-    writingDocuments,
   };
 }

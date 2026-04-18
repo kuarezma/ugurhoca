@@ -11,14 +11,12 @@ import {
   Plus,
   FileText,
   Megaphone,
-  Edit3,
   Upload,
   CheckCircle2,
   Users,
   RefreshCw,
   Bell,
   ClipboardList,
-  MessageSquareText,
   BarChart3,
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
@@ -31,22 +29,18 @@ import { useAdminModalSubmitHandlers } from '@/features/admin/hooks/useAdminModa
 import { useAdminNotifications } from '@/features/admin/hooks/useAdminNotifications';
 import {
   loadAdminAssignmentSubmissions,
-  loadAdminChatMessages,
   loadAdminDashboardData,
   loadAdminQuizQuestions,
   loadAdminStudentProfile,
   refreshAdminUsers as refreshAdminUsersQuery,
   resolveAdminAuth,
-  sendAdminChatMessage,
   updateAdminSubmissionReview,
 } from '@/features/admin/queries';
 import type {
   AdminActiveTab,
   AdminAnnouncement as Announcement,
   AdminAssignment as Assignment,
-  AdminChatMessage as ChatMessage,
   AdminDashboardData,
-  AdminChatRoom as ChatRoom,
   AdminDocument as Document,
   AdminFormState,
   AdminNotification as Notification,
@@ -113,16 +107,12 @@ export default function AdminPage() {
   const [announcements, setAnnouncements] = useState<Announcement[]>([]);
   const [documents, setDocuments] = useState<Document[]>([]);
   const [allUsers, setAllUsers] = useState<AdminUser[]>([]);
-  const [privateStudents, setPrivateStudents] = useState<AdminUser[]>([]);
   const [assignments, setAssignments] = useState<Assignment[]>([]);
   const [sharedDocs, setSharedDocs] = useState<SharedDoc[]>([]);
   const [quizzes, setQuizzes] = useState<Quiz[]>([]);
   const [selectedAssignmentSubmissions, setSelectedAssignmentSubmissions] =
     useState<Submission[]>([]);
   const [quizQuestions, setQuizQuestions] = useState<QuizQuestion[]>([]);
-  const [chatRooms, setChatRooms] = useState<ChatRoom[]>([]);
-  const [activeChatRoom, setActiveChatRoom] = useState<ChatRoom | null>(null);
-  const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [activeStudentProfileId, setActiveStudentProfileId] = useState<string | null>(null);
   const [activeStudentProfileData, setActiveStudentProfileData] =
@@ -156,7 +146,6 @@ export default function AdminPage() {
     resetModalState,
     selectedDoc,
     selectedQuiz,
-    selectedStudent,
     setAdminMsgImagePreview,
     setAdminMsgImageUrl,
     setAdminMsgText,
@@ -165,7 +154,6 @@ export default function AdminPage() {
     setIsSubmitting,
     setSelectedDoc,
     setSelectedQuiz,
-    setSelectedStudent,
     showModal,
     showSubmissionsModal,
     success,
@@ -237,11 +225,9 @@ export default function AdminPage() {
     setAnnouncements(data.announcements);
     setDocuments(data.documents);
     setAllUsers(data.allUsers);
-    setPrivateStudents(data.privateStudents);
     setAssignments(data.assignments);
     setSharedDocs(data.sharedDocs);
     setQuizzes(data.quizzes);
-    setChatRooms(data.chatRooms);
     setNotifications(data.notifications);
   }, []);
 
@@ -284,14 +270,11 @@ export default function AdminPage() {
     deleteItem,
     editAssignment,
     editSharedDocument,
-    handleDeleteChatRoom,
     handleDownloadStudentsPdf,
     handleMigrateWorksheetDocuments,
     handleRefreshDocumentCategories,
     handleUpdateGrades,
     studentUsers,
-    togglePrivateStudent,
-    writingDocuments,
   } = useAdminListActions({
     allUsers,
     announcements,
@@ -299,7 +282,6 @@ export default function AdminPage() {
     documents,
     loadData,
     quizzes,
-    setActiveChatRoom,
     setAnnouncements,
     setAssignments,
     setDocuments,
@@ -315,7 +297,6 @@ export default function AdminPage() {
     handleEditDocumentSubmit,
     handleEditUserSubmit,
     handleSendDocSubmit,
-    handleStudentSubmit,
     handleSubmit,
   } = useAdminModalSubmitHandlers({
     adminMsgImageUrl,
@@ -337,12 +318,10 @@ export default function AdminPage() {
     resetModalState,
     selectedDoc,
     selectedQuiz,
-    selectedStudent,
     setAnnouncements,
     setAssignments,
     setDocuments,
     setIsSubmitting,
-    setPrivateStudents,
     setQuizQuestions,
     setQuizzes,
     setSharedDocs,
@@ -399,19 +378,6 @@ export default function AdminPage() {
     router.push('/');
   };
 
-  const loadChatMessages = async (roomId: string) => {
-    setChatMessages(await loadAdminChatMessages(roomId));
-  };
-
-  const sendChatMessage = async (roomId: string, text: string) => {
-    if (!text.trim()) return;
-    const { error } = await sendAdminChatMessage(roomId, text);
-    if (!error) {
-      setReplyText('');
-      loadChatMessages(roomId);
-    }
-  };
-
   const loadQuizQuestions = async (quizId: string) => {
     setQuizQuestions(await loadAdminQuizQuestions(quizId));
   };
@@ -439,11 +405,6 @@ export default function AdminPage() {
     typeof window === 'undefined'
       ? null
       : localStorage.getItem('lastGradeUpdate');
-
-  const handleSelectChatRoom = async (room: ChatRoom) => {
-    setActiveChatRoom(room);
-    await loadChatMessages(room.id);
-  };
 
   const handleAddQuizQuestion = async (quiz: Quiz) => {
     setSelectedQuiz(quiz);
@@ -590,25 +551,11 @@ export default function AdminPage() {
                   color: 'from-blue-500 to-cyan-500',
                 },
                 {
-                  id: 'writings',
-                  label: 'Yazılar',
-                  shortLabel: 'Yazı',
-                  icon: Edit3,
-                  color: 'from-purple-500 to-violet-500',
-                },
-                {
                   id: 'users',
                   label: 'Kullanıcılar',
                   shortLabel: 'Kull.',
                   icon: Users,
                   color: 'from-green-500 to-emerald-500',
-                },
-                {
-                  id: 'messages',
-                  label: 'Mesajlar',
-                  shortLabel: 'Msj.',
-                  icon: MessageSquareText,
-                  color: 'from-indigo-500 to-purple-500',
                 },
                 {
                   id: 'gradeUpdate',
@@ -662,11 +609,7 @@ export default function AdminPage() {
                 <button
                   onClick={() =>
                     openModal(
-                      activeTab === 'announcements'
-                        ? 'announcement'
-                        : activeTab === 'documents'
-                          ? 'document'
-                          : 'writing',
+                      activeTab === 'announcements' ? 'announcement' : 'document',
                     )
                   }
                   className="btn-primary w-full sm:w-auto justify-center"
@@ -697,12 +640,9 @@ export default function AdminPage() {
           )}
 
           <AdminTabPanels
-            activeChatRoom={activeChatRoom}
             activeTab={activeTab}
             announcements={announcements}
             assignments={assignments}
-            chatMessages={chatMessages}
-            chatRooms={chatRooms}
             documents={documents}
             formatDate={formatDate}
             isSubmitting={isSubmitting}
@@ -710,40 +650,30 @@ export default function AdminPage() {
             onAddQuizQuestion={handleAddQuizQuestion}
             onCreateAnnouncement={() => openModal('announcement')}
             onCreateAssignment={() => openModal('assignment')}
-            onCreateQuiz={() => openModal('quiz')}
             onCreateSendDocument={() => openModal('sendDoc')}
             onDeleteAnnouncement={(id) => deleteItem('announcement', id)}
             onDeleteAssignment={(id) => deleteItem('assignment', id)}
-            onDeleteChatRoom={handleDeleteChatRoom}
             onDeleteDocument={(id) => deleteItem('document', id)}
             onDeleteQuiz={(id) => deleteItem('quiz', id)}
             onDeleteSharedDocument={(id) => deleteItem('shared_document', id)}
-            onDeleteWriting={(id) => deleteItem('writing', id)}
             onDownloadStudentsPdf={handleDownloadStudentsPdf}
             onEditAnnouncement={openEditAnnouncement}
             onEditAssignment={editAssignment}
             onEditDocument={openEditDocument}
             onEditQuiz={handleEditQuiz}
           onEditSharedDocument={editSharedDocument}
-          onEditUser={openEditUser}
-          onMigrateWorksheets={handleMigrateWorksheetDocuments}
-          onRefreshDocumentCategories={handleRefreshDocumentCategories}
+            onEditUser={openEditUser}
+            onMigrateWorksheets={handleMigrateWorksheetDocuments}
+            onRefreshDocumentCategories={handleRefreshDocumentCategories}
             onRefreshUsers={loadData}
-            onReplyTextChange={setReplyText}
-            onSelectChatRoom={handleSelectChatRoom}
             onSendAdminMessage={openAdminMessage}
-            onSendChatMessage={sendChatMessage}
-            onShowImportQuestions={() => openModal('importQuestions')}
             onShowSubmissions={handleOpenSubmissions}
-            onTogglePrivateStudent={togglePrivateStudent}
             onUpdateGrades={handleUpdateGrades}
             onViewStudentProfile={handleOpenStudentProfile}
             pdfStudentsLoading={pdfStudentsLoading}
             quizzes={quizzes}
-            replyText={replyText}
             sharedDocs={sharedDocs}
             studentUsers={studentUsers}
-            writings={writingDocuments}
           />
         </div>
       </div>
@@ -766,10 +696,7 @@ export default function AdminPage() {
           onEditUserSubmit={handleEditUserSubmit}
           onGenericSubmit={handleSubmit}
           onSendDocSubmit={handleSendDocSubmit}
-          onStudentSubmit={handleStudentSubmit}
-          privateStudents={privateStudents}
           selectedDoc={selectedDoc}
-          selectedStudent={selectedStudent}
           setAdminMsgImagePreview={setAdminMsgImagePreview}
           setAdminMsgImageUrl={setAdminMsgImageUrl}
           setAdminMsgText={setAdminMsgText}
@@ -777,7 +704,6 @@ export default function AdminPage() {
           setFormData={setFormData}
           setIsSubmitting={setIsSubmitting}
           setSelectedDoc={setSelectedDoc}
-          setSelectedStudent={setSelectedStudent}
           studentUsers={studentUsers}
           success={success}
         />

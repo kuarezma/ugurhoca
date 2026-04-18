@@ -6,16 +6,12 @@ import AdminAnnouncementsTab from "@/features/admin/components/tabs/AdminAnnounc
 import AdminAssignmentsTab from "@/features/admin/components/tabs/AdminAssignmentsTab";
 import AdminDocumentsTab from "@/features/admin/components/tabs/AdminDocumentsTab";
 import AdminGradeUpdateTab from "@/features/admin/components/tabs/AdminGradeUpdateTab";
-import AdminMessagesTab from "@/features/admin/components/tabs/AdminMessagesTab";
 import AdminQuizzesTab from "@/features/admin/components/tabs/AdminQuizzesTab";
 import AdminUsersTab from "@/features/admin/components/tabs/AdminUsersTab";
-import AdminWritingsTab from "@/features/admin/components/tabs/AdminWritingsTab";
 import type {
   AdminActiveTab,
   AdminAnnouncement,
   AdminAssignment,
-  AdminChatMessage,
-  AdminChatRoom,
   AdminDocument,
   AdminFormState,
   AdminQuiz,
@@ -24,12 +20,9 @@ import type {
 } from "@/features/admin/types";
 
 type AdminTabPanelsProps = {
-  activeChatRoom: AdminChatRoom | null;
   activeTab: AdminActiveTab;
   announcements: AdminAnnouncement[];
   assignments: AdminAssignment[];
-  chatMessages: AdminChatMessage[];
-  chatRooms: AdminChatRoom[];
   documents: AdminDocument[];
   formatDate: (dateString?: string | null) => string;
   isSubmitting: boolean;
@@ -37,15 +30,12 @@ type AdminTabPanelsProps = {
   onAddQuizQuestion: (quiz: AdminQuiz) => Promise<void> | void;
   onCreateAnnouncement: () => void;
   onCreateAssignment: () => void;
-  onCreateQuiz: () => void;
   onCreateSendDocument: () => void;
   onDeleteAnnouncement: (id: string) => void;
   onDeleteAssignment: (id: string) => void;
-  onDeleteChatRoom: (room: AdminChatRoom) => Promise<void> | void;
   onDeleteDocument: (id: string) => void;
   onDeleteQuiz: (id: string) => void;
   onDeleteSharedDocument: (id: string) => void;
-  onDeleteWriting: (id: string) => void;
   onDownloadStudentsPdf: () => Promise<void> | void;
   onEditAnnouncement: (
     announcement: AdminAnnouncement,
@@ -64,33 +54,20 @@ type AdminTabPanelsProps = {
   onMigrateWorksheets: () => Promise<void> | void;
   onRefreshDocumentCategories: () => Promise<void> | void;
   onRefreshUsers: () => Promise<void> | void;
-  onReplyTextChange: (value: string) => void;
-  onSelectChatRoom: (room: AdminChatRoom) => Promise<void> | void;
   onSendAdminMessage: (user: AdminUser) => void;
-  onSendChatMessage: (roomId: string, text: string) => Promise<void> | void;
-  onShowImportQuestions: () => void;
   onShowSubmissions: (assignment: AdminAssignment) => Promise<void> | void;
-  onTogglePrivateStudent: (
-    userId: string,
-    isCurrentlyPrivate: boolean,
-  ) => Promise<void> | void;
   onUpdateGrades: () => Promise<void> | void;
   onViewStudentProfile: (user: AdminUser) => Promise<void> | void;
   pdfStudentsLoading: boolean;
   quizzes: AdminQuiz[];
-  replyText: string;
   sharedDocs: AdminSharedDocument[];
   studentUsers: AdminUser[];
-  writings: AdminDocument[];
 };
 
 export default function AdminTabPanels({
-  activeChatRoom,
   activeTab,
   announcements,
   assignments,
-  chatMessages,
-  chatRooms,
   documents,
   formatDate,
   isSubmitting,
@@ -101,11 +78,9 @@ export default function AdminTabPanels({
   onCreateSendDocument,
   onDeleteAnnouncement,
   onDeleteAssignment,
-  onDeleteChatRoom,
   onDeleteDocument,
   onDeleteQuiz,
   onDeleteSharedDocument,
-  onDeleteWriting,
   onDownloadStudentsPdf,
   onEditAnnouncement,
   onEditAssignment,
@@ -116,20 +91,14 @@ export default function AdminTabPanels({
   onMigrateWorksheets,
   onRefreshDocumentCategories,
   onRefreshUsers,
-  onReplyTextChange,
-  onSelectChatRoom,
   onSendAdminMessage,
-  onSendChatMessage,
   onShowSubmissions,
-  onTogglePrivateStudent,
   onUpdateGrades,
   onViewStudentProfile,
   pdfStudentsLoading,
   quizzes,
-  replyText,
   sharedDocs,
   studentUsers,
-  writings,
 }: AdminTabPanelsProps) {
   return (
     <AnimatePresence mode="wait">
@@ -165,14 +134,6 @@ export default function AdminTabPanels({
         />
       )}
 
-      {activeTab === "writings" && (
-        <AdminWritingsTab
-          formatDate={formatDate}
-          onDelete={onDeleteWriting}
-          writings={writings}
-        />
-      )}
-
       {activeTab === "users" && (
         <AdminUsersTab
           formatDate={formatDate}
@@ -180,23 +141,9 @@ export default function AdminTabPanels({
           onEditUser={onEditUser}
           onRefresh={onRefreshUsers}
           onSendMessage={onSendAdminMessage}
-          onTogglePrivateStudent={onTogglePrivateStudent}
           onViewProfile={onViewStudentProfile}
           pdfStudentsLoading={pdfStudentsLoading}
           students={studentUsers}
-        />
-      )}
-
-      {activeTab === "messages" && (
-        <AdminMessagesTab
-          activeChatRoom={activeChatRoom}
-          chatMessages={chatMessages}
-          chatRooms={chatRooms}
-          onDeleteRoom={onDeleteChatRoom}
-          onReplyTextChange={onReplyTextChange}
-          onSelectRoom={onSelectChatRoom}
-          onSendMessage={onSendChatMessage}
-          replyText={replyText}
         />
       )}
 

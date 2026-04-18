@@ -79,9 +79,6 @@ export default function RegisterPage() {
       const userGrade =
         formData.grade === 'Mezun' ? 0 : Number.parseInt(formData.grade, 10);
       const gradeValue = Number.isNaN(userGrade) ? 0 : userGrade;
-      const isPrivate =
-        formData.password.toLowerCase() === 'ozelders' ||
-        formData.password.toLowerCase() === 'özelders';
 
       const { data: existingByEmail } = await supabase
         .from('profiles')
@@ -113,7 +110,6 @@ export default function RegisterPage() {
           data: {
             name: displayName,
             grade: gradeValue,
-            is_private_student: isPrivate,
           },
         },
       });
@@ -127,7 +123,6 @@ export default function RegisterPage() {
           name_normalized: nameNormalized,
           email: fakeEmail,
           grade: gradeValue,
-          is_private_student: isPrivate,
           created_at: new Date().toISOString(),
         });
         if (profileErr) throw profileErr;

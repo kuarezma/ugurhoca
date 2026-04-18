@@ -3,8 +3,6 @@ import type {
   Announcement,
   AppUser,
   Assignment,
-  ChatMessage,
-  ChatRoom,
   ContentDocument,
   GradeValue,
   Notification,
@@ -31,9 +29,7 @@ export type AdminActiveTab =
   | 'statistics'
   | 'announcements'
   | 'documents'
-  | 'writings'
   | 'users'
-  | 'messages'
   | 'gradeUpdate'
   | 'assignments'
   | 'quizzes';
@@ -45,7 +41,6 @@ export type AdminModalType =
   | 'writing'
   | 'assignment'
   | 'editUser'
-  | 'student'
   | 'sendDoc'
   | 'editDocument'
   | 'adminMessage'
@@ -63,8 +58,6 @@ export type AdminAssignment = Assignment;
 export type AdminQuiz = Quiz;
 export type AdminSubmission = Submission;
 export type AdminQuizQuestion = QuizQuestion;
-export type AdminChatRoom = ChatRoom;
-export type AdminChatMessage = ChatMessage;
 export type AdminStudentProfileData = {
   assignments: DashboardAssignment[];
   badges: DashboardBadge[];
@@ -79,10 +72,8 @@ export type AdminDashboardData = {
   allUsers: AdminUser[];
   announcements: AdminAnnouncement[];
   assignments: AdminAssignment[];
-  chatRooms: AdminChatRoom[];
   documents: AdminDocument[];
   notifications: AdminNotification[];
-  privateStudents: AdminUser[];
   quizzes: AdminQuiz[];
   sharedDocs: AdminSharedDocument[];
 };

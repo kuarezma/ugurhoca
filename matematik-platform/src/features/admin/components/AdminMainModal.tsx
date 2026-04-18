@@ -13,7 +13,6 @@ import AdminGenericContentForm from '@/features/admin/components/modal/AdminGene
 import AdminMessageForm from '@/features/admin/components/modal/AdminMessageForm';
 import AdminModalSuccessState from '@/features/admin/components/modal/AdminModalSuccessState';
 import AdminSendDocumentForm from '@/features/admin/components/modal/AdminSendDocumentForm';
-import AdminStudentForm from '@/features/admin/components/modal/AdminStudentForm';
 import {
   getModalTitle,
   type AdminFormUpdate,
@@ -43,10 +42,7 @@ type AdminMainModalProps = {
   onEditUserSubmit: AdminModalSubmitHandler;
   onGenericSubmit: AdminModalSubmitHandler;
   onSendDocSubmit: AdminModalSubmitHandler;
-  onStudentSubmit: AdminModalSubmitHandler;
-  privateStudents: AdminUser[];
   selectedDoc: Document | null;
-  selectedStudent: string;
   setAdminMsgImagePreview: Dispatch<SetStateAction<string | null>>;
   setAdminMsgImageUrl: Dispatch<SetStateAction<string>>;
   setAdminMsgText: Dispatch<SetStateAction<string>>;
@@ -54,7 +50,6 @@ type AdminMainModalProps = {
   setFormData: Dispatch<SetStateAction<AdminFormState>>;
   setIsSubmitting: Dispatch<SetStateAction<boolean>>;
   setSelectedDoc: Dispatch<SetStateAction<Document | null>>;
-  setSelectedStudent: Dispatch<SetStateAction<string>>;
   studentUsers: AdminUser[];
   success: boolean;
 };
@@ -76,10 +71,7 @@ export default function AdminMainModal({
   onEditUserSubmit,
   onGenericSubmit,
   onSendDocSubmit,
-  onStudentSubmit,
-  privateStudents,
   selectedDoc,
-  selectedStudent,
   setAdminMsgImagePreview,
   setAdminMsgImageUrl,
   setAdminMsgText,
@@ -87,7 +79,6 @@ export default function AdminMainModal({
   setFormData,
   setIsSubmitting,
   setSelectedDoc,
-  setSelectedStudent,
   studentUsers,
   success,
 }: AdminMainModalProps) {
@@ -245,15 +236,6 @@ export default function AdminMainModal({
             updateFormData={updateFormData}
           />
         );
-      case 'student':
-        return (
-          <AdminStudentForm
-            formData={formData}
-            isSubmitting={isSubmitting}
-            onSubmit={onStudentSubmit}
-            updateFormData={updateFormData}
-          />
-        );
       default:
         return (
           <AdminGenericContentForm
@@ -263,10 +245,7 @@ export default function AdminMainModal({
             onDocumentUpload={handleDocumentUpload}
             onQuestionImportUpload={handleQuestionImportUpload}
             onSubmit={onGenericSubmit}
-            onSelectedStudentChange={setSelectedStudent}
             onToggleDocumentGrade={toggleDocumentGrade}
-            privateStudents={privateStudents}
-            selectedStudent={selectedStudent}
             updateFormData={updateFormData}
           />
         );

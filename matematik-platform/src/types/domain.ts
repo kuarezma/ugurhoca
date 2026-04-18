@@ -10,7 +10,6 @@ export interface AppUser {
   avatar_id?: string | null;
   created_at?: string | null;
   current_streak?: number | null;
-  is_private_student?: boolean | null;
   name_normalized?: string | null;
   [key: string]: unknown;
 }

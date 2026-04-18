@@ -148,7 +148,7 @@ export default function AdminAssignmentsTab({
                       <p className="text-[10px] text-slate-500">
                         {assignment.grade
                           ? `${assignment.grade}. Sınıf`
-                          : 'Özel'}{' '}
+                          : 'Genel'}{' '}
                         • Son:{' '}
                         {assignment.due_date
                           ? new Date(assignment.due_date).toLocaleDateString(

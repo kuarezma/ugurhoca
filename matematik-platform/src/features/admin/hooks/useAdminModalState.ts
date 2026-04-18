@@ -17,7 +17,6 @@ type OpenableAdminModalType =
   | "document"
   | "writing"
   | "assignment"
-  | "student"
   | "sendDoc"
   | "quiz"
   | "editQuiz"
@@ -29,7 +28,6 @@ export function useAdminModalState() {
   const [activeAssignment, setActiveAssignment] =
     useState<AdminAssignment | null>(null);
   const [selectedQuiz, setSelectedQuiz] = useState<AdminQuiz | null>(null);
-  const [selectedStudent, setSelectedStudent] = useState<string>("");
   const [showModal, setShowModal] = useState(false);
   const [modalType, setModalType] = useState<AdminModalType>("announcement");
   const [formData, setFormData] = useState<AdminFormState>({});
@@ -51,13 +49,9 @@ export function useAdminModalState() {
 
   const openModal = (
     type: OpenableAdminModalType,
-    studentId?: string,
     doc?: AdminDocument,
   ) => {
     setModalType(type);
-    if (studentId) {
-      setSelectedStudent(studentId);
-    }
     if (doc) {
       setSelectedDoc(doc);
     }
@@ -123,7 +117,6 @@ export function useAdminModalState() {
     setShowModal(false);
     setSuccess(false);
     setFormData({});
-    setSelectedStudent("");
     setSelectedDoc(null);
     setEditingAnnouncement(null);
     setEditingUser(null);
@@ -160,7 +153,6 @@ export function useAdminModalState() {
     resetModalState,
     selectedDoc,
     selectedQuiz,
-    selectedStudent,
     setAdminMsgImagePreview,
     setAdminMsgImageUrl,
     setAdminMsgText,
@@ -170,7 +162,6 @@ export function useAdminModalState() {
     setIsSubmitting,
     setSelectedDoc,
     setSelectedQuiz,
-    setSelectedStudent,
     setSuccess,
     showModal,
     showSubmissionsModal,

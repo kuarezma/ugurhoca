@@ -11,7 +11,6 @@ import AdminQuizSettingsFields from "@/features/admin/components/modal/generic/A
 import type {
   AdminFormState,
   AdminModalType,
-  AdminUser,
 } from "@/features/admin/types";
 import {
   DOCUMENT_CATEGORY_OPTIONS,
@@ -30,9 +29,6 @@ type AdminGenericContentFormProps = {
   ) => Promise<void>;
   onSubmit: AdminModalSubmitHandler;
   onToggleDocumentGrade: (grade: number | "Mezun", checked: boolean) => void;
-  onSelectedStudentChange: (studentId: string) => void;
-  privateStudents: AdminUser[];
-  selectedStudent: string;
   updateFormData: AdminFormUpdate;
 };
 
@@ -43,10 +39,7 @@ export default function AdminGenericContentForm({
   onDocumentUpload,
   onQuestionImportUpload,
   onSubmit,
-  onSelectedStudentChange,
   onToggleDocumentGrade,
-  privateStudents,
-  selectedStudent,
   updateFormData,
 }: AdminGenericContentFormProps) {
   const isWorksheetDocument =
@@ -57,9 +50,6 @@ export default function AdminGenericContentForm({
       {modalType === "assignment" && (
         <AdminAssignmentFields
           formData={formData}
-          onSelectedStudentChange={onSelectedStudentChange}
-          privateStudents={privateStudents}
-          selectedStudent={selectedStudent}
           updateFormData={updateFormData}
         />
       )}

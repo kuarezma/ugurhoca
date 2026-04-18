@@ -8,7 +8,6 @@ import {
   createAdminAnnouncement,
   createAdminAssignment,
   createAdminDocument,
-  createAdminPrivateStudent,
   createAdminQuiz,
   createAdminQuizQuestion,
   createAdminSharedDocument,
@@ -49,12 +48,10 @@ type UseAdminModalSubmitHandlersOptions = {
   resetModalState: () => void;
   selectedDoc: AdminDocument | null;
   selectedQuiz: AdminQuiz | null;
-  selectedStudent: string;
   setAnnouncements: Dispatch<SetStateAction<AdminAnnouncement[]>>;
   setAssignments: Dispatch<SetStateAction<AdminAssignment[]>>;
   setDocuments: Dispatch<SetStateAction<AdminDocument[]>>;
   setIsSubmitting: Dispatch<SetStateAction<boolean>>;
-  setPrivateStudents: Dispatch<SetStateAction<AdminUser[]>>;
   setQuizQuestions: Dispatch<SetStateAction<AdminQuizQuestion[]>>;
   setQuizzes: Dispatch<SetStateAction<AdminQuiz[]>>;
   setSharedDocs: Dispatch<SetStateAction<AdminSharedDocument[]>>;
@@ -83,12 +80,10 @@ export function useAdminModalSubmitHandlers({
   resetModalState,
   selectedDoc,
   selectedQuiz,
-  selectedStudent,
   setAnnouncements,
   setAssignments,
   setDocuments,
   setIsSubmitting,
-  setPrivateStudents,
   setQuizQuestions,
   setQuizzes,
   setSharedDocs,
@@ -124,7 +119,7 @@ export function useAdminModalSubmitHandlers({
         description: formData.description,
         due_date: formData.due_date,
         grade: formData.grade,
-        student_id: selectedStudent || null,
+        student_id: null,
         title: formData.title,
       });
 
@@ -462,32 +457,11 @@ export function useAdminModalSubmitHandlers({
     setIsSubmitting(false);
   };
 
-  const handleStudentSubmit = async (event: FormEvent) => {
-    event.preventDefault();
-    setIsSubmitting(true);
-
-    const { data, error } = await createAdminPrivateStudent({
-      email: formData.email,
-      grade: formData.grade,
-      name: formData.name,
-    });
-
-    if (!error && data) {
-      setPrivateStudents((current) => [data, ...current]);
-      setIsSubmitting(false);
-      scheduleModalSuccessReset();
-      return;
-    }
-
-    setIsSubmitting(false);
-  };
-
   return {
     handleAdminMessageSubmit,
     handleEditDocumentSubmit,
     handleEditUserSubmit,
     handleSendDocSubmit,
-    handleStudentSubmit,
     handleSubmit,
   };
 }

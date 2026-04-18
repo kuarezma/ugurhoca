@@ -6,7 +6,6 @@ import {
   Eye,
   RefreshCw,
   Send,
-  Star,
   Users,
 } from 'lucide-react';
 import type { AdminUser } from '@/features/admin/types';
@@ -18,10 +17,6 @@ type AdminUsersTabProps = {
   onRefresh: () => Promise<void> | void;
   onSendMessage: (user: AdminUser) => void;
   onViewProfile: (user: AdminUser) => Promise<void> | void;
-  onTogglePrivateStudent: (
-    userId: string,
-    isCurrentlyPrivate: boolean,
-  ) => Promise<void> | void;
   pdfStudentsLoading: boolean;
   students: AdminUser[];
 };
@@ -33,7 +28,6 @@ export default function AdminUsersTab({
   onRefresh,
   onSendMessage,
   onViewProfile,
-  onTogglePrivateStudent,
   pdfStudentsLoading,
   students,
 }: AdminUsersTabProps) {
@@ -79,13 +73,8 @@ export default function AdminUsersTab({
             >
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 bg-gradient-to-br from-green-500 to-emerald-500 rounded-full flex items-center justify-center text-xl font-bold text-white relative">
+                  <div className="w-12 h-12 bg-gradient-to-br from-green-500 to-emerald-500 rounded-full flex items-center justify-center text-xl font-bold text-white">
                     {user.name?.[0] || '?'}
-                    {user.is_private_student && (
-                      <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-gradient-to-r from-amber-400 to-orange-500 rounded-full flex items-center justify-center border-2 border-[var(--bg-elevated)] shadow-sm">
-                        <Star className="w-3 h-3 text-white fill-white" />
-                      </div>
-                    )}
                   </div>
                   <div>
                     <h3 className="text-lg font-bold text-white">
@@ -101,30 +90,6 @@ export default function AdminUsersTab({
                   </div>
                 </div>
                 <div className="flex items-center gap-2 flex-wrap justify-end">
-                  <button
-                    onClick={() =>
-                      onTogglePrivateStudent(
-                        user.id,
-                        user.is_private_student || false,
-                      )
-                    }
-                    className={`px-3 py-2 sm:px-4 sm:py-2 text-xs sm:text-sm rounded-lg transition-all font-semibold flex items-center gap-2 ${
-                      user.is_private_student
-                        ? 'bg-amber-500/10 text-amber-500 hover:bg-amber-500/20 border border-amber-500/20'
-                        : 'bg-slate-800 text-slate-300 hover:bg-slate-700 border border-slate-700'
-                    }`}
-                  >
-                    <Star
-                      className={`w-4 h-4 ${
-                        user.is_private_student ? 'fill-amber-500' : ''
-                      }`}
-                    />
-                    <span className="hidden sm:inline">
-                      {user.is_private_student
-                        ? 'Özel Dersten Çıkar'
-                        : 'Özel Derse Ekle'}
-                    </span>
-                  </button>
                   <button
                     onClick={() => onViewProfile(user)}
                     className="px-4 py-2 bg-gradient-to-r from-cyan-500/20 to-blue-500/20 text-cyan-300 rounded-lg hover:from-cyan-500/40 hover:to-blue-500/40 transition-all font-semibold flex items-center gap-2"

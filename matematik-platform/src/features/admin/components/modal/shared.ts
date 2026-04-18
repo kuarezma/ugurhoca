@@ -37,8 +37,6 @@ export const getModalTitle = (modalType: AdminModalType) => {
       return "Belge Düzenle";
     case "assignment":
       return "Yeni Ödev";
-    case "student":
-      return "Yeni Öğrenci";
     case "editUser":
       return "Kullanıcı Düzenle";
     case "sendDoc":
