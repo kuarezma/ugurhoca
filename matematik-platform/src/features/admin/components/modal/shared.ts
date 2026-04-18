@@ -51,8 +51,6 @@ export const getModalTitle = (modalType: AdminModalType) => {
       return "Soru Ekle";
     case "importQuestions":
       return "Toplu Soru İçe Aktar";
-    case "writing":
-      return "Yeni Yazı";
     default:
       return "Yeni İçerik";
   }

@@ -15,7 +15,6 @@ type OpenableAdminModalType =
   | "announcement"
   | "editAnnouncement"
   | "document"
-  | "writing"
   | "assignment"
   | "sendDoc"
   | "quiz"

@@ -185,7 +185,7 @@ export function useAdminModalSubmitHandlers({
       }
 
       await loadData();
-    } else if (modalType === "document" || modalType === "writing") {
+    } else if (modalType === "document") {
       const documentItem = {
         answer_key_text: formData.answer_key_text || null,
         description: formData.description,
@@ -195,7 +195,7 @@ export function useAdminModalSubmitHandlers({
         learning_outcome: formData.learning_outcome || null,
         solution_url: formData.solution_url || null,
         title: formData.title,
-        type: modalType === "document" ? formData.type : modalType,
+        type: formData.type,
         video_url: formData.video_url,
         worksheet_order: formData.worksheet_order || null,
       };

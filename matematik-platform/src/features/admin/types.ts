@@ -38,7 +38,6 @@ export type AdminModalType =
   | 'announcement'
   | 'editAnnouncement'
   | 'document'
-  | 'writing'
   | 'assignment'
   | 'editUser'
   | 'sendDoc'
