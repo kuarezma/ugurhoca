@@ -3,6 +3,7 @@ import type { ChangeEvent, FormEvent } from 'react';
 import { Check, Upload } from 'lucide-react';
 import { CONTENT_TYPE_OPTIONS } from '@/features/content/constants';
 import type { ContentFormState } from '@/features/content/types';
+import { WORKSHEET_OUTCOME_CATALOG } from '@/features/content/worksheet-catalog';
 import {
   isWorksheetType,
   WORKSHEET_GRADE_OPTIONS,
@@ -55,6 +56,11 @@ export default function ContentDocumentForm({
   submittingLabel,
 }: ContentDocumentFormProps) {
   const isWorksheet = isWorksheetType(formData.type);
+  const selectedWorksheetGrade =
+    typeof formData.grade?.[0] === 'number' ? formData.grade[0] : null;
+  const worksheetOutcomeOptions = selectedWorksheetGrade
+    ? WORKSHEET_OUTCOME_CATALOG[selectedWorksheetGrade] || []
+    : [];
 
   const updateGrades = (grade: number | 'Mezun', checked: boolean) => {
     const nextGrades = formData.grade || [];
@@ -134,6 +140,7 @@ export default function ContentDocumentForm({
                   grade: event.target.value
                     ? [event.target.value === 'Mezun' ? 'Mezun' : Number(event.target.value)]
                     : [],
+                  learning_outcome: '',
                 })
               }
               className={`w-full bg-slate-800/50 border border-slate-700 rounded-xl px-4 py-3 text-white transition-colors ${FIELD_FOCUS_CLASS[accent]} focus:outline-none`}
@@ -149,16 +156,26 @@ export default function ContentDocumentForm({
 
           <div>
             <label className="block text-slate-300 mb-2 text-sm">Kazanım</label>
-            <input
-              type="text"
+            <select
               required
               value={formData.learning_outcome || ''}
               onChange={(event) =>
                 onChange({ learning_outcome: event.target.value })
               }
               className={`w-full bg-slate-800/50 border border-slate-700 rounded-xl px-4 py-3 text-white transition-colors ${FIELD_FOCUS_CLASS[accent]} focus:outline-none`}
-              placeholder="Örn. Doğal sayılarla dört işlem"
-            />
+              disabled={!selectedWorksheetGrade || worksheetOutcomeOptions.length === 0}
+            >
+              <option value="">
+                {!selectedWorksheetGrade
+                  ? 'Önce sınıf düzeyi seçin'
+                  : 'Kazanım seçin'}
+              </option>
+              {worksheetOutcomeOptions.map((outcome) => (
+                <option key={outcome.code} value={outcome.full}>
+                  {outcome.code} {outcome.label}
+                </option>
+              ))}
+            </select>
           </div>
         </>
       )}
