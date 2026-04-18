@@ -1,40 +1,28 @@
 'use client';
 
-import {
-  startTransition,
-  useEffect,
-  useState,
-  type FormEvent,
-} from 'react';
+import { startTransition, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { useToast } from '@/components/Toast';
 import {
   getCurrentUserProfile,
   redirectToHome,
-  requireClientSession,
   signOutClient,
 } from '@/lib/auth-client';
-import { getErrorMessage } from '@/lib/error-utils';
 import type {
   Announcement,
   AppUser,
   ContentDocument,
   SharedDocumentAssignment,
-  SupportAttachment,
 } from '@/types';
 import type { HomeInitialFeed } from '@/features/home/home-initial-feed';
 import {
   dismissHomeAssignment,
   fetchHomeFeed,
   fetchUserAssignments,
-  sendSupportMessage,
-  uploadSupportFiles,
 } from '@/features/home/queries';
 
 export const useHomePageData = (initialFeed?: HomeInitialFeed | null) => {
   const isFeedSeeded = Boolean(initialFeed);
   const router = useRouter();
-  const { showToast } = useToast();
 
   const [user, setUser] = useState<AppUser | null>(null);
   const [documents, setDocuments] = useState<ContentDocument[]>(
@@ -51,12 +39,6 @@ export const useHomePageData = (initialFeed?: HomeInitialFeed | null) => {
   );
   const [selectedAnnouncement, setSelectedAnnouncement] =
     useState<Announcement | null>(null);
-  const [supportMessage, setSupportMessage] = useState('');
-  const [supportAttachments, setSupportAttachments] = useState<
-    SupportAttachment[]
-  >([]);
-  const [supportSending, setSupportSending] = useState(false);
-  const [supportSent, setSupportSent] = useState(false);
 
   useEffect(() => {
     let isDisposed = false;
@@ -134,79 +116,6 @@ export const useHomePageData = (initialFeed?: HomeInitialFeed | null) => {
     (assignment) => !dismissedAssignments.has(assignment.id),
   );
 
-  const uploadSupportAttachments = async (files: FileList | null) => {
-    if (!files?.length) {
-      return;
-    }
-
-    const uploads = await uploadSupportFiles(files);
-    setSupportAttachments((currentAttachments) => [
-      ...currentAttachments,
-      ...uploads,
-    ]);
-  };
-
-  const removeSupportAttachment = (index: number) => {
-    setSupportAttachments((currentAttachments) =>
-      currentAttachments.filter(
-        (_, attachmentIndex) => attachmentIndex !== index,
-      ),
-    );
-  };
-
-  const handleSupportSubmit = async (event: FormEvent) => {
-    event.preventDefault();
-
-    if (!user || user.isAdmin) {
-      return;
-    }
-
-    if (!supportMessage.trim() && supportAttachments.length === 0) {
-      return;
-    }
-
-    if (!user.id) {
-      showToast('warning', 'Oturum bilgisi bulunamadı. Lütfen tekrar giriş yap.');
-      return;
-    }
-
-    setSupportSending(true);
-
-    try {
-      const session = await requireClientSession({ redirectToLogin: false });
-
-      if (!session?.user?.id) {
-        showToast('warning', 'Oturum süresi dolmuş. Lütfen tekrar giriş yap.');
-        setSupportSending(false);
-        return;
-      }
-
-      await sendSupportMessage(
-        {
-          attachments: supportAttachments,
-          sender_email: user.email || session.user.email || '',
-          sender_id: session.user.id,
-          sender_name: user.name || 'Öğrenci',
-          text: supportMessage.trim(),
-        },
-        session.access_token,
-      );
-
-      setSupportMessage('');
-      setSupportAttachments([]);
-      setSupportSent(true);
-      setTimeout(() => setSupportSent(false), 3000);
-    } catch (error) {
-      console.error('Support message error:', error);
-      showToast(
-        'error',
-        getErrorMessage(error, 'Mesaj gönderilemedi. Lütfen tekrar dene.'),
-      );
-    } finally {
-      setSupportSending(false);
-    }
-  };
-
   const handleDismissAssignment = async (
     assignment: SharedDocumentAssignment,
   ) => {
@@ -243,16 +152,8 @@ export const useHomePageData = (initialFeed?: HomeInitialFeed | null) => {
     handleDismissAllAssignments,
     handleDismissAssignment,
     handleLogout,
-    handleSupportSubmit,
-    removeSupportAttachment,
     selectedAnnouncement,
     setSelectedAnnouncement,
-    setSupportMessage,
-    supportAttachments,
-    supportMessage,
-    supportSending,
-    supportSent,
-    uploadSupportAttachments,
     user,
     visibleAssignments,
   };

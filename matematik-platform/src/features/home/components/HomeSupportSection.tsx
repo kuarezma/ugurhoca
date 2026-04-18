@@ -1,36 +1,108 @@
 'use client';
 
-import { type FormEvent } from 'react';
+import { useState, type FormEvent } from 'react';
+import { useToast } from '@/components/Toast';
+import { requireClientSession } from '@/lib/auth-client';
+import { getErrorMessage } from '@/lib/error-utils';
 import type { AppUser, SupportAttachment } from '@/types';
 import { HomeSupportForm } from '@/features/home/components/support/HomeSupportForm';
 import { HomeSupportHeader } from '@/features/home/components/support/HomeSupportHeader';
 import { HomeSupportLockedState } from '@/features/home/components/support/HomeSupportLockedState';
+import {
+  sendSupportMessage,
+  uploadSupportFiles,
+} from '@/features/home/queries';
 
 type HomeSupportSectionProps = {
   isLight: boolean;
-  onRemoveSupportAttachment: (index: number) => void;
-  onSubmit: (event: FormEvent) => void;
-  onSupportMessageChange: (message: string) => void;
-  onUploadSupportAttachments: (files: FileList | null) => Promise<void>;
-  supportAttachments: SupportAttachment[];
-  supportMessage: string;
-  supportSending: boolean;
-  supportSent: boolean;
   user: AppUser | null;
 };
 
 export function HomeSupportSection({
   isLight,
-  onRemoveSupportAttachment,
-  onSubmit,
-  onSupportMessageChange,
-  onUploadSupportAttachments,
-  supportAttachments,
-  supportMessage,
-  supportSending,
-  supportSent,
   user,
 }: HomeSupportSectionProps) {
+  const { showToast } = useToast();
+  const [supportMessage, setSupportMessage] = useState('');
+  const [supportAttachments, setSupportAttachments] = useState<
+    SupportAttachment[]
+  >([]);
+  const [supportSending, setSupportSending] = useState(false);
+  const [supportSent, setSupportSent] = useState(false);
+
+  const uploadSupportAttachments = async (files: FileList | null) => {
+    if (!files?.length) {
+      return;
+    }
+
+    const uploads = await uploadSupportFiles(files);
+    setSupportAttachments((currentAttachments) => [
+      ...currentAttachments,
+      ...uploads,
+    ]);
+  };
+
+  const removeSupportAttachment = (index: number) => {
+    setSupportAttachments((currentAttachments) =>
+      currentAttachments.filter(
+        (_, attachmentIndex) => attachmentIndex !== index,
+      ),
+    );
+  };
+
+  const handleSupportSubmit = async (event: FormEvent) => {
+    event.preventDefault();
+
+    if (!user || user.isAdmin) {
+      return;
+    }
+
+    if (!supportMessage.trim() && supportAttachments.length === 0) {
+      return;
+    }
+
+    if (!user.id) {
+      showToast('warning', 'Oturum bilgisi bulunamadı. Lütfen tekrar giriş yap.');
+      return;
+    }
+
+    setSupportSending(true);
+
+    try {
+      const session = await requireClientSession({ redirectToLogin: false });
+
+      if (!session?.user?.id) {
+        showToast('warning', 'Oturum süresi dolmuş. Lütfen tekrar giriş yap.');
+        setSupportSending(false);
+        return;
+      }
+
+      await sendSupportMessage(
+        {
+          attachments: supportAttachments,
+          sender_email: user.email || session.user.email || '',
+          sender_id: session.user.id,
+          sender_name: user.name || 'Öğrenci',
+          text: supportMessage.trim(),
+        },
+        session.access_token,
+      );
+
+      setSupportMessage('');
+      setSupportAttachments([]);
+      setSupportSent(true);
+      window.setTimeout(() => setSupportSent(false), 3000);
+    } catch (error) {
+      console.error('Support message error:', error);
+      showToast(
+        'error',
+        getErrorMessage(error, 'Mesaj gönderilemedi. Lütfen tekrar dene.'),
+      );
+    } finally {
+      setSupportSending(false);
+    }
+  };
+
   return (
     <section className="defer-section px-4 py-8 sm:py-12">
       <div className="max-w-6xl mx-auto">
@@ -48,10 +120,10 @@ export function HomeSupportSection({
             {user && !user.isAdmin ? (
               <HomeSupportForm
                 isLight={isLight}
-                onRemoveSupportAttachment={onRemoveSupportAttachment}
-                onSubmit={onSubmit}
-                onSupportMessageChange={onSupportMessageChange}
-                onUploadSupportAttachments={onUploadSupportAttachments}
+                onRemoveSupportAttachment={removeSupportAttachment}
+                onSubmit={handleSupportSubmit}
+                onSupportMessageChange={setSupportMessage}
+                onUploadSupportAttachments={uploadSupportAttachments}
                 supportAttachments={supportAttachments}
                 supportMessage={supportMessage}
                 supportSending={supportSending}

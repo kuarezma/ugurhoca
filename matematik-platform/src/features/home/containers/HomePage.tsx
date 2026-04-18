@@ -50,16 +50,8 @@ export default function HomePage({ initialFeed }: HomePageProps) {
     handleDismissAllAssignments,
     handleDismissAssignment,
     handleLogout,
-    handleSupportSubmit,
-    removeSupportAttachment,
     selectedAnnouncement,
     setSelectedAnnouncement,
-    setSupportMessage,
-    supportAttachments,
-    supportMessage,
-    supportSending,
-    supportSent,
-    uploadSupportAttachments,
     user,
     visibleAssignments,
   } = useHomePageData(initialFeed);
@@ -90,18 +82,7 @@ export default function HomePage({ initialFeed }: HomePageProps) {
         />
         <HomeRecentDocumentsSection documents={documents} isLight={isLight} />
         {!user && <HomeGuestCtaSection isLight={isLight} />}
-        <HomeSupportSection
-          isLight={isLight}
-          onRemoveSupportAttachment={removeSupportAttachment}
-          onSubmit={handleSupportSubmit}
-          onSupportMessageChange={setSupportMessage}
-          onUploadSupportAttachments={uploadSupportAttachments}
-          supportAttachments={supportAttachments}
-          supportMessage={supportMessage}
-          supportSending={supportSending}
-          supportSent={supportSent}
-          user={user}
-        />
+        <HomeSupportSection isLight={isLight} user={user} />
         <HomeFooter isLight={isLight} />
       </div>
       <HomeAnnouncementModal
