@@ -1,5 +1,6 @@
 import 'server-only';
 
+import { hasSupabasePublicEnv } from '@/lib/env.server';
 import { createServerSupabaseClient } from '@/lib/supabase/server';
 import { resolveYandexPublicDownloadUrl } from '@/lib/yandex-public-download';
 import type { HomeInitialFeed } from '@/features/home/home-initial-feed';
@@ -67,6 +68,15 @@ async function fetchAnnouncementsServer(
 }
 
 export async function loadInitialHomeFeed(): Promise<HomeInitialFeed> {
+  // CI / önizleme derlemesinde Supabase env yoksa statik üretim yine de tamamlanır.
+  if (!hasSupabasePublicEnv()) {
+    return {
+      announcements: [],
+      documents: [],
+      writings: [],
+    };
+  }
+
   const supabase = createServerSupabaseClient();
 
   const [documents, announcements] = await Promise.all([

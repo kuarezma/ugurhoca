@@ -1,7 +1,6 @@
 'use client';
 
 import Image from 'next/image';
-import { motion } from 'framer-motion';
 import { Bell } from 'lucide-react';
 import type { Announcement } from '@/types';
 import { isNewContent, proxiedImageSrc } from '@/features/home/queries';

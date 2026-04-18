@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Poppins, Space_Grotesk } from "next/font/google";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import InstallPrompt from "@/components/InstallPrompt";
 import { Providers } from "@/components/Providers";
 import { THEME_STORAGE_KEY } from "@/components/theme-constants";
@@ -155,6 +156,7 @@ export default function RootLayout({
           </div>
         </Providers>
         <InstallPrompt />
+        <SpeedInsights />
       </body>
     </html>
   );

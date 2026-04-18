@@ -1,16 +1,17 @@
 import type { Metadata } from 'next';
-import type { ReactNode } from 'react';
+import { createPageMetadata } from '@/lib/site-metadata';
 
-export const metadata: Metadata = {
-  title: 'Kayıt',
-  description: 'Yeni öğrenci hesabı oluştur ve matematik içeriklerine eriş.',
-  robots: { index: false, follow: true },
-};
+export const metadata: Metadata = createPageMetadata({
+  title: 'Kayıt ol',
+  description:
+    'Uğur Hoca Matematik platformuna kayıt olun; matematik içerikleri ve ödevleri kullanmaya başlayın.',
+  path: '/kayit',
+});
 
 export default function KayitLayout({
   children,
 }: {
-  children: ReactNode;
+  children: React.ReactNode;
 }) {
   return children;
 }

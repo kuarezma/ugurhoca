@@ -1,10 +1,14 @@
 import type { Metadata } from 'next';
 import AssignmentsPage from '@/features/assignments/containers/AssignmentsPage';
 import { loadInitialAssignmentsPageData } from '@/features/assignments/server';
+import { createPageMetadata } from '@/lib/site-metadata';
 
 export const metadata: Metadata = {
-  title: 'Ödevler',
-  description: 'Atanan ödevleri görüntüle, teslim et ve geri bildirim al.',
+  ...createPageMetadata({
+    title: 'Ödevler',
+    description: 'Atanan ödevleri görüntüle, teslim et ve geri bildirim al.',
+    path: '/odevler',
+  }),
   robots: { index: false, follow: false },
 };
 

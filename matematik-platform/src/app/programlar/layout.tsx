@@ -1,16 +1,16 @@
 import type { Metadata } from 'next';
-import type { ReactNode } from 'react';
+import { createPageMetadata } from '@/lib/site-metadata';
 
-export const metadata: Metadata = {
-  title: 'Programlar',
-  description:
-    'LGS ve YKS matematik çalışma programları, hedefler ve planlama.',
-};
+export const metadata: Metadata = createPageMetadata({
+  title: 'Programlar ve araçlar',
+  description: 'LGS ve YKS için programlar, puan hesaplama ve hedef araçları.',
+  path: '/programlar',
+});
 
 export default function ProgramlarLayout({
   children,
 }: {
-  children: ReactNode;
+  children: React.ReactNode;
 }) {
   return children;
 }

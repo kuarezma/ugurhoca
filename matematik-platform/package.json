@@ -11,6 +11,7 @@
     "format:check": "prettier --check .",
     "test": "vitest run --coverage",
     "start": "next start",
+    "setup:env": "bash scripts/bootstrap-env.sh",
     "analyze": "cross-env ANALYZE=true ANALYZE_OPEN=false next build --webpack",
     "analyze:compare": "node scripts/bundle-analyze-compare.mjs",
     "fetch:lgs": "python3 scripts/fetch-lgs-targets.py",
@@ -24,6 +25,7 @@
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.99.3",
+    "@vercel/speed-insights": "^2.0.0",
     "canvas-confetti": "^1.9.4",
     "clsx": "^2.1.1",
     "dotenv": "^17.3.1",

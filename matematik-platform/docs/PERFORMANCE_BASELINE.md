@@ -4,13 +4,13 @@ Bu dosya plandaki **ölçüm** adımı için kullanılır. Üretim veya `next st
 
 ## Kritik sayfalar (öncelik sırası)
 
-| Öncelik | Rota | Not |
-|--------|------|-----|
-| 1 | `/` | Ana sayfa, ilk izlenim |
-| 2 | `/testler` | Yoğun etkileşim |
-| 3 | `/icerikler` | Liste + görseller |
-| 4 | `/giris` | Dönüşüm |
-| 5 | `/profil` | Oturum açık kullanıcı |
+| Öncelik | Rota         | Not                    |
+| ------- | ------------ | ---------------------- |
+| 1       | `/`          | Ana sayfa, ilk izlenim |
+| 2       | `/testler`   | Yoğun etkileşim        |
+| 3       | `/icerikler` | Liste + görseller      |
+| 4       | `/giris`     | Dönüşüm                |
+| 5       | `/profil`    | Oturum açık kullanıcı  |
 
 ## Nasıl ölçülür?
 
@@ -20,9 +20,9 @@ Bu dosya plandaki **ölçüm** adımı için kullanılır. Üretim veya `next st
 
 ## Sonuç tablosu (elle doldurun)
 
-| Sayfa | Tarih | LCP | INP | CLS | Lighthouse perf |
-|-------|-------|-----|-----|-----|-----------------|
-| / | | | | | |
-| /testler | | | | | |
+| Sayfa    | Tarih | LCP | INP | CLS | Lighthouse perf |
+| -------- | ----- | --- | --- | --- | --------------- |
+| /        |       |     |     |     |                 |
+| /testler |       |     |     |     |                 |
 
 **Hedef (kılavuz)**: LCP &lt; 2,5 s (iyi), INP &lt; 200 ms (iyi), CLS &lt; 0,1 (iyi) — [Web Vitals](https://web.dev/vitals/).

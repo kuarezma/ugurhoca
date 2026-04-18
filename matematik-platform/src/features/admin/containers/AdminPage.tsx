@@ -118,11 +118,11 @@ export default function AdminPage() {
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [activeStudentProfileId, setActiveStudentProfileId] = useState<string | null>(null);
-  const [activeStudentProfileData, setActiveStudentProfileData] =
+  const [_activeStudentProfileData, setActiveStudentProfileData] =
     useState<AdminStudentProfileData | null>(null);
-  const [activeStudentProfileError, setActiveStudentProfileError] =
+  const [_activeStudentProfileError, setActiveStudentProfileError] =
     useState<string | null>(null);
-  const [activeStudentProfileLoading, setActiveStudentProfileLoading] =
+  const [_activeStudentProfileLoading, setActiveStudentProfileLoading] =
     useState(false);
   const [pdfStudentsLoading, setPdfStudentsLoading] = useState(false);
   const router = useRouter();
@@ -452,13 +452,6 @@ export default function AdminPage() {
     if (studentProfile.id === activeStudentProfileId) {
       await loadStudentProfile(studentProfile.id);
     }
-  };
-
-  const handleCloseStudentProfile = () => {
-    setActiveStudentProfileId(null);
-    setActiveStudentProfileData(null);
-    setActiveStudentProfileError(null);
-    setActiveStudentProfileLoading(false);
   };
 
   const handleOpenSubmissions = async (assignment: Assignment) => {

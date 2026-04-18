@@ -316,15 +316,7 @@ export default function IlerlemePage({ initialData }: ProgressPageProps) {
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              onClick={async () => {
-                setPdfLoading(true);
-                try {
-                  const { downloadProgressPDF } = await import('@/lib/pdf-export');
-                  await downloadProgressPDF();
-                } finally {
-                  setPdfLoading(false);
-                }
-              }}
+              onClick={() => void handleDownloadProgressPdf()}
               disabled={pdfLoading}
               title="Gelişim Raporunu PDF İndir"
               className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full border font-semibold text-sm transition-all disabled:opacity-50 ${

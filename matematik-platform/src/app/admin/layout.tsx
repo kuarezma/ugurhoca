@@ -1,15 +1,17 @@
 import type { Metadata } from 'next';
-import type { ReactNode } from 'react';
+import { createPageMetadata } from '@/lib/site-metadata';
 
-export const metadata: Metadata = {
-  title: 'Yönetim',
-  robots: { index: false, follow: false },
-};
+export const metadata: Metadata = createPageMetadata({
+  title: 'Yönetim paneli',
+  description: 'Yönetici alanı — arama motorlarında dizine eklenmez.',
+  path: '/admin',
+  noIndex: true,
+});
 
 export default function AdminLayout({
   children,
 }: {
-  children: ReactNode;
+  children: React.ReactNode;
 }) {
   return children;
 }

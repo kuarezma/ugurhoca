@@ -50,15 +50,6 @@ function shOut(cmd, opts = {}) {
   }).trim();
 }
 
-function copyAnalyzeTo(destDir) {
-  const src = join(MP, '.next', 'analyze');
-  if (!existsSync(src)) {
-    throw new Error(`Beklenen rapor yok: ${src}`);
-  }
-  mkdirSync(destDir, { recursive: true });
-  cpSync(src, destDir, { recursive: true });
-}
-
 const stamp = new Date().toISOString().replace(/[:.]/g, '-');
 const outRoot = join(MP, 'bundle-reports', stamp);
 mkdirSync(outRoot, { recursive: true });

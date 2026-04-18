@@ -1,16 +1,17 @@
 import type { Metadata } from 'next';
-import type { ReactNode } from 'react';
+import { createPageMetadata } from '@/lib/site-metadata';
 
-export const metadata: Metadata = {
+export const metadata: Metadata = createPageMetadata({
   title: 'Giriş',
-  description: 'Öğrenci hesabınla Uğur Hoca Matematik platformuna giriş yap.',
-  robots: { index: false, follow: true },
-};
+  description:
+    'Uğur Hoca Matematik hesabınıza giriş yapın; testler, ödevler ve içeriklere erişin.',
+  path: '/giris',
+});
 
 export default function GirisLayout({
   children,
 }: {
-  children: ReactNode;
+  children: React.ReactNode;
 }) {
   return children;
 }

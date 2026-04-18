@@ -5,12 +5,14 @@ import {
   getInitialContentGradeFilter,
   loadInitialContentDocuments,
 } from '@/features/content/server';
+import { createPageMetadata } from '@/lib/site-metadata';
 
-export const metadata: Metadata = {
+export const metadata: Metadata = createPageMetadata({
   title: 'İçerikler',
   description:
     'Çalışma kağıtları, ders notları, videolar ve dokümanları sınıf ve türe göre keşfet.',
-};
+  path: '/icerikler',
+});
 
 type IceriklerPageProps = {
   searchParams?: Promise<Record<string, string | string[] | undefined>>;

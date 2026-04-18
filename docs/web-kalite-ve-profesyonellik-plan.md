@@ -101,3 +101,5 @@ CI’da lint, typecheck, test; kritik akış testleri.
 - **Erişilebilirlik**: “Ana içeriğe geç” (`skip-link`); duyuru modalında `role="dialog"`, `aria-labelledby`, kapat `aria-label`.
 
 Sonraki adımlar: Lighthouse / gerçek cihaz ölçümü, diğer sayfalarda `img`→`next/image`, güvenlik başlıkları (HSTS/CSP üretimde test), yasal sayfalar (içerik onayıyla).
+
+**GitHub CI / Secrets:** [matematik-platform/docs/GITHUB_CI.md](../matematik-platform/docs/GITHUB_CI.md)

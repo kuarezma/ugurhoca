@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import { Calculator } from 'lucide-react';
 
 type HomeFooterProps = {
@@ -26,6 +27,35 @@ export function HomeFooter({ isLight }: HomeFooterProps) {
             Uğur Hoca Matematik
           </span>
         </div>
+        <nav
+          className={`mb-3 flex flex-wrap items-center justify-center gap-x-4 gap-y-1 text-xs ${
+            isLight ? 'text-slate-600' : 'text-slate-400'
+          }`}
+          aria-label="Yasal bağlantılar"
+        >
+          <Link
+            href="/gizlilik"
+            className={`underline-offset-2 hover:underline ${
+              isLight ? 'text-slate-700' : 'text-slate-300'
+            }`}
+          >
+            Gizlilik
+          </Link>
+          <span
+            aria-hidden
+            className={isLight ? 'text-slate-300' : 'text-slate-600'}
+          >
+            ·
+          </span>
+          <Link
+            href="/kvkk"
+            className={`underline-offset-2 hover:underline ${
+              isLight ? 'text-slate-700' : 'text-slate-300'
+            }`}
+          >
+            KVKK
+          </Link>
+        </nav>
         <p
           className={`text-xs ${isLight ? 'text-slate-600' : 'text-slate-500'}`}
         >
