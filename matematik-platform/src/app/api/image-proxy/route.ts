@@ -17,7 +17,7 @@ export async function GET(request: Request) {
 
   try {
     const res = await fetch(fetchUrl, {
-      cache: 'no-store',
+      cache: 'force-cache',
       signal: AbortSignal.timeout(7000),
       headers: {
         'User-Agent': 'Mozilla/5.0',
@@ -43,7 +43,8 @@ export async function GET(request: Request) {
     return new NextResponse(buffer, {
       headers: {
         'Content-Type': contentType,
-        'Cache-Control': 'public, max-age=3600',
+        'Cache-Control':
+          'public, max-age=86400, s-maxage=86400, stale-while-revalidate=604800',
       },
     });
   } catch {

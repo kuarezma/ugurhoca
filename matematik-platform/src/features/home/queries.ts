@@ -221,7 +221,15 @@ export const getAnnouncementLinkLabel = (url?: string | null) => {
 };
 
 export const proxiedImageSrc = (url?: string | null) => {
-  return getRemoteImageSrc(url);
+  if (!url) {
+    return '';
+  }
+
+  if (!/^https?:\/\//i.test(url)) {
+    return getRemoteImageSrc(url);
+  }
+
+  return `/api/image-proxy?url=${encodeURIComponent(url)}`;
 };
 
 export const isNewContent = (createdAt?: string) => {
