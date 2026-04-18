@@ -2,6 +2,7 @@
 
 import dynamic from 'next/dynamic';
 import { useState, useEffect, useCallback } from 'react';
+import { AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
 import {
   Calculator,
@@ -81,6 +82,11 @@ const AdminNotificationsPanel = dynamic(
   { loading: () => null },
 );
 
+const AdminStudentProfileDrawer = dynamic(
+  () => import('@/features/admin/components/AdminStudentProfileDrawer'),
+  { loading: () => null },
+);
+
 const AdminSubmissionsModal = dynamic(
   () => import('@/features/admin/components/AdminSubmissionsModal'),
   { loading: () => null },
@@ -120,11 +126,11 @@ export default function AdminPage() {
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [activeStudentProfileId, setActiveStudentProfileId] = useState<string | null>(null);
-  const [_activeStudentProfileData, setActiveStudentProfileData] =
+  const [activeStudentProfileData, setActiveStudentProfileData] =
     useState<AdminStudentProfileData | null>(null);
-  const [_activeStudentProfileError, setActiveStudentProfileError] =
+  const [activeStudentProfileError, setActiveStudentProfileError] =
     useState<string | null>(null);
-  const [_activeStudentProfileLoading, setActiveStudentProfileLoading] =
+  const [activeStudentProfileLoading, setActiveStudentProfileLoading] =
     useState(false);
   const [pdfStudentsLoading, setPdfStudentsLoading] = useState(false);
   const router = useRouter();
@@ -455,6 +461,13 @@ export default function AdminPage() {
       await loadStudentProfile(studentProfile.id);
     }
   };
+
+  const handleCloseStudentProfile = useCallback(() => {
+    setActiveStudentProfileId(null);
+    setActiveStudentProfileData(null);
+    setActiveStudentProfileError(null);
+    setActiveStudentProfileLoading(false);
+  }, []);
 
   const handleOpenSubmissions = async (assignment: Assignment) => {
     await loadSubmissions(assignment.id);
@@ -791,6 +804,20 @@ export default function AdminPage() {
           submissions={selectedAssignmentSubmissions}
         />
       )}
+
+      <AnimatePresence>
+        {activeStudentProfileId && (
+          <AdminStudentProfileDrawer
+            data={activeStudentProfileData}
+            error={activeStudentProfileError}
+            formatDate={formatDate}
+            isLoading={activeStudentProfileLoading}
+            onClose={handleCloseStudentProfile}
+            student={activeStudentProfileUser}
+          />
+        )}
+      </AnimatePresence>
+
       <ChatBubbleLoader />
     </main>
   );
