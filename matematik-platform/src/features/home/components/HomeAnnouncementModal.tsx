@@ -219,10 +219,44 @@ export function HomeAnnouncementModal({
                   )}
                 </p>
               </div>
-            )}
-          </motion.div>
-        </motion.div>
-      )}
-    </AnimatePresence>
+              <h2 className="mb-3 text-2xl font-bold text-white sm:text-3xl">
+                {announcement.title}
+              </h2>
+              <p className="whitespace-pre-line leading-relaxed text-slate-300">
+                {announcement.content}
+              </p>
+              {renderAnnouncementLink(announcement)}
+              <p className="mt-6 text-sm text-slate-500">
+                {new Date(announcement.created_at).toLocaleDateString('tr-TR')}
+              </p>
+            </div>
+          </div>
+        ) : (
+          <div className="p-6 sm:p-8">
+            <div className="mb-4 flex items-center justify-between">
+              <span className="rounded-full bg-pink-500/20 px-3 py-1 text-xs font-semibold text-pink-300">
+                Haber
+              </span>
+              <button
+                onClick={onClose}
+                className="text-slate-400 hover:text-white"
+              >
+                <X className="h-6 w-6" />
+              </button>
+            </div>
+            <h2 className="mb-3 text-2xl font-bold text-white sm:text-3xl">
+              {announcement.title}
+            </h2>
+            <p className="whitespace-pre-line leading-relaxed text-slate-300">
+              {announcement.content}
+            </p>
+            {renderAnnouncementLink(announcement)}
+            <p className="mt-6 text-sm text-slate-500">
+              {new Date(announcement.created_at).toLocaleDateString('tr-TR')}
+            </p>
+          </div>
+        )}
+      </div>
+    </div>
   );
 }

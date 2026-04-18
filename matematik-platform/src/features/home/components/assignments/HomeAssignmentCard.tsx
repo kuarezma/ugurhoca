@@ -1,6 +1,5 @@
 'use client';
 
-import { motion } from 'framer-motion';
 import { Download, FileText, X } from 'lucide-react';
 import type { SharedDocumentAssignment } from '@/types';
 
@@ -18,15 +17,13 @@ export function HomeAssignmentCard({
   onDismiss,
 }: HomeAssignmentCardProps) {
   return (
-    <motion.div
-      initial={{ opacity: 0, x: -10 }}
-      animate={{ opacity: 1, x: 0 }}
-      transition={{ delay: index * 0.1 }}
-      className={`flex items-center gap-3 rounded-xl p-3 transition-colors group ${
+    <div
+      className={`animate-fade-up flex items-center gap-3 rounded-xl p-3 transition-colors group ${
         isLight
           ? 'bg-slate-50 border border-slate-200 hover:bg-slate-100'
           : 'bg-slate-800/50 hover:bg-slate-800/70'
       }`}
+      style={{ animationDelay: `${index * 0.1}s` }}
     >
       <div
         className="flex-1 min-w-0 cursor-pointer"
@@ -90,6 +87,6 @@ export function HomeAssignmentCard({
           <X className="w-4 h-4" />
         </button>
       </div>
-    </motion.div>
+    </div>
   );
 }

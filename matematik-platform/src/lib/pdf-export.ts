@@ -1,6 +1,3 @@
-import html2canvas from 'html2canvas';
-import jsPDF from 'jspdf';
-
 export interface PDFOptions {
   background?: string;
   scale?: number;
@@ -18,6 +15,11 @@ export async function generatePDF(
   filename: string,
   options: PDFOptions = {}
 ): Promise<void> {
+  const [{ default: html2canvas }, { default: jsPDF }] = await Promise.all([
+    import('html2canvas'),
+    import('jspdf'),
+  ]);
+
   const {
     background = '#0f172a',
     scale = 2,

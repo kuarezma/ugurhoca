@@ -18,6 +18,7 @@ import {
   sendSupportMessage,
   uploadSupportFiles,
 } from '@/features/home/queries';
+import type { InitialHomePageData } from '@/features/home/types';
 
 export const useHomePageData = (initialFeed?: HomeInitialFeed | null) => {
   const isFeedSeeded = Boolean(initialFeed);

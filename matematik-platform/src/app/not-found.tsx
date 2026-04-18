@@ -2,12 +2,12 @@
 
 import Link from 'next/link';
 import { Home, ArrowLeft } from 'lucide-react';
-import FloatingShapes from '@/components/FloatingShapes';
+import DeferredFloatingShapes from '@/components/DeferredFloatingShapes';
 
 export default function NotFound() {
   return (
     <>
-      <FloatingShapes count={6} />
+      <DeferredFloatingShapes count={6} />
       <div className="min-h-screen flex items-center justify-center p-4 relative z-10">
         <div className="text-center">
           <h1 className="text-9xl font-bold text-white mb-4">404</h1>

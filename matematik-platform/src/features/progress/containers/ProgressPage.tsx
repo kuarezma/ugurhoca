@@ -23,17 +23,12 @@ import type {
   StudySession,
   UserBadge,
 } from '@/features/progress/types';
+import { getTopicsForGrade } from '@/features/progress/constants';
 import {
   mergeProgressRow,
   prependStudySession,
   resolveCurrentGoal,
 } from '@/features/progress/utils';
-
-const TOPICS = [
-  'Çarpanlar ve Katlar', 'Üslü İfadeler', 'Kareköklü İfadeler', 
-  'Veri Analizi', 'Olasılık', 'Cebirsel İfadeler', 'Doğrusal Denklemler',
-  'Eşitsizlikler', 'Üçgenler', 'Dönüşüm Geometrisi', 'Geometrik Cisimler'
-];
 
 type ProgressPageProps = {
   initialData?: InitialProgressPageData;
@@ -61,12 +56,17 @@ export default function IlerlemePage({ initialData }: ProgressPageProps) {
   const [duration, setDuration] = useState('');
   const [selectedTopic, setSelectedTopic] = useState('');
   const [addingSession, setAddingSession] = useState(false);
+  const [addSessionError, setAddSessionError] = useState<string | null>(null);
   const initialUserKey = useMemo(
     () =>
       initialData?.user
         ? `${initialData.user.id}:${String(initialData.user.grade)}`
         : null,
     [initialData?.user],
+  );
+  const availableTopics = useMemo(
+    () => getTopicsForGrade(user?.grade),
+    [user?.grade],
   );
 
   const loadDashboardData = useCallback(async () => {
@@ -119,6 +119,16 @@ export default function IlerlemePage({ initialData }: ProgressPageProps) {
     void loadDashboardData();
   }, [loadDashboardData]);
 
+  useEffect(() => {
+    if (!selectedTopic) {
+      return;
+    }
+
+    if (!availableTopics.includes(selectedTopic)) {
+      setSelectedTopic('');
+    }
+  }, [availableTopics, selectedTopic]);
+
   const handleAddSession = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!duration || isNaN(Number(duration)) || Number(duration) <= 0) return;
@@ -126,6 +136,7 @@ export default function IlerlemePage({ initialData }: ProgressPageProps) {
     if (!user) return;
     
     setAddingSession(true);
+    setAddSessionError(null);
     
     try {
       const durationNum = parseInt(duration);
@@ -151,7 +162,6 @@ export default function IlerlemePage({ initialData }: ProgressPageProps) {
       const newMastery = Math.min(100, (existingProgress?.mastery_level || 0) + masteryIncrement);
 
       const nextProgressRow = {
-        id: existingProgress?.id,
         user_id: user.id,
         topic: selectedTopic,
         mastery_level: newMastery,
@@ -161,7 +171,7 @@ export default function IlerlemePage({ initialData }: ProgressPageProps) {
 
       const { data: upsertedProgress, error: progressError } = await supabase
         .from('user_progress')
-        .upsert([nextProgressRow], { onConflict: 'user_id, topic' })
+        .upsert([nextProgressRow], { onConflict: 'user_id,topic' })
         .select()
         .single();
 
@@ -185,7 +195,17 @@ export default function IlerlemePage({ initialData }: ProgressPageProps) {
       
     } catch (error) {
       console.error(error);
-      alert('Kayıt eklenirken bir hata oluştu');
+      const message =
+        error instanceof Error
+          ? error.message
+          : typeof error === 'object' &&
+              error &&
+              'message' in error &&
+              typeof error.message === 'string'
+            ? error.message
+            : 'Bilinmeyen bir hata oluştu.';
+
+      setAddSessionError(`Kayıt eklenemedi: ${message}`);
     } finally {
       setAddingSession(false);
     }
@@ -244,6 +264,17 @@ export default function IlerlemePage({ initialData }: ProgressPageProps) {
     { subject: 'Olasılık', A: 0, fullMark: 100 },
   ];
 
+  const handleDownloadProgressPdf = async () => {
+    setPdfLoading(true);
+
+    try {
+      const { downloadProgressPDF } = await import('@/lib/pdf-export');
+      await downloadProgressPDF();
+    } finally {
+      setPdfLoading(false);
+    }
+  };
+
   return (
     <main className={`min-h-screen pb-20 ${isLight ? 'bg-slate-50' : 'bg-slate-900'}`}>
       <header className={`sticky top-0 z-40 backdrop-blur-lg border-b ${isLight ? 'bg-white/80 border-slate-200' : 'bg-slate-900/80 border-slate-800'}`}>
@@ -296,7 +327,10 @@ export default function IlerlemePage({ initialData }: ProgressPageProps) {
             <p className={isLight ? 'text-slate-600' : 'text-slate-400'}>Çalışmalarını takip et, hedeflerine ulaş.</p>
           </div>
           <button 
-            onClick={() => setShowAddModal(true)}
+            onClick={() => {
+              setAddSessionError(null);
+              setShowAddModal(true);
+            }}
             className="px-6 py-3 bg-gradient-to-r from-indigo-500 to-purple-500 hover:from-indigo-600 hover:to-purple-600 text-white font-bold rounded-2xl shadow-lg shadow-indigo-500/25 flex items-center gap-2 transition-transform hover:scale-105"
           >
             <Plus className="w-5 h-5" /> Çalışma Ekle
@@ -456,13 +490,21 @@ export default function IlerlemePage({ initialData }: ProgressPageProps) {
           <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setShowAddModal(false)} className="absolute inset-0 bg-slate-950/80 backdrop-blur-sm" />
             <motion.div initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.95, opacity: 0 }} onClick={e => e.stopPropagation()} className={`relative w-full max-w-md rounded-3xl p-6 sm:p-8 overflow-hidden shadow-2xl ${isLight ? 'bg-white border border-slate-200' : 'bg-slate-900 border border-slate-800'}`}>
-              <button onClick={() => setShowAddModal(false)} className="absolute top-4 right-4 p-2 text-slate-400 hover:text-slate-600 dark:hover:text-white transition-colors">
+              <button onClick={() => {
+                setAddSessionError(null);
+                setShowAddModal(false);
+              }} className="absolute top-4 right-4 p-2 text-slate-400 hover:text-slate-600 dark:hover:text-white transition-colors">
                 <X className="w-6 h-6" />
               </button>
               
               <h2 className={`text-2xl font-bold mb-6 ${isLight ? 'text-slate-900' : 'text-white'}`}>Çalışma Ekle</h2>
               
               <form onSubmit={handleAddSession} className="space-y-5">
+                {addSessionError && (
+                  <div className={`rounded-2xl border px-4 py-3 text-sm ${isLight ? 'border-red-200 bg-red-50 text-red-700' : 'border-red-500/30 bg-red-500/10 text-red-200'}`}>
+                    {addSessionError}
+                  </div>
+                )}
                 <div>
                   <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Aktivite Tipi</label>
                   <div className="grid grid-cols-3 gap-2">
@@ -474,7 +516,10 @@ export default function IlerlemePage({ initialData }: ProgressPageProps) {
                       <button
                         key={type.id}
                         type="button"
-                        onClick={() => setActivityType(type.id)}
+                        onClick={() => {
+                          setAddSessionError(null);
+                          setActivityType(type.id);
+                        }}
                         className={`flex flex-col items-center gap-2 p-3 rounded-xl border-2 transition-all ${activityType === type.id ? 'border-indigo-500 bg-indigo-500/10 text-indigo-500 dark:text-indigo-400' : isLight ? 'border-slate-200 text-slate-500 hover:border-slate-300' : 'border-slate-700 text-slate-400 hover:bg-slate-800'}`}
                       >
                         <type.icon className="w-5 h-5" />
@@ -489,11 +534,18 @@ export default function IlerlemePage({ initialData }: ProgressPageProps) {
                   <select
                     required
                     value={selectedTopic}
-                    onChange={(e) => setSelectedTopic(e.target.value)}
+                    onChange={(e) => {
+                      setAddSessionError(null);
+                      setSelectedTopic(e.target.value);
+                    }}
                     className={`w-full px-4 py-3 rounded-xl border focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-colors ${isLight ? 'bg-white border-slate-200 text-slate-900' : 'bg-slate-800 border-slate-700 text-white'}`}
                   >
                     <option value="">Konu seçin...</option>
-                    {TOPICS.map(t => <option key={t} value={t}>{t}</option>)}
+                    {availableTopics.map((topic) => (
+                      <option key={topic} value={topic}>
+                        {topic}
+                      </option>
+                    ))}
                   </select>
                 </div>
 
@@ -506,7 +558,10 @@ export default function IlerlemePage({ initialData }: ProgressPageProps) {
                     max="600"
                     placeholder="Örn: 45"
                     value={duration}
-                    onChange={(e) => setDuration(e.target.value)}
+                    onChange={(e) => {
+                      setAddSessionError(null);
+                      setDuration(e.target.value);
+                    }}
                     className={`w-full px-4 py-3 rounded-xl border focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-colors ${isLight ? 'bg-white border-slate-200 text-slate-900' : 'bg-slate-800 border-slate-700 text-white'}`}
                   />
                 </div>

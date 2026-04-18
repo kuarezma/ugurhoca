@@ -1,7 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Poppins, Space_Grotesk } from "next/font/google";
 import { Providers } from "@/components/Providers";
-import InstallPrompt from "@/components/InstallPrompt";
 import { THEME_STORAGE_KEY } from "@/components/theme-constants";
 import "./globals.css";
 

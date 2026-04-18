@@ -3,7 +3,6 @@
 import { useCallback, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { motion } from 'framer-motion';
 import { prefetchContentDocuments } from '@/features/content/queries';
 import {
   HOME_CATEGORIES,
@@ -13,6 +12,11 @@ import {
 
 type HomeHeroSectionProps = {
   isLight: boolean;
+};
+
+type NetworkInformationLike = {
+  effectiveType?: string;
+  saveData?: boolean;
 };
 
 export function HomeHeroSection({ isLight }: HomeHeroSectionProps) {
@@ -35,12 +39,24 @@ export function HomeHeroSection({ isLight }: HomeHeroSectionProps) {
   );
 
   useEffect(() => {
+    const connection = (
+      navigator as Navigator & { connection?: NetworkInformationLike }
+    ).connection;
+    const effectiveType = connection?.effectiveType || '';
+    const shouldAutoPrefetch =
+      !connection?.saveData &&
+      !['slow-2g', '2g', '3g'].includes(effectiveType.toLowerCase());
+
+    if (!shouldAutoPrefetch) {
+      return;
+    }
+
     const prefetchTargets = () => {
-      HOME_ROUTE_PREFETCH_HREFS.forEach((href) => {
+      HOME_ROUTE_PREFETCH_HREFS.slice(0, 4).forEach((href) => {
         prefetchHref(href);
       });
       void Promise.allSettled(
-        HOME_CONTENT_PREFETCH_TYPES.map((type) =>
+        HOME_CONTENT_PREFETCH_TYPES.slice(0, 2).map((type) =>
           prefetchContentDocuments(type),
         ),
       );
@@ -53,7 +69,7 @@ export function HomeHeroSection({ isLight }: HomeHeroSectionProps) {
       const idleCallbackId = requestIdleCallbackFn(() => {
         prefetchTargets();
       }, {
-        timeout: 1200,
+        timeout: 2500,
       });
 
       return () => {
@@ -61,7 +77,7 @@ export function HomeHeroSection({ isLight }: HomeHeroSectionProps) {
       };
     }
 
-    const timeoutId = globalThis.setTimeout(prefetchTargets, 250);
+    const timeoutId = globalThis.setTimeout(prefetchTargets, 1800);
 
     return () => {
       globalThis.clearTimeout(timeoutId);
@@ -71,10 +87,8 @@ export function HomeHeroSection({ isLight }: HomeHeroSectionProps) {
   return (
     <section className="px-4 pt-4 pb-8 sm:py-12">
       <div className="max-w-6xl mx-auto">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className={`mb-8 ${isLight ? 'light-section p-6 sm:p-8' : ''}`}
+        <div
+          className={`animate-fade-up mb-8 ${isLight ? 'light-section p-6 sm:p-8' : ''}`}
         >
           <h1
             className={`text-3xl sm:text-4xl font-bold mb-2 ${
@@ -86,15 +100,14 @@ export function HomeHeroSection({ isLight }: HomeHeroSectionProps) {
           <p className={isLight ? 'light-text-muted' : 'text-slate-400'}>
             Hızlı erişim için kategoriyi seç
           </p>
-        </motion.div>
+        </div>
 
         <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-4 gap-3 sm:gap-4">
           {HOME_CATEGORIES.map((category, index) => (
-            <motion.div
+            <div
               key={category.id}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.05 }}
+              className="animate-fade-up"
+              style={{ animationDelay: `${index * 0.05}s` }}
             >
               <Link
                 href={category.href}
@@ -123,7 +136,7 @@ export function HomeHeroSection({ isLight }: HomeHeroSectionProps) {
                   {category.title}
                 </h3>
               </Link>
-            </motion.div>
+            </div>
           ))}
         </div>
       </div>

@@ -14,6 +14,18 @@ import type {
   Submission,
   SupportAttachment,
 } from '@/types';
+import type {
+  DashboardAssignment,
+  DashboardBadge,
+  DashboardQuizResult,
+  DashboardSubmission,
+  StudentProfile,
+} from '@/types/dashboard';
+import type {
+  ProgressRow,
+  StudyGoal,
+  StudySession,
+} from '@/features/progress/types';
 
 export type AdminActiveTab =
   | 'statistics'
@@ -54,6 +66,16 @@ export type AdminSubmission = Submission;
 export type AdminQuizQuestion = QuizQuestion;
 export type AdminChatRoom = ChatRoom;
 export type AdminChatMessage = ChatMessage;
+export type AdminStudentProfileData = {
+  assignments: DashboardAssignment[];
+  badges: DashboardBadge[];
+  goal: StudyGoal | null;
+  progressRows: ProgressRow[];
+  quizResults: DashboardQuizResult[];
+  student: StudentProfile;
+  studySessions: StudySession[];
+  submissions: DashboardSubmission[];
+};
 export type AdminDashboardData = {
   allUsers: AdminUser[];
   announcements: AdminAnnouncement[];

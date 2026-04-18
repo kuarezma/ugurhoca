@@ -65,6 +65,162 @@ body {
   transition: background-color 0.2s ease, color 0.2s ease;
 }
 
+@keyframes floatY {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+  50% {
+    transform: translate3d(0, -18px, 0);
+  }
+}
+
+@keyframes pulseSoft {
+  0%,
+  100% {
+    opacity: var(--pulse-opacity-start, 0.18);
+    transform: scale(1);
+  }
+  50% {
+    opacity: var(--pulse-opacity-end, 0.3);
+    transform: scale(1.08);
+  }
+}
+
+@keyframes driftXY {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0);
+    opacity: var(--drift-opacity-start, 0.2);
+  }
+  50% {
+    transform: translate3d(4px, -4px, 0);
+    opacity: var(--drift-opacity-end, 0.3);
+  }
+}
+
+@keyframes bobSoft {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+  50% {
+    transform: translate3d(0, -2px, 0);
+  }
+}
+
+@keyframes iconBob {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) rotate(0deg);
+  }
+  25% {
+    transform: translate3d(0, -4px, 0) rotate(4deg);
+  }
+  75% {
+    transform: translate3d(0, -2px, 0) rotate(-4deg);
+  }
+}
+
+@keyframes sparkle {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+    opacity: 0.35;
+  }
+  50% {
+    transform: translate3d(0, -5px, 0) scale(1.15);
+    opacity: 0.8;
+  }
+}
+
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 18px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 24px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes slideToastIn {
+  from {
+    opacity: 0;
+    transform: translate3d(20px, 0, 0) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+}
+
+.animate-fade-up {
+  animation: fadeUp 0.45s ease-out both;
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.25s ease-out both;
+}
+
+.animate-slide-up {
+  animation: slideUp 0.35s ease-out both;
+}
+
+.animate-toast-in {
+  animation: slideToastIn 0.22s ease-out both;
+}
+
+.animate-float-y {
+  animation: floatY var(--float-duration, 6s) ease-in-out infinite;
+}
+
+.animate-pulse-soft {
+  animation: pulseSoft var(--pulse-duration, 5s) ease-in-out infinite;
+}
+
+.animate-drift-xy {
+  animation: driftXY var(--drift-duration, 5.6s) ease-in-out infinite;
+}
+
+.animate-bob-soft {
+  animation: bobSoft var(--bob-duration, 2.8s) ease-in-out infinite;
+}
+
+.animate-icon-bob {
+  animation: iconBob var(--icon-duration, 3.8s) ease-in-out infinite;
+}
+
+.animate-sparkle {
+  animation: sparkle var(--sparkle-duration, 2.8s) ease-in-out infinite;
+}
+
+.defer-section {
+  content-visibility: auto;
+  contain-intrinsic-size: 1px 720px;
+}
+
 :where(
   a[href],
   button,

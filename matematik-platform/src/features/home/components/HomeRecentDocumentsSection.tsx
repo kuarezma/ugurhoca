@@ -1,7 +1,6 @@
 'use client';
 
 import Link from 'next/link';
-import { motion } from 'framer-motion';
 import { ChevronRight, FileText } from 'lucide-react';
 import type { ContentDocument } from '@/types';
 import { HOME_CATEGORIES } from '@/features/home/constants';
@@ -21,7 +20,7 @@ export function HomeRecentDocumentsSection({
   }
 
   return (
-    <section className="px-4 py-8 sm:py-12">
+    <section className="defer-section px-4 py-8 sm:py-12">
       <div
         className={`max-w-6xl mx-auto ${isLight ? 'light-section p-5 sm:p-6' : ''}`}
       >
@@ -56,15 +55,13 @@ export function HomeRecentDocumentsSection({
                 rel="noopener noreferrer"
                 className="block"
               >
-                <motion.div
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: index * 0.05 }}
-                  className={`relative rounded-xl p-4 transition-all cursor-pointer ${
+                <div
+                  className={`animate-fade-up relative cursor-pointer rounded-xl p-4 transition-all ${
                     isLight
                       ? 'light-card hover:border-slate-300'
                       : 'bg-white/5 border border-white/10 hover:bg-white/10'
                   }`}
+                  style={{ animationDelay: `${index * 0.05}s` }}
                 >
                   {isNewContent(document.created_at) && (
                     <span className="absolute top-3 right-3 px-2 py-1 rounded-full bg-indigo-500 text-white text-[10px] font-bold">
@@ -100,7 +97,7 @@ export function HomeRecentDocumentsSection({
                     </div>
                     <ChevronRight className="w-5 h-5 text-slate-500" />
                   </div>
-                </motion.div>
+                </div>
               </a>
             );
           })}

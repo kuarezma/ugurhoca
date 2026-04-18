@@ -16,7 +16,7 @@ import {
   Plus,
   Search,
 } from 'lucide-react';
-import FloatingShapes from '@/components/FloatingShapes';
+import DeferredFloatingShapes from '@/components/DeferredFloatingShapes';
 import ContentCard from '@/features/content/components/ContentCard';
 import ContentCommentsModal from '@/features/content/components/ContentCommentsModal';
 import ContentEditModal from '@/features/content/components/ContentEditModal';
@@ -949,7 +949,7 @@ function ContentsPageInner({
 
   return (
     <main className="icerikler-page min-h-screen gradient-bg pb-20">
-      <FloatingShapes />
+      <DeferredFloatingShapes />
 
       <nav className="fixed top-0 left-0 right-0 z-50 bg-[#0b1220]/95 backdrop-blur-md border-b border-white/10 py-4 px-4 sm:px-6 xl:px-8">
         <div className="max-w-[1760px] mx-auto flex justify-between items-center">

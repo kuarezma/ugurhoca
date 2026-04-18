@@ -24,6 +24,7 @@ import type {
   AdminQuiz,
   AdminQuizQuestion,
   AdminSharedDocument,
+  AdminStudentProfileData,
   AdminSubmission,
   AdminUser,
   ModerationPayload,
@@ -172,6 +173,103 @@ export const loadAdminDashboardData = async (
     privateStudents: (privateStudentsRes.data || []) as AdminDashboardData['privateStudents'],
     quizzes: (quizzesRes.data || []) as AdminDashboardData['quizzes'],
     sharedDocs: (sharedDocsRes.data || []) as AdminDashboardData['sharedDocs'],
+  };
+};
+
+export const loadAdminStudentProfile = async (
+  studentId: string,
+): Promise<AdminStudentProfileData | null> => {
+  const { data: profile, error: profileError } = await supabase
+    .from('profiles')
+    .select('*')
+    .eq('id', studentId)
+    .single();
+
+  if (profileError) {
+    throw profileError;
+  }
+
+  if (!profile) {
+    return null;
+  }
+
+  const student = {
+    avatar_id: profile.avatar_id ?? null,
+    created_at: profile.created_at ?? null,
+    current_streak: profile.current_streak ?? 0,
+    email: profile.email || '',
+    grade: profile.grade ?? 5,
+    id: profile.id,
+    isAdmin: false,
+    name: profile.name || 'Öğrenci',
+  };
+
+  const gradeValue =
+    typeof student.grade === 'number' || typeof student.grade === 'string'
+      ? student.grade
+      : 5;
+
+  const gradeClause =
+    typeof gradeValue === 'string'
+      ? `grade.eq.${gradeValue},student_id.eq.${student.id}`
+      : `grade.eq.${Number(gradeValue)},student_id.eq.${student.id}`;
+
+  const [
+    studySessionsRes,
+    progressRes,
+    goalRes,
+    quizResultsRes,
+    assignmentsRes,
+    submissionsRes,
+    badgesRes,
+  ] = await Promise.all([
+    supabase
+      .from('study_sessions')
+      .select('*')
+      .eq('user_id', student.id)
+      .order('date', { ascending: false })
+      .limit(30),
+    supabase
+      .from('user_progress')
+      .select('*')
+      .eq('user_id', student.id)
+      .order('mastery_level', { ascending: false }),
+    supabase
+      .from('study_goals')
+      .select('target_duration, week_start')
+      .eq('user_id', student.id),
+    supabase
+      .from('quiz_results')
+      .select('id, score, total_questions, completed_at, quizzes(title, difficulty, grade)')
+      .eq('user_id', student.id)
+      .order('completed_at', { ascending: false }),
+    supabase
+      .from('assignments')
+      .select('*')
+      .or(gradeClause)
+      .order('created_at', { ascending: false }),
+    supabase
+      .from('assignment_submissions')
+      .select('*')
+      .eq('student_id', student.id)
+      .order('submitted_at', { ascending: false }),
+    supabase
+      .from('user_badges')
+      .select('id, badge_name, icon_name, earned_at')
+      .eq('user_id', student.id)
+      .order('earned_at', { ascending: false })
+      .limit(6),
+  ]);
+
+  return {
+    assignments: (assignmentsRes.data || []) as AdminStudentProfileData['assignments'],
+    badges: normalizeDashboardBadges(badgesRes.data || []),
+    goal: resolveCurrentGoal(goalRes.data || []),
+    progressRows: (progressRes.data || []) as AdminStudentProfileData['progressRows'],
+    quizResults: (quizResultsRes.data || []) as AdminStudentProfileData['quizResults'],
+    student,
+    studySessions: (studySessionsRes.data || []) as AdminStudentProfileData['studySessions'],
+    submissions: (submissionsRes.data || []) as AdminStudentProfileData['submissions'],
   };
 };
 
