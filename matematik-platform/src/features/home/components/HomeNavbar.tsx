@@ -2,6 +2,7 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { LogOut, Menu, X } from 'lucide-react';
 import { useState } from 'react';
 import { ThemeToggle } from '@/components/ThemeToggle';
@@ -16,8 +17,10 @@ type HomeNavbarProps = {
 
 export function HomeNavbar({ onLogout, user }: HomeNavbarProps) {
   const [isOpen, setIsOpen] = useState(false);
+  const pathname = usePathname();
   const { theme } = useTheme();
   const isLight = theme === 'light';
+  const isHomePage = pathname === '/';
   const profileHref = user?.isAdmin ? '/admin' : '/profil';
 
   return (
@@ -30,7 +33,16 @@ export function HomeNavbar({ onLogout, user }: HomeNavbarProps) {
     >
       <div className="mx-auto max-w-6xl px-4">
         <div className="flex h-14 items-center justify-between">
-          <Link href="/" className="flex items-center gap-2">
+          <Link
+            href="/"
+            aria-current={isHomePage ? 'page' : undefined}
+            onClick={(event) => {
+              if (isHomePage) {
+                event.preventDefault();
+              }
+            }}
+            className="flex items-center gap-2"
+          >
             <Image
               src="/ugur.jpeg"
               alt="Uğur Hoca"
