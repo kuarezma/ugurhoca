@@ -4,6 +4,7 @@ import { SpeedInsights } from "@vercel/speed-insights/next";
 import InstallPrompt from "@/components/InstallPrompt";
 import { Providers } from "@/components/Providers";
 import { THEME_STORAGE_KEY } from "@/components/theme-constants";
+import { SITE_URL, SITE_NAME } from "@/lib/site-metadata";
 import "./globals.css";
 
 const poppins = Poppins({
@@ -20,8 +21,6 @@ const spaceGrotesk = Space_Grotesk({
   display: "swap",
 });
 
-const siteUrl = "https://ugurhoca.com";
-
 function getSupabasePreconnectOrigin(): string | null {
   const raw = process.env.NEXT_PUBLIC_SUPABASE_URL;
   if (!raw) {
@@ -35,10 +34,10 @@ function getSupabasePreconnectOrigin(): string | null {
 }
 
 export const metadata: Metadata = {
-  metadataBase: new URL(siteUrl),
+  metadataBase: new URL(SITE_URL),
   title: {
-    default: "Uğur Hoca Matematik - Matematik Öğrenme Platformu",
-    template: "%s | Uğur Hoca Matematik",
+    default: `${SITE_NAME} - Matematik Öğrenme Platformu`,
+    template: `%s | ${SITE_NAME}`,
   },
   description:
     "Çalışma kağıtları, testler, oyunlar ve daha fazlasıyla matematik öğrenmeyi keşfet!",
@@ -61,17 +60,17 @@ export const metadata: Metadata = {
     title: "Uğur Hoca",
   },
   openGraph: {
-    title: "Uğur Hoca Matematik",
+    title: SITE_NAME,
     description:
       "Çalışma kağıtları, testler, oyunlar ve daha fazlasıyla matematik öğrenmeyi keşfet!",
     type: "website",
     locale: "tr_TR",
-    siteName: "Uğur Hoca Matematik",
-    url: siteUrl,
+    siteName: SITE_NAME,
+    url: SITE_URL,
   },
   twitter: {
     card: "summary_large_image",
-    title: "Uğur Hoca Matematik",
+    title: SITE_NAME,
     description:
       "Çalışma kağıtları, testler, oyunlar ve daha fazlasıyla matematik öğrenmeyi keşfet!",
   },
@@ -95,7 +94,7 @@ export const viewport: Viewport = {
 const serviceWorkerBootstrap =
   process.env.NODE_ENV === "production"
     ? `if('serviceWorker' in navigator){window.addEventListener('load',function(){navigator.serviceWorker.register('/sw.js').catch(function(){});});}`
-    : `if('serviceWorker' in navigator){window.addEventListener('load',async function(){try{var marker='__ugurhoca_sw_reset__';var hasReset=sessionStorage.getItem(marker)==='1';var registrations=await navigator.serviceWorker.getRegistrations();await Promise.all(registrations.map(function(registration){return registration.unregister();}));if('caches' in window){var cacheNames=await caches.keys();await Promise.all(cacheNames.filter(function(name){return name.indexOf('ugur-hoca-v')===0;}).map(function(name){return caches.delete(name);}));}if(!hasReset){sessionStorage.setItem(marker,'1');window.location.reload();}}catch(e){}});}`;
+    : `if('serviceWorker' in navigator){window.addEventListener('load',function(){navigator.serviceWorker.getRegistrations().then(function(registrations){return Promise.all(registrations.map(function(registration){return registration.unregister();}));}).catch(function(){});if('caches' in window){caches.keys().then(function(cacheNames){return Promise.all(cacheNames.filter(function(name){return name.indexOf('ugur-hoca-v')===0;}).map(function(name){return caches.delete(name);}));}).catch(function(){});}});}`;
 
 export default function RootLayout({
   children,
@@ -118,8 +117,8 @@ export default function RootLayout({
             __html: JSON.stringify({
               "@context": "https://schema.org",
               "@type": "EducationalOrganization",
-              name: "Uğur Hoca Matematik",
-              url: siteUrl,
+              name: SITE_NAME,
+              url: SITE_URL,
               description:
                 "Çalışma kağıtları, testler, oyunlar ve daha fazlasıyla matematik öğrenme platformu.",
               inLanguage: "tr-TR",

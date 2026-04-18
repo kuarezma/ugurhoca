@@ -6,11 +6,25 @@ const withBundleAnalyzer = require('@next/bundle-analyzer')({
 });
 
 const isProd = process.env.NODE_ENV === 'production';
+const cspReportOnly = [
+  "base-uri 'self'",
+  "default-src 'self'",
+  "font-src 'self' data:",
+  "form-action 'self'",
+  "frame-ancestors 'none'",
+  "img-src 'self' data: blob: https:",
+  "media-src 'self' data: blob: https:",
+  "object-src 'none'",
+  "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://va.vercel-scripts.com",
+  "style-src 'self' 'unsafe-inline'",
+  "worker-src 'self' blob:",
+  "connect-src 'self' https://*.supabase.co wss://*.supabase.co https://vitals.vercel-insights.com",
+].join('; ');
 
 const globalSecurityHeaders = [
+  { key: 'Content-Security-Policy-Report-Only', value: cspReportOnly },
   { key: 'X-Content-Type-Options', value: 'nosniff' },
   { key: 'X-Frame-Options', value: 'DENY' },
-  { key: 'X-XSS-Protection', value: '1; mode=block' },
   { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
   {
     key: 'Permissions-Policy',
@@ -56,7 +70,14 @@ const nextConfig = {
   images: {
     remotePatterns: [
       { protocol: 'https', hostname: 'drive.google.com' },
-      { protocol: 'https', hostname: 'lh3.googleusercontent.com' },
+      { protocol: 'https', hostname: '**.googleusercontent.com' },
+      { protocol: 'https', hostname: '**.supabase.co' },
+      { protocol: 'https', hostname: 'i.ibb.co' },
+      { protocol: 'https', hostname: 'ibb.co' },
+      { protocol: 'https', hostname: 'imgur.com' },
+      { protocol: 'https', hostname: 'i.imgur.com' },
+      { protocol: 'https', hostname: 'images.unsplash.com' },
+      { protocol: 'https', hostname: 'res.cloudinary.com' },
     ],
   },
 };

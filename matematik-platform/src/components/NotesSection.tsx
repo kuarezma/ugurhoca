@@ -2,6 +2,8 @@
 
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import SafeHtml from '@/components/SafeHtml';
+import { sanitizeRichTextHtml } from '@/lib/html-sanitize';
 import { 
   StickyNote, Plus, Search, X, Edit2, Trash2, Pin, PinOff,
   Bold, Italic, Underline, Heading1, List, ListOrdered, Link as LinkIcon, Folder, Clock
@@ -9,13 +11,6 @@ import {
 import type { LucideIcon } from 'lucide-react';
 import { supabase } from '@/lib/supabase/client';
 import { Note, NoteCategory } from '@/types/index';
-
-const sanitizeHtml = (html: string) => {
-  const doc = new DOMParser().parseFromString(html, 'text/html');
-  const scripts = doc.querySelectorAll('script');
-  scripts.forEach(s => s.remove());
-  return doc.body.innerHTML;
-};
 
 interface NotesSectionProps {
   userId: string;
@@ -97,6 +92,24 @@ export default function NotesSection({ userId }: NotesSectionProps) {
     setNewCategory('');
     setShowCategoryInput(false);
   };
+
+  useEffect(() => {
+    if (!showModal) {
+      return;
+    }
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        handleCloseModal();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [showModal]);
 
   const handleSave = async () => {
     const content = editorRef.current?.innerHTML || '';
@@ -281,9 +294,9 @@ export default function NotesSection({ userId }: NotesSectionProps) {
                 </div>
               )}
 
-              <div 
+              <SafeHtml
                 className="text-slate-300 text-sm line-clamp-4 prose prose-sm prose-invert max-w-none mb-3 [&>ul]:list-disc [&>ol]:list-decimal [&>li]:ml-4"
-                dangerouslySetInnerHTML={{ __html: sanitizeHtml(note.content) }}
+                html={note.content}
               />
 
               {note.tags.length > 0 && (
@@ -322,14 +335,18 @@ export default function NotesSection({ userId }: NotesSectionProps) {
               animate={{ scale: 1, opacity: 1, y: 0 }}
               exit={{ scale: 0.96, opacity: 0, y: 12 }}
               onClick={(e) => e.stopPropagation()}
+              role="dialog"
+              aria-modal="true"
+              aria-labelledby="notes-modal-title"
               className="w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-3xl bg-slate-900 border border-slate-700 shadow-2xl"
             >
               <div className="sticky top-0 bg-slate-900 border-b border-slate-700 p-4 flex items-center justify-between">
-                <h3 className="text-xl font-bold text-white">
+                <h3 id="notes-modal-title" className="text-xl font-bold text-white">
                   {editingNote ? 'Notu Düzenle' : 'Yeni Not'}
                 </h3>
                 <button
                   onClick={handleCloseModal}
+                  aria-label="Not düzenleme penceresini kapat"
                   className="p-2 hover:bg-white/10 rounded-xl transition-colors"
                 >
                   <X className="w-5 h-5 text-slate-400" />
@@ -429,7 +446,11 @@ export default function NotesSection({ userId }: NotesSectionProps) {
                       onInput={(e) => setFormData({ ...formData, content: e.currentTarget.innerHTML })}
                       className="min-h-[200px] p-4 text-white focus:outline-none prose prose-sm prose-invert max-w-none [&>h1]:text-2xl [&>h1]:font-bold [&>ul]:list-disc [&>ol]:list-decimal [&>li]:ml-4 [&>a]:text-purple-400 [&>a]:underline"
                       style={{ whiteSpace: 'pre-wrap' }}
-                      dangerouslySetInnerHTML={{ __html: editingNote ? sanitizeHtml(editingNote.content) : '' }}
+                      dangerouslySetInnerHTML={{
+                        __html: editingNote
+                          ? sanitizeRichTextHtml(editingNote.content)
+                          : '',
+                      }}
                     />
                   </div>
                 </div>

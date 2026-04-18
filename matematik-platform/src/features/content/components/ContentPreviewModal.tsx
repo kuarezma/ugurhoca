@@ -2,6 +2,7 @@ import { motion } from 'framer-motion';
 import { Download, Eye, FileText, Key, X } from 'lucide-react';
 import { getDriveId, getYouTubeId } from '@/features/content/utils';
 import { getWorksheetVisibleDescription } from '@/features/content/worksheet';
+import { useAccessibleModal } from '@/hooks/useAccessibleModal';
 import type { ContentDocument } from '@/types';
 
 type ContentPreviewModalProps = {
@@ -19,6 +20,7 @@ export default function ContentPreviewModal({
   previewDoc,
   showAnswerKey,
 }: ContentPreviewModalProps) {
+  const modalRef = useAccessibleModal<HTMLDivElement>(true, onClose);
   const visibleDescription = getWorksheetVisibleDescription(previewDoc);
   const previewVideoId = previewDoc.video_url
     ? getYouTubeId(previewDoc.video_url)
@@ -38,11 +40,19 @@ export default function ContentPreviewModal({
         animate={{ scale: 1, opacity: 1 }}
         exit={{ scale: 0.9, opacity: 0 }}
         onClick={(event) => event.stopPropagation()}
+        ref={modalRef}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="content-preview-title"
+        tabIndex={-1}
         className="glass flex max-h-[92vh] w-full max-w-5xl flex-col rounded-3xl p-4 sm:max-h-[90vh] sm:p-6"
       >
         <div className="mb-3 flex items-start justify-between gap-3 sm:mb-4 sm:items-center">
           <div className="min-w-0">
-            <h3 className="text-lg font-bold text-white sm:text-xl">
+            <h3
+              id="content-preview-title"
+              className="text-lg font-bold text-white sm:text-xl"
+            >
               {previewDoc.title}
             </h3>
             <p className="line-clamp-2 text-xs text-slate-400 sm:text-sm">
@@ -50,7 +60,9 @@ export default function ContentPreviewModal({
             </p>
           </div>
           <button
+            type="button"
             onClick={onClose}
+            aria-label="Kapat"
             className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-slate-400 transition-colors hover:bg-white/5 hover:text-white"
           >
             <X className="h-5 w-5 sm:h-6 sm:w-6" />

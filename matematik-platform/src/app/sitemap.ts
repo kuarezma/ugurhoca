@@ -1,79 +1,55 @@
 import { MetadataRoute } from 'next';
+import { buildCanonicalUrl } from '@/lib/site-metadata';
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const baseUrl = 'https://ugurhoca.com';
   const lastModified = new Date();
 
   return [
-    { url: baseUrl, lastModified, changeFrequency: 'weekly', priority: 1 },
+    { url: buildCanonicalUrl('/'), lastModified, changeFrequency: 'weekly', priority: 1 },
     {
-      url: `${baseUrl}/giris`,
-      lastModified,
-      changeFrequency: 'monthly',
-      priority: 0.8,
-    },
-    {
-      url: `${baseUrl}/kayit`,
-      lastModified,
-      changeFrequency: 'monthly',
-      priority: 0.8,
-    },
-    {
-      url: `${baseUrl}/testler`,
+      url: buildCanonicalUrl('/testler'),
       lastModified,
       changeFrequency: 'daily',
       priority: 0.9,
     },
     {
-      url: `${baseUrl}/oyunlar`,
+      url: buildCanonicalUrl('/oyunlar'),
       lastModified,
       changeFrequency: 'weekly',
       priority: 0.8,
     },
     {
-      url: `${baseUrl}/icerikler`,
+      url: buildCanonicalUrl('/icerikler'),
       lastModified,
       changeFrequency: 'daily',
       priority: 0.9,
     },
     {
-      url: `${baseUrl}/odevler`,
-      lastModified,
-      changeFrequency: 'daily',
-      priority: 0.8,
-    },
-    {
-      url: `${baseUrl}/ilerleme`,
-      lastModified,
-      changeFrequency: 'weekly',
-      priority: 0.7,
-    },
-    {
-      url: `${baseUrl}/programlar`,
+      url: buildCanonicalUrl('/programlar'),
       lastModified,
       changeFrequency: 'monthly',
       priority: 0.8,
     },
     {
-      url: `${baseUrl}/programlar/lgs`,
+      url: buildCanonicalUrl('/programlar/lgs'),
       lastModified,
       changeFrequency: 'monthly',
       priority: 0.8,
     },
     {
-      url: `${baseUrl}/programlar/yks`,
+      url: buildCanonicalUrl('/programlar/yks'),
       lastModified,
       changeFrequency: 'monthly',
       priority: 0.8,
     },
     {
-      url: `${baseUrl}/gizlilik`,
+      url: buildCanonicalUrl('/gizlilik'),
       lastModified,
       changeFrequency: 'yearly',
       priority: 0.3,
     },
     {
-      url: `${baseUrl}/kvkk`,
+      url: buildCanonicalUrl('/kvkk'),
       lastModified,
       changeFrequency: 'yearly',
       priority: 0.3,

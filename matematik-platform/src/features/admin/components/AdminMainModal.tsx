@@ -3,6 +3,9 @@
 import { motion } from 'framer-motion';
 import type { ChangeEvent, Dispatch, SetStateAction } from 'react';
 import { X } from 'lucide-react';
+import { useToast } from '@/components/Toast';
+import { getErrorMessage } from '@/lib/error-utils';
+import { useAccessibleModal } from '@/hooks/useAccessibleModal';
 import { supabase } from '@/lib/supabase/client';
 import AdminEditDocumentForm from '@/features/admin/components/modal/AdminEditDocumentForm';
 import AdminEditUserForm from '@/features/admin/components/modal/AdminEditUserForm';
@@ -88,6 +91,9 @@ export default function AdminMainModal({
   studentUsers,
   success,
 }: AdminMainModalProps) {
+  const { showToast } = useToast();
+  const modalRef = useAccessibleModal<HTMLDivElement>(true, onClose);
+
   const updateFormData: AdminFormUpdate = (nextValue) => {
     setFormData((current) => ({ ...current, ...nextValue }));
   };
@@ -116,7 +122,7 @@ export default function AdminMainModal({
       .upload(fileName, file);
 
     if (error || !data) {
-      alert('Resim yüklenemedi.');
+      showToast('error', 'Resim yüklenemedi.');
       return;
     }
 
@@ -136,12 +142,12 @@ export default function AdminMainModal({
     try {
       const buffer = await file.arrayBuffer();
       const { parseExcelFile } = await import('@/lib/question-import');
-      const result = parseExcelFile(buffer);
+      const result = await parseExcelFile(buffer);
       updateFormData({ importResult: result });
     } catch (error) {
-      alert(
-        'Excel dosyası okunamadı: ' +
-          (error instanceof Error ? error.message : 'Bilinmeyen hata'),
+      showToast(
+        'error',
+        `Excel dosyası okunamadı: ${getErrorMessage(error)}`,
       );
     }
   };
@@ -157,7 +163,7 @@ export default function AdminMainModal({
       .upload(fileName, file);
 
     if (error) {
-      alert('Dosya yüklenemedi: ' + error.message);
+      showToast('error', `Dosya yüklenemedi: ${error.message}`);
       setIsSubmitting(false);
       return;
     }
@@ -280,13 +286,23 @@ export default function AdminMainModal({
         animate={{ scale: 1, opacity: 1 }}
         exit={{ scale: 0.9, opacity: 0 }}
         onClick={(event) => event.stopPropagation()}
+        ref={modalRef}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="admin-main-modal-title"
+        tabIndex={-1}
         className="glass rounded-3xl p-8 w-full max-w-2xl max-h-[90vh] overflow-y-auto"
       >
         <div className="flex items-center justify-between mb-6">
-          <h2 className="text-2xl font-bold text-white">
+          <h2 id="admin-main-modal-title" className="text-2xl font-bold text-white">
             {getModalTitle(modalType)}
           </h2>
-          <button onClick={onClose} className="text-slate-400 hover:text-white">
+          <button
+            type="button"
+            onClick={onClose}
+            aria-label="Kapat"
+            className="text-slate-400 hover:text-white"
+          >
             <X className="w-6 h-6" />
           </button>
         </div>

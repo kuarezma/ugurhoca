@@ -11,6 +11,7 @@ import type { AppUser } from '@/types';
 
 type RouterLike = {
   push: (href: string) => void;
+  replace?: (href: string) => void;
 };
 
 type AuthOptions = {
@@ -58,13 +59,28 @@ const createAuthSnapshot = (profile: AppUser): AuthSnapshot => ({
   name: profile.name,
 });
 
-export const redirectToLogin = (router?: RouterLike) => {
-  if (router) {
-    router.push('/giris');
+const redirectToPath = (href: string, router?: RouterLike) => {
+  if (router?.replace) {
+    router.replace(href);
     return;
   }
 
-  window.location.href = '/giris';
+  if (router) {
+    router.push(href);
+    return;
+  }
+
+  if (typeof window !== 'undefined') {
+    window.location.assign(href);
+  }
+};
+
+export const redirectToLogin = (router?: RouterLike) => {
+  redirectToPath('/giris', router);
+};
+
+export const redirectToHome = (router?: RouterLike) => {
+  redirectToPath('/', router);
 };
 
 export const getClientSession = async () => {

@@ -1,6 +1,7 @@
 "use client";
 
 import type { Dispatch, SetStateAction } from "react";
+import { useToast } from "@/components/Toast";
 import { ADMIN_EMAIL } from "@/lib/admin";
 import {
   advanceAdminUserGrades,
@@ -57,6 +58,7 @@ export function useAdminListActions({
   sharedDocs,
   quizzes,
 }: UseAdminListActionsOptions) {
+  const { showToast } = useToast();
   const studentUsers = allUsers.filter((user) => user.email !== ADMIN_EMAIL);
   const writingDocuments = documents.filter(
     (document) => document.type === "writing",
@@ -79,12 +81,13 @@ export function useAdminListActions({
     const { error } = await toggleAdminPrivateStudent(userId, isCurrentlyPrivate);
 
     if (!error) {
-      alert(
+      showToast(
+        "success",
         `Öğrenci "Özel Ders" listesinden ${isCurrentlyPrivate ? "çıkarıldı" : "eklendi"}.`,
       );
       await loadData();
     } else {
-      alert("İşlem başarısız: " + error.message);
+      showToast("error", "İşlem başarısız: " + error.message);
     }
   };
 
@@ -192,7 +195,7 @@ export function useAdminListActions({
     }
 
     const updated = await refreshAdminDocumentCategories();
-    alert(`${updated} kategori güncellendi!`);
+    showToast("success", `${updated} kategori güncellendi.`);
     await loadData();
   };
 
@@ -206,7 +209,7 @@ export function useAdminListActions({
     }
 
     const updated = await migrateLegacyWorksheetDocuments(documents);
-    alert(`${updated} yaprak test kaydı geçiş aracından geçirildi.`);
+    showToast("success", `${updated} yaprak test kaydı geçiş aracından geçirildi.`);
     await loadData();
   };
 
@@ -239,7 +242,7 @@ export function useAdminListActions({
 
     await loadData();
     setIsSubmitting(false);
-    alert("Sınıflar başarıyla güncellendi!");
+    showToast("success", "Sınıflar başarıyla güncellendi.");
   };
 
   return {

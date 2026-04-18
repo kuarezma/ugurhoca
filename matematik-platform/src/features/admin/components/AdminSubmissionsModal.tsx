@@ -3,6 +3,7 @@
 import { ClipboardList, Clock, X } from 'lucide-react';
 import AdminSubmissionReviewCard from '@/features/admin/components/AdminSubmissionReviewCard';
 import type { AdminAssignment, AdminSubmission } from '@/features/admin/types';
+import { useAccessibleModal } from '@/hooks/useAccessibleModal';
 
 type AdminSubmissionsModalProps = {
   assignment: AdminAssignment;
@@ -21,13 +22,22 @@ export default function AdminSubmissionsModal({
   onUpdateSubmission,
   submissions,
 }: AdminSubmissionsModalProps) {
+  const modalRef = useAccessibleModal<HTMLDivElement>(true, onClose);
+
   return (
     <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
       <div
         onClick={onClose}
         className="absolute inset-0 bg-slate-950/90 backdrop-blur-md animate-fade-in"
       />
-      <div className="relative w-full max-w-4xl max-h-[90vh] glass rounded-3xl p-6 sm:p-8 flex flex-col overflow-hidden animate-fade-up">
+      <div
+        ref={modalRef}
+        role="dialog"
+        aria-modal="true"
+        aria-label="Teslim edilen ödevler"
+        tabIndex={-1}
+        className="relative w-full max-w-4xl max-h-[90vh] glass rounded-3xl p-6 sm:p-8 flex flex-col overflow-hidden animate-fade-up"
+      >
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-4">
             <div className="w-12 h-12 bg-indigo-500 rounded-2xl flex items-center justify-center">
@@ -43,7 +53,9 @@ export default function AdminSubmissionsModal({
             </div>
           </div>
           <button
+            type="button"
             onClick={onClose}
+            aria-label="Kapat"
             className="p-2 text-slate-400 hover:text-white transition-colors"
           >
             <X className="w-6 h-6" />

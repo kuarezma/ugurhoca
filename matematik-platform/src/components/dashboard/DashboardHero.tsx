@@ -1,7 +1,6 @@
 'use client';
 
-/* eslint-disable @next/next/no-img-element -- user-provided avatar images can come from Supabase storage URLs */
-
+import Image from 'next/image';
 import { motion } from 'framer-motion';
 import {
   BookOpen,
@@ -62,9 +61,11 @@ export default function DashboardHero({
               className="group relative flex h-24 w-24 shrink-0 items-center justify-center overflow-hidden rounded-3xl border border-white/20 bg-gradient-to-br from-white/20 to-white/5 text-4xl font-bold text-white shadow-xl backdrop-blur-md transition-all"
             >
               {hasImageAvatar ? (
-                <img
+                <Image
                   src={user.avatar_id || ''}
                   alt={`${user.name} profil fotoğrafı`}
+                  fill
+                  sizes="96px"
                   className="h-full w-full object-cover"
                 />
               ) : user.avatar_id ? (

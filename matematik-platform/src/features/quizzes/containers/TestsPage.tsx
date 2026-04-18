@@ -19,9 +19,11 @@ import {
   Download,
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { supabase } from '@/lib/supabase/client';
-import { getClientSession } from '@/lib/auth-client';
+import { useToast } from '@/components/Toast';
 import DeferredFloatingShapes from '@/components/DeferredFloatingShapes';
+import { requireClientSession } from '@/lib/auth-client';
+import { getErrorMessage } from '@/lib/error-utils';
+import { supabase } from '@/lib/supabase/client';
 import { Quiz, QuizQuestion } from '@/types/quiz';
 import type { AppUser } from '@/types';
 
@@ -51,6 +53,7 @@ export default function TestsPage({
   const [error, setError] = useState<string | null>(null);
   const [pdfLoading, setPdfLoading] = useState(false);
   const router = useRouter();
+  const { showToast } = useToast();
   const profileHref = user?.isAdmin ? '/admin' : '/profil';
   const initialUserKey = useMemo(
     () =>
@@ -72,9 +75,8 @@ export default function TestsPage({
 
   useEffect(() => {
     const checkSession = async () => {
-      const session = await getClientSession();
+      const session = await requireClientSession({ router });
       if (!session) {
-        router.push('/giris');
         return;
       }
       const { data: profile } = await supabase
@@ -149,7 +151,7 @@ export default function TestsPage({
       return false;
     } catch (err) {
       console.error('Sorular yüklenirken hata:', err);
-      alert(err instanceof Error ? err.message : 'Sorular yüklenemedi.');
+      showToast('error', getErrorMessage(err, 'Sorular yüklenemedi.'));
       return false;
     }
   };

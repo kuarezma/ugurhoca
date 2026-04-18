@@ -1,4 +1,4 @@
-import * as XLSX from 'xlsx';
+import ExcelJS from 'exceljs';
 
 export const MAX_QUESTIONS = 30;
 
@@ -23,35 +23,50 @@ export interface ImportResult {
   errors: { row: number; message: string }[];
 }
 
-type MetaRow = [string?, string?];
-type QuestionSheetRow = Record<string, string | number | undefined>;
-
 const CORRECT_MAP: Record<string, number> = { A: 0, B: 1, C: 2, D: 3 };
 const VALID_DIFFICULTIES = ['Kolay', 'Orta', 'Zor'];
+const TEMPLATE_MIME_TYPE =
+  'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
+
+const getCellText = (row: ExcelJS.Row, column: number) =>
+  row.getCell(column).text.trim();
+
+const getHeaderIndexes = (row: ExcelJS.Row) => {
+  const headerIndexes = new Map<string, number>();
+
+  row.eachCell({ includeEmpty: true }, (cell, colNumber) => {
+    const value = cell.text.trim();
+
+    if (value) {
+      headerIndexes.set(value, colNumber);
+    }
+  });
+
+  return headerIndexes;
+};
 
 /** Excel dosyasını (ArrayBuffer) parse eder ve ImportResult döner */
-export function parseExcelFile(buffer: ArrayBuffer): ImportResult {
-  const wb = XLSX.read(buffer, { type: 'array' });
+export async function parseExcelFile(buffer: ArrayBuffer): Promise<ImportResult> {
+  const workbook = new ExcelJS.Workbook();
+  await workbook.xlsx.load(buffer);
 
   // ── 1. Test Bilgileri sekmesi ─────────────────────────────────────────────
-  const metaSheet = wb.Sheets['Test Bilgileri'];
+  const metaSheet = workbook.getWorksheet('Test Bilgileri');
   if (!metaSheet) {
     throw new Error(
-      '"Test Bilgileri" sekmesi bulunamadı. Lütfen indirdiğiniz şablonu kullanın.'
+      '"Test Bilgileri" sekmesi bulunamadı. Lütfen indirdiğiniz şablonu kullanın.',
     );
   }
 
-  const metaRows = XLSX.utils.sheet_to_json<MetaRow>(metaSheet, {
-    header: 1,
-    defval: '',
-  });
-
   const metaMap: Record<string, string> = {};
-  for (const row of metaRows) {
-    if (row[0] && row[1] !== undefined) {
-      metaMap[String(row[0]).trim()] = String(row[1]).trim();
+  metaSheet.eachRow({ includeEmpty: false }, (row) => {
+    const key = getCellText(row, 1);
+    const value = getCellText(row, 2);
+
+    if (key) {
+      metaMap[key] = value;
     }
-  }
+  });
 
   const rawGrade = parseInt(metaMap['Sınıf'] || '0', 10);
   const rawTime = parseInt(metaMap['Süre (dakika)'] || '0', 10);
@@ -68,40 +83,46 @@ export function parseExcelFile(buffer: ArrayBuffer): ImportResult {
   };
 
   // ── 2. Sorular sekmesi ────────────────────────────────────────────────────
-  const soruSheet = wb.Sheets['Sorular'];
+  const soruSheet = workbook.getWorksheet('Sorular');
   if (!soruSheet) {
     throw new Error(
-      '"Sorular" sekmesi bulunamadı. Lütfen indirdiğiniz şablonu kullanın.'
+      '"Sorular" sekmesi bulunamadı. Lütfen indirdiğiniz şablonu kullanın.',
     );
   }
 
-  const rawRows = XLSX.utils.sheet_to_json<QuestionSheetRow>(soruSheet, {
-    defval: '',
-  });
-
+  const headerIndexes = getHeaderIndexes(soruSheet.getRow(1));
   const valid: ParsedQuestion[] = [];
   const errors: { row: number; message: string }[] = [];
 
-  for (let i = 0; i < rawRows.length; i++) {
-    const row = rawRows[i];
-    const rowNum = i + 2; // Excel satır numarası (header = 1)
+  soruSheet.eachRow({ includeEmpty: false }, (row, rowNumber) => {
+    if (rowNumber === 1) {
+      return;
+    }
+
+    const rowNum = rowNumber;
+    const q = getCellText(row, headerIndexes.get('Soru') || 1);
 
     // Boş satırı atla
-    const q = String(row['Soru'] || '').trim();
-    if (!q) continue;
+    if (!q) return;
 
     // Max soru sınırı
     if (valid.length >= MAX_QUESTIONS) {
-      errors.push({ row: rowNum, message: `Maksimum ${MAX_QUESTIONS} soru sınırına ulaşıldı. Bu satır ve sonrası atlandı.` });
-      break;
+      errors.push({
+        row: rowNum,
+        message: `Maksimum ${MAX_QUESTIONS} soru sınırına ulaşıldı. Bu satır ve sonrası atlandı.`,
+      });
+      return;
     }
 
-    const a = String(row['A Şıkkı'] || '').trim();
-    const b = String(row['B Şıkkı'] || '').trim();
-    const c = String(row['C Şıkkı'] || '').trim();
-    const d = String(row['D Şıkkı'] || '').trim();
-    const correctRaw = String(row['Doğru (A/B/C/D)'] || '').trim().toUpperCase();
-    const explanation = String(row['Açıklama'] || '').trim();
+    const a = getCellText(row, headerIndexes.get('A Şıkkı') || 2);
+    const b = getCellText(row, headerIndexes.get('B Şıkkı') || 3);
+    const c = getCellText(row, headerIndexes.get('C Şıkkı') || 4);
+    const d = getCellText(row, headerIndexes.get('D Şıkkı') || 5);
+    const correctRaw = getCellText(
+      row,
+      headerIndexes.get('Doğru (A/B/C/D)') || 6,
+    ).toUpperCase();
+    const explanation = getCellText(row, headerIndexes.get('Açıklama') || 7);
 
     const msgs: string[] = [];
 
@@ -110,7 +131,7 @@ export function parseExcelFile(buffer: ArrayBuffer): ImportResult {
 
     if (msgs.length > 0) {
       errors.push({ row: rowNum, message: msgs.join(' | ') });
-      continue;
+      return;
     }
 
     valid.push({
@@ -119,14 +140,18 @@ export function parseExcelFile(buffer: ArrayBuffer): ImportResult {
       correct_index: CORRECT_MAP[correctRaw],
       explanation,
     });
-  }
+  });
 
   return { meta, valid, errors };
 }
 
 /** Şablon .xlsx dosyası oluşturup tarayıcıdan indirir */
 export function downloadExcelTemplate(): void {
-  const wb = XLSX.utils.book_new();
+  if (typeof window === 'undefined') {
+    return;
+  }
+
+  const workbook = new ExcelJS.Workbook();
 
   // ── Test Bilgileri sekmesi ────────────────────────────────────────────────
   const metaData = [
@@ -136,9 +161,9 @@ export function downloadExcelTemplate(): void {
     ['Süre (dakika)', 20],
     ['Açıklama', 'Doğrusal denklemler konusunu kapsar.'],
   ];
-  const metaWS = XLSX.utils.aoa_to_sheet(metaData);
-  metaWS['!cols'] = [{ wch: 20 }, { wch: 40 }];
-  XLSX.utils.book_append_sheet(wb, metaWS, 'Test Bilgileri');
+  const metaSheet = workbook.addWorksheet('Test Bilgileri');
+  metaSheet.addRows(metaData);
+  metaSheet.columns = [{ width: 20 }, { width: 40 }];
 
   // ── Sorular sekmesi ───────────────────────────────────────────────────────
   const headers = [
@@ -159,13 +184,27 @@ export function downloadExcelTemplate(): void {
     'B',
     '3x = 9, dolayısıyla x = 3 bulunur.',
   ];
-  const soruData = [headers, exampleRow];
-  const soruWS = XLSX.utils.aoa_to_sheet(soruData);
-  soruWS['!cols'] = [
-    { wch: 55 }, { wch: 20 }, { wch: 20 }, { wch: 20 }, { wch: 20 },
-    { wch: 18 }, { wch: 40 },
+  const questionSheet = workbook.addWorksheet('Sorular');
+  questionSheet.addRow(headers);
+  questionSheet.addRow(exampleRow);
+  questionSheet.columns = [
+    { width: 55 },
+    { width: 20 },
+    { width: 20 },
+    { width: 20 },
+    { width: 20 },
+    { width: 18 },
+    { width: 40 },
   ];
-  XLSX.utils.book_append_sheet(wb, soruWS, 'Sorular');
 
-  XLSX.writeFile(wb, 'ugur-hoca-test-sablonu.xlsx');
+  void workbook.xlsx.writeBuffer().then((buffer) => {
+    const blob = new Blob([buffer], { type: TEMPLATE_MIME_TYPE });
+    const objectUrl = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+
+    link.href = objectUrl;
+    link.download = 'ugur-hoca-test-sablonu.xlsx';
+    link.click();
+    URL.revokeObjectURL(objectUrl);
+  });
 }

@@ -2,6 +2,7 @@
 
 import type { Dispatch, SetStateAction } from "react";
 import { useMemo, useState } from "react";
+import { useToast } from "@/components/Toast";
 import { isAdminEmail } from "@/lib/admin";
 import {
   applyAdminModerationAction,
@@ -36,6 +37,7 @@ export function useAdminNotifications({
   setNotifications,
   users,
 }: UseAdminNotificationsOptions) {
+  const { showToast } = useToast();
   const [showNotifications, setShowNotifications] = useState(false);
   const [selectedNotification, setSelectedNotification] =
     useState<AdminNotification | null>(null);
@@ -232,7 +234,8 @@ export function useAdminNotifications({
     });
 
     await loadData(currentUserId);
-    alert(
+    showToast(
+      "success",
       action === "report"
         ? "Mesaj raporlandı."
         : action === "mute"
@@ -249,7 +252,7 @@ export function useAdminNotifications({
 
     await sendAdminNotificationReply(payload.sender_id, replyText);
     setReplyText("");
-    alert("Cevap gönderildi.");
+    showToast("success", "Cevap gönderildi.");
   };
 
   const deleteMessage = async (notificationId: string) => {
@@ -259,7 +262,7 @@ export function useAdminNotifications({
 
     const { error } = await deleteAdminNotification(notificationId);
     if (error) {
-      alert("Mesaj silinemedi: " + error.message);
+      showToast("error", "Mesaj silinemedi: " + error.message);
       return;
     }
 

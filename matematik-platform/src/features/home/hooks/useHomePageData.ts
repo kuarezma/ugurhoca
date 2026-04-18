@@ -6,8 +6,15 @@ import {
   useState,
   type FormEvent,
 } from 'react';
-import { getCurrentUserProfile, requireClientSession } from '@/lib/auth-client';
-import { supabase } from '@/lib/supabase/client';
+import { useRouter } from 'next/navigation';
+import { useToast } from '@/components/Toast';
+import {
+  getCurrentUserProfile,
+  redirectToHome,
+  requireClientSession,
+  signOutClient,
+} from '@/lib/auth-client';
+import { getErrorMessage } from '@/lib/error-utils';
 import type {
   Announcement,
   AppUser,
@@ -26,6 +33,8 @@ import {
 
 export const useHomePageData = (initialFeed?: HomeInitialFeed | null) => {
   const isFeedSeeded = Boolean(initialFeed);
+  const router = useRouter();
+  const { showToast } = useToast();
 
   const [user, setUser] = useState<AppUser | null>(null);
   const [documents, setDocuments] = useState<ContentDocument[]>(
@@ -157,7 +166,7 @@ export const useHomePageData = (initialFeed?: HomeInitialFeed | null) => {
     }
 
     if (!user.id) {
-      alert('Oturum bilgisi bulunamadı. Lütfen tekrar giriş yap.');
+      showToast('warning', 'Oturum bilgisi bulunamadı. Lütfen tekrar giriş yap.');
       return;
     }
 
@@ -167,7 +176,7 @@ export const useHomePageData = (initialFeed?: HomeInitialFeed | null) => {
       const session = await requireClientSession({ redirectToLogin: false });
 
       if (!session?.user?.id) {
-        alert('Oturum süresi dolmuş. Lütfen tekrar giriş yap.');
+        showToast('warning', 'Oturum süresi dolmuş. Lütfen tekrar giriş yap.');
         setSupportSending(false);
         return;
       }
@@ -189,10 +198,9 @@ export const useHomePageData = (initialFeed?: HomeInitialFeed | null) => {
       setTimeout(() => setSupportSent(false), 3000);
     } catch (error) {
       console.error('Support message error:', error);
-      alert(
-        error instanceof Error
-          ? error.message
-          : 'Mesaj gönderilemedi. Lütfen tekrar dene.',
+      showToast(
+        'error',
+        getErrorMessage(error, 'Mesaj gönderilemedi. Lütfen tekrar dene.'),
       );
     } finally {
       setSupportSending(false);
@@ -224,9 +232,9 @@ export const useHomePageData = (initialFeed?: HomeInitialFeed | null) => {
   };
 
   const handleLogout = async () => {
-    await supabase.auth.signOut();
+    await signOutClient();
     setUser(null);
-    window.location.href = '/';
+    redirectToHome(router);
   };
 
   return {

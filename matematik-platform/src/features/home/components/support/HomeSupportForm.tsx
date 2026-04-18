@@ -2,6 +2,7 @@
 
 import { type FormEvent } from 'react';
 import { Send, Upload } from 'lucide-react';
+import { useToast } from '@/components/Toast';
 import type { SupportAttachment } from '@/types';
 import { HomeSupportAttachmentList } from '@/features/home/components/support/HomeSupportAttachmentList';
 
@@ -28,6 +29,8 @@ export function HomeSupportForm({
   supportSending,
   supportSent,
 }: HomeSupportFormProps) {
+  const { showToast } = useToast();
+
   return (
     <form onSubmit={onSubmit} className="space-y-4">
       <div>
@@ -71,7 +74,7 @@ export function HomeSupportForm({
                 await onUploadSupportAttachments(event.target.files);
                 event.target.value = '';
               } catch {
-                alert('Dosya yüklenemedi.');
+                showToast('error', 'Dosya yüklenemedi.');
               }
             }
           }}

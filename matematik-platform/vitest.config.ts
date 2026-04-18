@@ -4,6 +4,12 @@ import path from 'node:path';
 export default defineConfig({
   test: {
     coverage: {
+      thresholds: {
+        branches: 40,
+        functions: 60,
+        lines: 60,
+        statements: 60,
+      },
       provider: 'v8',
       reporter: ['text', 'html'],
     },

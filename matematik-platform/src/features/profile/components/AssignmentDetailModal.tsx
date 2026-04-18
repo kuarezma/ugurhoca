@@ -3,6 +3,7 @@
 import { motion } from 'framer-motion';
 import { ChevronRight } from 'lucide-react';
 import type { DashboardAssignment } from '@/types/dashboard';
+import { useAccessibleModal } from '@/hooks/useAccessibleModal';
 
 type AssignmentDetailModalProps = {
   assignment: DashboardAssignment;
@@ -15,6 +16,8 @@ export default function AssignmentDetailModal({
   onClose,
   onOpenAssignments,
 }: AssignmentDetailModalProps) {
+  const modalRef = useAccessibleModal<HTMLDivElement>(true, onClose);
+
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -28,6 +31,11 @@ export default function AssignmentDetailModal({
         animate={{ scale: 1, opacity: 1, y: 0 }}
         exit={{ scale: 0.96, opacity: 0, y: 12 }}
         onClick={(event) => event.stopPropagation()}
+        ref={modalRef}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="assignment-detail-title"
+        tabIndex={-1}
         className="w-full max-w-lg rounded-3xl border border-slate-700 bg-slate-900 p-6 shadow-2xl sm:p-8"
       >
         <div className="mb-4 flex items-start justify-between gap-4">
@@ -35,13 +43,14 @@ export default function AssignmentDetailModal({
             <p className="mb-2 text-xs uppercase tracking-[0.2em] text-purple-300">
               Ödev
             </p>
-            <h3 className="text-2xl font-bold text-white">
+            <h3 id="assignment-detail-title" className="text-2xl font-bold text-white">
               {assignment.title}
             </h3>
           </div>
           <button
             type="button"
             onClick={onClose}
+            aria-label="Kapat"
             className="text-slate-400 hover:text-white"
           >
             <ChevronRight className="h-6 w-6 rotate-45" />

@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import type { DragEvent, ChangeEvent } from 'react';
 import { ClipboardList, FileText, Upload, X } from 'lucide-react';
 import type { Assignment, Submission } from '@/types';
+import { useAccessibleModal } from '@/hooks/useAccessibleModal';
 
 type AssignmentSubmissionModalProps = {
   assignment: Assignment;
@@ -38,6 +39,8 @@ export function AssignmentSubmissionModal({
   uploadProgress,
   uploading,
 }: AssignmentSubmissionModalProps) {
+  const modalRef = useAccessibleModal<HTMLDivElement>(true, onClose);
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6">
       <motion.div
@@ -51,6 +54,11 @@ export function AssignmentSubmissionModal({
         initial={{ opacity: 0, scale: 0.95, y: 20 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
         exit={{ opacity: 0, scale: 0.95, y: 20 }}
+        ref={modalRef}
+        role="dialog"
+        aria-modal="true"
+        aria-label={assignment.title}
+        tabIndex={-1}
         className={`relative w-full max-w-lg overflow-hidden rounded-3xl p-6 sm:p-8 ${
           isLight ? 'bg-white' : 'border border-slate-800 bg-slate-900'
         }`}
@@ -58,6 +66,7 @@ export function AssignmentSubmissionModal({
         <button
           type="button"
           onClick={onClose}
+          aria-label="Kapat"
           className="absolute right-4 top-4 p-2 text-slate-400 hover:text-white"
         >
           <X className="h-6 w-6" />

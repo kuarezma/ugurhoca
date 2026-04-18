@@ -1,8 +1,13 @@
 import type { Metadata } from 'next';
 
 export const SITE_URL = 'https://ugurhoca.com';
+export const SITE_NAME = 'Uğur Hoca Matematik';
 
 const defaultOgImage = `${SITE_URL}/icon-512.png`;
+
+export function buildCanonicalUrl(path: string) {
+  return `${SITE_URL}${path.startsWith('/') ? path : `/${path}`}`;
+}
 
 export function createPageMetadata({
   title,
@@ -15,18 +20,27 @@ export function createPageMetadata({
   path: string;
   noIndex?: boolean;
 }): Metadata {
-  const url = `${SITE_URL}${path.startsWith('/') ? path : `/${path}`}`;
+  const url = buildCanonicalUrl(path);
 
   return {
     title,
     description,
     alternates: { canonical: url },
-    robots: noIndex ? { index: false, follow: false } : undefined,
+    robots: noIndex
+      ? {
+          follow: false,
+          googleBot: {
+            follow: false,
+            index: false,
+          },
+          index: false,
+        }
+      : undefined,
     openGraph: {
       title,
       description,
       url,
-      siteName: 'Uğur Hoca Matematik',
+      siteName: SITE_NAME,
       locale: 'tr_TR',
       type: 'website',
       images: [
@@ -42,6 +56,7 @@ export function createPageMetadata({
       card: 'summary_large_image',
       title,
       description,
+      images: [defaultOgImage],
     },
   };
 }

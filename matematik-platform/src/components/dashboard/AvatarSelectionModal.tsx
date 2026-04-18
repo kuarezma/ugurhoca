@@ -1,7 +1,6 @@
 'use client';
 
-/* eslint-disable @next/next/no-img-element -- user-provided avatar images can come from Supabase storage URLs */
-
+import Image from 'next/image';
 import { useRef, useState, type ChangeEvent } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { ImagePlus, LoaderCircle, Upload, X } from 'lucide-react';
@@ -11,6 +10,7 @@ import {
   PROFILE_AVATAR_ACCEPT,
   PROFILE_AVATAR_MAX_LABEL,
 } from '@/features/profile/utils/avatar-upload';
+import { useAccessibleModal } from '@/hooks/useAccessibleModal';
 
 export const AVATAR_LIST = [
   '🦊',
@@ -50,6 +50,7 @@ export default function AvatarSelectionModal({
   const [uploading, setUploading] = useState(false);
   const { showToast } = useToast();
   const hasImageAvatar = isAvatarImage(currentAvatar);
+  const modalRef = useAccessibleModal<HTMLDivElement>(isOpen, onClose);
 
   const handleEmojiSelect = async (avatar: string) => {
     try {
@@ -105,13 +106,18 @@ export default function AvatarSelectionModal({
           className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 p-4 backdrop-blur-md"
           onClick={onClose}
         >
-          <motion.div
-            initial={{ scale: 0.95, opacity: 0, y: 10 }}
-            animate={{ scale: 1, opacity: 1, y: 0 }}
-            exit={{ scale: 0.95, opacity: 0, y: 10 }}
-            onClick={(event) => event.stopPropagation()}
-            className="w-full max-w-2xl overflow-hidden rounded-[2rem] border border-white/10 bg-slate-900 shadow-2xl"
-          >
+        <motion.div
+          initial={{ scale: 0.95, opacity: 0, y: 10 }}
+          animate={{ scale: 1, opacity: 1, y: 0 }}
+          exit={{ scale: 0.95, opacity: 0, y: 10 }}
+          onClick={(event) => event.stopPropagation()}
+          ref={modalRef}
+          role="dialog"
+          aria-modal="true"
+          aria-label="Profil simgesi seç"
+          tabIndex={-1}
+          className="w-full max-w-2xl overflow-hidden rounded-[2rem] border border-white/10 bg-slate-900 shadow-2xl"
+        >
             <div className="flex items-center justify-between border-b border-white/5 bg-white/5 p-5">
               <div>
                 <h3 className="text-lg font-bold text-white">
@@ -124,6 +130,7 @@ export default function AvatarSelectionModal({
               <button
                 type="button"
                 onClick={onClose}
+                aria-label="Kapat"
                 className="flex h-8 w-8 items-center justify-center rounded-full bg-white/10 text-slate-300 transition-colors hover:bg-white/20 hover:text-white"
               >
                 <X className="h-5 w-5" />
@@ -148,11 +155,13 @@ export default function AvatarSelectionModal({
                 </div>
 
                 <div className="mt-5 rounded-3xl border border-dashed border-white/10 bg-black/20 p-5 text-center">
-                  <div className="mx-auto flex h-28 w-28 items-center justify-center overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-br from-white/15 to-white/5 text-5xl text-white">
+                  <div className="relative mx-auto flex h-28 w-28 items-center justify-center overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-br from-white/15 to-white/5 text-5xl text-white">
                     {hasImageAvatar ? (
-                      <img
+                      <Image
                         src={currentAvatar || ''}
                         alt="Mevcut profil fotoğrafı"
+                        fill
+                        sizes="112px"
                         className="h-full w-full object-cover"
                       />
                     ) : currentAvatar ? (

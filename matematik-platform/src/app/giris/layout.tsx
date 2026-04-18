@@ -6,6 +6,7 @@ export const metadata: Metadata = createPageMetadata({
   description:
     'Uğur Hoca Matematik hesabınıza giriş yapın; testler, ödevler ve içeriklere erişin.',
   path: '/giris',
+  noIndex: true,
 });
 
 export default function GirisLayout({

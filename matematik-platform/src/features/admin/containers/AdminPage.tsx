@@ -23,6 +23,7 @@ import {
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { signOutClient } from '@/lib/auth-client';
+import { useToast } from '@/components/Toast';
 import DeferredFloatingShapes from '@/components/DeferredFloatingShapes';
 import { useAdminListActions } from '@/features/admin/hooks/useAdminListActions';
 import { useAdminModalState } from '@/features/admin/hooks/useAdminModalState';
@@ -101,6 +102,7 @@ const AdminTabPanels = dynamic(
 
 export default function AdminPage() {
   const RETENTION_DAYS = 180;
+  const { showToast } = useToast();
   const [user, setUser] = useState<AdminUser | null>(null);
   const [activeTab, setActiveTab] = useState<AdminActiveTab>('statistics');
   const [announcements, setAnnouncements] = useState<Announcement[]>([]);
@@ -222,7 +224,7 @@ export default function AdminPage() {
 
     if (!error) {
       if (activeAssignment) loadSubmissions(activeAssignment.id);
-      alert('Değerlendirme kaydedildi.');
+      showToast('success', 'Değerlendirme kaydedildi.');
     }
   };
 

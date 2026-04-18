@@ -1,6 +1,5 @@
-/* eslint-disable @next/next/no-img-element -- content cards render external document preview URLs */
-
-import { createElement } from 'react';
+import Image from 'next/image';
+import { createElement, useState } from 'react';
 import { motion } from 'framer-motion';
 import {
   Calendar,
@@ -71,6 +70,7 @@ export default function ContentCard({
   user,
   viewMode,
 }: ContentCardProps) {
+  const [thumbnailFailed, setThumbnailFailed] = useState(false);
   const visibleDescription = getWorksheetVisibleDescription(content);
   const isDriveImage =
     typeof content.file_url === 'string' &&
@@ -79,6 +79,7 @@ export default function ContentCard({
     isDriveImage && content.file_url
       ? getGoogleDriveThumbnailUrl(content.file_url, 'w400')
       : null;
+  const showDriveThumbnail = Boolean(driveThumbnailSrc) && !thumbnailFailed;
 
   const actionButtons = (
     <div className="grid w-full grid-cols-2 gap-2 sm:flex sm:flex-wrap sm:items-center sm:gap-3">
@@ -190,20 +191,21 @@ export default function ContentCard({
         <div className="space-y-4">
           <div className="flex items-start justify-between gap-2 sm:gap-3">
             <div className="flex items-center gap-3 min-w-0">
-              {isDriveImage ? (
-                <img
-                  src={driveThumbnailSrc || ''}
-                  alt={content.title}
-                  className="w-11 h-11 sm:w-14 sm:h-14 rounded-xl object-cover border border-white/10 flex-shrink-0"
-                  onError={(event) => {
-                    const target = event.target as HTMLImageElement;
-                    target.style.display = 'none';
-                    target.nextElementSibling?.classList.remove('hidden');
-                  }}
-                />
+              {showDriveThumbnail ? (
+                <div className="relative h-11 w-11 flex-shrink-0 overflow-hidden rounded-xl border border-white/10 sm:h-14 sm:w-14">
+                  <Image
+                    src={driveThumbnailSrc || ''}
+                    alt={content.title}
+                    fill
+                    sizes="(max-width: 640px) 44px, 56px"
+                    className="object-cover"
+                    onError={() => setThumbnailFailed(true)}
+                    unoptimized
+                  />
+                </div>
               ) : null}
               <div
-                className={`w-11 h-11 sm:w-14 sm:h-14 rounded-xl bg-gradient-to-br ${getContentTypeColor(content.type)} flex items-center justify-center flex-shrink-0 ${isDriveImage ? 'hidden' : ''}`}
+                className={`w-11 h-11 sm:w-14 sm:h-14 rounded-xl bg-gradient-to-br ${getContentTypeColor(content.type)} flex items-center justify-center flex-shrink-0 ${showDriveThumbnail ? 'hidden' : ''}`}
               >
                 <ContentTypeIcon type={content.type} />
               </div>
@@ -275,20 +277,21 @@ export default function ContentCard({
       <div className={`h-2 bg-gradient-to-r ${getContentTypeColor(content.type)}`} />
       <div className="p-4 sm:p-6">
         <div className="flex items-start justify-between gap-2 sm:gap-3 mb-4 sm:mb-5">
-          {isDriveImage ? (
-            <img
-              src={driveThumbnailSrc || ''}
-              alt={content.title}
-              className="w-11 h-11 sm:w-14 sm:h-14 rounded-xl object-cover border border-white/10"
-              onError={(event) => {
-                const target = event.target as HTMLImageElement;
-                target.style.display = 'none';
-                target.nextElementSibling?.classList.remove('hidden');
-              }}
-            />
+          {showDriveThumbnail ? (
+            <div className="relative h-11 w-11 overflow-hidden rounded-xl border border-white/10 sm:h-14 sm:w-14">
+              <Image
+                src={driveThumbnailSrc || ''}
+                alt={content.title}
+                fill
+                sizes="(max-width: 640px) 44px, 56px"
+                className="object-cover"
+                onError={() => setThumbnailFailed(true)}
+                unoptimized
+              />
+            </div>
           ) : null}
           <div
-            className={`w-11 h-11 sm:w-14 sm:h-14 rounded-xl bg-gradient-to-br ${getContentTypeColor(content.type)} flex items-center justify-center ${isDriveImage ? 'hidden' : ''}`}
+            className={`w-11 h-11 sm:w-14 sm:h-14 rounded-xl bg-gradient-to-br ${getContentTypeColor(content.type)} flex items-center justify-center ${showDriveThumbnail ? 'hidden' : ''}`}
           >
             <ContentTypeIcon type={content.type} />
           </div>

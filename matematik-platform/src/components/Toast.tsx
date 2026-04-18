@@ -1,6 +1,12 @@
 'use client';
 
-import { createContext, useContext, useState, useCallback, ReactNode } from 'react';
+import {
+  createContext,
+  useContext,
+  useState,
+  useCallback,
+  type ReactNode,
+} from 'react';
 import { X, CheckCircle, AlertCircle, Info, AlertTriangle } from 'lucide-react';
 
 type ToastType = 'success' | 'error' | 'info' | 'warning';
@@ -35,7 +41,10 @@ export function ToastProvider({ children }: { children: ReactNode }) {
   const [toasts, setToasts] = useState<Toast[]>([]);
 
   const showToast = useCallback((type: ToastType, message: string) => {
-    const id = Math.random().toString(36).substring(7);
+    const id =
+      typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function'
+        ? crypto.randomUUID()
+        : Math.random().toString(36).substring(2, 9);
     setToasts((prev) => [...prev, { id, type, message }]);
     setTimeout(() => {
       setToasts((prev) => prev.filter((t) => t.id !== id));
@@ -49,18 +58,24 @@ export function ToastProvider({ children }: { children: ReactNode }) {
   return (
     <ToastContext.Provider value={{ showToast }}>
       {children}
-      <div className="fixed bottom-4 right-4 z-[100] flex flex-col gap-2">
+      <div
+        aria-atomic="true"
+        aria-live="polite"
+        className="fixed bottom-4 right-4 z-[100] flex flex-col gap-2"
+      >
         {toasts.map((toast) => {
           const Icon = icons[toast.type];
           return (
             <div
               key={toast.id}
+              role={toast.type === 'error' || toast.type === 'warning' ? 'alert' : 'status'}
               className={`animate-toast-in flex max-w-sm items-center gap-3 rounded-xl border px-4 py-3 shadow-lg backdrop-blur-lg ${colors[toast.type]}`}
             >
               <Icon className="h-5 w-5 flex-shrink-0" />
               <p className="flex-1 text-sm font-medium">{toast.message}</p>
               <button
                 onClick={() => removeToast(toast.id)}
+                aria-label="Bildirimi kapat"
                 className="rounded-md p-1 transition-colors hover:bg-black/10 dark:hover:bg-white/10"
               >
                 <X className="h-4 w-4" />

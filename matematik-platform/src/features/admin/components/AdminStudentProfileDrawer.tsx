@@ -18,6 +18,7 @@ import type {
   AdminUser,
 } from "@/features/admin/types";
 import { buildAdminStudentProfileSummary } from "@/features/admin/utils/student-profile";
+import { useAccessibleModal } from "@/hooks/useAccessibleModal";
 
 type AdminStudentProfileDrawerProps = {
   data: AdminStudentProfileData | null;
@@ -70,6 +71,7 @@ export default function AdminStudentProfileDrawer({
   onClose,
   student,
 }: AdminStudentProfileDrawerProps) {
+  const drawerRef = useAccessibleModal<HTMLElement>(true, onClose);
   const summary = data ? buildAdminStudentProfileSummary(data) : null;
   const submittedAssignmentIds = new Set(
     (data?.submissions || []).map((submission) => submission.assignment_id),
@@ -92,6 +94,11 @@ export default function AdminStudentProfileDrawer({
         exit={{ opacity: 0, x: 48 }}
         transition={{ type: "spring", damping: 28, stiffness: 280 }}
         onClick={(event) => event.stopPropagation()}
+        ref={drawerRef}
+        role="dialog"
+        aria-modal="true"
+        aria-label="Öğrenci profili"
+        tabIndex={-1}
         className="absolute inset-y-0 right-0 flex w-full max-w-2xl flex-col border-l border-white/10 bg-slate-950/95 shadow-2xl"
       >
         <div className="flex items-start justify-between gap-4 border-b border-white/10 px-6 py-5">
@@ -118,6 +125,7 @@ export default function AdminStudentProfileDrawer({
           <button
             type="button"
             onClick={onClose}
+            aria-label="Kapat"
             className="rounded-xl border border-white/10 p-2 text-slate-400 transition-colors hover:text-white"
           >
             <X className="h-5 w-5" />

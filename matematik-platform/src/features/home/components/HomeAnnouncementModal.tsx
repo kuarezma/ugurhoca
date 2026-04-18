@@ -16,6 +16,7 @@ import {
   proxiedImageSrc,
   resolveYandexImageUrl,
 } from '@/features/home/queries';
+import { useAccessibleModal } from '@/hooks/useAccessibleModal';
 
 type HomeAnnouncementModalProps = {
   announcement: Announcement | null;
@@ -67,6 +68,10 @@ export function HomeAnnouncementModal({
   announcement,
   onClose,
 }: HomeAnnouncementModalProps) {
+  const modalRef = useAccessibleModal<HTMLDivElement>(
+    Boolean(announcement),
+    onClose,
+  );
   const rawImages =
     announcement?.image_urls?.length && Array.isArray(announcement.image_urls)
       ? announcement.image_urls
@@ -127,10 +132,12 @@ export function HomeAnnouncementModal({
             animate={{ scale: 1, opacity: 1, y: 0 }}
             exit={{ scale: 0.95, opacity: 0, y: 20 }}
             onClick={(event) => event.stopPropagation()}
+            ref={modalRef}
             className="w-full max-w-5xl max-h-[90vh] overflow-y-auto rounded-3xl bg-slate-900 border border-slate-700 shadow-2xl"
             role="dialog"
             aria-modal="true"
             aria-labelledby="duyuru-baslik"
+            tabIndex={-1}
           >
             {images.length > 0 ? (
               <div className="grid md:grid-cols-2 gap-0">

@@ -1,6 +1,7 @@
 'use client';
 
 import { Download, FileText, X } from 'lucide-react';
+import { useToast } from '@/components/Toast';
 import type { SharedDocumentAssignment } from '@/types';
 
 type HomeAssignmentCardProps = {
@@ -16,6 +17,8 @@ export function HomeAssignmentCard({
   isLight,
   onDismiss,
 }: HomeAssignmentCardProps) {
+  const { showToast } = useToast();
+
   return (
     <div
       className={`animate-fade-up flex items-center gap-3 rounded-xl p-3 transition-colors group ${
@@ -31,7 +34,7 @@ export function HomeAssignmentCard({
           if (assignment.file_url) {
             window.open(assignment.file_url, '_blank');
           } else if (assignment.message) {
-            alert(String(assignment.message));
+            showToast('info', String(assignment.message));
           }
         }}
       >

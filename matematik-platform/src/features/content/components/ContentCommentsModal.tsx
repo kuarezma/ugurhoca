@@ -5,6 +5,7 @@ import type {
   ContentComment,
   ContentPageUser,
 } from '@/features/content/types';
+import { useAccessibleModal } from '@/hooks/useAccessibleModal';
 
 type ContentCommentsModalProps = {
   comments: ContentComment[];
@@ -23,6 +24,8 @@ export default function ContentCommentsModal({
   onSubmit,
   user,
 }: ContentCommentsModalProps) {
+  const modalRef = useAccessibleModal<HTMLDivElement>(true, onClose);
+
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -36,11 +39,23 @@ export default function ContentCommentsModal({
         animate={{ scale: 1, opacity: 1 }}
         exit={{ scale: 0.9, opacity: 0 }}
         onClick={(event) => event.stopPropagation()}
+        ref={modalRef}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="content-comments-title"
+        tabIndex={-1}
         className="glass rounded-3xl p-6 w-full max-w-lg max-h-[80vh] overflow-hidden flex flex-col"
       >
         <div className="flex items-center justify-between mb-4">
-          <h3 className="text-xl font-bold text-white">Yorumlar</h3>
-          <button onClick={onClose} className="text-slate-400 hover:text-white">
+          <h3 id="content-comments-title" className="text-xl font-bold text-white">
+            Yorumlar
+          </h3>
+          <button
+            type="button"
+            onClick={onClose}
+            aria-label="Kapat"
+            className="text-slate-400 hover:text-white"
+          >
             <X className="w-6 h-6" />
           </button>
         </div>

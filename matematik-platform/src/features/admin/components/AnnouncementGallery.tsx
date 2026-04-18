@@ -1,7 +1,6 @@
 'use client';
 
-/* eslint-disable @next/next/no-img-element -- gallery renders proxied dynamic remote images */
-
+import Image from 'next/image';
 import { useEffect, useState } from 'react';
 import { getRemoteImageSrc } from '@/lib/image-url';
 
@@ -46,10 +45,13 @@ export function AnnouncementGallery({
 
   return (
     <div className="relative min-h-[320px] bg-slate-900">
-      <img
+      <Image
         src={getRemoteImageSrc(resolvedImages[current] || images[current])}
         alt={title}
+        fill
+        sizes="100vw"
         className="absolute inset-0 h-full w-full object-cover"
+        unoptimized
       />
       <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/35 to-black/10" />
       {hasMultiple && (

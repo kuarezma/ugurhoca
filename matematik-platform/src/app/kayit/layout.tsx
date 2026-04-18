@@ -6,6 +6,7 @@ export const metadata: Metadata = createPageMetadata({
   description:
     'Uğur Hoca Matematik platformuna kayıt olun; matematik içerikleri ve ödevleri kullanmaya başlayın.',
   path: '/kayit',
+  noIndex: true,
 });
 
 export default function KayitLayout({

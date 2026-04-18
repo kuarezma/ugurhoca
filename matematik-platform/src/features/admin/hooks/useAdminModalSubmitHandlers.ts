@@ -1,7 +1,9 @@
 "use client";
 
 import type { Dispatch, FormEvent, SetStateAction } from "react";
+import { useToast } from "@/components/Toast";
 import { ADMIN_EMAIL } from "@/lib/admin";
+import { getErrorMessage } from "@/lib/error-utils";
 import {
   createAdminAnnouncement,
   createAdminAssignment,
@@ -94,6 +96,8 @@ export function useAdminModalSubmitHandlers({
   sharedDocs,
   studentUsers,
 }: UseAdminModalSubmitHandlersOptions) {
+  const { showToast } = useToast();
+
   const scheduleModalSuccessReset = () => {
     setSuccess(true);
     setTimeout(() => {
@@ -147,7 +151,8 @@ export function useAdminModalSubmitHandlers({
         setAnnouncements([data, ...announcements]);
         completedSuccessfully = true;
       } else {
-        alert(
+        showToast(
+          "error",
           error?.message
             ? `Duyuru kaydedilemedi: ${error.message}`
             : "Duyuru kaydedilemedi. Lütfen tekrar deneyin.",
@@ -205,7 +210,7 @@ export function useAdminModalSubmitHandlers({
         setDocuments([data, ...documents]);
         completedSuccessfully = true;
       } else {
-        alert("Belge kaydedilemedi. Lütfen tekrar deneyin.");
+        showToast("error", "Belge kaydedilemedi. Lütfen tekrar deneyin.");
       }
     } else if (modalType === "quiz") {
       const { data, error } = await createAdminQuiz({
@@ -221,7 +226,7 @@ export function useAdminModalSubmitHandlers({
         setQuizzes([data, ...quizzes]);
         completedSuccessfully = true;
       } else {
-        alert("Test kaydedilemedi. Lütfen tekrar deneyin.");
+        showToast("error", "Test kaydedilemedi. Lütfen tekrar deneyin.");
       }
     } else if (modalType === "editQuiz") {
       if (!selectedQuiz) {
@@ -277,13 +282,13 @@ export function useAdminModalSubmitHandlers({
         setQuizQuestions([...quizQuestions, data]);
         completedSuccessfully = true;
       } else {
-        alert("Soru eklenemedi. Lütfen tekrar deneyin.");
+        showToast("error", "Soru eklenemedi. Lütfen tekrar deneyin.");
       }
     } else if (modalType === "importQuestions") {
       const importResult = formData.importResult;
       if (!importResult) {
         setIsSubmitting(false);
-        alert("Önce geçerli bir soru dosyası yükleyin.");
+        showToast("warning", "Önce geçerli bir soru dosyası yükleyin.");
         return;
       }
 
@@ -299,10 +304,11 @@ export function useAdminModalSubmitHandlers({
 
       if (response.ok) {
         await loadData();
-        alert("Test ve sorular başarıyla kaydedildi!");
+        showToast("success", "Test ve sorular başarıyla kaydedildi.");
         completedSuccessfully = true;
       } else {
-        alert(
+        showToast(
+          "error",
           "Kayıt başarısız: " +
             (payload.error?.message || "Bilinmeyen bir hata oluştu."),
         );
@@ -392,9 +398,12 @@ export function useAdminModalSubmitHandlers({
 
       setIsSubmitting(false);
       scheduleModalSuccessReset();
-    } catch {
+    } catch (error) {
       setIsSubmitting(false);
-      alert("Mesaj gönderilemedi.");
+      showToast(
+        "error",
+        `Mesaj gönderilemedi: ${getErrorMessage(error)}`,
+      );
     }
   };
 

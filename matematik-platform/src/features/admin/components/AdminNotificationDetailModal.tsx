@@ -5,6 +5,7 @@ import type {
   AdminNotification,
   ModerationPayload,
 } from '@/features/admin/types';
+import { useAccessibleModal } from '@/hooks/useAccessibleModal';
 
 type SenderActionStatus = {
   blocked: boolean;
@@ -39,13 +40,20 @@ export default function AdminNotificationDetailModal({
   replyText,
   status,
 }: AdminNotificationDetailModalProps) {
+  const modalRef = useAccessibleModal<HTMLDivElement>(true, onClose);
+
   return (
     <div
       className="fixed inset-0 z-[100] bg-black/75 backdrop-blur-sm flex items-center justify-center p-4 animate-fade-in"
       onClick={onClose}
     >
       <div
+        ref={modalRef}
         onClick={(event) => event.stopPropagation()}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="admin-notification-title"
+        tabIndex={-1}
         className="w-full max-w-2xl rounded-3xl border border-slate-700 bg-slate-900 shadow-2xl overflow-hidden animate-fade-up"
       >
         <div className="p-5 border-b border-slate-700 flex items-start justify-between gap-4">
@@ -53,7 +61,7 @@ export default function AdminNotificationDetailModal({
             <p className="text-xs uppercase tracking-[0.2em] text-indigo-300 mb-2">
               Öğrenci Mesajı
             </p>
-            <h3 className="text-2xl font-bold text-white">
+            <h3 id="admin-notification-title" className="text-2xl font-bold text-white">
               {notification.title}
             </h3>
             <p className="text-slate-500 text-sm mt-1">
@@ -62,6 +70,7 @@ export default function AdminNotificationDetailModal({
           </div>
           <div className="flex items-center gap-2">
             <button
+              type="button"
               onClick={() => onDelete(notification.id)}
               className="inline-flex items-center gap-2 rounded-xl bg-red-500/20 px-3 py-2 text-red-300 hover:bg-red-500/30"
             >
@@ -69,7 +78,9 @@ export default function AdminNotificationDetailModal({
               Sil
             </button>
             <button
+              type="button"
               onClick={onClose}
+              aria-label="Kapat"
               className="text-slate-400 hover:text-white"
             >
               <X className="w-6 h-6" />
@@ -132,6 +143,7 @@ export default function AdminNotificationDetailModal({
             <div className="space-y-3 pt-4 border-t border-slate-700">
               <div className="flex flex-wrap gap-2">
                 <button
+                  type="button"
                   onClick={() => onModerationAction('report')}
                   className="inline-flex items-center gap-2 rounded-xl bg-slate-700/60 px-3 py-2 text-slate-200 hover:bg-slate-700"
                 >
@@ -139,12 +151,14 @@ export default function AdminNotificationDetailModal({
                   Raporla
                 </button>
                 <button
+                  type="button"
                   onClick={() => onModerationAction('mute')}
                   className="inline-flex items-center gap-2 rounded-xl bg-amber-500/20 px-3 py-2 text-amber-300 hover:bg-amber-500/30"
                 >
                   <VolumeX className="w-4 h-4" />7 Gün Sessize Al
                 </button>
                 <button
+                  type="button"
                   onClick={() => onModerationAction('block')}
                   className="inline-flex items-center gap-2 rounded-xl bg-red-500/20 px-3 py-2 text-red-300 hover:bg-red-500/30"
                 >
@@ -162,6 +176,7 @@ export default function AdminNotificationDetailModal({
               />
               <div className="flex justify-end">
                 <button
+                  type="button"
                   onClick={onSendReply}
                   className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-indigo-500 to-purple-500 px-4 py-2 text-white font-semibold hover:from-indigo-600 hover:to-purple-600 transition-all"
                 >

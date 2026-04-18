@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   ArrowLeft,
@@ -17,10 +18,10 @@ import {
   Award,
   Download,
 } from 'lucide-react';
-import { supabase } from '@/lib/supabase/client';
-import { getClientSession } from '@/lib/auth-client';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { useTheme } from '@/components/ThemeProvider';
+import { requireClientSession } from '@/lib/auth-client';
+import { supabase } from '@/lib/supabase/client';
 import type { AppUser } from '@/types';
 import type { InitialProgressPageData } from '@/features/progress/server';
 import type {
@@ -59,6 +60,7 @@ type ProgressPageProps = {
 
 export default function IlerlemePage({ initialData }: ProgressPageProps) {
   const { theme } = useTheme();
+  const router = useRouter();
   const isLight = theme === 'light';
   
   const [user, setUser] = useState<AppUser | null>(initialData?.user ?? null);
@@ -93,9 +95,8 @@ export default function IlerlemePage({ initialData }: ProgressPageProps) {
   );
 
   const loadDashboardData = useCallback(async () => {
-    const session = await getClientSession();
+    const session = await requireClientSession({ router });
     if (!session) {
-      window.location.href = '/giris';
       return;
     }
 
@@ -136,7 +137,7 @@ export default function IlerlemePage({ initialData }: ProgressPageProps) {
     setGoal(resolveCurrentGoal(goalRes.data || []));
     
     setLoading(false);
-  }, [initialData?.isHydrated, initialUserKey]);
+  }, [initialData?.isHydrated, initialUserKey, router]);
 
   useEffect(() => {
     void loadDashboardData();

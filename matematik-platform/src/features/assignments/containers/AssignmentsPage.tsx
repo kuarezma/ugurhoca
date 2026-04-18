@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   ClipboardList,
@@ -11,10 +12,12 @@ import {
   ChevronRight,
   ArrowLeft,
 } from 'lucide-react';
-import { supabase } from '@/lib/supabase/client';
-import { getClientSession } from '@/lib/auth-client';
 import { ThemeToggle } from '@/components/ThemeToggle';
+import { useToast } from '@/components/Toast';
 import { useTheme } from '@/components/ThemeProvider';
+import { requireClientSession } from '@/lib/auth-client';
+import { getErrorMessage } from '@/lib/error-utils';
+import { supabase } from '@/lib/supabase/client';
 import type { AppUser, Assignment, Submission } from '@/types';
 
 const AssignmentSubmissionModal = dynamic(
@@ -39,6 +42,8 @@ export default function OdevlerPage({
   isHydrated = false,
 }: AssignmentsPageProps) {
   const { theme } = useTheme();
+  const router = useRouter();
+  const { showToast } = useToast();
   const isLight = theme === 'light';
   const [user, setUser] = useState<AppUser | null>(initialUser);
   const [loading, setLoading] = useState(!isHydrated);
@@ -59,9 +64,8 @@ export default function OdevlerPage({
 
   useEffect(() => {
     const fetchUserAndAssignments = async () => {
-      const session = await getClientSession();
+      const session = await requireClientSession({ router });
       if (!session) {
-        window.location.href = '/giris';
         return;
       }
 
@@ -146,20 +150,20 @@ export default function OdevlerPage({
     };
 
     fetchUserAndAssignments();
-  }, [initialUserKey, isHydrated]);
+  }, [initialUserKey, isHydrated, router]);
 
   const handleFileUpload = async (assignmentId: string, file: File) => {
     if (!user) return;
     
     // Güvenlik kontrolleri
     if (file.size > 5 * 1024 * 1024) {
-      alert('Dosya boyutu 5MB\'dan küçük olmalıdır.');
+      showToast('warning', "Dosya boyutu 5MB'dan küçük olmalıdır.");
       return;
     }
 
     const allowedTypes = ['application/pdf', 'image/jpeg', 'image/png', 'image/jpg'];
     if (!allowedTypes.includes(file.type)) {
-      alert('Sadece PDF ve Görsel (JPG, PNG) dosyaları yüklenebilir.');
+      showToast('warning', 'Sadece PDF ve Görsel (JPG, PNG) dosyaları yüklenebilir.');
       return;
     }
 
@@ -208,13 +212,14 @@ export default function OdevlerPage({
         setSelectedAssignment(null);
         setComment('');
         setUploadProgress(null);
+        showToast('success', 'Ödev başarıyla yüklendi.');
       }, 500);
       
     } catch (error) {
       console.error('Yükleme hatası:', error);
-      alert(
-        'Ödev yüklenirken bir hata oluştu: ' +
-          (error instanceof Error ? error.message : 'Bilinmeyen hata'),
+      showToast(
+        'error',
+        `Ödev yüklenirken bir hata oluştu: ${getErrorMessage(error)}`,
       );
       setUploadProgress(null);
     } finally {

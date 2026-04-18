@@ -1,7 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { getClientSession } from '@/lib/auth-client';
+import { requireClientSession } from '@/lib/auth-client';
 import { supabase } from '@/lib/supabase/client';
 import type {
   DashboardAssignment,
@@ -105,10 +105,9 @@ export const useProfileDashboardData = (
 
   useEffect(() => {
     const loadData = async () => {
-      const session = await getClientSession();
+      const session = await requireClientSession({ router });
 
       if (!session) {
-        router.push('/giris');
         return;
       }
 

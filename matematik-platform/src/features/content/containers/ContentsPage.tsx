@@ -17,6 +17,8 @@ import {
   Plus,
   Search,
 } from 'lucide-react';
+import { useToast } from '@/components/Toast';
+import { getErrorMessage } from '@/lib/error-utils';
 import DeferredFloatingShapes from '@/components/DeferredFloatingShapes';
 import ContentCard from '@/features/content/components/ContentCard';
 
@@ -200,6 +202,7 @@ function ContentsPageInner({
   initialType = 'all',
 }: ContentsPageProps) {
   const searchParams = useSearchParams();
+  const { showToast } = useToast();
   const typeFromUrl = searchParams.get('type') || 'all';
   const [user, setUser] = useState<ContentPageUser | null>(null);
   const [documents, setDocuments] = useState<ContentDocument[]>(
@@ -523,12 +526,16 @@ function ContentsPageInner({
     });
   }, []);
 
-  const handleCopyLink = useCallback((content: ContentDocument) => {
-    navigator.clipboard.writeText(
-      `${window.location.origin}/icerikler?id=${content.id}`,
-    );
-    alert('Link kopyalandı!');
-  }, []);
+  const handleCopyLink = useCallback(async (content: ContentDocument) => {
+    try {
+      await navigator.clipboard.writeText(
+        `${window.location.origin}/icerikler?id=${content.id}`,
+      );
+      showToast('success', 'Link kopyalandı.');
+    } catch {
+      showToast('error', 'Link kopyalanamadı.');
+    }
+  }, [showToast]);
 
   const handleOpenPreview = useCallback((content: ContentDocument) => {
     setShowAnswerKey(false);
@@ -667,15 +674,15 @@ function ContentsPageInner({
           file_url: uploadedFile.publicUrl,
         }));
       } catch (error) {
-        alert(
-          'Dosya yüklenemedi: ' +
-            (error instanceof Error ? error.message : 'Bilinmeyen hata'),
+        showToast(
+          'error',
+          `Dosya yüklenemedi: ${getErrorMessage(error)}`,
         );
       } finally {
         setIsSubmitting(false);
       }
     },
-    [],
+    [showToast],
   );
 
   const handleQuickAddSubmit = useCallback(
@@ -708,15 +715,15 @@ function ContentsPageInner({
           setFormData({});
         }, 1500);
       } catch (error) {
-        alert(
-          'Kaydetme hatası: ' +
-            (error instanceof Error ? error.message : 'Bilinmeyen hata'),
+        showToast(
+          'error',
+          `Kaydetme hatası: ${getErrorMessage(error)}`,
         );
       } finally {
         setIsSubmitting(false);
       }
     },
-    [formData, refreshSelectedWorksheetGrade, selectedWorksheetGrade],
+    [formData, refreshSelectedWorksheetGrade, selectedWorksheetGrade, showToast],
   );
 
   const handleOpenEdit = useCallback((content: ContentDocument) => {
@@ -757,15 +764,15 @@ function ContentsPageInner({
           file_url: uploadedFile.publicUrl,
         }));
       } catch (error) {
-        alert(
-          'Dosya yüklenemedi: ' +
-            (error instanceof Error ? error.message : 'Bilinmeyen hata'),
+        showToast(
+          'error',
+          `Dosya yüklenemedi: ${getErrorMessage(error)}`,
         );
       } finally {
         setIsEditing(false);
       }
     },
-    [],
+    [showToast],
   );
 
   const handleEditSubmit = useCallback(
@@ -795,9 +802,9 @@ function ContentsPageInner({
           setEditSuccess(false);
         }, 1500);
       } catch (error) {
-        alert(
-          'Güncelleme hatası: ' +
-            (error instanceof Error ? error.message : 'Bilinmeyen hata'),
+        showToast(
+          'error',
+          `Güncelleme hatası: ${getErrorMessage(error)}`,
         );
       } finally {
         setIsEditing(false);
@@ -809,6 +816,7 @@ function ContentsPageInner({
       editFormData,
       refreshSelectedWorksheetGrade,
       selectedWorksheetGrade,
+      showToast,
     ],
   );
 
