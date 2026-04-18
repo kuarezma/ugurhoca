@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
-import { ADMIN_EMAILS } from "@/lib/admin";
+import { isAdminEmail } from "@/lib/admin";
 
 export async function POST(request: Request) {
   try {
@@ -20,7 +20,7 @@ export async function POST(request: Request) {
       );
     }
 
-    if (!ADMIN_EMAILS.includes(session.user.email ?? "")) {
+    if (!isAdminEmail(session.user.email)) {
       return NextResponse.json({ error: "Yetkiniz yok." }, { status: 403 });
     }
 
