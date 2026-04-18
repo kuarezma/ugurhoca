@@ -1,8 +1,23 @@
 import type { Metadata, Viewport } from "next";
+import { Poppins, Space_Grotesk } from "next/font/google";
 import { Providers } from "@/components/Providers";
 import InstallPrompt from "@/components/InstallPrompt";
 import { THEME_STORAGE_KEY } from "@/components/theme-constants";
 import "./globals.css";
+
+const poppins = Poppins({
+  subsets: ["latin", "latin-ext"],
+  weight: ["300", "400", "500", "600", "700", "800", "900"],
+  variable: "--font-poppins",
+  display: "swap",
+});
+
+const spaceGrotesk = Space_Grotesk({
+  subsets: ["latin", "latin-ext"],
+  weight: ["400", "500", "600", "700"],
+  variable: "--font-space-grotesk",
+  display: "swap",
+});
 
 export const metadata: Metadata = {
   title: {
@@ -72,7 +87,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="tr" suppressHydrationWarning data-scroll-behavior="smooth">
+    <html
+      lang="tr"
+      suppressHydrationWarning
+      data-scroll-behavior="smooth"
+      className={`${poppins.variable} ${spaceGrotesk.variable}`}
+    >
       <head>
         <script
           dangerouslySetInnerHTML={{

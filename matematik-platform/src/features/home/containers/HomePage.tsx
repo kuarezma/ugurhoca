@@ -1,7 +1,7 @@
 'use client';
 
 import { useTheme } from '@/components/ThemeProvider';
-import FloatingShapes from '@/components/FloatingShapes';
+import DeferredFloatingShapes from '@/components/DeferredFloatingShapes';
 import { HomeAnnouncementModal } from '@/features/home/components/HomeAnnouncementModal';
 import { HomeAnnouncementsSection } from '@/features/home/components/HomeAnnouncementsSection';
 import { HomeAssignmentsSection } from '@/features/home/components/HomeAssignmentsSection';
@@ -45,7 +45,7 @@ export default function HomePage() {
           : 'bg-gradient-to-br from-slate-900 via-slate-900 to-slate-800'
       }`}
     >
-      <FloatingShapes />
+      <DeferredFloatingShapes />
       <HomeNavbar user={user} onLogout={handleLogout} />
       <div className="pt-[calc(3.5rem+env(safe-area-inset-top))] md:pt-14">
         <HomeHeroSection isLight={isLight} />
