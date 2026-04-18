@@ -1,9 +1,7 @@
 'use client';
 
-import dynamic from 'next/dynamic';
 import DeferredFloatingShapes from '@/components/DeferredFloatingShapes';
 import { useTheme } from '@/components/ThemeProvider';
-import DeferredFloatingShapes from '@/components/DeferredFloatingShapes';
 import { HomeAnnouncementModal } from '@/features/home/components/HomeAnnouncementModal';
 import { HomeAnnouncementsSection } from '@/features/home/components/HomeAnnouncementsSection';
 import { HomeAssignmentsSection } from '@/features/home/components/HomeAssignmentsSection';
@@ -16,7 +14,6 @@ import { HomeRecentDocumentsSection } from '@/features/home/components/HomeRecen
 import { HomeSupportSection } from '@/features/home/components/HomeSupportSection';
 import type { HomeInitialFeed } from '@/features/home/home-initial-feed';
 import { useHomePageData } from '@/features/home/hooks/useHomePageData';
-import type { InitialHomePageData } from '@/features/home/types';
 
 type HomePageProps = {
   initialFeed?: HomeInitialFeed | null;

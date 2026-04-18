@@ -13,6 +13,8 @@ import {
   isWorksheetType,
   prepareWorksheetDocumentPayload,
 } from '@/features/content/worksheet';
+import { normalizeDashboardBadges } from '@/features/profile/utils/dashboard-view-model';
+import { resolveCurrentGoal } from '@/features/progress/utils';
 import type {
   AdminAnnouncement,
   AdminAssignment,

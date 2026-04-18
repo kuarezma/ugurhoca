@@ -1,6 +1,14 @@
 'use client';
 
-import { Download, Edit3, RefreshCw, Send, Star, Users } from 'lucide-react';
+import {
+  Download,
+  Edit3,
+  Eye,
+  RefreshCw,
+  Send,
+  Star,
+  Users,
+} from 'lucide-react';
 import type { AdminUser } from '@/features/admin/types';
 
 type AdminUsersTabProps = {
