@@ -1,6 +1,7 @@
 'use client';
 
 import { useCallback, useMemo, useState } from 'react';
+import dynamic from 'next/dynamic';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -21,9 +22,19 @@ import RecentDocuments from '@/components/dashboard/RecentDocuments';
 import RecentResults from '@/components/dashboard/RecentResults';
 import TodayPlanCard from '@/components/dashboard/TodayPlanCard';
 import DashboardSettings from '@/components/dashboard/DashboardSettings';
-import AvatarSelectionModal from '@/components/dashboard/AvatarSelectionModal';
-import AssignmentDetailModal from '@/features/profile/components/AssignmentDetailModal';
-import MessageDetailModal from '@/features/profile/components/MessageDetailModal';
+
+const AvatarSelectionModal = dynamic(
+  () => import('@/components/dashboard/AvatarSelectionModal'),
+  { ssr: false },
+);
+const AssignmentDetailModal = dynamic(
+  () => import('@/features/profile/components/AssignmentDetailModal'),
+  { ssr: false },
+);
+const MessageDetailModal = dynamic(
+  () => import('@/features/profile/components/MessageDetailModal'),
+  { ssr: false },
+);
 import ProfileNotificationsPanel from '@/features/profile/components/ProfileNotificationsPanel';
 import { useProfileDashboardData } from '@/features/profile/hooks/useProfileDashboardData';
 import {

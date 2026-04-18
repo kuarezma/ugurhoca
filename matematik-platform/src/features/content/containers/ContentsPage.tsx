@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback, Suspense, useRef } from 'react';
+import dynamic from 'next/dynamic';
 import { AnimatePresence, motion } from 'framer-motion';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
@@ -18,10 +19,23 @@ import {
 } from 'lucide-react';
 import DeferredFloatingShapes from '@/components/DeferredFloatingShapes';
 import ContentCard from '@/features/content/components/ContentCard';
-import ContentCommentsModal from '@/features/content/components/ContentCommentsModal';
-import ContentEditModal from '@/features/content/components/ContentEditModal';
-import ContentPreviewModal from '@/features/content/components/ContentPreviewModal';
-import ContentQuickAddModal from '@/features/content/components/ContentQuickAddModal';
+
+const ContentCommentsModal = dynamic(
+  () => import('@/features/content/components/ContentCommentsModal'),
+  { ssr: false },
+);
+const ContentEditModal = dynamic(
+  () => import('@/features/content/components/ContentEditModal'),
+  { ssr: false },
+);
+const ContentPreviewModal = dynamic(
+  () => import('@/features/content/components/ContentPreviewModal'),
+  { ssr: false },
+);
+const ContentQuickAddModal = dynamic(
+  () => import('@/features/content/components/ContentQuickAddModal'),
+  { ssr: false },
+);
 import {
   CONTENT_PAGE_SIZE,
   CONTENT_TYPE_OPTIONS,
