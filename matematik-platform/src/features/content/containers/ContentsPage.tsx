@@ -674,15 +674,15 @@ function ContentsPageInner({
           file_url: uploadedFile.publicUrl,
         }));
       } catch (error) {
-        showToast(
-          'error',
-          `Dosya yüklenemedi: ${getErrorMessage(error)}`,
+        window.alert(
+          'Dosya yüklenemedi: ' +
+            (error instanceof Error ? error.message : 'Bilinmeyen hata'),
         );
       } finally {
         setIsSubmitting(false);
       }
     },
-    [showToast],
+    [],
   );
 
   const handleQuickAddSubmit = useCallback(
@@ -715,15 +715,15 @@ function ContentsPageInner({
           setFormData({});
         }, 1500);
       } catch (error) {
-        showToast(
-          'error',
-          `Kaydetme hatası: ${getErrorMessage(error)}`,
+        window.alert(
+          'Kaydetme hatası: ' +
+            (error instanceof Error ? error.message : 'Bilinmeyen hata'),
         );
       } finally {
         setIsSubmitting(false);
       }
     },
-    [formData, refreshSelectedWorksheetGrade, selectedWorksheetGrade, showToast],
+    [formData, refreshSelectedWorksheetGrade, selectedWorksheetGrade],
   );
 
   const handleOpenEdit = useCallback((content: ContentDocument) => {
