@@ -1,6 +1,11 @@
 'use client';
 
-import { useEffect, useState, type FormEvent } from 'react';
+import {
+  startTransition,
+  useEffect,
+  useState,
+  type FormEvent,
+} from 'react';
 import { getCurrentUserProfile, requireClientSession } from '@/lib/auth-client';
 import { supabase } from '@/lib/supabase/client';
 import type {
@@ -18,7 +23,6 @@ import {
   sendSupportMessage,
   uploadSupportFiles,
 } from '@/features/home/queries';
-import type { InitialHomePageData } from '@/features/home/types';
 
 export const useHomePageData = (initialFeed?: HomeInitialFeed | null) => {
   const isFeedSeeded = Boolean(initialFeed);
@@ -71,7 +75,9 @@ export const useHomePageData = (initialFeed?: HomeInitialFeed | null) => {
         );
 
         if (!isDisposed) {
-          setUserAssignments(assignments);
+          startTransition(() => {
+            setUserAssignments(assignments);
+          });
         }
 
         return;
@@ -102,7 +108,9 @@ export const useHomePageData = (initialFeed?: HomeInitialFeed | null) => {
       );
 
       if (!isDisposed) {
-        setUserAssignments(assignments);
+        startTransition(() => {
+          setUserAssignments(assignments);
+        });
       }
     };
 

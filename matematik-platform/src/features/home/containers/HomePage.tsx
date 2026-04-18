@@ -7,11 +7,9 @@ import { HomeAnnouncementsSection } from '@/features/home/components/HomeAnnounc
 import { HomeAssignmentsSection } from '@/features/home/components/HomeAssignmentsSection';
 import { HomeExamCountdownSection } from '@/features/home/components/HomeExamCountdownSection';
 import { HomeFooter } from '@/features/home/components/HomeFooter';
-import { HomeGuestCtaSection } from '@/features/home/components/HomeGuestCtaSection';
 import { HomeHeroSection } from '@/features/home/components/HomeHeroSection';
 import { HomeNavbar } from '@/features/home/components/HomeNavbar';
 import { HomeRecentDocumentsSection } from '@/features/home/components/HomeRecentDocumentsSection';
-import { HomeSupportSection } from '@/features/home/components/HomeSupportSection';
 import type { HomeInitialFeed } from '@/features/home/home-initial-feed';
 import { useHomePageData } from '@/features/home/hooks/useHomePageData';
 
@@ -21,6 +19,22 @@ const HomeAnnouncementModal = dynamic(
       default: m.HomeAnnouncementModal,
     })),
   { ssr: false },
+);
+
+const HomeGuestCtaSection = dynamic(
+  () =>
+    import('@/features/home/components/HomeGuestCtaSection').then((m) => ({
+      default: m.HomeGuestCtaSection,
+    })),
+  { ssr: false },
+);
+
+const HomeSupportSection = dynamic(
+  () =>
+    import('@/features/home/components/HomeSupportSection').then((m) => ({
+      default: m.HomeSupportSection,
+    })),
+  { ssr: false, loading: () => <div className="min-h-[14rem]" aria-hidden /> },
 );
 
 type HomePageProps = {

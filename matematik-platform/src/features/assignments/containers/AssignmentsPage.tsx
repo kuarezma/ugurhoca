@@ -1,18 +1,29 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
+import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  ClipboardList, Clock, CheckCircle2, 
-  Upload, FileText, ChevronRight, ArrowLeft,
-  X
+import {
+  ClipboardList,
+  Clock,
+  CheckCircle2,
+  ChevronRight,
+  ArrowLeft,
 } from 'lucide-react';
 import { supabase } from '@/lib/supabase/client';
 import { getClientSession } from '@/lib/auth-client';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { useTheme } from '@/components/ThemeProvider';
 import type { AppUser, Assignment, Submission } from '@/types';
+
+const AssignmentSubmissionModal = dynamic(
+  () =>
+    import('@/features/assignments/components/AssignmentSubmissionModal').then(
+      (m) => ({ default: m.AssignmentSubmissionModal }),
+    ),
+  { ssr: false },
+);
 
 type AssignmentsPageProps = {
   initialAssignments?: Assignment[];
@@ -353,170 +364,30 @@ export default function OdevlerPage({
         )}
       </div>
 
-      {/* Upload/Detail Modal */}
       <AnimatePresence>
         {selectedAssignment && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6">
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              onClick={() => setSelectedAssignment(null)}
-              className="absolute inset-0 bg-slate-950/80 backdrop-blur-sm"
-            />
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95, y: 20 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              className={`relative w-full max-w-lg rounded-3xl p-6 sm:p-8 overflow-hidden ${
-                isLight ? 'bg-white' : 'bg-slate-900 border border-slate-800'
-              }`}
-            >
-              <button 
-                onClick={() => setSelectedAssignment(null)}
-                className="absolute top-4 right-4 p-2 text-slate-400 hover:text-white"
-              >
-                <X className="w-6 h-6" />
-              </button>
-
-              <div className="mb-6">
-                <div className="w-12 h-12 rounded-2xl bg-indigo-500/20 flex items-center justify-center mb-4">
-                  <ClipboardList className="w-6 h-6 text-indigo-400" />
-                </div>
-                <h2 className={`text-2xl font-bold mb-2 ${isLight ? 'text-slate-900' : 'text-white'}`}>
-                  {selectedAssignment.title}
-                </h2>
-                <p className={`text-sm ${isLight ? 'text-slate-600' : 'text-slate-400'}`}>
-                  {selectedAssignment.description}
-                </p>
-              </div>
-
-              {activeSubmission ? (
-                // Teslim Edilmis Odev Detayi
-                <div className="space-y-4">
-                  <div className={`p-4 rounded-2xl ${isLight ? 'bg-slate-50 border border-slate-200' : 'bg-white/5 border border-white/5'}`}>
-                    <p className="text-xs text-slate-500 mb-2 font-bold uppercase tracking-wider">Teslimat Detayı</p>
-                    <div className="flex items-center justify-between mb-4">
-                      <a 
-                        href={activeSubmission.file_url ?? '#'} 
-                        target="_blank" 
-                        rel="noopener noreferrer"
-                        className="flex items-center gap-3 text-indigo-400 hover:text-indigo-300 font-bold"
-                      >
-                        <FileText className="w-5 h-5" />
-                        Dosyayı Görüntüle
-                      </a>
-                      <span className="text-xs text-slate-500 font-medium">
-                        {activeSubmission.submitted_at
-                          ? new Date(activeSubmission.submitted_at).toLocaleString('tr-TR')
-                          : '-'}
-                      </span>
-                    </div>
-                    {activeSubmission.comment && (
-                      <p className={`text-sm italic ${isLight ? 'text-slate-600' : 'text-slate-400'}`}>
-                        "{activeSubmission.comment}"
-                      </p>
-                    ) || <p className="text-sm text-slate-500">Not eklenmemiş.</p>}
-                  </div>
-
-                  {activeSubmission.status === 'reviewed' && (
-                    <div className={`p-4 rounded-2xl border ${isLight ? 'bg-emerald-50 border-emerald-200' : 'bg-emerald-500/10 border-emerald-500/30'}`}>
-                      <div className="flex items-center justify-between mb-2">
-                        <span className="text-sm font-bold text-emerald-500">Uğur Hoca'nın Notu</span>
-                        <div className="px-3 py-1 bg-emerald-500 text-white rounded-lg text-xs font-bold">
-                          {activeSubmission.grade ?? '-'} / 100
-                        </div>
-                      </div>
-                      <p className="text-sm text-emerald-400 leading-relaxed">
-                        {activeSubmission.feedback || 'Harika iş çıkarmışsın! Başarılarının devamını dilerim.'}
-                      </p>
-                    </div>
-                  )}
-
-                  <button
-                    onClick={() => setSelectedAssignment(null)}
-                    className="w-full py-4 bg-slate-800 text-white font-bold rounded-2xl hover:bg-slate-700 transition-colors"
-                  >
-                    Kapat
-                  </button>
-                </div>
-              ) : (
-                // Yeni Teslimat Formu
-                <div className="space-y-5">
-                  <div>
-                    <label className="block text-slate-400 text-sm font-bold mb-2 uppercase tracking-wider">Hocana Not (Opsiyonel)</label>
-                    <textarea
-                      placeholder="Ödevle ilgili eklemek istediğin bir şey var mı?"
-                      value={comment}
-                      onChange={(e) => setComment(e.target.value)}
-                      className="w-full bg-white/5 border border-white/10 rounded-2xl px-4 py-3 text-white focus:outline-none focus:border-indigo-500 h-24 resize-none transition-colors"
-                    />
-                  </div>
-
-                  <div className="relative">
-                    <input
-                      type="file"
-                      id="file-upload"
-                      className="hidden"
-                      accept=".pdf,.jpg,.jpeg,.png"
-                      onChange={(e) => {
-                        const file = e.target.files?.[0];
-                        if (file) handleFileUpload(selectedAssignment.id, file);
-                      }}
-                      disabled={!!uploading}
-                    />
-                    <label
-                      htmlFor="file-upload"
-                      onDragOver={handleDragOver}
-                      onDragLeave={handleDragLeave}
-                      onDrop={(e) => handleDrop(e, selectedAssignment.id)}
-                      className={`relative overflow-hidden flex flex-col items-center justify-center gap-3 p-8 border-2 border-dashed rounded-3xl cursor-pointer transition-all duration-300 ${
-                        uploading 
-                          ? 'opacity-80 pointer-events-none border-indigo-500/30'
-                          : isDragging
-                            ? 'border-indigo-500 bg-indigo-500/10 scale-[1.02]' 
-                            : 'border-slate-700 hover:border-indigo-500/50 hover:bg-slate-800/50'
-                      }`}
-                    >
-                      {/* Upload Progress Bar Background */}
-                      {uploadProgress !== null && (
-                        <div 
-                           className="absolute bottom-0 left-0 h-1 bg-indigo-500 transition-all duration-300 ease-out z-0"
-                           style={{ width: `${Math.min(uploadProgress, 100)}%` }}
-                        />
-                      )}
-                      
-                      <div className={`w-14 h-14 rounded-2xl flex items-center justify-center transition-all duration-300 z-10 ${isDragging ? 'bg-indigo-500 shadow-lg shadow-indigo-500/30 scale-110' : 'bg-slate-800 border border-slate-700'}`}>
-                        {uploading ? (
-                          <div className="flex items-center gap-1">
-                             <div className="w-1.5 h-1.5 rounded-full bg-indigo-400 animate-bounce" style={{ animationDelay: '0ms' }} />
-                             <div className="w-1.5 h-1.5 rounded-full bg-indigo-400 animate-bounce" style={{ animationDelay: '150ms' }} />
-                             <div className="w-1.5 h-1.5 rounded-full bg-indigo-400 animate-bounce" style={{ animationDelay: '300ms' }} />
-                          </div>
-                        ) : (
-                          <Upload className={`w-6 h-6 ${isDragging ? 'text-white' : 'text-slate-300'}`} />
-                        )}
-                      </div>
-                      <div className="text-center z-10">
-                        <p className={`font-bold mb-1 ${isDragging ? 'text-indigo-400 text-base' : 'text-white text-sm'}`}>
-                          {uploading 
-                            ? `Yükleniyor... ${Math.round(uploadProgress || 0)}%` 
-                            : isDragging 
-                              ? 'Buraya Bırak' 
-                              : 'Dosyayı Sürükle veya Seç'}
-                        </p>
-                        <p className="text-xs text-slate-500">PDF, JPG veya PNG (Max 5MB)</p>
-                      </div>
-                    </label>
-                  </div>
-
-                  <p className="text-[10px] text-center text-slate-500 leading-relaxed uppercase tracking-tighter">
-                    Ödevi teslim ettiğinde Uğur Hoca'ya bildirim gidecektir. Teslim tarihinden sonra yüklediğin ödevler "Gecikmiş" olarak işaretlenebilir.
-                  </p>
-                </div>
-              )}
-            </motion.div>
-          </div>
+          <AssignmentSubmissionModal
+            key={selectedAssignment.id}
+            activeSubmission={activeSubmission}
+            assignment={selectedAssignment}
+            comment={comment}
+            isDragging={isDragging}
+            isLight={isLight}
+            onClose={() => setSelectedAssignment(null)}
+            onCommentChange={setComment}
+            onDragLeave={handleDragLeave}
+            onDragOver={handleDragOver}
+            onDrop={(e) => handleDrop(e, selectedAssignment.id)}
+            onFileChange={(e) => {
+              const file = e.target.files?.[0];
+              if (file) {
+                void handleFileUpload(selectedAssignment.id, file);
+              }
+            }}
+            onOverlayClick={() => setSelectedAssignment(null)}
+            uploadProgress={uploadProgress}
+            uploading={uploading}
+          />
         )}
       </AnimatePresence>
     </main>
