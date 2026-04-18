@@ -77,12 +77,6 @@ export type AdminDashboardData = {
   sharedDocs: AdminSharedDocument[];
 };
 
-export type AdminSelection =
-  | AdminAnnouncement
-  | AdminDocument
-  | AdminSharedDocument
-  | AdminUser;
-
 export type ModerationPayload = {
   action?: 'block' | 'mute' | 'report';
   attachments?: SupportAttachment[];
@@ -105,7 +99,6 @@ export type AdminFormState = {
   document_id?: string | null;
   document_title?: string | null;
   due_date?: string | null;
-  email?: string | null;
   explanation?: string | null;
   file_name?: string;
   file_url?: string | null;
@@ -115,16 +108,13 @@ export type AdminFormState = {
   image_urls?: string;
   importResult?: ImportResult | null;
   is_active?: boolean;
-  is_admin_only?: boolean;
   learning_outcome?: string | null;
   link_url?: string | null;
   name?: string | null;
   options?: string[];
   question?: string | null;
   solution_url?: string | null;
-  student_email?: string | null;
   student_id?: string | null;
-  student_name?: string | null;
   time_limit?: number;
   title?: string | null;
   type?: string | null;

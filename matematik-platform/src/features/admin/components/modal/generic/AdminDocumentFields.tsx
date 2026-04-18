@@ -118,23 +118,6 @@ export default function AdminDocumentFields({
           </p>
         )}
       </div>
-      <div className="flex items-center gap-3">
-        <input
-          type="checkbox"
-          id="is_admin_only"
-          checked={formData.is_admin_only || false}
-          onChange={(event) =>
-            updateFormData({ is_admin_only: event.target.checked })
-          }
-          className="w-5 h-5 accent-red-500"
-        />
-        <label htmlFor="is_admin_only" className="text-slate-300 cursor-pointer">
-          <span className="font-semibold text-red-400">Sadece Bana Özel</span>
-          <span className="text-slate-400 text-sm ml-2">
-            (Diğer kullanıcılar göremez)
-          </span>
-        </label>
-      </div>
       <div>
         {isWorksheet ? (
           <div className="space-y-4">
