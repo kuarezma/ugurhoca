@@ -4,5 +4,4 @@ export type InitialHomePageData = {
   announcements: Announcement[];
   documents: ContentDocument[];
   isHydrated: boolean;
-  writings: ContentDocument[];
 };

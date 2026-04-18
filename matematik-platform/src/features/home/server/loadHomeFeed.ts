@@ -73,7 +73,6 @@ export async function loadInitialHomeFeed(): Promise<HomeInitialFeed> {
     return {
       announcements: [],
       documents: [],
-      writings: [],
     };
   }
 
@@ -87,6 +86,5 @@ export async function loadInitialHomeFeed(): Promise<HomeInitialFeed> {
   return {
     announcements,
     documents,
-    writings: [],
   };
 }

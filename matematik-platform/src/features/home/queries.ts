@@ -37,17 +37,6 @@ export const fetchHomeDocuments = async () => {
   return (data || []) as ContentDocument[];
 };
 
-export const fetchHomeWritings = async () => {
-  const { data } = await supabase
-    .from('documents')
-    .select('*')
-    .in('type', ['ders-notlari', 'writing', 'yaprak-test'])
-    .order('created_at', { ascending: false })
-    .limit(4);
-
-  return (data || []) as ContentDocument[];
-};
-
 export const fetchAnnouncements = async () => {
   const { data } = await supabase
     .from('announcements')
@@ -85,13 +74,12 @@ export const fetchAnnouncements = async () => {
 };
 
 export const fetchHomeFeed = async () => {
-  const [documents, writings, announcements] = await Promise.all([
+  const [documents, announcements] = await Promise.all([
     fetchHomeDocuments(),
-    fetchHomeWritings(),
     fetchAnnouncements(),
   ]);
 
-  return { announcements, documents, writings };
+  return { announcements, documents };
 };
 
 export const fetchUserAssignments = async (userId: string) => {
