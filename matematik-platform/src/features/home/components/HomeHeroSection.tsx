@@ -1,22 +1,15 @@
 'use client';
 
-import { useCallback, useEffect } from 'react';
+import { useCallback } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { prefetchContentDocuments } from '@/features/content/queries';
 import {
   HOME_CATEGORIES,
-  HOME_CONTENT_PREFETCH_TYPES,
-  HOME_ROUTE_PREFETCH_HREFS,
 } from '@/features/home/constants';
 
 type HomeHeroSectionProps = {
   isLight: boolean;
-};
-
-type NetworkInformationLike = {
-  effectiveType?: string;
-  saveData?: boolean;
 };
 
 export function HomeHeroSection({ isLight }: HomeHeroSectionProps) {
@@ -37,52 +30,6 @@ export function HomeHeroSection({ isLight }: HomeHeroSectionProps) {
     },
     [prefetchHref],
   );
-
-  useEffect(() => {
-    const connection = (
-      navigator as Navigator & { connection?: NetworkInformationLike }
-    ).connection;
-    const effectiveType = connection?.effectiveType || '';
-    const shouldAutoPrefetch =
-      !connection?.saveData &&
-      !['slow-2g', '2g', '3g'].includes(effectiveType.toLowerCase());
-
-    if (!shouldAutoPrefetch) {
-      return;
-    }
-
-    const prefetchTargets = () => {
-      HOME_ROUTE_PREFETCH_HREFS.slice(0, 4).forEach((href) => {
-        prefetchHref(href);
-      });
-      void Promise.allSettled(
-        HOME_CONTENT_PREFETCH_TYPES.slice(0, 2).map((type) =>
-          prefetchContentDocuments(type),
-        ),
-      );
-    };
-
-    const requestIdleCallbackFn = window.requestIdleCallback?.bind(window);
-    const cancelIdleCallbackFn = window.cancelIdleCallback?.bind(window);
-
-    if (requestIdleCallbackFn) {
-      const idleCallbackId = requestIdleCallbackFn(() => {
-        prefetchTargets();
-      }, {
-        timeout: 2500,
-      });
-
-      return () => {
-        cancelIdleCallbackFn?.(idleCallbackId);
-      };
-    }
-
-    const timeoutId = globalThis.setTimeout(prefetchTargets, 1800);
-
-    return () => {
-      globalThis.clearTimeout(timeoutId);
-    };
-  }, [prefetchHref]);
 
   return (
     <section className="px-4 pt-4 pb-8 sm:py-12">
@@ -112,6 +59,9 @@ export function HomeHeroSection({ isLight }: HomeHeroSectionProps) {
               <Link
                 href={category.href}
                 onMouseEnter={() =>
+                  prefetchCategory(category.href, category.contentType)
+                }
+                onFocus={() =>
                   prefetchCategory(category.href, category.contentType)
                 }
                 onTouchStart={() =>
