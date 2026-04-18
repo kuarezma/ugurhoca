@@ -15,7 +15,6 @@ import { supabase } from '@/lib/supabase';
 import { getClientSession } from '@/lib/auth-client';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { useTheme } from '@/components/ThemeProvider';
-import { downloadProgressPDF } from '@/lib/pdf-export';
 import type { AppUser } from '@/types';
 import type { InitialProgressPageData } from '@/features/progress/server';
 import type {
@@ -260,7 +259,15 @@ export default function IlerlemePage({ initialData }: ProgressPageProps) {
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              onClick={async () => { setPdfLoading(true); await downloadProgressPDF(); setPdfLoading(false); }}
+              onClick={async () => {
+                setPdfLoading(true);
+                try {
+                  const { downloadProgressPDF } = await import('@/lib/pdf-export');
+                  await downloadProgressPDF();
+                } finally {
+                  setPdfLoading(false);
+                }
+              }}
               disabled={pdfLoading}
               title="Gelişim Raporunu PDF İndir"
               className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full border font-semibold text-sm transition-all disabled:opacity-50 ${

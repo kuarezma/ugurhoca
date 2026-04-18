@@ -10,6 +10,7 @@ import type {
   SharedDocumentAssignment,
   SupportAttachment,
 } from '@/types';
+import type { HomeInitialFeed } from '@/features/home/home-initial-feed';
 import {
   dismissHomeAssignment,
   fetchHomeFeed,
@@ -18,16 +19,22 @@ import {
   uploadSupportFiles,
 } from '@/features/home/queries';
 
-export const useHomePageData = () => {
+export const useHomePageData = (initialFeed?: HomeInitialFeed | null) => {
+  const isFeedSeeded = Boolean(initialFeed);
+
   const [user, setUser] = useState<AppUser | null>(null);
-  const [documents, setDocuments] = useState<ContentDocument[]>([]);
+  const [documents, setDocuments] = useState<ContentDocument[]>(
+    initialFeed?.documents ?? [],
+  );
   const [userAssignments, setUserAssignments] = useState<
     SharedDocumentAssignment[]
   >([]);
   const [dismissedAssignments, setDismissedAssignments] = useState<Set<string>>(
     new Set(),
   );
-  const [announcements, setAnnouncements] = useState<Announcement[]>([]);
+  const [announcements, setAnnouncements] = useState<Announcement[]>(
+    initialFeed?.announcements ?? [],
+  );
   const [selectedAnnouncement, setSelectedAnnouncement] =
     useState<Announcement | null>(null);
   const [supportMessage, setSupportMessage] = useState('');
@@ -41,6 +48,34 @@ export const useHomePageData = () => {
     let isDisposed = false;
 
     const loadPage = async () => {
+      if (isFeedSeeded) {
+        const profileResult = await getCurrentUserProfile({
+          redirectToLogin: false,
+        });
+
+        if (isDisposed) {
+          return;
+        }
+
+        if (!profileResult) {
+          setUser(null);
+          setUserAssignments([]);
+          return;
+        }
+
+        setUser(profileResult.profile);
+
+        const assignments = await fetchUserAssignments(
+          profileResult.session.user.id,
+        );
+
+        if (!isDisposed) {
+          setUserAssignments(assignments);
+        }
+
+        return;
+      }
+
       const [profileResult, feed] = await Promise.all([
         getCurrentUserProfile({ redirectToLogin: false }),
         fetchHomeFeed(),
@@ -75,7 +110,7 @@ export const useHomePageData = () => {
     return () => {
       isDisposed = true;
     };
-  }, []);
+  }, [isFeedSeeded]);
 
   const visibleAssignments = userAssignments.filter(
     (assignment) => !dismissedAssignments.has(assignment.id),

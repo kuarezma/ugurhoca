@@ -87,4 +87,10 @@ CI’da lint, typecheck, test; kritik akış testleri.
 4. **`next.config.js`** — `optimizePackageImports`: `framer-motion`, `@supabase/supabase-js`.
 5. **Faz 2 giriş** — `app/error.tsx`, `app/global-error.tsx`, `app/loading.tsx`.
 
-Sonraki adımlar: ölçüm (Lighthouse), opsiyonel RSC feed, `pdf-export` dinamik import, a11y/SEO incelemesi.
+**Faz 2 (devam)** — uygulandı:
+
+- **Sunucu tarafı anon feed**: `loadInitialHomeFeed` + `HomePage` / `useHomePageData` ile duyurular ve son dokümanlar ilk HTML’de; oturum ve ödevler yine istemci tarafında.
+- **Yandex çözümlemesi**: Ortak `resolveYandexPublicDownloadUrl` (`lib/yandex-public-download.ts`), API route ile aynı mantık.
+- **PDF chunk’ları**: `downloadProgressPDF` ve `downloadStudentListPDF` dinamik `import()` (Progress + Admin).
+
+Sonraki adımlar: Lighthouse / gerçek cihaz ölçümü, `next/image` + `sizes` turu, a11y/SEO (Sütun C–D), güvenlik başlıkları ve yasal sayfalar (içerik onayıyla).

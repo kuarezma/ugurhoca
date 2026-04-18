@@ -2,7 +2,6 @@
 
 import type { Dispatch, SetStateAction } from "react";
 import { ADMIN_EMAIL } from "@/lib/admin";
-import { downloadStudentListPDF } from "@/lib/pdf-export";
 import {
   advanceAdminUserGrades,
   deleteAdminChatRoom,
@@ -65,8 +64,12 @@ export function useAdminListActions({
 
   const handleDownloadStudentsPdf = async () => {
     setPdfStudentsLoading(true);
-    await downloadStudentListPDF();
-    setPdfStudentsLoading(false);
+    try {
+      const { downloadStudentListPDF } = await import("@/lib/pdf-export");
+      await downloadStudentListPDF();
+    } finally {
+      setPdfStudentsLoading(false);
+    }
   };
 
   const togglePrivateStudent = async (

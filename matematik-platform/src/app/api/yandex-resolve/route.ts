@@ -1,5 +1,7 @@
 import { NextResponse } from 'next/server';
 
+import { resolveYandexPublicDownloadUrl } from '@/lib/yandex-public-download';
+
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const url = searchParams.get('url');
@@ -8,19 +10,6 @@ export async function GET(request: Request) {
     return NextResponse.json({ error: 'Missing url' }, { status: 400 });
   }
 
-  if (!/disk\.yandex|yadi\.sk/i.test(url)) {
-    return NextResponse.json({ href: url });
-  }
-
-  try {
-    const res = await fetch(
-      `https://cloud-api.yandex.net/v1/disk/public/resources/download?public_key=${encodeURIComponent(url)}`,
-      { cache: 'no-store' }
-    );
-
-    const data = await res.json();
-    return NextResponse.json({ href: data?.href || url });
-  } catch {
-    return NextResponse.json({ href: url });
-  }
+  const href = await resolveYandexPublicDownloadUrl(url);
+  return NextResponse.json({ href });
 }

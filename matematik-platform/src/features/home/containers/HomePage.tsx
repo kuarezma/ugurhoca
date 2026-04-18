@@ -12,9 +12,14 @@ import { HomeHeroSection } from '@/features/home/components/HomeHeroSection';
 import { HomeNavbar } from '@/features/home/components/HomeNavbar';
 import { HomeRecentDocumentsSection } from '@/features/home/components/HomeRecentDocumentsSection';
 import { HomeSupportSection } from '@/features/home/components/HomeSupportSection';
+import type { HomeInitialFeed } from '@/features/home/home-initial-feed';
 import { useHomePageData } from '@/features/home/hooks/useHomePageData';
 
-export default function HomePage() {
+type HomePageProps = {
+  initialFeed?: HomeInitialFeed | null;
+};
+
+export default function HomePage({ initialFeed }: HomePageProps) {
   const { theme } = useTheme();
   const isLight = theme === 'light';
   const {
@@ -35,7 +40,7 @@ export default function HomePage() {
     uploadSupportAttachments,
     user,
     visibleAssignments,
-  } = useHomePageData();
+  } = useHomePageData(initialFeed);
 
   return (
     <main
