@@ -1,7 +1,6 @@
-"use client";
+'use client';
 
-import React, { useCallback, useEffect, useState } from "react";
-import { motion } from "framer-motion";
+import React, { useCallback, useEffect, useState } from 'react';
 import {
   Users,
   FileText,
@@ -13,9 +12,9 @@ import {
   Award,
   Download,
   Eye,
-} from "lucide-react";
-import { supabase } from "@/lib/supabase";
-import { isAdminEmail } from "@/lib/admin";
+} from 'lucide-react';
+import { supabase } from '@/lib/supabase/client';
+import { isAdminEmail } from '@/lib/admin';
 
 interface SiteStats {
   totalUsers: number;
@@ -32,28 +31,28 @@ interface SiteStats {
 export default function AdminStatistics() {
   const [stats, setStats] = useState<SiteStats | null>(null);
   const [loading, setLoading] = useState(true);
-  const [timeRange, setTimeRange] = useState<"week" | "month" | "all">("all");
+  const [timeRange, setTimeRange] = useState<'week' | 'month' | 'all'>('all');
 
   const loadStats = useCallback(async () => {
     setLoading(true);
 
     const now = new Date();
-    let dateFilter = "";
+    let dateFilter = '';
 
-    if (timeRange === "week") {
+    if (timeRange === 'week') {
       const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
       dateFilter = weekAgo.toISOString();
-    } else if (timeRange === "month") {
+    } else if (timeRange === 'month') {
       const monthAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
       dateFilter = monthAgo.toISOString();
     }
 
     const [usersRes, docsRes, notesRes, assignmentsRes] = await Promise.all([
-        supabase.from("profiles").select("*", { count: "exact" }),
-        supabase.from("documents").select("*", { count: "exact" }),
-        supabase.from("notes").select("*", { count: "exact" }),
-        supabase.from("assignments").select("*", { count: "exact" }),
-      ]);
+      supabase.from('profiles').select('*', { count: 'exact' }),
+      supabase.from('documents').select('*', { count: 'exact' }),
+      supabase.from('notes').select('*', { count: 'exact' }),
+      supabase.from('assignments').select('*', { count: 'exact' }),
+    ]);
 
     const users = usersRes.data || [];
     const documents = docsRes.data || [];
@@ -62,15 +61,15 @@ export default function AdminStatistics() {
 
     const gradeCounts: Record<string, number> = {};
     nonAdminUsers.forEach((u) => {
-      const grade = u.grade === "Mezun" ? "Mezun" : `${u.grade}. Sınıf`;
+      const grade = u.grade === 'Mezun' ? 'Mezun' : `${u.grade}. Sınıf`;
       gradeCounts[grade] = (gradeCounts[grade] || 0) + 1;
     });
 
     const usersByGrade = Object.entries(gradeCounts)
       .map(([grade, count]) => ({ grade, count }))
       .sort((a, b) => {
-        if (a.grade === "Mezun") return 1;
-        if (b.grade === "Mezun") return -1;
+        if (a.grade === 'Mezun') return 1;
+        if (b.grade === 'Mezun') return -1;
         return parseInt(a.grade) - parseInt(b.grade);
       });
 
@@ -95,7 +94,7 @@ export default function AdminStatistics() {
       totalViews,
       usersByGrade,
       recentSignups,
-      mostActiveDay: "-",
+      mostActiveDay: '-',
     });
 
     setLoading(false);
@@ -123,21 +122,21 @@ export default function AdminStatistics() {
           <p className="text-slate-400 text-sm mt-1">Platformun genel durumu</p>
         </div>
         <div className="flex gap-2">
-          {(["week", "month", "all"] as const).map((range) => (
+          {(['week', 'month', 'all'] as const).map((range) => (
             <button
               key={range}
               onClick={() => setTimeRange(range)}
               className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
                 timeRange === range
-                  ? "bg-purple-500 text-white"
-                  : "bg-white/5 text-slate-400 hover:text-white hover:bg-white/10"
+                  ? 'bg-purple-500 text-white'
+                  : 'bg-white/5 text-slate-400 hover:text-white hover:bg-white/10'
               }`}
             >
-              {range === "week"
-                ? "7 Gün"
-                : range === "month"
-                  ? "30 Gün"
-                  : "Tümü"}
+              {range === 'week'
+                ? '7 Gün'
+                : range === 'month'
+                  ? '30 Gün'
+                  : 'Tümü'}
             </button>
           ))}
         </div>
@@ -149,7 +148,7 @@ export default function AdminStatistics() {
           label="Toplam Kullanıcı"
           value={stats.totalUsers}
           color="from-blue-500 to-cyan-500"
-          subtext={`${stats.recentSignups} yeni (${timeRange === "week" ? "7 gün" : timeRange === "month" ? "30 gün" : "tüm zaman"})`}
+          subtext={`${stats.recentSignups} yeni (${timeRange === 'week' ? '7 gün' : timeRange === 'month' ? '30 gün' : 'tüm zaman'})`}
         />
         <StatCard
           icon={FileText}
@@ -219,15 +218,13 @@ export default function AdminStatistics() {
         </h3>
         <div className="grid grid-cols-3 sm:grid-cols-5 md:grid-cols-9 gap-3">
           {stats.usersByGrade.map(({ grade, count }) => (
-            <motion.div
+            <div
               key={grade}
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              className="bg-white/5 rounded-xl p-3 text-center hover:bg-white/10 transition-colors"
+              className="animate-fade-in bg-white/5 rounded-xl p-3 text-center hover:bg-white/10 transition-colors"
             >
               <div className="text-2xl font-bold text-white">{count}</div>
               <div className="text-xs text-slate-400 mt-1">{grade}</div>
-            </motion.div>
+            </div>
           ))}
         </div>
 
@@ -240,12 +237,13 @@ export default function AdminStatistics() {
               );
               const height = (count / maxCount) * 100;
               return (
-                <motion.div
+                <div
                   key={grade}
-                  initial={{ height: 0 }}
-                  animate={{ height: `${height}%` }}
-                  transition={{ delay: i * 0.05 }}
-                  className="flex-1 bg-gradient-to-t from-purple-500 to-pink-500 rounded-t-lg min-h-[8px]"
+                  className="flex-1 bg-gradient-to-t from-purple-500 to-pink-500 rounded-t-lg min-h-[8px] transition-[height] duration-500 ease-out"
+                  style={{
+                    height: `${height}%`,
+                    transitionDelay: `${i * 50}ms`,
+                  }}
                   title={`${grade}: ${count} kullanıcı`}
                 />
               );
@@ -255,7 +253,7 @@ export default function AdminStatistics() {
             {stats.usersByGrade.map(({ grade }) => (
               <div key={grade} className="flex-1 text-center">
                 <span className="text-[10px] text-slate-500 truncate block">
-                  {grade.replace(". Sınıf", "")}
+                  {grade.replace('. Sınıf', '')}
                 </span>
               </div>
             ))}
@@ -343,8 +341,8 @@ function StatCard({
   value,
   color,
   subtext,
-  iconColor = "text-white",
-  suffix = "",
+  iconColor = 'text-white',
+  suffix = '',
 }: {
   icon: React.ComponentType<{ className?: string }>;
   label: string;
@@ -355,11 +353,7 @@ function StatCard({
   suffix?: string;
 }) {
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      className="glass rounded-2xl p-5 card-hover"
-    >
+    <div className="glass rounded-2xl p-5 card-hover animate-fade-up">
       <div className="flex items-start justify-between">
         <div
           className={`w-12 h-12 rounded-xl bg-gradient-to-br ${color} flex items-center justify-center`}
@@ -369,12 +363,12 @@ function StatCard({
       </div>
       <div className="mt-4">
         <p className="text-3xl font-bold text-white">
-          {value.toLocaleString("tr-TR")}
+          {value.toLocaleString('tr-TR')}
           {suffix}
         </p>
         <p className="text-slate-400 text-sm mt-1">{label}</p>
         {subtext && <p className="text-slate-500 text-xs mt-1">{subtext}</p>}
       </div>
-    </motion.div>
+    </div>
   );
 }

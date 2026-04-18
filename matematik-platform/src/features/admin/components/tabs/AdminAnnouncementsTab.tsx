@@ -1,9 +1,8 @@
-"use client";
+'use client';
 
-import { motion } from "framer-motion";
-import { Calendar, Edit3, Megaphone, Trash2 } from "lucide-react";
-import { AnnouncementGallery } from "@/features/admin/components/AnnouncementGallery";
-import type { AdminAnnouncement, AdminFormState } from "@/features/admin/types";
+import { Calendar, Edit3, Megaphone, Trash2 } from 'lucide-react';
+import { AnnouncementGallery } from '@/features/admin/components/AnnouncementGallery';
+import type { AdminAnnouncement, AdminFormState } from '@/features/admin/types';
 
 type AdminAnnouncementsTabProps = {
   announcements: AdminAnnouncement[];
@@ -21,15 +20,14 @@ const getAnnouncementFormState = (
 ): AdminFormState => ({
   title: announcement.title,
   description: announcement.content,
-  image_urls: (
-    announcement.image_urls?.length
-      ? announcement.image_urls
-      : announcement.image_url
-        ? [announcement.image_url]
-        : []
-  ).join("\n"),
-  image_url: announcement.image_url || "",
-  link_url: announcement.link_url || "",
+  image_urls: (announcement.image_urls?.length
+    ? announcement.image_urls
+    : announcement.image_url
+      ? [announcement.image_url]
+      : []
+  ).join('\n'),
+  image_url: announcement.image_url || '',
+  link_url: announcement.link_url || '',
 });
 
 export default function AdminAnnouncementsTab({
@@ -40,13 +38,7 @@ export default function AdminAnnouncementsTab({
   onEdit,
 }: AdminAnnouncementsTabProps) {
   return (
-    <motion.div
-      key="announcements"
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -20 }}
-      className="space-y-6"
-    >
+    <div className="space-y-6 animate-fade-up">
       <div className="flex flex-col gap-4 mb-6 sm:flex-row sm:justify-between sm:items-center">
         <div>
           <h2 className="text-2xl font-bold text-white mb-1">
@@ -56,15 +48,13 @@ export default function AdminAnnouncementsTab({
             Öğrencilerinize göndereceğiniz haberleri yönetin
           </p>
         </div>
-        <motion.button
-          whileHover={{ scale: 1.02 }}
-          whileTap={{ scale: 0.98 }}
+        <button
           onClick={onCreate}
-          className="w-full px-5 py-3 bg-gradient-to-r from-blue-500 to-cyan-500 text-white font-semibold rounded-xl hover:from-blue-600 hover:to-cyan-600 transition-all flex items-center justify-center gap-2 shadow-lg shadow-blue-500/20 sm:w-auto"
+          className="w-full px-5 py-3 bg-gradient-to-r from-blue-500 to-cyan-500 text-white font-semibold rounded-xl hover:from-blue-600 hover:to-cyan-600 transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center gap-2 shadow-lg shadow-blue-500/20 sm:w-auto"
         >
           <Megaphone className="w-5 h-5" />
           Yeni Duyuru Ekle
-        </motion.button>
+        </button>
       </div>
 
       {announcements.length === 0 ? (
@@ -83,12 +73,10 @@ export default function AdminAnnouncementsTab({
       ) : (
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
           {announcements.map((announcement, index) => (
-            <motion.div
+            <div
               key={announcement.id}
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: index * 0.05 }}
-              className="glass relative rounded-3xl overflow-hidden hover:shadow-2xl hover:shadow-blue-500/10 transition-all duration-300 border border-white/5 flex flex-col h-full bg-gradient-to-b from-slate-800/80 to-slate-900/80"
+              className="glass relative rounded-3xl overflow-hidden hover:shadow-2xl hover:shadow-blue-500/10 transition-all duration-300 border border-white/5 flex flex-col h-full bg-gradient-to-b from-slate-800/80 to-slate-900/80 animate-slide-up"
+              style={{ animationDelay: `${index * 50}ms` }}
             >
               <div className="absolute top-4 left-4 z-10">
                 <span className="px-3 py-1.5 bg-blue-500/20 border border-blue-500/30 backdrop-blur-md rounded-full text-blue-300 text-xs font-bold shadow-lg flex items-center gap-1.5">
@@ -134,7 +122,10 @@ export default function AdminAnnouncementsTab({
                 <div className="flex items-center gap-2 pt-4 border-t border-white/5 mt-auto">
                   <button
                     onClick={() =>
-                      onEdit(announcement, getAnnouncementFormState(announcement))
+                      onEdit(
+                        announcement,
+                        getAnnouncementFormState(announcement),
+                      )
                     }
                     className="flex-1 py-2.5 bg-slate-800/50 text-blue-400 hover:bg-slate-700 hover:text-blue-300 rounded-xl transition-colors font-medium text-sm flex items-center justify-center gap-2 border border-slate-700"
                   >
@@ -150,10 +141,10 @@ export default function AdminAnnouncementsTab({
                   </button>
                 </div>
               </div>
-            </motion.div>
+            </div>
           ))}
         </div>
       )}
-    </motion.div>
+    </div>
   );
 }

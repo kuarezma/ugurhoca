@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { Calculator, Eye, EyeOff, ArrowLeft } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { supabase } from '@/lib/supabase';
+import { supabase } from '@/lib/supabase/client';
 import { getClientSession } from '@/lib/auth-client';
 import { normalizeFullNameForMatch } from '@/lib/student-identity';
 import DeferredFloatingShapes from '@/components/DeferredFloatingShapes';

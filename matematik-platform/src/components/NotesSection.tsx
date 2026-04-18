@@ -7,7 +7,7 @@ import {
   Bold, Italic, Underline, Heading1, List, ListOrdered, Link as LinkIcon, Folder, Clock
 } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
-import { supabase } from '@/lib/supabase';
+import { supabase } from '@/lib/supabase/client';
 import { Note, NoteCategory } from '@/types/index';
 
 const sanitizeHtml = (html: string) => {

@@ -1,6 +1,5 @@
-"use client";
+'use client';
 
-import { motion } from "framer-motion";
 import {
   ClipboardList,
   Edit3,
@@ -8,20 +7,18 @@ import {
   Plus,
   Send,
   Trash2,
-} from "lucide-react";
+} from 'lucide-react';
 import type {
   AdminAssignment,
   AdminSharedDocument,
-} from "@/features/admin/types";
+} from '@/features/admin/types';
 
 type AdminAssignmentsTabProps = {
   assignments: AdminAssignment[];
   onDeleteAssignment: (id: string) => void;
   onDeleteSharedDocument: (id: string) => void;
   onEditAssignment: (assignment: AdminAssignment) => Promise<void> | void;
-  onEditSharedDocument: (
-    document: AdminSharedDocument,
-  ) => Promise<void> | void;
+  onEditSharedDocument: (document: AdminSharedDocument) => Promise<void> | void;
   onOpenAssignmentModal: () => void;
   onOpenSendDocumentModal: () => void;
   onOpenSubmissions: (assignment: AdminAssignment) => Promise<void> | void;
@@ -40,13 +37,7 @@ export default function AdminAssignmentsTab({
   sharedDocs,
 }: AdminAssignmentsTabProps) {
   return (
-    <motion.div
-      key="assignments"
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -20 }}
-      className="space-y-6"
-    >
+    <div className="space-y-6 animate-fade-up">
       <div className="flex flex-col gap-4 mb-6 sm:flex-row sm:justify-between sm:items-center">
         <div>
           <h2 className="text-2xl font-bold text-white mb-1">Ödevlendirme</h2>
@@ -55,24 +46,20 @@ export default function AdminAssignmentsTab({
           </p>
         </div>
         <div className="flex flex-col gap-3 w-full sm:w-auto sm:flex-row">
-          <motion.button
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
+          <button
             onClick={onOpenSendDocumentModal}
-            className="btn-primary w-full sm:w-auto justify-center"
+            className="btn-primary w-full sm:w-auto justify-center hover:scale-[1.02] active:scale-[0.98]"
           >
             <Send className="w-5 h-5" />
             Belge Gönder
-          </motion.button>
-          <motion.button
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
+          </button>
+          <button
             onClick={onOpenAssignmentModal}
-            className="btn-primary w-full sm:w-auto justify-center"
+            className="btn-primary w-full sm:w-auto justify-center hover:scale-[1.02] active:scale-[0.98]"
           >
             <Plus className="w-5 h-5" />
             Ödev Ver
-          </motion.button>
+          </button>
         </div>
       </div>
 
@@ -110,11 +97,11 @@ export default function AdminAssignmentsTab({
                     <span
                       className={`px-2 py-1 rounded-full text-xs ${
                         document.is_read
-                          ? "bg-green-500/20 text-green-400"
-                          : "bg-yellow-500/20 text-yellow-400"
+                          ? 'bg-green-500/20 text-green-400'
+                          : 'bg-yellow-500/20 text-yellow-400'
                       }`}
                     >
-                      {document.is_read ? "Görüldü" : "Bekliyor"}
+                      {document.is_read ? 'Görüldü' : 'Bekliyor'}
                     </span>
                     <button
                       onClick={() => onEditSharedDocument(document)}
@@ -159,13 +146,15 @@ export default function AdminAssignmentsTab({
                         {assignment.title}
                       </p>
                       <p className="text-[10px] text-slate-500">
-                        {assignment.grade ? `${assignment.grade}. Sınıf` : "Özel"}{" "}
-                        • Son:{" "}
+                        {assignment.grade
+                          ? `${assignment.grade}. Sınıf`
+                          : 'Özel'}{' '}
+                        • Son:{' '}
                         {assignment.due_date
                           ? new Date(assignment.due_date).toLocaleDateString(
-                              "tr-TR",
+                              'tr-TR',
                             )
-                          : "Belirtilmedi"}
+                          : 'Belirtilmedi'}
                       </p>
                     </div>
                     <div className="flex items-center gap-2 self-start sm:self-auto">
@@ -200,6 +189,6 @@ export default function AdminAssignmentsTab({
           )}
         </div>
       </div>
-    </motion.div>
+    </div>
   );
 }

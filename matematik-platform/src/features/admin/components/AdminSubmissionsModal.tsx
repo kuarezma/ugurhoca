@@ -1,12 +1,8 @@
-"use client";
+'use client';
 
-import { motion } from "framer-motion";
-import { ClipboardList, Clock, X } from "lucide-react";
-import AdminSubmissionReviewCard from "@/features/admin/components/AdminSubmissionReviewCard";
-import type {
-  AdminAssignment,
-  AdminSubmission,
-} from "@/features/admin/types";
+import { ClipboardList, Clock, X } from 'lucide-react';
+import AdminSubmissionReviewCard from '@/features/admin/components/AdminSubmissionReviewCard';
+import type { AdminAssignment, AdminSubmission } from '@/features/admin/types';
 
 type AdminSubmissionsModalProps = {
   assignment: AdminAssignment;
@@ -27,19 +23,11 @@ export default function AdminSubmissionsModal({
 }: AdminSubmissionsModalProps) {
   return (
     <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
+      <div
         onClick={onClose}
-        className="absolute inset-0 bg-slate-950/90 backdrop-blur-md"
+        className="absolute inset-0 bg-slate-950/90 backdrop-blur-md animate-fade-in"
       />
-      <motion.div
-        initial={{ opacity: 0, scale: 0.95, y: 20 }}
-        animate={{ opacity: 1, scale: 1, y: 0 }}
-        exit={{ opacity: 0, scale: 0.95, y: 20 }}
-        className="relative w-full max-w-4xl max-h-[90vh] glass rounded-3xl p-6 sm:p-8 flex flex-col overflow-hidden"
-      >
+      <div className="relative w-full max-w-4xl max-h-[90vh] glass rounded-3xl p-6 sm:p-8 flex flex-col overflow-hidden animate-fade-up">
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-4">
             <div className="w-12 h-12 bg-indigo-500 rounded-2xl flex items-center justify-center">
@@ -78,7 +66,7 @@ export default function AdminSubmissionsModal({
             ))
           )}
         </div>
-      </motion.div>
+      </div>
     </div>
   );
 }

@@ -11,7 +11,7 @@ import {
   GraduationCap,
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { supabase } from '@/lib/supabase';
+import { supabase } from '@/lib/supabase/client';
 import {
   formatSignupError,
   normalizeFullNameForMatch,

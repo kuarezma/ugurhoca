@@ -1,11 +1,7 @@
-"use client";
+'use client';
 
-import { motion } from "framer-motion";
-import { MessageSquareText, Send, Trash2, Users } from "lucide-react";
-import type {
-  AdminChatMessage,
-  AdminChatRoom,
-} from "@/features/admin/types";
+import { MessageSquareText, Send, Trash2, Users } from 'lucide-react';
+import type { AdminChatMessage, AdminChatRoom } from '@/features/admin/types';
 
 type AdminMessagesTabProps = {
   activeChatRoom: AdminChatRoom | null;
@@ -29,13 +25,7 @@ export default function AdminMessagesTab({
   replyText,
 }: AdminMessagesTabProps) {
   return (
-    <motion.div
-      key="messages"
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -20 }}
-      className="space-y-6"
-    >
+    <div className="space-y-6 animate-fade-up">
       <div className="flex flex-col gap-4 mb-8 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h2 className="text-2xl font-bold text-white mb-1">Sohbetler</h2>
@@ -59,7 +49,7 @@ export default function AdminMessagesTab({
           <div className="lg:col-span-1 space-y-3 max-h-[600px] overflow-y-auto pr-2">
             {chatRooms.map((room) => {
               const isActive = activeChatRoom?.id === room.id;
-              const studentName = room.name || "Öğrenci";
+              const studentName = room.name || 'Öğrenci';
 
               return (
                 <button
@@ -67,16 +57,16 @@ export default function AdminMessagesTab({
                   onClick={() => onSelectRoom(room)}
                   className={`w-full text-left p-4 rounded-xl border transition-all ${
                     isActive
-                      ? "bg-indigo-500/20 border-indigo-500/50 shadow-lg shadow-indigo-500/10"
-                      : "glass border-white/5 hover:bg-white/5"
+                      ? 'bg-indigo-500/20 border-indigo-500/50 shadow-lg shadow-indigo-500/10'
+                      : 'glass border-white/5 hover:bg-white/5'
                   }`}
                 >
                   <div className="flex items-center gap-3">
                     <div
                       className={`w-10 h-10 rounded-lg flex items-center justify-center ${
                         isActive
-                          ? "bg-indigo-500 text-white"
-                          : "bg-slate-800 text-slate-400"
+                          ? 'bg-indigo-500 text-white'
+                          : 'bg-slate-800 text-slate-400'
                       }`}
                     >
                       <Users className="w-5 h-5" />
@@ -87,8 +77,8 @@ export default function AdminMessagesTab({
                       </p>
                       <p className="text-[10px] text-slate-500">
                         {room.updated_at
-                          ? new Date(room.updated_at).toLocaleString("tr-TR")
-                          : "Tarih yok"}
+                          ? new Date(room.updated_at).toLocaleString('tr-TR')
+                          : 'Tarih yok'}
                       </p>
                     </div>
                   </div>
@@ -103,10 +93,10 @@ export default function AdminMessagesTab({
                 <div className="p-4 border-b border-white/10 bg-white/5 flex items-center justify-between">
                   <div className="flex items-center gap-3">
                     <div className="w-8 h-8 rounded-full bg-indigo-500 flex items-center justify-center text-xs font-bold text-white">
-                      {activeChatRoom.name?.[0] || "Ö"}
+                      {activeChatRoom.name?.[0] || 'Ö'}
                     </div>
                     <span className="text-white font-semibold text-sm">
-                      {activeChatRoom.name || "Öğrenci"}
+                      {activeChatRoom.name || 'Öğrenci'}
                     </span>
                   </div>
                   <button
@@ -119,38 +109,38 @@ export default function AdminMessagesTab({
 
                 <div className="flex-1 overflow-y-auto p-4 space-y-3">
                   {chatMessages.map((message) => {
-                    const isAdmin = message.sender_tc === "admin";
+                    const isAdmin = message.sender_tc === 'admin';
 
                     return (
                       <div
                         key={message.id}
                         className={`flex ${
-                          isAdmin ? "justify-end" : "justify-start"
+                          isAdmin ? 'justify-end' : 'justify-start'
                         }`}
                       >
                         <div
                           className={`max-w-[80%] p-3 rounded-2xl text-sm ${
                             isAdmin
-                              ? "bg-indigo-600 text-white rounded-tr-none"
-                              : "bg-slate-800 text-slate-300 rounded-tl-none border border-white/5"
+                              ? 'bg-indigo-600 text-white rounded-tr-none'
+                              : 'bg-slate-800 text-slate-300 rounded-tl-none border border-white/5'
                           }`}
                         >
                           {!isAdmin && (
                             <p className="text-[10px] font-bold text-indigo-400 mb-1">
-                              {message.display_name || "Öğrenci"}
+                              {message.display_name || 'Öğrenci'}
                             </p>
                           )}
                           <p className="whitespace-pre-wrap">{message.text}</p>
                           <p
                             className={`text-[9px] mt-1 text-right ${
-                              isAdmin ? "text-white/60" : "text-slate-500"
+                              isAdmin ? 'text-white/60' : 'text-slate-500'
                             }`}
                           >
                             {new Date(
                               message.ts ?? message.created_at ?? Date.now(),
-                            ).toLocaleTimeString("tr-TR", {
-                              hour: "2-digit",
-                              minute: "2-digit",
+                            ).toLocaleTimeString('tr-TR', {
+                              hour: '2-digit',
+                              minute: '2-digit',
                             })}
                           </p>
                         </div>
@@ -163,9 +153,11 @@ export default function AdminMessagesTab({
                   <div className="flex gap-2">
                     <textarea
                       value={replyText}
-                      onChange={(event) => onReplyTextChange(event.target.value)}
+                      onChange={(event) =>
+                        onReplyTextChange(event.target.value)
+                      }
                       onKeyDown={(event) => {
-                        if (event.key === "Enter" && !event.shiftKey) {
+                        if (event.key === 'Enter' && !event.shiftKey) {
                           event.preventDefault();
                           onSendMessage(activeChatRoom.id, replyText);
                         }
@@ -174,7 +166,9 @@ export default function AdminMessagesTab({
                       className="flex-1 bg-slate-800 border border-white/10 rounded-xl px-4 py-2 text-sm text-white focus:outline-none focus:border-indigo-500 h-10 resize-none"
                     />
                     <button
-                      onClick={() => onSendMessage(activeChatRoom.id, replyText)}
+                      onClick={() =>
+                        onSendMessage(activeChatRoom.id, replyText)
+                      }
                       className="w-10 h-10 bg-indigo-500 rounded-xl flex items-center justify-center text-white hover:bg-indigo-600 transition-colors"
                     >
                       <Send className="w-5 h-5" />
@@ -193,6 +187,6 @@ export default function AdminMessagesTab({
           </div>
         </div>
       )}
-    </motion.div>
+    </div>
   );
 }

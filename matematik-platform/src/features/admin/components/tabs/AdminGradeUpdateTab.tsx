@@ -1,9 +1,8 @@
-"use client";
+'use client';
 
-import { motion } from "framer-motion";
-import { AlertCircle, GraduationCap, RefreshCw } from "lucide-react";
-import { ADMIN_EMAIL } from "@/lib/admin";
-import type { AdminUser } from "@/features/admin/types";
+import { AlertCircle, GraduationCap, RefreshCw } from 'lucide-react';
+import { ADMIN_EMAIL } from '@/lib/admin';
+import type { AdminUser } from '@/features/admin/types';
 
 type AdminGradeUpdateTabProps = {
   isSubmitting: boolean;
@@ -19,13 +18,7 @@ export default function AdminGradeUpdateTab({
   users,
 }: AdminGradeUpdateTabProps) {
   return (
-    <motion.div
-      key="gradeUpdate"
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -20 }}
-      className="max-w-2xl mx-auto"
-    >
+    <div className="max-w-2xl mx-auto animate-fade-up">
       <div className="glass rounded-3xl p-8">
         <div className="flex items-center gap-4 mb-6">
           <div className="w-16 h-16 bg-gradient-to-br from-teal-500 to-cyan-500 rounded-2xl flex items-center justify-center">
@@ -43,7 +36,9 @@ export default function AdminGradeUpdateTab({
           <div className="flex items-start gap-3">
             <AlertCircle className="w-5 h-5 text-teal-400 mt-0.5" />
             <div className="text-sm">
-              <p className="text-teal-300 font-medium mb-1">Bu işlem ne yapar?</p>
+              <p className="text-teal-300 font-medium mb-1">
+                Bu işlem ne yapar?
+              </p>
               <p className="text-slate-400">
                 Tüm öğrencilerin sınıfı otomatik olarak +1 artırılır. Örneğin:
                 5. sınıf → 6. sınıf, 12. sınıf → 12. sınıf (sabit kalır)
@@ -55,7 +50,7 @@ export default function AdminGradeUpdateTab({
         <div className="mb-6">
           <p className="text-slate-300 mb-3">Mevcut durum:</p>
           <div className="grid grid-cols-4 gap-3">
-            {[5, 6, 7, 8, 9, 10, 11, 12, "Mezun"].map((grade) => {
+            {[5, 6, 7, 8, 9, 10, 11, 12, 'Mezun'].map((grade) => {
               const count = users.filter(
                 (user) => user.grade === grade && user.email !== ADMIN_EMAIL,
               ).length;
@@ -67,7 +62,7 @@ export default function AdminGradeUpdateTab({
                 >
                   <div className="text-2xl font-bold text-white">{count}</div>
                   <div className="text-xs text-slate-400">
-                    {grade === "Mezun" ? "Mezun" : `${grade}. Sınıf`}
+                    {grade === 'Mezun' ? 'Mezun' : `${grade}. Sınıf`}
                   </div>
                 </div>
               );
@@ -76,18 +71,16 @@ export default function AdminGradeUpdateTab({
         </div>
 
         <div className="text-slate-500 text-sm mb-6">
-          Son güncelleme:{" "}
+          Son güncelleme:{' '}
           <span className="text-slate-300 font-medium">
-            {lastGradeUpdate || "Henüz yapılmadı"}
+            {lastGradeUpdate || 'Henüz yapılmadı'}
           </span>
         </div>
 
-        <motion.button
-          whileHover={{ scale: 1.02 }}
-          whileTap={{ scale: 0.98 }}
+        <button
           onClick={onUpdateGrades}
           disabled={isSubmitting}
-          className="w-full py-4 bg-gradient-to-r from-teal-500 to-cyan-500 text-white font-semibold rounded-xl hover:from-teal-600 hover:to-cyan-600 transition-all flex items-center justify-center gap-2"
+          className="w-full py-4 bg-gradient-to-r from-teal-500 to-cyan-500 text-white font-semibold rounded-xl hover:from-teal-600 hover:to-cyan-600 transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center gap-2"
         >
           {isSubmitting ? (
             <>
@@ -100,8 +93,8 @@ export default function AdminGradeUpdateTab({
               Sınıfları Güncelle
             </>
           )}
-        </motion.button>
+        </button>
       </div>
-    </motion.div>
+    </div>
   );
 }
