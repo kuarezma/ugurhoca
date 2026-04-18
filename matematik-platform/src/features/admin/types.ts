@@ -33,7 +33,6 @@ export type AdminActiveTab =
   | 'documents'
   | 'writings'
   | 'users'
-  | 'privateStudents'
   | 'messages'
   | 'gradeUpdate'
   | 'assignments'

@@ -7,7 +7,6 @@ import AdminAssignmentsTab from "@/features/admin/components/tabs/AdminAssignmen
 import AdminDocumentsTab from "@/features/admin/components/tabs/AdminDocumentsTab";
 import AdminGradeUpdateTab from "@/features/admin/components/tabs/AdminGradeUpdateTab";
 import AdminMessagesTab from "@/features/admin/components/tabs/AdminMessagesTab";
-import AdminPrivateStudentsTab from "@/features/admin/components/tabs/AdminPrivateStudentsTab";
 import AdminQuizzesTab from "@/features/admin/components/tabs/AdminQuizzesTab";
 import AdminUsersTab from "@/features/admin/components/tabs/AdminUsersTab";
 import AdminWritingsTab from "@/features/admin/components/tabs/AdminWritingsTab";
@@ -38,8 +37,6 @@ type AdminTabPanelsProps = {
   onAddQuizQuestion: (quiz: AdminQuiz) => Promise<void> | void;
   onCreateAnnouncement: () => void;
   onCreateAssignment: () => void;
-  onCreateAssignmentForStudent: (studentId: string) => void;
-  onCreatePrivateStudent: () => void;
   onCreateQuiz: () => void;
   onCreateSendDocument: () => void;
   onDeleteAnnouncement: (id: string) => void;
@@ -80,7 +77,6 @@ type AdminTabPanelsProps = {
   onUpdateGrades: () => Promise<void> | void;
   onViewStudentProfile: (user: AdminUser) => Promise<void> | void;
   pdfStudentsLoading: boolean;
-  privateStudents: AdminUser[];
   quizzes: AdminQuiz[];
   replyText: string;
   sharedDocs: AdminSharedDocument[];
@@ -102,8 +98,6 @@ export default function AdminTabPanels({
   onAddQuizQuestion,
   onCreateAnnouncement,
   onCreateAssignment,
-  onCreateAssignmentForStudent,
-  onCreatePrivateStudent,
   onCreateSendDocument,
   onDeleteAnnouncement,
   onDeleteAssignment,
@@ -131,7 +125,6 @@ export default function AdminTabPanels({
   onUpdateGrades,
   onViewStudentProfile,
   pdfStudentsLoading,
-  privateStudents,
   quizzes,
   replyText,
   sharedDocs,
@@ -191,16 +184,6 @@ export default function AdminTabPanels({
           onViewProfile={onViewStudentProfile}
           pdfStudentsLoading={pdfStudentsLoading}
           students={studentUsers}
-        />
-      )}
-
-      {activeTab === "privateStudents" && (
-        <AdminPrivateStudentsTab
-          assignments={assignments}
-          onCreateAssignment={onCreateAssignmentForStudent}
-          onCreateStudent={onCreatePrivateStudent}
-          onDeleteAssignment={onDeleteAssignment}
-          students={privateStudents}
         />
       )}
 

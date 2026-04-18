@@ -15,7 +15,6 @@ import {
   Upload,
   CheckCircle2,
   Users,
-  BookOpen,
   RefreshCw,
   Bell,
   ClipboardList,
@@ -605,13 +604,6 @@ export default function AdminPage() {
                   color: 'from-green-500 to-emerald-500',
                 },
                 {
-                  id: 'privateStudents',
-                  label: 'Öğrencilerim',
-                  shortLabel: 'Öğr.',
-                  icon: BookOpen,
-                  color: 'from-amber-500 to-orange-500',
-                },
-                {
                   id: 'messages',
                   label: 'Mesajlar',
                   shortLabel: 'Msj.',
@@ -718,10 +710,6 @@ export default function AdminPage() {
             onAddQuizQuestion={handleAddQuizQuestion}
             onCreateAnnouncement={() => openModal('announcement')}
             onCreateAssignment={() => openModal('assignment')}
-            onCreateAssignmentForStudent={(studentId) =>
-              openModal('assignment', studentId)
-            }
-            onCreatePrivateStudent={() => openModal('student')}
             onCreateQuiz={() => openModal('quiz')}
             onCreateSendDocument={() => openModal('sendDoc')}
             onDeleteAnnouncement={(id) => deleteItem('announcement', id)}
@@ -751,7 +739,6 @@ export default function AdminPage() {
             onUpdateGrades={handleUpdateGrades}
             onViewStudentProfile={handleOpenStudentProfile}
             pdfStudentsLoading={pdfStudentsLoading}
-            privateStudents={privateStudents}
             quizzes={quizzes}
             replyText={replyText}
             sharedDocs={sharedDocs}
