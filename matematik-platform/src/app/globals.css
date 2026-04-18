@@ -53,16 +53,33 @@ html[data-theme='light'] {
 html {
   scroll-behavior: smooth;
   -webkit-text-size-adjust: 100%;
+  min-height: 100%;
+  overflow-x: hidden;
+  overscroll-behavior-x: none;
 }
 
 body {
   font-family: var(--font-poppins), sans-serif;
   background: var(--bg);
   color: var(--text);
+  min-height: 100vh;
+  min-height: 100dvh;
   overflow-x: hidden;
+  overscroll-behavior-y: none;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+[class*='overflow-y-auto'],
+[class*='overflow-auto'] {
+  -webkit-overflow-scrolling: touch;
 }
 
 @keyframes floatY {
@@ -956,6 +973,16 @@ html[data-theme='light'] .programlar-page [class*='transition-'] {
 }
 
 @media (max-width: 767px) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  input,
+  select,
+  textarea {
+    font-size: 16px;
+  }
+
   .animate-fade-up,
   .animate-fade-in,
   .animate-slide-up,
@@ -1032,6 +1059,12 @@ html[data-theme='light'] .programlar-page [class*='transition-'] {
   [class*='group-hover:translate-'],
   [class*='group-hover:-translate-'] {
     transform: none !important;
+  }
+
+  [style*='backdrop-filter'],
+  [style*='WebkitBackdropFilter'] {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
   }
 }
 

@@ -52,6 +52,12 @@ export const metadata: Metadata = {
     statusBarStyle: "black-translucent",
     title: "Uğur Hoca",
   },
+  formatDetection: {
+    address: false,
+    date: false,
+    email: false,
+    telephone: false,
+  },
   openGraph: {
     title: SITE_NAME,
     description:
@@ -80,8 +86,11 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
-  maximumScale: 1,
-  userScalable: false,
+  viewportFit: "cover",
+  themeColor: [
+    { media: "(prefers-color-scheme: dark)", color: "#0f172a" },
+    { media: "(prefers-color-scheme: light)", color: "#ffffff" },
+  ],
 };
 
 const serviceWorkerBootstrap = `if('serviceWorker' in navigator){window.addEventListener('load',function(){navigator.serviceWorker.getRegistrations().then(function(registrations){return Promise.all(registrations.map(function(registration){return registration.unregister();}));}).catch(function(){});if('caches' in window){caches.keys().then(function(cacheNames){return Promise.all(cacheNames.filter(function(name){return name.indexOf('ugur-hoca-v')===0;}).map(function(name){return caches.delete(name);}));}).catch(function(){});}navigator.serviceWorker.addEventListener('message',function(event){if(event&&event.data&&event.data.type==='UGUR_HOCA_SW_DISABLED'){window.location.reload();}});});}`;
@@ -128,7 +137,8 @@ export default function RootLayout({
         ) : null}
         {/* PWA */}
         <link rel="apple-touch-icon" href="/icon-192.png" />
-        <meta name="theme-color" content="#f97316" />
+        <meta name="mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
         <script
           dangerouslySetInnerHTML={{
             __html: serviceWorkerBootstrap,

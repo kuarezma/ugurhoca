@@ -16,8 +16,12 @@ export default function InstallPrompt() {
     useState<BeforeInstallPromptEvent | null>(null);
   const [show, setShow] = useState(false);
   const [installing, setInstalling] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
+    const coarsePointer = window.matchMedia('(hover: none) and (pointer: coarse)');
+    setIsMobile(coarsePointer.matches);
+
     // Daha önce kapatılmışsa gösterme
     const dismissed = localStorage.getItem(DISMISS_KEY);
     if (dismissed && Date.now() - Number(dismissed) < DISMISS_DURATION_MS) return;
@@ -67,10 +71,12 @@ export default function InstallPrompt() {
         style={{
           background:
             'linear-gradient(135deg, rgba(15,23,42,0.95) 0%, rgba(30,41,59,0.95) 100%)',
-          backdropFilter: 'blur(20px)',
-          WebkitBackdropFilter: 'blur(20px)',
+          backdropFilter: isMobile ? 'blur(10px)' : 'blur(20px)',
+          WebkitBackdropFilter: isMobile ? 'blur(10px)' : 'blur(20px)',
           boxShadow:
-            '0 20px 60px rgba(0,0,0,0.6), 0 0 0 1px rgba(249,115,22,0.15)',
+            isMobile
+              ? '0 12px 32px rgba(0,0,0,0.4), 0 0 0 1px rgba(249,115,22,0.12)'
+              : '0 20px 60px rgba(0,0,0,0.6), 0 0 0 1px rgba(249,115,22,0.15)',
         }}
       >
         <div className="h-0.5 w-full bg-gradient-to-r from-orange-500 via-red-500 to-orange-500" />
