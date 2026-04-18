@@ -76,8 +76,8 @@ export function HomeAnnouncementsSection({
                       alt=""
                       fill
                       className="object-cover"
-                      sizes="(max-width: 768px) 82vw, (max-width: 1280px) 50vw, 25vw"
-                      quality={68}
+                      sizes="(max-width: 639px) 82vw, (max-width: 767px) 46vw, (max-width: 1279px) 320px, 288px"
+                      quality={54}
                       priority={index === 0}
                     />
                   </div>
