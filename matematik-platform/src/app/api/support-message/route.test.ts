@@ -20,13 +20,7 @@ vi.mock('@/features/support/server/supportMessages', () => ({
   sendSupportEmail: vi.fn(),
 }));
 
-const createProfilesQuery = (adminId = 'admin-1') => ({
-  eq: vi.fn().mockReturnValue({
-    single: vi.fn().mockResolvedValue({ data: { id: adminId } }),
-  }),
-});
-
-const createSupabaseStub = (userId = 'student-1') =>
+const createSupabaseStub = (userId = 'student-1', adminId = 'admin-1') =>
   ({
     auth: {
       getUser: vi.fn().mockResolvedValue({
@@ -34,14 +28,12 @@ const createSupabaseStub = (userId = 'student-1') =>
         error: null,
       }),
     },
-    from: vi.fn().mockImplementation((table: string) => {
-      if (table === 'profiles') {
-        return {
-          select: vi.fn().mockReturnValue(createProfilesQuery()),
-        };
+    rpc: vi.fn().mockImplementation((name: string) => {
+      if (name === 'get_admin_profile_id') {
+        return Promise.resolve({ data: adminId, error: null });
       }
 
-      throw new Error(`Unexpected table: ${table}`);
+      throw new Error(`Unexpected rpc: ${name}`);
     }),
   }) as const;
 
