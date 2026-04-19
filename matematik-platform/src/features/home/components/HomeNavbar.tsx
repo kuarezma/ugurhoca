@@ -8,6 +8,7 @@ import { useState } from 'react';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { useTheme } from '@/components/ThemeProvider';
 import { HOME_CATEGORIES } from '@/features/home/constants';
+import { HomeNavbarNotificationBell } from '@/features/home/components/HomeNavbarNotificationBell';
 import type { AppUser } from '@/types';
 
 type HomeNavbarProps = {
@@ -22,6 +23,7 @@ export function HomeNavbar({ onLogout, user }: HomeNavbarProps) {
   const isLight = theme === 'light';
   const isHomePage = pathname === '/';
   const profileHref = user?.isAdmin ? '/admin' : '/profil';
+  const showStudentBell = Boolean(user && !user.isAdmin && user.id);
 
   return (
     <nav
@@ -77,6 +79,9 @@ export function HomeNavbar({ onLogout, user }: HomeNavbarProps) {
 
           <div className="hidden items-center gap-3 md:flex">
             <ThemeToggle compact />
+            {showStudentBell && user?.id ? (
+              <HomeNavbarNotificationBell userId={user.id} isLight={isLight} />
+            ) : null}
             {user ? (
               <>
                 <Link
@@ -128,18 +133,23 @@ export function HomeNavbar({ onLogout, user }: HomeNavbarProps) {
             )}
           </div>
 
-          <button
-            type="button"
-            className={`md:hidden inline-flex h-11 w-11 items-center justify-center rounded-xl transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary ${
-              isLight ? 'text-slate-700 hover:bg-slate-100' : 'text-white hover:bg-white/5'
-            }`}
-            onClick={() => setIsOpen(!isOpen)}
-            aria-expanded={isOpen}
-            aria-controls="mobile-navigation"
-            aria-label={isOpen ? 'Menüyü kapat' : 'Menüyü aç'}
-          >
-            {isOpen ? <X className="h-6 w-6" aria-hidden="true" /> : <Menu className="h-6 w-6" aria-hidden="true" />}
-          </button>
+          <div className="flex items-center gap-1 md:hidden">
+            {showStudentBell && user?.id ? (
+              <HomeNavbarNotificationBell userId={user.id} isLight={isLight} />
+            ) : null}
+            <button
+              type="button"
+              className={`inline-flex h-11 w-11 items-center justify-center rounded-xl transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary ${
+                isLight ? 'text-slate-700 hover:bg-slate-100' : 'text-white hover:bg-white/5'
+              }`}
+              onClick={() => setIsOpen(!isOpen)}
+              aria-expanded={isOpen}
+              aria-controls="mobile-navigation"
+              aria-label={isOpen ? 'Menüyü kapat' : 'Menüyü aç'}
+            >
+              {isOpen ? <X className="h-6 w-6" aria-hidden="true" /> : <Menu className="h-6 w-6" aria-hidden="true" />}
+            </button>
+          </div>
         </div>
       </div>
 
