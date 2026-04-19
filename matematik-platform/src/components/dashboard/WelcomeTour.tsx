@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useId, useState } from 'react';
+import { useCallback, useEffect, useId, useRef, useState } from 'react';
 import {
   BookOpen,
   Command,
@@ -11,6 +11,7 @@ import {
   type LucideIcon,
 } from 'lucide-react';
 import { AnimatePresence, motion } from 'framer-motion';
+import { supabase } from '@/lib/supabase/client';
 
 type WelcomeTourProps = {
   userId?: string | null;
@@ -70,41 +71,95 @@ const SLIDES: Slide[] = [
 
 const STORAGE_KEY = 'uh.welcomeTour.dismissed';
 
+const readDismissedIds = () => {
+  if (typeof window === 'undefined') return [] as string[];
+  try {
+    const raw = window.localStorage.getItem(STORAGE_KEY);
+    return raw ? (JSON.parse(raw) as string[]) : [];
+  } catch {
+    return [] as string[];
+  }
+};
+
+const writeDismissedId = (id: string) => {
+  if (typeof window === 'undefined') return;
+  try {
+    const ids = readDismissedIds();
+    if (!ids.includes(id)) {
+      ids.push(id);
+      window.localStorage.setItem(STORAGE_KEY, JSON.stringify(ids));
+    }
+  } catch {
+    // storage hatası sessizce geçilir
+  }
+};
+
 export default function WelcomeTour({ userId, userName }: WelcomeTourProps) {
   const [open, setOpen] = useState(false);
   const [stepIndex, setStepIndex] = useState(0);
   const headingId = useId();
+  const persistedRef = useRef(false);
+
+  const persistSeen = useCallback(async (id: string) => {
+    if (persistedRef.current) return;
+    persistedRef.current = true;
+    writeDismissedId(id);
+
+    try {
+      await supabase
+        .from('profiles')
+        .update({ welcome_tour_seen_at: new Date().toISOString() })
+        .eq('id', id)
+        .is('welcome_tour_seen_at', null);
+    } catch {
+      // DB'ye yazılamazsa localStorage fallback yeterli
+    }
+  }, []);
 
   useEffect(() => {
-    if (!userId || typeof window === 'undefined') {
-      return;
-    }
-    try {
-      const raw = window.localStorage.getItem(STORAGE_KEY);
-      const dismissedIds: string[] = raw ? JSON.parse(raw) : [];
-      if (!dismissedIds.includes(userId)) {
-        setOpen(true);
+    if (!userId) return;
+
+    let cancelled = false;
+
+    const decide = async () => {
+      const dismissedIds = readDismissedIds();
+      if (dismissedIds.includes(userId)) {
+        return;
       }
-    } catch {
+
+      try {
+        const { data } = await supabase
+          .from('profiles')
+          .select('welcome_tour_seen_at')
+          .eq('id', userId)
+          .maybeSingle();
+
+        if (cancelled) return;
+
+        if (data?.welcome_tour_seen_at) {
+          writeDismissedId(userId);
+          return;
+        }
+      } catch {
+        // yoksay — localStorage yeterli
+      }
+
+      if (cancelled) return;
       setOpen(true);
-    }
-  }, [userId]);
+      void persistSeen(userId);
+    };
+
+    void decide();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [userId, persistSeen]);
 
   const dismiss = () => {
     setOpen(false);
-    if (!userId || typeof window === 'undefined') {
-      return;
-    }
-    try {
-      const raw = window.localStorage.getItem(STORAGE_KEY);
-      const dismissedIds: string[] = raw ? JSON.parse(raw) : [];
-      if (!dismissedIds.includes(userId)) {
-        dismissedIds.push(userId);
-        window.localStorage.setItem(STORAGE_KEY, JSON.stringify(dismissedIds));
-      }
-    } catch {
-      // storage hatası sessizce geçilir
-    }
+    if (!userId) return;
+    void persistSeen(userId);
   };
 
   if (!open) {
