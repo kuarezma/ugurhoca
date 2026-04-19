@@ -12,8 +12,15 @@ import { Skeleton } from '@/components/ui/Skeleton';
 export default function GamesPage() {
   const [selectedGame, setSelectedGame] = useState<GameDefinition | null>(null);
   const router = useRouter();
-  const { leaderboard, loading, recordScore, totalScore, user } =
-    useGamesPageData(router);
+  const {
+    leaderboard,
+    leaderboardPeriod,
+    loading,
+    recordScore,
+    setLeaderboardPeriod,
+    totalScore,
+    user,
+  } = useGamesPageData(router);
 
   const handleScore = useCallback(
     async (score: number) => {
@@ -62,6 +69,8 @@ export default function GamesPage() {
   return (
     <GamesLandingView
       leaderboard={leaderboard}
+      leaderboardPeriod={leaderboardPeriod}
+      onLeaderboardPeriodChange={setLeaderboardPeriod}
       onSelectGame={setSelectedGame}
       totalScore={totalScore}
       user={user}

@@ -10,10 +10,13 @@ import {
   games,
 } from '@/features/games/components/gameLibrary';
 import { GamesLeaderboard } from '@/features/games/components/GamesLeaderboard';
+import type { LeaderboardPeriod } from '@/features/games/queries';
 import type { GameDefinition, LeaderboardRow } from '@/features/games/types';
 
 type GamesLandingViewProps = {
   leaderboard: LeaderboardRow[];
+  leaderboardPeriod: LeaderboardPeriod;
+  onLeaderboardPeriodChange: (period: LeaderboardPeriod) => void;
   onSelectGame: (game: GameDefinition) => void;
   totalScore: number;
   user: AppUser;
@@ -21,6 +24,8 @@ type GamesLandingViewProps = {
 
 export function GamesLandingView({
   leaderboard,
+  leaderboardPeriod,
+  onLeaderboardPeriodChange,
   onSelectGame,
   totalScore,
   user,
@@ -78,7 +83,11 @@ export function GamesLandingView({
             ))}
           </div>
 
-          <GamesLeaderboard leaderboard={leaderboard} />
+          <GamesLeaderboard
+            leaderboard={leaderboard}
+            period={leaderboardPeriod}
+            onPeriodChange={onLeaderboardPeriodChange}
+          />
 
           {totalScore > 0 && (
             <motion.div

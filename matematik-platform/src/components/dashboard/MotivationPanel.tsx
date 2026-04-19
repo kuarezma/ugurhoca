@@ -1,7 +1,19 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { Award, Flame, Sparkles, Trophy } from 'lucide-react';
+import {
+  Award,
+  Crown,
+  Flame,
+  Lock,
+  Medal,
+  Sparkles,
+  Sunrise,
+  Target,
+  Trophy,
+  type LucideIcon,
+} from 'lucide-react';
+import { BADGE_CATALOG } from '@/features/profile/constants/badgeCatalog';
 import type { DashboardBadge } from '@/types/dashboard';
 
 interface MotivationPanelProps {
@@ -10,6 +22,20 @@ interface MotivationPanelProps {
   message: string;
   streak: number;
 }
+
+const BADGE_ICONS: Record<string, LucideIcon> = {
+  Award,
+  Crown,
+  Flame,
+  Medal,
+  Sparkles,
+  Sunrise,
+  Target,
+  Trophy,
+};
+
+const resolveBadgeIcon = (name?: string): LucideIcon =>
+  (name && BADGE_ICONS[name]) || Award;
 
 const getNextStreakTarget = (streak: number) => {
   if (streak < 3) {
@@ -106,32 +132,69 @@ export default function MotivationPanel({
       <div className="mt-6 rounded-2xl border border-white/10 bg-white/5 p-4">
         <div className="mb-3 flex items-center justify-between gap-3">
           <h3 className="text-sm font-bold uppercase tracking-[0.18em] text-slate-400">
-            Son Rozetler
+            Rozet Yolculuğu
           </h3>
-          <span className="text-xs text-slate-400">{badges.length} toplam</span>
+          <span className="text-xs text-slate-400">
+            {badges.length} / {BADGE_CATALOG.length}
+          </span>
         </div>
 
-        {badges.length === 0 ? (
-          <p className="text-sm text-slate-400">
-            İlk rozeti açmak için test çözüp seriyi başlat.
-          </p>
-        ) : (
-          <div className="flex flex-wrap gap-3">
-            {badges.slice(0, 3).map((badge) => (
-              <div
-                key={badge.id}
-                className="min-w-[140px] rounded-2xl border border-amber-500/20 bg-amber-500/10 px-4 py-3"
+        <ul
+          className="grid grid-cols-2 gap-2 sm:grid-cols-3"
+          aria-label="Rozet kataloğu"
+        >
+          {BADGE_CATALOG.map((entry) => {
+            const earned = badges.find(
+              (badge) => (badge.id ?? '').toString() === entry.type,
+            );
+            const lookup =
+              earned ||
+              badges.find(
+                (badge) => badge.name?.toLowerCase() === entry.name.toLowerCase(),
+              );
+            const isEarned = Boolean(lookup);
+            const Icon = resolveBadgeIcon(lookup?.icon || entry.icon);
+
+            return (
+              <li
+                key={entry.type}
+                className={`flex items-start gap-3 rounded-xl border p-3 transition-colors ${
+                  isEarned
+                    ? 'border-amber-500/30 bg-amber-500/10'
+                    : 'border-white/5 bg-white/[0.03]'
+                }`}
+                title={entry.description}
               >
-                <p className="text-sm font-bold text-white">{badge.name}</p>
-                <p className="mt-1 text-xs text-amber-200/80">
-                  {badge.earnedAt
-                    ? new Date(badge.earnedAt).toLocaleDateString('tr-TR')
-                    : 'Yeni rozet'}
-                </p>
-              </div>
-            ))}
-          </div>
-        )}
+                <span
+                  className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-lg ${
+                    isEarned
+                      ? 'bg-amber-500/30 text-amber-100'
+                      : 'bg-white/10 text-slate-500'
+                  }`}
+                  aria-hidden="true"
+                >
+                  {isEarned ? (
+                    <Icon className="h-4 w-4" />
+                  ) : (
+                    <Lock className="h-4 w-4" />
+                  )}
+                </span>
+                <div className="min-w-0 flex-1">
+                  <p
+                    className={`text-xs font-bold ${
+                      isEarned ? 'text-white' : 'text-slate-300'
+                    }`}
+                  >
+                    {entry.name}
+                  </p>
+                  <p className="mt-0.5 line-clamp-2 text-[11px] text-slate-400">
+                    {entry.description}
+                  </p>
+                </div>
+              </li>
+            );
+          })}
+        </ul>
       </div>
     </motion.section>
   );

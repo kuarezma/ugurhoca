@@ -45,7 +45,12 @@ const MessageDetailModal = dynamic(
   () => import('@/features/profile/components/MessageDetailModal'),
   { ssr: false },
 );
+const WelcomeTour = dynamic(
+  () => import('@/components/dashboard/WelcomeTour'),
+  { ssr: false },
+);
 import ProfileNotificationsPanel from '@/features/profile/components/ProfileNotificationsPanel';
+import { useDailyStreakTouch } from '@/features/profile/hooks/useDailyStreakTouch';
 import { useProfileDashboardData } from '@/features/profile/hooks/useProfileDashboardData';
 import {
   updateProfileAvatar,
@@ -102,6 +107,8 @@ export default function ProfilePage({ initialData }: ProfilePageProps) {
     submissions,
     user,
   } = useProfileDashboardData(router, initialData);
+
+  useDailyStreakTouch(user?.id, user?.isAdmin);
 
   const handleLogout = async () => {
     await signOutClient();
@@ -430,6 +437,10 @@ export default function ProfilePage({ initialData }: ProfilePageProps) {
           </div>
         </div>
       </nav>
+
+      {!user.isAdmin ? (
+        <WelcomeTour userId={user.id} userName={user.name} />
+      ) : null}
 
       {showNotifications && !user.isAdmin && (
         <ProfileNotificationsPanel

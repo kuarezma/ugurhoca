@@ -3,10 +3,25 @@
 import { memo } from 'react';
 import { motion } from 'framer-motion';
 import { Crown, Medal, Trophy } from 'lucide-react';
+import type { LeaderboardPeriod } from '@/features/games/queries';
 import type { LeaderboardRow } from '@/features/games/types';
 
 type GamesLeaderboardProps = {
   leaderboard: LeaderboardRow[];
+  period?: LeaderboardPeriod;
+  onPeriodChange?: (period: LeaderboardPeriod) => void;
+};
+
+const PERIOD_OPTIONS: Array<{ id: LeaderboardPeriod; label: string }> = [
+  { id: 'all', label: 'Tüm Zaman' },
+  { id: 'month', label: 'Bu Ay' },
+  { id: 'week', label: 'Bu Hafta' },
+];
+
+const PERIOD_TITLE: Record<LeaderboardPeriod, string> = {
+  all: 'Global Liderlik Tablosu',
+  month: 'Bu Ay Liderleri',
+  week: 'Bu Haftanın Liderleri',
 };
 
 type PodiumConfig = {
@@ -88,18 +103,51 @@ const getLeaderboardClasses = (index: number) => {
   );
 };
 
-function GamesLeaderboardInner({ leaderboard }: GamesLeaderboardProps) {
+function GamesLeaderboardInner({
+  leaderboard,
+  period = 'all',
+  onPeriodChange,
+}: GamesLeaderboardProps) {
   return (
     <motion.div
       initial={{ opacity: 0, scale: 0.95 }}
       animate={{ opacity: 1, scale: 1 }}
       className="mt-16 max-w-5xl mx-auto glass rounded-3xl overflow-hidden"
     >
-      <div className="bg-gradient-to-r from-amber-500/20 to-orange-500/20 py-5 px-6 border-b border-white/5 flex items-center justify-center gap-3">
-        <Trophy className="w-8 h-8 text-amber-400" />
-        <h2 className="text-2xl font-bold text-white tracking-wide">
-          Global Liderlik Tablosu
-        </h2>
+      <div className="bg-gradient-to-r from-amber-500/20 to-orange-500/20 py-5 px-6 border-b border-white/5 flex flex-col items-center gap-4 sm:flex-row sm:justify-between">
+        <div className="flex items-center gap-3">
+          <Trophy className="w-8 h-8 text-amber-400" />
+          <h2 className="text-xl sm:text-2xl font-bold text-white tracking-wide">
+            {PERIOD_TITLE[period]}
+          </h2>
+        </div>
+        {onPeriodChange ? (
+          <div
+            role="tablist"
+            aria-label="Liderlik tablosu dönemi"
+            className="inline-flex rounded-full border border-white/10 bg-slate-900/40 p-1"
+          >
+            {PERIOD_OPTIONS.map((option) => {
+              const active = option.id === period;
+              return (
+                <button
+                  key={option.id}
+                  type="button"
+                  role="tab"
+                  aria-selected={active}
+                  onClick={() => onPeriodChange(option.id)}
+                  className={`rounded-full px-3 py-1 text-xs font-semibold transition-colors ${
+                    active
+                      ? 'bg-amber-400 text-slate-900 shadow'
+                      : 'text-slate-300 hover:bg-white/5'
+                  }`}
+                >
+                  {option.label}
+                </button>
+              );
+            })}
+          </div>
+        ) : null}
       </div>
 
       <div className="p-6">

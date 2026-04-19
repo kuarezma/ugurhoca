@@ -7,6 +7,7 @@ import {
   insertGameScore,
   loadGamesLeaderboard,
   loadGamesPageUser,
+  type LeaderboardPeriod,
 } from '@/features/games/queries';
 
 type RouterLike = {
@@ -16,17 +17,22 @@ type RouterLike = {
 export const useGamesPageData = (router: RouterLike) => {
   const [user, setUser] = useState<AppUser | null>(null);
   const [leaderboard, setLeaderboard] = useState<LeaderboardRow[]>([]);
+  const [leaderboardPeriod, setLeaderboardPeriod] =
+    useState<LeaderboardPeriod>('all');
   const [totalScore, setTotalScore] = useState(0);
   const [loading, setLoading] = useState(true);
 
-  const refreshLeaderboard = useCallback(async () => {
-    const nextLeaderboard = await loadGamesLeaderboard();
-    setLeaderboard(nextLeaderboard);
-  }, []);
+  const refreshLeaderboard = useCallback(
+    async (period: LeaderboardPeriod = leaderboardPeriod) => {
+      const nextLeaderboard = await loadGamesLeaderboard(period);
+      setLeaderboard(nextLeaderboard);
+    },
+    [leaderboardPeriod],
+  );
 
   useEffect(() => {
-    void refreshLeaderboard();
-  }, [refreshLeaderboard]);
+    void refreshLeaderboard(leaderboardPeriod);
+  }, [leaderboardPeriod, refreshLeaderboard]);
 
   useEffect(() => {
     const loadUser = async () => {
@@ -61,8 +67,10 @@ export const useGamesPageData = (router: RouterLike) => {
 
   return {
     leaderboard,
+    leaderboardPeriod,
     loading,
     recordScore,
+    setLeaderboardPeriod,
     totalScore,
     user,
   };

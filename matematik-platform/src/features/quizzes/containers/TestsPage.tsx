@@ -22,6 +22,7 @@ import {
 import { useRouter } from 'next/navigation';
 import { useToast } from '@/components/Toast';
 import DeferredFloatingShapes from '@/components/DeferredFloatingShapes';
+import MathText from '@/components/MathText';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { Skeleton } from '@/components/ui/Skeleton';
 import { requireClientSession } from '@/lib/auth-client';
@@ -357,9 +358,12 @@ export default function TestsPage({
             </div>
 
             <div key={currentQuestion} className="animate-fade-up" role="group" aria-label={`Soru ${currentQuestion + 1}`}>
-              <h2 className="text-2xl font-bold text-white mb-8 font-display">
+              <MathText
+                as="h2"
+                className="text-2xl font-bold text-white mb-8 font-display"
+              >
                 {question.question}
-              </h2>
+              </MathText>
 
               <div
                 className="space-y-3"
@@ -391,7 +395,7 @@ export default function TestsPage({
                       >
                         {String.fromCharCode(65 + i)}
                       </span>
-                      <span className="flex-1">{option}</span>
+                      <MathText className="flex-1">{option}</MathText>
                     </button>
                   );
                 })}
@@ -584,13 +588,14 @@ export default function TestsPage({
                       }`}
                     >
                       <div className="flex items-start justify-between gap-4 mb-2">
-                        <p
+                        <MathText
+                          as="p"
                           className={`font-semibold text-sm ${
                             isCorrect ? 'text-emerald-300' : 'text-red-300'
                           }`}
                         >
-                          {index + 1}. {q.question}
-                        </p>
+                          {`${index + 1}. ${q.question}`}
+                        </MathText>
                         {isCorrect ? (
                           <CheckCircle2 className="w-5 h-5 text-emerald-400 shrink-0" />
                         ) : (
@@ -603,7 +608,7 @@ export default function TestsPage({
                           <span className="opacity-50 w-20 text-xs uppercase tracking-wider">
                             Cevabın:
                           </span>
-                          <span
+                          <MathText
                             className={`font-medium px-2 py-0.5 rounded ${
                               isCorrect
                                 ? 'bg-emerald-500/20 text-emerald-200'
@@ -613,22 +618,22 @@ export default function TestsPage({
                             {isUnanswered
                               ? 'Boş Bırakıldı'
                               : q.options[userAnswer]}
-                          </span>
+                          </MathText>
                         </div>
                         {!isCorrect && (
                           <div className="flex items-center gap-2 text-sm text-slate-300">
                             <span className="opacity-50 w-20 text-xs uppercase tracking-wider">
                               Doğrusu:
                             </span>
-                            <span className="font-medium px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-200">
+                            <MathText className="font-medium px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-200">
                               {q.options[q.correct_index]}
-                            </span>
+                            </MathText>
                           </div>
                         )}
                         {q.explanation && (
                           <div className="mt-3 p-3 bg-slate-900/50 rounded-lg text-xs text-slate-400 flex items-start gap-2">
                             <AlertCircle className="w-4 h-4 text-amber-500 shrink-0 mt-0.5" />
-                            <p>{q.explanation}</p>
+                            <MathText as="p">{q.explanation}</MathText>
                           </div>
                         )}
                       </div>
