@@ -17,7 +17,9 @@ import {
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { signOutClient } from '@/lib/auth-client';
+import { useTheme } from '@/components/ThemeProvider';
 import DeferredFloatingShapes from '@/components/DeferredFloatingShapes';
+import { HomeNavbarMessagesButton } from '@/features/home/components/HomeNavbarMessagesButton';
 import NotesSection from '@/components/NotesSection';
 import DashboardHero from '@/components/dashboard/DashboardHero';
 import MessageSummaryCard from '@/components/dashboard/MessageSummaryCard';
@@ -90,6 +92,8 @@ export default function ProfilePage({ initialData }: ProfilePageProps) {
   const [isAvatarModalOpen, setIsAvatarModalOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<ProfileTab>('overview');
   const router = useRouter();
+  const { theme } = useTheme();
+  const isLightNav = theme === 'light';
   const {
     assignments,
     availableQuizzes,
@@ -405,7 +409,15 @@ export default function ProfilePage({ initialData }: ProfilePageProps) {
             <span className="text-lg font-bold text-white">Uğur Hoca</span>
           </Link>
 
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2 sm:gap-4">
+            {!user.isAdmin && (
+              <HomeNavbarMessagesButton
+                userId={user.id}
+                userName={user.name || ''}
+                userEmail={user.email || ''}
+                isLight={isLightNav}
+              />
+            )}
             {!user.isAdmin && (
               <button
                 type="button"
