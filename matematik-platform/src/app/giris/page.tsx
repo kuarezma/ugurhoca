@@ -59,24 +59,17 @@ export default function LoginPage() {
 
     setLoading(true);
     try {
-      const { data: byNorm, error: normError } = await supabase
-        .from('profiles')
-        .select('email')
-        .eq('name_normalized', nameNormalized);
+      const { data: rpcMatches, error: rpcError } = await supabase.rpc(
+        'find_login_email',
+        {
+          p_name_normalized: nameNormalized,
+          p_display_name: displayName,
+        },
+      );
 
-      if (normError) throw normError;
+      if (rpcError) throw rpcError;
 
-      let profileMatches = byNorm ?? [];
-
-      if (profileMatches.length === 0) {
-        const { data: legacy, error: legacyError } = await supabase
-          .from('profiles')
-          .select('email')
-          .ilike('name', displayName);
-
-        if (legacyError) throw legacyError;
-        profileMatches = legacy ?? [];
-      }
+      const profileMatches = (rpcMatches ?? []) as Array<{ email: string }>;
 
       if (!profileMatches || profileMatches.length === 0) {
         setError('Bu ad soyad ile kayıtlı hesap bulunamadı.');

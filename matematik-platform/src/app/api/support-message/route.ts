@@ -4,7 +4,6 @@ import { supportMessageSchema } from '@/lib/route-schemas';
 
 const log = createLogger('support-message');
 import { createServerSupabaseClient } from '@/lib/supabase/server';
-import { ADMIN_EMAIL } from '@/lib/admin';
 import {
   buildSupportNotificationPayload,
   cleanupExpiredNotifications,
@@ -48,13 +47,8 @@ export async function POST(request: Request) {
     return apiError('Geçersiz istek.', 403, 'sender_mismatch');
   }
 
-  const { data: admin } = await supabase
-    .from('profiles')
-    .select('id')
-    .eq('email', ADMIN_EMAIL)
-    .single();
-
-  const adminId = admin?.id || 'admin-1';
+  const { data: adminIdFromRpc } = await supabase.rpc('get_admin_profile_id');
+  const adminId = (adminIdFromRpc as string | null) || 'admin-1';
 
   await cleanupExpiredNotifications(supabase);
 

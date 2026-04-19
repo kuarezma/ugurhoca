@@ -108,25 +108,17 @@ export default function RegisterPage() {
         formData.grade === 'Mezun' ? 0 : Number.parseInt(formData.grade, 10);
       const gradeValue = Number.isNaN(userGrade) ? 0 : userGrade;
 
-      const { data: existingByEmail } = await supabase
-        .from('profiles')
-        .select('id')
-        .eq('email', fakeEmail)
-        .maybeSingle();
+      const { data: existsReason, error: existsErr } = await supabase.rpc(
+        'profile_exists_for_register',
+        {
+          p_email: fakeEmail,
+          p_name_normalized: nameNormalized,
+        },
+      );
 
-      if (existingByEmail) {
-        setError('Bu ad soyad ile zaten hesap var. Giriş sayfasından deneyin.');
-        return;
-      }
+      if (existsErr) throw existsErr;
 
-      const { data: existingByNorm, error: normErr } = await supabase
-        .from('profiles')
-        .select('id')
-        .eq('name_normalized', nameNormalized)
-        .maybeSingle();
-
-      if (normErr) throw normErr;
-      if (existingByNorm) {
+      if (existsReason) {
         setError('Bu ad soyad ile zaten hesap var. Giriş sayfasından deneyin.');
         return;
       }
