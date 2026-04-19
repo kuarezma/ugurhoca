@@ -76,7 +76,7 @@ export default function MotivationPanel({
           </p>
         </div>
         <div className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-right">
-          <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-slate-500">
+          <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-slate-400">
             Sıradaki hedef
           </p>
           <p className="mt-1 text-xl font-black text-white">{nextTarget} gün</p>
@@ -95,7 +95,7 @@ export default function MotivationPanel({
             <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-xl bg-white/10">
               <stat.icon className={`h-5 w-5 ${stat.tone}`} />
             </div>
-            <p className="text-xs font-bold uppercase tracking-[0.18em] text-slate-500">
+            <p className="text-xs font-bold uppercase tracking-[0.18em] text-slate-400">
               {stat.label}
             </p>
             <p className="mt-2 text-lg font-bold text-white">{stat.value}</p>
@@ -108,7 +108,7 @@ export default function MotivationPanel({
           <h3 className="text-sm font-bold uppercase tracking-[0.18em] text-slate-400">
             Son Rozetler
           </h3>
-          <span className="text-xs text-slate-500">{badges.length} toplam</span>
+          <span className="text-xs text-slate-400">{badges.length} toplam</span>
         </div>
 
         {badges.length === 0 ? (

@@ -19,7 +19,7 @@ export type FeaturedExam = {
 export const featuredExams: FeaturedExam[] = [
   {
     id: 'lgs-2026',
-    title: "LGS'ye Kalan Sure",
+    title: "LGS'ye Kalan Süre",
     provider: 'MEB',
     targetDate: '2026-06-13T09:30:00+03:00',
     dateLabel: '13 Haziran 2026 Cumartesi',
@@ -30,8 +30,8 @@ export const featuredExams: FeaturedExam[] = [
   },
   {
     id: 'yks-2026',
-    title: "YKS'ye Kalan Sure",
-    provider: 'OSYM',
+    title: "YKS'ye Kalan Süre",
+    provider: 'ÖSYM',
     targetDate: '2026-06-20T10:15:00+03:00',
     dateLabel: '20 Haziran 2026 Cumartesi 10:15',
     accent: 'from-violet-500 via-fuchsia-500 to-orange-400',

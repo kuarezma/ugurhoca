@@ -54,31 +54,72 @@ export default function DashboardHero({
       <div className="relative grid gap-8 xl:grid-cols-[1.35fr_0.9fr] xl:items-center">
         <div className="space-y-6">
           <div className="flex flex-col gap-6 lg:flex-row lg:items-center">
-            <motion.button
-              type="button"
-              onClick={onAvatarClick}
-              whileHover={{ scale: 1.05 }}
-              className="group relative flex h-24 w-24 shrink-0 items-center justify-center overflow-hidden rounded-3xl border border-white/20 bg-gradient-to-br from-white/20 to-white/5 text-4xl font-bold text-white shadow-xl backdrop-blur-md transition-all"
-            >
-              {hasImageAvatar ? (
-                <Image
-                  src={user.avatar_id || ''}
-                  alt={`${user.name} profil fotoğrafı`}
-                  fill
-                  sizes="96px"
-                  className="h-full w-full object-cover"
+            <div className="relative flex h-32 w-32 shrink-0 items-center justify-center">
+              <svg
+                className="absolute inset-0 h-full w-full -rotate-90"
+                viewBox="0 0 120 120"
+                aria-hidden="true"
+              >
+                <defs>
+                  <linearGradient id="xp-ring" x1="0" y1="0" x2="1" y2="1">
+                    <stop offset="0%" stopColor="#FBBF24" />
+                    <stop offset="50%" stopColor="#F472B6" />
+                    <stop offset="100%" stopColor="#7C3AED" />
+                  </linearGradient>
+                </defs>
+                <circle
+                  cx="60"
+                  cy="60"
+                  r="54"
+                  stroke="rgba(255,255,255,0.15)"
+                  strokeWidth="6"
+                  fill="none"
                 />
-              ) : user.avatar_id ? (
-                <span className="text-5xl">{user.avatar_id}</span>
-              ) : (
-                <span>{user.name?.[0] || '?'}</span>
-              )}
-              <div className="absolute inset-0 flex items-center justify-center rounded-3xl bg-black/40 opacity-0 transition-opacity group-hover:opacity-100">
-                <span className="text-xs font-bold uppercase tracking-wider text-white">
-                  Değiştir
-                </span>
-              </div>
-            </motion.button>
+                <circle
+                  cx="60"
+                  cy="60"
+                  r="54"
+                  stroke="url(#xp-ring)"
+                  strokeWidth="6"
+                  strokeLinecap="round"
+                  fill="none"
+                  strokeDasharray={`${(goalSnapshot.progressPercent / 100) * 339.292} 339.292`}
+                  style={{ transition: 'stroke-dasharray 600ms ease-out' }}
+                />
+              </svg>
+              <motion.button
+                type="button"
+                onClick={onAvatarClick}
+                whileHover={{ scale: 1.04 }}
+                aria-label="Avatarı değiştir"
+                className="group relative flex h-24 w-24 shrink-0 items-center justify-center overflow-hidden rounded-full border border-white/20 bg-gradient-to-br from-white/20 to-white/5 text-4xl font-bold text-white shadow-xl backdrop-blur-md transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-slate-900"
+              >
+                {hasImageAvatar ? (
+                  <Image
+                    src={user.avatar_id || ''}
+                    alt={`${user.name} profil fotoğrafı`}
+                    fill
+                    sizes="96px"
+                    className="h-full w-full object-cover"
+                  />
+                ) : user.avatar_id ? (
+                  <span className="text-5xl">{user.avatar_id}</span>
+                ) : (
+                  <span>{user.name?.[0] || '?'}</span>
+                )}
+                <div className="absolute inset-0 flex items-center justify-center rounded-full bg-black/40 opacity-0 transition-opacity group-hover:opacity-100">
+                  <span className="text-xs font-bold uppercase tracking-wider text-white">
+                    Değiştir
+                  </span>
+                </div>
+              </motion.button>
+              <span
+                className="absolute -bottom-1 left-1/2 -translate-x-1/2 rounded-full bg-gradient-to-r from-amber-400 via-orange-400 to-pink-500 px-3 py-0.5 text-[10px] font-black uppercase tracking-wider text-slate-900 shadow-lg"
+                aria-label={`Haftalık hedef yüzdesi ${goalSnapshot.progressPercent}%`}
+              >
+                %{goalSnapshot.progressPercent}
+              </span>
+            </div>
 
             <div>
               <div className="mb-3 inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-1.5 text-xs font-bold uppercase tracking-[0.2em] text-white backdrop-blur-md">

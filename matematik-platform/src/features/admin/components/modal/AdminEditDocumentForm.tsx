@@ -1,3 +1,4 @@
+import { useId } from "react";
 import { motion } from "framer-motion";
 import type {
   AdminDocument as Document,
@@ -29,6 +30,16 @@ export default function AdminEditDocumentForm({
   updateFormData,
 }: AdminEditDocumentFormProps) {
   const isWorksheet = isWorksheetType(formData.type);
+  const baseId = useId();
+  const titleId = `${baseId}-title`;
+  const descriptionId = `${baseId}-description`;
+  const typeId = `${baseId}-type`;
+  const worksheetGradeId = `${baseId}-worksheet-grade`;
+  const learningOutcomeId = `${baseId}-learning-outcome`;
+  const fileUrlId = `${baseId}-file-url`;
+  const videoUrlId = `${baseId}-video-url`;
+  const answerKeyId = `${baseId}-answer-key`;
+  const solutionUrlId = `${baseId}-solution-url`;
 
   return (
     <form onSubmit={onSubmit} className="space-y-5">
@@ -38,8 +49,11 @@ export default function AdminEditDocumentForm({
         </div>
       ) : (
         <div>
-          <label className="block text-slate-300 mb-2 text-sm">Başlık</label>
+          <label htmlFor={titleId} className="block text-slate-300 mb-2 text-sm">
+            Başlık
+          </label>
           <input
+            id={titleId}
             type="text"
             required
             value={formData.title || ""}
@@ -50,8 +64,14 @@ export default function AdminEditDocumentForm({
         </div>
       )}
       <div>
-        <label className="block text-slate-300 mb-2 text-sm">Açıklama</label>
+        <label
+          htmlFor={descriptionId}
+          className="block text-slate-300 mb-2 text-sm"
+        >
+          Açıklama
+        </label>
         <textarea
+          id={descriptionId}
           rows={3}
           value={formData.description || ""}
           onChange={(event) => updateFormData({ description: event.target.value })}
@@ -60,8 +80,11 @@ export default function AdminEditDocumentForm({
         />
       </div>
       <div>
-        <label className="block text-slate-300 mb-2 text-sm">Kategori</label>
+        <label htmlFor={typeId} className="block text-slate-300 mb-2 text-sm">
+          Kategori
+        </label>
         <select
+          id={typeId}
           value={formData.type || ""}
           onChange={(event) => updateFormData({ type: event.target.value })}
           className="w-full bg-slate-800/50 border border-slate-700 rounded-xl px-4 py-3 text-white
@@ -78,10 +101,14 @@ export default function AdminEditDocumentForm({
       {isWorksheet && (
         <>
           <div>
-            <label className="block text-slate-300 mb-2 text-sm">
+            <label
+              htmlFor={worksheetGradeId}
+              className="block text-slate-300 mb-2 text-sm"
+            >
               Sınıf Düzeyi
             </label>
             <select
+              id={worksheetGradeId}
               value={formData.grades?.[0] || ""}
               onChange={(event) =>
                 updateFormData({
@@ -106,10 +133,14 @@ export default function AdminEditDocumentForm({
             </select>
           </div>
           <div>
-            <label className="block text-slate-300 mb-2 text-sm">
+            <label
+              htmlFor={learningOutcomeId}
+              className="block text-slate-300 mb-2 text-sm"
+            >
               Kazanım
             </label>
             <input
+              id={learningOutcomeId}
               type="text"
               value={formData.learning_outcome || ""}
               onChange={(event) =>
@@ -122,8 +153,11 @@ export default function AdminEditDocumentForm({
         </>
       )}
       <div>
-        <label className="block text-slate-300 mb-2 text-sm">Dosya Linki</label>
+        <label htmlFor={fileUrlId} className="block text-slate-300 mb-2 text-sm">
+          Dosya Linki
+        </label>
         <input
+          id={fileUrlId}
           type="url"
           value={formData.file_url || ""}
           onChange={(event) => updateFormData({ file_url: event.target.value })}
@@ -132,8 +166,11 @@ export default function AdminEditDocumentForm({
         />
       </div>
       <div>
-        <label className="block text-slate-300 mb-2 text-sm">YouTube URL</label>
+        <label htmlFor={videoUrlId} className="block text-slate-300 mb-2 text-sm">
+          YouTube URL
+        </label>
         <input
+          id={videoUrlId}
           type="url"
           value={formData.video_url || ""}
           onChange={(event) => updateFormData({ video_url: event.target.value })}
@@ -142,10 +179,14 @@ export default function AdminEditDocumentForm({
         />
       </div>
       <div>
-        <label className="block text-slate-300 mb-2 text-sm">
+        <label
+          htmlFor={answerKeyId}
+          className="block text-slate-300 mb-2 text-sm"
+        >
           Cevap Anahtarı (Metin)
         </label>
         <textarea
+          id={answerKeyId}
           value={formData.answer_key_text || ""}
           onChange={(event) =>
             updateFormData({ answer_key_text: event.target.value })
@@ -157,10 +198,14 @@ export default function AdminEditDocumentForm({
         />
       </div>
       <div>
-        <label className="block text-slate-300 mb-2 text-sm">
+        <label
+          htmlFor={solutionUrlId}
+          className="block text-slate-300 mb-2 text-sm"
+        >
           Çözüm PDF (Drive Link)
         </label>
         <input
+          id={solutionUrlId}
           type="url"
           value={formData.solution_url || ""}
           onChange={(event) => updateFormData({ solution_url: event.target.value })}

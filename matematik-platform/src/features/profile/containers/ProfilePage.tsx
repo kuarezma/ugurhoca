@@ -5,7 +5,16 @@ import dynamic from 'next/dynamic';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
 import Link from 'next/link';
-import { ArrowLeft, Bell, LogOut, Settings, Shield } from 'lucide-react';
+import {
+  ArrowLeft,
+  Bell,
+  LogOut,
+  Settings,
+  Shield,
+  LayoutDashboard,
+  StickyNote,
+  Sliders,
+} from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { signOutClient } from '@/lib/auth-client';
 import DeferredFloatingShapes from '@/components/DeferredFloatingShapes';
@@ -22,6 +31,7 @@ import RecentDocuments from '@/components/dashboard/RecentDocuments';
 import RecentResults from '@/components/dashboard/RecentResults';
 import TodayPlanCard from '@/components/dashboard/TodayPlanCard';
 import DashboardSettings from '@/components/dashboard/DashboardSettings';
+import { Skeleton } from '@/components/ui/Skeleton';
 
 const AvatarSelectionModal = dynamic(
   () => import('@/components/dashboard/AvatarSelectionModal'),
@@ -54,6 +64,18 @@ type ProfilePageProps = {
   initialData?: InitialProfileDashboardData;
 };
 
+type ProfileTab = 'overview' | 'notes' | 'settings';
+
+const PROFILE_TABS: Array<{
+  id: ProfileTab;
+  label: string;
+  icon: typeof LayoutDashboard;
+}> = [
+  { id: 'overview', label: 'Genel Bakış', icon: LayoutDashboard },
+  { id: 'notes', label: 'Notlar', icon: StickyNote },
+  { id: 'settings', label: 'Ayarlar', icon: Sliders },
+];
+
 export default function ProfilePage({ initialData }: ProfilePageProps) {
   const [showNotifications, setShowNotifications] = useState(false);
   const [selectedAssignment, setSelectedAssignment] =
@@ -61,6 +83,7 @@ export default function ProfilePage({ initialData }: ProfilePageProps) {
   const [selectedMessage, setSelectedMessage] =
     useState<DashboardNotification | null>(null);
   const [isAvatarModalOpen, setIsAvatarModalOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState<ProfileTab>('overview');
   const router = useRouter();
   const {
     assignments,
@@ -337,12 +360,21 @@ export default function ProfilePage({ initialData }: ProfilePageProps) {
 
   if (loading) {
     return (
-      <main className="profil-page min-h-screen gradient-bg flex items-center justify-center">
-        <motion.div
-          animate={{ rotate: 360 }}
-          transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
-          className="h-16 w-16 rounded-full border-4 border-orange-500 border-t-transparent"
-        />
+      <main className="profil-page min-h-screen bg-gradient-to-br from-slate-900 via-slate-900 to-slate-800 px-4 pb-12 pt-20">
+        <div className="mx-auto max-w-6xl space-y-6">
+          <Skeleton className="h-48 rounded-[2.5rem]" />
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            <Skeleton className="h-28 rounded-2xl" />
+            <Skeleton className="h-28 rounded-2xl" />
+            <Skeleton className="h-28 rounded-2xl" />
+            <Skeleton className="h-28 rounded-2xl" />
+          </div>
+          <div className="grid gap-6 lg:grid-cols-2">
+            <Skeleton className="h-64 rounded-3xl" />
+            <Skeleton className="h-64 rounded-3xl" />
+          </div>
+          <Skeleton className="h-48 rounded-3xl" />
+        </div>
       </main>
     );
   }
@@ -463,55 +495,124 @@ export default function ProfilePage({ initialData }: ProfilePageProps) {
                 user={user}
               />
 
-              <div className="mx-auto w-full max-w-full">
-                <QuickActionGrid items={quickActionItems} />
+              <div
+                role="tablist"
+                aria-label="Profil bölümleri"
+                className="flex w-full gap-2 overflow-x-auto rounded-2xl border border-white/10 bg-white/5 p-1.5 backdrop-blur"
+              >
+                {PROFILE_TABS.map((tab) => {
+                  const TabIcon = tab.icon;
+                  const isActive = activeTab === tab.id;
+                  return (
+                    <button
+                      key={tab.id}
+                      type="button"
+                      role="tab"
+                      aria-selected={isActive}
+                      id={`profile-tab-${tab.id}`}
+                      aria-controls={`profile-panel-${tab.id}`}
+                      onClick={() => setActiveTab(tab.id)}
+                      className={`relative flex flex-1 items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-slate-900 ${
+                        isActive
+                          ? 'bg-gradient-to-r from-amber-400/90 via-orange-400/90 to-pink-500/90 text-slate-900 shadow-lg'
+                          : 'text-white/70 hover:bg-white/5 hover:text-white'
+                      }`}
+                    >
+                      <TabIcon className="h-4 w-4" />
+                      <span className="whitespace-nowrap">{tab.label}</span>
+                    </button>
+                  );
+                })}
               </div>
 
-              <div className="grid gap-6 xl:grid-cols-[0.95fr_1.05fr]">
-                <TodayPlanCard
-                  tasks={tasks}
-                  onSelectTask={(task) => handleDashboardAction(task.action)}
-                />
-                <ProgressOverview
-                  detailHref="/ilerleme"
-                  focusTopic={focusTopic}
-                  goalSnapshot={goalSnapshot}
-                  latestScore={latestQuizScore}
-                  strongTopic={strongTopic}
-                />
-              </div>
+              {activeTab === 'overview' && (
+                <motion.div
+                  key="overview"
+                  id="profile-panel-overview"
+                  role="tabpanel"
+                  aria-labelledby="profile-tab-overview"
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.25 }}
+                  className="space-y-8"
+                >
+                  <div className="mx-auto w-full max-w-full">
+                    <QuickActionGrid items={quickActionItems} />
+                  </div>
 
-              <div className="grid gap-6 lg:grid-cols-2">
-                <MotivationPanel
-                  badges={recentBadges}
-                  latestScore={latestQuizScore}
-                  message={motivationMessage}
-                  streak={user.current_streak || 0}
-                />
-                <MessageSummaryCard
-                  notifications={notifications}
-                  onMarkAllAsRead={markAllAsRead}
-                  onOpenNotification={(notification) => {
-                    void handleNotificationClick(notification);
-                  }}
-                  onOpenPanel={() => setShowNotifications(true)}
-                  unreadCount={unreadCount}
-                />
-              </div>
+                  <div className="grid gap-6 xl:grid-cols-[0.95fr_1.05fr]">
+                    <TodayPlanCard
+                      tasks={tasks}
+                      onSelectTask={(task) =>
+                        handleDashboardAction(task.action)
+                      }
+                    />
+                    <ProgressOverview
+                      detailHref="/ilerleme"
+                      focusTopic={focusTopic}
+                      goalSnapshot={goalSnapshot}
+                      latestScore={latestQuizScore}
+                      strongTopic={strongTopic}
+                    />
+                  </div>
 
-              <QuickUpdatesPanel
-                updates={updates}
-                onSelectUpdate={handleUpdateSelect}
-              />
+                  <div className="grid gap-6 lg:grid-cols-2">
+                    <MotivationPanel
+                      badges={recentBadges}
+                      latestScore={latestQuizScore}
+                      message={motivationMessage}
+                      streak={user.current_streak || 0}
+                    />
+                    <MessageSummaryCard
+                      notifications={notifications}
+                      onMarkAllAsRead={markAllAsRead}
+                      onOpenNotification={(notification) => {
+                        void handleNotificationClick(notification);
+                      }}
+                      onOpenPanel={() => setShowNotifications(true)}
+                      unreadCount={unreadCount}
+                    />
+                  </div>
 
-              <div className="grid gap-6 lg:grid-cols-2">
-                <RecentResults results={quizResults} />
-                <RecentDocuments documents={sharedDocs} />
-              </div>
+                  <QuickUpdatesPanel
+                    updates={updates}
+                    onSelectUpdate={handleUpdateSelect}
+                  />
 
-              <NotesSection userId={user.id} />
+                  <div className="grid gap-6 lg:grid-cols-2">
+                    <RecentResults results={quizResults} />
+                    <RecentDocuments documents={sharedDocs} />
+                  </div>
+                </motion.div>
+              )}
 
-              <DashboardSettings />
+              {activeTab === 'notes' && (
+                <motion.div
+                  key="notes"
+                  id="profile-panel-notes"
+                  role="tabpanel"
+                  aria-labelledby="profile-tab-notes"
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.25 }}
+                >
+                  <NotesSection userId={user.id} />
+                </motion.div>
+              )}
+
+              {activeTab === 'settings' && (
+                <motion.div
+                  key="settings"
+                  id="profile-panel-settings"
+                  role="tabpanel"
+                  aria-labelledby="profile-tab-settings"
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.25 }}
+                >
+                  <DashboardSettings />
+                </motion.div>
+              )}
 
               <AvatarSelectionModal
                 isOpen={isAvatarModalOpen}

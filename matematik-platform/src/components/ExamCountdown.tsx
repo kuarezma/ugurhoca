@@ -148,7 +148,7 @@ export function ExamCountdown({ exam, isLight }: ExamCountdownProps) {
               {item.value}
             </div>
             <div
-              className={`mt-1.5 text-[9px] font-semibold uppercase tracking-[0.2em] ${isLight ? "text-slate-500" : "text-slate-300"}`}
+              className={`mt-1.5 text-[9px] font-semibold uppercase tracking-[0.2em] ${isLight ? "text-slate-400" : "text-slate-300"}`}
             >
               {item.label}
             </div>

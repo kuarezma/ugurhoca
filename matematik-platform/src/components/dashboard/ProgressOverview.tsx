@@ -91,7 +91,7 @@ export default function ProgressOverview({
             <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-xl bg-white/10">
               <item.icon className={`h-5 w-5 ${item.tone}`} />
             </div>
-            <p className="text-xs font-bold uppercase tracking-[0.18em] text-slate-500">
+            <p className="text-xs font-bold uppercase tracking-[0.18em] text-slate-400">
               {item.label}
             </p>
             <p className="mt-2 text-lg font-bold text-white">{item.value}</p>
@@ -102,7 +102,7 @@ export default function ProgressOverview({
       <div className="mt-6 rounded-3xl border border-white/10 bg-black/15 p-5">
         <div className="mb-4 flex items-end justify-between gap-4">
           <div>
-            <p className="text-xs font-bold uppercase tracking-[0.18em] text-slate-500">
+            <p className="text-xs font-bold uppercase tracking-[0.18em] text-slate-400">
               Haftalık çizgi
             </p>
             <p className="mt-2 text-3xl font-black text-white">
@@ -138,7 +138,7 @@ export default function ProgressOverview({
                     style={{ height: `${Math.min(height, 100)}%` }}
                   />
                 </div>
-                <p className="mt-3 text-xs font-bold uppercase tracking-[0.18em] text-slate-500">
+                <p className="mt-3 text-xs font-bold uppercase tracking-[0.18em] text-slate-400">
                   {day.label}
                 </p>
                 <p className="mt-1 text-sm font-semibold text-white">

@@ -1,8 +1,11 @@
 'use client';
 
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useId, useState, useEffect, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import SafeHtml from '@/components/SafeHtml';
+import { Modal } from '@/components/ui/Modal';
+import { Button } from '@/components/ui/Button';
+import { Input } from '@/components/ui/Input';
 import { sanitizeRichTextHtml } from '@/lib/html-sanitize';
 import { 
   StickyNote, Plus, Search, X, Edit2, Trash2, Pin, PinOff,
@@ -35,7 +38,16 @@ export default function NotesSection({ userId }: NotesSectionProps) {
   const [newTag, setNewTag] = useState('');
   const [newCategory, setNewCategory] = useState('');
   const [showCategoryInput, setShowCategoryInput] = useState(false);
+  const [linkDialogOpen, setLinkDialogOpen] = useState(false);
+  const [linkDialogValue, setLinkDialogValue] = useState('');
+  const savedSelectionRef = useRef<Range | null>(null);
   const editorRef = useRef<HTMLDivElement>(null);
+  const baseId = useId();
+  const titleInputId = `${baseId}-title`;
+  const categorySelectId = `${baseId}-category`;
+  const newCategoryInputId = `${baseId}-new-category`;
+  const contentLabelId = `${baseId}-content-label`;
+  const tagInputId = `${baseId}-tag`;
 
   const loadData = useCallback(async () => {
     setLoading(true);
@@ -312,7 +324,7 @@ export default function NotesSection({ userId }: NotesSectionProps) {
                 </div>
               )}
 
-              <div className="flex items-center gap-2 text-xs text-slate-500">
+              <div className="flex items-center gap-2 text-xs text-slate-400">
                 <Clock className="w-3 h-3" />
                 {new Date(note.updated_at).toLocaleDateString('tr-TR')}
               </div>
@@ -327,18 +339,22 @@ export default function NotesSection({ userId }: NotesSectionProps) {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[100] bg-black/80 backdrop-blur-sm flex items-center justify-center p-4"
-            onClick={handleCloseModal}
+            className="fixed inset-0 z-[100] flex items-center justify-center p-4"
           >
+            <button
+              type="button"
+              aria-label="Not penceresini kapat"
+              onClick={handleCloseModal}
+              className="absolute inset-0 bg-black/80 backdrop-blur-sm"
+            />
             <motion.div
               initial={{ scale: 0.96, opacity: 0, y: 12 }}
               animate={{ scale: 1, opacity: 1, y: 0 }}
               exit={{ scale: 0.96, opacity: 0, y: 12 }}
-              onClick={(e) => e.stopPropagation()}
               role="dialog"
               aria-modal="true"
               aria-labelledby="notes-modal-title"
-              className="w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-3xl bg-slate-900 border border-slate-700 shadow-2xl"
+              className="relative w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-3xl bg-slate-900 border border-slate-700 shadow-2xl"
             >
               <div className="sticky top-0 bg-slate-900 border-b border-slate-700 p-4 flex items-center justify-between">
                 <h3 id="notes-modal-title" className="text-xl font-bold text-white">
@@ -355,8 +371,14 @@ export default function NotesSection({ userId }: NotesSectionProps) {
 
               <div className="p-4 space-y-4">
                 <div>
-                  <label className="block text-sm text-slate-400 mb-2">Başlık</label>
+                  <label
+                    htmlFor={titleInputId}
+                    className="block text-sm text-slate-400 mb-2"
+                  >
+                    Başlık
+                  </label>
                   <input
+                    id={titleInputId}
                     type="text"
                     value={formData.title}
                     onChange={(e) => setFormData({ ...formData, title: e.target.value })}
@@ -366,10 +388,16 @@ export default function NotesSection({ userId }: NotesSectionProps) {
                 </div>
 
                 <div>
-                  <label className="block text-sm text-slate-400 mb-2">Kategori</label>
+                  <label
+                    htmlFor={showCategoryInput ? newCategoryInputId : categorySelectId}
+                    className="block text-sm text-slate-400 mb-2"
+                  >
+                    Kategori
+                  </label>
                   {showCategoryInput ? (
                     <div className="flex gap-2">
                       <input
+                        id={newCategoryInputId}
                         type="text"
                         value={newCategory}
                         onChange={(e) => setNewCategory(e.target.value)}
@@ -397,6 +425,7 @@ export default function NotesSection({ userId }: NotesSectionProps) {
                   ) : (
                     <div className="flex gap-2">
                       <select
+                        id={categorySelectId}
                         value={formData.category}
                         onChange={(e) => setFormData({ ...formData, category: e.target.value })}
                         className="flex-1 px-4 py-2 bg-white/5 border border-white/10 rounded-xl text-white focus:outline-none focus:border-purple-500/50"
@@ -418,8 +447,17 @@ export default function NotesSection({ userId }: NotesSectionProps) {
                 </div>
 
                 <div>
-                  <label className="block text-sm text-slate-400 mb-2">İçerik</label>
-                  <div className="border border-white/10 rounded-xl overflow-hidden">
+                  <span
+                    id={contentLabelId}
+                    className="block text-sm text-slate-400 mb-2"
+                  >
+                    İçerik
+                  </span>
+                  <div
+                    role="group"
+                    aria-labelledby={contentLabelId}
+                    className="border border-white/10 rounded-xl overflow-hidden"
+                  >
                     <div className="flex flex-wrap gap-1 p-2 bg-white/5 border-b border-white/10">
                       <ToolbarButton icon={Bold} title="Kalın" onClick={() => execCommand('bold')} />
                       <ToolbarButton icon={Italic} title="İtalik" onClick={() => execCommand('italic')} />
@@ -430,13 +468,18 @@ export default function NotesSection({ userId }: NotesSectionProps) {
                       <ToolbarButton icon={List} title="Liste" onClick={() => execCommand('insertUnorderedList')} />
                       <ToolbarButton icon={ListOrdered} title="Numaralı Liste" onClick={() => execCommand('insertOrderedList')} />
                       <div className="w-px h-6 bg-white/10 mx-1" />
-                      <ToolbarButton 
-                        icon={LinkIcon} 
-                        title="Bağlantı" 
+                      <ToolbarButton
+                        icon={LinkIcon}
+                        title="Bağlantı"
                         onClick={() => {
-                          const url = prompt('Bağlantı URL\'si:');
-                          if (url) execCommand('createLink', url);
-                        }} 
+                          const selection = window.getSelection();
+                          savedSelectionRef.current =
+                            selection && selection.rangeCount > 0
+                              ? selection.getRangeAt(0).cloneRange()
+                              : null;
+                          setLinkDialogValue('');
+                          setLinkDialogOpen(true);
+                        }}
                       />
                     </div>
                     <div
@@ -456,7 +499,12 @@ export default function NotesSection({ userId }: NotesSectionProps) {
                 </div>
 
                 <div>
-                  <label className="block text-sm text-slate-400 mb-2">Etiketler</label>
+                  <label
+                    htmlFor={tagInputId}
+                    className="block text-sm text-slate-400 mb-2"
+                  >
+                    Etiketler
+                  </label>
                   <div className="flex flex-wrap gap-2 mb-2">
                     {formData.tags.map(tag => (
                       <span
@@ -475,6 +523,7 @@ export default function NotesSection({ userId }: NotesSectionProps) {
                   </div>
                   <div className="flex gap-2">
                     <input
+                      id={tagInputId}
                       type="text"
                       value={newTag}
                       onChange={(e) => setNewTag(e.target.value)}
@@ -510,6 +559,48 @@ export default function NotesSection({ userId }: NotesSectionProps) {
           </motion.div>
         )}
       </AnimatePresence>
+
+      <Modal
+        open={linkDialogOpen}
+        onClose={() => setLinkDialogOpen(false)}
+        title="Bağlantı ekle"
+        description="Seçili metne eklenecek bağlantı adresini girin."
+        size="sm"
+        footer={
+          <>
+            <Button variant="ghost" onClick={() => setLinkDialogOpen(false)}>
+              Vazgeç
+            </Button>
+            <Button
+              onClick={() => {
+                const url = linkDialogValue.trim();
+                if (!url) return;
+                editorRef.current?.focus();
+                const range = savedSelectionRef.current;
+                const selection = window.getSelection();
+                if (range && selection) {
+                  selection.removeAllRanges();
+                  selection.addRange(range);
+                }
+                execCommand('createLink', url);
+                setLinkDialogOpen(false);
+              }}
+            >
+              Ekle
+            </Button>
+          </>
+        }
+      >
+        <Input
+          type="url"
+          label="Bağlantı URL'si"
+          placeholder="https://örnek.com"
+          // eslint-disable-next-line jsx-a11y/no-autofocus -- modal açıldığında URL girişi için otomatik odak
+          autoFocus
+          value={linkDialogValue}
+          onChange={(event) => setLinkDialogValue(event.target.value)}
+        />
+      </Modal>
     </div>
   );
 }
@@ -525,11 +616,13 @@ function ToolbarButton({
 }) {
   return (
     <button
+      type="button"
       onClick={onClick}
       title={title}
-      className="p-2 hover:bg-white/10 rounded-lg transition-colors text-slate-400 hover:text-white"
+      aria-label={title}
+      className="inline-flex h-9 w-9 items-center justify-center rounded-lg text-slate-400 transition-colors hover:bg-white/10 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary"
     >
-      <Icon className="w-4 h-4" />
+      <Icon className="h-4 w-4" aria-hidden="true" />
     </button>
   );
 }

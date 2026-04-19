@@ -1,5 +1,6 @@
 "use client";
 
+import { memo } from "react";
 import { motion } from "framer-motion";
 import { Download, FileText } from "lucide-react";
 import { DashboardDocument } from "@/types/dashboard";
@@ -8,7 +9,7 @@ interface RecentDocumentsProps {
   documents: DashboardDocument[];
 }
 
-export default function RecentDocuments({ documents }: RecentDocumentsProps) {
+function RecentDocuments({ documents }: RecentDocumentsProps) {
   return (
     <motion.section
       initial={{ opacity: 0, y: 20 }}
@@ -66,7 +67,7 @@ export default function RecentDocuments({ documents }: RecentDocumentsProps) {
                     Yeni
                   </span>
                 ) : null}
-                <Download className="h-4 w-4 text-slate-500" />
+                <Download className="h-4 w-4 text-slate-400" />
               </div>
             </a>
           ))}
@@ -75,3 +76,5 @@ export default function RecentDocuments({ documents }: RecentDocumentsProps) {
     </motion.section>
   );
 }
+
+export default memo(RecentDocuments);

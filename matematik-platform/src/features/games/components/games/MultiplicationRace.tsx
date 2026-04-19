@@ -206,7 +206,7 @@ export function MultiplicationRace({ onScore }: GameComponentProps) {
         <p className="text-slate-400 mb-2">
           {tablesCompleted.length} tablo tamamladın!
         </p>
-        <p className="text-slate-500 mb-8">
+        <p className="text-slate-400 mb-8">
           {tablesCompleted.length > 0 &&
             `Tamamlanan tablolar: ${tablesCompleted.join(', ')}`}
         </p>

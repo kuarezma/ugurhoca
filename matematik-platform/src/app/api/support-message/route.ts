@@ -1,5 +1,8 @@
 import { apiError, apiOk } from '@/lib/api-response';
+import { createLogger } from '@/lib/logger';
 import { supportMessageSchema } from '@/lib/route-schemas';
+
+const log = createLogger('support-message');
 import { createServerSupabaseClient } from '@/lib/supabase/server';
 import { ADMIN_EMAIL } from '@/lib/admin';
 import {
@@ -85,7 +88,7 @@ export async function POST(request: Request) {
     try {
       await sendSupportEmail(parsed.data);
     } catch (emailError) {
-      console.error('Email gonderilemedi:', emailError);
+      log.warn('Destek e-postası gönderilemedi', { error: String(emailError) });
     }
 
     return apiOk({ ok: true });

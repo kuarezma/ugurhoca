@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import type { ChangeEvent, FormEvent } from 'react';
+import { useId, type ChangeEvent, type FormEvent } from 'react';
 import { Check, Upload } from 'lucide-react';
 import { CONTENT_TYPE_OPTIONS } from '@/features/content/constants';
 import type { ContentFormState } from '@/features/content/types';
@@ -65,6 +65,17 @@ export default function ContentDocumentForm({
   const worksheetOutcomeOptions = selectedWorksheetGrade
     ? WORKSHEET_OUTCOME_CATALOG[selectedWorksheetGrade] || []
     : [];
+  const baseId = useId();
+  const titleId = `${baseId}-title`;
+  const typeId = `${baseId}-type`;
+  const descriptionId = `${baseId}-description`;
+  const worksheetGradeId = `${baseId}-worksheet-grade`;
+  const outcomeId = `${baseId}-outcome`;
+  const fileUrlId = `${baseId}-file-url`;
+  const videoUrlId = `${baseId}-video-url`;
+  const answerKeyId = `${baseId}-answer-key`;
+  const solutionUrlId = `${baseId}-solution-url`;
+  const gradesGroupLabelId = `${baseId}-grades-label`;
 
   const updateGrades = (grade: number | 'Mezun', checked: boolean) => {
     const nextGrades = formData.grade || [];
@@ -89,8 +100,11 @@ export default function ContentDocumentForm({
         </div>
       ) : (
         <div>
-          <label className="block text-slate-300 mb-2 text-sm">Başlık</label>
+          <label htmlFor={titleId} className="block text-slate-300 mb-2 text-sm">
+            Başlık
+          </label>
           <input
+            id={titleId}
             type="text"
             required
             value={formData.title || ''}
@@ -102,8 +116,11 @@ export default function ContentDocumentForm({
       )}
 
       <div>
-        <label className="block text-slate-300 mb-2 text-sm">Kategori</label>
+        <label htmlFor={typeId} className="block text-slate-300 mb-2 text-sm">
+          Kategori
+        </label>
         <select
+          id={typeId}
           required
           value={formData.type || ''}
           onChange={(event) => onChange({ type: event.target.value })}
@@ -119,8 +136,14 @@ export default function ContentDocumentForm({
       </div>
 
       <div>
-        <label className="block text-slate-300 mb-2 text-sm">Açıklama</label>
+        <label
+          htmlFor={descriptionId}
+          className="block text-slate-300 mb-2 text-sm"
+        >
+          Açıklama
+        </label>
         <textarea
+          id={descriptionId}
           required
           rows={3}
           value={formData.description || ''}
@@ -133,10 +156,14 @@ export default function ContentDocumentForm({
       {isWorksheet && (
         <>
           <div>
-            <label className="block text-slate-300 mb-2 text-sm">
+            <label
+              htmlFor={worksheetGradeId}
+              className="block text-slate-300 mb-2 text-sm"
+            >
               Sınıf Düzeyi
             </label>
             <select
+              id={worksheetGradeId}
               required
               value={formData.grade?.[0] || ''}
               onChange={(event) =>
@@ -162,8 +189,14 @@ export default function ContentDocumentForm({
           </div>
 
           <div>
-            <label className="block text-slate-300 mb-2 text-sm">Kazanım</label>
+            <label
+              htmlFor={outcomeId}
+              className="block text-slate-300 mb-2 text-sm"
+            >
+              Kazanım
+            </label>
             <select
+              id={outcomeId}
               required
               value={formData.learning_outcome || ''}
               onChange={(event) =>
@@ -188,7 +221,10 @@ export default function ContentDocumentForm({
       )}
 
       <div>
-        <label className="block text-slate-300 mb-2 text-sm">
+        <label
+          htmlFor={fileInputId}
+          className="block text-slate-300 mb-2 text-sm"
+        >
           Dosya Yükle (Tüm dosya türleri)
         </label>
         <div className="relative">
@@ -214,10 +250,14 @@ export default function ContentDocumentForm({
       <div className="text-center text-slate-500 text-sm">veya</div>
 
       <div>
-        <label className="block text-slate-300 mb-2 text-sm">
+        <label
+          htmlFor={fileUrlId}
+          className="block text-slate-300 mb-2 text-sm"
+        >
           Tıkla/İndir Linki (Google Drive vb.)
         </label>
         <input
+          id={fileUrlId}
           type="url"
           value={formData.file_url || ''}
           onChange={(event) =>
@@ -229,10 +269,14 @@ export default function ContentDocumentForm({
       </div>
 
       <div>
-        <label className="block text-slate-300 mb-2 text-sm">
+        <label
+          htmlFor={videoUrlId}
+          className="block text-slate-300 mb-2 text-sm"
+        >
           YouTube Video URL
         </label>
         <input
+          id={videoUrlId}
           type="url"
           value={formData.video_url || ''}
           onChange={(event) => onChange({ video_url: event.target.value })}
@@ -242,10 +286,14 @@ export default function ContentDocumentForm({
       </div>
 
       <div>
-        <label className="block text-slate-300 mb-2 text-sm">
+        <label
+          htmlFor={answerKeyId}
+          className="block text-slate-300 mb-2 text-sm"
+        >
           Cevap Anahtarı (Metin)
         </label>
         <textarea
+          id={answerKeyId}
           value={formData.answer_key_text || ''}
           onChange={(event) => onChange({ answer_key_text: event.target.value })}
           rows={3}
@@ -255,10 +303,14 @@ export default function ContentDocumentForm({
       </div>
 
       <div>
-        <label className="block text-slate-300 mb-2 text-sm">
+        <label
+          htmlFor={solutionUrlId}
+          className="block text-slate-300 mb-2 text-sm"
+        >
           Çözüm PDF (Drive Link)
         </label>
         <input
+          id={solutionUrlId}
           type="url"
           value={formData.solution_url || ''}
           onChange={(event) => onChange({ solution_url: event.target.value })}
@@ -274,10 +326,17 @@ export default function ContentDocumentForm({
 
       {!isWorksheet && (
         <div>
-          <label className="block text-slate-300 mb-2 text-sm">
+          <span
+            id={gradesGroupLabelId}
+            className="block text-slate-300 mb-2 text-sm"
+          >
             Hedef Sınıflar
-          </label>
-          <div className="flex flex-wrap gap-2">
+          </span>
+          <div
+            role="group"
+            aria-labelledby={gradesGroupLabelId}
+            className="flex flex-wrap gap-2"
+          >
             {WORKSHEET_GRADE_OPTIONS.filter((grade) => grade !== 'Mezun').map(
               (grade) => (
                 <label

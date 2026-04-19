@@ -178,7 +178,7 @@ export function MathPuzzle({ onScore }: GameComponentProps) {
         <h2 className="text-3xl font-bold text-white mb-2">Süre Doldu!</h2>
         <p className="text-5xl font-bold text-green-400 mb-2">{score} Puan</p>
         <p className="text-slate-400 mb-2">Seviye {level}'e ulaştın!</p>
-        <p className="text-slate-500 mb-8">Harika bir performans!</p>
+        <p className="text-slate-400 mb-8">Harika bir performans!</p>
         <motion.button
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}

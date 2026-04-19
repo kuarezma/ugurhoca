@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useId, useState } from "react";
 import { Key, Eye, EyeOff, CheckCircle2, AlertCircle } from "lucide-react";
 import { supabase } from "@/lib/supabase/client";
 
@@ -19,6 +19,10 @@ export default function ChangePasswordForm({
   const [sending, setSending] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState("");
+  const baseId = useId();
+  const currentPasswordId = `${baseId}-current`;
+  const newPasswordId = `${baseId}-new`;
+  const confirmPasswordId = `${baseId}-confirm`;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -82,7 +86,7 @@ export default function ChangePasswordForm({
   const inputClass = `w-full rounded-xl border px-4 py-2.5 pr-10 text-sm focus:outline-none focus:border-indigo-500 transition-colors ${
     isLight
       ? "bg-white border-slate-300 text-slate-900 placeholder:text-slate-400"
-      : "bg-slate-800/60 border-slate-700 text-white placeholder:text-slate-500"
+      : "bg-slate-800/60 border-slate-700 text-white placeholder:text-slate-400"
   }`;
 
   return (
@@ -122,11 +126,13 @@ export default function ChangePasswordForm({
 
       <div>
         <label
+          htmlFor={currentPasswordId}
           className={`block mb-1.5 text-sm font-semibold ${isLight ? "text-slate-700" : "text-slate-300"}`}
         >
           Mevcut Şifre
         </label>
         <input
+          id={currentPasswordId}
           type="password"
           value={currentPassword}
           onChange={(e) => setCurrentPassword(e.target.value)}
@@ -138,12 +144,14 @@ export default function ChangePasswordForm({
 
       <div>
         <label
+          htmlFor={newPasswordId}
           className={`block mb-1.5 text-sm font-semibold ${isLight ? "text-slate-700" : "text-slate-300"}`}
         >
           Yeni Şifre
         </label>
         <div className="relative">
           <input
+            id={newPasswordId}
             type={showNew ? "text" : "password"}
             value={newPassword}
             onChange={(e) => setNewPassword(e.target.value)}
@@ -154,7 +162,7 @@ export default function ChangePasswordForm({
           <button
             type="button"
             onClick={() => setShowNew(!showNew)}
-            className={`absolute right-3 top-1/2 -translate-y-1/2 ${isLight ? "text-slate-400" : "text-slate-500"}`}
+            className={`absolute right-3 top-1/2 -translate-y-1/2 ${isLight ? "text-slate-400" : "text-slate-400"}`}
           >
             {showNew ? (
               <EyeOff className="w-4 h-4" />
@@ -167,12 +175,14 @@ export default function ChangePasswordForm({
 
       <div>
         <label
+          htmlFor={confirmPasswordId}
           className={`block mb-1.5 text-sm font-semibold ${isLight ? "text-slate-700" : "text-slate-300"}`}
         >
           Yeni Şifre Tekrar
         </label>
         <div className="relative">
           <input
+            id={confirmPasswordId}
             type={showConfirm ? "text" : "password"}
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
@@ -183,7 +193,7 @@ export default function ChangePasswordForm({
           <button
             type="button"
             onClick={() => setShowConfirm(!showConfirm)}
-            className={`absolute right-3 top-1/2 -translate-y-1/2 ${isLight ? "text-slate-400" : "text-slate-500"}`}
+            className={`absolute right-3 top-1/2 -translate-y-1/2 ${isLight ? "text-slate-400" : "text-slate-400"}`}
           >
             {showConfirm ? (
               <EyeOff className="w-4 h-4" />

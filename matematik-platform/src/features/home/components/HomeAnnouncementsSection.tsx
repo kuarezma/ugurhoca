@@ -85,7 +85,7 @@ export function HomeAnnouncementsSection({
                 <div className="p-3 sm:p-4">
                   <div
                     className={`flex items-center gap-2 mb-2 text-xs ${
-                      isLight ? 'text-slate-500' : 'text-slate-400'
+                      isLight ? 'text-slate-400' : 'text-slate-400'
                     }`}
                   >
                     <Bell className="w-4 h-4 text-pink-400" />

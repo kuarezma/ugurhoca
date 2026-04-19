@@ -1,3 +1,4 @@
+import { useId } from "react";
 import type { AdminFormState } from "@/features/admin/types";
 import {
   PRIVATE_STUDENT_GRADES,
@@ -13,13 +14,18 @@ export default function AdminAssignmentFields({
   formData,
   updateFormData,
 }: AdminAssignmentFieldsProps) {
+  const baseId = useId();
+  const gradeId = `${baseId}-grade`;
+  const dueDateId = `${baseId}-due-date`;
+
   return (
     <div className="grid grid-cols-1 gap-4">
       <div>
-        <label className="block text-slate-300 mb-2 text-sm">
+        <label htmlFor={gradeId} className="block text-slate-300 mb-2 text-sm">
           Sınıf
         </label>
         <select
+          id={gradeId}
           value={formData.grade || ""}
           onChange={(event) =>
             updateFormData({
@@ -39,10 +45,14 @@ export default function AdminAssignmentFields({
         </select>
       </div>
       <div>
-        <label className="block text-slate-300 mb-2 text-sm">
+        <label
+          htmlFor={dueDateId}
+          className="block text-slate-300 mb-2 text-sm"
+        >
           Teslim Tarihi
         </label>
         <input
+          id={dueDateId}
           type="datetime-local"
           value={formData.due_date || ""}
           onChange={(event) => updateFormData({ due_date: event.target.value })}

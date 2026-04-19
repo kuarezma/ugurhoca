@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import type { ChangeEvent } from "react";
+import { useId, type ChangeEvent } from "react";
 import { Upload } from "lucide-react";
 import AdminAnnouncementFields from "@/features/admin/components/modal/generic/AdminAnnouncementFields";
 import AdminAssignmentFields from "@/features/admin/components/modal/generic/AdminAssignmentFields";
@@ -44,6 +44,9 @@ export default function AdminGenericContentForm({
 }: AdminGenericContentFormProps) {
   const isWorksheetDocument =
     modalType === "document" && isWorksheetType(formData.type);
+  const baseId = useId();
+  const titleId = `${baseId}-title`;
+  const categoryId = `${baseId}-category`;
 
   return (
     <form onSubmit={onSubmit} className="space-y-5">
@@ -56,8 +59,11 @@ export default function AdminGenericContentForm({
 
       {!isWorksheetDocument && (
         <div>
-          <label className="block text-slate-300 mb-2 text-sm">Başlık</label>
+          <label htmlFor={titleId} className="block text-slate-300 mb-2 text-sm">
+            Başlık
+          </label>
           <input
+            id={titleId}
             type="text"
             required
             value={formData.title || ""}
@@ -78,8 +84,14 @@ export default function AdminGenericContentForm({
 
       {modalType === "document" && (
         <div>
-          <label className="block text-slate-300 mb-2 text-sm">Kategori</label>
+          <label
+            htmlFor={categoryId}
+            className="block text-slate-300 mb-2 text-sm"
+          >
+            Kategori
+          </label>
           <select
+            id={categoryId}
             required
             value={formData.type || ""}
             onChange={(event) => updateFormData({ type: event.target.value })}

@@ -1,3 +1,4 @@
+import { useId } from "react";
 import type { AdminFormState } from "@/features/admin/types";
 import { type AdminFormUpdate } from "@/features/admin/components/modal/shared";
 
@@ -10,13 +11,21 @@ export default function AdminAnnouncementFields({
   formData,
   updateFormData,
 }: AdminAnnouncementFieldsProps) {
+  const baseId = useId();
+  const imageUrlsId = `${baseId}-image-urls`;
+  const linkUrlId = `${baseId}-link-url`;
+
   return (
     <>
       <div>
-        <label className="block text-slate-300 mb-2 text-sm">
+        <label
+          htmlFor={imageUrlsId}
+          className="block text-slate-300 mb-2 text-sm"
+        >
           Görsel Linkleri
         </label>
         <textarea
+          id={imageUrlsId}
           rows={4}
           value={formData.image_urls || ""}
           onChange={(event) => updateFormData({ image_urls: event.target.value })}
@@ -30,8 +39,14 @@ export default function AdminAnnouncementFields({
       </div>
 
       <div>
-        <label className="block text-slate-300 mb-2 text-sm">Detay Linki</label>
+        <label
+          htmlFor={linkUrlId}
+          className="block text-slate-300 mb-2 text-sm"
+        >
+          Detay Linki
+        </label>
         <input
+          id={linkUrlId}
           type="url"
           value={formData.link_url || ""}
           onChange={(event) => updateFormData({ link_url: event.target.value })}

@@ -4,6 +4,9 @@ import { useState, type FormEvent } from 'react';
 import { useToast } from '@/components/Toast';
 import { requireClientSession } from '@/lib/auth-client';
 import { getErrorMessage } from '@/lib/error-utils';
+import { createLogger } from '@/lib/logger';
+
+const log = createLogger('support-section');
 import type { AppUser, SupportAttachment } from '@/types';
 import { HomeSupportForm } from '@/features/home/components/support/HomeSupportForm';
 import { HomeSupportHeader } from '@/features/home/components/support/HomeSupportHeader';
@@ -93,7 +96,7 @@ export function HomeSupportSection({
       setSupportSent(true);
       window.setTimeout(() => setSupportSent(false), 3000);
     } catch (error) {
-      console.error('Support message error:', error);
+      log.error('Support message error', error);
       showToast(
         'error',
         getErrorMessage(error, 'Mesaj gönderilemedi. Lütfen tekrar dene.'),

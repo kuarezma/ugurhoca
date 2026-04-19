@@ -77,7 +77,7 @@ export default function QuickUpdatesPanel({
                 {item.description}
               </p>
               <div className="mt-4 flex items-center justify-between gap-3">
-                <span className="text-xs text-slate-500">
+                <span className="text-xs text-slate-400">
                   {new Date(item.createdAt).toLocaleDateString('tr-TR')}
                 </span>
                 <span className="inline-flex items-center gap-2 text-sm font-bold text-white/85 transition-colors group-hover:text-white">

@@ -72,7 +72,7 @@ export default function ContentCommentsModal({
                   <span className="text-white font-medium text-sm">
                     {comment.user_name || 'Anonim'}
                   </span>
-                  <span className="text-slate-500 text-xs">
+                  <span className="text-slate-400 text-xs">
                     {comment.created_at
                       ? new Date(comment.created_at).toLocaleDateString('tr-TR')
                       : '-'}

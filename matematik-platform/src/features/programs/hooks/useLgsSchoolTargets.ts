@@ -36,7 +36,7 @@ export function useLgsSchoolTargets(preferredYear = 2026) {
         setDataYear(preferredYear);
         setError(
           payload?.error?.message ||
-            'LGS okul verileri yuklenemedi. Lutfen tekrar deneyin.',
+            'LGS okul verileri yüklenemedi. Lütfen tekrar deneyin.',
         );
         setHistoryYears([]);
         setLoading(false);

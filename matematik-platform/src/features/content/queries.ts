@@ -122,7 +122,7 @@ export const prefetchContentDocuments = async (typeFilter: string) => {
 
     if (!response.ok || !payload?.data) {
       throw new Error(
-        payload?.error?.message || 'Icerik on hazirligi yuklenemedi.',
+        payload?.error?.message || 'İçerik ön hazırlığı yüklenemedi.',
       );
     }
 

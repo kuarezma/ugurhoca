@@ -181,7 +181,7 @@ export function ColorMath({ onScore }: GameComponentProps) {
         <h2 className="text-3xl font-bold text-white mb-2">Oyun Bitti!</h2>
         <p className="text-5xl font-bold text-cyan-400 mb-2">{score} Puan</p>
         <p className="text-slate-400 mb-2">{round} soru cevapladın</p>
-        <p className="text-slate-500 mb-8">Gözlem yeteneğin harika!</p>
+        <p className="text-slate-400 mb-8">Gözlem yeteneğin harika!</p>
         <motion.button
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
@@ -240,7 +240,7 @@ export function ColorMath({ onScore }: GameComponentProps) {
         >
           {question.word}
         </motion.p>
-        <p className="text-slate-500 mt-6 text-sm">
+        <p className="text-slate-400 mt-6 text-sm">
           Kelimeyi değil yazı rengini takip et.
         </p>
       </motion.div>

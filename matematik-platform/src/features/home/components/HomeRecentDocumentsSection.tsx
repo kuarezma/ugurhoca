@@ -95,7 +95,7 @@ export function HomeRecentDocumentsSection({
                         )}
                       </div>
                     </div>
-                    <ChevronRight className="w-5 h-5 text-slate-500" />
+                    <ChevronRight className="w-5 h-5 text-slate-400" />
                   </div>
                 </div>
               </a>

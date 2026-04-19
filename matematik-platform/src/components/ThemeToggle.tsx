@@ -11,7 +11,7 @@ type ThemeToggleProps = {
 export function ThemeToggle({ compact = false, className = '' }: ThemeToggleProps) {
   const { theme, toggleTheme } = useTheme();
   const isDark = theme === 'dark';
-  const label = isDark ? 'Aydinlik moda gec' : 'Karanlik moda gec';
+  const label = isDark ? 'Aydınlık moda geç' : 'Karanlık moda geç';
 
   return (
     <button
@@ -20,13 +20,13 @@ export function ThemeToggle({ compact = false, className = '' }: ThemeToggleProp
       aria-label={label}
       title={label}
       className={[
-        'theme-toggle inline-flex items-center justify-center gap-2 rounded-xl border transition-colors',
-        compact ? 'h-10 w-10' : 'px-4 py-2.5',
+        'theme-toggle inline-flex items-center justify-center gap-2 rounded-xl border transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:ring-offset-2',
+        compact ? 'h-11 w-11' : 'h-11 px-4',
         className,
       ].join(' ')}
     >
-      {isDark ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
-      {!compact && <span className="text-sm font-semibold">{isDark ? 'Acik Mod' : 'Koyu Mod'}</span>}
+      {isDark ? <Sun className="h-5 w-5" aria-hidden="true" /> : <Moon className="h-5 w-5" aria-hidden="true" />}
+      {!compact && <span className="text-sm font-semibold">{isDark ? 'Açık Mod' : 'Koyu Mod'}</span>}
     </button>
   );
 }

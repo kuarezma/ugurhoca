@@ -1,3 +1,4 @@
+import { useId } from "react";
 import { AlertCircle } from "lucide-react";
 import type { AdminFormState } from "@/features/admin/types";
 import {
@@ -14,13 +15,22 @@ export default function AdminQuestionFields({
   formData,
   updateFormData,
 }: AdminQuestionFieldsProps) {
+  const baseId = useId();
+  const questionId = `${baseId}-question`;
+  const optionsGroupLabelId = `${baseId}-options-label`;
+  const explanationId = `${baseId}-explanation`;
+
   return (
     <>
       <div>
-        <label className="block text-slate-300 mb-2 font-bold uppercase tracking-wider text-xs">
+        <label
+          htmlFor={questionId}
+          className="block text-slate-300 mb-2 font-bold uppercase tracking-wider text-xs"
+        >
           Soru Metni
         </label>
         <textarea
+          id={questionId}
           required
           rows={3}
           value={formData.question || ""}
@@ -31,10 +41,13 @@ export default function AdminQuestionFields({
         />
       </div>
 
-      <div>
-        <label className="block text-slate-300 mb-3 font-bold uppercase tracking-wider text-xs">
+      <div role="group" aria-labelledby={optionsGroupLabelId}>
+        <span
+          id={optionsGroupLabelId}
+          className="block text-slate-300 mb-3 font-bold uppercase tracking-wider text-xs"
+        >
           Şıklar ve Doğru Cevap
-        </label>
+        </span>
         <div className="space-y-3">
           {[0, 1, 2, 3].map((index) => {
             const isCorrect = formData.correct_index === index;
@@ -78,11 +91,15 @@ export default function AdminQuestionFields({
       </div>
 
       <div>
-        <label className="block text-amber-500 mb-2 font-bold uppercase tracking-wider text-xs flex items-center gap-1 mt-4">
+        <label
+          htmlFor={explanationId}
+          className="block text-amber-500 mb-2 font-bold uppercase tracking-wider text-xs flex items-center gap-1 mt-4"
+        >
           <AlertCircle className="w-3.5 h-3.5" /> Çözüm / Açıklama
           (Opsiyonel)
         </label>
         <textarea
+          id={explanationId}
           rows={2}
           value={formData.explanation || ""}
           onChange={(event) =>

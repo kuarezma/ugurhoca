@@ -1,7 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import type { DragEvent, ChangeEvent } from 'react';
+import { useId, type DragEvent, type ChangeEvent } from 'react';
 import { ClipboardList, FileText, Upload, X } from 'lucide-react';
 import type { Assignment, Submission } from '@/types';
 import { useAccessibleModal } from '@/hooks/useAccessibleModal';
@@ -40,10 +40,15 @@ export function AssignmentSubmissionModal({
   uploading,
 }: AssignmentSubmissionModalProps) {
   const modalRef = useAccessibleModal<HTMLDivElement>(true, onClose);
+  const baseId = useId();
+  const commentId = `${baseId}-comment`;
+  const fileUploadId = `${baseId}-file`;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6">
-      <motion.div
+      <motion.button
+        type="button"
+        aria-label="Kapat"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
@@ -91,7 +96,7 @@ export function AssignmentSubmissionModal({
             <div
               className={`rounded-2xl p-4 ${isLight ? 'border border-slate-200 bg-slate-50' : 'border border-white/5 bg-white/5'}`}
             >
-              <p className="mb-2 text-xs font-bold uppercase tracking-wider text-slate-500">
+              <p className="mb-2 text-xs font-bold uppercase tracking-wider text-slate-400">
                 Teslimat Detayı
               </p>
               <div className="mb-4 flex items-center justify-between">
@@ -104,7 +109,7 @@ export function AssignmentSubmissionModal({
                   <FileText className="h-5 w-5" />
                   Dosyayı Görüntüle
                 </a>
-                <span className="text-xs font-medium text-slate-500">
+                <span className="text-xs font-medium text-slate-400">
                   {activeSubmission.submitted_at
                     ? new Date(activeSubmission.submitted_at).toLocaleString(
                         'tr-TR',
@@ -117,7 +122,7 @@ export function AssignmentSubmissionModal({
                   &quot;{activeSubmission.comment}&quot;
                 </p>
               ) : (
-                <p className="text-sm text-slate-500">Not eklenmemiş.</p>
+                <p className="text-sm text-slate-400">Not eklenmemiş.</p>
               )}
             </div>
 
@@ -151,10 +156,14 @@ export function AssignmentSubmissionModal({
         ) : (
           <div className="space-y-5">
             <div>
-              <label className="mb-2 block text-sm font-bold uppercase tracking-wider text-slate-400">
+              <label
+                htmlFor={commentId}
+                className="mb-2 block text-sm font-bold uppercase tracking-wider text-slate-400"
+              >
                 Hocana Not (Opsiyonel)
               </label>
               <textarea
+                id={commentId}
                 placeholder="Ödevle ilgili eklemek istediğin bir şey var mı?"
                 value={comment}
                 onChange={(e) => onCommentChange(e.target.value)}
@@ -165,14 +174,15 @@ export function AssignmentSubmissionModal({
             <div className="relative">
               <input
                 type="file"
-                id="file-upload"
+                id={fileUploadId}
                 className="hidden"
                 accept=".pdf,.jpg,.jpeg,.png"
                 onChange={onFileChange}
                 disabled={!!uploading}
               />
+              {/* eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions -- label form kontrolüyle ilişkili ve drag&drop desteği için listenerlara ihtiyaç duyar */}
               <label
-                htmlFor="file-upload"
+                htmlFor={fileUploadId}
                 onDragOver={onDragOver}
                 onDragLeave={onDragLeave}
                 onDrop={onDrop}
@@ -229,12 +239,12 @@ export function AssignmentSubmissionModal({
                         ? 'Buraya Bırak'
                         : 'Dosyayı Sürükle veya Seç'}
                   </p>
-                  <p className="text-xs text-slate-500">PDF, JPG veya PNG (Max 5MB)</p>
+                  <p className="text-xs text-slate-400">PDF, JPG veya PNG (Max 5MB)</p>
                 </div>
               </label>
             </div>
 
-            <p className="text-center text-[10px] uppercase leading-relaxed tracking-tighter text-slate-500">
+            <p className="text-center text-[10px] uppercase leading-relaxed tracking-tighter text-slate-400">
               Ödevi teslim ettiğinde Uğur Hoca&apos;ya bildirim gidecektir. Teslim
               tarihinden sonra yüklediğin ödevler &quot;Gecikmiş&quot; olarak
               işaretlenebilir.

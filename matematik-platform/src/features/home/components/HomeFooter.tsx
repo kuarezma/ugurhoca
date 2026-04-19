@@ -57,7 +57,7 @@ export function HomeFooter({ isLight }: HomeFooterProps) {
           </Link>
         </nav>
         <p
-          className={`text-xs ${isLight ? 'text-slate-600' : 'text-slate-500'}`}
+          className={`text-xs ${isLight ? 'text-slate-600' : 'text-slate-400'}`}
         >
           © 2026 Uğur Hoca Matematik, tüm hakları saklıdır.
         </p>

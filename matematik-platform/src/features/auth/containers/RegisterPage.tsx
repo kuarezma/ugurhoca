@@ -1,15 +1,16 @@
 'use client';
 
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import Link from 'next/link';
 import {
-  Calculator,
-  Eye,
-  EyeOff,
   ArrowLeft,
   CheckCircle2,
+  Eye,
+  EyeOff,
   GraduationCap,
+  Sparkles,
 } from 'lucide-react';
+import { motion } from 'framer-motion';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase/client';
 import {
@@ -17,54 +18,81 @@ import {
   normalizeFullNameForMatch,
   studentLoginEmail,
 } from '@/lib/student-identity';
+import { createLogger } from '@/lib/logger';
+import { passwordStrength } from '@/lib/validation/auth';
 import DeferredFloatingShapes from '@/components/DeferredFloatingShapes';
+import { Mascot } from '@/components/Mascot';
+import { fireConfetti } from '@/components/ConfettiBurst';
+import { Input, Select } from '@/components/ui/Input';
+import { Button } from '@/components/ui/Button';
+
+const log = createLogger('register-page');
+
+type FormState = {
+  name: string;
+  password: string;
+  confirmPassword: string;
+  grade: string;
+};
+
+type FieldErrors = Partial<Record<keyof FormState, string>>;
+
+const STRENGTH_TO_TONE: Record<
+  0 | 1 | 2 | 3 | 4,
+  { color: string; width: string }
+> = {
+  0: { color: 'bg-rose-500', width: 'w-0' },
+  1: { color: 'bg-rose-500', width: 'w-1/4' },
+  2: { color: 'bg-amber-500', width: 'w-2/4' },
+  3: { color: 'bg-lime-500', width: 'w-3/4' },
+  4: { color: 'bg-emerald-500', width: 'w-full' },
+};
 
 export default function RegisterPage() {
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<FormState>({
     name: '',
     password: '',
     confirmPassword: '',
     grade: '',
   });
   const [showPassword, setShowPassword] = useState(false);
+  const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
+  const [loading, setLoading] = useState(false);
   const router = useRouter();
+
+  const strength = useMemo(
+    () => passwordStrength(formData.password),
+    [formData.password],
+  );
+
+  const validate = (): FieldErrors => {
+    const errs: FieldErrors = {};
+    const name = formData.name.trim();
+    if (!name) errs.name = 'Ad ve soyad gerekli.';
+    else if (name.split(/\s+/).filter(Boolean).length < 2)
+      errs.name = 'Lütfen ad ve soyadı birlikte girin.';
+    if (!formData.grade) errs.grade = 'Sınıf seçimi gerekli.';
+    if (!formData.password) errs.password = 'Şifre gerekli.';
+    else if (formData.password.length < 6)
+      errs.password = 'Şifre en az 6 karakter olmalı.';
+    if (formData.password !== formData.confirmPassword)
+      errs.confirmPassword = 'Şifreler eşleşmiyor.';
+    return errs;
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
-
-    if (!formData.name.trim()) {
-      setError('Lütfen adınızı ve soyadınızı girin');
+    const errs = validate();
+    if (Object.keys(errs).length > 0) {
+      setFieldErrors(errs);
       return;
     }
+    setFieldErrors({});
 
-    if (formData.name.trim().split(' ').length < 2) {
-      setError('Lütfen hem adınızı hem soyadınızı girin');
-      return;
-    }
-
-    if (!formData.grade) {
-      setError('Lütfen sınıf düzeyinizi seçin');
-      return;
-    }
-
-    if (!formData.password) {
-      setError('Lütfen şifre girin');
-      return;
-    }
-
-    if (formData.password !== formData.confirmPassword) {
-      setError('Şifreler eşleşmiyor');
-      return;
-    }
-
-    if (formData.password.length < 6) {
-      setError('Şifre en az 6 karakter olmalı');
-      return;
-    }
-
+    setLoading(true);
     try {
       const displayName = formData.name.trim();
       const nameNormalized = normalizeFullNameForMatch(displayName);
@@ -129,25 +157,30 @@ export default function RegisterPage() {
       }
 
       setSuccess(true);
+      void fireConfetti({ particleCount: 180, spread: 120, origin: { y: 0.5 } });
       setTimeout(() => {
         router.push('/profil');
-      }, 2000);
+      }, 1800);
     } catch (err: unknown) {
+      log.warn('Register failure', { message: err instanceof Error ? err.message : String(err) });
       setError(formatSignupError(err));
+    } finally {
+      setLoading(false);
     }
   };
 
   if (success) {
     return (
-      <main className="kayit-page min-h-screen gradient-bg flex items-center justify-center p-6">
+      <main className="relative flex min-h-screen items-center justify-center overflow-hidden p-6">
         <DeferredFloatingShapes count={15} />
-        <div className="glass rounded-3xl p-12 text-center max-w-md w-full relative z-10 animate-fade-up">
-          <div className="animate-pulse-soft w-20 h-20 bg-gradient-to-br from-green-400 to-emerald-500 rounded-full flex items-center justify-center mx-auto mb-6">
-            <CheckCircle2 className="w-10 h-10 text-white" />
+        <div className="glass animate-fade-up relative z-10 w-full max-w-md rounded-3xl p-10 text-center">
+          <Mascot pose="celebrate" size={160} className="mx-auto" />
+          <div className="mx-auto mt-4 inline-flex h-16 w-16 animate-pop items-center justify-center rounded-full bg-gradient-to-br from-emerald-400 to-teal-500">
+            <CheckCircle2 className="h-8 w-8 text-white" aria-hidden="true" />
           </div>
-          <h2 className="text-3xl font-bold text-white mb-4">Başarılı!</h2>
-          <p className="text-slate-300 mb-8">
-            Hesabınız oluşturuldu. Yönlendiriliyorsunuz...
+          <h2 className="mt-4 font-display text-3xl font-bold text-white">Harika!</h2>
+          <p className="mt-2 text-slate-300">
+            Hesabın oluşturuldu. Profilin hazırlanıyor, bir saniye...
           </p>
         </div>
       </main>
@@ -155,154 +188,179 @@ export default function RegisterPage() {
   }
 
   return (
-    <main className="kayit-page min-h-screen gradient-bg flex items-center justify-center p-6">
-      <DeferredFloatingShapes count={15} />
+    <main className="kayit-page relative min-h-screen overflow-hidden">
+      <DeferredFloatingShapes count={12} />
+      <div
+        className="absolute inset-0 -z-10 bg-gradient-to-br from-brand-primary/20 via-brand-pink/10 to-brand-orange/10"
+        aria-hidden="true"
+      />
 
-      <div className="w-full max-w-md relative z-10 animate-fade-up">
-        <Link
-          href="/"
-          className="inline-flex items-center gap-2 text-slate-300 hover:text-white mb-8 transition-colors"
-        >
-          <ArrowLeft className="w-5 h-5" />
-          Ana Sayfa
-        </Link>
-
-        <div className="glass rounded-3xl p-8">
-          <div className="flex items-center gap-3 mb-8">
-            <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl flex items-center justify-center">
-              <Calculator className="w-7 h-7 text-white" />
-            </div>
-            <div>
-              <h1 className="text-2xl font-bold text-white">Kayıt Ol</h1>
-              <p className="text-slate-400 text-sm">Hesap oluşturun</p>
-            </div>
+      <div className="mx-auto flex min-h-screen max-w-6xl flex-col items-stretch gap-10 px-6 py-10 lg:flex-row lg:items-center">
+        <aside className="relative hidden flex-1 items-center justify-center overflow-hidden rounded-[2rem] border border-white/10 bg-gradient-to-br from-brand-secondary/20 via-brand-primary/15 to-brand-pink/20 p-10 text-white lg:flex">
+          <div aria-hidden="true" className="absolute -right-16 -top-16 h-72 w-72 rounded-full bg-brand-secondary/30 blur-3xl" />
+          <div aria-hidden="true" className="absolute -bottom-20 -left-20 h-80 w-80 rounded-full bg-brand-primary/30 blur-3xl" />
+          <div className="relative max-w-sm text-center">
+            <Mascot pose="study" size={200} className="mx-auto animate-float-y" />
+            <p className="mt-6 font-display text-2xl font-bold">
+              Birlikte matematiği parçalayacağız!
+            </p>
+            <ul className="mx-auto mt-5 space-y-2 text-left text-sm text-slate-200">
+              <li className="flex items-start gap-2"><span>✨</span> Seviyene özel içerikler</li>
+              <li className="flex items-start gap-2"><span>🏆</span> Rozetler ve XP ile motivasyon</li>
+              <li className="flex items-start gap-2"><span>📊</span> İlerlemen gerçek zamanlı grafiklerde</li>
+              <li className="flex items-start gap-2"><span>🎮</span> Eğlenceli matematik oyunları</li>
+            </ul>
           </div>
+        </aside>
 
-          <form onSubmit={handleSubmit} className="space-y-5">
-            <div>
-              <label className="block text-slate-300 mb-2 text-sm">
-                Ad Soyad
-              </label>
-              <input
-                type="text"
-                required
-                autoComplete="name"
-                value={formData.name}
-                onChange={(e) =>
-                  setFormData({ ...formData, name: e.target.value })
-                }
-                className="w-full bg-slate-800/50 border border-slate-700 rounded-xl px-4 py-3 text-white
-                         focus:outline-none focus:border-purple-500 transition-colors"
-                placeholder="Adınız Soyadınız"
-              />
-              <p className="mt-1.5 text-xs text-slate-500">
-                Büyük/küçük harf fark etmez; girişte aynı ad soyadı kullanın.
-              </p>
-            </div>
+        <motion.div
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.35 }}
+          className="relative z-10 w-full max-w-md flex-1 self-center"
+        >
+          <Link
+            href="/"
+            className="mb-6 inline-flex items-center gap-2 text-sm font-semibold text-slate-300 hover:text-white"
+          >
+            <ArrowLeft className="h-4 w-4" aria-hidden="true" />
+            Ana sayfa
+          </Link>
 
-            <div>
-              <label className="block text-slate-300 mb-2 font-medium">
-                Sınıf Düzeyi
-              </label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                  <GraduationCap className="h-5 w-5 text-slate-400" />
-                </div>
-                <select
-                  required
-                  value={formData.grade}
-                  onChange={(e) =>
-                    setFormData({ ...formData, grade: e.target.value })
-                  }
-                  className="w-full bg-slate-800/50 border border-slate-700 rounded-xl pl-12 pr-4 py-3 text-white
-                           focus:outline-none focus:border-purple-500 focus:bg-slate-800 transition-all appearance-none"
-                >
-                  <option value="" disabled>
-                    Seçiniz
-                  </option>
-                  {[5, 6, 7, 8, 9, 10, 11, 12].map((grade) => (
-                    <option key={grade} value={grade}>
-                      {grade}. Sınıf
-                    </option>
-                  ))}
-                  <option value="Mezun">Mezun</option>
-                </select>
+          <div className="glass rounded-3xl border border-white/10 bg-slate-900/70 p-8 shadow-brand-glow backdrop-blur-xl">
+            <div className="mb-6 flex items-center gap-3">
+              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-brand-primary via-brand-pink to-brand-orange text-white shadow-brand-glow">
+                <Sparkles className="h-6 w-6" aria-hidden="true" />
+              </div>
+              <div>
+                <h1 className="font-display text-2xl font-bold text-white">
+                  Hemen kayıt ol
+                </h1>
+                <p className="text-sm text-slate-400">30 saniyede hesap oluştur</p>
               </div>
             </div>
 
-            <div>
-              <label className="block text-slate-300 mb-2 text-sm">Şifre</label>
-              <div className="relative">
-                <input
+            <form onSubmit={handleSubmit} className="space-y-4" noValidate>
+              <Input
+                label="Ad ve soyad"
+                autoComplete="name"
+                placeholder="Örn: Ahmet Yılmaz"
+                value={formData.name}
+                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                error={fieldErrors.name}
+                hint="Büyük/küçük harf fark etmez. Giriş için aynı ad soyadı kullanacaksın."
+                required
+              />
+
+              <Select
+                label="Sınıf düzeyi"
+                value={formData.grade}
+                onChange={(e) => setFormData({ ...formData, grade: e.target.value })}
+                error={fieldErrors.grade}
+                leadingIcon={<GraduationCap className="h-4 w-4" aria-hidden="true" />}
+                required
+              >
+                <option value="" disabled>
+                  Seçiniz
+                </option>
+                {[5, 6, 7, 8, 9, 10, 11, 12].map((grade) => (
+                  <option key={grade} value={grade}>
+                    {grade}. Sınıf
+                  </option>
+                ))}
+                <option value="Mezun">Mezun</option>
+              </Select>
+
+              <div className="space-y-1">
+                <Input
+                  label="Şifre"
                   type={showPassword ? 'text' : 'password'}
-                  required
                   autoComplete="new-password"
+                  placeholder="En az 6 karakter"
                   value={formData.password}
                   onChange={(e) =>
                     setFormData({ ...formData, password: e.target.value })
                   }
-                  className="w-full bg-slate-800/50 border border-slate-700 rounded-xl px-4 py-3 text-white
-                           focus:outline-none focus:border-purple-500 transition-colors pr-12"
-                  placeholder="En az 6 karakter"
+                  error={fieldErrors.password}
+                  required
+                  trailingSlot={
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword((v) => !v)}
+                      aria-label={showPassword ? 'Şifreyi gizle' : 'Şifreyi göster'}
+                      className="inline-flex h-9 w-9 items-center justify-center rounded-lg text-slate-400 hover:bg-white/10 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary"
+                    >
+                      {showPassword ? (
+                        <EyeOff className="h-4 w-4" aria-hidden="true" />
+                      ) : (
+                        <Eye className="h-4 w-4" aria-hidden="true" />
+                      )}
+                    </button>
+                  }
                 />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white"
-                >
-                  {showPassword ? (
-                    <EyeOff className="w-5 h-5" />
-                  ) : (
-                    <Eye className="w-5 h-5" />
-                  )}
-                </button>
+                {formData.password.length > 0 ? (
+                  <div className="space-y-1" aria-live="polite">
+                    <div className="h-1.5 w-full overflow-hidden rounded-full bg-white/10">
+                      <div
+                        className={`h-full transition-all ${STRENGTH_TO_TONE[strength.score].width} ${STRENGTH_TO_TONE[strength.score].color}`}
+                      />
+                    </div>
+                    <p className="text-xs text-slate-400">
+                      Şifre gücü: <span className="font-semibold">{strength.label}</span>
+                    </p>
+                  </div>
+                ) : null}
               </div>
-            </div>
 
-            <div>
-              <label className="block text-slate-300 mb-2 text-sm">
-                Şifre Tekrar
-              </label>
-              <input
+              <Input
+                label="Şifre (tekrar)"
                 type="password"
-                required
                 autoComplete="new-password"
+                placeholder="Şifreni tekrar yaz"
                 value={formData.confirmPassword}
                 onChange={(e) =>
                   setFormData({ ...formData, confirmPassword: e.target.value })
                 }
-                className="w-full bg-slate-800/50 border border-slate-700 rounded-xl px-4 py-3 text-white
-                         focus:outline-none focus:border-purple-500 transition-colors"
-                placeholder="Şifrenizi tekrar girin"
+                error={fieldErrors.confirmPassword}
+                required
               />
-            </div>
 
-            {error && (
-              <div className="animate-fade-in bg-red-500/20 border border-red-500/50 rounded-xl px-4 py-3 text-red-400 text-sm">
-                {error}
-              </div>
-            )}
+              {error && (
+                <div
+                  role="alert"
+                  className="animate-fade-in rounded-xl border border-red-500/40 bg-red-500/15 px-4 py-3 text-sm font-medium text-red-300"
+                >
+                  {error}
+                </div>
+              )}
 
-            <button
-              type="submit"
-              className="w-full bg-gradient-to-r from-purple-500 to-pink-500 text-white font-semibold py-4
-                       rounded-xl hover:from-purple-600 hover:to-pink-600 transition-all duration-200
-                       hover:scale-[1.02] active:scale-[0.98] glow-button"
-            >
-              Kayıt Ol
-            </button>
-          </form>
+              <Button type="submit" size="lg" fullWidth loading={loading}>
+                Hesap oluştur
+              </Button>
+            </form>
 
-          <p className="text-center text-slate-400 mt-6">
-            Zaten hesabın var mı?{' '}
-            <Link
-              href="/giris"
-              className="text-purple-400 hover:text-purple-300 font-semibold"
-            >
-              Giriş yap
-            </Link>
-          </p>
-        </div>
+            <p className="mt-6 text-center text-sm text-slate-400">
+              Zaten hesabın var mı?{' '}
+              <Link
+                href="/giris"
+                className="font-semibold text-brand-primary-soft hover:text-white"
+              >
+                Giriş yap
+              </Link>
+            </p>
+            <p className="mt-4 text-center text-xs text-slate-400">
+              Devam ederek{' '}
+              <Link href="/gizlilik" className="underline-offset-4 hover:underline">
+                Gizlilik Politikası
+              </Link>{' '}
+              ve{' '}
+              <Link href="/kvkk" className="underline-offset-4 hover:underline">
+                KVKK
+              </Link>{' '}
+              metinlerini kabul etmiş olursun.
+            </p>
+          </div>
+        </motion.div>
       </div>
     </main>
   );

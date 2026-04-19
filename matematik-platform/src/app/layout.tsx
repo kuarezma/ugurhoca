@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
-import { Poppins } from "next/font/google";
+import { Poppins, Baloo_2 } from "next/font/google";
 import { SpeedInsights } from "@vercel/speed-insights/next";
+import CookieBanner from "@/components/CookieBanner";
 import InstallPrompt from "@/components/InstallPrompt";
 import { Providers } from "@/components/Providers";
 import { THEME_STORAGE_KEY } from "@/components/theme-constants";
@@ -9,8 +10,15 @@ import "./globals.css";
 
 const poppins = Poppins({
   subsets: ["latin", "latin-ext"],
-  weight: ["500", "700"],
+  weight: ["400", "500", "600", "700", "800"],
   variable: "--font-poppins",
+  display: "swap",
+});
+
+const displayFont = Baloo_2({
+  subsets: ["latin", "latin-ext"],
+  weight: ["500", "600", "700", "800"],
+  variable: "--font-display",
   display: "swap",
 });
 
@@ -42,7 +50,7 @@ export const metadata: Metadata = {
     "lgs",
     "yks",
     "çözüm",
-    "egitim",
+    "eğitim",
     "uğur hoca",
   ],
   authors: [{ name: "Uğur Hoca" }],
@@ -107,7 +115,7 @@ export default function RootLayout({
       lang="tr"
       suppressHydrationWarning
       data-scroll-behavior="smooth"
-      className={poppins.variable}
+      className={`${poppins.variable} ${displayFont.variable}`}
     >
       <head>
         <script
@@ -155,6 +163,7 @@ export default function RootLayout({
           </div>
         </Providers>
         <InstallPrompt />
+        <CookieBanner />
         <SpeedInsights />
       </body>
     </html>

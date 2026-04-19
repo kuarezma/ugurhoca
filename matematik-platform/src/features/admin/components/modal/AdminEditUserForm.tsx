@@ -1,3 +1,4 @@
+import { useId } from "react";
 import { motion } from "framer-motion";
 import type {
   AdminFormState,
@@ -24,11 +25,18 @@ export default function AdminEditUserForm({
   onSubmit,
   updateFormData,
 }: AdminEditUserFormProps) {
+  const baseId = useId();
+  const nameId = `${baseId}-name`;
+  const gradeId = `${baseId}-grade`;
+
   return (
     <form onSubmit={onSubmit} className="space-y-5">
       <div>
-        <label className="block text-slate-300 mb-2 text-sm">Ad Soyad</label>
+        <label htmlFor={nameId} className="block text-slate-300 mb-2 text-sm">
+          Ad Soyad
+        </label>
         <input
+          id={nameId}
           type="text"
           required
           value={formData.name || ""}
@@ -39,8 +47,11 @@ export default function AdminEditUserForm({
         />
       </div>
       <div>
-        <label className="block text-slate-300 mb-2 text-sm">Sınıf</label>
+        <label htmlFor={gradeId} className="block text-slate-300 mb-2 text-sm">
+          Sınıf
+        </label>
         <select
+          id={gradeId}
           value={formData.grade || ""}
           onChange={(event) =>
             updateFormData({

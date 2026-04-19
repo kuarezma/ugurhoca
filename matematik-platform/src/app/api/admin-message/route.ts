@@ -1,6 +1,9 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 import { isAdminEmail } from "@/lib/admin";
+import { createLogger } from "@/lib/logger";
+
+const log = createLogger("admin-message");
 
 export async function POST(request: Request) {
   try {
@@ -71,7 +74,7 @@ export async function POST(request: Request) {
       .insert(notification);
 
     if (error) {
-      console.error("Admin message error:", error);
+      log.error("Admin message insert error", error);
       return NextResponse.json(
         { error: "Mesaj gönderilemedi." },
         { status: 500 },
@@ -80,7 +83,7 @@ export async function POST(request: Request) {
 
     return NextResponse.json({ success: true });
   } catch (err) {
-    console.error("Admin message route error:", err);
+    log.error("Admin message route error", err);
     return NextResponse.json({ error: "Sunucu hatası." }, { status: 500 });
   }
 }

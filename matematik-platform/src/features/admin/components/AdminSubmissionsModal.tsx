@@ -26,7 +26,9 @@ export default function AdminSubmissionsModal({
 
   return (
     <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
-      <div
+      <button
+        type="button"
+        aria-label="Kapat"
         onClick={onClose}
         className="absolute inset-0 bg-slate-950/90 backdrop-blur-md animate-fade-in"
       />

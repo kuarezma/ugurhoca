@@ -21,6 +21,55 @@ const getFocusableElements = (container: HTMLElement | null) => {
   ).filter((element) => !element.hasAttribute('aria-hidden'));
 };
 
+// Ref-counted body scroll lock.
+// Birden fazla modal aynı anda açılıp kapandığında `body.style.overflow`
+// inline değerinin geride kalmaması için modülün paylaştığı bir sayaç
+// kullanıyoruz. Sayaç 0'a düştüğünde original değerler geri yüklenir.
+type ScrollLockState = {
+  count: number;
+  previousOverflow: string;
+  previousPaddingRight: string;
+};
+
+const scrollLockState: ScrollLockState = {
+  count: 0,
+  previousOverflow: '',
+  previousPaddingRight: '',
+};
+
+const acquireBodyScrollLock = () => {
+  if (typeof document === 'undefined') {
+    return;
+  }
+  const { body } = document;
+  if (scrollLockState.count === 0) {
+    scrollLockState.previousOverflow = body.style.overflow;
+    scrollLockState.previousPaddingRight = body.style.paddingRight;
+    const scrollbarWidth =
+      window.innerWidth - document.documentElement.clientWidth;
+    body.style.overflow = 'hidden';
+    if (scrollbarWidth > 0) {
+      body.style.paddingRight = `${scrollbarWidth}px`;
+    }
+  }
+  scrollLockState.count += 1;
+};
+
+const releaseBodyScrollLock = () => {
+  if (typeof document === 'undefined') {
+    return;
+  }
+  if (scrollLockState.count === 0) {
+    return;
+  }
+  scrollLockState.count -= 1;
+  if (scrollLockState.count === 0) {
+    const { body } = document;
+    body.style.overflow = scrollLockState.previousOverflow;
+    body.style.paddingRight = scrollLockState.previousPaddingRight;
+  }
+};
+
 export const useAccessibleModal = <T extends HTMLElement>(
   isOpen: boolean,
   onClose: () => void,
@@ -41,6 +90,8 @@ export const useAccessibleModal = <T extends HTMLElement>(
     const firstTarget = focusableElements[0] ?? container;
 
     firstTarget?.focus();
+
+    acquireBodyScrollLock();
 
     const handleKeyDown = (event: KeyboardEvent) => {
       if (!container) {
@@ -89,6 +140,7 @@ export const useAccessibleModal = <T extends HTMLElement>(
 
     return () => {
       document.removeEventListener('keydown', handleKeyDown);
+      releaseBodyScrollLock();
       previousActiveElement?.focus();
     };
   }, [isOpen, onClose]);

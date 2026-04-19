@@ -17,13 +17,19 @@ import {
   Target,
   AlertCircle,
   Download,
+  Share2,
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useToast } from '@/components/Toast';
 import DeferredFloatingShapes from '@/components/DeferredFloatingShapes';
+import { EmptyState } from '@/components/ui/EmptyState';
+import { Skeleton } from '@/components/ui/Skeleton';
 import { requireClientSession } from '@/lib/auth-client';
 import { getErrorMessage } from '@/lib/error-utils';
+import { createLogger } from '@/lib/logger';
 import { supabase } from '@/lib/supabase/client';
+
+const log = createLogger('tests-page');
 import { Quiz, QuizQuestion } from '@/types/quiz';
 import type { AppUser } from '@/types';
 
@@ -123,7 +129,7 @@ export default function TestsPage({
         if (quizError) throw quizError;
         if (data) setQuizzes(data);
       } catch (err) {
-        console.error('Testler yüklenirken hata:', err);
+        log.error('Testler yüklenirken hata', err);
         setError('Testler yüklenemedi. Lütfen sayfayı yenileyin.');
       } finally {
         setLoading(false);
@@ -150,7 +156,7 @@ export default function TestsPage({
       }
       return false;
     } catch (err) {
-      console.error('Sorular yüklenirken hata:', err);
+      log.error('Sorular yüklenirken hata', err);
       showToast('error', getErrorMessage(err, 'Sorular yüklenemedi.'));
       return false;
     }
@@ -189,6 +195,14 @@ export default function TestsPage({
     }
   };
 
+  const previousQuestion = () => {
+    if (currentQuestion > 0) {
+      const prev = currentQuestion - 1;
+      setCurrentQuestion(prev);
+      setSelectedAnswer(answers[prev] !== undefined ? answers[prev] : null);
+    }
+  };
+
   const calculateScore = useCallback(() => {
     if (quizQuestions.length === 0) return 0;
     let correct = 0;
@@ -216,7 +230,7 @@ export default function TestsPage({
       ]);
       if (saveError) throw saveError;
     } catch (err) {
-      console.error('Sonuç kaydedilirken hata:', err);
+      log.error('Sonuç kaydedilirken hata', err);
     }
   }, [
     answers,
@@ -342,52 +356,81 @@ export default function TestsPage({
               </div>
             </div>
 
-            <div key={currentQuestion} className="animate-fade-up">
-              <h2 className="text-2xl font-bold text-white mb-8">
+            <div key={currentQuestion} className="animate-fade-up" role="group" aria-label={`Soru ${currentQuestion + 1}`}>
+              <h2 className="text-2xl font-bold text-white mb-8 font-display">
                 {question.question}
               </h2>
 
-              <div className="space-y-4">
-                {question.options.map((option: string, i: number) => (
-                  <button
-                    key={i}
-                    onClick={() => selectAnswer(i)}
-                    className={`w-full p-4 rounded-xl text-left transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] ${
-                      selectedAnswer === i
-                        ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white'
-                        : 'bg-slate-800/50 text-slate-300 hover:bg-slate-700/50'
-                    }`}
-                  >
-                    <span className="font-semibold mr-3">
-                      {String.fromCharCode(65 + i)})
-                    </span>
-                    {option}
-                  </button>
-                ))}
+              <div
+                className="space-y-3"
+                role="radiogroup"
+                aria-label="Cevap seçenekleri"
+              >
+                {question.options.map((option: string, i: number) => {
+                  const selected = selectedAnswer === i;
+                  return (
+                    <button
+                      key={i}
+                      type="button"
+                      role="radio"
+                      aria-checked={selected}
+                      onClick={() => selectAnswer(i)}
+                      className={`w-full min-h-[3.25rem] p-4 rounded-xl text-left transition-all duration-200 flex items-center gap-3 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:ring-offset-2 focus-visible:ring-offset-slate-900 ${
+                        selected
+                          ? 'bg-gradient-to-r from-brand-primary via-brand-pink to-brand-orange text-white shadow-brand-glow scale-[1.01]'
+                          : 'bg-slate-800/60 text-slate-200 hover:bg-slate-700/60 hover:translate-x-0.5'
+                      }`}
+                    >
+                      <span
+                        className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-lg font-bold text-sm ${
+                          selected
+                            ? 'bg-white/25 text-white'
+                            : 'bg-slate-900/60 text-brand-primary-soft'
+                        }`}
+                        aria-hidden="true"
+                      >
+                        {String.fromCharCode(65 + i)}
+                      </span>
+                      <span className="flex-1">{option}</span>
+                    </button>
+                  );
+                })}
               </div>
             </div>
 
-            <button
-              onClick={nextQuestion}
-              disabled={selectedAnswer === null}
-              className={`w-full mt-8 py-4 rounded-xl font-semibold transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center gap-2 ${
-                selectedAnswer !== null
-                  ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white glow-button'
-                  : 'bg-slate-700 text-slate-500 cursor-not-allowed'
-              }`}
-            >
-              {currentQuestion < quizQuestions.length - 1 ? (
-                <>
-                  Sonraki Soru
-                  <ChevronRight className="w-5 h-5" />
-                </>
-              ) : (
-                <>
-                  Testi Bitir
-                  <Trophy className="w-5 h-5" />
-                </>
-              )}
-            </button>
+            <div className="mt-8 grid grid-cols-1 gap-3 sm:grid-cols-[auto_1fr]">
+              <button
+                type="button"
+                onClick={previousQuestion}
+                disabled={currentQuestion === 0}
+                className="inline-flex h-12 items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/5 px-5 text-sm font-semibold text-slate-200 transition-colors hover:bg-white/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                <ArrowLeft className="h-4 w-4" aria-hidden="true" />
+                Önceki
+              </button>
+              <button
+                type="button"
+                onClick={nextQuestion}
+                disabled={selectedAnswer === null}
+                className={`inline-flex h-12 items-center justify-center gap-2 rounded-xl font-bold transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:ring-offset-2 focus-visible:ring-offset-slate-900 ${
+                  selectedAnswer !== null
+                    ? 'bg-gradient-to-r from-brand-primary via-brand-pink to-brand-orange text-white shadow-brand-glow hover:-translate-y-0.5'
+                    : 'bg-slate-700/60 text-slate-400 cursor-not-allowed'
+                }`}
+              >
+                {currentQuestion < quizQuestions.length - 1 ? (
+                  <>
+                    Sonraki soru
+                    <ChevronRight className="w-5 h-5" aria-hidden="true" />
+                  </>
+                ) : (
+                  <>
+                    Testi bitir
+                    <Trophy className="w-5 h-5" aria-hidden="true" />
+                  </>
+                )}
+              </button>
+            </div>
           </div>
         </div>
       </main>
@@ -404,6 +447,42 @@ export default function TestsPage({
         await downloadQuizPDF(selectedQuiz.title);
       } finally {
         setPdfLoading(false);
+      }
+    };
+
+    const handleShareResult = async () => {
+      const shareText = `${selectedQuiz.title} testinden %${score} aldım! Uğur Hoca Matematik ile birlikte çalışıyorum.`;
+      const shareUrl =
+        typeof window !== 'undefined' ? window.location.origin : '';
+      const payload: ShareData = {
+        title: 'Uğur Hoca Matematik',
+        text: shareText,
+        url: shareUrl,
+      };
+
+      try {
+        if (typeof navigator !== 'undefined' && navigator.share) {
+          await navigator.share(payload);
+          return;
+        }
+        if (
+          typeof navigator !== 'undefined' &&
+          navigator.clipboard &&
+          shareUrl
+        ) {
+          await navigator.clipboard.writeText(`${shareText} ${shareUrl}`);
+          showToast('success', 'Sonuç panoya kopyalandı!');
+          return;
+        }
+        showToast('warning', 'Paylaşım desteklenmiyor.');
+      } catch (err) {
+        if (err instanceof Error && err.name === 'AbortError') {
+          return;
+        }
+        log.warn('Paylaşım hatası', {
+          error: err instanceof Error ? err.message : String(err),
+        });
+        showToast('error', 'Paylaşım başarısız oldu.');
       }
     };
 
@@ -577,19 +656,32 @@ export default function TestsPage({
             </div>
           </div>
 
-          <button
-            onClick={handleDownloadPDF}
-            disabled={pdfLoading}
-            className="animate-slide-up w-full mt-4 py-3.5 rounded-2xl border border-white/10 bg-white/5 hover:bg-white/10 text-white font-semibold flex items-center justify-center gap-2.5 transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50"
-            style={{ animationDelay: '240ms' }}
-          >
-            {pdfLoading ? (
-              <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-            ) : (
-              <Download className="w-5 h-5 text-emerald-400" />
-            )}
-            {pdfLoading ? 'PDF Hazırlanıyor...' : 'Sınav Raporunu PDF İndir'}
-          </button>
+          <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
+            <button
+              onClick={handleDownloadPDF}
+              disabled={pdfLoading}
+              aria-label="Sınav raporunu PDF olarak indir"
+              className="animate-slide-up w-full py-3.5 rounded-2xl border border-white/10 bg-white/5 hover:bg-white/10 text-white font-semibold flex items-center justify-center gap-2.5 transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-900"
+              style={{ animationDelay: '240ms' }}
+            >
+              {pdfLoading ? (
+                <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+              ) : (
+                <Download className="w-5 h-5 text-emerald-400" />
+              )}
+              {pdfLoading ? 'PDF Hazırlanıyor...' : 'PDF İndir'}
+            </button>
+
+            <button
+              onClick={handleShareResult}
+              aria-label="Sonucu arkadaşlarınla paylaş"
+              className="animate-slide-up w-full py-3.5 rounded-2xl border border-white/10 bg-gradient-to-r from-cyan-500/20 via-sky-500/20 to-blue-500/20 hover:from-cyan-500/30 hover:to-blue-500/30 text-white font-semibold flex items-center justify-center gap-2.5 transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-900"
+              style={{ animationDelay: '300ms' }}
+            >
+              <Share2 className="w-5 h-5 text-cyan-300" />
+              Sonucu Paylaş
+            </button>
+          </div>
         </div>
       </main>
     );
@@ -638,22 +730,51 @@ export default function TestsPage({
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {loading ? (
-              <div className="col-span-full text-center py-12">
-                <p className="text-slate-400">Yükleniyor...</p>
-              </div>
+              <>
+                {Array.from({ length: 6 }).map((_, index) => (
+                  <div
+                    key={`skeleton-${index}`}
+                    className="glass rounded-2xl overflow-hidden"
+                    aria-hidden="true"
+                  >
+                    <Skeleton className="h-2 w-full" rounded="sm" />
+                    <div className="p-6 space-y-4">
+                      <Skeleton className="h-14 w-14" rounded="lg" />
+                      <Skeleton className="h-5 w-2/3" />
+                      <Skeleton className="h-4 w-full" />
+                      <Skeleton className="h-4 w-5/6" />
+                      <Skeleton className="h-10 w-full" rounded="lg" />
+                    </div>
+                  </div>
+                ))}
+                <span className="sr-only" aria-live="polite">
+                  Testler yükleniyor
+                </span>
+              </>
             ) : visibleQuizzes.length === 0 ? (
-              <div className="col-span-full text-center py-12">
-                <div className="w-16 h-16 bg-slate-800/50 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                  <FileText className="w-8 h-8 text-slate-500" />
-                </div>
-                <h3 className="text-xl font-bold text-slate-300 mb-2">
-                  {user.isAdmin
-                    ? 'Henüz Aktif Test Bulunamadı'
-                    : `${user.grade}. Sınıf İçin Test Bulunamadı`}
-                </h3>
-                <p className="text-slate-500">
-                  Yakında bu sınıf seviyesi için yeni testler eklenecektir.
-                </p>
+              <div className="col-span-full">
+                <EmptyState
+                  tone="soft"
+                  icon={<FileText className="h-10 w-10" aria-hidden="true" />}
+                  title={
+                    user.isAdmin
+                      ? 'Henüz aktif test bulunamadı'
+                      : `${user.grade}. sınıf için aktif test yok`
+                  }
+                  description={
+                    user.isAdmin
+                      ? 'Admin panelinden yeni bir test oluşturabilir veya mevcut bir testi yayınlayabilirsin.'
+                      : 'Uğur Hoca yeni testler hazırlıyor. Bu arada içerikler bölümünden konuları tekrar edebilirsin.'
+                  }
+                  action={
+                    <Link
+                      href="/icerikler"
+                      className="inline-flex h-11 items-center justify-center rounded-xl bg-gradient-to-r from-brand-primary via-brand-pink to-brand-orange px-5 text-sm font-semibold text-white shadow-brand-glow transition-transform hover:-translate-y-0.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary"
+                    >
+                      İçeriklere git
+                    </Link>
+                  }
+                />
               </div>
             ) : (
               visibleQuizzes.map((quiz, i: number) => (

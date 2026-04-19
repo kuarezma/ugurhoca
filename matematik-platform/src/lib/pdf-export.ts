@@ -1,3 +1,7 @@
+import { createLogger } from '@/lib/logger';
+
+const log = createLogger('pdf-export');
+
 export interface PDFOptions {
   background?: string;
   scale?: number;
@@ -28,7 +32,7 @@ export async function generatePDF(
 
   const el = document.getElementById(elementId);
   if (!el) {
-    console.error(`PDF export: #${elementId} elementi bulunamadı.`);
+    log.error('PDF export elementi bulunamadı', undefined, { elementId });
     return;
   }
 

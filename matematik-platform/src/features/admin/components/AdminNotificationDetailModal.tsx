@@ -43,18 +43,20 @@ export default function AdminNotificationDetailModal({
   const modalRef = useAccessibleModal<HTMLDivElement>(true, onClose);
 
   return (
-    <div
-      className="fixed inset-0 z-[100] bg-black/75 backdrop-blur-sm flex items-center justify-center p-4 animate-fade-in"
-      onClick={onClose}
-    >
+    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 animate-fade-in">
+      <button
+        type="button"
+        aria-label="Kapat"
+        onClick={onClose}
+        className="absolute inset-0 bg-black/75 backdrop-blur-sm"
+      />
       <div
         ref={modalRef}
-        onClick={(event) => event.stopPropagation()}
         role="dialog"
         aria-modal="true"
         aria-labelledby="admin-notification-title"
         tabIndex={-1}
-        className="w-full max-w-2xl rounded-3xl border border-slate-700 bg-slate-900 shadow-2xl overflow-hidden animate-fade-up"
+        className="relative w-full max-w-2xl rounded-3xl border border-slate-700 bg-slate-900 shadow-2xl overflow-hidden animate-fade-up"
       >
         <div className="p-5 border-b border-slate-700 flex items-start justify-between gap-4">
           <div>
@@ -166,8 +168,14 @@ export default function AdminNotificationDetailModal({
                   Engelle
                 </button>
               </div>
-              <label className="block text-slate-300 text-sm">Cevap yaz</label>
+              <label
+                htmlFor="admin-notification-reply"
+                className="block text-slate-300 text-sm"
+              >
+                Cevap yaz
+              </label>
               <textarea
+                id="admin-notification-reply"
                 rows={4}
                 value={replyText}
                 onChange={(event) => onReplyTextChange(event.target.value)}

@@ -3,8 +3,38 @@ import 'server-only';
 import { hasSupabasePublicEnv } from '@/lib/env.server';
 import { createServerSupabaseClient } from '@/lib/supabase/server';
 import { resolveYandexPublicDownloadUrl } from '@/lib/yandex-public-download';
-import type { HomeInitialFeed } from '@/features/home/home-initial-feed';
+import type {
+  HomeInitialFeed,
+  HomeStatsSnapshot,
+} from '@/features/home/home-initial-feed';
 import type { Announcement, ContentDocument } from '@/types';
+
+async function fetchHomeStatsServer(
+  supabase: ReturnType<typeof createServerSupabaseClient>,
+): Promise<HomeStatsSnapshot> {
+  const safeCount = async (
+    query: ReturnType<typeof createServerSupabaseClient>,
+    table: 'students' | 'quizzes' | 'documents' | 'assignments',
+  ): Promise<number> => {
+    try {
+      const { count } = await query
+        .from(table)
+        .select('*', { count: 'exact', head: true });
+      return count ?? 0;
+    } catch {
+      return 0;
+    }
+  };
+
+  const [students, quizzes, documents, assignments] = await Promise.all([
+    safeCount(supabase, 'students'),
+    safeCount(supabase, 'quizzes'),
+    safeCount(supabase, 'documents'),
+    safeCount(supabase, 'assignments'),
+  ]);
+
+  return { students, quizzes, documents, assignments };
+}
 
 async function fetchHomeDocumentsServer(
   supabase: ReturnType<typeof createServerSupabaseClient>,
@@ -73,18 +103,21 @@ export async function loadInitialHomeFeed(): Promise<HomeInitialFeed> {
     return {
       announcements: [],
       documents: [],
+      stats: { students: 0, quizzes: 0, documents: 0, assignments: 0 },
     };
   }
 
   const supabase = createServerSupabaseClient();
 
-  const [documents, announcements] = await Promise.all([
+  const [documents, announcements, stats] = await Promise.all([
     fetchHomeDocumentsServer(supabase),
     fetchAnnouncementsServer(supabase),
+    fetchHomeStatsServer(supabase),
   ]);
 
   return {
     announcements,
     documents,
+    stats,
   };
 }

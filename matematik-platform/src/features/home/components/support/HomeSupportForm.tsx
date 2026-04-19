@@ -1,6 +1,6 @@
 'use client';
 
-import { type FormEvent } from 'react';
+import { useId, type FormEvent } from 'react';
 import { Send, Upload } from 'lucide-react';
 import { useToast } from '@/components/Toast';
 import type { SupportAttachment } from '@/types';
@@ -30,11 +30,15 @@ export function HomeSupportForm({
   supportSent,
 }: HomeSupportFormProps) {
   const { showToast } = useToast();
+  const baseId = useId();
+  const messageId = `${baseId}-message`;
+  const uploadId = `${baseId}-upload`;
 
   return (
     <form onSubmit={onSubmit} className="space-y-4">
       <div>
         <label
+          htmlFor={messageId}
           className={`block mb-2 text-sm ${
             isLight ? 'text-slate-700' : 'text-slate-300'
           }`}
@@ -42,6 +46,7 @@ export function HomeSupportForm({
           Mesajın
         </label>
         <textarea
+          id={messageId}
           rows={5}
           value={supportMessage}
           onChange={(event) => onSupportMessageChange(event.target.value)}
@@ -49,13 +54,14 @@ export function HomeSupportForm({
           className={`w-full rounded-2xl px-4 py-3 focus:outline-none focus:border-indigo-500 transition-colors resize-none ${
             isLight
               ? 'bg-white border border-slate-300 text-slate-900 placeholder:text-slate-400'
-              : 'bg-slate-800/60 border border-slate-700 text-white placeholder:text-slate-500'
+              : 'bg-slate-800/60 border border-slate-700 text-white placeholder:text-slate-400'
           }`}
         />
       </div>
 
       <div>
         <label
+          htmlFor={uploadId}
           className={`block mb-2 text-sm ${
             isLight ? 'text-slate-700' : 'text-slate-300'
           }`}
@@ -67,7 +73,7 @@ export function HomeSupportForm({
           multiple
           accept="image/*,.pdf,.doc,.docx"
           className="hidden"
-          id="support-upload"
+          id={uploadId}
           onChange={async (event) => {
             if (event.target.files?.length) {
               try {
@@ -80,7 +86,7 @@ export function HomeSupportForm({
           }}
         />
         <label
-          htmlFor="support-upload"
+          htmlFor={uploadId}
           className={`flex items-center justify-center gap-2 w-full rounded-2xl border border-dashed px-4 py-5 transition-colors cursor-pointer ${
             isLight
               ? 'border-slate-300 bg-slate-50 text-slate-700 hover:bg-slate-100 hover:border-indigo-500'
@@ -100,7 +106,7 @@ export function HomeSupportForm({
 
       <div className="flex flex-col sm:flex-row sm:items-center gap-3 justify-between">
         <p
-          className={`text-xs ${isLight ? 'text-slate-600' : 'text-slate-500'}`}
+          className={`text-xs ${isLight ? 'text-slate-600' : 'text-slate-400'}`}
         >
           Gönderdiğin mesaj anında bildirim olarak iletilir.
         </p>

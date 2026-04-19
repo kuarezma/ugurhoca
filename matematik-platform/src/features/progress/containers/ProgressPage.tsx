@@ -4,13 +4,12 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import {
   ArrowLeft,
   Target,
   Flame,
   Plus,
-  X,
   Video,
   BookOpen,
   PenTool,
@@ -18,9 +17,14 @@ import {
   Award,
   Download,
 } from 'lucide-react';
+import { Modal } from '@/components/ui/Modal';
+import { Input, Select } from '@/components/ui/Input';
+import { Button } from '@/components/ui/Button';
+import { Skeleton } from '@/components/ui/Skeleton';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { useTheme } from '@/components/ThemeProvider';
 import { requireClientSession } from '@/lib/auth-client';
+import { createLogger } from '@/lib/logger';
 import { supabase } from '@/lib/supabase/client';
 import type { AppUser } from '@/types';
 import type { InitialProgressPageData } from '@/features/progress/server';
@@ -37,6 +41,8 @@ import {
   resolveCurrentGoal,
 } from '@/features/progress/utils';
 import type { RadarChartPoint } from '@/features/progress/components/ProgressCharts';
+
+const log = createLogger('progress-page');
 
 const ProgressCharts = dynamic(
   () =>
@@ -218,7 +224,7 @@ export default function IlerlemePage({ initialData }: ProgressPageProps) {
       setSelectedTopic('');
       
     } catch (error) {
-      console.error(error);
+      log.error('Ders saati kayıt hatası', error);
       const message =
         error instanceof Error
           ? error.message
@@ -237,9 +243,27 @@ export default function IlerlemePage({ initialData }: ProgressPageProps) {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-slate-900">
-        <div className="w-12 h-12 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin"></div>
-      </div>
+      <main className={`min-h-screen pb-20 ${isLight ? 'bg-slate-50' : 'bg-slate-900'}`}>
+        <div
+          className="max-w-6xl mx-auto px-4 py-10 space-y-6"
+          aria-busy="true"
+          aria-live="polite"
+        >
+          <div className="flex justify-between items-center">
+            <Skeleton className="h-10 w-56" />
+            <Skeleton className="h-10 w-36" rounded="lg" />
+          </div>
+          <Skeleton className="h-4 w-80" />
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <Skeleton className="col-span-1 md:col-span-2 h-40" rounded="lg" />
+            <Skeleton className="h-40" rounded="lg" />
+          </div>
+          <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+            <Skeleton className="h-80" rounded="lg" />
+            <Skeleton className="h-80" rounded="lg" />
+          </div>
+        </div>
+      </main>
     );
   }
 
@@ -369,10 +393,10 @@ export default function IlerlemePage({ initialData }: ProgressPageProps) {
                   <div>
                     <div className="flex items-center gap-2 mb-1">
                       <Target className={`w-5 h-5 ${isLight ? 'text-orange-500' : 'text-orange-400'}`} />
-                      <h3 className={`font-bold uppercase tracking-wider text-xs ${isLight ? 'text-slate-500' : 'text-slate-400'}`}>Haftalık Hedef</h3>
+                      <h3 className={`font-bold uppercase tracking-wider text-xs ${isLight ? 'text-slate-400' : 'text-slate-400'}`}>Haftalık Hedef</h3>
                     </div>
                     <p className={`text-3xl font-bold ${isLight ? 'text-slate-900' : 'text-white'}`}>
-                      {currentWeekTotal} <span className={`text-lg font-medium ${isLight ? 'text-slate-500' : 'text-slate-400'}`}>/ {goal?.target_duration || 0} dk</span>
+                      {currentWeekTotal} <span className={`text-lg font-medium ${isLight ? 'text-slate-400' : 'text-slate-400'}`}>/ {goal?.target_duration || 0} dk</span>
                     </p>
                   </div>
                   <div className="text-right">
@@ -414,12 +438,18 @@ export default function IlerlemePage({ initialData }: ProgressPageProps) {
               </div>
             ) : (
               <div className="flex-1 grid grid-cols-2 gap-2 mt-2">
-                {badges.slice(0,4).map(badge => (
+                {badges.slice(0, 4).map((badge) => (
                   <div key={badge.id} className="relative group cursor-pointer">
-                    <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-orange-400 to-yellow-500 flex items-center justify-center shadow-lg shadow-orange-500/20">
-                      <Award className="w-6 h-6 text-white" />
+                    <div className="relative h-12 w-12 overflow-hidden rounded-xl bg-gradient-to-br from-amber-400 via-orange-400 to-pink-500 shadow-lg shadow-orange-500/25 animate-wiggle-hover">
+                      <div className="flex h-full w-full items-center justify-center">
+                        <Award className="h-6 w-6 text-white drop-shadow" aria-hidden="true" />
+                      </div>
+                      <span
+                        aria-hidden="true"
+                        className="pointer-events-none absolute inset-0 animate-shine bg-gradient-to-r from-transparent via-white/50 to-transparent"
+                        style={{ backgroundSize: '200% 100%' }}
+                      />
                     </div>
-                    {/* Tooltip */}
                     <div className="absolute opacity-0 group-hover:opacity-100 bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 bg-slate-800 text-white text-[10px] whitespace-nowrap rounded font-medium transition-opacity pointer-events-none z-10">
                       {badge.name}
                     </div>
@@ -460,101 +490,104 @@ export default function IlerlemePage({ initialData }: ProgressPageProps) {
         )}
       </div>
 
-      {/* Çalışma Ekle Modalı */}
-      <AnimatePresence>
-        {showAddModal && (
-          <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setShowAddModal(false)} className="absolute inset-0 bg-slate-950/80 backdrop-blur-sm" />
-            <motion.div initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.95, opacity: 0 }} onClick={e => e.stopPropagation()} className={`relative w-full max-w-md rounded-3xl p-6 sm:p-8 overflow-hidden shadow-2xl ${isLight ? 'bg-white border border-slate-200' : 'bg-slate-900 border border-slate-800'}`}>
-              <button onClick={() => {
-                setAddSessionError(null);
-                setShowAddModal(false);
-              }} className="absolute top-4 right-4 p-2 text-slate-400 hover:text-slate-600 dark:hover:text-white transition-colors">
-                <X className="w-6 h-6" />
-              </button>
-              
-              <h2 className={`text-2xl font-bold mb-6 ${isLight ? 'text-slate-900' : 'text-white'}`}>Çalışma Ekle</h2>
-              
-              <form onSubmit={handleAddSession} className="space-y-5">
-                {addSessionError && (
-                  <div className={`rounded-2xl border px-4 py-3 text-sm ${isLight ? 'border-red-200 bg-red-50 text-red-700' : 'border-red-500/30 bg-red-500/10 text-red-200'}`}>
-                    {addSessionError}
-                  </div>
-                )}
-                <div>
-                  <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Aktivite Tipi</label>
-                  <div className="grid grid-cols-3 gap-2">
-                    {[
-                      { id: 'test', label: 'Test Çözümü', icon: PenTool },
-                      { id: 'video', label: 'Video İzleme', icon: Video },
-                      { id: 'kitap', label: 'Kitap Okuma', icon: BookOpen }
-                    ].map(type => (
-                      <button
-                        key={type.id}
-                        type="button"
-                        onClick={() => {
-                          setAddSessionError(null);
-                          setActivityType(type.id);
-                        }}
-                        className={`flex flex-col items-center gap-2 p-3 rounded-xl border-2 transition-all ${activityType === type.id ? 'border-indigo-500 bg-indigo-500/10 text-indigo-500 dark:text-indigo-400' : isLight ? 'border-slate-200 text-slate-500 hover:border-slate-300' : 'border-slate-700 text-slate-400 hover:bg-slate-800'}`}
-                      >
-                        <type.icon className="w-5 h-5" />
-                        <span className="text-xs font-medium">{type.label}</span>
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                <div>
-                  <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Konu</label>
-                  <select
-                    required
-                    value={selectedTopic}
-                    onChange={(e) => {
+      <Modal
+        open={showAddModal}
+        onClose={() => {
+          setAddSessionError(null);
+          setShowAddModal(false);
+        }}
+        title="Çalışma Ekle"
+        description="Bugün çalıştığın konuyu ve süreni kaydet."
+        size="md"
+      >
+        <form onSubmit={handleAddSession} className="space-y-5">
+          {addSessionError && (
+            <div
+              role="alert"
+              className="rounded-xl border border-rose-500/40 bg-rose-500/10 px-4 py-3 text-sm font-medium text-rose-500 dark:text-rose-300"
+            >
+              {addSessionError}
+            </div>
+          )}
+          <div>
+            <div
+              id="activity-type-label"
+              className="mb-2 block text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-slate-400"
+            >
+              Aktivite Tipi
+            </div>
+            <div role="radiogroup" aria-labelledby="activity-type-label" className="grid grid-cols-3 gap-2">
+              {[
+                { id: 'test', label: 'Test Çözümü', icon: PenTool },
+                { id: 'video', label: 'Video İzleme', icon: Video },
+                { id: 'kitap', label: 'Kitap Okuma', icon: BookOpen },
+              ].map((type) => {
+                const active = activityType === type.id;
+                return (
+                  <button
+                    key={type.id}
+                    type="button"
+                    onClick={() => {
                       setAddSessionError(null);
-                      setSelectedTopic(e.target.value);
+                      setActivityType(type.id);
                     }}
-                    className={`w-full px-4 py-3 rounded-xl border focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-colors ${isLight ? 'bg-white border-slate-200 text-slate-900' : 'bg-slate-800 border-slate-700 text-white'}`}
+                    aria-pressed={active}
+                    className={`flex flex-col items-center gap-2 rounded-xl border-2 p-3 transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary ${
+                      active
+                        ? 'border-brand-primary bg-brand-primary/10 text-brand-primary'
+                        : 'border-slate-200 text-slate-400 hover:border-slate-300 dark:border-white/10 dark:text-slate-400 dark:hover:bg-white/5'
+                    }`}
                   >
-                    <option value="">Konu seçin...</option>
-                    {availableTopics.map((topic) => (
-                      <option key={topic} value={topic}>
-                        {topic}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                <div>
-                  <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Süre (Dakika)</label>
-                  <input
-                    type="number"
-                    required
-                    min="1"
-                    max="600"
-                    placeholder="Örn: 45"
-                    value={duration}
-                    onChange={(e) => {
-                      setAddSessionError(null);
-                      setDuration(e.target.value);
-                    }}
-                    className={`w-full px-4 py-3 rounded-xl border focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-colors ${isLight ? 'bg-white border-slate-200 text-slate-900' : 'bg-slate-800 border-slate-700 text-white'}`}
-                  />
-                </div>
-
-                <button
-                  type="submit"
-                  disabled={addingSession}
-                  className="w-full py-4 mt-2 bg-indigo-500 hover:bg-indigo-600 text-white font-bold rounded-xl transition-colors shadow-lg shadow-indigo-500/25 flex justify-center items-center gap-2 disabled:opacity-50"
-                >
-                  {addingSession ? <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" /> : <CheckCircle2 className="w-5 h-5" />}
-                  {addingSession ? 'Kaydediliyor...' : 'Kaydet'}
-                </button>
-              </form>
-            </motion.div>
+                    <type.icon className="h-5 w-5" aria-hidden="true" />
+                    <span className="text-xs font-medium">{type.label}</span>
+                  </button>
+                );
+              })}
+            </div>
           </div>
-        )}
-      </AnimatePresence>
+
+          <Select
+            label="Konu"
+            required
+            value={selectedTopic}
+            onChange={(e) => {
+              setAddSessionError(null);
+              setSelectedTopic(e.target.value);
+            }}
+          >
+            <option value="">Konu seçin...</option>
+            {availableTopics.map((topic) => (
+              <option key={topic} value={topic}>
+                {topic}
+              </option>
+            ))}
+          </Select>
+
+          <Input
+            label="Süre (dakika)"
+            type="number"
+            required
+            min={1}
+            max={600}
+            placeholder="Örn: 45"
+            value={duration}
+            onChange={(e) => {
+              setAddSessionError(null);
+              setDuration(e.target.value);
+            }}
+          />
+
+          <Button
+            type="submit"
+            size="lg"
+            fullWidth
+            loading={addingSession}
+            leadingIcon={<CheckCircle2 className="h-5 w-5" aria-hidden="true" />}
+          >
+            {addingSession ? 'Kaydediliyor...' : 'Kaydet'}
+          </Button>
+        </form>
+      </Modal>
     </main>
   );
 }

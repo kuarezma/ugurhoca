@@ -382,9 +382,12 @@ export function Hangman({ onScore }: GameComponentProps) {
             key={letter}
             whileHover={{ scale: guessed.has(letter) ? 1 : 1.1 }}
             whileTap={{ scale: 0.9 }}
+            type="button"
             onClick={() => handleGuess(letter)}
             disabled={guessed.has(letter) || gameState !== 'playing'}
-            className={`w-10 h-10 rounded-xl font-bold text-lg transition-all ${
+            aria-label={`${letter} harfini dene`}
+            aria-pressed={guessed.has(letter)}
+            className={`inline-flex h-11 w-11 items-center justify-center rounded-xl font-bold text-lg transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary disabled:cursor-not-allowed ${
               guessed.has(letter)
                 ? word.includes(letter)
                   ? 'bg-green-500 text-white'

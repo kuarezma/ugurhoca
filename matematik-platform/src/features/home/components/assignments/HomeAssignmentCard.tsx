@@ -19,6 +19,14 @@ export function HomeAssignmentCard({
 }: HomeAssignmentCardProps) {
   const { showToast } = useToast();
 
+  const openAssignment = () => {
+    if (assignment.file_url) {
+      window.open(assignment.file_url, '_blank', 'noopener,noreferrer');
+    } else if (assignment.message) {
+      showToast('info', String(assignment.message));
+    }
+  };
+
   return (
     <div
       className={`animate-fade-up flex items-center gap-3 rounded-xl p-3 transition-colors group ${
@@ -28,15 +36,10 @@ export function HomeAssignmentCard({
       }`}
       style={{ animationDelay: `${index * 0.1}s` }}
     >
-      <div
-        className="flex-1 min-w-0 cursor-pointer"
-        onClick={() => {
-          if (assignment.file_url) {
-            window.open(assignment.file_url, '_blank');
-          } else if (assignment.message) {
-            showToast('info', String(assignment.message));
-          }
-        }}
+      <button
+        type="button"
+        className="flex-1 min-w-0 text-left cursor-pointer rounded-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary/60"
+        onClick={openAssignment}
       >
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 bg-gradient-to-br from-orange-500/50 to-red-500/50 rounded-lg flex items-center justify-center flex-shrink-0">
@@ -65,7 +68,7 @@ export function HomeAssignmentCard({
             </p>
           </div>
         </div>
-      </div>
+      </button>
       <div className="flex items-center gap-2">
         {assignment.file_url && (
           <span className="px-2 py-1 bg-green-500/20 text-green-400 text-xs font-medium rounded-lg flex items-center gap-1">
@@ -73,7 +76,7 @@ export function HomeAssignmentCard({
             İndir
           </span>
         )}
-        <span className="text-slate-500 text-xs">
+        <span className="text-slate-400 text-xs">
           {new Date(assignment.created_at).toLocaleDateString('tr-TR', {
             day: 'numeric',
             month: 'short',
@@ -84,7 +87,7 @@ export function HomeAssignmentCard({
             event.stopPropagation();
             onDismiss(assignment);
           }}
-          className="p-1.5 text-slate-500 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-colors"
+          className="p-1.5 text-slate-400 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-colors"
           title="Kaldır"
         >
           <X className="w-4 h-4" />

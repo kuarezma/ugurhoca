@@ -1,7 +1,10 @@
 import { apiError, apiOk } from '@/lib/api-response';
+import { createLogger } from '@/lib/logger';
 import { quizImportSchema } from '@/lib/route-schemas';
 import { createServiceRoleClient } from '@/lib/supabase/server';
 import { insertQuizWithQuestions } from '@/features/quizzes/server/importQuiz';
+
+const log = createLogger('import-questions');
 
 export async function POST(request: Request) {
   const body = await request.json().catch(() => null);
@@ -21,7 +24,7 @@ export async function POST(request: Request) {
 
     return apiOk(result);
   } catch (error) {
-    console.error('Import error:', error);
+    log.error('Quiz import failed', error);
     return apiError(
       error instanceof Error ? error.message : 'Sunucu hatası oluştu.',
       500,

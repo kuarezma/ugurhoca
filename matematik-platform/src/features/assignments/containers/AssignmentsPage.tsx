@@ -17,7 +17,13 @@ import { useToast } from '@/components/Toast';
 import { useTheme } from '@/components/ThemeProvider';
 import { requireClientSession } from '@/lib/auth-client';
 import { getErrorMessage } from '@/lib/error-utils';
+import { createLogger } from '@/lib/logger';
 import { supabase } from '@/lib/supabase/client';
+import { Skeleton } from '@/components/ui/Skeleton';
+import { EmptyState } from '@/components/ui/EmptyState';
+import { Badge } from '@/components/ui/Badge';
+
+const log = createLogger('assignments-page');
 import type { AppUser, Assignment, Submission } from '@/types';
 
 const AssignmentSubmissionModal = dynamic(
@@ -216,7 +222,7 @@ export default function OdevlerPage({
       }, 500);
       
     } catch (error) {
-      console.error('Yükleme hatası:', error);
+      log.error('Yükleme hatası', error);
       showToast(
         'error',
         `Ödev yüklenirken bir hata oluştu: ${getErrorMessage(error)}`,
@@ -249,14 +255,51 @@ export default function OdevlerPage({
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-slate-900">
-        <div className="flex flex-col items-center gap-4">
-          <div className="w-12 h-12 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin"></div>
-          <p className="text-slate-400 font-medium">Ödevler yükleniyor...</p>
+      <main className={`min-h-screen ${isLight ? 'bg-slate-50' : 'bg-slate-900'} pb-20`}>
+        <div className="max-w-5xl mx-auto px-4 py-10 space-y-6" aria-busy="true" aria-live="polite">
+          <Skeleton className="h-10 w-64" />
+          <Skeleton className="h-4 w-96" />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {Array.from({ length: 4 }).map((_, i) => (
+              <div
+                key={i}
+                className={`rounded-3xl p-6 border space-y-4 ${
+                  isLight ? 'bg-white border-slate-200' : 'bg-slate-800 border-slate-700'
+                }`}
+              >
+                <div className="flex justify-between">
+                  <Skeleton className="h-6 w-24" rounded="full" />
+                  <Skeleton className="h-4 w-20" />
+                </div>
+                <Skeleton className="h-5 w-2/3" />
+                <Skeleton className="h-4 w-full" />
+                <Skeleton className="h-4 w-5/6" />
+                <Skeleton className="h-10 w-32" rounded="lg" />
+              </div>
+            ))}
+          </div>
         </div>
-      </div>
+      </main>
     );
   }
+
+  const computeDueStatus = (dueDate: string | null | undefined, submitted: boolean) => {
+    if (!dueDate) return { label: null as string | null, tone: 'neutral' as const };
+    const due = new Date(dueDate).getTime();
+    const now = Date.now();
+    const diffDays = Math.round((due - now) / (1000 * 60 * 60 * 24));
+    if (submitted) {
+      return { label: 'Teslim edildi', tone: 'success' as const };
+    }
+    if (diffDays < 0) {
+      const abs = Math.abs(diffDays);
+      return { label: `${abs} gün geçti`, tone: 'danger' as const };
+    }
+    if (diffDays === 0) return { label: 'Bugün son gün', tone: 'danger' as const };
+    if (diffDays <= 2) return { label: `${diffDays} gün kaldı`, tone: 'warning' as const };
+    if (diffDays <= 7) return { label: `${diffDays} gün kaldı`, tone: 'info' as const };
+    return { label: `${diffDays} gün kaldı`, tone: 'success' as const };
+  };
 
   const activeSubmission = selectedAssignment
     ? submissions[selectedAssignment.id]
@@ -291,13 +334,20 @@ export default function OdevlerPage({
         </div>
 
         {assignments.length === 0 ? (
-          <div className={`rounded-3xl p-12 text-center border-2 border-dashed ${
-            isLight ? 'bg-white border-slate-200' : 'bg-slate-800/50 border-slate-700'
-          }`}>
-            <ClipboardList className="w-16 h-16 mx-auto mb-4 text-slate-500 opacity-20" />
-            <h3 className={`text-xl font-bold mb-2 ${isLight ? 'text-slate-900' : 'text-white'}`}>Henüz Ödev Yok</h3>
-            <p className="text-slate-400">Şu an için teslim etmen gereken bir ödev bulunumuyor. Rahatla!</p>
-          </div>
+          <EmptyState
+            tone="soft"
+            icon={<ClipboardList className="h-8 w-8" aria-hidden="true" />}
+            title="Henüz ödev yok"
+            description="Şu an için teslim etmen gereken bir ödev bulunmuyor. Tekrar ve testlerle güçlendirmeye devam et."
+            action={
+              <Link
+                href="/testler"
+                className="inline-flex h-11 items-center justify-center rounded-xl bg-gradient-to-r from-brand-primary via-brand-pink to-brand-orange px-5 text-sm font-semibold text-white shadow-brand-glow transition-transform hover:-translate-y-0.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary"
+              >
+                Test çözmeye git
+              </Link>
+            }
+          />
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {assignments.map((assignment) => {
@@ -305,61 +355,87 @@ export default function OdevlerPage({
               const isPastDue = assignment.due_date && new Date(assignment.due_date) < new Date();
               const isSubmitted = !!submission;
               const isReviewed = submission?.status === 'reviewed';
+              const dueStatus = computeDueStatus(assignment.due_date, isSubmitted);
+              const statusTone: 'success' | 'info' | 'danger' | 'warning' = isReviewed
+                ? 'success'
+                : isSubmitted
+                  ? 'info'
+                  : isPastDue
+                    ? 'danger'
+                    : 'warning';
+              const statusLabel = isReviewed
+                ? 'İncelendi'
+                : isSubmitted
+                  ? 'Teslim edildi'
+                  : isPastDue
+                    ? 'Süresi geçti'
+                    : 'Bekliyor';
 
               return (
                 <motion.div
                   key={assignment.id}
                   layoutId={assignment.id}
-                  className={`relative rounded-3xl p-6 border transition-all ${
-                    isLight 
-                      ? 'bg-white border-slate-200 shadow-sm hover:shadow-md' 
-                      : 'bg-slate-800 border-slate-700 hover:border-slate-600'
+                  whileHover={{ y: -2 }}
+                  className={`group relative rounded-3xl p-6 border transition-all focus-within:ring-2 focus-within:ring-brand-primary ${
+                    isLight
+                      ? 'bg-white border-slate-200 shadow-sm hover:shadow-lg'
+                      : 'bg-slate-800 border-slate-700 hover:border-brand-primary/40 hover:shadow-brand-glow/40'
                   }`}
                 >
-                  {/* Durum Badge */}
-                  <div className="flex justify-between items-start mb-4">
-                    <div className={`px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider ${
-                      isReviewed 
-                        ? 'bg-emerald-500/20 text-emerald-400' 
-                        : isSubmitted 
-                          ? 'bg-blue-500/20 text-blue-400' 
-                          : isPastDue 
-                            ? 'bg-red-500/20 text-red-400' 
-                            : 'bg-amber-500/20 text-amber-400'
-                    }`}>
-                      {isReviewed ? 'İncelendi' : isSubmitted ? 'Teslim Edildi' : isPastDue ? 'Süresi Geçti' : 'Bekliyor'}
-                    </div>
-                    {assignment.due_date && (
-                      <div className={`flex items-center gap-1.5 text-xs font-medium ${isPastDue && !isSubmitted ? 'text-red-400' : 'text-slate-500'}`}>
-                        <Clock className="w-3.5 h-3.5" />
-                        {new Date(assignment.due_date).toLocaleDateString('tr-TR', { day: 'numeric', month: 'long' })}
-                      </div>
+                  <div className="flex flex-wrap items-center gap-2 justify-between mb-4">
+                    <Badge tone={statusTone}>{statusLabel}</Badge>
+                    {dueStatus.label && (
+                      <Badge tone={dueStatus.tone} leadingIcon={<Clock className="h-3 w-3" aria-hidden="true" />}>
+                        {dueStatus.label}
+                      </Badge>
                     )}
                   </div>
 
-                  <h3 className={`text-xl font-bold mb-2 ${isLight ? 'text-slate-900' : 'text-white'}`}>{assignment.title}</h3>
-                  <p className={`text-sm mb-6 line-clamp-2 ${isLight ? 'text-slate-600' : 'text-slate-400'}`}>{assignment.description}</p>
+                  <h3 className={`font-display text-xl font-bold mb-2 ${isLight ? 'text-slate-900' : 'text-white'}`}>
+                    {assignment.title}
+                  </h3>
+                  <p className={`text-sm mb-5 line-clamp-2 ${isLight ? 'text-slate-600' : 'text-slate-400'}`}>
+                    {assignment.description}
+                  </p>
 
-                  <div className="flex items-center justify-between">
+                  {assignment.due_date && (
+                    <p className={`mb-4 text-xs font-medium ${isLight ? 'text-slate-400' : 'text-slate-400'}`}>
+                      Son teslim:{' '}
+                      {new Date(assignment.due_date).toLocaleDateString('tr-TR', {
+                        day: 'numeric',
+                        month: 'long',
+                        year: 'numeric',
+                      })}
+                    </p>
+                  )}
+
+                  <div className="flex items-center justify-between flex-wrap gap-3">
                     {isSubmitted ? (
                       <div className="flex items-center gap-2 text-emerald-500 text-sm font-bold">
-                        <CheckCircle2 className="w-5 h-5" />
-                        Puan: {submission.grade !== null && submission.grade !== undefined ? submission.grade : 'Bekliyor'}
+                        <CheckCircle2 className="w-5 h-5" aria-hidden="true" />
+                        Puan:{' '}
+                        {submission.grade !== null && submission.grade !== undefined
+                          ? submission.grade
+                          : 'Bekliyor'}
                       </div>
                     ) : (
-                      <div />
+                      <div className="text-xs font-semibold uppercase tracking-wider text-slate-400">
+                        Teslim bekliyor
+                      </div>
                     )}
-                    
+
                     <button
+                      type="button"
                       onClick={() => setSelectedAssignment(assignment)}
-                      className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold transition-all ${
+                      aria-label={isSubmitted ? 'Teslim detaylarını gör' : 'Ödev teslim et'}
+                      className={`inline-flex items-center gap-2 px-5 h-11 rounded-xl text-sm font-bold transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:ring-offset-2 ${
                         isSubmitted
                           ? 'bg-slate-700 text-white hover:bg-slate-600'
-                          : 'bg-indigo-500 text-white hover:bg-indigo-600 shadow-lg shadow-indigo-500/20'
+                          : 'bg-gradient-to-r from-brand-primary via-brand-pink to-brand-orange text-white shadow-brand-glow hover:-translate-y-0.5'
                       }`}
                     >
-                      {isSubmitted ? 'Detayları Gör' : 'Ödev Teslim Et'}
-                      <ChevronRight className="w-4 h-4" />
+                      {isSubmitted ? 'Detayları gör' : 'Ödev teslim et'}
+                      <ChevronRight className="w-4 h-4" aria-hidden="true" />
                     </button>
                   </div>
                 </motion.div>

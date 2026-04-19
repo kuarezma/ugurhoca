@@ -56,7 +56,7 @@ export async function loadLgsSchoolPageData(
   if (yearListQuery.error) {
     return {
       dataYear: preferredYear,
-      error: 'LGS okul verileri okunamadi. Lutfen veritabani tablosunu kontrol et.',
+      error: 'LGS okul verileri okunamadı. Lütfen veritabanı tablosunu kontrol et.',
       historyYears: [],
       schools: [],
     };
@@ -74,7 +74,7 @@ export async function loadLgsSchoolPageData(
     return {
       dataYear: preferredYear,
       error:
-        'LGS hedef okul verisi bulunamadi. Supabase tablosuna resmi veriler yuklenmeli.',
+        'LGS hedef okul verisi bulunamadı. Supabase tablosuna resmi veriler yüklenmeli.',
       historyYears: [],
       schools: [],
     };
@@ -103,7 +103,7 @@ export async function loadLgsSchoolPageData(
   if (rowsQuery.error) {
     return {
       dataYear: selectedYear,
-      error: 'LGS okul verileri okunamadi. Lutfen veritabani tablosunu kontrol et.',
+      error: 'LGS okul verileri okunamadı. Lütfen veritabanı tablosunu kontrol et.',
       historyYears: [...historyYears].sort((a, b) => a - b),
       schools: [],
     };
@@ -163,7 +163,7 @@ export async function loadLgsSchoolPageData(
     dataYear: selectedYear,
     error: schools.length
       ? ''
-      : 'LGS hedef okul verisi bulunamadi. Supabase tablosuna resmi veriler yuklenmeli.',
+      : 'LGS hedef okul verisi bulunamadı. Supabase tablosuna resmi veriler yüklenmeli.',
     historyYears: [...historyYears].sort((a, b) => a - b),
     schools,
   };

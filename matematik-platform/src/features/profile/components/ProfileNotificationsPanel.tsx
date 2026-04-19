@@ -65,7 +65,7 @@ export default function ProfileNotificationsPanel({
                         {notification.message}
                       </p>
                     ) : null}
-                    <p className="mt-2 text-xs text-slate-500">
+                    <p className="mt-2 text-xs text-slate-400">
                       {new Date(notification.created_at).toLocaleDateString(
                         'tr-TR',
                       )}

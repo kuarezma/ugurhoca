@@ -34,9 +34,9 @@ import {
 } from '@/lib/examCalculators';
 
 const levelSectionLabels: Record<ProgramTargetLevel, string> = {
-  iddiali: 'Iddiali Hedef',
+  iddiali: 'İddialı Hedef',
   dengeli: 'Dengeli Hedef',
-  guvenli: 'Guvenli Hedef',
+  guvenli: 'Güvenli Hedef',
 };
 
 const INITIAL_VISIBLE_SCHOOL_COUNT = 24;
@@ -200,7 +200,7 @@ export default function LgsWizardPage() {
   const steps: ProgramStep[] = [
     { id: 1 as const, title: 'Puan Hesapla' },
     { id: 2 as const, title: 'Hedef Filtreleri' },
-    { id: 3 as const, title: 'Lise Onerileri' },
+    { id: 3 as const, title: 'Lise Önerileri' },
   ];
 
   return (
@@ -215,10 +215,10 @@ export default function LgsWizardPage() {
         >
           <ProgramWizardHeader
             badgeClassName="bg-gradient-to-r from-cyan-500 via-blue-500 to-indigo-500"
-            badgeLabel="LGS 2026 Sihirbazi"
+            badgeLabel="LGS 2026 Sihirbazı"
             dataYear={dataYear}
-            dataYearNote={dataYear < 2026 ? 'En guncel tam yerlestirme verisi kullaniliyor.' : undefined}
-            description="13 Haziran 2026 baz alinarak tahmini LGS puani hesaplanir. Ardindan gercek veritabanindaki hedef lise verilerine gore iddiali, dengeli ve guvenli secenekler listelenir."
+            dataYearNote={dataYear < 2026 ? 'En güncel tam yerleştirme verisi kullanılıyor.' : undefined}
+            description="13 Haziran 2026 baz alınarak tahmini LGS puanı hesaplanır. Ardından gerçek veritabanındaki hedef lise verilerine göre iddialı, dengeli ve güvenli seçenekler listelenir."
             isLight={isLight}
             title="LGS Puan Hesaplama ve Lise Hedef Belirleme"
           />
@@ -248,15 +248,19 @@ export default function LgsWizardPage() {
                     >
                       <div className={`text-sm font-bold ${isLight ? 'text-slate-900' : 'text-white'}`}>{subject.label}</div>
                       <div className={`mt-1 text-xs ${isLight ? 'text-slate-500' : 'text-slate-400'}`}>
-                        {subject.questions} soru - katsayi {subject.coefficient}
+                        {subject.questions} soru · katsayı {subject.coefficient}
                       </div>
 
                       <div className="mt-3 grid grid-cols-2 gap-2">
                         <div>
-                          <label className={`mb-1 block text-[11px] font-semibold uppercase tracking-[0.14em] ${isLight ? 'text-slate-500' : 'text-slate-400'}`}>
-                            Dogru
+                          <label
+                            htmlFor={`lgs-${subject.key}-correct`}
+                            className={`mb-1 block text-[11px] font-semibold uppercase tracking-[0.14em] ${isLight ? 'text-slate-500' : 'text-slate-400'}`}
+                          >
+                            Doğru
                           </label>
                           <input
+                            id={`lgs-${subject.key}-correct`}
                             type="number"
                             min={0}
                             max={subject.questions}
@@ -270,10 +274,14 @@ export default function LgsWizardPage() {
                           />
                         </div>
                         <div>
-                          <label className={`mb-1 block text-[11px] font-semibold uppercase tracking-[0.14em] ${isLight ? 'text-slate-500' : 'text-slate-400'}`}>
-                            Yanlis
+                          <label
+                            htmlFor={`lgs-${subject.key}-wrong`}
+                            className={`mb-1 block text-[11px] font-semibold uppercase tracking-[0.14em] ${isLight ? 'text-slate-500' : 'text-slate-400'}`}
+                          >
+                            Yanlış
                           </label>
                           <input
+                            id={`lgs-${subject.key}-wrong`}
                             type="number"
                             min={0}
                             max={subject.questions - value.correct}
@@ -308,7 +316,7 @@ export default function LgsWizardPage() {
                   </div>
                   <div>
                     <div className={`text-[11px] font-bold uppercase tracking-[0.18em] ${isLight ? 'text-slate-500' : 'text-slate-400'}`}>
-                      Tahmini Yuzdelik
+                      Tahmini Yüzdelik
                     </div>
                     <div className={`mt-1 text-3xl font-black ${isLight ? 'text-slate-950' : 'text-white'}`}>%{lgsResult.estimatedPercentile}</div>
                   </div>
@@ -319,7 +327,7 @@ export default function LgsWizardPage() {
                   onClick={() => setStep(2)}
                   className="mt-4 inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-cyan-500 via-blue-500 to-indigo-500 px-4 py-2 text-sm font-bold text-white shadow-lg"
                 >
-                  Hedef Filtrelerine Gec
+                  Hedef Filtrelerine Geç
                   <ChevronRight className="h-4 w-4" />
                 </button>
               </div>
@@ -338,7 +346,7 @@ export default function LgsWizardPage() {
                   <input
                     value={query}
                     onChange={(event) => setQuery(event.target.value)}
-                    placeholder="Okul adi veya il ara"
+                    placeholder="Okul adı veya il ara"
                     className={`rounded-xl border px-3 py-2 text-sm ${
                       isLight ? 'bg-slate-50 border-slate-200 text-slate-900' : 'bg-slate-900/70 border-white/10 text-white'
                     }`}
@@ -354,7 +362,7 @@ export default function LgsWizardPage() {
                       isLight ? 'bg-slate-50 border-slate-200 text-slate-900' : 'bg-slate-900/70 border-white/10 text-white'
                     }`}
                   >
-                    <option value="all">Tum Iller</option>
+                    <option value="all">Tüm İller</option>
                     {provinces.map((item) => (
                       <option key={item} value={item}>
                         {formatProgramOptionLabel(item)}
@@ -369,7 +377,7 @@ export default function LgsWizardPage() {
                       isLight ? 'bg-slate-50 border-slate-200 text-slate-900' : 'bg-slate-900/70 border-white/10 text-white'
                     }`}
                   >
-                    <option value="all">Tum Ilceler</option>
+                    <option value="all">Tüm İlçeler</option>
                     {districts.map((item) => (
                       <option key={item} value={item}>
                         {formatProgramOptionLabel(item)}
@@ -384,7 +392,7 @@ export default function LgsWizardPage() {
                       isLight ? 'bg-slate-50 border-slate-200 text-slate-900' : 'bg-slate-900/70 border-white/10 text-white'
                     }`}
                   >
-                    <option value="all">Tum Okul Turleri</option>
+                    <option value="all">Tüm Okul Türleri</option>
                     {schoolTypes.map((item) => (
                       <option key={item} value={item}>
                         {formatProgramOptionLabel(item)}
@@ -399,7 +407,7 @@ export default function LgsWizardPage() {
                       isLight ? 'bg-slate-50 border-slate-200 text-slate-900' : 'bg-slate-900/70 border-white/10 text-white'
                     }`}
                   >
-                    <option value="all">Tum Diller</option>
+                    <option value="all">Tüm Diller</option>
                     {languages.map((item) => (
                       <option key={item} value={item}>
                         {formatProgramOptionLabel(item)}
@@ -431,14 +439,14 @@ export default function LgsWizardPage() {
                     }`}
                   >
                     <option value="all">Hedef Seviyesi (Hepsi)</option>
-                    <option value="iddiali">Iddiali</option>
+                    <option value="iddiali">İddialı</option>
                     <option value="dengeli">Dengeli</option>
-                    <option value="guvenli">Guvenli</option>
+                    <option value="guvenli">Güvenli</option>
                   </select>
                 </div>
 
                 <div className={`mt-4 rounded-2xl border p-3 text-sm ${isLight ? 'bg-slate-50 border-slate-200 text-slate-700' : 'bg-white/5 border-white/10 text-slate-300'}`}>
-                  Filtreye uygun okul sayisi: <span className="font-bold">{evaluatedSchools.length}</span>
+                  Filtreye uygun okul sayısı: <span className="font-bold">{evaluatedSchools.length}</span>
                 </div>
 
                 {error ? (
@@ -454,12 +462,12 @@ export default function LgsWizardPage() {
                 ) : null}
 
                 <div className={`mt-3 rounded-2xl border p-3 text-sm ${isLight ? 'bg-indigo-50 border-indigo-100 text-slate-700' : 'bg-indigo-500/10 border-indigo-400/20 text-slate-200'}`}>
-                  Veritabani kapsami: <span className="font-bold">{provinces.length} il</span>,{' '}
-                  <span className="font-bold">{totalDistrictCount} ilce</span>,{' '}
+                  Veritabanı kapsamı: <span className="font-bold">{provinces.length} il</span>,{' '}
+                  <span className="font-bold">{totalDistrictCount} ilçe</span>,{' '}
                   <span className="font-bold">{groupedSchools.length} okul</span>
                   {orderedHistoryYears.length ? (
                     <>
-                      , <span className="font-bold">{orderedHistoryYears.length} yil trendi</span> ({orderedHistoryYears.join(', ')})
+                      , <span className="font-bold">{orderedHistoryYears.length} yıl trendi</span> ({orderedHistoryYears.join(', ')})
                     </>
                   ) : null}
                 </div>
@@ -472,14 +480,14 @@ export default function LgsWizardPage() {
                       isLight ? 'bg-white border-slate-200 text-slate-700' : 'bg-white/5 border-white/10 text-slate-200'
                     }`}
                   >
-                    Geri Don
+                    Geri Dön
                   </button>
                   <button
                     type="button"
                     onClick={() => setStep(3)}
                     className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-cyan-500 via-blue-500 to-indigo-500 px-4 py-2 text-sm font-bold text-white shadow-lg"
                   >
-                    Onerileri Goster
+                    Önerileri Göster
                     <ChevronRight className="h-4 w-4" />
                   </button>
                 </div>
@@ -503,7 +511,7 @@ export default function LgsWizardPage() {
                 </div>
               </div>
 
-              {loading && <div className={`rounded-3xl border p-5 text-sm ${isLight ? 'bg-white border-slate-200 text-slate-600' : 'bg-white/5 border-white/10 text-slate-300'}`}>Okul verileri yukleniyor...</div>}
+              {loading && <div className={`rounded-3xl border p-5 text-sm ${isLight ? 'bg-white border-slate-200 text-slate-600' : 'bg-white/5 border-white/10 text-slate-300'}`}>Okul verileri yükleniyor...</div>}
               {!loading && error && (
                 <div className={`rounded-3xl border p-5 text-sm ${isLight ? 'bg-rose-50 border-rose-200 text-rose-700' : 'bg-rose-500/10 border-rose-500/30 text-rose-200'}`}>
                   {error}
@@ -512,7 +520,7 @@ export default function LgsWizardPage() {
 
               {!loading && !error && !evaluatedSchools.length && (
                 <div className={`rounded-3xl border p-6 ${isLight ? 'bg-white border-slate-200' : 'bg-white/5 border-white/10'}`}>
-                  <p className={isLight ? 'text-slate-700' : 'text-slate-200'}>Secilen filtrelere uygun okul bulunamadi.</p>
+                  <p className={isLight ? 'text-slate-700' : 'text-slate-200'}>Seçilen filtrelere uygun okul bulunamadı.</p>
                 </div>
               )}
 
@@ -566,20 +574,20 @@ export default function LgsWizardPage() {
                                   <div className={`font-black ${isLight ? 'text-slate-900' : 'text-white'}`}>{school.baseScore.toFixed(2)}</div>
                                 </div>
                                 <div className={`rounded-xl border px-3 py-2 ${isLight ? 'bg-white/80 border-white/70' : 'bg-black/20 border-white/10'}`}>
-                                  <div className={isLight ? 'text-slate-500' : 'text-slate-400'}>Puan Farki</div>
+                                  <div className={isLight ? 'text-slate-500' : 'text-slate-400'}>Puan Farkı</div>
                                   <div className={`font-black ${school.delta >= 0 ? 'text-emerald-600' : 'text-rose-600'}`}>
                                     {school.delta >= 0 ? '+' : ''}
                                     {school.delta.toFixed(2)}
                                   </div>
                                 </div>
                                 <div className={`rounded-xl border px-3 py-2 ${isLight ? 'bg-white/80 border-white/70' : 'bg-black/20 border-white/10'}`}>
-                                  <div className={isLight ? 'text-slate-500' : 'text-slate-400'}>Son Yuzdelik</div>
+                                  <div className={isLight ? 'text-slate-500' : 'text-slate-400'}>Son Yüzdelik</div>
                                   <div className={`font-black ${isLight ? 'text-slate-900' : 'text-white'}`}>
                                     {school.national_percentile !== null ? `%${school.national_percentile.toFixed(2)}` : '-'}
                                   </div>
                                 </div>
                                 <div className={`rounded-xl border px-3 py-2 ${isLight ? 'bg-white/80 border-white/70' : 'bg-black/20 border-white/10'}`}>
-                                  <div className={isLight ? 'text-slate-500' : 'text-slate-400'}>Baz Yil</div>
+                                  <div className={isLight ? 'text-slate-500' : 'text-slate-400'}>Baz Yıl</div>
                                   <div className={`font-black ${isLight ? 'text-slate-900' : 'text-white'}`}>{school.latest_year}</div>
                                 </div>
                               </div>
@@ -599,7 +607,7 @@ export default function LgsWizardPage() {
 
                               <div className={`mt-4 rounded-2xl border p-3 ${isLight ? 'bg-white/70 border-white/80' : 'bg-black/10 border-white/10'}`}>
                                 <div className={`mb-2 text-[11px] font-bold uppercase tracking-[0.16em] ${isLight ? 'text-slate-500' : 'text-slate-400'}`}>
-                                  {orderedHistoryYears.join(', ')} Yuzdelik ve Taban Puan
+                                  {orderedHistoryYears.join(', ')} Yüzdelik ve Taban Puan
                                 </div>
                                 <div className="grid grid-cols-5 gap-2">
                                   {orderedHistoryYears.map((year) => {
@@ -613,7 +621,7 @@ export default function LgsWizardPage() {
                                         <div className={`font-bold ${isLight ? 'text-slate-900' : 'text-white'}`}>{year}</div>
                                         <div className="mt-1">Puan: {point ? point.base_score.toFixed(2) : '-'}</div>
                                         <div>
-                                          Yuzdelik: {point && point.national_percentile !== null ? `%${point.national_percentile.toFixed(2)}` : '-'}
+                                          Yüzdelik: {point && point.national_percentile !== null ? `%${point.national_percentile.toFixed(2)}` : '-'}
                                         </div>
                                       </div>
                                     );
@@ -636,7 +644,7 @@ export default function LgsWizardPage() {
                                 : 'bg-white/5 border-white/10 text-slate-200'
                             }`}
                           >
-                            Daha Fazla Goster ({visibleItems.length}/{items.length})
+                            Daha Fazla Göster ({visibleItems.length}/{items.length})
                           </button>
                         </div>
                       ) : null}
@@ -648,8 +656,8 @@ export default function LgsWizardPage() {
                 <div className="flex items-start gap-2">
                   <Info className="mt-0.5 h-4 w-4 shrink-0" />
                   <p>
-                    Bu ekran sonuc kaydetmez. Oneriler sadece anlik puanin ve secilen filtrelere gore olusturulur. Resmi
-                    tercihlerinde guncel MEB kilavuzunu mutlaka kontrol et.
+                    Bu ekran sonuç kaydetmez. Öneriler sadece anlık puanın ve seçilen filtrelere göre oluşturulur. Resmi
+                    tercihlerinde güncel MEB kılavuzunu mutlaka kontrol et.
                   </p>
                 </div>
               </div>
@@ -662,14 +670,14 @@ export default function LgsWizardPage() {
                     isLight ? 'bg-white border-slate-200 text-slate-700' : 'bg-white/5 border-white/10 text-slate-200'
                   }`}
                 >
-                  Filtreleri Duzenle
+                  Filtreleri Düzenle
                 </button>
                 <button
                   type="button"
                   onClick={() => setStep(1)}
                   className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-cyan-500 via-blue-500 to-indigo-500 px-4 py-2 text-sm font-bold text-white"
                 >
-                  Netleri Guncelle
+                  Netleri Güncelle
                   <Target className="h-4 w-4" />
                 </button>
               </div>

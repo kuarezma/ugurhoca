@@ -1,3 +1,4 @@
+import { useId } from "react";
 import type {
   AdminFormState,
   AdminModalType,
@@ -19,11 +20,19 @@ export default function AdminQuizSettingsFields({
   modalType,
   updateFormData,
 }: AdminQuizSettingsFieldsProps) {
+  const baseId = useId();
+  const gradeId = `${baseId}-grade`;
+  const timeLimitId = `${baseId}-time-limit`;
+  const difficultyId = `${baseId}-difficulty`;
+
   return (
     <>
       <div>
-        <label className="block text-slate-300 mb-2 text-sm">Sınıf</label>
+        <label htmlFor={gradeId} className="block text-slate-300 mb-2 text-sm">
+          Sınıf
+        </label>
         <select
+          id={gradeId}
           required
           value={formData.grade || ""}
           onChange={(event) =>
@@ -41,8 +50,14 @@ export default function AdminQuizSettingsFields({
         </select>
       </div>
       <div>
-        <label className="block text-slate-300 mb-2 text-sm">Süre (Dakika)</label>
+        <label
+          htmlFor={timeLimitId}
+          className="block text-slate-300 mb-2 text-sm"
+        >
+          Süre (Dakika)
+        </label>
         <input
+          id={timeLimitId}
           type="number"
           required
           min="1"
@@ -56,10 +71,14 @@ export default function AdminQuizSettingsFields({
         />
       </div>
       <div>
-        <label className="block text-slate-300 mb-2 text-sm">
+        <label
+          htmlFor={difficultyId}
+          className="block text-slate-300 mb-2 text-sm"
+        >
           Zorluk Seviyesi
         </label>
         <select
+          id={difficultyId}
           required
           value={formData.difficulty || ""}
           onChange={(event) =>

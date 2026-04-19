@@ -1,5 +1,6 @@
 "use client";
 
+import { memo } from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { CheckCircle2, ChevronRight, FileText } from "lucide-react";
@@ -9,7 +10,7 @@ interface RecentResultsProps {
   results: DashboardQuizResult[];
 }
 
-export default function RecentResults({ results }: RecentResultsProps) {
+function RecentResults({ results }: RecentResultsProps) {
   return (
     <motion.section
       initial={{ opacity: 0, y: 20 }}
@@ -72,3 +73,5 @@ export default function RecentResults({ results }: RecentResultsProps) {
     </motion.section>
   );
 }
+
+export default memo(RecentResults);

@@ -102,7 +102,7 @@ export default function ContentPreviewModal({
             />
           ) : previewDoc.file_url ? (
             <div className="flex h-full min-h-[48vh] flex-col items-center justify-center p-6 text-center sm:min-h-[60vh] sm:p-8">
-              <FileText className="mb-4 h-20 w-20 text-slate-500 sm:h-24 sm:w-24" />
+              <FileText className="mb-4 h-20 w-20 text-slate-400 sm:h-24 sm:w-24" />
               <p className="mb-2 text-base font-semibold text-white sm:text-lg">
                 Dosya Önizlemesi
               </p>

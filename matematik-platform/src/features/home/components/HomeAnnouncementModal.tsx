@@ -188,7 +188,7 @@ export function HomeAnnouncementModal({
                     {announcement.content}
                   </p>
                   {renderAnnouncementLink(announcement)}
-                  <p className="text-slate-500 text-sm mt-6">
+                  <p className="text-slate-400 text-sm mt-6">
                     {new Date(announcement.created_at).toLocaleDateString(
                       'tr-TR',
                     )}
@@ -220,7 +220,7 @@ export function HomeAnnouncementModal({
                   {announcement.content}
                 </p>
                 {renderAnnouncementLink(announcement)}
-                <p className="mt-6 text-sm text-slate-500">
+                <p className="mt-6 text-sm text-slate-400">
                   {new Date(announcement.created_at).toLocaleDateString(
                     'tr-TR',
                   )}

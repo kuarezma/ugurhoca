@@ -34,7 +34,7 @@ export default function TodayPlanCard({
           </p>
         </div>
         <div className="rounded-2xl bg-white/5 px-4 py-2 text-right">
-          <p className="text-xs uppercase tracking-[0.18em] text-slate-500">
+          <p className="text-xs uppercase tracking-[0.18em] text-slate-400">
             Görev
           </p>
           <p className="text-xl font-black text-white">{tasks.length}</p>

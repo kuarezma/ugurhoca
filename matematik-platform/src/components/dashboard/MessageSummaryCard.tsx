@@ -149,12 +149,12 @@ export default function MessageSummaryCard({
                 </p>
               </div>
               <div className="flex shrink-0 items-center gap-2">
-                <span className="text-xs text-slate-500">
+                <span className="text-xs text-slate-400">
                   {new Date(notification.created_at).toLocaleDateString(
                     'tr-TR',
                   )}
                 </span>
-                <ChevronRight className="h-4 w-4 text-slate-500" />
+                <ChevronRight className="h-4 w-4 text-slate-400" />
               </div>
             </button>
           ))}

@@ -5,11 +5,13 @@ import DeferredFloatingShapes from '@/components/DeferredFloatingShapes';
 import { useTheme } from '@/components/ThemeProvider';
 import { HomeAnnouncementsSection } from '@/features/home/components/HomeAnnouncementsSection';
 import { HomeAssignmentsSection } from '@/features/home/components/HomeAssignmentsSection';
+import { HomeDailyQuote } from '@/features/home/components/HomeDailyQuote';
 import { HomeExamCountdownSection } from '@/features/home/components/HomeExamCountdownSection';
 import { HomeFooter } from '@/features/home/components/HomeFooter';
 import { HomeHeroSection } from '@/features/home/components/HomeHeroSection';
 import { HomeNavbar } from '@/features/home/components/HomeNavbar';
 import { HomeRecentDocumentsSection } from '@/features/home/components/HomeRecentDocumentsSection';
+import { HomeStatsStrip } from '@/features/home/components/HomeStatsStrip';
 import type { HomeInitialFeed } from '@/features/home/home-initial-feed';
 import { useHomePageData } from '@/features/home/hooks/useHomePageData';
 
@@ -67,12 +69,14 @@ export default function HomePage({ initialFeed }: HomePageProps) {
       <DeferredFloatingShapes />
       <HomeNavbar user={user} onLogout={handleLogout} />
       <div className="pt-[calc(3.5rem+env(safe-area-inset-top))] md:pt-14">
-        <HomeHeroSection isLight={isLight} />
+        <HomeHeroSection isLight={isLight} user={user} />
+        <HomeStatsStrip isLight={isLight} stats={initialFeed?.stats} />
         <HomeAnnouncementsSection
           announcements={announcements}
           isLight={isLight}
           onSelectAnnouncement={setSelectedAnnouncement}
         />
+        <HomeDailyQuote isLight={isLight} />
         <HomeExamCountdownSection isLight={isLight} />
         <HomeAssignmentsSection
           assignments={visibleAssignments}

@@ -1,3 +1,4 @@
+import { useId } from "react";
 import { motion } from "framer-motion";
 import type {
   AdminDocument as Document,
@@ -31,11 +32,18 @@ export default function AdminSendDocumentForm({
   studentUsers,
   updateFormData,
 }: AdminSendDocumentFormProps) {
+  const baseId = useId();
+  const docId = `${baseId}-document`;
+  const studentId = `${baseId}-student`;
+
   return (
     <form onSubmit={onSubmit} className="space-y-5">
       <div>
-        <label className="block text-slate-300 mb-2 text-sm">Belge Seç</label>
+        <label htmlFor={docId} className="block text-slate-300 mb-2 text-sm">
+          Belge Seç
+        </label>
         <select
+          id={docId}
           required
           value={formData.document_id || ""}
           onChange={(event) => onDocumentSelect(event.target.value)}
@@ -51,8 +59,11 @@ export default function AdminSendDocumentForm({
         </select>
       </div>
       <div>
-        <label className="block text-slate-300 mb-2 text-sm">Öğrenci Seç</label>
+        <label htmlFor={studentId} className="block text-slate-300 mb-2 text-sm">
+          Öğrenci Seç
+        </label>
         <select
+          id={studentId}
           required
           value={formData.student_id || ""}
           onChange={(event) => updateFormData({ student_id: event.target.value })}

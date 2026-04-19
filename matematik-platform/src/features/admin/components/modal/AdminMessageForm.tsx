@@ -1,7 +1,7 @@
 /* eslint-disable @next/next/no-img-element -- admin preview uses temporary object URLs from local uploads */
 
 import { motion } from "framer-motion";
-import type { ChangeEvent } from "react";
+import { useId, type ChangeEvent } from "react";
 import { Image as ImageIcon, Send, X } from "lucide-react";
 import type { AdminUser } from "@/features/admin/types";
 import { type AdminModalSubmitHandler } from "@/features/admin/components/modal/shared";
@@ -31,6 +31,11 @@ export default function AdminMessageForm({
   setAdminMsgText,
   setAdminMsgTitle,
 }: AdminMessageFormProps) {
+  const baseId = useId();
+  const titleId = `${baseId}-title`;
+  const imageId = `${baseId}-image`;
+  const messageId = `${baseId}-message`;
+
   return (
     <form onSubmit={onSubmit} className="space-y-5">
       {adminMsgRecipient && (
@@ -47,8 +52,11 @@ export default function AdminMessageForm({
         </div>
       )}
       <div>
-        <label className="block text-slate-300 mb-2 text-sm">Başlık</label>
+        <label htmlFor={titleId} className="block text-slate-300 mb-2 text-sm">
+          Başlık
+        </label>
         <input
+          id={titleId}
           type="text"
           value={adminMsgTitle}
           onChange={(event) => setAdminMsgTitle(event.target.value)}
@@ -58,7 +66,7 @@ export default function AdminMessageForm({
         />
       </div>
       <div>
-        <label className="block text-slate-300 mb-2 text-sm">
+        <label htmlFor={imageId} className="block text-slate-300 mb-2 text-sm">
           Resim (Opsiyonel)
         </label>
         <div className="relative">
@@ -67,10 +75,10 @@ export default function AdminMessageForm({
             accept="image/*"
             onChange={onImageUpload}
             className="hidden"
-            id="admin-msg-image"
+            id={imageId}
           />
           <label
-            htmlFor="admin-msg-image"
+            htmlFor={imageId}
             className="flex items-center justify-center gap-2 w-full bg-slate-800/50 border border-slate-700 border-dashed rounded-xl px-4 py-4 text-slate-400 cursor-pointer hover:bg-slate-800 hover:border-purple-500 transition-colors"
           >
             <ImageIcon className="w-5 h-5" />
@@ -95,8 +103,11 @@ export default function AdminMessageForm({
         )}
       </div>
       <div>
-        <label className="block text-slate-300 mb-2 text-sm">Mesaj</label>
+        <label htmlFor={messageId} className="block text-slate-300 mb-2 text-sm">
+          Mesaj
+        </label>
         <textarea
+          id={messageId}
           required
           value={adminMsgText}
           onChange={(event) => setAdminMsgText(event.target.value)}

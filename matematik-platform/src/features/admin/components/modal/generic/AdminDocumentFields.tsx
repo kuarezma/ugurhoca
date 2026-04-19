@@ -1,4 +1,4 @@
-import type { ChangeEvent } from "react";
+import { useId, type ChangeEvent } from "react";
 import { Upload } from "lucide-react";
 import type { AdminFormState } from "@/features/admin/types";
 import {
@@ -24,11 +24,23 @@ export default function AdminDocumentFields({
   updateFormData,
 }: AdminDocumentFieldsProps) {
   const isWorksheet = isWorksheetType(formData.type);
+  const baseId = useId();
+  const fileInputId = `${baseId}-file`;
+  const fileUrlId = `${baseId}-file-url`;
+  const videoUrlId = `${baseId}-video-url`;
+  const answerKeyId = `${baseId}-answer-key`;
+  const solutionUrlId = `${baseId}-solution-url`;
+  const worksheetGradeId = `${baseId}-worksheet-grade`;
+  const learningOutcomeId = `${baseId}-learning-outcome`;
+  const gradesGroupLabelId = `${baseId}-grades-label`;
 
   return (
     <>
       <div>
-        <label className="block text-slate-300 mb-2 text-sm">
+        <label
+          htmlFor={fileInputId}
+          className="block text-slate-300 mb-2 text-sm"
+        >
           Dosya Yükle (PDF, EXE, MP4 vb.)
         </label>
         <div className="relative">
@@ -37,10 +49,10 @@ export default function AdminDocumentFields({
             accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.zip,.rar,.exe,.mp4,.avi,.mov"
             onChange={onDocumentUpload}
             className="hidden"
-            id="file-upload"
+            id={fileInputId}
           />
           <label
-            htmlFor="file-upload"
+            htmlFor={fileInputId}
             className="flex items-center justify-center gap-2 w-full bg-slate-800/50 border border-slate-700 border-dashed rounded-xl px-4 py-6 text-slate-400 cursor-pointer hover:bg-slate-800 hover:border-purple-500 transition-colors"
           >
             <Upload className="w-5 h-5" />
@@ -53,10 +65,14 @@ export default function AdminDocumentFields({
       </div>
       <div className="text-center text-slate-500 text-sm">veya</div>
       <div>
-        <label className="block text-slate-300 mb-2 text-sm">
+        <label
+          htmlFor={fileUrlId}
+          className="block text-slate-300 mb-2 text-sm"
+        >
           Link (Google Drive, vb.)
         </label>
         <input
+          id={fileUrlId}
           type="url"
           value={formData.file_url || ""}
           onChange={(event) =>
@@ -71,10 +87,14 @@ export default function AdminDocumentFields({
         />
       </div>
       <div>
-        <label className="block text-slate-300 mb-2 text-sm">
+        <label
+          htmlFor={videoUrlId}
+          className="block text-slate-300 mb-2 text-sm"
+        >
           YouTube Video URL
         </label>
         <input
+          id={videoUrlId}
           type="url"
           value={formData.video_url || ""}
           onChange={(event) => updateFormData({ video_url: event.target.value })}
@@ -84,10 +104,14 @@ export default function AdminDocumentFields({
         />
       </div>
       <div>
-        <label className="block text-slate-300 mb-2 text-sm">
+        <label
+          htmlFor={answerKeyId}
+          className="block text-slate-300 mb-2 text-sm"
+        >
           Cevap Anahtarı (Metin)
         </label>
         <textarea
+          id={answerKeyId}
           value={formData.answer_key_text || ""}
           onChange={(event) =>
             updateFormData({ answer_key_text: event.target.value })
@@ -99,10 +123,14 @@ export default function AdminDocumentFields({
         />
       </div>
       <div>
-        <label className="block text-slate-300 mb-2 text-sm">
+        <label
+          htmlFor={solutionUrlId}
+          className="block text-slate-300 mb-2 text-sm"
+        >
           Çözüm PDF (Drive Link)
         </label>
         <input
+          id={solutionUrlId}
           type="url"
           value={formData.solution_url || ""}
           onChange={(event) =>
@@ -125,10 +153,14 @@ export default function AdminDocumentFields({
               Yaprak testler otomatik olarak sıradaki isimle kaydedilir.
             </div>
             <div>
-              <label className="block text-slate-300 mb-2 text-sm">
+              <label
+                htmlFor={worksheetGradeId}
+                className="block text-slate-300 mb-2 text-sm"
+              >
                 Sınıf Düzeyi
               </label>
               <select
+                id={worksheetGradeId}
                 required
                 value={formData.grades?.[0] || ""}
                 onChange={(event) =>
@@ -154,10 +186,14 @@ export default function AdminDocumentFields({
               </select>
             </div>
             <div>
-              <label className="block text-slate-300 mb-2 text-sm">
+              <label
+                htmlFor={learningOutcomeId}
+                className="block text-slate-300 mb-2 text-sm"
+              >
                 Kazanım
               </label>
               <input
+                id={learningOutcomeId}
                 type="text"
                 required
                 value={formData.learning_outcome || ""}
@@ -172,10 +208,17 @@ export default function AdminDocumentFields({
           </div>
         ) : (
           <>
-            <label className="block text-slate-300 mb-2 text-sm">
+            <span
+              id={gradesGroupLabelId}
+              className="block text-slate-300 mb-2 text-sm"
+            >
               Hedef Sınıflar
-            </label>
-            <div className="flex flex-wrap gap-2">
+            </span>
+            <div
+              role="group"
+              aria-labelledby={gradesGroupLabelId}
+              className="flex flex-wrap gap-2"
+            >
               {PRIVATE_STUDENT_GRADES.map((grade) => (
                 <label
                   key={grade}

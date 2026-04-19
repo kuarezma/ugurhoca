@@ -252,7 +252,7 @@ export function NumberPuzzle({ onScore }: GameComponentProps) {
         }`}
       >
         <p className="text-5xl font-bold text-white mb-2">{problem.text}</p>
-        <p className="text-slate-500 text-sm mt-2">{problem.hint}</p>
+        <p className="text-slate-400 text-sm mt-2">{problem.hint}</p>
         {feedback === 'correct' && (
           <p className="text-green-400 font-bold text-xl mt-3">✓ Doğru!</p>
         )}
@@ -279,6 +279,7 @@ export function NumberPuzzle({ onScore }: GameComponentProps) {
           value={input}
           onChange={(event) => setInput(event.target.value)}
           placeholder="Cevabını yaz..."
+          // eslint-disable-next-line jsx-a11y/no-autofocus -- oyun karesi açıldığında cevap inputuna otomatik odak
           autoFocus
           className="flex-1 bg-slate-800 border border-slate-700 rounded-2xl px-6 py-4 text-white text-2xl font-bold text-center focus:outline-none focus:border-amber-500 transition-colors"
         />

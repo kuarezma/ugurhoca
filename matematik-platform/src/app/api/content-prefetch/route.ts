@@ -30,7 +30,7 @@ export async function GET(request: Request) {
     return apiError(
       error instanceof Error
         ? error.message
-        : 'Icerik on hazirligi yuklenemedi.',
+        : 'İçerik ön hazırlığı yüklenemedi.',
       500,
       'content_prefetch_failed',
     );

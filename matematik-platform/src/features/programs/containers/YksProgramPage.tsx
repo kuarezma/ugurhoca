@@ -38,9 +38,9 @@ import {
 } from '@/lib/examCalculators';
 
 const levelSectionLabels: Record<ProgramTargetLevel, string> = {
-  iddiali: 'Iddiali Hedefler',
+  iddiali: 'İddialı Hedefler',
   dengeli: 'Dengeli Hedefler',
-  guvenli: 'Guvenli Hedefler',
+  guvenli: 'Güvenli Hedefler',
 };
 
 export default function YksWizardPage() {
@@ -224,7 +224,7 @@ export default function YksWizardPage() {
   const steps: ProgramStep[] = [
     { id: 1 as const, title: 'Puan Hesapla' },
     { id: 2 as const, title: 'Tercih Filtreleri' },
-    { id: 3 as const, title: 'Program Onerileri' },
+    { id: 3 as const, title: 'Program Önerileri' },
   ];
 
   return (
@@ -239,12 +239,12 @@ export default function YksWizardPage() {
         >
           <ProgramWizardHeader
             badgeClassName="bg-gradient-to-r from-violet-500 via-fuchsia-500 to-orange-400"
-            badgeLabel="YKS Tercih Sihirbazi"
+            badgeLabel="YKS Tercih Sihirbazı"
             dataYear={dataYear}
-            dataYearNote={dataYear < 2026 ? 'En guncel tam tercih verisi kullaniliyor.' : undefined}
-            description="TYT / SAY / EA / SOZ puan tahmini yapilir. Sonra gercek veritabanindaki universiteler filtrelenerek hedef seviyene uygun secenekler listelenir. Sonuclar kaydedilmez."
+            dataYearNote={dataYear < 2026 ? 'En güncel tam tercih verisi kullanılıyor.' : undefined}
+            description="TYT / SAY / EA / SÖZ puan tahmini yapılır. Sonra gerçek veritabanındaki üniversiteler filtrelenerek hedef seviyene uygun seçenekler listelenir. Sonuçlar kaydedilmez."
             isLight={isLight}
-            title="YKS Puan Hesaplama ve Universite Tercih Sihirbazi"
+            title="YKS Puan Hesaplama ve Üniversite Tercih Sihirbazı"
           />
 
           <ProgramStepTabs
@@ -275,10 +275,14 @@ export default function YksWizardPage() {
 
                       <div className="mt-3 grid grid-cols-2 gap-2">
                         <div>
-                          <label className={`mb-1 block text-[11px] font-semibold uppercase tracking-[0.14em] ${isLight ? 'text-slate-500' : 'text-slate-400'}`}>
-                            Dogru
+                          <label
+                            htmlFor={`yks-${subject.key}-correct`}
+                            className={`mb-1 block text-[11px] font-semibold uppercase tracking-[0.14em] ${isLight ? 'text-slate-500' : 'text-slate-400'}`}
+                          >
+                            Doğru
                           </label>
                           <input
+                            id={`yks-${subject.key}-correct`}
                             type="number"
                             min={0}
                             max={subject.questions}
@@ -292,10 +296,14 @@ export default function YksWizardPage() {
                           />
                         </div>
                         <div>
-                          <label className={`mb-1 block text-[11px] font-semibold uppercase tracking-[0.14em] ${isLight ? 'text-slate-500' : 'text-slate-400'}`}>
-                            Yanlis
+                          <label
+                            htmlFor={`yks-${subject.key}-wrong`}
+                            className={`mb-1 block text-[11px] font-semibold uppercase tracking-[0.14em] ${isLight ? 'text-slate-500' : 'text-slate-400'}`}
+                          >
+                            Yanlış
                           </label>
                           <input
+                            id={`yks-${subject.key}-wrong`}
                             type="number"
                             min={0}
                             max={subject.questions - value.correct}
@@ -316,10 +324,14 @@ export default function YksWizardPage() {
 
               <div className="grid gap-3 sm:grid-cols-3">
                 <div className={`rounded-2xl border p-4 ${isLight ? 'bg-white border-slate-200' : 'bg-white/5 border-white/10'}`}>
-                  <label className={`mb-1 block text-[11px] font-bold uppercase tracking-[0.18em] ${isLight ? 'text-slate-500' : 'text-slate-400'}`}>
-                    Puan Turu
+                  <label
+                    htmlFor="yks-score-type"
+                    className={`mb-1 block text-[11px] font-bold uppercase tracking-[0.18em] ${isLight ? 'text-slate-500' : 'text-slate-400'}`}
+                  >
+                    Puan Türü
                   </label>
                   <select
+                    id="yks-score-type"
                     value={scoreType}
                     onChange={(event) => setScoreType(event.target.value as YksScoreType)}
                     className={`w-full rounded-xl border px-3 py-2 text-sm font-semibold ${
@@ -329,15 +341,19 @@ export default function YksWizardPage() {
                     <option value="TYT">TYT</option>
                     <option value="SAY">SAY</option>
                     <option value="EA">EA</option>
-                    <option value="SOZ">SOZ</option>
+                    <option value="SOZ">SÖZ</option>
                   </select>
                 </div>
 
                 <div className={`rounded-2xl border p-4 ${isLight ? 'bg-white border-slate-200' : 'bg-white/5 border-white/10'}`}>
-                  <label className={`mb-1 block text-[11px] font-bold uppercase tracking-[0.18em] ${isLight ? 'text-slate-500' : 'text-slate-400'}`}>
+                  <label
+                    htmlFor="yks-obp"
+                    className={`mb-1 block text-[11px] font-bold uppercase tracking-[0.18em] ${isLight ? 'text-slate-500' : 'text-slate-400'}`}
+                  >
                     OBP (50-100)
                   </label>
                   <input
+                    id="yks-obp"
                     type="number"
                     min={50}
                     max={100}
@@ -352,10 +368,14 @@ export default function YksWizardPage() {
                 </div>
 
                 <div className={`rounded-2xl border p-4 ${isLight ? 'bg-white border-slate-200' : 'bg-white/5 border-white/10'}`}>
-                  <label className={`mb-1 block text-[11px] font-bold uppercase tracking-[0.18em] ${isLight ? 'text-slate-500' : 'text-slate-400'}`}>
-                    Manuel Siralama (Opsiyonel)
+                  <label
+                    htmlFor="yks-manual-rank"
+                    className={`mb-1 block text-[11px] font-bold uppercase tracking-[0.18em] ${isLight ? 'text-slate-500' : 'text-slate-400'}`}
+                  >
+                    Manuel Sıralama (Opsiyonel)
                   </label>
                   <input
+                    id="yks-manual-rank"
                     type="number"
                     min={1}
                     value={manualRank}
@@ -378,13 +398,13 @@ export default function YksWizardPage() {
                   </div>
                   <div>
                     <div className={`text-[11px] font-bold uppercase tracking-[0.18em] ${isLight ? 'text-slate-500' : 'text-slate-400'}`}>
-                      Tahmini Siralama
+                      Tahmini Sıralama
                     </div>
                     <div className={`mt-1 text-3xl font-black ${isLight ? 'text-slate-950' : 'text-white'}`}>{formatRank(activeRank)}</div>
                   </div>
                   <div>
                     <div className={`text-[11px] font-bold uppercase tracking-[0.18em] ${isLight ? 'text-slate-500' : 'text-slate-400'}`}>
-                      OBP Katkisi
+                      OBP Katkısı
                     </div>
                     <div className={`mt-1 text-3xl font-black ${isLight ? 'text-slate-950' : 'text-white'}`}>{yksResult.obpContribution}</div>
                   </div>
@@ -395,7 +415,7 @@ export default function YksWizardPage() {
                   onClick={() => setStep(2)}
                   className="mt-4 inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-violet-500 via-fuchsia-500 to-orange-400 px-4 py-2 text-sm font-bold text-white shadow-lg"
                 >
-                  Tercih Filtrelerine Gec
+                  Tercih Filtrelerine Geç
                   <ChevronRight className="h-4 w-4" />
                 </button>
               </div>
@@ -406,14 +426,14 @@ export default function YksWizardPage() {
             <div className={`rounded-3xl border p-5 ${isLight ? 'bg-white border-slate-200' : 'bg-white/5 border-white/10'}`}>
               <div className="mb-4 flex items-center gap-2">
                 <Filter className={`h-5 w-5 ${isLight ? 'text-fuchsia-600' : 'text-fuchsia-300'}`} />
-                <h2 className={`text-lg font-bold ${isLight ? 'text-slate-900' : 'text-white'}`}>Universite Tercih Filtreleri</h2>
+                <h2 className={`text-lg font-bold ${isLight ? 'text-slate-900' : 'text-white'}`}>Üniversite Tercih Filtreleri</h2>
               </div>
 
               <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
                 <input
                   value={query}
                   onChange={(event) => setQuery(event.target.value)}
-                  placeholder="Universite veya bolum ara"
+                  placeholder="Üniversite veya bölüm ara"
                   className={`rounded-xl border px-3 py-2 text-sm ${
                     isLight ? 'bg-slate-50 border-slate-200 text-slate-900' : 'bg-slate-900/70 border-white/10 text-white'
                   }`}
@@ -426,9 +446,9 @@ export default function YksWizardPage() {
                     isLight ? 'bg-slate-50 border-slate-200 text-slate-900' : 'bg-slate-900/70 border-white/10 text-white'
                   }`}
                 >
-                  <option value="all">Lisans + Onlisans</option>
+                  <option value="all">Lisans + Ön Lisans</option>
                   <option value="lisans">Lisans</option>
-                  <option value="onlisans">Onlisans</option>
+                  <option value="onlisans">Ön Lisans</option>
                 </select>
 
                 <select
@@ -441,9 +461,9 @@ export default function YksWizardPage() {
                     isLight ? 'bg-slate-50 border-slate-200 text-slate-900' : 'bg-slate-900/70 border-white/10 text-white'
                   }`}
                 >
-                  <option value="all">Tum Konumlar</option>
-                  <option value="domestic">Turkiye</option>
-                  <option value="international">Yurt Disi</option>
+                  <option value="all">Tüm Konumlar</option>
+                  <option value="domestic">Türkiye</option>
+                  <option value="international">Yurt Dışı</option>
                 </select>
 
                 <select
@@ -453,7 +473,7 @@ export default function YksWizardPage() {
                     isLight ? 'bg-slate-50 border-slate-200 text-slate-900' : 'bg-slate-900/70 border-white/10 text-white'
                   }`}
                 >
-                  <option value="all">Tum Sehirler</option>
+                  <option value="all">Tüm Şehirler</option>
                   {cities.map((item) => (
                     <option key={item} value={item}>
                       {formatProgramOptionLabel(item)}
@@ -468,7 +488,7 @@ export default function YksWizardPage() {
                     isLight ? 'bg-slate-50 border-slate-200 text-slate-900' : 'bg-slate-900/70 border-white/10 text-white'
                   }`}
                 >
-                  <option value="all">Tum Universite Tipleri</option>
+                  <option value="all">Tüm Üniversite Tipleri</option>
                   {universityTypes.map((item) => (
                     <option key={item} value={item}>
                       {formatProgramOptionLabel(item)}
@@ -483,7 +503,7 @@ export default function YksWizardPage() {
                     isLight ? 'bg-slate-50 border-slate-200 text-slate-900' : 'bg-slate-900/70 border-white/10 text-white'
                   }`}
                 >
-                  <option value="all">Tum Ogretim Turleri</option>
+                  <option value="all">Tüm Öğretim Türleri</option>
                   {teachingTypes.map((item) => (
                     <option key={item} value={item}>
                       {formatProgramOptionLabel(item)}
@@ -498,7 +518,7 @@ export default function YksWizardPage() {
                     isLight ? 'bg-slate-50 border-slate-200 text-slate-900' : 'bg-slate-900/70 border-white/10 text-white'
                   }`}
                 >
-                  <option value="all">Tum Diller</option>
+                  <option value="all">Tüm Diller</option>
                   {languages.map((item) => (
                     <option key={item} value={item}>
                       {formatProgramOptionLabel(item)}
@@ -514,8 +534,8 @@ export default function YksWizardPage() {
                   }`}
                 >
                   <option value="all">Burs Durumu (Hepsi)</option>
-                  <option value="none">Ucretli / Burs Yok</option>
-                  <option value="partial">Kismi Burs</option>
+                  <option value="none">Ücretli / Burs Yok</option>
+                  <option value="partial">Kısmi Burs</option>
                   <option value="full">Tam Burs</option>
                 </select>
 
@@ -529,20 +549,20 @@ export default function YksWizardPage() {
                   }`}
                 >
                   <option value="all">Hedef Seviyesi (Hepsi)</option>
-                  <option value="iddiali">Iddiali</option>
+                  <option value="iddiali">İddialı</option>
                   <option value="dengeli">Dengeli</option>
-                  <option value="guvenli">Guvenli</option>
+                  <option value="guvenli">Güvenli</option>
                 </select>
               </div>
 
               <div className={`mt-4 rounded-2xl border p-3 text-sm ${isLight ? 'bg-slate-50 border-slate-200 text-slate-700' : 'bg-white/5 border-white/10 text-slate-300'}`}>
-                Filtreye uygun program sayisi: <span className="font-bold">{evaluatedPrograms.length}</span>
+                Filtreye uygun program sayısı: <span className="font-bold">{evaluatedPrograms.length}</span>
               </div>
 
               <div className={`mt-3 rounded-2xl border p-3 text-sm ${isLight ? 'bg-fuchsia-50 border-fuchsia-100 text-slate-700' : 'bg-fuchsia-500/10 border-fuchsia-400/20 text-slate-200'}`}>
-                Veritabani kapsami: <span className="font-bold">{domesticCityCount} Turkiye sehri</span>,{' '}
-                <span className="font-bold">{internationalLocationCount} yurt disi konumu</span>,{' '}
-                <span className="font-bold">{universityCount} universite</span>,{' '}
+                Veritabanı kapsamı: <span className="font-bold">{domesticCityCount} Türkiye şehri</span>,{' '}
+                <span className="font-bold">{internationalLocationCount} yurt dışı konumu</span>,{' '}
+                <span className="font-bold">{universityCount} üniversite</span>,{' '}
                 <span className="font-bold">{programs.length} program</span>
               </div>
 
@@ -554,14 +574,14 @@ export default function YksWizardPage() {
                     isLight ? 'bg-white border-slate-200 text-slate-700' : 'bg-white/5 border-white/10 text-slate-200'
                   }`}
                 >
-                  Geri Don
+                  Geri Dön
                 </button>
                 <button
                   type="button"
                   onClick={() => setStep(3)}
                   className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-violet-500 via-fuchsia-500 to-orange-400 px-4 py-2 text-sm font-bold text-white shadow-lg"
                 >
-                  Onerileri Goster
+                  Önerileri Göster
                   <ChevronRight className="h-4 w-4" />
                 </button>
               </div>
@@ -574,7 +594,7 @@ export default function YksWizardPage() {
                 <div className="flex flex-wrap items-center justify-between gap-3">
                   <div>
                     <div className={`text-[11px] font-bold uppercase tracking-[0.18em] ${isLight ? 'text-slate-500' : 'text-slate-400'}`}>
-                      Tahmini Puan / Siralama
+                      Tahmini Puan / Sıralama
                     </div>
                     <div className={`text-2xl font-black ${isLight ? 'text-slate-950' : 'text-white'}`}>
                       {yksResult.estimatedScore} / {formatRank(activeRank)}
@@ -586,7 +606,7 @@ export default function YksWizardPage() {
                 </div>
               </div>
 
-              {loading && <div className={`rounded-3xl border p-5 text-sm ${isLight ? 'bg-white border-slate-200 text-slate-600' : 'bg-white/5 border-white/10 text-slate-300'}`}>Program verileri yukleniyor...</div>}
+              {loading && <div className={`rounded-3xl border p-5 text-sm ${isLight ? 'bg-white border-slate-200 text-slate-600' : 'bg-white/5 border-white/10 text-slate-300'}`}>Program verileri yükleniyor...</div>}
               {!loading && error && (
                 <div className={`rounded-3xl border p-5 text-sm ${isLight ? 'bg-rose-50 border-rose-200 text-rose-700' : 'bg-rose-500/10 border-rose-500/30 text-rose-200'}`}>
                   {error}
@@ -595,7 +615,7 @@ export default function YksWizardPage() {
 
               {!loading && !error && !evaluatedPrograms.length && (
                 <div className={`rounded-3xl border p-6 ${isLight ? 'bg-white border-slate-200' : 'bg-white/5 border-white/10'}`}>
-                  <p className={isLight ? 'text-slate-700' : 'text-slate-200'}>Secilen filtrelere uygun program bulunamadi.</p>
+                  <p className={isLight ? 'text-slate-700' : 'text-slate-200'}>Seçilen filtrelere uygun program bulunamadı.</p>
                 </div>
               )}
 
@@ -648,7 +668,7 @@ export default function YksWizardPage() {
 
                               <div className="mt-3 grid grid-cols-2 gap-2 text-xs sm:text-sm">
                                 <div className={`rounded-xl border px-3 py-2 ${isLight ? 'bg-white/80 border-white/70' : 'bg-black/20 border-white/10'}`}>
-                                  <div className={isLight ? 'text-slate-500' : 'text-slate-400'}>Taban Siralama</div>
+                                  <div className={isLight ? 'text-slate-500' : 'text-slate-400'}>Taban Sıralama</div>
                                   <div className={`font-black ${isLight ? 'text-slate-900' : 'text-white'}`}>{formatRank(program.base_rank)}</div>
                                 </div>
                                 <div className={`rounded-xl border px-3 py-2 ${isLight ? 'bg-white/80 border-white/70' : 'bg-black/20 border-white/10'}`}>
@@ -659,7 +679,7 @@ export default function YksWizardPage() {
 
                               <div className={`mt-3 flex flex-wrap gap-2 text-[11px] ${isLight ? 'text-slate-700' : 'text-slate-200'}`}>
                                 <span className={`rounded-full px-2 py-1 ${isLight ? 'bg-white/80' : 'bg-white/10'}`}>{program.score_type}</span>
-                                <span className={`rounded-full px-2 py-1 ${isLight ? 'bg-white/80' : 'bg-white/10'}`}>{program.level === 'lisans' ? 'Lisans' : 'Onlisans'}</span>
+                                <span className={`rounded-full px-2 py-1 ${isLight ? 'bg-white/80' : 'bg-white/10'}`}>{program.level === 'lisans' ? 'Lisans' : 'Ön Lisans'}</span>
                                 <span className={`rounded-full px-2 py-1 ${isLight ? 'bg-white/80' : 'bg-white/10'}`}>{formatProgramOptionLabel(program.university_type)}</span>
                                 <span className={`rounded-full px-2 py-1 ${isLight ? 'bg-white/80' : 'bg-white/10'}`}>
                                   Burs: %{program.scholarship_rate || 0}
@@ -680,8 +700,8 @@ export default function YksWizardPage() {
                 <div className="flex items-start gap-2">
                   <Info className="mt-0.5 h-4 w-4 shrink-0" />
                   <p>
-                    Bu arac sonuc kaydetmez. Oneriler anlik puan/siralama ve filtrelere gore uretilir. Resmi tercih oncesi
-                    mutlaka OSYM kilavuzu ve YOK Atlas verilerini tekrar kontrol et.
+                    Bu araç sonuç kaydetmez. Öneriler anlık puan/sıralama ve filtrelere göre üretilir. Resmi tercih öncesi
+                    mutlaka ÖSYM kılavuzu ve YÖK Atlas verilerini tekrar kontrol et.
                   </p>
                 </div>
               </div>
@@ -694,14 +714,14 @@ export default function YksWizardPage() {
                     isLight ? 'bg-white border-slate-200 text-slate-700' : 'bg-white/5 border-white/10 text-slate-200'
                   }`}
                 >
-                  Filtreleri Duzenle
+                  Filtreleri Düzenle
                 </button>
                 <button
                   type="button"
                   onClick={() => setStep(1)}
                   className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-violet-500 via-fuchsia-500 to-orange-400 px-4 py-2 text-sm font-bold text-white"
                 >
-                  Netleri Guncelle
+                  Netleri Güncelle
                   <Target className="h-4 w-4" />
                 </button>
               </div>

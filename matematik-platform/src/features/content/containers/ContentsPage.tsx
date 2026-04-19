@@ -21,6 +21,10 @@ import { useToast } from '@/components/Toast';
 import { getErrorMessage } from '@/lib/error-utils';
 import DeferredFloatingShapes from '@/components/DeferredFloatingShapes';
 import ContentCard from '@/features/content/components/ContentCard';
+import { Skeleton } from '@/components/ui/Skeleton';
+import { EmptyState } from '@/components/ui/EmptyState';
+import { Modal } from '@/components/ui/Modal';
+import { Button } from '@/components/ui/Button';
 
 const ContentCommentsModal = dynamic(
   () => import('@/features/content/components/ContentCommentsModal'),
@@ -256,6 +260,8 @@ function ContentsPageInner({
   );
   const [totalCount, setTotalCount] = useState(initialTotalCount);
   const [authResolved, setAuthResolved] = useState(false);
+  const [deleteCandidate, setDeleteCandidate] = useState<ContentDocument | null>(null);
+  const [deleting, setDeleting] = useState(false);
   const loadMoreRef = useRef<HTMLDivElement>(null);
   const loadRequestIdRef = useRef(0);
   const worksheetRequestIdRef = useRef(0);
@@ -688,7 +694,8 @@ function ContentsPageInner({
           file_url: uploadedFile.publicUrl,
         }));
       } catch (error) {
-        window.alert(
+        showToast(
+          'error',
           'Dosya yüklenemedi: ' +
             (error instanceof Error ? error.message : 'Bilinmeyen hata'),
         );
@@ -696,7 +703,7 @@ function ContentsPageInner({
         setIsSubmitting(false);
       }
     },
-    [],
+    [showToast],
   );
 
   const handleQuickAddSubmit = useCallback(
@@ -714,14 +721,15 @@ function ContentsPageInner({
           typeof selectedWorksheetGrade !== 'number' ||
           !SUPPORTED_WORKSHEET_QUICK_ADD_GRADES.includes(selectedWorksheetGrade)
         ) {
-          window.alert(
+          showToast(
+            'warning',
             'Yaprak test için desteklenen bir sınıf düzeyi seçmelisiniz.',
           );
           return;
         }
 
         if (!formData.learning_outcome?.trim()) {
-          window.alert('Yaprak test için bir kazanım seçmelisiniz.');
+          showToast('warning', 'Yaprak test için bir kazanım seçmelisiniz.');
           return;
         }
       }
@@ -731,7 +739,8 @@ function ContentsPageInner({
         !formData.video_url?.trim() &&
         !formData.solution_url?.trim()
       ) {
-        window.alert(
+        showToast(
+          'warning',
           'En az bir dosya, bağlantı veya video URL alanı doldurmalısınız.',
         );
         return;
@@ -764,7 +773,8 @@ function ContentsPageInner({
           setFormData({});
         }, 1500);
       } catch (error) {
-        window.alert(
+        showToast(
+          'error',
           'Kaydetme hatası: ' +
             (error instanceof Error ? error.message : 'Bilinmeyen hata'),
         );
@@ -772,7 +782,7 @@ function ContentsPageInner({
         setIsSubmitting(false);
       }
     },
-    [formData, isSubmitting, refreshSelectedWorksheetGrade, selectedWorksheetGrade],
+    [formData, isSubmitting, refreshSelectedWorksheetGrade, selectedWorksheetGrade, showToast],
   );
 
   const handleOpenEdit = useCallback((content: ContentDocument) => {
@@ -869,17 +879,24 @@ function ContentsPageInner({
     ],
   );
 
-  const handleDeleteDocument = useCallback(
-    async (content: ContentDocument) => {
-      if (!confirm('Bu içeriği silmek istediğinize emin misiniz?')) {
-        return;
-      }
+  const handleDeleteDocument = useCallback((content: ContentDocument) => {
+    setDeleteCandidate(content);
+  }, []);
 
-      await deleteContentDocument(content.id);
-      removeDocumentFromState(content.id);
-    },
-    [removeDocumentFromState],
-  );
+  const confirmDeleteDocument = useCallback(async () => {
+    if (!deleteCandidate) return;
+    setDeleting(true);
+    try {
+      await deleteContentDocument(deleteCandidate.id);
+      removeDocumentFromState(deleteCandidate.id);
+      showToast('success', 'İçerik silindi.');
+      setDeleteCandidate(null);
+    } catch (error) {
+      showToast('error', `Silme hatası: ${getErrorMessage(error)}`);
+    } finally {
+      setDeleting(false);
+    }
+  }, [deleteCandidate, removeDocumentFromState, showToast]);
 
   const filteredContents = documents.filter((content) => {
     if (!content.title) return false;
@@ -1075,7 +1092,7 @@ function ContentsPageInner({
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
-            className="glass rounded-2xl p-4 sm:p-6 mb-8"
+            className="glass rounded-2xl p-4 sm:p-6 mb-8 sticky top-20 z-30 border border-white/10 shadow-brand-glow/40 backdrop-blur-xl"
           >
             <div className="flex flex-col lg:flex-row gap-4">
               <div className="flex-1 relative">
@@ -1228,7 +1245,7 @@ function ContentsPageInner({
               </button>
               {worksheetGradeLabel && (
                 <>
-                  <ChevronRight className="w-4 h-4 text-slate-500" />
+                  <ChevronRight className="w-4 h-4 text-slate-400" />
                   <button
                     onClick={() => setSelectedWorksheetOutcome(null)}
                     className={`rounded-full border px-4 py-2 transition-colors ${
@@ -1243,7 +1260,7 @@ function ContentsPageInner({
               )}
               {selectedWorksheetOutcome && (
                 <>
-                  <ChevronRight className="w-4 h-4 text-slate-500" />
+                  <ChevronRight className="w-4 h-4 text-slate-400" />
                   <span className="rounded-full border border-purple-500/30 bg-purple-500/15 px-4 py-2 text-purple-100">
                     {selectedWorksheetOutcome}
                   </span>
@@ -1290,18 +1307,19 @@ function ContentsPageInner({
                 ))}
               </div>
             ) : worksheetLoading ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-7">
+              <div
+                className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-7"
+                aria-busy="true"
+                aria-live="polite"
+              >
                 {[...Array(6)].map((_, index) => (
                   <div
                     key={index}
-                    className="glass rounded-3xl overflow-hidden border border-white/10"
+                    className="glass rounded-3xl overflow-hidden border border-white/10 p-4 sm:p-6 space-y-4"
                   >
-                    <div className="h-2 bg-slate-700 animate-pulse" />
-                    <div className="p-4 sm:p-6 space-y-4">
-                      <div className="w-14 h-14 rounded-xl bg-slate-700 animate-pulse" />
-                      <div className="h-5 bg-slate-700 rounded w-2/3 animate-pulse" />
-                      <div className="h-4 bg-slate-700 rounded w-1/2 animate-pulse" />
-                    </div>
+                    <Skeleton className="h-14 w-14 rounded-xl" />
+                    <Skeleton className="h-5 w-2/3" />
+                    <Skeleton className="h-4 w-1/2" />
                   </div>
                 ))}
               </div>
@@ -1359,7 +1377,7 @@ function ContentsPageInner({
                                 <span className="rounded-full border border-cyan-400/20 bg-cyan-500/10 px-3 py-1 text-xs font-semibold text-cyan-200">
                                   {entry.count} test
                                 </span>
-                                <ChevronRight className="h-5 w-5 text-slate-500 transition-colors group-hover:text-cyan-200" />
+                                <ChevronRight className="h-5 w-5 text-slate-400 transition-colors group-hover:text-cyan-200" />
                               </div>
                             </motion.button>
                           );
@@ -1369,14 +1387,12 @@ function ContentsPageInner({
                   ))}
                 </div>
               ) : (
-                <div className="glass rounded-3xl border border-white/10 p-8 text-center">
-                  <p className="text-xl font-semibold text-white">
-                    {worksheetGradeLabel} için kazanım bulunamadı
-                  </p>
-                  <p className="mt-3 text-slate-400">
-                    Bu sınıf düzeyine henüz yaprak test yüklenmemiş.
-                  </p>
-                </div>
+                <EmptyState
+                  tone="soft"
+                  icon={<FolderOpen className="h-6 w-6" aria-hidden="true" />}
+                  title={`${worksheetGradeLabel} için kazanım bulunamadı`}
+                  description="Bu sınıf düzeyine henüz yaprak test yüklenmemiş."
+                />
               )
             ) : viewMode === 'grid' ? (
               filteredWorksheetTests.length > 0 ? (
@@ -1402,14 +1418,12 @@ function ContentsPageInner({
                   ))}
                 </div>
               ) : (
-                <div className="glass rounded-3xl border border-white/10 p-8 text-center">
-                  <p className="text-xl font-semibold text-white">
-                    Bu kazanımda test bulunamadı
-                  </p>
-                  <p className="mt-3 text-slate-400">
-                    Uygun test yüklendiğinde burada listelenecek.
-                  </p>
-                </div>
+                <EmptyState
+                  tone="soft"
+                  icon={<FolderOpen className="h-6 w-6" aria-hidden="true" />}
+                  title="Bu kazanımda test bulunamadı"
+                  description="Uygun test yüklendiğinde burada listelenecek."
+                />
               )
             ) : filteredWorksheetTests.length > 0 ? (
               <div className="space-y-4">
@@ -1434,37 +1448,49 @@ function ContentsPageInner({
                 ))}
               </div>
             ) : (
-              <div className="glass rounded-3xl border border-white/10 p-8 text-center">
-                <p className="text-xl font-semibold text-white">
-                  Bu kazanımda test bulunamadı
-                </p>
-                <p className="mt-3 text-slate-400">
-                  Uygun test yüklendiğinde burada listelenecek.
-                </p>
-              </div>
+              <EmptyState
+                tone="soft"
+                icon={<FolderOpen className="h-6 w-6" aria-hidden="true" />}
+                title="Bu kazanımda test bulunamadı"
+                description="Uygun test yüklendiğinde burada listelenecek."
+              />
             )
           ) : loading && documents.length === 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-7">
+            <div
+              className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-7"
+              aria-busy="true"
+              aria-live="polite"
+            >
               {[...Array(6)].map((_, index) => (
                 <div
                   key={index}
-                  className="glass rounded-3xl overflow-hidden border border-white/10"
+                  className="glass rounded-3xl overflow-hidden border border-white/10 p-4 sm:p-6 space-y-4"
                 >
-                  <div className="h-2 bg-slate-700 animate-pulse" />
-                  <div className="p-4 sm:p-6 space-y-4">
-                    <div className="flex items-start gap-3">
-                      <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-slate-700 animate-pulse" />
-                      <div className="flex-1 space-y-2">
-                        <div className="h-4 bg-slate-700 rounded w-3/4 animate-pulse" />
-                        <div className="h-3 bg-slate-700 rounded w-1/2 animate-pulse" />
-                      </div>
+                  <div className="flex items-start gap-3">
+                    <Skeleton className="h-12 w-12 sm:h-14 sm:w-14 rounded-xl" />
+                    <div className="flex-1 space-y-2">
+                      <Skeleton className="h-4 w-3/4" />
+                      <Skeleton className="h-3 w-1/2" />
                     </div>
-                    <div className="h-6 bg-slate-700 rounded w-full animate-pulse" />
-                    <div className="h-4 bg-slate-700 rounded w-2/3 animate-pulse" />
                   </div>
+                  <Skeleton className="h-6 w-full" />
+                  <Skeleton className="h-4 w-2/3" />
                 </div>
               ))}
             </div>
+          ) : filteredContents.length === 0 ? (
+            <EmptyState
+              icon={<Filter className="h-6 w-6" aria-hidden="true" />}
+              title="Aradığın kriterlerde içerik yok"
+              description="Farklı bir sınıf seviyesi, tür ya da anahtar kelime dene."
+              action={
+                searchTerm ? (
+                  <Button variant="secondary" onClick={() => setSearchTerm('')}>
+                    Aramayı temizle
+                  </Button>
+                ) : undefined
+              }
+            />
           ) : viewMode === 'grid' ? (
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-7">
               {filteredContents.map((content, index) => (
@@ -1586,6 +1612,37 @@ function ContentsPageInner({
           />
         )}
       </AnimatePresence>
+
+      <Modal
+        open={Boolean(deleteCandidate)}
+        onClose={() => (deleting ? undefined : setDeleteCandidate(null))}
+        title="İçeriği silmek istediğine emin misin?"
+        description={deleteCandidate?.title ?? undefined}
+        size="sm"
+        disableBackdropClose={deleting}
+        footer={
+          <>
+            <Button
+              variant="ghost"
+              onClick={() => setDeleteCandidate(null)}
+              disabled={deleting}
+            >
+              Vazgeç
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={confirmDeleteDocument}
+              loading={deleting}
+            >
+              Sil
+            </Button>
+          </>
+        }
+      >
+        <p className="text-sm text-slate-600 dark:text-slate-300">
+          Bu işlem geri alınamaz. İçerik kalıcı olarak kaldırılacak.
+        </p>
+      </Modal>
     </main>
   );
 }
@@ -1594,8 +1651,29 @@ export default function ContentsPage(props: ContentsPageProps) {
   return (
     <Suspense
       fallback={
-        <div className="min-h-screen bg-slate-900 flex items-center justify-center">
-          <div className="animate-spin w-8 h-8 border-4 border-purple-500 border-t-transparent rounded-full" />
+        <div className="min-h-screen bg-slate-900 px-4 py-24">
+          <div className="mx-auto max-w-6xl space-y-6">
+            <Skeleton className="h-10 w-64" />
+            <Skeleton className="h-24 w-full" />
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-7">
+              {[...Array(6)].map((_, i) => (
+                <div
+                  key={i}
+                  className="glass rounded-3xl border border-white/10 p-4 sm:p-6 space-y-4"
+                >
+                  <div className="flex items-start gap-3">
+                    <Skeleton className="h-14 w-14 rounded-xl" />
+                    <div className="flex-1 space-y-2">
+                      <Skeleton className="h-4 w-3/4" />
+                      <Skeleton className="h-3 w-1/2" />
+                    </div>
+                  </div>
+                  <Skeleton className="h-6 w-full" />
+                  <Skeleton className="h-4 w-2/3" />
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
       }
     >

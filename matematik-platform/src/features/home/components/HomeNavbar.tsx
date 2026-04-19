@@ -93,14 +93,17 @@ export function HomeNavbar({ onLogout, user }: HomeNavbarProps) {
                   </span>
                 </Link>
                 <button
+                  type="button"
                   onClick={onLogout}
-                  className={`ml-2 transition-colors ${
+                  aria-label="Çıkış yap"
+                  title="Çıkış yap"
+                  className={`ml-2 inline-flex h-11 w-11 items-center justify-center rounded-xl transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary ${
                     isLight
-                      ? 'text-slate-500 hover:text-slate-900'
-                      : 'text-slate-400 hover:text-white'
+                      ? 'text-slate-400 hover:bg-slate-100 hover:text-slate-900'
+                      : 'text-slate-400 hover:bg-white/5 hover:text-white'
                   }`}
                 >
-                  <LogOut className="h-5 w-5" />
+                  <LogOut className="h-5 w-5" aria-hidden="true" />
                 </button>
               </>
             ) : (
@@ -125,14 +128,24 @@ export function HomeNavbar({ onLogout, user }: HomeNavbarProps) {
             )}
           </div>
 
-          <button className="md:hidden" onClick={() => setIsOpen(!isOpen)}>
-            {isOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+          <button
+            type="button"
+            className={`md:hidden inline-flex h-11 w-11 items-center justify-center rounded-xl transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary ${
+              isLight ? 'text-slate-700 hover:bg-slate-100' : 'text-white hover:bg-white/5'
+            }`}
+            onClick={() => setIsOpen(!isOpen)}
+            aria-expanded={isOpen}
+            aria-controls="mobile-navigation"
+            aria-label={isOpen ? 'Menüyü kapat' : 'Menüyü aç'}
+          >
+            {isOpen ? <X className="h-6 w-6" aria-hidden="true" /> : <Menu className="h-6 w-6" aria-hidden="true" />}
           </button>
         </div>
       </div>
 
       {isOpen && (
         <div
+          id="mobile-navigation"
           className={`animate-fade-in border-t md:hidden ${
             isLight
               ? 'border-slate-200 bg-white'
@@ -174,7 +187,11 @@ export function HomeNavbar({ onLogout, user }: HomeNavbarProps) {
                   >
                     {user.isAdmin ? 'Admin Panel' : 'Profil'}
                   </Link>
-                  <button onClick={onLogout} className="py-2 text-red-400">
+                  <button
+                    type="button"
+                    onClick={onLogout}
+                    className="min-h-[44px] py-2 text-left text-red-400 hover:text-red-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary"
+                  >
                     Çıkış
                   </button>
                 </>

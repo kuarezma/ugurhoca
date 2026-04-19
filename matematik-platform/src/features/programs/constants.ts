@@ -25,7 +25,7 @@ export const PROGRAM_LEVEL_TONES: Record<ProgramTargetLevel, ProgramLevelTone> =
 };
 
 export const PROGRAM_LEVEL_BADGE_LABELS: Record<ProgramTargetLevel, string> = {
-  iddiali: 'Iddiali',
+  iddiali: 'İddialı',
   dengeli: 'Dengeli',
-  guvenli: 'Guvenli',
+  guvenli: 'Güvenli',
 };

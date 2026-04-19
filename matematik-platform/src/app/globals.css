@@ -16,8 +16,19 @@
   --border-strong: rgba(148, 163, 184, 0.35);
   --shadow: rgba(15, 23, 42, 0.35);
   --scrollbar-track: #1e293b;
-  --scrollbar-thumb-start: #8b5cf6;
+  --scrollbar-thumb-start: #7c3aed;
   --scrollbar-thumb-end: #ec4899;
+
+  --brand-primary: #7c3aed;
+  --brand-primary-soft: #a78bfa;
+  --brand-primary-deep: #5b21b6;
+  --brand-secondary: #06b6d4;
+  --brand-accent: #facc15;
+  --brand-success: #22c55e;
+  --brand-danger: #ef4444;
+  --brand-pink: #ec4899;
+  --brand-orange: #fb923c;
+  --ring: rgba(124, 58, 237, 0.55);
 }
 
 html[data-theme='light'] {
@@ -40,8 +51,19 @@ html[data-theme='light'] {
   --border-strong: rgba(100, 116, 139, 0.35);
   --shadow: rgba(148, 163, 184, 0.18);
   --scrollbar-track: #e2e8f0;
-  --scrollbar-thumb-start: #6366f1;
-  --scrollbar-thumb-end: #db2777;
+  --scrollbar-thumb-start: #7c3aed;
+  --scrollbar-thumb-end: #ec4899;
+
+  --brand-primary: #7c3aed;
+  --brand-primary-soft: #c4b5fd;
+  --brand-primary-deep: #5b21b6;
+  --brand-secondary: #0891b2;
+  --brand-accent: #eab308;
+  --brand-success: #16a34a;
+  --brand-danger: #dc2626;
+  --brand-pink: #db2777;
+  --brand-orange: #ea580c;
+  --ring: rgba(124, 58, 237, 0.4);
 }
 
 * {
@@ -54,8 +76,16 @@ html {
   scroll-behavior: smooth;
   -webkit-text-size-adjust: 100%;
   min-height: 100%;
+  /*
+   * `overflow-x: hidden` tarayıcıda yeni bir scroll container yaratır;
+   * `body` de aynı değeri aldığında iki ayrı scroll container oluşur ve
+   * bazı Chrome/macOS sürümlerinde trackpad ile dikey kaydırma viewport'a
+   * iletilmeyebilir. Bu yüzden yatay taşmayı `clip` ile kırpıyoruz:
+   * `clip` scroll container oluşturmaz, yalnızca görüntüyü keser.
+   * Eski tarayıcılar için `hidden` fallback'i koruyoruz.
+   */
   overflow-x: hidden;
-  overscroll-behavior-x: none;
+  overflow-x: clip;
 }
 
 body {
@@ -65,7 +95,7 @@ body {
   min-height: 100vh;
   min-height: 100dvh;
   overflow-x: hidden;
-  overscroll-behavior-y: none;
+  overflow-x: clip;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   transition: background-color 0.2s ease, color 0.2s ease;
@@ -80,6 +110,22 @@ textarea {
 [class*='overflow-y-auto'],
 [class*='overflow-auto'] {
   -webkit-overflow-scrolling: touch;
+}
+
+/*
+ * Gradient text (bg-clip-text + text-transparent) fix for Turkish diacritics.
+ *
+ * Türkçe karakterlerin (ğ, ş, ö, ü, ç, İ) üstündeki/altındaki işaretler
+ * standart satır kutusunun üstüne taştığında `background-clip: text`
+ * kırpması bu parçaları keser ve harf şeffaf/yanlış renkte görünür.
+ * Padding'i inline-level element'te bıraktığımız için vertical layout
+ * etkilenmez; sadece arka planın (ve dolayısıyla clip'in) dikey kapsamı
+ * genişler ve diakritikler gradient içinde kalır.
+ */
+.bg-clip-text {
+  padding-block: 0.12em;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
 }
 
 @keyframes floatY {
@@ -231,6 +277,119 @@ textarea {
 
 .animate-sparkle {
   animation: sparkle var(--sparkle-duration, 2.8s) ease-in-out infinite;
+}
+
+@keyframes wiggle {
+  0%, 100% { transform: rotate(0deg); }
+  20% { transform: rotate(-6deg); }
+  40% { transform: rotate(6deg); }
+  60% { transform: rotate(-4deg); }
+  80% { transform: rotate(4deg); }
+}
+
+@keyframes pop {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.08); }
+  100% { transform: scale(1); }
+}
+
+@keyframes shine {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+@keyframes shimmer {
+  0% { background-position: -450px 0; }
+  100% { background-position: 450px 0; }
+}
+
+@keyframes gradientFlow {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+@keyframes ripple {
+  0% { transform: scale(0); opacity: 0.6; }
+  100% { transform: scale(3.2); opacity: 0; }
+}
+
+.animate-wiggle-hover:hover {
+  animation: wiggle 0.6s ease-in-out;
+}
+
+.animate-pop {
+  animation: pop 0.22s ease-out;
+}
+
+.animate-shine {
+  background: linear-gradient(100deg, transparent 40%, rgba(255, 255, 255, 0.55) 50%, transparent 60%);
+  background-size: 200% 100%;
+  animation: shine 2.2s linear infinite;
+}
+
+.shimmer-bg {
+  background: linear-gradient(90deg, rgba(148, 163, 184, 0.08) 0%, rgba(148, 163, 184, 0.18) 50%, rgba(148, 163, 184, 0.08) 100%);
+  background-size: 450px 100%;
+  animation: shimmer 1.4s ease-in-out infinite;
+}
+
+.animate-gradient-flow {
+  background-size: 200% 200%;
+  animation: gradientFlow 6s ease infinite;
+}
+
+.focus-ring {
+  outline: none;
+}
+.focus-ring:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+  border-radius: 0.5rem;
+}
+
+.tilt-on-hover {
+  transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.3s ease;
+  will-change: transform;
+}
+.tilt-on-hover:hover {
+  transform: translateY(-4px) rotate(-0.4deg);
+}
+
+.ripple-container {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.ripple-span {
+  position: absolute;
+  border-radius: 9999px;
+  background: currentColor;
+  opacity: 0.35;
+  pointer-events: none;
+  animation: ripple 0.6s ease-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  .animate-shine,
+  .animate-gradient-flow,
+  .animate-float-y,
+  .animate-pulse-soft,
+  .animate-drift-xy,
+  .animate-bob-soft,
+  .animate-icon-bob,
+  .animate-sparkle,
+  .shimmer-bg {
+    animation: none !important;
+  }
 }
 
 .defer-section {

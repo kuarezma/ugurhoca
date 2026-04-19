@@ -193,7 +193,7 @@ function ChatBubble() {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 16, scale: 0.98 }}
             transition={{ type: "spring", stiffness: 380, damping: 28 }}
-            className="fixed bottom-24 right-6 z-[100] flex h-[560px] w-[400px] max-h-[calc(100vh-7rem)] flex-col overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--bg-elevated)] shadow-2xl"
+            className="fixed bottom-24 right-4 z-[100] flex h-[min(560px,calc(100dvh-7rem))] w-[min(400px,calc(100vw-2rem))] flex-col overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--bg-elevated)] shadow-2xl sm:right-6"
             style={{ boxShadow: "0 25px 50px var(--shadow, rgba(0,0,0,0.25))" }}
           >
             {/* Başlık */}
@@ -334,6 +334,7 @@ function ChatBubble() {
                                   onChange={(e) => setReplyText(e.target.value)}
                                   placeholder="Cevabınız..."
                                   className="w-full resize-none rounded-xl border border-[var(--border)] bg-[var(--bg-soft)] px-3 py-2 text-sm text-[var(--text)] outline-none focus:border-violet-500"
+                                  // eslint-disable-next-line jsx-a11y/no-autofocus -- sohbet açılınca cevap alanına otomatik odak
                                   autoFocus
                                 />
                                 <div className="flex gap-2">
