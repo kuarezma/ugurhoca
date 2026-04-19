@@ -20,7 +20,7 @@ export function ThemeToggle({ compact = false, className = '' }: ThemeToggleProp
       aria-label={label}
       title={label}
       className={[
-        'theme-toggle inline-flex items-center justify-center gap-2 rounded-xl border transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:ring-offset-2',
+        'theme-toggle inline-flex shrink-0 items-center justify-center gap-2 rounded-xl border transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:ring-offset-2',
         compact ? 'h-11 w-11' : 'h-11 px-4',
         className,
       ].join(' ')}

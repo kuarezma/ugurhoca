@@ -35,8 +35,8 @@ export function HomeNavbar({ onLogout, user }: HomeNavbarProps) {
           : 'border-slate-800/50 bg-slate-900/95'
       }`}
     >
-      <div className="mx-auto max-w-6xl px-4">
-        <div className="flex h-14 items-center justify-between">
+      <div className="mx-auto max-w-6xl px-4 pl-[max(1rem,env(safe-area-inset-left))] pr-[max(1rem,env(safe-area-inset-right))]">
+        <div className="flex h-14 w-full items-center gap-2 sm:gap-3">
           <Link
             href="/"
             aria-current={isHomePage ? 'page' : undefined}
@@ -45,7 +45,7 @@ export function HomeNavbar({ onLogout, user }: HomeNavbarProps) {
                 event.preventDefault();
               }
             }}
-            className="flex items-center gap-2"
+            className="flex shrink-0 items-center gap-2"
           >
             <Image
               src="/ugur.jpeg"
@@ -63,23 +63,29 @@ export function HomeNavbar({ onLogout, user }: HomeNavbarProps) {
             </span>
           </Link>
 
-          <div className="hidden items-center gap-4 lg:flex xl:gap-5">
-            {HOME_CATEGORIES.map((category) => (
-              <Link
-                key={category.id}
-                href={category.href}
-                className={`whitespace-nowrap text-sm font-medium transition-colors ${
-                  isLight
-                    ? 'text-slate-600 hover:text-slate-900'
-                    : 'text-slate-400 hover:text-white'
-                }`}
-              >
-                {category.title}
-              </Link>
-            ))}
+          {/* Orta menü: dar genişlikte taşma yerine yatay kaydır — tüm tarayıcılar + PWA */}
+          <div className="hidden min-h-0 min-w-0 flex-1 items-center lg:flex">
+            <nav
+              aria-label="Ana menü"
+              className="mx-auto flex max-w-full items-center gap-2 overflow-x-auto overflow-y-hidden py-1 [scrollbar-width:thin] xl:gap-3"
+            >
+              {HOME_CATEGORIES.map((category) => (
+                <Link
+                  key={category.id}
+                  href={category.href}
+                  className={`shrink-0 whitespace-nowrap text-sm font-medium transition-colors ${
+                    isLight
+                      ? 'text-slate-600 hover:text-slate-900'
+                      : 'text-slate-400 hover:text-white'
+                  }`}
+                >
+                  {category.title}
+                </Link>
+              ))}
+            </nav>
           </div>
 
-          <div className="hidden items-center gap-2 lg:flex xl:gap-3">
+          <div className="hidden shrink-0 items-center gap-1.5 lg:flex xl:gap-2.5">
             <ThemeToggle compact />
             {showStudentMessages && user?.id ? (
               <HomeNavbarMessagesButton
@@ -143,7 +149,7 @@ export function HomeNavbar({ onLogout, user }: HomeNavbarProps) {
             )}
           </div>
 
-          <div className="flex items-center gap-1 lg:hidden">
+          <div className="ml-auto flex shrink-0 items-center gap-1 lg:hidden">
             {showStudentMessages && user?.id ? (
               <HomeNavbarMessagesButton
                 userId={user.id}
