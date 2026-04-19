@@ -63,12 +63,12 @@ export function HomeNavbar({ onLogout, user }: HomeNavbarProps) {
             </span>
           </Link>
 
-          <div className="hidden items-center gap-6 md:flex">
+          <div className="hidden items-center gap-4 lg:flex xl:gap-5">
             {HOME_CATEGORIES.map((category) => (
               <Link
                 key={category.id}
                 href={category.href}
-                className={`text-sm font-medium transition-colors ${
+                className={`whitespace-nowrap text-sm font-medium transition-colors ${
                   isLight
                     ? 'text-slate-600 hover:text-slate-900'
                     : 'text-slate-400 hover:text-white'
@@ -79,7 +79,7 @@ export function HomeNavbar({ onLogout, user }: HomeNavbarProps) {
             ))}
           </div>
 
-          <div className="hidden items-center gap-3 md:flex">
+          <div className="hidden items-center gap-2 lg:flex xl:gap-3">
             <ThemeToggle compact />
             {showStudentMessages && user?.id ? (
               <HomeNavbarMessagesButton
@@ -103,7 +103,7 @@ export function HomeNavbar({ onLogout, user }: HomeNavbarProps) {
                   <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-indigo-500 to-purple-500 text-sm font-bold">
                     {user.name?.[0] || '?'}
                   </div>
-                  <span className="font-medium">
+                  <span className="hidden font-medium xl:inline">
                     {user.name?.split(' ')[0]}
                   </span>
                 </Link>
@@ -112,7 +112,7 @@ export function HomeNavbar({ onLogout, user }: HomeNavbarProps) {
                   onClick={onLogout}
                   aria-label="Çıkış yap"
                   title="Çıkış yap"
-                  className={`ml-2 inline-flex h-11 w-11 items-center justify-center rounded-xl transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary ${
+                  className={`inline-flex h-11 w-11 items-center justify-center rounded-xl transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary ${
                     isLight
                       ? 'text-slate-400 hover:bg-slate-100 hover:text-slate-900'
                       : 'text-slate-400 hover:bg-white/5 hover:text-white'
@@ -143,7 +143,7 @@ export function HomeNavbar({ onLogout, user }: HomeNavbarProps) {
             )}
           </div>
 
-          <div className="flex items-center gap-1 md:hidden">
+          <div className="flex items-center gap-1 lg:hidden">
             {showStudentMessages && user?.id ? (
               <HomeNavbarMessagesButton
                 userId={user.id}
@@ -174,7 +174,7 @@ export function HomeNavbar({ onLogout, user }: HomeNavbarProps) {
       {isOpen && (
         <div
           id="mobile-navigation"
-          className={`animate-fade-in border-t md:hidden ${
+          className={`animate-fade-in border-t lg:hidden ${
             isLight
               ? 'border-slate-200 bg-white'
               : 'border-slate-800 bg-slate-900'
