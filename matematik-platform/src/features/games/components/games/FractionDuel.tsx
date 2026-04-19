@@ -1,9 +1,13 @@
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState, type ReactNode } from 'react';
 import { motion } from 'framer-motion';
 import { Play, RotateCcw, Trophy } from 'lucide-react';
 import type { GameComponentProps } from '@/features/games/types';
+import {
+  FractionBlock,
+  mathClass,
+} from '@/features/games/components/math/MathTypography';
 
 type Cmp = 'left' | 'right' | 'equal';
 
@@ -95,8 +99,6 @@ export function FractionDuel({ onScore }: GameComponentProps) {
     setTimeLeft(60);
     setStreak(0);
   };
-
-  const fmt = (pair: [number, number]) => `${pair[0]}/${pair[1]}`;
 
   if (gameState === 'idle') {
     return (
@@ -192,27 +194,46 @@ export function FractionDuel({ onScore }: GameComponentProps) {
               : 'border-slate-700'
         }`}
       >
-        <p className="mb-6 text-sm font-semibold uppercase tracking-wider text-slate-500">
+        <p
+          className={`mb-6 text-sm font-semibold uppercase tracking-wider text-slate-500 ${mathClass}`}
+        >
           Hangisi büyük?
         </p>
-        <div className="flex flex-wrap items-center justify-center gap-4 text-5xl font-bold text-white md:gap-8">
-          <span className="rounded-2xl bg-white/5 px-6 py-4 ring-1 ring-white/10">
-            {fmt(left)}
+        <div
+          className={`flex flex-wrap items-center justify-center gap-3 md:gap-6 ${mathClass}`}
+        >
+          <div className="rounded-2xl bg-white/5 px-4 py-3 ring-1 ring-white/10">
+            <FractionBlock den={left[1]} num={left[0]} size="lg" />
+          </div>
+          <span
+            className="select-none px-1 text-sm font-medium uppercase tracking-widest text-slate-500"
+            aria-hidden
+          >
+            vs
           </span>
-          <span className="text-slate-500">—</span>
-          <span className="rounded-2xl bg-white/5 px-6 py-4 ring-1 ring-white/10">
-            {fmt(right)}
-          </span>
+          <div className="rounded-2xl bg-white/5 px-4 py-3 ring-1 ring-white/10">
+            <FractionBlock den={right[1]} num={right[0]} size="lg" />
+          </div>
         </div>
         {feedback === 'wrong' && (
-          <p className="mt-4 text-sm text-red-400">
-            Doğru seçenek:{' '}
-            {answer === 'equal'
-              ? 'Eşitler'
-              : answer === 'left'
-                ? `Sol (${fmt(left)})`
-                : `Sağ (${fmt(right)})`}
-          </p>
+          <div
+            className={`mt-4 flex flex-wrap items-center justify-center gap-2 text-sm text-red-400 ${mathClass}`}
+          >
+            <span>Doğru:</span>
+            {answer === 'equal' ? (
+              <span className="font-semibold">Eşitler</span>
+            ) : answer === 'left' ? (
+              <>
+                <span>Sol</span>
+                <FractionBlock den={left[1]} num={left[0]} size="sm" />
+              </>
+            ) : (
+              <>
+                <span>Sağ</span>
+                <FractionBlock den={right[1]} num={right[0]} size="sm" />
+              </>
+            )}
+          </div>
         )}
       </motion.div>
 
@@ -225,11 +246,49 @@ export function FractionDuel({ onScore }: GameComponentProps) {
       <div className="grid gap-3 sm:grid-cols-3">
         {(
           [
-            { key: 'left' as Cmp, label: `Sol (${fmt(left)}) büyük` },
-            { key: 'equal' as Cmp, label: 'Eşitler' },
-            { key: 'right' as Cmp, label: `Sağ (${fmt(right)}) büyük` },
-          ] as const
-        ).map(({ key, label }) => (
+            {
+              key: 'left' as Cmp,
+              className:
+                'border-rose-400/40 bg-gradient-to-br from-rose-500 to-pink-600 text-white shadow-lg shadow-rose-500/25 hover:brightness-110',
+              label: (
+                <span className="flex flex-col items-center gap-2">
+                  <span className="text-[11px] font-bold uppercase tracking-wide opacity-95">
+                    Sol büyük
+                  </span>
+                  <FractionBlock den={left[1]} num={left[0]} size="sm" />
+                </span>
+              ),
+            },
+            {
+              key: 'equal' as Cmp,
+              className:
+                'border-amber-300/50 bg-gradient-to-br from-amber-400 to-yellow-400 text-slate-900 shadow-lg shadow-amber-400/30 hover:brightness-105',
+              label: (
+                <span className="flex flex-col items-center gap-1 py-0.5">
+                  <span className="text-[11px] font-bold uppercase tracking-wide">
+                    Eşit
+                  </span>
+                  <span className="text-3xl font-light leading-none" aria-hidden>
+                    =
+                  </span>
+                </span>
+              ),
+            },
+            {
+              key: 'right' as Cmp,
+              className:
+                'border-cyan-400/40 bg-gradient-to-br from-cyan-500 to-sky-600 text-white shadow-lg shadow-cyan-500/25 hover:brightness-110',
+              label: (
+                <span className="flex flex-col items-center gap-2">
+                  <span className="text-[11px] font-bold uppercase tracking-wide opacity-95">
+                    Sağ büyük
+                  </span>
+                  <FractionBlock den={right[1]} num={right[0]} size="sm" />
+                </span>
+              ),
+            },
+          ] as { key: Cmp; className: string; label: ReactNode }[]
+        ).map(({ key, className, label }) => (
           <motion.button
             key={key}
             type="button"
@@ -237,7 +296,7 @@ export function FractionDuel({ onScore }: GameComponentProps) {
             whileTap={{ scale: 0.97 }}
             disabled={feedback !== null}
             onClick={() => pick(key)}
-            className="rounded-2xl border border-slate-600 bg-slate-800/80 px-3 py-4 text-center text-sm font-bold text-white transition hover:border-rose-500/50 hover:bg-slate-700 disabled:opacity-50"
+            className={`rounded-2xl border-2 px-2 py-4 text-center text-sm font-bold transition disabled:opacity-45 ${className}`}
           >
             {label}
           </motion.button>

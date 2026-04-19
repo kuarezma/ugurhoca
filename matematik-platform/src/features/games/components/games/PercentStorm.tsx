@@ -1,15 +1,28 @@
 'use client';
 
-import { useCallback, useEffect, useState, type FormEvent } from 'react';
+import {
+  useCallback,
+  useEffect,
+  useState,
+  type FormEvent,
+  type ReactNode,
+} from 'react';
 import { motion } from 'framer-motion';
 import { Play, RotateCcw, Trophy } from 'lucide-react';
 import type { GameComponentProps } from '@/features/games/types';
+import {
+  MathNum,
+  mathClass,
+} from '@/features/games/components/math/MathTypography';
 
 type Problem = {
-  text: string;
+  display: ReactNode;
   answer: number;
   hint: string;
 };
+
+const times = '\u00d7';
+const div = '\u00f7';
 
 export function PercentStorm({ onScore }: GameComponentProps) {
   const [gameState, setGameState] = useState<'idle' | 'playing' | 'ended'>(
@@ -18,7 +31,7 @@ export function PercentStorm({ onScore }: GameComponentProps) {
   const [score, setScore] = useState(0);
   const [level, setLevel] = useState(1);
   const [problem, setProblem] = useState<Problem>({
-    text: '',
+    display: null,
     answer: 0,
     hint: '',
   });
@@ -53,8 +66,21 @@ export function PercentStorm({ onScore }: GameComponentProps) {
         const ans = Math.round((n * p) / 100);
         return {
           answer: ans,
-          hint: 'Önce %1’i düşün veya n × (p/100)',
-          text: `${n} sayısının %${p}’ü kaçtır?`,
+          display: (
+            <p
+              className={`text-2xl font-medium leading-relaxed text-white md:text-3xl ${mathClass}`}
+            >
+              <MathNum>{n}</MathNum>
+              <span className="font-normal text-slate-300"> sayısının </span>
+              <span className="font-bold tracking-tight text-cyan-300">
+                %{p}
+              </span>
+              <span className="font-normal text-slate-300">
+                &apos;ü kaçtır?
+              </span>
+            </p>
+          ),
+          hint: `n ${times} (p ${div} 100) veya önce %1’i bul`,
         };
       },
       () => {
@@ -63,8 +89,20 @@ export function PercentStorm({ onScore }: GameComponentProps) {
         const a = Math.round((b * pct) / 100);
         return {
           answer: pct,
-          hint: '(a ÷ b) × 100',
-          text: `${a}, ${b} sayısının yüzde kaçıdır?`,
+          display: (
+            <p
+              className={`text-2xl font-medium leading-relaxed text-white md:text-3xl ${mathClass}`}
+            >
+              <MathNum>{a}</MathNum>
+              <span className="text-slate-400">, </span>
+              <MathNum>{b}</MathNum>
+              <span className="font-normal text-slate-300">
+                {' '}
+                sayısının yüzde kaçıdır?
+              </span>
+            </p>
+          ),
+          hint: `(a ${div} b) ${times} 100`,
         };
       },
       () => {
@@ -73,8 +111,20 @@ export function PercentStorm({ onScore }: GameComponentProps) {
         const newVal = Math.round(base * (1 + inc / 100));
         return {
           answer: newVal,
-          hint: 'Yeni değer = taban × (1 + %/100)',
-          text: `${base} sayısı %${inc} artırılırsa sonuç kaç olur?`,
+          display: (
+            <p
+              className={`text-2xl font-medium leading-relaxed text-white md:text-3xl ${mathClass}`}
+            >
+              <MathNum>{base}</MathNum>
+              <span className="font-normal text-slate-300"> sayısı </span>
+              <span className="font-bold text-emerald-300">%{inc}</span>
+              <span className="font-normal text-slate-300">
+                {' '}
+                artırılırsa sonuç kaç olur?
+              </span>
+            </p>
+          ),
+          hint: `Yeni = taban ${times} (1 + p ${div} 100)`,
         };
       },
     ];
@@ -87,8 +137,19 @@ export function PercentStorm({ onScore }: GameComponentProps) {
           const ans = Math.round((n * p) / 100);
           return {
             answer: ans,
-            hint: '%33 ≈ üçte bir',
-            text: `${n} sayısının %33’ü (tam sayıya yuvarla) kaçtır?`,
+            display: (
+              <p
+                className={`text-2xl font-medium leading-relaxed text-white md:text-3xl ${mathClass}`}
+              >
+                <MathNum>{n}</MathNum>
+                <span className="font-normal text-slate-300"> sayısının </span>
+                <span className="font-bold text-cyan-300">%{p}</span>
+                <span className="font-normal text-slate-300">
+                  &apos;ü (tam sayıya yuvarla) kaçtır?
+                </span>
+              </p>
+            ),
+            hint: `%33 ≈ üçte bir; n ${div} 3`,
           };
         },
         () => {
@@ -96,8 +157,20 @@ export function PercentStorm({ onScore }: GameComponentProps) {
           const after = Math.round(before * 0.85);
           return {
             answer: after,
-            hint: '%15 azalış → kalan %85',
-            text: `${before} sayısı %15 azaltılırsa sonuç kaç olur?`,
+            display: (
+              <p
+                className={`text-2xl font-medium leading-relaxed text-white md:text-3xl ${mathClass}`}
+              >
+                <MathNum>{before}</MathNum>
+                <span className="font-normal text-slate-300"> sayısı </span>
+                <span className="font-bold text-rose-300">%{15}</span>
+                <span className="font-normal text-slate-300">
+                  {' '}
+                  azaltılırsa sonuç kaç olur?
+                </span>
+              </p>
+            ),
+            hint: `Kalan %85 → taban ${times} 0,85`,
           };
         },
       );
@@ -156,12 +229,13 @@ export function PercentStorm({ onScore }: GameComponentProps) {
             transition={{ duration: 2, repeat: Infinity }}
             className="mx-auto mb-6 flex h-32 w-32 items-center justify-center rounded-3xl bg-gradient-to-br from-sky-500 to-cyan-600"
           >
-            <span className="text-5xl">%</span>
+            <span className={`text-6xl font-bold text-white ${mathClass}`}>
+              %
+            </span>
           </motion.div>
           <h2 className="mb-4 text-3xl font-bold text-white">Yüzde Fırtınası</h2>
           <p className="mx-auto mb-6 max-w-md text-slate-400">
-            Yüzde hesaplama, oran ve artış–azalış. Zaman baskılı — 65 saniye,
-            cevaplar tam sayı.
+            Yüzde, oran ve artış–azalış. 65 saniye; cevaplar tam sayı.
           </p>
         </div>
         <motion.button
@@ -237,16 +311,14 @@ export function PercentStorm({ onScore }: GameComponentProps) {
               : 'border-slate-700'
         }`}
       >
-        <p className="mb-3 text-2xl font-bold leading-snug text-white md:text-3xl">
-          {problem.text}
-        </p>
-        <p className="text-sm text-slate-400">{problem.hint}</p>
+        <div className="mb-3 min-h-[4rem]">{problem.display}</div>
+        <p className={`text-sm text-slate-400 ${mathClass}`}>{problem.hint}</p>
         {feedback === 'correct' && (
           <p className="mt-3 text-xl font-bold text-green-400">✓ Doğru!</p>
         )}
         {feedback === 'wrong' && (
-          <p className="mt-3 text-xl font-bold text-red-400">
-            ✗ Doğru cevap: {problem.answer}
+          <p className={`mt-3 text-xl font-bold text-red-400 ${mathClass}`}>
+            ✗ Doğru cevap: <MathNum>{problem.answer}</MathNum>
           </p>
         )}
       </motion.div>
@@ -265,13 +337,13 @@ export function PercentStorm({ onScore }: GameComponentProps) {
           placeholder="Cevap"
           // eslint-disable-next-line jsx-a11y/no-autofocus -- oyun ekranında hızlı giriş
           autoFocus
-          className="flex-1 rounded-2xl border border-slate-700 bg-slate-800 px-6 py-4 text-center text-2xl font-bold text-white transition-colors focus:border-cyan-500 focus:outline-none"
+          className={`flex-1 rounded-2xl border border-slate-700 bg-slate-800 px-6 py-4 text-center text-2xl font-bold text-white transition-colors focus:border-cyan-500 focus:outline-none ${mathClass}`}
         />
         <motion.button
           type="submit"
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
-          className="rounded-2xl bg-gradient-to-r from-sky-500 to-cyan-600 px-8 py-4 text-xl font-bold text-white"
+          className="rounded-2xl bg-gradient-to-r from-sky-500 to-cyan-600 px-8 py-4 text-xl font-bold text-white shadow-lg shadow-cyan-500/20"
         >
           Gönder
         </motion.button>

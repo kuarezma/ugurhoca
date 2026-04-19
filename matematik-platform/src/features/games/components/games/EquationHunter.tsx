@@ -1,15 +1,34 @@
 'use client';
 
-import { useCallback, useEffect, useState, type FormEvent } from 'react';
+import {
+  useCallback,
+  useEffect,
+  useState,
+  type FormEvent,
+  type ReactNode,
+} from 'react';
 import { motion } from 'framer-motion';
 import { Play, RotateCcw, Trophy } from 'lucide-react';
 import type { GameComponentProps } from '@/features/games/types';
+import {
+  MathNum,
+  MathRow,
+  MathVar,
+  mathClass,
+} from '@/features/games/components/math/MathTypography';
 
 type Problem = {
-  text: string;
+  display: ReactNode;
   answer: number;
   hint: string;
 };
+
+const sym = {
+  eq: '=',
+  minus: '\u2212',
+  mul: '\u00d7',
+  div: '\u00f7',
+} as const;
 
 export function EquationHunter({ onScore }: GameComponentProps) {
   const [gameState, setGameState] = useState<'idle' | 'playing' | 'ended'>(
@@ -18,7 +37,7 @@ export function EquationHunter({ onScore }: GameComponentProps) {
   const [score, setScore] = useState(0);
   const [level, setLevel] = useState(1);
   const [problem, setProblem] = useState<Problem>({
-    text: '',
+    display: null,
     answer: 0,
     hint: '',
   });
@@ -52,8 +71,17 @@ export function EquationHunter({ onScore }: GameComponentProps) {
         const c = a * x + b;
         return {
           answer: x,
+          display: (
+            <MathRow>
+              <MathNum>{a}</MathNum>
+              <MathVar>x</MathVar>
+              <span className="text-slate-400">+</span>
+              <MathNum>{b}</MathNum>
+              <span className="px-1 text-slate-500">{sym.eq}</span>
+              <MathNum>{c}</MathNum>
+            </MathRow>
+          ),
           hint: 'Önce sabit terimi karşıya at',
-          text: `${a}x + ${b} = ${c}`,
         };
       },
       () => {
@@ -63,8 +91,17 @@ export function EquationHunter({ onScore }: GameComponentProps) {
         const c = a * x - b;
         return {
           answer: x,
+          display: (
+            <MathRow>
+              <MathNum>{a}</MathNum>
+              <MathVar>x</MathVar>
+              <span className="text-slate-300">{sym.minus}</span>
+              <MathNum>{b}</MathNum>
+              <span className="px-1 text-slate-500">{sym.eq}</span>
+              <MathNum>{c}</MathNum>
+            </MathRow>
+          ),
           hint: 'x terimini tek başına bırak',
-          text: `${a}x − ${b} = ${c}`,
         };
       },
       () => {
@@ -74,8 +111,19 @@ export function EquationHunter({ onScore }: GameComponentProps) {
         const rhs = k * (x + b);
         return {
           answer: x,
-          hint: 'Parantezi aç: k·x + k·b = sağ taraf',
-          text: `${k}(x + ${b}) = ${rhs}`,
+          display: (
+            <MathRow>
+              <MathNum>{k}</MathNum>
+              <span className="text-slate-300">(</span>
+              <MathVar>x</MathVar>
+              <span className="text-slate-400">+</span>
+              <MathNum>{b}</MathNum>
+              <span className="text-slate-300">)</span>
+              <span className="px-1 text-slate-500">{sym.eq}</span>
+              <MathNum>{rhs}</MathNum>
+            </MathRow>
+          ),
+          hint: 'Parantezi aç: k · (x + b) = k·x + k·b',
         };
       },
     ];
@@ -89,8 +137,18 @@ export function EquationHunter({ onScore }: GameComponentProps) {
           const sum = a * x + b * x;
           return {
             answer: x,
-            hint: 'Soldaki x terimlerini birleştir',
-            text: `${a}x + ${b}x = ${sum}`,
+            display: (
+              <MathRow>
+                <MathNum>{a}</MathNum>
+                <MathVar>x</MathVar>
+                <span className="text-slate-400">+</span>
+                <MathNum>{b}</MathNum>
+                <MathVar>x</MathVar>
+                <span className="px-1 text-slate-500">{sym.eq}</span>
+                <MathNum>{sum}</MathNum>
+              </MathRow>
+            ),
+            hint: 'Soldaki x terimlerini topla',
           };
         },
         () => {
@@ -99,8 +157,16 @@ export function EquationHunter({ onScore }: GameComponentProps) {
           const x = k * denom;
           return {
             answer: x,
+            display: (
+              <MathRow>
+                <MathVar>x</MathVar>
+                <span className="px-1 text-slate-400">{sym.div}</span>
+                <MathNum>{denom}</MathNum>
+                <span className="px-1 text-slate-500">{sym.eq}</span>
+                <MathNum>{k}</MathNum>
+              </MathRow>
+            ),
             hint: `Her iki tarafı ${denom} ile çarp`,
-            text: `x ÷ ${denom} = ${k}`,
           };
         },
       );
@@ -159,12 +225,12 @@ export function EquationHunter({ onScore }: GameComponentProps) {
             transition={{ duration: 2, repeat: Infinity }}
             className="mx-auto mb-6 flex h-32 w-32 items-center justify-center rounded-3xl bg-gradient-to-br from-violet-600 to-indigo-700"
           >
-            <span className="text-5xl">𝑥</span>
+            <span className={`text-5xl ${mathClass} italic text-white`}>x</span>
           </motion.div>
           <h2 className="mb-4 text-3xl font-bold text-white">Denklem Avcısı</h2>
           <p className="mx-auto mb-6 max-w-md text-slate-400">
-            x&apos;i bul: doğrusal denklemler, parantez ve kesirli katsayılar.
-            İleri seviye — 75 saniye!
+            x&apos;i bul: doğrusal denklemler, parantez ve bölme. İleri seviye —
+            75 saniye!
           </p>
         </div>
         <motion.button
@@ -240,16 +306,18 @@ export function EquationHunter({ onScore }: GameComponentProps) {
               : 'border-slate-700'
         }`}
       >
-        <p className="mb-2 font-mono text-3xl font-bold text-white md:text-4xl">
-          {problem.text}
-        </p>
-        <p className="text-sm text-slate-400">{problem.hint}</p>
+        <div
+          className={`mb-3 min-h-[3.5rem] text-3xl font-semibold text-white md:min-h-[4rem] md:text-4xl ${mathClass}`}
+        >
+          {problem.display}
+        </div>
+        <p className={`text-sm text-slate-400 ${mathClass}`}>{problem.hint}</p>
         {feedback === 'correct' && (
           <p className="mt-3 text-xl font-bold text-green-400">✓ Doğru!</p>
         )}
         {feedback === 'wrong' && (
-          <p className="mt-3 text-xl font-bold text-red-400">
-            ✗ x = {problem.answer}
+          <p className={`mt-3 text-xl font-bold text-red-400 ${mathClass}`}>
+            ✗ <MathVar>x</MathVar> = <MathNum>{problem.answer}</MathNum>
           </p>
         )}
       </motion.div>
@@ -268,13 +336,13 @@ export function EquationHunter({ onScore }: GameComponentProps) {
           placeholder="x = ?"
           // eslint-disable-next-line jsx-a11y/no-autofocus -- oyun ekranında hızlı giriş
           autoFocus
-          className="flex-1 rounded-2xl border border-slate-700 bg-slate-800 px-6 py-4 text-center text-2xl font-bold text-white transition-colors focus:border-violet-500 focus:outline-none"
+          className={`flex-1 rounded-2xl border border-slate-700 bg-slate-800 px-6 py-4 text-center text-2xl font-bold text-white transition-colors focus:border-violet-500 focus:outline-none ${mathClass}`}
         />
         <motion.button
           type="submit"
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
-          className="rounded-2xl bg-gradient-to-r from-violet-600 to-indigo-600 px-8 py-4 text-xl font-bold text-white"
+          className="rounded-2xl bg-gradient-to-r from-violet-600 to-indigo-600 px-8 py-4 text-xl font-bold text-white shadow-lg shadow-violet-500/25"
         >
           Gönder
         </motion.button>
