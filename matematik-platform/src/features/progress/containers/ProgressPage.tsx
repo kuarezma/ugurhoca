@@ -86,6 +86,7 @@ export default function IlerlemePage({ initialData }: ProgressPageProps) {
   const [activityType, setActivityType] = useState('test');
   const [duration, setDuration] = useState('');
   const [selectedTopic, setSelectedTopic] = useState('');
+  const [customTopic, setCustomTopic] = useState('');
   const [addingSession, setAddingSession] = useState(false);
   const [addSessionError, setAddSessionError] = useState<string | null>(null);
   const initialUserKey = useMemo(
@@ -99,6 +100,14 @@ export default function IlerlemePage({ initialData }: ProgressPageProps) {
     () => getTopicsForGrade(user?.grade),
     [user?.grade],
   );
+
+  const resolvedTopic = useMemo(() => {
+    const custom = customTopic.trim();
+    if (custom.length > 0) {
+      return custom.slice(0, 200);
+    }
+    return selectedTopic.trim();
+  }, [customTopic, selectedTopic]);
 
   const loadDashboardData = useCallback(async () => {
     const session = await requireClientSession({ router });
@@ -162,7 +171,7 @@ export default function IlerlemePage({ initialData }: ProgressPageProps) {
   const handleAddSession = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!duration || isNaN(Number(duration)) || Number(duration) <= 0) return;
-    if (!selectedTopic) return;
+    if (!resolvedTopic) return;
     if (!user) return;
     
     setAddingSession(true);
@@ -175,7 +184,7 @@ export default function IlerlemePage({ initialData }: ProgressPageProps) {
         user_id: user.id,
         activity_type: activityType,
         duration: durationNum,
-        topics: [selectedTopic],
+        topics: [resolvedTopic],
         date: sessionDate,
       };
 
@@ -187,13 +196,13 @@ export default function IlerlemePage({ initialData }: ProgressPageProps) {
 
       if (sessionError) throw sessionError;
 
-      const existingProgress = progressData.find(p => p.topic === selectedTopic);
+      const existingProgress = progressData.find(p => p.topic === resolvedTopic);
       const masteryIncrement = Math.min(100, Math.floor(durationNum / 5));
       const newMastery = Math.min(100, (existingProgress?.mastery_level || 0) + masteryIncrement);
 
       const nextProgressRow = {
         user_id: user.id,
-        topic: selectedTopic,
+        topic: resolvedTopic,
         mastery_level: newMastery,
         practice_count: (existingProgress?.practice_count || 0) + 1,
         last_practiced: new Date().toISOString(),
@@ -222,6 +231,7 @@ export default function IlerlemePage({ initialData }: ProgressPageProps) {
       setShowAddModal(false);
       setDuration('');
       setSelectedTopic('');
+      setCustomTopic('');
       
     } catch (error) {
       log.error('Ders saati kayıt hatası', error);
@@ -372,6 +382,7 @@ export default function IlerlemePage({ initialData }: ProgressPageProps) {
           <button 
             onClick={() => {
               setAddSessionError(null);
+              setCustomTopic('');
               setShowAddModal(true);
             }}
             className="px-6 py-3 bg-gradient-to-r from-indigo-500 to-purple-500 hover:from-indigo-600 hover:to-purple-600 text-white font-bold rounded-2xl shadow-lg shadow-indigo-500/25 flex items-center gap-2 transition-transform hover:scale-105"
@@ -494,6 +505,7 @@ export default function IlerlemePage({ initialData }: ProgressPageProps) {
         open={showAddModal}
         onClose={() => {
           setAddSessionError(null);
+          setCustomTopic('');
           setShowAddModal(false);
         }}
         title="Çalışma Ekle"
@@ -547,21 +559,33 @@ export default function IlerlemePage({ initialData }: ProgressPageProps) {
           </div>
 
           <Select
-            label="Konu"
-            required
+            label="Konu (listeden)"
             value={selectedTopic}
             onChange={(e) => {
               setAddSessionError(null);
               setSelectedTopic(e.target.value);
             }}
           >
-            <option value="">Konu seçin...</option>
+            <option value="">Seç veya aşağıya kendi konunu yaz...</option>
             {availableTopics.map((topic) => (
               <option key={topic} value={topic}>
                 {topic}
               </option>
             ))}
           </Select>
+
+          <Input
+            label="Kendi konun"
+            type="text"
+            maxLength={200}
+            placeholder="Örn: Parabol tekrarı, deneme analizi..."
+            value={customTopic}
+            onChange={(e) => {
+              setAddSessionError(null);
+              setCustomTopic(e.target.value);
+            }}
+            hint="Doldurursan bu ad geçerli olur; liste seçimini geçersiz kılar."
+          />
 
           <Input
             label="Süre (dakika)"
@@ -582,6 +606,13 @@ export default function IlerlemePage({ initialData }: ProgressPageProps) {
             size="lg"
             fullWidth
             loading={addingSession}
+            disabled={
+              addingSession ||
+              !duration.trim() ||
+              Number.isNaN(Number(duration)) ||
+              Number(duration) <= 0 ||
+              !resolvedTopic
+            }
             leadingIcon={<CheckCircle2 className="h-5 w-5" aria-hidden="true" />}
           >
             {addingSession ? 'Kaydediliyor...' : 'Kaydet'}
