@@ -5,7 +5,10 @@ import {
   Grid3x3,
   Link2,
   Palette,
+  Percent,
   Puzzle,
+  Scale,
+  Variable,
   WholeWord,
 } from 'lucide-react';
 import { FloatingParticles } from './FloatingParticles';
@@ -15,7 +18,10 @@ import { Hangman } from './games/Hangman';
 import { MathPuzzle } from './games/MathPuzzle';
 import { MemoryGame } from './games/MemoryGame';
 import { MultiplicationRace } from './games/MultiplicationRace';
+import { EquationHunter } from './games/EquationHunter';
+import { FractionDuel } from './games/FractionDuel';
 import { NumberPuzzle } from './games/NumberPuzzle';
+import { PercentStorm } from './games/PercentStorm';
 import type { GameDefinition } from '../types';
 
 export { FloatingParticles, GameCard };
@@ -91,5 +97,38 @@ export const games: GameDefinition[] = [
     color: 'from-emerald-500 to-teal-500',
     icon: Link2,
     component: MemoryGame,
+  },
+  {
+    id: 7,
+    title: 'Kesir Düellosu',
+    description: 'İki kesri karşılaştır — hangisi büyük?',
+    grade: '6-8',
+    rating: 4.5,
+    difficulty: 'Zor',
+    color: 'from-rose-500 to-red-600',
+    icon: Scale,
+    component: FractionDuel,
+  },
+  {
+    id: 8,
+    title: 'Denklem Avcısı',
+    description: 'x\'i bul: parantez ve birleşik terimler.',
+    grade: '6-8',
+    rating: 4.4,
+    difficulty: 'Zor',
+    color: 'from-violet-600 to-indigo-700',
+    icon: Variable,
+    component: EquationHunter,
+  },
+  {
+    id: 9,
+    title: 'Yüzde Fırtınası',
+    description: 'Oran, artış ve yüzde hesapları.',
+    grade: '6-8',
+    rating: 4.3,
+    difficulty: 'Zor',
+    color: 'from-sky-500 to-cyan-600',
+    icon: Percent,
+    component: PercentStorm,
   },
 ];
