@@ -1,8 +1,10 @@
 import { NextResponse } from "next/server";
-import { createClient } from "@supabase/supabase-js";
 import { isAdminEmail } from "@/lib/admin";
 import { createLogger } from "@/lib/logger";
-import { createServerSupabaseClient } from "@/lib/supabase/server";
+import {
+  createServerSupabaseClient,
+  createServiceRoleClient,
+} from "@/lib/supabase/server";
 import {
   ADMIN_MESSAGE_BROADCAST_EVENT,
   getStudentMessagesChannelName,
@@ -41,10 +43,19 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Yetkiniz yok." }, { status: 403 });
     }
 
-    const adminClient = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY!,
-    );
+    let adminClient: ReturnType<typeof createServiceRoleClient>;
+    try {
+      adminClient = createServiceRoleClient();
+    } catch (serviceError) {
+      log.error("Service role client oluşturulamadı", serviceError);
+      return NextResponse.json(
+        {
+          error:
+            "Sunucu yapılandırması eksik (SUPABASE_SERVICE_ROLE_KEY).",
+        },
+        { status: 500 },
+      );
+    }
 
     const body = await request.json().catch(() => null);
     const {
@@ -92,7 +103,12 @@ export async function POST(request: Request) {
     if (error) {
       log.error("Admin message insert error", error);
       return NextResponse.json(
-        { error: "Mesaj gönderilemedi." },
+        {
+          error:
+            "message" in error && typeof error.message === "string"
+              ? error.message
+              : "Mesaj gönderilemedi.",
+        },
         { status: 500 },
       );
     }

@@ -2,11 +2,8 @@
 
 import { useCallback, useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabase/client';
-import { mergeAdminThread } from '@/features/messages/mapNotificationsToThread';
 import type { ThreadMessage } from '@/features/messages/types';
 import { parseSupportPayload } from '@/features/messages/supportChatUtils';
-
-const FETCH_LIMIT = 200;
 
 function rowToIncomingThreadMessage(row: {
   id: string;
@@ -91,32 +88,35 @@ export function useAdminStudentThread({
 
     setLoading(true);
     try {
-      const [inboxRes, repliesRes] = await Promise.all([
-        supabase
-          .from('notifications')
-          .select('id, created_at, message, is_read')
-          .eq('user_id', adminUserId)
-          .eq('type', 'message')
-          .order('created_at', { ascending: true })
-          .limit(FETCH_LIMIT),
-        supabase
-          .from('notifications')
-          .select('id, created_at, message, metadata')
-          .eq('user_id', studentId)
-          .eq('type', 'admin-message')
-          .order('created_at', { ascending: true })
-          .limit(FETCH_LIMIT),
-      ]);
+      const {
+        data: { session },
+        error: sessionError,
+      } = await supabase.auth.getSession();
 
-      const inboxRows = (inboxRes.data || []).filter((n) => {
-        const parsed = parseSupportPayload(n.message);
-        return parsed?.sender_id === studentId;
-      });
+      if (sessionError || !session?.access_token) {
+        setMessages([]);
+        return;
+      }
 
-      const merged = mergeAdminThread(
-        inboxRows,
-        (repliesRes.data || []) as Parameters<typeof mergeAdminThread>[1],
+      const res = await fetch(
+        `/api/admin-conversation-thread?student_id=${encodeURIComponent(studentId)}`,
+        {
+          headers: {
+            Authorization: `Bearer ${session.access_token}`,
+          },
+        },
       );
+
+      const json = (await res.json().catch(() => null)) as
+        | { data?: { messages?: ThreadMessage[] }; error?: { message?: string } }
+        | null;
+
+      if (!res.ok || !json) {
+        setMessages([]);
+        return;
+      }
+
+      const merged = json.data?.messages ?? [];
       setMessages(merged);
 
       await markAdminInboxReadForStudent(adminUserId, studentId);
