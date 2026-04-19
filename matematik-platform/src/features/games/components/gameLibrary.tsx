@@ -1,6 +1,13 @@
 'use client';
 
-import { Brain, Sparkles, Target, Zap } from 'lucide-react';
+import {
+  Calculator,
+  Grid3x3,
+  Link2,
+  Palette,
+  Puzzle,
+  WholeWord,
+} from 'lucide-react';
 import { FloatingParticles } from './FloatingParticles';
 import { GameCard } from './GameCard';
 import { ColorMath } from './games/ColorMath';
@@ -27,18 +34,18 @@ export const games: GameDefinition[] = [
     rating: 4.9,
     difficulty: 'Kolay',
     color: 'from-pink-500 to-purple-500',
-    icon: Brain,
+    icon: Grid3x3,
     component: MultiplicationRace,
   },
   {
     id: 2,
     title: 'Matematik Zihin Jimnastiği',
-    description: 'Zor problemleri çöz, seviye atlę!',
+    description: 'Zor problemleri çöz, seviye atla!',
     grade: '5-8',
     rating: 4.8,
     difficulty: 'Orta',
     color: 'from-purple-500 to-pink-500',
-    icon: Brain,
+    icon: Puzzle,
     component: MathPuzzle,
   },
   {
@@ -49,7 +56,7 @@ export const games: GameDefinition[] = [
     rating: 4.7,
     difficulty: 'Zor',
     color: 'from-cyan-500 to-blue-500',
-    icon: Sparkles,
+    icon: Palette,
     component: ColorMath,
   },
   {
@@ -60,7 +67,7 @@ export const games: GameDefinition[] = [
     rating: 4.8,
     difficulty: 'Orta',
     color: 'from-indigo-500 to-purple-500',
-    icon: Target,
+    icon: WholeWord,
     component: Hangman,
   },
   {
@@ -71,7 +78,7 @@ export const games: GameDefinition[] = [
     rating: 4.6,
     difficulty: 'Orta',
     color: 'from-amber-500 to-orange-500',
-    icon: Zap,
+    icon: Calculator,
     component: NumberPuzzle,
   },
   {
@@ -82,7 +89,7 @@ export const games: GameDefinition[] = [
     rating: 4.9,
     difficulty: 'Kolay',
     color: 'from-emerald-500 to-teal-500',
-    icon: Brain,
+    icon: Link2,
     component: MemoryGame,
   },
 ];
