@@ -1,7 +1,7 @@
 'use client';
 
 import { AnimatePresence, motion } from 'framer-motion';
-import { MessageCircle, Send, X } from 'lucide-react';
+import { Loader2, MessageCircle, X } from 'lucide-react';
 import Image from 'next/image';
 import {
   useCallback,
@@ -367,7 +367,10 @@ export function HomeNavbarMessagesButton({
                   }}
                   placeholder="Uğur Hoca'ya mesaj yaz..."
                   rows={1}
-                  className={`max-h-32 flex-1 resize-none rounded-xl border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400 ${
+                  autoComplete="off"
+                  autoCorrect="on"
+                  enterKeyHint="send"
+                  className={`max-h-32 min-h-[2.5rem] flex-1 resize-none appearance-none rounded-xl border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400 ${
                     isLight
                       ? 'border-slate-200 bg-white text-slate-900 placeholder:text-slate-400'
                       : 'border-slate-700 bg-slate-800 text-slate-100 placeholder:text-slate-500'
@@ -377,10 +380,18 @@ export function HomeNavbarMessagesButton({
                 <button
                   type="submit"
                   disabled={sending || draft.trim().length === 0}
-                  aria-label="Gönder"
-                  className="inline-flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl bg-gradient-to-r from-indigo-500 to-purple-500 text-white transition-all hover:from-indigo-600 hover:to-purple-600 disabled:cursor-not-allowed disabled:opacity-50"
+                  aria-busy={sending}
+                  aria-label={sending ? 'Gönderiliyor' : 'Gönder'}
+                  className="inline-flex h-10 min-w-[5.25rem] flex-shrink-0 items-center justify-center rounded-xl bg-gradient-to-r from-indigo-500 to-purple-500 px-3 text-sm font-semibold text-white transition-all hover:from-indigo-600 hover:to-purple-600 disabled:cursor-not-allowed disabled:opacity-50"
                 >
-                  <Send className="h-4 w-4" aria-hidden="true" />
+                  {sending ? (
+                    <Loader2
+                      className="h-5 w-5 animate-spin"
+                      aria-hidden="true"
+                    />
+                  ) : (
+                    'Gönder'
+                  )}
                 </button>
               </div>
             </form>
