@@ -8,6 +8,7 @@ import { useState } from 'react';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { useTheme } from '@/components/ThemeProvider';
 import { HOME_CATEGORIES } from '@/features/home/constants';
+import { HomeNavbarMessagesButton } from '@/features/home/components/HomeNavbarMessagesButton';
 import { HomeNavbarNotificationBell } from '@/features/home/components/HomeNavbarNotificationBell';
 import type { AppUser } from '@/types';
 
@@ -24,6 +25,7 @@ export function HomeNavbar({ onLogout, user }: HomeNavbarProps) {
   const isHomePage = pathname === '/';
   const profileHref = user?.isAdmin ? '/admin' : '/profil';
   const showStudentBell = Boolean(user && !user.isAdmin && user.id);
+  const showStudentMessages = showStudentBell;
 
   return (
     <nav
@@ -79,6 +81,14 @@ export function HomeNavbar({ onLogout, user }: HomeNavbarProps) {
 
           <div className="hidden items-center gap-3 md:flex">
             <ThemeToggle compact />
+            {showStudentMessages && user?.id ? (
+              <HomeNavbarMessagesButton
+                userId={user.id}
+                userName={user.name || ''}
+                userEmail={user.email || ''}
+                isLight={isLight}
+              />
+            ) : null}
             {showStudentBell && user?.id ? (
               <HomeNavbarNotificationBell userId={user.id} isLight={isLight} />
             ) : null}
@@ -134,6 +144,14 @@ export function HomeNavbar({ onLogout, user }: HomeNavbarProps) {
           </div>
 
           <div className="flex items-center gap-1 md:hidden">
+            {showStudentMessages && user?.id ? (
+              <HomeNavbarMessagesButton
+                userId={user.id}
+                userName={user.name || ''}
+                userEmail={user.email || ''}
+                isLight={isLight}
+              />
+            ) : null}
             {showStudentBell && user?.id ? (
               <HomeNavbarNotificationBell userId={user.id} isLight={isLight} />
             ) : null}

@@ -15,7 +15,8 @@ export type DashboardNotificationType =
   | 'general'
   | 'message'
   | 'admin-message'
-  | 'message-read';
+  | 'message-read'
+  | 'sent-message';
 
 export interface DashboardNotification {
   id: string;
@@ -25,7 +26,14 @@ export interface DashboardNotification {
   type: DashboardNotificationType;
   is_read: boolean;
   created_at: string;
-  metadata?: { image_url?: string; sender_name?: string } | null;
+  metadata?:
+    | ({
+        image_url?: string | null;
+        sender_id?: string;
+        sender_name?: string;
+        student_name?: string;
+      } & Record<string, unknown>)
+    | null;
 }
 
 export interface DashboardDocument {

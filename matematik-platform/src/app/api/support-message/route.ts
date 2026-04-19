@@ -9,6 +9,7 @@ import {
   cleanupExpiredNotifications,
   findActiveModerationAction,
   notifyAdminForSupportMessage,
+  recordSelfCopyForStudent,
   sendSupportEmail,
 } from '@/features/support/server/supportMessages';
 
@@ -78,6 +79,14 @@ export async function POST(request: Request) {
     const payload = buildSupportNotificationPayload(parsed.data, request);
 
     await notifyAdminForSupportMessage(supabase, adminId, payload);
+
+    try {
+      await recordSelfCopyForStudent(supabase, payload);
+    } catch (selfCopyError) {
+      log.warn('Öğrencinin kendi mesaj kopyası yazılamadı', {
+        error: String(selfCopyError),
+      });
+    }
 
     try {
       await sendSupportEmail(parsed.data);

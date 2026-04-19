@@ -4,6 +4,7 @@ import {
   cleanupExpiredNotifications,
   findActiveModerationAction,
   notifyAdminForSupportMessage,
+  recordSelfCopyForStudent,
   sendSupportEmail,
 } from '@/features/support/server/supportMessages';
 import { createServerSupabaseClient } from '@/lib/supabase/server';
@@ -17,6 +18,7 @@ vi.mock('@/features/support/server/supportMessages', () => ({
   cleanupExpiredNotifications: vi.fn(),
   findActiveModerationAction: vi.fn(),
   notifyAdminForSupportMessage: vi.fn(),
+  recordSelfCopyForStudent: vi.fn(),
   sendSupportEmail: vi.fn(),
 }));
 
@@ -104,6 +106,10 @@ describe('POST /api/support-message', () => {
     expect(notifyAdminForSupportMessage).toHaveBeenCalledWith(
       supabaseClient,
       'admin-1',
+      notificationPayload,
+    );
+    expect(recordSelfCopyForStudent).toHaveBeenCalledWith(
+      supabaseClient,
       notificationPayload,
     );
     expect(sendSupportEmail).toHaveBeenCalledWith(body);

@@ -26,6 +26,13 @@ export function HomeNavbarNotificationBell({
 
   useEffect(() => {
     if (!open) return;
+    if (unreadCount > 0) {
+      void markAllAsRead();
+    }
+  }, [open, unreadCount, markAllAsRead]);
+
+  useEffect(() => {
+    if (!open) return;
 
     const handleClickOutside = (event: MouseEvent) => {
       if (
