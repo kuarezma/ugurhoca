@@ -80,8 +80,9 @@ export async function POST(request: Request) {
 
     await notifyAdminForSupportMessage(supabase, adminId, payload);
 
+    let selfCopy: unknown = null;
     try {
-      await recordSelfCopyForStudent(supabase, payload);
+      selfCopy = await recordSelfCopyForStudent(supabase, payload);
     } catch (selfCopyError) {
       log.warn('Öğrencinin kendi mesaj kopyası yazılamadı', {
         error: String(selfCopyError),
@@ -94,7 +95,7 @@ export async function POST(request: Request) {
       log.warn('Destek e-postası gönderilemedi', { error: String(emailError) });
     }
 
-    return apiOk({ ok: true });
+    return apiOk({ ok: true, message: selfCopy });
   } catch (error) {
     return apiError(
       error instanceof Error ? error.message : 'Mesaj gönderilemedi.',

@@ -174,7 +174,7 @@ export const sendSupportMessage = async (
 
   const responseData = (await response.json().catch(() => null)) as
     | ApiErrorResponse
-    | ApiSuccessResponse<{ ok: boolean }>
+    | ApiSuccessResponse<{ ok: boolean; message?: unknown }>
     | null;
 
   if (!response.ok) {
@@ -184,6 +184,12 @@ export const sendSupportMessage = async (
         : `Sunucu hatası (${response.status}).`,
     );
   }
+
+  if (responseData && 'data' in responseData) {
+    return responseData.data.message ?? null;
+  }
+
+  return null;
 };
 
 export const getAnnouncementLinkLabel = (url?: string | null) => {

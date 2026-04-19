@@ -106,6 +106,15 @@ export const useNavbarMessages = (userId: string | null | undefined) => {
     };
   }, [userId, fetchMessages]);
 
+  const appendMessage = useCallback((message: DashboardNotification) => {
+    setMessages((current) => {
+      if (current.some((item) => item.id === message.id)) {
+        return current;
+      }
+      return sortAsc([...current, message]).slice(-MESSAGE_LIMIT);
+    });
+  }, []);
+
   const markAllAsRead = useCallback(async () => {
     const unreadIds = messages
       .filter((item) => item.type === 'admin-message' && !item.is_read)
@@ -130,6 +139,7 @@ export const useNavbarMessages = (userId: string | null | undefined) => {
   ).length;
 
   return {
+    appendMessage,
     loading,
     markAllAsRead,
     messages,

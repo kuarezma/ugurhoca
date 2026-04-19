@@ -141,24 +141,31 @@ export const recordSelfCopyForStudent = async (
     payload.text ||
     (attachmentNames ? `[Dosya eki: ${attachmentNames}]` : '');
 
-  const { error } = await supabase.from('notifications').insert([
-    {
-      message: messageText,
-      metadata: {
-        attachments: payload.attachments,
-        image_url: firstImage?.url || null,
-        sender_id: payload.sender_id,
-        sender_name: payload.sender_name || 'Sen',
+  const { data, error } = await supabase
+    .from('notifications')
+    .insert([
+      {
+        is_read: true,
+        message: messageText,
+        metadata: {
+          attachments: payload.attachments,
+          image_url: firstImage?.url || null,
+          sender_id: payload.sender_id,
+          sender_name: payload.sender_name || 'Sen',
+        },
+        title: 'Uğur Hoca için mesajın',
+        type: 'sent-message',
+        user_id: payload.sender_id,
       },
-      title: 'Uğur Hoca için mesajın',
-      type: 'sent-message',
-      user_id: payload.sender_id,
-    },
-  ]);
+    ])
+    .select('*')
+    .single();
 
   if (error) {
     throw error;
   }
+
+  return data;
 };
 
 export const sendSupportEmail = async (

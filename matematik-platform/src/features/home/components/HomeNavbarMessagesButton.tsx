@@ -58,7 +58,8 @@ export function HomeNavbarMessagesButton({
   userEmail,
   isLight,
 }: HomeNavbarMessagesButtonProps) {
-  const { markAllAsRead, messages, unreadCount } = useNavbarMessages(userId);
+  const { appendMessage, markAllAsRead, messages, unreadCount } =
+    useNavbarMessages(userId);
   const [open, setOpen] = useState(false);
   const [draft, setDraft] = useState('');
   const [sending, setSending] = useState(false);
@@ -123,7 +124,7 @@ export function HomeNavbarMessagesButton({
           throw new Error('Oturum açmanız gerekiyor.');
         }
 
-        await sendSupportMessage(
+        const sentRow = await sendSupportMessage(
           {
             attachments: [],
             sender_email: userEmail || '',
@@ -133,6 +134,24 @@ export function HomeNavbarMessagesButton({
           },
           session.access_token,
         );
+
+        if (sentRow && typeof sentRow === 'object' && 'id' in sentRow) {
+          appendMessage(sentRow as DashboardNotification);
+        } else {
+          appendMessage({
+            created_at: new Date().toISOString(),
+            id: `local-${Date.now()}`,
+            is_read: true,
+            message: text,
+            metadata: {
+              sender_id: userId,
+              sender_name: userName || 'Sen',
+            },
+            title: 'Uğur Hoca için mesajın',
+            type: 'sent-message',
+            user_id: userId,
+          });
+        }
 
         setDraft('');
       } catch (sendError) {
@@ -145,7 +164,7 @@ export function HomeNavbarMessagesButton({
         setSending(false);
       }
     },
-    [draft, sending, userEmail, userId, userName],
+    [appendMessage, draft, sending, userEmail, userId, userName],
   );
 
   const buttonClasses = `relative inline-flex h-11 w-11 items-center justify-center rounded-xl transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary ${
