@@ -151,6 +151,16 @@ export const useNavbarMessages = (userId: string | null | undefined) => {
     });
   }, []);
 
+  const refetch = useCallback(async () => {
+    if (!userId) return;
+    setLoading(true);
+    try {
+      await fetchMessages(userId);
+    } finally {
+      setLoading(false);
+    }
+  }, [userId, fetchMessages]);
+
   const markAllAsRead = useCallback(async () => {
     const unreadIds = messages
       .filter((item) => item.type === 'admin-message' && !item.is_read)
@@ -179,6 +189,7 @@ export const useNavbarMessages = (userId: string | null | undefined) => {
     loading,
     markAllAsRead,
     messages,
+    refetch,
     unreadCount,
   };
 };

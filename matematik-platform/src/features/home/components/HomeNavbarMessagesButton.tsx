@@ -58,7 +58,7 @@ export function HomeNavbarMessagesButton({
   userEmail,
   isLight,
 }: HomeNavbarMessagesButtonProps) {
-  const { appendMessage, markAllAsRead, messages, unreadCount } =
+  const { appendMessage, markAllAsRead, messages, refetch, unreadCount } =
     useNavbarMessages(userId);
   const [open, setOpen] = useState(false);
   const [draft, setDraft] = useState('');
@@ -66,6 +66,11 @@ export function HomeNavbarMessagesButton({
   const [error, setError] = useState<string | null>(null);
   const containerRef = useRef<HTMLDivElement | null>(null);
   const listRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    if (!open) return;
+    void refetch();
+  }, [open, refetch]);
 
   useEffect(() => {
     if (!open) return;
