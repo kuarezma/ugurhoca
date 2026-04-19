@@ -1,12 +1,10 @@
 'use client';
 
 import { AnimatePresence, motion } from 'framer-motion';
-import { Loader2, MessageCircle, X } from 'lucide-react';
-import Image from 'next/image';
+import { MessageCircle } from 'lucide-react';
 import {
   useCallback,
   useEffect,
-  useLayoutEffect,
   useMemo,
   useRef,
   useState,
@@ -15,6 +13,8 @@ import {
 import { supabase } from '@/lib/supabase/client';
 import { sendSupportMessage } from '@/features/home/queries';
 import { useNavbarMessages } from '@/features/home/hooks/useNavbarMessages';
+import { SupportChatPanel } from '@/features/messages/components/SupportChatPanel';
+import { mapStudentNotificationsToThread } from '@/features/messages/mapNotificationsToThread';
 import type { DashboardNotification } from '@/types/dashboard';
 
 type HomeNavbarMessagesButtonProps = {
@@ -22,34 +22,6 @@ type HomeNavbarMessagesButtonProps = {
   userName: string;
   userEmail: string;
   isLight: boolean;
-};
-
-const formatTime = (value: string) =>
-  new Date(value).toLocaleString('tr-TR', {
-    day: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit',
-    month: 'short',
-  });
-
-const getBubbleImage = (message: DashboardNotification) => {
-  const attachments = (message.metadata?.attachments as unknown[]) || [];
-  if (Array.isArray(attachments)) {
-    const image = attachments.find(
-      (item): item is { kind: string; url: string; name?: string } =>
-        Boolean(
-          item &&
-            typeof item === 'object' &&
-            'kind' in item &&
-            (item as { kind?: string }).kind === 'image' &&
-            'url' in item &&
-            typeof (item as { url?: string }).url === 'string',
-        ),
-    );
-    if (image) return image.url;
-  }
-  if (message.metadata?.image_url) return message.metadata.image_url;
-  return null;
 };
 
 export function HomeNavbarMessagesButton({
@@ -65,7 +37,11 @@ export function HomeNavbarMessagesButton({
   const [sending, setSending] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const containerRef = useRef<HTMLDivElement | null>(null);
-  const listRef = useRef<HTMLDivElement | null>(null);
+
+  const threadMessages = useMemo(
+    () => mapStudentNotificationsToThread(messages),
+    [messages],
+  );
 
   useEffect(() => {
     if (!open) return;
@@ -101,14 +77,6 @@ export function HomeNavbarMessagesButton({
       document.removeEventListener('keydown', handleEscape);
     };
   }, [open]);
-
-  useLayoutEffect(() => {
-    if (!open) return;
-    if (!listRef.current) return;
-    listRef.current.scrollTop = listRef.current.scrollHeight;
-  }, [open, messages.length]);
-
-  const chronologicalMessages = useMemo(() => messages, [messages]);
 
   const handleSubmit = useCallback(
     async (event: FormEvent<HTMLFormElement>) => {
@@ -209,197 +177,27 @@ export function HomeNavbarMessagesButton({
             transition={{ duration: 0.15 }}
             role="dialog"
             aria-label="Uğur Hoca ile mesajlaşma"
-            className={`fixed left-4 right-4 top-[calc(3.5rem+0.25rem+env(safe-area-inset-top))] z-50 flex max-h-[80vh] flex-col overflow-hidden rounded-2xl border shadow-2xl sm:absolute sm:left-auto sm:right-0 sm:top-auto sm:mt-2 sm:w-[24rem] md:w-[26rem] ${
+            className={`fixed left-4 right-4 top-[calc(3.5rem+0.25rem+env(safe-area-inset-top))] z-50 flex h-[min(80vh,28rem)] min-h-0 flex-col overflow-hidden rounded-2xl border shadow-2xl sm:absolute sm:left-auto sm:right-0 sm:top-auto sm:mt-2 sm:w-[24rem] md:w-[26rem] ${
               isLight
                 ? 'border-slate-200 bg-white'
                 : 'border-slate-700 bg-slate-900'
             }`}
           >
-            <div
-              className={`flex items-center justify-between border-b px-4 py-3 ${
-                isLight ? 'border-slate-200' : 'border-slate-700'
-              }`}
-            >
-              <div className="flex items-center gap-2">
-                <Image
-                  src="/ugur.jpeg"
-                  alt="Uğur Hoca"
-                  width={32}
-                  height={32}
-                  className="h-8 w-8 rounded-full object-cover"
-                />
-                <div className="flex flex-col">
-                  <span
-                    className={`text-sm font-semibold ${
-                      isLight ? 'text-slate-900' : 'text-white'
-                    }`}
-                  >
-                    Uğur Hoca
-                  </span>
-                  <span
-                    className={`text-[11px] ${
-                      isLight ? 'text-slate-500' : 'text-slate-400'
-                    }`}
-                  >
-                    Mesajlaşma
-                  </span>
-                </div>
-              </div>
-              <button
-                type="button"
-                onClick={() => setOpen(false)}
-                aria-label="Kapat"
-                className={`rounded-lg p-1.5 transition-colors ${
-                  isLight
-                    ? 'text-slate-500 hover:bg-slate-100 hover:text-slate-900'
-                    : 'text-slate-400 hover:bg-white/5 hover:text-white'
-                }`}
-              >
-                <X className="h-4 w-4" aria-hidden="true" />
-              </button>
-            </div>
-
-            <div
-              ref={listRef}
-              className={`flex-1 overflow-y-auto px-3 py-3 ${
-                isLight ? 'bg-slate-50/60' : 'bg-slate-950/30'
-              }`}
-              style={{ maxHeight: 'calc(80vh - 8.5rem)' }}
-            >
-              {chronologicalMessages.length === 0 ? (
-                <p
-                  className={`py-10 text-center text-sm ${
-                    isLight ? 'text-slate-500' : 'text-slate-400'
-                  }`}
-                >
-                  Henüz mesaj yok. Uğur Hoca'ya yazmak için aşağıdaki kutuyu
-                  kullan.
-                </p>
-              ) : (
-                <ul className="flex flex-col gap-2">
-                  {chronologicalMessages.map((message) => {
-                    const isSent = message.type === 'sent-message';
-                    const imageUrl = getBubbleImage(message);
-
-                    return (
-                      <li
-                        key={message.id}
-                        className={`flex ${isSent ? 'justify-end' : 'justify-start'}`}
-                      >
-                        <div
-                          className={`max-w-[80%] rounded-2xl px-3 py-2 text-sm shadow-sm ${
-                            isSent
-                              ? 'rounded-br-sm bg-indigo-500 text-white'
-                              : isLight
-                                ? 'rounded-bl-sm bg-white text-slate-900 ring-1 ring-slate-200'
-                                : 'rounded-bl-sm bg-slate-800 text-slate-100 ring-1 ring-slate-700'
-                          }`}
-                        >
-                          {!isSent && message.title && (
-                            <p
-                              className={`mb-1 text-[11px] font-semibold ${
-                                isLight ? 'text-indigo-600' : 'text-indigo-300'
-                              }`}
-                            >
-                              {message.metadata?.sender_name || 'Uğur Hoca'}
-                            </p>
-                          )}
-                          {imageUrl ? (
-                            <a
-                              href={imageUrl}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="mb-1 block overflow-hidden rounded-lg"
-                            >
-                              <Image
-                                src={imageUrl}
-                                alt="Ek görsel"
-                                width={240}
-                                height={180}
-                                className="h-auto w-full max-w-[240px] rounded-lg object-cover"
-                                unoptimized
-                              />
-                            </a>
-                          ) : null}
-                          {message.message ? (
-                            <p className="whitespace-pre-wrap break-words text-[13px] leading-relaxed">
-                              {message.message}
-                            </p>
-                          ) : null}
-                          <p
-                            className={`mt-1 text-[10px] ${
-                              isSent
-                                ? 'text-indigo-100/80'
-                                : isLight
-                                  ? 'text-slate-400'
-                                  : 'text-slate-500'
-                            }`}
-                          >
-                            {formatTime(message.created_at)}
-                          </p>
-                        </div>
-                      </li>
-                    );
-                  })}
-                </ul>
-              )}
-            </div>
-
-            <form
+            <SupportChatPanel
+              appearance="navbar"
+              draft={draft}
+              error={error}
+              isLight={isLight}
+              messages={threadMessages}
+              onClose={() => setOpen(false)}
+              onDraftChange={setDraft}
               onSubmit={handleSubmit}
-              className={`border-t px-3 py-2 ${
-                isLight ? 'border-slate-200 bg-white' : 'border-slate-700 bg-slate-900'
-              }`}
-            >
-              {error ? (
-                <p className="mb-1 text-[11px] text-red-500">{error}</p>
-              ) : null}
-              <div className="flex items-end gap-2">
-                <textarea
-                  value={draft}
-                  onChange={(event) => setDraft(event.target.value)}
-                  onKeyDown={(event) => {
-                    if (
-                      event.key === 'Enter' &&
-                      !event.shiftKey &&
-                      !event.nativeEvent.isComposing
-                    ) {
-                      event.preventDefault();
-                      (
-                        event.currentTarget.form as HTMLFormElement | null
-                      )?.requestSubmit();
-                    }
-                  }}
-                  placeholder="Uğur Hoca'ya mesaj yaz..."
-                  rows={1}
-                  autoComplete="off"
-                  autoCorrect="on"
-                  enterKeyHint="send"
-                  className={`max-h-32 min-h-[2.5rem] flex-1 resize-none appearance-none rounded-xl border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400 ${
-                    isLight
-                      ? 'border-slate-200 bg-white text-slate-900 placeholder:text-slate-400'
-                      : 'border-slate-700 bg-slate-800 text-slate-100 placeholder:text-slate-500'
-                  }`}
-                  disabled={sending}
-                />
-                <button
-                  type="submit"
-                  disabled={sending || draft.trim().length === 0}
-                  aria-busy={sending}
-                  aria-label={sending ? 'Gönderiliyor' : 'Gönder'}
-                  className="inline-flex h-10 min-w-[5.25rem] flex-shrink-0 items-center justify-center rounded-xl bg-gradient-to-r from-indigo-500 to-purple-500 px-3 text-sm font-semibold text-white transition-all hover:from-indigo-600 hover:to-purple-600 disabled:cursor-not-allowed disabled:opacity-50"
-                >
-                  {sending ? (
-                    <Loader2
-                      className="h-5 w-5 animate-spin"
-                      aria-hidden="true"
-                    />
-                  ) : (
-                    'Gönder'
-                  )}
-                </button>
-              </div>
-            </form>
+              peerAvatarSrc="/ugur.jpeg"
+              peerDisplayName="Uğur Hoca"
+              peerSubtitle="Mesajlaşma"
+              placeholder="Uğur Hoca'ya mesaj yaz..."
+              sending={sending}
+            />
           </motion.div>
         )}
       </AnimatePresence>
