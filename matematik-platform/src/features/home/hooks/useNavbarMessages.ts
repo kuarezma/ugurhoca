@@ -2,6 +2,10 @@
 
 import { useCallback, useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabase/client';
+import {
+  ADMIN_MESSAGE_BROADCAST_EVENT,
+  getStudentMessagesChannelName,
+} from '@/lib/realtime/studentMessagesChannel';
 import type { DashboardNotification } from '@/types/dashboard';
 
 const MESSAGE_LIMIT = 80;
@@ -13,6 +17,25 @@ const sortAsc = (items: DashboardNotification[]) =>
       new Date(left.created_at).getTime() -
       new Date(right.created_at).getTime(),
   );
+
+const parseBroadcastPayload = (
+  raw: unknown,
+): DashboardNotification | null => {
+  if (!raw || typeof raw !== 'object') return null;
+  const obj = raw as Record<string, unknown>;
+  if (
+    'payload' in obj &&
+    obj.payload &&
+    typeof obj.payload === 'object' &&
+    'id' in (obj.payload as object)
+  ) {
+    return obj.payload as DashboardNotification;
+  }
+  if ('id' in obj && 'type' in obj) {
+    return raw as DashboardNotification;
+  }
+  return null;
+};
 
 export const useNavbarMessages = (userId: string | null | undefined) => {
   const [messages, setMessages] = useState<DashboardNotification[]>([]);
@@ -51,8 +74,33 @@ export const useNavbarMessages = (userId: string | null | undefined) => {
 
     void load();
 
+    const mergeIncoming = (incoming: DashboardNotification) => {
+      if (
+        incoming.type !== 'admin-message' &&
+        incoming.type !== 'sent-message'
+      ) {
+        return;
+      }
+      setMessages((current) => {
+        if (current.some((item) => item.id === incoming.id)) {
+          return current;
+        }
+        return sortAsc([...current, incoming]).slice(-MESSAGE_LIMIT);
+      });
+    };
+
     const channel = supabase
-      .channel(`navbar-messages-${userId}`)
+      .channel(getStudentMessagesChannelName(userId))
+      .on(
+        'broadcast',
+        { event: ADMIN_MESSAGE_BROADCAST_EVENT },
+        (payload) => {
+          const row = parseBroadcastPayload(payload);
+          if (row?.type === 'admin-message') {
+            mergeIncoming(row);
+          }
+        },
+      )
       .on(
         'postgres_changes',
         {
@@ -62,19 +110,7 @@ export const useNavbarMessages = (userId: string | null | undefined) => {
           filter: `user_id=eq.${userId}`,
         },
         (payload) => {
-          const incoming = payload.new as DashboardNotification;
-          if (
-            incoming.type !== 'admin-message' &&
-            incoming.type !== 'sent-message'
-          ) {
-            return;
-          }
-          setMessages((current) => {
-            if (current.some((item) => item.id === incoming.id)) {
-              return current;
-            }
-            return sortAsc([...current, incoming]).slice(-MESSAGE_LIMIT);
-          });
+          mergeIncoming(payload.new as DashboardNotification);
         },
       )
       .on(

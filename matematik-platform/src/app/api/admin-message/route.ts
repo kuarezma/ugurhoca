@@ -2,6 +2,10 @@ import { NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 import { isAdminEmail } from "@/lib/admin";
 import { createLogger } from "@/lib/logger";
+import {
+  ADMIN_MESSAGE_BROADCAST_EVENT,
+  getStudentMessagesChannelName,
+} from "@/lib/realtime/studentMessagesChannel";
 
 const log = createLogger("admin-message");
 
@@ -69,9 +73,11 @@ export async function POST(request: Request) {
       },
     };
 
-    const { error } = await adminClient
+    const { data: inserted, error } = await adminClient
       .from("notifications")
-      .insert(notification);
+      .insert(notification)
+      .select("*")
+      .single();
 
     if (error) {
       log.error("Admin message insert error", error);
@@ -79,6 +85,26 @@ export async function POST(request: Request) {
         { error: "Mesaj gönderilemedi." },
         { status: 500 },
       );
+    }
+
+    try {
+      const broadcastChannel = adminClient.channel(
+        getStudentMessagesChannelName(student_id),
+      );
+      const sendResult = await broadcastChannel.send({
+        type: "broadcast",
+        event: ADMIN_MESSAGE_BROADCAST_EVENT,
+        payload: inserted,
+      });
+      if (sendResult !== "ok") {
+        log.warn("Admin mesajı realtime broadcast tamamlanamadı", {
+          sendResult,
+        });
+      }
+    } catch (broadcastError) {
+      log.warn("Admin mesajı realtime broadcast hatası", {
+        error: String(broadcastError),
+      });
     }
 
     return NextResponse.json({ success: true });
