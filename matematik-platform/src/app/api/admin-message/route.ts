@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 import { isAdminEmail } from "@/lib/admin";
 import { createLogger } from "@/lib/logger";
+import { createServerSupabaseClient } from "@/lib/supabase/server";
 import {
   ADMIN_MESSAGE_BROADCAST_EVENT,
   getStudentMessagesChannelName,
@@ -11,23 +12,32 @@ const log = createLogger("admin-message");
 
 export async function POST(request: Request) {
   try {
-    const anonClient = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    );
+    const authHeader = request.headers.get("authorization");
+    const accessToken = authHeader?.startsWith("Bearer ")
+      ? authHeader.slice(7).trim()
+      : "";
 
-    const {
-      data: { session },
-      error: sessionError,
-    } = await anonClient.auth.getSession();
-    if (sessionError || !session) {
+    if (!accessToken) {
       return NextResponse.json(
         { error: "Oturum açmanız gerekiyor." },
         { status: 401 },
       );
     }
 
-    if (!isAdminEmail(session.user.email)) {
+    const authSupabase = createServerSupabaseClient(accessToken);
+    const {
+      data: { user },
+      error: userError,
+    } = await authSupabase.auth.getUser(accessToken);
+
+    if (userError || !user?.email) {
+      return NextResponse.json(
+        { error: "Oturum açmanız gerekiyor." },
+        { status: 401 },
+      );
+    }
+
+    if (!isAdminEmail(user.email)) {
       return NextResponse.json({ error: "Yetkiniz yok." }, { status: 403 });
     }
 

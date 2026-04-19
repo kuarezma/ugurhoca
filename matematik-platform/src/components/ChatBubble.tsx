@@ -143,9 +143,15 @@ function ChatBubble() {
     setSendingReply(true);
     try {
       const session = await getClientSession();
-      await fetch("/api/admin-message", {
+      if (!session?.access_token) {
+        throw new Error("Oturum açmanız gerekiyor.");
+      }
+      const response = await fetch("/api/admin-message", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          Authorization: `Bearer ${session.access_token}`,
+          "Content-Type": "application/json",
+        },
         body: JSON.stringify({
           student_id: replyingTo.parsed.sender_id,
           student_name: replyingTo.parsed.sender_name,
@@ -155,8 +161,18 @@ function ChatBubble() {
           sender_name: "Uğur Hoca",
         }),
       });
+      const body = (await response.json().catch(() => null)) as {
+        error?: string;
+      } | null;
+      if (!response.ok) {
+        throw new Error(body?.error || "Mesaj gönderilemedi.");
+      }
       setReplyText("");
       setReplyingTo(null);
+    } catch (error) {
+      window.alert(
+        error instanceof Error ? error.message : "Mesaj gönderilemedi.",
+      );
     } finally {
       setSendingReply(false);
     }

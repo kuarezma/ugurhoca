@@ -3,6 +3,7 @@
 import type { Dispatch, FormEvent, SetStateAction } from "react";
 import { useToast } from "@/components/Toast";
 import { ADMIN_EMAIL } from "@/lib/admin";
+import { getClientSession } from "@/lib/auth-client";
 import { getErrorMessage } from "@/lib/error-utils";
 import {
   createAdminAnnouncement,
@@ -377,9 +378,16 @@ export function useAdminModalSubmitHandlers({
     setIsSubmitting(true);
 
     try {
-      await fetch("/api/admin-message", {
+      const session = await getClientSession();
+      if (!session?.access_token) {
+        throw new Error("Oturum açmanız gerekiyor.");
+      }
+      const response = await fetch("/api/admin-message", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          Authorization: `Bearer ${session.access_token}`,
+          "Content-Type": "application/json",
+        },
         body: JSON.stringify({
           image_url: adminMsgImageUrl || null,
           message: adminMsgText,
@@ -390,6 +398,12 @@ export function useAdminModalSubmitHandlers({
           title: adminMsgTitle || "Uğur Hoca'dan Mesaj",
         }),
       });
+      const body = (await response.json().catch(() => null)) as {
+        error?: string;
+      } | null;
+      if (!response.ok) {
+        throw new Error(body?.error || "Mesaj gönderilemedi.");
+      }
 
       setIsSubmitting(false);
       scheduleModalSuccessReset();
