@@ -145,6 +145,7 @@ export default function AdminMainModal({
 
       updateFormData({
         importBundleFile: isBundle ? file : null,
+        importBundleUrl: '',
         importMode: result.source,
         importResult: result,
       });
@@ -153,6 +154,45 @@ export default function AdminMainModal({
         'error',
         `Import dosyası okunamadı: ${getErrorMessage(error)}`,
       );
+    }
+  };
+
+  const handleQuestionImportFromUrl = async (bundleUrl: string) => {
+    const normalizedUrl = bundleUrl.trim();
+    if (!normalizedUrl) {
+      showToast('warning', 'Önce geçerli bir ZIP linki girin.');
+      return;
+    }
+
+    setIsSubmitting(true);
+    try {
+      const response = await fetch('/api/import-questions-bundle', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ bundle_url: normalizedUrl, preview: true }),
+      });
+      const payload = (await response.json().catch(() => null)) as
+        | {
+            data?: { importResult?: unknown };
+            error?: { message?: string };
+          }
+        | null;
+      if (!response.ok || !payload?.data?.importResult) {
+        throw new Error(payload?.error?.message || 'ZIP linki işlenemedi.');
+      }
+
+      const importResult = payload.data.importResult as AdminFormState['importResult'];
+      updateFormData({
+        importBundleFile: null,
+        importBundleUrl: normalizedUrl,
+        importMode: importResult?.source,
+        importResult,
+      });
+      showToast('success', 'ZIP linki başarıyla işlendi.');
+    } catch (error) {
+      showToast('error', `ZIP linki işlenemedi: ${getErrorMessage(error)}`);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -256,6 +296,7 @@ export default function AdminMainModal({
             isSubmitting={isSubmitting}
             modalType={modalType}
             onDocumentUpload={handleDocumentUpload}
+            onQuestionImportFromUrl={handleQuestionImportFromUrl}
             onQuestionImportUpload={handleQuestionImportUpload}
             onSubmit={onGenericSubmit}
             onToggleDocumentGrade={toggleDocumentGrade}

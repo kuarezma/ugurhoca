@@ -58,6 +58,7 @@ export function useAdminModalState() {
       type === 'importQuestions'
         ? {
             importBundleFile: null,
+            importBundleUrl: '',
             importMode: 'excel',
             importResult: null,
           }
@@ -125,6 +126,7 @@ export function useAdminModalState() {
     setSuccess(false);
     setFormData({
       importBundleFile: null,
+      importBundleUrl: '',
       importMode: 'excel',
       importResult: null,
     });

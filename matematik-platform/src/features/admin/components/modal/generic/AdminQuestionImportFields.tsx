@@ -1,5 +1,6 @@
 /* eslint-disable @next/next/no-img-element -- admin import preview renders local blob URLs */
 import type { ChangeEvent } from 'react';
+import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { FileArchive, FileSpreadsheet, Image as ImageIcon, Upload } from 'lucide-react';
 import type { AdminFormState } from '@/features/admin/types';
@@ -11,13 +12,17 @@ type AdminQuestionImportFieldsProps = {
   onQuestionImportUpload: (
     event: ChangeEvent<HTMLInputElement>,
   ) => Promise<void>;
+  onQuestionImportFromUrl: (bundleUrl: string) => Promise<void>;
 };
 
 export default function AdminQuestionImportFields({
   formData,
   isSubmitting,
+  onQuestionImportFromUrl,
   onQuestionImportUpload,
 }: AdminQuestionImportFieldsProps) {
+  const [bundleUrl, setBundleUrl] = useState(formData.importBundleUrl || '');
+
   const handleDownloadTemplate = async () => {
     const { downloadExcelTemplate } = await import('@/lib/question-import');
     downloadExcelTemplate();
@@ -62,6 +67,31 @@ export default function AdminQuestionImportFields({
                   quiz.json + images/ içeren converter çıktısı
                 </p>
               </label>
+            </div>
+            <div className="mt-4 rounded-2xl border border-cyan-400/25 bg-slate-900/30 p-4">
+              <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-cyan-300">
+                veya Drive ZIP linki
+              </p>
+              <div className="flex flex-col gap-2 sm:flex-row">
+                <input
+                  type="url"
+                  value={bundleUrl}
+                  onChange={(event) => setBundleUrl(event.target.value)}
+                  className="w-full rounded-lg border border-slate-700 bg-slate-950/70 px-3 py-2 text-sm text-slate-100 placeholder:text-slate-500 focus:border-cyan-400 focus:outline-none"
+                  placeholder="https://drive.google.com/file/d/.../view?usp=sharing"
+                />
+                <button
+                  type="button"
+                  disabled={isSubmitting || !bundleUrl.trim()}
+                  onClick={() => onQuestionImportFromUrl(bundleUrl)}
+                  className="rounded-lg bg-cyan-500 px-4 py-2 text-sm font-semibold text-slate-950 transition-colors hover:bg-cyan-400 disabled:cursor-not-allowed disabled:opacity-60"
+                >
+                  URL&apos;den yükle
+                </button>
+              </div>
+              <p className="mt-2 text-xs text-slate-500">
+                Link herkese açık olmalı ve ZIP bundle (quiz.json + images/) içermeli.
+              </p>
             </div>
           </section>
 

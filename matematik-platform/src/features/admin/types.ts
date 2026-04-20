@@ -107,6 +107,7 @@ export type AdminFormState = {
   image_url?: string | null;
   image_urls?: string;
   importBundleFile?: File | null;
+  importBundleUrl?: string;
   importMode?: 'bundle' | 'excel';
   importResult?: ImportResult | null;
   is_active?: boolean;

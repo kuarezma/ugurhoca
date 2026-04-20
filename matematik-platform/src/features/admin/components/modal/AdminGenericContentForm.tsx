@@ -27,6 +27,7 @@ type AdminGenericContentFormProps = {
   onQuestionImportUpload: (
     event: ChangeEvent<HTMLInputElement>,
   ) => Promise<void>;
+  onQuestionImportFromUrl: (bundleUrl: string) => Promise<void>;
   onSubmit: AdminModalSubmitHandler;
   onToggleDocumentGrade: (grade: number | "Mezun", checked: boolean) => void;
   updateFormData: AdminFormUpdate;
@@ -38,6 +39,7 @@ export default function AdminGenericContentForm({
   modalType,
   onDocumentUpload,
   onQuestionImportUpload,
+  onQuestionImportFromUrl,
   onSubmit,
   onToggleDocumentGrade,
   updateFormData,
@@ -133,6 +135,7 @@ export default function AdminGenericContentForm({
         <AdminQuestionImportFields
           formData={formData}
           isSubmitting={isSubmitting}
+          onQuestionImportFromUrl={onQuestionImportFromUrl}
           onQuestionImportUpload={onQuestionImportUpload}
         />
       )}

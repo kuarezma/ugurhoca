@@ -287,9 +287,16 @@ export function useAdminModalSubmitHandlers({
         showToast("warning", "Önce geçerli bir soru dosyası yükleyin.");
         return;
       }
-      if (importResult.source === "bundle" && !formData.importBundleFile) {
+      if (
+        importResult.source === "bundle" &&
+        !formData.importBundleFile &&
+        !formData.importBundleUrl
+      ) {
         setIsSubmitting(false);
-        showToast("warning", "ZIP bundle dosyası eksik. Lütfen yeniden yükleyin.");
+        showToast(
+          "warning",
+          "ZIP bundle kaynağı eksik. Dosya yükleyin veya geçerli bir link girin.",
+        );
         return;
       }
 
@@ -303,6 +310,14 @@ export function useAdminModalSubmitHandlers({
                 body: bundleFormData,
               });
             })()
+          : importResult.source === "bundle" && formData.importBundleUrl
+            ? await fetch("/api/import-questions-bundle", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                  bundle_url: formData.importBundleUrl,
+                }),
+              })
           : await fetch("/api/import-questions", {
               method: "POST",
               headers: { "Content-Type": "application/json" },

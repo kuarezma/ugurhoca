@@ -32,7 +32,7 @@ describe('POST /api/import-questions-bundle', () => {
     await expect(response.json()).resolves.toEqual({
       error: {
         code: 'missing_bundle_file',
-        message: 'ZIP dosyası gerekli.',
+        message: 'ZIP dosyası veya bundle_url gerekli.',
       },
     });
   });
@@ -102,5 +102,62 @@ describe('POST /api/import-questions-bundle', () => {
       archive,
     );
     await expect(response.json()).resolves.toEqual({ data: result });
+  });
+
+  it('parses bundle with bundle_url in preview mode', async () => {
+    const archive = {
+      assetFiles: new Map(),
+      importResult: {
+        assetPreviewUrls: {},
+        errors: [],
+        meta: {
+          description: '',
+          difficulty: 'Orta' as const,
+          grade: 8,
+          time_limit: 20,
+          title: 'Drive Testi',
+        },
+        source: 'bundle' as const,
+        valid: [
+          {
+            correct_index: 1,
+            explanation: '',
+            option_image_files: [[], [], [], []] as [
+              string[],
+              string[],
+              string[],
+              string[],
+            ],
+            options: ['1', '2', '3', '4'] as [string, string, string, string],
+            question: '1 + 1 kaç eder?',
+            question_image_files: [],
+          },
+        ],
+      },
+    };
+    vi.mocked(parseQuizBundleArchive).mockResolvedValue(archive);
+    vi.spyOn(global, 'fetch').mockResolvedValue(
+      new Response(new Uint8Array([0x50, 0x4b, 0x03, 0x04]).buffer, {
+        status: 200,
+        headers: { 'Content-Type': 'application/zip' },
+      }),
+    );
+
+    const response = await POST(
+      new Request('http://localhost/api/import-questions-bundle', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          bundle_url: 'https://drive.google.com/file/d/abc/view?usp=sharing',
+          preview: true,
+        }),
+      }),
+    );
+
+    expect(response.status).toBe(200);
+    expect(insertQuizBundleWithImages).not.toHaveBeenCalled();
+    await expect(response.json()).resolves.toEqual({
+      data: { importResult: archive.importResult },
+    });
   });
 });
