@@ -125,16 +125,16 @@ export const getContentKindLabel = (content: ContentDocument) => {
 };
 
 const CONTENT_PRIMARY_GRADE_BADGE_STYLES: Record<string, string> = {
-  5: 'bg-emerald-500/15 text-emerald-300 border border-emerald-400/20',
-  6: 'bg-sky-500/15 text-sky-300 border border-sky-400/20',
-  7: 'bg-violet-500/15 text-violet-300 border border-violet-400/20',
-  8: 'bg-indigo-500/15 text-indigo-300 border border-indigo-400/20',
-  9: 'bg-fuchsia-500/15 text-fuchsia-300 border border-fuchsia-400/20',
-  10: 'bg-amber-500/15 text-amber-300 border border-amber-400/20',
-  11: 'bg-rose-500/15 text-rose-300 border border-rose-400/20',
-  12: 'bg-cyan-500/15 text-cyan-300 border border-cyan-400/20',
-  Mezun: 'bg-orange-500/15 text-orange-300 border border-orange-400/20',
-  all: 'bg-slate-500/15 text-slate-300 border border-slate-400/20',
+  5: 'bg-emerald-500/35 text-emerald-50 border border-emerald-200/80 shadow-sm shadow-emerald-500/30',
+  6: 'bg-sky-500/35 text-sky-50 border border-sky-200/80 shadow-sm shadow-sky-500/30',
+  7: 'bg-violet-500/35 text-violet-50 border border-violet-200/80 shadow-sm shadow-violet-500/30',
+  8: 'bg-indigo-500/40 text-indigo-50 border border-indigo-200/85 shadow-sm shadow-indigo-500/35',
+  9: 'bg-fuchsia-500/35 text-fuchsia-50 border border-fuchsia-200/80 shadow-sm shadow-fuchsia-500/30',
+  10: 'bg-amber-500/35 text-amber-50 border border-amber-200/80 shadow-sm shadow-amber-500/30',
+  11: 'bg-rose-500/35 text-rose-50 border border-rose-200/80 shadow-sm shadow-rose-500/30',
+  12: 'bg-cyan-500/35 text-cyan-50 border border-cyan-200/80 shadow-sm shadow-cyan-500/30',
+  Mezun: 'bg-orange-500/35 text-orange-50 border border-orange-200/80 shadow-sm shadow-orange-500/30',
+  all: 'bg-slate-500/35 text-slate-50 border border-slate-200/70 shadow-sm shadow-slate-500/20',
 };
 
 export const getContentPrimaryGradeBadgeClass = (

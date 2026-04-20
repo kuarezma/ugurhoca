@@ -216,17 +216,17 @@ export default function ContentCard({
                 </p>
               </div>
             </div>
-            <div className="flex max-w-[48%] flex-wrap justify-end gap-1.5 sm:max-w-none sm:items-center sm:gap-2">
-              <span
-                className={`px-2.5 sm:px-3 py-1 rounded-full text-[10px] sm:text-xs font-semibold ${gradeBadgeClass}`}
-              >
-                {getContentPrimaryGradeLabel(content)}
-              </span>
+            <div className="flex max-w-[52%] flex-wrap justify-end gap-1.5 sm:max-w-none sm:items-center sm:gap-2">
               {content.isNew && (
                 <span className="px-2.5 sm:px-3 py-1 rounded-full bg-emerald-500/15 text-emerald-300 text-[10px] sm:text-xs font-semibold border border-emerald-400/20">
                   Yeni
                 </span>
               )}
+              <span
+                className={`ml-auto px-3.5 sm:px-4 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-bold tracking-wide ${gradeBadgeClass}`}
+              >
+                {getContentPrimaryGradeLabel(content)}
+              </span>
             </div>
           </div>
 
@@ -285,11 +285,6 @@ export default function ContentCard({
             <ContentTypeIcon type={content.type} />
           </div>
           <div className="flex max-w-[52%] flex-wrap justify-end gap-1.5 sm:max-w-none sm:items-center sm:gap-2">
-            <span
-              className={`px-2.5 sm:px-3 py-1 rounded-full text-[10px] sm:text-xs font-semibold ${gradeBadgeClass}`}
-            >
-              {getContentPrimaryGradeLabel(content)}
-            </span>
             <span className="px-2.5 sm:px-3 py-1 rounded-full bg-amber-500/15 text-amber-300 text-[10px] sm:text-xs font-semibold border border-amber-400/20">
               {getContentTypeLabel(content.type)}
             </span>
@@ -303,6 +298,11 @@ export default function ContentCard({
                 ÇÖZÜMLÜ
               </span>
             )}
+            <span
+              className={`ml-auto px-3.5 sm:px-4 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-bold tracking-wide ${gradeBadgeClass}`}
+            >
+              {getContentPrimaryGradeLabel(content)}
+            </span>
           </div>
         </div>
 
