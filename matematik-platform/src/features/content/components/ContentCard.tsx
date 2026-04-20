@@ -9,13 +9,12 @@ import {
   Heart,
   MessageCircle,
   Play,
-  Share2,
   Star,
   Trash2,
   Users,
 } from 'lucide-react';
 import {
-  getContentKindLabel,
+  getContentPrimaryGradeBadgeClass,
   getContentTypeColor,
   getContentTypeIcon,
   getContentTypeLabel,
@@ -35,7 +34,6 @@ type ContentCardProps = {
   index: number;
   isFavorite: boolean;
   isLiked: boolean;
-  onCopyLink: (content: ContentDocument) => void;
   onDelete: (content: ContentDocument) => void | Promise<void>;
   onDownload: (content: ContentDocument) => void | Promise<void>;
   onEdit: (content: ContentDocument) => void;
@@ -59,7 +57,6 @@ export default function ContentCard({
   index,
   isFavorite,
   isLiked,
-  onCopyLink,
   onDelete,
   onDownload,
   onEdit,
@@ -80,6 +77,7 @@ export default function ContentCard({
       ? getGoogleDriveThumbnailUrl(content.file_url, 'w400')
       : null;
   const showDriveThumbnail = Boolean(driveThumbnailSrc) && !thumbnailFailed;
+  const gradeBadgeClass = getContentPrimaryGradeBadgeClass(content);
 
   const actionButtons = (
     <div className="grid w-full grid-cols-2 gap-2 sm:flex sm:flex-wrap sm:items-center sm:gap-3">
@@ -219,18 +217,9 @@ export default function ContentCard({
               </div>
             </div>
             <div className="flex max-w-[48%] flex-wrap justify-end gap-1.5 sm:max-w-none sm:items-center sm:gap-2">
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                onClick={() => onCopyLink(content)}
-                className="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-slate-800/70 border border-white/10 text-slate-300 hover:text-white flex items-center justify-center transition-colors"
+              <span
+                className={`px-2.5 sm:px-3 py-1 rounded-full text-[10px] sm:text-xs font-semibold ${gradeBadgeClass}`}
               >
-                <Share2 className="w-4 h-4" />
-              </motion.button>
-              <span className="px-2.5 sm:px-3 py-1 rounded-full bg-rose-500/15 text-rose-300 text-[10px] sm:text-xs font-semibold border border-rose-400/20">
-                {getContentKindLabel(content)}
-              </span>
-              <span className="px-2.5 sm:px-3 py-1 rounded-full bg-indigo-500/15 text-indigo-300 text-[10px] sm:text-xs font-semibold border border-indigo-400/20">
                 {getContentPrimaryGradeLabel(content)}
               </span>
               {content.isNew && (
@@ -296,18 +285,9 @@ export default function ContentCard({
             <ContentTypeIcon type={content.type} />
           </div>
           <div className="flex max-w-[52%] flex-wrap justify-end gap-1.5 sm:max-w-none sm:items-center sm:gap-2">
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              onClick={() => onCopyLink(content)}
-              className="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-slate-800/70 border border-white/10 text-slate-300 hover:text-white flex items-center justify-center transition-colors"
+            <span
+              className={`px-2.5 sm:px-3 py-1 rounded-full text-[10px] sm:text-xs font-semibold ${gradeBadgeClass}`}
             >
-              <Share2 className="w-4 h-4" />
-            </motion.button>
-            <span className="px-2.5 sm:px-3 py-1 rounded-full bg-rose-500/15 text-rose-300 text-[10px] sm:text-xs font-semibold border border-rose-400/20">
-              {getContentKindLabel(content)}
-            </span>
-            <span className="px-2.5 sm:px-3 py-1 rounded-full bg-indigo-500/15 text-indigo-300 text-[10px] sm:text-xs font-semibold border border-indigo-400/20">
               {getContentPrimaryGradeLabel(content)}
             </span>
             <span className="px-2.5 sm:px-3 py-1 rounded-full bg-amber-500/15 text-amber-300 text-[10px] sm:text-xs font-semibold border border-amber-400/20">

@@ -123,3 +123,30 @@ export const getContentKindLabel = (content: ContentDocument) => {
   }
   return 'Dosya';
 };
+
+const CONTENT_PRIMARY_GRADE_BADGE_STYLES: Record<string, string> = {
+  5: 'bg-emerald-500/15 text-emerald-300 border border-emerald-400/20',
+  6: 'bg-sky-500/15 text-sky-300 border border-sky-400/20',
+  7: 'bg-violet-500/15 text-violet-300 border border-violet-400/20',
+  8: 'bg-indigo-500/15 text-indigo-300 border border-indigo-400/20',
+  9: 'bg-fuchsia-500/15 text-fuchsia-300 border border-fuchsia-400/20',
+  10: 'bg-amber-500/15 text-amber-300 border border-amber-400/20',
+  11: 'bg-rose-500/15 text-rose-300 border border-rose-400/20',
+  12: 'bg-cyan-500/15 text-cyan-300 border border-cyan-400/20',
+  Mezun: 'bg-orange-500/15 text-orange-300 border border-orange-400/20',
+  all: 'bg-slate-500/15 text-slate-300 border border-slate-400/20',
+};
+
+export const getContentPrimaryGradeBadgeClass = (
+  content: Pick<ContentDocument, 'grade'>,
+) => {
+  const primaryGrade =
+    Array.isArray(content.grade) && content.grade.length > 0
+      ? String(content.grade[0])
+      : 'all';
+
+  return (
+    CONTENT_PRIMARY_GRADE_BADGE_STYLES[primaryGrade] ||
+    CONTENT_PRIMARY_GRADE_BADGE_STYLES.all
+  );
+};

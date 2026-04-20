@@ -544,17 +544,6 @@ function ContentsPageInner({
     });
   }, []);
 
-  const handleCopyLink = useCallback(async (content: ContentDocument) => {
-    try {
-      await navigator.clipboard.writeText(
-        `${window.location.origin}/icerikler?id=${content.id}`,
-      );
-      showToast('success', 'Link kopyalandı.');
-    } catch {
-      showToast('error', 'Link kopyalanamadı.');
-    }
-  }, [showToast]);
-
   const handleOpenPreview = useCallback((content: ContentDocument) => {
     setShowAnswerKey(false);
     setPreviewDoc(content);
@@ -1404,7 +1393,6 @@ function ContentsPageInner({
                       index={index}
                       isFavorite={favorites.has(content.id)}
                       isLiked={likedDocs.has(content.id)}
-                      onCopyLink={handleCopyLink}
                       onDelete={handleDeleteDocument}
                       onDownload={handleDownloadDocument}
                       onEdit={handleOpenEdit}
@@ -1434,7 +1422,6 @@ function ContentsPageInner({
                     index={index}
                     isFavorite={favorites.has(content.id)}
                     isLiked={likedDocs.has(content.id)}
-                    onCopyLink={handleCopyLink}
                     onDelete={handleDeleteDocument}
                     onDownload={handleDownloadDocument}
                     onEdit={handleOpenEdit}
@@ -1500,7 +1487,6 @@ function ContentsPageInner({
                   index={index}
                   isFavorite={favorites.has(content.id)}
                   isLiked={likedDocs.has(content.id)}
-                  onCopyLink={handleCopyLink}
                   onDelete={handleDeleteDocument}
                   onDownload={handleDownloadDocument}
                   onEdit={handleOpenEdit}
@@ -1522,7 +1508,6 @@ function ContentsPageInner({
                   index={index}
                   isFavorite={favorites.has(content.id)}
                   isLiked={likedDocs.has(content.id)}
-                  onCopyLink={handleCopyLink}
                   onDelete={handleDeleteDocument}
                   onDownload={handleDownloadDocument}
                   onEdit={handleOpenEdit}
