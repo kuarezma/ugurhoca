@@ -75,6 +75,11 @@ export const useAccessibleModal = <T extends HTMLElement>(
   onClose: () => void,
 ) => {
   const containerRef = useRef<T | null>(null);
+  const onCloseRef = useRef(onClose);
+
+  useEffect(() => {
+    onCloseRef.current = onClose;
+  }, [onClose]);
 
   useEffect(() => {
     if (!isOpen) {
@@ -100,7 +105,7 @@ export const useAccessibleModal = <T extends HTMLElement>(
 
       if (event.key === 'Escape') {
         event.preventDefault();
-        onClose();
+        onCloseRef.current();
         return;
       }
 
@@ -143,7 +148,7 @@ export const useAccessibleModal = <T extends HTMLElement>(
       releaseBodyScrollLock();
       previousActiveElement?.focus();
     };
-  }, [isOpen, onClose]);
+  }, [isOpen]);
 
   return containerRef;
 };
