@@ -106,6 +106,8 @@ export type AdminFormState = {
   grades?: GradeValue[];
   image_url?: string | null;
   image_urls?: string;
+  importBundleFile?: File | null;
+  importMode?: 'bundle' | 'excel';
   importResult?: ImportResult | null;
   is_active?: boolean;
   learning_outcome?: string | null;

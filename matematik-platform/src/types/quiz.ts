@@ -17,6 +17,8 @@ export interface QuizQuestion {
   quiz_id: string;
   question: string;
   options: string[];
+  question_image_url?: string | null;
+  option_image_urls?: string[] | null;
   correct_index: number;
   question_order: number;
   explanation: string | null;

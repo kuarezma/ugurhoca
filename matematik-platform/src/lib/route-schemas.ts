@@ -15,8 +15,13 @@ export const quizImportSchema = z.object({
       z.object({
         correct_index: z.number().int().min(0).max(3),
         explanation: z.string().optional().default(''),
+        option_image_urls: z
+          .array(z.string().trim().url().or(z.literal('')))
+          .length(4)
+          .optional(),
         options: z.array(z.string().trim().min(1)).length(4),
         question: z.string().trim().min(1),
+        question_image_url: z.string().trim().url().optional(),
       }),
     )
     .min(1, 'En az 1 geçerli soru gereklidir.')

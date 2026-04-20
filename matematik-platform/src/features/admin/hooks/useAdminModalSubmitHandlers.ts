@@ -287,15 +287,30 @@ export function useAdminModalSubmitHandlers({
         showToast("warning", "Önce geçerli bir soru dosyası yükleyin.");
         return;
       }
+      if (importResult.source === "bundle" && !formData.importBundleFile) {
+        setIsSubmitting(false);
+        showToast("warning", "ZIP bundle dosyası eksik. Lütfen yeniden yükleyin.");
+        return;
+      }
 
-      const response = await fetch("/api/import-questions", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          meta: importResult.meta,
-          questions: importResult.valid,
-        }),
-      });
+      const response =
+        importResult.source === "bundle" && formData.importBundleFile
+          ? await (() => {
+              const bundleFormData = new FormData();
+              bundleFormData.set("file", formData.importBundleFile as File);
+              return fetch("/api/import-questions-bundle", {
+                method: "POST",
+                body: bundleFormData,
+              });
+            })()
+          : await fetch("/api/import-questions", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                meta: importResult.meta,
+                questions: importResult.valid,
+              }),
+            });
       const payload = await response.json();
 
       if (response.ok) {

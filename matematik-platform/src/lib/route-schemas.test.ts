@@ -23,8 +23,15 @@ describe('route-schemas', () => {
       questions: [
         {
           correct_index: 1,
+          option_image_urls: [
+            '',
+            'https://example.com/option-b.png',
+            '',
+            '',
+          ],
           options: ['1', '2', '3', '4'],
           question: '1 + 1 kaç eder?',
+          question_image_url: 'https://example.com/question.png',
         },
       ],
     });

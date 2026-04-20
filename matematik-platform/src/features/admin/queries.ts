@@ -1,6 +1,7 @@
 import type { Session } from '@supabase/supabase-js';
 import { ADMIN_EMAIL, isAdminEmail } from '@/lib/admin';
 import { getClientSession } from '@/lib/auth-client';
+import { decodeQuizMediaExplanation } from '@/lib/quiz-media';
 import { supabase } from '@/lib/supabase/client';
 import {
   buildWorksheetDescription,
@@ -806,5 +807,13 @@ export const loadAdminQuizQuestions = async (quizId: string) => {
     .eq('quiz_id', quizId)
     .order('question_order', { ascending: true });
 
-  return (data || []) as AdminQuizQuestion[];
+  return ((data || []) as AdminQuizQuestion[]).map((question) => {
+    const media = decodeQuizMediaExplanation(question.explanation);
+    return {
+      ...question,
+      explanation: media.explanation,
+      option_image_urls: question.option_image_urls || media.option_image_urls,
+      question_image_url: question.question_image_url || media.question_image_url,
+    };
+  });
 };

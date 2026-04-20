@@ -132,13 +132,26 @@ export default function AdminMainModal({
 
     try {
       const buffer = await file.arrayBuffer();
-      const { parseExcelFile } = await import('@/lib/question-import');
-      const result = await parseExcelFile(buffer);
-      updateFormData({ importResult: result });
+      const { parseExcelFile, parseQuizBundleFile } = await import(
+        '@/lib/question-import'
+      );
+      const isBundle = file.name.toLowerCase().endsWith('.zip');
+      const result = isBundle
+        ? await parseQuizBundleFile(buffer, {
+            createPreviewUrls: true,
+            fileName: file.name,
+          })
+        : await parseExcelFile(buffer);
+
+      updateFormData({
+        importBundleFile: isBundle ? file : null,
+        importMode: result.source,
+        importResult: result,
+      });
     } catch (error) {
       showToast(
         'error',
-        `Excel dosyası okunamadı: ${getErrorMessage(error)}`,
+        `Import dosyası okunamadı: ${getErrorMessage(error)}`,
       );
     }
   };

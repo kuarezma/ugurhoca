@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback, useMemo } from 'react';
+import Image from 'next/image';
 import Link from 'next/link';
 import {
   Calculator,
@@ -28,6 +29,7 @@ import { Skeleton } from '@/components/ui/Skeleton';
 import { requireClientSession } from '@/lib/auth-client';
 import { getErrorMessage } from '@/lib/error-utils';
 import { createLogger } from '@/lib/logger';
+import { decodeQuizMediaExplanation } from '@/lib/quiz-media';
 import { supabase } from '@/lib/supabase/client';
 
 const log = createLogger('tests-page');
@@ -39,6 +41,63 @@ type TestsPageProps = {
   initialUser?: AppUser | null;
   isHydrated?: boolean;
 };
+
+const hasOptionImage = (question: QuizQuestion, optionIndex: number) =>
+  Boolean(question.option_image_urls?.[optionIndex]);
+
+const normalizeQuizQuestion = (question: QuizQuestion): QuizQuestion => {
+  const media = decodeQuizMediaExplanation(question.explanation);
+  return {
+    ...question,
+    explanation: media.explanation,
+    option_image_urls: question.option_image_urls || media.option_image_urls,
+    question_image_url: question.question_image_url || media.question_image_url,
+  };
+};
+
+function QuestionImage({
+  alt,
+  src,
+}: {
+  alt: string;
+  src: string;
+}) {
+  return (
+    <div className="mt-4 overflow-hidden rounded-2xl border border-white/10 bg-slate-950/40 p-3">
+      <div className="relative mx-auto h-72 w-full max-w-xl">
+        <Image
+          src={src}
+          alt={alt}
+          fill
+          sizes="(max-width: 768px) 100vw, 40rem"
+          className="object-contain"
+        />
+      </div>
+    </div>
+  );
+}
+
+function OptionMedia({
+  alt,
+  src,
+}: {
+  alt: string;
+  src: string;
+}) {
+  return (
+    <div className="mt-3 overflow-hidden rounded-xl border border-white/10 bg-slate-950/50 p-2">
+      <div className="relative h-28 w-full">
+        <Image
+          src={src}
+          alt={alt}
+          fill
+          sizes="(max-width: 768px) 100vw, 20rem"
+          className="object-contain"
+        />
+      </div>
+    </div>
+  );
+}
 
 export default function TestsPage({
   initialQuizzes = [],
@@ -152,7 +211,7 @@ export default function TestsPage({
         if (data.length === 0) {
           throw new Error('Bu teste henüz soru eklenmemiş.');
         }
-        setQuizQuestions(data);
+        setQuizQuestions(data.map((item) => normalizeQuizQuestion(item as QuizQuestion)));
         return true;
       }
       return false;
@@ -365,6 +424,13 @@ export default function TestsPage({
                 {question.question}
               </MathText>
 
+              {question.question_image_url ? (
+                <QuestionImage
+                  alt={`Soru ${currentQuestion + 1} görseli`}
+                  src={question.question_image_url}
+                />
+              ) : null}
+
               <div
                 className="space-y-3"
                 role="radiogroup"
@@ -384,18 +450,26 @@ export default function TestsPage({
                           ? 'bg-gradient-to-r from-brand-primary via-brand-pink to-brand-orange text-white shadow-brand-glow scale-[1.01]'
                           : 'bg-slate-800/60 text-slate-200 hover:bg-slate-700/60 hover:translate-x-0.5'
                       }`}
-                    >
-                      <span
-                        className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-lg font-bold text-sm ${
+                      >
+                        <span
+                          className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-lg font-bold text-sm ${
                           selected
                             ? 'bg-white/25 text-white'
                             : 'bg-slate-900/60 text-brand-primary-soft'
                         }`}
                         aria-hidden="true"
-                      >
-                        {String.fromCharCode(65 + i)}
-                      </span>
-                      <MathText className="flex-1">{option}</MathText>
+                        >
+                          {String.fromCharCode(65 + i)}
+                        </span>
+                      <div className="flex-1">
+                        <MathText>{option}</MathText>
+                        {hasOptionImage(question, i) ? (
+                          <OptionMedia
+                            alt={`Soru ${currentQuestion + 1} şık ${String.fromCharCode(65 + i)} görseli`}
+                            src={question.option_image_urls?.[i] || ''}
+                          />
+                        ) : null}
+                      </div>
                     </button>
                   );
                 })}
@@ -588,14 +662,22 @@ export default function TestsPage({
                       }`}
                     >
                       <div className="flex items-start justify-between gap-4 mb-2">
-                        <MathText
-                          as="p"
-                          className={`font-semibold text-sm ${
-                            isCorrect ? 'text-emerald-300' : 'text-red-300'
-                          }`}
-                        >
-                          {`${index + 1}. ${q.question}`}
-                        </MathText>
+                        <div className="min-w-0 flex-1">
+                          <MathText
+                            as="p"
+                            className={`font-semibold text-sm ${
+                              isCorrect ? 'text-emerald-300' : 'text-red-300'
+                            }`}
+                          >
+                            {`${index + 1}. ${q.question}`}
+                          </MathText>
+                          {q.question_image_url ? (
+                            <QuestionImage
+                              alt={`Analiz soru ${index + 1} görseli`}
+                              src={q.question_image_url}
+                            />
+                          ) : null}
+                        </div>
                         {isCorrect ? (
                           <CheckCircle2 className="w-5 h-5 text-emerald-400 shrink-0" />
                         ) : (
@@ -620,15 +702,29 @@ export default function TestsPage({
                               : q.options[userAnswer]}
                           </MathText>
                         </div>
+                        {!isUnanswered && hasOptionImage(q, userAnswer) && (
+                          <OptionMedia
+                            alt={`Analiz seçilen şık görseli`}
+                            src={q.option_image_urls?.[userAnswer] || ''}
+                          />
+                        )}
                         {!isCorrect && (
-                          <div className="flex items-center gap-2 text-sm text-slate-300">
-                            <span className="opacity-50 w-20 text-xs uppercase tracking-wider">
-                              Doğrusu:
-                            </span>
-                            <MathText className="font-medium px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-200">
-                              {q.options[q.correct_index]}
-                            </MathText>
-                          </div>
+                          <>
+                            <div className="flex items-center gap-2 text-sm text-slate-300">
+                              <span className="opacity-50 w-20 text-xs uppercase tracking-wider">
+                                Doğrusu:
+                              </span>
+                              <MathText className="font-medium px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-200">
+                                {q.options[q.correct_index]}
+                              </MathText>
+                            </div>
+                            {hasOptionImage(q, q.correct_index) && (
+                              <OptionMedia
+                                alt={`Analiz doğru şık görseli`}
+                                src={q.option_image_urls?.[q.correct_index] || ''}
+                              />
+                            )}
+                          </>
                         )}
                         {q.explanation && (
                           <div className="mt-3 p-3 bg-slate-900/50 rounded-lg text-xs text-slate-400 flex items-start gap-2">

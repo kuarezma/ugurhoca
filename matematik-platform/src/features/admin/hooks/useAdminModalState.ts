@@ -54,7 +54,15 @@ export function useAdminModalState() {
     if (doc) {
       setSelectedDoc(doc);
     }
-    setFormData({});
+    setFormData(
+      type === 'importQuestions'
+        ? {
+            importBundleFile: null,
+            importMode: 'excel',
+            importResult: null,
+          }
+        : {},
+    );
     setShowModal(true);
   };
 
@@ -115,7 +123,11 @@ export function useAdminModalState() {
   const resetModalState = () => {
     setShowModal(false);
     setSuccess(false);
-    setFormData({});
+    setFormData({
+      importBundleFile: null,
+      importMode: 'excel',
+      importResult: null,
+    });
     setSelectedDoc(null);
     setEditingAnnouncement(null);
     setEditingUser(null);
