@@ -16,7 +16,8 @@ export const WORKSHEET_GRADE_OPTIONS = [
 
 export const DEFAULT_WORKSHEET_OUTCOME = 'Genel Kazanım';
 
-const WORKSHEET_TITLE_PATTERN = /^Test\s*-\s*(\d+)$/i;
+const WORKSHEET_LEGACY_TITLE_PATTERN = /^Test\s*-\s*(\d+)$/i;
+const WORKSHEET_TITLE_SUFFIX_PATTERN = /\(\s*Test\s*-\s*(\d+)\s*\)\s*$/i;
 const WORKSHEET_META_PREFIX = '__WS_META__';
 const WORKSHEET_GENERIC_DESCRIPTION_PATTERNS = [
   /^test\s*-\s*\d+$/i,
@@ -57,7 +58,24 @@ const isOfficialWorksheetOutcome = (grade: number, outcome: string) =>
 
 export const isWorksheetType = (type?: string | null) => type === 'yaprak-test';
 
-export const getWorksheetTestTitle = (order: number) => `Test - ${order}`;
+const normalizeWorksheetTitleBase = (
+  description?: string | null,
+  outcome?: string | null,
+) => {
+  const normalizedDescription = description?.trim().replace(/\s+/g, ' ') || '';
+  const normalizedOutcome = normalizeWorksheetOutcome(outcome);
+
+  return normalizedDescription || normalizedOutcome || DEFAULT_WORKSHEET_OUTCOME;
+};
+
+export const getWorksheetTestTitle = (
+  order: number,
+  description?: string | null,
+  outcome?: string | null,
+) => {
+  const titleBase = normalizeWorksheetTitleBase(description, outcome);
+  return `${titleBase} (Test-${order})`;
+};
 
 export const normalizeWorksheetOutcome = (value?: string | null) =>
   value?.trim().replace(/\s+/g, ' ') || '';
@@ -413,8 +431,12 @@ export const getWorksheetOrder = (
     return metadata.order;
   }
 
-  const match = document.title?.match(WORKSHEET_TITLE_PATTERN);
-  const parsedOrder = match ? Number.parseInt(match[1] || '', 10) : Number.NaN;
+  const suffixMatch = document.title?.match(WORKSHEET_TITLE_SUFFIX_PATTERN);
+  const legacyMatch = document.title?.match(WORKSHEET_LEGACY_TITLE_PATTERN);
+  const parsedOrder = Number.parseInt(
+    suffixMatch?.[1] || legacyMatch?.[1] || '',
+    10,
+  );
 
   return Number.isFinite(parsedOrder) && parsedOrder > 0 ? parsedOrder : 0;
 };
@@ -496,6 +518,10 @@ export const prepareWorksheetDocumentPayload = async <
       outcome: learningOutcome,
     }),
     grade: [grade],
-    title: getWorksheetTestTitle(worksheetOrder),
+    title: getWorksheetTestTitle(
+      worksheetOrder,
+      payload.description,
+      learningOutcome,
+    ),
   };
 };

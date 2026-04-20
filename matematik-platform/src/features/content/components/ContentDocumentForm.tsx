@@ -94,9 +94,9 @@ export default function ContentDocumentForm({
     <form onSubmit={onSubmit} className="space-y-5">
       {isWorksheet ? (
         <div className="rounded-2xl border border-purple-400/20 bg-purple-500/10 px-4 py-3 text-sm text-purple-100">
-          Yaprak testlerde başlık otomatik verilir. Yeni yükleme sırayla
-          <span className="font-semibold"> Test - 1, Test - 2 </span>
-          şeklinde adlandırılır.
+          Yaprak testlerde başlık açıklamaya göre otomatik verilir:
+          <span className="font-semibold"> Açıklama (Test-1), Açıklama (Test-2) </span>
+          formatında adlandırılır.
         </div>
       ) : (
         <div>

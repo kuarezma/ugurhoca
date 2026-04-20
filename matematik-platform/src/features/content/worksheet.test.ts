@@ -27,6 +27,9 @@ describe('worksheet helpers', () => {
 
     expect(getWorksheetOrder({ description, title: 'Test - 1' })).toBe(4);
     expect(getWorksheetOrder({ description: '', title: 'Test - 7' })).toBe(7);
+    expect(
+      getWorksheetOrder({ description: '', title: 'Eşlik ve Benzerlik (Test-8)' }),
+    ).toBe(8);
   });
 
   it('calculates the next test order', () => {
@@ -36,7 +39,9 @@ describe('worksheet helpers', () => {
         { description: '', title: 'Test - 3' },
       ]),
     ).toBe(4);
-    expect(getWorksheetTestTitle(4)).toBe('Test - 4');
+    expect(getWorksheetTestTitle(4, 'Eşlik ve Benzerlik')).toBe(
+      'Eşlik ve Benzerlik (Test-4)',
+    );
   });
 
   it('extracts outcome label and visible description from metadata', () => {
