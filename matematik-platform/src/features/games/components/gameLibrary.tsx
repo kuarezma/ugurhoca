@@ -15,6 +15,7 @@ import { FloatingParticles } from './FloatingParticles';
 import { GameCard } from './GameCard';
 import { ColorMath } from './games/ColorMath';
 import { Hangman } from './games/Hangman';
+import { MatMatik } from './games/MatMatik';
 import { MathPuzzle } from './games/MathPuzzle';
 import { MemoryGame } from './games/MemoryGame';
 import { MultiplicationRace } from './games/MultiplicationRace';
@@ -130,5 +131,16 @@ export const games: GameDefinition[] = [
     color: 'from-sky-500 to-cyan-600',
     icon: Percent,
     component: PercentStorm,
+  },
+  {
+    id: 10,
+    title: 'MatMatik',
+    description: 'Çarpımları işaretle, dört hücrelik diziyi tamamla.',
+    grade: '5-8',
+    rating: 4.8,
+    difficulty: 'Orta',
+    color: 'from-emerald-500 to-cyan-500',
+    icon: Grid3x3,
+    component: MatMatik,
   },
 ];

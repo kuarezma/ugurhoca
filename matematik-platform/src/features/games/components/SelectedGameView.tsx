@@ -43,7 +43,7 @@ export function SelectedGameView({
 
       <div className="pt-24 px-6">
         <div className="container mx-auto max-w-4xl">
-          <GameComponent onScore={onScore} />
+          <GameComponent onExit={onBack} onScore={onScore} />
         </div>
       </div>
     </main>
