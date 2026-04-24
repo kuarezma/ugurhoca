@@ -1,6 +1,7 @@
 import { isAdminEmail } from '@/lib/admin';
 import { getClientSession } from '@/lib/auth-client';
 import { supabase } from '@/lib/supabase/client';
+import type { ApiSuccessResponse } from '@/lib/api-response';
 import type { Comment, ContentDocument } from '@/types';
 import type {
   ContentComment,
@@ -23,6 +24,7 @@ import {
   prepareWorksheetDocumentPayload,
   sortWorksheetDocuments,
 } from '@/features/content/worksheet';
+import { buildContentDocumentPersistPayload } from '@/features/content/persistence';
 import { sortContentDocumentsByNewest } from '@/features/content/utils';
 
 const CONTENT_DOCUMENT_CACHE_TTL_MS = 60_000;
@@ -284,26 +286,39 @@ export const resolveContentUser = async () => {
 
 export const createContentDocument = async (payload: ContentFormState) => {
   const nextPayload = await prepareWorksheetDocumentPayload(payload);
-  const { learning_outcome: _learning_outcome, worksheet_order: _worksheet_order, ...persistedPayload } =
-    nextPayload as ContentFormState;
-  const { data, error } = await supabase
-    .from('documents')
-    .insert([
-      {
-        ...persistedPayload,
-        created_at: new Date().toISOString(),
-        downloads: 0,
-      },
-    ])
-    .select();
+  const persistedPayload = buildContentDocumentPersistPayload(
+    nextPayload as ContentFormState,
+  );
+  const session = await getClientSession();
 
-  if (error) {
-    throw error;
+  if (!session?.access_token) {
+    throw new Error('Oturum açmanız gerekiyor.');
+  }
+
+  const response = await fetch('/api/content-documents', {
+    body: JSON.stringify({ document: persistedPayload }),
+    credentials: 'same-origin',
+    headers: {
+      authorization: `Bearer ${session.access_token}`,
+      'content-type': 'application/json',
+    },
+    method: 'POST',
+  });
+  const result = (await response.json().catch(() => null)) as
+    | ApiSuccessResponse<ContentDocument | null>
+    | { error?: { message?: string } }
+    | null;
+
+  if (!response.ok || !result) {
+    const errorResult = result as { error?: { message?: string } } | null;
+    throw new Error(
+      errorResult?.error?.message || 'İçerik kaydedilemedi.',
+    );
   }
 
   clearContentDocumentCache();
 
-  return (data?.[0] || null) as ContentDocument | null;
+  return (result as ApiSuccessResponse<ContentDocument | null>).data;
 };
 
 export const uploadContentFile = async (file: File) => {

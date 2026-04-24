@@ -748,7 +748,8 @@ function ContentsPageInner({
             selectedWorksheetGrade &&
             Array.isArray(document.grade) &&
             document.grade.some(
-              (grade) => String(grade) === String(selectedWorksheetGrade),
+              (grade: GradeValue) =>
+                String(grade) === String(selectedWorksheetGrade),
             )
           ) {
             await refreshSelectedWorksheetGrade();
