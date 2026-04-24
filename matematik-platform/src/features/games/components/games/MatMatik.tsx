@@ -1,8 +1,15 @@
 'use client';
 
-import { useEffect, useMemo, useState, type ReactNode } from 'react';
+import {
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type PointerEvent as ReactPointerEvent,
+  type ReactNode,
+} from 'react';
 import { motion } from 'framer-motion';
-import { Bot, Play, RotateCcw, Trophy, Users } from 'lucide-react';
+import { Bot, Hand, Play, RotateCcw, Trophy, Users } from 'lucide-react';
 import type { GameComponentProps } from '@/features/games/types';
 import {
   MATMATIK_FACTORS,
@@ -20,6 +27,7 @@ import {
 
 type GameMode = 'single' | 'two';
 type GamePhase = 'setup' | 'playing' | 'ended';
+type SelectorHandle = 'top' | 'bottom';
 
 const difficultyLabels: Record<MatMatikDifficulty, string> = {
   easy: 'Kolay',
@@ -33,6 +41,7 @@ const playerStyles: Record<MatMatikPlayer, string> = {
 };
 
 export function MatMatik({ onExit }: GameComponentProps) {
+  const numberLineRef = useRef<HTMLDivElement | null>(null);
   const [phase, setPhase] = useState<GamePhase>('setup');
   const [mode, setMode] = useState<GameMode>('single');
   const [difficulty, setDifficulty] = useState<MatMatikDifficulty>('medium');
@@ -46,17 +55,21 @@ export function MatMatik({ onExit }: GameComponentProps) {
   );
   const [board, setBoard] = useState<MatMatikBoard>(() => createMatMatikBoard());
   const [currentPlayer, setCurrentPlayer] = useState<MatMatikPlayer>(1);
-  const [selectedFactors, setSelectedFactors] = useState<number[]>([]);
-  const [message, setMessage] = useState('İki sayı seç ve hamleni yap.');
+  const [selectedFactors, setSelectedFactors] = useState<
+    Record<SelectorHandle, number>
+  >({
+    bottom: 5,
+    top: 5,
+  });
+  const [activeSelector, setActiveSelector] = useState<SelectorHandle>('top');
+  const [draggingSelector, setDraggingSelector] =
+    useState<SelectorHandle | null>(null);
+  const [message, setMessage] = useState('Okları sayılara taşı ve hamleni yap.');
   const [winner, setWinner] = useState<MatMatikPlayer | 'draw' | null>(null);
   const [computerThinking, setComputerThinking] = useState(false);
 
-  const selectedProduct =
-    selectedFactors.length === 2
-      ? selectedFactors[0] * selectedFactors[1]
-      : null;
-  const selectedProductIndex =
-    selectedProduct === null ? -1 : getProductIndex(selectedProduct);
+  const selectedProduct = selectedFactors.top * selectedFactors.bottom;
+  const selectedProductIndex = getProductIndex(selectedProduct);
   const isComputerTurn =
     phase === 'playing' && mode === 'single' && currentPlayer === 2;
 
@@ -85,6 +98,7 @@ export function MatMatik({ onExit }: GameComponentProps) {
         return;
       }
 
+      setSelectedFactors({ bottom: move.b, top: move.a });
       completeMove(nextBoard, 2, `${move.a} × ${move.b} = ${move.product}`);
       setComputerThinking(false);
     }, 650);
@@ -94,13 +108,37 @@ export function MatMatik({ onExit }: GameComponentProps) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [board, difficulty, isComputerTurn, winner]);
 
+  useEffect(() => {
+    if (!draggingSelector) {
+      return;
+    }
+
+    const handlePointerMove = (event: PointerEvent) => {
+      updateSelectorFromClientX(draggingSelector, event.clientX);
+    };
+    const stopDragging = () => {
+      setDraggingSelector(null);
+    };
+
+    window.addEventListener('pointermove', handlePointerMove);
+    window.addEventListener('pointerup', stopDragging, { once: true });
+    window.addEventListener('pointercancel', stopDragging, { once: true });
+
+    return () => {
+      window.removeEventListener('pointermove', handlePointerMove);
+      window.removeEventListener('pointerup', stopDragging);
+      window.removeEventListener('pointercancel', stopDragging);
+    };
+  }, [draggingSelector]);
+
   const startGame = () => {
     setBoard(createMatMatikBoard());
     setCurrentPlayer(1);
-    setSelectedFactors([]);
+    setSelectedFactors({ bottom: 5, top: 5 });
+    setActiveSelector('top');
     setWinner(null);
     setPhase('playing');
-    setMessage('Oyuncu 1 başlar. İki sayı seç ve hamleni yap.');
+    setMessage('Oyuncu 1 başlar. Okları sayılara taşı ve hamleni yap.');
     setPlayerNames({
       1: player1Input.trim() || 'Oyuncu 1',
       2:
@@ -113,48 +151,79 @@ export function MatMatik({ onExit }: GameComponentProps) {
   const resetToSetup = () => {
     setPhase('setup');
     setBoard(createMatMatikBoard());
-    setSelectedFactors([]);
+    setSelectedFactors({ bottom: 5, top: 5 });
+    setActiveSelector('top');
     setWinner(null);
     setCurrentPlayer(1);
-    setMessage('İki sayı seç ve hamleni yap.');
+    setMessage('Okları sayılara taşı ve hamleni yap.');
     setComputerThinking(false);
   };
 
   const restartSameGame = () => {
     setBoard(createMatMatikBoard());
-    setSelectedFactors([]);
+    setSelectedFactors({ bottom: 5, top: 5 });
+    setActiveSelector('top');
     setWinner(null);
     setCurrentPlayer(1);
     setPhase('playing');
-    setMessage(`${playerNames[1]} başlar. İki sayı seç ve hamleni yap.`);
+    setMessage(`${playerNames[1]} başlar. Okları sayılara taşı ve hamleni yap.`);
     setComputerThinking(false);
   };
 
-  const toggleFactor = (factor: number) => {
+  const moveSelector = (selector: SelectorHandle, factor: number) => {
     if (phase !== 'playing' || isComputerTurn || winner) {
       return;
     }
 
-    setSelectedFactors((currentFactors) => {
-      if (currentFactors.includes(factor)) {
-        return currentFactors.filter((value) => value !== factor);
-      }
-
-      if (currentFactors.length >= 2) {
-        return [currentFactors[1], factor];
-      }
-
-      return [...currentFactors, factor];
-    });
-    setMessage('Seçimini tamamlayınca hamleni yap.');
+    setSelectedFactors((currentFactors) => ({
+      ...currentFactors,
+      [selector]: factor,
+    }));
+    setActiveSelector(selector);
+    setMessage('Ok konumlarını ayarla, sonra hamleni yap.');
   };
 
-  const playSelectedMove = () => {
-    if (selectedFactors.length !== 2 || selectedProduct === null) {
-      setMessage('Hamle için iki sayı seçmelisin.');
+  const nudgeSelector = (selector: SelectorHandle, direction: -1 | 0 | 1) => {
+    const currentValue = selectedFactors[selector];
+    const nextValue = Math.min(9, Math.max(1, currentValue + direction));
+    moveSelector(selector, nextValue);
+  };
+
+  const startDraggingSelector = (
+    selector: SelectorHandle,
+    event: ReactPointerEvent<HTMLButtonElement>,
+  ) => {
+    if (phase !== 'playing' || isComputerTurn || winner) {
       return;
     }
 
+    event.currentTarget.setPointerCapture(event.pointerId);
+    setDraggingSelector(selector);
+    setActiveSelector(selector);
+    updateSelectorFromClientX(selector, event.clientX);
+  };
+
+  const updateSelectorFromClientX = (
+    selector: SelectorHandle,
+    clientX: number,
+  ) => {
+    const line = numberLineRef.current;
+    if (!line) {
+      return;
+    }
+
+    const rect = line.getBoundingClientRect();
+    const relativeX = Math.min(Math.max(clientX - rect.left, 0), rect.width);
+    const index = Math.round((relativeX / rect.width) * 8);
+    const factor = Math.min(9, Math.max(1, index + 1));
+
+    setSelectedFactors((currentFactors) => ({
+      ...currentFactors,
+      [selector]: factor,
+    }));
+  };
+
+  const playSelectedMove = () => {
     const nextBoard = applyMatMatikMove(
       board,
       selectedProduct,
@@ -163,7 +232,7 @@ export function MatMatik({ onExit }: GameComponentProps) {
 
     if (!nextBoard) {
       setMessage(
-        `${selectedFactors[0]} × ${selectedFactors[1]} = ${selectedProduct} dolu. Farklı bir seçim dene.`,
+        `${selectedFactors.top} × ${selectedFactors.bottom} = ${selectedProduct} dolu. Oklardan birini farklı sayıya taşı.`,
       );
       return;
     }
@@ -171,7 +240,7 @@ export function MatMatik({ onExit }: GameComponentProps) {
     completeMove(
       nextBoard,
       currentPlayer,
-      `${selectedFactors[0]} × ${selectedFactors[1]} = ${selectedProduct}`,
+      `${selectedFactors.top} × ${selectedFactors.bottom} = ${selectedProduct}`,
     );
   };
 
@@ -182,7 +251,6 @@ export function MatMatik({ onExit }: GameComponentProps) {
   ) => {
     const nextWinner = findWinner(nextBoard);
     setBoard(nextBoard);
-    setSelectedFactors([]);
 
     if (nextWinner) {
       finishGame(nextBoard, nextWinner);
@@ -365,27 +433,50 @@ export function MatMatik({ onExit }: GameComponentProps) {
             <p className="mb-2 text-sm font-semibold text-slate-400">
               Sayı seçimi
             </p>
-            <div className="grid grid-cols-3 gap-2">
-              {MATMATIK_FACTORS.map((factor) => {
-                const active = selectedFactors.includes(factor);
-                return (
+            <div
+              className="rounded-3xl border border-white/10 bg-white p-3 shadow-inner"
+              aria-label="MatMatik sayı hattı"
+            >
+              <div
+                ref={numberLineRef}
+                className="relative mx-auto grid max-w-[540px] grid-cols-9 gap-1 pb-12 pt-12 sm:gap-2"
+              >
+                <SelectorArrow
+                  active={activeSelector === 'top'}
+                  disabled={isComputerTurn || phase !== 'playing'}
+                  label="Üst ok"
+                  position={selectedFactors.top}
+                  selector="top"
+                  onKeyMove={nudgeSelector}
+                  onPointerDown={startDraggingSelector}
+                />
+                {MATMATIK_FACTORS.map((factor) => (
                   <button
                     key={factor}
                     type="button"
                     disabled={isComputerTurn || phase !== 'playing'}
-                    onClick={() => toggleFactor(factor)}
-                    aria-pressed={active}
-                    className={`aspect-square rounded-2xl border text-xl font-black transition focus:outline-none focus-visible:ring-4 focus-visible:ring-cyan-300/40 disabled:cursor-not-allowed disabled:opacity-50 ${
-                      active
-                        ? 'border-cyan-300 bg-cyan-400 text-slate-950'
-                        : 'border-white/10 bg-white/5 text-white hover:border-cyan-300/70'
-                    }`}
+                    onClick={() => moveSelector(activeSelector, factor)}
+                    className="aspect-square rounded-xl border border-slate-300 bg-blue-500 text-lg font-black text-white shadow-md transition hover:bg-blue-600 focus:outline-none focus-visible:ring-4 focus-visible:ring-yellow-300/70 disabled:cursor-not-allowed disabled:opacity-70 sm:text-2xl"
+                    aria-label={`${factor} sayısını ${activeSelector === 'top' ? 'üst' : 'alt'} oka seç`}
                   >
                     {factor}
                   </button>
-                );
-              })}
+                ))}
+                <SelectorArrow
+                  active={activeSelector === 'bottom'}
+                  disabled={isComputerTurn || phase !== 'playing'}
+                  label="Alt ok"
+                  position={selectedFactors.bottom}
+                  selector="bottom"
+                  onKeyMove={nudgeSelector}
+                  onPointerDown={startDraggingSelector}
+                />
+              </div>
             </div>
+            <p className="mt-3 text-center text-xs text-slate-500">
+              Sarı oklardan birini sürükle veya bir oka odaklıyken sayı
+              kutusuna dokun.
+            </p>
           </div>
 
           <div className="mb-5 rounded-2xl border border-white/10 bg-white/5 p-4 text-center">
@@ -393,17 +484,14 @@ export function MatMatik({ onExit }: GameComponentProps) {
               Çarpım
             </p>
             <p className="mt-2 min-h-10 text-3xl font-black text-white">
-              {selectedFactors.length === 2
-                ? `${selectedFactors[0]} × ${selectedFactors[1]} = ${selectedProduct}`
-                : '—'}
+              {selectedFactors.top} × {selectedFactors.bottom} ={' '}
+              {selectedProduct}
             </p>
           </div>
 
           <button
             type="button"
-            disabled={
-              selectedFactors.length !== 2 || isComputerTurn || phase !== 'playing'
-            }
+            disabled={isComputerTurn || phase !== 'playing'}
             onClick={playSelectedMove}
             className="mb-3 w-full rounded-2xl bg-gradient-to-r from-emerald-500 to-cyan-500 px-5 py-3 font-bold text-white transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-50"
           >
@@ -465,6 +553,67 @@ export function MatMatik({ onExit }: GameComponentProps) {
         </div>
       )}
     </div>
+  );
+}
+
+function SelectorArrow({
+  active,
+  disabled,
+  label,
+  onKeyMove,
+  onPointerDown,
+  position,
+  selector,
+}: {
+  active: boolean;
+  disabled: boolean;
+  label: string;
+  onKeyMove: (selector: SelectorHandle, direction: -1 | 0 | 1) => void;
+  onPointerDown: (
+    selector: SelectorHandle,
+    event: ReactPointerEvent<HTMLButtonElement>,
+  ) => void;
+  position: number;
+  selector: SelectorHandle;
+}) {
+  const isTop = selector === 'top';
+
+  return (
+    <button
+      type="button"
+      disabled={disabled}
+      onClick={() => {
+        if (!disabled) {
+          onKeyMove(selector, 0);
+        }
+      }}
+      onKeyDown={(event) => {
+        if (event.key === 'ArrowLeft') {
+          event.preventDefault();
+          onKeyMove(selector, -1);
+        }
+        if (event.key === 'ArrowRight') {
+          event.preventDefault();
+          onKeyMove(selector, 1);
+        }
+      }}
+      onPointerDown={(event) => onPointerDown(selector, event)}
+      aria-label={`${label}: ${position}`}
+      className={`absolute z-10 flex h-10 w-10 touch-none cursor-grab items-center justify-center rounded-full text-yellow-400 transition focus:outline-none focus-visible:ring-4 focus-visible:ring-yellow-300/70 disabled:cursor-not-allowed disabled:opacity-60 ${
+        isTop ? 'top-1' : 'bottom-1'
+      } ${active ? 'scale-110 drop-shadow-[0_0_12px_rgba(250,204,21,0.7)]' : 'drop-shadow-md'}`}
+      style={{
+        left: `${((position - 0.5) / MATMATIK_FACTORS.length) * 100}%`,
+        transform: 'translateX(-50%)',
+      }}
+    >
+      <Hand
+        className={`h-9 w-9 fill-yellow-400 stroke-yellow-500 ${
+          isTop ? 'rotate-180' : ''
+        }`}
+        aria-hidden="true"
+      />
+    </button>
   );
 }
 
