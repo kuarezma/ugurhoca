@@ -16,9 +16,11 @@ import type {
 import type { HomeInitialFeed } from '@/features/home/home-initial-feed';
 import {
   dismissHomeAssignment,
+  fetchHomeDocuments,
   fetchHomeFeed,
   fetchUserAssignments,
 } from '@/features/home/queries';
+import { supabase } from '@/lib/supabase/client';
 
 export const useHomePageData = (initialFeed?: HomeInitialFeed | null) => {
   const isFeedSeeded = Boolean(initialFeed);
@@ -111,6 +113,29 @@ export const useHomePageData = (initialFeed?: HomeInitialFeed | null) => {
       isDisposed = true;
     };
   }, [isFeedSeeded]);
+
+  useEffect(() => {
+    let isDisposed = false;
+    const channel = supabase
+      .channel('home-recent-documents')
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'documents' },
+        () => {
+          void fetchHomeDocuments().then((nextDocuments) => {
+            if (!isDisposed) {
+              startTransition(() => setDocuments(nextDocuments));
+            }
+          });
+        },
+      )
+      .subscribe();
+
+    return () => {
+      isDisposed = true;
+      void supabase.removeChannel(channel);
+    };
+  }, []);
 
   const visibleAssignments = userAssignments.filter(
     (assignment) => !dismissedAssignments.has(assignment.id),

@@ -302,9 +302,21 @@ export default function IlerlemePage({ initialData }: ProgressPageProps) {
 
   const chartData = getWeeklyChartData();
   const currentWeekTotal = chartData.reduce((acc, curr) => acc + curr.duration, 0);
+  const weeklyTarget = goal?.target_duration || 600;
+  const studyCurveData = chartData.reduce<
+    Array<{ cumulative: number; name: string; target: number }>
+  >((points, day, index) => {
+    const previous = points[index - 1]?.cumulative || 0;
+    points.push({
+      cumulative: previous + day.duration,
+      name: day.name,
+      target: Math.round((weeklyTarget / 7) * (index + 1)),
+    });
+    return points;
+  }, []);
   const goalPercentage = Math.min(
     100,
-    Math.round((currentWeekTotal / (goal?.target_duration || 1)) * 100),
+    Math.round((currentWeekTotal / weeklyTarget) * 100),
   );
   
   // Radar data hazırlama: Sadece bir kez veya daha fazla çalışılmış top 6 konu
@@ -475,6 +487,7 @@ export default function IlerlemePage({ initialData }: ProgressPageProps) {
           isLight={isLight}
           chartData={chartData}
           displayRadarData={displayRadarData}
+          studyCurveData={studyCurveData}
         />
 
         {/* Mevcut Geleneksel Konu Çubuğu Barı (Optional, Alta alındı detay için) */}

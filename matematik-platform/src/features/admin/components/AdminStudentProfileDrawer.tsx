@@ -63,6 +63,57 @@ const getActivityTypeLabel = (activityType?: string | null) => {
   }
 };
 
+const buildWeeklyStudyCurve = (
+  sessions: AdminStudentProfileData["studySessions"],
+  targetMinutes: number,
+) => {
+  const days = ["Pzt", "Sal", "Çar", "Per", "Cum", "Cmt", "Paz"];
+  const today = new Date();
+  const dayOfWeek = today.getDay() === 0 ? 6 : today.getDay() - 1;
+  const startOfWeek = new Date(today);
+  startOfWeek.setDate(today.getDate() - dayOfWeek);
+  startOfWeek.setHours(0, 0, 0, 0);
+
+  const daily = days.map((name) => ({ minutes: 0, name }));
+
+  for (const session of sessions) {
+    const sessionDate = new Date(session.date);
+    if (sessionDate >= startOfWeek) {
+      const index = sessionDate.getDay() === 0 ? 6 : sessionDate.getDay() - 1;
+      if (index >= 0 && index < daily.length) {
+        daily[index].minutes += session.duration;
+      }
+    }
+  }
+
+  let cumulative = 0;
+  return daily.map((day, index) => {
+    cumulative += day.minutes;
+    return {
+      ...day,
+      cumulative,
+      target: Math.round((targetMinutes / 7) * (index + 1)),
+    };
+  });
+};
+
+const getTopStudyTopics = (
+  sessions: AdminStudentProfileData["studySessions"],
+) => {
+  const totals = new Map<string, number>();
+
+  for (const session of sessions) {
+    for (const topic of session.topics || []) {
+      totals.set(topic, (totals.get(topic) || 0) + session.duration);
+    }
+  }
+
+  return Array.from(totals.entries())
+    .map(([topic, minutes]) => ({ minutes, topic }))
+    .sort((left, right) => right.minutes - left.minutes)
+    .slice(0, 5);
+};
+
 export default function AdminStudentProfileDrawer({
   data,
   error,
@@ -79,6 +130,15 @@ export default function AdminStudentProfileDrawer({
   const completedAssignments = (data?.assignments || []).filter((assignment) =>
     submittedAssignmentIds.has(assignment.id),
   ).length;
+  const weeklyStudyCurve =
+    data && summary
+      ? buildWeeklyStudyCurve(data.studySessions, summary.goalSnapshot.targetMinutes)
+      : [];
+  const maxCurveValue = Math.max(
+    1,
+    ...weeklyStudyCurve.flatMap((point) => [point.cumulative, point.target]),
+  );
+  const topStudyTopics = data ? getTopStudyTopics(data.studySessions) : [];
 
   return (
     <motion.div
@@ -172,6 +232,85 @@ export default function AdminStudentProfileDrawer({
                   }
                 />
               </div>
+
+              <section className="rounded-3xl border border-white/10 bg-white/5 p-5">
+                <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+                  <div>
+                    <h3 className="text-lg font-bold text-white">
+                      Haftalık Çalışma Eğrisi
+                    </h3>
+                    <p className="text-sm text-slate-400">
+                      600 dk hedefe göre toplam çalışma ilerlemesi
+                    </p>
+                  </div>
+                  <span className="rounded-full border border-emerald-400/30 bg-emerald-500/10 px-3 py-1 text-sm font-semibold text-emerald-300">
+                    {summary.goalSnapshot.completedMinutes}/{summary.goalSnapshot.targetMinutes} dk
+                  </span>
+                </div>
+
+                <div className="grid gap-4 lg:grid-cols-[1fr_220px]">
+                  <div className="flex h-40 items-end gap-2 rounded-2xl border border-white/10 bg-slate-900/60 p-4">
+                    {weeklyStudyCurve.map((point) => (
+                      <div
+                        key={point.name}
+                        className="flex h-full flex-1 flex-col justify-end gap-2"
+                      >
+                        <div className="relative flex flex-1 items-end justify-center">
+                          <div
+                            className="absolute bottom-0 w-2 rounded-t-full bg-slate-700"
+                            style={{
+                              height: `${Math.max(8, (point.target / maxCurveValue) * 100)}%`,
+                            }}
+                            title={`Hedef: ${point.target} dk`}
+                          />
+                          <div
+                            className="relative z-10 w-5 rounded-t-xl bg-gradient-to-t from-emerald-500 to-cyan-300 shadow-lg shadow-emerald-500/20"
+                            style={{
+                              height: `${Math.max(point.cumulative > 0 ? 10 : 4, (point.cumulative / maxCurveValue) * 100)}%`,
+                            }}
+                            title={`${point.cumulative} dk`}
+                          />
+                        </div>
+                        <span className="text-center text-[11px] font-semibold text-slate-500">
+                          {point.name}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+
+                  <div className="rounded-2xl border border-white/10 bg-slate-900/60 p-4">
+                    <p className="mb-3 text-sm font-bold text-white">
+                      En Çok Çalışılan Konular
+                    </p>
+                    {topStudyTopics.length === 0 ? (
+                      <p className="text-sm text-slate-500">Henüz konu yok.</p>
+                    ) : (
+                      <div className="space-y-3">
+                        {topStudyTopics.map((topic) => (
+                          <div key={topic.topic}>
+                            <div className="mb-1 flex justify-between gap-2 text-xs">
+                              <span className="truncate text-slate-300">
+                                {topic.topic}
+                              </span>
+                              <span className="font-semibold text-cyan-300">
+                                {topic.minutes} dk
+                              </span>
+                            </div>
+                            <div className="h-2 rounded-full bg-slate-800">
+                              <div
+                                className="h-2 rounded-full bg-gradient-to-r from-cyan-500 to-emerald-400"
+                                style={{
+                                  width: `${Math.min(100, (topic.minutes / Math.max(topStudyTopics[0]?.minutes || 1, 1)) * 100)}%`,
+                                }}
+                              />
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </section>
 
               <section className="rounded-3xl border border-white/10 bg-white/5 p-5">
                 <div className="mb-4 flex items-center justify-between gap-3">

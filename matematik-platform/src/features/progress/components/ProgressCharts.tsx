@@ -5,6 +5,9 @@ import {
   Bar,
   BarChart,
   Cell,
+  CartesianGrid,
+  Line,
+  LineChart,
   PolarAngleAxis,
   PolarGrid,
   PolarRadiusAxis,
@@ -25,16 +28,24 @@ export type RadarChartPoint = {
   fullMark: number;
 };
 
+export type StudyCurvePoint = {
+  cumulative: number;
+  name: string;
+  target: number;
+};
+
 type ProgressChartsProps = {
   isLight: boolean;
   chartData: WeeklyChartPoint[];
   displayRadarData: RadarChartPoint[];
+  studyCurveData: StudyCurvePoint[];
 };
 
 export function ProgressCharts({
   isLight,
   chartData,
   displayRadarData,
+  studyCurveData,
 }: ProgressChartsProps) {
   return (
     <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
@@ -163,6 +174,85 @@ export function ProgressCharts({
                 }}
               />
             </RadarChart>
+          </ResponsiveContainer>
+        </div>
+      </motion.div>
+
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.35 }}
+        className={`rounded-3xl border p-6 lg:col-span-2 ${
+          isLight
+            ? 'border-slate-200 bg-white'
+            : 'border-slate-700 bg-slate-800/50'
+        }`}
+      >
+        <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
+          <div className="flex items-center gap-2">
+            <Calendar
+              className={`h-5 w-5 ${isLight ? 'text-emerald-500' : 'text-emerald-400'}`}
+            />
+            <h2
+              className={`text-lg font-bold ${isLight ? 'text-slate-900' : 'text-white'}`}
+            >
+              Haftalık Çalışma Eğrisi
+            </h2>
+          </div>
+          <span className={isLight ? 'text-sm text-slate-500' : 'text-sm text-slate-400'}>
+            600 dk hedef çizgisiyle karşılaştırma
+          </span>
+        </div>
+        <div className="h-72 w-full">
+          <ResponsiveContainer width="100%" height="100%">
+            <LineChart
+              data={studyCurveData}
+              margin={{ top: 10, right: 20, left: -10, bottom: 0 }}
+            >
+              <CartesianGrid
+                strokeDasharray="3 3"
+                stroke={isLight ? '#e2e8f0' : '#334155'}
+              />
+              <XAxis
+                dataKey="name"
+                stroke={isLight ? '#94a3b8' : '#64748b'}
+                fontSize={12}
+                tickLine={false}
+                axisLine={false}
+              />
+              <YAxis
+                stroke={isLight ? '#94a3b8' : '#64748b'}
+                fontSize={12}
+                tickLine={false}
+                axisLine={false}
+              />
+              <Tooltip
+                contentStyle={{
+                  backgroundColor: isLight ? '#fff' : '#0f172a',
+                  border: 'none',
+                  borderRadius: '12px',
+                  color: isLight ? '#000' : '#fff',
+                }}
+              />
+              <Line
+                type="monotone"
+                dataKey="target"
+                name="Hedef"
+                stroke={isLight ? '#cbd5e1' : '#64748b'}
+                strokeDasharray="6 6"
+                strokeWidth={2}
+                dot={false}
+              />
+              <Line
+                type="monotone"
+                dataKey="cumulative"
+                name="Çalışma"
+                stroke="#10b981"
+                strokeWidth={3}
+                dot={{ fill: '#10b981', r: 4 }}
+                activeDot={{ r: 6 }}
+              />
+            </LineChart>
           </ResponsiveContainer>
         </div>
       </motion.div>
