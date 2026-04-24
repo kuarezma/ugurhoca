@@ -409,6 +409,7 @@ export function MatMatik({ onExit }: GameComponentProps) {
           active={currentPlayer === 1 && phase === 'playing'}
           name={playerNames[1]}
           player={1}
+          thinking={false}
         />
         <div className="flex min-h-20 flex-col items-center justify-center rounded-3xl border border-white/10 bg-slate-950/60 px-4 py-3 text-center">
           <p className="text-xs font-semibold uppercase tracking-widest text-slate-500">
@@ -422,6 +423,7 @@ export function MatMatik({ onExit }: GameComponentProps) {
           active={currentPlayer === 2 && phase === 'playing'}
           name={playerNames[2]}
           player={2}
+          thinking={computerThinking}
         />
       </div>
 
@@ -800,29 +802,74 @@ function PlayerBadge({
   active,
   name,
   player,
+  thinking,
 }: {
   active: boolean;
   name: string;
   player: MatMatikPlayer;
+  thinking: boolean;
 }) {
+  const isPlayerOne = player === 1;
   return (
     <div
-      className={`min-h-20 rounded-3xl border px-4 py-3 text-center transition ${
-        player === 1
+      className={`relative min-h-20 overflow-visible rounded-3xl border px-4 py-3 transition ${
+        isPlayerOne
           ? 'border-emerald-400/30 bg-emerald-500/10'
           : 'border-rose-400/30 bg-rose-500/10'
-      } ${active ? 'ring-4 ring-cyan-300/30' : ''}`}
+      } ${
+        active
+          ? isPlayerOne
+            ? 'shadow-[0_0_34px_rgba(16,185,129,0.24)] ring-4 ring-emerald-300/25'
+            : 'shadow-[0_0_34px_rgba(244,63,94,0.24)] ring-4 ring-rose-300/25'
+          : ''
+      }`}
     >
-      <p className="text-xs font-semibold uppercase tracking-widest text-slate-500">
-        {player === 1 ? 'Yeşil' : 'Kırmızı'}
-      </p>
-      <p
-        className={`mt-1 truncate text-xl font-black ${
-          player === 1 ? 'text-emerald-300' : 'text-rose-300'
-        }`}
-      >
-        {name}
-      </p>
+      {active && (
+        <div
+          className={`absolute top-1/2 hidden h-0 w-0 -translate-y-1/2 md:block ${
+            isPlayerOne
+              ? '-right-4 border-y-[12px] border-l-[16px] border-y-transparent border-l-emerald-300 drop-shadow-[0_0_10px_rgba(16,185,129,0.9)]'
+              : '-left-4 border-y-[12px] border-r-[16px] border-y-transparent border-r-rose-300 drop-shadow-[0_0_10px_rgba(244,63,94,0.9)]'
+          }`}
+          aria-hidden="true"
+        />
+      )}
+      <div className="flex h-full items-center gap-3">
+        <div
+          className={`h-12 w-12 shrink-0 rounded-2xl border-2 shadow-lg ${
+            isPlayerOne
+              ? 'border-emerald-200 bg-emerald-500 shadow-emerald-500/25'
+              : 'border-rose-200 bg-rose-500 shadow-rose-500/25'
+          }`}
+          aria-hidden="true"
+        />
+        <div className="min-w-0 flex-1 text-left">
+          <p
+            className={`text-xs font-semibold uppercase tracking-widest ${
+              active
+                ? isPlayerOne
+                  ? 'text-emerald-200'
+                  : 'text-rose-200'
+                : 'text-slate-500'
+            }`}
+          >
+            {active
+              ? thinking
+                ? 'Düşünüyor'
+                : 'Sıra sende'
+              : isPlayerOne
+                ? 'Yeşil'
+                : 'Kırmızı'}
+          </p>
+          <p
+            className={`mt-1 truncate text-xl font-black ${
+              isPlayerOne ? 'text-emerald-300' : 'text-rose-300'
+            }`}
+          >
+            {name}
+          </p>
+        </div>
+      </div>
     </div>
   );
 }
