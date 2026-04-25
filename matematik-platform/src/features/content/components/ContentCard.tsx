@@ -78,6 +78,9 @@ export default function ContentCard({
       : null;
   const showDriveThumbnail = Boolean(driveThumbnailSrc) && !thumbnailFailed;
   const gradeBadgeClass = getContentPrimaryGradeBadgeClass(content);
+  const hasSolution = Boolean(
+    content.solution_url?.trim() || content.answer_key_text?.trim(),
+  );
 
   const actionButtons = (
     <div className="grid w-full grid-cols-2 gap-2 sm:flex sm:flex-wrap sm:items-center sm:gap-3">
@@ -222,6 +225,11 @@ export default function ContentCard({
                   Yeni
                 </span>
               )}
+              {hasSolution && (
+                <span className="px-2.5 sm:px-3 py-1 rounded-full bg-green-500/15 text-green-300 text-[10px] sm:text-xs font-semibold border border-green-400/30">
+                  ÇÖZÜMLÜ
+                </span>
+              )}
               <span
                 className={`ml-auto px-3.5 sm:px-4 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-bold tracking-wide ${gradeBadgeClass}`}
               >
@@ -293,7 +301,7 @@ export default function ContentCard({
                 Yeni
               </span>
             )}
-            {content.solution_url && (
+            {hasSolution && (
               <span className="px-2.5 sm:px-3 py-1 rounded-full bg-green-500/15 text-green-300 text-[10px] sm:text-xs font-semibold border border-green-400/30">
                 ÇÖZÜMLÜ
               </span>
