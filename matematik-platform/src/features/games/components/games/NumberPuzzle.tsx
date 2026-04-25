@@ -12,7 +12,10 @@ type NumberProblem = {
   text: string;
 };
 
-export function NumberPuzzle({ onScore }: GameComponentProps) {
+export function NumberPuzzle({
+  onScore,
+  scoreMultiplier,
+}: GameComponentProps) {
   const [gameState, setGameState] = useState<'idle' | 'playing' | 'ended'>(
     'idle',
   );
@@ -132,7 +135,9 @@ export function NumberPuzzle({ onScore }: GameComponentProps) {
     const value = parseInt(input.trim(), 10);
     if (value === problem.answer) {
       const bonus = streak > 4 ? 15 : streak > 2 ? 5 : 0;
-      setScore((currentScore) => currentScore + 10 * level + bonus);
+      setScore(
+        (currentScore) => currentScore + (10 * level + bonus) * scoreMultiplier,
+      );
       setStreak((currentStreak) => currentStreak + 1);
 
       if (score >= level * 80) {

@@ -31,7 +31,7 @@ const symbols = [
   '≈',
 ];
 
-export function MemoryGame({ onScore }: GameComponentProps) {
+export function MemoryGame({ onScore, scoreMultiplier }: GameComponentProps) {
   const [cards, setCards] = useState<MemoryCard[]>([]);
   const [selected, setSelected] = useState<number[]>([]);
   const [moves, setMoves] = useState(0);
@@ -91,14 +91,18 @@ export function MemoryGame({ onScore }: GameComponentProps) {
           ? { ...card, matched: true }
           : card,
       );
+      const matchScore = 20 * scoreMultiplier;
+      const bonus = nextCards.every((card) => card.matched)
+        ? Math.max(0, (timeLeft - moves) * 2) * scoreMultiplier
+        : 0;
+      const nextScore = score + matchScore + bonus;
 
       setCards(nextCards);
-      setScore((currentScore) => currentScore + 20);
+      setScore(nextScore);
       setSelected([]);
 
       if (nextCards.every((card) => card.matched)) {
-        const bonus = Math.max(0, (timeLeft - moves) * 2);
-        setScore((currentScore) => currentScore + bonus);
+        onScore(nextScore);
         setTimeout(() => setGameState('won'), 500);
       }
     } else {
@@ -115,7 +119,7 @@ export function MemoryGame({ onScore }: GameComponentProps) {
     }
 
     setMoves((currentMoves) => currentMoves + 1);
-  }, [cards, moves, selected, timeLeft]);
+  }, [cards, moves, onScore, score, scoreMultiplier, selected, timeLeft]);
 
   if (gameState === 'idle') {
     return (

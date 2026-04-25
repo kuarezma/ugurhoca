@@ -44,7 +44,14 @@ const playerStyles: Record<MatMatikPlayer, string> = {
   2: 'border-rose-400 bg-rose-500 text-white shadow-rose-500/30',
 };
 
-export function MatMatik({ onExit }: GameComponentProps) {
+const MATMATIK_DRAW_SCORE = 100;
+const MATMATIK_WIN_SCORE = 250;
+
+export function MatMatik({
+  onExit,
+  onScore,
+  scoreMultiplier,
+}: GameComponentProps) {
   const numberLineRef = useRef<HTMLDivElement | null>(null);
   const [phase, setPhase] = useState<GamePhase>('setup');
   const [mode, setMode] = useState<GameMode>('single');
@@ -81,6 +88,12 @@ export function MatMatik({ onExit }: GameComponentProps) {
     () => board.filter((owner) => owner !== null).length,
     [board],
   );
+  const resultScore =
+    winner === 1
+      ? MATMATIK_WIN_SCORE * scoreMultiplier
+      : winner === 'draw'
+        ? MATMATIK_DRAW_SCORE * scoreMultiplier
+        : 0;
 
   useEffect(() => {
     if (!isComputerTurn || winner) {
@@ -300,6 +313,12 @@ export function MatMatik({ onExit }: GameComponentProps) {
     setBoard(nextBoard);
     setWinner(result);
     setPhase('ended');
+
+    if (result === 1) {
+      onScore(MATMATIK_WIN_SCORE * scoreMultiplier);
+    } else if (result === 'draw') {
+      onScore(MATMATIK_DRAW_SCORE * scoreMultiplier);
+    }
   };
 
   if (phase === 'setup') {
@@ -556,6 +575,11 @@ export function MatMatik({ onExit }: GameComponentProps) {
                 ? 'Tüm hamleler tamamlandı, kazanan çıkmadı.'
                 : 'Dört hücrelik diziyi tamamladı.'}
             </p>
+            {resultScore > 0 && (
+              <p className="mb-6 text-4xl font-black text-yellow-300">
+                +{resultScore} Puan
+              </p>
+            )}
             <div className="grid gap-3 sm:grid-cols-2">
               <button
                 type="button"

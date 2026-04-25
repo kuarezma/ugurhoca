@@ -24,7 +24,10 @@ type Problem = {
 const times = '\u00d7';
 const div = '\u00f7';
 
-export function PercentStorm({ onScore }: GameComponentProps) {
+export function PercentStorm({
+  onScore,
+  scoreMultiplier,
+}: GameComponentProps) {
   const [gameState, setGameState] = useState<'idle' | 'playing' | 'ended'>(
     'idle',
   );
@@ -194,7 +197,7 @@ export function PercentStorm({ onScore }: GameComponentProps) {
 
     if (value === problem.answer) {
       const bonus = streak > 3 ? 22 : streak > 1 ? 10 : 0;
-      setScore((s) => s + 13 * level + bonus);
+      setScore((s) => s + (13 * level + bonus) * scoreMultiplier);
       setStreak((s) => s + 1);
       if (score >= level * 90) {
         setLevel((lv) => Math.min(lv + 1, 12));

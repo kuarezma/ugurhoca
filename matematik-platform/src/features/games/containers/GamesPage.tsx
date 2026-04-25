@@ -9,6 +9,8 @@ import { useGamesPageData } from '@/features/games/hooks/useGamesPageData';
 import type { GameDefinition } from '@/features/games/types';
 import { Skeleton } from '@/components/ui/Skeleton';
 
+const GAME_SCORE_MULTIPLIER = 10;
+
 export default function GamesPage() {
   const [selectedGame, setSelectedGame] = useState<GameDefinition | null>(null);
   const router = useRouter();
@@ -61,6 +63,7 @@ export default function GamesPage() {
         game={selectedGame}
         onBack={() => setSelectedGame(null)}
         onScore={handleScore}
+        scoreMultiplier={GAME_SCORE_MULTIPLIER}
         totalScore={totalScore}
       />
     );

@@ -5,7 +5,7 @@ import { motion } from 'framer-motion';
 import { Brain, Flame, Play, RotateCcw, Trophy } from 'lucide-react';
 import type { GameComponentProps } from '@/features/games/types';
 
-export function MathPuzzle({ onScore }: GameComponentProps) {
+export function MathPuzzle({ onScore, scoreMultiplier }: GameComponentProps) {
   const [gameState, setGameState] = useState<'idle' | 'playing' | 'ended'>(
     'idle',
   );
@@ -99,7 +99,9 @@ export function MathPuzzle({ onScore }: GameComponentProps) {
       setStreak((currentStreak) => currentStreak + 1);
 
       const bonus = streak > 3 ? 20 : 0;
-      setScore((currentScore) => currentScore + 10 * level + bonus);
+      setScore(
+        (currentScore) => currentScore + (10 * level + bonus) * scoreMultiplier,
+      );
 
       setTimeout(() => {
         if (score > level * 100) {

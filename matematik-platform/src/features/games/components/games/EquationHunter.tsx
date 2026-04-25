@@ -30,7 +30,10 @@ const sym = {
   div: '\u00f7',
 } as const;
 
-export function EquationHunter({ onScore }: GameComponentProps) {
+export function EquationHunter({
+  onScore,
+  scoreMultiplier,
+}: GameComponentProps) {
   const [gameState, setGameState] = useState<'idle' | 'playing' | 'ended'>(
     'idle',
   );
@@ -190,7 +193,7 @@ export function EquationHunter({ onScore }: GameComponentProps) {
 
     if (value === problem.answer) {
       const bonus = streak > 4 ? 18 : streak > 2 ? 8 : 0;
-      setScore((s) => s + 14 * level + bonus);
+      setScore((s) => s + (14 * level + bonus) * scoreMultiplier);
       setStreak((s) => s + 1);
       if (score >= level * 85) {
         setLevel((lv) => Math.min(lv + 1, 12));

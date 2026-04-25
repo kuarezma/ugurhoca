@@ -14,7 +14,7 @@ const colorMap: Record<string, string> = {
   Turuncu: 'text-orange-500',
 };
 
-export function ColorMath({ onScore }: GameComponentProps) {
+export function ColorMath({ onScore, scoreMultiplier }: GameComponentProps) {
   const [gameState, setGameState] = useState<'idle' | 'playing' | 'ended'>(
     'idle',
   );
@@ -104,7 +104,10 @@ export function ColorMath({ onScore }: GameComponentProps) {
 
   const handleAnswer = (answer: boolean) => {
     if (answer === question.answer) {
-      setScore((currentScore) => currentScore + Math.floor(timeLeft * 10));
+      setScore(
+        (currentScore) =>
+          currentScore + Math.floor(timeLeft * 10) * scoreMultiplier,
+      );
     } else {
       setLives((currentLives) => {
         if (currentLives <= 1) {

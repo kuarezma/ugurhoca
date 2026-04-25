@@ -8,6 +8,7 @@ type SelectedGameViewProps = {
   game: GameDefinition;
   onBack: () => void;
   onScore: (score: number) => void;
+  scoreMultiplier: number;
   totalScore: number;
 };
 
@@ -15,6 +16,7 @@ export function SelectedGameView({
   game,
   onBack,
   onScore,
+  scoreMultiplier,
   totalScore,
 }: SelectedGameViewProps) {
   const GameComponent = game.component;
@@ -43,7 +45,11 @@ export function SelectedGameView({
 
       <div className="pt-24 px-6">
         <div className="container mx-auto max-w-4xl">
-          <GameComponent onExit={onBack} onScore={onScore} />
+          <GameComponent
+            onExit={onBack}
+            onScore={onScore}
+            scoreMultiplier={scoreMultiplier}
+          />
         </div>
       </div>
     </main>

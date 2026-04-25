@@ -18,7 +18,10 @@ function compareFrac(a: number, b: number, c: number, d: number): Cmp {
   return l > r ? 'left' : 'right';
 }
 
-export function FractionDuel({ onScore }: GameComponentProps) {
+export function FractionDuel({
+  onScore,
+  scoreMultiplier,
+}: GameComponentProps) {
   const [gameState, setGameState] = useState<'idle' | 'playing' | 'ended'>(
     'idle',
   );
@@ -75,7 +78,7 @@ export function FractionDuel({ onScore }: GameComponentProps) {
     if (feedback !== null) return;
     if (choice === answer) {
       const bonus = streak > 3 ? 20 : streak > 1 ? 8 : 0;
-      setScore((s) => s + 12 * level + bonus);
+      setScore((s) => s + (12 * level + bonus) * scoreMultiplier);
       setStreak((s) => s + 1);
       if (score >= level * 70) {
         setLevel((lv) => Math.min(lv + 1, 12));

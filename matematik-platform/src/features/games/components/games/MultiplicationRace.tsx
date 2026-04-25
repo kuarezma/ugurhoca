@@ -5,7 +5,10 @@ import { motion } from 'framer-motion';
 import { Play, RotateCcw, Trophy } from 'lucide-react';
 import type { GameComponentProps } from '@/features/games/types';
 
-export function MultiplicationRace({ onScore }: GameComponentProps) {
+export function MultiplicationRace({
+  onScore,
+  scoreMultiplier,
+}: GameComponentProps) {
   const [gameState, setGameState] = useState<'idle' | 'playing' | 'ended'>(
     'idle',
   );
@@ -80,7 +83,9 @@ export function MultiplicationRace({ onScore }: GameComponentProps) {
       setStreak((currentStreak) => currentStreak + 1);
 
       const bonus = streak > 4 ? 15 : streak > 2 ? 5 : 0;
-      setScore((currentScore) => currentScore + 10 * level + bonus);
+      setScore(
+        (currentScore) => currentScore + (10 * level + bonus) * scoreMultiplier,
+      );
 
       if (progress >= 90) {
         setTablesCompleted((completedTables) => [...completedTables, table]);

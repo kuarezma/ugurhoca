@@ -107,7 +107,7 @@ const mathTerms = [
   'LİMİT',
 ];
 
-export function Hangman({ onScore }: GameComponentProps) {
+export function Hangman({ onScore, scoreMultiplier }: GameComponentProps) {
   const [gameState, setGameState] = useState<
     'idle' | 'playing' | 'won' | 'lost'
   >('idle');
@@ -156,7 +156,9 @@ export function Hangman({ onScore }: GameComponentProps) {
 
     if (nextWon) {
       setScore(
-        (currentScore) => currentScore + (maxWrong - nextWrongCount) * 10 + 50,
+        (currentScore) =>
+          currentScore +
+          ((maxWrong - nextWrongCount) * 10 + 50) * scoreMultiplier,
       );
       setGameState('won');
 

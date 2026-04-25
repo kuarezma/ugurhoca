@@ -4,6 +4,7 @@ import type { LucideIcon } from 'lucide-react';
 export type GameComponentProps = {
   onExit?: () => void;
   onScore: (score: number) => void;
+  scoreMultiplier: number;
 };
 
 export type GameDefinition = {
