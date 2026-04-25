@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { ChevronRight, FileText } from 'lucide-react';
 import type { ContentDocument } from '@/types';
+import { getContentTypeLabel } from '@/features/content/constants';
 import { HOME_CATEGORIES } from '@/features/home/constants';
 import { isNewContent } from '@/features/home/queries';
 
@@ -46,6 +47,7 @@ export function HomeRecentDocumentsSection({
               (category) => category.id === document.type,
             );
             const Icon = matchingCategory?.icon || FileText;
+            const contentTypeLabel = getContentTypeLabel(document.type);
 
             return (
               <a
@@ -89,7 +91,7 @@ export function HomeRecentDocumentsSection({
                           isLight ? 'text-slate-600' : 'text-slate-400'
                         }`}
                       >
-                        <span className="capitalize">{document.type}</span>
+                        <span>{contentTypeLabel}</span>
                         {document.grade && (
                           <span>{document.grade.join(', ')}. Sınıf</span>
                         )}
