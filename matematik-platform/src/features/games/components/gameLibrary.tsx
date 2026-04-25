@@ -2,15 +2,18 @@
 
 import {
   Calculator,
+  CircleDot,
   Grid3x3,
   Link2,
   Palette,
   Percent,
   Puzzle,
+  Rocket,
   Scale,
   Variable,
   WholeWord,
 } from 'lucide-react';
+import { BalloonPop } from './games/BalloonPop';
 import { FloatingParticles } from './FloatingParticles';
 import { GameCard } from './GameCard';
 import { ColorMath } from './games/ColorMath';
@@ -23,6 +26,7 @@ import { EquationHunter } from './games/EquationHunter';
 import { FractionDuel } from './games/FractionDuel';
 import { NumberPuzzle } from './games/NumberPuzzle';
 import { PercentStorm } from './games/PercentStorm';
+import { SpaceRocket } from './games/SpaceRocket';
 import type { GameDefinition } from '../types';
 
 export { FloatingParticles, GameCard };
@@ -142,5 +146,27 @@ export const games: GameDefinition[] = [
     color: 'from-emerald-500 to-cyan-500',
     icon: Grid3x3,
     component: MatMatik,
+  },
+  {
+    id: 11,
+    title: 'Balon Patlatma',
+    description: 'Doğru cevabın balonunu patlat!',
+    grade: '5-8',
+    rating: 4.9,
+    difficulty: 'Kolay',
+    color: 'from-pink-500 to-cyan-500',
+    icon: CircleDot,
+    component: BalloonPop,
+  },
+  {
+    id: 12,
+    title: 'Uzay Roketi',
+    description: 'Roketi doğru cevap kapısına uçur!',
+    grade: '6-8',
+    rating: 4.9,
+    difficulty: 'Orta',
+    color: 'from-indigo-500 to-amber-500',
+    icon: Rocket,
+    component: SpaceRocket,
   },
 ];
