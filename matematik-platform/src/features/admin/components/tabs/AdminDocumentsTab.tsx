@@ -50,11 +50,11 @@ export default function AdminDocumentsTab({
       exit={{ opacity: 0, y: -20 }}
       className="space-y-4"
     >
-      <div className="flex justify-between items-center">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <h3 className="text-lg font-bold text-white">
           Tüm İçerikler ({documents.length})
         </h3>
-        <div className="flex flex-wrap items-center gap-2">
+        <div className="grid grid-cols-1 gap-2 sm:flex sm:flex-wrap sm:items-center sm:justify-end">
           <button
             onClick={onMigrateWorksheets}
             className="px-4 py-2 bg-purple-500/20 border border-purple-500/30 text-purple-300 rounded-lg hover:bg-purple-500/30 transition-colors text-sm font-medium"
@@ -88,20 +88,20 @@ export default function AdminDocumentsTab({
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.05 }}
-              className="glass rounded-2xl p-6 card-hover"
+              className="glass rounded-2xl p-4 sm:p-6 card-hover overflow-hidden"
             >
-              <div className="flex items-start justify-between">
-                <div className="flex items-center gap-4 flex-1">
+              <div className="flex min-w-0 flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+                <div className="flex min-w-0 flex-1 items-start gap-3 sm:items-center sm:gap-4">
                   <div
-                    className={`w-14 h-14 rounded-xl bg-gradient-to-br ${
+                    className={`w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-gradient-to-br ${
                       ADMIN_DOCUMENT_TYPE_COLORS[document.type] ||
                       "from-slate-500 to-slate-600"
                     } flex items-center justify-center flex-shrink-0`}
                   >
-                    <FileText className="w-7 h-7 text-white" />
+                    <FileText className="w-6 h-6 sm:w-7 sm:h-7 text-white" />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-3 mb-1">
+                    <div className="flex min-w-0 flex-col gap-2 mb-1 sm:flex-row sm:items-center sm:gap-3">
                       <h3 className="text-lg font-bold text-white truncate">
                         {document.title}
                       </h3>
@@ -125,7 +125,7 @@ export default function AdminDocumentsTab({
                         </span>
                       </div>
                     )}
-                    <div className="flex items-center gap-4 mt-2 text-xs text-slate-500">
+                    <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mt-2 text-xs text-slate-500">
                       <span className="flex items-center gap-1">
                         <Calendar className="w-3 h-3" />
                         {formatDate(document.created_at)}
@@ -150,7 +150,7 @@ export default function AdminDocumentsTab({
                     </div>
                   </div>
                 </div>
-                <div className="flex gap-2 ml-4">
+                <div className="flex justify-end gap-2 sm:ml-4">
                   <button
                     onClick={() =>
                       onEdit(document, {

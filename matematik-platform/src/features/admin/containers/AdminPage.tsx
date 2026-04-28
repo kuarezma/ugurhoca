@@ -445,17 +445,17 @@ export default function AdminPage() {
       <DeferredFloatingShapes />
 
       <nav className="fixed top-0 left-0 right-0 z-50 bg-slate-950/95 backdrop-blur-md border-b border-white/10 py-3 px-4 sm:py-4 sm:px-6 shadow-lg shadow-black/20">
-        <div className="container mx-auto flex items-center justify-between gap-3">
-          <Link href="/" className="flex items-center gap-3">
+        <div className="container mx-auto flex min-w-0 items-center justify-between gap-3">
+          <Link href="/" className="flex min-w-0 items-center gap-3">
             <div className="w-9 h-9 sm:w-10 sm:h-10 bg-gradient-to-br from-orange-500 to-red-500 rounded-xl flex items-center justify-center flex-shrink-0">
               <Calculator className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
             </div>
-            <span className="text-sm sm:text-xl font-bold bg-gradient-to-r from-orange-400 to-red-400 bg-clip-text text-transparent leading-tight">
+            <span className="min-w-0 truncate text-sm sm:text-xl font-bold bg-gradient-to-r from-orange-400 to-red-400 bg-clip-text text-transparent leading-tight">
               Uğur Hoca Matematik
             </span>
           </Link>
 
-          <div className="flex items-center gap-2 sm:gap-4">
+          <div className="flex shrink-0 items-center gap-2 sm:gap-4">
             <button
               onClick={() => setShowNotifications((v) => !v)}
               className="relative p-2 text-slate-300 hover:text-white transition-colors"
@@ -508,8 +508,8 @@ export default function AdminPage() {
         />
       )}
 
-      <div className="pt-20 sm:pt-24 px-4 sm:px-6">
-        <div className="container mx-auto">
+      <div className="pt-20 sm:pt-24 px-4 sm:px-6 overflow-x-clip">
+        <div className="container mx-auto min-w-0">
           <div className="mb-6 sm:mb-8 animate-fade-up">
             <Link
               href="/profil"
@@ -621,7 +621,7 @@ export default function AdminPage() {
             )}
 
           {activeTab === 'quizzes' && (
-            <div className="flex justify-stretch sm:justify-end mb-6 gap-3">
+            <div className="flex flex-col justify-stretch gap-3 mb-6 sm:flex-row sm:justify-end">
               <button
                 onClick={() => openModal('quiz')}
                 className="btn-primary w-full sm:w-auto justify-center"
