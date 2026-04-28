@@ -273,6 +273,7 @@ export default function AdminPage() {
     handleDownloadStudentsPdf,
     handleMigrateWorksheetDocuments,
     handleRefreshDocumentCategories,
+    handleToggleFavoriteStudent,
     handleUpdateGrades,
     studentUsers,
   } = useAdminListActions({
@@ -282,6 +283,7 @@ export default function AdminPage() {
     documents,
     loadData,
     quizzes,
+    setAllUsers,
     setAnnouncements,
     setAssignments,
     setDocuments,
@@ -668,6 +670,7 @@ export default function AdminPage() {
             onRefreshUsers={loadData}
             onSendAdminMessage={openAdminMessage}
             onShowSubmissions={handleOpenSubmissions}
+            onToggleFavoriteStudent={handleToggleFavoriteStudent}
             onUpdateGrades={handleUpdateGrades}
             onViewStudentProfile={handleOpenStudentProfile}
             pdfStudentsLoading={pdfStudentsLoading}

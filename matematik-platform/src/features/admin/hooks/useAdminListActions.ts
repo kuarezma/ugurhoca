@@ -8,6 +8,7 @@ import {
   deleteAdminEntity,
   migrateLegacyWorksheetDocuments,
   refreshAdminDocumentCategories,
+  updateAdminUser,
   updateAdminAssignment,
   updateAdminSharedDocument,
 } from "@/features/admin/queries";
@@ -30,6 +31,7 @@ type UseAdminListActionsOptions = {
   setAssignments: Dispatch<SetStateAction<AdminAssignment[]>>;
   setDocuments: Dispatch<SetStateAction<AdminDocument[]>>;
   setIsSubmitting: Dispatch<SetStateAction<boolean>>;
+  setAllUsers: Dispatch<SetStateAction<AdminUser[]>>;
   setPdfStudentsLoading: Dispatch<SetStateAction<boolean>>;
   setQuizzes: Dispatch<SetStateAction<AdminQuiz[]>>;
   setSharedDocs: Dispatch<SetStateAction<AdminSharedDocument[]>>;
@@ -47,6 +49,7 @@ export function useAdminListActions({
   setAssignments,
   setDocuments,
   setIsSubmitting,
+  setAllUsers,
   setPdfStudentsLoading,
   setQuizzes,
   setSharedDocs,
@@ -55,6 +58,40 @@ export function useAdminListActions({
 }: UseAdminListActionsOptions) {
   const { showToast } = useToast();
   const studentUsers = allUsers.filter((user) => user.email !== ADMIN_EMAIL);
+
+  const handleToggleFavoriteStudent = async (student: AdminUser) => {
+    const nextFavorite = !student.is_favorite;
+    setAllUsers((currentUsers) =>
+      currentUsers.map((currentUser) =>
+        currentUser.id === student.id
+          ? { ...currentUser, is_favorite: nextFavorite }
+          : currentUser,
+      ),
+    );
+
+    const { error } = await updateAdminUser(student.id, {
+      is_favorite: nextFavorite,
+    });
+
+    if (error) {
+      setAllUsers((currentUsers) =>
+        currentUsers.map((currentUser) =>
+          currentUser.id === student.id
+            ? { ...currentUser, is_favorite: student.is_favorite }
+            : currentUser,
+        ),
+      );
+      showToast("error", "Favori durumu güncellenemedi.");
+      return;
+    }
+
+    showToast(
+      "success",
+      nextFavorite
+        ? `${student.name || "Öğrenci"} favorilere eklendi.`
+        : `${student.name || "Öğrenci"} favorilerden çıkarıldı.`,
+    );
+  };
 
   const handleDownloadStudentsPdf = async () => {
     setPdfStudentsLoading(true);
@@ -217,6 +254,7 @@ export function useAdminListActions({
     handleDownloadStudentsPdf,
     handleMigrateWorksheetDocuments,
     handleRefreshDocumentCategories,
+    handleToggleFavoriteStudent,
     handleUpdateGrades,
     studentUsers,
   };

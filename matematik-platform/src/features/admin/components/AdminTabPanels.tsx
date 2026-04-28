@@ -56,6 +56,7 @@ type AdminTabPanelsProps = {
   onRefreshUsers: () => Promise<void> | void;
   onSendAdminMessage: (user: AdminUser) => void;
   onShowSubmissions: (assignment: AdminAssignment) => Promise<void> | void;
+  onToggleFavoriteStudent: (user: AdminUser) => Promise<void> | void;
   onUpdateGrades: () => Promise<void> | void;
   onViewStudentProfile: (user: AdminUser) => Promise<void> | void;
   pdfStudentsLoading: boolean;
@@ -93,6 +94,7 @@ export default function AdminTabPanels({
   onRefreshUsers,
   onSendAdminMessage,
   onShowSubmissions,
+  onToggleFavoriteStudent,
   onUpdateGrades,
   onViewStudentProfile,
   pdfStudentsLoading,
@@ -141,6 +143,7 @@ export default function AdminTabPanels({
           onEditUser={onEditUser}
           onRefresh={onRefreshUsers}
           onSendMessage={onSendAdminMessage}
+          onToggleFavorite={onToggleFavoriteStudent}
           onViewProfile={onViewStudentProfile}
           pdfStudentsLoading={pdfStudentsLoading}
           students={studentUsers}

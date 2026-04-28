@@ -7,6 +7,7 @@ export interface AppUser {
   email: string;
   grade: GradeValue;
   isAdmin?: boolean;
+  is_favorite?: boolean | null;
   avatar_id?: string | null;
   created_at?: string | null;
   current_streak?: number | null;

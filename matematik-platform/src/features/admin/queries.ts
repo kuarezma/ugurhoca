@@ -688,6 +688,7 @@ export const updateAdminUser = async (
   userId: string,
   updates: {
     grade?: AdminUser['grade'] | null;
+    is_favorite?: boolean | null;
     name?: string | null;
   },
 ) => {
