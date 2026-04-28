@@ -45,6 +45,16 @@ type ScoreAnchor = {
   rank: number;
 };
 
+export type YksScoreRow = {
+  scoreType: YksScoreType;
+  rawScore: number;
+  rawRank: number;
+  placementScore: number;
+  placementRank: number;
+};
+
+export const yksScoreTypes: YksScoreType[] = ['TYT', 'SAY', 'EA', 'SOZ'];
+
 export const lgsSubjects: LgsSubjectMeta[] = [
   { key: 'turkce', label: 'Turkce', questions: 20, coefficient: 4 },
   { key: 'matematik', label: 'Matematik', questions: 20, coefficient: 4 },
@@ -65,6 +75,19 @@ export const yksSubjects: YksSubjectMeta[] = [
   { key: 'aytSosyal', label: 'AYT Sosyal Bilimler-2', questions: 40 },
 ];
 
+export const tytSubjectKeys: YksSubjectKey[] = [
+  'tytTurkce',
+  'tytSosyal',
+  'tytMatematik',
+  'tytFen',
+];
+export const aytSubjectKeys: YksSubjectKey[] = [
+  'aytMatematik',
+  'aytFen',
+  'aytEdebiyat',
+  'aytSosyal',
+];
+
 const yksTytWeights = {
   tytTurkce: 3.4,
   tytSosyal: 3.1,
@@ -72,7 +95,10 @@ const yksTytWeights = {
   tytFen: 3.3,
 };
 
-const yksAytWeights: Record<YksScoreType, Record<'aytMatematik' | 'aytFen' | 'aytEdebiyat' | 'aytSosyal', number>> = {
+const yksAytWeights: Record<
+  YksScoreType,
+  Record<'aytMatematik' | 'aytFen' | 'aytEdebiyat' | 'aytSosyal', number>
+> = {
   TYT: { aytMatematik: 0, aytFen: 0, aytEdebiyat: 0, aytSosyal: 0 },
   SAY: { aytMatematik: 3.0, aytFen: 2.9, aytEdebiyat: 0.3, aytSosyal: 0.3 },
   EA: { aytMatematik: 2.5, aytFen: 0.3, aytEdebiyat: 2.2, aytSosyal: 1.3 },
@@ -131,7 +157,8 @@ function net(correct: number, wrong: number, wrongDivisor: number) {
 
 function interpolateRank(score: number, anchors: ScoreAnchor[]) {
   if (score >= anchors[0].score) return anchors[0].rank;
-  if (score <= anchors[anchors.length - 1].score) return anchors[anchors.length - 1].rank;
+  if (score <= anchors[anchors.length - 1].score)
+    return anchors[anchors.length - 1].rank;
 
   for (let i = 0; i < anchors.length - 1; i += 1) {
     const current = anchors[i];
@@ -183,11 +210,22 @@ export function calculateLgsScore(inputs: LgsInputs) {
     };
   });
 
-  const weightedNet = Number(subjectNets.reduce((sum, subject) => sum + subject.weighted, 0).toFixed(2));
-  const totalNet = Number(subjectNets.reduce((sum, subject) => sum + subject.net, 0).toFixed(2));
-  const maxWeightedNet = lgsSubjects.reduce((sum, subject) => sum + subject.questions * subject.coefficient, 0);
-  const estimatedScore = Number(clamp(100 + (weightedNet / maxWeightedNet) * 400, 100, 500).toFixed(2));
-  const estimatedPercentile = Number(clamp(100 - ((estimatedScore - 100) / 400) * 100, 0.01, 99.99).toFixed(2));
+  const weightedNet = Number(
+    subjectNets.reduce((sum, subject) => sum + subject.weighted, 0).toFixed(2),
+  );
+  const totalNet = Number(
+    subjectNets.reduce((sum, subject) => sum + subject.net, 0).toFixed(2),
+  );
+  const maxWeightedNet = lgsSubjects.reduce(
+    (sum, subject) => sum + subject.questions * subject.coefficient,
+    0,
+  );
+  const estimatedScore = Number(
+    clamp(100 + (weightedNet / maxWeightedNet) * 400, 100, 500).toFixed(2),
+  );
+  const estimatedPercentile = Number(
+    clamp(100 - ((estimatedScore - 100) / 400) * 100, 0.01, 99.99).toFixed(2),
+  );
 
   return {
     subjectNets,
@@ -198,16 +236,55 @@ export function calculateLgsScore(inputs: LgsInputs) {
   };
 }
 
-export function calculateYksScore(inputs: YksInputs, scoreType: YksScoreType, obp: number) {
+export function calculateYksScore(
+  inputs: YksInputs,
+  scoreType: YksScoreType,
+  obp: number,
+  placedLastYear = false,
+) {
+  const scoreTable = calculateYksScoreTable(inputs, obp, placedLastYear);
+  const activeRow =
+    scoreTable.rows.find((row) => row.scoreType === scoreType) ??
+    scoreTable.rows[0];
+
+  return {
+    tytNets: scoreTable.tytNets,
+    aytNets: scoreTable.aytNets,
+    tytRaw: scoreTable.tytRaw,
+    aytRaw: scoreTable.aytRawByScoreType[scoreType],
+    obpContribution: scoreTable.obpContribution,
+    rawScore: activeRow.rawScore,
+    rawRank: activeRow.rawRank,
+    placementScore: activeRow.placementScore,
+    placementRank: activeRow.placementRank,
+    estimatedScore: activeRow.placementScore,
+    estimatedRank: activeRow.placementRank,
+    rows: scoreTable.rows,
+  };
+}
+
+export function calculateYksScoreTable(
+  inputs: YksInputs,
+  obp: number,
+  placedLastYear = false,
+) {
   const tytNets = {
     tytTurkce: net(inputs.tytTurkce.correct, inputs.tytTurkce.wrong, 4),
     tytSosyal: net(inputs.tytSosyal.correct, inputs.tytSosyal.wrong, 4),
-    tytMatematik: net(inputs.tytMatematik.correct, inputs.tytMatematik.wrong, 4),
+    tytMatematik: net(
+      inputs.tytMatematik.correct,
+      inputs.tytMatematik.wrong,
+      4,
+    ),
     tytFen: net(inputs.tytFen.correct, inputs.tytFen.wrong, 4),
   };
 
   const aytNets = {
-    aytMatematik: net(inputs.aytMatematik.correct, inputs.aytMatematik.wrong, 4),
+    aytMatematik: net(
+      inputs.aytMatematik.correct,
+      inputs.aytMatematik.wrong,
+      4,
+    ),
     aytFen: net(inputs.aytFen.correct, inputs.aytFen.wrong, 4),
     aytEdebiyat: net(inputs.aytEdebiyat.correct, inputs.aytEdebiyat.wrong, 4),
     aytSosyal: net(inputs.aytSosyal.correct, inputs.aytSosyal.wrong, 4),
@@ -219,32 +296,65 @@ export function calculateYksScore(inputs: YksInputs, scoreType: YksScoreType, ob
       tytNets.tytSosyal * yksTytWeights.tytSosyal +
       tytNets.tytMatematik * yksTytWeights.tytMatematik +
       tytNets.tytFen * yksTytWeights.tytFen
-    ).toFixed(2)
-  );
-
-  const aytWeight = yksAytWeights[scoreType];
-  const aytRaw = Number(
-    (
-      aytNets.aytMatematik * aytWeight.aytMatematik +
-      aytNets.aytFen * aytWeight.aytFen +
-      aytNets.aytEdebiyat * aytWeight.aytEdebiyat +
-      aytNets.aytSosyal * aytWeight.aytSosyal
-    ).toFixed(2)
+    ).toFixed(2),
   );
 
   const safeObp = clamp(obp, 50, 100);
-  const obpContribution = Number((safeObp * 0.6).toFixed(2));
-  const estimatedScore = Number(clamp(100 + tytRaw * 1.25 + aytRaw * 1.45 + obpContribution, 100, 560).toFixed(2));
-  const estimatedRank = interpolateRank(estimatedScore, yksRankAnchors[scoreType]);
+  const obpBaseContribution = Number((safeObp * 0.6).toFixed(2));
+  const obpContribution = placedLastYear
+    ? Number((obpBaseContribution / 2).toFixed(2))
+    : obpBaseContribution;
+
+  const aytRawByScoreType = yksScoreTypes.reduce(
+    (accumulator, currentScoreType) => {
+      const aytWeight = yksAytWeights[currentScoreType];
+      accumulator[currentScoreType] = Number(
+        (
+          aytNets.aytMatematik * aytWeight.aytMatematik +
+          aytNets.aytFen * aytWeight.aytFen +
+          aytNets.aytEdebiyat * aytWeight.aytEdebiyat +
+          aytNets.aytSosyal * aytWeight.aytSosyal
+        ).toFixed(2),
+      );
+
+      return accumulator;
+    },
+    {} as Record<YksScoreType, number>,
+  );
+
+  const rows: YksScoreRow[] = yksScoreTypes.map((currentScoreType) => {
+    const rawScore = Number(
+      clamp(
+        100 + tytRaw * 1.25 + aytRawByScoreType[currentScoreType] * 1.45,
+        100,
+        500,
+      ).toFixed(2),
+    );
+    const placementScore = Number(
+      clamp(rawScore + obpContribution, 100, 560).toFixed(2),
+    );
+
+    return {
+      scoreType: currentScoreType,
+      rawScore,
+      rawRank: interpolateRank(rawScore, yksRankAnchors[currentScoreType]),
+      placementScore,
+      placementRank: interpolateRank(
+        placementScore,
+        yksRankAnchors[currentScoreType],
+      ),
+    };
+  });
 
   return {
     tytNets,
     aytNets,
     tytRaw,
-    aytRaw,
+    aytRawByScoreType,
+    obpBaseContribution,
     obpContribution,
-    estimatedScore,
-    estimatedRank,
+    placedLastYear,
+    rows,
   };
 }
 
@@ -292,4 +402,11 @@ export function classifyYksTarget(params: {
 export function formatRank(rank?: number | null) {
   if (!rank || Number.isNaN(rank)) return '-';
   return rank.toLocaleString('tr-TR');
+}
+
+export function resolveYksPreferenceRank(
+  estimatedRank: number,
+  manualRank?: number | null,
+) {
+  return manualRank && manualRank > 0 ? manualRank : estimatedRank;
 }
