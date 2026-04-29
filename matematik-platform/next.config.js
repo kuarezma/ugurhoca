@@ -68,6 +68,7 @@ const nextConfig = {
     ];
   },
   images: {
+    qualities: [54, 75],
     localPatterns: [
       { pathname: '/**', search: '' },
       { pathname: '/api/image-proxy' },
