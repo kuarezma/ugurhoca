@@ -21,13 +21,20 @@ import type {
   AdminDashboardData,
   AdminDocument,
   AdminNotification,
+  AdminQuizResultRow,
   AdminQuiz,
   AdminQuizQuestion,
   AdminSharedDocument,
+  AdminStudyGoalRow,
+  AdminStudySessionRow,
   AdminStudentProfileData,
   AdminSubmission,
   AdminUser,
   ModerationPayload,
+  StudentActivityEvent,
+  StudentAdminNote,
+  StudentAdminStatus,
+  StudentWeeklyPlan,
 } from '@/features/admin/types';
 
 type ResolveAdminAuthResult =
@@ -133,6 +140,13 @@ export const loadAdminDashboardData = async (
     sharedDocsRes,
     quizzesRes,
     notificationsRes,
+    submissionsRes,
+    quizResultsRes,
+    studySessionsRes,
+    studyGoalsRes,
+    adminStatusesRes,
+    weeklyPlansRes,
+    activityEventsRes,
   ] = await Promise.all([
     supabase.from('announcements').select('*').order('created_at', { ascending: false }),
     supabase.from('documents').select('*').order('created_at', { ascending: false }),
@@ -147,20 +161,51 @@ export const loadAdminDashboardData = async (
           .eq('user_id', adminUserId)
           .order('created_at', { ascending: false })
       : Promise.resolve({ data: [], error: null }),
+    supabase
+      .from('assignment_submissions')
+      .select('*')
+      .order('submitted_at', { ascending: false }),
+    supabase
+      .from('quiz_results')
+      .select('id, user_id, quiz_id, score, total_questions, completed_at, quizzes(title, difficulty, grade)')
+      .order('completed_at', { ascending: false }),
+    supabase
+      .from('study_sessions')
+      .select('id, user_id, duration, date, activity_type, topics')
+      .order('date', { ascending: false })
+      .limit(1000),
+    supabase.from('study_goals').select('user_id, target_duration, week_start'),
+    supabase.from('student_admin_statuses').select('*'),
+    supabase
+      .from('student_weekly_plans')
+      .select('*, student_weekly_plan_items(*)')
+      .order('week_start', { ascending: false }),
+    supabase
+      .from('student_activity_events')
+      .select('*')
+      .order('created_at', { ascending: false })
+      .limit(1000),
   ]);
 
   return {
+    activityEvents: (activityEventsRes.data || []) as StudentActivityEvent[],
     allUsers: (allUsersRes.data || []) as AdminUser[],
     announcements: ((announcementsRes.data || []) as AdminDashboardData['announcements']).sort(
       (left, right) =>
         new Date(right.created_at || 0).getTime() -
         new Date(left.created_at || 0).getTime(),
     ),
+    adminStatuses: (adminStatusesRes.data || []) as StudentAdminStatus[],
     assignments: (assignmentsRes.data || []) as AdminDashboardData['assignments'],
     documents: (documentsRes.data || []) as AdminDashboardData['documents'],
     notifications: (notificationsRes.data || []) as AdminDashboardData['notifications'],
+    quizResults: (quizResultsRes.data || []) as AdminQuizResultRow[],
     quizzes: (quizzesRes.data || []) as AdminDashboardData['quizzes'],
     sharedDocs: (sharedDocsRes.data || []) as AdminDashboardData['sharedDocs'],
+    studyGoals: (studyGoalsRes.data || []) as AdminStudyGoalRow[],
+    studySessions: (studySessionsRes.data || []) as AdminStudySessionRow[],
+    submissions: (submissionsRes.data || []) as AdminSubmission[],
+    weeklyPlans: (weeklyPlansRes.data || []) as StudentWeeklyPlan[],
   };
 };
 
@@ -210,6 +255,9 @@ export const loadAdminStudentProfile = async (
     assignmentsRes,
     submissionsRes,
     badgesRes,
+    adminStatusRes,
+    adminNotesRes,
+    weeklyPlansRes,
   ] = await Promise.all([
     supabase
       .from('study_sessions')
@@ -247,9 +295,28 @@ export const loadAdminStudentProfile = async (
       .eq('user_id', student.id)
       .order('earned_at', { ascending: false })
       .limit(6),
+    supabase
+      .from('student_admin_statuses')
+      .select('*')
+      .eq('student_id', student.id)
+      .maybeSingle(),
+    supabase
+      .from('student_admin_notes')
+      .select('*')
+      .eq('student_id', student.id)
+      .order('created_at', { ascending: false })
+      .limit(20),
+    supabase
+      .from('student_weekly_plans')
+      .select('*, student_weekly_plan_items(*)')
+      .eq('student_id', student.id)
+      .order('week_start', { ascending: false })
+      .limit(8),
   ]);
 
   return {
+    adminNotes: (adminNotesRes.data || []) as StudentAdminNote[],
+    adminStatus: (adminStatusRes.data || null) as StudentAdminStatus | null,
     assignments: (assignmentsRes.data || []) as AdminStudentProfileData['assignments'],
     badges: normalizeDashboardBadges(badgesRes.data || []),
     goal: resolveCurrentGoal(goalRes.data || []),
@@ -258,6 +325,7 @@ export const loadAdminStudentProfile = async (
     student,
     studySessions: (studySessionsRes.data || []) as AdminStudentProfileData['studySessions'],
     submissions: (submissionsRes.data || []) as AdminStudentProfileData['submissions'],
+    weeklyPlans: (weeklyPlansRes.data || []) as StudentWeeklyPlan[],
   };
 };
 
@@ -799,6 +867,140 @@ export const advanceAdminUserGrades = async (users: AdminUser[]) => {
   }
 
   return updated;
+};
+
+const getCurrentWeekStartISODate = () => {
+  const today = new Date();
+  const dayOfWeek = today.getDay() === 0 ? 6 : today.getDay() - 1;
+  const start = new Date(today);
+  start.setDate(today.getDate() - dayOfWeek);
+  start.setHours(0, 0, 0, 0);
+  return start.toISOString().slice(0, 10);
+};
+
+export const createAdminWeeklyPlan = async ({
+  authorId,
+  itemTitles,
+  studentId,
+  targetMinutes = 600,
+  title,
+}: {
+  authorId: string;
+  itemTitles: string[];
+  studentId: string;
+  targetMinutes?: number;
+  title: string;
+}) => {
+  const weekStart = getCurrentWeekStartISODate();
+  const { data: plan, error: planError } = await supabase
+    .from('student_weekly_plans')
+    .upsert(
+      {
+        author_id: authorId,
+        status: 'active',
+        student_id: studentId,
+        target_minutes: targetMinutes,
+        title,
+        week_start: weekStart,
+      },
+      { onConflict: 'student_id,week_start' },
+    )
+    .select('*')
+    .single();
+
+  if (planError) {
+    throw planError;
+  }
+
+  await supabase
+    .from('student_weekly_plan_items')
+    .delete()
+    .eq('plan_id', plan.id);
+
+  const cleanedItems = itemTitles
+    .map((item) => item.trim())
+    .filter(Boolean)
+    .slice(0, 12);
+
+  if (cleanedItems.length > 0) {
+    const { error: itemsError } = await supabase
+      .from('student_weekly_plan_items')
+      .insert(
+        cleanedItems.map((itemTitle, index) => ({
+          kind: 'custom',
+          plan_id: plan.id,
+          sort_order: index,
+          title: itemTitle,
+        })),
+      );
+
+    if (itemsError) {
+      throw itemsError;
+    }
+  }
+
+  return plan as StudentWeeklyPlan;
+};
+
+export const upsertStudentAdminStatus = async ({
+  adminId,
+  followUpAt,
+  labels,
+  status,
+  studentId,
+}: {
+  adminId: string;
+  followUpAt?: string | null;
+  labels?: string[];
+  status: StudentAdminStatus['status'];
+  studentId: string;
+}) => {
+  const { data, error } = await supabase
+    .from('student_admin_statuses')
+    .upsert(
+      {
+        follow_up_at: followUpAt ?? null,
+        labels: labels ?? [],
+        status,
+        student_id: studentId,
+        updated_by: adminId,
+      },
+      { onConflict: 'student_id' },
+    )
+    .select('*')
+    .single();
+
+  if (error) {
+    throw error;
+  }
+
+  return data as StudentAdminStatus;
+};
+
+export const addStudentAdminNote = async ({
+  authorId,
+  body,
+  studentId,
+}: {
+  authorId: string;
+  body: string;
+  studentId: string;
+}) => {
+  const { data, error } = await supabase
+    .from('student_admin_notes')
+    .insert({
+      author_id: authorId,
+      body,
+      student_id: studentId,
+    })
+    .select('*')
+    .single();
+
+  if (error) {
+    throw error;
+  }
+
+  return data as StudentAdminNote;
 };
 
 export const loadAdminQuizQuestions = async (quizId: string) => {

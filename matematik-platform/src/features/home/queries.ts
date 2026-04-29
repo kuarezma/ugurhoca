@@ -8,6 +8,19 @@ import type {
   SupportAttachment,
 } from '@/types';
 
+const SUPPORT_IMAGE_TYPES = new Set(['image/jpeg', 'image/png', 'image/webp']);
+const SUPPORT_IMAGE_MAX_BYTES = 5 * 1024 * 1024;
+
+export const validateSupportImageFile = (file: File) => {
+  if (!SUPPORT_IMAGE_TYPES.has(file.type)) {
+    throw new Error('Sadece JPG, PNG veya WebP görsel eklenebilir.');
+  }
+
+  if (file.size > SUPPORT_IMAGE_MAX_BYTES) {
+    throw new Error('Fotoğraf en fazla 5 MB olabilir.');
+  }
+};
+
 export const resolveYandexImageUrl = async (url: string) => {
   if (!url || !/disk\.yandex|yadi\.sk/i.test(url)) {
     return url;
@@ -126,9 +139,16 @@ export const dismissHomeAssignment = async (
   }
 };
 
-export const uploadSupportFiles = async (files: FileList) => {
+export const uploadSupportFiles = async (
+  files: FileList | File[],
+  options: { imagesOnly?: boolean } = {},
+) => {
   const uploads = await Promise.all(
     Array.from(files).map(async (file) => {
+      if (options.imagesOnly) {
+        validateSupportImageFile(file);
+      }
+
       const fileName = `support_${Date.now()}_${Math.random().toString(36).slice(2)}_${file.name}`;
       const { data, error } = await supabase.storage
         .from('documents')

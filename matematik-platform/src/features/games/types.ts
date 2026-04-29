@@ -20,7 +20,15 @@ export type GameDefinition = {
 };
 
 export type LeaderboardRow = {
-  id?: string;
+  alias: string;
+  rank?: number;
   total_score: number;
-  user_name: string;
+};
+
+export type GameAlias = {
+  alias: string;
+  alias_normalized: string;
+  created_at?: string;
+  updated_at?: string;
+  user_id: string;
 };

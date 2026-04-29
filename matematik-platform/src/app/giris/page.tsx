@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
-import { ArrowLeft, Eye, EyeOff, Sparkles } from 'lucide-react';
+import { ArrowLeft, Eye, EyeOff, ShieldCheck, Sparkles } from 'lucide-react';
 import { supabase } from '@/lib/supabase/client';
 import { getClientSession } from '@/lib/auth-client';
 import { normalizeFullNameForMatch } from '@/lib/student-identity';
@@ -217,6 +217,11 @@ export default function LoginPage() {
               >
                 Hemen kayıt ol
               </Link>
+            </p>
+            <p className="mt-4 flex items-start gap-2 rounded-2xl border border-emerald-400/20 bg-emerald-500/10 px-4 py-3 text-xs leading-relaxed text-emerald-100/90">
+              <ShieldCheck className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
+              Öğrenci verileri gizlidir. Başka öğrenciler profilini, mesajlarını,
+              ödevlerini, test sonuçlarını veya çalışma hareketlerini göremez.
             </p>
           </div>
         </motion.div>

@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { Brain, Play } from 'lucide-react';
+import { Brain, LockKeyhole, Play, ShieldCheck } from 'lucide-react';
 
 type HomeGuestCtaSectionProps = {
   isLight: boolean;
@@ -33,8 +33,39 @@ export function HomeGuestCtaSection({ isLight }: HomeGuestCtaSectionProps) {
               isLight ? 'text-slate-600' : 'text-slate-300'
             }`}
           >
-            Tüm içeriklere erişmek için kayıt ol. Sadece 30 saniye!
+            Platform öğrencilerin faydalanması için tamamen ücretsizdir.
+            Çalışmaların ve mesajların başka öğrencilerle paylaşılmaz.
           </p>
+          <div className="mx-auto mb-6 grid max-w-2xl gap-3 sm:grid-cols-2">
+            <div
+              className={`rounded-2xl border p-4 text-left ${
+                isLight
+                  ? 'border-slate-200 bg-white text-slate-700'
+                  : 'border-white/10 bg-white/5 text-slate-300'
+              }`}
+            >
+              <ShieldCheck className="mb-2 h-5 w-5 text-emerald-400" />
+              <p className="text-sm font-semibold">Öğrenci gizliliği</p>
+              <p className="mt-1 text-xs opacity-80">
+                Her öğrenci yalnızca kendi profilini, planını, ödevini,
+                mesajını ve ilerlemesini görür.
+              </p>
+            </div>
+            <div
+              className={`rounded-2xl border p-4 text-left ${
+                isLight
+                  ? 'border-slate-200 bg-white text-slate-700'
+                  : 'border-white/10 bg-white/5 text-slate-300'
+              }`}
+            >
+              <LockKeyhole className="mb-2 h-5 w-5 text-cyan-400" />
+              <p className="text-sm font-semibold">Nasıl çalışır?</p>
+              <p className="mt-1 text-xs opacity-80">
+                Kayıt ol, çalış, test çöz, ödevlerini takip et ve Uğur
+                Hoca’dan geri bildirim al.
+              </p>
+            </div>
+          </div>
           <Link
             href="/kayit"
             className="inline-flex items-center gap-2 bg-gradient-to-r from-indigo-500 to-purple-500 text-white font-semibold px-6 py-3 rounded-xl hover:from-indigo-600 hover:to-purple-600 transition-all"

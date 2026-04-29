@@ -55,7 +55,42 @@ export function HomeFooter({ isLight }: HomeFooterProps) {
           >
             KVKK
           </Link>
+          <span
+            aria-hidden
+            className={isLight ? 'text-slate-300' : 'text-slate-600'}
+          >
+            ·
+          </span>
+          <Link
+            href="/gizlilik#cerezler"
+            className={`underline-offset-2 hover:underline ${
+              isLight ? 'text-slate-700' : 'text-slate-300'
+            }`}
+          >
+            Çerezler
+          </Link>
+          <span
+            aria-hidden
+            className={isLight ? 'text-slate-300' : 'text-slate-600'}
+          >
+            ·
+          </span>
+          <a
+            href="mailto:yasayanugur@gmail.com"
+            className={`underline-offset-2 hover:underline ${
+              isLight ? 'text-slate-700' : 'text-slate-300'
+            }`}
+          >
+            İletişim
+          </a>
         </nav>
+        <p
+          className={`mb-2 text-xs ${
+            isLight ? 'text-slate-600' : 'text-slate-400'
+          }`}
+        >
+          Öğrenci verileri gizlidir; platform öğrencilerin çalışması için ücretsizdir.
+        </p>
         <p
           className={`text-xs ${isLight ? 'text-slate-600' : 'text-slate-400'}`}
         >

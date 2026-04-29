@@ -30,7 +30,7 @@ export default function KvkkPage() {
           <p>
             6698 sayılı Kişisel Verilerin Korunması Kanunu (“KVKK”) uyarınca, Uğur
             Hoca Matematik platformunu işleten Uğur Hoca (“Veri Sorumlusu”), öğrenci
-            ve velilerin kişisel verilerini aşağıdaki esaslar çerçevesinde işler.
+            kişisel verilerini aşağıdaki esaslar çerçevesinde işler.
             Veri sorumlusu ile iletişime geçmek için platformdaki destek formunu
             kullanabilirsiniz.
           </p>
@@ -41,14 +41,14 @@ export default function KvkkPage() {
           <ul className="list-disc space-y-1 pl-5">
             <li>Kimlik: ad, soyad, sınıf/seviye, okul bilgisi (beyan)</li>
             <li>İletişim: e-posta adresi</li>
-            <li>Müşteri işlem: çözülen testler, ödev teslim kayıtları, puanlar</li>
+            <li>Öğrenci işlem: çözülen testler, ödev teslim kayıtları, puanlar</li>
             <li>Teknik: oturum kimliği, giriş/çıkış zaman damgaları</li>
-            <li>Müşteri işlem (destek): destek formu mesajları ve ekleri</li>
+            <li>Destek: destek formu mesajları ve ekleri</li>
           </ul>
 
           <h2 className="font-display text-xl font-bold text-white">3. İşleme amaçları</h2>
           <ul className="list-disc space-y-1 pl-5">
-            <li>Üyelik sözleşmesinin kurulması ve yürütülmesi</li>
+            <li>Öğrenci hesabının oluşturulması ve yürütülmesi</li>
             <li>Eğitim içeriği, ödev ve sınav hizmetlerinin sunulması</li>
             <li>Bildirim, duyuru ve destek taleplerinin yönetilmesi</li>
             <li>Yasal yükümlülüklerin yerine getirilmesi ve istatistiksel analiz</li>
@@ -97,9 +97,8 @@ export default function KvkkPage() {
           </ul>
           <p>
             Haklarınızı kullanmak için destek formu üzerinden kimliğinizi
-            doğrulayacak şekilde başvurabilirsiniz. Talepleriniz en geç 30 gün
-            içinde ücretsiz sonuçlandırılır; işlemin ayrı bir maliyet gerektirmesi
-            halinde Kurul tarafından belirlenen tarife esas alınır.
+            doğrulayacak şekilde başvurabilirsiniz. Talepleriniz yasal süre içinde
+            sonuçlandırılır.
           </p>
         </section>
 

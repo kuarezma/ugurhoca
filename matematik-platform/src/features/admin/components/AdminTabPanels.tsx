@@ -7,6 +7,7 @@ import AdminAssignmentsTab from "@/features/admin/components/tabs/AdminAssignmen
 import AdminDocumentsTab from "@/features/admin/components/tabs/AdminDocumentsTab";
 import AdminGradeUpdateTab from "@/features/admin/components/tabs/AdminGradeUpdateTab";
 import AdminQuizzesTab from "@/features/admin/components/tabs/AdminQuizzesTab";
+import AdminTrackingTab from "@/features/admin/components/tabs/AdminTrackingTab";
 import AdminUsersTab from "@/features/admin/components/tabs/AdminUsersTab";
 import type {
   AdminActiveTab,
@@ -14,23 +15,38 @@ import type {
   AdminAssignment,
   AdminDocument,
   AdminFormState,
+  AdminQuizResultRow,
   AdminQuiz,
   AdminSharedDocument,
+  AdminStudyGoalRow,
+  AdminStudySessionRow,
   AdminUser,
+  StudentActivityEvent,
+  StudentAdminStatus,
+  StudentWeeklyPlan,
 } from "@/features/admin/types";
+import type { AdminNotification, AdminSubmission } from "@/features/admin/types";
 
 type AdminTabPanelsProps = {
   activeTab: AdminActiveTab;
+  activityEvents: StudentActivityEvent[];
+  adminStatuses: StudentAdminStatus[];
   announcements: AdminAnnouncement[];
   assignments: AdminAssignment[];
+  dashboardQuizResults: AdminQuizResultRow[];
+  dashboardStudyGoals: AdminStudyGoalRow[];
+  dashboardStudySessions: AdminStudySessionRow[];
+  dashboardSubmissions: AdminSubmission[];
   documents: AdminDocument[];
   formatDate: (dateString?: string | null) => string;
   isSubmitting: boolean;
   lastGradeUpdate: string | null;
+  notifications: AdminNotification[];
   onAddQuizQuestion: (quiz: AdminQuiz) => Promise<void> | void;
   onCreateAnnouncement: () => void;
   onCreateAssignment: () => void;
   onCreateSendDocument: () => void;
+  onCreateWeeklyPlan: (user: AdminUser) => Promise<void> | void;
   onDeleteAnnouncement: (id: string) => void;
   onDeleteAssignment: (id: string) => void;
   onDeleteDocument: (id: string) => void;
@@ -57,26 +73,40 @@ type AdminTabPanelsProps = {
   onSendAdminMessage: (user: AdminUser) => void;
   onShowSubmissions: (assignment: AdminAssignment) => Promise<void> | void;
   onToggleFavoriteStudent: (user: AdminUser) => Promise<void> | void;
+  onUpdateStudentStatus: (
+    user: AdminUser,
+    status: StudentAdminStatus['status'],
+    labels?: string[],
+  ) => Promise<void> | void;
   onUpdateGrades: () => Promise<void> | void;
   onViewStudentProfile: (user: AdminUser) => Promise<void> | void;
   pdfStudentsLoading: boolean;
   quizzes: AdminQuiz[];
   sharedDocs: AdminSharedDocument[];
   studentUsers: AdminUser[];
+  weeklyPlans: StudentWeeklyPlan[];
 };
 
 export default function AdminTabPanels({
   activeTab,
+  activityEvents,
+  adminStatuses,
   announcements,
   assignments,
+  dashboardQuizResults,
+  dashboardStudyGoals,
+  dashboardStudySessions,
+  dashboardSubmissions,
   documents,
   formatDate,
   isSubmitting,
   lastGradeUpdate,
+  notifications,
   onAddQuizQuestion,
   onCreateAnnouncement,
   onCreateAssignment,
   onCreateSendDocument,
+  onCreateWeeklyPlan,
   onDeleteAnnouncement,
   onDeleteAssignment,
   onDeleteDocument,
@@ -95,12 +125,14 @@ export default function AdminTabPanels({
   onSendAdminMessage,
   onShowSubmissions,
   onToggleFavoriteStudent,
+  onUpdateStudentStatus,
   onUpdateGrades,
   onViewStudentProfile,
   pdfStudentsLoading,
   quizzes,
   sharedDocs,
   studentUsers,
+  weeklyPlans,
 }: AdminTabPanelsProps) {
   return (
     <AnimatePresence mode="wait">
@@ -113,6 +145,25 @@ export default function AdminTabPanels({
         >
           <AdminStatistics />
         </motion.div>
+      )}
+
+      {activeTab === "tracking" && (
+        <AdminTrackingTab
+          activityEvents={activityEvents}
+          adminStatuses={adminStatuses}
+          assignments={assignments}
+          notifications={notifications}
+          onCreateWeeklyPlan={onCreateWeeklyPlan}
+          onSendMessage={onSendAdminMessage}
+          onUpdateStatus={onUpdateStudentStatus}
+          onViewProfile={onViewStudentProfile}
+          quizResults={dashboardQuizResults}
+          studyGoals={dashboardStudyGoals}
+          studySessions={dashboardStudySessions}
+          students={studentUsers}
+          submissions={dashboardSubmissions}
+          weeklyPlans={weeklyPlans}
+        />
       )}
 
       {activeTab === "announcements" && (

@@ -41,7 +41,7 @@ describe('strongPasswordSchema', () => {
 describe('loginSchema', () => {
   it('validates ad-soyad + password together', () => {
     const res = loginSchema.safeParse({
-      fullName: 'Ali Veli',
+      fullName: 'Ali Demir',
       password: '123456',
     });
     expect(res.success).toBe(true);
@@ -50,7 +50,7 @@ describe('loginSchema', () => {
 
 describe('registerSchema', () => {
   const valid = {
-    fullName: 'Ali Veli',
+    fullName: 'Ali Demir',
     email: 'ali@example.com',
     password: 'abc123',
     confirmPassword: 'abc123',

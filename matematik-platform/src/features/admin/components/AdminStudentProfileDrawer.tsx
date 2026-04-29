@@ -5,10 +5,12 @@ import type { ReactNode } from "react";
 import {
   Award,
   BookOpen,
+  CalendarClock,
   CheckCircle2,
   Clock3,
   Flame,
   GraduationCap,
+  MessageSquarePlus,
   Target,
   Trophy,
   X,
@@ -25,7 +27,14 @@ type AdminStudentProfileDrawerProps = {
   error: string | null;
   formatDate: (dateString?: string | null) => string;
   isLoading: boolean;
+  onAddAdminNote?: (student: AdminUser) => Promise<void> | void;
   onClose: () => void;
+  onCreateWeeklyPlan?: (student: AdminUser) => Promise<void> | void;
+  onUpdateStatus?: (
+    student: AdminUser,
+    status: "normal" | "watch" | "risk" | string,
+    labels?: string[],
+  ) => Promise<void> | void;
   student: AdminUser | null;
 };
 
@@ -119,7 +128,10 @@ export default function AdminStudentProfileDrawer({
   error,
   formatDate,
   isLoading,
+  onAddAdminNote,
   onClose,
+  onCreateWeeklyPlan,
+  onUpdateStatus,
   student,
 }: AdminStudentProfileDrawerProps) {
   const drawerRef = useAccessibleModal<HTMLElement>(true, onClose);
@@ -139,6 +151,8 @@ export default function AdminStudentProfileDrawer({
     ...weeklyStudyCurve.flatMap((point) => [point.cumulative, point.target]),
   );
   const topStudyTopics = data ? getTopStudyTopics(data.studySessions) : [];
+  const effectiveStudent = student ?? (data?.student as AdminUser | null) ?? null;
+  const latestPlan = data?.weeklyPlans?.[0] ?? null;
 
   return (
     <motion.div
@@ -232,6 +246,161 @@ export default function AdminStudentProfileDrawer({
                   }
                 />
               </div>
+
+              <section className="rounded-3xl border border-white/10 bg-white/5 p-5">
+                <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                  <div>
+                    <h3 className="text-lg font-bold text-white">
+                      Takip Durumu
+                    </h3>
+                    <p className="text-sm text-slate-400">
+                      Admin notları, etiketler ve takip tarihi.
+                    </p>
+                  </div>
+                  {effectiveStudent ? (
+                    <div className="flex flex-wrap gap-2">
+                      <button
+                        type="button"
+                        onClick={() => onUpdateStatus?.(effectiveStudent, "normal", [])}
+                        className="rounded-xl bg-emerald-500/15 px-3 py-2 text-xs font-bold text-emerald-200 transition hover:bg-emerald-500/25"
+                      >
+                        Normal
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => onUpdateStatus?.(effectiveStudent, "watch", ["takipte"])}
+                        className="rounded-xl bg-amber-500/15 px-3 py-2 text-xs font-bold text-amber-200 transition hover:bg-amber-500/25"
+                      >
+                        Takipte
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => onUpdateStatus?.(effectiveStudent, "risk", ["risk"])}
+                        className="rounded-xl bg-red-500/15 px-3 py-2 text-xs font-bold text-red-200 transition hover:bg-red-500/25"
+                      >
+                        Riskte
+                      </button>
+                    </div>
+                  ) : null}
+                </div>
+
+                <div className="grid gap-3 sm:grid-cols-3">
+                  <MiniStat
+                    label="Durum"
+                    value={
+                      data.adminStatus?.status === "risk"
+                        ? "Risk"
+                        : data.adminStatus?.status === "watch"
+                          ? "Takip"
+                          : "Normal"
+                    }
+                  />
+                  <MiniStat
+                    label="Takip Tarihi"
+                    value={
+                      data.adminStatus?.follow_up_at
+                        ? formatShortDate(data.adminStatus.follow_up_at)
+                        : "-"
+                    }
+                  />
+                  <MiniStat
+                    label="Etiket"
+                    value={data.adminStatus?.labels?.join(", ") || "-"}
+                  />
+                </div>
+
+                <div className="mt-4">
+                  <div className="mb-3 flex items-center justify-between gap-3">
+                    <p className="text-sm font-bold text-white">Admin Notları</p>
+                    {effectiveStudent ? (
+                      <button
+                        type="button"
+                        onClick={() => onAddAdminNote?.(effectiveStudent)}
+                        className="inline-flex items-center gap-2 rounded-xl bg-white/10 px-3 py-2 text-xs font-bold text-white transition hover:bg-white/15"
+                      >
+                        <MessageSquarePlus className="h-4 w-4" />
+                        Not Ekle
+                      </button>
+                    ) : null}
+                  </div>
+                  {data.adminNotes.length === 0 ? (
+                    <EmptyState text="Henüz admin notu yok." />
+                  ) : (
+                    <div className="space-y-2">
+                      {data.adminNotes.slice(0, 5).map((note) => (
+                        <div
+                          key={note.id}
+                          className="rounded-2xl border border-white/10 bg-slate-900/60 px-4 py-3"
+                        >
+                          <p className="whitespace-pre-wrap text-sm text-slate-200">
+                            {note.body}
+                          </p>
+                          <p className="mt-2 text-xs text-slate-500">
+                            {formatShortDate(note.created_at)}
+                          </p>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </section>
+
+              <section className="rounded-3xl border border-white/10 bg-white/5 p-5">
+                <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                  <div>
+                    <h3 className="text-lg font-bold text-white">
+                      Haftalık Plan
+                    </h3>
+                    <p className="text-sm text-slate-400">
+                      Öğrenci yalnızca kendi planını görür.
+                    </p>
+                  </div>
+                  {effectiveStudent ? (
+                    <button
+                      type="button"
+                      onClick={() => onCreateWeeklyPlan?.(effectiveStudent)}
+                      className="inline-flex items-center justify-center gap-2 rounded-xl bg-cyan-500/15 px-4 py-2 text-sm font-bold text-cyan-200 transition hover:bg-cyan-500/25"
+                    >
+                      <CalendarClock className="h-4 w-4" />
+                      Plan Oluştur
+                    </button>
+                  ) : null}
+                </div>
+
+                {!latestPlan ? (
+                  <EmptyState text="Bu öğrenci için haftalık plan yok." />
+                ) : (
+                  <div className="rounded-2xl border border-white/10 bg-slate-900/60 p-4">
+                    <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
+                      <div>
+                        <p className="font-bold text-white">{latestPlan.title}</p>
+                        <p className="text-xs text-slate-500">
+                          Hafta: {formatShortDate(latestPlan.week_start)} • Hedef: {latestPlan.target_minutes} dk
+                        </p>
+                      </div>
+                      <span className="rounded-full bg-cyan-500/10 px-3 py-1 text-xs font-bold text-cyan-200">
+                        {latestPlan.student_weekly_plan_items?.filter((item) => item.completed_at).length || 0}/
+                        {latestPlan.student_weekly_plan_items?.length || 0}
+                      </span>
+                    </div>
+                    <div className="space-y-2">
+                      {(latestPlan.student_weekly_plan_items || []).map((item) => (
+                        <div
+                          key={item.id}
+                          className="flex items-center gap-2 rounded-xl bg-white/5 px-3 py-2 text-sm"
+                        >
+                          <CheckCircle2
+                            className={`h-4 w-4 ${item.completed_at ? "text-emerald-300" : "text-slate-600"}`}
+                          />
+                          <span className={item.completed_at ? "text-slate-400 line-through" : "text-slate-200"}>
+                            {item.title}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </section>
 
               <section className="rounded-3xl border border-white/10 bg-white/5 p-5">
                 <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
@@ -538,7 +707,7 @@ function MiniStat({
   value,
 }: {
   label: string;
-  value: number;
+  value: number | string;
 }) {
   return (
     <div className="rounded-2xl border border-white/10 bg-slate-900/60 px-3 py-3 text-center">

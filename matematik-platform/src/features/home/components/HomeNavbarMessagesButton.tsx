@@ -11,7 +11,11 @@ import {
   type FormEvent,
 } from 'react';
 import { supabase } from '@/lib/supabase/client';
-import { sendSupportMessage } from '@/features/home/queries';
+import {
+  sendSupportMessage,
+  uploadSupportFiles,
+  validateSupportImageFile,
+} from '@/features/home/queries';
 import { useNavbarMessages } from '@/features/home/hooks/useNavbarMessages';
 import { SupportChatPanel } from '@/features/messages/components/SupportChatPanel';
 import { mapStudentNotificationsToThread } from '@/features/messages/mapNotificationsToThread';
@@ -36,6 +40,10 @@ export function HomeNavbarMessagesButton({
   const [draft, setDraft] = useState('');
   const [sending, setSending] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [selectedImage, setSelectedImage] = useState<File | null>(null);
+  const [attachmentPreviewUrl, setAttachmentPreviewUrl] = useState<
+    string | null
+  >(null);
   const containerRef = useRef<HTMLDivElement | null>(null);
 
   const threadMessages = useMemo(
@@ -78,11 +86,42 @@ export function HomeNavbarMessagesButton({
     };
   }, [open]);
 
+  useEffect(() => {
+    return () => {
+      if (attachmentPreviewUrl) {
+        URL.revokeObjectURL(attachmentPreviewUrl);
+      }
+    };
+  }, [attachmentPreviewUrl]);
+
+  const clearAttachment = useCallback(() => {
+    setSelectedImage(null);
+    setAttachmentPreviewUrl(null);
+  }, []);
+
+  const handleAttachmentSelect = useCallback((files: FileList | null) => {
+    const file = files?.[0];
+    if (!file) return;
+
+    try {
+      validateSupportImageFile(file);
+      setSelectedImage(file);
+      setAttachmentPreviewUrl(URL.createObjectURL(file));
+      setError(null);
+    } catch (selectError) {
+      setError(
+        selectError instanceof Error
+          ? selectError.message
+          : 'Fotoğraf eklenemedi.',
+      );
+    }
+  }, []);
+
   const handleSubmit = useCallback(
     async (event: FormEvent<HTMLFormElement>) => {
       event.preventDefault();
       const text = draft.trim();
-      if (!text || sending) return;
+      if ((!text && !selectedImage) || sending) return;
 
       setSending(true);
       setError(null);
@@ -97,9 +136,13 @@ export function HomeNavbarMessagesButton({
           throw new Error('Oturum açmanız gerekiyor.');
         }
 
+        const attachments = selectedImage
+          ? await uploadSupportFiles([selectedImage], { imagesOnly: true })
+          : [];
+
         const sentRow = await sendSupportMessage(
           {
-            attachments: [],
+            attachments,
             sender_email: userEmail || '',
             sender_id: userId,
             sender_name: userName || 'Öğrenci',
@@ -115,8 +158,16 @@ export function HomeNavbarMessagesButton({
             created_at: new Date().toISOString(),
             id: `local-${Date.now()}`,
             is_read: true,
-            message: text,
+            message:
+              text ||
+              (attachments[0]?.name
+                ? `[Fotoğraf: ${attachments[0].name}]`
+                : ''),
             metadata: {
+              attachments,
+              image_url:
+                attachments.find((attachment) => attachment.kind === 'image')
+                  ?.url || null,
               sender_id: userId,
               sender_name: userName || 'Sen',
             },
@@ -127,6 +178,7 @@ export function HomeNavbarMessagesButton({
         }
 
         setDraft('');
+        clearAttachment();
       } catch (sendError) {
         setError(
           sendError instanceof Error
@@ -137,7 +189,16 @@ export function HomeNavbarMessagesButton({
         setSending(false);
       }
     },
-    [appendMessage, draft, sending, userEmail, userId, userName],
+    [
+      appendMessage,
+      clearAttachment,
+      draft,
+      selectedImage,
+      sending,
+      userEmail,
+      userId,
+      userName,
+    ],
   );
 
   const buttonClasses = `relative inline-flex h-11 w-11 items-center justify-center rounded-xl transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary ${
@@ -190,8 +251,15 @@ export function HomeNavbarMessagesButton({
               isLight={isLight}
               messages={threadMessages}
               onClose={() => setOpen(false)}
+              onAttachmentRemove={clearAttachment}
+              onAttachmentSelect={handleAttachmentSelect}
               onDraftChange={setDraft}
               onSubmit={handleSubmit}
+              attachmentPreview={
+                selectedImage && attachmentPreviewUrl
+                  ? { name: selectedImage.name, url: attachmentPreviewUrl }
+                  : null
+              }
               peerAvatarSrc="/ugur.jpeg"
               peerDisplayName="Uğur Hoca"
               peerSubtitle="Mesajlaşma"

@@ -29,7 +29,7 @@ export default function GizlilikPage() {
           <p>
             Uğur Hoca Matematik platformu (“Platform”), öğrencilerin matematik
             çalışmalarını destekleyen bir eğitim uygulamasıdır. Bu politika;
-            Platform’u kullanan ziyaretçi, öğrenci ve veli bilgilerinin nasıl
+            Platform’u kullanan ziyaretçi ve öğrenci bilgilerinin nasıl
             toplandığını, işlendiğini ve korunduğunu açıklar.
           </p>
 
@@ -46,7 +46,7 @@ export default function GizlilikPage() {
             <li>Hata raporları ve performans metrikleri (anonim)</li>
           </ul>
 
-          <h2 className="font-display text-xl font-bold text-white">
+          <h2 id="cerezler" className="font-display text-xl font-bold text-white">
             Çerez kullanımı
           </h2>
           <p>
@@ -73,17 +73,18 @@ export default function GizlilikPage() {
             <li>Tüm trafik için zorunlu HTTPS</li>
             <li>Parolalar yalnızca tek yönlü özet fonksiyonları ile saklanır</li>
             <li>Row-level güvenlik kuralları ile satır bazlı erişim kontrolü</li>
+            <li>Öğrenci verileri başka öğrencilerle paylaşılmaz</li>
             <li>Erişim günlükleri ve düzenli yedekleme</li>
           </ul>
 
           <h2 className="font-display text-xl font-bold text-white">
-            Çocuk kullanıcılar
+            Öğrenci hesapları
           </h2>
           <p>
-            Platform, ortaokul ve lise seviyesindeki öğrencilere hitap eder.
-            13 yaş altı kullanıcıların hesap oluşturmaları veli onayını
-            gerektirir. Üye olan öğrenciler velilerinin bilgisi dahilinde
-            kullanılmalıdır.
+            Platform, ortaokul ve lise seviyesindeki öğrencilerin matematik
+            çalışmasını destekler. Her öğrencinin mesajları, ödevleri, test
+            sonuçları, çalışma verileri ve haftalık planı yalnızca kendi hesabı
+            ve Uğur Hoca tarafından görülebilir.
           </p>
 
           <h2 className="font-display text-xl font-bold text-white">

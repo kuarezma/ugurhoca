@@ -15,6 +15,8 @@ import type {
   ProfileDashboardData,
   ProfileProgressRow,
   ProfileStudySessionRow,
+  ProfileWeeklyPlan,
+  ProfileWeeklyPlanItem,
 } from '@/features/profile/types';
 import {
   normalizeDashboardBadges,
@@ -70,6 +72,7 @@ export const loadClientProfileDashboardCollections = async (
       sharedDocs: [],
       studySessions: [],
       submissions: [],
+      weeklyPlans: [],
     };
   }
 
@@ -115,6 +118,7 @@ export const loadClientProfileDashboardCollections = async (
     progressRes,
     goalRes,
     badgesRes,
+    weeklyPlansRes,
   ] = await Promise.all([
     supabase
       .from('notifications')
@@ -158,6 +162,13 @@ export const loadClientProfileDashboardCollections = async (
       .eq('user_id', user.id)
       .order('earned_at', { ascending: false })
       .limit(6),
+    supabase
+      .from('student_weekly_plans')
+      .select('*, student_weekly_plan_items(*)')
+      .eq('student_id', user.id)
+      .eq('status', 'active')
+      .order('week_start', { ascending: false })
+      .limit(4),
   ]);
 
   return {
@@ -174,7 +185,24 @@ export const loadClientProfileDashboardCollections = async (
     sharedDocs: (sharedDocsRes.data || []) as DashboardDocument[],
     studySessions: (studySessionsRes.data || []) as ProfileStudySessionRow[],
     submissions: (submissionsRes.data || []) as DashboardSubmission[],
+    weeklyPlans: (weeklyPlansRes.data || []) as ProfileWeeklyPlan[],
   };
+};
+
+export const completeWeeklyPlanItem = async (
+  itemId: string,
+  completed: boolean,
+) => {
+  const { data, error } = await supabase.rpc('complete_weekly_plan_item', {
+    p_completed: completed,
+    p_item_id: itemId,
+  });
+
+  if (error) {
+    throw error;
+  }
+
+  return data as ProfileWeeklyPlanItem;
 };
 
 export const markProfileNotificationAsRead = async (id: string) => {

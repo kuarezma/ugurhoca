@@ -18,6 +18,7 @@ import {
   Bell,
   ClipboardList,
   BarChart3,
+  Activity,
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { signOutClient } from '@/lib/auth-client';
@@ -28,12 +29,15 @@ import { useAdminModalState } from '@/features/admin/hooks/useAdminModalState';
 import { useAdminModalSubmitHandlers } from '@/features/admin/hooks/useAdminModalSubmitHandlers';
 import { useAdminNotifications } from '@/features/admin/hooks/useAdminNotifications';
 import {
+  addStudentAdminNote,
+  createAdminWeeklyPlan,
   loadAdminAssignmentSubmissions,
   loadAdminDashboardData,
   loadAdminQuizQuestions,
   loadAdminStudentProfile,
   refreshAdminUsers as refreshAdminUsersQuery,
   resolveAdminAuth,
+  upsertStudentAdminStatus,
   updateAdminSubmissionReview,
 } from '@/features/admin/queries';
 import type {
@@ -44,12 +48,18 @@ import type {
   AdminDocument as Document,
   AdminFormState,
   AdminNotification as Notification,
+  AdminQuizResultRow,
   AdminQuiz as Quiz,
   AdminQuizQuestion as QuizQuestion,
   AdminSharedDocument as SharedDoc,
+  AdminStudyGoalRow,
+  AdminStudySessionRow,
   AdminStudentProfileData,
   AdminSubmission as Submission,
   AdminUser,
+  StudentActivityEvent,
+  StudentAdminStatus,
+  StudentWeeklyPlan,
 } from '@/features/admin/types';
 
 const ChatBubbleLoader = dynamic(
@@ -114,6 +124,23 @@ export default function AdminPage() {
     useState<Submission[]>([]);
   const [quizQuestions, setQuizQuestions] = useState<QuizQuestion[]>([]);
   const [notifications, setNotifications] = useState<Notification[]>([]);
+  const [adminStatuses, setAdminStatuses] = useState<StudentAdminStatus[]>([]);
+  const [weeklyPlans, setWeeklyPlans] = useState<StudentWeeklyPlan[]>([]);
+  const [dashboardSubmissions, setDashboardSubmissions] = useState<
+    Submission[]
+  >([]);
+  const [dashboardQuizResults, setDashboardQuizResults] = useState<
+    AdminQuizResultRow[]
+  >([]);
+  const [dashboardStudySessions, setDashboardStudySessions] = useState<
+    AdminStudySessionRow[]
+  >([]);
+  const [dashboardStudyGoals, setDashboardStudyGoals] = useState<
+    AdminStudyGoalRow[]
+  >([]);
+  const [activityEvents, setActivityEvents] = useState<StudentActivityEvent[]>(
+    [],
+  );
   const [activeStudentProfileId, setActiveStudentProfileId] = useState<string | null>(null);
   const [activeStudentProfileData, setActiveStudentProfileData] =
     useState<AdminStudentProfileData | null>(null);
@@ -229,6 +256,13 @@ export default function AdminPage() {
     setSharedDocs(data.sharedDocs);
     setQuizzes(data.quizzes);
     setNotifications(data.notifications);
+    setAdminStatuses(data.adminStatuses);
+    setWeeklyPlans(data.weeklyPlans);
+    setDashboardSubmissions(data.submissions);
+    setDashboardQuizResults(data.quizResults);
+    setDashboardStudySessions(data.studySessions);
+    setDashboardStudyGoals(data.studyGoals);
+    setActivityEvents(data.activityEvents);
   }, []);
 
   const loadData = useCallback(
@@ -436,6 +470,116 @@ export default function AdminPage() {
     openSubmissionsModal(assignment);
   };
 
+  const refreshAfterStudentTrackingChange = async (studentId: string) => {
+    await loadData(user?.id);
+    if (activeStudentProfileId === studentId) {
+      await loadStudentProfile(studentId);
+    }
+  };
+
+  const handleCreateWeeklyPlan = async (student: AdminUser) => {
+    if (!user) return;
+
+    const title =
+      window.prompt(
+        `${student.name || 'Öğrenci'} için haftalık plan başlığı`,
+        'Bu Haftaki Plan',
+      )?.trim() || '';
+
+    if (!title) return;
+
+    const rawItems =
+      window.prompt(
+        'Plan maddelerini virgül veya satır satır yazın',
+        'Eksik konuyu tekrar et, 1 test çöz, Ödevleri kontrol et',
+      ) || '';
+    const itemTitles = rawItems
+      .split(/\n|,/)
+      .map((item) => item.trim())
+      .filter(Boolean);
+
+    if (itemTitles.length === 0) {
+      showToast('warning', 'En az bir plan maddesi ekleyin.');
+      return;
+    }
+
+    try {
+      await createAdminWeeklyPlan({
+        authorId: user.id,
+        itemTitles,
+        studentId: student.id,
+        title,
+      });
+      showToast('success', 'Haftalık plan kaydedildi.');
+      await refreshAfterStudentTrackingChange(student.id);
+    } catch (error) {
+      showToast(
+        'error',
+        error instanceof Error ? error.message : 'Haftalık plan kaydedilemedi.',
+      );
+    }
+  };
+
+  const handleUpdateStudentStatus = async (
+    student: AdminUser,
+    status: StudentAdminStatus['status'],
+    labels?: string[],
+  ) => {
+    if (!user) return;
+
+    try {
+      const followUpAt =
+        status === 'normal'
+          ? null
+          : new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toISOString();
+
+      await upsertStudentAdminStatus({
+        adminId: user.id,
+        followUpAt,
+        labels:
+          labels ??
+          (status === 'risk'
+            ? ['risk']
+            : status === 'watch'
+              ? ['takipte']
+              : []),
+        status,
+        studentId: student.id,
+      });
+      showToast('success', 'Takip durumu güncellendi.');
+      await refreshAfterStudentTrackingChange(student.id);
+    } catch (error) {
+      showToast(
+        'error',
+        error instanceof Error ? error.message : 'Takip durumu kaydedilemedi.',
+      );
+    }
+  };
+
+  const handleAddStudentAdminNote = async (student: AdminUser) => {
+    if (!user) return;
+    const body =
+      window.prompt(`${student.name || 'Öğrenci'} için admin notu`)?.trim() ||
+      '';
+
+    if (!body) return;
+
+    try {
+      await addStudentAdminNote({
+        authorId: user.id,
+        body,
+        studentId: student.id,
+      });
+      showToast('success', 'Admin notu kaydedildi.');
+      await refreshAfterStudentTrackingChange(student.id);
+    } catch (error) {
+      showToast(
+        'error',
+        error instanceof Error ? error.message : 'Admin notu kaydedilemedi.',
+      );
+    }
+  };
+
   const handleEditQuiz = (quiz: Quiz) => {
     openEditQuiz(quiz, getQuizFormState(quiz));
   };
@@ -539,6 +683,13 @@ export default function AdminPage() {
                   color: 'from-emerald-500 to-teal-500',
                 },
                 {
+                  id: 'tracking',
+                  label: 'Takip Merkezi',
+                  shortLabel: 'Takip',
+                  icon: Activity,
+                  color: 'from-cyan-500 to-blue-500',
+                },
+                {
                   id: 'announcements',
                   label: 'Duyurular',
                   shortLabel: 'Duy.',
@@ -603,6 +754,7 @@ export default function AdminPage() {
           </div>
 
           {activeTab !== 'statistics' &&
+            activeTab !== 'tracking' &&
             activeTab !== 'users' &&
             activeTab !== 'gradeUpdate' &&
             activeTab !== 'assignments' &&
@@ -643,16 +795,24 @@ export default function AdminPage() {
 
           <AdminTabPanels
             activeTab={activeTab}
+            activityEvents={activityEvents}
+            adminStatuses={adminStatuses}
             announcements={announcements}
             assignments={assignments}
+            dashboardQuizResults={dashboardQuizResults}
+            dashboardStudyGoals={dashboardStudyGoals}
+            dashboardStudySessions={dashboardStudySessions}
+            dashboardSubmissions={dashboardSubmissions}
             documents={documents}
             formatDate={formatDate}
             isSubmitting={isSubmitting}
             lastGradeUpdate={lastGradeUpdate}
+            notifications={notifications}
             onAddQuizQuestion={handleAddQuizQuestion}
             onCreateAnnouncement={() => openModal('announcement')}
             onCreateAssignment={() => openModal('assignment')}
             onCreateSendDocument={() => openModal('sendDoc')}
+            onCreateWeeklyPlan={handleCreateWeeklyPlan}
             onDeleteAnnouncement={(id) => deleteItem('announcement', id)}
             onDeleteAssignment={(id) => deleteItem('assignment', id)}
             onDeleteDocument={(id) => deleteItem('document', id)}
@@ -663,7 +823,7 @@ export default function AdminPage() {
             onEditAssignment={editAssignment}
             onEditDocument={openEditDocument}
             onEditQuiz={handleEditQuiz}
-          onEditSharedDocument={editSharedDocument}
+            onEditSharedDocument={editSharedDocument}
             onEditUser={openEditUser}
             onMigrateWorksheets={handleMigrateWorksheetDocuments}
             onRefreshDocumentCategories={handleRefreshDocumentCategories}
@@ -671,12 +831,14 @@ export default function AdminPage() {
             onSendAdminMessage={openAdminMessage}
             onShowSubmissions={handleOpenSubmissions}
             onToggleFavoriteStudent={handleToggleFavoriteStudent}
+            onUpdateStudentStatus={handleUpdateStudentStatus}
             onUpdateGrades={handleUpdateGrades}
             onViewStudentProfile={handleOpenStudentProfile}
             pdfStudentsLoading={pdfStudentsLoading}
             quizzes={quizzes}
             sharedDocs={sharedDocs}
             studentUsers={studentUsers}
+            weeklyPlans={weeklyPlans}
           />
         </div>
       </div>
@@ -728,7 +890,10 @@ export default function AdminPage() {
             error={activeStudentProfileError}
             formatDate={formatDate}
             isLoading={activeStudentProfileLoading}
+            onAddAdminNote={handleAddStudentAdminNote}
             onClose={handleCloseStudentProfile}
+            onCreateWeeklyPlan={handleCreateWeeklyPlan}
+            onUpdateStatus={handleUpdateStudentStatus}
             student={activeStudentProfileUser}
           />
         )}

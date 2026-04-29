@@ -103,6 +103,8 @@ const submissions: DashboardSubmission[] = [
 const createProfileData = (
   overrides?: Partial<AdminStudentProfileData>,
 ): AdminStudentProfileData => ({
+  adminNotes: overrides?.adminNotes ?? [],
+  adminStatus: overrides?.adminStatus ?? null,
   assignments: overrides?.assignments ?? assignments,
   badges: overrides?.badges ?? badges,
   goal: overrides?.goal ?? goal,
@@ -111,6 +113,7 @@ const createProfileData = (
   student: overrides?.student ?? student,
   studySessions: overrides?.studySessions ?? studySessions,
   submissions: overrides?.submissions ?? submissions,
+  weeklyPlans: overrides?.weeklyPlans ?? [],
 });
 
 describe('buildAdminStudentProfileSummary', () => {

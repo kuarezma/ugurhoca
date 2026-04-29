@@ -1,8 +1,8 @@
 'use client';
 
-import { ArrowLeft, Loader2, X } from 'lucide-react';
+import { ArrowLeft, ImagePlus, Loader2, X } from 'lucide-react';
 import Image from 'next/image';
-import { useLayoutEffect, useRef, type FormEvent } from 'react';
+import { useLayoutEffect, useRef, type ChangeEvent, type FormEvent } from 'react';
 import type { ThreadMessage } from '@/features/messages/types';
 
 const formatTime = (value: string) =>
@@ -29,6 +29,9 @@ export type SupportChatPanelProps = {
   isLight?: boolean;
   placeholder?: string;
   inputDisabled?: boolean;
+  attachmentPreview?: { name: string; url: string } | null;
+  onAttachmentRemove?: () => void;
+  onAttachmentSelect?: (files: FileList | null) => void;
 };
 
 export function SupportChatPanel({
@@ -47,8 +50,12 @@ export function SupportChatPanel({
   isLight = true,
   placeholder = "Mesaj yaz...",
   inputDisabled = false,
+  attachmentPreview = null,
+  onAttachmentRemove,
+  onAttachmentSelect,
 }: SupportChatPanelProps) {
   const listRef = useRef<HTMLDivElement | null>(null);
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   useLayoutEffect(() => {
     if (!listRef.current) return;
@@ -124,6 +131,15 @@ export function SupportChatPanel({
     }
     return 'rounded-bl-sm bg-[var(--bg-muted)] text-[var(--text)] ring-1 ring-[var(--border)]';
   })();
+  const canSend =
+    !sending &&
+    !inputDisabled &&
+    (draft.trim().length > 0 || Boolean(attachmentPreview));
+
+  const handleAttachmentChange = (event: ChangeEvent<HTMLInputElement>) => {
+    onAttachmentSelect?.(event.target.files);
+    event.target.value = '';
+  };
 
   return (
     <div className="flex min-h-0 flex-1 flex-col">
@@ -269,7 +285,57 @@ export function SupportChatPanel({
         {error ? (
           <p className="mb-1 text-[11px] text-red-500">{error}</p>
         ) : null}
+        {attachmentPreview ? (
+          <div className="mb-2 flex items-center gap-2 rounded-xl border border-indigo-400/20 bg-indigo-500/10 p-2">
+            <Image
+              src={attachmentPreview.url}
+              alt=""
+              width={44}
+              height={44}
+              className="h-11 w-11 rounded-lg object-cover"
+              unoptimized
+            />
+            <span className="min-w-0 flex-1 truncate text-xs text-[var(--text-muted,#94a3b8)]">
+              {attachmentPreview.name}
+            </span>
+            <button
+              type="button"
+              onClick={onAttachmentRemove}
+              aria-label="Fotoğrafı kaldır"
+              className="rounded-lg p-1.5 text-[var(--text-muted,#94a3b8)] transition hover:bg-white/10 hover:text-white"
+            >
+              <X className="h-4 w-4" aria-hidden="true" />
+            </button>
+          </div>
+        ) : null}
         <div className="flex items-end gap-2">
+          {onAttachmentSelect ? (
+            <>
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/jpeg,image/png,image/webp"
+                className="sr-only"
+                onChange={handleAttachmentChange}
+              />
+              <button
+                type="button"
+                onClick={() => fileInputRef.current?.click()}
+                disabled={sending || inputDisabled}
+                aria-label="Fotoğraf ekle"
+                title="Fotoğraf ekle"
+                className={`inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border transition-colors disabled:cursor-not-allowed disabled:opacity-50 ${
+                  appearance === 'navbar'
+                    ? isLight
+                      ? 'border-slate-200 bg-white text-slate-500 hover:bg-slate-100 hover:text-slate-900'
+                      : 'border-slate-700 bg-slate-800 text-slate-400 hover:bg-slate-700 hover:text-white'
+                    : 'border-[var(--border)] bg-[var(--bg-soft)] text-[var(--text-muted)] hover:bg-[var(--bg-muted)] hover:text-[var(--text-strong)]'
+                }`}
+              >
+                <ImagePlus className="h-5 w-5" aria-hidden="true" />
+              </button>
+            </>
+          ) : null}
           <textarea
             value={draft}
             onChange={(event) => onDraftChange(event.target.value)}
@@ -295,11 +361,7 @@ export function SupportChatPanel({
           />
           <button
             type="submit"
-            disabled={
-              sending ||
-              inputDisabled ||
-              draft.trim().length === 0
-            }
+            disabled={!canSend}
             aria-busy={sending}
             aria-label={sending ? 'Gönderiliyor' : 'Gönder'}
             className="inline-flex h-10 min-w-[5.25rem] flex-shrink-0 items-center justify-center rounded-xl bg-gradient-to-r from-indigo-500 to-purple-500 px-3 text-sm font-semibold text-white transition-all hover:from-indigo-600 hover:to-purple-600 disabled:cursor-not-allowed disabled:opacity-50"

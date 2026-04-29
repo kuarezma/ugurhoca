@@ -23,6 +23,29 @@ export type ProfileStudySessionRow = {
   duration: number;
 };
 
+export type ProfileWeeklyPlanItem = {
+  id: string;
+  plan_id: string;
+  kind: 'assignment' | 'quiz' | 'content' | 'custom' | string;
+  title: string;
+  linked_id?: string | null;
+  href?: string | null;
+  due_at?: string | null;
+  sort_order?: number | null;
+  completed_at?: string | null;
+  completed_by?: string | null;
+};
+
+export type ProfileWeeklyPlan = {
+  id: string;
+  student_id: string;
+  week_start: string;
+  title: string;
+  target_minutes: number;
+  status: string;
+  student_weekly_plan_items?: ProfileWeeklyPlanItem[];
+};
+
 export type ProfileNotificationStyle = {
   badge: string;
   icon: typeof Clock3;
@@ -44,6 +67,7 @@ export type ProfileDashboardData = {
   studySessions: ProfileStudySessionRow[];
   submissions: DashboardSubmission[];
   user: StudentProfile | null;
+  weeklyPlans: ProfileWeeklyPlan[];
 };
 
 export type InitialProfileDashboardData = ProfileDashboardData;

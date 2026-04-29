@@ -12,6 +12,10 @@ import { ChevronRight, MessageCircle, X } from "lucide-react";
 import { supabase } from "@/lib/supabase/client";
 import { isAdminEmail } from "@/lib/admin";
 import { getClientSession } from "@/lib/auth-client";
+import {
+  uploadSupportFiles,
+  validateSupportImageFile,
+} from "@/features/home/queries";
 import { SupportChatPanel } from "@/features/messages/components/SupportChatPanel";
 import { useAdminStudentThread } from "@/features/messages/hooks/useAdminStudentThread";
 import {
@@ -47,7 +51,8 @@ function buildConversations(messages: InboxMessage[]): ConversationPreview[] {
     const sid = m.parsed?.sender_id;
     if (!sid) continue;
     const name = m.parsed?.sender_name || "Öğrenci";
-    const snippet = m.parsed?.text?.trim() || "—";
+    const hasImage = m.parsed?.attachments?.some((a) => a.kind === "image");
+    const snippet = m.parsed?.text?.trim() || (hasImage ? "Fotoğraf" : "—");
     const prev = byStudent.get(sid);
     if (!prev || new Date(m.created_at) > new Date(prev.lastAt)) {
       byStudent.set(sid, {
@@ -87,6 +92,10 @@ function ChatBubble() {
   const [draft, setDraft] = useState("");
   const [sending, setSending] = useState(false);
   const [sendError, setSendError] = useState<string | null>(null);
+  const [selectedImage, setSelectedImage] = useState<File | null>(null);
+  const [attachmentPreviewUrl, setAttachmentPreviewUrl] = useState<
+    string | null
+  >(null);
 
   const loadMessages = useCallback(async (userId: string) => {
     const { data } = await supabase
@@ -133,6 +142,35 @@ function ChatBubble() {
     if (!mounted) return;
     void checkAdmin();
   }, [checkAdmin, mounted]);
+
+  useEffect(() => {
+    return () => {
+      if (attachmentPreviewUrl) {
+        URL.revokeObjectURL(attachmentPreviewUrl);
+      }
+    };
+  }, [attachmentPreviewUrl]);
+
+  const clearAttachment = useCallback(() => {
+    setSelectedImage(null);
+    setAttachmentPreviewUrl(null);
+  }, []);
+
+  const handleAttachmentSelect = useCallback((files: FileList | null) => {
+    const file = files?.[0];
+    if (!file) return;
+
+    try {
+      validateSupportImageFile(file);
+      setSelectedImage(file);
+      setAttachmentPreviewUrl(URL.createObjectURL(file));
+      setSendError(null);
+    } catch (error) {
+      setSendError(
+        error instanceof Error ? error.message : "Fotoğraf eklenemedi.",
+      );
+    }
+  }, []);
 
   useEffect(() => {
     if (!mounted || !adminUserId) return;
@@ -186,7 +224,7 @@ function ChatBubble() {
   const handleSendAdmin = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const text = draft.trim();
-    if (!text || !selectedStudentId || sending) return;
+    if ((!text && !selectedImage) || !selectedStudentId || sending) return;
     setSending(true);
     setSendError(null);
     try {
@@ -194,8 +232,15 @@ function ChatBubble() {
       if (!session?.access_token) {
         throw new Error("Oturum açmanız gerekiyor.");
       }
+      const attachments = selectedImage
+        ? await uploadSupportFiles([selectedImage], { imagesOnly: true })
+        : [];
+      const imageUrl =
+        attachments.find((attachment) => attachment.kind === "image")?.url ||
+        null;
       const response = await fetch("/api/admin-message", {
         body: JSON.stringify({
+          image_url: imageUrl,
           message: text,
           sender_id: session.user?.id ?? "admin",
           sender_name: "Uğur Hoca",
@@ -216,6 +261,7 @@ function ChatBubble() {
         throw new Error(body?.error || "Mesaj gönderilemedi.");
       }
       setDraft("");
+      clearAttachment();
       await fetchThread();
     } catch (error) {
       setSendError(
@@ -285,6 +331,7 @@ function ChatBubble() {
                         setSelectedStudentId(null);
                         setDraft("");
                         setSendError(null);
+                        clearAttachment();
                       }}
                       className="rounded-lg p-1.5 text-[var(--text-muted)] transition hover:bg-[var(--bg-muted)]"
                       aria-label="Kapat"
@@ -311,6 +358,7 @@ function ChatBubble() {
                           setSelectedStudentId(c.studentId);
                           setDraft("");
                           setSendError(null);
+                          clearAttachment();
                         }}
                         className="flex w-full items-start gap-3 border-b border-[var(--border)] px-4 py-3 text-left transition-colors hover:bg-[var(--bg-soft)]"
                       >
@@ -355,10 +403,18 @@ function ChatBubble() {
                 error={sendError}
                 inputDisabled={false}
                 messages={threadMessages}
+                attachmentPreview={
+                  selectedImage && attachmentPreviewUrl
+                    ? { name: selectedImage.name, url: attachmentPreviewUrl }
+                    : null
+                }
+                onAttachmentRemove={clearAttachment}
+                onAttachmentSelect={handleAttachmentSelect}
                 onBack={() => {
                   setSelectedStudentId(null);
                   setDraft("");
                   setSendError(null);
+                  clearAttachment();
                   if (adminUserId) void loadMessages(adminUserId);
                 }}
                 onClose={() => {
@@ -366,6 +422,7 @@ function ChatBubble() {
                   setSelectedStudentId(null);
                   setDraft("");
                   setSendError(null);
+                  clearAttachment();
                 }}
                 onDraftChange={setDraft}
                 onSubmit={handleSendAdmin}

@@ -18,6 +18,7 @@ import type {
   InitialProfileDashboardData,
   ProfileProgressRow,
   ProfileStudySessionRow,
+  ProfileWeeklyPlan,
 } from '@/features/profile/types';
 import {
   loadClientProfileDashboardCollections,
@@ -95,6 +96,9 @@ export const useProfileDashboardData = (
   const [progressRows, setProgressRows] = useState<ProfileProgressRow[]>(
     initialData?.progressRows ?? [],
   );
+  const [weeklyPlans, setWeeklyPlans] = useState<ProfileWeeklyPlan[]>(
+    initialData?.weeklyPlans ?? [],
+  );
   const initialUserKey = useMemo(
     () =>
       initialData?.user
@@ -136,6 +140,7 @@ export const useProfileDashboardData = (
       setAvailableQuizzes(collections.availableQuizzes);
       setStudySessions(collections.studySessions);
       setProgressRows(collections.progressRows);
+      setWeeklyPlans(collections.weeklyPlans);
       setLoading(false);
     };
 
@@ -245,9 +250,11 @@ export const useProfileDashboardData = (
     progressRows,
     quizResults,
     setUser,
+    setWeeklyPlans,
     sharedDocs,
     studySessions,
     submissions,
     user,
+    weeklyPlans,
   };
 };

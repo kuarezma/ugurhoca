@@ -19,6 +19,7 @@ import type {
   InitialProfileDashboardData,
   ProfileProgressRow,
   ProfileStudySessionRow,
+  ProfileWeeklyPlan,
 } from '@/features/profile/types';
 import {
   normalizeDashboardBadges,
@@ -46,6 +47,7 @@ export const loadInitialProfileDashboardData =
         studySessions: [],
         submissions: [],
         user: null,
+        weeklyPlans: [],
       };
     }
 
@@ -65,6 +67,7 @@ export const loadInitialProfileDashboardData =
         user: {
           ...snapshot,
         },
+        weeklyPlans: [],
       };
     }
 
@@ -100,6 +103,7 @@ export const loadInitialProfileDashboardData =
         studySessions: [],
         submissions: [],
         user,
+        weeklyPlans: [],
       };
     }
 
@@ -145,6 +149,7 @@ export const loadInitialProfileDashboardData =
       progressRes,
       goalRes,
       badgesRes,
+      weeklyPlansRes,
     ] = await Promise.all([
       supabase
         .from('notifications')
@@ -188,6 +193,13 @@ export const loadInitialProfileDashboardData =
         .eq('user_id', user.id)
         .order('earned_at', { ascending: false })
         .limit(6),
+      supabase
+        .from('student_weekly_plans')
+        .select('*, student_weekly_plan_items(*)')
+        .eq('student_id', user.id)
+        .eq('status', 'active')
+        .order('week_start', { ascending: false })
+        .limit(4),
     ]);
 
     return {
@@ -206,5 +218,6 @@ export const loadInitialProfileDashboardData =
       studySessions: (studySessionsRes.data || []) as ProfileStudySessionRow[],
       submissions: (submissionsRes.data || []) as DashboardSubmission[],
       user,
+      weeklyPlans: (weeklyPlansRes.data || []) as ProfileWeeklyPlan[],
     };
   };

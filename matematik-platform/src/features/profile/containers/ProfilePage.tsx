@@ -8,6 +8,8 @@ import Link from 'next/link';
 import {
   ArrowLeft,
   Bell,
+  CalendarClock,
+  CheckCircle2,
   LogOut,
   Settings,
   Shield,
@@ -55,10 +57,15 @@ import ProfileNotificationsPanel from '@/features/profile/components/ProfileNoti
 import { useDailyStreakTouch } from '@/features/profile/hooks/useDailyStreakTouch';
 import { useProfileDashboardData } from '@/features/profile/hooks/useProfileDashboardData';
 import {
+  completeWeeklyPlanItem,
   updateProfileAvatar,
   uploadProfileAvatar,
 } from '@/features/profile/queries';
-import type { InitialProfileDashboardData } from '@/features/profile/types';
+import type {
+  InitialProfileDashboardData,
+  ProfileWeeklyPlan,
+  ProfileWeeklyPlanItem,
+} from '@/features/profile/types';
 import { buildProfileDashboardViewModel } from '@/features/profile/utils/dashboard-view-model';
 import type {
   DashboardAction,
@@ -105,11 +112,13 @@ export default function ProfilePage({ initialData }: ProfilePageProps) {
     notifications,
     progressRows,
     quizResults,
+    setWeeklyPlans,
     setUser,
     sharedDocs,
     studySessions,
     submissions,
     user,
+    weeklyPlans,
   } = useProfileDashboardData(router, initialData);
 
   useDailyStreakTouch(user?.id, user?.isAdmin);
@@ -369,6 +378,25 @@ export default function ProfilePage({ initialData }: ProfilePageProps) {
     handleDashboardAction(item.action);
   };
 
+  const activeWeeklyPlan = weeklyPlans[0] ?? null;
+
+  const handleWeeklyPlanItemToggle = async (item: ProfileWeeklyPlanItem) => {
+    const nextCompleted = !item.completed_at;
+    const updatedItem = await completeWeeklyPlanItem(item.id, nextCompleted);
+
+    setWeeklyPlans((currentPlans) =>
+      currentPlans.map((plan) => ({
+        ...plan,
+        student_weekly_plan_items: (plan.student_weekly_plan_items || []).map(
+          (currentItem) =>
+            currentItem.id === updatedItem.id
+              ? { ...currentItem, ...updatedItem }
+              : currentItem,
+        ),
+      })),
+    );
+  };
+
   if (loading) {
     return (
       <main className="profil-page min-h-screen bg-gradient-to-br from-slate-900 via-slate-900 to-slate-800 px-4 pb-12 pt-20">
@@ -563,6 +591,11 @@ export default function ProfilePage({ initialData }: ProfilePageProps) {
                     <QuickActionGrid items={quickActionItems} />
                   </div>
 
+                  <WeeklyPlanCard
+                    plan={activeWeeklyPlan}
+                    onToggleItem={handleWeeklyPlanItemToggle}
+                  />
+
                   <div className="grid gap-6 xl:grid-cols-[0.95fr_1.05fr]">
                     <TodayPlanCard
                       tasks={tasks}
@@ -664,5 +697,91 @@ export default function ProfilePage({ initialData }: ProfilePageProps) {
         />
       )}
     </main>
+  );
+}
+
+function WeeklyPlanCard({
+  onToggleItem,
+  plan,
+}: {
+  onToggleItem: (item: ProfileWeeklyPlanItem) => Promise<void> | void;
+  plan: ProfileWeeklyPlan | null;
+}) {
+  const items = plan?.student_weekly_plan_items || [];
+  const completedCount = items.filter((item) => item.completed_at).length;
+
+  return (
+    <motion.section
+      initial={{ opacity: 0, y: 16 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay: 0.06 }}
+      className="rounded-3xl border border-cyan-400/20 bg-cyan-500/10 p-6 sm:p-8"
+    >
+      <div className="mb-5 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+        <div>
+          <div className="mb-2 inline-flex items-center gap-2 rounded-full bg-cyan-400/15 px-3 py-1 text-[11px] font-bold uppercase tracking-[0.18em] text-cyan-100">
+            <CalendarClock className="h-3.5 w-3.5" />
+            Bu Haftaki Plan
+          </div>
+          <h2 className="text-2xl font-bold text-white">
+            {plan?.title || 'Bu Haftaki Plan'}
+          </h2>
+          <p className="mt-1 text-sm text-slate-300">
+            Planını sadece sen ve Uğur Hoca görebilir.
+          </p>
+        </div>
+        <div className="rounded-2xl bg-white/10 px-4 py-2 text-right">
+          <p className="text-xs uppercase tracking-[0.18em] text-slate-300">
+            Tamamlanan
+          </p>
+          <p className="text-xl font-black text-white">
+            {completedCount}/{items.length}
+          </p>
+        </div>
+      </div>
+
+      {!plan ? (
+        <div className="rounded-2xl border border-dashed border-white/15 px-5 py-7 text-center text-sm text-slate-300">
+          Bu hafta için özel plan henüz eklenmedi.
+        </div>
+      ) : items.length === 0 ? (
+        <div className="rounded-2xl border border-dashed border-white/15 px-5 py-7 text-center text-sm text-slate-300">
+          Plan başlığı hazır, maddeler eklendiğinde burada görünecek.
+        </div>
+      ) : (
+        <div className="grid gap-3 md:grid-cols-2">
+          {items.map((item) => {
+            const completed = Boolean(item.completed_at);
+            return (
+              <button
+                key={item.id}
+                type="button"
+                onClick={() => onToggleItem(item)}
+                className={`flex min-h-16 items-center gap-3 rounded-2xl border px-4 py-3 text-left transition ${
+                  completed
+                    ? 'border-emerald-400/30 bg-emerald-500/10'
+                    : 'border-white/10 bg-slate-950/40 hover:border-cyan-300/30 hover:bg-slate-900/70'
+                }`}
+              >
+                <CheckCircle2
+                  className={`h-5 w-5 shrink-0 ${
+                    completed ? 'text-emerald-300' : 'text-slate-500'
+                  }`}
+                />
+                <span
+                  className={`text-sm font-semibold ${
+                    completed
+                      ? 'text-emerald-100 line-through decoration-emerald-200/60'
+                      : 'text-white'
+                  }`}
+                >
+                  {item.title}
+                </span>
+              </button>
+            );
+          })}
+        </div>
+      )}
+    </motion.section>
   );
 }

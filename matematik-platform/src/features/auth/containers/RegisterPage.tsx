@@ -8,6 +8,7 @@ import {
   Eye,
   EyeOff,
   GraduationCap,
+  ShieldCheck,
   Sparkles,
 } from 'lucide-react';
 import { motion } from 'framer-motion';
@@ -339,6 +340,12 @@ export default function RegisterPage() {
               >
                 Giriş yap
               </Link>
+            </p>
+            <p className="mt-4 flex items-start gap-2 rounded-2xl border border-emerald-400/20 bg-emerald-500/10 px-4 py-3 text-xs leading-relaxed text-emerald-100/90">
+              <ShieldCheck className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
+              Platform öğrencilerin faydalanması için ücretsizdir. Profilin,
+              mesajların, ödevlerin ve çalışma verilerin başka öğrencilerle
+              paylaşılmaz.
             </p>
             <p className="mt-4 text-center text-xs text-slate-400">
               Devam ederek{' '}

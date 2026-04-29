@@ -177,7 +177,7 @@ function GamesLeaderboardInner({
                         <PodiumIcon className={`h-7 w-7 ${podium.iconClass}`} aria-hidden="true" />
                       </div>
                       <p className="text-center text-sm font-bold text-white line-clamp-1">
-                        {entry.user_name || 'Gizemli Şampiyon'}
+                        {entry.alias || 'Gizemli Şampiyon'}
                       </p>
                       <p className="text-xs uppercase tracking-wider text-slate-400 mb-3">
                         {podium.label}
@@ -208,7 +208,7 @@ function GamesLeaderboardInner({
 
               return (
                 <motion.div
-                  key={`${entry.id ?? entry.user_name}-${index}`}
+                  key={`${entry.alias}-${index}`}
                   className={`flex items-center justify-between p-4 rounded-2xl transition-colors border ${classes.row}`}
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
@@ -222,7 +222,7 @@ function GamesLeaderboardInner({
                     </div>
                     <div>
                       <span className="font-bold text-white text-lg block">
-                        {entry.user_name || 'Gizemli Şampiyon'}
+                        {entry.alias || 'Gizemli Şampiyon'}
                       </span>
                       <span className="text-xs text-slate-400">
                         Genel Ortalama Sıralaması
