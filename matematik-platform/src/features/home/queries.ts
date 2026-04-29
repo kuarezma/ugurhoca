@@ -1,4 +1,5 @@
 import { supabase } from '@/lib/supabase/client';
+import { trackStudentActivityEvent } from '@/features/analytics/trackActivity';
 import { getRemoteImageSrc } from '@/lib/image-url';
 import type { ApiErrorResponse, ApiSuccessResponse } from '@/lib/api-response';
 import type {
@@ -206,8 +207,31 @@ export const sendSupportMessage = async (
   }
 
   if (responseData && 'data' in responseData) {
+    void trackStudentActivityEvent({
+      entityType: 'support_message',
+      eventType: 'support_message_sent',
+      metadata: {
+        attachment_count: payload.attachments.length,
+        has_image: payload.attachments.some(
+          (attachment) => attachment.kind === 'image',
+        ),
+      },
+      userId: payload.sender_id,
+    });
     return responseData.data.message ?? null;
   }
+
+  void trackStudentActivityEvent({
+    entityType: 'support_message',
+    eventType: 'support_message_sent',
+    metadata: {
+      attachment_count: payload.attachments.length,
+      has_image: payload.attachments.some(
+        (attachment) => attachment.kind === 'image',
+      ),
+    },
+    userId: payload.sender_id,
+  });
 
   return null;
 };

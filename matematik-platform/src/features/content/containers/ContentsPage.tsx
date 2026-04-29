@@ -19,6 +19,7 @@ import {
 } from 'lucide-react';
 import { useToast } from '@/components/Toast';
 import { getErrorMessage } from '@/lib/error-utils';
+import { trackStudentActivityEvent } from '@/features/analytics/trackActivity';
 import DeferredFloatingShapes from '@/components/DeferredFloatingShapes';
 import ContentCard from '@/features/content/components/ContentCard';
 import { Skeleton } from '@/components/ui/Skeleton';
@@ -544,10 +545,24 @@ function ContentsPageInner({
     });
   }, []);
 
-  const handleOpenPreview = useCallback((content: ContentDocument) => {
-    setShowAnswerKey(false);
-    setPreviewDoc(content);
-  }, []);
+  const handleOpenPreview = useCallback(
+    (content: ContentDocument) => {
+      setShowAnswerKey(false);
+      setPreviewDoc(content);
+      void trackStudentActivityEvent({
+        entityId: content.id,
+        entityType: 'document',
+        eventType: 'content_viewed',
+        metadata: {
+          grade: content.grade,
+          title: content.title,
+          type: content.type,
+        },
+        userId: user?.id,
+      });
+    },
+    [user?.id],
+  );
 
   const handleClosePreview = useCallback(() => {
     setPreviewDoc(null);
@@ -562,8 +577,19 @@ function ContentsPageInner({
       const nextDownloads = (content.downloads || 0) + 1;
       await updateDocumentMetric(content.id, { downloads: nextDownloads });
       applyDocumentPatch(content.id, { downloads: nextDownloads });
+      void trackStudentActivityEvent({
+        entityId: content.id,
+        entityType: 'document',
+        eventType: 'content_downloaded',
+        metadata: {
+          grade: content.grade,
+          title: content.title,
+          type: content.type,
+        },
+        userId: user?.id,
+      });
     },
-    [applyDocumentPatch],
+    [applyDocumentPatch, user?.id],
   );
 
   const handleToggleLike = useCallback(
@@ -585,8 +611,18 @@ function ContentsPageInner({
 
       await updateDocumentMetric(content.id, { likes: nextLikes });
       applyDocumentPatch(content.id, { likes: nextLikes });
+      void trackStudentActivityEvent({
+        entityId: content.id,
+        entityType: 'document',
+        eventType: isLiked ? 'content_unliked' : 'content_liked',
+        metadata: {
+          title: content.title,
+          type: content.type,
+        },
+        userId: user?.id,
+      });
     },
-    [applyDocumentPatch, likedDocs],
+    [applyDocumentPatch, likedDocs, user?.id],
   );
 
   const handleOpenComments = useCallback(async (content: ContentDocument) => {
@@ -628,6 +664,16 @@ function ContentsPageInner({
       const nextCount = (targetDocument.comments_count || 0) + 1;
       await updateDocumentMetric(showComments, { comments_count: nextCount });
       applyDocumentPatch(showComments, { comments_count: nextCount });
+      void trackStudentActivityEvent({
+        entityId: showComments,
+        entityType: 'document',
+        eventType: 'content_comment_added',
+        metadata: {
+          title: targetDocument.title,
+          type: targetDocument.type,
+        },
+        userId: user.id,
+      });
     },
     [
       applyDocumentPatch,

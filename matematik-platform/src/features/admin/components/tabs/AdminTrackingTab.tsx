@@ -328,6 +328,53 @@ export default function AdminTrackingTab({
     return { activeToday, highRisk, inactive, unreadMessages };
   }, [insights]);
 
+  const activityAnalytics = useMemo(() => {
+    const now = Date.now();
+    const last7Days = activityEvents.filter(
+      (event) => now - new Date(event.created_at).getTime() <= 7 * DAY_MS,
+    );
+    const last30Days = activityEvents.filter(
+      (event) => now - new Date(event.created_at).getTime() <= 30 * DAY_MS,
+    );
+    const byType = new Map<string, number>();
+    const contentUsage = new Map<string, { count: number; title: string; type: string }>();
+
+    for (const event of last30Days) {
+      byType.set(event.event_type, (byType.get(event.event_type) || 0) + 1);
+
+      if (event.entity_type === 'document' && event.entity_id) {
+        const metadata = event.metadata || {};
+        const current = contentUsage.get(event.entity_id) || {
+          count: 0,
+          title:
+            typeof metadata.title === 'string'
+              ? metadata.title
+              : 'İçerik',
+          type:
+            typeof metadata.type === 'string'
+              ? metadata.type
+              : 'document',
+        };
+        contentUsage.set(event.entity_id, {
+          ...current,
+          count: current.count + 1,
+        });
+      }
+    }
+
+    return {
+      last7Count: last7Days.length,
+      last30Count: last30Days.length,
+      topContent: Array.from(contentUsage.values())
+        .sort((left, right) => right.count - left.count)
+        .slice(0, 5),
+      topTypes: Array.from(byType.entries())
+        .map(([type, count]) => ({ count, type }))
+        .sort((left, right) => right.count - left.count)
+        .slice(0, 6),
+    };
+  }, [activityEvents]);
+
   return (
     <div className="space-y-5 animate-fade-up">
       <section className="rounded-2xl border border-cyan-400/20 bg-cyan-500/10 p-5">
@@ -396,6 +443,63 @@ export default function AdminTrackingTab({
               className="w-full rounded-xl border border-white/10 bg-slate-950/60 py-2.5 pl-10 pr-3 text-sm text-white placeholder:text-slate-500 outline-none focus:border-cyan-400/60 focus:ring-2 focus:ring-cyan-400/20 lg:w-36"
             />
           </label>
+        </div>
+      </section>
+
+      <section className="grid gap-4 lg:grid-cols-[0.8fr_1.2fr]">
+        <div className="rounded-2xl border border-white/10 bg-white/5 p-5">
+          <h3 className="mb-4 text-base font-bold text-white">
+            Canlı Ölçüm
+          </h3>
+          <div className="grid grid-cols-2 gap-3">
+            <Metric label="7 gün event" value={activityAnalytics.last7Count} />
+            <Metric label="30 gün event" value={activityAnalytics.last30Count} />
+          </div>
+          <div className="mt-4 space-y-2">
+            {activityAnalytics.topTypes.length === 0 ? (
+              <p className="text-sm text-slate-500">Henüz ölçüm kaydı yok.</p>
+            ) : (
+              activityAnalytics.topTypes.map((item) => (
+                <div
+                  key={item.type}
+                  className="flex items-center justify-between rounded-xl bg-slate-950/45 px-3 py-2 text-sm"
+                >
+                  <span className="text-slate-300">{item.type}</span>
+                  <span className="font-bold text-cyan-200">{item.count}</span>
+                </div>
+              ))
+            )}
+          </div>
+        </div>
+
+        <div className="rounded-2xl border border-white/10 bg-white/5 p-5">
+          <h3 className="mb-4 text-base font-bold text-white">
+            En Çok Kullanılan İçerikler
+          </h3>
+          {activityAnalytics.topContent.length === 0 ? (
+            <p className="rounded-xl border border-dashed border-white/10 px-4 py-8 text-center text-sm text-slate-500">
+              İçerik kullanım kaydı birikince burada listelenecek.
+            </p>
+          ) : (
+            <div className="space-y-2">
+              {activityAnalytics.topContent.map((item) => (
+                <div
+                  key={`${item.title}:${item.type}`}
+                  className="flex items-center justify-between gap-3 rounded-xl bg-slate-950/45 px-3 py-2"
+                >
+                  <div className="min-w-0">
+                    <p className="truncate text-sm font-semibold text-white">
+                      {item.title}
+                    </p>
+                    <p className="text-xs text-slate-500">{item.type}</p>
+                  </div>
+                  <span className="rounded-full bg-cyan-400/10 px-3 py-1 text-xs font-bold text-cyan-200">
+                    {item.count}
+                  </span>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       </section>
 

@@ -1,6 +1,7 @@
 import type { Session } from '@supabase/supabase-js';
 import { isAdminEmail } from '@/lib/admin';
 import { supabase } from '@/lib/supabase/client';
+import { trackStudentActivityEvent } from '@/features/analytics/trackActivity';
 import { resolveCurrentGoal } from '@/features/progress/utils';
 import type {
   DashboardAssignment,
@@ -201,6 +202,14 @@ export const completeWeeklyPlanItem = async (
   if (error) {
     throw error;
   }
+
+  void trackStudentActivityEvent({
+    entityId: itemId,
+    entityType: 'weekly_plan_item',
+    eventType: completed
+      ? 'weekly_plan_item_completed'
+      : 'weekly_plan_item_reopened',
+  });
 
   return data as ProfileWeeklyPlanItem;
 };

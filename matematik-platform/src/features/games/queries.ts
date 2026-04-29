@@ -1,5 +1,6 @@
 import { getCurrentUserProfile } from '@/lib/auth-client';
 import { supabase } from '@/lib/supabase/client';
+import { trackStudentActivityEvent } from '@/features/analytics/trackActivity';
 import type { AppUser } from '@/types';
 import type { GameAlias, LeaderboardRow } from '@/features/games/types';
 
@@ -74,6 +75,18 @@ export const insertGameScore = async (payload: {
       user_name: null,
     },
   ]);
+
+  if (!error) {
+    void trackStudentActivityEvent({
+      entityId: String(payload.gameId),
+      entityType: 'game',
+      eventType: 'game_score_saved',
+      metadata: {
+        score: payload.score,
+      },
+      userId: payload.user.id,
+    });
+  }
 
   return !error;
 };

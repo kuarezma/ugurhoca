@@ -31,6 +31,7 @@ import { getErrorMessage } from '@/lib/error-utils';
 import { createLogger } from '@/lib/logger';
 import { decodeQuizMediaExplanation } from '@/lib/quiz-media';
 import { supabase } from '@/lib/supabase/client';
+import { trackStudentActivityEvent } from '@/features/analytics/trackActivity';
 
 const log = createLogger('tests-page');
 import { Quiz, QuizQuestion } from '@/types/quiz';
@@ -289,6 +290,20 @@ export default function TestsPage({
         },
       ]);
       if (saveError) throw saveError;
+      void trackStudentActivityEvent({
+        entityId: selectedQuiz.id,
+        entityType: 'quiz',
+        eventType: 'quiz_completed',
+        metadata: {
+          difficulty: selectedQuiz.difficulty,
+          grade: selectedQuiz.grade,
+          question_count: quizQuestions.length,
+          score,
+          time_spent: timeSpent,
+          title: selectedQuiz.title,
+        },
+        userId: user.id,
+      });
     } catch (err) {
       log.error('Sonuç kaydedilirken hata', err);
     }

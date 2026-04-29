@@ -26,6 +26,7 @@ import { useTheme } from '@/components/ThemeProvider';
 import { requireClientSession } from '@/lib/auth-client';
 import { createLogger } from '@/lib/logger';
 import { supabase } from '@/lib/supabase/client';
+import { trackStudentActivityEvent } from '@/features/analytics/trackActivity';
 import type { AppUser } from '@/types';
 import type { InitialProgressPageData } from '@/features/progress/server';
 import type {
@@ -228,6 +229,17 @@ export default function IlerlemePage({ initialData }: ProgressPageProps) {
           (upsertedProgress || nextProgressRow) as ProgressRow,
         ),
       );
+      void trackStudentActivityEvent({
+        entityId: insertedSession?.id ?? null,
+        entityType: 'study_session',
+        eventType: 'study_session_added',
+        metadata: {
+          activity_type: activityType,
+          duration: durationNum,
+          topic: resolvedTopic,
+        },
+        userId: user.id,
+      });
       setShowAddModal(false);
       setDuration('');
       setSelectedTopic('');
