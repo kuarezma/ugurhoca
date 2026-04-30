@@ -36,9 +36,7 @@ function formatUnit(value: number) {
 }
 
 export function ExamCountdown({ exam, isLight }: ExamCountdownProps) {
-  const [timeLeft, setTimeLeft] = useState<TimeLeft>(() =>
-    getTimeLeft(exam.targetDate),
-  );
+  const [timeLeft, setTimeLeft] = useState<TimeLeft | null>(null);
 
   useEffect(() => {
     const update = () => setTimeLeft(getTimeLeft(exam.targetDate));
@@ -50,6 +48,10 @@ export function ExamCountdown({ exam, isLight }: ExamCountdownProps) {
   }, [exam.targetDate]);
 
   const status = useMemo(() => {
+    if (!timeLeft) {
+      return "Hazırlık zamanı";
+    }
+
     if (timeLeft.total <= 0) {
       return "Sınav gerçekleşti";
     }
@@ -60,6 +62,18 @@ export function ExamCountdown({ exam, isLight }: ExamCountdownProps) {
 
     return "Hazırlık zamanı";
   }, [timeLeft]);
+
+  const countdownItems = timeLeft
+    ? [
+        { label: "Gün", value: formatUnit(timeLeft.days) },
+        { label: "Saat", value: formatUnit(timeLeft.hours) },
+        { label: "Dakika", value: formatUnit(timeLeft.minutes) },
+      ]
+    : [
+        { label: "Gün", value: "--" },
+        { label: "Saat", value: "--" },
+        { label: "Dakika", value: "--" },
+      ];
 
   return (
     <div
@@ -127,11 +141,7 @@ export function ExamCountdown({ exam, isLight }: ExamCountdownProps) {
       </div>
 
       <div className="relative mt-3 grid grid-cols-3 gap-2">
-        {[
-          { label: "Gün", value: formatUnit(timeLeft.days) },
-          { label: "Saat", value: formatUnit(timeLeft.hours) },
-          { label: "Dakika", value: formatUnit(timeLeft.minutes) },
-        ].map((item, index) => (
+        {countdownItems.map((item, index) => (
           <div
             key={item.label}
             className={[
