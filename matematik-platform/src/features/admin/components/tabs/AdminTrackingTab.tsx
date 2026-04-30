@@ -12,6 +12,7 @@ import {
   Search,
   Send,
   ShieldCheck,
+  Star,
   Target,
   UserRound,
 } from 'lucide-react';
@@ -59,6 +60,7 @@ type AdminTrackingTabProps = {
 
 type RiskFilter = 'all' | 'high' | 'medium' | 'low';
 type ActivityFilter = 'all' | 'today' | 'week' | 'inactive';
+type FavoriteFilter = 'all' | 'favorites';
 
 const getCurrentWeekStart = () => {
   const today = new Date();
@@ -92,6 +94,7 @@ export default function AdminTrackingTab({
   const [searchQuery, setSearchQuery] = useState('');
   const [riskFilter, setRiskFilter] = useState<RiskFilter>('all');
   const [activityFilter, setActivityFilter] = useState<ActivityFilter>('all');
+  const [favoriteFilter, setFavoriteFilter] = useState<FavoriteFilter>('all');
   const [gradeFilter, setGradeFilter] = useState('all');
   const [labelFilter, setLabelFilter] = useState('');
   const weekStart = useMemo(() => getCurrentWeekStart(), []);
@@ -161,6 +164,8 @@ export default function AdminTrackingTab({
           activityFilter === 'all' || insight.activityStatus === activityFilter;
         const matchesGrade =
           gradeFilter === 'all' || String(insight.student.grade) === gradeFilter;
+        const matchesFavorite =
+          favoriteFilter === 'all' || Boolean(insight.student.is_favorite);
         const matchesLabel =
           !normalizedLabel ||
           (insight.status?.labels || []).some((label) =>
@@ -172,14 +177,34 @@ export default function AdminTrackingTab({
           matchesRisk &&
           matchesActivity &&
           matchesGrade &&
+          matchesFavorite &&
           matchesLabel
         );
       })
       .sort((left, right) => {
         const riskOrder = { high: 0, medium: 1, low: 2 };
-        return riskOrder[left.riskLevel] - riskOrder[right.riskLevel];
+        const riskDelta = riskOrder[left.riskLevel] - riskOrder[right.riskLevel];
+        if (riskDelta !== 0) return riskDelta;
+
+        const favoriteDelta =
+          Number(Boolean(right.student.is_favorite)) -
+          Number(Boolean(left.student.is_favorite));
+        if (favoriteDelta !== 0) return favoriteDelta;
+
+        return (left.student.name || '').localeCompare(
+          right.student.name || '',
+          'tr-TR',
+        );
       });
-  }, [activityFilter, gradeFilter, insights, labelFilter, riskFilter, searchQuery]);
+  }, [
+    activityFilter,
+    favoriteFilter,
+    gradeFilter,
+    insights,
+    labelFilter,
+    riskFilter,
+    searchQuery,
+  ]);
 
   const dashboard = useMemo(() => buildTrackingDashboard(insights), [insights]);
 
@@ -212,7 +237,7 @@ export default function AdminTrackingTab({
       </section>
 
       <section className="rounded-2xl border border-white/10 bg-white/5 p-4">
-        <div className="grid gap-3 lg:grid-cols-[minmax(0,1fr)_auto_auto_auto_auto]">
+        <div className="grid gap-3 lg:grid-cols-[minmax(0,1fr)_auto_auto_auto_auto_auto]">
           <label className="relative block">
             <span className="sr-only">Öğrenci ara</span>
             <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500" />
@@ -245,6 +270,13 @@ export default function AdminTrackingTab({
                 {grade === 'Mezun' ? 'Mezun' : `${grade}. Sınıf`}
               </option>
             ))}
+          </Select>
+          <Select
+            value={favoriteFilter}
+            onChange={(value) => setFavoriteFilter(value as FavoriteFilter)}
+          >
+            <option value="all">Tüm öğrenciler</option>
+            <option value="favorites">Favoriler</option>
           </Select>
           <label className="relative block">
             <span className="sr-only">Takip etiketi</span>
@@ -348,7 +380,9 @@ export default function AdminTrackingTab({
 
       {filteredInsights.length === 0 ? (
         <div className="rounded-2xl border border-dashed border-white/10 bg-white/5 p-10 text-center text-slate-400">
-          Filtrelere uygun öğrenci bulunamadı.
+          {studentUsers.length === 0
+            ? 'Takip edilecek öğrenci kaydı henüz yok.'
+            : 'Filtrelere uygun öğrenci bulunamadı.'}
         </div>
       ) : (
         <div className="space-y-4">
@@ -379,6 +413,12 @@ export default function AdminTrackingTab({
                     <span className="rounded-full bg-white/5 px-2.5 py-1 text-xs font-semibold text-slate-300">
                       {formatGrade(insight.student.grade)}
                     </span>
+                    {insight.student.is_favorite ? (
+                      <span className="inline-flex items-center gap-1 rounded-full border border-amber-300/25 bg-amber-300/10 px-2.5 py-1 text-xs font-semibold text-amber-200">
+                        <Star className="h-3.5 w-3.5 fill-current" />
+                        Favori
+                      </span>
+                    ) : null}
                     {insight.status?.labels?.map((label) => (
                       <span
                         key={label}
