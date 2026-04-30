@@ -152,6 +152,7 @@ export default function AdminTabPanels({
           activityEvents={activityEvents}
           adminStatuses={adminStatuses}
           assignments={assignments}
+          documents={documents}
           notifications={notifications}
           onCreateWeeklyPlan={onCreateWeeklyPlan}
           onSendMessage={onSendAdminMessage}

@@ -10,16 +10,134 @@ import type {
 } from '@/types';
 
 const SUPPORT_IMAGE_TYPES = new Set(['image/jpeg', 'image/png', 'image/webp']);
-const SUPPORT_IMAGE_MAX_BYTES = 5 * 1024 * 1024;
+export const SUPPORT_IMAGE_MAX_BYTES = 1 * 1024 * 1024;
+const SUPPORT_IMAGE_MAX_LABEL = '1 MB';
+const SUPPORT_IMAGE_MAX_DIMENSION = 1600;
+const SUPPORT_IMAGE_QUALITY_STEPS = [
+  0.88, 0.8, 0.72, 0.64, 0.56, 0.48, 0.4, 0.32,
+];
+const SUPPORT_IMAGE_SCALE_STEPS = [1, 0.85, 0.7, 0.55, 0.42, 0.32, 0.24, 0.18];
 
 export const validateSupportImageFile = (file: File) => {
   if (!SUPPORT_IMAGE_TYPES.has(file.type)) {
     throw new Error('Sadece JPG, PNG veya WebP görsel eklenebilir.');
   }
 
-  if (file.size > SUPPORT_IMAGE_MAX_BYTES) {
-    throw new Error('Fotoğraf en fazla 5 MB olabilir.');
+};
+
+const loadImageFromFile = (file: File) =>
+  new Promise<HTMLImageElement>((resolve, reject) => {
+    const objectUrl = URL.createObjectURL(file);
+    const image = new Image();
+
+    image.onload = () => {
+      URL.revokeObjectURL(objectUrl);
+      resolve(image);
+    };
+
+    image.onerror = () => {
+      URL.revokeObjectURL(objectUrl);
+      reject(new Error('Fotoğraf okunamadı.'));
+    };
+
+    image.src = objectUrl;
+  });
+
+const canvasToSupportImageBlob = (
+  canvas: HTMLCanvasElement,
+  mimeType: string,
+  quality: number,
+) =>
+  new Promise<Blob>((resolve, reject) => {
+    canvas.toBlob(
+      (blob) => {
+        if (!blob) {
+          reject(new Error('Fotoğraf sıkıştırılamadı.'));
+          return;
+        }
+
+        resolve(blob);
+      },
+      mimeType,
+      quality,
+    );
+  });
+
+const getCompressedSupportImageName = (fileName: string, mimeType: string) => {
+  const extension = mimeType === 'image/png' ? 'png' : 'webp';
+  const baseName = fileName.replace(/\.[^.]+$/, '') || 'support-image';
+  return `${baseName}.${extension}`;
+};
+
+export const compressSupportImageFile = async (
+  file: File,
+  maxBytes = SUPPORT_IMAGE_MAX_BYTES,
+) => {
+  validateSupportImageFile(file);
+
+  if (file.size <= maxBytes) {
+    return file;
   }
+
+  const image = await loadImageFromFile(file);
+  const outputType = file.type === 'image/png' ? 'image/png' : 'image/webp';
+  const baseScale = Math.min(
+    1,
+    SUPPORT_IMAGE_MAX_DIMENSION /
+      Math.max(image.naturalWidth, image.naturalHeight),
+  );
+  const baseWidth = Math.max(1, Math.round(image.naturalWidth * baseScale));
+  const baseHeight = Math.max(1, Math.round(image.naturalHeight * baseScale));
+  let smallestBlob: Blob | null = null;
+
+  for (const scale of SUPPORT_IMAGE_SCALE_STEPS) {
+    const width = Math.max(1, Math.round(baseWidth * scale));
+    const height = Math.max(1, Math.round(baseHeight * scale));
+    const canvas = document.createElement('canvas');
+    const context = canvas.getContext('2d');
+
+    if (!context) {
+      throw new Error('Tarayıcı fotoğraf sıkıştırmayı desteklemiyor.');
+    }
+
+    canvas.width = width;
+    canvas.height = height;
+    context.drawImage(image, 0, 0, width, height);
+
+    for (const quality of SUPPORT_IMAGE_QUALITY_STEPS) {
+      const blob = await canvasToSupportImageBlob(canvas, outputType, quality);
+
+      if (!smallestBlob || blob.size < smallestBlob.size) {
+        smallestBlob = blob;
+      }
+
+      if (blob.size <= maxBytes) {
+        return new File(
+          [blob],
+          getCompressedSupportImageName(file.name, outputType),
+          {
+            lastModified: Date.now(),
+            type: outputType,
+          },
+        );
+      }
+    }
+  }
+
+  if (smallestBlob && smallestBlob.size <= maxBytes) {
+    return new File(
+      [smallestBlob],
+      getCompressedSupportImageName(file.name, outputType),
+      {
+        lastModified: Date.now(),
+        type: outputType,
+      },
+    );
+  }
+
+  throw new Error(
+    `Fotoğraf ${SUPPORT_IMAGE_MAX_LABEL} altına indirilemedi. Daha sade bir fotoğraf deneyin.`,
+  );
 };
 
 export const resolveYandexImageUrl = async (url: string) => {
@@ -146,14 +264,15 @@ export const uploadSupportFiles = async (
 ) => {
   const uploads = await Promise.all(
     Array.from(files).map(async (file) => {
+      let uploadFile = file;
       if (options.imagesOnly) {
-        validateSupportImageFile(file);
+        uploadFile = await compressSupportImageFile(file);
       }
 
-      const fileName = `support_${Date.now()}_${Math.random().toString(36).slice(2)}_${file.name}`;
+      const fileName = `support_${Date.now()}_${Math.random().toString(36).slice(2)}_${uploadFile.name}`;
       const { data, error } = await supabase.storage
         .from('documents')
-        .upload(fileName, file, { upsert: false });
+        .upload(fileName, uploadFile, { upsert: false });
 
       if (error) {
         throw error;
@@ -163,11 +282,11 @@ export const uploadSupportFiles = async (
         .from('documents')
         .getPublicUrl(data.path);
 
-      const kind: SupportAttachment['kind'] = file.type.startsWith('image/')
+      const kind: SupportAttachment['kind'] = uploadFile.type.startsWith('image/')
         ? 'image'
         : 'file';
 
-      return { kind, name: file.name, url: urlData.publicUrl };
+      return { kind, name: uploadFile.name, url: urlData.publicUrl };
     }),
   );
 

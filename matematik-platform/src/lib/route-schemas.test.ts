@@ -12,6 +12,22 @@ describe('route-schemas', () => {
     expect(parsed.error?.issues[0]?.message).toBe('Mesaj içeriği eksik.');
   });
 
+  it('rejects non-image support attachments', () => {
+    const parsed = supportMessageSchema.safeParse({
+      attachments: [
+        {
+          kind: 'file',
+          name: 'odev.pdf',
+          url: 'https://example.com/odev.pdf',
+        },
+      ],
+      sender_id: 'student-1',
+      text: '',
+    });
+
+    expect(parsed.success).toBe(false);
+  });
+
   it('accepts a valid quiz import payload', () => {
     const parsed = quizImportSchema.safeParse({
       meta: {

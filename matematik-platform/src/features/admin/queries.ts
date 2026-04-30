@@ -875,7 +875,10 @@ const getCurrentWeekStartISODate = () => {
   const start = new Date(today);
   start.setDate(today.getDate() - dayOfWeek);
   start.setHours(0, 0, 0, 0);
-  return start.toISOString().slice(0, 10);
+  const year = start.getFullYear();
+  const month = String(start.getMonth() + 1).padStart(2, '0');
+  const day = String(start.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
 };
 
 export const createAdminWeeklyPlan = async ({

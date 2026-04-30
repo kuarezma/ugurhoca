@@ -66,12 +66,12 @@ export function HomeSupportForm({
             isLight ? 'text-slate-700' : 'text-slate-300'
           }`}
         >
-          Belge / Resim Ekle
+          Fotoğraf Ekle
         </label>
         <input
           type="file"
           multiple
-          accept="image/*,.pdf,.doc,.docx"
+          accept="image/jpeg,image/png,image/webp"
           className="hidden"
           id={uploadId}
           onChange={async (event) => {
@@ -80,7 +80,7 @@ export function HomeSupportForm({
                 await onUploadSupportAttachments(event.target.files);
                 event.target.value = '';
               } catch {
-                showToast('error', 'Dosya yüklenemedi.');
+                showToast('error', 'Fotoğraf yüklenemedi.');
               }
             }
           }}
@@ -94,7 +94,7 @@ export function HomeSupportForm({
           }`}
         >
           <Upload className="w-5 h-5" />
-          Resim veya belge seç
+          Fotoğraf seç
         </label>
       </div>
 

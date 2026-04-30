@@ -38,7 +38,7 @@ export function HomeSupportSection({
       return;
     }
 
-    const uploads = await uploadSupportFiles(files);
+    const uploads = await uploadSupportFiles(files, { imagesOnly: true });
     setSupportAttachments((currentAttachments) => [
       ...currentAttachments,
       ...uploads,

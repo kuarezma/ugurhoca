@@ -13,6 +13,7 @@ import AdminGenericContentForm from '@/features/admin/components/modal/AdminGene
 import AdminMessageForm from '@/features/admin/components/modal/AdminMessageForm';
 import AdminModalSuccessState from '@/features/admin/components/modal/AdminModalSuccessState';
 import AdminSendDocumentForm from '@/features/admin/components/modal/AdminSendDocumentForm';
+import { uploadSupportFiles } from '@/features/home/queries';
 import {
   getModalTitle,
   type AdminFormUpdate,
@@ -107,21 +108,19 @@ export default function AdminMainModal({
     const file = event.target.files?.[0];
     if (!file) return;
 
-    const fileName = `admin_msg_${Date.now()}_${file.name}`;
-    const { data, error } = await supabase.storage
-      .from('documents')
-      .upload(fileName, file);
-
-    if (error || !data) {
-      showToast('error', 'Resim yüklenemedi.');
+    try {
+      const [uploadedImage] = await uploadSupportFiles([file], {
+        imagesOnly: true,
+      });
+      setAdminMsgImageUrl(uploadedImage.url);
+      setAdminMsgImagePreview(URL.createObjectURL(file));
+    } catch (error) {
+      showToast(
+        'error',
+        error instanceof Error ? error.message : 'Resim yüklenemedi.',
+      );
       return;
     }
-
-    const { data: urlData } = supabase.storage
-      .from('documents')
-      .getPublicUrl(fileName);
-    setAdminMsgImageUrl(urlData.publicUrl);
-    setAdminMsgImagePreview(URL.createObjectURL(file));
   };
 
   const handleQuestionImportUpload = async (

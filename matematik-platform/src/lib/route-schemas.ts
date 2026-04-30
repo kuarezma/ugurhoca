@@ -29,7 +29,7 @@ export const quizImportSchema = z.object({
 });
 
 export const supportAttachmentSchema = z.object({
-  kind: z.enum(['image', 'file']),
+  kind: z.literal('image'),
   name: z.string().trim().min(1),
   url: z.string().trim().url(),
 });

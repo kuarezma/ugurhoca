@@ -14,7 +14,7 @@ SECURITY DEFINER
 SET search_path = public
 AS $$
   SELECT COALESCE(
-    (auth.jwt() ->> 'email') = ANY (ARRAY['admin@ugurhoca.com','admin@matematiklab.com']),
+    (auth.jwt() ->> 'email') = 'admin@ugurhoca.com',
     false
   );
 $$;

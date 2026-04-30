@@ -16,9 +16,14 @@ import {
   UserRound,
 } from 'lucide-react';
 import { isAdminEmail } from '@/lib/admin';
-import { parseSupportPayload } from '@/features/messages/supportChatUtils';
+import { buildTrackingActivityAnalytics } from '@/features/admin/utils/tracking-analytics';
+import {
+  buildTrackingDashboard,
+  buildTrackingInsights,
+} from '@/features/admin/utils/tracking-insights';
 import type {
   AdminAssignment,
+  AdminDocument,
   AdminNotification,
   AdminQuizResultRow,
   AdminStudyGoalRow,
@@ -34,6 +39,7 @@ type AdminTrackingTabProps = {
   activityEvents: StudentActivityEvent[];
   adminStatuses: StudentAdminStatus[];
   assignments: AdminAssignment[];
+  documents: AdminDocument[];
   notifications: AdminNotification[];
   onCreateWeeklyPlan: (student: AdminUser) => Promise<void> | void;
   onSendMessage: (student: AdminUser) => void;
@@ -54,8 +60,6 @@ type AdminTrackingTabProps = {
 type RiskFilter = 'all' | 'high' | 'medium' | 'low';
 type ActivityFilter = 'all' | 'today' | 'week' | 'inactive';
 
-const DAY_MS = 24 * 60 * 60 * 1000;
-
 const getCurrentWeekStart = () => {
   const today = new Date();
   const dayOfWeek = today.getDay() === 0 ? 6 : today.getDay() - 1;
@@ -65,38 +69,14 @@ const getCurrentWeekStart = () => {
   return start;
 };
 
-const getDaysSince = (value?: string | null) => {
-  if (!value) return Number.POSITIVE_INFINITY;
-  return Math.floor((Date.now() - new Date(value).getTime()) / DAY_MS);
-};
-
 const formatGrade = (grade: AdminUser['grade']) =>
   grade === 'Mezun' ? 'Mezun' : `${grade}. Sınıf`;
-
-const assignmentAppliesToStudent = (
-  assignment: AdminAssignment,
-  student: AdminUser,
-) => {
-  if (assignment.student_id) {
-    return assignment.student_id === student.id;
-  }
-
-  if (assignment.grade === null || typeof assignment.grade === 'undefined') {
-    return true;
-  }
-
-  return String(assignment.grade) === String(student.grade);
-};
-
-const getQuizPercent = (result?: AdminQuizResultRow | null) => {
-  if (!result) return null;
-  return Math.round((result.score / Math.max(result.total_questions, 1)) * 100);
-};
 
 export default function AdminTrackingTab({
   activityEvents,
   adminStatuses,
   assignments,
+  documents,
   notifications,
   onCreateWeeklyPlan,
   onSendMessage,
@@ -135,155 +115,37 @@ export default function AdminTrackingTab({
     });
   }, [studentUsers]);
 
-  const insights = useMemo(() => {
-    const submissionsByStudent = new Map<string, Set<string>>();
-    for (const submission of submissions) {
-      const set = submissionsByStudent.get(submission.student_id) ?? new Set<string>();
-      set.add(submission.assignment_id);
-      submissionsByStudent.set(submission.student_id, set);
-    }
-
-    const quizByStudent = new Map<string, AdminQuizResultRow[]>();
-    for (const result of quizResults) {
-      const rows = quizByStudent.get(result.user_id) ?? [];
-      rows.push(result);
-      quizByStudent.set(result.user_id, rows);
-    }
-
-    const sessionsByStudent = new Map<string, AdminStudySessionRow[]>();
-    for (const session of studySessions) {
-      const rows = sessionsByStudent.get(session.user_id) ?? [];
-      rows.push(session);
-      sessionsByStudent.set(session.user_id, rows);
-    }
-
-    const eventsByStudent = new Map<string, StudentActivityEvent[]>();
-    for (const event of activityEvents) {
-      const rows = eventsByStudent.get(event.user_id) ?? [];
-      rows.push(event);
-      eventsByStudent.set(event.user_id, rows);
-    }
-
-    const goalsByStudent = new Map(studyGoals.map((goal) => [goal.user_id, goal]));
-    const statusesByStudent = new Map(
-      adminStatuses.map((status) => [status.student_id, status]),
-    );
-    const plansByStudent = new Map<string, StudentWeeklyPlan[]>();
-    for (const plan of weeklyPlans) {
-      const rows = plansByStudent.get(plan.student_id) ?? [];
-      rows.push(plan);
-      plansByStudent.set(plan.student_id, rows);
-    }
-
-    const unreadMessagesByStudent = new Map<string, number>();
-    for (const notification of notifications) {
-      if (notification.type !== 'message' || notification.is_read) continue;
-      const parsed = parseSupportPayload(notification.message);
-      if (!parsed?.sender_id) continue;
-      unreadMessagesByStudent.set(
-        parsed.sender_id,
-        (unreadMessagesByStudent.get(parsed.sender_id) || 0) + 1,
-      );
-    }
-
-    return studentUsers.map((student) => {
-      const submittedAssignments = submissionsByStudent.get(student.id) ?? new Set<string>();
-      const studentAssignments = assignments.filter((assignment) =>
-        assignmentAppliesToStudent(assignment, student),
-      );
-      const overdueAssignments = studentAssignments.filter((assignment) => {
-        if (!assignment.due_date || submittedAssignments.has(assignment.id)) {
-          return false;
-        }
-        return new Date(assignment.due_date).getTime() < Date.now();
-      });
-
-      const studentQuizResults = quizByStudent.get(student.id) ?? [];
-      const latestQuiz = studentQuizResults[0] ?? null;
-      const latestQuizPercent = getQuizPercent(latestQuiz);
-      const studentSessions = sessionsByStudent.get(student.id) ?? [];
-      const weeklyMinutes = studentSessions
-        .filter((session) => new Date(session.date) >= weekStart)
-        .reduce((sum, session) => sum + (session.duration || 0), 0);
-      const targetMinutes = goalsByStudent.get(student.id)?.target_duration ?? 600;
-      const weeklyProgress = Math.round((weeklyMinutes / Math.max(targetMinutes, 1)) * 100);
-
-      const candidateDates = [
-        ...studentSessions.map((session) => session.date),
-        ...studentQuizResults.map((result) => result.completed_at),
-        ...submissions
-          .filter((submission) => submission.student_id === student.id)
-          .map((submission) => submission.submitted_at || null),
-        ...(eventsByStudent.get(student.id) ?? []).map((event) => event.created_at),
-      ].filter(Boolean) as string[];
-      const lastActivityAt =
-        candidateDates.sort(
-          (left, right) => new Date(right).getTime() - new Date(left).getTime(),
-        )[0] || student.created_at || null;
-      const inactiveDays = getDaysSince(lastActivityAt);
-      const status = statusesByStudent.get(student.id) ?? null;
-      const studentPlans = plansByStudent.get(student.id) ?? [];
-      const currentWeekPlan = studentPlans.find(
-        (plan) => plan.week_start === weekStart.toISOString().slice(0, 10),
-      );
-
-      const riskReasons: string[] = [];
-      if (inactiveDays >= 7) riskReasons.push('7+ gün pasif');
-      if (overdueAssignments.length > 0) riskReasons.push('Gecikmiş ödev');
-      if (latestQuizPercent !== null && latestQuizPercent < 60) {
-        riskReasons.push('Düşük son test');
-      }
-      if (weeklyProgress < 40 && new Date().getDay() >= 4) {
-        riskReasons.push('Haftalık hedef geride');
-      }
-      if ((unreadMessagesByStudent.get(student.id) || 0) > 0) {
-        riskReasons.push('Okunmamış mesaj');
-      }
-
-      const riskLevel: 'high' | 'medium' | 'low' =
-        status?.status === 'risk' || riskReasons.length >= 2
-          ? 'high'
-          : status?.status === 'watch' || riskReasons.length === 1
-            ? 'medium'
-            : 'low';
-      const activityStatus =
-        lastActivityAt && new Date(lastActivityAt) >= todayStart
-          ? 'today'
-          : inactiveDays <= 7
-            ? 'week'
-            : 'inactive';
-
-      return {
-        activityStatus,
-        currentWeekPlan,
-        inactiveDays,
-        lastActivityAt,
-        latestQuizPercent,
-        overdueAssignments,
-        riskLevel,
-        riskReasons,
-        status,
-        student,
-        unreadMessages: unreadMessagesByStudent.get(student.id) || 0,
-        weeklyMinutes,
-        weeklyProgress,
-        targetMinutes,
-      };
-    });
-  }, [
-    activityEvents,
-    adminStatuses,
-    assignments,
-    notifications,
-    quizResults,
-    studentUsers,
-    studyGoals,
-    studySessions,
-    submissions,
-    todayStart,
-    weekStart,
-    weeklyPlans,
-  ]);
+  const insights = useMemo(
+    () =>
+      buildTrackingInsights({
+        activityEvents,
+        adminStatuses,
+        assignments,
+        notifications,
+        quizResults,
+        students: studentUsers,
+        studyGoals,
+        studySessions,
+        submissions,
+        todayStart,
+        weekStart,
+        weeklyPlans,
+      }),
+    [
+      activityEvents,
+      adminStatuses,
+      assignments,
+      notifications,
+      quizResults,
+      studentUsers,
+      studyGoals,
+      studySessions,
+      submissions,
+      todayStart,
+      weekStart,
+      weeklyPlans,
+    ],
+  );
 
   const filteredInsights = useMemo(() => {
     const normalizedQuery = searchQuery.trim().toLocaleLowerCase('tr-TR');
@@ -319,61 +181,12 @@ export default function AdminTrackingTab({
       });
   }, [activityFilter, gradeFilter, insights, labelFilter, riskFilter, searchQuery]);
 
-  const dashboard = useMemo(() => {
-    const activeToday = insights.filter((insight) => insight.activityStatus === 'today').length;
-    const inactive = insights.filter((insight) => insight.inactiveDays >= 7).length;
-    const highRisk = insights.filter((insight) => insight.riskLevel === 'high').length;
-    const unreadMessages = insights.reduce((sum, insight) => sum + insight.unreadMessages, 0);
+  const dashboard = useMemo(() => buildTrackingDashboard(insights), [insights]);
 
-    return { activeToday, highRisk, inactive, unreadMessages };
-  }, [insights]);
-
-  const activityAnalytics = useMemo(() => {
-    const now = Date.now();
-    const last7Days = activityEvents.filter(
-      (event) => now - new Date(event.created_at).getTime() <= 7 * DAY_MS,
-    );
-    const last30Days = activityEvents.filter(
-      (event) => now - new Date(event.created_at).getTime() <= 30 * DAY_MS,
-    );
-    const byType = new Map<string, number>();
-    const contentUsage = new Map<string, { count: number; title: string; type: string }>();
-
-    for (const event of last30Days) {
-      byType.set(event.event_type, (byType.get(event.event_type) || 0) + 1);
-
-      if (event.entity_type === 'document' && event.entity_id) {
-        const metadata = event.metadata || {};
-        const current = contentUsage.get(event.entity_id) || {
-          count: 0,
-          title:
-            typeof metadata.title === 'string'
-              ? metadata.title
-              : 'İçerik',
-          type:
-            typeof metadata.type === 'string'
-              ? metadata.type
-              : 'document',
-        };
-        contentUsage.set(event.entity_id, {
-          ...current,
-          count: current.count + 1,
-        });
-      }
-    }
-
-    return {
-      last7Count: last7Days.length,
-      last30Count: last30Days.length,
-      topContent: Array.from(contentUsage.values())
-        .sort((left, right) => right.count - left.count)
-        .slice(0, 5),
-      topTypes: Array.from(byType.entries())
-        .map(([type, count]) => ({ count, type }))
-        .sort((left, right) => right.count - left.count)
-        .slice(0, 6),
-    };
-  }, [activityEvents]);
+  const activityAnalytics = useMemo(
+    () => buildTrackingActivityAnalytics(activityEvents, documents),
+    [activityEvents, documents],
+  );
 
   return (
     <div className="space-y-5 animate-fade-up">
@@ -446,7 +259,7 @@ export default function AdminTrackingTab({
         </div>
       </section>
 
-      <section className="grid gap-4 lg:grid-cols-[0.8fr_1.2fr]">
+      <section className="grid gap-4 xl:grid-cols-[0.75fr_1fr_1fr]">
         <div className="rounded-2xl border border-white/10 bg-white/5 p-5">
           <h3 className="mb-4 text-base font-bold text-white">
             Canlı Ölçüm
@@ -484,7 +297,7 @@ export default function AdminTrackingTab({
             <div className="space-y-2">
               {activityAnalytics.topContent.map((item) => (
                 <div
-                  key={`${item.title}:${item.type}`}
+                  key={item.id}
                   className="flex items-center justify-between gap-3 rounded-xl bg-slate-950/45 px-3 py-2"
                 >
                   <div className="min-w-0">
@@ -494,6 +307,36 @@ export default function AdminTrackingTab({
                     <p className="text-xs text-slate-500">{item.type}</p>
                   </div>
                   <span className="rounded-full bg-cyan-400/10 px-3 py-1 text-xs font-bold text-cyan-200">
+                    {item.count}
+                  </span>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
+        <div className="rounded-2xl border border-white/10 bg-white/5 p-5">
+          <h3 className="mb-4 text-base font-bold text-white">
+            Az Kullanılan İçerikler
+          </h3>
+          {activityAnalytics.lowContent.length === 0 ? (
+            <p className="rounded-xl border border-dashed border-white/10 px-4 py-8 text-center text-sm text-slate-500">
+              İçerik eklenince burada kullanım açığı görülecek.
+            </p>
+          ) : (
+            <div className="space-y-2">
+              {activityAnalytics.lowContent.map((item) => (
+                <div
+                  key={item.id}
+                  className="flex items-center justify-between gap-3 rounded-xl bg-slate-950/45 px-3 py-2"
+                >
+                  <div className="min-w-0">
+                    <p className="truncate text-sm font-semibold text-white">
+                      {item.title}
+                    </p>
+                    <p className="text-xs text-slate-500">{item.type}</p>
+                  </div>
+                  <span className="rounded-full bg-amber-400/10 px-3 py-1 text-xs font-bold text-amber-200">
                     {item.count}
                   </span>
                 </div>
