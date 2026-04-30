@@ -18,7 +18,6 @@ const isMissingSchemaError = (error: { code?: string } | null) =>
   error?.code === 'PGRST202' || error?.code === 'PGRST205';
 
 const GAME_ALIAS_STORAGE_PREFIX = 'ugur-hoca-game-alias:';
-let useLegacyAliasFallback = false;
 
 const getStoredAlias = (userId: string): GameAlias | null => {
   if (typeof window === 'undefined') {
@@ -72,7 +71,6 @@ export const loadGamesLeaderboard = async (
 
   if (error) {
     if (isMissingSchemaError(error)) {
-      useLegacyAliasFallback = true;
       const { data: legacyData, error: legacyError } = await supabase
         .from('global_leaderboard')
         .select('*');
@@ -108,7 +106,6 @@ export const loadGameAlias = async (userId: string) => {
 
   if (error) {
     if (isMissingSchemaError(error)) {
-      useLegacyAliasFallback = true;
       return getStoredAlias(userId);
     }
     throw error;
@@ -125,7 +122,6 @@ export const saveGameAlias = async (alias: string) => {
 
   if (error) {
     if (isMissingSchemaError(error)) {
-      useLegacyAliasFallback = true;
       const {
         data: { user },
       } = await supabase.auth.getUser();
@@ -166,18 +162,10 @@ export const insertGameScore = async (payload: {
   score: number;
   user: Pick<AppUser, 'id'>;
 }) => {
-  const fallbackAlias =
-    useLegacyAliasFallback && typeof window !== 'undefined'
-      ? getStoredAlias(payload.user.id)?.alias || null
-      : null;
-  const { error } = await supabase.from('game_scores').insert([
-    {
-      game_id: payload.gameId,
-      score: payload.score,
-      user_id: payload.user.id,
-      user_name: fallbackAlias,
-    },
-  ]);
+  const { error } = await supabase.rpc('submit_game_score', {
+    p_game_id: payload.gameId,
+    p_score: payload.score,
+  });
 
   if (!error) {
     void trackStudentActivityEvent({

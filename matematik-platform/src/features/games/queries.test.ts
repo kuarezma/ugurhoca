@@ -58,9 +58,8 @@ describe('games queries', () => {
     });
   });
 
-  it('inserts game scores without leaking real names', async () => {
-    const insert = vi.fn().mockResolvedValue({ error: null });
-    vi.mocked(supabase.from).mockReturnValue({ insert } as never);
+  it('submits game scores through the validation RPC', async () => {
+    vi.mocked(supabase.rpc).mockResolvedValue({ data: null, error: null } as never);
 
     await expect(
       insertGameScore({
@@ -70,15 +69,11 @@ describe('games queries', () => {
       }),
     ).resolves.toBe(true);
 
-    expect(supabase.from).toHaveBeenCalledWith('game_scores');
-    expect(insert).toHaveBeenCalledWith([
-      {
-        game_id: 7,
-        score: 35,
-        user_id: 'student-1',
-        user_name: null,
-      },
-    ]);
+    expect(supabase.rpc).toHaveBeenCalledWith('submit_game_score', {
+      p_game_id: 7,
+      p_score: 35,
+    });
+    expect(supabase.from).not.toHaveBeenCalledWith('game_scores');
     expect(trackStudentActivityEvent).toHaveBeenCalledWith({
       entityId: '7',
       entityType: 'game',
@@ -91,10 +86,10 @@ describe('games queries', () => {
   });
 
   it('does not track activity when score insert fails', async () => {
-    const insert = vi.fn().mockResolvedValue({
+    vi.mocked(supabase.rpc).mockResolvedValue({
+      data: null,
       error: { message: 'Rumuz seçmeniz gerekiyor.' },
-    });
-    vi.mocked(supabase.from).mockReturnValue({ insert } as never);
+    } as never);
 
     await expect(
       insertGameScore({
@@ -150,27 +145,23 @@ describe('games queries', () => {
     });
   });
 
-  it('uses stored aliases for legacy score inserts while alias migration is missing', async () => {
+  it('does not fall back to direct score inserts when score RPC fails', async () => {
     window.localStorage.setItem('ugur-hoca-game-alias:student-1', 'SayiUstasi');
-    await loadGameAlias('student-1');
+    vi.mocked(supabase.rpc).mockResolvedValue({
+      data: null,
+      error: {
+        code: 'PGRST202',
+        message: 'Could not find the function public.submit_game_score',
+      },
+    } as never);
 
-    const insert = vi.fn().mockResolvedValue({ error: null });
-    vi.mocked(supabase.from).mockReturnValue({ insert } as never);
-
-    await insertGameScore({
+    await expect(insertGameScore({
       gameId: 7,
       score: 35,
       user: { id: 'student-1' },
-    });
+    })).resolves.toBe(false);
 
-    expect(insert).toHaveBeenCalledWith([
-      {
-        game_id: 7,
-        score: 35,
-        user_id: 'student-1',
-        user_name: 'SayiUstasi',
-      },
-    ]);
+    expect(supabase.from).not.toHaveBeenCalledWith('game_scores');
   });
 
   it('extracts Supabase object error messages for alias failures', () => {

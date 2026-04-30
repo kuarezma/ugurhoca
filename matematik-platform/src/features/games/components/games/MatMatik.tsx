@@ -44,7 +44,7 @@ const playerStyles: Record<MatMatikPlayer, string> = {
   2: 'border-rose-400 bg-rose-500 text-white shadow-rose-500/30',
 };
 
-const MATMATIK_DRAW_SCORE = 100;
+const MATMATIK_DRAW_SCORE = 75;
 const MATMATIK_WIN_SCORE = 250;
 
 export function MatMatik({

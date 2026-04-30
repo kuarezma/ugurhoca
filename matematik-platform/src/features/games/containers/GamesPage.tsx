@@ -9,7 +9,7 @@ import { useGamesPageData } from '@/features/games/hooks/useGamesPageData';
 import type { GameDefinition } from '@/features/games/types';
 import { Skeleton } from '@/components/ui/Skeleton';
 
-const GAME_SCORE_MULTIPLIER = 10;
+const GAME_SCORE_MULTIPLIER = 1;
 
 function GameAliasModal({
   error,
