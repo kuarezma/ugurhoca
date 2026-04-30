@@ -72,7 +72,7 @@ export default function AdminMessageForm({
         <div className="relative">
           <input
             type="file"
-            accept="image/*"
+            accept="image/jpeg,image/png,image/webp"
             onChange={onImageUpload}
             className="hidden"
             id={imageId}
@@ -108,7 +108,6 @@ export default function AdminMessageForm({
         </label>
         <textarea
           id={messageId}
-          required
           value={adminMsgText}
           onChange={(event) => setAdminMsgText(event.target.value)}
           rows={5}
@@ -121,7 +120,11 @@ export default function AdminMessageForm({
         type="submit"
         whileHover={{ scale: 1.02 }}
         whileTap={{ scale: 0.98 }}
-        disabled={isSubmitting || !adminMsgText.trim() || !adminMsgRecipient}
+        disabled={
+          isSubmitting ||
+          (!adminMsgText.trim() && !adminMsgImagePreview) ||
+          !adminMsgRecipient
+        }
         className="w-full py-4 bg-gradient-to-r from-purple-500 to-pink-500 text-white font-semibold rounded-xl hover:from-purple-600 hover:to-pink-600 transition-all flex items-center justify-center gap-2 disabled:opacity-60"
       >
         {isSubmitting ? (
