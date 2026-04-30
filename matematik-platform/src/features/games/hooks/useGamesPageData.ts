@@ -9,6 +9,7 @@ import type {
 } from '@/features/games/types';
 import {
   insertGameScore,
+  getGameAliasErrorMessage,
   loadGameAlias,
   loadGamesLeaderboard,
   loadGamesPageUser,
@@ -68,11 +69,7 @@ export const useGamesPageData = (router: RouterLike) => {
         await refreshLeaderboard();
         return true;
       } catch (error) {
-        setAliasError(
-          error instanceof Error
-            ? error.message
-            : 'Rumuz kaydedilemedi.',
-        );
+        setAliasError(getGameAliasErrorMessage(error));
         return false;
       } finally {
         setAliasSaving(false);

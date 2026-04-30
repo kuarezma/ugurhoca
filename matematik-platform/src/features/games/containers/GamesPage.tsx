@@ -2,7 +2,7 @@
 
 import { useCallback, useState, type FormEvent } from 'react';
 import { useRouter } from 'next/navigation';
-import { Gamepad2, ShieldCheck } from 'lucide-react';
+import { Gamepad2, ShieldCheck, X } from 'lucide-react';
 import { GamesLandingView } from '@/features/games/components/GamesLandingView';
 import { SelectedGameView } from '@/features/games/components/SelectedGameView';
 import { useGamesPageData } from '@/features/games/hooks/useGamesPageData';
@@ -13,10 +13,12 @@ const GAME_SCORE_MULTIPLIER = 10;
 
 function GameAliasModal({
   error,
+  onClose,
   onSubmit,
   saving,
 }: {
   error: string | null;
+  onClose: () => void;
   onSubmit: (alias: string) => Promise<boolean>;
   saving: boolean;
 }) {
@@ -34,8 +36,16 @@ function GameAliasModal({
     <div className="fixed inset-0 z-[120] flex items-center justify-center bg-slate-950/85 px-4 backdrop-blur-sm">
       <form
         onSubmit={handleSubmit}
-        className="w-full max-w-sm rounded-3xl border border-white/10 bg-slate-900 p-5 shadow-2xl"
+        className="relative w-full max-w-sm rounded-3xl border border-white/10 bg-slate-900 p-5 shadow-2xl"
       >
+        <button
+          type="button"
+          onClick={onClose}
+          aria-label="Rumuz penceresini kapat"
+          className="absolute right-4 top-4 inline-flex h-9 w-9 items-center justify-center rounded-xl text-slate-400 transition hover:bg-white/10 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400"
+        >
+          <X className="h-5 w-5" aria-hidden="true" />
+        </button>
         <div className="mb-4 flex items-center gap-3">
           <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-emerald-500/15 text-emerald-300">
             <ShieldCheck className="h-6 w-6" aria-hidden="true" />
@@ -76,6 +86,7 @@ function GameAliasModal({
 
 export default function GamesPage() {
   const [selectedGame, setSelectedGame] = useState<GameDefinition | null>(null);
+  const [aliasModalDismissed, setAliasModalDismissed] = useState(false);
   const router = useRouter();
   const {
     aliasError,
@@ -134,9 +145,10 @@ export default function GamesPage() {
           scoreMultiplier={GAME_SCORE_MULTIPLIER}
           totalScore={totalScore}
         />
-        {!gameAlias && (
+        {!gameAlias && !aliasModalDismissed && (
           <GameAliasModal
             error={aliasError}
+            onClose={() => setAliasModalDismissed(true)}
             onSubmit={submitAlias}
             saving={aliasSaving}
           />
@@ -155,9 +167,10 @@ export default function GamesPage() {
         totalScore={totalScore}
         user={user}
       />
-      {!gameAlias && (
+      {!gameAlias && !aliasModalDismissed && (
         <GameAliasModal
           error={aliasError}
+          onClose={() => setAliasModalDismissed(true)}
           onSubmit={submitAlias}
           saving={aliasSaving}
         />
