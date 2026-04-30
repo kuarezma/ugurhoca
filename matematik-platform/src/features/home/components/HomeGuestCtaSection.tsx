@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { Brain, LockKeyhole, Play, ShieldCheck } from 'lucide-react';
+import { Brain, Database, Play, ShieldCheck } from 'lucide-react';
 
 type HomeGuestCtaSectionProps = {
   isLight: boolean;
@@ -58,11 +58,11 @@ export function HomeGuestCtaSection({ isLight }: HomeGuestCtaSectionProps) {
                   : 'border-white/10 bg-white/5 text-slate-300'
               }`}
             >
-              <LockKeyhole className="mb-2 h-5 w-5 text-cyan-400" />
-              <p className="text-sm font-semibold">Nasıl çalışır?</p>
+              <Database className="mb-2 h-5 w-5 text-cyan-400" />
+              <p className="text-sm font-semibold">Veri güvenliği</p>
               <p className="mt-1 text-xs opacity-80">
-                Kayıt ol, çalış, test çöz, ödevlerini takip et ve Uğur
-                Hoca’dan geri bildirim al.
+                Kayıt, giriş ve çalışma verileri yalnızca öğrenme takibi için
+                kullanılır.
               </p>
             </div>
           </div>

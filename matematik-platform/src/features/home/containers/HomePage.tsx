@@ -8,6 +8,7 @@ import { HomeAssignmentsSection } from '@/features/home/components/HomeAssignmen
 import { HomeDailyQuote } from '@/features/home/components/HomeDailyQuote';
 import { HomeExamCountdownSection } from '@/features/home/components/HomeExamCountdownSection';
 import { HomeFooter } from '@/features/home/components/HomeFooter';
+import { HomeHowItWorksSection } from '@/features/home/components/HomeHowItWorksSection';
 import { HomeHeroSection } from '@/features/home/components/HomeHeroSection';
 import { HomeNavbar } from '@/features/home/components/HomeNavbar';
 import { HomeRecentDocumentsSection } from '@/features/home/components/HomeRecentDocumentsSection';
@@ -85,6 +86,7 @@ export default function HomePage({ initialFeed }: HomePageProps) {
           onDismissAssignment={handleDismissAssignment}
         />
         <HomeRecentDocumentsSection documents={documents} isLight={isLight} />
+        {!user && <HomeHowItWorksSection isLight={isLight} />}
         {!user && <HomeGuestCtaSection isLight={isLight} />}
         <HomeSupportSection isLight={isLight} user={user} />
         <HomeFooter isLight={isLight} />
