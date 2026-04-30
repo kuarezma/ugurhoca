@@ -11,6 +11,9 @@ type ActivityEventInput = {
 const isMissingSchemaError = (error: { code?: string } | null) =>
   error?.code === 'PGRST202' || error?.code === 'PGRST205';
 
+const UUID_PATTERN =
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+
 export const trackStudentActivityEvent = async ({
   entityId,
   entityType,
@@ -32,11 +35,15 @@ export const trackStudentActivityEvent = async ({
       return;
     }
 
+    const isUuidEntityId = entityId ? UUID_PATTERN.test(entityId) : false;
+    const eventMetadata =
+      entityId && !isUuidEntityId ? { ...metadata, entity_id: entityId } : metadata;
+
     const { error } = await supabase.from('student_activity_events').insert({
-      entity_id: entityId || null,
+      entity_id: isUuidEntityId ? entityId : null,
       entity_type: entityType || null,
       event_type: eventType,
-      metadata,
+      metadata: eventMetadata,
       user_id: resolvedUserId,
     });
 
