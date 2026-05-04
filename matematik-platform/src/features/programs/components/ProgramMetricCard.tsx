@@ -41,7 +41,9 @@ export function ProgramMetricCard({
       <div className="text-[11px] font-black uppercase tracking-[0.16em] opacity-75">
         {label}
       </div>
-      <div className="mt-1 text-3xl font-black tracking-normal">{value}</div>
+      <div className="mt-1 text-3xl font-black tracking-normal tabular-nums">
+        {value}
+      </div>
     </div>
   );
 }

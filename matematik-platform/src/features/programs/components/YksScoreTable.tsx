@@ -44,7 +44,7 @@ export function YksScoreTable({
         </h2>
       </div>
       <div className="overflow-x-auto">
-        <table className="w-full min-w-[700px] border-collapse text-left text-sm">
+        <table className="w-full min-w-[700px] border-collapse text-left text-sm tabular-nums">
           <thead className={headerClassName}>
             <tr>
               <th className="px-4 py-3 text-xs font-black uppercase tracking-[0.14em]">
@@ -53,13 +53,13 @@ export function YksScoreTable({
               <th className="px-4 py-3 text-xs font-black uppercase tracking-[0.14em]">
                 Ham Puan
               </th>
-              <th className="px-4 py-3 text-xs font-black uppercase tracking-[0.14em]">
+              <th className="px-4 py-3 text-right text-xs font-black uppercase tracking-[0.14em]">
                 Ham Sıralama
               </th>
-              <th className="px-4 py-3 text-xs font-black uppercase tracking-[0.14em]">
+              <th className="px-4 py-3 text-right text-xs font-black uppercase tracking-[0.14em]">
                 Yer. Puanı
               </th>
-              <th className="px-4 py-3 text-xs font-black uppercase tracking-[0.14em]">
+              <th className="px-4 py-3 text-right text-xs font-black uppercase tracking-[0.14em]">
                 Yer. Sıralama
               </th>
               <th className="px-4 py-3 text-xs font-black uppercase tracking-[0.14em]">
@@ -92,28 +92,28 @@ export function YksScoreTable({
                   <td
                     className={
                       isLight
-                        ? 'px-4 py-3 text-slate-700'
-                        : 'px-4 py-3 text-slate-200'
+                        ? 'px-4 py-3 text-right text-slate-700'
+                        : 'px-4 py-3 text-right text-slate-200'
                     }
                   >
-                    {row.rawScore}
+                    {row.rawScore.toFixed(2)}
                   </td>
                   <td
                     className={
                       isLight
-                        ? 'px-4 py-3 text-slate-700'
-                        : 'px-4 py-3 text-slate-200'
+                        ? 'px-4 py-3 text-right text-slate-700'
+                        : 'px-4 py-3 text-right text-slate-200'
                     }
                   >
                     {formatRank(row.rawRank)}
                   </td>
                   <td
-                    className={`px-4 py-3 font-bold ${isLight ? 'text-slate-950' : 'text-white'}`}
+                    className={`px-4 py-3 text-right font-bold ${isLight ? 'text-slate-950' : 'text-white'}`}
                   >
-                    {row.placementScore}
+                    {row.placementScore.toFixed(2)}
                   </td>
                   <td
-                    className={`px-4 py-3 font-bold ${isLight ? 'text-slate-950' : 'text-white'}`}
+                    className={`px-4 py-3 text-right font-bold ${isLight ? 'text-slate-950' : 'text-white'}`}
                   >
                     {formatRank(row.placementRank)}
                   </td>

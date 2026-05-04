@@ -27,7 +27,7 @@ export function ProgramSubjectInputCard({
   title,
   value,
 }: ProgramSubjectInputCardProps) {
-  const fieldClassName = `w-full rounded-xl border px-3 py-2 text-sm font-semibold outline-none transition focus:ring-2 ${
+  const fieldClassName = `w-full rounded-xl border px-3 py-2 text-right text-sm font-semibold tabular-nums outline-none transition focus:ring-2 ${
     isLight
       ? 'border-slate-200 bg-slate-50 text-slate-900 focus:border-cyan-300 focus:ring-cyan-100'
       : 'border-white/10 bg-slate-950/70 text-white focus:border-cyan-300/70 focus:ring-cyan-300/10'
@@ -66,7 +66,7 @@ export function ProgramSubjectInputCard({
             <div className="text-[10px] font-bold uppercase tracking-[0.14em]">
               Net
             </div>
-            <div className="text-base font-black">{net ?? 0}</div>
+            <div className="text-base font-black tabular-nums">{net ?? 0}</div>
           </div>
         </div>
 

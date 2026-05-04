@@ -51,7 +51,7 @@ export default function YksWizardPage() {
   const [step, setStep] = useState<1 | 2 | 3>(1);
   const [inputs, setInputs] = useState(createInitialYksInputs());
   const [scoreType, setScoreType] = useState<YksScoreType>('SAY');
-  const [obp, setObp] = useState(85);
+  const [obpInput, setObpInput] = useState('85');
   const [placedLastYear, setPlacedLastYear] = useState(false);
   const [manualRank, setManualRank] = useState('');
 
@@ -69,6 +69,17 @@ export default function YksWizardPage() {
   const [preferredLevel, setPreferredLevel] = useState<
     'all' | ProgramTargetLevel
   >('all');
+
+  const parseObpInput = (value: string) => {
+    const normalized = value.replace(',', '.').trim();
+    if (!normalized) return Number.NaN;
+    return Number.parseFloat(normalized);
+  };
+
+  const obp = useMemo(() => {
+    const parsed = parseObpInput(obpInput);
+    return Number.isNaN(parsed) ? 50 : clampProgramValue(parsed, 50, 100);
+  }, [obpInput]);
 
   const yksResult = useMemo(
     () => calculateYksScore(inputs, scoreType, obp, placedLastYear),
@@ -361,20 +372,19 @@ export default function YksWizardPage() {
                       type="number"
                       min={50}
                       max={100}
-                      value={obp}
-                      onChange={(event) =>
-                        setObp(
-                          clampProgramValue(
-                            Number(event.target.value) || 50,
-                            50,
-                            100,
-                          ),
-                        )
-                      }
+                      value={obpInput}
+                      onChange={(event) => setObpInput(event.target.value)}
+                      onBlur={() => {
+                        setObpInput((current) => {
+                          const parsed = Number.parseFloat(current);
+                          if (Number.isNaN(parsed)) return '50';
+                          return String(clampProgramValue(parsed, 50, 100));
+                        });
+                      }}
                       className={`w-full rounded-xl border px-3 py-2 text-sm font-semibold ${
                         isLight
-                          ? 'border-slate-200 bg-slate-50 text-slate-900'
-                          : 'border-white/10 bg-slate-900/70 text-white'
+                          ? 'border-slate-200 bg-slate-50 text-slate-900 tabular-nums'
+                          : 'border-white/10 bg-slate-900/70 text-white tabular-nums'
                       }`}
                     />
                   </div>
@@ -556,12 +566,25 @@ export default function YksWizardPage() {
                     type="number"
                     min={1}
                     value={manualRank}
-                    onChange={(event) => setManualRank(event.target.value)}
+                    onChange={(event) => {
+                      const digitsOnly = event.target.value.replace(/\D/g, '');
+                      setManualRank(digitsOnly);
+                    }}
+                    onBlur={() => {
+                      setManualRank((current) => {
+                        const normalized = current.replace(/\D/g, '');
+                        if (!normalized) return '';
+                        const parsed = Number.parseInt(normalized, 10);
+                        return Number.isNaN(parsed) || parsed < 1
+                          ? ''
+                          : String(parsed);
+                      });
+                    }}
                     placeholder={formatRank(yksResult.estimatedRank)}
                     className={`w-full rounded-xl border px-3 py-2 text-sm font-semibold ${
                       isLight
-                        ? 'bg-slate-50 border-slate-200 text-slate-900'
-                        : 'bg-slate-900/70 border-white/10 text-white'
+                        ? 'bg-slate-50 border-slate-200 text-slate-900 tabular-nums'
+                        : 'bg-slate-900/70 border-white/10 text-white tabular-nums'
                     }`}
                   />
                 </div>
@@ -841,9 +864,9 @@ export default function YksWizardPage() {
                       Tahmini Puan / Sıralama
                     </div>
                     <div
-                      className={`text-2xl font-black ${isLight ? 'text-slate-950' : 'text-white'}`}
+                      className={`text-2xl font-black tabular-nums ${isLight ? 'text-slate-950' : 'text-white'}`}
                     >
-                      {yksResult.estimatedScore} / {formatRank(activeRank)}
+                      {yksResult.estimatedScore.toFixed(2)} / {formatRank(activeRank)}
                     </div>
                   </div>
                   <div

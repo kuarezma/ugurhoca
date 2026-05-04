@@ -587,9 +587,9 @@ export default function LgsWizardPage() {
                       LGS Tahmini Puan
                     </div>
                     <div
-                      className={`text-2xl font-black ${isLight ? 'text-slate-950' : 'text-white'}`}
+                      className={`text-2xl font-black tabular-nums ${isLight ? 'text-slate-950' : 'text-white'}`}
                     >
-                      {lgsResult.estimatedScore}
+                      {lgsResult.estimatedScore.toFixed(2)}
                     </div>
                   </div>
                   <div
@@ -708,7 +708,7 @@ export default function LgsWizardPage() {
                                     Taban Puan
                                   </div>
                                   <div
-                                    className={`font-black ${isLight ? 'text-slate-900' : 'text-white'}`}
+                                    className={`font-black tabular-nums ${isLight ? 'text-slate-900' : 'text-white'}`}
                                   >
                                     {school.baseScore.toFixed(2)}
                                   </div>
@@ -726,7 +726,7 @@ export default function LgsWizardPage() {
                                     Puan Farkı
                                   </div>
                                   <div
-                                    className={`font-black ${school.delta >= 0 ? 'text-emerald-600' : 'text-rose-600'}`}
+                                    className={`font-black tabular-nums ${school.delta >= 0 ? 'text-emerald-600' : 'text-rose-600'}`}
                                   >
                                     {school.delta >= 0 ? '+' : ''}
                                     {school.delta.toFixed(2)}
@@ -745,7 +745,7 @@ export default function LgsWizardPage() {
                                     Son Yüzdelik
                                   </div>
                                   <div
-                                    className={`font-black ${isLight ? 'text-slate-900' : 'text-white'}`}
+                                    className={`font-black tabular-nums ${isLight ? 'text-slate-900' : 'text-white'}`}
                                   >
                                     {school.national_percentile !== null
                                       ? `%${school.national_percentile.toFixed(2)}`
@@ -821,7 +821,7 @@ export default function LgsWizardPage() {
                                     return (
                                       <div
                                         key={year}
-                                        className={`rounded-xl border px-2 py-2 text-[10px] sm:px-3 sm:text-[11px] ${isLight ? 'bg-slate-50 border-slate-200 text-slate-700' : 'bg-white/5 border-white/10 text-slate-200'}`}
+                                        className={`rounded-xl border px-2 py-2 text-[10px] tabular-nums sm:px-3 sm:text-[11px] ${isLight ? 'bg-slate-50 border-slate-200 text-slate-700' : 'bg-white/5 border-white/10 text-slate-200'}`}
                                       >
                                         <div
                                           className={`font-bold ${isLight ? 'text-slate-900' : 'text-white'}`}
