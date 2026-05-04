@@ -20,6 +20,7 @@ import {
 import { useToast } from '@/components/Toast';
 import { getErrorMessage } from '@/lib/error-utils';
 import { trackStudentActivityEvent } from '@/features/analytics/trackActivity';
+import { broadcastHomeDocumentsUpdated } from '@/features/home/home-documents-events';
 import DeferredFloatingShapes from '@/components/DeferredFloatingShapes';
 import ContentCard from '@/features/content/components/ContentCard';
 import { Skeleton } from '@/components/ui/Skeleton';
@@ -788,6 +789,7 @@ function ContentsPageInner({
 
         if (document) {
           setDocuments((current) => [document, ...current]);
+          broadcastHomeDocumentsUpdated();
 
           if (
             isWorksheetType(document.type) &&

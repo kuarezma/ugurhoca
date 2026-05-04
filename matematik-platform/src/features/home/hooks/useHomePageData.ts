@@ -14,6 +14,7 @@ import type {
   SharedDocumentAssignment,
 } from '@/types';
 import type { HomeInitialFeed } from '@/features/home/home-initial-feed';
+import { HOME_DOCUMENTS_UPDATED_EVENT } from '@/features/home/home-documents-events';
 import {
   dismissHomeAssignment,
   fetchHomeDocuments,
@@ -73,6 +74,11 @@ export const useHomePageData = (initialFeed?: HomeInitialFeed | null) => {
           });
         }
 
+        const nextDocuments = await fetchHomeDocuments();
+        if (!isDisposed) {
+          startTransition(() => setDocuments(nextDocuments));
+        }
+
         return;
       }
 
@@ -113,6 +119,28 @@ export const useHomePageData = (initialFeed?: HomeInitialFeed | null) => {
       isDisposed = true;
     };
   }, [isFeedSeeded]);
+
+  useEffect(() => {
+    let isDisposed = false;
+
+    const refreshRecentDocuments = () => {
+      void fetchHomeDocuments().then((nextDocuments) => {
+        if (!isDisposed) {
+          startTransition(() => setDocuments(nextDocuments));
+        }
+      });
+    };
+
+    window.addEventListener(HOME_DOCUMENTS_UPDATED_EVENT, refreshRecentDocuments);
+
+    return () => {
+      isDisposed = true;
+      window.removeEventListener(
+        HOME_DOCUMENTS_UPDATED_EVENT,
+        refreshRecentDocuments,
+      );
+    };
+  }, []);
 
   useEffect(() => {
     let isDisposed = false;

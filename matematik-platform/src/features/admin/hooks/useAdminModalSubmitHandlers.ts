@@ -17,6 +17,7 @@ import {
   updateAdminQuiz,
   updateAdminUser,
 } from "@/features/admin/queries";
+import { broadcastHomeDocumentsUpdated } from "@/features/home/home-documents-events";
 import type {
   AdminAnnouncement,
   AdminAssignment,
@@ -204,6 +205,7 @@ export function useAdminModalSubmitHandlers({
 
       if (!error && data) {
         setDocuments([data, ...documents]);
+        broadcastHomeDocumentsUpdated();
         completedSuccessfully = true;
       } else {
         showToast("error", "Belge kaydedilemedi. Lütfen tekrar deneyin.");
