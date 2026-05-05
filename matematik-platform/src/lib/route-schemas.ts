@@ -53,12 +53,12 @@ export const supportMessageSchema = z
 export const adminMessageSchema = z
   .object({
     image_url: z.string().trim().url().nullable().optional().or(z.literal('')),
-    message: z.string().trim().optional().default(''),
-    sender_id: z.string().trim().optional(),
-    sender_name: z.string().trim().optional(),
+    message: z.string().trim().nullable().optional().transform((value) => value ?? ''),
+    sender_id: z.string().trim().nullable().optional(),
+    sender_name: z.string().trim().nullable().optional(),
     student_id: z.string().trim().min(1, 'Öğrenci seçimi zorunludur.'),
-    student_name: z.string().trim().optional(),
-    title: z.string().trim().optional().default(''),
+    student_name: z.string().trim().nullable().optional(),
+    title: z.string().trim().nullable().optional().transform((value) => value ?? ''),
   })
   .refine(
     (payload) =>

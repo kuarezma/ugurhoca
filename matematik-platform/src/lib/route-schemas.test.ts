@@ -82,6 +82,19 @@ describe('route-schemas', () => {
     expect(parsed.success).toBe(true);
   });
 
+  it('accepts nullable optional text fields in admin message payload', () => {
+    const parsed = adminMessageSchema.safeParse({
+      image_url: null,
+      message: 'Merhaba',
+      sender_name: null,
+      student_id: 'student-1',
+      student_name: null,
+      title: null,
+    });
+
+    expect(parsed.success).toBe(true);
+  });
+
   it('rejects content document payload without required fields', () => {
     const parsed = contentDocumentCreateSchema.safeParse({
       document: {
