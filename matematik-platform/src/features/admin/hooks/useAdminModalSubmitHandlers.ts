@@ -163,12 +163,14 @@ export function useAdminModalSubmitHandlers({
         return;
       }
 
+      const normalizedImageUrl = (imageUrls[0] || formData.image_url || "").trim();
+      const normalizedLinkUrl = (formData.link_url || "").trim();
       const announcementUpdate = {
         content: formData.description ?? editingAnnouncement.content,
-        image_url: imageUrls[0] || formData.image_url || "",
-        image_urls: imageUrls.length ? imageUrls : [],
-        link_url: formData.link_url || "",
         title: formData.title ?? editingAnnouncement.title,
+        ...(imageUrls.length ? { image_urls: imageUrls } : {}),
+        ...(normalizedImageUrl ? { image_url: normalizedImageUrl } : {}),
+        ...(normalizedLinkUrl ? { link_url: normalizedLinkUrl } : {}),
       };
       const { error } = await updateAdminAnnouncement(
         editingAnnouncement.id,
@@ -301,6 +303,11 @@ export function useAdminModalSubmitHandlers({
         );
         return;
       }
+      const session = await getClientSession();
+      if (!session?.access_token) {
+        showToast("error", "Oturum açmanız gerekiyor.");
+        return;
+      }
 
       const response =
         importResult.source === "bundle" && formData.importBundleFile
@@ -310,19 +317,28 @@ export function useAdminModalSubmitHandlers({
               return fetch("/api/import-questions-bundle", {
                 method: "POST",
                 body: bundleFormData,
+                headers: {
+                  Authorization: `Bearer ${session.access_token}`,
+                },
               });
             })()
           : importResult.source === "bundle" && formData.importBundleUrl
             ? await fetch("/api/import-questions-bundle", {
                 method: "POST",
-                headers: { "Content-Type": "application/json" },
+                headers: {
+                  Authorization: `Bearer ${session.access_token}`,
+                  "Content-Type": "application/json",
+                },
                 body: JSON.stringify({
                   bundle_url: formData.importBundleUrl,
                 }),
               })
           : await fetch("/api/import-questions", {
               method: "POST",
-              headers: { "Content-Type": "application/json" },
+              headers: {
+                Authorization: `Bearer ${session.access_token}`,
+                "Content-Type": "application/json",
+              },
               body: JSON.stringify({
                 meta: importResult.meta,
                 questions: importResult.valid,

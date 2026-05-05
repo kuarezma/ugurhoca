@@ -303,13 +303,20 @@ export const sendSupportMessage = async (
   },
   accessToken: string,
 ) => {
+  const normalizedAttachments = payload.attachments.filter(
+    (attachment) => attachment.kind === 'image',
+  );
+
   const response = await fetch('/api/support-message', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
       Authorization: `Bearer ${accessToken}`,
     },
-    body: JSON.stringify(payload),
+    body: JSON.stringify({
+      ...payload,
+      attachments: normalizedAttachments,
+    }),
   });
 
   const responseData = (await response.json().catch(() => null)) as
@@ -330,8 +337,8 @@ export const sendSupportMessage = async (
       entityType: 'support_message',
       eventType: 'support_message_sent',
       metadata: {
-        attachment_count: payload.attachments.length,
-        has_image: payload.attachments.some(
+        attachment_count: normalizedAttachments.length,
+        has_image: normalizedAttachments.some(
           (attachment) => attachment.kind === 'image',
         ),
       },
@@ -344,8 +351,8 @@ export const sendSupportMessage = async (
     entityType: 'support_message',
     eventType: 'support_message_sent',
     metadata: {
-      attachment_count: payload.attachments.length,
-      has_image: payload.attachments.some(
+      attachment_count: normalizedAttachments.length,
+      has_image: normalizedAttachments.some(
         (attachment) => attachment.kind === 'image',
       ),
     },

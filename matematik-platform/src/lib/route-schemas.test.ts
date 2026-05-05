@@ -71,6 +71,17 @@ describe('route-schemas', () => {
     expect(parsed.error?.issues[0]?.message).toBe('Mesaj, başlık veya görsel zorunludur.');
   });
 
+  it('accepts admin message payload when image_url is null', () => {
+    const parsed = adminMessageSchema.safeParse({
+      image_url: null,
+      message: 'Merhaba',
+      student_id: 'student-1',
+      title: '',
+    });
+
+    expect(parsed.success).toBe(true);
+  });
+
   it('rejects content document payload without required fields', () => {
     const parsed = contentDocumentCreateSchema.safeParse({
       document: {

@@ -52,7 +52,7 @@ export const supportMessageSchema = z
 
 export const adminMessageSchema = z
   .object({
-    image_url: z.string().trim().url().optional().or(z.literal('')),
+    image_url: z.string().trim().url().nullable().optional().or(z.literal('')),
     message: z.string().trim().optional().default(''),
     sender_id: z.string().trim().optional(),
     sender_name: z.string().trim().optional(),
