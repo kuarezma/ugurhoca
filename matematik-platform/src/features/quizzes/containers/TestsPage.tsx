@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import {
@@ -119,6 +119,7 @@ export default function TestsPage({
   const [loading, setLoading] = useState(!isHydrated);
   const [error, setError] = useState<string | null>(null);
   const [pdfLoading, setPdfLoading] = useState(false);
+  const resultSavedRef = useRef(false);
   const router = useRouter();
   const { showToast } = useToast();
   const profileHref = user?.isAdmin ? '/admin' : '/profil';
@@ -235,6 +236,7 @@ export default function TestsPage({
     setShowResult(false);
     setStartTime(Date.now());
     setTimeLeft(quiz.time_limit * 60);
+    resultSavedRef.current = false;
   };
 
   const selectAnswer = (index: number) => {
@@ -275,6 +277,8 @@ export default function TestsPage({
 
   const saveQuizResult = useCallback(async () => {
     if (!user || !selectedQuiz || !startTime) return;
+    if (resultSavedRef.current) return;
+    resultSavedRef.current = true;
     const score = calculateScore();
     const timeSpent = Math.round((Date.now() - startTime) / 1000);
 
@@ -306,6 +310,7 @@ export default function TestsPage({
       });
     } catch (err) {
       log.error('Sonuç kaydedilirken hata', err);
+      resultSavedRef.current = false;
     }
   }, [
     answers,
@@ -355,6 +360,7 @@ export default function TestsPage({
     setShowResult(false);
     setStartTime(null);
     setTimeLeft(null);
+    resultSavedRef.current = false;
   };
 
   const formatTime = (seconds: number) => {

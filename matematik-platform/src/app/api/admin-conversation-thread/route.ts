@@ -72,12 +72,12 @@ export async function GET(request: Request) {
 
   if (inboxRes.error) {
     log.error('Admin inbox okuma hatası', inboxRes.error);
-    return apiError(inboxRes.error.message, 500, 'inbox_fetch_failed');
+    return apiError('Mesaj geçmişi getirilemedi.', 500, 'inbox_fetch_failed');
   }
 
   if (repliesRes.error) {
     log.error('Öğrenci admin-message okuma hatası', repliesRes.error);
-    return apiError(repliesRes.error.message, 500, 'replies_fetch_failed');
+    return apiError('Mesaj yanıtları getirilemedi.', 500, 'replies_fetch_failed');
   }
 
   const inboxRows = (inboxRes.data || []).filter((n) => {

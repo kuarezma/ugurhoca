@@ -50,6 +50,38 @@ export const supportMessageSchema = z
     },
   );
 
+export const adminMessageSchema = z
+  .object({
+    image_url: z.string().trim().url().optional().or(z.literal('')),
+    message: z.string().trim().optional().default(''),
+    sender_id: z.string().trim().optional(),
+    sender_name: z.string().trim().optional(),
+    student_id: z.string().trim().min(1, 'Öğrenci seçimi zorunludur.'),
+    student_name: z.string().trim().optional(),
+    title: z.string().trim().optional().default(''),
+  })
+  .refine(
+    (payload) =>
+      payload.message.length > 0 ||
+      payload.title.length > 0 ||
+      Boolean(payload.image_url?.trim()),
+    {
+      message: 'Mesaj, başlık veya görsel zorunludur.',
+      path: ['message'],
+    },
+  );
+
+const contentDocumentSchema = z
+  .object({
+    title: z.string().trim().min(1, 'Başlık zorunludur.'),
+    type: z.string().trim().min(1, 'Kategori zorunludur.'),
+  })
+  .passthrough();
+
+export const contentDocumentCreateSchema = z.object({
+  document: contentDocumentSchema,
+});
+
 const adminAnnouncementPayloadSchema = z.object({
   content: z.string().trim().nullable().optional(),
   image_url: z.string().trim().url().optional(),

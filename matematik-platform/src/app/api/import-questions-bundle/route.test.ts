@@ -1,6 +1,10 @@
 import { POST } from '@/app/api/import-questions-bundle/route';
 import { parseQuizBundleArchive } from '@/lib/question-import';
-import { createServiceRoleClient } from '@/lib/supabase/server';
+import { getServerAccessToken } from '@/lib/auth-snapshot.server';
+import {
+  createServerSupabaseClient,
+  createServiceRoleClient,
+} from '@/lib/supabase/server';
 import { insertQuizBundleWithImages } from '@/features/quizzes/server/importQuiz';
 
 vi.mock('@/lib/question-import', () => ({
@@ -8,7 +12,12 @@ vi.mock('@/lib/question-import', () => ({
 }));
 
 vi.mock('@/lib/supabase/server', () => ({
+  createServerSupabaseClient: vi.fn(),
   createServiceRoleClient: vi.fn(),
+}));
+
+vi.mock('@/lib/auth-snapshot.server', () => ({
+  getServerAccessToken: vi.fn(),
 }));
 
 vi.mock('@/features/quizzes/server/importQuiz', () => ({
@@ -18,15 +27,24 @@ vi.mock('@/features/quizzes/server/importQuiz', () => ({
 describe('POST /api/import-questions-bundle', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    vi.mocked(getServerAccessToken).mockResolvedValue('token');
+    vi.mocked(createServerSupabaseClient).mockReturnValue({
+      auth: {
+        getUser: vi.fn().mockResolvedValue({
+          data: { user: { id: 'user-1', email: 'admin@ugurhoca.com' } },
+          error: null,
+        }),
+      },
+    } as never);
   });
 
   it('returns 400 when no bundle file is provided', async () => {
-    const response = await POST(
+    const response = (await POST(
       new Request('http://localhost/api/import-questions-bundle', {
         method: 'POST',
         body: new FormData(),
       }),
-    );
+    )) as Response;
 
     expect(response.status).toBe(400);
     await expect(response.json()).resolves.toEqual({
@@ -89,12 +107,12 @@ describe('POST /api/import-questions-bundle', () => {
     vi.mocked(createServiceRoleClient).mockReturnValue(supabaseClient as never);
     vi.mocked(insertQuizBundleWithImages).mockResolvedValue(result);
 
-    const response = await POST(
+    const response = (await POST(
       new Request('http://localhost/api/import-questions-bundle', {
         method: 'POST',
         body: formData,
       }),
-    );
+    )) as Response;
 
     expect(response.status).toBe(200);
     expect(insertQuizBundleWithImages).toHaveBeenCalledWith(
@@ -143,7 +161,7 @@ describe('POST /api/import-questions-bundle', () => {
       }),
     );
 
-    const response = await POST(
+    const response = (await POST(
       new Request('http://localhost/api/import-questions-bundle', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -152,12 +170,33 @@ describe('POST /api/import-questions-bundle', () => {
           preview: true,
         }),
       }),
-    );
+    )) as Response;
 
     expect(response.status).toBe(200);
     expect(insertQuizBundleWithImages).not.toHaveBeenCalled();
     await expect(response.json()).resolves.toEqual({
       data: { importResult: archive.importResult },
+    });
+  });
+
+  it('rejects non-allowlisted bundle_url hosts', async () => {
+    const response = (await POST(
+      new Request('http://localhost/api/import-questions-bundle', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          bundle_url: 'https://example.com/quiz-bundle.zip',
+          preview: true,
+        }),
+      }),
+    )) as Response;
+
+    expect(response.status).toBe(400);
+    await expect(response.json()).resolves.toEqual({
+      error: {
+        code: 'invalid_bundle_payload',
+        message: 'bundle_url hostu izinli değil.',
+      },
     });
   });
 });

@@ -1,10 +1,10 @@
 export const ADMIN_EMAIL = "admin@ugurhoca.com";
 
-/** Varsayılan admin + NEXT_PUBLIC_ADMIN_EXTRA_EMAILS ile ek adresler. */
+/** Varsayılan admin + server-only ADMIN_EXTRA_EMAILS ile ek adresler. */
 const ADMIN_EMAIL_ALLOWLIST = new Set(
   [
     ADMIN_EMAIL,
-    ...((process.env.NEXT_PUBLIC_ADMIN_EXTRA_EMAILS ?? "")
+    ...((process.env.ADMIN_EXTRA_EMAILS ?? "")
       .split(",")
       .map((entry) => entry.trim().toLowerCase())
       .filter(Boolean)),

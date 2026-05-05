@@ -97,8 +97,9 @@ export async function POST(request: Request) {
 
     return apiOk({ ok: true, message: selfCopy });
   } catch (error) {
+    log.error('Destek mesajı kaydedilemedi', error);
     return apiError(
-      error instanceof Error ? error.message : 'Mesaj gönderilemedi.',
+      'Mesaj gönderilemedi.',
       500,
       'support_message_failed',
     );

@@ -1,8 +1,17 @@
 import { POST } from '@/app/api/import-questions/route';
 import { insertQuizWithQuestions } from '@/features/quizzes/server/importQuiz';
-import { createServiceRoleClient } from '@/lib/supabase/server';
+import { getServerAccessToken } from '@/lib/auth-snapshot.server';
+import {
+  createServerSupabaseClient,
+  createServiceRoleClient,
+} from '@/lib/supabase/server';
+
+vi.mock('@/lib/auth-snapshot.server', () => ({
+  getServerAccessToken: vi.fn(),
+}));
 
 vi.mock('@/lib/supabase/server', () => ({
+  createServerSupabaseClient: vi.fn(),
   createServiceRoleClient: vi.fn(),
 }));
 
@@ -13,16 +22,25 @@ vi.mock('@/features/quizzes/server/importQuiz', () => ({
 describe('POST /api/import-questions', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    vi.mocked(getServerAccessToken).mockResolvedValue('token');
+    vi.mocked(createServerSupabaseClient).mockReturnValue({
+      auth: {
+        getUser: vi.fn().mockResolvedValue({
+          data: { user: { id: 'user-1', email: 'admin@ugurhoca.com' } },
+          error: null,
+        }),
+      },
+    } as never);
   });
 
   it('returns 400 for an invalid quiz payload', async () => {
-    const response = await POST(
+    const response = (await POST(
       new Request('http://localhost/api/import-questions', {
         body: JSON.stringify({ meta: {}, questions: [] }),
         headers: { 'content-type': 'application/json' },
         method: 'POST',
       }),
-    );
+    )) as Response;
 
     expect(response.status).toBe(400);
     await expect(response.json()).resolves.toEqual({
@@ -62,13 +80,13 @@ describe('POST /api/import-questions', () => {
     );
     vi.mocked(insertQuizWithQuestions).mockResolvedValue(result);
 
-    const response = await POST(
+    const response = (await POST(
       new Request('http://localhost/api/import-questions', {
         body: JSON.stringify(payload),
         headers: { 'content-type': 'application/json' },
         method: 'POST',
       }),
-    );
+    )) as Response;
 
     expect(response.status).toBe(200);
     expect(insertQuizWithQuestions).toHaveBeenCalledWith(

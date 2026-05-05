@@ -1,13 +1,13 @@
 import { apiError, apiOk } from '@/lib/api-response';
 import { isAdminEmail } from '@/lib/admin';
 import { createLogger } from '@/lib/logger';
+import { contentDocumentCreateSchema } from '@/lib/route-schemas';
 import {
   createServerSupabaseClient,
   createServiceRoleClient,
 } from '@/lib/supabase/server';
 import { buildContentDocumentPersistPayload } from '@/features/content/persistence';
 import type { ContentDocument } from '@/types';
-import type { ContentFormState } from '@/features/content/types';
 
 const log = createLogger('content-documents');
 
@@ -36,14 +36,12 @@ export async function POST(request: Request) {
       return apiError('Yetkiniz yok.', 403, 'forbidden');
     }
 
-    const body = (await request.json().catch(() => null)) as {
-      document?: ContentFormState;
-    } | null;
-    const documentPayload = body?.document;
-
-    if (!documentPayload?.type || !documentPayload.title) {
+    const body = await request.json().catch(() => null);
+    const parsed = contentDocumentCreateSchema.safeParse(body);
+    if (!parsed.success) {
       return apiError('Başlık ve kategori zorunludur.', 400, 'invalid_payload');
     }
+    const documentPayload = parsed.data.document;
 
     const persistedPayload = buildContentDocumentPersistPayload(documentPayload);
     const adminClient = createServiceRoleClient();
@@ -61,16 +59,16 @@ export async function POST(request: Request) {
 
     if (error) {
       log.error('Content document insert failed', error);
-      return apiError(error.message, 500, 'content_document_insert_failed');
+      return apiError(
+        'İçerik kaydedilemedi.',
+        500,
+        'content_document_insert_failed',
+      );
     }
 
     return apiOk((data || null) as ContentDocument | null);
   } catch (error) {
     log.error('Content document route failed', error);
-    return apiError(
-      error instanceof Error ? error.message : 'Sunucu hatası oluştu.',
-      500,
-      'content_document_failed',
-    );
+    return apiError('Sunucu hatası oluştu.', 500, 'content_document_failed');
   }
 }

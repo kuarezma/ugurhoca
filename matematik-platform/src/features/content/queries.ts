@@ -246,10 +246,13 @@ export const resolveContentUser = async () => {
   const localUser = localStorage.getItem('matematiklab_user');
 
   if (localUser) {
-    const userData = JSON.parse(localUser) as ContentPageUser;
-
-    if (isAdminEmail(userData.email)) {
-      return { ...userData, isAdmin: true };
+    try {
+      const userData = JSON.parse(localUser) as ContentPageUser;
+      if (isAdminEmail(userData.email)) {
+        return { ...userData, isAdmin: true };
+      }
+    } catch {
+      localStorage.removeItem('matematiklab_user');
     }
   }
 

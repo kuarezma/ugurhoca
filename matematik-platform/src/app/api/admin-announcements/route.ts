@@ -10,6 +10,9 @@ import {
   createServerSupabaseClient,
   createServiceRoleClient,
 } from '@/lib/supabase/server';
+import { createLogger } from '@/lib/logger';
+
+const log = createLogger('admin-announcements');
 
 const getAccessToken = async (request: Request) => {
   const authHeader = request.headers.get('authorization');
@@ -69,6 +72,9 @@ const normalizeAnnouncementPayload = (
   ...(payload.title !== undefined ? { title: payload.title.trim() } : {}),
 });
 
+const isNotFoundError = (error: { code?: string | null; message?: string | null }) =>
+  error.code === 'PGRST116' || error.message?.toLowerCase().includes('no rows') === true;
+
 export async function POST(request: Request) {
   const auth = await requireAdmin(request);
 
@@ -95,7 +101,8 @@ export async function POST(request: Request) {
     .single();
 
   if (error) {
-    return apiError(error.message, 500, 'announcement_insert_failed');
+    log.error('Announcement insert failed', error);
+    return apiError('Duyuru kaydedilemedi.', 500, 'announcement_insert_failed');
   }
 
   if (parsed.data.recipient_user_ids.length > 0) {
@@ -111,8 +118,9 @@ export async function POST(request: Request) {
       );
 
     if (notificationError) {
+      log.error('Announcement notification insert failed', notificationError);
       return apiError(
-        notificationError.message,
+        'Duyuru bildirimi gönderilemedi.',
         500,
         'announcement_notification_failed',
       );
@@ -148,7 +156,11 @@ export async function PATCH(request: Request) {
     .single();
 
   if (error) {
-    return apiError(error.message, 500, 'announcement_update_failed');
+    if (isNotFoundError(error)) {
+      return apiError('Duyuru bulunamadı.', 404, 'announcement_not_found');
+    }
+    log.error('Announcement update failed', error);
+    return apiError('Duyuru güncellenemedi.', 500, 'announcement_update_failed');
   }
 
   return apiOk(data);
@@ -172,13 +184,19 @@ export async function DELETE(request: Request) {
     );
   }
 
-  const { error } = await auth.serviceRole
+  const { data, error } = await auth.serviceRole
     .from('announcements')
     .delete()
-    .eq('id', parsed.data.announcement_id);
+    .eq('id', parsed.data.announcement_id)
+    .select('id');
 
   if (error) {
-    return apiError(error.message, 500, 'announcement_delete_failed');
+    log.error('Announcement delete failed', error);
+    return apiError('Duyuru silinemedi.', 500, 'announcement_delete_failed');
+  }
+
+  if (!data || data.length === 0) {
+    return apiError('Duyuru bulunamadı.', 404, 'announcement_not_found');
   }
 
   return apiOk({ ok: true });

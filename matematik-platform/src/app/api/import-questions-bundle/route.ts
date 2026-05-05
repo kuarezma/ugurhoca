@@ -1,12 +1,66 @@
 import { apiError, apiOk } from '@/lib/api-response';
+import { isAdminEmail } from '@/lib/admin';
+import { getServerAccessToken } from '@/lib/auth-snapshot.server';
 import { parseQuizBundleArchive } from '@/lib/question-import';
 import { createLogger } from '@/lib/logger';
-import { createServiceRoleClient } from '@/lib/supabase/server';
+import { createServerSupabaseClient, createServiceRoleClient } from '@/lib/supabase/server';
 import { insertQuizBundleWithImages } from '@/features/quizzes/server/importQuiz';
+import { isIP } from 'node:net';
 
 const log = createLogger('import-questions-bundle');
+const BUNDLE_FETCH_TIMEOUT_MS = 8_000;
+const MAX_BUNDLE_BYTES = 20 * 1024 * 1024;
+const DEFAULT_BUNDLE_ALLOWED_HOSTS = [
+  'drive.google.com',
+  'docs.google.com',
+  '.googleusercontent.com',
+  'disk.yandex.com',
+  'yadi.sk',
+];
+
+const getAccessToken = async (request: Request) => {
+  const authHeader = request.headers.get('authorization');
+
+  if (!authHeader?.startsWith('Bearer ')) {
+    return (await getServerAccessToken()) ?? '';
+  }
+
+  return authHeader.slice(7).trim();
+};
+
+const requireAdmin = async (request: Request) => {
+  const accessToken = await getAccessToken(request);
+
+  if (!accessToken) {
+    return {
+      error: apiError('Oturum açmanız gerekiyor.', 401, 'missing_access_token'),
+    };
+  }
+
+  const supabase = createServerSupabaseClient(accessToken);
+  const {
+    data: { user },
+    error,
+  } = await supabase.auth.getUser(accessToken);
+
+  if (error || !user?.id) {
+    return { error: apiError('Oturum açmanız gerekiyor.', 401, 'invalid_session') };
+  }
+
+  if (!isAdminEmail(user.email)) {
+    return { error: apiError('Bu işlem için yetkiniz yok.', 403, 'not_admin') };
+  }
+
+  return { serviceRole: createServiceRoleClient() };
+};
 
 export async function POST(request: Request) {
+  const auth = await requireAdmin(request);
+
+  if ('error' in auth) {
+    return auth.error;
+  }
+
   try {
     const filePayload = await getBundlePayloadFromRequest(request);
     if (!filePayload) {
@@ -39,8 +93,7 @@ export async function POST(request: Request) {
       return apiOk({ importResult: archive.importResult });
     }
 
-    const supabase = createServiceRoleClient();
-    const result = await insertQuizBundleWithImages(supabase, archive);
+    const result = await insertQuizBundleWithImages(auth.serviceRole, archive);
 
     return apiOk(result);
   } catch (error) {
@@ -48,11 +101,7 @@ export async function POST(request: Request) {
     if (error instanceof Error && isBundleInputError(error.message)) {
       return apiError(error.message, 400, 'invalid_bundle_payload');
     }
-    return apiError(
-      error instanceof Error ? error.message : 'Sunucu hatası oluştu.',
-      500,
-      'quiz_bundle_import_failed',
-    );
+    return apiError('Bundle içe aktarımı sırasında sunucu hatası oluştu.', 500, 'quiz_bundle_import_failed');
   }
 }
 
@@ -124,9 +173,16 @@ const downloadBundleFromUrl = async (bundleUrl: string) => {
   if (!['http:', 'https:'].includes(parsed.protocol)) {
     throw new Error('bundle_url yalnızca http/https olabilir.');
   }
+  if (!isAllowedRemoteHost(parsed.hostname, getAllowedBundleHosts())) {
+    throw new Error('bundle_url hostu izinli değil.');
+  }
+  if (isPrivateOrLocalHost(parsed.hostname)) {
+    throw new Error('bundle_url yerel veya özel ağ adresi olamaz.');
+  }
 
   const response = await fetch(bundleUrl, {
     redirect: 'follow',
+    signal: AbortSignal.timeout(BUNDLE_FETCH_TIMEOUT_MS),
     headers: {
       'User-Agent': 'ugurhoca-bundle-import/1.0',
     },
@@ -135,8 +191,16 @@ const downloadBundleFromUrl = async (bundleUrl: string) => {
     throw new Error(`ZIP indirilemedi. HTTP ${response.status}`);
   }
 
+  const contentLength = Number(response.headers.get('content-length') ?? '0');
+  if (Number.isFinite(contentLength) && contentLength > MAX_BUNDLE_BYTES) {
+    throw new Error('ZIP dosyası çok büyük.');
+  }
+
   const contentType = response.headers.get('content-type')?.toLowerCase() || '';
   const bytes = new Uint8Array(await response.arrayBuffer());
+  if (bytes.byteLength > MAX_BUNDLE_BYTES) {
+    throw new Error('ZIP dosyası çok büyük.');
+  }
   const looksLikeZip =
     contentType.includes('zip') ||
     bundleUrl.toLowerCase().endsWith('.zip') ||
@@ -163,7 +227,55 @@ const isBundleInputError = (message: string) =>
   message.includes('4 şıklı') ||
   message.includes('geçerli JSON') ||
   message.includes('Görsel bulunamadı') ||
-  message.includes('Eksik görsel');
+  message.includes('Eksik görsel') ||
+  message.includes('izinli değil') ||
+  message.includes('özel ağ') ||
+  message.includes('çok büyük');
+
+const parseAllowlist = (raw: string | undefined) =>
+  (raw ?? '')
+    .split(',')
+    .map((value) => value.trim().toLowerCase())
+    .filter(Boolean);
+
+const getAllowedBundleHosts = () => {
+  const configured = parseAllowlist(process.env.BUNDLE_IMPORT_ALLOWED_HOSTS);
+  return configured.length > 0 ? configured : DEFAULT_BUNDLE_ALLOWED_HOSTS;
+};
+
+const isAllowedRemoteHost = (host: string, allowlist: string[]) => {
+  const lowerHost = host.toLowerCase();
+  return allowlist.some((entry) => {
+    const normalized = entry.trim().toLowerCase();
+    if (!normalized) return false;
+    if (normalized.startsWith('.')) {
+      return lowerHost.endsWith(normalized);
+    }
+    return lowerHost === normalized || lowerHost.endsWith(`.${normalized}`);
+  });
+};
+
+const isPrivateOrLocalHost = (host: string) => {
+  const lowerHost = host.toLowerCase();
+  if (lowerHost === 'localhost' || lowerHost.endsWith('.local')) {
+    return true;
+  }
+
+  const ipKind = isIP(lowerHost);
+  if (ipKind === 4) {
+    return (
+      lowerHost.startsWith('10.') ||
+      lowerHost.startsWith('127.') ||
+      lowerHost.startsWith('192.168.') ||
+      lowerHost.startsWith('169.254.') ||
+      /^172\.(1[6-9]|2\d|3[0-1])\./.test(lowerHost)
+    );
+  }
+  if (ipKind === 6) {
+    return lowerHost === '::1' || lowerHost.startsWith('fc') || lowerHost.startsWith('fd');
+  }
+  return false;
+};
 
 type BinaryFileLike = {
   arrayBuffer: () => Promise<ArrayBuffer>;

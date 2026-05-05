@@ -105,18 +105,18 @@ export function useAdminModalSubmitHandlers({
   const handleSubmit = async (event: FormEvent) => {
     event.preventDefault();
     setIsSubmitting(true);
+    try {
+      const imageUrls =
+        modalType === "announcement" || modalType === "editAnnouncement"
+          ? String(formData.image_urls || "")
+              .split("\n")
+              .map((url: string) => url.trim())
+              .filter(Boolean)
+          : [];
 
-    const imageUrls =
-      modalType === "announcement" || modalType === "editAnnouncement"
-        ? String(formData.image_urls || "")
-            .split("\n")
-            .map((url: string) => url.trim())
-            .filter(Boolean)
-        : [];
+      let completedSuccessfully = false;
 
-    let completedSuccessfully = false;
-
-    if (modalType === "assignment") {
+      if (modalType === "assignment") {
       const { data, error } = await createAdminAssignment({
         description: formData.description,
         due_date: formData.due_date,
@@ -341,15 +341,16 @@ export function useAdminModalSubmitHandlers({
             (payload.error?.message || "Bilinmeyen bir hata oluştu."),
         );
       }
+      }
+
+      if (!completedSuccessfully) {
+        return;
+      }
+
+      scheduleModalSuccessReset();
+    } finally {
+      setIsSubmitting(false);
     }
-
-    setIsSubmitting(false);
-
-    if (!completedSuccessfully) {
-      return;
-    }
-
-    scheduleModalSuccessReset();
   };
 
   const handleEditUserSubmit = async (event: FormEvent) => {

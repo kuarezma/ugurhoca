@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { isAdminEmail } from "@/lib/admin";
 import { createLogger } from "@/lib/logger";
+import { adminMessageSchema } from "@/lib/route-schemas";
 import {
   createServerSupabaseClient,
   createServiceRoleClient,
@@ -58,19 +59,18 @@ export async function POST(request: Request) {
     }
 
     const body = await request.json().catch(() => null);
-    const {
-      student_id,
-      student_name,
-      title,
-      message,
-      sender_id,
-      sender_name,
-      image_url,
-    } = body || {};
-
-    if (!student_id || (!message?.trim() && !title?.trim() && !image_url)) {
-      return NextResponse.json({ error: "Eksik alanlar." }, { status: 400 });
+    const parsed = adminMessageSchema.safeParse(body);
+    if (!parsed.success) {
+      return NextResponse.json(
+        {
+          error:
+            parsed.error.issues[0]?.message || "Geçersiz mesaj isteği.",
+        },
+        { status: 400 },
+      );
     }
+    const { student_id, student_name, title, message, sender_id, sender_name, image_url } =
+      parsed.data;
 
     const ip =
       request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ||
@@ -102,15 +102,7 @@ export async function POST(request: Request) {
 
     if (error) {
       log.error("Admin message insert error", error);
-      return NextResponse.json(
-        {
-          error:
-            "message" in error && typeof error.message === "string"
-              ? error.message
-              : "Mesaj gönderilemedi.",
-        },
-        { status: 500 },
-      );
+      return NextResponse.json({ error: "Mesaj gönderilemedi." }, { status: 500 });
     }
 
     try {

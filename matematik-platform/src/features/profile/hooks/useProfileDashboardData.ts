@@ -109,39 +109,44 @@ export const useProfileDashboardData = (
 
   useEffect(() => {
     const loadData = async () => {
-      const session = await requireClientSession({ router });
+      try {
+        setLoading(true);
+        const session = await requireClientSession({ router });
 
-      if (!session) {
-        return;
-      }
+        if (!session) {
+          return;
+        }
 
-      const nextUser = await resolveClientProfileUser(session);
-      setUser(nextUser);
+        const nextUser = await resolveClientProfileUser(session);
+        setUser(nextUser);
 
-      const currentUserKey = `${nextUser.id}:${String(nextUser.grade)}:${String(nextUser.isAdmin)}`;
+        const currentUserKey = `${nextUser.id}:${String(nextUser.grade)}:${String(nextUser.isAdmin)}`;
 
-      if (
-        (initialData?.isHydrated ?? false) &&
-        currentUserKey === initialUserKey
-      ) {
+        if (
+          (initialData?.isHydrated ?? false) &&
+          currentUserKey === initialUserKey
+        ) {
+          return;
+        }
+
+        const collections = await loadClientProfileDashboardCollections(nextUser);
+
+        setBadges(collections.badges);
+        setGoal(collections.goal);
+        setNotifications(sortNotificationsDesc(collections.notifications));
+        setSharedDocs(collections.sharedDocs);
+        setAssignments(collections.assignments);
+        setSubmissions(collections.submissions);
+        setQuizResults(collections.quizResults);
+        setAvailableQuizzes(collections.availableQuizzes);
+        setStudySessions(collections.studySessions);
+        setProgressRows(collections.progressRows);
+        setWeeklyPlans(collections.weeklyPlans);
+      } catch {
+        // Keep previous dashboard state and stop spinner on transient failures.
+      } finally {
         setLoading(false);
-        return;
       }
-
-      const collections = await loadClientProfileDashboardCollections(nextUser);
-
-      setBadges(collections.badges);
-      setGoal(collections.goal);
-      setNotifications(sortNotificationsDesc(collections.notifications));
-      setSharedDocs(collections.sharedDocs);
-      setAssignments(collections.assignments);
-      setSubmissions(collections.submissions);
-      setQuizResults(collections.quizResults);
-      setAvailableQuizzes(collections.availableQuizzes);
-      setStudySessions(collections.studySessions);
-      setProgressRows(collections.progressRows);
-      setWeeklyPlans(collections.weeklyPlans);
-      setLoading(false);
     };
 
     loadData();

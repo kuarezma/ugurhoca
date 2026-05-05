@@ -1,4 +1,9 @@
-import { quizImportSchema, supportMessageSchema } from '@/lib/route-schemas';
+import {
+  adminMessageSchema,
+  contentDocumentCreateSchema,
+  quizImportSchema,
+  supportMessageSchema,
+} from '@/lib/route-schemas';
 
 describe('route-schemas', () => {
   it('rejects an empty support message without attachments', () => {
@@ -53,5 +58,27 @@ describe('route-schemas', () => {
     });
 
     expect(parsed.success).toBe(true);
+  });
+
+  it('rejects admin message payload without text/title/image', () => {
+    const parsed = adminMessageSchema.safeParse({
+      message: '',
+      student_id: 'student-1',
+      title: '',
+    });
+
+    expect(parsed.success).toBe(false);
+    expect(parsed.error?.issues[0]?.message).toBe('Mesaj, başlık veya görsel zorunludur.');
+  });
+
+  it('rejects content document payload without required fields', () => {
+    const parsed = contentDocumentCreateSchema.safeParse({
+      document: {
+        title: '',
+        type: '',
+      },
+    });
+
+    expect(parsed.success).toBe(false);
   });
 });
