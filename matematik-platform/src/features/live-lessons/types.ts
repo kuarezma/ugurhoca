@@ -51,7 +51,7 @@ export type LiveLessonChatMessage = {
   created_at: string;
 };
 
-export type LiveLessonAudienceGrade = Extract<GradeValue, number> | 'Mezun';
+export type LiveLessonAudienceGrade = Extract<GradeValue, number> | 'Mezun' | 'all';
 
 export type LiveLessonDashboardData = {
   lessons: LiveLesson[];

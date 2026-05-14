@@ -72,7 +72,11 @@ export default function AdminLiveLessonsTab({ data, onRefresh }: Props) {
                   <div>
                     <h3 className="text-lg font-bold">{lesson.title}</h3>
                     <p className="mt-1 text-sm text-slate-400">
-                      {formatDate(lesson.starts_at)} · {lesson.target_grade}. sınıf ·{" "}
+                      {formatDate(lesson.starts_at)} ·{" "}
+                      {lesson.target_grade === "all"
+                        ? "Herkese açık"
+                        : `${lesson.target_grade}. sınıf`}{" "}
+                      ·{" "}
                       {lesson.duration_minutes} dk
                     </p>
                     {lesson.description ? (

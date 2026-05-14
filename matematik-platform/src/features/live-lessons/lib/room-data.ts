@@ -1,6 +1,13 @@
 import type { QuizMessage } from "@/features/live-lessons/lib/quiz-messages";
 import { isQuizMessage } from "@/features/live-lessons/lib/quiz-messages";
 
+export type LiveLessonDisplaySettings = {
+  cameraPlacement: "side" | "overlay" | "hidden";
+  cameraSize: "small" | "medium" | "large";
+  panelWidth: "normal" | "wide";
+  screenFit: "contain" | "cover";
+};
+
 export type RoomDataMessage =
   | {
       kind: "raise_hand";
@@ -28,6 +35,11 @@ export type RoomDataMessage =
       targetIdentity: string;
       allowed: boolean;
       fromIdentity: string;
+    }
+  | {
+      kind: "display_settings";
+      fromIdentity: string;
+      settings: LiveLessonDisplaySettings;
     };
 
 export type DecodedDataPayload =
@@ -65,6 +77,22 @@ function isRoomDataMessage(value: unknown): value is RoomDataMessage {
       typeof v.targetIdentity === "string" &&
       typeof v.allowed === "boolean" &&
       typeof v.fromIdentity === "string"
+    );
+  }
+  if (k === "display_settings") {
+    const v = value as Record<string, unknown>;
+    const settings = v.settings as Record<string, unknown> | undefined;
+    return (
+      typeof v.fromIdentity === "string" &&
+      !!settings &&
+      (settings.cameraPlacement === "side" ||
+        settings.cameraPlacement === "overlay" ||
+        settings.cameraPlacement === "hidden") &&
+      (settings.cameraSize === "small" ||
+        settings.cameraSize === "medium" ||
+        settings.cameraSize === "large") &&
+      (settings.panelWidth === "normal" || settings.panelWidth === "wide") &&
+      (settings.screenFit === "contain" || settings.screenFit === "cover")
     );
   }
   return false;

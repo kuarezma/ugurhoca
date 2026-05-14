@@ -1,8 +1,10 @@
 "use client";
 
 import { LiveKitRoom, RoomAudioRenderer } from "@livekit/components-react";
-import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { DisplaySettingsBridge } from "@/features/live-lessons/components/room/DisplaySettingsBridge";
+import { DisplaySettingsPanel } from "@/features/live-lessons/components/room/DisplaySettingsPanel";
 import { QuizPanel } from "@/features/live-lessons/components/quiz/QuizPanel";
 import { LiveLessonChatPanel } from "@/features/live-lessons/components/room/LiveLessonChatPanel";
 import { RemoteScreenShareView } from "@/features/live-lessons/components/room/RemoteScreenShareView";
@@ -10,10 +12,18 @@ import { StudentEngagementBar } from "@/features/live-lessons/components/room/St
 import { TeacherCameraView } from "@/features/live-lessons/components/room/TeacherCameraView";
 import { TeacherModerationPanel } from "@/features/live-lessons/components/room/TeacherModerationPanel";
 import { TeacherToolbar } from "@/features/live-lessons/components/room/TeacherToolbar";
+import type { LiveLessonDisplaySettings } from "@/features/live-lessons/lib/room-data";
 import type { LiveLesson, LiveLessonRole } from "@/features/live-lessons/types";
 
 const requireStudentApproval =
-  process.env.NEXT_PUBLIC_REQUIRE_STUDENT_APPROVAL === "true";
+  process.env.NEXT_PUBLIC_REQUIRE_STUDENT_APPROVAL !== "false";
+
+const defaultDisplaySettings: LiveLessonDisplaySettings = {
+  cameraPlacement: "side",
+  cameraSize: "medium",
+  panelWidth: "normal",
+  screenFit: "contain",
+};
 
 function newIdentity(userId: string, role: LiveLessonRole): string {
   const prefix = role === "teacher" ? "teacher" : "student";
@@ -36,6 +46,7 @@ export function RoomExperience({
   userId,
 }: Props) {
   const roomId = lesson.room_id;
+  const router = useRouter();
   const [identity] = useState(() => newIdentity(userId, role));
   const [token, setToken] = useState<string | null>(null);
   const [persistToken, setPersistToken] = useState<string | null>(null);
@@ -46,6 +57,8 @@ export function RoomExperience({
   const [lessonUnlocked, setLessonUnlocked] = useState(
     () => role === "teacher" || !requireStudentApproval,
   );
+  const [displaySettings, setDisplaySettings] = useState(defaultDisplaySettings);
+  const [leaving, setLeaving] = useState(false);
   const copyTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const serverUrl = process.env.NEXT_PUBLIC_LIVEKIT_URL;
 
@@ -121,6 +134,26 @@ export function RoomExperience({
     });
   }, [studentShareUrl]);
 
+  const leaveLesson = useCallback(async () => {
+    setLeaving(true);
+    try {
+      await fetch(`/api/live-lessons/${lesson.id}/leave`, {
+        credentials: "same-origin",
+        method: "POST",
+      });
+    } finally {
+      router.push("/canli-ders");
+    }
+  }, [lesson.id, router]);
+
+  const overlayCameraSize =
+    displaySettings.cameraSize === "large"
+      ? "w-80 max-w-[42vw]"
+      : displaySettings.cameraSize === "small"
+        ? "w-36 max-w-[34vw]"
+        : "w-56 max-w-[38vw]";
+  const sidePanelWidth = displaySettings.panelWidth === "wide" ? "lg:w-[30rem]" : "lg:w-96";
+
   if (!token) {
     return (
       <div className="flex min-h-screen flex-col items-center justify-center bg-slate-950 px-4 py-8 text-white">
@@ -169,9 +202,13 @@ export function RoomExperience({
             </div>
           ) : null}
 
-          <Link href="/canli-ders" className="block text-center text-sm text-violet-200 underline">
+          <button
+            type="button"
+            onClick={() => router.push("/canli-ders")}
+            className="block w-full text-center text-sm text-violet-200 underline"
+          >
             Canlı derslere dön
-          </Link>
+          </button>
         </div>
       </div>
     );
@@ -193,7 +230,13 @@ export function RoomExperience({
       }}
       onError={(event) => setRoomError(event.message)}
     >
-      <RoomAudioRenderer />
+      {(role === "teacher" || lessonUnlocked) && <RoomAudioRenderer />}
+      <DisplaySettingsBridge
+        identity={identity}
+        onSettingsChange={setDisplaySettings}
+        role={role}
+        settings={displaySettings}
+      />
       {roomError ? (
         <div
           className="flex shrink-0 items-center justify-between gap-2 border-b border-red-500/30 bg-red-500/10 px-3 py-2 text-sm text-red-200"
@@ -230,12 +273,14 @@ export function RoomExperience({
               <TeacherToolbar />
             </>
           ) : null}
-          <Link
-            href="/canli-ders"
+          <button
+            type="button"
+            onClick={() => void leaveLesson()}
+            disabled={leaving}
             className="rounded-lg border border-border px-3 py-1.5 text-xs font-medium hover:bg-white/5"
           >
-            Çık
-          </Link>
+            {leaving ? "Çıkılıyor" : "Dersten çık"}
+          </button>
         </div>
       </header>
 
@@ -254,10 +299,31 @@ export function RoomExperience({
               : ""
           }`}
         >
-          <RemoteScreenShareView role={role} />
+          <div className="relative flex min-h-0 flex-1">
+            <RemoteScreenShareView fit={displaySettings.screenFit} role={role} />
+            {displaySettings.cameraPlacement === "overlay" && (
+              <div className={`absolute right-3 top-3 z-10 ${overlayCameraSize}`}>
+                <TeacherCameraView
+                  cameraSize={displaySettings.cameraSize}
+                  role={role}
+                />
+              </div>
+            )}
+          </div>
         </div>
-        <aside className="flex min-h-0 w-full min-w-0 flex-col gap-2 lg:w-96 lg:shrink-0">
-          <TeacherCameraView role={role} />
+        <aside className={`flex min-h-0 w-full min-w-0 flex-col gap-2 ${sidePanelWidth} lg:shrink-0`}>
+          {role === "teacher" ? (
+            <DisplaySettingsPanel
+              settings={displaySettings}
+              onChange={setDisplaySettings}
+            />
+          ) : null}
+          {displaySettings.cameraPlacement === "side" ? (
+            <TeacherCameraView
+              cameraSize={displaySettings.cameraSize}
+              role={role}
+            />
+          ) : null}
           {role === "teacher" ? (
             <TeacherModerationPanel
               teacherIdentity={identity}

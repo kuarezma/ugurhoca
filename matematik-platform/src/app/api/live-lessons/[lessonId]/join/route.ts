@@ -27,7 +27,11 @@ export async function POST(_request: Request, context: RouteContext) {
   if (lesson.status === 'cancelled' || lesson.status === 'ended') {
     return NextResponse.json({ error: 'Bu ders artık aktif değil.' }, { status: 409 });
   }
-  if (role === 'student' && String(auth.user.grade) !== String(lesson.target_grade)) {
+  if (
+    role === 'student' &&
+    lesson.target_grade !== 'all' &&
+    String(auth.user.grade) !== String(lesson.target_grade)
+  ) {
     return NextResponse.json({ error: 'Bu ders sizin sınıfınıza açık değil.' }, { status: 403 });
   }
 

@@ -29,7 +29,7 @@ export default async function CanliDersRoomPage({ params }: Props) {
 
   const lesson = data as LiveLesson;
   const isAdmin = isLiveLessonAdmin(user);
-  if (!isAdmin && String(user.grade) !== String(lesson.target_grade)) {
+  if (!isAdmin && lesson.target_grade !== 'all' && String(user.grade) !== String(lesson.target_grade)) {
     redirect('/canli-ders');
   }
 

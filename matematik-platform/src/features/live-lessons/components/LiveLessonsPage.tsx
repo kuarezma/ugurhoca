@@ -10,7 +10,14 @@ type Props = {
   user: AuthSnapshot;
 };
 
-const gradeOptions = ["5", "6", "7", "8", "Mezun"];
+const gradeOptions = [
+  { label: "5. sınıf", value: "5" },
+  { label: "6. sınıf", value: "6" },
+  { label: "7. sınıf", value: "7" },
+  { label: "8. sınıf", value: "8" },
+  { label: "Mezun", value: "Mezun" },
+  { label: "Herkese açık", value: "all" },
+];
 
 function formatDate(value: string) {
   return new Intl.DateTimeFormat("tr-TR", {
@@ -77,6 +84,23 @@ export function LiveLessonsPage({ initialLessons, user }: Props) {
     }
   };
 
+  const cancelLesson = async (lesson: LiveLesson) => {
+    const response = await fetch(`/api/live-lessons/${lesson.id}/end`, {
+      body: JSON.stringify({ status: "cancelled" }),
+      credentials: "same-origin",
+      headers: { "Content-Type": "application/json" },
+      method: "POST",
+    });
+    const payload = (await response.json().catch(() => null)) as {
+      lesson?: LiveLesson;
+    } | null;
+    if (response.ok && payload?.lesson) {
+      setLessons((current) =>
+        current.map((item) => (item.id === lesson.id ? payload.lesson! : item)),
+      );
+    }
+  };
+
   return (
     <main className="min-h-screen bg-slate-950 px-4 py-8 text-white sm:px-6">
       <div className="mx-auto flex max-w-6xl flex-col gap-6">
@@ -112,8 +136,8 @@ export function LiveLessonsPage({ initialLessons, user }: Props) {
                   className="min-h-11 w-full rounded-xl border border-white/10 bg-slate-950 px-3 outline-none focus:ring-2 focus:ring-brand-primary"
                 >
                   {gradeOptions.map((grade) => (
-                    <option key={grade} value={grade}>
-                      {grade}
+                    <option key={grade.value} value={grade.value}>
+                      {grade.label}
                     </option>
                   ))}
                 </select>
@@ -174,7 +198,10 @@ export function LiveLessonsPage({ initialLessons, user }: Props) {
                   <div>
                     <h2 className="text-lg font-bold">{lesson.title}</h2>
                     <p className="mt-1 text-sm text-slate-400">
-                      {formatDate(lesson.starts_at)} · {lesson.duration_minutes} dk
+                      {formatDate(lesson.starts_at)} · {lesson.duration_minutes} dk ·{" "}
+                      {lesson.target_grade === "all"
+                        ? "Herkese açık"
+                        : `${lesson.target_grade}. sınıf`}
                     </p>
                   </div>
                   <span className="rounded-full bg-white/10 px-3 py-1 text-xs font-semibold">
@@ -184,12 +211,23 @@ export function LiveLessonsPage({ initialLessons, user }: Props) {
                 {lesson.description ? (
                   <p className="mt-3 text-sm text-slate-300">{lesson.description}</p>
                 ) : null}
-                <Link
-                  href={`/canli-ders/d/${lesson.room_id}`}
-                  className="mt-4 inline-flex min-h-11 items-center rounded-xl bg-brand-primary px-4 text-sm font-semibold text-white hover:bg-brand-primary-deep"
-                >
-                  Derse katıl
-                </Link>
+                <div className="mt-4 flex flex-wrap gap-2">
+                  <Link
+                    href={`/canli-ders/d/${lesson.room_id}`}
+                    className="inline-flex min-h-11 items-center rounded-xl bg-brand-primary px-4 text-sm font-semibold text-white hover:bg-brand-primary-deep"
+                  >
+                    Derse katıl
+                  </Link>
+                  {user.isAdmin && lesson.status !== "cancelled" && lesson.status !== "ended" ? (
+                    <button
+                      type="button"
+                      onClick={() => void cancelLesson(lesson)}
+                      className="min-h-11 rounded-xl border border-red-400/40 px-4 text-sm font-semibold text-red-200 hover:bg-red-500/10"
+                    >
+                      Dersi iptal et
+                    </button>
+                  ) : null}
+                </div>
               </article>
             ))
           )}

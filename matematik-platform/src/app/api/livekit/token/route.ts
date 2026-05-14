@@ -62,7 +62,11 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Öğretmen yetkisi doğrulanamadı.' }, { status: 403 });
     }
   }
-  if (body.role === 'student' && String(auth.user.grade) !== String(lesson.target_grade)) {
+  if (
+    body.role === 'student' &&
+    lesson.target_grade !== 'all' &&
+    String(auth.user.grade) !== String(lesson.target_grade)
+  ) {
     return NextResponse.json({ error: 'Bu ders sizin sınıfınıza açık değil.' }, { status: 403 });
   }
 

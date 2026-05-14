@@ -4,10 +4,13 @@ import { VideoTrack, useTracks } from "@livekit/components-react";
 import { Track } from "livekit-client";
 
 export function RemoteScreenShareView({
+  fit = "contain",
   role,
 }: {
+  fit?: "contain" | "cover";
   role: "teacher" | "student";
 }) {
+  const fitClass = fit === "cover" ? "h-full w-full object-cover" : "max-h-full max-w-full object-contain";
   const remoteScreen = useTracks(
     [{ source: Track.Source.ScreenShare, withPlaceholder: false }],
     { onlySubscribed: true },
@@ -37,7 +40,7 @@ export function RemoteScreenShareView({
     }
     return (
       <div className="relative flex flex-1 items-center justify-center">
-        <VideoTrack trackRef={ref} className="max-h-full max-w-full object-contain" />
+        <VideoTrack trackRef={ref} className={fitClass} />
       </div>
     );
   }
@@ -53,7 +56,7 @@ export function RemoteScreenShareView({
 
   return (
     <div className="relative flex flex-1 items-center justify-center">
-      <VideoTrack trackRef={ref} className="max-h-full max-w-full object-contain" />
+      <VideoTrack trackRef={ref} className={fitClass} />
     </div>
   );
 }

@@ -57,7 +57,7 @@ export async function loadLiveLessonsForCurrentUser(): Promise<LiveLesson[]> {
 
   const { data } = isLiveLessonAdmin(snapshot)
     ? await query
-    : await query.eq('target_grade', String(snapshot.grade));
+    : await query.or(`target_grade.eq.${snapshot.grade},target_grade.eq.all`);
 
   return (data || []) as LiveLesson[];
 }
@@ -107,10 +107,11 @@ async function notifyGrade({
   title: string;
 }) {
   const supabase = createServiceRoleClient();
-  const { data: students } = await supabase
-    .from('profiles')
-    .select('id')
-    .eq('grade', Number.isFinite(Number(grade)) ? Number(grade) : grade);
+  const studentsQuery = supabase.from('profiles').select('id');
+  const { data: students } =
+    grade === 'all'
+      ? await studentsQuery
+      : await studentsQuery.eq('grade', Number.isFinite(Number(grade)) ? Number(grade) : grade);
 
   const rows = (students || [])
     .filter((student: { id?: string | null }) => student.id)
@@ -151,7 +152,7 @@ export async function createLiveLesson(input: {
   if (!Number.isFinite(startsAt.getTime())) {
     throw new Error('Geçerli bir tarih ve saat seçin.');
   }
-  if (!['5', '6', '7', '8', 'Mezun'].includes(input.targetGrade)) {
+  if (!['5', '6', '7', '8', 'Mezun', 'all'].includes(input.targetGrade)) {
     throw new Error('Geçerli bir sınıf seçin.');
   }
 
