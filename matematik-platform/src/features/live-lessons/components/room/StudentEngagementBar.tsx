@@ -12,6 +12,7 @@ import {
 type Props = {
   identity: string;
   displayName: string;
+  lessonId: string;
   requireStudentApproval: boolean;
   onLessonUnlocked: () => void;
 };
@@ -19,6 +20,7 @@ type Props = {
 export function StudentEngagementBar({
   identity,
   displayName,
+  lessonId,
   requireStudentApproval,
   onLessonUnlocked,
 }: Props) {
@@ -29,13 +31,29 @@ export function StudentEngagementBar({
   const [raised, setRaised] = useState(false);
   const [micAllowed, setMicAllowed] = useState(false);
   const [micEnabled, setMicEnabled] = useState(false);
+  const [approvalResolved, setApprovalResolved] = useState(!requireStudentApproval);
+
+  const unlockAfterApproval = useCallback(() => {
+    setApprovalResolved(true);
+    onLessonUnlocked();
+  }, [onLessonUnlocked]);
+
+  const checkApprovalStatus = useCallback(async () => {
+    const response = await fetch(
+      `/api/live-lessons/${lessonId}/approval?identity=${encodeURIComponent(identity)}`,
+      { credentials: "same-origin" },
+    );
+    if (!response.ok) return;
+    const payload = (await response.json().catch(() => null)) as { approved?: boolean } | null;
+    if (payload?.approved) unlockAfterApproval();
+  }, [identity, lessonId, unlockAfterApproval]);
 
   useEffect(() => {
     if (requireStudentApproval) return;
     if (skipApprovalUnlockRef.current) return;
     skipApprovalUnlockRef.current = true;
-    onLessonUnlocked();
-  }, [onLessonUnlocked, requireStudentApproval]);
+    unlockAfterApproval();
+  }, [requireStudentApproval, unlockAfterApproval]);
 
   useEffect(() => {
     if (!requireStudentApproval) return;
@@ -63,14 +81,23 @@ export function StudentEngagementBar({
       if (msg.targetIdentity !== identity) return;
       if (!participant || participant.isLocal) return;
       if (msg.fromIdentity !== participant.identity) return;
-      onLessonUnlocked();
+      unlockAfterApproval();
     };
 
     room.on(RoomEvent.DataReceived, onData);
     return () => {
       room.off(RoomEvent.DataReceived, onData);
     };
-  }, [identity, onLessonUnlocked, requireStudentApproval, room]);
+  }, [identity, requireStudentApproval, room, unlockAfterApproval]);
+
+  useEffect(() => {
+    if (!requireStudentApproval || approvalResolved) return;
+    void checkApprovalStatus();
+    const interval = window.setInterval(() => {
+      void checkApprovalStatus();
+    }, 2000);
+    return () => window.clearInterval(interval);
+  }, [approvalResolved, checkApprovalStatus, requireStudentApproval]);
 
   useEffect(() => {
     if (!requireStudentApproval) return;

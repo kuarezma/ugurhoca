@@ -327,6 +327,7 @@ export function RoomExperience({
           {role === "teacher" ? (
             <TeacherModerationPanel
               teacherIdentity={identity}
+              lessonId={lesson.id}
               requireStudentApproval={requireStudentApproval}
             />
           ) : null}
@@ -348,6 +349,7 @@ export function RoomExperience({
           identity={identity}
           displayName={displayName.trim()}
           requireStudentApproval={requireStudentApproval}
+          lessonId={lesson.id}
           onLessonUnlocked={unlockLesson}
         />
       ) : null}

@@ -15,6 +15,7 @@ import {
 } from "@/features/live-lessons/lib/room-data";
 
 type Props = {
+  lessonId: string;
   teacherIdentity: string;
   requireStudentApproval: boolean;
 };
@@ -25,6 +26,7 @@ function displayLabel(p: { name?: string; identity: string }): string {
 }
 
 export function TeacherModerationPanel({
+  lessonId,
   teacherIdentity,
   requireStudentApproval,
 }: Props) {
@@ -38,6 +40,7 @@ export function TeacherModerationPanel({
   const [raisedHands, setRaisedHands] = useState<
     Record<string, { displayName: string }>
   >({});
+  const [error, setError] = useState<string | null>(null);
 
   const publishRoom = useCallback(
     async (msg: RoomDataMessage, destinationIdentities?: string[]) => {
@@ -89,6 +92,18 @@ export function TeacherModerationPanel({
 
   const approveJoin = useCallback(
     async (targetIdentity: string) => {
+      setError(null);
+      const response = await fetch(`/api/live-lessons/${lessonId}/approval`, {
+        body: JSON.stringify({ targetIdentity }),
+        credentials: "same-origin",
+        headers: { "Content-Type": "application/json" },
+        method: "POST",
+      });
+      if (!response.ok) {
+        const payload = (await response.json().catch(() => null)) as { error?: string } | null;
+        setError(payload?.error ?? "Öğrenci onaylanamadı.");
+        return;
+      }
       setPendingJoins((prev) => {
         const next = { ...prev };
         delete next[targetIdentity];
@@ -100,10 +115,9 @@ export function TeacherModerationPanel({
           targetIdentity,
           fromIdentity: teacherIdentity,
         },
-        [targetIdentity],
       );
     },
-    [publishRoom, teacherIdentity],
+    [lessonId, publishRoom, teacherIdentity],
   );
 
   const lowerHand = useCallback(
@@ -174,6 +188,11 @@ export function TeacherModerationPanel({
   return (
     <div className="flex w-full shrink-0 flex-col gap-3 rounded-xl border border-border bg-card p-4 md:max-h-[38vh] md:overflow-y-auto md:w-80">
       <h2 className="text-sm font-semibold">Katılımcılar</h2>
+      {error ? (
+        <p className="rounded-lg bg-red-500/10 px-2 py-1 text-xs text-red-600 dark:text-red-300">
+          {error}
+        </p>
+      ) : null}
       <ul className="space-y-1 text-xs text-foreground/85">
         {rows.map((r) => (
           <li key={r.identity} className="flex items-center justify-between gap-2">
