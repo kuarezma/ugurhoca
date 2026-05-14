@@ -11,6 +11,7 @@ import {
   GraduationCap,
   Home,
   LogIn,
+  MonitorPlay,
   Search,
   Sparkles,
   User,
@@ -100,6 +101,14 @@ export default function CommandPalette() {
         keywords: ['oyun', 'game', 'eglence', 'puzzle'],
         icon: Gamepad2,
         action: () => router.push('/oyunlar'),
+      },
+      {
+        id: 'live-lessons',
+        label: 'Canlı Ders',
+        hint: 'Planlanan ve aktif dersler',
+        keywords: ['canli', 'ders', 'zoom', 'online', 'uzaktan'],
+        icon: MonitorPlay,
+        action: () => router.push('/canli-ders'),
       },
       {
         id: 'login',

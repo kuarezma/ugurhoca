@@ -5,6 +5,7 @@ import {
   ClipboardList,
   FileText,
   Gamepad2,
+  MonitorPlay,
   Video,
 } from 'lucide-react';
 
@@ -88,6 +89,15 @@ export const HOME_CATEGORIES: HomeCategory[] = [
     icon: Gamepad2,
     id: 'oyunlar',
     title: 'Oyunlar',
+  },
+  {
+    bgColor: 'bg-sky-500/10',
+    borderColor: 'border-sky-500/30',
+    color: 'from-sky-500 to-indigo-500',
+    href: '/canli-ders',
+    icon: MonitorPlay,
+    id: 'canli-ders',
+    title: 'Canlı Ders',
   },
   {
     bgColor: 'bg-pink-500/10',

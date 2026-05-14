@@ -1,0 +1,8 @@
+{
+  "crons": [
+    {
+      "path": "/api/cron/live-lesson-reminders",
+      "schedule": "0 6 * * *"
+    }
+  ]
+}

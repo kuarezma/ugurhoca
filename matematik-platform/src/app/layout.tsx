@@ -6,6 +6,7 @@ import InstallPrompt from "@/components/InstallPrompt";
 import { Providers } from "@/components/Providers";
 import { THEME_STORAGE_KEY } from "@/components/theme-constants";
 import { SITE_URL, SITE_NAME } from "@/lib/site-metadata";
+import "@livekit/components-styles";
 import "katex/dist/katex.min.css";
 import "./globals.css";
 

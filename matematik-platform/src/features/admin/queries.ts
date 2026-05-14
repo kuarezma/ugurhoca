@@ -147,6 +147,10 @@ export const loadAdminDashboardData = async (
     adminStatusesRes,
     weeklyPlansRes,
     activityEventsRes,
+    liveLessonsRes,
+    liveLessonParticipantsRes,
+    liveLessonEventsRes,
+    liveLessonChatRes,
   ] = await Promise.all([
     supabase.from('announcements').select('*').order('created_at', { ascending: false }),
     supabase.from('documents').select('*').order('created_at', { ascending: false }),
@@ -185,6 +189,26 @@ export const loadAdminDashboardData = async (
       .select('*')
       .order('created_at', { ascending: false })
       .limit(1000),
+    supabase
+      .from('live_lessons')
+      .select('*')
+      .order('starts_at', { ascending: false })
+      .limit(100),
+    supabase
+      .from('live_lesson_participants')
+      .select('*')
+      .order('joined_at', { ascending: false })
+      .limit(1000),
+    supabase
+      .from('live_lesson_events')
+      .select('*')
+      .order('created_at', { ascending: false })
+      .limit(1000),
+    supabase
+      .from('live_lesson_chat_messages')
+      .select('*')
+      .order('created_at', { ascending: false })
+      .limit(1000),
   ]);
 
   return {
@@ -206,6 +230,12 @@ export const loadAdminDashboardData = async (
     studySessions: (studySessionsRes.data || []) as AdminStudySessionRow[],
     submissions: (submissionsRes.data || []) as AdminSubmission[],
     weeklyPlans: (weeklyPlansRes.data || []) as StudentWeeklyPlan[],
+    liveLessons: {
+      chatMessages: liveLessonChatRes.data || [],
+      events: liveLessonEventsRes.data || [],
+      lessons: liveLessonsRes.data || [],
+      participants: liveLessonParticipantsRes.data || [],
+    },
   };
 };
 

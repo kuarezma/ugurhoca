@@ -24,6 +24,7 @@ import type {
   StudyGoal,
   StudySession,
 } from '@/features/progress/types';
+import type { LiveLessonDashboardData } from '@/features/live-lessons/types';
 
 export type AdminActiveTab =
   | 'statistics'
@@ -33,7 +34,8 @@ export type AdminActiveTab =
   | 'users'
   | 'gradeUpdate'
   | 'assignments'
-  | 'quizzes';
+  | 'quizzes'
+  | 'liveLessons';
 
 export type AdminModalType =
   | 'announcement'
@@ -158,6 +160,7 @@ export type AdminDashboardData = {
   studySessions: AdminStudySessionRow[];
   submissions: AdminSubmission[];
   weeklyPlans: StudentWeeklyPlan[];
+  liveLessons: LiveLessonDashboardData;
 };
 
 export type ModerationPayload = {

@@ -19,6 +19,7 @@ import {
   ClipboardList,
   BarChart3,
   Activity,
+  Video,
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { signOutClient } from '@/lib/auth-client';
@@ -61,6 +62,7 @@ import type {
   StudentAdminStatus,
   StudentWeeklyPlan,
 } from '@/features/admin/types';
+import type { LiveLessonDashboardData } from '@/features/live-lessons/types';
 
 const ChatBubbleLoader = dynamic(
   () =>
@@ -141,6 +143,12 @@ export default function AdminPage() {
   const [activityEvents, setActivityEvents] = useState<StudentActivityEvent[]>(
     [],
   );
+  const [liveLessons, setLiveLessons] = useState<LiveLessonDashboardData>({
+    chatMessages: [],
+    events: [],
+    lessons: [],
+    participants: [],
+  });
   const [activeStudentProfileId, setActiveStudentProfileId] = useState<string | null>(null);
   const [activeStudentProfileData, setActiveStudentProfileData] =
     useState<AdminStudentProfileData | null>(null);
@@ -263,6 +271,7 @@ export default function AdminPage() {
     setDashboardStudySessions(data.studySessions);
     setDashboardStudyGoals(data.studyGoals);
     setActivityEvents(data.activityEvents);
+    setLiveLessons(data.liveLessons);
   }, []);
 
   const loadData = useCallback(
@@ -731,6 +740,13 @@ export default function AdminPage() {
                   icon: CheckCircle2,
                   color: 'from-violet-500 to-purple-500',
                 },
+                {
+                  id: 'liveLessons',
+                  label: 'Canlı Dersler',
+                  shortLabel: 'Canlı',
+                  icon: Video,
+                  color: 'from-sky-500 to-indigo-500',
+                },
               ].map((tab) => (
                 <button
                   key={tab.id}
@@ -758,7 +774,8 @@ export default function AdminPage() {
             activeTab !== 'users' &&
             activeTab !== 'gradeUpdate' &&
             activeTab !== 'assignments' &&
-            activeTab !== 'quizzes' && (
+            activeTab !== 'quizzes' &&
+            activeTab !== 'liveLessons' && (
               <div className="flex justify-stretch sm:justify-end mb-6">
                 <button
                   onClick={() =>
@@ -807,6 +824,7 @@ export default function AdminPage() {
             formatDate={formatDate}
             isSubmitting={isSubmitting}
             lastGradeUpdate={lastGradeUpdate}
+            liveLessons={liveLessons}
             notifications={notifications}
             onAddQuizQuestion={handleAddQuizQuestion}
             onCreateAnnouncement={() => openModal('announcement')}

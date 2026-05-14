@@ -219,6 +219,15 @@ export default function ProfilePage({ initialData }: ProfilePageProps) {
         return;
       }
 
+      if (notification.type === 'live-lesson') {
+        router.push(
+          typeof notification.metadata?.href === 'string'
+            ? notification.metadata.href
+            : '/canli-ders',
+        );
+        return;
+      }
+
       setSelectedMessage(notification);
     },
     [assignments, markAsRead, pendingAssignments, router, sharedDocs],

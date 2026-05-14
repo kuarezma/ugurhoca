@@ -1,0 +1,256 @@
+"use client";
+
+import {
+  useLocalParticipant,
+  useRemoteParticipants,
+  useRoomContext,
+} from "@livekit/components-react";
+import { RoomEvent, type Participant } from "livekit-client";
+import { useCallback, useEffect, useMemo, useState } from "react";
+
+import {
+  decodeDataPayload,
+  encodeRoomDataMessage,
+  type RoomDataMessage,
+} from "@/features/live-lessons/lib/room-data";
+
+type Props = {
+  teacherIdentity: string;
+  requireStudentApproval: boolean;
+};
+
+function displayLabel(p: { name?: string; identity: string }): string {
+  const n = p.name?.trim();
+  return n || p.identity.slice(0, 8);
+}
+
+export function TeacherModerationPanel({
+  teacherIdentity,
+  requireStudentApproval,
+}: Props) {
+  const room = useRoomContext();
+  const remotes = useRemoteParticipants();
+  const { localParticipant } = useLocalParticipant();
+
+  const [pendingJoins, setPendingJoins] = useState<
+    Record<string, { displayName: string }>
+  >({});
+  const [raisedHands, setRaisedHands] = useState<
+    Record<string, { displayName: string }>
+  >({});
+
+  const publishRoom = useCallback(
+    async (msg: RoomDataMessage, destinationIdentities?: string[]) => {
+      await localParticipant.publishData(encodeRoomDataMessage(msg), {
+        reliable: true,
+        destinationIdentities,
+      });
+    },
+    [localParticipant],
+  );
+
+  useEffect(() => {
+    const onData = (payload: Uint8Array, participant?: Participant) => {
+      const decoded = decodeDataPayload(payload);
+      if (!decoded || decoded.channel !== "room") return;
+      const msg = decoded.message;
+      const sender = participant?.identity;
+
+      if (msg.kind === "join_request") {
+        if (!requireStudentApproval) return;
+        if (!sender || sender !== msg.fromIdentity) return;
+        setPendingJoins((prev) => ({
+          ...prev,
+          [msg.fromIdentity]: { displayName: msg.displayName },
+        }));
+        return;
+      }
+
+      if (msg.kind === "raise_hand") {
+        if (!sender || sender !== msg.fromIdentity) return;
+        setRaisedHands((prev) => {
+          const next = { ...prev };
+          if (msg.raised) {
+            next[msg.fromIdentity] = { displayName: msg.displayName };
+          } else {
+            delete next[msg.fromIdentity];
+          }
+          return next;
+        });
+        return;
+      }
+    };
+
+    room.on(RoomEvent.DataReceived, onData);
+    return () => {
+      room.off(RoomEvent.DataReceived, onData);
+    };
+  }, [requireStudentApproval, room]);
+
+  const approveJoin = useCallback(
+    async (targetIdentity: string) => {
+      setPendingJoins((prev) => {
+        const next = { ...prev };
+        delete next[targetIdentity];
+        return next;
+      });
+      await publishRoom(
+        {
+          kind: "join_approved",
+          targetIdentity,
+          fromIdentity: teacherIdentity,
+        },
+        [targetIdentity],
+      );
+    },
+    [publishRoom, teacherIdentity],
+  );
+
+  const lowerHand = useCallback(
+    async (forIdentity: string) => {
+      setRaisedHands((prev) => {
+        const next = { ...prev };
+        delete next[forIdentity];
+        return next;
+      });
+      await publishRoom(
+        {
+          kind: "lower_hand",
+          forIdentity,
+          fromIdentity: teacherIdentity,
+        },
+        [forIdentity],
+      );
+    },
+    [publishRoom, teacherIdentity],
+  );
+
+  const setMicrophonePermission = useCallback(
+    async (targetIdentity: string, allowed: boolean) => {
+      await publishRoom(
+        {
+          allowed,
+          fromIdentity: teacherIdentity,
+          kind: "microphone_permission",
+          targetIdentity,
+        },
+        [targetIdentity],
+      );
+    },
+    [publishRoom, teacherIdentity],
+  );
+
+  const rows = useMemo(() => {
+    const out: {
+      identity: string;
+      label: string;
+      self: boolean;
+    }[] = [
+      {
+        identity: localParticipant.identity,
+        label: `${displayLabel(localParticipant)} (siz)`,
+        self: true,
+      },
+    ];
+    for (const p of remotes) {
+      out.push({
+        identity: p.identity,
+        label: displayLabel(p),
+        self: false,
+      });
+    }
+    return out.sort((a, b) => a.label.localeCompare(b.label, "tr"));
+  }, [localParticipant, remotes]);
+
+  const pendingEntries = useMemo(
+    () => Object.entries(pendingJoins),
+    [pendingJoins],
+  );
+  const raisedEntries = useMemo(
+    () => Object.entries(raisedHands),
+    [raisedHands],
+  );
+
+  return (
+    <div className="flex w-full shrink-0 flex-col gap-3 rounded-xl border border-border bg-card p-4 md:max-h-[38vh] md:overflow-y-auto md:w-80">
+      <h2 className="text-sm font-semibold">Katılımcılar</h2>
+      <ul className="space-y-1 text-xs text-foreground/85">
+        {rows.map((r) => (
+          <li key={r.identity} className="flex items-center justify-between gap-2">
+            <span className="min-w-0 truncate">{r.label}</span>
+            {r.self ? (
+              <span className="shrink-0 text-foreground/50">öğretmen</span>
+            ) : (
+              <span className="flex shrink-0 items-center gap-1">
+                <button
+                  type="button"
+                  onClick={() => void setMicrophonePermission(r.identity, true)}
+                  className="rounded-md bg-emerald-600 px-2 py-1 text-[10px] font-semibold text-white hover:bg-emerald-500"
+                >
+                  Ses ver
+                </button>
+                <button
+                  type="button"
+                  onClick={() => void setMicrophonePermission(r.identity, false)}
+                  className="rounded-md border border-border px-2 py-1 text-[10px] font-semibold hover:bg-foreground/5"
+                >
+                  Sustur
+                </button>
+              </span>
+            )}
+          </li>
+        ))}
+      </ul>
+
+      {requireStudentApproval && pendingEntries.length > 0 && (
+        <div className="border-t border-border pt-3">
+          <p className="mb-2 text-xs font-medium text-foreground/70">
+            Onay bekleyenler
+          </p>
+          <ul className="space-y-2">
+            {pendingEntries.map(([id, v]) => (
+              <li
+                key={id}
+                className="flex items-center justify-between gap-2 text-xs"
+              >
+                <span className="min-w-0 truncate">{v.displayName}</span>
+                <button
+                  type="button"
+                  onClick={() => void approveJoin(id)}
+                  className="shrink-0 rounded-lg bg-accent px-2 py-1 text-[11px] font-medium text-white hover:bg-accent-muted"
+                >
+                  Onayla
+                </button>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+
+      {raisedEntries.length > 0 && (
+        <div className="border-t border-border pt-3">
+          <p className="mb-2 text-xs font-medium text-foreground/70">
+            El kaldıranlar
+          </p>
+          <ul className="space-y-2">
+            {raisedEntries.map(([id, v]) => (
+              <li
+                key={id}
+                className="flex items-center justify-between gap-2 text-xs"
+              >
+                <span className="min-w-0 truncate">{v.displayName}</span>
+                <button
+                  type="button"
+                  onClick={() => void lowerHand(id)}
+                  className="shrink-0 rounded-lg border border-border px-2 py-1 text-[11px] font-medium hover:bg-foreground/5"
+                >
+                  İndir
+                </button>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+    </div>
+  );
+}

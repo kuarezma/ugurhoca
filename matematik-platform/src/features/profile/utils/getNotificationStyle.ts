@@ -45,6 +45,16 @@ export const getNotificationStyle = (
     };
   }
 
+  if (notification.type === 'live-lesson') {
+    return {
+      wrapper: 'border-sky-500/30 bg-sky-500/10 hover:bg-sky-500/15',
+      icon: Bell,
+      iconWrap: 'bg-sky-500/15 text-sky-300',
+      badge: 'bg-sky-500/15 text-sky-200',
+      status: 'Canlı ders',
+    };
+  }
+
   if (notification.type === 'message-read') {
     return {
       wrapper: 'border-emerald-500/20 bg-emerald-500/5 hover:bg-emerald-500/10',

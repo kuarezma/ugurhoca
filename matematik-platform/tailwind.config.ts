@@ -8,6 +8,12 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
+        accent: "#7C3AED",
+        "accent-muted": "#6D28D9",
+        background: "#0F172A",
+        border: "rgba(148, 163, 184, 0.28)",
+        card: "#111827",
+        foreground: "#F8FAFC",
         brand: {
           primary: "#7C3AED",
           "primary-soft": "#A78BFA",

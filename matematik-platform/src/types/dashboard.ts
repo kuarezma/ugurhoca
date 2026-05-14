@@ -15,6 +15,7 @@ export type DashboardNotificationType =
   | 'general'
   | 'message'
   | 'admin-message'
+  | 'live-lesson'
   | 'message-read'
   | 'sent-message';
 

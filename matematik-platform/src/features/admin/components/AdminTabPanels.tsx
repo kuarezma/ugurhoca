@@ -7,6 +7,7 @@ import AdminAssignmentsTab from "@/features/admin/components/tabs/AdminAssignmen
 import AdminDocumentsTab from "@/features/admin/components/tabs/AdminDocumentsTab";
 import AdminGradeUpdateTab from "@/features/admin/components/tabs/AdminGradeUpdateTab";
 import AdminQuizzesTab from "@/features/admin/components/tabs/AdminQuizzesTab";
+import AdminLiveLessonsTab from "@/features/admin/components/tabs/AdminLiveLessonsTab";
 import AdminTrackingTab from "@/features/admin/components/tabs/AdminTrackingTab";
 import AdminUsersTab from "@/features/admin/components/tabs/AdminUsersTab";
 import type {
@@ -26,6 +27,7 @@ import type {
   StudentWeeklyPlan,
 } from "@/features/admin/types";
 import type { AdminNotification, AdminSubmission } from "@/features/admin/types";
+import type { LiveLessonDashboardData } from "@/features/live-lessons/types";
 
 type AdminTabPanelsProps = {
   activeTab: AdminActiveTab;
@@ -41,6 +43,7 @@ type AdminTabPanelsProps = {
   formatDate: (dateString?: string | null) => string;
   isSubmitting: boolean;
   lastGradeUpdate: string | null;
+  liveLessons: LiveLessonDashboardData;
   notifications: AdminNotification[];
   onAddQuizQuestion: (quiz: AdminQuiz) => Promise<void> | void;
   onCreateAnnouncement: () => void;
@@ -101,6 +104,7 @@ export default function AdminTabPanels({
   formatDate,
   isSubmitting,
   lastGradeUpdate,
+  liveLessons,
   notifications,
   onAddQuizQuestion,
   onCreateAnnouncement,
@@ -232,6 +236,10 @@ export default function AdminTabPanels({
           onEditQuiz={onEditQuiz}
           quizzes={quizzes}
         />
+      )}
+
+      {activeTab === "liveLessons" && (
+        <AdminLiveLessonsTab data={liveLessons} onRefresh={onRefreshUsers} />
       )}
     </AnimatePresence>
   );
