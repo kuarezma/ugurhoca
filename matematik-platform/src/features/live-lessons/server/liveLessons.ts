@@ -13,6 +13,7 @@ import type {
   LiveLessonEvent,
   LiveLessonParticipant,
 } from '@/features/live-lessons/types';
+import type { AppUser } from '@/types';
 
 const NOTIFICATION_TYPE = 'live-lesson';
 const REMINDER_TYPE = 'thirty_minutes';
@@ -57,9 +58,27 @@ export async function loadLiveLessonsForCurrentUser(): Promise<LiveLesson[]> {
 
   const { data } = isLiveLessonAdmin(snapshot)
     ? await query
-    : await query.or(`target_grade.eq.${snapshot.grade},target_grade.eq.all`);
+    : await query.or(
+        `target_grade.eq.${snapshot.grade},target_grade.eq.all,target_student_ids.cs.{${snapshot.id}}`,
+      );
 
   return (data || []) as LiveLesson[];
+}
+
+export async function loadLiveLessonStudentOptions(): Promise<AppUser[]> {
+  const snapshot = await getServerAuthSnapshot();
+
+  if (!snapshot || !isLiveLessonAdmin(snapshot)) {
+    return [];
+  }
+
+  const supabase = createServiceRoleClient();
+  const { data } = await supabase
+    .from('profiles')
+    .select('id, name, email, grade, is_favorite, created_at')
+    .order('name', { ascending: true });
+
+  return ((data || []) as AppUser[]).filter((user) => !isLiveLessonAdmin(user));
 }
 
 export async function loadLiveLessonDashboardData(): Promise<LiveLessonDashboardData> {
@@ -133,11 +152,58 @@ async function notifyGrade({
   }
 }
 
+async function notifyStudents({
+  lesson,
+  message,
+  studentIds,
+  title,
+}: {
+  lesson: LiveLesson;
+  message: string;
+  studentIds: string[];
+  title: string;
+}) {
+  const supabase = createServiceRoleClient();
+  const uniqueStudentIds = [...new Set(studentIds)].filter(Boolean);
+
+  if (uniqueStudentIds.length === 0) return;
+
+  const rows = uniqueStudentIds.map((studentId) => ({
+    message,
+    metadata: {
+      href: `/canli-ders`,
+      lesson_id: lesson.id,
+      room_id: lesson.room_id,
+      starts_at: lesson.starts_at,
+    },
+    title,
+    type: NOTIFICATION_TYPE,
+    user_id: studentId,
+  }));
+
+  await supabase.from('notifications').insert(rows);
+}
+
+function isStudentTargeted(lesson: LiveLesson, userId: string) {
+  return Array.isArray(lesson.target_student_ids) && lesson.target_student_ids.includes(userId);
+}
+
+export function canUserAccessLiveLesson(
+  lesson: LiveLesson,
+  user: { grade?: string | number | null; id: string },
+) {
+  if (lesson.target_grade === 'selected') {
+    return isStudentTargeted(lesson, user.id);
+  }
+  return lesson.target_grade === 'all' || String(user.grade) === String(lesson.target_grade);
+}
+
 export async function createLiveLesson(input: {
   description?: string | null;
   durationMinutes: number;
   startsAt: string;
   targetGrade: string;
+  targetStudentIds?: string[];
   title: string;
   userId: string;
 }) {
@@ -152,8 +218,13 @@ export async function createLiveLesson(input: {
   if (!Number.isFinite(startsAt.getTime())) {
     throw new Error('Geçerli bir tarih ve saat seçin.');
   }
-  if (!['5', '6', '7', '8', 'Mezun', 'all'].includes(input.targetGrade)) {
+  const targetStudentIds = [...new Set(input.targetStudentIds || [])].filter(Boolean);
+
+  if (!['5', '6', '7', '8', 'Mezun', 'all', 'selected'].includes(input.targetGrade)) {
     throw new Error('Geçerli bir sınıf seçin.');
+  }
+  if (input.targetGrade === 'selected' && targetStudentIds.length === 0) {
+    throw new Error('En az bir öğrenci seçin.');
   }
 
   const { data, error } = await supabase
@@ -166,6 +237,7 @@ export async function createLiveLesson(input: {
       starts_at: startsAt.toISOString(),
       status: startsAt.getTime() <= Date.now() + 5 * 60 * 1000 ? 'active' : 'scheduled',
       target_grade: input.targetGrade,
+      target_student_ids: input.targetGrade === 'selected' ? targetStudentIds : null,
       teacher_proof: teacherProof,
       title: input.title.trim(),
     })
@@ -181,12 +253,22 @@ export async function createLiveLesson(input: {
     lesson_id: lesson.id,
     reminder_type: REMINDER_TYPE,
   });
-  await notifyGrade({
-    grade: lesson.target_grade,
-    lesson,
-    message: `${lesson.title} dersi ${formatLessonDate(lesson.starts_at)} tarihinde yapılacak.`,
-    title: 'Canlı ders planlandı',
-  });
+  const message = `${lesson.title} dersi ${formatLessonDate(lesson.starts_at)} tarihinde yapılacak.`;
+  if (lesson.target_grade === 'selected') {
+    await notifyStudents({
+      lesson,
+      message,
+      studentIds: lesson.target_student_ids || [],
+      title: 'Canlı ders planlandı',
+    });
+  } else {
+    await notifyGrade({
+      grade: lesson.target_grade,
+      lesson,
+      message,
+      title: 'Canlı ders planlandı',
+    });
+  }
 
   revalidatePath('/canli-ders');
   return lesson;
@@ -220,12 +302,22 @@ export async function updateLiveLessonStatus({
 
   const lesson = data as LiveLesson;
   if (status === 'cancelled') {
-    await notifyGrade({
-      grade: lesson.target_grade,
-      lesson,
-      message: `${lesson.title} canlı dersi iptal edildi.`,
-      title: 'Canlı ders iptal edildi',
-    });
+    const message = `${lesson.title} canlı dersi iptal edildi.`;
+    if (lesson.target_grade === 'selected') {
+      await notifyStudents({
+        lesson,
+        message,
+        studentIds: lesson.target_student_ids || [],
+        title: 'Canlı ders iptal edildi',
+      });
+    } else {
+      await notifyGrade({
+        grade: lesson.target_grade,
+        lesson,
+        message,
+        title: 'Canlı ders iptal edildi',
+      });
+    }
   }
 
   revalidatePath('/canli-ders');
@@ -273,12 +365,22 @@ export async function sendDueLiveLessonReminders() {
   for (const row of due) {
     const lesson = normalizeReminderLesson(row.live_lessons);
     if (!lesson) continue;
-    await notifyGrade({
-      grade: lesson.target_grade,
-      lesson,
-      message: `${lesson.title} canlı dersi 30 dakika içinde başlayacak.`,
-      title: 'Canlı ders yaklaşıyor',
-    });
+    const message = `${lesson.title} canlı dersi 30 dakika içinde başlayacak.`;
+    if (lesson.target_grade === 'selected') {
+      await notifyStudents({
+        lesson,
+        message,
+        studentIds: lesson.target_student_ids || [],
+        title: 'Canlı ders yaklaşıyor',
+      });
+    } else {
+      await notifyGrade({
+        grade: lesson.target_grade,
+        lesson,
+        message,
+        title: 'Canlı ders yaklaşıyor',
+      });
+    }
     await supabase
       .from('live_lesson_reminders')
       .update({ sent_at: new Date().toISOString() })

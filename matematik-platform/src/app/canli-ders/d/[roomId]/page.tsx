@@ -1,6 +1,9 @@
 import { redirect } from 'next/navigation';
 import { RoomPageShell } from '@/features/live-lessons/components/room/RoomPageShell';
-import { isLiveLessonAdmin } from '@/features/live-lessons/server/liveLessons';
+import {
+  canUserAccessLiveLesson,
+  isLiveLessonAdmin,
+} from '@/features/live-lessons/server/liveLessons';
 import type { LiveLesson } from '@/features/live-lessons/types';
 import { getServerAuthSnapshot } from '@/lib/auth-snapshot.server';
 import { createServiceRoleClient } from '@/lib/supabase/server';
@@ -29,7 +32,7 @@ export default async function CanliDersRoomPage({ params }: Props) {
 
   const lesson = data as LiveLesson;
   const isAdmin = isLiveLessonAdmin(user);
-  if (!isAdmin && lesson.target_grade !== 'all' && String(user.grade) !== String(lesson.target_grade)) {
+  if (!isAdmin && !canUserAccessLiveLesson(lesson, user)) {
     redirect('/canli-ders');
   }
 

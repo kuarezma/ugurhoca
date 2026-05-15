@@ -1,7 +1,10 @@
 import type { Metadata } from 'next';
 import { redirect } from 'next/navigation';
 import { LiveLessonsPage } from '@/features/live-lessons/components/LiveLessonsPage';
-import { loadLiveLessonsForCurrentUser } from '@/features/live-lessons/server/liveLessons';
+import {
+  loadLiveLessonsForCurrentUser,
+  loadLiveLessonStudentOptions,
+} from '@/features/live-lessons/server/liveLessons';
 import { getServerAuthSnapshot } from '@/lib/auth-snapshot.server';
 import { createPageMetadata } from '@/lib/site-metadata';
 
@@ -18,6 +21,9 @@ export default async function CanliDersPage() {
     redirect('/giris');
   }
 
-  const lessons = await loadLiveLessonsForCurrentUser();
-  return <LiveLessonsPage initialLessons={lessons} user={user} />;
+  const [lessons, students] = await Promise.all([
+    loadLiveLessonsForCurrentUser(),
+    loadLiveLessonStudentOptions(),
+  ]);
+  return <LiveLessonsPage initialLessons={lessons} students={students} user={user} />;
 }

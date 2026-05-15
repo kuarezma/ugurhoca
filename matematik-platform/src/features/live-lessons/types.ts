@@ -9,6 +9,7 @@ export type LiveLesson = {
   title: string;
   description?: string | null;
   target_grade: string;
+  target_student_ids?: string[] | null;
   starts_at: string;
   duration_minutes: number;
   status: LiveLessonStatus;

@@ -4,9 +4,11 @@ import Link from "next/link";
 import { useMemo, useState } from "react";
 import type { AuthSnapshot } from "@/lib/auth-snapshot";
 import type { LiveLesson } from "@/features/live-lessons/types";
+import type { AppUser } from "@/types";
 
 type Props = {
   initialLessons: LiveLesson[];
+  students: AppUser[];
   user: AuthSnapshot;
 };
 
@@ -17,6 +19,7 @@ const gradeOptions = [
   { label: "8. sınıf", value: "8" },
   { label: "Mezun", value: "Mezun" },
   { label: "Herkese açık", value: "all" },
+  { label: "Seçili öğrenciler", value: "selected" },
 ];
 
 function formatDate(value: string) {
@@ -34,7 +37,24 @@ function toLocalInputValue(date: Date) {
   )}:${pad(date.getMinutes())}`;
 }
 
-export function LiveLessonsPage({ initialLessons, user }: Props) {
+function formatGrade(value: AppUser["grade"]) {
+  return value === "Mezun" ? "Mezun" : `${value}. sınıf`;
+}
+
+function formatAudience(lesson: LiveLesson, students: AppUser[]) {
+  if (lesson.target_grade === "all") return "Herkese açık";
+  if (lesson.target_grade === "Mezun") return "Mezun";
+  if (lesson.target_grade !== "selected") return `${lesson.target_grade}. sınıf`;
+
+  const selectedCount = lesson.target_student_ids?.length || 0;
+  if (selectedCount === 0) return "Seçili öğrenci yok";
+
+  const firstStudent = students.find((student) => student.id === lesson.target_student_ids?.[0]);
+  const firstName = firstStudent?.name || firstStudent?.email || "Seçili öğrenci";
+  return selectedCount === 1 ? firstName : `${firstName} + ${selectedCount - 1} öğrenci`;
+}
+
+export function LiveLessonsPage({ initialLessons, students, user }: Props) {
   const [lessons, setLessons] = useState(initialLessons);
   const [title, setTitle] = useState("Canlı matematik dersi");
   const [description, setDescription] = useState("");
@@ -43,8 +63,11 @@ export function LiveLessonsPage({ initialLessons, user }: Props) {
   );
   const [durationMinutes, setDurationMinutes] = useState(60);
   const [targetGrade, setTargetGrade] = useState(String(user.grade || "5"));
+  const [selectedStudentIds, setSelectedStudentIds] = useState<string[]>([]);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  const selectedStudentCount = selectedStudentIds.length;
 
   const visibleLessons = useMemo(
     () =>
@@ -55,6 +78,11 @@ export function LiveLessonsPage({ initialLessons, user }: Props) {
   );
 
   const createLesson = async () => {
+    if (targetGrade === "selected" && selectedStudentIds.length === 0) {
+      setError("En az bir öğrenci seçin.");
+      return;
+    }
+
     setSaving(true);
     setError(null);
     try {
@@ -64,6 +92,7 @@ export function LiveLessonsPage({ initialLessons, user }: Props) {
           durationMinutes,
           startsAt: new Date(startsAt).toISOString(),
           targetGrade,
+          targetStudentIds: targetGrade === "selected" ? selectedStudentIds : [],
           title,
         }),
         credentials: "same-origin",
@@ -79,9 +108,18 @@ export function LiveLessonsPage({ initialLessons, user }: Props) {
         return;
       }
       setLessons((current) => [payload.lesson!, ...current]);
+      setSelectedStudentIds([]);
     } finally {
       setSaving(false);
     }
+  };
+
+  const toggleStudent = (studentId: string) => {
+    setSelectedStudentIds((current) =>
+      current.includes(studentId)
+        ? current.filter((id) => id !== studentId)
+        : [...current, studentId],
+    );
   };
 
   const cancelLesson = async (lesson: LiveLesson) => {
@@ -129,7 +167,7 @@ export function LiveLessonsPage({ initialLessons, user }: Props) {
                 />
               </label>
               <label className="space-y-1">
-                <span className="text-sm text-slate-300">Sınıf</span>
+                <span className="text-sm text-slate-300">Ders hedefi</span>
                 <select
                   value={targetGrade}
                   onChange={(event) => setTargetGrade(event.target.value)}
@@ -142,6 +180,48 @@ export function LiveLessonsPage({ initialLessons, user }: Props) {
                   ))}
                 </select>
               </label>
+              {targetGrade === "selected" ? (
+                <div className="space-y-2 md:col-span-2">
+                  <div className="flex flex-wrap items-center justify-between gap-2">
+                    <span className="text-sm text-slate-300">Öğrenci seç</span>
+                    <span className="text-xs text-slate-400">
+                      {selectedStudentCount} öğrenci seçildi
+                    </span>
+                  </div>
+                  <div className="max-h-64 overflow-y-auto rounded-xl border border-white/10 bg-slate-950 p-2">
+                    {students.length === 0 ? (
+                      <p className="px-2 py-3 text-sm text-slate-400">
+                        Seçilecek öğrenci kaydı bulunamadı.
+                      </p>
+                    ) : (
+                      <div className="grid gap-2 sm:grid-cols-2">
+                        {students.map((student) => (
+                          <label
+                            key={student.id}
+                            className="flex min-h-12 cursor-pointer items-center gap-3 rounded-lg border border-white/10 px-3 py-2 text-sm hover:bg-white/5"
+                          >
+                            <input
+                              type="checkbox"
+                              aria-label={`${student.name || student.email} öğrencisini seç`}
+                              checked={selectedStudentIds.includes(student.id)}
+                              onChange={() => toggleStudent(student.id)}
+                              className="h-4 w-4 accent-brand-primary"
+                            />
+                            <span className="min-w-0">
+                              <span className="block truncate font-semibold text-white">
+                                {student.name || student.email}
+                              </span>
+                              <span className="block truncate text-xs text-slate-400">
+                                {formatGrade(student.grade)}
+                              </span>
+                            </span>
+                          </label>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              ) : null}
               <label className="space-y-1">
                 <span className="text-sm text-slate-300">Tarih ve saat</span>
                 <input
@@ -175,7 +255,7 @@ export function LiveLessonsPage({ initialLessons, user }: Props) {
             <button
               type="button"
               onClick={() => void createLesson()}
-              disabled={saving}
+              disabled={saving || (targetGrade === "selected" && selectedStudentCount === 0)}
               className="mt-4 min-h-11 rounded-xl bg-brand-primary px-5 font-semibold text-white hover:bg-brand-primary-deep disabled:opacity-50"
             >
               {saving ? "Planlanıyor..." : "Dersi planla"}
@@ -199,9 +279,7 @@ export function LiveLessonsPage({ initialLessons, user }: Props) {
                     <h2 className="text-lg font-bold">{lesson.title}</h2>
                     <p className="mt-1 text-sm text-slate-400">
                       {formatDate(lesson.starts_at)} · {lesson.duration_minutes} dk ·{" "}
-                      {lesson.target_grade === "all"
-                        ? "Herkese açık"
-                        : `${lesson.target_grade}. sınıf`}
+                      {formatAudience(lesson, students)}
                     </p>
                   </div>
                   <span className="rounded-full bg-white/10 px-3 py-1 text-xs font-semibold">

@@ -29,6 +29,7 @@ export async function POST(request: Request) {
         durationMinutes?: number;
         startsAt?: string;
         targetGrade?: string;
+        targetStudentIds?: string[];
         title?: string;
       }
     | null;
@@ -39,6 +40,7 @@ export async function POST(request: Request) {
       durationMinutes: Number(body?.durationMinutes || 60),
       startsAt: String(body?.startsAt || ''),
       targetGrade: String(body?.targetGrade || ''),
+      targetStudentIds: Array.isArray(body?.targetStudentIds) ? body.targetStudentIds : [],
       title: String(body?.title || ''),
       userId: auth.user.id,
     });
