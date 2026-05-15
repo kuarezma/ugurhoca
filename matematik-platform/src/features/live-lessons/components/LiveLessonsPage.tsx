@@ -96,6 +96,23 @@ export function LiveLessonsPage({ initialLessons, students, user }: Props) {
   );
 
   const createLesson = async () => {
+    if (!title.trim()) {
+      setError("Ders başlığı gerekli.");
+      return;
+    }
+
+    const lessonStartDate = new Date(startsAt);
+    if (!Number.isFinite(lessonStartDate.getTime())) {
+      setError("Geçerli bir ders tarihi ve saati seçin.");
+      return;
+    }
+
+    const repeatEndDate = repeatWeekly ? new Date(repeatWeeklyUntil) : null;
+    if (repeatWeekly && (!repeatEndDate || !Number.isFinite(repeatEndDate.getTime()))) {
+      setError("Tekrar bitişi için geçerli bir tarih seçin.");
+      return;
+    }
+
     if (targetGrade === "selected" && selectedStudentIds.length === 0) {
       setError("En az bir öğrenci seçin.");
       return;
@@ -108,8 +125,8 @@ export function LiveLessonsPage({ initialLessons, students, user }: Props) {
         body: JSON.stringify({
           description,
           durationMinutes,
-          repeatWeeklyUntil: repeatWeekly ? new Date(repeatWeeklyUntil).toISOString() : null,
-          startsAt: new Date(startsAt).toISOString(),
+          repeatWeeklyUntil: repeatEndDate ? repeatEndDate.toISOString() : null,
+          startsAt: lessonStartDate.toISOString(),
           targetGrade,
           targetStudentIds: targetGrade === "selected" ? selectedStudentIds : [],
           title,
@@ -124,11 +141,13 @@ export function LiveLessonsPage({ initialLessons, students, user }: Props) {
         lessons?: LiveLesson[];
       } | null;
       if (!response.ok || !payload?.lesson) {
-        setError(payload?.error || "Ders planlanamadı.");
+        setError(payload?.error || "Ders planlanamadı. Lütfen sayfayı yenileyip tekrar deneyin.");
         return;
       }
       setLessons((current) => [...(payload.lessons || [payload.lesson!]), ...current]);
       setSelectedStudentIds([]);
+    } catch {
+      setError("Ders planlanamadı. İnternet bağlantısını kontrol edip tekrar deneyin.");
     } finally {
       setSaving(false);
     }
