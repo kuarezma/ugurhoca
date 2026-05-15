@@ -17,6 +17,8 @@ import type { AppUser } from '@/types';
 
 const NOTIFICATION_TYPE = 'live-lesson';
 const REMINDER_TYPE = 'thirty_minutes';
+const MAX_RECURRING_LESSONS = 16;
+const VALID_TARGET_GRADES = ['5', '6', '7', '8', 'Mezun', 'all', 'selected'];
 
 type RouteAuth =
   | { ok: true; user: NonNullable<Awaited<ReturnType<typeof getServerAuthSnapshot>>>; accessToken: string | null }
@@ -184,6 +186,33 @@ async function notifyStudents({
   await supabase.from('notifications').insert(rows);
 }
 
+async function notifyLessonAudience({
+  lesson,
+  message,
+  title,
+}: {
+  lesson: LiveLesson;
+  message: string;
+  title: string;
+}) {
+  if (lesson.target_grade === 'selected') {
+    await notifyStudents({
+      lesson,
+      message,
+      studentIds: lesson.target_student_ids || [],
+      title,
+    });
+    return;
+  }
+
+  await notifyGrade({
+    grade: lesson.target_grade,
+    lesson,
+    message,
+    title,
+  });
+}
+
 function isStudentTargeted(lesson: LiveLesson, userId: string) {
   return Array.isArray(lesson.target_student_ids) && lesson.target_student_ids.includes(userId);
 }
@@ -207,9 +236,21 @@ export async function createLiveLesson(input: {
   title: string;
   userId: string;
 }) {
+  const lessons = await createLiveLessons({ ...input, repeatWeeklyUntil: null });
+  return lessons[0];
+}
+
+export async function createLiveLessons(input: {
+  description?: string | null;
+  durationMinutes: number;
+  repeatWeeklyUntil?: string | null;
+  startsAt: string;
+  targetGrade: string;
+  targetStudentIds?: string[];
+  title: string;
+  userId: string;
+}) {
   const supabase = createServiceRoleClient();
-  const roomId = generateRoomId();
-  const teacherProof = signTeacherProof(roomId);
   const startsAt = new Date(input.startsAt);
 
   if (!input.title.trim()) {
@@ -220,27 +261,117 @@ export async function createLiveLesson(input: {
   }
   const targetStudentIds = [...new Set(input.targetStudentIds || [])].filter(Boolean);
 
-  if (!['5', '6', '7', '8', 'Mezun', 'all', 'selected'].includes(input.targetGrade)) {
+  if (!VALID_TARGET_GRADES.includes(input.targetGrade)) {
     throw new Error('Geçerli bir sınıf seçin.');
   }
   if (input.targetGrade === 'selected' && targetStudentIds.length === 0) {
     throw new Error('En az bir öğrenci seçin.');
   }
 
-  const { data, error } = await supabase
-    .from('live_lessons')
-    .insert({
+  const startsAtValues = buildRecurringStartsAtValues(startsAt, input.repeatWeeklyUntil);
+  const rows = startsAtValues.map((date) => {
+    const roomId = generateRoomId();
+    return {
       created_by: input.userId,
       description: input.description || null,
       duration_minutes: Math.max(15, Math.min(240, input.durationMinutes || 60)),
       room_id: roomId,
-      starts_at: startsAt.toISOString(),
-      status: startsAt.getTime() <= Date.now() + 5 * 60 * 1000 ? 'active' : 'scheduled',
+      starts_at: date.toISOString(),
+      status: date.getTime() <= Date.now() + 5 * 60 * 1000 ? 'active' : 'scheduled',
       target_grade: input.targetGrade,
       target_student_ids: input.targetGrade === 'selected' ? targetStudentIds : null,
-      teacher_proof: teacherProof,
+      teacher_proof: signTeacherProof(roomId),
       title: input.title.trim(),
+    };
+  });
+
+  const { data, error } = await supabase
+    .from('live_lessons')
+    .insert(rows)
+    .select('*');
+
+  if (error) {
+    throw error;
+  }
+
+  const lessons = (data || []) as LiveLesson[];
+  await supabase.from('live_lesson_reminders').insert(lessons.map((lesson) => ({
+    lesson_id: lesson.id,
+    reminder_type: REMINDER_TYPE,
+  })));
+  for (const lesson of lessons) {
+    await notifyLessonAudience({
+      lesson,
+      message: `${lesson.title} dersi ${formatLessonDate(lesson.starts_at)} tarihinde yapılacak.`,
+      title: 'Canlı ders planlandı',
+    });
+  }
+
+  revalidatePath('/canli-ders');
+  return lessons;
+}
+
+export async function updateLiveLesson(input: {
+  description?: string | null;
+  durationMinutes: number;
+  lessonId: string;
+  startsAt: string;
+  targetGrade: string;
+  targetStudentIds?: string[];
+  title: string;
+}) {
+  const supabase = createServiceRoleClient();
+  const startsAt = new Date(input.startsAt);
+
+  if (!input.title.trim()) {
+    throw new Error('Ders başlığı gerekli.');
+  }
+  if (!Number.isFinite(startsAt.getTime())) {
+    throw new Error('Geçerli bir tarih ve saat seçin.');
+  }
+  if (!VALID_TARGET_GRADES.includes(input.targetGrade)) {
+    throw new Error('Geçerli bir ders hedefi seçin.');
+  }
+
+  const targetStudentIds = [...new Set(input.targetStudentIds || [])].filter(Boolean);
+  if (input.targetGrade === 'selected' && targetStudentIds.length === 0) {
+    throw new Error('En az bir öğrenci seçin.');
+  }
+
+  const { data: current, error: currentError } = await supabase
+    .from('live_lessons')
+    .select('*')
+    .eq('id', input.lessonId)
+    .single();
+
+  if (currentError || !current) {
+    throw new Error('Ders bulunamadı.');
+  }
+
+  const currentLesson = current as LiveLesson;
+  if (currentLesson.status === 'ended' || currentLesson.status === 'cancelled') {
+    throw new Error('Bitmiş veya iptal edilmiş ders düzenlenemez.');
+  }
+
+  const nextTargetStudentIds = input.targetGrade === 'selected' ? targetStudentIds : null;
+  const startsAtChanged = currentLesson.starts_at !== startsAt.toISOString();
+  const audienceChanged =
+    currentLesson.target_grade !== input.targetGrade ||
+    JSON.stringify([...(currentLesson.target_student_ids || [])].sort()) !==
+      JSON.stringify([...(nextTargetStudentIds || [])].sort());
+
+  const { data, error } = await supabase
+    .from('live_lessons')
+    .update({
+      description: input.description || null,
+      duration_minutes: Math.max(15, Math.min(240, input.durationMinutes || 60)),
+      starts_at: startsAt.toISOString(),
+      target_grade: input.targetGrade,
+      target_student_ids: nextTargetStudentIds,
+      title: input.title.trim(),
+      updated_at: new Date().toISOString(),
     })
+    .eq('id', input.lessonId)
     .select('*')
     .single();
 
@@ -249,28 +380,18 @@ export async function createLiveLesson(input: {
   }
 
   const lesson = data as LiveLesson;
-  await supabase.from('live_lesson_reminders').insert({
-    lesson_id: lesson.id,
-    reminder_type: REMINDER_TYPE,
-  });
-  const message = `${lesson.title} dersi ${formatLessonDate(lesson.starts_at)} tarihinde yapılacak.`;
-  if (lesson.target_grade === 'selected') {
-    await notifyStudents({
+  if (startsAtChanged || audienceChanged) {
+    await notifyLessonAudience({
       lesson,
-      message,
-      studentIds: lesson.target_student_ids || [],
-      title: 'Canlı ders planlandı',
-    });
-  } else {
-    await notifyGrade({
-      grade: lesson.target_grade,
-      lesson,
-      message,
-      title: 'Canlı ders planlandı',
+      message: `${lesson.title} canlı dersi güncellendi. Yeni zaman: ${formatLessonDate(
+        lesson.starts_at,
+      )}.`,
+      title: 'Canlı ders güncellendi',
     });
   }
 
   revalidatePath('/canli-ders');
+  revalidatePath('/admin');
   return lesson;
 }
 
@@ -302,22 +423,11 @@ export async function updateLiveLessonStatus({
 
   const lesson = data as LiveLesson;
   if (status === 'cancelled') {
-    const message = `${lesson.title} canlı dersi iptal edildi.`;
-    if (lesson.target_grade === 'selected') {
-      await notifyStudents({
-        lesson,
-        message,
-        studentIds: lesson.target_student_ids || [],
-        title: 'Canlı ders iptal edildi',
-      });
-    } else {
-      await notifyGrade({
-        grade: lesson.target_grade,
-        lesson,
-        message,
-        title: 'Canlı ders iptal edildi',
-      });
-    }
+    await notifyLessonAudience({
+      lesson,
+      message: `${lesson.title} canlı dersi iptal edildi.`,
+      title: 'Canlı ders iptal edildi',
+    });
   }
 
   revalidatePath('/canli-ders');
@@ -365,22 +475,11 @@ export async function sendDueLiveLessonReminders() {
   for (const row of due) {
     const lesson = normalizeReminderLesson(row.live_lessons);
     if (!lesson) continue;
-    const message = `${lesson.title} canlı dersi 30 dakika içinde başlayacak.`;
-    if (lesson.target_grade === 'selected') {
-      await notifyStudents({
-        lesson,
-        message,
-        studentIds: lesson.target_student_ids || [],
-        title: 'Canlı ders yaklaşıyor',
-      });
-    } else {
-      await notifyGrade({
-        grade: lesson.target_grade,
-        lesson,
-        message,
-        title: 'Canlı ders yaklaşıyor',
-      });
-    }
+    await notifyLessonAudience({
+      lesson,
+      message: `${lesson.title} canlı dersi 30 dakika içinde başlayacak.`,
+      title: 'Canlı ders yaklaşıyor',
+    });
     await supabase
       .from('live_lesson_reminders')
       .update({ sent_at: new Date().toISOString() })
@@ -388,6 +487,38 @@ export async function sendDueLiveLessonReminders() {
   }
 
   return { sent: due.length };
+}
+
+function buildRecurringStartsAtValues(startsAt: Date, repeatWeeklyUntil?: string | null) {
+  if (!repeatWeeklyUntil) {
+    return [startsAt];
+  }
+
+  const repeatUntil = new Date(repeatWeeklyUntil);
+  if (!Number.isFinite(repeatUntil.getTime())) {
+    throw new Error('Geçerli bir tekrar bitiş tarihi seçin.');
+  }
+  if (repeatUntil.getTime() < startsAt.getTime()) {
+    throw new Error('Tekrar bitiş tarihi ders başlangıcından önce olamaz.');
+  }
+
+  const values: Date[] = [];
+  for (
+    let next = new Date(startsAt);
+    next.getTime() <= repeatUntil.getTime() && values.length < MAX_RECURRING_LESSONS;
+    next = new Date(next.getTime() + 7 * 24 * 60 * 60 * 1000)
+  ) {
+    values.push(next);
+  }
+
+  if (values.length === MAX_RECURRING_LESSONS) {
+    const nextAfterLimit = new Date(startsAt.getTime() + MAX_RECURRING_LESSONS * 7 * 24 * 60 * 60 * 1000);
+    if (nextAfterLimit.getTime() <= repeatUntil.getTime()) {
+      throw new Error('Tekrar eden dersler en fazla 16 hafta planlanabilir.');
+    }
+  }
+
+  return values;
 }
 
 function normalizeReminderLesson(value: unknown): LiveLesson | null {

@@ -239,7 +239,11 @@ export default function AdminTabPanels({
       )}
 
       {activeTab === "liveLessons" && (
-        <AdminLiveLessonsTab data={liveLessons} onRefresh={onRefreshUsers} />
+        <AdminLiveLessonsTab
+          data={liveLessons}
+          onRefresh={onRefreshUsers}
+          students={studentUsers}
+        />
       )}
     </AnimatePresence>
   );

@@ -1,6 +1,11 @@
 import { NextResponse } from 'next/server';
 import { createServiceRoleClient } from '@/lib/supabase/server';
-import { isLiveLessonAdmin, requireLiveLessonUser } from '@/features/live-lessons/server/liveLessons';
+import {
+  canUserAccessLiveLesson,
+  isLiveLessonAdmin,
+  requireLiveLessonUser,
+} from '@/features/live-lessons/server/liveLessons';
+import type { LiveLesson } from '@/features/live-lessons/types';
 
 export const runtime = 'nodejs';
 
@@ -27,12 +32,8 @@ export async function POST(_request: Request, context: RouteContext) {
   if (lesson.status === 'cancelled' || lesson.status === 'ended') {
     return NextResponse.json({ error: 'Bu ders artık aktif değil.' }, { status: 409 });
   }
-  if (
-    role === 'student' &&
-    lesson.target_grade !== 'all' &&
-    String(auth.user.grade) !== String(lesson.target_grade)
-  ) {
-    return NextResponse.json({ error: 'Bu ders sizin sınıfınıza açık değil.' }, { status: 403 });
+  if (role === 'student' && !canUserAccessLiveLesson(lesson as LiveLesson, auth.user)) {
+    return NextResponse.json({ error: 'Bu ders size açık değil.' }, { status: 403 });
   }
 
   await supabase.from('live_lesson_participants').insert({

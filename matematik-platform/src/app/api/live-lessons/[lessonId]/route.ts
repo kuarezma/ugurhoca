@@ -1,33 +1,28 @@
 import { NextResponse } from 'next/server';
 import {
-  createLiveLessons,
-  loadLiveLessonsForCurrentUser,
-  requireLiveLessonUser,
   isLiveLessonAdmin,
+  requireLiveLessonUser,
+  updateLiveLesson,
 } from '@/features/live-lessons/server/liveLessons';
 
 export const runtime = 'nodejs';
 
-export async function GET() {
-  const auth = await requireLiveLessonUser();
-  if (!auth.ok) return auth.response;
+type RouteContext = {
+  params: Promise<{ lessonId: string }>;
+};
 
-  const lessons = await loadLiveLessonsForCurrentUser();
-  return NextResponse.json({ lessons });
-}
-
-export async function POST(request: Request) {
+export async function PATCH(request: Request, context: RouteContext) {
   const auth = await requireLiveLessonUser();
   if (!auth.ok) return auth.response;
   if (!isLiveLessonAdmin(auth.user)) {
     return NextResponse.json({ error: 'Bu işlem için admin yetkisi gerekir.' }, { status: 403 });
   }
 
+  const { lessonId } = await context.params;
   const body = (await request.json().catch(() => null)) as
     | {
         description?: string | null;
         durationMinutes?: number;
-        repeatWeeklyUntil?: string | null;
         startsAt?: string;
         targetGrade?: string;
         targetStudentIds?: string[];
@@ -36,20 +31,19 @@ export async function POST(request: Request) {
     | null;
 
   try {
-    const lessons = await createLiveLessons({
+    const lesson = await updateLiveLesson({
       description: body?.description || null,
       durationMinutes: Number(body?.durationMinutes || 60),
-      repeatWeeklyUntil: body?.repeatWeeklyUntil || null,
+      lessonId,
       startsAt: String(body?.startsAt || ''),
       targetGrade: String(body?.targetGrade || ''),
       targetStudentIds: Array.isArray(body?.targetStudentIds) ? body.targetStudentIds : [],
       title: String(body?.title || ''),
-      userId: auth.user.id,
     });
-    return NextResponse.json({ lesson: lessons[0], lessons });
+    return NextResponse.json({ lesson });
   } catch (error) {
     return NextResponse.json(
-      { error: error instanceof Error ? error.message : 'Ders planlanamadı.' },
+      { error: error instanceof Error ? error.message : 'Ders güncellenemedi.' },
       { status: 400 },
     );
   }

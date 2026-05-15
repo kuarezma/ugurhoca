@@ -64,6 +64,10 @@ export function LiveLessonsPage({ initialLessons, students, user }: Props) {
   const [durationMinutes, setDurationMinutes] = useState(60);
   const [targetGrade, setTargetGrade] = useState(String(user.grade || "5"));
   const [selectedStudentIds, setSelectedStudentIds] = useState<string[]>([]);
+  const [repeatWeekly, setRepeatWeekly] = useState(false);
+  const [repeatWeeklyUntil, setRepeatWeeklyUntil] = useState(() =>
+    toLocalInputValue(new Date(Date.now() + 28 * 24 * 60 * 60 * 1000)),
+  );
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -90,6 +94,7 @@ export function LiveLessonsPage({ initialLessons, students, user }: Props) {
         body: JSON.stringify({
           description,
           durationMinutes,
+          repeatWeeklyUntil: repeatWeekly ? new Date(repeatWeeklyUntil).toISOString() : null,
           startsAt: new Date(startsAt).toISOString(),
           targetGrade,
           targetStudentIds: targetGrade === "selected" ? selectedStudentIds : [],
@@ -102,12 +107,13 @@ export function LiveLessonsPage({ initialLessons, students, user }: Props) {
       const payload = (await response.json().catch(() => null)) as {
         error?: string;
         lesson?: LiveLesson;
+        lessons?: LiveLesson[];
       } | null;
       if (!response.ok || !payload?.lesson) {
         setError(payload?.error || "Ders planlanamadı.");
         return;
       }
-      setLessons((current) => [payload.lesson!, ...current]);
+      setLessons((current) => [...(payload.lessons || [payload.lesson!]), ...current]);
       setSelectedStudentIds([]);
     } finally {
       setSaving(false);
@@ -242,6 +248,31 @@ export function LiveLessonsPage({ initialLessons, students, user }: Props) {
                   className="min-h-11 w-full rounded-xl border border-white/10 bg-slate-950 px-3 outline-none focus:ring-2 focus:ring-brand-primary"
                 />
               </label>
+              <label className="flex min-h-11 items-center gap-3 rounded-xl border border-white/10 bg-slate-950 px-3 md:col-span-2">
+                <input
+                  type="checkbox"
+                  checked={repeatWeekly}
+                  onChange={(event) => setRepeatWeekly(event.target.checked)}
+                  className="h-4 w-4 accent-brand-primary"
+                />
+                <span className="text-sm font-semibold text-slate-200">
+                  Haftalık tekrar oluştur
+                </span>
+              </label>
+              {repeatWeekly ? (
+                <label className="space-y-1 md:col-span-2">
+                  <span className="text-sm text-slate-300">Tekrar bitiş tarihi</span>
+                  <input
+                    type="datetime-local"
+                    value={repeatWeeklyUntil}
+                    onChange={(event) => setRepeatWeeklyUntil(event.target.value)}
+                    className="min-h-11 w-full rounded-xl border border-white/10 bg-slate-950 px-3 outline-none focus:ring-2 focus:ring-brand-primary"
+                  />
+                  <span className="text-xs text-slate-500">
+                    En fazla 16 haftalık ders planlanır.
+                  </span>
+                </label>
+              ) : null}
               <label className="space-y-1 md:col-span-2">
                 <span className="text-sm text-slate-300">Açıklama</span>
                 <textarea
