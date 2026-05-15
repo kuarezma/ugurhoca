@@ -1,151 +1,162 @@
-# Uğur Hoca — Matematik Platformu
+# Uğur Hoca Matematik Platformu
 
 [English](README.en.md) | Türkçe
 
-Uğur Hoca, öğrenciler için kapsamlı bir matematik öğrenme platformudur. Test çözme, ödev teslimi, ilerleme takibi, oyunlaştırma ve sohbet özelliklerini bir araya getirir.
+Uğur Hoca Matematik Platformu; öğrencilerin matematik çalışmasını, test çözmesini, ödevlerini takip etmesini, öğretmenle iletişim kurmasını ve canlı derslere katılmasını sağlayan modern bir eğitim uygulamasıdır.
 
-<!-- TODO: Ana sayfa ekran görüntüsü ekle -->
+Platformun odağı sade bir öğrenci deneyimi, güçlü öğretmen yönetimi ve güvenli veri erişimidir. Öğrenciler yalnızca kendi içeriklerini, sonuçlarını ve mesajlarını görür; öğretmen paneli ise takip, ölçme ve geri bildirim süreçlerini tek yerden yönetir.
 
-## Özellikler
+![Uğur Hoca ana sayfa masaüstü görünümü](docs/screenshots/homepage-desktop.jpg)
 
-- **Test Sistemi:** Zamanlı testler, soru analizi, konfeti animasyonları
-- **Ödev Teslimi:** Dosya yükleme, drag & drop, puanlama sistemi
-- **İlerleme Takibi:** Çalışma süreleri, grafikler, rozetler, streak sistemi
-- **Oyunlaştırma:** Mini oyunlar, liderlik tablosu, rozet koleksiyonu
-- **Sohbet Sistemi:** Admin-öğrenci iletişimi, bildirimler
-- **PDF Export:** Test raporları, ilerleme grafikleri PDF olarak indirilebilir
-- **PWA Desteği:** Mobil uygulama deneyimi, offline çalışma
-- **Program Verisi:** LGS ve YKS okul/program bilgileri
+## Öne Çıkanlar
+
+- **Canlı ders:** LiveKit tabanlı oda yapısı, öğretmen ekran paylaşımı, öğrenci tam ekran izleme, mikrofon izin yönetimi, katılım onayı ve canlı sohbet.
+- **Test sistemi:** Zamanlı testler, doğru/yanlış takibi, sonuç ekranı, çözüm geri bildirimi ve PDF çıktıları.
+- **Ödev yönetimi:** Öğrenciye veya sınıfa ödev atama, dosya teslimi, teslim inceleme ve puanlama.
+- **İlerleme takibi:** Çalışma süresi, hedefler, günlük seri, grafikler ve öğrenci gelişim özeti.
+- **Oyunlaştırma:** Matematik oyunları, rozetler, puanlama ve gizliliği koruyan rumuzlu liderlik yapısı.
+- **Öğretmen paneli:** Kullanıcı yönetimi, içerik yönetimi, duyurular, mesajlar, takip merkezi ve canlı ders planlama.
+- **İçerik kütüphanesi:** Dokümanlar, yaprak testler, konu içerikleri ve LGS/YKS odaklı çalışma kaynakları.
+- **Mobil uyum:** PWA desteği, responsive arayüz ve telefon/tablet kullanımına uygun akışlar.
 
 ## Teknoloji Yığını
 
-- **Frontend:** Next.js 16, React 19, TypeScript
-- **Styling:** TailwindCSS, Framer Motion
-- **Backend:** Supabase (Auth, Database, Storage, Realtime)
-- **Deployment:** Vercel
-- **Testing:** Vitest, Testing Library
-- **Code Quality:** ESLint, Prettier
+- **Uygulama:** Next.js 16, React 19, TypeScript
+- **Arayüz:** Tailwind CSS, Framer Motion, Lucide React
+- **Veri ve kimlik:** Supabase Auth, Postgres, Storage, Realtime, RLS politikaları
+- **Canlı ders:** LiveKit
+- **E-posta:** Resend
+- **Test ve kalite:** Vitest, Testing Library, ESLint, Prettier, TypeScript
+- **Dağıtım:** Vercel
+
+## Proje Yapısı
+
+```text
+ugurhoca/
+├── matematik-platform/          # Ana Next.js uygulaması
+│   ├── src/
+│   │   ├── app/                 # App Router sayfaları ve API route'ları
+│   │   ├── components/          # Ortak UI bileşenleri
+│   │   ├── features/            # Özellik bazlı modüller
+│   │   ├── hooks/               # Ortak React hook'ları
+│   │   ├── lib/                 # Yardımcı fonksiyonlar ve servisler
+│   │   └── types/               # Ortak TypeScript tipleri
+│   ├── public/                  # Statik dosyalar ve PWA varlıkları
+│   ├── scripts/                 # Veri aktarımı ve kurulum scriptleri
+│   └── supabase/migrations/     # Veritabanı migration dosyaları
+├── docs/                        # Proje dokümantasyonu
+├── package.json                 # Kök script yönlendiricileri
+└── README.md
+```
 
 ## Kurulum
 
 ### Gereksinimler
 
-- Node.js 18+
-- npm veya yarn
-- Supabase hesabı
+- Node.js 18 veya üzeri
+- npm
+- Supabase projesi
+- Canlı ders kullanılacaksa LiveKit projesi
 
-### Adımlar
+### Yerel Geliştirme
 
 ```bash
-# Depoyu klonla
-git clone <repository-url>
+git clone https://github.com/kuarezma/ugurhoca.git
 cd ugurhoca
 
-# Environment değişkenlerini ayarla
-cd matematik-platform
-./scripts/bootstrap-env.sh   # .env.local oluşturur
+npm install --prefix matematik-platform
+npm run setup:env
+```
 
-# .env.local dosyasını düzenle
-# NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
-# NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
-# SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
+`matematik-platform/.env.local` dosyasını kendi servis bilgilerinle doldur:
 
-# Bağımlılıkları yükle
-npm install
+```env
+NEXT_PUBLIC_SUPABASE_URL=https://YOUR_PROJECT_ID.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key_here
+SUPABASE_SERVICE_ROLE_KEY=your_supabase_service_role_key_here
+ADMIN_EMAILS=admin@ugurhoca.com
+RESEND_API_KEY=your_resend_api_key_here
 
-# Geliştirme sunucusunu başlat
+# Canlı ders için
+NEXT_PUBLIC_LIVEKIT_URL=wss://your-livekit-host
+LIVEKIT_API_KEY=your_livekit_api_key
+LIVEKIT_API_SECRET=your_livekit_api_secret
+LESSON_TEACHER_SECRET=strong_teacher_secret
+LESSON_PERSIST_SIGNING_SECRET=strong_persist_secret
+```
+
+Geliştirme sunucusunu başlat:
+
+```bash
 npm run dev
 ```
 
-Tarayıcıda `http://localhost:3000` adresini açın.
+Uygulama varsayılan olarak `http://localhost:3000` adresinde çalışır.
 
-## Deployment
+## Komutlar
 
-### Vercel
-
-1. Depoyu Vercel'e import edin
-2. Environment değişkenlerini ekleyin:
-   - `NEXT_PUBLIC_SUPABASE_URL`
-   - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
-   - `SUPABASE_SERVICE_ROLE_KEY`
-   - `RESEND_API_KEY` (opsiyonel)
-   - `ADMIN_EMAILS`
-3. Deploy
-
-### Supabase Setup
-
-1. Supabase projesi oluşturun
-2. Migration dosyalarını çalıştırın: `supabase/migrations/`
-3. Storage bucket'ları oluşturun
-4. RLS politikalarını uygulayın
-
-## Proje Yapısı
-
-```
-ugurhoca/
-├── matematik-platform/          # Ana uygulama
-│   ├── src/
-│   │   ├── app/                 # Next.js App Router
-│   │   ├── components/          # React bileşenleri
-│   │   ├── features/            # Feature bazlı yapı
-│   │   ├── lib/                 # Utility fonksiyonları
-│   │   └── types/               # TypeScript tipleri
-│   ├── supabase/
-│   │   └── migrations/          # DB migration'ları
-│   └── public/                  # Statik dosyalar
-├── docs/                        # Dokümantasyon
-└── package.json                 # Kök package.json
-```
-
-## Geliştirme
-
-### Kullanılabilir Scriptler
+Kök dizinden çalıştırılabilir:
 
 ```bash
-npm run dev          # Geliştirme sunucusu
-npm run build        # Production build
-npm run start        # Production sunucusu
-npm run lint         # ESLint kontrolü
-npm run lint:fix     # ESLint düzeltme
-npm run format       # Prettier formatlama
-npm run test         # Test çalıştırma
-npm run typecheck    # TypeScript kontrolü
+npm run dev            # Geliştirme sunucusu
+npm run build          # Production build
+npm run start          # Production sunucusu
+npm run typecheck      # TypeScript kontrolü
+npm run lint           # ESLint kontrolü
+npm run lint:fix       # ESLint düzeltmeleri
+npm run format         # Prettier formatlama
+npm run format:check   # Format kontrolü
+npm run test           # Vitest testleri
 ```
 
-### Kod Kalitesi
+## Supabase Notları
 
-- ESLint ve Prettier otomatik formatlama
-- TypeScript tip güvenliği
-- Vitest ile unit testler
-- GitHub Actions ile CI/CD
+Veritabanı şeması `matematik-platform/supabase/migrations/` altında tutulur. Yeni ortam kurulurken migration dosyaları Supabase projesine uygulanmalıdır.
 
-## Katkıda Bulunma
+Projede öğrenci gizliliği kritik kabul edilir:
 
-1. Fork yapın
-2. Feature branch oluşturun (`git checkout -b feature/amazing-feature`)
-3. Değişikliklerinizi commit edin (`git commit -m 'Add amazing feature'`)
-4. Branch'inizi push edin (`git push origin feature/amazing-feature`)
-5. Pull Request açın
+- Öğrenciler başka öğrencilerin profilini, mesajını, ödev teslimini, test sonucunu veya çalışma verisini okuyamaz.
+- Öğretmen/admin rolleri gerekli yönetim ekranlarına erişebilir.
+- Genel görünümlerde gerçek öğrenci bilgisi yerine gizliliği koruyan yapılar tercih edilir.
 
-## Lisans
+## Dağıtım
 
-Bu proje özel bir lisans altındadır. İzinsiz kullanılamaz.
+Önerilen dağıtım ortamı Vercel'dir.
 
-## İletişim
+1. Depoyu Vercel'e import edin.
+2. Build root olarak `matematik-platform` klasörünü kullanın.
+3. `.env.local` içindeki gerekli değişkenleri Vercel Environment Variables alanına ekleyin.
+4. Supabase migration ve storage ayarlarının production ortamında hazır olduğundan emin olun.
+5. Deploy alın.
 
-- **Email:** admin@ugurhoca.com
-- **Web:** [ugurhoca.com](https://ugurhoca.com)
+Canlı ders, e-posta ve cron işleri için ilgili servis anahtarlarının production ortamında ayrıca tanımlanması gerekir.
 
-## Ekran Görüntüleri
+## Kalite Kontrol
 
-<!-- TODO: Ana sayfa ekran görüntüsü ekle -->
-<!-- TODO: Dashboard ekran görüntüsü ekle -->
-<!-- TODO: Test ekranı ekran görüntüsü ekle -->
-<!-- TODO: Ödev sayfası ekran görüntüsü ekle -->
-<!-- TODO: İlerleme dashboard ekran görüntüsü ekle -->
+Değişikliklerden önce veya deploy öncesi önerilen kontrol sırası:
+
+```bash
+npm run typecheck
+npm run lint
+npm run test
+npm run build
+```
+
+Küçük UI değişikliklerinde ilgili sayfa mobil ve masaüstü görünümde ayrıca kontrol edilmelidir.
 
 ## Dokümantasyon
 
-- [Kalite Planı](docs/web-kalite-ve-profesyonellik-plan.md)
-- [GitHub CI Rehberi](matematik-platform/docs/GITHUB_CI.md)
-- [İlerleme Özeti](progress.md)
+- [Web kalite ve profesyonellik planı](docs/web-kalite-ve-profesyonellik-plan.md)
+- [GitHub CI rehberi](matematik-platform/docs/GITHUB_CI.md)
+- [Performans notları](matematik-platform/docs/PERFORMANCE_BASELINE.md)
+- [Quiz bundle import rehberi](matematik-platform/docs/QUIZ_BUNDLE_IMPORT.md)
+- [İlerleme özeti](progress.md)
+
+## Lisans
+
+Bu proje özel kullanım için geliştirilmiştir. İzinsiz kopyalanamaz, dağıtılamaz veya ticari amaçla kullanılamaz.
+
+## İletişim
+
+- Web: [ugurhoca.com](https://ugurhoca.com)
+- E-posta: admin@ugurhoca.com
