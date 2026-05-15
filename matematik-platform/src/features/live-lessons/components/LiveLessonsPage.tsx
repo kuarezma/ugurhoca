@@ -54,6 +54,10 @@ function formatAudience(lesson: LiveLesson, students: AppUser[]) {
   return selectedCount === 1 ? firstName : `${firstName} + ${selectedCount - 1} öğrenci`;
 }
 
+function normalizeSearchText(value: string) {
+  return value.toLocaleLowerCase("tr-TR").trim();
+}
+
 export function LiveLessonsPage({ initialLessons, students, user }: Props) {
   const [lessons, setLessons] = useState(initialLessons);
   const [title, setTitle] = useState("Canlı matematik dersi");
@@ -64,6 +68,7 @@ export function LiveLessonsPage({ initialLessons, students, user }: Props) {
   const [durationMinutes, setDurationMinutes] = useState(60);
   const [targetGrade, setTargetGrade] = useState(String(user.grade || "5"));
   const [selectedStudentIds, setSelectedStudentIds] = useState<string[]>([]);
+  const [studentSearchQuery, setStudentSearchQuery] = useState("");
   const [repeatWeekly, setRepeatWeekly] = useState(false);
   const [repeatWeeklyUntil, setRepeatWeeklyUntil] = useState(() =>
     toLocalInputValue(new Date(Date.now() + 28 * 24 * 60 * 60 * 1000)),
@@ -72,6 +77,15 @@ export function LiveLessonsPage({ initialLessons, students, user }: Props) {
   const [error, setError] = useState<string | null>(null);
 
   const selectedStudentCount = selectedStudentIds.length;
+
+  const filteredStudents = useMemo(() => {
+    const query = normalizeSearchText(studentSearchQuery);
+    if (!query) return students;
+
+    return students.filter((student) =>
+      normalizeSearchText(`${student.name || ""} ${student.email || ""}`).includes(query),
+    );
+  }, [studentSearchQuery, students]);
 
   const visibleLessons = useMemo(
     () =>
@@ -194,14 +208,25 @@ export function LiveLessonsPage({ initialLessons, students, user }: Props) {
                       {selectedStudentCount} öğrenci seçildi
                     </span>
                   </div>
+                  <input
+                    type="search"
+                    value={studentSearchQuery}
+                    onChange={(event) => setStudentSearchQuery(event.target.value)}
+                    placeholder="Öğrenci adı veya e-posta ara"
+                    className="min-h-11 w-full rounded-xl border border-white/10 bg-slate-950 px-3 text-sm outline-none focus:ring-2 focus:ring-brand-primary"
+                  />
                   <div className="max-h-64 overflow-y-auto rounded-xl border border-white/10 bg-slate-950 p-2">
                     {students.length === 0 ? (
                       <p className="px-2 py-3 text-sm text-slate-400">
                         Seçilecek öğrenci kaydı bulunamadı.
                       </p>
+                    ) : filteredStudents.length === 0 ? (
+                      <p className="px-2 py-3 text-sm text-slate-400">
+                        Aramaya uygun öğrenci bulunamadı.
+                      </p>
                     ) : (
                       <div className="grid gap-2 sm:grid-cols-2">
-                        {students.map((student) => (
+                        {filteredStudents.map((student) => (
                           <label
                             key={student.id}
                             className="flex min-h-12 cursor-pointer items-center gap-3 rounded-lg border border-white/10 px-3 py-2 text-sm hover:bg-white/5"

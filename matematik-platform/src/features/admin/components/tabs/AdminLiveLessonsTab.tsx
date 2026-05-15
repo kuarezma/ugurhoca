@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import type {
   LiveLesson,
   LiveLessonDashboardData,
@@ -86,6 +86,10 @@ function formatAudience(lesson: LiveLesson, students: AdminUser[]) {
   return selectedCount === 1 ? firstName : `${firstName} + ${selectedCount - 1} öğrenci`;
 }
 
+function normalizeSearchText(value: string) {
+  return value.toLocaleLowerCase("tr-TR").trim();
+}
+
 function buildEditForm(lesson: LiveLesson): EditFormState {
   return {
     description: lesson.description || "",
@@ -127,12 +131,23 @@ function attendanceForLesson(participants: LiveLessonParticipant[], lessonId: st
 export default function AdminLiveLessonsTab({ data, onRefresh, students }: Props) {
   const [editingLessonId, setEditingLessonId] = useState<string | null>(null);
   const [editForm, setEditForm] = useState<EditFormState | null>(null);
+  const [editStudentSearchQuery, setEditStudentSearchQuery] = useState("");
   const [savingLessonId, setSavingLessonId] = useState<string | null>(null);
   const [editError, setEditError] = useState<string | null>(null);
+
+  const filteredEditStudents = useMemo(() => {
+    const query = normalizeSearchText(editStudentSearchQuery);
+    if (!query) return students;
+
+    return students.filter((student) =>
+      normalizeSearchText(`${student.name || ""} ${student.email || ""}`).includes(query),
+    );
+  }, [editStudentSearchQuery, students]);
 
   const openEditForm = (lesson: LiveLesson) => {
     setEditingLessonId(lesson.id);
     setEditForm(buildEditForm(lesson));
+    setEditStudentSearchQuery("");
     setEditError(null);
   };
 
@@ -325,9 +340,25 @@ export default function AdminLiveLessonsTab({ data, onRefresh, students }: Props
                               {editForm.targetStudentIds.length} öğrenci seçildi
                             </span>
                           </div>
+                          <input
+                            type="search"
+                            value={editStudentSearchQuery}
+                            onChange={(event) => setEditStudentSearchQuery(event.target.value)}
+                            placeholder="Öğrenci adı veya e-posta ara"
+                            className="min-h-11 w-full rounded-xl border border-white/10 bg-slate-900 px-3 text-sm outline-none focus:ring-2 focus:ring-brand-primary"
+                          />
                           <div className="max-h-56 overflow-y-auto rounded-xl border border-white/10 bg-slate-900 p-2">
-                            <div className="grid gap-2 sm:grid-cols-2">
-                              {students.map((student) => (
+                            {students.length === 0 ? (
+                              <p className="px-2 py-3 text-sm text-slate-400">
+                                Seçilecek öğrenci kaydı bulunamadı.
+                              </p>
+                            ) : filteredEditStudents.length === 0 ? (
+                              <p className="px-2 py-3 text-sm text-slate-400">
+                                Aramaya uygun öğrenci bulunamadı.
+                              </p>
+                            ) : (
+                              <div className="grid gap-2 sm:grid-cols-2">
+                                {filteredEditStudents.map((student) => (
                                 <label
                                   key={student.id}
                                   className="flex min-h-12 cursor-pointer items-center gap-3 rounded-lg border border-white/10 px-3 py-2 text-sm hover:bg-white/5"
@@ -349,7 +380,8 @@ export default function AdminLiveLessonsTab({ data, onRefresh, students }: Props
                                   </span>
                                 </label>
                               ))}
-                            </div>
+                              </div>
+                            )}
                           </div>
                         </div>
                       ) : null}
