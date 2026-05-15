@@ -40,6 +40,10 @@ export function TeacherModerationPanel({
   const [raisedHands, setRaisedHands] = useState<
     Record<string, { displayName: string }>
   >({});
+  const [micRequests, setMicRequests] = useState<
+    Record<string, { displayName: string }>
+  >({});
+  const [micPermissions, setMicPermissions] = useState<Record<string, boolean>>({});
   const [error, setError] = useState<string | null>(null);
 
   const publishRoom = useCallback(
@@ -81,6 +85,14 @@ export function TeacherModerationPanel({
           return next;
         });
         return;
+      }
+
+      if (msg.kind === "microphone_request") {
+        if (!sender || sender !== msg.fromIdentity) return;
+        setMicRequests((prev) => ({
+          ...prev,
+          [msg.fromIdentity]: { displayName: msg.displayName },
+        }));
       }
     };
 
@@ -141,6 +153,12 @@ export function TeacherModerationPanel({
 
   const setMicrophonePermission = useCallback(
     async (targetIdentity: string, allowed: boolean) => {
+      setMicPermissions((prev) => ({ ...prev, [targetIdentity]: allowed }));
+      setMicRequests((prev) => {
+        const next = { ...prev };
+        delete next[targetIdentity];
+        return next;
+      });
       await publishRoom(
         {
           allowed,
@@ -184,6 +202,10 @@ export function TeacherModerationPanel({
     () => Object.entries(raisedHands),
     [raisedHands],
   );
+  const micRequestEntries = useMemo(
+    () => Object.entries(micRequests),
+    [micRequests],
+  );
 
   return (
     <div className="flex w-full shrink-0 flex-col gap-3 rounded-xl border border-border bg-card p-4 md:max-h-[38vh] md:overflow-y-auto md:w-80">
@@ -206,7 +228,7 @@ export function TeacherModerationPanel({
                   onClick={() => void setMicrophonePermission(r.identity, true)}
                   className="rounded-md bg-emerald-600 px-2 py-1 text-[10px] font-semibold text-white hover:bg-emerald-500"
                 >
-                  Ses ver
+                  {micPermissions[r.identity] ? "Ses açık" : "Ses ver"}
                 </button>
                 <button
                   type="button"
@@ -240,6 +262,40 @@ export function TeacherModerationPanel({
                 >
                   Onayla
                 </button>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+
+      {micRequestEntries.length > 0 && (
+        <div className="border-t border-border pt-3">
+          <p className="mb-2 text-xs font-medium text-foreground/70">
+            Mikrofon izni isteyenler
+          </p>
+          <ul className="space-y-2">
+            {micRequestEntries.map(([id, v]) => (
+              <li
+                key={id}
+                className="flex items-center justify-between gap-2 text-xs"
+              >
+                <span className="min-w-0 truncate">{v.displayName}</span>
+                <span className="flex shrink-0 items-center gap-1">
+                  <button
+                    type="button"
+                    onClick={() => void setMicrophonePermission(id, true)}
+                    className="rounded-lg bg-emerald-600 px-2 py-1 text-[11px] font-medium text-white hover:bg-emerald-500"
+                  >
+                    Ses ver
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => void setMicrophonePermission(id, false)}
+                    className="rounded-lg border border-border px-2 py-1 text-[11px] font-medium hover:bg-foreground/5"
+                  >
+                    Reddet
+                  </button>
+                </span>
               </li>
             ))}
           </ul>

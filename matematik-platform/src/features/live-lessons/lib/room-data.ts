@@ -37,6 +37,11 @@ export type RoomDataMessage =
       fromIdentity: string;
     }
   | {
+      kind: "microphone_request";
+      fromIdentity: string;
+      displayName: string;
+    }
+  | {
       kind: "display_settings";
       fromIdentity: string;
       settings: LiveLessonDisplaySettings;
@@ -78,6 +83,10 @@ function isRoomDataMessage(value: unknown): value is RoomDataMessage {
       typeof v.allowed === "boolean" &&
       typeof v.fromIdentity === "string"
     );
+  }
+  if (k === "microphone_request") {
+    const v = value as Record<string, unknown>;
+    return typeof v.fromIdentity === "string" && typeof v.displayName === "string";
   }
   if (k === "display_settings") {
     const v = value as Record<string, unknown>;

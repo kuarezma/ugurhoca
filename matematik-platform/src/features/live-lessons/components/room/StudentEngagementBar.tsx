@@ -31,6 +31,7 @@ export function StudentEngagementBar({
   const [raised, setRaised] = useState(false);
   const [micAllowed, setMicAllowed] = useState(false);
   const [micEnabled, setMicEnabled] = useState(false);
+  const [micRequestSent, setMicRequestSent] = useState(false);
   const [approvalResolved, setApprovalResolved] = useState(!requireStudentApproval);
 
   const unlockAfterApproval = useCallback(() => {
@@ -128,8 +129,11 @@ export function StudentEngagementBar({
       if (msg.fromIdentity !== participant.identity) return;
       setMicAllowed(msg.allowed);
       if (!msg.allowed) {
+        setMicRequestSent(false);
         setMicEnabled(false);
         void room.localParticipant.setMicrophoneEnabled(false);
+      } else {
+        setMicRequestSent(false);
       }
     };
     room.on(RoomEvent.DataReceived, onData);
@@ -153,11 +157,22 @@ export function StudentEngagementBar({
   }, [displayName, identity, raised, room.localParticipant]);
 
   const toggleMic = useCallback(async () => {
-    if (!micAllowed) return;
+    if (!micAllowed) {
+      setMicRequestSent(true);
+      await room.localParticipant.publishData(
+        encodeRoomDataMessage({
+          kind: "microphone_request",
+          fromIdentity: identity,
+          displayName,
+        }),
+        { reliable: true },
+      );
+      return;
+    }
     const next = !micEnabled;
     setMicEnabled(next);
     await room.localParticipant.setMicrophoneEnabled(next);
-  }, [micAllowed, micEnabled, room.localParticipant]);
+  }, [displayName, identity, micAllowed, micEnabled, room.localParticipant]);
 
   return (
     <div className="flex shrink-0 items-center justify-center gap-2 border-t border-border bg-card px-3 py-2">
@@ -175,8 +190,7 @@ export function StudentEngagementBar({
       <button
         type="button"
         onClick={() => void toggleMic()}
-        disabled={!micAllowed}
-        className={`touch-target rounded-xl px-4 py-2 text-sm font-medium transition disabled:opacity-50 ${
+        className={`touch-target rounded-xl px-4 py-2 text-sm font-medium transition ${
           micEnabled
             ? "bg-emerald-600 text-white hover:bg-emerald-500"
             : "border border-border hover:bg-foreground/5"
@@ -186,7 +200,9 @@ export function StudentEngagementBar({
           ? micEnabled
             ? "Mikrofonu kapat"
             : "Mikrofonu aç"
-          : "Mikrofon izni bekleniyor"}
+          : micRequestSent
+            ? "İzin bekleniyor"
+            : "Mikrofon izni iste"}
       </button>
     </div>
   );
