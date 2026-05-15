@@ -58,11 +58,22 @@ export async function loadLiveLessonsForCurrentUser(): Promise<LiveLesson[]> {
     .in('status', ['scheduled', 'active'])
     .order('starts_at', { ascending: true });
 
-  const { data } = isLiveLessonAdmin(snapshot)
+  const { data, error } = isLiveLessonAdmin(snapshot)
     ? await query
     : await query.or(
         `target_grade.eq.${snapshot.grade},target_grade.eq.all,target_student_ids.cs.{${snapshot.id}}`,
       );
+
+  if (error && !isLiveLessonAdmin(snapshot)) {
+    const { data: gradeData } = await supabase
+      .from('live_lessons')
+      .select('*')
+      .in('status', ['scheduled', 'active'])
+      .or(`target_grade.eq.${snapshot.grade},target_grade.eq.all`)
+      .order('starts_at', { ascending: true });
+
+    return (gradeData || []) as LiveLesson[];
+  }
 
   return (data || []) as LiveLesson[];
 }
@@ -271,7 +282,7 @@ export async function createLiveLessons(input: {
   const startsAtValues = buildRecurringStartsAtValues(startsAt, input.repeatWeeklyUntil);
   const rows = startsAtValues.map((date) => {
     const roomId = generateRoomId();
-    return {
+    const lessonRow: Record<string, unknown> = {
       created_by: input.userId,
       description: input.description || null,
       duration_minutes: Math.max(15, Math.min(240, input.durationMinutes || 60)),
@@ -279,10 +290,15 @@ export async function createLiveLessons(input: {
       starts_at: date.toISOString(),
       status: date.getTime() <= Date.now() + 5 * 60 * 1000 ? 'active' : 'scheduled',
       target_grade: input.targetGrade,
-      target_student_ids: input.targetGrade === 'selected' ? targetStudentIds : null,
       teacher_proof: signTeacherProof(roomId),
       title: input.title.trim(),
     };
+
+    if (input.targetGrade === 'selected') {
+      lessonRow.target_student_ids = targetStudentIds;
+    }
+
+    return lessonRow;
   });
 
   const { data, error } = await supabase
@@ -360,17 +376,22 @@ export async function updateLiveLesson(input: {
     JSON.stringify([...(currentLesson.target_student_ids || [])].sort()) !==
       JSON.stringify([...(nextTargetStudentIds || [])].sort());
 
+  const updatePayload: Record<string, unknown> = {
+    description: input.description || null,
+    duration_minutes: Math.max(15, Math.min(240, input.durationMinutes || 60)),
+    starts_at: startsAt.toISOString(),
+    target_grade: input.targetGrade,
+    title: input.title.trim(),
+    updated_at: new Date().toISOString(),
+  };
+
+  if (input.targetGrade === 'selected') {
+    updatePayload.target_student_ids = nextTargetStudentIds;
+  }
+
   const { data, error } = await supabase
     .from('live_lessons')
-    .update({
-      description: input.description || null,
-      duration_minutes: Math.max(15, Math.min(240, input.durationMinutes || 60)),
-      starts_at: startsAt.toISOString(),
-      target_grade: input.targetGrade,
-      target_student_ids: nextTargetStudentIds,
-      title: input.title.trim(),
-      updated_at: new Date().toISOString(),
-    })
+    .update(updatePayload)
     .eq('id', input.lessonId)
     .select('*')
     .single();
