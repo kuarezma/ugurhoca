@@ -1,6 +1,10 @@
 "use client";
 
-import { useConnectionState, useRoomContext } from "@livekit/components-react";
+import {
+  useConnectionState,
+  useLocalParticipant,
+  useRoomContext,
+} from "@livekit/components-react";
 import { ConnectionState, RoomEvent, type Participant } from "livekit-client";
 import { useCallback, useEffect, useRef, useState } from "react";
 
@@ -25,12 +29,14 @@ export function StudentEngagementBar({
   onLessonUnlocked,
 }: Props) {
   const room = useRoomContext();
+  const { isMicrophoneEnabled, localParticipant } = useLocalParticipant();
   const connectionState = useConnectionState(room);
   const joinSentRef = useRef(false);
   const skipApprovalUnlockRef = useRef(false);
   const [raised, setRaised] = useState(false);
   const [micAllowed, setMicAllowed] = useState(false);
-  const [micEnabled, setMicEnabled] = useState(false);
+  const [micBusy, setMicBusy] = useState(false);
+  const [micError, setMicError] = useState<string | null>(null);
   const [micRequestSent, setMicRequestSent] = useState(false);
   const [approvalResolved, setApprovalResolved] = useState(!requireStudentApproval);
 
@@ -100,6 +106,25 @@ export function StudentEngagementBar({
     return () => window.clearInterval(interval);
   }, [approvalResolved, checkApprovalStatus, requireStudentApproval]);
 
+  const setStudentMicrophone = useCallback(
+    async (enabled: boolean) => {
+      setMicBusy(true);
+      setMicError(null);
+      try {
+        await localParticipant.setMicrophoneEnabled(enabled);
+      } catch {
+        setMicError(
+          enabled
+            ? "Mikrofon açılamadı. Tarayıcı mikrofon iznini kontrol edin."
+            : "Mikrofon kapatılamadı. Lütfen tekrar deneyin.",
+        );
+      } finally {
+        setMicBusy(false);
+      }
+    },
+    [localParticipant],
+  );
+
   useEffect(() => {
     if (!requireStudentApproval) return;
     const onData = (payload: Uint8Array, participant?: Participant) => {
@@ -130,17 +155,17 @@ export function StudentEngagementBar({
       setMicAllowed(msg.allowed);
       if (!msg.allowed) {
         setMicRequestSent(false);
-        setMicEnabled(false);
-        void room.localParticipant.setMicrophoneEnabled(false);
+        void setStudentMicrophone(false);
       } else {
         setMicRequestSent(false);
+        void setStudentMicrophone(true);
       }
     };
     room.on(RoomEvent.DataReceived, onData);
     return () => {
       room.off(RoomEvent.DataReceived, onData);
     };
-  }, [identity, room]);
+  }, [identity, room, setStudentMicrophone]);
 
   const toggleRaise = useCallback(async () => {
     const next = !raised;
@@ -169,41 +194,56 @@ export function StudentEngagementBar({
       );
       return;
     }
-    const next = !micEnabled;
-    setMicEnabled(next);
-    await room.localParticipant.setMicrophoneEnabled(next);
-  }, [displayName, identity, micAllowed, micEnabled, room.localParticipant]);
+    await setStudentMicrophone(!isMicrophoneEnabled);
+  }, [
+    displayName,
+    identity,
+    isMicrophoneEnabled,
+    micAllowed,
+    room.localParticipant,
+    setStudentMicrophone,
+  ]);
 
   return (
-    <div className="flex shrink-0 items-center justify-center gap-2 border-t border-border bg-card px-3 py-2">
-      <button
-        type="button"
-        onClick={() => void toggleRaise()}
-        className={`touch-target rounded-xl px-4 py-2 text-sm font-medium transition ${
-          raised
-            ? "bg-amber-500 text-white hover:bg-amber-400"
-            : "border border-border hover:bg-foreground/5"
-        }`}
-      >
-        {raised ? "Eli indir" : "El kaldır"}
-      </button>
-      <button
-        type="button"
-        onClick={() => void toggleMic()}
-        className={`touch-target rounded-xl px-4 py-2 text-sm font-medium transition ${
-          micEnabled
-            ? "bg-emerald-600 text-white hover:bg-emerald-500"
-            : "border border-border hover:bg-foreground/5"
-        }`}
-      >
-        {micAllowed
-          ? micEnabled
-            ? "Mikrofonu kapat"
-            : "Mikrofonu aç"
-          : micRequestSent
-            ? "İzin bekleniyor"
-            : "Mikrofon izni iste"}
-      </button>
+    <div className="flex shrink-0 flex-col items-center justify-center gap-2 border-t border-border bg-card px-3 py-2">
+      <div className="flex flex-wrap items-center justify-center gap-2">
+        <button
+          type="button"
+          onClick={() => void toggleRaise()}
+          className={`touch-target rounded-xl px-4 py-2 text-sm font-medium transition ${
+            raised
+              ? "bg-amber-500 text-white hover:bg-amber-400"
+              : "border border-border hover:bg-foreground/5"
+          }`}
+        >
+          {raised ? "Eli indir" : "El kaldır"}
+        </button>
+        <button
+          type="button"
+          onClick={() => void toggleMic()}
+          disabled={micBusy}
+          className={`touch-target rounded-xl px-4 py-2 text-sm font-medium transition disabled:opacity-60 ${
+            isMicrophoneEnabled
+              ? "bg-emerald-600 text-white hover:bg-emerald-500"
+              : "border border-border hover:bg-foreground/5"
+          }`}
+        >
+          {micBusy
+            ? "İşleniyor..."
+            : micAllowed
+              ? isMicrophoneEnabled
+                ? "Mikrofonu kapat"
+                : "Mikrofonu aç"
+              : micRequestSent
+                ? "İzin bekleniyor"
+                : "Mikrofon izni iste"}
+        </button>
+      </div>
+      {micError ? (
+        <p className="max-w-sm text-center text-xs font-medium text-red-600 dark:text-red-300">
+          {micError}
+        </p>
+      ) : null}
     </div>
   );
 }
