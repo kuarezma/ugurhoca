@@ -15,8 +15,7 @@ export const DOCUMENT_CATEGORY_OPTIONS = [
   { label: "Kitaplar", value: "kitaplar" },
   { label: "Kazanımlar", value: "yaprak-test" },
   { label: "Ders Videoları", value: "ders-videolari" },
-  { label: "Deneme", value: "deneme" },
-  { label: "Sınav", value: "sinav" },
+  { label: "Deneme-Sınav", value: "deneme-sinav" },
   { label: "Programlar", value: "programlar" },
 ] as const;
 

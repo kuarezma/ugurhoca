@@ -1,6 +1,9 @@
 import type { Metadata } from 'next';
 import ContentsPage from '@/features/content/containers/ContentsPage';
-import { CONTENT_PAGE_SIZE } from '@/features/content/constants';
+import {
+  CONTENT_PAGE_SIZE,
+  CONTENT_TYPE_MAPPING,
+} from '@/features/content/constants';
 import {
   getInitialContentGradeFilter,
   loadInitialContentDocuments,
@@ -23,8 +26,9 @@ export default async function IceriklerPage({
 }: IceriklerPageProps) {
   const resolvedSearchParams = searchParams ? await searchParams : {};
   const typeParam = resolvedSearchParams.type;
-  const initialType =
+  const requestedType =
     typeof typeParam === 'string' && typeParam.length > 0 ? typeParam : 'all';
+  const initialType = CONTENT_TYPE_MAPPING[requestedType] || requestedType;
   const initialGrade = await getInitialContentGradeFilter();
 
   const initialData = await loadInitialContentDocuments(

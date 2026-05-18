@@ -14,8 +14,7 @@ export const CONTENT_TYPE_OPTIONS = [
   { value: 'kitaplar', label: 'Kitaplar' },
   { value: 'yaprak-test', label: 'Kazanımlar' },
   { value: 'ders-videolari', label: 'Ders Videoları' },
-  { value: 'deneme', label: 'Deneme' },
-  { value: 'sinav', label: 'Sınav' },
+  { value: 'deneme-sinav', label: 'Deneme-Sınav' },
   { value: 'oyunlar', label: 'Oyunlar' },
   { value: 'programlar', label: 'Programlar' },
 ] as const;
@@ -26,9 +25,10 @@ export const CONTENT_TYPE_MAPPING: Record<string, string> = {
   'yaprak-test': 'yaprak-test',
   'ders-videolari': 'ders-videolari',
   video: 'ders-videolari',
-  deneme: 'deneme',
-  sinav: 'sinav',
-  test: 'sinav',
+  deneme: 'deneme-sinav',
+  sinav: 'deneme-sinav',
+  test: 'deneme-sinav',
+  'deneme-sinav': 'deneme-sinav',
   worksheet: 'yaprak-test',
   oyunlar: 'oyunlar',
   game: 'oyunlar',
@@ -63,9 +63,7 @@ export const getContentTypeColor = (type: string) => {
       return 'from-purple-500 to-pink-500';
     case 'ders-videolari':
       return 'from-red-500 to-orange-500';
-    case 'deneme':
-      return 'from-green-500 to-emerald-500';
-    case 'sinav':
+    case 'deneme-sinav':
       return 'from-teal-500 to-cyan-500';
     case 'oyunlar':
       return 'from-yellow-500 to-amber-500';
@@ -86,10 +84,8 @@ export const getContentTypeLabel = (type: string) => {
       return 'Kazanımlar';
     case 'ders-videolari':
       return 'Ders Videoları';
-    case 'deneme':
-      return 'Deneme';
-    case 'sinav':
-      return 'Sınav';
+    case 'deneme-sinav':
+      return 'Deneme-Sınav';
     case 'oyunlar':
       return 'Oyun';
     case 'programlar':
@@ -104,6 +100,10 @@ export const getContentTypeQueryTypes = (type: string) => {
 
   if (normalizedType === 'ders-notlari') {
     return ['ders-notlari', 'writing', 'yaprak-test'];
+  }
+
+  if (normalizedType === 'deneme-sinav') {
+    return ['deneme', 'sinav', 'test', 'deneme-sinav'];
   }
 
   return [normalizedType];

@@ -69,10 +69,10 @@ export const getContentPageTitle = (selectedType: string) => {
   switch (selectedType) {
     case 'yaprak-test':
       return 'Kazanımlar';
+    case 'deneme-sinav':
     case 'deneme':
-      return 'Denemeler';
     case 'sinav':
-      return 'Sınavlar';
+      return 'Deneme-Sınav';
     case 'oyunlar':
       return 'Oyunlar';
     case 'ders-notlari':

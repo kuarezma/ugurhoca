@@ -200,7 +200,7 @@ export function useAdminListActions({
   const handleRefreshDocumentCategories = async () => {
     if (
       !confirm(
-        "Eski içeriklerin kategori türlerini güncellemek istediğinize emin misiniz?\n\n• worksheet → Yaprak Test\n• test → Sınav\n• game → Oyunlar\n• document → Yaprak Test\n• writing → Ders Notları\n• ders-notuari-kitaplar → Ders Notları\n• deneme → Deneme",
+        "Eski içeriklerin kategori türlerini güncellemek istediğinize emin misiniz?\n\n• worksheet → Yaprak Test\n• test → Deneme-Sınav\n• deneme → Deneme-Sınav\n• sinav → Deneme-Sınav\n• game → Oyunlar\n• document → Yaprak Test\n• writing → Ders Notları\n• ders-notuari-kitaplar → Ders Notları",
       )
     ) {
       return;

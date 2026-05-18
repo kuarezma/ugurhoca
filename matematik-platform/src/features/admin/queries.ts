@@ -844,7 +844,9 @@ export const refreshAdminDocumentCategories = async () => {
   const updates = [
     { old: 'worksheet', next: 'yaprak-test' },
     { old: 'document', next: 'yaprak-test' },
-    { old: 'test', next: 'sinav' },
+    { old: 'test', next: 'deneme-sinav' },
+    { old: 'deneme', next: 'deneme-sinav' },
+    { old: 'sinav', next: 'deneme-sinav' },
     { old: 'game', next: 'oyunlar' },
     { old: 'writing', next: 'ders-notlari' },
     { old: 'ders-notuari-kitaplar', next: 'ders-notlari' },

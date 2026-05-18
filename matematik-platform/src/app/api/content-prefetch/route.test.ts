@@ -63,7 +63,7 @@ describe('GET /api/content-prefetch', () => {
     );
 
     const response = await GET(
-      new Request('http://localhost/api/content-prefetch?type=deneme'),
+      new Request('http://localhost/api/content-prefetch?type=deneme-sinav'),
     );
 
     expect(response.status).toBe(500);

@@ -46,6 +46,7 @@ const ContentQuickAddModal = dynamic(
 );
 import {
   CONTENT_PAGE_SIZE,
+  CONTENT_TYPE_MAPPING,
   CONTENT_TYPE_OPTIONS,
 } from '@/features/content/constants';
 import {
@@ -221,7 +222,9 @@ function ContentsPageInner({
 }: ContentsPageProps) {
   const searchParams = useSearchParams();
   const { showToast } = useToast();
-  const typeFromUrl = searchParams.get('type') || 'all';
+  const requestedTypeFromUrl = searchParams.get('type') || 'all';
+  const typeFromUrl =
+    CONTENT_TYPE_MAPPING[requestedTypeFromUrl] || requestedTypeFromUrl;
   const [user, setUser] = useState<ContentPageUser | null>(null);
   const [documents, setDocuments] = useState<ContentDocument[]>(
     initialDocuments,
