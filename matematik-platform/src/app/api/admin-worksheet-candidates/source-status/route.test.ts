@@ -55,6 +55,12 @@ describe('GET /api/admin-worksheet-candidates/source-status', () => {
       data: {
         allowedHosts: [],
         configured: false,
+        health: {
+          allowedHosts: 0,
+          invalidSources: 0,
+          totalSources: 0,
+          validSources: 0,
+        },
         invalidAllowedHosts: [],
         invalidSourceUrls: [],
         sourceUrls: [],
@@ -64,7 +70,7 @@ describe('GET /api/admin-worksheet-candidates/source-status', () => {
 
   it('returns configured source urls and inferred allowed hosts', async () => {
     process.env.WORKSHEET_CANDIDATE_SOURCE_URLS =
-      'https://example.com/testler, https://www.meb.gov.tr/pdfler';
+      'https://example.com/testler,\n https://www.meb.gov.tr/pdfler';
 
     const response = await GET(
       new Request(
@@ -77,6 +83,12 @@ describe('GET /api/admin-worksheet-candidates/source-status', () => {
       data: {
         allowedHosts: ['example.com', 'www.meb.gov.tr'],
         configured: true,
+        health: {
+          allowedHosts: 2,
+          invalidSources: 0,
+          totalSources: 2,
+          validSources: 2,
+        },
         invalidAllowedHosts: [],
         invalidSourceUrls: [],
         sourceUrls: [
@@ -102,6 +114,12 @@ describe('GET /api/admin-worksheet-candidates/source-status', () => {
       data: {
         allowedHosts: ['example.com'],
         configured: false,
+        health: {
+          allowedHosts: 1,
+          invalidSources: 2,
+          totalSources: 3,
+          validSources: 1,
+        },
         invalidAllowedHosts: [],
         invalidSourceUrls: ['ftp://example.com/file.pdf', 'not-a-url'],
         sourceUrls: [
@@ -113,11 +131,9 @@ describe('GET /api/admin-worksheet-candidates/source-status', () => {
     });
   });
 
-  it('returns invalid allowed hosts when host config includes protocol or path', async () => {
+  it('returns invalid source urls for local or private network addresses', async () => {
     process.env.WORKSHEET_CANDIDATE_SOURCE_URLS =
-      'https://example.com/testler';
-    process.env.WORKSHEET_CANDIDATE_ALLOWED_HOSTS =
-      'example.com, https://meb.gov.tr, kaynak.com/testler';
+      'http://localhost/testler, http://192.168.1.10/testler, https://example.com/testler';
 
     const response = await GET(
       new Request(
@@ -128,9 +144,61 @@ describe('GET /api/admin-worksheet-candidates/source-status', () => {
     expect(response.status).toBe(200);
     await expect(response.json()).resolves.toEqual({
       data: {
-        allowedHosts: ['example.com', 'https://meb.gov.tr', 'kaynak.com/testler'],
+        allowedHosts: ['example.com'],
         configured: false,
-        invalidAllowedHosts: ['https://meb.gov.tr', 'kaynak.com/testler'],
+        health: {
+          allowedHosts: 1,
+          invalidSources: 2,
+          totalSources: 3,
+          validSources: 1,
+        },
+        invalidAllowedHosts: [],
+        invalidSourceUrls: [
+          'http://localhost/testler',
+          'http://192.168.1.10/testler',
+        ],
+        sourceUrls: [
+          'http://localhost/testler',
+          'http://192.168.1.10/testler',
+          'https://example.com/testler',
+        ],
+      },
+    });
+  });
+
+  it('returns invalid allowed hosts when host config includes protocol or path', async () => {
+    process.env.WORKSHEET_CANDIDATE_SOURCE_URLS =
+      'https://example.com/testler';
+    process.env.WORKSHEET_CANDIDATE_ALLOWED_HOSTS =
+      'example.com,\n https://meb.gov.tr, kaynak.com/testler, 192.168.1.10';
+
+    const response = await GET(
+      new Request(
+        'http://localhost/api/admin-worksheet-candidates/source-status',
+      ),
+    );
+
+    expect(response.status).toBe(200);
+    await expect(response.json()).resolves.toEqual({
+      data: {
+        allowedHosts: [
+          'example.com',
+          'https://meb.gov.tr',
+          'kaynak.com/testler',
+          '192.168.1.10',
+        ],
+        configured: false,
+        health: {
+          allowedHosts: 4,
+          invalidSources: 0,
+          totalSources: 1,
+          validSources: 1,
+        },
+        invalidAllowedHosts: [
+          'https://meb.gov.tr',
+          'kaynak.com/testler',
+          '192.168.1.10',
+        ],
         invalidSourceUrls: [],
         sourceUrls: ['https://example.com/testler'],
       },

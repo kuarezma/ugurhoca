@@ -18,6 +18,7 @@ export const DEFAULT_WORKSHEET_OUTCOME = 'Genel Kazanım';
 
 const WORKSHEET_LEGACY_TITLE_PATTERN = /^Test\s*-\s*(\d+)$/i;
 const WORKSHEET_TITLE_SUFFIX_PATTERN = /\(\s*Test\s*-\s*(\d+)\s*\)\s*$/i;
+const WORKSHEET_STANDARD_TITLE_PATTERN = /Yaprak Test\s+(\d+)\s*$/i;
 const WORKSHEET_META_PREFIX = '__WS_META__';
 const WORKSHEET_GENERIC_DESCRIPTION_PATTERNS = [
   /^test\s*-\s*\d+$/i,
@@ -68,11 +69,65 @@ const normalizeWorksheetTitleBase = (
   return normalizedDescription || normalizedOutcome || DEFAULT_WORKSHEET_OUTCOME;
 };
 
+export const getWorksheetTitleTopic = (options: {
+  outcome?: string | null;
+  subject?: string | null;
+}) => {
+  const normalizedSubject = options.subject?.trim().replace(/\s+/g, ' ') || '';
+
+  if (normalizedSubject) {
+    return normalizedSubject;
+  }
+
+  const normalizedOutcome = normalizeWorksheetOutcome(options.outcome)
+    .replace(/^M(?:AT)?\.\d+\.\d+\.\d+\.\d+\.?\s*/i, '')
+    .replace(/^M(?:AT)?\.\d+\.\d+\.\d+\.?\s*/i, '')
+    .replace(/\s+/g, ' ')
+    .trim();
+
+  return normalizedOutcome || DEFAULT_WORKSHEET_OUTCOME;
+};
+
+export const formatWorksheetOrder = (order?: number | null) =>
+  typeof order === 'number' && Number.isFinite(order) && order > 0
+    ? String(order).padStart(2, '0')
+    : '';
+
+export const buildWorksheetStandardTitle = ({
+  grade,
+  order,
+  outcome,
+  subject,
+}: {
+  grade: number;
+  order?: number | null;
+  outcome?: string | null;
+  subject?: string | null;
+}) => {
+  const orderLabel = formatWorksheetOrder(order);
+  const suffix = orderLabel ? `Yaprak Test ${orderLabel}` : 'Yaprak Test';
+
+  return `${grade}. Sınıf Matematik - ${getWorksheetTitleTopic({
+    outcome,
+    subject,
+  })} - ${suffix}`;
+};
+
 export const getWorksheetTestTitle = (
   order: number,
   description?: string | null,
   outcome?: string | null,
+  grade?: number | null,
 ) => {
+  if (typeof grade === 'number') {
+    return buildWorksheetStandardTitle({
+      grade,
+      order,
+      outcome,
+      subject: description,
+    });
+  }
+
   const titleBase = normalizeWorksheetTitleBase(description, outcome);
   return `${titleBase} (Test-${order})`;
 };
@@ -433,8 +488,9 @@ export const getWorksheetOrder = (
 
   const suffixMatch = document.title?.match(WORKSHEET_TITLE_SUFFIX_PATTERN);
   const legacyMatch = document.title?.match(WORKSHEET_LEGACY_TITLE_PATTERN);
+  const standardMatch = document.title?.match(WORKSHEET_STANDARD_TITLE_PATTERN);
   const parsedOrder = Number.parseInt(
-    suffixMatch?.[1] || legacyMatch?.[1] || '',
+    standardMatch?.[1] || suffixMatch?.[1] || legacyMatch?.[1] || '',
     10,
   );
 
@@ -522,6 +578,7 @@ export const prepareWorksheetDocumentPayload = async <
       worksheetOrder,
       payload.description,
       learningOutcome,
+      typeof grade === 'number' ? grade : null,
     ),
   };
 };

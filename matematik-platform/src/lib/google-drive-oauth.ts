@@ -232,7 +232,7 @@ export async function uploadWorksheetPdfToDrive({
   });
   const uploadResult = await uploadPdfFile({
     accessToken,
-    fileName: buildPdfFileName(input),
+    fileName: buildWorksheetPdfFileName(input),
     parentId,
     pdfBytes: input.pdfBytes,
   });
@@ -411,7 +411,7 @@ async function shareDriveFile(accessToken: string, fileId: string) {
   }
 }
 
-function buildPdfFileName(input: GoogleDriveUploadInput) {
+export function buildWorksheetPdfFileName(input: GoogleDriveUploadInput) {
   const title = sanitizeDriveName(input.candidateTitle || input.subject);
   return title.toLowerCase().endsWith('.pdf') ? title : `${title}.pdf`;
 }

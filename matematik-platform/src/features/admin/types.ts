@@ -184,6 +184,12 @@ export type WorksheetCandidateSourceStatus = {
   configured: boolean;
   invalidAllowedHosts?: string[];
   invalidSourceUrls?: string[];
+  health?: {
+    allowedHosts: number;
+    invalidSources: number;
+    totalSources: number;
+    validSources: number;
+  };
   sourceUrls: string[];
 };
 

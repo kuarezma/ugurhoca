@@ -2,14 +2,20 @@
 
 Bu özellik yıllık planı okuyup haftanın kazanımına göre PDF adaylarını bulur, onaylanan PDF'yi Google Drive'a kopyalar ve öğrencilerin paneline/bildirimlerine düşürür.
 
+Paket 2 başlık, kaynak güvenliği ve eşleşme kalitesi notları için:
+
+```text
+docs/WORKSHEET_AUTOMATION_PACKAGE_2.md
+```
+
 ## Ortam Değişkenleri
 
 Vercel ve yerel `.env.local` için:
 
 | Değişken | Açıklama |
 | --- | --- |
-| `WORKSHEET_CANDIDATE_SOURCE_URLS` | Virgülle ayrılmış izinli kaynak sayfaları veya PDF URL'leri |
-| `WORKSHEET_CANDIDATE_ALLOWED_HOSTS` | İsteğe bağlı. Boşsa kaynak URL alan adları otomatik izinli sayılır |
+| `WORKSHEET_CANDIDATE_SOURCE_URLS` | Virgülle veya satır satır ayrılmış izinli kaynak sayfaları/PDF URL'leri |
+| `WORKSHEET_CANDIDATE_ALLOWED_HOSTS` | İsteğe bağlı. Virgülle veya satır satır yazılabilir; boşsa kaynak URL alan adları otomatik izinli sayılır |
 | `GOOGLE_DRIVE_CLIENT_ID` | Google OAuth istemci ID |
 | `GOOGLE_DRIVE_CLIENT_SECRET` | Google OAuth istemci secret |
 | `GOOGLE_DRIVE_REDIRECT_URI` | Örn. `https://www.ugurhoca.com/api/admin-google-drive/callback` |
@@ -69,7 +75,7 @@ npm run setup:worksheets:source
 
 ## Kaynak URL Ayarı
 
-`WORKSHEET_CANDIDATE_SOURCE_URLS` alanına PDF dosyası veya PDF linkleri içeren kaynak sayfalar yazılabilir:
+`WORKSHEET_CANDIDATE_SOURCE_URLS` alanına PDF dosyası veya PDF linkleri içeren kaynak sayfalar yazılabilir. Kaynaklar virgülle veya satır satır ayrılabilir:
 
 ```bash
 WORKSHEET_CANDIDATE_SOURCE_URLS=https://ornek-site.com/8-sinif-testler,https://ornek-site.com/test.pdf
@@ -80,6 +86,32 @@ WORKSHEET_CANDIDATE_SOURCE_URLS=https://ornek-site.com/8-sinif-testler,https://o
 ```bash
 WORKSHEET_CANDIDATE_ALLOWED_HOSTS=ornek-site.com,baska-kaynak.com
 ```
+
+Kaynak kontrol komutu HTML sayfalarında PDF linklerini sayar, doğrudan PDF URL'lerinde ise kaynağı "doğrudan PDF kaynağı" olarak raporlar.
+
+Güvenlik için yerel veya özel ağ adresleri kaynak olarak kabul edilmez:
+
+- `localhost`
+- `*.local`
+- `127.x.x.x`
+- `10.x.x.x`
+- `172.16.x.x` - `172.31.x.x`
+- `192.168.x.x`
+
+## PDF Başlık Standardı
+
+Yeni onaylanan yaprak testlerde başlık ve Google Drive dosya adı aynı sistemle oluşturulur:
+
+```text
+8. Sınıf Matematik - Üslü İfadeler - Yaprak Test 01
+```
+
+Kurallar:
+
+- Aday listesinde sıra numarası olmayan düzenli başlık gösterilir.
+- Yayın sırasında aynı sınıf ve kazanımdaki sıraya göre `01`, `02`, `03` eklenir.
+- Drive dosya adı aynı başlığa `.pdf` uzantısı eklenerek oluşturulur.
+- Eski yayınlanmış başlıklar toplu değiştirilmez.
 
 ## Google Drive OAuth
 

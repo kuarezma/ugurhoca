@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import {
   buildWorksheetDescription,
+  buildWorksheetStandardTitle,
   getNextWorksheetOrder,
   getWorksheetOutcomeLabel,
   getWorksheetOrder,
@@ -30,6 +31,12 @@ describe('worksheet helpers', () => {
     expect(
       getWorksheetOrder({ description: '', title: 'Eşlik ve Benzerlik (Test-8)' }),
     ).toBe(8);
+    expect(
+      getWorksheetOrder({
+        description: '',
+        title: '8. Sınıf Matematik - Eşlik ve Benzerlik - Yaprak Test 09',
+      }),
+    ).toBe(9);
   });
 
   it('calculates the next test order', () => {
@@ -41,6 +48,48 @@ describe('worksheet helpers', () => {
     ).toBe(4);
     expect(getWorksheetTestTitle(4, 'Eşlik ve Benzerlik')).toBe(
       'Eşlik ve Benzerlik (Test-4)',
+    );
+    expect(
+      getWorksheetTestTitle(
+        4,
+        'Eşlik ve Benzerlik',
+        'M.8.3.1. Eşlik ve benzerlik ilişkilerini yorumlar.',
+        8,
+      ),
+    ).toBe('8. Sınıf Matematik - Eşlik ve Benzerlik - Yaprak Test 04');
+  });
+
+  it('builds standard worksheet titles', () => {
+    expect(
+      buildWorksheetStandardTitle({
+        grade: 8,
+        order: 1,
+        subject: 'Üslü İfadeler',
+      }),
+    ).toBe('8. Sınıf Matematik - Üslü İfadeler - Yaprak Test 01');
+    expect(
+      buildWorksheetStandardTitle({
+        grade: 5,
+        order: 2,
+        subject: 'Kesirler',
+      }),
+    ).toBe('5. Sınıf Matematik - Kesirler - Yaprak Test 02');
+    expect(
+      buildWorksheetStandardTitle({
+        grade: 6,
+        outcome: '',
+        subject: '   ',
+      }),
+    ).toBe('6. Sınıf Matematik - Genel Kazanım - Yaprak Test');
+    expect(
+      buildWorksheetStandardTitle({
+        grade: 8,
+        outcome:
+          'M.8.1.2.1. Üslü ifadelerle ilgili temel kuralları anlar.',
+        subject: '',
+      }),
+    ).toBe(
+      '8. Sınıf Matematik - Üslü ifadelerle ilgili temel kuralları anlar. - Yaprak Test',
     );
   });
 

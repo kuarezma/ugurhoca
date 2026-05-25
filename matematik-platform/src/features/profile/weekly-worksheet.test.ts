@@ -56,6 +56,31 @@ describe('weekly worksheet suggestion', () => {
     });
   });
 
+  it('supports the standard worksheet title format in weekly suggestions', () => {
+    const suggestion = selectWeeklyWorksheetSuggestion({
+      documents: [
+        {
+          description: 'Pisagor',
+          file_url: 'https://drive.google.com/file/d/standard-test',
+          grade: [8],
+          id: 'worksheet-standard',
+          title: '8. Sınıf Matematik - Pisagor - Yaprak Test 01',
+          type: 'yaprak-test',
+        },
+      ] as ContentDocument[],
+      grade: 8,
+      planItems,
+      today: '2026-05-18',
+    });
+
+    expect(suggestion).toMatchObject({
+      documentId: 'worksheet-standard',
+      fileUrl: 'https://drive.google.com/file/d/standard-test',
+      learningOutcome: outcome,
+      subject: 'Pisagor',
+    });
+  });
+
   it('does not suggest a worksheet for another grade or missing outcome', () => {
     expect(
       selectWeeklyWorksheetSuggestion({

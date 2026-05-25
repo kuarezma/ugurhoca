@@ -1,6 +1,7 @@
 import { describe, expect, it, vi } from 'vitest';
 import {
   discoverWorksheetCandidatesFromSources,
+  isPublicWorksheetSourceUrl,
   parseAllowedHosts,
   parseSourceUrls,
 } from '@/lib/worksheet-candidate-discovery';
@@ -17,7 +18,7 @@ const planItem = {
 describe('worksheet candidate discovery', () => {
   it('parses source and host allowlists', () => {
     const sources = parseSourceUrls(
-      ' https://meb.gov.tr/kaynaklar , https://eba.gov.tr/testler ',
+      ' https://meb.gov.tr/kaynaklar ,\n https://eba.gov.tr/testler ',
     );
 
     expect(sources).toEqual([
@@ -25,10 +26,17 @@ describe('worksheet candidate discovery', () => {
       'https://eba.gov.tr/testler',
     ]);
     expect(parseAllowedHosts('', sources)).toEqual(['meb.gov.tr', 'eba.gov.tr']);
-    expect(parseAllowedHosts('meb.gov.tr,.eba.gov.tr', sources)).toEqual([
+    expect(parseAllowedHosts('meb.gov.tr,\n.eba.gov.tr', sources)).toEqual([
       'meb.gov.tr',
       '.eba.gov.tr',
     ]);
+  });
+
+  it('detects public worksheet source URLs', () => {
+    expect(isPublicWorksheetSourceUrl('https://meb.gov.tr/testler')).toBe(true);
+    expect(isPublicWorksheetSourceUrl('ftp://meb.gov.tr/testler')).toBe(false);
+    expect(isPublicWorksheetSourceUrl('http://localhost/testler')).toBe(false);
+    expect(isPublicWorksheetSourceUrl('http://192.168.1.10/testler')).toBe(false);
   });
 
   it('discovers matching PDF links only from allowed hosts', async () => {
@@ -57,6 +65,7 @@ describe('worksheet candidate discovery', () => {
       source_url: 'https://meb.gov.tr/kaynaklar',
       status: 'pending',
       subject: 'Üslü İfadeler',
+      title: '8. Sınıf Matematik - Üslü İfadeler - Yaprak Test',
     });
     expect(result.candidates[0]?.match_score).toBeGreaterThanOrEqual(20);
   });
@@ -81,8 +90,74 @@ describe('worksheet candidate discovery', () => {
     });
 
     expect(result.candidates).toHaveLength(1);
-    expect(result.candidates[0]?.title).toContain('Üslü İfadeler');
+    expect(result.candidates[0]?.title).toBe(
+      '8. Sınıf Matematik - Üslü İfadeler - Yaprak Test',
+    );
     expect(result.candidates[0]?.match_score).toBeGreaterThanOrEqual(20);
+  });
+
+  it('uses the PDF file name when link text is generic', async () => {
+    const fetcher = vi.fn().mockResolvedValue({
+      headers: new Headers({ 'content-type': 'text/html' }),
+      ok: true,
+      text: async () => `
+        <a href="/dosyalar/8-sinif-uslu-ifadeler-yaprak-test.pdf">İndir</a>
+      `,
+    });
+
+    const result = await discoverWorksheetCandidatesFromSources({
+      allowedHosts: ['meb.gov.tr'],
+      fetcher,
+      planItem,
+      sourceUrls: ['https://meb.gov.tr/kaynaklar'],
+    });
+
+    expect(result.candidates).toHaveLength(1);
+    expect(result.candidates[0]?.title).toBe(
+      '8. Sınıf Matematik - Üslü İfadeler - Yaprak Test',
+    );
+  });
+
+  it('matches flexible grade spellings', async () => {
+    const fetcher = vi.fn().mockResolvedValue({
+      headers: new Headers({ 'content-type': 'text/html' }),
+      ok: true,
+      text: async () => `
+        <a href="/pdf/8_sinif_uslu_ifadeler_test.pdf">8. sınıf üslü ifadeler testi</a>
+        <a href="/pdf/8sinif-uslu-ifadeler-yaprak-test.pdf">8sinif üslü ifadeler yaprak test</a>
+      `,
+    });
+
+    const result = await discoverWorksheetCandidatesFromSources({
+      allowedHosts: ['meb.gov.tr'],
+      fetcher,
+      planItem,
+      sourceUrls: ['https://meb.gov.tr/kaynaklar'],
+    });
+
+    expect(result.candidates).toHaveLength(2);
+    expect(result.candidates.every((candidate) => candidate.match_score >= 20)).toBe(
+      true,
+    );
+  });
+
+  it('rejects PDFs that mention a different grade only', async () => {
+    const fetcher = vi.fn().mockResolvedValue({
+      headers: new Headers({ 'content-type': 'text/html' }),
+      ok: true,
+      text: async () => `
+        <a href="/pdf/7-sinif-uslu-ifadeler-yaprak-test.pdf">7. Sınıf Üslü İfadeler Yaprak Test</a>
+      `,
+    });
+
+    const result = await discoverWorksheetCandidatesFromSources({
+      allowedHosts: ['meb.gov.tr'],
+      fetcher,
+      planItem,
+      sourceUrls: ['https://meb.gov.tr/kaynaklar'],
+    });
+
+    expect(result.candidates).toEqual([]);
   });
 
   it('accepts broad grade-level math PDF sources as low-confidence candidates', async () => {
@@ -110,7 +185,7 @@ describe('worksheet candidate discovery', () => {
       file_url:
         'https://meb.gov.tr/dosyalar/5.sinifmatematikmebkazanimkavramatestleri.pdf',
       grade: 5,
-      title: '5.sinifmatematikmebkazanimkavramatestleri',
+      title: '5. Sınıf Matematik - Temel Geometrik Çizimler ve İnşalar - Yaprak Test',
     });
     expect(result.candidates[0]?.match_score).toBeGreaterThanOrEqual(20);
   });

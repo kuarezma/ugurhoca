@@ -1,3 +1,5 @@
+import { buildWorksheetStandardTitle } from '@/features/content/worksheet';
+
 export type WorksheetCandidatePlanItem = {
   id: string;
   grade: number;
@@ -37,14 +39,14 @@ const DEFAULT_TIMEOUT_MS = 8_000;
 
 export function parseSourceUrls(raw: string | undefined) {
   return (raw ?? '')
-    .split(',')
+    .split(/[,\n]+/)
     .map((value) => value.trim())
     .filter(Boolean);
 }
 
 export function parseAllowedHosts(raw: string | undefined, sourceUrls: string[]) {
   const configured = (raw ?? '')
-    .split(',')
+    .split(/[,\n]+/)
     .map((value) => value.trim().toLowerCase())
     .filter(Boolean);
 
@@ -64,6 +66,20 @@ export function parseAllowedHosts(raw: string | undefined, sourceUrls: string[])
         })
         .filter(Boolean),
     ),
+  );
+}
+
+export function isPublicWorksheetSourceUrl(value: string) {
+  let parsed: URL;
+  try {
+    parsed = new URL(value);
+  } catch {
+    return false;
+  }
+
+  return (
+    ['http:', 'https:'].includes(parsed.protocol) &&
+    !isPrivateOrLocalHost(parsed.hostname)
   );
 }
 
@@ -164,8 +180,12 @@ function buildCandidate({
   sourceName: string;
   sourceUrl: string;
 }): DiscoveredWorksheetCandidate {
-  const title = cleanTitle(linkText) || cleanTitle(decodeUrlName(fileUrl));
-  const matchScore = calculateMatchScore(planItem, `${title} ${fileUrl}`);
+  const sourceTitle = cleanTitle(linkText) || cleanTitle(decodeUrlName(fileUrl));
+  const fileTitle = cleanTitle(decodeUrlName(fileUrl));
+  const matchScore = calculateMatchScore(
+    planItem,
+    `${sourceTitle} ${fileTitle} ${fileUrl}`,
+  );
 
   return {
     annual_plan_item_id: planItem.id,
@@ -177,7 +197,11 @@ function buildCandidate({
     source_url: sourceUrl,
     status: 'pending',
     subject: planItem.subject,
-    title: title || `${planItem.subject} Yaprak Test`,
+    title: buildWorksheetStandardTitle({
+      grade: planItem.grade,
+      outcome: planItem.learning_outcome,
+      subject: planItem.subject,
+    }),
     week_end: planItem.week_end,
     week_start: planItem.week_start,
   };
@@ -190,15 +214,19 @@ function calculateMatchScore(
   const source = normalizeSearchText(sourceText);
   const subjectTokens = tokenize(planItem.subject);
   const outcomeTokens = tokenize(planItem.learning_outcome);
-  const importantTokens = [...subjectTokens, ...outcomeTokens].slice(0, 10);
+  const importantTokens = Array.from(
+    new Set([...subjectTokens, ...outcomeTokens]),
+  ).slice(0, 10);
   const matchedTokens = importantTokens.filter((token) => source.includes(token));
-  const gradeMatched =
-    source.includes(`${planItem.grade} sinif`) ||
-    source.includes(`${planItem.grade}sinif`) ||
-    source.includes(`${planItem.grade}-sinif`);
+  const gradeMatched = hasGradeMatch(source, planItem.grade);
+  const wrongGradeMatched = hasWrongGradeMatch(source, planItem.grade);
   const pdfMatched = source.includes('pdf') ? 10 : 0;
   const worksheetMatched =
     source.includes('test') || source.includes('yaprak') ? 15 : 0;
+
+  if (wrongGradeMatched && !gradeMatched) {
+    return 0;
+  }
 
   if (importantTokens.length > 0 && matchedTokens.length === 0) {
     const broadMathPdfMatched =
@@ -215,7 +243,31 @@ function calculateMatchScore(
       ? 0
       : Math.round((matchedTokens.length / importantTokens.length) * 55);
 
-  return Math.min(100, tokenScore + (gradeMatched ? 20 : 0) + worksheetMatched + pdfMatched);
+  const wrongGradePenalty = wrongGradeMatched ? 25 : 0;
+
+  return Math.max(
+    0,
+    Math.min(
+      100,
+      tokenScore + (gradeMatched ? 20 : 0) + worksheetMatched + pdfMatched - wrongGradePenalty,
+    ),
+  );
+}
+
+function hasGradeMatch(source: string, grade: number) {
+  return new RegExp(`\\b${grade}\\s*[.\\-_]?\\s*sinif(?:\\b|(?=matematik))`).test(
+    source,
+  );
+}
+
+function hasWrongGradeMatch(source: string, expectedGrade: number) {
+  const gradeMatches = Array.from(
+    source.matchAll(
+      /\b(5|6|7|8|9|10|11|12)\s*[.\-_]?\s*sinif(?:\b|(?=matematik))/g,
+    ),
+  );
+
+  return gradeMatches.some((match) => Number(match[1]) !== expectedGrade);
 }
 
 function extractLinks(html: string, baseUrl: URL) {
@@ -359,7 +411,7 @@ function normalizeSearchText(value: string) {
     .replace(/ı/g, 'i')
     .normalize('NFD')
     .replace(/[\u0300-\u036f]/g, '')
-    .replace(/[^a-z0-9\s-]/g, ' ')
+    .replace(/[^a-z0-9\s._-]/g, ' ')
     .replace(/\s+/g, ' ')
     .trim();
 }

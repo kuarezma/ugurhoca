@@ -49,6 +49,15 @@ function isHttpUrl(value) {
   }
 }
 
+function isPublicHttpUrl(value) {
+  try {
+    const url = new URL(value);
+    return ['http:', 'https:'].includes(url.protocol) && !isPrivateOrLocalHost(url.hostname);
+  } catch {
+    return false;
+  }
+}
+
 function hasGoogleDriveCallbackPath(value) {
   try {
     return new URL(value).pathname === '/api/admin-google-drive/callback';
@@ -58,7 +67,34 @@ function hasGoogleDriveCallbackPath(value) {
 }
 
 function isValidHost(value) {
-  return /^[a-z0-9.-]+$/i.test(value) && value.includes('.') && !value.includes('..');
+  return (
+    /^[a-z0-9.-]+$/i.test(value) &&
+    value.includes('.') &&
+    !value.includes('..') &&
+    isPublicHttpUrl(`https://${value.replace(/^\./, '')}`)
+  );
+}
+
+function isPrivateOrLocalHost(host) {
+  const lowerHost = host.toLowerCase();
+  if (lowerHost === 'localhost' || lowerHost.endsWith('.local')) {
+    return true;
+  }
+
+  const ipv4 = lowerHost.match(/^(\d+)\.(\d+)\.(\d+)\.(\d+)$/);
+  if (!ipv4) {
+    return false;
+  }
+
+  const first = Number(ipv4[1]);
+  const second = Number(ipv4[2]);
+
+  return (
+    first === 10 ||
+    first === 127 ||
+    (first === 172 && second >= 16 && second <= 31) ||
+    (first === 192 && second === 168)
+  );
 }
 
 addResult(
@@ -72,24 +108,24 @@ for (const key of requiredEnv) {
 }
 
 const sourceUrls = (process.env.WORKSHEET_CANDIDATE_SOURCE_URLS || '')
-  .split(',')
+  .split(/[,\n]+/)
   .map((value) => value.trim())
   .filter(Boolean);
 
 if (sourceUrls.length > 0) {
-  const invalidUrls = sourceUrls.filter((value) => !isHttpUrl(value));
+  const invalidUrls = sourceUrls.filter((value) => !isPublicHttpUrl(value));
 
   addResult(
     invalidUrls.length === 0,
-    'WORKSHEET_CANDIDATE_SOURCE_URLS URL formatı',
+    'WORKSHEET_CANDIDATE_SOURCE_URLS public URL formatı',
     invalidUrls.length === 0
       ? `${sourceUrls.length} kaynak geçerli görünüyor`
-      : `${invalidUrls.length} kaynak geçersiz`,
+      : `${invalidUrls.length} kaynak geçersiz veya yerel/özel ağ adresi`,
   );
 }
 
 const allowedHosts = (process.env.WORKSHEET_CANDIDATE_ALLOWED_HOSTS || '')
-  .split(',')
+  .split(/[,\n]+/)
   .map((value) => value.trim().toLowerCase())
   .filter(Boolean);
 

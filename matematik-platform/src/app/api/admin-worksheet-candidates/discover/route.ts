@@ -5,6 +5,7 @@ import { getServerAccessToken } from '@/lib/auth-snapshot.server';
 import { createLogger } from '@/lib/logger';
 import {
   discoverWorksheetCandidatesFromSources,
+  isPublicWorksheetSourceUrl,
   parseAllowedHosts,
   parseSourceUrls,
   type WorksheetCandidatePlanItem,
@@ -75,12 +76,13 @@ export async function POST(request: Request) {
   }
 
   const sourceUrls = parseSourceUrls(process.env.WORKSHEET_CANDIDATE_SOURCE_URLS);
+  const validSourceUrls = sourceUrls.filter(isPublicWorksheetSourceUrl);
   const allowedHosts = parseAllowedHosts(
     process.env.WORKSHEET_CANDIDATE_ALLOWED_HOSTS,
-    sourceUrls,
+    validSourceUrls,
   );
 
-  if (sourceUrls.length === 0 || allowedHosts.length === 0) {
+  if (validSourceUrls.length === 0 || allowedHosts.length === 0) {
     return apiError(
       'İzinli kaynak listesi boş. WORKSHEET_CANDIDATE_SOURCE_URLS ayarlanmalı.',
       400,
@@ -102,7 +104,7 @@ export async function POST(request: Request) {
     const discovery = await discoverWorksheetCandidatesFromSources({
       allowedHosts,
       planItem: planItem as WorksheetCandidatePlanItem,
-      sourceUrls,
+      sourceUrls: validSourceUrls,
     });
 
     if (discovery.candidates.length === 0) {

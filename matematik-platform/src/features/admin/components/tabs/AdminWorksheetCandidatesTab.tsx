@@ -309,6 +309,13 @@ export default function AdminWorksheetCandidatesTab({
                 İlk hatalı alan adı: {sourceStatus?.invalidAllowedHosts?.[0]}
               </p>
             )}
+            {sourceStatus?.health && (
+              <p className="mt-2 text-xs text-slate-300">
+                Kaynak özeti: {sourceStatus.health.validSources} geçerli,{" "}
+                {sourceStatus.health.invalidSources} geçersiz,{" "}
+                {sourceStatus.health.allowedHosts} izinli alan adı.
+              </p>
+            )}
           </div>
           {sourceStatus?.configured && (
             <div className="max-w-xl text-xs text-emerald-100/80 lg:text-right">

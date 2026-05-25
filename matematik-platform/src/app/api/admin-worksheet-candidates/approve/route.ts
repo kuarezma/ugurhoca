@@ -12,10 +12,11 @@ import {
 } from '@/lib/google-drive-oauth';
 import {
   buildWorksheetDescription,
+  buildWorksheetStandardTitle,
   getNextWorksheetOrder,
   getWorksheetGradeValue,
   getWorksheetOutcomeLabel,
-  getWorksheetTestTitle,
+  getWorksheetTitleTopic,
 } from '@/features/content/worksheet';
 import type { ContentDocument } from '@/types';
 import {
@@ -140,6 +141,28 @@ export async function POST(request: Request) {
       return apiError('Bu PDF zaten yaprak test olarak yayınlanmış.', 409, 'worksheet_document_duplicate');
     }
 
+    const { data: worksheetDocuments, error: documentsError } = await auth.serviceRole
+      .from('documents')
+      .select('grade, title, description')
+      .eq('type', 'yaprak-test');
+
+    if (documentsError) {
+      throw documentsError;
+    }
+
+    const sameOutcomeDocuments = ((worksheetDocuments || []) as ContentDocument[]).filter(
+      (document) =>
+        String(getWorksheetGradeValue(document.grade)) === String(candidate.grade) &&
+        getWorksheetOutcomeLabel(document) === candidate.learning_outcome,
+    );
+    const worksheetOrder = getNextWorksheetOrder(sameOutcomeDocuments);
+    const visibleDescription = candidate.subject || candidate.learning_outcome;
+    const worksheetTitle = buildWorksheetStandardTitle({
+      grade: candidate.grade,
+      order: worksheetOrder,
+      outcome: candidate.learning_outcome,
+      subject: candidate.subject,
+    });
     const token = await refreshGoogleDriveAccessToken({
       config: getGoogleDriveOAuthConfig(),
       refreshToken: driveConnection.refresh_token,
@@ -148,7 +171,7 @@ export async function POST(request: Request) {
     const driveUpload = await uploadWorksheetPdfToDrive({
       accessToken: token.access_token,
       input: {
-        candidateTitle: candidate.title,
+        candidateTitle: worksheetTitle,
         grade: candidate.grade,
         learningOutcome: candidate.learning_outcome,
         pdfBytes,
@@ -165,22 +188,6 @@ export async function POST(request: Request) {
       })
       .eq('admin_user_id', auth.user.id);
 
-    const { data: worksheetDocuments, error: documentsError } = await auth.serviceRole
-      .from('documents')
-      .select('grade, title, description')
-      .eq('type', 'yaprak-test');
-
-    if (documentsError) {
-      throw documentsError;
-    }
-
-    const sameOutcomeDocuments = ((worksheetDocuments || []) as ContentDocument[]).filter(
-      (document) =>
-        String(getWorksheetGradeValue(document.grade)) === String(candidate.grade) &&
-        getWorksheetOutcomeLabel(document) === candidate.learning_outcome,
-    );
-    const worksheetOrder = getNextWorksheetOrder(sameOutcomeDocuments);
-    const visibleDescription = candidate.subject || candidate.title;
     const documentPayload = {
       description: buildWorksheetDescription({
         description: visibleDescription,
@@ -191,11 +198,7 @@ export async function POST(request: Request) {
       file_url: driveUpload.fileUrl,
       grade: [candidate.grade],
       is_new: true,
-      title: getWorksheetTestTitle(
-        worksheetOrder,
-        visibleDescription,
-        candidate.learning_outcome,
-      ),
+      title: worksheetTitle,
       type: 'yaprak-test',
     };
 
@@ -225,6 +228,10 @@ export async function POST(request: Request) {
       candidate.grade,
       candidate.learning_outcome,
     );
+    const notificationTopic = getWorksheetTitleTopic({
+      outcome: candidate.learning_outcome,
+      subject: candidate.subject,
+    });
     let notifiedStudents = 0;
     let sharedDocuments = 0;
     let notificationWarning: string | null = null;
@@ -261,14 +268,14 @@ export async function POST(request: Request) {
             recipientStudents.map((student) => ({
               created_at: createdAt,
               is_read: false,
-              message: `${candidate.subject} konusu için yeni yaprak test yayınlandı.`,
+              message: `${notificationTopic} konusu için yeni yaprak test yayınlandı.`,
               metadata: {
                 document_id: document.id,
                 file_url: document.file_url,
                 href: worksheetHref,
                 learning_outcome: candidate.learning_outcome,
               },
-              title: 'Yeni Yaprak Test',
+              title: document.title,
               type: 'document',
               user_id: student.id,
             })),

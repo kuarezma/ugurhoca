@@ -2,6 +2,7 @@ import { apiError, apiOk } from '@/lib/api-response';
 import { isAdminEmail } from '@/lib/admin';
 import { getServerAccessToken } from '@/lib/auth-snapshot.server';
 import {
+  isPublicWorksheetSourceUrl,
   parseAllowedHosts,
   parseSourceUrls,
 } from '@/lib/worksheet-candidate-discovery';
@@ -19,12 +20,15 @@ const getAccessToken = async (request: Request) => {
 
 const parseConfiguredAllowedHosts = (raw: string | undefined) =>
   (raw ?? '')
-    .split(',')
+    .split(/[,\n]+/)
     .map((value) => value.trim().toLowerCase())
     .filter(Boolean);
 
 const isValidHost = (value: string) =>
-  /^[a-z0-9.-]+$/i.test(value) && value.includes('.') && !value.includes('..');
+  /^[a-z0-9.-]+$/i.test(value) &&
+  value.includes('.') &&
+  !value.includes('..') &&
+  isPublicWorksheetSourceUrl(`https://${value.replace(/^\./, '')}`);
 
 export async function GET(request: Request) {
   const accessToken = await getAccessToken(request);
@@ -48,17 +52,13 @@ export async function GET(request: Request) {
   }
 
   const sourceUrls = parseSourceUrls(process.env.WORKSHEET_CANDIDATE_SOURCE_URLS);
-  const invalidSourceUrls = sourceUrls.filter((sourceUrl) => {
-    try {
-      const url = new URL(sourceUrl);
-      return !['http:', 'https:'].includes(url.protocol);
-    } catch {
-      return true;
-    }
-  });
+  const validSourceUrls = sourceUrls.filter(isPublicWorksheetSourceUrl);
+  const invalidSourceUrls = sourceUrls.filter(
+    (sourceUrl) => !isPublicWorksheetSourceUrl(sourceUrl),
+  );
   const allowedHosts = parseAllowedHosts(
     process.env.WORKSHEET_CANDIDATE_ALLOWED_HOSTS,
-    sourceUrls,
+    validSourceUrls,
   );
   const configuredAllowedHosts = parseConfiguredAllowedHosts(
     process.env.WORKSHEET_CANDIDATE_ALLOWED_HOSTS,
@@ -74,6 +74,12 @@ export async function GET(request: Request) {
       allowedHosts.length > 0 &&
       invalidAllowedHosts.length === 0 &&
       invalidSourceUrls.length === 0,
+    health: {
+      allowedHosts: allowedHosts.length,
+      invalidSources: invalidSourceUrls.length,
+      totalSources: sourceUrls.length,
+      validSources: validSourceUrls.length,
+    },
     invalidAllowedHosts,
     invalidSourceUrls,
     sourceUrls,

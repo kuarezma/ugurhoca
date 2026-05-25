@@ -2,6 +2,7 @@ import type { SupabaseClient } from '@supabase/supabase-js';
 import { createLogger } from '@/lib/logger';
 import {
   discoverWorksheetCandidatesFromSources,
+  isPublicWorksheetSourceUrl,
   parseAllowedHosts,
   parseSourceUrls,
   type WorksheetCandidatePlanItem,
@@ -25,12 +26,13 @@ export async function scanCurrentWeekWorksheetCandidates(
   serviceRole: SupabaseClient,
 ): Promise<WorksheetCandidateScanResult> {
   const sourceUrls = parseSourceUrls(process.env.WORKSHEET_CANDIDATE_SOURCE_URLS);
+  const validSourceUrls = sourceUrls.filter(isPublicWorksheetSourceUrl);
   const allowedHosts = parseAllowedHosts(
     process.env.WORKSHEET_CANDIDATE_ALLOWED_HOSTS,
-    sourceUrls,
+    validSourceUrls,
   );
 
-  if (sourceUrls.length === 0 || allowedHosts.length === 0) {
+  if (validSourceUrls.length === 0 || allowedHosts.length === 0) {
     throw new Error(
       'İzinli kaynak listesi boş. WORKSHEET_CANDIDATE_SOURCE_URLS ayarlanmalı.',
     );
@@ -60,7 +62,7 @@ export async function scanCurrentWeekWorksheetCandidates(
       const discovery = await discoverWorksheetCandidatesFromSources({
         allowedHosts,
         planItem,
-        sourceUrls,
+        sourceUrls: validSourceUrls,
       });
 
       searchedSources += discovery.searchedSources;

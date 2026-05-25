@@ -3,11 +3,11 @@ import dotenv from 'dotenv';
 dotenv.config({ path: '.env.local', quiet: true });
 
 const sourceUrls = (process.env.WORKSHEET_CANDIDATE_SOURCE_URLS || '')
-  .split(',')
+  .split(/[,\n]+/)
   .map((value) => value.trim())
   .filter(Boolean);
 const allowedHosts = (process.env.WORKSHEET_CANDIDATE_ALLOWED_HOSTS || '')
-  .split(',')
+  .split(/[,\n]+/)
   .map((value) => value.trim().toLowerCase())
   .filter(Boolean);
 
@@ -35,6 +35,13 @@ for (const sourceUrl of sourceUrls.slice(0, 8)) {
   }
 
   const contentType = response.headers.get('content-type')?.toLowerCase() || '';
+  if (isPdfSource(parsed, contentType)) {
+    console.log(
+      `OK  ${sourceUrl} - ${contentType || 'content-type yok'} - doğrudan PDF kaynağı`,
+    );
+    continue;
+  }
+
   const body = await response.text();
   const pdfLinks = [...body.matchAll(/<a\b[^>]*href\s*=\s*["']([^"']+)["'][^>]*>([\s\S]*?)<\/a>/gi)]
     .map((match) => {
@@ -73,6 +80,10 @@ function parseAllowedUrl(value) {
     return null;
   }
 
+  if (isPrivateOrLocalHost(parsed.hostname)) {
+    return null;
+  }
+
   if (allowedHosts.length === 0) {
     return parsed;
   }
@@ -83,6 +94,32 @@ function parseAllowedUrl(value) {
   );
 
   return isAllowed ? parsed : null;
+}
+
+function isPdfSource(parsed, contentType) {
+  return contentType.includes('pdf') || parsed.pathname.toLowerCase().endsWith('.pdf');
+}
+
+function isPrivateOrLocalHost(host) {
+  const lowerHost = host.toLowerCase();
+  if (lowerHost === 'localhost' || lowerHost.endsWith('.local')) {
+    return true;
+  }
+
+  const ipv4 = lowerHost.match(/^(\d+)\.(\d+)\.(\d+)\.(\d+)$/);
+  if (!ipv4) {
+    return false;
+  }
+
+  const first = Number(ipv4[1]);
+  const second = Number(ipv4[2]);
+
+  return (
+    first === 10 ||
+    first === 127 ||
+    (first === 172 && second >= 16 && second <= 31) ||
+    (first === 192 && second === 168)
+  );
 }
 
 function getNearbyHtmlText(html, linkIndex) {

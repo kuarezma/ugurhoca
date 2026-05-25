@@ -46,11 +46,15 @@ const getSourceWarningMessage = (
   sourceStatus: WorksheetCandidateSourceStatus | null,
 ) => {
   if ((sourceStatus?.invalidSourceUrls?.length ?? 0) > 0) {
-    return `${sourceStatus?.invalidSourceUrls?.length} kaynak URL geçersiz. Yaprak Test Adayları bölümünde kaynak bağlantılarını kontrol edin.`;
+    return `${sourceStatus?.health?.validSources ?? 0} geçerli, ${sourceStatus?.invalidSourceUrls?.length} geçersiz kaynak var. Yaprak Test Adayları bölümünde kaynak bağlantılarını kontrol edin.`;
   }
 
   if ((sourceStatus?.invalidAllowedHosts?.length ?? 0) > 0) {
     return `${sourceStatus?.invalidAllowedHosts?.length} izinli alan adı geçersiz. Alan adlarını protokolsüz yazın.`;
+  }
+
+  if ((sourceStatus?.health?.totalSources ?? 0) === 0) {
+    return "Aday arama için önce Yaprak Test Adayları bölümünde kaynak bağlantısı ekleyin.";
   }
 
   return "Aday arama için önce Yaprak Test Adayları bölümünde kaynak ayarlarını tamamlayın.";
