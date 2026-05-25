@@ -73,20 +73,37 @@ export const getWorksheetTitleTopic = (options: {
   outcome?: string | null;
   subject?: string | null;
 }) => {
-  const normalizedSubject = options.subject?.trim().replace(/\s+/g, ' ') || '';
+  const normalizedSubject = cleanWorksheetTitleTopic(options.subject);
 
   if (normalizedSubject) {
     return normalizedSubject;
   }
 
-  const normalizedOutcome = normalizeWorksheetOutcome(options.outcome)
-    .replace(/^M(?:AT)?\.\d+\.\d+\.\d+\.\d+\.?\s*/i, '')
-    .replace(/^M(?:AT)?\.\d+\.\d+\.\d+\.?\s*/i, '')
-    .replace(/\s+/g, ' ')
-    .trim();
+  const normalizedOutcome = cleanWorksheetTitleTopic(options.outcome);
 
   return normalizedOutcome || DEFAULT_WORKSHEET_OUTCOME;
 };
+
+const cleanWorksheetTitleTopic = (value?: string | null) => {
+  const normalized = value?.trim().replace(/\s+/g, ' ') || '';
+  const withoutCode = normalized
+    .replace(/^M(?:AT)?\.\d+(?:\.\d+){1,4}\.?\s*/i, '')
+    .replace(/\s*>\s*.*/, '')
+    .replace(/\s+/g, ' ')
+    .trim();
+
+  if (!withoutCode) {
+    return '';
+  }
+
+  const hasLowercaseLetter = /[a-zçğıöşü]/.test(withoutCode);
+  return hasLowercaseLetter ? withoutCode : toWorksheetTitleCase(withoutCode);
+};
+
+const toWorksheetTitleCase = (value: string) =>
+  value
+    .toLocaleLowerCase('tr')
+    .replace(/(^|\s)([a-zçğıöşü])/g, (match) => match.toLocaleUpperCase('tr'));
 
 export const formatWorksheetOrder = (order?: number | null) =>
   typeof order === 'number' && Number.isFinite(order) && order > 0

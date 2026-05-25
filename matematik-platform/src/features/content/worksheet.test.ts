@@ -91,6 +91,25 @@ describe('worksheet helpers', () => {
     ).toBe(
       '8. Sınıf Matematik - Üslü ifadelerle ilgili temel kuralları anlar. - Yaprak Test',
     );
+    expect(
+      buildWorksheetStandardTitle({
+        grade: 6,
+        order: 1,
+        subject: 'MAT.6.4.GEOMETRİK NİCELİKLER',
+      }),
+    ).toBe('6. Sınıf Matematik - Geometrik Nicelikler - Yaprak Test 01');
+    expect(
+      buildWorksheetStandardTitle({
+        grade: 7,
+        subject: 'M.7.4.1. Veri Analizi',
+      }),
+    ).toBe('7. Sınıf Matematik - Veri Analizi - Yaprak Test');
+    expect(
+      buildWorksheetStandardTitle({
+        grade: 5,
+        subject: 'Kategorik Veri Dağılımları >Eşitliğin Korunumu',
+      }),
+    ).toBe('5. Sınıf Matematik - Kategorik Veri Dağılımları - Yaprak Test');
   });
 
   it('extracts outcome label and visible description from metadata', () => {
