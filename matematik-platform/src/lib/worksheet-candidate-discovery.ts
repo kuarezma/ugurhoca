@@ -20,6 +20,7 @@ export type DiscoveredWorksheetCandidate = {
   source_name: string | null;
   source_url: string;
   file_url: string;
+  match_reason: string | null;
   match_score: number;
   status: 'pending';
 };
@@ -183,16 +184,15 @@ function buildCandidate({
 }): DiscoveredWorksheetCandidate {
   const sourceTitle = cleanTitle(linkText) || cleanTitle(decodeUrlName(fileUrl));
   const fileTitle = cleanTitle(decodeUrlName(fileUrl));
-  const matchScore = calculateMatchScore(
-    planItem,
-    `${sourceTitle} ${fileTitle} ${fileUrl} ${sourceUrl}`,
-  );
+  const scoreInput = `${sourceTitle} ${fileTitle} ${fileUrl} ${sourceUrl}`;
+  const matchScore = calculateMatchScore(planItem, scoreInput);
 
   return {
     annual_plan_item_id: planItem.id,
     file_url: fileUrl,
     grade: planItem.grade,
     learning_outcome: planItem.learning_outcome,
+    match_reason: buildMatchReason(planItem, scoreInput),
     match_score: matchScore,
     source_name: sourceName,
     source_url: sourceUrl,
@@ -206,6 +206,40 @@ function buildCandidate({
     week_end: planItem.week_end,
     week_start: planItem.week_start,
   };
+}
+
+function buildMatchReason(
+  planItem: Pick<WorksheetCandidatePlanItem, 'grade' | 'learning_outcome' | 'subject'>,
+  sourceText: string,
+) {
+  const source = normalizeSearchText(sourceText);
+  const reasons: string[] = [];
+  const subjectTokens = tokenize(planItem.subject);
+  const outcomeTokens = tokenize(planItem.learning_outcome);
+  const subjectMatches = subjectTokens.filter((token) => source.includes(token));
+  const outcomeMatches = outcomeTokens.filter((token) => source.includes(token));
+
+  if (hasGradeMatch(source, planItem.grade)) {
+    reasons.push(`${planItem.grade}. sınıf bulundu`);
+  }
+
+  if (subjectMatches.length > 0) {
+    reasons.push(`konu eşleşti: ${subjectMatches.slice(0, 3).join(', ')}`);
+  } else if (outcomeMatches.length > 0) {
+    reasons.push(`kazanım eşleşti: ${outcomeMatches.slice(0, 3).join(', ')}`);
+  }
+
+  if (source.includes('test') || source.includes('yaprak')) {
+    reasons.push('test bağlantısı');
+  }
+
+  if (source.includes('pdf')) {
+    reasons.push('PDF dosyası');
+  } else if (source.includes('drive.google.com file')) {
+    reasons.push('Drive dosyası');
+  }
+
+  return reasons.length > 0 ? reasons.join(' · ') : null;
 }
 
 function calculateMatchScore(

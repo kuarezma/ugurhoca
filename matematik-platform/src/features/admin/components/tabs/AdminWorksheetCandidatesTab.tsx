@@ -63,6 +63,36 @@ const STATUS_LABEL: Record<string, string> = {
   rejected: "Reddedildi",
 };
 
+const getSourcePanelStyle = (
+  sourceStatus: WorksheetCandidateSourceStatus | null,
+  unreachableSourceCount: number,
+) => {
+  if (!sourceStatus?.configured) {
+    return {
+      badge: "border-red-400/20 bg-red-500/10 text-red-200",
+      icon: "error" as const,
+      panel: "border-red-400/20 bg-red-500/10",
+      title: "Tarama kaynakları eksik",
+    };
+  }
+
+  if (unreachableSourceCount > 0) {
+    return {
+      badge: "border-amber-400/20 bg-amber-500/10 text-amber-200",
+      icon: "warning" as const,
+      panel: "border-amber-400/20 bg-amber-500/10",
+      title: "Bazı kaynaklara ulaşılamıyor",
+    };
+  }
+
+  return {
+    badge: "border-emerald-400/20 bg-emerald-500/10 text-emerald-200",
+    icon: "ok" as const,
+    panel: "border-emerald-400/20 bg-emerald-500/10",
+    title: "Tarama kaynakları hazır",
+  };
+};
+
 const formatShortDate = (value?: string | null) => {
   if (!value) return "-";
   const [year, month, day] = value.split("-");
@@ -156,6 +186,10 @@ export default function AdminWorksheetCandidatesTab({
   const invalidAllowedHostCount = sourceStatus?.invalidAllowedHosts?.length ?? 0;
   const invalidSourceCount = sourceStatus?.invalidSourceUrls?.length ?? 0;
   const unreachableSourceCount = sourceStatus?.unreachableSourceUrls?.length ?? 0;
+  const sourcePanelStyle = getSourcePanelStyle(
+    sourceStatus,
+    unreachableSourceCount,
+  );
   const driveConfigured = driveConnection?.configured !== false;
 
   return (
@@ -263,23 +297,13 @@ export default function AdminWorksheetCandidatesTab({
         )}
       </div>
 
-      <div
-        className={`rounded-2xl border p-4 sm:p-6 ${
-          sourceStatus?.configured
-            ? "border-emerald-400/20 bg-emerald-500/10"
-            : "border-red-400/20 bg-red-500/10"
-        }`}
-      >
+      <div className={`rounded-2xl border p-4 sm:p-6 ${sourcePanelStyle.panel}`}>
         <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
           <div>
             <div
-              className={`mb-2 inline-flex items-center gap-2 rounded-full border px-3 py-1 text-xs font-semibold ${
-                sourceStatus?.configured
-                  ? "border-emerald-400/20 bg-emerald-500/10 text-emerald-200"
-                  : "border-red-400/20 bg-red-500/10 text-red-200"
-              }`}
+              className={`mb-2 inline-flex items-center gap-2 rounded-full border px-3 py-1 text-xs font-semibold ${sourcePanelStyle.badge}`}
             >
-              {sourceStatus?.configured ? (
+              {sourcePanelStyle.icon === "ok" ? (
                 <CheckCircle2 className="h-3.5 w-3.5" />
               ) : (
                 <AlertTriangle className="h-3.5 w-3.5" />
@@ -287,9 +311,7 @@ export default function AdminWorksheetCandidatesTab({
               Kaynak Ayarları
             </div>
             <h3 className="text-lg font-bold text-white">
-              {sourceStatus?.configured
-                ? "Tarama kaynakları hazır"
-                : "Tarama kaynakları eksik"}
+              {sourcePanelStyle.title}
             </h3>
             <p className="mt-1 text-sm text-slate-300">
               {invalidSourceCount > 0
@@ -320,12 +342,41 @@ export default function AdminWorksheetCandidatesTab({
             {sourceStatus?.health && (
               <p className="mt-2 text-xs text-slate-300">
                 Kaynak özeti: {sourceStatus.health.validSources} geçerli,{" "}
+                {typeof sourceStatus.health.reachableSources === "number"
+                  ? `${sourceStatus.health.reachableSources} erişilebilir, `
+                  : ""}
                 {sourceStatus.health.invalidSources} geçersiz,{" "}
                 {typeof sourceStatus.health.unreachableSources === "number"
                   ? `${sourceStatus.health.unreachableSources} erişilemeyen, `
                   : ""}
                 {sourceStatus.health.allowedHosts} izinli alan adı.
               </p>
+            )}
+            {(sourceStatus?.sourceChecks?.length ?? 0) > 0 && (
+              <div className="mt-3 grid gap-2 sm:grid-cols-2">
+                {sourceStatus?.sourceChecks?.slice(0, 4).map((check) => (
+                  <div
+                    className="rounded-xl border border-white/10 bg-slate-950/30 px-3 py-2 text-xs text-slate-200"
+                    key={check.url}
+                  >
+                    <div className="flex items-center gap-2">
+                      {check.ok ? (
+                        <CheckCircle2 className="h-3.5 w-3.5 text-emerald-300" />
+                      ) : (
+                        <AlertTriangle className="h-3.5 w-3.5 text-amber-300" />
+                      )}
+                      <span className="font-semibold">
+                        {check.ok
+                          ? "Erişilebilir"
+                          : check.statusCode
+                            ? `HTTP ${check.statusCode}`
+                            : "Ulaşılamadı"}
+                      </span>
+                    </div>
+                    <p className="mt-1 truncate text-slate-400">{check.url}</p>
+                  </div>
+                ))}
+              </div>
             )}
           </div>
           {sourceStatus?.configured && (
@@ -451,6 +502,11 @@ export default function AdminWorksheetCandidatesTab({
                   <p className="mt-2 line-clamp-2 text-sm text-slate-300">
                     {candidate.learning_outcome}
                   </p>
+                  {candidate.match_reason && (
+                    <p className="mt-2 rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-xs text-slate-300">
+                      Eşleşme nedeni: {candidate.match_reason}
+                    </p>
+                  )}
                   <p className="mt-2 text-xs text-slate-500">
                     Kaynak: {candidate.source_name || "İzinli kaynak"}
                   </p>

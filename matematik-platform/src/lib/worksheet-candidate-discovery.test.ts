@@ -62,6 +62,8 @@ describe('worksheet candidate discovery', () => {
     expect(result.candidates[0]).toMatchObject({
       file_url: 'https://meb.gov.tr/pdf/8-sinif-uslu-ifadeler-yaprak-test.pdf',
       grade: 8,
+      match_reason:
+        '8. sınıf bulundu · konu eşleşti: uslu, ifadeler · test bağlantısı · PDF dosyası',
       source_url: 'https://meb.gov.tr/kaynaklar',
       status: 'pending',
       subject: 'Üslü İfadeler',

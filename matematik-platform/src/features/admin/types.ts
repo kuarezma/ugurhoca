@@ -216,6 +216,7 @@ export type WorksheetCandidate = {
   source_name?: string | null;
   source_url: string;
   file_url: string;
+  match_reason?: string | null;
   match_score: number;
   status: WorksheetCandidateStatus | string;
   rejection_reason?: string | null;

@@ -4,11 +4,13 @@ import { getClientSession } from '@/lib/auth-client';
 import { decodeQuizMediaExplanation } from '@/lib/quiz-media';
 import { supabase } from '@/lib/supabase/client';
 import {
+  buildWorksheetStandardTitle,
   buildWorksheetDescription,
   DEFAULT_WORKSHEET_OUTCOME,
   getWorksheetGradeValue,
   getWorksheetOrder,
   getWorksheetOutcomeLabel,
+  getWorksheetTitleTopic,
   getWorksheetVisibleDescription,
   isWorksheetType,
   prepareWorksheetDocumentPayload,
@@ -930,10 +932,23 @@ export const migrateLegacyWorksheetDocuments = async (
       outcome,
     });
     const nextGrade = grade ? [grade] : document.grade;
+    const nextTitle =
+      typeof grade === 'number'
+        ? buildWorksheetStandardTitle({
+            grade,
+            order: getWorksheetOrder(document) || 1,
+            outcome,
+            subject: getWorksheetTitleTopic({
+              outcome,
+              subject: getWorksheetVisibleDescription(document),
+            }),
+          })
+        : document.title;
 
     if (
       nextDescription === (document.description || '') &&
-      gradesAreEqual(nextGrade, document.grade)
+      gradesAreEqual(nextGrade, document.grade) &&
+      nextTitle === document.title
     ) {
       continue;
     }
@@ -943,6 +958,7 @@ export const migrateLegacyWorksheetDocuments = async (
       .update({
         description: nextDescription,
         grade: nextGrade,
+        title: nextTitle,
       })
       .eq('id', document.id);
 

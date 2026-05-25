@@ -214,7 +214,7 @@ export function useAdminListActions({
   const handleMigrateWorksheetDocuments = async () => {
     if (
       !confirm(
-        "Eski yaprak test kayıtları kazanım klasörlerine göre düzenlensin mi?\n\nBu işlem mevcut yaprak test açıklamalarına gizli kazanım bilgisi ekler ve sınıf alanındaki hatalı 0 değerlerini temizler.",
+        "Eski yaprak test kayıtları kazanım klasörlerine göre düzenlensin mi?\n\nBu işlem başlıkları standart yaprak test formatına çeker, açıklamalara gizli kazanım bilgisi ekler ve sınıf alanındaki hatalı 0 değerlerini temizler.",
       )
     ) {
       return;
