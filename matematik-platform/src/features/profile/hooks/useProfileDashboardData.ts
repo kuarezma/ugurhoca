@@ -99,6 +99,9 @@ export const useProfileDashboardData = (
   const [weeklyPlans, setWeeklyPlans] = useState<ProfileWeeklyPlan[]>(
     initialData?.weeklyPlans ?? [],
   );
+  const [weeklyWorksheet, setWeeklyWorksheet] = useState(
+    initialData?.weeklyWorksheet ?? null,
+  );
   const initialUserKey = useMemo(
     () =>
       initialData?.user
@@ -142,6 +145,7 @@ export const useProfileDashboardData = (
         setStudySessions(collections.studySessions);
         setProgressRows(collections.progressRows);
         setWeeklyPlans(collections.weeklyPlans);
+        setWeeklyWorksheet(collections.weeklyWorksheet);
       } catch {
         // Keep previous dashboard state and stop spinner on transient failures.
       } finally {
@@ -256,6 +260,7 @@ export const useProfileDashboardData = (
     quizResults,
     setUser,
     setWeeklyPlans,
+    weeklyWorksheet,
     sharedDocs,
     studySessions,
     submissions,

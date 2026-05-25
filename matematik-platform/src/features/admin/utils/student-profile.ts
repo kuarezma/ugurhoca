@@ -65,6 +65,7 @@ export const buildAdminStudentProfileSummary = (
     })),
     submissions: data.submissions,
     user: data.student,
+    weeklyWorksheet: null,
   });
 
   return {

@@ -10,6 +10,7 @@ import type {
   StudentProfile,
 } from '@/types/dashboard';
 import type { StudyGoal } from '@/features/progress/types';
+import type { WeeklyWorksheetSuggestion } from '@/features/profile/weekly-worksheet';
 
 export type ProfileProgressRow = {
   id: string;
@@ -68,6 +69,7 @@ export type ProfileDashboardData = {
   submissions: DashboardSubmission[];
   user: StudentProfile | null;
   weeklyPlans: ProfileWeeklyPlan[];
+  weeklyWorksheet: WeeklyWorksheetSuggestion | null;
 };
 
 export type InitialProfileDashboardData = ProfileDashboardData;

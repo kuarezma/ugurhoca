@@ -17,6 +17,9 @@ Workflow bu isimleri job `env` ile `matematik-platform` derlemesine aktarır. Ta
 
 **Önemli:** `SUPABASE_SERVICE_ROLE_KEY` ve `RESEND_API_KEY` CI derlemesi için zorunlu değildir; yalnızca API route’ları ve betikler için üretim/Vercel’de gerekir.
 
+Yaprak test otomasyonu için gerekli ek değişkenler ve canlı kontrol sırası:
+[WORKSHEET_AUTOMATION_SETUP.md](./WORKSHEET_AUTOMATION_SETUP.md)
+
 ## Yerel geliştirme
 
 ```bash

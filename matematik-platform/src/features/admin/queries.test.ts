@@ -1,6 +1,7 @@
 import {
   addStudentAdminNote,
   createAdminWeeklyPlan,
+  updateWorksheetCandidateStatus,
   upsertStudentAdminStatus,
 } from '@/features/admin/queries';
 import { supabase } from '@/lib/supabase/client';
@@ -164,5 +165,39 @@ describe('admin tracking queries', () => {
       body: 'Bu hafta problemler tekrar edilecek.',
       student_id: 'student-1',
     });
+  });
+
+  it('rejects a worksheet candidate with reviewer metadata', async () => {
+    const candidate = {
+      id: 'candidate-1',
+      rejection_reason: 'Konu uyumsuz',
+      reviewed_by: 'admin-1',
+      status: 'rejected',
+    };
+    const candidateSelect = mockSingleSelect(candidate);
+    const eq = vi.fn().mockReturnValue({ select: candidateSelect.select });
+    const candidateBuilder = {
+      update: vi.fn().mockReturnValue({ eq }),
+    };
+    vi.mocked(supabase.from).mockReturnValueOnce(candidateBuilder as never);
+
+    await expect(
+      updateWorksheetCandidateStatus({
+        candidateId: 'candidate-1',
+        rejectionReason: '  Konu uyumsuz  ',
+        reviewedBy: 'admin-1',
+        status: 'rejected',
+      }),
+    ).resolves.toEqual(candidate);
+
+    expect(supabase.from).toHaveBeenCalledWith('worksheet_candidates');
+    expect(candidateBuilder.update).toHaveBeenCalledWith({
+      rejection_reason: 'Konu uyumsuz',
+      reviewed_at: '2026-04-30T12:00:00.000Z',
+      reviewed_by: 'admin-1',
+      status: 'rejected',
+      updated_at: '2026-04-30T12:00:00.000Z',
+    });
+    expect(eq).toHaveBeenCalledWith('id', 'candidate-1');
   });
 });

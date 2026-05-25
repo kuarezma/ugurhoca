@@ -31,6 +31,8 @@ export type AdminActiveTab =
   | 'tracking'
   | 'announcements'
   | 'documents'
+  | 'annualPlan'
+  | 'worksheetCandidates'
   | 'users'
   | 'gradeUpdate'
   | 'assignments'
@@ -122,6 +124,100 @@ export type StudentWeeklyPlan = {
   student_weekly_plan_items?: StudentWeeklyPlanItem[];
 };
 
+export type AnnualPlanItem = {
+  id: string;
+  grade: number;
+  week_start: string;
+  week_end: string;
+  subject: string;
+  learning_outcome: string;
+  description?: string | null;
+  created_at?: string | null;
+  updated_at?: string | null;
+};
+
+export type AnnualPlanImportResult = {
+  inserted: number;
+  items: AnnualPlanItem[];
+  skipped: number;
+  total: number;
+};
+
+export type WorksheetCandidateDiscoveryResult = {
+  inserted: number;
+  items: WorksheetCandidate[];
+  searchedSources: number;
+  skipped: number;
+  total: number;
+};
+
+export type WorksheetCandidateWeekScanResult = {
+  failures: Array<{ plan_item_id: string; message: string }>;
+  inserted: number;
+  ok: boolean;
+  planItems: number;
+  searchedSources: number;
+  skipped: number;
+  today: string;
+  total: number;
+};
+
+export type WorksheetCandidateApprovalResult = {
+  candidate: WorksheetCandidate;
+  document: AdminDocument;
+  notificationWarning?: string | null;
+  notifiedStudents: number;
+  sharedDocuments: number;
+};
+
+export type GoogleDriveConnectionStatus = {
+  configured?: boolean;
+  connected: boolean;
+  connected_at?: string | null;
+  google_email?: string | null;
+  missingKeys?: string[];
+  updated_at?: string | null;
+};
+
+export type WorksheetCandidateSourceStatus = {
+  allowedHosts: string[];
+  configured: boolean;
+  invalidAllowedHosts?: string[];
+  invalidSourceUrls?: string[];
+  health?: {
+    allowedHosts: number;
+    invalidSources: number;
+    totalSources: number;
+    validSources: number;
+  };
+  sourceUrls: string[];
+};
+
+export type WorksheetCandidateStatus = 'pending' | 'approved' | 'rejected';
+
+export type WorksheetCandidate = {
+  id: string;
+  annual_plan_item_id?: string | null;
+  grade: number;
+  week_start?: string | null;
+  week_end?: string | null;
+  subject: string;
+  learning_outcome: string;
+  title: string;
+  source_name?: string | null;
+  source_url: string;
+  file_url: string;
+  match_score: number;
+  status: WorksheetCandidateStatus | string;
+  rejection_reason?: string | null;
+  drive_file_id?: string | null;
+  drive_file_url?: string | null;
+  reviewed_by?: string | null;
+  reviewed_at?: string | null;
+  created_at?: string | null;
+  updated_at?: string | null;
+};
+
 export type AdminQuizResultRow = DashboardQuizResult & {
   user_id: string;
   quiz_id?: string | null;
@@ -149,6 +245,7 @@ export type AdminDashboardData = {
   activityEvents: StudentActivityEvent[];
   allUsers: AdminUser[];
   announcements: AdminAnnouncement[];
+  annualPlanItems: AnnualPlanItem[];
   adminStatuses: StudentAdminStatus[];
   assignments: AdminAssignment[];
   documents: AdminDocument[];
@@ -159,6 +256,7 @@ export type AdminDashboardData = {
   studyGoals: AdminStudyGoalRow[];
   studySessions: AdminStudySessionRow[];
   submissions: AdminSubmission[];
+  worksheetCandidates: WorksheetCandidate[];
   weeklyPlans: StudentWeeklyPlan[];
   liveLessons: LiveLessonDashboardData;
 };

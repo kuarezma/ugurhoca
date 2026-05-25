@@ -87,6 +87,24 @@ const GRADE_OPTIONS = [5, 6, 7, 8, 9, 10, 11, 12] as const;
 
 type WorksheetGradeSelection = number | 'Mezun';
 
+const parseWorksheetGradeParam = (
+  value?: string | null,
+): WorksheetGradeSelection | null => {
+  if (!value) {
+    return null;
+  }
+
+  if (value.toLocaleLowerCase('tr') === 'mezun') {
+    return 'Mezun';
+  }
+
+  const grade = Number(value);
+
+  return WORKSHEET_GRADE_OPTIONS.some((option) => option === grade)
+    ? grade
+    : null;
+};
+
 const WORKSHEET_GRADE_CARD_STYLES: Record<
   WorksheetGradeSelection,
   {
@@ -225,6 +243,8 @@ function ContentsPageInner({
   const requestedTypeFromUrl = searchParams.get('type') || 'all';
   const typeFromUrl =
     CONTENT_TYPE_MAPPING[requestedTypeFromUrl] || requestedTypeFromUrl;
+  const worksheetGradeFromUrl = searchParams.get('grade');
+  const worksheetOutcomeFromUrl = searchParams.get('outcome');
   const [user, setUser] = useState<ContentPageUser | null>(null);
   const [documents, setDocuments] = useState<ContentDocument[]>(
     initialDocuments,
@@ -270,6 +290,7 @@ function ContentsPageInner({
   const loadMoreRef = useRef<HTMLDivElement>(null);
   const loadRequestIdRef = useRef(0);
   const worksheetRequestIdRef = useRef(0);
+  const appliedWorksheetLinkRef = useRef<string | null>(null);
   const isWorksheetBrowser = isWorksheetType(selectedType);
 
   const applyDocumentPatch = useCallback(
@@ -532,8 +553,65 @@ function ContentsPageInner({
       url.searchParams.set('type', type);
     }
 
+    if (!isWorksheetType(type)) {
+      url.searchParams.delete('grade');
+      url.searchParams.delete('outcome');
+    }
+
     window.history.pushState({}, '', url.toString());
   }, []);
+
+  const updateWorksheetBrowserUrl = useCallback(
+    (grade: WorksheetGradeSelection | null, outcome?: string | null) => {
+      const url = new URL(window.location.href);
+      url.searchParams.set('type', 'yaprak-test');
+
+      if (grade) {
+        url.searchParams.set('grade', String(grade));
+      } else {
+        url.searchParams.delete('grade');
+      }
+
+      if (outcome) {
+        url.searchParams.set('outcome', outcome);
+      } else {
+        url.searchParams.delete('outcome');
+      }
+
+      appliedWorksheetLinkRef.current = grade
+        ? `${String(grade)}:${outcome?.trim() || ''}`
+        : null;
+      window.history.pushState({}, '', url.toString());
+    },
+    [],
+  );
+
+  useEffect(() => {
+    if (!authResolved || !isWorksheetBrowser) {
+      return;
+    }
+
+    const grade = parseWorksheetGradeParam(worksheetGradeFromUrl);
+    const outcome = worksheetOutcomeFromUrl?.trim() || '';
+    const linkKey = `${String(grade || '')}:${outcome}`;
+
+    if (!grade || appliedWorksheetLinkRef.current === linkKey) {
+      return;
+    }
+
+    appliedWorksheetLinkRef.current = linkKey;
+    void loadWorksheetGradeDocuments(grade).then(() => {
+      if (outcome) {
+        setSelectedWorksheetOutcome(outcome);
+      }
+    });
+  }, [
+    authResolved,
+    isWorksheetBrowser,
+    loadWorksheetGradeDocuments,
+    worksheetGradeFromUrl,
+    worksheetOutcomeFromUrl,
+  ]);
 
   const toggleFavorite = useCallback((docId: string) => {
     setFavorites((current) => {
@@ -1215,6 +1293,7 @@ function ContentsPageInner({
                       <button
                         onClick={() => {
                           resetWorksheetHierarchy();
+                          updateWorksheetBrowserUrl(null);
                           setSearchTerm('');
                         }}
                         className="px-4 py-3 rounded-xl border border-slate-700 bg-slate-800/50 text-sm font-semibold text-slate-200 transition-colors hover:text-white"
@@ -1226,6 +1305,7 @@ function ContentsPageInner({
                       <button
                         onClick={() => {
                           setSelectedWorksheetOutcome(null);
+                          updateWorksheetBrowserUrl(selectedWorksheetGrade);
                           setSearchTerm('');
                         }}
                         className="px-4 py-3 rounded-xl border border-purple-500/30 bg-purple-500/15 text-sm font-semibold text-purple-100 transition-colors hover:bg-purple-500/25"
@@ -1274,6 +1354,7 @@ function ContentsPageInner({
               <button
                 onClick={() => {
                   resetWorksheetHierarchy();
+                  updateWorksheetBrowserUrl(null);
                   setSearchTerm('');
                 }}
                 className={`rounded-full border px-4 py-2 transition-colors ${
@@ -1288,7 +1369,10 @@ function ContentsPageInner({
                 <>
                   <ChevronRight className="w-4 h-4 text-slate-400" />
                   <button
-                    onClick={() => setSelectedWorksheetOutcome(null)}
+                    onClick={() => {
+                      setSelectedWorksheetOutcome(null);
+                      updateWorksheetBrowserUrl(selectedWorksheetGrade);
+                    }}
                     className={`rounded-full border px-4 py-2 transition-colors ${
                       selectedWorksheetOutcome
                         ? 'border-slate-700 bg-slate-800/50 hover:text-white'
@@ -1333,7 +1417,10 @@ function ContentsPageInner({
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: index * 0.04 }}
-                    onClick={() => void loadWorksheetGradeDocuments(grade)}
+                    onClick={() => {
+                      updateWorksheetBrowserUrl(grade);
+                      void loadWorksheetGradeDocuments(grade);
+                    }}
                     className={`rounded-3xl border p-5 text-center transition-all hover:-translate-y-1 sm:p-6 ${WORKSHEET_GRADE_CARD_STYLES[grade].border} ${WORKSHEET_GRADE_CARD_STYLES[grade].surface}`}
                   >
                     <div
@@ -1392,9 +1479,13 @@ function ContentsPageInner({
                               transition={{
                                 delay: groupIndex * 0.06 + entryIndex * 0.03,
                               }}
-                              onClick={() =>
-                                setSelectedWorksheetOutcome(entry.outcome)
-                              }
+                              onClick={() => {
+                                setSelectedWorksheetOutcome(entry.outcome);
+                                updateWorksheetBrowserUrl(
+                                  selectedWorksheetGrade,
+                                  entry.outcome,
+                                );
+                              }}
                               className="group flex w-full items-center gap-4 rounded-2xl border border-cyan-500/15 bg-slate-900/50 px-4 py-4 text-left transition-all hover:border-cyan-400/35 hover:bg-slate-900/70 sm:px-5"
                             >
                               <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-cyan-500 to-blue-500">

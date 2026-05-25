@@ -25,6 +25,12 @@ import {
   normalizeDashboardBadges,
   type DashboardBadgeRow,
 } from '@/features/profile/utils/dashboard-view-model';
+import {
+  getTodayInTimeZone,
+  selectWeeklyWorksheetSuggestion,
+  type WeeklyWorksheetPlanItem,
+} from '@/features/profile/weekly-worksheet';
+import type { ContentDocument } from '@/types';
 
 export const loadInitialProfileDashboardData =
   async (): Promise<InitialProfileDashboardData> => {
@@ -48,6 +54,7 @@ export const loadInitialProfileDashboardData =
         submissions: [],
         user: null,
         weeklyPlans: [],
+        weeklyWorksheet: null,
       };
     }
 
@@ -68,6 +75,7 @@ export const loadInitialProfileDashboardData =
           ...snapshot,
         },
         weeklyPlans: [],
+        weeklyWorksheet: null,
       };
     }
 
@@ -104,6 +112,7 @@ export const loadInitialProfileDashboardData =
         submissions: [],
         user,
         weeklyPlans: [],
+        weeklyWorksheet: null,
       };
     }
 
@@ -118,6 +127,7 @@ export const loadInitialProfileDashboardData =
         : `grade.eq.${Number(gradeValue)},student_id.eq.${user.id}`;
 
     const numericGrade = Number(gradeValue);
+    const today = getTodayInTimeZone();
 
     const assignmentsQuery = supabase
       .from('assignments')
@@ -150,6 +160,8 @@ export const loadInitialProfileDashboardData =
       goalRes,
       badgesRes,
       weeklyPlansRes,
+      annualPlanItemsRes,
+      worksheetDocumentsRes,
     ] = await Promise.all([
       supabase
         .from('notifications')
@@ -200,6 +212,22 @@ export const loadInitialProfileDashboardData =
         .eq('status', 'active')
         .order('week_start', { ascending: false })
         .limit(4),
+      Number.isFinite(numericGrade)
+        ? supabase
+            .from('annual_plan_items')
+            .select('grade, week_start, week_end, subject, learning_outcome')
+            .eq('grade', numericGrade)
+            .lte('week_start', today)
+            .gte('week_end', today)
+            .order('week_start', { ascending: true })
+        : Promise.resolve({ data: [], error: null }),
+      Number.isFinite(numericGrade)
+        ? supabase
+            .from('documents')
+            .select('*')
+            .eq('type', 'yaprak-test')
+            .contains('grade', [numericGrade])
+        : Promise.resolve({ data: [], error: null }),
     ]);
 
     return {
@@ -219,5 +247,11 @@ export const loadInitialProfileDashboardData =
       submissions: (submissionsRes.data || []) as DashboardSubmission[],
       user,
       weeklyPlans: (weeklyPlansRes.data || []) as ProfileWeeklyPlan[],
+      weeklyWorksheet: selectWeeklyWorksheetSuggestion({
+        documents: (worksheetDocumentsRes.data || []) as ContentDocument[],
+        grade: user.grade,
+        planItems: (annualPlanItemsRes.data || []) as WeeklyWorksheetPlanItem[],
+        today,
+      }),
     };
   };

@@ -21,6 +21,7 @@ import {
   getCurrentWeekStart,
   resolveCurrentGoal,
 } from '@/features/progress/utils';
+import type { WeeklyWorksheetSuggestion } from '@/features/profile/weekly-worksheet';
 
 export type DashboardBadgeRow = {
   id: string;
@@ -44,6 +45,7 @@ type BuildProfileDashboardViewModelInput = {
   studySessions: ProfileStudySessionRow[];
   submissions: DashboardSubmission[];
   user: StudentProfile | null;
+  weeklyWorksheet: WeeklyWorksheetSuggestion | null;
 };
 
 export type ProfileDashboardViewModel = {
@@ -273,6 +275,7 @@ export const buildProfileDashboardViewModel = ({
   studySessions,
   submissions,
   user,
+  weeklyWorksheet,
 }: BuildProfileDashboardViewModelInput): ProfileDashboardViewModel => {
   const goalSnapshot = buildDashboardGoalSnapshot({
     goal,
@@ -339,6 +342,22 @@ export const buildProfileDashboardViewModel = ({
       id: `topic:${weakTopicRow.topic}`,
       meta: `%${weakTopicRow.mastery_level} hakimiyet`,
       title: 'Zayıf konuna kısa tekrar ekle',
+    });
+  }
+
+  if (weeklyWorksheet) {
+    tasks.push({
+      accentClass: 'from-cyan-500/20 via-blue-500/15 to-indigo-500/10',
+      action: {
+        type: 'open-document',
+        url: weeklyWorksheet.href,
+      },
+      actionLabel: 'Yaprak Teste Git',
+      badge: 'Haftalık',
+      description: weeklyWorksheet.description,
+      id: `weekly-worksheet:${weeklyWorksheet.documentId}`,
+      meta: `${weeklyWorksheet.grade}. sınıf`,
+      title: weeklyWorksheet.title,
     });
   }
 

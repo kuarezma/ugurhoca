@@ -150,8 +150,11 @@ export default function AdminDocumentFields({
         {isWorksheet ? (
           <div className="space-y-4">
             <div className="rounded-2xl border border-purple-400/20 bg-purple-500/10 px-4 py-3 text-sm text-purple-100">
-              Yaprak testler açıklamaya göre otomatik adlandırılır:
-              <span className="font-semibold"> Açıklama (Test-1), Açıklama (Test-2)</span>.
+              Yaprak testler sınıf, konu ve sıraya göre otomatik adlandırılır:
+              <span className="font-semibold">
+                {" "}
+                8. Sınıf Matematik - Üslü İfadeler - Yaprak Test 01
+              </span>.
             </div>
             <div>
               <label
