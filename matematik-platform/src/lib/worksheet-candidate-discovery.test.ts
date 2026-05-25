@@ -188,6 +188,44 @@ describe('worksheet candidate discovery', () => {
     );
   });
 
+  it('discovers matching Google Drive file links and keeps the best two', async () => {
+    const navigationLinks = Array.from({ length: 100 }, (_, index) => {
+      return `<a href="/menu-${index}">Menü ${index}</a>`;
+    }).join('');
+    const fetcher = vi.fn().mockResolvedValue({
+      headers: new Headers({ 'content-type': 'text/html' }),
+      ok: true,
+      text: async () => `
+        ${navigationLinks}
+        <a href="https://drive.google.com/file/d/alan-1/view">Test 25 - Alan Ölçme-1</a>
+        <a href="https://drive.google.com/file/d/alan-2/view">Test 26 - Alan Ölçme-2</a>
+        <a href="https://drive.google.com/file/d/cember/view">Test 27 - Çember-1</a>
+      `,
+    });
+
+    const result = await discoverWorksheetCandidatesFromSources({
+      allowedHosts: ['ortaokul-matematik.com', 'drive.google.com'],
+      fetcher,
+      planItem: {
+        ...planItem,
+        grade: 6,
+        learning_outcome:
+          'MAT.6.4.3. Geometrik şekillerin alanları ile ilgili problemleri çözer.',
+        subject: 'MAT.6.4.GEOMETRİK NİCELİKLER',
+      },
+      sourceUrls: [
+        'https://www.ortaokul-matematik.com/6-sinif-matematik-meb-kazanim-testileri/',
+      ],
+    });
+
+    expect(result.candidates).toHaveLength(2);
+    expect(result.candidates.map((candidate) => candidate.file_url)).toEqual([
+      'https://drive.google.com/file/d/alan-1/view',
+      'https://drive.google.com/file/d/alan-2/view',
+    ]);
+    expect(result.candidates.every((candidate) => candidate.grade === 6)).toBe(true);
+  });
+
   it('accepts broad grade-level math PDF sources as low-confidence candidates', async () => {
     const fetcher = vi.fn().mockResolvedValue({
       headers: new Headers({ 'content-type': 'application/pdf' }),

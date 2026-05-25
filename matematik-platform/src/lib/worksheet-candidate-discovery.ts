@@ -33,7 +33,8 @@ export type WorksheetDiscoveryResult = {
 type Fetcher = typeof fetch;
 
 const MAX_SOURCES_PER_SCAN = 8;
-const MAX_LINKS_PER_SOURCE = 80;
+const MAX_LINKS_PER_SOURCE = 220;
+const MAX_CANDIDATES_PER_PLAN_ITEM = 2;
 const MIN_MATCH_SCORE = 20;
 const DEFAULT_TIMEOUT_MS = 8_000;
 
@@ -140,7 +141,7 @@ export async function discoverWorksheetCandidatesFromSources({
 
     for (const link of links) {
       const parsedFile = parseAllowedUrl(link.href, allowedHosts);
-      if (!parsedFile || !isPdfUrl(parsedFile.toString())) {
+      if (!parsedFile || !isWorksheetFileUrl(parsedFile.toString())) {
         continue;
       }
 
@@ -159,9 +160,9 @@ export async function discoverWorksheetCandidatesFromSources({
   }
 
   return {
-    candidates: Array.from(candidates.values()).sort(
-      (left, right) => right.match_score - left.match_score,
-    ),
+    candidates: Array.from(candidates.values())
+      .sort((left, right) => right.match_score - left.match_score)
+      .slice(0, MAX_CANDIDATES_PER_PLAN_ITEM),
     searchedSources,
     skippedSources,
   };
@@ -184,7 +185,7 @@ function buildCandidate({
   const fileTitle = cleanTitle(decodeUrlName(fileUrl));
   const matchScore = calculateMatchScore(
     planItem,
-    `${sourceTitle} ${fileTitle} ${fileUrl}`,
+    `${sourceTitle} ${fileTitle} ${fileUrl} ${sourceUrl}`,
   );
 
   return {
@@ -220,7 +221,8 @@ function calculateMatchScore(
   const matchedTokens = importantTokens.filter((token) => source.includes(token));
   const gradeMatched = hasGradeMatch(source, planItem.grade);
   const wrongGradeMatched = hasWrongGradeMatch(source, planItem.grade);
-  const pdfMatched = source.includes('pdf') ? 10 : 0;
+  const documentMatched =
+    source.includes('pdf') || source.includes('drive.google.com file') ? 10 : 0;
   const worksheetMatched =
     source.includes('test') || source.includes('yaprak') ? 15 : 0;
 
@@ -231,7 +233,7 @@ function calculateMatchScore(
   if (importantTokens.length > 0 && matchedTokens.length === 0) {
     const broadMathPdfMatched =
       gradeMatched &&
-      pdfMatched > 0 &&
+      documentMatched > 0 &&
       worksheetMatched > 0 &&
       source.includes('matematik');
 
@@ -249,7 +251,11 @@ function calculateMatchScore(
     0,
     Math.min(
       100,
-      tokenScore + (gradeMatched ? 20 : 0) + worksheetMatched + pdfMatched - wrongGradePenalty,
+      tokenScore +
+        (gradeMatched ? 20 : 0) +
+        worksheetMatched +
+        documentMatched -
+        wrongGradePenalty,
     ),
   );
 }
@@ -384,6 +390,22 @@ function isPdfUrl(value: string) {
   }
 }
 
+function isWorksheetFileUrl(value: string) {
+  return isPdfUrl(value) || isGoogleDriveFileUrl(value);
+}
+
+function isGoogleDriveFileUrl(value: string) {
+  try {
+    const parsed = new URL(value);
+    return (
+      parsed.hostname.toLowerCase() === 'drive.google.com' &&
+      (/^\/file\/d\/[^/]+/i.test(parsed.pathname) || parsed.searchParams.has('id'))
+    );
+  } catch {
+    return false;
+  }
+}
+
 function decodeUrlName(value: string) {
   try {
     const pathname = new URL(value).pathname;
@@ -407,9 +429,28 @@ function stripHtml(value: string) {
 }
 
 function tokenize(value: string) {
-  return normalizeSearchText(value)
+  const tokens = normalizeSearchText(value)
     .split(' ')
     .filter((token) => token.length > 2 && !STOP_WORDS.has(token));
+
+  return Array.from(new Set(tokens.flatMap(expandTokenVariants)));
+}
+
+function expandTokenVariants(token: string) {
+  const variants = [token];
+  const suffixPatterns = [
+    /(lari|leri|larla|lerle|larin|lerin|ların|lerin)$/i,
+    /(inin|unun|ünün|nin|nun|nün)$/i,
+  ];
+
+  for (const pattern of suffixPatterns) {
+    const stem = token.replace(pattern, '');
+    if (stem !== token && stem.length > 2) {
+      variants.push(stem);
+    }
+  }
+
+  return variants;
 }
 
 function normalizeSearchText(value: string) {

@@ -177,8 +177,9 @@ export async function downloadPdfForDriveUpload(fileUrl: string) {
   if (!parsed) {
     throw new Error('PDF bağlantısı geçersiz.');
   }
+  const downloadUrl = getDownloadablePdfUrl(parsed);
 
-  const response = await fetch(parsed.toString(), {
+  const response = await fetch(downloadUrl.toString(), {
     headers: { 'User-Agent': 'ugurhoca-drive-upload/1.0' },
     redirect: 'follow',
     signal: AbortSignal.timeout(12_000),
@@ -201,7 +202,7 @@ export async function downloadPdfForDriveUpload(fileUrl: string) {
   const contentType = response.headers.get('content-type')?.toLowerCase() || '';
   const looksLikePdf =
     contentType.includes('pdf') ||
-    parsed.pathname.toLowerCase().endsWith('.pdf') ||
+    downloadUrl.pathname.toLowerCase().endsWith('.pdf') ||
     (bytes.length >= 4 &&
       bytes[0] === 0x25 &&
       bytes[1] === 0x50 &&
@@ -213,6 +214,24 @@ export async function downloadPdfForDriveUpload(fileUrl: string) {
   }
 
   return bytes;
+}
+
+function getDownloadablePdfUrl(parsed: URL) {
+  if (parsed.hostname.toLowerCase() !== 'drive.google.com') {
+    return parsed;
+  }
+
+  const fileId =
+    parsed.pathname.match(/\/file\/d\/([^/]+)/i)?.[1] ||
+    parsed.searchParams.get('id');
+
+  if (!fileId) {
+    return parsed;
+  }
+
+  return new URL(
+    `https://drive.google.com/uc?export=download&id=${encodeURIComponent(fileId)}`,
+  );
 }
 
 export async function uploadWorksheetPdfToDrive({

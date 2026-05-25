@@ -10,6 +10,7 @@ import {
 
 const log = createLogger('worksheet-candidate-scan');
 const MAX_PLAN_ITEMS_PER_RUN = 20;
+const MAX_PLAN_ITEMS_TO_LOAD = 300;
 
 export type WorksheetCandidateScanResult = {
   failures: Array<{ plan_item_id: string; message: string }>;
@@ -21,6 +22,44 @@ export type WorksheetCandidateScanResult = {
   today: string;
   total: number;
 };
+
+export function selectWorksheetPlanItemsForScan(
+  planItems: WorksheetCandidatePlanItem[],
+  today: string,
+) {
+  const byGrade = new Map<number, WorksheetCandidatePlanItem[]>();
+
+  for (const planItem of planItems) {
+    byGrade.set(planItem.grade, [...(byGrade.get(planItem.grade) || []), planItem]);
+  }
+
+  return Array.from(byGrade.entries())
+    .sort(([leftGrade], [rightGrade]) => leftGrade - rightGrade)
+    .flatMap(([, gradeItems]) => {
+      const sortedItems = [...gradeItems].sort((left, right) =>
+        String(left.week_start || '').localeCompare(String(right.week_start || '')),
+      );
+      const currentItems = sortedItems.filter(
+        (item) =>
+          String(item.week_start || '') <= today &&
+          String(item.week_end || '') >= today,
+      );
+
+      if (currentItems.length > 0) {
+        return currentItems;
+      }
+
+      const nearestItem = sortedItems
+        .map((item) => ({
+          distance: getPlanItemDistanceInDays(item, today),
+          item,
+        }))
+        .sort((left, right) => left.distance - right.distance)[0]?.item;
+
+      return nearestItem ? [nearestItem] : [];
+    })
+    .slice(0, MAX_PLAN_ITEMS_PER_RUN);
+}
 
 export async function scanCurrentWeekWorksheetCandidates(
   serviceRole: SupabaseClient,
@@ -39,17 +78,21 @@ export async function scanCurrentWeekWorksheetCandidates(
   }
 
   const today = getIstanbulDateString();
-  const { data: planItems, error: planError } = await serviceRole
+  const { data: planRows, error: planError } = await serviceRole
     .from('annual_plan_items')
     .select('*')
-    .lte('week_start', today)
-    .gte('week_end', today)
     .order('grade', { ascending: true })
-    .limit(MAX_PLAN_ITEMS_PER_RUN);
+    .order('week_start', { ascending: true })
+    .limit(MAX_PLAN_ITEMS_TO_LOAD);
 
   if (planError) {
     throw new Error('Yıllık plan satırları alınamadı.');
   }
+
+  const planItems = selectWorksheetPlanItemsForScan(
+    (planRows || []) as WorksheetCandidatePlanItem[],
+    today,
+  );
 
   let inserted = 0;
   let skipped = 0;
@@ -57,7 +100,7 @@ export async function scanCurrentWeekWorksheetCandidates(
   let searchedSources = 0;
   const failures: Array<{ plan_item_id: string; message: string }> = [];
 
-  for (const planItem of (planItems || []) as WorksheetCandidatePlanItem[]) {
+  for (const planItem of planItems) {
     try {
       const discovery = await discoverWorksheetCandidatesFromSources({
         allowedHosts,
@@ -103,12 +146,35 @@ export async function scanCurrentWeekWorksheetCandidates(
     failures,
     inserted,
     ok: failures.length === 0,
-    planItems: planItems?.length || 0,
+    planItems: planItems.length,
     searchedSources,
     skipped,
     today,
     total,
   };
+}
+
+function getPlanItemDistanceInDays(
+  planItem: Pick<WorksheetCandidatePlanItem, 'week_end' | 'week_start'>,
+  today: string,
+) {
+  const todayTime = Date.parse(`${today}T00:00:00.000Z`);
+  const weekStartTime = Date.parse(`${planItem.week_start || ''}T00:00:00.000Z`);
+  const weekEndTime = Date.parse(`${planItem.week_end || ''}T00:00:00.000Z`);
+
+  if (!Number.isFinite(todayTime)) {
+    return Number.MAX_SAFE_INTEGER;
+  }
+
+  if (Number.isFinite(weekStartTime) && weekStartTime > todayTime) {
+    return Math.round((weekStartTime - todayTime) / 86_400_000);
+  }
+
+  if (Number.isFinite(weekEndTime) && weekEndTime < todayTime) {
+    return Math.round((todayTime - weekEndTime) / 86_400_000);
+  }
+
+  return 0;
 }
 
 function getIstanbulDateString() {
