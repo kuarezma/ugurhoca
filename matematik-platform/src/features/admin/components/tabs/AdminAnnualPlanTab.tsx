@@ -53,6 +53,10 @@ const getSourceWarningMessage = (
     return `${sourceStatus?.invalidAllowedHosts?.length} izinli alan adı geçersiz. Alan adlarını protokolsüz yazın.`;
   }
 
+  if ((sourceStatus?.unreachableSourceUrls?.length ?? 0) > 0) {
+    return `${sourceStatus?.unreachableSourceUrls?.length} kaynak şu an erişilemiyor. Yaprak Test Adayları bölümünde kaynak sağlığını kontrol edin.`;
+  }
+
   if ((sourceStatus?.health?.totalSources ?? 0) === 0) {
     return "Aday arama için önce Yaprak Test Adayları bölümünde kaynak bağlantısı ekleyin.";
   }

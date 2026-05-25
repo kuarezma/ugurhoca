@@ -30,6 +30,30 @@ const isValidHost = (value: string) =>
   !value.includes('..') &&
   isPublicWorksheetSourceUrl(`https://${value.replace(/^\./, '')}`);
 
+const checkSourceUrl = async (sourceUrl: string) => {
+  try {
+    const response = await fetch(sourceUrl, {
+      headers: { 'User-Agent': 'ugurhoca-source-status/1.0' },
+      method: 'HEAD',
+      redirect: 'follow',
+      signal: AbortSignal.timeout(4_000),
+    });
+
+    return {
+      ok: response.ok,
+      statusCode: response.status,
+      url: sourceUrl,
+    };
+  } catch (error) {
+    return {
+      message:
+        error instanceof Error ? error.message : 'Kaynağa ulaşılamadı.',
+      ok: false,
+      url: sourceUrl,
+    };
+  }
+};
+
 export async function GET(request: Request) {
   const accessToken = await getAccessToken(request);
 
@@ -66,6 +90,16 @@ export async function GET(request: Request) {
   const invalidAllowedHosts = configuredAllowedHosts.filter(
     (host) => !isValidHost(host),
   );
+  const shouldCheckLiveSources =
+    new URL(request.url).searchParams.get('live') === '1';
+  const sourceChecks = shouldCheckLiveSources
+    ? await Promise.all(validSourceUrls.map(checkSourceUrl))
+    : [];
+  const unreachableSourceUrls = sourceChecks
+    .filter((check) => !check.ok)
+    .map((check) => check.url);
+  const hasReachableSource =
+    !shouldCheckLiveSources || sourceChecks.some((check) => check.ok);
 
   return apiOk({
     allowedHosts,
@@ -73,15 +107,23 @@ export async function GET(request: Request) {
       sourceUrls.length > 0 &&
       allowedHosts.length > 0 &&
       invalidAllowedHosts.length === 0 &&
-      invalidSourceUrls.length === 0,
+      invalidSourceUrls.length === 0 &&
+      hasReachableSource,
     health: {
       allowedHosts: allowedHosts.length,
       invalidSources: invalidSourceUrls.length,
+      reachableSources: shouldCheckLiveSources
+        ? sourceChecks.filter((check) => check.ok).length
+        : undefined,
       totalSources: sourceUrls.length,
+      unreachableSources: shouldCheckLiveSources
+        ? unreachableSourceUrls.length
+        : undefined,
       validSources: validSourceUrls.length,
     },
     invalidAllowedHosts,
     invalidSourceUrls,
+    ...(shouldCheckLiveSources ? { sourceChecks, unreachableSourceUrls } : {}),
     sourceUrls,
   });
 }

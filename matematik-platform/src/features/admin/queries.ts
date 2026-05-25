@@ -232,10 +232,13 @@ const requestWorksheetCandidateSourceStatus = async () => {
     headers.Authorization = `Bearer ${session.access_token}`;
   }
 
-  const response = await fetch('/api/admin-worksheet-candidates/source-status', {
-    credentials: 'same-origin',
-    headers,
-  });
+  const response = await fetch(
+    '/api/admin-worksheet-candidates/source-status?live=1',
+    {
+      credentials: 'same-origin',
+      headers,
+    },
+  );
 
   const payload = (await response.json().catch(() => null)) as
     | { data?: WorksheetCandidateSourceStatus; error?: { message?: string } }

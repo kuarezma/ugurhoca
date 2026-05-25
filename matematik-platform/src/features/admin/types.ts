@@ -187,10 +187,19 @@ export type WorksheetCandidateSourceStatus = {
   health?: {
     allowedHosts: number;
     invalidSources: number;
+    reachableSources?: number;
     totalSources: number;
+    unreachableSources?: number;
     validSources: number;
   };
+  sourceChecks?: Array<{
+    message?: string;
+    ok: boolean;
+    statusCode?: number;
+    url: string;
+  }>;
   sourceUrls: string[];
+  unreachableSourceUrls?: string[];
 };
 
 export type WorksheetCandidateStatus = 'pending' | 'approved' | 'rejected';

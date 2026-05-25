@@ -33,6 +33,7 @@ const mockAdminAuth = () => {
 describe('GET /api/admin-worksheet-candidates/source-status', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    vi.restoreAllMocks();
     delete process.env.WORKSHEET_CANDIDATE_SOURCE_URLS;
     delete process.env.WORKSHEET_CANDIDATE_ALLOWED_HOSTS;
     mockAdminAuth();
@@ -95,6 +96,61 @@ describe('GET /api/admin-worksheet-candidates/source-status', () => {
           'https://example.com/testler',
           'https://www.meb.gov.tr/pdfler',
         ],
+      },
+    });
+  });
+
+  it('checks live source reachability when requested', async () => {
+    process.env.WORKSHEET_CANDIDATE_SOURCE_URLS =
+      'https://example.com/testler,\n https://www.meb.gov.tr/kayip';
+    vi.spyOn(globalThis, 'fetch')
+      .mockResolvedValueOnce({
+        ok: true,
+        status: 200,
+      } as Response)
+      .mockResolvedValueOnce({
+        ok: false,
+        status: 404,
+      } as Response);
+
+    const response = await GET(
+      new Request(
+        'http://localhost/api/admin-worksheet-candidates/source-status?live=1',
+      ),
+    );
+
+    expect(response.status).toBe(200);
+    await expect(response.json()).resolves.toEqual({
+      data: {
+        allowedHosts: ['example.com', 'www.meb.gov.tr'],
+        configured: true,
+        health: {
+          allowedHosts: 2,
+          invalidSources: 0,
+          reachableSources: 1,
+          totalSources: 2,
+          unreachableSources: 1,
+          validSources: 2,
+        },
+        invalidAllowedHosts: [],
+        invalidSourceUrls: [],
+        sourceChecks: [
+          {
+            ok: true,
+            statusCode: 200,
+            url: 'https://example.com/testler',
+          },
+          {
+            ok: false,
+            statusCode: 404,
+            url: 'https://www.meb.gov.tr/kayip',
+          },
+        ],
+        sourceUrls: [
+          'https://example.com/testler',
+          'https://www.meb.gov.tr/kayip',
+        ],
+        unreachableSourceUrls: ['https://www.meb.gov.tr/kayip'],
       },
     });
   });

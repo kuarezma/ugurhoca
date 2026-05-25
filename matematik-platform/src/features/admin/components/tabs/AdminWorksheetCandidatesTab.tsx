@@ -155,6 +155,7 @@ export default function AdminWorksheetCandidatesTab({
   const sourcesReady = sourceStatus?.configured === true;
   const invalidAllowedHostCount = sourceStatus?.invalidAllowedHosts?.length ?? 0;
   const invalidSourceCount = sourceStatus?.invalidSourceUrls?.length ?? 0;
+  const unreachableSourceCount = sourceStatus?.unreachableSourceUrls?.length ?? 0;
   const driveConfigured = driveConnection?.configured !== false;
 
   return (
@@ -295,6 +296,8 @@ export default function AdminWorksheetCandidatesTab({
                 ? `${invalidSourceCount} kaynak URL geçersiz. Lütfen http/https bağlantılarını kontrol edin.`
                 : invalidAllowedHostCount > 0
                   ? `${invalidAllowedHostCount} izinli alan adı geçersiz. Alan adını protokolsüz yazın.`
+                : unreachableSourceCount > 0
+                  ? `${unreachableSourceCount} kaynak şu an erişilemiyor. Diğer kaynaklar hazırsa tarama devam eder.`
                 : sourceStatus?.configured
                 ? `${sourceStatus.sourceUrls.length} kaynak ve ${sourceStatus.allowedHosts.length} izinli alan adı tanımlı.`
                 : "Bu Haftayı Tara için WORKSHEET_CANDIDATE_SOURCE_URLS ayarlanmalı."}
@@ -309,10 +312,18 @@ export default function AdminWorksheetCandidatesTab({
                 İlk hatalı alan adı: {sourceStatus?.invalidAllowedHosts?.[0]}
               </p>
             )}
+            {unreachableSourceCount > 0 && (
+              <p className="mt-2 text-xs text-amber-100/90">
+                İlk erişilemeyen kaynak: {sourceStatus?.unreachableSourceUrls?.[0]}
+              </p>
+            )}
             {sourceStatus?.health && (
               <p className="mt-2 text-xs text-slate-300">
                 Kaynak özeti: {sourceStatus.health.validSources} geçerli,{" "}
                 {sourceStatus.health.invalidSources} geçersiz,{" "}
+                {typeof sourceStatus.health.unreachableSources === "number"
+                  ? `${sourceStatus.health.unreachableSources} erişilemeyen, `
+                  : ""}
                 {sourceStatus.health.allowedHosts} izinli alan adı.
               </p>
             )}
