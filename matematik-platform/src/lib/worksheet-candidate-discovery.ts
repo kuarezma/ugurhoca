@@ -255,8 +255,10 @@ function calculateMatchScore(
 }
 
 function hasGradeMatch(source: string, grade: number) {
-  return new RegExp(`\\b${grade}\\s*[.\\-_]?\\s*sinif(?:\\b|(?=matematik))`).test(
-    source,
+  return (
+    new RegExp(`\\b${grade}\\s*[.\\-_]?\\s*sinif(?:\\b|(?=matematik))`).test(
+      source,
+    ) || source.includes(`${grade}kt`)
   );
 }
 
@@ -266,8 +268,13 @@ function hasWrongGradeMatch(source: string, expectedGrade: number) {
       /\b(5|6|7|8|9|10|11|12)\s*[.\-_]?\s*sinif(?:\b|(?=matematik))/g,
     ),
   );
+  const gradeFolderMatches = Array.from(
+    source.matchAll(/\b(5|6|7|8|9|10|11|12)kt\b/g),
+  );
 
-  return gradeMatches.some((match) => Number(match[1]) !== expectedGrade);
+  return [...gradeMatches, ...gradeFolderMatches].some(
+    (match) => Number(match[1]) !== expectedGrade,
+  );
 }
 
 function extractLinks(html: string, baseUrl: URL) {

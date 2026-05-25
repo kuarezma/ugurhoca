@@ -160,6 +160,34 @@ describe('worksheet candidate discovery', () => {
     expect(result.candidates).toEqual([]);
   });
 
+  it('rejects EBA grade-folder PDFs for another grade', async () => {
+    const fetcher = vi.fn().mockResolvedValue({
+      headers: new Headers({ 'content-type': 'text/html' }),
+      ok: true,
+      text: async () => `
+        <a href="https://cdn.eba.gov.tr/yardimcikaynaklar/2022/11/kt/7kt/mat/31.pdf">Geometrik Cisimler</a>
+        <a href="https://cdn.eba.gov.tr/yardimcikaynaklar/2022/11/kt/8kt/mat/6.pdf">Dönüşüm Geometrisi / Geometrik Cisimler</a>
+      `,
+    });
+
+    const result = await discoverWorksheetCandidatesFromSources({
+      allowedHosts: ['odsgm.meb.gov.tr', 'cdn.eba.gov.tr'],
+      fetcher,
+      planItem: {
+        ...planItem,
+        learning_outcome:
+          'M.8.3.4.1. Dik prizmaları tanır, temel elemanlarını belirler.',
+        subject: 'Geometrik Cisimler',
+      },
+      sourceUrls: ['https://odsgm.meb.gov.tr/testler'],
+    });
+
+    expect(result.candidates).toHaveLength(1);
+    expect(result.candidates[0]?.file_url).toBe(
+      'https://cdn.eba.gov.tr/yardimcikaynaklar/2022/11/kt/8kt/mat/6.pdf',
+    );
+  });
+
   it('accepts broad grade-level math PDF sources as low-confidence candidates', async () => {
     const fetcher = vi.fn().mockResolvedValue({
       headers: new Headers({ 'content-type': 'application/pdf' }),
