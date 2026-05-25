@@ -119,6 +119,7 @@ export default function ProfilePage({ initialData }: ProfilePageProps) {
     submissions,
     user,
     weeklyPlans,
+    weeklyWorksheet,
   } = useProfileDashboardData(router, initialData);
 
   useDailyStreakTouch(user?.id, user?.isAdmin);
@@ -158,6 +159,7 @@ export default function ProfilePage({ initialData }: ProfilePageProps) {
         studySessions,
         submissions,
         user,
+        weeklyWorksheet,
       }),
     [
       assignments,
@@ -171,6 +173,7 @@ export default function ProfilePage({ initialData }: ProfilePageProps) {
       studySessions,
       submissions,
       user,
+      weeklyWorksheet,
     ],
   );
 
@@ -191,6 +194,25 @@ export default function ProfilePage({ initialData }: ProfilePageProps) {
       setShowNotifications(false);
 
       if (notification.type === 'document') {
+        const notificationHref =
+          typeof notification.metadata?.href === 'string'
+            ? notification.metadata.href
+            : '';
+        const notificationFileUrl =
+          typeof notification.metadata?.file_url === 'string'
+            ? notification.metadata.file_url
+            : '';
+
+        if (notificationHref.startsWith('/')) {
+          router.push(notificationHref);
+          return;
+        }
+
+        if (notificationFileUrl) {
+          window.open(notificationFileUrl, '_blank', 'noopener,noreferrer');
+          return;
+        }
+
         const latestUnreadDocument =
           sharedDocs.find((document) => !document.is_read) || sharedDocs[0];
 
@@ -279,6 +301,11 @@ export default function ProfilePage({ initialData }: ProfilePageProps) {
       }
 
       if (action.type === 'open-document' && action.url) {
+        if (action.url.startsWith('/')) {
+          router.push(action.url);
+          return;
+        }
+
         window.open(action.url, '_blank', 'noopener,noreferrer');
       }
     },

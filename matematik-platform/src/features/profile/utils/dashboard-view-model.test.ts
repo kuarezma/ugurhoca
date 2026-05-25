@@ -13,6 +13,7 @@ import type {
   ProfileProgressRow,
   ProfileStudySessionRow,
 } from '@/features/profile/types';
+import type { WeeklyWorksheetSuggestion } from '@/features/profile/weekly-worksheet';
 import type { StudyGoal } from '@/features/progress/types';
 import {
   buildDashboardGoalSnapshot,
@@ -152,6 +153,7 @@ const createViewModel = (overrides?: {
   studySessions?: ProfileStudySessionRow[];
   submissions?: DashboardSubmission[];
   user?: StudentProfile | null;
+  weeklyWorksheet?: WeeklyWorksheetSuggestion | null;
 }) =>
   buildProfileDashboardViewModel({
     assignments: overrides?.assignments ?? baseAssignments,
@@ -166,6 +168,7 @@ const createViewModel = (overrides?: {
     studySessions: overrides?.studySessions ?? baseStudySessions,
     submissions: overrides?.submissions ?? baseSubmissions,
     user: overrides?.user ?? baseUser,
+    weeklyWorksheet: overrides?.weeklyWorksheet ?? null,
   });
 
 describe('dashboard view model', () => {
@@ -178,6 +181,36 @@ describe('dashboard view model', () => {
       'quiz:quiz-1',
     ]);
     expect(viewModel.primaryTask?.title).toBe('Yaklaşan ödevini tamamla');
+  });
+
+  it('adds the current weekly worksheet after assignment and focus tasks', () => {
+    const viewModel = createViewModel({
+      weeklyWorksheet: {
+        description: 'Pisagor konusu için yayınlanan yaprak testi hazır.',
+        documentId: 'worksheet-1',
+        fileUrl: 'https://example.com/worksheet.pdf',
+        grade: 8,
+        href: '/icerikler?type=yaprak-test&grade=8&outcome=Pisagor',
+        learningOutcome: 'M.8.3.1.5. Pisagor bağıntısını oluşturur.',
+        subject: 'Pisagor',
+        title: 'Bu haftanın yaprak testini çöz',
+        weekEnd: '2026-04-19',
+        weekStart: '2026-04-13',
+      },
+    });
+
+    expect(viewModel.tasks.map((task) => task.id)).toEqual([
+      'assignment:assignment-1',
+      'topic:Üslü İfadeler',
+      'weekly-worksheet:worksheet-1',
+    ]);
+    expect(viewModel.tasks[2]).toMatchObject({
+      action: {
+        type: 'open-document',
+        url: '/icerikler?type=yaprak-test&grade=8&outcome=Pisagor',
+      },
+      actionLabel: 'Yaprak Teste Git',
+    });
   });
 
   it('uses a 600-minute fallback when there is no current study goal', () => {

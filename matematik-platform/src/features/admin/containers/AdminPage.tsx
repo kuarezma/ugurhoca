@@ -15,10 +15,12 @@ import {
   CheckCircle2,
   Users,
   RefreshCw,
+  Search,
   Bell,
   ClipboardList,
   BarChart3,
   Activity,
+  CalendarDays,
   Video,
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
@@ -29,16 +31,26 @@ import { useAdminListActions } from '@/features/admin/hooks/useAdminListActions'
 import { useAdminModalState } from '@/features/admin/hooks/useAdminModalState';
 import { useAdminModalSubmitHandlers } from '@/features/admin/hooks/useAdminModalSubmitHandlers';
 import { useAdminNotifications } from '@/features/admin/hooks/useAdminNotifications';
+import { broadcastHomeDocumentsUpdated } from '@/features/home/home-documents-events';
 import {
   addStudentAdminNote,
+  approveAdminWorksheetCandidate,
   createAdminWeeklyPlan,
+  discoverAdminWorksheetCandidates,
+  disconnectGoogleDriveConnection,
+  importAdminAnnualPlan,
   loadAdminAssignmentSubmissions,
   loadAdminDashboardData,
+  loadGoogleDriveAuthUrl,
+  loadGoogleDriveConnectionStatus,
+  loadWorksheetCandidateSourceStatus,
   loadAdminQuizQuestions,
   loadAdminStudentProfile,
   refreshAdminUsers as refreshAdminUsersQuery,
   resolveAdminAuth,
+  scanCurrentWeekWorksheetCandidates,
   upsertStudentAdminStatus,
+  updateWorksheetCandidateStatus,
   updateAdminSubmissionReview,
 } from '@/features/admin/queries';
 import type {
@@ -58,9 +70,16 @@ import type {
   AdminStudentProfileData,
   AdminSubmission as Submission,
   AdminUser,
+  AnnualPlanItem,
+  GoogleDriveConnectionStatus,
   StudentActivityEvent,
   StudentAdminStatus,
   StudentWeeklyPlan,
+  WorksheetCandidate,
+  WorksheetCandidateDiscoveryResult,
+  WorksheetCandidateSourceStatus,
+  WorksheetCandidateStatus,
+  WorksheetCandidateWeekScanResult,
 } from '@/features/admin/types';
 import type { LiveLessonDashboardData } from '@/features/live-lessons/types';
 
@@ -111,6 +130,34 @@ const AdminTabPanels = dynamic(
   },
 );
 
+const GOOGLE_DRIVE_CALLBACK_MESSAGES: Record<
+  string,
+  { message: string; type: 'error' | 'success' }
+> = {
+  auth_required: {
+    message: 'Google Drive bağlantısı için tekrar giriş yapmanız gerekiyor.',
+    type: 'error',
+  },
+  connected: {
+    message: 'Google Drive bağlantısı kuruldu.',
+    type: 'success',
+  },
+  error: {
+    message: 'Google Drive bağlantısı tamamlanamadı.',
+    type: 'error',
+  },
+  missing_refresh_token: {
+    message:
+      'Google Drive kalıcı erişim izni vermedi. Bağlantıyı tekrar başlatın.',
+    type: 'error',
+  },
+  state_error: {
+    message:
+      'Google Drive bağlantı doğrulaması geçersiz oldu. Lütfen tekrar deneyin.',
+    type: 'error',
+  },
+};
+
 export default function AdminPage() {
   const RETENTION_DAYS = 180;
   const { showToast } = useToast();
@@ -118,6 +165,18 @@ export default function AdminPage() {
   const [activeTab, setActiveTab] = useState<AdminActiveTab>('statistics');
   const [announcements, setAnnouncements] = useState<Announcement[]>([]);
   const [documents, setDocuments] = useState<Document[]>([]);
+  const [annualPlanItems, setAnnualPlanItems] = useState<AnnualPlanItem[]>([]);
+  const [worksheetCandidates, setWorksheetCandidates] = useState<
+    WorksheetCandidate[]
+  >([]);
+  const [googleDriveConnection, setGoogleDriveConnection] =
+    useState<GoogleDriveConnectionStatus | null>(null);
+  const [worksheetSourceStatus, setWorksheetSourceStatus] =
+    useState<WorksheetCandidateSourceStatus | null>(null);
+  const [isGoogleDriveBusy, setIsGoogleDriveBusy] = useState(false);
+  const [isWeekScanRunning, setIsWeekScanRunning] = useState(false);
+  const [lastWeekScanResult, setLastWeekScanResult] =
+    useState<WorksheetCandidateWeekScanResult | null>(null);
   const [allUsers, setAllUsers] = useState<AdminUser[]>([]);
   const [assignments, setAssignments] = useState<Assignment[]>([]);
   const [sharedDocs, setSharedDocs] = useState<SharedDoc[]>([]);
@@ -258,6 +317,8 @@ export default function AdminPage() {
 
   const applyDashboardData = useCallback((data: AdminDashboardData) => {
     setAnnouncements(data.announcements);
+    setAnnualPlanItems(data.annualPlanItems);
+    setWorksheetCandidates(data.worksheetCandidates);
     setDocuments(data.documents);
     setAllUsers(data.allUsers);
     setAssignments(data.assignments);
@@ -282,6 +343,40 @@ export default function AdminPage() {
     },
     [RETENTION_DAYS, applyDashboardData, user?.id],
   );
+
+  const refreshGoogleDriveConnection = useCallback(async () => {
+    try {
+      setGoogleDriveConnection(await loadGoogleDriveConnectionStatus());
+    } catch {
+      setGoogleDriveConnection({ connected: false });
+    }
+  }, []);
+
+  const refreshWorksheetSourceStatus = useCallback(async (showFeedback = false) => {
+    try {
+      const status = await loadWorksheetCandidateSourceStatus();
+      setWorksheetSourceStatus(status);
+
+      if (showFeedback) {
+        showToast(
+          status.configured ? 'success' : 'warning',
+          status.configured
+            ? 'Kaynak ayarları hazır.'
+            : 'Kaynak ayarları eksik.',
+        );
+      }
+    } catch {
+      setWorksheetSourceStatus({
+        allowedHosts: [],
+        configured: false,
+        sourceUrls: [],
+      });
+
+      if (showFeedback) {
+        showToast('error', 'Kaynak ayarları kontrol edilemedi.');
+      }
+    }
+  }, [showToast]);
 
   const {
     applyModerationAction,
@@ -386,9 +481,40 @@ export default function AdminPage() {
 
       setUser(authResult.user);
       await loadData(authResult.user.id);
+      await Promise.all([
+        refreshGoogleDriveConnection(),
+        refreshWorksheetSourceStatus(),
+      ]);
     };
     void checkAuth();
-  }, [loadData, router]);
+  }, [
+    loadData,
+    refreshGoogleDriveConnection,
+    refreshWorksheetSourceStatus,
+    router,
+  ]);
+
+  useEffect(() => {
+    if (!user || typeof window === 'undefined') return;
+
+    const driveStatus = new URLSearchParams(window.location.search).get('drive');
+    if (!driveStatus) return;
+
+    const callbackMessage = GOOGLE_DRIVE_CALLBACK_MESSAGES[driveStatus] ?? {
+      message: 'Google Drive bağlantısı tamamlanamadı.',
+      type: 'error' as const,
+    };
+
+    showToast(callbackMessage.type, callbackMessage.message);
+
+    if (driveStatus === 'connected') {
+      void refreshGoogleDriveConnection();
+    }
+
+    const url = new URL(window.location.href);
+    url.searchParams.delete('drive');
+    window.history.replaceState({}, '', url.toString());
+  }, [refreshGoogleDriveConnection, showToast, user]);
 
   // Kullanıcı listesini görünür sekmede periyodik olarak yenile
   useEffect(() => {
@@ -477,6 +603,140 @@ export default function AdminPage() {
   const handleOpenSubmissions = async (assignment: Assignment) => {
     await loadSubmissions(assignment.id);
     openSubmissionsModal(assignment);
+  };
+
+  const handleImportAnnualPlan = async (file: File) => {
+    const result = await importAdminAnnualPlan(file);
+    await loadData(user?.id);
+    return result;
+  };
+
+  const handleDiscoverWorksheetCandidates = async (
+    item: AnnualPlanItem,
+  ): Promise<WorksheetCandidateDiscoveryResult> => {
+    const result = await discoverAdminWorksheetCandidates(item.id);
+    await loadData(user?.id);
+    return result;
+  };
+
+  const handleUpdateWorksheetCandidateStatus = async (
+    candidate: WorksheetCandidate,
+    status: Extract<WorksheetCandidateStatus, 'pending' | 'rejected'>,
+    rejectionReason?: string | null,
+  ) => {
+    if (!user) return;
+
+    try {
+      const updatedCandidate = await updateWorksheetCandidateStatus({
+        candidateId: candidate.id,
+        rejectionReason,
+        reviewedBy: user.id,
+        status,
+      });
+      setWorksheetCandidates((currentCandidates) =>
+        currentCandidates.map((currentCandidate) =>
+          currentCandidate.id === updatedCandidate.id
+            ? updatedCandidate
+            : currentCandidate,
+        ),
+      );
+      showToast(
+        'success',
+        status === 'rejected'
+          ? 'Aday test reddedildi.'
+          : 'Aday test tekrar beklemeye alındı.',
+      );
+    } catch (error) {
+      showToast(
+        'error',
+        error instanceof Error
+          ? error.message
+          : 'Aday test durumu güncellenemedi.',
+      );
+    }
+  };
+
+  const handleApproveWorksheetCandidate = async (
+    candidate: WorksheetCandidate,
+  ) => {
+    try {
+      const result = await approveAdminWorksheetCandidate(candidate.id);
+      showToast(
+        result.notificationWarning ? 'warning' : 'success',
+        result.notificationWarning
+          ? result.notificationWarning
+          : result.notifiedStudents > 0
+          ? `Aday test yayınlandı. ${result.notifiedStudents} öğrenciye bildirim gönderildi.`
+          : 'Aday test yayınlandı. Bu sınıfta bildirim gönderilecek öğrenci bulunamadı.',
+      );
+      await loadData(user?.id);
+      broadcastHomeDocumentsUpdated();
+    } catch (error) {
+      showToast(
+        'error',
+        error instanceof Error
+          ? error.message
+          : 'Aday test yayınlanamadı.',
+      );
+    }
+  };
+
+  const handleConnectGoogleDrive = async () => {
+    setIsGoogleDriveBusy(true);
+    try {
+      const { url } = await loadGoogleDriveAuthUrl();
+      window.location.href = url;
+    } catch (error) {
+      showToast(
+        'error',
+        error instanceof Error
+          ? error.message
+          : 'Google Drive bağlantısı başlatılamadı.',
+      );
+      setIsGoogleDriveBusy(false);
+    }
+  };
+
+  const handleDisconnectGoogleDrive = async () => {
+    setIsGoogleDriveBusy(true);
+    try {
+      const status = await disconnectGoogleDriveConnection();
+      setGoogleDriveConnection(status);
+      showToast('success', 'Google Drive bağlantısı kesildi.');
+    } catch (error) {
+      showToast(
+        'error',
+        error instanceof Error
+          ? error.message
+          : 'Google Drive bağlantısı kesilemedi.',
+      );
+    } finally {
+      setIsGoogleDriveBusy(false);
+    }
+  };
+
+  const handleScanCurrentWeekCandidates = async () => {
+    setIsWeekScanRunning(true);
+    try {
+      const result = await scanCurrentWeekWorksheetCandidates();
+      setLastWeekScanResult(result);
+      await loadData(user?.id);
+      showToast(
+        result.inserted > 0 ? 'success' : 'info',
+        result.inserted > 0
+          ? `${result.inserted} yeni test adayı bulundu.`
+          : 'Bu hafta için yeni test adayı bulunamadı.',
+      );
+    } catch (error) {
+      showToast(
+        'error',
+        error instanceof Error
+          ? error.message
+          : 'Bu hafta taraması yapılamadı.',
+      );
+    } finally {
+      setIsWeekScanRunning(false);
+    }
   };
 
   const refreshAfterStudentTrackingChange = async (studentId: string) => {
@@ -713,6 +973,20 @@ export default function AdminPage() {
                   color: 'from-blue-500 to-cyan-500',
                 },
                 {
+                  id: 'annualPlan',
+                  label: 'Yıllık Plan',
+                  shortLabel: 'Plan',
+                  icon: CalendarDays,
+                  color: 'from-emerald-500 to-teal-500',
+                },
+                {
+                  id: 'worksheetCandidates',
+                  label: 'Test Adayları',
+                  shortLabel: 'Aday',
+                  icon: Search,
+                  color: 'from-amber-500 to-orange-500',
+                },
+                {
                   id: 'users',
                   label: 'Kullanıcılar',
                   shortLabel: 'Kull.',
@@ -771,6 +1045,8 @@ export default function AdminPage() {
 
           {activeTab !== 'statistics' &&
             activeTab !== 'tracking' &&
+            activeTab !== 'annualPlan' &&
+            activeTab !== 'worksheetCandidates' &&
             activeTab !== 'users' &&
             activeTab !== 'gradeUpdate' &&
             activeTab !== 'assignments' &&
@@ -815,6 +1091,7 @@ export default function AdminPage() {
             activityEvents={activityEvents}
             adminStatuses={adminStatuses}
             announcements={announcements}
+            annualPlanItems={annualPlanItems}
             assignments={assignments}
             dashboardQuizResults={dashboardQuizResults}
             dashboardStudyGoals={dashboardStudyGoals}
@@ -822,20 +1099,28 @@ export default function AdminPage() {
             dashboardSubmissions={dashboardSubmissions}
             documents={documents}
             formatDate={formatDate}
+            googleDriveConnection={googleDriveConnection}
             isSubmitting={isSubmitting}
+            isGoogleDriveBusy={isGoogleDriveBusy}
+            isWeekScanRunning={isWeekScanRunning}
             lastGradeUpdate={lastGradeUpdate}
+            lastWeekScanResult={lastWeekScanResult}
             liveLessons={liveLessons}
             notifications={notifications}
             onAddQuizQuestion={handleAddQuizQuestion}
+            onApproveWorksheetCandidate={handleApproveWorksheetCandidate}
+            onConnectGoogleDrive={handleConnectGoogleDrive}
             onCreateAnnouncement={() => openModal('announcement')}
             onCreateAssignment={() => openModal('assignment')}
             onCreateSendDocument={() => openModal('sendDoc')}
             onCreateWeeklyPlan={handleCreateWeeklyPlan}
+            onDiscoverWorksheetCandidates={handleDiscoverWorksheetCandidates}
             onDeleteAnnouncement={(id) => deleteItem('announcement', id)}
             onDeleteAssignment={(id) => deleteItem('assignment', id)}
             onDeleteDocument={(id) => deleteItem('document', id)}
             onDeleteQuiz={(id) => deleteItem('quiz', id)}
             onDeleteSharedDocument={(id) => deleteItem('shared_document', id)}
+            onDisconnectGoogleDrive={handleDisconnectGoogleDrive}
             onDownloadStudentsPdf={handleDownloadStudentsPdf}
             onEditAnnouncement={openEditAnnouncement}
             onEditAssignment={editAssignment}
@@ -843,20 +1128,28 @@ export default function AdminPage() {
             onEditQuiz={handleEditQuiz}
             onEditSharedDocument={editSharedDocument}
             onEditUser={openEditUser}
+            onImportAnnualPlan={handleImportAnnualPlan}
             onMigrateWorksheets={handleMigrateWorksheetDocuments}
             onRefreshDocumentCategories={handleRefreshDocumentCategories}
+            onRefreshWorksheetSourceStatus={() => refreshWorksheetSourceStatus(true)}
             onRefreshUsers={loadData}
+            onScanCurrentWeekCandidates={handleScanCurrentWeekCandidates}
             onSendAdminMessage={openAdminMessage}
             onShowSubmissions={handleOpenSubmissions}
             onToggleFavoriteStudent={handleToggleFavoriteStudent}
             onUpdateStudentStatus={handleUpdateStudentStatus}
             onUpdateGrades={handleUpdateGrades}
+            onUpdateWorksheetCandidateStatus={
+              handleUpdateWorksheetCandidateStatus
+            }
             onViewStudentProfile={handleOpenStudentProfile}
             pdfStudentsLoading={pdfStudentsLoading}
             quizzes={quizzes}
             sharedDocs={sharedDocs}
             studentUsers={studentUsers}
             weeklyPlans={weeklyPlans}
+            worksheetSourceStatus={worksheetSourceStatus}
+            worksheetCandidates={worksheetCandidates}
           />
         </div>
       </div>

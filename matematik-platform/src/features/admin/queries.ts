@@ -20,6 +20,8 @@ import type {
   AdminAssignment,
   AdminDashboardData,
   AdminDocument,
+  AnnualPlanImportResult,
+  AnnualPlanItem,
   AdminNotification,
   AdminQuizResultRow,
   AdminQuiz,
@@ -30,11 +32,18 @@ import type {
   AdminStudentProfileData,
   AdminSubmission,
   AdminUser,
+  GoogleDriveConnectionStatus,
   ModerationPayload,
   StudentActivityEvent,
   StudentAdminNote,
   StudentAdminStatus,
   StudentWeeklyPlan,
+  WorksheetCandidate,
+  WorksheetCandidateApprovalResult,
+  WorksheetCandidateDiscoveryResult,
+  WorksheetCandidateSourceStatus,
+  WorksheetCandidateStatus,
+  WorksheetCandidateWeekScanResult,
 } from '@/features/admin/types';
 
 type ResolveAdminAuthResult =
@@ -85,6 +94,192 @@ const requestAdminAnnouncementRoute = async <TResult>(
   };
 };
 
+const requestAdminAnnualPlanImport = async (file: File) => {
+  const session = await getClientSession();
+  const headers: Record<string, string> = {};
+
+  if (session?.access_token) {
+    headers.Authorization = `Bearer ${session.access_token}`;
+  }
+
+  const formData = new FormData();
+  formData.append('file', file);
+
+  const response = await fetch('/api/admin-annual-plan/import', {
+    body: formData,
+    credentials: 'same-origin',
+    headers,
+    method: 'POST',
+  });
+
+  const payload = (await response.json().catch(() => null)) as
+    | { data?: AnnualPlanImportResult; error?: { message?: string } }
+    | null;
+
+  if (!response.ok) {
+    throw new Error(
+      payload?.error?.message || 'Yıllık plan içe aktarılamadı.',
+    );
+  }
+
+  if (!payload?.data) {
+    throw new Error('Yıllık plan içe aktarma sonucu alınamadı.');
+  }
+
+  return payload.data;
+};
+
+const requestWorksheetCandidateDiscovery = async (annualPlanItemId: string) => {
+  const session = await getClientSession();
+  const headers: Record<string, string> = {
+    'Content-Type': 'application/json',
+  };
+
+  if (session?.access_token) {
+    headers.Authorization = `Bearer ${session.access_token}`;
+  }
+
+  const response = await fetch('/api/admin-worksheet-candidates/discover', {
+    body: JSON.stringify({ annual_plan_item_id: annualPlanItemId }),
+    credentials: 'same-origin',
+    headers,
+    method: 'POST',
+  });
+
+  const payload = (await response.json().catch(() => null)) as
+    | { data?: WorksheetCandidateDiscoveryResult; error?: { message?: string } }
+    | null;
+
+  if (!response.ok) {
+    throw new Error(payload?.error?.message || 'Test adayı araması yapılamadı.');
+  }
+
+  if (!payload?.data) {
+    throw new Error('Test adayı arama sonucu alınamadı.');
+  }
+
+  return payload.data;
+};
+
+const requestWorksheetCandidateWeekScan = async () => {
+  const session = await getClientSession();
+  const headers: Record<string, string> = {
+    'Content-Type': 'application/json',
+  };
+
+  if (session?.access_token) {
+    headers.Authorization = `Bearer ${session.access_token}`;
+  }
+
+  const response = await fetch('/api/admin-worksheet-candidates/discover-week', {
+    credentials: 'same-origin',
+    headers,
+    method: 'POST',
+  });
+
+  const payload = (await response.json().catch(() => null)) as
+    | { data?: WorksheetCandidateWeekScanResult; error?: { message?: string } }
+    | null;
+
+  if (!response.ok) {
+    throw new Error(payload?.error?.message || 'Bu hafta taraması yapılamadı.');
+  }
+
+  if (!payload?.data) {
+    throw new Error('Bu hafta tarama sonucu alınamadı.');
+  }
+
+  return payload.data;
+};
+
+const requestWorksheetCandidateApproval = async (candidateId: string) => {
+  const session = await getClientSession();
+  const headers: Record<string, string> = {
+    'Content-Type': 'application/json',
+  };
+
+  if (session?.access_token) {
+    headers.Authorization = `Bearer ${session.access_token}`;
+  }
+
+  const response = await fetch('/api/admin-worksheet-candidates/approve', {
+    body: JSON.stringify({ candidate_id: candidateId }),
+    credentials: 'same-origin',
+    headers,
+    method: 'POST',
+  });
+
+  const payload = (await response.json().catch(() => null)) as
+    | { data?: WorksheetCandidateApprovalResult; error?: { message?: string } }
+    | null;
+
+  if (!response.ok) {
+    throw new Error(payload?.error?.message || 'Aday test yayınlanamadı.');
+  }
+
+  if (!payload?.data) {
+    throw new Error('Aday test yayınlama sonucu alınamadı.');
+  }
+
+  return payload.data;
+};
+
+const requestWorksheetCandidateSourceStatus = async () => {
+  const session = await getClientSession();
+  const headers: Record<string, string> = {};
+
+  if (session?.access_token) {
+    headers.Authorization = `Bearer ${session.access_token}`;
+  }
+
+  const response = await fetch('/api/admin-worksheet-candidates/source-status', {
+    credentials: 'same-origin',
+    headers,
+  });
+
+  const payload = (await response.json().catch(() => null)) as
+    | { data?: WorksheetCandidateSourceStatus; error?: { message?: string } }
+    | null;
+
+  if (!response.ok) {
+    throw new Error(payload?.error?.message || 'Kaynak ayarları okunamadı.');
+  }
+
+  if (!payload?.data) {
+    throw new Error('Kaynak ayarı sonucu alınamadı.');
+  }
+
+  return payload.data;
+};
+
+const requestGoogleDriveRoute = async <TResult>(
+  path: '/api/admin-google-drive/auth-url' | '/api/admin-google-drive/status',
+  method: 'GET' | 'DELETE' = 'GET',
+) => {
+  const session = await getClientSession();
+  const headers: Record<string, string> = {};
+
+  if (session?.access_token) {
+    headers.Authorization = `Bearer ${session.access_token}`;
+  }
+
+  const response = await fetch(path, {
+    credentials: 'same-origin',
+    headers,
+    method,
+  });
+
+  const payload = (await response.json().catch(() => null)) as
+    | { data?: TResult; error?: { message?: string } }
+    | null;
+
+  if (!response.ok) {
+    throw new Error(payload?.error?.message || 'Google Drive işlemi yapılamadı.');
+  }
+
+  return payload?.data as TResult;
+};
+
 export const resolveAdminAuth = async (): Promise<ResolveAdminAuthResult> => {
   const session = await getClientSession();
 
@@ -118,6 +313,68 @@ export const refreshAdminUsers = async () => {
   return (data || []) as AdminUser[];
 };
 
+export const importAdminAnnualPlan = (file: File) =>
+  requestAdminAnnualPlanImport(file);
+
+export const discoverAdminWorksheetCandidates = (annualPlanItemId: string) =>
+  requestWorksheetCandidateDiscovery(annualPlanItemId);
+
+export const scanCurrentWeekWorksheetCandidates = () =>
+  requestWorksheetCandidateWeekScan();
+
+export const approveAdminWorksheetCandidate = (candidateId: string) =>
+  requestWorksheetCandidateApproval(candidateId);
+
+export const loadWorksheetCandidateSourceStatus = () =>
+  requestWorksheetCandidateSourceStatus();
+
+export const loadGoogleDriveConnectionStatus = () =>
+  requestGoogleDriveRoute<GoogleDriveConnectionStatus>(
+    '/api/admin-google-drive/status',
+  );
+
+export const disconnectGoogleDriveConnection = () =>
+  requestGoogleDriveRoute<GoogleDriveConnectionStatus>(
+    '/api/admin-google-drive/status',
+    'DELETE',
+  );
+
+export const loadGoogleDriveAuthUrl = () =>
+  requestGoogleDriveRoute<{ url: string }>('/api/admin-google-drive/auth-url');
+
+export const updateWorksheetCandidateStatus = async ({
+  candidateId,
+  rejectionReason,
+  reviewedBy,
+  status,
+}: {
+  candidateId: string;
+  rejectionReason?: string | null;
+  reviewedBy?: string | null;
+  status: Extract<WorksheetCandidateStatus, 'pending' | 'rejected'>;
+}) => {
+  const updates = {
+    rejection_reason: status === 'rejected' ? rejectionReason?.trim() || null : null,
+    reviewed_at: status === 'pending' ? null : new Date().toISOString(),
+    reviewed_by: status === 'pending' ? null : reviewedBy ?? null,
+    status,
+    updated_at: new Date().toISOString(),
+  };
+
+  const { data, error } = await supabase
+    .from('worksheet_candidates')
+    .update(updates)
+    .eq('id', candidateId)
+    .select('*')
+    .single();
+
+  if (error) {
+    throw error;
+  }
+
+  return data as WorksheetCandidate;
+};
+
 export const loadAdminDashboardData = async (
   retentionDays: number,
   adminUserId?: string | null,
@@ -146,6 +403,8 @@ export const loadAdminDashboardData = async (
     studyGoalsRes,
     adminStatusesRes,
     weeklyPlansRes,
+    annualPlanItemsRes,
+    worksheetCandidatesRes,
     activityEventsRes,
     liveLessonsRes,
     liveLessonParticipantsRes,
@@ -185,6 +444,15 @@ export const loadAdminDashboardData = async (
       .select('*, student_weekly_plan_items(*)')
       .order('week_start', { ascending: false }),
     supabase
+      .from('annual_plan_items')
+      .select('*')
+      .order('grade', { ascending: true })
+      .order('week_start', { ascending: true }),
+    supabase
+      .from('worksheet_candidates')
+      .select('*')
+      .order('created_at', { ascending: false }),
+    supabase
       .from('student_activity_events')
       .select('*')
       .order('created_at', { ascending: false })
@@ -219,6 +487,7 @@ export const loadAdminDashboardData = async (
         new Date(right.created_at || 0).getTime() -
         new Date(left.created_at || 0).getTime(),
     ),
+    annualPlanItems: (annualPlanItemsRes.data || []) as AnnualPlanItem[],
     adminStatuses: (adminStatusesRes.data || []) as StudentAdminStatus[],
     assignments: (assignmentsRes.data || []) as AdminDashboardData['assignments'],
     documents: (documentsRes.data || []) as AdminDashboardData['documents'],
@@ -230,6 +499,7 @@ export const loadAdminDashboardData = async (
     studySessions: (studySessionsRes.data || []) as AdminStudySessionRow[],
     submissions: (submissionsRes.data || []) as AdminSubmission[],
     weeklyPlans: (weeklyPlansRes.data || []) as StudentWeeklyPlan[],
+    worksheetCandidates: (worksheetCandidatesRes.data || []) as WorksheetCandidate[],
     liveLessons: {
       chatMessages: liveLessonChatRes.data || [],
       events: liveLessonEventsRes.data || [],

@@ -3,6 +3,7 @@
 import { AnimatePresence, motion } from "framer-motion";
 import AdminStatistics from "@/components/AdminStatistics";
 import AdminAnnouncementsTab from "@/features/admin/components/tabs/AdminAnnouncementsTab";
+import AdminAnnualPlanTab from "@/features/admin/components/tabs/AdminAnnualPlanTab";
 import AdminAssignmentsTab from "@/features/admin/components/tabs/AdminAssignmentsTab";
 import AdminDocumentsTab from "@/features/admin/components/tabs/AdminDocumentsTab";
 import AdminGradeUpdateTab from "@/features/admin/components/tabs/AdminGradeUpdateTab";
@@ -10,12 +11,16 @@ import AdminQuizzesTab from "@/features/admin/components/tabs/AdminQuizzesTab";
 import AdminLiveLessonsTab from "@/features/admin/components/tabs/AdminLiveLessonsTab";
 import AdminTrackingTab from "@/features/admin/components/tabs/AdminTrackingTab";
 import AdminUsersTab from "@/features/admin/components/tabs/AdminUsersTab";
+import AdminWorksheetCandidatesTab from "@/features/admin/components/tabs/AdminWorksheetCandidatesTab";
 import type {
   AdminActiveTab,
   AdminAnnouncement,
   AdminAssignment,
+  AnnualPlanImportResult,
+  AnnualPlanItem,
   AdminDocument,
   AdminFormState,
+  GoogleDriveConnectionStatus,
   AdminQuizResultRow,
   AdminQuiz,
   AdminSharedDocument,
@@ -25,6 +30,11 @@ import type {
   StudentActivityEvent,
   StudentAdminStatus,
   StudentWeeklyPlan,
+  WorksheetCandidate,
+  WorksheetCandidateDiscoveryResult,
+  WorksheetCandidateSourceStatus,
+  WorksheetCandidateStatus,
+  WorksheetCandidateWeekScanResult,
 } from "@/features/admin/types";
 import type { AdminNotification, AdminSubmission } from "@/features/admin/types";
 import type { LiveLessonDashboardData } from "@/features/live-lessons/types";
@@ -34,6 +44,7 @@ type AdminTabPanelsProps = {
   activityEvents: StudentActivityEvent[];
   adminStatuses: StudentAdminStatus[];
   announcements: AdminAnnouncement[];
+  annualPlanItems: AnnualPlanItem[];
   assignments: AdminAssignment[];
   dashboardQuizResults: AdminQuizResultRow[];
   dashboardStudyGoals: AdminStudyGoalRow[];
@@ -41,20 +52,32 @@ type AdminTabPanelsProps = {
   dashboardSubmissions: AdminSubmission[];
   documents: AdminDocument[];
   formatDate: (dateString?: string | null) => string;
+  googleDriveConnection: GoogleDriveConnectionStatus | null;
   isSubmitting: boolean;
+  isGoogleDriveBusy: boolean;
+  isWeekScanRunning: boolean;
   lastGradeUpdate: string | null;
+  lastWeekScanResult: WorksheetCandidateWeekScanResult | null;
   liveLessons: LiveLessonDashboardData;
   notifications: AdminNotification[];
   onAddQuizQuestion: (quiz: AdminQuiz) => Promise<void> | void;
+  onApproveWorksheetCandidate: (
+    candidate: WorksheetCandidate,
+  ) => Promise<void> | void;
+  onConnectGoogleDrive: () => Promise<void> | void;
   onCreateAnnouncement: () => void;
   onCreateAssignment: () => void;
   onCreateSendDocument: () => void;
   onCreateWeeklyPlan: (user: AdminUser) => Promise<void> | void;
+  onDiscoverWorksheetCandidates: (
+    item: AnnualPlanItem,
+  ) => Promise<WorksheetCandidateDiscoveryResult>;
   onDeleteAnnouncement: (id: string) => void;
   onDeleteAssignment: (id: string) => void;
   onDeleteDocument: (id: string) => void;
   onDeleteQuiz: (id: string) => void;
   onDeleteSharedDocument: (id: string) => void;
+  onDisconnectGoogleDrive: () => Promise<void> | void;
   onDownloadStudentsPdf: () => Promise<void> | void;
   onEditAnnouncement: (
     announcement: AdminAnnouncement,
@@ -70,9 +93,12 @@ type AdminTabPanelsProps = {
     document: AdminSharedDocument,
   ) => Promise<void> | void;
   onEditUser: (user: AdminUser) => void;
+  onImportAnnualPlan: (file: File) => Promise<AnnualPlanImportResult>;
   onMigrateWorksheets: () => Promise<void> | void;
   onRefreshDocumentCategories: () => Promise<void> | void;
+  onRefreshWorksheetSourceStatus: () => Promise<void> | void;
   onRefreshUsers: () => Promise<void> | void;
+  onScanCurrentWeekCandidates: () => Promise<void> | void;
   onSendAdminMessage: (user: AdminUser) => void;
   onShowSubmissions: (assignment: AdminAssignment) => Promise<void> | void;
   onToggleFavoriteStudent: (user: AdminUser) => Promise<void> | void;
@@ -82,12 +108,19 @@ type AdminTabPanelsProps = {
     labels?: string[],
   ) => Promise<void> | void;
   onUpdateGrades: () => Promise<void> | void;
+  onUpdateWorksheetCandidateStatus: (
+    candidate: WorksheetCandidate,
+    status: Extract<WorksheetCandidateStatus, "pending" | "rejected">,
+    rejectionReason?: string | null,
+  ) => Promise<void> | void;
   onViewStudentProfile: (user: AdminUser) => Promise<void> | void;
   pdfStudentsLoading: boolean;
   quizzes: AdminQuiz[];
   sharedDocs: AdminSharedDocument[];
   studentUsers: AdminUser[];
   weeklyPlans: StudentWeeklyPlan[];
+  worksheetSourceStatus: WorksheetCandidateSourceStatus | null;
+  worksheetCandidates: WorksheetCandidate[];
 };
 
 export default function AdminTabPanels({
@@ -95,6 +128,7 @@ export default function AdminTabPanels({
   activityEvents,
   adminStatuses,
   announcements,
+  annualPlanItems,
   assignments,
   dashboardQuizResults,
   dashboardStudyGoals,
@@ -102,20 +136,28 @@ export default function AdminTabPanels({
   dashboardSubmissions,
   documents,
   formatDate,
+  googleDriveConnection,
   isSubmitting,
+  isGoogleDriveBusy,
+  isWeekScanRunning,
   lastGradeUpdate,
+  lastWeekScanResult,
   liveLessons,
   notifications,
   onAddQuizQuestion,
+  onApproveWorksheetCandidate,
+  onConnectGoogleDrive,
   onCreateAnnouncement,
   onCreateAssignment,
   onCreateSendDocument,
   onCreateWeeklyPlan,
+  onDiscoverWorksheetCandidates,
   onDeleteAnnouncement,
   onDeleteAssignment,
   onDeleteDocument,
   onDeleteQuiz,
   onDeleteSharedDocument,
+  onDisconnectGoogleDrive,
   onDownloadStudentsPdf,
   onEditAnnouncement,
   onEditAssignment,
@@ -123,20 +165,26 @@ export default function AdminTabPanels({
   onEditQuiz,
   onEditSharedDocument,
   onEditUser,
+  onImportAnnualPlan,
   onMigrateWorksheets,
   onRefreshDocumentCategories,
+  onRefreshWorksheetSourceStatus,
   onRefreshUsers,
+  onScanCurrentWeekCandidates,
   onSendAdminMessage,
   onShowSubmissions,
   onToggleFavoriteStudent,
   onUpdateStudentStatus,
   onUpdateGrades,
+  onUpdateWorksheetCandidateStatus,
   onViewStudentProfile,
   pdfStudentsLoading,
   quizzes,
   sharedDocs,
   studentUsers,
   weeklyPlans,
+  worksheetSourceStatus,
+  worksheetCandidates,
 }: AdminTabPanelsProps) {
   return (
     <AnimatePresence mode="wait">
@@ -189,6 +237,32 @@ export default function AdminTabPanels({
           onEdit={onEditDocument}
           onMigrateWorksheets={onMigrateWorksheets}
           onRefreshCategories={onRefreshDocumentCategories}
+        />
+      )}
+
+      {activeTab === "annualPlan" && (
+        <AdminAnnualPlanTab
+          items={annualPlanItems}
+          onDiscoverCandidates={onDiscoverWorksheetCandidates}
+          onImport={onImportAnnualPlan}
+          sourceStatus={worksheetSourceStatus}
+        />
+      )}
+
+      {activeTab === "worksheetCandidates" && (
+        <AdminWorksheetCandidatesTab
+          candidates={worksheetCandidates}
+          driveConnection={googleDriveConnection}
+          sourceStatus={worksheetSourceStatus}
+          isDriveBusy={isGoogleDriveBusy}
+          isWeekScanRunning={isWeekScanRunning}
+          lastWeekScanResult={lastWeekScanResult}
+          onApprove={onApproveWorksheetCandidate}
+          onConnectDrive={onConnectGoogleDrive}
+          onDisconnectDrive={onDisconnectGoogleDrive}
+          onRefreshSourceStatus={onRefreshWorksheetSourceStatus}
+          onScanCurrentWeek={onScanCurrentWeekCandidates}
+          onUpdateStatus={onUpdateWorksheetCandidateStatus}
         />
       )}
 
