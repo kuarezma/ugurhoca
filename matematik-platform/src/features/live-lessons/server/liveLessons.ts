@@ -9,7 +9,10 @@ import {
   createServerSupabaseClient,
   createServiceRoleClient,
 } from '@/lib/supabase/server';
-import { generateRoomId, signTeacherProof } from '@/features/live-lessons/lib/lesson-auth';
+import {
+  generateRoomId,
+  signTeacherProof,
+} from '@/features/live-lessons/lib/lesson-auth';
 import type {
   LiveLesson,
   LiveLessonChatMessage,
@@ -34,9 +37,10 @@ function normalizeGrade(value: unknown): AuthSnapshot['grade'] {
   return Number.isFinite(numericGrade) ? numericGrade : 5;
 }
 
-export async function getVerifiedLiveLessonUser(): Promise<
-  { accessToken: string; user: AuthSnapshot } | null
-> {
+export async function getVerifiedLiveLessonUser(): Promise<{
+  accessToken: string;
+  user: AuthSnapshot;
+} | null> {
   const accessToken = await getServerAccessToken();
 
   if (!accessToken) {
@@ -68,7 +72,8 @@ export async function getVerifiedLiveLessonUser(): Promise<
   const name =
     typeof profileRecord.name === 'string' && profileRecord.name.trim()
       ? profileRecord.name.trim()
-      : typeof user.user_metadata?.name === 'string' && user.user_metadata.name.trim()
+      : typeof user.user_metadata?.name === 'string' &&
+          user.user_metadata.name.trim()
         ? user.user_metadata.name.trim()
         : 'Öğrenci';
 
@@ -90,14 +95,20 @@ export async function requireLiveLessonUser(): Promise<RouteAuth> {
   if (!verified) {
     return {
       ok: false,
-      response: NextResponse.json({ error: 'Giriş yapmanız gerekiyor.' }, { status: 401 }),
+      response: NextResponse.json(
+        { error: 'Giriş yapmanız gerekiyor.' },
+        { status: 401 },
+      ),
     };
   }
 
   return { accessToken: verified.accessToken, ok: true, user: verified.user };
 }
 
-export function isLiveLessonAdmin(user: { email?: string | null; isAdmin?: boolean }) {
+export function isLiveLessonAdmin(user: {
+  email?: string | null;
+  isAdmin?: boolean;
+}) {
   return Boolean(user.isAdmin || isAdminEmail(user.email));
 }
 
@@ -202,7 +213,10 @@ async function notifyGrade({
   const { data: students } =
     grade === 'all'
       ? await studentsQuery
-      : await studentsQuery.eq('grade', Number.isFinite(Number(grade)) ? Number(grade) : grade);
+      : await studentsQuery.eq(
+          'grade',
+          Number.isFinite(Number(grade)) ? Number(grade) : grade,
+        );
 
   const rows = (students || [])
     .filter((student: { id?: string | null }) => student.id)
@@ -284,7 +298,10 @@ async function notifyLessonAudience({
 }
 
 function isStudentTargeted(lesson: LiveLesson, userId: string) {
-  return Array.isArray(lesson.target_student_ids) && lesson.target_student_ids.includes(userId);
+  return (
+    Array.isArray(lesson.target_student_ids) &&
+    lesson.target_student_ids.includes(userId)
+  );
 }
 
 export function canUserAccessLiveLesson(
@@ -294,7 +311,10 @@ export function canUserAccessLiveLesson(
   if (lesson.target_grade === 'selected') {
     return isStudentTargeted(lesson, user.id);
   }
-  return lesson.target_grade === 'all' || String(user.grade) === String(lesson.target_grade);
+  return (
+    lesson.target_grade === 'all' ||
+    String(user.grade) === String(lesson.target_grade)
+  );
 }
 
 export async function createLiveLesson(input: {
@@ -306,7 +326,10 @@ export async function createLiveLesson(input: {
   title: string;
   userId: string;
 }) {
-  const lessons = await createLiveLessons({ ...input, repeatWeeklyUntil: null });
+  const lessons = await createLiveLessons({
+    ...input,
+    repeatWeeklyUntil: null,
+  });
   return lessons[0];
 }
 
@@ -329,7 +352,9 @@ export async function createLiveLessons(input: {
   if (!Number.isFinite(startsAt.getTime())) {
     throw new Error('Geçerli bir tarih ve saat seçin.');
   }
-  const targetStudentIds = [...new Set(input.targetStudentIds || [])].filter(Boolean);
+  const targetStudentIds = [...new Set(input.targetStudentIds || [])].filter(
+    Boolean,
+  );
 
   if (!VALID_TARGET_GRADES.includes(input.targetGrade)) {
     throw new Error('Geçerli bir sınıf seçin.');
@@ -338,16 +363,23 @@ export async function createLiveLessons(input: {
     throw new Error('En az bir öğrenci seçin.');
   }
 
-  const startsAtValues = buildRecurringStartsAtValues(startsAt, input.repeatWeeklyUntil);
+  const startsAtValues = buildRecurringStartsAtValues(
+    startsAt,
+    input.repeatWeeklyUntil,
+  );
   const rows = startsAtValues.map((date) => {
     const roomId = generateRoomId();
     const lessonRow: Record<string, unknown> = {
       created_by: input.userId,
       description: input.description || null,
-      duration_minutes: Math.max(15, Math.min(240, input.durationMinutes || 60)),
+      duration_minutes: Math.max(
+        15,
+        Math.min(240, input.durationMinutes || 60),
+      ),
       room_id: roomId,
       starts_at: date.toISOString(),
-      status: date.getTime() <= Date.now() + 5 * 60 * 1000 ? 'active' : 'scheduled',
+      status:
+        date.getTime() <= Date.now() + 5 * 60 * 1000 ? 'active' : 'scheduled',
       target_grade: input.targetGrade,
       teacher_proof: signTeacherProof(roomId),
       title: input.title.trim(),
@@ -370,10 +402,12 @@ export async function createLiveLessons(input: {
   }
 
   const lessons = (data || []) as LiveLesson[];
-  await supabase.from('live_lesson_reminders').insert(lessons.map((lesson) => ({
-    lesson_id: lesson.id,
-    reminder_type: REMINDER_TYPE,
-  })));
+  await supabase.from('live_lesson_reminders').insert(
+    lessons.map((lesson) => ({
+      lesson_id: lesson.id,
+      reminder_type: REMINDER_TYPE,
+    })),
+  );
   for (const lesson of lessons) {
     await notifyLessonAudience({
       lesson,
@@ -408,7 +442,9 @@ export async function updateLiveLesson(input: {
     throw new Error('Geçerli bir ders hedefi seçin.');
   }
 
-  const targetStudentIds = [...new Set(input.targetStudentIds || [])].filter(Boolean);
+  const targetStudentIds = [...new Set(input.targetStudentIds || [])].filter(
+    Boolean,
+  );
   if (input.targetGrade === 'selected' && targetStudentIds.length === 0) {
     throw new Error('En az bir öğrenci seçin.');
   }
@@ -424,11 +460,15 @@ export async function updateLiveLesson(input: {
   }
 
   const currentLesson = current as LiveLesson;
-  if (currentLesson.status === 'ended' || currentLesson.status === 'cancelled') {
+  if (
+    currentLesson.status === 'ended' ||
+    currentLesson.status === 'cancelled'
+  ) {
     throw new Error('Bitmiş veya iptal edilmiş ders düzenlenemez.');
   }
 
-  const nextTargetStudentIds = input.targetGrade === 'selected' ? targetStudentIds : null;
+  const nextTargetStudentIds =
+    input.targetGrade === 'selected' ? targetStudentIds : null;
   const startsAtChanged = currentLesson.starts_at !== startsAt.toISOString();
   const audienceChanged =
     currentLesson.target_grade !== input.targetGrade ||
@@ -440,13 +480,10 @@ export async function updateLiveLesson(input: {
     duration_minutes: Math.max(15, Math.min(240, input.durationMinutes || 60)),
     starts_at: startsAt.toISOString(),
     target_grade: input.targetGrade,
+    target_student_ids: nextTargetStudentIds,
     title: input.title.trim(),
     updated_at: new Date().toISOString(),
   };
-
-  if (input.targetGrade === 'selected') {
-    updatePayload.target_student_ids = nextTargetStudentIds;
-  }
 
   const { data, error } = await supabase
     .from('live_lessons')
@@ -569,7 +606,10 @@ export async function sendDueLiveLessonReminders() {
   return { sent: due.length };
 }
 
-function buildRecurringStartsAtValues(startsAt: Date, repeatWeeklyUntil?: string | null) {
+function buildRecurringStartsAtValues(
+  startsAt: Date,
+  repeatWeeklyUntil?: string | null,
+) {
   if (!repeatWeeklyUntil) {
     return [startsAt];
   }
@@ -585,14 +625,17 @@ function buildRecurringStartsAtValues(startsAt: Date, repeatWeeklyUntil?: string
   const values: Date[] = [];
   for (
     let next = new Date(startsAt);
-    next.getTime() <= repeatUntil.getTime() && values.length < MAX_RECURRING_LESSONS;
+    next.getTime() <= repeatUntil.getTime() &&
+    values.length < MAX_RECURRING_LESSONS;
     next = new Date(next.getTime() + 7 * 24 * 60 * 60 * 1000)
   ) {
     values.push(next);
   }
 
   if (values.length === MAX_RECURRING_LESSONS) {
-    const nextAfterLimit = new Date(startsAt.getTime() + MAX_RECURRING_LESSONS * 7 * 24 * 60 * 60 * 1000);
+    const nextAfterLimit = new Date(
+      startsAt.getTime() + MAX_RECURRING_LESSONS * 7 * 24 * 60 * 60 * 1000,
+    );
     if (nextAfterLimit.getTime() <= repeatUntil.getTime()) {
       throw new Error('Tekrar eden dersler en fazla 16 hafta planlanabilir.');
     }

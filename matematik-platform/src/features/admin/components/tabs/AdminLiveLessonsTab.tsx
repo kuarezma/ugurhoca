@@ -1,13 +1,14 @@
-"use client";
+'use client';
 
-import Link from "next/link";
-import { useMemo, useState } from "react";
+import Link from 'next/link';
+import { useState } from 'react';
 import type {
   LiveLesson,
   LiveLessonDashboardData,
   LiveLessonParticipant,
-} from "@/features/live-lessons/types";
-import type { AdminUser } from "@/features/admin/types";
+} from '@/features/live-lessons/types';
+import { StudentPicker } from '@/features/live-lessons/components/StudentPicker';
+import type { AdminUser } from '@/features/admin/types';
 
 type Props = {
   data: LiveLessonDashboardData;
@@ -25,35 +26,35 @@ type EditFormState = {
 };
 
 const gradeOptions = [
-  { label: "5. sınıf", value: "5" },
-  { label: "6. sınıf", value: "6" },
-  { label: "7. sınıf", value: "7" },
-  { label: "8. sınıf", value: "8" },
-  { label: "Mezun", value: "Mezun" },
-  { label: "Herkese açık", value: "all" },
-  { label: "Seçili öğrenciler", value: "selected" },
+  { label: '5. sınıf', value: '5' },
+  { label: '6. sınıf', value: '6' },
+  { label: '7. sınıf', value: '7' },
+  { label: '8. sınıf', value: '8' },
+  { label: 'Mezun', value: 'Mezun' },
+  { label: 'Herkese açık', value: 'all' },
+  { label: 'Seçili öğrenciler', value: 'selected' },
 ];
 
 function formatDate(value: string) {
-  return new Intl.DateTimeFormat("tr-TR", {
-    dateStyle: "medium",
-    timeStyle: "short",
-    timeZone: "Europe/Istanbul",
+  return new Intl.DateTimeFormat('tr-TR', {
+    dateStyle: 'medium',
+    timeStyle: 'short',
+    timeZone: 'Europe/Istanbul',
   }).format(new Date(value));
 }
 
 function formatTime(value?: string | null) {
-  if (!value) return "-";
-  return new Intl.DateTimeFormat("tr-TR", {
-    hour: "2-digit",
-    minute: "2-digit",
-    timeZone: "Europe/Istanbul",
+  if (!value) return '-';
+  return new Intl.DateTimeFormat('tr-TR', {
+    hour: '2-digit',
+    minute: '2-digit',
+    timeZone: 'Europe/Istanbul',
   }).format(new Date(value));
 }
 
 function toLocalInputValue(value: string) {
   const date = new Date(value);
-  const pad = (number: number) => String(number).padStart(2, "0");
+  const pad = (number: number) => String(number).padStart(2, '0');
   return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(
     date.getHours(),
   )}:${pad(date.getMinutes())}`;
@@ -61,38 +62,44 @@ function toLocalInputValue(value: string) {
 
 function formatDuration(joinedAt: string, leftAt?: string | null) {
   const end = leftAt ? new Date(leftAt).getTime() : Date.now();
-  const minutes = Math.max(0, Math.round((end - new Date(joinedAt).getTime()) / 60000));
-  return minutes < 60 ? `${minutes} dk` : `${Math.floor(minutes / 60)} sa ${minutes % 60} dk`;
+  const minutes = Math.max(
+    0,
+    Math.round((end - new Date(joinedAt).getTime()) / 60000),
+  );
+  return minutes < 60
+    ? `${minutes} dk`
+    : `${Math.floor(minutes / 60)} sa ${minutes % 60} dk`;
 }
 
-function formatGrade(value: AdminUser["grade"]) {
-  return value === "Mezun" ? "Mezun" : `${value}. sınıf`;
-}
-
-function countForLesson<T extends { lesson_id: string }>(items: T[], lessonId: string) {
+function countForLesson<T extends { lesson_id: string }>(
+  items: T[],
+  lessonId: string,
+) {
   return items.filter((item) => item.lesson_id === lessonId).length;
 }
 
 function formatAudience(lesson: LiveLesson, students: AdminUser[]) {
-  if (lesson.target_grade === "all") return "Herkese açık";
-  if (lesson.target_grade === "Mezun") return "Mezun";
-  if (lesson.target_grade !== "selected") return `${lesson.target_grade}. sınıf`;
+  if (lesson.target_grade === 'all') return 'Herkese açık';
+  if (lesson.target_grade === 'Mezun') return 'Mezun';
+  if (lesson.target_grade !== 'selected')
+    return `${lesson.target_grade}. sınıf`;
 
   const selectedCount = lesson.target_student_ids?.length || 0;
-  if (selectedCount === 0) return "Seçili öğrenci yok";
+  if (selectedCount === 0) return 'Seçili öğrenci yok';
 
-  const firstStudent = students.find((student) => student.id === lesson.target_student_ids?.[0]);
-  const firstName = firstStudent?.name || firstStudent?.email || "Seçili öğrenci";
-  return selectedCount === 1 ? firstName : `${firstName} + ${selectedCount - 1} öğrenci`;
-}
-
-function normalizeSearchText(value: string) {
-  return value.toLocaleLowerCase("tr-TR").trim();
+  const firstStudent = students.find(
+    (student) => student.id === lesson.target_student_ids?.[0],
+  );
+  const firstName =
+    firstStudent?.name || firstStudent?.email || 'Seçili öğrenci';
+  return selectedCount === 1
+    ? firstName
+    : `${firstName} + ${selectedCount - 1} öğrenci`;
 }
 
 function buildEditForm(lesson: LiveLesson): EditFormState {
   return {
-    description: lesson.description || "",
+    description: lesson.description || '',
     durationMinutes: lesson.duration_minutes,
     startsAt: toLocalInputValue(lesson.starts_at),
     targetGrade: lesson.target_grade,
@@ -101,9 +108,13 @@ function buildEditForm(lesson: LiveLesson): EditFormState {
   };
 }
 
-function attendanceForLesson(participants: LiveLessonParticipant[], lessonId: string) {
+function attendanceForLesson(
+  participants: LiveLessonParticipant[],
+  lessonId: string,
+) {
   const rows = participants.filter(
-    (participant) => participant.lesson_id === lessonId && participant.role === "student",
+    (participant) =>
+      participant.lesson_id === lessonId && participant.role === 'student',
   );
   const byStudent = new Map<string, LiveLessonParticipant[]>();
 
@@ -114,7 +125,9 @@ function attendanceForLesson(participants: LiveLessonParticipant[], lessonId: st
 
   return [...byStudent.values()].map((studentRows) => {
     const sortedRows = studentRows.sort(
-      (left, right) => new Date(left.joined_at).getTime() - new Date(right.joined_at).getTime(),
+      (left, right) =>
+        new Date(left.joined_at).getTime() -
+        new Date(right.joined_at).getTime(),
     );
     const first = sortedRows[0];
     const last = sortedRows[sortedRows.length - 1];
@@ -128,55 +141,44 @@ function attendanceForLesson(participants: LiveLessonParticipant[], lessonId: st
   });
 }
 
-export default function AdminLiveLessonsTab({ data, onRefresh, students }: Props) {
+export default function AdminLiveLessonsTab({
+  data,
+  onRefresh,
+  students,
+}: Props) {
   const [editingLessonId, setEditingLessonId] = useState<string | null>(null);
   const [editForm, setEditForm] = useState<EditFormState | null>(null);
-  const [editStudentSearchQuery, setEditStudentSearchQuery] = useState("");
+  const [editStudentSearchQuery, setEditStudentSearchQuery] = useState('');
   const [savingLessonId, setSavingLessonId] = useState<string | null>(null);
   const [editError, setEditError] = useState<string | null>(null);
-
-  const filteredEditStudents = useMemo(() => {
-    const query = normalizeSearchText(editStudentSearchQuery);
-    if (!query) return students;
-
-    return students.filter((student) =>
-      normalizeSearchText(`${student.name || ""} ${student.email || ""}`).includes(query),
-    );
-  }, [editStudentSearchQuery, students]);
 
   const openEditForm = (lesson: LiveLesson) => {
     setEditingLessonId(lesson.id);
     setEditForm(buildEditForm(lesson));
-    setEditStudentSearchQuery("");
+    setEditStudentSearchQuery('');
     setEditError(null);
   };
 
-  const updateStatus = async (lesson: LiveLesson, status: "ended" | "cancelled") => {
+  const updateStatus = async (
+    lesson: LiveLesson,
+    status: 'ended' | 'cancelled',
+  ) => {
     await fetch(`/api/live-lessons/${lesson.id}/end`, {
       body: JSON.stringify({ status }),
-      credentials: "same-origin",
-      headers: { "Content-Type": "application/json" },
-      method: "POST",
+      credentials: 'same-origin',
+      headers: { 'Content-Type': 'application/json' },
+      method: 'POST',
     });
     await onRefresh();
   };
 
-  const toggleEditStudent = (studentId: string) => {
-    setEditForm((current) => {
-      if (!current) return current;
-      return {
-        ...current,
-        targetStudentIds: current.targetStudentIds.includes(studentId)
-          ? current.targetStudentIds.filter((id) => id !== studentId)
-          : [...current.targetStudentIds, studentId],
-      };
-    });
-  };
-
   const saveEdit = async (lesson: LiveLesson) => {
     if (!editForm) return;
-    if (editForm.targetGrade === "selected" && editForm.targetStudentIds.length === 0) {
-      setEditError("En az bir öğrenci seçin.");
+    if (
+      editForm.targetGrade === 'selected' &&
+      editForm.targetStudentIds.length === 0
+    ) {
+      setEditError('En az bir öğrenci seçin.');
       return;
     }
 
@@ -189,16 +191,21 @@ export default function AdminLiveLessonsTab({ data, onRefresh, students }: Props
           durationMinutes: editForm.durationMinutes,
           startsAt: new Date(editForm.startsAt).toISOString(),
           targetGrade: editForm.targetGrade,
-          targetStudentIds: editForm.targetGrade === "selected" ? editForm.targetStudentIds : [],
+          targetStudentIds:
+            editForm.targetGrade === 'selected'
+              ? editForm.targetStudentIds
+              : [],
           title: editForm.title,
         }),
-        credentials: "same-origin",
-        headers: { "Content-Type": "application/json" },
-        method: "PATCH",
+        credentials: 'same-origin',
+        headers: { 'Content-Type': 'application/json' },
+        method: 'PATCH',
       });
-      const payload = (await response.json().catch(() => null)) as { error?: string } | null;
+      const payload = (await response.json().catch(() => null)) as {
+        error?: string;
+      } | null;
       if (!response.ok) {
-        setEditError(payload?.error || "Ders güncellenemedi.");
+        setEditError(payload?.error || 'Ders güncellenemedi.');
         return;
       }
       setEditingLessonId(null);
@@ -237,10 +244,14 @@ export default function AdminLiveLessonsTab({ data, onRefresh, students }: Props
           data.lessons.map((lesson) => {
             const participants = countForLesson(data.participants, lesson.id);
             const answers = data.events.filter(
-              (event) => event.lesson_id === lesson.id && event.event_type === "answer",
+              (event) =>
+                event.lesson_id === lesson.id && event.event_type === 'answer',
             ).length;
             const chats = countForLesson(data.chatMessages, lesson.id);
-            const attendanceRows = attendanceForLesson(data.participants, lesson.id);
+            const attendanceRows = attendanceForLesson(
+              data.participants,
+              lesson.id,
+            );
             const isEditing = editingLessonId === lesson.id && editForm;
 
             return (
@@ -252,11 +263,14 @@ export default function AdminLiveLessonsTab({ data, onRefresh, students }: Props
                   <div>
                     <h3 className="text-lg font-bold">{lesson.title}</h3>
                     <p className="mt-1 text-sm text-slate-400">
-                      {formatDate(lesson.starts_at)} · {formatAudience(lesson, students)} ·{" "}
+                      {formatDate(lesson.starts_at)} ·{' '}
+                      {formatAudience(lesson, students)} ·{' '}
                       {lesson.duration_minutes} dk
                     </p>
                     {lesson.description ? (
-                      <p className="mt-2 text-sm text-slate-300">{lesson.description}</p>
+                      <p className="mt-2 text-sm text-slate-300">
+                        {lesson.description}
+                      </p>
                     ) : null}
                   </div>
                   <span className="w-fit rounded-full bg-white/10 px-3 py-1 text-xs font-semibold">
@@ -282,7 +296,9 @@ export default function AdminLiveLessonsTab({ data, onRefresh, students }: Props
                 <div className="mt-4 rounded-xl border border-white/10 bg-slate-950/50 p-4">
                   <p className="text-sm font-semibold">Yoklama raporu</p>
                   {attendanceRows.length === 0 ? (
-                    <p className="mt-2 text-sm text-slate-400">Bu derse henüz öğrenci katılmadı.</p>
+                    <p className="mt-2 text-sm text-slate-400">
+                      Bu derse henüz öğrenci katılmadı.
+                    </p>
                   ) : (
                     <div className="mt-3 grid gap-2">
                       {attendanceRows.map((row) => (
@@ -291,11 +307,17 @@ export default function AdminLiveLessonsTab({ data, onRefresh, students }: Props
                           className="grid gap-2 rounded-lg bg-white/5 p-3 text-sm sm:grid-cols-4"
                         >
                           <span className="font-semibold">{row.name}</span>
-                          <span className="text-slate-300">Giriş: {formatTime(row.joinedAt)}</span>
-                          <span className="text-slate-300">Çıkış: {formatTime(row.leftAt)}</span>
+                          <span className="text-slate-300">
+                            Giriş: {formatTime(row.joinedAt)}
+                          </span>
+                          <span className="text-slate-300">
+                            Çıkış: {formatTime(row.leftAt)}
+                          </span>
                           <span className="text-slate-300">
                             Süre: {formatDuration(row.joinedAt, row.leftAt)}
-                            {row.sessions > 1 ? ` · ${row.sessions} oturum` : ""}
+                            {row.sessions > 1
+                              ? ` · ${row.sessions} oturum`
+                              : ''}
                           </span>
                         </div>
                       ))}
@@ -311,18 +333,31 @@ export default function AdminLiveLessonsTab({ data, onRefresh, students }: Props
                         <input
                           value={editForm.title}
                           onChange={(event) =>
-                            setEditForm({ ...editForm, title: event.target.value })
+                            setEditForm({
+                              ...editForm,
+                              title: event.target.value,
+                            })
                           }
                           className="min-h-11 w-full rounded-xl border border-white/10 bg-slate-900 px-3 outline-none focus:ring-2 focus:ring-brand-primary"
                         />
                       </label>
                       <label className="space-y-1">
-                        <span className="text-sm text-slate-300">Ders hedefi</span>
+                        <span className="text-sm text-slate-300">
+                          Ders hedefi
+                        </span>
                         <select
                           value={editForm.targetGrade}
-                          onChange={(event) =>
-                            setEditForm({ ...editForm, targetGrade: event.target.value })
-                          }
+                          onChange={(event) => {
+                            const targetGrade = event.target.value;
+                            setEditForm({
+                              ...editForm,
+                              targetGrade,
+                              targetStudentIds:
+                                targetGrade === 'selected'
+                                  ? editForm.targetStudentIds
+                                  : [],
+                            });
+                          }}
                           className="min-h-11 w-full rounded-xl border border-white/10 bg-slate-900 px-3 outline-none focus:ring-2 focus:ring-brand-primary"
                         >
                           {gradeOptions.map((grade) => (
@@ -332,66 +367,30 @@ export default function AdminLiveLessonsTab({ data, onRefresh, students }: Props
                           ))}
                         </select>
                       </label>
-                      {editForm.targetGrade === "selected" ? (
-                        <div className="space-y-2 md:col-span-2">
-                          <div className="flex flex-wrap items-center justify-between gap-2">
-                            <span className="text-sm text-slate-300">Öğrenci seç</span>
-                            <span className="text-xs text-slate-400">
-                              {editForm.targetStudentIds.length} öğrenci seçildi
-                            </span>
-                          </div>
-                          <input
-                            type="search"
-                            value={editStudentSearchQuery}
-                            onChange={(event) => setEditStudentSearchQuery(event.target.value)}
-                            placeholder="Öğrenci adı veya e-posta ara"
-                            className="min-h-11 w-full rounded-xl border border-white/10 bg-slate-900 px-3 text-sm outline-none focus:ring-2 focus:ring-brand-primary"
-                          />
-                          <div className="max-h-56 overflow-y-auto rounded-xl border border-white/10 bg-slate-900 p-2">
-                            {students.length === 0 ? (
-                              <p className="px-2 py-3 text-sm text-slate-400">
-                                Seçilecek öğrenci kaydı bulunamadı.
-                              </p>
-                            ) : filteredEditStudents.length === 0 ? (
-                              <p className="px-2 py-3 text-sm text-slate-400">
-                                Aramaya uygun öğrenci bulunamadı.
-                              </p>
-                            ) : (
-                              <div className="grid gap-2 sm:grid-cols-2">
-                                {filteredEditStudents.map((student) => (
-                                <label
-                                  key={student.id}
-                                  className="flex min-h-12 cursor-pointer items-center gap-3 rounded-lg border border-white/10 px-3 py-2 text-sm hover:bg-white/5"
-                                >
-                                  <input
-                                    type="checkbox"
-                                    aria-label={`${student.name || student.email} öğrencisini seç`}
-                                    checked={editForm.targetStudentIds.includes(student.id)}
-                                    onChange={() => toggleEditStudent(student.id)}
-                                    className="h-4 w-4 accent-brand-primary"
-                                  />
-                                  <span className="min-w-0">
-                                    <span className="block truncate font-semibold">
-                                      {student.name || student.email}
-                                    </span>
-                                    <span className="block truncate text-xs text-slate-400">
-                                      {formatGrade(student.grade)}
-                                    </span>
-                                  </span>
-                                </label>
-                              ))}
-                              </div>
-                            )}
-                          </div>
-                        </div>
+                      {editForm.targetGrade === 'selected' ? (
+                        <StudentPicker
+                          listClassName="bg-slate-900"
+                          onSearchChange={setEditStudentSearchQuery}
+                          onSelectedStudentIdsChange={(targetStudentIds) =>
+                            setEditForm({ ...editForm, targetStudentIds })
+                          }
+                          searchQuery={editStudentSearchQuery}
+                          selectedStudentIds={editForm.targetStudentIds}
+                          students={students}
+                        />
                       ) : null}
                       <label className="space-y-1">
-                        <span className="text-sm text-slate-300">Tarih ve saat</span>
+                        <span className="text-sm text-slate-300">
+                          Tarih ve saat
+                        </span>
                         <input
                           type="datetime-local"
                           value={editForm.startsAt}
                           onChange={(event) =>
-                            setEditForm({ ...editForm, startsAt: event.target.value })
+                            setEditForm({
+                              ...editForm,
+                              startsAt: event.target.value,
+                            })
                           }
                           className="min-h-11 w-full rounded-xl border border-white/10 bg-slate-900 px-3 outline-none focus:ring-2 focus:ring-brand-primary"
                         />
@@ -417,13 +416,18 @@ export default function AdminLiveLessonsTab({ data, onRefresh, students }: Props
                         <textarea
                           value={editForm.description}
                           onChange={(event) =>
-                            setEditForm({ ...editForm, description: event.target.value })
+                            setEditForm({
+                              ...editForm,
+                              description: event.target.value,
+                            })
                           }
                           className="min-h-20 w-full rounded-xl border border-white/10 bg-slate-900 px-3 py-2 outline-none focus:ring-2 focus:ring-brand-primary"
                         />
                       </label>
                     </div>
-                    {editError ? <p className="mt-3 text-sm text-red-300">{editError}</p> : null}
+                    {editError ? (
+                      <p className="mt-3 text-sm text-red-300">{editError}</p>
+                    ) : null}
                     <div className="mt-4 flex flex-wrap gap-2">
                       <button
                         type="button"
@@ -431,7 +435,9 @@ export default function AdminLiveLessonsTab({ data, onRefresh, students }: Props
                         disabled={savingLessonId === lesson.id}
                         className="rounded-xl bg-brand-primary px-4 py-2 text-sm font-semibold hover:bg-brand-primary-deep disabled:opacity-50"
                       >
-                        {savingLessonId === lesson.id ? "Kaydediliyor..." : "Kaydet"}
+                        {savingLessonId === lesson.id
+                          ? 'Kaydediliyor...'
+                          : 'Kaydet'}
                       </button>
                       <button
                         type="button"
@@ -455,7 +461,8 @@ export default function AdminLiveLessonsTab({ data, onRefresh, students }: Props
                   >
                     Odaya gir
                   </Link>
-                  {lesson.status !== "ended" && lesson.status !== "cancelled" ? (
+                  {lesson.status !== 'ended' &&
+                  lesson.status !== 'cancelled' ? (
                     <>
                       <button
                         type="button"
@@ -466,14 +473,14 @@ export default function AdminLiveLessonsTab({ data, onRefresh, students }: Props
                       </button>
                       <button
                         type="button"
-                        onClick={() => void updateStatus(lesson, "ended")}
+                        onClick={() => void updateStatus(lesson, 'ended')}
                         className="rounded-xl border border-white/10 px-4 py-2 text-sm font-semibold hover:bg-white/5"
                       >
                         Dersi bitir
                       </button>
                       <button
                         type="button"
-                        onClick={() => void updateStatus(lesson, "cancelled")}
+                        onClick={() => void updateStatus(lesson, 'cancelled')}
                         className="rounded-xl border border-red-400/40 px-4 py-2 text-sm font-semibold text-red-200 hover:bg-red-500/10"
                       >
                         İptal et

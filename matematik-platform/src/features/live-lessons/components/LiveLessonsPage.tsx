@@ -1,10 +1,11 @@
-"use client";
+'use client';
 
-import Link from "next/link";
-import { useMemo, useState } from "react";
-import type { AuthSnapshot } from "@/lib/auth-snapshot";
-import type { LiveLesson } from "@/features/live-lessons/types";
-import type { AppUser } from "@/types";
+import Link from 'next/link';
+import { useMemo, useState } from 'react';
+import type { AuthSnapshot } from '@/lib/auth-snapshot';
+import { StudentPicker } from '@/features/live-lessons/components/StudentPicker';
+import type { LiveLesson } from '@/features/live-lessons/types';
+import type { AppUser } from '@/types';
 
 type Props = {
   initialLessons: LiveLesson[];
@@ -13,62 +14,60 @@ type Props = {
 };
 
 const gradeOptions = [
-  { label: "5. sınıf", value: "5" },
-  { label: "6. sınıf", value: "6" },
-  { label: "7. sınıf", value: "7" },
-  { label: "8. sınıf", value: "8" },
-  { label: "Mezun", value: "Mezun" },
-  { label: "Herkese açık", value: "all" },
-  { label: "Seçili öğrenciler", value: "selected" },
+  { label: '5. sınıf', value: '5' },
+  { label: '6. sınıf', value: '6' },
+  { label: '7. sınıf', value: '7' },
+  { label: '8. sınıf', value: '8' },
+  { label: 'Mezun', value: 'Mezun' },
+  { label: 'Herkese açık', value: 'all' },
+  { label: 'Seçili öğrenciler', value: 'selected' },
 ];
 
 function formatDate(value: string) {
-  return new Intl.DateTimeFormat("tr-TR", {
-    dateStyle: "medium",
-    timeStyle: "short",
-    timeZone: "Europe/Istanbul",
+  return new Intl.DateTimeFormat('tr-TR', {
+    dateStyle: 'medium',
+    timeStyle: 'short',
+    timeZone: 'Europe/Istanbul',
   }).format(new Date(value));
 }
 
 function toLocalInputValue(date: Date) {
-  const pad = (value: number) => String(value).padStart(2, "0");
+  const pad = (value: number) => String(value).padStart(2, '0');
   return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(
     date.getHours(),
   )}:${pad(date.getMinutes())}`;
 }
 
-function formatGrade(value: AppUser["grade"]) {
-  return value === "Mezun" ? "Mezun" : `${value}. sınıf`;
-}
-
 function formatAudience(lesson: LiveLesson, students: AppUser[]) {
-  if (lesson.target_grade === "all") return "Herkese açık";
-  if (lesson.target_grade === "Mezun") return "Mezun";
-  if (lesson.target_grade !== "selected") return `${lesson.target_grade}. sınıf`;
+  if (lesson.target_grade === 'all') return 'Herkese açık';
+  if (lesson.target_grade === 'Mezun') return 'Mezun';
+  if (lesson.target_grade !== 'selected')
+    return `${lesson.target_grade}. sınıf`;
 
   const selectedCount = lesson.target_student_ids?.length || 0;
-  if (selectedCount === 0) return "Seçili öğrenci yok";
+  if (selectedCount === 0) return 'Seçili öğrenci yok';
 
-  const firstStudent = students.find((student) => student.id === lesson.target_student_ids?.[0]);
-  const firstName = firstStudent?.name || firstStudent?.email || "Seçili öğrenci";
-  return selectedCount === 1 ? firstName : `${firstName} + ${selectedCount - 1} öğrenci`;
-}
-
-function normalizeSearchText(value: string) {
-  return value.toLocaleLowerCase("tr-TR").trim();
+  const firstStudent = students.find(
+    (student) => student.id === lesson.target_student_ids?.[0],
+  );
+  const firstName =
+    firstStudent?.name || firstStudent?.email || 'Seçili öğrenci';
+  return selectedCount === 1
+    ? firstName
+    : `${firstName} + ${selectedCount - 1} öğrenci`;
 }
 
 export function LiveLessonsPage({ initialLessons, students, user }: Props) {
   const [lessons, setLessons] = useState(initialLessons);
-  const [title, setTitle] = useState("Canlı matematik dersi");
-  const [description, setDescription] = useState("");
+  const [title, setTitle] = useState('Canlı matematik dersi');
+  const [description, setDescription] = useState('');
   const [startsAt, setStartsAt] = useState(() =>
     toLocalInputValue(new Date(Date.now() + 60 * 60 * 1000)),
   );
   const [durationMinutes, setDurationMinutes] = useState(60);
-  const [targetGrade, setTargetGrade] = useState(String(user.grade || "5"));
+  const [targetGrade, setTargetGrade] = useState(String(user.grade || '5'));
   const [selectedStudentIds, setSelectedStudentIds] = useState<string[]>([]);
-  const [studentSearchQuery, setStudentSearchQuery] = useState("");
+  const [studentSearchQuery, setStudentSearchQuery] = useState('');
   const [repeatWeekly, setRepeatWeekly] = useState(false);
   const [repeatWeeklyUntil, setRepeatWeeklyUntil] = useState(() =>
     toLocalInputValue(new Date(Date.now() + 28 * 24 * 60 * 60 * 1000)),
@@ -78,62 +77,63 @@ export function LiveLessonsPage({ initialLessons, students, user }: Props) {
 
   const selectedStudentCount = selectedStudentIds.length;
 
-  const filteredStudents = useMemo(() => {
-    const query = normalizeSearchText(studentSearchQuery);
-    if (!query) return students;
-
-    return students.filter((student) =>
-      normalizeSearchText(`${student.name || ""} ${student.email || ""}`).includes(query),
-    );
-  }, [studentSearchQuery, students]);
-
   const visibleLessons = useMemo(
     () =>
       lessons
-        .filter((lesson) => lesson.status !== "ended" && lesson.status !== "cancelled")
-        .sort((a, b) => new Date(a.starts_at).getTime() - new Date(b.starts_at).getTime()),
+        .filter(
+          (lesson) =>
+            lesson.status !== 'ended' && lesson.status !== 'cancelled',
+        )
+        .sort(
+          (a, b) =>
+            new Date(a.starts_at).getTime() - new Date(b.starts_at).getTime(),
+        ),
     [lessons],
   );
 
   const createLesson = async () => {
     if (!title.trim()) {
-      setError("Ders başlığı gerekli.");
+      setError('Ders başlığı gerekli.');
       return;
     }
 
     const lessonStartDate = new Date(startsAt);
     if (!Number.isFinite(lessonStartDate.getTime())) {
-      setError("Geçerli bir ders tarihi ve saati seçin.");
+      setError('Geçerli bir ders tarihi ve saati seçin.');
       return;
     }
 
     const repeatEndDate = repeatWeekly ? new Date(repeatWeeklyUntil) : null;
-    if (repeatWeekly && (!repeatEndDate || !Number.isFinite(repeatEndDate.getTime()))) {
-      setError("Tekrar bitişi için geçerli bir tarih seçin.");
+    if (
+      repeatWeekly &&
+      (!repeatEndDate || !Number.isFinite(repeatEndDate.getTime()))
+    ) {
+      setError('Tekrar bitişi için geçerli bir tarih seçin.');
       return;
     }
 
-    if (targetGrade === "selected" && selectedStudentIds.length === 0) {
-      setError("En az bir öğrenci seçin.");
+    if (targetGrade === 'selected' && selectedStudentIds.length === 0) {
+      setError('En az bir öğrenci seçin.');
       return;
     }
 
     setSaving(true);
     setError(null);
     try {
-      const response = await fetch("/api/live-lessons", {
+      const response = await fetch('/api/live-lessons', {
         body: JSON.stringify({
           description,
           durationMinutes,
           repeatWeeklyUntil: repeatEndDate ? repeatEndDate.toISOString() : null,
           startsAt: lessonStartDate.toISOString(),
           targetGrade,
-          targetStudentIds: targetGrade === "selected" ? selectedStudentIds : [],
+          targetStudentIds:
+            targetGrade === 'selected' ? selectedStudentIds : [],
           title,
         }),
-        credentials: "same-origin",
-        headers: { "Content-Type": "application/json" },
-        method: "POST",
+        credentials: 'same-origin',
+        headers: { 'Content-Type': 'application/json' },
+        method: 'POST',
       });
       const payload = (await response.json().catch(() => null)) as {
         error?: string;
@@ -141,32 +141,32 @@ export function LiveLessonsPage({ initialLessons, students, user }: Props) {
         lessons?: LiveLesson[];
       } | null;
       if (!response.ok || !payload?.lesson) {
-        setError(payload?.error || "Ders planlanamadı. Lütfen sayfayı yenileyip tekrar deneyin.");
+        setError(
+          payload?.error ||
+            'Ders planlanamadı. Lütfen sayfayı yenileyip tekrar deneyin.',
+        );
         return;
       }
-      setLessons((current) => [...(payload.lessons || [payload.lesson!]), ...current]);
+      setLessons((current) => [
+        ...(payload.lessons || [payload.lesson!]),
+        ...current,
+      ]);
       setSelectedStudentIds([]);
     } catch {
-      setError("Ders planlanamadı. İnternet bağlantısını kontrol edip tekrar deneyin.");
+      setError(
+        'Ders planlanamadı. İnternet bağlantısını kontrol edip tekrar deneyin.',
+      );
     } finally {
       setSaving(false);
     }
   };
 
-  const toggleStudent = (studentId: string) => {
-    setSelectedStudentIds((current) =>
-      current.includes(studentId)
-        ? current.filter((id) => id !== studentId)
-        : [...current, studentId],
-    );
-  };
-
   const cancelLesson = async (lesson: LiveLesson) => {
     const response = await fetch(`/api/live-lessons/${lesson.id}/end`, {
-      body: JSON.stringify({ status: "cancelled" }),
-      credentials: "same-origin",
-      headers: { "Content-Type": "application/json" },
-      method: "POST",
+      body: JSON.stringify({ status: 'cancelled' }),
+      credentials: 'same-origin',
+      headers: { 'Content-Type': 'application/json' },
+      method: 'POST',
     });
     const payload = (await response.json().catch(() => null)) as {
       lesson?: LiveLesson;
@@ -209,7 +209,12 @@ export function LiveLessonsPage({ initialLessons, students, user }: Props) {
                 <span className="text-sm text-slate-300">Ders hedefi</span>
                 <select
                   value={targetGrade}
-                  onChange={(event) => setTargetGrade(event.target.value)}
+                  onChange={(event) => {
+                    setTargetGrade(event.target.value);
+                    if (event.target.value !== 'selected') {
+                      setSelectedStudentIds([]);
+                    }
+                  }}
                   className="min-h-11 w-full rounded-xl border border-white/10 bg-slate-950 px-3 outline-none focus:ring-2 focus:ring-brand-primary"
                 >
                   {gradeOptions.map((grade) => (
@@ -219,58 +224,14 @@ export function LiveLessonsPage({ initialLessons, students, user }: Props) {
                   ))}
                 </select>
               </label>
-              {targetGrade === "selected" ? (
-                <div className="space-y-2 md:col-span-2">
-                  <div className="flex flex-wrap items-center justify-between gap-2">
-                    <span className="text-sm text-slate-300">Öğrenci seç</span>
-                    <span className="text-xs text-slate-400">
-                      {selectedStudentCount} öğrenci seçildi
-                    </span>
-                  </div>
-                  <input
-                    type="search"
-                    value={studentSearchQuery}
-                    onChange={(event) => setStudentSearchQuery(event.target.value)}
-                    placeholder="Öğrenci adı veya e-posta ara"
-                    className="min-h-11 w-full rounded-xl border border-white/10 bg-slate-950 px-3 text-sm outline-none focus:ring-2 focus:ring-brand-primary"
-                  />
-                  <div className="max-h-64 overflow-y-auto rounded-xl border border-white/10 bg-slate-950 p-2">
-                    {students.length === 0 ? (
-                      <p className="px-2 py-3 text-sm text-slate-400">
-                        Seçilecek öğrenci kaydı bulunamadı.
-                      </p>
-                    ) : filteredStudents.length === 0 ? (
-                      <p className="px-2 py-3 text-sm text-slate-400">
-                        Aramaya uygun öğrenci bulunamadı.
-                      </p>
-                    ) : (
-                      <div className="grid gap-2 sm:grid-cols-2">
-                        {filteredStudents.map((student) => (
-                          <label
-                            key={student.id}
-                            className="flex min-h-12 cursor-pointer items-center gap-3 rounded-lg border border-white/10 px-3 py-2 text-sm hover:bg-white/5"
-                          >
-                            <input
-                              type="checkbox"
-                              aria-label={`${student.name || student.email} öğrencisini seç`}
-                              checked={selectedStudentIds.includes(student.id)}
-                              onChange={() => toggleStudent(student.id)}
-                              className="h-4 w-4 accent-brand-primary"
-                            />
-                            <span className="min-w-0">
-                              <span className="block truncate font-semibold text-white">
-                                {student.name || student.email}
-                              </span>
-                              <span className="block truncate text-xs text-slate-400">
-                                {formatGrade(student.grade)}
-                              </span>
-                            </span>
-                          </label>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                </div>
+              {targetGrade === 'selected' ? (
+                <StudentPicker
+                  onSearchChange={setStudentSearchQuery}
+                  onSelectedStudentIdsChange={setSelectedStudentIds}
+                  searchQuery={studentSearchQuery}
+                  selectedStudentIds={selectedStudentIds}
+                  students={students}
+                />
               ) : null}
               <label className="space-y-1">
                 <span className="text-sm text-slate-300">Tarih ve saat</span>
@@ -288,7 +249,9 @@ export function LiveLessonsPage({ initialLessons, students, user }: Props) {
                   min={15}
                   max={240}
                   value={durationMinutes}
-                  onChange={(event) => setDurationMinutes(Number(event.target.value))}
+                  onChange={(event) =>
+                    setDurationMinutes(Number(event.target.value))
+                  }
                   className="min-h-11 w-full rounded-xl border border-white/10 bg-slate-950 px-3 outline-none focus:ring-2 focus:ring-brand-primary"
                 />
               </label>
@@ -305,11 +268,15 @@ export function LiveLessonsPage({ initialLessons, students, user }: Props) {
               </label>
               {repeatWeekly ? (
                 <label className="space-y-1 md:col-span-2">
-                  <span className="text-sm text-slate-300">Tekrar bitiş tarihi</span>
+                  <span className="text-sm text-slate-300">
+                    Tekrar bitiş tarihi
+                  </span>
                   <input
                     type="datetime-local"
                     value={repeatWeeklyUntil}
-                    onChange={(event) => setRepeatWeeklyUntil(event.target.value)}
+                    onChange={(event) =>
+                      setRepeatWeeklyUntil(event.target.value)
+                    }
                     className="min-h-11 w-full rounded-xl border border-white/10 bg-slate-950 px-3 outline-none focus:ring-2 focus:ring-brand-primary"
                   />
                   <span className="text-xs text-slate-500">
@@ -326,14 +293,19 @@ export function LiveLessonsPage({ initialLessons, students, user }: Props) {
                 />
               </label>
             </div>
-            {error ? <p className="mt-3 text-sm text-red-300">{error}</p> : null}
+            {error ? (
+              <p className="mt-3 text-sm text-red-300">{error}</p>
+            ) : null}
             <button
               type="button"
               onClick={() => void createLesson()}
-              disabled={saving || (targetGrade === "selected" && selectedStudentCount === 0)}
+              disabled={
+                saving ||
+                (targetGrade === 'selected' && selectedStudentCount === 0)
+              }
               className="mt-4 min-h-11 rounded-xl bg-brand-primary px-5 font-semibold text-white hover:bg-brand-primary-deep disabled:opacity-50"
             >
-              {saving ? "Planlanıyor..." : "Dersi planla"}
+              {saving ? 'Planlanıyor...' : 'Dersi planla'}
             </button>
           </section>
         ) : null}
@@ -353,16 +325,18 @@ export function LiveLessonsPage({ initialLessons, students, user }: Props) {
                   <div>
                     <h2 className="text-lg font-bold">{lesson.title}</h2>
                     <p className="mt-1 text-sm text-slate-400">
-                      {formatDate(lesson.starts_at)} · {lesson.duration_minutes} dk ·{" "}
-                      {formatAudience(lesson, students)}
+                      {formatDate(lesson.starts_at)} · {lesson.duration_minutes}{' '}
+                      dk · {formatAudience(lesson, students)}
                     </p>
                   </div>
                   <span className="rounded-full bg-white/10 px-3 py-1 text-xs font-semibold">
-                    {lesson.status === "active" ? "Aktif" : "Planlandı"}
+                    {lesson.status === 'active' ? 'Aktif' : 'Planlandı'}
                   </span>
                 </div>
                 {lesson.description ? (
-                  <p className="mt-3 text-sm text-slate-300">{lesson.description}</p>
+                  <p className="mt-3 text-sm text-slate-300">
+                    {lesson.description}
+                  </p>
                 ) : null}
                 <div className="mt-4 flex flex-wrap gap-2">
                   <Link
@@ -371,7 +345,9 @@ export function LiveLessonsPage({ initialLessons, students, user }: Props) {
                   >
                     Derse katıl
                   </Link>
-                  {user.isAdmin && lesson.status !== "cancelled" && lesson.status !== "ended" ? (
+                  {user.isAdmin &&
+                  lesson.status !== 'cancelled' &&
+                  lesson.status !== 'ended' ? (
                     <button
                       type="button"
                       onClick={() => void cancelLesson(lesson)}
