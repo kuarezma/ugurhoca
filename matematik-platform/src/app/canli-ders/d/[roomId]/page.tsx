@@ -2,10 +2,10 @@ import { redirect } from 'next/navigation';
 import { RoomPageShell } from '@/features/live-lessons/components/room/RoomPageShell';
 import {
   canUserAccessLiveLesson,
+  getVerifiedLiveLessonUser,
   isLiveLessonAdmin,
 } from '@/features/live-lessons/server/liveLessons';
 import type { LiveLesson } from '@/features/live-lessons/types';
-import { getServerAuthSnapshot } from '@/lib/auth-snapshot.server';
 import { createServiceRoleClient } from '@/lib/supabase/server';
 
 type Props = {
@@ -13,10 +13,11 @@ type Props = {
 };
 
 export default async function CanliDersRoomPage({ params }: Props) {
-  const user = await getServerAuthSnapshot();
-  if (!user) {
+  const verified = await getVerifiedLiveLessonUser();
+  if (!verified) {
     redirect('/giris');
   }
+  const user = verified.user;
 
   const { roomId } = await params;
   const supabase = createServiceRoleClient();

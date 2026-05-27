@@ -2,6 +2,8 @@ import type { GradeValue } from '@/types';
 
 export type LiveLessonStatus = 'scheduled' | 'active' | 'ended' | 'cancelled';
 export type LiveLessonRole = 'teacher' | 'student';
+export type LiveLessonMicPermission = 'blocked' | 'requested' | 'allowed';
+export type LiveLessonHandStatus = 'lowered' | 'raised' | 'mic_requested';
 
 export type LiveLesson = {
   id: string;
@@ -27,9 +29,16 @@ export type LiveLessonParticipant = {
   user_id?: string | null;
   user_name: string;
   role: LiveLessonRole;
+  identity?: string | null;
   joined_at: string;
   left_at?: string | null;
   microphone_allowed?: boolean | null;
+  mic_permission?: LiveLessonMicPermission | null;
+  hand_status?: LiveLessonHandStatus | null;
+  approved_at?: string | null;
+  muted_by_teacher?: boolean | null;
+  last_seen_at?: string | null;
+  updated_at?: string | null;
 };
 
 export type LiveLessonEvent = {

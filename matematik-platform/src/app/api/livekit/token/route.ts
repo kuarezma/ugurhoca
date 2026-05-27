@@ -1,4 +1,4 @@
-import { AccessToken, type VideoGrant } from 'livekit-server-sdk';
+import { AccessToken } from 'livekit-server-sdk';
 import { NextResponse } from 'next/server';
 import { createServiceRoleClient } from '@/lib/supabase/server';
 import {
@@ -6,12 +6,14 @@ import {
   isLiveLessonAdmin,
   requireLiveLessonUser,
 } from '@/features/live-lessons/server/liveLessons';
+import { buildLiveLessonIdentity } from '@/features/live-lessons/lib/participant-identity';
 import type { LiveLesson } from '@/features/live-lessons/types';
 import {
   isValidRoomId,
   signPersistToken,
   verifyTeacherProof,
 } from '@/features/live-lessons/lib/lesson-auth';
+import { buildLiveKitVideoGrant } from '@/features/live-lessons/lib/livekit-grants';
 
 export const runtime = 'nodejs';
 
@@ -61,6 +63,12 @@ export async function POST(request: Request) {
   }
 
   const isAdmin = isLiveLessonAdmin(auth.user);
+  const resolvedRole = isAdmin ? 'teacher' : 'student';
+  const expectedIdentity = buildLiveLessonIdentity(auth.user.id, resolvedRole);
+  if (body.role !== resolvedRole || body.identity !== expectedIdentity) {
+    return NextResponse.json({ error: 'Ders rolü doğrulanamadı.' }, { status: 403 });
+  }
+
   if (body.role === 'teacher') {
     const validProof = verifyTeacherProof(body.roomName, body.teacherProof);
     if (!isAdmin || !validProof) {
@@ -77,14 +85,7 @@ export async function POST(request: Request) {
     ttl: '8h',
   });
 
-  const grant: VideoGrant = {
-    canPublish: true,
-    canPublishData: true,
-    canSubscribe: true,
-    room: body.roomName,
-    roomJoin: true,
-  };
-  token.addGrant(grant);
+  token.addGrant(buildLiveKitVideoGrant(resolvedRole, body.roomName));
 
   return NextResponse.json({
     persistToken: signPersistToken({

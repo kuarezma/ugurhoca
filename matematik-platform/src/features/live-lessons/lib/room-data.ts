@@ -4,8 +4,22 @@ import { isQuizMessage } from "@/features/live-lessons/lib/quiz-messages";
 export type LiveLessonDisplaySettings = {
   cameraPlacement: "side" | "overlay" | "hidden";
   cameraSize: "small" | "medium" | "large";
+  mainView: "screen" | "whiteboard";
   panelWidth: "normal" | "wide";
   screenFit: "contain" | "cover";
+};
+
+export type WhiteboardPoint = {
+  x: number;
+  y: number;
+};
+
+export type WhiteboardStroke = {
+  color: string;
+  mode: "draw" | "erase";
+  points: WhiteboardPoint[];
+  strokeId: string;
+  width: number;
 };
 
 export type RoomDataMessage =
@@ -45,6 +59,29 @@ export type RoomDataMessage =
       kind: "display_settings";
       fromIdentity: string;
       settings: LiveLessonDisplaySettings;
+    }
+  | {
+      kind: "whiteboard_stroke";
+      fromIdentity: string;
+      stroke: WhiteboardStroke;
+    }
+  | {
+      kind: "whiteboard_undo";
+      fromIdentity: string;
+      strokeId: string;
+    }
+  | {
+      kind: "whiteboard_clear";
+      fromIdentity: string;
+    }
+  | {
+      kind: "whiteboard_snapshot_request";
+      fromIdentity: string;
+    }
+  | {
+      kind: "whiteboard_snapshot";
+      fromIdentity: string;
+      strokes: WhiteboardStroke[];
     };
 
 export type DecodedDataPayload =
@@ -100,11 +137,52 @@ function isRoomDataMessage(value: unknown): value is RoomDataMessage {
       (settings.cameraSize === "small" ||
         settings.cameraSize === "medium" ||
         settings.cameraSize === "large") &&
+      (settings.mainView === "screen" || settings.mainView === "whiteboard") &&
       (settings.panelWidth === "normal" || settings.panelWidth === "wide") &&
       (settings.screenFit === "contain" || settings.screenFit === "cover")
     );
   }
+  if (k === "whiteboard_stroke") {
+    const v = value as Record<string, unknown>;
+    return typeof v.fromIdentity === "string" && isWhiteboardStroke(v.stroke);
+  }
+  if (k === "whiteboard_undo") {
+    const v = value as Record<string, unknown>;
+    return typeof v.fromIdentity === "string" && typeof v.strokeId === "string";
+  }
+  if (k === "whiteboard_clear" || k === "whiteboard_snapshot_request") {
+    const v = value as Record<string, unknown>;
+    return typeof v.fromIdentity === "string";
+  }
+  if (k === "whiteboard_snapshot") {
+    const v = value as Record<string, unknown>;
+    return (
+      typeof v.fromIdentity === "string" &&
+      Array.isArray(v.strokes) &&
+      v.strokes.every(isWhiteboardStroke)
+    );
+  }
   return false;
+}
+
+function isWhiteboardStroke(value: unknown): value is WhiteboardStroke {
+  if (!value || typeof value !== "object") return false;
+  const v = value as Record<string, unknown>;
+  return (
+    typeof v.strokeId === "string" &&
+    typeof v.color === "string" &&
+    typeof v.width === "number" &&
+    (v.mode === "draw" || v.mode === "erase") &&
+    Array.isArray(v.points) &&
+    v.points.length <= 2048 &&
+    v.points.every(
+      (point) =>
+        !!point &&
+        typeof point === "object" &&
+        typeof (point as WhiteboardPoint).x === "number" &&
+        typeof (point as WhiteboardPoint).y === "number",
+    )
+  );
 }
 
 export function decodeDataPayload(data: Uint8Array): DecodedDataPayload | null {

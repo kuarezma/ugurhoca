@@ -1,21 +1,18 @@
 import { NextResponse } from 'next/server';
 import { createServiceRoleClient } from '@/lib/supabase/server';
-import { isLiveLessonAdmin, requireLiveLessonUser } from '@/features/live-lessons/server/liveLessons';
+import {
+  canUserAccessLiveLesson,
+  isLiveLessonAdmin,
+  requireLiveLessonUser,
+} from '@/features/live-lessons/server/liveLessons';
+import { parseLiveLessonIdentity } from '@/features/live-lessons/lib/participant-identity';
+import type { LiveLesson } from '@/features/live-lessons/types';
 
 export const runtime = 'nodejs';
 
 type RouteContext = {
   params: Promise<{ lessonId: string }>;
 };
-
-const studentIdentityPrefix = 'student_';
-const uuidPattern = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
-
-function userIdFromIdentity(identity: string): string | null {
-  if (!identity.startsWith(studentIdentityPrefix)) return null;
-  const value = identity.slice(studentIdentityPrefix.length);
-  return uuidPattern.test(value) ? value : null;
-}
 
 export async function GET(request: Request, context: RouteContext) {
   const auth = await requireLiveLessonUser();
@@ -54,19 +51,44 @@ export async function POST(request: Request, context: RouteContext) {
   const { lessonId } = await context.params;
   const body = (await request.json().catch(() => null)) as { targetIdentity?: string } | null;
   const targetIdentity = body?.targetIdentity?.trim() ?? '';
-  if (!targetIdentity.startsWith(studentIdentityPrefix)) {
+  const parsedIdentity = parseLiveLessonIdentity(targetIdentity);
+  if (!parsedIdentity || parsedIdentity.role !== 'student') {
     return NextResponse.json({ error: 'Öğrenci kimliği geçersiz.' }, { status: 400 });
   }
 
-  const targetUserId = userIdFromIdentity(targetIdentity);
   const supabase = createServiceRoleClient();
+  const { data: lesson } = await supabase
+    .from('live_lessons')
+    .select('*')
+    .eq('id', lessonId)
+    .single();
+
+  if (!lesson) {
+    return NextResponse.json({ error: 'Ders bulunamadı.' }, { status: 404 });
+  }
+
+  const { data: targetProfile } = await supabase
+    .from('profiles')
+    .select('grade')
+    .eq('id', parsedIdentity.userId)
+    .maybeSingle();
+
+  if (
+    !canUserAccessLiveLesson(lesson as LiveLesson, {
+      grade: (targetProfile as { grade?: string | number | null } | null)?.grade,
+      id: parsedIdentity.userId,
+    })
+  ) {
+    return NextResponse.json({ error: 'Öğrenci bu derse atanmadı.' }, { status: 403 });
+  }
+
   const { error } = await supabase.from('live_lesson_events').insert({
     event_type: 'join_approved',
     lesson_id: lessonId,
     payload: {
       approved_at: new Date().toISOString(),
       target_identity: targetIdentity,
-      ...(targetUserId ? { target_user_id: targetUserId } : {}),
+      target_user_id: parsedIdentity.userId,
     },
     user_id: auth.user.id,
     user_name: auth.user.name,

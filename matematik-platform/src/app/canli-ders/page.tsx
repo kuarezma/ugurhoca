@@ -2,10 +2,10 @@ import type { Metadata } from 'next';
 import { redirect } from 'next/navigation';
 import { LiveLessonsPage } from '@/features/live-lessons/components/LiveLessonsPage';
 import {
+  getVerifiedLiveLessonUser,
   loadLiveLessonsForCurrentUser,
   loadLiveLessonStudentOptions,
 } from '@/features/live-lessons/server/liveLessons';
-import { getServerAuthSnapshot } from '@/lib/auth-snapshot.server';
 import { createPageMetadata } from '@/lib/site-metadata';
 
 export const metadata: Metadata = createPageMetadata({
@@ -16,10 +16,11 @@ export const metadata: Metadata = createPageMetadata({
 });
 
 export default async function CanliDersPage() {
-  const user = await getServerAuthSnapshot();
-  if (!user) {
+  const verified = await getVerifiedLiveLessonUser();
+  if (!verified) {
     redirect('/giris');
   }
+  const user = verified.user;
 
   const [lessons, students] = await Promise.all([
     loadLiveLessonsForCurrentUser(),

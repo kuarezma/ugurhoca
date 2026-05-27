@@ -2,6 +2,13 @@
 
 import { useLocalParticipant } from "@livekit/components-react";
 import { useCallback, useState } from "react";
+import {
+  teacherAudioCaptureOptions,
+  teacherAudioPublishOptions,
+  teacherCameraCaptureOptions,
+  teacherScreenShareOptions,
+  teacherScreenSharePublishOptions,
+} from "@/features/live-lessons/lib/media-settings";
 
 export function TeacherToolbar() {
   const { localParticipant, isCameraEnabled, isMicrophoneEnabled } =
@@ -14,7 +21,11 @@ export function TeacherToolbar() {
     setScreenBusy(true);
     try {
       const on = localParticipant.isScreenShareEnabled;
-      await localParticipant.setScreenShareEnabled(!on);
+      await localParticipant.setScreenShareEnabled(
+        !on,
+        teacherScreenShareOptions,
+        teacherScreenSharePublishOptions,
+      );
     } catch {
       /* kullanıcı iptal edebilir */
     } finally {
@@ -25,7 +36,11 @@ export function TeacherToolbar() {
   const toggleMic = useCallback(async () => {
     setMicBusy(true);
     try {
-      await localParticipant.setMicrophoneEnabled(!isMicrophoneEnabled);
+      await localParticipant.setMicrophoneEnabled(
+        !isMicrophoneEnabled,
+        teacherAudioCaptureOptions,
+        teacherAudioPublishOptions,
+      );
     } catch {
       /* izin reddi vb. */
     } finally {
@@ -36,7 +51,7 @@ export function TeacherToolbar() {
   const toggleCamera = useCallback(async () => {
     setCameraBusy(true);
     try {
-      await localParticipant.setCameraEnabled(!isCameraEnabled);
+      await localParticipant.setCameraEnabled(!isCameraEnabled, teacherCameraCaptureOptions);
     } catch {
       /* izin reddi vb. */
     } finally {

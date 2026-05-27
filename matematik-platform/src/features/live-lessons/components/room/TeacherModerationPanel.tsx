@@ -88,11 +88,25 @@ export function TeacherModerationPanel({
       }
 
       if (msg.kind === "microphone_request") {
-        if (!sender || sender !== msg.fromIdentity) return;
+        const fromVerifiedStudent = !!sender && sender === msg.fromIdentity;
+        const fromServer = !participant;
+        if (!fromVerifiedStudent && !fromServer) return;
         setMicRequests((prev) => ({
           ...prev,
           [msg.fromIdentity]: { displayName: msg.displayName },
         }));
+        return;
+      }
+
+      if (msg.kind === "microphone_permission") {
+        const fromServer = msg.fromIdentity === "server" && !participant;
+        if (!fromServer) return;
+        if (msg.targetIdentity === "*") {
+          setMicPermissions({});
+          setMicRequests({});
+          return;
+        }
+        setMicPermissions((prev) => ({ ...prev, [msg.targetIdentity]: msg.allowed }));
       }
     };
 
@@ -153,24 +167,47 @@ export function TeacherModerationPanel({
 
   const setMicrophonePermission = useCallback(
     async (targetIdentity: string, allowed: boolean) => {
+      setError(null);
+      const response = await fetch(`/api/live-lessons/${lessonId}/microphone`, {
+        body: JSON.stringify({
+          action: allowed ? "allow" : "mute",
+          targetIdentity,
+        }),
+        credentials: "same-origin",
+        headers: { "Content-Type": "application/json" },
+        method: "POST",
+      });
+      if (!response.ok) {
+        const payload = (await response.json().catch(() => null)) as { error?: string } | null;
+        setError(payload?.error ?? "Mikrofon izni güncellenemedi.");
+        return;
+      }
       setMicPermissions((prev) => ({ ...prev, [targetIdentity]: allowed }));
       setMicRequests((prev) => {
         const next = { ...prev };
         delete next[targetIdentity];
         return next;
       });
-      await publishRoom(
-        {
-          allowed,
-          fromIdentity: teacherIdentity,
-          kind: "microphone_permission",
-          targetIdentity,
-        },
-        [targetIdentity],
-      );
     },
-    [publishRoom, teacherIdentity],
+    [lessonId],
   );
+
+  const muteAllStudents = useCallback(async () => {
+    setError(null);
+    const response = await fetch(`/api/live-lessons/${lessonId}/microphone`, {
+      body: JSON.stringify({ action: "mute_all" }),
+      credentials: "same-origin",
+      headers: { "Content-Type": "application/json" },
+      method: "POST",
+    });
+    if (!response.ok) {
+      const payload = (await response.json().catch(() => null)) as { error?: string } | null;
+      setError(payload?.error ?? "Mikrofonlar kapatılamadı.");
+      return;
+    }
+    setMicPermissions({});
+    setMicRequests({});
+  }, [lessonId]);
 
   const rows = useMemo(() => {
     const out: {
@@ -209,7 +246,16 @@ export function TeacherModerationPanel({
 
   return (
     <div className="flex w-full shrink-0 flex-col gap-3 rounded-xl border border-border bg-card p-4 md:max-h-[38vh] md:overflow-y-auto md:w-80">
-      <h2 className="text-sm font-semibold">Katılımcılar</h2>
+      <div className="flex items-center justify-between gap-2">
+        <h2 className="text-sm font-semibold">Katılımcılar</h2>
+        <button
+          type="button"
+          onClick={() => void muteAllStudents()}
+          className="rounded-md border border-border px-2 py-1 text-[10px] font-semibold hover:bg-foreground/5"
+        >
+          Tümünü sustur
+        </button>
+      </div>
       {error ? (
         <p className="rounded-lg bg-red-500/10 px-2 py-1 text-xs text-red-600 dark:text-red-300">
           {error}

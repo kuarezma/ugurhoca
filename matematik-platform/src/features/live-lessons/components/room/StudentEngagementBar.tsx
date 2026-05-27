@@ -35,6 +35,7 @@ export function StudentEngagementBar({
   const skipApprovalUnlockRef = useRef(false);
   const [raised, setRaised] = useState(false);
   const [micAllowed, setMicAllowed] = useState(false);
+  const [teacherMuted, setTeacherMuted] = useState(false);
   const [micBusy, setMicBusy] = useState(false);
   const [micError, setMicError] = useState<string | null>(null);
   const [micRequestSent, setMicRequestSent] = useState(false);
@@ -113,6 +114,15 @@ export function StudentEngagementBar({
       try {
         await localParticipant.setMicrophoneEnabled(enabled);
       } catch {
+        if (enabled) {
+          await new Promise((resolve) => window.setTimeout(resolve, 500));
+          try {
+            await localParticipant.setMicrophoneEnabled(true);
+            return;
+          } catch {
+            // LiveKit permission update tarayıcıya ulaşmadıysa kullanıcıya net uyarı gösterilir.
+          }
+        }
         setMicError(
           enabled
             ? "Mikrofon açılamadı. Tarayıcı mikrofon iznini kontrol edin."
@@ -149,14 +159,17 @@ export function StudentEngagementBar({
       if (!decoded || decoded.channel !== "room") return;
       if (decoded.message.kind !== "microphone_permission") return;
       const msg = decoded.message;
-      if (msg.targetIdentity !== identity) return;
-      if (!participant || participant.isLocal) return;
-      if (msg.fromIdentity !== participant.identity) return;
+      if (msg.targetIdentity !== identity && msg.targetIdentity !== "*") return;
+      const fromServer = msg.fromIdentity === "server" && !participant;
+      const fromTeacher = !!participant && !participant.isLocal && msg.fromIdentity === participant.identity;
+      if (!fromServer && !fromTeacher) return;
       setMicAllowed(msg.allowed);
       if (!msg.allowed) {
+        setTeacherMuted(true);
         setMicRequestSent(false);
         void setStudentMicrophone(false);
       } else {
+        setTeacherMuted(false);
         setMicRequestSent(false);
         void setStudentMicrophone(true);
       }
@@ -184,23 +197,23 @@ export function StudentEngagementBar({
   const toggleMic = useCallback(async () => {
     if (!micAllowed) {
       setMicRequestSent(true);
-      await room.localParticipant.publishData(
-        encodeRoomDataMessage({
-          kind: "microphone_request",
-          fromIdentity: identity,
-          displayName,
-        }),
-        { reliable: true },
-      );
+      const response = await fetch(`/api/live-lessons/${lessonId}/microphone`, {
+        body: JSON.stringify({ action: "request" }),
+        credentials: "same-origin",
+        headers: { "Content-Type": "application/json" },
+        method: "POST",
+      });
+      if (!response.ok) {
+        setMicRequestSent(false);
+        setMicError("Mikrofon isteği gönderilemedi. Lütfen tekrar deneyin.");
+      }
       return;
     }
     await setStudentMicrophone(!isMicrophoneEnabled);
   }, [
-    displayName,
-    identity,
     isMicrophoneEnabled,
+    lessonId,
     micAllowed,
-    room.localParticipant,
     setStudentMicrophone,
   ]);
 
@@ -230,13 +243,15 @@ export function StudentEngagementBar({
         >
           {micBusy
             ? "İşleniyor..."
-            : micAllowed
-              ? isMicrophoneEnabled
-                ? "Mikrofonu kapat"
-                : "Mikrofonu aç"
+              : micAllowed
+                ? isMicrophoneEnabled
+                  ? "Mikrofonu kapat"
+                  : "Mikrofonu aç"
               : micRequestSent
                 ? "İzin bekleniyor"
-                : "Mikrofon izni iste"}
+                : teacherMuted
+                  ? "Öğretmen susturdu"
+                  : "Mikrofon izni iste"}
         </button>
       </div>
       {micError ? (

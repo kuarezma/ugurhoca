@@ -10,8 +10,17 @@ import { LiveLessonChatPanel } from "@/features/live-lessons/components/room/Liv
 import { RemoteScreenShareView } from "@/features/live-lessons/components/room/RemoteScreenShareView";
 import { StudentEngagementBar } from "@/features/live-lessons/components/room/StudentEngagementBar";
 import { TeacherCameraView } from "@/features/live-lessons/components/room/TeacherCameraView";
+import { TeacherPresenceNotice } from "@/features/live-lessons/components/room/TeacherPresenceNotice";
 import { TeacherModerationPanel } from "@/features/live-lessons/components/room/TeacherModerationPanel";
 import { TeacherToolbar } from "@/features/live-lessons/components/room/TeacherToolbar";
+import { ConnectionStatusBar } from "@/features/live-lessons/components/room/ConnectionStatusBar";
+import { WhiteboardCanvas } from "@/features/live-lessons/components/room/WhiteboardCanvas";
+import {
+  liveLessonConnectOptions,
+  liveLessonRoomOptions,
+  teacherAudioCaptureOptions,
+} from "@/features/live-lessons/lib/media-settings";
+import { buildLiveLessonIdentity } from "@/features/live-lessons/lib/participant-identity";
 import type { LiveLessonDisplaySettings } from "@/features/live-lessons/lib/room-data";
 import type { LiveLesson, LiveLessonRole } from "@/features/live-lessons/types";
 
@@ -21,14 +30,10 @@ const requireStudentApproval =
 const defaultDisplaySettings: LiveLessonDisplaySettings = {
   cameraPlacement: "side",
   cameraSize: "medium",
+  mainView: "screen",
   panelWidth: "normal",
   screenFit: "contain",
 };
-
-function newIdentity(userId: string, role: LiveLessonRole): string {
-  const prefix = role === "teacher" ? "teacher" : "student";
-  return `${prefix}_${userId.slice(0, 24)}`;
-}
 
 type Props = {
   displayName: string;
@@ -47,7 +52,7 @@ export function RoomExperience({
 }: Props) {
   const roomId = lesson.room_id;
   const router = useRouter();
-  const [identity] = useState(() => newIdentity(userId, role));
+  const [identity] = useState(() => buildLiveLessonIdentity(userId, role));
   const [token, setToken] = useState<string | null>(null);
   const [persistToken, setPersistToken] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -219,7 +224,9 @@ export function RoomExperience({
       serverUrl={serverUrl}
       token={token}
       connect
-      audio={role === "teacher"}
+      audio={role === "teacher" ? teacherAudioCaptureOptions : false}
+      connectOptions={liveLessonConnectOptions}
+      options={liveLessonRoomOptions}
       video={false}
       className="flex min-h-screen min-h-dvh flex-col bg-background text-foreground"
       onDisconnected={() => {
@@ -273,6 +280,7 @@ export function RoomExperience({
               <TeacherToolbar />
             </>
           ) : null}
+          <ConnectionStatusBar />
           <button
             type="button"
             onClick={() => void leaveLesson()}
@@ -300,7 +308,12 @@ export function RoomExperience({
           }`}
         >
           <div className="relative flex min-h-0 flex-1">
-            <RemoteScreenShareView fit={displaySettings.screenFit} role={role} />
+            {displaySettings.mainView === "whiteboard" ? (
+              <WhiteboardCanvas identity={identity} role={role} />
+            ) : null}
+            {displaySettings.mainView === "screen" ? (
+              <RemoteScreenShareView fit={displaySettings.screenFit} role={role} />
+            ) : null}
             {displaySettings.cameraPlacement === "overlay" && (
               <div className={`absolute right-3 top-3 z-10 ${overlayCameraSize}`}>
                 <TeacherCameraView
@@ -344,6 +357,7 @@ export function RoomExperience({
           <LiveLessonChatPanel lessonId={lesson.id} />
         </aside>
       </div>
+      {role === "student" ? <TeacherPresenceNotice /> : null}
       {role === "student" ? (
         <StudentEngagementBar
           identity={identity}

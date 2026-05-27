@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import { supabase } from "@/lib/supabase/client";
 import type { LiveLessonChatMessage } from "@/features/live-lessons/types";
 
 type Props = {
@@ -11,6 +12,16 @@ export function LiveLessonChatPanel({ lessonId }: Props) {
   const [messages, setMessages] = useState<LiveLessonChatMessage[]>([]);
   const [text, setText] = useState("");
   const [sending, setSending] = useState(false);
+
+  const mergeMessages = useCallback((nextMessages: LiveLessonChatMessage[]) => {
+    setMessages((current) => {
+      const byId = new Map(current.map((message) => [message.id, message]));
+      for (const message of nextMessages) byId.set(message.id, message);
+      return [...byId.values()].sort(
+        (a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime(),
+      );
+    });
+  }, []);
 
   const loadMessages = useCallback(async () => {
     const response = await fetch(`/api/live-lessons/${lessonId}/chat`, {
@@ -24,9 +35,28 @@ export function LiveLessonChatPanel({ lessonId }: Props) {
 
   useEffect(() => {
     void loadMessages();
-    const id = window.setInterval(() => void loadMessages(), 5000);
-    return () => window.clearInterval(id);
-  }, [loadMessages]);
+    const fallbackId = window.setInterval(() => void loadMessages(), 15000);
+    const channel = supabase
+      .channel(`live-lesson-chat:${lessonId}`)
+      .on(
+        "postgres_changes",
+        {
+          event: "INSERT",
+          filter: `lesson_id=eq.${lessonId}`,
+          schema: "public",
+          table: "live_lesson_chat_messages",
+        },
+        (payload) => {
+          mergeMessages([payload.new as LiveLessonChatMessage]);
+        },
+      )
+      .subscribe();
+
+    return () => {
+      window.clearInterval(fallbackId);
+      void supabase.removeChannel(channel);
+    };
+  }, [lessonId, loadMessages, mergeMessages]);
 
   const sendMessage = useCallback(async () => {
     const message = text.trim();
@@ -40,13 +70,16 @@ export function LiveLessonChatPanel({ lessonId }: Props) {
         method: "POST",
       });
       if (response.ok) {
+        const payload = (await response.json().catch(() => null)) as {
+          message?: LiveLessonChatMessage;
+        } | null;
         setText("");
-        await loadMessages();
+        if (payload?.message) mergeMessages([payload.message]);
       }
     } finally {
       setSending(false);
     }
-  }, [lessonId, loadMessages, text]);
+  }, [lessonId, mergeMessages, text]);
 
   return (
     <section className="flex min-h-0 flex-1 flex-col rounded-xl border border-border bg-card">

@@ -18,6 +18,19 @@ export function DisplaySettingsPanel({ onChange, settings }: Props) {
       <h2 className="text-sm font-semibold">Görüntü düzeni</h2>
       <div className="mt-3 grid gap-2 text-xs">
         <label className="grid gap-1">
+          <span className="text-foreground/70">Ana alan</span>
+          <select
+            value={settings.mainView}
+            onChange={(event) =>
+              update("mainView", event.target.value as LiveLessonDisplaySettings["mainView"])
+            }
+            className="min-h-9 rounded-lg border border-border bg-background px-2"
+          >
+            <option value="screen">Ekran paylaşımı</option>
+            <option value="whiteboard">Beyaz tahta</option>
+          </select>
+        </label>
+        <label className="grid gap-1">
           <span className="text-foreground/70">Kamera konumu</span>
           <select
             value={settings.cameraPlacement}

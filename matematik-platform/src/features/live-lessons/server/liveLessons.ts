@@ -3,8 +3,12 @@ import 'server-only';
 import { revalidatePath } from 'next/cache';
 import { NextResponse } from 'next/server';
 import { isAdminEmail } from '@/lib/admin';
-import { getServerAccessToken, getServerAuthSnapshot } from '@/lib/auth-snapshot.server';
-import { createServiceRoleClient } from '@/lib/supabase/server';
+import type { AuthSnapshot } from '@/lib/auth-snapshot';
+import { getServerAccessToken } from '@/lib/auth-snapshot.server';
+import {
+  createServerSupabaseClient,
+  createServiceRoleClient,
+} from '@/lib/supabase/server';
 import { generateRoomId, signTeacherProof } from '@/features/live-lessons/lib/lesson-auth';
 import type {
   LiveLesson,
@@ -21,23 +25,76 @@ const MAX_RECURRING_LESSONS = 16;
 const VALID_TARGET_GRADES = ['5', '6', '7', '8', 'Mezun', 'all', 'selected'];
 
 type RouteAuth =
-  | { ok: true; user: NonNullable<Awaited<ReturnType<typeof getServerAuthSnapshot>>>; accessToken: string | null }
+  | { ok: true; user: AuthSnapshot; accessToken: string }
   | { ok: false; response: NextResponse };
 
-export async function requireLiveLessonUser(): Promise<RouteAuth> {
-  const [user, accessToken] = await Promise.all([
-    getServerAuthSnapshot(),
-    getServerAccessToken(),
-  ]);
+function normalizeGrade(value: unknown): AuthSnapshot['grade'] {
+  if (value === 'Mezun') return 'Mezun';
+  const numericGrade = Number(value);
+  return Number.isFinite(numericGrade) ? numericGrade : 5;
+}
 
-  if (!user) {
+export async function getVerifiedLiveLessonUser(): Promise<
+  { accessToken: string; user: AuthSnapshot } | null
+> {
+  const accessToken = await getServerAccessToken();
+
+  if (!accessToken) {
+    return null;
+  }
+
+  const authClient = createServerSupabaseClient(accessToken);
+  const {
+    data: { user },
+    error,
+  } = await authClient.auth.getUser(accessToken);
+
+  if (error || !user?.id) {
+    return null;
+  }
+
+  const supabase = createServiceRoleClient();
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('id, name, email, grade')
+    .eq('id', user.id)
+    .maybeSingle();
+
+  const profileRecord = (profile || {}) as Record<string, unknown>;
+  const email =
+    typeof profileRecord.email === 'string' && profileRecord.email
+      ? profileRecord.email
+      : user.email || '';
+  const name =
+    typeof profileRecord.name === 'string' && profileRecord.name.trim()
+      ? profileRecord.name.trim()
+      : typeof user.user_metadata?.name === 'string' && user.user_metadata.name.trim()
+        ? user.user_metadata.name.trim()
+        : 'Öğrenci';
+
+  return {
+    accessToken,
+    user: {
+      email,
+      grade: normalizeGrade(profileRecord.grade ?? user.user_metadata?.grade),
+      id: user.id,
+      isAdmin: isAdminEmail(email),
+      name,
+    },
+  };
+}
+
+export async function requireLiveLessonUser(): Promise<RouteAuth> {
+  const verified = await getVerifiedLiveLessonUser();
+
+  if (!verified) {
     return {
       ok: false,
       response: NextResponse.json({ error: 'Giriş yapmanız gerekiyor.' }, { status: 401 }),
     };
   }
 
-  return { accessToken, ok: true, user };
+  return { accessToken: verified.accessToken, ok: true, user: verified.user };
 }
 
 export function isLiveLessonAdmin(user: { email?: string | null; isAdmin?: boolean }) {
@@ -45,7 +102,8 @@ export function isLiveLessonAdmin(user: { email?: string | null; isAdmin?: boole
 }
 
 export async function loadLiveLessonsForCurrentUser(): Promise<LiveLesson[]> {
-  const snapshot = await getServerAuthSnapshot();
+  const verified = await getVerifiedLiveLessonUser();
+  const snapshot = verified?.user;
 
   if (!snapshot) {
     return [];
@@ -79,7 +137,8 @@ export async function loadLiveLessonsForCurrentUser(): Promise<LiveLesson[]> {
 }
 
 export async function loadLiveLessonStudentOptions(): Promise<AppUser[]> {
-  const snapshot = await getServerAuthSnapshot();
+  const verified = await getVerifiedLiveLessonUser();
+  const snapshot = verified?.user;
 
   if (!snapshot || !isLiveLessonAdmin(snapshot)) {
     return [];

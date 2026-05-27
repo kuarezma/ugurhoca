@@ -5,6 +5,7 @@ import {
   isLiveLessonAdmin,
   requireLiveLessonUser,
 } from '@/features/live-lessons/server/liveLessons';
+import { buildLiveLessonIdentity } from '@/features/live-lessons/lib/participant-identity';
 import type { LiveLesson } from '@/features/live-lessons/types';
 
 export const runtime = 'nodejs';
@@ -19,6 +20,7 @@ export async function POST(_request: Request, context: RouteContext) {
   const { lessonId } = await context.params;
   const supabase = createServiceRoleClient();
   const role = isLiveLessonAdmin(auth.user) ? 'teacher' : 'student';
+  const identity = buildLiveLessonIdentity(auth.user.id, role);
 
   const { data: lesson, error: lessonError } = await supabase
     .from('live_lessons')
@@ -37,8 +39,12 @@ export async function POST(_request: Request, context: RouteContext) {
   }
 
   await supabase.from('live_lesson_participants').insert({
+    identity,
     lesson_id: lessonId,
+    last_seen_at: new Date().toISOString(),
+    mic_permission: role === 'teacher' ? 'allowed' : 'blocked',
     microphone_allowed: role === 'teacher',
+    muted_by_teacher: role !== 'teacher',
     role,
     user_id: auth.user.id,
     user_name: auth.user.name,
