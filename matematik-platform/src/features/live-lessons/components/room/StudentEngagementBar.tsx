@@ -9,6 +9,10 @@ import { ConnectionState, RoomEvent, type Participant } from "livekit-client";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 import {
+  teacherAudioCaptureOptions,
+  teacherAudioPublishOptions,
+} from "@/features/live-lessons/lib/media-settings";
+import {
   decodeDataPayload,
   encodeRoomDataMessage,
 } from "@/features/live-lessons/lib/room-data";
@@ -33,6 +37,7 @@ export function StudentEngagementBar({
   const connectionState = useConnectionState(room);
   const joinSentRef = useRef(false);
   const skipApprovalUnlockRef = useRef(false);
+  const initialMicSyncRef = useRef(false);
   const [raised, setRaised] = useState(false);
   const [micAllowed, setMicAllowed] = useState(false);
   const [teacherMuted, setTeacherMuted] = useState(false);
@@ -112,12 +117,20 @@ export function StudentEngagementBar({
       setMicBusy(true);
       setMicError(null);
       try {
-        await localParticipant.setMicrophoneEnabled(enabled);
+        await localParticipant.setMicrophoneEnabled(
+          enabled,
+          enabled ? teacherAudioCaptureOptions : undefined,
+          enabled ? teacherAudioPublishOptions : undefined,
+        );
       } catch {
         if (enabled) {
           await new Promise((resolve) => window.setTimeout(resolve, 500));
           try {
-            await localParticipant.setMicrophoneEnabled(true);
+            await localParticipant.setMicrophoneEnabled(
+              true,
+              teacherAudioCaptureOptions,
+              teacherAudioPublishOptions,
+            );
             return;
           } catch {
             // LiveKit permission update tarayıcıya ulaşmadıysa kullanıcıya net uyarı gösterilir.
@@ -153,6 +166,21 @@ export function StudentEngagementBar({
     };
   }, [identity, requireStudentApproval, room]);
 
+  const applyMicrophonePermission = useCallback(
+    (allowed: boolean, { mutedByTeacher = false }: { mutedByTeacher?: boolean } = {}) => {
+      setMicAllowed(allowed);
+      setMicRequestSent(false);
+      if (allowed) {
+        setTeacherMuted(false);
+        void setStudentMicrophone(true);
+      } else {
+        setTeacherMuted(mutedByTeacher);
+        void setStudentMicrophone(false);
+      }
+    },
+    [setStudentMicrophone],
+  );
+
   useEffect(() => {
     const onData = (payload: Uint8Array, participant?: Participant) => {
       const decoded = decodeDataPayload(payload);
@@ -163,22 +191,96 @@ export function StudentEngagementBar({
       const fromServer = msg.fromIdentity === "server" && !participant;
       const fromTeacher = !!participant && !participant.isLocal && msg.fromIdentity === participant.identity;
       if (!fromServer && !fromTeacher) return;
-      setMicAllowed(msg.allowed);
-      if (!msg.allowed) {
-        setTeacherMuted(true);
-        setMicRequestSent(false);
-        void setStudentMicrophone(false);
-      } else {
-        setTeacherMuted(false);
-        setMicRequestSent(false);
-        void setStudentMicrophone(true);
-      }
+      applyMicrophonePermission(msg.allowed, { mutedByTeacher: !msg.allowed });
     };
     room.on(RoomEvent.DataReceived, onData);
     return () => {
       room.off(RoomEvent.DataReceived, onData);
     };
-  }, [identity, room, setStudentMicrophone]);
+  }, [applyMicrophonePermission, identity, room]);
+
+  useEffect(() => {
+    if (connectionState !== ConnectionState.Connected) return;
+    if (initialMicSyncRef.current) return;
+    initialMicSyncRef.current = true;
+
+    let cancelled = false;
+    void (async () => {
+      try {
+        const response = await fetch(
+          `/api/live-lessons/${lessonId}/microphone?identity=${encodeURIComponent(identity)}`,
+          { credentials: "same-origin" },
+        );
+        if (!response.ok || cancelled) return;
+        const payload = (await response.json().catch(() => null)) as {
+          micPermission?: "allowed" | "requested" | "blocked" | null;
+          microphoneAllowed?: boolean;
+          mutedByTeacher?: boolean;
+        } | null;
+        if (cancelled || !payload) return;
+        if (payload.micPermission === "allowed" || payload.microphoneAllowed) {
+          applyMicrophonePermission(true);
+        } else if (payload.micPermission === "requested") {
+          setMicRequestSent(true);
+        } else if (payload.mutedByTeacher) {
+          setTeacherMuted(true);
+        }
+      } catch {
+        // Connect anında ağ titrer; sonraki polling tekrar deneyecek.
+      }
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [applyMicrophonePermission, connectionState, identity, lessonId]);
+
+  useEffect(() => {
+    if (!micRequestSent || micAllowed) return;
+    if (connectionState !== ConnectionState.Connected) return;
+
+    let cancelled = false;
+    const poll = async () => {
+      try {
+        const response = await fetch(
+          `/api/live-lessons/${lessonId}/microphone?identity=${encodeURIComponent(identity)}`,
+          { credentials: "same-origin" },
+        );
+        if (!response.ok || cancelled) return;
+        const payload = (await response.json().catch(() => null)) as {
+          micPermission?: "allowed" | "requested" | "blocked" | null;
+          microphoneAllowed?: boolean;
+          mutedByTeacher?: boolean;
+        } | null;
+        if (cancelled || !payload) return;
+        if (payload.micPermission === "allowed" || payload.microphoneAllowed) {
+          applyMicrophonePermission(true);
+        } else if (payload.micPermission === "blocked") {
+          applyMicrophonePermission(false, {
+            mutedByTeacher: Boolean(payload.mutedByTeacher),
+          });
+        }
+      } catch {
+        // Network hiccups are tolerated; data message yine de denenir.
+      }
+    };
+
+    void poll();
+    const interval = window.setInterval(() => {
+      void poll();
+    }, 2000);
+    return () => {
+      cancelled = true;
+      window.clearInterval(interval);
+    };
+  }, [
+    applyMicrophonePermission,
+    connectionState,
+    identity,
+    lessonId,
+    micAllowed,
+    micRequestSent,
+  ]);
 
   const toggleRaise = useCallback(async () => {
     const next = !raised;

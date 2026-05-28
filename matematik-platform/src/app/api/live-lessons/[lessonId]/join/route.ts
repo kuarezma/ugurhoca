@@ -6,7 +6,10 @@ import {
   requireLiveLessonUser,
 } from '@/features/live-lessons/server/liveLessons';
 import { buildLiveLessonIdentity } from '@/features/live-lessons/lib/participant-identity';
-import type { LiveLesson } from '@/features/live-lessons/types';
+import type {
+  LiveLesson,
+  LiveLessonMicPermission,
+} from '@/features/live-lessons/types';
 
 export const runtime = 'nodejs';
 
@@ -38,13 +41,47 @@ export async function POST(_request: Request, context: RouteContext) {
     return NextResponse.json({ error: 'Bu ders size açık değil.' }, { status: 403 });
   }
 
+  let micPermission: LiveLessonMicPermission =
+    role === 'teacher' ? 'allowed' : 'blocked';
+  let microphoneAllowed = role === 'teacher';
+  let mutedByTeacher = role !== 'teacher';
+
+  if (role === 'student') {
+    const { data: previous } = await supabase
+      .from('live_lesson_participants')
+      .select('mic_permission, microphone_allowed, muted_by_teacher')
+      .eq('lesson_id', lessonId)
+      .eq('identity', identity)
+      .order('joined_at', { ascending: false })
+      .limit(1)
+      .maybeSingle();
+
+    const previousRow = (previous || null) as
+      | {
+          mic_permission?: LiveLessonMicPermission | null;
+          microphone_allowed?: boolean | null;
+          muted_by_teacher?: boolean | null;
+        }
+      | null;
+
+    if (
+      previousRow?.mic_permission === 'allowed' &&
+      previousRow.microphone_allowed === true &&
+      previousRow.muted_by_teacher !== true
+    ) {
+      micPermission = 'allowed';
+      microphoneAllowed = true;
+      mutedByTeacher = false;
+    }
+  }
+
   await supabase.from('live_lesson_participants').insert({
     identity,
     lesson_id: lessonId,
     last_seen_at: new Date().toISOString(),
-    mic_permission: role === 'teacher' ? 'allowed' : 'blocked',
-    microphone_allowed: role === 'teacher',
-    muted_by_teacher: role !== 'teacher',
+    mic_permission: micPermission,
+    microphone_allowed: microphoneAllowed,
+    muted_by_teacher: mutedByTeacher,
     role,
     user_id: auth.user.id,
     user_name: auth.user.name,

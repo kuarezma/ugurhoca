@@ -7,7 +7,10 @@ import {
   requireLiveLessonUser,
 } from '@/features/live-lessons/server/liveLessons';
 import { buildLiveLessonIdentity } from '@/features/live-lessons/lib/participant-identity';
-import type { LiveLesson } from '@/features/live-lessons/types';
+import type {
+  LiveLesson,
+  LiveLessonMicPermission,
+} from '@/features/live-lessons/types';
 import {
   isValidRoomId,
   signPersistToken,
@@ -79,13 +82,42 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: 'Bu ders size açık değil.' }, { status: 403 });
   }
 
+  let studentCanPublishMicrophone = false;
+  if (resolvedRole === 'student') {
+    const { data: participantRow } = await supabase
+      .from('live_lesson_participants')
+      .select('mic_permission, microphone_allowed, muted_by_teacher')
+      .eq('lesson_id', body.lessonId)
+      .eq('identity', body.identity)
+      .order('joined_at', { ascending: false })
+      .limit(1)
+      .maybeSingle();
+
+    const row = (participantRow || null) as
+      | {
+          mic_permission?: LiveLessonMicPermission | null;
+          microphone_allowed?: boolean | null;
+          muted_by_teacher?: boolean | null;
+        }
+      | null;
+
+    studentCanPublishMicrophone =
+      row?.mic_permission === 'allowed' &&
+      row.microphone_allowed === true &&
+      row.muted_by_teacher !== true;
+  }
+
   const token = new AccessToken(apiKey, apiSecret, {
     identity: body.identity,
     name: auth.user.name || auth.user.email,
     ttl: '8h',
   });
 
-  token.addGrant(buildLiveKitVideoGrant(resolvedRole, body.roomName));
+  token.addGrant(
+    buildLiveKitVideoGrant(resolvedRole, body.roomName, {
+      studentCanPublishMicrophone,
+    }),
+  );
 
   return NextResponse.json({
     persistToken: signPersistToken({

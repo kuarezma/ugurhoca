@@ -45,25 +45,41 @@ const studentUser = {
   name: 'Öğrenci',
 };
 
-function mockLessonQuery() {
+type ParticipantRow = {
+  mic_permission: 'allowed' | 'requested' | 'blocked' | null;
+  microphone_allowed: boolean | null;
+  muted_by_teacher: boolean | null;
+};
+
+function mockSupabase(participantRow: ParticipantRow | null = null) {
+  const lessonSingle = vi.fn().mockResolvedValue({
+    data: {
+      id: 'lesson-1',
+      room_id: 'room1234',
+      status: 'active',
+      target_grade: '7',
+    },
+  });
+  const lessonEqRoom = vi.fn().mockReturnValue({ single: lessonSingle });
+  const lessonEqId = vi.fn().mockReturnValue({ eq: lessonEqRoom });
+  const lessonSelect = vi.fn().mockReturnValue({ eq: lessonEqId });
+
+  const participantMaybeSingle = vi.fn().mockResolvedValue({ data: participantRow });
+  const participantLimit = vi.fn().mockReturnValue({ maybeSingle: participantMaybeSingle });
+  const participantOrder = vi.fn().mockReturnValue({ limit: participantLimit });
+  const participantEqIdentity = vi.fn().mockReturnValue({ order: participantOrder });
+  const participantEqLesson = vi.fn().mockReturnValue({ eq: participantEqIdentity });
+  const participantSelect = vi.fn().mockReturnValue({ eq: participantEqLesson });
+
   vi.mocked(createServiceRoleClient).mockReturnValue({
-    from: vi.fn().mockReturnValue({
-      select: vi.fn().mockReturnValue({
-        eq: vi.fn().mockReturnValue({
-          eq: vi.fn().mockReturnValue({
-            single: vi.fn().mockResolvedValue({
-              data: {
-                id: 'lesson-1',
-                room_id: 'room1234',
-                status: 'active',
-                target_grade: '7',
-              },
-            }),
-          }),
-        }),
-      }),
+    from: vi.fn((table: string) => {
+      if (table === 'live_lessons') return { select: lessonSelect };
+      if (table === 'live_lesson_participants') return { select: participantSelect };
+      return {};
     }),
   } as never);
+
+  return { participantMaybeSingle };
 }
 
 describe('POST /api/livekit/token', () => {
@@ -75,7 +91,7 @@ describe('POST /api/livekit/token', () => {
   });
 
   it('rejects a student trying to request a teacher token', async () => {
-    mockLessonQuery();
+    mockSupabase();
     vi.mocked(requireLiveLessonUser).mockResolvedValue({
       accessToken: 'token',
       ok: true,
@@ -105,7 +121,7 @@ describe('POST /api/livekit/token', () => {
   });
 
   it('issues a data-only student token for the expected identity', async () => {
-    mockLessonQuery();
+    mockSupabase();
     vi.mocked(requireLiveLessonUser).mockResolvedValue({
       accessToken: 'token',
       ok: true,
@@ -136,6 +152,79 @@ describe('POST /api/livekit/token', () => {
         canPublishData: true,
         canSubscribe: true,
         room: 'room1234',
+      }),
+    );
+  });
+
+  it('grants microphone publish to a reconnecting student previously approved', async () => {
+    mockSupabase({
+      mic_permission: 'allowed',
+      microphone_allowed: true,
+      muted_by_teacher: false,
+    });
+    vi.mocked(requireLiveLessonUser).mockResolvedValue({
+      accessToken: 'token',
+      ok: true,
+      user: studentUser,
+    });
+    vi.mocked(isLiveLessonAdmin).mockReturnValue(false);
+    vi.mocked(canUserAccessLiveLesson).mockReturnValue(true);
+
+    const response = await POST(
+      new Request('http://localhost/api/livekit/token', {
+        body: JSON.stringify({
+          identity: buildLiveLessonIdentity(studentUser.id, 'student'),
+          lessonId: 'lesson-1',
+          role: 'student',
+          roomName: 'room1234',
+        }),
+        headers: { 'content-type': 'application/json' },
+        method: 'POST',
+      }),
+    );
+
+    expect(response.status).toBe(200);
+    expect(liveKitSdkMock.addGrant).toHaveBeenCalledWith(
+      expect.objectContaining({
+        canPublish: true,
+        canPublishData: true,
+        canSubscribe: true,
+        room: 'room1234',
+      }),
+    );
+  });
+
+  it('does not grant publish when teacher has muted the student', async () => {
+    mockSupabase({
+      mic_permission: 'allowed',
+      microphone_allowed: true,
+      muted_by_teacher: true,
+    });
+    vi.mocked(requireLiveLessonUser).mockResolvedValue({
+      accessToken: 'token',
+      ok: true,
+      user: studentUser,
+    });
+    vi.mocked(isLiveLessonAdmin).mockReturnValue(false);
+    vi.mocked(canUserAccessLiveLesson).mockReturnValue(true);
+
+    const response = await POST(
+      new Request('http://localhost/api/livekit/token', {
+        body: JSON.stringify({
+          identity: buildLiveLessonIdentity(studentUser.id, 'student'),
+          lessonId: 'lesson-1',
+          role: 'student',
+          roomName: 'room1234',
+        }),
+        headers: { 'content-type': 'application/json' },
+        method: 'POST',
+      }),
+    );
+
+    expect(response.status).toBe(200);
+    expect(liveKitSdkMock.addGrant).toHaveBeenCalledWith(
+      expect.objectContaining({
+        canPublish: false,
       }),
     );
   });

@@ -1,4 +1,4 @@
-import { POST } from '@/app/api/live-lessons/[lessonId]/microphone/route';
+import { GET, POST } from '@/app/api/live-lessons/[lessonId]/microphone/route';
 import { createServiceRoleClient } from '@/lib/supabase/server';
 import {
   canUserAccessLiveLesson,
@@ -89,6 +89,106 @@ function postMicrophone(body: unknown) {
     { params: Promise.resolve({ lessonId: 'lesson-1' }) },
   );
 }
+
+type ParticipantStateRow = {
+  mic_permission: 'allowed' | 'requested' | 'blocked' | null;
+  microphone_allowed: boolean | null;
+  muted_by_teacher: boolean | null;
+};
+
+function mockParticipantStateLookup(row: ParticipantStateRow | null) {
+  const maybeSingle = vi.fn().mockResolvedValue({ data: row, error: null });
+  const limit = vi.fn().mockReturnValue({ maybeSingle });
+  const order = vi.fn().mockReturnValue({ limit });
+  const is = vi.fn().mockReturnValue({ order });
+  const secondEq = vi.fn().mockReturnValue({ is });
+  const firstEq = vi.fn().mockReturnValue({ eq: secondEq });
+  const select = vi.fn().mockReturnValue({ eq: firstEq });
+
+  vi.mocked(createServiceRoleClient).mockReturnValue({
+    from: vi.fn((table: string) => {
+      if (table === 'live_lesson_participants') return { select };
+      return {};
+    }),
+  } as never);
+}
+
+function getMicrophone(identity: string | null) {
+  const url = identity
+    ? `http://localhost/api/live-lessons/lesson-1/microphone?identity=${encodeURIComponent(identity)}`
+    : 'http://localhost/api/live-lessons/lesson-1/microphone';
+  return GET(new Request(url, { method: 'GET' }), {
+    params: Promise.resolve({ lessonId: 'lesson-1' }),
+  });
+}
+
+describe('GET /api/live-lessons/[lessonId]/microphone', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it('returns the persisted permission for the calling student', async () => {
+    mockParticipantStateLookup({
+      mic_permission: 'allowed',
+      microphone_allowed: true,
+      muted_by_teacher: false,
+    });
+    vi.mocked(requireLiveLessonUser).mockResolvedValue({
+      accessToken: 'token',
+      ok: true,
+      user: studentUser,
+    });
+    vi.mocked(isLiveLessonAdmin).mockReturnValue(false);
+
+    const response = await getMicrophone(
+      buildLiveLessonIdentity(studentUser.id, 'student'),
+    );
+
+    expect(response.status).toBe(200);
+    await expect(response.json()).resolves.toMatchObject({
+      micPermission: 'allowed',
+      microphoneAllowed: true,
+      mutedByTeacher: false,
+    });
+  });
+
+  it('forbids a student from reading another student state', async () => {
+    mockParticipantStateLookup(null);
+    vi.mocked(requireLiveLessonUser).mockResolvedValue({
+      accessToken: 'token',
+      ok: true,
+      user: studentUser,
+    });
+    vi.mocked(isLiveLessonAdmin).mockReturnValue(false);
+
+    const response = await getMicrophone(
+      buildLiveLessonIdentity('00000000-0000-4000-8000-000000000000', 'student'),
+    );
+
+    expect(response.status).toBe(403);
+  });
+
+  it('returns null permission when no participant row exists yet', async () => {
+    mockParticipantStateLookup(null);
+    vi.mocked(requireLiveLessonUser).mockResolvedValue({
+      accessToken: 'token',
+      ok: true,
+      user: studentUser,
+    });
+    vi.mocked(isLiveLessonAdmin).mockReturnValue(false);
+
+    const response = await getMicrophone(
+      buildLiveLessonIdentity(studentUser.id, 'student'),
+    );
+
+    expect(response.status).toBe(200);
+    await expect(response.json()).resolves.toMatchObject({
+      micPermission: null,
+      microphoneAllowed: false,
+      mutedByTeacher: false,
+    });
+  });
+});
 
 describe('POST /api/live-lessons/[lessonId]/microphone', () => {
   beforeEach(() => {

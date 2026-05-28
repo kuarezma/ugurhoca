@@ -14,7 +14,13 @@ import {
   sendLiveLessonRoomMessage,
   setStudentMicrophonePublishPermission,
 } from '@/features/live-lessons/server/livekit-permissions';
-import type { LiveLesson } from '@/features/live-lessons/types';
+import { createLogger } from '@/lib/logger';
+import type {
+  LiveLesson,
+  LiveLessonMicPermission,
+} from '@/features/live-lessons/types';
+
+const log = createLogger('live-lesson-microphone');
 
 export const runtime = 'nodejs';
 
@@ -42,6 +48,60 @@ async function loadLesson(lessonId: string) {
     .single();
 
   return { lesson: data as LiveLesson | null, supabase };
+}
+
+export async function GET(request: Request, context: RouteContext) {
+  const auth = await requireLiveLessonUser();
+  if (!auth.ok) return auth.response;
+
+  const { lessonId } = await context.params;
+  const url = new URL(request.url);
+  const requestedIdentity = url.searchParams.get('identity')?.trim() ?? '';
+  const isAdmin = isLiveLessonAdmin(auth.user);
+  const callerRole = isAdmin ? 'teacher' : 'student';
+  const callerIdentity = buildLiveLessonIdentity(auth.user.id, callerRole);
+
+  const identity = requestedIdentity || callerIdentity;
+
+  if (!isAdmin && identity !== callerIdentity) {
+    return NextResponse.json(
+      { error: 'Bu kayda erişim yetkiniz yok.' },
+      { status: 403 },
+    );
+  }
+
+  const supabase = createServiceRoleClient();
+  const { data, error } = await supabase
+    .from('live_lesson_participants')
+    .select('mic_permission, microphone_allowed, muted_by_teacher')
+    .eq('lesson_id', lessonId)
+    .eq('identity', identity)
+    .is('left_at', null)
+    .order('joined_at', { ascending: false })
+    .limit(1)
+    .maybeSingle();
+
+  if (error) {
+    log.warn('Mikrofon durumu okunamadı', {
+      identity,
+      lessonId,
+      message: error.message,
+    });
+  }
+
+  const row = (data || null) as
+    | {
+        mic_permission?: LiveLessonMicPermission | null;
+        microphone_allowed?: boolean | null;
+        muted_by_teacher?: boolean | null;
+      }
+    | null;
+
+  return NextResponse.json({
+    micPermission: row?.mic_permission ?? null,
+    microphoneAllowed: Boolean(row?.microphone_allowed),
+    mutedByTeacher: Boolean(row?.muted_by_teacher),
+  });
 }
 
 export async function POST(request: Request, context: RouteContext) {
@@ -103,7 +163,13 @@ export async function POST(request: Request, context: RouteContext) {
         kind: 'microphone_request',
       },
       roomName: lesson.room_id,
-    }).catch(() => undefined);
+    }).catch((reason) => {
+      log.warn('Mikrofon isteği yayını gönderilemedi', {
+        identity,
+        lessonId,
+        reason: reason instanceof Error ? reason.message : String(reason),
+      });
+    });
 
     return NextResponse.json({ ok: true, micPermission: 'requested' });
   }
@@ -159,7 +225,12 @@ export async function POST(request: Request, context: RouteContext) {
         targetIdentity: '*',
       },
       roomName: lesson.room_id,
-    }).catch(() => undefined);
+    }).catch((reason) => {
+      log.warn('mute_all yayını gönderilemedi', {
+        lessonId,
+        reason: reason instanceof Error ? reason.message : String(reason),
+      });
+    });
 
     return NextResponse.json({ ok: true, muted: identities.length });
   }
@@ -225,7 +296,15 @@ export async function POST(request: Request, context: RouteContext) {
         targetIdentity,
       },
       roomName: lesson.room_id,
-    }).catch(() => undefined);
+    }).catch((reason) => {
+      log.warn('Mikrofon izin yayını gönderilemedi', {
+        action,
+        allowed: state.allowed,
+        lessonId,
+        reason: reason instanceof Error ? reason.message : String(reason),
+        targetIdentity,
+      });
+    });
 
     return NextResponse.json({ ok: true, micPermission: state.permission });
   }

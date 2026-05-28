@@ -33,4 +33,19 @@ describe('LiveKit live lesson grants', () => {
     });
     expect(grant.canPublishSources).toBeUndefined();
   });
+
+  it('lets a previously approved student publish only their microphone', () => {
+    const grant = buildLiveKitVideoGrant('student', 'room1234', {
+      studentCanPublishMicrophone: true,
+    });
+
+    expect(grant).toMatchObject({
+      canPublish: true,
+      canPublishData: true,
+      canSubscribe: true,
+      room: 'room1234',
+      roomJoin: true,
+    });
+    expect(grant.canPublishSources).toEqual([TrackSource.MICROPHONE]);
+  });
 });
