@@ -26,13 +26,33 @@ export function normalizeFullNameForMatch(input: string): string {
   return collapsed.toLocaleLowerCase('tr-TR');
 }
 
+/** Türkçe karakterleri ASCII karşılığına indirger. */
+function foldTurkishToAscii(input: string): string {
+  let ascii = '';
+  for (const ch of input) {
+    ascii += TR_CHAR_TO_ASCII[ch] ?? ch;
+  }
+  return ascii;
+}
+
+/**
+ * Arama eşleştirmesi için metni indirger:
+ * - Türkçe kurallarıyla küçük harf
+ * - Türkçe karakterleri ASCII karşılığına çevir (İ/ı/i/I -> i, ğ -> g, ...)
+ * - Boşlukları tek boşluğa düşür ve trim et
+ *
+ * Böylece "İlker", "Ilker", "ilker", "ılker" aynı anahtara denk gelir.
+ */
+export function normalizeSearchMatchText(input: string): string {
+  if (!input) return '';
+  const lower = input.toLocaleLowerCase('tr-TR');
+  return foldTurkishToAscii(lower).replace(/\s+/g, ' ').trim();
+}
+
 /** @ugurhoca.local için yerel kısım: normalize ad + ASCII slug. */
 function slugForStudentEmailLocalPart(displayName: string): string {
   const normalized = normalizeFullNameForMatch(displayName);
-  let ascii = '';
-  for (const ch of normalized) {
-    ascii += TR_CHAR_TO_ASCII[ch] ?? ch;
-  }
+  const ascii = foldTurkishToAscii(normalized);
   return ascii
     .replace(/\s+/g, '_')
     .replace(/[^a-z0-9_]/g, '')

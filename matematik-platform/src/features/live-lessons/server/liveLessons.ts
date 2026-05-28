@@ -5,6 +5,7 @@ import { NextResponse } from 'next/server';
 import { isAdminEmail } from '@/lib/admin';
 import type { AuthSnapshot } from '@/lib/auth-snapshot';
 import { getServerAccessToken } from '@/lib/auth-snapshot.server';
+import { createLogger } from '@/lib/logger';
 import {
   createServerSupabaseClient,
   createServiceRoleClient,
@@ -21,6 +22,8 @@ import type {
   LiveLessonParticipant,
 } from '@/features/live-lessons/types';
 import type { AppUser } from '@/types';
+
+const log = createLogger('live-lessons-server');
 
 const NOTIFICATION_TYPE = 'live-lesson';
 const REMINDER_TYPE = 'thirty_minutes';
@@ -156,10 +159,20 @@ export async function loadLiveLessonStudentOptions(): Promise<AppUser[]> {
   }
 
   const supabase = createServiceRoleClient();
-  const { data } = await supabase
+  const { data, error } = await supabase
     .from('profiles')
-    .select('id, name, email, grade, is_favorite, created_at')
+    .select('id, name, name_normalized, email, grade, is_favorite, created_at')
     .order('name', { ascending: true });
+
+  if (error) {
+    log.warn('Öğrenci listesi yüklenemedi', {
+      code: error.code,
+      details: error.details,
+      hint: error.hint,
+      message: error.message,
+    });
+    return [];
+  }
 
   return ((data || []) as AppUser[]).filter((user) => !isLiveLessonAdmin(user));
 }

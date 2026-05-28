@@ -1,11 +1,17 @@
 'use client';
 
 import { useMemo } from 'react';
+import { normalizeSearchMatchText } from '@/lib/student-identity';
 import type { AppUser } from '@/types';
 
-type StudentPickerProps<
-  TStudent extends Pick<AppUser, 'id' | 'name' | 'email' | 'grade'>,
-> = {
+type StudentPickerStudent = Pick<
+  AppUser,
+  'id' | 'name' | 'email' | 'grade'
+> & {
+  name_normalized?: string | null;
+};
+
+type StudentPickerProps<TStudent extends StudentPickerStudent> = {
   emptyMessage?: string;
   listClassName?: string;
   onSearchChange: (value: string) => void;
@@ -15,17 +21,21 @@ type StudentPickerProps<
   students: TStudent[];
 };
 
-function normalizeSearchText(value: string) {
-  return value.toLocaleLowerCase('tr-TR').trim();
-}
-
 function formatGrade(value: AppUser['grade']) {
   return value === 'Mezun' ? 'Mezun' : `${value}. sınıf`;
 }
 
-export function StudentPicker<
-  TStudent extends Pick<AppUser, 'id' | 'name' | 'email' | 'grade'>,
->({
+function buildSearchHaystack(student: StudentPickerStudent): string {
+  const name = student.name || '';
+  const nameNormalized = student.name_normalized || '';
+  const email = student.email || '';
+  const emailLocalAsName = email.split('@')[0]?.replace(/[._-]+/g, ' ') ?? '';
+  return normalizeSearchMatchText(
+    `${name} ${nameNormalized} ${email} ${emailLocalAsName}`,
+  );
+}
+
+export function StudentPicker<TStudent extends StudentPickerStudent>({
   emptyMessage = 'Kayıtlı öğrenci bulunamadı.',
   listClassName = 'bg-slate-950',
   onSearchChange,
@@ -35,13 +45,11 @@ export function StudentPicker<
   students,
 }: StudentPickerProps<TStudent>) {
   const filteredStudents = useMemo(() => {
-    const query = normalizeSearchText(searchQuery);
+    const query = normalizeSearchMatchText(searchQuery);
     if (!query) return students;
 
     return students.filter((student) =>
-      normalizeSearchText(
-        `${student.name || ''} ${student.email || ''}`,
-      ).includes(query),
+      buildSearchHaystack(student).includes(query),
     );
   }, [searchQuery, students]);
 
@@ -68,13 +76,16 @@ export function StudentPicker<
     ]);
   };
 
+  const hasActiveSearch = searchQuery.trim().length > 0;
+  const summaryText = hasActiveSearch
+    ? `${filteredStudents.length} / ${students.length} öğrenci`
+    : `${students.length} öğrenci • ${selectedStudentIds.length} seçili`;
+
   return (
     <div className="space-y-2 md:col-span-2">
       <div className="flex flex-wrap items-center justify-between gap-2">
         <span className="text-sm text-slate-300">Öğrenci seç</span>
-        <span className="text-xs text-slate-400">
-          {selectedStudentIds.length} öğrenci seçildi
-        </span>
+        <span className="text-xs text-slate-400">{summaryText}</span>
       </div>
 
       <div className="flex flex-col gap-2 sm:flex-row">
@@ -109,10 +120,18 @@ export function StudentPicker<
         className={`max-h-64 overflow-y-auto rounded-xl border border-white/10 p-2 ${listClassName}`}
       >
         {students.length === 0 ? (
-          <p className="px-2 py-3 text-sm text-slate-400">{emptyMessage}</p>
+          <p
+            data-testid="student-picker-empty"
+            className="px-2 py-3 text-sm text-slate-400"
+          >
+            {emptyMessage}
+          </p>
         ) : filteredStudents.length === 0 ? (
-          <p className="px-2 py-3 text-sm text-slate-400">
-            Aramaya uygun öğrenci bulunamadı.
+          <p
+            data-testid="student-picker-no-match"
+            className="px-2 py-3 text-sm text-slate-400"
+          >
+            “{searchQuery.trim()}” aramasıyla eşleşen öğrenci yok.
           </p>
         ) : (
           <div className="grid gap-2 sm:grid-cols-2">
