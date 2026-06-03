@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion';
 import { Download, Eye, FileText, Key, X } from 'lucide-react';
 import { getDriveId, getYouTubeId } from '@/features/content/utils';
-import { getWorksheetVisibleDescription } from '@/features/content/worksheet';
+import { getWorksheetVisibleDescription } from '@/features/content/worksheet-display';
 import { useAccessibleModal } from '@/hooks/useAccessibleModal';
 import type { ContentDocument } from '@/types';
 

@@ -1,13 +1,13 @@
 import { motion } from 'framer-motion';
-import { useId, type ChangeEvent, type FormEvent } from 'react';
+import { useEffect, useId, useState, type ChangeEvent, type FormEvent } from 'react';
 import { Check, Upload } from 'lucide-react';
 import { CONTENT_TYPE_OPTIONS } from '@/features/content/constants';
 import type { ContentFormState } from '@/features/content/types';
-import { WORKSHEET_OUTCOME_CATALOG } from '@/features/content/worksheet-catalog';
+import type { WorksheetCatalogItem } from '@/features/content/worksheet-catalog';
 import {
   isWorksheetType,
   WORKSHEET_GRADE_OPTIONS,
-} from '@/features/content/worksheet';
+} from '@/features/content/worksheet-display';
 
 type Accent = 'purple' | 'blue';
 
@@ -44,9 +44,7 @@ const BUTTON_CLASS: Record<Accent, string> = {
     'from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 shadow-purple-500/25',
 };
 
-const WORKSHEET_FORM_GRADE_OPTIONS = Object.keys(WORKSHEET_OUTCOME_CATALOG)
-  .map((grade) => Number(grade))
-  .sort((left, right) => left - right);
+const WORKSHEET_FORM_GRADE_OPTIONS = [5, 6, 7, 8];
 
 export default function ContentDocumentForm({
   accent,
@@ -59,11 +57,14 @@ export default function ContentDocumentForm({
   submitLabel,
   submittingLabel,
 }: ContentDocumentFormProps) {
+  const [worksheetOutcomeCatalog, setWorksheetOutcomeCatalog] = useState<
+    Record<number, WorksheetCatalogItem[]>
+  >({});
   const isWorksheet = isWorksheetType(formData.type);
   const selectedWorksheetGrade =
     typeof formData.grade?.[0] === 'number' ? formData.grade[0] : null;
   const worksheetOutcomeOptions = selectedWorksheetGrade
-    ? WORKSHEET_OUTCOME_CATALOG[selectedWorksheetGrade] || []
+    ? worksheetOutcomeCatalog[selectedWorksheetGrade] || []
     : [];
   const baseId = useId();
   const titleId = `${baseId}-title`;
@@ -76,6 +77,25 @@ export default function ContentDocumentForm({
   const answerKeyId = `${baseId}-answer-key`;
   const solutionUrlId = `${baseId}-solution-url`;
   const gradesGroupLabelId = `${baseId}-grades-label`;
+
+  useEffect(() => {
+    if (!isWorksheet || Object.keys(worksheetOutcomeCatalog).length > 0) {
+      return;
+    }
+
+    let active = true;
+    void import('@/features/content/worksheet-catalog').then(
+      ({ WORKSHEET_OUTCOME_CATALOG }) => {
+        if (active) {
+          setWorksheetOutcomeCatalog(WORKSHEET_OUTCOME_CATALOG);
+        }
+      },
+    );
+
+    return () => {
+      active = false;
+    };
+  }, [isWorksheet, worksheetOutcomeCatalog]);
 
   const updateGrades = (grade: number | 'Mezun', checked: boolean) => {
     const nextGrades = formData.grade || [];

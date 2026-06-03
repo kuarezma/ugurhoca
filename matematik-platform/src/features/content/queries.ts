@@ -17,13 +17,11 @@ import {
   getContentTypeQueryTypes,
 } from '@/features/content/constants';
 import {
-  buildWorksheetDescription,
   DEFAULT_WORKSHEET_OUTCOME,
   getWorksheetOrder,
   isWorksheetType,
-  prepareWorksheetDocumentPayload,
   sortWorksheetDocuments,
-} from '@/features/content/worksheet';
+} from '@/features/content/worksheet-display';
 import { buildContentDocumentPersistPayload } from '@/features/content/persistence';
 import { sortContentDocumentsByNewest } from '@/features/content/utils';
 
@@ -288,7 +286,12 @@ export const resolveContentUser = async () => {
 };
 
 export const createContentDocument = async (payload: ContentFormState) => {
-  const nextPayload = await prepareWorksheetDocumentPayload(payload);
+  const nextPayload = isWorksheetType(payload.type)
+    ? await import('@/features/content/worksheet').then(
+        ({ prepareWorksheetDocumentPayload }) =>
+          prepareWorksheetDocumentPayload(payload),
+      )
+    : payload;
   const persistedPayload = buildContentDocumentPersistPayload(
     nextPayload as ContentFormState,
   );
@@ -346,19 +349,21 @@ export const updateContentDocument = async (
   documentId: string,
   payload: ContentFormState,
 ) => {
-  const nextPayload = isWorksheetType(payload.type)
-    ? {
-        ...payload,
-        description: buildWorksheetDescription({
-          description: payload.description,
-          order: getWorksheetOrder({
-            description: payload.description || null,
-            title: payload.title || '',
-          }),
-          outcome: payload.learning_outcome?.trim() || DEFAULT_WORKSHEET_OUTCOME,
-        }),
-      }
-    : payload;
+  const nextPayload = { ...payload };
+
+  if (isWorksheetType(payload.type)) {
+    const { buildWorksheetDescription } = await import(
+      '@/features/content/worksheet'
+    );
+    nextPayload.description = buildWorksheetDescription({
+      description: payload.description,
+      order: getWorksheetOrder({
+        description: payload.description || null,
+        title: payload.title || '',
+      }),
+      outcome: payload.learning_outcome?.trim() || DEFAULT_WORKSHEET_OUTCOME,
+    });
+  }
   const { learning_outcome: _learning_outcome, worksheet_order: _worksheet_order, ...persistedPayload } =
     nextPayload as ContentFormState;
   const { data, error } = await supabase

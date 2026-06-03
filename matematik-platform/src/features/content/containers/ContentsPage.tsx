@@ -25,7 +25,6 @@ import DeferredFloatingShapes from '@/components/DeferredFloatingShapes';
 import ContentCard from '@/features/content/components/ContentCard';
 import { Skeleton } from '@/components/ui/Skeleton';
 import { EmptyState } from '@/components/ui/EmptyState';
-import { Modal } from '@/components/ui/Modal';
 import { Button } from '@/components/ui/Button';
 
 const ContentCommentsModal = dynamic(
@@ -42,6 +41,10 @@ const ContentPreviewModal = dynamic(
 );
 const ContentQuickAddModal = dynamic(
   () => import('@/features/content/components/ContentQuickAddModal'),
+  { ssr: false },
+);
+const ContentDeleteConfirmModal = dynamic(
+  () => import('@/features/content/components/ContentDeleteConfirmModal'),
   { ssr: false },
 );
 import {
@@ -79,8 +82,8 @@ import {
   isWorksheetType,
   sortWorksheetDocuments,
   WORKSHEET_GRADE_OPTIONS,
-} from '@/features/content/worksheet';
-import { WORKSHEET_OUTCOME_CATALOG } from '@/features/content/worksheet-catalog';
+} from '@/features/content/worksheet-display';
+import type { WorksheetCatalogItem } from '@/features/content/worksheet-catalog';
 import type { ContentDocument, GradeValue } from '@/types';
 
 const GRADE_OPTIONS = [5, 6, 7, 8, 9, 10, 11, 12] as const;
@@ -213,11 +216,7 @@ const splitWorksheetOutcomeHeading = (outcome: string) => {
   };
 };
 
-const SUPPORTED_WORKSHEET_QUICK_ADD_GRADES = Object.keys(
-  WORKSHEET_OUTCOME_CATALOG,
-)
-  .map((grade) => Number(grade))
-  .sort((left, right) => left - right);
+const SUPPORTED_WORKSHEET_QUICK_ADD_GRADES: readonly number[] = [5, 6, 7, 8];
 
 const normalizeWorksheetQuickAddGrade = (grade?: GradeValue | null) =>
   typeof grade === 'number' &&
@@ -274,6 +273,10 @@ function ContentsPageInner({
   const [worksheetDocuments, setWorksheetDocuments] = useState<ContentDocument[]>(
     [],
   );
+  const [worksheetOutcomeCatalog, setWorksheetOutcomeCatalog] = useState<
+    Record<number, WorksheetCatalogItem[]>
+  >({});
+  const [worksheetCatalogLoading, setWorksheetCatalogLoading] = useState(false);
   const [worksheetLoading, setWorksheetLoading] = useState(false);
   const [selectedWorksheetGrade, setSelectedWorksheetGrade] =
     useState<WorksheetGradeSelection | null>(null);
@@ -292,6 +295,23 @@ function ContentsPageInner({
   const worksheetRequestIdRef = useRef(0);
   const appliedWorksheetLinkRef = useRef<string | null>(null);
   const isWorksheetBrowser = isWorksheetType(selectedType);
+
+  const ensureWorksheetOutcomeCatalog = useCallback(async () => {
+    if (Object.keys(worksheetOutcomeCatalog).length > 0) {
+      return worksheetOutcomeCatalog;
+    }
+
+    setWorksheetCatalogLoading(true);
+    try {
+      const { WORKSHEET_OUTCOME_CATALOG } = await import(
+        '@/features/content/worksheet-catalog'
+      );
+      setWorksheetOutcomeCatalog(WORKSHEET_OUTCOME_CATALOG);
+      return WORKSHEET_OUTCOME_CATALOG;
+    } finally {
+      setWorksheetCatalogLoading(false);
+    }
+  }, [worksheetOutcomeCatalog]);
 
   const applyDocumentPatch = useCallback(
     (documentId: string, patch: Partial<ContentDocument>) => {
@@ -513,6 +533,7 @@ function ContentsPageInner({
       const requestId = ++worksheetRequestIdRef.current;
       setWorksheetLoading(true);
       setSelectedWorksheetGrade(grade);
+      void ensureWorksheetOutcomeCatalog();
 
       if (!preserveOutcome) {
         setSelectedWorksheetOutcome(null);
@@ -532,7 +553,7 @@ function ContentsPageInner({
         }
       }
     },
-    [],
+    [ensureWorksheetOutcomeCatalog],
   );
 
   const refreshSelectedWorksheetGrade = useCallback(async () => {
@@ -768,6 +789,7 @@ function ContentsPageInner({
   );
 
   const handleQuickAddOpen = useCallback(() => {
+    void ensureWorksheetOutcomeCatalog();
     const preferredWorksheetGrade =
       selectedWorksheetGrade ||
       (selectedGrade !== 'all' ? (selectedGrade as GradeValue) : user?.grade);
@@ -786,6 +808,7 @@ function ContentsPageInner({
     selectedType,
     selectedWorksheetGrade,
     selectedWorksheetOutcome,
+    ensureWorksheetOutcomeCatalog,
     user?.grade,
   ]);
 
@@ -1041,7 +1064,7 @@ function ContentsPageInner({
 
   const worksheetCatalogOutcomes =
     selectedWorksheetGrade && typeof selectedWorksheetGrade === 'number'
-      ? WORKSHEET_OUTCOME_CATALOG[selectedWorksheetGrade] || []
+      ? worksheetOutcomeCatalog[selectedWorksheetGrade] || []
       : [];
   const worksheetCatalogOutcomeMap = new Map(
     worksheetCatalogOutcomes.map((item, index) => [item.full, { ...item, index }]),
@@ -1401,7 +1424,7 @@ function ContentsPageInner({
             className="flex items-center gap-2 mb-6"
           >
             <Filter className="w-5 h-5 text-slate-400" />
-            {loading || worksheetLoading ? (
+            {loading || worksheetLoading || worksheetCatalogLoading ? (
               <span className="text-slate-400">Yükleniyor...</span>
             ) : (
               <span className="text-slate-400">{resultLabel}</span>
@@ -1741,36 +1764,14 @@ function ContentsPageInner({
         )}
       </AnimatePresence>
 
-      <Modal
-        open={Boolean(deleteCandidate)}
-        onClose={() => (deleting ? undefined : setDeleteCandidate(null))}
-        title="İçeriği silmek istediğine emin misin?"
-        description={deleteCandidate?.title ?? undefined}
-        size="sm"
-        disableBackdropClose={deleting}
-        footer={
-          <>
-            <Button
-              variant="ghost"
-              onClick={() => setDeleteCandidate(null)}
-              disabled={deleting}
-            >
-              Vazgeç
-            </Button>
-            <Button
-              variant="destructive"
-              onClick={confirmDeleteDocument}
-              loading={deleting}
-            >
-              Sil
-            </Button>
-          </>
-        }
-      >
-        <p className="text-sm text-slate-600 dark:text-slate-300">
-          Bu işlem geri alınamaz. İçerik kalıcı olarak kaldırılacak.
-        </p>
-      </Modal>
+      {deleteCandidate && (
+        <ContentDeleteConfirmModal
+          deleting={deleting}
+          deleteCandidate={deleteCandidate}
+          onCancel={() => setDeleteCandidate(null)}
+          onConfirm={confirmDeleteDocument}
+        />
+      )}
     </main>
   );
 }

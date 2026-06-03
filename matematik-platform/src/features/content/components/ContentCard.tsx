@@ -24,7 +24,7 @@ import {
   getContentAuthorLabel,
   getContentPrimaryGradeLabel,
 } from '@/features/content/utils';
-import { getWorksheetVisibleDescription } from '@/features/content/worksheet';
+import { getWorksheetVisibleDescription } from '@/features/content/worksheet-display';
 import { getGoogleDriveThumbnailUrl } from '@/lib/image-url';
 import type { ContentPageUser } from '@/features/content/types';
 import type { ContentDocument } from '@/types';
