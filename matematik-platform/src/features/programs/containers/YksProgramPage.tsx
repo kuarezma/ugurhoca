@@ -2,7 +2,14 @@
 
 import { useMemo, useState } from 'react';
 import { motion } from 'framer-motion';
-import { ChevronRight, Filter, Info, MapPin, Target } from 'lucide-react';
+import {
+  ChevronRight,
+  ExternalLink,
+  Filter,
+  Info,
+  MapPin,
+  Target,
+} from 'lucide-react';
 import { useTheme } from '@/components/ThemeProvider';
 import { ProgramBackLink } from '@/features/programs/components/ProgramBackLink';
 import { ProgramMetricCard } from '@/features/programs/components/ProgramMetricCard';
@@ -42,6 +49,13 @@ const levelSectionLabels: Record<ProgramTargetLevel, string> = {
   dengeli: 'Dengeli Hedefler',
   guvenli: 'Güvenli Hedefler',
 };
+
+const buildSourceLinkClassName = (isLight: boolean) =>
+  `inline-flex items-center gap-1.5 rounded-xl border px-3 py-2 text-xs font-bold transition-colors ${
+    isLight
+      ? 'border-slate-200 bg-white/80 text-slate-700 hover:border-cyan-300 hover:text-cyan-700'
+      : 'border-white/10 bg-white/10 text-slate-100 hover:border-cyan-300/50 hover:text-cyan-100'
+  }`;
 
 export default function YksWizardPage() {
   const { theme } = useTheme();
@@ -1049,6 +1063,38 @@ export default function YksWizardPage() {
                                   </span>
                                 ) : null}
                               </div>
+
+                              {program.source_url_osym ||
+                              program.source_url_yokatlas ? (
+                                <div className="mt-3 flex flex-wrap gap-2">
+                                  {program.source_url_osym ? (
+                                    <a
+                                      href={program.source_url_osym}
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                      className={buildSourceLinkClassName(
+                                        isLight,
+                                      )}
+                                    >
+                                      ÖSYM kaynağı
+                                      <ExternalLink className="h-3.5 w-3.5" />
+                                    </a>
+                                  ) : null}
+                                  {program.source_url_yokatlas ? (
+                                    <a
+                                      href={program.source_url_yokatlas}
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                      className={buildSourceLinkClassName(
+                                        isLight,
+                                      )}
+                                    >
+                                      YÖK Atlas
+                                      <ExternalLink className="h-3.5 w-3.5" />
+                                    </a>
+                                  ) : null}
+                                </div>
+                              ) : null}
                             </article>
                           );
                         })}

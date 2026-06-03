@@ -2,7 +2,14 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import { motion } from 'framer-motion';
-import { ChevronRight, Filter, Info, MapPin, Target } from 'lucide-react';
+import {
+  ChevronRight,
+  ExternalLink,
+  Filter,
+  Info,
+  MapPin,
+  Target,
+} from 'lucide-react';
 import { useTheme } from '@/components/ThemeProvider';
 import { ProgramBackLink } from '@/features/programs/components/ProgramBackLink';
 import { ProgramMetricCard } from '@/features/programs/components/ProgramMetricCard';
@@ -36,6 +43,16 @@ const levelSectionLabels: Record<ProgramTargetLevel, string> = {
 };
 
 const INITIAL_VISIBLE_SCHOOL_COUNT = 24;
+
+const buildSourceLinkClassName = (isLight: boolean) =>
+  `inline-flex items-center gap-1.5 rounded-xl border px-3 py-2 text-xs font-bold transition-colors ${
+    isLight
+      ? 'border-slate-200 bg-white/80 text-slate-700 hover:border-cyan-300 hover:text-cyan-700'
+      : 'border-white/10 bg-white/10 text-slate-100 hover:border-cyan-300/50 hover:text-cyan-100'
+  }`;
+
+const getLgsSourceLabel = (sourceUrl: string) =>
+  sourceUrl.includes('meb.gov.tr') ? 'MEB kaynağı' : 'Veri kaynağı';
 
 const createInitialVisibleSchoolCounts = (): Record<
   ProgramTargetLevel,
@@ -846,6 +863,22 @@ export default function LgsWizardPage() {
                                   })}
                                 </div>
                               </div>
+
+                              {school.source_url ? (
+                                <div className="mt-3 flex flex-wrap gap-2">
+                                  <a
+                                    href={school.source_url}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className={buildSourceLinkClassName(
+                                      isLight,
+                                    )}
+                                  >
+                                    {getLgsSourceLabel(school.source_url)}
+                                    <ExternalLink className="h-3.5 w-3.5" />
+                                  </a>
+                                </div>
+                              ) : null}
                             </article>
                           );
                         })}
