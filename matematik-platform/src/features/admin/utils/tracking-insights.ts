@@ -31,6 +31,14 @@ export type TrackingInsight = {
   weeklyProgress: number;
 };
 
+export type TrackingSortOption =
+  | 'risk'
+  | 'lastActivity'
+  | 'inactiveDays'
+  | 'unreadMessages'
+  | 'weeklyTargetLag'
+  | 'latestQuizPercent';
+
 type BuildTrackingInsightsInput = {
   activityEvents: StudentActivityEvent[];
   adminStatuses: StudentAdminStatus[];
@@ -72,6 +80,54 @@ const getQuizPercent = (result?: AdminQuizResultRow | null) => {
   return Math.round((result.score / Math.max(result.total_questions, 1)) * 100);
 };
 
+const getTime = (value: string | null) =>
+  value ? new Date(value).getTime() : Number.NEGATIVE_INFINITY;
+
+const compareByName = (left: TrackingInsight, right: TrackingInsight) =>
+  (left.student.name || '').localeCompare(right.student.name || '', 'tr-TR');
+
+export const sortTrackingInsights = (
+  insights: TrackingInsight[],
+  sortOption: TrackingSortOption,
+) => {
+  const riskOrder = { high: 0, medium: 1, low: 2 };
+  const sortedInsights = [...insights].sort((left, right) => {
+    if (sortOption === 'lastActivity') {
+      const activityDelta =
+        getTime(right.lastActivityAt) - getTime(left.lastActivityAt);
+      if (activityDelta !== 0) return activityDelta;
+    } else if (sortOption === 'inactiveDays') {
+      const inactiveDelta = right.inactiveDays - left.inactiveDays;
+      if (inactiveDelta !== 0) return inactiveDelta;
+    } else if (sortOption === 'unreadMessages') {
+      const unreadDelta = right.unreadMessages - left.unreadMessages;
+      if (unreadDelta !== 0) return unreadDelta;
+    } else if (sortOption === 'weeklyTargetLag') {
+      const leftLag = Math.max(0, 100 - left.weeklyProgress);
+      const rightLag = Math.max(0, 100 - right.weeklyProgress);
+      const targetDelta = rightLag - leftLag;
+      if (targetDelta !== 0) return targetDelta;
+    } else if (sortOption === 'latestQuizPercent') {
+      const leftPercent = left.latestQuizPercent ?? Number.POSITIVE_INFINITY;
+      const rightPercent = right.latestQuizPercent ?? Number.POSITIVE_INFINITY;
+      const quizDelta = leftPercent - rightPercent;
+      if (quizDelta !== 0) return quizDelta;
+    }
+
+    const riskDelta = riskOrder[left.riskLevel] - riskOrder[right.riskLevel];
+    if (riskDelta !== 0) return riskDelta;
+
+    const favoriteDelta =
+      Number(Boolean(right.student.is_favorite)) -
+      Number(Boolean(left.student.is_favorite));
+    if (favoriteDelta !== 0) return favoriteDelta;
+
+    return compareByName(left, right);
+  });
+
+  return sortedInsights;
+};
+
 export const buildTrackingInsights = ({
   activityEvents,
   adminStatuses,
@@ -89,7 +145,8 @@ export const buildTrackingInsights = ({
 }: BuildTrackingInsightsInput): TrackingInsight[] => {
   const submissionsByStudent = new Map<string, Set<string>>();
   for (const submission of submissions) {
-    const set = submissionsByStudent.get(submission.student_id) ?? new Set<string>();
+    const set =
+      submissionsByStudent.get(submission.student_id) ?? new Set<string>();
     set.add(submission.assignment_id);
     submissionsByStudent.set(submission.student_id, set);
   }
@@ -115,7 +172,9 @@ export const buildTrackingInsights = ({
     eventsByStudent.set(event.user_id, rows);
   }
 
-  const goalsByStudent = new Map(studyGoals.map((goal) => [goal.user_id, goal]));
+  const goalsByStudent = new Map(
+    studyGoals.map((goal) => [goal.user_id, goal]),
+  );
   const statusesByStudent = new Map(
     adminStatuses.map((status) => [status.student_id, status]),
   );
@@ -157,7 +216,8 @@ export const buildTrackingInsights = ({
     const weeklyMinutes = studentSessions
       .filter((session) => new Date(session.date) >= weekStart)
       .reduce((sum, session) => sum + (session.duration || 0), 0);
-    const targetMinutes = goalsByStudent.get(student.id)?.target_duration ?? 600;
+    const targetMinutes =
+      goalsByStudent.get(student.id)?.target_duration ?? 600;
     const weeklyProgress = Math.round(
       (weeklyMinutes / Math.max(targetMinutes, 1)) * 100,
     );
@@ -168,12 +228,16 @@ export const buildTrackingInsights = ({
       ...submissions
         .filter((submission) => submission.student_id === student.id)
         .map((submission) => submission.submitted_at || null),
-      ...(eventsByStudent.get(student.id) ?? []).map((event) => event.created_at),
+      ...(eventsByStudent.get(student.id) ?? []).map(
+        (event) => event.created_at,
+      ),
     ].filter(Boolean) as string[];
     const lastActivityAt =
       candidateDates.sort(
         (left, right) => new Date(right).getTime() - new Date(left).getTime(),
-      )[0] || student.created_at || null;
+      )[0] ||
+      student.created_at ||
+      null;
     const inactiveDays = getDaysSince(lastActivityAt, now);
     const status = statusesByStudent.get(student.id) ?? null;
     const studentPlans = plansByStudent.get(student.id) ?? [];
@@ -230,8 +294,12 @@ export const buildTrackingDashboard = (insights: TrackingInsight[]) => {
   const activeToday = insights.filter(
     (insight) => insight.activityStatus === 'today',
   ).length;
-  const inactive = insights.filter((insight) => insight.inactiveDays >= 7).length;
-  const highRisk = insights.filter((insight) => insight.riskLevel === 'high').length;
+  const inactive = insights.filter(
+    (insight) => insight.inactiveDays >= 7,
+  ).length;
+  const highRisk = insights.filter(
+    (insight) => insight.riskLevel === 'high',
+  ).length;
   const unreadMessages = insights.reduce(
     (sum, insight) => sum + insight.unreadMessages,
     0,

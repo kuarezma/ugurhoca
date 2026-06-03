@@ -21,7 +21,9 @@ import { buildTrackingActivityAnalytics } from '@/features/admin/utils/tracking-
 import {
   buildTrackingDashboard,
   buildTrackingInsights,
+  sortTrackingInsights,
 } from '@/features/admin/utils/tracking-insights';
+import type { TrackingSortOption } from '@/features/admin/utils/tracking-insights';
 import type {
   AdminAssignment,
   AdminDocument,
@@ -97,6 +99,7 @@ export default function AdminTrackingTab({
   const [favoriteFilter, setFavoriteFilter] = useState<FavoriteFilter>('all');
   const [gradeFilter, setGradeFilter] = useState('all');
   const [labelFilter, setLabelFilter] = useState('');
+  const [sortOption, setSortOption] = useState<TrackingSortOption>('risk');
   const weekStart = useMemo(() => getCurrentWeekStart(), []);
   const todayStart = useMemo(() => {
     const start = new Date();
@@ -105,12 +108,17 @@ export default function AdminTrackingTab({
   }, []);
 
   const studentUsers = useMemo(
-    () => students.filter((student) => !student.isAdmin && !isAdminEmail(student.email)),
+    () =>
+      students.filter(
+        (student) => !student.isAdmin && !isAdminEmail(student.email),
+      ),
     [students],
   );
 
   const gradeOptions = useMemo(() => {
-    const grades = new Set(studentUsers.map((student) => String(student.grade)));
+    const grades = new Set(
+      studentUsers.map((student) => String(student.grade)),
+    );
     return Array.from(grades).sort((left, right) => {
       if (left === 'Mezun') return 1;
       if (right === 'Mezun') return -1;
@@ -154,48 +162,37 @@ export default function AdminTrackingTab({
     const normalizedQuery = searchQuery.trim().toLocaleLowerCase('tr-TR');
     const normalizedLabel = labelFilter.trim().toLocaleLowerCase('tr-TR');
 
-    return insights
-      .filter((insight) => {
-        const matchesSearch =
-          !normalizedQuery ||
-          (insight.student.name || '').toLocaleLowerCase('tr-TR').includes(normalizedQuery);
-        const matchesRisk = riskFilter === 'all' || insight.riskLevel === riskFilter;
-        const matchesActivity =
-          activityFilter === 'all' || insight.activityStatus === activityFilter;
-        const matchesGrade =
-          gradeFilter === 'all' || String(insight.student.grade) === gradeFilter;
-        const matchesFavorite =
-          favoriteFilter === 'all' || Boolean(insight.student.is_favorite);
-        const matchesLabel =
-          !normalizedLabel ||
-          (insight.status?.labels || []).some((label) =>
-            label.toLocaleLowerCase('tr-TR').includes(normalizedLabel),
-          );
-
-        return (
-          matchesSearch &&
-          matchesRisk &&
-          matchesActivity &&
-          matchesGrade &&
-          matchesFavorite &&
-          matchesLabel
+    const visibleInsights = insights.filter((insight) => {
+      const matchesSearch =
+        !normalizedQuery ||
+        (insight.student.name || '')
+          .toLocaleLowerCase('tr-TR')
+          .includes(normalizedQuery);
+      const matchesRisk =
+        riskFilter === 'all' || insight.riskLevel === riskFilter;
+      const matchesActivity =
+        activityFilter === 'all' || insight.activityStatus === activityFilter;
+      const matchesGrade =
+        gradeFilter === 'all' || String(insight.student.grade) === gradeFilter;
+      const matchesFavorite =
+        favoriteFilter === 'all' || Boolean(insight.student.is_favorite);
+      const matchesLabel =
+        !normalizedLabel ||
+        (insight.status?.labels || []).some((label) =>
+          label.toLocaleLowerCase('tr-TR').includes(normalizedLabel),
         );
-      })
-      .sort((left, right) => {
-        const riskOrder = { high: 0, medium: 1, low: 2 };
-        const riskDelta = riskOrder[left.riskLevel] - riskOrder[right.riskLevel];
-        if (riskDelta !== 0) return riskDelta;
 
-        const favoriteDelta =
-          Number(Boolean(right.student.is_favorite)) -
-          Number(Boolean(left.student.is_favorite));
-        if (favoriteDelta !== 0) return favoriteDelta;
+      return (
+        matchesSearch &&
+        matchesRisk &&
+        matchesActivity &&
+        matchesGrade &&
+        matchesFavorite &&
+        matchesLabel
+      );
+    });
 
-        return (left.student.name || '').localeCompare(
-          right.student.name || '',
-          'tr-TR',
-        );
-      });
+    return sortTrackingInsights(visibleInsights, sortOption);
   }, [
     activityFilter,
     favoriteFilter,
@@ -204,6 +201,7 @@ export default function AdminTrackingTab({
     labelFilter,
     riskFilter,
     searchQuery,
+    sortOption,
   ]);
 
   const dashboard = useMemo(() => buildTrackingDashboard(insights), [insights]);
@@ -237,8 +235,8 @@ export default function AdminTrackingTab({
       </section>
 
       <section className="rounded-2xl border border-white/10 bg-white/5 p-4">
-        <div className="grid gap-3 lg:grid-cols-[minmax(0,1fr)_auto_auto_auto_auto_auto]">
-          <label className="relative block">
+        <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-[minmax(0,1fr)_repeat(6,minmax(9rem,auto))]">
+          <label className="relative block sm:col-span-2 xl:col-span-1">
             <span className="sr-only">Öğrenci ara</span>
             <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500" />
             <input
@@ -248,7 +246,10 @@ export default function AdminTrackingTab({
               className="w-full rounded-xl border border-white/10 bg-slate-950/60 py-2.5 pl-10 pr-3 text-sm text-white placeholder:text-slate-500 outline-none focus:border-cyan-400/60 focus:ring-2 focus:ring-cyan-400/20"
             />
           </label>
-          <Select value={riskFilter} onChange={(value) => setRiskFilter(value as RiskFilter)}>
+          <Select
+            value={riskFilter}
+            onChange={(value) => setRiskFilter(value as RiskFilter)}
+          >
             <option value="all">Tüm riskler</option>
             <option value="high">Yüksek risk</option>
             <option value="medium">Takipte</option>
@@ -278,6 +279,17 @@ export default function AdminTrackingTab({
             <option value="all">Tüm öğrenciler</option>
             <option value="favorites">Favoriler</option>
           </Select>
+          <Select
+            value={sortOption}
+            onChange={(value) => setSortOption(value as TrackingSortOption)}
+          >
+            <option value="risk">Risk önceliği</option>
+            <option value="lastActivity">Son aktivite</option>
+            <option value="inactiveDays">Pasif gün sayısı</option>
+            <option value="unreadMessages">Okunmamış mesaj</option>
+            <option value="weeklyTargetLag">Hedef geriliği</option>
+            <option value="latestQuizPercent">Son test yüzdesi</option>
+          </Select>
           <label className="relative block">
             <span className="sr-only">Takip etiketi</span>
             <Filter className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500" />
@@ -285,7 +297,7 @@ export default function AdminTrackingTab({
               value={labelFilter}
               onChange={(event) => setLabelFilter(event.target.value)}
               placeholder="Etiket"
-              className="w-full rounded-xl border border-white/10 bg-slate-950/60 py-2.5 pl-10 pr-3 text-sm text-white placeholder:text-slate-500 outline-none focus:border-cyan-400/60 focus:ring-2 focus:ring-cyan-400/20 lg:w-36"
+              className="w-full rounded-xl border border-white/10 bg-slate-950/60 py-2.5 pl-10 pr-3 text-sm text-white placeholder:text-slate-500 outline-none focus:border-cyan-400/60 focus:ring-2 focus:ring-cyan-400/20"
             />
           </label>
         </div>
@@ -293,12 +305,13 @@ export default function AdminTrackingTab({
 
       <section className="grid gap-4 xl:grid-cols-[0.75fr_1fr_1fr]">
         <div className="rounded-2xl border border-white/10 bg-white/5 p-5">
-          <h3 className="mb-4 text-base font-bold text-white">
-            Canlı Ölçüm
-          </h3>
+          <h3 className="mb-4 text-base font-bold text-white">Canlı Ölçüm</h3>
           <div className="grid grid-cols-2 gap-3">
             <Metric label="7 gün event" value={activityAnalytics.last7Count} />
-            <Metric label="30 gün event" value={activityAnalytics.last30Count} />
+            <Metric
+              label="30 gün event"
+              value={activityAnalytics.last30Count}
+            />
           </div>
           <div className="mt-4 space-y-2">
             {activityAnalytics.topTypes.length === 0 ? (
@@ -547,7 +560,7 @@ function Select({
     <select
       value={value}
       onChange={(event) => onChange(event.target.value)}
-      className="w-full rounded-xl border border-white/10 bg-slate-950/60 px-3 py-2.5 text-sm text-white outline-none focus:border-cyan-400/60 focus:ring-2 focus:ring-cyan-400/20 lg:w-40"
+      className="w-full rounded-xl border border-white/10 bg-slate-950/60 px-3 py-2.5 text-sm text-white outline-none focus:border-cyan-400/60 focus:ring-2 focus:ring-cyan-400/20"
     >
       {children}
     </select>

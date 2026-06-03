@@ -10,6 +10,7 @@ import type {
 import {
   buildTrackingDashboard,
   buildTrackingInsights,
+  sortTrackingInsights,
 } from '@/features/admin/utils/tracking-insights';
 
 const now = new Date('2026-04-30T12:00:00Z');
@@ -80,15 +81,17 @@ const notification = (
   user_id: 'admin-1',
 });
 
-const build = (overrides: {
-  assignments?: AdminAssignment[];
-  notifications?: AdminNotification[];
-  quizResults?: AdminQuizResultRow[];
-  studyGoals?: AdminStudyGoalRow[];
-  studySessions?: AdminStudySessionRow[];
-  students?: AdminUser[];
-  submissions?: AdminSubmission[];
-} = {}) =>
+const build = (
+  overrides: {
+    assignments?: AdminAssignment[];
+    notifications?: AdminNotification[];
+    quizResults?: AdminQuizResultRow[];
+    studyGoals?: AdminStudyGoalRow[];
+    studySessions?: AdminStudySessionRow[];
+    students?: AdminUser[];
+    submissions?: AdminSubmission[];
+  } = {},
+) =>
   buildTrackingInsights({
     activityEvents: [],
     adminStatuses: [],
@@ -110,7 +113,9 @@ describe('buildTrackingInsights', () => {
     const [insight] = build({
       assignments: [assignment('assignment-1', '2026-04-20T12:00:00Z')],
       notifications: [notification('message-1', 'student-1')],
-      quizResults: [quizResult('result-1', 'student-1', 4, '2026-04-10T10:00:00Z')],
+      quizResults: [
+        quizResult('result-1', 'student-1', 4, '2026-04-10T10:00:00Z'),
+      ],
       studyGoals: [
         {
           target_duration: 600,
@@ -182,5 +187,56 @@ describe('buildTrackingInsights', () => {
       inactive: 2,
       unreadMessages: 1,
     });
+  });
+
+  it('sorts students by selected tracking signal', () => {
+    const insights = build({
+      notifications: [
+        notification('message-1', 'student-3'),
+        notification('message-2', 'student-3'),
+      ],
+      quizResults: [
+        quizResult('result-1', 'student-1', 8, '2026-04-29T10:00:00Z'),
+        quizResult('result-2', 'student-2', 5, '2026-04-20T10:00:00Z'),
+      ],
+      studyGoals: [
+        {
+          target_duration: 600,
+          user_id: 'student-1',
+          week_start: '2026-04-27',
+        },
+        {
+          target_duration: 600,
+          user_id: 'student-2',
+          week_start: '2026-04-27',
+        },
+        {
+          target_duration: 600,
+          user_id: 'student-3',
+          week_start: '2026-04-27',
+        },
+      ],
+      studySessions: [
+        session('session-1', 'student-1', '2026-04-30', 100),
+        session('session-2', 'student-2', '2026-04-20', 30),
+        session('session-3', 'student-3', '2026-04-28', 500),
+      ],
+      students: [
+        student('student-1', 'Ayşe'),
+        student('student-2', 'Bora'),
+        student('student-3', 'Ceren'),
+      ],
+    });
+
+    const names = (sortOption: Parameters<typeof sortTrackingInsights>[1]) =>
+      sortTrackingInsights(insights, sortOption).map(
+        (insight) => insight.student.name,
+      );
+
+    expect(names('lastActivity')[0]).toBe('Ayşe');
+    expect(names('inactiveDays')[0]).toBe('Bora');
+    expect(names('unreadMessages')[0]).toBe('Ceren');
+    expect(names('weeklyTargetLag')[0]).toBe('Bora');
+    expect(names('latestQuizPercent')).toEqual(['Bora', 'Ayşe', 'Ceren']);
   });
 });
