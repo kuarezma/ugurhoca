@@ -74,7 +74,7 @@ npm run setup:env
 NEXT_PUBLIC_SUPABASE_URL=https://YOUR_PROJECT_ID.supabase.co
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key_here
 SUPABASE_SERVICE_ROLE_KEY=your_supabase_service_role_key_here
-ADMIN_EMAILS=admin@ugurhoca.com
+ADMIN_EXTRA_EMAILS=ikinci-admin@ugurhoca.com
 RESEND_API_KEY=your_resend_api_key_here
 
 # Canlı ders için
@@ -84,6 +84,8 @@ LIVEKIT_API_SECRET=your_livekit_api_secret
 LESSON_TEACHER_SECRET=strong_teacher_secret
 LESSON_PERSIST_SIGNING_SECRET=strong_persist_secret
 ```
+
+`admin@ugurhoca.com` adresi varsayılan admin olarak koda gömülüdür; `ADMIN_EXTRA_EMAILS` yalnızca ek admin adresleri tanımlar. Değişkenlerin tam listesi ve açıklamaları için `matematik-platform/.env.example` dosyasına bakın.
 
 Geliştirme sunucusunu başlat:
 

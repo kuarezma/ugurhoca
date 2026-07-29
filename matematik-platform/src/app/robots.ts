@@ -5,7 +5,16 @@ export default function robots(): MetadataRoute.Robots {
     rules: {
       userAgent: '*',
       allow: '/',
-      disallow: ['/admin/', '/api/'],
+      disallow: [
+        '/admin/',
+        '/api/',
+        '/profil',
+        '/odevler',
+        '/ilerleme',
+        '/canli-ders',
+        '/giris',
+        '/kayit',
+      ],
     },
     sitemap: 'https://ugurhoca.com/sitemap.xml',
   };
