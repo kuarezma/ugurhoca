@@ -84,6 +84,8 @@ export default function ContentPreviewModal({
               src={previewDoc.file_url}
               className="h-full min-h-[48vh] w-full sm:min-h-[60vh]"
               title={previewDoc.title}
+              sandbox="allow-same-origin"
+              referrerPolicy="no-referrer"
             />
           ) : driveId ? (
             <iframe

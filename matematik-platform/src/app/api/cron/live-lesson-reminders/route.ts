@@ -1,11 +1,11 @@
 import { NextResponse } from 'next/server';
+import { isAuthorizedCronRequest } from '@/lib/cron-auth';
 import { sendDueLiveLessonReminders } from '@/features/live-lessons/server/liveLessons';
 
 export const runtime = 'nodejs';
 
 export async function GET(request: Request) {
-  const authHeader = request.headers.get('authorization');
-  if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
+  if (!isAuthorizedCronRequest(request)) {
     return NextResponse.json({ error: 'Yetkisiz istek.' }, { status: 401 });
   }
 
