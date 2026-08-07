@@ -10,7 +10,6 @@ import type { LiveLesson } from '@/features/live-lessons/types';
 import {
   isValidRoomId,
   signPersistToken,
-  verifyTeacherProof,
 } from '@/features/live-lessons/lib/lesson-auth';
 
 export const runtime = 'nodejs';
@@ -20,7 +19,6 @@ type Body = {
   lessonId: string;
   roomName: string;
   role: 'teacher' | 'student';
-  teacherProof?: string;
 };
 
 export async function POST(request: Request) {
@@ -60,12 +58,11 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: 'Ders aktif değil.' }, { status: 404 });
   }
 
+  // Öğretmen yetkisi yalnızca doğrulanmış admin JWT'sine dayanır; istemciye asla
+  // teacher_proof sızdırılmadığı için ayrı HMAC ikinci faktörüne gerek kalmadı.
   const isAdmin = isLiveLessonAdmin(auth.user);
-  if (body.role === 'teacher') {
-    const validProof = verifyTeacherProof(body.roomName, body.teacherProof);
-    if (!isAdmin || !validProof) {
-      return NextResponse.json({ error: 'Öğretmen yetkisi doğrulanamadı.' }, { status: 403 });
-    }
+  if (body.role === 'teacher' && !isAdmin) {
+    return NextResponse.json({ error: 'Öğretmen yetkisi doğrulanamadı.' }, { status: 403 });
   }
   if (body.role === 'student' && !canUserAccessLiveLesson(lesson as LiveLesson, auth.user)) {
     return NextResponse.json({ error: 'Bu ders size açık değil.' }, { status: 403 });

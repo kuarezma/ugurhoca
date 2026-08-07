@@ -5,7 +5,7 @@ import {
   loadLiveLessonsForCurrentUser,
   loadLiveLessonStudentOptions,
 } from '@/features/live-lessons/server/liveLessons';
-import { getServerAuthSnapshot } from '@/lib/auth-snapshot.server';
+import { getVerifiedServerUser } from '@/lib/auth-verify.server';
 import { createPageMetadata } from '@/lib/site-metadata';
 
 export const metadata: Metadata = createPageMetadata({
@@ -16,7 +16,7 @@ export const metadata: Metadata = createPageMetadata({
 });
 
 export default async function CanliDersPage() {
-  const user = await getServerAuthSnapshot();
+  const user = await getVerifiedServerUser();
   if (!user) {
     redirect('/giris');
   }

@@ -2,9 +2,13 @@ import 'server-only';
 
 import { revalidatePath } from 'next/cache';
 import { NextResponse } from 'next/server';
-import { isAdminEmail } from '@/lib/admin';
-import { getServerAccessToken, getServerAuthSnapshot } from '@/lib/auth-snapshot.server';
+import type { AuthSnapshot } from '@/lib/auth-snapshot';
+import { getVerifiedServerUser } from '@/lib/auth-verify.server';
 import { createServiceRoleClient } from '@/lib/supabase/server';
+import {
+  isLiveLessonAdmin,
+  toClientLiveLesson,
+} from '@/features/live-lessons/lib/lesson-access';
 import { generateRoomId, signTeacherProof } from '@/features/live-lessons/lib/lesson-auth';
 import type {
   LiveLesson,
@@ -21,14 +25,11 @@ const MAX_RECURRING_LESSONS = 16;
 const VALID_TARGET_GRADES = ['5', '6', '7', '8', 'Mezun', 'all', 'selected'];
 
 type RouteAuth =
-  | { ok: true; user: NonNullable<Awaited<ReturnType<typeof getServerAuthSnapshot>>>; accessToken: string | null }
+  | { ok: true; user: AuthSnapshot }
   | { ok: false; response: NextResponse };
 
 export async function requireLiveLessonUser(): Promise<RouteAuth> {
-  const [user, accessToken] = await Promise.all([
-    getServerAuthSnapshot(),
-    getServerAccessToken(),
-  ]);
+  const user = await getVerifiedServerUser();
 
   if (!user) {
     return {
@@ -37,17 +38,19 @@ export async function requireLiveLessonUser(): Promise<RouteAuth> {
     };
   }
 
-  return { accessToken, ok: true, user };
+  return { ok: true, user };
 }
 
-export function isLiveLessonAdmin(user: { email?: string | null; isAdmin?: boolean }) {
-  return Boolean(user.isAdmin || isAdminEmail(user.email));
-}
+export {
+  canUserAccessLiveLesson,
+  isLiveLessonAdmin,
+  toClientLiveLesson,
+} from '@/features/live-lessons/lib/lesson-access';
 
 export async function loadLiveLessonsForCurrentUser(): Promise<LiveLesson[]> {
-  const snapshot = await getServerAuthSnapshot();
+  const user = await getVerifiedServerUser();
 
-  if (!snapshot) {
+  if (!user) {
     return [];
   }
 
@@ -58,30 +61,30 @@ export async function loadLiveLessonsForCurrentUser(): Promise<LiveLesson[]> {
     .in('status', ['scheduled', 'active'])
     .order('starts_at', { ascending: true });
 
-  const { data, error } = isLiveLessonAdmin(snapshot)
+  const { data, error } = isLiveLessonAdmin(user)
     ? await query
     : await query.or(
-        `target_grade.eq.${snapshot.grade},target_grade.eq.all,target_student_ids.cs.{${snapshot.id}}`,
+        `target_grade.eq.${user.grade},target_grade.eq.all,target_student_ids.cs.{${user.id}}`,
       );
 
-  if (error && !isLiveLessonAdmin(snapshot)) {
+  if (error && !isLiveLessonAdmin(user)) {
     const { data: gradeData } = await supabase
       .from('live_lessons')
       .select('*')
       .in('status', ['scheduled', 'active'])
-      .or(`target_grade.eq.${snapshot.grade},target_grade.eq.all`)
+      .or(`target_grade.eq.${user.grade},target_grade.eq.all`)
       .order('starts_at', { ascending: true });
 
-    return (gradeData || []) as LiveLesson[];
+    return ((gradeData || []) as LiveLesson[]).map(toClientLiveLesson);
   }
 
-  return (data || []) as LiveLesson[];
+  return ((data || []) as LiveLesson[]).map(toClientLiveLesson);
 }
 
 export async function loadLiveLessonStudentOptions(): Promise<AppUser[]> {
-  const snapshot = await getServerAuthSnapshot();
+  const user = await getVerifiedServerUser();
 
-  if (!snapshot || !isLiveLessonAdmin(snapshot)) {
+  if (!user || !isLiveLessonAdmin(user)) {
     return [];
   }
 
@@ -122,7 +125,7 @@ export async function loadLiveLessonDashboardData(): Promise<LiveLessonDashboard
   return {
     chatMessages: (chatRes.data || []) as LiveLessonChatMessage[],
     events: (eventsRes.data || []) as LiveLessonEvent[],
-    lessons: (lessonsRes.data || []) as LiveLesson[],
+    lessons: ((lessonsRes.data || []) as LiveLesson[]).map(toClientLiveLesson),
     participants: (participantsRes.data || []) as LiveLessonParticipant[],
   };
 }
@@ -224,20 +227,6 @@ async function notifyLessonAudience({
   });
 }
 
-function isStudentTargeted(lesson: LiveLesson, userId: string) {
-  return Array.isArray(lesson.target_student_ids) && lesson.target_student_ids.includes(userId);
-}
-
-export function canUserAccessLiveLesson(
-  lesson: LiveLesson,
-  user: { grade?: string | number | null; id: string },
-) {
-  if (lesson.target_grade === 'selected') {
-    return isStudentTargeted(lesson, user.id);
-  }
-  return lesson.target_grade === 'all' || String(user.grade) === String(lesson.target_grade);
-}
-
 export async function createLiveLesson(input: {
   description?: string | null;
   durationMinutes: number;
@@ -324,7 +313,7 @@ export async function createLiveLessons(input: {
   }
 
   revalidatePath('/canli-ders');
-  return lessons;
+  return lessons.map(toClientLiveLesson);
 }
 
 export async function updateLiveLesson(input: {
@@ -413,7 +402,7 @@ export async function updateLiveLesson(input: {
 
   revalidatePath('/canli-ders');
   revalidatePath('/admin');
-  return lesson;
+  return toClientLiveLesson(lesson);
 }
 
 export async function updateLiveLessonStatus({
@@ -452,7 +441,7 @@ export async function updateLiveLessonStatus({
   }
 
   revalidatePath('/canli-ders');
-  return lesson;
+  return toClientLiveLesson(lesson);
 }
 
 export async function recordLiveLessonEvent(input: {

@@ -3,9 +3,10 @@ import { RoomPageShell } from '@/features/live-lessons/components/room/RoomPageS
 import {
   canUserAccessLiveLesson,
   isLiveLessonAdmin,
+  toClientLiveLesson,
 } from '@/features/live-lessons/server/liveLessons';
 import type { LiveLesson } from '@/features/live-lessons/types';
-import { getServerAuthSnapshot } from '@/lib/auth-snapshot.server';
+import { getVerifiedServerUser } from '@/lib/auth-verify.server';
 import { createServiceRoleClient } from '@/lib/supabase/server';
 
 type Props = {
@@ -13,7 +14,7 @@ type Props = {
 };
 
 export default async function CanliDersRoomPage({ params }: Props) {
-  const user = await getServerAuthSnapshot();
+  const user = await getVerifiedServerUser();
   if (!user) {
     redirect('/giris');
   }
@@ -30,7 +31,7 @@ export default async function CanliDersRoomPage({ params }: Props) {
     redirect('/canli-ders');
   }
 
-  const lesson = data as LiveLesson;
+  const lesson = toClientLiveLesson(data as LiveLesson);
   const isAdmin = isLiveLessonAdmin(user);
   if (!isAdmin && !canUserAccessLiveLesson(lesson, user)) {
     redirect('/canli-ders');
@@ -41,7 +42,6 @@ export default async function CanliDersRoomPage({ params }: Props) {
       displayName={user.name}
       lesson={lesson}
       role={isAdmin ? 'teacher' : 'student'}
-      teacherProof={isAdmin ? lesson.teacher_proof : null}
       userId={user.id}
     />
   );

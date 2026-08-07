@@ -4,6 +4,7 @@ import {
   canUserAccessLiveLesson,
   isLiveLessonAdmin,
   requireLiveLessonUser,
+  toClientLiveLesson,
 } from '@/features/live-lessons/server/liveLessons';
 import type { LiveLesson } from '@/features/live-lessons/types';
 
@@ -51,5 +52,5 @@ export async function POST(_request: Request, context: RouteContext) {
       .eq('id', lessonId);
   }
 
-  return NextResponse.json({ lesson, role });
+  return NextResponse.json({ lesson: toClientLiveLesson(lesson as LiveLesson), role });
 }
