@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { getGoogleDriveThumbnailUrl } from '@/lib/image-url';
+import { enforceRateLimit, getClientIp } from '@/lib/rate-limit';
 import { isIP } from 'node:net';
 
 const IMAGE_FETCH_TIMEOUT_MS = 7_000;
@@ -18,6 +19,16 @@ const DEFAULT_IMAGE_PROXY_ALLOWED_HOSTS = [
 ];
 
 export async function GET(request: Request) {
+  // Görsel-yoğun sayfalar tek gezinmede çok istek üretebildiği için limit yüksek
+  // tutuldu; amaç yalnızca kötüye kullanımı (bant genişliği/SSRF amplifikasyonu) frenlemek.
+  const limited = await enforceRateLimit('image-proxy', getClientIp(request), {
+    limit: 120,
+    windowSeconds: 60,
+  });
+  if (limited) {
+    return limited;
+  }
+
   const { searchParams } = new URL(request.url);
   const url = searchParams.get('url');
 

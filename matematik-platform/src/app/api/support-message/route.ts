@@ -1,5 +1,6 @@
 import { apiError, apiOk } from '@/lib/api-response';
 import { createLogger } from '@/lib/logger';
+import { enforceRateLimit } from '@/lib/rate-limit';
 import { supportMessageSchema } from '@/lib/route-schemas';
 
 const log = createLogger('support-message');
@@ -31,6 +32,14 @@ export async function POST(request: Request) {
 
   if (userError || !user?.id) {
     return apiError('Oturum açmanız gerekiyor.', 401, 'invalid_session');
+  }
+
+  const limited = await enforceRateLimit('support-message', user.id, {
+    limit: 5,
+    windowSeconds: 60,
+  });
+  if (limited) {
+    return limited;
   }
 
   const body = await request.json().catch(() => null);

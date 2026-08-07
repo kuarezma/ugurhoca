@@ -6,23 +6,30 @@ const withBundleAnalyzer = require('@next/bundle-analyzer')({
 });
 
 const isProd = process.env.NODE_ENV === 'production';
+// Kademeli sertleştirme: 'unsafe-eval' kaldırıldı, frame-src daraltıldı ve ihlal
+// raporlaması eklendi. Politika hâlâ Report-Only — Vercel loglarındaki ihlaller
+// temiz çıkınca zorlamaya (Content-Security-Policy) geçilecek.
 const cspReportOnly = [
   "base-uri 'self'",
   "default-src 'self'",
   "font-src 'self' data:",
   "form-action 'self'",
   "frame-ancestors 'none'",
+  "frame-src 'self' https://www.youtube.com https://drive.google.com",
   "img-src 'self' data: blob: https:",
   "media-src 'self' data: blob: https:",
   "object-src 'none'",
-  "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://va.vercel-scripts.com",
+  "script-src 'self' 'unsafe-inline' https://va.vercel-scripts.com",
   "style-src 'self' 'unsafe-inline'",
   "worker-src 'self' blob:",
   "connect-src 'self' https://*.supabase.co wss://*.supabase.co https://*.livekit.cloud wss://*.livekit.cloud https://vitals.vercel-insights.com",
+  'report-uri /api/csp-report',
+  'report-to csp-endpoint',
 ].join('; ');
 
 const globalSecurityHeaders = [
   { key: 'Content-Security-Policy-Report-Only', value: cspReportOnly },
+  { key: 'Reporting-Endpoints', value: 'csp-endpoint="/api/csp-report"' },
   { key: 'X-Content-Type-Options', value: 'nosniff' },
   { key: 'X-Frame-Options', value: 'DENY' },
   { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },

@@ -1,5 +1,6 @@
 import { AccessToken, type VideoGrant } from 'livekit-server-sdk';
 import { NextResponse } from 'next/server';
+import { enforceRateLimit } from '@/lib/rate-limit';
 import { createServiceRoleClient } from '@/lib/supabase/server';
 import {
   canUserAccessLiveLesson,
@@ -24,6 +25,14 @@ type Body = {
 export async function POST(request: Request) {
   const auth = await requireLiveLessonUser();
   if (!auth.ok) return auth.response;
+
+  const limited = await enforceRateLimit('livekit-token', auth.user.id, {
+    limit: 30,
+    windowSeconds: 60,
+  });
+  if (limited) {
+    return limited;
+  }
 
   const apiKey = process.env.LIVEKIT_API_KEY;
   const apiSecret = process.env.LIVEKIT_API_SECRET;
