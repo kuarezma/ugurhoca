@@ -14,7 +14,6 @@ Uğur Hoca is a comprehensive mathematics learning platform for students. It com
 - **Gamification:** Mini games, leaderboard, badge collection
 - **Chat System:** Admin-student communication, notifications
 - **PDF Export:** Test reports, progress charts downloadable as PDF
-- **PWA Support:** Mobile app experience, offline functionality
 - **Program Data:** LGS and YKS school/program information
 
 ## Tech Stack

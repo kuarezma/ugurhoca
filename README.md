@@ -17,7 +17,7 @@ Platformun odağı sade bir öğrenci deneyimi, güçlü öğretmen yönetimi ve
 - **Oyunlaştırma:** Matematik oyunları, rozetler, puanlama ve gizliliği koruyan rumuzlu liderlik yapısı.
 - **Öğretmen paneli:** Kullanıcı yönetimi, içerik yönetimi, duyurular, mesajlar, takip merkezi ve canlı ders planlama.
 - **İçerik kütüphanesi:** Dokümanlar, yaprak testler, konu içerikleri ve LGS/YKS odaklı çalışma kaynakları.
-- **Mobil uyum:** PWA desteği, responsive arayüz ve telefon/tablet kullanımına uygun akışlar.
+- **Mobil uyum:** Responsive arayüz ve telefon/tablet kullanımına uygun akışlar.
 
 ## Teknoloji Yığını
 
@@ -41,7 +41,7 @@ ugurhoca/
 │   │   ├── hooks/               # Ortak React hook'ları
 │   │   ├── lib/                 # Yardımcı fonksiyonlar ve servisler
 │   │   └── types/               # Ortak TypeScript tipleri
-│   ├── public/                  # Statik dosyalar ve PWA varlıkları
+│   ├── public/                  # Statik dosyalar
 │   ├── scripts/                 # Veri aktarımı ve kurulum scriptleri
 │   └── supabase/migrations/     # Veritabanı migration dosyaları
 ├── docs/                        # Proje dokümantasyonu

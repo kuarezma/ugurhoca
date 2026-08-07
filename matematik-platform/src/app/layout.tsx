@@ -2,7 +2,6 @@ import type { Metadata, Viewport } from "next";
 import { Poppins, Baloo_2 } from "next/font/google";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import CookieBanner from "@/components/CookieBanner";
-import InstallPrompt from "@/components/InstallPrompt";
 import { Providers } from "@/components/Providers";
 import { THEME_STORAGE_KEY } from "@/components/theme-constants";
 import { SITE_URL, SITE_NAME } from "@/lib/site-metadata";
@@ -56,12 +55,6 @@ export const metadata: Metadata = {
     "uğur hoca",
   ],
   authors: [{ name: "Uğur Hoca" }],
-  manifest: "/manifest.json",
-  appleWebApp: {
-    capable: true,
-    statusBarStyle: "black-translucent",
-    title: "Uğur Hoca",
-  },
   formatDetection: {
     address: false,
     date: false,
@@ -103,7 +96,9 @@ export const viewport: Viewport = {
   ],
 };
 
-const serviceWorkerBootstrap = `if('serviceWorker' in navigator){window.addEventListener('load',function(){navigator.serviceWorker.getRegistrations().then(function(registrations){return Promise.all(registrations.map(function(registration){return registration.unregister();}));}).catch(function(){});if('caches' in window){caches.keys().then(function(cacheNames){return Promise.all(cacheNames.filter(function(name){return name.indexOf('ugur-hoca-v')===0;}).map(function(name){return caches.delete(name);}));}).catch(function(){});}navigator.serviceWorker.addEventListener('message',function(event){if(event&&event.data&&event.data.type==='UGUR_HOCA_SW_DISABLED'){window.location.reload();}});});}`;
+// Eski PWA kaldırıldı: daha önce service worker kaydetmiş istemcilerde kalan
+// kayıtları ve ugur-hoca-v* önbelleklerini tek seferlik temizler.
+const legacyServiceWorkerCleanup = `if('serviceWorker' in navigator){window.addEventListener('load',function(){navigator.serviceWorker.getRegistrations().then(function(registrations){return Promise.all(registrations.map(function(registration){return registration.unregister();}));}).catch(function(){});if('caches' in window){caches.keys().then(function(cacheNames){return Promise.all(cacheNames.filter(function(name){return name.indexOf('ugur-hoca-v')===0;}).map(function(name){return caches.delete(name);}));}).catch(function(){});}});}`;
 
 export default function RootLayout({
   children,
@@ -145,12 +140,10 @@ export default function RootLayout({
             <link rel="preconnect" href={supabaseOrigin} crossOrigin="anonymous" />
           </>
         ) : null}
-        {/* PWA */}
-        <meta name="mobile-web-app-capable" content="yes" />
-        <meta name="apple-mobile-web-app-capable" content="yes" />
+        {/* Eski service worker temizliği (PWA kaldırıldı) */}
         <script
           dangerouslySetInnerHTML={{
-            __html: serviceWorkerBootstrap,
+            __html: legacyServiceWorkerCleanup,
           }}
         />
       </head>
@@ -163,7 +156,6 @@ export default function RootLayout({
             {children}
           </div>
         </Providers>
-        <InstallPrompt />
         <CookieBanner />
         <SpeedInsights />
       </body>
