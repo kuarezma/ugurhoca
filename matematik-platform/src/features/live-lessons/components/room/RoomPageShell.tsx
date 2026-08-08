@@ -1,6 +1,7 @@
 "use client";
 
 import dynamic from "next/dynamic";
+import { ErrorBoundary } from "@/components/ErrorBoundary";
 import type { LiveLesson, LiveLessonRole } from "@/features/live-lessons/types";
 
 const RoomExperience = dynamic(() => import("@/features/live-lessons/components/room/RoomExperience"), {
@@ -21,5 +22,9 @@ type Props = {
 };
 
 export function RoomPageShell(props: Props) {
-  return <RoomExperience {...props} />;
+  return (
+    <ErrorBoundary>
+      <RoomExperience {...props} />
+    </ErrorBoundary>
+  );
 }

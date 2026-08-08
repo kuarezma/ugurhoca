@@ -26,6 +26,9 @@ import ContentCard from '@/features/content/components/ContentCard';
 import { Skeleton } from '@/components/ui/Skeleton';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { Button } from '@/components/ui/Button';
+import { createLogger } from '@/lib/logger';
+
+const log = createLogger('contents-page');
 
 const ContentCommentsModal = dynamic(
   () => import('@/features/content/components/ContentCommentsModal'),
@@ -308,6 +311,11 @@ function ContentsPageInner({
       );
       setWorksheetOutcomeCatalog(WORKSHEET_OUTCOME_CATALOG);
       return WORKSHEET_OUTCOME_CATALOG;
+    } catch (error) {
+      // Katalog yüklenemezse (chunk hatası) sessiz unhandled rejection yerine
+      // logla ve mevcut (boş olabilir) kataloğu döndür; fonksiyon asla reject etmez.
+      log.error('Kazanım kataloğu yüklenemedi', error);
+      return worksheetOutcomeCatalog;
     } finally {
       setWorksheetCatalogLoading(false);
     }
