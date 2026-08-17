@@ -1,7 +1,7 @@
 "use client";
 
+import { useState, type ReactNode } from "react";
 import { motion } from "framer-motion";
-import type { ReactNode } from "react";
 import {
   Award,
   BookOpen,
@@ -11,6 +11,7 @@ import {
   Flame,
   GraduationCap,
   MessageSquarePlus,
+  Printer,
   Target,
   Trophy,
   X,
@@ -21,6 +22,7 @@ import type {
 } from "@/features/admin/types";
 import { buildAdminStudentProfileSummary } from "@/features/admin/utils/student-profile";
 import { useAccessibleModal } from "@/hooks/useAccessibleModal";
+import { StudentReportPrintView } from "./StudentReportPrintView";
 
 type AdminStudentProfileDrawerProps = {
   data: AdminStudentProfileData | null;
@@ -153,6 +155,7 @@ export default function AdminStudentProfileDrawer({
   const topStudyTopics = data ? getTopStudyTopics(data.studySessions) : [];
   const effectiveStudent = student ?? (data?.student as AdminUser | null) ?? null;
   const latestPlan = data?.weeklyPlans?.[0] ?? null;
+  const [isPrintReportOpen, setIsPrintReportOpen] = useState(false);
 
   return (
     <motion.div
@@ -192,14 +195,25 @@ export default function AdminStudentProfileDrawer({
               Kayıt: {formatDate(student?.created_at || data?.student.created_at)}
             </p>
           </div>
-          <button
-            type="button"
-            onClick={onClose}
-            aria-label="Kapat"
-            className="rounded-xl border border-white/10 p-2 text-slate-400 transition-colors hover:text-white"
-          >
-            <X className="h-5 w-5" />
-          </button>
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={() => setIsPrintReportOpen(true)}
+              title="Öğrenci Gelişim Raporunu Yazdır / PDF"
+              className="inline-flex items-center gap-1.5 rounded-xl border border-indigo-400/30 bg-indigo-500/15 px-3 py-2 text-xs font-bold text-indigo-200 transition hover:bg-indigo-500/25"
+            >
+              <Printer className="h-4 w-4" />
+              <span className="hidden sm:inline">Gelişim Raporu</span>
+            </button>
+            <button
+              type="button"
+              onClick={onClose}
+              aria-label="Kapat"
+              className="rounded-xl border border-white/10 p-2 text-slate-400 transition-colors hover:text-white"
+            >
+              <X className="h-5 w-5" />
+            </button>
+          </div>
         </div>
 
         <div className="flex-1 overflow-y-auto px-6 py-6">
@@ -673,6 +687,32 @@ export default function AdminStudentProfileDrawer({
           )}
         </div>
       </motion.aside>
+
+      <StudentReportPrintView
+        isOpen={isPrintReportOpen}
+        onClose={() => setIsPrintReportOpen(false)}
+        student={
+          effectiveStudent
+            ? {
+                id: effectiveStudent.id,
+                name: effectiveStudent.name,
+                grade:
+                  typeof effectiveStudent.grade === 'number'
+                    ? effectiveStudent.grade
+                    : undefined,
+                email: effectiveStudent.email,
+                status:
+                  typeof effectiveStudent.status === 'string'
+                    ? effectiveStudent.status
+                    : undefined,
+                totalMinutes: summary?.goalSnapshot.targetMinutes,
+                completedQuizzes: data?.quizResults?.length || 0,
+                completedAssignments: data?.submissions?.length || 0,
+                averageScore: summary?.latestQuizScore ?? 85,
+              }
+            : null
+        }
+      />
     </motion.div>
   );
 }

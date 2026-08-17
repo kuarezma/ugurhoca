@@ -1,9 +1,11 @@
 'use client';
 
+import { useState } from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import {
   ArrowLeft,
+  BookOpen,
   Calculator,
   ChevronRight,
   GraduationCap,
@@ -13,6 +15,7 @@ import {
   type LucideIcon,
 } from 'lucide-react';
 import { useTheme } from '@/components/ThemeProvider';
+import { FormulaFlashcardsModal } from '@/features/programs/components/FormulaFlashcardsModal';
 
 type ProgramTool = {
   id: string;
@@ -56,21 +59,33 @@ const tools: ProgramTool[] = [
 export default function ProgramsHubPage() {
   const { theme } = useTheme();
   const isLight = theme === 'light';
+  const [isFlashcardsOpen, setIsFlashcardsOpen] = useState(false);
 
   return (
     <main className="programlar-page min-h-screen gradient-bg px-4 pb-12 pt-16 sm:px-6 sm:pt-20">
       <div className="mx-auto max-w-6xl">
-        <Link
-          href="/"
-          className={`mb-6 inline-flex items-center gap-2 text-sm font-semibold transition-colors ${
-            isLight
-              ? 'text-slate-700 hover:text-slate-950'
-              : 'text-slate-300 hover:text-white'
-          }`}
-        >
-          <ArrowLeft className="h-4 w-4" />
-          Ana Sayfa
-        </Link>
+        <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
+          <Link
+            href="/"
+            className={`inline-flex items-center gap-2 text-sm font-semibold transition-colors ${
+              isLight
+                ? 'text-slate-700 hover:text-slate-950'
+                : 'text-slate-300 hover:text-white'
+            }`}
+          >
+            <ArrowLeft className="h-4 w-4" />
+            Ana Sayfa
+          </Link>
+
+          <button
+            type="button"
+            onClick={() => setIsFlashcardsOpen(true)}
+            className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-purple-500 via-pink-500 to-orange-400 px-4 py-2 text-xs sm:text-sm font-bold text-white shadow-lg transition hover:scale-[1.02] active:scale-[0.98]"
+          >
+            <BookOpen className="h-4 w-4" />
+            Formül & Bilgi Kartları
+          </button>
+        </div>
 
         <motion.section
           initial={{ opacity: 0, y: 16 }}
@@ -178,6 +193,11 @@ export default function ProgramsHubPage() {
           </div>
         </motion.section>
       </div>
+
+      <FormulaFlashcardsModal
+        isOpen={isFlashcardsOpen}
+        onClose={() => setIsFlashcardsOpen(false)}
+      />
     </main>
   );
 }

@@ -23,6 +23,7 @@ import { trackStudentActivityEvent } from '@/features/analytics/trackActivity';
 import { broadcastHomeDocumentsUpdated } from '@/features/home/home-documents-events';
 import DeferredFloatingShapes from '@/components/DeferredFloatingShapes';
 import ContentCard from '@/features/content/components/ContentCard';
+import { ContentCategoryChips } from '@/features/content/components/ContentCategoryChips';
 import { Skeleton } from '@/components/ui/Skeleton';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { Button } from '@/components/ui/Button';
@@ -1373,6 +1374,21 @@ function ContentsPageInner({
                 )}
               </div>
             </div>
+
+            {!isWorksheetBrowser && (
+              <div className="mt-4 border-t border-white/10 pt-3">
+                <ContentCategoryChips
+                  selectedGrade={String(selectedGrade)}
+                  selectedType={selectedType}
+                  onSelectGrade={(g) => {
+                    if (g === 'all') setSelectedGrade('all');
+                    else if (g === 'Mezun') setSelectedGrade('Mezun');
+                    else setSelectedGrade(Number(g));
+                  }}
+                  onSelectType={(t) => handleTypeChange(t)}
+                />
+              </div>
+            )}
           </motion.div>
 
           {isWorksheetBrowser && (

@@ -19,11 +19,18 @@ import {
   AlertCircle,
   Download,
   Share2,
+  PenTool,
+  Maximize2,
+  Minimize2,
+  WifiOff,
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useToast } from '@/components/Toast';
 import DeferredFloatingShapes from '@/components/DeferredFloatingShapes';
 import MathText from '@/components/MathText';
+import ScratchpadModal from '@/components/ScratchpadModal';
+import { QuizQuestionPalette } from '@/features/quizzes/components/QuizQuestionPalette';
+import { QuizMistakeReviewModal } from '@/features/quizzes/components/QuizMistakeReviewModal';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { Skeleton } from '@/components/ui/Skeleton';
 import { requireClientSession } from '@/lib/auth-client';
@@ -119,9 +126,31 @@ export default function TestsPage({
   const [loading, setLoading] = useState(!isHydrated);
   const [error, setError] = useState<string | null>(null);
   const [pdfLoading, setPdfLoading] = useState(false);
+  const [isScratchpadOpen, setIsScratchpadOpen] = useState(false);
+  const [isFocusMode, setIsFocusMode] = useState(false);
+  const [flaggedQuestions, setFlaggedQuestions] = useState<Set<number>>(new Set());
+  const [isMistakeModalOpen, setIsMistakeModalOpen] = useState(false);
+  const [isOnline, setIsOnline] = useState(true);
   const resultSavedRef = useRef(false);
   const router = useRouter();
   const { showToast } = useToast();
+
+  useEffect(() => {
+    const handleOnline = () => {
+      setIsOnline(true);
+      showToast('info', 'İnternet bağlantısı yeniden kuruldu.');
+    };
+    const handleOffline = () => {
+      setIsOnline(false);
+      showToast('warning', 'İnternet bağlantısı koptu. Cevaplarınız yerel olarak güvende.');
+    };
+    window.addEventListener('online', handleOnline);
+    window.addEventListener('offline', handleOffline);
+    return () => {
+      window.removeEventListener('online', handleOnline);
+      window.removeEventListener('offline', handleOffline);
+    };
+  }, [showToast]);
   const profileHref = user?.isAdmin ? '/admin' : '/profil';
   const initialUserKey = useMemo(
     () =>
@@ -242,6 +271,46 @@ export default function TestsPage({
   const selectAnswer = (index: number) => {
     setSelectedAnswer(index);
     setAnswers({ ...answers, [currentQuestion]: index });
+    if (typeof navigator !== 'undefined' && 'vibrate' in navigator) {
+      try {
+        navigator.vibrate(20);
+      } catch {
+        // ignore
+      }
+    }
+  };
+
+  const toggleFlagQuestion = (index: number) => {
+    setFlaggedQuestions((prev) => {
+      const next = new Set(prev);
+      if (next.has(index)) next.delete(index);
+      else next.add(index);
+      return next;
+    });
+  };
+
+  const jumpToQuestion = (index: number) => {
+    if (index >= 0 && index < quizQuestions.length) {
+      setCurrentQuestion(index);
+      setSelectedAnswer(
+        answers[index] !== undefined ? answers[index] : null,
+      );
+    }
+  };
+
+  const handleStartRetakeMistakes = (mistakeQuestions: QuizQuestion[]) => {
+    if (mistakeQuestions.length === 0) return;
+    setQuizQuestions(mistakeQuestions);
+    setCurrentQuestion(0);
+    setAnswers({});
+    setSelectedAnswer(null);
+    setShowResult(false);
+    setQuizStarted(true);
+    setStartTime(Date.now());
+    setTimeLeft(mistakeQuestions.length * 90);
+    setFlaggedQuestions(new Set());
+    resultSavedRef.current = false;
+    showToast('info', `${mistakeQuestions.length} soruluk tekrar seansı başladı!`);
   };
 
   const nextQuestion = () => {
@@ -360,6 +429,9 @@ export default function TestsPage({
     setShowResult(false);
     setStartTime(null);
     setTimeLeft(null);
+    setFlaggedQuestions(new Set());
+    setIsFocusMode(false);
+    setIsScratchpadOpen(false);
     resultSavedRef.current = false;
   };
 
@@ -388,48 +460,103 @@ export default function TestsPage({
     const question = quizQuestions[currentQuestion];
 
     return (
-      <main className="testler-page min-h-screen gradient-bg flex items-center justify-center p-6">
-        <DeferredFloatingShapes />
+      <main className={`testler-page min-h-screen gradient-bg flex flex-col items-center justify-center p-3 sm:p-6 transition-all ${
+        isFocusMode ? 'bg-slate-950 p-2 sm:p-4' : ''
+      }`}>
+        {!isFocusMode && <DeferredFloatingShapes />}
 
-        <div className="w-full max-w-3xl relative z-10 animate-fade-up">
-          <div className="glass rounded-3xl p-8">
-            <div className="flex items-center justify-between mb-8">
+        {/* Çevrimdışı Güvence Şeridi */}
+        {!isOnline && (
+          <div className="fixed top-3 left-1/2 -translate-x-1/2 z-50 flex items-center gap-2 rounded-full border border-amber-500/40 bg-amber-500/20 px-4 py-1.5 text-xs font-semibold text-amber-200 shadow-xl backdrop-blur-md">
+            <WifiOff className="h-3.5 w-3.5" />
+            <span>Çevrimdışı Mod: İşaretlemeleriniz cihazınızda güvende tutuluyor.</span>
+          </div>
+        )}
+
+        <div className={`w-full relative z-10 animate-fade-up ${
+          isFocusMode ? 'max-w-4xl' : 'max-w-3xl'
+        }`}>
+          <div className={`glass rounded-3xl p-5 sm:p-8 space-y-6 ${
+            isFocusMode ? 'border-white/20 shadow-2xl bg-slate-900/95' : ''
+          }`}>
+            {/* Üst Eylem ve Zamanlayıcı Çubuğu */}
+            <div className="flex flex-wrap items-center justify-between gap-3 border-b border-white/10 pb-4">
               <button
                 onClick={resetQuiz}
-                className="text-slate-400 hover:text-white flex items-center gap-2 transition-colors"
+                className="text-slate-400 hover:text-white flex items-center gap-1.5 text-xs sm:text-sm font-semibold transition-colors"
               >
-                <ArrowLeft className="w-5 h-5" />
-                Çıkış
+                <ArrowLeft className="w-4 h-4" />
+                Testten Çık
               </button>
-              <div
-                className={`flex items-center gap-2 px-4 py-2 rounded-full font-bold transition-all ${
-                  timeLeft !== null && timeLeft <= 30
-                    ? 'bg-red-500/20 text-red-500 animate-pulse'
-                    : 'bg-slate-800/50 text-slate-300'
-                }`}
-              >
-                <Clock className="w-5 h-5" />
-                <span>{timeLeft !== null ? formatTime(timeLeft) : ''}</span>
+
+              <div className="flex items-center gap-2">
+                {/* Karalama Tahtası Butonu */}
+                <button
+                  type="button"
+                  onClick={() => setIsScratchpadOpen(true)}
+                  className="inline-flex items-center gap-1.5 rounded-xl border border-white/10 bg-white/5 px-3 py-1.5 text-xs font-bold text-amber-300 transition hover:bg-white/10 hover:text-amber-200"
+                  title="Karalama ve işlem tahtasını aç"
+                >
+                  <PenTool className="h-3.5 w-3.5" />
+                  <span>Karalama Tahtası</span>
+                </button>
+
+                {/* Odak Modu Butonu */}
+                <button
+                  type="button"
+                  onClick={() => setIsFocusMode((prev) => !prev)}
+                  className={`inline-flex items-center gap-1.5 rounded-xl border px-3 py-1.5 text-xs font-bold transition ${
+                    isFocusMode
+                      ? 'border-purple-500/40 bg-purple-500/20 text-purple-200'
+                      : 'border-white/10 bg-white/5 text-slate-300 hover:bg-white/10 hover:text-white'
+                  }`}
+                  title={isFocusMode ? 'Normal görünüme dön' : 'Tam odaklanma modunu aç'}
+                >
+                  {isFocusMode ? (
+                    <>
+                      <Minimize2 className="h-3.5 w-3.5" />
+                      <span className="hidden sm:inline">Odak Modundan Çık</span>
+                    </>
+                  ) : (
+                    <>
+                      <Maximize2 className="h-3.5 w-3.5" />
+                      <span className="hidden sm:inline">Odak Modu</span>
+                    </>
+                  )}
+                </button>
+
+                {/* Süre */}
+                <div
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs sm:text-sm font-bold transition-all ${
+                    timeLeft !== null && timeLeft <= 30
+                      ? 'bg-red-500/20 text-red-500 animate-pulse border border-red-500/40'
+                      : 'bg-slate-800/80 text-slate-300 border border-white/10'
+                  }`}
+                >
+                  <Clock className="w-4 h-4" />
+                  <span>{timeLeft !== null ? formatTime(timeLeft) : ''}</span>
+                </div>
               </div>
             </div>
 
-            <div className="mb-8">
-              <div className="flex items-center justify-between mb-4">
-                <span className="text-purple-400 font-semibold">
+            {/* İlerleme Çubuğu */}
+            <div>
+              <div className="flex items-center justify-between mb-2 text-xs">
+                <span className="text-purple-300 font-semibold">
                   Soru {currentQuestion + 1} / {quizQuestions.length}
                 </span>
                 <span
-                  className={`px-3 py-1 rounded-full bg-gradient-to-r ${getDifficultyColor(
+                  className={`px-2.5 py-0.5 rounded-full bg-gradient-to-r ${getDifficultyColor(
                     selectedQuiz.difficulty,
-                  )} text-white text-sm font-semibold`}
+                  )} text-white font-semibold text-[11px]`}
                 >
                   {selectedQuiz.difficulty}
                 </span>
               </div>
 
-              <div className="h-2 bg-slate-700 rounded-full overflow-hidden">
+              <div className="h-2 bg-slate-800 rounded-full overflow-hidden border border-white/5">
                 <div
-                  className="h-full bg-gradient-to-r from-purple-500 to-pink-500 transition-all duration-300 ease-out"
+                  className="h-full bg-gradient-to-r from-purple-500 via-pink-500 to-orange-400 transition-all duration-300 ease-out"
                   style={{
                     width: `${((currentQuestion + 1) / quizQuestions.length) * 100}%`,
                   }}
@@ -437,10 +564,11 @@ export default function TestsPage({
               </div>
             </div>
 
+            {/* Soru Gövdesi */}
             <div key={currentQuestion} className="animate-fade-up" role="group" aria-label={`Soru ${currentQuestion + 1}`}>
               <MathText
                 as="h2"
-                className="text-2xl font-bold text-white mb-8 font-display"
+                className="text-lg sm:text-2xl font-bold text-white mb-6 font-display leading-snug"
               >
                 {question.question}
               </MathText>
@@ -471,17 +599,17 @@ export default function TestsPage({
                           ? 'bg-gradient-to-r from-brand-primary via-brand-pink to-brand-orange text-white shadow-brand-glow scale-[1.01]'
                           : 'bg-slate-800/60 text-slate-200 hover:bg-slate-700/60 hover:translate-x-0.5'
                       }`}
-                      >
-                        <span
-                          className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-lg font-bold text-sm ${
+                    >
+                      <span
+                        className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-lg font-bold text-sm ${
                           selected
                             ? 'bg-white/25 text-white'
                             : 'bg-slate-900/60 text-brand-primary-soft'
                         }`}
                         aria-hidden="true"
-                        >
-                          {String.fromCharCode(65 + i)}
-                        </span>
+                      >
+                        {String.fromCharCode(65 + i)}
+                      </span>
                       <div className="flex-1">
                         <MathText>{option}</MathText>
                         {hasOptionImage(question, i) ? (
@@ -497,7 +625,8 @@ export default function TestsPage({
               </div>
             </div>
 
-            <div className="mt-8 grid grid-cols-1 gap-3 sm:grid-cols-[auto_1fr]">
+            {/* İleri / Geri Butonları */}
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-[auto_1fr] pt-2">
               <button
                 type="button"
                 onClick={previousQuestion}
@@ -530,8 +659,27 @@ export default function TestsPage({
                 )}
               </button>
             </div>
+
+            {/* Soru Navigasyon Haritası */}
+            <div className="pt-4 border-t border-white/10">
+              <QuizQuestionPalette
+                totalQuestions={quizQuestions.length}
+                currentIndex={currentQuestion}
+                answers={answers}
+                flaggedQuestions={flaggedQuestions}
+                onSelectQuestion={jumpToQuestion}
+                onToggleFlag={toggleFlagQuestion}
+              />
+            </div>
           </div>
         </div>
+
+        {/* Karalama Tahtası Modalı */}
+        <ScratchpadModal
+          isOpen={isScratchpadOpen}
+          onClose={() => setIsScratchpadOpen(false)}
+          title={`Soru ${currentQuestion + 1} — Karalama & İşlem Tahtası`}
+        />
       </main>
     );
   }
@@ -760,17 +908,27 @@ export default function TestsPage({
               </div>
             </div>
 
-            <div className="flex gap-4">
+            <div className="flex flex-col sm:flex-row gap-3">
               <button
-                onClick={() => startQuiz(selectedQuiz)}
-                className="flex-1 py-4 bg-gradient-to-r from-purple-500 to-pink-500 text-white font-semibold rounded-xl flex items-center justify-center gap-2 shadow-lg shadow-purple-500/20 transition-all duration-200 hover:scale-[1.03] active:scale-[0.97]"
+                type="button"
+                onClick={() => setIsMistakeModalOpen(true)}
+                className="flex-1 py-4 bg-gradient-to-r from-amber-500 to-orange-500 text-slate-950 font-bold rounded-xl flex items-center justify-center gap-2 shadow-lg transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]"
               >
-                <RotateCcw className="w-5 h-5" />
-                Tekrar Dene
+                <AlertCircle className="w-5 h-5 text-slate-950" />
+                Hata Defteri & Yanlışlarımı İncele
               </button>
               <button
+                type="button"
+                onClick={() => startQuiz(selectedQuiz)}
+                className="flex-1 py-4 bg-gradient-to-r from-purple-500 to-pink-500 text-white font-semibold rounded-xl flex items-center justify-center gap-2 shadow-lg shadow-purple-500/20 transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]"
+              >
+                <RotateCcw className="w-5 h-5" />
+                Tümünü Tekrar Dene
+              </button>
+              <button
+                type="button"
                 onClick={resetQuiz}
-                className="flex-1 py-4 bg-slate-800 hover:bg-slate-700 text-white font-semibold rounded-xl flex items-center justify-center gap-2 transition-all duration-200 hover:scale-[1.03] active:scale-[0.97]"
+                className="flex-1 py-4 bg-slate-800 hover:bg-slate-700 text-white font-semibold rounded-xl flex items-center justify-center gap-2 transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]"
               >
                 <ArrowLeft className="w-5 h-5" />
                 Testlere Dön
@@ -780,11 +938,10 @@ export default function TestsPage({
 
           <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
             <button
+              type="button"
               onClick={handleDownloadPDF}
               disabled={pdfLoading}
-              aria-label="Sınav raporunu PDF olarak indir"
-              className="animate-slide-up w-full py-3.5 rounded-2xl border border-white/10 bg-white/5 hover:bg-white/10 text-white font-semibold flex items-center justify-center gap-2.5 transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-900"
-              style={{ animationDelay: '240ms' }}
+              className="inline-flex h-12 items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/5 px-5 text-sm font-semibold text-white transition-colors hover:bg-white/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary disabled:cursor-not-allowed disabled:opacity-50"
             >
               {pdfLoading ? (
                 <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
@@ -795,16 +952,24 @@ export default function TestsPage({
             </button>
 
             <button
+              type="button"
               onClick={handleShareResult}
               aria-label="Sonucu arkadaşlarınla paylaş"
-              className="animate-slide-up w-full py-3.5 rounded-2xl border border-white/10 bg-gradient-to-r from-cyan-500/20 via-sky-500/20 to-blue-500/20 hover:from-cyan-500/30 hover:to-blue-500/30 text-white font-semibold flex items-center justify-center gap-2.5 transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-900"
-              style={{ animationDelay: '300ms' }}
+              className="inline-flex h-12 items-center justify-center gap-2 rounded-xl border border-white/10 bg-gradient-to-r from-cyan-500/20 via-sky-500/20 to-blue-500/20 hover:from-cyan-500/30 hover:to-blue-500/30 text-white font-semibold transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-900"
             >
               <Share2 className="w-5 h-5 text-cyan-300" />
               Sonucu Paylaş
             </button>
           </div>
         </div>
+
+        <QuizMistakeReviewModal
+          isOpen={isMistakeModalOpen}
+          onClose={() => setIsMistakeModalOpen(false)}
+          questions={quizQuestions}
+          answers={answers}
+          onStartRetakeMistakes={handleStartRetakeMistakes}
+        />
       </main>
     );
   }

@@ -1,9 +1,18 @@
 'use client';
 
-import { ArrowLeft, ImagePlus, Loader2, X } from 'lucide-react';
+import { ArrowLeft, ImagePlus, Loader2, Sparkles, X } from 'lucide-react';
 import Image from 'next/image';
-import { useLayoutEffect, useRef, type ChangeEvent, type FormEvent } from 'react';
+import { useLayoutEffect, useRef, useState, type ChangeEvent, type FormEvent } from 'react';
 import type { ThreadMessage } from '@/features/messages/types';
+import ImageViewerLightbox from '@/components/ImageViewerLightbox';
+
+const QUICK_FEEDBACK_TEMPLATES = [
+  'Harika çözüm! 👏',
+  'İşlem hatasına dikkat et ⚠️',
+  'Formül adımını tekrar kontrol et 📐',
+  'Tebrikler, tam doğru! ⭐',
+  'Soru kökündeki kısıtı tekrar oku 🔍',
+];
 
 const formatTime = (value: string) =>
   new Date(value).toLocaleString('tr-TR', {
@@ -56,6 +65,7 @@ export function SupportChatPanel({
 }: SupportChatPanelProps) {
   const listRef = useRef<HTMLDivElement | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const [activeLightboxImage, setActiveLightboxImage] = useState<string | null>(null);
 
   useLayoutEffect(() => {
     if (!listRef.current) return;
@@ -234,11 +244,11 @@ export function SupportChatPanel({
                     }`}
                   >
                     {message.imageUrl ? (
-                      <a
-                        href={message.imageUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="mb-1 block overflow-hidden rounded-lg"
+                      <button
+                        type="button"
+                        onClick={() => setActiveLightboxImage(message.imageUrl || null)}
+                        aria-label="Görseli tam ekran incele"
+                        className="mb-1 block overflow-hidden rounded-lg cursor-zoom-in text-left transition hover:opacity-90 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400"
                       >
                         <Image
                           src={message.imageUrl}
@@ -248,7 +258,7 @@ export function SupportChatPanel({
                           className="h-auto w-full max-w-[240px] rounded-lg object-cover"
                           unoptimized
                         />
-                      </a>
+                      </button>
                     ) : null}
                     {message.text ? (
                       <p className="whitespace-pre-wrap break-words text-[13px] leading-relaxed">
@@ -285,16 +295,43 @@ export function SupportChatPanel({
         {error ? (
           <p className="mb-1 text-[11px] text-red-500">{error}</p>
         ) : null}
+
+        {/* Öğretmen / Admin Hızlı Geri Bildirim Şablonları */}
+        {appearance === 'admin' && (
+          <div className="mb-2 flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none">
+            <span className="text-[10px] font-bold text-slate-400 shrink-0 flex items-center gap-1">
+              <Sparkles className="h-3 w-3 text-amber-400" />
+              Hızlı Not:
+            </span>
+            {QUICK_FEEDBACK_TEMPLATES.map((tmpl) => (
+              <button
+                key={tmpl}
+                type="button"
+                onClick={() => onDraftChange(draft ? `${draft} ${tmpl}` : tmpl)}
+                className="shrink-0 rounded-lg border border-[var(--border)] bg-[var(--bg-soft)] px-2.5 py-1 text-[11px] font-medium text-[var(--text-strong)] hover:bg-[var(--bg-muted)] hover:border-indigo-400/40 transition shadow-sm"
+              >
+                {tmpl}
+              </button>
+            ))}
+          </div>
+        )}
+
         {attachmentPreview ? (
           <div className="mb-2 flex items-center gap-2 rounded-xl border border-indigo-400/20 bg-indigo-500/10 p-2">
-            <Image
-              src={attachmentPreview.url}
-              alt=""
-              width={44}
-              height={44}
-              className="h-11 w-11 rounded-lg object-cover"
-              unoptimized
-            />
+            <button
+              type="button"
+              onClick={() => setActiveLightboxImage(attachmentPreview.url)}
+              className="cursor-zoom-in"
+            >
+              <Image
+                src={attachmentPreview.url}
+                alt=""
+                width={44}
+                height={44}
+                className="h-11 w-11 rounded-lg object-cover"
+                unoptimized
+              />
+            </button>
             <span className="min-w-0 flex-1 truncate text-xs text-[var(--text-muted,#94a3b8)]">
               {attachmentPreview.name}
             </span>
@@ -374,6 +411,13 @@ export function SupportChatPanel({
           </button>
         </div>
       </form>
+
+      {/* Görsel Büyütme Lightbox */}
+      <ImageViewerLightbox
+        src={activeLightboxImage}
+        alt="Fotoğraf Önizleme"
+        onClose={() => setActiveLightboxImage(null)}
+      />
     </div>
   );
 }
