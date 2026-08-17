@@ -17,6 +17,8 @@ import { HomeQuickToolsGrid } from '@/features/home/components/HomeQuickToolsGri
 import { HomeRecentDocumentsSection } from '@/features/home/components/HomeRecentDocumentsSection';
 import { HomeStatsStrip } from '@/features/home/components/HomeStatsStrip';
 import { HomeSuccessRoadmap } from '@/features/home/components/HomeSuccessRoadmap';
+import { HomeGuestCtaSection } from '@/features/home/components/HomeGuestCtaSection';
+import { HomeSupportSection } from '@/features/home/components/HomeSupportSection';
 import { FormulaFlashcardsModal } from '@/features/programs/components/FormulaFlashcardsModal';
 import ScratchpadModal from '@/components/ScratchpadModal';
 import type { HomeInitialFeed } from '@/features/home/home-initial-feed';
@@ -30,22 +32,6 @@ const HomeAnnouncementModal = dynamic(
       default: m.HomeAnnouncementModal,
     })),
   { ssr: false },
-);
-
-const HomeGuestCtaSection = dynamic(
-  () =>
-    import('@/features/home/components/HomeGuestCtaSection').then((m) => ({
-      default: m.HomeGuestCtaSection,
-    })),
-  { ssr: false },
-);
-
-const HomeSupportSection = dynamic(
-  () =>
-    import('@/features/home/components/HomeSupportSection').then((m) => ({
-      default: m.HomeSupportSection,
-    })),
-  { ssr: false, loading: () => <div className="min-h-[14rem]" aria-hidden /> },
 );
 
 type HomePageProps = {
