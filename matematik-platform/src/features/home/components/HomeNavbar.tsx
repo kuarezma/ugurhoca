@@ -29,14 +29,14 @@ export function HomeNavbar({ onLogout, user }: HomeNavbarProps) {
 
   return (
     <nav
-      className={`fixed left-0 right-0 top-0 z-50 border-b backdrop-blur-lg ${
+      className={`fixed left-0 right-0 top-0 z-50 border-b backdrop-blur-xl transition-all duration-300 ${
         isLight
-          ? 'border-slate-200/90 bg-white/90 shadow-sm shadow-slate-200/80'
-          : 'border-slate-800/50 bg-slate-900/95'
+          ? 'border-slate-200/80 bg-white/85 shadow-sm'
+          : 'border-white/10 bg-slate-900/85 shadow-2xl'
       }`}
     >
       <div className="mx-auto max-w-6xl px-4 pl-[max(1rem,env(safe-area-inset-left))] pr-[max(1rem,env(safe-area-inset-right))]">
-        <div className="flex h-14 w-full items-center gap-2 sm:gap-3">
+        <div className="flex h-16 w-full items-center gap-3 sm:gap-4">
           <Link
             href="/"
             aria-current={isHomePage ? 'page' : undefined}
@@ -45,38 +45,45 @@ export function HomeNavbar({ onLogout, user }: HomeNavbarProps) {
                 event.preventDefault();
               }
             }}
-            className="flex shrink-0 items-center gap-2"
+            className="group flex shrink-0 items-center gap-2.5"
           >
-            <Image
-              src="/ugur.jpeg"
-              alt="Uğur Hoca"
-              width={36}
-              height={36}
-              className="h-9 w-9 rounded-lg object-cover"
-            />
-            <span
-              className={`text-lg font-bold ${
-                isLight ? 'text-slate-900' : 'text-white'
-              }`}
-            >
-              Uğur Hoca
-            </span>
+            <div className="relative flex h-10 w-10 items-center justify-center overflow-hidden rounded-2xl bg-gradient-to-br from-brand-primary via-brand-pink to-brand-orange p-0.5 shadow-md transition-transform duration-200 group-hover:scale-105">
+              <Image
+                src="/ugur.jpeg"
+                alt="Uğur Hoca"
+                width={40}
+                height={40}
+                className="h-full w-full rounded-[14px] object-cover"
+              />
+            </div>
+            <div className="flex flex-col">
+              <span
+                className={`font-display text-base font-bold sm:text-lg leading-tight ${
+                  isLight ? 'text-slate-900' : 'text-white'
+                }`}
+              >
+                Uğur Hoca
+              </span>
+              <span className="text-[10px] font-semibold text-brand-primary-soft uppercase tracking-wider">
+                Matematik Platformu
+              </span>
+            </div>
           </Link>
 
-          {/* Orta menü: dar genişlikte taşma yerine yatay kaydır — tüm tarayıcılar + PWA */}
+          {/* Orta menü */}
           <div className="hidden min-h-0 min-w-0 flex-1 items-center lg:flex">
             <nav
               aria-label="Ana menü"
-              className="mx-auto flex max-w-full items-center gap-2 overflow-x-auto overflow-y-hidden py-1 [scrollbar-width:thin] xl:gap-3"
+              className="mx-auto flex max-w-full items-center gap-1.5 overflow-x-auto overflow-y-hidden py-1 [scrollbar-width:thin]"
             >
               {HOME_CATEGORIES.map((category) => (
                 <Link
                   key={category.id}
                   href={category.href}
-                  className={`shrink-0 whitespace-nowrap text-sm font-medium transition-colors ${
+                  className={`shrink-0 whitespace-nowrap rounded-xl px-3.5 py-1.5 text-xs font-semibold transition-all duration-200 ${
                     isLight
-                      ? 'text-slate-600 hover:text-slate-900'
-                      : 'text-slate-400 hover:text-white'
+                      ? 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
+                      : 'text-slate-300 hover:bg-white/10 hover:text-white'
                   }`}
                 >
                   {category.title}
@@ -85,7 +92,7 @@ export function HomeNavbar({ onLogout, user }: HomeNavbarProps) {
             </nav>
           </div>
 
-          <div className="hidden shrink-0 items-center gap-1.5 lg:flex xl:gap-2.5">
+          <div className="hidden shrink-0 items-center gap-2 lg:flex">
             <ThemeToggle compact />
             {showStudentMessages && user?.id ? (
               <HomeNavbarMessagesButton
@@ -102,14 +109,16 @@ export function HomeNavbar({ onLogout, user }: HomeNavbarProps) {
               <>
                 <Link
                   href={profileHref}
-                  className={`flex items-center gap-2 ${
-                    isLight ? 'text-slate-900' : 'text-white'
+                  className={`flex items-center gap-2.5 rounded-2xl border px-3 py-1.5 transition-all ${
+                    isLight
+                      ? 'border-slate-200 bg-slate-50 text-slate-900 hover:bg-slate-100'
+                      : 'border-white/10 bg-white/5 text-white hover:bg-white/10'
                   }`}
                 >
-                  <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-indigo-500 to-purple-500 text-sm font-bold">
+                  <div className="flex h-7 w-7 items-center justify-center rounded-xl bg-gradient-to-br from-brand-primary to-brand-pink text-xs font-bold text-white shadow">
                     {user.name?.[0] || '?'}
                   </div>
-                  <span className="hidden font-medium xl:inline">
+                  <span className="font-semibold text-xs xl:inline">
                     {user.name?.split(' ')[0]}
                   </span>
                 </Link>
@@ -118,32 +127,32 @@ export function HomeNavbar({ onLogout, user }: HomeNavbarProps) {
                   onClick={onLogout}
                   aria-label="Çıkış yap"
                   title="Çıkış yap"
-                  className={`inline-flex h-11 w-11 items-center justify-center rounded-xl transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary ${
+                  className={`inline-flex h-9 w-9 items-center justify-center rounded-xl transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary ${
                     isLight
                       ? 'text-slate-400 hover:bg-slate-100 hover:text-slate-900'
                       : 'text-slate-400 hover:bg-white/5 hover:text-white'
                   }`}
                 >
-                  <LogOut className="h-5 w-5" aria-hidden="true" />
+                  <LogOut className="h-4 w-4" aria-hidden="true" />
                 </button>
               </>
             ) : (
               <>
                 <Link
                   href="/giris"
-                  className={`text-sm font-medium transition-colors ${
+                  className={`rounded-xl px-3.5 py-2 text-xs font-bold transition-colors ${
                     isLight
-                      ? 'text-slate-700 hover:text-slate-900'
-                      : 'text-slate-300 hover:text-white'
+                      ? 'text-slate-700 hover:bg-slate-100 hover:text-slate-900'
+                      : 'text-slate-300 hover:bg-white/10 hover:text-white'
                   }`}
                 >
-                  Giriş
+                  Giriş Yap
                 </Link>
                 <Link
                   href="/kayit"
-                  className="rounded-lg bg-gradient-to-r from-indigo-500 to-purple-500 px-4 py-2 text-sm font-semibold text-white transition-all hover:from-indigo-600 hover:to-purple-600"
+                  className="rounded-xl bg-gradient-to-r from-brand-primary via-brand-pink to-brand-orange px-4 py-2 text-xs font-bold text-white shadow-brand-glow transition-transform hover:scale-105 active:scale-95"
                 >
-                  Kayıt Ol
+                  Ücretsiz Kayıt
                 </Link>
               </>
             )}
