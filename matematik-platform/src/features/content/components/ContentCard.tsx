@@ -132,50 +132,66 @@ export default function ContentCard({
 
   const statsBar = (
     <div
-      className={`grid grid-cols-4 gap-2 text-[11px] text-slate-300 sm:flex sm:flex-wrap sm:items-center ${viewMode === 'grid' ? 'sm:gap-6' : 'sm:gap-4'} sm:text-sm ${viewMode === 'grid' ? 'mb-4 sm:mb-5' : ''}`}
+      className={`grid grid-cols-5 gap-1.5 text-[11px] text-slate-300 sm:flex sm:flex-wrap sm:items-center ${viewMode === 'grid' ? 'sm:gap-5' : 'sm:gap-4'} sm:text-sm ${viewMode === 'grid' ? 'mb-4 sm:mb-5' : ''}`}
     >
       <button
-        onClick={() => onToggleLike(content)}
-        className={`flex min-w-0 items-center justify-center gap-1.5 rounded-xl bg-slate-800/40 px-2.5 py-2 transition-colors sm:justify-start sm:rounded-none sm:bg-transparent sm:px-0 sm:py-0 ${isLiked ? 'text-red-400' : 'hover:text-red-400'}`}
+        onClick={() => onPreview(content)}
+        title="Görüntülenme sayısı"
+        className="flex min-w-0 items-center justify-center gap-1.5 rounded-xl bg-slate-800/40 px-2 py-2 transition-colors hover:text-cyan-300 sm:justify-start sm:rounded-none sm:bg-transparent sm:px-0 sm:py-0"
       >
-        <Heart className={`w-5 h-5 ${isLiked ? 'fill-current' : ''}`} />
+        <Eye className="w-4 h-4 sm:w-5 sm:h-5 text-slate-400" />
+        {content.views || 0}
+      </button>
+
+      <button
+        onClick={() => onToggleLike(content)}
+        title="Beğen"
+        className={`flex min-w-0 items-center justify-center gap-1.5 rounded-xl bg-slate-800/40 px-2 py-2 transition-colors sm:justify-start sm:rounded-none sm:bg-transparent sm:px-0 sm:py-0 ${isLiked ? 'text-red-400' : 'hover:text-red-400'}`}
+      >
+        <Heart className={`w-4 h-4 sm:w-5 sm:h-5 ${isLiked ? 'fill-current' : ''}`} />
         {content.likes || 0}
       </button>
+
       {viewMode === 'grid' ? (
         <button
           onClick={() => onOpenComments(content)}
-          className="flex min-w-0 items-center justify-center gap-1.5 rounded-xl bg-slate-800/40 px-2.5 py-2 transition-colors hover:text-cyan-300 sm:justify-start sm:rounded-none sm:bg-transparent sm:px-0 sm:py-0"
+          title="Yorumlar"
+          className="flex min-w-0 items-center justify-center gap-1.5 rounded-xl bg-slate-800/40 px-2 py-2 transition-colors hover:text-cyan-300 sm:justify-start sm:rounded-none sm:bg-transparent sm:px-0 sm:py-0"
         >
-          <MessageCircle className="w-5 h-5" />
+          <MessageCircle className="w-4 h-4 sm:w-5 sm:h-5" />
           {content.comments_count || 0}
         </button>
       ) : (
-        <div className="flex min-w-0 items-center justify-center gap-1.5 rounded-xl bg-slate-800/40 px-2.5 py-2 transition-colors hover:text-cyan-300 sm:justify-start sm:rounded-none sm:bg-transparent sm:px-0 sm:py-0">
-          <MessageCircle className="w-5 h-5" />
+        <div className="flex min-w-0 items-center justify-center gap-1.5 rounded-xl bg-slate-800/40 px-2 py-2 transition-colors hover:text-cyan-300 sm:justify-start sm:rounded-none sm:bg-transparent sm:px-0 sm:py-0">
+          <MessageCircle className="w-4 h-4 sm:w-5 sm:h-5" />
           {content.comments_count || 0}
         </div>
       )}
+
       {content.file_url ? (
         <button
           onClick={() => onDownload(content)}
-          className="flex min-w-0 items-center justify-center gap-1.5 rounded-xl bg-slate-800/40 px-2.5 py-2 transition-colors hover:text-cyan-300 sm:justify-start sm:rounded-none sm:bg-transparent sm:px-0 sm:py-0"
+          title="İndirme sayısı"
+          className="flex min-w-0 items-center justify-center gap-1.5 rounded-xl bg-slate-800/40 px-2 py-2 transition-colors hover:text-cyan-300 sm:justify-start sm:rounded-none sm:bg-transparent sm:px-0 sm:py-0"
         >
-          <Download className="w-5 h-5" />
+          <Download className="w-4 h-4 sm:w-5 sm:h-5" />
           {content.downloads || 0}
         </button>
       ) : (
-        <div className="flex min-w-0 items-center justify-center gap-1.5 rounded-xl bg-slate-800/40 px-2.5 py-2 sm:justify-start sm:rounded-none sm:bg-transparent sm:px-0 sm:py-0">
-          <Download className="w-5 h-5" />
+        <div className="flex min-w-0 items-center justify-center gap-1.5 rounded-xl bg-slate-800/40 px-2 py-2 sm:justify-start sm:rounded-none sm:bg-transparent sm:px-0 sm:py-0">
+          <Download className="w-4 h-4 sm:w-5 sm:h-5" />
           {content.downloads || 0}
         </div>
       )}
+
       <button
         onClick={() => onToggleFavorite(content.id)}
-        className={`flex min-w-0 items-center justify-center gap-1.5 rounded-xl bg-slate-800/40 px-2.5 py-2 transition-colors sm:justify-start sm:rounded-none sm:bg-transparent sm:px-0 sm:py-0 ${isFavorite ? 'text-amber-400' : 'hover:text-amber-400'}`}
+        title="Favori"
+        className={`flex min-w-0 items-center justify-center gap-1.5 rounded-xl bg-slate-800/40 px-2 py-2 transition-colors sm:justify-start sm:rounded-none sm:bg-transparent sm:px-0 sm:py-0 ${isFavorite ? 'text-amber-400' : 'hover:text-amber-400'}`}
       >
-        <Star className={`w-5 h-5 ${isFavorite ? 'fill-current' : ''}`} />
-        <span className="hidden sm:inline">
-          {isFavorite ? 'Favorilerden Çıkar' : 'Favorilere Ekle'}
+        <Star className={`w-4 h-4 sm:w-5 sm:h-5 ${isFavorite ? 'fill-current' : ''}`} />
+        <span className="hidden sm:inline text-xs">
+          {isFavorite ? 'Favori' : 'Ekle'}
         </span>
       </button>
     </div>

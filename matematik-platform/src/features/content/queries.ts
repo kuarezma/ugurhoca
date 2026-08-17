@@ -393,7 +393,7 @@ export const deleteContentDocument = async (documentId: string) => {
 
 export const updateDocumentMetric = async (
   documentId: string,
-  payload: Partial<Pick<ContentDocument, 'comments_count' | 'downloads' | 'likes'>>,
+  payload: Partial<Pick<ContentDocument, 'comments_count' | 'downloads' | 'likes' | 'views'>>,
 ) => {
   const { error } = await supabase
     .from('documents')
@@ -401,7 +401,18 @@ export const updateDocumentMetric = async (
     .eq('id', documentId);
 
   if (error) {
-    throw error;
+    try {
+      const metricKey = Object.keys(payload)[0] as 'views' | 'downloads' | 'likes';
+      if (metricKey) {
+        await fetch('/api/content-documents', {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ document_id: documentId, metric: metricKey }),
+        });
+      }
+    } catch {
+      // ignore
+    }
   }
 
   clearContentDocumentCache();

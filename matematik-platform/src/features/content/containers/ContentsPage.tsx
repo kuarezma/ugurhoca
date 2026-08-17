@@ -660,7 +660,11 @@ function ContentsPageInner({
   const handleOpenPreview = useCallback(
     (content: ContentDocument) => {
       setShowAnswerKey(false);
-      setPreviewDoc(content);
+      const nextViews = (content.views || 0) + 1;
+      const updatedDoc = { ...content, views: nextViews };
+      setPreviewDoc(updatedDoc);
+      applyDocumentPatch(content.id, { views: nextViews });
+      void updateDocumentMetric(content.id, { views: nextViews }).catch(() => undefined);
       void trackStudentActivityEvent({
         entityId: content.id,
         entityType: 'document',
@@ -673,7 +677,7 @@ function ContentsPageInner({
         userId: user?.id,
       });
     },
-    [user?.id],
+    [applyDocumentPatch, user?.id],
   );
 
   const handleClosePreview = useCallback(() => {
@@ -687,8 +691,13 @@ function ContentsPageInner({
 
       window.open(content.file_url, '_blank');
       const nextDownloads = (content.downloads || 0) + 1;
-      await updateDocumentMetric(content.id, { downloads: nextDownloads });
       applyDocumentPatch(content.id, { downloads: nextDownloads });
+      setPreviewDoc((current) =>
+        current && current.id === content.id
+          ? { ...current, downloads: nextDownloads }
+          : current,
+      );
+      void updateDocumentMetric(content.id, { downloads: nextDownloads }).catch(() => undefined);
       void trackStudentActivityEvent({
         entityId: content.id,
         entityType: 'document',

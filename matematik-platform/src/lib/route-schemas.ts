@@ -82,6 +82,11 @@ export const contentDocumentCreateSchema = z.object({
   document: contentDocumentSchema,
 });
 
+export const contentDocumentMetricUpdateSchema = z.object({
+  document_id: z.string().min(1, 'Doküman ID gereklidir.'),
+  metric: z.enum(['views', 'downloads', 'likes']),
+});
+
 const adminAnnouncementPayloadSchema = z.object({
   content: z.string().trim().nullable().optional(),
   image_url: z.string().trim().url().optional(),

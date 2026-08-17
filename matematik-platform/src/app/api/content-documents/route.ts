@@ -1,7 +1,10 @@
 import { apiError, apiOk } from '@/lib/api-response';
 import { isAdminEmail } from '@/lib/admin';
 import { createLogger } from '@/lib/logger';
-import { contentDocumentCreateSchema } from '@/lib/route-schemas';
+import {
+  contentDocumentCreateSchema,
+  contentDocumentMetricUpdateSchema,
+} from '@/lib/route-schemas';
 import {
   createServerSupabaseClient,
   createServiceRoleClient,
@@ -52,6 +55,7 @@ export async function POST(request: Request) {
           ...persistedPayload,
           created_at: new Date().toISOString(),
           downloads: 0,
+          views: 0,
         },
       ])
       .select()
@@ -70,5 +74,46 @@ export async function POST(request: Request) {
   } catch (error) {
     log.error('Content document route failed', error);
     return apiError('Sunucu hatası oluştu.', 500, 'content_document_failed');
+  }
+}
+
+export async function PATCH(request: Request) {
+  try {
+    const body = await request.json().catch(() => null);
+    const parsed = contentDocumentMetricUpdateSchema.safeParse(body);
+    if (!parsed.success) {
+      return apiError('Geçersiz istek parametreleri.', 400, 'invalid_payload');
+    }
+
+    const { document_id, metric } = parsed.data;
+    const adminClient = createServiceRoleClient();
+
+    const { data: doc, error: fetchError } = await adminClient
+      .from('documents')
+      .select(metric)
+      .eq('id', document_id)
+      .single();
+
+    if (fetchError || !doc) {
+      return apiError('Doküman bulunamadı.', 404, 'document_not_found');
+    }
+
+    const currentVal = (doc as Record<string, number | null | undefined>)[metric] ?? 0;
+    const nextVal = (typeof currentVal === 'number' ? currentVal : 0) + 1;
+
+    const { error: updateError } = await adminClient
+      .from('documents')
+      .update({ [metric]: nextVal })
+      .eq('id', document_id);
+
+    if (updateError) {
+      log.error('Metric update failed', updateError);
+      return apiError('Sayaç güncellenemedi.', 500, 'metric_update_failed');
+    }
+
+    return apiOk({ document_id, [metric]: nextVal });
+  } catch (error) {
+    log.error('Document metric PATCH route failed', error);
+    return apiError('Sunucu hatası oluştu.', 500, 'metric_route_failed');
   }
 }
