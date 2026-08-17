@@ -65,15 +65,27 @@ export function HomeHeroSection({ isLight, user }: HomeHeroSectionProps) {
 
           <div className="relative grid gap-8 lg:grid-cols-[1.3fr_1fr] lg:items-center">
             <div className="space-y-5">
-              <div
-                className={`inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-wider ${
-                  isLight
-                    ? 'bg-brand-primary/15 text-brand-primary'
-                    : 'bg-brand-primary/20 text-brand-primary-soft'
-                }`}
-              >
-                <Sparkles className="h-3.5 w-3.5" aria-hidden="true" />
-                {user ? 'Bugün hangi konuyu parçalıyoruz?' : 'Uğur Hoca Matematik Platformu'}
+              <div className="flex flex-wrap items-center gap-2">
+                <div
+                  className={`inline-flex items-center gap-2 rounded-full px-3.5 py-1 text-xs font-bold uppercase tracking-wider ${
+                    isLight
+                      ? 'bg-gradient-to-r from-amber-500/20 via-orange-500/20 to-pink-500/20 text-amber-700 border border-amber-300/40 shadow-sm'
+                      : 'bg-gradient-to-r from-amber-500/20 via-orange-500/20 to-pink-500/20 text-amber-300 border border-amber-400/30 shadow-brand-glow'
+                  }`}
+                >
+                  <Sparkles className="h-3.5 w-3.5 text-amber-400 animate-spin" aria-hidden="true" />
+                  <span>🎉 2026-2027 Yeni Eğitim Öğretim Yılı Başladı!</span>
+                </div>
+
+                <div
+                  className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold ${
+                    isLight
+                      ? 'bg-brand-primary/10 text-brand-primary'
+                      : 'bg-brand-primary/20 text-brand-primary-soft'
+                  }`}
+                >
+                  {user ? 'Hedefe Tam Odaklan!' : 'Ücretsiz & Tam Kapsamlı'}
+                </div>
               </div>
 
               <h1
@@ -86,7 +98,7 @@ export function HomeHeroSection({ isLight, user }: HomeHeroSectionProps) {
                 </span>
                 <br />
                 <span className={isLight ? 'text-slate-800' : 'text-slate-100'}>
-                  Ne çalışmak istiyorsun?
+                  Bu Yıl Matematikte Zirveye!
                 </span>
               </h1>
 
@@ -95,8 +107,8 @@ export function HomeHeroSection({ isLight, user }: HomeHeroSectionProps) {
                   isLight ? 'text-slate-600' : 'text-slate-300'
                 }`}
               >
-                LGS ve YKS için içerikler, oyunlaştırılmış testler, ödev takibi ve
-                performans grafikleri. Tek yerde, senin hızında.
+                LGS ve YKS için müfredatla birebir ders notları, yaprak testler, formül kartları,
+                karalama tahtası ve canlı dersler seni bekliyor.
               </p>
 
               <div className="flex flex-wrap gap-3">
@@ -122,6 +134,40 @@ export function HomeHeroSection({ isLight, user }: HomeHeroSectionProps) {
                 >
                   Oyunla öğren
                 </Link>
+              </div>
+
+              {/* Hızlı Sınıf Başlangıç Çipleri */}
+              <div className="pt-2">
+                <span className="text-xs font-bold uppercase tracking-wider text-slate-400 block mb-2">
+                  Sınıfını Seç ve Hemen Başla:
+                </span>
+                <div className="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none">
+                  {[
+                    { label: '5. Sınıf', href: '/icerikler?grade=5' },
+                    { label: '6. Sınıf', href: '/icerikler?grade=6' },
+                    { label: '7. Sınıf', href: '/icerikler?grade=7' },
+                    { label: '8. Sınıf (LGS)', href: '/icerikler?grade=8', highlight: true },
+                    { label: '9. Sınıf', href: '/icerikler?grade=9' },
+                    { label: '10. Sınıf', href: '/icerikler?grade=10' },
+                    { label: '11. Sınıf', href: '/icerikler?grade=11' },
+                    { label: '12. Sınıf (YKS)', href: '/icerikler?grade=12', highlight: true },
+                    { label: 'Mezun', href: '/icerikler?grade=Mezun' },
+                  ].map((item) => (
+                    <Link
+                      key={item.label}
+                      href={item.href}
+                      className={`shrink-0 rounded-xl px-3 py-1.5 text-xs font-semibold transition-all ${
+                        item.highlight
+                          ? 'bg-gradient-to-r from-brand-primary to-brand-pink text-white shadow-sm hover:scale-105'
+                          : isLight
+                          ? 'bg-slate-100 text-slate-700 hover:bg-slate-200 border border-slate-200'
+                          : 'bg-white/5 text-slate-300 hover:bg-white/10 hover:text-white border border-white/10'
+                      }`}
+                    >
+                      {item.label}
+                    </Link>
+                  ))}
+                </div>
               </div>
             </div>
 

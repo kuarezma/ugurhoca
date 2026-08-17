@@ -1,18 +1,24 @@
 'use client';
 
+import { useState } from 'react';
 import dynamic from 'next/dynamic';
 import DeferredFloatingShapes from '@/components/DeferredFloatingShapes';
 import { useTheme } from '@/components/ThemeProvider';
 import { HomeAnnouncementsSection } from '@/features/home/components/HomeAnnouncementsSection';
 import { HomeAssignmentsSection } from '@/features/home/components/HomeAssignmentsSection';
+import { HomeDailyChallenge } from '@/features/home/components/HomeDailyChallenge';
 import { HomeDailyQuote } from '@/features/home/components/HomeDailyQuote';
 import { HomeExamCountdownSection } from '@/features/home/components/HomeExamCountdownSection';
 import { HomeFooter } from '@/features/home/components/HomeFooter';
-import { HomeHowItWorksSection } from '@/features/home/components/HomeHowItWorksSection';
 import { HomeHeroSection } from '@/features/home/components/HomeHeroSection';
+import { HomeHowItWorksSection } from '@/features/home/components/HomeHowItWorksSection';
 import { HomeNavbar } from '@/features/home/components/HomeNavbar';
+import { HomeQuickToolsGrid } from '@/features/home/components/HomeQuickToolsGrid';
 import { HomeRecentDocumentsSection } from '@/features/home/components/HomeRecentDocumentsSection';
 import { HomeStatsStrip } from '@/features/home/components/HomeStatsStrip';
+import { HomeSuccessRoadmap } from '@/features/home/components/HomeSuccessRoadmap';
+import { FormulaFlashcardsModal } from '@/features/programs/components/FormulaFlashcardsModal';
+import ScratchpadModal from '@/components/ScratchpadModal';
 import type { HomeInitialFeed } from '@/features/home/home-initial-feed';
 import { useHomePageData } from '@/features/home/hooks/useHomePageData';
 import type { LiveLesson } from '@/features/live-lessons/types';
@@ -50,6 +56,8 @@ type HomePageProps = {
 export default function HomePage({ activeLiveLesson, initialFeed }: HomePageProps) {
   const { theme } = useTheme();
   const isLight = theme === 'light';
+  const [isFlashcardsOpen, setIsFlashcardsOpen] = useState(false);
+  const [isScratchpadOpen, setIsScratchpadOpen] = useState(false);
   const {
     announcements,
     documents,
@@ -87,6 +95,16 @@ export default function HomePage({ activeLiveLesson, initialFeed }: HomePageProp
       ) : null}
       <div className="pt-[calc(3.5rem+env(safe-area-inset-top))] md:pt-14">
         <HomeHeroSection isLight={isLight} user={user} />
+        <HomeDailyChallenge isLight={isLight} />
+        <HomeQuickToolsGrid
+          isLight={isLight}
+          onOpenFlashcards={() => setIsFlashcardsOpen(true)}
+          onOpenScratchpad={() => setIsScratchpadOpen(true)}
+        />
+        <HomeSuccessRoadmap
+          isLight={isLight}
+          onOpenFlashcards={() => setIsFlashcardsOpen(true)}
+        />
         <HomeStatsStrip isLight={isLight} stats={initialFeed?.stats} />
         <HomeAnnouncementsSection
           announcements={announcements}
@@ -110,6 +128,14 @@ export default function HomePage({ activeLiveLesson, initialFeed }: HomePageProp
       <HomeAnnouncementModal
         announcement={selectedAnnouncement}
         onClose={() => setSelectedAnnouncement(null)}
+      />
+      <FormulaFlashcardsModal
+        isOpen={isFlashcardsOpen}
+        onClose={() => setIsFlashcardsOpen(false)}
+      />
+      <ScratchpadModal
+        isOpen={isScratchpadOpen}
+        onClose={() => setIsScratchpadOpen(false)}
       />
     </main>
   );
