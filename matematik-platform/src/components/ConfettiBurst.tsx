@@ -14,6 +14,7 @@ export type ConfettiOptions = {
 
 function shouldSkip(): boolean {
   if (typeof window === 'undefined') return true;
+  if (typeof process !== 'undefined' && process.env.NODE_ENV === 'test') return true;
   try {
     return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   } catch {

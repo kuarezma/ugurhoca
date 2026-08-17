@@ -20,7 +20,6 @@ import {
 import { useRouter } from 'next/navigation';
 import { signOutClient } from '@/lib/auth-client';
 import { useTheme } from '@/components/ThemeProvider';
-import DeferredFloatingShapes from '@/components/DeferredFloatingShapes';
 import { HomeNavbarMessagesButton } from '@/features/home/components/HomeNavbarMessagesButton';
 import NotesSection from '@/components/NotesSection';
 import DashboardHero from '@/components/dashboard/DashboardHero';
@@ -458,22 +457,27 @@ export default function ProfilePage({ initialData }: ProfilePageProps) {
 
   return (
     <main className="profil-page min-h-screen bg-gradient-to-br from-slate-900 via-slate-900 to-slate-800">
-      <DeferredFloatingShapes count={6} />
-
-      <nav className="fixed left-0 right-0 top-0 z-50 border-b border-slate-800/50 bg-slate-900/95 backdrop-blur-lg">
-        <div className="mx-auto flex h-14 max-w-6xl items-center justify-between px-4">
-          <Link href="/" className="flex items-center gap-2">
-            <Image
-              src="/ugur.jpeg"
-              alt="Uğur Hoca"
-              width={36}
-              height={36}
-              className="h-9 w-9 rounded-lg object-cover"
-            />
-            <span className="text-lg font-bold text-white">Uğur Hoca</span>
+      <nav className="fixed left-0 right-0 top-0 z-50 border-b border-white/10 bg-slate-950/80 backdrop-blur-xl transition-all duration-300">
+        <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 sm:px-6">
+          <Link href="/" className="group flex items-center gap-3">
+            <div className="relative flex h-10 w-10 items-center justify-center overflow-hidden rounded-xl bg-gradient-to-br from-brand-primary via-brand-pink to-brand-orange p-0.5 shadow-md transition-transform duration-300 group-hover:scale-105">
+              <Image
+                src="/ugur.jpeg"
+                alt="Uğur Hoca"
+                width={40}
+                height={40}
+                className="h-full w-full rounded-[10px] object-cover"
+              />
+            </div>
+            <div className="flex flex-col">
+              <span className="font-display text-base font-extrabold tracking-tight text-white">
+                Uğur Hoca
+              </span>
+              <span className="text-[10px] font-bold text-slate-400">Öğrenci Paneli</span>
+            </div>
           </Link>
 
-          <div className="flex items-center gap-2 sm:gap-4">
+          <div className="flex items-center gap-2 sm:gap-3">
             {!user.isAdmin && (
               <HomeNavbarMessagesButton
                 userId={user.id}
@@ -486,11 +490,12 @@ export default function ProfilePage({ initialData }: ProfilePageProps) {
               <button
                 type="button"
                 onClick={() => setShowNotifications((prev) => !prev)}
-                className="relative text-slate-400 transition-colors hover:text-white"
+                className="relative flex h-9 w-9 items-center justify-center rounded-xl border border-white/10 bg-white/5 text-slate-400 transition-colors hover:bg-white/10 hover:text-white"
+                aria-label="Bildirimler"
               >
-                <Bell className="h-5 w-5" />
+                <Bell className="h-4.5 w-4.5" />
                 {unreadCount > 0 && (
-                  <span className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-xs text-white">
+                  <span className="absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[10px] font-bold text-white">
                     {unreadCount}
                   </span>
                 )}
@@ -498,17 +503,18 @@ export default function ProfilePage({ initialData }: ProfilePageProps) {
             )}
             <Link
               href="/"
-              className="flex items-center gap-1 text-sm text-slate-400 transition-colors hover:text-white"
+              className="flex items-center gap-1.5 rounded-xl border border-white/10 bg-white/5 px-3 py-1.5 text-xs font-semibold text-slate-300 transition-colors hover:bg-white/10 hover:text-white sm:text-sm"
             >
               <ArrowLeft className="h-4 w-4" />
-              Ana Sayfa
+              <span className="hidden sm:inline">Ana Sayfa</span>
             </Link>
             <button
               type="button"
               onClick={handleLogout}
-              className="text-slate-400 transition-colors hover:text-white"
+              className="flex h-9 w-9 items-center justify-center rounded-xl border border-white/10 bg-white/5 text-slate-400 transition-colors hover:bg-red-500/20 hover:text-red-300"
+              aria-label="Çıkış Yap"
             >
-              <LogOut className="h-5 w-5" />
+              <LogOut className="h-4.5 w-4.5" />
             </button>
           </div>
         </div>

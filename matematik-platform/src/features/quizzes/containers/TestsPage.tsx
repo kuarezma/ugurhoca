@@ -26,8 +26,8 @@ import {
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useToast } from '@/components/Toast';
-import DeferredFloatingShapes from '@/components/DeferredFloatingShapes';
 import MathText from '@/components/MathText';
+import { fireConfetti } from '@/components/ConfettiBurst';
 import ScratchpadModal from '@/components/ScratchpadModal';
 import { QuizQuestionPalette } from '@/features/quizzes/components/QuizQuestionPalette';
 import { QuizMistakeReviewModal } from '@/features/quizzes/components/QuizMistakeReviewModal';
@@ -406,16 +406,11 @@ export default function TestsPage({
     if (showResult && quizQuestions.length > 0) {
       const finalScore = calculateScore();
       if (finalScore >= 80) {
-        void import('canvas-confetti')
-          .then(({ default: confetti }) =>
-            confetti({
-              particleCount: 150,
-              spread: 80,
-              origin: { y: 0.6 },
-              colors: ['#8b5cf6', '#ec4899', '#06b6d4', '#f97316', '#10b981'],
-            }),
-          )
-          .catch(() => undefined);
+        void fireConfetti({
+          particleCount: 150,
+          spread: 80,
+          origin: { y: 0.6 },
+        });
       }
     }
   }, [calculateScore, quizQuestions.length, showResult]);
@@ -463,7 +458,6 @@ export default function TestsPage({
       <main className={`testler-page min-h-screen gradient-bg flex flex-col items-center justify-center p-3 sm:p-6 transition-all ${
         isFocusMode ? 'bg-slate-950 p-2 sm:p-4' : ''
       }`}>
-        {!isFocusMode && <DeferredFloatingShapes />}
 
         {/* Çevrimdışı Güvence Şeridi */}
         {!isOnline && (
@@ -735,8 +729,6 @@ export default function TestsPage({
 
     return (
       <main className="testler-page min-h-screen gradient-bg flex items-center justify-center p-6">
-        <DeferredFloatingShapes />
-
         <div className="w-full max-w-2xl relative z-10 animate-fade-up">
           <div
             id="quiz-result-pdf"
@@ -976,8 +968,6 @@ export default function TestsPage({
 
   return (
     <main className="testler-page min-h-screen gradient-bg pb-20">
-      <DeferredFloatingShapes />
-
       <nav className="fixed top-0 left-0 right-0 z-50 glass py-4 px-6">
         <div className="container mx-auto flex justify-between items-center">
           <Link href="/" className="flex items-center gap-3">

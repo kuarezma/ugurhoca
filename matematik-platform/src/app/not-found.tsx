@@ -2,15 +2,12 @@
 
 import Link from 'next/link';
 import { Home, ArrowLeft, Search } from 'lucide-react';
-import DeferredFloatingShapes from '@/components/DeferredFloatingShapes';
 import { Mascot } from '@/components/Mascot';
 import { Button } from '@/components/ui/Button';
 
 export default function NotFound() {
   return (
-    <>
-      <DeferredFloatingShapes count={6} />
-      <main className="relative z-10 flex min-h-screen items-center justify-center p-6">
+    <main className="relative z-10 flex min-h-screen items-center justify-center p-6">
         <div className="max-w-xl text-center">
           <div className="mx-auto mb-6 inline-flex animate-float-y">
             <Mascot pose="confused" size={160} ariaLabel="Kafası karışmış maskot Pi" />
@@ -51,6 +48,5 @@ export default function NotFound() {
           </div>
         </div>
       </main>
-    </>
   );
 }

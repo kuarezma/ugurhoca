@@ -10,7 +10,6 @@ import { getClientSession } from '@/lib/auth-client';
 import { normalizeFullNameForMatch } from '@/lib/student-identity';
 import { loginSchema } from '@/lib/validation/auth';
 import { createLogger } from '@/lib/logger';
-import DeferredFloatingShapes from '@/components/DeferredFloatingShapes';
 import { Mascot } from '@/components/Mascot';
 import { Input } from '@/components/ui/Input';
 import { Button } from '@/components/ui/Button';
@@ -108,7 +107,6 @@ export default function LoginPage() {
 
   return (
     <main className="giris-page relative min-h-screen overflow-hidden">
-      <DeferredFloatingShapes count={10} />
       <div className="absolute inset-0 -z-10 bg-gradient-to-br from-brand-primary/20 via-brand-pink/10 to-brand-orange/10" aria-hidden="true" />
 
       <div className="mx-auto flex min-h-screen max-w-6xl flex-col items-stretch gap-10 px-6 py-10 lg:flex-row lg:items-center">

@@ -191,28 +191,29 @@ export function HomeNavbar({ onLogout, user }: HomeNavbarProps) {
           id="mobile-navigation"
           className={`animate-fade-in border-t lg:hidden ${
             isLight
-              ? 'border-slate-200 bg-white'
-              : 'border-slate-800 bg-slate-900'
+              ? 'border-slate-200 bg-white/95 backdrop-blur-xl'
+              : 'border-white/10 bg-slate-950/95 backdrop-blur-xl'
           }`}
         >
-          <div className="space-y-2 px-4 py-4">
+          <div className="space-y-1.5 px-4 py-4">
             {HOME_CATEGORIES.map((category) => (
               <Link
                 key={category.id}
                 href={category.href}
-                className={`flex items-center gap-3 rounded-lg px-3 py-2 transition-colors ${
+                onClick={() => setIsOpen(false)}
+                className={`flex items-center gap-3 rounded-xl px-3.5 py-2.5 text-sm font-semibold transition-colors ${
                   isLight
                     ? 'text-slate-700 hover:bg-slate-100 hover:text-slate-900'
-                    : 'text-slate-300 hover:bg-white/5 hover:text-white'
+                    : 'text-slate-300 hover:bg-white/10 hover:text-white'
                 }`}
               >
-                <category.icon className="h-5 w-5" />
+                <category.icon className="h-5 w-5 text-brand-primary-soft" />
                 {category.title}
               </Link>
             ))}
             <div
               className={`mt-3 border-t pt-3 ${
-                isLight ? 'border-slate-200' : 'border-slate-700'
+                isLight ? 'border-slate-200' : 'border-white/10'
               }`}
             >
               <div className="mb-3">
@@ -222,41 +223,47 @@ export function HomeNavbar({ onLogout, user }: HomeNavbarProps) {
                 <>
                   <Link
                     href={profileHref}
-                    className={`block py-2 ${
+                    onClick={() => setIsOpen(false)}
+                    className={`block rounded-xl px-3.5 py-2.5 text-sm font-semibold ${
                       isLight
-                        ? 'text-slate-700 hover:text-slate-900'
-                        : 'text-slate-300 hover:text-white'
+                        ? 'text-slate-700 hover:bg-slate-100 hover:text-slate-900'
+                        : 'text-slate-300 hover:bg-white/10 hover:text-white'
                     }`}
                   >
-                    {user.isAdmin ? 'Admin Panel' : 'Profil'}
+                    {user.isAdmin ? 'Admin Paneli' : 'Öğrenci Profili'}
                   </Link>
                   <button
                     type="button"
-                    onClick={onLogout}
-                    className="min-h-[44px] py-2 text-left text-red-400 hover:text-red-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary"
+                    onClick={() => {
+                      setIsOpen(false);
+                      onLogout();
+                    }}
+                    className="flex w-full min-h-[44px] items-center rounded-xl px-3.5 py-2 text-left text-sm font-semibold text-red-400 hover:bg-red-500/10 hover:text-red-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary"
                   >
-                    Çıkış
+                    Çıkış Yap
                   </button>
                 </>
               ) : (
-                <>
+                <div className="grid grid-cols-2 gap-2 pt-2">
                   <Link
                     href="/giris"
-                    className={`block py-2 ${
+                    onClick={() => setIsOpen(false)}
+                    className={`flex items-center justify-center rounded-xl border px-3 py-2.5 text-center text-xs font-bold transition-colors ${
                       isLight
-                        ? 'text-slate-700 hover:text-slate-900'
-                        : 'text-slate-300 hover:text-white'
+                        ? 'border-slate-200 text-slate-700 hover:bg-slate-100'
+                        : 'border-white/10 text-slate-300 hover:bg-white/10'
                     }`}
                   >
-                    Giriş
+                    Giriş Yap
                   </Link>
                   <Link
                     href="/kayit"
-                    className="mt-2 block rounded-lg bg-gradient-to-r from-indigo-500 to-purple-500 py-2 text-center font-semibold text-white"
+                    onClick={() => setIsOpen(false)}
+                    className="flex items-center justify-center rounded-xl bg-gradient-to-r from-brand-primary via-brand-pink to-brand-orange px-3 py-2.5 text-center text-xs font-bold text-white shadow-md transition-transform active:scale-95"
                   >
-                    Kayıt Ol
+                    Ücretsiz Kayıt
                   </Link>
-                </>
+                </div>
               )}
             </div>
           </div>

@@ -12,6 +12,7 @@ import {
   Lightbulb,
 } from 'lucide-react';
 import MathText from '@/components/MathText';
+import { fireConfetti } from '@/components/ConfettiBurst';
 
 type Challenge = {
   id: string;
@@ -69,16 +70,11 @@ export function HomeDailyChallenge({ isLight }: { isLight: boolean }) {
 
     if (index === challenge.correctIndex) {
       setStreakCount((prev) => prev + 1);
-      void import('canvas-confetti')
-        .then(({ default: confetti }) =>
-          confetti({
-            particleCount: 80,
-            spread: 60,
-            origin: { y: 0.7 },
-            colors: ['#a855f7', '#ec4899', '#06b6d4', '#f59e0b', '#10b981'],
-          }),
-        )
-        .catch(() => undefined);
+      void fireConfetti({
+        particleCount: 80,
+        spread: 60,
+        origin: { y: 0.7 },
+      });
     }
   };
 

@@ -2,7 +2,6 @@
 
 import { useState } from 'react';
 import dynamic from 'next/dynamic';
-import DeferredFloatingShapes from '@/components/DeferredFloatingShapes';
 import { useTheme } from '@/components/ThemeProvider';
 import { HomeAnnouncementsSection } from '@/features/home/components/HomeAnnouncementsSection';
 import { HomeAssignmentsSection } from '@/features/home/components/HomeAssignmentsSection';
@@ -64,7 +63,6 @@ export default function HomePage({ activeLiveLesson, initialFeed }: HomePageProp
           : 'bg-gradient-to-br from-slate-900 via-slate-900 to-slate-800'
       }`}
     >
-      <DeferredFloatingShapes />
       <HomeNavbar user={user} onLogout={handleLogout} />
       {activeLiveLesson ? (
         <Link
@@ -79,7 +77,7 @@ export default function HomePage({ activeLiveLesson, initialFeed }: HomePageProp
           <span className="truncate">Şu an ders var</span>
         </Link>
       ) : null}
-      <div className="pt-[calc(3.5rem+env(safe-area-inset-top))] md:pt-14">
+      <div className="pt-[calc(4.5rem+env(safe-area-inset-top))] md:pt-20">
         <HomeHeroSection isLight={isLight} user={user} />
         <HomeDailyChallenge isLight={isLight} />
         <HomeQuickToolsGrid

@@ -21,7 +21,6 @@ import {
 } from '@/lib/student-identity';
 import { createLogger } from '@/lib/logger';
 import { passwordStrength } from '@/lib/validation/auth';
-import DeferredFloatingShapes from '@/components/DeferredFloatingShapes';
 import { Mascot } from '@/components/Mascot';
 import { fireConfetti } from '@/components/ConfettiBurst';
 import { Input, Select } from '@/components/ui/Input';
@@ -165,7 +164,6 @@ export default function RegisterPage() {
   if (success) {
     return (
       <main className="relative flex min-h-screen items-center justify-center overflow-hidden p-6">
-        <DeferredFloatingShapes count={15} />
         <div className="glass animate-fade-up relative z-10 w-full max-w-md rounded-3xl p-10 text-center">
           <Mascot pose="celebrate" size={160} className="mx-auto" />
           <div className="mx-auto mt-4 inline-flex h-16 w-16 animate-pop items-center justify-center rounded-full bg-gradient-to-br from-emerald-400 to-teal-500">
@@ -182,7 +180,6 @@ export default function RegisterPage() {
 
   return (
     <main className="kayit-page relative min-h-screen overflow-hidden">
-      <DeferredFloatingShapes count={12} />
       <div
         className="absolute inset-0 -z-10 bg-gradient-to-br from-brand-primary/20 via-brand-pink/10 to-brand-orange/10"
         aria-hidden="true"
