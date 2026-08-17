@@ -55,6 +55,13 @@ const nextConfig = {
       'framer-motion',
       '@supabase/supabase-js',
       'recharts',
+      'katex',
+      'dompurify',
+      'clsx',
+      'tailwind-merge',
+      'zod',
+      'exceljs',
+      'canvas-confetti',
     ],
   },
   async headers() {
@@ -64,7 +71,7 @@ const nextConfig = {
         headers: globalSecurityHeaders,
       },
       {
-        source: '/:path*.(png|jpg|jpeg|webp|svg|ico|woff|woff2)',
+        source: '/:path*.(png|jpg|jpeg|webp|avif|svg|ico|woff|woff2)',
         headers: [
           {
             key: 'Cache-Control',
@@ -75,6 +82,7 @@ const nextConfig = {
     ];
   },
   images: {
+    formats: ['image/avif', 'image/webp'],
     qualities: [54, 75],
     localPatterns: [
       { pathname: '/**', search: '' },

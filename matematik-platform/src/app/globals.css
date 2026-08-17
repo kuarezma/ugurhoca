@@ -74,6 +74,7 @@ html[data-theme='light'] {
 
 html {
   scroll-behavior: smooth;
+  scroll-padding-top: 4.5rem;
   -webkit-text-size-adjust: 100%;
   min-height: 100%;
   /*
@@ -86,6 +87,7 @@ html {
    */
   overflow-x: hidden;
   overflow-x: clip;
+  text-rendering: optimizeLegibility;
 }
 
 body {
@@ -98,6 +100,7 @@ body {
   overflow-x: clip;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
   transition: background-color 0.2s ease, color 0.2s ease;
 }
 
@@ -268,26 +271,40 @@ input[type='number']::-webkit-inner-spin-button {
 
 .animate-float-y {
   animation: floatY var(--float-duration, 6s) ease-in-out infinite;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  will-change: transform;
 }
 
 .animate-pulse-soft {
   animation: pulseSoft var(--pulse-duration, 5s) ease-in-out infinite;
+  will-change: opacity, transform;
 }
 
 .animate-drift-xy {
   animation: driftXY var(--drift-duration, 5.6s) ease-in-out infinite;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  will-change: transform, opacity;
 }
 
 .animate-bob-soft {
   animation: bobSoft var(--bob-duration, 2.8s) ease-in-out infinite;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  will-change: transform;
 }
 
 .animate-icon-bob {
   animation: iconBob var(--icon-duration, 3.8s) ease-in-out infinite;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  will-change: transform;
 }
 
 .animate-sparkle {
   animation: sparkle var(--sparkle-duration, 2.8s) ease-in-out infinite;
+  will-change: transform, opacity;
 }
 
 @keyframes wiggle {
@@ -360,10 +377,13 @@ input[type='number']::-webkit-inner-spin-button {
 
 .tilt-on-hover {
   transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.3s ease;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  transform: translateZ(0);
   will-change: transform;
 }
 .tilt-on-hover:hover {
-  transform: translateY(-4px) rotate(-0.4deg);
+  transform: translateY(-4px) rotate(-0.4deg) translateZ(0);
 }
 
 .ripple-container {
@@ -503,17 +523,23 @@ html[data-theme='light'] [class*='bg-black/40'] {
 }
 
 .card-hover {
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition: transform 0.2s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.2s ease;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  transform: translateZ(0);
 }
 
 .card-hover:hover {
-  transform: translateY(-4px);
+  transform: translateY(-4px) translateZ(0);
   box-shadow: 0 12px 40px rgba(139, 92, 246, 0.15);
 }
 
 .glow-button {
   box-shadow: 0 0 20px rgba(139, 92, 246, 0.4);
-  transition: box-shadow 0.3s ease;
+  transition: box-shadow 0.3s ease, transform 0.2s ease;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  transform: translateZ(0);
 }
 
 .glow-button:hover {
