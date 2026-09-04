@@ -9,46 +9,50 @@ import {
   RotateCcw,
   Sparkles,
   ListChecks,
+  Printer,
 } from 'lucide-react';
 import { GRADE_TOPIC_OPTIONS } from '@/features/progress/constants';
+
+type TopicStatus = {
+  studied: boolean; // Konu anlatımı çalışıldı
+  solved: boolean;  // 50+ soru çözüldü
+  reviewed: boolean; // Genel tekrar yapıldı
+};
+
+type GradeChecklist = Record<string, TopicStatus>;
+type AllGradesChecklist = Record<string, GradeChecklist>;
+
+const STORAGE_KEY = 'ugurhoca_topic_checklist_v1';
+
+const GRADE_LABELS: Record<string, string> = {
+  '5': '5. Sınıf',
+  '6': '6. Sınıf',
+  '7': '7. Sınıf',
+  '8': '8. Sınıf (LGS)',
+  '9': '9. Sınıf',
+  '10': '10. Sınıf',
+  '11': '11. Sınıf',
+  '12': '12. Sınıf / YKS',
+};
 
 type TopicChecklistModalProps = {
   isOpen: boolean;
   onClose: () => void;
+  defaultGrade?: string;
   initialGrade?: string;
-};
-
-type TopicStatus = {
-  studied: boolean; // Konu Anlatımı
-  solved: boolean;  // Soru Çözümü
-  reviewed: boolean; // Tekrar
-};
-
-type ChecklistData = Record<string, Record<string, TopicStatus>>;
-
-const STORAGE_KEY = 'ugur_hoca_topic_checklist_v1';
-
-const GRADE_LABELS: Record<string, string> = {
-  '8': '8. Sınıf (LGS)',
-  '12': '12. Sınıf / YKS',
-  '11': '11. Sınıf',
-  '10': '10. Sınıf',
-  '9': '9. Sınıf',
-  '7': '7. Sınıf',
-  '6': '6. Sınıf',
-  '5': '5. Sınıf',
 };
 
 export function TopicChecklistModal({
   isOpen,
   onClose,
-  initialGrade = '8',
+  defaultGrade,
+  initialGrade,
 }: TopicChecklistModalProps) {
   const titleId = useId();
-  const [selectedGrade, setSelectedGrade] = useState<string>(initialGrade);
-  const [checklist, setChecklist] = useState<ChecklistData>({});
+  const [selectedGrade, setSelectedGrade] = useState<string>(initialGrade || defaultGrade || '8');
+  const [checklist, setChecklist] = useState<AllGradesChecklist>({});
 
-  // LocalStorage'dan yükle
+  // localStorage'dan yükle
   useEffect(() => {
     try {
       const saved = localStorage.getItem(STORAGE_KEY);
@@ -56,17 +60,16 @@ export function TopicChecklistModal({
         setChecklist(JSON.parse(saved));
       }
     } catch {
-      // ignore
+      // sessizce geç
     }
   }, []);
 
-  // Değişiklikleri kaydet
-  const saveChecklist = (next: ChecklistData) => {
-    setChecklist(next);
+  const saveChecklist = (data: AllGradesChecklist) => {
+    setChecklist(data);
     try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
     } catch {
-      // ignore
+      // sessizce geç
     }
   };
 
@@ -84,7 +87,7 @@ export function TopicChecklistModal({
     const totalSteps = topics.length * 3;
 
     for (const topic of topics) {
-      const status = currentGradeData[topic];
+      const status = currentGradeData[topic] || { studied: false, solved: false, reviewed: false };
       if (status?.studied) completedSteps++;
       if (status?.solved) completedSteps++;
       if (status?.reviewed) completedSteps++;
@@ -118,10 +121,39 @@ export function TopicChecklistModal({
     saveChecklist(next);
   };
 
+  const handlePrint = () => {
+    if (typeof window !== 'undefined') {
+      window.print();
+    }
+  };
+
   return (
     <div className="fixed inset-0 z-[150] flex items-center justify-center p-3 sm:p-5">
+      <style dangerouslySetInnerHTML={{ __html: `
+        @media print {
+          body * { visibility: hidden !important; }
+          .print-checklist-area, .print-checklist-area * { visibility: visible !important; }
+          .print-checklist-area {
+            position: absolute !important;
+            left: 0 !important;
+            top: 0 !important;
+            width: 100% !important;
+            max-height: none !important;
+            background: #ffffff !important;
+            color: #000000 !important;
+            box-shadow: none !important;
+            border: none !important;
+            padding: 10mm !important;
+          }
+          .no-print { display: none !important; }
+          .print-only { display: block !important; }
+        }
+        @media screen {
+          .print-only { display: none !important; }
+        }
+      `}} />
       <div
-        className="fixed inset-0 -z-10 bg-slate-950/80 backdrop-blur-md"
+        className="no-print fixed inset-0 -z-10 bg-slate-950/80 backdrop-blur-md"
         onClick={onClose}
         aria-hidden="true"
       />
@@ -129,10 +161,23 @@ export function TopicChecklistModal({
         role="dialog"
         aria-modal="true"
         aria-labelledby={titleId}
-        className="flex max-h-[92vh] w-full max-w-4xl flex-col overflow-hidden rounded-3xl border border-slate-200/80 dark:border-white/10 bg-white dark:bg-slate-900 shadow-2xl transition-all"
+        className="print-checklist-area flex max-h-[92vh] w-full max-w-4xl flex-col overflow-hidden rounded-3xl border border-slate-200/80 dark:border-white/10 bg-white dark:bg-slate-900 shadow-2xl transition-all"
       >
+        {/* Yazdırmaya Özel Başlık */}
+        <div className="print-only mb-6 border-b-2 border-black pb-4 text-black">
+          <div className="flex justify-between items-center">
+            <div>
+              <h1 className="text-xl font-bold">Uğur Hoca Matematik — {GRADE_LABELS[selectedGrade]} Konu Takip Çizelgesi</h1>
+              <p className="mt-1 text-xs text-gray-700">Öğrenci Adı Soyadı: _______________________________   Tarih: ____/____/2026</p>
+            </div>
+            <div className="text-right">
+              <span className="text-sm font-bold">Tamamlanma: %{stats.percent} ({stats.completedSteps}/{stats.totalSteps} Adım)</span>
+            </div>
+          </div>
+        </div>
+
         {/* Başlık ve Sınıf Seçimi */}
-        <div className="flex flex-col gap-3 border-b border-slate-200/80 dark:border-white/10 bg-slate-50/80 dark:bg-slate-950/80 px-5 py-4 sm:flex-row sm:items-center sm:justify-between">
+        <div className="no-print flex flex-col gap-3 border-b border-slate-200/80 dark:border-white/10 bg-slate-50/80 dark:bg-slate-950/80 px-5 py-4 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-center gap-3">
             <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-600 text-white shadow-md">
               <ListChecks className="h-5 w-5" />
@@ -148,7 +193,6 @@ export function TopicChecklistModal({
           </div>
 
           <div className="flex items-center gap-2">
-            {/* Sınıf Seçici Dropdown */}
             <select
               value={selectedGrade}
               onChange={(e) => setSelectedGrade(e.target.value)}
@@ -160,6 +204,18 @@ export function TopicChecklistModal({
                 </option>
               ))}
             </select>
+
+            {/* A4 Yazdır / PDF Butonu */}
+            <button
+              type="button"
+              onClick={handlePrint}
+              aria-label="A4 Yazdır veya PDF Al"
+              className="inline-flex items-center gap-1.5 rounded-xl border border-slate-200 dark:border-white/10 bg-white dark:bg-slate-800 px-3 py-1.5 text-xs font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors shadow-sm"
+              title="A4 Çıktısı Al veya PDF Olarak Kaydet"
+            >
+              <Printer className="h-3.5 w-3.5 text-slate-500 dark:text-slate-400" />
+              <span className="hidden sm:inline">A4 Yazdır / PDF</span>
+            </button>
 
             <button
               type="button"
@@ -267,7 +323,7 @@ export function TopicChecklistModal({
         </div>
 
         {/* Alt Bilgi ve Sıfırla */}
-        <div className="flex items-center justify-between border-t border-slate-200 dark:border-white/10 bg-slate-50/80 dark:bg-slate-950/80 px-5 py-3 text-xs">
+        <div className="no-print flex items-center justify-between border-t border-slate-200 dark:border-white/10 bg-slate-50/80 dark:bg-slate-950/80 px-5 py-3 text-xs">
           <button
             type="button"
             onClick={handleResetGrade}

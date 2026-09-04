@@ -9,6 +9,7 @@ import {
   Calculator,
   ChevronRight,
   GraduationCap,
+  ListChecks,
   School,
   Sparkles,
   Target,
@@ -16,50 +17,86 @@ import {
 } from 'lucide-react';
 import { useTheme } from '@/components/ThemeProvider';
 import { FormulaFlashcardsModal } from '@/features/programs/components/FormulaFlashcardsModal';
+import { ExamScoreCalculatorModal } from '@/components/ExamScoreCalculatorModal';
+import { TopicChecklistModal } from '@/features/programs/components/TopicChecklistModal';
 
 type ProgramTool = {
   id: string;
   title: string;
   subtitle: string;
-  href: string;
+  href?: string;
+  onClick?: () => void;
   icon: LucideIcon;
   gradient: string;
   bullets: string[];
+  ctaLabel?: string;
 };
-
-const tools: ProgramTool[] = [
-  {
-    id: 'lgs',
-    title: 'LGS Puan ve Lise Tercih Sihirbazı',
-    subtitle: 'Ortaokul seviyesi için puan hesaplama ve hedef belirleme',
-    href: '/programlar/lgs',
-    icon: School,
-    gradient: 'from-cyan-500 via-blue-500 to-indigo-500',
-    bullets: [
-      'Net tabanlı tahmini puan',
-      'Lise hedef seviyesi',
-      'Gerçek veritabanından okul önerileri',
-    ],
-  },
-  {
-    id: 'yks',
-    title: 'YKS Puan ve Üniversite Tercih Sihirbazı',
-    subtitle: 'Lise grubu için puan hesaplama ve üniversite tercih yardımı',
-    href: '/programlar/yks',
-    icon: GraduationCap,
-    gradient: 'from-violet-500 via-fuchsia-500 to-orange-400',
-    bullets: [
-      'TYT / SAY / EA / SOZ puan tahmini',
-      'Başarı sırası odaklı filtreleme',
-      'Gerçek veritabanından program önerileri',
-    ],
-  },
-];
 
 export default function ProgramsHubPage() {
   const { theme } = useTheme();
   const isLight = theme === 'light';
   const [isFlashcardsOpen, setIsFlashcardsOpen] = useState(false);
+  const [isCalculatorOpen, setIsCalculatorOpen] = useState(false);
+  const [isChecklistOpen, setIsChecklistOpen] = useState(false);
+
+  const tools: ProgramTool[] = [
+    {
+      id: 'lgs',
+      title: 'LGS Puan ve Lise Tercih Sihirbazı',
+      subtitle: 'Ortaokul seviyesi için puan hesaplama ve hedef belirleme',
+      href: '/programlar/lgs',
+      icon: School,
+      gradient: 'from-cyan-500 via-blue-500 to-indigo-500',
+      bullets: [
+        'Net tabanlı tahmini puan',
+        'Lise hedef seviyesi',
+        'Gerçek veritabanından okul önerileri',
+      ],
+      ctaLabel: 'Sihirbazı Aç',
+    },
+    {
+      id: 'yks',
+      title: 'YKS Puan ve Üniversite Tercih Sihirbazı',
+      subtitle: 'Lise grubu için puan hesaplama ve üniversite tercih yardımı',
+      href: '/programlar/yks',
+      icon: GraduationCap,
+      gradient: 'from-violet-500 via-fuchsia-500 to-orange-400',
+      bullets: [
+        'TYT / SAY / EA / SOZ puan tahmini',
+        'Başarı sırası odaklı filtreleme',
+        'Gerçek veritabanından program önerileri',
+      ],
+      ctaLabel: 'Sihirbazı Aç',
+    },
+    {
+      id: 'calculator',
+      title: 'İnteraktif Sınav Puanı & Net Hesaplayıcı',
+      subtitle: 'LGS ve YKS için güncel katsayılarla anlık net ve puan hesabı',
+      onClick: () => setIsCalculatorOpen(true),
+      icon: Calculator,
+      gradient: 'from-indigo-500 via-purple-500 to-pink-500',
+      bullets: [
+        '3 yanlış 1 doğru kuralı (LGS)',
+        'Diploma notu (OBP) ve sıralama bandı',
+        'Sayısal, Eşit Ağırlık ve Sözel',
+      ],
+      ctaLabel: 'Hesaplayıcıyı Aç',
+    },
+    {
+      id: 'checklist',
+      title: 'MEB Matematik Konu Takip Çizelgesi',
+      subtitle: '5-12. sınıf müfredat kazanım takip listesi ve A4 duvara asılabilir çıktı',
+      onClick: () => setIsChecklistOpen(true),
+      icon: ListChecks,
+      gradient: 'from-emerald-500 via-teal-500 to-cyan-600',
+      bullets: [
+        'Konu anlatımı, 50+ soru ve tekrar adımları',
+        'Dinamik yüzde tamamlama göstergesi',
+        'A4 Yazdır / Duvar Çalışma Planı',
+      ],
+      ctaLabel: 'Çizelgeyi Aç',
+    },
+  ];
 
   return (
     <main className="programlar-page min-h-screen gradient-bg px-4 pb-12 pt-16 sm:px-6 sm:pt-20">
@@ -179,14 +216,26 @@ export default function ProgramsHubPage() {
                     ))}
                   </ul>
 
-                  <Link
-                    href={tool.href}
-                    className={`mt-5 inline-flex items-center gap-2 rounded-xl bg-gradient-to-r ${tool.gradient} px-4 py-2 text-sm font-bold text-white shadow-lg transition hover:scale-[1.02] focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-slate-900`}
-                    aria-label={`${tool.title} sihirbazını aç`}
-                  >
-                    Sihirbazı Aç
-                    <ChevronRight className="h-4 w-4" />
-                  </Link>
+                  {tool.onClick ? (
+                    <button
+                      type="button"
+                      onClick={tool.onClick}
+                      className={`mt-5 inline-flex items-center gap-2 rounded-xl bg-gradient-to-r ${tool.gradient} px-4 py-2 text-sm font-bold text-white shadow-lg transition hover:scale-[1.02] focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-slate-900`}
+                      aria-label={`${tool.title} aracını aç`}
+                    >
+                      {tool.ctaLabel || 'Aracı Aç'}
+                      <ChevronRight className="h-4 w-4" />
+                    </button>
+                  ) : (
+                    <Link
+                      href={tool.href || '#'}
+                      className={`mt-5 inline-flex items-center gap-2 rounded-xl bg-gradient-to-r ${tool.gradient} px-4 py-2 text-sm font-bold text-white shadow-lg transition hover:scale-[1.02] focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-slate-900`}
+                      aria-label={`${tool.title} sihirbazını aç`}
+                    >
+                      {tool.ctaLabel || 'Sihirbazı Aç'}
+                      <ChevronRight className="h-4 w-4" />
+                    </Link>
+                  )}
                 </div>
               </motion.article>
             ))}
@@ -197,6 +246,14 @@ export default function ProgramsHubPage() {
       <FormulaFlashcardsModal
         isOpen={isFlashcardsOpen}
         onClose={() => setIsFlashcardsOpen(false)}
+      />
+      <ExamScoreCalculatorModal
+        isOpen={isCalculatorOpen}
+        onClose={() => setIsCalculatorOpen(false)}
+      />
+      <TopicChecklistModal
+        isOpen={isChecklistOpen}
+        onClose={() => setIsChecklistOpen(false)}
       />
     </main>
   );

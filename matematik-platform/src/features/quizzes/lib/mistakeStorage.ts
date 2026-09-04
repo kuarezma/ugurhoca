@@ -1,11 +1,24 @@
 import type { QuizQuestion } from '@/types/quiz';
 
+export type MistakeReason = 'careless' | 'concept' | 'reading' | 'time';
+
+export const MISTAKE_REASON_LABELS: Record<
+  MistakeReason,
+  { label: string; shortLabel: string; emoji: string }
+> = {
+  careless: { label: 'İşlem Hatası (Dikkatsizlik)', shortLabel: 'İşlem Hatası', emoji: '🔴' },
+  concept: { label: 'Konu / Kural Eksikliği', shortLabel: 'Kural Eksikliği', emoji: '🟡' },
+  reading: { label: 'Soru Kökünü Yanlış Okuma', shortLabel: 'Yanlış Okuma', emoji: '🔵' },
+  time: { label: 'Süre Baskısı / Yetişmedi', shortLabel: 'Süre Baskısı', emoji: '🟣' },
+};
+
 export type SavedMistakeQuestion = {
   id: string;
   question: QuizQuestion;
   quizTitle?: string;
   savedAt: string;
   mastered: boolean;
+  reason?: MistakeReason;
 };
 
 const STORAGE_KEY = 'ugur_hoca_mistakes_bank_v1';
@@ -70,6 +83,22 @@ export const removeMistakeFromBank = (questionText: string): void => {
   try {
     const existing = getSavedMistakes();
     const next = existing.filter((m) => m.question.question !== questionText);
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
+  } catch {
+    // ignore
+  }
+};
+
+export const updateMistakeReason = (
+  questionText: string,
+  reason?: MistakeReason,
+): void => {
+  if (typeof window === 'undefined') return;
+  try {
+    const existing = getSavedMistakes();
+    const next = existing.map((m) =>
+      m.question.question === questionText ? { ...m, reason } : m,
+    );
     localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
   } catch {
     // ignore

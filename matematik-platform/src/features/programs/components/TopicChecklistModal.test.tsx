@@ -27,6 +27,13 @@ describe('TopicChecklistModal', () => {
     const konuButtons = screen.getAllByRole('button', { name: /Konu/i });
     fireEvent.click(konuButtons[0]);
 
+    // A4 Yazdır butonu
+    const printSpy = vi.spyOn(window, 'print').mockImplementation(() => {});
+    const printBtn = screen.getByRole('button', { name: /A4 Yazdır/i });
+    fireEvent.click(printBtn);
+    expect(printSpy).toHaveBeenCalled();
+    printSpy.mockRestore();
+
     // Kapat butonu
     const closeBtn = screen.getByRole('button', { name: 'Kapat' });
     fireEvent.click(closeBtn);

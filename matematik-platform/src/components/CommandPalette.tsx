@@ -5,15 +5,19 @@ import { useRouter } from 'next/navigation';
 import {
   BarChart3,
   BookOpen,
+  Calculator,
+  CheckCircle2,
   ClipboardList,
   FileText,
   Gamepad2,
   GraduationCap,
   Home,
+  ListChecks,
   LogIn,
   MonitorPlay,
   Search,
   Sparkles,
+  Timer,
   User,
 } from 'lucide-react';
 
@@ -36,8 +40,61 @@ export default function CommandPalette() {
   const inputRef = useRef<HTMLInputElement>(null);
   const listboxId = useId();
 
+  const openTool = useCallback((tool: string, fallbackPath = '/?tool=' + tool) => {
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new CustomEvent('ugurhoca:open-tool', { detail: { tool } }));
+      if (tool === 'mistakes' && !window.location.pathname.startsWith('/testler')) {
+        router.push('/testler?tool=mistakes');
+        return;
+      }
+      if (tool !== 'mistakes' && window.location.pathname !== '/') {
+        router.push(fallbackPath);
+      }
+    }
+  }, [router]);
+
   const commands = useMemo<CommandItem[]>(
     () => [
+      {
+        id: 'calculator',
+        label: 'LGS & YKS Puan / Net Hesaplayıcı',
+        hint: 'MEB/ÖSYM uyumlu anlık net ve puan hesapla',
+        keywords: ['hesapla', 'hesaplayici', 'puan', 'net', 'lgs', 'yks', 'tyt', 'ayt'],
+        icon: Calculator,
+        action: () => openTool('calculator'),
+      },
+      {
+        id: 'pomodoro',
+        label: 'Matematik Odak & Pomodoro Sayacı',
+        hint: '25/50 dk çalışma süreölçeri ve mola zili',
+        keywords: ['pomodoro', 'odak', 'sayac', 'sure', 'zaman', 'timer', 'kronometre'],
+        icon: Timer,
+        action: () => openTool('pomodoro'),
+      },
+      {
+        id: 'checklist',
+        label: 'MEB Matematik Konu Takip Çizelgesi',
+        hint: '5-12. sınıf müfredat kazanım takip listesi ve A4 yazdır',
+        keywords: ['cizelge', 'konu', 'takip', 'kazanim', 'mufredat', 'liste', 'checklist', 'yazdir'],
+        icon: ListChecks,
+        action: () => openTool('checklist'),
+      },
+      {
+        id: 'flashcards',
+        label: 'Formül & Bilgi Kartları',
+        hint: 'LGS ve YKS matematik pratik formül tekrarı',
+        keywords: ['formul', 'kart', 'flashcard', 'kural', 'ozet', 'ezber'],
+        icon: Sparkles,
+        action: () => openTool('flashcards'),
+      },
+      {
+        id: 'mistakes',
+        label: 'Akıllı Hata Defterim',
+        hint: 'Testlerdeki yanlış sorular havuzu ve tekrar çözümü',
+        keywords: ['hata', 'yanlis', 'defter', 'tekrar', 'soru', 'eksik'],
+        icon: CheckCircle2,
+        action: () => openTool('mistakes', '/testler?tool=mistakes'),
+      },
       {
         id: 'home',
         label: 'Ana Sayfa',
@@ -119,7 +176,7 @@ export default function CommandPalette() {
         action: () => router.push('/giris'),
       },
     ],
-    [router],
+    [openTool, router],
   );
 
   const normalize = (value: string) =>
@@ -154,7 +211,9 @@ export default function CommandPalette() {
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
       const target = event.target as HTMLElement | null;
-      const inField = target?.closest(ACTIONABLE_SELECTOR);
+      const inField = Boolean(
+        target && typeof target.closest === 'function' && target.closest(ACTIONABLE_SELECTOR),
+      );
       const isPaletteOpen = open;
 
       if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'k') {

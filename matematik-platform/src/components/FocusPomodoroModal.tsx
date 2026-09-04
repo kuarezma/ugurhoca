@@ -65,35 +65,86 @@ export function FocusPomodoroModal({ isOpen, onClose }: FocusPomodoroModalProps)
   const [soundEnabled, setSoundEnabled] = useState(true);
 
   const timerRef = useRef<number | null>(null);
+  const endTimeRef = useRef<number | null>(null);
+  const originalTitleRef = useRef<string>('');
+  const timeLeftRef = useRef(timeLeft);
+
+  useEffect(() => {
+    timeLeftRef.current = timeLeft;
+  }, [timeLeft]);
 
   const totalDuration = MODE_DURATIONS[mode];
   const progressPercent = ((totalDuration - timeLeft) / totalDuration) * 100;
 
-  // Sayacı çalıştırma efekti
+  const isBreak = mode.startsWith('break');
+  const minutes = Math.floor(timeLeft / 60);
+  const seconds = timeLeft % 60;
+  const timeString = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+
+  // Sayacı çalıştırma ve sekme başlığı senkronizasyonu
   useEffect(() => {
+    if (typeof document !== 'undefined' && !originalTitleRef.current) {
+      originalTitleRef.current = document.title;
+    }
+
     if (!isRunning) {
       if (timerRef.current) clearInterval(timerRef.current);
+      if (typeof document !== 'undefined' && originalTitleRef.current) {
+        document.title = originalTitleRef.current;
+      }
       return;
     }
 
+    // Hedef bitiş zamanı (arka plan sekme throttling koruması)
+    const initialTime = timeLeftRef.current;
+    endTimeRef.current = Date.now() + initialTime * 1000;
+
+    // Anlık sekme başlığı güncellemesi
+    if (typeof document !== 'undefined') {
+      const emoji = isBreak ? '☕' : '🍅';
+      const m = Math.floor(initialTime / 60).toString().padStart(2, '0');
+      const s = (initialTime % 60).toString().padStart(2, '0');
+      document.title = `${emoji} ${m}:${s} - Odak | Uğur Hoca`;
+    }
+
     timerRef.current = window.setInterval(() => {
-      setTimeLeft((prev) => {
-        if (prev <= 1) {
-          setIsRunning(false);
-          if (soundEnabled) playCompletionSound();
-          if (mode.startsWith('focus')) {
-            setCompletedSessions((c) => c + 1);
+      if (!endTimeRef.current) return;
+      const remainingMs = endTimeRef.current - Date.now();
+      const nextTime = Math.max(0, Math.ceil(remainingMs / 1000));
+
+      setTimeLeft(nextTime);
+
+      if (typeof document !== 'undefined') {
+        const currentMins = Math.floor(nextTime / 60);
+        const currentSecs = nextTime % 60;
+        const formatted = `${currentMins.toString().padStart(2, '0')}:${currentSecs.toString().padStart(2, '0')}`;
+        const emoji = isBreak ? '☕' : '🍅';
+        document.title = `${emoji} ${formatted} - Odak | Uğur Hoca`;
+      }
+
+      if (nextTime <= 0) {
+        setIsRunning(false);
+        if (soundEnabled) playCompletionSound();
+        if (typeof navigator !== 'undefined' && typeof navigator.vibrate === 'function') {
+          try {
+            navigator.vibrate([150, 80, 150]);
+          } catch {
+            // Titreşim desteklenmiyorsa sessizce geç
           }
-          return 0;
         }
-        return prev - 1;
-      });
+        if (mode.startsWith('focus')) {
+          setCompletedSessions((c) => c + 1);
+        }
+      }
     }, 1000);
 
     return () => {
       if (timerRef.current) clearInterval(timerRef.current);
+      if (typeof document !== 'undefined' && originalTitleRef.current) {
+        document.title = originalTitleRef.current;
+      }
     };
-  }, [isRunning, soundEnabled, mode]);
+  }, [isRunning, soundEnabled, mode, isBreak]);
 
   if (!isOpen) return null;
 
@@ -107,12 +158,6 @@ export function FocusPomodoroModal({ isOpen, onClose }: FocusPomodoroModalProps)
     setIsRunning(false);
     setTimeLeft(MODE_DURATIONS[mode]);
   };
-
-  const minutes = Math.floor(timeLeft / 60);
-  const seconds = timeLeft % 60;
-  const timeString = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-
-  const isBreak = mode.startsWith('break');
 
   return (
     <div className="fixed inset-0 z-[150] flex items-center justify-center p-3 sm:p-5">

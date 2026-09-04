@@ -34,6 +34,7 @@ import { QuizQuestionPalette } from '@/features/quizzes/components/QuizQuestionP
 import { QuizMistakeReviewModal } from '@/features/quizzes/components/QuizMistakeReviewModal';
 import { MistakeNotebookModal } from '@/features/quizzes/components/MistakeNotebookModal';
 import { saveMistakesToBank, markMistakeMastered } from '@/features/quizzes/lib/mistakeStorage';
+import { incrementQuestionsSolved } from '@/lib/dailyGoalStorage';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { Skeleton } from '@/components/ui/Skeleton';
 import { requireClientSession } from '@/lib/auth-client';
@@ -358,6 +359,7 @@ export default function TestsPage({
     for (const c of corrects) {
       markMistakeMastered(c.question, true);
     }
+    incrementQuestionsSolved(quizQuestions.length);
 
     if (!user || !selectedQuiz || !startTime) return;
     if (resultSavedRef.current) return;

@@ -26,4 +26,19 @@ describe('FocusPomodoroModal', () => {
     fireEvent.click(closeBtn);
     expect(onClose).toHaveBeenCalled();
   });
+
+  it('updates document.title when timer starts and restores it on pause', () => {
+    document.title = 'Uğur Hoca Matematik';
+    render(<FocusPomodoroModal isOpen={true} onClose={vi.fn()} />);
+
+    const startBtn = screen.getByRole('button', { name: /Başlat/i });
+    fireEvent.click(startBtn);
+
+    expect(document.title).toContain('🍅 25:00 - Odak | Uğur Hoca');
+
+    const pauseBtn = screen.getByRole('button', { name: /Duraklat/i });
+    fireEvent.click(pauseBtn);
+
+    expect(document.title).toBe('Uğur Hoca Matematik');
+  });
 });

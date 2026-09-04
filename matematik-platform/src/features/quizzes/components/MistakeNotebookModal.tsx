@@ -15,7 +15,10 @@ import {
   markMistakeMastered,
   removeMistakeFromBank,
   clearAllMistakes,
+  updateMistakeReason,
   type SavedMistakeQuestion,
+  type MistakeReason,
+  MISTAKE_REASON_LABELS,
 } from '@/features/quizzes/lib/mistakeStorage';
 
 type MistakeNotebookModalProps = {
@@ -32,6 +35,7 @@ export function MistakeNotebookModal({
   const titleId = useId();
   const [mistakes, setMistakes] = useState<SavedMistakeQuestion[]>([]);
   const [filter, setFilter] = useState<'all' | 'pending' | 'mastered'>('pending');
+  const [reasonFilter, setReasonFilter] = useState<MistakeReason | 'all'>('all');
 
   const reloadMistakes = () => {
     setMistakes(getSavedMistakes());
@@ -51,12 +55,20 @@ export function MistakeNotebookModal({
   }, [mistakes]);
 
   const filteredList = useMemo(() => {
-    if (filter === 'pending') return mistakes.filter((m) => !m.mastered);
-    if (filter === 'mastered') return mistakes.filter((m) => m.mastered);
-    return mistakes;
-  }, [mistakes, filter]);
+    return mistakes.filter((m) => {
+      if (filter === 'pending' && m.mastered) return false;
+      if (filter === 'mastered' && !m.mastered) return false;
+      if (reasonFilter !== 'all' && m.reason !== reasonFilter) return false;
+      return true;
+    });
+  }, [mistakes, filter, reasonFilter]);
 
   if (!isOpen) return null;
+
+  const handleSetReason = (questionText: string, reason?: MistakeReason) => {
+    updateMistakeReason(questionText, reason);
+    reloadMistakes();
+  };
 
   const handleToggleMastered = (questionText: string, current: boolean) => {
     markMistakeMastered(questionText, !current);
@@ -115,17 +127,17 @@ export function MistakeNotebookModal({
                 Akıllı Hata Defterim 📓
               </h2>
               <p className="text-xs text-slate-500 dark:text-slate-400">
-                Testlerde yanlış yaptığın sorular burada birikir. Tekrar çözerek eksiklerini kalıcı kapat.
+                Yanlış yaptığın sorular burada toplanır. Nedenini belirle, tekrar çöz ve pekiştir.
               </p>
             </div>
           </div>
 
           <div className="flex items-center gap-2">
-            {onStartRetakeQuiz && stats.pending > 0 ? (
+            {stats.pending > 0 ? (
               <button
                 type="button"
                 onClick={handleStartPractice}
-                className="inline-flex items-center gap-1.5 rounded-xl bg-gradient-to-r from-amber-500 to-rose-600 px-3.5 py-1.5 text-xs font-bold text-white shadow-md transition-transform active:scale-95"
+                className="inline-flex items-center gap-1.5 rounded-xl bg-gradient-to-r from-amber-500 to-rose-600 px-4 py-2 text-xs font-bold text-white shadow-md transition hover:scale-[1.02] active:scale-[0.98]"
               >
                 <Play className="h-3.5 w-3.5 fill-white" />
                 <span>Hatalarımdan Test Çöz ({stats.pending})</span>
@@ -144,52 +156,89 @@ export function MistakeNotebookModal({
         </div>
 
         {/* Sayaç ve Filtre Şeridi */}
-        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 dark:border-white/5 bg-slate-50/50 dark:bg-white/[0.02] px-5 py-3 text-xs">
-          <div className="flex items-center gap-2">
-            <button
-              type="button"
-              onClick={() => setFilter('pending')}
-              className={`rounded-lg px-2.5 py-1 font-bold transition-all ${
-                filter === 'pending'
-                  ? 'bg-amber-500 text-white shadow-sm'
-                  : 'bg-slate-200/70 dark:bg-white/10 text-slate-700 dark:text-slate-300'
-              }`}
-            >
-              Tekrar Bekleyen ({stats.pending})
-            </button>
-            <button
-              type="button"
-              onClick={() => setFilter('mastered')}
-              className={`rounded-lg px-2.5 py-1 font-bold transition-all ${
-                filter === 'mastered'
-                  ? 'bg-emerald-500 text-white shadow-sm'
-                  : 'bg-slate-200/70 dark:bg-white/10 text-slate-700 dark:text-slate-300'
-              }`}
-            >
-              Öğrenilenler ({stats.mastered})
-            </button>
-            <button
-              type="button"
-              onClick={() => setFilter('all')}
-              className={`rounded-lg px-2.5 py-1 font-bold transition-all ${
-                filter === 'all'
-                  ? 'bg-indigo-600 text-white shadow-sm'
-                  : 'bg-slate-200/70 dark:bg-white/10 text-slate-700 dark:text-slate-300'
-              }`}
-            >
-              Tümü ({stats.total})
-            </button>
+        <div className="flex flex-col gap-2.5 border-b border-slate-100 dark:border-white/5 bg-slate-50/50 dark:bg-white/[0.02] px-5 py-3 text-xs">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={() => setFilter('pending')}
+                className={`rounded-lg px-2.5 py-1 font-bold transition-all ${
+                  filter === 'pending'
+                    ? 'bg-amber-500 text-white shadow-sm'
+                    : 'bg-slate-200/70 dark:bg-white/10 text-slate-700 dark:text-slate-300'
+                }`}
+              >
+                Tekrar Bekleyen ({stats.pending})
+              </button>
+              <button
+                type="button"
+                onClick={() => setFilter('mastered')}
+                className={`rounded-lg px-2.5 py-1 font-bold transition-all ${
+                  filter === 'mastered'
+                    ? 'bg-emerald-500 text-white shadow-sm'
+                    : 'bg-slate-200/70 dark:bg-white/10 text-slate-700 dark:text-slate-300'
+                }`}
+              >
+                Öğrenilenler ({stats.mastered})
+              </button>
+              <button
+                type="button"
+                onClick={() => setFilter('all')}
+                className={`rounded-lg px-2.5 py-1 font-bold transition-all ${
+                  filter === 'all'
+                    ? 'bg-indigo-600 text-white shadow-sm'
+                    : 'bg-slate-200/70 dark:bg-white/10 text-slate-700 dark:text-slate-300'
+                }`}
+              >
+                Tümü ({stats.total})
+              </button>
+            </div>
+
+            {stats.total > 0 && (
+              <button
+                type="button"
+                onClick={handleClearAll}
+                className="text-slate-400 hover:text-red-500 transition-colors font-medium text-[11px]"
+              >
+                Defteri Boşalt
+              </button>
+            )}
           </div>
 
-          {stats.total > 0 && (
+          {/* Hata Nedeni Filtresi */}
+          <div className="flex flex-wrap items-center gap-1.5 pt-2 border-t border-slate-200/50 dark:border-white/5 text-[11px]">
+            <span className="text-slate-500 dark:text-slate-400 font-semibold mr-1">Neden Filtresi:</span>
             <button
               type="button"
-              onClick={handleClearAll}
-              className="text-slate-400 hover:text-red-500 transition-colors font-medium text-[11px]"
+              onClick={() => setReasonFilter('all')}
+              className={`px-2 py-0.5 rounded-md font-medium transition-all ${
+                reasonFilter === 'all'
+                  ? 'bg-slate-800 dark:bg-white/20 text-white font-bold'
+                  : 'text-slate-500 hover:bg-slate-200/60 dark:hover:bg-white/5'
+              }`}
             >
-              Defteri Boşalt
+              Tümü
             </button>
-          )}
+            {(['careless', 'concept', 'reading', 'time'] as MistakeReason[]).map((rKey) => {
+              const meta = MISTAKE_REASON_LABELS[rKey];
+              const count = mistakes.filter((m) => m.reason === rKey).length;
+              return (
+                <button
+                  key={rKey}
+                  type="button"
+                  onClick={() => setReasonFilter(reasonFilter === rKey ? 'all' : rKey)}
+                  className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-md font-medium transition-all ${
+                    reasonFilter === rKey
+                      ? 'bg-indigo-600 text-white shadow-sm font-bold'
+                      : 'bg-slate-100 dark:bg-white/5 text-slate-600 dark:text-slate-300 hover:bg-slate-200/60'
+                  }`}
+                >
+                  <span>{meta.emoji}</span>
+                  <span>{meta.shortLabel} ({count})</span>
+                </button>
+              );
+            })}
+          </div>
         </div>
 
         {/* Soru Listesi (Kaydırılabilir) */}
@@ -305,6 +354,32 @@ export function MistakeNotebookModal({
                       <MathText>{q.explanation}</MathText>
                     </div>
                   )}
+
+                  {/* Hata Nedeni Etiketleme */}
+                  <div className="mt-3 pt-2.5 border-t border-slate-200/60 dark:border-white/5 flex flex-wrap items-center gap-1.5 text-xs">
+                    <span className="text-[11px] font-semibold text-slate-500 dark:text-slate-400 mr-1">
+                      Hata Nedeni:
+                    </span>
+                    {(['careless', 'concept', 'reading', 'time'] as MistakeReason[]).map((rKey) => {
+                      const isSelected = item.reason === rKey;
+                      const meta = MISTAKE_REASON_LABELS[rKey];
+                      return (
+                        <button
+                          key={rKey}
+                          type="button"
+                          onClick={() => handleSetReason(q.question, isSelected ? undefined : rKey)}
+                          className={`inline-flex items-center gap-1 rounded-lg px-2 py-0.5 text-[11px] font-medium transition-all ${
+                            isSelected
+                              ? 'bg-indigo-600 text-white shadow-sm font-bold scale-[1.02]'
+                              : 'bg-slate-100 dark:bg-white/5 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-white/10'
+                          }`}
+                        >
+                          <span>{meta.emoji}</span>
+                          <span>{meta.shortLabel}</span>
+                        </button>
+                      );
+                    })}
+                  </div>
                 </div>
               );
             })

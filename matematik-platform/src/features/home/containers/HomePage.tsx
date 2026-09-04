@@ -1,11 +1,12 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import dynamic from 'next/dynamic';
 import { useTheme } from '@/components/ThemeProvider';
 import { HomeAnnouncementsSection } from '@/features/home/components/HomeAnnouncementsSection';
 import { HomeAssignmentsSection } from '@/features/home/components/HomeAssignmentsSection';
 import { HomeDailyChallenge } from '@/features/home/components/HomeDailyChallenge';
+import { HomeDailyGoalWidget } from '@/features/home/components/HomeDailyGoalWidget';
 import { HomeDailyQuote } from '@/features/home/components/HomeDailyQuote';
 import { HomeExamCountdownSection } from '@/features/home/components/HomeExamCountdownSection';
 import { HomeFooter } from '@/features/home/components/HomeFooter';
@@ -73,6 +74,43 @@ export default function HomePage({ activeLiveLesson, initialFeed }: HomePageProp
   }>({ isOpen: false, tab: 'lgs' });
   const [isPomodoroOpen, setIsPomodoroOpen] = useState(false);
   const [isChecklistOpen, setIsChecklistOpen] = useState(false);
+
+  useEffect(() => {
+    const handleToolEvent = (e: Event) => {
+      const customEvent = e as CustomEvent<{ tool: string; tab?: 'lgs' | 'yks' }>;
+      const tool = customEvent.detail?.tool;
+      if (tool === 'calculator') {
+        setCalculatorState({ isOpen: true, tab: customEvent.detail?.tab || 'lgs' });
+      } else if (tool === 'pomodoro') {
+        setIsPomodoroOpen(true);
+      } else if (tool === 'checklist') {
+        setIsChecklistOpen(true);
+      } else if (tool === 'flashcards') {
+        setIsFlashcardsOpen(true);
+      } else if (tool === 'scratchpad') {
+        setIsScratchpadOpen(true);
+      }
+    };
+
+    window.addEventListener('ugurhoca:open-tool', handleToolEvent);
+
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search);
+      const toolParam = params.get('tool');
+      if (toolParam === 'calculator') {
+        setCalculatorState({ isOpen: true, tab: (params.get('tab') as 'lgs' | 'yks') || 'lgs' });
+      } else if (toolParam === 'pomodoro') {
+        setIsPomodoroOpen(true);
+      } else if (toolParam === 'checklist') {
+        setIsChecklistOpen(true);
+      } else if (toolParam === 'flashcards') {
+        setIsFlashcardsOpen(true);
+      }
+    }
+
+    return () => window.removeEventListener('ugurhoca:open-tool', handleToolEvent);
+  }, []);
+
   const {
     announcements,
     documents,
@@ -110,6 +148,7 @@ export default function HomePage({ activeLiveLesson, initialFeed }: HomePageProp
       <div className="pt-[calc(4.5rem+env(safe-area-inset-top))] md:pt-20">
         <HomeHeroSection isLight={isLight} user={user} />
         <HomeDailyChallenge isLight={isLight} />
+        <HomeDailyGoalWidget isLight={isLight} />
         <HomeQuickToolsGrid
           isLight={isLight}
           onOpenFlashcards={() => setIsFlashcardsOpen(true)}

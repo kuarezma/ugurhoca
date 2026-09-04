@@ -9,6 +9,7 @@ import {
   RotateCw,
   Sparkles,
   CheckCircle,
+  Printer,
 } from 'lucide-react';
 import MathText from '@/components/MathText';
 
@@ -178,9 +179,64 @@ export function FormulaFlashcardsModal({
       aria-label="Matematik Formül & Bilgi Kartları"
       className="fixed inset-0 z-[150] flex items-center justify-center bg-slate-950/85 p-3 sm:p-4 backdrop-blur-md"
     >
-      <div className="flex h-full max-h-[90vh] w-full max-w-2xl flex-col overflow-hidden rounded-3xl border border-white/15 bg-slate-900 shadow-2xl">
+      <style dangerouslySetInnerHTML={{ __html: `
+        @media print {
+          body * { visibility: hidden !important; }
+          .print-flashcards-area, .print-flashcards-area * { visibility: visible !important; }
+          .print-flashcards-area {
+            position: absolute !important;
+            left: 0 !important;
+            top: 0 !important;
+            width: 100% !important;
+            max-height: none !important;
+            background: #ffffff !important;
+            color: #000000 !important;
+            border: none !important;
+            box-shadow: none !important;
+            padding: 8mm !important;
+          }
+          .no-print { display: none !important; }
+          .print-only { display: block !important; }
+        }
+        @media screen {
+          .print-only { display: none !important; }
+        }
+      `}} />
+
+      <div className="print-flashcards-area flex h-full max-h-[90vh] w-full max-w-2xl flex-col overflow-hidden rounded-3xl border border-white/15 bg-slate-900 shadow-2xl">
+        {/* A4 Yazdırma Görünümü (Yalnızca print esnasında görünür) */}
+        <div className="print-only mb-6 border-b-2 border-black pb-4 text-black">
+          <div className="flex justify-between items-center">
+            <div>
+              <h1 className="text-xl font-bold">Uğur Hoca Matematik — Formül & Bilgi Cep Kitapçığı</h1>
+              <p className="mt-1 text-xs text-gray-700">Kategori: {categoryFilter === 'all' ? 'Tüm Konular (LGS & YKS)' : categoryFilter.toUpperCase()} | Öğrenci Çalışma Notu</p>
+            </div>
+            <div className="text-right">
+              <span className="text-xs font-bold text-gray-600">Toplam {filteredCards.length} Formül Kartı</span>
+            </div>
+          </div>
+          <div className="mt-4 grid grid-cols-2 gap-3 text-xs">
+            {filteredCards.map((card, idx) => (
+              <div key={card.id || idx} className="rounded-lg border border-gray-400 p-2.5 break-inside-avoid">
+                <div className="flex justify-between items-center text-[10px] font-bold text-gray-600 uppercase mb-1">
+                  <span>{card.subject}</span>
+                  <span>{card.category.toUpperCase()}</span>
+                </div>
+                <div className="font-bold text-sm text-black mb-1">{card.title}</div>
+                <div className="font-mono text-xs bg-gray-100 p-1.5 rounded border border-gray-300 text-black mb-1">
+                  <MathText>{card.formula}</MathText>
+                </div>
+                <div className="text-[11px] text-gray-800">{card.frontText}</div>
+                {card.tip && (
+                  <div className="mt-1 text-[10px] italic text-gray-600">💡 {card.tip}</div>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+
         {/* Header */}
-        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-white/10 bg-slate-950/80 px-6 py-4">
+        <div className="no-print flex flex-wrap items-center justify-between gap-3 border-b border-white/10 bg-slate-950/80 px-6 py-4">
           <div className="flex items-center gap-3">
             <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 text-white shadow-md">
               <Sparkles className="h-5 w-5" />
@@ -196,6 +252,16 @@ export function FormulaFlashcardsModal({
           </div>
 
           <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={() => typeof window !== 'undefined' && window.print()}
+              aria-label="A4 Formül Kitapçığı Yazdır"
+              title="Tüm formülleri A4 formatında yazdır veya PDF al"
+              className="inline-flex items-center gap-1.5 rounded-xl bg-white/5 px-2.5 py-1.5 text-xs font-semibold text-slate-300 hover:bg-white/10 hover:text-white transition-colors"
+            >
+              <Printer className="h-4 w-4 text-slate-400" />
+              <span className="hidden sm:inline">A4 Yazdır</span>
+            </button>
             <button
               type="button"
               onClick={handleShuffle}
@@ -217,7 +283,7 @@ export function FormulaFlashcardsModal({
         </div>
 
         {/* Filtre Çipleri */}
-        <div className="flex items-center justify-between border-b border-white/10 bg-slate-950/40 px-6 py-2.5">
+        <div className="no-print flex items-center justify-between border-b border-white/10 bg-slate-950/40 px-6 py-2.5">
           <div className="flex items-center gap-2">
             <button
               type="button"
@@ -272,7 +338,7 @@ export function FormulaFlashcardsModal({
         </div>
 
         {/* Kart Sahnesi */}
-        <div className="flex flex-1 flex-col items-center justify-center p-6 sm:p-8">
+        <div className="no-print flex flex-1 flex-col items-center justify-center p-6 sm:p-8">
           {currentCard && (
             <div
               role="button"
@@ -351,7 +417,7 @@ export function FormulaFlashcardsModal({
         </div>
 
         {/* Alt Navigasyon */}
-        <div className="flex items-center justify-between border-t border-white/10 bg-slate-950/80 px-6 py-4">
+        <div className="no-print flex items-center justify-between border-t border-white/10 bg-slate-950/80 px-6 py-4">
           <button
             type="button"
             onClick={handlePrev}

@@ -5,6 +5,7 @@ import {
   markMistakeMastered,
   removeMistakeFromBank,
   clearAllMistakes,
+  updateMistakeReason,
 } from './mistakeStorage';
 import type { QuizQuestion } from '@/types/quiz';
 
@@ -59,5 +60,17 @@ describe('mistakeStorage', () => {
     saveMistakesToBank([mockQuestion]);
     clearAllMistakes();
     expect(getSavedMistakes()).toHaveLength(0);
+  });
+
+  it('updates mistake reason', () => {
+    saveMistakesToBank([mockQuestion]);
+    updateMistakeReason(mockQuestion.question, 'careless');
+
+    const saved = getSavedMistakes();
+    expect(saved[0].reason).toBe('careless');
+
+    // Neden kaldırılabilir
+    updateMistakeReason(mockQuestion.question, undefined);
+    expect(getSavedMistakes()[0].reason).toBeUndefined();
   });
 });
