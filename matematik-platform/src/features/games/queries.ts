@@ -79,11 +79,13 @@ export const loadGamesLeaderboard = async (
         return [];
       }
 
-      return ((legacyData || []) as Array<{
-        alias?: string | null;
-        total_score?: number | null;
-        user_name?: string | null;
-      }>)
+      return (
+        (legacyData || []) as Array<{
+          alias?: string | null;
+          total_score?: number | null;
+          user_name?: string | null;
+        }>
+      )
         .map((row, index) => ({
           alias: row.alias || row.user_name || '',
           rank: index + 1,

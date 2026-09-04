@@ -74,7 +74,9 @@ const makeRocketProblem = (level: number): RocketProblem => {
       ),
       prompt: (
         <>
-          <span className="text-violet-200">x + {add} = {x + add}</span>{' '}
+          <span className="text-violet-200">
+            x + {add} = {x + add}
+          </span>{' '}
           ise x kaçtır?
         </>
       ),
@@ -257,7 +259,9 @@ export function SpaceRocket({ onScore, scoreMultiplier }: GameComponentProps) {
         >
           <Trophy className="h-16 w-16 text-white" />
         </motion.div>
-        <h2 className="mb-2 text-3xl font-bold text-white">Görev Tamamlandı!</h2>
+        <h2 className="mb-2 text-3xl font-bold text-white">
+          Görev Tamamlandı!
+        </h2>
         <p className="mb-2 text-5xl font-bold text-amber-300">{score} Puan</p>
         <p className="mb-8 text-slate-400">{stars} yıldız topladın.</p>
         <motion.button

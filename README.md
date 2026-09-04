@@ -16,7 +16,7 @@ Platformun odağı sade bir öğrenci deneyimi, güçlü öğretmen yönetimi ve
 - **Test sistemi:** Zamanlı testler, doğru/yanlış takibi, sonuç ekranı, çözüm geri bildirimi ve PDF çıktıları.
 - **Ödev yönetimi:** Öğrenciye veya sınıfa ödev atama, dosya teslimi, teslim inceleme ve puanlama.
 - **İlerleme takibi:** Çalışma süresi, hedefler, günlük seri, grafikler ve öğrenci gelişim özeti.
-- **Oyunlaştırma:** Matematik oyunları, rozetler, puanlama ve gizliliği koruyan rumuzlu liderlik yapısı.
+- **Oyunlaştırma (18 Özgün Oyun):** Çocukların ve gençlerin severek oynadığı Pizza Ustası, Matematik Ninja, Köstebek Avı, Hızlı Şoför, Koordinat Korsanı, Sayı Kulesi, Çarpım Tablosu, Balon Patlatma, Uzay Roketi ve rumuzlu liderlik tablosu.
 - **Öğretmen paneli:** Kullanıcı yönetimi, içerik yönetimi, duyurular, mesajlar, takip merkezi ve canlı ders planlama.
 - **İçerik kütüphanesi:** Dokümanlar, yaprak testler, konu içerikleri, LGS/YKS kaynakları ve hızlı PDF/döküman önizleyici.
 - **İnteraktif Sınav Hesaplayıcı:** LGS ve YKS (TYT/AYT) için anlık net ve standart puan hesaplama motoru.
@@ -162,6 +162,15 @@ Küçük UI değişikliklerinde ilgili sayfa mobil ve masaüstü görünümde ay
 
 ## Değişiklik Günlüğü (Changelog)
  
+- **2026-09-04 (Çocuklar İçin 6 Yeni Eğitici Matematik Oyunu):**
+  - **Pizza Ustası (Kesir & Parça-Bütün):** Müşteri siparişine göre pizzayı istenen kesir ve yüzde kadar süsleyip fırına verme oyunu.
+  - **Matematik Ninja (Çarpanlar, Asal & Sayı Refleksi):** Kılıçla uçuşan meyvelerden görev kuralına uyanları dilimleme, kombo ve refleks oyunu.
+  - **Köstebek Avı (Hızlı Zihinden İşlem):** Çimenlikteki yuvalardan kafasını çıkaran köstebeklerden doğru cevabı tutana çekiçle vurma oyunu.
+  - **Hızlı Şoför (Matematik Yarışı & Nitro):** 3 şeritli pistte spor arabayla doğru işlem kapısına girerek alevli nitro boost kazanma oyunu.
+  - **Koordinat Korsanı (Kartezyen Koordinat Sistemi):** Korsan adasındaki gizli altın sandıklarını (X, Y) koordinatlarıyla bulup kazma oyunu.
+  - **Sayı Kulesi (Örüntüler & Matematik İstifleme):** Sayı dizisini çözüp doğru blokla gökdelen inşa etme oyunu.
+  - **Web Audio Sentetik Ses Efektleri:** Harici dosya yüklemeden sıfır gecikmeli doğru/yanlış/kombo/nitro/zafer sesleri entegre edildi.
+  - **Supabase Skor Güvenliği:** Yeni oyunlar için puan limitleri tanımlandı ve liderlik tablosu entegrasyonu sağlandı.
 - **2026-09-04 (Yeni Eğitim Araçları & Pedagojik Özellikler):**
   - **İnteraktif Sınav Hesaplayıcı:** LGS ve YKS için doğru/yanlış/net ve tahmini başarı sıralamasını anında hesaplayan modal eklendi.
   - **Akıllı Hata Defterim:** Testlerde yanlış yapılan soruları gizlilikle tarayıcıda biriktiren ve tek tıkla tekrar testi başlatan kişisel hata havuzu kuruldu.

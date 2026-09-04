@@ -10,23 +10,31 @@ import {
   Puzzle,
   Rocket,
   Scale,
+  Swords,
   Variable,
   WholeWord,
 } from 'lucide-react';
 import { BalloonPop } from './games/BalloonPop';
+import { Boxes, Car, ChefHat, Compass, Hammer } from 'lucide-react';
 import { FloatingParticles } from './FloatingParticles';
 import { GameCard } from './GameCard';
 import { ColorMath } from './games/ColorMath';
 import { Hangman } from './games/Hangman';
 import { MatMatik } from './games/MatMatik';
+import { MathNinja } from './games/MathNinja';
 import { MathPuzzle } from './games/MathPuzzle';
 import { MemoryGame } from './games/MemoryGame';
+import { MoleWhack } from './games/MoleWhack';
 import { MultiplicationRace } from './games/MultiplicationRace';
 import { EquationHunter } from './games/EquationHunter';
 import { FractionDuel } from './games/FractionDuel';
 import { NumberPuzzle } from './games/NumberPuzzle';
 import { PercentStorm } from './games/PercentStorm';
+import { PizzaChef } from './games/PizzaChef';
 import { SpaceRocket } from './games/SpaceRocket';
+import { SpeedRacer } from './games/SpeedRacer';
+import { TowerBlock } from './games/TowerBlock';
+import { TreasurePirate } from './games/TreasurePirate';
 import type { GameDefinition } from '../types';
 
 export { FloatingParticles, GameCard };
@@ -117,7 +125,7 @@ export const games: GameDefinition[] = [
   {
     id: 8,
     title: 'Denklem Avcısı',
-    description: 'x\'i bul: parantez ve birleşik terimler.',
+    description: "x'i bul: parantez ve birleşik terimler.",
     grade: '6-8',
     rating: 4.4,
     difficulty: 'Zor',
@@ -168,5 +176,71 @@ export const games: GameDefinition[] = [
     color: 'from-indigo-500 to-amber-500',
     icon: Rocket,
     component: SpaceRocket,
+  },
+  {
+    id: 13,
+    title: 'Pizza Ustası',
+    description: 'Pizzanın istenen kesrini hazırla, fırına ver!',
+    grade: '5-7',
+    rating: 4.9,
+    difficulty: 'Kolay',
+    color: 'from-amber-500 to-red-500',
+    icon: ChefHat,
+    component: PizzaChef,
+  },
+  {
+    id: 14,
+    title: 'Matematik Ninja',
+    description: 'Kurala uyan meyveleri dilimle, kombo patlat!',
+    grade: '5-8',
+    rating: 4.9,
+    difficulty: 'Orta',
+    color: 'from-rose-500 to-amber-500',
+    icon: Swords,
+    component: MathNinja,
+  },
+  {
+    id: 15,
+    title: 'Köstebek Avı',
+    description: 'Doğru işlemin köstebeğine hızla çekiçle vur!',
+    grade: '5-6',
+    rating: 4.8,
+    difficulty: 'Kolay',
+    color: 'from-emerald-500 to-teal-600',
+    icon: Hammer,
+    component: MoleWhack,
+  },
+  {
+    id: 16,
+    title: 'Hızlı Şoför',
+    description: 'İşlemi çöz, doğru şeride girip nitro kazan!',
+    grade: '5-8',
+    rating: 4.9,
+    difficulty: 'Orta',
+    color: 'from-cyan-500 to-blue-600',
+    icon: Car,
+    component: SpeedRacer,
+  },
+  {
+    id: 17,
+    title: 'Koordinat Korsanı',
+    description: 'Pusulayı ayarla, koordinattaki hazineyi kaz!',
+    grade: '6-8',
+    rating: 4.8,
+    difficulty: 'Orta',
+    color: 'from-amber-600 to-yellow-500',
+    icon: Compass,
+    component: TreasurePirate,
+  },
+  {
+    id: 18,
+    title: 'Sayı Kulesi',
+    description: 'Sayı örüntüsünü çöz, kuleyi bulutlara yükselt!',
+    grade: '5-8',
+    rating: 4.8,
+    difficulty: 'Orta',
+    color: 'from-indigo-500 to-purple-600',
+    icon: Boxes,
+    component: TowerBlock,
   },
 ];

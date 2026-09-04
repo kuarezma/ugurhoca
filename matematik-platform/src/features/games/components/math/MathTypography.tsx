@@ -37,9 +37,7 @@ export function FractionBlock({
 }
 
 export function MathVar({ children }: { children: ReactNode }) {
-  return (
-    <span className={`italic text-white ${mathClass}`}>{children}</span>
-  );
+  return <span className={`italic text-white ${mathClass}`}>{children}</span>;
 }
 
 export function MathNum({ children }: { children: ReactNode }) {

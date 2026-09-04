@@ -58,13 +58,15 @@ export function MatMatik({
   const [difficulty, setDifficulty] = useState<MatMatikDifficulty>('medium');
   const [player1Input, setPlayer1Input] = useState('');
   const [player2Input, setPlayer2Input] = useState('');
-  const [playerNames, setPlayerNames] = useState<Record<MatMatikPlayer, string>>(
-    {
-      1: 'Oyuncu 1',
-      2: 'Bilgisayar',
-    },
+  const [playerNames, setPlayerNames] = useState<
+    Record<MatMatikPlayer, string>
+  >({
+    1: 'Oyuncu 1',
+    2: 'Bilgisayar',
+  });
+  const [board, setBoard] = useState<MatMatikBoard>(() =>
+    createMatMatikBoard(),
   );
-  const [board, setBoard] = useState<MatMatikBoard>(() => createMatMatikBoard());
   const [currentPlayer, setCurrentPlayer] = useState<MatMatikPlayer>(1);
   const [selectedFactors, setSelectedFactors] = useState<
     Record<SelectorHandle, number>
@@ -171,10 +173,7 @@ export function MatMatik({
     setMessage('Oyuncu 1 başlar. Oklardan birini sayıya taşı.');
     setPlayerNames({
       1: player1Input.trim() || 'Oyuncu 1',
-      2:
-        mode === 'single'
-          ? 'Bilgisayar'
-          : player2Input.trim() || 'Oyuncu 2',
+      2: mode === 'single' ? 'Bilgisayar' : player2Input.trim() || 'Oyuncu 2',
     });
   };
 
@@ -334,8 +333,8 @@ export function MatMatik({
           </div>
           <h2 className="mb-3 text-4xl font-bold text-white">MatMatik</h2>
           <p className="mx-auto max-w-xl text-slate-400">
-            İki sayı seç, çarpımı tabloda işaretle. Kendi renginle yatay,
-            dikey veya çapraz dört hücreyi ilk tamamlayan kazanır.
+            İki sayı seç, çarpımı tabloda işaretle. Kendi renginle yatay, dikey
+            veya çapraz dört hücreyi ilk tamamlayan kazanır.
           </p>
         </div>
 
@@ -568,7 +567,9 @@ export function MatMatik({
               <Trophy className="h-10 w-10 text-white" />
             </div>
             <h3 className="mb-2 text-3xl font-black text-white">
-              {winner === 'draw' ? 'Berabere' : `${playerNames[winner ?? 1]} Kazandı`}
+              {winner === 'draw'
+                ? 'Berabere'
+                : `${playerNames[winner ?? 1]} Kazandı`}
             </h3>
             <p className="mb-6 text-slate-400">
               {winner === 'draw'

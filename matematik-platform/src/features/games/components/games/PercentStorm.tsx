@@ -24,10 +24,7 @@ type Problem = {
 const times = '\u00d7';
 const div = '\u00f7';
 
-export function PercentStorm({
-  onScore,
-  scoreMultiplier,
-}: GameComponentProps) {
+export function PercentStorm({ onScore, scoreMultiplier }: GameComponentProps) {
   const [gameState, setGameState] = useState<'idle' | 'playing' | 'ended'>(
     'idle',
   );
@@ -236,7 +233,9 @@ export function PercentStorm({
               %
             </span>
           </motion.div>
-          <h2 className="mb-4 text-3xl font-bold text-white">Yüzde Fırtınası</h2>
+          <h2 className="mb-4 text-3xl font-bold text-white">
+            Yüzde Fırtınası
+          </h2>
           <p className="mx-auto mb-6 max-w-md text-slate-400">
             Yüzde, oran ve artış–azalış. 65 saniye; cevaplar tam sayı.
           </p>

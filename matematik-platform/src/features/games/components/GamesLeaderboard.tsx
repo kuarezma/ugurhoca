@@ -173,8 +173,13 @@ function GamesLeaderboardInner({
                       transition={{ delay: podium.rank * 0.1 }}
                       className={`relative flex flex-col items-center ${podium.order}`}
                     >
-                      <div className={`mb-3 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br ${podium.gradient} ${podium.glow}`}>
-                        <PodiumIcon className={`h-7 w-7 ${podium.iconClass}`} aria-hidden="true" />
+                      <div
+                        className={`mb-3 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br ${podium.gradient} ${podium.glow}`}
+                      >
+                        <PodiumIcon
+                          className={`h-7 w-7 ${podium.iconClass}`}
+                          aria-hidden="true"
+                        />
                       </div>
                       <p className="text-center text-sm font-bold text-white line-clamp-1">
                         {entry.alias || 'Gizemli Şampiyon'}
@@ -202,48 +207,48 @@ function GamesLeaderboardInner({
                 })}
               </div>
             )}
-          <div className="space-y-3">
-            {leaderboard.map((entry, index) => {
-              const classes = getLeaderboardClasses(index);
+            <div className="space-y-3">
+              {leaderboard.map((entry, index) => {
+                const classes = getLeaderboardClasses(index);
 
-              return (
-                <motion.div
-                  key={`${entry.alias}-${index}`}
-                  className={`flex items-center justify-between p-4 rounded-2xl transition-colors border ${classes.row}`}
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: index * 0.1 }}
-                >
-                  <div className="flex items-center gap-4">
-                    <div
-                      className={`w-12 h-12 rounded-full flex items-center justify-center font-bold text-xl ${classes.container}`}
-                    >
-                      {index + 1}
+                return (
+                  <motion.div
+                    key={`${entry.alias}-${index}`}
+                    className={`flex items-center justify-between p-4 rounded-2xl transition-colors border ${classes.row}`}
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: index * 0.1 }}
+                  >
+                    <div className="flex items-center gap-4">
+                      <div
+                        className={`w-12 h-12 rounded-full flex items-center justify-center font-bold text-xl ${classes.container}`}
+                      >
+                        {index + 1}
+                      </div>
+                      <div>
+                        <span className="font-bold text-white text-lg block">
+                          {entry.alias || 'Gizemli Şampiyon'}
+                        </span>
+                        <span className="text-xs text-slate-400">
+                          Genel Ortalama Sıralaması
+                        </span>
+                      </div>
                     </div>
-                    <div>
-                      <span className="font-bold text-white text-lg block">
-                        {entry.alias || 'Gizemli Şampiyon'}
-                      </span>
-                      <span className="text-xs text-slate-400">
-                        Genel Ortalama Sıralaması
-                      </span>
-                    </div>
-                  </div>
 
-                  <div className="flex flex-col items-end">
-                    <div className="flex items-baseline gap-1">
-                      <span className={`font-bold text-2xl ${classes.score}`}>
-                        {entry.total_score}
-                      </span>
-                      <span className="text-slate-400 text-xs uppercase tracking-wider">
-                        Puan
-                      </span>
+                    <div className="flex flex-col items-end">
+                      <div className="flex items-baseline gap-1">
+                        <span className={`font-bold text-2xl ${classes.score}`}>
+                          {entry.total_score}
+                        </span>
+                        <span className="text-slate-400 text-xs uppercase tracking-wider">
+                          Puan
+                        </span>
+                      </div>
                     </div>
-                  </div>
-                </motion.div>
-              );
-            })}
-          </div>
+                  </motion.div>
+                );
+              })}
+            </div>
           </>
         )}
       </div>

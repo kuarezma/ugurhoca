@@ -70,7 +70,10 @@ describe('games queries', () => {
       alias_normalized: 'sayiustasi',
       user_id: 'student-1',
     };
-    vi.mocked(supabase.rpc).mockResolvedValue({ data: alias, error: null } as never);
+    vi.mocked(supabase.rpc).mockResolvedValue({
+      data: alias,
+      error: null,
+    } as never);
 
     await expect(saveGameAlias('SayiUstasi')).resolves.toEqual(alias);
 
@@ -80,7 +83,10 @@ describe('games queries', () => {
   });
 
   it('submits game scores through the validation RPC', async () => {
-    vi.mocked(supabase.rpc).mockResolvedValue({ data: null, error: null } as never);
+    vi.mocked(supabase.rpc).mockResolvedValue({
+      data: null,
+      error: null,
+    } as never);
 
     await expect(
       insertGameScore({
@@ -176,11 +182,13 @@ describe('games queries', () => {
       },
     } as never);
 
-    await expect(insertGameScore({
-      gameId: 7,
-      score: 35,
-      user: { id: 'student-1' },
-    })).resolves.toBe(false);
+    await expect(
+      insertGameScore({
+        gameId: 7,
+        score: 35,
+        user: { id: 'student-1' },
+      }),
+    ).resolves.toBe(false);
 
     expect(supabase.from).not.toHaveBeenCalledWith('game_scores');
   });

@@ -169,9 +169,7 @@ export function BalloonPop({ onScore, scoreMultiplier }: GameComponentProps) {
           >
             <Sparkles className="h-16 w-16 text-white" />
           </motion.div>
-          <h2 className="mb-4 text-3xl font-bold text-white">
-            Balon Patlatma
-          </h2>
+          <h2 className="mb-4 text-3xl font-bold text-white">Balon Patlatma</h2>
           <p className="mx-auto mb-6 max-w-md text-slate-400">
             İşlemi çöz, doğru cevabın balonunu patlat. Seri yapınca puanlar
             parlıyor!
@@ -233,9 +231,7 @@ export function BalloonPop({ onScore, scoreMultiplier }: GameComponentProps) {
             <Heart
               key={index}
               className={`h-7 w-7 ${
-                index < lives
-                  ? 'fill-red-500 text-red-500'
-                  : 'text-slate-600'
+                index < lives ? 'fill-red-500 text-red-500' : 'text-slate-600'
               }`}
             />
           ))}
@@ -306,7 +302,9 @@ export function BalloonPop({ onScore, scoreMultiplier }: GameComponentProps) {
             feedback === 'correct' ? 'text-emerald-300' : 'text-rose-300'
           }`}
         >
-          {feedback === 'correct' ? 'Patladı! Harika cevap.' : 'Yaklaştın, tekrar dene!'}
+          {feedback === 'correct'
+            ? 'Patladı! Harika cevap.'
+            : 'Yaklaştın, tekrar dene!'}
         </motion.p>
       )}
     </div>

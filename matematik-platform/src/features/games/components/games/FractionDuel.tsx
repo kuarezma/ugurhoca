@@ -18,10 +18,7 @@ function compareFrac(a: number, b: number, c: number, d: number): Cmp {
   return l > r ? 'left' : 'right';
 }
 
-export function FractionDuel({
-  onScore,
-  scoreMultiplier,
-}: GameComponentProps) {
+export function FractionDuel({ onScore, scoreMultiplier }: GameComponentProps) {
   const [gameState, setGameState] = useState<'idle' | 'playing' | 'ended'>(
     'idle',
   );
@@ -271,7 +268,10 @@ export function FractionDuel({
                   <span className="text-[11px] font-bold uppercase tracking-wide">
                     Eşit
                   </span>
-                  <span className="text-3xl font-light leading-none" aria-hidden>
+                  <span
+                    className="text-3xl font-light leading-none"
+                    aria-hidden
+                  >
                     =
                   </span>
                 </span>

@@ -12,10 +12,7 @@ type NumberProblem = {
   text: string;
 };
 
-export function NumberPuzzle({
-  onScore,
-  scoreMultiplier,
-}: GameComponentProps) {
+export function NumberPuzzle({ onScore, scoreMultiplier }: GameComponentProps) {
   const [gameState, setGameState] = useState<'idle' | 'playing' | 'ended'>(
     'idle',
   );
