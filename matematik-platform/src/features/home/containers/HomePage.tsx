@@ -66,6 +66,14 @@ const MathGraphVisualizerModal = dynamic(
   { ssr: false },
 );
 
+const VisualMathProofsModal = dynamic(
+  () =>
+    import('@/components/VisualMathProofsModal').then((m) => ({
+      default: m.VisualMathProofsModal,
+    })),
+  { ssr: false },
+);
+
 type HomePageProps = {
   activeLiveLesson?: LiveLesson | null;
   initialFeed?: HomeInitialFeed | null;
@@ -83,6 +91,7 @@ export default function HomePage({ activeLiveLesson, initialFeed }: HomePageProp
   const [isPomodoroOpen, setIsPomodoroOpen] = useState(false);
   const [isChecklistOpen, setIsChecklistOpen] = useState(false);
   const [isGraphOpen, setIsGraphOpen] = useState(false);
+  const [isProofsOpen, setIsProofsOpen] = useState(false);
 
   useEffect(() => {
     const handleToolEvent = (e: Event) => {
@@ -99,6 +108,8 @@ export default function HomePage({ activeLiveLesson, initialFeed }: HomePageProp
         setIsChecklistOpen(true);
       } else if (tool === 'graph') {
         setIsGraphOpen(true);
+      } else if (tool === 'proofs') {
+        setIsProofsOpen(true);
       } else if (tool === 'flashcards') {
         setIsFlashcardsOpen(true);
       } else if (tool === 'scratchpad') {
@@ -171,6 +182,7 @@ export default function HomePage({ activeLiveLesson, initialFeed }: HomePageProp
           onOpenPomodoro={() => setIsPomodoroOpen(true)}
           onOpenChecklist={() => setIsChecklistOpen(true)}
           onOpenGraph={() => setIsGraphOpen(true)}
+          onOpenProofs={() => setIsProofsOpen(true)}
         />
         <div className="defer-section">
           <HomeSuccessRoadmap
@@ -249,6 +261,11 @@ export default function HomePage({ activeLiveLesson, initialFeed }: HomePageProp
       <MathGraphVisualizerModal
         isOpen={isGraphOpen}
         onClose={() => setIsGraphOpen(false)}
+        isLight={isLight}
+      />
+      <VisualMathProofsModal
+        isOpen={isProofsOpen}
+        onClose={() => setIsProofsOpen(false)}
         isLight={isLight}
       />
     </main>

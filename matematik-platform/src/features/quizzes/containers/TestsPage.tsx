@@ -749,6 +749,15 @@ export default function TestsPage({
           isOpen={isScratchpadOpen}
           onClose={() => setIsScratchpadOpen(false)}
           title={`Soru ${currentQuestion + 1} — Karalama & İşlem Tahtası`}
+          questionContext={
+            question
+              ? {
+                  questionText: question.question,
+                  options: question.options,
+                  imageUrl: question.question_image_url,
+                }
+              : undefined
+          }
         />
       </main>
     );

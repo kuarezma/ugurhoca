@@ -10,6 +10,7 @@ import {
   ChevronRight,
   Sparkles,
   Activity,
+  Compass,
 } from 'lucide-react';
 
 type HomeQuickToolsGridProps = {
@@ -20,6 +21,7 @@ type HomeQuickToolsGridProps = {
   onOpenPomodoro?: () => void;
   onOpenChecklist?: () => void;
   onOpenGraph?: () => void;
+  onOpenProofs?: () => void;
 };
 
 export function HomeQuickToolsGrid({
@@ -30,8 +32,21 @@ export function HomeQuickToolsGrid({
   onOpenPomodoro,
   onOpenChecklist,
   onOpenGraph,
+  onOpenProofs,
 }: HomeQuickToolsGridProps) {
   const tools = [
+    {
+      id: 'visualProofs',
+      title: 'İnteraktif Görsel Formül İspatları',
+      description: 'Pisagor, iki kare farkı, sin²θ+cos²θ=1 ve Pascal üçgenini gözlerinle keşfet.',
+      icon: Compass,
+      gradient: 'from-fuchsia-600 via-purple-600 to-indigo-600',
+      actionType: onOpenProofs ? 'modal' : 'link',
+      action: onOpenProofs,
+      href: '#',
+      buttonLabel: 'İspatı İncele',
+      badge: 'İspat 🔬',
+    },
     {
       id: 'graphVisualizer',
       title: 'Fonksiyon & Grafik Laboratuvarı',

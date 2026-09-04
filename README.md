@@ -29,6 +29,11 @@ Platformun odağı sade bir öğrenci deneyimi, güçlü öğretmen yönetimi ve
 - **Akıllı Hata Defterim:** Testlerde yanlış yapılan soruları %100 gizlilikle yerel olarak biriktiren ve tekrar testi oluşturan kişisel çalışma havuzu.
 - **Matematik Odak & Pomodoro:** 25 ve 50 dakikalık odaklanma ve mola zamanlayıcısı (Web Audio melodik geri bildirimli).
 - **MEB Konu Takip Çizelgesi:** 5. sınıftan 12. sınıfa kadar tüm matematik kazanımlarının adım adım işaretlenebildiği müfredat takip aracı.
+- **Test İçi Çözüm & Karalama Tuvali (Digital Scratchpad):** Soru metnini ve şıkları yan yana gösteren, şık eleme özellikli, fosforlu kalem, cetvel, PNG indirme ve kareli/çizgili defter zeminli dijital karalama tahtası.
+- **Bireysel Çalışma Disiplini & Seri Hub:** Sıralama ve kıyaslama baskısı olmadan tamamen öğrenciye özel günlük seri, 14 günlük alışkanlık ısı haritası ve hedef sınav sayaçları.
+- **İnteraktif Görsel Formül İspatları:** Pisagor teoremi ($a^2+b^2=c^2$), iki kare farkı ($a^2-b^2$), birim çemberde $\sin^2\theta+\cos^2\theta=1$ ve Pascal/binom açılımının hareketli görsel geometrik ispatları.
+- **Kişiselleştirilmiş Eksik Reçetesi (Smart Diagnostic):** Hata defterindeki soru kök nedenlerini (kural eksikliği, işlem hatası, soru okuma, süre) teşhis ederek kişiye özel 3 adımlı çalışma reçetesi üreten pedagojik motor.
+- **"Sorunu Canlı Derse Gönder" (Öğrenci Soru Masası):** Öğrencilerin çözemediği soruları canlı derse göndermesi ve öğretmenin tek tıkla canlı ders tahtasına yansıtıp çözebilmesini sağlayan havuz.
 - **Mobil uyum:** Responsive arayüz, yüzen alt gezinti çubuğu ve telefon/tablet kullanımına uygun akışlar.
 
 ## Teknoloji Yığını
@@ -168,6 +173,12 @@ Küçük UI değişikliklerinde ilgili sayfa mobil ve masaüstü görünümde ay
 
 ## Değişiklik Günlüğü (Changelog)
  
+- **2026-09-04 (Dijital Karalama Tuvali, Bireysel Seri Hub, Görsel Formül İspatları, Akıllı Reçete & Canlı Ders Soru Masası):**
+  - **Test İçi Çözüm & Karalama Tuvali (`ScratchpadModal`):** Soru ekranında soruyu ve şıkları bölmeli ekranda yan yana gösteren, şıkları tıklayarak eleme, fosforlu kalem, düz çizgi/cetvel, kareli/çizgili zemin ve PNG indirme destekli gelişmiş dijital karalama tahtası geliştirildi.
+  - **Bireysel Çalışma Disiplini & Seri Hub (`PersonalStreakHub`):** Hiçbir öğrenciyle kıyaslanmayan %100 gizli günlük çalışma serisi (streak), son 14 günlük alışkanlık ısı haritası, hedef belirleyici ve hedef sınav (LGS/YKS) sayaçları `/ilerleme` sayfasına entegre edildi.
+  - **İnteraktif Görsel Formül İspatları (`VisualMathProofsModal`):** Pisagor alan korunum teoremi ($a^2+b^2=c^2$), iki kare farkı geometrik dikdörtgen dönüşümü ($a^2-b^2$), birim çember trigonometrik özdeşliği ($\sin^2\theta+\cos^2\theta=1$) ve Pascal/binom açılımı animasyonlu SVG simülasyonlarıyla ana sayfa hızlı araçlarına eklendi.
+  - **Kişiselleştirilmiş Eksik Reçetesi (`SmartTopicDiagnostic`):** Yanlış defterindeki soru kök nedenlerini (kural eksikliği, işlem hatası, soru okuma, süre baskısı) teşhis eden, en çok takılınan konuyu saptayan ve 3 adımlı tedavi reçetesi sunan akıllı pedagojik teşhis motoru `/ilerleme` ekranına eklendi.
+  - **"Sorunu Canlı Derse Gönder" & Öğrenci Soru Masası (`SubmitQuestionModal` & `TeacherQuestionPoolModal`):** Öğrencilerin evde yapamadığı soruları canlı derse göndermesi, öğretmenin de canlı derste bu soruları tek tıkla tahtaya yansıtıp çözmesini sağlayan soru havuzu sistemi `/canli-ders` sayfasına ve öğretmen araç çubuğuna entegre edildi.
 - **2026-09-04 (Yeni Matematik Laboratuvarı, Kademeli İpucu, Akıllı Telafi, Rozetler & A4 Yaprak Test):**
   - **İnteraktif Fonksiyon & Grafik Laboratuvarı (`MathGraphVisualizerModal`):** Doğrusal fonksiyon ($y = mx + b$), parabol ($y = ax^2 + bx + c$) ve birim çember açısı için canlı SVG koordinat grafiği, kaydırıcılar (sliders), anlık tepe noktası/diskriminant hesaplamaları ve hazır sınav şablonları eklendi.
   - **Kademeli İpucu Sistemi (`QuestionHintLadder`):** Test çözme esnasında öğrencilerin tek tıkla 3 aşamalı (1. Temel Kural/Formül, 2. İlk İşlem Hamlesi, 3. Çözüm Stratejisi) pedagojik yönlendirme açabilmesi sağlandı.

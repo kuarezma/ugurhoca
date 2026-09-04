@@ -31,6 +31,8 @@ const BadgesShowcaseModal = dynamic(
     })),
   { ssr: false },
 );
+import { PersonalStreakHub } from '@/features/progress/components/PersonalStreakHub';
+import { SmartTopicDiagnostic } from '@/features/progress/components/SmartTopicDiagnostic';
 import { requireClientSession } from '@/lib/auth-client';
 import { createLogger } from '@/lib/logger';
 import { supabase } from '@/lib/supabase/client';
@@ -423,6 +425,12 @@ export default function IlerlemePage({ initialData }: ProgressPageProps) {
             <Plus className="w-5 h-5" /> Çalışma Ekle
           </button>
         </div>
+
+        {/* Bireysel Çalışma Disiplini & Seri Hub */}
+        <PersonalStreakHub isLight={isLight} />
+
+        {/* Kişiselleştirilmiş Eksik Reçetesi */}
+        <SmartTopicDiagnostic isLight={isLight} progressData={progressData} />
 
         {/* Üst Paneller */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">

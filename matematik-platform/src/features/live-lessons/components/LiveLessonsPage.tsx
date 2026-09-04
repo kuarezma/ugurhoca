@@ -16,6 +16,8 @@ import {
   ChevronUp,
   History,
   GraduationCap,
+  HelpCircle,
+  Layers,
 } from 'lucide-react';
 import { HomeNavbar } from '@/features/home/components/HomeNavbar';
 import { useTheme } from '@/components/ThemeProvider';
@@ -25,6 +27,8 @@ import type { LiveLesson } from '@/features/live-lessons/types';
 import type { AppUser } from '@/types';
 import { LiveLessonCard } from '@/features/live-lessons/components/LiveLessonCard';
 import { LiveLessonEditModal } from '@/features/live-lessons/components/LiveLessonEditModal';
+import { SubmitQuestionModal } from '@/features/live-lessons/components/SubmitQuestionModal';
+import { TeacherQuestionPoolModal } from '@/features/live-lessons/components/TeacherQuestionPoolModal';
 
 type Props = {
   initialLessons: LiveLesson[];
@@ -71,6 +75,8 @@ export function LiveLessonsPage({ initialLessons, students, user }: Props) {
   const [isPlanFormOpen, setIsPlanFormOpen] = useState(false);
   const [editingLesson, setEditingLesson] = useState<LiveLesson | null>(null);
   const [quickStarting, setQuickStarting] = useState(false);
+  const [isSubmitQuestionOpen, setIsSubmitQuestionOpen] = useState(false);
+  const [isTeacherPoolOpen, setIsTeacherPoolOpen] = useState(false);
 
   // Ders Planlama Form Durumu
   const [title, setTitle] = useState('Canlı Matematik Dersi');
@@ -346,30 +352,51 @@ export function LiveLessonsPage({ initialLessons, students, user }: Props) {
               </p>
             </div>
 
-            {/* Öğretmen / Admin Hızlı Aksiyon Butonları */}
-            {user.isAdmin && (
-              <div className="flex flex-wrap items-center gap-2 sm:gap-3">
-                <button
-                  type="button"
-                  onClick={handleQuickLaunch}
-                  disabled={quickStarting}
-                  className="inline-flex min-h-11 items-center gap-2 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 px-4 py-2.5 text-xs sm:text-sm font-bold text-white shadow-lg shadow-orange-500/25 transition-all duration-200 hover:brightness-110 active:scale-95 disabled:opacity-50"
-                >
-                  <Zap className="h-4 w-4 fill-white" />
-                  <span>{quickStarting ? 'Başlatılıyor...' : 'Hızlı Ders Başlat'}</span>
-                </button>
+            {/* Hızlı Aksiyon Butonları */}
+            <div className="flex flex-wrap items-center gap-2 sm:gap-3">
+              <button
+                type="button"
+                onClick={() => setIsSubmitQuestionOpen(true)}
+                className="inline-flex min-h-11 items-center gap-2 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 px-4 py-2.5 text-xs sm:text-sm font-bold text-white shadow-lg shadow-orange-500/25 transition-all duration-200 hover:brightness-110 active:scale-95"
+                title="Yapamadığın soruyu gönder, canlı derste tahtada çözelim"
+              >
+                <HelpCircle className="h-4 w-4" />
+                <span>🙋 Derse Soru Gönder</span>
+              </button>
 
-                <button
-                  type="button"
-                  onClick={() => setIsPlanFormOpen((v) => !v)}
-                  className="inline-flex min-h-11 items-center gap-2 rounded-xl bg-brand-primary px-4 py-2.5 text-xs sm:text-sm font-bold text-white shadow-lg shadow-brand-primary/25 transition-all duration-200 hover:bg-brand-primary-deep active:scale-95"
-                >
-                  <Plus className="h-4 w-4" />
-                  <span>Ders Planla</span>
-                  {isPlanFormOpen ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
-                </button>
-              </div>
-            )}
+              {user.isAdmin && (
+                <>
+                  <button
+                    type="button"
+                    onClick={() => setIsTeacherPoolOpen(true)}
+                    className="inline-flex min-h-11 items-center gap-2 rounded-xl border border-indigo-500/40 bg-indigo-500/15 px-4 py-2.5 text-xs sm:text-sm font-bold text-indigo-300 hover:bg-indigo-500/25 transition-all active:scale-95"
+                  >
+                    <Layers className="h-4 w-4" />
+                    <span>Soru Masası</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={handleQuickLaunch}
+                    disabled={quickStarting}
+                    className="inline-flex min-h-11 items-center gap-2 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 px-4 py-2.5 text-xs sm:text-sm font-bold text-white shadow-lg shadow-emerald-500/25 transition-all duration-200 hover:brightness-110 active:scale-95 disabled:opacity-50"
+                  >
+                    <Zap className="h-4 w-4 fill-white" />
+                    <span>{quickStarting ? 'Başlatılıyor...' : 'Hızlı Ders Başlat'}</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setIsPlanFormOpen((v) => !v)}
+                    className="inline-flex min-h-11 items-center gap-2 rounded-xl bg-brand-primary px-4 py-2.5 text-xs sm:text-sm font-bold text-white shadow-lg shadow-brand-primary/25 transition-all duration-200 hover:bg-brand-primary-deep active:scale-95"
+                  >
+                    <Plus className="h-4 w-4" />
+                    <span>Ders Planla</span>
+                    {isPlanFormOpen ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+                  </button>
+                </>
+              )}
+            </div>
           </div>
 
           {/* İstatistik Şeridi */}
@@ -775,6 +802,22 @@ export function LiveLessonsPage({ initialLessons, students, user }: Props) {
           students={students}
         />
       )}
+
+      {/* Soru Gönder Modalı */}
+      <SubmitQuestionModal
+        isOpen={isSubmitQuestionOpen}
+        onClose={() => setIsSubmitQuestionOpen(false)}
+        lessons={upcomingLessons}
+        defaultStudentName={user.name || ''}
+        isLight={isLight}
+      />
+
+      {/* Öğretmen Soru Havuzu Modalı */}
+      <TeacherQuestionPoolModal
+        isOpen={isTeacherPoolOpen}
+        onClose={() => setIsTeacherPoolOpen(false)}
+        isLight={isLight}
+      />
     </div>
   );
 }

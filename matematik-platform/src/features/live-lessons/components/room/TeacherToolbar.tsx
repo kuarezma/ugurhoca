@@ -2,6 +2,7 @@
 
 import { useLocalParticipant } from "@livekit/components-react";
 import { useCallback, useState } from "react";
+import { TeacherQuestionPoolModal } from "@/features/live-lessons/components/TeacherQuestionPoolModal";
 
 export function TeacherToolbar() {
   const { localParticipant, isCameraEnabled, isMicrophoneEnabled } =
@@ -9,6 +10,7 @@ export function TeacherToolbar() {
   const [cameraBusy, setCameraBusy] = useState(false);
   const [screenBusy, setScreenBusy] = useState(false);
   const [micBusy, setMicBusy] = useState(false);
+  const [isPoolOpen, setIsPoolOpen] = useState(false);
 
   const toggleScreen = useCallback(async () => {
     setScreenBusy(true);
@@ -84,6 +86,19 @@ export function TeacherToolbar() {
       >
         {screenBusy ? "…" : screenOn ? "Paylaşımı durdur" : "Ekranı paylaş"}
       </button>
+      <button
+        type="button"
+        onClick={() => setIsPoolOpen(true)}
+        className="rounded-lg px-3 py-1.5 text-xs font-semibold bg-amber-500/20 text-amber-300 border border-amber-500/30 hover:bg-amber-500/30 transition flex items-center gap-1"
+        title="Öğrencilerin gönderdiği soruları aç"
+      >
+        <span>Öğrenci Soruları</span>
+      </button>
+
+      <TeacherQuestionPoolModal
+        isOpen={isPoolOpen}
+        onClose={() => setIsPoolOpen(false)}
+      />
     </div>
   );
 }
