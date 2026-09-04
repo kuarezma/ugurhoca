@@ -1,6 +1,8 @@
 import {
   SUPPORT_IMAGE_MAX_BYTES,
+  clearUserAssignmentsCache,
   compressSupportImageFile,
+  fetchUserAssignments,
   uploadSupportFiles,
   validateSupportImageFile,
 } from '@/features/home/queries';
@@ -8,6 +10,7 @@ import { supabase } from '@/lib/supabase/client';
 
 vi.mock('@/lib/supabase/client', () => ({
   supabase: {
+    from: vi.fn(),
     storage: {
       from: vi.fn(),
     },
@@ -75,5 +78,37 @@ describe('home queries support image validation', () => {
     const uploadedFile = upload.mock.calls[0]?.[1] as File;
     expect(uploadedFile.size).toBeLessThanOrEqual(SUPPORT_IMAGE_MAX_BYTES);
     expect(uploadedFile.type).toBe('image/jpeg');
+  });
+});
+
+describe('fetchUserAssignments caching and deduplication', () => {
+  it('deduplicates concurrent calls and caches results', async () => {
+    clearUserAssignmentsCache();
+    const mockOrder = vi.fn().mockResolvedValue({ data: [] });
+    const mockEq = vi.fn().mockReturnValue({ order: mockOrder });
+    const mockSelect = vi.fn().mockReturnValue({ eq: mockEq });
+    const mockFrom = vi.fn().mockReturnValue({ select: mockSelect });
+    vi.mocked(supabase.from).mockImplementation(mockFrom as never);
+
+    const [r1, r2, r3] = await Promise.all([
+      fetchUserAssignments('user-abc'),
+      fetchUserAssignments('user-abc'),
+      fetchUserAssignments('user-abc'),
+    ]);
+
+    expect(r1).toEqual([]);
+    expect(r2).toEqual([]);
+    expect(r3).toEqual([]);
+    // Only 2 calls to supabase.from (shared_documents and notifications)
+    expect(mockFrom).toHaveBeenCalledTimes(2);
+
+    // Subsequent call should hit cache
+    await fetchUserAssignments('user-abc');
+    expect(mockFrom).toHaveBeenCalledTimes(2);
+
+    // After clearing cache, should call again
+    clearUserAssignmentsCache('user-abc');
+    await fetchUserAssignments('user-abc');
+    expect(mockFrom).toHaveBeenCalledTimes(4);
   });
 });

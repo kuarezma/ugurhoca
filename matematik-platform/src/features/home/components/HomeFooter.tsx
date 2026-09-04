@@ -1,6 +1,6 @@
 'use client';
 
-import Link from 'next/link';
+import { SafeLink } from '@/components/SafeLink';
 import Image from 'next/image';
 import { Sparkles, Shield, Heart } from 'lucide-react';
 
@@ -62,29 +62,29 @@ export function HomeFooter({ isLight }: HomeFooterProps) {
             </h4>
             <ul className="space-y-1.5 text-xs text-slate-400">
               <li>
-                <Link href="/icerikler" prefetch={false} className="hover:text-brand-primary-soft transition">
+                <SafeLink href="/icerikler" className="hover:text-brand-primary-soft transition">
                   Ders Notları & PDF'ler
-                </Link>
+                </SafeLink>
               </li>
               <li>
-                <Link href="/testler" prefetch={false} className="hover:text-brand-primary-soft transition">
+                <SafeLink href="/testler" className="hover:text-brand-primary-soft transition">
                   İnteraktif Testler
-                </Link>
+                </SafeLink>
               </li>
               <li>
-                <Link href="/programlar" prefetch={false} className="hover:text-brand-primary-soft transition">
+                <SafeLink href="/programlar" className="hover:text-brand-primary-soft transition">
                   LGS & YKS Rehberliği
-                </Link>
+                </SafeLink>
               </li>
               <li>
-                <Link href="/oyunlar" prefetch={false} className="hover:text-brand-primary-soft transition">
+                <SafeLink href="/oyunlar" className="hover:text-brand-primary-soft transition">
                   Matematik Oyunları
-                </Link>
+                </SafeLink>
               </li>
               <li>
-                <Link href="/canli-ders" prefetch={false} className="hover:text-brand-primary-soft transition">
+                <SafeLink href="/canli-ders" className="hover:text-brand-primary-soft transition">
                   Canlı Ders Salonu
-                </Link>
+                </SafeLink>
               </li>
             </ul>
           </div>
@@ -100,19 +100,19 @@ export function HomeFooter({ isLight }: HomeFooterProps) {
             </h4>
             <ul className="space-y-1.5 text-xs text-slate-400">
               <li>
-                <Link href="/gizlilik" prefetch={false} className="hover:text-brand-primary-soft transition">
+                <SafeLink href="/gizlilik" className="hover:text-brand-primary-soft transition">
                   Gizlilik Politikası
-                </Link>
+                </SafeLink>
               </li>
               <li>
-                <Link href="/kvkk" prefetch={false} className="hover:text-brand-primary-soft transition">
+                <SafeLink href="/kvkk" className="hover:text-brand-primary-soft transition">
                   KVKK Aydınlatma Metni
-                </Link>
+                </SafeLink>
               </li>
               <li>
-                <Link href="/gizlilik#cerezler" prefetch={false} className="hover:text-brand-primary-soft transition">
+                <SafeLink href="/gizlilik#cerezler" className="hover:text-brand-primary-soft transition">
                   Çerez Tercihleri
-                </Link>
+                </SafeLink>
               </li>
               <li>
                 <a

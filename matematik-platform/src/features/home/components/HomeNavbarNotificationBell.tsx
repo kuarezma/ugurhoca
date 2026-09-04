@@ -2,7 +2,7 @@
 
 import { AnimatePresence, motion } from 'framer-motion';
 import { Bell, CheckCheck, ChevronRight, X } from 'lucide-react';
-import Link from 'next/link';
+import { SafeLink } from '@/components/SafeLink';
 import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import type { DashboardNotification } from '@/types/dashboard';
@@ -260,9 +260,8 @@ export function HomeNavbarNotificationBell({
                 isLight ? 'border-slate-200' : 'border-slate-700'
               }`}
             >
-              <Link
+              <SafeLink
                 href="/profil"
-                prefetch={false}
                 onClick={() => setOpen(false)}
                 className={`inline-flex items-center gap-1 text-xs font-medium transition-colors ${
                   isLight
@@ -272,7 +271,7 @@ export function HomeNavbarNotificationBell({
               >
                 Tümünü Gör
                 <ChevronRight className="h-3.5 w-3.5" aria-hidden="true" />
-              </Link>
+              </SafeLink>
             </div>
           </motion.div>
         )}

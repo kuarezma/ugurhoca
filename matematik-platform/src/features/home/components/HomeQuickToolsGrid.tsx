@@ -1,7 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import Link from 'next/link';
+import { SafeLink } from '@/components/SafeLink';
 import {
   BookOpen,
   PenTool,
@@ -219,13 +219,12 @@ export function HomeQuickToolsGrid({
                     <ChevronRight className="h-3.5 w-3.5" />
                   </button>
                 ) : (
-                  <Link
+                  <SafeLink
                     href={tool.href || '/'}
-                    prefetch={false}
                     className={`inline-flex w-full items-center justify-center gap-1.5 rounded-xl bg-gradient-to-r ${tool.gradient} px-4 py-2.5 text-xs font-bold text-white shadow-md transition-all duration-200 hover:shadow-lg active:scale-[0.98]`}>
                     <span>{tool.buttonLabel}</span>
                     <ChevronRight className="h-3.5 w-3.5" />
-                  </Link>
+                  </SafeLink>
                 )}
               </div>
             </motion.div>

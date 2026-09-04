@@ -214,32 +214,43 @@ export const fetchHomeFeed = async () => {
   return { announcements, documents };
 };
 
-const userAssignmentsCache = new Map<
-  string,
-  { data: SharedDocumentAssignment[]; expiresAt: number }
->();
-const inFlightAssignmentsFetch = new Map<
-  string,
-  Promise<SharedDocumentAssignment[]>
->();
+type AssignmentsGlobalStore = {
+  cache: Map<string, { data: SharedDocumentAssignment[]; expiresAt: number }>;
+  inFlight: Map<string, Promise<SharedDocumentAssignment[]>>;
+};
+
+const getAssignmentsStore = (): AssignmentsGlobalStore => {
+  const g = globalThis as unknown as {
+    __ugurhoca_assignments_store__?: AssignmentsGlobalStore;
+  };
+  if (!g.__ugurhoca_assignments_store__) {
+    g.__ugurhoca_assignments_store__ = {
+      cache: new Map(),
+      inFlight: new Map(),
+    };
+  }
+  return g.__ugurhoca_assignments_store__;
+};
 
 export const clearUserAssignmentsCache = (userId?: string) => {
+  const store = getAssignmentsStore();
   if (userId) {
-    userAssignmentsCache.delete(userId);
-    inFlightAssignmentsFetch.delete(userId);
+    store.cache.delete(userId);
+    store.inFlight.delete(userId);
   } else {
-    userAssignmentsCache.clear();
-    inFlightAssignmentsFetch.clear();
+    store.cache.clear();
+    store.inFlight.clear();
   }
 };
 
 export const fetchUserAssignments = async (userId: string) => {
-  const cached = userAssignmentsCache.get(userId);
+  const store = getAssignmentsStore();
+  const cached = store.cache.get(userId);
   if (cached && cached.expiresAt > Date.now()) {
     return cached.data;
   }
 
-  const inFlight = inFlightAssignmentsFetch.get(userId);
+  const inFlight = store.inFlight.get(userId);
   if (inFlight) {
     return inFlight;
   }
@@ -274,20 +285,20 @@ export const fetchUserAssignments = async (userId: string) => {
         .map((item) => ({ ...item, source: 'notification' as const })),
     ];
 
-    userAssignmentsCache.set(userId, {
+    store.cache.set(userId, {
       data: result,
-      expiresAt: Date.now() + 15_000,
+      expiresAt: Date.now() + 30_000,
     });
 
     return result;
   })();
 
-  inFlightAssignmentsFetch.set(userId, fetchPromise);
+  store.inFlight.set(userId, fetchPromise);
 
   try {
     return await fetchPromise;
   } finally {
-    inFlightAssignmentsFetch.delete(userId);
+    store.inFlight.delete(userId);
   }
 };
 

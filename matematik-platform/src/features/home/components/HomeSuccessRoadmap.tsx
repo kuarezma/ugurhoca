@@ -1,7 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import Link from 'next/link';
+import { SafeLink } from '@/components/SafeLink';
 import {
   BookOpen,
   FileCheck,
@@ -128,9 +128,8 @@ export function HomeSuccessRoadmap({
 
               <div className="mt-6 pt-4 border-t border-white/5">
                 {item.href ? (
-                  <Link
+                  <SafeLink
                     href={item.href}
-                    prefetch={false}
                     className={`inline-flex w-full items-center justify-center gap-1.5 rounded-xl border px-3 py-2 text-xs font-bold transition hover:scale-[1.02] active:scale-[0.98] ${
                       isLight
                         ? 'border-slate-200 bg-slate-50 text-slate-800 hover:bg-slate-100'
@@ -139,7 +138,7 @@ export function HomeSuccessRoadmap({
                   >
                     <span>{item.actionLabel}</span>
                     <ChevronRight className="h-3.5 w-3.5" />
-                  </Link>
+                  </SafeLink>
                 ) : (
                   <button
                     type="button"

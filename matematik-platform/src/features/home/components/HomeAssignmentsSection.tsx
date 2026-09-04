@@ -1,6 +1,6 @@
 'use client';
 
-import Link from 'next/link';
+import { SafeLink } from '@/components/SafeLink';
 import { Bell, ChevronRight, X } from 'lucide-react';
 import type { SharedDocumentAssignment } from '@/types';
 import { HomeAssignmentsList } from '@/features/home/components/assignments/HomeAssignmentsList';
@@ -96,14 +96,13 @@ export function HomeAssignmentsSection({
                 </div>
 
                 {assignments.length > 3 && (
-                  <Link
+                  <SafeLink
                     href="/odevler"
-                    prefetch={false}
                     className="inline-flex items-center gap-2 mt-4 text-orange-400 hover:text-orange-300 text-sm font-medium transition-colors"
                   >
                     Tüm ödevleri gör ({assignments.length})
                     <ChevronRight className="w-4 h-4" />
-                  </Link>
+                  </SafeLink>
                 )}
               </div>
             </div>

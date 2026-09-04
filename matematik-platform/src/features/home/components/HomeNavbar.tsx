@@ -1,10 +1,10 @@
 'use client';
 
 import Image from 'next/image';
-import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { LogOut, Menu, X } from 'lucide-react';
 import { useState } from 'react';
+import { SafeLink } from '@/components/SafeLink';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { useTheme } from '@/components/ThemeProvider';
 import { HOME_CATEGORIES } from '@/features/home/constants';
@@ -37,7 +37,7 @@ export function HomeNavbar({ onLogout, user }: HomeNavbarProps) {
     >
       <div className="mx-auto max-w-6xl px-4 pl-[max(1rem,env(safe-area-inset-left))] pr-[max(1rem,env(safe-area-inset-right))]">
         <div className="flex h-16 w-full items-center gap-3 sm:gap-4">
-          <Link
+          <SafeLink
             href="/"
             aria-current={isHomePage ? 'page' : undefined}
             onClick={(event) => {
@@ -68,7 +68,7 @@ export function HomeNavbar({ onLogout, user }: HomeNavbarProps) {
                 Matematik Platformu
               </span>
             </div>
-          </Link>
+          </SafeLink>
 
           {/* Orta menü */}
           <div className="hidden min-h-0 min-w-0 flex-1 items-center lg:flex">
@@ -77,10 +77,9 @@ export function HomeNavbar({ onLogout, user }: HomeNavbarProps) {
               className="mx-auto flex max-w-full items-center gap-1.5 overflow-x-auto overflow-y-hidden py-1 [scrollbar-width:thin]"
             >
               {HOME_CATEGORIES.map((category) => (
-                <Link
+                <SafeLink
                   key={category.id}
                   href={category.href}
-                  prefetch={false}
                   className={`shrink-0 whitespace-nowrap rounded-xl px-3.5 py-1.5 text-xs font-semibold transition-all duration-200 ${
                     isLight
                       ? 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
@@ -88,7 +87,7 @@ export function HomeNavbar({ onLogout, user }: HomeNavbarProps) {
                   }`}
                 >
                   {category.title}
-                </Link>
+                </SafeLink>
               ))}
             </nav>
           </div>
@@ -108,9 +107,8 @@ export function HomeNavbar({ onLogout, user }: HomeNavbarProps) {
             ) : null}
             {user ? (
               <>
-                <Link
+                <SafeLink
                   href={profileHref}
-                  prefetch={false}
                   className={`flex items-center gap-2.5 rounded-2xl border px-3 py-1.5 transition-all ${
                     isLight
                       ? 'border-slate-200 bg-slate-50 text-slate-900 hover:bg-slate-100'
@@ -123,7 +121,7 @@ export function HomeNavbar({ onLogout, user }: HomeNavbarProps) {
                   <span className="font-semibold text-xs xl:inline">
                     {user.name?.split(' ')[0]}
                   </span>
-                </Link>
+                </SafeLink>
                 <button
                   type="button"
                   onClick={onLogout}
@@ -140,9 +138,8 @@ export function HomeNavbar({ onLogout, user }: HomeNavbarProps) {
               </>
             ) : (
               <>
-                <Link
+                <SafeLink
                   href="/giris"
-                  prefetch={false}
                   className={`rounded-xl px-3.5 py-2 text-xs font-bold transition-colors ${
                     isLight
                       ? 'text-slate-700 hover:bg-slate-100 hover:text-slate-900'
@@ -150,14 +147,13 @@ export function HomeNavbar({ onLogout, user }: HomeNavbarProps) {
                   }`}
                 >
                   Giriş Yap
-                </Link>
-                <Link
+                </SafeLink>
+                <SafeLink
                   href="/kayit"
-                  prefetch={false}
                   className="rounded-xl bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-500 px-4 py-2 text-xs font-bold text-white shadow-md transition-all duration-200 hover:shadow-lg hover:scale-105 active:scale-95"
                 >
                   Ücretsiz Kayıt
-                </Link>
+                </SafeLink>
               </>
             )}
           </div>
@@ -201,10 +197,9 @@ export function HomeNavbar({ onLogout, user }: HomeNavbarProps) {
         >
           <div className="space-y-1.5 px-4 py-4">
             {HOME_CATEGORIES.map((category) => (
-              <Link
+              <SafeLink
                 key={category.id}
                 href={category.href}
-                prefetch={false}
                 onClick={() => setIsOpen(false)}
                 className={`flex items-center gap-3 rounded-xl px-3.5 py-2.5 text-sm font-semibold transition-colors ${
                   isLight
@@ -214,7 +209,7 @@ export function HomeNavbar({ onLogout, user }: HomeNavbarProps) {
               >
                 <category.icon className="h-5 w-5 text-brand-primary-soft" />
                 {category.title}
-              </Link>
+              </SafeLink>
             ))}
             <div
               className={`mt-3 border-t pt-3 ${
@@ -226,9 +221,8 @@ export function HomeNavbar({ onLogout, user }: HomeNavbarProps) {
               </div>
               {user ? (
                 <>
-                  <Link
+                  <SafeLink
                     href={profileHref}
-                    prefetch={false}
                     onClick={() => setIsOpen(false)}
                     className={`block rounded-xl px-3.5 py-2.5 text-sm font-semibold ${
                       isLight
@@ -237,7 +231,7 @@ export function HomeNavbar({ onLogout, user }: HomeNavbarProps) {
                     }`}
                   >
                     {user.isAdmin ? 'Admin Paneli' : 'Öğrenci Profili'}
-                  </Link>
+                  </SafeLink>
                   <button
                     type="button"
                     onClick={() => {
@@ -251,9 +245,8 @@ export function HomeNavbar({ onLogout, user }: HomeNavbarProps) {
                 </>
               ) : (
                 <div className="grid grid-cols-2 gap-2 pt-2">
-                  <Link
+                  <SafeLink
                     href="/giris"
-                    prefetch={false}
                     onClick={() => setIsOpen(false)}
                     className={`flex items-center justify-center rounded-xl border px-3 py-2.5 text-center text-xs font-bold transition-colors ${
                       isLight
@@ -262,15 +255,14 @@ export function HomeNavbar({ onLogout, user }: HomeNavbarProps) {
                     }`}
                   >
                     Giriş Yap
-                  </Link>
-                  <Link
+                  </SafeLink>
+                  <SafeLink
                     href="/kayit"
-                    prefetch={false}
                     onClick={() => setIsOpen(false)}
                     className="flex items-center justify-center rounded-xl bg-gradient-to-r from-brand-primary via-brand-pink to-brand-orange px-3 py-2.5 text-center text-xs font-bold text-white shadow-md transition-transform active:scale-95"
                   >
                     Ücretsiz Kayıt
-                  </Link>
+                  </SafeLink>
                 </div>
               )}
             </div>

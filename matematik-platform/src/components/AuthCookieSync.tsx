@@ -9,26 +9,42 @@ import { supabase } from '@/lib/supabase/client';
 
 export default function AuthCookieSync() {
   useEffect(() => {
-    void syncCurrentUserSnapshotCookie();
+    let syncTimeout: ReturnType<typeof setTimeout> | null = null;
+
+    const scheduleSync = () => {
+      if (syncTimeout) {
+        clearTimeout(syncTimeout);
+      }
+      syncTimeout = setTimeout(() => {
+        void syncCurrentUserSnapshotCookie();
+      }, 150);
+    };
 
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((event) => {
       if (event === 'SIGNED_OUT') {
+        if (syncTimeout) clearTimeout(syncTimeout);
         clearClientAuthSnapshotCookie();
         return;
       }
 
       if (
+        event === 'INITIAL_SESSION' ||
         event === 'SIGNED_IN' ||
         event === 'TOKEN_REFRESHED' ||
         event === 'USER_UPDATED'
       ) {
-        void syncCurrentUserSnapshotCookie();
+        scheduleSync();
       }
     });
 
-    return () => subscription.unsubscribe();
+    return () => {
+      if (syncTimeout) {
+        clearTimeout(syncTimeout);
+      }
+      subscription.unsubscribe();
+    };
   }, []);
 
   return null;

@@ -23,9 +23,18 @@ type NotificationStore = {
   refCount: number;
 };
 
-const stores = new Map<string, NotificationStore>();
+const getStores = (): Map<string, NotificationStore> => {
+  const g = globalThis as unknown as {
+    __ugurhoca_notification_stores__?: Map<string, NotificationStore>;
+  };
+  if (!g.__ugurhoca_notification_stores__) {
+    g.__ugurhoca_notification_stores__ = new Map();
+  }
+  return g.__ugurhoca_notification_stores__;
+};
 
 const getOrCreateStore = (userId: string): NotificationStore => {
+  const stores = getStores();
   let store = stores.get(userId);
   if (!store) {
     store = {
@@ -100,7 +109,7 @@ export const useNavbarNotifications = (userId: string | null | undefined) => {
     }
 
     const now = Date.now();
-    if (now - store.lastFetchedAt > 15_000 && !store.fetchPromise) {
+    if (now - store.lastFetchedAt > 30_000 && !store.fetchPromise) {
       store.loading = store.notifications.length === 0;
       store.fetchPromise = (async () => {
         try {
@@ -126,10 +135,12 @@ export const useNavbarNotifications = (userId: string | null | undefined) => {
       store.refCount -= 1;
       if (store.refCount <= 0) {
         store.refCount = 0;
-        if (store.channel) {
-          void supabase.removeChannel(store.channel);
-          store.channel = null;
-        }
+        setTimeout(() => {
+          if (store.refCount <= 0 && store.channel) {
+            void supabase.removeChannel(store.channel);
+            store.channel = null;
+          }
+        }, 5000);
       }
     };
   }, [userId, store]);

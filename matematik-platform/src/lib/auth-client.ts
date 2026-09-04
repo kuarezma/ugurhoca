@@ -84,39 +84,96 @@ export const redirectToHome = (router?: RouterLike) => {
   redirectToPath('/', router);
 };
 
-export const getClientSession = async () => {
-  try {
-    const {
-      data: { session },
-      error,
-    } = await supabase.auth.getSession();
+type CachedProfileEntry = {
+  expiresAt: number;
+  result: { profile: AppUser; session: Session } | null;
+  userId: string;
+};
 
-    if (error) {
-      throw error;
-    }
+type AuthGlobalStore = {
+  cachedSession: { session: Session | null; expiresAt: number } | null;
+  inFlightProfilePromise: Promise<{ profile: AppUser; session: Session } | null> | null;
+  inFlightSessionPromise: Promise<Session | null> | null;
+  profileCache: CachedProfileEntry | null;
+};
 
-    if (!session) {
-      writeAccessTokenCookie(null);
-      writeAuthSnapshotCookie(null);
-    } else {
-      writeAccessTokenCookie(session.access_token);
-    }
-
-    return session;
-  } catch (error) {
-    if (isInvalidRefreshTokenError(error)) {
-      await supabase.auth.signOut({ scope: 'local' }).catch(() => undefined);
-      writeAccessTokenCookie(null);
-      writeAuthSnapshotCookie(null);
-      return null;
-    }
-
-    throw error;
+const getGlobalAuthStore = (): AuthGlobalStore => {
+  const g = globalThis as unknown as { __ugurhoca_auth_store__?: AuthGlobalStore };
+  if (!g.__ugurhoca_auth_store__) {
+    g.__ugurhoca_auth_store__ = {
+      cachedSession: null,
+      inFlightProfilePromise: null,
+      inFlightSessionPromise: null,
+      profileCache: null,
+    };
   }
+  return g.__ugurhoca_auth_store__;
+};
+
+export const clearUserProfileCache = () => {
+  const store = getGlobalAuthStore();
+  store.profileCache = null;
+  store.inFlightProfilePromise = null;
+  store.cachedSession = null;
+  store.inFlightSessionPromise = null;
+};
+
+export const getClientSession = async (options: { forceRefresh?: boolean } = {}) => {
+  const store = getGlobalAuthStore();
+
+  if (!options.forceRefresh && store.cachedSession && store.cachedSession.expiresAt > Date.now()) {
+    return store.cachedSession.session;
+  }
+
+  if (!options.forceRefresh && store.inFlightSessionPromise) {
+    return await store.inFlightSessionPromise;
+  }
+
+  const sessionPromise = (async () => {
+    try {
+      const {
+        data: { session },
+        error,
+      } = await supabase.auth.getSession();
+
+      if (error) {
+        throw error;
+      }
+
+      if (!session) {
+        writeAccessTokenCookie(null);
+        writeAuthSnapshotCookie(null);
+      } else {
+        writeAccessTokenCookie(session.access_token);
+      }
+
+      store.cachedSession = {
+        expiresAt: Date.now() + 5_000,
+        session,
+      };
+
+      return session;
+    } catch (error) {
+      if (isInvalidRefreshTokenError(error)) {
+        await supabase.auth.signOut({ scope: 'local' }).catch(() => undefined);
+        writeAccessTokenCookie(null);
+        writeAuthSnapshotCookie(null);
+        store.cachedSession = null;
+        return null;
+      }
+
+      throw error;
+    } finally {
+      store.inFlightSessionPromise = null;
+    }
+  })();
+
+  store.inFlightSessionPromise = sessionPromise;
+  return await sessionPromise;
 };
 
 export const requireClientSession = async (options: AuthOptions = {}) => {
-  const session = await getClientSession();
+  const session = await getClientSession({ forceRefresh: options.forceRefresh });
 
   if (!session) {
     if (options.redirectToLogin !== false) {
@@ -128,29 +185,17 @@ export const requireClientSession = async (options: AuthOptions = {}) => {
   return session;
 };
 
-type CachedProfileEntry = {
-  expiresAt: number;
-  result: { profile: AppUser; session: Session } | null;
-  userId: string;
-};
-
-let profileCache: CachedProfileEntry | null = null;
-let inFlightProfilePromise: Promise<{ profile: AppUser; session: Session } | null> | null = null;
-
-export const clearUserProfileCache = () => {
-  profileCache = null;
-  inFlightProfilePromise = null;
-};
-
 export const getCurrentUserProfile = async <TProfile extends AppUser = AppUser>(
   options: AuthOptions = {},
 ): Promise<{ profile: TProfile; session: Session } | null> => {
-  if (!options.forceRefresh && profileCache && profileCache.expiresAt > Date.now()) {
-    return profileCache.result as { profile: TProfile; session: Session } | null;
+  const store = getGlobalAuthStore();
+
+  if (!options.forceRefresh && store.profileCache && store.profileCache.expiresAt > Date.now()) {
+    return store.profileCache.result as { profile: TProfile; session: Session } | null;
   }
 
-  if (inFlightProfilePromise && !options.forceRefresh) {
-    return (await inFlightProfilePromise) as { profile: TProfile; session: Session } | null;
+  if (store.inFlightProfilePromise && !options.forceRefresh) {
+    return (await store.inFlightProfilePromise) as { profile: TProfile; session: Session } | null;
   }
 
   const fetchPromise = (async () => {
@@ -158,17 +203,17 @@ export const getCurrentUserProfile = async <TProfile extends AppUser = AppUser>(
 
     if (!session) {
       writeAuthSnapshotCookie(null);
-      profileCache = null;
+      store.profileCache = null;
       return null;
     }
 
     if (
       !options.forceRefresh &&
-      profileCache &&
-      profileCache.userId === session.user.id &&
-      profileCache.expiresAt > Date.now()
+      store.profileCache &&
+      store.profileCache.userId === session.user.id &&
+      store.profileCache.expiresAt > Date.now()
     ) {
-      return profileCache.result;
+      return store.profileCache.result;
     }
 
     const { data: profile } = await supabase
@@ -212,8 +257,8 @@ export const getCurrentUserProfile = async <TProfile extends AppUser = AppUser>(
       };
     }
 
-    profileCache = {
-      expiresAt: Date.now() + 15_000,
+    store.profileCache = {
+      expiresAt: Date.now() + 30_000,
       result,
       userId: session.user.id,
     };
@@ -221,14 +266,14 @@ export const getCurrentUserProfile = async <TProfile extends AppUser = AppUser>(
     return result;
   })();
 
-  inFlightProfilePromise = fetchPromise;
+  store.inFlightProfilePromise = fetchPromise;
 
   try {
     const res = await fetchPromise;
     return res as { profile: TProfile; session: Session } | null;
   } finally {
-    if (inFlightProfilePromise === fetchPromise) {
-      inFlightProfilePromise = null;
+    if (store.inFlightProfilePromise === fetchPromise) {
+      store.inFlightProfilePromise = null;
     }
   }
 };

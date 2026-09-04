@@ -1,12 +1,9 @@
 'use client';
 
-import { useCallback } from 'react';
-import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { Sparkles, Zap, ArrowRight } from 'lucide-react';
 import { Mascot } from '@/components/Mascot';
-import { prefetchContentDocuments } from '@/features/content/queries';
+import { SafeLink } from '@/components/SafeLink';
 import { HOME_CATEGORIES } from '@/features/home/constants';
 import type { AppUser } from '@/types';
 
@@ -16,25 +13,6 @@ type HomeHeroSectionProps = {
 };
 
 export function HomeHeroSection({ isLight, user }: HomeHeroSectionProps) {
-  const router = useRouter();
-
-  const prefetchHref = useCallback(
-    (href: string) => {
-      router.prefetch(href);
-    },
-    [router],
-  );
-
-  const prefetchCategory = useCallback(
-    (href: string, contentType?: string) => {
-      prefetchHref(href);
-      if (contentType) {
-        void prefetchContentDocuments(contentType).catch(() => undefined);
-      }
-    },
-    [prefetchHref],
-  );
-
   const firstName = user?.name?.split(' ')[0];
   const greeting = firstName ? `Merhaba ${firstName}!` : 'Matematiğe hoş geldin!';
 
@@ -111,22 +89,16 @@ export function HomeHeroSection({ isLight, user }: HomeHeroSectionProps) {
               </p>
 
               <div className="flex flex-col sm:flex-row gap-2.5 sm:gap-3">
-                <Link
+                <SafeLink
                   href="/icerikler"
-                  prefetch={false}
-                  onMouseEnter={() => prefetchHref('/icerikler')}
-                  onFocus={() => prefetchHref('/icerikler')}
                   className="group inline-flex h-11 sm:h-12 items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-500 px-5 sm:px-6 text-sm font-bold text-white shadow-md transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2"
                 >
                   <Zap className="h-4 w-4" aria-hidden="true" />
                   Çalışmaya başla
                   <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" aria-hidden="true" />
-                </Link>
-                <Link
+                </SafeLink>
+                <SafeLink
                   href="/oyunlar"
-                  prefetch={false}
-                  onMouseEnter={() => prefetchHref('/oyunlar')}
-                  onFocus={() => prefetchHref('/oyunlar')}
                   className={`inline-flex h-11 sm:h-12 items-center justify-center gap-2 rounded-2xl border px-5 text-sm font-semibold transition-all duration-200 hover:-translate-y-0.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 ${
                     isLight
                       ? 'border-slate-200 bg-white text-slate-800 hover:bg-slate-50 shadow-sm'
@@ -134,7 +106,7 @@ export function HomeHeroSection({ isLight, user }: HomeHeroSectionProps) {
                   }`}
                 >
                   Oyunla öğren
-                </Link>
+                </SafeLink>
               </div>
 
               {/* Hızlı Sınıf Başlangıç Çipleri */}
@@ -154,10 +126,9 @@ export function HomeHeroSection({ isLight, user }: HomeHeroSectionProps) {
                     { label: '12. Sınıf (YKS)', href: '/icerikler?grade=12', highlight: true },
                     { label: 'Mezun', href: '/icerikler?grade=Mezun' },
                   ].map((item) => (
-                    <Link
+                    <SafeLink
                       key={item.label}
                       href={item.href}
-                      prefetch={false}
                       className={`shrink-0 rounded-xl px-3.5 py-1.5 text-xs font-semibold transition-all duration-200 ${
                         item.highlight
                           ? 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-sm hover:scale-105'
@@ -167,7 +138,7 @@ export function HomeHeroSection({ isLight, user }: HomeHeroSectionProps) {
                       }`}
                     >
                       {item.label}
-                    </Link>
+                    </SafeLink>
                   ))}
                 </div>
               </div>
@@ -212,18 +183,8 @@ export function HomeHeroSection({ isLight, user }: HomeHeroSectionProps) {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.35, delay: index * 0.04 }}
               >
-                <Link
+                <SafeLink
                   href={category.href}
-                  prefetch={false}
-                  onMouseEnter={() =>
-                    prefetchCategory(category.href, category.contentType)
-                  }
-                  onFocus={() =>
-                    prefetchCategory(category.href, category.contentType)
-                  }
-                  onTouchStart={() =>
-                    prefetchCategory(category.href, category.contentType)
-                  }
                   aria-label={`${category.title} kategorisi`}
                   className={`group relative block overflow-hidden rounded-2xl sm:rounded-3xl border p-3.5 sm:p-5 text-center transition-all duration-300 hover:-translate-y-1 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 ${
                     isLight
@@ -248,7 +209,7 @@ export function HomeHeroSection({ isLight, user }: HomeHeroSectionProps) {
                     aria-hidden="true"
                     className="pointer-events-none absolute inset-x-0 -bottom-px h-1 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
                   />
-                </Link>
+                </SafeLink>
               </motion.div>
             ))}
           </div>

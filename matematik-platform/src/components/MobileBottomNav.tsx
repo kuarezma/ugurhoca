@@ -1,6 +1,6 @@
 'use client';
 
-import Link from 'next/link';
+import { SafeLink } from '@/components/SafeLink';
 import { usePathname } from 'next/navigation';
 import { Home, BookOpen, FileCheck, Gamepad2, User } from 'lucide-react';
 
@@ -35,10 +35,9 @@ export function MobileBottomNav() {
             const Icon = item.icon;
 
             return (
-              <Link
+              <SafeLink
                 key={item.href}
                 href={item.href}
-                prefetch={false}
                 aria-current={isActive ? 'page' : undefined}
                 className={`relative flex min-h-[44px] min-w-[52px] flex-col items-center justify-center rounded-xl px-2 py-1 text-[11px] font-semibold transition-all duration-200 ${
                   isActive
@@ -59,7 +58,7 @@ export function MobileBottomNav() {
                   aria-hidden="true"
                 />
                 <span className="mt-1 leading-none">{item.label}</span>
-              </Link>
+              </SafeLink>
             );
           })}
         </div>

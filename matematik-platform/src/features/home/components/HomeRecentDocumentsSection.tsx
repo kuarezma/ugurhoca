@@ -1,6 +1,6 @@
 'use client';
 
-import Link from 'next/link';
+import { SafeLink } from '@/components/SafeLink';
 import { ChevronRight, FileText } from 'lucide-react';
 import type { ContentDocument } from '@/types';
 import { getContentTypeLabel } from '@/features/content/constants';
@@ -33,13 +33,12 @@ export function HomeRecentDocumentsSection({
           >
             Son Eklenenler
           </h2>
-          <Link
+          <SafeLink
             href="/icerikler"
-            prefetch={false}
             className="text-indigo-400 hover:text-indigo-300 text-sm font-medium flex items-center gap-1"
           >
             Tümünü Gör <ChevronRight className="w-4 h-4" />
-          </Link>
+          </SafeLink>
         </div>
 
         <div className="space-y-3">

@@ -1,6 +1,6 @@
 'use client';
 
-import Link from 'next/link';
+import { SafeLink } from '@/components/SafeLink';
 import { Brain, Database, Play, ShieldCheck } from 'lucide-react';
 
 type HomeGuestCtaSectionProps = {
@@ -66,14 +66,13 @@ export function HomeGuestCtaSection({ isLight }: HomeGuestCtaSectionProps) {
               </p>
             </div>
           </div>
-          <Link
+          <SafeLink
             href="/kayit"
-            prefetch={false}
             className="inline-flex items-center gap-2 bg-gradient-to-r from-indigo-500 to-purple-500 text-white font-semibold px-6 py-3 rounded-xl hover:from-indigo-600 hover:to-purple-600 transition-all"
           >
             <Play className="w-5 h-5" />
             Ücretsiz Kayıt Ol
-          </Link>
+          </SafeLink>
         </div>
       </div>
     </section>

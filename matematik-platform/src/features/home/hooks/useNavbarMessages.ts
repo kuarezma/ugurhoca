@@ -47,10 +47,19 @@ type MessagesStore = {
   refCount: number;
 };
 
-const messageStores = new Map<string, MessagesStore>();
+const getMessageStores = (): Map<string, MessagesStore> => {
+  const g = globalThis as unknown as {
+    __ugurhoca_message_stores__?: Map<string, MessagesStore>;
+  };
+  if (!g.__ugurhoca_message_stores__) {
+    g.__ugurhoca_message_stores__ = new Map();
+  }
+  return g.__ugurhoca_message_stores__;
+};
 
 const getOrCreateMessageStore = (userId: string): MessagesStore => {
-  let store = messageStores.get(userId);
+  const stores = getMessageStores();
+  let store = stores.get(userId);
   if (!store) {
     store = {
       channel: null,
@@ -61,7 +70,7 @@ const getOrCreateMessageStore = (userId: string): MessagesStore => {
       messages: [],
       refCount: 0,
     };
-    messageStores.set(userId, store);
+    stores.set(userId, store);
   }
   return store;
 };
@@ -149,7 +158,7 @@ export const useNavbarMessages = (userId: string | null | undefined) => {
     }
 
     const now = Date.now();
-    if (now - store.lastFetchedAt > 15_000 && !store.fetchPromise) {
+    if (now - store.lastFetchedAt > 30_000 && !store.fetchPromise) {
       store.loading = store.messages.length === 0;
       store.fetchPromise = (async () => {
         try {
@@ -176,10 +185,12 @@ export const useNavbarMessages = (userId: string | null | undefined) => {
       store.refCount -= 1;
       if (store.refCount <= 0) {
         store.refCount = 0;
-        if (store.channel) {
-          void supabase.removeChannel(store.channel);
-          store.channel = null;
-        }
+        setTimeout(() => {
+          if (store.refCount <= 0 && store.channel) {
+            void supabase.removeChannel(store.channel);
+            store.channel = null;
+          }
+        }, 5000);
       }
     };
   }, [userId, store]);
