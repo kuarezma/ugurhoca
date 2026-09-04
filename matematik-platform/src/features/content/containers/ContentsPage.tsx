@@ -1249,7 +1249,7 @@ function ContentsPageInner({
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
-            className="glass rounded-2xl p-4 sm:p-6 mb-8 sticky top-20 z-30 border border-white/10 shadow-brand-glow/40 backdrop-blur-xl"
+            className="glass rounded-2xl p-4 sm:p-6 mb-8 border border-white/10 shadow-brand-glow/40 backdrop-blur-xl"
           >
             <div className="flex flex-col lg:flex-row gap-4">
               <div className="flex-1 relative">
