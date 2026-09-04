@@ -147,16 +147,16 @@ export default function AdminUsersTab({
   }
 
   const renderControls = () => (
-    <div className="glass rounded-2xl p-4">
+    <div className="glass rounded-2xl p-4 border border-white/10 shadow-lg">
       <div className="grid gap-3 lg:grid-cols-[minmax(0,1fr)_auto_auto_auto]">
         <label className="relative block">
           <span className="sr-only">Öğrenci ismine göre ara</span>
-          <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500" />
+          <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
           <input
             value={searchQuery}
             onChange={(event) => setSearchQuery(event.target.value)}
             placeholder="Öğrenci ismi ara..."
-            className="w-full rounded-xl border border-white/10 bg-slate-950/60 py-2.5 pl-10 pr-3 text-sm text-white placeholder:text-slate-500 outline-none transition focus:border-orange-400/60 focus:ring-2 focus:ring-orange-400/20"
+            className="w-full rounded-xl border border-white/10 bg-slate-900/60 py-2.5 pl-10 pr-3 text-sm text-white placeholder:text-slate-500 outline-none transition focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/25"
           />
         </label>
 
@@ -167,7 +167,7 @@ export default function AdminUsersTab({
             onChange={(event) =>
               setStudentFilter(event.target.value as StudentFilter)
             }
-            className="w-full rounded-xl border border-white/10 bg-slate-950/60 px-3 py-2.5 text-sm text-white outline-none transition focus:border-orange-400/60 focus:ring-2 focus:ring-orange-400/20 lg:w-44"
+            className="w-full rounded-xl border border-white/10 bg-slate-900/60 px-3 py-2.5 text-sm text-white outline-none transition focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/25 lg:w-44"
           >
             <option value="all">Tüm öğrenciler</option>
             <option value="favorites">Sadece favoriler</option>
@@ -179,7 +179,7 @@ export default function AdminUsersTab({
           <select
             value={gradeFilter}
             onChange={(event) => setGradeFilter(event.target.value)}
-            className="w-full rounded-xl border border-white/10 bg-slate-950/60 px-3 py-2.5 text-sm text-white outline-none transition focus:border-orange-400/60 focus:ring-2 focus:ring-orange-400/20 lg:w-36"
+            className="w-full rounded-xl border border-white/10 bg-slate-900/60 px-3 py-2.5 text-sm text-white outline-none transition focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/25 lg:w-36"
           >
             <option value="all">Tüm sınıflar</option>
             {gradeOptions.map((grade) => (
@@ -197,7 +197,7 @@ export default function AdminUsersTab({
             onChange={(event) =>
               setStudentSort(event.target.value as StudentSort)
             }
-            className="w-full rounded-xl border border-white/10 bg-slate-950/60 px-3 py-2.5 text-sm text-white outline-none transition focus:border-orange-400/60 focus:ring-2 focus:ring-orange-400/20 lg:w-52"
+            className="w-full rounded-xl border border-white/10 bg-slate-900/60 px-3 py-2.5 text-sm text-white outline-none transition focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/25 lg:w-52"
           >
             <option value="name">Alfabetik sırala</option>
             <option value="created_at">Son kayıt tarihine göre</option>
@@ -212,7 +212,7 @@ export default function AdminUsersTab({
         {hasActiveFilters && (
           <button
             onClick={resetFilters}
-            className="self-start rounded-lg px-2 py-1 text-xs font-semibold text-orange-300 transition-colors hover:bg-orange-400/10 hover:text-orange-200"
+            className="self-start rounded-lg px-2.5 py-1 text-xs font-semibold text-violet-300 transition-colors hover:bg-violet-500/10 hover:text-violet-200"
           >
             Filtreleri temizle
           </button>
@@ -222,13 +222,13 @@ export default function AdminUsersTab({
   );
 
   const renderEmptyState = () => (
-    <div className="glass rounded-2xl p-12 text-center">
+    <div className="glass rounded-2xl p-12 text-center border border-white/10">
       <Users className="w-16 h-16 mx-auto mb-4 text-slate-500" />
       <p className="text-slate-400">{emptyMessage}</p>
       {hasActiveFilters && (
         <button
           onClick={resetFilters}
-          className="mt-4 rounded-lg bg-orange-500/20 px-4 py-2 text-sm font-semibold text-orange-300 transition-colors hover:bg-orange-500/30"
+          className="mt-4 rounded-xl bg-brand-primary/20 px-4 py-2 text-sm font-semibold text-brand-primary-soft transition-colors hover:bg-brand-primary/30"
         >
           Filtreleri temizle
         </button>
@@ -242,12 +242,12 @@ export default function AdminUsersTab({
     return (
       <div
         key={user.id}
-        className="glass rounded-2xl p-4 sm:p-5 card-hover animate-slide-up overflow-hidden"
+        className="glass rounded-2xl p-4 sm:p-5 card-hover animate-slide-up overflow-hidden border border-white/10 hover:border-white/20 transition-all duration-300"
         style={{ animationDelay: `${index * 50}ms` }}
       >
         <div className="flex min-w-0 flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex min-w-0 items-center gap-3 sm:gap-4">
-            <div className="w-11 h-11 sm:w-12 sm:h-12 bg-gradient-to-br from-green-500 to-emerald-500 rounded-full flex shrink-0 items-center justify-center text-lg sm:text-xl font-bold text-white">
+            <div className="w-11 h-11 sm:w-12 sm:h-12 bg-gradient-to-tr from-brand-primary via-indigo-600 to-brand-secondary rounded-2xl flex shrink-0 items-center justify-center text-lg sm:text-xl font-bold text-white shadow-md shadow-violet-500/20">
               {user.name?.[0] || '?'}
             </div>
             <div className="min-w-0">
@@ -272,10 +272,10 @@ export default function AdminUsersTab({
           <div className="grid grid-cols-1 gap-2 sm:flex sm:flex-wrap sm:items-center sm:justify-end">
             <button
               onClick={() => onToggleFavorite(user)}
-              className={`justify-center px-4 py-2 rounded-lg transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] font-semibold flex items-center gap-2 ${
+              className={`justify-center px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold flex items-center gap-1.5 transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] border ${
                 user.is_favorite
-                  ? 'bg-amber-400/20 text-amber-300 hover:bg-amber-400/30'
-                  : 'bg-white/5 text-slate-300 hover:bg-white/10 hover:text-amber-300'
+                  ? 'bg-amber-400/20 text-amber-300 border-amber-400/30 hover:bg-amber-400/30'
+                  : 'bg-white/5 text-slate-300 hover:bg-white/10 hover:text-amber-300 border-white/10'
               }`}
               aria-pressed={Boolean(user.is_favorite)}
             >
@@ -286,21 +286,21 @@ export default function AdminUsersTab({
             </button>
             <button
               onClick={() => onViewProfile(user)}
-              className="justify-center px-4 py-2 bg-gradient-to-r from-cyan-500/20 to-blue-500/20 text-cyan-300 rounded-lg hover:from-cyan-500/40 hover:to-blue-500/40 transition-all font-semibold flex items-center gap-2"
+              className="justify-center px-3.5 py-2 bg-cyan-500/15 border border-cyan-500/25 text-cyan-300 rounded-xl hover:bg-cyan-500/25 transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] text-xs sm:text-sm font-semibold flex items-center gap-1.5"
             >
               <Eye className="w-4 h-4" />
               Profili Gör
             </button>
             <button
               onClick={() => onEditUser(user)}
-              className="justify-center px-4 py-2 bg-gradient-to-r from-green-500/20 to-emerald-500/20 text-green-300 rounded-lg hover:from-green-500/40 hover:to-emerald-500/40 transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] font-semibold flex items-center gap-2"
+              className="justify-center px-3.5 py-2 bg-emerald-500/15 border border-emerald-500/25 text-emerald-300 rounded-xl hover:bg-emerald-500/25 transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] text-xs sm:text-sm font-semibold flex items-center gap-1.5"
             >
               <Edit3 className="w-4 h-4" />
               Düzenle
             </button>
             <button
               onClick={() => onSendMessage(user)}
-              className="justify-center px-4 py-2 bg-gradient-to-r from-purple-500/20 to-pink-500/20 text-purple-300 rounded-lg hover:from-purple-500/40 hover:to-pink-500/40 transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] font-semibold flex items-center gap-2"
+              className="justify-center px-3.5 py-2 bg-brand-primary/20 border border-brand-primary/30 text-violet-200 rounded-xl hover:bg-brand-primary/30 transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] text-xs sm:text-sm font-semibold flex items-center gap-1.5 shadow-md shadow-violet-500/10"
             >
               <Send className="w-4 h-4" />
               Mesaj Yaz

@@ -121,22 +121,22 @@ export default function AdminStatistics() {
           <h2 className="text-2xl font-bold text-white">Site İstatistikleri</h2>
           <p className="text-slate-400 text-sm mt-1">Platformun genel durumu</p>
         </div>
-        <div className="flex gap-2">
+        <div className="flex gap-1.5 p-1 bg-white/5 rounded-xl border border-white/10">
           {(['week', 'month', 'all'] as const).map((range) => (
             <button
               key={range}
               onClick={() => setTimeRange(range)}
-              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+              className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all ${
                 timeRange === range
-                  ? 'bg-purple-500 text-white'
-                  : 'bg-white/5 text-slate-400 hover:text-white hover:bg-white/10'
+                  ? 'bg-brand-primary text-white shadow-md shadow-violet-500/25'
+                  : 'text-slate-400 hover:text-white hover:bg-white/5'
               }`}
             >
               {range === 'week'
-                ? '7 Gün'
+                ? 'Son 7 Gün'
                 : range === 'month'
-                  ? '30 Gün'
-                  : 'Tümü'}
+                  ? 'Son 30 Gün'
+                  : 'Tüm Zamanlar'}
             </button>
           ))}
         </div>
@@ -239,7 +239,7 @@ export default function AdminStatistics() {
               return (
                 <div
                   key={grade}
-                  className="flex-1 bg-gradient-to-t from-purple-500 to-pink-500 rounded-t-lg min-h-[8px] transition-[height] duration-500 ease-out"
+                  className="flex-1 bg-gradient-to-t from-brand-primary via-indigo-500 to-cyan-400 rounded-t-lg min-h-[8px] transition-[height] duration-500 ease-out hover:brightness-110"
                   style={{
                     height: `${height}%`,
                     transitionDelay: `${i * 50}ms`,
@@ -252,7 +252,7 @@ export default function AdminStatistics() {
           <div className="flex gap-1 mt-2">
             {stats.usersByGrade.map(({ grade }) => (
               <div key={grade} className="flex-1 text-center">
-                <span className="text-[10px] text-slate-500 truncate block">
+                <span className="text-[10px] text-slate-400 font-medium truncate block">
                   {grade.replace('. Sınıf', '')}
                 </span>
               </div>
@@ -262,48 +262,21 @@ export default function AdminStatistics() {
       </div>
 
       <div className="grid sm:grid-cols-2 gap-4">
-        <div className="glass rounded-2xl p-6">
+        <div className="glass rounded-2xl p-6 border border-white/10">
           <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
-            <Calendar className="w-5 h-5 text-blue-400" />
-            Son Kayıtlar
+            <Calendar className="w-5 h-5 text-cyan-400" />
+            Sistem Özeti & Verim
           </h3>
-          <div className="space-y-3">
-            {[
-              ...stats.usersByGrade.reduce(
-                (acc, g) => acc.concat(Array(g.count).fill(g.grade)),
-                [] as string[],
-              ),
-            ]
-              .slice(0, 5)
-              .map((grade, i) => (
-                <div key={i} className="flex items-center gap-3">
-                  <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-full flex items-center justify-center text-white text-sm font-bold">
-                    {i + 1}
-                  </div>
-                  <div className="flex-1">
-                    <div className="h-2 bg-slate-700 rounded-full w-full" />
-                  </div>
-                  <span className="text-xs text-slate-400">{grade}</span>
-                </div>
-              ))}
-          </div>
-        </div>
-
-        <div className="glass rounded-2xl p-6">
-          <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
-            <Activity className="w-5 h-5 text-green-400" />
-            Platform Metrikleri
-          </h3>
-          <div className="space-y-4">
-            <div className="flex items-center justify-between">
-              <span className="text-slate-400">Kullanıcı/Belge Oranı</span>
+          <div className="space-y-3 text-sm">
+            <div className="flex items-center justify-between pb-2 border-b border-white/5">
+              <span className="text-slate-400">Kullanıcı Başına İçerik</span>
               <span className="text-white font-semibold">
                 {(stats.totalUsers / Math.max(stats.totalDocuments, 1)).toFixed(
                   1,
                 )}
               </span>
             </div>
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between pb-2 border-b border-white/5">
               <span className="text-slate-400">Belge Başına Ort. İndirme</span>
               <span className="text-white font-semibold">
                 {Math.round(
@@ -311,7 +284,7 @@ export default function AdminStatistics() {
                 )}
               </span>
             </div>
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between pb-2 border-b border-white/5">
               <span className="text-slate-400">Öğrenci Not Ortalaması</span>
               <span className="text-white font-semibold">
                 {Math.round(stats.totalNotes / Math.max(stats.totalUsers, 1))}
@@ -319,7 +292,7 @@ export default function AdminStatistics() {
             </div>
             <div className="flex items-center justify-between">
               <span className="text-slate-400">Etkinlik Oranı</span>
-              <span className="text-white font-semibold">
+              <span className="text-emerald-400 font-bold">
                 {(
                   ((stats.totalNotes + stats.totalAssignments) /
                     Math.max(stats.totalUsers, 1)) *
@@ -353,21 +326,21 @@ function StatCard({
   suffix?: string;
 }) {
   return (
-    <div className="glass rounded-2xl p-5 card-hover animate-fade-up">
-      <div className="flex items-start justify-between">
+    <div className="glass rounded-2xl p-4 sm:p-5 card-hover animate-fade-up relative overflow-hidden group border border-white/10 hover:border-white/20 transition-all duration-300">
+      <div className="flex items-center justify-between">
         <div
-          className={`w-12 h-12 rounded-xl bg-gradient-to-br ${color} flex items-center justify-center`}
+          className={`w-11 h-11 sm:w-12 sm:h-12 rounded-2xl bg-gradient-to-br ${color} flex items-center justify-center shadow-lg shadow-black/20 group-hover:scale-105 transition-transform duration-200`}
         >
-          <Icon className={`w-6 h-6 ${iconColor}`} />
+          <Icon className={`w-5 h-5 sm:w-6 sm:h-6 ${iconColor}`} />
         </div>
       </div>
-      <div className="mt-4">
-        <p className="text-3xl font-bold text-white">
+      <div className="mt-3.5 sm:mt-4">
+        <p className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
           {value.toLocaleString('tr-TR')}
           {suffix}
         </p>
-        <p className="text-slate-400 text-sm mt-1">{label}</p>
-        {subtext && <p className="text-slate-500 text-xs mt-1">{subtext}</p>}
+        <p className="text-slate-300 font-medium text-xs sm:text-sm mt-1">{label}</p>
+        {subtext && <p className="text-slate-400 text-[11px] sm:text-xs mt-0.5 truncate">{subtext}</p>}
       </div>
     </div>
   );

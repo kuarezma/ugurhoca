@@ -57,13 +57,14 @@ export default function AdminDocumentsTab({
         <div className="grid grid-cols-1 gap-2 sm:flex sm:flex-wrap sm:items-center sm:justify-end">
           <button
             onClick={onMigrateWorksheets}
-            className="px-4 py-2 bg-purple-500/20 border border-purple-500/30 text-purple-300 rounded-lg hover:bg-purple-500/30 transition-colors text-sm font-medium"
+            className="px-4 py-2 bg-brand-primary/15 border border-brand-primary/25 text-violet-300 rounded-xl hover:bg-brand-primary/25 transition-all text-xs sm:text-sm font-semibold flex items-center justify-center gap-1.5"
           >
+            <FolderTree className="w-4 h-4" />
             Yaprak Test Geçişi
           </button>
           <button
             onClick={onRefreshCategories}
-            className="px-4 py-2 bg-yellow-500/20 border border-yellow-500/30 text-yellow-400 rounded-lg hover:bg-yellow-500/30 transition-colors text-sm font-medium"
+            className="px-4 py-2 bg-amber-500/15 border border-amber-500/25 text-amber-300 rounded-xl hover:bg-amber-500/25 transition-all text-xs sm:text-sm font-semibold flex items-center justify-center gap-1.5"
           >
             Kategorileri Güncelle
           </button>
@@ -71,7 +72,7 @@ export default function AdminDocumentsTab({
       </div>
 
       {documents.length === 0 ? (
-        <div className="glass rounded-2xl p-12 text-center">
+        <div className="glass rounded-2xl p-12 text-center border border-white/10">
           <FileText className="w-16 h-16 mx-auto mb-4 text-slate-500" />
           <p className="text-slate-400">Henüz içerik yok</p>
         </div>
@@ -88,21 +89,21 @@ export default function AdminDocumentsTab({
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.05 }}
-              className="glass rounded-2xl p-4 sm:p-6 card-hover overflow-hidden"
+              className="glass rounded-2xl p-4 sm:p-5 card-hover overflow-hidden border border-white/10 hover:border-white/20 transition-all duration-300"
             >
               <div className="flex min-w-0 flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
                 <div className="flex min-w-0 flex-1 items-start gap-3 sm:items-center sm:gap-4">
                   <div
-                    className={`w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-gradient-to-br ${
+                    className={`w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-gradient-to-br ${
                       ADMIN_DOCUMENT_TYPE_COLORS[document.type] ||
                       "from-slate-500 to-slate-600"
-                    } flex items-center justify-center flex-shrink-0`}
+                    } flex items-center justify-center flex-shrink-0 shadow-md shadow-black/20`}
                   >
                     <FileText className="w-6 h-6 sm:w-7 sm:h-7 text-white" />
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex min-w-0 flex-col gap-2 mb-1 sm:flex-row sm:items-center sm:gap-3">
-                      <h3 className="text-lg font-bold text-white truncate">
+                      <h3 className="text-base sm:text-lg font-bold text-white truncate">
                         {document.title}
                       </h3>
                       <span
@@ -150,7 +151,7 @@ export default function AdminDocumentsTab({
                     </div>
                   </div>
                 </div>
-                <div className="flex justify-end gap-2 sm:ml-4">
+                <div className="flex justify-end gap-1.5 sm:ml-4">
                   <button
                     onClick={() =>
                       onEdit(document, {
@@ -167,15 +168,17 @@ export default function AdminDocumentsTab({
                         video_url: document.video_url ?? "",
                       })
                     }
-                    className="p-2 text-slate-400 hover:text-blue-400 transition-colors"
+                    className="p-2.5 rounded-xl text-slate-400 hover:text-cyan-300 hover:bg-cyan-500/10 transition-all"
+                    title="Düzenle"
                   >
-                    <Edit3 className="w-5 h-5" />
+                    <Edit3 className="w-4 h-4 sm:w-5 sm:h-5" />
                   </button>
                   <button
                     onClick={() => onDelete(document.id)}
-                    className="p-2 text-slate-400 hover:text-red-400 transition-colors"
+                    className="p-2.5 rounded-xl text-slate-400 hover:text-rose-400 hover:bg-rose-500/10 transition-all"
+                    title="Sil"
                   >
-                    <Trash2 className="w-5 h-5" />
+                    <Trash2 className="w-4 h-4 sm:w-5 sm:h-5" />
                   </button>
                 </div>
               </div>

@@ -22,10 +22,15 @@ import {
   Activity,
   CalendarDays,
   Video,
+  ShieldCheck,
+  Globe,
+  Sparkles,
+  ExternalLink,
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { signOutClient } from '@/lib/auth-client';
 import { useToast } from '@/components/Toast';
+import { ThemeToggle } from '@/components/ThemeToggle';
 import { useAdminListActions } from '@/features/admin/hooks/useAdminListActions';
 import { useAdminModalState } from '@/features/admin/hooks/useAdminModalState';
 import { useAdminModalSubmitHandlers } from '@/features/admin/hooks/useAdminModalSubmitHandlers';
@@ -162,6 +167,9 @@ export default function AdminPage() {
   const { showToast } = useToast();
   const [user, setUser] = useState<AdminUser | null>(null);
   const [activeTab, setActiveTab] = useState<AdminActiveTab>('statistics');
+  const [tabCategory, setTabCategory] = useState<
+    'all' | 'general' | 'education' | 'curriculum'
+  >('all');
   const [announcements, setAnnouncements] = useState<Announcement[]>([]);
   const [documents, setDocuments] = useState<Document[]>([]);
   const [annualPlanItems, setAnnualPlanItems] = useState<AnnualPlanItem[]>([]);
@@ -856,37 +864,55 @@ export default function AdminPage() {
 
   return (
     <main className="admin-page min-h-screen gradient-bg pb-20">
-      <nav className="fixed top-0 left-0 right-0 z-50 bg-slate-950/95 backdrop-blur-md border-b border-white/10 py-3 px-4 sm:py-4 sm:px-6 shadow-lg shadow-black/20">
+      <nav className="fixed top-0 left-0 right-0 z-50 bg-slate-950/90 backdrop-blur-xl border-b border-white/10 py-2.5 px-4 sm:py-3 sm:px-6 shadow-xl shadow-black/20">
         <div className="container mx-auto flex min-w-0 items-center justify-between gap-3">
-          <Link href="/" className="flex min-w-0 items-center gap-3">
-            <div className="w-9 h-9 sm:w-10 sm:h-10 bg-gradient-to-br from-orange-500 to-red-500 rounded-xl flex items-center justify-center flex-shrink-0">
-              <Calculator className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
+          <Link href="/" className="flex min-w-0 items-center gap-3 group">
+            <div className="w-9 h-9 sm:w-10 sm:h-10 bg-gradient-to-tr from-brand-primary via-indigo-600 to-brand-secondary rounded-2xl flex items-center justify-center flex-shrink-0 shadow-lg shadow-violet-500/25 group-hover:scale-105 transition-transform duration-200">
+              <Calculator className="w-5 h-5 text-white" />
             </div>
-            <span className="min-w-0 truncate text-sm sm:text-xl font-bold bg-gradient-to-r from-orange-400 to-red-400 bg-clip-text text-transparent leading-tight">
-              Uğur Hoca Matematik
-            </span>
+            <div className="min-w-0">
+              <span className="block truncate text-sm sm:text-base font-bold bg-gradient-to-r from-white via-slate-100 to-slate-300 bg-clip-text text-transparent leading-tight">
+                Uğur Hoca
+              </span>
+              <span className="hidden sm:flex items-center gap-1 text-[11px] font-semibold text-cyan-300 tracking-wide">
+                <ShieldCheck className="w-3 h-3" />
+                Yönetici Portalı
+              </span>
+            </div>
           </Link>
 
-          <div className="flex shrink-0 items-center gap-2 sm:gap-4">
+          <div className="flex shrink-0 items-center gap-2 sm:gap-3">
+            <Link
+              href="/"
+              className="hidden md:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-white/10 bg-white/5 text-slate-300 hover:text-white hover:bg-white/10 transition-colors text-xs font-semibold"
+            >
+              <Globe className="w-3.5 h-3.5 text-cyan-400" />
+              Siteyi Gör
+            </Link>
+
+            <ThemeToggle compact className="h-9 w-9 rounded-xl border-white/10 bg-white/5 hover:bg-white/10" />
+
             <button
               onClick={() => setShowNotifications((v) => !v)}
-              className="relative p-2 text-slate-300 hover:text-white transition-colors"
+              aria-label="Bildirimler"
+              className="relative h-9 w-9 flex items-center justify-center rounded-xl border border-white/10 bg-white/5 text-slate-300 hover:text-white hover:bg-white/10 transition-colors"
             >
-              <Bell className="w-5 h-5" />
+              <Bell className="w-4 h-4" />
               {unreadNotifications.length > 0 && (
-                <span className="absolute -top-0.5 -right-0.5 w-5 h-5 bg-red-500 rounded-full text-[10px] text-white flex items-center justify-center font-bold">
+                <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 bg-rose-500 rounded-full text-[10px] text-white flex items-center justify-center font-bold shadow-md shadow-rose-500/50 animate-pulse">
                   {unreadNotifications.length}
                 </span>
               )}
             </button>
-            <span className="hidden md:block px-4 py-2 bg-orange-500/20 text-orange-400 rounded-full text-sm font-semibold">
-              Admin Paneli
-            </span>
+
+            <div className="h-5 w-px bg-white/10 mx-0.5 hidden sm:block" />
+
             <button
               onClick={handleLogout}
-              className="btn-secondary text-xs sm:text-sm px-3 py-2 sm:px-4 sm:py-2"
+              className="btn-secondary text-xs px-3 py-1.5 rounded-xl h-9 flex items-center gap-1.5"
+              title="Oturumu Kapat"
             >
-              <LogOut className="w-4 h-4" />
+              <LogOut className="w-3.5 h-3.5 text-rose-400" />
               <span className="hidden sm:inline">Çıkış</span>
             </button>
           </div>
@@ -922,24 +948,134 @@ export default function AdminPage() {
 
       <div className="pt-20 sm:pt-24 px-4 sm:px-6 overflow-x-clip">
         <div className="container mx-auto min-w-0">
-          <div className="mb-6 sm:mb-8 animate-fade-up">
-            <Link
-              href="/profil"
-              className="text-slate-400 hover:text-white inline-flex items-center gap-2 mb-4 text-sm sm:text-base"
-            >
-              <ArrowLeft className="w-5 h-5" />
-              Profil'e Dön
-            </Link>
-            <h1 className="text-2xl sm:text-4xl font-bold text-white mb-2">
-              Admin Paneli
-            </h1>
-            <p className="text-slate-400 text-sm sm:text-base">
-              Hoş geldiniz, Uğur Hoca!
-            </p>
+          {/* Executive Welcome & KPI Summary Hero */}
+          <div className="glass rounded-3xl p-5 sm:p-7 mb-8 border border-white/10 shadow-2xl relative overflow-hidden animate-fade-up">
+            <div className="absolute -right-16 -top-16 w-64 h-64 bg-violet-600/15 rounded-full blur-3xl pointer-events-none" />
+            <div className="absolute -left-16 -bottom-16 w-64 h-64 bg-cyan-600/15 rounded-full blur-3xl pointer-events-none" />
+
+            <div className="relative z-10 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
+              <div>
+                <div className="flex flex-wrap items-center gap-2 mb-2.5">
+                  <Link
+                    href="/profil"
+                    className="inline-flex items-center gap-1.5 text-xs text-slate-400 hover:text-white transition-colors mr-2 group"
+                  >
+                    <ArrowLeft className="w-3.5 h-3.5 group-hover:-translate-x-0.5 transition-transform" />
+                    Profil'e Dön
+                  </Link>
+                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-violet-500/20 text-violet-300 border border-violet-500/30">
+                    <ShieldCheck className="w-3.5 h-3.5" />
+                    Yönetici Portalı
+                  </span>
+                  <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                    Sistem Aktif
+                  </span>
+                </div>
+                <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-white tracking-tight">
+                  Hoş Geldiniz, {user.name || 'Uğur Hoca'} 👋
+                </h1>
+                <p className="text-slate-300/80 text-sm sm:text-base mt-1.5 max-w-xl leading-relaxed">
+                  Öğrenci takibi, çalışma kağıtları, sınavlar ve canlı derslerinizi tek merkezden uyumla yönetin.
+                </p>
+              </div>
+
+              {/* Quick KPI Counters */}
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 w-full lg:w-auto">
+                <div className="glass rounded-2xl p-3 sm:p-4 text-center border border-white/10 hover:border-violet-500/40 transition-colors">
+                  <div className="text-xl sm:text-2xl font-black text-white">{studentUsers.length}</div>
+                  <div className="text-xs text-slate-400 font-medium mt-0.5">Öğrenci</div>
+                </div>
+                <div className="glass rounded-2xl p-3 sm:p-4 text-center border border-white/10 hover:border-blue-500/40 transition-colors">
+                  <div className="text-xl sm:text-2xl font-black text-white">{documents.length}</div>
+                  <div className="text-xs text-slate-400 font-medium mt-0.5">İçerik & Belge</div>
+                </div>
+                <div className="glass rounded-2xl p-3 sm:p-4 text-center border border-white/10 hover:border-pink-500/40 transition-colors">
+                  <div className="text-xl sm:text-2xl font-black text-white">{quizzes.length}</div>
+                  <div className="text-xs text-slate-400 font-medium mt-0.5">Test / Sınav</div>
+                </div>
+                <div className="glass rounded-2xl p-3 sm:p-4 text-center border border-white/10 hover:border-amber-500/40 transition-colors">
+                  <div className="text-xl sm:text-2xl font-black text-amber-300">
+                    {worksheetCandidates.filter((c) => c.status === 'pending').length}
+                  </div>
+                  <div className="text-xs text-slate-400 font-medium mt-0.5">Aday Test</div>
+                </div>
+              </div>
+            </div>
+
+            {/* Quick Action Buttons Strip */}
+            <div className="relative z-10 mt-6 pt-4 border-t border-white/10 flex flex-wrap items-center gap-2">
+              <span className="text-xs font-semibold text-slate-400 mr-1 flex items-center gap-1.5">
+                <Sparkles className="w-3.5 h-3.5 text-violet-400" />
+                Hızlı Eylemler:
+              </span>
+              <button
+                onClick={() => openModal('document')}
+                className="btn-primary text-xs py-2 px-3 sm:px-4 rounded-xl"
+              >
+                <Plus className="w-3.5 h-3.5" />
+                Yeni Belge Ekle
+              </button>
+              <button
+                onClick={() => openModal('announcement')}
+                className="btn-secondary text-xs py-2 px-3 sm:px-4 rounded-xl"
+              >
+                <Megaphone className="w-3.5 h-3.5 text-pink-400" />
+                Yeni Duyuru
+              </button>
+              <button
+                onClick={() => openModal('quiz')}
+                className="btn-secondary text-xs py-2 px-3 sm:px-4 rounded-xl"
+              >
+                <CheckCircle2 className="w-3.5 h-3.5 text-violet-400" />
+                Yeni Test
+              </button>
+              <button
+                onClick={() => openModal('assignment')}
+                className="btn-secondary text-xs py-2 px-3 sm:px-4 rounded-xl"
+              >
+                <ClipboardList className="w-3.5 h-3.5 text-rose-400" />
+                Ödev Ver
+              </button>
+              <Link
+                href="/"
+                target="_blank"
+                className="btn-secondary text-xs py-2 px-3 sm:px-4 rounded-xl ml-auto"
+                title="Platformun ön yüzünü yeni sekmede aç"
+              >
+                <ExternalLink className="w-3.5 h-3.5 text-cyan-400" />
+                <span>Siteyi Aç</span>
+              </Link>
+            </div>
           </div>
 
-          <div className="sticky top-16 z-40 -mx-4 sm:mx-0 mb-6 sm:mb-8 px-4 sm:px-0 py-3 sm:py-0">
-            <div className="flex flex-nowrap gap-1.5 sm:gap-3 overflow-x-auto pb-2 sm:pb-0 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+          {/* Category Filter Pills & Tab Navigation */}
+          <div className="sticky top-14 sm:top-16 z-40 -mx-4 sm:mx-0 mb-6 sm:mb-8 px-4 sm:px-0 py-3 backdrop-blur-md bg-slate-950/40 rounded-2xl border border-white/5">
+            {/* Category Segment Filter */}
+            <div className="flex items-center gap-1.5 mb-3 overflow-x-auto pb-1 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+              {[
+                { id: 'all', label: 'Tüm Bölümler', count: 11 },
+                { id: 'general', label: '📊 Genel & Takip', count: 3 },
+                { id: 'education', label: '📚 Eğitim & İçerik', count: 4 },
+                { id: 'curriculum', label: '⚙️ Plan & Otomasyon', count: 4 },
+              ].map((cat) => (
+                <button
+                  key={cat.id}
+                  onClick={() => setTabCategory(cat.id as typeof tabCategory)}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all whitespace-nowrap ${
+                    tabCategory === cat.id
+                      ? 'bg-brand-primary text-white shadow-md shadow-violet-500/25'
+                      : 'bg-white/5 text-slate-400 hover:text-white hover:bg-white/10'
+                  }`}
+                >
+                  {cat.label}
+                  <span className="ml-1.5 opacity-60 text-[10px]">({cat.count})</span>
+                </button>
+              ))}
+            </div>
+
+            {/* Individual Tab Buttons */}
+            <div className="flex flex-nowrap gap-1.5 sm:gap-2.5 overflow-x-auto pb-1 sm:pb-0 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
               {[
                 {
                   id: 'statistics',
@@ -947,6 +1083,8 @@ export default function AdminPage() {
                   shortLabel: 'İstat.',
                   icon: BarChart3,
                   color: 'from-emerald-500 to-teal-500',
+                  category: 'general',
+                  badge: null,
                 },
                 {
                   id: 'tracking',
@@ -954,20 +1092,53 @@ export default function AdminPage() {
                   shortLabel: 'Takip',
                   icon: Activity,
                   color: 'from-cyan-500 to-blue-500',
+                  category: 'general',
+                  badge: null,
                 },
                 {
-                  id: 'announcements',
-                  label: 'Duyurular',
-                  shortLabel: 'Duy.',
-                  icon: Megaphone,
-                  color: 'from-pink-500 to-rose-500',
+                  id: 'users',
+                  label: 'Kullanıcılar',
+                  shortLabel: 'Kullanıcılar',
+                  icon: Users,
+                  color: 'from-indigo-500 to-purple-500',
+                  category: 'general',
+                  badge: studentUsers.length,
                 },
                 {
                   id: 'documents',
                   label: 'Belgeler',
-                  shortLabel: 'Bel.',
+                  shortLabel: 'Belgeler',
                   icon: FileText,
                   color: 'from-blue-500 to-cyan-500',
+                  category: 'education',
+                  badge: documents.length,
+                },
+                {
+                  id: 'quizzes',
+                  label: 'Testler',
+                  shortLabel: 'Testler',
+                  icon: CheckCircle2,
+                  color: 'from-violet-500 to-purple-500',
+                  category: 'education',
+                  badge: quizzes.length,
+                },
+                {
+                  id: 'assignments',
+                  label: 'Ödevlendirme',
+                  shortLabel: 'Ödevler',
+                  icon: ClipboardList,
+                  color: 'from-rose-500 to-pink-500',
+                  category: 'education',
+                  badge: assignments.length,
+                },
+                {
+                  id: 'liveLessons',
+                  label: 'Canlı Dersler',
+                  shortLabel: 'Canlı Ders',
+                  icon: Video,
+                  color: 'from-sky-500 to-indigo-500',
+                  category: 'education',
+                  badge: liveLessons.lessons.length > 0 ? liveLessons.lessons.length : null,
                 },
                 {
                   id: 'annualPlan',
@@ -975,20 +1146,18 @@ export default function AdminPage() {
                   shortLabel: 'Plan',
                   icon: CalendarDays,
                   color: 'from-emerald-500 to-teal-500',
+                  category: 'curriculum',
+                  badge: annualPlanItems.length > 0 ? annualPlanItems.length : null,
                 },
                 {
                   id: 'worksheetCandidates',
                   label: 'Test Adayları',
-                  shortLabel: 'Aday',
+                  shortLabel: 'Adaylar',
                   icon: Search,
                   color: 'from-amber-500 to-orange-500',
-                },
-                {
-                  id: 'users',
-                  label: 'Kullanıcılar',
-                  shortLabel: 'Kull.',
-                  icon: Users,
-                  color: 'from-green-500 to-emerald-500',
+                  category: 'curriculum',
+                  badge: worksheetCandidates.filter((c) => c.status === 'pending').length || null,
+                  badgeAlert: worksheetCandidates.filter((c) => c.status === 'pending').length > 0,
                 },
                 {
                   id: 'gradeUpdate',
@@ -996,47 +1165,52 @@ export default function AdminPage() {
                   shortLabel: 'Sınıf',
                   icon: RefreshCw,
                   color: 'from-teal-500 to-cyan-500',
+                  category: 'curriculum',
+                  badge: null,
                 },
                 {
-                  id: 'assignments',
-                  label: 'Ödevlendirme',
-                  shortLabel: 'Ödev',
-                  icon: ClipboardList,
-                  color: 'from-rose-500 to-pink-500',
+                  id: 'announcements',
+                  label: 'Duyurular',
+                  shortLabel: 'Duyurular',
+                  icon: Megaphone,
+                  color: 'from-pink-500 to-rose-500',
+                  category: 'curriculum',
+                  badge: announcements.length,
                 },
-                {
-                  id: 'quizzes',
-                  label: 'Testler',
-                  shortLabel: 'Test',
-                  icon: CheckCircle2,
-                  color: 'from-violet-500 to-purple-500',
-                },
-                {
-                  id: 'liveLessons',
-                  label: 'Canlı Dersler',
-                  shortLabel: 'Canlı',
-                  icon: Video,
-                  color: 'from-sky-500 to-indigo-500',
-                },
-              ].map((tab) => (
-                <button
-                  key={tab.id}
-                  onClick={() => setActiveTab(tab.id as AdminActiveTab)}
-                  className={`relative overflow-hidden px-3 py-2.5 sm:px-5 sm:py-3.5 rounded-xl flex items-center gap-1.5 sm:gap-2.5 transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] whitespace-nowrap shrink-0 border shadow-md ${
-                    activeTab === tab.id
-                      ? `bg-gradient-to-r ${tab.color} text-white border-white/20 shadow-${tab.color.includes('pink') ? 'pink' : tab.color.includes('blue') ? 'cyan' : tab.color.includes('green') ? 'emerald' : 'violet'}-500/30`
-                      : `bg-slate-900/80 border-white/10 text-slate-300 hover:text-white hover:border-white/20 hover:bg-slate-800/80`
-                  }`}
-                >
-                  {activeTab === tab.id && (
-                    <span className="absolute inset-0 bg-white/10 pointer-events-none" />
-                  )}
-                  <tab.icon className="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0" />
-                  <span className="relative font-semibold text-[11px] sm:text-sm">
-                    {activeTab === tab.id ? tab.label : tab.shortLabel}
-                  </span>
-                </button>
-              ))}
+              ]
+                .filter((tab) => tabCategory === 'all' || tab.category === tabCategory)
+                .map((tab) => (
+                  <button
+                    key={tab.id}
+                    onClick={() => setActiveTab(tab.id as AdminActiveTab)}
+                    className={`relative overflow-hidden px-3 py-2 sm:px-4 sm:py-3 rounded-xl flex items-center gap-1.5 sm:gap-2 transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] whitespace-nowrap shrink-0 border shadow-md ${
+                      activeTab === tab.id
+                        ? `bg-gradient-to-r ${tab.color} text-white border-white/25 shadow-lg shadow-violet-500/20 ring-1 ring-white/20`
+                        : `bg-slate-900/80 border-white/10 text-slate-300 hover:text-white hover:border-white/20 hover:bg-slate-800/80`
+                    }`}
+                  >
+                    {activeTab === tab.id && (
+                      <span className="absolute inset-0 bg-white/10 pointer-events-none" />
+                    )}
+                    <tab.icon className="w-4 h-4 sm:w-4.5 sm:h-4.5 flex-shrink-0" />
+                    <span className="relative font-semibold text-xs sm:text-sm">
+                      {tab.label}
+                    </span>
+                    {tab.badge !== null && (
+                      <span
+                        className={`ml-1 px-1.5 py-0.5 rounded-md text-[10px] font-bold ${
+                          tab.badgeAlert
+                            ? 'bg-amber-400 text-slate-950 animate-pulse'
+                            : activeTab === tab.id
+                              ? 'bg-white/25 text-white'
+                              : 'bg-white/10 text-slate-400'
+                        }`}
+                      >
+                        {tab.badge}
+                      </span>
+                    )}
+                  </button>
+                ))}
             </div>
           </div>
 
