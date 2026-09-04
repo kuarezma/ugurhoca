@@ -101,6 +101,7 @@ function MathTextInner({ children, className, as: Tag = 'span' }: MathTextProps)
         segment.type === 'math' ? (
           <span
             // katex çıktısı güvenlidir (trust:false, strict:ignore); kullanıcı metnini asla ham render etmiyoruz.
+            className={segment.display ? 'block max-w-full overflow-x-auto overflow-y-hidden my-1' : 'inline max-w-full'}
             dangerouslySetInnerHTML={{
               __html: renderMath(segment.value, segment.display),
             }}

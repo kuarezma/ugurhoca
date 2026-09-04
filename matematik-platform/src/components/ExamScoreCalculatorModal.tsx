@@ -286,8 +286,8 @@ export function ExamScoreCalculatorModal({
               </div>
 
               {/* Ders Giriş Tablosu */}
-              <div className="rounded-2xl border border-slate-200 dark:border-white/10 overflow-hidden">
-                <div className="grid grid-cols-12 bg-slate-100 dark:bg-white/5 px-4 py-2.5 text-xs font-bold text-slate-600 dark:text-slate-300 border-b border-slate-200 dark:border-white/10">
+              <div className="rounded-2xl border border-slate-200 dark:border-white/10 overflow-hidden min-w-0">
+                <div className="grid grid-cols-12 bg-slate-100 dark:bg-white/5 px-2.5 sm:px-4 py-2 sm:py-2.5 text-[11px] sm:text-xs font-bold text-slate-600 dark:text-slate-300 border-b border-slate-200 dark:border-white/10">
                   <div className="col-span-5 sm:col-span-4">Ders Adı (Soru)</div>
                   <div className="col-span-2 text-center">Doğru</div>
                   <div className="col-span-2 text-center">Yanlış</div>
@@ -302,12 +302,12 @@ export function ExamScoreCalculatorModal({
                     const net = Math.max(0, current.correct - current.wrong / 3);
 
                     return (
-                      <div key={sub.key} className="grid grid-cols-12 items-center px-4 py-3 text-sm hover:bg-slate-50/50 dark:hover:bg-white/5 transition-colors">
-                        <div className="col-span-5 sm:col-span-4 font-semibold text-slate-800 dark:text-slate-200">
+                      <div key={sub.key} className="grid grid-cols-12 items-center px-2 sm:px-4 py-2 sm:py-3 text-xs sm:text-sm hover:bg-slate-50/50 dark:hover:bg-white/5 transition-colors">
+                        <div className="col-span-5 sm:col-span-4 font-semibold text-slate-800 dark:text-slate-200 truncate pr-1">
                           {sub.label}
-                          <span className="ml-1 text-xs text-slate-400 font-normal">({sub.questions}s)</span>
+                          <span className="ml-1 text-[10px] sm:text-xs text-slate-400 font-normal">({sub.questions}s)</span>
                         </div>
-                        <div className="col-span-2 px-1">
+                        <div className="col-span-2 px-0.5 sm:px-1">
                           <input
                             type="number"
                             min="0"
@@ -315,10 +315,10 @@ export function ExamScoreCalculatorModal({
                             value={current.correct || ''}
                             placeholder="0"
                             onChange={(e) => handleLgsChange(sub.key, 'correct', parseInt(e.target.value, 10), sub.questions)}
-                            className="w-full rounded-xl border border-slate-200 dark:border-white/10 bg-white dark:bg-slate-800 px-2 py-1.5 text-center font-bold text-slate-900 dark:text-white focus:border-indigo-500 focus:outline-none"
+                            className="w-full min-w-0 rounded-lg sm:rounded-xl border border-slate-200 dark:border-white/10 bg-white dark:bg-slate-800 px-1 sm:px-2 py-1 sm:py-1.5 text-center text-xs sm:text-sm font-bold text-slate-900 dark:text-white focus:border-indigo-500 focus:outline-none"
                           />
                         </div>
-                        <div className="col-span-2 px-1">
+                        <div className="col-span-2 px-0.5 sm:px-1">
                           <input
                             type="number"
                             min="0"
@@ -326,13 +326,13 @@ export function ExamScoreCalculatorModal({
                             value={current.wrong || ''}
                             placeholder="0"
                             onChange={(e) => handleLgsChange(sub.key, 'wrong', parseInt(e.target.value, 10), sub.questions)}
-                            className="w-full rounded-xl border border-slate-200 dark:border-white/10 bg-white dark:bg-slate-800 px-2 py-1.5 text-center font-bold text-red-500 focus:border-red-500 focus:outline-none"
+                            className="w-full min-w-0 rounded-lg sm:rounded-xl border border-slate-200 dark:border-white/10 bg-white dark:bg-slate-800 px-1 sm:px-2 py-1 sm:py-1.5 text-center text-xs sm:text-sm font-bold text-red-500 focus:border-red-500 focus:outline-none"
                           />
                         </div>
                         <div className="col-span-1 text-center font-medium text-slate-400 text-xs hidden sm:block">
                           {empty}
                         </div>
-                        <div className="col-span-3 text-right font-display font-extrabold text-indigo-600 dark:text-indigo-400 tabular-nums">
+                        <div className="col-span-3 text-right font-display font-extrabold text-xs sm:text-sm text-indigo-600 dark:text-indigo-400 tabular-nums">
                           {net.toFixed(2)}
                         </div>
                       </div>
@@ -359,15 +359,15 @@ export function ExamScoreCalculatorModal({
             /* YKS HESAPLAMA PANELİ */
             <div className="space-y-6">
               {/* Puan Türü ve Diploma Notu Seçimi */}
-              <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-white/5 p-4">
-                <div className="flex items-center gap-2">
-                  <span className="text-xs font-bold text-slate-700 dark:text-slate-300">Hedef Alan:</span>
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 rounded-2xl border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-white/5 p-3 sm:p-4">
+                <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
+                  <span className="text-xs font-bold text-slate-700 dark:text-slate-300 mr-1">Hedef Alan:</span>
                   {(['SAY', 'EA', 'SOZ', 'TYT'] as YksScoreType[]).map((type) => (
                     <button
                       key={type}
                       type="button"
                       onClick={() => setSelectedYksType(type)}
-                      className={`rounded-xl px-3 py-1.5 text-xs font-bold transition-all ${
+                      className={`rounded-xl px-2.5 sm:px-3 py-1 sm:py-1.5 text-[11px] sm:text-xs font-bold transition-all ${
                         selectedYksType === type
                           ? 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-sm'
                           : 'border border-slate-200 dark:border-white/10 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300'
@@ -378,7 +378,7 @@ export function ExamScoreCalculatorModal({
                   ))}
                 </div>
 
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 self-end sm:self-auto">
                   <GraduationCap className="h-4 w-4 text-indigo-500" />
                   <label htmlFor="obp-input" className="text-xs font-bold text-slate-700 dark:text-slate-300">
                     Diploma Notu (OBP):
@@ -452,11 +452,11 @@ export function ExamScoreCalculatorModal({
                       const current = yksInputs[key] || { correct: 0, wrong: 0 };
                       const net = Math.max(0, current.correct - current.wrong / 4);
                       return (
-                        <div key={key} className="flex items-center justify-between p-2.5">
-                          <span className="font-semibold text-slate-800 dark:text-slate-200">
+                        <div key={key} className="flex items-center justify-between p-2 sm:p-2.5 gap-2">
+                          <span className="font-semibold text-slate-800 dark:text-slate-200 truncate text-[11px] sm:text-xs">
                             {meta?.label} ({meta?.questions}s)
                           </span>
-                          <div className="flex items-center gap-2">
+                          <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
                             <input
                               type="number"
                               min="0"
@@ -464,7 +464,7 @@ export function ExamScoreCalculatorModal({
                               placeholder="D"
                               value={current.correct || ''}
                               onChange={(e) => handleYksChange(key, 'correct', parseInt(e.target.value, 10), meta?.questions || 40)}
-                              className="w-12 rounded-lg border border-slate-200 dark:border-white/10 bg-white dark:bg-slate-800 p-1 text-center font-bold"
+                              className="w-10 sm:w-12 rounded-lg border border-slate-200 dark:border-white/10 bg-white dark:bg-slate-800 p-1 text-center font-bold text-xs"
                             />
                             <input
                               type="number"
@@ -473,9 +473,9 @@ export function ExamScoreCalculatorModal({
                               placeholder="Y"
                               value={current.wrong || ''}
                               onChange={(e) => handleYksChange(key, 'wrong', parseInt(e.target.value, 10), meta?.questions || 40)}
-                              className="w-12 rounded-lg border border-slate-200 dark:border-white/10 bg-white dark:bg-slate-800 p-1 text-center font-bold text-red-500"
+                              className="w-10 sm:w-12 rounded-lg border border-slate-200 dark:border-white/10 bg-white dark:bg-slate-800 p-1 text-center font-bold text-red-500 text-xs"
                             />
-                            <span className="w-12 text-right font-bold text-indigo-600 dark:text-indigo-400">
+                            <span className="w-10 sm:w-12 text-right font-bold text-indigo-600 dark:text-indigo-400 text-xs">
                               {net.toFixed(1)}
                             </span>
                           </div>
@@ -497,11 +497,11 @@ export function ExamScoreCalculatorModal({
                       const current = yksInputs[key] || { correct: 0, wrong: 0 };
                       const net = Math.max(0, current.correct - current.wrong / 4);
                       return (
-                        <div key={key} className="flex items-center justify-between p-2.5">
-                          <span className="font-semibold text-slate-800 dark:text-slate-200">
+                        <div key={key} className="flex items-center justify-between p-2 sm:p-2.5 gap-2">
+                          <span className="font-semibold text-slate-800 dark:text-slate-200 truncate text-[11px] sm:text-xs">
                             {meta?.label} ({meta?.questions}s)
                           </span>
-                          <div className="flex items-center gap-2">
+                          <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
                             <input
                               type="number"
                               min="0"
@@ -509,7 +509,7 @@ export function ExamScoreCalculatorModal({
                               placeholder="D"
                               value={current.correct || ''}
                               onChange={(e) => handleYksChange(key, 'correct', parseInt(e.target.value, 10), meta?.questions || 40)}
-                              className="w-12 rounded-lg border border-slate-200 dark:border-white/10 bg-white dark:bg-slate-800 p-1 text-center font-bold"
+                              className="w-10 sm:w-12 rounded-lg border border-slate-200 dark:border-white/10 bg-white dark:bg-slate-800 p-1 text-center font-bold text-xs"
                             />
                             <input
                               type="number"
@@ -518,9 +518,9 @@ export function ExamScoreCalculatorModal({
                               placeholder="Y"
                               value={current.wrong || ''}
                               onChange={(e) => handleYksChange(key, 'wrong', parseInt(e.target.value, 10), meta?.questions || 40)}
-                              className="w-12 rounded-lg border border-slate-200 dark:border-white/10 bg-white dark:bg-slate-800 p-1 text-center font-bold text-red-500"
+                              className="w-10 sm:w-12 rounded-lg border border-slate-200 dark:border-white/10 bg-white dark:bg-slate-800 p-1 text-center font-bold text-red-500 text-xs"
                             />
-                            <span className="w-12 text-right font-bold text-purple-600 dark:text-purple-400">
+                            <span className="w-10 sm:w-12 text-right font-bold text-purple-600 dark:text-purple-400 text-xs">
                               {net.toFixed(1)}
                             </span>
                           </div>

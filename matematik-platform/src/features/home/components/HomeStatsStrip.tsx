@@ -121,7 +121,7 @@ function StatCard({
       initial={{ opacity: 0, y: 16 }}
       animate={inView ? { opacity: 1, y: 0 } : {}}
       transition={{ duration: 0.4 }}
-      className={`tilt-on-hover relative overflow-hidden rounded-3xl border p-5 backdrop-blur-xl transition-all duration-300 ${
+      className={`tilt-on-hover relative overflow-hidden rounded-2xl sm:rounded-3xl border p-3 sm:p-5 backdrop-blur-xl transition-all duration-300 ${
         isLight
           ? 'border-slate-200 bg-white shadow-md hover:shadow-lg'
           : 'border-white/10 bg-slate-900/70 shadow-xl hover:border-white/20'
@@ -131,27 +131,27 @@ function StatCard({
         className={`pointer-events-none absolute inset-0 bg-gradient-to-br ${tile.accent} opacity-40`}
         aria-hidden="true"
       />
-      <div className="relative flex items-center gap-3.5">
+      <div className="relative flex items-center gap-2.5 sm:gap-3.5 min-w-0">
         <div
-          className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl ${tile.iconClass} shadow-md`}
+          className={`flex h-10 w-10 sm:h-12 sm:w-12 shrink-0 items-center justify-center rounded-xl sm:rounded-2xl ${tile.iconClass} shadow-md`}
           aria-hidden="true"
         >
-          <Icon className="h-6 w-6" />
+          <Icon className="h-5 w-5 sm:h-6 sm:w-6" />
         </div>
-        <div className="flex-1">
+        <div className="flex-1 min-w-0">
           <p
-            className={`font-display text-2xl font-extrabold tracking-tight sm:text-3xl ${
+            className={`font-display text-lg sm:text-3xl font-extrabold tracking-tight truncate ${
               isLight ? 'text-slate-900' : 'text-white'
             }`}
             aria-live="polite"
           >
             {count.toLocaleString('tr-TR')}
-            <span className="ml-1 text-sm font-bold text-amber-400">
+            <span className="ml-0.5 sm:ml-1 text-xs sm:text-sm font-bold text-amber-400">
               {tile.suffix}
             </span>
           </p>
           <p
-            className={`text-xs font-semibold ${
+            className={`text-[11px] sm:text-xs font-semibold truncate ${
               isLight ? 'text-slate-500' : 'text-slate-400'
             }`}
           >

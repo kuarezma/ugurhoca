@@ -177,22 +177,22 @@ export function TopicChecklistModal({
         </div>
 
         {/* Başlık ve Sınıf Seçimi */}
-        <div className="no-print flex flex-col gap-3 border-b border-slate-200/80 dark:border-white/10 bg-slate-50/80 dark:bg-slate-950/80 px-5 py-4 sm:flex-row sm:items-center sm:justify-between">
-          <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-600 text-white shadow-md">
-              <ListChecks className="h-5 w-5" />
+        <div className="no-print flex flex-col gap-3 border-b border-slate-200/80 dark:border-white/10 bg-slate-50/80 dark:bg-slate-950/80 px-4 sm:px-5 py-3 sm:py-4 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
+            <div className="flex h-9 w-9 sm:h-10 sm:w-10 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-600 text-white shadow-md">
+              <ListChecks className="h-4 w-4 sm:h-5 sm:w-5" />
             </div>
-            <div>
-              <h2 id={titleId} className="font-display text-base sm:text-lg font-bold text-slate-900 dark:text-white">
+            <div className="min-w-0">
+              <h2 id={titleId} className="font-display text-sm sm:text-lg font-bold text-slate-900 dark:text-white truncate">
                 MEB Matematik Konu Takip Çizelgesi
               </h2>
-              <p className="text-xs text-slate-500 dark:text-slate-400">
+              <p className="text-[11px] sm:text-xs text-slate-500 dark:text-slate-400 truncate">
                 Müfredat konularını adım adım işaretle, hazırlık sürecini kontrol altında tut.
               </p>
             </div>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 shrink-0 self-end sm:self-auto">
             <select
               value={selectedGrade}
               onChange={(e) => setSelectedGrade(e.target.value)}
@@ -274,47 +274,47 @@ export function TopicChecklistModal({
                 </div>
 
                 {/* 3 Adımlı Aksiyon Onay Kutuları */}
-                <div className="flex items-center gap-2 self-end sm:self-center">
+                <div className="flex flex-wrap items-center gap-1.5 sm:gap-2 self-stretch sm:self-center justify-between sm:justify-end">
                   <button
                     type="button"
                     onClick={() => handleToggle(topic, 'studied')}
-                    className={`inline-flex items-center gap-1.5 rounded-xl border px-3 py-1.5 text-xs font-semibold transition-all ${
+                    className={`inline-flex items-center gap-1 sm:gap-1.5 rounded-xl border px-2.5 sm:px-3 py-1 sm:py-1.5 text-[11px] sm:text-xs font-semibold transition-all ${
                       status.studied
                         ? 'border-indigo-500/50 bg-indigo-50 dark:bg-indigo-500/20 text-indigo-700 dark:text-indigo-300'
                         : 'border-slate-200 dark:border-white/10 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200'
                     }`}
                   >
-                    <BookOpen className="h-3.5 w-3.5" />
+                    <BookOpen className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
                     <span>Konu</span>
-                    {status.studied && <CheckCircle2 className="h-3.5 w-3.5 text-indigo-500" />}
+                    {status.studied && <CheckCircle2 className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-indigo-500" />}
                   </button>
 
                   <button
                     type="button"
                     onClick={() => handleToggle(topic, 'solved')}
-                    className={`inline-flex items-center gap-1.5 rounded-xl border px-3 py-1.5 text-xs font-semibold transition-all ${
+                    className={`inline-flex items-center gap-1 sm:gap-1.5 rounded-xl border px-2.5 sm:px-3 py-1 sm:py-1.5 text-[11px] sm:text-xs font-semibold transition-all ${
                       status.solved
                         ? 'border-purple-500/50 bg-purple-50 dark:bg-purple-500/20 text-purple-700 dark:text-purple-300'
                         : 'border-slate-200 dark:border-white/10 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200'
                     }`}
                   >
-                    <PenTool className="h-3.5 w-3.5" />
+                    <PenTool className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
                     <span>Soru (50+)</span>
-                    {status.solved && <CheckCircle2 className="h-3.5 w-3.5 text-purple-500" />}
+                    {status.solved && <CheckCircle2 className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-purple-500" />}
                   </button>
 
                   <button
                     type="button"
                     onClick={() => handleToggle(topic, 'reviewed')}
-                    className={`inline-flex items-center gap-1.5 rounded-xl border px-3 py-1.5 text-xs font-semibold transition-all ${
+                    className={`inline-flex items-center gap-1 sm:gap-1.5 rounded-xl border px-2.5 sm:px-3 py-1 sm:py-1.5 text-[11px] sm:text-xs font-semibold transition-all ${
                       status.reviewed
                         ? 'border-emerald-500/50 bg-emerald-50 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-300'
                         : 'border-slate-200 dark:border-white/10 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200'
                     }`}
                   >
-                    <RotateCcw className="h-3.5 w-3.5" />
+                    <RotateCcw className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
                     <span>Tekrar</span>
-                    {status.reviewed && <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500" />}
+                    {status.reviewed && <CheckCircle2 className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-emerald-500" />}
                   </button>
                 </div>
               </div>

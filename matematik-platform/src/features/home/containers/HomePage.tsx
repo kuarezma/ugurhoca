@@ -125,7 +125,7 @@ export default function HomePage({ activeLiveLesson, initialFeed }: HomePageProp
 
   return (
     <main
-      className={`home-page relative min-h-screen ${
+      className={`home-page relative min-h-screen overflow-x-clip ${
         isLight
           ? 'bg-white light-atmosphere'
           : 'bg-gradient-to-br from-slate-900 via-slate-900 to-slate-800'

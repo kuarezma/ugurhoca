@@ -662,6 +662,7 @@ html[data-theme='light'] .bento-interactive:hover {
 
 .light-atmosphere {
   position: relative;
+  overflow-x: clip;
 }
 
 .light-atmosphere::before,
@@ -1350,4 +1351,37 @@ html[data-theme='light'] .programlar-page [class*='transition-'] {
 .skip-link:focus-visible {
   outline: 2px solid #fff;
   outline-offset: 2px;
+}
+
+/* ==========================================================================
+   Mobil Optimizasyon & Düzen Kararlılığı (Layout Stability & Anti-Overflow)
+   ========================================================================== */
+
+/* KaTeX formüllerinin mobilde sayfayı yatayda taşırmasını engelleme */
+.katex-display {
+  max-width: 100% !important;
+  overflow-x: auto !important;
+  overflow-y: hidden !important;
+  padding-block: 0.25rem !important;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+}
+
+.katex {
+  max-width: 100%;
+  text-rendering: auto;
+}
+
+.katex-html {
+  max-width: 100%;
+}
+
+/* Küçük mobil ekranlarda metinlerin ve kartların yatay taşmasını önleme */
+@media (max-width: 640px) {
+  .home-page,
+  .icerikler-page,
+  .testler-page,
+  .oyunlar-page {
+    overflow-x: clip;
+  }
 }

@@ -282,10 +282,10 @@ function ChatBubble() {
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.96 }}
         onClick={() => setOpen((o) => !o)}
-        className="fixed bottom-6 right-6 z-[100] flex h-[60px] w-[60px] items-center justify-center rounded-full bg-gradient-to-br from-violet-600 to-fuchsia-600 text-white shadow-xl shadow-violet-500/30"
+        className="fixed bottom-20 sm:bottom-6 right-4 sm:right-6 z-[100] flex h-14 w-14 sm:h-[60px] sm:w-[60px] items-center justify-center rounded-full bg-gradient-to-br from-violet-600 to-fuchsia-600 text-white shadow-xl shadow-violet-500/30"
         aria-label="Öğrenci mesajları"
       >
-        <MessageCircle className="h-7 w-7" strokeWidth={2} />
+        <MessageCircle className="h-6 w-6 sm:h-7 sm:w-7" strokeWidth={2} />
         {totalUnread > 0 && (
           <span className="absolute -right-1 -top-1 flex h-5 min-w-[1.25rem] items-center justify-center rounded-full bg-red-500 px-1 text-[11px] font-bold text-white">
             {totalUnread > 9 ? "9+" : totalUnread}
@@ -300,7 +300,7 @@ function ChatBubble() {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 16, scale: 0.98 }}
             transition={{ type: "spring", stiffness: 380, damping: 28 }}
-            className="fixed bottom-24 right-4 z-[100] flex h-[min(560px,calc(100dvh-7rem))] min-h-0 w-[min(400px,calc(100vw-2rem))] flex-col overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--bg-elevated)] shadow-2xl sm:right-6"
+            className="fixed bottom-20 sm:bottom-24 right-2 sm:right-6 z-[100] flex h-[min(560px,calc(100dvh-7.5rem))] min-h-0 w-[calc(100vw-1rem)] sm:w-[400px] flex-col overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--bg-elevated)] shadow-2xl"
             style={{
               boxShadow: "0 25px 50px var(--shadow, rgba(0,0,0,0.25))",
             }}

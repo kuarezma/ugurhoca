@@ -159,17 +159,17 @@ export default function ScratchpadModal({
     >
       <div className="flex h-full max-h-[92vh] w-full max-w-4xl flex-col overflow-hidden rounded-3xl border border-white/15 bg-slate-900 shadow-2xl">
         {/* Header & Araç Çubuğu */}
-        <div className="flex flex-wrap items-center justify-between gap-2 border-b border-white/10 bg-slate-950/80 px-4 py-3">
-          <div className="flex items-center gap-2">
-            <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-brand-primary/20 text-brand-primary-soft">
-              <PenTool className="h-4 w-4" />
+        <div className="flex flex-wrap items-center justify-between gap-2 border-b border-white/10 bg-slate-950/80 px-3 sm:px-4 py-2 sm:py-3">
+          <div className="flex items-center gap-2 min-w-0">
+            <div className="flex h-7 w-7 sm:h-8 sm:w-8 shrink-0 items-center justify-center rounded-xl bg-brand-primary/20 text-brand-primary-soft">
+              <PenTool className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
             </div>
-            <span className="font-display text-sm font-bold text-white sm:text-base">
+            <span className="font-display text-xs sm:text-base font-bold text-white truncate">
               {title}
             </span>
           </div>
 
-          <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
+          <div className="flex flex-wrap items-center gap-1 sm:gap-2">
             {/* Kalem / Silgi Modu */}
             <button
               type="button"
@@ -286,9 +286,9 @@ export default function ScratchpadModal({
         </div>
 
         {/* Alt Bilgi */}
-        <div className="flex items-center justify-between border-t border-white/10 bg-slate-950/60 px-4 py-2 text-[11px] text-slate-400">
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-1 border-t border-white/10 bg-slate-950/60 px-3 sm:px-4 py-2 text-[11px] text-slate-400 text-center sm:text-left">
           <span>İşlemlerini burada serbestçe karalayabilirsin.</span>
-          <span className="font-semibold text-slate-300">Soruyu çözerken tahtayı kapatıp açabilirsin.</span>
+          <span className="font-semibold text-slate-300 hidden sm:inline">Soruyu çözerken tahtayı kapatıp açabilirsin.</span>
         </div>
       </div>
     </div>

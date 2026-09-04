@@ -236,22 +236,22 @@ export function FormulaFlashcardsModal({
         </div>
 
         {/* Header */}
-        <div className="no-print flex flex-wrap items-center justify-between gap-3 border-b border-white/10 bg-slate-950/80 px-6 py-4">
-          <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 text-white shadow-md">
-              <Sparkles className="h-5 w-5" />
+        <div className="no-print flex items-center justify-between gap-2.5 border-b border-white/10 bg-slate-950/80 px-4 sm:px-6 py-3 sm:py-4">
+          <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
+            <div className="flex h-9 w-9 sm:h-10 sm:w-10 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 text-white shadow-md">
+              <Sparkles className="h-4 w-4 sm:h-5 sm:w-5" />
             </div>
-            <div>
-              <h2 className="font-display text-base font-bold text-white sm:text-lg">
+            <div className="min-w-0">
+              <h2 className="font-display text-sm sm:text-lg font-bold text-white truncate">
                 Formül & Bilgi Kartları
               </h2>
-              <p className="text-xs text-slate-400">
+              <p className="text-[11px] sm:text-xs text-slate-400 truncate">
                 LGS ve YKS için pratik formül tekrarı
               </p>
             </div>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
             <button
               type="button"
               onClick={() => typeof window !== 'undefined' && window.print()}
@@ -283,8 +283,8 @@ export function FormulaFlashcardsModal({
         </div>
 
         {/* Filtre Çipleri */}
-        <div className="no-print flex items-center justify-between border-b border-white/10 bg-slate-950/40 px-6 py-2.5">
-          <div className="flex items-center gap-2">
+        <div className="no-print flex flex-wrap sm:flex-nowrap items-center justify-between gap-2 border-b border-white/10 bg-slate-950/40 px-4 sm:px-6 py-2 sm:py-2.5">
+          <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
             <button
               type="button"
               onClick={() => {
@@ -417,26 +417,28 @@ export function FormulaFlashcardsModal({
         </div>
 
         {/* Alt Navigasyon */}
-        <div className="no-print flex items-center justify-between border-t border-white/10 bg-slate-950/80 px-6 py-4">
+        <div className="no-print flex items-center justify-between border-t border-white/10 bg-slate-950/80 px-3 sm:px-6 py-3 sm:py-4 gap-2">
           <button
             type="button"
             onClick={handlePrev}
-            className="inline-flex items-center gap-2 rounded-xl bg-white/5 px-4 py-2.5 text-xs font-bold text-white hover:bg-white/10"
+            aria-label="Önceki Kart"
+            className="inline-flex items-center gap-1.5 rounded-xl bg-white/5 px-3 sm:px-4 py-2 sm:py-2.5 text-xs font-bold text-white hover:bg-white/10 shrink-0"
           >
             <ChevronLeft className="h-4 w-4" />
-            Önceki Kart
+            <span>Önceki <span className="hidden sm:inline">Kart</span></span>
           </button>
 
-          <span className="text-xs font-semibold text-slate-400">
-            {learnedCards.size} / {filteredCards.length} kart öğrenildi
+          <span className="text-[11px] sm:text-xs font-semibold text-slate-400 text-center truncate">
+            {learnedCards.size} / {filteredCards.length} öğrenildi
           </span>
 
           <button
             type="button"
             onClick={handleNext}
-            className="inline-flex items-center gap-2 rounded-xl bg-brand-primary px-4 py-2.5 text-xs font-bold text-white shadow-md hover:bg-brand-primary-deep"
+            aria-label="Sonraki Kart"
+            className="inline-flex items-center gap-1.5 rounded-xl bg-brand-primary px-3 sm:px-4 py-2 sm:py-2.5 text-xs font-bold text-white shadow-md hover:bg-brand-primary-deep shrink-0"
           >
-            Sonraki Kart
+            <span>Sonraki <span className="hidden sm:inline">Kart</span></span>
             <ChevronRight className="h-4 w-4" />
           </button>
         </div>

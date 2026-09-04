@@ -186,6 +186,11 @@ Küçük UI değişikliklerinde ilgili sayfa mobil ve masaüstü görünümde ay
   - **Matematik Odak & Pomodoro Sayacı:** 25/50 dk çalışma ve mola sürelerini yöneten dairesel animasyonlu ve Web Audio melodili çalışma aracı eklendi.
   - **MEB Konu Takip Çizelgesi:** 5-12. sınıf matematik müfredatını (konu, soru, tekrar) takip eden interaktif checklist eklendi.
   - **Gelişmiş PDF Önizleme:** Çalışma kağıtlarında iframe sandbox uyumluluğu artırıldı ve ayrı sekmede tam ekran açma butonu eklendi.
+- **2026-09-04 (Kapsamlı Mobil Optimizasyon & Kayma/Taşma Önleme):**
+  - **Sıfır Yatay Taşma (Anti-Overflow):** `#ana-icerik`, `.light-atmosphere` ve ana sayfa kapsayıcılarına `overflow-x: clip` koruması eklendi; iOS Safari ve mobil tarayıcılardaki sağa-sola kayma (horizontal drift) tamamen engellendi.
+  - **KaTeX Mobil Formül Kararlılığı:** Uzun matematik formülleri ve denklemlerin mobil ekranı dışarı itmesi önlendi; `.katex-display` için konteyner içi yatay kaydırma desteği getirildi.
+  - **Mobil Çakışma Önleme:** Yüzen `ChatBubble` butonu alt menü (`MobileBottomNav`) ile çakışmayacak şekilde `bottom-20 sm:bottom-6` olarak konumlandırıldı; sohbet penceresi taşmaları giderildi.
+  - **Duyarlı Üst Barlar & Modallar:** İçerikler, Testler, Oyunlar navbar'ları dar ekranlarda (320px–375px) `min-w-0` ve `truncate` ile güçlendirildi; Sınav Hesaplayıcı, Formül Kartları, Karalama Tahtası ve Konu Takip modalları mobilde tek satıra sığmayan buton ve girdi kutularını esnek düzenle (flex-wrap) saracak şekilde optimize edildi.
 - **2026-09-04 (Tasarım & Hız Modernizasyonu):**
   - Apple/Linear esintili modern bento-grid yapısı ve token'ları (`bento-card`, çok katmanlı gölgeler, safir/indigo teması) entegre edildi.
   - LGS ve YKS sınav sayaçları widget tarzı modern bento kutularına dönüştürüldü.

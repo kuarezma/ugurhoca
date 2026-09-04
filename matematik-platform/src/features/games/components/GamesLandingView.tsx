@@ -36,28 +36,28 @@ export function GamesLandingView({
     <main className="oyunlar-page min-h-screen bg-gradient-to-br from-slate-900 via-slate-900 to-slate-800 pb-20">
       <FloatingParticles />
 
-      <nav className="fixed top-0 left-0 right-0 z-50 glass py-4 px-6">
-        <div className="container mx-auto flex justify-between items-center">
-          <Link href="/" className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl flex items-center justify-center">
-              <Calculator className="w-6 h-6 text-white" />
+      <nav className="fixed top-0 left-0 right-0 z-50 glass py-3 sm:py-4 px-4 sm:px-6">
+        <div className="container mx-auto flex justify-between items-center gap-3">
+          <Link href="/" className="flex items-center gap-2.5 min-w-0">
+            <div className="w-8 h-8 sm:w-10 sm:h-10 shrink-0 bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl flex items-center justify-center">
+              <Calculator className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
             </div>
-            <span className="text-xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
+            <span className="text-base sm:text-xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent truncate">
               Uğur Hoca Matematik
             </span>
           </Link>
 
           <Link
             href={profileHref}
-            className="text-slate-300 hover:text-white flex items-center gap-2"
+            className="text-slate-300 hover:text-white flex items-center gap-1.5 text-xs sm:text-base shrink-0"
           >
-            <ArrowLeft className="w-5 h-5" />
-            {user.isAdmin ? 'Admin Panel' : 'Profil'}
+            <ArrowLeft className="w-4 h-4 sm:w-5 sm:h-5" />
+            <span>{user.isAdmin ? 'Admin Panel' : 'Profil'}</span>
           </Link>
         </div>
       </nav>
 
-      <div className="pt-24 px-6">
+      <div className="pt-20 sm:pt-24 px-4 sm:px-6">
         <div className="container mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 20 }}

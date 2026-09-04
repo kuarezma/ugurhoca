@@ -45,9 +45,9 @@ export function HomeNavbar({ onLogout, user }: HomeNavbarProps) {
                 event.preventDefault();
               }
             }}
-            className="group flex shrink-0 items-center gap-2.5"
+            className="group flex min-w-0 shrink items-center gap-2 sm:gap-2.5"
           >
-            <div className="relative flex h-10 w-10 items-center justify-center overflow-hidden rounded-2xl bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 p-0.5 shadow-md transition-transform duration-200 group-hover:scale-105">
+            <div className="relative flex h-9 w-9 sm:h-10 sm:w-10 shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 p-0.5 shadow-md transition-transform duration-200 group-hover:scale-105">
               <Image
                 src="/ugur.jpeg"
                 alt="Uğur Hoca"
@@ -56,15 +56,15 @@ export function HomeNavbar({ onLogout, user }: HomeNavbarProps) {
                 className="h-full w-full rounded-[14px] object-cover"
               />
             </div>
-            <div className="flex flex-col">
+            <div className="flex flex-col min-w-0">
               <span
-                className={`font-display text-base font-bold sm:text-lg leading-tight ${
+                className={`font-display text-sm sm:text-lg font-bold leading-tight truncate ${
                   isLight ? 'text-slate-900' : 'text-white'
                 }`}
               >
                 Uğur Hoca
               </span>
-              <span className="text-[10px] font-semibold text-indigo-500 dark:text-indigo-400 uppercase tracking-wider">
+              <span className="text-[9px] sm:text-[10px] font-semibold text-indigo-500 dark:text-indigo-400 uppercase tracking-wider truncate">
                 Matematik Platformu
               </span>
             </div>

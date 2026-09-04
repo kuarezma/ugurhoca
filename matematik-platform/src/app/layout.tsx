@@ -153,7 +153,7 @@ export default function RootLayout({
           Ana içeriğe geç
         </a>
         <Providers>
-          <div id="ana-icerik" tabIndex={-1}>
+          <div id="ana-icerik" tabIndex={-1} className="w-full max-w-full overflow-x-clip">
             {children}
           </div>
           <MobileBottomNav />
