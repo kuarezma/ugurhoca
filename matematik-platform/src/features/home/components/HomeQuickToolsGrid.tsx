@@ -9,6 +9,7 @@ import {
   Gamepad2,
   ChevronRight,
   Sparkles,
+  Activity,
 } from 'lucide-react';
 
 type HomeQuickToolsGridProps = {
@@ -18,6 +19,7 @@ type HomeQuickToolsGridProps = {
   onOpenCalculator?: () => void;
   onOpenPomodoro?: () => void;
   onOpenChecklist?: () => void;
+  onOpenGraph?: () => void;
 };
 
 export function HomeQuickToolsGrid({
@@ -27,8 +29,21 @@ export function HomeQuickToolsGrid({
   onOpenCalculator,
   onOpenPomodoro,
   onOpenChecklist,
+  onOpenGraph,
 }: HomeQuickToolsGridProps) {
   const tools = [
+    {
+      id: 'graphVisualizer',
+      title: 'Fonksiyon & Grafik Laboratuvarı',
+      description: 'Doğrusal fonksiyon, parabol ve birim çemberi anlık canlı grafik ve slider ile keşfet.',
+      icon: Activity,
+      gradient: 'from-blue-600 via-indigo-600 to-purple-600',
+      actionType: onOpenGraph ? 'modal' : 'link',
+      action: onOpenGraph,
+      href: '#',
+      buttonLabel: 'Grafiği İncele',
+      badge: 'Grafik 📈',
+    },
     {
       id: 'flashcards',
       title: 'Formül & Bilgi Kartları',

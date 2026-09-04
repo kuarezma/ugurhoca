@@ -24,8 +24,10 @@ import {
   Minimize2,
   WifiOff,
   BookOpen,
+  Printer,
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import dynamic from 'next/dynamic';
 import { useToast } from '@/components/Toast';
 import MathText from '@/components/MathText';
 import { fireConfetti } from '@/components/ConfettiBurst';
@@ -33,7 +35,16 @@ import ScratchpadModal from '@/components/ScratchpadModal';
 import { QuizQuestionPalette } from '@/features/quizzes/components/QuizQuestionPalette';
 import { QuizMistakeReviewModal } from '@/features/quizzes/components/QuizMistakeReviewModal';
 import { MistakeNotebookModal } from '@/features/quizzes/components/MistakeNotebookModal';
-import { saveMistakesToBank, markMistakeMastered } from '@/features/quizzes/lib/mistakeStorage';
+import { QuestionHintLadder } from '@/features/quizzes/components/QuestionHintLadder';
+
+const PrintableWorksheetModal = dynamic(
+  () =>
+    import('@/features/quizzes/components/PrintableWorksheetModal').then((m) => ({
+      default: m.PrintableWorksheetModal,
+    })),
+  { ssr: false },
+);
+import { saveMistakesToBank, markMistakeMastered, getSavedMistakes } from '@/features/quizzes/lib/mistakeStorage';
 import { incrementQuestionsSolved } from '@/lib/dailyGoalStorage';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { Skeleton } from '@/components/ui/Skeleton';
@@ -135,7 +146,18 @@ export default function TestsPage({
   const [flaggedQuestions, setFlaggedQuestions] = useState<Set<number>>(new Set());
   const [isMistakeModalOpen, setIsMistakeModalOpen] = useState(false);
   const [isMistakeNotebookOpen, setIsMistakeNotebookOpen] = useState(false);
+  const [pendingMistakesCount, setPendingMistakesCount] = useState(0);
+  const [isWorksheetModalOpen, setIsWorksheetModalOpen] = useState(false);
   const [isOnline, setIsOnline] = useState(true);
+
+  useEffect(() => {
+    try {
+      const list = getSavedMistakes();
+      setPendingMistakesCount(list.filter((m) => !m.mastered).length);
+    } catch {
+      // ignore
+    }
+  }, [isMistakeNotebookOpen, isMistakeModalOpen, quizStarted]);
   const resultSavedRef = useRef(false);
   const router = useRouter();
   const { showToast } = useToast();
@@ -273,6 +295,14 @@ export default function TestsPage({
     resultSavedRef.current = false;
   };
 
+  const handleOpenWorksheetPreview = async (quiz: Quiz) => {
+    setSelectedQuiz(quiz);
+    const success = await loadQuizQuestions(quiz.id);
+    if (success) {
+      setIsWorksheetModalOpen(true);
+    }
+  };
+
   const selectAnswer = (index: number) => {
     setSelectedAnswer(index);
     setAnswers({ ...answers, [currentQuestion]: index });
@@ -305,6 +335,17 @@ export default function TestsPage({
 
   const handleStartRetakeMistakes = (mistakeQuestions: QuizQuestion[]) => {
     if (mistakeQuestions.length === 0) return;
+    if (!selectedQuiz) {
+      setSelectedQuiz({
+        id: 'adaptive-recovery-quiz',
+        title: 'Akıllı Telafi & Pekiştirme Testi',
+        description: 'Hata defterindeki zayıf kazanımlara özel derlenmiş kişiselleştirilmiş test.',
+        difficulty: 'orta',
+        duration_minutes: Math.ceil((mistakeQuestions.length * 90) / 60),
+        question_count: mistakeQuestions.length,
+        created_at: new Date().toISOString(),
+      } as unknown as Quiz);
+    }
     setQuizQuestions(mistakeQuestions);
     setCurrentQuestion(0);
     setAnswers({});
@@ -315,7 +356,23 @@ export default function TestsPage({
     setTimeLeft(mistakeQuestions.length * 90);
     setFlaggedQuestions(new Set());
     resultSavedRef.current = false;
-    showToast('info', `${mistakeQuestions.length} soruluk tekrar seansı başladı!`);
+    showToast('info', `${mistakeQuestions.length} soruluk telafi testi başladı!`);
+  };
+
+  const handleStartAdaptiveQuiz = (count?: number) => {
+    const list = getSavedMistakes();
+    const pending = list.filter((m) => !m.mastered);
+    if (pending.length === 0) {
+      showToast('info', 'Hata defterinde henüz çözülecek yanlış soru bulunmuyor. Tebrikler!');
+      return;
+    }
+    const sorted = [...pending].sort((a, b) => {
+      if (a.reason === 'concept' && b.reason !== 'concept') return -1;
+      if (b.reason === 'concept' && a.reason !== 'concept') return 1;
+      return 0;
+    });
+    const questionsToSolve = (count ? sorted.slice(0, count) : sorted).map((m) => m.question);
+    handleStartRetakeMistakes(questionsToSolve);
   };
 
   const nextQuestion = () => {
@@ -633,6 +690,9 @@ export default function TestsPage({
                   );
                 })}
               </div>
+
+              {/* Kademeli İpucu Sistemi */}
+              <QuestionHintLadder question={question} questionIndex={currentQuestion} />
             </div>
 
             {/* İleri / Geri Butonları */}
@@ -977,6 +1037,15 @@ export default function TestsPage({
               <BookOpen className="w-5 h-5 text-amber-400" />
               Hata Defterimi Aç
             </button>
+
+            <button
+              type="button"
+              onClick={() => setIsWorksheetModalOpen(true)}
+              className="inline-flex h-12 items-center justify-center gap-2 rounded-xl border border-indigo-500/30 bg-indigo-500/20 hover:bg-indigo-500/30 text-indigo-300 font-semibold transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]"
+            >
+              <Printer className="w-5 h-5 text-indigo-400" />
+              A4 Yaprak Test Yazdır
+            </button>
           </div>
         </div>
 
@@ -1045,6 +1114,61 @@ export default function TestsPage({
               <span>Akıllı Hata Defterim</span>
             </button>
           </div>
+
+          {/* Akıllı Telafi Testi Kartı */}
+          {pendingMistakesCount > 0 && (
+            <div className="mb-8 rounded-3xl border border-amber-500/30 bg-gradient-to-br from-amber-500/10 via-orange-500/5 to-purple-500/10 p-5 sm:p-6 backdrop-blur-xl shadow-xl animate-fade-up">
+              <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div className="flex items-start gap-3.5">
+                  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-amber-500 to-rose-600 text-white shadow-lg shadow-amber-500/25">
+                    <Target className="h-6 w-6" />
+                  </div>
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <h2 className="text-base sm:text-lg font-bold text-white font-display">
+                        Kişisel Akıllı Telafi Testi Hazır!
+                      </h2>
+                      <span className="rounded-full bg-amber-500/20 px-2.5 py-0.5 text-xs font-extrabold text-amber-300">
+                        {pendingMistakesCount} Hatalı Soru
+                      </span>
+                    </div>
+                    <p className="text-xs sm:text-sm text-slate-300 mt-1 max-w-xl">
+                      Hata defterinde biriken zayıf kazanımlarını kapatmak için kişiselleştirilmiş telafi oturumuna hemen başla.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex flex-wrap items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => handleStartAdaptiveQuiz(5)}
+                    className="inline-flex items-center gap-1.5 rounded-xl bg-gradient-to-r from-amber-500 to-rose-600 px-4 py-2.5 text-xs font-bold text-white shadow-lg shadow-amber-500/20 hover:brightness-110 active:scale-95 transition"
+                  >
+                    <Play className="h-3.5 w-3.5 fill-current" />
+                    <span>5 Soruluk Hızlı Telafi</span>
+                  </button>
+                  {pendingMistakesCount >= 10 && (
+                    <button
+                      type="button"
+                      onClick={() => handleStartAdaptiveQuiz(10)}
+                      className="inline-flex items-center gap-1.5 rounded-xl border border-white/15 bg-white/10 px-4 py-2.5 text-xs font-bold text-white hover:bg-white/15 active:scale-95 transition"
+                    >
+                      <Zap className="h-3.5 w-3.5 text-amber-300" />
+                      <span>10 Soruluk Kapsamlı</span>
+                    </button>
+                  )}
+                  <button
+                    type="button"
+                    onClick={() => setIsMistakeNotebookOpen(true)}
+                    className="inline-flex items-center gap-1.5 rounded-xl border border-amber-500/30 bg-amber-500/10 px-3 py-2.5 text-xs font-semibold text-amber-300 hover:bg-amber-500/20 transition"
+                  >
+                    <BookOpen className="h-3.5 w-3.5" />
+                    <span>Hata Defterini İncele</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {loading ? (
@@ -1129,13 +1253,27 @@ export default function TestsPage({
                       <span className="capitalize">{quiz.difficulty}</span>
                     </div>
 
-                    <button
-                      onClick={() => startQuiz(quiz)}
-                      className="w-full py-3 bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-500 text-white font-bold rounded-2xl flex items-center justify-center gap-2 shadow-md transition-all duration-200 hover:shadow-lg hover:scale-[1.02] active:scale-[0.98]"
-                    >
-                      <Play className="w-4 h-4 fill-white" />
-                      Teste Başla
-                    </button>
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() => startQuiz(quiz)}
+                        className="flex-1 py-3 bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-500 text-white font-bold rounded-2xl flex items-center justify-center gap-2 shadow-md transition-all duration-200 hover:shadow-lg hover:scale-[1.02] active:scale-[0.98]"
+                      >
+                        <Play className="w-4 h-4 fill-white" />
+                        Teste Başla
+                      </button>
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          void handleOpenWorksheetPreview(quiz);
+                        }}
+                        className="px-3.5 py-3 rounded-2xl border border-white/10 bg-white/5 hover:bg-white/10 text-slate-300 hover:text-white font-semibold flex items-center justify-center gap-1.5 transition active:scale-95"
+                        title="A4 Yazdırılabilir Yaprak Test"
+                      >
+                        <Printer className="w-4 h-4 text-indigo-400" />
+                        <span className="text-xs hidden sm:inline">Yaprak Test</span>
+                      </button>
+                    </div>
                   </div>
                 </div>
               ))
@@ -1147,6 +1285,12 @@ export default function TestsPage({
         isOpen={isMistakeNotebookOpen}
         onClose={() => setIsMistakeNotebookOpen(false)}
         onStartRetakeQuiz={handleStartRetakeMistakes}
+      />
+      <PrintableWorksheetModal
+        isOpen={isWorksheetModalOpen}
+        onClose={() => setIsWorksheetModalOpen(false)}
+        quiz={selectedQuiz}
+        questions={quizQuestions}
       />
     </main>
   );

@@ -87,14 +87,21 @@ export function MistakeNotebookModal({
     }
   };
 
-  const handleStartPractice = () => {
-    const questionsToSolve = (
-      filter === 'all'
-        ? mistakes
-        : filter === 'pending'
-        ? mistakes.filter((m) => !m.mastered)
-        : mistakes.filter((m) => m.mastered)
-    ).map((m) => m.question);
+  const handleStartPractice = (count?: number) => {
+    let pool = filter === 'all'
+      ? mistakes
+      : filter === 'pending'
+      ? mistakes.filter((m) => !m.mastered)
+      : mistakes.filter((m) => m.mastered);
+
+    // Önceliklendirme: Kazanım açığı (concept) ve dikkat hataları (attention) en başa
+    pool = [...pool].sort((a, b) => {
+      if (a.reason === 'concept' && b.reason !== 'concept') return -1;
+      if (b.reason === 'concept' && a.reason !== 'concept') return 1;
+      return 0;
+    });
+
+    const questionsToSolve = (count ? pool.slice(0, count) : pool).map((m) => m.question);
 
     if (!questionsToSolve.length) return;
     if (onStartRetakeQuiz) {
@@ -132,16 +139,28 @@ export function MistakeNotebookModal({
             </div>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
             {stats.pending > 0 ? (
-              <button
-                type="button"
-                onClick={handleStartPractice}
-                className="inline-flex items-center gap-1.5 rounded-xl bg-gradient-to-r from-amber-500 to-rose-600 px-4 py-2 text-xs font-bold text-white shadow-md transition hover:scale-[1.02] active:scale-[0.98]"
-              >
-                <Play className="h-3.5 w-3.5 fill-white" />
-                <span>Hatalarımdan Test Çöz ({stats.pending})</span>
-              </button>
+              <>
+                {stats.pending > 5 && (
+                  <button
+                    type="button"
+                    onClick={() => handleStartPractice(5)}
+                    className="inline-flex items-center gap-1.5 rounded-xl border border-amber-500/40 bg-amber-500/10 px-3 py-2 text-xs font-bold text-amber-300 shadow-sm transition hover:bg-amber-500/20 active:scale-[0.98]"
+                  >
+                    <Play className="h-3 w-3 fill-amber-300" />
+                    <span>5 Soruluk Hızlı Telafi</span>
+                  </button>
+                )}
+                <button
+                  type="button"
+                  onClick={() => handleStartPractice()}
+                  className="inline-flex items-center gap-1.5 rounded-xl bg-gradient-to-r from-amber-500 to-rose-600 px-4 py-2 text-xs font-bold text-white shadow-md transition hover:scale-[1.02] active:scale-[0.98]"
+                >
+                  <Play className="h-3.5 w-3.5 fill-white" />
+                  <span>Hatalarımdan Test Çöz ({stats.pending})</span>
+                </button>
+              </>
             ) : null}
 
             <button

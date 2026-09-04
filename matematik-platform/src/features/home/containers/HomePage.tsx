@@ -58,6 +58,14 @@ const TopicChecklistModal = dynamic(
   { ssr: false },
 );
 
+const MathGraphVisualizerModal = dynamic(
+  () =>
+    import('@/components/MathGraphVisualizerModal').then((m) => ({
+      default: m.MathGraphVisualizerModal,
+    })),
+  { ssr: false },
+);
+
 type HomePageProps = {
   activeLiveLesson?: LiveLesson | null;
   initialFeed?: HomeInitialFeed | null;
@@ -74,17 +82,23 @@ export default function HomePage({ activeLiveLesson, initialFeed }: HomePageProp
   }>({ isOpen: false, tab: 'lgs' });
   const [isPomodoroOpen, setIsPomodoroOpen] = useState(false);
   const [isChecklistOpen, setIsChecklistOpen] = useState(false);
+  const [isGraphOpen, setIsGraphOpen] = useState(false);
 
   useEffect(() => {
     const handleToolEvent = (e: Event) => {
       const customEvent = e as CustomEvent<{ tool: string; tab?: 'lgs' | 'yks' }>;
       const tool = customEvent.detail?.tool;
       if (tool === 'calculator') {
-        setCalculatorState({ isOpen: true, tab: customEvent.detail?.tab || 'lgs' });
+        setCalculatorState({
+          isOpen: true,
+          tab: customEvent.detail?.tab || 'lgs',
+        });
       } else if (tool === 'pomodoro') {
         setIsPomodoroOpen(true);
       } else if (tool === 'checklist') {
         setIsChecklistOpen(true);
+      } else if (tool === 'graph') {
+        setIsGraphOpen(true);
       } else if (tool === 'flashcards') {
         setIsFlashcardsOpen(true);
       } else if (tool === 'scratchpad') {
@@ -156,6 +170,7 @@ export default function HomePage({ activeLiveLesson, initialFeed }: HomePageProp
           onOpenCalculator={() => setCalculatorState({ isOpen: true, tab: 'lgs' })}
           onOpenPomodoro={() => setIsPomodoroOpen(true)}
           onOpenChecklist={() => setIsChecklistOpen(true)}
+          onOpenGraph={() => setIsGraphOpen(true)}
         />
         <div className="defer-section">
           <HomeSuccessRoadmap
@@ -230,6 +245,11 @@ export default function HomePage({ activeLiveLesson, initialFeed }: HomePageProp
       <TopicChecklistModal
         isOpen={isChecklistOpen}
         onClose={() => setIsChecklistOpen(false)}
+      />
+      <MathGraphVisualizerModal
+        isOpen={isGraphOpen}
+        onClose={() => setIsGraphOpen(false)}
+        isLight={isLight}
       />
     </main>
   );

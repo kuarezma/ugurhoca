@@ -286,7 +286,58 @@ export function QuizPanel({
   if (role === "teacher") {
     return (
       <aside className="flex max-h-[min(70vh,42rem)] w-full shrink-0 flex-col gap-4 overflow-y-auto rounded-xl border border-border bg-card p-4 md:w-80">
-        <h2 className="text-sm font-semibold">Canlı soru</h2>
+        <h2 className="text-sm font-semibold">Canlı Soru & Anket</h2>
+
+        {/* Hızlı Şablonlar */}
+        <div className="space-y-1.5">
+          <span className="text-[11px] font-bold text-foreground/70">Hızlı Oylama & Quiz Şablonları</span>
+          <div className="grid grid-cols-2 gap-1.5">
+            <button
+              type="button"
+              onClick={() => {
+                setDraftPrompt("Bu konuyu ne kadar anladınız?");
+                setDraftOptions(["Çok İyi Anladım 🚀", "Kısmen Anladım 🤔", "Tekrar Edelim 🙋‍♂️"]);
+                setDraftCorrect(0);
+              }}
+              className="rounded-lg border border-border bg-background/60 p-1.5 text-left text-[11px] font-semibold hover:border-accent hover:text-accent transition"
+            >
+              📊 Anlama Oylaması
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                setDraftPrompt("Paylaşılan ifade sizce doğru mu, yanlış mı?");
+                setDraftOptions(["Doğru (D) ✅", "Yanlış (Y) ❌"]);
+                setDraftCorrect(0);
+              }}
+              className="rounded-lg border border-border bg-background/60 p-1.5 text-left text-[11px] font-semibold hover:border-accent hover:text-accent transition"
+            >
+              ✅ Doğru / Yanlış
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                setDraftPrompt("Ekranda çözülen sorunun doğru cevabı hangisi?");
+                setDraftOptions(["A", "B", "C", "D"]);
+                setDraftCorrect(0);
+              }}
+              className="rounded-lg border border-border bg-background/60 p-1.5 text-left text-[11px] font-semibold hover:border-accent hover:text-accent transition"
+            >
+              🔤 A - B - C - D
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                setDraftPrompt("Şimdi nasıl devam edelim?");
+                setDraftOptions(["Yeni Soru Çözelim 📝", "Konuya Devam Edelim 📚", "Kısa Bir Mola ☕"]);
+                setDraftCorrect(0);
+              }}
+              className="rounded-lg border border-border bg-background/60 p-1.5 text-left text-[11px] font-semibold hover:border-accent hover:text-accent transition"
+            >
+              ⏱️ Sıradaki Adım
+            </button>
+          </div>
+        </div>
 
         <label className="block space-y-1">
           <span className="text-xs text-foreground/70">Soru metni</span>
@@ -367,19 +418,43 @@ export function QuizPanel({
         )}
 
         {active && (
-          <div className="space-y-2 border-t border-border pt-3">
-            <p className="text-xs font-medium text-foreground/70">Özet</p>
-            <p className="text-sm font-medium">{active.prompt}</p>
-            <ul className="text-xs text-foreground/80">
-              {active.options.map((o, i) => (
-                <li key={i}>
-                  {o}:{" "}
-                  <strong>{summary.counts[i] ?? 0}</strong> oy
-                  {i === active.correctIndex ? " (doğru)" : ""}
-                </li>
-              ))}
-            </ul>
-            <ul className="max-h-40 space-y-1 overflow-y-auto text-xs">
+          <div className="space-y-3 border-t border-border pt-3">
+            <div className="flex items-center justify-between">
+              <p className="text-xs font-bold text-foreground/80">Canlı Oylama Dağılımı</p>
+              <span className="text-[11px] font-semibold text-accent">{summary.rows.length} Yanıt</span>
+            </div>
+            <p className="text-xs font-medium text-foreground">{active.prompt}</p>
+
+            <div className="space-y-2">
+              {active.options.map((o, i) => {
+                const count = summary.counts[i] ?? 0;
+                const total = summary.rows.length;
+                const pct = total > 0 ? Math.round((count / total) * 100) : 0;
+                const isCorrect = i === active.correctIndex;
+
+                return (
+                  <div key={i} className="space-y-1">
+                    <div className="flex items-center justify-between text-xs">
+                      <span className="truncate max-w-[170px] font-medium">
+                        {o} {isCorrect ? '🎯' : ''}
+                      </span>
+                      <span className="font-bold text-foreground/90">
+                        %{pct} ({count})
+                      </span>
+                    </div>
+                    <div className="h-2 w-full rounded-full bg-border overflow-hidden">
+                      <div
+                        className={`h-full transition-all duration-300 ${
+                          isCorrect ? 'bg-emerald-500' : 'bg-accent'
+                        }`}
+                        style={{ width: `${pct}%` }}
+                      />
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+            <ul className="max-h-32 space-y-1 overflow-y-auto text-xs border-t border-border/50 pt-2">
               {summary.rows.map(([id, row]) => (
                 <li
                   key={id}

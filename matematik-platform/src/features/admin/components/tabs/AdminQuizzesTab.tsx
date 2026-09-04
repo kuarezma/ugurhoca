@@ -1,12 +1,13 @@
 'use client';
 
-import { CheckCircle2, Trash2 } from 'lucide-react';
+import { CheckCircle2, Trash2, Printer } from 'lucide-react';
 import type { AdminQuiz } from '@/features/admin/types';
 
 type AdminQuizzesTabProps = {
   onAddQuestion: (quiz: AdminQuiz) => Promise<void> | void;
   onDeleteQuiz: (id: string) => void;
   onEditQuiz: (quiz: AdminQuiz) => void;
+  onPrintWorksheet?: (quiz: AdminQuiz) => void;
   quizzes: AdminQuiz[];
 };
 
@@ -14,6 +15,7 @@ export default function AdminQuizzesTab({
   onAddQuestion,
   onDeleteQuiz,
   onEditQuiz,
+  onPrintWorksheet,
   quizzes,
 }: AdminQuizzesTabProps) {
   return (
@@ -81,6 +83,16 @@ export default function AdminQuizzesTab({
                 >
                   Soru Ekle
                 </button>
+                {onPrintWorksheet && (
+                  <button
+                    type="button"
+                    onClick={() => onPrintWorksheet(quiz)}
+                    className="p-2 rounded-xl text-slate-400 hover:text-indigo-300 hover:bg-indigo-500/10 transition-all"
+                    title="A4 Yaprak Test Yazdır / İndir"
+                  >
+                    <Printer className="w-4 h-4" />
+                  </button>
+                )}
                 <button
                   onClick={() => onDeleteQuiz(quiz.id)}
                   className="p-2 rounded-xl text-slate-400 hover:text-rose-400 hover:bg-rose-500/10 transition-all"

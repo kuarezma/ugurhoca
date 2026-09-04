@@ -23,6 +23,14 @@ import { Button } from '@/components/ui/Button';
 import { Skeleton } from '@/components/ui/Skeleton';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { useTheme } from '@/components/ThemeProvider';
+
+const BadgesShowcaseModal = dynamic(
+  () =>
+    import('@/features/profile/components/BadgesShowcaseModal').then((m) => ({
+      default: m.BadgesShowcaseModal,
+    })),
+  { ssr: false },
+);
 import { requireClientSession } from '@/lib/auth-client';
 import { createLogger } from '@/lib/logger';
 import { supabase } from '@/lib/supabase/client';
@@ -81,6 +89,7 @@ export default function IlerlemePage({ initialData }: ProgressPageProps) {
   const [goal, setGoal] = useState<StudyGoal | null>(initialData?.goal ?? null);
   const [badges, setBadges] = useState<UserBadge[]>(initialData?.badges ?? []);
   const [pdfLoading, setPdfLoading] = useState(false);
+  const [showBadgesModal, setShowBadgesModal] = useState(false);
   
   // Modal states
   const [showAddModal, setShowAddModal] = useState(false);
@@ -463,7 +472,14 @@ export default function IlerlemePage({ initialData }: ProgressPageProps) {
                 </div>
                 <h3 className={`text-sm font-bold uppercase tracking-wider ${isLight ? 'text-indigo-900/70' : 'text-indigo-200/70'}`}>Rozetlerim</h3>
               </div>
-              <span className={`text-xl font-black ${isLight ? 'text-indigo-900' : 'text-white'}`}>{badges.length}</span>
+              <button
+                type="button"
+                onClick={() => setShowBadgesModal(true)}
+                className="inline-flex items-center gap-1 text-xs font-bold text-amber-500 hover:text-amber-400 transition"
+              >
+                <span>Tüm Rozetler</span>
+                <span className={`text-sm font-black ${isLight ? 'text-indigo-900' : 'text-white'}`}>({badges.length}) &rarr;</span>
+              </button>
             </div>
             
             {badges.length === 0 ? (
@@ -644,6 +660,14 @@ export default function IlerlemePage({ initialData }: ProgressPageProps) {
           </Button>
         </form>
       </Modal>
+
+      <BadgesShowcaseModal
+        isOpen={showBadgesModal}
+        onClose={() => setShowBadgesModal(false)}
+        earnedBadges={badges}
+        currentStreak={user?.current_streak || 0}
+        isLight={isLight}
+      />
     </main>
   );
 }

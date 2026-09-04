@@ -19,6 +19,12 @@ Platformun odağı sade bir öğrenci deneyimi, güçlü öğretmen yönetimi ve
 - **Oyunlaştırma (18 Özgün Oyun):** Çocukların ve gençlerin severek oynadığı Pizza Ustası, Matematik Ninja, Köstebek Avı, Hızlı Şoför, Koordinat Korsanı, Sayı Kulesi, Çarpım Tablosu, Balon Patlatma, Uzay Roketi ve rumuzlu liderlik tablosu.
 - **Öğretmen paneli:** Kullanıcı yönetimi, içerik yönetimi, duyurular, mesajlar, takip merkezi ve canlı ders planlama.
 - **İçerik kütüphanesi:** Dokümanlar, yaprak testler, konu içerikleri, LGS/YKS kaynakları ve hızlı PDF/döküman önizleyici.
+- **İnteraktif Fonksiyon & Grafik Laboratuvarı:** Doğrusal fonksiyon, parabol ve birim çember açısı için canlı SVG koordinat grafiği, tepe noktası/kök analizi ve sınav çıkarımları.
+- **Kademeli İpucu Sistemi (Hint Ladder):** Test çözme esnasında öğrencilere 3 aşamalı (Formül & Kural, İlk İşlem Hamlesi, Çözüm Stratejisi) pedagojik yönlendirme.
+- **Akıllı Telafi & Pekiştirme Testi:** Hata defterindeki zayıf kazanımları analiz ederek 5-10 soruluk kişiselleştirilmiş telafi denemesi oluşturan motor.
+- **Matematik Başarı Rozetleri & Vitrini:** İstikrar, isabet, odak ve refleks kategorilerinde 12 özgün dijital rozet ve ilerleme vitrini.
+- **Tek Tıkla A4 Yaprak Test Üretici:** Testleri anında Uğur Hoca antetli, iki sütunlu, cevap anahtarlı yazdırılabilir A4 yaprak test formatına dönüştürme.
+- **Canlı Ders Hızlı Oylama Şablonları:** LiveKit canlı dersinde tek tıkla anlama oylaması, doğru/yanlış ve mini anket fırlatma ile anlık görsel oy dağılımı.
 - **İnteraktif Sınav Hesaplayıcı:** LGS ve YKS (TYT/AYT) için anlık net ve standart puan hesaplama motoru.
 - **Akıllı Hata Defterim:** Testlerde yanlış yapılan soruları %100 gizlilikle yerel olarak biriktiren ve tekrar testi oluşturan kişisel çalışma havuzu.
 - **Matematik Odak & Pomodoro:** 25 ve 50 dakikalık odaklanma ve mola zamanlayıcısı (Web Audio melodik geri bildirimli).
@@ -162,6 +168,13 @@ Küçük UI değişikliklerinde ilgili sayfa mobil ve masaüstü görünümde ay
 
 ## Değişiklik Günlüğü (Changelog)
  
+- **2026-09-04 (Yeni Matematik Laboratuvarı, Kademeli İpucu, Akıllı Telafi, Rozetler & A4 Yaprak Test):**
+  - **İnteraktif Fonksiyon & Grafik Laboratuvarı (`MathGraphVisualizerModal`):** Doğrusal fonksiyon ($y = mx + b$), parabol ($y = ax^2 + bx + c$) ve birim çember açısı için canlı SVG koordinat grafiği, kaydırıcılar (sliders), anlık tepe noktası/diskriminant hesaplamaları ve hazır sınav şablonları eklendi.
+  - **Kademeli İpucu Sistemi (`QuestionHintLadder`):** Test çözme esnasında öğrencilerin tek tıkla 3 aşamalı (1. Temel Kural/Formül, 2. İlk İşlem Hamlesi, 3. Çözüm Stratejisi) pedagojik yönlendirme açabilmesi sağlandı.
+  - **Akıllı Telafi & Pekiştirme Testi:** Hata defterindeki zayıf kazanımları analiz eden, öncelikli 5 veya 10 soruluk telafi oturumunu tek tıkla başlatan akıllı telafi kartı ve test çözme entegrasyonu kuruldu.
+  - **Matematik Başarı Rozetleri & Vitrini (`BadgesShowcaseModal`):** İstikrar, isabet, odak ve refleks kategorilerinde 12 adet özgün dijital rozet, ilerleme yüzdesi ve vitrin modalı `/ilerleme` ve `/profil` ile bağlandı.
+  - **Tek Tıkla A4 Yaprak Test Üretici (`PrintableWorksheetModal`):** Hem test ekranında hem admin panelinde testleri Uğur Hoca antetli, iki sütunlu, öğrenci bilgi alanlı ve cevap anahtarlı A4 yazdırılabilir/PDF formatına dönüştürme özelliği eklendi.
+  - **Canlı Ders Hızlı Oylama & Anket Şablonları (`QuizPanel`):** Öğretmenin derste tek tıkla "Anlama Oylaması", "Doğru/Yanlış", "A-B-C-D" mini anketleri fırlatabilmesi ve anlık renkli oy dağılım çubukları entegre edildi.
 - **2026-09-04 (Admin Paneli Modernizasyonu & Tasarım Uyumu):**
   - **Marka & Renk Bütünlüğü:** Admin üst barı ve logosu sitenin modern marka gradyanına (`brand-primary / indigo / cyan`) uyarlandı; "Siteyi Gör", tema değiştirici (`ThemeToggle`) ve yönetici kalkanı (`ShieldCheck`) eklendi.
   - **Yönetici Özet Alanı (Executive Hero):** Canlı öğrenci, içerik, test ve bekleyen aday metrikleri ile tek tıkla yeni belge/duyuru/test oluşturma ve ödev verme hızlı aksiyon çubuğu entegre edildi.
