@@ -33,7 +33,7 @@ export function ThemeToggle({ compact = false, className = '' }: ThemeToggleProp
 
 export function FloatingThemeToggle() {
   return (
-    <div className="fixed bottom-4 left-4 z-[90] sm:bottom-6 sm:left-6">
+    <div className="hidden md:block fixed bottom-6 left-6 z-[90]">
       <ThemeToggle className="shadow-lg backdrop-blur-lg" />
     </div>
   );

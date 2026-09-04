@@ -63,22 +63,22 @@ export function HomeHeroSection({ isLight, user }: HomeHeroSectionProps) {
             π
           </div>
 
-          <div className="relative grid gap-8 lg:grid-cols-[1.3fr_1fr] lg:items-center">
-            <div className="space-y-5">
+          <div className="relative grid gap-8 lg:grid-cols-[1.3fr_1fr] lg:items-center min-w-0 w-full">
+            <div className="space-y-5 min-w-0 w-full">
               <div className="flex flex-wrap items-center gap-2">
                 <div
-                  className={`inline-flex items-center gap-2 rounded-full px-3.5 py-1 text-xs font-bold uppercase tracking-wider ${
+                  className={`inline-flex max-w-full items-center gap-1.5 sm:gap-2 rounded-full px-3 py-1 text-[11px] sm:text-xs font-bold uppercase tracking-wider ${
                     isLight
                       ? 'bg-amber-50 text-amber-800 border border-amber-200/80 shadow-sm'
                       : 'bg-amber-400/10 text-amber-300 border border-amber-400/20'
                   }`}
                 >
-                  <Sparkles className="h-3.5 w-3.5 text-amber-500 animate-pulse" aria-hidden="true" />
-                  <span>🎉 2026-2027 Yeni Eğitim Öğretim Yılı</span>
+                  <Sparkles className="h-3.5 w-3.5 shrink-0 text-amber-500 animate-pulse" aria-hidden="true" />
+                  <span className="truncate">🎉 2026-2027 Yeni Eğitim Öğretim Yılı</span>
                 </div>
 
                 <div
-                  className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold ${
+                  className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-[11px] sm:text-xs font-semibold ${
                     isLight
                       ? 'bg-indigo-50 text-indigo-700 border border-indigo-100'
                       : 'bg-indigo-500/15 text-indigo-300 border border-indigo-500/20'
@@ -89,21 +89,20 @@ export function HomeHeroSection({ isLight, user }: HomeHeroSectionProps) {
               </div>
 
               <h1
-                className={`font-display text-3xl font-extrabold leading-tight tracking-tight sm:text-5xl lg:text-[3.25rem] ${
+                className={`font-display text-2xl xs:text-3xl font-extrabold leading-tight tracking-tight sm:text-5xl lg:text-[3.25rem] ${
                   isLight ? 'text-slate-900' : 'text-white'
                 }`}
               >
                 <span className="bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-500 bg-clip-text text-transparent dark:from-indigo-400 dark:via-purple-400 dark:to-pink-400">
                   {greeting}
-                </span>
-                <br />
+                </span>{' '}
                 <span className={isLight ? 'text-slate-800' : 'text-slate-100'}>
                   Bu Yıl Matematikte Zirveye!
                 </span>
               </h1>
 
               <p
-                className={`max-w-lg text-base sm:text-lg leading-relaxed ${
+                className={`w-full max-w-lg text-sm sm:text-lg leading-relaxed ${
                   isLight ? 'text-slate-600' : 'text-slate-300'
                 }`}
               >
@@ -111,12 +110,12 @@ export function HomeHeroSection({ isLight, user }: HomeHeroSectionProps) {
                 karalama tahtası ve canlı dersler seni bekliyor.
               </p>
 
-              <div className="flex flex-wrap gap-3">
+              <div className="flex flex-col sm:flex-row gap-2.5 sm:gap-3">
                 <Link
                   href="/icerikler"
                   onMouseEnter={() => prefetchHref('/icerikler')}
                   onFocus={() => prefetchHref('/icerikler')}
-                  className="group inline-flex h-12 items-center gap-2 rounded-2xl bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-500 px-6 text-sm font-bold text-white shadow-md transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2"
+                  className="group inline-flex h-11 sm:h-12 items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-500 px-5 sm:px-6 text-sm font-bold text-white shadow-md transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2"
                 >
                   <Zap className="h-4 w-4" aria-hidden="true" />
                   Çalışmaya başla
@@ -126,7 +125,7 @@ export function HomeHeroSection({ isLight, user }: HomeHeroSectionProps) {
                   href="/oyunlar"
                   onMouseEnter={() => prefetchHref('/oyunlar')}
                   onFocus={() => prefetchHref('/oyunlar')}
-                  className={`inline-flex h-12 items-center gap-2 rounded-2xl border px-5 text-sm font-semibold transition-all duration-200 hover:-translate-y-0.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 ${
+                  className={`inline-flex h-11 sm:h-12 items-center justify-center gap-2 rounded-2xl border px-5 text-sm font-semibold transition-all duration-200 hover:-translate-y-0.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 ${
                     isLight
                       ? 'border-slate-200 bg-white text-slate-800 hover:bg-slate-50 shadow-sm'
                       : 'border-white/10 bg-white/5 text-white hover:bg-white/10'
@@ -137,11 +136,11 @@ export function HomeHeroSection({ isLight, user }: HomeHeroSectionProps) {
               </div>
 
               {/* Hızlı Sınıf Başlangıç Çipleri */}
-              <div className="pt-2">
+              <div className="pt-2 w-full min-w-0">
                 <span className="text-xs font-bold uppercase tracking-wider text-slate-400 block mb-2">
                   Sınıfını Seç ve Hemen Başla:
                 </span>
-                <div className="flex items-center gap-2 overflow-x-auto pb-1 [scrollbar-width:none]">
+                <div className="flex items-center gap-2 overflow-x-auto pb-1 max-w-full [scrollbar-width:none]">
                   {[
                     { label: '5. Sınıf', href: '/icerikler?grade=5' },
                     { label: '6. Sınıf', href: '/icerikler?grade=6' },
@@ -202,7 +201,7 @@ export function HomeHeroSection({ isLight, user }: HomeHeroSectionProps) {
             </span>
             Hızlı erişim
           </h2>
-          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4 sm:gap-4">
+          <div className="grid grid-cols-2 gap-2.5 sm:gap-4 sm:grid-cols-3 lg:grid-cols-4">
             {HOME_CATEGORIES.map((category, index) => (
               <motion.div
                 key={category.id}
@@ -222,7 +221,7 @@ export function HomeHeroSection({ isLight, user }: HomeHeroSectionProps) {
                     prefetchCategory(category.href, category.contentType)
                   }
                   aria-label={`${category.title} kategorisi`}
-                  className={`group relative block overflow-hidden rounded-3xl border p-5 text-center transition-all duration-300 hover:-translate-y-1 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 ${
+                  className={`group relative block overflow-hidden rounded-2xl sm:rounded-3xl border p-3.5 sm:p-5 text-center transition-all duration-300 hover:-translate-y-1 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 ${
                     isLight
                       ? 'border-slate-200/90 bg-white/90 shadow-bento hover:shadow-bento-hover hover:border-indigo-200'
                       : `${category.bgColor} ${category.borderColor} hover:border-white/20 hover:shadow-2xl`
@@ -230,12 +229,12 @@ export function HomeHeroSection({ isLight, user }: HomeHeroSectionProps) {
                 >
                   <div
                     aria-hidden="true"
-                    className={`mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br ${category.color} shadow-md transition-transform duration-300 group-hover:scale-110`}
+                    className={`mx-auto mb-2.5 sm:mb-3 flex h-11 w-11 sm:h-14 sm:w-14 items-center justify-center rounded-xl sm:rounded-2xl bg-gradient-to-br ${category.color} shadow-md transition-transform duration-300 group-hover:scale-110`}
                   >
-                    <category.icon className="h-7 w-7 text-white" />
+                    <category.icon className="h-5 w-5 sm:h-7 sm:w-7 text-white" />
                   </div>
                   <h3
-                    className={`font-display text-sm font-bold sm:text-base ${
+                    className={`font-display text-xs font-bold sm:text-base truncate ${
                       isLight ? 'text-slate-900' : 'text-white'
                     }`}
                   >
