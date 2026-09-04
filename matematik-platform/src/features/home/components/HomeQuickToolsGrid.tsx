@@ -15,12 +15,18 @@ type HomeQuickToolsGridProps = {
   isLight: boolean;
   onOpenFlashcards: () => void;
   onOpenScratchpad: () => void;
+  onOpenCalculator?: () => void;
+  onOpenPomodoro?: () => void;
+  onOpenChecklist?: () => void;
 };
 
 export function HomeQuickToolsGrid({
   isLight,
   onOpenFlashcards,
   onOpenScratchpad,
+  onOpenCalculator,
+  onOpenPomodoro,
+  onOpenChecklist,
 }: HomeQuickToolsGridProps) {
   const tools = [
     {
@@ -32,7 +38,7 @@ export function HomeQuickToolsGrid({
       actionType: 'modal',
       action: onOpenFlashcards,
       buttonLabel: 'Kartları Aç',
-      badge: 'Yeni',
+      badge: 'Formül',
     },
     {
       id: 'scratchpad',
@@ -46,22 +52,47 @@ export function HomeQuickToolsGrid({
       badge: 'Çizim',
     },
     {
+      id: 'pomodoro',
+      title: 'Matematik Odak & Pomodoro',
+      description: '25/50 dk odaklanma zamanlayıcısı ile soru çözerken dikkatini en üst seviyede tut.',
+      icon: Sparkles,
+      gradient: 'from-rose-500 via-pink-500 to-amber-500',
+      actionType: onOpenPomodoro ? 'modal' : 'link',
+      action: onOpenPomodoro,
+      href: '#',
+      buttonLabel: 'Odak Sayacı',
+      badge: 'Odak ⏱️',
+    },
+    {
+      id: 'checklist',
+      title: 'MEB Konu Takip Çizelgesi',
+      description: '5. sınıftan YKS\'ye tüm matematik kazanımlarını checklist ile adım adım takip et.',
+      icon: Target,
+      gradient: 'from-emerald-500 via-teal-500 to-cyan-500',
+      actionType: onOpenChecklist ? 'modal' : 'link',
+      action: onOpenChecklist,
+      href: '/programlar',
+      buttonLabel: 'Çizelgeyi Aç',
+      badge: 'Kazanım 📋',
+    },
+    {
       id: 'calculators',
-      title: 'LGS & YKS Tercih Sihirbazı',
-      description: 'Netlerini gir, tahmini puanını hesapla ve hedef liseleri/üniversiteleri keşfet.',
+      title: 'LGS & YKS Puan/Net Hesaplayıcı',
+      description: 'Doğru ve yanlışlarını gir, MEB/ÖSYM formülüyle anında net ve puanını öğren.',
       icon: Target,
       gradient: 'from-cyan-500 via-blue-500 to-indigo-500',
-      actionType: 'link',
+      actionType: onOpenCalculator ? 'modal' : 'link',
+      action: onOpenCalculator,
       href: '/programlar',
-      buttonLabel: 'Sihirbaza Git',
-      badge: 'Rehberlik',
+      buttonLabel: 'Net Hesapla',
+      badge: 'Puan 🎯',
     },
     {
       id: 'games',
       title: 'Matematik Oyunları',
       description: 'Hızlı işlem, aritmetik yarışlar ve refleks geliştirici mini oyunlar.',
       icon: Gamepad2,
-      gradient: 'from-emerald-400 via-teal-500 to-cyan-500',
+      gradient: 'from-teal-400 via-emerald-500 to-cyan-500',
       actionType: 'link',
       href: '/oyunlar',
       buttonLabel: 'Oyunları Oyna',
@@ -95,7 +126,7 @@ export function HomeQuickToolsGrid({
           </p>
         </div>
 
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {tools.map((tool, idx) => (
             <motion.div
               key={tool.id}

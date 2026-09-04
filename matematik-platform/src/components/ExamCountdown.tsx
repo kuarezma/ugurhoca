@@ -8,6 +8,7 @@ import type { FeaturedExam } from "@/lib/examDates";
 type ExamCountdownProps = {
   exam: FeaturedExam;
   isLight: boolean;
+  onOpenCalculator?: (examType: 'lgs' | 'yks') => void;
 };
 
 type TimeLeft = {
@@ -35,7 +36,11 @@ function formatUnit(value: number) {
   return value.toString().padStart(2, "0");
 }
 
-export function ExamCountdown({ exam, isLight }: ExamCountdownProps) {
+export function ExamCountdown({
+  exam,
+  isLight,
+  onOpenCalculator,
+}: ExamCountdownProps) {
   const [timeLeft, setTimeLeft] = useState<TimeLeft | null>(null);
 
   useEffect(() => {
@@ -181,16 +186,30 @@ export function ExamCountdown({ exam, isLight }: ExamCountdownProps) {
           </div>
 
           {exam.toolHref ? (
-            <Link
-              href={exam.toolHref}
-              className={`shrink-0 inline-flex items-center gap-1.5 rounded-xl px-3 py-1.5 text-xs font-bold transition-all ${
-                isLight
-                  ? "bg-indigo-600 text-white shadow-sm hover:bg-indigo-700"
-                  : "bg-white/15 text-white hover:bg-white/25 border border-white/10"
-              }`}
-            >
-              Puan Hesapla →
-            </Link>
+            onOpenCalculator ? (
+              <button
+                type="button"
+                onClick={() => onOpenCalculator(exam.id.includes('lgs') ? 'lgs' : 'yks')}
+                className={`shrink-0 inline-flex items-center gap-1.5 rounded-xl px-3 py-1.5 text-xs font-bold transition-all ${
+                  isLight
+                    ? "bg-indigo-600 text-white shadow-sm hover:bg-indigo-700"
+                    : "bg-white/15 text-white hover:bg-white/25 border border-white/10"
+                }`}
+              >
+                Net & Puan Hesapla →
+              </button>
+            ) : (
+              <Link
+                href={exam.toolHref}
+                className={`shrink-0 inline-flex items-center gap-1.5 rounded-xl px-3 py-1.5 text-xs font-bold transition-all ${
+                  isLight
+                    ? "bg-indigo-600 text-white shadow-sm hover:bg-indigo-700"
+                    : "bg-white/15 text-white hover:bg-white/25 border border-white/10"
+                }`}
+              >
+                Puan Hesapla →
+              </Link>
+            )
           ) : null}
         </div>
 

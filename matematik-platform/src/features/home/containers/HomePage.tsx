@@ -33,6 +33,30 @@ const HomeAnnouncementModal = dynamic(
   { ssr: false },
 );
 
+const ExamScoreCalculatorModal = dynamic(
+  () =>
+    import('@/components/ExamScoreCalculatorModal').then((m) => ({
+      default: m.ExamScoreCalculatorModal,
+    })),
+  { ssr: false },
+);
+
+const FocusPomodoroModal = dynamic(
+  () =>
+    import('@/components/FocusPomodoroModal').then((m) => ({
+      default: m.FocusPomodoroModal,
+    })),
+  { ssr: false },
+);
+
+const TopicChecklistModal = dynamic(
+  () =>
+    import('@/features/programs/components/TopicChecklistModal').then((m) => ({
+      default: m.TopicChecklistModal,
+    })),
+  { ssr: false },
+);
+
 type HomePageProps = {
   activeLiveLesson?: LiveLesson | null;
   initialFeed?: HomeInitialFeed | null;
@@ -43,6 +67,12 @@ export default function HomePage({ activeLiveLesson, initialFeed }: HomePageProp
   const isLight = theme === 'light';
   const [isFlashcardsOpen, setIsFlashcardsOpen] = useState(false);
   const [isScratchpadOpen, setIsScratchpadOpen] = useState(false);
+  const [calculatorState, setCalculatorState] = useState<{
+    isOpen: boolean;
+    tab: 'lgs' | 'yks';
+  }>({ isOpen: false, tab: 'lgs' });
+  const [isPomodoroOpen, setIsPomodoroOpen] = useState(false);
+  const [isChecklistOpen, setIsChecklistOpen] = useState(false);
   const {
     announcements,
     documents,
@@ -84,6 +114,9 @@ export default function HomePage({ activeLiveLesson, initialFeed }: HomePageProp
           isLight={isLight}
           onOpenFlashcards={() => setIsFlashcardsOpen(true)}
           onOpenScratchpad={() => setIsScratchpadOpen(true)}
+          onOpenCalculator={() => setCalculatorState({ isOpen: true, tab: 'lgs' })}
+          onOpenPomodoro={() => setIsPomodoroOpen(true)}
+          onOpenChecklist={() => setIsChecklistOpen(true)}
         />
         <div className="defer-section">
           <HomeSuccessRoadmap
@@ -104,7 +137,10 @@ export default function HomePage({ activeLiveLesson, initialFeed }: HomePageProp
         <div className="defer-section">
           <HomeDailyQuote isLight={isLight} />
         </div>
-        <HomeExamCountdownSection isLight={isLight} />
+        <HomeExamCountdownSection
+          isLight={isLight}
+          onOpenCalculator={(tab) => setCalculatorState({ isOpen: true, tab })}
+        />
         <div className="defer-section">
           <HomeAssignmentsSection
             assignments={visibleAssignments}
@@ -142,6 +178,19 @@ export default function HomePage({ activeLiveLesson, initialFeed }: HomePageProp
       <ScratchpadModal
         isOpen={isScratchpadOpen}
         onClose={() => setIsScratchpadOpen(false)}
+      />
+      <ExamScoreCalculatorModal
+        isOpen={calculatorState.isOpen}
+        initialTab={calculatorState.tab}
+        onClose={() => setCalculatorState((prev) => ({ ...prev, isOpen: false }))}
+      />
+      <FocusPomodoroModal
+        isOpen={isPomodoroOpen}
+        onClose={() => setIsPomodoroOpen(false)}
+      />
+      <TopicChecklistModal
+        isOpen={isChecklistOpen}
+        onClose={() => setIsChecklistOpen(false)}
       />
     </main>
   );

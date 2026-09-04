@@ -18,8 +18,12 @@ Platformun odağı sade bir öğrenci deneyimi, güçlü öğretmen yönetimi ve
 - **İlerleme takibi:** Çalışma süresi, hedefler, günlük seri, grafikler ve öğrenci gelişim özeti.
 - **Oyunlaştırma:** Matematik oyunları, rozetler, puanlama ve gizliliği koruyan rumuzlu liderlik yapısı.
 - **Öğretmen paneli:** Kullanıcı yönetimi, içerik yönetimi, duyurular, mesajlar, takip merkezi ve canlı ders planlama.
-- **İçerik kütüphanesi:** Dokümanlar, yaprak testler, konu içerikleri ve LGS/YKS odaklı çalışma kaynakları.
-- **Mobil uyum:** Responsive arayüz ve telefon/tablet kullanımına uygun akışlar.
+- **İçerik kütüphanesi:** Dokümanlar, yaprak testler, konu içerikleri, LGS/YKS kaynakları ve hızlı PDF/döküman önizleyici.
+- **İnteraktif Sınav Hesaplayıcı:** LGS ve YKS (TYT/AYT) için anlık net ve standart puan hesaplama motoru.
+- **Akıllı Hata Defterim:** Testlerde yanlış yapılan soruları %100 gizlilikle yerel olarak biriktiren ve tekrar testi oluşturan kişisel çalışma havuzu.
+- **Matematik Odak & Pomodoro:** 25 ve 50 dakikalık odaklanma ve mola zamanlayıcısı (Web Audio melodik geri bildirimli).
+- **MEB Konu Takip Çizelgesi:** 5. sınıftan 12. sınıfa kadar tüm matematik kazanımlarının adım adım işaretlenebildiği müfredat takip aracı.
+- **Mobil uyum:** Responsive arayüz, yüzen alt gezinti çubuğu ve telefon/tablet kullanımına uygun akışlar.
 
 ## Teknoloji Yığını
 
@@ -158,12 +162,19 @@ Küçük UI değişikliklerinde ilgili sayfa mobil ve masaüstü görünümde ay
 
 ## Değişiklik Günlüğü (Changelog)
  
-- **2026-09-04 (Tasarım Modernizasyonu):**
+- **2026-09-04 (Yeni Eğitim Araçları & Pedagojik Özellikler):**
+  - **İnteraktif Sınav Hesaplayıcı:** LGS ve YKS için doğru/yanlış/net ve tahmini başarı sıralamasını anında hesaplayan modal eklendi.
+  - **Akıllı Hata Defterim:** Testlerde yanlış yapılan soruları gizlilikle tarayıcıda biriktiren ve tek tıkla tekrar testi başlatan kişisel hata havuzu kuruldu.
+  - **Matematik Odak & Pomodoro Sayacı:** 25/50 dk çalışma ve mola sürelerini yöneten dairesel animasyonlu ve Web Audio melodili çalışma aracı eklendi.
+  - **MEB Konu Takip Çizelgesi:** 5-12. sınıf matematik müfredatını (konu, soru, tekrar) takip eden interaktif checklist eklendi.
+  - **Gelişmiş PDF Önizleme:** Çalışma kağıtlarında iframe sandbox uyumluluğu artırıldı ve ayrı sekmede tam ekran açma butonu eklendi.
+- **2026-09-04 (Tasarım & Hız Modernizasyonu):**
   - Apple/Linear esintili modern bento-grid yapısı ve token'ları (`bento-card`, çok katmanlı gölgeler, safir/indigo teması) entegre edildi.
   - LGS ve YKS sınav sayaçları widget tarzı modern bento kutularına dönüştürüldü.
   - Hero alanı, sınıf seçim hapları ve hızlı araçlar (bilgi kartları, karalama tahtası) ferah arayüze kavuşturuldu.
   - Mobil kullanıcılar için tek elle kullanıma uygun yüzen alt gezinti çubuğu (`MobileBottomNav`) eklendi.
   - Test çözme ve sonuç ekranları modern degrade vurguları ile yenilendi.
+  - `defer-section` (`content-visibility: auto`) ve yerel CSS View Transitions ile sayfa açılış ve geçiş hızları optimize edildi.
 
 ## Lisans
 

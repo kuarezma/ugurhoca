@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { Download, Eye, FileText, Key, X } from 'lucide-react';
+import { Download, Eye, FileText, Key, X, ExternalLink } from 'lucide-react';
 import { getDriveId, getYouTubeId } from '@/features/content/utils';
 import { getWorksheetVisibleDescription } from '@/features/content/worksheet-display';
 import { useAccessibleModal } from '@/hooks/useAccessibleModal';
@@ -79,13 +79,12 @@ export default function ContentPreviewModal({
               allowFullScreen
             />
           ) : typeof previewDoc.file_url === 'string' &&
-            previewDoc.file_url.endsWith('.pdf') ? (
+            (previewDoc.file_url.toLowerCase().includes('.pdf') || previewDoc.file_url.includes('application/pdf')) ? (
             <iframe
               src={previewDoc.file_url}
-              className="h-full min-h-[48vh] w-full sm:min-h-[60vh]"
+              className="h-full min-h-[48vh] w-full sm:min-h-[60vh] border-0"
               title={previewDoc.title}
-              sandbox="allow-same-origin"
-              referrerPolicy="no-referrer"
+              sandbox="allow-scripts allow-same-origin allow-popups allow-forms"
             />
           ) : driveId ? (
             <iframe
@@ -161,6 +160,17 @@ export default function ContentPreviewModal({
               >
                 <FileText className="h-4 w-4" />
                 Çözüm PDF
+              </a>
+            )}
+            {previewDoc.file_url && (
+              <a
+                href={previewDoc.file_url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex w-full items-center justify-center gap-1.5 rounded-xl border border-white/15 bg-white/10 px-3 py-2.5 text-xs font-semibold text-white transition-colors hover:bg-white/20 sm:w-auto sm:px-4 sm:text-sm"
+              >
+                <ExternalLink className="h-4 w-4 text-cyan-300" />
+                Ayrı Sekmede Aç
               </a>
             )}
             <button

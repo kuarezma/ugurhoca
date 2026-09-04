@@ -23,6 +23,7 @@ import {
   Maximize2,
   Minimize2,
   WifiOff,
+  BookOpen,
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useToast } from '@/components/Toast';
@@ -31,6 +32,8 @@ import { fireConfetti } from '@/components/ConfettiBurst';
 import ScratchpadModal from '@/components/ScratchpadModal';
 import { QuizQuestionPalette } from '@/features/quizzes/components/QuizQuestionPalette';
 import { QuizMistakeReviewModal } from '@/features/quizzes/components/QuizMistakeReviewModal';
+import { MistakeNotebookModal } from '@/features/quizzes/components/MistakeNotebookModal';
+import { saveMistakesToBank, markMistakeMastered } from '@/features/quizzes/lib/mistakeStorage';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { Skeleton } from '@/components/ui/Skeleton';
 import { requireClientSession } from '@/lib/auth-client';
@@ -130,6 +133,7 @@ export default function TestsPage({
   const [isFocusMode, setIsFocusMode] = useState(false);
   const [flaggedQuestions, setFlaggedQuestions] = useState<Set<number>>(new Set());
   const [isMistakeModalOpen, setIsMistakeModalOpen] = useState(false);
+  const [isMistakeNotebookOpen, setIsMistakeNotebookOpen] = useState(false);
   const [isOnline, setIsOnline] = useState(true);
   const resultSavedRef = useRef(false);
   const router = useRouter();
@@ -345,6 +349,16 @@ export default function TestsPage({
   }, [answers, quizQuestions]);
 
   const saveQuizResult = useCallback(async () => {
+    // Hata defterine yanlışları otomatik ekle, doğru çözülenleri öğrenildi işaretle
+    const mistakes = quizQuestions.filter((q, i) => answers[i] !== q.correct_index);
+    if (mistakes.length > 0) {
+      saveMistakesToBank(mistakes, selectedQuiz?.title);
+    }
+    const corrects = quizQuestions.filter((q, i) => answers[i] === q.correct_index);
+    for (const c of corrects) {
+      markMistakeMastered(c.question, true);
+    }
+
     if (!user || !selectedQuiz || !startTime) return;
     if (resultSavedRef.current) return;
     resultSavedRef.current = true;
@@ -952,6 +966,15 @@ export default function TestsPage({
               <Share2 className="w-5 h-5 text-cyan-300" />
               Sonucu Paylaş
             </button>
+
+            <button
+              type="button"
+              onClick={() => setIsMistakeNotebookOpen(true)}
+              className="inline-flex h-12 items-center justify-center gap-2 rounded-xl border border-amber-500/30 bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 font-semibold transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]"
+            >
+              <BookOpen className="w-5 h-5 text-amber-400" />
+              Hata Defterimi Aç
+            </button>
           </div>
         </div>
 
@@ -961,6 +984,12 @@ export default function TestsPage({
           questions={quizQuestions}
           answers={answers}
           onStartRetakeMistakes={handleStartRetakeMistakes}
+        />
+
+        <MistakeNotebookModal
+          isOpen={isMistakeNotebookOpen}
+          onClose={() => setIsMistakeNotebookOpen(false)}
+          onStartRetakeQuiz={handleStartRetakeMistakes}
         />
       </main>
     );
@@ -996,13 +1025,23 @@ export default function TestsPage({
               {error}
             </div>
           )}
-          <div className="mb-8 animate-fade-up">
-            <h1 className="text-4xl font-bold text-white mb-2">
-              Online Testler
-            </h1>
-            <p className="text-slate-400">
-              Bilginizi test edin ve kendinizi geliştirin
-            </p>
+          <div className="mb-8 flex flex-col sm:flex-row sm:items-center justify-between gap-4 animate-fade-up">
+            <div>
+              <h1 className="text-3xl sm:text-4xl font-bold text-white mb-2">
+                Online Testler
+              </h1>
+              <p className="text-slate-400">
+                Bilginizi test edin ve kendinizi geliştirin
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={() => setIsMistakeNotebookOpen(true)}
+              className="inline-flex items-center gap-2 self-start sm:self-auto rounded-2xl border border-amber-500/30 bg-amber-500/15 hover:bg-amber-500/25 px-4 py-2.5 text-xs sm:text-sm font-bold text-amber-300 shadow-md transition-all active:scale-95"
+            >
+              <BookOpen className="w-4 h-4 text-amber-400" />
+              <span>Akıllı Hata Defterim</span>
+            </button>
           </div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -1102,6 +1141,11 @@ export default function TestsPage({
           </div>
         </div>
       </div>
+      <MistakeNotebookModal
+        isOpen={isMistakeNotebookOpen}
+        onClose={() => setIsMistakeNotebookOpen(false)}
+        onStartRetakeQuiz={handleStartRetakeMistakes}
+      />
     </main>
   );
 }

@@ -5,10 +5,12 @@ import { featuredExams } from '@/lib/examDates';
 
 type HomeExamCountdownSectionProps = {
   isLight: boolean;
+  onOpenCalculator?: (examType: 'lgs' | 'yks') => void;
 };
 
 export function HomeExamCountdownSection({
   isLight,
+  onOpenCalculator,
 }: HomeExamCountdownSectionProps) {
   return (
     <section className="defer-section px-4 pt-2 pb-3 sm:py-6">
@@ -16,7 +18,12 @@ export function HomeExamCountdownSection({
         {featuredExams
           .filter((exam) => exam.featured)
           .map((exam) => (
-            <ExamCountdown key={exam.id} exam={exam} isLight={isLight} />
+            <ExamCountdown
+              key={exam.id}
+              exam={exam}
+              isLight={isLight}
+              onOpenCalculator={onOpenCalculator}
+            />
           ))}
       </div>
     </section>
