@@ -10,7 +10,6 @@ import {
   Radio,
   Search,
   Sparkles,
-  Users,
   Video,
   Zap,
   ChevronDown,
@@ -462,10 +461,11 @@ export function LiveLessonsPage({ initialLessons, students, user }: Props) {
 
               <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                 <div>
-                  <label className="block text-xs font-semibold text-foreground/80">
+                  <label htmlFor="plan-title" className="block text-xs font-semibold text-foreground/80">
                     Ders Başlığı *
                   </label>
                   <input
+                    id="plan-title"
                     type="text"
                     value={title}
                     onChange={(e) => setTitle(e.target.value)}
@@ -476,10 +476,11 @@ export function LiveLessonsPage({ initialLessons, students, user }: Props) {
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold text-foreground/80">
+                  <label htmlFor="plan-grade" className="block text-xs font-semibold text-foreground/80">
                     Ders Hedef Kitlesi *
                   </label>
                   <select
+                    id="plan-grade"
                     value={targetGrade}
                     onChange={(e) => setTargetGrade(e.target.value)}
                     className="mt-1 w-full rounded-xl border border-border bg-background px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-brand-primary"
@@ -538,10 +539,11 @@ export function LiveLessonsPage({ initialLessons, students, user }: Props) {
 
               <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                 <div>
-                  <label className="block text-xs font-semibold text-foreground/80">
+                  <label htmlFor="plan-starts-at" className="block text-xs font-semibold text-foreground/80">
                     Başlangıç Tarihi ve Saati *
                   </label>
                   <input
+                    id="plan-starts-at"
                     type="datetime-local"
                     value={startsAt}
                     onChange={(e) => setStartsAt(e.target.value)}
@@ -551,10 +553,11 @@ export function LiveLessonsPage({ initialLessons, students, user }: Props) {
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold text-foreground/80">
+                  <label htmlFor="plan-duration" className="block text-xs font-semibold text-foreground/80">
                     Planlanan Süre (Dakika) *
                   </label>
                   <input
+                    id="plan-duration"
                     type="number"
                     min={15}
                     max={240}
@@ -582,10 +585,11 @@ export function LiveLessonsPage({ initialLessons, students, user }: Props) {
 
                 {repeatWeekly && (
                   <div className="pt-2 animate-in fade-in">
-                    <label className="block text-xs font-semibold text-foreground/80">
+                    <label htmlFor="plan-repeat-until" className="block text-xs font-semibold text-foreground/80">
                       Tekrar Bitiş Tarihi
                     </label>
                     <input
+                      id="plan-repeat-until"
                       type="datetime-local"
                       value={repeatWeeklyUntil}
                       onChange={(e) => setRepeatWeeklyUntil(e.target.value)}
@@ -599,10 +603,11 @@ export function LiveLessonsPage({ initialLessons, students, user }: Props) {
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-foreground/80">
+                <label htmlFor="plan-description" className="block text-xs font-semibold text-foreground/80">
                   Ders Açıklaması / Kazanım ve Notlar
                 </label>
                 <textarea
+                  id="plan-description"
                   rows={2}
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}

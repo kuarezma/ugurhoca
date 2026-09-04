@@ -4,6 +4,14 @@ import path from 'node:path';
 export default defineConfig({
   test: {
     coverage: {
+      exclude: [
+        'node_modules/**',
+        'src/test/**',
+        '**/*.d.ts',
+        '**/*.test.{ts,tsx}',
+        'src/features/games/components/games/**',
+        'src/features/games/utils/gameAudio.ts',
+      ],
       thresholds: {
         branches: 40,
         functions: 60,

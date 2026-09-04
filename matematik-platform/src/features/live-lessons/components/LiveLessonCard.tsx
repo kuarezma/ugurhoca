@@ -241,10 +241,19 @@ export function LiveLessonCard({
               </button>
 
               {calendarOpen && (
-                <div
-                  className="absolute bottom-full left-0 z-20 mb-2 w-48 rounded-xl border border-border bg-card p-1.5 shadow-xl backdrop-blur-xl animate-in fade-in zoom-in-95"
-                  onMouseLeave={() => setCalendarOpen(false)}
-                >
+                <>
+                  <button
+                    type="button"
+                    aria-label="Menüyü kapat"
+                    tabIndex={-1}
+                    className="fixed inset-0 z-10 cursor-default bg-transparent"
+                    onClick={() => setCalendarOpen(false)}
+                  />
+                  <div
+                    role="menu"
+                    aria-orientation="vertical"
+                    className="absolute bottom-full left-0 z-20 mb-2 w-48 rounded-xl border border-border bg-card p-1.5 shadow-xl backdrop-blur-xl animate-in fade-in zoom-in-95"
+                  >
                   <a
                     href={googleCalUrl}
                     target="_blank"
@@ -267,7 +276,8 @@ export function LiveLessonCard({
                     <Calendar className="h-3 w-3 opacity-60" />
                   </button>
                 </div>
-              )}
+              </>
+            )}
             </div>
           )}
         </div>

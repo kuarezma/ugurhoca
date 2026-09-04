@@ -13,6 +13,13 @@ type Props = {
   students: AppUser[];
 };
 
+type ContentProps = {
+  lesson: LiveLesson;
+  onClose: () => void;
+  onSuccess: (updatedLesson: LiveLesson) => void;
+  students: AppUser[];
+};
+
 const gradeOptions = [
   { label: '5. Sınıf', value: '5' },
   { label: '6. Sınıf', value: '6' },
@@ -32,15 +39,12 @@ function toLocalInputValue(isoString: string) {
   )}:${pad(date.getMinutes())}`;
 }
 
-export function LiveLessonEditModal({
-  isOpen,
+function LiveLessonEditModalContent({
   lesson,
   onClose,
   onSuccess,
   students,
-}: Props) {
-  if (!isOpen || !lesson) return null;
-
+}: ContentProps) {
   const [title, setTitle] = useState(lesson.title);
   const [description, setDescription] = useState(lesson.description || '');
   const [startsAt, setStartsAt] = useState(() => toLocalInputValue(lesson.starts_at));
@@ -293,4 +297,9 @@ export function LiveLessonEditModal({
       </div>
     </div>
   );
+}
+
+export function LiveLessonEditModal(props: Props) {
+  if (!props.isOpen || !props.lesson) return null;
+  return <LiveLessonEditModalContent {...props} lesson={props.lesson} />;
 }
