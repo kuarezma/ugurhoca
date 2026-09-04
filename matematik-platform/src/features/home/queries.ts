@@ -214,40 +214,87 @@ export const fetchHomeFeed = async () => {
   return { announcements, documents };
 };
 
+const userAssignmentsCache = new Map<
+  string,
+  { data: SharedDocumentAssignment[]; expiresAt: number }
+>();
+const inFlightAssignmentsFetch = new Map<
+  string,
+  Promise<SharedDocumentAssignment[]>
+>();
+
+export const clearUserAssignmentsCache = (userId?: string) => {
+  if (userId) {
+    userAssignmentsCache.delete(userId);
+    inFlightAssignmentsFetch.delete(userId);
+  } else {
+    userAssignmentsCache.clear();
+    inFlightAssignmentsFetch.clear();
+  }
+};
+
 export const fetchUserAssignments = async (userId: string) => {
-  const [sharedDocumentsResponse, notificationsResponse] = await Promise.all([
-    supabase
-      .from('shared_documents')
-      .select('*')
-      .eq('student_id', userId)
-      .order('created_at', { ascending: false }),
-    supabase
-      .from('notifications')
-      .select('*')
-      .eq('user_id', userId)
-      .order('created_at', { ascending: false }),
-  ]);
+  const cached = userAssignmentsCache.get(userId);
+  if (cached && cached.expiresAt > Date.now()) {
+    return cached.data;
+  }
 
-  const sharedDocuments = (sharedDocumentsResponse.data ||
-    []) as SharedDocumentAssignment[];
-  const notifications = (notificationsResponse.data ||
-    []) as SharedDocumentAssignment[];
+  const inFlight = inFlightAssignmentsFetch.get(userId);
+  if (inFlight) {
+    return inFlight;
+  }
 
-  return [
-    ...sharedDocuments.map((item) => ({ ...item, source: 'shared' as const })),
-    ...notifications
-      .filter(
-        (item) =>
-          (item.type === 'assignment' || item.type === 'document') &&
-          !item.is_read,
-      )
-      .map((item) => ({ ...item, source: 'notification' as const })),
-  ];
+  const fetchPromise = (async () => {
+    const [sharedDocumentsResponse, notificationsResponse] = await Promise.all([
+      supabase
+        .from('shared_documents')
+        .select('*')
+        .eq('student_id', userId)
+        .order('created_at', { ascending: false }),
+      supabase
+        .from('notifications')
+        .select('*')
+        .eq('user_id', userId)
+        .order('created_at', { ascending: false }),
+    ]);
+
+    const sharedDocuments = (sharedDocumentsResponse.data ||
+      []) as SharedDocumentAssignment[];
+    const notifications = (notificationsResponse.data ||
+      []) as SharedDocumentAssignment[];
+
+    const result = [
+      ...sharedDocuments.map((item) => ({ ...item, source: 'shared' as const })),
+      ...notifications
+        .filter(
+          (item) =>
+            (item.type === 'assignment' || item.type === 'document') &&
+            !item.is_read,
+        )
+        .map((item) => ({ ...item, source: 'notification' as const })),
+    ];
+
+    userAssignmentsCache.set(userId, {
+      data: result,
+      expiresAt: Date.now() + 15_000,
+    });
+
+    return result;
+  })();
+
+  inFlightAssignmentsFetch.set(userId, fetchPromise);
+
+  try {
+    return await fetchPromise;
+  } finally {
+    inFlightAssignmentsFetch.delete(userId);
+  }
 };
 
 export const dismissHomeAssignment = async (
   assignment: SharedDocumentAssignment,
 ) => {
+  clearUserAssignmentsCache();
   if (assignment.source === 'shared') {
     await supabase.from('shared_documents').delete().eq('id', assignment.id);
     return;

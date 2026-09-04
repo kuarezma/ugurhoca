@@ -130,6 +130,7 @@ export function HomeSuccessRoadmap({
                 {item.href ? (
                   <Link
                     href={item.href}
+                    prefetch={false}
                     className={`inline-flex w-full items-center justify-center gap-1.5 rounded-xl border px-3 py-2 text-xs font-bold transition hover:scale-[1.02] active:scale-[0.98] ${
                       isLight
                         ? 'border-slate-200 bg-slate-50 text-slate-800 hover:bg-slate-100'

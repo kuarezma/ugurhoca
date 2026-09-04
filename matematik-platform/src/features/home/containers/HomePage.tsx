@@ -233,41 +233,57 @@ export default function HomePage({ activeLiveLesson, initialFeed }: HomePageProp
           <HomeFooter isLight={isLight} />
         </div>
       </div>
-      <HomeAnnouncementModal
-        announcement={selectedAnnouncement}
-        onClose={() => setSelectedAnnouncement(null)}
-      />
-      <FormulaFlashcardsModal
-        isOpen={isFlashcardsOpen}
-        onClose={() => setIsFlashcardsOpen(false)}
-      />
-      <ScratchpadModal
-        isOpen={isScratchpadOpen}
-        onClose={() => setIsScratchpadOpen(false)}
-      />
-      <ExamScoreCalculatorModal
-        isOpen={calculatorState.isOpen}
-        initialTab={calculatorState.tab}
-        onClose={() => setCalculatorState((prev) => ({ ...prev, isOpen: false }))}
-      />
-      <FocusPomodoroModal
-        isOpen={isPomodoroOpen}
-        onClose={() => setIsPomodoroOpen(false)}
-      />
-      <TopicChecklistModal
-        isOpen={isChecklistOpen}
-        onClose={() => setIsChecklistOpen(false)}
-      />
-      <MathGraphVisualizerModal
-        isOpen={isGraphOpen}
-        onClose={() => setIsGraphOpen(false)}
-        isLight={isLight}
-      />
-      <VisualMathProofsModal
-        isOpen={isProofsOpen}
-        onClose={() => setIsProofsOpen(false)}
-        isLight={isLight}
-      />
+      {selectedAnnouncement ? (
+        <HomeAnnouncementModal
+          announcement={selectedAnnouncement}
+          onClose={() => setSelectedAnnouncement(null)}
+        />
+      ) : null}
+      {isFlashcardsOpen ? (
+        <FormulaFlashcardsModal
+          isOpen={isFlashcardsOpen}
+          onClose={() => setIsFlashcardsOpen(false)}
+        />
+      ) : null}
+      {isScratchpadOpen ? (
+        <ScratchpadModal
+          isOpen={isScratchpadOpen}
+          onClose={() => setIsScratchpadOpen(false)}
+        />
+      ) : null}
+      {calculatorState.isOpen ? (
+        <ExamScoreCalculatorModal
+          isOpen={calculatorState.isOpen}
+          initialTab={calculatorState.tab}
+          onClose={() => setCalculatorState((prev) => ({ ...prev, isOpen: false }))}
+        />
+      ) : null}
+      {isPomodoroOpen ? (
+        <FocusPomodoroModal
+          isOpen={isPomodoroOpen}
+          onClose={() => setIsPomodoroOpen(false)}
+        />
+      ) : null}
+      {isChecklistOpen ? (
+        <TopicChecklistModal
+          isOpen={isChecklistOpen}
+          onClose={() => setIsChecklistOpen(false)}
+        />
+      ) : null}
+      {isGraphOpen ? (
+        <MathGraphVisualizerModal
+          isOpen={isGraphOpen}
+          onClose={() => setIsGraphOpen(false)}
+          isLight={isLight}
+        />
+      ) : null}
+      {isProofsOpen ? (
+        <VisualMathProofsModal
+          isOpen={isProofsOpen}
+          onClose={() => setIsProofsOpen(false)}
+          isLight={isLight}
+        />
+      ) : null}
     </main>
   );
 }

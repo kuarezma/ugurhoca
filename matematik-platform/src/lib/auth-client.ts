@@ -15,6 +15,7 @@ type RouterLike = {
 };
 
 type AuthOptions = {
+  forceRefresh?: boolean;
   redirectToLogin?: boolean;
   router?: RouterLike;
 };
@@ -127,62 +128,119 @@ export const requireClientSession = async (options: AuthOptions = {}) => {
   return session;
 };
 
+type CachedProfileEntry = {
+  expiresAt: number;
+  result: { profile: AppUser; session: Session } | null;
+  userId: string;
+};
+
+let profileCache: CachedProfileEntry | null = null;
+let inFlightProfilePromise: Promise<{ profile: AppUser; session: Session } | null> | null = null;
+
+export const clearUserProfileCache = () => {
+  profileCache = null;
+  inFlightProfilePromise = null;
+};
+
 export const getCurrentUserProfile = async <TProfile extends AppUser = AppUser>(
   options: AuthOptions = {},
 ): Promise<{ profile: TProfile; session: Session } | null> => {
-  const session = await requireClientSession(options);
-
-  if (!session) {
-    writeAuthSnapshotCookie(null);
-    return null;
+  if (!options.forceRefresh && profileCache && profileCache.expiresAt > Date.now()) {
+    return profileCache.result as { profile: TProfile; session: Session } | null;
   }
 
-  const { data: profile } = await supabase
-    .from('profiles')
-    .select('*')
-    .eq('id', session.user.id)
-    .single();
+  if (inFlightProfilePromise && !options.forceRefresh) {
+    return (await inFlightProfilePromise) as { profile: TProfile; session: Session } | null;
+  }
 
-  if (profile) {
-    const resolvedProfile = {
-      ...(profile as Record<string, unknown>),
-      email: session.user.email ?? '',
-      isAdmin:
-        typeof profile.isAdmin === 'boolean'
-          ? profile.isAdmin
-          : isAdminEmail(session.user.email),
-    } as TProfile;
+  const fetchPromise = (async () => {
+    const session = await requireClientSession(options);
 
-    writeAuthSnapshotCookie(createAuthSnapshot(resolvedProfile));
+    if (!session) {
+      writeAuthSnapshotCookie(null);
+      profileCache = null;
+      return null;
+    }
 
-    return {
-      profile: resolvedProfile,
-      session,
+    if (
+      !options.forceRefresh &&
+      profileCache &&
+      profileCache.userId === session.user.id &&
+      profileCache.expiresAt > Date.now()
+    ) {
+      return profileCache.result;
+    }
+
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('*')
+      .eq('id', session.user.id)
+      .single();
+
+    let result: { profile: AppUser; session: Session };
+
+    if (profile) {
+      const resolvedProfile = {
+        ...(profile as Record<string, unknown>),
+        email: session.user.email ?? '',
+        isAdmin:
+          typeof profile.isAdmin === 'boolean'
+            ? profile.isAdmin
+            : isAdminEmail(session.user.email),
+      } as AppUser;
+
+      writeAuthSnapshotCookie(createAuthSnapshot(resolvedProfile));
+
+      result = {
+        profile: resolvedProfile,
+        session,
+      };
+    } else {
+      const fallbackProfile = {
+        email: session.user.email ?? '',
+        grade: session.user.user_metadata?.grade ?? 5,
+        id: session.user.id,
+        isAdmin: isAdminEmail(session.user.email),
+        name: session.user.user_metadata?.name ?? 'Öğrenci',
+      } as AppUser;
+
+      writeAuthSnapshotCookie(createAuthSnapshot(fallbackProfile));
+
+      result = {
+        profile: fallbackProfile,
+        session,
+      };
+    }
+
+    profileCache = {
+      expiresAt: Date.now() + 15_000,
+      result,
+      userId: session.user.id,
     };
+
+    return result;
+  })();
+
+  inFlightProfilePromise = fetchPromise;
+
+  try {
+    const res = await fetchPromise;
+    return res as { profile: TProfile; session: Session } | null;
+  } finally {
+    if (inFlightProfilePromise === fetchPromise) {
+      inFlightProfilePromise = null;
+    }
   }
-
-  const fallbackProfile = {
-    email: session.user.email ?? '',
-    grade: session.user.user_metadata?.grade ?? 5,
-    id: session.user.id,
-    isAdmin: isAdminEmail(session.user.email),
-    name: session.user.user_metadata?.name ?? 'Öğrenci',
-  } as TProfile;
-
-  writeAuthSnapshotCookie(createAuthSnapshot(fallbackProfile));
-
-  return {
-    profile: fallbackProfile,
-    session,
-  };
 };
 
 export const clearClientAuthSnapshotCookie = () => {
+  clearUserProfileCache();
   writeAccessTokenCookie(null);
   writeAuthSnapshotCookie(null);
 };
 
 export const signOutClient = async () => {
+  clearUserProfileCache();
   await supabase.auth.signOut();
   clearClientAuthSnapshotCookie();
 };

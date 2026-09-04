@@ -37,42 +37,52 @@ const parseBroadcastPayload = (
   return null;
 };
 
+type MessagesStore = {
+  channel: ReturnType<typeof supabase.channel> | null;
+  fetchPromise: Promise<void> | null;
+  lastFetchedAt: number;
+  listeners: Set<() => void>;
+  loading: boolean;
+  messages: DashboardNotification[];
+  refCount: number;
+};
+
+const messageStores = new Map<string, MessagesStore>();
+
+const getOrCreateMessageStore = (userId: string): MessagesStore => {
+  let store = messageStores.get(userId);
+  if (!store) {
+    store = {
+      channel: null,
+      fetchPromise: null,
+      lastFetchedAt: 0,
+      listeners: new Set(),
+      loading: false,
+      messages: [],
+      refCount: 0,
+    };
+    messageStores.set(userId, store);
+  }
+  return store;
+};
+
+const notifyMessageStoreListeners = (store: MessagesStore) => {
+  store.listeners.forEach((listener) => listener());
+};
+
 export const useNavbarMessages = (userId: string | null | undefined) => {
-  const [messages, setMessages] = useState<DashboardNotification[]>([]);
-  const [loading, setLoading] = useState(false);
+  const [, setTick] = useState(0);
 
-  const fetchMessages = useCallback(async (targetUserId: string) => {
-    const { data } = await supabase
-      .from('notifications')
-      .select('*')
-      .eq('user_id', targetUserId)
-      .in('type', MESSAGE_TYPES as unknown as string[])
-      .order('created_at', { ascending: false })
-      .limit(MESSAGE_LIMIT);
-
-    setMessages(sortAsc((data ?? []) as DashboardNotification[]));
-  }, []);
+  const store = userId ? getOrCreateMessageStore(userId) : null;
 
   useEffect(() => {
-    if (!userId) {
-      setMessages([]);
+    if (!userId || !store) {
       return;
     }
 
-    let active = true;
-
-    const load = async () => {
-      setLoading(true);
-      try {
-        await fetchMessages(userId);
-      } finally {
-        if (active) {
-          setLoading(false);
-        }
-      }
-    };
-
-    void load();
+    const listener = () => setTick((t) => t + 1);
+    store.listeners.add(listener);
+    store.refCount += 1;
 
     const mergeIncoming = (incoming: DashboardNotification) => {
       if (
@@ -81,105 +91,153 @@ export const useNavbarMessages = (userId: string | null | undefined) => {
       ) {
         return;
       }
-      setMessages((current) => {
-        if (current.some((item) => item.id === incoming.id)) {
-          return current;
-        }
-        return sortAsc([...current, incoming]).slice(-MESSAGE_LIMIT);
-      });
+      if (store.messages.some((item) => item.id === incoming.id)) {
+        return;
+      }
+      store.messages = sortAsc([...store.messages, incoming]).slice(-MESSAGE_LIMIT);
+      notifyMessageStoreListeners(store);
     };
 
-    const channel = supabase
-      .channel(getStudentMessagesChannelName(userId))
-      .on(
-        'broadcast',
-        { event: ADMIN_MESSAGE_BROADCAST_EVENT },
-        (payload) => {
-          const row = parseBroadcastPayload(payload);
-          if (row?.type === 'admin-message') {
-            mergeIncoming(row);
-          }
-        },
-      )
-      .on(
-        'postgres_changes',
-        {
-          event: 'INSERT',
-          schema: 'public',
-          table: 'notifications',
-          filter: `user_id=eq.${userId}`,
-        },
-        (payload) => {
-          mergeIncoming(payload.new as DashboardNotification);
-        },
-      )
-      .on(
-        'postgres_changes',
-        {
-          event: 'UPDATE',
-          schema: 'public',
-          table: 'notifications',
-          filter: `user_id=eq.${userId}`,
-        },
-        (payload) => {
-          const updated = payload.new as DashboardNotification;
-          if (
-            updated.type !== 'admin-message' &&
-            updated.type !== 'sent-message'
-          ) {
-            return;
-          }
-          setMessages((current) =>
-            current.map((item) => (item.id === updated.id ? updated : item)),
-          );
-        },
-      )
-      .subscribe();
+    if (!store.channel) {
+      store.channel = supabase
+        .channel(getStudentMessagesChannelName(userId))
+        .on(
+          'broadcast',
+          { event: ADMIN_MESSAGE_BROADCAST_EVENT },
+          (payload) => {
+            const row = parseBroadcastPayload(payload);
+            if (row?.type === 'admin-message') {
+              mergeIncoming(row);
+            }
+          },
+        )
+        .on(
+          'postgres_changes',
+          {
+            event: 'INSERT',
+            schema: 'public',
+            table: 'notifications',
+            filter: `user_id=eq.${userId}`,
+          },
+          (payload) => {
+            mergeIncoming(payload.new as DashboardNotification);
+          },
+        )
+        .on(
+          'postgres_changes',
+          {
+            event: 'UPDATE',
+            schema: 'public',
+            table: 'notifications',
+            filter: `user_id=eq.${userId}`,
+          },
+          (payload) => {
+            const updated = payload.new as DashboardNotification;
+            if (
+              updated.type !== 'admin-message' &&
+              updated.type !== 'sent-message'
+            ) {
+              return;
+            }
+            store.messages = store.messages.map((item) =>
+              item.id === updated.id ? updated : item,
+            );
+            notifyMessageStoreListeners(store);
+          },
+        )
+        .subscribe();
+    }
+
+    const now = Date.now();
+    if (now - store.lastFetchedAt > 15_000 && !store.fetchPromise) {
+      store.loading = store.messages.length === 0;
+      store.fetchPromise = (async () => {
+        try {
+          const { data } = await supabase
+            .from('notifications')
+            .select('*')
+            .eq('user_id', userId)
+            .in('type', MESSAGE_TYPES as unknown as string[])
+            .order('created_at', { ascending: false })
+            .limit(MESSAGE_LIMIT);
+
+          store.messages = sortAsc((data ?? []) as DashboardNotification[]);
+          store.lastFetchedAt = Date.now();
+        } finally {
+          store.loading = false;
+          store.fetchPromise = null;
+          notifyMessageStoreListeners(store);
+        }
+      })();
+    }
 
     return () => {
-      active = false;
-      void supabase.removeChannel(channel);
-    };
-  }, [userId, fetchMessages]);
-
-  const appendMessage = useCallback((message: DashboardNotification) => {
-    setMessages((current) => {
-      if (current.some((item) => item.id === message.id)) {
-        return current;
+      store.listeners.delete(listener);
+      store.refCount -= 1;
+      if (store.refCount <= 0) {
+        store.refCount = 0;
+        if (store.channel) {
+          void supabase.removeChannel(store.channel);
+          store.channel = null;
+        }
       }
-      return sortAsc([...current, message]).slice(-MESSAGE_LIMIT);
-    });
-  }, []);
+    };
+  }, [userId, store]);
+
+  const appendMessage = useCallback(
+    (message: DashboardNotification) => {
+      if (!store) return;
+      if (store.messages.some((item) => item.id === message.id)) {
+        return;
+      }
+      store.messages = sortAsc([...store.messages, message]).slice(-MESSAGE_LIMIT);
+      notifyMessageStoreListeners(store);
+    },
+    [store],
+  );
 
   const refetch = useCallback(async () => {
-    if (!userId) return;
-    setLoading(true);
+    if (!userId || !store) return;
+    store.loading = true;
+    notifyMessageStoreListeners(store);
     try {
-      await fetchMessages(userId);
+      const { data } = await supabase
+        .from('notifications')
+        .select('*')
+        .eq('user_id', userId)
+        .in('type', MESSAGE_TYPES as unknown as string[])
+        .order('created_at', { ascending: false })
+        .limit(MESSAGE_LIMIT);
+
+      store.messages = sortAsc((data ?? []) as DashboardNotification[]);
+      store.lastFetchedAt = Date.now();
     } finally {
-      setLoading(false);
+      store.loading = false;
+      notifyMessageStoreListeners(store);
     }
-  }, [userId, fetchMessages]);
+  }, [userId, store]);
 
   const markAllAsRead = useCallback(async () => {
-    const unreadIds = messages
+    if (!store) return;
+    const unreadIds = store.messages
       .filter((item) => item.type === 'admin-message' && !item.is_read)
       .map((item) => item.id);
 
     if (unreadIds.length === 0) return;
 
-    setMessages((current) =>
-      current.map((item) =>
-        unreadIds.includes(item.id) ? { ...item, is_read: true } : item,
-      ),
+    store.messages = store.messages.map((item) =>
+      unreadIds.includes(item.id) ? { ...item, is_read: true } : item,
     );
+    notifyMessageStoreListeners(store);
 
     await supabase
       .from('notifications')
       .update({ is_read: true })
       .in('id', unreadIds);
-  }, [messages]);
+  }, [store]);
 
+  const messages = store ? store.messages : [];
+  const loading = store ? store.loading : false;
   const unreadCount = messages.filter(
     (item) => item.type === 'admin-message' && !item.is_read,
   ).length;

@@ -113,6 +113,7 @@ export function HomeHeroSection({ isLight, user }: HomeHeroSectionProps) {
               <div className="flex flex-col sm:flex-row gap-2.5 sm:gap-3">
                 <Link
                   href="/icerikler"
+                  prefetch={false}
                   onMouseEnter={() => prefetchHref('/icerikler')}
                   onFocus={() => prefetchHref('/icerikler')}
                   className="group inline-flex h-11 sm:h-12 items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-500 px-5 sm:px-6 text-sm font-bold text-white shadow-md transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2"
@@ -123,6 +124,7 @@ export function HomeHeroSection({ isLight, user }: HomeHeroSectionProps) {
                 </Link>
                 <Link
                   href="/oyunlar"
+                  prefetch={false}
                   onMouseEnter={() => prefetchHref('/oyunlar')}
                   onFocus={() => prefetchHref('/oyunlar')}
                   className={`inline-flex h-11 sm:h-12 items-center justify-center gap-2 rounded-2xl border px-5 text-sm font-semibold transition-all duration-200 hover:-translate-y-0.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 ${
@@ -155,6 +157,7 @@ export function HomeHeroSection({ isLight, user }: HomeHeroSectionProps) {
                     <Link
                       key={item.label}
                       href={item.href}
+                      prefetch={false}
                       className={`shrink-0 rounded-xl px-3.5 py-1.5 text-xs font-semibold transition-all duration-200 ${
                         item.highlight
                           ? 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-sm hover:scale-105'
@@ -211,6 +214,7 @@ export function HomeHeroSection({ isLight, user }: HomeHeroSectionProps) {
               >
                 <Link
                   href={category.href}
+                  prefetch={false}
                   onMouseEnter={() =>
                     prefetchCategory(category.href, category.contentType)
                   }

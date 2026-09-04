@@ -20,7 +20,6 @@ export default function AuthCookieSync() {
       }
 
       if (
-        event === 'INITIAL_SESSION' ||
         event === 'SIGNED_IN' ||
         event === 'TOKEN_REFRESHED' ||
         event === 'USER_UPDATED'

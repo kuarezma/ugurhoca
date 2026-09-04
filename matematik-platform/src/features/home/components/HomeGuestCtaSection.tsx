@@ -68,6 +68,7 @@ export function HomeGuestCtaSection({ isLight }: HomeGuestCtaSectionProps) {
           </div>
           <Link
             href="/kayit"
+            prefetch={false}
             className="inline-flex items-center gap-2 bg-gradient-to-r from-indigo-500 to-purple-500 text-white font-semibold px-6 py-3 rounded-xl hover:from-indigo-600 hover:to-purple-600 transition-all"
           >
             <Play className="w-5 h-5" />

@@ -8,6 +8,7 @@ import {
   getInitialContentGradeFilter,
   loadInitialContentDocuments,
 } from '@/features/content/server';
+import { normalizeContentGrade } from '@/features/content/utils';
 import { createPageMetadata } from '@/lib/site-metadata';
 
 export const metadata: Metadata = createPageMetadata({
@@ -16,6 +17,8 @@ export const metadata: Metadata = createPageMetadata({
     'Çalışma kağıtları, ders notları, videolar ve dokümanları sınıf ve türe göre keşfet.',
   path: '/icerikler',
 });
+
+export const revalidate = 60;
 
 type IceriklerPageProps = {
   searchParams?: Promise<Record<string, string | string[] | undefined>>;
@@ -26,10 +29,14 @@ export default async function IceriklerPage({
 }: IceriklerPageProps) {
   const resolvedSearchParams = searchParams ? await searchParams : {};
   const typeParam = resolvedSearchParams.type;
+  const gradeParam = resolvedSearchParams.grade;
   const requestedType =
     typeof typeParam === 'string' && typeParam.length > 0 ? typeParam : 'all';
   const initialType = CONTENT_TYPE_MAPPING[requestedType] || requestedType;
-  const initialGrade = await getInitialContentGradeFilter();
+  const initialGrade =
+    typeof gradeParam === 'string' && gradeParam.length > 0
+      ? normalizeContentGrade(gradeParam)
+      : await getInitialContentGradeFilter();
 
   const initialData = await loadInitialContentDocuments(
     1,

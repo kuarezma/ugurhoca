@@ -38,7 +38,7 @@ export function MobileBottomNav() {
               <Link
                 key={item.href}
                 href={item.href}
-                prefetch={true}
+                prefetch={false}
                 aria-current={isActive ? 'page' : undefined}
                 className={`relative flex min-h-[44px] min-w-[52px] flex-col items-center justify-center rounded-xl px-2 py-1 text-[11px] font-semibold transition-all duration-200 ${
                   isActive

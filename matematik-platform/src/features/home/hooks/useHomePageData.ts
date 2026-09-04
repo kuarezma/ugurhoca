@@ -74,11 +74,6 @@ export const useHomePageData = (initialFeed?: HomeInitialFeed | null) => {
           });
         }
 
-        const nextDocuments = await fetchHomeDocuments();
-        if (!isDisposed) {
-          startTransition(() => setDocuments(nextDocuments));
-        }
-
         return;
       }
 

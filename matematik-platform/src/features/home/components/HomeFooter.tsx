@@ -62,27 +62,27 @@ export function HomeFooter({ isLight }: HomeFooterProps) {
             </h4>
             <ul className="space-y-1.5 text-xs text-slate-400">
               <li>
-                <Link href="/icerikler" prefetch={true} className="hover:text-brand-primary-soft transition">
+                <Link href="/icerikler" prefetch={false} className="hover:text-brand-primary-soft transition">
                   Ders Notları & PDF'ler
                 </Link>
               </li>
               <li>
-                <Link href="/testler" prefetch={true} className="hover:text-brand-primary-soft transition">
+                <Link href="/testler" prefetch={false} className="hover:text-brand-primary-soft transition">
                   İnteraktif Testler
                 </Link>
               </li>
               <li>
-                <Link href="/programlar" prefetch={true} className="hover:text-brand-primary-soft transition">
+                <Link href="/programlar" prefetch={false} className="hover:text-brand-primary-soft transition">
                   LGS & YKS Rehberliği
                 </Link>
               </li>
               <li>
-                <Link href="/oyunlar" prefetch={true} className="hover:text-brand-primary-soft transition">
+                <Link href="/oyunlar" prefetch={false} className="hover:text-brand-primary-soft transition">
                   Matematik Oyunları
                 </Link>
               </li>
               <li>
-                <Link href="/canli-ders" prefetch={true} className="hover:text-brand-primary-soft transition">
+                <Link href="/canli-ders" prefetch={false} className="hover:text-brand-primary-soft transition">
                   Canlı Ders Salonu
                 </Link>
               </li>
@@ -100,17 +100,17 @@ export function HomeFooter({ isLight }: HomeFooterProps) {
             </h4>
             <ul className="space-y-1.5 text-xs text-slate-400">
               <li>
-                <Link href="/gizlilik" prefetch={true} className="hover:text-brand-primary-soft transition">
+                <Link href="/gizlilik" prefetch={false} className="hover:text-brand-primary-soft transition">
                   Gizlilik Politikası
                 </Link>
               </li>
               <li>
-                <Link href="/kvkk" prefetch={true} className="hover:text-brand-primary-soft transition">
+                <Link href="/kvkk" prefetch={false} className="hover:text-brand-primary-soft transition">
                   KVKK Aydınlatma Metni
                 </Link>
               </li>
               <li>
-                <Link href="/gizlilik#cerezler" prefetch={true} className="hover:text-brand-primary-soft transition">
+                <Link href="/gizlilik#cerezler" prefetch={false} className="hover:text-brand-primary-soft transition">
                   Çerez Tercihleri
                 </Link>
               </li>

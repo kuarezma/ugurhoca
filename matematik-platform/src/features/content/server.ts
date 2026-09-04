@@ -24,6 +24,10 @@ type ContentServerCacheEntry = {
 };
 
 const contentServerCache = new Map<string, ContentServerCacheEntry>();
+const inFlightContentPromises = new Map<
+  string,
+  Promise<ContentDocumentsPayload>
+>();
 
 const getServerContentCacheKey = (
   page: number,
@@ -67,57 +71,95 @@ export const loadInitialContentDocuments = async (
     if (cached && Date.now() - cached.timestamp < CONTENT_SERVER_CACHE_TTL_MS) {
       return cached.payload;
     }
+
+    const inFlight = inFlightContentPromises.get(cacheKey);
+    if (inFlight) {
+      return inFlight;
+    }
   }
 
-  let countQuery = serverSupabase
-    .from('documents')
-    .select('*', { count: 'exact', head: true });
+  const fetchPromise = (async () => {
+    try {
+      let countQuery = serverSupabase
+        .from('documents')
+        .select('*', { count: 'exact', head: true });
 
-  if (gradeFilter !== 'all') {
-    countQuery = countQuery.contains('grade', [gradeFilter]);
-  }
+      if (gradeFilter !== 'all') {
+        countQuery = countQuery.contains('grade', [gradeFilter]);
+      }
 
-  if (typeFilter !== 'all') {
-    countQuery =
-      queryTypes.length === 1
-        ? countQuery.eq('type', queryTypes[0])
-        : countQuery.in('type', queryTypes);
-  }
+      if (typeFilter !== 'all') {
+        countQuery =
+          queryTypes.length === 1
+            ? countQuery.eq('type', queryTypes[0])
+            : countQuery.in('type', queryTypes);
+      }
 
-  let dataQuery = serverSupabase
-    .from('documents')
-    .select('*')
-    .order('created_at', { ascending: false });
+      let dataQuery = serverSupabase
+        .from('documents')
+        .select('*')
+        .order('created_at', { ascending: false });
 
-  if (gradeFilter !== 'all') {
-    dataQuery = dataQuery.contains('grade', [gradeFilter]);
-  }
+      if (gradeFilter !== 'all') {
+        dataQuery = dataQuery.contains('grade', [gradeFilter]);
+      }
 
-  if (typeFilter !== 'all') {
-    dataQuery =
-      queryTypes.length === 1
-        ? dataQuery.eq('type', queryTypes[0])
-        : dataQuery.in('type', queryTypes);
-  }
+      if (typeFilter !== 'all') {
+        dataQuery =
+          queryTypes.length === 1
+            ? dataQuery.eq('type', queryTypes[0])
+            : dataQuery.in('type', queryTypes);
+      }
 
-  const [{ count }, { data }] = await Promise.all([
-    countQuery,
-    dataQuery.range(from, to),
-  ]);
+      const [{ count, error: countError }, { data, error: dataError }] =
+        await Promise.all([countQuery, dataQuery.range(from, to)]);
 
-  const payload = {
-    count: count || 0,
-    documents: sortContentDocumentsByNewest(
-      (data || []) as ContentDocument[],
-    ),
-  };
+      if (countError || dataError) {
+        console.warn(
+          '[loadInitialContentDocuments] Supabase query error:',
+          countError || dataError,
+        );
+        const staleCached = contentServerCache.get(cacheKey);
+        if (staleCached) {
+          return staleCached.payload;
+        }
+        return { count: 0, documents: [] };
+      }
+
+      const payload = {
+        count: count || 0,
+        documents: sortContentDocumentsByNewest(
+          (data || []) as ContentDocument[],
+        ),
+      };
+
+      if (useCache) {
+        contentServerCache.set(cacheKey, {
+          payload,
+          timestamp: Date.now(),
+        });
+      }
+
+      return payload;
+    } catch (err) {
+      console.warn('[loadInitialContentDocuments] Unexpected error:', err);
+      const staleCached = contentServerCache.get(cacheKey);
+      if (staleCached) {
+        return staleCached.payload;
+      }
+      return { count: 0, documents: [] };
+    }
+  })();
 
   if (useCache) {
-    contentServerCache.set(cacheKey, {
-      payload,
-      timestamp: Date.now(),
-    });
+    inFlightContentPromises.set(cacheKey, fetchPromise);
   }
 
-  return payload;
+  try {
+    return await fetchPromise;
+  } finally {
+    if (useCache) {
+      inFlightContentPromises.delete(cacheKey);
+    }
+  }
 };

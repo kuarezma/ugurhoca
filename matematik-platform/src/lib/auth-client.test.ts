@@ -21,6 +21,7 @@ vi.mock('@/lib/supabase/client', () => ({
 }));
 
 import {
+  clearUserProfileCache,
   getClientSession,
   getCurrentUserProfile,
   redirectToHome,
@@ -56,6 +57,7 @@ const getCookieValue = (name: string) =>
 describe('auth-client', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    clearUserProfileCache();
 
     document.cookie = `${AUTH_ACCESS_TOKEN_COOKIE_NAME}=; path=/; max-age=0`;
     document.cookie = `${AUTH_SNAPSHOT_COOKIE_NAME}=; path=/; max-age=0`;
@@ -179,5 +181,41 @@ describe('auth-client', () => {
       isAdmin: false,
       name: 'Ada Öğrenci',
     });
+  });
+
+  it('deduplicates concurrent calls to getCurrentUserProfile and uses cache', async () => {
+    const session = createSession();
+    mockGetSession.mockResolvedValue({
+      data: { session },
+      error: null,
+    });
+    mockProfileSingle.mockResolvedValue({
+      data: {
+        email: 'ogrenci@example.com',
+        grade: 8,
+        id: 'user-1',
+        isAdmin: false,
+        name: 'Ada Profil',
+      },
+    });
+
+    // 3 concurrent calls
+    const [r1, r2, r3] = await Promise.all([
+      getCurrentUserProfile({ redirectToLogin: false }),
+      getCurrentUserProfile({ redirectToLogin: false }),
+      getCurrentUserProfile({ redirectToLogin: false }),
+    ]);
+
+    expect(r1?.profile.name).toBe('Ada Profil');
+    expect(r2?.profile.name).toBe('Ada Profil');
+    expect(r3?.profile.name).toBe('Ada Profil');
+
+    // Supabase .from('profiles') should be called only once
+    expect(mockProfileSingle).toHaveBeenCalledTimes(1);
+
+    // Subsequent call within cache window also shouldn't trigger another query
+    const r4 = await getCurrentUserProfile({ redirectToLogin: false });
+    expect(r4?.profile.name).toBe('Ada Profil');
+    expect(mockProfileSingle).toHaveBeenCalledTimes(1);
   });
 });

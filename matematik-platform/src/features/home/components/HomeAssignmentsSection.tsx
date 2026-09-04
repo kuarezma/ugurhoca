@@ -98,6 +98,7 @@ export function HomeAssignmentsSection({
                 {assignments.length > 3 && (
                   <Link
                     href="/odevler"
+                    prefetch={false}
                     className="inline-flex items-center gap-2 mt-4 text-orange-400 hover:text-orange-300 text-sm font-medium transition-colors"
                   >
                     Tüm ödevleri gör ({assignments.length})

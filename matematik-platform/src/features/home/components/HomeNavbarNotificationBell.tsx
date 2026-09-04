@@ -262,6 +262,7 @@ export function HomeNavbarNotificationBell({
             >
               <Link
                 href="/profil"
+                prefetch={false}
                 onClick={() => setOpen(false)}
                 className={`inline-flex items-center gap-1 text-xs font-medium transition-colors ${
                   isLight

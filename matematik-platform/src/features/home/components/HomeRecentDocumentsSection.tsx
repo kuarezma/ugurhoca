@@ -35,6 +35,7 @@ export function HomeRecentDocumentsSection({
           </h2>
           <Link
             href="/icerikler"
+            prefetch={false}
             className="text-indigo-400 hover:text-indigo-300 text-sm font-medium flex items-center gap-1"
           >
             Tümünü Gör <ChevronRight className="w-4 h-4" />
