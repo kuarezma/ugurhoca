@@ -78,87 +78,78 @@ export function ExamCountdown({ exam, isLight }: ExamCountdownProps) {
   return (
     <div
       className={[
-        "exam-countdown relative overflow-hidden rounded-[26px] border p-3 sm:p-3.5 transition-all",
+        "exam-countdown relative overflow-hidden rounded-3xl border p-4 sm:p-5 transition-all duration-300",
         isLight
-          ? "light-card shadow-[0_14px_30px_rgba(99,102,241,0.14)]"
-          : "glass border-white/10 bg-gradient-to-br from-slate-950/95 via-slate-900/92 to-slate-800/90 shadow-[0_20px_48px_rgba(15,23,42,0.42)]",
+          ? "border-slate-200/90 bg-white/95 shadow-bento hover:shadow-bento-hover hover:border-indigo-300/60"
+          : "border-white/10 bg-slate-900/90 backdrop-blur-xl shadow-xl hover:border-white/20 hover:shadow-2xl",
       ].join(" ")}
     >
-      {/* Glow blob top-right — CSS animated */}
+      {/* Üst İnce Gradyan Aksan Çizgisi */}
       <div
-        className={`exam-countdown__glow-1 absolute -top-10 -right-8 h-24 w-24 rounded-full bg-gradient-to-br ${exam.accent} blur-3xl`}
-        style={{ opacity: isLight ? 0.2 : 0.3 }}
+        className={`absolute inset-x-0 top-0 h-1 bg-gradient-to-r ${exam.accent}`}
       />
-      {/* Glow blob bottom-left — CSS animated */}
-      <div
-        className={`exam-countdown__glow-2 absolute -bottom-10 -left-8 h-20 w-20 rounded-full bg-gradient-to-br ${exam.accent} blur-3xl`}
-        style={{ opacity: isLight ? 0.16 : 0.24 }}
-      />
-      {!isLight && (
-        <div
-          className={`absolute inset-0 bg-gradient-to-br ${exam.accent} opacity-[0.1]`}
-        />
-      )}
-      <div
-        className={`absolute inset-x-0 top-0 h-1.5 bg-gradient-to-r ${exam.accent}`}
-      />
-      {[0, 1, 2].map((index) => (
-        <span
-          key={index}
-          aria-hidden="true"
-          className={`exam-countdown__dot absolute rounded-full bg-gradient-to-br ${exam.accent} ${index === 0 ? "right-14 top-3 h-1.5 w-1.5" : index === 1 ? "right-8 top-8 h-2 w-2" : "left-4 top-5 h-1.5 w-1.5"}`}
-          style={{ animationDelay: `${index * 0.25}s` }}
-        />
-      ))}
 
+      {/* Başlık ve Durum Alanı */}
       <div className="relative flex items-start justify-between gap-3">
         <div className="min-w-0">
-          <div className="mb-1.5 flex flex-wrap items-center gap-1.5">
+          <div className="mb-1.5 flex flex-wrap items-center gap-2">
             <span
-              className={`inline-flex items-center gap-1 rounded-full px-2 py-1 text-[10px] font-bold uppercase tracking-[0.16em] ${isLight ? "border border-white/70 bg-gradient-to-r from-white to-slate-50 text-slate-700 shadow-sm" : "bg-white/10 text-white border border-white/15 shadow-[0_6px_16px_rgba(15,23,42,0.28)]"}`}
+              className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[11px] font-bold uppercase tracking-wider ${
+                isLight
+                  ? "bg-slate-100 text-slate-700 border border-slate-200/80"
+                  : "bg-white/10 text-white border border-white/15"
+              }`}
             >
-              <Clock3 className="w-3.5 h-3.5" />
+              <Clock3 className="w-3 h-3" />
               {exam.provider}
             </span>
             <span
-              className={`inline-flex items-center rounded-full bg-gradient-to-r ${exam.accent} px-2 py-1 text-[10px] font-bold text-white shadow-sm`}
+              className={`inline-flex items-center rounded-full bg-gradient-to-r ${exam.accent} px-2.5 py-0.5 text-[11px] font-bold text-white shadow-sm`}
             >
               {status}
             </span>
           </div>
           <h3
-            className={`truncate text-sm sm:text-[15px] font-black ${isLight ? "light-text-strong" : "text-white"}`}
+            className={`truncate font-display text-base sm:text-lg font-bold ${
+              isLight ? "text-slate-900" : "text-white"
+            }`}
           >
             {exam.title}
           </h3>
         </div>
 
         <div
-          className={`exam-countdown__icon flex h-9 w-9 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br ${exam.accent} shadow-lg`}
+          className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br ${exam.accent} shadow-md`}
         >
-          <Clock className="h-4.5 w-4.5 text-white" />
+          <Clock className="h-5 w-5 text-white" />
         </div>
       </div>
 
-      <div className="relative mt-3 grid grid-cols-3 gap-2">
-        {countdownItems.map((item, index) => (
+      {/* Geri Sayım Sayı Kutuları (Bento tarzı 3'lü kolon) */}
+      <div className="relative mt-4 grid grid-cols-3 gap-2.5">
+        {countdownItems.map((item) => (
           <div
             key={item.label}
             className={[
-              "exam-countdown__unit rounded-2xl border px-2 py-2.5 text-center",
+              "rounded-2xl border p-2.5 sm:p-3 text-center transition-transform hover:-translate-y-0.5",
               isLight
-                ? "border-white/75 bg-gradient-to-br from-white via-slate-50 to-indigo-50/80 shadow-sm"
-                : "bg-gradient-to-br from-white/12 via-white/8 to-transparent border-white/10 backdrop-blur-sm",
+                ? "border-slate-200/80 bg-slate-50/80 shadow-sm"
+                : "border-white/10 bg-white/5 backdrop-blur-sm",
             ].join(" ")}
-            style={{ animationDelay: `${index * 0.18}s` }}
           >
             <div
-              className={`text-lg sm:text-xl font-black leading-none ${isLight ? "bg-gradient-to-br from-slate-950 via-indigo-700 to-fuchsia-600 bg-clip-text text-transparent" : "bg-gradient-to-br from-white via-cyan-200 to-fuchsia-300 bg-clip-text text-transparent"}`}
+              className={`font-display text-2xl sm:text-3xl font-extrabold tabular-nums leading-none ${
+                isLight
+                  ? "text-slate-900"
+                  : "bg-gradient-to-br from-white via-slate-100 to-slate-300 bg-clip-text text-transparent"
+              }`}
             >
               {item.value}
             </div>
             <div
-              className={`mt-1.5 text-[9px] font-semibold uppercase tracking-[0.2em] ${isLight ? "text-slate-400" : "text-slate-300"}`}
+              className={`mt-1.5 text-[10px] font-bold uppercase tracking-wider ${
+                isLight ? "text-slate-500" : "text-slate-400"
+              }`}
             >
               {item.label}
             </div>
@@ -166,54 +157,59 @@ export function ExamCountdown({ exam, isLight }: ExamCountdownProps) {
         ))}
       </div>
 
+      {/* Alt Bilgi & Takvim Kutusu */}
       <div
         className={[
-          "relative mt-2.5 rounded-2xl border p-2.5",
+          "relative mt-3.5 rounded-2xl border p-3",
           isLight
-            ? "border-indigo-100 bg-gradient-to-r from-indigo-50 via-white to-pink-50/80 shadow-sm"
-            : "bg-gradient-to-r from-white/10 via-white/5 to-transparent border-white/10 backdrop-blur-sm",
+            ? "border-slate-200/70 bg-indigo-50/40 text-slate-700"
+            : "border-white/10 bg-white/5 text-slate-200 backdrop-blur-sm",
         ].join(" ")}
       >
-        <div
-          className={`text-[10px] font-bold uppercase tracking-[0.16em] ${isLight ? "text-slate-700" : "text-white"}`}
-        >
-          Sınav Takvimi
-        </div>
-        <div
-          className={`mt-1 text-[11px] sm:text-xs font-medium ${isLight ? "text-slate-600" : "text-slate-300"}`}
-        >
-          {exam.dateLabel}
+        <div className="flex items-center justify-between gap-2">
+          <div className="min-w-0">
+            <div
+              className={`text-[10px] font-bold uppercase tracking-wider ${
+                isLight ? "text-indigo-600" : "text-indigo-300"
+              }`}
+            >
+              Sınav Tarihi
+            </div>
+            <div className="mt-0.5 truncate text-xs sm:text-sm font-semibold">
+              {exam.dateLabel}
+            </div>
+          </div>
+
+          {exam.toolHref ? (
+            <Link
+              href={exam.toolHref}
+              className={`shrink-0 inline-flex items-center gap-1.5 rounded-xl px-3 py-1.5 text-xs font-bold transition-all ${
+                isLight
+                  ? "bg-indigo-600 text-white shadow-sm hover:bg-indigo-700"
+                  : "bg-white/15 text-white hover:bg-white/25 border border-white/10"
+              }`}
+            >
+              Puan Hesapla →
+            </Link>
+          ) : null}
         </div>
 
         {exam.subItems?.length ? (
-          <div className="mt-2 flex flex-wrap gap-1.5">
+          <div className="mt-2.5 flex flex-wrap gap-1.5 border-t border-slate-200/50 dark:border-white/10 pt-2">
             {exam.subItems.map((item) => (
               <div
                 key={item.label}
                 className={[
-                  "rounded-full px-2 py-1 text-[10px] font-semibold",
+                  "rounded-lg px-2 py-0.5 text-[10px] font-semibold",
                   isLight
-                    ? "bg-white/80 text-slate-700 shadow-sm ring-1 ring-indigo-100"
-                    : "bg-white/10 text-slate-200 ring-1 ring-white/10",
+                    ? "bg-white text-slate-700 shadow-sm border border-slate-200/80"
+                    : "bg-white/10 text-slate-300 border border-white/10",
                 ].join(" ")}
               >
-                {item.label}: {item.dateLabel}
+                <span className="font-bold text-indigo-500 dark:text-indigo-400">{item.label}:</span> {item.dateLabel}
               </div>
             ))}
           </div>
-        ) : null}
-
-        {exam.toolHref ? (
-          <Link
-            href={exam.toolHref}
-            className={`mt-2.5 inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[10px] font-bold ${
-              isLight
-                ? "bg-white text-slate-700 ring-1 ring-indigo-100"
-                : "bg-white/15 text-white ring-1 ring-white/10"
-            }`}
-          >
-            Puan Hesapla
-          </Link>
         ) : null}
       </div>
     </div>

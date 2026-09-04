@@ -74,8 +74,8 @@ export function HomeQuickToolsGrid({
       <div className="relative mx-auto max-w-6xl">
         <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
           <div>
-            <div className="mb-2 inline-flex items-center gap-1.5 rounded-full bg-brand-primary/15 px-3 py-1 text-xs font-bold text-brand-primary-soft">
-              <Sparkles className="h-3.5 w-3.5" />
+            <div className="mb-2 inline-flex items-center gap-1.5 rounded-full bg-indigo-50 dark:bg-indigo-500/15 border border-indigo-100 dark:border-indigo-500/20 px-3 py-1 text-xs font-bold text-indigo-700 dark:text-indigo-300">
+              <Sparkles className="h-3.5 w-3.5 text-indigo-500" />
               Süper Güçler & Hızlı Araçlar
             </div>
             <h2
@@ -103,29 +103,29 @@ export function HomeQuickToolsGrid({
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: idx * 0.06 }}
               whileHover={{ y: -4 }}
-              className={`tilt-on-hover group relative flex flex-col justify-between overflow-hidden rounded-3xl border p-5 sm:p-6 transition-all duration-300 ${
+              className={`group relative flex flex-col justify-between overflow-hidden rounded-3xl border p-5 sm:p-6 transition-all duration-300 ${
                 isLight
-                  ? 'border-slate-200 bg-white shadow-lg hover:border-brand-primary/40 hover:shadow-xl'
-                  : 'border-white/10 bg-slate-900/70 shadow-xl backdrop-blur-md hover:border-white/20 hover:bg-slate-900/90'
+                  ? 'border-slate-200/90 bg-white/95 shadow-bento hover:shadow-bento-hover hover:border-indigo-300'
+                  : 'border-white/10 bg-slate-900/80 shadow-xl backdrop-blur-xl hover:border-white/20 hover:shadow-2xl'
               }`}
             >
               {/* Üst Gradyan Şerit */}
               <div
-                className={`absolute inset-x-0 top-0 h-1.5 bg-gradient-to-r ${tool.gradient}`}
+                className={`absolute inset-x-0 top-0 h-1 bg-gradient-to-r ${tool.gradient}`}
               />
 
               <div>
                 <div className="mb-4 flex items-center justify-between">
                   <div
-                    className={`flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br ${tool.gradient} text-white shadow-md`}
+                    className={`flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br ${tool.gradient} text-white shadow-md transition-transform duration-300 group-hover:scale-105`}
                   >
                     <tool.icon className="h-6 w-6" />
                   </div>
                   <span
                     className={`rounded-full px-2.5 py-0.5 text-[11px] font-bold ${
                       isLight
-                        ? 'bg-slate-100 text-slate-700'
-                        : 'bg-white/10 text-slate-300'
+                        ? 'bg-slate-100 text-slate-700 border border-slate-200/60'
+                        : 'bg-white/10 text-slate-300 border border-white/10'
                     }`}
                   >
                     {tool.badge}
@@ -148,21 +148,19 @@ export function HomeQuickToolsGrid({
                 </p>
               </div>
 
-              <div className="mt-6 pt-4 border-t border-white/5">
+              <div className="mt-6 pt-4 border-t border-slate-100 dark:border-white/10">
                 {tool.actionType === 'modal' ? (
                   <button
                     type="button"
                     onClick={tool.action}
-                    className={`inline-flex w-full items-center justify-center gap-1.5 rounded-xl bg-gradient-to-r ${tool.gradient} px-4 py-2.5 text-xs font-bold text-white shadow-md transition hover:scale-[1.02] active:scale-[0.98]`}
-                  >
+                    className={`inline-flex w-full items-center justify-center gap-1.5 rounded-xl bg-gradient-to-r ${tool.gradient} px-4 py-2.5 text-xs font-bold text-white shadow-md transition-all duration-200 hover:shadow-lg active:scale-[0.98]`}>
                     <span>{tool.buttonLabel}</span>
                     <ChevronRight className="h-3.5 w-3.5" />
                   </button>
                 ) : (
                   <Link
                     href={tool.href || '/'}
-                    className={`inline-flex w-full items-center justify-center gap-1.5 rounded-xl bg-gradient-to-r ${tool.gradient} px-4 py-2.5 text-xs font-bold text-white shadow-md transition hover:scale-[1.02] active:scale-[0.98]`}
-                  >
+                    className={`inline-flex w-full items-center justify-center gap-1.5 rounded-xl bg-gradient-to-r ${tool.gradient} px-4 py-2.5 text-xs font-bold text-white shadow-md transition-all duration-200 hover:shadow-lg active:scale-[0.98]`}>
                     <span>{tool.buttonLabel}</span>
                     <ChevronRight className="h-3.5 w-3.5" />
                   </Link>

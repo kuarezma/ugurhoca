@@ -588,17 +588,17 @@ export default function TestsPage({
                       role="radio"
                       aria-checked={selected}
                       onClick={() => selectAnswer(i)}
-                      className={`w-full min-h-[3.25rem] p-4 rounded-xl text-left transition-all duration-200 flex items-center gap-3 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:ring-offset-2 focus-visible:ring-offset-slate-900 ${
+                      className={`w-full min-h-[3.25rem] p-4 rounded-2xl text-left transition-all duration-200 flex items-center gap-3.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-900 ${
                         selected
-                          ? 'bg-gradient-to-r from-brand-primary via-brand-pink to-brand-orange text-white shadow-brand-glow scale-[1.01]'
-                          : 'bg-slate-800/60 text-slate-200 hover:bg-slate-700/60 hover:translate-x-0.5'
+                          ? 'bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-500 text-white shadow-md scale-[1.01]'
+                          : 'bg-slate-800/60 text-slate-200 hover:bg-slate-700/60 hover:translate-x-0.5 border border-white/5'
                       }`}
                     >
                       <span
-                        className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-lg font-bold text-sm ${
+                        className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl font-bold text-sm ${
                           selected
-                            ? 'bg-white/25 text-white'
-                            : 'bg-slate-900/60 text-brand-primary-soft'
+                            ? 'bg-white/25 text-white shadow-sm'
+                            : 'bg-white/10 text-slate-300'
                         }`}
                         aria-hidden="true"
                       >
@@ -1057,41 +1057,43 @@ export default function TestsPage({
               visibleQuizzes.map((quiz, i: number) => (
                 <div
                   key={quiz.id}
-                  className="glass rounded-2xl overflow-hidden card-hover animate-slide-up"
+                  className="rounded-3xl border border-white/10 bg-slate-900/80 backdrop-blur-xl shadow-xl hover:shadow-2xl hover:border-white/20 transition-all duration-300 hover:-translate-y-1 overflow-hidden animate-slide-up"
                   style={{ animationDelay: `${i * 80}ms` }}
                 >
                   <div
-                    className={`h-2 bg-gradient-to-r ${getDifficultyColor(quiz.difficulty)}`}
+                    className={`h-1.5 bg-gradient-to-r ${getDifficultyColor(quiz.difficulty)}`}
                   />
                   <div className="p-6">
                     <div className="flex items-start justify-between mb-4">
-                      <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center">
-                        <FileText className="w-7 h-7 text-white" />
+                      <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-md">
+                        <FileText className="w-6 h-6 text-white" />
                       </div>
+                      <span className="rounded-full px-2.5 py-0.5 text-[11px] font-bold bg-white/10 text-slate-300 border border-white/10">
+                        {quiz.grade}. Sınıf
+                      </span>
                     </div>
 
-                    <h3 className="text-xl font-bold text-white mb-2">
+                    <h3 className="font-display text-xl font-bold text-white mb-2">
                       {quiz.title}
                     </h3>
-                    <p className="text-slate-400 text-sm mb-4">
+                    <p className="text-slate-400 text-xs sm:text-sm leading-relaxed mb-4 line-clamp-2">
                       {quiz.description}
                     </p>
 
-                    <div className="flex items-center gap-4 text-sm text-slate-400 mb-6">
-                      <span className="flex items-center gap-1">
-                        <Clock className="w-4 h-4" />
+                    <div className="flex items-center gap-4 text-xs text-slate-400 mb-6">
+                      <span className="flex items-center gap-1.5">
+                        <Clock className="w-4 h-4 text-indigo-400" />
                         {quiz.time_limit} dk
                       </span>
-                      <span>{quiz.grade}. Sınıf</span>
-                      <span>{quiz.difficulty}</span>
+                      <span className="capitalize">{quiz.difficulty}</span>
                     </div>
 
                     <button
                       onClick={() => startQuiz(quiz)}
-                      className="w-full py-3 bg-gradient-to-r from-purple-500 to-pink-500 text-white font-semibold rounded-xl flex items-center justify-center gap-2 glow-button transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]"
+                      className="w-full py-3 bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-500 text-white font-bold rounded-2xl flex items-center justify-center gap-2 shadow-md transition-all duration-200 hover:shadow-lg hover:scale-[1.02] active:scale-[0.98]"
                     >
-                      <Play className="w-4 h-4" />
-                      Başla
+                      <Play className="w-4 h-4 fill-white" />
+                      Teste Başla
                     </button>
                   </div>
                 </div>

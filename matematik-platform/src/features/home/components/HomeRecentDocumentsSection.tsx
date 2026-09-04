@@ -58,15 +58,15 @@ export function HomeRecentDocumentsSection({
                 className="block"
               >
                 <div
-                  className={`animate-fade-up relative cursor-pointer rounded-xl p-4 transition-all ${
+                  className={`animate-fade-up relative cursor-pointer rounded-2xl p-4 transition-all duration-200 hover:-translate-y-0.5 ${
                     isLight
-                      ? 'light-card hover:border-slate-300'
-                      : 'bg-white/5 border border-white/10 hover:bg-white/10'
+                      ? 'border border-slate-200/90 bg-white/95 shadow-sm hover:shadow-md hover:border-indigo-300/80'
+                      : 'border border-white/10 bg-slate-900/80 hover:bg-slate-900/95 hover:border-white/20 shadow-md'
                   }`}
                   style={{ animationDelay: `${index * 0.05}s` }}
                 >
                   {isNewContent(document.created_at) && (
-                    <span className="absolute top-3 right-3 px-2 py-1 rounded-full bg-indigo-500 text-white text-[10px] font-bold">
+                    <span className="absolute top-3 right-3 px-2 py-0.5 rounded-full bg-gradient-to-r from-indigo-500 to-purple-600 text-white text-[10px] font-bold shadow-sm">
                       Yeni
                     </span>
                   )}

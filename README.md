@@ -10,6 +10,8 @@ Platformun odağı sade bir öğrenci deneyimi, güçlü öğretmen yönetimi ve
 
 ## Öne Çıkanlar
 
+- **2026 Modern Bento Tasarımı:** Apple/Linear tarzı yumuşak çok katmanlı gölgeler, ferah boşluklar, modern sınav sayaç widgetları ve bento kutuları.
+- **Mobil Ergonomi:** Tek elle rahat gezinti sağlayan yüzen mobil alt menü (Bottom Navigation Dock) ve dokunmatik uyumu.
 - **Canlı ders:** LiveKit tabanlı oda yapısı, öğretmen ekran paylaşımı, öğrenci tam ekran izleme, mikrofon izin yönetimi, katılım onayı ve canlı sohbet.
 - **Test sistemi:** Zamanlı testler, doğru/yanlış takibi, sonuç ekranı, çözüm geri bildirimi ve PDF çıktıları.
 - **Ödev yönetimi:** Öğrenciye veya sınıfa ödev atama, dosya teslimi, teslim inceleme ve puanlama.
@@ -153,6 +155,15 @@ Küçük UI değişikliklerinde ilgili sayfa mobil ve masaüstü görünümde ay
 - [Performans notları](matematik-platform/docs/PERFORMANCE_BASELINE.md)
 - [Quiz bundle import rehberi](matematik-platform/docs/QUIZ_BUNDLE_IMPORT.md)
 - [İlerleme özeti](progress.md)
+
+## Değişiklik Günlüğü (Changelog)
+ 
+- **2026-09-04 (Tasarım Modernizasyonu):**
+  - Apple/Linear esintili modern bento-grid yapısı ve token'ları (`bento-card`, çok katmanlı gölgeler, safir/indigo teması) entegre edildi.
+  - LGS ve YKS sınav sayaçları widget tarzı modern bento kutularına dönüştürüldü.
+  - Hero alanı, sınıf seçim hapları ve hızlı araçlar (bilgi kartları, karalama tahtası) ferah arayüze kavuşturuldu.
+  - Mobil kullanıcılar için tek elle kullanıma uygun yüzen alt gezinti çubuğu (`MobileBottomNav`) eklendi.
+  - Test çözme ve sonuç ekranları modern degrade vurguları ile yenilendi.
 
 ## Lisans
 

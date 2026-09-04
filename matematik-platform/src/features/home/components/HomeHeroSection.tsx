@@ -42,23 +42,23 @@ export function HomeHeroSection({ isLight, user }: HomeHeroSectionProps) {
     <section className="relative px-4 pb-12 pt-6 sm:pt-10">
       <div className="relative mx-auto max-w-6xl">
         <div
-          className={`relative overflow-hidden rounded-3xl border px-6 py-8 sm:px-10 sm:py-12 ${
+          className={`relative overflow-hidden rounded-3xl border px-6 py-8 sm:px-10 sm:py-12 transition-all duration-300 ${
             isLight
-              ? 'border-slate-200 bg-gradient-to-br from-white via-violet-50/60 to-rose-50/60 shadow-[0_20px_60px_-30px_rgba(124,58,237,0.45)]'
-              : 'border-white/10 bg-gradient-to-br from-slate-900/90 via-slate-900/80 to-slate-950 shadow-brand-glow'
+              ? 'border-slate-200/90 bg-gradient-to-br from-white via-slate-50/60 to-indigo-50/40 shadow-bento'
+              : 'border-white/10 bg-gradient-to-br from-slate-900/95 via-slate-900/85 to-slate-950 shadow-2xl backdrop-blur-xl'
           }`}
         >
           <div
             aria-hidden="true"
-            className="pointer-events-none absolute -right-10 -top-10 h-60 w-60 rounded-full bg-brand-primary/25 blur-3xl"
+            className="pointer-events-none absolute -right-10 -top-10 h-64 w-64 rounded-full bg-indigo-500/15 blur-3xl"
           />
           <div
             aria-hidden="true"
-            className="pointer-events-none absolute -bottom-12 -left-12 h-72 w-72 rounded-full bg-brand-pink/20 blur-3xl"
+            className="pointer-events-none absolute -bottom-12 -left-12 h-72 w-72 rounded-full bg-pink-500/10 blur-3xl"
           />
           <div
             aria-hidden="true"
-            className="pointer-events-none absolute right-12 top-6 text-5xl font-black text-brand-primary/20 sm:text-7xl"
+            className="pointer-events-none absolute right-12 top-6 text-5xl font-black text-indigo-500/10 sm:text-7xl select-none"
           >
             π
           </div>
@@ -69,19 +69,19 @@ export function HomeHeroSection({ isLight, user }: HomeHeroSectionProps) {
                 <div
                   className={`inline-flex items-center gap-2 rounded-full px-3.5 py-1 text-xs font-bold uppercase tracking-wider ${
                     isLight
-                      ? 'bg-gradient-to-r from-amber-500/20 via-orange-500/20 to-pink-500/20 text-amber-700 border border-amber-300/40 shadow-sm'
-                      : 'bg-gradient-to-r from-amber-500/20 via-orange-500/20 to-pink-500/20 text-amber-300 border border-amber-400/30 shadow-brand-glow'
+                      ? 'bg-amber-50 text-amber-800 border border-amber-200/80 shadow-sm'
+                      : 'bg-amber-400/10 text-amber-300 border border-amber-400/20'
                   }`}
                 >
-                  <Sparkles className="h-3.5 w-3.5 text-amber-400 animate-spin" aria-hidden="true" />
-                  <span>🎉 2026-2027 Yeni Eğitim Öğretim Yılı Başladı!</span>
+                  <Sparkles className="h-3.5 w-3.5 text-amber-500 animate-pulse" aria-hidden="true" />
+                  <span>🎉 2026-2027 Yeni Eğitim Öğretim Yılı</span>
                 </div>
 
                 <div
                   className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold ${
                     isLight
-                      ? 'bg-brand-primary/10 text-brand-primary'
-                      : 'bg-brand-primary/20 text-brand-primary-soft'
+                      ? 'bg-indigo-50 text-indigo-700 border border-indigo-100'
+                      : 'bg-indigo-500/15 text-indigo-300 border border-indigo-500/20'
                   }`}
                 >
                   {user ? 'Hedefe Tam Odaklan!' : 'Ücretsiz & Tam Kapsamlı'}
@@ -93,7 +93,7 @@ export function HomeHeroSection({ isLight, user }: HomeHeroSectionProps) {
                   isLight ? 'text-slate-900' : 'text-white'
                 }`}
               >
-                <span className="bg-gradient-to-r from-brand-primary via-brand-pink to-brand-orange bg-clip-text text-transparent">
+                <span className="bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-500 bg-clip-text text-transparent dark:from-indigo-400 dark:via-purple-400 dark:to-pink-400">
                   {greeting}
                 </span>
                 <br />
@@ -103,7 +103,7 @@ export function HomeHeroSection({ isLight, user }: HomeHeroSectionProps) {
               </h1>
 
               <p
-                className={`max-w-lg text-base sm:text-lg ${
+                className={`max-w-lg text-base sm:text-lg leading-relaxed ${
                   isLight ? 'text-slate-600' : 'text-slate-300'
                 }`}
               >
@@ -116,7 +116,7 @@ export function HomeHeroSection({ isLight, user }: HomeHeroSectionProps) {
                   href="/icerikler"
                   onMouseEnter={() => prefetchHref('/icerikler')}
                   onFocus={() => prefetchHref('/icerikler')}
-                  className="group inline-flex h-12 items-center gap-2 rounded-2xl bg-gradient-to-r from-brand-primary via-brand-pink to-brand-orange px-6 text-sm font-bold text-white shadow-brand-glow transition-transform hover:-translate-y-0.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:ring-offset-2"
+                  className="group inline-flex h-12 items-center gap-2 rounded-2xl bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-500 px-6 text-sm font-bold text-white shadow-md transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2"
                 >
                   <Zap className="h-4 w-4" aria-hidden="true" />
                   Çalışmaya başla
@@ -126,9 +126,9 @@ export function HomeHeroSection({ isLight, user }: HomeHeroSectionProps) {
                   href="/oyunlar"
                   onMouseEnter={() => prefetchHref('/oyunlar')}
                   onFocus={() => prefetchHref('/oyunlar')}
-                  className={`inline-flex h-12 items-center gap-2 rounded-2xl border px-5 text-sm font-semibold transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:ring-offset-2 ${
+                  className={`inline-flex h-12 items-center gap-2 rounded-2xl border px-5 text-sm font-semibold transition-all duration-200 hover:-translate-y-0.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 ${
                     isLight
-                      ? 'border-slate-200 bg-white text-slate-800 hover:bg-slate-50'
+                      ? 'border-slate-200 bg-white text-slate-800 hover:bg-slate-50 shadow-sm'
                       : 'border-white/10 bg-white/5 text-white hover:bg-white/10'
                   }`}
                 >
@@ -141,7 +141,7 @@ export function HomeHeroSection({ isLight, user }: HomeHeroSectionProps) {
                 <span className="text-xs font-bold uppercase tracking-wider text-slate-400 block mb-2">
                   Sınıfını Seç ve Hemen Başla:
                 </span>
-                <div className="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none">
+                <div className="flex items-center gap-2 overflow-x-auto pb-1 [scrollbar-width:none]">
                   {[
                     { label: '5. Sınıf', href: '/icerikler?grade=5' },
                     { label: '6. Sınıf', href: '/icerikler?grade=6' },
@@ -156,11 +156,11 @@ export function HomeHeroSection({ isLight, user }: HomeHeroSectionProps) {
                     <Link
                       key={item.label}
                       href={item.href}
-                      className={`shrink-0 rounded-xl px-3 py-1.5 text-xs font-semibold transition-all ${
+                      className={`shrink-0 rounded-xl px-3.5 py-1.5 text-xs font-semibold transition-all duration-200 ${
                         item.highlight
-                          ? 'bg-gradient-to-r from-brand-primary to-brand-pink text-white shadow-sm hover:scale-105'
+                          ? 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-sm hover:scale-105'
                           : isLight
-                          ? 'bg-slate-100 text-slate-700 hover:bg-slate-200 border border-slate-200'
+                          ? 'bg-slate-100 text-slate-700 hover:bg-slate-200/80 border border-slate-200/80'
                           : 'bg-white/5 text-slate-300 hover:bg-white/10 hover:text-white border border-white/10'
                       }`}
                     >
@@ -222,15 +222,15 @@ export function HomeHeroSection({ isLight, user }: HomeHeroSectionProps) {
                     prefetchCategory(category.href, category.contentType)
                   }
                   aria-label={`${category.title} kategorisi`}
-                  className={`tilt-on-hover group relative block overflow-hidden rounded-2xl border p-5 text-center transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:ring-offset-2 ${
+                  className={`group relative block overflow-hidden rounded-3xl border p-5 text-center transition-all duration-300 hover:-translate-y-1 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 ${
                     isLight
-                      ? 'border-slate-200 bg-white shadow-soft-card hover:shadow-pop-card'
-                      : `${category.bgColor} ${category.borderColor} hover:border-white/20 hover:shadow-pop-card`
+                      ? 'border-slate-200/90 bg-white/90 shadow-bento hover:shadow-bento-hover hover:border-indigo-200'
+                      : `${category.bgColor} ${category.borderColor} hover:border-white/20 hover:shadow-2xl`
                   }`}
                 >
                   <div
                     aria-hidden="true"
-                    className={`mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br ${category.color} shadow-lg transition-transform group-hover:scale-110`}
+                    className={`mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br ${category.color} shadow-md transition-transform duration-300 group-hover:scale-110`}
                   >
                     <category.icon className="h-7 w-7 text-white" />
                   </div>
@@ -243,7 +243,7 @@ export function HomeHeroSection({ isLight, user }: HomeHeroSectionProps) {
                   </h3>
                   <span
                     aria-hidden="true"
-                    className="pointer-events-none absolute inset-x-0 -bottom-px h-0.5 bg-gradient-to-r from-brand-primary via-brand-pink to-brand-orange opacity-0 transition-opacity group-hover:opacity-100"
+                    className="pointer-events-none absolute inset-x-0 -bottom-px h-1 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
                   />
                 </Link>
               </motion.div>

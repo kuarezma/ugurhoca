@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Poppins, Baloo_2 } from "next/font/google";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import CookieBanner from "@/components/CookieBanner";
+import { MobileBottomNav } from "@/components/MobileBottomNav";
 import { Providers } from "@/components/Providers";
 import { THEME_STORAGE_KEY } from "@/components/theme-constants";
 import { SITE_URL, SITE_NAME } from "@/lib/site-metadata";
@@ -155,6 +156,7 @@ export default function RootLayout({
           <div id="ana-icerik" tabIndex={-1}>
             {children}
           </div>
+          <MobileBottomNav />
         </Providers>
         <CookieBanner />
         <SpeedInsights />

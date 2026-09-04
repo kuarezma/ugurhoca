@@ -31,8 +31,8 @@ export function HomeNavbar({ onLogout, user }: HomeNavbarProps) {
     <nav
       className={`fixed left-0 right-0 top-0 z-50 border-b backdrop-blur-xl transition-all duration-300 ${
         isLight
-          ? 'border-slate-200/80 bg-white/85 shadow-sm'
-          : 'border-white/10 bg-slate-900/85 shadow-2xl'
+          ? 'border-slate-200/90 bg-white/90 shadow-sm'
+          : 'border-white/10 bg-slate-900/90 shadow-xl'
       }`}
     >
       <div className="mx-auto max-w-6xl px-4 pl-[max(1rem,env(safe-area-inset-left))] pr-[max(1rem,env(safe-area-inset-right))]">
@@ -47,7 +47,7 @@ export function HomeNavbar({ onLogout, user }: HomeNavbarProps) {
             }}
             className="group flex shrink-0 items-center gap-2.5"
           >
-            <div className="relative flex h-10 w-10 items-center justify-center overflow-hidden rounded-2xl bg-gradient-to-br from-brand-primary via-brand-pink to-brand-orange p-0.5 shadow-md transition-transform duration-200 group-hover:scale-105">
+            <div className="relative flex h-10 w-10 items-center justify-center overflow-hidden rounded-2xl bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 p-0.5 shadow-md transition-transform duration-200 group-hover:scale-105">
               <Image
                 src="/ugur.jpeg"
                 alt="Uğur Hoca"
@@ -64,7 +64,7 @@ export function HomeNavbar({ onLogout, user }: HomeNavbarProps) {
               >
                 Uğur Hoca
               </span>
-              <span className="text-[10px] font-semibold text-brand-primary-soft uppercase tracking-wider">
+              <span className="text-[10px] font-semibold text-indigo-500 dark:text-indigo-400 uppercase tracking-wider">
                 Matematik Platformu
               </span>
             </div>
@@ -115,7 +115,7 @@ export function HomeNavbar({ onLogout, user }: HomeNavbarProps) {
                       : 'border-white/10 bg-white/5 text-white hover:bg-white/10'
                   }`}
                 >
-                  <div className="flex h-7 w-7 items-center justify-center rounded-xl bg-gradient-to-br from-brand-primary to-brand-pink text-xs font-bold text-white shadow">
+                  <div className="flex h-7 w-7 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-600 to-purple-600 text-xs font-bold text-white shadow">
                     {user.name?.[0] || '?'}
                   </div>
                   <span className="font-semibold text-xs xl:inline">
@@ -127,7 +127,7 @@ export function HomeNavbar({ onLogout, user }: HomeNavbarProps) {
                   onClick={onLogout}
                   aria-label="Çıkış yap"
                   title="Çıkış yap"
-                  className={`inline-flex h-9 w-9 items-center justify-center rounded-xl transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary ${
+                  className={`inline-flex h-9 w-9 items-center justify-center rounded-xl transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 ${
                     isLight
                       ? 'text-slate-400 hover:bg-slate-100 hover:text-slate-900'
                       : 'text-slate-400 hover:bg-white/5 hover:text-white'
@@ -150,7 +150,7 @@ export function HomeNavbar({ onLogout, user }: HomeNavbarProps) {
                 </Link>
                 <Link
                   href="/kayit"
-                  className="rounded-xl bg-gradient-to-r from-brand-primary via-brand-pink to-brand-orange px-4 py-2 text-xs font-bold text-white shadow-brand-glow transition-transform hover:scale-105 active:scale-95"
+                  className="rounded-xl bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-500 px-4 py-2 text-xs font-bold text-white shadow-md transition-all duration-200 hover:shadow-lg hover:scale-105 active:scale-95"
                 >
                   Ücretsiz Kayıt
                 </Link>

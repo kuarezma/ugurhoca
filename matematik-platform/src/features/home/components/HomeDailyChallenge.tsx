@@ -90,21 +90,21 @@ export function HomeDailyChallenge({ isLight }: { isLight: boolean }) {
         <motion.div
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
-          className={`relative overflow-hidden rounded-3xl border p-6 sm:p-8 ${
+          className={`relative overflow-hidden rounded-3xl border p-6 sm:p-8 transition-all duration-300 ${
             isLight
-              ? 'border-slate-200 bg-gradient-to-br from-violet-50/80 via-white to-amber-50/50 shadow-xl'
-              : 'border-white/10 bg-gradient-to-br from-slate-900/90 via-slate-850/80 to-slate-900/90 shadow-2xl backdrop-blur-md'
+              ? 'border-slate-200/90 bg-white/95 shadow-bento'
+              : 'border-white/10 bg-slate-900/90 shadow-2xl backdrop-blur-xl'
           }`}
         >
           {/* Arka Plan Glow */}
           <div
             aria-hidden="true"
-            className="pointer-events-none absolute -right-8 -top-8 h-48 w-48 rounded-full bg-amber-500/15 blur-3xl"
+            className="pointer-events-none absolute -right-8 -top-8 h-48 w-48 rounded-full bg-amber-500/10 blur-3xl"
           />
 
           <div className="relative">
             {/* Üst Başlık & Streak Bilgisi */}
-            <div className="mb-6 flex flex-wrap items-center justify-between gap-3 border-b border-white/10 pb-4">
+            <div className="mb-6 flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 dark:border-white/10 pb-4">
               <div className="flex items-center gap-3">
                 <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-br from-amber-400 to-orange-500 text-slate-950 font-black shadow-md">
                   <Zap className="h-5 w-5 fill-slate-950 text-slate-950" />
@@ -118,7 +118,11 @@ export function HomeDailyChallenge({ isLight }: { isLight: boolean }) {
                     >
                       Günün Matematik Meydan Okuması
                     </h2>
-                    <span className="rounded-full bg-amber-500/20 px-2.5 py-0.5 text-[11px] font-bold text-amber-300">
+                    <span className={`rounded-full px-2.5 py-0.5 text-[11px] font-bold ${
+                      isLight
+                        ? 'bg-amber-100 text-amber-800 border border-amber-200'
+                        : 'bg-amber-500/20 text-amber-300 border border-amber-500/30'
+                    }`}>
                       {challenge.gradeTag}
                     </span>
                   </div>
@@ -133,8 +137,12 @@ export function HomeDailyChallenge({ isLight }: { isLight: boolean }) {
               </div>
 
               <div className="flex items-center gap-2">
-                <div className="inline-flex items-center gap-1.5 rounded-xl border border-amber-500/30 bg-amber-500/10 px-3 py-1.5 text-xs font-bold text-amber-300 shadow-sm">
-                  <Flame className="h-4 w-4 fill-amber-400 text-amber-400 animate-bounce" />
+                <div className={`inline-flex items-center gap-1.5 rounded-xl border px-3 py-1.5 text-xs font-bold shadow-sm ${
+                  isLight
+                    ? 'border-amber-200 bg-amber-50 text-amber-800'
+                    : 'border-amber-500/30 bg-amber-500/10 text-amber-300'
+                }`}>
+                  <Flame className="h-4 w-4 fill-amber-500 text-amber-500 animate-pulse" />
                   <span>{streakCount} Günlük Seri</span>
                 </div>
 
@@ -142,9 +150,9 @@ export function HomeDailyChallenge({ isLight }: { isLight: boolean }) {
                   type="button"
                   onClick={handleNextChallenge}
                   title="Farklı bir soru dene"
-                  className={`inline-flex items-center gap-1.5 rounded-xl border px-3 py-1.5 text-xs font-semibold transition ${
+                  className={`inline-flex items-center gap-1.5 rounded-xl border px-3 py-1.5 text-xs font-semibold transition-all duration-200 ${
                     isLight
-                      ? 'border-slate-200 bg-white text-slate-700 hover:bg-slate-50'
+                      ? 'border-slate-200 bg-white text-slate-700 hover:bg-slate-50 shadow-sm'
                       : 'border-white/10 bg-white/5 text-slate-300 hover:bg-white/10 hover:text-white'
                   }`}
                 >
@@ -172,18 +180,22 @@ export function HomeDailyChallenge({ isLight }: { isLight: boolean }) {
                 const isCorrectChoice = challenge.correctIndex === optIdx;
 
                 let optStyle = isLight
-                  ? 'border-slate-200 bg-white text-slate-800 hover:border-brand-primary/50 hover:bg-violet-50/40 shadow-sm'
+                  ? 'border-slate-200/90 bg-white text-slate-800 hover:border-indigo-400 hover:bg-indigo-50/40 shadow-sm'
                   : 'border-white/10 bg-slate-800/60 text-slate-200 hover:border-white/20 hover:bg-slate-800';
 
                 if (isAnswered) {
                   if (isCorrectChoice) {
-                    optStyle =
-                      'border-emerald-500/50 bg-emerald-500/20 text-emerald-200 font-bold shadow-md';
+                    optStyle = isLight
+                      ? 'border-emerald-500 bg-emerald-50 text-emerald-900 font-bold shadow-sm'
+                      : 'border-emerald-500/50 bg-emerald-500/20 text-emerald-200 font-bold shadow-md';
                   } else if (isSelected) {
-                    optStyle =
-                      'border-rose-500/50 bg-rose-500/20 text-rose-200 font-semibold';
+                    optStyle = isLight
+                      ? 'border-rose-500 bg-rose-50 text-rose-900 font-semibold shadow-sm'
+                      : 'border-rose-500/50 bg-rose-500/20 text-rose-200 font-semibold';
                   } else {
-                    optStyle = 'opacity-50 border-white/5 bg-slate-900/40 text-slate-400';
+                    optStyle = isLight
+                      ? 'opacity-40 border-slate-100 bg-slate-50 text-slate-400'
+                      : 'opacity-40 border-white/5 bg-slate-900/40 text-slate-400';
                   }
                 }
 

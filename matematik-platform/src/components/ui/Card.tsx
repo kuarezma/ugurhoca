@@ -5,6 +5,7 @@ type CardProps = HTMLAttributes<HTMLDivElement> & {
   glow?: boolean;
   interactive?: boolean;
   padding?: 'none' | 'sm' | 'md' | 'lg';
+  variant?: 'default' | 'bento';
 };
 
 const PADDING = {
@@ -15,18 +16,28 @@ const PADDING = {
 };
 
 export const Card = forwardRef<HTMLDivElement, CardProps>(function Card(
-  { className, glow = false, interactive = false, padding = 'md', children, ...rest },
+  {
+    className,
+    glow = false,
+    interactive = false,
+    padding = 'md',
+    variant = 'default',
+    children,
+    ...rest
+  },
   ref,
 ) {
+  const isBento = variant === 'bento';
+
   return (
     <div
       ref={ref}
       className={cn(
-        'relative rounded-2xl border transition-all duration-200',
-        'bg-white/70 dark:bg-slate-900/60 backdrop-blur',
-        'border-slate-200/80 dark:border-white/10',
+        'relative transition-all duration-200',
+        isBento ? 'rounded-3xl bento-card' : 'rounded-2xl border',
+        !isBento && 'bg-white/70 dark:bg-slate-900/60 backdrop-blur border-slate-200/80 dark:border-white/10',
         glow && 'shadow-soft-card hover:shadow-pop-card',
-        interactive && 'tilt-on-hover cursor-pointer hover:border-brand-primary/40',
+        interactive && (isBento ? 'bento-interactive' : 'tilt-on-hover cursor-pointer hover:border-brand-primary/40'),
         PADDING[padding],
         className,
       )}
