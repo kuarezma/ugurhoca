@@ -162,6 +162,15 @@ Küçük UI değişikliklerinde ilgili sayfa mobil ve masaüstü görünümde ay
 
 ## Değişiklik Günlüğü (Changelog)
  
+- **2026-09-04 (Canlı Ders Bölümü Kapsamlı Modernizasyonu & Geliştirmesi):**
+  - **Modern Tema & Navigasyon:** `/canli-ders` sayfası sitenin açık/koyu temasına, cam (glassmorphism) efektlerine ve standart üst menüye (`HomeNavbar`) tam uyumlu hale getirildi.
+  - **İstatistik & Özet Şeridi:** Aktif canlı ders durumu, yaklaşan ders sayısı, toplam planlanan saat ve sınıf seviyesini gösteren bento özet kartları eklendi.
+  - **Sekmeli Ders Listesi & Arama:** "Yaklaşan Dersler" ve "Geçmiş Dersler" sekmeleri, sınıf bazlı filtre hapları ve anlık ders arama çubuğu entegre edildi.
+  - **Takvime Ekle & Kalan Süre Sayacı:** Her ders için anlık Türkçe geri sayım ("25 dk kaldı", "Ders devam ediyor"), tek tıkla Google Takvim bağlantısı ve `.ics` iCalendar indirme desteği eklendi.
+  - **Öğretmen Kolaylıkları:** Tek tıkla o an ders başlatan "Hızlı Ders Başlat" aksiyonu, katlanabilir ders planlama formu ve sayfa üzerinden doğrudan ders düzenleme modalı (`LiveLessonEditModal`) sunuldu.
+  - **Gelişmiş Bekleme Lobisi:** Derse girmeden önce mikrofon ses seviyesini canlı görselleştiren test aracı ve kamera/mikrofon hazır giriş ayarları (`RoomLobbyPreview`) eklendi.
+  - **Oda İçi Sekmeli Dock Paneli:** Canlı ders odasındaki dikey yığılma giderilerek profesyonel sekmeli dock paneli (Sohbet, Katılımcılar & Moderasyon, Anlık Soru / Quiz, Görünüm Ayarları) kuruldu.
+  - **Ders İçi Matematik Tahtası & Sayaç:** Canlı ders esnasında geçen/kalan süreyi gösteren akıllı sayaç, tek tık tam ekran modu ve entegre çizim/karalama tahtası eklendi.
 - **2026-09-04 (Çocuklar İçin 6 Yeni Eğitici Matematik Oyunu):**
   - **Pizza Ustası (Kesir & Parça-Bütün):** Müşteri siparişine göre pizzayı istenen kesir ve yüzde kadar süsleyip fırına verme oyunu.
   - **Matematik Ninja (Çarpanlar, Asal & Sayı Refleksi):** Kılıçla uçuşan meyvelerden görev kuralına uyanları dilimleme, kombo ve refleks oyunu.

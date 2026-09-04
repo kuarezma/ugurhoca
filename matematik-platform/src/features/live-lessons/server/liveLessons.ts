@@ -58,8 +58,8 @@ export async function loadLiveLessonsForCurrentUser(): Promise<LiveLesson[]> {
   const query = supabase
     .from('live_lessons')
     .select('*')
-    .in('status', ['scheduled', 'active'])
-    .order('starts_at', { ascending: true });
+    .in('status', ['scheduled', 'active', 'ended'])
+    .order('starts_at', { ascending: false });
 
   const { data, error } = isLiveLessonAdmin(user)
     ? await query
@@ -71,9 +71,9 @@ export async function loadLiveLessonsForCurrentUser(): Promise<LiveLesson[]> {
     const { data: gradeData } = await supabase
       .from('live_lessons')
       .select('*')
-      .in('status', ['scheduled', 'active'])
+      .in('status', ['scheduled', 'active', 'ended'])
       .or(`target_grade.eq.${user.grade},target_grade.eq.all`)
-      .order('starts_at', { ascending: true });
+      .order('starts_at', { ascending: false });
 
     return ((gradeData || []) as LiveLesson[]).map(toClientLiveLesson);
   }
