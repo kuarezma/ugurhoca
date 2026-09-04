@@ -25,6 +25,7 @@ import {
   WifiOff,
   BookOpen,
   Printer,
+  Keyboard,
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import dynamic from 'next/dynamic';
@@ -36,6 +37,7 @@ import { QuizQuestionPalette } from '@/features/quizzes/components/QuizQuestionP
 import { QuizMistakeReviewModal } from '@/features/quizzes/components/QuizMistakeReviewModal';
 import { MistakeNotebookModal } from '@/features/quizzes/components/MistakeNotebookModal';
 import { QuestionHintLadder } from '@/features/quizzes/components/QuestionHintLadder';
+import { QuizShortcutsModal } from '@/features/quizzes/components/QuizShortcutsModal';
 
 const PrintableWorksheetModal = dynamic(
   () =>
@@ -149,6 +151,7 @@ export default function TestsPage({
   const [pendingMistakesCount, setPendingMistakesCount] = useState(0);
   const [isWorksheetModalOpen, setIsWorksheetModalOpen] = useState(false);
   const [isOnline, setIsOnline] = useState(true);
+  const [isShortcutsOpen, setIsShortcutsOpen] = useState(false);
 
   useEffect(() => {
     try {
@@ -397,6 +400,75 @@ export default function TestsPage({
     }
   };
 
+  useEffect(() => {
+    if (!quizStarted || showResult || !selectedQuiz) return;
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      const target = e.target as HTMLElement | null;
+      if (
+        target &&
+        (target.tagName === 'INPUT' ||
+          target.tagName === 'TEXTAREA' ||
+          target.isContentEditable)
+      ) {
+        return;
+      }
+
+      const key = e.key.toUpperCase();
+
+      if (['A', 'B', 'C', 'D', 'E'].includes(key)) {
+        const optionIndex = key.charCodeAt(0) - 65;
+        const currentQ = quizQuestions[currentQuestion];
+        if (currentQ && currentQ.options && optionIndex < currentQ.options.length) {
+          e.preventDefault();
+          selectAnswer(optionIndex);
+        }
+      } else if (['1', '2', '3', '4', '5'].includes(e.key)) {
+        const optionIndex = parseInt(e.key, 10) - 1;
+        const currentQ = quizQuestions[currentQuestion];
+        if (currentQ && currentQ.options && optionIndex < currentQ.options.length) {
+          e.preventDefault();
+          selectAnswer(optionIndex);
+        }
+      } else if (e.key === 'ArrowRight' || e.key === 'Enter') {
+        if (!isShortcutsOpen && !isScratchpadOpen) {
+          e.preventDefault();
+          nextQuestion();
+        }
+      } else if (e.key === 'ArrowLeft') {
+        if (!isShortcutsOpen && !isScratchpadOpen) {
+          e.preventDefault();
+          previousQuestion();
+        }
+      } else if (key === 'K' || key === 'S') {
+        e.preventDefault();
+        setIsScratchpadOpen((prev) => !prev);
+      } else if (key === 'F' || key === 'B') {
+        e.preventDefault();
+        toggleFlagQuestion(currentQuestion);
+      } else if (e.key === '?' || (e.shiftKey && e.key === '/')) {
+        e.preventDefault();
+        setIsShortcutsOpen((prev) => !prev);
+      } else if (e.key === 'Escape') {
+        setIsShortcutsOpen(false);
+        setIsScratchpadOpen(false);
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    quizStarted,
+    showResult,
+    selectedQuiz,
+    currentQuestion,
+    quizQuestions,
+    isShortcutsOpen,
+    isScratchpadOpen,
+    answers,
+  ]);
+
   const calculateScore = useCallback(() => {
     if (quizQuestions.length === 0) return 0;
     let correct = 0;
@@ -592,6 +664,19 @@ export default function TestsPage({
                   )}
                 </button>
 
+                {/* Kısayollar Butonu */}
+                <button
+                  type="button"
+                  onClick={() => setIsShortcutsOpen(true)}
+                  className="inline-flex items-center gap-1.5 rounded-xl border border-white/10 bg-white/5 px-3 py-1.5 text-xs font-bold text-slate-300 hover:bg-white/10 hover:text-white transition"
+                  title="Klavye Kısayolları (?)"
+                  aria-label="Klavye kısayollarını göster"
+                >
+                  <Keyboard className="h-3.5 w-3.5 text-indigo-400" />
+                  <span className="hidden sm:inline">Kısayollar</span>
+                  <span className="text-[10px] font-mono px-1 py-0.5 rounded bg-white/10 text-indigo-300">?</span>
+                </button>
+
                 {/* Süre */}
                 <div
                   className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs sm:text-sm font-bold transition-all ${
@@ -758,6 +843,12 @@ export default function TestsPage({
                 }
               : undefined
           }
+        />
+
+        {/* Klavye Kısayolları Modalı */}
+        <QuizShortcutsModal
+          isOpen={isShortcutsOpen}
+          onClose={() => setIsShortcutsOpen(false)}
         />
       </main>
     );

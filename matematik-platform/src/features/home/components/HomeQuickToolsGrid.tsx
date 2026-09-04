@@ -11,6 +11,7 @@ import {
   Sparkles,
   Activity,
   Compass,
+  BookMarked,
 } from 'lucide-react';
 
 type HomeQuickToolsGridProps = {
@@ -22,6 +23,7 @@ type HomeQuickToolsGridProps = {
   onOpenChecklist?: () => void;
   onOpenGraph?: () => void;
   onOpenProofs?: () => void;
+  onOpenCheatSheet?: () => void;
 };
 
 export function HomeQuickToolsGrid({
@@ -33,8 +35,21 @@ export function HomeQuickToolsGrid({
   onOpenChecklist,
   onOpenGraph,
   onOpenProofs,
+  onOpenCheatSheet,
 }: HomeQuickToolsGridProps) {
   const tools = [
+    {
+      id: 'cheatSheet',
+      title: 'Hızlı Formül Cep Notu (LGS & YKS)',
+      description: 'Sınav öncesi 1 dakikalık son tekrar, tüm kritik MEB & ÖSYM formülleri ve yazdırılabilir A4 özeti.',
+      icon: BookMarked,
+      gradient: 'from-amber-500 via-orange-500 to-red-500',
+      actionType: onOpenCheatSheet ? 'modal' : 'link',
+      action: onOpenCheatSheet,
+      href: '#',
+      buttonLabel: 'Notu Aç',
+      badge: 'Cep Notu 📌',
+    },
     {
       id: 'visualProofs',
       title: 'İnteraktif Görsel Formül İspatları',

@@ -34,6 +34,10 @@ Platformun odağı sade bir öğrenci deneyimi, güçlü öğretmen yönetimi ve
 - **İnteraktif Görsel Formül İspatları:** Pisagor teoremi ($a^2+b^2=c^2$), iki kare farkı ($a^2-b^2$), birim çemberde $\sin^2\theta+\cos^2\theta=1$ ve Pascal/binom açılımının hareketli görsel geometrik ispatları.
 - **Kişiselleştirilmiş Eksik Reçetesi (Smart Diagnostic):** Hata defterindeki soru kök nedenlerini (kural eksikliği, işlem hatası, soru okuma, süre) teşhis ederek kişiye özel 3 adımlı çalışma reçetesi üreten pedagojik motor.
 - **"Sorunu Canlı Derse Gönder" (Öğrenci Soru Masası):** Öğrencilerin çözemediği soruları canlı derse göndermesi ve öğretmenin tek tıkla canlı ders tahtasına yansıtıp çözebilmesini sağlayan havuz.
+- **PWA (Progressive Web App) Desteği:** Masaüstü ve mobilde (Android & iOS) tek tıkla yerel uygulama gibi ana ekrana yüklenebilen Web App Manifest ve akıllı yükleme bildirim çubuğu.
+- **Test İçi Klavye Kısayolları (Power-User Sınav Modu):** Fareye dokunmadan hızlıca şık seçme (A-E, 1-5), soru geçişi (←, →, Enter), karalama tahtası (K, S), soruya bayrak koyma (F, B) ve kısayol rehberi (?).
+- **Kişisel Veri Yedekleme & Cihazlar Arası Aktarım:** Günlük çalışma serisi (streak), çözülen soru sayıları, hata defteri bankası ve konu çizelgesini tek tıkla `.json` olarak yedekleme ve yeni cihaza aktarma.
+- **Sınav Öncesi Hızlı Formül Cep Notu (LGS & YKS Cheat-Sheet):** Sınav öncesi son 1 dakikalık kritik MEB & ÖSYM formülleri, özdeşlikler, KaTeX matematiksel gösterimi ve tek tıkla yazdırılabilir/PDF A4 özet çıktısı.
 - **Mobil uyum:** Responsive arayüz, yüzen alt gezinti çubuğu ve telefon/tablet kullanımına uygun akışlar.
 
 ## Teknoloji Yığını

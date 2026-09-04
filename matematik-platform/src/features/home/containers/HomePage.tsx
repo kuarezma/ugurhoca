@@ -74,6 +74,14 @@ const VisualMathProofsModal = dynamic(
   { ssr: false },
 );
 
+const QuickFormulaCheatSheetModal = dynamic(
+  () =>
+    import('@/components/QuickFormulaCheatSheetModal').then((m) => ({
+      default: m.QuickFormulaCheatSheetModal,
+    })),
+  { ssr: false },
+);
+
 type HomePageProps = {
   activeLiveLesson?: LiveLesson | null;
   initialFeed?: HomeInitialFeed | null;
@@ -92,6 +100,7 @@ export default function HomePage({ activeLiveLesson, initialFeed }: HomePageProp
   const [isChecklistOpen, setIsChecklistOpen] = useState(false);
   const [isGraphOpen, setIsGraphOpen] = useState(false);
   const [isProofsOpen, setIsProofsOpen] = useState(false);
+  const [isCheatSheetOpen, setIsCheatSheetOpen] = useState(false);
 
   useEffect(() => {
     const handleToolEvent = (e: Event) => {
@@ -114,6 +123,8 @@ export default function HomePage({ activeLiveLesson, initialFeed }: HomePageProp
         setIsFlashcardsOpen(true);
       } else if (tool === 'scratchpad') {
         setIsScratchpadOpen(true);
+      } else if (tool === 'cheat-sheet' || tool === 'formulas') {
+        setIsCheatSheetOpen(true);
       }
     };
 
@@ -130,6 +141,8 @@ export default function HomePage({ activeLiveLesson, initialFeed }: HomePageProp
         setIsChecklistOpen(true);
       } else if (toolParam === 'flashcards') {
         setIsFlashcardsOpen(true);
+      } else if (toolParam === 'cheat-sheet' || toolParam === 'formulas') {
+        setIsCheatSheetOpen(true);
       }
     }
 
@@ -183,6 +196,7 @@ export default function HomePage({ activeLiveLesson, initialFeed }: HomePageProp
           onOpenChecklist={() => setIsChecklistOpen(true)}
           onOpenGraph={() => setIsGraphOpen(true)}
           onOpenProofs={() => setIsProofsOpen(true)}
+          onOpenCheatSheet={() => setIsCheatSheetOpen(true)}
         />
         <div className="defer-section">
           <HomeSuccessRoadmap
@@ -281,6 +295,13 @@ export default function HomePage({ activeLiveLesson, initialFeed }: HomePageProp
         <VisualMathProofsModal
           isOpen={isProofsOpen}
           onClose={() => setIsProofsOpen(false)}
+          isLight={isLight}
+        />
+      ) : null}
+      {isCheatSheetOpen ? (
+        <QuickFormulaCheatSheetModal
+          isOpen={isCheatSheetOpen}
+          onClose={() => setIsCheatSheetOpen(false)}
           isLight={isLight}
         />
       ) : null}
