@@ -80,6 +80,7 @@ export function HomeNavbar({ onLogout, user }: HomeNavbarProps) {
                 <Link
                   key={category.id}
                   href={category.href}
+                  prefetch={true}
                   className={`shrink-0 whitespace-nowrap rounded-xl px-3.5 py-1.5 text-xs font-semibold transition-all duration-200 ${
                     isLight
                       ? 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
@@ -109,6 +110,7 @@ export function HomeNavbar({ onLogout, user }: HomeNavbarProps) {
               <>
                 <Link
                   href={profileHref}
+                  prefetch={true}
                   className={`flex items-center gap-2.5 rounded-2xl border px-3 py-1.5 transition-all ${
                     isLight
                       ? 'border-slate-200 bg-slate-50 text-slate-900 hover:bg-slate-100'
@@ -140,6 +142,7 @@ export function HomeNavbar({ onLogout, user }: HomeNavbarProps) {
               <>
                 <Link
                   href="/giris"
+                  prefetch={true}
                   className={`rounded-xl px-3.5 py-2 text-xs font-bold transition-colors ${
                     isLight
                       ? 'text-slate-700 hover:bg-slate-100 hover:text-slate-900'
@@ -150,6 +153,7 @@ export function HomeNavbar({ onLogout, user }: HomeNavbarProps) {
                 </Link>
                 <Link
                   href="/kayit"
+                  prefetch={true}
                   className="rounded-xl bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-500 px-4 py-2 text-xs font-bold text-white shadow-md transition-all duration-200 hover:shadow-lg hover:scale-105 active:scale-95"
                 >
                   Ücretsiz Kayıt
@@ -200,6 +204,7 @@ export function HomeNavbar({ onLogout, user }: HomeNavbarProps) {
               <Link
                 key={category.id}
                 href={category.href}
+                prefetch={true}
                 onClick={() => setIsOpen(false)}
                 className={`flex items-center gap-3 rounded-xl px-3.5 py-2.5 text-sm font-semibold transition-colors ${
                   isLight
@@ -223,6 +228,7 @@ export function HomeNavbar({ onLogout, user }: HomeNavbarProps) {
                 <>
                   <Link
                     href={profileHref}
+                    prefetch={true}
                     onClick={() => setIsOpen(false)}
                     className={`block rounded-xl px-3.5 py-2.5 text-sm font-semibold ${
                       isLight
@@ -247,6 +253,7 @@ export function HomeNavbar({ onLogout, user }: HomeNavbarProps) {
                 <div className="grid grid-cols-2 gap-2 pt-2">
                   <Link
                     href="/giris"
+                    prefetch={true}
                     onClick={() => setIsOpen(false)}
                     className={`flex items-center justify-center rounded-xl border px-3 py-2.5 text-center text-xs font-bold transition-colors ${
                       isLight
@@ -258,6 +265,7 @@ export function HomeNavbar({ onLogout, user }: HomeNavbarProps) {
                   </Link>
                   <Link
                     href="/kayit"
+                    prefetch={true}
                     onClick={() => setIsOpen(false)}
                     className="flex items-center justify-center rounded-xl bg-gradient-to-r from-brand-primary via-brand-pink to-brand-orange px-3 py-2.5 text-center text-xs font-bold text-white shadow-md transition-transform active:scale-95"
                   >

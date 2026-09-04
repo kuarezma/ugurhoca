@@ -85,29 +85,51 @@ export default function HomePage({ activeLiveLesson, initialFeed }: HomePageProp
           onOpenFlashcards={() => setIsFlashcardsOpen(true)}
           onOpenScratchpad={() => setIsScratchpadOpen(true)}
         />
-        <HomeSuccessRoadmap
-          isLight={isLight}
-          onOpenFlashcards={() => setIsFlashcardsOpen(true)}
-        />
-        <HomeStatsStrip isLight={isLight} stats={initialFeed?.stats} />
-        <HomeAnnouncementsSection
-          announcements={announcements}
-          isLight={isLight}
-          onSelectAnnouncement={setSelectedAnnouncement}
-        />
-        <HomeDailyQuote isLight={isLight} />
+        <div className="defer-section">
+          <HomeSuccessRoadmap
+            isLight={isLight}
+            onOpenFlashcards={() => setIsFlashcardsOpen(true)}
+          />
+        </div>
+        <div className="defer-section">
+          <HomeStatsStrip isLight={isLight} stats={initialFeed?.stats} />
+        </div>
+        <div className="defer-section">
+          <HomeAnnouncementsSection
+            announcements={announcements}
+            isLight={isLight}
+            onSelectAnnouncement={setSelectedAnnouncement}
+          />
+        </div>
+        <div className="defer-section">
+          <HomeDailyQuote isLight={isLight} />
+        </div>
         <HomeExamCountdownSection isLight={isLight} />
-        <HomeAssignmentsSection
-          assignments={visibleAssignments}
-          isLight={isLight}
-          onDismissAll={handleDismissAllAssignments}
-          onDismissAssignment={handleDismissAssignment}
-        />
+        <div className="defer-section">
+          <HomeAssignmentsSection
+            assignments={visibleAssignments}
+            isLight={isLight}
+            onDismissAll={handleDismissAllAssignments}
+            onDismissAssignment={handleDismissAssignment}
+          />
+        </div>
         <HomeRecentDocumentsSection documents={documents} isLight={isLight} />
-        {!user && <HomeHowItWorksSection isLight={isLight} />}
-        {!user && <HomeGuestCtaSection isLight={isLight} />}
-        <HomeSupportSection isLight={isLight} user={user} />
-        <HomeFooter isLight={isLight} />
+        {!user && (
+          <div className="defer-section">
+            <HomeHowItWorksSection isLight={isLight} />
+          </div>
+        )}
+        {!user && (
+          <div className="defer-section">
+            <HomeGuestCtaSection isLight={isLight} />
+          </div>
+        )}
+        <div className="defer-section">
+          <HomeSupportSection isLight={isLight} user={user} />
+        </div>
+        <div className="defer-section">
+          <HomeFooter isLight={isLight} />
+        </div>
       </div>
       <HomeAnnouncementModal
         announcement={selectedAnnouncement}

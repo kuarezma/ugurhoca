@@ -56,13 +56,14 @@ describe('POST /api/import-questions-bundle', () => {
   });
 
   it('imports a valid bundle through the quiz bundle service', async () => {
+    const dummyBuffer = new Uint8Array([1, 2, 3]).buffer;
+    const file = new File([new Uint8Array([1, 2, 3])], 'quiz-bundle.zip', {
+      type: 'application/zip',
+    });
+    file.arrayBuffer = async () => dummyBuffer;
+
     const formData = new FormData();
-    formData.set(
-      'file',
-      new File([new Uint8Array([1, 2, 3])], 'quiz-bundle.zip', {
-        type: 'application/zip',
-      }),
-    );
+    formData.set('file', file);
 
     const archive = {
       assetFiles: new Map(),
@@ -107,13 +108,13 @@ describe('POST /api/import-questions-bundle', () => {
     vi.mocked(createServiceRoleClient).mockReturnValue(supabaseClient as never);
     vi.mocked(insertQuizBundleWithImages).mockResolvedValue(result);
 
-    const response = (await POST(
-      new Request('http://localhost/api/import-questions-bundle', {
-        method: 'POST',
-        body: formData,
-      }),
-    )) as Response;
+    const request = new Request('http://localhost/api/import-questions-bundle', {
+      method: 'POST',
+      body: formData,
+    });
+    request.formData = async () => formData;
 
+    const response = (await POST(request)) as Response;
     expect(response.status).toBe(200);
     expect(insertQuizBundleWithImages).toHaveBeenCalledWith(
       supabaseClient,

@@ -22,6 +22,27 @@ vi.mock('@/features/analytics/trackActivity', () => ({
   trackStudentActivityEvent: vi.fn(),
 }));
 
+const storageMock = (() => {
+  let store: Record<string, string> = {};
+  return {
+    getItem: (key: string) => store[key] ?? null,
+    setItem: (key: string, value: string) => {
+      store[key] = String(value);
+    },
+    clear: () => {
+      store = {};
+    },
+    removeItem: (key: string) => {
+      delete store[key];
+    },
+  };
+})();
+
+Object.defineProperty(window, 'localStorage', {
+  value: storageMock,
+  writable: true,
+});
+
 describe('games queries', () => {
   beforeEach(() => {
     vi.clearAllMocks();
