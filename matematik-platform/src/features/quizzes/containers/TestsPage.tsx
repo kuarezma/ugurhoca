@@ -398,7 +398,7 @@ export default function TestsPage({
   }, [
     answers,
     calculateScore,
-    quizQuestions.length,
+    quizQuestions,
     selectedQuiz,
     startTime,
     user,

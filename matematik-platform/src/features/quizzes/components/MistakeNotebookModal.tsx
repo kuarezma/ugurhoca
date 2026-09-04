@@ -7,10 +7,6 @@ import {
   CheckCircle2,
   Trash2,
   Play,
-  RotateCcw,
-  Sparkles,
-  AlertCircle,
-  HelpCircle,
 } from 'lucide-react';
 import MathText from '@/components/MathText';
 import type { QuizQuestion } from '@/types/quiz';
@@ -96,16 +92,17 @@ export function MistakeNotebookModal({
   };
 
   return (
-    <div
-      role="dialog"
-      aria-modal="true"
-      aria-labelledby={titleId}
-      className="fixed inset-0 z-[150] flex items-center justify-center bg-slate-950/80 p-3 backdrop-blur-md sm:p-5"
-      onClick={onClose}
-    >
+    <div className="fixed inset-0 z-[150] flex items-center justify-center p-3 sm:p-5">
       <div
+        className="fixed inset-0 -z-10 bg-slate-950/80 backdrop-blur-md"
+        onClick={onClose}
+        aria-hidden="true"
+      />
+      <div
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby={titleId}
         className="flex max-h-[92vh] w-full max-w-4xl flex-col overflow-hidden rounded-3xl border border-slate-200/80 dark:border-white/10 bg-white dark:bg-slate-900 shadow-2xl transition-all"
-        onClick={(e) => e.stopPropagation()}
       >
         {/* Başlık */}
         <div className="flex flex-col gap-3 border-b border-slate-200/80 dark:border-white/10 bg-slate-50/80 dark:bg-slate-950/80 px-5 py-4 sm:flex-row sm:items-center sm:justify-between">
