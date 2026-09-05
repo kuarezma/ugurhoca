@@ -61,7 +61,10 @@ describe('QuizPacingCoach', () => {
     expect(screen.getByText(/Sınav Tempo Koçu & Soru Süre Analizi/i)).toBeInTheDocument();
     expect(screen.getByText(/Hızlı Çözülen/i)).toBeInTheDocument();
     expect(screen.getByText(/İdeal Dengeli/i)).toBeInTheDocument();
-    expect(screen.getByText(/Süresi Uzayan/i)).toBeInTheDocument();
     expect(screen.getByText(/En Çok Vakit Harcanan Sorular:/i)).toBeInTheDocument();
+    expect(screen.getByText(/Soru Bazlı Tempo Şeridi:/i)).toBeInTheDocument();
+    expect(screen.getByText('S1')).toBeInTheDocument();
+    expect(screen.getByText('S2')).toBeInTheDocument();
+    expect(screen.getByText('S3')).toBeInTheDocument();
   });
 });

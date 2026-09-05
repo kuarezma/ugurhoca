@@ -234,6 +234,54 @@ export function QuizPacingCoach({
         </div>
       </div>
 
+      {/* Tüm Soruların Tempo Şeridi (Pacing Strip Heatmap) */}
+      {stats.records.length > 0 && (
+        <div>
+          <div className="text-xs font-bold text-slate-300 mb-2 flex items-center justify-between">
+            <div className="flex items-center gap-1.5">
+              <Clock className="h-3.5 w-3.5 text-indigo-400" />
+              <span>Soru Bazlı Tempo Şeridi:</span>
+            </div>
+            <span className="text-[10px] text-slate-400 font-normal">
+              Yeşil: Hızlı · Mavi: Dengeli · Kırmızı: Uzayan
+            </span>
+          </div>
+          <div className="grid grid-cols-5 sm:grid-cols-10 md:grid-cols-15 lg:grid-cols-20 gap-1.5">
+            {stats.records.map((r) => {
+              const isSlow = r.seconds > 130;
+              const isWarning = r.seconds > 90 && r.seconds <= 130;
+              const isFast = r.seconds > 0 && r.seconds <= 90;
+
+              const borderBg = isSlow
+                ? 'bg-rose-500/20 border-rose-500/40 text-rose-300'
+                : isWarning
+                ? 'bg-cyan-500/20 border-cyan-500/40 text-cyan-300'
+                : isFast
+                ? 'bg-emerald-500/20 border-emerald-500/40 text-emerald-300'
+                : 'bg-slate-800/40 border-white/5 text-slate-400';
+
+              return (
+                <div
+                  key={r.questionIndex}
+                  title={`Soru ${r.questionIndex + 1}: ${formatDuration(r.seconds)} (${
+                    r.isCorrect ? 'Doğru' : r.isAnswered ? 'Yanlış' : 'Boş'
+                  })`}
+                  className={`flex flex-col items-center justify-center p-1 rounded-lg border text-center transition hover:scale-105 cursor-default ${borderBg}`}
+                >
+                  <span className="text-[10px] font-bold">S{r.questionIndex + 1}</span>
+                  <span className="text-[9px] font-mono leading-none mt-0.5">
+                    {r.seconds > 0 ? formatDuration(r.seconds) : '-'}
+                  </span>
+                  <span className="text-[9px] font-bold mt-0.5">
+                    {r.isCorrect ? '✓' : r.isAnswered ? '✕' : '—'}
+                  </span>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
       {/* Pedagojik Koç Tavsiyesi */}
       <div
         className={`flex items-start gap-2.5 rounded-2xl border p-3.5 text-xs leading-relaxed ${

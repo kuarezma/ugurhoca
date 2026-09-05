@@ -57,13 +57,15 @@ export function PersonalStreakHub({ isLight }: PersonalStreakHubProps) {
     setGoalData(updated);
   };
 
-  // Son 14 günlük aktivite dizisi
-  const past14Days = useMemo(() => {
+  const [timeframe, setTimeframe] = useState<14 | 30 | 60 | 90>(30);
+
+  // Aktivite dizisi (seçilen zaman aralığına göre: 14, 30, 60, 90 gün)
+  const activityDays = useMemo(() => {
     const list = [];
     const today = new Date();
     const history = goalData.history || {};
 
-    for (let i = 13; i >= 0; i--) {
+    for (let i = timeframe - 1; i >= 0; i--) {
       const d = new Date(today);
       d.setDate(today.getDate() - i);
       const year = d.getFullYear();
@@ -85,7 +87,22 @@ export function PersonalStreakHub({ isLight }: PersonalStreakHubProps) {
       });
     }
     return list;
-  }, [goalData.history, goalData.solved, goalData.target]);
+  }, [goalData.history, goalData.solved, goalData.target, timeframe]);
+
+  const activityStats = useMemo(() => {
+    let totalQuestions = 0;
+    let activeDays = 0;
+    let maxDayQuestions = 0;
+
+    for (const day of activityDays) {
+      totalQuestions += day.count;
+      if (day.count > 0) activeDays++;
+      if (day.count > maxDayQuestions) maxDayQuestions = day.count;
+    }
+
+    const completionRate = Math.round((activeDays / activityDays.length) * 100);
+    return { totalQuestions, activeDays, maxDayQuestions, completionRate };
+  }, [activityDays]);
 
   const progressPercent = Math.min(100, Math.round((goalData.solved / goalData.target) * 100));
   const isGoalReached = goalData.solved >= goalData.target;
@@ -342,51 +359,118 @@ export function PersonalStreakHub({ isLight }: PersonalStreakHubProps) {
         )}
       </AnimatePresence>
 
-      {/* 14 Günlük Alışkanlık Isı Haritası (Heatmap) */}
-      <div>
-        <div className="flex items-center justify-between mb-3">
-          <div className="flex items-center gap-2 text-xs font-bold text-slate-400">
-            <Calendar className="h-4 w-4 text-slate-400" />
-            <span>Son 14 Günlük Alışkanlık Isı Haritası</span>
+      {/* Çok Zamanlı Alışkanlık Isı Haritası (GitHub Tarzı Aktivite Matrisi) */}
+      <div className="pt-2 border-t border-slate-200/60 dark:border-white/5">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-3">
+          <div className="flex items-center gap-2 text-xs font-bold text-slate-700 dark:text-slate-300">
+            <Calendar className="h-4 w-4 text-emerald-500" />
+            <span>Çalışma & Alışkanlık Isı Haritası</span>
           </div>
 
-          <div className="flex items-center gap-3 text-[11px] text-slate-400">
-            <span className="flex items-center gap-1">
-              <span className="h-2.5 w-2.5 rounded-md bg-emerald-500/80 inline-block" /> Hedef Tamam
+          {/* Zaman Aralığı Seçici */}
+          <div className="flex items-center gap-1 rounded-xl bg-slate-200/60 dark:bg-white/5 p-1 text-[11px] font-semibold">
+            {([14, 30, 60, 90] as const).map((days) => (
+              <button
+                key={days}
+                type="button"
+                onClick={() => setTimeframe(days)}
+                className={`px-2.5 py-1 rounded-lg transition-all ${
+                  timeframe === days
+                    ? 'bg-white dark:bg-slate-800 text-emerald-600 dark:text-emerald-400 font-bold shadow-sm'
+                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                }`}
+              >
+                {days} Gün
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Özet İstatistik Çubuğu */}
+        <div className="grid grid-cols-3 gap-2 mb-3 p-2.5 rounded-xl bg-slate-50/70 dark:bg-white/[0.02] border border-slate-200/60 dark:border-white/5 text-center text-xs">
+          <div>
+            <span className="text-[10px] text-slate-600 dark:text-slate-400 block">Toplam Çözülen</span>
+            <span className="font-bold text-slate-900 dark:text-white text-sm sm:text-base">
+              {activityStats.totalQuestions} Soru
             </span>
-            <span className="flex items-center gap-1">
-              <span className="h-2.5 w-2.5 rounded-md bg-amber-500/70 inline-block" /> Soru Çözüldü
+          </div>
+          <div>
+            <span className="text-[10px] text-slate-600 dark:text-slate-400 block">Aktif Gün Oranı</span>
+            <span className="font-bold text-emerald-600 dark:text-emerald-400 text-sm sm:text-base">
+              %{activityStats.completionRate} ({activityStats.activeDays}/{timeframe})
             </span>
-            <span className="flex items-center gap-1">
-              <span className="h-2.5 w-2.5 rounded-md bg-slate-700/50 inline-block" /> Dinlenme
+          </div>
+          <div>
+            <span className="text-[10px] text-slate-600 dark:text-slate-400 block">En Verimli Gün</span>
+            <span className="font-bold text-amber-600 dark:text-amber-400 text-sm sm:text-base">
+              {activityStats.maxDayQuestions} Soru
             </span>
           </div>
         </div>
 
-        <div className="grid grid-cols-7 sm:grid-cols-14 gap-2">
-          {past14Days.map((day) => {
-            let bgColor = isLight ? 'bg-slate-100 border-slate-200' : 'bg-slate-800/50 border-white/5';
-            let textColor = isLight ? 'text-slate-600' : 'text-slate-400';
+        {/* Gösterge (Legend) */}
+        <div className="flex flex-wrap items-center justify-between gap-2 mb-2.5 text-[10px] text-slate-600 dark:text-slate-400">
+          <span>Son {timeframe} günlük kümülatif çalışma yoğunluğun:</span>
+          <div className="flex items-center gap-2">
+            <span className="flex items-center gap-1">
+              <span className="h-2.5 w-2.5 rounded-sm bg-slate-200 dark:bg-slate-800 inline-block border border-slate-300 dark:border-white/10" /> 0
+            </span>
+            <span className="flex items-center gap-1">
+              <span className="h-2.5 w-2.5 rounded-sm bg-amber-400/70 inline-block" /> Hafif
+            </span>
+            <span className="flex items-center gap-1">
+              <span className="h-2.5 w-2.5 rounded-sm bg-emerald-400 inline-block" /> Orta
+            </span>
+            <span className="flex items-center gap-1">
+              <span className="h-2.5 w-2.5 rounded-sm bg-emerald-500 inline-block" /> Hedef
+            </span>
+            <span className="flex items-center gap-1">
+              <span className="h-2.5 w-2.5 rounded-sm bg-teal-400 inline-block" /> Maraton
+            </span>
+          </div>
+        </div>
 
-            if (day.isTargetReached) {
+        {/* Isı Haritası Izgarası */}
+        <div
+          className={`grid gap-1.5 ${
+            timeframe === 14
+              ? 'grid-cols-7 sm:grid-cols-14'
+              : timeframe === 30
+              ? 'grid-cols-6 sm:grid-cols-10 md:grid-cols-15'
+              : timeframe === 60
+              ? 'grid-cols-10 sm:grid-cols-12 md:grid-cols-20'
+              : 'grid-cols-10 sm:grid-cols-15 md:grid-cols-30'
+          }`}
+        >
+          {activityDays.map((day) => {
+            let bgColor = isLight ? 'bg-slate-100 border-slate-200 text-slate-400' : 'bg-slate-800/40 border-white/5 text-slate-500';
+            let countColor = isLight ? 'text-slate-500' : 'text-slate-400';
+
+            if (day.count >= goalData.target * 1.5) {
+              bgColor = 'bg-gradient-to-br from-emerald-500 to-teal-400 text-white border-teal-300 shadow-sm';
+              countColor = 'text-white font-bold';
+            } else if (day.isTargetReached) {
               bgColor = 'bg-emerald-500 text-white border-emerald-400 shadow-sm';
-              textColor = 'text-white';
+              countColor = 'text-white font-bold';
+            } else if (day.count >= goalData.target / 2) {
+              bgColor = isLight ? 'bg-emerald-200 border-emerald-300 text-emerald-900' : 'bg-emerald-800/60 border-emerald-700/50 text-emerald-100';
+              countColor = isLight ? 'text-emerald-950 font-bold' : 'text-emerald-200 font-bold';
             } else if (day.count > 0) {
-              bgColor = isLight ? 'bg-amber-100 border-amber-300 text-amber-900' : 'bg-amber-500/30 border-amber-500/40 text-amber-200';
-              textColor = isLight ? 'text-amber-900' : 'text-amber-200';
+              bgColor = isLight ? 'bg-amber-100 border-amber-300 text-amber-900' : 'bg-amber-500/25 border-amber-500/30 text-amber-200';
+              countColor = isLight ? 'text-amber-950' : 'text-amber-300';
             }
 
             return (
               <div
                 key={day.dateKey}
                 title={`${day.dateKey} (${day.dayName}): ${day.count} soru çözüldü`}
-                className={`flex flex-col items-center justify-center p-2 rounded-xl border text-center transition-transform hover:scale-105 cursor-default ${bgColor} ${
-                  day.isToday ? 'ring-2 ring-indigo-400 ring-offset-2 ring-offset-slate-900' : ''
+                className={`flex flex-col items-center justify-center p-1.5 rounded-xl border text-center transition-transform hover:scale-110 cursor-default ${bgColor} ${
+                  day.isToday ? 'ring-2 ring-indigo-400 ring-offset-1 ring-offset-slate-900' : ''
                 }`}
               >
-                <span className="text-[10px] font-semibold opacity-75">{day.dayName}</span>
-                <span className={`text-sm font-bold ${textColor}`}>{day.dayNumber}</span>
-                <span className="text-[10px] font-mono mt-0.5">
+                <span className="text-[9px] font-semibold opacity-75 leading-none">{day.dayName}</span>
+                <span className="text-xs font-bold leading-tight my-0.5">{day.dayNumber}</span>
+                <span className={`text-[9px] font-mono leading-none ${countColor}`}>
                   {day.count > 0 ? `${day.count}s` : '-'}
                 </span>
               </div>

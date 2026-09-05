@@ -80,4 +80,25 @@ describe('FormulaFlashcardsModal', () => {
 
     expect(screen.getAllByText('Tam Kare Özdeşlikleri')[0]).toBeInTheDocument();
   });
+
+  it('allows starring a formula and filters by Yıldızlılar', () => {
+    render(<FormulaFlashcardsModal isOpen={true} onClose={vi.fn()} />);
+
+    // Initial starred count should be 0
+    expect(screen.getByRole('button', { name: /Yıldızlılar/i })).toHaveTextContent('0');
+
+    // Click star button on current card
+    const starBtn = screen.getByRole('button', { name: /Yıldızla/i });
+    fireEvent.click(starBtn);
+
+    // Star count increases to 1
+    expect(screen.getByRole('button', { name: /Yıldızlılar/i })).toHaveTextContent('1');
+
+    // Filter by starred
+    const starredFilterBtn = screen.getByRole('button', { name: /Yıldızlılar/i });
+    fireEvent.click(starredFilterBtn);
+
+    // Currently starred card is present
+    expect(screen.getAllByText('Tam Kare Özdeşlikleri')[0]).toBeInTheDocument();
+  });
 });

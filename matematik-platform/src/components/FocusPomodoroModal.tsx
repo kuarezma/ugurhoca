@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef, useId } from 'react';
 import { useAccessibleModal } from '@/hooks/useAccessibleModal';
-import { isSoundMuted } from '@/features/games/utils/gameAudio';
+import { gameAudio } from '@/features/games/utils/gameAudio';
 import { useGameSoundMute } from '@/features/games/hooks/useGameSoundMute';
 import {
   X,
@@ -31,33 +31,7 @@ const MODE_DURATIONS: Record<TimerMode, number> = {
 };
 
 const playCompletionSound = () => {
-  if (isSoundMuted()) return;
-  try {
-    const AudioContext = window.AudioContext || (window as unknown as { webkitAudioContext: typeof window.AudioContext }).webkitAudioContext;
-    if (!AudioContext) return;
-    const ctx = new AudioContext();
-    const now = ctx.currentTime;
-
-    const playTone = (freq: number, start: number, duration: number) => {
-      const osc = ctx.createOscillator();
-      const gain = ctx.createGain();
-      osc.type = 'sine';
-      osc.frequency.setValueAtTime(freq, start);
-      gain.gain.setValueAtTime(0.15, start);
-      gain.gain.exponentialRampToValueAtTime(0.001, start + duration);
-      osc.connect(gain);
-      gain.connect(ctx.destination);
-      osc.start(start);
-      osc.stop(start + duration);
-    };
-
-    // Tatlı C-E-G akoru
-    playTone(523.25, now, 0.3);       // C5
-    playTone(659.25, now + 0.15, 0.3); // E5
-    playTone(783.99, now + 0.3, 0.5);  // G5
-  } catch {
-    // AudioContext izin verilmemişse sessizce geç
-  }
+  gameAudio.playLevelUp();
 };
 
 export function FocusPomodoroModal({ isOpen, onClose }: FocusPomodoroModalProps) {

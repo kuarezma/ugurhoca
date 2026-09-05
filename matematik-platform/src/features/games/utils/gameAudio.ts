@@ -239,6 +239,36 @@ export class GameAudioEffects {
     }
   }
 
+  playLevelUp() {
+    if (this.isMuted()) return;
+    const ctx = this.getContext();
+    if (!ctx) return;
+    try {
+      const notes = [523.25, 659.25, 783.99]; // C5, E5, G5
+      const now = ctx.currentTime;
+
+      notes.forEach((freq, idx) => {
+        const noteStart = now + idx * 0.12;
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(freq, noteStart);
+
+        gain.gain.setValueAtTime(0.18, noteStart);
+        gain.gain.exponentialRampToValueAtTime(0.001, noteStart + 0.35);
+
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+
+        osc.start(noteStart);
+        osc.stop(noteStart + 0.35);
+      });
+    } catch {
+      // Audio is non-blocking enhancement
+    }
+  }
+
   playFanfare() {
     if (this.isMuted()) return;
     const ctx = this.getContext();

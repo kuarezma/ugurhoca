@@ -4,6 +4,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Heart, Play, RotateCcw, Sparkles, Trophy } from 'lucide-react';
 import type { GameComponentProps } from '@/features/games/types';
+import { gameAudio } from '@/features/games/utils/gameAudio';
 
 type BalloonProblem = {
   answer: number;
@@ -115,6 +116,7 @@ export function BalloonPop({ onScore, scoreMultiplier }: GameComponentProps) {
   };
 
   const finishGame = (finalScore: number) => {
+    gameAudio.playFanfare();
     setGameState('ended');
     onScore(finalScore);
   };
@@ -137,12 +139,19 @@ export function BalloonPop({ onScore, scoreMultiplier }: GameComponentProps) {
       setLevel(nextLevel);
       setFeedback('correct');
 
+      if (nextStreak >= 3) {
+        gameAudio.playCombo(nextStreak);
+      } else {
+        gameAudio.playPop();
+      }
+
       window.setTimeout(() => nextProblem(nextLevel), 650);
       return;
     }
 
     setStreak(0);
     setFeedback('wrong');
+    gameAudio.playWrong();
     setLives((currentLives) => {
       const nextLives = currentLives - 1;
       if (nextLives <= 0) {

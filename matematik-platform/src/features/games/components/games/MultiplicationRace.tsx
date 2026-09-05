@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Play, RotateCcw, Trophy } from 'lucide-react';
 import type { GameComponentProps } from '@/features/games/types';
+import { gameAudio } from '@/features/games/utils/gameAudio';
 
 export function MultiplicationRace({
   onScore,
@@ -31,6 +32,7 @@ export function MultiplicationRace({
     const timer = setInterval(() => {
       setTimeLeft((currentTime) => {
         if (currentTime <= 1) {
+          gameAudio.playFanfare();
           setGameState('ended');
           onScore(score);
           return 0;
@@ -70,7 +72,7 @@ export function MultiplicationRace({
     if (gameState === 'playing') {
       generateProblem();
     }
-  }, [gameState, generateProblem]);
+  }, [generateProblem, gameState]);
 
   const handleSelect = (option: number) => {
     if (selected !== null) {
@@ -80,7 +82,13 @@ export function MultiplicationRace({
     setSelected(option);
 
     if (option === problem.answer) {
-      setStreak((currentStreak) => currentStreak + 1);
+      const nextStreak = streak + 1;
+      setStreak(nextStreak);
+      if (nextStreak >= 3) {
+        gameAudio.playCombo(nextStreak);
+      } else {
+        gameAudio.playCorrect();
+      }
 
       const bonus = streak > 4 ? 15 : streak > 2 ? 5 : 0;
       setScore(
@@ -88,6 +96,7 @@ export function MultiplicationRace({
       );
 
       if (progress >= 90) {
+        gameAudio.playLevelUp();
         setTablesCompleted((completedTables) => [...completedTables, table]);
 
         if (table < 9 + level) {
@@ -107,6 +116,7 @@ export function MultiplicationRace({
     }
 
     setStreak(0);
+    gameAudio.playWrong();
     setTimeout(() => {
       setSelected(null);
     }, 800);

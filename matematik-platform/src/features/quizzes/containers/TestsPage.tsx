@@ -1242,6 +1242,7 @@ export default function TestsPage({
                   const isCorrect = userAnswer === q.correct_index;
                   const isUnanswered =
                     userAnswer === undefined || userAnswer === null;
+                  const timeSpent = questionTimes[index] || 0;
 
                   return (
                     <div
@@ -1262,6 +1263,35 @@ export default function TestsPage({
                           >
                             {`${index + 1}. ${q.question}`}
                           </MathText>
+
+                          {/* Soru Süresi & Tempo Rozeti */}
+                          {timeSpent > 0 && (
+                            <div className="flex items-center gap-1.5 mt-1.5">
+                              <span
+                                className={`inline-flex items-center gap-1 rounded-md px-2 py-0.5 text-[11px] font-semibold border ${
+                                  timeSpent > 150
+                                    ? 'bg-rose-500/15 border-rose-500/30 text-rose-300'
+                                    : timeSpent > 110
+                                    ? 'bg-amber-500/15 border-amber-500/30 text-amber-300'
+                                    : timeSpent >= 45
+                                    ? 'bg-cyan-500/15 border-cyan-500/30 text-cyan-300'
+                                    : 'bg-emerald-500/15 border-emerald-500/30 text-emerald-300'
+                                }`}
+                              >
+                                <Clock className="h-3 w-3" />
+                                <span>
+                                  {timeSpent > 150
+                                    ? `⚠️ Zaman Tuzağı: ${Math.floor(timeSpent / 60)} dk ${timeSpent % 60} sn`
+                                    : timeSpent > 110
+                                    ? `⏳ Süre Uzadı: ${Math.floor(timeSpent / 60)} dk ${timeSpent % 60} sn`
+                                    : timeSpent >= 45
+                                    ? `⏱️ İdeal: ${timeSpent} sn`
+                                    : `⚡ Hızlı: ${timeSpent} sn`}
+                                </span>
+                              </span>
+                            </div>
+                          )}
+
                           {q.question_image_url ? (
                             <QuestionImage
                               alt={`Analiz soru ${index + 1} görseli`}

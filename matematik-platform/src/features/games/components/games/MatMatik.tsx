@@ -24,6 +24,7 @@ import {
   type MatMatikMove,
   type MatMatikPlayer,
 } from './matmatik-engine';
+import { gameAudio } from '@/features/games/utils/gameAudio';
 
 type GameMode = 'single' | 'two';
 type GamePhase = 'setup' | 'playing' | 'ended';
@@ -267,12 +268,14 @@ export function MatMatik({
     const nextBoard = applyMatMatikMove(board, product, currentPlayer);
 
     if (!nextBoard) {
+      gameAudio.playWrong();
       setMessage(
         `${factors.top} × ${factors.bottom} = ${product} dolu. Aynı oyuncu farklı bir ok konumu denesin.`,
       );
       return;
     }
 
+    gameAudio.playPop();
     completeMove(
       nextBoard,
       currentPlayer,
@@ -289,12 +292,14 @@ export function MatMatik({
     setBoard(nextBoard);
 
     if (nextWinner) {
+      gameAudio.playFanfare();
       finishGame(nextBoard, nextWinner);
       setMessage(`${moveLabel}. ${playerNames[nextWinner]} kazandı.`);
       return;
     }
 
     if (isBoardFull(nextBoard)) {
+      gameAudio.playFanfare();
       finishGame(nextBoard, 'draw');
       setMessage(`${moveLabel}. Oyun berabere bitti.`);
       return;

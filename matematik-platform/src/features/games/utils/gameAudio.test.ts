@@ -58,6 +58,7 @@ describe('gameAudio global mute preference', () => {
       gameAudio.playSlice();
       gameAudio.playWhack();
       gameAudio.playNitro();
+      gameAudio.playLevelUp();
       gameAudio.playFanfare();
     }).not.toThrow();
   });

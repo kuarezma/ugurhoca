@@ -1,6 +1,6 @@
 'use client';
-
-import { useState } from 'react';
+ 
+import { useState, useEffect } from 'react';
 import { useAccessibleModal } from '@/hooks/useAccessibleModal';
 import {
   X,
@@ -11,6 +11,7 @@ import {
   Sparkles,
   CheckCircle,
   Printer,
+  Star,
 } from 'lucide-react';
 import MathText from '@/components/MathText';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
@@ -44,6 +45,28 @@ export const LEITNER_INTERVALS: Record<LeitnerBoxLevel, number> = {
 };
 
 export const LEITNER_STORAGE_KEY = 'ugurhoca_leitner_box_v1';
+export const STARRED_FORMULAS_KEY = 'ugurhoca_starred_formulas_v1';
+export const LEARNED_FORMULAS_KEY = 'ugurhoca_learned_formulas_v1';
+
+export function getStarredFormulaIds(): string[] {
+  if (typeof window === 'undefined') return [];
+  try {
+    const raw = localStorage.getItem(STARRED_FORMULAS_KEY);
+    return raw ? JSON.parse(raw) : [];
+  } catch {
+    return [];
+  }
+}
+
+export function getLearnedFormulaIds(): string[] {
+  if (typeof window === 'undefined') return [];
+  try {
+    const raw = localStorage.getItem(LEARNED_FORMULAS_KEY);
+    return raw ? JSON.parse(raw) : [];
+  } catch {
+    return [];
+  }
+}
 
 export function getLeitnerStates(): Record<string, CardLeitnerState> {
   if (typeof window === 'undefined') return {};
@@ -203,22 +226,54 @@ export function FormulaFlashcardsModal({
   onClose,
 }: FormulaFlashcardsModalProps) {
   const modalRef = useAccessibleModal<HTMLDivElement>(isOpen, onClose);
-  const [categoryFilter, setCategoryFilter] = useState<'all' | 'lgs' | 'yks' | 'due'>('all');
+  const [categoryFilter, setCategoryFilter] = useState<'all' | 'due' | 'starred' | 'learned' | 'lgs' | 'yks'>('all');
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isFlipped, setIsFlipped] = useState(false);
+  const [starredCards, setStarredCards] = useState<Set<string>>(new Set());
   const [learnedCards, setLearnedCards] = useState<Set<string>>(new Set());
   const [leitnerStates, setLeitnerStates] = useState<Record<string, CardLeitnerState>>({});
 
-  // Leitner durumlarını localStorage'dan yükle
-  useState(() => {
-    if (typeof window !== 'undefined') {
+  useEffect(() => {
+    if (isOpen) {
+      setStarredCards(new Set(getStarredFormulaIds()));
+      setLearnedCards(new Set(getLearnedFormulaIds()));
+      setLeitnerStates(getLeitnerStates());
+    }
+  }, [isOpen]);
+
+  const toggleStarred = (id: string) => {
+    setStarredCards((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) {
+        next.delete(id);
+      } else {
+        next.add(id);
+      }
       try {
-        setLeitnerStates(getLeitnerStates());
+        localStorage.setItem(STARRED_FORMULAS_KEY, JSON.stringify(Array.from(next)));
       } catch {
         // ignore
       }
-    }
-  });
+      return next;
+    });
+  };
+
+  const toggleLearned = (id: string) => {
+    setLearnedCards((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) {
+        next.delete(id);
+      } else {
+        next.add(id);
+      }
+      try {
+        localStorage.setItem(LEARNED_FORMULAS_KEY, JSON.stringify(Array.from(next)));
+      } catch {
+        // ignore
+      }
+      return next;
+    });
+  };
 
   if (!isOpen) return null;
 
@@ -236,6 +291,8 @@ export function FormulaFlashcardsModal({
   const filteredCards = FLASHCARDS_DATA.filter((card) => {
     if (categoryFilter === 'all') return true;
     if (categoryFilter === 'due') return isDueCard(card);
+    if (categoryFilter === 'starred') return starredCards.has(card.id);
+    if (categoryFilter === 'learned') return learnedCards.has(card.id) || (leitnerStates[card.id]?.box || 1) >= 4;
     return card.category === categoryFilter;
   });
 
@@ -262,22 +319,18 @@ export function FormulaFlashcardsModal({
     const updated = saveCardLeitnerState(cardId, result);
     setLeitnerStates((prev) => ({ ...prev, [cardId]: updated }));
     if (result === 'known' && updated.box >= 4) {
-      setLearnedCards((prev) => new Set(prev).add(cardId));
+      setLearnedCards((prev) => {
+        const next = new Set(prev).add(cardId);
+        try {
+          localStorage.setItem(LEARNED_FORMULAS_KEY, JSON.stringify(Array.from(next)));
+        } catch {
+          // ignore
+        }
+        return next;
+      });
     }
     // Otomatik sonraki karta geçiş
     handleNext();
-  };
-
-  const toggleLearned = (id: string) => {
-    setLearnedCards((prev) => {
-      const next = new Set(prev);
-      if (next.has(id)) {
-        next.delete(id);
-      } else {
-        next.add(id);
-      }
-      return next;
-    });
   };
 
   // Kutu bazlı istatistikler
@@ -467,6 +520,44 @@ export function FormulaFlashcardsModal({
             <button
               type="button"
               onClick={() => {
+                setCategoryFilter('starred');
+                setCurrentIndex(0);
+                setIsFlipped(false);
+              }}
+              className={`rounded-xl px-3 py-1 text-xs font-semibold transition flex items-center gap-1 ${
+                categoryFilter === 'starred'
+                  ? 'bg-amber-400 text-slate-950 font-bold'
+                  : 'bg-white/5 text-amber-300 hover:bg-white/10'
+              }`}
+            >
+              <Star className="h-3 w-3 fill-amber-300 text-amber-300" />
+              <span>Yıldızlılar</span>
+              <span className="rounded-full bg-amber-400/30 px-1.5 py-0.2 text-[10px] font-bold">
+                {starredCards.size}
+              </span>
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                setCategoryFilter('learned');
+                setCurrentIndex(0);
+                setIsFlipped(false);
+              }}
+              className={`rounded-xl px-3 py-1 text-xs font-semibold transition flex items-center gap-1 ${
+                categoryFilter === 'learned'
+                  ? 'bg-emerald-500 text-white font-bold'
+                  : 'bg-white/5 text-emerald-300 hover:bg-white/10'
+              }`}
+            >
+              <CheckCircle className="h-3 w-3" />
+              <span>Öğrenilenler</span>
+              <span className="rounded-full bg-emerald-400/30 px-1.5 py-0.2 text-[10px] font-bold">
+                {learnedCards.size}
+              </span>
+            </button>
+            <button
+              type="button"
+              onClick={() => {
                 setCategoryFilter('lgs');
                 setCurrentIndex(0);
                 setIsFlipped(false);
@@ -529,10 +620,28 @@ export function FormulaFlashcardsModal({
                     </span>
                   )}
                 </div>
-                <span className="flex items-center gap-1 text-[11px] text-slate-400 group-hover:text-white">
-                  <RotateCw className="h-3 w-3" />
-                  {isFlipped ? 'Ön yüze dön' : 'Cevap için tıkla'}
-                </span>
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      toggleStarred(currentCard.id);
+                    }}
+                    className={`p-1.5 rounded-xl transition ${
+                      starredCards.has(currentCard.id)
+                        ? 'text-amber-400 bg-amber-500/20 hover:bg-amber-500/30'
+                        : 'text-slate-400 hover:text-white hover:bg-white/10'
+                    }`}
+                    title={starredCards.has(currentCard.id) ? 'Yıldızı kaldır' : 'Kritik formül olarak yıldızla'}
+                    aria-label={starredCards.has(currentCard.id) ? 'Yıldızı kaldır' : 'Yıldızla'}
+                  >
+                    <Star className={`h-4 w-4 ${starredCards.has(currentCard.id) ? 'fill-amber-400 text-amber-400' : ''}`} />
+                  </button>
+                  <span className="flex items-center gap-1 text-[11px] text-slate-400 group-hover:text-white">
+                    <RotateCw className="h-3 w-3" />
+                    {isFlipped ? 'Ön yüze dön' : 'Cevap için tıkla'}
+                  </span>
+                </div>
               </div>
 
               {/* Kart Gövdesi */}
