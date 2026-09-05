@@ -2,8 +2,9 @@
 
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
-import { Clock, Clock3, Target } from "lucide-react";
+import { BookOpen, Clock, Clock3, Target } from "lucide-react";
 import type { FeaturedExam } from "@/lib/examDates";
+import { getSavedExamTrials, type ExamHistoryType } from "@/lib/examHistoryStorage";
 
 type ExamCountdownProps = {
   exam: FeaturedExam;
@@ -47,8 +48,23 @@ export function ExamCountdown({
   const [targetNet, setTargetNet] = useState<number | null>(null);
   const [isEditingTarget, setIsEditingTarget] = useState(false);
 
+  const examType: ExamHistoryType = exam.id.includes('lgs') ? 'lgs' : 'yks';
   const maxNet = exam.id.includes('lgs') ? 20 : 40;
   const targetOptions = exam.id.includes('lgs') ? [12, 15, 17, 18, 20] : [20, 25, 30, 35, 40];
+  const trialsTargetOptions = examType === 'lgs' ? [10, 15, 20, 25, 30] : [15, 20, 25, 35, 50];
+
+  const [completedTrialsCount, setCompletedTrialsCount] = useState<number>(0);
+  const [targetTrials, setTargetTrials] = useState<number>(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem(`ugurhoca_exam_trials_target_${examType}`);
+      if (saved) {
+        const val = parseInt(saved, 10);
+        if (!isNaN(val) && val > 0) return val;
+      }
+    }
+    return examType === 'lgs' ? 15 : 25;
+  });
+  const [isEditingTrialsTarget, setIsEditingTrialsTarget] = useState(false);
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -62,11 +78,35 @@ export function ExamCountdown({
     }
   }, [exam.id, maxNet]);
 
+  useEffect(() => {
+    const syncTrials = () => {
+      const trials = getSavedExamTrials(examType);
+      setCompletedTrialsCount(trials.length);
+    };
+
+    syncTrials();
+    window.addEventListener('ugurhoca:exam-trials-updated', syncTrials);
+    window.addEventListener('storage', syncTrials);
+
+    return () => {
+      window.removeEventListener('ugurhoca:exam-trials-updated', syncTrials);
+      window.removeEventListener('storage', syncTrials);
+    };
+  }, [examType]);
+
   const handleSelectTarget = (val: number) => {
     setTargetNet(val);
     setIsEditingTarget(false);
     if (typeof window !== 'undefined') {
       localStorage.setItem(`ugurhoca_exam_target_${exam.id}`, String(val));
+    }
+  };
+
+  const handleSelectTrialsTarget = (val: number) => {
+    setTargetTrials(val);
+    setIsEditingTrialsTarget(false);
+    if (typeof window !== 'undefined') {
+      localStorage.setItem(`ugurhoca_exam_trials_target_${examType}`, String(val));
     }
   };
 
@@ -107,6 +147,15 @@ export function ExamCountdown({
 
     return "Hazırlık zamanı";
   }, [timeLeft]);
+
+  const remainingWeeks = useMemo(() => {
+    if (!timeLeft || timeLeft.total <= 0) return 0;
+    return Math.max(1, Math.ceil(timeLeft.days / 7));
+  }, [timeLeft]);
+
+  const remainingTrialsNeeded = Math.max(0, targetTrials - completedTrialsCount);
+  const weeklyPace = remainingWeeks > 0 ? (remainingTrialsNeeded / remainingWeeks).toFixed(1) : '0';
+  const trialsProgressPct = Math.min(100, Math.round((completedTrialsCount / targetTrials) * 100));
 
   const countdownItems = timeLeft
     ? [
@@ -153,6 +202,17 @@ export function ExamCountdown({
             >
               {status}
             </span>
+            {remainingWeeks > 0 && (
+              <span
+                className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[11px] font-bold ${
+                  isLight
+                    ? "bg-amber-50 text-amber-800 border border-amber-300/70"
+                    : "bg-amber-500/15 text-amber-300 border border-amber-500/30"
+                }`}
+              >
+                ⏳ {remainingWeeks} Hafta Kaldı
+              </span>
+            )}
             {isTargetGradeExam && (
               <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 border border-emerald-500/30 px-2 py-0.5 text-[10px] font-bold">
                 🎯 Hedef Kademem
@@ -312,6 +372,68 @@ export function ExamCountdown({
                   }`}
                 >
                   {opt}
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Hedef Deneme Sayacı & Haftalık İlerleme Takibi */}
+        <div className="mt-3 border-t border-slate-200/60 dark:border-white/10 pt-2.5">
+          <div className="flex items-center justify-between gap-2 text-xs">
+            <div className="flex items-center gap-1.5">
+              <BookOpen className="h-3.5 w-3.5 text-indigo-500 shrink-0" />
+              <span className="text-[11px] font-medium text-slate-500 dark:text-slate-400">
+                Hedef Deneme:
+              </span>
+              <span className="font-bold text-indigo-600 dark:text-indigo-400">
+                {completedTrialsCount} / {targetTrials} Deneme
+              </span>
+            </div>
+            <button
+              type="button"
+              onClick={() => setIsEditingTrialsTarget((p) => !p)}
+              className="text-[11px] font-semibold text-indigo-600 dark:text-indigo-400 hover:underline"
+            >
+              {isEditingTrialsTarget ? 'Kapat' : completedTrialsCount > 0 ? 'Hedef Değiştir' : 'Deneme Hedefi Seç'}
+            </button>
+          </div>
+
+          {/* İlerleme Çubuğu */}
+          <div className="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-slate-200 dark:bg-white/10">
+            <div
+              className="h-full rounded-full bg-gradient-to-r from-indigo-500 to-cyan-500 transition-all duration-500"
+              style={{ width: `${trialsProgressPct}%` }}
+            />
+          </div>
+
+          {/* Haftalık İlerleme & Stratejik Öneri */}
+          <div className="mt-1.5 flex items-center justify-between text-[10px] text-slate-500 dark:text-slate-400">
+            <span>%{trialsProgressPct} Tamamlandı</span>
+            <span className="font-medium text-slate-600 dark:text-slate-300">
+              {completedTrialsCount >= targetTrials
+                ? '🎯 Hedefe Ulaşıldı!'
+                : remainingWeeks > 0
+                  ? `Haftada ~${weeklyPace} deneme temposu`
+                  : 'Sınav vakti'}
+            </span>
+          </div>
+
+          {isEditingTrialsTarget && (
+            <div className="mt-2 flex flex-wrap items-center gap-1.5 rounded-xl border border-slate-200 dark:border-white/10 bg-slate-100/90 dark:bg-white/5 p-2">
+              <span className="text-[10px] text-slate-500 dark:text-slate-400 mr-1">Deneme Sayısı:</span>
+              {trialsTargetOptions.map((opt) => (
+                <button
+                  key={opt}
+                  type="button"
+                  onClick={() => handleSelectTrialsTarget(opt)}
+                  className={`rounded-lg px-2 py-0.5 text-[11px] font-bold transition-all ${
+                    targetTrials === opt
+                      ? 'bg-indigo-600 text-white shadow-sm ring-2 ring-indigo-500/30'
+                      : 'border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700'
+                  }`}
+                >
+                  {opt} Deneme
                 </button>
               ))}
             </div>

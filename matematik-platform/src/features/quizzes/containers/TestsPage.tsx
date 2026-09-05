@@ -28,6 +28,7 @@ import {
   Keyboard,
   Volume2,
   VolumeX,
+  Timer,
 } from 'lucide-react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import dynamic from 'next/dynamic';
@@ -79,6 +80,13 @@ const MathGlossaryModal = dynamic(
   () =>
     import('@/features/programs/components/MathGlossaryModal').then((m) => ({
       default: m.MathGlossaryModal,
+    })),
+  { ssr: false },
+);
+const ExamPacingStrategyModal = dynamic(
+  () =>
+    import('@/features/quizzes/components/ExamPacingStrategyModal').then((m) => ({
+      default: m.ExamPacingStrategyModal,
     })),
   { ssr: false },
 );
@@ -194,6 +202,7 @@ export default function TestsPage({
   const [isHintLadderOpen, setIsHintLadderOpen] = useState(false);
   const [isGlossaryOpen, setIsGlossaryOpen] = useState(false);
   const [isLeagueModalOpen, setIsLeagueModalOpen] = useState(false);
+  const [isPacingStrategyModalOpen, setIsPacingStrategyModalOpen] = useState(false);
   const [questionTimes, setQuestionTimes] = useState<Record<number, number>>({});
   const [questionElapsedSeconds, setQuestionElapsedSeconds] = useState(0);
   const [isDyslexicMode, setIsDyslexicMode] = useState(false);
@@ -1623,6 +1632,14 @@ export default function TestsPage({
             <div className="flex flex-wrap items-center gap-2 self-start sm:self-auto">
               <button
                 type="button"
+                onClick={() => setIsPacingStrategyModalOpen(true)}
+                className="inline-flex items-center gap-2 rounded-2xl border border-indigo-500/30 bg-indigo-500/15 hover:bg-indigo-500/25 px-4 py-2.5 text-xs sm:text-sm font-bold text-indigo-300 shadow-md transition-all active:scale-95"
+              >
+                <Timer className="w-4 h-4 text-indigo-400" />
+                <span>Süre Simülatörü</span>
+              </button>
+              <button
+                type="button"
                 onClick={() => setIsLeagueModalOpen(true)}
                 className="inline-flex items-center gap-2 rounded-2xl border border-rose-500/30 bg-rose-500/15 hover:bg-rose-500/25 px-4 py-2.5 text-xs sm:text-sm font-bold text-rose-300 shadow-md transition-all active:scale-95"
               >
@@ -1820,6 +1837,10 @@ export default function TestsPage({
       <WeeklyMockLeagueModal
         isOpen={isLeagueModalOpen}
         onClose={() => setIsLeagueModalOpen(false)}
+      />
+      <ExamPacingStrategyModal
+        isOpen={isPacingStrategyModalOpen}
+        onClose={() => setIsPacingStrategyModalOpen(false)}
       />
     </main>
   );

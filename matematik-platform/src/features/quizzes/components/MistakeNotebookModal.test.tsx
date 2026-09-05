@@ -44,7 +44,7 @@ describe('MistakeNotebookModal', () => {
       />,
     );
 
-    expect(screen.getByText(/3x = 12/i)).toBeInTheDocument();
+    expect(screen.getAllByText(/3x = 12/i)[0]).toBeInTheDocument();
 
     const retakeBtn = screen.getByRole('button', { name: /Hatalarımdan Test Çöz/i });
     fireEvent.click(retakeBtn);
@@ -142,5 +142,33 @@ describe('MistakeNotebookModal', () => {
 
     // Reçetenin Konu Kavrama & Formül Pekiştirme'ye dönüştüğünü doğrula
     expect(screen.getByText(/Öncelik: Konu Kavrama & Formül Pekiştirme/i)).toBeInTheDocument();
+  });
+
+  it('triggers window.print directly when clicking A4 Hata Analiz Föyü button', () => {
+    const printSpy = vi.spyOn(window, 'print').mockImplementation(() => {});
+    saveMistakesToBank(
+      [
+        {
+          id: 'q-diag',
+          quiz_id: 'quiz-d',
+          question_order: 1,
+          question: 'x^2 = 16 ise x pozitif değeri nedir?',
+          options: ['2', '4', '8', '16'],
+          correct_index: 1,
+          explanation: 'x = 4',
+          created_at: '2026-01-01T00:00:00Z',
+        },
+      ],
+      'Denklem',
+    );
+
+    render(<MistakeNotebookModal isOpen={true} onClose={vi.fn()} />);
+
+    const diagPrintBtn = screen.getByRole('button', { name: /A4 Hata Analiz Föyü/i });
+    expect(diagPrintBtn).toBeInTheDocument();
+    fireEvent.click(diagPrintBtn);
+
+    expect(printSpy).toHaveBeenCalled();
+    printSpy.mockRestore();
   });
 });

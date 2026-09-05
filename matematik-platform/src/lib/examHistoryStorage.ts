@@ -73,6 +73,7 @@ export const saveExamTrial = (
   if (typeof window !== 'undefined') {
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
+      window.dispatchEvent(new CustomEvent('ugurhoca:exam-trials-updated'));
     } catch {
       // Quota koruması
     }
@@ -87,6 +88,7 @@ export const deleteExamTrial = (id: string): void => {
     const existing = getSavedExamTrials();
     const updated = existing.filter((t) => t.id !== id);
     localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
+    window.dispatchEvent(new CustomEvent('ugurhoca:exam-trials-updated'));
   } catch {
     // sessizce geç
   }
@@ -97,11 +99,13 @@ export const clearAllExamTrials = (examType?: ExamHistoryType): void => {
   try {
     if (!examType) {
       localStorage.removeItem(STORAGE_KEY);
+      window.dispatchEvent(new CustomEvent('ugurhoca:exam-trials-updated'));
       return;
     }
     const existing = getSavedExamTrials();
     const remaining = existing.filter((t) => t.examType !== examType);
     localStorage.setItem(STORAGE_KEY, JSON.stringify(remaining));
+    window.dispatchEvent(new CustomEvent('ugurhoca:exam-trials-updated'));
   } catch {
     // sessizce geç
   }

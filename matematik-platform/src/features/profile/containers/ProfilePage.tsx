@@ -60,6 +60,7 @@ const ParentReportModal = dynamic(
 );
 import ProfileNotificationsPanel from '@/features/profile/components/ProfileNotificationsPanel';
 import StudyActivityHeatmap from '@/features/profile/components/StudyActivityHeatmap';
+import ExamTrendChart from '@/features/profile/components/ExamTrendChart';
 import { getSavedMistakes } from '@/features/quizzes/lib/mistakeStorage';
 import { useDailyStreakTouch } from '@/features/profile/hooks/useDailyStreakTouch';
 import { useProfileDashboardData } from '@/features/profile/hooks/useProfileDashboardData';
@@ -693,8 +694,9 @@ export default function ProfilePage({ initialData }: ProfilePageProps) {
                     onToggleItem={handleWeeklyPlanItemToggle}
                   />
 
-                  <div className="mx-auto w-full max-w-full">
+                  <div className="mx-auto w-full max-w-full space-y-6">
                     <StudyActivityHeatmap isLight={false} />
+                    <ExamTrendChart isLight={false} />
                   </div>
 
                   <div className="grid gap-6 xl:grid-cols-[0.95fr_1.05fr]">

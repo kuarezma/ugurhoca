@@ -25,6 +25,7 @@ import {
   deleteExamTrial,
   type SavedExamTrial,
 } from '@/lib/examHistoryStorage';
+import ExamTrendChart from '@/features/profile/components/ExamTrendChart';
 import {
   calculateLgsScore,
   calculateYksScoreTable,
@@ -503,6 +504,15 @@ export function ExamScoreCalculatorModal({
                     </div>
                   </div>
 
+                  {/* İnteraktif LGS Net Gelişim Grafiği */}
+                  <ExamTrendChart
+                    trials={savedTrials}
+                    examType="lgs"
+                    targetNet={15}
+                    isLight={false}
+                    className="border-none !p-0 !bg-transparent shadow-none"
+                  />
+
                   {savedTrials.length === 0 ? (
                     <p className="text-xs text-slate-500 dark:text-slate-400 py-3 text-center">
                       Henüz kayıtlı deneme sınavı bulunmuyor. Yukarıdaki &quot;Bu Denemeyi Kaydet&quot; butonuna basarak ilk sonucunu ekleyebilirsin.
@@ -834,6 +844,15 @@ export function ExamScoreCalculatorModal({
                       </h4>
                     </div>
                   </div>
+
+                  {/* İnteraktif YKS Net Gelişim Grafiği */}
+                  <ExamTrendChart
+                    trials={savedTrials}
+                    examType="yks"
+                    targetNet={30}
+                    isLight={false}
+                    className="border-none !p-0 !bg-transparent shadow-none"
+                  />
 
                   {savedTrials.length === 0 ? (
                     <p className="text-xs text-slate-500 dark:text-slate-400 py-3 text-center">

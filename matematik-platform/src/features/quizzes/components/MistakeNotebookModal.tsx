@@ -223,10 +223,34 @@ export function MistakeNotebookModal({
 
   return (
     <div className="fixed inset-0 z-[150] flex items-center justify-center p-3 sm:p-5">
+      <style>{`
+        @media print {
+          body * { visibility: hidden !important; }
+          .print-mistake-analysis-area, .print-mistake-analysis-area * { visibility: visible !important; }
+          .print-mistake-analysis-area {
+            position: absolute !important;
+            left: 0 !important;
+            top: 0 !important;
+            width: 100% !important;
+            background: #ffffff !important;
+            color: #000000 !important;
+            border: none !important;
+            box-shadow: none !important;
+            padding: 8mm !important;
+            max-height: none !important;
+            overflow: visible !important;
+          }
+          .no-print { display: none !important; }
+          .print-only { display: block !important; }
+        }
+        @media screen {
+          .print-only { display: none !important; }
+        }
+      `}</style>
       <button
         type="button"
         aria-label="Pencereyi kapat"
-        className="fixed inset-0 -z-10 bg-slate-950/80 backdrop-blur-md"
+        className="fixed inset-0 -z-10 bg-slate-950/80 backdrop-blur-md no-print"
         onClick={onClose}
       />
       <div
@@ -234,10 +258,82 @@ export function MistakeNotebookModal({
         role="dialog"
         aria-modal="true"
         aria-labelledby={titleId}
-        className="flex max-h-[92vh] w-full max-w-4xl flex-col overflow-hidden rounded-3xl border border-slate-200/80 dark:border-white/10 bg-white dark:bg-slate-900 shadow-2xl transition-all"
+        className="print-mistake-analysis-area flex max-h-[92vh] w-full max-w-4xl flex-col overflow-hidden rounded-3xl border border-slate-200/80 dark:border-white/10 bg-white dark:bg-slate-900 shadow-2xl transition-all"
       >
-        {/* Başlık */}
-        <div className="flex flex-col gap-3 border-b border-slate-200/80 dark:border-white/10 bg-slate-50/80 dark:bg-slate-950/80 px-5 py-4 sm:flex-row sm:items-center sm:justify-between">
+        {/* A4 Yazdırma Görünümü (Yalnızca print esnasında görünür) */}
+        <div className="print-only mb-6 border-b-2 border-black pb-4 text-black">
+          <div className="flex justify-between items-center">
+            <div>
+              <h1 className="text-xl font-bold">Uğur Hoca Matematik — Kişisel Hata Defteri & Odak Telafi Föyü</h1>
+              <p className="mt-1 text-xs text-gray-700">
+                Tarih: {new Date().toLocaleDateString('tr-TR')} | Toplam {filteredList.length} Soru | Kişisel Teşhis & Telafi Çalışması
+              </p>
+            </div>
+            <div className="text-right">
+              <span className="text-xs font-bold border border-black px-2.5 py-1 rounded-md">
+                LGS & YKS Matematik
+              </span>
+            </div>
+          </div>
+
+          {/* Kök Neden Dağılımı Özeti */}
+          <div className="mt-3 grid grid-cols-4 gap-2 text-center text-xs border border-gray-400 rounded-lg p-2.5 bg-gray-50">
+            <div className="border-r border-gray-300">
+              <span className="block font-bold text-red-700">🔴 İşlem Hatası</span>
+              <span className="text-sm font-extrabold">{reasonBreakdown?.careless || 0} Soru</span>
+            </div>
+            <div className="border-r border-gray-300">
+              <span className="block font-bold text-amber-700">🟡 Kural Eksikliği</span>
+              <span className="text-sm font-extrabold">{reasonBreakdown?.concept || 0} Soru</span>
+            </div>
+            <div className="border-r border-gray-300">
+              <span className="block font-bold text-blue-700">🔵 Yanlış Okuma</span>
+              <span className="text-sm font-extrabold">{reasonBreakdown?.reading || 0} Soru</span>
+            </div>
+            <div>
+              <span className="block font-bold text-purple-700">🟣 Süre Baskısı</span>
+              <span className="text-sm font-extrabold">{reasonBreakdown?.time || 0} Soru</span>
+            </div>
+          </div>
+
+          {/* Soru Listesi ve Çözüm/Düzeltme Alanları */}
+          <div className="mt-4 space-y-4">
+            {filteredList.map((item, idx) => (
+              <div key={item.id || idx} className="border border-gray-400 rounded-xl p-3.5 break-inside-avoid text-xs">
+                <div className="flex justify-between items-center mb-2 border-b border-gray-200 pb-1.5">
+                  <span className="font-bold text-sm">
+                    Soru #{idx + 1} {item.quizTitle ? `• ${item.quizTitle}` : ''}
+                  </span>
+                  <span className="font-semibold px-2 py-0.5 border border-gray-400 rounded text-[11px]">
+                    {item.reason ? MISTAKE_REASON_LABELS[item.reason].label : 'Teşhis Bekleniyor'}
+                  </span>
+                </div>
+                <div className="my-2.5 leading-relaxed text-black font-medium text-sm">
+                  {item.question.question}
+                </div>
+                {item.question.options && item.question.options.length > 0 && (
+                  <div className="grid grid-cols-2 gap-2 my-2 text-gray-800">
+                    {item.question.options.map((opt, optIdx) => (
+                      <div key={optIdx} className="border border-gray-300 rounded px-2.5 py-1 text-xs">
+                        <strong className="mr-1">{String.fromCharCode(65 + optIdx)})</strong> {opt}
+                      </div>
+                    ))}
+                  </div>
+                )}
+                {/* Öğrenci Çözüm ve Analiz Kutusu */}
+                <div className="mt-3 border-2 border-dashed border-gray-400 rounded-lg p-3 min-h-[95px] bg-white">
+                  <div className="flex justify-between items-center text-[10px] text-gray-500 font-bold uppercase mb-1">
+                    <span>✍️ Nerede Yanıldım? & Doğru Çözüm Adımlarım</span>
+                    <span className="border border-gray-400 px-2 py-0.5 rounded text-gray-700">[ ] Doğru Çözdüm & Kavradım</span>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Başlık (Ekran Görünümü) */}
+        <div className="no-print flex flex-col gap-3 border-b border-slate-200/80 dark:border-white/10 bg-slate-50/80 dark:bg-slate-950/80 px-5 py-4 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-center gap-3">
             <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-amber-500 to-rose-600 text-white shadow-md">
               <BookOpen className="h-5 w-5" />
@@ -288,16 +384,31 @@ export function MistakeNotebookModal({
             ) : null}
 
             {filteredList.length > 0 && (
-              <button
-                type="button"
-                onClick={() => setIsWorksheetOpen(true)}
-                title="Hatalarından A4 Yaprak Test Oluştur & Yazdır"
-                className="inline-flex items-center gap-1.5 rounded-xl border border-slate-300 dark:border-white/10 bg-white dark:bg-slate-800 px-3 py-2 text-xs font-bold text-slate-700 dark:text-slate-300 shadow-sm transition hover:bg-slate-100 dark:hover:bg-slate-700 active:scale-[0.98]"
-              >
-                <Printer className="h-3.5 w-3.5 text-indigo-500 dark:text-indigo-400" />
-                <span className="hidden sm:inline">A4 Yaprak Test / PDF</span>
-                <span className="sm:hidden">Yazdır / PDF</span>
-              </button>
+              <>
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (typeof window !== 'undefined') window.print();
+                  }}
+                  title="Hatalı Sorularını Çözüm ve Kök Neden Alanlarıyla A4 Analiz Föyü Olarak Yazdır"
+                  className="inline-flex items-center gap-1.5 rounded-xl border border-amber-500/40 bg-amber-50 dark:bg-amber-500/10 px-3 py-2 text-xs font-bold text-amber-800 dark:text-amber-300 shadow-sm transition hover:bg-amber-100 dark:hover:bg-amber-500/20 active:scale-[0.98]"
+                >
+                  <Printer className="h-3.5 w-3.5 text-amber-600 dark:text-amber-400" />
+                  <span className="hidden sm:inline">A4 Hata Analiz Föyü</span>
+                  <span className="sm:hidden">Analiz Föyü</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setIsWorksheetOpen(true)}
+                  title="Hatalarından A4 Yaprak Test Oluştur & Yazdır"
+                  className="inline-flex items-center gap-1.5 rounded-xl border border-slate-300 dark:border-white/10 bg-white dark:bg-slate-800 px-3 py-2 text-xs font-bold text-slate-700 dark:text-slate-300 shadow-sm transition hover:bg-slate-100 dark:hover:bg-slate-700 active:scale-[0.98]"
+                >
+                  <Printer className="h-3.5 w-3.5 text-indigo-500 dark:text-indigo-400" />
+                  <span className="hidden sm:inline">A4 Yaprak Test / PDF</span>
+                  <span className="sm:hidden">Yazdır / PDF</span>
+                </button>
+              </>
             )}
 
             <button
@@ -312,7 +423,7 @@ export function MistakeNotebookModal({
         </div>
 
         {/* Sayaç ve Filtre Şeridi */}
-        <div className="flex flex-col gap-2.5 border-b border-slate-100 dark:border-white/5 bg-slate-50/50 dark:bg-white/[0.02] px-5 py-3 text-xs">
+        <div className="no-print flex flex-col gap-2.5 border-b border-slate-100 dark:border-white/5 bg-slate-50/50 dark:bg-white/[0.02] px-5 py-3 text-xs">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div className="flex items-center gap-2">
               <button
@@ -410,7 +521,7 @@ export function MistakeNotebookModal({
 
         {/* Kök Neden Analizi & Teşhis Çubuğu */}
         {mistakes.length > 0 && reasonBreakdown && (
-          <div className="border-b border-slate-200/80 dark:border-white/10 bg-slate-50/70 dark:bg-slate-900/60 px-5 py-3">
+          <div className="no-print border-b border-slate-200/80 dark:border-white/10 bg-slate-50/70 dark:bg-slate-900/60 px-5 py-3">
             <div className="flex flex-col gap-2">
               <div className="flex items-center justify-between text-xs">
                 <div className="flex items-center gap-1.5 font-bold text-slate-800 dark:text-slate-200">
@@ -510,7 +621,7 @@ export function MistakeNotebookModal({
         )}
 
         {/* Soru Listesi (Kaydırılabilir) */}
-        <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-4 [scrollbar-width:thin]">
+        <div className="no-print flex-1 overflow-y-auto p-4 sm:p-6 space-y-4 [scrollbar-width:thin]">
           {filteredList.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-12 text-center">
               <div className="flex h-16 w-16 items-center justify-center rounded-3xl bg-emerald-50 dark:bg-emerald-500/10 text-emerald-500 mb-3">
