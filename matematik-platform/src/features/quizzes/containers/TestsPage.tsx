@@ -742,7 +742,7 @@ export default function TestsPage({
             <div className="flex flex-wrap items-center justify-between gap-3 border-b border-white/10 pb-4">
               <button
                 onClick={resetQuiz}
-                className="text-slate-400 hover:text-white flex items-center gap-1.5 text-xs sm:text-sm font-semibold transition-colors"
+                className="text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white flex items-center gap-1.5 text-xs sm:text-sm font-semibold transition-colors"
               >
                 <ArrowLeft className="w-4 h-4" />
                 Testten Çık
@@ -753,7 +753,7 @@ export default function TestsPage({
                 <button
                   type="button"
                   onClick={() => setIsScratchpadOpen(true)}
-                  className="inline-flex items-center gap-1.5 rounded-xl border border-white/10 bg-white/5 px-3 py-1.5 text-xs font-bold text-amber-300 transition hover:bg-white/10 hover:text-amber-200"
+                  className="inline-flex items-center gap-1.5 rounded-xl border border-amber-300 dark:border-white/10 bg-amber-50 dark:bg-white/5 px-3 py-1.5 text-xs font-bold text-amber-700 dark:text-amber-300 transition hover:bg-amber-100 dark:hover:bg-white/10 hover:text-amber-800 dark:hover:text-amber-200"
                   title="Karalama ve işlem tahtasını aç"
                 >
                   <PenTool className="h-3.5 w-3.5" />
@@ -764,10 +764,10 @@ export default function TestsPage({
                 <button
                   type="button"
                   onClick={() => setIsOpticalSheetOpen(true)}
-                  className="inline-flex items-center gap-1.5 rounded-xl border border-amber-500/30 bg-amber-500/10 px-3 py-1.5 text-xs font-bold text-amber-300 transition hover:bg-amber-500/20 hover:text-amber-200"
+                  className="inline-flex items-center gap-1.5 rounded-xl border border-amber-300 dark:border-amber-500/30 bg-amber-100/80 dark:bg-amber-500/10 px-3 py-1.5 text-xs font-bold text-amber-800 dark:text-amber-300 transition hover:bg-amber-200/80 dark:hover:bg-amber-500/20 hover:text-amber-900 dark:hover:text-amber-200"
                   title="LGS dijital optik form simülasyonunu aç"
                 >
-                  <FileText className="h-3.5 w-3.5 text-amber-400" />
+                  <FileText className="h-3.5 w-3.5 text-amber-500 dark:text-amber-400" />
                   <span>Optik Form</span>
                 </button>
 
@@ -845,7 +845,7 @@ export default function TestsPage({
                 </span>
               </div>
 
-              <div className="h-2 bg-slate-800 rounded-full overflow-hidden border border-white/5">
+              <div className="h-2 bg-slate-200 dark:bg-slate-800 rounded-full overflow-hidden border border-slate-300 dark:border-white/5">
                 <div
                   className="h-full bg-gradient-to-r from-purple-500 via-pink-500 to-orange-400 transition-all duration-300 ease-out"
                   style={{
@@ -860,7 +860,7 @@ export default function TestsPage({
               <div className="flex items-start justify-between gap-3 mb-6">
                 <MathText
                   as="h2"
-                  className="flex-1 text-lg sm:text-2xl font-bold text-white font-display leading-snug"
+                  className="flex-1 text-lg sm:text-2xl font-bold text-slate-900 dark:text-white font-display leading-snug"
                 >
                   {question.question}
                 </MathText>
@@ -878,13 +878,13 @@ export default function TestsPage({
                     aria-label={isSpeaking ? 'Seslendirmeyi durdur' : 'Soruyu sesli dinle'}
                     className={`shrink-0 inline-flex items-center gap-1.5 rounded-xl px-2.5 py-1.5 text-xs font-semibold transition-all ${
                       isSpeaking
-                        ? 'bg-amber-500/20 text-amber-300 border border-amber-500/40 animate-pulse'
-                        : 'bg-white/5 text-slate-400 hover:text-white hover:bg-white/10 border border-white/10'
+                        ? 'bg-amber-500/20 text-amber-700 dark:text-amber-300 border border-amber-500/40 animate-pulse'
+                        : 'bg-slate-100 dark:bg-white/5 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200 dark:hover:bg-white/10 border border-slate-200 dark:border-white/10'
                     }`}
                   >
                     {isSpeaking ? (
                       <>
-                        <VolumeX className="h-4 w-4 text-amber-400" />
+                        <VolumeX className="h-4 w-4 text-amber-600 dark:text-amber-400" />
                         <span className="hidden sm:inline">Durdur</span>
                       </>
                     ) : (
@@ -921,14 +921,14 @@ export default function TestsPage({
                       className={`w-full min-h-[3.25rem] p-4 rounded-2xl text-left transition-all duration-200 flex items-center gap-3.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-900 ${
                         selected
                           ? 'bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-500 text-white shadow-md scale-[1.01]'
-                          : 'bg-slate-800/60 text-slate-200 hover:bg-slate-700/60 hover:translate-x-0.5 border border-white/5'
+                          : 'bg-slate-100 hover:bg-slate-200/80 dark:bg-slate-800/60 dark:hover:bg-slate-700/60 text-slate-800 dark:text-slate-200 hover:translate-x-0.5 border border-slate-200 dark:border-white/5 shadow-sm'
                       }`}
                     >
                       <span
                         className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl font-bold text-sm ${
                           selected
                             ? 'bg-white/25 text-white shadow-sm'
-                            : 'bg-white/10 text-slate-300'
+                            : 'bg-slate-200 dark:bg-white/10 text-slate-700 dark:text-slate-300'
                         }`}
                         aria-hidden="true"
                       >
@@ -958,7 +958,7 @@ export default function TestsPage({
                 type="button"
                 onClick={previousQuestion}
                 disabled={currentQuestion === 0}
-                className="inline-flex h-12 items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/5 px-5 text-sm font-semibold text-slate-200 transition-colors hover:bg-white/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary disabled:cursor-not-allowed disabled:opacity-50"
+                className="inline-flex h-12 items-center justify-center gap-2 rounded-xl border border-slate-200 dark:border-white/10 bg-slate-100 dark:bg-white/5 px-5 text-sm font-semibold text-slate-700 dark:text-slate-200 transition-colors hover:bg-slate-200 dark:hover:bg-white/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary disabled:cursor-not-allowed disabled:opacity-50"
               >
                 <ArrowLeft className="h-4 w-4" aria-hidden="true" />
                 Önceki
@@ -970,7 +970,7 @@ export default function TestsPage({
                 className={`inline-flex h-12 items-center justify-center gap-2 rounded-xl font-bold transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:ring-offset-2 focus-visible:ring-offset-slate-900 ${
                   selectedAnswer !== null
                     ? 'bg-gradient-to-r from-brand-primary via-brand-pink to-brand-orange text-white shadow-brand-glow hover:-translate-y-0.5'
-                    : 'bg-slate-700/60 text-slate-400 cursor-not-allowed'
+                    : 'bg-slate-200 dark:bg-slate-700/60 text-slate-400 dark:text-slate-500 border border-slate-300 dark:border-transparent cursor-not-allowed'
                 }`}
               >
                 {currentQuestion < quizQuestions.length - 1 ? (

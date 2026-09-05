@@ -47,13 +47,22 @@ export type ScratchpadModalProps = {
 type ToolType = 'pen' | 'highlighter' | 'line' | 'eraser';
 type BackgroundPattern = 'dark' | 'grid' | 'lined';
 
-const COLOR_PALETTE = [
+const DARK_PALETTE = [
   { id: 'yellow', label: 'Sarı', value: '#facc15' },
   { id: 'white', label: 'Beyaz', value: '#f8fafc' },
   { id: 'cyan', label: 'Turkuaz', value: '#06b6d4' },
   { id: 'pink', label: 'Pembe', value: '#ec4899' },
   { id: 'emerald', label: 'Yeşil', value: '#22c55e' },
   { id: 'purple', label: 'Mor', value: '#a78bfa' },
+];
+
+const LIGHT_PALETTE = [
+  { id: 'ink', label: 'Lacivert', value: '#1e3a8a' },
+  { id: 'black', label: 'Mürekkep Siyah', value: '#0f172a' },
+  { id: 'blue', label: 'Mavi Kalem', value: '#2563eb' },
+  { id: 'red', label: 'Kırmızı Kalem', value: '#dc2626' },
+  { id: 'emerald', label: 'Zümrüt Yeşili', value: '#16a34a' },
+  { id: 'purple', label: 'Mor Kalem', value: '#7c3aed' },
 ];
 
 function hexToRgba(hex: string, alpha: number): string {
@@ -77,6 +86,7 @@ export default function ScratchpadModal({
 }: ScratchpadModalProps) {
   const modalRef = useAccessibleModal<HTMLDivElement>(isOpen, onClose);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const [isLight, setIsLight] = useState(false);
   const [activeTool, setActiveTool] = useState<ToolType>('pen');
   const [color, setColor] = useState('#facc15');
   const [lineWidth, setLineWidth] = useState(3);
@@ -91,13 +101,27 @@ export default function ScratchpadModal({
 
   const cacheKey = questionContext?.questionId || (questionContext?.questionText ? questionContext.questionText.trim().slice(0, 100) : null);
 
+  useEffect(() => {
+    if (typeof document !== 'undefined') {
+      const light = document.documentElement.getAttribute('data-theme') === 'light';
+      setIsLight(light);
+      if (light && color === '#facc15') {
+        setColor('#1e3a8a');
+      } else if (!light && color === '#1e3a8a') {
+        setColor('#facc15');
+      }
+    }
+  }, [isOpen, color]);
+
   // Background pattern painter
-  const drawBackground = useCallback((ctx: CanvasRenderingContext2D, width: number, height: number, pattern: BackgroundPattern) => {
-    ctx.fillStyle = '#090d16';
+  const drawBackground = useCallback((ctx: CanvasRenderingContext2D, width: number, height: number, pattern: BackgroundPattern, lightMode = false) => {
+    ctx.fillStyle = lightMode ? '#ffffff' : '#090d16';
     ctx.fillRect(0, 0, width, height);
 
+    const strokeColor = lightMode ? 'rgba(15, 23, 42, 0.08)' : 'rgba(255, 255, 255, 0.07)';
+
     if (pattern === 'grid') {
-      ctx.strokeStyle = 'rgba(255, 255, 255, 0.07)';
+      ctx.strokeStyle = strokeColor;
       ctx.lineWidth = 1;
       const step = 28;
       ctx.beginPath();
@@ -111,7 +135,7 @@ export default function ScratchpadModal({
       }
       ctx.stroke();
     } else if (pattern === 'lined') {
-      ctx.strokeStyle = 'rgba(255, 255, 255, 0.08)';
+      ctx.strokeStyle = strokeColor;
       ctx.lineWidth = 1;
       const step = 32;
       ctx.beginPath();
@@ -151,11 +175,11 @@ export default function ScratchpadModal({
       }
     }
 
-    drawBackground(ctx, rect.width, rect.height, backgroundPattern);
+    drawBackground(ctx, rect.width, rect.height, backgroundPattern, isLight);
     const initial = ctx.getImageData(0, 0, canvas.width, canvas.height);
     setHistory([initial]);
     setRedoHistory([]);
-  }, [backgroundPattern, cacheKey, drawBackground]);
+  }, [backgroundPattern, cacheKey, drawBackground, isLight]);
 
   useEffect(() => {
     if (isOpen) {
@@ -199,7 +223,7 @@ export default function ScratchpadModal({
     ctx.moveTo(x, y);
 
     if (activeTool === 'eraser') {
-      ctx.strokeStyle = '#090d16';
+      ctx.strokeStyle = isLight ? '#ffffff' : '#090d16';
       ctx.lineWidth = lineWidth * 5;
     } else if (activeTool === 'highlighter') {
       ctx.strokeStyle = hexToRgba(color, 0.35);
@@ -300,12 +324,12 @@ export default function ScratchpadModal({
       const tempCtx = temp.getContext('2d');
       if (tempCtx) {
         tempCtx.drawImage(canvas, 0, 0);
-        drawBackground(ctx, rect.width, rect.height, nextPattern);
+        drawBackground(ctx, rect.width, rect.height, nextPattern, isLight);
         ctx.drawImage(temp, 0, 0, rect.width, rect.height);
         saveState();
       }
     } else {
-      drawBackground(ctx, rect.width, rect.height, nextPattern);
+      drawBackground(ctx, rect.width, rect.height, nextPattern, isLight);
       saveState();
     }
   };
@@ -316,7 +340,7 @@ export default function ScratchpadModal({
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
     const rect = canvas.getBoundingClientRect();
-    drawBackground(ctx, rect.width, rect.height, backgroundPattern);
+    drawBackground(ctx, rect.width, rect.height, backgroundPattern, isLight);
     setRedoHistory([]);
     saveState();
     if (cacheKey) {
@@ -575,7 +599,9 @@ export default function ScratchpadModal({
         role="dialog"
         aria-modal="true"
         aria-label={title}
-        className="relative z-10 flex h-full max-h-[94vh] w-full max-w-6xl flex-col overflow-hidden rounded-3xl border border-white/15 bg-slate-900 shadow-2xl"
+        className={`relative z-10 flex h-full max-h-[94vh] w-full max-w-6xl flex-col overflow-hidden rounded-3xl border shadow-2xl ${
+          isLight ? 'border-slate-200 bg-white text-slate-900 shadow-xl' : 'border-white/15 bg-slate-900 text-white shadow-2xl'
+        }`}
       >
         <ErrorBoundary
           fallback={({ reset }) => (
@@ -601,12 +627,14 @@ export default function ScratchpadModal({
           )}
         >
         {/* Header & Araç Çubuğu */}
-        <div className="flex flex-wrap items-center justify-between gap-2 border-b border-white/10 bg-slate-950/90 px-3 sm:px-4 py-2 sm:py-3">
+        <div className={`flex flex-wrap items-center justify-between gap-2 border-b px-3 sm:px-4 py-2 sm:py-3 ${
+          isLight ? 'border-slate-200 bg-slate-50' : 'border-white/10 bg-slate-950/90'
+        }`}>
           <div className="flex items-center gap-2 min-w-0">
-            <div className="flex h-7 w-7 sm:h-8 sm:w-8 shrink-0 items-center justify-center rounded-xl bg-amber-500/20 text-amber-300">
+            <div className="flex h-7 w-7 sm:h-8 sm:w-8 shrink-0 items-center justify-center rounded-xl bg-amber-500/20 text-amber-500 dark:text-amber-300">
               <PenTool className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
             </div>
-            <span className="font-display text-xs sm:text-sm font-bold text-white truncate">
+            <span className={`font-display text-xs sm:text-sm font-bold truncate ${isLight ? 'text-slate-900' : 'text-white'}`}>
               {title}
             </span>
 
@@ -746,8 +774,10 @@ export default function ScratchpadModal({
 
             {/* Renk Paleti */}
             {activeTool !== 'eraser' && (
-              <div className="flex items-center gap-1 rounded-xl bg-white/5 p-1 border border-white/10">
-                {COLOR_PALETTE.map((c) => (
+              <div className={`flex items-center gap-1 rounded-xl p-1 border ${
+                isLight ? 'bg-slate-100 border-slate-300' : 'bg-white/5 border-white/10'
+              }`}>
+                {(isLight ? LIGHT_PALETTE : DARK_PALETTE).map((c) => (
                   <button
                     key={c.id}
                     type="button"
@@ -755,7 +785,11 @@ export default function ScratchpadModal({
                     onClick={() => setColor(c.value)}
                     className={`h-5 w-5 sm:h-6 sm:w-6 rounded-lg transition-transform ${
                       color === c.value
-                        ? 'scale-125 ring-2 ring-white ring-offset-1 ring-offset-slate-900'
+                        ? `scale-125 ring-2 shadow-sm ${
+                            isLight
+                              ? 'ring-slate-900 ring-offset-1 ring-offset-white'
+                              : 'ring-white ring-offset-1 ring-offset-slate-900'
+                          }`
                         : 'opacity-70 hover:opacity-100'
                     }`}
                     style={{ backgroundColor: c.value }}
@@ -860,20 +894,26 @@ export default function ScratchpadModal({
         <div className="relative flex flex-1 overflow-hidden">
           {/* Sol Soru Paneli (Varsa ve açıksa) */}
           {questionContext && showQuestionPanel && (
-            <div className="w-full md:w-80 lg:w-96 shrink-0 border-r border-white/10 bg-slate-950/70 p-4 overflow-y-auto hidden md:flex flex-col gap-4 text-slate-200">
+            <div className={`w-full md:w-80 lg:w-96 shrink-0 border-r p-4 overflow-y-auto hidden md:flex flex-col gap-4 ${
+              isLight ? 'border-slate-200 bg-slate-50 text-slate-800' : 'border-white/10 bg-slate-950/70 text-slate-200'
+            }`}>
               <div className="flex items-center justify-between">
-                <span className="text-xs font-bold uppercase tracking-wider text-amber-400">
+                <span className="text-xs font-bold uppercase tracking-wider text-amber-500 dark:text-amber-400">
                   Aktif Soru Metni
                 </span>
-                <span className="text-[11px] text-slate-400">Şıklara tıklayarak eleyebilirsin</span>
+                <span className="text-[11px] text-slate-500 dark:text-slate-400">Şıklara tıklayarak eleyebilirsin</span>
               </div>
 
-              <div className="rounded-2xl border border-white/10 bg-slate-900/80 p-4 text-sm font-medium leading-relaxed">
+              <div className={`rounded-2xl border p-4 text-sm font-medium leading-relaxed ${
+                isLight ? 'border-slate-200 bg-white text-slate-900 shadow-sm' : 'border-white/10 bg-slate-900/80 text-white'
+              }`}>
                 <MathText>{questionContext.questionText}</MathText>
               </div>
 
               {questionContext.imageUrl && (
-                <div className="relative h-36 w-full overflow-hidden rounded-xl border border-white/10 bg-slate-900">
+                <div className={`relative h-36 w-full overflow-hidden rounded-xl border ${
+                  isLight ? 'border-slate-200 bg-white' : 'border-white/10 bg-slate-900'
+                }`}>
                   <Image
                     src={questionContext.imageUrl}
                     alt="Soru Görseli"
@@ -887,7 +927,7 @@ export default function ScratchpadModal({
               {/* Şıklar ve Eleme */}
               {questionContext.options && questionContext.options.length > 0 && (
                 <div className="space-y-2">
-                  <span className="text-xs font-bold text-slate-400">Şıklar & Eleme:</span>
+                  <span className="text-xs font-bold text-slate-500 dark:text-slate-400">Şıklar & Eleme:</span>
                   <div className="space-y-1.5">
                     {questionContext.options.map((opt, idx) => {
                       const optLabel = String.fromCharCode(65 + idx);
@@ -899,14 +939,18 @@ export default function ScratchpadModal({
                           onClick={() => toggleEliminateOption(idx)}
                           className={`w-full flex items-center gap-2.5 p-2 rounded-xl text-left text-xs transition border ${
                             isEliminated
-                              ? 'bg-rose-950/25 border-rose-500/30 text-rose-300/60 line-through'
+                              ? 'bg-rose-50 dark:bg-rose-950/25 border-rose-200 dark:border-rose-500/30 text-rose-600 dark:text-rose-300/60 line-through'
+                              : isLight
+                              ? 'bg-white border-slate-200 text-slate-800 hover:bg-slate-100 shadow-sm'
                               : 'bg-white/5 border-white/10 text-slate-200 hover:bg-white/10'
                           }`}
                         >
                           <span
                             className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-lg text-[11px] font-bold ${
                               isEliminated
-                                ? 'bg-rose-500/20 text-rose-400'
+                                ? 'bg-rose-500/20 text-rose-500'
+                                : isLight
+                                ? 'bg-slate-100 text-slate-700'
                                 : 'bg-white/10 text-slate-300'
                             }`}
                           >
@@ -915,7 +959,7 @@ export default function ScratchpadModal({
                           <span className="flex-1 truncate">
                             <MathText>{opt}</MathText>
                           </span>
-                          {isEliminated && <X className="h-3.5 w-3.5 text-rose-400 shrink-0" />}
+                          {isEliminated && <X className="h-3.5 w-3.5 text-rose-500 shrink-0" />}
                         </button>
                       );
                     })}
@@ -926,7 +970,9 @@ export default function ScratchpadModal({
           )}
 
           {/* Canvas Çizim Alanı */}
-          <div className="relative flex-1 cursor-crosshair bg-[#090d16] touch-none">
+          <div className={`relative flex-1 cursor-crosshair touch-none transition-colors ${
+            isLight ? 'bg-white' : 'bg-[#090d16]'
+          }`}>
             <canvas
               ref={canvasRef}
               onPointerDown={handlePointerDown}
@@ -939,14 +985,16 @@ export default function ScratchpadModal({
         </div>
 
         {/* Alt Bilgi */}
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-1 border-t border-white/10 bg-slate-950/80 px-3 sm:px-4 py-2 text-[11px] text-slate-400 text-center sm:text-left">
+        <div className={`flex flex-col sm:flex-row items-center justify-between gap-1 border-t px-3 sm:px-4 py-2 text-[11px] text-center sm:text-left ${
+          isLight ? 'border-slate-200 bg-slate-50 text-slate-600' : 'border-white/10 bg-slate-950/80 text-slate-400'
+        }`}>
           <div className="flex items-center gap-2">
             <span>Kalem, fosforlu kalem ve düz cetvel ile işlemlerini yapabilirsin.</span>
             {questionContext && (
-              <span className="text-amber-400/90 font-medium">Sol panelde şıkları eleyebilirsin.</span>
+              <span className="text-amber-600 dark:text-amber-400 font-medium">Sol panelde şıkları eleyebilirsin.</span>
             )}
           </div>
-          <span className="font-semibold text-slate-300 hidden sm:inline">Soruyu çözerken tahtayı kapatıp açabilirsin.</span>
+          <span className="font-semibold text-slate-700 dark:text-slate-300 hidden sm:inline">Soruyu çözerken tahtayı kapatıp açabilirsin.</span>
         </div>
         </ErrorBoundary>
       </div>

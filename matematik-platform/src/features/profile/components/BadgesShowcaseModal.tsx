@@ -234,7 +234,7 @@ export function BadgesShowcaseModal({
           } backdrop-blur-xl`}
         >
           {/* Başlık */}
-          <div className="flex items-center justify-between border-b border-white/10 px-5 py-4 sm:px-6">
+          <div className="flex items-center justify-between border-b border-slate-200 dark:border-white/10 px-5 py-4 sm:px-6">
             <div className="flex items-center gap-3">
               <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-tr from-amber-400 to-rose-500 text-white shadow-md shadow-amber-500/30">
                 <Award className="h-5 w-5" />
@@ -243,7 +243,7 @@ export function BadgesShowcaseModal({
                 <h2 id={titleId} className="text-base sm:text-lg font-bold font-display leading-tight">
                   Matematik Başarı Rozetleri 🏆
                 </h2>
-                <p className="text-xs text-slate-400">
+                <p className="text-xs text-slate-500 dark:text-slate-400">
                   Çalıştıkça, test çözdükçe ve serini korudukça yeni rozetlerin kilidini aç.
                 </p>
               </div>
@@ -252,7 +252,7 @@ export function BadgesShowcaseModal({
             <button
               onClick={onClose}
               type="button"
-              className="rounded-xl p-2 text-slate-400 transition hover:bg-white/10 hover:text-white"
+              className="rounded-xl p-2 text-slate-400 hover:text-slate-700 dark:hover:text-white transition hover:bg-slate-100 dark:hover:bg-white/10"
               aria-label="Kapat"
             >
               <X className="h-5 w-5" />
@@ -260,12 +260,12 @@ export function BadgesShowcaseModal({
           </div>
 
           {/* İlerleme Çubuğu */}
-          <div className="border-b border-white/10 px-5 py-3 sm:px-6 bg-white/[0.02]">
+          <div className="border-b border-slate-200 dark:border-white/10 px-5 py-3 sm:px-6 bg-slate-50/70 dark:bg-white/[0.02]">
             <div className="flex items-center justify-between text-xs font-semibold mb-1.5">
-              <span className="text-slate-400">Rozet Koleksiyonu</span>
-              <span className="text-amber-400 font-bold">{earnedCount} / {ALL_BADGES.length} Kazanıldı</span>
+              <span className="text-slate-500 dark:text-slate-400">Rozet Koleksiyonu</span>
+              <span className="text-amber-600 dark:text-amber-400 font-bold">{earnedCount} / {ALL_BADGES.length} Kazanıldı</span>
             </div>
-            <div className="h-2 w-full rounded-full bg-white/10 overflow-hidden">
+            <div className="h-2 w-full rounded-full bg-slate-200 dark:bg-white/10 overflow-hidden">
               <div
                 className="h-full bg-gradient-to-r from-amber-400 via-orange-500 to-pink-500 transition-all duration-500"
                 style={{ width: `${(earnedCount / ALL_BADGES.length) * 100}%` }}
@@ -283,10 +283,10 @@ export function BadgesShowcaseModal({
                   className={`relative flex flex-col justify-between rounded-2xl border p-4 transition-all ${
                     badge.isUnlocked
                       ? isLight
-                        ? 'border-amber-200 bg-amber-50/50 shadow-sm'
+                        ? 'border-amber-200 bg-amber-50/60 shadow-sm'
                         : 'border-amber-500/30 bg-gradient-to-br from-white/5 to-amber-500/10 shadow-lg shadow-amber-500/5'
                       : isLight
-                      ? 'border-slate-200 bg-slate-50 opacity-60'
+                      ? 'border-slate-200 bg-slate-50/80 opacity-75'
                       : 'border-white/5 bg-slate-950/40 opacity-50'
                   }`}
                 >
@@ -296,19 +296,19 @@ export function BadgesShowcaseModal({
                         className={`flex h-12 w-12 items-center justify-center rounded-2xl shadow-md ${
                           badge.isUnlocked
                             ? `bg-gradient-to-br ${badge.gradient} text-white`
-                            : 'bg-slate-800 text-slate-500'
+                            : 'bg-slate-200 dark:bg-slate-800 text-slate-500'
                         }`}
                       >
                         <Icon className="h-6 w-6" />
                       </div>
 
                       {badge.isUnlocked ? (
-                        <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/20 px-2 py-0.5 text-[10px] font-bold text-emerald-400">
+                        <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/15 px-2 py-0.5 text-[10px] font-bold text-emerald-700 dark:text-emerald-400 border border-emerald-500/25">
                           <CheckCircle2 className="h-3 w-3" />
                           Kazanıldı
                         </span>
                       ) : (
-                        <span className="inline-flex items-center gap-1 rounded-full bg-slate-800 px-2 py-0.5 text-[10px] font-bold text-slate-400">
+                        <span className="inline-flex items-center gap-1 rounded-full bg-slate-200 dark:bg-slate-800 px-2 py-0.5 text-[10px] font-bold text-slate-600 dark:text-slate-400 border border-slate-300 dark:border-transparent">
                           <Lock className="h-3 w-3" />
                           Kilitli
                         </span>
@@ -318,12 +318,12 @@ export function BadgesShowcaseModal({
                     <h3 className="text-sm font-bold text-slate-900 dark:text-white">
                       {badge.name}
                     </h3>
-                    <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 leading-relaxed">
+                    <p className="text-xs text-slate-600 dark:text-slate-400 mt-1 leading-relaxed">
                       {badge.description}
                     </p>
                   </div>
 
-                  <div className="mt-3 pt-2.5 border-t border-white/10 flex items-center justify-between text-[11px] text-amber-500 dark:text-amber-300/80 font-medium">
+                  <div className="mt-3 pt-2.5 border-t border-slate-200 dark:border-white/10 flex items-center justify-between text-[11px] text-amber-700 dark:text-amber-300/80 font-medium">
                     <span>🎯 {badge.requirement}</span>
                     {badge.isUnlocked && (
                       <button
@@ -337,7 +337,7 @@ export function BadgesShowcaseModal({
                             gradient: badge.gradient,
                           })
                         }
-                        className="inline-flex items-center gap-1 font-bold text-amber-400 hover:text-amber-300 hover:underline transition"
+                        className="inline-flex items-center gap-1 font-bold text-amber-600 dark:text-amber-400 hover:text-amber-700 dark:hover:text-amber-300 hover:underline transition"
                         title="Başarı kartını görüntüle ve indir"
                       >
                         <Sparkles className="h-3 w-3" />
@@ -351,8 +351,8 @@ export function BadgesShowcaseModal({
           </div>
 
           {/* Alt Bilgi */}
-          <div className="flex items-center justify-between border-t border-white/10 px-5 py-3.5 sm:px-6 bg-white/[0.02]">
-            <p className="text-[11px] text-slate-400">
+          <div className="flex items-center justify-between border-t border-slate-200 dark:border-white/10 px-5 py-3.5 sm:px-6 bg-slate-50/70 dark:bg-white/[0.02]">
+            <p className="text-[11px] text-slate-500 dark:text-slate-400">
               Düzenli soru çözerek ve testleri tamamlayarak koleksiyonunu genişletebilirsin.
             </p>
             <button

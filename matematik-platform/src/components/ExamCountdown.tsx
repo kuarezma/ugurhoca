@@ -154,7 +154,7 @@ export function ExamCountdown({
               {status}
             </span>
             {isTargetGradeExam && (
-              <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/15 text-emerald-500 dark:text-emerald-400 border border-emerald-500/30 px-2 py-0.5 text-[10px] font-bold">
+              <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 border border-emerald-500/30 px-2 py-0.5 text-[10px] font-bold">
                 🎯 Hedef Kademem
               </span>
             )}
@@ -284,7 +284,7 @@ export function ExamCountdown({
               <span className="text-[11px] font-medium text-slate-500 dark:text-slate-400">
                 Hedef Netim:
               </span>
-              <span className="font-bold text-amber-500 dark:text-amber-400">
+              <span className="font-bold text-amber-600 dark:text-amber-400">
                 {targetNet ? `${targetNet} / ${maxNet} Net` : 'Belirlenmedi'}
               </span>
             </div>
@@ -298,7 +298,7 @@ export function ExamCountdown({
           </div>
 
           {isEditingTarget && (
-            <div className="mt-2 flex flex-wrap items-center gap-1.5 rounded-xl bg-slate-100/80 dark:bg-white/5 p-2">
+            <div className="mt-2 flex flex-wrap items-center gap-1.5 rounded-xl border border-slate-200 dark:border-white/10 bg-slate-100/90 dark:bg-white/5 p-2">
               <span className="text-[10px] text-slate-500 dark:text-slate-400 mr-1">Net Seç:</span>
               {targetOptions.map((opt) => (
                 <button
@@ -307,8 +307,8 @@ export function ExamCountdown({
                   onClick={() => handleSelectTarget(opt)}
                   className={`rounded-lg px-2 py-0.5 text-[11px] font-bold transition-all ${
                     targetNet === opt
-                      ? 'bg-amber-500 text-white shadow-sm'
-                      : 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700'
+                      ? 'bg-amber-500 text-white shadow-sm ring-2 ring-amber-500/30'
+                      : 'border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700'
                   }`}
                 >
                   {opt}

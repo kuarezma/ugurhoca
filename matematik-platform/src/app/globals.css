@@ -797,25 +797,49 @@ html[data-theme='light'] [class*='text-white'] {
   color: var(--text-strong) !important;
 }
 
-html[data-theme='light'] [class*='bg-gradient-to-'][class*='text-white'],
+/* Renkli ve gradyanlı buton/rozetlerdeki beyaz metin ve ikonları açık temada koruma */
+html[data-theme='light'] [class*='bg-gradient-'][class*='text-white'],
 html[data-theme='light'] [class*='bg-indigo-'][class*='text-white'],
 html[data-theme='light'] [class*='bg-purple-'][class*='text-white'],
 html[data-theme='light'] [class*='bg-blue-'][class*='text-white'],
 html[data-theme='light'] [class*='bg-green-'][class*='text-white'],
-html[data-theme='light'] [class*='bg-red-'][class*='text-white'],
+html[data-theme='light'] [class*='bg-emerald-'][class*='text-white'],
+html[data-theme='light'] [class*='bg-teal-'][class*='text-white'],
+html[data-theme='light'] [class*='bg-cyan-'][class*='text-white'],
+html[data-theme='light'] [class*='bg-amber-'][class*='text-white'],
+html[data-theme='light'] [class*='bg-yellow-'][class*='text-white'],
 html[data-theme='light'] [class*='bg-orange-'][class*='text-white'],
-html[data-theme='light'] [class*='bg-pink-'][class*='text-white'] {
+html[data-theme='light'] [class*='bg-red-'][class*='text-white'],
+html[data-theme='light'] [class*='bg-rose-'][class*='text-white'],
+html[data-theme='light'] [class*='bg-pink-'][class*='text-white'],
+html[data-theme='light'] [class*='bg-violet-'][class*='text-white'],
+html[data-theme='light'] [class*='bg-brand-'][class*='text-white'],
+html[data-theme='light'] [class*='btn-primary'][class*='text-white'],
+html[data-theme='light'] [class*='btn-primary'],
+html[data-theme='light'] [class*='bg-slate-900'][class*='text-white'],
+html[data-theme='light'] [class*='bg-slate-950'][class*='text-white'] {
   color: #ffffff !important;
 }
 
-html[data-theme='light'] [class*='bg-gradient-to-'] > [class*='text-white'],
-html[data-theme='light'] [class*='bg-indigo-'] > [class*='text-white'],
-html[data-theme='light'] [class*='bg-purple-'] > [class*='text-white'],
-html[data-theme='light'] [class*='bg-blue-'] > [class*='text-white'],
-html[data-theme='light'] [class*='bg-green-'] > [class*='text-white'],
-html[data-theme='light'] [class*='bg-red-'] > [class*='text-white'],
-html[data-theme='light'] [class*='bg-orange-'] > [class*='text-white'],
-html[data-theme='light'] [class*='bg-pink-'] > [class*='text-white'] {
+html[data-theme='light'] [class*='bg-gradient-'] [class*='text-white'],
+html[data-theme='light'] [class*='bg-indigo-'] [class*='text-white'],
+html[data-theme='light'] [class*='bg-purple-'] [class*='text-white'],
+html[data-theme='light'] [class*='bg-blue-'] [class*='text-white'],
+html[data-theme='light'] [class*='bg-green-'] [class*='text-white'],
+html[data-theme='light'] [class*='bg-emerald-'] [class*='text-white'],
+html[data-theme='light'] [class*='bg-teal-'] [class*='text-white'],
+html[data-theme='light'] [class*='bg-cyan-'] [class*='text-white'],
+html[data-theme='light'] [class*='bg-amber-'] [class*='text-white'],
+html[data-theme='light'] [class*='bg-yellow-'] [class*='text-white'],
+html[data-theme='light'] [class*='bg-orange-'] [class*='text-white'],
+html[data-theme='light'] [class*='bg-red-'] [class*='text-white'],
+html[data-theme='light'] [class*='bg-rose-'] [class*='text-white'],
+html[data-theme='light'] [class*='bg-pink-'] [class*='text-white'],
+html[data-theme='light'] [class*='bg-violet-'] [class*='text-white'],
+html[data-theme='light'] [class*='bg-brand-'] [class*='text-white'],
+html[data-theme='light'] [class*='btn-primary'] [class*='text-white'],
+html[data-theme='light'] [class*='bg-slate-900'] [class*='text-white'],
+html[data-theme='light'] [class*='bg-slate-950'] [class*='text-white'] {
   color: #ffffff !important;
 }
 
@@ -859,9 +883,23 @@ html[data-theme='light'] [class*='text-red-300'] { color: #b91c1c !important; }
 html[data-theme='light'] [class*='text-pink-300'] { color: #be185d !important; }
 html[data-theme='light'] [class*='text-rose-300'] { color: #be123c !important; }
 
+/* 200 tonlu renklerin açık modda okunaksızlaşmasını (kontrast kaybını) önleme */
+html[data-theme='light'] [class*='text-indigo-200'] { color: #3730a3 !important; }
+html[data-theme='light'] [class*='text-purple-200'] { color: #6b21a8 !important; }
+html[data-theme='light'] [class*='text-blue-200'] { color: #1e40af !important; }
+html[data-theme='light'] [class*='text-cyan-200'] { color: #155e75 !important; }
+html[data-theme='light'] [class*='text-teal-200'] { color: #115e59 !important; }
+html[data-theme='light'] [class*='text-green-200'] { color: #166534 !important; }
+html[data-theme='light'] [class*='text-emerald-200'] { color: #065f46 !important; }
+html[data-theme='light'] [class*='text-yellow-200'] { color: #854d0e !important; }
+html[data-theme='light'] [class*='text-amber-200'] { color: #92400e !important; }
+html[data-theme='light'] [class*='text-orange-200'] { color: #9a3412 !important; }
+html[data-theme='light'] [class*='text-red-200'] { color: #991b1b !important; }
+html[data-theme='light'] [class*='text-pink-200'] { color: #9d174d !important; }
+html[data-theme='light'] [class*='text-rose-200'] { color: #9f1239 !important; }
+
 html[data-theme='light'] [class*='border-slate-'],
-html[data-theme='light'] [class*='border-white/10'],
-html[data-theme='light'] [class*='border-white/20'] {
+html[data-theme='light'] [class*='border-white/'] {
   border-color: var(--border) !important;
 }
 
@@ -872,10 +910,28 @@ html[data-theme='light'] [class*='bg-slate-700'] {
   background-color: var(--bg-elevated) !important;
 }
 
+html[data-theme='light'] [class*='bg-slate-950/'],
 html[data-theme='light'] [class*='bg-slate-900/'],
 html[data-theme='light'] [class*='bg-slate-800/'],
 html[data-theme='light'] [class*='bg-slate-700/'] {
   background-color: var(--surface-2) !important;
+}
+
+/* Modal ve Drawer Karartma Perdeleri: Açık modda opak saf beyaz perde olmasını engeller, yarı saydam koyu perde sağlar */
+html[data-theme='light'] [class*='fixed'][class*='bg-slate-950/'],
+html[data-theme='light'] [class*='fixed'][class*='bg-slate-900/'],
+html[data-theme='light'] [class*='fixed'][class*='bg-black/'],
+html[data-theme='light'] [class*='absolute'][class*='bg-slate-950/'],
+html[data-theme='light'] [class*='absolute'][class*='bg-slate-900/'],
+html[data-theme='light'] [class*='absolute'][class*='bg-black/'] {
+  background-color: rgba(15, 23, 42, 0.65) !important;
+}
+
+/* Baskı / Yaprak test modunda siyah mürekkep öğeleri koruma */
+html[data-theme='light'] #printable-worksheet-content [class*='bg-slate-900'],
+html[data-theme='light'] #printable-worksheet-content [class*='bg-slate-800'] {
+  background-color: #0f172a !important;
+  color: #ffffff !important;
 }
 
 html[data-theme='light'] [class*='bg-white/5'],

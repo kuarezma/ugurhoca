@@ -157,9 +157,9 @@ export function MistakeNotebookModal({
                   <button
                     type="button"
                     onClick={() => handleStartPractice(5)}
-                    className="inline-flex items-center gap-1.5 rounded-xl border border-amber-500/40 bg-amber-500/10 px-3 py-2 text-xs font-bold text-amber-300 shadow-sm transition hover:bg-amber-500/20 active:scale-[0.98]"
+                    className="inline-flex items-center gap-1.5 rounded-xl border border-amber-300 dark:border-amber-500/40 bg-amber-50 dark:bg-amber-500/10 px-3 py-2 text-xs font-bold text-amber-800 dark:text-amber-300 shadow-sm transition hover:bg-amber-100 dark:hover:bg-amber-500/20 active:scale-[0.98]"
                   >
-                    <Play className="h-3 w-3 fill-amber-300" />
+                    <Play className="h-3 w-3 fill-amber-700 dark:fill-amber-300 text-amber-700 dark:text-amber-300" />
                     <span>5 Soruluk Hızlı Telafi</span>
                   </button>
                 )}

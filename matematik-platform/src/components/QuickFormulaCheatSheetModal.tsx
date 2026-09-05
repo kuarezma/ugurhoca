@@ -217,9 +217,9 @@ export function QuickFormulaCheatSheetModal({
         }`}
       >
         {/* Üst Başlık Barı */}
-        <div className="flex items-center justify-between p-4 sm:p-5 border-b border-white/10 shrink-0">
+        <div className="flex items-center justify-between p-4 sm:p-5 border-b border-slate-200 dark:border-white/10 shrink-0">
           <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-amber-500/20 text-amber-400">
+            <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-amber-500/20 text-amber-500 dark:text-amber-400">
               <BookMarked className="h-5 w-5" />
             </div>
             <div>
@@ -227,7 +227,7 @@ export function QuickFormulaCheatSheetModal({
                 <h3 className="font-display font-bold text-base sm:text-lg">
                   Hızlı Formül Cep Notu
                 </h3>
-                <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/30">
+                <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-amber-50 dark:bg-amber-500/20 text-amber-800 dark:text-amber-300 border border-amber-200 dark:border-amber-500/30">
                   Cheat-Sheet 📌
                 </span>
               </div>
@@ -242,10 +242,10 @@ export function QuickFormulaCheatSheetModal({
               type="button"
               onClick={handlePrint}
               aria-label="Formül notunu yazdır"
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 text-slate-300 hover:text-white text-xs font-bold transition shadow-sm"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-slate-300 dark:border-white/10 bg-slate-100 dark:bg-white/5 hover:bg-slate-200 dark:hover:bg-white/10 text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white text-xs font-bold transition shadow-sm"
               title="Yazıcıdan Çıkart veya PDF Kaydet"
             >
-              <Printer className="h-4 w-4 text-emerald-400" />
+              <Printer className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
               <span className="hidden sm:inline">Yazdır / PDF</span>
             </button>
 
@@ -326,25 +326,25 @@ export function QuickFormulaCheatSheetModal({
                 >
                   <div>
                     <div className="flex items-center justify-between gap-2 mb-2">
-                      <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-amber-500/10 text-amber-400 border border-amber-500/20">
+                      <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-amber-50 dark:bg-amber-500/10 text-amber-800 dark:text-amber-400 border border-amber-200 dark:border-amber-500/20">
                         {item.category}
                       </span>
-                      <span className="text-[10px] text-slate-400 font-mono">
+                      <span className="text-[10px] text-slate-500 dark:text-slate-400 font-mono">
                         {item.id.toUpperCase()}
                       </span>
                     </div>
 
-                    <h4 className="font-bold text-xs sm:text-sm text-white mb-2.5">
+                    <h4 className="font-bold text-xs sm:text-sm text-slate-900 dark:text-white mb-2.5">
                       {item.title}
                     </h4>
 
                     {/* KaTeX Formülü */}
-                    <div className="p-2.5 rounded-xl bg-slate-950/60 border border-white/5 text-amber-200 overflow-x-auto text-xs sm:text-sm font-mono mb-2 text-center">
+                    <div className="p-2.5 rounded-xl bg-slate-100 dark:bg-slate-950/60 border border-slate-200 dark:border-white/5 text-amber-900 dark:text-amber-200 overflow-x-auto text-xs sm:text-sm font-mono mb-2 text-center">
                       <MathText>{`$${item.formula}$`}</MathText>
                     </div>
                   </div>
 
-                  <p className="text-[11px] text-slate-400 leading-relaxed italic border-t border-white/5 pt-2 mt-1">
+                  <p className="text-[11px] text-slate-600 dark:text-slate-400 leading-relaxed italic border-t border-slate-200 dark:border-white/5 pt-2 mt-1">
                     💡 {item.note}
                   </p>
                 </div>
@@ -354,9 +354,9 @@ export function QuickFormulaCheatSheetModal({
         </div>
 
         {/* Alt Bilgi Barı */}
-        <div className="p-3.5 border-t border-white/10 bg-black/20 flex items-center justify-between text-[11px] text-slate-400 shrink-0">
+        <div className="p-3.5 border-t border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-black/20 flex items-center justify-between text-[11px] text-slate-600 dark:text-slate-400 shrink-0">
           <div className="flex items-center gap-2">
-            <Calculator className="h-3.5 w-3.5 text-amber-400" />
+            <Calculator className="h-3.5 w-3.5 text-amber-500 dark:text-amber-400" />
             <span>Toplam {filteredFormulas.length} kritik sınav formülü gösteriliyor.</span>
           </div>
           <span className="font-mono text-[10px] text-slate-500 hidden sm:inline">
