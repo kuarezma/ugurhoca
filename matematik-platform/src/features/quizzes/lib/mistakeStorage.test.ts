@@ -6,6 +6,8 @@ import {
   removeMistakeFromBank,
   clearAllMistakes,
   updateMistakeReason,
+  advanceMistakeReview,
+  getDueMistakes,
 } from './mistakeStorage';
 import type { QuizQuestion } from '@/types/quiz';
 
@@ -87,5 +89,64 @@ describe('mistakeStorage', () => {
     localStorage.setItem('ugur_hoca_mistakes_bank_v1', 'not valid json {{{');
     const result = getSavedMistakes();
     expect(result).toEqual([]);
+  });
+
+  it('advances spaced repetition stage on correct answer and completes on stage 3', () => {
+    saveMistakesToBank([mockQuestion]);
+    const initial = getSavedMistakes()[0];
+    expect(initial.reviewStage).toBe(0);
+    expect(initial.mastered).toBe(false);
+
+    // 1. Doğru çözüm -> Aşama 1
+    advanceMistakeReview(mockQuestion.question, true);
+    let current = getSavedMistakes()[0];
+    expect(current.reviewStage).toBe(1);
+    expect(current.mastered).toBe(false);
+    expect(current.reviewCount).toBe(1);
+
+    // 2. Doğru çözüm -> Aşama 2
+    advanceMistakeReview(mockQuestion.question, true);
+    current = getSavedMistakes()[0];
+    expect(current.reviewStage).toBe(2);
+    expect(current.mastered).toBe(false);
+    expect(current.reviewCount).toBe(2);
+
+    // 3. Doğru çözüm -> Aşama 3 (Kalıcı Öğrenildi / mastered = true)
+    advanceMistakeReview(mockQuestion.question, true);
+    current = getSavedMistakes()[0];
+    expect(current.reviewStage).toBe(3);
+    expect(current.mastered).toBe(true);
+    expect(current.reviewCount).toBe(3);
+  });
+
+  it('resets spaced repetition stage to 0 when student struggles (correct = false)', () => {
+    saveMistakesToBank([mockQuestion]);
+    advanceMistakeReview(mockQuestion.question, true);
+    expect(getSavedMistakes()[0].reviewStage).toBe(1);
+
+    // Zorlandı -> Başa döner (aşama 0) ve yarın tekrar planlanır
+    advanceMistakeReview(mockQuestion.question, false);
+    const reset = getSavedMistakes()[0];
+    expect(reset.reviewStage).toBe(0);
+    expect(reset.mastered).toBe(false);
+  });
+
+  it('filters due mistakes correctly based on review date and mastered status', () => {
+    saveMistakesToBank([mockQuestion]);
+    // Initially not due today because scheduled for tomorrow
+    expect(getDueMistakes()).toHaveLength(0);
+
+    // If nextReviewDate is today or past, it should be due
+    const todayStr = new Date().toISOString().split('T')[0];
+    const item = getSavedMistakes()[0];
+    localStorage.setItem(
+      'ugur_hoca_mistakes_bank_v1',
+      JSON.stringify([{ ...item, nextReviewDate: todayStr }]),
+    );
+    expect(getDueMistakes()).toHaveLength(1);
+
+    // If mastered, should not be due
+    markMistakeMastered(mockQuestion.question, true);
+    expect(getDueMistakes()).toHaveLength(0);
   });
 });

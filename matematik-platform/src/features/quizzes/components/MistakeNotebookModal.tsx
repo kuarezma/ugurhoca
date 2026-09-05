@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useId, useMemo } from 'react';
+import { useState, useEffect, useId, useMemo, useCallback } from 'react';
 import {
   X,
   BookOpen,
@@ -8,6 +8,8 @@ import {
   Trash2,
   Play,
   Printer,
+  Sparkles,
+  RotateCcw,
 } from 'lucide-react';
 import MathText from '@/components/MathText';
 import type { QuizQuestion } from '@/types/quiz';
@@ -17,6 +19,7 @@ import {
   removeMistakeFromBank,
   clearAllMistakes,
   updateMistakeReason,
+  advanceMistakeReview,
   type SavedMistakeQuestion,
   type MistakeReason,
   MISTAKE_REASON_LABELS,
@@ -37,30 +40,44 @@ export function MistakeNotebookModal({
 }: MistakeNotebookModalProps) {
   const titleId = useId();
   const [mistakes, setMistakes] = useState<SavedMistakeQuestion[]>([]);
-  const [filter, setFilter] = useState<'all' | 'pending' | 'mastered'>('pending');
+  const [filter, setFilter] = useState<'due' | 'pending' | 'mastered' | 'all'>('due');
   const [reasonFilter, setReasonFilter] = useState<MistakeReason | 'all'>('all');
   const [isWorksheetOpen, setIsWorksheetOpen] = useState(false);
   const modalRef = useAccessibleModal<HTMLDivElement>(isOpen, onClose);
 
-  const reloadMistakes = () => {
-    setMistakes(getSavedMistakes());
-  };
+  const reloadMistakes = useCallback(() => {
+    const list = getSavedMistakes();
+    setMistakes(list);
+    // Eğer bugün tekrar edilecek yoksa ve ilk açılışsa bekleyenlere geç
+    const today = new Date().toISOString().split('T')[0];
+    const dueCount = list.filter((m) => !m.mastered && (!m.nextReviewDate || m.nextReviewDate <= today)).length;
+    if (dueCount === 0 && filter === 'due') {
+      setFilter('pending');
+    }
+  }, [filter]);
 
   useEffect(() => {
     if (isOpen) {
       reloadMistakes();
     }
-  }, [isOpen]);
+  }, [isOpen, reloadMistakes]);
 
   const stats = useMemo(() => {
+    const today = new Date().toISOString().split('T')[0];
     const total = mistakes.length;
     const mastered = mistakes.filter((m) => m.mastered).length;
     const pending = total - mastered;
-    return { total, mastered, pending };
+    const due = mistakes.filter((m) => !m.mastered && (!m.nextReviewDate || m.nextReviewDate <= today)).length;
+    return { total, mastered, pending, due };
   }, [mistakes]);
 
   const filteredList = useMemo(() => {
+    const today = new Date().toISOString().split('T')[0];
     return mistakes.filter((m) => {
+      if (filter === 'due') {
+        if (m.mastered) return false;
+        if (m.nextReviewDate && m.nextReviewDate > today) return false;
+      }
       if (filter === 'pending' && m.mastered) return false;
       if (filter === 'mastered' && !m.mastered) return false;
       if (reasonFilter !== 'all' && m.reason !== reasonFilter) return false;
@@ -96,8 +113,18 @@ export function MistakeNotebookModal({
     }
   };
 
-  const handleStartPractice = (count?: number) => {
-    let pool = filter === 'all'
+  const handleAdvanceReview = (questionText: string, correct: boolean) => {
+    advanceMistakeReview(questionText, correct);
+    reloadMistakes();
+  };
+
+  const handleStartPractice = (count?: number, dueOnly = false) => {
+    const today = new Date().toISOString().split('T')[0];
+    let pool = dueOnly
+      ? mistakes.filter((m) => !m.mastered && (!m.nextReviewDate || m.nextReviewDate <= today))
+      : filter === 'due'
+      ? mistakes.filter((m) => !m.mastered && (!m.nextReviewDate || m.nextReviewDate <= today))
+      : filter === 'all'
       ? mistakes
       : filter === 'pending'
       ? mistakes.filter((m) => !m.mastered)
@@ -145,12 +172,23 @@ export function MistakeNotebookModal({
                 Akıllı Hata Defterim 📓
               </h2>
               <p className="text-xs text-slate-500 dark:text-slate-400">
-                Yanlış yaptığın sorular burada toplanır. Nedenini belirle, tekrar çöz ve pekiştir.
+                Aralıklı tekrar algoritmasıyla (1-3-7 gün) yanlış yaptığın soruları kalıcı öğrenmeye dönüştür.
               </p>
             </div>
           </div>
 
           <div className="flex flex-wrap items-center gap-2">
+            {stats.due > 0 && (
+              <button
+                type="button"
+                onClick={() => handleStartPractice(undefined, true)}
+                className="inline-flex items-center gap-1.5 rounded-xl bg-gradient-to-r from-rose-500 to-amber-500 px-3.5 py-2 text-xs font-bold text-white shadow-md transition hover:scale-[1.02] active:scale-[0.98]"
+              >
+                <Sparkles className="h-3.5 w-3.5 fill-white" />
+                <span>Bugünkü Tekrarları Çöz ({stats.due})</span>
+              </button>
+            )}
+
             {stats.pending > 0 ? (
               <>
                 {stats.pending > 5 && (
@@ -160,13 +198,13 @@ export function MistakeNotebookModal({
                     className="inline-flex items-center gap-1.5 rounded-xl border border-amber-300 dark:border-amber-500/40 bg-amber-50 dark:bg-amber-500/10 px-3 py-2 text-xs font-bold text-amber-800 dark:text-amber-300 shadow-sm transition hover:bg-amber-100 dark:hover:bg-amber-500/20 active:scale-[0.98]"
                   >
                     <Play className="h-3 w-3 fill-amber-700 dark:fill-amber-300 text-amber-700 dark:text-amber-300" />
-                    <span>5 Soruluk Hızlı Telafi</span>
+                    <span>5 Soruluk Telafi</span>
                   </button>
                 )}
                 <button
                   type="button"
                   onClick={() => handleStartPractice()}
-                  className="inline-flex items-center gap-1.5 rounded-xl bg-gradient-to-r from-amber-500 to-rose-600 px-4 py-2 text-xs font-bold text-white shadow-md transition hover:scale-[1.02] active:scale-[0.98]"
+                  className="inline-flex items-center gap-1.5 rounded-xl bg-slate-900 dark:bg-white/10 px-3.5 py-2 text-xs font-bold text-white shadow-md transition hover:bg-slate-800 dark:hover:bg-white/20 active:scale-[0.98]"
                 >
                   <Play className="h-3.5 w-3.5 fill-white" />
                   <span>Hatalarımdan Test Çöz ({stats.pending})</span>
@@ -204,6 +242,17 @@ export function MistakeNotebookModal({
             <div className="flex items-center gap-2">
               <button
                 type="button"
+                onClick={() => setFilter('due')}
+                className={`rounded-lg px-2.5 py-1 font-bold transition-all ${
+                  filter === 'due'
+                    ? 'bg-rose-500 text-white shadow-sm'
+                    : 'bg-slate-200/70 dark:bg-white/10 text-slate-700 dark:text-slate-300'
+                }`}
+              >
+                🧠 Bugün Tekrar ({stats.due})
+              </button>
+              <button
+                type="button"
                 onClick={() => setFilter('pending')}
                 className={`rounded-lg px-2.5 py-1 font-bold transition-all ${
                   filter === 'pending'
@@ -211,7 +260,7 @@ export function MistakeNotebookModal({
                     : 'bg-slate-200/70 dark:bg-white/10 text-slate-700 dark:text-slate-300'
                 }`}
               >
-                Tekrar Bekleyen ({stats.pending})
+                Bekleyen ({stats.pending})
               </button>
               <button
                 type="button"
@@ -301,17 +350,31 @@ export function MistakeNotebookModal({
           ) : (
             filteredList.map((item, index) => {
               const q = item.question;
+              const today = new Date().toISOString().split('T')[0];
+              const stage = item.reviewStage ?? 0;
+              const isDue = !item.mastered && (!item.nextReviewDate || item.nextReviewDate <= today);
+
+              const stageMeta = [
+                { label: '1. Aşama (1 gün)', icon: '🌱', bg: 'bg-amber-500/15 text-amber-700 dark:text-amber-300 border-amber-500/30' },
+                { label: '2. Aşama (3 gün)', icon: '🌿', bg: 'bg-blue-500/15 text-blue-700 dark:text-blue-300 border-blue-500/30' },
+                { label: '3. Aşama (7 gün)', icon: '🌳', bg: 'bg-purple-500/15 text-purple-700 dark:text-purple-300 border-purple-500/30' },
+                { label: 'Kalıcı Öğrenildi', icon: '🏆', bg: 'bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border-emerald-500/30' },
+              ];
+              const currentStage = stageMeta[Math.min(stage, 3)];
+
               return (
                 <div
                   key={item.id || index}
                   className={`rounded-2xl border p-4 transition-all ${
                     item.mastered
                       ? 'border-emerald-200 dark:border-emerald-500/20 bg-emerald-50/30 dark:bg-emerald-950/15'
+                      : isDue
+                      ? 'border-rose-300 dark:border-rose-500/30 bg-rose-50/20 dark:bg-rose-950/10'
                       : 'border-slate-200 dark:border-white/10 bg-slate-50/60 dark:bg-white/5'
                   }`}
                 >
-                  <div className="flex items-start justify-between gap-3 mb-2">
-                    <div className="flex items-center gap-2">
+                  <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-2.5 mb-2">
+                    <div className="flex flex-wrap items-center gap-2">
                       <span className="flex h-6 w-6 items-center justify-center rounded-lg bg-slate-200 dark:bg-white/10 text-xs font-bold">
                         {index + 1}
                       </span>
@@ -320,15 +383,51 @@ export function MistakeNotebookModal({
                           {item.quizTitle}
                         </span>
                       )}
-                      {item.mastered && (
-                        <span className="inline-flex items-center gap-1 rounded-md bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 px-2 py-0.5 text-[10px] font-bold">
-                          <CheckCircle2 className="h-3 w-3" />
-                          Öğrenildi
+                      {/* Aralıklı Tekrar Aşama Rozeti */}
+                      <span
+                        className={`inline-flex items-center gap-1 rounded-md px-2 py-0.5 text-[10px] font-bold border ${currentStage.bg}`}
+                        title="Aralıklı Tekrar Aşaması (Leitner Kutusu)"
+                      >
+                        <span>{currentStage.icon}</span>
+                        <span>{currentStage.label}</span>
+                      </span>
+
+                      {isDue && (
+                        <span className="inline-flex items-center gap-1 rounded-md bg-rose-500/15 text-rose-700 dark:text-rose-300 border border-rose-500/30 px-1.5 py-0.5 text-[10px] font-bold animate-pulse">
+                          🚨 Bugün Tekrarı
+                        </span>
+                      )}
+                      {!isDue && item.nextReviewDate && !item.mastered && (
+                        <span className="text-[10px] font-medium text-slate-400">
+                          🗓️ Sonraki: {item.nextReviewDate}
                         </span>
                       )}
                     </div>
 
-                    <div className="flex items-center gap-1.5">
+                    <div className="flex flex-wrap items-center gap-1.5">
+                      {!item.mastered && (
+                        <>
+                          <button
+                            type="button"
+                            onClick={() => handleAdvanceReview(q.question, true)}
+                            title="Bu soruyu doğru hatırladım, sonraki aralıklı aşamaya ilerlet"
+                            className="flex h-7 px-2 items-center gap-1 rounded-lg text-xs font-semibold bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 hover:bg-emerald-500/25 transition-colors"
+                          >
+                            <Sparkles className="h-3.5 w-3.5" />
+                            <span>Hatırladım</span>
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => handleAdvanceReview(q.question, false)}
+                            title="Bu soruda zorlandım, aralıklı tekrarı yarına baştan başlat"
+                            className="flex h-7 px-2 items-center gap-1 rounded-lg text-xs font-semibold bg-rose-500/10 text-rose-700 dark:text-rose-300 hover:bg-rose-500/20 transition-colors"
+                          >
+                            <RotateCcw className="h-3 w-3" />
+                            <span className="hidden sm:inline">Zorlandım</span>
+                          </button>
+                        </>
+                      )}
+
                       <button
                         type="button"
                         onClick={() => handleToggleMastered(q.question, item.mastered)}
@@ -336,11 +435,11 @@ export function MistakeNotebookModal({
                         className={`flex h-7 px-2.5 items-center gap-1 rounded-lg text-xs font-semibold transition-colors ${
                           item.mastered
                             ? 'bg-slate-200 dark:bg-white/10 text-slate-600 dark:text-slate-300'
-                            : 'bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500/25'
+                            : 'bg-slate-200/70 dark:bg-white/10 text-slate-700 dark:text-slate-300 hover:bg-slate-300 dark:hover:bg-white/15'
                         }`}
                       >
                         <CheckCircle2 className="h-3.5 w-3.5" />
-                        <span>{item.mastered ? 'Tekrar Aç' : 'Öğrendim'}</span>
+                        <span>{item.mastered ? 'Tekrar Aç' : 'Tamamlandı'}</span>
                       </button>
 
                       <button

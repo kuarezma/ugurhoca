@@ -9,6 +9,7 @@ import {
   getYesterdayDateString,
   grantFreezeToken,
   repairStreak,
+  activateFreezeTokenForToday,
 } from './dailyGoalStorage';
 
 describe('dailyGoalStorage', () => {
@@ -189,5 +190,27 @@ describe('dailyGoalStorage', () => {
     // Should not exceed max limit of 2
     const capped = grantFreezeToken();
     expect(capped.freezeTokens).toBe(2);
+  });
+
+  it('activates freeze token for today manually to protect streak on rest day', () => {
+    // Start with 1 token and a streak
+    localStorage.setItem(
+      'ugurhoca_daily_goal_v1',
+      JSON.stringify({
+        target: 20,
+        date: getLocalDateString(),
+        solved: 0,
+        streak: 5,
+        lastCompletedDate: getYesterdayDateString(),
+        history: {},
+        freezeTokens: 1,
+      }),
+    );
+
+    const afterFreeze = activateFreezeTokenForToday();
+    expect(afterFreeze.freezeTokens).toBe(0);
+    expect(afterFreeze.lastFreezeUsedDate).toBe(getLocalDateString());
+    expect(afterFreeze.lastCompletedDate).toBe(getLocalDateString());
+    expect(afterFreeze.streak).toBe(5);
   });
 });

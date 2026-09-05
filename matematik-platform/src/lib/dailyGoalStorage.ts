@@ -302,3 +302,29 @@ export const repairStreak = (): DailyGoalData => {
 
   return current;
 };
+
+export const activateFreezeTokenForToday = (): DailyGoalData => {
+  const current = getDailyGoal();
+  if ((current.freezeTokens || 0) > 0) {
+    const today = getLocalDateString();
+    const updated: DailyGoalData = {
+      ...current,
+      freezeTokens: Math.max(0, (current.freezeTokens || 0) - 1),
+      lastFreezeUsedDate: today,
+      lastCompletedDate: today,
+    };
+
+    if (typeof window !== 'undefined') {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
+        notifyUpdate(updated);
+      } catch {
+        // Ignore quota errors
+      }
+    }
+
+    return updated;
+  }
+
+  return current;
+};

@@ -185,6 +185,28 @@ export default function TestsPage({
   const [isLeagueModalOpen, setIsLeagueModalOpen] = useState(false);
   const [questionTimes, setQuestionTimes] = useState<Record<number, number>>({});
   const [questionElapsedSeconds, setQuestionElapsedSeconds] = useState(0);
+  const [isDyslexicMode, setIsDyslexicMode] = useState(false);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('ugurhoca_dyslexic_mode_v1') === 'true';
+      if (saved) setIsDyslexicMode(true);
+    }
+  }, []);
+
+  const toggleDyslexicMode = useCallback(() => {
+    setIsDyslexicMode((prev) => {
+      const next = !prev;
+      if (typeof window !== 'undefined') {
+        try {
+          localStorage.setItem('ugurhoca_dyslexic_mode_v1', String(next));
+        } catch {
+          // ignore
+        }
+      }
+      return next;
+    });
+  }, []);
 
   const {
     isSpeaking,
@@ -771,6 +793,22 @@ export default function TestsPage({
                   <span>Optik Form</span>
                 </button>
 
+                {/* Rahat Okuma / Disleksi Modu Butonu */}
+                <button
+                  type="button"
+                  onClick={toggleDyslexicMode}
+                  className={`inline-flex items-center gap-1.5 rounded-xl border px-3 py-1.5 text-xs font-bold transition ${
+                    isDyslexicMode
+                      ? 'border-emerald-500/40 bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 shadow-sm'
+                      : 'border-slate-300 dark:border-white/10 bg-slate-100 dark:bg-white/5 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-white/10'
+                  }`}
+                  title={isDyslexicMode ? 'Normal yazı tipine dön' : 'Disleksi dostu rahat okuma modunu aç'}
+                  aria-pressed={isDyslexicMode}
+                >
+                  <BookOpen className="h-3.5 w-3.5 text-emerald-600 dark:text-emerald-400" />
+                  <span className="hidden sm:inline">{isDyslexicMode ? 'Rahat Okuma Açık' : 'Rahat Okuma'}</span>
+                </button>
+
                 {/* Odak Modu Butonu */}
                 <button
                   type="button"
@@ -856,11 +894,18 @@ export default function TestsPage({
             </div>
 
             {/* Soru Gövdesi */}
-            <div key={currentQuestion} className="animate-fade-up" role="group" aria-label={`Soru ${currentQuestion + 1}`}>
+            <div
+              key={currentQuestion}
+              className={`animate-fade-up ${isDyslexicMode ? 'font-dyslexic accessible-reading-mode' : ''}`}
+              role="group"
+              aria-label={`Soru ${currentQuestion + 1}`}
+            >
               <div className="flex items-start justify-between gap-3 mb-6">
                 <MathText
                   as="h2"
-                  className="flex-1 text-lg sm:text-2xl font-bold text-slate-900 dark:text-white font-display leading-snug"
+                  className={`flex-1 text-lg sm:text-2xl font-bold text-slate-900 dark:text-white font-display leading-snug ${
+                    isDyslexicMode ? 'font-dyslexic accessible-reading-mode' : ''
+                  }`}
                 >
                   {question.question}
                 </MathText>
@@ -934,7 +979,7 @@ export default function TestsPage({
                       >
                         {String.fromCharCode(65 + i)}
                       </span>
-                      <div className="flex-1">
+                      <div className={`flex-1 ${isDyslexicMode ? 'font-dyslexic accessible-reading-mode' : ''}`}>
                         <MathText>{option}</MathText>
                         {hasOptionImage(question, i) ? (
                           <OptionMedia

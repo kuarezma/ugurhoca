@@ -8,11 +8,16 @@ import {
   Settings2,
   Lock,
   ShieldCheck,
+  RotateCcw,
+  Sparkles,
 } from 'lucide-react';
 import {
   getDailyGoal,
   setDailyTarget,
   getYesterdayDateString,
+  getLocalDateString,
+  activateFreezeTokenForToday,
+  repairStreak,
   type DailyGoalData,
 } from '@/lib/dailyGoalStorage';
 import { featuredExams } from '@/lib/examDates';
@@ -41,6 +46,16 @@ export function PersonalStreakHub({ isLight }: PersonalStreakHubProps) {
     window.addEventListener('ugurhoca:daily-goal-updated', handleUpdate);
     return () => window.removeEventListener('ugurhoca:daily-goal-updated', handleUpdate);
   }, []);
+
+  const handleUseFreezeToday = () => {
+    const updated = activateFreezeTokenForToday();
+    setGoalData(updated);
+  };
+
+  const handleRepairStreak = () => {
+    const updated = repairStreak();
+    setGoalData(updated);
+  };
 
   // Son 14 günlük aktivite dizisi
   const past14Days = useMemo(() => {
@@ -114,6 +129,33 @@ export function PersonalStreakHub({ isLight }: PersonalStreakHubProps) {
         </div>
       </div>
 
+      {/* Seri Telafi Kartı (Seri yeni kırıldıysa kurtarma seçeneği sunar) */}
+      {(goalData.previousStreakBeforeReset || 0) > 0 && goalData.streak === 0 && (
+        <div className="mb-6 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-amber-300 dark:border-amber-500/40 bg-amber-50/90 dark:bg-amber-950/25 p-4 text-xs shadow-sm">
+          <div className="flex items-center gap-2.5">
+            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-amber-500/20 text-amber-600 dark:text-amber-400">
+              <RotateCcw className="h-4 w-4" />
+            </div>
+            <div>
+              <span className="font-bold text-amber-900 dark:text-amber-200">
+                {goalData.previousStreakBeforeReset} Günlük Serini Kurtarabilirsin!
+              </span>
+              <p className="text-[11px] text-amber-800/80 dark:text-amber-300/80 mt-0.5">
+                Dün soru çözemedin ama zincirin henüz tamamen kaybolmadı. Tek tıkla serini kaldığı yerden devam ettir.
+              </p>
+            </div>
+          </div>
+          <button
+            type="button"
+            onClick={handleRepairStreak}
+            className="inline-flex items-center gap-1.5 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 px-3.5 py-2 text-xs font-bold text-white shadow-sm hover:scale-[1.02] active:scale-[0.98] transition"
+          >
+            <Sparkles className="h-3.5 w-3.5" />
+            <span>Seriyi Kurtar & Devam Et</span>
+          </button>
+        </div>
+      )}
+
       {/* 3 Ana Metrik Kartı */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
         {/* Seri Sayacı */}
@@ -136,19 +178,32 @@ export function PersonalStreakHub({ isLight }: PersonalStreakHubProps) {
               <span
                 className={`inline-flex items-center gap-1 rounded-md px-1.5 py-0.5 text-[10px] font-semibold border ${
                   (goalData.freezeTokens || 0) > 0
-                    ? 'bg-sky-500/15 border-sky-500/30 text-sky-400'
-                    : 'bg-slate-700/30 border-slate-600/30 text-slate-400'
+                    ? 'bg-sky-500/15 border-sky-500/30 text-sky-600 dark:text-sky-400'
+                    : 'bg-slate-200 dark:bg-slate-700/30 border-slate-300 dark:border-slate-600/30 text-slate-500 dark:text-slate-400'
                 }`}
                 title="Seri Kalkanı: Giremediğin günlerde çalışma serinin sıfırlanmasını otomatik önler."
               >
                 <ShieldCheck className="h-3 w-3" />
                 <span>{goalData.freezeTokens ?? 1} Kalkan</span>
               </span>
-              {goalData.lastFreezeUsedDate === getYesterdayDateString() && (
-                <span className="text-[10px] font-medium text-emerald-400">
+              {goalData.lastFreezeUsedDate === getLocalDateString() ? (
+                <span className="text-[10px] font-medium text-sky-600 dark:text-sky-300">
+                  🛡️ Bugün korumada (Dinlenme)
+                </span>
+              ) : goalData.lastFreezeUsedDate === getYesterdayDateString() ? (
+                <span className="text-[10px] font-medium text-emerald-600 dark:text-emerald-400">
                   🛡️ Dün serin korundu!
                 </span>
-              )}
+              ) : (goalData.freezeTokens || 0) > 0 && goalData.streak > 0 && !isGoalReached ? (
+                <button
+                  type="button"
+                  onClick={handleUseFreezeToday}
+                  className="text-[10px] font-semibold text-sky-600 dark:text-sky-400 hover:underline"
+                  title="Bugün ders çalışamayacaksan 1 kalkan kullanarak serini koru"
+                >
+                  Dinlenme Günü Kullan
+                </button>
+              ) : null}
             </div>
             <p className={`text-[11px] mt-1 ${isLight ? 'text-slate-600' : 'text-slate-400'}`}>
               {goalData.streak > 0 ? 'Harika gidiyorsun! Zinciri kırma.' : 'Bugün hedefine ulaş, seriyi başlat!'}
