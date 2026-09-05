@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback, Suspense, useRef } from 'react';
 import dynamic from 'next/dynamic';
 import { AnimatePresence, motion } from 'framer-motion';
 import Link from 'next/link';
-import { useSearchParams } from 'next/navigation';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import {
   ArrowLeft,
   ChevronRight,
@@ -245,6 +245,8 @@ function ContentsPageInner({
   initialTotalCount = 0,
   initialType = 'all',
 }: ContentsPageProps) {
+  const router = useRouter();
+  const pathname = usePathname();
   const searchParams = useSearchParams();
   const { showToast } = useToast();
   const requestedTypeFromUrl = searchParams.get('type') || 'all';
@@ -687,9 +689,12 @@ function ContentsPageInner({
     worksheetOutcomeFromUrl,
   ]);
 
+  const handledRequestedDocIdRef = useRef<string | null>(null);
+
   const handleOpenPreview = useCallback(
     (content: ContentDocument) => {
       setShowAnswerKey(false);
+      handledRequestedDocIdRef.current = content.id;
       const nextViews = (content.views || 0) + 1;
       const updatedDoc = { ...content, views: nextViews };
       setPreviewDoc(updatedDoc);
@@ -719,8 +724,11 @@ function ContentsPageInner({
   );
 
   const handleClosePreview = useCallback(() => {
+    const currentRequestedId = searchParams.get('id') || searchParams.get('doc');
+    handledRequestedDocIdRef.current = currentRequestedId || '__dismissed__';
     setPreviewDoc(null);
     setShowAnswerKey(false);
+
     try {
       const url = new URL(window.location.href);
       url.searchParams.delete('id');
@@ -729,13 +737,28 @@ function ContentsPageInner({
     } catch {
       // ignore
     }
-  }, []);
+
+    const params = new URLSearchParams(searchParams.toString());
+    if (params.has('id') || params.has('doc')) {
+      params.delete('id');
+      params.delete('doc');
+      const nextQuery = params.toString();
+      const nextUrl = nextQuery ? `${pathname}?${nextQuery}` : pathname;
+      router.replace(nextUrl, { scroll: false });
+    }
+  }, [pathname, router, searchParams]);
 
   const requestedDocId = searchParams.get('id') || searchParams.get('doc');
   useEffect(() => {
-    if (!requestedDocId || previewDoc?.id === requestedDocId) {
+    if (!requestedDocId) {
+      handledRequestedDocIdRef.current = null;
       return;
     }
+    if (handledRequestedDocIdRef.current === requestedDocId) {
+      return;
+    }
+    handledRequestedDocIdRef.current = requestedDocId;
+
     const found =
       documents.find((d) => d.id === requestedDocId) ||
       worksheetDocuments.find((d) => d.id === requestedDocId);
@@ -750,7 +773,7 @@ function ContentsPageInner({
         handleOpenPreview(doc);
       }
     });
-  }, [requestedDocId, documents, worksheetDocuments, previewDoc?.id, handleOpenPreview]);
+  }, [requestedDocId, documents, worksheetDocuments, handleOpenPreview]);
 
 
   const handleDownloadDocument = useCallback(
