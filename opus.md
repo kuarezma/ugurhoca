@@ -248,7 +248,7 @@ const ProgressCharts = dynamic(() => import('./ProgressCharts'), {
 ### 3.10 `/kvkk` ve `/gizlilik`
 
 - Gerçek hukuki içerik eklenir (şablon üzerinden):
-  - Veri sorumlusu: Uğur Hoca / admin@ugurhoca.com
+  - Veri sorumlusu: Uğur Hoca / İletişim Formu
   - Toplanan veriler: ad-soyad, e-posta, TC (sohbet için), test/ödev verileri
   - Saklama süresi, haklar (KVKK Madde 11), başvuru kanalı, çerez kullanımı
 - "Bu metin tam değil" uyarı kartı kaldırılır

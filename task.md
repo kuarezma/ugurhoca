@@ -217,18 +217,17 @@ Bu dosya, projenin tamamlanmış ve devam eden görevlerini özetler.
 - [x] `layout.tsx` içine Next.js native `viewport` eklenerek cihazların pinch-to-zoom (büyütme/küçültme) yapması PWA kalitesi için engellendi.
 - [x] Mobilde yatay scroll sorunlarına sebep olan taşmalar (overflow) `DashboardHero` içindeki `w-full sm:max-w-md` esnek genişliklerle çözüldü.
 
-### 18. Tek Admin Hesabı ve Giriş Bilgisi Standardizasyonu (11 Nisan 2026)
+### 18. Yönetici Hesabı ve Giriş Bilgisi Standardizasyonu (11 Nisan 2026)
 
-- [x] Admin hesabı tek e-posta ile sınırlandı: `admin@ugurhoca.com`
-- [x] `admin@matematiklab.com` kod tabanından kaldırıldı
-- [x] Ortak admin yardımcı modülü eklendi: `src/lib/admin.ts`
-- [x] `admin/page.tsx`, `profil/page.tsx`, `icerikler/page.tsx`, `ChatBubble.tsx`, `AdminStatistics.tsx`, `api/admin-message/route.ts` tek admin kaynağına bağlandı
-- [x] `.env.example` içindeki `ADMIN_EMAILS` tek admin hesabına indirildi
-- [x] Eski çift-admin RLS referansları migration dosyalarında tek hesaba güncellendi
+- [x] Yönetici hesabı tek e-posta kaynağı ile sınırlandı
+- [x] Eski referanslar kod tabanından kaldırıldı
+- [x] Ortak yönetici yardımcı modülü eklendi: `src/lib/admin.ts`
+- [x] İlgili sayfalar ve API route'ları merkezi yönetici yetki kontrolüne bağlandı
+- [x] `.env.example` içindeki yönetici değişkenleri standardize edildi
+- [x] RLS referansları güvenli ve tekil politikaya çekildi
 - [x] Yeni migration eklendi: `supabase/migrations/20260411110000_single_admin_email.sql`
-- [x] Supabase Auth admin kullanıcısı güncellendi: `admin@ugurhoca.com`
-- [x] Admin profil kaydı güncellendi: `name = Uğur Hoca`, `name_normalized = uğur hoca`
-- [x] Admin şifresi güncellendi: `19051989`
+- [x] Supabase Auth yönetici kullanıcısı ve profili güvenli şekilde güncellendi
+- [x] Yönetici erişimi ve şifre doğrulaması tamamlandı
 - [x] `npm run build` başarılı
 
 ### 19. Profesyonelleştirme ve Stabilizasyon Sprinti (13 Nisan 2026)

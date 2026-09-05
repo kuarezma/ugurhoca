@@ -430,35 +430,30 @@ _Son güncelleme: 10 Nisan 2026 — Avatar ve Native Mobil optimizasyonları Pus
 
 ### 18.1 Kod Tarafı
 
-- **Tek kaynak:** `matematik-platform/src/lib/admin.ts` eklendi. `ADMIN_EMAIL = 'admin@ugurhoca.com'` ve `isAdminEmail()` yardımcıları tanımlandı.
-- **Bağlanan dosyalar:** `src/app/admin/page.tsx`, `src/app/profil/page.tsx`, `src/app/icerikler/page.tsx`, `src/components/ChatBubble.tsx`, `src/components/AdminStatistics.tsx`, `src/app/api/admin-message/route.ts` artık aynı admin kaynağını kullanıyor.
-- **Temizlik:** `admin@matematiklab.com` referansları kod tabanından tamamen kaldırıldı.
+- **Tek kaynak:** `matematik-platform/src/lib/admin.ts` eklendi. `ADMIN_EMAIL` ve `isAdminEmail()` yardımcıları tanımlandı.
+- **Bağlanan dosyalar:** `src/app/admin/page.tsx`, `src/app/profil/page.tsx`, `src/app/icerikler/page.tsx`, `src/components/ChatBubble.tsx`, `src/components/AdminStatistics.tsx`, `src/app/api/admin-message/route.ts` artık aynı yönetici kaynağını kullanıyor.
+- **Temizlik:** Eski geçici referanslar kod tabanından tamamen kaldırıldı.
 
 ### 18.2 Supabase ve Yetki Politikaları
 
-- **Env örneği:** `.env.example` içindeki `ADMIN_EMAILS` değeri tek hesaba indirildi: `admin@ugurhoca.com`
-- **Geçmiş migration dosyaları:** Çift admin e-posta listeleri tek admin hesabına düşürüldü.
+- **Env örneği:** `.env.example` içindeki yönetici yapılandırması tekilleştirildi.
+- **Geçmiş migration dosyaları:** Çift yönetici e-posta listeleri tekil yönetici modeline çekildi.
 - **Yeni migration:** `matematik-platform/supabase/migrations/20260411110000_single_admin_email.sql`
-  - mevcut canlı policy'leri yeniden oluşturarak tek admin hesabını yetkili bırakır
-  - quiz, quiz_questions, chat, submissions, progress, badges, announcements ve documents policy'lerini kapsar
+  - Mevcut canlı policy'leri yeniden oluşturarak tek yönetici hesabını yetkili bırakır
+  - Test, ödev, sohbet, teslimat, ilerleme, rozet, duyuru ve döküman politikalarını kapsar
 
-### 18.3 Gerçek Admin Hesabı Güncellemesi
+### 18.3 Yönetici Hesabı Güncellemesi
 
-- **Auth kullanıcısı:** Supabase Auth üzerinde admin kullanıcı güncellendi
-  - e-posta: `admin@ugurhoca.com`
-  - şifre: `19051989`
-- **Profil kaydı:** `profiles` tablosunda admin profili güncellendi
-  - `name = Uğur Hoca`
-  - `name_normalized = uğur hoca`
-  - `email = admin@ugurhoca.com`
+- **Auth kullanıcısı:** Supabase Auth üzerinde yönetici hesabı güncellendi ve yetkilendirildi.
+- **Profil kaydı:** `profiles` tablosunda yönetici profili güncellendi.
 
 ### 18.4 Doğrulama
 
 - **Build:** `npm run build` temiz geçti
-- **Giriş testi:** `admin@ugurhoca.com / 19051989` ile Supabase Auth giriş doğrulandı
-- **Not:** Bu ortamda `supabase` CLI kurulu olmadığı için yeni migration dosyası yalnızca repoya eklendi; canlı policy push işlemi Git akışından ayrı olarak uygulanmalı
+- **Giriş testi:** Yönetici hesabı ile Supabase Auth girişi doğrulandı
+- **Not:** Bu ortamda `supabase` CLI kurulu olmadığı için yeni migration dosyası repoya eklendi; canlı policy push işlemi Git akışından ayrı olarak uygulanır
 
-_Son güncelleme: 11 Nisan 2026 — Admin hesabı tek e-postaya indirildi, şifre güncellendi ve giriş doğrulandı._
+_Son güncelleme: 11 Nisan 2026 — Yönetici hesabı yetkilendirmesi, politika standardizasyonu ve giriş testi doğrulandı._
 
 ---
 
