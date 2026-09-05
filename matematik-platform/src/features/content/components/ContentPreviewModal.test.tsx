@@ -8,7 +8,7 @@ const mockDoc: ContentDocument = {
   title: '5. Sınıf Doğal Sayılar Testi',
   description: 'Doğal sayılar yaprak test',
   type: 'yaprak-test',
-  grade: '5',
+  grade: [5],
   file_url: 'https://example.com/test.pdf',
   views: 12,
   downloads: 3,
