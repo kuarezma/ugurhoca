@@ -20,6 +20,8 @@ import type { QuizQuestion } from '@/types/quiz';
 type QuestionHintLadderProps = {
   question: QuizQuestion;
   questionIndex: number;
+  isOpen?: boolean;
+  onToggleOpen?: () => void;
 };
 
 export type QuestionHintsData = {
@@ -148,25 +150,44 @@ export function deriveQuestionHints(question: QuizQuestion): QuestionHintsData {
   };
 }
 
-export function QuestionHintLadder({ question, questionIndex }: QuestionHintLadderProps) {
-  const [isOpen, setIsOpen] = useState(false);
+export function QuestionHintLadder({
+  question,
+  questionIndex,
+  isOpen: controlledIsOpen,
+  onToggleOpen: controlledToggleOpen,
+}: QuestionHintLadderProps) {
+  const [internalIsOpen, setInternalIsOpen] = useState(false);
+  const isOpen = controlledIsOpen !== undefined ? controlledIsOpen : internalIsOpen;
   const [activeMode, setActiveMode] = useState<'ladder' | 'socratic'>('ladder');
   const [unlockedLevel, setUnlockedLevel] = useState<number>(0);
 
   // Soru değiştiğinde ipucu kutusunu ve modu sıfırla
   useEffect(() => {
-    setIsOpen(false);
+    if (controlledIsOpen === undefined) {
+      setInternalIsOpen(false);
+    }
     setActiveMode('ladder');
     setUnlockedLevel(0);
-  }, [questionIndex]);
+  }, [questionIndex, controlledIsOpen]);
+
+  // Açıldığında ilk kademe kilitli ise otomatik aç
+  useEffect(() => {
+    if (isOpen && unlockedLevel === 0) {
+      setUnlockedLevel(1);
+    }
+  }, [isOpen, unlockedLevel]);
 
   const hints = deriveQuestionHints(question);
 
   const handleToggleOpen = () => {
-    if (!isOpen && unlockedLevel === 0) {
-      setUnlockedLevel(1); // Açıldığında ilk kademe hazır gelsin
+    if (controlledToggleOpen) {
+      controlledToggleOpen();
+    } else {
+      if (!isOpen && unlockedLevel === 0) {
+        setUnlockedLevel(1);
+      }
+      setInternalIsOpen((prev) => !prev);
     }
-    setIsOpen((prev) => !prev);
   };
 
   return (

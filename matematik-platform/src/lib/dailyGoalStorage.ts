@@ -1,3 +1,9 @@
+export interface DailyQuestStatus {
+  challengeDone: boolean; // 1. Kademe: Günün sorusu çözüldü (10 XP)
+  targetProgressDone: boolean; // 2. Kademe: En az 15 soru çözüldü (25 XP)
+  reviewDone: boolean; // 3. Kademe: Formül kartı veya hata defteri çalışıldı (15 XP)
+}
+
 export interface DailyGoalData {
   target: number;
   date: string; // YYYY-MM-DD
@@ -8,6 +14,7 @@ export interface DailyGoalData {
   freezeTokens: number; // Seri Kalkanı sayısı (0-2)
   lastFreezeUsedDate?: string; // En son kalkanın devreye girdiği tarih
   previousStreakBeforeReset?: number; // Telafi edilebilecek önceki seri
+  dailyQuests?: DailyQuestStatus;
 }
 
 const STORAGE_KEY = 'ugurhoca_daily_goal_v1';
@@ -46,6 +53,11 @@ export const getDailyGoal = (): DailyGoalData => {
     streak: 0,
     history: {},
     freezeTokens: DEFAULT_FREEZE_TOKENS,
+    dailyQuests: {
+      challengeDone: false,
+      targetProgressDone: false,
+      reviewDone: false,
+    },
   };
 
   if (typeof window === 'undefined') return fallback;
@@ -101,21 +113,33 @@ export const getDailyGoal = (): DailyGoalData => {
         freezeTokens,
         lastFreezeUsedDate,
         previousStreakBeforeReset: previousStreak,
+        dailyQuests: {
+          challengeDone: false,
+          targetProgressDone: false,
+          reviewDone: false,
+        },
       };
       localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
       return updated;
     }
 
+    const solvedCount = typeof data.solved === 'number' ? data.solved : 0;
+
     return {
       target,
       date: today,
-      solved: typeof data.solved === 'number' ? data.solved : 0,
+      solved: solvedCount,
       streak,
       lastCompletedDate: lastCompleted,
       history,
       freezeTokens,
       lastFreezeUsedDate,
       previousStreakBeforeReset: previousStreak,
+      dailyQuests: {
+        challengeDone: Boolean(data.dailyQuests?.challengeDone),
+        targetProgressDone: solvedCount >= 15,
+        reviewDone: Boolean(data.dailyQuests?.reviewDone),
+      },
     };
   } catch {
     return fallback;
@@ -182,6 +206,24 @@ export const incrementQuestionsSolved = (amount: number = 1): DailyGoalData => {
     }
   }
 
+  const currentQuests = current.dailyQuests || {
+    challengeDone: false,
+    targetProgressDone: current.solved >= 15,
+    reviewDone: false,
+  };
+  const updatedQuests: DailyQuestStatus = {
+    ...currentQuests,
+    targetProgressDone: newSolved >= 15,
+  };
+
+  const wasAllQuestsDone =
+    currentQuests.challengeDone && currentQuests.targetProgressDone && currentQuests.reviewDone;
+  const isNowAllQuestsDone =
+    updatedQuests.challengeDone && updatedQuests.targetProgressDone && updatedQuests.reviewDone;
+  if (!wasAllQuestsDone && isNowAllQuestsDone && freezeTokens < 2) {
+    freezeTokens = Math.min(2, freezeTokens + 1);
+  }
+
   const updated: DailyGoalData = {
     ...current,
     solved: newSolved,
@@ -189,6 +231,7 @@ export const incrementQuestionsSolved = (amount: number = 1): DailyGoalData => {
     freezeTokens,
     lastCompletedDate: lastCompleted,
     history: updatedHistory,
+    dailyQuests: updatedQuests,
   };
 
   if (typeof window !== 'undefined') {
@@ -327,4 +370,52 @@ export const activateFreezeTokenForToday = (): DailyGoalData => {
   }
 
   return current;
+};
+
+export const getDailyQuestStatus = (data?: DailyGoalData): DailyQuestStatus => {
+  const current = data || getDailyGoal();
+  return {
+    challengeDone: Boolean(current.dailyQuests?.challengeDone),
+    targetProgressDone: current.solved >= 15,
+    reviewDone: Boolean(current.dailyQuests?.reviewDone),
+  };
+};
+
+export const markDailyQuest = (
+  questType: 'challenge' | 'review',
+  status: boolean = true,
+): DailyGoalData => {
+  const current = getDailyGoal();
+  const currentQuests = getDailyQuestStatus(current);
+  const updatedQuests: DailyQuestStatus = {
+    ...currentQuests,
+    ...(questType === 'challenge' ? { challengeDone: status } : { reviewDone: status }),
+    targetProgressDone: current.solved >= 15,
+  };
+
+  let freezeTokens = current.freezeTokens;
+  const wasAllCompleted =
+    currentQuests.challengeDone && currentQuests.targetProgressDone && currentQuests.reviewDone;
+  const isNowAllCompleted =
+    updatedQuests.challengeDone && updatedQuests.targetProgressDone && updatedQuests.reviewDone;
+  if (!wasAllCompleted && isNowAllCompleted && freezeTokens < 2) {
+    freezeTokens = Math.min(2, freezeTokens + 1);
+  }
+
+  const updated: DailyGoalData = {
+    ...current,
+    freezeTokens,
+    dailyQuests: updatedQuests,
+  };
+
+  if (typeof window !== 'undefined') {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
+      notifyUpdate(updated);
+    } catch {
+      // Ignore quota errors
+    }
+  }
+
+  return updated;
 };

@@ -51,4 +51,22 @@ describe('QuestionHintLadder', () => {
     expect(screen.getByText(/Kritik Eşitlik & Kilit Bağıntı/i)).toBeInTheDocument();
     expect(screen.getByText(/Dikkat: Sık Yapılan Yanılgı & Tuzak!/i)).toBeInTheDocument();
   });
+
+  it('supports controlled isOpen and onToggleOpen triggers', () => {
+    const onToggleOpen = vi.fn();
+    render(
+      <QuestionHintLadder
+        question={mockQuestion}
+        questionIndex={0}
+        isOpen={true}
+        onToggleOpen={onToggleOpen}
+      />,
+    );
+
+    expect(screen.getByText(/1. Kademe: Temel Kural & Formül/i)).toBeInTheDocument();
+
+    const mainBtn = screen.getByRole('button', { name: /Kademeli İpucu Sistemi/i });
+    fireEvent.click(mainBtn);
+    expect(onToggleOpen).toHaveBeenCalledTimes(1);
+  });
 });

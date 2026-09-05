@@ -24,6 +24,7 @@ type HomeQuickToolsGridProps = {
   onOpenGraph?: () => void;
   onOpenProofs?: () => void;
   onOpenCheatSheet?: () => void;
+  onOpenGlossary?: () => void;
 };
 
 export function HomeQuickToolsGrid({
@@ -36,6 +37,7 @@ export function HomeQuickToolsGrid({
   onOpenGraph,
   onOpenProofs,
   onOpenCheatSheet,
+  onOpenGlossary,
 }: HomeQuickToolsGridProps) {
   const tools = [
     {
@@ -107,6 +109,18 @@ export function HomeQuickToolsGrid({
       href: '#',
       buttonLabel: 'Odak Sayacı',
       badge: 'Odak ⏱️',
+    },
+    {
+      id: 'glossary',
+      title: 'Matematik Kavram Sözlüğü',
+      description: 'Asal sayılardan türeve tüm LGS & YKS terimleri, KaTeX formülleri ve kritik tuzak uyarıları.',
+      icon: BookOpen,
+      gradient: 'from-blue-500 via-indigo-600 to-violet-600',
+      actionType: onOpenGlossary ? 'modal' : 'link',
+      action: onOpenGlossary,
+      href: '#',
+      buttonLabel: 'Sözlüğü Aç',
+      badge: 'Sözlük 📖',
     },
     {
       id: 'checklist',

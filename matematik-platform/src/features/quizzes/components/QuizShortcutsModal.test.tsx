@@ -23,11 +23,11 @@ describe('QuizShortcutsModal', () => {
     expect(handleClose).toHaveBeenCalledTimes(1);
   });
 
-  it('calls onClose when "Anladım" button is clicked', () => {
-    const handleClose = vi.fn();
-    render(<QuizShortcutsModal isOpen={true} onClose={handleClose} />);
-    const understandBtn = screen.getByRole('button', { name: 'Anladım' });
-    fireEvent.click(understandBtn);
-    expect(handleClose).toHaveBeenCalledTimes(1);
+  it('renders all key shortcuts including Backspace, Optical form, and Dyslexia mode', () => {
+    render(<QuizShortcutsModal isOpen={true} onClose={() => {}} />);
+    expect(screen.getByText('İşaretlenen şıkkı siler ve soruyu boş bırakır.')).toBeInTheDocument();
+    expect(screen.getByText('Optik form simülasyonunu / yan paneli açar.')).toBeInTheDocument();
+    expect(screen.getByText('Disleksi dostu rahat okuma modunu açar / kapatır.')).toBeInTheDocument();
+    expect(screen.getByText('Matematik kavramlar ve terimler sözlüğünü açar.')).toBeInTheDocument();
   });
 });

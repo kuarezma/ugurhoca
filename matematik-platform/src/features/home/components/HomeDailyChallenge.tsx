@@ -13,7 +13,7 @@ import {
 } from 'lucide-react';
 import MathText from '@/components/MathText';
 import { fireConfetti } from '@/components/ConfettiBurst';
-import { incrementQuestionsSolved } from '@/lib/dailyGoalStorage';
+import { incrementQuestionsSolved, markDailyQuest } from '@/lib/dailyGoalStorage';
 
 type Challenge = {
   id: string;
@@ -72,6 +72,7 @@ export function HomeDailyChallenge({ isLight }: { isLight: boolean }) {
 
     if (index === challenge.correctIndex) {
       setStreakCount((prev) => prev + 1);
+      markDailyQuest('challenge', true);
       void fireConfetti({
         particleCount: 80,
         spread: 60,

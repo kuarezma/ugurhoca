@@ -83,6 +83,14 @@ const QuickFormulaCheatSheetModal = dynamic(
   { ssr: false },
 );
 
+const MathGlossaryModal = dynamic(
+  () =>
+    import('@/features/programs/components/MathGlossaryModal').then((m) => ({
+      default: m.MathGlossaryModal,
+    })),
+  { ssr: false },
+);
+
 type HomePageProps = {
   activeLiveLesson?: LiveLesson | null;
   initialFeed?: HomeInitialFeed | null;
@@ -102,6 +110,7 @@ export default function HomePage({ activeLiveLesson, initialFeed }: HomePageProp
   const [isGraphOpen, setIsGraphOpen] = useState(false);
   const [isProofsOpen, setIsProofsOpen] = useState(false);
   const [isCheatSheetOpen, setIsCheatSheetOpen] = useState(false);
+  const [isGlossaryOpen, setIsGlossaryOpen] = useState(false);
 
   useEffect(() => {
     const handleToolEvent = (e: Event) => {
@@ -126,6 +135,8 @@ export default function HomePage({ activeLiveLesson, initialFeed }: HomePageProp
         setIsScratchpadOpen(true);
       } else if (tool === 'cheat-sheet' || tool === 'formulas') {
         setIsCheatSheetOpen(true);
+      } else if (tool === 'glossary') {
+        setIsGlossaryOpen(true);
       }
     };
 
@@ -199,6 +210,7 @@ export default function HomePage({ activeLiveLesson, initialFeed }: HomePageProp
           onOpenGraph={() => setIsGraphOpen(true)}
           onOpenProofs={() => setIsProofsOpen(true)}
           onOpenCheatSheet={() => setIsCheatSheetOpen(true)}
+          onOpenGlossary={() => setIsGlossaryOpen(true)}
         />
         <div className="defer-section">
           <HomeSuccessRoadmap
@@ -305,6 +317,13 @@ export default function HomePage({ activeLiveLesson, initialFeed }: HomePageProp
         <QuickFormulaCheatSheetModal
           isOpen={isCheatSheetOpen}
           onClose={() => setIsCheatSheetOpen(false)}
+          isLight={isLight}
+        />
+      ) : null}
+      {isGlossaryOpen ? (
+        <MathGlossaryModal
+          isOpen={isGlossaryOpen}
+          onClose={() => setIsGlossaryOpen(false)}
           isLight={isLight}
         />
       ) : null}

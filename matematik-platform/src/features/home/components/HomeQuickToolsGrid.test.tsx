@@ -8,6 +8,7 @@ describe('HomeQuickToolsGrid', () => {
     const onOpenScratchpad = vi.fn();
     const onOpenGraph = vi.fn();
     const onOpenProofs = vi.fn();
+    const onOpenGlossary = vi.fn();
 
     render(
       <HomeQuickToolsGrid
@@ -16,6 +17,7 @@ describe('HomeQuickToolsGrid', () => {
         onOpenScratchpad={onOpenScratchpad}
         onOpenGraph={onOpenGraph}
         onOpenProofs={onOpenProofs}
+        onOpenGlossary={onOpenGlossary}
       />,
     );
 
@@ -24,6 +26,11 @@ describe('HomeQuickToolsGrid', () => {
     expect(screen.getByText('Fonksiyon & Grafik Laboratuvarı')).toBeInTheDocument();
     expect(screen.getByText('Formül & Bilgi Kartları')).toBeInTheDocument();
     expect(screen.getByText('Karalama & İşlem Tahtası')).toBeInTheDocument();
+    expect(screen.getByText('Matematik Kavram Sözlüğü')).toBeInTheDocument();
+
+    const glossaryBtn = screen.getByRole('button', { name: /Sözlüğü Aç/i });
+    fireEvent.click(glossaryBtn);
+    expect(onOpenGlossary).toHaveBeenCalled();
 
     const proofsBtn = screen.getByRole('button', { name: /İspatı İncele/i });
     fireEvent.click(proofsBtn);
@@ -40,5 +47,9 @@ describe('HomeQuickToolsGrid', () => {
     const scratchpadBtn = screen.getByRole('button', { name: /Tahtayı Başlat/i });
     fireEvent.click(scratchpadBtn);
     expect(onOpenScratchpad).toHaveBeenCalled();
+
+    // Check link type tool
+    const calcLink = screen.getByRole('link', { name: /Net Hesapla/i });
+    expect(calcLink).toHaveAttribute('href', '/programlar');
   });
 });

@@ -11,12 +11,18 @@ import {
   Settings2,
   Sparkles,
   ShieldCheck,
+  Award,
+  Circle,
+  ChevronDown,
+  ChevronUp,
 } from 'lucide-react';
 import {
   getDailyGoal,
   setDailyTarget,
   incrementQuestionsSolved,
   decrementQuestionsSolved,
+  getDailyQuestStatus,
+  markDailyQuest,
   type DailyGoalData,
 } from '@/lib/dailyGoalStorage';
 import { fireConfetti } from '@/components/ConfettiBurst';
@@ -25,6 +31,7 @@ export function HomeDailyGoalWidget({ isLight }: { isLight: boolean }) {
   const [goalData, setGoalData] = useState<DailyGoalData>(() => getDailyGoal());
   const [isEditingTarget, setIsEditingTarget] = useState(false);
   const [newTargetInput, setNewTargetInput] = useState('20');
+  const [isQuestsExpanded, setIsQuestsExpanded] = useState(true);
 
   useEffect(() => {
     // Initial fetch from localStorage
@@ -72,6 +79,26 @@ export function HomeDailyGoalWidget({ isLight }: { isLight: boolean }) {
       const updated = setDailyTarget(num);
       setGoalData(updated);
       setIsEditingTarget(false);
+    }
+  };
+
+  const questStatus = getDailyQuestStatus(goalData);
+  const completedQuestsCount =
+    (questStatus.challengeDone ? 1 : 0) +
+    (questStatus.targetProgressDone ? 1 : 0) +
+    (questStatus.reviewDone ? 1 : 0);
+  const allQuestsCompleted = completedQuestsCount === 3;
+
+  const handleToggleReviewQuest = () => {
+    const nextStatus = !questStatus.reviewDone;
+    const updated = markDailyQuest('review', nextStatus);
+    setGoalData(updated);
+    if (nextStatus) {
+      void fireConfetti({
+        particleCount: 50,
+        spread: 50,
+        origin: { y: 0.7 },
+      });
     }
   };
 
@@ -305,6 +332,214 @@ export function HomeDailyGoalWidget({ isLight }: { isLight: boolean }) {
               </motion.div>
             )}
           </AnimatePresence>
+
+          {/* Çok Aşamalı Günlük Görevler (Daily Quests) */}
+          <div
+            className={`mt-5 pt-4 border-t ${
+              isLight ? 'border-slate-200' : 'border-white/10'
+            }`}
+          >
+            <div className="flex items-center justify-between mb-3">
+              <div className="flex items-center gap-2">
+                <div className="flex h-6 w-6 items-center justify-center rounded-lg bg-indigo-500/20 text-indigo-400">
+                  <Award className="h-3.5 w-3.5" />
+                </div>
+                <h3
+                  className={`text-xs sm:text-sm font-bold flex items-center gap-2 ${
+                    isLight ? 'text-slate-800' : 'text-slate-200'
+                  }`}
+                >
+                  Günün Çalışma Görevleri
+                  <span
+                    className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
+                      allQuestsCompleted
+                        ? 'bg-emerald-500/20 text-emerald-600 dark:text-emerald-400'
+                        : isLight
+                        ? 'bg-indigo-100 text-indigo-800'
+                        : 'bg-indigo-500/20 text-indigo-300'
+                    }`}
+                  >
+                    {completedQuestsCount}/3 Tamamlandı
+                  </span>
+                </h3>
+              </div>
+
+              <button
+                type="button"
+                onClick={() => setIsQuestsExpanded((prev) => !prev)}
+                className={`p-1 rounded-lg text-xs flex items-center gap-1 transition ${
+                  isLight ? 'text-slate-500 hover:text-slate-800' : 'text-slate-400 hover:text-white'
+                }`}
+                aria-label={isQuestsExpanded ? 'Görevleri gizle' : 'Görevleri göster'}
+              >
+                <span className="text-[11px] hidden sm:inline">
+                  {isQuestsExpanded ? 'Gizle' : 'Göster'}
+                </span>
+                {isQuestsExpanded ? (
+                  <ChevronUp className="h-4 w-4" />
+                ) : (
+                  <ChevronDown className="h-4 w-4" />
+                )}
+              </button>
+            </div>
+
+            {isQuestsExpanded && (
+              <div className="space-y-2.5">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+                  {/* Görev 1: Günün Sorusu */}
+                  <div
+                    className={`p-3 rounded-2xl border transition-all flex items-start gap-2.5 ${
+                      questStatus.challengeDone
+                        ? 'bg-emerald-50/50 dark:bg-emerald-950/20 border-emerald-300 dark:border-emerald-500/30'
+                        : isLight
+                        ? 'bg-slate-50 border-slate-200'
+                        : 'bg-white/5 border-white/5'
+                    }`}
+                  >
+                    <div className="mt-0.5">
+                      {questStatus.challengeDone ? (
+                        <CheckCircle2 className="h-4 w-4 text-emerald-500 shrink-0" />
+                      ) : (
+                        <Circle className="h-4 w-4 text-slate-400 shrink-0" />
+                      )}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center justify-between gap-1">
+                        <span className="text-[10px] font-bold uppercase tracking-wider text-amber-500">
+                          1. Isınma · 10 XP
+                        </span>
+                        {questStatus.challengeDone && (
+                          <span className="text-[10px] font-bold text-emerald-500">Bitti</span>
+                        )}
+                      </div>
+                      <p
+                        className={`text-xs font-semibold truncate ${
+                          isLight ? 'text-slate-900' : 'text-white'
+                        }`}
+                      >
+                        Günün Sorusunu Çöz
+                      </p>
+                      <p
+                        className={`text-[11px] mt-0.5 ${
+                          isLight ? 'text-slate-500' : 'text-slate-400'
+                        }`}
+                      >
+                        Hızlı bir pratikle seriyi başlat.
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Görev 2: 15 Soru */}
+                  <div
+                    className={`p-3 rounded-2xl border transition-all flex items-start gap-2.5 ${
+                      questStatus.targetProgressDone
+                        ? 'bg-emerald-50/50 dark:bg-emerald-950/20 border-emerald-300 dark:border-emerald-500/30'
+                        : isLight
+                        ? 'bg-slate-50 border-slate-200'
+                        : 'bg-white/5 border-white/5'
+                    }`}
+                  >
+                    <div className="mt-0.5">
+                      {questStatus.targetProgressDone ? (
+                        <CheckCircle2 className="h-4 w-4 text-emerald-500 shrink-0" />
+                      ) : (
+                        <Circle className="h-4 w-4 text-slate-400 shrink-0" />
+                      )}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center justify-between gap-1">
+                        <span className="text-[10px] font-bold uppercase tracking-wider text-teal-500">
+                          2. Pekiştirme · 25 XP
+                        </span>
+                        <span className="text-[10px] font-bold text-slate-400">
+                          {Math.min(goalData.solved, 15)}/15
+                        </span>
+                      </div>
+                      <p
+                        className={`text-xs font-semibold truncate ${
+                          isLight ? 'text-slate-900' : 'text-white'
+                        }`}
+                      >
+                        En Az 15 Soru Tamamla
+                      </p>
+                      <p
+                        className={`text-[11px] mt-0.5 ${
+                          isLight ? 'text-slate-500' : 'text-slate-400'
+                        }`}
+                      >
+                        Test veya serbest soru çöz.
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Görev 3: Formül / Hata Tekrarı */}
+                  <div
+                    className={`p-3 rounded-2xl border transition-all flex items-start gap-2.5 ${
+                      questStatus.reviewDone
+                        ? 'bg-emerald-50/50 dark:bg-emerald-950/20 border-emerald-300 dark:border-emerald-500/30'
+                        : isLight
+                        ? 'bg-slate-50 border-slate-200'
+                        : 'bg-white/5 border-white/5'
+                    }`}
+                  >
+                    <button
+                      type="button"
+                      onClick={handleToggleReviewQuest}
+                      className="mt-0.5 focus:outline-none"
+                      aria-label="Formül veya hata tekrarını tamamlandı işaretle"
+                    >
+                      {questStatus.reviewDone ? (
+                        <CheckCircle2 className="h-4 w-4 text-emerald-500 shrink-0" />
+                      ) : (
+                        <Circle className="h-4 w-4 text-slate-400 hover:text-indigo-400 shrink-0 transition" />
+                      )}
+                    </button>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center justify-between gap-1">
+                        <span className="text-[10px] font-bold uppercase tracking-wider text-purple-500">
+                          3. Kalıcılık · 15 XP
+                        </span>
+                        {questStatus.reviewDone && (
+                          <span className="text-[10px] font-bold text-emerald-500">Bitti</span>
+                        )}
+                      </div>
+                      <p
+                        className={`text-xs font-semibold truncate ${
+                          isLight ? 'text-slate-900' : 'text-white'
+                        }`}
+                      >
+                        Formül veya Hata Tekrarı
+                      </p>
+                      <button
+                        type="button"
+                        onClick={handleToggleReviewQuest}
+                        className={`text-[11px] mt-0.5 underline text-left block ${
+                          isLight
+                            ? 'text-indigo-600 hover:text-indigo-800'
+                            : 'text-indigo-400 hover:text-indigo-300'
+                        }`}
+                      >
+                        {questStatus.reviewDone ? 'Tamamlandı (Geri Al)' : 'Tekrar Yapıldı İşaretle'}
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                {allQuestsCompleted && (
+                  <div
+                    className={`p-2.5 rounded-xl text-center text-xs font-bold border flex items-center justify-center gap-2 animate-in fade-in ${
+                      isLight
+                        ? 'bg-emerald-50 border-emerald-200 text-emerald-800'
+                        : 'bg-emerald-500/15 border-emerald-500/30 text-emerald-300'
+                    }`}
+                  >
+                    <Sparkles className="h-4 w-4 text-emerald-500" />
+                    <span>Tebrikler! Bugünkü tüm görevleri tamamladın (+50 XP). Seri Kalkanın güvende!</span>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
         </motion.div>
       </div>
     </section>

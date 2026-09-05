@@ -10,6 +10,8 @@ import {
   grantFreezeToken,
   repairStreak,
   activateFreezeTokenForToday,
+  getDailyQuestStatus,
+  markDailyQuest,
 } from './dailyGoalStorage';
 
 describe('dailyGoalStorage', () => {
@@ -212,5 +214,29 @@ describe('dailyGoalStorage', () => {
     expect(afterFreeze.lastFreezeUsedDate).toBe(getLocalDateString());
     expect(afterFreeze.lastCompletedDate).toBe(getLocalDateString());
     expect(afterFreeze.streak).toBe(5);
+  });
+
+  it('tracks daily quests (challenge, question target, review) and bonuses', () => {
+    let status = getDailyQuestStatus();
+    expect(status.challengeDone).toBe(false);
+    expect(status.targetProgressDone).toBe(false);
+    expect(status.reviewDone).toBe(false);
+
+    // Complete challenge
+    let data = markDailyQuest('challenge', true);
+    expect(data.dailyQuests?.challengeDone).toBe(true);
+
+    // Solve 15 questions
+    data = incrementQuestionsSolved(15);
+    expect(data.dailyQuests?.targetProgressDone).toBe(true);
+
+    // Review formulas / mistake notebook
+    data = markDailyQuest('review', true);
+    expect(data.dailyQuests?.reviewDone).toBe(true);
+
+    status = getDailyQuestStatus(data);
+    expect(status.challengeDone).toBe(true);
+    expect(status.targetProgressDone).toBe(true);
+    expect(status.reviewDone).toBe(true);
   });
 });

@@ -39,4 +39,43 @@ describe('QuizOpticalSheetModal', () => {
     expect(onSelectQuestion).toHaveBeenCalledWith(0);
     expect(onClose).toHaveBeenCalled();
   });
+
+  it('renders 5 options (A, B, C, D, E) when optionsCount is 5 and supports docked mode', () => {
+    const onToggleDock = vi.fn();
+    const onSelectQuestion = vi.fn();
+    const onSelectAnswer = vi.fn();
+
+    render(
+      <QuizOpticalSheetModal
+        isOpen={true}
+        onClose={vi.fn()}
+        totalQuestions={3}
+        currentIndex={1}
+        answers={{}}
+        flaggedQuestions={new Set()}
+        onSelectQuestion={onSelectQuestion}
+        onSelectAnswer={onSelectAnswer}
+        onClearAnswer={vi.fn()}
+        optionsCount={5}
+        isDocked={true}
+        onToggleDock={onToggleDock}
+      />
+    );
+
+    // E bubble should be rendered for each question
+    expect(screen.getByTitle('1. Soru için E şıkkını işaretle')).toBeInTheDocument();
+    expect(screen.getByTitle('2. Soru için E şıkkını işaretle')).toBeInTheDocument();
+
+    // In docked mode, dock toggle button should have title to revert to modal
+    const dockBtn = screen.getByLabelText(/Görünümü pop-up modala al/i);
+    fireEvent.click(dockBtn);
+    expect(onToggleDock).toHaveBeenCalledTimes(1);
+
+    // Clicking E on question 1
+    const bubbleE = screen.getByTitle('1. Soru için E şıkkını işaretle');
+    fireEvent.click(bubbleE);
+    expect(onSelectAnswer).toHaveBeenCalledWith(0, 4);
+    // When docked and question is not current (qIdx 0 !== current 1), jumps question
+    expect(onSelectQuestion).toHaveBeenCalledWith(0);
+  });
 });

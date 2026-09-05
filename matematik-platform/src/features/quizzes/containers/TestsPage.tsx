@@ -74,6 +74,14 @@ const WeeklyMockLeagueModal = dynamic(
     })),
   { ssr: false },
 );
+
+const MathGlossaryModal = dynamic(
+  () =>
+    import('@/features/programs/components/MathGlossaryModal').then((m) => ({
+      default: m.MathGlossaryModal,
+    })),
+  { ssr: false },
+);
 import { saveMistakesToBank, markMistakeMastered, getSavedMistakes } from '@/features/quizzes/lib/mistakeStorage';
 import { incrementQuestionsSolved } from '@/lib/dailyGoalStorage';
 import { EmptyState } from '@/components/ui/EmptyState';
@@ -182,6 +190,9 @@ export default function TestsPage({
   const [isOnline, setIsOnline] = useState(true);
   const [isShortcutsOpen, setIsShortcutsOpen] = useState(false);
   const [isOpticalSheetOpen, setIsOpticalSheetOpen] = useState(false);
+  const [isOpticalDocked, setIsOpticalDocked] = useState(false);
+  const [isHintLadderOpen, setIsHintLadderOpen] = useState(false);
+  const [isGlossaryOpen, setIsGlossaryOpen] = useState(false);
   const [isLeagueModalOpen, setIsLeagueModalOpen] = useState(false);
   const [questionTimes, setQuestionTimes] = useState<Record<number, number>>({});
   const [questionElapsedSeconds, setQuestionElapsedSeconds] = useState(0);
@@ -431,6 +442,23 @@ export default function TestsPage({
     }
   };
 
+  const clearAnswer = (targetQuestionIndex?: number) => {
+    const qIdx = targetQuestionIndex !== undefined ? targetQuestionIndex : currentQuestion;
+    setAnswers((prev) => {
+      const copy = { ...prev };
+      delete copy[qIdx];
+      return copy;
+    });
+    if (qIdx === currentQuestion) {
+      setSelectedAnswer(null);
+    }
+  };
+
+  const maxOptionsCount = useMemo(() => {
+    if (!quizQuestions || quizQuestions.length === 0) return 4;
+    return Math.max(...quizQuestions.map((q) => q.options?.length || 4), 4);
+  }, [quizQuestions]);
+
   const toggleFlagQuestion = (index: number) => {
     setFlaggedQuestions((prev) => {
       const next = new Set(prev);
@@ -529,7 +557,26 @@ export default function TestsPage({
 
       const key = e.key.toUpperCase();
 
-      if (['A', 'B', 'C', 'D', 'E'].includes(key)) {
+      if (e.shiftKey && key === 'K') {
+        e.preventDefault();
+        setIsGlossaryOpen((prev) => !prev);
+      } else if (e.key === 'Backspace' || e.key === 'Delete') {
+        e.preventDefault();
+        clearAnswer(currentQuestion);
+      } else if (key === 'O') {
+        e.preventDefault();
+        if (typeof window !== 'undefined' && window.innerWidth >= 1024) {
+          setIsOpticalDocked((prev) => !prev);
+        } else {
+          setIsOpticalSheetOpen((prev) => !prev);
+        }
+      } else if (key === 'I' || key === 'H') {
+        e.preventDefault();
+        setIsHintLadderOpen((prev) => !prev);
+      } else if (key === 'D') {
+        e.preventDefault();
+        toggleDyslexicMode();
+      } else if (['A', 'B', 'C', 'D', 'E'].includes(key)) {
         const optionIndex = key.charCodeAt(0) - 65;
         const currentQ = quizQuestions[currentQuestion];
         if (currentQ && currentQ.options && optionIndex < currentQ.options.length) {
@@ -544,12 +591,12 @@ export default function TestsPage({
           selectAnswer(optionIndex);
         }
       } else if (e.key === 'ArrowRight' || e.key === 'Enter') {
-        if (!isShortcutsOpen && !isScratchpadOpen) {
+        if (!isShortcutsOpen && !isScratchpadOpen && !isGlossaryOpen) {
           e.preventDefault();
           nextQuestion();
         }
       } else if (e.key === 'ArrowLeft') {
-        if (!isShortcutsOpen && !isScratchpadOpen) {
+        if (!isShortcutsOpen && !isScratchpadOpen && !isGlossaryOpen) {
           e.preventDefault();
           previousQuestion();
         }
@@ -565,6 +612,8 @@ export default function TestsPage({
       } else if (e.key === 'Escape') {
         setIsShortcutsOpen(false);
         setIsScratchpadOpen(false);
+        setIsGlossaryOpen(false);
+        setIsOpticalSheetOpen(false);
       }
     };
 
@@ -579,7 +628,11 @@ export default function TestsPage({
     quizQuestions,
     isShortcutsOpen,
     isScratchpadOpen,
+    isGlossaryOpen,
+    isOpticalSheetOpen,
+    isOpticalDocked,
     answers,
+    toggleDyslexicMode,
   ]);
 
   const calculateScore = useCallback(() => {
@@ -755,59 +808,81 @@ export default function TestsPage({
         )}
 
         <div className={`w-full relative z-10 animate-fade-up ${
-          isFocusMode ? 'max-w-4xl' : 'max-w-3xl'
+          isOpticalDocked ? 'max-w-6xl' : isFocusMode ? 'max-w-4xl' : 'max-w-3xl'
         }`}>
-          <div className={`glass rounded-3xl p-5 sm:p-8 space-y-6 ${
-            isFocusMode ? 'border-white/20 shadow-2xl bg-slate-900/95' : ''
-          }`}>
-            {/* Üst Eylem ve Zamanlayıcı Çubuğu */}
-            <div className="flex flex-wrap items-center justify-between gap-3 border-b border-white/10 pb-4">
-              <button
-                onClick={resetQuiz}
-                className="text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white flex items-center gap-1.5 text-xs sm:text-sm font-semibold transition-colors"
-              >
-                <ArrowLeft className="w-4 h-4" />
-                Testten Çık
-              </button>
-
-              <div className="flex items-center gap-2">
-                {/* Karalama Tahtası Butonu */}
+          <div className={isOpticalDocked ? 'flex flex-col lg:flex-row gap-6 items-start' : ''}>
+            <div className={`flex-1 w-full glass rounded-3xl p-5 sm:p-8 space-y-6 ${
+              isFocusMode ? 'border-white/20 shadow-2xl bg-slate-900/95' : ''
+            }`}>
+              {/* Üst Eylem ve Zamanlayıcı Çubuğu */}
+              <div className="flex flex-wrap items-center justify-between gap-3 border-b border-white/10 pb-4">
                 <button
-                  type="button"
-                  onClick={() => setIsScratchpadOpen(true)}
-                  className="inline-flex items-center gap-1.5 rounded-xl border border-amber-300 dark:border-white/10 bg-amber-50 dark:bg-white/5 px-3 py-1.5 text-xs font-bold text-amber-700 dark:text-amber-300 transition hover:bg-amber-100 dark:hover:bg-white/10 hover:text-amber-800 dark:hover:text-amber-200"
-                  title="Karalama ve işlem tahtasını aç"
+                  onClick={resetQuiz}
+                  className="text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white flex items-center gap-1.5 text-xs sm:text-sm font-semibold transition-colors"
                 >
-                  <PenTool className="h-3.5 w-3.5" />
-                  <span>Karalama Tahtası</span>
+                  <ArrowLeft className="w-4 h-4" />
+                  Testten Çık
                 </button>
 
-                {/* Optik Form Butonu */}
-                <button
-                  type="button"
-                  onClick={() => setIsOpticalSheetOpen(true)}
-                  className="inline-flex items-center gap-1.5 rounded-xl border border-amber-300 dark:border-amber-500/30 bg-amber-100/80 dark:bg-amber-500/10 px-3 py-1.5 text-xs font-bold text-amber-800 dark:text-amber-300 transition hover:bg-amber-200/80 dark:hover:bg-amber-500/20 hover:text-amber-900 dark:hover:text-amber-200"
-                  title="LGS dijital optik form simülasyonunu aç"
-                >
-                  <FileText className="h-3.5 w-3.5 text-amber-500 dark:text-amber-400" />
-                  <span>Optik Form</span>
-                </button>
+                <div className="flex items-center gap-2">
+                  {/* Karalama Tahtası Butonu */}
+                  <button
+                    type="button"
+                    onClick={() => setIsScratchpadOpen(true)}
+                    className="inline-flex items-center gap-1.5 rounded-xl border border-amber-300 dark:border-white/10 bg-amber-50 dark:bg-white/5 px-3 py-1.5 text-xs font-bold text-amber-700 dark:text-amber-300 transition hover:bg-amber-100 dark:hover:bg-white/10 hover:text-amber-800 dark:hover:text-amber-200"
+                    title="Karalama ve işlem tahtasını aç (K)"
+                  >
+                    <PenTool className="h-3.5 w-3.5" />
+                    <span className="hidden sm:inline">Karalama</span>
+                  </button>
 
-                {/* Rahat Okuma / Disleksi Modu Butonu */}
-                <button
-                  type="button"
-                  onClick={toggleDyslexicMode}
-                  className={`inline-flex items-center gap-1.5 rounded-xl border px-3 py-1.5 text-xs font-bold transition ${
-                    isDyslexicMode
-                      ? 'border-emerald-500/40 bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 shadow-sm'
-                      : 'border-slate-300 dark:border-white/10 bg-slate-100 dark:bg-white/5 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-white/10'
-                  }`}
-                  title={isDyslexicMode ? 'Normal yazı tipine dön' : 'Disleksi dostu rahat okuma modunu aç'}
-                  aria-pressed={isDyslexicMode}
-                >
-                  <BookOpen className="h-3.5 w-3.5 text-emerald-600 dark:text-emerald-400" />
-                  <span className="hidden sm:inline">{isDyslexicMode ? 'Rahat Okuma Açık' : 'Rahat Okuma'}</span>
-                </button>
+                  {/* Optik Form Butonu */}
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (typeof window !== 'undefined' && window.innerWidth >= 1024) {
+                        setIsOpticalDocked((prev) => !prev);
+                      } else {
+                        setIsOpticalSheetOpen(true);
+                      }
+                    }}
+                    className={`inline-flex items-center gap-1.5 rounded-xl border px-3 py-1.5 text-xs font-bold transition ${
+                      isOpticalDocked
+                        ? 'border-amber-500 bg-amber-500/20 text-amber-900 dark:text-amber-200'
+                        : 'border-amber-300 dark:border-amber-500/30 bg-amber-100/80 dark:bg-amber-500/10 text-amber-800 dark:text-amber-300 hover:bg-amber-200/80 hover:text-amber-900'
+                    }`}
+                    title="LGS / YKS dijital optik form simülasyonunu aç / sabitle (O)"
+                  >
+                    <FileText className="h-3.5 w-3.5 text-amber-500 dark:text-amber-400" />
+                    <span>{isOpticalDocked ? 'Optik Sabit' : 'Optik Form'}</span>
+                  </button>
+
+                  {/* Matematik Kavram Sözlüğü Butonu */}
+                  <button
+                    type="button"
+                    onClick={() => setIsGlossaryOpen(true)}
+                    className="inline-flex items-center gap-1.5 rounded-xl border border-indigo-300 dark:border-indigo-500/30 bg-indigo-50 dark:bg-indigo-500/10 px-3 py-1.5 text-xs font-bold text-indigo-700 dark:text-indigo-300 transition hover:bg-indigo-100 dark:hover:bg-indigo-500/20"
+                    title="Matematik Kavramlar ve Terimler Rehberini Aç (Shift + K)"
+                  >
+                    <BookOpen className="h-3.5 w-3.5 text-indigo-500 dark:text-indigo-400" />
+                    <span className="hidden sm:inline">Kavramlar</span>
+                  </button>
+
+                  {/* Rahat Okuma / Disleksi Modu Butonu */}
+                  <button
+                    type="button"
+                    onClick={toggleDyslexicMode}
+                    className={`inline-flex items-center gap-1.5 rounded-xl border px-3 py-1.5 text-xs font-bold transition ${
+                      isDyslexicMode
+                        ? 'border-emerald-500/40 bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 shadow-sm'
+                        : 'border-slate-300 dark:border-white/10 bg-slate-100 dark:bg-white/5 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-white/10'
+                    }`}
+                    title={isDyslexicMode ? 'Normal yazı tipine dön' : 'Disleksi dostu rahat okuma modunu aç (D)'}
+                    aria-pressed={isDyslexicMode}
+                  >
+                    <BookOpen className="h-3.5 w-3.5 text-emerald-600 dark:text-emerald-400" />
+                    <span className="hidden sm:inline">{isDyslexicMode ? 'Rahat Okuma Açık' : 'Rahat Okuma'}</span>
+                  </button>
 
                 {/* Odak Modu Butonu */}
                 <button
@@ -994,7 +1069,12 @@ export default function TestsPage({
               </div>
 
               {/* Kademeli İpucu Sistemi */}
-              <QuestionHintLadder question={question} questionIndex={currentQuestion} />
+              <QuestionHintLadder
+                question={question}
+                questionIndex={currentQuestion}
+                isOpen={isHintLadderOpen}
+                onToggleOpen={() => setIsHintLadderOpen((prev) => !prev)}
+              />
             </div>
 
             {/* İleri / Geri Butonları */}
@@ -1044,7 +1124,35 @@ export default function TestsPage({
               />
             </div>
           </div>
+
+          {/* Sabitlenmiş Yan Optik Form (Bölünmüş Ekran - Masaüstü) */}
+          {isOpticalDocked && (
+            <div className="w-full lg:w-80 shrink-0 hidden lg:block">
+              <QuizOpticalSheetModal
+                isOpen={true}
+                onClose={() => setIsOpticalDocked(false)}
+                totalQuestions={quizQuestions.length}
+                currentIndex={currentQuestion}
+                answers={answers}
+                flaggedQuestions={flaggedQuestions}
+                optionsCount={maxOptionsCount}
+                isDocked={true}
+                onToggleDock={() => {
+                  setIsOpticalDocked(false);
+                  setIsOpticalSheetOpen(true);
+                }}
+                onSelectQuestion={jumpToQuestion}
+                onSelectAnswer={(qIdx, optIdx) => {
+                  selectAnswer(optIdx, qIdx);
+                }}
+                onClearAnswer={clearAnswer}
+                quizTitle={selectedQuiz?.title}
+                studentName={user?.name || 'Öğrenci'}
+              />
+            </div>
+          )}
         </div>
+      </div>
 
         {/* Karalama Tahtası Modalı */}
         <ScratchpadModal
@@ -1068,30 +1176,35 @@ export default function TestsPage({
           onClose={() => setIsShortcutsOpen(false)}
         />
 
-        {/* Optik Form Modalı */}
-        <QuizOpticalSheetModal
-          isOpen={isOpticalSheetOpen}
-          onClose={() => setIsOpticalSheetOpen(false)}
-          totalQuestions={quizQuestions.length}
-          currentIndex={currentQuestion}
-          answers={answers}
-          flaggedQuestions={flaggedQuestions}
-          onSelectQuestion={jumpToQuestion}
-          onSelectAnswer={(qIdx, optIdx) => {
-            selectAnswer(optIdx, qIdx);
-          }}
-          onClearAnswer={(qIdx) => {
-            setAnswers((prev) => {
-              const copy = { ...prev };
-              delete copy[qIdx];
-              return copy;
-            });
-            if (qIdx === currentQuestion) {
-              setSelectedAnswer(null);
-            }
-          }}
-          quizTitle={selectedQuiz?.title}
-          studentName={user?.name || 'Öğrenci'}
+        {/* Optik Form Modalı (Docked değilken açılır) */}
+        {!isOpticalDocked && (
+          <QuizOpticalSheetModal
+            isOpen={isOpticalSheetOpen}
+            onClose={() => setIsOpticalSheetOpen(false)}
+            totalQuestions={quizQuestions.length}
+            currentIndex={currentQuestion}
+            answers={answers}
+            flaggedQuestions={flaggedQuestions}
+            optionsCount={maxOptionsCount}
+            isDocked={false}
+            onToggleDock={() => {
+              setIsOpticalSheetOpen(false);
+              setIsOpticalDocked(true);
+            }}
+            onSelectQuestion={jumpToQuestion}
+            onSelectAnswer={(qIdx, optIdx) => {
+              selectAnswer(optIdx, qIdx);
+            }}
+            onClearAnswer={clearAnswer}
+            quizTitle={selectedQuiz?.title}
+            studentName={user?.name || 'Öğrenci'}
+          />
+        )}
+
+        {/* Matematik Kavram Sözlüğü Modalı */}
+        <MathGlossaryModal
+          isOpen={isGlossaryOpen}
+          onClose={() => setIsGlossaryOpen(false)}
         />
       </main>
     );

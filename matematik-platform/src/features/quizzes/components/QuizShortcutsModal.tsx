@@ -15,6 +15,10 @@ const SHORTCUTS = [
     description: 'Şıkları tek tuşla anında işaretler.',
   },
   {
+    keys: ['Backspace', 'Delete'],
+    description: 'İşaretlenen şıkkı siler ve soruyu boş bırakır.',
+  },
+  {
     keys: ['→', 'Enter'],
     description: 'Sonraki soruya geçer veya testi tamamlar.',
   },
@@ -23,16 +27,28 @@ const SHORTCUTS = [
     description: 'Önceki soruya geri döner.',
   },
   {
+    keys: ['O'],
+    description: 'Optik form simülasyonunu / yan paneli açar.',
+  },
+  {
+    keys: ['I', 'H'],
+    description: 'Kademeli ipucu ve Sokratik analiz merdivenini açar.',
+  },
+  {
     keys: ['K', 'S'],
     description: 'Karalama & İşlem tahtasını açar / kapatır.',
   },
   {
-    keys: ['I', 'H'],
-    description: 'Kademeli ipucu merdivenini açar.',
+    keys: ['D'],
+    description: 'Disleksi dostu rahat okuma modunu açar / kapatır.',
   },
   {
     keys: ['F', 'B'],
     description: 'Soruya bayrak koyar / bayrağı kaldırır.',
+  },
+  {
+    keys: ['Shift + K'],
+    description: 'Matematik kavramlar ve terimler sözlüğünü açar.',
   },
   {
     keys: ['?'],
