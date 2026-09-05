@@ -3,6 +3,8 @@
 import { useCallback, useEffect, useId, useMemo, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import {
+  Activity,
+  Award,
   BarChart3,
   BookOpen,
   Calculator,
@@ -15,15 +17,21 @@ import {
   ListChecks,
   LogIn,
   MonitorPlay,
+  PenTool,
   Search,
   Sparkles,
+  Swords,
   Timer,
   User,
+  Video,
 } from 'lucide-react';
 
-type CommandItem = {
+export type CommandCategory = 'Araç' | 'Oyun' | 'Konu' | 'Sayfa';
+
+export type CommandItem = {
   id: string;
   label: string;
+  category: CommandCategory;
   hint?: string;
   keywords: string[];
   icon: React.ComponentType<{ className?: string }>;
@@ -55,9 +63,11 @@ export default function CommandPalette() {
 
   const commands = useMemo<CommandItem[]>(
     () => [
+      // Hızlı Araçlar
       {
         id: 'calculator',
         label: 'LGS & YKS Puan / Net Hesaplayıcı',
+        category: 'Araç',
         hint: 'MEB/ÖSYM uyumlu anlık net ve puan hesapla',
         keywords: ['hesapla', 'hesaplayici', 'puan', 'net', 'lgs', 'yks', 'tyt', 'ayt'],
         icon: Calculator,
@@ -66,6 +76,7 @@ export default function CommandPalette() {
       {
         id: 'pomodoro',
         label: 'Matematik Odak & Pomodoro Sayacı',
+        category: 'Araç',
         hint: '25/50 dk çalışma süreölçeri ve mola zili',
         keywords: ['pomodoro', 'odak', 'sayac', 'sure', 'zaman', 'timer', 'kronometre'],
         icon: Timer,
@@ -74,6 +85,7 @@ export default function CommandPalette() {
       {
         id: 'checklist',
         label: 'MEB Matematik Konu Takip Çizelgesi',
+        category: 'Araç',
         hint: '5-12. sınıf müfredat kazanım takip listesi ve A4 yazdır',
         keywords: ['cizelge', 'konu', 'takip', 'kazanim', 'mufredat', 'liste', 'checklist', 'yazdir'],
         icon: ListChecks,
@@ -82,6 +94,7 @@ export default function CommandPalette() {
       {
         id: 'flashcards',
         label: 'Formül & Bilgi Kartları',
+        category: 'Araç',
         hint: 'LGS ve YKS matematik pratik formül tekrarı',
         keywords: ['formul', 'kart', 'flashcard', 'kural', 'ozet', 'ezber'],
         icon: Sparkles,
@@ -90,14 +103,166 @@ export default function CommandPalette() {
       {
         id: 'mistakes',
         label: 'Akıllı Hata Defterim',
+        category: 'Araç',
         hint: 'Testlerdeki yanlış sorular havuzu ve tekrar çözümü',
         keywords: ['hata', 'yanlis', 'defter', 'tekrar', 'soru', 'eksik'],
         icon: CheckCircle2,
         action: () => openTool('mistakes', '/testler?tool=mistakes'),
       },
       {
+        id: 'scratchpad',
+        label: 'Karalama & İşlem Tahtası',
+        category: 'Araç',
+        hint: 'Geometrik şekiller ve serbest tuval çizimi',
+        keywords: ['karalama', 'cizim', 'tahta', 'tuval', 'scratchpad', 'geometri'],
+        icon: PenTool,
+        action: () => openTool('scratchpad'),
+      },
+      {
+        id: 'graph',
+        label: 'İnteraktif Fonksiyon & Grafik Görselleştirici',
+        category: 'Araç',
+        hint: 'Doğrusal fonksiyon, parabol ve birim çember simülasyonu',
+        keywords: ['grafik', 'fonksiyon', 'parabol', 'trigonometri', 'cember', 'egim', 'visualizer'],
+        icon: Activity,
+        action: () => openTool('graph'),
+      },
+      {
+        id: 'replay_archive',
+        label: 'Canlı Ders Kayıtları & Arşiv',
+        category: 'Araç',
+        hint: 'Geçmiş canlı video dersler ve bölüm başlıkları',
+        keywords: ['canli', 'ders', 'kayit', 'video', 'tekrar', 'arsiv'],
+        icon: Video,
+        action: () => openTool('replay_archive', '/canli-ders'),
+      },
+      {
+        id: 'report_card',
+        label: 'Aylık Matematik Gelişim Raporu & Karne',
+        category: 'Araç',
+        hint: 'Kazanım başarısı, soru istatistikleri ve A4 başarı belgesi',
+        keywords: ['karne', 'rapor', 'gelisim', 'basari', 'belge', 'aylik'],
+        icon: Award,
+        action: () => openTool('report_card', '/ilerleme'),
+      },
+
+      // Eğlenceli Matematik Oyunları
+      {
+        id: 'game_math_duel',
+        label: 'Matematik Düellosu (1v1 Hızlı İşlem)',
+        category: 'Oyun',
+        hint: 'Arkadaşınla ya da zamana karşı işlem yarışı',
+        keywords: ['oyun', 'duello', '1v1', 'hizli', 'islem', 'mathduel'],
+        icon: Swords,
+        action: () => router.push('/oyunlar'),
+      },
+      {
+        id: 'game_math_ninja',
+        label: 'Matematik Ninjası (Dilimlemece)',
+        category: 'Oyun',
+        hint: 'Doğru sonuçları dilimle ve kombo yap',
+        keywords: ['oyun', 'ninja', 'dilimle', 'islem', 'mathninja'],
+        icon: Swords,
+        action: () => router.push('/oyunlar'),
+      },
+      {
+        id: 'game_pizza_chef',
+        label: 'Kesir Şefi Pizza',
+        category: 'Oyun',
+        hint: 'Pizza dilimleriyle kesirleri öğren',
+        keywords: ['oyun', 'kesir', 'pizza', 'sef', 'pizzachef'],
+        icon: Gamepad2,
+        action: () => router.push('/oyunlar'),
+      },
+      {
+        id: 'game_speed_racer',
+        label: 'Hız Yarışı (Çarpım Tablosu)',
+        category: 'Oyun',
+        hint: 'Çarpım tablosu nitro yarışı',
+        keywords: ['oyun', 'hiz', 'yaris', 'carpim', 'tablosu', 'speedracer'],
+        icon: Gamepad2,
+        action: () => router.push('/oyunlar'),
+      },
+      {
+        id: 'game_mole_whack',
+        label: 'Köstebek Vurmaca',
+        category: 'Oyun',
+        hint: 'Katlar ve bölünebilme kuralları',
+        keywords: ['oyun', 'kostebek', 'kat', 'bolunebilme', 'molewhack'],
+        icon: Gamepad2,
+        action: () => router.push('/oyunlar'),
+      },
+      {
+        id: 'game_tower_block',
+        label: 'Kule Bloğu',
+        category: 'Oyun',
+        hint: 'Zihinden toplama ile matematik kulesi inşa et',
+        keywords: ['oyun', 'kule', 'blok', 'toplama', 'towerblock'],
+        icon: Gamepad2,
+        action: () => router.push('/oyunlar'),
+      },
+
+      // Önemli Matematik Konuları & Formül Kısayolları
+      {
+        id: 'topic_pythagoras',
+        label: 'Pisagor Bağıntısı ve Özel Üçgenler',
+        category: 'Konu',
+        hint: 'a² + b² = c² ve 3-4-5, 5-12-13 formülleri',
+        keywords: ['pisagor', 'ucgen', 'hipotenus', 'geometri', 'formuller'],
+        icon: Sparkles,
+        action: () => openTool('flashcards'),
+      },
+      {
+        id: 'topic_factoring',
+        label: 'Çarpanlara Ayırma ve Özdeşlikler',
+        category: 'Konu',
+        hint: '(a+b)² ve a²-b² iki kare farkı kuralları',
+        keywords: ['carpanlara ayirma', 'ozdeslik', 'iki kare farki', 'tam kare'],
+        icon: Sparkles,
+        action: () => openTool('flashcards'),
+      },
+      {
+        id: 'topic_radicals',
+        label: 'Kareköklü İfadeler ve Kural Özeti',
+        category: 'Konu',
+        hint: 'Kök dışına çıkarma ve yaklaşık değer hesabı',
+        keywords: ['karekok', 'koklu', 'yaklasik deger'],
+        icon: Sparkles,
+        action: () => openTool('flashcards'),
+      },
+      {
+        id: 'topic_quadratics',
+        label: 'İkinci Dereceden Denklemler & Diskriminant',
+        category: 'Konu',
+        hint: 'Δ = b² - 4ac, kök bulma ve parabol grafiği',
+        keywords: ['delta', 'diskriminant', 'ikinci derece', 'parabol'],
+        icon: Activity,
+        action: () => openTool('graph'),
+      },
+      {
+        id: 'topic_linear',
+        label: 'Doğrusal Fonksiyonlar ve Eğim',
+        category: 'Konu',
+        hint: 'y = mx + b doğrusu ve eğim hesabı',
+        keywords: ['dogrusal', 'egim', 'fonksiyon', 'grafik'],
+        icon: Activity,
+        action: () => openTool('graph'),
+      },
+      {
+        id: 'topic_trig',
+        label: 'Trigonometrik Oranlar & Birim Çember',
+        category: 'Konu',
+        hint: 'sin, cos, tan açı değerleri ve bölgeleri',
+        keywords: ['trigonometri', 'sinus', 'kosinus', 'birim cember'],
+        icon: Activity,
+        action: () => openTool('graph'),
+      },
+
+      // Sayfalar
+      {
         id: 'home',
         label: 'Ana Sayfa',
+        category: 'Sayfa',
         hint: 'Ana sayfaya git',
         keywords: ['anasayfa', 'home', 'ana', 'giris'],
         icon: Home,
@@ -106,6 +271,7 @@ export default function CommandPalette() {
       {
         id: 'profile',
         label: 'Profilim',
+        category: 'Sayfa',
         hint: 'Öğrenci panelim',
         keywords: ['profil', 'profile', 'hesap', 'panel', 'dashboard'],
         icon: User,
@@ -114,6 +280,7 @@ export default function CommandPalette() {
       {
         id: 'contents',
         label: 'İçerikler',
+        category: 'Sayfa',
         hint: 'Ders notları, PDF’ler, videolar',
         keywords: ['icerik', 'notlar', 'pdf', 'video', 'ders', 'dokuman'],
         icon: BookOpen,
@@ -122,6 +289,7 @@ export default function CommandPalette() {
       {
         id: 'tests',
         label: 'Testler',
+        category: 'Sayfa',
         hint: 'Soru çöz, pratik yap',
         keywords: ['test', 'soru', 'quiz', 'pratik', 'sinav'],
         icon: ClipboardList,
@@ -130,6 +298,7 @@ export default function CommandPalette() {
       {
         id: 'assignments',
         label: 'Ödevler',
+        category: 'Sayfa',
         hint: 'Aktif ödevlerim',
         keywords: ['odev', 'assignment', 'teslim', 'gorev'],
         icon: FileText,
@@ -138,6 +307,7 @@ export default function CommandPalette() {
       {
         id: 'progress',
         label: 'İlerleme',
+        category: 'Sayfa',
         hint: 'Grafikler, streak, hedefler',
         keywords: ['ilerleme', 'progress', 'grafik', 'hedef', 'streak'],
         icon: BarChart3,
@@ -146,6 +316,7 @@ export default function CommandPalette() {
       {
         id: 'programs',
         label: 'Programlar',
+        category: 'Sayfa',
         hint: 'LGS ve YKS programları',
         keywords: ['program', 'lgs', 'yks', 'plan', 'cizelge'],
         icon: GraduationCap,
@@ -154,6 +325,7 @@ export default function CommandPalette() {
       {
         id: 'games',
         label: 'Oyunlar',
+        category: 'Sayfa',
         hint: 'Eğlenceli matematik oyunları',
         keywords: ['oyun', 'game', 'eglence', 'puzzle'],
         icon: Gamepad2,
@@ -162,6 +334,7 @@ export default function CommandPalette() {
       {
         id: 'live-lessons',
         label: 'Canlı Ders',
+        category: 'Sayfa',
         hint: 'Planlanan ve aktif dersler',
         keywords: ['canli', 'ders', 'zoom', 'online', 'uzaktan'],
         icon: MonitorPlay,
@@ -170,6 +343,7 @@ export default function CommandPalette() {
       {
         id: 'login',
         label: 'Giriş / Kayıt',
+        category: 'Sayfa',
         hint: 'Hesabına gir veya kayıt ol',
         keywords: ['giris', 'kayit', 'login', 'register', 'signin', 'signup'],
         icon: LogIn,
@@ -351,9 +525,26 @@ export default function CommandPalette() {
                       <Icon className="h-4 w-4" aria-hidden="true" />
                     </span>
                     <span className="min-w-0 flex-1">
-                      <span className="block truncate text-sm font-semibold">
-                        {command.label}
-                      </span>
+                      <div className="flex items-center justify-between gap-2">
+                        <span className="block truncate text-sm font-semibold">
+                          {command.label}
+                        </span>
+                        {command.category && (
+                          <span
+                            className={`shrink-0 rounded-md border px-1.5 py-0.5 text-[10px] font-semibold ${
+                              command.category === 'Araç'
+                                ? 'bg-indigo-500/15 border-indigo-500/25 text-indigo-400'
+                                : command.category === 'Oyun'
+                                ? 'bg-purple-500/15 border-purple-500/25 text-purple-400'
+                                : command.category === 'Konu'
+                                ? 'bg-amber-500/15 border-amber-500/25 text-amber-400'
+                                : 'bg-slate-700/30 border-slate-600/30 text-slate-400'
+                            }`}
+                          >
+                            {command.category}
+                          </span>
+                        )}
+                      </div>
                       {command.hint ? (
                         <span className="block truncate text-xs text-slate-400">
                           {command.hint}

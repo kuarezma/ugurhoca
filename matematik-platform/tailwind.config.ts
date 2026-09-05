@@ -40,6 +40,7 @@ const config: Config = {
       fontFamily: {
         sans: ["var(--font-poppins)", "system-ui", "sans-serif"],
         display: ["var(--font-display)", "var(--font-poppins)", "system-ui", "sans-serif"],
+        dyslexic: ["OpenDyslexic", "Lexend", "system-ui", "sans-serif"],
       },
       fontSize: {
         "display-xl": ["clamp(2.75rem, 6vw, 4rem)", { lineHeight: "1.05", letterSpacing: "-0.02em", fontWeight: "800" }],

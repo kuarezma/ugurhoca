@@ -5,10 +5,14 @@ export interface DailyGoalData {
   streak: number;
   lastCompletedDate?: string; // YYYY-MM-DD
   history: Record<string, number>; // date -> count
+  freezeTokens: number; // Seri Kalkanı sayısı (0-2)
+  lastFreezeUsedDate?: string; // En son kalkanın devreye girdiği tarih
+  previousStreakBeforeReset?: number; // Telafi edilebilecek önceki seri
 }
 
 const STORAGE_KEY = 'ugurhoca_daily_goal_v1';
 const DEFAULT_TARGET = 20;
+const DEFAULT_FREEZE_TOKENS = 1;
 
 export const getLocalDateString = (d: Date = new Date()): string => {
   const year = d.getFullYear();
@@ -41,6 +45,7 @@ export const getDailyGoal = (): DailyGoalData => {
     solved: 0,
     streak: 0,
     history: {},
+    freezeTokens: DEFAULT_FREEZE_TOKENS,
   };
 
   if (typeof window === 'undefined') return fallback;
@@ -60,14 +65,31 @@ export const getDailyGoal = (): DailyGoalData => {
     let streak = typeof data.streak === 'number' ? data.streak : 0;
     const history = data.history && typeof data.history === 'object' ? data.history : {};
     const lastCompleted = data.lastCompletedDate;
+    let freezeTokens =
+      typeof data.freezeTokens === 'number' && !isNaN(data.freezeTokens)
+        ? Math.max(0, Math.min(2, Math.floor(data.freezeTokens)))
+        : DEFAULT_FREEZE_TOKENS;
+    let lastFreezeUsedDate = data.lastFreezeUsedDate;
+    let previousStreak =
+      typeof data.previousStreakBeforeReset === 'number' ? data.previousStreakBeforeReset : 0;
 
     // Check date transition
     if (data.date !== today) {
       // If it's a new day:
       // Did we complete the goal yesterday?
       if (lastCompleted !== yesterday && lastCompleted !== today) {
-        // Streak broken
-        streak = 0;
+        // Can streak freeze protect the streak?
+        if (freezeTokens > 0 && streak > 0 && lastFreezeUsedDate !== yesterday) {
+          freezeTokens -= 1;
+          lastFreezeUsedDate = yesterday;
+          // Streak is preserved!
+        } else {
+          // Streak broken
+          if (streak > 0) {
+            previousStreak = streak;
+          }
+          streak = 0;
+        }
       }
       const updated: DailyGoalData = {
         target,
@@ -76,6 +98,9 @@ export const getDailyGoal = (): DailyGoalData => {
         streak,
         lastCompletedDate: lastCompleted,
         history,
+        freezeTokens,
+        lastFreezeUsedDate,
+        previousStreakBeforeReset: previousStreak,
       };
       localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
       return updated;
@@ -88,6 +113,9 @@ export const getDailyGoal = (): DailyGoalData => {
       streak,
       lastCompletedDate: lastCompleted,
       history,
+      freezeTokens,
+      lastFreezeUsedDate,
+      previousStreakBeforeReset: previousStreak,
     };
   } catch {
     return fallback;
@@ -123,6 +151,7 @@ export const incrementQuestionsSolved = (amount: number = 1): DailyGoalData => {
 
   let streak = current.streak;
   let lastCompleted = current.lastCompletedDate;
+  let freezeTokens = current.freezeTokens;
 
   // Check if target reached today
   if (newSolved >= current.target && lastCompleted !== today) {
@@ -132,6 +161,11 @@ export const incrementQuestionsSolved = (amount: number = 1): DailyGoalData => {
       streak = 1;
     }
     lastCompleted = today;
+
+    // 7 günlük düzenli çalışma serisinde 1 ek Seri Kalkanı kazanılır (en fazla 2)
+    if (streak > 0 && streak % 7 === 0 && freezeTokens < 2) {
+      freezeTokens = Math.min(2, freezeTokens + 1);
+    }
   }
 
   const updatedHistory = {
@@ -152,6 +186,7 @@ export const incrementQuestionsSolved = (amount: number = 1): DailyGoalData => {
     ...current,
     solved: newSolved,
     streak,
+    freezeTokens,
     lastCompletedDate: lastCompleted,
     history: updatedHistory,
   };
@@ -219,4 +254,51 @@ export const resetTodaySolved = (): DailyGoalData => {
   }
 
   return updated;
+};
+
+export const grantFreezeToken = (amount: number = 1): DailyGoalData => {
+  const current = getDailyGoal();
+  const nextTokens = Math.min(2, (current.freezeTokens || 0) + Math.max(0, amount));
+  const updated: DailyGoalData = {
+    ...current,
+    freezeTokens: nextTokens,
+  };
+
+  if (typeof window !== 'undefined') {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
+      notifyUpdate(updated);
+    } catch {
+      // Ignore quota errors
+    }
+  }
+
+  return updated;
+};
+
+export const repairStreak = (): DailyGoalData => {
+  const current = getDailyGoal();
+  const prev = current.previousStreakBeforeReset || 0;
+  if (prev > 0 && current.streak === 0) {
+    const today = getLocalDateString();
+    const updated: DailyGoalData = {
+      ...current,
+      streak: prev + 1,
+      previousStreakBeforeReset: 0,
+      lastCompletedDate: today,
+    };
+
+    if (typeof window !== 'undefined') {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
+        notifyUpdate(updated);
+      } catch {
+        // Ignore quota errors
+      }
+    }
+
+    return updated;
+  }
+
+  return current;
 };

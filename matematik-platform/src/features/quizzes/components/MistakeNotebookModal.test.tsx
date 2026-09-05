@@ -80,7 +80,7 @@ describe('MistakeNotebookModal', () => {
     expect(screen.getByRole('button', { name: /İşlem Hatası \(1\)/i })).toBeInTheDocument();
   });
 
-  it('triggers window.print when print button is clicked', () => {
+  it('opens printable worksheet modal and triggers print', () => {
     const printSpy = vi.spyOn(window, 'print').mockImplementation(() => {});
     saveMistakesToBank(
       [
@@ -100,9 +100,14 @@ describe('MistakeNotebookModal', () => {
 
     render(<MistakeNotebookModal isOpen={true} onClose={vi.fn()} />);
 
-    const printBtn = screen.getByRole('button', { name: /Yazdır \/ PDF/i });
+    const printBtn = screen.getByRole('button', { name: /A4 Yaprak Test/i });
     expect(printBtn).toBeInTheDocument();
     fireEvent.click(printBtn);
+
+    expect(screen.getByText(/Hata Defteri Özel Çalışma Testi/i)).toBeInTheDocument();
+    const worksheetPrintBtn = screen.getByRole('button', { name: /Yazdır \(A4\)/i });
+    expect(worksheetPrintBtn).toBeInTheDocument();
+    fireEvent.click(worksheetPrintBtn);
     expect(printSpy).toHaveBeenCalled();
     printSpy.mockRestore();
   });

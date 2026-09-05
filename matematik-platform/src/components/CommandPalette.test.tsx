@@ -48,4 +48,20 @@ describe('CommandPalette', () => {
     expect(dispatchSpy).toHaveBeenCalled();
     dispatchSpy.mockRestore();
   });
+
+  it('searches math games and curriculum topics with category badges', () => {
+    render(<CommandPalette />);
+
+    fireEvent.keyDown(window, { key: 'k', metaKey: true });
+
+    const searchInput = screen.getByPlaceholderText(/sayfa ya da komut ara/i);
+    fireEvent.change(searchInput, { target: { value: 'pisagor' } });
+
+    expect(screen.getByText('Pisagor Bağıntısı ve Özel Üçgenler')).toBeInTheDocument();
+    expect(screen.getByText('Konu')).toBeInTheDocument();
+
+    fireEvent.change(searchInput, { target: { value: 'düello' } });
+    expect(screen.getByText('Matematik Düellosu (1v1 Hızlı İşlem)')).toBeInTheDocument();
+    expect(screen.getByText('Oyun')).toBeInTheDocument();
+  });
 });

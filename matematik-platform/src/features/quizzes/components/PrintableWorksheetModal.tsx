@@ -2,15 +2,19 @@
 
 import { useState, useId } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useAccessibleModal } from '@/hooks/useAccessibleModal';
 import {
   X,
   Printer,
   FileDown,
   Eye,
   EyeOff,
+  Maximize2,
 } from 'lucide-react';
 import MathText from '@/components/MathText';
 import type { Quiz, QuizQuestion } from '@/types/quiz';
+
+export type WorkspaceMode = 'compact' | 'standard' | 'large' | 'grid';
 
 type PrintableWorksheetModalProps = {
   isOpen: boolean;
@@ -28,8 +32,10 @@ export function PrintableWorksheetModal({
   isLight: _isLight = false,
 }: PrintableWorksheetModalProps) {
   const titleId = useId();
+  const modalRef = useAccessibleModal<HTMLDivElement>(isOpen, onClose);
   const [showAnswerKey, setShowAnswerKey] = useState(false);
   const [isExporting, setIsExporting] = useState(false);
+  const [workspaceMode, setWorkspaceMode] = useState<WorkspaceMode>('standard');
 
   if (!isOpen || !quiz) return null;
 
@@ -69,6 +75,8 @@ export function PrintableWorksheetModal({
 
         {/* Modal Kapsayıcı */}
         <motion.div
+          ref={modalRef}
+          tabIndex={-1}
           initial={{ opacity: 0, scale: 0.95, y: 16 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.95, y: 16 }}
@@ -93,7 +101,23 @@ export function PrintableWorksheetModal({
               </div>
             </div>
 
-            <div className="flex items-center gap-2">
+            <div className="flex flex-wrap items-center gap-2">
+              <div className="flex items-center gap-1.5 rounded-xl border border-slate-200 dark:border-white/10 px-2.5 py-1 text-xs font-semibold text-slate-700 dark:text-slate-200 bg-white dark:bg-slate-800">
+                <Maximize2 className="h-3.5 w-3.5 text-indigo-500 shrink-0" />
+                <span className="hidden sm:inline text-[11px] text-slate-400">Çözüm Alanı:</span>
+                <select
+                  value={workspaceMode}
+                  onChange={(e) => setWorkspaceMode(e.target.value as WorkspaceMode)}
+                  className="bg-transparent border-none text-xs font-semibold focus:outline-none cursor-pointer"
+                  title="Soruların altına eklenecek işlem alanı boyutu"
+                >
+                  <option value="compact">Kompakt (Az Boşluk)</option>
+                  <option value="standard">Standart Alan</option>
+                  <option value="large">Geniş Alan</option>
+                  <option value="grid">Kareli Defter</option>
+                </select>
+              </div>
+
               <button
                 type="button"
                 onClick={() => setShowAnswerKey((prev) => !prev)}
@@ -216,7 +240,22 @@ export function PrintableWorksheetModal({
                     </div>
 
                     {/* Soru Çözüm Boşluğu */}
-                    <div className="h-6 mt-2"></div>
+                    {workspaceMode === 'compact' && <div className="h-6 mt-2" />}
+                    {workspaceMode === 'standard' && (
+                      <div className="h-16 mt-2.5 rounded-lg border border-dashed border-slate-300 bg-slate-50/50 p-1 flex items-start">
+                        <span className="text-[9px] text-slate-400 font-mono select-none">Çözüm Alanı</span>
+                      </div>
+                    )}
+                    {workspaceMode === 'large' && (
+                      <div className="h-28 mt-2.5 rounded-lg border border-dashed border-slate-300 bg-slate-50/50 p-1 flex items-start">
+                        <span className="text-[9px] text-slate-400 font-mono select-none">Geniş Çözüm Alanı</span>
+                      </div>
+                    )}
+                    {workspaceMode === 'grid' && (
+                      <div className="h-24 mt-2.5 rounded-lg border border-dashed border-slate-300 bg-[radial-gradient(#94a3b8_1px,transparent_1px)] [background-size:10px_10px] p-1 flex items-start">
+                        <span className="text-[9px] text-slate-400 font-mono select-none bg-white px-1 rounded">Kareli İşlem Alanı</span>
+                      </div>
+                    )}
                   </div>
                 ))}
               </div>

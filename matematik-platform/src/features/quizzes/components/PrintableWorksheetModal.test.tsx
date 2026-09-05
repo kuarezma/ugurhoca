@@ -68,4 +68,22 @@ describe('PrintableWorksheetModal', () => {
     );
     expect(container).toBeEmptyDOMElement();
   });
+
+  it('allows changing calculation workspace mode', () => {
+    render(
+      <PrintableWorksheetModal
+        isOpen={true}
+        onClose={vi.fn()}
+        quiz={mockQuiz}
+        questions={mockQuestions}
+      />,
+    );
+
+    const select = screen.getByTitle('Soruların altına eklenecek işlem alanı boyutu') as HTMLSelectElement;
+    expect(select.value).toBe('standard');
+
+    fireEvent.change(select, { target: { value: 'grid' } });
+    expect(select.value).toBe('grid');
+    expect(screen.getByText('Kareli İşlem Alanı')).toBeInTheDocument();
+  });
 });

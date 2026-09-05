@@ -7,10 +7,12 @@ import {
   Calendar,
   Settings2,
   Lock,
+  ShieldCheck,
 } from 'lucide-react';
 import {
   getDailyGoal,
   setDailyTarget,
+  getYesterdayDateString,
   type DailyGoalData,
 } from '@/lib/dailyGoalStorage';
 import { featuredExams } from '@/lib/examDates';
@@ -129,6 +131,24 @@ export function PersonalStreakHub({ isLight }: PersonalStreakHubProps) {
                 {goalData.streak}
               </span>
               <span className="text-xs font-semibold text-orange-500">Gün Üst Üste</span>
+            </div>
+            <div className="mt-1.5 flex flex-wrap items-center gap-1.5">
+              <span
+                className={`inline-flex items-center gap-1 rounded-md px-1.5 py-0.5 text-[10px] font-semibold border ${
+                  (goalData.freezeTokens || 0) > 0
+                    ? 'bg-sky-500/15 border-sky-500/30 text-sky-400'
+                    : 'bg-slate-700/30 border-slate-600/30 text-slate-400'
+                }`}
+                title="Seri Kalkanı: Giremediğin günlerde çalışma serinin sıfırlanmasını otomatik önler."
+              >
+                <ShieldCheck className="h-3 w-3" />
+                <span>{goalData.freezeTokens ?? 1} Kalkan</span>
+              </span>
+              {goalData.lastFreezeUsedDate === getYesterdayDateString() && (
+                <span className="text-[10px] font-medium text-emerald-400">
+                  🛡️ Dün serin korundu!
+                </span>
+              )}
             </div>
             <p className={`text-[11px] mt-1 ${isLight ? 'text-slate-600' : 'text-slate-400'}`}>
               {goalData.streak > 0 ? 'Harika gidiyorsun! Zinciri kırma.' : 'Bugün hedefine ulaş, seriyi başlat!'}

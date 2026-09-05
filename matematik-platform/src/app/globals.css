@@ -1385,3 +1385,29 @@ html[data-theme='light'] .programlar-page [class*='transition-'] {
     overflow-x: clip;
   }
 }
+
+/* Disleksi ve Kapsayıcı Okuma Erişilebilirliği */
+.font-dyslexic {
+  font-family: 'OpenDyslexic', 'Lexend', 'Comic Sans MS', sans-serif !important;
+  letter-spacing: 0.04em;
+  word-spacing: 0.08em;
+  line-height: 1.75;
+}
+
+.accessible-reading-mode {
+  letter-spacing: 0.025em;
+  line-height: 1.8;
+  word-spacing: 0.05em;
+}
+
+/* MathML Ekran Okuyucu Desteği */
+.katex-mathml {
+  position: absolute;
+  clip: rect(1px, 1px, 1px, 1px);
+  padding: 0;
+  border: 0;
+  height: 1px;
+  width: 1px;
+  overflow: hidden;
+}
+

@@ -1,6 +1,9 @@
 'use client';
 
 import { useState, useEffect, useRef, useId } from 'react';
+import { useAccessibleModal } from '@/hooks/useAccessibleModal';
+import { isSoundMuted } from '@/features/games/utils/gameAudio';
+import { useGameSoundMute } from '@/features/games/hooks/useGameSoundMute';
 import {
   X,
   Play,
@@ -28,6 +31,7 @@ const MODE_DURATIONS: Record<TimerMode, number> = {
 };
 
 const playCompletionSound = () => {
+  if (isSoundMuted()) return;
   try {
     const AudioContext = window.AudioContext || (window as unknown as { webkitAudioContext: typeof window.AudioContext }).webkitAudioContext;
     if (!AudioContext) return;
@@ -58,11 +62,13 @@ const playCompletionSound = () => {
 
 export function FocusPomodoroModal({ isOpen, onClose }: FocusPomodoroModalProps) {
   const titleId = useId();
+  const modalRef = useAccessibleModal<HTMLDivElement>(isOpen, onClose);
+  const { isMuted, toggleMute } = useGameSoundMute();
+  const soundEnabled = !isMuted;
   const [mode, setMode] = useState<TimerMode>('focus25');
   const [timeLeft, setTimeLeft] = useState(MODE_DURATIONS.focus25);
   const [isRunning, setIsRunning] = useState(false);
   const [completedSessions, setCompletedSessions] = useState(0);
-  const [soundEnabled, setSoundEnabled] = useState(true);
 
   const timerRef = useRef<number | null>(null);
   const endTimeRef = useRef<number | null>(null);
@@ -159,18 +165,23 @@ export function FocusPomodoroModal({ isOpen, onClose }: FocusPomodoroModalProps)
     setTimeLeft(MODE_DURATIONS[mode]);
   };
 
+  if (!isOpen) return null;
+
   return (
     <div className="fixed inset-0 z-[150] flex items-center justify-center p-3 sm:p-5">
-      <div
-        className="fixed inset-0 -z-10 bg-slate-950/80 backdrop-blur-md"
+      <button
+        type="button"
+        aria-label="Pencereyi kapat"
         onClick={onClose}
-        aria-hidden="true"
+        className="fixed inset-0 bg-slate-950/80 backdrop-blur-md"
       />
       <div
+        ref={modalRef}
+        tabIndex={-1}
         role="dialog"
         aria-modal="true"
         aria-labelledby={titleId}
-        className="flex w-full max-w-md flex-col overflow-hidden rounded-3xl border border-slate-200/80 dark:border-white/10 bg-white dark:bg-slate-900 shadow-2xl transition-all"
+        className="relative z-10 flex w-full max-w-md flex-col overflow-hidden rounded-3xl border border-slate-200/80 dark:border-white/10 bg-white dark:bg-slate-900 shadow-2xl transition-all"
       >
         {/* Başlık */}
         <div className="flex items-center justify-between border-b border-slate-200/80 dark:border-white/10 bg-slate-50/80 dark:bg-slate-950/80 px-5 py-4">
@@ -193,8 +204,9 @@ export function FocusPomodoroModal({ isOpen, onClose }: FocusPomodoroModalProps)
           <div className="flex items-center gap-1.5">
             <button
               type="button"
-              onClick={() => setSoundEnabled(!soundEnabled)}
+              onClick={toggleMute}
               title={soundEnabled ? 'Sesi Kapat' : 'Sesi Aç'}
+              aria-label={soundEnabled ? 'Sesi Kapat' : 'Sesi Aç'}
               className="flex h-8 w-8 items-center justify-center rounded-xl text-slate-400 hover:bg-slate-100 dark:hover:bg-white/10 hover:text-slate-700 dark:hover:text-white transition-colors"
             >
               {soundEnabled ? <Volume2 className="h-4 w-4 text-indigo-500" /> : <VolumeX className="h-4 w-4" />}

@@ -21,6 +21,8 @@ import {
   type MistakeReason,
   MISTAKE_REASON_LABELS,
 } from '@/features/quizzes/lib/mistakeStorage';
+import { PrintableWorksheetModal } from './PrintableWorksheetModal';
+import { useAccessibleModal } from '@/hooks/useAccessibleModal';
 
 type MistakeNotebookModalProps = {
   isOpen: boolean;
@@ -37,6 +39,8 @@ export function MistakeNotebookModal({
   const [mistakes, setMistakes] = useState<SavedMistakeQuestion[]>([]);
   const [filter, setFilter] = useState<'all' | 'pending' | 'mastered'>('pending');
   const [reasonFilter, setReasonFilter] = useState<MistakeReason | 'all'>('all');
+  const [isWorksheetOpen, setIsWorksheetOpen] = useState(false);
+  const modalRef = useAccessibleModal<HTMLDivElement>(isOpen, onClose);
 
   const reloadMistakes = () => {
     setMistakes(getSavedMistakes());
@@ -63,6 +67,10 @@ export function MistakeNotebookModal({
       return true;
     });
   }, [mistakes, filter, reasonFilter]);
+
+  const printableQuestions = useMemo<QuizQuestion[]>(() => {
+    return filteredList.map((m) => m.question);
+  }, [filteredList]);
 
   if (!isOpen) return null;
 
@@ -113,12 +121,14 @@ export function MistakeNotebookModal({
 
   return (
     <div className="fixed inset-0 z-[150] flex items-center justify-center p-3 sm:p-5">
-      <div
+      <button
+        type="button"
+        aria-label="Pencereyi kapat"
         className="fixed inset-0 -z-10 bg-slate-950/80 backdrop-blur-md"
         onClick={onClose}
-        aria-hidden="true"
       />
       <div
+        ref={modalRef}
         role="dialog"
         aria-modal="true"
         aria-labelledby={titleId}
@@ -167,12 +177,13 @@ export function MistakeNotebookModal({
             {filteredList.length > 0 && (
               <button
                 type="button"
-                onClick={() => window.print()}
-                title="Hata Defterini Yazdır / PDF Olarak Kaydet"
+                onClick={() => setIsWorksheetOpen(true)}
+                title="Hatalarından A4 Yaprak Test Oluştur & Yazdır"
                 className="inline-flex items-center gap-1.5 rounded-xl border border-slate-300 dark:border-white/10 bg-white dark:bg-slate-800 px-3 py-2 text-xs font-bold text-slate-700 dark:text-slate-300 shadow-sm transition hover:bg-slate-100 dark:hover:bg-slate-700 active:scale-[0.98]"
               >
-                <Printer className="h-3.5 w-3.5" />
-                <span className="hidden sm:inline">Yazdır / PDF</span>
+                <Printer className="h-3.5 w-3.5 text-indigo-500 dark:text-indigo-400" />
+                <span className="hidden sm:inline">A4 Yaprak Test / PDF</span>
+                <span className="sm:hidden">Yazdır / PDF</span>
               </button>
             )}
 
@@ -418,6 +429,25 @@ export function MistakeNotebookModal({
           )}
         </div>
       </div>
+
+      {isWorksheetOpen && (
+        <PrintableWorksheetModal
+          isOpen={isWorksheetOpen}
+          onClose={() => setIsWorksheetOpen(false)}
+          quiz={{
+            id: 'hata-defteri-ozel-test',
+            title: 'Hata Defteri Özel Çalışma Testi',
+            grade: 8,
+            time_limit: Math.max(10, printableQuestions.length * 3),
+            difficulty: 'Orta',
+            description: 'Akıllı hata defterindeki sorulardan derlenmiş özel yaprak test.',
+            is_active: true,
+            created_at: '2026-01-01T00:00:00Z',
+            updated_at: '2026-01-01T00:00:00Z',
+          }}
+          questions={printableQuestions}
+        />
+      )}
     </div>
   );
 }

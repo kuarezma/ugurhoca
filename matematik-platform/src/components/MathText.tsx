@@ -75,7 +75,7 @@ function renderMath(expr: string, display: boolean): string {
       displayMode: display,
       throwOnError: false,
       strict: 'ignore',
-      output: 'html',
+      output: 'htmlAndMathml',
       trust: false,
     });
   } catch {

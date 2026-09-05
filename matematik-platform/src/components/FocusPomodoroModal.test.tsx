@@ -41,4 +41,14 @@ describe('FocusPomodoroModal', () => {
 
     expect(document.title).toBe('Uğur Hoca Matematik');
   });
+
+  it('toggles global sound mute when sound button is clicked', () => {
+    localStorage.clear();
+    render(<FocusPomodoroModal isOpen={true} onClose={vi.fn()} />);
+
+    const soundBtn = screen.getByRole('button', { name: /Sesi Kapat/i });
+    fireEvent.click(soundBtn);
+
+    expect(localStorage.getItem('ugurhoca:sound_muted')).toBe('true');
+  });
 });
