@@ -1,8 +1,9 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { ArrowLeft, Calculator, Trophy } from 'lucide-react';
+import { ArrowLeft, Calculator, Trophy, Volume2, VolumeX } from 'lucide-react';
 import Link from 'next/link';
+import { useGameSoundMute } from '@/features/games/hooks/useGameSoundMute';
 import type { AppUser } from '@/types';
 import {
   FloatingParticles,
@@ -31,6 +32,7 @@ export function GamesLandingView({
   user,
 }: GamesLandingViewProps) {
   const profileHref = user.isAdmin ? '/admin' : '/profil';
+  const { isMuted, toggleMute } = useGameSoundMute();
 
   return (
     <main className="oyunlar-page min-h-screen bg-gradient-to-br from-slate-900 via-slate-900 to-slate-800 pb-20">
@@ -47,13 +49,35 @@ export function GamesLandingView({
             </span>
           </Link>
 
-          <Link
-            href={profileHref}
-            className="text-slate-300 hover:text-white flex items-center gap-1.5 text-xs sm:text-base shrink-0"
-          >
-            <ArrowLeft className="w-4 h-4 sm:w-5 sm:h-5" />
-            <span>{user.isAdmin ? 'Admin Panel' : 'Profil'}</span>
-          </Link>
+          <div className="flex items-center gap-2 sm:gap-3 shrink-0">
+            <button
+              type="button"
+              onClick={toggleMute}
+              className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 text-white transition-colors text-xs"
+              aria-label={isMuted ? 'Oyun sesini aç' : 'Oyun sesini kapat'}
+              title={isMuted ? 'Ses Kapalı (Açmak için tıkla)' : 'Ses Açık (Kapatmak için tıkla)'}
+            >
+              {isMuted ? (
+                <>
+                  <VolumeX className="w-4 h-4 text-rose-400 shrink-0" />
+                  <span className="hidden sm:inline text-rose-300">Sessiz</span>
+                </>
+              ) : (
+                <>
+                  <Volume2 className="w-4 h-4 text-emerald-400 shrink-0" />
+                  <span className="hidden sm:inline text-emerald-300">Ses Açık</span>
+                </>
+              )}
+            </button>
+
+            <Link
+              href={profileHref}
+              className="text-slate-300 hover:text-white flex items-center gap-1.5 text-xs sm:text-base shrink-0"
+            >
+              <ArrowLeft className="w-4 h-4 sm:w-5 sm:h-5" />
+              <span>{user.isAdmin ? 'Admin Panel' : 'Profil'}</span>
+            </Link>
+          </div>
         </div>
       </nav>
 

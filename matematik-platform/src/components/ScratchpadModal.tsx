@@ -7,6 +7,7 @@ import {
   useState,
   type PointerEvent as ReactPointerEvent,
 } from 'react';
+import { useAccessibleModal } from '@/hooks/useAccessibleModal';
 import {
   Eraser,
   PenTool,
@@ -26,6 +27,7 @@ import {
 } from 'lucide-react';
 import MathText from '@/components/MathText';
 import Image from 'next/image';
+import { ErrorBoundary } from '@/components/ErrorBoundary';
 
 export type ScratchpadQuestionContext = {
   questionText: string;
@@ -69,6 +71,7 @@ export default function ScratchpadModal({
   title = 'Karalama & İşlem Tahtası',
   questionContext,
 }: ScratchpadModalProps) {
+  const modalRef = useAccessibleModal<HTMLDivElement>(isOpen, onClose);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const [activeTool, setActiveTool] = useState<ToolType>('pen');
   const [color, setColor] = useState('#facc15');
@@ -482,13 +485,44 @@ export default function ScratchpadModal({
   if (!isOpen) return null;
 
   return (
-    <div
-      role="dialog"
-      aria-modal="true"
-      aria-label={title}
-      className="fixed inset-0 z-[150] flex items-center justify-center bg-slate-950/85 p-2 sm:p-4 backdrop-blur-md"
-    >
-      <div className="flex h-full max-h-[94vh] w-full max-w-6xl flex-col overflow-hidden rounded-3xl border border-white/15 bg-slate-900 shadow-2xl">
+    <div className="fixed inset-0 z-[150] flex items-center justify-center p-2 sm:p-4">
+      <button
+        type="button"
+        aria-label="Pencereyi kapat"
+        onClick={onClose}
+        className="fixed inset-0 bg-slate-950/85 backdrop-blur-md"
+      />
+      <div
+        ref={modalRef}
+        tabIndex={-1}
+        role="dialog"
+        aria-modal="true"
+        aria-label={title}
+        className="relative z-10 flex h-full max-h-[94vh] w-full max-w-6xl flex-col overflow-hidden rounded-3xl border border-white/15 bg-slate-900 shadow-2xl"
+      >
+        <ErrorBoundary
+          fallback={({ reset }) => (
+            <div className="flex flex-1 flex-col items-center justify-center p-8 text-center text-slate-300 gap-4">
+              <p className="text-sm">Karalama tahtası yüklenirken beklenmedik bir durum oluştu.</p>
+              <div className="flex gap-2">
+                <button
+                  type="button"
+                  onClick={reset}
+                  className="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 rounded-xl text-white font-semibold text-xs transition"
+                >
+                  Tuvali Yeniden Başlat
+                </button>
+                <button
+                  type="button"
+                  onClick={onClose}
+                  className="px-4 py-2 bg-white/10 hover:bg-white/20 rounded-xl text-white font-semibold text-xs transition"
+                >
+                  Kapat
+                </button>
+              </div>
+            </div>
+          )}
+        >
         {/* Header & Araç Çubuğu */}
         <div className="flex flex-wrap items-center justify-between gap-2 border-b border-white/10 bg-slate-950/90 px-3 sm:px-4 py-2 sm:py-3">
           <div className="flex items-center gap-2 min-w-0">
@@ -827,6 +861,7 @@ export default function ScratchpadModal({
           </div>
           <span className="font-semibold text-slate-300 hidden sm:inline">Soruyu çözerken tahtayı kapatıp açabilirsin.</span>
         </div>
+        </ErrorBoundary>
       </div>
     </div>
   );

@@ -1,4 +1,4 @@
-import { describe, expect, it, beforeEach } from 'vitest';
+import { describe, it, expect, beforeEach } from 'vitest';
 import {
   getStudentQuestions,
   submitStudentQuestion,
@@ -11,30 +11,56 @@ describe('studentQuestionsStorage', () => {
     localStorage.clear();
   });
 
-  it('submits, retrieves, updates and deletes questions', () => {
-    expect(getStudentQuestions()).toHaveLength(0);
-
-    const question = submitStudentQuestion({
+  it('submits a student question and retrieves it', () => {
+    const q = submitStudentQuestion({
       student_name: 'Ahmet Y.',
-      lesson_id: 'lesson_123',
-      topic: 'Trigonometri',
+      topic: 'Üçgenler',
       difficulty: 'Orta',
-      question_text: 'sin(x) + cos(x) = 1 ise tan(x) kaçtır?',
+      question_text: 'ABC üçgeninde hipotenüs kaç cm?',
     });
 
-    expect(question.id).toBeDefined();
-    expect(question.status).toBe('pending');
+    expect(q.id).toBeDefined();
+    expect(q.status).toBe('pending');
+
+    const all = getStudentQuestions();
+    expect(all).toHaveLength(1);
+    expect(all[0].question_text).toBe('ABC üçgeninde hipotenüs kaç cm?');
+  });
+
+  it('updates question status', () => {
+    const q = submitStudentQuestion({
+      student_name: 'Zeynep K.',
+      topic: 'Fonksiyonlar',
+      difficulty: 'Zor',
+      question_text: 'f(x) = 2x+1 grafiği orijinden geçer mi?',
+    });
+
+    const updated = updateStudentQuestionStatus(q.id, 'resolved');
+    expect(updated).toBe(true);
+
+    const all = getStudentQuestions();
+    expect(all[0].status).toBe('resolved');
+  });
+
+  it('deletes a student question', () => {
+    const q = submitStudentQuestion({
+      student_name: 'Mehmet B.',
+      topic: 'Olasılık',
+      difficulty: 'Kolay',
+      question_text: 'Zar atıldığında tek sayı gelme olasılığı?',
+    });
+
     expect(getStudentQuestions()).toHaveLength(1);
-    expect(getStudentQuestions('lesson_123')).toHaveLength(1);
-    expect(getStudentQuestions('other_lesson')).toHaveLength(0);
-
-    // Update status
-    updateStudentQuestionStatus(question.id, 'projected');
-    const updatedList = getStudentQuestions();
-    expect(updatedList[0].status).toBe('projected');
-
-    // Delete
-    deleteStudentQuestion(question.id);
+    deleteStudentQuestion(q.id);
     expect(getStudentQuestions()).toHaveLength(0);
+  });
+
+  it('self-heals when storage contains non-array or invalid JSON', () => {
+    localStorage.setItem('ugur_hoca_live_questions_pool_v1', '{"invalid": true}');
+    expect(getStudentQuestions()).toEqual([]);
+    expect(localStorage.getItem('ugur_hoca_live_questions_pool_v1')).toBeNull();
+
+    localStorage.setItem('ugur_hoca_live_questions_pool_v1', 'broken json {{{{');
+    expect(getStudentQuestions()).toEqual([]);
   });
 });

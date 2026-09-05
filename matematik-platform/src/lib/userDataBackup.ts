@@ -202,7 +202,16 @@ export function importUserDataBackup(jsonContent: string): {
         topicsCount,
       },
     };
-  } catch {
+  } catch (err: unknown) {
+    if (
+      err instanceof DOMException &&
+      (err.name === 'QuotaExceededError' || err.code === 22)
+    ) {
+      return {
+        success: false,
+        message: 'Tarayıcı depolama alanı yetersiz. Lütfen tarayıcı önbelleğini temizleyip tekrar deneyin.',
+      };
+    }
     return {
       success: false,
       message: 'JSON dosyası çözümlenemedi. Dosyanın bozulmamış olduğundan emin olun.',

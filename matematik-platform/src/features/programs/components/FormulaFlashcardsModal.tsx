@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useAccessibleModal } from '@/hooks/useAccessibleModal';
 import {
   X,
   ChevronLeft,
@@ -12,6 +13,7 @@ import {
   Printer,
 } from 'lucide-react';
 import MathText from '@/components/MathText';
+import { ErrorBoundary } from '@/components/ErrorBoundary';
 
 type Flashcard = {
   id: string;
@@ -200,6 +202,7 @@ export function FormulaFlashcardsModal({
   isOpen,
   onClose,
 }: FormulaFlashcardsModalProps) {
+  const modalRef = useAccessibleModal<HTMLDivElement>(isOpen, onClose);
   const [categoryFilter, setCategoryFilter] = useState<'all' | 'lgs' | 'yks' | 'due'>('all');
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isFlipped, setIsFlipped] = useState(false);
@@ -285,12 +288,13 @@ export function FormulaFlashcardsModal({
   });
 
   return (
-    <div
-      role="dialog"
-      aria-modal="true"
-      aria-label="Matematik Formül & Bilgi Kartları"
-      className="fixed inset-0 z-[150] flex items-center justify-center bg-slate-950/85 p-3 sm:p-4 backdrop-blur-md"
-    >
+    <div className="fixed inset-0 z-[150] flex items-center justify-center p-3 sm:p-4">
+      <button
+        type="button"
+        aria-label="Pencereyi kapat"
+        onClick={onClose}
+        className="fixed inset-0 bg-slate-950/85 backdrop-blur-md"
+      />
       <style dangerouslySetInnerHTML={{ __html: `
         @media print {
           body * { visibility: hidden !important; }
@@ -315,7 +319,37 @@ export function FormulaFlashcardsModal({
         }
       `}} />
 
-      <div className="print-flashcards-area flex h-full max-h-[90vh] w-full max-w-2xl flex-col overflow-hidden rounded-3xl border border-white/15 bg-slate-900 shadow-2xl">
+      <div
+        ref={modalRef}
+        tabIndex={-1}
+        role="dialog"
+        aria-modal="true"
+        aria-label="Matematik Formül & Bilgi Kartları"
+        className="relative z-10 print-flashcards-area flex h-full max-h-[90vh] w-full max-w-2xl flex-col overflow-hidden rounded-3xl border border-white/15 bg-slate-900 shadow-2xl"
+      >
+        <ErrorBoundary
+          fallback={({ reset }) => (
+            <div className="flex flex-1 flex-col items-center justify-center p-8 text-center text-slate-300 gap-4">
+              <p className="text-sm">Formül kartları yüklenirken beklenmedik bir durum oluştu.</p>
+              <div className="flex gap-2">
+                <button
+                  type="button"
+                  onClick={reset}
+                  className="px-4 py-2 bg-brand-primary hover:bg-brand-primary-deep rounded-xl text-white font-semibold text-xs transition"
+                >
+                  Yeniden Dene
+                </button>
+                <button
+                  type="button"
+                  onClick={onClose}
+                  className="px-4 py-2 bg-white/10 hover:bg-white/20 rounded-xl text-white font-semibold text-xs transition"
+                >
+                  Kapat
+                </button>
+              </div>
+            </div>
+          )}
+        >
         {/* A4 Yazdırma Görünümü (Yalnızca print esnasında görünür) */}
         <div className="print-only mb-6 border-b-2 border-black pb-4 text-black">
           <div className="flex justify-between items-center">
@@ -631,6 +665,7 @@ export function FormulaFlashcardsModal({
             <ChevronRight className="h-4 w-4" />
           </button>
         </div>
+        </ErrorBoundary>
       </div>
     </div>
   );

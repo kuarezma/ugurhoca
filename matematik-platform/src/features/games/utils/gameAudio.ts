@@ -1,7 +1,38 @@
 // Web Audio API browser synth sound helper for educational games
 
-class GameAudioEffects {
+export const SOUND_MUTED_STORAGE_KEY = 'ugurhoca:sound_muted';
+
+export class GameAudioEffects {
   private ctx: AudioContext | null = null;
+
+  isMuted(): boolean {
+    if (typeof window === 'undefined') return false;
+    try {
+      return localStorage.getItem(SOUND_MUTED_STORAGE_KEY) === 'true';
+    } catch {
+      return false;
+    }
+  }
+
+  setMuted(muted: boolean): void {
+    if (typeof window === 'undefined') return;
+    try {
+      localStorage.setItem(SOUND_MUTED_STORAGE_KEY, muted ? 'true' : 'false');
+      window.dispatchEvent(
+        new CustomEvent('ugurhoca:sound-mute-changed', {
+          detail: { muted },
+        }),
+      );
+    } catch {
+      // Storage unavailable or blocked
+    }
+  }
+
+  toggleMuted(): boolean {
+    const nextState = !this.isMuted();
+    this.setMuted(nextState);
+    return nextState;
+  }
 
   private getContext(): AudioContext | null {
     if (typeof window === 'undefined') return null;
@@ -25,6 +56,7 @@ class GameAudioEffects {
   }
 
   playCorrect() {
+    if (this.isMuted()) return;
     const ctx = this.getContext();
     if (!ctx) return;
     try {
@@ -51,6 +83,7 @@ class GameAudioEffects {
   }
 
   playWrong() {
+    if (this.isMuted()) return;
     const ctx = this.getContext();
     if (!ctx) return;
     try {
@@ -76,6 +109,7 @@ class GameAudioEffects {
   }
 
   playPop() {
+    if (this.isMuted()) return;
     const ctx = this.getContext();
     if (!ctx) return;
     try {
@@ -101,6 +135,7 @@ class GameAudioEffects {
   }
 
   playCombo(level: number = 1) {
+    if (this.isMuted()) return;
     const ctx = this.getContext();
     if (!ctx) return;
     try {
@@ -127,6 +162,7 @@ class GameAudioEffects {
   }
 
   playSlice() {
+    if (this.isMuted()) return;
     const ctx = this.getContext();
     if (!ctx) return;
     try {
@@ -152,6 +188,7 @@ class GameAudioEffects {
   }
 
   playWhack() {
+    if (this.isMuted()) return;
     const ctx = this.getContext();
     if (!ctx) return;
     try {
@@ -177,6 +214,7 @@ class GameAudioEffects {
   }
 
   playNitro() {
+    if (this.isMuted()) return;
     const ctx = this.getContext();
     if (!ctx) return;
     try {
@@ -202,6 +240,7 @@ class GameAudioEffects {
   }
 
   playFanfare() {
+    if (this.isMuted()) return;
     const ctx = this.getContext();
     if (!ctx) return;
     try {
@@ -232,3 +271,6 @@ class GameAudioEffects {
 }
 
 export const gameAudio = new GameAudioEffects();
+export const isSoundMuted = () => gameAudio.isMuted();
+export const setSoundMuted = (muted: boolean) => gameAudio.setMuted(muted);
+export const toggleSoundMuted = () => gameAudio.toggleMuted();

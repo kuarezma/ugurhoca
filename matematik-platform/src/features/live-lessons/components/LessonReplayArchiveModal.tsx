@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useAccessibleModal } from '@/hooks/useAccessibleModal';
 import {
   X,
   Play,
@@ -100,6 +101,7 @@ export function LessonReplayArchiveModal({
   onClose,
   gradeFilter = 'all',
 }: LessonReplayArchiveModalProps) {
+  const modalRef = useAccessibleModal<HTMLDivElement>(isOpen, onClose);
   const [selectedLesson, setSelectedLesson] = useState<RecordedLesson>(
     SAMPLE_RECORDED_LESSONS[0]
   );
@@ -137,13 +139,21 @@ export function LessonReplayArchiveModal({
   };
 
   return (
-    <div
-      role="dialog"
-      aria-modal="true"
-      aria-label="Canlı Ders Kayıtları & Ders Arşivi"
-      className="fixed inset-0 z-[150] flex items-center justify-center bg-slate-950/85 p-2 sm:p-4 backdrop-blur-md"
-    >
-      <div className="flex h-full max-h-[92vh] w-full max-w-5xl flex-col overflow-hidden rounded-3xl border border-white/15 bg-slate-900 shadow-2xl">
+    <div className="fixed inset-0 z-[150] flex items-center justify-center p-2 sm:p-4">
+      <button
+        type="button"
+        aria-label="Pencereyi kapat"
+        onClick={onClose}
+        className="fixed inset-0 bg-slate-950/85 backdrop-blur-md"
+      />
+      <div
+        ref={modalRef}
+        tabIndex={-1}
+        role="dialog"
+        aria-modal="true"
+        aria-label="Canlı Ders Kayıtları & Ders Arşivi"
+        className="relative z-10 flex h-full max-h-[92vh] w-full max-w-5xl flex-col overflow-hidden rounded-3xl border border-white/15 bg-slate-900 shadow-2xl"
+      >
         {/* Header */}
         <div className="flex items-center justify-between border-b border-white/10 bg-slate-950/80 px-4 sm:px-6 py-3 sm:py-4">
           <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">

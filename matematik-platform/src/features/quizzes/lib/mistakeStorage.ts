@@ -22,13 +22,22 @@ export type SavedMistakeQuestion = {
 };
 
 const STORAGE_KEY = 'ugur_hoca_mistakes_bank_v1';
+const MAX_MISTAKES = 200;
 
 export const getSavedMistakes = (): SavedMistakeQuestion[] => {
   if (typeof window === 'undefined') return [];
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (!raw) return [];
-    return JSON.parse(raw);
+    const parsed = JSON.parse(raw);
+    if (Array.isArray(parsed)) {
+      return parsed.filter((item): item is SavedMistakeQuestion =>
+        Boolean(item && typeof item === 'object' && item.question && typeof item.question === 'object')
+      );
+    }
+    // Bozuk veri varsa temizle ve kendini onar
+    localStorage.removeItem(STORAGE_KEY);
+    return [];
   } catch {
     return [];
   }
@@ -57,7 +66,8 @@ export const saveMistakesToBank = (
       }
     }
 
-    const nextList = Array.from(existingMap.values());
+    // Kota aşımını önlemek için en fazla MAX_MISTAKES soru sakla (FIFO)
+    const nextList = Array.from(existingMap.values()).slice(-MAX_MISTAKES);
     localStorage.setItem(STORAGE_KEY, JSON.stringify(nextList));
     return addedCount;
   } catch {

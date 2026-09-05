@@ -1,6 +1,8 @@
 'use client';
 
 import { useState, useId, useMemo } from 'react';
+import { useAccessibleModal } from '@/hooks/useAccessibleModal';
+import { ErrorBoundary } from '@/components/ErrorBoundary';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   X,
@@ -26,6 +28,7 @@ export function MathGraphVisualizerModal({
   isLight = false,
 }: MathGraphVisualizerModalProps) {
   const titleId = useId();
+  const modalRef = useAccessibleModal<HTMLDivElement>(isOpen, onClose);
   const [activeTab, setActiveTab] = useState<VisualizerTab>('linear');
 
   // Doğrusal Fonksiyon (y = mx + b)
@@ -117,32 +120,58 @@ export function MathGraphVisualizerModal({
 
   return (
     <AnimatePresence>
-      <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
-        {/* Arka Plan Karartması */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          onClick={onClose}
-          className="fixed inset-0 bg-slate-950/80 backdrop-blur-md"
-          aria-hidden="true"
-        />
+      {isOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
+          {/* Arka Plan Karartması */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={onClose}
+            className="fixed inset-0 bg-slate-950/80 backdrop-blur-md"
+            aria-hidden="true"
+          />
 
-        {/* Modal Gövdesi */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.95, y: 16 }}
-          animate={{ opacity: 1, scale: 1, y: 0 }}
-          exit={{ opacity: 0, scale: 0.95, y: 16 }}
-          role="dialog"
-          aria-labelledby={titleId}
-          aria-modal="true"
-          className={`relative w-full max-w-4xl overflow-hidden rounded-3xl border shadow-2xl z-10 my-auto ${
-            isLight
-              ? 'bg-white/95 border-slate-200 text-slate-900 shadow-slate-900/20'
-              : 'bg-slate-900/95 border-white/10 text-white shadow-black/60'
-          } backdrop-blur-xl`}
-        >
-          {/* Üst Başlık Şeridi */}
+          {/* Modal Gövdesi */}
+          <motion.div
+            ref={modalRef}
+            tabIndex={-1}
+            initial={{ opacity: 0, scale: 0.95, y: 16 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.95, y: 16 }}
+            role="dialog"
+            aria-labelledby={titleId}
+            aria-modal="true"
+            className={`relative w-full max-w-4xl overflow-hidden rounded-3xl border shadow-2xl z-10 my-auto ${
+              isLight
+                ? 'bg-white/95 border-slate-200 text-slate-900 shadow-slate-900/20'
+                : 'bg-slate-900/95 border-white/10 text-white shadow-black/60'
+            } backdrop-blur-xl`}
+          >
+            <ErrorBoundary
+              fallback={({ reset }) => (
+                <div className="flex flex-col items-center justify-center p-12 text-center text-slate-300 gap-4">
+                  <p className="text-sm">Grafik görselleştirici yüklenirken bir hesaplama hatası oluştu.</p>
+                  <div className="flex gap-2">
+                    <button
+                      type="button"
+                      onClick={reset}
+                      className="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 rounded-xl text-white font-semibold text-xs transition"
+                    >
+                      Grafiği Sıfırla
+                    </button>
+                    <button
+                      type="button"
+                      onClick={onClose}
+                      className="px-4 py-2 bg-white/10 hover:bg-white/20 rounded-xl text-white font-semibold text-xs transition"
+                    >
+                      Kapat
+                    </button>
+                  </div>
+                </div>
+              )}
+            >
+            {/* Üst Başlık Şeridi */}
           <div className="flex items-center justify-between border-b border-white/10 px-5 py-4 sm:px-6">
             <div className="flex items-center gap-3">
               <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-tr from-indigo-500 via-purple-500 to-pink-500 text-white shadow-md shadow-indigo-500/30">
@@ -674,9 +703,11 @@ export function MathGraphVisualizerModal({
             >
               Anladım, Kapat
             </button>
-          </div>
-        </motion.div>
-      </div>
+            </div>
+            </ErrorBoundary>
+          </motion.div>
+        </div>
+      )}
     </AnimatePresence>
   );
 }

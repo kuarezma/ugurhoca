@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useAccessibleModal } from '@/hooks/useAccessibleModal';
 import {
   X,
   Award,
@@ -35,6 +36,7 @@ export function MonthlyReportCardModal({
   sessions = [],
   goal = null,
 }: MonthlyReportCardModalProps) {
+  const modalRef = useAccessibleModal<HTMLDivElement>(isOpen, onClose);
   const [activeTab, setActiveTab] = useState<'card' | 'certificate'>('card');
   const [selectedMonth] = useState('Bu Ay (Son 30 Gün)');
 
@@ -69,12 +71,13 @@ export function MonthlyReportCardModal({
   });
 
   return (
-    <div
-      role="dialog"
-      aria-modal="true"
-      aria-label="Aylık Matematik Gelişim Raporu & Başarı Belgesi"
-      className="fixed inset-0 z-[150] flex items-center justify-center bg-slate-950/85 p-2 sm:p-4 backdrop-blur-md"
-    >
+    <div className="fixed inset-0 z-[150] flex items-center justify-center p-2 sm:p-4">
+      <button
+        type="button"
+        aria-label="Pencereyi kapat"
+        onClick={onClose}
+        className="fixed inset-0 bg-slate-950/85 backdrop-blur-md"
+      />
       <style dangerouslySetInnerHTML={{ __html: `
         @media print {
           body * { visibility: hidden !important; }
@@ -99,7 +102,14 @@ export function MonthlyReportCardModal({
         }
       `}} />
 
-      <div className="print-monthly-report flex h-full max-h-[92vh] w-full max-w-4xl flex-col overflow-hidden rounded-3xl border border-white/15 bg-slate-900 shadow-2xl">
+      <div
+        ref={modalRef}
+        tabIndex={-1}
+        role="dialog"
+        aria-modal="true"
+        aria-label="Aylık Matematik Gelişim Raporu & Başarı Belgesi"
+        className="relative z-10 print-monthly-report flex h-full max-h-[92vh] w-full max-w-4xl flex-col overflow-hidden rounded-3xl border border-white/15 bg-slate-900 shadow-2xl"
+      >
         {/* Header (Screen View) */}
         <div className="no-print flex items-center justify-between border-b border-white/10 bg-slate-950/80 px-4 sm:px-6 py-3 sm:py-4">
           <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">

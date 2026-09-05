@@ -58,6 +58,8 @@ describe('mistakeStorage', () => {
 
   it('clears all mistakes', () => {
     saveMistakesToBank([mockQuestion]);
+    expect(getSavedMistakes()).toHaveLength(1);
+
     clearAllMistakes();
     expect(getSavedMistakes()).toHaveLength(0);
   });
@@ -72,5 +74,18 @@ describe('mistakeStorage', () => {
     // Neden kaldırılabilir
     updateMistakeReason(mockQuestion.question, undefined);
     expect(getSavedMistakes()[0].reason).toBeUndefined();
+  });
+
+  it('self-heals when localStorage contains corrupted non-array data', () => {
+    localStorage.setItem('ugur_hoca_mistakes_bank_v1', '{"invalid":"object"}');
+    const result = getSavedMistakes();
+    expect(result).toEqual([]);
+    expect(localStorage.getItem('ugur_hoca_mistakes_bank_v1')).toBeNull();
+  });
+
+  it('self-heals when localStorage contains invalid JSON string', () => {
+    localStorage.setItem('ugur_hoca_mistakes_bank_v1', 'not valid json {{{');
+    const result = getSavedMistakes();
+    expect(result).toEqual([]);
   });
 });

@@ -16,6 +16,7 @@ export interface StudentSubmittedQuestion {
 }
 
 const STORAGE_KEY = 'ugur_hoca_live_questions_pool_v1';
+const MAX_QUESTIONS = 50;
 
 const notifyUpdate = () => {
   if (typeof window !== 'undefined') {
@@ -28,11 +29,19 @@ export const getStudentQuestions = (lessonId?: string): StudentSubmittedQuestion
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (!raw) return [];
-    const list: StudentSubmittedQuestion[] = JSON.parse(raw);
-    if (lessonId) {
-      return list.filter((q) => !q.lesson_id || q.lesson_id === lessonId);
+    const parsed = JSON.parse(raw);
+    if (Array.isArray(parsed)) {
+      const valid = parsed.filter((q): q is StudentSubmittedQuestion =>
+        Boolean(q && typeof q === 'object' && q.id && q.question_text)
+      );
+      if (lessonId) {
+        return valid.filter((q) => !q.lesson_id || q.lesson_id === lessonId);
+      }
+      return valid;
     }
-    return list;
+    // Bozuk veri varsa temizle ve kendini onar
+    localStorage.removeItem(STORAGE_KEY);
+    return [];
   } catch {
     return [];
   }
@@ -51,7 +60,7 @@ export const submitStudentQuestion = (
   if (typeof window !== 'undefined') {
     try {
       const current = getStudentQuestions();
-      const updated = [newQuestion, ...current];
+      const updated = [newQuestion, ...current].slice(0, MAX_QUESTIONS);
       localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
       notifyUpdate();
     } catch {

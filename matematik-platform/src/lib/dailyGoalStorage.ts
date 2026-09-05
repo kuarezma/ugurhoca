@@ -49,7 +49,13 @@ export const getDailyGoal = (): DailyGoalData => {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (!raw) return fallback;
 
-    const data: Partial<DailyGoalData> = JSON.parse(raw);
+    const parsed = JSON.parse(raw);
+    if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) {
+      localStorage.removeItem(STORAGE_KEY);
+      return fallback;
+    }
+
+    const data = parsed as Partial<DailyGoalData>;
     const target = typeof data.target === 'number' && data.target > 0 ? data.target : DEFAULT_TARGET;
     let streak = typeof data.streak === 'number' ? data.streak : 0;
     const history = data.history && typeof data.history === 'object' ? data.history : {};
