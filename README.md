@@ -35,6 +35,12 @@ Platformun odağı sade bir öğrenci deneyimi, güçlü öğretmen yönetimi ve
 - **Kişiselleştirilmiş Eksik Reçetesi (Smart Diagnostic):** Hata defterindeki soru kök nedenlerini (kural eksikliği, işlem hatası, soru okuma, süre) teşhis ederek kişiye özel 3 adımlı çalışma reçetesi üreten pedagojik motor.
 - **"Sorunu Canlı Derse Gönder" (Öğrenci Soru Masası):** Öğrencilerin çözemediği soruları canlı derse göndermesi ve öğretmenin tek tıkla canlı ders tahtasına yansıtıp çözebilmesini sağlayan havuz.
 - **PWA (Progressive Web App) Desteği:** Masaüstü ve mobilde (Android & iOS) tek tıkla yerel uygulama gibi ana ekrana yüklenebilen Web App Manifest ve akıllı yükleme bildirim çubuğu.
+- **Aralıklı Tekrar & Leitner Formül Kartları (Spaced Repetition):** 5 kutulu Leitner algoritması (1, 3, 7, 14, 30 gün), zorlandım / bildim derecelendirmesi ve vadesi gelen kartlar filtresi ile matematik formüllerini kalıcı hafızaya alma.
+- **LGS & YKS Sınav Tempo Koçu & Soru Başına Süre Analizi:** Canlı sınav esnasında dinamik tempo rozetleri (İdeal / Hızlı / Dikkat / Riskli), turlama taktiği ("Bayrakla & Geç") ve sınav sonu detaylı soru başına süre dökümü.
+- **3 Kademeli Akıllı İpucu Merdiveni & Sokratik Rehberlik:** Test çözerken hazır cevaba kaçmadan 3 aşamalı (Formül & Kural, İlk İşlem Hamlesi, Çözüm Stratejisi) pedagojik yönlendirme ve Sokratik düşünme asistanı.
+- **Aylık Matematik Gelişim Raporu & Resmi Başarı Belgesi:** Öğrencinin aylık soru çözümü, net başarı yüzdesi, konu bazlı ustalık grafiği, öğretmen değerlendirmesi ve tek tıkla yazdırılabilir A4 resmi başarı sertifikası.
+- **Canlı Ders & Karalama Tahtası Matematik Araç Seti:** Dijital karalama tuvalinde tek tıkla eklenebilen Kartezyen koordinat sistemi, sayı doğrusu, dik üçgen, çember ve dikdörtgen geometrik şablonları.
+- **Canlı Ders Kayıtları & Zaman Damgalı Ders Arşivi:** Kaçırılan canlı derslerin video simülasyonu, 1x-2x oynatma hızları, konu başlıklarına göre zaman damgalı bölüm atlama ve dersteki tahta notlarının tek tıkla PDF indirimi.
 - **Test İçi Klavye Kısayolları (Power-User Sınav Modu):** Fareye dokunmadan hızlıca şık seçme (A-E, 1-5), soru geçişi (←, →, Enter), karalama tahtası (K, S), soruya bayrak koyma (F, B) ve kısayol rehberi (?).
 - **Kişisel Veri Yedekleme & Cihazlar Arası Aktarım:** Günlük çalışma serisi (streak), çözülen soru sayıları, hata defteri bankası ve konu çizelgesini tek tıkla `.json` olarak yedekleme ve yeni cihaza aktarma.
 - **Sınav Öncesi Hızlı Formül Cep Notu (LGS & YKS Cheat-Sheet):** Sınav öncesi son 1 dakikalık kritik MEB & ÖSYM formülleri, özdeşlikler, KaTeX matematiksel gösterimi ve tek tıkla yazdırılabilir/PDF A4 özet çıktısı.
@@ -177,6 +183,13 @@ Küçük UI değişikliklerinde ilgili sayfa mobil ve masaüstü görünümde ay
 
 ## Değişiklik Günlüğü (Changelog)
  
+- **2026-09-05 (Leitner Aralıklı Tekrar, Sınav Tempo Koçu, Aylık Gelişim Raporu, Geometrik Tahta Araçları & Ders Arşivi):**
+  - **Aralıklı Tekrar & Leitner Formül Kartları (`FormulaFlashcardsModal`):** 5 kutulu klasik Leitner aralıklı tekrar metodolojisi entegre edildi. Formüller öğrenme durumuna göre (1 gün, 3 gün, 7 gün, 14 gün, 30 gün) kutular arasında ilerletilir; "Bugün Tekrar Edilecekler" filtresi ile unutmanın önüne geçilir.
+  - **LGS & YKS Sınav Tempo Koçu & Süre Analizi (`QuizPacingCoach`):** Sınav çözerken her soru için hedef süreyi izleyen dinamik tempo göstergesi (İdeal, Hızlı, Dikkat, Riskli) eklendi. "Bayrakla & Geç" turlama taktiği ve sınav bitiminde soru bazlı harcanan süre dökümü sunuldu.
+  - **3 Kademeli İpucu & Sokratik Asistan (`QuestionHintLadder`):** Öğrenciye hazır cevap vermek yerine adım adım düşündüren 3 kademeli ipucu (Kural, İlk Adım, Strateji) ve Sokratik soru sorma sistemi test çözme akışına dahil edildi.
+  - **Aylık Matematik Gelişim Raporu & Başarı Belgesi (`MonthlyReportCardModal`):** Öğrencinin aylık çalışma saati, soru sayısı, konu hakimiyet dağılımı, öğretmen kanaati ve A4 formatında tek tıkla resmi yazdırılabilir Başarı Belgesi (Certificate of Achievement) `/ilerleme` sayfasına eklendi.
+  - **Karalama Tahtası Geometrik Çizim Araç Seti (`ScratchpadModal`):** Canlı ders ve test karalama tuvaline Kartezyen koordinat sistemi, sayı doğrusu, dik üçgen, çember ve dikdörtgen hazır geometrik şablonları (stencils) eklendi.
+  - **Canlı Ders Kayıtları & Zaman Damgalı Arşiv (`LessonReplayArchiveModal`):** Kaçırılan veya tekrar izlenmek istenen canlı derslerin kayıt arşivi, oynatma hızı ayarı (1x, 1.25x, 1.5x, 2x), zaman damgalı konu bölümleri ve derste tutulan tahta notlarını PDF olarak indirme desteği `/canli-ders` sayfasına entegre edildi.
 - **2026-09-04 (Dijital Karalama Tuvali, Bireysel Seri Hub, Görsel Formül İspatları, Akıllı Reçete & Canlı Ders Soru Masası):**
   - **Test İçi Çözüm & Karalama Tuvali (`ScratchpadModal`):** Soru ekranında soruyu ve şıkları bölmeli ekranda yan yana gösteren, şıkları tıklayarak eleme, fosforlu kalem, düz çizgi/cetvel, kareli/çizgili zemin ve PNG indirme destekli gelişmiş dijital karalama tahtası geliştirildi.
   - **Bireysel Çalışma Disiplini & Seri Hub (`PersonalStreakHub`):** Hiçbir öğrenciyle kıyaslanmayan %100 gizli günlük çalışma serisi (streak), son 14 günlük alışkanlık ısı haritası, hedef belirleyici ve hedef sınav (LGS/YKS) sayaçları `/ilerleme` sayfasına entegre edildi.

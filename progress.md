@@ -511,4 +511,41 @@ _Son güncelleme: 11 Nisan 2026 — Admin hesabı tek e-postaya indirildi, şifr
 - **Test:** `npm run test --prefix matematik-platform` (91/91 test dosyası, 318/318 test geçti)
 - **Build:** `npm run build --prefix matematik-platform` (48/48 sayfa Turbopack ile başarıyla üretildi)
 
-_Son güncelleme: 5 Eylül 2026 — İçerikler modernizasyonu (Aşama 1, 2, 3), konu paketleri ve tamamlama takibi eklendi._
+---
+
+## 21. Leitner Aralıklı Tekrar, Sınav Tempo Koçu, Aylık Gelişim Raporu, Karalama Tahtası Geometrisi ve Canlı Ders Arşivi (5 Eylül 2026)
+
+### 21.1 Leitner Aralıklı Tekrar & Formül Kartları (`FormulaFlashcardsModal`)
+- **5 Kutu Algoritması:** Klasik Leitner spaced repetition metodolojisi (1 gün, 3 gün, 7 gün, 14 gün, 30 gün inceleme aralıkları).
+- **Akıllı Filtreleme & Aksiyonlar:** "Bugün Tekrar Edilecekler" filtresi, "Zorlandım" (Kutu 1'e dön) ve "Bildim" (Bir sonraki kutuya terfi) aksiyonları ile formüllerin kalıcı hafızaya aktarımı.
+
+### 21.2 LGS & YKS Sınav Tempo Koçu & Süre Analizi (`QuizPacingCoach`)
+- **Canlı Tempo Rozetleri:** Soru bazlı hedef süreye göre dinamik durum göstergeleri (İdeal, Hızlı, Dikkat, Riskli).
+- **Turlama Stratejisi:** "Bayrakla & Geç" eylemi ile takılınan soruları erteleyip turlama tekniğini uygulama.
+- **Sınav Sonu Analizi:** Her soru için harcanan süre, ortalama soru süresi ve hız/doğruluk dökümü.
+
+### 21.3 3 Kademeli Akıllı İpucu Merdiveni & Sokratik Asistan (`QuestionHintLadder`)
+- **3 Aşamalı İpucu:** 1. Kural & Özdeşlik, 2. İlk İşlem Hamlesi, 3. Çözüm Stratejisi.
+- **Sokratik Rehberlik:** Öğrenciye cevabı hazır vermek yerine yönlendirici sorularla çözümü bulduran pedagojik asistan.
+
+### 21.4 Aylık Matematik Gelişim Raporu & Resmi Başarı Belgesi (`MonthlyReportCardModal`)
+- **Aylık Metrikler:** Toplam çalışma süresi, soru sayısı, net ortalaması ve konu bazlı ustalık oranları.
+- **Resmi Başarı Sertifikası:** Tek tıkla açılan, Uğur Hoca antetli ve resmi mühürlü yazdırılabilir/PDF A4 Başarı Belgesi.
+
+### 21.5 Karalama Tahtası Geometrik Çizim Araç Seti (`ScratchpadModal`)
+- **Geometrik Şablonlar:** Tuvale tek tıkla eklenebilen Kartezyen koordinat sistemi, sayı doğrusu, dik üçgen, çember ve dikdörtgen stensilleri.
+
+### 21.6 Canlı Ders Kayıtları & Zaman Damgalı Ders Arşivi (`LessonReplayArchiveModal`)
+- **Ders Kayıt Simülatörü:** 1x, 1.25x, 1.5x, 2x oynatma hızı ayarları.
+- **Zaman Damgalı Bölümler:** Konu başlıklarına göre tek tıkla dakikaya atlama.
+- **Ders Notu PDF:** Derste tutulan tahta notlarını doğrudan PDF olarak indirme.
+
+### 21.7 Doğrulama
+- **İçerik Dili Testi:** `npx vitest run src/lib/content-language.test.ts` (Geçti)
+- **Typecheck:** `npm run typecheck` (0 hata)
+- **Lint:** `npm run lint` (0 hata)
+- **Test:** `npm run test` (97 test dosyası, 332 test geçti)
+- **Build:** `npm run build` (50 sayfa Turbopack ile başarıyla üretildi)
+
+_Son güncelleme: 5 Eylül 2026 — Leitner aralıklı tekrar, sınav tempo koçu, aylık karne, karalama tahtası geometrisi ve canlı ders arşivi tamamlandı._
+
