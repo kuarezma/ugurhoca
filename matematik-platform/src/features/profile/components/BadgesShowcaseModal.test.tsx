@@ -33,4 +33,22 @@ describe('BadgesShowcaseModal', () => {
     );
     expect(container).toBeEmptyDOMElement();
   });
+
+  it('opens badge celebration modal when Kartı Gör is clicked on an unlocked badge', () => {
+    render(
+      <BadgesShowcaseModal
+        isOpen={true}
+        onClose={vi.fn()}
+        currentStreak={5}
+        totalQuestionsSolved={120}
+      />,
+    );
+
+    const kartGörBtns = screen.getAllByRole('button', { name: /Kartı Gör/i });
+    expect(kartGörBtns.length).toBeGreaterThan(0);
+    fireEvent.click(kartGörBtns[0]);
+
+    expect(screen.getByText('Yeni Rozet Açıldı!')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /Başarı Kartını İndir/i })).toBeInTheDocument();
+  });
 });

@@ -2,13 +2,14 @@
 
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
-import { Clock, Clock3 } from "lucide-react";
+import { Clock, Clock3, Target } from "lucide-react";
 import type { FeaturedExam } from "@/lib/examDates";
 
 type ExamCountdownProps = {
   exam: FeaturedExam;
   isLight: boolean;
   onOpenCalculator?: (examType: 'lgs' | 'yks') => void;
+  userGrade?: number | string | null;
 };
 
 type TimeLeft = {
@@ -40,8 +41,47 @@ export function ExamCountdown({
   exam,
   isLight,
   onOpenCalculator,
+  userGrade,
 }: ExamCountdownProps) {
   const [timeLeft, setTimeLeft] = useState<TimeLeft | null>(null);
+  const [targetNet, setTargetNet] = useState<number | null>(null);
+  const [isEditingTarget, setIsEditingTarget] = useState(false);
+
+  const maxNet = exam.id.includes('lgs') ? 20 : 40;
+  const targetOptions = exam.id.includes('lgs') ? [12, 15, 17, 18, 20] : [20, 25, 30, 35, 40];
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem(`ugurhoca_exam_target_${exam.id}`);
+      if (saved) {
+        const val = parseFloat(saved);
+        if (!isNaN(val) && val > 0 && val <= maxNet) {
+          setTargetNet(val);
+        }
+      }
+    }
+  }, [exam.id, maxNet]);
+
+  const handleSelectTarget = (val: number) => {
+    setTargetNet(val);
+    setIsEditingTarget(false);
+    if (typeof window !== 'undefined') {
+      localStorage.setItem(`ugurhoca_exam_target_${exam.id}`, String(val));
+    }
+  };
+
+  const isTargetGradeExam = useMemo(() => {
+    if (!userGrade) return false;
+    const numGrade = typeof userGrade === 'string' ? parseInt(userGrade, 10) : userGrade;
+    if (exam.id.includes('lgs') && !isNaN(numGrade) && numGrade >= 5 && numGrade <= 8) return true;
+    if (
+      exam.id.includes('yks') &&
+      (userGrade === 'Mezun' || userGrade === 'mezun' || (!isNaN(numGrade) && numGrade >= 9))
+    ) {
+      return true;
+    }
+    return false;
+  }, [exam.id, userGrade]);
 
   useEffect(() => {
     const update = () => setTimeLeft(getTimeLeft(exam.targetDate));
@@ -113,6 +153,11 @@ export function ExamCountdown({
             >
               {status}
             </span>
+            {isTargetGradeExam && (
+              <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/15 text-emerald-500 dark:text-emerald-400 border border-emerald-500/30 px-2 py-0.5 text-[10px] font-bold">
+                🎯 Hedef Kademem
+              </span>
+            )}
           </div>
           <h3
             className={`truncate font-display text-base sm:text-lg font-bold ${
@@ -230,6 +275,48 @@ export function ExamCountdown({
             ))}
           </div>
         ) : null}
+
+        {/* Hedef Net Şeridi */}
+        <div className="mt-3 border-t border-slate-200/60 dark:border-white/10 pt-2.5">
+          <div className="flex items-center justify-between gap-2 text-xs">
+            <div className="flex items-center gap-1.5">
+              <Target className="h-3.5 w-3.5 text-amber-500 shrink-0" />
+              <span className="text-[11px] font-medium text-slate-500 dark:text-slate-400">
+                Hedef Netim:
+              </span>
+              <span className="font-bold text-amber-500 dark:text-amber-400">
+                {targetNet ? `${targetNet} / ${maxNet} Net` : 'Belirlenmedi'}
+              </span>
+            </div>
+            <button
+              type="button"
+              onClick={() => setIsEditingTarget((p) => !p)}
+              className="text-[11px] font-semibold text-indigo-600 dark:text-indigo-400 hover:underline"
+            >
+              {isEditingTarget ? 'Kapat' : targetNet ? 'Düzenle' : 'Hedef Belirle'}
+            </button>
+          </div>
+
+          {isEditingTarget && (
+            <div className="mt-2 flex flex-wrap items-center gap-1.5 rounded-xl bg-slate-100/80 dark:bg-white/5 p-2">
+              <span className="text-[10px] text-slate-500 dark:text-slate-400 mr-1">Net Seç:</span>
+              {targetOptions.map((opt) => (
+                <button
+                  key={opt}
+                  type="button"
+                  onClick={() => handleSelectTarget(opt)}
+                  className={`rounded-lg px-2 py-0.5 text-[11px] font-bold transition-all ${
+                    targetNet === opt
+                      ? 'bg-amber-500 text-white shadow-sm'
+                      : 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700'
+                  }`}
+                >
+                  {opt}
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

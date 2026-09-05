@@ -124,6 +124,10 @@ export default function IlerlemePage({ initialData }: ProgressPageProps) {
     return selectedTopic.trim();
   }, [customTopic, selectedTopic]);
 
+  const totalQuestionsSolved = useMemo(() => {
+    return progressData.reduce((acc, row) => acc + (row.practice_count || 0), 0);
+  }, [progressData]);
+
   const loadDashboardData = useCallback(async () => {
     const session = await requireClientSession({ router });
     if (!session) {
@@ -696,6 +700,7 @@ export default function IlerlemePage({ initialData }: ProgressPageProps) {
         onClose={() => setShowBadgesModal(false)}
         earnedBadges={badges}
         currentStreak={user?.current_streak || 0}
+        totalQuestionsSolved={totalQuestionsSolved}
         isLight={isLight}
       />
 

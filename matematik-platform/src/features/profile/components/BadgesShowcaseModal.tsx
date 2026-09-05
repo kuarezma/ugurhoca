@@ -1,6 +1,6 @@
 'use client';
 
-import { useId, useMemo } from 'react';
+import { useId, useMemo, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   X,
@@ -15,6 +15,7 @@ import {
   CheckCircle2,
 } from 'lucide-react';
 import type { UserBadge } from '@/features/progress/types';
+import { BadgeCelebrationModal, type CelebrationBadge } from './BadgeCelebrationModal';
 
 type BadgesShowcaseModalProps = {
   isOpen: boolean;
@@ -183,6 +184,7 @@ export function BadgesShowcaseModal({
   isLight = false,
 }: BadgesShowcaseModalProps) {
   const titleId = useId();
+  const [celebratingBadge, setCelebratingBadge] = useState<CelebrationBadge | null>(null);
 
   const earnedBadgeIds = useMemo(() => {
     return new Set(
@@ -206,7 +208,8 @@ export function BadgesShowcaseModal({
   if (!isOpen) return null;
 
   return (
-    <AnimatePresence>
+    <>
+      <AnimatePresence>
       <div className="fixed inset-0 z-[160] flex items-center justify-center p-3 sm:p-5 overflow-y-auto">
         <motion.div
           initial={{ opacity: 0 }}
@@ -320,8 +323,27 @@ export function BadgesShowcaseModal({
                     </p>
                   </div>
 
-                  <div className="mt-3 pt-2.5 border-t border-white/10 text-[11px] text-amber-500 dark:text-amber-300/80 font-medium">
-                    🎯 {badge.requirement}
+                  <div className="mt-3 pt-2.5 border-t border-white/10 flex items-center justify-between text-[11px] text-amber-500 dark:text-amber-300/80 font-medium">
+                    <span>🎯 {badge.requirement}</span>
+                    {badge.isUnlocked && (
+                      <button
+                        type="button"
+                        onClick={() =>
+                          setCelebratingBadge({
+                            id: badge.id,
+                            name: badge.name,
+                            description: badge.description,
+                            requirement: badge.requirement,
+                            gradient: badge.gradient,
+                          })
+                        }
+                        className="inline-flex items-center gap-1 font-bold text-amber-400 hover:text-amber-300 hover:underline transition"
+                        title="Başarı kartını görüntüle ve indir"
+                      >
+                        <Sparkles className="h-3 w-3" />
+                        <span>Kartı Gör</span>
+                      </button>
+                    )}
                   </div>
                 </div>
               );
@@ -344,5 +366,15 @@ export function BadgesShowcaseModal({
         </motion.div>
       </div>
     </AnimatePresence>
-  );
+
+    {celebratingBadge && (
+      <BadgeCelebrationModal
+        isOpen={!!celebratingBadge}
+        onClose={() => setCelebratingBadge(null)}
+        badge={celebratingBadge}
+        studentName="Öğrenci"
+      />
+    )}
+  </>
+);
 }

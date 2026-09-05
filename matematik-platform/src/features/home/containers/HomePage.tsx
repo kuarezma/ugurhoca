@@ -222,6 +222,7 @@ export default function HomePage({ activeLiveLesson, initialFeed }: HomePageProp
         <HomeExamCountdownSection
           isLight={isLight}
           onOpenCalculator={(tab) => setCalculatorState({ isOpen: true, tab })}
+          userGrade={user?.grade}
         />
         <div className="defer-section">
           <HomeAssignmentsSection

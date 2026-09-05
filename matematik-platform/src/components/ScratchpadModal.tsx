@@ -12,6 +12,7 @@ import {
   Eraser,
   PenTool,
   RotateCcw,
+  RotateCw,
   Trash2,
   X,
   Minus,
@@ -33,6 +34,7 @@ export type ScratchpadQuestionContext = {
   questionText: string;
   options?: string[];
   imageUrl?: string | null;
+  questionId?: string;
 };
 
 export type ScratchpadModalProps = {
@@ -65,6 +67,8 @@ function hexToRgba(hex: string, alpha: number): string {
   return hex;
 }
 
+const scratchpadCache = new Map<string, ImageData>();
+
 export default function ScratchpadModal({
   isOpen,
   onClose,
@@ -81,8 +85,11 @@ export default function ScratchpadModal({
   const [lineStart, setLineStart] = useState<{ x: number; y: number } | null>(null);
   const [preLineState, setPreLineState] = useState<ImageData | null>(null);
   const [history, setHistory] = useState<ImageData[]>([]);
+  const [redoHistory, setRedoHistory] = useState<ImageData[]>([]);
   const [showQuestionPanel, setShowQuestionPanel] = useState(Boolean(questionContext));
   const [eliminatedOptions, setEliminatedOptions] = useState<Set<number>>(new Set());
+
+  const cacheKey = questionContext?.questionId || (questionContext?.questionText ? questionContext.questionText.trim().slice(0, 100) : null);
 
   // Background pattern painter
   const drawBackground = useCallback((ctx: CanvasRenderingContext2D, width: number, height: number, pattern: BackgroundPattern) => {
@@ -132,10 +139,23 @@ export default function ScratchpadModal({
     ctx.lineCap = 'round';
     ctx.lineJoin = 'round';
 
+    if (cacheKey && scratchpadCache.has(cacheKey)) {
+      const cached = scratchpadCache.get(cacheKey)!;
+      try {
+        ctx.putImageData(cached, 0, 0);
+        setHistory([cached]);
+        setRedoHistory([]);
+        return;
+      } catch {
+        // Fallback to fresh background if dimension mismatch
+      }
+    }
+
     drawBackground(ctx, rect.width, rect.height, backgroundPattern);
     const initial = ctx.getImageData(0, 0, canvas.width, canvas.height);
     setHistory([initial]);
-  }, [backgroundPattern, drawBackground]);
+    setRedoHistory([]);
+  }, [backgroundPattern, cacheKey, drawBackground]);
 
   useEffect(() => {
     if (isOpen) {
@@ -151,7 +171,11 @@ export default function ScratchpadModal({
     if (!ctx) return;
     const data = ctx.getImageData(0, 0, canvas.width, canvas.height);
     setHistory((prev) => [...prev.slice(-15), data]);
-  }, []);
+    setRedoHistory([]);
+    if (cacheKey) {
+      scratchpadCache.set(cacheKey, data);
+    }
+  }, [cacheKey]);
 
   const handlePointerDown = (e: ReactPointerEvent<HTMLCanvasElement>) => {
     const canvas = canvasRef.current;
@@ -231,10 +255,59 @@ export default function ScratchpadModal({
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
+    const currentState = history[history.length - 1];
     const newHistory = history.slice(0, -1);
     const previousState = newHistory[newHistory.length - 1];
     ctx.putImageData(previousState, 0, 0);
     setHistory(newHistory);
+    setRedoHistory((prev) => [...prev, currentState]);
+    if (cacheKey) {
+      scratchpadCache.set(cacheKey, previousState);
+    }
+  };
+
+  const handleRedo = () => {
+    if (redoHistory.length === 0) return;
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    const nextState = redoHistory[redoHistory.length - 1];
+    const newRedo = redoHistory.slice(0, -1);
+    ctx.putImageData(nextState, 0, 0);
+    setHistory((prev) => [...prev, nextState]);
+    setRedoHistory(newRedo);
+    if (cacheKey) {
+      scratchpadCache.set(cacheKey, nextState);
+    }
+  };
+
+  const handlePatternToggle = () => {
+    const nextPattern: BackgroundPattern = backgroundPattern === 'grid' ? 'lined' : backgroundPattern === 'lined' ? 'dark' : 'grid';
+    setBackgroundPattern(nextPattern);
+
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+    const rect = canvas.getBoundingClientRect();
+
+    if (history.length > 1) {
+      const temp = document.createElement('canvas');
+      temp.width = canvas.width;
+      temp.height = canvas.height;
+      const tempCtx = temp.getContext('2d');
+      if (tempCtx) {
+        tempCtx.drawImage(canvas, 0, 0);
+        drawBackground(ctx, rect.width, rect.height, nextPattern);
+        ctx.drawImage(temp, 0, 0, rect.width, rect.height);
+        saveState();
+      }
+    } else {
+      drawBackground(ctx, rect.width, rect.height, nextPattern);
+      saveState();
+    }
   };
 
   const handleClear = () => {
@@ -244,7 +317,11 @@ export default function ScratchpadModal({
     if (!ctx) return;
     const rect = canvas.getBoundingClientRect();
     drawBackground(ctx, rect.width, rect.height, backgroundPattern);
+    setRedoHistory([]);
     saveState();
+    if (cacheKey) {
+      scratchpadCache.delete(cacheKey);
+    }
   };
 
   const handleDownload = () => {
@@ -712,9 +789,7 @@ export default function ScratchpadModal({
             <div className="hidden sm:flex items-center rounded-xl bg-white/5 p-0.5 border border-white/10">
               <button
                 type="button"
-                onClick={() => {
-                  setBackgroundPattern((p) => (p === 'grid' ? 'lined' : p === 'lined' ? 'dark' : 'grid'));
-                }}
+                onClick={handlePatternToggle}
                 title={`Zemin Deseni: ${backgroundPattern === 'grid' ? 'Kareli' : backgroundPattern === 'lined' ? 'Çizgili' : 'Düz Tahta'}`}
                 className="inline-flex h-8 items-center gap-1 px-2 text-xs font-semibold text-slate-300 hover:text-white"
               >
@@ -733,6 +808,18 @@ export default function ScratchpadModal({
               className="inline-flex h-8 w-8 items-center justify-center rounded-xl bg-white/5 text-slate-300 hover:bg-white/10 hover:text-white disabled:opacity-40"
             >
               <RotateCcw className="h-3.5 w-3.5" />
+            </button>
+
+            {/* İleri Al */}
+            <button
+              type="button"
+              onClick={handleRedo}
+              disabled={redoHistory.length === 0}
+              title="İleri al"
+              aria-label="İleri al"
+              className="inline-flex h-8 w-8 items-center justify-center rounded-xl bg-white/5 text-slate-300 hover:bg-white/10 hover:text-white disabled:opacity-40"
+            >
+              <RotateCw className="h-3.5 w-3.5" />
             </button>
 
             {/* İndir PNG */}

@@ -63,6 +63,13 @@ describe('ScratchpadModal', () => {
     fireEvent.click(togglePanelBtn);
     fireEvent.click(togglePanelBtn);
 
+    // Undo & Redo buttons
+    const undoBtn = screen.getByTitle('Geri al');
+    const redoBtn = screen.getByTitle('İleri al');
+    expect(undoBtn).toBeInTheDocument();
+    expect(redoBtn).toBeInTheDocument();
+    expect(redoBtn).toBeDisabled();
+
     // Clear and download buttons
     const clearBtn = screen.getByTitle('Tümünü temizle');
     fireEvent.click(clearBtn);

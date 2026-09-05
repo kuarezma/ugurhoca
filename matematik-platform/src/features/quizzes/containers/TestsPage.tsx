@@ -26,6 +26,8 @@ import {
   BookOpen,
   Printer,
   Keyboard,
+  Volume2,
+  VolumeX,
 } from 'lucide-react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import dynamic from 'next/dynamic';
@@ -39,6 +41,7 @@ import { MistakeNotebookModal } from '@/features/quizzes/components/MistakeNoteb
 import { QuestionHintLadder } from '@/features/quizzes/components/QuestionHintLadder';
 import { QuizShortcutsModal } from '@/features/quizzes/components/QuizShortcutsModal';
 import { QuizPacingCoach } from '@/features/quizzes/components/QuizPacingCoach';
+import { useQuestionSpeech } from '@/features/quizzes/hooks/useQuestionSpeech';
 
 const PrintableWorksheetModal = dynamic(
   () =>
@@ -183,6 +186,17 @@ export default function TestsPage({
   const [questionTimes, setQuestionTimes] = useState<Record<number, number>>({});
   const [questionElapsedSeconds, setQuestionElapsedSeconds] = useState(0);
 
+  const {
+    isSpeaking,
+    isSupported: isSpeechSupported,
+    toggle: toggleSpeech,
+    stop: stopSpeech,
+  } = useQuestionSpeech();
+
+  useEffect(() => {
+    stopSpeech();
+  }, [currentQuestion, stopSpeech]);
+
   useEffect(() => {
     setQuestionElapsedSeconds(0);
   }, [currentQuestion]);
@@ -207,10 +221,28 @@ export default function TestsPage({
     }
   }, [modeParam]);
 
+  const flushPendingQuizResults = useCallback(async () => {
+    try {
+      const raw = localStorage.getItem('ugurhoca_pending_quiz_results');
+      if (!raw) return;
+      const pending = JSON.parse(raw);
+      if (!Array.isArray(pending) || pending.length === 0) return;
+
+      const { error: insertError } = await supabase.from('quiz_results').insert(pending);
+      if (!insertError) {
+        localStorage.removeItem('ugurhoca_pending_quiz_results');
+        showToast('success', 'Çevrimdışıyken tamamlanan test sonuçlarınız senkronize edildi.');
+      }
+    } catch {
+      // ignore
+    }
+  }, [showToast]);
+
   useEffect(() => {
     const handleOnline = () => {
       setIsOnline(true);
       showToast('info', 'İnternet bağlantısı yeniden kuruldu.');
+      void flushPendingQuizResults();
     };
     const handleOffline = () => {
       setIsOnline(false);
@@ -222,7 +254,21 @@ export default function TestsPage({
       window.removeEventListener('online', handleOnline);
       window.removeEventListener('offline', handleOffline);
     };
-  }, [showToast]);
+  }, [showToast, flushPendingQuizResults]);
+
+  // Aktif test cevaplarını sessionStorage'da anlık güvenceye al
+  useEffect(() => {
+    if (quizStarted && selectedQuiz && Object.keys(answers).length > 0) {
+      try {
+        sessionStorage.setItem(
+          `ugurhoca_active_quiz_${selectedQuiz.id}`,
+          JSON.stringify({ answers, currentQuestion, startTime }),
+        );
+      } catch {
+        // ignore
+      }
+    }
+  }, [quizStarted, selectedQuiz, answers, currentQuestion, startTime]);
   const profileHref = user?.isAdmin ? '/admin' : '/profil';
   const initialUserKey = useMemo(
     () =>
@@ -553,6 +599,11 @@ export default function TestsPage({
         },
       ]);
       if (saveError) throw saveError;
+      try {
+        sessionStorage.removeItem(`ugurhoca_active_quiz_${selectedQuiz.id}`);
+      } catch {
+        // ignore
+      }
       void trackStudentActivityEvent({
         entityId: selectedQuiz.id,
         entityType: 'quiz',
@@ -569,6 +620,22 @@ export default function TestsPage({
       });
     } catch (err) {
       log.error('Sonuç kaydedilirken hata', err);
+      try {
+        const raw = localStorage.getItem('ugurhoca_pending_quiz_results') || '[]';
+        const pending = JSON.parse(raw);
+        pending.push({
+          user_id: user.id,
+          quiz_id: selectedQuiz.id,
+          score,
+          total_questions: quizQuestions.length,
+          answers,
+          time_spent: timeSpent,
+        });
+        localStorage.setItem('ugurhoca_pending_quiz_results', JSON.stringify(pending));
+        showToast('info', 'Sonucunuz yerel hafızaya kaydedildi. İnternet bağlandığında otomatik kaydedilecek.');
+      } catch {
+        // ignore
+      }
       resultSavedRef.current = false;
     }
   }, [
@@ -576,6 +643,7 @@ export default function TestsPage({
     calculateScore,
     quizQuestions,
     selectedQuiz,
+    showToast,
     startTime,
     user,
   ]);
@@ -789,12 +857,45 @@ export default function TestsPage({
 
             {/* Soru Gövdesi */}
             <div key={currentQuestion} className="animate-fade-up" role="group" aria-label={`Soru ${currentQuestion + 1}`}>
-              <MathText
-                as="h2"
-                className="text-lg sm:text-2xl font-bold text-white mb-6 font-display leading-snug"
-              >
-                {question.question}
-              </MathText>
+              <div className="flex items-start justify-between gap-3 mb-6">
+                <MathText
+                  as="h2"
+                  className="flex-1 text-lg sm:text-2xl font-bold text-white font-display leading-snug"
+                >
+                  {question.question}
+                </MathText>
+
+                {isSpeechSupported && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const optionsSpeech = question.options
+                        ? question.options.map((opt: string, idx: number) => `${String.fromCharCode(65 + idx)} şıkkı: ${opt}`).join('. ')
+                        : '';
+                      toggleSpeech(`${question.question}. ${optionsSpeech}`);
+                    }}
+                    title={isSpeaking ? 'Seslendirmeyi durdur' : 'Soruyu sesli dinle'}
+                    aria-label={isSpeaking ? 'Seslendirmeyi durdur' : 'Soruyu sesli dinle'}
+                    className={`shrink-0 inline-flex items-center gap-1.5 rounded-xl px-2.5 py-1.5 text-xs font-semibold transition-all ${
+                      isSpeaking
+                        ? 'bg-amber-500/20 text-amber-300 border border-amber-500/40 animate-pulse'
+                        : 'bg-white/5 text-slate-400 hover:text-white hover:bg-white/10 border border-white/10'
+                    }`}
+                  >
+                    {isSpeaking ? (
+                      <>
+                        <VolumeX className="h-4 w-4 text-amber-400" />
+                        <span className="hidden sm:inline">Durdur</span>
+                      </>
+                    ) : (
+                      <>
+                        <Volume2 className="h-4 w-4" />
+                        <span className="hidden sm:inline">Sesli Oku</span>
+                      </>
+                    )}
+                  </button>
+                )}
+              </div>
 
               {question.question_image_url ? (
                 <QuestionImage
