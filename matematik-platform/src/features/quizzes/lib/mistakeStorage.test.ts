@@ -91,32 +91,42 @@ describe('mistakeStorage', () => {
     expect(result).toEqual([]);
   });
 
-  it('advances spaced repetition stage on correct answer and completes on stage 3', () => {
+  it('advances spaced repetition through all 5 Leitner boxes and masters on stage 5', () => {
     saveMistakesToBank([mockQuestion]);
     const initial = getSavedMistakes()[0];
     expect(initial.reviewStage).toBe(0);
     expect(initial.mastered).toBe(false);
 
-    // 1. Doğru çözüm -> Aşama 1
+    // Kutu 1 -> Kutu 2 (Aşama 1)
     advanceMistakeReview(mockQuestion.question, true);
     let current = getSavedMistakes()[0];
     expect(current.reviewStage).toBe(1);
     expect(current.mastered).toBe(false);
-    expect(current.reviewCount).toBe(1);
 
-    // 2. Doğru çözüm -> Aşama 2
+    // Kutu 2 -> Kutu 3 (Aşama 2)
     advanceMistakeReview(mockQuestion.question, true);
     current = getSavedMistakes()[0];
     expect(current.reviewStage).toBe(2);
     expect(current.mastered).toBe(false);
-    expect(current.reviewCount).toBe(2);
 
-    // 3. Doğru çözüm -> Aşama 3 (Kalıcı Öğrenildi / mastered = true)
+    // Kutu 3 -> Kutu 4 (Aşama 3)
     advanceMistakeReview(mockQuestion.question, true);
     current = getSavedMistakes()[0];
     expect(current.reviewStage).toBe(3);
+    expect(current.mastered).toBe(false);
+
+    // Kutu 4 -> Kutu 5 (Aşama 4)
+    advanceMistakeReview(mockQuestion.question, true);
+    current = getSavedMistakes()[0];
+    expect(current.reviewStage).toBe(4);
+    expect(current.mastered).toBe(false);
+
+    // Kutu 5 -> Kalıcı Öğrenildi (Aşama 5 / mastered = true)
+    advanceMistakeReview(mockQuestion.question, true);
+    current = getSavedMistakes()[0];
+    expect(current.reviewStage).toBe(5);
     expect(current.mastered).toBe(true);
-    expect(current.reviewCount).toBe(3);
+    expect(current.reviewCount).toBe(5);
   });
 
   it('resets spaced repetition stage to 0 when student struggles (correct = false)', () => {

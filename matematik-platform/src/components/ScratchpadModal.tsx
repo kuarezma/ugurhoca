@@ -25,6 +25,9 @@ import {
   EyeOff,
   Compass,
   Shapes,
+  Check,
+  ChevronDown,
+  CircleDot,
 } from 'lucide-react';
 import MathText from '@/components/MathText';
 import Image from 'next/image';
@@ -46,10 +49,11 @@ export type ScratchpadModalProps = {
 };
 
 type ToolType = 'pen' | 'highlighter' | 'line' | 'eraser';
-export type BackgroundPattern = 'dark' | 'grid' | 'lined' | 'isometric' | 'coordinate';
+export type BackgroundPattern = 'dark' | 'grid' | 'dot' | 'lined' | 'isometric' | 'coordinate';
 
 const PATTERN_NAMES: Record<BackgroundPattern, string> = {
   grid: 'Kareli',
+  dot: 'Noktalı (Geoboard)',
   lined: 'Çizgili',
   isometric: 'İzometrik 3D',
   coordinate: 'Koordinat',
@@ -108,6 +112,7 @@ export default function ScratchpadModal({
   const [showQuestionPanel, setShowQuestionPanel] = useState(Boolean(questionContext));
   const [eliminatedOptions, setEliminatedOptions] = useState<Set<number>>(new Set());
   const [showProtractor, setShowProtractor] = useState(false);
+  const [showPatternMenu, setShowPatternMenu] = useState(false);
 
   const cacheKey = questionContext?.questionId || (questionContext?.questionText ? questionContext.questionText.trim().slice(0, 100) : null);
 
@@ -144,6 +149,17 @@ export default function ScratchpadModal({
         ctx.lineTo(width, y);
       }
       ctx.stroke();
+    } else if (pattern === 'dot') {
+      ctx.fillStyle = lightMode ? 'rgba(15, 23, 42, 0.22)' : 'rgba(255, 255, 255, 0.22)';
+      const step = 28;
+      const dotRadius = 1.5;
+      for (let x = step; x < width; x += step) {
+        for (let y = step; y < height; y += step) {
+          ctx.beginPath();
+          ctx.arc(x, y, dotRadius, 0, Math.PI * 2);
+          ctx.fill();
+        }
+      }
     } else if (pattern === 'lined') {
       ctx.strokeStyle = strokeColor;
       ctx.lineWidth = 1;
@@ -418,11 +434,9 @@ export default function ScratchpadModal({
     }
   };
 
-  const handlePatternToggle = () => {
-    const patternOrder: BackgroundPattern[] = ['grid', 'lined', 'isometric', 'coordinate', 'dark'];
-    const currentIndex = patternOrder.indexOf(backgroundPattern);
-    const nextPattern = patternOrder[(currentIndex + 1) % patternOrder.length];
-    setBackgroundPattern(nextPattern);
+  const handleSelectPattern = (targetPattern: BackgroundPattern) => {
+    setBackgroundPattern(targetPattern);
+    setShowPatternMenu(false);
 
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -437,14 +451,21 @@ export default function ScratchpadModal({
       const tempCtx = temp.getContext('2d');
       if (tempCtx) {
         tempCtx.drawImage(canvas, 0, 0);
-        drawBackground(ctx, rect.width, rect.height, nextPattern, isLight);
+        drawBackground(ctx, rect.width, rect.height, targetPattern, isLight);
         ctx.drawImage(temp, 0, 0, rect.width, rect.height);
         saveState();
       }
     } else {
-      drawBackground(ctx, rect.width, rect.height, nextPattern, isLight);
+      drawBackground(ctx, rect.width, rect.height, targetPattern, isLight);
       saveState();
     }
+  };
+
+  const handlePatternToggle = () => {
+    const patternOrder: BackgroundPattern[] = ['grid', 'dot', 'lined', 'isometric', 'coordinate', 'dark'];
+    const currentIndex = patternOrder.indexOf(backgroundPattern);
+    const nextPattern = patternOrder[(currentIndex + 1) % patternOrder.length];
+    handleSelectPattern(nextPattern);
   };
 
   const handleClear = () => {
@@ -946,17 +967,66 @@ export default function ScratchpadModal({
               </button>
             </div>
 
-            {/* Arka Plan Deseni */}
-            <div className="hidden sm:flex items-center rounded-xl bg-white/5 p-0.5 border border-white/10">
+            {/* Arka Plan Deseni & Doğrudan Zemin Seçici */}
+            <div className="relative flex items-center rounded-xl bg-white/5 p-0.5 border border-white/10">
               <button
                 type="button"
                 onClick={handlePatternToggle}
                 title={`Zemin Deseni: ${PATTERN_NAMES[backgroundPattern]}`}
                 className="inline-flex h-8 items-center gap-1 px-2 text-xs font-semibold text-slate-300 hover:text-white"
               >
-                <Grid className="h-3.5 w-3.5" />
+                {backgroundPattern === 'dot' ? (
+                  <CircleDot className="h-3.5 w-3.5 text-indigo-400" />
+                ) : (
+                  <Grid className="h-3.5 w-3.5" />
+                )}
                 <span className="capitalize text-[11px]">{PATTERN_NAMES[backgroundPattern]}</span>
               </button>
+              <button
+                type="button"
+                onClick={() => setShowPatternMenu((prev) => !prev)}
+                title="Zemin Menüsünü Aç"
+                aria-label="Zemin Menüsünü Aç"
+                className="h-8 px-1 text-slate-400 hover:text-white hover:bg-white/10 rounded-r-lg border-l border-white/10 transition-colors"
+              >
+                <ChevronDown className="h-3 w-3" />
+              </button>
+
+              {/* Zemin Hızlı Seçim Popover */}
+              {showPatternMenu && (
+                <div className="absolute top-full mt-1.5 left-0 z-50 w-44 rounded-2xl border border-slate-700/80 bg-slate-900/95 p-1.5 shadow-2xl backdrop-blur-xl animate-in fade-in zoom-in-95">
+                  <div className="px-2 py-1 text-[10px] font-bold uppercase tracking-wider text-slate-400 border-b border-white/10 mb-1">
+                    Zemin Şablonu Seç
+                  </div>
+                  {(
+                    [
+                      { id: 'grid', label: 'Kareli', desc: 'Geometri & Cebir' },
+                      { id: 'dot', label: 'Noktalı (Geoboard)', desc: 'Noktalı Zemin & Şekil' },
+                      { id: 'lined', label: 'Çizgili', desc: 'İşlem & Açıklama' },
+                      { id: 'isometric', label: 'İzometrik 3D', desc: 'Katı Cisim & Prizma' },
+                      { id: 'coordinate', label: 'Koordinat', desc: 'X-Y Fonksiyon Grafiği' },
+                      { id: 'dark', label: 'Düz Tahta', desc: 'Serbest Çizim' },
+                    ] as const
+                  ).map((item) => (
+                    <button
+                      key={item.id}
+                      type="button"
+                      onClick={() => handleSelectPattern(item.id)}
+                      className={`w-full flex items-center justify-between rounded-xl px-2.5 py-1.5 text-left text-xs transition-all ${
+                        backgroundPattern === item.id
+                          ? 'bg-indigo-600 text-white font-bold shadow-sm'
+                          : 'text-slate-300 hover:bg-white/10 hover:text-white'
+                      }`}
+                    >
+                      <div>
+                        <div className="font-semibold">{item.label}</div>
+                        <div className="text-[9px] opacity-75">{item.desc}</div>
+                      </div>
+                      {backgroundPattern === item.id && <Check className="h-3.5 w-3.5" />}
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
 
             {/* Geri Al */}

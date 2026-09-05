@@ -16,20 +16,39 @@ describe('ExamScoreCalculatorModal', () => {
     expect(
       screen.getByText('İnteraktif Sınav Puanı & Net Hesaplayıcı'),
     ).toBeInTheDocument();
-    expect(screen.getByText('LGS Puanı')).toBeInTheDocument();
-    expect(screen.getByText('Turkce')).toBeInTheDocument();
+    expect(screen.getAllByText('LGS Puanı')[0]).toBeInTheDocument();
+    expect(screen.getAllByText('Turkce')[0]).toBeInTheDocument();
 
     // YKS sekmesine geçiş
     const yksTabBtn = screen.getByRole('button', { name: 'YKS (TYT & AYT)' });
     fireEvent.click(yksTabBtn);
 
-    expect(screen.getByText('Yerleştirme Puanı')).toBeInTheDocument();
+    expect(screen.getAllByText('Yerleştirme Puanı')[0]).toBeInTheDocument();
     expect(screen.getByText('TYT Testleri (120 Soru)')).toBeInTheDocument();
 
     // Kapat butonu
     const closeBtn = screen.getByRole('button', { name: 'Kapat' });
     fireEvent.click(closeBtn);
     expect(onClose).toHaveBeenCalled();
+  });
+
+  it('renders A4 printable diagnostic report card layout and allows printing', () => {
+    const printSpy = vi.spyOn(window, 'print').mockImplementation(() => {});
+    render(<ExamScoreCalculatorModal isOpen={true} onClose={vi.fn()} initialTab="lgs" />);
+
+    expect(
+      screen.getByText(/Uğur Hoca Matematik — Deneme Sınavı Sonuç Karnesi & Stratejik Eylem Planı/i),
+    ).toBeInTheDocument();
+    expect(screen.getByText(/Ders Bazlı Doğru, Yanlış ve Net Tablosu/i)).toBeInTheDocument();
+    expect(screen.getByText(/Bu Denemede Hata Yaptığım veya Zorlandığım Konular/i)).toBeInTheDocument();
+    expect(screen.getByText(/Gelecek Hafta Çözeceğim Telafi Soruları ve Odak Planım/i)).toBeInTheDocument();
+
+    const printBtns = screen.getAllByRole('button', { name: /A4 Karne Yazdır|Karnemi Yazdır \(A4\)/i });
+    expect(printBtns.length).toBeGreaterThan(0);
+    fireEvent.click(printBtns[0]);
+
+    expect(printSpy).toHaveBeenCalled();
+    printSpy.mockRestore();
   });
 
   it('saves current trial and renders trial progression in history timeline', () => {

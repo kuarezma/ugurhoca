@@ -171,4 +171,32 @@ describe('MistakeNotebookModal', () => {
     expect(printSpy).toHaveBeenCalled();
     printSpy.mockRestore();
   });
+
+  it('renders Leitner 5-box spaced repetition calendar and distribution metrics', () => {
+    saveMistakesToBank(
+      [
+        {
+          id: 'q-leitner',
+          quiz_id: 'quiz-l',
+          question_order: 1,
+          question: 'log_2(8) değeri kaçtır?',
+          options: ['1', '2', '3', '4'],
+          correct_index: 2,
+          explanation: '2^3 = 8 => 3',
+          created_at: '2026-01-01T00:00:00Z',
+        },
+      ],
+      'Logaritma',
+    );
+
+    render(<MistakeNotebookModal isOpen={true} onClose={vi.fn()} />);
+
+    expect(screen.getByText(/5-Kutulu Leitner Tekrar Takvimi/i)).toBeInTheDocument();
+    expect(screen.getByText('1. Kutu (1g)')).toBeInTheDocument();
+    expect(screen.getByText('2. Kutu (3g)')).toBeInTheDocument();
+    expect(screen.getByText('3. Kutu (7g)')).toBeInTheDocument();
+    expect(screen.getByText('4. Kutu (14g)')).toBeInTheDocument();
+    expect(screen.getByText('5. Kutu (30g)')).toBeInTheDocument();
+    expect(screen.getByText(/Kalıcı 🏆/i)).toBeInTheDocument();
+  });
 });

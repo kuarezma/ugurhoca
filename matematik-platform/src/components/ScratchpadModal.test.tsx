@@ -54,9 +54,11 @@ describe('ScratchpadModal', () => {
     const yellowBtn = screen.getByTitle('Sarı');
     fireEvent.click(yellowBtn);
 
-    // Background pattern toggle - cycle through all 5 patterns
+    // Background pattern toggle - cycle through all 6 patterns
     const patternBtn = screen.getByTitle(/Zemin Deseni:/i);
     expect(patternBtn).toHaveTextContent('Kareli');
+    fireEvent.click(patternBtn); // dot
+    expect(patternBtn).toHaveTextContent('Noktalı (Geoboard)');
     fireEvent.click(patternBtn); // lined
     expect(patternBtn).toHaveTextContent('Çizgili');
     fireEvent.click(patternBtn); // isometric
@@ -67,6 +69,15 @@ describe('ScratchpadModal', () => {
     expect(patternBtn).toHaveTextContent('Düz Tahta');
     fireEvent.click(patternBtn); // back to grid
     expect(patternBtn).toHaveTextContent('Kareli');
+
+    // Direct pattern menu selector
+    const menuToggle = screen.getByTitle('Zemin Menüsünü Aç');
+    fireEvent.click(menuToggle);
+    expect(screen.getByText('Zemin Şablonu Seç')).toBeInTheDocument();
+
+    const dotOption = screen.getByRole('button', { name: /Noktalı \(Geoboard\)/i });
+    fireEvent.click(dotOption);
+    expect(patternBtn).toHaveTextContent('Noktalı (Geoboard)');
 
     // Option elimination
     const optionA = screen.getByText('-2');

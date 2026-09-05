@@ -19,13 +19,88 @@ export type SavedMistakeQuestion = {
   savedAt: string;
   mastered: boolean;
   reason?: MistakeReason;
-  reviewStage?: number; // 0: Yeni (1 gün sonra), 1: 1. Tekrar (3 gün sonra), 2: 2. Tekrar (7 gün sonra), 3: Kalıcı Öğrenildi (Mastered)
+  reviewStage?: number; // 0: 1. Kutu (1 gün), 1: 2. Kutu (3 gün), 2: 3. Kutu (7 gün), 3: 4. Kutu (14 gün), 4: 5. Kutu (30 gün), 5: Kalıcı Öğrenildi (Mastered)
   nextReviewDate?: string; // YYYY-MM-DD
   lastReviewedAt?: string;
   reviewCount?: number;
 };
 
-export const SPACED_INTERVALS_DAYS = [1, 3, 7];
+export const SPACED_INTERVALS_DAYS = [1, 3, 7, 14, 30];
+
+export type LeitnerBoxInfo = {
+  box: number;
+  label: string;
+  days: number;
+  description: string;
+};
+
+export const LEITNER_BOXES: LeitnerBoxInfo[] = [
+  { box: 1, label: '1. Kutu', days: 1, description: '1 Gün Sonra' },
+  { box: 2, label: '2. Kutu', days: 3, description: '3 Gün Sonra' },
+  { box: 3, label: '3. Kutu', days: 7, description: '1 Hafta Sonra' },
+  { box: 4, label: '4. Kutu', days: 14, description: '2 Hafta Sonra' },
+  { box: 5, label: '5. Kutu', days: 30, description: '1 Ay Sonra' },
+];
+
+export type SpacedReviewStats = {
+  box1: number;
+  box2: number;
+  box3: number;
+  box4: number;
+  box5: number;
+  mastered: number;
+  dueToday: number;
+  dueTomorrow: number;
+  dueThisWeek: number;
+};
+
+export const getSpacedReviewStats = (mistakes: SavedMistakeQuestion[]): SpacedReviewStats => {
+  const today = new Date().toISOString().split('T')[0];
+  const tomorrowDate = new Date();
+  tomorrowDate.setDate(tomorrowDate.getDate() + 1);
+  const tomorrow = tomorrowDate.toISOString().split('T')[0];
+
+  const weekDate = new Date();
+  weekDate.setDate(weekDate.getDate() + 7);
+  const nextWeek = weekDate.toISOString().split('T')[0];
+
+  const stats: SpacedReviewStats = {
+    box1: 0,
+    box2: 0,
+    box3: 0,
+    box4: 0,
+    box5: 0,
+    mastered: 0,
+    dueToday: 0,
+    dueTomorrow: 0,
+    dueThisWeek: 0,
+  };
+
+  for (const m of mistakes) {
+    if (m.mastered || (m.reviewStage && m.reviewStage >= 5)) {
+      stats.mastered++;
+      continue;
+    }
+
+    const stage = m.reviewStage ?? 0;
+    if (stage === 0) stats.box1++;
+    else if (stage === 1) stats.box2++;
+    else if (stage === 2) stats.box3++;
+    else if (stage === 3) stats.box4++;
+    else if (stage === 4) stats.box5++;
+    else stats.mastered++;
+
+    if (!m.nextReviewDate || m.nextReviewDate <= today) {
+      stats.dueToday++;
+    } else if (m.nextReviewDate === tomorrow) {
+      stats.dueTomorrow++;
+    } else if (m.nextReviewDate <= nextWeek) {
+      stats.dueThisWeek++;
+    }
+  }
+
+  return stats;
+};
 
 const STORAGE_KEY = 'ugur_hoca_mistakes_bank_v1';
 const MAX_MISTAKES = 200;
@@ -66,17 +141,17 @@ export const advanceMistakeReview = (questionText: string, correct = true): void
       if (m.question.question !== questionText) return m;
       if (correct) {
         const nextStage = (m.reviewStage ?? 0) + 1;
-        if (nextStage >= 3) {
+        if (nextStage >= 5) {
           return {
             ...m,
-            reviewStage: 3,
+            reviewStage: 5,
             mastered: true,
             lastReviewedAt: today.toISOString(),
             reviewCount: (m.reviewCount || 0) + 1,
           };
         }
         const nextDate = new Date(today);
-        nextDate.setDate(today.getDate() + (SPACED_INTERVALS_DAYS[nextStage] || 7));
+        nextDate.setDate(today.getDate() + (SPACED_INTERVALS_DAYS[nextStage] || 30));
         return {
           ...m,
           reviewStage: nextStage,
