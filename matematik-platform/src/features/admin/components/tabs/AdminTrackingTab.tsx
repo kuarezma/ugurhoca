@@ -15,6 +15,7 @@ import {
   Star,
   Target,
   UserRound,
+  Download,
 } from 'lucide-react';
 import { isAdminEmail } from '@/lib/admin';
 import { buildTrackingActivityAnalytics } from '@/features/admin/utils/tracking-analytics';
@@ -213,6 +214,69 @@ export default function AdminTrackingTab({
     [activityEvents, documents],
   );
 
+  const handleExportCsv = () => {
+    const headers = [
+      'Öğrenci Adı',
+      'E-posta',
+      'Sınıf',
+      'Risk Durumu',
+      'Risk Sebepleri',
+      'Son Aktivite',
+      'Pasif Gün Sayısı',
+      'Son Test Başarısı (%)',
+      'Haftalık Çalışma (dk)',
+      'Haftalık Hedef (dk)',
+      'Hedef İlerleme (%)',
+      'Geciken Ödev Sayısı',
+      'Okunmamış Mesaj',
+      'Takip Etiketleri',
+    ];
+
+    const rows = filteredInsights.map((item) => {
+      const escape = (val: unknown) => `"${String(val ?? '').replace(/"/g, '""')}"`;
+      return [
+        escape(item.student.name || 'İsimsiz'),
+        escape(item.student.email),
+        escape(item.student.grade),
+        escape(
+          item.riskLevel === 'high'
+            ? 'Yüksek Risk'
+            : item.riskLevel === 'medium'
+              ? 'Takipte'
+              : 'Normal',
+        ),
+        escape(item.riskReasons.join('; ')),
+        escape(
+          item.lastActivityAt
+            ? new Date(item.lastActivityAt).toLocaleDateString('tr-TR')
+            : 'Hiç yok',
+        ),
+        escape(item.inactiveDays === Number.POSITIVE_INFINITY ? '-' : item.inactiveDays),
+        escape(item.latestQuizPercent !== null ? `%${item.latestQuizPercent}` : '-'),
+        escape(item.weeklyMinutes),
+        escape(item.targetMinutes),
+        escape(`%${item.weeklyProgress}`),
+        escape(item.overdueAssignments.length),
+        escape(item.unreadMessages),
+        escape((item.status?.labels || []).join(', ')),
+      ].join(',');
+    });
+
+    const csvContent = '\uFEFF' + [headers.join(','), ...rows].join('\r\n');
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute(
+      'download',
+      `Ugur-Hoca-Ogrenci-Takip-Raporu-${new Date().toISOString().slice(0, 10)}.csv`,
+    );
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  };
+
   return (
     <div className="space-y-5 animate-fade-up">
       <section className="rounded-2xl border border-cyan-400/20 bg-cyan-500/10 p-5">
@@ -226,6 +290,17 @@ export default function AdminTrackingTab({
             <p className="mt-1 text-sm text-slate-400">
               Risk, pasiflik, ödev, test, hedef ve mesaj sinyalleri tek ekranda.
             </p>
+            <div className="mt-3">
+              <button
+                type="button"
+                onClick={handleExportCsv}
+                className="inline-flex items-center gap-1.5 rounded-xl border border-emerald-500/30 bg-emerald-500/15 px-3 py-1.5 text-xs font-semibold text-emerald-300 transition hover:bg-emerald-500/25 active:scale-95"
+                title="Filtrelenen öğrenci takip listesini Excel/CSV olarak indir"
+              >
+                <Download className="h-3.5 w-3.5" />
+                <span>Excel / CSV Raporu İndir ({filteredInsights.length})</span>
+              </button>
+            </div>
           </div>
           <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
             <Metric label="Bugün aktif" value={dashboard.activeToday} />

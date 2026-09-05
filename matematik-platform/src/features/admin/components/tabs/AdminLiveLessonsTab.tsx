@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useMemo, useState } from "react";
+import { PlayCircle, FileText } from "lucide-react";
 import type {
   LiveLesson,
   LiveLessonDashboardData,
@@ -18,6 +19,8 @@ type Props = {
 type EditFormState = {
   description: string;
   durationMinutes: number;
+  materialsUrl: string;
+  recordingUrl: string;
   startsAt: string;
   targetGrade: string;
   targetStudentIds: string[];
@@ -94,6 +97,8 @@ function buildEditForm(lesson: LiveLesson): EditFormState {
   return {
     description: lesson.description || "",
     durationMinutes: lesson.duration_minutes,
+    materialsUrl: lesson.materials_url || "",
+    recordingUrl: lesson.recording_url || "",
     startsAt: toLocalInputValue(lesson.starts_at),
     targetGrade: lesson.target_grade,
     targetStudentIds: lesson.target_student_ids || [],
@@ -187,6 +192,8 @@ export default function AdminLiveLessonsTab({ data, onRefresh, students }: Props
         body: JSON.stringify({
           description: editForm.description,
           durationMinutes: editForm.durationMinutes,
+          materialsUrl: editForm.materialsUrl.trim() || null,
+          recordingUrl: editForm.recordingUrl.trim() || null,
           startsAt: new Date(editForm.startsAt).toISOString(),
           targetGrade: editForm.targetGrade,
           targetStudentIds: editForm.targetGrade === "selected" ? editForm.targetStudentIds : [],
@@ -259,9 +266,41 @@ export default function AdminLiveLessonsTab({ data, onRefresh, students }: Props
                       <p className="mt-2 text-sm text-slate-300">{lesson.description}</p>
                     ) : null}
                   </div>
-                  <span className="w-fit rounded-full bg-white/10 px-3 py-1 text-xs font-semibold">
-                    {lesson.status}
-                  </span>
+                  <div className="flex flex-wrap items-center gap-2">
+                    {lesson.recording_url ? (
+                      <a
+                        href={lesson.recording_url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1 rounded-full border border-purple-500/40 bg-purple-500/15 px-2.5 py-0.5 text-xs font-semibold text-purple-300 hover:bg-purple-500/25 transition"
+                        title="Ders kaydını aç"
+                      >
+                        <PlayCircle className="h-3 w-3" />
+                        <span>Kayıt İzle</span>
+                      </a>
+                    ) : lesson.status === "ended" ? (
+                      <span className="inline-flex items-center gap-1 rounded-full border border-slate-700 bg-slate-800/60 px-2.5 py-0.5 text-xs text-slate-400">
+                        Kayıt Yok
+                      </span>
+                    ) : null}
+
+                    {lesson.materials_url ? (
+                      <a
+                        href={lesson.materials_url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1 rounded-full border border-blue-500/40 bg-blue-500/15 px-2.5 py-0.5 text-xs font-semibold text-blue-300 hover:bg-blue-500/25 transition"
+                        title="Ders notlarını aç"
+                      >
+                        <FileText className="h-3 w-3" />
+                        <span>Notlar</span>
+                      </a>
+                    ) : null}
+
+                    <span className="w-fit rounded-full bg-white/10 px-3 py-1 text-xs font-semibold">
+                      {lesson.status}
+                    </span>
+                  </div>
                 </div>
 
                 <div className="mt-4 grid gap-3 sm:grid-cols-3">
@@ -422,6 +461,30 @@ export default function AdminLiveLessonsTab({ data, onRefresh, students }: Props
                           className="min-h-20 w-full rounded-xl border border-white/10 bg-slate-900 px-3 py-2 outline-none focus:ring-2 focus:ring-brand-primary"
                         />
                       </label>
+                      <label className="space-y-1">
+                        <span className="text-sm text-slate-300">Ders Kayıt Linki (YouTube / Drive)</span>
+                        <input
+                          type="url"
+                          placeholder="https://youtube.com/... veya video linki"
+                          value={editForm.recordingUrl}
+                          onChange={(event) =>
+                            setEditForm({ ...editForm, recordingUrl: event.target.value })
+                          }
+                          className="min-h-11 w-full rounded-xl border border-white/10 bg-slate-900 px-3 text-sm outline-none focus:ring-2 focus:ring-brand-primary"
+                        />
+                      </label>
+                      <label className="space-y-1">
+                        <span className="text-sm text-slate-300">Ders Notu / PDF Materyal Linki</span>
+                        <input
+                          type="url"
+                          placeholder="https://... PDF veya doküman linki"
+                          value={editForm.materialsUrl}
+                          onChange={(event) =>
+                            setEditForm({ ...editForm, materialsUrl: event.target.value })
+                          }
+                          className="min-h-11 w-full rounded-xl border border-white/10 bg-slate-900 px-3 text-sm outline-none focus:ring-2 focus:ring-brand-primary"
+                        />
+                      </label>
                     </div>
                     {editError ? <p className="mt-3 text-sm text-red-300">{editError}</p> : null}
                     <div className="mt-4 flex flex-wrap gap-2">
@@ -455,7 +518,7 @@ export default function AdminLiveLessonsTab({ data, onRefresh, students }: Props
                   >
                     Odaya gir
                   </Link>
-                  {lesson.status !== "ended" && lesson.status !== "cancelled" ? (
+                  {lesson.status !== "cancelled" ? (
                     <>
                       <button
                         type="button"
@@ -464,20 +527,24 @@ export default function AdminLiveLessonsTab({ data, onRefresh, students }: Props
                       >
                         Düzenle
                       </button>
-                      <button
-                        type="button"
-                        onClick={() => void updateStatus(lesson, "ended")}
-                        className="rounded-xl border border-white/10 px-4 py-2 text-sm font-semibold hover:bg-white/5"
-                      >
-                        Dersi bitir
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => void updateStatus(lesson, "cancelled")}
-                        className="rounded-xl border border-red-400/40 px-4 py-2 text-sm font-semibold text-red-200 hover:bg-red-500/10"
-                      >
-                        İptal et
-                      </button>
+                      {lesson.status !== "ended" ? (
+                        <>
+                          <button
+                            type="button"
+                            onClick={() => void updateStatus(lesson, "ended")}
+                            className="rounded-xl border border-white/10 px-4 py-2 text-sm font-semibold hover:bg-white/5"
+                          >
+                            Dersi bitir
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => void updateStatus(lesson, "cancelled")}
+                            className="rounded-xl border border-red-400/40 px-4 py-2 text-sm font-semibold text-red-200 hover:bg-red-500/10"
+                          >
+                            İptal et
+                          </button>
+                        </>
+                      ) : null}
                     </>
                   ) : null}
                 </div>

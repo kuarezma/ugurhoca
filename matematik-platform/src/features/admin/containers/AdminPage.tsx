@@ -26,6 +26,7 @@ import {
   Globe,
   Sparkles,
   ExternalLink,
+  Send,
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { signOutClient } from '@/lib/auth-client';
@@ -117,6 +118,27 @@ const AdminStudentProfileDrawer = dynamic(
 
 const AdminSubmissionsModal = dynamic(
   () => import('@/features/admin/components/AdminSubmissionsModal'),
+  { loading: () => null },
+);
+
+const AdminSpotlightModal = dynamic(
+  () => import('@/features/admin/components/AdminSpotlightModal'),
+  { loading: () => null },
+);
+
+const AdminBroadcastModal = dynamic(
+  () =>
+    import('@/features/admin/components/AdminBroadcastModal').then(
+      (mod) => mod.AdminBroadcastModal,
+    ),
+  { loading: () => null },
+);
+
+const AdminDiagnosticsCard = dynamic(
+  () =>
+    import('@/features/admin/components/AdminDiagnosticsCard').then(
+      (mod) => mod.AdminDiagnosticsCard,
+    ),
   { loading: () => null },
 );
 
@@ -223,6 +245,8 @@ export default function AdminPage() {
   const [activeStudentProfileLoading, setActiveStudentProfileLoading] =
     useState(false);
   const [pdfStudentsLoading, setPdfStudentsLoading] = useState(false);
+  const [isSpotlightOpen, setIsSpotlightOpen] = useState(false);
+  const [isBroadcastOpen, setIsBroadcastOpen] = useState(false);
   const router = useRouter();
   const {
     activeAssignment,
@@ -550,6 +574,18 @@ export default function AdminPage() {
 
     void loadStudentProfile(activeStudentProfileId);
   }, [activeStudentProfileId, activeStudentProfileUser, loadStudentProfile]);
+
+  // Global Cmd+K / Ctrl+K shortcut for Spotlight search
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
+        e.preventDefault();
+        setIsSpotlightOpen((prev) => !prev);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
 
   const handleLogout = async () => {
     await signOutClient();
@@ -890,6 +926,19 @@ export default function AdminPage() {
               Siteyi Gör
             </Link>
 
+            <button
+              type="button"
+              onClick={() => setIsSpotlightOpen(true)}
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-white/10 bg-white/5 text-slate-300 hover:text-white hover:bg-white/10 transition-colors text-xs font-semibold h-9"
+              title="Hızlı Ara (⌘K)"
+            >
+              <Search className="w-3.5 h-3.5 text-cyan-400" />
+              <span className="hidden sm:inline">Hızlı Ara</span>
+              <kbd className="hidden md:inline rounded bg-white/10 px-1.5 py-0.5 text-[10px] font-mono text-slate-400">
+                ⌘K
+              </kbd>
+            </button>
+
             <ThemeToggle compact className="h-9 w-9 rounded-xl border-white/10 bg-white/5 hover:bg-white/10" />
 
             <button
@@ -1024,6 +1073,13 @@ export default function AdminPage() {
                 Yeni Duyuru
               </button>
               <button
+                onClick={() => setIsBroadcastOpen(true)}
+                className="btn-secondary text-xs py-2 px-3 sm:px-4 rounded-xl"
+              >
+                <Send className="w-3.5 h-3.5 text-indigo-400" />
+                Toplu Bildirim
+              </button>
+              <button
                 onClick={() => openModal('quiz')}
                 className="btn-secondary text-xs py-2 px-3 sm:px-4 rounded-xl"
               >
@@ -1048,6 +1104,19 @@ export default function AdminPage() {
               </Link>
             </div>
           </div>
+
+          {/* System Diagnostics & Integration Status Card */}
+          <AdminDiagnosticsCard
+            driveConnected={Boolean(googleDriveConnection?.connected)}
+            pendingCandidatesCount={worksheetCandidates.filter((c) => c.status === 'pending').length}
+            unreadMessagesCount={notifications.filter((n) => !n.is_read && n.type === 'message').length}
+            studentCount={studentUsers.length}
+            onRefresh={() => {
+              void loadData();
+              void refreshUsers();
+              void refreshGoogleDriveConnection();
+            }}
+          />
 
           {/* Category Filter Pills & Tab Navigation */}
           <div className="sticky top-14 sm:top-16 z-40 -mx-4 sm:mx-0 mb-6 sm:mb-8 px-4 sm:px-0 py-3 backdrop-blur-md bg-slate-950/40 rounded-2xl border border-white/5">
@@ -1380,6 +1449,27 @@ export default function AdminPage() {
           />
         )}
       </AnimatePresence>
+
+      <AdminSpotlightModal
+        isOpen={isSpotlightOpen}
+        onClose={() => setIsSpotlightOpen(false)}
+        students={studentUsers}
+        quizzes={quizzes}
+        documents={documents}
+        liveLessons={liveLessons.lessons}
+        onSelectStudent={(student) => void handleOpenStudentProfile(student)}
+        onSelectTab={(tab) => {
+          setActiveTab(tab);
+        }}
+        onOpenModal={(modal) => openModal(modal)}
+        onOpenBroadcast={() => setIsBroadcastOpen(true)}
+      />
+
+      <AdminBroadcastModal
+        isOpen={isBroadcastOpen}
+        onClose={() => setIsBroadcastOpen(false)}
+        students={studentUsers}
+      />
 
       <ChatBubbleLoader />
     </main>
