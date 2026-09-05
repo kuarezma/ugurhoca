@@ -44,6 +44,7 @@ export function TeacherModerationPanel({
     Record<string, { displayName: string }>
   >({});
   const [micPermissions, setMicPermissions] = useState<Record<string, boolean>>({});
+  const [whiteboardPermissions, setWhiteboardPermissions] = useState<Record<string, boolean>>({});
   const [error, setError] = useState<string | null>(null);
 
   const publishRoom = useCallback(
@@ -172,6 +173,30 @@ export function TeacherModerationPanel({
     [publishRoom, teacherIdentity],
   );
 
+  const setWhiteboardPermission = useCallback(
+    async (targetIdentity: string, allowed: boolean) => {
+      setWhiteboardPermissions((prev) => ({ ...prev, [targetIdentity]: allowed }));
+      await publishRoom(
+        {
+          allowed,
+          fromIdentity: teacherIdentity,
+          kind: "whiteboard_permission",
+          targetIdentity,
+        },
+        [targetIdentity],
+      );
+    },
+    [publishRoom, teacherIdentity],
+  );
+
+  const giveSpeakingTurn = useCallback(
+    async (targetIdentity: string) => {
+      await setMicrophonePermission(targetIdentity, true);
+      await lowerHand(targetIdentity);
+    },
+    [lowerHand, setMicrophonePermission],
+  );
+
   const rows = useMemo(() => {
     const out: {
       identity: string;
@@ -236,6 +261,18 @@ export function TeacherModerationPanel({
                   className="rounded-md border border-border px-2 py-1 text-[10px] font-semibold hover:bg-foreground/5"
                 >
                   Sustur
+                </button>
+                <button
+                  type="button"
+                  onClick={() => void setWhiteboardPermission(r.identity, !whiteboardPermissions[r.identity])}
+                  className={`rounded-md px-2 py-1 text-[10px] font-semibold transition ${
+                    whiteboardPermissions[r.identity]
+                      ? "bg-sky-600 text-white hover:bg-sky-500"
+                      : "border border-border hover:bg-foreground/5"
+                  }`}
+                  title="Ortak beyaz tahta çizim izni"
+                >
+                  {whiteboardPermissions[r.identity] ? "Tahta açık" : "Tahta"}
                 </button>
               </span>
             )}
@@ -304,23 +341,51 @@ export function TeacherModerationPanel({
 
       {raisedEntries.length > 0 && (
         <div className="border-t border-border pt-3">
-          <p className="mb-2 text-xs font-medium text-foreground/70">
-            El kaldıranlar
+          <p className="mb-2 text-xs font-semibold text-amber-500 flex items-center gap-1.5">
+            <span>✋ Söz İsteyenler ({raisedEntries.length})</span>
           </p>
           <ul className="space-y-2">
-            {raisedEntries.map(([id, v]) => (
+            {raisedEntries.map(([id, v], idx) => (
               <li
                 key={id}
-                className="flex items-center justify-between gap-2 text-xs"
+                className="flex items-center justify-between gap-2 text-xs p-2 rounded-lg bg-amber-500/10 border border-amber-500/20"
               >
-                <span className="min-w-0 truncate">{v.displayName}</span>
-                <button
-                  type="button"
-                  onClick={() => void lowerHand(id)}
-                  className="shrink-0 rounded-lg border border-border px-2 py-1 text-[11px] font-medium hover:bg-foreground/5"
-                >
-                  İndir
-                </button>
+                <div className="flex items-center gap-1.5 min-w-0">
+                  <span className="w-4 h-4 rounded-full bg-amber-500 text-slate-950 font-bold text-[10px] flex items-center justify-center shrink-0">
+                    {idx + 1}
+                  </span>
+                  <span className="min-w-0 truncate font-medium">{v.displayName}</span>
+                </div>
+                <div className="flex items-center gap-1 shrink-0">
+                  <button
+                    type="button"
+                    onClick={() => void giveSpeakingTurn(id)}
+                    className="rounded-lg bg-emerald-600 px-2 py-1 text-[11px] font-bold text-white hover:bg-emerald-500 transition shadow-sm"
+                    title="Öğrenciye mikrofon izni ver ve elini indir"
+                  >
+                    Söz Ver
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => void setWhiteboardPermission(id, !whiteboardPermissions[id])}
+                    className={`rounded-lg px-2 py-1 text-[11px] font-semibold transition ${
+                      whiteboardPermissions[id]
+                        ? "bg-sky-600 text-white hover:bg-sky-500"
+                        : "border border-border hover:bg-foreground/5 text-foreground/80"
+                    }`}
+                    title="Ortak beyaz tahta çizim yetkisi"
+                  >
+                    {whiteboardPermissions[id] ? "Tahta Açık" : "Tahta İzni"}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => void lowerHand(id)}
+                    className="rounded-lg border border-border px-1.5 py-1 text-[11px] font-medium hover:bg-foreground/5 text-foreground/70"
+                    title="Eli indir"
+                  >
+                    İndir
+                  </button>
+                </div>
               </li>
             ))}
           </ul>

@@ -37,6 +37,12 @@ export type RoomDataMessage =
       fromIdentity: string;
     }
   | {
+      kind: "whiteboard_permission";
+      targetIdentity: string;
+      allowed: boolean;
+      fromIdentity: string;
+    }
+  | {
       kind: "microphone_request";
       fromIdentity: string;
       displayName: string;
@@ -77,6 +83,14 @@ function isRoomDataMessage(value: unknown): value is RoomDataMessage {
     );
   }
   if (k === "microphone_permission") {
+    const v = value as Record<string, unknown>;
+    return (
+      typeof v.targetIdentity === "string" &&
+      typeof v.allowed === "boolean" &&
+      typeof v.fromIdentity === "string"
+    );
+  }
+  if (k === "whiteboard_permission") {
     const v = value as Record<string, unknown>;
     return (
       typeof v.targetIdentity === "string" &&

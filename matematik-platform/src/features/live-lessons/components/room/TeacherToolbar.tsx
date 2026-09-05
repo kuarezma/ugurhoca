@@ -7,7 +7,11 @@ import { TeacherQuestionPoolModal } from "@/features/live-lessons/components/Tea
 import { encodeQuizMessage } from "@/features/live-lessons/lib/quiz-messages";
 import { useToast } from "@/components/Toast";
 
-export function TeacherToolbar() {
+type TeacherToolbarProps = {
+  onOpenModeration?: () => void;
+};
+
+export function TeacherToolbar({ onOpenModeration }: TeacherToolbarProps = {}) {
   const { showToast } = useToast();
   const { localParticipant, isCameraEnabled, isMicrophoneEnabled } =
     useLocalParticipant();
@@ -131,6 +135,17 @@ export function TeacherToolbar() {
       >
         <span>Öğrenci Soruları</span>
       </button>
+
+      {onOpenModeration && (
+        <button
+          type="button"
+          onClick={onOpenModeration}
+          className="rounded-lg px-3 py-1.5 text-xs font-semibold bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 hover:bg-indigo-500/30 transition flex items-center gap-1"
+          title="Katılımcılar ve el kaldıranlar listesini aç"
+        >
+          <span>✋ Söz / Katılımcılar</span>
+        </button>
+      )}
 
       <TeacherQuestionPoolModal
         isOpen={isPoolOpen}

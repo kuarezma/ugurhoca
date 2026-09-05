@@ -79,4 +79,31 @@ describe('MistakeNotebookModal', () => {
     // Neden filtresinde (1) görünmeli
     expect(screen.getByRole('button', { name: /İşlem Hatası \(1\)/i })).toBeInTheDocument();
   });
+
+  it('triggers window.print when print button is clicked', () => {
+    const printSpy = vi.spyOn(window, 'print').mockImplementation(() => {});
+    saveMistakesToBank(
+      [
+        {
+          id: 'q-print',
+          quiz_id: 'quiz-p',
+          question_order: 1,
+          question: '5x = 20 ise x kaçtır?',
+          options: ['2', '3', '4', '5'],
+          correct_index: 2,
+          explanation: 'x = 4',
+          created_at: '2026-01-01T00:00:00Z',
+        },
+      ],
+      'Baskı Testi',
+    );
+
+    render(<MistakeNotebookModal isOpen={true} onClose={vi.fn()} />);
+
+    const printBtn = screen.getByRole('button', { name: /Yazdır \/ PDF/i });
+    expect(printBtn).toBeInTheDocument();
+    fireEvent.click(printBtn);
+    expect(printSpy).toHaveBeenCalled();
+    printSpy.mockRestore();
+  });
 });

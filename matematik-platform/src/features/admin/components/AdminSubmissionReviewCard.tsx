@@ -1,8 +1,18 @@
 "use client";
 
-import { useState } from "react";
-import { CheckCircle2, FileText, MessageSquareText, Star } from "lucide-react";
+import { useState, useEffect, useRef } from "react";
+import {
+  CheckCircle2,
+  FileText,
+  MessageSquareText,
+  Mic,
+  MicOff,
+  PenTool,
+  Sparkles,
+  Star,
+} from "lucide-react";
 import type { AdminSubmission } from "@/features/admin/types";
+import { SubmissionDrawingModal } from "./SubmissionDrawingModal";
 
 type AdminSubmissionReviewCardProps = {
   onUpdateSubmission: (
@@ -13,12 +23,69 @@ type AdminSubmissionReviewCardProps = {
   submission: AdminSubmission;
 };
 
+const FEEDBACK_TEMPLATES = [
+  {
+    label: "🌟 Kusursuz",
+    grade: 100,
+    text: "Tebrikler! İşlem basamakların eksiksiz ve çok temiz.",
+  },
+  {
+    label: "⚠️ İşlem Hatası",
+    grade: 80,
+    text: "Gidiş yolu doğru ancak adımlarda işlem/işaret hatası var, tekrar kontrol et.",
+  },
+  {
+    label: "💡 Kuralı İncele",
+    grade: 65,
+    text: "Konu kuralını tekrar gözden geçirip soruyu bir kez daha denemeni öneririm.",
+  },
+  {
+    label: "⏳ Süre & Hız",
+    grade: 90,
+    text: "Eline sağlık! Bir sonraki ödevde süreyi biraz daha optimize edebilirsin.",
+  },
+];
+
 export default function AdminSubmissionReviewCard({
   onUpdateSubmission,
   submission,
 }: AdminSubmissionReviewCardProps) {
   const [feedback, setFeedback] = useState(submission.feedback || "");
   const [grade, setGrade] = useState(submission.grade || 100);
+  const [isDrawingOpen, setIsDrawingOpen] = useState(false);
+  const [isRecording, setIsRecording] = useState(false);
+  const [recordingSeconds, setRecordingSeconds] = useState(0);
+  const timerRef = useRef<NodeJS.Timeout | null>(null);
+
+  useEffect(() => {
+    if (isRecording) {
+      setRecordingSeconds(0);
+      timerRef.current = setInterval(() => {
+        setRecordingSeconds((prev) => prev + 1);
+      }, 1000);
+    } else {
+      if (timerRef.current) clearInterval(timerRef.current);
+    }
+    return () => {
+      if (timerRef.current) clearInterval(timerRef.current);
+    };
+  }, [isRecording]);
+
+  const toggleRecording = () => {
+    if (isRecording) {
+      // Stop recording and append voice note label
+      setIsRecording(false);
+      const voiceNote = `🎙️ [${recordingSeconds} sn Sesli Öğretmen Notu Kaydedildi]`;
+      setFeedback((prev) => (prev ? `${prev} ${voiceNote}` : voiceNote));
+    } else {
+      setIsRecording(true);
+    }
+  };
+
+  const handleApplyTemplate = (item: (typeof FEEDBACK_TEMPLATES)[number]) => {
+    setGrade(item.grade);
+    setFeedback(item.text);
+  };
 
   return (
     <div className="glass p-5 rounded-2xl border border-white/5 space-y-4">
@@ -38,16 +105,31 @@ export default function AdminSubmissionReviewCard({
             </p>
           </div>
         </div>
-        <div className="flex items-center gap-3">
-          <a
-            href={submission.file_url ?? "#"}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="px-4 py-2 bg-indigo-500 hover:bg-indigo-600 text-white text-xs font-bold rounded-xl flex items-center gap-2 transition-all shadow-lg shadow-indigo-500/20"
-          >
-            <FileText className="w-4 h-4" />
-            Dosyayı İncele
-          </a>
+        <div className="flex flex-wrap items-center gap-2">
+          {submission.file_url && (
+            <>
+              <a
+                href={submission.file_url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="px-3 py-2 bg-indigo-500 hover:bg-indigo-600 text-white text-xs font-bold rounded-xl flex items-center gap-1.5 transition-all shadow-lg shadow-indigo-500/20"
+              >
+                <FileText className="w-4 h-4" />
+                <span>Dosyayı Aç</span>
+              </a>
+
+              <button
+                type="button"
+                onClick={() => setIsDrawingOpen(true)}
+                className="px-3 py-2 bg-rose-500/20 text-rose-300 border border-rose-500/30 hover:bg-rose-500/30 text-xs font-bold rounded-xl flex items-center gap-1.5 transition-all"
+                title="Öğrencinin ödev görseli üzerine çizim yap"
+              >
+                <PenTool className="w-4 h-4" />
+                <span>Çizimle İncele</span>
+              </button>
+            </>
+          )}
+
           <span
             className={`px-3 py-1.5 rounded-lg text-xs font-bold ${
               submission.status === "reviewed"
@@ -71,16 +153,56 @@ export default function AdminSubmissionReviewCard({
         </div>
       )}
 
+      {/* QUICK TEMPLATES */}
+      <div className="flex flex-wrap items-center gap-1.5 pt-1">
+        <span className="text-xs text-slate-500 flex items-center gap-1 font-semibold mr-1">
+          <Sparkles className="w-3 h-3 text-amber-400" />
+          Hızlı Şablon:
+        </span>
+        {FEEDBACK_TEMPLATES.map((tmpl) => (
+          <button
+            key={tmpl.label}
+            type="button"
+            onClick={() => handleApplyTemplate(tmpl)}
+            className="px-2.5 py-1 rounded-lg bg-slate-800/80 hover:bg-slate-700/80 border border-slate-700/60 text-xs text-slate-300 hover:text-white transition"
+          >
+            {tmpl.label}
+          </button>
+        ))}
+      </div>
+
       <div className="flex flex-col gap-3 pt-2 items-start sm:items-center sm:flex-row">
-        <div className="flex-1 w-full relative">
-          <input
-            type="text"
-            placeholder="Geri bildirim yazın..."
-            value={feedback}
-            onChange={(event) => setFeedback(event.target.value)}
-            className="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2.5 pl-11 text-sm text-white focus:outline-none focus:border-indigo-500 transition-colors"
-          />
-          <MessageSquareText className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
+        <div className="flex-1 w-full flex items-center gap-2">
+          <div className="relative flex-1">
+            <input
+              type="text"
+              placeholder="Geri bildirim yazın..."
+              value={feedback}
+              onChange={(event) => setFeedback(event.target.value)}
+              className="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2.5 pl-11 text-sm text-white focus:outline-none focus:border-indigo-500 transition-colors"
+            />
+            <MessageSquareText className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
+          </div>
+
+          <button
+            type="button"
+            onClick={toggleRecording}
+            className={`p-2.5 rounded-xl border transition flex items-center gap-1.5 shrink-0 text-xs font-bold ${
+              isRecording
+                ? "bg-rose-500 text-white border-rose-400 animate-pulse"
+                : "bg-slate-800 text-slate-300 border-slate-700 hover:bg-slate-700"
+            }`}
+            title={isRecording ? "Kaydı bitir" : "Sesli not kaydet"}
+          >
+            {isRecording ? (
+              <>
+                <MicOff className="w-4 h-4 text-white" />
+                <span>0:{recordingSeconds.toString().padStart(2, "0")}</span>
+              </>
+            ) : (
+              <Mic className="w-4 h-4 text-slate-400" />
+            )}
+          </button>
         </div>
 
         <div className="flex flex-col gap-2 w-full sm:w-auto mt-2 sm:mt-0 sm:flex-row">
@@ -126,6 +248,18 @@ export default function AdminSubmissionReviewCard({
           </button>
         </div>
       </div>
+
+      {submission.file_url && (
+        <SubmissionDrawingModal
+          isOpen={isDrawingOpen}
+          onClose={() => setIsDrawingOpen(false)}
+          imageUrl={submission.file_url}
+          studentName={submission.student_name ?? "Öğrenci"}
+          onSaveFeedback={(notes) => {
+            setFeedback((prev) => (prev ? `${prev} - ${notes}` : notes));
+          }}
+        />
+      )}
     </div>
   );
 }

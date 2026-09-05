@@ -351,7 +351,7 @@ export function RoomExperience({
                   </>
                 )}
               </button>
-              <TeacherToolbar />
+              <TeacherToolbar onOpenModeration={() => setActiveTab('participants')} />
             </>
           )}
 

@@ -7,6 +7,7 @@ import { HomeAnnouncementsSection } from '@/features/home/components/HomeAnnounc
 import { HomeAssignmentsSection } from '@/features/home/components/HomeAssignmentsSection';
 import { HomeDailyChallenge } from '@/features/home/components/HomeDailyChallenge';
 import { HomeDailyGoalWidget } from '@/features/home/components/HomeDailyGoalWidget';
+import { LgsTacticsCorner } from '@/features/home/components/LgsTacticsCorner';
 import { HomeDailyQuote } from '@/features/home/components/HomeDailyQuote';
 import { HomeExamCountdownSection } from '@/features/home/components/HomeExamCountdownSection';
 import { HomeFooter } from '@/features/home/components/HomeFooter';
@@ -187,6 +188,7 @@ export default function HomePage({ activeLiveLesson, initialFeed }: HomePageProp
         <HomeHeroSection isLight={isLight} user={user} />
         <HomeDailyChallenge isLight={isLight} />
         <HomeDailyGoalWidget isLight={isLight} />
+        <LgsTacticsCorner isLight={isLight} />
         <HomeQuickToolsGrid
           isLight={isLight}
           onOpenFlashcards={() => setIsFlashcardsOpen(true)}

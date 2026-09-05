@@ -49,6 +49,16 @@ describe('VisualMathProofsModal', () => {
     const n2Btn = screen.getByRole('button', { name: 'n=2' });
     fireEvent.click(n2Btn);
 
+    // 4. Switch to Circle Sector
+    const circleTab = screen.getByText(/Daire Dilimi & Yay Uzunluğu/i);
+    fireEvent.click(circleTab);
+    expect(screen.getAllByText(/Yay Uzunluğu \(L\)/i).length).toBeGreaterThanOrEqual(1);
+    expect(screen.getByText(/Dilim Alanı \(A\)/i)).toBeInTheDocument();
+    const circleSliders = screen.getAllByRole('slider');
+    fireEvent.change(circleSliders[0], { target: { value: '7' } }); // Radius
+    fireEvent.change(circleSliders[1], { target: { value: '90' } }); // Angle
+    expect(screen.getByText(/O \(Merkez\)/i)).toBeInTheDocument();
+
     // Close button
     const closeBtn = screen.getByText('Anladım, Kapat');
     fireEvent.click(closeBtn);

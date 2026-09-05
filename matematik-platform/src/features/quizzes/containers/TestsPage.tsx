@@ -62,6 +62,14 @@ const QuizOpticalSheetModal = dynamic(
     })),
   { ssr: false },
 );
+
+const WeeklyMockLeagueModal = dynamic(
+  () =>
+    import('@/features/quizzes/components/WeeklyMockLeagueModal').then((m) => ({
+      default: m.WeeklyMockLeagueModal,
+    })),
+  { ssr: false },
+);
 import { saveMistakesToBank, markMistakeMastered, getSavedMistakes } from '@/features/quizzes/lib/mistakeStorage';
 import { incrementQuestionsSolved } from '@/lib/dailyGoalStorage';
 import { EmptyState } from '@/components/ui/EmptyState';
@@ -170,6 +178,7 @@ export default function TestsPage({
   const [isOnline, setIsOnline] = useState(true);
   const [isShortcutsOpen, setIsShortcutsOpen] = useState(false);
   const [isOpticalSheetOpen, setIsOpticalSheetOpen] = useState(false);
+  const [isLeagueModalOpen, setIsLeagueModalOpen] = useState(false);
 
   useEffect(() => {
     try {
@@ -1288,14 +1297,24 @@ export default function TestsPage({
                 Bilginizi test edin ve kendinizi geliştirin
               </p>
             </div>
-            <button
-              type="button"
-              onClick={() => setIsMistakeNotebookOpen(true)}
-              className="inline-flex items-center gap-2 self-start sm:self-auto rounded-2xl border border-amber-500/30 bg-amber-500/15 hover:bg-amber-500/25 px-4 py-2.5 text-xs sm:text-sm font-bold text-amber-300 shadow-md transition-all active:scale-95"
-            >
-              <BookOpen className="w-4 h-4 text-amber-400" />
-              <span>Akıllı Hata Defterim</span>
-            </button>
+            <div className="flex flex-wrap items-center gap-2 self-start sm:self-auto">
+              <button
+                type="button"
+                onClick={() => setIsLeagueModalOpen(true)}
+                className="inline-flex items-center gap-2 rounded-2xl border border-rose-500/30 bg-rose-500/15 hover:bg-rose-500/25 px-4 py-2.5 text-xs sm:text-sm font-bold text-rose-300 shadow-md transition-all active:scale-95"
+              >
+                <Trophy className="w-4 h-4 text-rose-400" />
+                <span>Deneme Ligi</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setIsMistakeNotebookOpen(true)}
+                className="inline-flex items-center gap-2 rounded-2xl border border-amber-500/30 bg-amber-500/15 hover:bg-amber-500/25 px-4 py-2.5 text-xs sm:text-sm font-bold text-amber-300 shadow-md transition-all active:scale-95"
+              >
+                <BookOpen className="w-4 h-4 text-amber-400" />
+                <span>Akıllı Hata Defterim</span>
+              </button>
+            </div>
           </div>
 
           {/* Akıllı Telafi Testi Kartı */}
@@ -1474,6 +1493,10 @@ export default function TestsPage({
         onClose={() => setIsWorksheetModalOpen(false)}
         quiz={selectedQuiz}
         questions={quizQuestions}
+      />
+      <WeeklyMockLeagueModal
+        isOpen={isLeagueModalOpen}
+        onClose={() => setIsLeagueModalOpen(false)}
       />
     </main>
   );
