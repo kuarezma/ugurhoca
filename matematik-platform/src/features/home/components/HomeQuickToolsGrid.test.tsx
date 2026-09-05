@@ -9,6 +9,8 @@ describe('HomeQuickToolsGrid', () => {
     const onOpenGraph = vi.fn();
     const onOpenProofs = vi.fn();
     const onOpenGlossary = vi.fn();
+    const onOpenTopicWeights = vi.fn();
+    const onOpenWeeklyPlanner = vi.fn();
 
     render(
       <HomeQuickToolsGrid
@@ -18,6 +20,8 @@ describe('HomeQuickToolsGrid', () => {
         onOpenGraph={onOpenGraph}
         onOpenProofs={onOpenProofs}
         onOpenGlossary={onOpenGlossary}
+        onOpenTopicWeights={onOpenTopicWeights}
+        onOpenWeeklyPlanner={onOpenWeeklyPlanner}
       />,
     );
 
@@ -27,6 +31,16 @@ describe('HomeQuickToolsGrid', () => {
     expect(screen.getByText('Formül & Bilgi Kartları')).toBeInTheDocument();
     expect(screen.getByText('Karalama & İşlem Tahtası')).toBeInTheDocument();
     expect(screen.getByText('Matematik Kavram Sözlüğü')).toBeInTheDocument();
+    expect(screen.getByText('LGS & YKS Çıkmış Soru Dağılım Matrisi')).toBeInTheDocument();
+    expect(screen.getByText('A4 Masabaşı Haftalık Çalışma Çizelgesi')).toBeInTheDocument();
+
+    const topicWeightsBtn = screen.getByRole('button', { name: /Matrisi İncele/i });
+    fireEvent.click(topicWeightsBtn);
+    expect(onOpenTopicWeights).toHaveBeenCalled();
+
+    const weeklyPlannerBtn = screen.getByRole('button', { name: /Çizelgeyi Aç/i });
+    fireEvent.click(weeklyPlannerBtn);
+    expect(onOpenWeeklyPlanner).toHaveBeenCalled();
 
     const glossaryBtn = screen.getByRole('button', { name: /Sözlüğü Aç/i });
     fireEvent.click(glossaryBtn);

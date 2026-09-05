@@ -275,11 +275,26 @@ export function LgsTacticsCorner({ isLight = false }: { isLight?: boolean }) {
             </span>
           </button>
 
-          <span className="text-slate-400">
-            {appliedTactics.size > 0
-              ? `${appliedTactics.size} taktik hafızaya eklendi`
-              : 'Her gün yeni bir sınav stratejisi'}
-          </span>
+          <div className="flex items-center gap-3">
+            <button
+              type="button"
+              onClick={() => {
+                if (typeof window !== 'undefined') {
+                  window.dispatchEvent(
+                    new CustomEvent('ugurhoca:open-tool', { detail: { tool: 'topic-weights' } })
+                  );
+                }
+              }}
+              className="inline-flex items-center gap-1 font-semibold text-indigo-600 dark:text-indigo-400 hover:underline"
+            >
+              <span>📊 Soru Dağılım Matrisi</span>
+            </button>
+            <span className="text-slate-400">
+              {appliedTactics.size > 0
+                ? `${appliedTactics.size} taktik hafızaya eklendi`
+                : 'Her gün yeni bir sınav stratejisi'}
+            </span>
+          </div>
         </div>
       </div>
     </section>

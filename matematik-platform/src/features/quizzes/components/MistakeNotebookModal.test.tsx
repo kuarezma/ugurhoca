@@ -111,4 +111,36 @@ describe('MistakeNotebookModal', () => {
     expect(printSpy).toHaveBeenCalled();
     printSpy.mockRestore();
   });
+
+  it('renders root-cause analysis bar and updates prescriptive advice when mistakes are tagged', () => {
+    saveMistakesToBank(
+      [
+        {
+          id: 'q-analysis-1',
+          quiz_id: 'quiz-a',
+          question_order: 1,
+          question: 'Kök 50 sayısı hangi iki tam sayı arasındadır?',
+          options: ['5-6', '6-7', '7-8', '8-9'],
+          correct_index: 2,
+          explanation: '49 < 50 < 64 olduğundan 7 ile 8 arasındadır.',
+          created_at: '2026-01-01T00:00:00Z',
+        },
+      ],
+      'Kareköklü İfadeler',
+    );
+
+    render(<MistakeNotebookModal isOpen={true} onClose={vi.fn()} />);
+
+    // Analiz çubuğu ve varsayılan etiketleme teşviki kontrolü
+    expect(screen.getByText(/Kök Neden Analiz Çubuğu/i)).toBeInTheDocument();
+    expect(screen.getByRole('progressbar', { name: /Hata Kök Neden Dağılımı/i })).toBeInTheDocument();
+    expect(screen.getByText(/Kişisel Teşhis İçin Hatalarını Etiketle/i)).toBeInTheDocument();
+
+    // Soruya Kural Eksikliği (🟡 Kural Eksikliği) etiketi ata
+    const kuralBtn = screen.getByRole('button', { name: /^🟡\s*Kural Eksikliği$/i });
+    fireEvent.click(kuralBtn);
+
+    // Reçetenin Konu Kavrama & Formül Pekiştirme'ye dönüştüğünü doğrula
+    expect(screen.getByText(/Öncelik: Konu Kavrama & Formül Pekiştirme/i)).toBeInTheDocument();
+  });
 });

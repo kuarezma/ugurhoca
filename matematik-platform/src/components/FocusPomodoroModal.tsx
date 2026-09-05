@@ -5,6 +5,11 @@ import { useAccessibleModal } from '@/hooks/useAccessibleModal';
 import { gameAudio } from '@/features/games/utils/gameAudio';
 import { useGameSoundMute } from '@/features/games/hooks/useGameSoundMute';
 import {
+  ambientAudio,
+  AMBIENT_SOUND_OPTIONS,
+  type AmbientSoundType,
+} from '@/features/games/utils/ambientAudio';
+import {
   X,
   Play,
   Pause,
@@ -43,6 +48,7 @@ export function FocusPomodoroModal({ isOpen, onClose }: FocusPomodoroModalProps)
   const [timeLeft, setTimeLeft] = useState(MODE_DURATIONS.focus25);
   const [isRunning, setIsRunning] = useState(false);
   const [completedSessions, setCompletedSessions] = useState(0);
+  const [ambientSound, setAmbientSound] = useState<AmbientSoundType>('none');
 
   const timerRef = useRef<number | null>(null);
   const endTimeRef = useRef<number | null>(null);
@@ -126,6 +132,27 @@ export function FocusPomodoroModal({ isOpen, onClose }: FocusPomodoroModalProps)
     };
   }, [isRunning, soundEnabled, mode, isBreak]);
 
+  // Ambiyans ses kontrolü ve sayaç senkronizasyonu
+  useEffect(() => {
+    if (!isOpen || !isRunning || isMuted || ambientSound === 'none') {
+      ambientAudio.stop();
+      return;
+    }
+
+    ambientAudio.play(ambientSound);
+
+    return () => {
+      ambientAudio.stop();
+    };
+  }, [isOpen, isRunning, isMuted, ambientSound]);
+
+  // Modal kapatıldığında veya unmount olduğunda ambiyans sesini sonlandır
+  useEffect(() => {
+    return () => {
+      ambientAudio.stop();
+    };
+  }, []);
+
   if (!isOpen) return null;
 
   const handleSelectMode = (newMode: TimerMode) => {
@@ -137,6 +164,15 @@ export function FocusPomodoroModal({ isOpen, onClose }: FocusPomodoroModalProps)
   const handleReset = () => {
     setIsRunning(false);
     setTimeLeft(MODE_DURATIONS[mode]);
+  };
+
+  const handleSelectAmbient = (type: AmbientSoundType) => {
+    setAmbientSound(type);
+    if (type === 'none' || isMuted || !isRunning) {
+      ambientAudio.stop();
+    } else {
+      ambientAudio.play(type);
+    }
   };
 
   if (!isOpen) return null;
@@ -319,6 +355,45 @@ export function FocusPomodoroModal({ isOpen, onClose }: FocusPomodoroModalProps)
                 </>
               )}
             </button>
+          </div>
+
+          {/* Ambiyans Odak Sesi Seçici */}
+          <div className="w-full rounded-2xl border border-slate-200/80 dark:border-white/10 bg-slate-50/70 dark:bg-slate-800/40 p-3 space-y-2">
+            <div className="flex items-center justify-between">
+              <span className="text-[11px] font-bold text-slate-700 dark:text-slate-300 flex items-center gap-1.5">
+                <span>🎧</span>
+                <span>Arka Plan Ambiyans Sesi</span>
+              </span>
+              {ambientSound !== 'none' && (
+                <span className="text-[10px] font-semibold text-indigo-600 dark:text-indigo-400">
+                  {isRunning && !isMuted ? '● Çalıyor' : 'Sayaç başladığında çalar'}
+                </span>
+              )}
+            </div>
+
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5">
+              {AMBIENT_SOUND_OPTIONS.map((opt) => {
+                const isSelected = ambientSound === opt.id;
+                return (
+                  <button
+                    key={opt.id}
+                    type="button"
+                    onClick={() => handleSelectAmbient(opt.id)}
+                    title={opt.description}
+                    className={`flex flex-col items-center justify-center p-2 rounded-xl text-center border transition-all ${
+                      isSelected
+                        ? 'border-indigo-500 bg-indigo-50 dark:bg-indigo-500/20 text-indigo-700 dark:text-indigo-200 shadow-sm'
+                        : 'border-slate-200/70 dark:border-white/5 bg-white dark:bg-slate-900/60 text-slate-600 dark:text-slate-400 hover:border-slate-300 dark:hover:border-white/10'
+                    }`}
+                  >
+                    <span className="text-base select-none">{opt.icon}</span>
+                    <span className="text-[10px] font-bold mt-0.5 truncate w-full">
+                      {opt.name}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
           </div>
 
           {/* Tamamlanan Oturum Sayacı */}

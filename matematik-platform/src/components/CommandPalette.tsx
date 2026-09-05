@@ -145,6 +145,24 @@ export default function CommandPalette() {
         icon: Award,
         action: () => openTool('report_card', '/ilerleme'),
       },
+      {
+        id: 'topic_weights',
+        label: 'MEB & ÖSYM Çıkmış Soru Dağılım Matrisi',
+        category: 'Araç',
+        hint: 'Son 5 yıl LGS, TYT ve AYT konu ağırlıkları ve kritik kazanımlar',
+        keywords: ['matris', 'cikmis', 'soru', 'dagilim', 'agirlik', 'lgs', 'tyt', 'ayt', 'istatistik'],
+        icon: BarChart3,
+        action: () => openTool('topic-weights'),
+      },
+      {
+        id: 'weekly_planner',
+        label: 'A4 Masabaşı Haftalık Çalışma Çizelgesi',
+        category: 'Araç',
+        hint: 'Kişiselleştirilebilir soru hedefi, Pomodoro takibi ve A4 yazdır',
+        keywords: ['cizelge', 'haftalik', 'plan', 'planner', 'calisma', 'program', 'yazdir', 'a4'],
+        icon: ClipboardList,
+        action: () => openTool('weekly-planner'),
+      },
 
       // Eğlenceli Matematik Oyunları
       {

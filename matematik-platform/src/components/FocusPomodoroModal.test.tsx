@@ -51,4 +51,19 @@ describe('FocusPomodoroModal', () => {
 
     expect(localStorage.getItem('ugurhoca:sound_muted')).toBe('true');
   });
+
+  it('renders ambient focus noise options and allows selecting noise modes', () => {
+    render(<FocusPomodoroModal isOpen={true} onClose={vi.fn()} />);
+
+    expect(screen.getByText('Arka Plan Ambiyans Sesi')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /Kahverengi Gürültü/i })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /Pembe Gürültü/i })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /432 Hz Zihin Akordu/i })).toBeInTheDocument();
+
+    // Kahverengi gürültü seç
+    const brownBtn = screen.getByRole('button', { name: /Kahverengi Gürültü/i });
+    fireEvent.click(brownBtn);
+
+    expect(screen.getByText('Sayaç başladığında çalar')).toBeInTheDocument();
+  });
 });

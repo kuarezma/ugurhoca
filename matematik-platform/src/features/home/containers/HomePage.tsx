@@ -91,6 +91,22 @@ const MathGlossaryModal = dynamic(
   { ssr: false },
 );
 
+const ExamTopicWeightMatrixModal = dynamic(
+  () =>
+    import('@/features/programs/components/ExamTopicWeightMatrixModal').then((m) => ({
+      default: m.ExamTopicWeightMatrixModal,
+    })),
+  { ssr: false },
+);
+
+const PrintableWeeklyPlannerModal = dynamic(
+  () =>
+    import('@/features/programs/components/PrintableWeeklyPlannerModal').then((m) => ({
+      default: m.PrintableWeeklyPlannerModal,
+    })),
+  { ssr: false },
+);
+
 type HomePageProps = {
   activeLiveLesson?: LiveLesson | null;
   initialFeed?: HomeInitialFeed | null;
@@ -111,6 +127,8 @@ export default function HomePage({ activeLiveLesson, initialFeed }: HomePageProp
   const [isProofsOpen, setIsProofsOpen] = useState(false);
   const [isCheatSheetOpen, setIsCheatSheetOpen] = useState(false);
   const [isGlossaryOpen, setIsGlossaryOpen] = useState(false);
+  const [isTopicWeightsOpen, setIsTopicWeightsOpen] = useState(false);
+  const [isWeeklyPlannerOpen, setIsWeeklyPlannerOpen] = useState(false);
 
   useEffect(() => {
     const handleToolEvent = (e: Event) => {
@@ -137,6 +155,10 @@ export default function HomePage({ activeLiveLesson, initialFeed }: HomePageProp
         setIsCheatSheetOpen(true);
       } else if (tool === 'glossary') {
         setIsGlossaryOpen(true);
+      } else if (tool === 'topic-weights' || tool === 'weights') {
+        setIsTopicWeightsOpen(true);
+      } else if (tool === 'weekly-planner' || tool === 'planner') {
+        setIsWeeklyPlannerOpen(true);
       }
     };
 
@@ -211,6 +233,8 @@ export default function HomePage({ activeLiveLesson, initialFeed }: HomePageProp
           onOpenProofs={() => setIsProofsOpen(true)}
           onOpenCheatSheet={() => setIsCheatSheetOpen(true)}
           onOpenGlossary={() => setIsGlossaryOpen(true)}
+          onOpenTopicWeights={() => setIsTopicWeightsOpen(true)}
+          onOpenWeeklyPlanner={() => setIsWeeklyPlannerOpen(true)}
         />
         <div className="defer-section">
           <HomeSuccessRoadmap
@@ -325,6 +349,18 @@ export default function HomePage({ activeLiveLesson, initialFeed }: HomePageProp
           isOpen={isGlossaryOpen}
           onClose={() => setIsGlossaryOpen(false)}
           isLight={isLight}
+        />
+      ) : null}
+      {isTopicWeightsOpen ? (
+        <ExamTopicWeightMatrixModal
+          isOpen={isTopicWeightsOpen}
+          onClose={() => setIsTopicWeightsOpen(false)}
+        />
+      ) : null}
+      {isWeeklyPlannerOpen ? (
+        <PrintableWeeklyPlannerModal
+          isOpen={isWeeklyPlannerOpen}
+          onClose={() => setIsWeeklyPlannerOpen(false)}
         />
       ) : null}
     </main>

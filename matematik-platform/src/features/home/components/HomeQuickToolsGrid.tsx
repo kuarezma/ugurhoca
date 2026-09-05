@@ -12,6 +12,8 @@ import {
   Activity,
   Compass,
   BookMarked,
+  TrendingUp,
+  Calendar,
 } from 'lucide-react';
 
 type HomeQuickToolsGridProps = {
@@ -25,6 +27,8 @@ type HomeQuickToolsGridProps = {
   onOpenProofs?: () => void;
   onOpenCheatSheet?: () => void;
   onOpenGlossary?: () => void;
+  onOpenTopicWeights?: () => void;
+  onOpenWeeklyPlanner?: () => void;
 };
 
 export function HomeQuickToolsGrid({
@@ -38,6 +42,8 @@ export function HomeQuickToolsGrid({
   onOpenProofs,
   onOpenCheatSheet,
   onOpenGlossary,
+  onOpenTopicWeights,
+  onOpenWeeklyPlanner,
 }: HomeQuickToolsGridProps) {
   const tools = [
     {
@@ -121,6 +127,30 @@ export function HomeQuickToolsGrid({
       href: '#',
       buttonLabel: 'Sözlüğü Aç',
       badge: 'Sözlük 📖',
+    },
+    {
+      id: 'topicWeights',
+      title: 'LGS & YKS Çıkmış Soru Dağılım Matrisi',
+      description: 'Son 5 yılın MEB & ÖSYM soru adetleri, konu ağırlıkları ve yüksek getirili kritik kazanımlar.',
+      icon: TrendingUp,
+      gradient: 'from-amber-500 via-rose-500 to-indigo-600',
+      actionType: onOpenTopicWeights ? 'modal' : 'link',
+      action: onOpenTopicWeights,
+      href: '#',
+      buttonLabel: 'Matrisi İncele',
+      badge: 'Soru Matrisi 📊',
+    },
+    {
+      id: 'weeklyPlanner',
+      title: 'A4 Masabaşı Haftalık Çalışma Çizelgesi',
+      description: 'Kişiselleştirilebilir gün gün soru hedefi, Pomodoro blokları ve mürekkep tasarruflu A4 çıktısı.',
+      icon: Calendar,
+      gradient: 'from-emerald-500 via-teal-600 to-sky-600',
+      actionType: onOpenWeeklyPlanner ? 'modal' : 'link',
+      action: onOpenWeeklyPlanner,
+      href: '#',
+      buttonLabel: 'Çizelgeyi Aç',
+      badge: 'Haftalık Plan 🗓️',
     },
     {
       id: 'checklist',
