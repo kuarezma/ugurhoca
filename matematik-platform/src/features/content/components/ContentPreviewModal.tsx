@@ -1,31 +1,69 @@
+import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Download, Eye, FileText, Key, X, ExternalLink } from 'lucide-react';
+import {
+  Check,
+  CheckCircle2,
+  Download,
+  Eye,
+  FileText,
+  Key,
+  Printer,
+  Share2,
+  X,
+  ExternalLink,
+} from 'lucide-react';
 import { getDriveId, getYouTubeId } from '@/features/content/utils';
 import { getWorksheetVisibleDescription } from '@/features/content/worksheet-display';
 import { useAccessibleModal } from '@/hooks/useAccessibleModal';
 import type { ContentDocument } from '@/types';
 
 type ContentPreviewModalProps = {
+  isCompleted?: boolean;
   onClose: () => void;
   onDownload: (content: ContentDocument) => void | Promise<void>;
   onToggleAnswerKey: () => void;
+  onToggleCompleted?: (content: ContentDocument) => void | Promise<void>;
   previewDoc: ContentDocument;
   showAnswerKey: boolean;
 };
 
+
 export default function ContentPreviewModal({
+  isCompleted,
   onClose,
   onDownload,
   onToggleAnswerKey,
+  onToggleCompleted,
   previewDoc,
   showAnswerKey,
 }: ContentPreviewModalProps) {
+  const [copiedLink, setCopiedLink] = useState(false);
   const modalRef = useAccessibleModal<HTMLDivElement>(true, onClose);
   const visibleDescription = getWorksheetVisibleDescription(previewDoc);
   const previewVideoId = previewDoc.video_url
     ? getYouTubeId(previewDoc.video_url)
     : null;
   const driveId = previewDoc.file_url ? getDriveId(previewDoc.file_url) : null;
+
+  const handleCopyLink = async () => {
+    try {
+      const url = `${window.location.origin}/icerikler?id=${previewDoc.id}`;
+      await navigator.clipboard.writeText(url);
+      setCopiedLink(true);
+      setTimeout(() => setCopiedLink(false), 2000);
+    } catch {
+      // ignore
+    }
+  };
+
+  const handlePrint = () => {
+    if (previewDoc.file_url) {
+      window.open(previewDoc.file_url, '_blank');
+    } else {
+      window.print();
+    }
+  };
+
 
   return (
     <motion.div
@@ -162,6 +200,41 @@ export default function ContentPreviewModal({
                 Çözüm PDF
               </a>
             )}
+            {onToggleCompleted && (
+              <button
+                onClick={() => onToggleCompleted(previewDoc)}
+                className={`flex w-full items-center justify-center gap-1.5 rounded-xl border px-3 py-2.5 text-xs font-semibold transition-colors sm:w-auto sm:px-4 sm:text-sm ${
+                  isCompleted
+                    ? 'border-emerald-500/40 bg-emerald-500/20 text-emerald-300'
+                    : 'border-white/10 bg-slate-800/60 text-slate-300 hover:bg-slate-700'
+                }`}
+              >
+                <CheckCircle2 className="h-4 w-4 text-emerald-400" />
+                {isCompleted ? 'Çözüldü' : 'Tamamla'}
+              </button>
+            )}
+            <button
+              onClick={handleCopyLink}
+              className={`flex w-full items-center justify-center gap-1.5 rounded-xl border px-3 py-2.5 text-xs font-semibold transition-colors sm:w-auto sm:px-4 sm:text-sm ${
+                copiedLink
+                  ? 'border-cyan-400/40 bg-cyan-500/20 text-cyan-300'
+                  : 'border-white/10 bg-slate-800/60 text-slate-300 hover:bg-slate-700'
+              }`}
+            >
+              {copiedLink ? (
+                <Check className="h-4 w-4 text-cyan-400" />
+              ) : (
+                <Share2 className="h-4 w-4" />
+              )}
+              {copiedLink ? 'Kopyalandı!' : 'Paylaş'}
+            </button>
+            <button
+              onClick={handlePrint}
+              className="flex w-full items-center justify-center gap-1.5 rounded-xl border border-white/10 bg-slate-800/60 px-3 py-2.5 text-xs font-semibold text-slate-300 transition-colors hover:bg-slate-700 sm:w-auto sm:px-4 sm:text-sm"
+            >
+              <Printer className="h-4 w-4 text-amber-300" />
+              Yazdır
+            </button>
             {previewDoc.file_url && (
               <a
                 href={previewDoc.file_url}
@@ -182,6 +255,7 @@ export default function ContentPreviewModal({
             </button>
           </div>
         </div>
+
 
         {showAnswerKey && previewDoc.answer_key_text && (
           <motion.div

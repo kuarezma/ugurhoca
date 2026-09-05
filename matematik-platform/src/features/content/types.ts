@@ -1,6 +1,21 @@
 import type { AppUser, Comment, ContentDocument, GradeValue } from '@/types';
 
 export type ContentGradeFilter = number | 'all' | 'Mezun';
+export type ContentSortOrder = 'newest' | 'downloads' | 'views' | 'likes';
+export type ContentQuickFilter =
+  | 'all'
+  | 'favorites'
+  | 'completed'
+  | 'with_solution'
+  | 'with_video';
+
+export type ContentQueryOptions = {
+  onlySolution?: boolean;
+  onlyVideo?: boolean;
+  searchTerm?: string;
+  sortBy?: ContentSortOrder;
+};
+
 export type ContentDocumentsPayload = {
   count: number;
   documents: ContentDocument[];
@@ -10,6 +25,7 @@ export type ContentPrefetchPayload = ContentDocumentsPayload & {
   grade: ContentGradeFilter;
   type: string;
 };
+
 
 export type ContentPageUser = AppUser;
 

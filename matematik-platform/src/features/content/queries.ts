@@ -10,7 +10,9 @@ import type {
   ContentGradeFilter,
   ContentPageUser,
   ContentPrefetchPayload,
+  ContentQueryOptions,
 } from '@/features/content/types';
+
 import {
   CONTENT_PAGE_SIZE,
   CONTENT_TYPE_MAPPING,
@@ -51,7 +53,14 @@ const getContentDocumentCacheKey = (
   pageSize: number,
   gradeFilter: ContentGradeFilter,
   typeFilter: string,
-) => `${page}:${pageSize}:${String(gradeFilter)}:${typeFilter}`;
+  options?: ContentQueryOptions,
+) => {
+  const search = options?.searchTerm?.trim().toLowerCase() || '';
+  const sort = options?.sortBy || 'newest';
+  const solution = options?.onlySolution ? '1' : '0';
+  const video = options?.onlyVideo ? '1' : '0';
+  return `${page}:${pageSize}:${String(gradeFilter)}:${typeFilter}:${search}:${sort}:${solution}:${video}`;
+};
 
 export const clearContentDocumentCache = () => {
   contentDocumentCache.clear();
@@ -66,12 +75,14 @@ export const seedContentDocumentCache = (
   gradeFilter: ContentGradeFilter,
   typeFilter: string,
   payload: ContentDocumentsPayload,
+  options?: ContentQueryOptions,
 ) => {
   const cacheKey = getContentDocumentCacheKey(
     page,
     pageSize,
     gradeFilter,
     typeFilter,
+    options,
   );
 
   contentDocumentCache.set(cacheKey, {
@@ -158,12 +169,14 @@ export const loadContentDocuments = async (
   pageSize: number,
   gradeFilter: ContentGradeFilter,
   typeFilter: string,
+  options?: ContentQueryOptions,
 ) => {
   const cacheKey = getContentDocumentCacheKey(
     page,
     pageSize,
     gradeFilter,
     typeFilter,
+    options,
   );
   const cached = contentDocumentCache.get(cacheKey);
 
@@ -198,10 +211,22 @@ export const loadContentDocuments = async (
           : countQuery.in('type', queryTypes);
     }
 
+    if (options?.searchTerm?.trim()) {
+      const term = `%${options.searchTerm.trim()}%`;
+      countQuery = countQuery.or(`title.ilike.${term},description.ilike.${term}`);
+    }
+
+    if (options?.onlyVideo) {
+      countQuery = countQuery.not('video_url', 'is', null).neq('video_url', '');
+    }
+
+    if (options?.onlySolution) {
+      countQuery = countQuery.or('solution_url.neq.,answer_key_text.neq.');
+    }
+
     let dataQuery = supabase
       .from('documents')
-      .select('*')
-      .order('created_at', { ascending: false });
+      .select('*');
 
     if (gradeFilter !== 'all') {
       dataQuery = dataQuery.contains('grade', [gradeFilter]);
@@ -214,19 +239,59 @@ export const loadContentDocuments = async (
           : dataQuery.in('type', queryTypes);
     }
 
+    if (options?.searchTerm?.trim()) {
+      const term = `%${options.searchTerm.trim()}%`;
+      dataQuery = dataQuery.or(`title.ilike.${term},description.ilike.${term}`);
+    }
+
+    if (options?.onlyVideo) {
+      dataQuery = dataQuery.not('video_url', 'is', null).neq('video_url', '');
+    }
+
+    if (options?.onlySolution) {
+      dataQuery = dataQuery.or('solution_url.neq.,answer_key_text.neq.');
+    }
+
+    if (options?.sortBy === 'downloads') {
+      dataQuery = dataQuery
+        .order('downloads', { ascending: false, nullsFirst: false })
+        .order('created_at', { ascending: false });
+    } else if (options?.sortBy === 'views') {
+      dataQuery = dataQuery
+        .order('views', { ascending: false, nullsFirst: false })
+        .order('created_at', { ascending: false });
+    } else if (options?.sortBy === 'likes') {
+      dataQuery = dataQuery
+        .order('likes', { ascending: false, nullsFirst: false })
+        .order('created_at', { ascending: false });
+    } else {
+      dataQuery = dataQuery.order('created_at', { ascending: false });
+    }
+
     const [{ count }, { data }] = await Promise.all([
       countQuery,
       dataQuery.range(from, to),
     ]);
 
+    const docs = (data || []) as ContentDocument[];
+    const sortedDocs =
+      !options?.sortBy || options.sortBy === 'newest'
+        ? sortContentDocumentsByNewest(docs)
+        : docs;
+
     const payload = {
       count: count || 0,
-      documents: sortContentDocumentsByNewest(
-        (data || []) as ContentDocument[],
-      ),
+      documents: sortedDocs,
     };
 
-    seedContentDocumentCache(page, pageSize, gradeFilter, typeFilter, payload);
+    seedContentDocumentCache(
+      page,
+      pageSize,
+      gradeFilter,
+      typeFilter,
+      payload,
+      options,
+    );
 
     return payload;
   })();
@@ -239,6 +304,27 @@ export const loadContentDocuments = async (
     pendingContentDocumentRequests.delete(cacheKey);
   }
 };
+
+export const loadDocumentById = async (
+  documentId: string,
+): Promise<ContentDocument | null> => {
+  try {
+    const { data, error } = await supabase
+      .from('documents')
+      .select('*')
+      .eq('id', documentId)
+      .maybeSingle();
+
+    if (error || !data) {
+      return null;
+    }
+
+    return data as ContentDocument;
+  } catch {
+    return null;
+  }
+};
+
 
 export const resolveContentUser = async () => {
   const localUser = localStorage.getItem('matematiklab_user');

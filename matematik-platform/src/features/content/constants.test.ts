@@ -1,9 +1,11 @@
 import {
+  CONTENT_SORT_OPTIONS,
   CONTENT_TYPE_MAPPING,
   CONTENT_TYPE_OPTIONS,
   getContentTypeLabel,
   getContentTypeQueryTypes,
 } from '@/features/content/constants';
+
 
 describe('content category constants', () => {
   it('merges trial exam and exam categories under Deneme-Sınav', () => {
@@ -35,4 +37,20 @@ describe('content category constants', () => {
       'deneme-sinav',
     ]);
   });
+
+  it('maps chip types to canonical database types correctly', () => {
+    expect(CONTENT_TYPE_MAPPING['ders-notu']).toBe('ders-notlari');
+    expect(CONTENT_TYPE_MAPPING['deneme-sinavi']).toBe('deneme-sinav');
+    expect(CONTENT_TYPE_MAPPING.video).toBe('ders-videolari');
+    expect(CONTENT_TYPE_MAPPING.videolar).toBe('ders-videolari');
+  });
+
+  it('defines sort options for content filtering', () => {
+    const ids = CONTENT_SORT_OPTIONS.map((o) => o.id);
+    expect(ids).toContain('newest');
+    expect(ids).toContain('downloads');
+    expect(ids).toContain('views');
+    expect(ids).toContain('likes');
+  });
 });
+

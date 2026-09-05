@@ -18,7 +18,9 @@ const GRADE_OPTIONS = [
   { id: '10', label: '10. Sınıf' },
   { id: '11', label: '11. Sınıf' },
   { id: '12', label: '12. Sınıf (YKS)' },
+  { id: 'Mezun', label: 'Mezun' },
 ];
+
 
 const TYPE_OPTIONS = [
   { id: 'all', label: 'Tüm Türler' },

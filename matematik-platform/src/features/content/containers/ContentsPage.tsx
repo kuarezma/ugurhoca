@@ -11,11 +11,8 @@ import {
   Calculator,
   Filter,
   FolderOpen,
-  Grid,
   Layers3,
-  List,
   Plus,
-  Search,
 } from 'lucide-react';
 import { useToast } from '@/components/Toast';
 import { getErrorMessage } from '@/lib/error-utils';
@@ -53,13 +50,19 @@ const ContentDeleteConfirmModal = dynamic(
 import {
   CONTENT_PAGE_SIZE,
   CONTENT_TYPE_MAPPING,
-  CONTENT_TYPE_OPTIONS,
 } from '@/features/content/constants';
+import ContentFilterBar, {
+  type ContentViewMode,
+} from '@/features/content/components/ContentFilterBar';
+import ContentTopicPacks from '@/features/content/components/ContentTopicPacks';
+import { useContentCompletion } from '@/features/content/hooks/useContentCompletion';
+import { useCloudFavorites } from '@/features/content/hooks/useCloudFavorites';
 import {
   createContentDocument,
   createDocumentComment,
   deleteContentDocument,
   loadContentDocuments,
+  loadDocumentById,
   loadDocumentComments,
   loadWorksheetDocumentsByGrade,
   resolveContentUser,
@@ -73,7 +76,11 @@ import type {
   ContentFormState,
   ContentGradeFilter,
   ContentPageUser,
+  ContentQueryOptions,
+  ContentQuickFilter,
+  ContentSortOrder,
 } from '@/features/content/types';
+
 import {
   getContentPageDescription,
   getContentPageTitle,
@@ -88,8 +95,6 @@ import {
 } from '@/features/content/worksheet-display';
 import type { WorksheetCatalogItem } from '@/features/content/worksheet-catalog';
 import type { ContentDocument, GradeValue } from '@/types';
-
-const GRADE_OPTIONS = [5, 6, 7, 8, 9, 10, 11, 12] as const;
 
 type WorksheetGradeSelection = number | 'Mezun';
 
@@ -252,12 +257,28 @@ function ContentsPageInner({
     initialDocuments,
   );
   const [searchTerm, setSearchTerm] = useState('');
+  const [debouncedSearch, setDebouncedSearch] = useState('');
+  const [sortBy, setSortBy] = useState<ContentSortOrder>('newest');
+  const [quickFilter, setQuickFilter] = useState<ContentQuickFilter>('all');
   const [selectedGrade, setSelectedGrade] =
     useState<ContentGradeFilter>(initialGrade);
   const [selectedType, setSelectedType] = useState<string>(initialType);
-  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
+  const [viewMode, setViewMode] = useState<ContentViewMode>('grid');
   const [likedDocs, setLikedDocs] = useState<Set<string>>(new Set());
-  const [favorites, setFavorites] = useState<Set<string>>(new Set());
+  const { isFavorite, toggleFavorite } = useCloudFavorites(user?.id);
+  const {
+    completedDocIds: _completedDocIds,
+    isCompleted,
+    toggleCompleted,
+  } = useContentCompletion(user?.id);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearch(searchTerm);
+    }, 300);
+    return () => clearTimeout(timer);
+  }, [searchTerm]);
+
   const [showComments, setShowComments] = useState<string | null>(null);
   const [comments, setComments] = useState<ContentComment[]>([]);
   const [newComment, setNewComment] = useState('');
@@ -357,6 +378,7 @@ function ContentsPageInner({
       append = false,
       gradeFilter: ContentGradeFilter = 'all',
       typeFilter = 'all',
+      options?: ContentQueryOptions,
     ) => {
       const requestId = ++loadRequestIdRef.current;
       setLoading(true);
@@ -366,6 +388,7 @@ function ContentsPageInner({
           CONTENT_PAGE_SIZE,
           gradeFilter,
           typeFilter,
+          options,
         );
 
         if (requestId !== loadRequestIdRef.current) {
@@ -426,7 +449,25 @@ function ContentsPageInner({
       return;
     }
 
-    if (selectedGrade === initialGrade && selectedType === initialType) {
+    const queryOptions: ContentQueryOptions = {
+      onlySolution: quickFilter === 'with_solution',
+      onlyVideo: quickFilter === 'with_video',
+      searchTerm: debouncedSearch,
+      sortBy,
+    };
+
+    const hasCustomFilters = Boolean(
+      debouncedSearch.trim() ||
+        sortBy !== 'newest' ||
+        quickFilter === 'with_solution' ||
+        quickFilter === 'with_video',
+    );
+
+    if (
+      !hasCustomFilters &&
+      selectedGrade === initialGrade &&
+      selectedType === initialType
+    ) {
       setPage(1);
       loadRequestIdRef.current += 1;
       setDocuments(initialDocuments);
@@ -437,16 +478,19 @@ function ContentsPageInner({
     }
 
     setPage(1);
-    void loadDocuments(1, false, selectedGrade, selectedType);
+    void loadDocuments(1, false, selectedGrade, selectedType, queryOptions);
   }, [
     authResolved,
+    debouncedSearch,
     initialDocuments,
     initialGrade,
     initialTotalCount,
     initialType,
     loadDocuments,
+    quickFilter,
     selectedGrade,
     selectedType,
+    sortBy,
     isWorksheetBrowser,
   ]);
 
@@ -464,7 +508,12 @@ function ContentsPageInner({
         if (entries[0]?.isIntersecting && hasMore && !loading) {
           const nextPage = page + 1;
           setPage(nextPage);
-          void loadDocuments(nextPage, true, selectedGrade, selectedType);
+          void loadDocuments(nextPage, true, selectedGrade, selectedType, {
+            onlySolution: quickFilter === 'with_solution',
+            onlyVideo: quickFilter === 'with_video',
+            searchTerm: debouncedSearch,
+            sortBy,
+          });
         }
       },
       {
@@ -480,14 +529,18 @@ function ContentsPageInner({
     return () => observer.disconnect();
   }, [
     authResolved,
+    debouncedSearch,
     hasMore,
     loadDocuments,
     loading,
     page,
+    quickFilter,
     selectedGrade,
     selectedType,
+    sortBy,
     isWorksheetBrowser,
   ]);
+
 
   useEffect(() => {
     const checkSession = async () => {
@@ -513,14 +566,6 @@ function ContentsPageInner({
     void checkSession();
   }, []);
 
-  useEffect(() => {
-    const savedFavorites = localStorage.getItem('favorites');
-    if (!savedFavorites) return;
-
-    try {
-      setFavorites(new Set(JSON.parse(savedFavorites)));
-    } catch {}
-  }, []);
 
   const resetWorksheetHierarchy = useCallback(() => {
     worksheetRequestIdRef.current += 1;
@@ -642,20 +687,6 @@ function ContentsPageInner({
     worksheetOutcomeFromUrl,
   ]);
 
-  const toggleFavorite = useCallback((docId: string) => {
-    setFavorites((current) => {
-      const next = new Set(current);
-      if (next.has(docId)) {
-        next.delete(docId);
-      } else {
-        next.add(docId);
-      }
-
-      localStorage.setItem('favorites', JSON.stringify([...next]));
-      return next;
-    });
-  }, []);
-
   const handleOpenPreview = useCallback(
     (content: ContentDocument) => {
       setShowAnswerKey(false);
@@ -675,6 +706,14 @@ function ContentsPageInner({
         },
         userId: user?.id,
       });
+
+      try {
+        const url = new URL(window.location.href);
+        url.searchParams.set('id', content.id);
+        window.history.replaceState({}, '', url.toString());
+      } catch {
+        // ignore
+      }
     },
     [applyDocumentPatch, user?.id],
   );
@@ -682,7 +721,37 @@ function ContentsPageInner({
   const handleClosePreview = useCallback(() => {
     setPreviewDoc(null);
     setShowAnswerKey(false);
+    try {
+      const url = new URL(window.location.href);
+      url.searchParams.delete('id');
+      url.searchParams.delete('doc');
+      window.history.replaceState({}, '', url.toString());
+    } catch {
+      // ignore
+    }
   }, []);
+
+  const requestedDocId = searchParams.get('id') || searchParams.get('doc');
+  useEffect(() => {
+    if (!requestedDocId || previewDoc?.id === requestedDocId) {
+      return;
+    }
+    const found =
+      documents.find((d) => d.id === requestedDocId) ||
+      worksheetDocuments.find((d) => d.id === requestedDocId);
+
+    if (found) {
+      handleOpenPreview(found);
+      return;
+    }
+
+    void loadDocumentById(requestedDocId).then((doc) => {
+      if (doc) {
+        handleOpenPreview(doc);
+      }
+    });
+  }, [requestedDocId, documents, worksheetDocuments, previewDoc?.id, handleOpenPreview]);
+
 
   const handleDownloadDocument = useCallback(
     async (content: ContentDocument) => {
@@ -1058,9 +1127,36 @@ function ContentsPageInner({
   }, [deleteCandidate, removeDocumentFromState, showToast]);
 
   const filteredContents = documents.filter((content) => {
-    if (!content.title) return false;
-    return content.title.toLowerCase().includes(searchTerm.toLowerCase());
+    if (quickFilter === 'favorites' && !isFavorite(content.id)) {
+      return false;
+    }
+    if (quickFilter === 'completed' && !isCompleted(content.id)) {
+      return false;
+    }
+    if (
+      quickFilter === 'with_solution' &&
+      !content.solution_url &&
+      !content.answer_key_text
+    ) {
+      return false;
+    }
+    if (
+      quickFilter === 'with_video' &&
+      !content.video_url &&
+      content.type !== 'ders-videolari'
+    ) {
+      return false;
+    }
+    if (!searchTerm.trim()) return true;
+    const term = searchTerm.toLowerCase();
+    return (
+      Boolean(content.title && content.title.toLowerCase().includes(term)) ||
+      Boolean(
+        content.description && content.description.toLowerCase().includes(term),
+      )
+    );
   });
+
 
   const filteredWorksheetGrades = WORKSHEET_GRADE_OPTIONS.filter((grade) => {
     if (!searchTerm.trim()) {
@@ -1251,135 +1347,49 @@ function ContentsPageInner({
             transition={{ delay: 0.1 }}
             className="glass rounded-2xl p-4 sm:p-6 mb-8 border border-white/10 shadow-brand-glow/40 backdrop-blur-xl"
           >
-            <div className="flex flex-col lg:flex-row gap-4">
-              <div className="flex-1 relative">
-                <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
-                <input
-                  type="text"
-                  placeholder={searchPlaceholder}
-                  value={searchTerm}
-                  onChange={(event) => setSearchTerm(event.target.value)}
-                  className="w-full bg-slate-800/50 border border-slate-700 rounded-xl pl-12 pr-4 py-3 text-sm sm:text-base text-white focus:outline-none focus:border-purple-500 transition-colors"
-                />
-              </div>
+            <ContentFilterBar
+              isWorksheetBrowser={isWorksheetBrowser}
+              onClearSearch={() => setSearchTerm('')}
+              onQuickFilterChange={setQuickFilter}
+              onSearchChange={setSearchTerm}
+              onSortChange={setSortBy}
+              onViewModeChange={setViewMode}
+              quickFilter={quickFilter}
+              searchPlaceholder={searchPlaceholder}
+              searchTerm={searchTerm}
+              sortBy={sortBy}
+              totalResults={filteredContents.length}
+              viewMode={viewMode}
+            />
 
-              <div className="flex gap-3 flex-wrap">
-                {!isWorksheetBrowser && (
-                  <>
-                    <select
-                      value={selectedGrade}
-                      onChange={(event) => {
-                        const value = event.target.value;
-                        if (value === 'all') {
-                          setSelectedGrade('all');
-                        } else if (value === 'Mezun') {
-                          setSelectedGrade('Mezun');
-                        } else {
-                          setSelectedGrade(parseInt(value));
-                        }
-                      }}
-                      className="bg-slate-800/50 border border-slate-700 rounded-xl px-4 py-3 text-sm sm:text-base text-white focus:outline-none focus:border-purple-500 transition-colors"
-                    >
-                      <option value="all">Tüm Sınıflar</option>
-                      {GRADE_OPTIONS.map((grade) => (
-                        <option key={grade} value={grade}>
-                          {grade}. Sınıf
-                        </option>
-                      ))}
-                      <option value="Mezun">Mezun</option>
-                    </select>
-
-                    {user && !user.isAdmin && (
-                      <button
-                        onClick={() =>
-                          setSelectedGrade(
-                            selectedGrade === 'all'
-                              ? normalizeContentGrade(user.grade)
-                              : 'all',
-                          )
-                        }
-                        className={`px-4 py-3 rounded-xl border text-sm font-semibold transition-colors ${
-                          selectedGrade === 'all'
-                            ? 'bg-emerald-500/20 border-emerald-500/30 text-emerald-300'
-                            : 'bg-slate-800/50 border-slate-700 text-slate-300 hover:text-white'
-                        }`}
-                      >
-                        {selectedGrade === 'all'
-                          ? 'Tüm Sınıflar Açık'
-                          : 'Diğer Sınıfları da Göster'}
-                      </button>
-                    )}
-                  </>
+            {isWorksheetBrowser && (
+              <div className="mt-3 flex gap-2 flex-wrap">
+                {selectedWorksheetGrade && (
+                  <button
+                    onClick={() => {
+                      resetWorksheetHierarchy();
+                      updateWorksheetBrowserUrl(null);
+                      setSearchTerm('');
+                    }}
+                    className="px-4 py-2 rounded-xl border border-slate-700 bg-slate-800/50 text-xs sm:text-sm font-semibold text-slate-200 transition-colors hover:text-white"
+                  >
+                    Sınıf Kartları
+                  </button>
                 )}
-
-                <select
-                  value={selectedType}
-                  onChange={(event) => handleTypeChange(event.target.value)}
-                  className="bg-slate-800/50 border border-slate-700 rounded-xl px-4 py-3 text-sm sm:text-base text-white focus:outline-none focus:border-purple-500 transition-colors"
-                >
-                  <option value="all">Tüm Türler</option>
-                  {CONTENT_TYPE_OPTIONS.map((option) => (
-                    <option key={option.value} value={option.value}>
-                      {option.label}
-                    </option>
-                  ))}
-                </select>
-
-                {isWorksheetBrowser && (
-                  <>
-                    {selectedWorksheetGrade && (
-                      <button
-                        onClick={() => {
-                          resetWorksheetHierarchy();
-                          updateWorksheetBrowserUrl(null);
-                          setSearchTerm('');
-                        }}
-                        className="px-4 py-3 rounded-xl border border-slate-700 bg-slate-800/50 text-sm font-semibold text-slate-200 transition-colors hover:text-white"
-                      >
-                        Sınıf Kartları
-                      </button>
-                    )}
-                    {selectedWorksheetOutcome && (
-                      <button
-                        onClick={() => {
-                          setSelectedWorksheetOutcome(null);
-                          updateWorksheetBrowserUrl(selectedWorksheetGrade);
-                          setSearchTerm('');
-                        }}
-                        className="px-4 py-3 rounded-xl border border-purple-500/30 bg-purple-500/15 text-sm font-semibold text-purple-100 transition-colors hover:bg-purple-500/25"
-                      >
-                        Kazanımlara Dön
-                      </button>
-                    )}
-                  </>
-                )}
-
-                {(!isWorksheetBrowser || selectedWorksheetOutcome) && (
-                  <div className="flex glass rounded-xl overflow-hidden">
-                    <button
-                      onClick={() => setViewMode('grid')}
-                      className={`p-3 transition-colors ${
-                        viewMode === 'grid'
-                          ? 'bg-purple-500 text-white'
-                          : 'text-slate-400 hover:text-white'
-                      }`}
-                    >
-                      <Grid className="w-5 h-5" />
-                    </button>
-                    <button
-                      onClick={() => setViewMode('list')}
-                      className={`p-3 transition-colors ${
-                        viewMode === 'list'
-                          ? 'bg-purple-500 text-white'
-                          : 'text-slate-400 hover:text-white'
-                      }`}
-                    >
-                      <List className="w-5 h-5" />
-                    </button>
-                  </div>
+                {selectedWorksheetOutcome && (
+                  <button
+                    onClick={() => {
+                      setSelectedWorksheetOutcome(null);
+                      updateWorksheetBrowserUrl(selectedWorksheetGrade);
+                      setSearchTerm('');
+                    }}
+                    className="px-4 py-2 rounded-xl border border-purple-500/30 bg-purple-500/15 text-xs sm:text-sm font-semibold text-purple-100 transition-colors hover:bg-purple-500/25"
+                  >
+                    Kazanımlara Dön
+                  </button>
                 )}
               </div>
-            </div>
+            )}
 
             {!isWorksheetBrowser && (
               <div className="mt-4 border-t border-white/10 pt-3">
@@ -1396,6 +1406,9 @@ function ContentsPageInner({
               </div>
             )}
           </motion.div>
+
+
+
 
           {isWorksheetBrowser && (
             <motion.div
@@ -1587,13 +1600,15 @@ function ContentsPageInner({
                       key={content.id}
                       content={content}
                       index={index}
-                      isFavorite={favorites.has(content.id)}
+                      isCompleted={isCompleted(content.id)}
+                      isFavorite={isFavorite(content.id)}
                       isLiked={likedDocs.has(content.id)}
                       onDelete={handleDeleteDocument}
                       onDownload={handleDownloadDocument}
                       onEdit={handleOpenEdit}
                       onOpenComments={handleOpenComments}
                       onPreview={handleOpenPreview}
+                      onToggleCompleted={toggleCompleted}
                       onToggleFavorite={toggleFavorite}
                       onToggleLike={handleToggleLike}
                       user={user}
@@ -1616,13 +1631,15 @@ function ContentsPageInner({
                     key={content.id}
                     content={content}
                     index={index}
-                    isFavorite={favorites.has(content.id)}
+                    isCompleted={isCompleted(content.id)}
+                    isFavorite={isFavorite(content.id)}
                     isLiked={likedDocs.has(content.id)}
                     onDelete={handleDeleteDocument}
                     onDownload={handleDownloadDocument}
                     onEdit={handleOpenEdit}
                     onOpenComments={handleOpenComments}
                     onPreview={handleOpenPreview}
+                    onToggleCompleted={toggleCompleted}
                     onToggleFavorite={toggleFavorite}
                     onToggleLike={handleToggleLike}
                     user={user}
@@ -1630,6 +1647,7 @@ function ContentsPageInner({
                   />
                 ))}
               </div>
+
             ) : (
               <EmptyState
                 tone="soft"
@@ -1674,6 +1692,22 @@ function ContentsPageInner({
                 ) : undefined
               }
             />
+          ) : viewMode === 'packs' ? (
+            <ContentTopicPacks
+              documents={filteredContents}
+              isCompleted={isCompleted}
+              isFavorite={isFavorite}
+              isLiked={(id) => likedDocs.has(id)}
+              onDelete={handleDeleteDocument}
+              onDownload={handleDownloadDocument}
+              onEdit={handleOpenEdit}
+              onOpenComments={handleOpenComments}
+              onPreview={handleOpenPreview}
+              onToggleCompleted={toggleCompleted}
+              onToggleFavorite={toggleFavorite}
+              onToggleLike={handleToggleLike}
+              user={user}
+            />
           ) : viewMode === 'grid' ? (
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-7">
               {filteredContents.map((content, index) => (
@@ -1681,13 +1715,15 @@ function ContentsPageInner({
                   key={content.id}
                   content={content}
                   index={index}
-                  isFavorite={favorites.has(content.id)}
+                  isCompleted={isCompleted(content.id)}
+                  isFavorite={isFavorite(content.id)}
                   isLiked={likedDocs.has(content.id)}
                   onDelete={handleDeleteDocument}
                   onDownload={handleDownloadDocument}
                   onEdit={handleOpenEdit}
                   onOpenComments={handleOpenComments}
                   onPreview={handleOpenPreview}
+                  onToggleCompleted={toggleCompleted}
                   onToggleFavorite={toggleFavorite}
                   onToggleLike={handleToggleLike}
                   user={user}
@@ -1702,13 +1738,15 @@ function ContentsPageInner({
                   key={content.id}
                   content={content}
                   index={index}
-                  isFavorite={favorites.has(content.id)}
+                  isCompleted={isCompleted(content.id)}
+                  isFavorite={isFavorite(content.id)}
                   isLiked={likedDocs.has(content.id)}
                   onDelete={handleDeleteDocument}
                   onDownload={handleDownloadDocument}
                   onEdit={handleOpenEdit}
                   onOpenComments={handleOpenComments}
                   onPreview={handleOpenPreview}
+                  onToggleCompleted={toggleCompleted}
                   onToggleFavorite={toggleFavorite}
                   onToggleLike={handleToggleLike}
                   user={user}
@@ -1717,6 +1755,7 @@ function ContentsPageInner({
               ))}
             </div>
           )}
+
 
           {!isWorksheetBrowser && loading && documents.length > 0 && (
             <div className="flex items-center justify-center py-8">
@@ -1737,14 +1776,17 @@ function ContentsPageInner({
       <AnimatePresence>
         {previewDoc && (
           <ContentPreviewModal
+            isCompleted={isCompleted(previewDoc.id)}
             onClose={handleClosePreview}
             onDownload={handleDownloadDocument}
             onToggleAnswerKey={() => setShowAnswerKey((current) => !current)}
+            onToggleCompleted={toggleCompleted}
             previewDoc={previewDoc}
             showAnswerKey={showAnswerKey}
           />
         )}
       </AnimatePresence>
+
 
       <AnimatePresence>
         {editDoc && (

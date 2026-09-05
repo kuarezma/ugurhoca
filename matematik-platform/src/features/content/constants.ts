@@ -21,14 +21,17 @@ export const CONTENT_TYPE_OPTIONS = [
 
 export const CONTENT_TYPE_MAPPING: Record<string, string> = {
   'ders-notlari': 'ders-notlari',
+  'ders-notu': 'ders-notlari',
   kitaplar: 'kitaplar',
   'yaprak-test': 'yaprak-test',
   'ders-videolari': 'ders-videolari',
   video: 'ders-videolari',
+  videolar: 'ders-videolari',
   deneme: 'deneme-sinav',
   sinav: 'deneme-sinav',
   test: 'deneme-sinav',
   'deneme-sinav': 'deneme-sinav',
+  'deneme-sinavi': 'deneme-sinav',
   worksheet: 'yaprak-test',
   oyunlar: 'oyunlar',
   game: 'oyunlar',
@@ -37,6 +40,14 @@ export const CONTENT_TYPE_MAPPING: Record<string, string> = {
   writing: 'ders-notlari',
   'ders-notuari-kitaplar': 'ders-notlari',
 };
+
+export const CONTENT_SORT_OPTIONS = [
+  { id: 'newest', label: 'En Yeni' },
+  { id: 'downloads', label: 'En Çok İndirilen' },
+  { id: 'views', label: 'En Çok İncelenen' },
+  { id: 'likes', label: 'En Çok Beğenilen' },
+] as const;
+
 
 export const getContentTypeIcon = (type: string): LucideIcon => {
   switch (CONTENT_TYPE_MAPPING[type] || type) {

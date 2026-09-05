@@ -483,4 +483,32 @@ _Son güncelleme: 11 Nisan 2026 — Admin hesabı tek e-postaya indirildi, şifr
 - **Test:** `npm run test --prefix matematik-platform`
 - **Build:** `npm run build --prefix matematik-platform`
 
-_Son güncelleme: 15 Nisan 2026 — Dashboard V2 ve profil fotoğrafı yükleme/sıkıştırma akışı eklendi._
+---
+
+## 20. İçerikler Ekranı Modernizasyonu, Sunucu Araması, Konu Paketleri ve Derin Linkleme (5 Eylül 2026)
+
+### 20.1 Arama, Filtreleme ve Kategori Senkronizasyonu (Aşama 1)
+
+- **Kategori eşleme senkronizasyonu:** `src/features/content/constants.ts` içindeki `CONTENT_TYPE_MAPPING` yapısına eksik anahtarlar eklendi (`ders-notu` -> `ders-notlari`, `deneme-sinavi` -> `deneme-sinav`, `video`/`videolar` -> `ders-videolari`). Bu sayede çip seçimlerinde yaşanan boş sonuç problemi çözüldü.
+- **Sunucu taraflı arama ve sıralama:** `src/features/content/queries.ts` içine `ContentQueryOptions` (`searchTerm`, `sortBy`, `hasVideo`, `hasSolution`) eklendi. Arama başlık ve açıklama üzerinde Supabase `.or()` ile sunucu katmanında çalışır hale getirildi ve `300ms` debounce uygulandı.
+- **Modern filtreleme barı:** `ContentFilterBar` bileşeni eklendi; glassmorphism tasarımında arama kutusu, dinamik sıralama (`newest`, `downloads`, `views`, `likes`), hızlı filtre çipleri (`Tümü`, `Favorilerim`, `Çözüldü`, `Video Anlatımlı`, `Çözümlü`) ve görünüm değiştirici (`grid`, `list`, `packs`) sunuldu.
+
+### 20.2 Öğrenci Deneyimi, Tamamlama Takibi ve Kalıcılık (Aşama 2)
+
+- **Tamamlama takibi:** `useContentCompletion` hook'u geliştirildi (`Set<string>` durumu, `matematiklab_completed_docs` localStorage kalıcılığı ve `trackStudentActivityEvent` telemetrisi).
+- **Bulut/Local favori yönetimi:** `useCloudFavorites` hook'u ile favoriler cihazlar arası senkronize edildi ve etkinlik kaydı tutuldu.
+- **Derin bağlantı (Deep Linking):** `/icerikler?id=<uuid>` sorgu parametresi desteği eklendi. Belge kimliğiyle gelen isteklerde belge otomatik yüklenip `ContentPreviewModal` açılıyor ve `history.replaceState` ile URL güncelleniyor.
+- **Kart ve modal eylemleri:** `ContentCard` ve `ContentPreviewModal` bileşenlerine "Çözüldü" rozeti ve butonu, doğrudan tarayıcı A4 yazdırma (`window.print`) ve tek tıkla paylaşım linki kopyalama eklendi.
+
+### 20.3 Konu Paketleri ve Mimari Entegrasyon (Aşama 3)
+
+- **Konu paketleri modülü:** `src/features/content/components/ContentTopicPacks.tsx` bileşeni eklendi. Belgeleri müfredat kazanımına göre dinamik olarak gruplayıp test, video ve döküman dağılımını, tamamlama yüzdesini ve akordiyon bazlı döküman listesini gösterir.
+- **Kapsamlı testler:** `ContentFilterBar.test.tsx`, `content-hooks.test.ts` ve güncellenen `constants.test.ts` ile toplam 91 test dosyası ve 318 test başarıyla çalıştı.
+
+### 20.4 Doğrulama
+
+- **Lint:** `npm run lint --prefix matematik-platform` (0 hata)
+- **Test:** `npm run test --prefix matematik-platform` (91/91 test dosyası, 318/318 test geçti)
+- **Build:** `npm run build --prefix matematik-platform` (48/48 sayfa Turbopack ile başarıyla üretildi)
+
+_Son güncelleme: 5 Eylül 2026 — İçerikler modernizasyonu (Aşama 1, 2, 3), konu paketleri ve tamamlama takibi eklendi._

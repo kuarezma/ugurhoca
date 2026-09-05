@@ -3,12 +3,15 @@ import { createElement, useState } from 'react';
 import { motion } from 'framer-motion';
 import {
   Calendar,
+  Check,
+  CheckCircle2,
   Download,
   Edit3,
   Eye,
   Heart,
   MessageCircle,
   Play,
+  Share2,
   Star,
   Trash2,
   Users,
@@ -32,6 +35,7 @@ import type { ContentDocument } from '@/types';
 type ContentCardProps = {
   content: ContentDocument;
   index: number;
+  isCompleted?: boolean;
   isFavorite: boolean;
   isLiked: boolean;
   onDelete: (content: ContentDocument) => void | Promise<void>;
@@ -39,11 +43,13 @@ type ContentCardProps = {
   onEdit: (content: ContentDocument) => void;
   onOpenComments: (content: ContentDocument) => void | Promise<void>;
   onPreview: (content: ContentDocument) => void;
+  onToggleCompleted?: (content: ContentDocument) => void | Promise<void>;
   onToggleFavorite: (docId: string) => void;
   onToggleLike: (content: ContentDocument) => void | Promise<void>;
   user: ContentPageUser | null;
   viewMode: 'grid' | 'list';
 };
+
 
 const ContentTypeIcon = ({ type }: { type: string }) => {
   const Icon = getContentTypeIcon(type);
@@ -55,6 +61,7 @@ const ContentTypeIcon = ({ type }: { type: string }) => {
 export default function ContentCard({
   content,
   index,
+  isCompleted,
   isFavorite,
   isLiked,
   onDelete,
@@ -62,12 +69,14 @@ export default function ContentCard({
   onEdit,
   onOpenComments,
   onPreview,
+  onToggleCompleted,
   onToggleFavorite,
   onToggleLike,
   user,
   viewMode,
 }: ContentCardProps) {
   const [thumbnailFailed, setThumbnailFailed] = useState(false);
+  const [copiedLink, setCopiedLink] = useState(false);
   const visibleDescription = getWorksheetVisibleDescription(content);
   const isDriveImage =
     typeof content.file_url === 'string' &&
@@ -81,6 +90,18 @@ export default function ContentCard({
   const hasSolution = Boolean(
     content.solution_url?.trim() || content.answer_key_text?.trim(),
   );
+
+  const handleCopyLink = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    try {
+      const url = `${window.location.origin}/icerikler?id=${content.id}`;
+      await navigator.clipboard.writeText(url);
+      setCopiedLink(true);
+      setTimeout(() => setCopiedLink(false), 2000);
+    } catch {
+      // ignore
+    }
+  };
 
   const actionButtons = (
     <div className="grid w-full grid-cols-2 gap-2 sm:flex sm:flex-wrap sm:items-center sm:gap-3">
@@ -132,7 +153,7 @@ export default function ContentCard({
 
   const statsBar = (
     <div
-      className={`grid grid-cols-5 gap-1.5 text-[11px] text-slate-300 sm:flex sm:flex-wrap sm:items-center ${viewMode === 'grid' ? 'sm:gap-5' : 'sm:gap-4'} sm:text-sm ${viewMode === 'grid' ? 'mb-4 sm:mb-5' : ''}`}
+      className={`flex flex-wrap items-center gap-2 text-[11px] text-slate-300 sm:gap-4 sm:text-sm ${viewMode === 'grid' ? 'mb-4 sm:mb-5' : ''}`}
     >
       <button
         onClick={() => onPreview(content)}
@@ -194,8 +215,37 @@ export default function ContentCard({
           {isFavorite ? 'Favori' : 'Ekle'}
         </span>
       </button>
+
+      {onToggleCompleted && (
+        <button
+          onClick={() => onToggleCompleted(content)}
+          title={isCompleted ? 'Çözüldü işaretini kaldır' : 'Çözüldü olarak işaretle'}
+          className={`flex min-w-0 items-center justify-center gap-1.5 rounded-xl bg-slate-800/40 px-2 py-2 transition-colors sm:justify-start sm:rounded-none sm:bg-transparent sm:px-0 sm:py-0 ${isCompleted ? 'text-emerald-400 font-semibold' : 'hover:text-emerald-400'}`}
+        >
+          <CheckCircle2 className={`w-4 h-4 sm:w-5 sm:h-5 ${isCompleted ? 'fill-emerald-400/20 text-emerald-400' : 'text-slate-400'}`} />
+          <span className="hidden sm:inline text-xs">
+            {isCompleted ? 'Çözüldü' : 'Tamamla'}
+          </span>
+        </button>
+      )}
+
+      <button
+        onClick={handleCopyLink}
+        title="Bağlantıyı Kopyala"
+        className={`flex min-w-0 items-center justify-center gap-1.5 rounded-xl bg-slate-800/40 px-2 py-2 transition-colors sm:justify-start sm:rounded-none sm:bg-transparent sm:px-0 sm:py-0 ${copiedLink ? 'text-cyan-400 font-semibold' : 'hover:text-cyan-400'}`}
+      >
+        {copiedLink ? (
+          <Check className="w-4 h-4 sm:w-5 sm:h-5 text-cyan-400" />
+        ) : (
+          <Share2 className="w-4 h-4 sm:w-5 sm:h-5 text-slate-400" />
+        )}
+        <span className="hidden sm:inline text-xs">
+          {copiedLink ? 'Kopyalandı!' : 'Paylaş'}
+        </span>
+      </button>
     </div>
   );
+
 
   if (viewMode === 'list') {
     return (
@@ -241,6 +291,12 @@ export default function ContentCard({
                   Yeni
                 </span>
               )}
+              {isCompleted && (
+                <span className="flex items-center gap-1 px-2.5 sm:px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-300 text-[10px] sm:text-xs font-semibold border border-emerald-400/30 shadow-sm shadow-emerald-500/20">
+                  <CheckCircle2 className="w-3 h-3" />
+                  Çözüldü
+                </span>
+              )}
               {hasSolution && (
                 <span className="px-2.5 sm:px-3 py-1 rounded-full bg-green-500/15 text-green-300 text-[10px] sm:text-xs font-semibold border border-green-400/30">
                   ÇÖZÜMLÜ
@@ -252,6 +308,7 @@ export default function ContentCard({
                 {getContentPrimaryGradeLabel(content)}
               </span>
             </div>
+
           </div>
 
           <div className="border-t border-white/10" />
@@ -317,11 +374,18 @@ export default function ContentCard({
                 Yeni
               </span>
             )}
+            {isCompleted && (
+              <span className="flex items-center gap-1 px-2.5 sm:px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-300 text-[10px] sm:text-xs font-semibold border border-emerald-400/30 shadow-sm shadow-emerald-500/20">
+                <CheckCircle2 className="w-3 h-3" />
+                Çözüldü
+              </span>
+            )}
             {hasSolution && (
               <span className="px-2.5 sm:px-3 py-1 rounded-full bg-green-500/15 text-green-300 text-[10px] sm:text-xs font-semibold border border-green-400/30">
                 ÇÖZÜMLÜ
               </span>
             )}
+
             <span
               className={`ml-auto px-3.5 sm:px-4 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-bold tracking-wide ${gradeBadgeClass}`}
             >
