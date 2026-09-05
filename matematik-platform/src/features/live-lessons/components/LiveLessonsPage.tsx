@@ -29,6 +29,7 @@ import { LiveLessonCard } from '@/features/live-lessons/components/LiveLessonCar
 import { LiveLessonEditModal } from '@/features/live-lessons/components/LiveLessonEditModal';
 import { SubmitQuestionModal } from '@/features/live-lessons/components/SubmitQuestionModal';
 import { TeacherQuestionPoolModal } from '@/features/live-lessons/components/TeacherQuestionPoolModal';
+import { LessonReplayArchiveModal } from '@/features/live-lessons/components/LessonReplayArchiveModal';
 
 type Props = {
   initialLessons: LiveLesson[];
@@ -77,6 +78,7 @@ export function LiveLessonsPage({ initialLessons, students, user }: Props) {
   const [quickStarting, setQuickStarting] = useState(false);
   const [isSubmitQuestionOpen, setIsSubmitQuestionOpen] = useState(false);
   const [isTeacherPoolOpen, setIsTeacherPoolOpen] = useState(false);
+  const [isReplayArchiveOpen, setIsReplayArchiveOpen] = useState(false);
 
   // Ders Planlama Form Durumu
   const [title, setTitle] = useState('Canlı Matematik Dersi');
@@ -362,6 +364,16 @@ export function LiveLessonsPage({ initialLessons, students, user }: Props) {
               >
                 <HelpCircle className="h-4 w-4" />
                 <span>🙋 Derse Soru Gönder</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setIsReplayArchiveOpen(true)}
+                className="inline-flex min-h-11 items-center gap-2 rounded-xl border border-rose-500/40 bg-rose-500/15 px-4 py-2.5 text-xs sm:text-sm font-bold text-rose-300 hover:bg-rose-500/25 transition-all active:scale-95 shadow-sm"
+                title="Geçmiş canlı derslerin video kayıtları ve tahta notları"
+              >
+                <Video className="h-4 w-4" />
+                <span>📹 Ders Kayıtları</span>
               </button>
 
               {user.isAdmin && (
@@ -817,6 +829,13 @@ export function LiveLessonsPage({ initialLessons, students, user }: Props) {
         isOpen={isTeacherPoolOpen}
         onClose={() => setIsTeacherPoolOpen(false)}
         isLight={isLight}
+      />
+
+      {/* Ders Kayıtları ve Zaman Damgalı Arşiv Modalı */}
+      <LessonReplayArchiveModal
+        isOpen={isReplayArchiveOpen}
+        onClose={() => setIsReplayArchiveOpen(false)}
+        gradeFilter={selectedGrade}
       />
     </div>
   );

@@ -31,6 +31,17 @@ describe('ScratchpadModal', () => {
     fireEvent.click(screen.getByText('Silgi'));
     fireEvent.click(screen.getByText('Kalem'));
 
+    // Math Whiteboard Toolkit
+    expect(screen.getByText('Koordinat')).toBeInTheDocument();
+    expect(screen.getByText('Sayı Doğrusu')).toBeInTheDocument();
+    expect(screen.getByText('Şekil')).toBeInTheDocument();
+
+    fireEvent.click(screen.getByTitle(/Kartezyen Koordinat Düzlemi Ekle/i));
+    fireEvent.click(screen.getByTitle(/Sayı Doğrusu Ekle/i));
+    fireEvent.click(screen.getByText(/Dik Üçgen/i));
+    fireEvent.click(screen.getByText(/Çember/i));
+    fireEvent.click(screen.getByText(/Dikdörtgen/i));
+
     // Line thickness controls
     fireEvent.click(screen.getByLabelText('Kalınlığı artır'));
     fireEvent.click(screen.getByLabelText('Kalınlığı azalt'));

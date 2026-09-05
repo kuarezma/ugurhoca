@@ -24,6 +24,76 @@ type Flashcard = {
   example?: string;
 };
 
+export type LeitnerBoxLevel = 1 | 2 | 3 | 4 | 5;
+
+export type CardLeitnerState = {
+  box: LeitnerBoxLevel;
+  lastReviewedAt: string;
+  nextReviewAt: string;
+  reviewCount: number;
+};
+
+export const LEITNER_INTERVALS: Record<LeitnerBoxLevel, number> = {
+  1: 1,  // 1 gün
+  2: 3,  // 3 gün
+  3: 7,  // 7 gün
+  4: 14, // 14 gün
+  5: 30, // 30 gün (kalıcı)
+};
+
+export const LEITNER_STORAGE_KEY = 'ugurhoca_leitner_box_v1';
+
+export function getLeitnerStates(): Record<string, CardLeitnerState> {
+  if (typeof window === 'undefined') return {};
+  try {
+    const raw = localStorage.getItem(LEITNER_STORAGE_KEY);
+    return raw ? JSON.parse(raw) : {};
+  } catch {
+    return {};
+  }
+}
+
+export function saveCardLeitnerState(
+  cardId: string,
+  result: 'forgot' | 'hard' | 'known'
+): CardLeitnerState {
+  const all = getLeitnerStates();
+  const current = all[cardId] || {
+    box: 1,
+    lastReviewedAt: new Date().toISOString(),
+    nextReviewAt: new Date().toISOString(),
+    reviewCount: 0,
+  };
+
+  let newBox: LeitnerBoxLevel = current.box;
+  if (result === 'forgot') {
+    newBox = 1;
+  } else if (result === 'hard') {
+    newBox = current.box;
+  } else if (result === 'known') {
+    newBox = Math.min(5, current.box + 1) as LeitnerBoxLevel;
+  }
+
+  const intervalDays = LEITNER_INTERVALS[newBox];
+  const nextDate = new Date();
+  nextDate.setDate(nextDate.getDate() + intervalDays);
+
+  const updated: CardLeitnerState = {
+    box: newBox,
+    lastReviewedAt: new Date().toISOString(),
+    nextReviewAt: nextDate.toISOString(),
+    reviewCount: (current.reviewCount || 0) + 1,
+  };
+
+  all[cardId] = updated;
+  try {
+    localStorage.setItem(LEITNER_STORAGE_KEY, JSON.stringify(all));
+  } catch {
+    // ignore
+  }
+  return updated;
+}
+
 const FLASHCARDS_DATA: Flashcard[] = [
   // LGS
   {
@@ -130,34 +200,69 @@ export function FormulaFlashcardsModal({
   isOpen,
   onClose,
 }: FormulaFlashcardsModalProps) {
-  const [categoryFilter, setCategoryFilter] = useState<'all' | 'lgs' | 'yks'>('all');
+  const [categoryFilter, setCategoryFilter] = useState<'all' | 'lgs' | 'yks' | 'due'>('all');
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isFlipped, setIsFlipped] = useState(false);
   const [learnedCards, setLearnedCards] = useState<Set<string>>(new Set());
+  const [leitnerStates, setLeitnerStates] = useState<Record<string, CardLeitnerState>>({});
+
+  // Leitner durumlarını localStorage'dan yükle
+  useState(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        setLeitnerStates(getLeitnerStates());
+      } catch {
+        // ignore
+      }
+    }
+  });
 
   if (!isOpen) return null;
 
+  const now = new Date();
+
+  // Tekrarı gelen kartlar: Henüz hiç çalışılmamış veya nextReviewAt zamanı dolmuş olanlar
+  const isDueCard = (card: Flashcard) => {
+    const st = leitnerStates[card.id];
+    if (!st) return true;
+    return new Date(st.nextReviewAt) <= now;
+  };
+
+  const dueCount = FLASHCARDS_DATA.filter(isDueCard).length;
+
   const filteredCards = FLASHCARDS_DATA.filter((card) => {
     if (categoryFilter === 'all') return true;
+    if (categoryFilter === 'due') return isDueCard(card);
     return card.category === categoryFilter;
   });
 
   const currentCard = filteredCards[currentIndex] || filteredCards[0];
+  const currentLeitner = currentCard ? leitnerStates[currentCard.id] || { box: 1, lastReviewedAt: '', nextReviewAt: '', reviewCount: 0 } : null;
 
   const handleNext = () => {
     setIsFlipped(false);
-    setCurrentIndex((prev) => (prev + 1) % filteredCards.length);
+    setCurrentIndex((prev) => (prev + 1) % (filteredCards.length || 1));
   };
 
   const handlePrev = () => {
     setIsFlipped(false);
-    setCurrentIndex((prev) => (prev - 1 + filteredCards.length) % filteredCards.length);
+    setCurrentIndex((prev) => (prev - 1 + (filteredCards.length || 1)) % (filteredCards.length || 1));
   };
 
   const handleShuffle = () => {
     setIsFlipped(false);
-    const rand = Math.floor(Math.random() * filteredCards.length);
+    const rand = Math.floor(Math.random() * (filteredCards.length || 1));
     setCurrentIndex(rand);
+  };
+
+  const handleLeitnerReview = (cardId: string, result: 'forgot' | 'hard' | 'known') => {
+    const updated = saveCardLeitnerState(cardId, result);
+    setLeitnerStates((prev) => ({ ...prev, [cardId]: updated }));
+    if (result === 'known' && updated.box >= 4) {
+      setLearnedCards((prev) => new Set(prev).add(cardId));
+    }
+    // Otomatik sonraki karta geçiş
+    handleNext();
   };
 
   const toggleLearned = (id: string) => {
@@ -171,6 +276,13 @@ export function FormulaFlashcardsModal({
       return next;
     });
   };
+
+  // Kutu bazlı istatistikler
+  const boxCounts = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
+  FLASHCARDS_DATA.forEach((c) => {
+    const b = leitnerStates[c.id]?.box || 1;
+    boxCounts[b as 1 | 2 | 3 | 4 | 5]++;
+  });
 
   return (
     <div
@@ -246,7 +358,7 @@ export function FormulaFlashcardsModal({
                 Formül & Bilgi Kartları
               </h2>
               <p className="text-[11px] sm:text-xs text-slate-400 truncate">
-                LGS ve YKS için pratik formül tekrarı
+                Leitner aralıklı tekrar sistemiyle kalıcı matematik hafızası
               </p>
             </div>
           </div>
@@ -303,6 +415,24 @@ export function FormulaFlashcardsModal({
             <button
               type="button"
               onClick={() => {
+                setCategoryFilter('due');
+                setCurrentIndex(0);
+                setIsFlipped(false);
+              }}
+              className={`rounded-xl px-3 py-1 text-xs font-semibold transition flex items-center gap-1 ${
+                categoryFilter === 'due'
+                  ? 'bg-amber-500 text-slate-950 font-bold'
+                  : 'bg-white/5 text-amber-300 hover:bg-white/10'
+              }`}
+            >
+              <span>Tekrar Vakti</span>
+              <span className="rounded-full bg-amber-400/30 px-1.5 py-0.2 text-[10px] font-bold">
+                {dueCount}
+              </span>
+            </button>
+            <button
+              type="button"
+              onClick={() => {
                 setCategoryFilter('lgs');
                 setCurrentIndex(0);
                 setIsFlipped(false);
@@ -333,16 +463,17 @@ export function FormulaFlashcardsModal({
           </div>
 
           <span className="text-xs font-medium text-slate-400">
-            {currentIndex + 1} / {filteredCards.length}
+            {filteredCards.length > 0 ? `${currentIndex + 1} / ${filteredCards.length}` : '0 / 0'}
           </span>
         </div>
 
         {/* Kart Sahnesi */}
-        <div className="no-print flex flex-1 flex-col items-center justify-center p-6 sm:p-8">
-          {currentCard && (
+        <div className="no-print flex flex-1 flex-col items-center justify-center p-4 sm:p-6">
+          {currentCard ? (
             <div
               role="button"
               tabIndex={0}
+              aria-label={currentCard.title}
               onClick={() => setIsFlipped((prev) => !prev)}
               onKeyDown={(e) => {
                 if (e.key === 'Enter' || e.key === ' ') {
@@ -350,13 +481,20 @@ export function FormulaFlashcardsModal({
                   setIsFlipped((prev) => !prev);
                 }
               }}
-              className="group relative flex h-72 w-full max-w-lg cursor-pointer flex-col justify-between rounded-3xl border border-white/15 bg-gradient-to-br from-slate-900/90 via-slate-800/80 to-slate-900/90 p-6 text-center shadow-2xl transition-all duration-300 hover:border-brand-primary/50 hover:shadow-brand-glow focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary"
+              className="group relative flex min-h-[300px] w-full max-w-lg cursor-pointer flex-col justify-between rounded-3xl border border-white/15 bg-gradient-to-br from-slate-900/90 via-slate-800/80 to-slate-900/90 p-5 sm:p-6 text-center shadow-2xl transition-all duration-300 hover:border-brand-primary/50 hover:shadow-brand-glow focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary"
             >
               {/* Üst Bilgi */}
               <div className="flex items-center justify-between text-xs text-slate-400">
-                <span className="rounded-lg bg-white/10 px-2.5 py-1 font-semibold text-brand-primary-soft">
-                  {currentCard.subject}
-                </span>
+                <div className="flex items-center gap-1.5">
+                  <span className="rounded-lg bg-white/10 px-2.5 py-1 font-semibold text-brand-primary-soft">
+                    {currentCard.subject}
+                  </span>
+                  {currentLeitner && (
+                    <span className="rounded-lg border border-amber-500/30 bg-amber-500/10 px-2 py-0.5 text-[10px] font-bold text-amber-300">
+                      Kutu {currentLeitner.box} ({LEITNER_INTERVALS[currentLeitner.box]} Gün)
+                    </span>
+                  )}
+                </div>
                 <span className="flex items-center gap-1 text-[11px] text-slate-400 group-hover:text-white">
                   <RotateCw className="h-3 w-3" />
                   {isFlipped ? 'Ön yüze dön' : 'Cevap için tıkla'}
@@ -364,7 +502,7 @@ export function FormulaFlashcardsModal({
               </div>
 
               {/* Kart Gövdesi */}
-              <div className="my-auto">
+              <div className="my-auto py-4">
                 {!isFlipped ? (
                   <div className="space-y-3">
                     <h3 className="font-display text-xl font-bold text-white sm:text-2xl">
@@ -389,6 +527,46 @@ export function FormulaFlashcardsModal({
                         Örn: <MathText>{currentCard.example}</MathText>
                       </p>
                     )}
+
+                    {/* Leitner Puanlama Aksiyonları (Arka Yüz) */}
+                    <div className="mt-4 pt-3 border-t border-white/10">
+                      <div className="text-[11px] text-slate-400 mb-2 font-semibold">Bu formülü ne kadar hatırladın?</div>
+                      <div className="grid grid-cols-3 gap-2">
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleLeitnerReview(currentCard.id, 'forgot');
+                          }}
+                          className="rounded-xl border border-rose-500/30 bg-rose-500/15 py-1.5 px-2 text-[11px] font-bold text-rose-300 hover:bg-rose-500/25 transition"
+                          title="Kutu 1'e geri dön (1 gün sonra tekrar)"
+                        >
+                          Unuttum (K1)
+                        </button>
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleLeitnerReview(currentCard.id, 'hard');
+                          }}
+                          className="rounded-xl border border-amber-500/30 bg-amber-500/15 py-1.5 px-2 text-[11px] font-bold text-amber-300 hover:bg-amber-500/25 transition"
+                          title="Aynı kutuda kal (yarın tekrar)"
+                        >
+                          Zorlandım
+                        </button>
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleLeitnerReview(currentCard.id, 'known');
+                          }}
+                          className="rounded-xl border border-emerald-500/30 bg-emerald-500/15 py-1.5 px-2 text-[11px] font-bold text-emerald-300 hover:bg-emerald-500/25 transition"
+                          title="Sonraki kutuya ilerlet"
+                        >
+                          Biliyorum (+1)
+                        </button>
+                      </div>
+                    </div>
                   </div>
                 )}
               </div>
@@ -413,30 +591,41 @@ export function FormulaFlashcardsModal({
                 <span className="text-[11px] text-slate-500">Kartı çevirmek için tıkla</span>
               </div>
             </div>
+          ) : (
+            <div className="text-center py-12">
+              <p className="text-sm font-semibold text-slate-300">Bu filtrede gösterilecek kart bulunamadı.</p>
+            </div>
           )}
         </div>
 
-        {/* Alt Navigasyon */}
+        {/* Alt Navigasyon & Leitner Dağılımı */}
         <div className="no-print flex items-center justify-between border-t border-white/10 bg-slate-950/80 px-3 sm:px-6 py-3 sm:py-4 gap-2">
           <button
             type="button"
             onClick={handlePrev}
             aria-label="Önceki Kart"
-            className="inline-flex items-center gap-1.5 rounded-xl bg-white/5 px-3 sm:px-4 py-2 sm:py-2.5 text-xs font-bold text-white hover:bg-white/10 shrink-0"
+            disabled={filteredCards.length === 0}
+            className="inline-flex items-center gap-1.5 rounded-xl bg-white/5 px-3 sm:px-4 py-2 sm:py-2.5 text-xs font-bold text-white hover:bg-white/10 disabled:opacity-40 shrink-0"
           >
             <ChevronLeft className="h-4 w-4" />
             <span>Önceki <span className="hidden sm:inline">Kart</span></span>
           </button>
 
-          <span className="text-[11px] sm:text-xs font-semibold text-slate-400 text-center truncate">
-            {learnedCards.size} / {filteredCards.length} öğrenildi
-          </span>
+          <div className="flex items-center gap-1 sm:gap-2 text-[10px] sm:text-xs text-slate-400 font-mono">
+            <span className="text-slate-500 font-sans hidden sm:inline">Hafıza Kutuları:</span>
+            <span className="px-1.5 py-0.5 rounded bg-white/5 border border-white/10" title="Kutu 1: Günlük">K1:{boxCounts[1]}</span>
+            <span className="px-1.5 py-0.5 rounded bg-white/5 border border-white/10" title="Kutu 2: 3 Günlük">K2:{boxCounts[2]}</span>
+            <span className="px-1.5 py-0.5 rounded bg-white/5 border border-white/10" title="Kutu 3: 7 Günlük">K3:{boxCounts[3]}</span>
+            <span className="px-1.5 py-0.5 rounded bg-white/5 border border-white/10" title="Kutu 4: 14 Günlük">K4:{boxCounts[4]}</span>
+            <span className="px-1.5 py-0.5 rounded bg-white/5 border border-white/10 text-emerald-400" title="Kutu 5: Kalıcı (30 Gün)">K5:{boxCounts[5]}</span>
+          </div>
 
           <button
             type="button"
             onClick={handleNext}
             aria-label="Sonraki Kart"
-            className="inline-flex items-center gap-1.5 rounded-xl bg-brand-primary px-3 sm:px-4 py-2 sm:py-2.5 text-xs font-bold text-white shadow-md hover:bg-brand-primary-deep shrink-0"
+            disabled={filteredCards.length === 0}
+            className="inline-flex items-center gap-1.5 rounded-xl bg-brand-primary px-3 sm:px-4 py-2 sm:py-2.5 text-xs font-bold text-white shadow-md hover:bg-brand-primary-deep disabled:opacity-40 shrink-0"
           >
             <span>Sonraki <span className="hidden sm:inline">Kart</span></span>
             <ChevronRight className="h-4 w-4" />

@@ -34,6 +34,7 @@ const BadgesShowcaseModal = dynamic(
 import { PersonalStreakHub } from '@/features/progress/components/PersonalStreakHub';
 import { SmartTopicDiagnostic } from '@/features/progress/components/SmartTopicDiagnostic';
 import { WeeklyGrowthReportCard } from '@/features/progress/components/WeeklyGrowthReportCard';
+import { MonthlyReportCardModal } from '@/features/progress/components/MonthlyReportCardModal';
 import { requireClientSession } from '@/lib/auth-client';
 import { createLogger } from '@/lib/logger';
 import { supabase } from '@/lib/supabase/client';
@@ -93,6 +94,7 @@ export default function IlerlemePage({ initialData }: ProgressPageProps) {
   const [badges, setBadges] = useState<UserBadge[]>(initialData?.badges ?? []);
   const [pdfLoading, setPdfLoading] = useState(false);
   const [showBadgesModal, setShowBadgesModal] = useState(false);
+  const [showMonthlyReportModal, setShowMonthlyReportModal] = useState(false);
   
   // Modal states
   const [showAddModal, setShowAddModal] = useState(false);
@@ -415,16 +417,27 @@ export default function IlerlemePage({ initialData }: ProgressPageProps) {
             <h1 className={`text-3xl font-bold mb-1 ${isLight ? 'text-slate-900' : 'text-white'}`}>Gelişim Ekranı</h1>
             <p className={isLight ? 'text-slate-600' : 'text-slate-400'}>Çalışmalarını takip et, hedeflerine ulaş.</p>
           </div>
-          <button 
-            onClick={() => {
-              setAddSessionError(null);
-              setCustomTopic('');
-              setShowAddModal(true);
-            }}
-            className="px-6 py-3 bg-gradient-to-r from-indigo-500 to-purple-500 hover:from-indigo-600 hover:to-purple-600 text-white font-bold rounded-2xl shadow-lg shadow-indigo-500/25 flex items-center gap-2 transition-transform hover:scale-105"
-          >
-            <Plus className="w-5 h-5" /> Çalışma Ekle
-          </button>
+          <div className="flex flex-wrap items-center gap-2.5 sm:gap-3">
+            <button
+              type="button"
+              onClick={() => setShowMonthlyReportModal(true)}
+              className="px-4 py-3 bg-amber-500/15 border border-amber-500/30 hover:bg-amber-500/25 text-amber-300 font-bold rounded-2xl flex items-center gap-2 transition-transform hover:scale-105 shadow-sm"
+              title="Aylık Karne ve Başarı Belgesini Görüntüle"
+            >
+              <Award className="w-5 h-5 text-amber-400" />
+              <span>Aylık Karne & Belge</span>
+            </button>
+            <button 
+              onClick={() => {
+                setAddSessionError(null);
+                setCustomTopic('');
+                setShowAddModal(true);
+              }}
+              className="px-6 py-3 bg-gradient-to-r from-indigo-500 to-purple-500 hover:from-indigo-600 hover:to-purple-600 text-white font-bold rounded-2xl shadow-lg shadow-indigo-500/25 flex items-center gap-2 transition-transform hover:scale-105"
+            >
+              <Plus className="w-5 h-5" /> Çalışma Ekle
+            </button>
+          </div>
         </div>
 
         {/* Haftalık Öğrenci Gelişim Karnesi */}
@@ -684,6 +697,16 @@ export default function IlerlemePage({ initialData }: ProgressPageProps) {
         earnedBadges={badges}
         currentStreak={user?.current_streak || 0}
         isLight={isLight}
+      />
+
+      <MonthlyReportCardModal
+        isOpen={showMonthlyReportModal}
+        onClose={() => setShowMonthlyReportModal(false)}
+        studentName={user?.name || 'Öğrenci'}
+        grade={user?.grade}
+        streak={user?.current_streak || 0}
+        sessions={sessions}
+        goal={goal}
       />
     </main>
   );

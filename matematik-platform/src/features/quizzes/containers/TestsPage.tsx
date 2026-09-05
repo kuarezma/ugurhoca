@@ -38,6 +38,7 @@ import { QuizMistakeReviewModal } from '@/features/quizzes/components/QuizMistak
 import { MistakeNotebookModal } from '@/features/quizzes/components/MistakeNotebookModal';
 import { QuestionHintLadder } from '@/features/quizzes/components/QuestionHintLadder';
 import { QuizShortcutsModal } from '@/features/quizzes/components/QuizShortcutsModal';
+import { QuizPacingCoach } from '@/features/quizzes/components/QuizPacingCoach';
 
 const PrintableWorksheetModal = dynamic(
   () =>
@@ -179,6 +180,12 @@ export default function TestsPage({
   const [isShortcutsOpen, setIsShortcutsOpen] = useState(false);
   const [isOpticalSheetOpen, setIsOpticalSheetOpen] = useState(false);
   const [isLeagueModalOpen, setIsLeagueModalOpen] = useState(false);
+  const [questionTimes, setQuestionTimes] = useState<Record<number, number>>({});
+  const [questionElapsedSeconds, setQuestionElapsedSeconds] = useState(0);
+
+  useEffect(() => {
+    setQuestionElapsedSeconds(0);
+  }, [currentQuestion]);
 
   useEffect(() => {
     try {
@@ -577,13 +584,18 @@ export default function TestsPage({
     if (quizStarted && !showResult && timeLeft !== null && timeLeft > 0) {
       const timer = setInterval(() => {
         setTimeLeft((prev) => (prev !== null && prev > 0 ? prev - 1 : 0));
+        setQuestionElapsedSeconds((prev) => prev + 1);
+        setQuestionTimes((prev) => ({
+          ...prev,
+          [currentQuestion]: (prev[currentQuestion] || 0) + 1,
+        }));
       }, 1000);
       return () => clearInterval(timer);
     } else if (timeLeft === 0 && quizStarted && !showResult) {
       setShowResult(true);
       saveQuizResult();
     }
-  }, [quizStarted, saveQuizResult, showResult, timeLeft]);
+  }, [currentQuestion, quizStarted, saveQuizResult, showResult, timeLeft]);
 
   useEffect(() => {
     if (showResult && quizQuestions.length > 0) {
@@ -610,6 +622,8 @@ export default function TestsPage({
     setFlaggedQuestions(new Set());
     setIsFocusMode(false);
     setIsScratchpadOpen(false);
+    setQuestionTimes({});
+    setQuestionElapsedSeconds(0);
     resultSavedRef.current = false;
   };
 
@@ -725,6 +739,14 @@ export default function TestsPage({
                   <span className="hidden sm:inline">Kısayollar</span>
                   <span className="text-[10px] font-mono px-1 py-0.5 rounded bg-white/10 text-indigo-300">?</span>
                 </button>
+
+                {/* LGS / Sınav Tempo Koçu (Canlı) */}
+                <QuizPacingCoach
+                  mode="live"
+                  currentQuestionIndex={currentQuestion}
+                  questionElapsedSeconds={questionElapsedSeconds}
+                  onFlagCurrentQuestion={() => toggleFlagQuestion(currentQuestion)}
+                />
 
                 {/* Süre */}
                 <div
@@ -1052,8 +1074,19 @@ export default function TestsPage({
                 </div>
               </div>
             </div>
+ 
+             {/* Sınav Tempo Koçu & Soru Başına Süre Analizi */}
+             <div className="mb-8">
+               <QuizPacingCoach
+                 mode="summary"
+                 questions={quizQuestions}
+                 questionTimes={questionTimes}
+                 answers={answers}
+                 totalSecondsSpent={startTime ? Math.floor((Date.now() - startTime) / 1000) : 0}
+               />
+             </div>
 
-            <div className="text-left bg-slate-800/30 border border-slate-700/50 rounded-2xl p-6 mb-8 max-h-[400px] overflow-y-auto custom-scrollbar">
+             <div className="text-left bg-slate-800/30 border border-slate-700/50 rounded-2xl p-6 mb-8 max-h-[400px] overflow-y-auto custom-scrollbar">
               <h3 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
                 <Target className="w-5 h-5 text-purple-400" /> Sınav Analizi
               </h3>
