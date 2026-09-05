@@ -33,6 +33,7 @@ const BadgesShowcaseModal = dynamic(
 );
 import { PersonalStreakHub } from '@/features/progress/components/PersonalStreakHub';
 import { SmartTopicDiagnostic } from '@/features/progress/components/SmartTopicDiagnostic';
+import { WeeklyGrowthReportCard } from '@/features/progress/components/WeeklyGrowthReportCard';
 import { requireClientSession } from '@/lib/auth-client';
 import { createLogger } from '@/lib/logger';
 import { supabase } from '@/lib/supabase/client';
@@ -425,6 +426,14 @@ export default function IlerlemePage({ initialData }: ProgressPageProps) {
             <Plus className="w-5 h-5" /> Çalışma Ekle
           </button>
         </div>
+
+        {/* Haftalık Öğrenci Gelişim Karnesi */}
+        <WeeklyGrowthReportCard
+          goal={goal}
+          sessions={sessions}
+          streak={user?.current_streak || 0}
+          studentName={user?.name || 'Öğrenci'}
+        />
 
         {/* Bireysel Çalışma Disiplini & Seri Hub */}
         <PersonalStreakHub isLight={isLight} />

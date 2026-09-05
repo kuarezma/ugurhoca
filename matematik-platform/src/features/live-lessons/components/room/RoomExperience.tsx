@@ -28,6 +28,7 @@ import { TeacherCameraView } from '@/features/live-lessons/components/room/Teach
 import { TeacherModerationPanel } from '@/features/live-lessons/components/room/TeacherModerationPanel';
 import { TeacherToolbar } from '@/features/live-lessons/components/room/TeacherToolbar';
 import { RoomLobbyPreview } from '@/features/live-lessons/components/room/RoomLobbyPreview';
+import { LivePollStudentOverlay } from '@/features/live-lessons/components/room/LivePollStudentOverlay';
 import type { LiveLessonDisplaySettings } from '@/features/live-lessons/lib/room-data';
 import type { LiveLesson, LiveLessonRole } from '@/features/live-lessons/types';
 
@@ -530,6 +531,17 @@ export function RoomExperience({
           requireStudentApproval={requireStudentApproval}
           lessonId={lesson.id}
           onLessonUnlocked={unlockLesson}
+        />
+      )}
+
+      {/* Canlı Soru / Anket Yüzen Penceresi (Öğrenci) */}
+      {role === 'student' && (
+        <LivePollStudentOverlay
+          identity={identity}
+          displayName={displayName.trim()}
+          roomId={roomId}
+          persistToken={persistToken}
+          interactionLocked={requireStudentApproval && !lessonUnlocked}
         />
       )}
 

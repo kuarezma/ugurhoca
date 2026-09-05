@@ -2,14 +2,19 @@
 
 import { useLocalParticipant } from "@livekit/components-react";
 import { useCallback, useState } from "react";
+import { BarChart2 } from "lucide-react";
 import { TeacherQuestionPoolModal } from "@/features/live-lessons/components/TeacherQuestionPoolModal";
+import { encodeQuizMessage } from "@/features/live-lessons/lib/quiz-messages";
+import { useToast } from "@/components/Toast";
 
 export function TeacherToolbar() {
+  const { showToast } = useToast();
   const { localParticipant, isCameraEnabled, isMicrophoneEnabled } =
     useLocalParticipant();
   const [cameraBusy, setCameraBusy] = useState(false);
   const [screenBusy, setScreenBusy] = useState(false);
   const [micBusy, setMicBusy] = useState(false);
+  const [pollBusy, setPollBusy] = useState(false);
   const [isPoolOpen, setIsPoolOpen] = useState(false);
 
   const toggleScreen = useCallback(async () => {
@@ -45,6 +50,28 @@ export function TeacherToolbar() {
       setCameraBusy(false);
     }
   }, [isCameraEnabled, localParticipant]);
+
+  const handleLaunchQuickPoll = useCallback(async () => {
+    setPollBusy(true);
+    try {
+      const quickPoll = {
+        kind: "question" as const,
+        questionId: `quick_poll_${Date.now()}`,
+        prompt: "Hızlı Soru: Doğru seçeneği işaretleyin",
+        options: ["A", "B", "C", "D"],
+        correctIndex: -1,
+        fromIdentity: localParticipant.identity,
+      };
+      await localParticipant.publishData(encodeQuizMessage(quickPoll), {
+        reliable: true,
+      });
+      showToast("success", "Hızlı anket öğrencilerin ekranına gönderildi.");
+    } catch {
+      showToast("error", "Anket gönderilemedi.");
+    } finally {
+      setPollBusy(false);
+    }
+  }, [localParticipant, showToast]);
 
   const screenOn = localParticipant.isScreenShareEnabled;
 
@@ -85,6 +112,16 @@ export function TeacherToolbar() {
         }`}
       >
         {screenBusy ? "…" : screenOn ? "Paylaşımı durdur" : "Ekranı paylaş"}
+      </button>
+      <button
+        type="button"
+        onClick={() => void handleLaunchQuickPoll()}
+        disabled={pollBusy}
+        className="rounded-lg px-3 py-1.5 text-xs font-semibold bg-violet-500/20 text-violet-300 border border-violet-500/30 hover:bg-violet-500/30 transition flex items-center gap-1.5 disabled:opacity-50"
+        title="Öğrencilerin ekranına anlık A-B-C-D anketi gönder"
+      >
+        <BarChart2 className="w-3.5 h-3.5 text-violet-400" />
+        <span>{pollBusy ? "Gönderiliyor..." : "Hızlı Anket (A-B-C-D)"}</span>
       </button>
       <button
         type="button"

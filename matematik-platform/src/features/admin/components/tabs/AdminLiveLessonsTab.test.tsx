@@ -53,4 +53,33 @@ describe('AdminLiveLessonsTab', () => {
     expect(screen.getByDisplayValue('https://youtube.com/watch?v=mockRec')).toBeInTheDocument();
     expect(screen.getByDisplayValue('https://ugurhoca.com/pdf/mockNotes.pdf')).toBeInTheDocument();
   });
+
+  it('renders attendance export buttons when participants exist', () => {
+    const dataWithParticipants: LiveLessonDashboardData = {
+      ...mockData,
+      participants: [
+        {
+          id: 'part-1',
+          lesson_id: 'lesson-1',
+          user_id: 'user-1',
+          user_name: 'Ahmet Yılmaz',
+          role: 'student',
+          joined_at: '2026-09-12T17:05:00.000Z',
+          left_at: '2026-09-12T17:55:00.000Z',
+        },
+      ],
+    };
+
+    render(
+      <AdminLiveLessonsTab
+        data={dataWithParticipants}
+        onRefresh={vi.fn()}
+        students={[]}
+      />
+    );
+
+    expect(screen.getByText('Tüm Katılım Özeti (CSV)')).toBeInTheDocument();
+    expect(screen.getByText('Yoklama İndir (CSV)')).toBeInTheDocument();
+    expect(screen.getByText('Ahmet Yılmaz')).toBeInTheDocument();
+  });
 });

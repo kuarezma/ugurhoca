@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useMemo, useState } from "react";
-import { PlayCircle, FileText } from "lucide-react";
+import { PlayCircle, FileText, Download } from "lucide-react";
 import type {
   LiveLesson,
   LiveLessonDashboardData,
@@ -133,6 +133,81 @@ function attendanceForLesson(participants: LiveLessonParticipant[], lessonId: st
   });
 }
 
+function exportAttendanceCsv(lesson: LiveLesson, rows: ReturnType<typeof attendanceForLesson>) {
+  const headers = [
+    'Öğrenci Adı',
+    'Ders Başlığı',
+    'Ders Tarihi',
+    'İlk Giriş Saati',
+    'Son Çıkış Saati',
+    'Katılım Süresi',
+    'Oturum Sayısı',
+  ];
+
+  const csvRows = rows.map((r) => {
+    const escape = (val: unknown) => `"${String(val ?? '').replace(/"/g, '""')}"`;
+    return [
+      escape(r.name),
+      escape(lesson.title),
+      escape(new Date(lesson.starts_at).toLocaleDateString('tr-TR')),
+      escape(formatTime(r.joinedAt)),
+      escape(formatTime(r.leftAt)),
+      escape(formatDuration(r.joinedAt, r.leftAt)),
+      escape(r.sessions),
+    ];
+  });
+
+  const csvContent = '\uFEFF' + [headers.join(','), ...csvRows.map((r) => r.join(','))].join('\r\n');
+  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.setAttribute('download', `yoklama-${lesson.id.slice(0, 8)}-${new Date().toISOString().slice(0, 10)}.csv`);
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  URL.revokeObjectURL(url);
+}
+
+function exportAllAttendanceCsv(data: LiveLessonDashboardData) {
+  const headers = [
+    'Ders Başlığı',
+    'Ders Tarihi',
+    'Öğrenci Adı',
+    'Giriş Saati',
+    'Çıkış Saati',
+    'Katılım Süresi',
+  ];
+
+  const lessonMap = new Map(data.lessons.map((l) => [l.id, l]));
+
+  const rows = data.participants
+    .filter((p) => p.role === 'student')
+    .map((p) => {
+      const lesson = lessonMap.get(p.lesson_id);
+      const escape = (val: unknown) => `"${String(val ?? '').replace(/"/g, '""')}"`;
+      return [
+        escape(lesson?.title || 'Bilinmeyen Ders'),
+        escape(lesson ? new Date(lesson.starts_at).toLocaleDateString('tr-TR') : '-'),
+        escape(p.user_name),
+        escape(formatTime(p.joined_at)),
+        escape(formatTime(p.left_at)),
+        escape(formatDuration(p.joined_at, p.left_at)),
+      ];
+    });
+
+  const csvContent = '\uFEFF' + [headers.join(','), ...rows.map((r) => r.join(','))].join('\r\n');
+  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.setAttribute('download', `tum-canli-ders-yoklama-${new Date().toISOString().slice(0, 10)}.csv`);
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  URL.revokeObjectURL(url);
+}
+
 export default function AdminLiveLessonsTab({ data, onRefresh, students }: Props) {
   const [editingLessonId, setEditingLessonId] = useState<string | null>(null);
   const [editForm, setEditForm] = useState<EditFormState | null>(null);
@@ -226,12 +301,25 @@ export default function AdminLiveLessonsTab({ data, onRefresh, students }: Props
               Planlama, aktif dersler, yoklama ve soru cevap kayıtları.
             </p>
           </div>
-          <Link
-            href="/canli-ders"
-            className="inline-flex min-h-11 items-center justify-center rounded-xl bg-brand-primary px-4 text-sm font-semibold text-white hover:bg-brand-primary-deep"
-          >
-            Ders planla
-          </Link>
+          <div className="flex items-center gap-2">
+            {data.participants.length > 0 && (
+              <button
+                type="button"
+                onClick={() => exportAllAttendanceCsv(data)}
+                className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl bg-white/10 px-4 text-sm font-semibold text-white hover:bg-white/20 transition-colors"
+                title="Tüm canlı derslerin yoklama verisini Excel / CSV olarak indir"
+              >
+                <Download className="w-4 h-4 text-emerald-400" />
+                <span>Tüm Katılım Özeti (CSV)</span>
+              </button>
+            )}
+            <Link
+              href="/canli-ders"
+              className="inline-flex min-h-11 items-center justify-center rounded-xl bg-brand-primary px-4 text-sm font-semibold text-white hover:bg-brand-primary-deep"
+            >
+              Ders planla
+            </Link>
+          </div>
         </div>
       </div>
 
@@ -319,7 +407,20 @@ export default function AdminLiveLessonsTab({ data, onRefresh, students }: Props
                 </div>
 
                 <div className="mt-4 rounded-xl border border-white/10 bg-slate-950/50 p-4">
-                  <p className="text-sm font-semibold">Yoklama raporu</p>
+                  <div className="flex items-center justify-between">
+                    <p className="text-sm font-semibold">Yoklama raporu</p>
+                    {attendanceRows.length > 0 && (
+                      <button
+                        type="button"
+                        onClick={() => exportAttendanceCsv(lesson, attendanceRows)}
+                        className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-white/10 hover:bg-white/20 text-xs font-semibold text-slate-200 transition-colors"
+                        title="Bu dersin yoklamasını CSV olarak indir"
+                      >
+                        <Download className="w-3.5 h-3.5 text-emerald-400" />
+                        Yoklama İndir (CSV)
+                      </button>
+                    )}
+                  </div>
                   {attendanceRows.length === 0 ? (
                     <p className="mt-2 text-sm text-slate-400">Bu derse henüz öğrenci katılmadı.</p>
                   ) : (

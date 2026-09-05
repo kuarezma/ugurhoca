@@ -46,6 +46,22 @@ const PrintableWorksheetModal = dynamic(
     })),
   { ssr: false },
 );
+
+const LearningOutcomeAnalysisModal = dynamic(
+  () =>
+    import('@/features/quizzes/components/LearningOutcomeAnalysisModal').then((m) => ({
+      default: m.LearningOutcomeAnalysisModal,
+    })),
+  { ssr: false },
+);
+
+const QuizOpticalSheetModal = dynamic(
+  () =>
+    import('@/features/quizzes/components/QuizOpticalSheetModal').then((m) => ({
+      default: m.QuizOpticalSheetModal,
+    })),
+  { ssr: false },
+);
 import { saveMistakesToBank, markMistakeMastered, getSavedMistakes } from '@/features/quizzes/lib/mistakeStorage';
 import { incrementQuestionsSolved } from '@/lib/dailyGoalStorage';
 import { EmptyState } from '@/components/ui/EmptyState';
@@ -150,8 +166,10 @@ export default function TestsPage({
   const [isMistakeNotebookOpen, setIsMistakeNotebookOpen] = useState(false);
   const [pendingMistakesCount, setPendingMistakesCount] = useState(0);
   const [isWorksheetModalOpen, setIsWorksheetModalOpen] = useState(false);
+  const [isOutcomeAnalysisOpen, setIsOutcomeAnalysisOpen] = useState(false);
   const [isOnline, setIsOnline] = useState(true);
   const [isShortcutsOpen, setIsShortcutsOpen] = useState(false);
+  const [isOpticalSheetOpen, setIsOpticalSheetOpen] = useState(false);
 
   useEffect(() => {
     try {
@@ -314,9 +332,12 @@ export default function TestsPage({
     }
   };
 
-  const selectAnswer = (index: number) => {
-    setSelectedAnswer(index);
-    setAnswers({ ...answers, [currentQuestion]: index });
+  const selectAnswer = (index: number, targetQuestionIndex?: number) => {
+    const qIdx = targetQuestionIndex !== undefined ? targetQuestionIndex : currentQuestion;
+    if (qIdx === currentQuestion) {
+      setSelectedAnswer(index);
+    }
+    setAnswers((prev) => ({ ...prev, [qIdx]: index }));
     if (typeof navigator !== 'undefined' && 'vibrate' in navigator) {
       try {
         navigator.vibrate(20);
@@ -648,6 +669,17 @@ export default function TestsPage({
                   <span>Karalama Tahtası</span>
                 </button>
 
+                {/* Optik Form Butonu */}
+                <button
+                  type="button"
+                  onClick={() => setIsOpticalSheetOpen(true)}
+                  className="inline-flex items-center gap-1.5 rounded-xl border border-amber-500/30 bg-amber-500/10 px-3 py-1.5 text-xs font-bold text-amber-300 transition hover:bg-amber-500/20 hover:text-amber-200"
+                  title="LGS dijital optik form simülasyonunu aç"
+                >
+                  <FileText className="h-3.5 w-3.5 text-amber-400" />
+                  <span>Optik Form</span>
+                </button>
+
                 {/* Odak Modu Butonu */}
                 <button
                   type="button"
@@ -857,6 +889,32 @@ export default function TestsPage({
         <QuizShortcutsModal
           isOpen={isShortcutsOpen}
           onClose={() => setIsShortcutsOpen(false)}
+        />
+
+        {/* Optik Form Modalı */}
+        <QuizOpticalSheetModal
+          isOpen={isOpticalSheetOpen}
+          onClose={() => setIsOpticalSheetOpen(false)}
+          totalQuestions={quizQuestions.length}
+          currentIndex={currentQuestion}
+          answers={answers}
+          flaggedQuestions={flaggedQuestions}
+          onSelectQuestion={jumpToQuestion}
+          onSelectAnswer={(qIdx, optIdx) => {
+            selectAnswer(optIdx, qIdx);
+          }}
+          onClearAnswer={(qIdx) => {
+            setAnswers((prev) => {
+              const copy = { ...prev };
+              delete copy[qIdx];
+              return copy;
+            });
+            if (qIdx === currentQuestion) {
+              setSelectedAnswer(null);
+            }
+          }}
+          quizTitle={selectedQuiz?.title}
+          studentName={user?.name || 'Öğrenci'}
         />
       </main>
     );
@@ -1087,6 +1145,14 @@ export default function TestsPage({
             <div className="flex flex-col sm:flex-row gap-3">
               <button
                 type="button"
+                onClick={() => setIsOutcomeAnalysisOpen(true)}
+                className="flex-1 py-4 bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 text-white font-bold rounded-xl flex items-center justify-center gap-2 shadow-lg shadow-indigo-500/25 transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]"
+              >
+                <Target className="w-5 h-5 text-indigo-200" />
+                Kazanım & Eksik Analizi
+              </button>
+              <button
+                type="button"
                 onClick={() => setIsMistakeModalOpen(true)}
                 className="flex-1 py-4 bg-gradient-to-r from-amber-500 to-orange-500 text-slate-950 font-bold rounded-xl flex items-center justify-center gap-2 shadow-lg transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]"
               >
@@ -1169,6 +1235,15 @@ export default function TestsPage({
           isOpen={isMistakeNotebookOpen}
           onClose={() => setIsMistakeNotebookOpen(false)}
           onStartRetakeQuiz={handleStartRetakeMistakes}
+        />
+
+        <LearningOutcomeAnalysisModal
+          isOpen={isOutcomeAnalysisOpen}
+          onClose={() => setIsOutcomeAnalysisOpen(false)}
+          questions={quizQuestions}
+          answers={answers}
+          quizTitle={selectedQuiz?.title}
+          grade={selectedQuiz?.grade || user?.grade || 8}
         />
       </main>
     );

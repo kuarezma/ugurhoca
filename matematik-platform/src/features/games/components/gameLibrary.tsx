@@ -35,6 +35,7 @@ import { SpaceRocket } from './games/SpaceRocket';
 import { SpeedRacer } from './games/SpeedRacer';
 import { TowerBlock } from './games/TowerBlock';
 import { TreasurePirate } from './games/TreasurePirate';
+import { MathDuel } from './games/MathDuel';
 import type { GameDefinition } from '../types';
 
 export { FloatingParticles, GameCard };
@@ -242,5 +243,16 @@ export const games: GameDefinition[] = [
     color: 'from-indigo-500 to-purple-600',
     icon: Boxes,
     component: TowerBlock,
+  },
+  {
+    id: 19,
+    title: 'Matematik Düellosu',
+    description: '1v1 hızlı işlem düellosu: süreyle yarış, kombo yap ve zirveye çık!',
+    grade: '5-8',
+    rating: 4.9,
+    difficulty: 'Orta',
+    color: 'from-amber-500 to-rose-500',
+    icon: Swords,
+    component: MathDuel,
   },
 ];
