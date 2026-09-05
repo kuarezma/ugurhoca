@@ -12,6 +12,8 @@ describe('HomeQuickToolsGrid', () => {
     const onOpenTopicWeights = vi.fn();
     const onOpenWeeklyPlanner = vi.fn();
 
+    const onOpenSpeedDrill = vi.fn();
+
     render(
       <HomeQuickToolsGrid
         isLight={false}
@@ -22,10 +24,12 @@ describe('HomeQuickToolsGrid', () => {
         onOpenGlossary={onOpenGlossary}
         onOpenTopicWeights={onOpenTopicWeights}
         onOpenWeeklyPlanner={onOpenWeeklyPlanner}
+        onOpenSpeedDrill={onOpenSpeedDrill}
       />,
     );
 
     expect(screen.getByText('Matematikte Seni Zirveye Taşıyacak Araçlar')).toBeInTheDocument();
+    expect(screen.getByText('60 Saniye Formül Eşleştirme')).toBeInTheDocument();
     expect(screen.getByText('İnteraktif Görsel Formül İspatları')).toBeInTheDocument();
     expect(screen.getByText('Fonksiyon & Grafik Laboratuvarı')).toBeInTheDocument();
     expect(screen.getByText('Formül & Bilgi Kartları')).toBeInTheDocument();
@@ -33,6 +37,10 @@ describe('HomeQuickToolsGrid', () => {
     expect(screen.getByText('Matematik Kavram Sözlüğü')).toBeInTheDocument();
     expect(screen.getByText('LGS & YKS Çıkmış Soru Dağılım Matrisi')).toBeInTheDocument();
     expect(screen.getByText('A4 Masabaşı Haftalık Çalışma Çizelgesi')).toBeInTheDocument();
+
+    const speedDrillBtn = screen.getByRole('button', { name: /Hız Antrenmanı/i });
+    fireEvent.click(speedDrillBtn);
+    expect(onOpenSpeedDrill).toHaveBeenCalled();
 
     const topicWeightsBtn = screen.getByRole('button', { name: /Matrisi İncele/i });
     fireEvent.click(topicWeightsBtn);

@@ -107,6 +107,11 @@ const PrintableWeeklyPlannerModal = dynamic(
   { ssr: false },
 );
 
+const FormulaSpeedDrillModal = dynamic(
+  () => import('@/features/programs/components/FormulaSpeedDrillModal'),
+  { ssr: false },
+);
+
 type HomePageProps = {
   activeLiveLesson?: LiveLesson | null;
   initialFeed?: HomeInitialFeed | null;
@@ -116,6 +121,7 @@ export default function HomePage({ activeLiveLesson, initialFeed }: HomePageProp
   const { theme } = useTheme();
   const isLight = theme === 'light';
   const [isFlashcardsOpen, setIsFlashcardsOpen] = useState(false);
+  const [isSpeedDrillOpen, setIsSpeedDrillOpen] = useState(false);
   const [isScratchpadOpen, setIsScratchpadOpen] = useState(false);
   const [calculatorState, setCalculatorState] = useState<{
     isOpen: boolean;
@@ -159,6 +165,8 @@ export default function HomePage({ activeLiveLesson, initialFeed }: HomePageProp
         setIsTopicWeightsOpen(true);
       } else if (tool === 'weekly-planner' || tool === 'planner') {
         setIsWeeklyPlannerOpen(true);
+      } else if (tool === 'speed-drill' || tool === 'drill') {
+        setIsSpeedDrillOpen(true);
       }
     };
 
@@ -177,6 +185,8 @@ export default function HomePage({ activeLiveLesson, initialFeed }: HomePageProp
         setIsFlashcardsOpen(true);
       } else if (toolParam === 'cheat-sheet' || toolParam === 'formulas') {
         setIsCheatSheetOpen(true);
+      } else if (toolParam === 'speed-drill' || toolParam === 'drill') {
+        setIsSpeedDrillOpen(true);
       }
     }
 
@@ -235,6 +245,7 @@ export default function HomePage({ activeLiveLesson, initialFeed }: HomePageProp
           onOpenGlossary={() => setIsGlossaryOpen(true)}
           onOpenTopicWeights={() => setIsTopicWeightsOpen(true)}
           onOpenWeeklyPlanner={() => setIsWeeklyPlannerOpen(true)}
+          onOpenSpeedDrill={() => setIsSpeedDrillOpen(true)}
         />
         <div className="defer-section">
           <HomeSuccessRoadmap
@@ -361,6 +372,16 @@ export default function HomePage({ activeLiveLesson, initialFeed }: HomePageProp
         <PrintableWeeklyPlannerModal
           isOpen={isWeeklyPlannerOpen}
           onClose={() => setIsWeeklyPlannerOpen(false)}
+        />
+      ) : null}
+      {isSpeedDrillOpen ? (
+        <FormulaSpeedDrillModal
+          isOpen={isSpeedDrillOpen}
+          onClose={() => setIsSpeedDrillOpen(false)}
+          onOpenFlashcards={() => {
+            setIsSpeedDrillOpen(false);
+            setIsFlashcardsOpen(true);
+          }}
         />
       ) : null}
     </main>

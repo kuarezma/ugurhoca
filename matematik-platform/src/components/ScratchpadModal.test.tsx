@@ -50,9 +50,19 @@ describe('ScratchpadModal', () => {
     const yellowBtn = screen.getByTitle('Sarı');
     fireEvent.click(yellowBtn);
 
-    // Background pattern toggle
+    // Background pattern toggle - cycle through all 5 patterns
     const patternBtn = screen.getByTitle(/Zemin Deseni:/i);
-    fireEvent.click(patternBtn);
+    expect(patternBtn).toHaveTextContent('Kareli');
+    fireEvent.click(patternBtn); // lined
+    expect(patternBtn).toHaveTextContent('Çizgili');
+    fireEvent.click(patternBtn); // isometric
+    expect(patternBtn).toHaveTextContent('İzometrik 3D');
+    fireEvent.click(patternBtn); // coordinate
+    expect(patternBtn).toHaveTextContent('Koordinat');
+    fireEvent.click(patternBtn); // dark
+    expect(patternBtn).toHaveTextContent('Düz Tahta');
+    fireEvent.click(patternBtn); // back to grid
+    expect(patternBtn).toHaveTextContent('Kareli');
 
     // Option elimination
     const optionA = screen.getByText('-2');

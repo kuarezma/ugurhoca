@@ -25,6 +25,7 @@ describe('CommandPalette', () => {
     expect(screen.getByText('Matematik Odak & Pomodoro Sayacı')).toBeInTheDocument();
     expect(screen.getByText('MEB Matematik Konu Takip Çizelgesi')).toBeInTheDocument();
     expect(screen.getByText('Formül & Bilgi Kartları')).toBeInTheDocument();
+    expect(screen.getByText('60 Saniye Formül Eşleştirme Antrenmanı')).toBeInTheDocument();
     expect(screen.getByText('Akıllı Hata Defterim')).toBeInTheDocument();
   });
 

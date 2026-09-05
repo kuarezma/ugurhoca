@@ -31,4 +31,29 @@ describe('ExamScoreCalculatorModal', () => {
     fireEvent.click(closeBtn);
     expect(onClose).toHaveBeenCalled();
   });
+
+  it('saves current trial and renders trial progression in history timeline', () => {
+    localStorage.clear();
+    render(<ExamScoreCalculatorModal isOpen={true} onClose={vi.fn()} initialTab="lgs" />);
+
+    // Bu Denemeyi Kaydet
+    const saveBtn = screen.getByRole('button', { name: /Bu Denemeyi Kaydet/i });
+    fireEvent.click(saveBtn);
+
+    expect(screen.getByText('Deneme Kaydedildi!')).toBeInTheDocument();
+
+    // Çizelgeyi aç
+    const historyBtn = screen.getByRole('button', { name: /Deneme Gelişim Çizelgesi/i });
+    fireEvent.click(historyBtn);
+
+    expect(screen.getByText('LGS Deneme #1')).toBeInTheDocument();
+  });
+
+  it('renders target school simulator and calculates reverse net recipe', () => {
+    render(<ExamScoreCalculatorModal isOpen={true} onClose={vi.fn()} initialTab="lgs" />);
+
+    expect(screen.getByText('Hedef Lise & Tersine Net Simülatörü')).toBeInTheDocument();
+    expect(screen.getByText(/Aksiyon Reçetesi/i)).toBeInTheDocument();
+    expect(screen.getByText(/Matematikten \+/i)).toBeInTheDocument();
+  });
 });

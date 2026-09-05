@@ -24,6 +24,7 @@ import {
   Timer,
   User,
   Video,
+  Zap,
 } from 'lucide-react';
 
 export type CommandCategory = 'Araç' | 'Oyun' | 'Konu' | 'Sayfa';
@@ -99,6 +100,15 @@ export default function CommandPalette() {
         keywords: ['formul', 'kart', 'flashcard', 'kural', 'ozet', 'ezber'],
         icon: Sparkles,
         action: () => openTool('flashcards'),
+      },
+      {
+        id: 'speed-drill',
+        label: '60 Saniye Formül Eşleştirme Antrenmanı',
+        category: 'Araç',
+        hint: '60 saniyede hızlı matematik formül eşleştirme pratiği',
+        keywords: ['formul', 'hiz', 'drill', 'eslestir', 'antrenman', 'sure', '60', 'kural', 'aktif'],
+        icon: Zap,
+        action: () => openTool('speed-drill'),
       },
       {
         id: 'mistakes',

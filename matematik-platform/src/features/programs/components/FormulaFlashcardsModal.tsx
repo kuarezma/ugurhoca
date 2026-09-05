@@ -12,11 +12,13 @@ import {
   CheckCircle,
   Printer,
   Star,
+  Zap,
 } from 'lucide-react';
 import MathText from '@/components/MathText';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
+import FormulaSpeedDrillModal from './FormulaSpeedDrillModal';
 
-type Flashcard = {
+export type Flashcard = {
   id: string;
   category: 'lgs' | 'yks';
   subject: string;
@@ -119,7 +121,7 @@ export function saveCardLeitnerState(
   return updated;
 }
 
-const FLASHCARDS_DATA: Flashcard[] = [
+export const FLASHCARDS_DATA: Flashcard[] = [
   // LGS
   {
     id: 'lgs-1',
@@ -168,6 +170,51 @@ const FLASHCARDS_DATA: Flashcard[] = [
     formula: '$$\\sqrt{a} \\cdot \\sqrt{b} = \\sqrt{a \\cdot b}, \\quad \\frac{\\sqrt{a}}{\\sqrt{b}} = \\sqrt{\\frac{a}{b}}$$',
     tip: 'Toplama ve çıkarma yaparken kök içlerinin birebir aynı olması gerekir ($a\\sqrt{x} + b\\sqrt{x} = (a+b)\\sqrt{x}$).',
   },
+  {
+    id: 'lgs-6',
+    category: 'lgs',
+    subject: 'Çarpanlar ve Katlar',
+    title: 'EBOB - EKOK Çarpım Kuralı',
+    frontText: 'İki pozitif tam sayının çarpımı ile EBOB ve EKOK çarpımı arasındaki bağıntı nedir?',
+    formula: '$$\\text{EBOB}(a, b) \\cdot \\text{EKOK}(a, b) = a \\cdot b$$',
+    tip: 'Yalnızca iki sayı için geçerlidir. Aralarında asal sayılarda EBOB = 1 ve EKOK = a · b olur.',
+  },
+  {
+    id: 'lgs-7',
+    category: 'lgs',
+    subject: 'Doğrusal Denklemler',
+    title: 'İki Noktadan Geçen Doğrunun Eğimi',
+    frontText: 'A(x₁, y₁) ve B(x₂, y₂) noktalarından geçen doğrunun eğimi nasıl bulunur?',
+    formula: '$$m = \\frac{y_2 - y_1}{x_2 - x_1} = \\frac{\\Delta y}{\\Delta x}$$',
+    tip: 'Eğim dikey değişimin yatay değişime oranıdır. Sağa yatık doğruların eğimi pozitif, sola yatıkların negatiftir.',
+  },
+  {
+    id: 'lgs-8',
+    category: 'lgs',
+    subject: 'Daire ve Geometri',
+    title: 'Daire Diliminin Alanı',
+    frontText: 'Merkez açısı α olan r yarıçaplı daire diliminin alanı nasıl hesaplanır?',
+    formula: '$$\\text{Alan} = \\frac{\\alpha}{360^\\circ} \\cdot \\pi r^2$$',
+    tip: 'Tüm daire alanını açının 360° ye oranıyla çarparız.',
+  },
+  {
+    id: 'lgs-9',
+    category: 'lgs',
+    subject: 'Geometri / Benzerlik',
+    title: 'Benzerlik ve Alan Oranı',
+    frontText: 'Benzer iki şeklin çevreleri ve alanları oranı benzerlik oranı (k) ile nasıl ilişkilidir?',
+    formula: '$$\\text{Çevre Oranı} = k, \\quad \\text{Alan Oranı} = k^2$$',
+    tip: 'Benzerlik oranı k ise alanların oranı k² dir. Hacimlerin oranı ise k³ olur.',
+  },
+  {
+    id: 'lgs-10',
+    category: 'lgs',
+    subject: 'Olasılık',
+    title: 'Basit Olayların Olasılığı',
+    frontText: 'Bir olayın olma olasılığı nasıl formüle edilir?',
+    formula: '$$P(A) = \\frac{\\text{İstenen Olası Durum Sayısı}}{\\text{Tüm Olası Durumların Sayısı}}$$',
+    tip: 'İmkânsız olayın olasılığı 0, kesin olayın olasılığı 1 dir. Daima 0 ≤ P(A) ≤ 1.',
+  },
   // YKS
   {
     id: 'yks-1',
@@ -214,6 +261,51 @@ const FLASHCARDS_DATA: Flashcard[] = [
     formula: '$$\\text{Alan} = \\int_{a}^{b} [f(x) - g(x)] \\, dx$$\n$$\\int x^n \\, dx = \\frac{x^{n+1}}{n+1} + C \\quad (n \\neq -1)$$',
     tip: 'Üstteki fonksiyondan alttaki fonksiyon çıkarılarak integral alınır.',
   },
+  {
+    id: 'yks-6',
+    category: 'yks',
+    subject: 'İkinci Dereceden Denklemler',
+    title: 'Diskriminant (Δ) ve Kökler Formülü',
+    frontText: 'ax² + bx + c = 0 denkleminin kökleri diskriminant ile nasıl bulunur?',
+    formula: '$$\\Delta = b^2 - 4ac, \\quad x_{1,2} = \\frac{-b \\pm \\sqrt{\\Delta}}{2a}$$',
+    tip: 'Δ > 0 ise iki farklı gerçek kök, Δ = 0 ise çakışık çift kök, Δ < 0 ise gerçek kök yoktur.',
+  },
+  {
+    id: 'yks-7',
+    category: 'yks',
+    subject: 'İkinci Dereceden Denklemler',
+    title: 'Kökler Toplamı ve Çarpımı',
+    frontText: 'ax² + bx + c = 0 denkleminde kökler toplamı ve çarpımı katsayılarla nasıl ifade edilir?',
+    formula: '$$x_1 + x_2 = -\\frac{b}{a}, \\quad x_1 \\cdot x_2 = \\frac{c}{a}$$',
+    tip: 'Kökleri tek tek bulmadan toplam veya çarpım sorularını anında çözmeni sağlar.',
+  },
+  {
+    id: 'yks-8',
+    category: 'yks',
+    subject: 'Kombinatorik',
+    title: 'Kombinasyon ve Permütasyon Formülleri',
+    frontText: 'n elemanın r li sıralanışı (P) ve seçimi (C) formülleri nelerdir?',
+    formula: '$$P(n, r) = \\frac{n!}{(n-r)!}, \\quad C(n, r) = \\binom{n}{r} = \\frac{n!}{r!(n-r)!}$$',
+    tip: 'Permütasyonda sıra önemlidir (sıralama), kombinasyonda sıra önemsizdir (grup seçimi).',
+  },
+  {
+    id: 'yks-9',
+    category: 'yks',
+    subject: 'Diziler',
+    title: 'Aritmetik Dizi Genel Terimi ve Toplamı',
+    frontText: 'Ortak farkı d olan aritmetik dizinin n. terimi ve ilk n terim toplamı nasıldır?',
+    formula: '$$a_n = a_1 + (n-1)d, \\quad S_n = \\frac{n}{2}(a_1 + a_n)$$',
+    tip: 'Her ardışık terim arasındaki fark sabittir. İlk ve son terim ortalamasının terim sayısıyla çarpımıdır.',
+  },
+  {
+    id: 'yks-10',
+    category: 'yks',
+    subject: 'Diziler',
+    title: 'Geometrik Dizi Genel Terimi',
+    frontText: 'Ortak çarpanı r olan geometrik dizinin n. terimi ve ilk n terim toplamı nasıldır?',
+    formula: '$$a_n = a_1 \\cdot r^{n-1}, \\quad S_n = a_1 \\frac{1 - r^n}{1 - r} \\quad (r \\neq 1)$$',
+    tip: 'Her terim bir önceki terimin sabit r katıdır.',
+  },
 ];
 
 type FormulaFlashcardsModalProps = {
@@ -229,6 +321,7 @@ export function FormulaFlashcardsModal({
   const [categoryFilter, setCategoryFilter] = useState<'all' | 'due' | 'starred' | 'learned' | 'lgs' | 'yks'>('all');
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isFlipped, setIsFlipped] = useState(false);
+  const [isSpeedDrillOpen, setIsSpeedDrillOpen] = useState(false);
   const [starredCards, setStarredCards] = useState<Set<string>>(new Set());
   const [learnedCards, setLearnedCards] = useState<Set<string>>(new Set());
   const [leitnerStates, setLeitnerStates] = useState<Record<string, CardLeitnerState>>({});
@@ -451,6 +544,15 @@ export function FormulaFlashcardsModal({
           </div>
 
           <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
+            <button
+              type="button"
+              onClick={() => setIsSpeedDrillOpen(true)}
+              title="60 Saniye Hızlı Formül Eşleştirme Antrenmanı"
+              className="inline-flex items-center gap-1.5 rounded-xl bg-amber-500/20 border border-amber-500/30 px-2.5 py-1.5 text-xs font-semibold text-amber-300 hover:bg-amber-500/30 hover:text-amber-200 transition-colors"
+            >
+              <Zap className="h-4 w-4 text-amber-400" />
+              <span className="hidden sm:inline">60s Hız Antrenmanı</span>
+            </button>
             <button
               type="button"
               onClick={() => typeof window !== 'undefined' && window.print()}
@@ -776,6 +878,12 @@ export function FormulaFlashcardsModal({
         </div>
         </ErrorBoundary>
       </div>
+
+      <FormulaSpeedDrillModal
+        isOpen={isSpeedDrillOpen}
+        onClose={() => setIsSpeedDrillOpen(false)}
+        onOpenFlashcards={() => setIsSpeedDrillOpen(false)}
+      />
     </div>
   );
 }

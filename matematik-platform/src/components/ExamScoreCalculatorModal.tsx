@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useId, useMemo } from 'react';
+import { useState, useId, useMemo, useCallback, useEffect } from 'react';
 import {
   X,
   Calculator,
@@ -9,7 +9,22 @@ import {
   TrendingUp,
   Award,
   GraduationCap,
+  History,
+  Target,
+  Trash2,
+  Check,
+  ArrowUpRight,
+  ArrowDownRight,
+  BookmarkPlus,
+  Flame,
 } from 'lucide-react';
+import { useAccessibleModal } from '@/hooks/useAccessibleModal';
+import {
+  getSavedExamTrials,
+  saveExamTrial,
+  deleteExamTrial,
+  type SavedExamTrial,
+} from '@/lib/examHistoryStorage';
 import {
   calculateLgsScore,
   calculateYksScoreTable,
@@ -25,6 +40,25 @@ import {
   type YksScoreType,
   type YksSubjectKey,
 } from '@/lib/examCalculators';
+
+export const LGS_TARGET_PRESETS = [
+  { name: 'Galatasaray Lisesi', score: 498.0 },
+  { name: 'Ankara Fen Lisesi', score: 494.5 },
+  { name: 'İzmir Fen Lisesi', score: 491.2 },
+  { name: 'Kabataş Erkek Lisesi', score: 489.0 },
+  { name: 'Kadıköy Anadolu Lisesi', score: 476.5 },
+  { name: 'Nitelikli Fen Lisesi', score: 460.0 },
+  { name: 'Köklü Anadolu Lisesi', score: 420.0 },
+];
+
+export const YKS_TARGET_PRESETS = [
+  { name: 'Tıp Fakültesi (Devlet)', score: 490.0, type: 'SAY' as const },
+  { name: 'Mühendislik (İTÜ / ODTÜ)', score: 455.0, type: 'SAY' as const },
+  { name: 'Hukuk Fakültesi (Ankara / İst)', score: 425.0, type: 'EA' as const },
+  { name: 'İktisat / İşletme (Boğaziçi)', score: 440.0, type: 'EA' as const },
+  { name: 'Mimarlık / Temel Bilimler', score: 390.0, type: 'SAY' as const },
+  { name: 'Eğitim Fakültesi (Öğretmenlik)', score: 360.0, type: 'EA' as const },
+];
 
 type ExamScoreCalculatorModalProps = {
   isOpen: boolean;
@@ -47,6 +81,24 @@ export function ExamScoreCalculatorModal({
   const [yksInputs, setYksInputs] = useState<YksInputs>(createInitialYksInputs);
   const [diplomaScore, setDiplomaScore] = useState<number>(85);
   const [selectedYksType, setSelectedYksType] = useState<YksScoreType>('SAY');
+
+  // Deneme Takibi & Hedef Simülatörü State
+  const modalRef = useAccessibleModal<HTMLDivElement>(isOpen, onClose);
+  const [savedTrials, setSavedTrials] = useState<SavedExamTrial[]>([]);
+  const [showHistory, setShowHistory] = useState(false);
+  const [saveSuccess, setSaveSuccess] = useState(false);
+  const [selectedLgsTarget, setSelectedLgsTarget] = useState(LGS_TARGET_PRESETS[1].name);
+  const [selectedYksTarget, setSelectedYksTarget] = useState(YKS_TARGET_PRESETS[0].name);
+
+  const reloadTrials = useCallback(() => {
+    setSavedTrials(getSavedExamTrials(activeTab));
+  }, [activeTab]);
+
+  useEffect(() => {
+    if (isOpen) {
+      reloadTrials();
+    }
+  }, [isOpen, reloadTrials]);
 
   // LGS Calculations
   const lgsResult = useMemo(() => {
@@ -117,8 +169,6 @@ export function ExamScoreCalculatorModal({
     };
   }, [yksInputs, diplomaScore, selectedYksType]);
 
-  if (!isOpen) return null;
-
   const handleLgsChange = (
     subject: LgsSubjectKey,
     field: 'correct' | 'wrong',
@@ -165,20 +215,137 @@ export function ExamScoreCalculatorModal({
     });
   };
 
+  const peakTrial = useMemo(() => {
+    if (!savedTrials.length) return null;
+    return [...savedTrials].sort((a, b) => b.score - a.score)[0];
+  }, [savedTrials]);
+
+  const currentLgsTarget = useMemo(() => {
+    return (
+      LGS_TARGET_PRESETS.find((p) => p.name === selectedLgsTarget) ||
+      LGS_TARGET_PRESETS[1]
+    );
+  }, [selectedLgsTarget]);
+
+  const lgsGapAnalysis = useMemo(() => {
+    const targetScore = currentLgsTarget.score;
+    const currentScore = lgsResult.score;
+    const delta = targetScore - currentScore;
+    const isReached = delta <= 0;
+
+    const mathInput = lgsInputs.matematik || { correct: 0, wrong: 0 };
+    const currentMathNet = Math.max(0, mathInput.correct - mathInput.wrong / 3);
+    const mathHeadroom = Math.max(0, 20 - currentMathNet);
+
+    const fenInput = lgsInputs.fen || { correct: 0, wrong: 0 };
+    const currentFenNet = Math.max(0, fenInput.correct - fenInput.wrong / 3);
+    const fenHeadroom = Math.max(0, 20 - currentFenNet);
+
+    const neededNet = isReached ? 0 : Math.ceil(delta / 4.34);
+    const mathNeeded = Math.min(mathHeadroom, neededNet);
+    const fenNeeded = Math.min(fenHeadroom, neededNet);
+
+    return {
+      targetScore,
+      delta: Number(delta.toFixed(2)),
+      isReached,
+      mathNeeded,
+      fenNeeded,
+    };
+  }, [currentLgsTarget, lgsResult, lgsInputs]);
+
+  const currentYksTarget = useMemo(() => {
+    return (
+      YKS_TARGET_PRESETS.find((p) => p.name === selectedYksTarget) ||
+      YKS_TARGET_PRESETS[0]
+    );
+  }, [selectedYksTarget]);
+
+  const yksGapAnalysis = useMemo(() => {
+    const targetScore = currentYksTarget.score;
+    const currentScore = yksResult.activeRow.placementScore;
+    const delta = targetScore - currentScore;
+    const isReached = delta <= 0;
+
+    const aytMathNeeded = isReached ? 0 : Math.ceil(delta / 3.0);
+
+    return {
+      targetScore,
+      delta: Number(delta.toFixed(2)),
+      isReached,
+      aytMathNeeded,
+    };
+  }, [currentYksTarget, yksResult]);
+
+  const handleSaveLgsTrial = () => {
+    const mathInput = lgsInputs.matematik || { correct: 0, wrong: 0 };
+    const mathNet = Math.max(0, mathInput.correct - mathInput.wrong / 3);
+    const trialCount = savedTrials.length + 1;
+    saveExamTrial({
+      examType: 'lgs',
+      title: `LGS Deneme #${trialCount}`,
+      score: lgsResult.score,
+      mathNet,
+      totalNet: lgsResult.totalNet,
+      details: {
+        correctCount: lgsResult.totalCorrect,
+        wrongCount: lgsResult.totalWrong,
+      },
+    });
+    reloadTrials();
+    setSaveSuccess(true);
+    setTimeout(() => setSaveSuccess(false), 2000);
+  };
+
+  const handleSaveYksTrial = () => {
+    const mathTyt = yksInputs.tytMatematik || { correct: 0, wrong: 0 };
+    const mathAyt = yksInputs.aytMatematik || { correct: 0, wrong: 0 };
+    const tytMathNet = Math.max(0, mathTyt.correct - mathTyt.wrong / 4);
+    const aytMathNet = Math.max(0, mathAyt.correct - mathAyt.wrong / 4);
+    const totalMathNet = tytMathNet + aytMathNet;
+    const trialCount = savedTrials.length + 1;
+
+    saveExamTrial({
+      examType: 'yks',
+      title: `YKS (${selectedYksType}) Deneme #${trialCount}`,
+      score: yksResult.activeRow.placementScore,
+      mathNet: totalMathNet,
+      totalNet: yksResult.tytNet + yksResult.aytNet,
+      details: {
+        subNets: {
+          tytNet: yksResult.tytNet,
+          aytNet: yksResult.aytNet,
+        },
+      },
+    });
+    reloadTrials();
+    setSaveSuccess(true);
+    setTimeout(() => setSaveSuccess(false), 2000);
+  };
+
+  const handleDeleteTrial = (id: string) => {
+    deleteExamTrial(id);
+    reloadTrials();
+  };
+
   const handleResetLgs = () => setLgsInputs(createInitialLgsInputs());
   const handleResetYks = () => {
     setYksInputs(createInitialYksInputs());
     setDiplomaScore(85);
   };
 
+  if (!isOpen) return null;
+
   return (
     <div className="fixed inset-0 z-[150] flex items-center justify-center p-3 sm:p-5">
-      <div
-        className="fixed inset-0 -z-10 bg-slate-950/80 backdrop-blur-md"
+      <button
+        type="button"
+        aria-label="Pencereyi kapat"
+        className="fixed inset-0 bg-slate-950/80 backdrop-blur-md"
         onClick={onClose}
-        aria-hidden="true"
       />
       <div
+        ref={modalRef}
         role="dialog"
         aria-modal="true"
         aria-labelledby={titleId}
@@ -282,6 +449,185 @@ export function ExamScoreCalculatorModal({
                   <div className="mt-1 truncate text-[11px] text-slate-500 dark:text-slate-400" title={lgsResult.targetBand}>
                     {lgsResult.targetBand}
                   </div>
+                </div>
+              </div>
+
+              {/* Aksiyon Barı: Deneme Kaydet & Geçmiş Gelişim */}
+              <div className="flex flex-wrap items-center justify-between gap-2.5 p-1">
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={handleSaveLgsTrial}
+                    className={`inline-flex items-center gap-1.5 rounded-xl px-3.5 py-2 text-xs font-bold transition-all shadow-sm ${
+                      saveSuccess
+                        ? 'bg-emerald-600 text-white'
+                        : 'bg-indigo-600 hover:bg-indigo-700 text-white active:scale-95'
+                    }`}
+                  >
+                    {saveSuccess ? <Check className="h-4 w-4" /> : <BookmarkPlus className="h-4 w-4" />}
+                    <span>{saveSuccess ? 'Deneme Kaydedildi!' : 'Bu Denemeyi Kaydet'}</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setShowHistory(!showHistory)}
+                    className={`inline-flex items-center gap-1.5 rounded-xl border px-3 py-2 text-xs font-bold transition-all ${
+                      showHistory
+                        ? 'border-indigo-500 bg-indigo-50 dark:bg-indigo-500/20 text-indigo-700 dark:text-indigo-200'
+                        : 'border-slate-200 dark:border-white/10 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-50'
+                    }`}
+                  >
+                    <History className="h-3.5 w-3.5" />
+                    <span>Deneme Gelişim Çizelgesi ({savedTrials.length})</span>
+                  </button>
+                </div>
+
+                {peakTrial && (
+                  <div className="text-[11px] font-semibold text-slate-500 dark:text-slate-400 flex items-center gap-1">
+                    <span>🏆 Zirve Denemen:</span>
+                    <strong className="text-amber-600 dark:text-amber-400">{peakTrial.score.toFixed(1)} Puan</strong>
+                    <span>(Mat: {peakTrial.mathNet} Net)</span>
+                  </div>
+                )}
+              </div>
+
+              {/* Deneme Gelişim Çizelgesi & Net Artış Eğrisi */}
+              {showHistory && (
+                <div className="rounded-2xl border border-indigo-200/80 dark:border-indigo-500/20 bg-indigo-50/40 dark:bg-indigo-950/20 p-4 space-y-3">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <History className="h-4 w-4 text-indigo-600 dark:text-indigo-400" />
+                      <h4 className="font-display text-xs font-bold text-slate-900 dark:text-white">
+                        Kayıtlı LGS Deneme Geçmişi ({savedTrials.length})
+                      </h4>
+                    </div>
+                  </div>
+
+                  {savedTrials.length === 0 ? (
+                    <p className="text-xs text-slate-500 dark:text-slate-400 py-3 text-center">
+                      Henüz kayıtlı deneme sınavı bulunmuyor. Yukarıdaki &quot;Bu Denemeyi Kaydet&quot; butonuna basarak ilk sonucunu ekleyebilirsin.
+                    </p>
+                  ) : (
+                    <div className="space-y-2 max-h-60 overflow-y-auto pr-1 [scrollbar-width:thin]">
+                      {savedTrials.map((trial, idx) => {
+                        const nextTrial = savedTrials[idx + 1];
+                        const netDiff = nextTrial ? trial.totalNet - nextTrial.totalNet : null;
+                        return (
+                          <div
+                            key={trial.id}
+                            className="flex items-center justify-between rounded-xl border border-slate-200/80 dark:border-white/10 bg-white dark:bg-slate-800/80 p-3 text-xs"
+                          >
+                            <div className="min-w-0 flex-1">
+                              <div className="flex items-center gap-2">
+                                <span className="font-bold text-slate-900 dark:text-white truncate">
+                                  {trial.title}
+                                </span>
+                                <span className="text-[10px] text-slate-400">{trial.date}</span>
+                              </div>
+                              <div className="mt-1 flex items-center gap-3 text-[11px] text-slate-600 dark:text-slate-300">
+                                <span>
+                                  Puan: <strong className="text-indigo-600 dark:text-indigo-400">{trial.score}</strong>
+                                </span>
+                                <span>•</span>
+                                <span>
+                                  Matematik: <strong>{trial.mathNet} Net</strong>
+                                </span>
+                                <span>•</span>
+                                <span>
+                                  Toplam: <strong>{trial.totalNet} Net</strong>
+                                </span>
+                              </div>
+                            </div>
+
+                            <div className="flex items-center gap-2.5 shrink-0">
+                              {netDiff !== null && (
+                                <span
+                                  className={`inline-flex items-center gap-0.5 rounded-md px-2 py-0.5 text-[11px] font-bold ${
+                                    netDiff >= 0
+                                      ? 'bg-emerald-500/15 text-emerald-700 dark:text-emerald-300'
+                                      : 'bg-rose-500/15 text-rose-700 dark:text-rose-300'
+                                  }`}
+                                >
+                                  {netDiff >= 0 ? (
+                                    <ArrowUpRight className="h-3 w-3" />
+                                  ) : (
+                                    <ArrowDownRight className="h-3 w-3" />
+                                  )}
+                                  <span>{netDiff >= 0 ? `+${netDiff.toFixed(2)}` : netDiff.toFixed(2)} Net</span>
+                                </span>
+                              )}
+
+                              <button
+                                type="button"
+                                onClick={() => handleDeleteTrial(trial.id)}
+                                title="Bu denemeyi sil"
+                                className="p-1 text-slate-400 hover:text-rose-500 transition-colors"
+                              >
+                                <Trash2 className="h-3.5 w-3.5" />
+                              </button>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* Hedef Lise & Tersine Net İhtiyacı Simülatörü */}
+              <div className="rounded-2xl border border-indigo-200/80 dark:border-indigo-500/20 bg-slate-50/70 dark:bg-slate-800/40 p-4 space-y-3">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                  <div className="flex items-center gap-2">
+                    <Target className="h-4 w-4 text-indigo-600 dark:text-indigo-400" />
+                    <h4 className="font-display text-xs font-bold text-slate-900 dark:text-white">
+                      Hedef Lise & Tersine Net Simülatörü
+                    </h4>
+                  </div>
+
+                  <div className="flex items-center gap-2">
+                    <span className="text-[11px] text-slate-500 dark:text-slate-400">Hedef Okul:</span>
+                    <select
+                      value={selectedLgsTarget}
+                      onChange={(e) => setSelectedLgsTarget(e.target.value)}
+                      className="rounded-lg border border-slate-200 dark:border-white/10 bg-white dark:bg-slate-800 px-2.5 py-1 text-xs font-semibold text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                    >
+                      {LGS_TARGET_PRESETS.map((preset) => (
+                        <option key={preset.name} value={preset.name}>
+                          {preset.name} ({preset.score} Puan)
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+
+                {/* Reçete Çıktısı */}
+                <div
+                  className={`rounded-xl border p-3 text-xs leading-relaxed ${
+                    lgsGapAnalysis.isReached
+                      ? 'border-emerald-200 bg-emerald-50/70 dark:border-emerald-500/20 dark:bg-emerald-950/30 text-emerald-950 dark:text-emerald-200'
+                      : 'border-amber-200 bg-amber-50/70 dark:border-amber-500/20 dark:bg-amber-950/30 text-amber-950 dark:text-amber-200'
+                  }`}
+                >
+                  {lgsGapAnalysis.isReached ? (
+                    <div className="flex items-center gap-2 font-bold">
+                      <Sparkles className="h-4 w-4 text-emerald-500 shrink-0" />
+                      <span>
+                        🎉 Harika Gidiyorsun! Mevcut netlerin ({lgsResult.score.toFixed(2)} puan) {selectedLgsTarget} taban puanının ({lgsGapAnalysis.targetScore} puan) üzerinde.
+                      </span>
+                    </div>
+                  ) : (
+                    <div className="space-y-1">
+                      <p className="font-bold flex items-center gap-1.5">
+                        <Flame className="h-3.5 w-3.5 text-amber-600 dark:text-amber-400 shrink-0" />
+                        <span>
+                          {selectedLgsTarget} ({lgsGapAnalysis.targetScore} Puan) İçin Kalan Fark: +{lgsGapAnalysis.delta} Puan
+                        </span>
+                      </p>
+                      <p className="text-[11px] opacity-90">
+                        💡 <strong>Aksiyon Reçetesi:</strong> Bu taban puan farkını kapatmak için kalan sürede: <strong>Matematikten +{lgsGapAnalysis.mathNeeded} net</strong> VEYA <strong>Fenden +{lgsGapAnalysis.fenNeeded} net</strong> artırman hedefe ulaşman için yeterli!
+                      </p>
+                    </div>
+                  )}
                 </div>
               </div>
 
@@ -435,6 +781,185 @@ export function ExamScoreCalculatorModal({
                     {yksResult.aytNet}
                   </div>
                   <div className="text-[10px] text-slate-500 dark:text-slate-400">Seçilen testler üzerinden</div>
+                </div>
+              </div>
+
+              {/* Aksiyon Barı: YKS Deneme Kaydet & Geçmiş Gelişim */}
+              <div className="flex flex-wrap items-center justify-between gap-2.5 p-1">
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={handleSaveYksTrial}
+                    className={`inline-flex items-center gap-1.5 rounded-xl px-3.5 py-2 text-xs font-bold transition-all shadow-sm ${
+                      saveSuccess
+                        ? 'bg-emerald-600 text-white'
+                        : 'bg-purple-600 hover:bg-purple-700 text-white active:scale-95'
+                    }`}
+                  >
+                    {saveSuccess ? <Check className="h-4 w-4" /> : <BookmarkPlus className="h-4 w-4" />}
+                    <span>{saveSuccess ? 'Deneme Kaydedildi!' : 'Bu Denemeyi Kaydet'}</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setShowHistory(!showHistory)}
+                    className={`inline-flex items-center gap-1.5 rounded-xl border px-3 py-2 text-xs font-bold transition-all ${
+                      showHistory
+                        ? 'border-purple-500 bg-purple-50 dark:bg-purple-500/20 text-purple-700 dark:text-purple-200'
+                        : 'border-slate-200 dark:border-white/10 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-50'
+                    }`}
+                  >
+                    <History className="h-3.5 w-3.5" />
+                    <span>YKS Deneme Çizelgesi ({savedTrials.length})</span>
+                  </button>
+                </div>
+
+                {peakTrial && (
+                  <div className="text-[11px] font-semibold text-slate-500 dark:text-slate-400 flex items-center gap-1">
+                    <span>🏆 Zirve YKS Skorun:</span>
+                    <strong className="text-purple-600 dark:text-purple-400">{peakTrial.score.toFixed(1)} Puan</strong>
+                    <span>(Mat: {peakTrial.mathNet} Net)</span>
+                  </div>
+                )}
+              </div>
+
+              {/* YKS Deneme Gelişim Çizelgesi */}
+              {showHistory && (
+                <div className="rounded-2xl border border-purple-200/80 dark:border-purple-500/20 bg-purple-50/40 dark:bg-purple-950/20 p-4 space-y-3">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <History className="h-4 w-4 text-purple-600 dark:text-purple-400" />
+                      <h4 className="font-display text-xs font-bold text-slate-900 dark:text-white">
+                        Kayıtlı YKS Deneme Geçmişi ({savedTrials.length})
+                      </h4>
+                    </div>
+                  </div>
+
+                  {savedTrials.length === 0 ? (
+                    <p className="text-xs text-slate-500 dark:text-slate-400 py-3 text-center">
+                      Henüz kayıtlı deneme sınavı bulunmuyor. Yukarıdaki &quot;Bu Denemeyi Kaydet&quot; butonuna basarak ilk sonucunu ekleyebilirsin.
+                    </p>
+                  ) : (
+                    <div className="space-y-2 max-h-60 overflow-y-auto pr-1 [scrollbar-width:thin]">
+                      {savedTrials.map((trial, idx) => {
+                        const nextTrial = savedTrials[idx + 1];
+                        const netDiff = nextTrial ? trial.totalNet - nextTrial.totalNet : null;
+                        return (
+                          <div
+                            key={trial.id}
+                            className="flex items-center justify-between rounded-xl border border-slate-200/80 dark:border-white/10 bg-white dark:bg-slate-800/80 p-3 text-xs"
+                          >
+                            <div className="min-w-0 flex-1">
+                              <div className="flex items-center gap-2">
+                                <span className="font-bold text-slate-900 dark:text-white truncate">
+                                  {trial.title}
+                                </span>
+                                <span className="text-[10px] text-slate-400">{trial.date}</span>
+                              </div>
+                              <div className="mt-1 flex items-center gap-3 text-[11px] text-slate-600 dark:text-slate-300">
+                                <span>
+                                  Puan: <strong className="text-purple-600 dark:text-purple-400">{trial.score}</strong>
+                                </span>
+                                <span>•</span>
+                                <span>
+                                  Mat Toplam: <strong>{trial.mathNet} Net</strong>
+                                </span>
+                                <span>•</span>
+                                <span>
+                                  Genel: <strong>{trial.totalNet} Net</strong>
+                                </span>
+                              </div>
+                            </div>
+
+                            <div className="flex items-center gap-2.5 shrink-0">
+                              {netDiff !== null && (
+                                <span
+                                  className={`inline-flex items-center gap-0.5 rounded-md px-2 py-0.5 text-[11px] font-bold ${
+                                    netDiff >= 0
+                                      ? 'bg-emerald-500/15 text-emerald-700 dark:text-emerald-300'
+                                      : 'bg-rose-500/15 text-rose-700 dark:text-rose-300'
+                                  }`}
+                                >
+                                  {netDiff >= 0 ? (
+                                    <ArrowUpRight className="h-3 w-3" />
+                                  ) : (
+                                    <ArrowDownRight className="h-3 w-3" />
+                                  )}
+                                  <span>{netDiff >= 0 ? `+${netDiff.toFixed(2)}` : netDiff.toFixed(2)} Net</span>
+                                </span>
+                              )}
+
+                              <button
+                                type="button"
+                                onClick={() => handleDeleteTrial(trial.id)}
+                                title="Bu denemeyi sil"
+                                className="p-1 text-slate-400 hover:text-rose-500 transition-colors"
+                              >
+                                <Trash2 className="h-3.5 w-3.5" />
+                              </button>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* YKS Hedef Üniversite Simülatörü */}
+              <div className="rounded-2xl border border-purple-200/80 dark:border-purple-500/20 bg-slate-50/70 dark:bg-slate-800/40 p-4 space-y-3">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                  <div className="flex items-center gap-2">
+                    <Target className="h-4 w-4 text-purple-600 dark:text-purple-400" />
+                    <h4 className="font-display text-xs font-bold text-slate-900 dark:text-white">
+                      Hedef Üniversite Programı & Net Simülatörü
+                    </h4>
+                  </div>
+
+                  <div className="flex items-center gap-2">
+                    <span className="text-[11px] text-slate-500 dark:text-slate-400">Hedef:</span>
+                    <select
+                      value={selectedYksTarget}
+                      onChange={(e) => setSelectedYksTarget(e.target.value)}
+                      className="rounded-lg border border-slate-200 dark:border-white/10 bg-white dark:bg-slate-800 px-2.5 py-1 text-xs font-semibold text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-1 focus:ring-purple-500"
+                    >
+                      {YKS_TARGET_PRESETS.map((preset) => (
+                        <option key={preset.name} value={preset.name}>
+                          {preset.name} ({preset.score} Puan - {preset.type})
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+
+                {/* YKS Reçete Çıktısı */}
+                <div
+                  className={`rounded-xl border p-3 text-xs leading-relaxed ${
+                    yksGapAnalysis.isReached
+                      ? 'border-emerald-200 bg-emerald-50/70 dark:border-emerald-500/20 dark:bg-emerald-950/30 text-emerald-950 dark:text-emerald-200'
+                      : 'border-purple-200 bg-purple-50/70 dark:border-purple-500/20 dark:bg-purple-950/30 text-purple-950 dark:text-purple-200'
+                  }`}
+                >
+                  {yksGapAnalysis.isReached ? (
+                    <div className="flex items-center gap-2 font-bold">
+                      <Sparkles className="h-4 w-4 text-emerald-500 shrink-0" />
+                      <span>
+                        🎉 Harika Gidiyorsun! Yerleştirme puanın ({yksResult.activeRow.placementScore.toFixed(1)}) {selectedYksTarget} taban puanının ({yksGapAnalysis.targetScore}) üzerinde.
+                      </span>
+                    </div>
+                  ) : (
+                    <div className="space-y-1">
+                      <p className="font-bold flex items-center gap-1.5">
+                        <Flame className="h-3.5 w-3.5 text-purple-600 dark:text-purple-400 shrink-0" />
+                        <span>
+                          {selectedYksTarget} ({yksGapAnalysis.targetScore} Puan) İçin Kalan Fark: +{yksGapAnalysis.delta} Puan
+                        </span>
+                      </p>
+                      <p className="text-[11px] opacity-90">
+                        💡 <strong>Aksiyon Reçetesi:</strong> Bu taban puan farkını kapatmak için: <strong>AYT Matematikten yaklaşık +{yksGapAnalysis.aytMathNeeded} net</strong> artırman hedefe ulaşman için yeterli!
+                      </p>
+                    </div>
+                  )}
                 </div>
               </div>
 

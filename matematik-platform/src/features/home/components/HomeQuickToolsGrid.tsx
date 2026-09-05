@@ -14,6 +14,7 @@ import {
   BookMarked,
   TrendingUp,
   Calendar,
+  Zap,
 } from 'lucide-react';
 
 type HomeQuickToolsGridProps = {
@@ -29,6 +30,7 @@ type HomeQuickToolsGridProps = {
   onOpenGlossary?: () => void;
   onOpenTopicWeights?: () => void;
   onOpenWeeklyPlanner?: () => void;
+  onOpenSpeedDrill?: () => void;
 };
 
 export function HomeQuickToolsGrid({
@@ -44,6 +46,7 @@ export function HomeQuickToolsGrid({
   onOpenGlossary,
   onOpenTopicWeights,
   onOpenWeeklyPlanner,
+  onOpenSpeedDrill,
 }: HomeQuickToolsGridProps) {
   const tools = [
     {
@@ -92,6 +95,18 @@ export function HomeQuickToolsGrid({
       action: onOpenFlashcards,
       buttonLabel: 'Kartları Aç',
       badge: 'Formül',
+    },
+    {
+      id: 'speedDrill',
+      title: '60 Saniye Formül Eşleştirme',
+      description: 'Zamana karşı kural ve KaTeX formüllerini aktif hatırlamayla eşleştir, serilik kazan.',
+      icon: Zap,
+      gradient: 'from-amber-400 via-yellow-500 to-orange-500',
+      actionType: onOpenSpeedDrill ? 'modal' : 'link',
+      action: onOpenSpeedDrill,
+      href: '#',
+      buttonLabel: 'Hız Antrenmanı',
+      badge: '60s Hız ⚡',
     },
     {
       id: 'scratchpad',
