@@ -1074,6 +1074,7 @@ export default function TestsPage({
                 questionIndex={currentQuestion}
                 isOpen={isHintLadderOpen}
                 onToggleOpen={() => setIsHintLadderOpen((prev) => !prev)}
+                quizTitle={selectedQuiz?.title}
               />
             </div>
 

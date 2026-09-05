@@ -34,10 +34,14 @@ describe('ScratchpadModal', () => {
     // Math Whiteboard Toolkit
     expect(screen.getByText('Koordinat')).toBeInTheDocument();
     expect(screen.getByText('Sayı Doğrusu')).toBeInTheDocument();
+    expect(screen.getByText('Açıölçer')).toBeInTheDocument();
     expect(screen.getByText('Şekil')).toBeInTheDocument();
 
     fireEvent.click(screen.getByTitle(/Kartezyen Koordinat Düzlemi Ekle/i));
     fireEvent.click(screen.getByTitle(/Sayı Doğrusu Ekle/i));
+    fireEvent.click(screen.getByText('Açıölçer'));
+    expect(screen.getByText('Açıölçer:')).toBeInTheDocument();
+    fireEvent.click(screen.getByText('Açıölçer')); // close
     fireEvent.click(screen.getByText(/Dik Üçgen/i));
     fireEvent.click(screen.getByText(/Çember/i));
     fireEvent.click(screen.getByText(/Dikdörtgen/i));

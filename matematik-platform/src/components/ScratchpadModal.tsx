@@ -29,6 +29,7 @@ import {
 import MathText from '@/components/MathText';
 import Image from 'next/image';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
+import ProtractorOverlay from '@/components/ProtractorOverlay';
 
 export type ScratchpadQuestionContext = {
   questionText: string;
@@ -106,6 +107,7 @@ export default function ScratchpadModal({
   const [redoHistory, setRedoHistory] = useState<ImageData[]>([]);
   const [showQuestionPanel, setShowQuestionPanel] = useState(Boolean(questionContext));
   const [eliminatedOptions, setEliminatedOptions] = useState<Set<number>>(new Set());
+  const [showProtractor, setShowProtractor] = useState(false);
 
   const cacheKey = questionContext?.questionId || (questionContext?.questionText ? questionContext.questionText.trim().slice(0, 100) : null);
 
@@ -848,6 +850,20 @@ export default function ScratchpadModal({
                 <span className="hidden sm:inline">Sayı Doğrusu</span>
               </button>
 
+              <button
+                type="button"
+                onClick={() => setShowProtractor((prev) => !prev)}
+                title={showProtractor ? 'Açıölçeri Gizle' : 'Açıölçer (İletki) Aç'}
+                className={`inline-flex h-8 items-center gap-1 rounded-lg px-2 text-xs font-semibold transition ${
+                  showProtractor
+                    ? 'bg-amber-500 text-slate-950 font-bold shadow-md'
+                    : 'text-indigo-300 hover:bg-indigo-500/20 hover:text-white'
+                }`}
+              >
+                <Compass className="h-3.5 w-3.5 text-amber-400" />
+                <span className="hidden sm:inline">Açıölçer</span>
+              </button>
+
               <div className="relative group">
                 <button
                   type="button"
@@ -1091,6 +1107,12 @@ export default function ScratchpadModal({
               onPointerUp={handlePointerUp}
               onPointerCancel={handlePointerUp}
               className="h-full w-full block"
+            />
+
+            <ProtractorOverlay
+              isOpen={showProtractor}
+              onClose={() => setShowProtractor(false)}
+              isLight={isLight}
             />
           </div>
         </div>

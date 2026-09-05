@@ -101,4 +101,42 @@ describe('FormulaFlashcardsModal', () => {
     // Currently starred card is present
     expect(screen.getAllByText('Tam Kare Özdeşlikleri')[0]).toBeInTheDocument();
   });
+
+  it('renders audio read-aloud button and toggles speech when supported', () => {
+    const mockSpeak = vi.fn();
+    const mockCancel = vi.fn();
+    Object.defineProperty(window, 'speechSynthesis', {
+      value: {
+        speak: mockSpeak,
+        cancel: mockCancel,
+        speaking: false,
+        getVoices: () => [],
+      },
+      writable: true,
+      configurable: true,
+    });
+    class MockUtterance {
+      text: string;
+      lang = '';
+      rate = 1;
+      pitch = 1;
+      onstart: (() => void) | null = null;
+      onend: (() => void) | null = null;
+      onerror: (() => void) | null = null;
+      constructor(text: string) {
+        this.text = text;
+      }
+    }
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (window as any).SpeechSynthesisUtterance = MockUtterance;
+
+    render(<FormulaFlashcardsModal isOpen={true} onClose={vi.fn()} />);
+
+    const speechBtn = screen.getByRole('button', { name: /Formülü sesli dinle/i });
+    expect(speechBtn).toBeInTheDocument();
+
+    fireEvent.click(speechBtn);
+    expect(mockSpeak).toHaveBeenCalled();
+  });
 });
+

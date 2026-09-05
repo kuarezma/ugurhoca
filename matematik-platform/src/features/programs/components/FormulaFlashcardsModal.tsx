@@ -13,10 +13,13 @@ import {
   Printer,
   Star,
   Zap,
+  Volume2,
+  VolumeX,
 } from 'lucide-react';
 import MathText from '@/components/MathText';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
 import FormulaSpeedDrillModal from './FormulaSpeedDrillModal';
+import { useFormulaSpeech } from '../utils/mathSpeechSynthesizer';
 
 export type Flashcard = {
   id: string;
@@ -326,13 +329,22 @@ export function FormulaFlashcardsModal({
   const [learnedCards, setLearnedCards] = useState<Set<string>>(new Set());
   const [leitnerStates, setLeitnerStates] = useState<Record<string, CardLeitnerState>>({});
 
+  const {
+    isSpeaking,
+    isSupported: isSpeechSupported,
+    toggle: toggleSpeech,
+    stop: stopSpeech,
+  } = useFormulaSpeech();
+
   useEffect(() => {
     if (isOpen) {
       setStarredCards(new Set(getStarredFormulaIds()));
       setLearnedCards(new Set(getLearnedFormulaIds()));
       setLeitnerStates(getLeitnerStates());
+    } else {
+      stopSpeech();
     }
-  }, [isOpen]);
+  }, [isOpen, stopSpeech]);
 
   const toggleStarred = (id: string) => {
     setStarredCards((prev) => {
@@ -393,16 +405,19 @@ export function FormulaFlashcardsModal({
   const currentLeitner = currentCard ? leitnerStates[currentCard.id] || { box: 1, lastReviewedAt: '', nextReviewAt: '', reviewCount: 0 } : null;
 
   const handleNext = () => {
+    stopSpeech();
     setIsFlipped(false);
     setCurrentIndex((prev) => (prev + 1) % (filteredCards.length || 1));
   };
 
   const handlePrev = () => {
+    stopSpeech();
     setIsFlipped(false);
     setCurrentIndex((prev) => (prev - 1 + (filteredCards.length || 1)) % (filteredCards.length || 1));
   };
 
   const handleShuffle = () => {
+    stopSpeech();
     setIsFlipped(false);
     const rand = Math.floor(Math.random() * (filteredCards.length || 1));
     setCurrentIndex(rand);
@@ -723,6 +738,28 @@ export function FormulaFlashcardsModal({
                   )}
                 </div>
                 <div className="flex items-center gap-2">
+                  {isSpeechSupported && (
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        if (isFlipped) {
+                          toggleSpeech(`${currentCard.title}. ${currentCard.formula}. ${currentCard.tip || ''}`);
+                        } else {
+                          toggleSpeech(`${currentCard.title}. ${currentCard.frontText}`);
+                        }
+                      }}
+                      className={`p-1.5 rounded-xl transition ${
+                        isSpeaking
+                          ? 'text-cyan-400 bg-cyan-500/20 animate-pulse'
+                          : 'text-slate-400 hover:text-white hover:bg-white/10'
+                      }`}
+                      title={isSpeaking ? 'Seslendirmeyi durdur' : 'Formülü sesli dinle'}
+                      aria-label={isSpeaking ? 'Seslendirmeyi durdur' : 'Formülü sesli dinle'}
+                    >
+                      {isSpeaking ? <VolumeX className="h-4 w-4" /> : <Volume2 className="h-4 w-4" />}
+                    </button>
+                  )}
                   <button
                     type="button"
                     onClick={(e) => {

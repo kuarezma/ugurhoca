@@ -13,15 +13,19 @@ import {
   BrainCircuit,
   AlertTriangle,
   Compass,
+  BookmarkPlus,
+  BookmarkCheck,
 } from 'lucide-react';
 import MathText from '@/components/MathText';
 import type { QuizQuestion } from '@/types/quiz';
+import { getSavedMistakes, saveMistakesToBank } from '../lib/mistakeStorage';
 
 type QuestionHintLadderProps = {
   question: QuizQuestion;
   questionIndex: number;
   isOpen?: boolean;
   onToggleOpen?: () => void;
+  quizTitle?: string;
 };
 
 export type QuestionHintsData = {
@@ -46,7 +50,102 @@ export function deriveQuestionHints(question: QuizQuestion): QuestionHintsData {
 
   // 1. Kademe: Formül & Kural
   let level1 = 'Soruda verilenleri ve isteneni belirle. Bilinen değerleri bir kenara not et.';
-  if (text.includes('oran') || text.includes('orantı')) {
+  if (
+    text.includes('sinüs') ||
+    text.includes('kosinüs') ||
+    text.includes('tanjant') ||
+    text.includes('kotanjant') ||
+    text.includes('\\sin') ||
+    text.includes('\\cos') ||
+    text.includes('\\tan') ||
+    text.includes('birim çember') ||
+    text.includes('trigonometri')
+  ) {
+    level1 =
+      'Temel trigonometrik özdeşliği hatırla: sin²(x) + cos²(x) = 1 ve tan(x) = sin(x) / cos(x). Açının hangi bölgede olduğunu tespit et.';
+    socraticAnalysis =
+      'Verilen açı hangi bölgede (1., 2., 3. veya 4.)? Trigonometrik fonksiyonların bu bölgedeki işaretleri (+ / -) nelerdir?';
+    criticalEquation =
+      '\\sin^2(x) + \\cos^2(x) = 1 | \\tan(x) \\cdot \\cot(x) = 1 | \\sin(2x) = 2\\sin(x)\\cos(x)';
+    commonTrap =
+      'Açı indirgemesi yaparken bölgeye göre işaret değişimini unutma! Örneğin 2. bölgede cos(180° - x) = -cos(x) olur.';
+  } else if (
+    text.includes('logaritma') ||
+    text.includes('\\log') ||
+    text.includes('\\ln') ||
+    text.includes('taban değiştir')
+  ) {
+    level1 =
+      'Logaritma tanımını uygula: log_a(b) = c ⟺ aᶜ = b (a > 0, a ≠ 1, b > 0). Çarpım toplamaya, bölüm çıkarmaya dönüşür.';
+    socraticAnalysis =
+      'Tabanlar aynı mı? Aynı tabandaki logaritmaları tek bir terimde birleştirebilir veya taban değiştirme kuralını uygulayabilir misin?';
+    criticalEquation =
+      '\\log_a(x \\cdot y) = \\log_a(x) + \\log_a(y) | \\log_a(x^k) = k \\cdot \\log_a(x) | a^{\\log_a(b)} = b';
+    commonTrap =
+      'Logaritma tanım kümesini kontrol et: Taban a > 0 ve a ≠ 1 olmalı, içerideki fonksiyon f(x) > 0 olmak zorundadır!';
+  } else if (
+    text.includes('aritmetik dizi') ||
+    text.includes('geometrik dizi') ||
+    text.includes('ortak fark') ||
+    text.includes('genel terim') ||
+    text.includes('dizi')
+  ) {
+    level1 =
+      'Aritmetik dizide ardışık terimler farkı sabit (aₙ = a₁ + (n-1)d), geometrik dizide terimler oranı sabittir (aₙ = a₁ · rⁿ⁻¹).';
+    socraticAnalysis =
+      'Dizi aritmetik mi (sabit ekleniyor) yoksa geometrik mi (sabit çarpılıyor)? İlk terim a₁ ve ortak fark/çarpan biliniyor mu?';
+    criticalEquation =
+      'Aritmetik: a_n = a_1 + (n-1)d | S_n = \\frac{n}{2}(a_1 + a_n) | Geometrik: a_n = a_1 \\cdot r^{n-1}';
+    commonTrap =
+      'Terim sayısı formülünde +1 eklemeyi unutma: Terim Sayısı = (Son Terim - İlk Terim) / Artış Miktarı + 1.';
+  } else if (
+    text.includes('polinom') ||
+    text.includes('kalan teoremi') ||
+    text.includes('baş katsayı') ||
+    text.includes('derece')
+  ) {
+    level1 =
+      'Polinomda x kuvvetleri doğal sayı olmalıdır. P(x) polinomunun (x - a) ile bölümünden kalan P(a) değeridir.';
+    socraticAnalysis =
+      'Kalanı bulmak için uzun polinom bölmesi yerine bölen çarpanı sıfıra eşitleyerek doğrudan sonuca ulaşabilir misin?';
+    criticalEquation =
+      'P(x) = Q(x) \\cdot B(x) + K(x) | \\text{der}[K(x)] < \\text{der}[B(x)] | x = a \\implies P(a)';
+    commonTrap =
+      'Sabit terim için x = 0, katsayılar toplamı için x = 1 yazılır. P(x+2) verildiğinde katsayılar toplamı için x yerine 1 yazıp P(3) arandığını unutma!';
+  } else if (
+    text.includes('fonksiyon') ||
+    text.includes('f(x)') ||
+    text.includes('g(x)') ||
+    text.includes('bileşke') ||
+    text.includes('ters fonksiyon') ||
+    text.includes('tanım kümesi')
+  ) {
+    level1 =
+      'Fonksiyon bağıntısında tanım kümesindeki her elemanın değer kümesinde yalnız bir karşılığı olmalıdır. Ters fonksiyonda y = f(x) eşitliğinde x yalnız bırakılır.';
+    socraticAnalysis =
+      'Bileşke (f ∘ g)(x) mi isteniyor? Önce en içerideki g(x) değerini hesaplayıp çıkan sonucu f fonksiyonuna girdi yapabilir misin?';
+    criticalEquation =
+      '(f \\circ g)(x) = f(g(x)) | f(a) = b \\iff f^{-1}(b) = a | (f \\circ f^{-1})(x) = x';
+    commonTrap =
+      'f(x+2) verildiğinde f(5) değerini bulmak için x yerine 5 değil, x+2 = 5 ⟹ x = 3 yazılmalıdır!';
+  } else if (
+    text.includes('pisagor') ||
+    text.includes('30-60-90') ||
+    text.includes('45-45-90') ||
+    text.includes('hipotenüs') ||
+    text.includes('dik üçgen') ||
+    text.includes('öklid') ||
+    text.includes('muhteşem üçlü')
+  ) {
+    level1 =
+      'Özel dik üçgen oranlarını hatırla: 3-4-5, 5-12-13, 8-15-17. 30-60-90 üçgeninde 30° karşısı a ise 90° karşısı 2a, 60° karşısı a√3 olur.';
+    socraticAnalysis =
+      'Dik açıdan dikme inmiş mi (Öklid bağıntıları: h² = p · k)? Hipotenüse ait kenarortay var mı (Muhteşem Üçlü)?';
+    criticalEquation =
+      'a^2 + b^2 = c^2 | \\text{Öklid: } h^2 = p \\cdot k, b^2 = k \\cdot a | 30^\\circ-60^\\circ-90^\\circ: a, a\\sqrt{3}, 2a';
+    commonTrap =
+      'Özel açıları (30°, 45°, 60°) gördüğünde karşılarına dikme indir; ancak geniş açılı üçgenlerde dikmenin üçgenin dışına düşebileceğini hatırla!';
+  } else if (text.includes('oran') || text.includes('orantı')) {
     level1 = 'İçler dışlar çarpımı kuralını hatırla: a/b = c/d ise a · d = b · c.';
     socraticAnalysis =
       'Verilen iki büyüklük arasında doğru orantı mı (biri artınca diğeri de artıyor) yoksa ters orantı mı (biri artınca diğeri azalıyor) var?';
@@ -121,7 +220,38 @@ export function deriveQuestionHints(question: QuizQuestion): QuestionHintsData {
   // 2. Kademe: İlk İşlem Adımı
   let level2 =
     'Denklem kurmak için bilinmeyene x de ve soruda verilen eşitliği matematik diline dök.';
-  if (text.includes('karekö') || text.includes('kök')) {
+  if (
+    text.includes('sinüs') ||
+    text.includes('kosinüs') ||
+    text.includes('tanjant') ||
+    text.includes('\\sin') ||
+    text.includes('\\cos') ||
+    text.includes('\\tan') ||
+    text.includes('trigonometri')
+  ) {
+    level2 =
+      'İlk adım olarak verilen açıyı esas ölçüsüne ([0, 360°] veya [0, 2π]) indirge ve trigonometrik değerin bölgesine göre işaretini (+/-) belirle.';
+  } else if (text.includes('logaritma') || text.includes('\\log') || text.includes('\\ln')) {
+    level2 =
+      'İlk adım olarak tüm logaritmaları aynı tabana dönüştür veya üsleri katsayı olarak logaritmanın başına indir.';
+  } else if (text.includes('dizi') || text.includes('aritmetik dizi') || text.includes('geometrik dizi')) {
+    level2 =
+      'İlk terim (a₁) ve ortak farkı (d) ya da ortak çarpanı (r) tespit ederek sorudaki tüm terimleri a₁ cinsinden ifade et.';
+  } else if (text.includes('polinom')) {
+    level2 =
+      'İlk adım olarak bölen ifadeyi sıfıra eşitleyerek elde ettiğin x değerini doğrudan polinom fonksiyonunda yerine koy.';
+  } else if (text.includes('fonksiyon') || text.includes('f(x)') || text.includes('bileşke')) {
+    level2 =
+      'İlk olarak parantez içindeki bağıntıyı istenen girdi değerine eşitle veya bileşke işleminde içeriden dışarıya doğru adım at.';
+  } else if (
+    text.includes('pisagor') ||
+    text.includes('dik üçgen') ||
+    text.includes('öklid') ||
+    text.includes('30-60-90')
+  ) {
+    level2 =
+      'İlk adım olarak bilinen dik kenarları veya hipotenüsü yerleştir, 3-4-5 gibi özel üçgen kalıplarını veya Öklid bağıntısını kontrol et.';
+  } else if (text.includes('karekö') || text.includes('kök')) {
     level2 =
       'İlk adım olarak kök dışındaki katsayıları kök içine al veya kök içindeki sayıları en sade a√b haline getir.';
   } else if (text.includes('oran') || text.includes('yüzde')) {
@@ -155,11 +285,13 @@ export function QuestionHintLadder({
   questionIndex,
   isOpen: controlledIsOpen,
   onToggleOpen: controlledToggleOpen,
+  quizTitle,
 }: QuestionHintLadderProps) {
   const [internalIsOpen, setInternalIsOpen] = useState(false);
   const isOpen = controlledIsOpen !== undefined ? controlledIsOpen : internalIsOpen;
   const [activeMode, setActiveMode] = useState<'ladder' | 'socratic'>('ladder');
   const [unlockedLevel, setUnlockedLevel] = useState<number>(0);
+  const [isSavedToMistakes, setIsSavedToMistakes] = useState(false);
 
   // Soru değiştiğinde ipucu kutusunu ve modu sıfırla
   useEffect(() => {
@@ -168,7 +300,10 @@ export function QuestionHintLadder({
     }
     setActiveMode('ladder');
     setUnlockedLevel(0);
-  }, [questionIndex, controlledIsOpen]);
+    const saved = getSavedMistakes();
+    const found = saved.some((m) => m.question.question === question.question);
+    setIsSavedToMistakes(found);
+  }, [questionIndex, question, controlledIsOpen]);
 
   // Açıldığında ilk kademe kilitli ise otomatik aç
   useEffect(() => {
@@ -189,6 +324,53 @@ export function QuestionHintLadder({
       setInternalIsOpen((prev) => !prev);
     }
   };
+
+  const handleSaveToMistakes = () => {
+    if (isSavedToMistakes) return;
+    saveMistakesToBank([question], quizTitle);
+    setIsSavedToMistakes(true);
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new CustomEvent('ugur_hoca_mistakes_updated'));
+    }
+  };
+
+  const renderMistakeBookmarkCard = () => (
+    <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2.5 rounded-xl border border-white/10 bg-slate-900/80 p-3">
+      <div className="space-y-0.5">
+        <div className="flex items-center gap-1.5 text-xs font-semibold text-slate-200">
+          <BookmarkPlus className="h-3.5 w-3.5 text-amber-400" />
+          <span>Bu soruyu aralıklı tekrara eklemek ister misin?</span>
+        </div>
+        <p className="text-[11px] text-slate-400 leading-tight">
+          {isSavedToMistakes
+            ? 'Soru Hata Defterine eklendi. Leitner aralıklı tekrar algoritmasıyla karşına çıkacak.'
+            : 'Zorlandığın veya ipucu aldığın soruları Hata Defterine ekleyerek unutmanın önüne geçebilirsin.'}
+        </p>
+      </div>
+      <button
+        type="button"
+        onClick={handleSaveToMistakes}
+        disabled={isSavedToMistakes}
+        className={`shrink-0 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold transition ${
+          isSavedToMistakes
+            ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 cursor-default'
+            : 'bg-amber-500/20 text-amber-300 hover:bg-amber-500/30 border border-amber-500/40 hover:text-white'
+        }`}
+      >
+        {isSavedToMistakes ? (
+          <>
+            <BookmarkCheck className="h-3.5 w-3.5 text-emerald-400" />
+            <span>Hata Defterinde Kayıtlı</span>
+          </>
+        ) : (
+          <>
+            <BookmarkPlus className="h-3.5 w-3.5 text-amber-400" />
+            <span>Hata Defterine Ekle</span>
+          </>
+        )}
+      </button>
+    </div>
+  );
 
   return (
     <div className="mt-4 rounded-2xl border border-amber-500/20 bg-amber-500/5 p-3 sm:p-4 backdrop-blur-sm transition-all">
@@ -334,6 +516,9 @@ export function QuestionHintLadder({
                     <span>3. Kademe İpucunu Aç (Çözüm Stratejisi)</span>
                   </button>
                 ) : null}
+
+                {/* 3. Kademe Açıldığında Hata Defterine Kaydetme Önerisi */}
+                {unlockedLevel >= 3 && renderMistakeBookmarkCard()}
               </div>
             ) : (
               /* Sokratik Yapay Zeka Düşünme Asistanı */
@@ -370,6 +555,9 @@ export function QuestionHintLadder({
                     <MathText>{hints.commonTrap}</MathText>
                   </div>
                 </div>
+
+                {/* Sokratik Modda da Hata Defterine Ekleme */}
+                {renderMistakeBookmarkCard()}
               </div>
             )}
           </motion.div>
