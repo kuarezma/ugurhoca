@@ -324,6 +324,8 @@ export async function updateLiveLesson(input: {
   targetGrade: string;
   targetStudentIds?: string[];
   title: string;
+  recordingUrl?: string | null;
+  materialsUrl?: string | null;
 }) {
   const supabase = createServiceRoleClient();
   const startsAt = new Date(input.startsAt);
@@ -354,8 +356,8 @@ export async function updateLiveLesson(input: {
   }
 
   const currentLesson = current as LiveLesson;
-  if (currentLesson.status === 'ended' || currentLesson.status === 'cancelled') {
-    throw new Error('Bitmiş veya iptal edilmiş ders düzenlenemez.');
+  if (currentLesson.status === 'cancelled') {
+    throw new Error('İptal edilmiş ders düzenlenemez.');
   }
 
   const nextTargetStudentIds = input.targetGrade === 'selected' ? targetStudentIds : null;
@@ -374,10 +376,18 @@ export async function updateLiveLesson(input: {
     updated_at: new Date().toISOString(),
   };
 
+  if (input.recordingUrl !== undefined) {
+    updatePayload.recording_url = input.recordingUrl?.trim() || null;
+  }
+  if (input.materialsUrl !== undefined) {
+    updatePayload.materials_url = input.materialsUrl?.trim() || null;
+  }
+
   if (input.targetGrade === 'selected') {
     updatePayload.target_student_ids = nextTargetStudentIds;
   }
 
+  let lesson: LiveLesson;
   const { data, error } = await supabase
     .from('live_lessons')
     .update(updatePayload)
@@ -386,10 +396,23 @@ export async function updateLiveLesson(input: {
     .single();
 
   if (error) {
-    throw error;
+    if (error.message?.includes('column') || error.code === '42703') {
+      delete updatePayload.recording_url;
+      delete updatePayload.materials_url;
+      const retry = await supabase
+        .from('live_lessons')
+        .update(updatePayload)
+        .eq('id', input.lessonId)
+        .select('*')
+        .single();
+      if (retry.error) throw retry.error;
+      lesson = retry.data as LiveLesson;
+    } else {
+      throw error;
+    }
+  } else {
+    lesson = data as LiveLesson;
   }
-
-  const lesson = data as LiveLesson;
   if (startsAtChanged || audienceChanged) {
     await notifyLessonAudience({
       lesson,

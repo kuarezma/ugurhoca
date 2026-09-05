@@ -14,6 +14,8 @@ import {
   Radio,
   ExternalLink,
   ChevronDown,
+  PlayCircle,
+  FileText,
 } from 'lucide-react';
 import type { LiveLesson } from '@/features/live-lessons/types';
 import type { AppUser } from '@/types';
@@ -226,6 +228,34 @@ export function LiveLessonCard({
             </span>
           )}
 
+          {lesson.recording_url && (
+            <a
+              href={lesson.recording_url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex min-h-10 items-center gap-1.5 rounded-xl border border-purple-500/30 bg-purple-500/10 px-3 py-2 text-xs font-semibold text-purple-600 transition hover:bg-purple-500/20 dark:text-purple-300"
+              title="Ders kaydını izle"
+            >
+              <PlayCircle className="h-4 w-4 text-purple-600 dark:text-purple-400" />
+              <span>Kayıt İzle</span>
+              <ExternalLink className="h-3 w-3 opacity-60" />
+            </a>
+          )}
+
+          {lesson.materials_url && (
+            <a
+              href={lesson.materials_url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex min-h-10 items-center gap-1.5 rounded-xl border border-blue-500/30 bg-blue-500/10 px-3 py-2 text-xs font-semibold text-blue-600 transition hover:bg-blue-500/20 dark:text-blue-300"
+              title="Ders materyallerini aç"
+            >
+              <FileText className="h-4 w-4 text-blue-600 dark:text-blue-400" />
+              <span>Ders Notu</span>
+              <ExternalLink className="h-3 w-3 opacity-60" />
+            </a>
+          )}
+
           {/* Takvime Ekle Açılır Menüsü */}
           {!isEnded && !isCancelled && (
             <div className="relative">
@@ -285,7 +315,7 @@ export function LiveLessonCard({
         {/* Öğretmen / Admin Kontrolleri */}
         {isAdmin && (
           <div className="flex items-center gap-1">
-            {onEdit && !isEnded && !isCancelled && (
+            {onEdit && !isCancelled && (
               <button
                 type="button"
                 onClick={() => onEdit(lesson)}

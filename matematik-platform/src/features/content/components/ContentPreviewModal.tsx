@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import dynamic from 'next/dynamic';
 import { motion } from 'framer-motion';
 import {
   Check,
@@ -7,11 +8,17 @@ import {
   Eye,
   FileText,
   Key,
+  PenTool,
   Printer,
   Share2,
   X,
   ExternalLink,
 } from 'lucide-react';
+
+const ScratchpadModal = dynamic(
+  () => import('@/components/ScratchpadModal'),
+  { ssr: false },
+);
 import { getDriveId, getYouTubeId } from '@/features/content/utils';
 import { getWorksheetVisibleDescription } from '@/features/content/worksheet-display';
 import { useAccessibleModal } from '@/hooks/useAccessibleModal';
@@ -38,6 +45,7 @@ export default function ContentPreviewModal({
   showAnswerKey,
 }: ContentPreviewModalProps) {
   const [copiedLink, setCopiedLink] = useState(false);
+  const [isScratchpadOpen, setIsScratchpadOpen] = useState(false);
   const modalRef = useAccessibleModal<HTMLDivElement>(true, onClose);
   const visibleDescription = getWorksheetVisibleDescription(previewDoc);
   const previewVideoId = previewDoc.video_url
@@ -232,6 +240,15 @@ export default function ContentPreviewModal({
               {copiedLink ? 'Kopyalandı!' : 'Paylaş'}
             </button>
             <button
+              type="button"
+              onClick={() => setIsScratchpadOpen(true)}
+              className="flex w-full items-center justify-center gap-1.5 rounded-xl border border-indigo-400/30 bg-indigo-500/20 px-3 py-2.5 text-xs font-semibold text-indigo-200 transition-colors hover:bg-indigo-500/30 sm:w-auto sm:px-4 sm:text-sm"
+            >
+              <PenTool className="h-4 w-4 text-indigo-300" />
+              İşlem Tahtası
+            </button>
+            <button
+              type="button"
               onClick={handlePrint}
               className="flex w-full items-center justify-center gap-1.5 rounded-xl border border-white/10 bg-slate-800/60 px-3 py-2.5 text-xs font-semibold text-slate-300 transition-colors hover:bg-slate-700 sm:w-auto sm:px-4 sm:text-sm"
             >
@@ -277,6 +294,14 @@ export default function ContentPreviewModal({
           </motion.div>
         )}
       </motion.div>
+
+      {isScratchpadOpen && (
+        <ScratchpadModal
+          isOpen={isScratchpadOpen}
+          onClose={() => setIsScratchpadOpen(false)}
+          title={`${previewDoc.title} — Karalama & İşlem Tahtası`}
+        />
+      )}
     </motion.div>
   );
 }

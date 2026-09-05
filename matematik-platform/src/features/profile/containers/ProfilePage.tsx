@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import dynamic from 'next/dynamic';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
@@ -8,8 +8,10 @@ import Link from 'next/link';
 import {
   ArrowLeft,
   Bell,
+  BookOpen,
   CalendarClock,
   CheckCircle2,
+  FileSpreadsheet,
   LogOut,
   Settings,
   Shield,
@@ -52,7 +54,12 @@ const WelcomeTour = dynamic(
   () => import('@/components/dashboard/WelcomeTour'),
   { ssr: false },
 );
+const ParentReportModal = dynamic(
+  () => import('@/features/profile/components/ParentReportModal'),
+  { ssr: false },
+);
 import ProfileNotificationsPanel from '@/features/profile/components/ProfileNotificationsPanel';
+import { getSavedMistakes } from '@/features/quizzes/lib/mistakeStorage';
 import { useDailyStreakTouch } from '@/features/profile/hooks/useDailyStreakTouch';
 import { useProfileDashboardData } from '@/features/profile/hooks/useProfileDashboardData';
 import {
@@ -132,6 +139,18 @@ export default function ProfilePage({ initialData }: ProfilePageProps) {
     (notification) => !notification.is_read,
   ).length;
   const latestNotification = notifications[0] || null;
+
+  const [pendingMistakesCount, setPendingMistakesCount] = useState(0);
+  const [isParentReportOpen, setIsParentReportOpen] = useState(false);
+
+  useEffect(() => {
+    try {
+      const list = getSavedMistakes();
+      setPendingMistakesCount(list.filter((m) => !m.mastered).length);
+    } catch {
+      // ignore
+    }
+  }, []);
 
   const {
     focusTopic,
@@ -588,34 +607,45 @@ export default function ProfilePage({ initialData }: ProfilePageProps) {
                 user={user}
               />
 
-              <div
-                role="tablist"
-                aria-label="Profil bölümleri"
-                className="flex w-full gap-2 overflow-x-auto rounded-2xl border border-white/10 bg-white/5 p-1.5 backdrop-blur"
-              >
-                {PROFILE_TABS.map((tab) => {
-                  const TabIcon = tab.icon;
-                  const isActive = activeTab === tab.id;
-                  return (
-                    <button
-                      key={tab.id}
-                      type="button"
-                      role="tab"
-                      aria-selected={isActive}
-                      id={`profile-tab-${tab.id}`}
-                      aria-controls={`profile-panel-${tab.id}`}
-                      onClick={() => setActiveTab(tab.id)}
-                      className={`relative flex flex-1 items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-slate-900 ${
-                        isActive
-                          ? 'bg-gradient-to-r from-amber-400/90 via-orange-400/90 to-pink-500/90 text-slate-900 shadow-lg'
-                          : 'text-white/70 hover:bg-white/5 hover:text-white'
-                      }`}
-                    >
-                      <TabIcon className="h-4 w-4" />
-                      <span className="whitespace-nowrap">{tab.label}</span>
-                    </button>
-                  );
-                })}
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                <div
+                  role="tablist"
+                  aria-label="Profil bölümleri"
+                  className="flex flex-1 gap-2 overflow-x-auto rounded-2xl border border-white/10 bg-white/5 p-1.5 backdrop-blur"
+                >
+                  {PROFILE_TABS.map((tab) => {
+                    const TabIcon = tab.icon;
+                    const isActive = activeTab === tab.id;
+                    return (
+                      <button
+                        key={tab.id}
+                        type="button"
+                        role="tab"
+                        aria-selected={isActive}
+                        id={`profile-tab-${tab.id}`}
+                        aria-controls={`profile-panel-${tab.id}`}
+                        onClick={() => setActiveTab(tab.id)}
+                        className={`relative flex flex-1 items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-slate-900 ${
+                          isActive
+                            ? 'bg-gradient-to-r from-amber-400/90 via-orange-400/90 to-pink-500/90 text-slate-900 shadow-lg'
+                            : 'text-white/70 hover:bg-white/5 hover:text-white'
+                        }`}
+                      >
+                        <TabIcon className="h-4 w-4" />
+                        <span className="whitespace-nowrap">{tab.label}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setIsParentReportOpen(true)}
+                  className="inline-flex shrink-0 items-center justify-center gap-2 rounded-2xl border border-emerald-500/30 bg-emerald-500/10 px-4 py-2.5 text-sm font-semibold text-emerald-300 transition-all hover:bg-emerald-500/20 hover:text-emerald-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400"
+                  title="WhatsApp gelişim özeti ve karne PDF'i oluştur"
+                >
+                  <FileSpreadsheet className="h-4 w-4" />
+                  <span className="whitespace-nowrap">Gelişim Raporu</span>
+                </button>
               </div>
 
               {activeTab === 'overview' && (
@@ -632,6 +662,30 @@ export default function ProfilePage({ initialData }: ProfilePageProps) {
                   <div className="mx-auto w-full max-w-full">
                     <QuickActionGrid items={quickActionItems} />
                   </div>
+
+                  {pendingMistakesCount > 0 && (
+                    <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 rounded-3xl border border-amber-500/30 bg-gradient-to-r from-amber-500/10 via-orange-500/5 to-rose-500/10 p-5 shadow-xl backdrop-blur-xl">
+                      <div className="flex items-center gap-3.5">
+                        <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-amber-500 to-rose-600 text-white shadow-lg shadow-amber-500/20">
+                          <BookOpen className="h-5 w-5" />
+                        </div>
+                        <div>
+                          <h3 className="text-sm sm:text-base font-bold text-white">
+                            Akıllı Hata Defteri: {pendingMistakesCount} Soru Pekiştirilmeyi Bekliyor
+                          </h3>
+                          <p className="text-xs text-slate-400">
+                            Geçmiş testlerde yanlış yaptığın soruları telafi ederek eksik kazanımlarını kapat.
+                          </p>
+                        </div>
+                      </div>
+                      <Link
+                        href="/testler?mode=mistakes"
+                        className="shrink-0 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 px-4 py-2.5 text-xs sm:text-sm font-bold text-slate-950 transition-all hover:brightness-110 active:scale-95 shadow-md shadow-amber-500/20"
+                      >
+                        Hataları Tekrar Çöz ➔
+                      </Link>
+                    </div>
+                  )}
 
                   <WeeklyPlanCard
                     plan={activeWeeklyPlan}
@@ -718,6 +772,19 @@ export default function ProfilePage({ initialData }: ProfilePageProps) {
                 onSelect={handleAvatarSelect}
                 onUpload={handleAvatarUpload}
                 currentAvatar={user.avatar_id}
+              />
+
+              <ParentReportModal
+                isOpen={isParentReportOpen}
+                onClose={() => setIsParentReportOpen(false)}
+                studentName={user.name || user.email || 'Öğrenci'}
+                studentGrade={user.grade ?? 'Belirtilmedi'}
+                streakCount={user.current_streak || 0}
+                progressPercent={goalSnapshot.progressPercent || 0}
+                totalQuizzesSolved={quizResults?.length || 0}
+                averageScore={latestQuizScore}
+                strongTopic={progressRows.find((r) => r.mastery_level >= 75)?.topic ?? null}
+                focusTopic={progressRows.find((r) => r.mastery_level < 60)?.topic ?? null}
               />
             </div>
           )}

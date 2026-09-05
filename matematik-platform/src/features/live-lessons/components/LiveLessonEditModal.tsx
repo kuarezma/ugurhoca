@@ -49,6 +49,8 @@ function LiveLessonEditModalContent({
   const [description, setDescription] = useState(lesson.description || '');
   const [startsAt, setStartsAt] = useState(() => toLocalInputValue(lesson.starts_at));
   const [durationMinutes, setDurationMinutes] = useState(lesson.duration_minutes);
+  const [recordingUrl, setRecordingUrl] = useState(lesson.recording_url || '');
+  const [materialsUrl, setMaterialsUrl] = useState(lesson.materials_url || '');
   const [targetGrade, setTargetGrade] = useState(lesson.target_grade);
   const [selectedStudentIds, setSelectedStudentIds] = useState<string[]>(
     lesson.target_student_ids || [],
@@ -100,6 +102,8 @@ function LiveLessonEditModalContent({
         body: JSON.stringify({
           description: description.trim() || null,
           durationMinutes: Number(durationMinutes),
+          materialsUrl: materialsUrl.trim() || null,
+          recordingUrl: recordingUrl.trim() || null,
           startsAt: startDate.toISOString(),
           targetGrade,
           targetStudentIds: targetGrade === 'selected' ? selectedStudentIds : [],
@@ -275,6 +279,35 @@ function LiveLessonEditModalContent({
               placeholder="Kazanımlar, çözülecek sorular veya hatırlatmalar..."
               className="mt-1 w-full rounded-xl border border-border bg-background px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-brand-primary"
             />
+          </div>
+
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+            <div>
+              <label htmlFor="edit-recording" className="block text-xs font-semibold text-foreground/80">
+                Ders Kayıt Linki (Opsiyonel)
+              </label>
+              <input
+                id="edit-recording"
+                type="url"
+                placeholder="https://youtube.com/... veya Drive"
+                value={recordingUrl}
+                onChange={(e) => setRecordingUrl(e.target.value)}
+                className="mt-1 w-full rounded-xl border border-border bg-background px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-brand-primary"
+              />
+            </div>
+            <div>
+              <label htmlFor="edit-materials" className="block text-xs font-semibold text-foreground/80">
+                Ders Notları / PDF Linki (Opsiyonel)
+              </label>
+              <input
+                id="edit-materials"
+                type="url"
+                placeholder="https://... PDF veya Drive linki"
+                value={materialsUrl}
+                onChange={(e) => setMaterialsUrl(e.target.value)}
+                className="mt-1 w-full rounded-xl border border-border bg-background px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-brand-primary"
+              />
+            </div>
           </div>
 
           <div className="flex items-center justify-end gap-2 border-t border-border pt-4">

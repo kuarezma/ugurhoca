@@ -35,4 +35,20 @@ describe('QuestionHintLadder', () => {
     fireEvent.click(level3Btn);
     expect(screen.getByText(/3. Kademe: Çözüm Stratejisi/i)).toBeInTheDocument();
   });
+
+  it('switches to Socratic Assistant mode and displays pedagogical prompts and trap warnings', () => {
+    render(<QuestionHintLadder question={mockQuestion} questionIndex={0} />);
+
+    const mainBtn = screen.getByRole('button', { name: /Kademeli İpucu Sistemi/i });
+    fireEvent.click(mainBtn);
+
+    const socraticTabBtn = screen.getByRole('button', { name: /Sokratik Asistan \(Rehber\)/i });
+    fireEvent.click(socraticTabBtn);
+
+    expect(
+      screen.getByText(/Sokratik Soru Analizi \(Ne Verildi, Ne Aranıyor\?\)/i),
+    ).toBeInTheDocument();
+    expect(screen.getByText(/Kritik Eşitlik & Kilit Bağıntı/i)).toBeInTheDocument();
+    expect(screen.getByText(/Dikkat: Sık Yapılan Yanılgı & Tuzak!/i)).toBeInTheDocument();
+  });
 });

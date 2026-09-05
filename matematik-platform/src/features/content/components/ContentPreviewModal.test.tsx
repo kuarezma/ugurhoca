@@ -82,4 +82,22 @@ describe('ContentPreviewModal', () => {
     fireEvent.click(dialog);
     expect(onClose).not.toHaveBeenCalled();
   });
+
+  it('renders İşlem Tahtası (Scratchpad) button', () => {
+    render(
+      <ContentPreviewModal
+        isCompleted={false}
+        onClose={vi.fn()}
+        onDownload={vi.fn()}
+        onToggleAnswerKey={vi.fn()}
+        onToggleCompleted={vi.fn()}
+        previewDoc={mockDoc}
+        showAnswerKey={false}
+      />,
+    );
+
+    const scratchpadBtn = screen.getByRole('button', { name: /İşlem Tahtası/i });
+    expect(scratchpadBtn).toBeInTheDocument();
+    fireEvent.click(scratchpadBtn);
+  });
 });

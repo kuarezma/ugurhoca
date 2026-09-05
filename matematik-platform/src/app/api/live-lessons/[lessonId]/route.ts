@@ -23,6 +23,8 @@ export async function PATCH(request: Request, context: RouteContext) {
     | {
         description?: string | null;
         durationMinutes?: number;
+        recordingUrl?: string | null;
+        materialsUrl?: string | null;
         startsAt?: string;
         targetGrade?: string;
         targetStudentIds?: string[];
@@ -35,6 +37,8 @@ export async function PATCH(request: Request, context: RouteContext) {
       description: body?.description || null,
       durationMinutes: Number(body?.durationMinutes || 60),
       lessonId,
+      materialsUrl: body?.materialsUrl ?? null,
+      recordingUrl: body?.recordingUrl ?? null,
       startsAt: String(body?.startsAt || ''),
       targetGrade: String(body?.targetGrade || ''),
       targetStudentIds: Array.isArray(body?.targetStudentIds) ? body.targetStudentIds : [],

@@ -27,7 +27,7 @@ import {
   Printer,
   Keyboard,
 } from 'lucide-react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import dynamic from 'next/dynamic';
 import { useToast } from '@/components/Toast';
 import MathText from '@/components/MathText';
@@ -163,7 +163,15 @@ export default function TestsPage({
   }, [isMistakeNotebookOpen, isMistakeModalOpen, quizStarted]);
   const resultSavedRef = useRef(false);
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { showToast } = useToast();
+
+  const modeParam = searchParams?.get('mode') || (searchParams?.get('mistakes') ? 'mistakes' : null);
+  useEffect(() => {
+    if (modeParam === 'mistakes') {
+      setIsMistakeNotebookOpen(true);
+    }
+  }, [modeParam]);
 
   useEffect(() => {
     const handleOnline = () => {

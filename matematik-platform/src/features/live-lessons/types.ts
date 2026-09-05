@@ -17,6 +17,8 @@ export type LiveLesson = {
   teacher_proof?: string | null;
   started_at?: string | null;
   ended_at?: string | null;
+  recording_url?: string | null;
+  materials_url?: string | null;
   created_at?: string | null;
   updated_at?: string | null;
 };
