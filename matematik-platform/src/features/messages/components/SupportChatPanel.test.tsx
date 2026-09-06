@@ -118,4 +118,70 @@ describe('SupportChatPanel Component', () => {
 
     expect(screen.getByText('Canlı Formül Önizleme:')).toBeInTheDocument();
   });
+
+  it('peerTyping true olduğunda canlı yazıyor göstergesini görüntüler', () => {
+    render(
+      <SupportChatPanel
+        appearance="navbar"
+        draft=""
+        error={null}
+        messages={dummyMessages}
+        onDraftChange={vi.fn()}
+        onSubmit={vi.fn()}
+        peerDisplayName="Uğur Hoca"
+        peerTyping={true}
+        sending={false}
+      />,
+    );
+
+    expect(screen.getByText('Uğur Hoca yazıyor')).toBeInTheDocument();
+  });
+
+  it('öğrenci görünümünde soru şablonlarını gösterir ve tıklandığında taslağa aktarır', () => {
+    const handleDraftChange = vi.fn();
+
+    render(
+      <SupportChatPanel
+        appearance="navbar"
+        draft=""
+        error={null}
+        messages={dummyMessages}
+        onDraftChange={handleDraftChange}
+        onSubmit={vi.fn()}
+        peerDisplayName="Uğur Hoca"
+        sending={false}
+      />,
+    );
+
+    expect(screen.getByText('Soru Şablonu:')).toBeInTheDocument();
+    const questionBtn = screen.getByText('❓ Çözüm adımlarını anlayamadım');
+    expect(questionBtn).toBeInTheDocument();
+
+    fireEvent.click(questionBtn);
+    expect(handleDraftChange).toHaveBeenCalledWith('❓ Çözüm adımlarını anlayamadım');
+  });
+
+  it('sohbette ara butonuna tıklandığında arama çubuğunu açar ve filtreler', () => {
+    render(
+      <SupportChatPanel
+        appearance="navbar"
+        draft=""
+        error={null}
+        messages={dummyMessages}
+        onDraftChange={vi.fn()}
+        onSubmit={vi.fn()}
+        peerDisplayName="Uğur Hoca"
+        sending={false}
+      />,
+    );
+
+    const searchBtn = screen.getByLabelText('Sohbette ara');
+    fireEvent.click(searchBtn);
+
+    const searchInput = screen.getByPlaceholderText('Mesajlarda ara...');
+    expect(searchInput).toBeInTheDocument();
+
+    fireEvent.change(searchInput, { target: { value: 'Teşekkürler' } });
+    expect(screen.getByText(/1 eşleşme/i)).toBeInTheDocument();
+  });
 });

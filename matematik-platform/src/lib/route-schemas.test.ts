@@ -17,8 +17,8 @@ describe('route-schemas', () => {
     expect(parsed.error?.issues[0]?.message).toBe('Mesaj içeriği eksik.');
   });
 
-  it('rejects non-image support attachments', () => {
-    const parsed = supportMessageSchema.safeParse({
+  it('accepts image, file, and audio attachments and rejects unknown kinds', () => {
+    const valid = supportMessageSchema.safeParse({
       attachments: [
         {
           kind: 'file',
@@ -29,8 +29,20 @@ describe('route-schemas', () => {
       sender_id: 'student-1',
       text: '',
     });
+    expect(valid.success).toBe(true);
 
-    expect(parsed.success).toBe(false);
+    const invalid = supportMessageSchema.safeParse({
+      attachments: [
+        {
+          kind: 'video',
+          name: 'video.mp4',
+          url: 'https://example.com/video.mp4',
+        },
+      ],
+      sender_id: 'student-1',
+      text: '',
+    });
+    expect(invalid.success).toBe(false);
   });
 
   it('accepts a valid quiz import payload', () => {

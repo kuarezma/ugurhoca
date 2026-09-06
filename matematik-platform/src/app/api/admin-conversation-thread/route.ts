@@ -63,7 +63,7 @@ export async function GET(request: Request) {
       .limit(FETCH_LIMIT),
     service
       .from('notifications')
-      .select('id, created_at, message, metadata')
+      .select('id, created_at, message, metadata, is_read')
       .eq('user_id', studentId)
       .eq('type', 'admin-message')
       .order('created_at', { ascending: true })

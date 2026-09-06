@@ -191,5 +191,5 @@ export interface ChatMessage {
 export interface SupportAttachment {
   name: string;
   url: string;
-  kind: 'image' | 'file';
+  kind: 'image' | 'file' | 'audio';
 }

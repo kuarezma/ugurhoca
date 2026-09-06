@@ -323,11 +323,12 @@ export const uploadSupportFiles = async (
   const uploads = await Promise.all(
     Array.from(files).map(async (file) => {
       let uploadFile = file;
-      if (options.imagesOnly) {
+      if (options.imagesOnly && file.type.startsWith('image/')) {
         uploadFile = await compressSupportImageFile(file);
       }
 
-      const fileName = `support_${Date.now()}_${Math.random().toString(36).slice(2)}_${uploadFile.name}`;
+      const safeName = uploadFile.name.replace(/[^a-zA-Z0-9._-]/g, '_');
+      const fileName = `support_${Date.now()}_${Math.random().toString(36).slice(2)}_${safeName}`;
       const { data, error } = await supabase.storage
         .from('documents')
         .upload(fileName, uploadFile, { upsert: false });
@@ -340,9 +341,11 @@ export const uploadSupportFiles = async (
         .from('documents')
         .getPublicUrl(data.path);
 
-      const kind: SupportAttachment['kind'] = uploadFile.type.startsWith('image/')
-        ? 'image'
-        : 'file';
+      const kind: SupportAttachment['kind'] = uploadFile.type.startsWith('audio/')
+        ? 'audio'
+        : uploadFile.type.startsWith('image/')
+          ? 'image'
+          : 'file';
 
       return { kind, name: uploadFile.name, url: urlData.publicUrl };
     }),
@@ -361,9 +364,7 @@ export const sendSupportMessage = async (
   },
   accessToken: string,
 ) => {
-  const normalizedAttachments = payload.attachments.filter(
-    (attachment) => attachment.kind === 'image',
-  );
+  const normalizedAttachments = payload.attachments;
 
   const response = await fetch('/api/support-message', {
     method: 'POST',

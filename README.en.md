@@ -19,6 +19,7 @@ With its clean and distraction-free design, the platform keeps the focus entirel
 - 📊 **Monthly Growth Report & Certificate of Achievement:** Monthly progress reports highlighting study time and topic mastery, accompanied by a printable official Certificate of Achievement.
 - 🎮 **18 Educational Math Games:** Engaging games designed to build mental math speed, coordinate geometry, fractions, and factor recognition.
 - 📝 **Homework Tracking & Printable Worksheets:** Easy submission and tracking of assignments, alongside 1-click printable A4 worksheets with answer keys.
+- 💬 **Enhanced Chat Bubble & 1-on-1 Teacher Messaging:** Real-time typing indicators, WhatsApp-style read receipts (✓✓), formula and question quote/reply support, 60-second voice note recording with integrated audio player, multi-image and PDF worksheet attachments, in-chat search, and student quick question templates.
 - 📱 **Seamless on All Devices:** Optimized for desktop, tablet, and mobile with 1-tap installation to home screens.
 
 ---
@@ -29,6 +30,17 @@ Student privacy and well-being are paramount on the platform:
 - All study statistics, test scores, and homework submissions are private to each individual student.
 - Leaderboards and games display pseudonyms instead of real student names.
 - Students never see each other's test results, notes, or private communication.
+
+---
+
+## Changelog
+
+### v1.1.0 - Enhanced Chat Bubble & Educational Messaging
+- **Real-time Interaction:** Live typing indicators and message delivery/read receipts (✓ / ✓✓) powered by Supabase Realtime broadcast channels.
+- **Rich Messaging & Voice Notes:** MediaRecorder audio recording, waveform audio player, and quote & reply support.
+- **Multiple Attachments & PDFs:** Multi-file image uploads and PDF worksheet attachment preview support.
+- **In-Chat Search & Quick Templates:** Instant message search, one-tap student question templates, and dynamic teacher online status.
+- **Theme & Accessibility:** Full light/dark theme synchronization, dialog accessibility standards, focus trapping, and autofocus.
 
 ---
 

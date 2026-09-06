@@ -1,4 +1,7 @@
 import {
+  extractReplyFromText,
+  formatReplyText,
+  getAttachmentsFromNotification,
   getImageUrlFromNotification,
   parseSupportPayload,
 } from '@/features/messages/supportChatUtils';
@@ -57,5 +60,60 @@ describe('support chat utils', () => {
     ).toBe('https://example.com/legacy.png');
 
     expect(getImageUrlFromNotification(notification({}))).toBeNull();
+  });
+
+  it('getAttachmentsFromNotification parses mixed attachments and handles legacy fallbacks', () => {
+    const notif = notification({
+      attachments: [
+        { kind: 'image', name: 'foto.jpg', url: 'https://example.com/foto.jpg' },
+        { kind: 'file', name: 'odev.pdf', url: 'https://example.com/odev.pdf' },
+        { kind: 'audio', name: 'ses.webm', url: 'https://example.com/ses.webm' },
+      ],
+    });
+
+    const attachments = getAttachmentsFromNotification(notif);
+    expect(attachments).toHaveLength(3);
+    expect(attachments[0]).toEqual({
+      kind: 'image',
+      name: 'foto.jpg',
+      url: 'https://example.com/foto.jpg',
+      size: undefined,
+    });
+    expect(attachments[1]).toEqual({
+      kind: 'file',
+      name: 'odev.pdf',
+      url: 'https://example.com/odev.pdf',
+      size: undefined,
+    });
+    expect(attachments[2]).toEqual({
+      kind: 'audio',
+      name: 'ses.webm',
+      url: 'https://example.com/ses.webm',
+      size: undefined,
+    });
+  });
+
+  it('extractReplyFromText extracts quoted reply correctly', () => {
+    const formatted = '💬 [Yanıt: "Önceki soru" - Uğur Hoca]\n\nEvet hocam anladım.';
+    const parsed = extractReplyFromText(formatted);
+    expect(parsed.replyTo).toEqual({
+      senderName: 'Uğur Hoca',
+      text: 'Önceki soru',
+    });
+    expect(parsed.cleanText).toBe('Evet hocam anladım.');
+
+    const normal = 'Normal mesaj metni';
+    expect(extractReplyFromText(normal)).toEqual({
+      cleanText: 'Normal mesaj metni',
+      replyTo: null,
+    });
+  });
+
+  it('formatReplyText constructs standardized quote prefix', () => {
+    const result = formatReplyText(
+      { text: 'Bu soru nasıl çözülür?', senderName: 'Ahmet' },
+      'Ben de aynı yerde takıldım.',
+    );
+    expect(result).toBe('💬 [Yanıt: "Bu soru nasıl çözülür?" - Ahmet]\n\nBen de aynı yerde takıldım.');
   });
 });
