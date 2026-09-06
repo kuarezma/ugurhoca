@@ -88,14 +88,6 @@ import type {
 } from '@/features/admin/types';
 import type { LiveLessonDashboardData } from '@/features/live-lessons/types';
 
-const ChatBubbleLoader = dynamic(
-  () =>
-    import('@/components/ChatBubbleLoader').then(
-      (module) => module.ChatBubbleLoader,
-    ),
-  { loading: () => null },
-);
-
 const AdminMainModal = dynamic(
   () => import('@/features/admin/components/AdminMainModal'),
   { loading: () => null },
@@ -1470,8 +1462,6 @@ export default function AdminPage() {
         onClose={() => setIsBroadcastOpen(false)}
         students={studentUsers}
       />
-
-      <ChatBubbleLoader />
     </main>
   );
 }

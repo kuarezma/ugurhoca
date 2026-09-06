@@ -1,27 +1,35 @@
-"use client";
+'use client';
 
 import {
   useCallback,
   useEffect,
   useMemo,
+  useRef,
   useState,
   type FormEvent,
-} from "react";
-import { AnimatePresence, motion } from "framer-motion";
-import { ChevronRight, MessageCircle, X } from "lucide-react";
-import { supabase } from "@/lib/supabase/client";
-import { isAdminEmail } from "@/lib/admin";
-import { getClientSession } from "@/lib/auth-client";
+} from 'react';
+import Image from 'next/image';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import { AnimatePresence, motion } from 'framer-motion';
+import { MessageCircle, X, LogIn, UserPlus } from 'lucide-react';
+import { supabase } from '@/lib/supabase/client';
+import { isAdminEmail } from '@/lib/admin';
+import { getClientSession } from '@/lib/auth-client';
 import {
+  sendSupportMessage,
   uploadSupportFiles,
   validateSupportImageFile,
-} from "@/features/home/queries";
-import { SupportChatPanel } from "@/features/messages/components/SupportChatPanel";
-import { useAdminStudentThread } from "@/features/messages/hooks/useAdminStudentThread";
+} from '@/features/home/queries';
+import { useNavbarMessages } from '@/features/home/hooks/useNavbarMessages';
+import { SupportChatPanel } from '@/features/messages/components/SupportChatPanel';
+import { useAdminStudentThread } from '@/features/messages/hooks/useAdminStudentThread';
+import { mapStudentNotificationsToThread } from '@/features/messages/mapNotificationsToThread';
+import type { DashboardNotification } from '@/types/dashboard';
 import {
   parseSupportPayload,
   type ParsedSupportPayload,
-} from "@/features/messages/supportChatUtils";
+} from '@/features/messages/supportChatUtils';
 
 type InboxMessage = {
   id: string;
@@ -49,61 +57,83 @@ function buildConversations(messages: InboxMessage[]): ConversationPreview[] {
 
   for (const m of messages) {
     const sid = m.parsed?.sender_id;
+    const sname = m.parsed?.sender_name || 'Öğrenci';
     if (!sid) continue;
-    const name = m.parsed?.sender_name || "Öğrenci";
-    const hasImage = m.parsed?.attachments?.some((a) => a.kind === "image");
-    const snippet = m.parsed?.text?.trim() || (hasImage ? "Fotoğraf" : "—");
-    const prev = byStudent.get(sid);
-    if (!prev || new Date(m.created_at) > new Date(prev.lastAt)) {
+
+    const existing = byStudent.get(sid);
+    const unread = !m.is_read ? 1 : 0;
+    const snippet = m.parsed?.text || m.title || '';
+
+    if (!existing) {
       byStudent.set(sid, {
-        lastAt: m.created_at,
-        lastSnippet: snippet,
         studentId: sid,
-        studentName: name,
-        unreadCount: 0,
+        studentName: sname,
+        lastSnippet: snippet,
+        lastAt: m.created_at,
+        unreadCount: unread,
       });
+    } else {
+      existing.unreadCount += unread;
+      if (new Date(m.created_at) > new Date(existing.lastAt)) {
+        existing.lastAt = m.created_at;
+        existing.lastSnippet = snippet;
+        existing.studentName = sname;
+      }
     }
   }
 
-  for (const m of messages) {
-    const sid = m.parsed?.sender_id;
-    if (!sid || m.is_read) continue;
-    const row = byStudent.get(sid);
-    if (row) {
-      row.unreadCount += 1;
-    }
-  }
-
-  return [...byStudent.values()].sort(
+  return Array.from(byStudent.values()).sort(
     (a, b) => new Date(b.lastAt).getTime() - new Date(a.lastAt).getTime(),
   );
 }
 
-function ChatBubble() {
+export default function ChatBubble() {
+  const pathname = usePathname();
   const [mounted, setMounted] = useState(false);
-  const [isAdmin, setIsAdmin] = useState(false);
-  const [adminUserId, setAdminUserId] = useState<string | null>(null);
-  const [open, setOpen] = useState(false);
-  const [inboxMessages, setInboxMessages] = useState<InboxMessage[]>([]);
+  const [currentUser, setCurrentUser] = useState<{
+    id: string;
+    email: string;
+    name: string;
+    isAdmin: boolean;
+  } | null>(null);
   const [loading, setLoading] = useState(true);
-  const [selectedStudentId, setSelectedStudentId] = useState<string | null>(
-    null,
-  );
-  const [draft, setDraft] = useState("");
+  const [open, setOpen] = useState(false);
+
+  // Admin state
+  const [inboxMessages, setInboxMessages] = useState<InboxMessage[]>([]);
+  const [selectedStudentId, setSelectedStudentId] = useState<string | null>(null);
+
+  // Ortak form state
+  const [draft, setDraft] = useState('');
   const [sending, setSending] = useState(false);
   const [sendError, setSendError] = useState<string | null>(null);
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
-  const [attachmentPreviewUrl, setAttachmentPreviewUrl] = useState<
-    string | null
-  >(null);
+  const [attachmentPreviewUrl, setAttachmentPreviewUrl] = useState<string | null>(null);
+  const bubbleRef = useRef<HTMLDivElement | null>(null);
 
-  const loadMessages = useCallback(async (userId: string) => {
+  // Öğrenci mesaj hook'u (sadece öğrenci ise aktif)
+  const studentUserId = currentUser && !currentUser.isAdmin ? currentUser.id : '';
+  const {
+    appendMessage: appendStudentMessage,
+    markAllAsRead: markAllStudentAsRead,
+    messages: studentRawMessages,
+    refetch: refetchStudentMessages,
+    unreadCount: studentUnreadCount,
+  } = useNavbarMessages(studentUserId);
+
+  const studentThreadMessages = useMemo(
+    () => mapStudentNotificationsToThread(studentRawMessages),
+    [studentRawMessages],
+  );
+
+  // Admin mesajları yükleme
+  const loadAdminMessages = useCallback(async (adminId: string) => {
     const { data } = await supabase
-      .from("notifications")
-      .select("*")
-      .eq("user_id", userId)
-      .eq("type", "message")
-      .order("created_at", { ascending: false })
+      .from('notifications')
+      .select('*')
+      .eq('user_id', adminId)
+      .eq('type', 'message')
+      .order('created_at', { ascending: false })
       .limit(120);
 
     if (data) {
@@ -119,30 +149,54 @@ function ChatBubble() {
     }
   }, []);
 
-  const checkAdmin = useCallback(async () => {
+  // Oturum kontrolü
+  const checkAuth = useCallback(async () => {
     try {
       const session = await getClientSession();
-      if (session?.user && isAdminEmail(session.user.email)) {
-        setIsAdmin(true);
-        setAdminUserId(session.user.id);
-        await loadMessages(session.user.id);
+      if (session?.user) {
+        const isAdmin = isAdminEmail(session.user.email);
+        const displayName =
+          (session.user.user_metadata?.name as string) ||
+          (session.user.user_metadata?.full_name as string) ||
+          session.user.email?.split('@')[0] ||
+          'Kullanıcı';
+
+        setCurrentUser({
+          id: session.user.id,
+          email: session.user.email || '',
+          name: displayName,
+          isAdmin,
+        });
+
+        if (isAdmin) {
+          await loadAdminMessages(session.user.id);
+        }
+      } else {
+        setCurrentUser(null);
       }
     } catch {
-      // ignore
+      setCurrentUser(null);
     } finally {
       setLoading(false);
     }
-  }, [loadMessages]);
+  }, [loadAdminMessages]);
 
   useEffect(() => {
     setMounted(true);
-  }, []);
+    void checkAuth();
 
-  useEffect(() => {
-    if (!mounted) return;
-    void checkAdmin();
-  }, [checkAdmin, mounted]);
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange(() => {
+      void checkAuth();
+    });
 
+    return () => {
+      subscription.unsubscribe();
+    };
+  }, [checkAuth]);
+
+  // Ek dosya temizliği
   useEffect(() => {
     return () => {
       if (attachmentPreviewUrl) {
@@ -167,277 +221,473 @@ function ChatBubble() {
       setSendError(null);
     } catch (error) {
       setSendError(
-        error instanceof Error ? error.message : "Fotoğraf eklenemedi.",
+        error instanceof Error ? error.message : 'Fotoğraf eklenemedi.',
       );
     }
   }, []);
 
+  // Admin Realtime bildirimleri dinleme
   useEffect(() => {
-    if (!mounted || !adminUserId) return;
+    if (!mounted || !currentUser?.isAdmin || !currentUser.id) return;
     const channel = supabase
-      .channel(`admin_inbox_digest_${adminUserId}`)
+      .channel(`admin_inbox_digest_${currentUser.id}`)
       .on(
-        "postgres_changes",
+        'postgres_changes',
         {
-          event: "INSERT",
-          filter: `user_id=eq.${adminUserId}`,
-          schema: "public",
-          table: "notifications",
+          event: 'INSERT',
+          filter: `user_id=eq.${currentUser.id}`,
+          schema: 'public',
+          table: 'notifications',
         },
         (payload) => {
           const row = payload.new as { type?: string };
-          if (row.type === "message") {
-            void loadMessages(adminUserId);
+          if (row.type === 'message') {
+            void loadAdminMessages(currentUser.id);
           }
         },
       )
       .subscribe();
+
     return () => {
       void supabase.removeChannel(channel);
     };
-  }, [adminUserId, loadMessages, mounted]);
+  }, [currentUser, loadAdminMessages, mounted]);
 
-  const conversations = useMemo(
+  // ESC ve dışarı tıklama ile kapatma
+  useEffect(() => {
+    if (!open) return;
+    const handleClickOutside = (event: MouseEvent) => {
+      if (bubbleRef.current && !bubbleRef.current.contains(event.target as Node)) {
+        setOpen(false);
+      }
+    };
+    const handleEscape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') setOpen(false);
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener('keydown', handleEscape);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('keydown', handleEscape);
+    };
+  }, [open]);
+
+  // Öğrenci balonu açıldığında okunmamışları sıfırlama ve yenileme
+  useEffect(() => {
+    if (!open || !currentUser || currentUser.isAdmin) return;
+    void refetchStudentMessages();
+    if (studentUnreadCount > 0) {
+      void markAllStudentAsRead();
+    }
+  }, [currentUser, markAllStudentAsRead, open, refetchStudentMessages, studentUnreadCount]);
+
+  // Admin: Seçilen öğrenci konuşma geçmişi
+  const adminConversations = useMemo(
     () => buildConversations(inboxMessages),
     [inboxMessages],
   );
 
-  const totalUnread = useMemo(
+  const adminTotalUnread = useMemo(
     () => inboxMessages.filter((m) => !m.is_read).length,
     [inboxMessages],
   );
 
   const selectedPeerName = useMemo(() => {
-    if (!selectedStudentId) return "Öğrenci";
+    if (!selectedStudentId) return 'Öğrenci';
     return (
-      conversations.find((c) => c.studentId === selectedStudentId)
-        ?.studentName ?? "Öğrenci"
+      adminConversations.find((c) => c.studentId === selectedStudentId)
+        ?.studentName ?? 'Öğrenci'
     );
-  }, [conversations, selectedStudentId]);
+  }, [adminConversations, selectedStudentId]);
 
-  const { fetchThread, loading: threadLoading, messages: threadMessages } =
-    useAdminStudentThread({
-      adminUserId,
-      studentId: selectedStudentId,
-    });
+  const {
+    fetchThread: fetchAdminThread,
+    loading: adminThreadLoading,
+    messages: adminThreadMessages,
+  } = useAdminStudentThread({
+    adminUserId: currentUser?.isAdmin ? currentUser.id : null,
+    studentId: selectedStudentId,
+  });
 
+  // Admin mesaj gönderme
   const handleSendAdmin = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const text = draft.trim();
     if ((!text && !selectedImage) || !selectedStudentId || sending) return;
+
     setSending(true);
     setSendError(null);
     try {
       const session = await getClientSession();
       if (!session?.access_token) {
-        throw new Error("Oturum açmanız gerekiyor.");
+        throw new Error('Oturum açmanız gerekiyor.');
       }
       const attachments = selectedImage
         ? await uploadSupportFiles([selectedImage], { imagesOnly: true })
         : [];
       const imageUrl =
-        attachments.find((attachment) => attachment.kind === "image")?.url ||
-        null;
-      const response = await fetch("/api/admin-message", {
+        attachments.find((attachment) => attachment.kind === 'image')?.url || null;
+
+      const response = await fetch('/api/admin-message', {
         body: JSON.stringify({
           image_url: imageUrl,
           message: text,
-          sender_id: session.user?.id ?? "admin",
-          sender_name: "Uğur Hoca",
+          sender_id: currentUser?.id,
+          sender_name: 'Uğur Hoca',
           student_id: selectedStudentId,
           student_name: selectedPeerName,
-          title: "Uğur Hoca yazdı",
         }),
         headers: {
           Authorization: `Bearer ${session.access_token}`,
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
-        method: "POST",
+        method: 'POST',
       });
-      const body = (await response.json().catch(() => null)) as {
-        error?: string;
-      } | null;
+
       if (!response.ok) {
-        throw new Error(body?.error || "Mesaj gönderilemedi.");
+        const errorData = await response.json().catch(() => null);
+        throw new Error(errorData?.error || 'Mesaj gönderilemedi.');
       }
-      setDraft("");
+
+      setDraft('');
       clearAttachment();
-      await fetchThread();
-    } catch (error) {
+      await fetchAdminThread();
+      if (currentUser) void loadAdminMessages(currentUser.id);
+    } catch (err) {
       setSendError(
-        error instanceof Error ? error.message : "Mesaj gönderilemedi.",
+        err instanceof Error ? err.message : 'Mesaj gönderilirken hata oluştu.',
       );
     } finally {
       setSending(false);
     }
   };
 
-  if (!mounted || loading || !isAdmin) return null;
+  // Öğrenci: Uğur Hoca'ya mesaj gönderme (Sadece Uğur Hoca ile sohbet)
+  const handleSendStudent = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const text = draft.trim();
+    if ((!text && !selectedImage) || sending || !currentUser) return;
+
+    setSending(true);
+    setSendError(null);
+    try {
+      const session = await getClientSession();
+      if (!session?.access_token) {
+        throw new Error('Oturum açmanız gerekiyor.');
+      }
+
+      const attachments = selectedImage
+        ? await uploadSupportFiles([selectedImage], { imagesOnly: true })
+        : [];
+
+      const sentRow = await sendSupportMessage(
+        {
+          attachments,
+          sender_email: currentUser.email || '',
+          sender_id: currentUser.id,
+          sender_name: currentUser.name || 'Öğrenci',
+          text,
+        },
+        session.access_token,
+      );
+
+      if (sentRow && typeof sentRow === 'object' && 'id' in sentRow) {
+        appendStudentMessage(sentRow as DashboardNotification);
+      } else {
+        appendStudentMessage({
+          created_at: new Date().toISOString(),
+          id: `local-${Date.now()}`,
+          is_read: true,
+          message:
+            text ||
+            (attachments[0]?.name
+              ? `[Fotoğraf: ${attachments[0].name}]`
+              : ''),
+          metadata: attachments.length ? { attachments } : undefined,
+          title: "Uğur Hoca'ya Mesajınız",
+          type: 'sent-message',
+          user_id: currentUser.id,
+        });
+      }
+
+      setDraft('');
+      clearAttachment();
+      void refetchStudentMessages();
+    } catch (err) {
+      setSendError(
+        err instanceof Error ? err.message : 'Mesaj gönderilirken hata oluştu.',
+      );
+    } finally {
+      setSending(false);
+    }
+  };
+
+  // Canlı ders odasında floating bubble gizlenir (kendi dahili sohbeti vardır)
+  if (!mounted || loading || pathname?.startsWith('/canli-ders/d/')) {
+    return null;
+  }
+
+  const unreadCountBadge = currentUser?.isAdmin
+    ? adminTotalUnread
+    : currentUser
+      ? studentUnreadCount
+      : 0;
 
   return (
-    <>
+    <div ref={bubbleRef}>
+      {/* Floating Trigger Button */}
       <motion.button
         type="button"
         initial={false}
-        whileHover={{ scale: 1.05 }}
-        whileTap={{ scale: 0.96 }}
+        whileHover={{ scale: 1.06 }}
+        whileTap={{ scale: 0.94 }}
         onClick={() => setOpen((o) => !o)}
-        className="fixed bottom-20 sm:bottom-6 right-4 sm:right-6 z-[100] flex h-14 w-14 sm:h-[60px] sm:w-[60px] items-center justify-center rounded-full bg-gradient-to-br from-violet-600 to-fuchsia-600 text-white shadow-xl shadow-violet-500/30"
-        aria-label="Öğrenci mesajları"
+        className="fixed bottom-20 sm:bottom-6 right-4 sm:right-6 z-40 flex h-14 w-14 sm:h-[60px] sm:w-[60px] items-center justify-center rounded-full bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-500 text-white shadow-2xl shadow-purple-500/40 focus:outline-none focus-visible:ring-4 focus-visible:ring-purple-400"
+        aria-label={
+          currentUser?.isAdmin
+            ? 'Öğrenci mesajları'
+            : "Uğur Hoca'ya mesaj yaz"
+        }
+        aria-haspopup="dialog"
+        aria-expanded={open}
       >
-        <MessageCircle className="h-6 w-6 sm:h-7 sm:w-7" strokeWidth={2} />
-        {totalUnread > 0 && (
-          <span className="absolute -right-1 -top-1 flex h-5 min-w-[1.25rem] items-center justify-center rounded-full bg-red-500 px-1 text-[11px] font-bold text-white">
-            {totalUnread > 9 ? "9+" : totalUnread}
+        {!currentUser?.isAdmin ? (
+          <div className="relative flex h-full w-full items-center justify-center">
+            <Image
+              src="/ugur.jpeg"
+              alt="Uğur Hoca"
+              width={48}
+              height={48}
+              className="h-11 w-11 sm:h-12 sm:w-12 rounded-full object-cover border-2 border-white/90 shadow-sm"
+            />
+            <span className="absolute bottom-1 right-1 h-3.5 w-3.5 rounded-full border-2 border-slate-900 bg-emerald-500" />
+          </div>
+        ) : (
+          <MessageCircle className="h-6 w-6 sm:h-7 sm:w-7" strokeWidth={2.2} />
+        )}
+
+        {unreadCountBadge > 0 && (
+          <span className="absolute -right-1 -top-1 flex h-5 min-w-[1.25rem] animate-pulse items-center justify-center rounded-full bg-red-500 px-1 text-[11px] font-bold text-white shadow-md">
+            {unreadCountBadge > 9 ? '9+' : unreadCountBadge}
           </span>
         )}
       </motion.button>
 
+      {/* Floating Chat Panel */}
       <AnimatePresence>
         {open && (
           <motion.div
-            initial={{ opacity: 0, y: 24, scale: 0.96 }}
+            initial={{ opacity: 0, y: 20, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 16, scale: 0.98 }}
-            transition={{ type: "spring", stiffness: 380, damping: 28 }}
-            className="fixed bottom-20 sm:bottom-24 right-2 sm:right-6 z-[100] flex h-[min(560px,calc(100dvh-7.5rem))] min-h-0 w-[calc(100vw-1rem)] sm:w-[400px] flex-col overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--bg-elevated)] shadow-2xl"
-            style={{
-              boxShadow: "0 25px 50px var(--shadow, rgba(0,0,0,0.25))",
-            }}
+            exit={{ opacity: 0, y: 16, scale: 0.95 }}
+            transition={{ type: 'spring', stiffness: 350, damping: 26 }}
+            className="fixed bottom-24 sm:bottom-24 right-3 sm:right-6 z-40 flex h-[min(580px,calc(100dvh-7.5rem))] min-h-0 w-[calc(100vw-1.5rem)] sm:w-[420px] flex-col overflow-hidden rounded-3xl border border-slate-700/80 bg-slate-900/95 backdrop-blur-2xl shadow-2xl"
           >
-            {!selectedStudentId ? (
-              <>
-                <div className="flex shrink-0 items-center gap-2 border-b border-[var(--border)] px-4 py-3">
-                  <h2 className="text-sm font-bold text-[var(--text-strong)]">
-                    Sohbetler
-                  </h2>
-                  {totalUnread > 0 && (
-                    <span className="rounded-full bg-red-500/15 px-2 py-0.5 text-[11px] font-bold text-red-500">
-                      {totalUnread} yeni
-                    </span>
-                  )}
-                  <div className="ml-auto flex items-center gap-1">
-                    <button
-                      type="button"
-                      onClick={() => adminUserId && loadMessages(adminUserId)}
-                      className="rounded-lg px-2 py-1.5 text-[11px] font-medium text-[var(--text-muted)] transition-colors hover:bg-[var(--bg-muted)]"
+            {/* 1. Senaryo: Giriş Yapmamış Ziyaretçi */}
+            {!currentUser ? (
+              <div className="flex h-full flex-col justify-between p-6 text-center">
+                <div className="flex justify-end">
+                  <button
+                    type="button"
+                    onClick={() => setOpen(false)}
+                    className="rounded-xl p-1.5 text-slate-400 hover:bg-slate-800 hover:text-white transition-colors"
+                    aria-label="Kapat"
+                  >
+                    <X className="h-5 w-5" />
+                  </button>
+                </div>
+
+                <div className="my-auto space-y-4">
+                  <div className="relative mx-auto h-20 w-20 overflow-hidden rounded-full border-2 border-purple-500 p-0.5 shadow-lg">
+                    <Image
+                      src="/ugur.jpeg"
+                      alt="Uğur Hoca"
+                      width={80}
+                      height={80}
+                      className="h-full w-full rounded-full object-cover"
+                    />
+                  </div>
+                  <div>
+                    <h3 className="font-display text-xl font-bold text-white">
+                      Uğur Hoca ile Sohbet
+                    </h3>
+                    <p className="mt-2 text-sm text-slate-300">
+                      Doğrudan benimle mesajlaşmak, sorularını iletmek veya ders takibi yapmak için giriş yapabilirsin.
+                    </p>
+                  </div>
+                  <div className="pt-2 flex flex-col gap-2.5">
+                    <Link
+                      href="/giris"
+                      onClick={() => setOpen(false)}
+                      className="flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 px-4 py-3 text-sm font-semibold text-white shadow-md hover:from-indigo-500 hover:to-purple-500 transition-all"
                     >
-                      Yenile
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setOpen(false);
-                        setSelectedStudentId(null);
-                        setDraft("");
-                        setSendError(null);
-                        clearAttachment();
-                      }}
-                      className="rounded-lg p-1.5 text-[var(--text-muted)] transition hover:bg-[var(--bg-muted)]"
-                      aria-label="Kapat"
+                      <LogIn className="h-4 w-4" /> Giriş Yap
+                    </Link>
+                    <Link
+                      href="/kayit"
+                      onClick={() => setOpen(false)}
+                      className="flex items-center justify-center gap-2 rounded-xl border border-slate-700 bg-slate-800/80 px-4 py-3 text-sm font-semibold text-slate-200 hover:bg-slate-800 hover:text-white transition-all"
                     >
-                      <X className="h-4 w-4" />
-                    </button>
+                      <UserPlus className="h-4 w-4" /> Ücretsiz Hesap Oluştur
+                    </Link>
                   </div>
                 </div>
 
-                <div className="min-h-0 flex-1 overflow-y-auto">
-                  {conversations.length === 0 ? (
-                    <div className="flex flex-col items-center justify-center gap-3 py-16">
-                      <MessageCircle className="h-10 w-10 text-[var(--text-soft,#64748b)]" />
-                      <p className="text-sm text-[var(--text-muted)]">
-                        Henüz öğrenci mesajı yok.
-                      </p>
-                    </div>
-                  ) : (
-                    conversations.map((c) => (
+                <p className="text-[11px] text-slate-500">
+                  Öğrenciler sadece öğretmenle 1-e-1 güvenli iletişim kurar.
+                </p>
+              </div>
+            ) : currentUser.isAdmin ? (
+              /* 2. Senaryo: Admin (Uğur Hoca) Paneli */
+              !selectedStudentId ? (
+                <>
+                  <div className="flex shrink-0 items-center gap-2 border-b border-slate-800 px-4 py-3.5">
+                    <h2 className="text-sm font-bold text-white">
+                      Öğrenci Sohbetleri
+                    </h2>
+                    {adminTotalUnread > 0 && (
+                      <span className="rounded-full bg-red-500/20 border border-red-500/40 px-2 py-0.5 text-[11px] font-bold text-red-400">
+                        {adminTotalUnread} yeni
+                      </span>
+                    )}
+                    <div className="ml-auto flex items-center gap-1">
                       <button
-                        key={c.studentId}
+                        type="button"
+                        onClick={() => currentUser.id && loadAdminMessages(currentUser.id)}
+                        className="rounded-lg px-2 py-1 text-[11px] font-medium text-slate-400 transition-colors hover:bg-slate-800 hover:text-white"
+                      >
+                        Yenile
+                      </button>
+                      <button
                         type="button"
                         onClick={() => {
-                          setSelectedStudentId(c.studentId);
-                          setDraft("");
+                          setOpen(false);
+                          setSelectedStudentId(null);
+                          setDraft('');
                           setSendError(null);
                           clearAttachment();
                         }}
-                        className="flex w-full items-start gap-3 border-b border-[var(--border)] px-4 py-3 text-left transition-colors hover:bg-[var(--bg-soft)]"
+                        className="rounded-lg p-1.5 text-slate-400 transition hover:bg-slate-800 hover:text-white"
+                        aria-label="Kapat"
                       >
-                        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-violet-500 to-fuchsia-500 text-[13px] font-bold text-white shadow-sm">
-                          {(c.studentName[0] || "?").toUpperCase()}
-                        </div>
-                        <div className="min-w-0 flex-1">
-                          <div className="flex items-center gap-2">
-                            <span className="truncate text-sm font-semibold text-[var(--text-strong)]">
-                              {c.studentName}
-                            </span>
-                            {c.unreadCount > 0 ? (
-                              <span className="h-2 w-2 shrink-0 rounded-full bg-violet-500" />
-                            ) : null}
-                          </div>
-                          <p className="mt-0.5 line-clamp-1 text-xs text-[var(--text-muted)]">
-                            {c.lastSnippet}
-                          </p>
-                          <p className="mt-0.5 text-[10px] text-[var(--text-soft,#64748b)]">
-                            {new Date(c.lastAt).toLocaleString("tr-TR", {
-                              day: "numeric",
-                              hour: "2-digit",
-                              minute: "2-digit",
-                              month: "short",
-                            })}
-                          </p>
-                        </div>
-                        <ChevronRight className="mt-1 h-4 w-4 shrink-0 text-[var(--text-muted)]" />
+                        <X className="h-4 w-4" />
                       </button>
-                    ))
-                  )}
+                    </div>
+                  </div>
+
+                  <div className="min-h-0 flex-1 overflow-y-auto">
+                    {adminConversations.length === 0 ? (
+                      <div className="flex flex-col items-center justify-center gap-3 py-16 text-center px-4">
+                        <MessageCircle className="h-10 w-10 text-slate-600" />
+                        <p className="text-sm text-slate-400">
+                          Henüz öğrenci mesajı bulunmuyor.
+                        </p>
+                      </div>
+                    ) : (
+                      adminConversations.map((c) => (
+                        <button
+                          key={c.studentId}
+                          type="button"
+                          onClick={() => {
+                            setSelectedStudentId(c.studentId);
+                            setDraft('');
+                            setSendError(null);
+                            clearAttachment();
+                          }}
+                          className="flex w-full items-start gap-3 border-b border-slate-800/80 px-4 py-3.5 text-left transition-colors hover:bg-slate-800/50"
+                        >
+                          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 text-sm font-bold text-white shadow-sm">
+                            {(c.studentName[0] || '?').toUpperCase()}
+                          </div>
+                          <div className="min-w-0 flex-1">
+                            <div className="flex items-center gap-2">
+                              <span className="truncate text-sm font-semibold text-white">
+                                {c.studentName}
+                              </span>
+                              {c.unreadCount > 0 && (
+                                <span className="rounded-full bg-red-500/20 border border-red-500/30 px-1.5 py-0.5 text-[10px] font-bold text-red-300">
+                                  {c.unreadCount}
+                                </span>
+                              )}
+                            </div>
+                            <p className="truncate text-xs text-slate-400 mt-0.5">
+                              {c.lastSnippet || 'Ek veya mesaj'}
+                            </p>
+                          </div>
+                        </button>
+                      ))
+                    )}
+                  </div>
+                </>
+              ) : adminThreadLoading ? (
+                <div className="flex flex-1 items-center justify-center py-16 text-sm text-slate-400">
+                  Yükleniyor…
                 </div>
-              </>
-            ) : threadLoading && threadMessages.length === 0 ? (
-              <div className="flex min-h-0 flex-1 flex-col items-center justify-center py-16 text-sm text-[var(--text-muted)]">
-                Yükleniyor…
-              </div>
+              ) : (
+                <SupportChatPanel
+                  appearance="admin"
+                  draft={draft}
+                  error={sendError}
+                  inputDisabled={false}
+                  messages={adminThreadMessages}
+                  attachmentPreview={
+                    selectedImage && attachmentPreviewUrl
+                      ? { name: selectedImage.name, url: attachmentPreviewUrl }
+                      : null
+                  }
+                  onAttachmentRemove={clearAttachment}
+                  onAttachmentSelect={handleAttachmentSelect}
+                  onBack={() => {
+                    setSelectedStudentId(null);
+                    setDraft('');
+                    setSendError(null);
+                    clearAttachment();
+                    if (currentUser) void loadAdminMessages(currentUser.id);
+                  }}
+                  onClose={() => {
+                    setOpen(false);
+                    setSelectedStudentId(null);
+                    setDraft('');
+                    setSendError(null);
+                    clearAttachment();
+                  }}
+                  onDraftChange={setDraft}
+                  onSubmit={handleSendAdmin}
+                  peerAvatarSrc={undefined}
+                  peerDisplayName={selectedPeerName}
+                  peerSubtitle="Öğrenci"
+                  placeholder="Öğrenciye yanıt yaz..."
+                  sending={sending}
+                />
+              )
             ) : (
+              /* 3. Senaryo: Öğrenci (SADECE UĞUR HOCA İLE 1-E-1 SOHBET) */
               <SupportChatPanel
-                appearance="admin"
+                appearance="navbar"
                 draft={draft}
                 error={sendError}
-                inputDisabled={false}
-                messages={threadMessages}
+                messages={studentThreadMessages}
+                onClose={() => setOpen(false)}
+                onAttachmentRemove={clearAttachment}
+                onAttachmentSelect={handleAttachmentSelect}
+                onDraftChange={setDraft}
+                onSubmit={handleSendStudent}
                 attachmentPreview={
                   selectedImage && attachmentPreviewUrl
                     ? { name: selectedImage.name, url: attachmentPreviewUrl }
                     : null
                 }
-                onAttachmentRemove={clearAttachment}
-                onAttachmentSelect={handleAttachmentSelect}
-                onBack={() => {
-                  setSelectedStudentId(null);
-                  setDraft("");
-                  setSendError(null);
-                  clearAttachment();
-                  if (adminUserId) void loadMessages(adminUserId);
-                }}
-                onClose={() => {
-                  setOpen(false);
-                  setSelectedStudentId(null);
-                  setDraft("");
-                  setSendError(null);
-                  clearAttachment();
-                }}
-                onDraftChange={setDraft}
-                onSubmit={handleSendAdmin}
-                peerAvatarSrc={undefined}
-                peerDisplayName={selectedPeerName}
-                peerSubtitle="Öğrenci"
-                placeholder="Mesaj yaz..."
+                peerAvatarSrc="/ugur.jpeg"
+                peerDisplayName="Uğur Hoca"
+                peerSubtitle="Matematik Öğretmeni"
+                placeholder="Uğur Hoca'ya mesaj yaz veya soru sor..."
                 sending={sending}
               />
             )}
           </motion.div>
         )}
       </AnimatePresence>
-    </>
+    </div>
   );
 }
-
-export default ChatBubble;

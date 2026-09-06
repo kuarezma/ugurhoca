@@ -12,6 +12,11 @@ const CommandPalette = dynamic(() => import('@/components/CommandPalette'), {
   ssr: false,
 });
 
+const ChatBubbleLoader = dynamic(
+  () => import('@/components/ChatBubbleLoader').then((m) => m.ChatBubbleLoader),
+  { ssr: false },
+);
+
 export function Providers({ children }: { children: ReactNode }) {
   return (
     <ThemeProvider>
@@ -21,6 +26,7 @@ export function Providers({ children }: { children: ReactNode }) {
           {children}
           <FloatingThemeToggle />
           <CommandPalette />
+          <ChatBubbleLoader />
         </ToastProvider>
       </MotionConfig>
     </ThemeProvider>
