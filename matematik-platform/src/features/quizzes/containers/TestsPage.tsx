@@ -27,6 +27,7 @@ import {
   AlertTriangle,
   Compass,
   MonitorPlay,
+  Sliders,
 } from 'lucide-react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import dynamic from 'next/dynamic';
@@ -45,6 +46,8 @@ import { QuestionDrawingOverlay } from '@/features/quizzes/components/QuestionDr
 import { trackFeatureOpen } from '@/lib/analytics';
 import { SpotTheMistakeModal } from '@/features/quizzes/components/SpotTheMistakeModal';
 import { InteractiveMathLabModal } from '@/features/programs/components/InteractiveMathLabModal';
+import { AccessibilitySettingsModal } from '@/components/AccessibilitySettingsModal';
+import { useAccessibilitySettings } from '@/hooks/useAccessibilitySettings';
 
 const PrintableWorksheetModal = dynamic(
   () =>
@@ -226,6 +229,8 @@ export default function TestsPage({
   const [isSmartboardMode, setIsSmartboardMode] = useState(false);
   const [showSmartboardSolution, setShowSmartboardSolution] = useState(false);
   const [activeDraft, setActiveDraft] = useState<QuizDraft | null>(null);
+  const [isA11yModalOpen, setIsA11yModalOpen] = useState(false);
+  const { settings: a11ySettings } = useAccessibilitySettings();
 
   useEffect(() => {
     if (typeof window !== 'undefined' && !quizStarted) {
@@ -1100,6 +1105,17 @@ export default function TestsPage({
                     <span className="hidden sm:inline">{isSmartboardMode ? 'Tahta Modu Açık' : 'Akıllı Tahta'}</span>
                   </button>
 
+                  {/* Görünüm & Erişilebilirlik Butonu */}
+                  <button
+                    type="button"
+                    onClick={() => setIsA11yModalOpen(true)}
+                    className="inline-flex items-center gap-1.5 rounded-xl border border-slate-300 dark:border-white/10 bg-slate-100 dark:bg-white/5 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-white/10 px-3 py-1.5 text-xs font-bold transition"
+                    title="Yazı boyutu, dokunma alanı ve animasyon ayarları (WCAG 2.2)"
+                  >
+                    <Sliders className="h-3.5 w-3.5 text-sky-500" />
+                    <span className="hidden sm:inline">Görünüm & Erişilebilirlik</span>
+                  </button>
+
                 {/* Odak Modu Butonu */}
                 <button
                   type="button"
@@ -1241,7 +1257,7 @@ export default function TestsPage({
               ) : null}
 
               <div
-                className="space-y-3"
+                className={`space-y-3 ${a11ySettings.spaciousOptions ? 'space-y-5 sm:space-y-6' : ''}`}
                 role="radiogroup"
                 aria-label="Cevap seçenekleri"
               >
@@ -1254,7 +1270,11 @@ export default function TestsPage({
                       role="radio"
                       aria-checked={selected}
                       onClick={() => selectAnswer(i)}
-                      className={`w-full min-h-[3.25rem] p-4 rounded-2xl text-left transition-all duration-200 flex items-center gap-3.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-900 ${
+                      className={`w-full rounded-2xl text-left transition-all duration-200 flex items-center gap-3.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-900 ${
+                        a11ySettings.touchTarget === 'comfortable_44'
+                          ? 'min-h-[4rem] p-4 sm:p-5'
+                          : 'min-h-[3.25rem] p-4'
+                      } ${
                         selected
                           ? 'bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-500 text-white shadow-md scale-[1.01]'
                           : 'bg-slate-100 hover:bg-slate-200/80 dark:bg-slate-800/60 dark:hover:bg-slate-700/60 text-slate-800 dark:text-slate-200 hover:translate-x-0.5 border border-slate-200 dark:border-white/5 shadow-sm'
@@ -1270,7 +1290,15 @@ export default function TestsPage({
                       >
                         {String.fromCharCode(65 + i)}
                       </span>
-                      <div className={`flex-1 ${isDyslexicMode ? 'font-dyslexic accessible-reading-mode' : ''}`}>
+                      <div
+                        className={`flex-1 ${
+                          a11ySettings.fontSize === 'xlarge'
+                            ? 'text-base sm:text-lg'
+                            : a11ySettings.fontSize === 'large'
+                              ? 'text-sm sm:text-base'
+                              : 'text-xs sm:text-sm'
+                        } ${isDyslexicMode ? 'font-dyslexic accessible-reading-mode' : ''}`}
+                      >
                         <MathText>{option}</MathText>
                         {hasOptionImage(question, i) ? (
                           <OptionMedia
@@ -1905,6 +1933,10 @@ export default function TestsPage({
       <InteractiveMathLabModal
         isOpen={isMathLabOpen}
         onClose={() => setIsMathLabOpen(false)}
+      />
+      <AccessibilitySettingsModal
+        isOpen={isA11yModalOpen}
+        onClose={() => setIsA11yModalOpen(false)}
       />
     </main>
   );

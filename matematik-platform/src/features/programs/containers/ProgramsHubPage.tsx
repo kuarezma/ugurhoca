@@ -14,6 +14,7 @@ import {
   Sparkles,
   Target,
   Compass,
+  Layers,
   type LucideIcon,
 } from 'lucide-react';
 import { useTheme } from '@/components/ThemeProvider';
@@ -21,6 +22,8 @@ import { FormulaFlashcardsModal } from '@/features/programs/components/FormulaFl
 import { ExamScoreCalculatorModal } from '@/components/ExamScoreCalculatorModal';
 import { TopicChecklistModal } from '@/features/programs/components/TopicChecklistModal';
 import { GeometryMathLabModal } from '@/features/programs/components/GeometryMathLabModal';
+import { CurriculumCoverageMatrixModal } from '@/features/programs/components/CurriculumCoverageMatrixModal';
+import { MathGlossaryModal } from '@/features/programs/components/MathGlossaryModal';
 
 type ProgramTool = {
   id: string;
@@ -41,6 +44,8 @@ export default function ProgramsHubPage() {
   const [isCalculatorOpen, setIsCalculatorOpen] = useState(false);
   const [isChecklistOpen, setIsChecklistOpen] = useState(false);
   const [isGeometryLabOpen, setIsGeometryLabOpen] = useState(false);
+  const [isCoverageMatrixOpen, setIsCoverageMatrixOpen] = useState(false);
+  const [isGlossaryOpen, setIsGlossaryOpen] = useState(false);
 
   const tools: ProgramTool[] = [
     {
@@ -112,6 +117,34 @@ export default function ProgramsHubPage() {
         'A4 Yazdır / Duvar Çalışma Planı',
       ],
       ctaLabel: 'Çizelgeyi Aç',
+    },
+    {
+      id: 'coverage-matrix',
+      title: 'Kazanım Kapsam & İçerik Haritası',
+      subtitle: 'Anlatım, örnek, test ve çalışma kâğıdı eksiklerini tek tabloda tespit et',
+      onClick: () => setIsCoverageMatrixOpen(true),
+      icon: Layers,
+      gradient: 'from-teal-600 via-emerald-600 to-green-500',
+      bullets: [
+        '5-12. sınıf konu bazlı 4 içerik kanalı',
+        'Eksikli konuları anlık filtreleme',
+        'Öğretmen için kapsam tamamlama yönetimi',
+      ],
+      ctaLabel: 'Kapsam Haritasını Aç',
+    },
+    {
+      id: 'math-glossary',
+      title: 'Matematik Terimler & Kişisel Sözlük',
+      subtitle: 'Kritik kavramlar, sık yapılan tuzaklar ve kendi açıklamalarını ekleme',
+      onClick: () => setIsGlossaryOpen(true),
+      icon: BookOpen,
+      gradient: 'from-indigo-600 via-purple-600 to-pink-500',
+      bullets: [
+        'Kavram tanımları ve KaTeX matematik modelleri',
+        'Sık yapılan kavram yanılgıları ve tuzak uyarıları',
+        'Kişisel terimlerini ve özel notlarını kaydetme',
+      ],
+      ctaLabel: 'Sözlüğü Aç',
     },
   ];
 
@@ -275,6 +308,14 @@ export default function ProgramsHubPage() {
       <GeometryMathLabModal
         isOpen={isGeometryLabOpen}
         onClose={() => setIsGeometryLabOpen(false)}
+      />
+      <CurriculumCoverageMatrixModal
+        isOpen={isCoverageMatrixOpen}
+        onClose={() => setIsCoverageMatrixOpen(false)}
+      />
+      <MathGlossaryModal
+        isOpen={isGlossaryOpen}
+        onClose={() => setIsGlossaryOpen(false)}
       />
     </main>
   );

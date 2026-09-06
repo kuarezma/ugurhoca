@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useId } from 'react';
+import { useState, useId, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAccessibleModal } from '@/hooks/useAccessibleModal';
 import {
@@ -10,9 +10,12 @@ import {
   Eye,
   EyeOff,
   Maximize2,
+  QrCode,
+  Lock,
 } from 'lucide-react';
 import MathText from '@/components/MathText';
 import type { Quiz, QuizQuestion } from '@/types/quiz';
+import { generateQRCodeSVG } from '@/lib/qr-generator';
 
 export type WorkspaceMode = 'compact' | 'standard' | 'large' | 'grid';
 
@@ -36,6 +39,22 @@ export function PrintableWorksheetModal({
   const [showAnswerKey, setShowAnswerKey] = useState(false);
   const [isExporting, setIsExporting] = useState(false);
   const [workspaceMode, setWorkspaceMode] = useState<WorkspaceMode>('standard');
+  const [showQRCode, setShowQRCode] = useState(true);
+  const [unlockSchedule, setUnlockSchedule] = useState<'instant' | 'after_class' | 'next_day' | 'locked'>('instant');
+
+  const qrSvgString = useMemo(() => {
+    if (!quiz) return '';
+    const baseUrl = typeof window !== 'undefined' ? window.location.origin : 'https://www.ugurhoca.com';
+    const targetUrl = `${baseUrl}/testler?quizId=${encodeURIComponent(quiz.id)}&qr=1`;
+    return generateQRCodeSVG(targetUrl, { size: 68, color: '#0f172a' });
+  }, [quiz]);
+
+  const unlockLabel = {
+    instant: 'Hemen Açık',
+    after_class: 'Ders Bitimi (17:00)',
+    next_day: 'Yarın Sabah (09:00)',
+    locked: 'Öğretmen Kilitli',
+  }[unlockSchedule];
 
   if (!isOpen || !quiz) return null;
 
@@ -120,6 +139,35 @@ export function PrintableWorksheetModal({
 
               <button
                 type="button"
+                onClick={() => setShowQRCode((prev) => !prev)}
+                className={`inline-flex items-center gap-1.5 rounded-xl border px-3 py-1.5 text-xs font-semibold transition ${
+                  showQRCode
+                    ? 'bg-indigo-50 dark:bg-indigo-950/40 border-indigo-300 dark:border-indigo-700 text-indigo-700 dark:text-indigo-300'
+                    : 'border-slate-200 dark:border-white/10 text-slate-500 hover:bg-slate-100 dark:hover:bg-white/5'
+                }`}
+              >
+                <QrCode className="h-3.5 w-3.5" />
+                <span>{showQRCode ? 'QR Kod Açık' : 'QR Kod Gizli'}</span>
+              </button>
+
+              <div className="flex items-center gap-1.5 rounded-xl border border-slate-200 dark:border-white/10 px-2.5 py-1 text-xs font-semibold text-slate-700 dark:text-slate-200 bg-white dark:bg-slate-800">
+                <Lock className="h-3.5 w-3.5 text-purple-500 shrink-0" />
+                <span className="hidden sm:inline text-[11px] text-slate-400">Çözüm Erişimi:</span>
+                <select
+                  value={unlockSchedule}
+                  onChange={(e) => setUnlockSchedule(e.target.value as 'instant' | 'after_class' | 'next_day' | 'locked')}
+                  className="bg-transparent border-none text-xs font-semibold focus:outline-none cursor-pointer"
+                  title="Öğrenciler QR kodu okuttuğunda çözümlerin açılma zamanı"
+                >
+                  <option value="instant">Hemen Açık</option>
+                  <option value="after_class">Ders Sonrası (17:00)</option>
+                  <option value="next_day">Yarın Sabah (09:00)</option>
+                  <option value="locked">Öğretmen Kilitli</option>
+                </select>
+              </div>
+
+              <button
+                type="button"
                 onClick={() => setShowAnswerKey((prev) => !prev)}
                 className="inline-flex items-center gap-1.5 rounded-xl border border-slate-200 dark:border-white/10 px-3 py-1.5 text-xs font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-white/5 transition"
               >
@@ -178,11 +226,31 @@ export function PrintableWorksheetModal({
                     </p>
                   </div>
 
-                  <div className="text-right">
-                    <span className="inline-block rounded border border-slate-900 px-2 py-0.5 text-xs font-bold uppercase tracking-wider">
-                      YAPRAK TEST
-                    </span>
-                    <p className="text-[11px] text-slate-500 mt-1 font-mono">ugurhoca.com</p>
+                  <div className="flex items-center gap-3">
+                    {showQRCode && (
+                      <div className="flex items-center gap-2 border border-slate-300 rounded-xl p-1.5 bg-slate-50 print:bg-white">
+                        <div
+                          className="shrink-0 leading-none"
+                          dangerouslySetInnerHTML={{ __html: qrSvgString }}
+                          aria-label="Test dijital çözüm QR kodu"
+                        />
+                        <div className="text-[10px] text-left max-w-[105px] leading-tight">
+                          <strong className="block font-bold text-slate-900">📱 Çözüm & İpucu</strong>
+                          <span className="text-slate-500 text-[9px] block mt-0.5">Kameranla tara, çözümlere ulaş</span>
+                          <div className="inline-flex items-center gap-1 mt-1 px-1.5 py-0.5 bg-purple-100 text-purple-800 rounded font-semibold text-[8.5px]">
+                            <Lock className="w-2.5 h-2.5 shrink-0" />
+                            <span>{unlockLabel}</span>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
+                    <div className="text-right">
+                      <span className="inline-block rounded border border-slate-900 px-2 py-0.5 text-xs font-bold uppercase tracking-wider">
+                        YAPRAK TEST
+                      </span>
+                      <p className="text-[11px] text-slate-500 mt-1 font-mono">ugurhoca.com</p>
+                    </div>
                   </div>
                 </div>
 

@@ -89,6 +89,20 @@ describe('QuestionHintLadder', () => {
 
     expect(screen.getByRole('button', { name: /Hata Defterinde Kayıtlı/i })).toBeInTheDocument();
   });
+
+  it('allows student to mark "Burayı Anlamadım" on step 1 and shows guidance', () => {
+    localStorage.clear();
+    render(<QuestionHintLadder question={mockQuestion} questionIndex={0} isOpen={true} />);
+
+    const puzzledBtn = screen.getByRole('button', { name: /Burayı Anlamadım/i });
+    expect(puzzledBtn).toBeInTheDocument();
+
+    fireEvent.click(puzzledBtn);
+
+    expect(screen.getByText(/Anlaşılmadı \(İşaretlendi\)/i)).toBeInTheDocument();
+    expect(screen.getByText(/Mikro Rehber:/i)).toBeInTheDocument();
+    expect(screen.getByText(/Temel kuralı formüle dönüştürmekte zorlandıysan/i)).toBeInTheDocument();
+  });
 });
 
 describe('deriveQuestionHints heuristics', () => {

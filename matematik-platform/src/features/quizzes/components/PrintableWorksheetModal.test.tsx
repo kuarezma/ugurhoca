@@ -86,4 +86,29 @@ describe('PrintableWorksheetModal', () => {
     expect(select.value).toBe('grid');
     expect(screen.getByText('Kareli İşlem Alanı')).toBeInTheDocument();
   });
+
+  it('toggles QR code and updates solution unlock schedule', () => {
+    render(
+      <PrintableWorksheetModal
+        isOpen={true}
+        onClose={vi.fn()}
+        quiz={mockQuiz}
+        questions={mockQuestions}
+      />,
+    );
+
+    // Initial QR Code is rendered
+    expect(screen.getByText(/Çözüm & İpucu/i)).toBeInTheDocument();
+    expect(screen.getAllByText('Hemen Açık').length).toBeGreaterThanOrEqual(1);
+
+    // Change unlock schedule
+    const unlockSelect = screen.getByTitle('Öğrenciler QR kodu okuttuğunda çözümlerin açılma zamanı') as HTMLSelectElement;
+    fireEvent.change(unlockSelect, { target: { value: 'after_class' } });
+    expect(screen.getByText('Ders Bitimi (17:00)')).toBeInTheDocument();
+
+    // Toggle QR Code off
+    const qrToggleBtn = screen.getByRole('button', { name: /QR Kod Açık/i });
+    fireEvent.click(qrToggleBtn);
+    expect(screen.queryByText(/Çözüm & İpucu/i)).not.toBeInTheDocument();
+  });
 });

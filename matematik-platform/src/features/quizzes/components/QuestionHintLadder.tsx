@@ -15,10 +15,13 @@ import {
   Compass,
   BookmarkPlus,
   BookmarkCheck,
+  HelpCircle,
 } from 'lucide-react';
 import MathText from '@/components/MathText';
 import type { QuizQuestion } from '@/types/quiz';
 import { getSavedMistakes, saveMistakesToBank } from '../lib/mistakeStorage';
+
+export const STORAGE_PUZZLED_KEY = 'ugurhoca_puzzled_steps_v1';
 
 type QuestionHintLadderProps = {
   question: QuizQuestion;
@@ -292,6 +295,49 @@ export function QuestionHintLadder({
   const [activeMode, setActiveMode] = useState<'ladder' | 'socratic'>('ladder');
   const [unlockedLevel, setUnlockedLevel] = useState<number>(0);
   const [isSavedToMistakes, setIsSavedToMistakes] = useState(false);
+  const [puzzledSteps, setPuzzledSteps] = useState<Record<number, boolean>>({});
+
+  // Soru değiştiğinde veya açıldığında bu soru için takılınan adımları yükle
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem(STORAGE_PUZZLED_KEY);
+      if (raw) {
+        const all: Record<string, Record<number, boolean>> = JSON.parse(raw);
+        const qKey = question.id || question.question;
+        setPuzzledSteps(all[qKey] || {});
+      } else {
+        setPuzzledSteps({});
+      }
+    } catch {
+      setPuzzledSteps({});
+    }
+  }, [question]);
+
+  const handleTogglePuzzledStep = (level: number) => {
+    const qKey = question.id || question.question;
+    const nextState = !puzzledSteps[level];
+    const updated = { ...puzzledSteps, [level]: nextState };
+    if (!nextState) {
+      delete updated[level];
+    }
+    setPuzzledSteps(updated);
+
+    try {
+      const raw = localStorage.getItem(STORAGE_PUZZLED_KEY);
+      const all: Record<string, Record<number, boolean>> = raw ? JSON.parse(raw) : {};
+      if (Object.keys(updated).length > 0) {
+        all[qKey] = updated;
+      } else {
+        delete all[qKey];
+      }
+      localStorage.setItem(STORAGE_PUZZLED_KEY, JSON.stringify(all));
+      if (typeof window !== 'undefined') {
+        window.dispatchEvent(new CustomEvent('ugur_hoca_puzzled_updated'));
+      }
+    } catch {
+      // sessizce geç
+    }
+  };
 
   // Soru değiştiğinde ipucu kutusunu ve modu sıfırla
   useEffect(() => {
@@ -455,14 +501,33 @@ export function QuestionHintLadder({
             {activeMode === 'ladder' ? (
               <div className="space-y-3">
                 {/* 1. Kademe: Temel Kural & Formül */}
-                <div className="rounded-xl border border-white/10 bg-slate-900/60 p-3 space-y-1">
-                  <div className="flex items-center gap-1.5 text-xs font-bold text-amber-300">
-                    <BookOpen className="h-3.5 w-3.5" />
-                    <span>1. Kademe: Temel Kural & Formül</span>
+                <div className="rounded-xl border border-white/10 bg-slate-900/60 p-3 space-y-2">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-1.5 text-xs font-bold text-amber-300">
+                      <BookOpen className="h-3.5 w-3.5" />
+                      <span>1. Kademe: Temel Kural & Formül</span>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => handleTogglePuzzledStep(1)}
+                      className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-lg text-[10px] font-semibold transition ${
+                        puzzledSteps[1]
+                          ? 'bg-rose-500/20 text-rose-300 border border-rose-500/40'
+                          : 'text-slate-400 hover:text-rose-300 hover:bg-white/5'
+                      }`}
+                    >
+                      <HelpCircle className="w-3 h-3" />
+                      <span>{puzzledSteps[1] ? 'Anlaşılmadı (İşaretlendi)' : 'Burayı Anlamadım 🤔'}</span>
+                    </button>
                   </div>
                   <div className="text-xs text-slate-300 leading-relaxed pl-5">
                     <MathText>{hints.level1}</MathText>
                   </div>
+                  {puzzledSteps[1] && (
+                    <div className="rounded-lg bg-rose-950/40 border border-rose-500/30 p-2 text-[11px] text-rose-200 mt-1">
+                      <strong>💡 Mikro Rehber:</strong> Temel kuralı formüle dönüştürmekte zorlandıysan, sorudaki sayıları doğrudan formüldeki harflerin yerine yazarak başla.
+                    </div>
+                  )}
                 </div>
 
                 {/* 2. Kademe: İlk İşlem Adımı */}
@@ -470,15 +535,34 @@ export function QuestionHintLadder({
                   <motion.div
                     initial={{ opacity: 0, y: 4 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className="rounded-xl border border-indigo-500/30 bg-indigo-950/40 p-3 space-y-1"
+                    className="rounded-xl border border-indigo-500/30 bg-indigo-950/40 p-3 space-y-2"
                   >
-                    <div className="flex items-center gap-1.5 text-xs font-bold text-indigo-300">
-                      <ArrowRight className="h-3.5 w-3.5" />
-                      <span>2. Kademe: İlk İşlem Hamlesi</span>
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-1.5 text-xs font-bold text-indigo-300">
+                        <ArrowRight className="h-3.5 w-3.5" />
+                        <span>2. Kademe: İlk İşlem Hamlesi</span>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => handleTogglePuzzledStep(2)}
+                        className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-lg text-[10px] font-semibold transition ${
+                          puzzledSteps[2]
+                            ? 'bg-rose-500/20 text-rose-300 border border-rose-500/40'
+                            : 'text-slate-400 hover:text-rose-300 hover:bg-white/5'
+                        }`}
+                      >
+                        <HelpCircle className="w-3 h-3" />
+                        <span>{puzzledSteps[2] ? 'Anlaşılmadı (İşaretlendi)' : 'Burayı Anlamadım 🤔'}</span>
+                      </button>
                     </div>
                     <div className="text-xs text-slate-300 leading-relaxed pl-5">
                       <MathText>{hints.level2}</MathText>
                     </div>
+                    {puzzledSteps[2] && (
+                      <div className="rounded-lg bg-rose-950/40 border border-rose-500/30 p-2 text-[11px] text-rose-200 mt-1">
+                        <strong>💡 Mikro Rehber:</strong> İlk işlem hamlesinde takıldıysan, benzer terimleri tek tarafa topla veya parantez dağılımını adım adım yaz.
+                      </div>
+                    )}
                   </motion.div>
                 ) : (
                   <button
@@ -496,15 +580,34 @@ export function QuestionHintLadder({
                   <motion.div
                     initial={{ opacity: 0, y: 4 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className="rounded-xl border border-purple-500/30 bg-purple-950/40 p-3 space-y-1"
+                    className="rounded-xl border border-purple-500/30 bg-purple-950/40 p-3 space-y-2"
                   >
-                    <div className="flex items-center gap-1.5 text-xs font-bold text-purple-300">
-                      <CheckCircle2 className="h-3.5 w-3.5" />
-                      <span>3. Kademe: Çözüm Stratejisi</span>
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-1.5 text-xs font-bold text-purple-300">
+                        <CheckCircle2 className="h-3.5 w-3.5" />
+                        <span>3. Kademe: Çözüm Stratejisi</span>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => handleTogglePuzzledStep(3)}
+                        className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-lg text-[10px] font-semibold transition ${
+                          puzzledSteps[3]
+                            ? 'bg-rose-500/20 text-rose-300 border border-rose-500/40'
+                            : 'text-slate-400 hover:text-rose-300 hover:bg-white/5'
+                        }`}
+                      >
+                        <HelpCircle className="w-3 h-3" />
+                        <span>{puzzledSteps[3] ? 'Anlaşılmadı (İşaretlendi)' : 'Burayı Anlamadım 🤔'}</span>
+                      </button>
                     </div>
                     <div className="text-xs text-slate-300 leading-relaxed pl-5">
                       <MathText>{hints.level3}</MathText>
                     </div>
+                    {puzzledSteps[3] && (
+                      <div className="rounded-lg bg-rose-950/40 border border-rose-500/30 p-2 text-[11px] text-rose-200 mt-1">
+                        <strong>💡 Mikro Rehber:</strong> Çözümün son adımında şıkları eleyerek veya bulduğun sonucu denklemde yerine koyup sağlama yaparak kontrol et.
+                      </div>
+                    )}
                   </motion.div>
                 ) : unlockedLevel >= 2 ? (
                   <button

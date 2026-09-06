@@ -8,6 +8,8 @@ export interface MathGlossaryConcept {
   example: string;
   trapAlert: string;
   relatedTopic?: string;
+  isCustom?: boolean;
+  userNote?: string;
 }
 
 export const MATH_GLOSSARY_CONCEPTS: MathGlossaryConcept[] = [
