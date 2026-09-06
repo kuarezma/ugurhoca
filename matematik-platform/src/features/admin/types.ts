@@ -29,6 +29,7 @@ import type { LiveLessonDashboardData } from '@/features/live-lessons/types';
 export type AdminActiveTab =
   | 'statistics'
   | 'tracking'
+  | 'classroom'
   | 'announcements'
   | 'documents'
   | 'annualPlan'

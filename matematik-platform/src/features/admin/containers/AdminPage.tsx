@@ -27,6 +27,7 @@ import {
   Sparkles,
   ExternalLink,
   Send,
+  GraduationCap,
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { signOutClient } from '@/lib/auth-client';
@@ -1115,8 +1116,8 @@ export default function AdminPage() {
             {/* Category Segment Filter */}
             <div className="flex items-center gap-1.5 mb-3 overflow-x-auto pb-1 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
               {[
-                { id: 'all', label: 'Tüm Bölümler', count: 11 },
-                { id: 'general', label: '📊 Genel & Takip', count: 3 },
+                { id: 'all', label: 'Tümü', count: 12 },
+                { id: 'general', label: '📊 Genel & Takip', count: 4 },
                 { id: 'education', label: '📚 Eğitim & İçerik', count: 4 },
                 { id: 'curriculum', label: '⚙️ Plan & Otomasyon', count: 4 },
               ].map((cat) => (
@@ -1155,6 +1156,15 @@ export default function AdminPage() {
                   color: 'from-cyan-500 to-blue-500',
                   category: 'general',
                   badge: null,
+                },
+                {
+                  id: 'classroom',
+                  label: 'Sınıfım & Şube Masası',
+                  shortLabel: 'Sınıfım',
+                  icon: GraduationCap,
+                  color: 'from-amber-500 via-orange-500 to-rose-500',
+                  category: 'general',
+                  badge: studentUsers.length > 0 ? studentUsers.length : null,
                 },
                 {
                   id: 'users',
@@ -1277,6 +1287,7 @@ export default function AdminPage() {
 
           {activeTab !== 'statistics' &&
             activeTab !== 'tracking' &&
+            activeTab !== 'classroom' &&
             activeTab !== 'annualPlan' &&
             activeTab !== 'worksheetCandidates' &&
             activeTab !== 'users' &&

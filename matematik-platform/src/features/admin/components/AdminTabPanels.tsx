@@ -5,6 +5,7 @@ import AdminStatistics from "@/components/AdminStatistics";
 import AdminAnnouncementsTab from "@/features/admin/components/tabs/AdminAnnouncementsTab";
 import AdminAnnualPlanTab from "@/features/admin/components/tabs/AdminAnnualPlanTab";
 import AdminAssignmentsTab from "@/features/admin/components/tabs/AdminAssignmentsTab";
+import AdminClassroomTab from "@/features/admin/components/tabs/AdminClassroomTab";
 import AdminDocumentsTab from "@/features/admin/components/tabs/AdminDocumentsTab";
 import AdminGradeUpdateTab from "@/features/admin/components/tabs/AdminGradeUpdateTab";
 import AdminQuizzesTab from "@/features/admin/components/tabs/AdminQuizzesTab";
@@ -216,6 +217,19 @@ export default function AdminTabPanels({
           students={studentUsers}
           submissions={dashboardSubmissions}
           weeklyPlans={weeklyPlans}
+        />
+      )}
+
+      {activeTab === "classroom" && (
+        <AdminClassroomTab
+          students={studentUsers}
+          assignments={assignments}
+          quizResults={dashboardQuizResults}
+          submissions={dashboardSubmissions}
+          studySessions={dashboardStudySessions}
+          onSendMessage={onSendAdminMessage}
+          onViewProfile={onViewStudentProfile}
+          onQuickResetPassword={onEditUser}
         />
       )}
 
