@@ -13,6 +13,7 @@ import {
   BookOpen,
   Printer,
   Sparkles,
+  MessageCircle,
 } from 'lucide-react';
 import MathText from '@/components/MathText';
 import { Mascot } from '@/components/Mascot';
@@ -285,6 +286,29 @@ export function QuizResultsView({
                         <div className="mt-3 p-3 bg-slate-900/50 rounded-lg text-xs text-slate-400 flex items-start gap-2">
                           <AlertCircle className="w-4 h-4 text-amber-500 shrink-0 mt-0.5" />
                           <MathText as="p">{q.explanation}</MathText>
+                        </div>
+                      )}
+
+                      {!isCorrect && (
+                        <div className="mt-3 flex justify-end">
+                          <button
+                            type="button"
+                            onClick={() => {
+                              window.dispatchEvent(
+                                new CustomEvent('open-teacher-chat-with-question', {
+                                  detail: {
+                                    questionIndex: index,
+                                    questionText: q.question,
+                                    quizTitle: quiz?.title || 'Test',
+                                  },
+                                }),
+                              );
+                            }}
+                            className="inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1 text-xs font-semibold bg-indigo-500/15 text-indigo-300 border border-indigo-500/30 hover:bg-indigo-500/25 transition shadow-xs"
+                          >
+                            <MessageCircle className="h-3.5 w-3.5" />
+                            <span>Bu Soruyu Uğur Hoca'ya Sor</span>
+                          </button>
                         </div>
                       )}
                     </div>

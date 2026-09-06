@@ -24,8 +24,8 @@ export function HomeNavbar({ onLogout, user }: HomeNavbarProps) {
   const isLight = theme === 'light';
   const isHomePage = pathname === '/';
   const profileHref = user?.isAdmin ? '/admin' : '/profil';
-  const showStudentBell = Boolean(user && !user.isAdmin && user.id);
-  const showStudentMessages = showStudentBell;
+  const showBell = Boolean(user?.id);
+  const showMessages = Boolean(user?.id);
 
   return (
     <nav
@@ -36,7 +36,7 @@ export function HomeNavbar({ onLogout, user }: HomeNavbarProps) {
       }`}
     >
       <div className="mx-auto max-w-6xl px-4 pl-[max(1rem,env(safe-area-inset-left))] pr-[max(1rem,env(safe-area-inset-right))]">
-        <div className="flex h-16 w-full items-center gap-3 sm:gap-4">
+        <div className="flex h-16 w-full items-center justify-between gap-3 sm:gap-4">
           <SafeLink
             href="/"
             aria-current={isHomePage ? 'page' : undefined}
@@ -70,31 +70,9 @@ export function HomeNavbar({ onLogout, user }: HomeNavbarProps) {
             </div>
           </SafeLink>
 
-          {/* Orta menü */}
-          <div className="hidden min-h-0 min-w-0 flex-1 items-center lg:flex">
-            <nav
-              aria-label="Ana menü"
-              className="mx-auto flex max-w-full items-center gap-1.5 overflow-x-auto overflow-y-hidden py-1 [scrollbar-width:thin]"
-            >
-              {HOME_CATEGORIES.map((category) => (
-                <SafeLink
-                  key={category.id}
-                  href={category.href}
-                  className={`shrink-0 whitespace-nowrap rounded-xl px-3.5 py-1.5 text-xs font-semibold transition-all duration-200 ${
-                    isLight
-                      ? 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
-                      : 'text-slate-300 hover:bg-white/10 hover:text-white'
-                  }`}
-                >
-                  {category.title}
-                </SafeLink>
-              ))}
-            </nav>
-          </div>
-
           <div className="hidden shrink-0 items-center gap-2 lg:flex">
             <ThemeToggle compact />
-            {showStudentMessages && user?.id ? (
+            {showMessages && user?.id ? (
               <HomeNavbarMessagesButton
                 userId={user.id}
                 userName={user.name || ''}
@@ -102,7 +80,7 @@ export function HomeNavbar({ onLogout, user }: HomeNavbarProps) {
                 isLight={isLight}
               />
             ) : null}
-            {showStudentBell && user?.id ? (
+            {showBell && user?.id ? (
               <HomeNavbarNotificationBell userId={user.id} isLight={isLight} />
             ) : null}
             {user ? (
@@ -159,7 +137,7 @@ export function HomeNavbar({ onLogout, user }: HomeNavbarProps) {
           </div>
 
           <div className="ml-auto flex shrink-0 items-center gap-1 lg:hidden">
-            {showStudentMessages && user?.id ? (
+            {showMessages && user?.id ? (
               <HomeNavbarMessagesButton
                 userId={user.id}
                 userName={user.name || ''}
@@ -167,7 +145,7 @@ export function HomeNavbar({ onLogout, user }: HomeNavbarProps) {
                 isLight={isLight}
               />
             ) : null}
-            {showStudentBell && user?.id ? (
+            {showBell && user?.id ? (
               <HomeNavbarNotificationBell userId={user.id} isLight={isLight} />
             ) : null}
             <button

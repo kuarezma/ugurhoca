@@ -11,6 +11,7 @@ import {
   Sparkles,
   RotateCcw,
   Activity,
+  MessageCircle,
 } from 'lucide-react';
 import MathText from '@/components/MathText';
 import type { QuizQuestion } from '@/types/quiz';
@@ -797,6 +798,27 @@ export function MistakeNotebookModal({
                       >
                         <CheckCircle2 className="h-3.5 w-3.5" />
                         <span>{item.mastered ? 'Tekrar Aç' : 'Tamamlandı'}</span>
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => {
+                          onClose();
+                          window.dispatchEvent(
+                            new CustomEvent('open-teacher-chat-with-question', {
+                              detail: {
+                                questionIndex: index,
+                                questionText: q.question,
+                                quizTitle: item.quizTitle || 'Yanlış Defteri',
+                              },
+                            }),
+                          );
+                        }}
+                        title="Bu soruyu Uğur Hoca'ya sor"
+                        className="flex h-7 px-2 items-center gap-1 rounded-lg text-xs font-semibold bg-indigo-500/15 text-indigo-700 dark:text-indigo-300 hover:bg-indigo-500/25 transition-colors"
+                      >
+                        <MessageCircle className="h-3.5 w-3.5" />
+                        <span className="hidden sm:inline">Hocama Sor</span>
                       </button>
 
                       <button

@@ -28,6 +28,7 @@ import {
   Compass,
   MonitorPlay,
   Sliders,
+  MessageCircle,
 } from 'lucide-react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import dynamic from 'next/dynamic';
@@ -1247,6 +1248,27 @@ export default function TestsPage({
                     )}
                   </button>
                 )}
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    window.dispatchEvent(
+                      new CustomEvent('open-teacher-chat-with-question', {
+                        detail: {
+                          questionIndex: currentQuestion,
+                          questionText: question.question,
+                          quizTitle: selectedQuiz.title,
+                        },
+                      }),
+                    );
+                  }}
+                  title="Bu soruyu Uğur Hoca'ya sor"
+                  aria-label="Bu soruyu Uğur Hoca'ya sor"
+                  className="shrink-0 inline-flex items-center gap-1.5 rounded-xl px-2.5 py-1.5 text-xs font-semibold bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border border-indigo-200 dark:border-indigo-500/20 hover:bg-indigo-100 dark:hover:bg-indigo-500/20 transition-all shadow-xs"
+                >
+                  <MessageCircle className="h-4 w-4" />
+                  <span className="hidden sm:inline">Hocama Sor</span>
+                </button>
               </div>
 
               {question.question_image_url ? (

@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor, act } from '@testing-library/react';
 import ChatBubble from './ChatBubble';
 
 const mockGetClientSession = vi.fn();
@@ -108,7 +108,8 @@ describe('ChatBubble Component', () => {
     fireEvent.click(triggerBtn);
 
     expect(await screen.findByText('Uğur Hoca')).toBeInTheDocument();
-    expect(screen.getByText('Matematik Öğretmeni')).toBeInTheDocument();
+    expect(screen.getByText(/Çevrim içi/i)).toBeInTheDocument();
+    expect(screen.getByText('√x')).toBeInTheDocument();
   });
 
   it('öğrenci mesaj yazıp gönderdiğinde sendSupportMessage servisini tetikler', async () => {
@@ -188,5 +189,36 @@ describe('ChatBubble Component', () => {
     expect(
       screen.getByRole('link', { name: /Ücretsiz Hesap Oluştur/i }),
     ).toBeInTheDocument();
+  });
+
+  it('open-teacher-chat-with-question eventi fırlatıldığında balonu açıp taslağı doldurur', async () => {
+    mockGetClientSession.mockResolvedValue({
+      user: {
+        id: 'student-123',
+        email: 'ogrenci@ugurhoca.local',
+        user_metadata: { name: 'Ahmet Yılmaz' },
+      },
+    });
+
+    render(<ChatBubble />);
+
+    await act(async () => {
+      window.dispatchEvent(
+        new CustomEvent('open-teacher-chat-with-question', {
+          detail: {
+            questionIndex: 2,
+            questionText: '2^5 işleminin sonucu kaçtır?',
+            quizTitle: 'Üslü İfadeler',
+          },
+        }),
+      );
+    });
+
+    expect(await screen.findByText('Uğur Hoca')).toBeInTheDocument();
+    const textarea = screen.getByPlaceholderText(
+      /Uğur Hoca'ya mesaj yaz/i,
+    ) as HTMLTextAreaElement;
+    expect(textarea.value).toContain('Üslü İfadeler');
+    expect(textarea.value).toContain('Soru #3');
   });
 });

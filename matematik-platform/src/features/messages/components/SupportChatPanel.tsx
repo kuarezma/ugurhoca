@@ -1,17 +1,41 @@
 'use client';
 
-import { ArrowLeft, ImagePlus, Loader2, Sparkles, X } from 'lucide-react';
+import { ArrowLeft, ImagePlus, Loader2, Sparkles, X, Calculator } from 'lucide-react';
 import Image from 'next/image';
 import { useLayoutEffect, useRef, useState, type ChangeEvent, type FormEvent } from 'react';
 import type { ThreadMessage } from '@/features/messages/types';
 import ImageViewerLightbox from '@/components/ImageViewerLightbox';
+import MathText from '@/components/MathText';
 
 const QUICK_FEEDBACK_TEMPLATES = [
   'Harika çözüm! 👏',
   'İşlem hatasına dikkat et ⚠️',
-  'Formül adımını tekrar kontrol et 📐',
-  'Tebrikler, tam doğru! ⭐',
+  'Ortak çarpan parantezine almayı dene 📐',
   'Soru kökündeki kısıtı tekrar oku 🔍',
+  'Tebrikler, tam doğru! ⭐',
+  'Yanlış defterindeki çözümlü videoyu izle 🎬',
+  'Ödevini inceledim, eline sağlık! 📚',
+];
+
+export const MATH_QUICK_SYMBOLS = [
+  { label: '√x', snippet: '$\\sqrt{x}$' },
+  { label: 'x²', snippet: '$x^2$' },
+  { label: 'a/b', snippet: '$\\frac{a}{b}$' },
+  { label: 'π', snippet: '$\\pi$' },
+  { label: '±', snippet: '$\\pm$' },
+  { label: '≤', snippet: '$\\le$' },
+  { label: '≥', snippet: '$\\ge$' },
+  { label: '≠', snippet: '$\\neq$' },
+  { label: '·', snippet: '$\\cdot$' },
+  { label: '°', snippet: '$^\\circ$' },
+  { label: 'Δ', snippet: '$\\Delta$' },
+];
+
+export const STUDENT_FAQ_CHIPS = [
+  '📌 Bu haftaki ödevim ne zaman teslim?',
+  '🎯 Netlerimi artırmak için nereden başlamalıyım?',
+  '💡 Çözemediğim soruyu nasıl iletebilirim?',
+  '🕒 Canlı ders saatleri ne zaman?',
 ];
 
 const formatTime = (value: string) =>
@@ -106,13 +130,6 @@ export function SupportChatPanel({
         ? 'bg-slate-50/60'
         : 'bg-slate-950/30'
       : 'bg-[var(--bg-soft,#0f172a)]';
-
-  const emptyText =
-    appearance === 'navbar'
-      ? isLight
-        ? 'text-slate-500'
-        : 'text-slate-400'
-      : 'text-[var(--text-muted)]';
 
   const formBorder =
     appearance === 'navbar'
@@ -226,9 +243,38 @@ export function SupportChatPanel({
         style={{ minHeight: 0 }}
       >
         {messages.length === 0 ? (
-          <p className={`py-10 text-center text-sm ${emptyText}`}>
-            Henüz mesaj yok. Aşağıdan yazarak başlayın.
-          </p>
+          <div className="flex flex-col items-center justify-center py-6 px-2 text-center">
+            <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-2xl bg-indigo-500/10 text-indigo-500">
+              <Calculator className="h-6 w-6" />
+            </div>
+            <p className={`text-sm font-semibold mb-1 ${titleClass}`}>
+              Uğur Hoca ile Matematik Sohbeti
+            </p>
+            <p className={`text-xs max-w-xs mb-4 ${subtitleClass}`}>
+              Takıldığın bir soru, ödev veya çalışma programın hakkında Uğur Hoca'ya doğrudan yazabilirsin.
+            </p>
+            {appearance === 'navbar' && (
+              <div className="w-full space-y-1.5 text-left">
+                <span className={`block text-[11px] font-bold px-1 ${subtitleClass}`}>
+                  Hızlı Başlangıç:
+                </span>
+                {STUDENT_FAQ_CHIPS.map((faq) => (
+                  <button
+                    key={faq}
+                    type="button"
+                    onClick={() => onDraftChange(faq)}
+                    className={`w-full text-left rounded-xl border p-2.5 text-xs font-medium transition shadow-xs ${
+                      isLight
+                        ? 'border-slate-200 bg-white text-slate-800 hover:border-indigo-400 hover:bg-indigo-50/50'
+                        : 'border-slate-700 bg-slate-800 text-slate-100 hover:border-indigo-500 hover:bg-slate-700/80'
+                    }`}
+                  >
+                    {faq}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
         ) : (
           <ul className="flex flex-col gap-2">
             {messages.map((message) => {
@@ -261,9 +307,9 @@ export function SupportChatPanel({
                       </button>
                     ) : null}
                     {message.text ? (
-                      <p className="whitespace-pre-wrap break-words text-[13px] leading-relaxed">
-                        {message.text}
-                      </p>
+                      <div className="whitespace-pre-wrap break-words text-[13px] leading-relaxed">
+                        <MathText>{message.text}</MathText>
+                      </div>
                     ) : null}
                     <p
                       className={`mt-1 text-[10px] ${
@@ -313,6 +359,43 @@ export function SupportChatPanel({
                 {tmpl}
               </button>
             ))}
+          </div>
+        )}
+
+        {/* Hızlı Matematik Sembolleri Çubuğu */}
+        <div className="mb-2 flex items-center gap-1 overflow-x-auto pb-1 scrollbar-none">
+          <span className="text-[10px] font-bold text-indigo-500 shrink-0 flex items-center gap-1 px-1">
+            <Calculator className="h-3 w-3" />
+            Sembol:
+          </span>
+          {MATH_QUICK_SYMBOLS.map((sym) => (
+            <button
+              key={sym.label}
+              type="button"
+              onClick={() => onDraftChange(draft ? `${draft} ${sym.snippet}` : sym.snippet)}
+              title={`${sym.label} ekle`}
+              className={`shrink-0 rounded-lg border px-2 py-0.5 text-xs font-medium transition shadow-xs ${
+                appearance === 'navbar'
+                  ? isLight
+                    ? 'border-slate-200 bg-slate-100/80 text-slate-700 hover:bg-indigo-50 hover:border-indigo-300 hover:text-indigo-600'
+                    : 'border-slate-700 bg-slate-800 text-slate-200 hover:bg-slate-700 hover:border-indigo-400 hover:text-indigo-300'
+                  : 'border-[var(--border)] bg-[var(--bg-soft)] text-[var(--text)] hover:border-indigo-400 hover:bg-[var(--bg-muted)]'
+              }`}
+            >
+              {sym.label}
+            </button>
+          ))}
+        </div>
+
+        {/* Canlı Matematik Önizleme */}
+        {draft.includes('$') && (
+          <div className="mb-2 rounded-xl border border-indigo-400/30 bg-indigo-500/10 p-2 text-xs">
+            <span className="block text-[10px] font-bold text-indigo-500 mb-0.5">
+              Canlı Formül Önizleme:
+            </span>
+            <div className="text-[13px] font-serif text-slate-800 dark:text-slate-100">
+              <MathText>{draft}</MathText>
+            </div>
           </div>
         )}
 
