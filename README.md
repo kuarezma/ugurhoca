@@ -35,6 +35,11 @@ Platformda öğrenci gizliliği en üst düzeyde korunur:
 
 ## Değişiklik Günlüğü (Changelog)
 
+### v1.3.3 - Akordeon Kategori Kartları Mimarisi (Ferah & Genişleyen Tasarım)
+- **Akordeon / Genişleyen Kart Tasarımı:** Sekmeli ve sabit yapışkan (sticky) kategori çubuğu tamamen kaldırılarak yerine 3 büyük, modern akordeon kartı (**Dersler**, **Oyun**, **Araçlar**) yerleştirildi.
+- **Akıcı Açılıp Kapanma & Mikro-Etkileşimler:** Her kart kendi satırında bağımsız olarak açılır/kapanır (`aria-expanded`, dönen chevron animasyonu). Kartlar kapalıyken sayfa minimum dikey alana iner, tıklandığında yumuşak framer-motion animasyonuyla altındaki modüller açılır.
+- **Odak & Sayfa Ferahlığı:** Kullanıcı tek bir kategoriye odaklanırken diğer kategoriler sayfayı doldurmaz; başparmak ergonomisi ve görsel sadelik en üst düzeye çıkarıldı.
+
 ### v1.3.2 - Son Eklenenler Temizliği & Başarı Yol Haritası Konumlandırması
 - **Son Eklenenler Bölümü Kaldırıldı:** Anasayfadaki gereksiz dikey yükü ve görsel kalabalığı azaltmak amacıyla "Son Eklenenler" belgeler modülü anasayfa akışından tamamen çıkarıldı.
 - **Başarı Yol Haritası Konumlandırması:** Öğrencinin öğrenim hedeflerine ve seviye basamaklarına kolayca erişebilmesi için "Başarı Yol Haritası" bölümü Kategori Hub'ının altındaki Duyurular bölümünün hemen altına taşındı.

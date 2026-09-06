@@ -100,4 +100,22 @@ describe('HomeCategoryHub', () => {
       screen.getByText(/LGS Matematik Taktik Köşesi/i),
     ).toBeInTheDocument();
   });
+
+  it('collapses the open category when clicking the same category header again', () => {
+    render(<HomeCategoryHub {...defaultProps} />);
+
+    // Başlangıçta dersler açık
+    expect(
+      screen.getByText('Hızlı Erişim & Ders Materyalleri'),
+    ).toBeInTheDocument();
+
+    // Aynı başlığa tekrar tıkla
+    const lessonsTab = screen.getAllByRole('tab', { name: /Dersler/i })[0];
+    fireEvent.click(lessonsTab);
+
+    // Kapanmalı
+    expect(
+      screen.queryByText('Hızlı Erişim & Ders Materyalleri'),
+    ).not.toBeInTheDocument();
+  });
 });

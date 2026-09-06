@@ -35,6 +35,11 @@ Student privacy and well-being are paramount on the platform:
 
 ## Changelog
 
+### v1.3.3 - Expandable Accordion Category Architecture
+- **Expandable Accordion Cards:** Completely replaced the sticky top category bar and tab switcher with 3 clean, modern expandable cards (**Lessons**, **Games**, and **Tools**).
+- **Smooth Toggle & Micro-Interactions:** Each category card expands or collapses independently with smooth Framer Motion height animations and 180° chevron rotation (`aria-expanded`).
+- **Maximum Page Compactness:** When collapsed, the page takes minimal vertical height. Opening a category displays only that section's modules without page bloat.
+
 ### v1.3.2 - Recent Documents Removal & Success Roadmap Relocation
 - **Removed Recent Documents Section:** To further minimize homepage clutter and redundant vertical scroll, the recent documents module has been completely removed from the homepage flow.
 - **Relocated Success Roadmap:** The "Success Roadmap" section was moved directly beneath the Announcements module under the Category Hub for better progression visibility.
