@@ -124,4 +124,29 @@ describe("FocusPomodoroPageContainer", () => {
     expect(gameAudio.resume).toHaveBeenCalled();
     expect(gameAudio.playPomodoroBell).toHaveBeenCalled();
   });
+
+  it("resets timer when Sıfırla button is clicked", () => {
+    render(<FocusPomodoroPageContainer />);
+
+    const breakBtn = screen.getByRole("button", { name: /10 Dk Uzun Mola/i });
+    fireEvent.click(breakBtn);
+    expect(screen.getByText("10:00")).toBeInTheDocument();
+
+    const resetBtn = screen.getByRole("button", { name: /Sıfırla/i });
+    fireEvent.click(resetBtn);
+    expect(screen.getByText("10:00")).toBeInTheDocument();
+  });
+
+  it("adjusts ambient volume when slider value changes", () => {
+    render(<FocusPomodoroPageContainer />);
+
+    // Activate ambient sound first to reveal volume slider
+    const pinkBtn = screen.getByRole("button", { name: /Pembe Gürültü/i });
+    fireEvent.click(pinkBtn);
+
+    const slider = screen.getByLabelText(/Ambiyans ses düzeyi/i);
+    fireEvent.change(slider, { target: { value: "0.8" } });
+
+    expect(ambientAudio.setVolume).toHaveBeenCalledWith(0.8);
+  });
 });

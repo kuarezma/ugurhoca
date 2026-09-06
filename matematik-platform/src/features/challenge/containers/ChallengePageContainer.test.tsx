@@ -56,4 +56,13 @@ describe('ChallengePageContainer', () => {
     expect(screen.getByText('Yeni nesil sorularda hız ve net kazandıran stratejiler')).toBeInTheDocument();
     expect(screen.getByText(/Başarı Yol Haritası/i)).toBeInTheDocument();
   });
+
+  it('renders anchor links with correct href attributes', () => {
+    render(<ChallengePageContainer />);
+
+    expect(screen.getByRole('link', { name: /⚡ Günün Sorusu/i })).toHaveAttribute('href', '#gunun-sorusu');
+    expect(screen.getByRole('link', { name: /🎯 Soru Hedefim/i })).toHaveAttribute('href', '#soru-hedefi');
+    expect(screen.getByRole('link', { name: /💡 LGS Taktikleri/i })).toHaveAttribute('href', '#lgs-taktikleri');
+    expect(screen.getByRole('link', { name: /🗺️ Yol Haritası/i })).toHaveAttribute('href', '#yol-haritasi');
+  });
 });
