@@ -35,6 +35,16 @@ Platformda öğrenci gizliliği en üst düzeyde korunur:
 
 ## Değişiklik Günlüğü (Changelog)
 
+### v1.4.1 - Anasayfa Sadeleştirme & Açıkta Kalan Araçların ve Ekstra Blokların Temizliği
+- **Açıkta Kalan 12 Araç ve Fazlalıklar Kaldırıldı:** 12 araç Hızlı Erişim içerisindeki açılır "Araçlar" kartına toplandığından, ana sayfada açıkta yer kaplayan `HomeQuickToolsGrid` tamamen kaldırıldı. Ayrıca `HomeDailyChallenge`, `HomeDailyGoalWidget`, `LgsTacticsCorner`, `HomeRecentDocumentsSection` ve `HomeStatsStrip` temizlendi.
+- **Sadece İstenen 6 Ana Bölüm Bırakıldı:**
+  1. **Karşılama Ekranı (Hero):** Hızlı Erişim kategorileri + Gönderilen resimdeki açılır "Araçlar [12 ARAÇ]" kartı.
+  2. **Duyurular:** Önemli güncellemeler ve bildirimler.
+  3. **Başarı Yol Haritası:** Duyuruların hemen altında yer alan basamaklar.
+  4. **LGS ve YKS Sayacı:** Geri sayım ve hızlı puan hesaplama geçişi.
+  5. **Günün Sözü:** Motivasyon kartı.
+  6. **Uğur Hoca'ya Yaz:** Eğitmenle doğrudan iletişim paneli.
+
 ### v1.4.0 - Orijinal Anasayfa Akışına Dönüş & Hızlı Erişimde Açılır "Araçlar (12 Araç)" Kartı
 - **Orijinal Anasayfa Düzenine Dönüş:** Anasayfa önceki sekmeli veya akordeonlu hub yerine sevilen orijinal, dengeli ve zengin sayfa akışına (Hero ➔ Günlük Meydan Okuma ➔ Hedef Takipçisi ➔ Taktik Köşesi ➔ Yol Haritası ➔ Duyurular ➔ Geri Sayım Sayacı ➔ Belgeler) geri döndürüldü.
 - **Hızlı Erişimde Açılır Araçlar Kartı:** Hızlı erişim kategorilerinin hemen altına kullanıcının belirlediği "Araçlar [12 ARAÇ]" açılır akordeon kartı yerleştirildi.

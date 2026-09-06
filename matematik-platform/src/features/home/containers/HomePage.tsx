@@ -4,21 +4,12 @@ import { useEffect, useState } from 'react';
 import dynamic from 'next/dynamic';
 import { useTheme } from '@/components/ThemeProvider';
 import { HomeAnnouncementsSection } from '@/features/home/components/HomeAnnouncementsSection';
-import { HomeAssignmentsSection } from '@/features/home/components/HomeAssignmentsSection';
-import { HomeDailyChallenge } from '@/features/home/components/HomeDailyChallenge';
-import { HomeDailyGoalWidget } from '@/features/home/components/HomeDailyGoalWidget';
-import { LgsTacticsCorner } from '@/features/home/components/LgsTacticsCorner';
 import { HomeDailyQuote } from '@/features/home/components/HomeDailyQuote';
 import { HomeExamCountdownSection } from '@/features/home/components/HomeExamCountdownSection';
 import { HomeFooter } from '@/features/home/components/HomeFooter';
 import { HomeHeroSection } from '@/features/home/components/HomeHeroSection';
-import { HomeHowItWorksSection } from '@/features/home/components/HomeHowItWorksSection';
 import { HomeNavbar } from '@/features/home/components/HomeNavbar';
-import { HomeQuickToolsGrid } from '@/features/home/components/HomeQuickToolsGrid';
-import { HomeRecentDocumentsSection } from '@/features/home/components/HomeRecentDocumentsSection';
-import { HomeStatsStrip } from '@/features/home/components/HomeStatsStrip';
 import { HomeSuccessRoadmap } from '@/features/home/components/HomeSuccessRoadmap';
-import { HomeGuestCtaSection } from '@/features/home/components/HomeGuestCtaSection';
 import { HomeSupportSection } from '@/features/home/components/HomeSupportSection';
 import type { HomeInitialFeed } from '@/features/home/home-initial-feed';
 import { useHomePageData } from '@/features/home/hooks/useHomePageData';
@@ -205,14 +196,10 @@ export default function HomePage({ activeLiveLesson, initialFeed }: HomePageProp
 
   const {
     announcements,
-    documents,
-    handleDismissAllAssignments,
-    handleDismissAssignment,
     handleLogout,
     selectedAnnouncement,
     setSelectedAnnouncement,
     user,
-    visibleAssignments,
   } = useHomePageData(initialFeed);
 
   return (
@@ -238,6 +225,7 @@ export default function HomePage({ activeLiveLesson, initialFeed }: HomePageProp
         </SafeLink>
       ) : null}
       <div className="pt-[calc(4.5rem+env(safe-area-inset-top))] md:pt-20">
+        {/* 1. Karşılama Ekranı (Hero - Hızlı Erişim ve Açılır 12 Araç Kartı) */}
         <HomeHeroSection
           isLight={isLight}
           user={user}
@@ -255,33 +243,8 @@ export default function HomePage({ activeLiveLesson, initialFeed }: HomePageProp
           onOpenWeeklyPlanner={() => setIsWeeklyPlannerOpen(true)}
           onOpenSpeedDrill={() => setIsSpeedDrillOpen(true)}
         />
-        <HomeDailyChallenge isLight={isLight} />
-        <HomeDailyGoalWidget isLight={isLight} />
-        <LgsTacticsCorner isLight={isLight} />
-        <HomeQuickToolsGrid
-          isLight={isLight}
-          onOpenFlashcards={() => setIsFlashcardsOpen(true)}
-          onOpenScratchpad={() => setIsScratchpadOpen(true)}
-          onOpenCalculator={() => setCalculatorState({ isOpen: true, tab: 'lgs' })}
-          onOpenPomodoro={() => setIsPomodoroOpen(true)}
-          onOpenChecklist={() => setIsChecklistOpen(true)}
-          onOpenGraph={() => setIsGraphOpen(true)}
-          onOpenProofs={() => setIsProofsOpen(true)}
-          onOpenCheatSheet={() => setIsCheatSheetOpen(true)}
-          onOpenGlossary={() => setIsGlossaryOpen(true)}
-          onOpenTopicWeights={() => setIsTopicWeightsOpen(true)}
-          onOpenWeeklyPlanner={() => setIsWeeklyPlannerOpen(true)}
-          onOpenSpeedDrill={() => setIsSpeedDrillOpen(true)}
-        />
-        <div className="defer-section">
-          <HomeSuccessRoadmap
-            isLight={isLight}
-            onOpenFlashcards={() => setIsFlashcardsOpen(true)}
-          />
-        </div>
-        <div className="defer-section">
-          <HomeStatsStrip isLight={isLight} stats={initialFeed?.stats} />
-        </div>
+
+        {/* 2. Duyurular */}
         <div className="defer-section">
           <HomeAnnouncementsSection
             announcements={announcements}
@@ -289,36 +252,33 @@ export default function HomePage({ activeLiveLesson, initialFeed }: HomePageProp
             onSelectAnnouncement={setSelectedAnnouncement}
           />
         </div>
+
+        {/* 3. Başarı Yol Haritası (Duyuruların Altında) */}
         <div className="defer-section">
-          <HomeDailyQuote isLight={isLight} />
+          <HomeSuccessRoadmap
+            isLight={isLight}
+            onOpenFlashcards={() => setIsFlashcardsOpen(true)}
+          />
         </div>
+
+        {/* 4. LGS ve YKS Sayacı */}
         <HomeExamCountdownSection
           isLight={isLight}
           onOpenCalculator={(tab) => setCalculatorState({ isOpen: true, tab })}
           userGrade={user?.grade}
         />
+
+        {/* 5. Günün Sözü */}
         <div className="defer-section">
-          <HomeAssignmentsSection
-            assignments={visibleAssignments}
-            isLight={isLight}
-            onDismissAll={handleDismissAllAssignments}
-            onDismissAssignment={handleDismissAssignment}
-          />
+          <HomeDailyQuote isLight={isLight} />
         </div>
-        <HomeRecentDocumentsSection documents={documents} isLight={isLight} />
-        {!user && (
-          <div className="defer-section">
-            <HomeHowItWorksSection isLight={isLight} />
-          </div>
-        )}
-        {!user && (
-          <div className="defer-section">
-            <HomeGuestCtaSection isLight={isLight} />
-          </div>
-        )}
+
+        {/* 6. Uğur Hoca'ya Yaz */}
         <div className="defer-section">
           <HomeSupportSection isLight={isLight} user={user} />
         </div>
+
+        {/* 7. Footer */}
         <div className="defer-section">
           <HomeFooter isLight={isLight} />
         </div>

@@ -35,6 +35,16 @@ Student privacy and well-being are paramount on the platform:
 
 ## Changelog
 
+### v1.4.1 - Streamlined Homepage & Redundant Tools/Sections Cleanup
+- **Removed Redundant Tools Grid & Clutter:** Because all 12 tools are now cleanly housed inside the expandable "Tools" quick-access card, the standalone `HomeQuickToolsGrid` on the homepage was eliminated. Extra modules (`HomeDailyChallenge`, `HomeDailyGoalWidget`, `LgsTacticsCorner`, `HomeRecentDocumentsSection`, `HomeStatsStrip`) were also removed as requested.
+- **Strictly Kept the 6 User-Requested Sections:**
+  1. **Hero Section:** Greeting + Quick Access Categories + Expandable "Araçlar [12 ARAÇ]" Card.
+  2. **Announcements:** Latest platform updates.
+  3. **Success Roadmap:** Positioned directly beneath Announcements.
+  4. **LGS & YKS Exam Countdown:** Dynamic countdown timers & quick score calculator.
+  5. **Quote of the Day:** Motivational daily math quote.
+  6. **Contact Uğur Hoca:** Direct messaging section.
+
 ### v1.4.0 - Rollback to Original Layout & Expandable "Tools (12 Tools)" Quick Access Card
 - **Restoration of Original Homepage Flow:** Reverted from the multi-tab / accordion category hub back to the original, well-balanced homepage layout (Hero ➔ Daily Challenge ➔ Goal Widget ➔ Tactics Corner ➔ Roadmap ➔ Announcements ➔ Countdown ➔ Documents).
 - **Expandable Tools Card in Quick Access:** Added the requested "Araçlar [12 ARAÇ]" accordion card directly beneath the quick access categories.
