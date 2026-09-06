@@ -1716,6 +1716,16 @@ function ContentsPageInner({
                   <Button variant="secondary" onClick={() => setSearchTerm('')}>
                     Aramayı temizle
                   </Button>
+                ) : selectedGrade !== 'all' ? (
+                  <Button
+                    variant="secondary"
+                    onClick={() => {
+                      setQuickFilter('all');
+                      setSelectedGrade('all');
+                    }}
+                  >
+                    Tüm sınıflardaki içerikleri göster
+                  </Button>
                 ) : undefined
               }
             />

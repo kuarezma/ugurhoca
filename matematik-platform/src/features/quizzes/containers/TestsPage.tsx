@@ -165,7 +165,7 @@ import { incrementQuestionsSolved } from '@/lib/dailyGoalStorage';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { Skeleton } from '@/components/ui/Skeleton';
 import { QuizResultsView } from '@/features/quizzes/components/QuizResultsView';
-import { requireClientSession } from '@/lib/auth-client';
+import { getCurrentUserProfile } from '@/lib/auth-client';
 import { getErrorMessage } from '@/lib/error-utils';
 import { createLogger } from '@/lib/logger';
 import { decodeQuizMediaExplanation } from '@/lib/quiz-media';
@@ -434,30 +434,16 @@ export default function TestsPage({
   }, [quizzes, user]);
 
   useEffect(() => {
-    const checkSession = async () => {
-      const session = await requireClientSession({ router });
-      if (!session) {
-        return;
-      }
-      const { data: profile } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('id', session.user.id)
-        .single();
+    if (isHydrated && initialUser) {
+      return;
+    }
 
-      if (profile) {
-        setUser({ ...profile, email: session.user.email });
-      } else {
-        setUser({
-          id: session.user.id,
-          name: session.user.user_metadata?.name || 'Öğrenci',
-          email: session.user.email ?? '',
-          grade: session.user.user_metadata?.grade ?? 5,
-        });
-      }
+    const checkSession = async () => {
+      const result = await getCurrentUserProfile({ router });
+      setUser(result?.profile ?? null);
     };
-    checkSession();
-  }, [router]);
+    void checkSession();
+  }, [initialUser, isHydrated, router]);
 
   useEffect(() => {
     const loadQuizzes = async () => {

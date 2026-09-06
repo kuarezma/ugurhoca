@@ -13,21 +13,25 @@ type ExamCountdownCardProps = {
 type TimeLeft = {
   days: number;
   hours: number;
+  isCompleted: boolean;
   minutes: number;
 };
 
-function getTimeRemaining(targetDate: string): TimeLeft {
-  const total = new Date(targetDate).getTime() - Date.now();
+export function getTimeRemaining(targetDate: string, referenceTime = Date.now()): TimeLeft {
+  const total = new Date(targetDate).getTime() - referenceTime;
   if (total <= 0) {
-    return { days: 0, hours: 0, minutes: 0 };
+    return { days: 0, hours: 0, isCompleted: true, minutes: 0 };
   }
   const days = Math.floor(total / (1000 * 60 * 60 * 24));
   const hours = Math.floor((total / (1000 * 60 * 60)) % 24);
   const minutes = Math.floor((total / (1000 * 60)) % 60);
-  return { days, hours, minutes };
+  return { days, hours, isCompleted: false, minutes };
 }
 
-function getMotivationMotto(daysLeft: number, examTitle: string): string {
+export function getMotivationMotto(daysLeft: number, examTitle: string, isCompleted = false): string {
+  if (isCompleted) {
+    return `${examTitle} tamamlandı. Yeni dönem sınav takvimi açıklandığında buradan takip edebilirsin.`;
+  }
   if (daysLeft > 120) {
     return `Büyük hedefler sabırlı adımlarla inşa edilir. ${examTitle} yolculuğunda bugün çözdüğün her soru geleceğini şekillendirir!`;
   }
@@ -67,8 +71,8 @@ export function ExamCountdownCard({
   }, [currentExam]);
 
   const motto = useMemo(
-    () => getMotivationMotto(timeLeft.days, currentExam.title.replace("'ye Kalan Süre", "")),
-    [timeLeft.days, currentExam],
+    () => getMotivationMotto(timeLeft.days, currentExam.title.replace("'ye Kalan Süre", ""), timeLeft.isCompleted),
+    [timeLeft.days, timeLeft.isCompleted, currentExam.title],
   );
 
   const targetNet = useMemo(() => {
@@ -104,7 +108,7 @@ export function ExamCountdownCard({
           <div>
             <div className="flex items-center gap-2">
               <h3 className="text-base sm:text-lg font-bold">
-                {currentExam.title}
+                {timeLeft.isCompleted ? `${currentExam.title.replace("'ye Kalan Süre", "")} tamamlandı` : currentExam.title}
               </h3>
               <span className="rounded-full bg-indigo-500/20 border border-indigo-500/30 px-2 py-0.5 text-[10px] font-bold text-indigo-300">
                 {currentExam.provider}
@@ -135,7 +139,11 @@ export function ExamCountdownCard({
         </div>
       </div>
 
-      {/* Countdown Digits */}
+      {timeLeft.isCompleted ? (
+        <div className="my-4 rounded-2xl border border-emerald-400/20 bg-emerald-500/10 p-4 text-sm text-emerald-100">
+          Bu yılın sınavı tamamlandı. Yeni tarih duyurulduğunda geri sayım otomatik olarak burada başlayacak.
+        </div>
+      ) : (
       <div className="grid grid-cols-3 gap-3 my-4">
         <div className="rounded-2xl border border-white/10 bg-white/5 p-3 text-center">
           <div className="text-2xl sm:text-3xl font-black bg-gradient-to-br from-white to-slate-300 bg-clip-text text-transparent">
@@ -162,6 +170,7 @@ export function ExamCountdownCard({
           </div>
         </div>
       </div>
+      )}
 
       {/* Motivational Motto & Target Net Footer */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-3 border-t border-white/10">

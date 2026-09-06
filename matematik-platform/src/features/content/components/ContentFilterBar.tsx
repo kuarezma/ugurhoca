@@ -51,8 +51,15 @@ export default function ContentFilterBar({
 }: ContentFilterBarProps) {
   return (
     <div className="space-y-4">
-      {/* Search and Sort row */}
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+      <details className="group md:contents">
+        <summary className="flex cursor-pointer list-none items-center justify-between rounded-2xl border border-white/10 bg-slate-800/60 px-4 py-3 text-sm font-semibold text-slate-200 transition-colors hover:bg-slate-800 md:hidden">
+          Filtrele
+          <span className="text-xs font-medium text-cyan-300 group-open:hidden">Aç</span>
+          <span className="hidden text-xs font-medium text-cyan-300 group-open:inline">Kapat</span>
+        </summary>
+        <div className="hidden space-y-4 group-open:block md:block">
+          {/* Search and Sort row */}
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         {/* Search Input */}
         <div className="relative flex-1">
           <Search className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-slate-400" />
@@ -133,11 +140,11 @@ export default function ContentFilterBar({
             )}
           </div>
         </div>
-      </div>
+          </div>
 
       {/* Quick Filters Row */}
-      {!isWorksheetBrowser && viewMode !== 'packs' && (
-        <div className="flex flex-wrap items-center justify-between gap-2 pt-1">
+          {!isWorksheetBrowser && viewMode !== 'packs' && (
+            <div className="flex flex-wrap items-center justify-between gap-2 pt-1">
           <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
             <button
               onClick={() => onQuickFilterChange('all')}
@@ -198,8 +205,10 @@ export default function ContentFilterBar({
           <span className="text-xs text-slate-400 font-medium">
             {totalResults} içerik bulundu
           </span>
+            </div>
+          )}
         </div>
-      )}
+      </details>
     </div>
   );
 }

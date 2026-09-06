@@ -1,5 +1,5 @@
 import { isAdminEmail } from '@/lib/admin';
-import { getClientSession } from '@/lib/auth-client';
+import { getClientSession, getCurrentUserProfile } from '@/lib/auth-client';
 import { supabase } from '@/lib/supabase/client';
 import type { ApiSuccessResponse } from '@/lib/api-response';
 import type { Comment, ContentDocument } from '@/types';
@@ -340,35 +340,15 @@ export const resolveContentUser = async () => {
     }
   }
 
-  const session = await getClientSession();
+  const result = await getCurrentUserProfile<ContentPageUser>({
+    redirectToLogin: false,
+  });
 
-  if (!session) {
+  if (!result) {
     return null;
   }
 
-  const { data: profile } = await supabase
-    .from('profiles')
-    .select('*')
-    .eq('id', session.user.id)
-    .single();
-
-  const isAdmin = isAdminEmail(session.user.email);
-
-  if (profile) {
-    return {
-      ...(profile as Record<string, unknown>),
-      email: session.user.email ?? '',
-      isAdmin,
-    } as ContentPageUser;
-  }
-
-  return {
-    email: session.user.email ?? '',
-    grade: session.user.user_metadata?.grade ?? 5,
-    id: session.user.id,
-    isAdmin,
-    name: session.user.user_metadata?.name || 'Öğrenci',
-  } as ContentPageUser;
+  return result.profile;
 };
 
 export const createContentDocument = async (payload: ContentFormState) => {

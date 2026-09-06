@@ -111,6 +111,11 @@ export const useProfileDashboardData = (
   );
 
   useEffect(() => {
+    if (initialData?.isHydrated && initialData.user) {
+      setLoading(false);
+      return;
+    }
+
     const loadData = async () => {
       try {
         setLoading(true);

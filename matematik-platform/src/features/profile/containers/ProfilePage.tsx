@@ -43,6 +43,8 @@ import TodayPlanCard from '@/components/dashboard/TodayPlanCard';
 import DashboardSettings from '@/components/dashboard/DashboardSettings';
 import { Skeleton } from '@/components/ui/Skeleton';
 
+const DeferredDashboardCard = () => <Skeleton className="h-72 rounded-3xl" />;
+
 const AvatarSelectionModal = dynamic(
   () => import('@/components/dashboard/AvatarSelectionModal'),
   { ssr: false },
@@ -84,10 +86,22 @@ const FeynmanVoiceExplanationModal = dynamic(
   { ssr: false },
 );
 import ProfileNotificationsPanel from '@/features/profile/components/ProfileNotificationsPanel';
-import StudyActivityHeatmap from '@/features/profile/components/StudyActivityHeatmap';
-import ExamTrendChart from '@/features/profile/components/ExamTrendChart';
-import TargetSchoolGapCard from '@/features/profile/components/TargetSchoolGapCard';
-import { ExamCountdownCard } from '@/features/profile/components/ExamCountdownCard';
+const StudyActivityHeatmap = dynamic(
+  () => import('@/features/profile/components/StudyActivityHeatmap'),
+  { loading: DeferredDashboardCard, ssr: false },
+);
+const ExamTrendChart = dynamic(
+  () => import('@/features/profile/components/ExamTrendChart'),
+  { loading: DeferredDashboardCard, ssr: false },
+);
+const TargetSchoolGapCard = dynamic(
+  () => import('@/features/profile/components/TargetSchoolGapCard'),
+  { loading: DeferredDashboardCard, ssr: false },
+);
+const ExamCountdownCard = dynamic(
+  () => import('@/features/profile/components/ExamCountdownCard').then((module) => ({ default: module.ExamCountdownCard })),
+  { loading: DeferredDashboardCard, ssr: false },
+);
 import { StudyPrescriptionCard } from '@/features/quizzes/components/StudyPrescriptionCard';
 import { getSavedMistakes, getDueMistakes } from '@/features/quizzes/lib/mistakeStorage';
 import { syncMistakesWithCloud } from '@/features/quizzes/lib/mistakeSync';

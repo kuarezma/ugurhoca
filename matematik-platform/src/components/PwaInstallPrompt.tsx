@@ -79,7 +79,7 @@ export function PwaInstallPrompt() {
       {/* Yüzen Kurulum Şeridi */}
       <aside
         aria-label="Uygulama Yükleme Bildirimi"
-        className="fixed bottom-20 sm:bottom-6 right-4 z-40 max-w-sm animate-fade-up"
+        className="fixed bottom-40 sm:bottom-6 right-4 z-40 max-w-sm animate-fade-up"
       >
         <div className="flex items-center gap-3 rounded-2xl border border-indigo-500/30 bg-slate-900/95 p-3.5 shadow-2xl backdrop-blur-xl text-white">
           <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 shadow-md">
