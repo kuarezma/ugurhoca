@@ -17,6 +17,7 @@ import {
   Layers,
   type LucideIcon,
 } from 'lucide-react';
+import dynamic from 'next/dynamic';
 import { useTheme } from '@/components/ThemeProvider';
 import { FormulaFlashcardsModal } from '@/features/programs/components/FormulaFlashcardsModal';
 import { ExamScoreCalculatorModal } from '@/components/ExamScoreCalculatorModal';
@@ -24,6 +25,11 @@ import { TopicChecklistModal } from '@/features/programs/components/TopicCheckli
 import { GeometryMathLabModal } from '@/features/programs/components/GeometryMathLabModal';
 import { CurriculumCoverageMatrixModal } from '@/features/programs/components/CurriculumCoverageMatrixModal';
 import { MathGlossaryModal } from '@/features/programs/components/MathGlossaryModal';
+
+const MathProjectWorkshopModal = dynamic(
+  () => import('@/features/projects/components/MathProjectWorkshopModal'),
+  { ssr: false },
+);
 
 type ProgramTool = {
   id: string;
@@ -46,6 +52,7 @@ export default function ProgramsHubPage() {
   const [isGeometryLabOpen, setIsGeometryLabOpen] = useState(false);
   const [isCoverageMatrixOpen, setIsCoverageMatrixOpen] = useState(false);
   const [isGlossaryOpen, setIsGlossaryOpen] = useState(false);
+  const [isProjectWorkshopOpen, setIsProjectWorkshopOpen] = useState(false);
 
   const tools: ProgramTool[] = [
     {
@@ -145,6 +152,20 @@ export default function ProgramsHubPage() {
         'Kişisel terimlerini ve özel notlarını kaydetme',
       ],
       ctaLabel: 'Sözlüğü Aç',
+    },
+    {
+      id: 'project-workshop',
+      title: 'Matematik Proje Atölyesi & Araştırma Görevleri',
+      subtitle: 'Gerçek hayat senaryoları, aşamalı teslim adımları ve 100 puanlık değerlendirme rubriği',
+      onClick: () => setIsProjectWorkshopOpen(true),
+      icon: Compass,
+      gradient: 'from-amber-500 via-rose-500 to-purple-600',
+      bullets: [
+        'Evimizin enerji verimliliği ve doğrusal modelleme',
+        'Altın oran, mimari plan ve Fibonacci analizi',
+        'Fraktallar ve doğadaki geometrik örüntüler',
+      ],
+      ctaLabel: 'Atölyeyi Aç',
     },
   ];
 
@@ -316,6 +337,10 @@ export default function ProgramsHubPage() {
       <MathGlossaryModal
         isOpen={isGlossaryOpen}
         onClose={() => setIsGlossaryOpen(false)}
+      />
+      <MathProjectWorkshopModal
+        isOpen={isProjectWorkshopOpen}
+        onClose={() => setIsProjectWorkshopOpen(false)}
       />
     </main>
   );

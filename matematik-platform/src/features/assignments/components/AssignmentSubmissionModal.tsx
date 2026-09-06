@@ -5,6 +5,7 @@ import { useId, type DragEvent, type ChangeEvent } from 'react';
 import { ClipboardList, FileText, Upload, X } from 'lucide-react';
 import type { Assignment, Submission } from '@/types';
 import { useAccessibleModal } from '@/hooks/useAccessibleModal';
+import { MathInputToolbar } from '@/components/MathInputToolbar';
 
 type AssignmentSubmissionModalProps = {
   assignment: Assignment;
@@ -169,6 +170,9 @@ export function AssignmentSubmissionModal({
                 onChange={(e) => onCommentChange(e.target.value)}
                 className="h-24 w-full resize-none rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-white transition-colors focus:border-indigo-500 focus:outline-none"
               />
+              <div className="mt-1.5">
+                <MathInputToolbar onInsertSymbol={(sym) => onCommentChange(comment ? `${comment} ${sym}` : sym)} />
+              </div>
             </div>
 
             <div className="relative">

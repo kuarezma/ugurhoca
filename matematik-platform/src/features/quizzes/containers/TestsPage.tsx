@@ -30,6 +30,7 @@ import {
   Sliders,
   FileSpreadsheet,
   MessageCircle,
+  HardDrive,
 } from 'lucide-react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import dynamic from 'next/dynamic';
@@ -55,6 +56,14 @@ const PrintableWorksheetModal = dynamic(
   () =>
     import('@/features/quizzes/components/PrintableWorksheetModal').then((m) => ({
       default: m.PrintableWorksheetModal,
+    })),
+  { ssr: false },
+);
+
+const OfflineStudyPackageModal = dynamic(
+  () =>
+    import('@/features/quizzes/components/OfflineStudyPackageModal').then((m) => ({
+      default: m.OfflineStudyPackageModal,
     })),
   { ssr: false },
 );
@@ -213,6 +222,7 @@ export default function TestsPage({
   const [isMistakeNotebookOpen, setIsMistakeNotebookOpen] = useState(false);
   const [pendingMistakesCount, setPendingMistakesCount] = useState(0);
   const [isWorksheetModalOpen, setIsWorksheetModalOpen] = useState(false);
+  const [isOfflinePackageModalOpen, setIsOfflinePackageModalOpen] = useState(false);
   const [isOutcomeAnalysisOpen, setIsOutcomeAnalysisOpen] = useState(false);
   const [isOnline, setIsOnline] = useState(true);
   const [isShortcutsOpen, setIsShortcutsOpen] = useState(false);
@@ -626,6 +636,30 @@ export default function TestsPage({
     setFlaggedQuestions(new Set());
     resultSavedRef.current = false;
     showToast('info', `${mistakeQuestions.length} soruluk telafi testi başladı!`);
+  };
+
+  const handleStartOfflineQuiz = (pkg: import('@/features/quizzes/lib/offlineQuizPackageStorage').OfflineQuizPackage) => {
+    if (!pkg.questions || pkg.questions.length === 0) return;
+    setSelectedQuiz({
+      id: pkg.id,
+      title: pkg.title,
+      description: 'Cihaza indirilmiş çevrimdışı çalışma soru seti.',
+      difficulty: 'orta',
+      duration_minutes: Math.ceil((pkg.questions.length * 90) / 60),
+      question_count: pkg.questions.length,
+      created_at: pkg.downloadedAt,
+    } as unknown as Quiz);
+    setQuizQuestions(pkg.questions);
+    setCurrentQuestion(0);
+    setAnswers({});
+    setSelectedAnswer(null);
+    setShowResult(false);
+    setQuizStarted(true);
+    setStartTime(Date.now());
+    setTimeLeft(pkg.questions.length * 90);
+    setFlaggedQuestions(new Set());
+    resultSavedRef.current = false;
+    showToast('success', `Çevrimdışı test başladı: ${pkg.title}`);
   };
 
   const handleStartAdaptiveQuiz = (count?: number) => {
@@ -1736,6 +1770,14 @@ export default function TestsPage({
                 <BookOpen className="w-4 h-4 text-amber-400" />
                 <span>Akıllı Hata Defterim</span>
               </button>
+              <button
+                type="button"
+                onClick={() => setIsOfflinePackageModalOpen(true)}
+                className="inline-flex items-center gap-2 rounded-2xl border border-emerald-500/30 bg-emerald-500/15 hover:bg-emerald-500/25 px-4 py-2.5 text-xs sm:text-sm font-bold text-emerald-300 shadow-md transition-all active:scale-95"
+              >
+                <HardDrive className="w-4 h-4 text-emerald-400" />
+                <span>Çevrimdışı Setler</span>
+              </button>
             </div>
           </div>
 
@@ -1979,6 +2021,11 @@ export default function TestsPage({
       <AccessibilitySettingsModal
         isOpen={isA11yModalOpen}
         onClose={() => setIsA11yModalOpen(false)}
+      />
+      <OfflineStudyPackageModal
+        isOpen={isOfflinePackageModalOpen}
+        onClose={() => setIsOfflinePackageModalOpen(false)}
+        onStartOfflineQuiz={handleStartOfflineQuiz}
       />
     </main>
   );

@@ -40,5 +40,8 @@ describe('ProgramsHubPage', () => {
     const checklistBtn = screen.getByRole('button', { name: /MEB Matematik Konu Takip Çizelgesi aracını aç/i });
     fireEvent.click(checklistBtn);
     expect(screen.getAllByText('MEB Matematik Konu Takip Çizelgesi').length).toBe(2);
+
+    // Proje Atölyesini doğrula
+    expect(screen.getByText('Matematik Proje Atölyesi & Araştırma Görevleri')).toBeInTheDocument();
   });
 });

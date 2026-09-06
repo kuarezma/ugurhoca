@@ -11,6 +11,7 @@ import {
   CheckCircle2,
   ChevronRight,
   ArrowLeft,
+  Calendar,
 } from 'lucide-react';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { useToast } from '@/components/Toast';
@@ -30,6 +31,14 @@ const AssignmentSubmissionModal = dynamic(
   () =>
     import('@/features/assignments/components/AssignmentSubmissionModal').then(
       (m) => ({ default: m.AssignmentSubmissionModal }),
+    ),
+  { ssr: false },
+);
+
+const HomeworkLoadCalendarModal = dynamic(
+  () =>
+    import('@/features/assignments/components/HomeworkLoadCalendarModal').then(
+      (m) => ({ default: m.HomeworkLoadCalendarModal }),
     ),
   { ssr: false },
 );
@@ -59,6 +68,7 @@ export default function OdevlerPage({
   );
   const [uploading, setUploading] = useState<string | null>(null);
   const [selectedAssignment, setSelectedAssignment] = useState<Assignment | null>(null);
+  const [isCalendarOpen, setIsCalendarOpen] = useState(false);
   const [comment, setComment] = useState('');
   const [isDragging, setIsDragging] = useState(false);
   const [uploadProgress, setUploadProgress] = useState<number | null>(null);
@@ -326,11 +336,21 @@ export default function OdevlerPage({
       </header>
 
       <div className="max-w-5xl mx-auto px-4 py-8">
-        <div className="mb-8">
-          <h1 className={`text-3xl font-bold mb-2 ${isLight ? 'text-slate-900' : 'text-white'}`}>Önemli Ödevlerin</h1>
-          <p className={isLight ? 'text-slate-600' : 'text-slate-400'}>
-            {user?.grade}. Sınıf için atanan ödevlerini buradan takip edip teslim edebilirsin.
-          </p>
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
+          <div>
+            <h1 className={`text-3xl font-bold mb-2 ${isLight ? 'text-slate-900' : 'text-white'}`}>Önemli Ödevlerin</h1>
+            <p className={isLight ? 'text-slate-600' : 'text-slate-400'}>
+              {user?.grade}. Sınıf için atanan ödevlerini buradan takip edip teslim edebilirsin.
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={() => setIsCalendarOpen(true)}
+            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-amber-500/20 text-amber-300 border border-amber-500/30 hover:bg-amber-500/30 font-bold text-xs sm:text-sm transition shadow-sm self-start sm:self-auto"
+          >
+            <Calendar className="w-4 h-4 text-amber-400" />
+            <span>Ödev Yükü Takvimi & Radar</span>
+          </button>
         </div>
 
         {assignments.length === 0 ? (
@@ -471,6 +491,14 @@ export default function OdevlerPage({
           />
         )}
       </AnimatePresence>
+
+      <HomeworkLoadCalendarModal
+        isOpen={isCalendarOpen}
+        onClose={() => setIsCalendarOpen(false)}
+        assignments={assignments}
+        submissions={submissions}
+        onSelectAssignment={(ass) => setSelectedAssignment(ass)}
+      />
     </main>
   );
 }

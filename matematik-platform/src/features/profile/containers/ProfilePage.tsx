@@ -12,6 +12,7 @@ import {
   CalendarClock,
   CheckCircle2,
   FileSpreadsheet,
+  FolderKanban,
   LogOut,
   Settings,
   Shield,
@@ -56,6 +57,10 @@ const WelcomeTour = dynamic(
 );
 const ParentReportModal = dynamic(
   () => import('@/features/profile/components/ParentReportModal'),
+  { ssr: false },
+);
+const StudentPortfolioModal = dynamic(
+  () => import('@/features/portfolio/components/StudentPortfolioModal'),
   { ssr: false },
 );
 import ProfileNotificationsPanel from '@/features/profile/components/ProfileNotificationsPanel';
@@ -149,6 +154,7 @@ export default function ProfilePage({ initialData }: ProfilePageProps) {
   const [pendingMistakesCount, setPendingMistakesCount] = useState(0);
   const [dueMistakesCount, setDueMistakesCount] = useState(0);
   const [isParentReportOpen, setIsParentReportOpen] = useState(false);
+  const [isPortfolioOpen, setIsPortfolioOpen] = useState(false);
 
   useEffect(() => {
     try {
@@ -685,6 +691,15 @@ export default function ProfilePage({ initialData }: ProfilePageProps) {
                   <FileSpreadsheet className="h-4 w-4" />
                   <span className="whitespace-nowrap">Gelişim Raporu</span>
                 </button>
+                <button
+                  type="button"
+                  onClick={() => setIsPortfolioOpen(true)}
+                  className="inline-flex shrink-0 items-center justify-center gap-2 rounded-2xl border border-indigo-500/30 bg-indigo-500/10 px-4 py-2.5 text-sm font-semibold text-indigo-300 transition-all hover:bg-indigo-500/20 hover:text-indigo-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400"
+                  title="Öğrenci matematik gelişim dosyası ve portfolyosu"
+                >
+                  <FolderKanban className="h-4 w-4" />
+                  <span className="whitespace-nowrap">Gelişim Portfolyosu</span>
+                </button>
               </div>
 
               {activeTab === 'overview' && (
@@ -840,6 +855,13 @@ export default function ProfilePage({ initialData }: ProfilePageProps) {
                 averageScore={latestQuizScore}
                 strongTopic={progressRows.find((r) => r.mastery_level >= 75)?.topic ?? null}
                 focusTopic={progressRows.find((r) => r.mastery_level < 60)?.topic ?? null}
+              />
+
+              <StudentPortfolioModal
+                isOpen={isPortfolioOpen}
+                onClose={() => setIsPortfolioOpen(false)}
+                studentName={user.name || user.email || 'Öğrenci'}
+                grade={String(user.grade ?? '8')}
               />
             </div>
           )}
