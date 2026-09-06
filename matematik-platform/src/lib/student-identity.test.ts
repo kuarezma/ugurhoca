@@ -23,6 +23,8 @@ describe('student-identity', () => {
         code: '23505',
         message: 'duplicate key value violates unique constraint',
       }),
-    ).toBe('Bu ad soyad ile zaten hesap var. Giriş sayfasından deneyin.');
+    ).toBe(
+      'Bu ad soyad ile zaten hesap var. Aynı isimde farklı bir öğrenciysen adının sonuna sınıfını ekleyerek (örn: Ahmet Yılmaz 8-A) kayıt olabilirsin. Şifreni unuttuysan öğretmenine başvurabilirsin.',
+    );
   });
 });
