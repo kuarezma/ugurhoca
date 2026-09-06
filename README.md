@@ -35,6 +35,10 @@ Platformda öğrenci gizliliği en üst düzeyde korunur:
 
 ## Değişiklik Günlüğü (Changelog)
 
+### v1.4.5 - Yaprak Test Üst Vitrine 3. Kart Olarak Eklendi & Ders Kategorisi 6'lı Kusursuz Simetriye Ulaştı
+- **Öne Çıkan 3'lü Vitrin Kartları:** "Yaprak Test", Canlı Ders ve Oyunlar'ın yanına 3. parlak kart olarak eklendi. Mobilde üstte tam genişlikte Canlı Ders, altında yan yana Yaprak Test ve Oyunlar (1 Geniş + 2 Yan Yana) düzeniyle kaydırma gerektirmeden tam görünürlük sağlandı. Masaüstünde ise yan yana 3 sütunlu altın üçgen (Canlı Ders · Yaprak Test · Oyunlar) oluşturuldu.
+- **"Ders" Kategorisinde Kusursuz 6'lı Simetri:** Yaprak Test'in üst vitrine taşınmasıyla Ders kartı içerisindeki materyal sayısı 6'ya indi; böylece 3 sütunlu ızgarada tam 2 satır (2×3 = 6) kusursuz simetrik dikdörtgen yapı elde edildi.
+
 ### v1.4.4 - Hızlı Erişim "Ders" Kartına Dönüştürüldü & Oyunlar ile Canlı Ders Öne Çıkarıldı
 - **Canlı Ders ve Oyunlar Kartları:** Karşılama ve maskotun hemen altına yan yana, renkli, parlak (glow efektli) ve öğrencilerin dikkatini çeken büyük öne çıkan kartlar olarak yerleştirildi.
 - **"Ders" Açılır Kategori Kartı:** "Hızlı erişim" başlığı "Ders" olarak yenilendi; Araçlar kartıyla birebir aynı açılır-kapanır (varsayılan açık) tasarım diline kavuşturuldu. İçerisinde yalnızca 7 temel ders materyali (Yaprak Test, Kitaplar, Kazanımlar, Ders Videoları, Deneme-Sınav, Çıkış Bileti ve Programlar) 3 sütunlu yatay kartlar halinde listelendi.

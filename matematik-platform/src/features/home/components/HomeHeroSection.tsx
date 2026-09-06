@@ -67,14 +67,6 @@ export function HomeHeroSection({
 
   const lessonCategories = [
     {
-      id: 'ders-notlari',
-      title: 'Yaprak Test',
-      subtitle: 'Konu testleri ve pekiştirme soruları',
-      href: '/icerikler?type=ders-notlari',
-      icon: BookOpen,
-      color: 'from-blue-500 to-cyan-500',
-    },
-    {
       id: 'kitaplar',
       title: 'Kitaplar',
       subtitle: 'MEB ders kitapları ve soru föyleri',
@@ -388,13 +380,13 @@ export function HomeHeroSection({
           </div>
         </div>
 
-        {/* Karşılama ve Maskotun Hemen Altında: Canlı Ders & Oyunlar (Renkli, Parlak & Büyük Kartlar) */}
-        <div className="mt-5 sm:mt-7 grid grid-cols-2 gap-3 sm:gap-4.5">
-          {/* Canlı Ders Kartı */}
+        {/* Karşılama ve Maskotun Hemen Altında: Canlı Ders, Yaprak Test & Oyunlar (Renkli & Parlak Kartlar) */}
+        <div className="mt-5 sm:mt-7 grid grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4.5">
+          {/* 1. Canlı Ders Kartı */}
           <SafeLink
             href="/canli-ders"
             aria-label="Canlı Dersler"
-            className="group relative overflow-hidden rounded-2xl sm:rounded-3xl p-4 sm:p-6 border border-red-400/40 bg-gradient-to-br from-red-600 via-rose-600 to-amber-600 text-white shadow-lg shadow-rose-600/25 transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl hover:shadow-rose-600/40 active:scale-[0.99] cursor-pointer"
+            className="col-span-2 md:col-span-1 group relative overflow-hidden rounded-2xl sm:rounded-3xl p-4 sm:p-6 border border-red-400/40 bg-gradient-to-br from-red-600 via-rose-600 to-amber-600 text-white shadow-lg shadow-rose-600/25 transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl hover:shadow-rose-600/40 active:scale-[0.99] cursor-pointer"
           >
             {/* Parlak Arka Plan Işık Efekti */}
             <div
@@ -440,11 +432,58 @@ export function HomeHeroSection({
             </div>
           </SafeLink>
 
-          {/* Oyunlar Kartı */}
+          {/* 2. Yaprak Test Kartı */}
+          <SafeLink
+            href="/icerikler?type=ders-notlari"
+            aria-label="Yaprak Testler"
+            className="col-span-1 group relative overflow-hidden rounded-2xl sm:rounded-3xl p-4 sm:p-6 border border-teal-400/40 bg-gradient-to-br from-emerald-600 via-teal-600 to-cyan-600 text-white shadow-lg shadow-teal-600/25 transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl hover:shadow-teal-600/40 active:scale-[0.99] cursor-pointer"
+          >
+            {/* Parlak Arka Plan Işık Efekti */}
+            <div
+              aria-hidden="true"
+              className="pointer-events-none absolute -right-8 -top-8 h-36 w-36 rounded-full bg-white/20 blur-2xl transition-transform duration-500 group-hover:scale-125"
+            />
+            <div
+              aria-hidden="true"
+              className="pointer-events-none absolute -left-8 -bottom-8 h-28 w-28 rounded-full bg-cyan-300/20 blur-2xl"
+            />
+
+            <div className="relative flex flex-col justify-between h-full space-y-3 sm:space-y-4">
+              <div className="flex items-start justify-between gap-2">
+                <div className="flex h-10 w-10 sm:h-13 sm:w-13 shrink-0 items-center justify-center rounded-xl sm:rounded-2xl bg-white/20 backdrop-blur-md text-white shadow-inner border border-white/30 group-hover:scale-105 transition-transform duration-300">
+                  <BookOpen className="h-5 w-5 sm:h-6 sm:w-6" />
+                </div>
+                <span className="inline-flex items-center gap-1 sm:gap-1.5 rounded-full bg-black/25 backdrop-blur-md px-2 py-0.5 sm:px-3 sm:py-1 text-[10px] sm:text-xs font-bold text-white border border-white/20 tracking-wide uppercase">
+                  <BookMarked className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-cyan-200" />
+                  Test & Soru
+                </span>
+              </div>
+
+              <div>
+                <h3 className="font-display text-base sm:text-2xl font-black tracking-tight text-white flex items-center gap-2">
+                  Yaprak Test
+                </h3>
+                <p className="mt-0.5 sm:mt-1 text-[11px] sm:text-sm text-white/90 leading-snug sm:leading-relaxed line-clamp-2">
+                  Müfredatla uyumlu konu testleri, yeni nesil soru föyleri ve kazanım özetleri.
+                </p>
+              </div>
+
+              <div className="pt-2 flex items-center justify-between border-t border-white/20 text-[11px] sm:text-sm font-bold text-white">
+                <span className="inline-flex items-center gap-1 opacity-95">
+                  Test Çöz
+                </span>
+                <div className="flex h-6 w-6 sm:h-8 sm:w-8 items-center justify-center rounded-lg sm:rounded-xl bg-white/20 backdrop-blur-sm group-hover:bg-white/30 transition-all duration-300 group-hover:translate-x-1">
+                  <ArrowRight className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                </div>
+              </div>
+            </div>
+          </SafeLink>
+
+          {/* 3. Oyunlar Kartı */}
           <SafeLink
             href="/oyunlar"
             aria-label="Matematik Oyunları"
-            className="group relative overflow-hidden rounded-2xl sm:rounded-3xl p-4 sm:p-6 border border-purple-400/40 bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-500 text-white shadow-lg shadow-purple-600/25 transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl hover:shadow-purple-600/40 active:scale-[0.99] cursor-pointer"
+            className="col-span-1 group relative overflow-hidden rounded-2xl sm:rounded-3xl p-4 sm:p-6 border border-purple-400/40 bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-500 text-white shadow-lg shadow-purple-600/25 transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl hover:shadow-purple-600/40 active:scale-[0.99] cursor-pointer"
           >
             {/* Parlak Arka Plan Işık Efekti */}
             <div
@@ -510,7 +549,7 @@ export function HomeHeroSection({
                 <BookOpen className="h-5 w-5 sm:h-6 sm:w-6" />
               </div>
 
-              {/* Orta: Başlık, 7 KATEGORİ Rozeti ve Açıklama */}
+              {/* Orta: Başlık, 6 KATEGORİ Rozeti ve Açıklama */}
               <div className="min-w-0">
                 <div className="flex items-center gap-2">
                   <h3
@@ -527,7 +566,7 @@ export function HomeHeroSection({
                         : 'bg-indigo-500/20 text-indigo-300 border border-indigo-500/30'
                     }`}
                   >
-                    7 KATEGORİ
+                    6 KATEGORİ
                   </span>
                 </div>
                 <p
@@ -535,7 +574,7 @@ export function HomeHeroSection({
                     isLight ? 'text-slate-500' : 'text-slate-400'
                   }`}
                 >
-                  Yaprak test, kitaplar, kazanımlar, ders videoları, denemeler...
+                  Kitaplar, kazanımlar, ders videoları, denemeler, çıkış bileti...
                 </p>
               </div>
             </div>

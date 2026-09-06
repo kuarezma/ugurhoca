@@ -36,17 +36,17 @@ describe('HomeHeroSection', () => {
     onOpenSpeedDrill: vi.fn(),
   };
 
-  it('renders Canlı Ders and Oyunlar cards, expandable Ders and Araçlar cards', () => {
+  it('renders Canlı Ders, Yaprak Test and Oyunlar cards, expandable Ders and Araçlar cards', () => {
     render(<HomeHeroSection {...defaultProps} />);
 
-    // Karşılama ve maskot altındaki Canlı Ders ve Oyunlar kartları
+    // Karşılama ve maskot altındaki Canlı Ders, Yaprak Test ve Oyunlar kartları
     expect(screen.getByText('Canlı Ders')).toBeInTheDocument();
+    expect(screen.getByText('Yaprak Test')).toBeInTheDocument();
     expect(screen.getByText('Oyunlar')).toBeInTheDocument();
 
-    // Ders kategori kartı ve içindeki 7 ders materyali
+    // Ders kategori kartı ve içindeki 6 ders materyali
     expect(screen.getByText('Ders')).toBeInTheDocument();
-    expect(screen.getByText('7 KATEGORİ')).toBeInTheDocument();
-    expect(screen.getByText('Yaprak Test')).toBeInTheDocument();
+    expect(screen.getByText('6 KATEGORİ')).toBeInTheDocument();
     expect(screen.getByText('Kitaplar')).toBeInTheDocument();
     expect(screen.getByText('Kazanımlar')).toBeInTheDocument();
     expect(screen.getByText('Ders Videoları')).toBeInTheDocument();
@@ -97,8 +97,8 @@ describe('HomeHeroSection', () => {
     ).not.toBeInTheDocument();
 
     // Ders başlığına tıklandığında kapanabilmeli
-    const lessonsButton = screen.getByRole('button', { name: /Ders 7 KATEGORİ/i });
+    const lessonsButton = screen.getByRole('button', { name: /Ders 6 KATEGORİ/i });
     fireEvent.click(lessonsButton);
-    expect(screen.queryByText('Yaprak Test')).not.toBeInTheDocument();
+    expect(screen.queryByText('Kitaplar')).not.toBeInTheDocument();
   });
 });

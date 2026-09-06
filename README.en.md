@@ -35,6 +35,10 @@ Student privacy and well-being are paramount on the platform:
 
 ## Changelog
 
+### v1.4.5 - Yaprak Test Added as 3rd Featured Card & 6-Item Symmetric Ders Grid
+- **Featured Golden Triad Cards:** "Yaprak Test" (Worksheets / Practice tests) was added alongside Live Lessons and Games as the 3rd prominent card. On mobile, Canlı Ders takes full-width with Yaprak Test and Games neatly side-by-side underneath (1 Wide + 2 Side-by-Side), ensuring 100% immediate visibility without horizontal swiping. On desktop, all 3 form an equal 3-column banner.
+- **Symmetric 6-Item Ders Category:** Moving Yaprak Test up reduced the items in the Ders category to 6, completing a flawless 2-row × 3-column rectangle without orphaned items.
+
 ### v1.4.4 - Quick Access Renamed to "Ders" & Games and Live Lessons Featured
 - **Featured Live Lessons & Games Cards:** Positioned prominently side-by-side right below the greeting and mascot with vibrant, shiny gradient cards that catch students' attention.
 - **"Ders" Expandable Category Card:** Renamed "Hızlı erişim" to "Ders", styled identically to the expandable "Araçlar" container. Strictly houses the 7 key learning materials (Yaprak Test, Kitaplar, Kazanımlar, Ders Videoları, Deneme-Sınav, Çıkış Bileti, and Programlar) in an aligned 3-column layout.
