@@ -380,63 +380,13 @@ export function HomeHeroSection({
           </div>
         </div>
 
-        {/* Karşılama ve Maskotun Hemen Altında: Canlı Ders, Yaprak Test & Oyunlar (Renkli & Parlak Kartlar) */}
+        {/* Karşılama ve Maskotun Hemen Altında: Yaprak Test, Oyunlar & Canlı Ders */}
         <div className="mt-5 sm:mt-7 grid grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4.5">
-          {/* 1. Canlı Ders Kartı */}
-          <SafeLink
-            href="/canli-ders"
-            aria-label="Canlı Dersler"
-            className="col-span-2 md:col-span-1 group relative overflow-hidden rounded-2xl sm:rounded-3xl p-4 sm:p-6 border border-red-400/40 bg-gradient-to-br from-red-600 via-rose-600 to-amber-600 text-white shadow-lg shadow-rose-600/25 transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl hover:shadow-rose-600/40 active:scale-[0.99] cursor-pointer"
-          >
-            {/* Parlak Arka Plan Işık Efekti */}
-            <div
-              aria-hidden="true"
-              className="pointer-events-none absolute -right-8 -top-8 h-36 w-36 rounded-full bg-white/20 blur-2xl transition-transform duration-500 group-hover:scale-125"
-            />
-            <div
-              aria-hidden="true"
-              className="pointer-events-none absolute -left-8 -bottom-8 h-28 w-28 rounded-full bg-amber-300/20 blur-2xl"
-            />
-
-            <div className="relative flex flex-col justify-between h-full space-y-3 sm:space-y-4">
-              <div className="flex items-start justify-between gap-2">
-                <div className="flex h-10 w-10 sm:h-13 sm:w-13 shrink-0 items-center justify-center rounded-xl sm:rounded-2xl bg-white/20 backdrop-blur-md text-white shadow-inner border border-white/30 group-hover:scale-105 transition-transform duration-300">
-                  <MonitorPlay className="h-5 w-5 sm:h-6 sm:w-6" />
-                </div>
-                <span className="inline-flex items-center gap-1 sm:gap-1.5 rounded-full bg-black/25 backdrop-blur-md px-2 py-0.5 sm:px-3 sm:py-1 text-[10px] sm:text-xs font-bold text-white border border-white/20 tracking-wide uppercase">
-                  <span className="relative flex h-2 w-2">
-                    <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-white opacity-90" />
-                    <span className="relative inline-flex h-2 w-2 rounded-full bg-white" />
-                  </span>
-                  Canlı Yayın
-                </span>
-              </div>
-
-              <div>
-                <h3 className="font-display text-base sm:text-2xl font-black tracking-tight text-white flex items-center gap-2">
-                  Canlı Ders
-                </h3>
-                <p className="mt-0.5 sm:mt-1 text-[11px] sm:text-sm text-white/90 leading-snug sm:leading-relaxed line-clamp-2">
-                  Öğretmenle birebir etkileşimli yayınlar, anlık soru masası ve ders kayıtları.
-                </p>
-              </div>
-
-              <div className="pt-2 flex items-center justify-between border-t border-white/20 text-[11px] sm:text-sm font-bold text-white">
-                <span className="inline-flex items-center gap-1 opacity-95">
-                  Derse Katıl
-                </span>
-                <div className="flex h-6 w-6 sm:h-8 sm:w-8 items-center justify-center rounded-lg sm:rounded-xl bg-white/20 backdrop-blur-sm group-hover:bg-white/30 transition-all duration-300 group-hover:translate-x-1">
-                  <ArrowRight className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-                </div>
-              </div>
-            </div>
-          </SafeLink>
-
-          {/* 2. Yaprak Test Kartı */}
+          {/* 1. Yaprak Test Kartı (Mobilde üstte tam genişlik, masaüstünde 1. kart) */}
           <SafeLink
             href="/icerikler?type=ders-notlari"
             aria-label="Yaprak Testler"
-            className="col-span-1 group relative overflow-hidden rounded-2xl sm:rounded-3xl p-4 sm:p-6 border border-teal-400/40 bg-gradient-to-br from-emerald-600 via-teal-600 to-cyan-600 text-white shadow-lg shadow-teal-600/25 transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl hover:shadow-teal-600/40 active:scale-[0.99] cursor-pointer"
+            className="col-span-2 md:col-span-1 group relative overflow-hidden rounded-2xl sm:rounded-3xl p-4 sm:p-6 border border-teal-400/40 bg-gradient-to-br from-emerald-600 via-teal-600 to-cyan-600 text-white shadow-lg shadow-teal-600/25 transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl hover:shadow-teal-600/40 active:scale-[0.99] cursor-pointer"
           >
             {/* Parlak Arka Plan Işık Efekti */}
             <div
@@ -479,7 +429,7 @@ export function HomeHeroSection({
             </div>
           </SafeLink>
 
-          {/* 3. Oyunlar Kartı */}
+          {/* 2. Oyunlar Kartı (Mobilde altta solda, masaüstünde 2. kart / ortada) */}
           <SafeLink
             href="/oyunlar"
             aria-label="Matematik Oyunları"
@@ -518,6 +468,56 @@ export function HomeHeroSection({
               <div className="pt-2 flex items-center justify-between border-t border-white/20 text-[11px] sm:text-sm font-bold text-white">
                 <span className="inline-flex items-center gap-1 opacity-95">
                   Oyun Alanı
+                </span>
+                <div className="flex h-6 w-6 sm:h-8 sm:w-8 items-center justify-center rounded-lg sm:rounded-xl bg-white/20 backdrop-blur-sm group-hover:bg-white/30 transition-all duration-300 group-hover:translate-x-1">
+                  <ArrowRight className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                </div>
+              </div>
+            </div>
+          </SafeLink>
+
+          {/* 3. Canlı Ders Kartı (Mobilde altta sağda, masaüstünde 3. kart / sağda) */}
+          <SafeLink
+            href="/canli-ders"
+            aria-label="Canlı Dersler"
+            className="col-span-1 group relative overflow-hidden rounded-2xl sm:rounded-3xl p-4 sm:p-6 border border-red-400/40 bg-gradient-to-br from-red-600 via-rose-600 to-amber-600 text-white shadow-lg shadow-rose-600/25 transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl hover:shadow-rose-600/40 active:scale-[0.99] cursor-pointer"
+          >
+            {/* Parlak Arka Plan Işık Efekti */}
+            <div
+              aria-hidden="true"
+              className="pointer-events-none absolute -right-8 -top-8 h-36 w-36 rounded-full bg-white/20 blur-2xl transition-transform duration-500 group-hover:scale-125"
+            />
+            <div
+              aria-hidden="true"
+              className="pointer-events-none absolute -left-8 -bottom-8 h-28 w-28 rounded-full bg-amber-300/20 blur-2xl"
+            />
+
+            <div className="relative flex flex-col justify-between h-full space-y-3 sm:space-y-4">
+              <div className="flex items-start justify-between gap-2">
+                <div className="flex h-10 w-10 sm:h-13 sm:w-13 shrink-0 items-center justify-center rounded-xl sm:rounded-2xl bg-white/20 backdrop-blur-md text-white shadow-inner border border-white/30 group-hover:scale-105 transition-transform duration-300">
+                  <MonitorPlay className="h-5 w-5 sm:h-6 sm:w-6" />
+                </div>
+                <span className="inline-flex items-center gap-1 sm:gap-1.5 rounded-full bg-black/25 backdrop-blur-md px-2 py-0.5 sm:px-3 sm:py-1 text-[10px] sm:text-xs font-bold text-white border border-white/20 tracking-wide uppercase">
+                  <span className="relative flex h-2 w-2">
+                    <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-white opacity-90" />
+                    <span className="relative inline-flex h-2 w-2 rounded-full bg-white" />
+                  </span>
+                  Canlı Yayın
+                </span>
+              </div>
+
+              <div>
+                <h3 className="font-display text-base sm:text-2xl font-black tracking-tight text-white flex items-center gap-2">
+                  Canlı Ders
+                </h3>
+                <p className="mt-0.5 sm:mt-1 text-[11px] sm:text-sm text-white/90 leading-snug sm:leading-relaxed line-clamp-2">
+                  Öğretmenle birebir etkileşimli yayınlar, anlık soru masası ve ders kayıtları.
+                </p>
+              </div>
+
+              <div className="pt-2 flex items-center justify-between border-t border-white/20 text-[11px] sm:text-sm font-bold text-white">
+                <span className="inline-flex items-center gap-1 opacity-95">
+                  Derse Katıl
                 </span>
                 <div className="flex h-6 w-6 sm:h-8 sm:w-8 items-center justify-center rounded-lg sm:rounded-xl bg-white/20 backdrop-blur-sm group-hover:bg-white/30 transition-all duration-300 group-hover:translate-x-1">
                   <ArrowRight className="h-3.5 w-3.5 sm:h-4 sm:w-4" />

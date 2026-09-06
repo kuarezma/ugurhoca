@@ -35,6 +35,11 @@ Student privacy and well-being are paramount on the platform:
 
 ## Changelog
 
+### v1.4.6 - Updated Featured Cards Order (Worksheets · Games · Live Lessons)
+- **Reordered per User Preference:**
+  - **On Desktop:** Worksheets (Yaprak Test) on the left, Games (Oyunlar) in the middle, and Live Lessons (Canlı Ders) on the right across 3 equal columns.
+  - **On Mobile:** Worksheets (Yaprak Test) on top spanning full-width, with Games (left) and Live Lessons (right) positioned side-by-side underneath.
+
 ### v1.4.5 - Yaprak Test Added as 3rd Featured Card & 6-Item Symmetric Ders Grid
 - **Featured Golden Triad Cards:** "Yaprak Test" (Worksheets / Practice tests) was added alongside Live Lessons and Games as the 3rd prominent card. On mobile, Canlı Ders takes full-width with Yaprak Test and Games neatly side-by-side underneath (1 Wide + 2 Side-by-Side), ensuring 100% immediate visibility without horizontal swiping. On desktop, all 3 form an equal 3-column banner.
 - **Symmetric 6-Item Ders Category:** Moving Yaprak Test up reduced the items in the Ders category to 6, completing a flawless 2-row × 3-column rectangle without orphaned items.
