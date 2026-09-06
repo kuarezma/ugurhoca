@@ -60,6 +60,7 @@ describe('gameAudio global mute preference', () => {
       gameAudio.playNitro();
       gameAudio.playLevelUp();
       gameAudio.playFanfare();
+      gameAudio.playPomodoroBell();
     }).not.toThrow();
   });
 });

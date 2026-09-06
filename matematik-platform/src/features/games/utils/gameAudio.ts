@@ -298,9 +298,60 @@ export class GameAudioEffects {
       // Audio is non-blocking enhancement
     }
   }
+
+  async resume(): Promise<void> {
+    const ctx = this.getContext();
+    if (ctx && ctx.state === 'suspended') {
+      try {
+        await ctx.resume();
+      } catch {
+        // Audio is non-blocking enhancement
+      }
+    }
+  }
+
+  playPomodoroBell() {
+    if (this.isMuted()) return;
+    const ctx = this.getContext();
+    if (!ctx) return;
+    try {
+      if (ctx.state === 'suspended') {
+        void ctx.resume();
+      }
+      const now = ctx.currentTime;
+      // Zengin ve dingin meditasyon / pomodoro çanı (C5, E5, G5, C6)
+      const chord = [
+        { freq: 523.25, peakGain: 0.22, decay: 1.8 },
+        { freq: 659.25, peakGain: 0.16, decay: 1.5 },
+        { freq: 783.99, peakGain: 0.14, decay: 1.4 },
+        { freq: 1046.5, peakGain: 0.10, decay: 1.2 },
+      ];
+
+      chord.forEach(({ freq, peakGain, decay }) => {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(freq, now);
+
+        gain.gain.setValueAtTime(0.001, now);
+        gain.gain.exponentialRampToValueAtTime(peakGain, now + 0.02);
+        gain.gain.exponentialRampToValueAtTime(0.0001, now + decay);
+
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+
+        osc.start(now);
+        osc.stop(now + decay);
+      });
+    } catch {
+      // Audio is non-blocking enhancement
+    }
+  }
 }
 
 export const gameAudio = new GameAudioEffects();
 export const isSoundMuted = () => gameAudio.isMuted();
 export const setSoundMuted = (muted: boolean) => gameAudio.setMuted(muted);
 export const toggleSoundMuted = () => gameAudio.toggleMuted();
+export const playPomodoroBell = () => gameAudio.playPomodoroBell();

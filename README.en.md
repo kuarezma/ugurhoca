@@ -43,7 +43,8 @@ Student privacy and well-being are paramount on the platform:
 - **Dedicated Focus & Pomodoro Page (`/odak-pomodoro`):**
   - **4 Timer Modes:** 25-min Standard Focus, 50-min Deep Focus, 5-min Short Break, 10-min Long Break.
   - **Digital Clock & Linear Progress:** Live countdown, responsive progress bar, dynamic browser tab title sync (`🍅 24:59`, `☕ 04:59`).
-  - **Synthesized Web Audio Ambient Soundscapes:** 0 KB external bandwidth synthesized ambient noise (Silent, Brown Noise, Pink Noise, 432 Hz Mind Tone).
+  - **Hardened Web Audio Ambient Engine:** Instant 1-tap playback independent of timer state (Silent, Brown Noise, Pink Noise, 432 Hz Mind Tone) with 50ms seamless loop crossfades and resolution of timer race conditions.
+  - **Pomodoro Bell Chime & Audio Test Button:** Gentle completion meditation bowl chime (`playPomodoroBell`), "Zili Test Et" instant audio verification button, and custom volume slider (`%10-%100`).
   - **Session Goal Input & Study Tactics:** Custom session intention input, completed session streak tracker, and actionable math study strategy tips.
 
 ### v1.4.8 - "Meydan Okuma" Dedicated Page Navigation (`/meydan-okuma`)

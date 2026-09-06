@@ -43,7 +43,8 @@ Platformda öğrenci gizliliği en üst düzeyde korunur:
 - **Yeni Odak & Pomodoro Zamanlayıcı Sayfası (`/odak-pomodoro`):**
   - **4 Zamanlayıcı Modu:** 25 Dk Standart Odak, 50 Dk Derin Odak, 5 Dk Kısa Mola, 10 Dk Uzun Mola.
   - **Büyük Dijital Sayaç & İlerleme Çubuğu:** Kalan süre, animasyonlu ilerleme ve tarayıcı sekme başlığında dinamik geri sayım (`🍅 24:59`, `☕ 04:59`).
-  - **Dahili Web Audio Ambiyans Sesleri:** Sıfır ağ maliyetli saf Web Audio API sentezleyicisi (Sessiz, Kahverengi Gürültü, Pembe Gürültü, 432 Hz Zihin Akordu).
+  - **Güçlendirilmiş Web Audio Ambiyans Ses Motoru:** Sayaç başlamadan da anında tek dokunuşla çalabilen doğal ses dalgaları (Sessiz, Kahverengi Gürültü, Pembe Gürültü, 432 Hz Zihin Akordu); 50ms dikişsiz döngü crossfade'i ve ses kesintisi oluşturan zamanlayıcı yarış durumları giderildi.
+  - **Pomodoro Bitiş Çanı & Zil Testi:** Süre dolduğunda çalan dingin meditasyon çanı (`playPomodoroBell`), arayüzde "Zili Test Et" butonu ve interaktif ses düzeyi kaydırıcısı (`%10-%100`).
   - **Hedef Belirleme & Taktik Kartları:** Seans odak konusu girişi, tamamlanan pomodoro sayacı ve matematik çalışma tüyoları.
 
 ### v1.4.8 - "Meydan Okuma" Tıklanınca Açılan Özel Sayfaya Dönüştürüldü (`/meydan-okuma`)

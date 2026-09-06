@@ -20,7 +20,7 @@ describe("ambientAudio", () => {
 
   it("initializes with none sound and default volume", () => {
     expect(synth.getCurrentSound()).toBe("none");
-    expect(synth.getVolume()).toBe(0.25);
+    expect(synth.getVolume()).toBe(0.35);
   });
 
   it("clamps volume properly", () => {
