@@ -35,6 +35,10 @@ Student privacy and well-being are paramount on the platform:
 
 ## Changelog
 
+### v1.4.4 - Quick Access Renamed to "Ders" & Games and Live Lessons Featured
+- **Featured Live Lessons & Games Cards:** Positioned prominently side-by-side right below the greeting and mascot with vibrant, shiny gradient cards that catch students' attention.
+- **"Ders" Expandable Category Card:** Renamed "Hızlı erişim" to "Ders", styled identically to the expandable "Araçlar" container. Strictly houses the 7 key learning materials (Yaprak Test, Kitaplar, Kazanımlar, Ders Videoları, Deneme-Sınav, Çıkış Bileti, and Programlar) in an aligned 3-column layout.
+
 ### v1.4.3 - Daily Challenge, Goal Widget & LGS Tactics Corner Moved to Bottom
 - **Daily Activity Widgets Positioned at the Bottom:** "Günün Matematik Meydan Okuması", "Günlük Soru Hedefim", and "LGS Matematik Taktik Köşesi" were re-introduced and placed cleanly at the very bottom of the page, keeping the top hero section focused and uncluttered.
 

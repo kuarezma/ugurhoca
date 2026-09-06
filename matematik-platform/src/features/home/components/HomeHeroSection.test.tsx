@@ -36,11 +36,25 @@ describe('HomeHeroSection', () => {
     onOpenSpeedDrill: vi.fn(),
   };
 
-  it('renders quick access categories and the expandable Araçlar category card', () => {
+  it('renders Canlı Ders and Oyunlar cards, expandable Ders and Araçlar cards', () => {
     render(<HomeHeroSection {...defaultProps} />);
 
-    expect(screen.getByText('Hızlı erişim')).toBeInTheDocument();
+    // Karşılama ve maskot altındaki Canlı Ders ve Oyunlar kartları
+    expect(screen.getByText('Canlı Ders')).toBeInTheDocument();
+    expect(screen.getByText('Oyunlar')).toBeInTheDocument();
+
+    // Ders kategori kartı ve içindeki 7 ders materyali
+    expect(screen.getByText('Ders')).toBeInTheDocument();
+    expect(screen.getByText('7 KATEGORİ')).toBeInTheDocument();
     expect(screen.getByText('Yaprak Test')).toBeInTheDocument();
+    expect(screen.getByText('Kitaplar')).toBeInTheDocument();
+    expect(screen.getByText('Kazanımlar')).toBeInTheDocument();
+    expect(screen.getByText('Ders Videoları')).toBeInTheDocument();
+    expect(screen.getByText('Deneme-Sınav')).toBeInTheDocument();
+    expect(screen.getByText('Çıkış Bileti')).toBeInTheDocument();
+    expect(screen.getByText('Programlar')).toBeInTheDocument();
+
+    // Araçlar kategori kartı
     expect(screen.getByText('Araçlar')).toBeInTheDocument();
     expect(screen.getByText('12 ARAÇ')).toBeInTheDocument();
     expect(
@@ -75,11 +89,16 @@ describe('HomeHeroSection', () => {
     fireEvent.click(lgsCalcBtn);
     expect(defaultProps.onOpenCalculator).toHaveBeenCalledWith('lgs');
 
-    // Başlığa tıklandığında kapanabilmeli
+    // Araçlar başlığına tıklandığında kapanabilmeli
     const toolsButton = screen.getByRole('button', { name: /Araçlar 12 ARAÇ/i });
     fireEvent.click(toolsButton);
     expect(
       screen.queryByText('LGS Puan & Net Hesaplama'),
     ).not.toBeInTheDocument();
+
+    // Ders başlığına tıklandığında kapanabilmeli
+    const lessonsButton = screen.getByRole('button', { name: /Ders 7 KATEGORİ/i });
+    fireEvent.click(lessonsButton);
+    expect(screen.queryByText('Yaprak Test')).not.toBeInTheDocument();
   });
 });

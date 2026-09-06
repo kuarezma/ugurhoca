@@ -35,6 +35,10 @@ Platformda öğrenci gizliliği en üst düzeyde korunur:
 
 ## Değişiklik Günlüğü (Changelog)
 
+### v1.4.4 - Hızlı Erişim "Ders" Kartına Dönüştürüldü & Oyunlar ile Canlı Ders Öne Çıkarıldı
+- **Canlı Ders ve Oyunlar Kartları:** Karşılama ve maskotun hemen altına yan yana, renkli, parlak (glow efektli) ve öğrencilerin dikkatini çeken büyük öne çıkan kartlar olarak yerleştirildi.
+- **"Ders" Açılır Kategori Kartı:** "Hızlı erişim" başlığı "Ders" olarak yenilendi; Araçlar kartıyla birebir aynı açılır-kapanır (varsayılan açık) tasarım diline kavuşturuldu. İçerisinde yalnızca 7 temel ders materyali (Yaprak Test, Kitaplar, Kazanımlar, Ders Videoları, Deneme-Sınav, Çıkış Bileti ve Programlar) 3 sütunlu yatay kartlar halinde listelendi.
+
 ### v1.4.3 - Günlük Meydan Okuma, Soru Hedefi ve LGS Taktik Köşesi Sayfa Altına Eklendi
 - **Günlük Çalışma Kartları Sayfa Altına Yerleştirildi:** Öğrencinin günlük motivasyonunu ve çalışma disiplinini artıran "Günün Matematik Meydan Okuması", "Günlük Soru Hedefim" ve "LGS Matematik Taktik Köşesi" bileşenleri, sayfanın üst kısmını kalabalıklaştırmayacak şekilde sayfanın en altına konumlandırıldı.
 
