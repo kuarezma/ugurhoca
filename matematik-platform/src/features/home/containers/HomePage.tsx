@@ -4,6 +4,8 @@ import { useEffect, useState } from 'react';
 import dynamic from 'next/dynamic';
 import { useTheme } from '@/components/ThemeProvider';
 import { HomeAnnouncementsSection } from '@/features/home/components/HomeAnnouncementsSection';
+import { HomeDailyChallenge } from '@/features/home/components/HomeDailyChallenge';
+import { HomeDailyGoalWidget } from '@/features/home/components/HomeDailyGoalWidget';
 import { HomeDailyQuote } from '@/features/home/components/HomeDailyQuote';
 import { HomeExamCountdownSection } from '@/features/home/components/HomeExamCountdownSection';
 import { HomeFooter } from '@/features/home/components/HomeFooter';
@@ -11,6 +13,7 @@ import { HomeHeroSection } from '@/features/home/components/HomeHeroSection';
 import { HomeNavbar } from '@/features/home/components/HomeNavbar';
 import { HomeSuccessRoadmap } from '@/features/home/components/HomeSuccessRoadmap';
 import { HomeSupportSection } from '@/features/home/components/HomeSupportSection';
+import { LgsTacticsCorner } from '@/features/home/components/LgsTacticsCorner';
 import type { HomeInitialFeed } from '@/features/home/home-initial-feed';
 import { useHomePageData } from '@/features/home/hooks/useHomePageData';
 import type { LiveLesson } from '@/features/live-lessons/types';
@@ -278,7 +281,18 @@ export default function HomePage({ activeLiveLesson, initialFeed }: HomePageProp
           <HomeSupportSection isLight={isLight} user={user} />
         </div>
 
-        {/* 7. Footer */}
+        {/* 7. Günlük Meydan Okuma, Soru Hedefi & LGS Taktik Köşesi */}
+        <div className="defer-section">
+          <HomeDailyChallenge isLight={isLight} />
+        </div>
+        <div className="defer-section">
+          <HomeDailyGoalWidget isLight={isLight} />
+        </div>
+        <div className="defer-section">
+          <LgsTacticsCorner isLight={isLight} />
+        </div>
+
+        {/* 8. Footer */}
         <div className="defer-section">
           <HomeFooter isLight={isLight} />
         </div>

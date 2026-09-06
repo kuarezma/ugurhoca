@@ -35,6 +35,9 @@ Student privacy and well-being are paramount on the platform:
 
 ## Changelog
 
+### v1.4.3 - Daily Challenge, Goal Widget & LGS Tactics Corner Moved to Bottom
+- **Daily Activity Widgets Positioned at the Bottom:** "Günün Matematik Meydan Okuması", "Günlük Soru Hedefim", and "LGS Matematik Taktik Köşesi" were re-introduced and placed cleanly at the very bottom of the page, keeping the top hero section focused and uncluttered.
+
 ### v1.4.2 - Horizontal 3-Column Quick Access Categories & Open Tools Default
 - **Aligned Quick Access Layout:** Replaced the tall 4-column blocks with a matching horizontal 3-column (3x3 = 9 categories) grid design identical to the Tools cards below. Each item includes a colorful left icon, title, concise subtitle, and arrow indicator.
 - **Tools Open by Default:** Per user preference, the "Araçlar [12 ARAÇ]" expandable card is now set to remain open by default on page load (`isToolsOpen: true`).

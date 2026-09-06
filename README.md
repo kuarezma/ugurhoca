@@ -35,6 +35,9 @@ Platformda öğrenci gizliliği en üst düzeyde korunur:
 
 ## Değişiklik Günlüğü (Changelog)
 
+### v1.4.3 - Günlük Meydan Okuma, Soru Hedefi ve LGS Taktik Köşesi Sayfa Altına Eklendi
+- **Günlük Çalışma Kartları Sayfa Altına Yerleştirildi:** Öğrencinin günlük motivasyonunu ve çalışma disiplinini artıran "Günün Matematik Meydan Okuması", "Günlük Soru Hedefim" ve "LGS Matematik Taktik Köşesi" bileşenleri, sayfanın üst kısmını kalabalıklaştırmayacak şekilde sayfanın en altına konumlandırıldı.
+
 ### v1.4.2 - Hızlı Erişim Kategorilerinin Yatay 3'lü Izgaraya Dönüşümü & Araçların Açık Tutulması
 - **Hızlı Erişim Kartları Yenilendi:** Üstteki 9 ders kategorisi, altındaki Araçlar kartlarıyla birebir aynı tasarım diline kavuşturuldu; 4'lü dikey bloklar yerine zarif, yatay, kompakt 3 sütunlu (3x3 = 9 kategori) ızgara yapısına geçirildi. Her kartta sol renkli ikon, başlık, alt açıklama ve yönlendirici ok simgesi yer aldı.
 - **Araçlar Bölümü Hep Açık:** Kullanıcı beğenisi doğrultusunda 12 aracın listelendiği açılır "Araçlar [12 ARAÇ]" kartı, sayfa açılışında varsayılan olarak hep açık tutuldu (`isToolsOpen: true`).
