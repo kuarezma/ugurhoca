@@ -35,6 +35,17 @@ Platformda öğrenci gizliliği en üst düzeyde korunur:
 
 ## Değişiklik Günlüğü (Changelog)
 
+### v1.4.9 - Mobil Alt Menü "Testler" & "Odak" Olarak Güncellendi, Özel Odak & Pomodoro Sayfası Eklendi (`/odak-pomodoro`)
+- **Mobil Gezinme Çubuğu Güncellemesi:**
+  - 2. sıradaki "İçerikler" etiketi doğrudan **"Testler"** (`/testler`) olarak güncellendi.
+  - 3. sıradaki menü öğesi **"Odak"** (`/odak-pomodoro`, `Timer` ikonu) ile değiştirildi. Böylece mobil kullanıcılar tek dokunuşla Pomodoro ve derin odaklanma seanslarına erişebiliyor.
+  - Yeni mobil sekme sırası: **Ana Sayfa** · **Testler** · **Odak** · **Oyunlar** · **Profil**.
+- **Yeni Odak & Pomodoro Zamanlayıcı Sayfası (`/odak-pomodoro`):**
+  - **4 Zamanlayıcı Modu:** 25 Dk Standart Odak, 50 Dk Derin Odak, 5 Dk Kısa Mola, 10 Dk Uzun Mola.
+  - **Büyük Dijital Sayaç & İlerleme Çubuğu:** Kalan süre, animasyonlu ilerleme ve tarayıcı sekme başlığında dinamik geri sayım (`🍅 24:59`, `☕ 04:59`).
+  - **Dahili Web Audio Ambiyans Sesleri:** Sıfır ağ maliyetli saf Web Audio API sentezleyicisi (Sessiz, Kahverengi Gürültü, Pembe Gürültü, 432 Hz Zihin Akordu).
+  - **Hedef Belirleme & Taktik Kartları:** Seans odak konusu girişi, tamamlanan pomodoro sayacı ve matematik çalışma tüyoları.
+
 ### v1.4.8 - "Meydan Okuma" Tıklanınca Açılan Özel Sayfaya Dönüştürüldü (`/meydan-okuma`)
 - **Doğrudan Sayfa Yönlendirmeli Kart:** Kullanıcı isteği doğrultusunda "Meydan Okuma" kartı, tıpkı Yaprak Test, Oyunlar ve Canlı Ders kartları gibi tıklandığında yeni sayfa açan (`/meydan-okuma`) bağımsız bir gezinme kartına dönüştürüldü.
 - **Ana Sayfa Alt Blokları Kaldırıldı:** Kategori kartının altında sürekli açık veya akordeon şeklinde ekstra bir bölüm tutulmadı; kartın altı tamamen sadeleştirilerek yalnızca "Ders" ve "Araçlar" korundu.

@@ -31,6 +31,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.9,
     },
     {
+      url: buildCanonicalUrl('/odak-pomodoro'),
+      lastModified,
+      changeFrequency: 'daily',
+      priority: 0.9,
+    },
+    {
       url: buildCanonicalUrl('/programlar'),
       lastModified,
       changeFrequency: 'monthly',

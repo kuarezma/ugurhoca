@@ -35,6 +35,17 @@ Student privacy and well-being are paramount on the platform:
 
 ## Changelog
 
+### v1.4.9 - Mobile Bottom Navigation Updated with "Testler" & "Odak", Dedicated Focus & Pomodoro Route Created (`/odak-pomodoro`)
+- **Mobile Bottom Navigation Bar Update:**
+  - Tab 2 label changed from "İçerikler" to **"Testler"** (`/testler`).
+  - Tab 3 replaced with **"Odak"** (`/odak-pomodoro`, `Timer` icon), giving mobile students instantaneous 1-tap access to Pomodoro focus sessions.
+  - Updated mobile bottom bar layout: **Ana Sayfa** · **Testler** · **Odak** · **Oyunlar** · **Profil**.
+- **Dedicated Focus & Pomodoro Page (`/odak-pomodoro`):**
+  - **4 Timer Modes:** 25-min Standard Focus, 50-min Deep Focus, 5-min Short Break, 10-min Long Break.
+  - **Digital Clock & Linear Progress:** Live countdown, responsive progress bar, dynamic browser tab title sync (`🍅 24:59`, `☕ 04:59`).
+  - **Synthesized Web Audio Ambient Soundscapes:** 0 KB external bandwidth synthesized ambient noise (Silent, Brown Noise, Pink Noise, 432 Hz Mind Tone).
+  - **Session Goal Input & Study Tactics:** Custom session intention input, completed session streak tracker, and actionable math study strategy tips.
+
 ### v1.4.8 - "Meydan Okuma" Dedicated Page Navigation (`/meydan-okuma`)
 - **Standalone Navigation Card:** Per user request, the "Meydan Okuma" card now functions identically to Yaprak Test, Games, and Live Lessons — clicking the card navigates directly to its dedicated page (`/meydan-okuma`).
 - **Zero In-Page Clutter on Homepage:** Removed any continuous or collapsible accordion panels beneath the card on the homepage, maintaining an ultra-clean Hero flow with only "Ders" and "Araçlar".

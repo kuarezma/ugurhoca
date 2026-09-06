@@ -2,12 +2,12 @@
 
 import { SafeLink } from '@/components/SafeLink';
 import { usePathname } from 'next/navigation';
-import { Home, BookOpen, FileCheck, Gamepad2, User } from 'lucide-react';
+import { Home, FileCheck, Timer, Gamepad2, User } from 'lucide-react';
 
 const NAV_ITEMS = [
   { href: '/', label: 'Ana Sayfa', icon: Home },
-  { href: '/icerikler', label: 'İçerikler', icon: BookOpen },
   { href: '/testler', label: 'Testler', icon: FileCheck },
+  { href: '/odak-pomodoro', label: 'Odak', icon: Timer },
   { href: '/oyunlar', label: 'Oyunlar', icon: Gamepad2 },
   { href: '/profil', label: 'Profil', icon: User },
 ];
