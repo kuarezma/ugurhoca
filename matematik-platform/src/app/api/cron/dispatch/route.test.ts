@@ -13,6 +13,10 @@ vi.mock('@/features/live-lessons/server/liveLessons', () => ({
   sendDueLiveLessonReminders: vi.fn(),
 }));
 
+vi.mock('@/features/profile/server/streakReminders', () => ({
+  sendDueStreakReminders: vi.fn().mockResolvedValue({ remindedCount: 3, studentIds: ['s-1'] }),
+}));
+
 vi.mock('@/lib/worksheet-candidate-scan', () => ({
   scanCurrentWeekWorksheetCandidates: vi.fn(),
 }));
@@ -115,6 +119,21 @@ describe('Cron Dispatch Route (/api/cron/dispatch)', () => {
     expect(data.results.supabaseKeepalive).toEqual({
       ok: true,
       count: 42,
+    });
+  });
+
+  it('job=streak-reminders parametresinde seri hatırlatıcılarını çalıştırır', async () => {
+    vi.mocked(isAuthorizedCronRequest).mockReturnValue(true);
+
+    const req = new Request('https://ugurhoca.com/api/cron/dispatch?job=streak-reminders');
+    const res = await GET(req);
+
+    expect(res.status).toBe(200);
+    const data = await res.json();
+    expect(data.ok).toBe(true);
+    expect(data.results.streakReminders).toEqual({
+      remindedCount: 3,
+      studentIds: ['s-1'],
     });
   });
 });

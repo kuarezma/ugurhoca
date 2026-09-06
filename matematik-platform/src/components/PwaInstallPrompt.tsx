@@ -45,6 +45,15 @@ export function PwaInstallPrompt() {
       iosTimer = setTimeout(() => setIsVisible(true), 3000);
     }
 
+    // Service Worker Kaydı (Üretim ortamında çevrimdışı ve PWA desteği)
+    if (typeof window !== 'undefined' && 'serviceWorker' in navigator && process.env.NODE_ENV === 'production') {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker
+          .register('/sw.js')
+          .catch((err) => console.warn('SW registration failed:', err));
+      });
+    }
+
     return () => {
       window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
       if (iosTimer) clearTimeout(iosTimer);

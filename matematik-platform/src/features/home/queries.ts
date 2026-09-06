@@ -323,7 +323,10 @@ export const uploadSupportFiles = async (
   const uploads = await Promise.all(
     Array.from(files).map(async (file) => {
       let uploadFile = file;
-      if (options.imagesOnly && file.type.startsWith('image/')) {
+      if (options.imagesOnly) {
+        validateSupportImageFile(file);
+      }
+      if (file.type.startsWith('image/')) {
         uploadFile = await compressSupportImageFile(file);
       }
 

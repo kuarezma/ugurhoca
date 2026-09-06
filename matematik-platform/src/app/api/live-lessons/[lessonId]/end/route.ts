@@ -1,3 +1,4 @@
+import { RoomServiceClient } from 'livekit-server-sdk';
 import { NextResponse } from 'next/server';
 import {
   isLiveLessonAdmin,
@@ -24,6 +25,21 @@ export async function POST(request: Request, context: RouteContext) {
 
   try {
     const lesson = await updateLiveLessonStatus({ lessonId, status });
+
+    // LiveKit bulut odasını anında kapat ve katılımcıları düşürerek kota tüketimini kes
+    const livekitHost = process.env.LIVEKIT_URL || process.env.NEXT_PUBLIC_LIVEKIT_URL;
+    const apiKey = process.env.LIVEKIT_API_KEY;
+    const apiSecret = process.env.LIVEKIT_API_SECRET;
+
+    if (livekitHost && apiKey && apiSecret && lesson?.room_id) {
+      try {
+        const roomService = new RoomServiceClient(livekitHost, apiKey, apiSecret);
+        await roomService.deleteRoom(lesson.room_id);
+      } catch {
+        // Oda zaten boşalmış veya LiveKit tarafında kapanmış olabilir; ana akışı engelleme
+      }
+    }
+
     return NextResponse.json({ lesson });
   } catch (error) {
     return NextResponse.json(

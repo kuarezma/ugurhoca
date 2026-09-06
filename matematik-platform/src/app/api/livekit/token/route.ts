@@ -80,7 +80,7 @@ export async function POST(request: Request) {
   const token = new AccessToken(apiKey, apiSecret, {
     identity: body.identity,
     name: auth.user.name || auth.user.email,
-    ttl: '8h',
+    ttl: body.role === 'teacher' ? '3h' : '2h',
   });
 
   const grant: VideoGrant = {

@@ -79,6 +79,32 @@ describe('home queries support image validation', () => {
     expect(uploadedFile.size).toBeLessThanOrEqual(SUPPORT_IMAGE_MAX_BYTES);
     expect(uploadedFile.type).toBe('image/jpeg');
   });
+
+  it('automatically applies compression to image files even without imagesOnly option', async () => {
+    const upload = vi
+      .fn()
+      .mockResolvedValue({ data: { path: 'support/auto.png' }, error: null });
+    const getPublicUrl = vi.fn().mockReturnValue({
+      data: { publicUrl: 'https://example.com/support/auto.png' },
+    });
+    vi.mocked(supabase.storage.from).mockReturnValue({
+      getPublicUrl,
+      upload,
+    } as never);
+
+    await expect(
+      uploadSupportFiles([createFile('image/png', 1024, 'auto.png')]),
+    ).resolves.toEqual([
+      {
+        kind: 'image',
+        name: 'auto.png',
+        url: 'https://example.com/support/auto.png',
+      },
+    ]);
+
+    const uploadedFile = upload.mock.calls[0]?.[1] as File;
+    expect(uploadedFile.size).toBeLessThanOrEqual(SUPPORT_IMAGE_MAX_BYTES);
+  });
 });
 
 describe('fetchUserAssignments caching and deduplication', () => {

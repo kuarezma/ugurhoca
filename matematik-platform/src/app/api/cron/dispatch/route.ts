@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { isAuthorizedCronRequest } from '@/lib/cron-auth';
 import { sendDueAssignmentReminders } from '@/features/assignments/server/assignmentReminders';
 import { sendDueLiveLessonReminders } from '@/features/live-lessons/server/liveLessons';
+import { sendDueStreakReminders } from '@/features/profile/server/streakReminders';
 import { scanCurrentWeekWorksheetCandidates } from '@/lib/worksheet-candidate-scan';
 import { createServiceRoleClient } from '@/lib/supabase/server';
 import { createLogger } from '@/lib/logger';
@@ -82,6 +83,17 @@ export async function GET(request: Request) {
       const msg = err instanceof Error ? err.message : String(err);
       log.error('Cron job failed: supabase-keepalive', { error: msg });
       errors.supabaseKeepalive = msg;
+    }
+  }
+
+  // 5. Günlük Seri (Streak) Hatırlatıcıları (Serisi bozulma riski olan öğrencileri koruma)
+  if (!specificJob || specificJob === 'daily' || specificJob === 'streak-reminders') {
+    try {
+      results.streakReminders = await sendDueStreakReminders();
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : String(err);
+      log.error('Cron job failed: streak-reminders', { error: msg });
+      errors.streakReminders = msg;
     }
   }
 
