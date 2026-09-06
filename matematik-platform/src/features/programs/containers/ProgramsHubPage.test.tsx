@@ -43,5 +43,10 @@ describe('ProgramsHubPage', () => {
 
     // Proje Atölyesini doğrula
     expect(screen.getByText('Matematik Proje Atölyesi & Araştırma Görevleri')).toBeInTheDocument();
+
+    // Yeni pedagojik modülleri doğrula
+    expect(screen.getByText('«Neden Doğru?» Matematiksel İspat Koleksiyonu')).toBeInTheDocument();
+    expect(screen.getByText('Öğrenci Soru Yazarlık Atölyesi')).toBeInTheDocument();
+    expect(screen.getByText('60 Saniyede Feynman Anlatımı')).toBeInTheDocument();
   });
 });

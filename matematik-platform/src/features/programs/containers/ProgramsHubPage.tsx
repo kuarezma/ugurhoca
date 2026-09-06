@@ -25,9 +25,22 @@ import { TopicChecklistModal } from '@/features/programs/components/TopicCheckli
 import { GeometryMathLabModal } from '@/features/programs/components/GeometryMathLabModal';
 import { CurriculumCoverageMatrixModal } from '@/features/programs/components/CurriculumCoverageMatrixModal';
 import { MathGlossaryModal } from '@/features/programs/components/MathGlossaryModal';
+import { PenTool, Mic } from 'lucide-react';
 
 const MathProjectWorkshopModal = dynamic(
   () => import('@/features/projects/components/MathProjectWorkshopModal'),
+  { ssr: false },
+);
+const VisualMathProofsModal = dynamic(
+  () => import('@/features/proofs/components/VisualMathProofsModal').then(m => ({ default: m.VisualMathProofsModal })),
+  { ssr: false },
+);
+const StudentQuestionAuthoringModal = dynamic(
+  () => import('@/features/authoring/components/StudentQuestionAuthoringModal').then(m => ({ default: m.StudentQuestionAuthoringModal })),
+  { ssr: false },
+);
+const FeynmanVoiceExplanationModal = dynamic(
+  () => import('@/features/feynman/components/FeynmanVoiceExplanationModal').then(m => ({ default: m.FeynmanVoiceExplanationModal })),
   { ssr: false },
 );
 
@@ -53,6 +66,9 @@ export default function ProgramsHubPage() {
   const [isCoverageMatrixOpen, setIsCoverageMatrixOpen] = useState(false);
   const [isGlossaryOpen, setIsGlossaryOpen] = useState(false);
   const [isProjectWorkshopOpen, setIsProjectWorkshopOpen] = useState(false);
+  const [isProofsOpen, setIsProofsOpen] = useState(false);
+  const [isAuthoringOpen, setIsAuthoringOpen] = useState(false);
+  const [isFeynmanOpen, setIsFeynmanOpen] = useState(false);
 
   const tools: ProgramTool[] = [
     {
@@ -166,6 +182,48 @@ export default function ProgramsHubPage() {
         'Fraktallar ve doğadaki geometrik örüntüler',
       ],
       ctaLabel: 'Atölyeyi Aç',
+    },
+    {
+      id: 'math-proofs',
+      title: '«Neden Doğru?» Matematiksel İspat Koleksiyonu',
+      subtitle: 'Pisagor, iki kare farkı, üçgen açıları ve Gauss toplamının görsel mantıksal ispatları',
+      onClick: () => setIsProofsOpen(true),
+      icon: Compass,
+      gradient: 'from-cyan-500 via-blue-500 to-indigo-600',
+      bullets: [
+        'Ezber yerine mantık: Pisagor, iki kare farkı, Gauss toplamı',
+        'Adım adım geometrik ve cebirsel kanıt kartları',
+        'İspat ustası rozetleri ve tarihsel arka plan',
+      ],
+      ctaLabel: 'İspatları İncele',
+    },
+    {
+      id: 'authoring-workshop',
+      title: 'Öğrenci Soru Yazarlık Atölyesi',
+      subtitle: 'Bloom yaratma basamağı: Kendi sorunu yaz, çeldiricilerini kurgula ve havuza katıl',
+      onClick: () => setIsAuthoringOpen(true),
+      icon: PenTool,
+      gradient: 'from-indigo-500 via-purple-500 to-pink-500',
+      bullets: [
+        'Kendi matematik sorunu yazma ve çeldirici analizi',
+        'Öğretmen onayıyla genel soru havuzuna katılım',
+        'Genç Yazar rozeti ve pedagojik geri bildirimler',
+      ],
+      ctaLabel: 'Atölyeye Katıl',
+    },
+    {
+      id: 'feynman-voice',
+      title: '60 Saniyede Feynman Anlatımı',
+      subtitle: '«Bir konuyu basitçe anlatabiliyorsan anlamışsındır» sesli anlatım vitrini',
+      onClick: () => setIsFeynmanOpen(true),
+      icon: Mic,
+      gradient: 'from-rose-500 via-pink-500 to-orange-400',
+      bullets: [
+        '60 saniyelik sesli mikrofon kaydı ve kavram özeti',
+        'Akranların anlatımlarını dinleme ve beğenme vitrini',
+        'Feynman Ustası rozeti ve öğretmen takdir notları',
+      ],
+      ctaLabel: 'Anlatımı Başlat',
     },
   ];
 
@@ -341,6 +399,18 @@ export default function ProgramsHubPage() {
       <MathProjectWorkshopModal
         isOpen={isProjectWorkshopOpen}
         onClose={() => setIsProjectWorkshopOpen(false)}
+      />
+      <VisualMathProofsModal
+        isOpen={isProofsOpen}
+        onClose={() => setIsProofsOpen(false)}
+      />
+      <StudentQuestionAuthoringModal
+        isOpen={isAuthoringOpen}
+        onClose={() => setIsAuthoringOpen(false)}
+      />
+      <FeynmanVoiceExplanationModal
+        isOpen={isFeynmanOpen}
+        onClose={() => setIsFeynmanOpen(false)}
       />
     </main>
   );

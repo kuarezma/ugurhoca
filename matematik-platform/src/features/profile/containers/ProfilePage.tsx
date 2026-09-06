@@ -19,6 +19,10 @@ import {
   LayoutDashboard,
   StickyNote,
   Sliders,
+  Lightbulb,
+  Clock,
+  PenTool,
+  Mic,
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { signOutClient } from '@/lib/auth-client';
@@ -61,6 +65,22 @@ const ParentReportModal = dynamic(
 );
 const StudentPortfolioModal = dynamic(
   () => import('@/features/portfolio/components/StudentPortfolioModal'),
+  { ssr: false },
+);
+const MathAhaMomentsModal = dynamic(
+  () => import('@/features/profile/components/MathAhaMomentsModal').then(m => ({ default: m.MathAhaMomentsModal })),
+  { ssr: false },
+);
+const GoalTimeCapsuleModal = dynamic(
+  () => import('@/features/profile/components/GoalTimeCapsuleModal').then(m => ({ default: m.GoalTimeCapsuleModal })),
+  { ssr: false },
+);
+const StudentQuestionAuthoringModal = dynamic(
+  () => import('@/features/authoring/components/StudentQuestionAuthoringModal').then(m => ({ default: m.StudentQuestionAuthoringModal })),
+  { ssr: false },
+);
+const FeynmanVoiceExplanationModal = dynamic(
+  () => import('@/features/feynman/components/FeynmanVoiceExplanationModal').then(m => ({ default: m.FeynmanVoiceExplanationModal })),
   { ssr: false },
 );
 import ProfileNotificationsPanel from '@/features/profile/components/ProfileNotificationsPanel';
@@ -155,6 +175,10 @@ export default function ProfilePage({ initialData }: ProfilePageProps) {
   const [dueMistakesCount, setDueMistakesCount] = useState(0);
   const [isParentReportOpen, setIsParentReportOpen] = useState(false);
   const [isPortfolioOpen, setIsPortfolioOpen] = useState(false);
+  const [isAhaModalOpen, setIsAhaModalOpen] = useState(false);
+  const [isTimeCapsuleOpen, setIsTimeCapsuleOpen] = useState(false);
+  const [isAuthoringModalOpen, setIsAuthoringModalOpen] = useState(false);
+  const [isFeynmanModalOpen, setIsFeynmanModalOpen] = useState(false);
 
   useEffect(() => {
     try {
@@ -700,6 +724,42 @@ export default function ProfilePage({ initialData }: ProfilePageProps) {
                   <FolderKanban className="h-4 w-4" />
                   <span className="whitespace-nowrap">Gelişim Portfolyosu</span>
                 </button>
+                <button
+                  type="button"
+                  onClick={() => setIsAhaModalOpen(true)}
+                  className="inline-flex shrink-0 items-center justify-center gap-2 rounded-2xl border border-amber-500/30 bg-amber-500/10 px-4 py-2.5 text-sm font-semibold text-amber-300 transition-all hover:bg-amber-500/20 hover:text-amber-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-400"
+                  title="Aha! Anları ve Matematik Keşif Günlüğü"
+                >
+                  <Lightbulb className="h-4 w-4" />
+                  <span className="whitespace-nowrap">Aha! Keşif Günlüğü</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setIsTimeCapsuleOpen(true)}
+                  className="inline-flex shrink-0 items-center justify-center gap-2 rounded-2xl border border-orange-500/30 bg-orange-500/10 px-4 py-2.5 text-sm font-semibold text-orange-300 transition-all hover:bg-orange-500/20 hover:text-orange-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-orange-400"
+                  title="Sene başı - sene sonu hedef zaman kapsülü"
+                >
+                  <Clock className="h-4 w-4" />
+                  <span className="whitespace-nowrap">Hedef Zaman Kapsülü</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setIsAuthoringModalOpen(true)}
+                  className="inline-flex shrink-0 items-center justify-center gap-2 rounded-2xl border border-purple-500/30 bg-purple-500/10 px-4 py-2.5 text-sm font-semibold text-purple-300 transition-all hover:bg-purple-500/20 hover:text-purple-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-purple-400"
+                  title="Kendi matematik sorularını yaz ve çeldiricilerini kurgula"
+                >
+                  <PenTool className="h-4 w-4" />
+                  <span className="whitespace-nowrap">Soru Yazarlık</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setIsFeynmanModalOpen(true)}
+                  className="inline-flex shrink-0 items-center justify-center gap-2 rounded-2xl border border-rose-500/30 bg-rose-500/10 px-4 py-2.5 text-sm font-semibold text-rose-300 transition-all hover:bg-rose-500/20 hover:text-rose-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-rose-400"
+                  title="60 saniyede sesli Feynman anlatımı"
+                >
+                  <Mic className="h-4 w-4" />
+                  <span className="whitespace-nowrap">Feynman Anlatımı</span>
+                </button>
               </div>
 
               {activeTab === 'overview' && (
@@ -861,6 +921,36 @@ export default function ProfilePage({ initialData }: ProfilePageProps) {
                 isOpen={isPortfolioOpen}
                 onClose={() => setIsPortfolioOpen(false)}
                 studentName={user.name || user.email || 'Öğrenci'}
+                grade={String(user.grade ?? '8')}
+              />
+
+              <MathAhaMomentsModal
+                isOpen={isAhaModalOpen}
+                onClose={() => setIsAhaModalOpen(false)}
+                studentName={user.name || user.email || 'Öğrenci'}
+                studentId={user.id}
+              />
+
+              <GoalTimeCapsuleModal
+                isOpen={isTimeCapsuleOpen}
+                onClose={() => setIsTimeCapsuleOpen(false)}
+                studentName={user.name || user.email || 'Öğrenci'}
+                studentId={user.id}
+              />
+
+              <StudentQuestionAuthoringModal
+                isOpen={isAuthoringModalOpen}
+                onClose={() => setIsAuthoringModalOpen(false)}
+                studentName={user.name || user.email || 'Öğrenci'}
+                studentId={user.id}
+                grade={String(user.grade ?? '8')}
+              />
+
+              <FeynmanVoiceExplanationModal
+                isOpen={isFeynmanModalOpen}
+                onClose={() => setIsFeynmanModalOpen(false)}
+                studentName={user.name || user.email || 'Öğrenci'}
+                studentId={user.id}
                 grade={String(user.grade ?? '8')}
               />
             </div>
