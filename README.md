@@ -35,6 +35,10 @@ Platformda öğrenci gizliliği en üst düzeyde korunur:
 
 ## Değişiklik Günlüğü (Changelog)
 
+### v1.4.2 - Hızlı Erişim Kategorilerinin Yatay 3'lü Izgaraya Dönüşümü & Araçların Açık Tutulması
+- **Hızlı Erişim Kartları Yenilendi:** Üstteki 9 ders kategorisi, altındaki Araçlar kartlarıyla birebir aynı tasarım diline kavuşturuldu; 4'lü dikey bloklar yerine zarif, yatay, kompakt 3 sütunlu (3x3 = 9 kategori) ızgara yapısına geçirildi. Her kartta sol renkli ikon, başlık, alt açıklama ve yönlendirici ok simgesi yer aldı.
+- **Araçlar Bölümü Hep Açık:** Kullanıcı beğenisi doğrultusunda 12 aracın listelendiği açılır "Araçlar [12 ARAÇ]" kartı, sayfa açılışında varsayılan olarak hep açık tutuldu (`isToolsOpen: true`).
+
 ### v1.4.1 - Anasayfa Sadeleştirme & Açıkta Kalan Araçların ve Ekstra Blokların Temizliği
 - **Açıkta Kalan 12 Araç ve Fazlalıklar Kaldırıldı:** 12 araç Hızlı Erişim içerisindeki açılır "Araçlar" kartına toplandığından, ana sayfada açıkta yer kaplayan `HomeQuickToolsGrid` tamamen kaldırıldı. Ayrıca `HomeDailyChallenge`, `HomeDailyGoalWidget`, `LgsTacticsCorner`, `HomeRecentDocumentsSection` ve `HomeStatsStrip` temizlendi.
 - **Sadece İstenen 6 Ana Bölüm Bırakıldı:**

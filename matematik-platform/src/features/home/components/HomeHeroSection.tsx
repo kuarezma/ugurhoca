@@ -55,9 +55,21 @@ export function HomeHeroSection({
   onOpenTopicWeights,
   onOpenWeeklyPlanner,
 }: HomeHeroSectionProps) {
-  const [isToolsOpen, setIsToolsOpen] = useState(false);
+  const [isToolsOpen, setIsToolsOpen] = useState(true);
   const firstName = user?.name?.split(' ')[0];
   const greeting = firstName ? `Merhaba ${firstName}!` : 'Matematiğe hoş geldin!';
+
+  const CATEGORY_SUBTITLES: Record<string, string> = {
+    'ders-notlari': 'Konu testleri ve pekiştirme soruları',
+    kitaplar: 'MEB ders kitapları ve soru föyleri',
+    'yaprak-test': 'Müfredat kazanım testleri ve özetler',
+    'ders-videolari': 'Konu anlatım ve soru çözüm kayıtları',
+    'deneme-sinav': 'LGS ve YKS formatında deneme sınavları',
+    oyunlar: 'Refleks ve zihin geliştiren oyunlar',
+    'canli-ders': 'Öğretmenle etkileşimli canlı yayınlar',
+    'cikis-bileti': 'Ders sonu hızlı anlama kontrolü',
+    programlar: 'LGS & YKS yıllık çalışma programları',
+  };
 
   const quickTools = [
     {
@@ -334,40 +346,46 @@ export function HomeHeroSection({
             </span>
             Hızlı erişim
           </h2>
-          <div className="grid grid-cols-2 gap-2.5 sm:gap-4 sm:grid-cols-3 lg:grid-cols-4">
+          <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3">
             {HOME_CATEGORIES.map((category, index) => (
               <motion.div
                 key={category.id}
-                initial={{ opacity: 0, y: 12 }}
+                initial={{ opacity: 0, y: 8 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.35, delay: index * 0.04 }}
+                transition={{ duration: 0.25, delay: index * 0.025 }}
               >
                 <SafeLink
                   href={category.href}
                   aria-label={`${category.title} kategorisi`}
-                  className={`group relative block overflow-hidden rounded-2xl sm:rounded-3xl border p-3.5 sm:p-5 text-center transition-all duration-300 hover:-translate-y-1 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 ${
+                  className={`flex items-center gap-3 rounded-xl sm:rounded-2xl border p-3 text-left transition-all hover:-translate-y-0.5 active:scale-[0.99] cursor-pointer ${
                     isLight
-                      ? 'border-slate-200/90 bg-white/90 shadow-bento hover:shadow-bento-hover hover:border-indigo-200'
-                      : `${category.bgColor} ${category.borderColor} hover:border-white/20 hover:shadow-2xl`
+                      ? 'border-slate-200/80 bg-white/90 shadow-bento hover:border-indigo-300 hover:shadow-bento-hover'
+                      : 'border-white/10 bg-slate-900/80 hover:bg-slate-900 hover:border-white/20'
                   }`}
                 >
                   <div
-                    aria-hidden="true"
-                    className={`mx-auto mb-2.5 sm:mb-3 flex h-11 w-11 sm:h-14 sm:w-14 items-center justify-center rounded-xl sm:rounded-2xl bg-gradient-to-br ${category.color} shadow-md transition-transform duration-300 group-hover:scale-110`}
+                    className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br ${category.color} text-white shadow-xs`}
                   >
-                    <category.icon className="h-5 w-5 sm:h-7 sm:w-7 text-white" />
+                    <category.icon className="h-5 w-5" />
                   </div>
-                  <h3
-                    className={`font-display text-xs font-bold sm:text-base truncate ${
-                      isLight ? 'text-slate-900' : 'text-white'
-                    }`}
-                  >
-                    {category.title}
-                  </h3>
-                  <span
-                    aria-hidden="true"
-                    className="pointer-events-none absolute inset-x-0 -bottom-px h-1 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
-                  />
+                  <div className="min-w-0 flex-1">
+                    <h3
+                      className={`text-xs sm:text-sm font-bold truncate ${
+                        isLight ? 'text-slate-900' : 'text-white'
+                      }`}
+                    >
+                      {category.title}
+                    </h3>
+                    <p
+                      className={`text-[11px] sm:text-xs line-clamp-1 mt-0.5 ${
+                        isLight ? 'text-slate-500' : 'text-slate-400'
+                      }`}
+                    >
+                      {CATEGORY_SUBTITLES[category.id] ||
+                        'Ders materyalleri ve çalışma içerikleri'}
+                    </p>
+                  </div>
+                  <ArrowRight className="h-4 w-4 shrink-0 text-slate-400" />
                 </SafeLink>
               </motion.div>
             ))}

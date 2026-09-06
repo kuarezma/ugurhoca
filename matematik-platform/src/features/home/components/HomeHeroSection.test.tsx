@@ -48,19 +48,10 @@ describe('HomeHeroSection', () => {
     ).toBeInTheDocument();
   });
 
-  it('expands 12 tools sequentially on click and triggers tool modal on tool click', () => {
+  it('renders 12 tools open by default and triggers tool modal on tool click', () => {
     render(<HomeHeroSection {...defaultProps} />);
 
-    // Başlangıçta 12 araç kapalı olmalı
-    expect(
-      screen.queryByText('LGS Puan & Net Hesaplama'),
-    ).not.toBeInTheDocument();
-
-    // Araçlar kartına tıkla
-    const toolsButton = screen.getByRole('button', { name: /Araçlar 12 ARAÇ/i });
-    fireEvent.click(toolsButton);
-
-    // 12 araç görünmeli
+    // Kullanıcı isteğiyle araçlar varsayılan olarak hep açık gelir
     expect(screen.getByText('LGS Puan & Net Hesaplama')).toBeInTheDocument();
     expect(
       screen.getByText('YKS (TYT-AYT) Puan Hesaplama'),
@@ -84,7 +75,8 @@ describe('HomeHeroSection', () => {
     fireEvent.click(lgsCalcBtn);
     expect(defaultProps.onOpenCalculator).toHaveBeenCalledWith('lgs');
 
-    // Tekrar tıklandığında kapanmalı
+    // Başlığa tıklandığında kapanabilmeli
+    const toolsButton = screen.getByRole('button', { name: /Araçlar 12 ARAÇ/i });
     fireEvent.click(toolsButton);
     expect(
       screen.queryByText('LGS Puan & Net Hesaplama'),

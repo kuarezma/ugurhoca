@@ -35,6 +35,10 @@ Student privacy and well-being are paramount on the platform:
 
 ## Changelog
 
+### v1.4.2 - Horizontal 3-Column Quick Access Categories & Open Tools Default
+- **Aligned Quick Access Layout:** Replaced the tall 4-column blocks with a matching horizontal 3-column (3x3 = 9 categories) grid design identical to the Tools cards below. Each item includes a colorful left icon, title, concise subtitle, and arrow indicator.
+- **Tools Open by Default:** Per user preference, the "Araçlar [12 ARAÇ]" expandable card is now set to remain open by default on page load (`isToolsOpen: true`).
+
 ### v1.4.1 - Streamlined Homepage & Redundant Tools/Sections Cleanup
 - **Removed Redundant Tools Grid & Clutter:** Because all 12 tools are now cleanly housed inside the expandable "Tools" quick-access card, the standalone `HomeQuickToolsGrid` on the homepage was eliminated. Extra modules (`HomeDailyChallenge`, `HomeDailyGoalWidget`, `LgsTacticsCorner`, `HomeRecentDocumentsSection`, `HomeStatsStrip`) were also removed as requested.
 - **Strictly Kept the 6 User-Requested Sections:**
