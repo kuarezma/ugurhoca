@@ -35,10 +35,10 @@ Student privacy and well-being are paramount on the platform:
 
 ## Changelog
 
-### v1.3.3 - Expandable Accordion Category Architecture
-- **Expandable Accordion Cards:** Completely replaced the sticky top category bar and tab switcher with 3 clean, modern expandable cards (**Lessons**, **Games**, and **Tools**).
-- **Smooth Toggle & Micro-Interactions:** Each category card expands or collapses independently with smooth Framer Motion height animations and 180° chevron rotation (`aria-expanded`).
-- **Maximum Page Compactness:** When collapsed, the page takes minimal vertical height. Opening a category displays only that section's modules without page bloat.
+### v1.4.0 - Rollback to Original Layout & Expandable "Tools (12 Tools)" Quick Access Card
+- **Restoration of Original Homepage Flow:** Reverted from the multi-tab / accordion category hub back to the original, well-balanced homepage layout (Hero ➔ Daily Challenge ➔ Goal Widget ➔ Tactics Corner ➔ Roadmap ➔ Announcements ➔ Countdown ➔ Documents).
+- **Expandable Tools Card in Quick Access:** Added the requested "Araçlar [12 ARAÇ]" accordion card directly beneath the quick access categories.
+- **Sequential 12-Tool List:** Tapping the card smoothly expands 12 interactive tools (LGS/YKS Score & Net Calculator, Pomodoro, Scratchpad, Flashcards, Formula Sheet, Grapher, Proofs, Tactics, Glossary, Topic Weights, Weekly Planner) for instant 1-tap modal launches.
 
 ### v1.3.2 - Recent Documents Removal & Success Roadmap Relocation
 - **Removed Recent Documents Section:** To further minimize homepage clutter and redundant vertical scroll, the recent documents module has been completely removed from the homepage flow.

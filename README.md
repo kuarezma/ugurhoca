@@ -35,10 +35,10 @@ Platformda öğrenci gizliliği en üst düzeyde korunur:
 
 ## Değişiklik Günlüğü (Changelog)
 
-### v1.3.3 - Akordeon Kategori Kartları Mimarisi (Ferah & Genişleyen Tasarım)
-- **Akordeon / Genişleyen Kart Tasarımı:** Sekmeli ve sabit yapışkan (sticky) kategori çubuğu tamamen kaldırılarak yerine 3 büyük, modern akordeon kartı (**Dersler**, **Oyun**, **Araçlar**) yerleştirildi.
-- **Akıcı Açılıp Kapanma & Mikro-Etkileşimler:** Her kart kendi satırında bağımsız olarak açılır/kapanır (`aria-expanded`, dönen chevron animasyonu). Kartlar kapalıyken sayfa minimum dikey alana iner, tıklandığında yumuşak framer-motion animasyonuyla altındaki modüller açılır.
-- **Odak & Sayfa Ferahlığı:** Kullanıcı tek bir kategoriye odaklanırken diğer kategoriler sayfayı doldurmaz; başparmak ergonomisi ve görsel sadelik en üst düzeye çıkarıldı.
+### v1.4.0 - Orijinal Anasayfa Akışına Dönüş & Hızlı Erişimde Açılır "Araçlar (12 Araç)" Kartı
+- **Orijinal Anasayfa Düzenine Dönüş:** Anasayfa önceki sekmeli veya akordeonlu hub yerine sevilen orijinal, dengeli ve zengin sayfa akışına (Hero ➔ Günlük Meydan Okuma ➔ Hedef Takipçisi ➔ Taktik Köşesi ➔ Yol Haritası ➔ Duyurular ➔ Geri Sayım Sayacı ➔ Belgeler) geri döndürüldü.
+- **Hızlı Erişimde Açılır Araçlar Kartı:** Hızlı erişim kategorilerinin hemen altına kullanıcının belirlediği "Araçlar [12 ARAÇ]" açılır akordeon kartı yerleştirildi.
+- **12 Aracın Sıralı Listesi:** Karta tıklandığında yumuşak bir animasyon ve dönen chevron oku ile 12 araç (LGS/YKS Net Hesaplama, Pomodoro, Karalama Tahtası, Formül Kartları, Kural Tablosu, Grafik Çizici, Görsel İspatlar, Taktik Köşesi, Sözlük, Soru Ağırlıkları, Çalışma Planı) dikey olarak sıralanır ve doğrudan modal aksiyonlarını çalıştırır.
 
 ### v1.3.2 - Son Eklenenler Temizliği & Başarı Yol Haritası Konumlandırması
 - **Son Eklenenler Bölümü Kaldırıldı:** Anasayfadaki gereksiz dikey yükü ve görsel kalabalığı azaltmak amacıyla "Son Eklenenler" belgeler modülü anasayfa akışından tamamen çıkarıldı.
