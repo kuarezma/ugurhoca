@@ -27,16 +27,31 @@ CREATE INDEX IF NOT EXISTS idx_student_groups_grade ON public.student_groups(gra
 ALTER TABLE public.student_groups ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.student_group_members ENABLE ROW LEVEL SECURITY;
 
--- Politikalar: Herkes veya oturum açmış kullanıcılar okuyabilir (veya admin), admin yönetir
+-- Politikalar: Giriş yapmış kullanıcılar okuyabilir (üyeler kendi üyeliklerini), admin yönetir
 DROP POLICY IF EXISTS "student_groups_select" ON public.student_groups;
 DROP POLICY IF EXISTS "student_groups_all_admin" ON public.student_groups;
-CREATE POLICY "student_groups_select" ON public.student_groups FOR SELECT USING (true);
-CREATE POLICY "student_groups_all_admin" ON public.student_groups FOR ALL USING (true) WITH CHECK (true);
+DROP POLICY IF EXISTS "student_groups_admin_all" ON public.student_groups;
+CREATE POLICY "student_groups_select" ON public.student_groups
+  FOR SELECT TO authenticated
+  USING (true);
+CREATE POLICY "student_groups_admin_all" ON public.student_groups
+  FOR ALL TO authenticated
+  USING (public.is_admin_email())
+  WITH CHECK (public.is_admin_email());
 
 DROP POLICY IF EXISTS "student_group_members_select" ON public.student_group_members;
 DROP POLICY IF EXISTS "student_group_members_all_admin" ON public.student_group_members;
-CREATE POLICY "student_group_members_select" ON public.student_group_members FOR SELECT USING (true);
-CREATE POLICY "student_group_members_all_admin" ON public.student_group_members FOR ALL USING (true) WITH CHECK (true);
+DROP POLICY IF EXISTS "student_group_members_admin_all" ON public.student_group_members;
+CREATE POLICY "student_group_members_select" ON public.student_group_members
+  FOR SELECT TO authenticated
+  USING (auth.uid() = user_id OR public.is_admin_email());
+CREATE POLICY "student_group_members_admin_all" ON public.student_group_members
+  FOR ALL TO authenticated
+  USING (public.is_admin_email())
+  WITH CHECK (public.is_admin_email());
 
-GRANT SELECT, INSERT, UPDATE, DELETE ON public.student_groups TO anon, authenticated;
-GRANT SELECT, INSERT, UPDATE, DELETE ON public.student_group_members TO anon, authenticated;
+-- Anonim erişimi tamamen kaldır, yalnızca doğrulanmış oturumlara yetki ver (RLS kontrolünde)
+REVOKE ALL ON public.student_groups FROM anon;
+REVOKE ALL ON public.student_group_members FROM anon;
+GRANT SELECT, INSERT, UPDATE, DELETE ON public.student_groups TO authenticated;
+GRANT SELECT, INSERT, UPDATE, DELETE ON public.student_group_members TO authenticated;

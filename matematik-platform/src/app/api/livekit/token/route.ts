@@ -67,20 +67,22 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: 'Ders aktif değil.' }, { status: 404 });
   }
 
-  // Öğretmen yetkisi yalnızca doğrulanmış admin JWT'sine dayanır; istemciye asla
-  // teacher_proof sızdırılmadığı için ayrı HMAC ikinci faktörüne gerek kalmadı.
   const isAdmin = isLiveLessonAdmin(auth.user);
+  // Rol ve kimlik istemciden değil, sunucu tarafında doğrulanmış kullanıcıdan türetilir
+  const role: 'teacher' | 'student' = isAdmin ? 'teacher' : 'student';
+  const identity = `${role}_${auth.user.id.slice(0, 24)}`;
+
   if (body.role === 'teacher' && !isAdmin) {
     return NextResponse.json({ error: 'Öğretmen yetkisi doğrulanamadı.' }, { status: 403 });
   }
-  if (body.role === 'student' && !canUserAccessLiveLesson(lesson as LiveLesson, auth.user)) {
+  if (role === 'student' && !canUserAccessLiveLesson(lesson as LiveLesson, auth.user)) {
     return NextResponse.json({ error: 'Bu ders size açık değil.' }, { status: 403 });
   }
 
   const token = new AccessToken(apiKey, apiSecret, {
-    identity: body.identity,
+    identity,
     name: auth.user.name || auth.user.email,
-    ttl: body.role === 'teacher' ? '3h' : '2h',
+    ttl: role === 'teacher' ? '3h' : '2h',
   });
 
   const grant: VideoGrant = {
@@ -94,8 +96,8 @@ export async function POST(request: Request) {
 
   return NextResponse.json({
     persistToken: signPersistToken({
-      identity: body.identity,
-      role: body.role,
+      identity,
+      role,
       roomId: body.roomName,
     }),
     token: await token.toJwt(),

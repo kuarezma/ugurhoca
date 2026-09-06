@@ -190,15 +190,43 @@ const downloadBundleFromUrl = async (bundleUrl: string) => {
     throw new Error('bundle_url yerel veya özel ağ adresi olamaz.');
   }
 
-  const response = await fetch(bundleUrl, {
-    redirect: 'follow',
-    signal: AbortSignal.timeout(BUNDLE_FETCH_TIMEOUT_MS),
-    headers: {
-      'User-Agent': 'ugurhoca-bundle-import/1.0',
-    },
-  });
-  if (!response.ok) {
-    throw new Error(`ZIP indirilemedi. HTTP ${response.status}`);
+  let response: Response | null = null;
+  let currentFetchUrl = bundleUrl;
+  const maxRedirects = 3;
+
+  for (let i = 0; i <= maxRedirects; i++) {
+    response = await fetch(currentFetchUrl, {
+      redirect: 'manual',
+      signal: AbortSignal.timeout(BUNDLE_FETCH_TIMEOUT_MS),
+      headers: {
+        'User-Agent': 'ugurhoca-bundle-import/1.0',
+      },
+    });
+
+    if ([301, 302, 303, 307, 308].includes(response.status)) {
+      const location = response.headers.get('location');
+      if (!location) {
+        throw new Error('Yönlendirme adresi bulunamadı.');
+      }
+      const nextUrl = new URL(location, currentFetchUrl);
+      if (!['http:', 'https:'].includes(nextUrl.protocol)) {
+        throw new Error('Geçersiz yönlendirme protokolü.');
+      }
+      if (isPrivateOrLocalHost(nextUrl.hostname)) {
+        throw new Error('bundle_url yerel veya özel ağ adresi olamaz.');
+      }
+      if (!isAllowedRemoteHost(nextUrl.hostname, getAllowedBundleHosts())) {
+        throw new Error('bundle_url hostu izinli değil.');
+      }
+      currentFetchUrl = nextUrl.toString();
+      continue;
+    }
+
+    break;
+  }
+
+  if (!response || !response.ok) {
+    throw new Error(`ZIP indirilemedi. HTTP ${response?.status ?? 500}`);
   }
 
   const contentLength = Number(response.headers.get('content-length') ?? '0');

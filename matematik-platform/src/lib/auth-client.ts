@@ -26,17 +26,24 @@ const AUTH_SNAPSHOT_MAX_AGE = 60 * 60 * 24 * 30;
 const isInvalidRefreshTokenError = (error: unknown) =>
   error instanceof Error && INVALID_REFRESH_TOKEN_PATTERN.test(error.message);
 
+const getSecureCookieFlag = () => {
+  if (typeof window === 'undefined') return '';
+  return window.location.protocol === 'https:' ? '; secure' : '';
+};
+
 const writeAuthSnapshotCookie = (snapshot: AuthSnapshot | null) => {
   if (typeof document === 'undefined') {
     return;
   }
 
+  const secure = getSecureCookieFlag();
+
   if (!snapshot) {
-    document.cookie = `${AUTH_SNAPSHOT_COOKIE_NAME}=; path=/; max-age=0; samesite=lax`;
+    document.cookie = `${AUTH_SNAPSHOT_COOKIE_NAME}=; path=/; max-age=0; samesite=lax${secure}`;
     return;
   }
 
-  document.cookie = `${AUTH_SNAPSHOT_COOKIE_NAME}=${serializeAuthSnapshot(snapshot)}; path=/; max-age=${AUTH_SNAPSHOT_MAX_AGE}; samesite=lax`;
+  document.cookie = `${AUTH_SNAPSHOT_COOKIE_NAME}=${serializeAuthSnapshot(snapshot)}; path=/; max-age=${AUTH_SNAPSHOT_MAX_AGE}; samesite=lax${secure}`;
 };
 
 const writeAccessTokenCookie = (accessToken: string | null) => {
@@ -44,12 +51,14 @@ const writeAccessTokenCookie = (accessToken: string | null) => {
     return;
   }
 
+  const secure = getSecureCookieFlag();
+
   if (!accessToken) {
-    document.cookie = `${AUTH_ACCESS_TOKEN_COOKIE_NAME}=; path=/; max-age=0; samesite=lax`;
+    document.cookie = `${AUTH_ACCESS_TOKEN_COOKIE_NAME}=; path=/; max-age=0; samesite=lax${secure}`;
     return;
   }
 
-  document.cookie = `${AUTH_ACCESS_TOKEN_COOKIE_NAME}=${encodeURIComponent(accessToken)}; path=/; max-age=${AUTH_SNAPSHOT_MAX_AGE}; samesite=lax`;
+  document.cookie = `${AUTH_ACCESS_TOKEN_COOKIE_NAME}=${encodeURIComponent(accessToken)}; path=/; max-age=${AUTH_SNAPSHOT_MAX_AGE}; samesite=lax${secure}`;
 };
 
 const createAuthSnapshot = (profile: AppUser): AuthSnapshot => ({

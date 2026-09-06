@@ -56,4 +56,24 @@ describe('GET /api/image-proxy', () => {
     expect(response.status).toBe(200);
     expect(response.headers.get('content-type')).toBe('image/jpeg');
   });
+
+  it('blocks redirect to private or unapproved hosts (SSRF mitigation)', async () => {
+    vi.spyOn(global, 'fetch').mockResolvedValue(
+      new Response(null, {
+        status: 302,
+        headers: { location: 'http://169.254.169.254/latest/meta-data' },
+      }),
+    );
+
+    const response = await GET(
+      new Request(
+        'http://localhost/api/image-proxy?url=https%3A%2F%2Fimages.unsplash.com%2Fredirect',
+      ),
+    );
+
+    expect(response.status).toBe(400);
+    await expect(response.json()).resolves.toEqual({
+      error: 'Blocked redirect hostname',
+    });
+  });
 });

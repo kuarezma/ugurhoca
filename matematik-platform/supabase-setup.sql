@@ -442,26 +442,46 @@ ON CONFLICT (year, program_code) DO UPDATE SET
   source_url_yokatlas = EXCLUDED.source_url_yokatlas;
 
 -- ============================================
--- chat_users (sohbet girişi — ChatLogin upsert)
--- Ayrıca: supabase/migrations/20260406120000_chat_users.sql
+-- student_groups & student_group_members (Öğrenci Grupları)
+-- Ayrıca: supabase/migrations/20260906123000_student_groups.sql
 -- ============================================
-CREATE TABLE IF NOT EXISTS public.chat_users (
-  tc_number TEXT PRIMARY KEY,
-  full_name TEXT NOT NULL,
-  display_name TEXT NOT NULL,
+CREATE TABLE IF NOT EXISTS public.student_groups (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  name TEXT NOT NULL,
+  grade TEXT,
+  description TEXT,
+  color TEXT DEFAULT 'indigo',
   created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
   updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
-ALTER TABLE public.chat_users ENABLE ROW LEVEL SECURITY;
+CREATE TABLE IF NOT EXISTS public.student_group_members (
+  group_id UUID NOT NULL REFERENCES public.student_groups(id) ON DELETE CASCADE,
+  user_id UUID NOT NULL,
+  joined_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  PRIMARY KEY (group_id, user_id)
+);
 
-DROP POLICY IF EXISTS "chat_users_select" ON public.chat_users;
-DROP POLICY IF EXISTS "chat_users_insert" ON public.chat_users;
-DROP POLICY IF EXISTS "chat_users_update" ON public.chat_users;
+CREATE INDEX IF NOT EXISTS idx_student_group_members_user ON public.student_group_members(user_id);
+CREATE INDEX IF NOT EXISTS idx_student_groups_grade ON public.student_groups(grade);
 
-CREATE POLICY "chat_users_select" ON public.chat_users FOR SELECT USING (true);
-CREATE POLICY "chat_users_insert" ON public.chat_users FOR INSERT WITH CHECK (true);
-GRANT SELECT, INSERT, UPDATE ON public.chat_users TO anon, authenticated;
+ALTER TABLE public.student_groups ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.student_group_members ENABLE ROW LEVEL SECURITY;
+
+DROP POLICY IF EXISTS "student_groups_select" ON public.student_groups;
+DROP POLICY IF EXISTS "student_groups_admin_all" ON public.student_groups;
+CREATE POLICY "student_groups_select" ON public.student_groups FOR SELECT TO authenticated USING (true);
+CREATE POLICY "student_groups_admin_all" ON public.student_groups FOR ALL TO authenticated USING (public.is_admin_email()) WITH CHECK (public.is_admin_email());
+
+DROP POLICY IF EXISTS "student_group_members_select" ON public.student_group_members;
+DROP POLICY IF EXISTS "student_group_members_admin_all" ON public.student_group_members;
+CREATE POLICY "student_group_members_select" ON public.student_group_members FOR SELECT TO authenticated USING (auth.uid() = user_id OR public.is_admin_email());
+CREATE POLICY "student_group_members_admin_all" ON public.student_group_members FOR ALL TO authenticated USING (public.is_admin_email()) WITH CHECK (public.is_admin_email());
+
+REVOKE ALL ON public.student_groups FROM anon;
+REVOKE ALL ON public.student_group_members FROM anon;
+GRANT SELECT, INSERT, UPDATE, DELETE ON public.student_groups TO authenticated;
+GRANT SELECT, INSERT, UPDATE, DELETE ON public.student_group_members TO authenticated;
 
 -- ============================================
 -- Performans ve Ölçeklenme Bileşik İndeksleri

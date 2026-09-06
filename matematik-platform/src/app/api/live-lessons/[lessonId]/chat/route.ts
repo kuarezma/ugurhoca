@@ -1,6 +1,11 @@
 import { NextResponse } from 'next/server';
 import { createServiceRoleClient } from '@/lib/supabase/server';
-import { isLiveLessonAdmin, requireLiveLessonUser } from '@/features/live-lessons/server/liveLessons';
+import {
+  canUserAccessLiveLesson,
+  isLiveLessonAdmin,
+  requireLiveLessonUser,
+} from '@/features/live-lessons/server/liveLessons';
+import type { LiveLesson } from '@/features/live-lessons/types';
 
 export const runtime = 'nodejs';
 
@@ -13,6 +18,20 @@ export async function GET(_request: Request, context: RouteContext) {
   if (!auth.ok) return auth.response;
   const { lessonId } = await context.params;
   const supabase = createServiceRoleClient();
+
+  const { data: lesson } = await supabase
+    .from('live_lessons')
+    .select('*')
+    .eq('id', lessonId)
+    .single();
+
+  if (!lesson) {
+    return NextResponse.json({ error: 'Ders bulunamadı.' }, { status: 404 });
+  }
+
+  if (!canUserAccessLiveLesson(lesson as LiveLesson, auth.user)) {
+    return NextResponse.json({ error: 'Bu dersin sohbetine erişim yetkiniz yok.' }, { status: 403 });
+  }
 
   const { data } = await supabase
     .from('live_lesson_chat_messages')
@@ -35,6 +54,20 @@ export async function POST(request: Request, context: RouteContext) {
   }
 
   const supabase = createServiceRoleClient();
+
+  const { data: lesson } = await supabase
+    .from('live_lessons')
+    .select('*')
+    .eq('id', lessonId)
+    .single();
+
+  if (!lesson || lesson.status === 'ended' || lesson.status === 'cancelled') {
+    return NextResponse.json({ error: 'Ders aktif değil veya bulunamadı.' }, { status: 404 });
+  }
+
+  if (!canUserAccessLiveLesson(lesson as LiveLesson, auth.user)) {
+    return NextResponse.json({ error: 'Bu dersin sohbetine mesaj gönderme yetkiniz yok.' }, { status: 403 });
+  }
   const role = isLiveLessonAdmin(auth.user) ? 'teacher' : 'student';
   const { data, error } = await supabase
     .from('live_lesson_chat_messages')

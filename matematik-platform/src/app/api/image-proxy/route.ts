@@ -59,17 +59,45 @@ export async function GET(request: Request) {
   }
 
   try {
-    const res = await fetch(fetchUrl, {
-      cache: 'force-cache',
-      signal: AbortSignal.timeout(IMAGE_FETCH_TIMEOUT_MS),
-      headers: {
-        'User-Agent': 'Mozilla/5.0',
-        'Accept': 'image/*,*/*;q=0.8',
-      },
-    });
+    let res: Response | null = null;
+    let currentUrl = fetchUrl;
+    const maxRedirects = 3;
 
-    if (!res.ok) {
-      return NextResponse.json({ error: 'Failed to fetch image' }, { status: res.status });
+    for (let i = 0; i <= maxRedirects; i++) {
+      res = await fetch(currentUrl, {
+        cache: 'force-cache',
+        redirect: 'manual',
+        signal: AbortSignal.timeout(IMAGE_FETCH_TIMEOUT_MS),
+        headers: {
+          'User-Agent': 'Mozilla/5.0',
+          'Accept': 'image/*,*/*;q=0.8',
+        },
+      });
+
+      if ([301, 302, 303, 307, 308].includes(res.status)) {
+        const location = res.headers.get('location');
+        if (!location) {
+          return NextResponse.json({ error: 'Redirect without location' }, { status: 400 });
+        }
+        const nextUrl = new URL(location, currentUrl);
+        if (!['http:', 'https:'].includes(nextUrl.protocol)) {
+          return NextResponse.json({ error: 'Invalid redirect protocol' }, { status: 400 });
+        }
+        if (isPrivateOrLocalHost(nextUrl.hostname)) {
+          return NextResponse.json({ error: 'Blocked redirect hostname' }, { status: 400 });
+        }
+        if (!isAllowedRemoteHost(nextUrl.hostname, getAllowedImageProxyHosts())) {
+          return NextResponse.json({ error: 'Redirect hostname is not allowlisted' }, { status: 400 });
+        }
+        currentUrl = nextUrl.toString();
+        continue;
+      }
+
+      break;
+    }
+
+    if (!res || !res.ok) {
+      return NextResponse.json({ error: 'Failed to fetch image' }, { status: res?.status ?? 500 });
     }
 
     const contentType = res.headers.get('content-type') || 'image/jpeg';
