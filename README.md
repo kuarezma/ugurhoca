@@ -35,6 +35,13 @@ Platformda öğrenci gizliliği en üst düzeyde korunur:
 
 ## Değişiklik Günlüğü (Changelog)
 
+### v1.3.0 - Anasayfa Kategori Mimarisi & Sadeleştirilmiş Akış Düzeni
+- **Kompakt Kategori Hub'ı:** Sonsuz aşağı kaydırma ve aşırı uzun sayfa yükü ortadan kaldırıldı; içerikler **Dersler**, **Oyun** ve **Araçlar** olmak üzere 3 ana interaktif sekmede toplandı.
+- **Dersler Sekmesi:** Yaprak Test, Kitaplar, Kazanımlar, Ders Videoları, Deneme-Sınav, Canlı Ders, Çıkış Bileti, Programlar (oyun hariç 8 ders alanı), son eklenen belgeler, ödevler ve başarı yol haritası bir araya getirildi.
+- **Oyun Sekmesi:** Günlük Matematik Meydan Okuması, 60s Hızlı Formül Antrenmanı ve eğlenceli matematik oyunları vitrini olarak yapılandırıldı.
+- **Araçlar Sekmesi:** Puan/Net Hesaplayıcı, Pomodoro, Karalama Tahtası, Formül Kartları, Grafik Çizici, LGS Taktik Köşesi ve Günlük Hedef Takipçisi tek çatı altında toplandı.
+- **İdeal Sayfa Akışı & Geri Alınabilirlik:** Kategori bölümünün ardından sırasıyla Duyurular ➔ LGS/YKS Sayacı ➔ Günün Sözü ➔ Uğur Hoca'ya Yaz sıralaması uygulandı. Canlı geçiş butonu ve `?layout=classic` parametresiyle kullanıcıların diledikleri an klasik görünüme tek tıkla dönebilmesi sağlandı.
+
 ### v1.2.1 - Sohbet Penceresi Kaydırma Yalıtımı, Scrollbar İyileştirmesi & Taşma Koruması
 - **Scroll Chaining & Bleed Önleme:** Sohbet penceresi veya mesaj listesi kaydırılırken momentumun arkadaki site sayfasına sıçramasını engelleyen `useScrollContainment` kancası ve CSS overscroll containment mimarisi entegre edildi.
 - **Scrollbar İyileştirmesi:** Global kaydırma çubukları 5px'lik zarif, yarı saydam ve yuvarlatılmış modern hap (pill) tasarımına geçirildi; Hızlı Not ve Sembol yatay çubuklarındaki dikkat dağıtıcı kalın çubuklar gizlendi.

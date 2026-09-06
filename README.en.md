@@ -35,6 +35,13 @@ Student privacy and well-being are paramount on the platform:
 
 ## Changelog
 
+### v1.3.0 - Homepage Category Architecture & Streamlined Layout
+- **Compact Category Hub:** Eliminated endless vertical scrolling and page bloat by consolidating homepage modules into 3 intuitive tabs: **Lessons**, **Games**, and **Tools**.
+- **Lessons Tab:** Consolidated 8 learning modules (Worksheets, Books, Learning Outcomes, Video Lectures, Practice Exams, Live Classes, Exit Tickets, Programs - games excluded), recently added documents, student homework, and the success roadmap.
+- **Games Tab:** Features the Daily Math Challenge, 60s Speed Drill quick modal trainer, and interactive math game portals.
+- **Tools Tab:** Unified all 12 supercharged student tools (Exam score & net calculators, Pomodoro, Scratchpad, Flashcards, Graphs, LGS Tactics Corner, and Daily Goal Tracker).
+- **Streamlined Order & Rollback Capability:** Standardized flow below the categories: Announcements ➔ LGS/YKS Countdown ➔ Quote of the Day ➔ Contact Uğur Hoca. Includes a one-click live toggle and `?layout=classic` parameter to view or revert to the classic long layout anytime.
+
 ### v1.2.1 - Chat Window Scroll Isolation, Refined Scrollbars & Overflow Protection
 - **Scroll Bleed Prevention:** Added `useScrollContainment` hook and CSS overscroll containment to isolate chat scrolling from the background website.
 - **Subtle Scrollbars:** Refined global scrollbars to a 5px thin, modern translucent pill style; completely hid scrollbars on horizontal quick template and math symbol chips.

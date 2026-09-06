@@ -20,6 +20,7 @@ import { HomeStatsStrip } from '@/features/home/components/HomeStatsStrip';
 import { HomeSuccessRoadmap } from '@/features/home/components/HomeSuccessRoadmap';
 import { HomeGuestCtaSection } from '@/features/home/components/HomeGuestCtaSection';
 import { HomeSupportSection } from '@/features/home/components/HomeSupportSection';
+import { HomeCategoryHub } from '@/features/home/components/HomeCategoryHub';
 import type { HomeInitialFeed } from '@/features/home/home-initial-feed';
 import { useHomePageData } from '@/features/home/hooks/useHomePageData';
 import type { LiveLesson } from '@/features/live-lessons/types';
@@ -91,9 +92,11 @@ const MathGlossaryModal = dynamic(
 
 const FormulaFlashcardsModal = dynamic(
   () =>
-    import('@/features/programs/components/FormulaFlashcardsModal').then((m) => ({
-      default: m.FormulaFlashcardsModal,
-    })),
+    import('@/features/programs/components/FormulaFlashcardsModal').then(
+      (m) => ({
+        default: m.FormulaFlashcardsModal,
+      }),
+    ),
   { ssr: false },
 );
 
@@ -103,17 +106,21 @@ const ScratchpadModal = dynamic(() => import('@/components/ScratchpadModal'), {
 
 const ExamTopicWeightMatrixModal = dynamic(
   () =>
-    import('@/features/programs/components/ExamTopicWeightMatrixModal').then((m) => ({
-      default: m.ExamTopicWeightMatrixModal,
-    })),
+    import('@/features/programs/components/ExamTopicWeightMatrixModal').then(
+      (m) => ({
+        default: m.ExamTopicWeightMatrixModal,
+      }),
+    ),
   { ssr: false },
 );
 
 const PrintableWeeklyPlannerModal = dynamic(
   () =>
-    import('@/features/programs/components/PrintableWeeklyPlannerModal').then((m) => ({
-      default: m.PrintableWeeklyPlannerModal,
-    })),
+    import('@/features/programs/components/PrintableWeeklyPlannerModal').then(
+      (m) => ({
+        default: m.PrintableWeeklyPlannerModal,
+      }),
+    ),
   { ssr: false },
 );
 
@@ -127,7 +134,10 @@ type HomePageProps = {
   initialFeed?: HomeInitialFeed | null;
 };
 
-export default function HomePage({ activeLiveLesson, initialFeed }: HomePageProps) {
+export default function HomePage({
+  activeLiveLesson,
+  initialFeed,
+}: HomePageProps) {
   const { theme } = useTheme();
   const isLight = theme === 'light';
   const [isFlashcardsOpen, setIsFlashcardsOpen] = useState(false);
@@ -145,10 +155,16 @@ export default function HomePage({ activeLiveLesson, initialFeed }: HomePageProp
   const [isGlossaryOpen, setIsGlossaryOpen] = useState(false);
   const [isTopicWeightsOpen, setIsTopicWeightsOpen] = useState(false);
   const [isWeeklyPlannerOpen, setIsWeeklyPlannerOpen] = useState(false);
+  const [layoutMode, setLayoutMode] = useState<'categorized' | 'classic'>(
+    'categorized',
+  );
 
   useEffect(() => {
     const handleToolEvent = (e: Event) => {
-      const customEvent = e as CustomEvent<{ tool: string; tab?: 'lgs' | 'yks' }>;
+      const customEvent = e as CustomEvent<{
+        tool: string;
+        tab?: 'lgs' | 'yks';
+      }>;
       const tool = customEvent.detail?.tool;
       if (tool === 'calculator') {
         setCalculatorState({
@@ -186,7 +202,10 @@ export default function HomePage({ activeLiveLesson, initialFeed }: HomePageProp
       const params = new URLSearchParams(window.location.search);
       const toolParam = params.get('tool');
       if (toolParam === 'calculator') {
-        setCalculatorState({ isOpen: true, tab: (params.get('tab') as 'lgs' | 'yks') || 'lgs' });
+        setCalculatorState({
+          isOpen: true,
+          tab: (params.get('tab') as 'lgs' | 'yks') || 'lgs',
+        });
       } else if (toolParam === 'pomodoro') {
         setIsPomodoroOpen(true);
       } else if (toolParam === 'checklist') {
@@ -198,9 +217,15 @@ export default function HomePage({ activeLiveLesson, initialFeed }: HomePageProp
       } else if (toolParam === 'speed-drill' || toolParam === 'drill') {
         setIsSpeedDrillOpen(true);
       }
+
+      const layoutParam = params.get('layout') || params.get('view');
+      if (layoutParam === 'classic') {
+        setLayoutMode('classic');
+      }
     }
 
-    return () => window.removeEventListener('ugurhoca:open-tool', handleToolEvent);
+    return () =>
+      window.removeEventListener('ugurhoca:open-tool', handleToolEvent);
   }, []);
 
   const {
@@ -238,73 +263,194 @@ export default function HomePage({ activeLiveLesson, initialFeed }: HomePageProp
         </SafeLink>
       ) : null}
       <div className="pt-[calc(4.5rem+env(safe-area-inset-top))] md:pt-20">
-        <HomeHeroSection isLight={isLight} user={user} />
-        <HomeDailyChallenge isLight={isLight} />
-        <HomeDailyGoalWidget isLight={isLight} />
-        <LgsTacticsCorner isLight={isLight} />
-        <HomeQuickToolsGrid
-          isLight={isLight}
-          onOpenFlashcards={() => setIsFlashcardsOpen(true)}
-          onOpenScratchpad={() => setIsScratchpadOpen(true)}
-          onOpenCalculator={() => setCalculatorState({ isOpen: true, tab: 'lgs' })}
-          onOpenPomodoro={() => setIsPomodoroOpen(true)}
-          onOpenChecklist={() => setIsChecklistOpen(true)}
-          onOpenGraph={() => setIsGraphOpen(true)}
-          onOpenProofs={() => setIsProofsOpen(true)}
-          onOpenCheatSheet={() => setIsCheatSheetOpen(true)}
-          onOpenGlossary={() => setIsGlossaryOpen(true)}
-          onOpenTopicWeights={() => setIsTopicWeightsOpen(true)}
-          onOpenWeeklyPlanner={() => setIsWeeklyPlannerOpen(true)}
-          onOpenSpeedDrill={() => setIsSpeedDrillOpen(true)}
-        />
-        <div className="defer-section">
-          <HomeSuccessRoadmap
-            isLight={isLight}
-            onOpenFlashcards={() => setIsFlashcardsOpen(true)}
-          />
-        </div>
-        <div className="defer-section">
-          <HomeStatsStrip isLight={isLight} stats={initialFeed?.stats} />
-        </div>
-        <div className="defer-section">
-          <HomeAnnouncementsSection
-            announcements={announcements}
-            isLight={isLight}
-            onSelectAnnouncement={setSelectedAnnouncement}
-          />
-        </div>
-        <div className="defer-section">
-          <HomeDailyQuote isLight={isLight} />
-        </div>
-        <HomeExamCountdownSection
-          isLight={isLight}
-          onOpenCalculator={(tab) => setCalculatorState({ isOpen: true, tab })}
-          userGrade={user?.grade}
-        />
-        <div className="defer-section">
-          <HomeAssignmentsSection
-            assignments={visibleAssignments}
-            isLight={isLight}
-            onDismissAll={handleDismissAllAssignments}
-            onDismissAssignment={handleDismissAssignment}
-          />
-        </div>
-        <HomeRecentDocumentsSection documents={documents} isLight={isLight} />
-        {!user && (
-          <div className="defer-section">
-            <HomeHowItWorksSection isLight={isLight} />
-          </div>
+        {layoutMode === 'categorized' ? (
+          <>
+            {/* 1. En üstteki Karşılama Ekranı */}
+            <HomeHeroSection
+              isLight={isLight}
+              user={user}
+              showQuickAccess={false}
+            />
+
+            {/* 2. Kategoriler Bölümü: Dersler, Oyun, Araçlar */}
+            <HomeCategoryHub
+              isLight={isLight}
+              user={user}
+              documents={documents}
+              visibleAssignments={visibleAssignments}
+              onDismissAllAssignments={handleDismissAllAssignments}
+              onDismissAssignment={handleDismissAssignment}
+              onOpenFlashcards={() => setIsFlashcardsOpen(true)}
+              onOpenScratchpad={() => setIsScratchpadOpen(true)}
+              onOpenCalculator={() =>
+                setCalculatorState({ isOpen: true, tab: 'lgs' })
+              }
+              onOpenPomodoro={() => setIsPomodoroOpen(true)}
+              onOpenChecklist={() => setIsChecklistOpen(true)}
+              onOpenGraph={() => setIsGraphOpen(true)}
+              onOpenProofs={() => setIsProofsOpen(true)}
+              onOpenCheatSheet={() => setIsCheatSheetOpen(true)}
+              onOpenGlossary={() => setIsGlossaryOpen(true)}
+              onOpenTopicWeights={() => setIsTopicWeightsOpen(true)}
+              onOpenWeeklyPlanner={() => setIsWeeklyPlannerOpen(true)}
+              onOpenSpeedDrill={() => setIsSpeedDrillOpen(true)}
+            />
+
+            {/* 3. Duyurular */}
+            <div className="defer-section">
+              <HomeAnnouncementsSection
+                announcements={announcements}
+                isLight={isLight}
+                onSelectAnnouncement={setSelectedAnnouncement}
+              />
+            </div>
+
+            {/* 4. LGS ve YKS Sayacı */}
+            <HomeExamCountdownSection
+              isLight={isLight}
+              onOpenCalculator={(tab) =>
+                setCalculatorState({ isOpen: true, tab })
+              }
+              userGrade={user?.grade}
+            />
+
+            {/* 5. Günün Sözü */}
+            <div className="defer-section">
+              <HomeDailyQuote isLight={isLight} />
+            </div>
+
+            {/* İstatistikler */}
+            <div className="defer-section">
+              <HomeStatsStrip isLight={isLight} stats={initialFeed?.stats} />
+            </div>
+
+            {!user && (
+              <div className="defer-section">
+                <HomeHowItWorksSection isLight={isLight} />
+              </div>
+            )}
+            {!user && (
+              <div className="defer-section">
+                <HomeGuestCtaSection isLight={isLight} />
+              </div>
+            )}
+
+            {/* 6. En altta Uğur Hoca'ya Yaz Bölümü */}
+            <div className="defer-section">
+              <HomeSupportSection isLight={isLight} user={user} />
+            </div>
+
+            {/* 7. Footer */}
+            <div className="defer-section">
+              <HomeFooter isLight={isLight} />
+            </div>
+          </>
+        ) : (
+          /* Geri Alınabilir Klasik Düzen */
+          <>
+            <HomeHeroSection
+              isLight={isLight}
+              user={user}
+              showQuickAccess={true}
+            />
+            <HomeDailyChallenge isLight={isLight} />
+            <HomeDailyGoalWidget isLight={isLight} />
+            <LgsTacticsCorner isLight={isLight} />
+            <HomeQuickToolsGrid
+              isLight={isLight}
+              onOpenFlashcards={() => setIsFlashcardsOpen(true)}
+              onOpenScratchpad={() => setIsScratchpadOpen(true)}
+              onOpenCalculator={() =>
+                setCalculatorState({ isOpen: true, tab: 'lgs' })
+              }
+              onOpenPomodoro={() => setIsPomodoroOpen(true)}
+              onOpenChecklist={() => setIsChecklistOpen(true)}
+              onOpenGraph={() => setIsGraphOpen(true)}
+              onOpenProofs={() => setIsProofsOpen(true)}
+              onOpenCheatSheet={() => setIsCheatSheetOpen(true)}
+              onOpenGlossary={() => setIsGlossaryOpen(true)}
+              onOpenTopicWeights={() => setIsTopicWeightsOpen(true)}
+              onOpenWeeklyPlanner={() => setIsWeeklyPlannerOpen(true)}
+              onOpenSpeedDrill={() => setIsSpeedDrillOpen(true)}
+            />
+            <div className="defer-section">
+              <HomeSuccessRoadmap
+                isLight={isLight}
+                onOpenFlashcards={() => setIsFlashcardsOpen(true)}
+              />
+            </div>
+            <div className="defer-section">
+              <HomeStatsStrip isLight={isLight} stats={initialFeed?.stats} />
+            </div>
+            <div className="defer-section">
+              <HomeAnnouncementsSection
+                announcements={announcements}
+                isLight={isLight}
+                onSelectAnnouncement={setSelectedAnnouncement}
+              />
+            </div>
+            <div className="defer-section">
+              <HomeDailyQuote isLight={isLight} />
+            </div>
+            <HomeExamCountdownSection
+              isLight={isLight}
+              onOpenCalculator={(tab) =>
+                setCalculatorState({ isOpen: true, tab })
+              }
+              userGrade={user?.grade}
+            />
+            <div className="defer-section">
+              <HomeAssignmentsSection
+                assignments={visibleAssignments}
+                isLight={isLight}
+                onDismissAll={handleDismissAllAssignments}
+                onDismissAssignment={handleDismissAssignment}
+              />
+            </div>
+            <HomeRecentDocumentsSection
+              documents={documents}
+              isLight={isLight}
+            />
+            {!user && (
+              <div className="defer-section">
+                <HomeHowItWorksSection isLight={isLight} />
+              </div>
+            )}
+            {!user && (
+              <div className="defer-section">
+                <HomeGuestCtaSection isLight={isLight} />
+              </div>
+            )}
+            <div className="defer-section">
+              <HomeSupportSection isLight={isLight} user={user} />
+            </div>
+            <div className="defer-section">
+              <HomeFooter isLight={isLight} />
+            </div>
+          </>
         )}
-        {!user && (
-          <div className="defer-section">
-            <HomeGuestCtaSection isLight={isLight} />
-          </div>
-        )}
-        <div className="defer-section">
-          <HomeSupportSection isLight={isLight} user={user} />
-        </div>
-        <div className="defer-section">
-          <HomeFooter isLight={isLight} />
+
+        {/* Canlı Görünüm Değiştirici Buton (Kullanıcıya tek tıkla eski ve yeni hali kıyaslama ve geri alma imkanı) */}
+        <div className="pb-8 pt-2 text-center">
+          <button
+            type="button"
+            onClick={() =>
+              setLayoutMode((prev) =>
+                prev === 'categorized' ? 'classic' : 'categorized',
+              )
+            }
+            className={`inline-flex items-center gap-2 rounded-full px-4 py-2 text-xs font-semibold transition-all ${
+              isLight
+                ? 'bg-slate-100 text-slate-600 hover:bg-slate-200 border border-slate-300/80 shadow-sm'
+                : 'bg-white/10 text-slate-300 hover:bg-white/15 border border-white/10'
+            }`}
+          >
+            <span>
+              {layoutMode === 'categorized'
+                ? '🔄 Klasik (Uzun) Görünüme Geç'
+                : '✨ Yeni Kategori Düzenine Geç'}
+            </span>
+          </button>
         </div>
       </div>
       {selectedAnnouncement ? (
@@ -329,7 +475,9 @@ export default function HomePage({ activeLiveLesson, initialFeed }: HomePageProp
         <ExamScoreCalculatorModal
           isOpen={calculatorState.isOpen}
           initialTab={calculatorState.tab}
-          onClose={() => setCalculatorState((prev) => ({ ...prev, isOpen: false }))}
+          onClose={() =>
+            setCalculatorState((prev) => ({ ...prev, isOpen: false }))
+          }
         />
       ) : null}
       {isPomodoroOpen ? (

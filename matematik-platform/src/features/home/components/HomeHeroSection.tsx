@@ -10,11 +10,18 @@ import type { AppUser } from '@/types';
 type HomeHeroSectionProps = {
   isLight: boolean;
   user?: AppUser | null;
+  showQuickAccess?: boolean;
 };
 
-export function HomeHeroSection({ isLight, user }: HomeHeroSectionProps) {
+export function HomeHeroSection({
+  isLight,
+  user,
+  showQuickAccess = true,
+}: HomeHeroSectionProps) {
   const firstName = user?.name?.split(' ')[0];
-  const greeting = firstName ? `Merhaba ${firstName}!` : 'Matematiğe hoş geldin!';
+  const greeting = firstName
+    ? `Merhaba ${firstName}!`
+    : 'Matematiğe hoş geldin!';
 
   return (
     <section className="relative px-4 pb-12 pt-6 sm:pt-10">
@@ -51,8 +58,13 @@ export function HomeHeroSection({ isLight, user }: HomeHeroSectionProps) {
                       : 'bg-amber-400/10 text-amber-300 border border-amber-400/20'
                   }`}
                 >
-                  <Sparkles className="h-3.5 w-3.5 shrink-0 text-amber-500 animate-pulse" aria-hidden="true" />
-                  <span className="truncate">🎉 2026-2027 Yeni Eğitim Öğretim Yılı</span>
+                  <Sparkles
+                    className="h-3.5 w-3.5 shrink-0 text-amber-500 animate-pulse"
+                    aria-hidden="true"
+                  />
+                  <span className="truncate">
+                    🎉 2026-2027 Yeni Eğitim Öğretim Yılı
+                  </span>
                 </div>
 
                 <div
@@ -84,8 +96,9 @@ export function HomeHeroSection({ isLight, user }: HomeHeroSectionProps) {
                   isLight ? 'text-slate-600' : 'text-slate-300'
                 }`}
               >
-                LGS ve YKS için müfredatla birebir ders notları, yaprak testler, formül kartları,
-                karalama tahtası ve canlı dersler seni bekliyor.
+                LGS ve YKS için müfredatla birebir ders notları, yaprak testler,
+                formül kartları, karalama tahtası ve canlı dersler seni
+                bekliyor.
               </p>
 
               <div className="flex flex-col sm:flex-row gap-2.5 sm:gap-3">
@@ -95,7 +108,10 @@ export function HomeHeroSection({ isLight, user }: HomeHeroSectionProps) {
                 >
                   <Zap className="h-4 w-4" aria-hidden="true" />
                   Çalışmaya başla
-                  <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" aria-hidden="true" />
+                  <ArrowRight
+                    className="h-4 w-4 transition-transform group-hover:translate-x-0.5"
+                    aria-hidden="true"
+                  />
                 </SafeLink>
                 <SafeLink
                   href="/oyunlar"
@@ -119,11 +135,19 @@ export function HomeHeroSection({ isLight, user }: HomeHeroSectionProps) {
                     { label: '5. Sınıf', href: '/icerikler?grade=5' },
                     { label: '6. Sınıf', href: '/icerikler?grade=6' },
                     { label: '7. Sınıf', href: '/icerikler?grade=7' },
-                    { label: '8. Sınıf (LGS)', href: '/icerikler?grade=8', highlight: true },
+                    {
+                      label: '8. Sınıf (LGS)',
+                      href: '/icerikler?grade=8',
+                      highlight: true,
+                    },
                     { label: '9. Sınıf', href: '/icerikler?grade=9' },
                     { label: '10. Sınıf', href: '/icerikler?grade=10' },
                     { label: '11. Sınıf', href: '/icerikler?grade=11' },
-                    { label: '12. Sınıf (YKS)', href: '/icerikler?grade=12', highlight: true },
+                    {
+                      label: '12. Sınıf (YKS)',
+                      href: '/icerikler?grade=12',
+                      highlight: true,
+                    },
                     { label: 'Mezun', href: '/icerikler?grade=Mezun' },
                   ].map((item) => (
                     <SafeLink
@@ -133,8 +157,8 @@ export function HomeHeroSection({ isLight, user }: HomeHeroSectionProps) {
                         item.highlight
                           ? 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-sm hover:scale-105'
                           : isLight
-                          ? 'bg-slate-100 text-slate-700 hover:bg-slate-200/80 border border-slate-200/80'
-                          : 'bg-white/5 text-slate-300 hover:bg-white/10 hover:text-white border border-white/10'
+                            ? 'bg-slate-100 text-slate-700 hover:bg-slate-200/80 border border-slate-200/80'
+                            : 'bg-white/5 text-slate-300 hover:bg-white/10 hover:text-white border border-white/10'
                       }`}
                     >
                       {item.label}
@@ -158,62 +182,66 @@ export function HomeHeroSection({ isLight, user }: HomeHeroSectionProps) {
                 pose={user ? 'celebrate' : 'waving'}
                 size={220}
                 className="relative animate-float-y"
-                ariaLabel={user ? 'Seni tebrik eden maskot Pi' : 'Selamlayan maskot Pi'}
+                ariaLabel={
+                  user ? 'Seni tebrik eden maskot Pi' : 'Selamlayan maskot Pi'
+                }
               />
             </motion.div>
           </div>
         </div>
 
-        <div className="mt-10">
-          <h2
-            className={`mb-4 flex items-center gap-2 font-display text-xl font-bold ${
-              isLight ? 'text-slate-900' : 'text-white'
-            }`}
-          >
-            <span className="inline-flex h-7 w-7 items-center justify-center rounded-lg bg-brand-primary/15 text-brand-primary">
-              ⚡
-            </span>
-            Hızlı erişim
-          </h2>
-          <div className="grid grid-cols-2 gap-2.5 sm:gap-4 sm:grid-cols-3 lg:grid-cols-4">
-            {HOME_CATEGORIES.map((category, index) => (
-              <motion.div
-                key={category.id}
-                initial={{ opacity: 0, y: 12 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.35, delay: index * 0.04 }}
-              >
-                <SafeLink
-                  href={category.href}
-                  aria-label={`${category.title} kategorisi`}
-                  className={`group relative block overflow-hidden rounded-2xl sm:rounded-3xl border p-3.5 sm:p-5 text-center transition-all duration-300 hover:-translate-y-1 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 ${
-                    isLight
-                      ? 'border-slate-200/90 bg-white/90 shadow-bento hover:shadow-bento-hover hover:border-indigo-200'
-                      : `${category.bgColor} ${category.borderColor} hover:border-white/20 hover:shadow-2xl`
-                  }`}
+        {showQuickAccess && (
+          <div className="mt-10">
+            <h2
+              className={`mb-4 flex items-center gap-2 font-display text-xl font-bold ${
+                isLight ? 'text-slate-900' : 'text-white'
+              }`}
+            >
+              <span className="inline-flex h-7 w-7 items-center justify-center rounded-lg bg-brand-primary/15 text-brand-primary">
+                ⚡
+              </span>
+              Hızlı erişim
+            </h2>
+            <div className="grid grid-cols-2 gap-2.5 sm:gap-4 sm:grid-cols-3 lg:grid-cols-4">
+              {HOME_CATEGORIES.map((category, index) => (
+                <motion.div
+                  key={category.id}
+                  initial={{ opacity: 0, y: 12 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.35, delay: index * 0.04 }}
                 >
-                  <div
-                    aria-hidden="true"
-                    className={`mx-auto mb-2.5 sm:mb-3 flex h-11 w-11 sm:h-14 sm:w-14 items-center justify-center rounded-xl sm:rounded-2xl bg-gradient-to-br ${category.color} shadow-md transition-transform duration-300 group-hover:scale-110`}
-                  >
-                    <category.icon className="h-5 w-5 sm:h-7 sm:w-7 text-white" />
-                  </div>
-                  <h3
-                    className={`font-display text-xs font-bold sm:text-base truncate ${
-                      isLight ? 'text-slate-900' : 'text-white'
+                  <SafeLink
+                    href={category.href}
+                    aria-label={`${category.title} kategorisi`}
+                    className={`group relative block overflow-hidden rounded-2xl sm:rounded-3xl border p-3.5 sm:p-5 text-center transition-all duration-300 hover:-translate-y-1 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 ${
+                      isLight
+                        ? 'border-slate-200/90 bg-white/90 shadow-bento hover:shadow-bento-hover hover:border-indigo-200'
+                        : `${category.bgColor} ${category.borderColor} hover:border-white/20 hover:shadow-2xl`
                     }`}
                   >
-                    {category.title}
-                  </h3>
-                  <span
-                    aria-hidden="true"
-                    className="pointer-events-none absolute inset-x-0 -bottom-px h-1 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
-                  />
-                </SafeLink>
-              </motion.div>
-            ))}
+                    <div
+                      aria-hidden="true"
+                      className={`mx-auto mb-2.5 sm:mb-3 flex h-11 w-11 sm:h-14 sm:w-14 items-center justify-center rounded-xl sm:rounded-2xl bg-gradient-to-br ${category.color} shadow-md transition-transform duration-300 group-hover:scale-110`}
+                    >
+                      <category.icon className="h-5 w-5 sm:h-7 sm:w-7 text-white" />
+                    </div>
+                    <h3
+                      className={`font-display text-xs font-bold sm:text-base truncate ${
+                        isLight ? 'text-slate-900' : 'text-white'
+                      }`}
+                    >
+                      {category.title}
+                    </h3>
+                    <span
+                      aria-hidden="true"
+                      className="pointer-events-none absolute inset-x-0 -bottom-px h-1 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+                    />
+                  </SafeLink>
+                </motion.div>
+              ))}
+            </div>
           </div>
-        </div>
+        )}
       </div>
     </section>
   );
