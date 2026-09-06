@@ -119,6 +119,12 @@ Platformda öğrenci gizliliği en üst düzeyde korunur:
 - **Scrollbar İyileştirmesi:** Global kaydırma çubukları 5px'lik zarif, yarı saydam ve yuvarlatılmış modern hap (pill) tasarımına geçirildi; Hızlı Not ve Sembol yatay çubuklarındaki dikkat dağıtıcı kalın çubuklar gizlendi.
 - **Yatay Kayma & Taşma Önleme:** Mesaj akış alanına `overflow-x-hidden` ve baloncuklara `break-words [overflow-wrap:anywhere]` uygulanarak dikey kaydırma esnasında oluşabilecek yatay drift (kayma) ve formül taşmaları tamamen önlendi.
 
+### v1.3.0 - Sekme Geçişleri ve Arayüz Performans Optimizasyonu
+- **Mobil Alt Menü Rota Prefetch & Anlık Tepki:** Mobil menüdeki 5 ana sekme (`/`, `/testler`, `/odak-pomodoro`, `/oyunlar`, `/profil`) boşta iken arka planda prefetch edilerek ağ gecikmesi sıfırlandı; dokunulduğu an parlayan optimistik aktif sekme göstergesi ve donanım hızlandırmalı CSS geçişleri eklendi.
+- **Yönetici Paneli Keep-Alive (0ms Sekme Geçişi):** `AdminTabPanels` bileşenindeki `<AnimatePresence mode="wait">` animasyon blokajı kaldırıldı; açılan sekmeleri DOM'da canlı tutan ve anında CSS ile gösterip gizleyen mimariyle yüzlerce öğrenci ve karmaşık matris hesaplarının her sekme tıklamasında sıfırdan hesaplanması önlendi.
+- **Profil Sayfası Sekme Hızlandırması:** Recharts SVG grafikleri, 365 günlük SVG ısı haritası ve dashboard kartlarının her sekme geçişinde unmount/remount edilmesini engelleyen keep-alive yapısı kuruldu.
+- **İstatistik Önbelleği:** `AdminStatistics` için 60 saniyelik bellek içi önbellek oluşturularak sekme geçişlerinde mükerrer veritabanı sorguları engellendi.
+
 ### v1.2.0 - Platform Denetimi, SEO, Favicon & Erişilebilirlik Optimizasyonu
 - **Favicon & Çoklu Boyut Desteği:** 16x16, 32x32 ve 48x48 piksellik standart `favicon.ico` üretildi, Next.js root layout metadata'sına eksiksiz `icons` tanımları işlendi.
 - **Sosyal Önizleme (OG & Twitter):** Kök layout için Open Graph ve Twitter Cards görsel önizleme etiketleri eksiksiz hale getirildi.

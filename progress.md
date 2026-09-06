@@ -622,5 +622,34 @@ _Son güncelleme: 11 Nisan 2026 — Yönetici hesabı yetkilendirmesi, politika 
 - **Testler:** `167` test dosyası, `614` birim testi başarıyla geçti.
 - **Build:** `npm run build` ile 63 üretim rotası Turbopack ile başarıyla üretildi.
 
-_Son güncelleme: 6 Eylül 2026 — Web sitesi genel denetimi, SEO, Favicon, A11y ve robots/sitemap optimizasyonları tamamlandı._
+---
+
+## 25. Sekme Geçişleri ve Arayüz Performans Optimizasyonu (6 Eylül 2026)
+
+### 25.1 Tespit Edilen Darboğazlar ve Kök Nedenler
+- **Mobil Alt Menü Rota Gecikmesi:** `MobileBottomNav` bileşeninde 5 ana sekme (`/`, `/testler`, `/odak-pomodoro`, `/oyunlar`, `/profil`) için prefetch devre dışı bırakılmıştı ve tıklandığında anlık görsel geri bildirim verilmiyordu; bu durum mobil cihazlarda rotanın yüklenmesi esnasında 500–1500ms'lik donma ve hantallık hissi yaratıyordu.
+- **Yönetici Paneli Unmount & Animasyon Blokajı:** `AdminTabPanels` bileşeni `<AnimatePresence mode="wait">` ile her sekme geçişinde önceki sekmeyi tamamen DOM'dan siliyor ve yeni sekmenin mount edilmesini geciktiriyordu. `AdminTrackingTab`, `AdminClassroomTab` gibi yüzlerce öğrenci ve karmaşık matris hesaplayan sekmeler her tıklamada sıfırdan hesaplanıyordu.
+- **Profil Sayfası Ağır Bileşen Remount Döngüsü:** `ProfilePage` üzerinde `Genel Bakış`, `Notlar` ve `Ayarlar` sekmeleri arasında geçiş yapıldığında Recharts SVG grafiği, 365 günlük SVG aktivite ısı haritası ve 13 dashboard kartı unmount edilip 250ms animasyon gecikmesiyle yeniden yükleniyordu.
+- **Tekrarlayan İstatistik Sorguları:** `AdminStatistics` bileşeni her açıldığında 4 Supabase tablosuna baştan sorgu atıp yükleme çarkı gösteriyordu.
+
+### 25.2 Uygulanan Çözümler
+1. **Mobil Alt Navigasyon Hızlandırması (`MobileBottomNav.tsx`):**
+   - 5 birincil rotanın tamamı `requestIdleCallback` (fallback `setTimeout`) ile tarayıcı boşta iken arka planda `router.prefetch()` ile Next.js Router Cache'ine alındı.
+   - Parmak dokunuşunda (`onPointerDown`) ek prefetch tetikleyici ve anlık optimistik aktiflik göstergesi (`pendingHref`) eklenerek dokunma anında 0ms görsel tepki sağlandı.
+   - Ağır `transition-all duration-300` ve repainting yükü, donanım hızlandırmalı hedefli CSS özellikleri (`transition-colors`, `transition-transform`) ile değiştirildi.
+2. **Yönetici Paneli Keep-Alive Mimarisi (`AdminTabPanels.tsx`):**
+   - `<AnimatePresence mode="wait">` blokajı kaldırıldı.
+   - Ziyaret edilen sekmeleri bellekte ve DOM'da canlı tutan `visitedTabs` mekanizmasına geçildi; sekmeler CSS `hidden` / `block` ile 0 milisaniyede ve sıfır yeniden hesaplama maliyetiyle anında açılır hale getirildi.
+3. **Profil Sayfası Sekme Optimizasyonu (`ProfilePage.tsx`):**
+   - `overview`, `notes` ve `settings` sekmeleri için `visitedTabs` keep-alive mimarisi uygulandı; Recharts SVG ve ısı haritası grafikleri DOM'da korunarak sekme geçişleri anlık hale getirildi.
+4. **İstatistik Önbelleği (`AdminStatistics.tsx`):**
+   - İstatistikler zaman aralığı bazında 60 saniyelik bellek içi önbellek (`statsCache`) ile donatıldı; sekme değişimlerinde mükerrer ağ istekleri engellendi.
+
+### 25.3 Doğrulama & Kalite Kapıları
+- **Lint:** `npm run lint` (0 hata, 0 uyarı).
+- **Typecheck:** `npm run typecheck` (0 hata).
+- **Birim Testleri:** `167` test dosyası, `614` birim testi başarıyla geçti.
+- **Üretim Derlemesi:** `npm run build` ile 65 rota Turbopack ile başarıyla üretildi.
+
+_Son güncelleme: 6 Eylül 2026 — Sekme geçişleri, mobil alt menü prefetch, keep-alive sekmeli paneller ve istatistik önbelleği optimizasyonları tamamlandı._
 

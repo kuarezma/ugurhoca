@@ -324,7 +324,8 @@ Bu dosya, projenin tamamlanmış ve devam eden görevlerini özetler.
 - [x] SEO & Favicon: Çok boyutlu `favicon.ico` (16/32/48) üretildi, `layout.tsx` metadata etiketlerine `icons`, Open Graph ve Twitter kart görselleri eklendi
 - [x] Rota Güvenliği & Harita: `/sifremi-unuttum` ve `/sifre-sifirla` arama motoru dizinlemesinden çıkarıldı (`noIndex`, `robots.ts`), `/cikis-bileti` canonical metadata ile `sitemap.xml`'e entegre edildi
 - [x] Erişilebilirlik (A11y): `SupportChatPanel` arama kutusunda `autoFocus` uyarısı giderildi, kontrollü `ref` odaklama mimarisine geçildi
+- [x] **Sekme Geçişleri Performans Optimizasyonu:** `MobileBottomNav` 5 ana sekmesine arka plan prefetch ve anlık optimistik aktiflik göstergesi getirildi; `AdminTabPanels` ve `ProfilePage` üzerinde `<AnimatePresence mode="wait">` blokajı kaldırılarak visited-tabs keep-alive ve CSS `hidden` toggle yapısına geçildi; `AdminStatistics` için 60s bellek önbelleği eklendi (0ms sekme geçişi).
 
 ---
 
-_Son güncelleme: 6 Eylül 2026 — Web sitesi genel denetimi, SEO/Favicon/A11y düzeltmeleri, sitemap & robots güncellemeleri ve lint sıfırlaması tamamlandı._
+_Son güncelleme: 6 Eylül 2026 — Sekme geçişleri performans optimizasyonu, mobil alt menü prefetch, keep-alive sekmeli paneller tamamlandı._

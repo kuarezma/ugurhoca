@@ -135,6 +135,18 @@ export default function ProfilePage({ initialData }: ProfilePageProps) {
     useState<DashboardNotification | null>(null);
   const [isAvatarModalOpen, setIsAvatarModalOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<ProfileTab>('overview');
+  const [visitedTabs, setVisitedTabs] = useState<Set<ProfileTab>>(
+    () => new Set<ProfileTab>([activeTab]),
+  );
+
+  useEffect(() => {
+    setVisitedTabs((prev) => {
+      if (prev.has(activeTab)) return prev;
+      const next = new Set(prev);
+      next.add(activeTab);
+      return next;
+    });
+  }, [activeTab]);
   const router = useRouter();
   const { theme } = useTheme();
   const isLightNav = theme === 'light';
@@ -762,139 +774,131 @@ export default function ProfilePage({ initialData }: ProfilePageProps) {
                 </button>
               </div>
 
-              {activeTab === 'overview' && (
-                <motion.div
-                  key="overview"
-                  id="profile-panel-overview"
-                  role="tabpanel"
-                  aria-labelledby="profile-tab-overview"
-                  initial={{ opacity: 0, y: 8 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.25 }}
-                  className="space-y-8"
-                >
-                  <div className="mx-auto w-full max-w-full">
-                    <QuickActionGrid items={quickActionItems} />
-                  </div>
-
-                  {pendingMistakesCount > 0 && (
-                    <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 rounded-3xl border border-amber-500/30 bg-gradient-to-r from-amber-500/10 via-orange-500/5 to-rose-500/10 p-5 shadow-xl backdrop-blur-xl">
-                      <div className="flex items-center gap-3.5">
-                        <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-amber-500 to-rose-600 text-white shadow-lg shadow-amber-500/20">
-                          <BookOpen className="h-5 w-5" />
-                        </div>
-                        <div>
-                          <h3 className="text-sm sm:text-base font-bold text-white">
-                            Akıllı Hata Defteri: {pendingMistakesCount} Soru Pekiştirilmeyi Bekliyor
-                          </h3>
-                          <p className="text-xs text-slate-400">
-                            Geçmiş testlerde yanlış yaptığın soruları telafi ederek eksik kazanımlarını kapat.
-                          </p>
-                        </div>
-                      </div>
-                      <Link
-                        href="/testler?mode=mistakes"
-                        className="shrink-0 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 px-4 py-2.5 text-xs sm:text-sm font-bold text-slate-950 transition-all hover:brightness-110 active:scale-95 shadow-md shadow-amber-500/20"
-                      >
-                        Hataları Tekrar Çöz ➔
-                      </Link>
+              <div
+                id="profile-panel-overview"
+                role="tabpanel"
+                aria-labelledby="profile-tab-overview"
+                className={activeTab === 'overview' ? 'space-y-8 block' : 'hidden'}
+              >
+                {visitedTabs.has('overview') && (
+                  <>
+                    <div className="mx-auto w-full max-w-full">
+                      <QuickActionGrid items={quickActionItems} />
                     </div>
-                  )}
 
-                  <StudyPrescriptionCard
-                    isLight={false}
-                    onStartQuiz={(_questions, topic) => {
-                      router.push(
-                        `/testler?mode=prescription&topic=${encodeURIComponent(topic)}`,
-                      );
-                    }}
-                  />
+                    {pendingMistakesCount > 0 && (
+                      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 rounded-3xl border border-amber-500/30 bg-gradient-to-r from-amber-500/10 via-orange-500/5 to-rose-500/10 p-5 shadow-xl backdrop-blur-xl">
+                        <div className="flex items-center gap-3.5">
+                          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-amber-500 to-rose-600 text-white shadow-lg shadow-amber-500/20">
+                            <BookOpen className="h-5 w-5" />
+                          </div>
+                          <div>
+                            <h3 className="text-sm sm:text-base font-bold text-white">
+                              Akıllı Hata Defteri: {pendingMistakesCount} Soru Pekiştirilmeyi Bekliyor
+                            </h3>
+                            <p className="text-xs text-slate-400">
+                              Geçmiş testlerde yanlış yaptığın soruları telafi ederek eksik kazanımlarını kapat.
+                            </p>
+                          </div>
+                        </div>
+                        <Link
+                          href="/testler?mode=mistakes"
+                          className="shrink-0 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 px-4 py-2.5 text-xs sm:text-sm font-bold text-slate-950 transition-all hover:brightness-110 active:scale-95 shadow-md shadow-amber-500/20"
+                        >
+                          Hataları Tekrar Çöz ➔
+                        </Link>
+                      </div>
+                    )}
 
-                  <WeeklyPlanCard
-                    plan={activeWeeklyPlan}
-                    onToggleItem={handleWeeklyPlanItemToggle}
-                  />
-
-                  <div className="mx-auto w-full max-w-full space-y-6">
-                    <StudyActivityHeatmap isLight={false} />
-                    <ExamTrendChart isLight={false} />
-                    <TargetSchoolGapCard isLight={false} />
-                    <ExamCountdownCard userGrade={user?.grade} isLight={false} />
-                  </div>
-
-                  <div className="grid gap-6 xl:grid-cols-[0.95fr_1.05fr]">
-                    <TodayPlanCard
-                      tasks={tasks}
-                      onSelectTask={(task) =>
-                        handleDashboardAction(task.action)
-                      }
-                    />
-                    <ProgressOverview
-                      detailHref="/ilerleme"
-                      focusTopic={focusTopic}
-                      goalSnapshot={goalSnapshot}
-                      latestScore={latestQuizScore}
-                      strongTopic={strongTopic}
-                    />
-                  </div>
-
-                  <div className="grid gap-6 lg:grid-cols-2">
-                    <MotivationPanel
-                      badges={recentBadges}
-                      latestScore={latestQuizScore}
-                      message={motivationMessage}
-                      streak={user.current_streak || 0}
-                    />
-                    <MessageSummaryCard
-                      notifications={notifications}
-                      onMarkAllAsRead={markAllAsRead}
-                      onOpenNotification={(notification) => {
-                        void handleNotificationClick(notification);
+                    <StudyPrescriptionCard
+                      isLight={false}
+                      onStartQuiz={(_questions, topic) => {
+                        router.push(
+                          `/testler?mode=prescription&topic=${encodeURIComponent(topic)}`,
+                        );
                       }}
-                      onOpenPanel={() => setShowNotifications(true)}
-                      unreadCount={unreadCount}
                     />
-                  </div>
 
-                  <QuickUpdatesPanel
-                    updates={updates}
-                    onSelectUpdate={handleUpdateSelect}
-                  />
+                    <WeeklyPlanCard
+                      plan={activeWeeklyPlan}
+                      onToggleItem={handleWeeklyPlanItemToggle}
+                    />
 
-                  <div className="grid gap-6 lg:grid-cols-2">
-                    <RecentResults results={quizResults} />
-                    <RecentDocuments documents={sharedDocs} />
-                  </div>
-                </motion.div>
-              )}
+                    <div className="mx-auto w-full max-w-full space-y-6">
+                      <StudyActivityHeatmap isLight={false} />
+                      <ExamTrendChart isLight={false} />
+                      <TargetSchoolGapCard isLight={false} />
+                      <ExamCountdownCard userGrade={user?.grade} isLight={false} />
+                    </div>
 
-              {activeTab === 'notes' && (
-                <motion.div
-                  key="notes"
-                  id="profile-panel-notes"
-                  role="tabpanel"
-                  aria-labelledby="profile-tab-notes"
-                  initial={{ opacity: 0, y: 8 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.25 }}
-                >
+                    <div className="grid gap-6 xl:grid-cols-[0.95fr_1.05fr]">
+                      <TodayPlanCard
+                        tasks={tasks}
+                        onSelectTask={(task) =>
+                          handleDashboardAction(task.action)
+                        }
+                      />
+                      <ProgressOverview
+                        detailHref="/ilerleme"
+                        focusTopic={focusTopic}
+                        goalSnapshot={goalSnapshot}
+                        latestScore={latestQuizScore}
+                        strongTopic={strongTopic}
+                      />
+                    </div>
+
+                    <div className="grid gap-6 lg:grid-cols-2">
+                      <MotivationPanel
+                        badges={recentBadges}
+                        latestScore={latestQuizScore}
+                        message={motivationMessage}
+                        streak={user.current_streak || 0}
+                      />
+                      <MessageSummaryCard
+                        notifications={notifications}
+                        onMarkAllAsRead={markAllAsRead}
+                        onOpenNotification={(notification) => {
+                          void handleNotificationClick(notification);
+                        }}
+                        onOpenPanel={() => setShowNotifications(true)}
+                        unreadCount={unreadCount}
+                      />
+                    </div>
+
+                    <QuickUpdatesPanel
+                      updates={updates}
+                      onSelectUpdate={handleUpdateSelect}
+                    />
+
+                    <div className="grid gap-6 lg:grid-cols-2">
+                      <RecentResults results={quizResults} />
+                      <RecentDocuments documents={sharedDocs} />
+                    </div>
+                  </>
+                )}
+              </div>
+
+              <div
+                id="profile-panel-notes"
+                role="tabpanel"
+                aria-labelledby="profile-tab-notes"
+                className={activeTab === 'notes' ? 'block' : 'hidden'}
+              >
+                {visitedTabs.has('notes') && (
                   <NotesSection userId={user.id} />
-                </motion.div>
-              )}
+                )}
+              </div>
 
-              {activeTab === 'settings' && (
-                <motion.div
-                  key="settings"
-                  id="profile-panel-settings"
-                  role="tabpanel"
-                  aria-labelledby="profile-tab-settings"
-                  initial={{ opacity: 0, y: 8 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.25 }}
-                >
+              <div
+                id="profile-panel-settings"
+                role="tabpanel"
+                aria-labelledby="profile-tab-settings"
+                className={activeTab === 'settings' ? 'block' : 'hidden'}
+              >
+                {visitedTabs.has('settings') && (
                   <DashboardSettings />
-                </motion.div>
-              )}
+                )}
+              </div>
 
               <AvatarSelectionModal
                 isOpen={isAvatarModalOpen}

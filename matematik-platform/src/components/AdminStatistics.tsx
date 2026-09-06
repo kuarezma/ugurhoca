@@ -28,12 +28,22 @@ interface SiteStats {
   mostActiveDay: string;
 }
 
+const statsCache = new Map<string, { data: SiteStats; timestamp: number }>();
+const CACHE_TTL_MS = 60 * 1000;
+
 export default function AdminStatistics() {
   const [stats, setStats] = useState<SiteStats | null>(null);
   const [loading, setLoading] = useState(true);
   const [timeRange, setTimeRange] = useState<'week' | 'month' | 'all'>('all');
 
   const loadStats = useCallback(async () => {
+    const cached = statsCache.get(timeRange);
+    if (cached && Date.now() - cached.timestamp < CACHE_TTL_MS) {
+      setStats(cached.data);
+      setLoading(false);
+      return;
+    }
+
     setLoading(true);
 
     const now = new Date();
@@ -85,7 +95,7 @@ export default function AdminStatistics() {
         ).length
       : nonAdminUsers.length;
 
-    setStats({
+    const nextStats: SiteStats = {
       totalUsers: nonAdminUsers.length,
       totalDocuments: documents.length,
       totalNotes: notesRes.count || 0,
@@ -95,8 +105,10 @@ export default function AdminStatistics() {
       usersByGrade,
       recentSignups,
       mostActiveDay: '-',
-    });
+    };
 
+    statsCache.set(timeRange, { data: nextStats, timestamp: Date.now() });
+    setStats(nextStats);
     setLoading(false);
   }, [timeRange]);
 

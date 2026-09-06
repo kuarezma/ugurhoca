@@ -1,6 +1,6 @@
 "use client";
 
-import { AnimatePresence, motion } from "framer-motion";
+import { useEffect, useState } from "react";
 import AdminStatistics from "@/components/AdminStatistics";
 import AdminAnnouncementsTab from "@/features/admin/components/tabs/AdminAnnouncementsTab";
 import AdminAnnualPlanTab from "@/features/admin/components/tabs/AdminAnnualPlanTab";
@@ -187,152 +187,240 @@ export default function AdminTabPanels({
   worksheetSourceStatus,
   worksheetCandidates,
 }: AdminTabPanelsProps) {
+  const [visitedTabs, setVisitedTabs] = useState<Set<AdminActiveTab>>(
+    () => new Set<AdminActiveTab>([activeTab]),
+  );
+
+  useEffect(() => {
+    setVisitedTabs((prev) => {
+      if (prev.has(activeTab)) return prev;
+      const next = new Set(prev);
+      next.add(activeTab);
+      return next;
+    });
+  }, [activeTab]);
+
   return (
-    <AnimatePresence mode="wait">
-      {activeTab === "statistics" && (
-        <motion.div
-          key="statistics"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -20 }}
-        >
-          <AdminStatistics />
-        </motion.div>
-      )}
+    <div className="w-full">
+      <div
+        id="admin-tabpanel-statistics"
+        role="tabpanel"
+        aria-labelledby="admin-tab-statistics"
+        className={activeTab === "statistics" ? "block" : "hidden"}
+      >
+        {visitedTabs.has("statistics") && <AdminStatistics />}
+      </div>
 
-      {activeTab === "tracking" && (
-        <AdminTrackingTab
-          activityEvents={activityEvents}
-          adminStatuses={adminStatuses}
-          assignments={assignments}
-          documents={documents}
-          notifications={notifications}
-          onCreateWeeklyPlan={onCreateWeeklyPlan}
-          onSendMessage={onSendAdminMessage}
-          onUpdateStatus={onUpdateStudentStatus}
-          onViewProfile={onViewStudentProfile}
-          quizResults={dashboardQuizResults}
-          studyGoals={dashboardStudyGoals}
-          studySessions={dashboardStudySessions}
-          students={studentUsers}
-          submissions={dashboardSubmissions}
-          weeklyPlans={weeklyPlans}
-        />
-      )}
+      <div
+        id="admin-tabpanel-tracking"
+        role="tabpanel"
+        aria-labelledby="admin-tab-tracking"
+        className={activeTab === "tracking" ? "block" : "hidden"}
+      >
+        {visitedTabs.has("tracking") && (
+          <AdminTrackingTab
+            activityEvents={activityEvents}
+            adminStatuses={adminStatuses}
+            assignments={assignments}
+            documents={documents}
+            notifications={notifications}
+            onCreateWeeklyPlan={onCreateWeeklyPlan}
+            onSendMessage={onSendAdminMessage}
+            onUpdateStatus={onUpdateStudentStatus}
+            onViewProfile={onViewStudentProfile}
+            quizResults={dashboardQuizResults}
+            studyGoals={dashboardStudyGoals}
+            studySessions={dashboardStudySessions}
+            students={studentUsers}
+            submissions={dashboardSubmissions}
+            weeklyPlans={weeklyPlans}
+          />
+        )}
+      </div>
 
-      {activeTab === "classroom" && (
-        <AdminClassroomTab
-          students={studentUsers}
-          assignments={assignments}
-          quizResults={dashboardQuizResults}
-          submissions={dashboardSubmissions}
-          studySessions={dashboardStudySessions}
-          onSendMessage={onSendAdminMessage}
-          onViewProfile={onViewStudentProfile}
-          onQuickResetPassword={onEditUser}
-        />
-      )}
+      <div
+        id="admin-tabpanel-classroom"
+        role="tabpanel"
+        aria-labelledby="admin-tab-classroom"
+        className={activeTab === "classroom" ? "block" : "hidden"}
+      >
+        {visitedTabs.has("classroom") && (
+          <AdminClassroomTab
+            students={studentUsers}
+            assignments={assignments}
+            quizResults={dashboardQuizResults}
+            submissions={dashboardSubmissions}
+            studySessions={dashboardStudySessions}
+            onSendMessage={onSendAdminMessage}
+            onViewProfile={onViewStudentProfile}
+            onQuickResetPassword={onEditUser}
+          />
+        )}
+      </div>
 
-      {activeTab === "announcements" && (
-        <AdminAnnouncementsTab
-          announcements={announcements}
-          formatDate={formatDate}
-          onCreate={onCreateAnnouncement}
-          onDelete={onDeleteAnnouncement}
-          onEdit={onEditAnnouncement}
-        />
-      )}
+      <div
+        id="admin-tabpanel-announcements"
+        role="tabpanel"
+        aria-labelledby="admin-tab-announcements"
+        className={activeTab === "announcements" ? "block" : "hidden"}
+      >
+        {visitedTabs.has("announcements") && (
+          <AdminAnnouncementsTab
+            announcements={announcements}
+            formatDate={formatDate}
+            onCreate={onCreateAnnouncement}
+            onDelete={onDeleteAnnouncement}
+            onEdit={onEditAnnouncement}
+          />
+        )}
+      </div>
 
-      {activeTab === "documents" && (
-        <AdminDocumentsTab
-          documents={documents}
-          formatDate={formatDate}
-          onDelete={onDeleteDocument}
-          onEdit={onEditDocument}
-          onMigrateWorksheets={onMigrateWorksheets}
-          onRefreshCategories={onRefreshDocumentCategories}
-        />
-      )}
+      <div
+        id="admin-tabpanel-documents"
+        role="tabpanel"
+        aria-labelledby="admin-tab-documents"
+        className={activeTab === "documents" ? "block" : "hidden"}
+      >
+        {visitedTabs.has("documents") && (
+          <AdminDocumentsTab
+            documents={documents}
+            formatDate={formatDate}
+            onDelete={onDeleteDocument}
+            onEdit={onEditDocument}
+            onMigrateWorksheets={onMigrateWorksheets}
+            onRefreshCategories={onRefreshDocumentCategories}
+          />
+        )}
+      </div>
 
-      {activeTab === "annualPlan" && (
-        <AdminAnnualPlanTab
-          items={annualPlanItems}
-          onDiscoverCandidates={onDiscoverWorksheetCandidates}
-          onImport={onImportAnnualPlan}
-          sourceStatus={worksheetSourceStatus}
-        />
-      )}
+      <div
+        id="admin-tabpanel-annualPlan"
+        role="tabpanel"
+        aria-labelledby="admin-tab-annualPlan"
+        className={activeTab === "annualPlan" ? "block" : "hidden"}
+      >
+        {visitedTabs.has("annualPlan") && (
+          <AdminAnnualPlanTab
+            items={annualPlanItems}
+            onDiscoverCandidates={onDiscoverWorksheetCandidates}
+            onImport={onImportAnnualPlan}
+            sourceStatus={worksheetSourceStatus}
+          />
+        )}
+      </div>
 
-      {activeTab === "worksheetCandidates" && (
-        <AdminWorksheetCandidatesTab
-          candidates={worksheetCandidates}
-          driveConnection={googleDriveConnection}
-          sourceStatus={worksheetSourceStatus}
-          isDriveBusy={isGoogleDriveBusy}
-          isWeekScanRunning={isWeekScanRunning}
-          lastWeekScanResult={lastWeekScanResult}
-          onApprove={onApproveWorksheetCandidate}
-          onConnectDrive={onConnectGoogleDrive}
-          onDisconnectDrive={onDisconnectGoogleDrive}
-          onRefreshSourceStatus={onRefreshWorksheetSourceStatus}
-          onScanCurrentWeek={onScanCurrentWeekCandidates}
-          onUpdateStatus={onUpdateWorksheetCandidateStatus}
-        />
-      )}
+      <div
+        id="admin-tabpanel-worksheetCandidates"
+        role="tabpanel"
+        aria-labelledby="admin-tab-worksheetCandidates"
+        className={activeTab === "worksheetCandidates" ? "block" : "hidden"}
+      >
+        {visitedTabs.has("worksheetCandidates") && (
+          <AdminWorksheetCandidatesTab
+            candidates={worksheetCandidates}
+            driveConnection={googleDriveConnection}
+            sourceStatus={worksheetSourceStatus}
+            isDriveBusy={isGoogleDriveBusy}
+            isWeekScanRunning={isWeekScanRunning}
+            lastWeekScanResult={lastWeekScanResult}
+            onApprove={onApproveWorksheetCandidate}
+            onConnectDrive={onConnectGoogleDrive}
+            onDisconnectDrive={onDisconnectGoogleDrive}
+            onRefreshSourceStatus={onRefreshWorksheetSourceStatus}
+            onScanCurrentWeek={onScanCurrentWeekCandidates}
+            onUpdateStatus={onUpdateWorksheetCandidateStatus}
+          />
+        )}
+      </div>
 
-      {activeTab === "users" && (
-        <AdminUsersTab
-          formatDate={formatDate}
-          onDownloadPdf={onDownloadStudentsPdf}
-          onEditUser={onEditUser}
-          onRefresh={onRefreshUsers}
-          onSendMessage={onSendAdminMessage}
-          onToggleFavorite={onToggleFavoriteStudent}
-          onViewProfile={onViewStudentProfile}
-          pdfStudentsLoading={pdfStudentsLoading}
-          students={studentUsers}
-        />
-      )}
+      <div
+        id="admin-tabpanel-users"
+        role="tabpanel"
+        aria-labelledby="admin-tab-users"
+        className={activeTab === "users" ? "block" : "hidden"}
+      >
+        {visitedTabs.has("users") && (
+          <AdminUsersTab
+            formatDate={formatDate}
+            onDownloadPdf={onDownloadStudentsPdf}
+            onEditUser={onEditUser}
+            onRefresh={onRefreshUsers}
+            onSendMessage={onSendAdminMessage}
+            onToggleFavorite={onToggleFavoriteStudent}
+            onViewProfile={onViewStudentProfile}
+            pdfStudentsLoading={pdfStudentsLoading}
+            students={studentUsers}
+          />
+        )}
+      </div>
 
-      {activeTab === "gradeUpdate" && (
-        <AdminGradeUpdateTab
-          isSubmitting={isSubmitting}
-          lastGradeUpdate={lastGradeUpdate}
-          onUpdateGrades={onUpdateGrades}
-          users={studentUsers}
-        />
-      )}
+      <div
+        id="admin-tabpanel-gradeUpdate"
+        role="tabpanel"
+        aria-labelledby="admin-tab-gradeUpdate"
+        className={activeTab === "gradeUpdate" ? "block" : "hidden"}
+      >
+        {visitedTabs.has("gradeUpdate") && (
+          <AdminGradeUpdateTab
+            isSubmitting={isSubmitting}
+            lastGradeUpdate={lastGradeUpdate}
+            onUpdateGrades={onUpdateGrades}
+            users={studentUsers}
+          />
+        )}
+      </div>
 
-      {activeTab === "assignments" && (
-        <AdminAssignmentsTab
-          assignments={assignments}
-          onDeleteAssignment={onDeleteAssignment}
-          onDeleteSharedDocument={onDeleteSharedDocument}
-          onEditAssignment={onEditAssignment}
-          onEditSharedDocument={onEditSharedDocument}
-          onOpenAssignmentModal={onCreateAssignment}
-          onOpenSendDocumentModal={onCreateSendDocument}
-          onOpenSubmissions={onShowSubmissions}
-          sharedDocs={sharedDocs}
-        />
-      )}
+      <div
+        id="admin-tabpanel-assignments"
+        role="tabpanel"
+        aria-labelledby="admin-tab-assignments"
+        className={activeTab === "assignments" ? "block" : "hidden"}
+      >
+        {visitedTabs.has("assignments") && (
+          <AdminAssignmentsTab
+            assignments={assignments}
+            onDeleteAssignment={onDeleteAssignment}
+            onDeleteSharedDocument={onDeleteSharedDocument}
+            onEditAssignment={onEditAssignment}
+            onEditSharedDocument={onEditSharedDocument}
+            onOpenAssignmentModal={onCreateAssignment}
+            onOpenSendDocumentModal={onCreateSendDocument}
+            onOpenSubmissions={onShowSubmissions}
+            sharedDocs={sharedDocs}
+          />
+        )}
+      </div>
 
-      {activeTab === "quizzes" && (
-        <AdminQuizzesTab
-          onAddQuestion={onAddQuizQuestion}
-          onDeleteQuiz={onDeleteQuiz}
-          onEditQuiz={onEditQuiz}
-          quizzes={quizzes}
-        />
-      )}
+      <div
+        id="admin-tabpanel-quizzes"
+        role="tabpanel"
+        aria-labelledby="admin-tab-quizzes"
+        className={activeTab === "quizzes" ? "block" : "hidden"}
+      >
+        {visitedTabs.has("quizzes") && (
+          <AdminQuizzesTab
+            onAddQuestion={onAddQuizQuestion}
+            onDeleteQuiz={onDeleteQuiz}
+            onEditQuiz={onEditQuiz}
+            quizzes={quizzes}
+          />
+        )}
+      </div>
 
-      {activeTab === "liveLessons" && (
-        <AdminLiveLessonsTab
-          data={liveLessons}
-          onRefresh={onRefreshUsers}
-          students={studentUsers}
-        />
-      )}
-    </AnimatePresence>
+      <div
+        id="admin-tabpanel-liveLessons"
+        role="tabpanel"
+        aria-labelledby="admin-tab-liveLessons"
+        className={activeTab === "liveLessons" ? "block" : "hidden"}
+      >
+        {visitedTabs.has("liveLessons") && (
+          <AdminLiveLessonsTab
+            data={liveLessons}
+            onRefresh={onRefreshUsers}
+            students={studentUsers}
+          />
+        )}
+      </div>
+    </div>
   );
 }
