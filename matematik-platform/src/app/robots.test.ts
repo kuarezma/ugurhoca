@@ -11,6 +11,8 @@ describe('robots', () => {
     expect(disallow).toContain('/odevler');
     expect(disallow).toContain('/ilerleme');
     expect(disallow).toContain('/canli-ders');
+    expect(disallow).toContain('/sifremi-unuttum');
+    expect(disallow).toContain('/sifre-sifirla');
   });
 
   it('keeps public routes crawlable', () => {

@@ -63,6 +63,14 @@ export const metadata: Metadata = {
     email: false,
     telephone: false,
   },
+  icons: {
+    icon: [
+      { url: '/favicon.ico', sizes: '32x32' },
+      { url: '/icon.svg', type: 'image/svg+xml' },
+      { url: '/icon-512.png', sizes: '512x512', type: 'image/png' },
+    ],
+    apple: [{ url: '/apple-icon.png', sizes: '180x180', type: 'image/png' }],
+  },
   openGraph: {
     title: SITE_NAME,
     description:
@@ -71,12 +79,21 @@ export const metadata: Metadata = {
     locale: "tr_TR",
     siteName: SITE_NAME,
     url: SITE_URL,
+    images: [
+      {
+        url: `${SITE_URL}/icon-512.png`,
+        width: 512,
+        height: 512,
+        alt: SITE_NAME,
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
     title: SITE_NAME,
     description:
       "Çalışma kağıtları, testler, oyunlar ve daha fazlasıyla matematik öğrenmeyi keşfet!",
+    images: [`${SITE_URL}/icon-512.png`],
   },
   robots: {
     index: true,

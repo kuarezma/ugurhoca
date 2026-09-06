@@ -14,6 +14,8 @@ export default function robots(): MetadataRoute.Robots {
         '/canli-ders',
         '/giris',
         '/kayit',
+        '/sifremi-unuttum',
+        '/sifre-sifirla',
       ],
     },
     sitemap: 'https://ugurhoca.com/sitemap.xml',

@@ -35,6 +35,13 @@ Platformda öğrenci gizliliği en üst düzeyde korunur:
 
 ## Değişiklik Günlüğü (Changelog)
 
+### v1.2.0 - Platform Denetimi, SEO, Favicon & Erişilebilirlik Optimizasyonu
+- **Favicon & Çoklu Boyut Desteği:** 16x16, 32x32 ve 48x48 piksellik standart `favicon.ico` üretildi, Next.js root layout metadata'sına eksiksiz `icons` tanımları işlendi.
+- **Sosyal Önizleme (OG & Twitter):** Kök layout için Open Graph ve Twitter Cards görsel önizleme etiketleri eksiksiz hale getirildi.
+- **Sitemap & Robots İyileştirmesi:** `/cikis-bileti` canonical metadata ile `sitemap.xml`'e eklendi; `/sifre-sifirla` ve `/sifremi-unuttum` hassas rotaları arama motoru dizinlerinden (`robots.txt`, `noIndex`) izole edildi.
+- **Erişilebilirlik (A11y) & Kod Hijyeni:** `SupportChatPanel` üzerindeki kullanılmayan import temizlendi, ekran okuyucu ve klavye uyumluluğu için `autoFocus` yerine reaktif odaklama mimarisine geçildi.
+- **İstatistik İyileştirmesi:** Yönetici panelindeki kayıtlı kullanıcı sayaç filtreleri tüm zamanlar aralığı için optimize edildi.
+
 ### v1.1.0 - Sohbet Balonu & Eğitsel İletişim Paketi
 - **Canlı Etkileşim:** Supabase Realtime broadcast kanalı üzerinden anlık "yazıyor..." (typing indicator) animasyonu ve mesaj teslim/okundu (✓ / ✓✓) imleri eklendi.
 - **Zengin İletişim & Sesli Not:** MediaRecorder destekli sesli mesaj (voice note) kaydı, dalga formlu ses çalar ve mesaj alıntılama/yanıtlama (quote/reply) desteği sunuldu.

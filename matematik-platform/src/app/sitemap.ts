@@ -73,6 +73,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.8,
     },
     {
+      url: buildCanonicalUrl('/cikis-bileti'),
+      lastModified,
+      changeFrequency: 'weekly',
+      priority: 0.8,
+    },
+    {
       url: buildCanonicalUrl('/gizlilik'),
       lastModified,
       changeFrequency: 'yearly',

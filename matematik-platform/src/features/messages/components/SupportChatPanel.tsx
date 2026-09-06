@@ -29,7 +29,7 @@ import {
   type ChangeEvent,
   type FormEvent,
 } from 'react';
-import type { MessageAttachment, ThreadMessage } from '@/features/messages/types';
+import type { ThreadMessage } from '@/features/messages/types';
 import ImageViewerLightbox from '@/components/ImageViewerLightbox';
 import MathText from '@/components/MathText';
 import { formatReplyText } from '@/features/messages/supportChatUtils';
@@ -254,8 +254,14 @@ export function SupportChatPanel({
   // Sohbet İçi Arama State
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const searchInputRef = useRef<HTMLInputElement | null>(null);
 
-  // Ses Kaydı State
+  useEffect(() => {
+    if (isSearchOpen) {
+      searchInputRef.current?.focus();
+    }
+  }, [isSearchOpen]);
+
   const [isRecording, setIsRecording] = useState(false);
   const [recordingSeconds, setRecordingSeconds] = useState(0);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
@@ -588,11 +594,11 @@ export function SupportChatPanel({
         >
           <Search className="h-3.5 w-3.5 text-slate-400 shrink-0" />
           <input
+            ref={searchInputRef}
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Mesajlarda ara..."
-            autoFocus
             className={`w-full bg-transparent text-xs focus:outline-none ${
               isLight ? 'text-slate-900 placeholder:text-slate-400' : 'text-slate-100 placeholder:text-slate-500'
             }`}

@@ -81,9 +81,9 @@ export default function AdminStatistics() {
 
     const recentSignups = dateFilter
       ? nonAdminUsers.filter(
-          (u) => new Date(u.created_at) >= new Date(dateFilter),
+          (u) => u.created_at && new Date(u.created_at) >= new Date(dateFilter),
         ).length
-      : 0;
+      : nonAdminUsers.length;
 
     setStats({
       totalUsers: nonAdminUsers.length,

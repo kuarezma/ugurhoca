@@ -316,12 +316,15 @@ Bu dosya, projenin tamamlanmış ve devam eden görevlerini özetler.
 - [ ] Kritik sayfalar için screenshot baseline veya otomatik browser regression akışı eklenecek
 - [ ] PWA / service worker davranışı production ve local ortam için ayrı kabul kriterleriyle netleştirilecek
 
-### UX İyileştirmeleri
+### UX ve Kalite İyileştirmeleri
 
-- [ ] `AdminStatistics` "Son Kayıtlar" bölümüne gerçek `created_at` sorgusu yazılacak
+- [x] `AdminStatistics` "Son Kayıtlar" bölümünde `created_at` ve tüm zamanlar kullanıcı sayısı filtreleme mantığı düzeltildi
 - [x] Şifremi Unuttum akışı (Resend e-posta bildirimi, `/sifremi-unuttum` ve `/sifre-sifirla` rotaları tamamlandı)
-- [ ] Tüm form sayfalarında `autoComplete` attribute eksiklikleri giderilecek
+- [x] Tüm form sayfalarında (`LoginPage`, `RegisterPage`, `ChangePasswordForm`, `ForgotPasswordPage`, `ResetPasswordPage`) `autoComplete` attribute standartları doğrulandı
+- [x] SEO & Favicon: Çok boyutlu `favicon.ico` (16/32/48) üretildi, `layout.tsx` metadata etiketlerine `icons`, Open Graph ve Twitter kart görselleri eklendi
+- [x] Rota Güvenliği & Harita: `/sifremi-unuttum` ve `/sifre-sifirla` arama motoru dizinlemesinden çıkarıldı (`noIndex`, `robots.ts`), `/cikis-bileti` canonical metadata ile `sitemap.xml`'e entegre edildi
+- [x] Erişilebilirlik (A11y): `SupportChatPanel` arama kutusunda `autoFocus` uyarısı giderildi, kontrollü `ref` odaklama mimarisine geçildi
 
 ---
 
-_Son güncelleme: 6 Eylül 2026 — Şifremi unuttum akışı tamamlandı, chat veri borcu ve gelişim karnesi hizalaması yapıldı._
+_Son güncelleme: 6 Eylül 2026 — Web sitesi genel denetimi, SEO/Favicon/A11y düzeltmeleri, sitemap & robots güncellemeleri ve lint sıfırlaması tamamlandı._
