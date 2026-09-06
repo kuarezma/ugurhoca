@@ -2,6 +2,7 @@ import { apiError, apiOk } from '@/lib/api-response';
 import { isAdminEmail } from '@/lib/admin';
 import { getServerAccessToken } from '@/lib/auth-snapshot.server';
 import { createLogger } from '@/lib/logger';
+import { enforceRateLimit, getClientIp } from '@/lib/rate-limit';
 import { quizImportSchema } from '@/lib/route-schemas';
 import { createServerSupabaseClient, createServiceRoleClient } from '@/lib/supabase/server';
 import { insertQuizWithQuestions } from '@/features/quizzes/server/importQuiz';
@@ -45,6 +46,15 @@ const requireAdmin = async (request: Request) => {
 };
 
 export async function POST(request: Request) {
+  const clientIp = getClientIp(request);
+  const limited = await enforceRateLimit('import-questions', clientIp, {
+    limit: 10,
+    windowSeconds: 60,
+  });
+  if (limited) {
+    return limited;
+  }
+
   const auth = await requireAdmin(request);
 
   if ('error' in auth) {

@@ -10,6 +10,7 @@ import {
   ADMIN_MESSAGE_BROADCAST_EVENT,
   getStudentMessagesChannelName,
 } from "@/lib/realtime/studentMessagesChannel";
+import { enforceRateLimit } from "@/lib/rate-limit";
 
 const log = createLogger("admin-message");
 
@@ -42,6 +43,14 @@ export async function POST(request: Request) {
 
     if (!isAdminEmail(user.email)) {
       return NextResponse.json({ error: "Yetkiniz yok." }, { status: 403 });
+    }
+
+    const limited = await enforceRateLimit('admin-message', user.id, {
+      limit: 20,
+      windowSeconds: 60,
+    });
+    if (limited) {
+      return limited;
     }
 
     let adminClient: ReturnType<typeof createServiceRoleClient>;

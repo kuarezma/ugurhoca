@@ -22,13 +22,13 @@ const cspReportOnly = [
   "script-src 'self' 'unsafe-inline' https://va.vercel-scripts.com",
   "style-src 'self' 'unsafe-inline'",
   "worker-src 'self' blob:",
-  "connect-src 'self' https://*.supabase.co wss://*.supabase.co https://*.livekit.cloud wss://*.livekit.cloud https://vitals.vercel-insights.com",
+  "connect-src 'self' https://*.supabase.co wss://*.supabase.co https://*.livekit.cloud wss://*.livekit.cloud https://vitals.vercel-insights.com https://*.ingest.sentry.io https://*.ingest.us.sentry.io https://*.ingest.de.sentry.io",
   'report-uri /api/csp-report',
   'report-to csp-endpoint',
 ].join('; ');
 
 const globalSecurityHeaders = [
-  { key: 'Content-Security-Policy-Report-Only', value: cspReportOnly },
+  { key: 'Content-Security-Policy', value: cspReportOnly },
   { key: 'Reporting-Endpoints', value: 'csp-endpoint="/api/csp-report"' },
   { key: 'X-Content-Type-Options', value: 'nosniff' },
   { key: 'X-Frame-Options', value: 'DENY' },
@@ -102,4 +102,14 @@ const nextConfig = {
   },
 };
 
-module.exports = withBundleAnalyzer(nextConfig);
+const { withSentryConfig } = require('@sentry/nextjs/config');
+
+module.exports = withSentryConfig(withBundleAnalyzer(nextConfig), {
+  silent: true,
+  org: process.env.SENTRY_ORG,
+  project: process.env.SENTRY_PROJECT,
+  authToken: process.env.SENTRY_AUTH_TOKEN,
+  widenClientFileUpload: true,
+  tunnelRoute: '/monitoring',
+  hideSourceMaps: true,
+});

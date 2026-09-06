@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { createLogger } from './logger';
+import { createLogger, setSentryReporterForTesting } from './logger';
 
 describe('createLogger', () => {
   let infoSpy: ReturnType<typeof vi.spyOn>;
@@ -55,5 +55,30 @@ describe('createLogger', () => {
     log.error('failed', { code: 'E_BAD' });
     const ctx = errorSpy.mock.calls[0][1] as Record<string, unknown>;
     expect(ctx.error).toEqual({ code: 'E_BAD' });
+  });
+
+  it('routes debug messages to console in development', () => {
+    const log = createLogger('unit-debug');
+    log.debug('debug info', { step: 1 });
+    expect(infoSpy).toHaveBeenCalled();
+  });
+
+  it('forwards error and warning events to Sentry reporter', () => {
+    const sentryMock = vi.fn();
+    setSentryReporterForTesting(sentryMock);
+
+    const log = createLogger('sentry-test');
+    log.warn('warning alert', { extra: 123 });
+    expect(sentryMock).toHaveBeenCalledWith('warn', 'sentry-test', 'warning alert', { extra: 123 });
+
+    log.error('error alert', new Error('test-err'));
+    expect(sentryMock).toHaveBeenCalledWith(
+      'error',
+      'sentry-test',
+      'error alert',
+      expect.objectContaining({ error: expect.any(Object) }),
+    );
+
+    setSentryReporterForTesting(null);
   });
 });

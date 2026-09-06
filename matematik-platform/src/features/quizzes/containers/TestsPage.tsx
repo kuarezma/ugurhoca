@@ -9,16 +9,11 @@ import {
   Clock,
   Trophy,
   ArrowLeft,
-  CheckCircle2,
-  XCircle,
   ChevronRight,
   Play,
   RotateCcw,
   Zap,
   Target,
-  AlertCircle,
-  Download,
-  Share2,
   PenTool,
   Maximize2,
   Minimize2,
@@ -103,6 +98,7 @@ import {
 import { incrementQuestionsSolved } from '@/lib/dailyGoalStorage';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { Skeleton } from '@/components/ui/Skeleton';
+import { QuizResultsView } from '@/features/quizzes/components/QuizResultsView';
 import { requireClientSession } from '@/lib/auth-client';
 import { getErrorMessage } from '@/lib/error-utils';
 import { createLogger } from '@/lib/logger';
@@ -1420,314 +1416,23 @@ export default function TestsPage({
 
     return (
       <main className="testler-page min-h-screen gradient-bg flex items-center justify-center p-6">
-        <div className="w-full max-w-2xl relative z-10 animate-fade-up">
-          <div
-            id="quiz-result-pdf"
-            className="glass rounded-3xl p-8 text-center"
-          >
-            <div
-              className={`animate-fade-up w-32 h-32 mx-auto mb-6 rounded-full flex items-center justify-center ${
-                score >= 70
-                  ? 'bg-gradient-to-br from-green-400 to-emerald-500'
-                  : score >= 40
-                    ? 'bg-gradient-to-br from-yellow-400 to-orange-500'
-                    : 'bg-gradient-to-br from-red-400 to-pink-500'
-              }`}
-              style={{ animationDelay: '120ms' }}
-            >
-              {score >= 70 ? (
-                <Trophy className="w-16 h-16 text-white" />
-              ) : score >= 40 ? (
-                <Target className="w-16 h-16 text-white" />
-              ) : (
-                <Zap className="w-16 h-16 text-white" />
-              )}
-            </div>
-
-            <h2 className="text-4xl font-bold text-white mb-2">
-              {score >= 80
-                ? 'Harika Çıkardın!'
-                : score >= 60
-                  ? 'Tebrikler!'
-                  : score >= 40
-                    ? 'Daha İyisini Yapabilirsin!'
-                    : 'Pratiğe Devam!'}
-            </h2>
-
-            <div
-              className={`text-7xl font-black mb-4 bg-gradient-to-r bg-clip-text text-transparent ${
-                score >= 80
-                  ? 'from-green-400 to-emerald-400'
-                  : score >= 40
-                    ? 'from-amber-400 to-orange-400'
-                    : 'from-red-400 to-pink-400'
-              }`}
-            >
-              {score}%
-            </div>
-
-            <div className="grid grid-cols-2 gap-4 mb-8">
-              <div className="bg-emerald-500/10 border border-emerald-500/20 rounded-2xl p-4">
-                <div className="text-4xl font-black text-emerald-400 mb-1">
-                  {
-                    Object.values(answers).filter(
-                      (a, i) => a === quizQuestions[i]?.correct_index,
-                    ).length
-                  }
-                </div>
-                <div className="text-emerald-500/80 font-bold uppercase text-xs tracking-wider">
-                  Doğru
-                </div>
-              </div>
-              <div className="bg-red-500/10 border border-red-500/20 rounded-2xl p-4">
-                <div className="text-4xl font-black text-red-400 mb-1">
-                  {
-                    Object.values(answers).filter(
-                      (a, i) => a !== quizQuestions[i]?.correct_index,
-                    ).length
-                  }
-                </div>
-                <div className="text-red-500/80 font-bold uppercase text-xs tracking-wider">
-                  Yanlış
-                </div>
-              </div>
-            </div>
- 
-             {/* Sınav Tempo Koçu & Soru Başına Süre Analizi */}
-             <div className="mb-8">
-               <QuizPacingCoach
-                 mode="summary"
-                 questions={quizQuestions}
-                 questionTimes={questionTimes}
-                 answers={answers}
-                 totalSecondsSpent={startTime ? Math.floor((Date.now() - startTime) / 1000) : 0}
-               />
-             </div>
-
-             <div className="text-left bg-slate-800/30 border border-slate-700/50 rounded-2xl p-6 mb-8 max-h-[400px] overflow-y-auto custom-scrollbar">
-              <h3 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
-                <Target className="w-5 h-5 text-purple-400" /> Sınav Analizi
-              </h3>
-              <div className="space-y-4">
-                {quizQuestions.map((q, index) => {
-                  const userAnswer = answers[index];
-                  const isCorrect = userAnswer === q.correct_index;
-                  const isUnanswered =
-                    userAnswer === undefined || userAnswer === null;
-                  const timeSpent = questionTimes[index] || 0;
-
-                  return (
-                    <div
-                      key={index}
-                      className={`p-4 rounded-xl border ${
-                        isCorrect
-                          ? 'bg-emerald-500/5 border-emerald-500/20'
-                          : 'bg-red-500/5 border-red-500/20'
-                      }`}
-                    >
-                      <div className="flex items-start justify-between gap-4 mb-2">
-                        <div className="min-w-0 flex-1">
-                          <MathText
-                            as="p"
-                            className={`font-semibold text-sm ${
-                              isCorrect ? 'text-emerald-300' : 'text-red-300'
-                            }`}
-                          >
-                            {`${index + 1}. ${q.question}`}
-                          </MathText>
-
-                          {/* Soru Süresi & Tempo Rozeti */}
-                          {timeSpent > 0 && (
-                            <div className="flex items-center gap-1.5 mt-1.5">
-                              <span
-                                className={`inline-flex items-center gap-1 rounded-md px-2 py-0.5 text-[11px] font-semibold border ${
-                                  timeSpent > 150
-                                    ? 'bg-rose-500/15 border-rose-500/30 text-rose-300'
-                                    : timeSpent > 110
-                                    ? 'bg-amber-500/15 border-amber-500/30 text-amber-300'
-                                    : timeSpent >= 45
-                                    ? 'bg-cyan-500/15 border-cyan-500/30 text-cyan-300'
-                                    : 'bg-emerald-500/15 border-emerald-500/30 text-emerald-300'
-                                }`}
-                              >
-                                <Clock className="h-3 w-3" />
-                                <span>
-                                  {timeSpent > 150
-                                    ? `⚠️ Zaman Tuzağı: ${Math.floor(timeSpent / 60)} dk ${timeSpent % 60} sn`
-                                    : timeSpent > 110
-                                    ? `⏳ Süre Uzadı: ${Math.floor(timeSpent / 60)} dk ${timeSpent % 60} sn`
-                                    : timeSpent >= 45
-                                    ? `⏱️ İdeal: ${timeSpent} sn`
-                                    : `⚡ Hızlı: ${timeSpent} sn`}
-                                </span>
-                              </span>
-                            </div>
-                          )}
-
-                          {q.question_image_url ? (
-                            <QuestionImage
-                              alt={`Analiz soru ${index + 1} görseli`}
-                              src={q.question_image_url}
-                            />
-                          ) : null}
-                        </div>
-                        {isCorrect ? (
-                          <CheckCircle2 className="w-5 h-5 text-emerald-400 shrink-0" />
-                        ) : (
-                          <XCircle className="w-5 h-5 text-red-400 shrink-0" />
-                        )}
-                      </div>
-
-                      <div className="space-y-2 mt-3">
-                        <div className="flex items-center gap-2 text-sm text-slate-300">
-                          <span className="opacity-50 w-20 text-xs uppercase tracking-wider">
-                            Cevabın:
-                          </span>
-                          <MathText
-                            className={`font-medium px-2 py-0.5 rounded ${
-                              isCorrect
-                                ? 'bg-emerald-500/20 text-emerald-200'
-                                : 'bg-red-500/20 text-red-200'
-                            }`}
-                          >
-                            {isUnanswered
-                              ? 'Boş Bırakıldı'
-                              : q.options[userAnswer]}
-                          </MathText>
-                        </div>
-                        {!isUnanswered && hasOptionImage(q, userAnswer) && (
-                          <OptionMedia
-                            alt={`Analiz seçilen şık görseli`}
-                            src={q.option_image_urls?.[userAnswer] || ''}
-                          />
-                        )}
-                        {!isCorrect && (
-                          <>
-                            <div className="flex items-center gap-2 text-sm text-slate-300">
-                              <span className="opacity-50 w-20 text-xs uppercase tracking-wider">
-                                Doğrusu:
-                              </span>
-                              <MathText className="font-medium px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-200">
-                                {q.options[q.correct_index]}
-                              </MathText>
-                            </div>
-                            {hasOptionImage(q, q.correct_index) && (
-                              <OptionMedia
-                                alt={`Analiz doğru şık görseli`}
-                                src={q.option_image_urls?.[q.correct_index] || ''}
-                              />
-                            )}
-                          </>
-                        )}
-                        {!isCorrect &&
-                          !isUnanswered &&
-                          userAnswer !== undefined &&
-                          q.distractor_explanations?.[userAnswer] && (
-                            <div className="mt-3 p-3 bg-rose-500/10 border border-rose-500/30 rounded-xl text-xs text-rose-200 flex items-start gap-2.5">
-                              <AlertCircle className="w-4 h-4 text-rose-400 shrink-0 mt-0.5" />
-                              <div>
-                                <span className="font-bold block text-rose-300">
-                                  💡 Kavram Yanılgısı Teşhisi ({String.fromCharCode(65 + userAnswer)} Şıkkı):
-                                </span>
-                                <p className="mt-0.5 leading-relaxed text-slate-300">
-                                  {q.distractor_explanations[userAnswer]}
-                                </p>
-                              </div>
-                            </div>
-                          )}
-                        {q.explanation && (
-                          <div className="mt-3 p-3 bg-slate-900/50 rounded-lg text-xs text-slate-400 flex items-start gap-2">
-                            <AlertCircle className="w-4 h-4 text-amber-500 shrink-0 mt-0.5" />
-                            <MathText as="p">{q.explanation}</MathText>
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-
-            <div className="flex flex-col sm:flex-row gap-3">
-              <button
-                type="button"
-                onClick={() => setIsOutcomeAnalysisOpen(true)}
-                className="flex-1 py-4 bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 text-white font-bold rounded-xl flex items-center justify-center gap-2 shadow-lg shadow-indigo-500/25 transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]"
-              >
-                <Target className="w-5 h-5 text-indigo-200" />
-                Kazanım & Eksik Analizi
-              </button>
-              <button
-                type="button"
-                onClick={() => setIsMistakeModalOpen(true)}
-                className="flex-1 py-4 bg-gradient-to-r from-amber-500 to-orange-500 text-slate-950 font-bold rounded-xl flex items-center justify-center gap-2 shadow-lg transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]"
-              >
-                <AlertCircle className="w-5 h-5 text-slate-950" />
-                Hata Defteri & Yanlışlarımı İncele
-              </button>
-              <button
-                type="button"
-                onClick={() => startQuiz(selectedQuiz)}
-                className="flex-1 py-4 bg-gradient-to-r from-purple-500 to-pink-500 text-white font-semibold rounded-xl flex items-center justify-center gap-2 shadow-lg shadow-purple-500/20 transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]"
-              >
-                <RotateCcw className="w-5 h-5" />
-                Tümünü Tekrar Dene
-              </button>
-              <button
-                type="button"
-                onClick={resetQuiz}
-                className="flex-1 py-4 bg-slate-800 hover:bg-slate-700 text-white font-semibold rounded-xl flex items-center justify-center gap-2 transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]"
-              >
-                <ArrowLeft className="w-5 h-5" />
-                Testlere Dön
-              </button>
-            </div>
-          </div>
-
-          <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
-            <button
-              type="button"
-              onClick={handleDownloadPDF}
-              disabled={pdfLoading}
-              className="inline-flex h-12 items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/5 px-5 text-sm font-semibold text-white transition-colors hover:bg-white/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary disabled:cursor-not-allowed disabled:opacity-50"
-            >
-              {pdfLoading ? (
-                <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-              ) : (
-                <Download className="w-5 h-5 text-emerald-400" />
-              )}
-              {pdfLoading ? 'PDF Hazırlanıyor...' : 'PDF İndir'}
-            </button>
-
-            <button
-              type="button"
-              onClick={handleShareResult}
-              aria-label="Sonucu arkadaşlarınla paylaş"
-              className="inline-flex h-12 items-center justify-center gap-2 rounded-xl border border-white/10 bg-gradient-to-r from-cyan-500/20 via-sky-500/20 to-blue-500/20 hover:from-cyan-500/30 hover:to-blue-500/30 text-white font-semibold transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-900"
-            >
-              <Share2 className="w-5 h-5 text-cyan-300" />
-              Sonucu Paylaş
-            </button>
-
-            <button
-              type="button"
-              onClick={() => setIsMistakeNotebookOpen(true)}
-              className="inline-flex h-12 items-center justify-center gap-2 rounded-xl border border-amber-500/30 bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 font-semibold transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]"
-            >
-              <BookOpen className="w-5 h-5 text-amber-400" />
-              Hata Defterimi Aç
-            </button>
-
-            <button
-              type="button"
-              onClick={() => setIsWorksheetModalOpen(true)}
-              className="inline-flex h-12 items-center justify-center gap-2 rounded-xl border border-indigo-500/30 bg-indigo-500/20 hover:bg-indigo-500/30 text-indigo-300 font-semibold transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]"
-            >
-              <Printer className="w-5 h-5 text-indigo-400" />
-              A4 Yaprak Test Yazdır
-            </button>
-          </div>
-        </div>
+        <QuizResultsView
+          score={score}
+          quiz={selectedQuiz}
+          quizQuestions={quizQuestions}
+          answers={answers}
+          questionTimes={questionTimes}
+          startTime={startTime}
+          onRetake={() => startQuiz(selectedQuiz)}
+          onBackToLobby={resetQuiz}
+          onOpenOutcomeAnalysis={() => setIsOutcomeAnalysisOpen(true)}
+          onOpenMistakeModal={() => setIsMistakeModalOpen(true)}
+          onDownloadPDF={handleDownloadPDF}
+          pdfLoading={pdfLoading}
+          onShareResult={handleShareResult}
+          onOpenMistakeNotebook={() => setIsMistakeNotebookOpen(true)}
+          onOpenWorksheet={() => setIsWorksheetModalOpen(true)}
+        />
 
         <QuizMistakeReviewModal
           isOpen={isMistakeModalOpen}

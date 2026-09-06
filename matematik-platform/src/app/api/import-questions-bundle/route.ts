@@ -3,6 +3,7 @@ import { isAdminEmail } from '@/lib/admin';
 import { getServerAccessToken } from '@/lib/auth-snapshot.server';
 import { parseQuizBundleArchive } from '@/lib/question-import';
 import { createLogger } from '@/lib/logger';
+import { enforceRateLimit, getClientIp } from '@/lib/rate-limit';
 import { createServerSupabaseClient, createServiceRoleClient } from '@/lib/supabase/server';
 import { insertQuizBundleWithImages } from '@/features/quizzes/server/importQuiz';
 import { isIP } from 'node:net';
@@ -55,6 +56,15 @@ const requireAdmin = async (request: Request) => {
 };
 
 export async function POST(request: Request) {
+  const clientIp = getClientIp(request);
+  const limited = await enforceRateLimit('import-questions-bundle', clientIp, {
+    limit: 5,
+    windowSeconds: 60,
+  });
+  if (limited) {
+    return limited;
+  }
+
   const auth = await requireAdmin(request);
 
   if ('error' in auth) {

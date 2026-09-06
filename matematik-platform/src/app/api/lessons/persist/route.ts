@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { createServiceRoleClient } from '@/lib/supabase/server';
+import { enforceRateLimit } from '@/lib/rate-limit';
 import {
   isValidRoomId,
   readBearerToken,
@@ -18,6 +19,14 @@ export async function POST(request: Request) {
   const token = verifyPersistToken(readBearerToken(request.headers.get('authorization')));
   if (!token) {
     return NextResponse.json({ error: 'Geçersiz kayıt tokeni.' }, { status: 401 });
+  }
+
+  const limited = await enforceRateLimit('lesson-persist', token.roomId, {
+    limit: 60,
+    windowSeconds: 60,
+  });
+  if (limited) {
+    return limited;
   }
 
   const body = (await request.json().catch(() => null)) as Body | null;

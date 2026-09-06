@@ -7,6 +7,7 @@ import {
   createServiceRoleClient,
 } from '@/lib/supabase/server';
 import { createLogger } from '@/lib/logger';
+import { enforceRateLimit } from '@/lib/rate-limit';
 
 const log = createLogger('admin-broadcast');
 
@@ -57,6 +58,14 @@ export async function POST(request: Request) {
 
   if ('error' in auth) {
     return auth.error;
+  }
+
+  const limited = await enforceRateLimit('admin-broadcast', auth.user.id, {
+    limit: 10,
+    windowSeconds: 60,
+  });
+  if (limited) {
+    return limited;
   }
 
   const body = await request.json().catch(() => null);

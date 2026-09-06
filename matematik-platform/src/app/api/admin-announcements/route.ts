@@ -11,6 +11,7 @@ import {
   createServiceRoleClient,
 } from '@/lib/supabase/server';
 import { createLogger } from '@/lib/logger';
+import { enforceRateLimit } from '@/lib/rate-limit';
 
 const log = createLogger('admin-announcements');
 
@@ -82,6 +83,14 @@ export async function POST(request: Request) {
     return auth.error;
   }
 
+  const limited = await enforceRateLimit('admin-announcements', auth.user.id, {
+    limit: 15,
+    windowSeconds: 60,
+  });
+  if (limited) {
+    return limited;
+  }
+
   const body = await request.json().catch(() => null);
   const parsed = adminAnnouncementCreateSchema.safeParse(body);
 
@@ -137,6 +146,14 @@ export async function PATCH(request: Request) {
     return auth.error;
   }
 
+  const patchLimited = await enforceRateLimit('admin-announcements', auth.user.id, {
+    limit: 20,
+    windowSeconds: 60,
+  });
+  if (patchLimited) {
+    return patchLimited;
+  }
+
   const body = await request.json().catch(() => null);
   const parsed = adminAnnouncementUpdateSchema.safeParse(body);
 
@@ -171,6 +188,14 @@ export async function DELETE(request: Request) {
 
   if ('error' in auth) {
     return auth.error;
+  }
+
+  const deleteLimited = await enforceRateLimit('admin-announcements', auth.user.id, {
+    limit: 20,
+    windowSeconds: 60,
+  });
+  if (deleteLimited) {
+    return deleteLimited;
   }
 
   const body = await request.json().catch(() => null);
