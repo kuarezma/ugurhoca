@@ -13,7 +13,7 @@ const prefetchedUrls = new Set<string>();
 
 /**
  * SafeLink renders a clean HTML <a> tag with intent-based (hover/touch) prefetching
- * and native View Transitions SPA navigation.
+ * and client-side SPA navigation.
  *
  * It prevents viewport IntersectionObserver prefetch storms (which would trigger
  * 60+ simultaneous requests on the home page) while ensuring 0ms navigation latency
@@ -85,21 +85,15 @@ export function SafeLink({
       if (router) {
         event.preventDefault();
 
-        // Native View Transition (eğer tarayıcı destekliyorsa ve reduced-motion yoksa)
-        const doc = typeof document !== 'undefined' ? (document as unknown as {
-          startViewTransition?: (cb: () => void) => void;
-        }) : null;
-
-        if (
-          doc?.startViewTransition &&
-          !window.matchMedia('(prefers-reduced-motion: reduce)').matches
-        ) {
-          doc.startViewTransition(() => {
-            router?.push(href);
-          });
-        } else {
-          router.push(href);
-        }
+        // Not: Burada daha önce `document.startViewTransition(() => router.push(href))`
+        // çağrılıyordu. `router.push` asenkron olduğu için geri çağrım DOM değişmeden
+        // dönüyor; tarayıcı bu yüzden birbirinin aynısı iki tam sayfa anlık görüntüsü
+        // alıp aralarında geçiş yapıyordu. Sonuç: her sekme geçişinde iki kez tam sayfa
+        // rasterleştirme ve geçiş süresince `pointer-events: none` ile donan bir arayüz —
+        // üstelik gerçek gezinme bu geçiş bittikten sonra, animasyonsuz gerçekleşiyordu.
+        // Gerçek bir geçiş isteniyorsa Next.js'in `experimental.viewTransition` desteği
+        // kullanılmalı; elle sarmalamak yalnızca gecikme ekliyor.
+        router.push(href);
       }
     }
   };

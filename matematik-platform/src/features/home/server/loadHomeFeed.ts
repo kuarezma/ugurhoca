@@ -3,50 +3,8 @@ import 'server-only';
 import { hasSupabasePublicEnv } from '@/lib/env.server';
 import { createServerSupabaseClient } from '@/lib/supabase/server';
 import { resolveYandexPublicDownloadUrl } from '@/lib/yandex-public-download';
-import type {
-  HomeInitialFeed,
-  HomeStatsSnapshot,
-} from '@/features/home/home-initial-feed';
-import type { Announcement, ContentDocument } from '@/types';
-
-async function fetchHomeStatsServer(
-  supabase: ReturnType<typeof createServerSupabaseClient>,
-): Promise<HomeStatsSnapshot> {
-  const safeCount = async (
-    query: ReturnType<typeof createServerSupabaseClient>,
-    table: 'students' | 'quizzes' | 'documents' | 'assignments',
-  ): Promise<number> => {
-    try {
-      const { count } = await query
-        .from(table)
-        .select('*', { count: 'exact', head: true });
-      return count ?? 0;
-    } catch {
-      return 0;
-    }
-  };
-
-  const [students, quizzes, documents, assignments] = await Promise.all([
-    safeCount(supabase, 'students'),
-    safeCount(supabase, 'quizzes'),
-    safeCount(supabase, 'documents'),
-    safeCount(supabase, 'assignments'),
-  ]);
-
-  return { students, quizzes, documents, assignments };
-}
-
-async function fetchHomeDocumentsServer(
-  supabase: ReturnType<typeof createServerSupabaseClient>,
-) {
-  const { data } = await supabase
-    .from('documents')
-    .select('*')
-    .order('created_at', { ascending: false })
-    .limit(5);
-
-  return (data || []) as ContentDocument[];
-}
+import type { HomeInitialFeed } from '@/features/home/home-initial-feed';
+import type { Announcement } from '@/types';
 
 async function fetchAnnouncementsServer(
   supabase: ReturnType<typeof createServerSupabaseClient>,
@@ -100,24 +58,18 @@ async function fetchAnnouncementsServer(
 export async function loadInitialHomeFeed(): Promise<HomeInitialFeed> {
   // CI / önizleme derlemesinde Supabase env yoksa statik üretim yine de tamamlanır.
   if (!hasSupabasePublicEnv()) {
-    return {
-      announcements: [],
-      documents: [],
-      stats: { students: 0, quizzes: 0, documents: 0, assignments: 0 },
-    };
+    return { announcements: [] };
   }
 
   const supabase = createServerSupabaseClient();
 
-  const [documents, announcements, stats] = await Promise.all([
-    fetchHomeDocumentsServer(supabase),
-    fetchAnnouncementsServer(supabase),
-    fetchHomeStatsServer(supabase),
-  ]);
-
+  // Not: Burada eskiden `documents` listesi ve dört adet `count: 'exact'` sayımı
+  // (students/quizzes/documents/assignments) da çekiliyordu. Exact count Postgres’te
+  // tam tablo taraması demek; dördü birden her ana sayfa isteğinde TTFB’ye ekleniyordu.
+  // Ana sayfa bu iki alanın hiçbirini render etmiyor (HomeStatsStrip ve
+  // HomeRecentDocumentsSection hiçbir yerde mount edilmiyor), dolayısıyla sonuç
+  // doğrudan çöpe gidiyordu. Yalnızca gerçekten gösterilen duyurular çekiliyor.
   return {
-    announcements,
-    documents,
-    stats,
+    announcements: await fetchAnnouncementsServer(supabase),
   };
 }

@@ -57,11 +57,15 @@ export default function AdminStatistics() {
       dateFilter = monthAgo.toISOString();
     }
 
+    // `notes` ve `assignments` yalnızca satır sayısı için kullanılıyor: `head: true`
+    // ile satırlar hiç indirilmez. `profiles` ve `documents` için satır gerekiyor ama
+    // `select('*')` tüm kolonları (ve dokümanlarda uzun metin alanlarını) çekiyordu;
+    // yalnızca gerçekten okunan kolonlar isteniyor.
     const [usersRes, docsRes, notesRes, assignmentsRes] = await Promise.all([
-      supabase.from('profiles').select('*', { count: 'exact' }),
-      supabase.from('documents').select('*', { count: 'exact' }),
-      supabase.from('notes').select('*', { count: 'exact' }),
-      supabase.from('assignments').select('*', { count: 'exact' }),
+      supabase.from('profiles').select('email, grade, created_at'),
+      supabase.from('documents').select('downloads, views'),
+      supabase.from('notes').select('id', { count: 'exact', head: true }),
+      supabase.from('assignments').select('id', { count: 'exact', head: true }),
     ]);
 
     const users = usersRes.data || [];

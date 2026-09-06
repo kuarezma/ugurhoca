@@ -1,5 +1,6 @@
 import 'server-only';
 
+import { cache } from 'react';
 import { isAdminEmail } from '@/lib/admin';
 import type { AuthSnapshot } from '@/lib/auth-snapshot';
 import { getServerAccessToken } from '@/lib/auth-snapshot.server';
@@ -26,8 +27,12 @@ const normalizeGrade = (value: unknown): GradeValue => {
  * `ugurhoca_auth_snapshot` çerezine güvenmez; isAdmin dahil tüm alanlar
  * doğrulanmış access token ve profiles kaydından türetilir. Yetki kararı
  * gerektiren her sunucu yolu getServerAuthSnapshot yerine bunu kullanmalıdır.
+ *
+ * React `cache()` ile sarmalanmıştır: her biri Supabase'e iki ağ gidiş-dönüşü
+ * (auth.getUser + profiles) maliyetinde olan bu doğrulama, tek bir istek içinde
+ * kaç sunucu bileşeni/yardımcısı çağırırsa çağırsın yalnızca bir kez çalışır.
  */
-export const getVerifiedServerUser = async (): Promise<AuthSnapshot | null> => {
+export const getVerifiedServerUser = cache(async (): Promise<AuthSnapshot | null> => {
   const accessToken = await getServerAccessToken();
   if (!accessToken) {
     return null;
@@ -69,4 +74,4 @@ export const getVerifiedServerUser = async (): Promise<AuthSnapshot | null> => {
     isAdmin: isAdminEmail(email),
     name,
   };
-};
+});

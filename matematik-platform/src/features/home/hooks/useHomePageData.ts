@@ -1,42 +1,31 @@
 'use client';
 
-import { startTransition, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import {
   getCurrentUserProfile,
   redirectToHome,
   signOutClient,
 } from '@/lib/auth-client';
-import type {
-  Announcement,
-  AppUser,
-  ContentDocument,
-  SharedDocumentAssignment,
-} from '@/types';
+import type { Announcement, AppUser } from '@/types';
 import type { HomeInitialFeed } from '@/features/home/home-initial-feed';
-import { HOME_DOCUMENTS_UPDATED_EVENT } from '@/features/home/home-documents-events';
-import {
-  dismissHomeAssignment,
-  fetchHomeDocuments,
-  fetchHomeFeed,
-  fetchUserAssignments,
-} from '@/features/home/queries';
-import { supabase } from '@/lib/supabase/client';
+import { fetchAnnouncements } from '@/features/home/queries';
 
+/**
+ * Ana sayfanın ihtiyaç duyduğu istemci verisi.
+ *
+ * Not: Bu hook eskiden ayrıca son dokümanları (`fetchHomeDocuments`), kullanıcı
+ * ödevlerini (`fetchUserAssignments` — `shared_documents` + `notifications` üzerinde
+ * limitsiz iki sorgu) çekiyor ve `documents` tablosu için bir realtime kanalı açıyordu.
+ * Ana sayfa bu üçünü de render etmiyor (HomeRecentDocumentsSection ve
+ * HomeAssignmentsSection hiçbir yerde mount edilmiyor), dolayısıyla her ziyarette
+ * boşuna sorgu ve websocket maliyeti ödeniyordu. Yalnızca gösterilen veri çekiliyor.
+ */
 export const useHomePageData = (initialFeed?: HomeInitialFeed | null) => {
   const isFeedSeeded = Boolean(initialFeed);
   const router = useRouter();
 
   const [user, setUser] = useState<AppUser | null>(null);
-  const [documents, setDocuments] = useState<ContentDocument[]>(
-    initialFeed?.documents ?? [],
-  );
-  const [userAssignments, setUserAssignments] = useState<
-    SharedDocumentAssignment[]
-  >([]);
-  const [dismissedAssignments, setDismissedAssignments] = useState<Set<string>>(
-    new Set(),
-  );
   const [announcements, setAnnouncements] = useState<Announcement[]>(
     initialFeed?.announcements ?? [],
   );
@@ -47,65 +36,20 @@ export const useHomePageData = (initialFeed?: HomeInitialFeed | null) => {
     let isDisposed = false;
 
     const loadPage = async () => {
-      if (isFeedSeeded) {
-        const profileResult = await getCurrentUserProfile({
-          redirectToLogin: false,
-        });
-
-        if (isDisposed) {
-          return;
-        }
-
-        if (!profileResult) {
-          setUser(null);
-          setUserAssignments([]);
-          return;
-        }
-
-        setUser(profileResult.profile);
-
-        const assignments = await fetchUserAssignments(
-          profileResult.session.user.id,
-        );
-
-        if (!isDisposed) {
-          startTransition(() => {
-            setUserAssignments(assignments);
-          });
-        }
-
-        return;
-      }
-
       const [profileResult, feed] = await Promise.all([
         getCurrentUserProfile({ redirectToLogin: false }),
-        fetchHomeFeed(),
+        isFeedSeeded ? Promise.resolve(null) : fetchAnnouncements(),
       ]);
 
       if (isDisposed) {
         return;
       }
 
-      setDocuments(feed.documents);
-      setAnnouncements(feed.announcements);
-
-      if (!profileResult) {
-        setUser(null);
-        setUserAssignments([]);
-        return;
+      if (feed) {
+        setAnnouncements(feed);
       }
 
-      setUser(profileResult.profile);
-
-      const assignments = await fetchUserAssignments(
-        profileResult.session.user.id,
-      );
-
-      if (!isDisposed) {
-        startTransition(() => {
-          setUserAssignments(assignments);
-        });
-      }
+      setUser(profileResult ? profileResult.profile : null);
     };
 
     void loadPage();
@@ -115,79 +59,6 @@ export const useHomePageData = (initialFeed?: HomeInitialFeed | null) => {
     };
   }, [isFeedSeeded]);
 
-  useEffect(() => {
-    let isDisposed = false;
-
-    const refreshRecentDocuments = () => {
-      void fetchHomeDocuments().then((nextDocuments) => {
-        if (!isDisposed) {
-          startTransition(() => setDocuments(nextDocuments));
-        }
-      });
-    };
-
-    window.addEventListener(HOME_DOCUMENTS_UPDATED_EVENT, refreshRecentDocuments);
-
-    return () => {
-      isDisposed = true;
-      window.removeEventListener(
-        HOME_DOCUMENTS_UPDATED_EVENT,
-        refreshRecentDocuments,
-      );
-    };
-  }, []);
-
-  useEffect(() => {
-    let isDisposed = false;
-    const channel = supabase
-      .channel('home-recent-documents')
-      .on(
-        'postgres_changes',
-        { event: '*', schema: 'public', table: 'documents' },
-        () => {
-          void fetchHomeDocuments().then((nextDocuments) => {
-            if (!isDisposed) {
-              startTransition(() => setDocuments(nextDocuments));
-            }
-          });
-        },
-      )
-      .subscribe();
-
-    return () => {
-      isDisposed = true;
-      void supabase.removeChannel(channel);
-    };
-  }, []);
-
-  const visibleAssignments = userAssignments.filter(
-    (assignment) => !dismissedAssignments.has(assignment.id),
-  );
-
-  const handleDismissAssignment = async (
-    assignment: SharedDocumentAssignment,
-  ) => {
-    await dismissHomeAssignment(assignment);
-    setDismissedAssignments(
-      (currentDismissedAssignments) =>
-        new Set([...currentDismissedAssignments, assignment.id]),
-    );
-  };
-
-  const handleDismissAllAssignments = async () => {
-    await Promise.all(
-      visibleAssignments.map((assignment) => dismissHomeAssignment(assignment)),
-    );
-
-    setDismissedAssignments(
-      (currentDismissedAssignments) =>
-        new Set([
-          ...currentDismissedAssignments,
-          ...visibleAssignments.map((assignment) => assignment.id),
-        ]),
-    );
-  };
-
   const handleLogout = async () => {
     await signOutClient();
     setUser(null);
@@ -196,13 +67,9 @@ export const useHomePageData = (initialFeed?: HomeInitialFeed | null) => {
 
   return {
     announcements,
-    documents,
-    handleDismissAllAssignments,
-    handleDismissAssignment,
     handleLogout,
     selectedAnnouncement,
     setSelectedAnnouncement,
     user,
-    visibleAssignments,
   };
 };

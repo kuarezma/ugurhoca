@@ -81,6 +81,50 @@ export async function loadLiveLessonsForCurrentUser(): Promise<LiveLesson[]> {
   return ((data || []) as LiveLesson[]).map(toClientLiveLesson);
 }
 
+/**
+ * Ana sayfadaki "şu an ders var" rozeti için yalnızca aktif dersi getirir.
+ *
+ * `loadLiveLessonsForCurrentUser` scheduled + active + ended durumundaki TÜM dersleri
+ * limitsiz `select('*')` ile çekiyor; ana sayfa bunlardan sadece `status === 'active'`
+ * olanı kullanıyordu. Tablo her biten dersle büyüdüğü için bu sorgu zamanla ana sayfanın
+ * TTFB'sini sürekli artırıyordu. Burada tek satır ve yalnızca gereken kolonlar okunur.
+ */
+export async function loadActiveLiveLessonForCurrentUser(): Promise<LiveLesson | null> {
+  const user = await getVerifiedServerUser();
+
+  if (!user) {
+    return null;
+  }
+
+  const supabase = createServiceRoleClient();
+  const buildQuery = () =>
+    supabase
+      .from('live_lessons')
+      .select('*')
+      .eq('status', 'active')
+      .order('starts_at', { ascending: false })
+      .limit(1);
+
+  const { data, error } = isLiveLessonAdmin(user)
+    ? await buildQuery()
+    : await buildQuery().or(
+        `target_grade.eq.${user.grade},target_grade.eq.all,target_student_ids.cs.{${user.id}}`,
+      );
+
+  // `target_student_ids` kolonu yoksa (eski şema) sınıf bazlı filtreye düş.
+  if (error && !isLiveLessonAdmin(user)) {
+    const { data: gradeData } = await buildQuery().or(
+      `target_grade.eq.${user.grade},target_grade.eq.all`,
+    );
+
+    const fallback = (gradeData || [])[0] as LiveLesson | undefined;
+    return fallback ? toClientLiveLesson(fallback) : null;
+  }
+
+  const lesson = (data || [])[0] as LiveLesson | undefined;
+  return lesson ? toClientLiveLesson(lesson) : null;
+}
+
 export async function loadLiveLessonStudentOptions(): Promise<AppUser[]> {
   const user = await getVerifiedServerUser();
 

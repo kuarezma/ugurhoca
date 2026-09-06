@@ -26,6 +26,30 @@ describe('SafeLink', () => {
     expect(mockPush).toHaveBeenCalledWith('/icerikler?grade=8');
   });
 
+  it('gezinmeyi startViewTransition ile sarmalamaz', () => {
+    // Regresyon: `startViewTransition(() => router.push(href))` çağrısı, router.push
+    // asenkron olduğu için DOM değişmeden döner. Tarayıcı bu yüzden aynı görüntünün
+    // iki anlık kopyası arasında geçiş yapar; her sekme geçişinde iki tam sayfa
+    // rasterleştirme ve geçiş boyunca donan bir arayüz maliyeti doğar.
+    mockPush.mockClear();
+    const startViewTransition = vi.fn((callback: () => void) => callback());
+    (
+      document as unknown as { startViewTransition?: (cb: () => void) => void }
+    ).startViewTransition = startViewTransition;
+
+    try {
+      render(<SafeLink href="/testler">Testler</SafeLink>);
+      fireEvent.click(screen.getByRole('link', { name: 'Testler' }));
+
+      expect(startViewTransition).not.toHaveBeenCalled();
+      expect(mockPush).toHaveBeenCalledWith('/testler');
+    } finally {
+      delete (
+        document as unknown as { startViewTransition?: (cb: () => void) => void }
+      ).startViewTransition;
+    }
+  });
+
   it('does not prevent default on meta key (cmd+click)', () => {
     mockPush.mockClear();
     render(<SafeLink href="/icerikler">İçerikler</SafeLink>);
