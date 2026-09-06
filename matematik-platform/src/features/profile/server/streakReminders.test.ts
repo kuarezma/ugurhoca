@@ -2,7 +2,6 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { sendDueStreakReminders } from './streakReminders';
 
 const mockInsert = vi.fn();
-const mockSelect = vi.fn();
 const mockFrom = vi.fn();
 
 vi.mock('@/lib/supabase/server', () => ({

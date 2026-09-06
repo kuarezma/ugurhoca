@@ -227,31 +227,42 @@ function ScrollableChipRow({
     rowRef.current?.scrollBy({ left: 160, behavior: 'smooth' });
   };
 
-  const isDownRef = useRef(false);
-  const startXRef = useRef(0);
-  const scrollLeftPosRef = useRef(0);
-
-  const handleMouseDown = (e: React.MouseEvent) => {
+  useEffect(() => {
     const el = rowRef.current;
     if (!el) return;
-    isDownRef.current = true;
-    startXRef.current = e.pageX - el.offsetLeft;
-    scrollLeftPosRef.current = el.scrollLeft;
-  };
 
-  const handleMouseMove = (e: React.MouseEvent) => {
-    if (!isDownRef.current) return;
-    const el = rowRef.current;
-    if (!el) return;
-    e.preventDefault();
-    const x = e.pageX - el.offsetLeft;
-    const walk = (x - startXRef.current) * 1.3;
-    el.scrollLeft = scrollLeftPosRef.current - walk;
-  };
+    let isDown = false;
+    let startX = 0;
+    let scrollLeftPos = 0;
 
-  const handleMouseUp = () => {
-    isDownRef.current = false;
-  };
+    const onMouseDown = (e: MouseEvent) => {
+      isDown = true;
+      startX = e.pageX - el.offsetLeft;
+      scrollLeftPos = el.scrollLeft;
+    };
+
+    const onMouseMove = (e: MouseEvent) => {
+      if (!isDown) return;
+      e.preventDefault();
+      const x = e.pageX - el.offsetLeft;
+      const walk = (x - startX) * 1.3;
+      el.scrollLeft = scrollLeftPos - walk;
+    };
+
+    const onMouseUp = () => {
+      isDown = false;
+    };
+
+    el.addEventListener('mousedown', onMouseDown);
+    window.addEventListener('mousemove', onMouseMove);
+    window.addEventListener('mouseup', onMouseUp);
+
+    return () => {
+      el.removeEventListener('mousedown', onMouseDown);
+      window.removeEventListener('mousemove', onMouseMove);
+      window.removeEventListener('mouseup', onMouseUp);
+    };
+  }, []);
 
   return (
     <div className="group/scrollrow relative flex items-center min-w-0 w-full">
@@ -284,10 +295,6 @@ function ScrollableChipRow({
       {/* Kaydırılabilir İçerik */}
       <div
         ref={rowRef}
-        onMouseDown={handleMouseDown}
-        onMouseMove={handleMouseMove}
-        onMouseUp={handleMouseUp}
-        onMouseLeave={handleMouseUp}
         className={`flex items-center gap-1.5 overflow-x-auto overflow-y-hidden overscroll-contain pb-1 scrollbar-none [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden w-full cursor-grab active:cursor-grabbing ${className}`}
         style={{ overscrollBehavior: 'contain' }}
       >
