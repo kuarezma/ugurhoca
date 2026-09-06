@@ -15,8 +15,6 @@ import { HomeQuickToolsGrid } from '@/features/home/components/HomeQuickToolsGri
 import { HomeDailyChallenge } from '@/features/home/components/HomeDailyChallenge';
 import { HomeDailyGoalWidget } from '@/features/home/components/HomeDailyGoalWidget';
 import { LgsTacticsCorner } from '@/features/home/components/LgsTacticsCorner';
-import { HomeSuccessRoadmap } from '@/features/home/components/HomeSuccessRoadmap';
-import { HomeRecentDocumentsSection } from '@/features/home/components/HomeRecentDocumentsSection';
 import { HomeAssignmentsSection } from '@/features/home/components/HomeAssignmentsSection';
 import type {
   AppUser,
@@ -29,7 +27,7 @@ export type HomeCategoryTab = 'lessons' | 'games' | 'tools';
 type HomeCategoryHubProps = {
   isLight: boolean;
   user?: AppUser | null;
-  documents: ContentDocument[];
+  documents?: ContentDocument[];
   visibleAssignments?: SharedDocumentAssignment[];
   onDismissAllAssignments?: () => void;
   onDismissAssignment?: (assignment: SharedDocumentAssignment) => void;
@@ -50,7 +48,7 @@ type HomeCategoryHubProps = {
 export function HomeCategoryHub({
   isLight,
   user: _user,
-  documents,
+  documents: _documents,
   visibleAssignments = [],
   onDismissAllAssignments = () => {},
   onDismissAssignment = () => {},
@@ -366,18 +364,6 @@ export function HomeCategoryHub({
                     onDismissAssignment={onDismissAssignment}
                   />
                 )}
-
-                {/* Son Eklenen Belgeler */}
-                <HomeRecentDocumentsSection
-                  documents={documents}
-                  isLight={isLight}
-                />
-
-                {/* Başarı Yol Haritası */}
-                <HomeSuccessRoadmap
-                  isLight={isLight}
-                  onOpenFlashcards={onOpenFlashcards}
-                />
               </motion.div>
             )}
 

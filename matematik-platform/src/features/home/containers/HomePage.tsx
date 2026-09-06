@@ -15,7 +15,6 @@ import { HomeHeroSection } from '@/features/home/components/HomeHeroSection';
 import { HomeHowItWorksSection } from '@/features/home/components/HomeHowItWorksSection';
 import { HomeNavbar } from '@/features/home/components/HomeNavbar';
 import { HomeQuickToolsGrid } from '@/features/home/components/HomeQuickToolsGrid';
-import { HomeRecentDocumentsSection } from '@/features/home/components/HomeRecentDocumentsSection';
 import { HomeStatsStrip } from '@/features/home/components/HomeStatsStrip';
 import { HomeSuccessRoadmap } from '@/features/home/components/HomeSuccessRoadmap';
 import { HomeGuestCtaSection } from '@/features/home/components/HomeGuestCtaSection';
@@ -230,7 +229,6 @@ export default function HomePage({
 
   const {
     announcements,
-    documents,
     handleDismissAllAssignments,
     handleDismissAssignment,
     handleLogout,
@@ -276,7 +274,6 @@ export default function HomePage({
             <HomeCategoryHub
               isLight={isLight}
               user={user}
-              documents={documents}
               visibleAssignments={visibleAssignments}
               onDismissAllAssignments={handleDismissAllAssignments}
               onDismissAssignment={handleDismissAssignment}
@@ -305,7 +302,15 @@ export default function HomePage({
               />
             </div>
 
-            {/* 4. LGS ve YKS Sayacı */}
+            {/* 4. Başarı Yol Haritası (Duyuruların Altında) */}
+            <div className="defer-section">
+              <HomeSuccessRoadmap
+                isLight={isLight}
+                onOpenFlashcards={() => setIsFlashcardsOpen(true)}
+              />
+            </div>
+
+            {/* 5. LGS ve YKS Sayacı */}
             <HomeExamCountdownSection
               isLight={isLight}
               onOpenCalculator={(tab) =>
@@ -314,7 +319,7 @@ export default function HomePage({
               userGrade={user?.grade}
             />
 
-            {/* 5. Günün Sözü */}
+            {/* 6. Günün Sözü */}
             <div className="defer-section">
               <HomeDailyQuote isLight={isLight} />
             </div>
@@ -407,10 +412,6 @@ export default function HomePage({
                 onDismissAssignment={handleDismissAssignment}
               />
             </div>
-            <HomeRecentDocumentsSection
-              documents={documents}
-              isLight={isLight}
-            />
             {!user && (
               <div className="defer-section">
                 <HomeHowItWorksSection isLight={isLight} />

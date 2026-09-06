@@ -35,6 +35,11 @@ Student privacy and well-being are paramount on the platform:
 
 ## Changelog
 
+### v1.3.2 - Recent Documents Removal & Success Roadmap Relocation
+- **Removed Recent Documents Section:** To further minimize homepage clutter and redundant vertical scroll, the recent documents module has been completely removed from the homepage flow.
+- **Relocated Success Roadmap:** The "Success Roadmap" section was moved directly beneath the Announcements module under the Category Hub for better progression visibility.
+- **Refined Section Flow:** Hero Greeting ➔ Category Hub (Lessons, Games, Tools) ➔ Announcements ➔ Success Roadmap ➔ LGS/YKS Countdown ➔ Quote of the Day ➔ Contact Uğur Hoca.
+
 ### v1.3.1 - Mobile Experience & Thumb Ergonomics Optimization
 - **Sticky Mobile Category Bar:** Category bar now sticks cleanly under the top navbar on mobile, enabling one-thumb category switching from anywhere on the page without scrolling back to the top.
 - **Segmented Mobile Pill Switcher:** Replaced bulky stacked cards with a compact, single-row iOS/Android segmented pill bar for mobile devices.
