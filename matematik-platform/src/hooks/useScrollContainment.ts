@@ -78,8 +78,18 @@ export function useScrollContainment<T extends HTMLElement = HTMLDivElement>(
       if (isVertical) {
         const scrollable = findScrollableParent(e.target as HTMLElement, container, 'y');
 
-        // Hedef alan kaydırılabilir bir liste/alan değilse (başlık, boşluk, butonlar vb.)
+        // Hedef alan dikeyde kaydırılabilir bir liste/alan değilse (başlık, butonlar veya yatay çipler)
         if (!scrollable) {
+          // Eğer hedef alan YATAYDA kaydırılabilir bir şeritse (Hızlı Not, Sembol vb.),
+          // masaüstü fare tekerleğinin dikey hareketini (deltaY) yatay kaydırmaya dönüştür:
+          const horizontalScrollable = findScrollableParent(e.target as HTMLElement, container, 'x');
+          if (horizontalScrollable && Math.abs(e.deltaY) > 0) {
+            horizontalScrollable.scrollLeft += e.deltaY;
+            e.preventDefault();
+            e.stopPropagation();
+            return;
+          }
+
           e.preventDefault();
           return;
         }

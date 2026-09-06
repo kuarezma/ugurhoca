@@ -20,8 +20,6 @@ import { HomeStatsStrip } from '@/features/home/components/HomeStatsStrip';
 import { HomeSuccessRoadmap } from '@/features/home/components/HomeSuccessRoadmap';
 import { HomeGuestCtaSection } from '@/features/home/components/HomeGuestCtaSection';
 import { HomeSupportSection } from '@/features/home/components/HomeSupportSection';
-import { FormulaFlashcardsModal } from '@/features/programs/components/FormulaFlashcardsModal';
-import ScratchpadModal from '@/components/ScratchpadModal';
 import type { HomeInitialFeed } from '@/features/home/home-initial-feed';
 import { useHomePageData } from '@/features/home/hooks/useHomePageData';
 import type { LiveLesson } from '@/features/live-lessons/types';
@@ -90,6 +88,18 @@ const MathGlossaryModal = dynamic(
     })),
   { ssr: false },
 );
+
+const FormulaFlashcardsModal = dynamic(
+  () =>
+    import('@/features/programs/components/FormulaFlashcardsModal').then((m) => ({
+      default: m.FormulaFlashcardsModal,
+    })),
+  { ssr: false },
+);
+
+const ScratchpadModal = dynamic(() => import('@/components/ScratchpadModal'), {
+  ssr: false,
+});
 
 const ExamTopicWeightMatrixModal = dynamic(
   () =>

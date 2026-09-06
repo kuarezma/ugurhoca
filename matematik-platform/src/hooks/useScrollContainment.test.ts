@@ -107,6 +107,34 @@ describe('useScrollContainment hook', () => {
     expect(stopPropagationSpy).toHaveBeenCalled();
   });
 
+  it('yalnızca yatayda kaydırılabilen alanda (çip satırları) dikey fare tekerleğini yatay kaydırmaya dönüştürür', () => {
+    renderHook(() => useScrollContainment(targetRef, { enabled: true, lockBodyOnMobile: false }));
+
+    const horizontalList = document.createElement('div');
+    horizontalList.style.overflowX = 'auto';
+    horizontalList.style.overflowY = 'hidden';
+    Object.defineProperty(horizontalList, 'scrollWidth', { value: 600, configurable: true });
+    Object.defineProperty(horizontalList, 'clientWidth', { value: 300, configurable: true });
+    Object.defineProperty(horizontalList, 'scrollHeight', { value: 40, configurable: true });
+    Object.defineProperty(horizontalList, 'clientHeight', { value: 40, configurable: true });
+    horizontalList.scrollLeft = 0;
+    container.appendChild(horizontalList);
+
+    const wheelEvent = new WheelEvent('wheel', {
+      deltaY: 25,
+      cancelable: true,
+      bubbles: true,
+    });
+    const preventDefaultSpy = vi.spyOn(wheelEvent, 'preventDefault');
+    const stopPropagationSpy = vi.spyOn(wheelEvent, 'stopPropagation');
+
+    horizontalList.dispatchEvent(wheelEvent);
+
+    expect(horizontalList.scrollLeft).toBe(25);
+    expect(preventDefaultSpy).toHaveBeenCalled();
+    expect(stopPropagationSpy).toHaveBeenCalled();
+  });
+
   it('mobil cihazlarda enabled olduğunda body scroll kilidi uygular', () => {
     window.innerWidth = 400;
 

@@ -68,6 +68,23 @@ export async function GET(request: Request) {
     }
   }
 
+  // 4. Supabase Free Tier Inactivity Keepalive (Haftalık uykuya geçişi önleme)
+  if (!specificJob || specificJob === 'daily' || specificJob === 'supabase-keepalive') {
+    try {
+      const supabase = createServiceRoleClient();
+      const { count, error } = await supabase
+        .from('profiles')
+        .select('id', { count: 'exact', head: true });
+
+      if (error) throw error;
+      results.supabaseKeepalive = { ok: true, count };
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : String(err);
+      log.error('Cron job failed: supabase-keepalive', { error: msg });
+      errors.supabaseKeepalive = msg;
+    }
+  }
+
   const hasErrors = Object.keys(errors).length > 0;
   log.info('Cron dispatch finished', {
     hasErrors,

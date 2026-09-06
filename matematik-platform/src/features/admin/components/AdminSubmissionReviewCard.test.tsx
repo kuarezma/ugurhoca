@@ -3,6 +3,17 @@ import { render, screen, fireEvent, act } from '@testing-library/react';
 import AdminSubmissionReviewCard from './AdminSubmissionReviewCard';
 import type { AdminSubmission } from '@/features/admin/types';
 
+vi.mock('@/components/Toast', () => ({
+  useToast: () => ({
+    showToast: vi.fn(),
+    success: vi.fn(),
+    error: vi.fn(),
+    info: vi.fn(),
+    warning: vi.fn(),
+    dismiss: vi.fn(),
+  }),
+}));
+
 describe('AdminSubmissionReviewCard Component', () => {
   const mockSubmission: AdminSubmission = {
     id: 'sub-123',
@@ -75,5 +86,55 @@ describe('AdminSubmissionReviewCard Component', () => {
     const input = screen.getByPlaceholderText('Geri bildirim yazın...') as HTMLInputElement;
     expect(input.value).toContain('Sesli Öğretmen Notu');
     vi.useRealTimers();
+  });
+
+  it('opens teacher feedback library modal and selects a pedagogical note', () => {
+    const onUpdate = vi.fn();
+    render(
+      <AdminSubmissionReviewCard
+        submission={mockSubmission}
+        onUpdateSubmission={onUpdate}
+      />,
+    );
+
+    const libraryBtn = screen.getByRole('button', { name: /Geri Bildirim Kütüphanesi/i });
+    expect(libraryBtn).toBeInTheDocument();
+    fireEvent.click(libraryBtn);
+
+    // Modal should be visible with categories
+    expect(screen.getByText('Öğretmen Geri Bildirim Kütüphanesi')).toBeInTheDocument();
+
+    // Select a template from the library using "İliştir"
+    const attachBtns = screen.getAllByRole('button', { name: /İliştir/i });
+    expect(attachBtns.length).toBeGreaterThan(0);
+    fireEvent.click(attachBtns[0]);
+
+    const textarea = screen.getByPlaceholderText('Geri bildirim yazın...') as HTMLTextAreaElement;
+    expect(textarea.value.length).toBeGreaterThan(5);
+  });
+
+  it('attaches step prefix when a step chip is clicked and template is selected', () => {
+    const onUpdate = vi.fn();
+    render(
+      <AdminSubmissionReviewCard
+        submission={mockSubmission}
+        onUpdateSubmission={onUpdate}
+      />,
+    );
+
+    // Click on "1. Adım" chip
+    const step1Btn = screen.getByRole('button', { name: /1\. Adım/i });
+    fireEvent.click(step1Btn);
+
+    // Modal should open with banner indicating step context
+    expect(screen.getByText('Öğretmen Geri Bildirim Kütüphanesi')).toBeInTheDocument();
+    expect(screen.getAllByText(/1\. Adım: Verilenleri Belirleme/i).length).toBeGreaterThan(0);
+
+    // Pick first template using "İliştir"
+    const attachBtns = screen.getAllByRole('button', { name: /İliştir/i });
+    fireEvent.click(attachBtns[0]);
+
+    const textarea = screen.getByPlaceholderText('Geri bildirim yazın...') as HTMLTextAreaElement;
+    expect(textarea.value).toContain('[1. Adım: Verilenleri Belirleme]');
   });
 });

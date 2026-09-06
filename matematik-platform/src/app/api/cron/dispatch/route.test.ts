@@ -18,7 +18,11 @@ vi.mock('@/lib/worksheet-candidate-scan', () => ({
 }));
 
 vi.mock('@/lib/supabase/server', () => ({
-  createServiceRoleClient: vi.fn().mockReturnValue({}),
+  createServiceRoleClient: vi.fn().mockReturnValue({
+    from: vi.fn().mockReturnValue({
+      select: vi.fn().mockResolvedValue({ count: 42, error: null }),
+    }),
+  }),
 }));
 
 vi.mock('@/lib/logger', () => ({
@@ -96,6 +100,21 @@ describe('Cron Dispatch Route (/api/cron/dispatch)', () => {
     expect(data.results.worksheetCandidates).toEqual({
       candidatesCreated: 5,
       weekNumber: 12,
+    });
+  });
+
+  it('job=supabase-keepalive parametresinde veritabanı uyandırma sorgusunu çalıştırır', async () => {
+    vi.mocked(isAuthorizedCronRequest).mockReturnValue(true);
+
+    const req = new Request('https://ugurhoca.com/api/cron/dispatch?job=supabase-keepalive');
+    const res = await GET(req);
+
+    expect(res.status).toBe(200);
+    const data = await res.json();
+    expect(data.ok).toBe(true);
+    expect(data.results.supabaseKeepalive).toEqual({
+      ok: true,
+      count: 42,
     });
   });
 });

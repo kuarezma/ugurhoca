@@ -5,8 +5,11 @@ import {
   Calculator,
   Check,
   CheckCheck,
+  ChevronLeft,
+  ChevronRight,
   FileText,
   ImagePlus,
+  LayoutGrid,
   Loader2,
   Mic,
   Pause,
@@ -184,6 +187,142 @@ function VoiceNotePlayer({
   );
 }
 
+function ScrollableChipRow({
+  children,
+  isLight = true,
+  className = '',
+}: {
+  children: React.ReactNode;
+  isLight?: boolean;
+  className?: string;
+}) {
+  const rowRef = useRef<HTMLDivElement | null>(null);
+  const [canScrollLeft, setCanScrollLeft] = useState(false);
+  const [canScrollRight, setCanScrollRight] = useState(false);
+
+  const updateScroll = useCallback(() => {
+    const el = rowRef.current;
+    if (!el) return;
+    setCanScrollLeft(el.scrollLeft > 6);
+    setCanScrollRight(el.scrollLeft + el.clientWidth < el.scrollWidth - 6);
+  }, []);
+
+  useEffect(() => {
+    updateScroll();
+    const el = rowRef.current;
+    if (!el) return;
+    el.addEventListener('scroll', updateScroll, { passive: true });
+    window.addEventListener('resize', updateScroll);
+    return () => {
+      el.removeEventListener('scroll', updateScroll);
+      window.removeEventListener('resize', updateScroll);
+    };
+  }, [updateScroll]);
+
+  const scrollLeft = () => {
+    rowRef.current?.scrollBy({ left: -160, behavior: 'smooth' });
+  };
+
+  const scrollRight = () => {
+    rowRef.current?.scrollBy({ left: 160, behavior: 'smooth' });
+  };
+
+  const isDownRef = useRef(false);
+  const startXRef = useRef(0);
+  const scrollLeftPosRef = useRef(0);
+
+  const handleMouseDown = (e: React.MouseEvent) => {
+    const el = rowRef.current;
+    if (!el) return;
+    isDownRef.current = true;
+    startXRef.current = e.pageX - el.offsetLeft;
+    scrollLeftPosRef.current = el.scrollLeft;
+  };
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (!isDownRef.current) return;
+    const el = rowRef.current;
+    if (!el) return;
+    e.preventDefault();
+    const x = e.pageX - el.offsetLeft;
+    const walk = (x - startXRef.current) * 1.3;
+    el.scrollLeft = scrollLeftPosRef.current - walk;
+  };
+
+  const handleMouseUp = () => {
+    isDownRef.current = false;
+  };
+
+  return (
+    <div className="group/scrollrow relative flex items-center min-w-0 w-full">
+      {/* Sol Kaydırma Oku & Hafif Gradyan Fade */}
+      {canScrollLeft && (
+        <>
+          <div
+            className={`pointer-events-none absolute left-0 top-0 bottom-1 w-8 bg-gradient-to-r ${
+              isLight
+                ? 'from-white via-white/80 to-transparent'
+                : 'from-slate-900 via-slate-900/80 to-transparent'
+            }`}
+          />
+          <button
+            type="button"
+            onClick={scrollLeft}
+            aria-label="Sola kaydır"
+            title="Sola kaydır"
+            className={`absolute left-0 z-10 flex h-6 w-6 shrink-0 items-center justify-center rounded-full shadow-md transition-all ${
+              isLight
+                ? 'bg-white text-slate-700 hover:bg-slate-100 hover:text-indigo-600 border border-slate-200'
+                : 'bg-slate-800 text-slate-200 hover:bg-slate-700 hover:text-white border border-slate-700'
+            }`}
+          >
+            <ChevronLeft className="h-3.5 w-3.5" />
+          </button>
+        </>
+      )}
+
+      {/* Kaydırılabilir İçerik */}
+      <div
+        ref={rowRef}
+        onMouseDown={handleMouseDown}
+        onMouseMove={handleMouseMove}
+        onMouseUp={handleMouseUp}
+        onMouseLeave={handleMouseUp}
+        className={`flex items-center gap-1.5 overflow-x-auto overflow-y-hidden overscroll-contain pb-1 scrollbar-none [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden w-full cursor-grab active:cursor-grabbing ${className}`}
+        style={{ overscrollBehavior: 'contain' }}
+      >
+        {children}
+      </div>
+
+      {/* Sağ Kaydırma Oku & Hafif Gradyan Fade */}
+      {canScrollRight && (
+        <>
+          <div
+            className={`pointer-events-none absolute right-0 top-0 bottom-1 w-8 bg-gradient-to-l ${
+              isLight
+                ? 'from-white via-white/80 to-transparent'
+                : 'from-slate-900 via-slate-900/80 to-transparent'
+            }`}
+          />
+          <button
+            type="button"
+            onClick={scrollRight}
+            aria-label="Sağa kaydır"
+            title="Sağa kaydır"
+            className={`absolute right-0 z-10 flex h-6 w-6 shrink-0 items-center justify-center rounded-full shadow-md transition-all ${
+              isLight
+                ? 'bg-white text-slate-700 hover:bg-slate-100 hover:text-indigo-600 border border-slate-200'
+                : 'bg-slate-800 text-slate-200 hover:bg-slate-700 hover:text-white border border-slate-700'
+            }`}
+          >
+            <ChevronRight className="h-3.5 w-3.5" />
+          </button>
+        </>
+      )}
+    </div>
+  );
+}
+
 export type SupportChatPanelProps = {
   peerDisplayName: string;
   peerSubtitle?: string;
@@ -250,6 +389,9 @@ export function SupportChatPanel({
 
   // Yanıtlama (Quote / Reply) State
   const [replyingTo, setReplyingTo] = useState<ThreadMessage | null>(null);
+
+  // Hızlı Semboller Grid Görünümü State
+  const [isSymbolsExpanded, setIsSymbolsExpanded] = useState(false);
 
   // Sohbet İçi Arama State
   const [isSearchOpen, setIsSearchOpen] = useState(false);
@@ -853,80 +995,137 @@ export function SupportChatPanel({
 
         {/* Öğrenci Hızlı Soru Şablonları */}
         {appearance === 'navbar' && !draft && (
-          <div
-            className="mb-2 flex items-center gap-1.5 overflow-x-auto overscroll-contain pb-1 scrollbar-none [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
-            style={{ overscrollBehavior: 'contain' }}
-          >
-            <span className="text-[10px] font-bold text-indigo-500 shrink-0 flex items-center gap-1">
-              <Sparkles className="h-3 w-3 text-amber-400" />
-              Soru Şablonu:
-            </span>
-            {STUDENT_QUICK_TEMPLATES.map((tmpl) => (
-              <button
-                key={tmpl}
-                type="button"
-                onClick={() => onDraftChange(tmpl)}
-                className={`shrink-0 rounded-full border px-2.5 py-1 text-[11px] font-medium transition shadow-2xs ${
-                  isLight
-                    ? 'border-slate-200 bg-slate-50 text-slate-700 hover:border-indigo-400 hover:bg-indigo-50 hover:text-indigo-600'
-                    : 'border-slate-700 bg-slate-800 text-slate-300 hover:border-indigo-400 hover:bg-slate-700 hover:text-indigo-300'
-                }`}
-              >
-                {tmpl}
-              </button>
-            ))}
+          <div className="mb-2">
+            <ScrollableChipRow isLight={isLight}>
+              <span className="text-[10px] font-bold text-indigo-500 shrink-0 flex items-center gap-1 pr-1 select-none">
+                <Sparkles className="h-3 w-3 text-amber-400" />
+                Soru Şablonu:
+              </span>
+              {STUDENT_QUICK_TEMPLATES.map((tmpl) => (
+                <button
+                  key={tmpl}
+                  type="button"
+                  onClick={() => onDraftChange(tmpl)}
+                  className={`shrink-0 rounded-full border px-2.5 py-1 text-[11px] font-medium transition shadow-2xs ${
+                    isLight
+                      ? 'border-slate-200 bg-slate-50 text-slate-700 hover:border-indigo-400 hover:bg-indigo-50 hover:text-indigo-600'
+                      : 'border-slate-700 bg-slate-800 text-slate-300 hover:border-indigo-400 hover:bg-slate-700 hover:text-indigo-300'
+                  }`}
+                >
+                  {tmpl}
+                </button>
+              ))}
+            </ScrollableChipRow>
           </div>
         )}
 
         {/* Öğretmen / Admin Hızlı Geri Bildirim Şablonları */}
         {appearance === 'admin' && (
-          <div
-            className="mb-2 flex items-center gap-1.5 overflow-x-auto overscroll-contain pb-1 scrollbar-none [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
-            style={{ overscrollBehavior: 'contain' }}
-          >
-            <span className="text-[10px] font-bold text-slate-400 shrink-0 flex items-center gap-1">
-              <Sparkles className="h-3 w-3 text-amber-400" />
-              Hızlı Not:
-            </span>
-            {QUICK_FEEDBACK_TEMPLATES.map((tmpl) => (
-              <button
-                key={tmpl}
-                type="button"
-                onClick={() => onDraftChange(draft ? `${draft} ${tmpl}` : tmpl)}
-                className="shrink-0 rounded-lg border border-[var(--border)] bg-[var(--bg-soft)] px-2.5 py-1 text-[11px] font-medium text-[var(--text-strong)] hover:bg-[var(--bg-muted)] hover:border-indigo-400/40 transition shadow-sm"
-              >
-                {tmpl}
-              </button>
-            ))}
+          <div className="mb-2">
+            <ScrollableChipRow isLight={isLight}>
+              <span className="text-[10px] font-bold text-slate-400 shrink-0 flex items-center gap-1 pr-1 select-none">
+                <Sparkles className="h-3 w-3 text-amber-400" />
+                Hızlı Not:
+              </span>
+              {QUICK_FEEDBACK_TEMPLATES.map((tmpl) => (
+                <button
+                  key={tmpl}
+                  type="button"
+                  onClick={() => onDraftChange(draft ? `${draft} ${tmpl}` : tmpl)}
+                  className="shrink-0 rounded-lg border border-[var(--border)] bg-[var(--bg-soft)] px-2.5 py-1 text-[11px] font-medium text-[var(--text-strong)] hover:bg-[var(--bg-muted)] hover:border-indigo-400/40 transition shadow-sm"
+                >
+                  {tmpl}
+                </button>
+              ))}
+            </ScrollableChipRow>
           </div>
         )}
 
-        {/* Hızlı Matematik Sembolleri Çubuğu */}
-        <div
-          className="mb-2 flex items-center gap-1 overflow-x-auto overscroll-contain pb-1 scrollbar-none [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
-          style={{ overscrollBehavior: 'contain' }}
-        >
-          <span className="text-[10px] font-bold text-indigo-500 shrink-0 flex items-center gap-1 px-1">
-            <Calculator className="h-3 w-3" />
-            Sembol:
-          </span>
-          {MATH_QUICK_SYMBOLS.map((sym) => (
-            <button
-              key={sym.label}
-              type="button"
-              onClick={() => onDraftChange(draft ? `${draft} ${sym.snippet}` : sym.snippet)}
-              title={`${sym.label} ekle`}
-              className={`shrink-0 rounded-lg border px-2 py-0.5 text-xs font-medium transition shadow-2xs ${
-                appearance === 'navbar'
-                  ? isLight
-                    ? 'border-slate-200 bg-slate-100/80 text-slate-700 hover:bg-indigo-50 hover:border-indigo-300 hover:text-indigo-600'
-                    : 'border-slate-700 bg-slate-800 text-slate-200 hover:bg-slate-700 hover:border-indigo-400 hover:text-indigo-300'
-                  : 'border-[var(--border)] bg-[var(--bg-soft)] text-[var(--text)] hover:border-indigo-400 hover:bg-[var(--bg-muted)]'
+        {/* Hızlı Matematik Sembolleri Çubuğu / Izgara */}
+        <div className="mb-2">
+          {isSymbolsExpanded ? (
+            <div
+              className={`rounded-xl border p-2 transition-all shadow-xs ${
+                isLight
+                  ? 'border-slate-200 bg-slate-50/90'
+                  : 'border-slate-700/80 bg-slate-800/80'
               }`}
             >
-              {sym.label}
-            </button>
-          ))}
+              <div className="mb-1.5 flex items-center justify-between">
+                <span className="text-[10px] font-bold text-indigo-500 flex items-center gap-1 select-none">
+                  <Calculator className="h-3 w-3" />
+                  Matematik Sembolleri (Tümü):
+                </span>
+                <button
+                  type="button"
+                  onClick={() => setIsSymbolsExpanded(false)}
+                  className="flex items-center gap-1 rounded px-1.5 py-0.5 text-[10px] font-medium text-slate-500 hover:text-indigo-600 transition"
+                  title="Satır görünümüne dön"
+                >
+                  <LayoutGrid className="h-3 w-3 text-indigo-500" />
+                  Kapat
+                </button>
+              </div>
+              <div className="flex flex-wrap gap-1">
+                {MATH_QUICK_SYMBOLS.map((sym) => (
+                  <button
+                    key={sym.label}
+                    type="button"
+                    onClick={() => onDraftChange(draft ? `${draft} ${sym.snippet}` : sym.snippet)}
+                    title={`${sym.label} ekle`}
+                    className={`rounded-lg border px-2 py-0.5 text-xs font-medium transition shadow-2xs ${
+                      appearance === 'navbar'
+                        ? isLight
+                          ? 'border-slate-200 bg-white text-slate-700 hover:bg-indigo-50 hover:border-indigo-300 hover:text-indigo-600'
+                          : 'border-slate-700 bg-slate-800 text-slate-200 hover:bg-slate-700 hover:border-indigo-400 hover:text-indigo-300'
+                        : 'border-[var(--border)] bg-[var(--bg-soft)] text-[var(--text)] hover:border-indigo-400 hover:bg-[var(--bg-muted)]'
+                    }`}
+                  >
+                    {sym.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+          ) : (
+            <ScrollableChipRow isLight={isLight}>
+              <div className="shrink-0 flex items-center gap-1 pr-1">
+                <span className="text-[10px] font-bold text-indigo-500 flex items-center gap-1 select-none">
+                  <Calculator className="h-3 w-3" />
+                  Sembol:
+                </span>
+                <button
+                  type="button"
+                  onClick={() => setIsSymbolsExpanded(true)}
+                  className={`flex h-5 w-5 items-center justify-center rounded border transition shadow-2xs ${
+                    isLight
+                      ? 'border-slate-200 bg-slate-50 text-slate-600 hover:text-indigo-600 hover:border-indigo-300'
+                      : 'border-slate-700 bg-slate-800 text-slate-300 hover:text-indigo-400 hover:border-indigo-500'
+                  }`}
+                  title="Tüm sembolleri ızgara olarak göster"
+                  aria-label="Tüm sembolleri ızgara olarak göster"
+                >
+                  <LayoutGrid className="h-3 w-3" />
+                </button>
+              </div>
+              {MATH_QUICK_SYMBOLS.map((sym) => (
+                <button
+                  key={sym.label}
+                  type="button"
+                  onClick={() => onDraftChange(draft ? `${draft} ${sym.snippet}` : sym.snippet)}
+                  title={`${sym.label} ekle`}
+                  className={`shrink-0 rounded-lg border px-2 py-0.5 text-xs font-medium transition shadow-2xs ${
+                    appearance === 'navbar'
+                      ? isLight
+                        ? 'border-slate-200 bg-slate-100/80 text-slate-700 hover:bg-indigo-50 hover:border-indigo-300 hover:text-indigo-600'
+                        : 'border-slate-700 bg-slate-800 text-slate-200 hover:bg-slate-700 hover:border-indigo-400 hover:text-indigo-300'
+                      : 'border-[var(--border)] bg-[var(--bg-soft)] text-[var(--text)] hover:border-indigo-400 hover:bg-[var(--bg-muted)]'
+                  }`}
+                >
+                  {sym.label}
+                </button>
+              ))}
+            </ScrollableChipRow>
+          )}
         </div>
 
         {/* Canlı Matematik Önizleme */}

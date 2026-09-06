@@ -184,4 +184,29 @@ describe('SupportChatPanel Component', () => {
     fireEvent.change(searchInput, { target: { value: 'Teşekkürler' } });
     expect(screen.getByText(/1 eşleşme/i)).toBeInTheDocument();
   });
+
+  it('sembol ızgara butonuna tıklandığında tüm sembolleri ızgara formatında açar ve kapatır', () => {
+    render(
+      <SupportChatPanel
+        appearance="navbar"
+        draft=""
+        error={null}
+        messages={dummyMessages}
+        onDraftChange={vi.fn()}
+        onSubmit={vi.fn()}
+        peerDisplayName="Uğur Hoca"
+        sending={false}
+      />,
+    );
+
+    const toggleGridBtn = screen.getByLabelText('Tüm sembolleri ızgara olarak göster');
+    expect(toggleGridBtn).toBeInTheDocument();
+
+    fireEvent.click(toggleGridBtn);
+    expect(screen.getByText('Matematik Sembolleri (Tümü):')).toBeInTheDocument();
+    expect(screen.getByText('Kapat')).toBeInTheDocument();
+
+    fireEvent.click(screen.getByText('Kapat'));
+    expect(screen.getByText('Sembol:')).toBeInTheDocument();
+  });
 });

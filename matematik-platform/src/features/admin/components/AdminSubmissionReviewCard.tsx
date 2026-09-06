@@ -10,9 +10,14 @@ import {
   PenTool,
   Sparkles,
   Star,
+  BookOpen,
+  Layers,
 } from "lucide-react";
 import type { AdminSubmission } from "@/features/admin/types";
 import { SubmissionDrawingModal } from "./SubmissionDrawingModal";
+import TeacherFeedbackLibraryModal, {
+  type FeedbackTemplateItem,
+} from "./TeacherFeedbackLibraryModal";
 
 type AdminSubmissionReviewCardProps = {
   onUpdateSubmission: (
@@ -53,6 +58,8 @@ export default function AdminSubmissionReviewCard({
   const [feedback, setFeedback] = useState(submission.feedback || "");
   const [grade, setGrade] = useState(submission.grade || 100);
   const [isDrawingOpen, setIsDrawingOpen] = useState(false);
+  const [isLibraryOpen, setIsLibraryOpen] = useState(false);
+  const [selectedStep, setSelectedStep] = useState<string | null>(null);
   const [isRecording, setIsRecording] = useState(false);
   const [recordingSeconds, setRecordingSeconds] = useState(0);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
@@ -85,6 +92,32 @@ export default function AdminSubmissionReviewCard({
   const handleApplyTemplate = (item: (typeof FEEDBACK_TEMPLATES)[number]) => {
     setGrade(item.grade);
     setFeedback(item.text);
+  };
+
+  const handleAttachStep = (stepPrefix: string) => {
+    setSelectedStep(stepPrefix);
+    setIsLibraryOpen(true);
+  };
+
+  const handleSelectFromLibrary = (
+    tmpl: FeedbackTemplateItem,
+    mode: "append" | "replace",
+  ) => {
+    if (tmpl.grade !== undefined) {
+      setGrade(tmpl.grade);
+    }
+    const prefix = selectedStep || tmpl.stepPrefix || "";
+    const textToAdd = prefix ? `${prefix} ${tmpl.text}` : tmpl.text;
+
+    if (mode === "replace") {
+      setFeedback(textToAdd);
+    } else {
+      setFeedback((prev) =>
+        prev.trim() ? `${prev.trim()}\n${textToAdd}` : textToAdd,
+      );
+    }
+    setIsLibraryOpen(false);
+    setSelectedStep(null);
   };
 
   return (
@@ -153,41 +186,81 @@ export default function AdminSubmissionReviewCard({
         </div>
       )}
 
-      {/* QUICK TEMPLATES */}
-      <div className="flex flex-wrap items-center gap-1.5 pt-1">
-        <span className="text-xs text-slate-500 flex items-center gap-1 font-semibold mr-1">
-          <Sparkles className="w-3 h-3 text-amber-400" />
-          Hızlı Şablon:
-        </span>
-        {FEEDBACK_TEMPLATES.map((tmpl) => (
+      {/* QUICK TEMPLATES & LIBRARY */}
+      <div className="space-y-2 pt-1">
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <div className="flex flex-wrap items-center gap-1.5">
+            <span className="text-xs text-slate-500 flex items-center gap-1 font-semibold mr-1">
+              <Sparkles className="w-3 h-3 text-amber-400" />
+              Hızlı Şablon:
+            </span>
+            {FEEDBACK_TEMPLATES.map((tmpl) => (
+              <button
+                key={tmpl.label}
+                type="button"
+                onClick={() => handleApplyTemplate(tmpl)}
+                className="px-2.5 py-1 rounded-lg bg-slate-800/80 hover:bg-slate-700/80 border border-slate-700/60 text-xs text-slate-300 hover:text-white transition"
+              >
+                {tmpl.label}
+              </button>
+            ))}
+          </div>
+
           <button
-            key={tmpl.label}
             type="button"
-            onClick={() => handleApplyTemplate(tmpl)}
-            className="px-2.5 py-1 rounded-lg bg-slate-800/80 hover:bg-slate-700/80 border border-slate-700/60 text-xs text-slate-300 hover:text-white transition"
+            onClick={() => {
+              setSelectedStep(null);
+              setIsLibraryOpen(true);
+            }}
+            className="px-3 py-1.5 rounded-xl bg-indigo-600/20 hover:bg-indigo-600/30 text-indigo-300 border border-indigo-500/30 text-xs font-bold flex items-center gap-1.5 transition shadow-sm"
           >
-            {tmpl.label}
+            <BookOpen className="w-3.5 h-3.5 text-indigo-400" />
+            <span>📚 Geri Bildirim Kütüphanesi</span>
           </button>
-        ))}
+        </div>
+
+        {/* STEP ATTACHMENT SHORTCUTS */}
+        <div className="flex flex-wrap items-center gap-1.5 bg-slate-900/40 p-2 rounded-xl border border-white/5 text-xs">
+          <span className="text-slate-400 font-medium flex items-center gap-1">
+            <Layers className="w-3 h-3 text-cyan-400" />
+            Adıma Not İliştir:
+          </span>
+          {[
+            { label: "1. Adım", prefix: "[1. Adım: Verilenleri Belirleme]" },
+            { label: "2. Adım", prefix: "[2. Adım: Formül / Denklem Kurma]" },
+            { label: "3. Adım", prefix: "[3. Adım: Dört İşlem / Sadeleştirme]" },
+            { label: "Sonuç", prefix: "[Sonuç: Doğrulama & Birim Kontrolü]" },
+          ].map((step) => (
+            <button
+              key={step.label}
+              type="button"
+              onClick={() => handleAttachStep(step.prefix)}
+              className="px-2 py-0.5 rounded-lg bg-cyan-950/40 text-cyan-300 border border-cyan-800/40 hover:bg-cyan-900/50 hover:border-cyan-700 transition text-[11px] font-medium"
+              title={`${step.prefix} için kütüphaneden not seç`}
+            >
+              🪜 {step.label}
+            </button>
+          ))}
+        </div>
       </div>
 
-      <div className="flex flex-col gap-3 pt-2 items-start sm:items-center sm:flex-row">
-        <div className="flex-1 w-full flex items-center gap-2">
+      <div className="flex flex-col gap-3 pt-1 items-start sm:items-center sm:flex-row">
+        <div className="flex-1 w-full flex items-start gap-2">
           <div className="relative flex-1">
-            <input
-              type="text"
+            <textarea
+              rows={2}
               placeholder="Geri bildirim yazın..."
               value={feedback}
               onChange={(event) => setFeedback(event.target.value)}
-              className="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2.5 pl-11 text-sm text-white focus:outline-none focus:border-indigo-500 transition-colors"
+              className="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2.5 pl-11 text-sm text-white focus:outline-none focus:border-indigo-500 transition-colors resize-y min-h-[44px]"
             />
-            <MessageSquareText className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
+            <MessageSquareText className="absolute left-4 top-3.5 w-4 h-4 text-slate-500" />
           </div>
 
           <button
             type="button"
             onClick={toggleRecording}
-            className={`p-2.5 rounded-xl border transition flex items-center gap-1.5 shrink-0 text-xs font-bold ${
+            className={`p-2.5 rounded-xl border transition flex items-center gap-1.5 shrink-0 text-xs font-bold mt-0.5 ${
               isRecording
                 ? "bg-rose-500 text-white border-rose-400 animate-pulse"
                 : "bg-slate-800 text-slate-300 border-slate-700 hover:bg-slate-700"
@@ -260,6 +333,16 @@ export default function AdminSubmissionReviewCard({
           }}
         />
       )}
+
+      <TeacherFeedbackLibraryModal
+        isOpen={isLibraryOpen}
+        onClose={() => {
+          setIsLibraryOpen(false);
+          setSelectedStep(null);
+        }}
+        onSelectTemplate={handleSelectFromLibrary}
+        selectedStepPrefix={selectedStep}
+      />
     </div>
   );
 }
