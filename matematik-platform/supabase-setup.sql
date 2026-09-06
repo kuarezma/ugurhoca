@@ -461,6 +461,24 @@ DROP POLICY IF EXISTS "chat_users_update" ON public.chat_users;
 
 CREATE POLICY "chat_users_select" ON public.chat_users FOR SELECT USING (true);
 CREATE POLICY "chat_users_insert" ON public.chat_users FOR INSERT WITH CHECK (true);
-CREATE POLICY "chat_users_update" ON public.chat_users FOR UPDATE USING (true) WITH CHECK (true);
-
 GRANT SELECT, INSERT, UPDATE ON public.chat_users TO anon, authenticated;
+
+-- ============================================
+-- Performans ve Ölçeklenme Bileşik İndeksleri
+-- (Öğrenci ilerleme, test geçmişi ve aktivite)
+-- ============================================
+CREATE INDEX IF NOT EXISTS idx_quiz_results_user_created 
+  ON public.quiz_results(user_id, created_at DESC);
+
+CREATE INDEX IF NOT EXISTS idx_study_sessions_user_id 
+  ON public.study_sessions(user_id);
+
+CREATE INDEX IF NOT EXISTS idx_study_sessions_user_created 
+  ON public.study_sessions(user_id, created_at DESC);
+
+CREATE INDEX IF NOT EXISTS idx_user_mistakes_user_saved 
+  ON public.user_mistakes(user_id, saved_at DESC);
+
+CREATE INDEX IF NOT EXISTS idx_student_activity_user_created 
+  ON public.student_activity_events(user_id, created_at DESC);
+

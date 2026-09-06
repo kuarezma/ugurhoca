@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useMemo } from 'react';
+import React, { useMemo } from 'react';
 import Link from 'next/link';
 import {
   X,
@@ -12,6 +12,7 @@ import {
   TrendingUp,
   FileCheck2,
 } from 'lucide-react';
+import { useAccessibleModal } from '@/hooks/useAccessibleModal';
 import {
   analyzeQuizLearningOutcomes,
   type QuizOutcomeAnalysisResult,
@@ -60,15 +61,7 @@ export const LearningOutcomeAnalysisModal: React.FC<LearningOutcomeAnalysisModal
   quizTitle,
   grade,
 }) => {
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && isOpen) {
-        onClose();
-      }
-    };
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isOpen, onClose]);
+  const containerRef = useAccessibleModal<HTMLDivElement>(isOpen, onClose);
 
   const analysis: QuizOutcomeAnalysisResult = useMemo(() => {
     return analyzeQuizLearningOutcomes({
@@ -92,10 +85,12 @@ export const LearningOutcomeAnalysisModal: React.FC<LearningOutcomeAnalysisModal
 
       {/* Modal Dialog */}
       <div
+        ref={containerRef}
         role="dialog"
         aria-modal="true"
+        tabIndex={-1}
         aria-labelledby="outcome-modal-title"
-        className="relative z-10 w-full max-w-2xl flex flex-col max-h-[90vh] rounded-3xl border border-white/10 bg-slate-900 shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-200"
+        className="relative z-10 w-full max-w-2xl flex flex-col max-h-[90vh] rounded-3xl border border-white/10 bg-slate-900 shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-200 outline-none"
       >
         {/* Header */}
         <div className="flex items-center justify-between border-b border-white/10 bg-slate-950/70 px-6 py-4">

@@ -2,6 +2,7 @@
 
 import { X, RotateCcw, CheckCircle2, XCircle, AlertCircle } from 'lucide-react';
 import MathText from '@/components/MathText';
+import { useAccessibleModal } from '@/hooks/useAccessibleModal';
 import type { QuizQuestion } from '@/types/quiz';
 
 type QuizMistakeReviewModalProps = {
@@ -19,6 +20,8 @@ export function QuizMistakeReviewModal({
   answers,
   onStartRetakeMistakes,
 }: QuizMistakeReviewModalProps) {
+  const containerRef = useAccessibleModal<HTMLDivElement>(isOpen, onClose);
+
   if (!isOpen) return null;
 
   const mistakes = questions
@@ -36,13 +39,15 @@ export function QuizMistakeReviewModal({
   };
 
   return (
-    <div
-      role="dialog"
-      aria-modal="true"
-      aria-label="Yanlış Soru İnceleme ve Tekrar Havuzu"
-      className="fixed inset-0 z-[140] flex items-center justify-center bg-slate-950/80 p-4 backdrop-blur-md"
-    >
-      <div className="flex max-h-[90vh] w-full max-w-3xl flex-col overflow-hidden rounded-3xl border border-white/15 bg-slate-900 shadow-2xl">
+    <div className="fixed inset-0 z-[140] flex items-center justify-center bg-slate-950/80 p-4 backdrop-blur-md">
+      <div
+        ref={containerRef}
+        role="dialog"
+        aria-modal="true"
+        tabIndex={-1}
+        aria-label="Yanlış Soru İnceleme ve Tekrar Havuzu"
+        className="flex max-h-[90vh] w-full max-w-3xl flex-col overflow-hidden rounded-3xl border border-white/15 bg-slate-900 shadow-2xl outline-none"
+      >
         {/* Header */}
         <div className="flex items-center justify-between border-b border-white/10 bg-slate-950/80 px-6 py-4">
           <div className="flex items-center gap-3">

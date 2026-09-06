@@ -1,7 +1,7 @@
 'use client';
 
-import React, { useEffect } from 'react';
 import { X, CheckCircle2, Bookmark, Trash2, ArrowRight, PanelRight, Minimize2 } from 'lucide-react';
+import { useAccessibleModal } from '@/hooks/useAccessibleModal';
 
 interface QuizOpticalSheetModalProps {
   isOpen: boolean;
@@ -39,16 +39,7 @@ export const QuizOpticalSheetModal: React.FC<QuizOpticalSheetModalProps> = ({
   onToggleDock,
 }) => {
   const activeOptionLetters = ALL_OPTION_LETTERS.slice(0, Math.min(5, Math.max(4, optionsCount)));
-
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && isOpen && !isDocked) {
-        onClose();
-      }
-    };
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isOpen, isDocked, onClose]);
+  const containerRef = useAccessibleModal<HTMLDivElement>(isOpen && !isDocked, onClose);
 
   if (!isOpen) return null;
 
@@ -56,9 +47,11 @@ export const QuizOpticalSheetModal: React.FC<QuizOpticalSheetModalProps> = ({
 
   const content = (
     <div
+      ref={isDocked ? undefined : containerRef}
+      tabIndex={isDocked ? undefined : -1}
       role="region"
       aria-labelledby="optical-sheet-title"
-      className={`w-full flex flex-col rounded-3xl border border-amber-500/30 bg-amber-50/95 dark:bg-slate-900/95 text-slate-900 dark:text-white shadow-2xl shadow-amber-950/20 overflow-hidden ${
+      className={`w-full flex flex-col rounded-3xl border border-amber-500/30 bg-amber-50/95 dark:bg-slate-900/95 text-slate-900 dark:text-white shadow-2xl shadow-amber-950/20 overflow-hidden outline-none ${
         isDocked ? 'h-[calc(100vh-140px)] sticky top-20' : 'max-w-xl max-h-[90vh]'
       }`}
     >

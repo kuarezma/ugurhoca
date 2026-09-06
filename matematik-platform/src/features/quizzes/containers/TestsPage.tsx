@@ -39,6 +39,7 @@ import { QuizShortcutsModal } from '@/features/quizzes/components/QuizShortcutsM
 import { QuizPacingCoach } from '@/features/quizzes/components/QuizPacingCoach';
 import { useQuestionSpeech } from '@/features/quizzes/hooks/useQuestionSpeech';
 import { QuestionDrawingOverlay } from '@/features/quizzes/components/QuestionDrawingOverlay';
+import { trackFeatureOpen } from '@/lib/analytics';
 
 const PrintableWorksheetModal = dynamic(
   () =>
@@ -982,7 +983,10 @@ export default function TestsPage({
                   {/* Karalama Tahtası Butonu */}
                   <button
                     type="button"
-                    onClick={() => setIsScratchpadOpen(true)}
+                    onClick={() => {
+                      setIsScratchpadOpen(true);
+                      void trackFeatureOpen('scratchpad');
+                    }}
                     className="inline-flex items-center gap-1.5 rounded-xl border border-amber-300 dark:border-white/10 bg-amber-50 dark:bg-white/5 px-3 py-1.5 text-xs font-bold text-amber-700 dark:text-amber-300 transition hover:bg-amber-100 dark:hover:bg-white/10 hover:text-amber-800 dark:hover:text-amber-200"
                     title="Karalama ve işlem tahtasını aç (K)"
                   >
@@ -994,6 +998,7 @@ export default function TestsPage({
                   <button
                     type="button"
                     onClick={() => {
+                      void trackFeatureOpen('optical_sheet');
                       if (typeof window !== 'undefined' && window.innerWidth >= 1024) {
                         setIsOpticalDocked((prev) => !prev);
                       } else {
@@ -1014,7 +1019,10 @@ export default function TestsPage({
                   {/* Matematik Kavram Sözlüğü Butonu */}
                   <button
                     type="button"
-                    onClick={() => setIsGlossaryOpen(true)}
+                    onClick={() => {
+                      setIsGlossaryOpen(true);
+                      void trackFeatureOpen('math_glossary');
+                    }}
                     className="inline-flex items-center gap-1.5 rounded-xl border border-indigo-300 dark:border-indigo-500/30 bg-indigo-50 dark:bg-indigo-500/10 px-3 py-1.5 text-xs font-bold text-indigo-700 dark:text-indigo-300 transition hover:bg-indigo-100 dark:hover:bg-indigo-500/20"
                     title="Matematik Kavramlar ve Terimler Rehberini Aç (Shift + K)"
                   >

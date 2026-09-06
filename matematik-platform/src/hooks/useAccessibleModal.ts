@@ -70,12 +70,23 @@ const releaseBodyScrollLock = () => {
   }
 };
 
+export type AccessibleModalOptions = {
+  /**
+   * Mobil cihazlarda veya tarayıcıda geri tuşuna basıldığında modalı kapatmak için
+   * history.pushState / popstate dinleyicisi ekler. Varsayılan: true.
+   */
+  enableHistoryBack?: boolean;
+};
+
 export const useAccessibleModal = <T extends HTMLElement>(
   isOpen: boolean,
   onClose: () => void,
+  options: AccessibleModalOptions = {},
 ) => {
+  const { enableHistoryBack = true } = options;
   const containerRef = useRef<T | null>(null);
   const onCloseRef = useRef(onClose);
+  const isPushedRef = useRef(false);
 
   useEffect(() => {
     onCloseRef.current = onClose;
@@ -98,8 +109,27 @@ export const useAccessibleModal = <T extends HTMLElement>(
 
     acquireBodyScrollLock();
 
+    // Mobil geri tuşu ve tarayıcı back senkronizasyonu
+    const handlePopState = () => {
+      isPushedRef.current = false;
+      onCloseRef.current();
+    };
+
+    if (enableHistoryBack && typeof window !== 'undefined') {
+      const stateId = `modal_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`;
+      try {
+        window.history.pushState({ modalState: stateId }, '', window.location.href);
+        isPushedRef.current = true;
+        window.addEventListener('popstate', handlePopState);
+      } catch {
+        // İlgili ortamda history manipülasyonu kısıtlıysa graceful fallback
+        isPushedRef.current = false;
+      }
+    }
+
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (!container) {
+      const currentContainer = containerRef.current;
+      if (!currentContainer) {
         return;
       }
 
@@ -113,11 +143,11 @@ export const useAccessibleModal = <T extends HTMLElement>(
         return;
       }
 
-      const currentFocusableElements = getFocusableElements(container);
+      const currentFocusableElements = getFocusableElements(currentContainer);
 
       if (currentFocusableElements.length === 0) {
         event.preventDefault();
-        container.focus();
+        currentContainer.focus();
         return;
       }
 
@@ -127,7 +157,7 @@ export const useAccessibleModal = <T extends HTMLElement>(
       const activeElement = document.activeElement;
 
       if (event.shiftKey) {
-        if (activeElement === firstElement || !container.contains(activeElement)) {
+        if (activeElement === firstElement || !currentContainer.contains(activeElement)) {
           event.preventDefault();
           lastElement.focus();
         }
@@ -135,7 +165,7 @@ export const useAccessibleModal = <T extends HTMLElement>(
         return;
       }
 
-      if (activeElement === lastElement || !container.contains(activeElement)) {
+      if (activeElement === lastElement || !currentContainer.contains(activeElement)) {
         event.preventDefault();
         firstElement.focus();
       }
@@ -145,10 +175,25 @@ export const useAccessibleModal = <T extends HTMLElement>(
 
     return () => {
       document.removeEventListener('keydown', handleKeyDown);
+
+      if (enableHistoryBack && typeof window !== 'undefined') {
+        window.removeEventListener('popstate', handlePopState);
+        // Eğer kullanıcı geri tuşuyla değil, buton/Escape/backdrop ile kapattıysa
+        // tarayıcı geçmişinde fazladan duran kaydı geri al
+        if (isPushedRef.current) {
+          isPushedRef.current = false;
+          try {
+            window.history.back();
+          } catch {
+            // ignore
+          }
+        }
+      }
+
       releaseBodyScrollLock();
       previousActiveElement?.focus();
     };
-  }, [isOpen]);
+  }, [isOpen, enableHistoryBack]);
 
   return containerRef;
 };

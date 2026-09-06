@@ -14,10 +14,10 @@ export default defineConfig({
         'src/features/games/utils/gameAudio.ts',
       ],
       thresholds: {
-        branches: 40,
+        branches: 50,
         functions: 60,
-        lines: 60,
-        statements: 60,
+        lines: 62,
+        statements: 62,
       },
       provider: 'v8',
       reporter: ['text', 'html'],

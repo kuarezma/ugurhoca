@@ -9,6 +9,7 @@ import {
   AlertCircle,
   Play,
 } from 'lucide-react';
+import { useAccessibleModal } from '@/hooks/useAccessibleModal';
 
 type LeagueParticipant = {
   rank: number;
@@ -91,17 +92,20 @@ export function WeeklyMockLeagueModal({
   onStartExam,
 }: WeeklyMockLeagueModalProps) {
   const [activeTab, setActiveTab] = useState<'leaderboard' | 'analysis'>('leaderboard');
+  const containerRef = useAccessibleModal<HTMLDivElement>(isOpen, onClose);
 
   if (!isOpen) return null;
 
   return (
-    <div
-      role="dialog"
-      aria-modal="true"
-      aria-label="Haftalık LGS Deneme Ligi"
-      className="fixed inset-0 z-[150] flex items-center justify-center bg-slate-950/80 p-3 sm:p-5 backdrop-blur-md overflow-y-auto"
-    >
-      <div className="relative flex flex-col w-full max-w-4xl max-h-[92vh] bg-slate-900 border border-slate-700/80 rounded-3xl shadow-2xl overflow-hidden text-slate-100">
+    <div className="fixed inset-0 z-[150] flex items-center justify-center bg-slate-950/80 p-3 sm:p-5 backdrop-blur-md overflow-y-auto">
+      <div
+        ref={containerRef}
+        role="dialog"
+        aria-modal="true"
+        tabIndex={-1}
+        aria-label="Haftalık LGS Deneme Ligi"
+        className="relative flex flex-col w-full max-w-4xl max-h-[92vh] bg-slate-900 border border-slate-700/80 rounded-3xl shadow-2xl overflow-hidden text-slate-100 outline-none"
+      >
         {/* HEADER */}
         <div className="flex flex-wrap items-center justify-between gap-3 p-5 sm:p-6 border-b border-slate-800 bg-gradient-to-r from-amber-500/15 via-rose-500/10 to-transparent">
           <div className="flex items-center gap-3.5">

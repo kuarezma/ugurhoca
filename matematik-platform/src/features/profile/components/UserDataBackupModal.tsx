@@ -15,6 +15,7 @@ import {
   downloadUserDataBackupFile,
   importUserDataBackup,
 } from '@/lib/userDataBackup';
+import { useAccessibleModal } from '@/hooks/useAccessibleModal';
 
 interface UserDataBackupModalProps {
   isOpen: boolean;
@@ -27,6 +28,7 @@ export function UserDataBackupModal({
   onClose,
   isLight = false,
 }: UserDataBackupModalProps) {
+  const containerRef = useAccessibleModal<HTMLDivElement>(isOpen, onClose);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [feedback, setFeedback] = useState<{
     type: 'success' | 'error';
@@ -98,14 +100,14 @@ export function UserDataBackupModal({
   };
 
   return (
-    <div
-      role="dialog"
-      aria-modal="true"
-      aria-label="Veri Yedekleme ve Cihaz Aktarımı"
-      className="fixed inset-0 z-[160] flex items-center justify-center bg-slate-950/80 p-4 backdrop-blur-md animate-fade-in"
-    >
+    <div className="fixed inset-0 z-[160] flex items-center justify-center bg-slate-950/80 p-4 backdrop-blur-md animate-fade-in">
       <div
-        className={`w-full max-w-lg rounded-3xl border shadow-2xl p-6 transition-all ${
+        ref={containerRef}
+        role="dialog"
+        aria-modal="true"
+        tabIndex={-1}
+        aria-label="Veri Yedekleme ve Cihaz Aktarımı"
+        className={`w-full max-w-lg rounded-3xl border shadow-2xl p-6 transition-all outline-none ${
           isLight
             ? 'bg-white border-slate-200 text-slate-900'
             : 'bg-slate-900 border-white/15 text-white'
