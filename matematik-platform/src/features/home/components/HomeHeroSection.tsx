@@ -24,10 +24,10 @@ export function HomeHeroSection({
     : 'Matematiğe hoş geldin!';
 
   return (
-    <section className="relative px-4 pb-12 pt-6 sm:pt-10">
+    <section className="relative px-3.5 pb-6 pt-3 sm:px-4 sm:pb-10 sm:pt-8">
       <div className="relative mx-auto max-w-6xl">
         <div
-          className={`relative overflow-hidden rounded-3xl border px-4 py-7 sm:px-10 sm:py-12 transition-all duration-300 ${
+          className={`relative overflow-hidden rounded-3xl border px-4 py-5 sm:px-10 sm:py-10 transition-all duration-300 ${
             isLight
               ? 'border-slate-200/90 bg-gradient-to-br from-white via-slate-50/60 to-indigo-50/40 shadow-bento'
               : 'border-white/10 bg-gradient-to-br from-slate-900/95 via-slate-900/85 to-slate-950 shadow-2xl backdrop-blur-xl'

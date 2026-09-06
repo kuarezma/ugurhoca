@@ -35,6 +35,12 @@ Platformda öğrenci gizliliği en üst düzeyde korunur:
 
 ## Değişiklik Günlüğü (Changelog)
 
+### v1.3.1 - Mobil Deneyim & Başparmak Ergonomisi Optimizasyonu
+- **Sticky Mobil Kategori Barı:** Kullanıcı sayfada nerede olursa olsun, tepeye kaydırmadan başparmağıyla tek tıkla Dersler, Oyun ve Araçlar arasında geçiş yapabilmesi için yapışkan (sticky) kategori kontrolü entegre edildi.
+- **Segmented Hap (Pill) Switcher:** Mobilde dikey yer kaplayan hantal kutular yerine tek satırda 3 şık, modern iOS/Android segmented hap buton mimarisine geçildi.
+- **4 Sütunlu Ders Uygulama Izgarası (App Grid):** 8 ders materyali mobilde 4 satırlık bloklar yerine sadece 2 satır kaplayan kompakt 4x2 uygulama simgelerine dönüştürüldü; dikey kaydırma mesafesi %60 kısaltıldı.
+- **Mobil Araç Filtreleme Çipleri:** Araçlar sekmesinde 12 araç arasında kaybolmayı önlemek için `Tümü`, `🎯 Sınav & Net`, `📖 Formül & İspat`, `⏱️ Plan & Odak` ve `✏️ Tahta & Pratik` hızlı filtre çipleri sunuldu.
+
 ### v1.3.0 - Anasayfa Kategori Mimarisi & Sadeleştirilmiş Akış Düzeni
 - **Kompakt Kategori Hub'ı:** Sonsuz aşağı kaydırma ve aşırı uzun sayfa yükü ortadan kaldırıldı; içerikler **Dersler**, **Oyun** ve **Araçlar** olmak üzere 3 ana interaktif sekmede toplandı.
 - **Dersler Sekmesi:** Yaprak Test, Kitaplar, Kazanımlar, Ders Videoları, Deneme-Sınav, Canlı Ders, Çıkış Bileti, Programlar (oyun hariç 8 ders alanı), son eklenen belgeler, ödevler ve başarı yol haritası bir araya getirildi.

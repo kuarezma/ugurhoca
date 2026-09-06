@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { SafeLink } from '@/components/SafeLink';
 import {
@@ -16,6 +17,8 @@ import {
   Calendar,
   Zap,
 } from 'lucide-react';
+
+type ToolCategory = 'all' | 'exam' | 'formulas' | 'plan' | 'practice';
 
 type HomeQuickToolsGridProps = {
   isLight: boolean;
@@ -52,6 +55,7 @@ export function HomeQuickToolsGrid({
   onOpenWeeklyPlanner,
   onOpenSpeedDrill,
 }: HomeQuickToolsGridProps) {
+  const [selectedFilter, setSelectedFilter] = useState<ToolCategory>('all');
   const tools = [
     {
       id: 'cheatSheet',
@@ -221,15 +225,48 @@ export function HomeQuickToolsGrid({
     },
   ];
 
-  const visibleTools = excludeGames
+  const baseTools = excludeGames
     ? tools.filter((t) => t.id !== 'games')
     : tools;
 
+  const visibleTools =
+    selectedFilter === 'all'
+      ? baseTools
+      : baseTools.filter((t) => {
+          if (selectedFilter === 'exam') {
+            return t.id === 'calculators' || t.id === 'topicWeights';
+          }
+          if (selectedFilter === 'formulas') {
+            return (
+              t.id === 'cheatSheet' ||
+              t.id === 'visualProofs' ||
+              t.id === 'flashcards' ||
+              t.id === 'glossary'
+            );
+          }
+          if (selectedFilter === 'plan') {
+            return (
+              t.id === 'pomodoro' ||
+              t.id === 'weeklyPlanner' ||
+              t.id === 'checklist'
+            );
+          }
+          if (selectedFilter === 'practice') {
+            return (
+              t.id === 'scratchpad' ||
+              t.id === 'graphVisualizer' ||
+              t.id === 'speedDrill' ||
+              t.id === 'games'
+            );
+          }
+          return true;
+        });
+
   return (
-    <section className="relative px-4 py-8 sm:py-10">
+    <section className="relative px-3.5 py-6 sm:px-4 sm:py-10">
       <div className="relative mx-auto max-w-6xl">
         {!hideHeader && (
-          <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
+          <div className="mb-5 sm:mb-6 flex flex-wrap items-center justify-between gap-3">
             <div>
               <div className="mb-2 inline-flex items-center gap-1.5 rounded-full bg-indigo-50 dark:bg-indigo-500/15 border border-indigo-100 dark:border-indigo-500/20 px-3 py-1 text-xs font-bold text-indigo-700 dark:text-indigo-300">
                 <Sparkles className="h-3.5 w-3.5 text-indigo-500" />
@@ -254,7 +291,36 @@ export function HomeQuickToolsGrid({
           </div>
         )}
 
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        {/* Mobil & Masaüstü Hızlı Kategori Filtre Çipleri */}
+        <div className="mb-4 sm:mb-6 flex items-center gap-1.5 overflow-x-auto pb-1 [scrollbar-width:none]">
+          {[
+            { id: 'all', label: `Tümü (${baseTools.length})` },
+            { id: 'exam', label: '🎯 Sınav & Net' },
+            { id: 'formulas', label: '📖 Formül & İspat' },
+            { id: 'plan', label: '⏱️ Plan & Odak' },
+            { id: 'practice', label: '✏️ Tahta & Pratik' },
+          ].map((chip) => {
+            const isSelected = selectedFilter === chip.id;
+            return (
+              <button
+                key={chip.id}
+                type="button"
+                onClick={() => setSelectedFilter(chip.id as ToolCategory)}
+                className={`shrink-0 rounded-xl px-3 py-1.5 text-xs font-semibold transition-all ${
+                  isSelected
+                    ? 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-sm scale-105'
+                    : isLight
+                      ? 'bg-slate-100 text-slate-700 hover:bg-slate-200 border border-slate-200/80'
+                      : 'bg-white/5 text-slate-300 hover:bg-white/10 border border-white/10'
+                }`}
+              >
+                {chip.label}
+              </button>
+            );
+          })}
+        </div>
+
+        <div className="grid grid-cols-1 gap-3.5 sm:grid-cols-2 lg:grid-cols-3">
           {visibleTools.map((tool, idx) => (
             <motion.div
               key={tool.id}
@@ -262,7 +328,7 @@ export function HomeQuickToolsGrid({
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: idx * 0.06 }}
               whileHover={{ y: -4 }}
-              className={`group relative flex flex-col justify-between overflow-hidden rounded-3xl border p-5 sm:p-6 transition-all duration-300 ${
+              className={`group relative flex flex-col justify-between overflow-hidden rounded-2xl sm:rounded-3xl border p-4 sm:p-6 transition-all duration-300 ${
                 isLight
                   ? 'border-slate-200/90 bg-white/95 shadow-bento hover:shadow-bento-hover hover:border-indigo-300'
                   : 'border-white/10 bg-slate-900/80 shadow-xl backdrop-blur-xl hover:border-white/20 hover:shadow-2xl'
@@ -274,17 +340,17 @@ export function HomeQuickToolsGrid({
               />
 
               <div>
-                <div className="mb-4 flex items-center justify-between">
+                <div className="mb-3 sm:mb-4 flex items-center justify-between">
                   <div
-                    className={`flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br ${tool.gradient} text-white shadow-md transition-transform duration-300 group-hover:scale-105`}
+                    className={`flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-xl sm:rounded-2xl bg-gradient-to-br ${tool.gradient} text-white shadow-md transition-transform duration-300 group-hover:scale-105`}
                   >
-                    <tool.icon className="h-6 w-6" />
+                    <tool.icon className="h-5 w-5 sm:h-6 sm:w-6" />
                   </div>
                   <span
-                    className={`rounded-full px-2.5 py-0.5 text-[11px] font-bold ${
+                    className={`rounded-full px-2.5 py-0.5 text-[10px] sm:text-[11px] font-bold ${
                       isLight
-                        ? 'bg-slate-100 text-slate-700 border border-slate-200/60'
-                        : 'bg-white/10 text-slate-300 border border-white/10'
+                        ? 'bg-slate-100 text-slate-700'
+                        : 'bg-white/10 text-slate-300'
                     }`}
                   >
                     {tool.badge}
@@ -292,14 +358,14 @@ export function HomeQuickToolsGrid({
                 </div>
 
                 <h3
-                  className={`font-display text-base font-bold sm:text-lg mb-2 ${
+                  className={`font-display text-sm sm:text-base font-bold mb-1.5 ${
                     isLight ? 'text-slate-900' : 'text-white'
                   }`}
                 >
                   {tool.title}
                 </h3>
                 <p
-                  className={`text-xs leading-relaxed ${
+                  className={`text-xs leading-relaxed line-clamp-2 sm:line-clamp-none ${
                     isLight ? 'text-slate-600' : 'text-slate-400'
                   }`}
                 >
@@ -307,7 +373,7 @@ export function HomeQuickToolsGrid({
                 </p>
               </div>
 
-              <div className="mt-6 pt-4 border-t border-slate-100 dark:border-white/10">
+              <div className="mt-4 sm:mt-6 pt-3 sm:pt-4 border-t border-slate-100 dark:border-white/10">
                 {tool.actionType === 'modal' ? (
                   <button
                     type="button"

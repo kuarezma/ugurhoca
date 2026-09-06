@@ -35,6 +35,12 @@ Student privacy and well-being are paramount on the platform:
 
 ## Changelog
 
+### v1.3.1 - Mobile Experience & Thumb Ergonomics Optimization
+- **Sticky Mobile Category Bar:** Category bar now sticks cleanly under the top navbar on mobile, enabling one-thumb category switching from anywhere on the page without scrolling back to the top.
+- **Segmented Mobile Pill Switcher:** Replaced bulky stacked cards with a compact, single-row iOS/Android segmented pill bar for mobile devices.
+- **4-Column Lesson App Grid:** Reorganized the 8 lesson categories into a 4-column launcher grid on mobile, condensing 4 tall rows into 2 compact rows and reducing vertical scroll by ~60%.
+- **Mobile Quick Tool Filter Chips:** Added instant horizontal filter chips (`All`, `🎯 Exam & Scores`, `📖 Formulas & Proofs`, `⏱️ Plan & Focus`, `✏️ Board & Practice`) in the Tools tab for instant tool discovery.
+
 ### v1.3.0 - Homepage Category Architecture & Streamlined Layout
 - **Compact Category Hub:** Eliminated endless vertical scrolling and page bloat by consolidating homepage modules into 3 intuitive tabs: **Lessons**, **Games**, and **Tools**.
 - **Lessons Tab:** Consolidated 8 learning modules (Worksheets, Books, Learning Outcomes, Video Lectures, Practice Exams, Live Classes, Exit Tickets, Programs - games excluded), recently added documents, student homework, and the success roadmap.

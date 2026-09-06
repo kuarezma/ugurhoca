@@ -1,17 +1,13 @@
-'use client';
-
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   BookOpen,
   Gamepad2,
   Zap,
-  Sparkles,
   ArrowRight,
   Trophy,
   Flame,
   CheckCircle2,
-  Layers,
 } from 'lucide-react';
 import { SafeLink } from '@/components/SafeLink';
 import { HOME_CATEGORIES } from '@/features/home/constants';
@@ -72,11 +68,25 @@ export function HomeCategoryHub({
   onOpenSpeedDrill,
 }: HomeCategoryHubProps) {
   const [activeTab, setActiveTab] = useState<HomeCategoryTab>('lessons');
+  const sectionRef = useRef<HTMLElement>(null);
 
   // Dersler sekmesindeki hızlı erişim: Oyunlar hariç tüm ders alanları
   const lessonCategories = HOME_CATEGORIES.filter(
     (cat) => cat.id !== 'oyunlar',
   );
+
+  const handleTabChange = (tabId: HomeCategoryTab) => {
+    setActiveTab(tabId);
+    if (sectionRef.current) {
+      const rect = sectionRef.current.getBoundingClientRect();
+      if (rect.top < 0) {
+        window.scrollTo({
+          top: window.scrollY + rect.top - 80,
+          behavior: 'smooth',
+        });
+      }
+    }
+  };
 
   const tabs: {
     id: HomeCategoryTab;
@@ -92,7 +102,7 @@ export function HomeCategoryHub({
       id: 'lessons',
       title: 'Dersler',
       subtitle: 'Yaprak test, konu, video ve dokümanlar',
-      badge: '8 Kategori',
+      badge: '8 Alan',
       icon: BookOpen,
       gradient: 'from-blue-600 via-indigo-600 to-violet-600',
       activeBorder: 'border-indigo-500',
@@ -112,7 +122,7 @@ export function HomeCategoryHub({
       id: 'tools',
       title: 'Araçlar',
       subtitle: 'Süper güçler, net hesaplama & Pomodoro',
-      badge: '12 Süper Araç',
+      badge: '12 Araç',
       icon: Zap,
       gradient: 'from-amber-500 via-rose-500 to-purple-600',
       activeBorder: 'border-amber-500',
@@ -122,143 +132,152 @@ export function HomeCategoryHub({
 
   return (
     <section
-      className="relative px-4 pb-10 pt-2 sm:pt-4"
+      ref={sectionRef}
+      className="relative px-3.5 pb-8 pt-1 sm:px-4 sm:pb-10 sm:pt-2"
       aria-label="Ana Kategoriler"
     >
       <div className="mx-auto max-w-6xl">
-        {/* Kategori Seçici Başlık */}
-        <div className="mb-4 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <span
-              className={`flex h-8 w-8 items-center justify-center rounded-xl font-bold ${
-                isLight
-                  ? 'bg-indigo-100 text-indigo-700'
-                  : 'bg-indigo-500/20 text-indigo-400'
-              }`}
-            >
-              <Layers className="h-4 w-4" />
-            </span>
-            <div>
-              <h2
-                className={`font-display text-lg font-bold sm:text-2xl ${
-                  isLight ? 'text-slate-900' : 'text-white'
-                }`}
-              >
-                Kategoriler
-              </h2>
-              <p
-                className={`text-xs ${isLight ? 'text-slate-500' : 'text-slate-400'}`}
-              >
-                İhtiyacın olan bölüme tek tıkla ulaş
-              </p>
-            </div>
-          </div>
-
+        {/* Sticky Mobil & Masaüstü Kategori Seçici Barı */}
+        <div className="sticky top-[calc(3.75rem+env(safe-area-inset-top))] sm:top-[calc(4.5rem+env(safe-area-inset-top))] z-20 -mx-3.5 px-3.5 py-2 sm:-mx-4 sm:px-4 sm:py-3 mb-3 sm:mb-6 backdrop-blur-xl bg-white/95 dark:bg-slate-900/95 border-y border-slate-200/80 dark:border-white/10 shadow-xs transition-all">
+          {/* Mobilde Segmented Control Bar (3 Ergonomik Hap Buton) */}
           <div
-            className={`hidden sm:inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold ${
-              isLight
-                ? 'bg-slate-100 text-slate-600 border border-slate-200'
-                : 'bg-white/5 text-slate-300 border border-white/10'
-            }`}
+            className="grid grid-cols-3 gap-1 rounded-2xl bg-slate-100 dark:bg-slate-800/90 p-1 sm:hidden border border-slate-200/80 dark:border-white/10"
+            role="tablist"
+            aria-label="İçerik Kategorileri"
           >
-            <Sparkles className="h-3 w-3 text-amber-500" />
-            <span>Kompakt Görünüm</span>
+            {tabs.map((tab) => {
+              const isActive = activeTab === tab.id;
+              const Icon = tab.icon;
+              return (
+                <button
+                  key={`mobile-${tab.id}`}
+                  role="tab"
+                  aria-selected={isActive}
+                  aria-controls={`panel-${tab.id}`}
+                  id={`tab-${tab.id}`}
+                  onClick={() => handleTabChange(tab.id)}
+                  className={`relative flex h-11 items-center justify-center gap-1.5 rounded-xl px-2 text-xs font-bold transition-all touch-manipulation active:scale-[0.98] ${
+                    isActive
+                      ? 'text-white shadow-sm'
+                      : isLight
+                        ? 'text-slate-600 hover:text-slate-900'
+                        : 'text-slate-300 hover:text-white'
+                  }`}
+                >
+                  {isActive && (
+                    <motion.div
+                      layoutId="mobileActivePill"
+                      className={`absolute inset-0 rounded-xl bg-gradient-to-r ${tab.gradient}`}
+                      transition={{
+                        type: 'spring',
+                        bounce: 0.15,
+                        duration: 0.35,
+                      }}
+                    />
+                  )}
+                  <Icon className="relative z-10 h-4 w-4 shrink-0" />
+                  <span className="relative z-10 truncate">{tab.title}</span>
+                </button>
+              );
+            })}
           </div>
-        </div>
 
-        {/* 3 Ana Kategori Sekmesi (Kart Switcher) */}
-        <div
-          className="grid grid-cols-3 gap-2 sm:gap-4"
-          role="tablist"
-          aria-label="İçerik Kategorileri"
-        >
-          {tabs.map((tab) => {
-            const isActive = activeTab === tab.id;
-            const Icon = tab.icon;
+          {/* Masaüstü Zengin Bento Kart Switcher */}
+          <div
+            className="hidden sm:grid sm:grid-cols-3 sm:gap-4"
+            role="tablist"
+            aria-label="İçerik Kategorileri Masaüstü"
+          >
+            {tabs.map((tab) => {
+              const isActive = activeTab === tab.id;
+              const Icon = tab.icon;
 
-            return (
-              <button
-                key={tab.id}
-                role="tab"
-                aria-selected={isActive}
-                aria-controls={`panel-${tab.id}`}
-                id={`tab-${tab.id}`}
-                onClick={() => setActiveTab(tab.id)}
-                className={`group relative flex flex-col items-center sm:items-start rounded-2xl sm:rounded-3xl border p-3 sm:p-5 text-left transition-all duration-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 ${
-                  isActive
-                    ? `${tab.activeBorder} ${tab.activeBg} shadow-lg scale-[1.01]`
-                    : isLight
-                      ? 'border-slate-200/90 bg-white/90 hover:border-slate-300 hover:bg-slate-50/80 shadow-sm'
-                      : 'border-white/10 bg-slate-900/60 hover:border-white/20 hover:bg-white/5'
-                }`}
-              >
-                {/* Aktiflik Üst Çizgisi */}
-                {isActive && (
-                  <motion.div
-                    layoutId="activeTabIndicator"
-                    className={`absolute inset-x-0 -top-px h-1 rounded-t-3xl bg-gradient-to-r ${tab.gradient}`}
-                    transition={{ type: 'spring', bounce: 0.2, duration: 0.5 }}
-                  />
-                )}
+              return (
+                <button
+                  key={`desktop-${tab.id}`}
+                  role="tab"
+                  aria-selected={isActive}
+                  aria-controls={`panel-${tab.id}`}
+                  onClick={() => handleTabChange(tab.id)}
+                  className={`group relative flex flex-col items-start rounded-3xl border p-5 text-left transition-all duration-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 ${
+                    isActive
+                      ? `${tab.activeBorder} ${tab.activeBg} shadow-lg scale-[1.01]`
+                      : isLight
+                        ? 'border-slate-200/90 bg-white/90 hover:border-slate-300 hover:bg-slate-50/80 shadow-sm'
+                        : 'border-white/10 bg-slate-900/60 hover:border-white/20 hover:bg-white/5'
+                  }`}
+                >
+                  {isActive && (
+                    <motion.div
+                      layoutId="activeTabIndicator"
+                      className={`absolute inset-x-0 -top-px h-1 rounded-t-3xl bg-gradient-to-r ${tab.gradient}`}
+                      transition={{
+                        type: 'spring',
+                        bounce: 0.2,
+                        duration: 0.5,
+                      }}
+                    />
+                  )}
 
-                <div className="flex w-full items-center justify-between mb-2">
-                  <div
-                    className={`flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-xl sm:rounded-2xl transition-transform duration-300 group-hover:scale-105 ${
-                      isActive
-                        ? `bg-gradient-to-br ${tab.gradient} text-white shadow-md`
-                        : isLight
-                          ? 'bg-slate-100 text-slate-700'
-                          : 'bg-white/10 text-slate-300'
-                    }`}
-                  >
-                    <Icon className="h-5 w-5 sm:h-6 sm:w-6" />
+                  <div className="flex w-full items-center justify-between mb-2">
+                    <div
+                      className={`flex h-12 w-12 items-center justify-center rounded-2xl transition-transform duration-300 group-hover:scale-105 ${
+                        isActive
+                          ? `bg-gradient-to-br ${tab.gradient} text-white shadow-md`
+                          : isLight
+                            ? 'bg-slate-100 text-slate-700'
+                            : 'bg-white/10 text-slate-300'
+                      }`}
+                    >
+                      <Icon className="h-6 w-6" />
+                    </div>
+
+                    <span
+                      className={`rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider ${
+                        isActive
+                          ? isLight
+                            ? 'bg-white text-indigo-700 shadow-sm'
+                            : 'bg-white/15 text-white'
+                          : isLight
+                            ? 'bg-slate-100 text-slate-500'
+                            : 'bg-white/5 text-slate-400'
+                      }`}
+                    >
+                      {tab.badge}
+                    </span>
                   </div>
 
-                  <span
-                    className={`hidden sm:inline-block rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider ${
+                  <h3
+                    className={`font-display text-base font-bold transition-colors ${
                       isActive
                         ? isLight
-                          ? 'bg-white text-indigo-700 shadow-sm'
-                          : 'bg-white/15 text-white'
+                          ? 'text-slate-900'
+                          : 'text-white'
                         : isLight
-                          ? 'bg-slate-100 text-slate-500'
-                          : 'bg-white/5 text-slate-400'
+                          ? 'text-slate-700 group-hover:text-slate-900'
+                          : 'text-slate-300 group-hover:text-white'
                     }`}
                   >
-                    {tab.badge}
-                  </span>
-                </div>
+                    {tab.title}
+                  </h3>
 
-                <h3
-                  className={`font-display text-xs sm:text-base font-bold transition-colors ${
-                    isActive
-                      ? isLight
-                        ? 'text-slate-900'
-                        : 'text-white'
-                      : isLight
-                        ? 'text-slate-700 group-hover:text-slate-900'
-                        : 'text-slate-300 group-hover:text-white'
-                  }`}
-                >
-                  {tab.title}
-                </h3>
-
-                <p
-                  className={`hidden sm:line-clamp-1 text-xs mt-0.5 transition-colors ${
-                    isActive
-                      ? isLight
-                        ? 'text-slate-600 font-medium'
-                        : 'text-slate-300'
-                      : isLight
-                        ? 'text-slate-500'
-                        : 'text-slate-400'
-                  }`}
-                >
-                  {tab.subtitle}
-                </p>
-              </button>
-            );
-          })}
+                  <p
+                    className={`line-clamp-1 text-xs mt-0.5 transition-colors ${
+                      isActive
+                        ? isLight
+                          ? 'text-slate-600 font-medium'
+                          : 'text-slate-300'
+                        : isLight
+                          ? 'text-slate-500'
+                          : 'text-slate-400'
+                    }`}
+                  >
+                    {tab.subtitle}
+                  </p>
+                </button>
+              );
+            })}
+          </div>
         </div>
 
         {/* Seçili Kategori İçeriği */}
@@ -276,25 +295,25 @@ export function HomeCategoryHub({
                 transition={{ duration: 0.25 }}
                 className="space-y-6"
               >
-                {/* Hızlı Erişim Kartları (Oyun hariç) */}
+                {/* Hızlı Erişim Kartları (Oyun hariç - Mobilde 4'lü Uygulama Izgarası) */}
                 <div
-                  className={`rounded-3xl border p-5 sm:p-7 ${
+                  className={`rounded-2xl sm:rounded-3xl border p-3.5 sm:p-7 ${
                     isLight
                       ? 'border-slate-200/90 bg-gradient-to-br from-white via-slate-50/50 to-indigo-50/20 shadow-bento'
                       : 'border-white/10 bg-gradient-to-br from-slate-900/90 via-slate-900/80 to-slate-950 shadow-xl'
                   }`}
                 >
-                  <div className="mb-4 flex items-center justify-between">
+                  <div className="mb-3 sm:mb-4 flex items-center justify-between">
                     <div>
                       <h3
-                        className={`font-display text-lg font-bold sm:text-xl ${
+                        className={`font-display text-base font-bold sm:text-xl ${
                           isLight ? 'text-slate-900' : 'text-white'
                         }`}
                       >
                         Hızlı Erişim & Ders Materyalleri
                       </h3>
                       <p
-                        className={`text-xs sm:text-sm ${isLight ? 'text-slate-500' : 'text-slate-400'}`}
+                        className={`hidden sm:block text-xs sm:text-sm ${isLight ? 'text-slate-500' : 'text-slate-400'}`}
                       >
                         Müfredata uygun tüm konu, test, video ve çalışma
                         dokümanları
@@ -304,30 +323,30 @@ export function HomeCategoryHub({
                       href="/icerikler"
                       className="inline-flex items-center gap-1 text-xs font-bold text-indigo-600 hover:text-indigo-700 dark:text-indigo-400"
                     >
-                      Tüm içerikler <ArrowRight className="h-3.5 w-3.5" />
+                      Tümü <ArrowRight className="h-3.5 w-3.5" />
                     </SafeLink>
                   </div>
 
-                  <div className="grid grid-cols-2 gap-2.5 sm:gap-3.5 sm:grid-cols-4">
+                  <div className="grid grid-cols-4 gap-1.5 sm:gap-3.5">
                     {lessonCategories.map((category) => (
                       <SafeLink
                         key={category.id}
                         href={category.href}
                         aria-label={`${category.title} kategorisi`}
-                        className={`group relative block overflow-hidden rounded-2xl border p-3.5 sm:p-4 text-center transition-all duration-200 hover:-translate-y-0.5 ${
+                        className={`group relative flex flex-col items-center justify-center overflow-hidden rounded-xl sm:rounded-2xl border p-2 sm:p-4 text-center transition-all duration-200 hover:-translate-y-0.5 touch-manipulation active:scale-95 ${
                           isLight
-                            ? 'border-slate-200/80 bg-white shadow-sm hover:border-indigo-200 hover:shadow-md'
+                            ? 'border-slate-200/80 bg-white shadow-xs hover:border-indigo-200 hover:shadow-md'
                             : `${category.bgColor} ${category.borderColor} hover:border-white/20 hover:shadow-lg`
                         }`}
                       >
                         <div
                           aria-hidden="true"
-                          className={`mx-auto mb-2 flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-xl bg-gradient-to-br ${category.color} shadow-sm transition-transform duration-200 group-hover:scale-105`}
+                          className={`mx-auto mb-1.5 sm:mb-2 flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-xl sm:rounded-2xl bg-gradient-to-br ${category.color} shadow-sm transition-transform duration-200 group-hover:scale-105`}
                         >
                           <category.icon className="h-5 w-5 sm:h-6 sm:w-6 text-white" />
                         </div>
                         <h4
-                          className={`font-display text-xs font-bold sm:text-sm truncate ${
+                          className={`font-display text-[10px] sm:text-sm font-bold truncate max-w-full ${
                             isLight ? 'text-slate-900' : 'text-white'
                           }`}
                         >
@@ -379,27 +398,27 @@ export function HomeCategoryHub({
 
                 {/* Hızlı İşlem ve Oyun Vitrini */}
                 <div
-                  className={`rounded-3xl border p-5 sm:p-7 ${
+                  className={`rounded-2xl sm:rounded-3xl border p-4 sm:p-7 ${
                     isLight
                       ? 'border-slate-200/90 bg-gradient-to-br from-white via-emerald-50/30 to-teal-50/20 shadow-bento'
                       : 'border-white/10 bg-gradient-to-br from-slate-900/90 via-slate-900/80 to-slate-950 shadow-xl'
                   }`}
                 >
-                  <div className="mb-5 flex flex-wrap items-center justify-between gap-2">
+                  <div className="mb-4 sm:mb-5 flex flex-wrap items-center justify-between gap-2">
                     <div>
-                      <div className="mb-1.5 inline-flex items-center gap-1.5 rounded-full bg-emerald-500/10 px-2.5 py-0.5 text-xs font-bold text-emerald-600 dark:text-emerald-400">
+                      <div className="mb-1 inline-flex items-center gap-1.5 rounded-full bg-emerald-500/10 px-2.5 py-0.5 text-xs font-bold text-emerald-600 dark:text-emerald-400">
                         <Flame className="h-3.5 w-3.5 text-emerald-500" />
                         Oyunla Öğrenme Merkezi
                       </div>
                       <h3
-                        className={`font-display text-lg font-bold sm:text-2xl ${
+                        className={`font-display text-base font-bold sm:text-2xl ${
                           isLight ? 'text-slate-900' : 'text-white'
                         }`}
                       >
                         Matematik Oyunları & Hızlı Egzersizler
                       </h3>
                       <p
-                        className={`text-xs sm:text-sm ${isLight ? 'text-slate-500' : 'text-slate-400'}`}
+                        className={`hidden sm:block text-xs sm:text-sm ${isLight ? 'text-slate-500' : 'text-slate-400'}`}
                       >
                         Reflekslerini geliştir, zamana karşı işlem yap ve
                         liderlik tablosunda yüksel!
@@ -408,15 +427,15 @@ export function HomeCategoryHub({
 
                     <SafeLink
                       href="/oyunlar"
-                      className="inline-flex h-10 items-center gap-2 rounded-2xl bg-gradient-to-r from-emerald-500 via-teal-600 to-cyan-600 px-4 text-xs font-bold text-white shadow-md transition-transform hover:-translate-y-0.5"
+                      className="inline-flex h-9 sm:h-10 items-center gap-2 rounded-xl sm:rounded-2xl bg-gradient-to-r from-emerald-500 via-teal-600 to-cyan-600 px-3.5 sm:px-4 text-xs font-bold text-white shadow-md transition-transform hover:-translate-y-0.5 touch-manipulation active:scale-95"
                     >
                       <Gamepad2 className="h-4 w-4" />
-                      Tüm Oyunları Gör
+                      Tüm Oyunlar
                       <ArrowRight className="h-3.5 w-3.5" />
                     </SafeLink>
                   </div>
 
-                  <div className="grid grid-cols-1 gap-3.5 sm:grid-cols-3">
+                  <div className="grid grid-cols-1 gap-2.5 sm:gap-3.5 sm:grid-cols-3">
                     {/* Hızlı Formül Düellosu */}
                     <div
                       className={`flex flex-col justify-between rounded-2xl border p-4 sm:p-5 transition-all ${
