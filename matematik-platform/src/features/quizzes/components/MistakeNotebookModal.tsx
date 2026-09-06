@@ -846,6 +846,22 @@ export function MistakeNotebookModal({
                     })}
                   </div>
 
+                  {/* Kavram Yanılgısı Teşhisi (varsa) */}
+                  {item.userSelectedOption !== undefined &&
+                    item.userSelectedOption !== q.correct_index &&
+                    q.distractor_explanations?.[item.userSelectedOption] && (
+                      <div className="mt-3 rounded-xl bg-rose-50/80 dark:bg-rose-950/20 border border-rose-200 dark:border-rose-500/30 p-3 text-xs text-rose-900 dark:text-rose-200 flex items-start gap-2">
+                        <div>
+                          <span className="font-bold block text-rose-700 dark:text-rose-400">
+                            💡 Kavram Yanılgısı Teşhisi ({String.fromCharCode(65 + item.userSelectedOption)} Şıkkı):
+                          </span>
+                          <p className="mt-0.5 leading-relaxed text-slate-700 dark:text-slate-300">
+                            {q.distractor_explanations[item.userSelectedOption]}
+                          </p>
+                        </div>
+                      </div>
+                    )}
+
                   {/* Çözüm Açıklaması (varsa) */}
                   {q.explanation && (
                     <div className="mt-3 rounded-xl bg-amber-50/70 dark:bg-amber-950/20 border border-amber-200/60 dark:border-amber-500/20 p-2.5 text-xs text-amber-900 dark:text-amber-200">

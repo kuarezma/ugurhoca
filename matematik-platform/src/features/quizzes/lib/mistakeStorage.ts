@@ -23,6 +23,7 @@ export type SavedMistakeQuestion = {
   nextReviewDate?: string; // YYYY-MM-DD
   lastReviewedAt?: string;
   reviewCount?: number;
+  userSelectedOption?: number;
 };
 
 export const SPACED_INTERVALS_DAYS = [1, 3, 7, 14, 30];
@@ -182,6 +183,7 @@ export const advanceMistakeReview = (questionText: string, correct = true): void
 export const saveMistakesToBank = (
   questions: QuizQuestion[],
   quizTitle?: string,
+  userAnswers?: Record<string, number>,
 ): number => {
   if (typeof window === 'undefined' || !questions.length) return 0;
   try {
@@ -203,6 +205,7 @@ export const saveMistakesToBank = (
           reviewStage: 0,
           nextReviewDate: tomorrowStr,
           reviewCount: 0,
+          userSelectedOption: userAnswers?.[q.id],
         });
         addedCount++;
       }

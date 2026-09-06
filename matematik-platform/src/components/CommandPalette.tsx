@@ -26,6 +26,7 @@ import {
   Video,
   Zap,
   Compass,
+  Presentation,
 } from 'lucide-react';
 
 export type CommandCategory = 'Araç' | 'Oyun' | 'Konu' | 'Sayfa';
@@ -377,6 +378,15 @@ export default function CommandPalette() {
         keywords: ['canli', 'ders', 'zoom', 'online', 'uzaktan'],
         icon: MonitorPlay,
         action: () => router.push('/canli-ders'),
+      },
+      {
+        id: 'exit-ticket',
+        label: 'Ders Sonu Çıkış Bileti',
+        category: 'Sayfa',
+        hint: 'Akıllı tahta ve PIN ile 3 dakikalık anlık değerlendirme',
+        keywords: ['cikis', 'bileti', 'exit', 'ticket', 'akilli', 'tahta', 'pin', 'degerlendirme', 'sinif'],
+        icon: Presentation,
+        action: () => router.push('/cikis-bileti'),
       },
       {
         id: 'login',

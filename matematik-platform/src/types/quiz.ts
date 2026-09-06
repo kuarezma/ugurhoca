@@ -22,6 +22,7 @@ export interface QuizQuestion {
   correct_index: number;
   question_order: number;
   explanation: string | null;
+  distractor_explanations?: Record<number, string> | null;
   created_at: string;
 }
 

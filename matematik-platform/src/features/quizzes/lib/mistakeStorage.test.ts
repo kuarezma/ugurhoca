@@ -159,4 +159,11 @@ describe('mistakeStorage', () => {
     markMistakeMastered(mockQuestion.question, true);
     expect(getDueMistakes()).toHaveLength(0);
   });
+
+  it('stores userSelectedOption when userAnswers map is provided', () => {
+    saveMistakesToBank([mockQuestion], 'Test 1', { 'q-1': 1 });
+    const saved = getSavedMistakes();
+    expect(saved).toHaveLength(1);
+    expect(saved[0].userSelectedOption).toBe(1);
+  });
 });

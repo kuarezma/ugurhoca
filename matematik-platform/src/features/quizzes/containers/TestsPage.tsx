@@ -130,6 +130,7 @@ const normalizeQuizQuestion = (question: QuizQuestion): QuizQuestion => {
     explanation: media.explanation,
     option_image_urls: question.option_image_urls || media.option_image_urls,
     question_image_url: question.question_image_url || media.question_image_url,
+    distractor_explanations: question.distractor_explanations || media.distractor_explanations,
   };
 };
 
@@ -762,7 +763,13 @@ export default function TestsPage({
     // Hata defterine yanlışları otomatik ekle, doğru çözülenleri öğrenildi işaretle
     const mistakes = quizQuestions.filter((q, i) => answers[i] !== q.correct_index);
     if (mistakes.length > 0) {
-      saveMistakesToBank(mistakes, selectedQuiz?.title);
+      const userAnswersMap: Record<string, number> = {};
+      quizQuestions.forEach((q, i) => {
+        if (answers[i] !== undefined) {
+          userAnswersMap[q.id] = answers[i];
+        }
+      });
+      saveMistakesToBank(mistakes, selectedQuiz?.title, userAnswersMap);
     }
     const corrects = quizQuestions.filter((q, i) => answers[i] === q.correct_index);
     for (const c of corrects) {
@@ -1612,6 +1619,22 @@ export default function TestsPage({
                             )}
                           </>
                         )}
+                        {!isCorrect &&
+                          !isUnanswered &&
+                          userAnswer !== undefined &&
+                          q.distractor_explanations?.[userAnswer] && (
+                            <div className="mt-3 p-3 bg-rose-500/10 border border-rose-500/30 rounded-xl text-xs text-rose-200 flex items-start gap-2.5">
+                              <AlertCircle className="w-4 h-4 text-rose-400 shrink-0 mt-0.5" />
+                              <div>
+                                <span className="font-bold block text-rose-300">
+                                  💡 Kavram Yanılgısı Teşhisi ({String.fromCharCode(65 + userAnswer)} Şıkkı):
+                                </span>
+                                <p className="mt-0.5 leading-relaxed text-slate-300">
+                                  {q.distractor_explanations[userAnswer]}
+                                </p>
+                              </div>
+                            </div>
+                          )}
                         {q.explanation && (
                           <div className="mt-3 p-3 bg-slate-900/50 rounded-lg text-xs text-slate-400 flex items-start gap-2">
                             <AlertCircle className="w-4 h-4 text-amber-500 shrink-0 mt-0.5" />
