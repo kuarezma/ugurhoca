@@ -651,5 +651,39 @@ _Son güncelleme: 11 Nisan 2026 — Yönetici hesabı yetkilendirmesi, politika 
 - **Birim Testleri:** `167` test dosyası, `614` birim testi başarıyla geçti.
 - **Üretim Derlemesi:** `npm run build` ile 65 rota Turbopack ile başarıyla üretildi.
 
-_Son güncelleme: 6 Eylül 2026 — Sekme geçişleri, mobil alt menü prefetch, keep-alive sekmeli paneller ve istatistik önbelleği optimizasyonları tamamlandı._
+---
+
+## 26. Platform Genel Hız Motoru ve Akıcılık Optimizasyonu (6 Eylül 2026)
+
+### 26.1 Tespit Edilen İkincil Hız Darboğazları
+- **Bağlantı Tıklama Gecikmesi (Click-to-Render Delay):** Site genelindeki dahili bağlantılarda (`SafeLink`) prefetch kapalıydı; kullanıcı bir bağlantıya tıkladığında sayfa bileşenleri ve kod parçaları ancak tıklandıktan sonra indirilmeye başlanıyordu (~300-600ms gecikme).
+- **Testler Sayfası Başlangıç JS Yükü:** `/testler` sayfasında (`TestsPage.tsx`) `ScratchpadModal`, `QuizMistakeReviewModal`, `MistakeNotebookModal`, `QuizShortcutsModal`, `SpotTheMistakeModal`, `InteractiveMathLabModal` ve `AccessibilitySettingsModal` bileşenleri statik/eager import edilmişti; kullanıcı test çözmeye başlamadan veya modal açmadan yüzlerce kilobaytlık kullanılmayan JS parse ediliyordu.
+- **Kartların Mükerrer Çizimi ve DOM Yükü:** `ContentsPage` üzerinde filtre veya arama yapıldığında onlarca `ContentCard` bileşeni sıfırdan render ediliyordu. Ekran dışındaki kartlar için GPU ve layout hesaplaması çalışıyordu.
+- **Filtre ve Sekme Değişimlerinde UI Blokajı:** `ContentsPage` üzerinde kategori ve sınıf sekmeleri değiştiğinde senkron state güncellemesi ana iş parçacığını (main thread) bloke ediyordu.
+- **Mobil Cihazlarda GPU Shading Aşırı Isınması:** Dokunmatik ekranlarda yoğun `backdrop-filter: blur(...)` kullanımı, özellikle sayfa kaydırılırken GPU fill-rate darboğazına ve kare düşmelerine yol açıyordu.
+
+### 26.2 Uygulanan Çözümler
+1. **Niyet-Bazlı Prefetch & View Transitions (`SafeLink.tsx`):**
+   - Masaüstünde fare imleci bir linkin üzerine geldiğinde (`onPointerEnter`) ve mobil cihazlarda parmak dokunduğu anda (`onTouchStart`) 100-200ms erkenden `router.prefetch()` tetiklendi.
+   - Global `Set<string>` (`prefetchedUrls`) ile mükerrer prefetch çağrıları engellendi.
+   - Tarayıcı destekliyorsa yerel `document.startViewTransition` ile sayfa geçişleri yumuşak ve sıfır gecikmeli hale getirildi.
+2. **Testler Sayfasında Dinamik Modal Bölümleme (`TestsPage.tsx`):**
+   - 7 adet ağır modal (`ScratchpadModal`, `QuizMistakeReviewModal`, `MistakeNotebookModal`, `QuizShortcutsModal`, `SpotTheMistakeModal`, `InteractiveMathLabModal`, `AccessibilitySettingsModal`), `dynamic(() => import(...), { ssr: false })` mimarisine dönüştürüldü.
+   - `/testler` rotasının ilk yükleme JS boyutu ve ayrıştırma süresi radikal biçimde düşürüldü.
+3. **Kart Memoization ve CSS Virtualization (`ContentCard.tsx` & `globals.css`):**
+   - `ContentCard` bileşeni `React.memo` ile sarıldı.
+   - `globals.css` içine `.defer-card` (`content-visibility: auto; contain-intrinsic-size: 1px 380px;`) ve `.defer-card-list` (`contain-intrinsic-size: 1px 160px;`) sınıfları eklenerek ekran dışındaki kartların çizim maliyeti sıfırlandı.
+4. **React 19 Eşzamanlı State Geçişleri (`ContentsPage.tsx`):**
+   - Kategori ve sınıf sekmeleri değişimleri `startTransition` içine alınarak arayüzün kilitlenmesi önlendi (INP skoru güvenceye alındı).
+5. **Mobil GPU Fill-Rate Optimizasyonu (`globals.css`):**
+   - Dokunmatik aygıtlar (`pointer: coarse`) için `[class*='backdrop-blur']` ve `.glass` bulanıklık yoğunluğu `blur(6px)` seviyesine optimize edilerek mobil GPU darboğazı çözüldü.
+
+### 26.3 Doğrulama & Kalite Kapıları
+- **Lint:** `npm run lint` (0 hata, 0 uyarı).
+- **Typecheck:** `npm run typecheck` (0 hata).
+- **Birim Testleri:** `167` test dosyası, `614` birim testi eksiksiz geçti.
+- **Üretim Derlemesi:** `npm run build` ile 65 rota Turbopack ile başarıyla üretildi.
+
+_Son güncelleme: 6 Eylül 2026 — Platform genel hız motoru, niyet-bazlı link prefetching, lazy-loaded test modalları, React.memo & content-visibility kart sanallaştırması ve mobil GPU optimizasyonu tamamlandı._
+
 

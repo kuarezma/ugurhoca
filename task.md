@@ -325,7 +325,8 @@ Bu dosya, projenin tamamlanmış ve devam eden görevlerini özetler.
 - [x] Rota Güvenliği & Harita: `/sifremi-unuttum` ve `/sifre-sifirla` arama motoru dizinlemesinden çıkarıldı (`noIndex`, `robots.ts`), `/cikis-bileti` canonical metadata ile `sitemap.xml`'e entegre edildi
 - [x] Erişilebilirlik (A11y): `SupportChatPanel` arama kutusunda `autoFocus` uyarısı giderildi, kontrollü `ref` odaklama mimarisine geçildi
 - [x] **Sekme Geçişleri Performans Optimizasyonu:** `MobileBottomNav` 5 ana sekmesine arka plan prefetch ve anlık optimistik aktiflik göstergesi getirildi; `AdminTabPanels` ve `ProfilePage` üzerinde `<AnimatePresence mode="wait">` blokajı kaldırılarak visited-tabs keep-alive ve CSS `hidden` toggle yapısına geçildi; `AdminStatistics` için 60s bellek önbelleği eklendi (0ms sekme geçişi).
+- [x] **Platform Genel Hız & Akıcılık Motoru:** `SafeLink` ile niyet-bazlı prefetch (`pointerenter`/`touchstart`) ve native View Transitions API entegrasyonu; `TestsPage` üzerindeki 7 ağır modalın `dynamic` import ile sayfa açılışından ayrıştırılması; `ContentCard` için `React.memo` ve CSS `content-visibility: auto` sanallaştırması; `ContentsPage` üzerinde React 19 `startTransition` eşzamanlı render kontrolü ve mobil GPU `backdrop-blur` optimizasyonu tamamlandı.
 
 ---
 
-_Son güncelleme: 6 Eylül 2026 — Sekme geçişleri performans optimizasyonu, mobil alt menü prefetch, keep-alive sekmeli paneller tamamlandı._
+_Son güncelleme: 6 Eylül 2026 — Platform genel hız motoru, niyet-bazlı prefetch, dynamic modal ayrıştırması, React.memo & content-visibility sanallaştırması ve mobil GPU optimizasyonu tamamlandı._

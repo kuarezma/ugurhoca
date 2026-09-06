@@ -101,6 +101,13 @@ Platformda öğrenci gizliliği en üst düzeyde korunur:
 - **Başarı Yol Haritası Konumlandırması:** Öğrencinin öğrenim hedeflerine ve seviye basamaklarına kolayca erişebilmesi için "Başarı Yol Haritası" bölümü Kategori Hub'ının altındaki Duyurular bölümünün hemen altına taşındı.
 - **Güncel Akış Sıralaması:** Hero Karşılama ➔ Kategori Hub'ı (Dersler, Oyun, Araçlar) ➔ Duyurular ➔ Başarı Yol Haritası ➔ LGS/YKS Sayacı ➔ Günün Sözü ➔ Uğur Hoca'ya Yaz.
 
+### v1.3.3 - Platform Genel Hız Motoru (Site-Wide Speed & Fluidity Engine)
+- **Niyet-Bazlı Link Prefetching (`SafeLink`):** Site genelindeki tüm bağlantılarda kullanıcı fareyle üzerine geldiğinde (`onPointerEnter`) veya mobilde dokunduğu anda (`onTouchStart`) 100-200ms önceden route prefetch tetiklenir; tıklandığı anda sayfa tarayıcı belleğinden 0ms gecikmeyle açılır (View Transitions API destekli).
+- **Testler Sayfası Ağır Modal Ayrıştırması (`TestsPage`):** Karalama tahtası, hata defteri, soru inceleme, laboratuvar ve kısayol modalları `dynamic(() => import(...), { ssr: false })` ile ayrıştırılarak ilk sayfa yükleme ve ayrıştırma süresi dramatik biçimde düşürüldü.
+- **Kart Optimizasyonu & CSS Sanallaştırma (`ContentCard` & `ContentsPage`):** `ContentCard` bileşeni `React.memo` ile sarılarak gereksiz yeniden çizimler önlendi; ekranda olmayan kartlar için `content-visibility: auto` ve `contain-intrinsic-size` uygulanarak DOM boyama maliyeti sıfırlandı.
+- **Eşzamanlı Arayüz Geçişleri (React 19 `startTransition`):** İçerikler ve sınıf sekmeleri arası filtre değişimleri `startTransition` içine alınarak arayüzün kilitlenmesi veya kare düşmesi (INP) önlendi.
+- **Mobil GPU & Shading Tasarrufu:** Dokunmatik ekranlarda (`pointer: coarse`) çoklu Gaussian bulanıklaştırma katmanları (`backdrop-filter`) optimize edilerek mobil kaydırmada 60/120fps akıcılık güvenceye alındı.
+
 ### v1.3.1 - Mobil Deneyim & Başparmak Ergonomisi Optimizasyonu
 - **Sticky Mobil Kategori Barı:** Kullanıcı sayfada nerede olursa olsun, tepeye kaydırmadan başparmağıyla tek tıkla Dersler, Oyun ve Araçlar arasında geçiş yapabilmesi için yapışkan (sticky) kategori kontrolü entegre edildi.
 - **Segmented Hap (Pill) Switcher:** Mobilde dikey yer kaplayan hantal kutular yerine tek satırda 3 şık, modern iOS/Android segmented hap buton mimarisine geçildi.

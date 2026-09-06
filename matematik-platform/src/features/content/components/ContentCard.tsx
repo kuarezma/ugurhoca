@@ -1,5 +1,5 @@
 import Image from 'next/image';
-import { createElement, useState } from 'react';
+import { createElement, memo, useState } from 'react';
 import { motion } from 'framer-motion';
 import {
   Calendar,
@@ -58,7 +58,7 @@ const ContentTypeIcon = ({ type }: { type: string }) => {
   });
 };
 
-export default function ContentCard({
+function ContentCard({
   content,
   index,
   isCompleted,
@@ -253,7 +253,7 @@ export default function ContentCard({
         initial={{ opacity: 0, x: -20 }}
         animate={{ opacity: 1, x: 0 }}
         transition={{ delay: index * 0.05 }}
-        className="glass rounded-3xl border border-white/10 p-4 sm:p-6 card-hover group"
+        className="glass rounded-3xl border border-white/10 p-4 sm:p-6 card-hover group defer-card-list"
       >
         <div className="space-y-4">
           <div className="flex items-start justify-between gap-2 sm:gap-3">
@@ -342,7 +342,7 @@ export default function ContentCard({
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: index * 0.05 }}
-      className="glass rounded-3xl overflow-hidden border border-white/10 card-hover group"
+      className="glass rounded-3xl overflow-hidden border border-white/10 card-hover group defer-card"
     >
       <div className={`h-2 bg-gradient-to-r ${getContentTypeColor(content.type)}`} />
       <div className="p-4 sm:p-6">
@@ -420,3 +420,7 @@ export default function ContentCard({
     </motion.div>
   );
 }
+
+const MemoizedContentCard = memo(ContentCard);
+export default MemoizedContentCard;
+export { MemoizedContentCard as ContentCard };

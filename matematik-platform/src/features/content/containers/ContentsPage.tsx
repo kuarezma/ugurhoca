@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback, Suspense, useRef } from 'react';
+import { useState, useEffect, useCallback, Suspense, useRef, startTransition } from 'react';
 import dynamic from 'next/dynamic';
 import { AnimatePresence, motion } from 'framer-motion';
 import Link from 'next/link';
@@ -620,7 +620,9 @@ function ContentsPageInner({
   }, [loadWorksheetGradeDocuments, selectedWorksheetGrade]);
 
   const handleTypeChange = useCallback((type: string) => {
-    setSelectedType(type);
+    startTransition(() => {
+      setSelectedType(type);
+    });
     const url = new URL(window.location.href);
 
     if (type === 'all') {
@@ -1420,9 +1422,11 @@ function ContentsPageInner({
                   selectedGrade={String(selectedGrade)}
                   selectedType={selectedType}
                   onSelectGrade={(g) => {
-                    if (g === 'all') setSelectedGrade('all');
-                    else if (g === 'Mezun') setSelectedGrade('Mezun');
-                    else setSelectedGrade(Number(g));
+                    startTransition(() => {
+                      if (g === 'all') setSelectedGrade('all');
+                      else if (g === 'Mezun') setSelectedGrade('Mezun');
+                      else setSelectedGrade(Number(g));
+                    });
                   }}
                   onSelectType={(t) => handleTypeChange(t)}
                 />

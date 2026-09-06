@@ -37,20 +37,66 @@ import dynamic from 'next/dynamic';
 import { useToast } from '@/components/Toast';
 import MathText from '@/components/MathText';
 import { fireConfetti } from '@/components/ConfettiBurst';
-import ScratchpadModal from '@/components/ScratchpadModal';
 import { QuizQuestionPalette } from '@/features/quizzes/components/QuizQuestionPalette';
-import { QuizMistakeReviewModal } from '@/features/quizzes/components/QuizMistakeReviewModal';
-import { MistakeNotebookModal } from '@/features/quizzes/components/MistakeNotebookModal';
 import { QuestionHintLadder } from '@/features/quizzes/components/QuestionHintLadder';
-import { QuizShortcutsModal } from '@/features/quizzes/components/QuizShortcutsModal';
 import { QuizPacingCoach } from '@/features/quizzes/components/QuizPacingCoach';
 import { useQuestionSpeech } from '@/features/quizzes/hooks/useQuestionSpeech';
 import { QuestionDrawingOverlay } from '@/features/quizzes/components/QuestionDrawingOverlay';
 import { trackFeatureOpen } from '@/lib/analytics';
-import { SpotTheMistakeModal } from '@/features/quizzes/components/SpotTheMistakeModal';
-import { InteractiveMathLabModal } from '@/features/programs/components/InteractiveMathLabModal';
-import { AccessibilitySettingsModal } from '@/components/AccessibilitySettingsModal';
 import { useAccessibilitySettings } from '@/hooks/useAccessibilitySettings';
+
+const ScratchpadModal = dynamic(
+  () => import('@/components/ScratchpadModal'),
+  { ssr: false },
+);
+
+const QuizMistakeReviewModal = dynamic(
+  () =>
+    import('@/features/quizzes/components/QuizMistakeReviewModal').then((m) => ({
+      default: m.QuizMistakeReviewModal,
+    })),
+  { ssr: false },
+);
+
+const MistakeNotebookModal = dynamic(
+  () =>
+    import('@/features/quizzes/components/MistakeNotebookModal').then((m) => ({
+      default: m.MistakeNotebookModal,
+    })),
+  { ssr: false },
+);
+
+const QuizShortcutsModal = dynamic(
+  () =>
+    import('@/features/quizzes/components/QuizShortcutsModal').then((m) => ({
+      default: m.QuizShortcutsModal,
+    })),
+  { ssr: false },
+);
+
+const SpotTheMistakeModal = dynamic(
+  () =>
+    import('@/features/quizzes/components/SpotTheMistakeModal').then((m) => ({
+      default: m.SpotTheMistakeModal,
+    })),
+  { ssr: false },
+);
+
+const InteractiveMathLabModal = dynamic(
+  () =>
+    import('@/features/programs/components/InteractiveMathLabModal').then((m) => ({
+      default: m.InteractiveMathLabModal,
+    })),
+  { ssr: false },
+);
+
+const AccessibilitySettingsModal = dynamic(
+  () =>
+    import('@/components/AccessibilitySettingsModal').then((m) => ({
+      default: m.AccessibilitySettingsModal,
+    })),
+  { ssr: false },
+);
 
 const PrintableWorksheetModal = dynamic(
   () =>

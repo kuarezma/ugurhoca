@@ -461,6 +461,16 @@ input[type='number']::-webkit-inner-spin-button {
   contain-intrinsic-size: 1px 720px;
 }
 
+.defer-card {
+  content-visibility: auto;
+  contain-intrinsic-size: 1px 380px;
+}
+
+.defer-card-list {
+  content-visibility: auto;
+  contain-intrinsic-size: 1px 160px;
+}
+
 :where(
   a[href],
   button,
@@ -1400,6 +1410,16 @@ html[data-theme='light'] .programlar-page [class*='transition-'] {
   [style*='WebkitBackdropFilter'] {
     backdrop-filter: none !important;
     -webkit-backdrop-filter: none !important;
+  }
+
+  .glass {
+    backdrop-filter: blur(6px) !important;
+    -webkit-backdrop-filter: blur(6px) !important;
+  }
+
+  [class*='backdrop-blur'] {
+    backdrop-filter: blur(6px) !important;
+    -webkit-backdrop-filter: blur(6px) !important;
   }
 }
 
