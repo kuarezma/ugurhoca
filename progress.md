@@ -542,5 +542,40 @@ _Son güncelleme: 11 Nisan 2026 — Yönetici hesabı yetkilendirmesi, politika 
 - **Test:** `npm run test` (97 test dosyası, 332 test geçti)
 - **Build:** `npm run build` (50 sayfa Turbopack ile başarıyla üretildi)
 
-_Son güncelleme: 5 Eylül 2026 — Leitner aralıklı tekrar, sınav tempo koçu, aylık karne, karalama tahtası geometrisi ve canlı ders arşivi tamamlandı._
+---
+
+## 22. Soru Üzerine Çizim Katmanı, İnteraktif Geometri Labı, /araclar SEO Hub ve Admin LaTeX Asistanı (6 Eylül 2026)
+
+### 22.1 Soru Kartı Üzerinde Doğrudan Çizim Katmanı (`QuestionDrawingOverlay`)
+- **Doğrudan Çizim Deneyimi:** Modal yerine soru kartının tam üzerine binen şeffaf HTML5 Canvas katmanı; stylus ve parmakla çizim desteği (`touch-action: none`, `pointerdown/move/up`).
+- **Araç Çubuğu:** 5 renkli tükenmez kalem (Kırmızı, Mavi, Turuncu, Yeşil, Mor), Fosforlu kalem (yarı saydam sarı vurgulayıcı), Silgi, Geri al (`undo`), Temizle.
+- **Şık İşaretleme / Passthrough Modu:** Çizimler ekranda kalırken soru şıklarını doğrudan tıklayabilme desteği (`pointer-events: none` akıllı toggling).
+- **Oturum Hafızası:** Soru numaraları arasında geçiş yapıldığında önceki sorudaki çizimler `questionDrawingCache` içinde korunur.
+
+### 22.2 Etkileşimli Matematik & Geometri Laboratuvarı (`GeometryMathLabModal`)
+- **Pisagor & Dik Üçgen:** $a$ ve $b$ dik kenar slider'ları ile canlı üçgen çizimi, $a^2 + b^2 = c^2$ kare alanları görsel ispatı ve özel üçgen algılama (3-4-5, 5-12-13 vb.).
+- **Birim Çember & Trigonometri:** Açı ($\theta$) slider'ı, dinamik sinüs/kosinüs/tanjant izdüşümleri ve bölge analizleri.
+- **Parabol:** $a, b, c$ katsayılarıyla anlık $f(x) = ax^2+bx+c$ eğrisi, tepe noktası $T(r,k)$ ve diskriminant ($\Delta$) kök dökümü.
+- **Eğim & Doğrusal Fonksiyon:** İki nokta $A(x_1, y_1)$ ve $B(x_2, y_2)$ üzerinden eğim ($m$) ve doğru denklemi hesabı.
+
+### 22.3 Herkese Açık SEO Mıknatısı Matematik & Sınav Araçları Hub'ı (`/araclar`)
+- **Next.js 16 App Router & SSG:** Statik prerender edilmiş 5 rota (`/araclar`, `/araclar/lgs-puan-hesaplama`, `/araclar/ebob-ekok-hesaplayici`, `/araclar/pisagor-hesaplayici`, `/araclar/yks-puan-hesaplama`).
+- **LGS & YKS Hesaplayıcıları:** 2026/2027 MEB standart sapma katsayıları, toplam netler, tahmini yüzdelik dilim ve yerleştirme puanları.
+- **Adım Adım EBOB-EKOK:** Asal çarpan bölen algoritması tablosu, adım adım ortak bölen yıldızlama ve aralarında asallık dedektörü.
+- **Dinamik Pisagor Çizimi:** Dik kenar / hipotenüs modları, adımlı karekök sadeleştirme ve SVG çizimi.
+- **SEO & Keşfedilebilirlik:** Schema.org FAQPage yapılandırılmış verisi (`FaqAccordion`), `sitemap.ts` ve `HomeFooter` entegrasyonu.
+
+### 22.4 Öğretmen / Admin İçin Akıllı LaTeX & Formül Dizgi Asistanı (`AdminLatexHelperModal`)
+- **Canlı KaTeX Önizlemesi:** Yazılan matematiksel formülün anında render edilmesi.
+- **Sembol Paleti:** 4 kategoride (Temel İşlemler/Kök/Kesir, Geometri & Açı, Kümeler & Eşitsizlikler, Lise Limit/İntegral) tek tıkla formül ekleme.
+- **Otomatik Dönüştürücü:** Düz metin ifadelerini (örn. `karekok(x)`, `(a)/(b)`) KaTeX sözdizimine dönüştüren akıllı formatlayıcı.
+- **Panoya Kopyala / Soruya Ekle:** Admin soru düzenleme modallarına (`AdminQuestionFields`) doğrudan entegrasyon.
+
+### 22.5 Doğrulama & Kalite Kapıları
+- **Testler:** 4 yeni test dosyası (`QuestionDrawingOverlay.test.tsx`, `GeometryMathLabModal.test.tsx`, `araclar.test.tsx`, `AdminLatexHelperModal.test.tsx`), 21 yeni test ile tüm test suite 100% başarıyla geçti.
+- **Lint:** `npm run lint` (0 hata).
+- **Typecheck:** `npm run typecheck` (0 hata).
+- **Build:** `npm run build` (55 rota, 0 hata ile optimize edildi).
+
+_Son güncelleme: 6 Eylül 2026 — Soru üzeri çizim modu, geometri labı, /araclar SEO hub ve admin LaTeX asistanı tamamlandı._
 

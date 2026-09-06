@@ -1,10 +1,11 @@
-import { useId } from "react";
-import { AlertCircle } from "lucide-react";
+import { useId, useState } from "react";
+import { AlertCircle, FunctionSquare } from "lucide-react";
 import type { AdminFormState } from "@/features/admin/types";
 import {
   OPTION_LETTERS,
   type AdminFormUpdate,
 } from "@/features/admin/components/modal/shared";
+import { AdminLatexHelperModal } from "@/features/admin/components/modal/AdminLatexHelperModal";
 
 type AdminQuestionFieldsProps = {
   formData: AdminFormState;
@@ -15,6 +16,7 @@ export default function AdminQuestionFields({
   formData,
   updateFormData,
 }: AdminQuestionFieldsProps) {
+  const [isLatexModalOpen, setIsLatexModalOpen] = useState(false);
   const baseId = useId();
   const questionId = `${baseId}-question`;
   const optionsGroupLabelId = `${baseId}-options-label`;
@@ -23,12 +25,22 @@ export default function AdminQuestionFields({
   return (
     <>
       <div>
-        <label
-          htmlFor={questionId}
-          className="block text-slate-300 mb-2 font-bold uppercase tracking-wider text-xs"
-        >
-          Soru Metni
-        </label>
+        <div className="flex items-center justify-between mb-2">
+          <label
+            htmlFor={questionId}
+            className="block text-slate-300 font-bold uppercase tracking-wider text-xs"
+          >
+            Soru Metni
+          </label>
+          <button
+            type="button"
+            onClick={() => setIsLatexModalOpen(true)}
+            className="inline-flex items-center gap-1.5 rounded-lg border border-violet-500/30 bg-violet-500/10 px-2.5 py-1 text-xs font-bold text-violet-300 hover:bg-violet-500/20 hover:text-white transition"
+          >
+            <FunctionSquare className="w-3.5 h-3.5" />
+            Formül / LaTeX Asistanı
+          </button>
+        </div>
         <textarea
           id={questionId}
           required
@@ -40,6 +52,15 @@ export default function AdminQuestionFields({
           placeholder="Soruyu buraya yazın..."
         />
       </div>
+
+      <AdminLatexHelperModal
+        isOpen={isLatexModalOpen}
+        onClose={() => setIsLatexModalOpen(false)}
+        onInsertFormula={(formula) => {
+          const current = formData.question || "";
+          updateFormData({ question: current ? `${current} ${formula}` : formula });
+        }}
+      />
 
       <div role="group" aria-labelledby={optionsGroupLabelId}>
         <span

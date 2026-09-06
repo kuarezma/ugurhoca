@@ -25,6 +25,7 @@ import {
   User,
   Video,
   Zap,
+  Compass,
 } from 'lucide-react';
 
 export type CommandCategory = 'Araç' | 'Oyun' | 'Konu' | 'Sayfa';
@@ -136,6 +137,15 @@ export default function CommandPalette() {
         keywords: ['grafik', 'fonksiyon', 'parabol', 'trigonometri', 'cember', 'egim', 'visualizer'],
         icon: Activity,
         action: () => openTool('graph'),
+      },
+      {
+        id: 'geometry_lab',
+        label: 'Etkileşimli Matematik & Geometri Laboratuvarı',
+        category: 'Araç',
+        hint: 'Pisagor, birim çember, trigonometri, parabol ve eğim canlı simülatörü',
+        keywords: ['geometri', 'pisagor', 'cember', 'trigonometri', 'parabol', 'egim', 'lab', 'simulator'],
+        icon: Compass,
+        action: () => router.push('/programlar'),
       },
       {
         id: 'replay_archive',

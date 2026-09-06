@@ -286,6 +286,15 @@ Bu dosya, projenin tamamlanmış ve devam eden görevlerini özetler.
 - [x] Birim ve entegrasyon testleri (`ContentFilterBar.test.tsx`, `content-hooks.test.ts`, `constants.test.ts`) yazıldı; 91 test dosyası, 318 test eksiksiz geçti
 - [x] `npm run lint`, `npm run test`, `npm run build` doğrulamaları sıfır hata ile tamamlandı
 
+### 23. Soru Üzerine Çizim, İnteraktif Geometri Labı, /araclar SEO Hub ve Admin LaTeX Asistanı (6 Eylül 2026)
+
+- [x] **Soru Kartı Üzerinde Doğrudan Çizim Katmanı (`QuestionDrawingOverlay`):** HTML5 Canvas tabanlı, stylus/dokunmatik uyumlu, renk paletli (kırmızı, mavi, turuncu, yeşil, mor), fosforlu kalem, silgi, geri al ve çizimleri koruyarak alttaki şıkları tıklayabilmeyi sağlayan "Şık İşaretleme / Passthrough" modu geliştirildi. Çizimler sorular arası geçişte oturum boyunca hafızada saklanır.
+- [x] **Etkileşimli Matematik & Geometri Laboratuvarı (`GeometryMathLabModal`):** Pisagor Teoremi (canlı dik üçgen, kareler kanıtı, özel üçgen tespiti), Birim Çember & Trigonometri (açı slider'ı, sin/cos/tan izdüşümleri), Parabol Görselleştirici ($f(x) = ax^2+bx+c$, tepe noktası, diskriminant kök analizi) ve Eğim & Doğru Denklemi laboratuvarı tamamlandı. Programlar Hub'ına ve `Cmd+K` hızlı komut paletine entegre edildi.
+- [x] **SEO Mıknatısı Herkese Açık Matematik & Sınav Araçları Hub'ı (`/araclar`):** Next.js 16 App Router mimarisinde tam SSG prerender edilmiş 5 yeni sayfa (`/araclar`, `/araclar/lgs-puan-hesaplama`, `/araclar/ebob-ekok-hesaplayici`, `/araclar/pisagor-hesaplayici`, `/araclar/yks-puan-hesaplama`), Schema.org FAQPage yapılandırılmış verisi (`FaqAccordion`), dinamik SVG geometrisi, adım adım asal çarpan bölen algoritması tablosu ve 2026/2027 MEB katsayı uyumlu hesaplama motorları eklendi. `sitemap.ts` ve `HomeFooter.tsx` güncellendi.
+- [x] **Öğretmen / Admin Akıllı LaTeX & Formül Dizgi Asistanı (`AdminLatexHelperModal`):** Soru ekleme ve düzenleme paneline entegre, canlı KaTeX önizlemeli, tek tıkla soruya ekleme ve panoya kopyalama özellikli, 4 kategoride (Temel işlemler/kök/kesir, Geometri/açı/pi, Kümeler/eşitsizlikler, Lise limit/integral) sembol paleti ve düz metni LaTeX'e çeviren otomatik formatlayıcı asistanı eklendi.
+- [x] Tüm modüller için Vitest birim testleri (`QuestionDrawingOverlay.test.tsx`, `GeometryMathLabModal.test.tsx`, `araclar.test.tsx`, `AdminLatexHelperModal.test.tsx`) yazıldı; 21 yeni test ile tam suite eksiksiz çalıştı.
+- [x] `npm run lint`, `npm run typecheck`, `npm run test` ve `npm run build` (55 statik/dinamik rota) sıfır hata ile doğrulandı.
+
 ## Bekleyen Görevler
 
 ### Chat Sistemi Refactor
@@ -307,4 +316,4 @@ Bu dosya, projenin tamamlanmış ve devam eden görevlerini özetler.
 
 ---
 
-_Son güncelleme: 15 Nisan 2026 — Dashboard V2 ve profil fotoğrafı yükleme/sıkıştırma akışı dahil edilerek görev listesi güncellendi._
+_Son güncelleme: 6 Eylül 2026 — Soru üzeri çizim katmanı, geometri labı, /araclar SEO hub'ı ve admin LaTeX asistanı tamamlandı._

@@ -43,6 +43,7 @@ import { QuestionHintLadder } from '@/features/quizzes/components/QuestionHintLa
 import { QuizShortcutsModal } from '@/features/quizzes/components/QuizShortcutsModal';
 import { QuizPacingCoach } from '@/features/quizzes/components/QuizPacingCoach';
 import { useQuestionSpeech } from '@/features/quizzes/hooks/useQuestionSpeech';
+import { QuestionDrawingOverlay } from '@/features/quizzes/components/QuestionDrawingOverlay';
 
 const PrintableWorksheetModal = dynamic(
   () =>
@@ -188,6 +189,8 @@ export default function TestsPage({
   const [error, setError] = useState<string | null>(null);
   const [pdfLoading, setPdfLoading] = useState(false);
   const [isScratchpadOpen, setIsScratchpadOpen] = useState(false);
+  const [isDrawingOverlayActive, setIsDrawingOverlayActive] = useState(false);
+  const questionCardRef = useRef<HTMLDivElement | null>(null);
   const [isFocusMode, setIsFocusMode] = useState(false);
   const [flaggedQuestions, setFlaggedQuestions] = useState<Set<number>>(new Set());
   const [isMistakeModalOpen, setIsMistakeModalOpen] = useState(false);
@@ -609,6 +612,9 @@ export default function TestsPage({
           e.preventDefault();
           previousQuestion();
         }
+      } else if (e.shiftKey && key === 'S') {
+        e.preventDefault();
+        setIsDrawingOverlayActive((prev) => !prev);
       } else if (key === 'K' || key === 'S') {
         e.preventDefault();
         setIsScratchpadOpen((prev) => !prev);
@@ -621,6 +627,7 @@ export default function TestsPage({
       } else if (e.key === 'Escape') {
         setIsShortcutsOpen(false);
         setIsScratchpadOpen(false);
+        setIsDrawingOverlayActive(false);
         setIsGlossaryOpen(false);
         setIsOpticalSheetOpen(false);
       }
@@ -774,6 +781,7 @@ export default function TestsPage({
     setFlaggedQuestions(new Set());
     setIsFocusMode(false);
     setIsScratchpadOpen(false);
+    setIsDrawingOverlayActive(false);
     setQuestionTimes({});
     setQuestionElapsedSeconds(0);
     resultSavedRef.current = false;
@@ -820,9 +828,20 @@ export default function TestsPage({
           isOpticalDocked ? 'max-w-6xl' : isFocusMode ? 'max-w-4xl' : 'max-w-3xl'
         }`}>
           <div className={isOpticalDocked ? 'flex flex-col lg:flex-row gap-6 items-start' : ''}>
-            <div className={`flex-1 w-full glass rounded-3xl p-5 sm:p-8 space-y-6 ${
-              isFocusMode ? 'border-white/20 shadow-2xl bg-slate-900/95' : ''
-            }`}>
+            <div
+              ref={questionCardRef}
+              className={`flex-1 w-full glass rounded-3xl p-5 sm:p-8 space-y-6 relative ${
+                isFocusMode ? 'border-white/20 shadow-2xl bg-slate-900/95' : ''
+              }`}
+            >
+              {/* Soru Üzerine Çizim Katmanı */}
+              <QuestionDrawingOverlay
+                isActive={isDrawingOverlayActive}
+                onClose={() => setIsDrawingOverlayActive(false)}
+                questionIndex={currentQuestion}
+                containerRef={questionCardRef}
+              />
+
               {/* Üst Eylem ve Zamanlayıcı Çubuğu */}
               <div className="flex flex-wrap items-center justify-between gap-3 border-b border-white/10 pb-4">
                 <button
@@ -834,6 +853,22 @@ export default function TestsPage({
                 </button>
 
                 <div className="flex items-center gap-2">
+                  {/* Soru Üzerine Çizim Modu Butonu */}
+                  <button
+                    type="button"
+                    onClick={() => setIsDrawingOverlayActive((prev) => !prev)}
+                    className={`inline-flex items-center gap-1.5 rounded-xl border px-3 py-1.5 text-xs font-bold transition ${
+                      isDrawingOverlayActive
+                        ? 'border-indigo-500 bg-indigo-500/20 text-indigo-700 dark:text-indigo-300 shadow-sm'
+                        : 'border-slate-200 dark:border-white/10 bg-slate-100 dark:bg-white/5 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-white/10'
+                    }`}
+                    title="Soru kartı üzerine doğrudan çizim ve not alma katmanını aç/kapat"
+                    aria-label="Soruya Çiz"
+                  >
+                    <PenTool className="h-3.5 w-3.5 text-indigo-500 dark:text-indigo-400" />
+                    <span className="hidden sm:inline">Soruya Çiz</span>
+                  </button>
+
                   {/* Karalama Tahtası Butonu */}
                   <button
                     type="button"

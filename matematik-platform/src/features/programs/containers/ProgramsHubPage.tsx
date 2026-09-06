@@ -13,12 +13,14 @@ import {
   School,
   Sparkles,
   Target,
+  Compass,
   type LucideIcon,
 } from 'lucide-react';
 import { useTheme } from '@/components/ThemeProvider';
 import { FormulaFlashcardsModal } from '@/features/programs/components/FormulaFlashcardsModal';
 import { ExamScoreCalculatorModal } from '@/components/ExamScoreCalculatorModal';
 import { TopicChecklistModal } from '@/features/programs/components/TopicChecklistModal';
+import { GeometryMathLabModal } from '@/features/programs/components/GeometryMathLabModal';
 
 type ProgramTool = {
   id: string;
@@ -38,6 +40,7 @@ export default function ProgramsHubPage() {
   const [isFlashcardsOpen, setIsFlashcardsOpen] = useState(false);
   const [isCalculatorOpen, setIsCalculatorOpen] = useState(false);
   const [isChecklistOpen, setIsChecklistOpen] = useState(false);
+  const [isGeometryLabOpen, setIsGeometryLabOpen] = useState(false);
 
   const tools: ProgramTool[] = [
     {
@@ -67,6 +70,20 @@ export default function ProgramsHubPage() {
         'Gerçek veritabanından program önerileri',
       ],
       ctaLabel: 'Sihirbazı Aç',
+    },
+    {
+      id: 'geometry-lab',
+      title: 'Etkileşimli Matematik & Geometri Laboratuvarı',
+      subtitle: 'Pisagor, birim çember, trigonometri, parabol ve eğim canlı görselleştiricisi',
+      onClick: () => setIsGeometryLabOpen(true),
+      icon: Compass,
+      gradient: 'from-amber-500 via-orange-500 to-rose-500',
+      bullets: [
+        'Pisagor teoremi ve özel dik üçgenler',
+        'Birim çember, sinüs, kosinüs ve tanjant',
+        'Parabol tepe noktası ve diskriminant (Δ)',
+      ],
+      ctaLabel: 'Laboratuvarı Aç',
     },
     {
       id: 'calculator',
@@ -254,6 +271,10 @@ export default function ProgramsHubPage() {
       <TopicChecklistModal
         isOpen={isChecklistOpen}
         onClose={() => setIsChecklistOpen(false)}
+      />
+      <GeometryMathLabModal
+        isOpen={isGeometryLabOpen}
+        onClose={() => setIsGeometryLabOpen(false)}
       />
     </main>
   );

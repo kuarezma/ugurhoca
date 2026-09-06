@@ -77,6 +77,11 @@ export function HomeFooter({ isLight }: HomeFooterProps) {
                 </SafeLink>
               </li>
               <li>
+                <SafeLink href="/araclar" className="hover:text-brand-primary-soft transition">
+                  Matematik & Sınav Araçları
+                </SafeLink>
+              </li>
+              <li>
                 <SafeLink href="/oyunlar" className="hover:text-brand-primary-soft transition">
                   Matematik Oyunları
                 </SafeLink>
