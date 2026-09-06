@@ -31,13 +31,6 @@ export const MATH_QUICK_SYMBOLS = [
   { label: 'Δ', snippet: '$\\Delta$' },
 ];
 
-export const STUDENT_FAQ_CHIPS = [
-  '📌 Bu haftaki ödevim ne zaman teslim?',
-  '🎯 Netlerimi artırmak için nereden başlamalıyım?',
-  '💡 Çözemediğim soruyu nasıl iletebilirim?',
-  '🕒 Canlı ders saatleri ne zaman?',
-];
-
 const formatTime = (value: string) =>
   new Date(value).toLocaleString('tr-TR', {
     day: 'numeric',
@@ -243,37 +236,16 @@ export function SupportChatPanel({
         style={{ minHeight: 0 }}
       >
         {messages.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-6 px-2 text-center">
+          <div className="flex flex-col items-center justify-center py-12 px-4 text-center my-auto">
             <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-2xl bg-indigo-500/10 text-indigo-500">
               <Calculator className="h-6 w-6" />
             </div>
             <p className={`text-sm font-semibold mb-1 ${titleClass}`}>
               Uğur Hoca ile Matematik Sohbeti
             </p>
-            <p className={`text-xs max-w-xs mb-4 ${subtitleClass}`}>
+            <p className={`text-xs max-w-xs ${subtitleClass}`}>
               Takıldığın bir soru, ödev veya çalışma programın hakkında Uğur Hoca'ya doğrudan yazabilirsin.
             </p>
-            {appearance === 'navbar' && (
-              <div className="w-full space-y-1.5 text-left">
-                <span className={`block text-[11px] font-bold px-1 ${subtitleClass}`}>
-                  Hızlı Başlangıç:
-                </span>
-                {STUDENT_FAQ_CHIPS.map((faq) => (
-                  <button
-                    key={faq}
-                    type="button"
-                    onClick={() => onDraftChange(faq)}
-                    className={`w-full text-left rounded-xl border p-2.5 text-xs font-medium transition shadow-xs ${
-                      isLight
-                        ? 'border-slate-200 bg-white text-slate-800 hover:border-indigo-400 hover:bg-indigo-50/50'
-                        : 'border-slate-700 bg-slate-800 text-slate-100 hover:border-indigo-500 hover:bg-slate-700/80'
-                    }`}
-                  >
-                    {faq}
-                  </button>
-                ))}
-              </div>
-            )}
           </div>
         ) : (
           <ul className="flex flex-col gap-2">

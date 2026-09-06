@@ -47,7 +47,7 @@ describe('SupportChatPanel Component', () => {
     expect(handleDraftChange).toHaveBeenCalledWith('$\\sqrt{x}$');
   });
 
-  it('boş mesaj durumunda Hızlı Başlangıç haplarını gösterir ve tıklanınca taslağa yazar', () => {
+  it('boş mesaj durumunda Uğur Hoca karşılama metnini gösterir', () => {
     const handleDraftChange = vi.fn();
     const handleSubmit = vi.fn();
 
@@ -64,14 +64,14 @@ describe('SupportChatPanel Component', () => {
       />,
     );
 
-    expect(screen.getByText(/Hızlı Başlangıç/i)).toBeInTheDocument();
-    const faqBtn = screen.getByText(/📌 Bu haftaki ödevim ne zaman teslim\?/i);
-    expect(faqBtn).toBeInTheDocument();
-
-    fireEvent.click(faqBtn);
-    expect(handleDraftChange).toHaveBeenCalledWith(
-      '📌 Bu haftaki ödevim ne zaman teslim?',
-    );
+    expect(
+      screen.getByText('Uğur Hoca ile Matematik Sohbeti'),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText(
+        /Takıldığın bir soru, ödev veya çalışma programın hakkında Uğur Hoca'ya doğrudan yazabilirsin./i,
+      ),
+    ).toBeInTheDocument();
   });
 
   it('admin görünümünde hızlı not şablonlarını gösterir ve tıklandığında taslağa yazar', () => {

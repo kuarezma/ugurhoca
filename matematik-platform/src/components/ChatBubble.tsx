@@ -324,11 +324,16 @@ export default function ChatBubble() {
       'open-teacher-chat-with-question',
       handleOpenWithQuestion,
     );
+    const handleOpenChat = () => {
+      setOpen(true);
+    };
+    window.addEventListener('open-chat-bubble', handleOpenChat);
     return () => {
       window.removeEventListener(
         'open-teacher-chat-with-question',
         handleOpenWithQuestion,
       );
+      window.removeEventListener('open-chat-bubble', handleOpenChat);
     };
   }, []);
 

@@ -105,6 +105,24 @@ export const useNavbarNotifications = (userId: string | null | undefined) => {
             notifyStoreListeners(store);
           },
         )
+        .on(
+          'postgres_changes',
+          {
+            event: 'DELETE',
+            schema: 'public',
+            table: 'notifications',
+            filter: `user_id=eq.${userId}`,
+          },
+          (payload) => {
+            const deletedId = (payload.old as { id?: string })?.id;
+            if (deletedId) {
+              store.notifications = store.notifications.filter(
+                (item) => item.id !== deletedId,
+              );
+              notifyStoreListeners(store);
+            }
+          },
+        )
         .subscribe();
     }
 
@@ -180,11 +198,23 @@ export const useNavbarNotifications = (userId: string | null | undefined) => {
       .in('id', unreadIds);
   }, [store]);
 
+  const deleteNotification = useCallback(
+    async (id: string) => {
+      if (!store) return;
+      store.notifications = store.notifications.filter((item) => item.id !== id);
+      notifyStoreListeners(store);
+
+      await supabase.from('notifications').delete().eq('id', id);
+    },
+    [store],
+  );
+
   const notifications = store ? store.notifications : [];
   const loading = store ? store.loading : false;
   const unreadCount = notifications.filter((item) => !item.is_read).length;
 
   return {
+    deleteNotification,
     loading,
     markAllAsRead,
     markAsRead,
