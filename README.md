@@ -35,6 +35,11 @@ Platformda öğrenci gizliliği en üst düzeyde korunur:
 
 ## Değişiklik Günlüğü (Changelog)
 
+### v1.2.1 - Sohbet Penceresi Kaydırma Yalıtımı, Scrollbar İyileştirmesi & Taşma Koruması
+- **Scroll Chaining & Bleed Önleme:** Sohbet penceresi veya mesaj listesi kaydırılırken momentumun arkadaki site sayfasına sıçramasını engelleyen `useScrollContainment` kancası ve CSS overscroll containment mimarisi entegre edildi.
+- **Scrollbar İyileştirmesi:** Global kaydırma çubukları 5px'lik zarif, yarı saydam ve yuvarlatılmış modern hap (pill) tasarımına geçirildi; Hızlı Not ve Sembol yatay çubuklarındaki dikkat dağıtıcı kalın çubuklar gizlendi.
+- **Yatay Kayma & Taşma Önleme:** Mesaj akış alanına `overflow-x-hidden` ve baloncuklara `break-words [overflow-wrap:anywhere]` uygulanarak dikey kaydırma esnasında oluşabilecek yatay drift (kayma) ve formül taşmaları tamamen önlendi.
+
 ### v1.2.0 - Platform Denetimi, SEO, Favicon & Erişilebilirlik Optimizasyonu
 - **Favicon & Çoklu Boyut Desteği:** 16x16, 32x32 ve 48x48 piksellik standart `favicon.ico` üretildi, Next.js root layout metadata'sına eksiksiz `icons` tanımları işlendi.
 - **Sosyal Önizleme (OG & Twitter):** Kök layout için Open Graph ve Twitter Cards görsel önizleme etiketleri eksiksiz hale getirildi.

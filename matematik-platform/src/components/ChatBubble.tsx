@@ -22,6 +22,7 @@ import {
   validateSupportImageFile,
 } from '@/features/home/queries';
 import { useNavbarMessages } from '@/features/home/hooks/useNavbarMessages';
+import { useScrollContainment } from '@/hooks/useScrollContainment';
 import { SupportChatPanel } from '@/features/messages/components/SupportChatPanel';
 import { useAdminStudentThread } from '@/features/messages/hooks/useAdminStudentThread';
 import { mapStudentNotificationsToThread } from '@/features/messages/mapNotificationsToThread';
@@ -144,6 +145,8 @@ export default function ChatBubble() {
     Array<{ name: string; url: string; kind: 'image' | 'file'; size?: number }>
   >([]);
   const bubbleRef = useRef<HTMLDivElement | null>(null);
+  const panelRef = useRef<HTMLDivElement | null>(null);
+  useScrollContainment(panelRef, { enabled: open });
 
   // Realtime Canlı Yazıyor (Typing) State
   const [peerTyping, setPeerTyping] = useState(false);
@@ -882,6 +885,7 @@ export default function ChatBubble() {
       <AnimatePresence>
         {open && (
           <motion.div
+            ref={panelRef}
             initial={{ opacity: 0, y: 20, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 16, scale: 0.95 }}
@@ -889,7 +893,8 @@ export default function ChatBubble() {
             role="dialog"
             aria-modal="true"
             aria-label="Uğur Hoca ile Sohbet"
-            className={`fixed bottom-24 sm:bottom-24 right-3 sm:right-6 z-40 flex h-[min(600px,calc(100dvh-7.5rem))] min-h-0 w-[calc(100vw-1.5rem)] sm:w-[420px] flex-col overflow-hidden rounded-3xl border shadow-2xl backdrop-blur-2xl transition-colors ${
+            style={{ overscrollBehavior: 'contain' }}
+            className={`fixed bottom-24 sm:bottom-24 right-3 sm:right-6 z-40 flex h-[min(600px,calc(100dvh-7.5rem))] min-h-0 w-[calc(100vw-1.5rem)] sm:w-[420px] flex-col overflow-hidden overscroll-contain rounded-3xl border shadow-2xl backdrop-blur-2xl transition-colors ${
               isLight
                 ? 'border-slate-200/90 bg-white/95 text-slate-800 shadow-indigo-950/15'
                 : 'border-slate-700/80 bg-slate-900/95 text-slate-100 shadow-black/50'
@@ -897,7 +902,10 @@ export default function ChatBubble() {
           >
             {/* 1. Senaryo: Giriş Yapmamış Ziyaretçi */}
             {!currentUser ? (
-              <div className="flex h-full flex-col justify-between p-6 text-center">
+              <div
+                className="flex h-full flex-col justify-between p-6 text-center overscroll-contain"
+                style={{ overscrollBehavior: 'contain' }}
+              >
                 <div className="flex justify-end">
                   <button
                     type="button"
@@ -1021,7 +1029,10 @@ export default function ChatBubble() {
                     </div>
                   </div>
 
-                  <div className="min-h-0 flex-1 overflow-y-auto">
+                  <div
+                    className="min-h-0 flex-1 overflow-y-auto overflow-x-hidden overscroll-contain"
+                    style={{ overscrollBehavior: 'contain' }}
+                  >
                     {adminConversations.length === 0 ? (
                       <div className="flex flex-col items-center justify-center gap-3 py-16 text-center px-4">
                         <MessageCircle className="h-10 w-10 text-slate-400 dark:text-slate-600" />

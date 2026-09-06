@@ -35,6 +35,11 @@ Student privacy and well-being are paramount on the platform:
 
 ## Changelog
 
+### v1.2.1 - Chat Window Scroll Isolation, Refined Scrollbars & Overflow Protection
+- **Scroll Bleed Prevention:** Added `useScrollContainment` hook and CSS overscroll containment to isolate chat scrolling from the background website.
+- **Subtle Scrollbars:** Refined global scrollbars to a 5px thin, modern translucent pill style; completely hid scrollbars on horizontal quick template and math symbol chips.
+- **Horizontal Drift & Overflow Fix:** Added `overflow-x-hidden` and word breaking to the message stream to eliminate horizontal drift and formula layout shifts during vertical scrolling.
+
 ### v1.1.0 - Enhanced Chat Bubble & Educational Messaging
 - **Real-time Interaction:** Live typing indicators and message delivery/read receipts (✓ / ✓✓) powered by Supabase Realtime broadcast channels.
 - **Rich Messaging & Voice Notes:** MediaRecorder audio recording, waveform audio player, and quote & reply support.

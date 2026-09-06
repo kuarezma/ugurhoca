@@ -17,6 +17,7 @@ import {
   validateSupportImageFile,
 } from '@/features/home/queries';
 import { useNavbarMessages } from '@/features/home/hooks/useNavbarMessages';
+import { useScrollContainment } from '@/hooks/useScrollContainment';
 import { SupportChatPanel } from '@/features/messages/components/SupportChatPanel';
 import { mapStudentNotificationsToThread } from '@/features/messages/mapNotificationsToThread';
 import type { DashboardNotification } from '@/types/dashboard';
@@ -45,6 +46,8 @@ export function HomeNavbarMessagesButton({
     string | null
   >(null);
   const containerRef = useRef<HTMLDivElement | null>(null);
+  const panelRef = useRef<HTMLDivElement | null>(null);
+  useScrollContainment(panelRef, { enabled: open });
 
   const threadMessages = useMemo(
     () => mapStudentNotificationsToThread(messages),
@@ -232,13 +235,15 @@ export function HomeNavbarMessagesButton({
       <AnimatePresence>
         {open && (
           <motion.div
+            ref={panelRef}
             initial={{ opacity: 0, y: -8, scale: 0.98 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -4, scale: 0.98 }}
             transition={{ duration: 0.15 }}
             role="dialog"
             aria-label="Uğur Hoca ile mesajlaşma"
-            className={`fixed left-4 right-4 top-[calc(3.5rem+0.25rem+env(safe-area-inset-top))] z-50 flex h-[min(80vh,28rem)] min-h-0 flex-col overflow-hidden rounded-2xl border shadow-2xl sm:absolute sm:left-auto sm:right-0 sm:top-auto sm:mt-2 sm:w-[24rem] md:w-[26rem] ${
+            style={{ overscrollBehavior: 'contain' }}
+            className={`fixed left-4 right-4 top-[calc(3.5rem+0.25rem+env(safe-area-inset-top))] z-50 flex h-[min(80vh,28rem)] min-h-0 flex-col overflow-hidden overscroll-contain rounded-2xl border shadow-2xl sm:absolute sm:left-auto sm:right-0 sm:top-auto sm:mt-2 sm:w-[24rem] md:w-[26rem] ${
               isLight
                 ? 'border-slate-200 bg-white'
                 : 'border-slate-700 bg-slate-900'

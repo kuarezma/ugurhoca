@@ -37,7 +37,7 @@ const scrollLockState: ScrollLockState = {
   previousPaddingRight: '',
 };
 
-const acquireBodyScrollLock = () => {
+export const acquireBodyScrollLock = () => {
   if (typeof document === 'undefined') {
     return;
   }
@@ -55,7 +55,7 @@ const acquireBodyScrollLock = () => {
   scrollLockState.count += 1;
 };
 
-const releaseBodyScrollLock = () => {
+export const releaseBodyScrollLock = () => {
   if (typeof document === 'undefined') {
     return;
   }

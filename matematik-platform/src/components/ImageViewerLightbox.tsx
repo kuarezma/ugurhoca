@@ -1,8 +1,9 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { Download, RotateCw, X, ZoomIn, ZoomOut, RefreshCw } from 'lucide-react';
+import { acquireBodyScrollLock, releaseBodyScrollLock } from '@/hooks/useAccessibleModal';
 
 type ImageViewerLightboxProps = {
   src: string | null;
@@ -17,6 +18,14 @@ export default function ImageViewerLightbox({
 }: ImageViewerLightboxProps) {
   const [scale, setScale] = useState(1);
   const [rotation, setRotation] = useState(0);
+
+  useEffect(() => {
+    if (!src) return;
+    acquireBodyScrollLock();
+    return () => {
+      releaseBodyScrollLock();
+    };
+  }, [src]);
 
   if (!src) return null;
 
@@ -33,7 +42,8 @@ export default function ImageViewerLightbox({
       role="dialog"
       aria-modal="true"
       aria-label={alt}
-      className="fixed inset-0 z-[160] flex flex-col bg-slate-950/92 backdrop-blur-md"
+      style={{ overscrollBehavior: 'contain' }}
+      className="fixed inset-0 z-[160] flex flex-col bg-slate-950/92 backdrop-blur-md overscroll-contain"
     >
       {/* Kontrol Çubuğu */}
       <div className="flex items-center justify-between border-b border-white/10 bg-slate-900/80 px-4 py-3 text-white">

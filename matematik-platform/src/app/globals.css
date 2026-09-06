@@ -472,21 +472,43 @@ input[type='number']::-webkit-inner-spin-button {
   -webkit-tap-highlight-color: transparent;
 }
 
+/* Scrollbar Gizleme Yardımcısı */
+.scrollbar-none {
+  -ms-overflow-style: none !important;
+  scrollbar-width: none !important;
+}
+.scrollbar-none::-webkit-scrollbar {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+}
+
+/* Zarif, ince ve dikkat dağıtmayan scrollbar tasarımı */
 ::-webkit-scrollbar {
-  width: 8px;
+  width: 5px;
+  height: 5px;
 }
 
 ::-webkit-scrollbar-track {
-  background: var(--scrollbar-track);
+  background: transparent;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: linear-gradient(180deg, var(--scrollbar-thumb-start), var(--scrollbar-thumb-end));
-  border-radius: 4px;
+  background: rgba(148, 163, 184, 0.35);
+  border-radius: 9999px;
+  transition: background-color 0.2s ease;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(180deg, #a78bfa, #f472b6);
+  background: rgba(148, 163, 184, 0.65);
+}
+
+html[data-theme='light'] ::-webkit-scrollbar-thumb {
+  background: rgba(100, 116, 139, 0.3);
+}
+
+html[data-theme='light'] ::-webkit-scrollbar-thumb:hover {
+  background: rgba(100, 116, 139, 0.6);
 }
 
 .gradient-bg {
@@ -498,9 +520,6 @@ input[type='number']::-webkit-inner-spin-button {
 }
 
 @supports (background: color-mix(in srgb, white 80%, black)) {
-  ::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(180deg, color-mix(in srgb, var(--scrollbar-thumb-start) 80%, white), color-mix(in srgb, var(--scrollbar-thumb-end) 80%, white));
-  }
 
   .gradient-bg {
     background: linear-gradient(135deg, var(--bg) 0%, color-mix(in srgb, var(--bg) 85%, #4f46e5) 50%, var(--bg) 100%);

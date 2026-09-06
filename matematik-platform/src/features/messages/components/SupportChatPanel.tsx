@@ -623,8 +623,8 @@ export function SupportChatPanel({
       {/* 3. Mesaj Akış Alanı (List) */}
       <div
         ref={listRef}
-        className={`flex-1 overflow-y-auto px-3 py-3 ${listBg}`}
-        style={{ minHeight: 0 }}
+        className={`flex-1 overflow-y-auto overflow-x-hidden overscroll-contain px-3 py-3 ${listBg}`}
+        style={{ minHeight: 0, overscrollBehavior: 'contain' }}
       >
         {/* Daha Eski Mesajları Yükle Butonu */}
         {hasMoreMessages && (
@@ -682,7 +682,7 @@ export function SupportChatPanel({
                   </div>
 
                   <div
-                    className={`max-w-[84%] rounded-2xl px-3.5 py-2.5 text-sm transition-all ${
+                    className={`max-w-[84%] break-words [overflow-wrap:anywhere] rounded-2xl px-3.5 py-2.5 text-sm transition-all ${
                       isOwn ? ownBubble : peerBubble
                     }`}
                   >
@@ -845,7 +845,7 @@ export function SupportChatPanel({
       {/* 5. Alt Form Alanı */}
       <form
         onSubmit={handleFormSubmit}
-        className={`border-t px-3 py-2.5 transition-colors ${formBorder}`}
+        className={`shrink-0 border-t px-3 py-2.5 transition-colors ${formBorder}`}
       >
         {error ? (
           <p className="mb-1.5 text-[11px] font-medium text-red-500">{error}</p>
@@ -853,7 +853,10 @@ export function SupportChatPanel({
 
         {/* Öğrenci Hızlı Soru Şablonları */}
         {appearance === 'navbar' && !draft && (
-          <div className="mb-2 flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none">
+          <div
+            className="mb-2 flex items-center gap-1.5 overflow-x-auto overscroll-contain pb-1 scrollbar-none [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+            style={{ overscrollBehavior: 'contain' }}
+          >
             <span className="text-[10px] font-bold text-indigo-500 shrink-0 flex items-center gap-1">
               <Sparkles className="h-3 w-3 text-amber-400" />
               Soru Şablonu:
@@ -877,7 +880,10 @@ export function SupportChatPanel({
 
         {/* Öğretmen / Admin Hızlı Geri Bildirim Şablonları */}
         {appearance === 'admin' && (
-          <div className="mb-2 flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none">
+          <div
+            className="mb-2 flex items-center gap-1.5 overflow-x-auto overscroll-contain pb-1 scrollbar-none [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+            style={{ overscrollBehavior: 'contain' }}
+          >
             <span className="text-[10px] font-bold text-slate-400 shrink-0 flex items-center gap-1">
               <Sparkles className="h-3 w-3 text-amber-400" />
               Hızlı Not:
@@ -896,7 +902,10 @@ export function SupportChatPanel({
         )}
 
         {/* Hızlı Matematik Sembolleri Çubuğu */}
-        <div className="mb-2 flex items-center gap-1 overflow-x-auto pb-1 scrollbar-none">
+        <div
+          className="mb-2 flex items-center gap-1 overflow-x-auto overscroll-contain pb-1 scrollbar-none [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+          style={{ overscrollBehavior: 'contain' }}
+        >
           <span className="text-[10px] font-bold text-indigo-500 shrink-0 flex items-center gap-1 px-1">
             <Calculator className="h-3 w-3" />
             Sembol:
