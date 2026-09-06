@@ -28,10 +28,6 @@ import {
 } from 'lucide-react';
 import { Mascot } from '@/components/Mascot';
 import { SafeLink } from '@/components/SafeLink';
-import { HomeDailyChallenge } from '@/features/home/components/HomeDailyChallenge';
-import { HomeDailyGoalWidget } from '@/features/home/components/HomeDailyGoalWidget';
-import { HomeSuccessRoadmap } from '@/features/home/components/HomeSuccessRoadmap';
-import { LgsTacticsCorner } from '@/features/home/components/LgsTacticsCorner';
 import type { AppUser } from '@/types';
 
 type HomeHeroSectionProps = {
@@ -65,8 +61,6 @@ export function HomeHeroSection({
   onOpenTopicWeights,
   onOpenWeeklyPlanner,
 }: HomeHeroSectionProps) {
-  const [isChallengeOpen, setIsChallengeOpen] = useState(true);
-  const [challengeTab, setChallengeTab] = useState<'all' | 'challenge' | 'goal' | 'tactics' | 'roadmap'>('all');
   const [isLessonsOpen, setIsLessonsOpen] = useState(true);
   const [isToolsOpen, setIsToolsOpen] = useState(true);
   const firstName = user?.name?.split(' ')[0];
@@ -204,14 +198,7 @@ export function HomeHeroSection({
       icon: Compass,
       gradient: 'from-sky-500 to-blue-600',
       action: () => {
-        setIsChallengeOpen(true);
-        setChallengeTab('tactics');
-        setTimeout(() => {
-          const el = document.getElementById('lgs-tactics-section');
-          if (el) {
-            el.scrollIntoView({ behavior: 'smooth' });
-          }
-        }, 100);
+        window.location.href = '/meydan-okuma#lgs-tactics-section';
       },
     },
     {
@@ -538,17 +525,10 @@ export function HomeHeroSection({
           </SafeLink>
 
           {/* 4. Meydan Okuma Kartı */}
-          <button
-            type="button"
-            onClick={() => {
-              setIsChallengeOpen((prev) => !prev);
-              const el = document.getElementById('meydan-okuma-hub');
-              if (el) {
-                el.scrollIntoView({ behavior: 'smooth' });
-              }
-            }}
+          <SafeLink
+            href="/meydan-okuma"
             aria-label="Meydan Okuma"
-            className="col-span-1 group relative overflow-hidden rounded-2xl sm:rounded-3xl p-4 sm:p-6 border border-amber-400/40 bg-gradient-to-br from-amber-500 via-orange-600 to-rose-600 text-white shadow-lg shadow-orange-600/25 transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl hover:shadow-orange-600/40 active:scale-[0.99] cursor-pointer text-left"
+            className="col-span-1 group relative overflow-hidden rounded-2xl sm:rounded-3xl p-4 sm:p-6 border border-amber-400/40 bg-gradient-to-br from-amber-500 via-orange-600 to-rose-600 text-white shadow-lg shadow-orange-600/25 transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl hover:shadow-orange-600/40 active:scale-[0.99] cursor-pointer"
           >
             {/* Parlak Arka Plan Işık Efekti */}
             <div
@@ -567,7 +547,7 @@ export function HomeHeroSection({
                 </div>
                 <span className="inline-flex items-center gap-1 sm:gap-1.5 rounded-full bg-black/25 backdrop-blur-md px-2 py-0.5 sm:px-3 sm:py-1 text-[10px] sm:text-xs font-bold text-white border border-white/20 tracking-wide uppercase">
                   <Sparkles className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-yellow-300" />
-                  4 Bölüm
+                  4 Görev
                 </span>
               </div>
 
@@ -582,154 +562,14 @@ export function HomeHeroSection({
 
               <div className="pt-2 flex items-center justify-between border-t border-white/20 text-[11px] sm:text-sm font-bold text-white">
                 <span className="inline-flex items-center gap-1 opacity-95">
-                  {isChallengeOpen ? 'Bölümleri Gizle' : 'Meydan Oku'}
+                  Meydan Oku
                 </span>
-                <div
-                  className={`flex h-6 w-6 sm:h-8 sm:w-8 items-center justify-center rounded-lg sm:rounded-xl bg-white/20 backdrop-blur-sm group-hover:bg-white/30 transition-all duration-300 ${
-                    isChallengeOpen ? 'rotate-180' : ''
-                  }`}
-                >
-                  <ChevronDown className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                <div className="flex h-6 w-6 sm:h-8 sm:w-8 items-center justify-center rounded-lg sm:rounded-xl bg-white/20 backdrop-blur-sm group-hover:bg-white/30 transition-all duration-300 group-hover:translate-x-1">
+                  <ArrowRight className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                 </div>
               </div>
             </div>
-          </button>
-        </div>
-
-        {/* Meydan Okuma Kategori Kartı / Hub */}
-        <div
-          id="meydan-okuma-hub"
-          className={`mt-4 sm:mt-5 overflow-hidden rounded-2xl sm:rounded-3xl border transition-all duration-300 ${
-            isChallengeOpen
-              ? 'border-amber-500/50 bg-amber-50/20 dark:bg-amber-950/15 shadow-md'
-              : isLight
-                ? 'border-slate-200/90 bg-white/90 shadow-bento hover:border-amber-300/80 hover:shadow-bento-hover'
-                : 'border-white/10 bg-slate-900/80 hover:border-white/20'
-          }`}
-        >
-          <button
-            type="button"
-            onClick={() => setIsChallengeOpen((prev) => !prev)}
-            aria-expanded={isChallengeOpen}
-            className="flex w-full items-center justify-between p-3.5 sm:p-5 text-left transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-500 rounded-2xl sm:rounded-3xl cursor-pointer"
-          >
-            <div className="flex items-center gap-3 sm:gap-4 min-w-0">
-              {/* Sol: Amber-Turuncu-Kırmızı Gradyanlı İkon */}
-              <div className="flex h-11 w-11 sm:h-13 sm:w-13 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-amber-500 via-orange-500 to-red-500 text-white shadow-md">
-                <Flame className="h-5 w-5 sm:h-6 sm:w-6" />
-              </div>
-
-              {/* Orta: Başlık, 4 BÖLÜM Rozeti ve Açıklama */}
-              <div className="min-w-0">
-                <div className="flex items-center gap-2">
-                  <h3
-                    className={`font-display text-base sm:text-lg font-bold ${
-                      isLight ? 'text-slate-900' : 'text-white'
-                    }`}
-                  >
-                    Meydan Okuma
-                  </h3>
-                  <span
-                    className={`rounded-full px-2.5 py-0.5 text-[10px] sm:text-xs font-bold uppercase tracking-wider ${
-                      isLight
-                        ? 'bg-amber-100 text-amber-800'
-                        : 'bg-amber-500/20 text-amber-300 border border-amber-500/30'
-                    }`}
-                  >
-                    4 BÖLÜM
-                  </span>
-                </div>
-                <p
-                  className={`text-xs sm:text-sm line-clamp-1 mt-0.5 ${
-                    isLight ? 'text-slate-500' : 'text-slate-400'
-                  }`}
-                >
-                  Günün sorusu, soru hedefi, LGS taktik köşesi, başarı yol haritası...
-                </p>
-              </div>
-            </div>
-
-            {/* Sağ: Dönen Chevron Butonu */}
-            <div className="flex items-center gap-2 shrink-0 ml-2">
-              <div
-                className={`flex h-8 w-8 sm:h-9 sm:w-9 items-center justify-center rounded-xl transition-transform duration-300 ${
-                  isChallengeOpen
-                    ? 'rotate-180 bg-black/10 dark:bg-white/15 text-slate-900 dark:text-white'
-                    : isLight
-                      ? 'bg-slate-100 text-slate-600'
-                      : 'bg-white/10 text-slate-300'
-                }`}
-              >
-                <ChevronDown className="h-4 w-4" />
-              </div>
-            </div>
-          </button>
-
-          {/* Tıklandığında içindeki 4 bölüm görüntülenir */}
-          <AnimatePresence initial={false}>
-            {isChallengeOpen && (
-              <motion.div
-                initial={{ opacity: 0, height: 0 }}
-                animate={{ opacity: 1, height: 'auto' }}
-                exit={{ opacity: 0, height: 0 }}
-                transition={{ duration: 0.3, ease: 'easeInOut' }}
-                className="border-t border-slate-200/80 dark:border-white/10 p-3 sm:p-5"
-              >
-                {/* Sekme Filtreleri */}
-                <div className="flex items-center gap-2 overflow-x-auto pb-3 mb-2 [scrollbar-width:none]">
-                  {[
-                    { id: 'all', label: '📋 Tümü' },
-                    { id: 'challenge', label: '⚡ Günün Sorusu' },
-                    { id: 'goal', label: '🎯 Soru Hedefim' },
-                    { id: 'tactics', label: '💡 LGS Taktikleri' },
-                    { id: 'roadmap', label: '🗺️ Yol Haritası' },
-                  ].map((tab) => (
-                    <button
-                      key={tab.id}
-                      type="button"
-                      onClick={() => setChallengeTab(tab.id as typeof challengeTab)}
-                      className={`shrink-0 rounded-xl px-3.5 py-1.5 text-xs font-bold transition-all duration-200 cursor-pointer ${
-                        challengeTab === tab.id
-                          ? 'bg-gradient-to-r from-amber-500 to-orange-500 text-white shadow-sm scale-105'
-                          : isLight
-                            ? 'bg-slate-100 text-slate-700 hover:bg-slate-200/80 border border-slate-200/80'
-                            : 'bg-white/5 text-slate-300 hover:bg-white/10 hover:text-white border border-white/10'
-                      }`}
-                    >
-                      {tab.label}
-                    </button>
-                  ))}
-                </div>
-
-                {/* İçerikler */}
-                <div className="space-y-4">
-                  {(challengeTab === 'all' || challengeTab === 'challenge') && (
-                    <div className="defer-section">
-                      <HomeDailyChallenge isLight={isLight} />
-                    </div>
-                  )}
-                  {(challengeTab === 'all' || challengeTab === 'goal') && (
-                    <div className="defer-section">
-                      <HomeDailyGoalWidget isLight={isLight} />
-                    </div>
-                  )}
-                  {(challengeTab === 'all' || challengeTab === 'tactics') && (
-                    <div className="defer-section">
-                      <LgsTacticsCorner isLight={isLight} />
-                    </div>
-                  )}
-                  {(challengeTab === 'all' || challengeTab === 'roadmap') && (
-                    <div className="defer-section">
-                      <HomeSuccessRoadmap
-                        isLight={isLight}
-                        onOpenFlashcards={onOpenFlashcards || (() => {})}
-                      />
-                    </div>
-                  )}
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
+          </SafeLink>
         </div>
 
         {/* Ders Kategori Kartı (Tıpkı Araçlar Kategori Kartı Tasarımı Gibi) */}

@@ -35,6 +35,11 @@ Platformda öğrenci gizliliği en üst düzeyde korunur:
 
 ## Değişiklik Günlüğü (Changelog)
 
+### v1.4.8 - "Meydan Okuma" Tıklanınca Açılan Özel Sayfaya Dönüştürüldü (`/meydan-okuma`)
+- **Doğrudan Sayfa Yönlendirmeli Kart:** Kullanıcı isteği doğrultusunda "Meydan Okuma" kartı, tıpkı Yaprak Test, Oyunlar ve Canlı Ders kartları gibi tıklandığında yeni sayfa açan (`/meydan-okuma`) bağımsız bir gezinme kartına dönüştürüldü.
+- **Ana Sayfa Alt Blokları Kaldırıldı:** Kategori kartının altında sürekli açık veya akordeon şeklinde ekstra bir bölüm tutulmadı; kartın altı tamamen sadeleştirilerek yalnızca "Ders" ve "Araçlar" korundu.
+- **Özel Meydan Okuma Sayfası (`/meydan-okuma`):** 4 temel bölüm (**Günün Matematik Meydan Okuması**, **Günlük Soru Hedefim**, **LGS Matematik Taktik Köşesi**, **Başarı Yol Haritası**) yeni `/meydan-okuma` sayfasında ferah bir hero başlık, hızlı çapa linkleri ve odaklanmış tam ekran deneyimiyle sunuldu.
+
 ### v1.4.7 - "Meydan Okuma" 4. Kart Olarak Eklendi & Dağınık 4 Bölüm Hub İçine Taşındı
 - **Öne Çıkan 4'lü Vitrin:** Üstteki 3 kartın (Yaprak Test, Oyunlar, Canlı Ders) yanına 4. olarak sıcak ateş/kupa gradyanlı **"Meydan Okuma"** kartı eklendi.
   - **Masaüstünde:** Soldan sağa 4 eşit sütun: **Yaprak Test** · **Oyunlar** · **Canlı Ders** · **Meydan Okuma**.

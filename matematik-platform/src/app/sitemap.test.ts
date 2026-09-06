@@ -8,6 +8,7 @@ describe('sitemap', () => {
     expect(urls).toContain('https://ugurhoca.com/');
     expect(urls).toContain('https://ugurhoca.com/testler');
     expect(urls).toContain('https://ugurhoca.com/cikis-bileti');
+    expect(urls).toContain('https://ugurhoca.com/meydan-okuma');
     expect(urls).not.toContain('https://ugurhoca.com/giris');
     expect(urls).not.toContain('https://ugurhoca.com/kayit');
     expect(urls).not.toContain('https://ugurhoca.com/odevler');

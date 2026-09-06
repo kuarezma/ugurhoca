@@ -36,22 +36,18 @@ describe('HomeHeroSection', () => {
     onOpenSpeedDrill: vi.fn(),
   };
 
-  it('renders Canlı Ders, Yaprak Test, Oyunlar and Meydan Okuma cards, expandable Meydan Okuma, Ders and Araçlar hubs', () => {
+  it('renders Canlı Ders, Yaprak Test, Oyunlar and Meydan Okuma cards, expandable Ders and Araçlar hubs', () => {
     render(<HomeHeroSection {...defaultProps} />);
 
-    // Karşılama ve maskot altındaki 4 kart: Yaprak Test, Oyunlar, Canlı Ders ve Meydan Okuma
+    // Karşılama ve maskot altındaki 4 öne çıkan kart: Yaprak Test, Oyunlar, Canlı Ders ve Meydan Okuma
     expect(screen.getByText('Yaprak Test')).toBeInTheDocument();
     expect(screen.getByText('Oyunlar')).toBeInTheDocument();
     expect(screen.getByText('Canlı Ders')).toBeInTheDocument();
-    expect(screen.getAllByText('Meydan Okuma').length).toBeGreaterThanOrEqual(1);
+    expect(screen.getByText('Meydan Okuma')).toBeInTheDocument();
 
-    // Meydan Okuma hub ve sekmeleri
-    expect(screen.getByText('4 BÖLÜM')).toBeInTheDocument();
-    expect(screen.getByText('📋 Tümü')).toBeInTheDocument();
-    expect(screen.getByText('⚡ Günün Sorusu')).toBeInTheDocument();
-    expect(screen.getByText('🎯 Soru Hedefim')).toBeInTheDocument();
-    expect(screen.getByText('💡 LGS Taktikleri')).toBeInTheDocument();
-    expect(screen.getByText('🗺️ Yol Haritası')).toBeInTheDocument();
+    // 4. Kart doğrudan /meydan-okuma sayfasına link vermeli
+    const challengeLink = screen.getByRole('link', { name: 'Meydan Okuma' });
+    expect(challengeLink).toHaveAttribute('href', '/meydan-okuma');
 
     // Ders kategori kartı ve içindeki 6 ders materyali
     expect(screen.getByText('Ders')).toBeInTheDocument();
@@ -109,23 +105,5 @@ describe('HomeHeroSection', () => {
     const lessonsButton = screen.getByRole('button', { name: /Ders 6 KATEGORİ/i });
     fireEvent.click(lessonsButton);
     expect(screen.queryByText('Kitaplar')).not.toBeInTheDocument();
-  });
-
-  it('allows toggling Meydan Okuma hub and switching tabs', () => {
-    render(<HomeHeroSection {...defaultProps} />);
-
-    // Başlangıçta açık
-    expect(screen.getByText('⚡ Günün Sorusu')).toBeInTheDocument();
-
-    // Sekmeler arası geçiş
-    fireEvent.click(screen.getByText('💡 LGS Taktikleri'));
-    expect(
-      screen.getByText('Yeni nesil sorularda hız ve net kazandıran stratejiler'),
-    ).toBeInTheDocument();
-
-    // Meydan Okuma başlığına tıklandığında kapanabilmeli
-    const challengeButton = screen.getByRole('button', { name: /Meydan Okuma 4 BÖLÜM/i });
-    fireEvent.click(challengeButton);
-    expect(screen.queryByText('⚡ Günün Sorusu')).not.toBeInTheDocument();
   });
 });

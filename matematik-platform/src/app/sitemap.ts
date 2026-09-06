@@ -25,6 +25,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.9,
     },
     {
+      url: buildCanonicalUrl('/meydan-okuma'),
+      lastModified,
+      changeFrequency: 'daily',
+      priority: 0.9,
+    },
+    {
       url: buildCanonicalUrl('/programlar'),
       lastModified,
       changeFrequency: 'monthly',

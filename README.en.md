@@ -35,6 +35,11 @@ Student privacy and well-being are paramount on the platform:
 
 ## Changelog
 
+### v1.4.8 - "Meydan Okuma" Dedicated Page Navigation (`/meydan-okuma`)
+- **Standalone Navigation Card:** Per user request, the "Meydan Okuma" card now functions identically to Yaprak Test, Games, and Live Lessons — clicking the card navigates directly to its dedicated page (`/meydan-okuma`).
+- **Zero In-Page Clutter on Homepage:** Removed any continuous or collapsible accordion panels beneath the card on the homepage, maintaining an ultra-clean Hero flow with only "Ders" and "Araçlar".
+- **Dedicated Challenge Route (`/meydan-okuma`):** The 4 components (**Günün Matematik Meydan Okuması**, **Günlük Soru Hedefim**, **LGS Matematik Taktik Köşesi**, **Başarı Yol Haritası**) now reside on their dedicated page with anchor jump pills, hero introduction, mascot, and full responsive theme support.
+
 ### v1.4.7 - "Meydan Okuma" (Challenge) Added as 4th Featured Card & 4 Dispersed Widgets Consolidated
 - **4 Featured Showcase Cards:** Added a vibrant, fire-themed **"Meydan Okuma"** (Challenge) card alongside Worksheets, Games, and Live Lessons.
   - **On Desktop:** 4 equal columns: **Yaprak Test** (Worksheets) · **Oyunlar** (Games) · **Canlı Ders** (Live Lessons) · **Meydan Okuma** (Challenge).
