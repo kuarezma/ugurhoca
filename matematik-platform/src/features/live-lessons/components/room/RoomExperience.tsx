@@ -534,16 +534,15 @@ export function RoomExperience({
         />
       )}
 
-      {/* Canlı Soru / Anket Yüzen Penceresi (Öğrenci) */}
-      {role === 'student' && (
-        <LivePollStudentOverlay
-          identity={identity}
-          displayName={displayName.trim()}
-          roomId={roomId}
-          persistToken={persistToken}
-          interactionLocked={requireStudentApproval && !lessonUnlocked}
-        />
-      )}
+      {/* Canlı Soru / Anket Yüzen Penceresi */}
+      <LivePollStudentOverlay
+        identity={identity}
+        displayName={displayName.trim()}
+        roomId={roomId}
+        isTeacher={role === 'teacher'}
+        persistToken={persistToken}
+        interactionLocked={requireStudentApproval && !lessonUnlocked}
+      />
 
       {/* Matematik Karalama Tahtası Modalı */}
       {isScratchpadOpen && (

@@ -18,6 +18,7 @@ interface QuizOpticalSheetModalProps {
   optionsCount?: number;
   isDocked?: boolean;
   onToggleDock?: () => void;
+  onSubmit?: () => void;
 }
 
 const ALL_OPTION_LETTERS = ['A', 'B', 'C', 'D', 'E'];
@@ -37,6 +38,7 @@ export const QuizOpticalSheetModal: React.FC<QuizOpticalSheetModalProps> = ({
   optionsCount = 4,
   isDocked = false,
   onToggleDock,
+  onSubmit,
 }) => {
   const activeOptionLetters = ALL_OPTION_LETTERS.slice(0, Math.min(5, Math.max(4, optionsCount)));
   const containerRef = useAccessibleModal<HTMLDivElement>(isOpen && !isDocked, onClose);
@@ -196,20 +198,35 @@ export const QuizOpticalSheetModal: React.FC<QuizOpticalSheetModalProps> = ({
       </div>
 
       {/* Footer */}
-      <div className="border-t border-amber-200 dark:border-slate-800 bg-amber-100/50 dark:bg-slate-950/80 px-4 sm:px-6 py-3.5 flex items-center justify-between">
+      <div className="border-t border-amber-200 dark:border-slate-800 bg-amber-100/50 dark:bg-slate-950/80 px-4 sm:px-6 py-3 flex items-center justify-between gap-3">
         <div className="text-[11px] text-slate-500 dark:text-slate-400">
           İşaretlenen şıklar anında kaydedilir.
         </div>
-        {!isDocked && (
-          <button
-            type="button"
-            onClick={onClose}
-            className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold transition-colors shadow-lg shadow-indigo-600/20"
-          >
-            <span>Teste Devam Et</span>
-            <ArrowRight className="w-3.5 h-3.5" />
-          </button>
-        )}
+        <div className="flex items-center gap-2">
+          {onSubmit && (
+            <button
+              type="button"
+              onClick={() => {
+                if (!isDocked) onClose();
+                onSubmit();
+              }}
+              className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold transition-all shadow-md shadow-emerald-600/20 active:scale-95"
+            >
+              <CheckCircle2 className="w-3.5 h-3.5" />
+              <span>Optik Formu Teslim Et</span>
+            </button>
+          )}
+          {!isDocked && (
+            <button
+              type="button"
+              onClick={onClose}
+              className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold transition-colors shadow-md shadow-indigo-600/20"
+            >
+              <span>Teste Devam Et</span>
+              <ArrowRight className="w-3.5 h-3.5" />
+            </button>
+          )}
+        </div>
       </div>
     </div>
   );

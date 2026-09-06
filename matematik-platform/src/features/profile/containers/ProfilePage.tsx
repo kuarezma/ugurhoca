@@ -62,6 +62,8 @@ import ProfileNotificationsPanel from '@/features/profile/components/ProfileNoti
 import StudyActivityHeatmap from '@/features/profile/components/StudyActivityHeatmap';
 import ExamTrendChart from '@/features/profile/components/ExamTrendChart';
 import TargetSchoolGapCard from '@/features/profile/components/TargetSchoolGapCard';
+import { ExamCountdownCard } from '@/features/profile/components/ExamCountdownCard';
+import { StudyPrescriptionCard } from '@/features/quizzes/components/StudyPrescriptionCard';
 import { getSavedMistakes, getDueMistakes } from '@/features/quizzes/lib/mistakeStorage';
 import { syncMistakesWithCloud } from '@/features/quizzes/lib/mistakeSync';
 import { useDailyStreakTouch } from '@/features/profile/hooks/useDailyStreakTouch';
@@ -724,6 +726,15 @@ export default function ProfilePage({ initialData }: ProfilePageProps) {
                     </div>
                   )}
 
+                  <StudyPrescriptionCard
+                    isLight={false}
+                    onStartQuiz={(_questions, topic) => {
+                      router.push(
+                        `/testler?mode=prescription&topic=${encodeURIComponent(topic)}`,
+                      );
+                    }}
+                  />
+
                   <WeeklyPlanCard
                     plan={activeWeeklyPlan}
                     onToggleItem={handleWeeklyPlanItemToggle}
@@ -733,6 +744,7 @@ export default function ProfilePage({ initialData }: ProfilePageProps) {
                     <StudyActivityHeatmap isLight={false} />
                     <ExamTrendChart isLight={false} />
                     <TargetSchoolGapCard isLight={false} />
+                    <ExamCountdownCard userGrade={user?.grade} isLight={false} />
                   </div>
 
                   <div className="grid gap-6 xl:grid-cols-[0.95fr_1.05fr]">

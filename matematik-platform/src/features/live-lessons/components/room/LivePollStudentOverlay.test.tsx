@@ -19,8 +19,8 @@ vi.mock('@livekit/components-react', () => ({
 }));
 
 describe('LivePollStudentOverlay', () => {
-  it('registers data listener on mount', () => {
-    render(
+  it('registers data listener on mount and unregisters on unmount', () => {
+    const { unmount } = render(
       <LivePollStudentOverlay
         identity="student-1"
         displayName="Ali Yılmaz"
@@ -29,5 +29,21 @@ describe('LivePollStudentOverlay', () => {
     );
 
     expect(mockRoomOn).toHaveBeenCalled();
+    unmount();
+    expect(mockRoomOff).toHaveBeenCalled();
+  });
+
+  it('renders correctly with isTeacher=true', () => {
+    const { container } = render(
+      <LivePollStudentOverlay
+        identity="teacher-1"
+        displayName="Uğur Hoca"
+        roomId="room-1"
+        isTeacher={true}
+      />
+    );
+
+    // Başlangıçta aktif soru olmadığında null döner
+    expect(container.firstChild).toBeNull();
   });
 });

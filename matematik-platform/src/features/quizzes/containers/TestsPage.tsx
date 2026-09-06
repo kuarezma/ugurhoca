@@ -28,6 +28,7 @@ import {
   Compass,
   MonitorPlay,
   Sliders,
+  FileSpreadsheet,
   MessageCircle,
 } from 'lucide-react';
 import { useRouter, useSearchParams } from 'next/navigation';
@@ -862,6 +863,11 @@ export default function TestsPage({
     user,
   ]);
 
+  const handleFinishQuiz = useCallback(() => {
+    setShowResult(true);
+    saveQuizResult();
+  }, [saveQuizResult]);
+
   useEffect(() => {
     if (quizStarted && !showResult && timeLeft !== null && timeLeft > 0) {
       const timer = setInterval(() => {
@@ -1152,6 +1158,18 @@ export default function TestsPage({
                   <Keyboard className="h-3.5 w-3.5 text-indigo-400" />
                   <span className="hidden sm:inline">Kısayollar</span>
                   <span className="text-[10px] font-mono px-1 py-0.5 rounded bg-white/10 text-indigo-300">?</span>
+                </button>
+
+                {/* Hızlı Optik Kodlama Butonu */}
+                <button
+                  type="button"
+                  onClick={() => setIsOpticalSheetOpen(true)}
+                  className="inline-flex items-center gap-1.5 rounded-xl border border-amber-500/30 bg-amber-500/15 px-3 py-1.5 text-xs font-bold text-amber-300 hover:bg-amber-500/25 transition shadow-xs"
+                  title="Optik Formu Aç (Hızlı İşaretleme)"
+                  aria-label="Optik Formu Aç"
+                >
+                  <FileSpreadsheet className="h-3.5 w-3.5 text-amber-400" />
+                  <span className="hidden sm:inline">Optik Form</span>
                 </button>
 
                 {/* LGS / Sınav Tempo Koçu (Canlı) */}
@@ -1494,6 +1512,7 @@ export default function TestsPage({
                 onClearAnswer={clearAnswer}
                 quizTitle={selectedQuiz?.title}
                 studentName={user?.name || 'Öğrenci'}
+                onSubmit={handleFinishQuiz}
               />
             </div>
           )}
@@ -1544,6 +1563,7 @@ export default function TestsPage({
             onClearAnswer={clearAnswer}
             quizTitle={selectedQuiz?.title}
             studentName={user?.name || 'Öğrenci'}
+            onSubmit={handleFinishQuiz}
           />
         )}
 

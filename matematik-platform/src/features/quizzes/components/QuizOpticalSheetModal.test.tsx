@@ -78,4 +78,31 @@ describe('QuizOpticalSheetModal', () => {
     // When docked and question is not current (qIdx 0 !== current 1), jumps question
     expect(onSelectQuestion).toHaveBeenCalledWith(0);
   });
+
+  it('triggers onSubmit when Optik Formu Teslim Et button is clicked', () => {
+    const onSubmit = vi.fn();
+    const onClose = vi.fn();
+
+    render(
+      <QuizOpticalSheetModal
+        isOpen={true}
+        onClose={onClose}
+        totalQuestions={2}
+        currentIndex={0}
+        answers={{ 0: 1 }}
+        flaggedQuestions={new Set()}
+        onSelectQuestion={vi.fn()}
+        onSelectAnswer={vi.fn()}
+        onClearAnswer={vi.fn()}
+        onSubmit={onSubmit}
+      />
+    );
+
+    const submitBtn = screen.getByRole('button', { name: /Optik Formu Teslim Et/i });
+    expect(submitBtn).toBeInTheDocument();
+    fireEvent.click(submitBtn);
+
+    expect(onSubmit).toHaveBeenCalledTimes(1);
+    expect(onClose).toHaveBeenCalledTimes(1);
+  });
 });
