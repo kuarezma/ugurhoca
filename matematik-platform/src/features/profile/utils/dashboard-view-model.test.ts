@@ -145,6 +145,7 @@ const createViewModel = (overrides?: {
   assignments?: DashboardAssignment[];
   availableQuizzes?: DashboardQuizSummary[];
   badges?: DashboardBadge[];
+  dueMistakesCount?: number;
   goal?: StudyGoal | null;
   notifications?: DashboardNotification[];
   progressRows?: ProfileProgressRow[];
@@ -159,6 +160,7 @@ const createViewModel = (overrides?: {
     assignments: overrides?.assignments ?? baseAssignments,
     availableQuizzes: overrides?.availableQuizzes ?? baseQuizList,
     badges: overrides?.badges ?? baseBadges,
+    dueMistakesCount: overrides?.dueMistakesCount ?? 0,
     goal: overrides?.goal ?? baseGoal,
     notifications: overrides?.notifications ?? baseNotifications,
     progressRows: overrides?.progressRows ?? baseProgressRows,
@@ -172,6 +174,20 @@ const createViewModel = (overrides?: {
   });
 
 describe('dashboard view model', () => {
+  it('prioritizes due mistakes review when due mistakes exist', () => {
+    const viewModel = createViewModel({ dueMistakesCount: 5 });
+
+    expect(viewModel.tasks.map((task) => task.id)).toEqual([
+      'assignment:assignment-1',
+      'mistake:due-review',
+      'topic:Üslü İfadeler',
+    ]);
+    expect(viewModel.tasks[1]).toMatchObject({
+      action: { type: 'start-mistake-review' },
+      actionLabel: 'Tekrarı Başlat',
+      badge: 'Tekrar',
+    });
+  });
   it('builds today plan tasks in the configured priority order', () => {
     const viewModel = createViewModel();
 

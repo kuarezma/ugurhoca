@@ -241,6 +241,16 @@ export const removeMistakeFromBank = (questionText: string): void => {
   }
 };
 
+export const saveMistakesList = (items: SavedMistakeQuestion[]): void => {
+  if (typeof window === 'undefined') return;
+  try {
+    const limited = items.slice(-MAX_MISTAKES);
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(limited));
+  } catch {
+    // ignore
+  }
+};
+
 export const updateMistakeReason = (
   questionText: string,
   reason?: MistakeReason,

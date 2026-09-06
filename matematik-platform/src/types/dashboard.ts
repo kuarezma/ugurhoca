@@ -94,13 +94,17 @@ export type DashboardActionType =
   | 'go-progress'
   | 'open-assignment'
   | 'open-document'
-  | 'open-notification';
+  | 'open-notification'
+  | 'start-mistake-review'
+  | 'start-quiz';
 
 export interface DashboardAction {
   type: DashboardActionType;
   assignmentId?: string;
   notificationId?: string;
   url?: string;
+  quizId?: string;
+  topic?: string;
 }
 
 export interface DashboardTask {

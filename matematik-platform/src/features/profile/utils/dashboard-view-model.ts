@@ -36,6 +36,7 @@ type BuildProfileDashboardViewModelInput = {
   assignments: DashboardAssignment[];
   availableQuizzes: DashboardQuizSummary[];
   badges: DashboardBadge[];
+  dueMistakesCount?: number;
   goal: StudyGoal | null;
   notifications: DashboardNotification[];
   progressRows: ProfileProgressRow[];
@@ -266,6 +267,7 @@ export const buildProfileDashboardViewModel = ({
   assignments,
   availableQuizzes,
   badges,
+  dueMistakesCount = 0,
   goal,
   notifications,
   progressRows,
@@ -292,7 +294,9 @@ export const buildProfileDashboardViewModel = ({
   const notificationList = sortNotificationsDesc(notifications);
 
   const submittedAssignmentIds = new Set(
-    submissions.map((submission) => submission.assignment_id),
+    submissions
+      .filter((submission) => submission.status !== 'returned')
+      .map((submission) => submission.assignment_id),
   );
   const pendingAssignments = sortPendingAssignments(
     assignments.filter(
@@ -314,6 +318,7 @@ export const buildProfileDashboardViewModel = ({
   const tasks: DashboardTask[] = [];
   const nearestAssignment = pendingAssignments[0] || null;
 
+  // Odak Görev 1: Yaklaşan Ödev (Varsa en yakın teslim tarihli ödev)
   if (nearestAssignment) {
     tasks.push({
       accentClass: 'from-orange-500/20 via-amber-500/15 to-yellow-500/10',
@@ -321,27 +326,50 @@ export const buildProfileDashboardViewModel = ({
         assignmentId: nearestAssignment.id,
         type: 'open-assignment',
       },
-      actionLabel: 'Ödevi Aç',
+      actionLabel: 'Ödevi Aç & Çöz',
       badge: 'Öncelik',
       description: `${
         nearestAssignment.title
-      } ödevini teslim etmeyi unutmadan kısa bir çalışma bloğu ayır.`,
+      } ödevini teslim etmeyi unutmadan hemen tamamla.`,
       id: `assignment:${nearestAssignment.id}`,
       meta: getRelativeDueLabel(nearestAssignment.due_date),
       title: 'Yaklaşan ödevini tamamla',
     });
   }
 
+  // Odak Görev 2: Zamanı Gelen Tekrar (Leitner aralıklı tekrar vadesi dolmuş yanlış sorular)
+  if (dueMistakesCount > 0) {
+    tasks.push({
+      accentClass: 'from-amber-500/20 via-orange-500/15 to-rose-500/10',
+      action: { type: 'start-mistake-review' },
+      actionLabel: 'Tekrarı Başlat',
+      badge: 'Tekrar',
+      description: `Akıllı Hata Defterinde bugün aralıklı tekrarı gelen ${dueMistakesCount} soru seni bekliyor.`,
+      id: 'mistake:due-review',
+      meta: `${dueMistakesCount} soru vadesi geldi`,
+      title: 'Zamanı gelen tekrarını yap',
+    });
+  }
+
+  // Odak Görev 3: Eksik Konu / Zayıf Kazanım (Doğrudan ilgili testi veya alıştırmayı başlatma)
   if (weakTopicRow) {
+    const matchingQuiz = availableQuizzes.find((q) =>
+      q.title.toLowerCase().includes(weakTopicRow.topic.toLowerCase()),
+    );
+
     tasks.push({
       accentClass: 'from-rose-500/20 via-orange-500/15 to-amber-500/10',
-      action: { type: 'go-progress' },
-      actionLabel: 'Tekrar Planı Aç',
+      action: {
+        type: 'start-quiz',
+        quizId: matchingQuiz?.id,
+        topic: weakTopicRow.topic,
+      },
+      actionLabel: matchingQuiz ? 'Konu Testini Çöz' : 'Kazanımı Pekiştir',
       badge: 'Odak',
-      description: `${weakTopicRow.topic} konusu şu an en çok tekrar isteyen alanın.`,
+      description: `${weakTopicRow.topic} konusu şu an %${weakTopicRow.mastery_level} ile en çok pratik isteyen alanın.`,
       id: `topic:${weakTopicRow.topic}`,
       meta: `%${weakTopicRow.mastery_level} hakimiyet`,
-      title: 'Zayıf konuna kısa tekrar ekle',
+      title: `${weakTopicRow.topic} eksiklerini tamamla`,
     });
   }
 
@@ -364,8 +392,11 @@ export const buildProfileDashboardViewModel = ({
   if (availableQuizzes[0]) {
     tasks.push({
       accentClass: 'from-emerald-500/20 via-teal-500/15 to-cyan-500/10',
-      action: { type: 'go-tests' },
-      actionLabel: 'Teste Git',
+      action: {
+        type: 'start-quiz',
+        quizId: availableQuizzes[0].id,
+      },
+      actionLabel: 'Teste Başla',
       badge: 'Test',
       description: `${availableQuizzes[0].title} ile bugünkü ritmini sıcak tutabilirsin.`,
       id: `quiz:${availableQuizzes[0].id}`,

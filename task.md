@@ -295,6 +295,14 @@ Bu dosya, projenin tamamlanmış ve devam eden görevlerini özetler.
 - [x] Tüm modüller için Vitest birim testleri (`QuestionDrawingOverlay.test.tsx`, `GeometryMathLabModal.test.tsx`, `araclar.test.tsx`, `AdminLatexHelperModal.test.tsx`) yazıldı; 21 yeni test ile tam suite eksiksiz çalıştı.
 - [x] `npm run lint`, `npm run typecheck`, `npm run test` ve `npm run build` (55 statik/dinamik rota) sıfır hata ile doğrulandı.
 
+### 24. Günlük 3 Odak Görev Akışı, Hata Defteri Bulut Eşitlemesi ve Test Kesinti Kurtarma (6 Eylül 2026)
+
+- [x] **“Bugün ne çalışmalıyım?” 3 Odak Görev Akışı:** Öğrenci panelinde (`buildProfileDashboardViewModel`) en fazla üç odak görev mantığı kuruldu: 1. Yaklaşan Ödev (en yakın teslim tarihli ödev, doğrudan teslim modalı), 2. Zamanı Gelen Tekrar (Leitner 5 kutulu sistemde vadesi gelen sorular, doğrudan telafi testi başlatma), 3. Eksik Konu / Zayıf Kazanım (mastery < %60 olan konuya ait konu testini veya alıştırmayı doğrudan başlatma). `ProfilePage.tsx` ve `TestsPage.tsx` URL parametreleri (`?mode=mistakes`, `?quizId=...`, `?topic=...`) ile doğrudan eyleme bağlandı.
+- [x] **Hata Defteri Bulut & Cihazlar Arası Eşitleme (`mistakeSync.ts`):** `user_mistakes` tablosu migration'ı (`20260906100000_user_mistakes.sql`) oluşturuldu. İstemci ile bulut verisini `question_id` ve `updated_at` (Last-Write-Wins ve kalıcı `mastered` koruması) ile çift yönlü birleştiren saf `mergeMistakes` ve `syncMistakesWithCloud` fonksiyonları geliştirildi. `MistakeNotebookModal`, `ProfilePage` ve `TestsPage` entegrasyonuyla telefonda çözülen yanlışlar bilgisayarda anında eşitlenir hale getirildi.
+- [x] **Testlerde Kesinti Koruması & State Recovery (`quizDraftStorage.ts`):** Sayfa yenileme, bağlantı kopması veya sekme kapanmasında öğrencinin işaretlediği tüm cevapları, kaldığı soru indeksini, bayraklarını, soru sürelerini ve geçen gerçek zamanı koruyan yerel taslak motoru geliştirildi. Sınavlar sayfasına "Yarım Kalan Sınavınız Bulundu" kurtarma banner'ı eklendi. Test bitiminde taslak temizlenir ve çift gönderim engellenir (`isSubmitting` ve idempotency kontrolü).
+- [x] 4 test dosyası (`dashboard-view-model.test.ts`, `mistakeSync.test.ts`, `quizDraftStorage.test.ts`, `TestsPageRecovery.test.tsx`) ile tüm birim ve entegrasyon testleri başarıyla doğrulandı.
+- [x] `npm run lint`, `npm run typecheck`, `npm run test` ve `npm run build` (55 rota) sıfır hata ile tamamlandı.
+
 ## Bekleyen Görevler
 
 ### Chat Sistemi Refactor
@@ -316,4 +324,4 @@ Bu dosya, projenin tamamlanmış ve devam eden görevlerini özetler.
 
 ---
 
-_Son güncelleme: 6 Eylül 2026 — Soru üzeri çizim katmanı, geometri labı, /araclar SEO hub'ı ve admin LaTeX asistanı tamamlandı._
+_Son güncelleme: 6 Eylül 2026 — Günlük 3 odak görev akışı, hata defteri bulut eşitlemesi ve test kesinti koruması tamamlandı._

@@ -92,6 +92,14 @@ const ExamPacingStrategyModal = dynamic(
   { ssr: false },
 );
 import { saveMistakesToBank, markMistakeMastered, getSavedMistakes } from '@/features/quizzes/lib/mistakeStorage';
+import { syncMistakesWithCloud } from '@/features/quizzes/lib/mistakeSync';
+import {
+  saveQuizDraft,
+  getQuizDraft,
+  clearQuizDraft,
+  getActiveQuizDraft,
+  type QuizDraft,
+} from '@/features/quizzes/lib/quizDraftStorage';
 import { incrementQuestionsSolved } from '@/lib/dailyGoalStorage';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { Skeleton } from '@/components/ui/Skeleton';
@@ -209,6 +217,16 @@ export default function TestsPage({
   const [questionTimes, setQuestionTimes] = useState<Record<number, number>>({});
   const [questionElapsedSeconds, setQuestionElapsedSeconds] = useState(0);
   const [isDyslexicMode, setIsDyslexicMode] = useState(false);
+  const [activeDraft, setActiveDraft] = useState<QuizDraft | null>(null);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined' && !quizStarted) {
+      const draft = getActiveQuizDraft();
+      if (draft) {
+        setActiveDraft(draft);
+      }
+    }
+  }, [quizStarted]);
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -301,19 +319,30 @@ export default function TestsPage({
     };
   }, [showToast, flushPendingQuizResults]);
 
-  // Aktif test cevaplarını sessionStorage'da anlık güvenceye al
+  // Aktif test durumunu (cevaplar, kalan süre, bayraklar, soru süreleri) anlık güvenceye al
   useEffect(() => {
-    if (quizStarted && selectedQuiz && Object.keys(answers).length > 0) {
-      try {
-        sessionStorage.setItem(
-          `ugurhoca_active_quiz_${selectedQuiz.id}`,
-          JSON.stringify({ answers, currentQuestion, startTime }),
-        );
-      } catch {
-        // ignore
-      }
+    if (quizStarted && selectedQuiz && (Object.keys(answers).length > 0 || currentQuestion > 0)) {
+      saveQuizDraft({
+        quizId: selectedQuiz.id,
+        quizTitle: selectedQuiz.title,
+        currentQuestion,
+        answers,
+        flaggedQuestions: Array.from(flaggedQuestions),
+        questionTimes,
+        startTime: startTime || Date.now(),
+        timeLeft: timeLeft ?? (selectedQuiz.time_limit * 60),
+      });
     }
-  }, [quizStarted, selectedQuiz, answers, currentQuestion, startTime]);
+  }, [
+    quizStarted,
+    selectedQuiz,
+    answers,
+    currentQuestion,
+    startTime,
+    timeLeft,
+    flaggedQuestions,
+    questionTimes,
+  ]);
   const profileHref = user?.isAdmin ? '/admin' : '/profil';
   const initialUserKey = useMemo(
     () =>
@@ -392,7 +421,7 @@ export default function TestsPage({
     loadQuizzes();
   }, [currentUserKey, initialUserKey, isHydrated, user]);
 
-  const loadQuizQuestions = async (quizId: string) => {
+  const loadQuizQuestions = useCallback(async (quizId: string) => {
     try {
       const { data, error: qError } = await supabase
         .from('quiz_questions')
@@ -414,22 +443,91 @@ export default function TestsPage({
       showToast('error', getErrorMessage(err, 'Sorular yüklenemedi.'));
       return false;
     }
-  };
+  }, [showToast]);
 
-  const startQuiz = async (quiz: Quiz) => {
-    const success = await loadQuizQuestions(quiz.id);
-    if (!success) return;
+  const handleResumeDraft = useCallback(
+    async (draft: QuizDraft) => {
+      const targetQuiz = quizzes.find((q) => q.id === draft.quizId);
+      if (!targetQuiz) {
+        clearQuizDraft(draft.quizId);
+        setActiveDraft(null);
+        return;
+      }
 
-    setSelectedQuiz(quiz);
-    setQuizStarted(true);
-    setCurrentQuestion(0);
-    setAnswers({});
-    setSelectedAnswer(null);
-    setShowResult(false);
-    setStartTime(Date.now());
-    setTimeLeft(quiz.time_limit * 60);
-    resultSavedRef.current = false;
-  };
+      const success = await loadQuizQuestions(targetQuiz.id);
+      if (!success) return;
+
+      setSelectedQuiz(targetQuiz);
+      setQuizStarted(true);
+      setCurrentQuestion(draft.currentQuestion);
+      setAnswers(draft.answers || {});
+      setSelectedAnswer(draft.answers[draft.currentQuestion] ?? null);
+      setShowResult(false);
+      setStartTime(draft.startTime || Date.now());
+      setTimeLeft(draft.timeLeft);
+      setFlaggedQuestions(new Set(draft.flaggedQuestions || []));
+      setQuestionTimes(draft.questionTimes || {});
+      resultSavedRef.current = false;
+      setActiveDraft(null);
+      showToast('success', `${targetQuiz.title} sınavına kaldığınız yerden devam ediyorsunuz.`);
+    },
+    [loadQuizQuestions, quizzes, showToast],
+  );
+
+  const handleDiscardDraft = useCallback((quizId: string) => {
+    clearQuizDraft(quizId);
+    setActiveDraft(null);
+  }, []);
+
+  const startQuiz = useCallback(
+    async (quiz: Quiz) => {
+      const existingDraft = getQuizDraft(quiz.id);
+      if (existingDraft && (Object.keys(existingDraft.answers).length > 0 || existingDraft.currentQuestion > 0)) {
+        await handleResumeDraft(existingDraft);
+        return;
+      }
+
+      const success = await loadQuizQuestions(quiz.id);
+      if (!success) return;
+
+      setSelectedQuiz(quiz);
+      setQuizStarted(true);
+      setCurrentQuestion(0);
+      setAnswers({});
+      setSelectedAnswer(null);
+      setShowResult(false);
+      setStartTime(Date.now());
+      setTimeLeft(quiz.time_limit * 60);
+      setFlaggedQuestions(new Set());
+      setQuestionTimes({});
+      resultSavedRef.current = false;
+    },
+    [handleResumeDraft, loadQuizQuestions],
+  );
+
+  const quizIdParam = searchParams?.get('quizId');
+  const topicParam = searchParams?.get('topic');
+  const autoStartedQuizRef = useRef(false);
+
+  useEffect(() => {
+    if (autoStartedQuizRef.current || quizStarted || quizzes.length === 0) return;
+
+    if (quizIdParam) {
+      const targetQuiz = quizzes.find((q) => q.id === quizIdParam);
+      if (targetQuiz) {
+        autoStartedQuizRef.current = true;
+        void startQuiz(targetQuiz);
+      }
+    } else if (topicParam) {
+      const targetQuiz = quizzes.find((q) =>
+        q.title.toLowerCase().includes(topicParam.toLowerCase()),
+      );
+      if (targetQuiz) {
+        autoStartedQuizRef.current = true;
+        void startQuiz(targetQuiz);
+      }
+    }
+  }, [quizIdParam, topicParam, quizzes, quizStarted, startQuiz]);
 
   const handleOpenWorksheetPreview = async (quiz: Quiz) => {
     setSelectedQuiz(quiz);
@@ -670,6 +768,9 @@ export default function TestsPage({
     for (const c of corrects) {
       markMistakeMastered(c.question, true);
     }
+    if (user?.id) {
+      void syncMistakesWithCloud(user.id);
+    }
     incrementQuestionsSolved(quizQuestions.length);
 
     if (!user || !selectedQuiz || !startTime) return;
@@ -691,7 +792,9 @@ export default function TestsPage({
       ]);
       if (saveError) throw saveError;
       try {
+        clearQuizDraft(selectedQuiz.id);
         sessionStorage.removeItem(`ugurhoca_active_quiz_${selectedQuiz.id}`);
+        setActiveDraft(null);
       } catch {
         // ignore
       }
@@ -770,6 +873,10 @@ export default function TestsPage({
   }, [calculateScore, quizQuestions.length, showResult]);
 
   const resetQuiz = () => {
+    if (selectedQuiz) {
+      clearQuizDraft(selectedQuiz.id);
+    }
+    setActiveDraft(null);
     setSelectedQuiz(null);
     setQuizStarted(false);
     setCurrentQuestion(0);
@@ -1691,6 +1798,50 @@ export default function TestsPage({
               </button>
             </div>
           </div>
+
+          {/* Yarım Kalan Sınav Taslağı Kurtarma Banner'ı */}
+          {activeDraft && (
+            <div className="mb-8 rounded-3xl border border-amber-400/40 bg-gradient-to-r from-amber-500/20 via-orange-500/15 to-amber-500/10 p-5 sm:p-6 backdrop-blur-xl shadow-2xl animate-fade-in">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div className="flex items-center gap-3.5">
+                  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-amber-500/30 text-amber-300 border border-amber-400/30 shadow-md">
+                    <RotateCcw className="h-6 w-6" />
+                  </div>
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <h2 className="text-base sm:text-lg font-bold text-white font-display">
+                        Yarım Kalan Sınavınız Bulundu
+                      </h2>
+                      <span className="rounded-full bg-amber-500/30 px-2.5 py-0.5 text-xs font-extrabold text-amber-300 border border-amber-400/30">
+                        Kesinti Koruması Aktif
+                      </span>
+                    </div>
+                    <p className="text-xs sm:text-sm text-slate-200 mt-1 max-w-xl">
+                      <strong>{activeDraft.quizTitle}</strong> sınavında {activeDraft.currentQuestion + 1}. soruda kalmıştınız ({Object.keys(activeDraft.answers).length} cevap işaretli). Kalan süreniz ve işaretleriniz korundu.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-2.5 shrink-0">
+                  <button
+                    type="button"
+                    onClick={() => handleResumeDraft(activeDraft)}
+                    className="flex-1 sm:flex-initial inline-flex items-center justify-center gap-2 rounded-xl bg-amber-500 hover:bg-amber-400 px-4 py-2.5 text-xs sm:text-sm font-bold text-slate-950 shadow-lg shadow-amber-500/25 transition active:scale-95"
+                  >
+                    <Play className="w-4 h-4 fill-slate-950" />
+                    <span>Kaldığım Yerden Devam Et</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => handleDiscardDraft(activeDraft.quizId)}
+                    className="inline-flex items-center justify-center rounded-xl border border-white/15 bg-white/5 hover:bg-white/10 px-3.5 py-2.5 text-xs font-semibold text-slate-300 hover:text-white transition"
+                  >
+                    Taslağı Sil
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
 
           {/* Akıllı Telafi Testi Kartı */}
           {pendingMistakesCount > 0 && (

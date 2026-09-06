@@ -26,6 +26,7 @@ import {
   type MistakeReason,
   MISTAKE_REASON_LABELS,
 } from '@/features/quizzes/lib/mistakeStorage';
+import { syncMistakesWithCloud } from '@/features/quizzes/lib/mistakeSync';
 import { PrintableWorksheetModal } from './PrintableWorksheetModal';
 import { useAccessibleModal } from '@/hooks/useAccessibleModal';
 
@@ -45,6 +46,7 @@ export function MistakeNotebookModal({
   const [filter, setFilter] = useState<'due' | 'pending' | 'mastered' | 'all'>('due');
   const [reasonFilter, setReasonFilter] = useState<MistakeReason | 'all'>('all');
   const [isWorksheetOpen, setIsWorksheetOpen] = useState(false);
+  const [isSyncing, setIsSyncing] = useState(false);
   const modalRef = useAccessibleModal<HTMLDivElement>(isOpen, onClose);
 
   const reloadMistakes = useCallback(() => {
@@ -61,6 +63,13 @@ export function MistakeNotebookModal({
   useEffect(() => {
     if (isOpen) {
       reloadMistakes();
+      setIsSyncing(true);
+      void syncMistakesWithCloud().then((res) => {
+        setIsSyncing(false);
+        if (res.success && res.mistakes) {
+          setMistakes(res.mistakes);
+        }
+      });
     }
   }, [isOpen, reloadMistakes]);
 
@@ -342,9 +351,14 @@ export function MistakeNotebookModal({
               <BookOpen className="h-5 w-5" />
             </div>
             <div>
-              <h2 id={titleId} className="font-display text-base sm:text-lg font-bold text-slate-900 dark:text-white">
-                Akıllı Hata Defterim 📓
-              </h2>
+              <div className="flex items-center gap-2">
+                <h2 id={titleId} className="font-display text-base sm:text-lg font-bold text-slate-900 dark:text-white">
+                  Akıllı Hata Defterim 📓
+                </h2>
+                <span className="inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-bold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
+                  {isSyncing ? 'Bulut Eşitleniyor...' : 'Bulut Senkronize ✓'}
+                </span>
+              </div>
               <p className="text-xs text-slate-500 dark:text-slate-400">
                 Aralıklı tekrar algoritmasıyla (1-3-7 gün) yanlış yaptığın soruları kalıcı öğrenmeye dönüştür.
               </p>

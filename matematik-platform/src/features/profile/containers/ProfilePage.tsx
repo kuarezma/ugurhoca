@@ -62,7 +62,8 @@ import ProfileNotificationsPanel from '@/features/profile/components/ProfileNoti
 import StudyActivityHeatmap from '@/features/profile/components/StudyActivityHeatmap';
 import ExamTrendChart from '@/features/profile/components/ExamTrendChart';
 import TargetSchoolGapCard from '@/features/profile/components/TargetSchoolGapCard';
-import { getSavedMistakes } from '@/features/quizzes/lib/mistakeStorage';
+import { getSavedMistakes, getDueMistakes } from '@/features/quizzes/lib/mistakeStorage';
+import { syncMistakesWithCloud } from '@/features/quizzes/lib/mistakeSync';
 import { useDailyStreakTouch } from '@/features/profile/hooks/useDailyStreakTouch';
 import { useProfileDashboardData } from '@/features/profile/hooks/useProfileDashboardData';
 import {
@@ -144,16 +145,29 @@ export default function ProfilePage({ initialData }: ProfilePageProps) {
   const latestNotification = notifications[0] || null;
 
   const [pendingMistakesCount, setPendingMistakesCount] = useState(0);
+  const [dueMistakesCount, setDueMistakesCount] = useState(0);
   const [isParentReportOpen, setIsParentReportOpen] = useState(false);
 
   useEffect(() => {
     try {
       const list = getSavedMistakes();
       setPendingMistakesCount(list.filter((m) => !m.mastered).length);
+      const dueList = getDueMistakes();
+      setDueMistakesCount(dueList.length);
+
+      void syncMistakesWithCloud(user?.id).then((res) => {
+        if (res.success && res.mistakes) {
+          setPendingMistakesCount(res.mistakes.filter((m) => !m.mastered).length);
+          const today = new Date().toISOString().split('T')[0];
+          setDueMistakesCount(
+            res.mistakes.filter((m) => !m.mastered && (!m.nextReviewDate || m.nextReviewDate <= today)).length,
+          );
+        }
+      });
     } catch {
       // ignore
     }
-  }, []);
+  }, [user?.id]);
 
   const {
     focusTopic,
@@ -172,6 +186,7 @@ export default function ProfilePage({ initialData }: ProfilePageProps) {
         assignments,
         availableQuizzes,
         badges,
+        dueMistakesCount,
         goal,
         notifications,
         progressRows,
@@ -186,6 +201,7 @@ export default function ProfilePage({ initialData }: ProfilePageProps) {
       assignments,
       availableQuizzes,
       badges,
+      dueMistakesCount,
       goal,
       notifications,
       progressRows,
@@ -318,6 +334,24 @@ export default function ProfilePage({ initialData }: ProfilePageProps) {
         }
 
         setShowNotifications(true);
+        return;
+      }
+
+      if (action.type === 'start-mistake-review') {
+        router.push('/testler?mode=mistakes');
+        return;
+      }
+
+      if (action.type === 'start-quiz') {
+        if (action.quizId) {
+          router.push(`/testler?quizId=${action.quizId}`);
+          return;
+        }
+        if (action.topic) {
+          router.push(`/testler?topic=${encodeURIComponent(action.topic)}`);
+          return;
+        }
+        router.push('/testler');
         return;
       }
 

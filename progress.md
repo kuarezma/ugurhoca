@@ -577,5 +577,33 @@ _Son güncelleme: 11 Nisan 2026 — Yönetici hesabı yetkilendirmesi, politika 
 - **Typecheck:** `npm run typecheck` (0 hata).
 - **Build:** `npm run build` (55 rota, 0 hata ile optimize edildi).
 
-_Son güncelleme: 6 Eylül 2026 — Soru üzeri çizim modu, geometri labı, /araclar SEO hub ve admin LaTeX asistanı tamamlandı._
+---
+
+## 23. Günlük 3 Odak Görev Akışı, Hata Defteri Bulut Eşitlemesi ve Test Kesinti Kurtarma (6 Eylül 2026)
+
+### 23.1 “Bugün Ne Çalışmalıyım?” 3 Odak Görev Akışı
+- **Önceliklendirme:** Öğrenci paneli `buildProfileDashboardViewModel` içinde en fazla 3 kritik görev kuralı:
+  1. **Yaklaşan Ödev:** En yakın teslim tarihli teslim edilmemiş ödev -> doğrudan ödev teslim modalını (`open-assignment`) açar.
+  2. **Zamanı Gelen Tekrar:** Leitner 5 kutulu sistemde vadesi gelen yanlış sorular (`getDueMistakes()`) -> doğrudan telafi testi ve tekrar ekranını (`start-mistake-review`) açar.
+  3. **Eksik Konu / Zayıf Kazanım:** Başarı oranı %60 altındaki konu için doğrudan konu testini (`start-quiz` quizId veya topic parametresi) başlatır.
+- **Doğrudan Eylem:** `TestsPage.tsx` içinde `searchParams` (`mode=mistakes`, `quizId`, `topic`) dinlenerek tıklandığı an testin doğrudan başlaması sağlandı.
+
+### 23.2 Hata Defteri Bulut & Cihazlar Arası Senkronizasyon (`mistakeSync.ts`)
+- **Veritabanı Şeması:** `user_mistakes` tablosu migration'ı (`20260906100000_user_mistakes.sql`) ve RLS politikaları hazırlandı.
+- **Saf Merge Fonksiyonu (`mergeMistakes`):** Yerel `localStorage` ve bulut verisini `question_id` bazında birleştiren motor. `mastered` durumu koruma, en yüksek `reviewStage` ve `lastReviewedAt` önceliği (Last-Write-Wins).
+- **Otomatik Eşitleme (`syncMistakesWithCloud`):** Öğrenci oturum açtığında, profil sayfasını açtığında, hata defteri modalına girdiğinde ve test bitiminde arka planda çift yönlü senkronizasyon çalışır; telefondan çözülen yanlışlar bilgisayarda da anında görünür.
+
+### 23.3 Testlerde Kesintiden Sonra Devam & State Recovery (`quizDraftStorage.ts`)
+- **Yerel Taslak Depolama:** Her şık seçiminde ve soru değişiminde `{ quizId, quizTitle, currentQuestion, answers, flaggedQuestions, questionTimes, startTime, timeLeft, savedAt }` güvenle `localStorage`'a yazılır.
+- **Gerçek Süre Hesabı:** Sayfa kapalıyken geçen süre (`now - savedAt`) kalan süreden otomatik düşülür; sayfayı kapatarak süre dondurma hilesi önlenir. 24 saat sonra zaman aşımına uğrar.
+- **Kurtarma Banner'ı:** `TestsPage` açılışında yarım kalan taslak varsa "Yarım Kalan Sınavınız Bulundu" kartı açılır; öğrenci tek tıkla kaldığı sorudan, işaretlediği şıklar ve kalan süresiyle teste devam edebilir veya taslağı silebilir.
+- **İdempotent Kayıt:** Test tamamlandığında taslak otomatik temizlenir; çift gönderimi engelleyen kilit mekanizması devrededir.
+
+### 23.4 Doğrulama & Kalite Kapıları
+- **Testler:** `dashboard-view-model.test.ts`, `mistakeSync.test.ts`, `quizDraftStorage.test.ts`, `TestsPageRecovery.test.tsx` dahil tüm testler %100 geçti.
+- **Lint:** `npm run lint` (0 problem).
+- **Typecheck:** `npm run typecheck` (0 hata).
+- **Build:** `npm run build` (55 rota Turbopack ile başarıyla üretildi).
+
+_Son güncelleme: 6 Eylül 2026 — Günlük 3 odak görev, hata defteri bulut senkronizasyonu ve test kesinti kurtarma tamamlandı._
 
