@@ -35,6 +35,15 @@ Student privacy and well-being are paramount on the platform:
 
 ## Changelog
 
+### v1.4.7 - "Meydan Okuma" (Challenge) Added as 4th Featured Card & 4 Dispersed Widgets Consolidated
+- **4 Featured Showcase Cards:** Added a vibrant, fire-themed **"Meydan Okuma"** (Challenge) card alongside Worksheets, Games, and Live Lessons.
+  - **On Desktop:** 4 equal columns: **Yaprak Test** (Worksheets) · **Oyunlar** (Games) · **Canlı Ders** (Live Lessons) · **Meydan Okuma** (Challenge).
+  - **On Mobile:** Perfectly balanced 2×2 grid: Row 1 has Worksheets & Games, Row 2 has Live Lessons & Challenge.
+- **Dedicated Challenge Hub:** Moved the 4 dispersed sections from the homepage body (**Başarı Yol Haritası**, **Günün Matematik Meydan Okuması**, **Günlük Soru Hedefim**, **LGS Matematik Taktik Köşesi**) directly inside the expandable Challenge Hub.
+  - Features quick-access filter tabs (`📋 Tümü`, `⚡ Günün Sorusu`, `🎯 Soru Hedefim`, `💡 LGS Taktikleri`, `🗺️ Yol Haritası`) for focused or comprehensive study.
+- **Streamlined Homepage Layout:** Cleaning up individual widgets leaves an uncluttered, distraction-free flow:
+  Hero (4 Cards + Challenge Hub + 6 Lessons + 12 Tools) ➔ Announcements ➔ Exam Countdown ➔ Quote of the Day ➔ Support & Contact ➔ Footer.
+
 ### v1.4.6 - Updated Featured Cards Order (Worksheets · Games · Live Lessons)
 - **Reordered per User Preference:**
   - **On Desktop:** Worksheets (Yaprak Test) on the left, Games (Oyunlar) in the middle, and Live Lessons (Canlı Ders) on the right across 3 equal columns.

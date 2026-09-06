@@ -35,6 +35,15 @@ Platformda öğrenci gizliliği en üst düzeyde korunur:
 
 ## Değişiklik Günlüğü (Changelog)
 
+### v1.4.7 - "Meydan Okuma" 4. Kart Olarak Eklendi & Dağınık 4 Bölüm Hub İçine Taşındı
+- **Öne Çıkan 4'lü Vitrin:** Üstteki 3 kartın (Yaprak Test, Oyunlar, Canlı Ders) yanına 4. olarak sıcak ateş/kupa gradyanlı **"Meydan Okuma"** kartı eklendi.
+  - **Masaüstünde:** Soldan sağa 4 eşit sütun: **Yaprak Test** · **Oyunlar** · **Canlı Ders** · **Meydan Okuma**.
+  - **Mobilde:** Kusursuz 2×2 simetrik ızgara: Üstte **Yaprak Test** & **Oyunlar**, altta **Canlı Ders** & **Meydan Okuma**.
+- **Meydan Okuma Açılır Hub:** Ana sayfada dağınık duran 4 bölüm (**Başarı Yol Haritası**, **Günün Matematik Meydan Okuması**, **Günlük Soru Hedefim**, **LGS Matematik Taktik Köşesi**) doğrudan Meydan Okuma hub'ının içerisine taşındı.
+  - Hızlı sekme filtreleri (`📋 Tümü`, `⚡ Günün Sorusu`, `🎯 Soru Hedefim`, `💡 LGS Taktikleri`, `🗺️ Yol Haritası`) ile öğrenci ister tek tek ister tümünü aynı anda inceleyebilir.
+- **Sadeleşen Ana Sayfa Akışı:** Dağınık widget'ların kaldırılmasıyla ana sayfa akışı tam olarak sadeleşti:
+  Hero (4 Kart + Meydan Okuma Hub + 6'lı Ders + 12'li Araçlar) ➔ Duyurular ➔ LGS/YKS Sayacı ➔ Günün Sözü ➔ Uğur Hoca'ya Yaz ➔ Footer.
+
 ### v1.4.6 - Öne Çıkan Kart Sıralaması Güncellendi (Yaprak Test · Oyunlar · Canlı Ders)
 - **Kullanıcı İsteğine Göre Yeniden Sıralama:**
   - **Masaüstünde:** Solda **Yaprak Test**, ortada **Oyunlar**, sağda **Canlı Ders** olarak 3 eşit sütun halinde konumlandırıldı.

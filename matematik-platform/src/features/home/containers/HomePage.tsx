@@ -4,16 +4,12 @@ import { useEffect, useState } from 'react';
 import dynamic from 'next/dynamic';
 import { useTheme } from '@/components/ThemeProvider';
 import { HomeAnnouncementsSection } from '@/features/home/components/HomeAnnouncementsSection';
-import { HomeDailyChallenge } from '@/features/home/components/HomeDailyChallenge';
-import { HomeDailyGoalWidget } from '@/features/home/components/HomeDailyGoalWidget';
 import { HomeDailyQuote } from '@/features/home/components/HomeDailyQuote';
 import { HomeExamCountdownSection } from '@/features/home/components/HomeExamCountdownSection';
 import { HomeFooter } from '@/features/home/components/HomeFooter';
 import { HomeHeroSection } from '@/features/home/components/HomeHeroSection';
 import { HomeNavbar } from '@/features/home/components/HomeNavbar';
-import { HomeSuccessRoadmap } from '@/features/home/components/HomeSuccessRoadmap';
 import { HomeSupportSection } from '@/features/home/components/HomeSupportSection';
-import { LgsTacticsCorner } from '@/features/home/components/LgsTacticsCorner';
 import type { HomeInitialFeed } from '@/features/home/home-initial-feed';
 import { useHomePageData } from '@/features/home/hooks/useHomePageData';
 import type { LiveLesson } from '@/features/live-lessons/types';
@@ -256,43 +252,24 @@ export default function HomePage({ activeLiveLesson, initialFeed }: HomePageProp
           />
         </div>
 
-        {/* 3. Başarı Yol Haritası (Duyuruların Altında) */}
-        <div className="defer-section">
-          <HomeSuccessRoadmap
-            isLight={isLight}
-            onOpenFlashcards={() => setIsFlashcardsOpen(true)}
-          />
-        </div>
-
-        {/* 4. LGS ve YKS Sayacı */}
+        {/* 3. LGS ve YKS Sayacı */}
         <HomeExamCountdownSection
           isLight={isLight}
           onOpenCalculator={(tab) => setCalculatorState({ isOpen: true, tab })}
           userGrade={user?.grade}
         />
 
-        {/* 5. Günün Sözü */}
+        {/* 4. Günün Sözü */}
         <div className="defer-section">
           <HomeDailyQuote isLight={isLight} />
         </div>
 
-        {/* 6. Uğur Hoca'ya Yaz */}
+        {/* 5. Uğur Hoca'ya Yaz */}
         <div className="defer-section">
           <HomeSupportSection isLight={isLight} user={user} />
         </div>
 
-        {/* 7. Günlük Meydan Okuma, Soru Hedefi & LGS Taktik Köşesi */}
-        <div className="defer-section">
-          <HomeDailyChallenge isLight={isLight} />
-        </div>
-        <div className="defer-section">
-          <HomeDailyGoalWidget isLight={isLight} />
-        </div>
-        <div className="defer-section">
-          <LgsTacticsCorner isLight={isLight} />
-        </div>
-
-        {/* 8. Footer */}
+        {/* 6. Footer */}
         <div className="defer-section">
           <HomeFooter isLight={isLight} />
         </div>
