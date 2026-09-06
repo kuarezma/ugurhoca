@@ -25,7 +25,7 @@ export default function FloatingShapes({ count = 8, showSymbols = true }: Floati
 
   return (
     <div
-      className="absolute inset-x-0 top-0 h-[38rem] overflow-hidden pointer-events-none z-0"
+      className="absolute inset-x-0 top-0 h-[38rem] overflow-hidden pointer-events-none z-0 motion-reduce:hidden"
       aria-hidden="true"
     >
       {Array.from({ length: halfOrbs }).map((_, i) => (

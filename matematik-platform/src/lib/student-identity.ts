@@ -60,17 +60,17 @@ export function formatSignupError(err: unknown): string {
       : '';
   const lower = msg.toLowerCase();
   if (code === '23505' || lower.includes('duplicate key')) {
-    return 'Bu ad soyad ile zaten hesap var. Giriş sayfasından deneyin.';
+    return 'Bu ad soyad ile zaten hesap var. Aynı isimde farklı bir öğrenciysen adının sonuna sınıfını ekleyerek (örn: Ahmet Yılmaz 8-A) kayıt olabilirsin. Şifreni unuttuysan öğretmenine başvurabilirsin.';
   }
   if (
     lower.includes('already registered') ||
     lower.includes('user already') ||
     lower.includes('already been registered')
   ) {
-    return 'Bu ad soyad ile zaten hesap var. Giriş sayfasından deneyin.';
+    return 'Bu ad soyad ile zaten hesap var. Giriş sayfasından giriş yapabilir veya aynı isimdeysen adının sonuna sınıfını ekleyebilirsin (örn: Ahmet Yılmaz 8-A).';
   }
   if (lower.includes('duplicate') && lower.includes('name_normalized')) {
-    return 'Bu ad soyad ile zaten hesap var. Giriş sayfasından deneyin.';
+    return 'Bu ad soyad ile zaten hesap var. Aynı isimdeysen adının sonuna sınıfını ekleyerek (örn: Ahmet Yılmaz 8-A) kayıt olabilirsin.';
   }
   return msg || 'Kayıt olurken bir hata oluştu';
 }

@@ -111,3 +111,9 @@ export const adminAnnouncementUpdateSchema = z.object({
 export const adminAnnouncementDeleteSchema = z.object({
   announcement_id: z.string().uuid(),
 });
+
+export const adminResetPasswordSchema = z.object({
+  student_id: z.string().trim().min(1, 'Öğrenci ID zorunludur.'),
+  new_password: z.string().min(6, 'Şifre en az 6 karakter olmalıdır.'),
+});
+

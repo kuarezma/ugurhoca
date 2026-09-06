@@ -119,7 +119,9 @@ export default function RegisterPage() {
       if (existsErr) throw existsErr;
 
       if (existsReason) {
-        setError('Bu ad soyad ile zaten hesap var. Giriş sayfasından deneyin.');
+        setError(
+          `Bu ad soyad ile sistemde zaten bir hesap kayıtlı. Eğer aynı isimde farklı bir öğrenciysen, adının sonuna sınıfını veya ayırt edici bir kod ekleyerek (${displayName} 8-A gibi) kayıt olabilirsin. Şifreni unuttuysan öğretmeninden sıfırlama talep edebilirsin.`,
+        );
         return;
       }
 
