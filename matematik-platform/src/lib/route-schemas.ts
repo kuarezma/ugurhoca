@@ -117,3 +117,8 @@ export const adminResetPasswordSchema = z.object({
   new_password: z.string().min(6, 'Şifre en az 6 karakter olmalıdır.'),
 });
 
+export const forgotPasswordSchema = z.object({
+  identifier: z.string().trim().min(2, 'Ad soyad veya e-posta adresi giriniz.'),
+});
+
+

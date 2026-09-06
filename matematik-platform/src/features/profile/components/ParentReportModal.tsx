@@ -265,3 +265,6 @@ export default function ParentReportModal({
     </AnimatePresence>
   );
 }
+
+export const StudentReportModal = ParentReportModal;
+

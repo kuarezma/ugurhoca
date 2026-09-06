@@ -307,7 +307,7 @@ Bu dosya, projenin tamamlanmış ve devam eden görevlerini özetler.
 
 ### Chat Sistemi Refactor
 
-- [ ] `chat_room_members` tablosundaki `user_tc` / `school_number` tutarsızlığı giderilecek
+- [x] Chat sistemi modernize edildi: Eski `chat_room_members` (`user_tc`/`school_number`) borcu kapatıldı; modern Supabase Auth `user_id` tabanlı birebir öğretmen-öğrenci `support_messages` mimarisine geçildi.
 - [ ] `UserStatistics` bileşenindeki `shared_documents` tablosu tanımı gözden geçirilecek
 
 ### Tarayıcı / Cihaz Regresyon Kapısı
@@ -319,9 +319,9 @@ Bu dosya, projenin tamamlanmış ve devam eden görevlerini özetler.
 ### UX İyileştirmeleri
 
 - [ ] `AdminStatistics` "Son Kayıtlar" bölümüne gerçek `created_at` sorgusu yazılacak
-- [ ] Şifremi Unuttum akışı (Resend e-posta entegrasyonu ile birlikte)
+- [x] Şifremi Unuttum akışı (Resend e-posta bildirimi, `/sifremi-unuttum` ve `/sifre-sifirla` rotaları tamamlandı)
 - [ ] Tüm form sayfalarında `autoComplete` attribute eksiklikleri giderilecek
 
 ---
 
-_Son güncelleme: 6 Eylül 2026 — Günlük 3 odak görev akışı, hata defteri bulut eşitlemesi ve test kesinti koruması tamamlandı._
+_Son güncelleme: 6 Eylül 2026 — Şifremi unuttum akışı tamamlandı, chat veri borcu ve gelişim karnesi hizalaması yapıldı._

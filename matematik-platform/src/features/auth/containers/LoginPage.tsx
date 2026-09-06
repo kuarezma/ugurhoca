@@ -209,7 +209,12 @@ export default function LoginPage() {
 
             <div className="mt-4 rounded-xl border border-slate-800/80 bg-slate-900/40 p-3 text-center text-xs text-slate-400">
               <span className="font-medium text-slate-300">🔑 Şifreni mi unuttun?</span>{' '}
-              Öğretmeninize başvurarak şifrenizin anında sıfırlanmasını isteyebilirsiniz.
+              <Link
+                href="/sifremi-unuttum"
+                className="font-semibold text-brand-primary-soft hover:text-white underline underline-offset-2 transition-colors"
+              >
+                Şifre sıfırlama talebi oluştur
+              </Link>
             </div>
 
             <p className="mt-6 text-center text-sm text-slate-400">
