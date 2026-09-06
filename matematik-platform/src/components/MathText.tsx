@@ -2,6 +2,10 @@
 
 import { memo, useMemo } from 'react';
 import katex from 'katex';
+// KaTeX stilleri kok layout'tan buraya tasindi: artik TUM sayfalarda render'i
+// bloke eden global CSS degil, yalnizca matematik render eden chunk'larla
+// birlikte yuklenen bir stil sayfasi.
+import 'katex/dist/katex.min.css';
 
 type MathTextProps = {
   children?: string | null;

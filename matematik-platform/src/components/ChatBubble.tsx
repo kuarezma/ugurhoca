@@ -8,6 +8,7 @@ import {
   useState,
   type FormEvent,
 } from 'react';
+import dynamic from 'next/dynamic';
 import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
@@ -23,7 +24,6 @@ import {
 } from '@/features/home/queries';
 import { useNavbarMessages } from '@/features/home/hooks/useNavbarMessages';
 import { useScrollContainment } from '@/hooks/useScrollContainment';
-import { SupportChatPanel } from '@/features/messages/components/SupportChatPanel';
 import { useAdminStudentThread } from '@/features/messages/hooks/useAdminStudentThread';
 import { mapStudentNotificationsToThread } from '@/features/messages/mapNotificationsToThread';
 import type { DashboardNotification } from '@/types/dashboard';
@@ -36,6 +36,18 @@ import {
   TYPING_BROADCAST_EVENT,
   type TypingPayload,
 } from '@/lib/realtime/studentMessagesChannel';
+
+// SupportChatPanel 1300+ satir ve MathText uzerinden KaTeX'i de beraberinde
+// getiriyor. Statik import edildiginde bu agirlik, panel hic acilmasa bile her
+// sayfada yuklenen chunk'a giriyordu. Panel yalnizca sohbet acildiginda render
+// edildigi icin dinamik import ediliyor.
+const SupportChatPanel = dynamic(
+  () =>
+    import('@/features/messages/components/SupportChatPanel').then((m) => ({
+      default: m.SupportChatPanel,
+    })),
+  { ssr: false },
+);
 
 type InboxMessage = {
   id: string;

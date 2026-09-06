@@ -1,5 +1,6 @@
 'use client';
 
+import dynamic from 'next/dynamic';
 import { AnimatePresence, motion } from 'framer-motion';
 import { MessageCircle } from 'lucide-react';
 import {
@@ -18,9 +19,20 @@ import {
 } from '@/features/home/queries';
 import { useNavbarMessages } from '@/features/home/hooks/useNavbarMessages';
 import { useScrollContainment } from '@/hooks/useScrollContainment';
-import { SupportChatPanel } from '@/features/messages/components/SupportChatPanel';
 import { mapStudentNotificationsToThread } from '@/features/messages/mapNotificationsToThread';
 import type { DashboardNotification } from '@/types/dashboard';
+
+// SupportChatPanel 1300+ satir ve MathText uzerinden KaTeX'i de beraberinde
+// getiriyor. Statik import edildiginde bu agirlik, panel hic acilmasa bile her
+// sayfada yuklenen chunk'a giriyordu. Panel yalnizca sohbet acildiginda render
+// edildigi icin dinamik import ediliyor.
+const SupportChatPanel = dynamic(
+  () =>
+    import('@/features/messages/components/SupportChatPanel').then((m) => ({
+      default: m.SupportChatPanel,
+    })),
+  { ssr: false },
+);
 
 type HomeNavbarMessagesButtonProps = {
   userId: string;

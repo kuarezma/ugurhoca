@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect } from 'react';
-import * as Sentry from '@sentry/nextjs';
 import './globals.css';
 
 export default function GlobalError({
@@ -12,9 +11,18 @@ export default function GlobalError({
   reset: () => void;
 }) {
   useEffect(() => {
-    Sentry.captureException(error, {
-      extra: { digest: error.digest },
-    });
+    // Sentry dinamik import ediliyor: statik import edildiginde SDK cekirdegi
+    // global-error uzerinden her sayfa paketine giriyordu. Bu bilesen yalnizca
+    // kritik bir hatada render edildigi icin SDK'yi o anda yuklemek yeterli.
+    void import('@sentry/nextjs')
+      .then((Sentry) => {
+        Sentry.captureException(error, {
+          extra: { digest: error.digest },
+        });
+      })
+      .catch(() => {
+        // Raporlama basarisiz olsa bile hata ekrani gosterilmeye devam etmeli.
+      });
   }, [error]);
   return (
     <html lang="tr">

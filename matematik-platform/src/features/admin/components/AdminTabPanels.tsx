@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { Activity, useEffect, useState, type ReactNode } from "react";
 import AdminStatistics from "@/components/AdminStatistics";
 import AdminAnnouncementsTab from "@/features/admin/components/tabs/AdminAnnouncementsTab";
 import AdminAnnualPlanTab from "@/features/admin/components/tabs/AdminAnnualPlanTab";
@@ -124,6 +124,44 @@ type AdminTabPanelsProps = {
   worksheetCandidates: WorksheetCandidate[];
 };
 
+/**
+ * Tek bir admin sekmesi paneli.
+ *
+ * Paneller ziyaret edildikten sonra mount'ta kalir (sekme durumu korunsun diye),
+ * ama AdminPage kullanici listesini 30 sn'de bir yeniliyor; bu her poll'da
+ * gizli sekmelerin de yeniden render edilmesine yol aciyordu. `<Activity>` ile
+ * gizli paneller dusuk oncelikte render edilir ve efektleri sokulur (gizli
+ * sekmedeki zamanlayici/abonelikler durur), state ise korunur.
+ *
+ * `visitedTabs` kontrolu korunuyor: hic acilmamis sekme hic render edilmez.
+ */
+function AdminTabPanel({
+  activeTab,
+  children,
+  tab,
+  visitedTabs,
+}: {
+  activeTab: AdminActiveTab;
+  children: ReactNode;
+  tab: AdminActiveTab;
+  visitedTabs: Set<AdminActiveTab>;
+}) {
+  const isActive = activeTab === tab;
+
+  return (
+    <div
+      id={`admin-tabpanel-${tab}`}
+      role="tabpanel"
+      aria-labelledby={`admin-tab-${tab}`}
+      className={isActive ? "block" : "hidden"}
+    >
+      {visitedTabs.has(tab) ? (
+        <Activity mode={isActive ? "visible" : "hidden"}>{children}</Activity>
+      ) : null}
+    </div>
+  );
+}
+
 export default function AdminTabPanels({
   activeTab,
   activityEvents,
@@ -202,225 +240,143 @@ export default function AdminTabPanels({
 
   return (
     <div className="w-full">
-      <div
-        id="admin-tabpanel-statistics"
-        role="tabpanel"
-        aria-labelledby="admin-tab-statistics"
-        className={activeTab === "statistics" ? "block" : "hidden"}
-      >
-        {visitedTabs.has("statistics") && <AdminStatistics />}
-      </div>
+      <AdminTabPanel activeTab={activeTab} tab="statistics" visitedTabs={visitedTabs}>
+        <AdminStatistics />
+      </AdminTabPanel>
 
-      <div
-        id="admin-tabpanel-tracking"
-        role="tabpanel"
-        aria-labelledby="admin-tab-tracking"
-        className={activeTab === "tracking" ? "block" : "hidden"}
-      >
-        {visitedTabs.has("tracking") && (
-          <AdminTrackingTab
-            activityEvents={activityEvents}
-            adminStatuses={adminStatuses}
-            assignments={assignments}
-            documents={documents}
-            notifications={notifications}
-            onCreateWeeklyPlan={onCreateWeeklyPlan}
-            onSendMessage={onSendAdminMessage}
-            onUpdateStatus={onUpdateStudentStatus}
-            onViewProfile={onViewStudentProfile}
-            quizResults={dashboardQuizResults}
-            studyGoals={dashboardStudyGoals}
-            studySessions={dashboardStudySessions}
-            students={studentUsers}
-            submissions={dashboardSubmissions}
-            weeklyPlans={weeklyPlans}
-          />
-        )}
-      </div>
+      <AdminTabPanel activeTab={activeTab} tab="tracking" visitedTabs={visitedTabs}>
+        <AdminTrackingTab
+          activityEvents={activityEvents}
+          adminStatuses={adminStatuses}
+          assignments={assignments}
+          documents={documents}
+          notifications={notifications}
+          onCreateWeeklyPlan={onCreateWeeklyPlan}
+          onSendMessage={onSendAdminMessage}
+          onUpdateStatus={onUpdateStudentStatus}
+          onViewProfile={onViewStudentProfile}
+          quizResults={dashboardQuizResults}
+          studyGoals={dashboardStudyGoals}
+          studySessions={dashboardStudySessions}
+          students={studentUsers}
+          submissions={dashboardSubmissions}
+          weeklyPlans={weeklyPlans}
+        />
+      </AdminTabPanel>
 
-      <div
-        id="admin-tabpanel-classroom"
-        role="tabpanel"
-        aria-labelledby="admin-tab-classroom"
-        className={activeTab === "classroom" ? "block" : "hidden"}
-      >
-        {visitedTabs.has("classroom") && (
-          <AdminClassroomTab
-            students={studentUsers}
-            assignments={assignments}
-            quizResults={dashboardQuizResults}
-            submissions={dashboardSubmissions}
-            studySessions={dashboardStudySessions}
-            onSendMessage={onSendAdminMessage}
-            onViewProfile={onViewStudentProfile}
-            onQuickResetPassword={onEditUser}
-          />
-        )}
-      </div>
+      <AdminTabPanel activeTab={activeTab} tab="classroom" visitedTabs={visitedTabs}>
+        <AdminClassroomTab
+          students={studentUsers}
+          assignments={assignments}
+          quizResults={dashboardQuizResults}
+          submissions={dashboardSubmissions}
+          studySessions={dashboardStudySessions}
+          onSendMessage={onSendAdminMessage}
+          onViewProfile={onViewStudentProfile}
+          onQuickResetPassword={onEditUser}
+        />
+      </AdminTabPanel>
 
-      <div
-        id="admin-tabpanel-announcements"
-        role="tabpanel"
-        aria-labelledby="admin-tab-announcements"
-        className={activeTab === "announcements" ? "block" : "hidden"}
-      >
-        {visitedTabs.has("announcements") && (
-          <AdminAnnouncementsTab
-            announcements={announcements}
-            formatDate={formatDate}
-            onCreate={onCreateAnnouncement}
-            onDelete={onDeleteAnnouncement}
-            onEdit={onEditAnnouncement}
-          />
-        )}
-      </div>
+      <AdminTabPanel activeTab={activeTab} tab="announcements" visitedTabs={visitedTabs}>
+        <AdminAnnouncementsTab
+          announcements={announcements}
+          formatDate={formatDate}
+          onCreate={onCreateAnnouncement}
+          onDelete={onDeleteAnnouncement}
+          onEdit={onEditAnnouncement}
+        />
+      </AdminTabPanel>
 
-      <div
-        id="admin-tabpanel-documents"
-        role="tabpanel"
-        aria-labelledby="admin-tab-documents"
-        className={activeTab === "documents" ? "block" : "hidden"}
-      >
-        {visitedTabs.has("documents") && (
-          <AdminDocumentsTab
-            documents={documents}
-            formatDate={formatDate}
-            onDelete={onDeleteDocument}
-            onEdit={onEditDocument}
-            onMigrateWorksheets={onMigrateWorksheets}
-            onRefreshCategories={onRefreshDocumentCategories}
-          />
-        )}
-      </div>
+      <AdminTabPanel activeTab={activeTab} tab="documents" visitedTabs={visitedTabs}>
+        <AdminDocumentsTab
+          documents={documents}
+          formatDate={formatDate}
+          onDelete={onDeleteDocument}
+          onEdit={onEditDocument}
+          onMigrateWorksheets={onMigrateWorksheets}
+          onRefreshCategories={onRefreshDocumentCategories}
+        />
+      </AdminTabPanel>
 
-      <div
-        id="admin-tabpanel-annualPlan"
-        role="tabpanel"
-        aria-labelledby="admin-tab-annualPlan"
-        className={activeTab === "annualPlan" ? "block" : "hidden"}
-      >
-        {visitedTabs.has("annualPlan") && (
-          <AdminAnnualPlanTab
-            items={annualPlanItems}
-            onDiscoverCandidates={onDiscoverWorksheetCandidates}
-            onImport={onImportAnnualPlan}
-            sourceStatus={worksheetSourceStatus}
-          />
-        )}
-      </div>
+      <AdminTabPanel activeTab={activeTab} tab="annualPlan" visitedTabs={visitedTabs}>
+        <AdminAnnualPlanTab
+          items={annualPlanItems}
+          onDiscoverCandidates={onDiscoverWorksheetCandidates}
+          onImport={onImportAnnualPlan}
+          sourceStatus={worksheetSourceStatus}
+        />
+      </AdminTabPanel>
 
-      <div
-        id="admin-tabpanel-worksheetCandidates"
-        role="tabpanel"
-        aria-labelledby="admin-tab-worksheetCandidates"
-        className={activeTab === "worksheetCandidates" ? "block" : "hidden"}
-      >
-        {visitedTabs.has("worksheetCandidates") && (
-          <AdminWorksheetCandidatesTab
-            candidates={worksheetCandidates}
-            driveConnection={googleDriveConnection}
-            sourceStatus={worksheetSourceStatus}
-            isDriveBusy={isGoogleDriveBusy}
-            isWeekScanRunning={isWeekScanRunning}
-            lastWeekScanResult={lastWeekScanResult}
-            onApprove={onApproveWorksheetCandidate}
-            onConnectDrive={onConnectGoogleDrive}
-            onDisconnectDrive={onDisconnectGoogleDrive}
-            onRefreshSourceStatus={onRefreshWorksheetSourceStatus}
-            onScanCurrentWeek={onScanCurrentWeekCandidates}
-            onUpdateStatus={onUpdateWorksheetCandidateStatus}
-          />
-        )}
-      </div>
+      <AdminTabPanel activeTab={activeTab} tab="worksheetCandidates" visitedTabs={visitedTabs}>
+        <AdminWorksheetCandidatesTab
+          candidates={worksheetCandidates}
+          driveConnection={googleDriveConnection}
+          sourceStatus={worksheetSourceStatus}
+          isDriveBusy={isGoogleDriveBusy}
+          isWeekScanRunning={isWeekScanRunning}
+          lastWeekScanResult={lastWeekScanResult}
+          onApprove={onApproveWorksheetCandidate}
+          onConnectDrive={onConnectGoogleDrive}
+          onDisconnectDrive={onDisconnectGoogleDrive}
+          onRefreshSourceStatus={onRefreshWorksheetSourceStatus}
+          onScanCurrentWeek={onScanCurrentWeekCandidates}
+          onUpdateStatus={onUpdateWorksheetCandidateStatus}
+        />
+      </AdminTabPanel>
 
-      <div
-        id="admin-tabpanel-users"
-        role="tabpanel"
-        aria-labelledby="admin-tab-users"
-        className={activeTab === "users" ? "block" : "hidden"}
-      >
-        {visitedTabs.has("users") && (
-          <AdminUsersTab
-            formatDate={formatDate}
-            onDownloadPdf={onDownloadStudentsPdf}
-            onEditUser={onEditUser}
-            onRefresh={onRefreshUsers}
-            onSendMessage={onSendAdminMessage}
-            onToggleFavorite={onToggleFavoriteStudent}
-            onViewProfile={onViewStudentProfile}
-            pdfStudentsLoading={pdfStudentsLoading}
-            students={studentUsers}
-          />
-        )}
-      </div>
+      <AdminTabPanel activeTab={activeTab} tab="users" visitedTabs={visitedTabs}>
+        <AdminUsersTab
+          formatDate={formatDate}
+          onDownloadPdf={onDownloadStudentsPdf}
+          onEditUser={onEditUser}
+          onRefresh={onRefreshUsers}
+          onSendMessage={onSendAdminMessage}
+          onToggleFavorite={onToggleFavoriteStudent}
+          onViewProfile={onViewStudentProfile}
+          pdfStudentsLoading={pdfStudentsLoading}
+          students={studentUsers}
+        />
+      </AdminTabPanel>
 
-      <div
-        id="admin-tabpanel-gradeUpdate"
-        role="tabpanel"
-        aria-labelledby="admin-tab-gradeUpdate"
-        className={activeTab === "gradeUpdate" ? "block" : "hidden"}
-      >
-        {visitedTabs.has("gradeUpdate") && (
-          <AdminGradeUpdateTab
-            isSubmitting={isSubmitting}
-            lastGradeUpdate={lastGradeUpdate}
-            onUpdateGrades={onUpdateGrades}
-            users={studentUsers}
-          />
-        )}
-      </div>
+      <AdminTabPanel activeTab={activeTab} tab="gradeUpdate" visitedTabs={visitedTabs}>
+        <AdminGradeUpdateTab
+          isSubmitting={isSubmitting}
+          lastGradeUpdate={lastGradeUpdate}
+          onUpdateGrades={onUpdateGrades}
+          users={studentUsers}
+        />
+      </AdminTabPanel>
 
-      <div
-        id="admin-tabpanel-assignments"
-        role="tabpanel"
-        aria-labelledby="admin-tab-assignments"
-        className={activeTab === "assignments" ? "block" : "hidden"}
-      >
-        {visitedTabs.has("assignments") && (
-          <AdminAssignmentsTab
-            assignments={assignments}
-            onDeleteAssignment={onDeleteAssignment}
-            onDeleteSharedDocument={onDeleteSharedDocument}
-            onEditAssignment={onEditAssignment}
-            onEditSharedDocument={onEditSharedDocument}
-            onOpenAssignmentModal={onCreateAssignment}
-            onOpenSendDocumentModal={onCreateSendDocument}
-            onOpenSubmissions={onShowSubmissions}
-            sharedDocs={sharedDocs}
-          />
-        )}
-      </div>
+      <AdminTabPanel activeTab={activeTab} tab="assignments" visitedTabs={visitedTabs}>
+        <AdminAssignmentsTab
+          assignments={assignments}
+          onDeleteAssignment={onDeleteAssignment}
+          onDeleteSharedDocument={onDeleteSharedDocument}
+          onEditAssignment={onEditAssignment}
+          onEditSharedDocument={onEditSharedDocument}
+          onOpenAssignmentModal={onCreateAssignment}
+          onOpenSendDocumentModal={onCreateSendDocument}
+          onOpenSubmissions={onShowSubmissions}
+          sharedDocs={sharedDocs}
+        />
+      </AdminTabPanel>
 
-      <div
-        id="admin-tabpanel-quizzes"
-        role="tabpanel"
-        aria-labelledby="admin-tab-quizzes"
-        className={activeTab === "quizzes" ? "block" : "hidden"}
-      >
-        {visitedTabs.has("quizzes") && (
-          <AdminQuizzesTab
-            onAddQuestion={onAddQuizQuestion}
-            onDeleteQuiz={onDeleteQuiz}
-            onEditQuiz={onEditQuiz}
-            quizzes={quizzes}
-          />
-        )}
-      </div>
+      <AdminTabPanel activeTab={activeTab} tab="quizzes" visitedTabs={visitedTabs}>
+        <AdminQuizzesTab
+          onAddQuestion={onAddQuizQuestion}
+          onDeleteQuiz={onDeleteQuiz}
+          onEditQuiz={onEditQuiz}
+          quizzes={quizzes}
+        />
+      </AdminTabPanel>
 
-      <div
-        id="admin-tabpanel-liveLessons"
-        role="tabpanel"
-        aria-labelledby="admin-tab-liveLessons"
-        className={activeTab === "liveLessons" ? "block" : "hidden"}
-      >
-        {visitedTabs.has("liveLessons") && (
-          <AdminLiveLessonsTab
-            data={liveLessons}
-            onRefresh={onRefreshUsers}
-            students={studentUsers}
-          />
-        )}
-      </div>
+      <AdminTabPanel activeTab={activeTab} tab="liveLessons" visitedTabs={visitedTabs}>
+        <AdminLiveLessonsTab
+          data={liveLessons}
+          onRefresh={onRefreshUsers}
+          students={studentUsers}
+        />
+      </AdminTabPanel>
     </div>
   );
 }

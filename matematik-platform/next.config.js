@@ -50,6 +50,16 @@ const nextConfig = {
   reactStrictMode: true,
   compress: true,
   experimental: {
+    // Next 15+ varsayilani `dynamic: 0`: cerez okuyan (dinamik) her rota icin
+    // istemci router onbellegi aninda bayatliyor. Bu yuzden az once ayrildigin
+    // sekmeye geri donmek bile tam bir RSC istegi + tum Supabase sorgulari
+    // demekti. 30 sn'lik pencere, sekmeler arasi gidis-gelisi sunucuya hic
+    // ugramadan aninda yapar; router.refresh() ve server action'lar onbellegi
+    // yine gecersiz kilar.
+    staleTimes: {
+      dynamic: 30,
+      static: 300,
+    },
     optimizePackageImports: [
       'lucide-react',
       'framer-motion',

@@ -7,8 +7,11 @@ import { PwaInstallPrompt } from "@/components/PwaInstallPrompt";
 import { Providers } from "@/components/Providers";
 import { THEME_STORAGE_KEY } from "@/components/theme-constants";
 import { SITE_URL, SITE_NAME } from "@/lib/site-metadata";
-import "@livekit/components-styles";
-import "katex/dist/katex.min.css";
+// Not: `@livekit/components-styles` ve `katex/dist/katex.min.css` buradan
+// kaldirildi. Kok layout'tan import edilen her stil sayfasi TUM rotalarda
+// render'i bloke eden CSS'e giriyordu; oysa LiveKit stilleri yalnizca canli
+// ders odasinda, KaTeX stilleri yalnizca matematik render eden bilesenlerde
+// gerekli. Artik ilgili chunk'lariyla birlikte yukleniyorlar.
 import "./globals.css";
 
 const poppins = Poppins({

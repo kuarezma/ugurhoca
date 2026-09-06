@@ -1,6 +1,8 @@
 'use client';
 
 import { LiveKitRoom, RoomAudioRenderer } from '@livekit/components-react';
+// LiveKit stilleri yalnizca canli ders odasi chunk'iyla yuklenir (kok layout'ta degil).
+import '@livekit/components-styles';
 import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import dynamic from 'next/dynamic';
