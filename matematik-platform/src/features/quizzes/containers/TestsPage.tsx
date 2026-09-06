@@ -24,6 +24,9 @@ import {
   Volume2,
   VolumeX,
   Timer,
+  AlertTriangle,
+  Compass,
+  MonitorPlay,
 } from 'lucide-react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import dynamic from 'next/dynamic';
@@ -40,6 +43,8 @@ import { QuizPacingCoach } from '@/features/quizzes/components/QuizPacingCoach';
 import { useQuestionSpeech } from '@/features/quizzes/hooks/useQuestionSpeech';
 import { QuestionDrawingOverlay } from '@/features/quizzes/components/QuestionDrawingOverlay';
 import { trackFeatureOpen } from '@/lib/analytics';
+import { SpotTheMistakeModal } from '@/features/quizzes/components/SpotTheMistakeModal';
+import { InteractiveMathLabModal } from '@/features/programs/components/InteractiveMathLabModal';
 
 const PrintableWorksheetModal = dynamic(
   () =>
@@ -212,9 +217,14 @@ export default function TestsPage({
   const [isGlossaryOpen, setIsGlossaryOpen] = useState(false);
   const [isLeagueModalOpen, setIsLeagueModalOpen] = useState(false);
   const [isPacingStrategyModalOpen, setIsPacingStrategyModalOpen] = useState(false);
+  const [confidenceRatings, setConfidenceRatings] = useState<Record<number, 'sure' | 'unsure' | 'guess'>>({});
+  const [isSpotMistakeOpen, setIsSpotMistakeOpen] = useState(false);
+  const [isMathLabOpen, setIsMathLabOpen] = useState(false);
   const [questionTimes, setQuestionTimes] = useState<Record<number, number>>({});
   const [questionElapsedSeconds, setQuestionElapsedSeconds] = useState(0);
   const [isDyslexicMode, setIsDyslexicMode] = useState(false);
+  const [isSmartboardMode, setIsSmartboardMode] = useState(false);
+  const [showSmartboardSolution, setShowSmartboardSolution] = useState(false);
   const [activeDraft, setActiveDraft] = useState<QuizDraft | null>(null);
 
   useEffect(() => {
@@ -936,13 +946,13 @@ export default function TestsPage({
         )}
 
         <div className={`w-full relative z-10 animate-fade-up ${
-          isOpticalDocked ? 'max-w-6xl' : isFocusMode ? 'max-w-4xl' : 'max-w-3xl'
+          isSmartboardMode ? 'max-w-6xl' : isOpticalDocked ? 'max-w-6xl' : isFocusMode ? 'max-w-4xl' : 'max-w-3xl'
         }`}>
           <div className={isOpticalDocked ? 'flex flex-col lg:flex-row gap-6 items-start' : ''}>
             <div
               ref={questionCardRef}
               className={`flex-1 w-full glass rounded-3xl p-5 sm:p-8 space-y-6 relative ${
-                isFocusMode ? 'border-white/20 shadow-2xl bg-slate-900/95' : ''
+                isSmartboardMode ? 'border-amber-500/30 bg-slate-900/98 shadow-2xl p-6 sm:p-10' : isFocusMode ? 'border-white/20 shadow-2xl bg-slate-900/95' : ''
               }`}
             >
               {/* Soru Üzerine Çizim Katmanı */}
@@ -1030,6 +1040,34 @@ export default function TestsPage({
                     <span className="hidden sm:inline">Kavramlar</span>
                   </button>
 
+                  {/* Hatayı Bul Etkinlik Butonu */}
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setIsSpotMistakeOpen(true);
+                      void trackFeatureOpen('spot_the_mistake');
+                    }}
+                    className="inline-flex items-center gap-1.5 rounded-xl border border-rose-300 dark:border-rose-500/30 bg-rose-50 dark:bg-rose-500/10 px-3 py-1.5 text-xs font-bold text-rose-700 dark:text-rose-300 transition hover:bg-rose-100 dark:hover:bg-rose-500/20"
+                    title="Öğrenci çözümlerinde ilk hatalı adımı bulma etkinliği"
+                  >
+                    <AlertTriangle className="h-3.5 w-3.5 text-rose-500 dark:text-rose-400" />
+                    <span className="hidden sm:inline">Hatayı Bul</span>
+                  </button>
+
+                  {/* Etkileşimli Matematik Lab Butonu */}
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setIsMathLabOpen(true);
+                      void trackFeatureOpen('interactive_math_lab');
+                    }}
+                    className="inline-flex items-center gap-1.5 rounded-xl border border-cyan-300 dark:border-cyan-500/30 bg-cyan-50 dark:bg-cyan-500/10 px-3 py-1.5 text-xs font-bold text-cyan-700 dark:text-cyan-300 transition hover:bg-cyan-100 dark:hover:bg-cyan-500/20"
+                    title="Dinamik geometri ve etkileşimli deney laboratuvarı"
+                  >
+                    <Compass className="h-3.5 w-3.5 text-cyan-500 dark:text-cyan-400" />
+                    <span className="hidden sm:inline">Matematik Lab</span>
+                  </button>
+
                   {/* Rahat Okuma / Disleksi Modu Butonu */}
                   <button
                     type="button"
@@ -1044,6 +1082,22 @@ export default function TestsPage({
                   >
                     <BookOpen className="h-3.5 w-3.5 text-emerald-600 dark:text-emerald-400" />
                     <span className="hidden sm:inline">{isDyslexicMode ? 'Rahat Okuma Açık' : 'Rahat Okuma'}</span>
+                  </button>
+
+                  {/* Akıllı Tahta / Sunum Modu Butonu */}
+                  <button
+                    type="button"
+                    onClick={() => setIsSmartboardMode((prev) => !prev)}
+                    className={`inline-flex items-center gap-1.5 rounded-xl border px-3 py-1.5 text-xs font-bold transition ${
+                      isSmartboardMode
+                        ? 'border-amber-500 bg-amber-500/20 text-amber-300 shadow-md'
+                        : 'border-slate-300 dark:border-white/10 bg-slate-100 dark:bg-white/5 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-white/10'
+                    }`}
+                    title={isSmartboardMode ? 'Standart görünüme dön' : 'Sınıf akıllı tahta projeksiyon modunu aç'}
+                    aria-pressed={isSmartboardMode}
+                  >
+                    <MonitorPlay className="h-3.5 w-3.5 text-amber-500 dark:text-amber-400" />
+                    <span className="hidden sm:inline">{isSmartboardMode ? 'Tahta Modu Açık' : 'Akıllı Tahta'}</span>
                   </button>
 
                 {/* Odak Modu Butonu */}
@@ -1140,9 +1194,9 @@ export default function TestsPage({
               <div className="flex items-start justify-between gap-3 mb-6">
                 <MathText
                   as="h2"
-                  className={`flex-1 text-lg sm:text-2xl font-bold text-slate-900 dark:text-white font-display leading-snug ${
-                    isDyslexicMode ? 'font-dyslexic accessible-reading-mode' : ''
-                  }`}
+                  className={`flex-1 font-bold text-slate-900 dark:text-white font-display leading-snug ${
+                    isSmartboardMode ? 'text-2xl sm:text-3xl tracking-wide' : 'text-lg sm:text-2xl'
+                  } ${isDyslexicMode ? 'font-dyslexic accessible-reading-mode' : ''}`}
                 >
                   {question.question}
                 </MathText>
@@ -1230,6 +1284,54 @@ export default function TestsPage({
                 })}
               </div>
 
+              {/* Cevaba Güven Derecesi Seçimi (Metakognisyon) */}
+              {selectedAnswer !== null && (
+                <div className="flex flex-wrap items-center justify-between gap-2 p-3 rounded-2xl bg-white/5 border border-white/10 text-xs animate-fade-in">
+                  <span className="text-slate-400 font-medium">Cevabından ne kadar eminsin?</span>
+                  <div className="flex items-center gap-1.5">
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setConfidenceRatings((prev) => ({ ...prev, [currentQuestion]: 'sure' }))
+                      }
+                      className={`px-3 py-1 rounded-xl font-bold transition ${
+                        confidenceRatings[currentQuestion] === 'sure'
+                          ? 'bg-emerald-500 text-slate-950 shadow-sm'
+                          : 'bg-white/10 text-slate-300 hover:bg-white/15'
+                      }`}
+                    >
+                      🎯 Eminim
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setConfidenceRatings((prev) => ({ ...prev, [currentQuestion]: 'unsure' }))
+                      }
+                      className={`px-3 py-1 rounded-xl font-bold transition ${
+                        confidenceRatings[currentQuestion] === 'unsure'
+                          ? 'bg-amber-500 text-slate-950 shadow-sm'
+                          : 'bg-white/10 text-slate-300 hover:bg-white/15'
+                      }`}
+                    >
+                      🤔 Kararsızım
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setConfidenceRatings((prev) => ({ ...prev, [currentQuestion]: 'guess' }))
+                      }
+                      className={`px-3 py-1 rounded-xl font-bold transition ${
+                        confidenceRatings[currentQuestion] === 'guess'
+                          ? 'bg-purple-500 text-white shadow-sm'
+                          : 'bg-white/10 text-slate-300 hover:bg-white/15'
+                      }`}
+                    >
+                      🎲 Tahmin Ettim
+                    </button>
+                  </div>
+                </div>
+              )}
+
               {/* Kademeli İpucu Sistemi */}
               <QuestionHintLadder
                 question={question}
@@ -1238,6 +1340,37 @@ export default function TestsPage({
                 onToggleOpen={() => setIsHintLadderOpen((prev) => !prev)}
                 quizTitle={selectedQuiz?.title}
               />
+
+              {/* Akıllı Tahta / Öğretmen Çözüm Açma Paneli */}
+              {isSmartboardMode && (
+                <div className="p-4 rounded-2xl bg-amber-500/10 border border-amber-500/30 text-left animate-fade-in">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-bold text-amber-300 flex items-center gap-1.5">
+                      <MonitorPlay className="w-4 h-4" />
+                      <span>Akıllı Tahta: Öğretmen Çözüm Paneli</span>
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => setShowSmartboardSolution((prev) => !prev)}
+                      className="px-3 py-1 rounded-xl bg-amber-500 text-slate-950 text-xs font-bold transition hover:bg-amber-400"
+                    >
+                      {showSmartboardSolution ? 'Çözümü Gizle' : 'Çözümü Tahtada Aç'}
+                    </button>
+                  </div>
+                  {showSmartboardSolution && (
+                    <div className="mt-3 pt-3 border-t border-amber-500/20 text-sm text-slate-200 space-y-2">
+                      <div className="font-bold text-emerald-400">
+                        Doğru Cevap: {String.fromCharCode(65 + question.correct_index)}) {question.options[question.correct_index]}
+                      </div>
+                      {question.explanation && (
+                        <div className="text-xs sm:text-sm leading-relaxed text-slate-300 bg-slate-950/60 p-3 rounded-xl border border-white/5">
+                          <MathText>{question.explanation}</MathText>
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
 
             {/* İleri / Geri Butonları */}
@@ -1430,6 +1563,7 @@ export default function TestsPage({
           quizQuestions={quizQuestions}
           answers={answers}
           questionTimes={questionTimes}
+          confidenceRatings={confidenceRatings}
           startTime={startTime}
           onRetake={() => startQuiz(selectedQuiz)}
           onBackToLobby={resetQuiz}
@@ -1763,6 +1897,14 @@ export default function TestsPage({
       <ExamPacingStrategyModal
         isOpen={isPacingStrategyModalOpen}
         onClose={() => setIsPacingStrategyModalOpen(false)}
+      />
+      <SpotTheMistakeModal
+        isOpen={isSpotMistakeOpen}
+        onClose={() => setIsSpotMistakeOpen(false)}
+      />
+      <InteractiveMathLabModal
+        isOpen={isMathLabOpen}
+        onClose={() => setIsMathLabOpen(false)}
       />
     </main>
   );

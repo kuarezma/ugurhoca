@@ -12,6 +12,7 @@ import {
   Share2,
   BookOpen,
   Printer,
+  Sparkles,
 } from 'lucide-react';
 import MathText from '@/components/MathText';
 import { Mascot } from '@/components/Mascot';
@@ -24,6 +25,7 @@ export interface QuizResultsViewProps {
   quizQuestions: QuizQuestion[];
   answers: { [key: number]: number };
   questionTimes: { [key: number]: number };
+  confidenceRatings?: Record<number, 'sure' | 'unsure' | 'guess'>;
   startTime: number | null;
   onRetake: () => void;
   onBackToLobby: () => void;
@@ -43,6 +45,7 @@ export function QuizResultsView({
   quizQuestions,
   answers,
   questionTimes,
+  confidenceRatings = {},
   startTime,
   onRetake,
   onBackToLobby,
@@ -120,6 +123,50 @@ export function QuizResultsView({
               totalSecondsSpent={startTime ? Math.floor((Date.now() - startTime) / 1000) : 0}
             />
           </div>
+
+          {/* Metakognitif Öz Güven & Yanılgı Analizi */}
+          {Object.keys(confidenceRatings).length > 0 && (() => {
+            const ratedEntries = Object.entries(confidenceRatings);
+            const sureWrongCount = ratedEntries.filter(
+              ([idx, conf]) => conf === 'sure' && answers[Number(idx)] !== quizQuestions[Number(idx)]?.correct_index,
+            ).length;
+            const guessCorrectCount = ratedEntries.filter(
+              ([idx, conf]) => conf === 'guess' && answers[Number(idx)] === quizQuestions[Number(idx)]?.correct_index,
+            ).length;
+
+            return (
+              <div className="mb-8 w-full p-4 sm:p-5 rounded-2xl bg-indigo-950/40 border border-indigo-500/30 text-left">
+                <div className="flex items-center gap-2 mb-3">
+                  <Sparkles className="w-4 h-4 text-indigo-400" />
+                  <h4 className="text-xs sm:text-sm font-bold text-white uppercase tracking-wider">
+                    Metakognitif Analiz (Öz Güven & Tahmin Karnesi)
+                  </h4>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+                  <div className="p-3 rounded-xl bg-rose-500/10 border border-rose-500/20">
+                    <span className="font-bold text-rose-300 block">
+                      🚨 Emin Olup Yanlış Yapılan: {sureWrongCount} Soru
+                    </span>
+                    <p className="text-slate-300 mt-1 leading-relaxed">
+                      {sureWrongCount > 0
+                        ? 'Bu sorularda güçlü bir kavram yanılgısı tespit edildi. Hata defterinden çözüm adımlarını özellikle incele.'
+                        : 'Harika! Kendinden emin olduğun hiçbir soruda yanılgıya düşmedin.'}
+                    </p>
+                  </div>
+                  <div className="p-3 rounded-xl bg-amber-500/10 border border-amber-500/20">
+                    <span className="font-bold text-amber-300 block">
+                      🎲 Tahmin Edip Doğru Çıkan: {guessCorrectCount} Soru
+                    </span>
+                    <p className="text-slate-300 mt-1 leading-relaxed">
+                      {guessCorrectCount > 0
+                        ? 'Şans faktörüyle tutturulmuş olabilir. Konuyu kalıcı kılmak için soru çözümünü gözden geçir.'
+                        : 'Tahmin ettiğin soru bulunmuyor.'}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            );
+          })()}
 
           {/* Soru Soru Sınav Analizi */}
           <div className="text-left bg-slate-800/30 border border-slate-700/50 rounded-2xl p-6 mb-8 max-h-[400px] overflow-y-auto custom-scrollbar w-full">

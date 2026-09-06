@@ -78,4 +78,27 @@ describe('QuizResultsView', () => {
     fireEvent.click(screen.getByRole('button', { name: /Testlere Dön/i }));
     expect(onBack).toHaveBeenCalledTimes(1);
   });
+
+  it('confidenceRatings verildiğinde metakognitif analiz kartını gösterir', () => {
+    render(
+      <QuizResultsView
+        score={50}
+        quiz={mockQuiz}
+        quizQuestions={mockQuestions}
+        answers={{ 0: 1, 1: 1 }}
+        questionTimes={{ 0: 25, 1: 40 }}
+        confidenceRatings={{ 0: 'guess', 1: 'sure' }}
+        startTime={Date.now() - 65000}
+        onRetake={vi.fn()}
+        onBackToLobby={vi.fn()}
+        onOpenOutcomeAnalysis={vi.fn()}
+        onOpenMistakeModal={vi.fn()}
+        onDownloadPDF={vi.fn()}
+      />,
+    );
+
+    expect(screen.getByText(/Metakognitif Analiz/i)).toBeInTheDocument();
+    expect(screen.getByText(/Emin Olup Yanlış Yapılan: 1 Soru/i)).toBeInTheDocument();
+    expect(screen.getByText(/Tahmin Edip Doğru Çıkan: 1 Soru/i)).toBeInTheDocument();
+  });
 });
