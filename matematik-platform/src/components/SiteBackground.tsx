@@ -29,12 +29,8 @@ export function SiteBackground() {
   const { theme } = useTheme();
   const isLight = theme === 'light';
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const glowRef = useRef<HTMLDivElement | null>(null);
   const [mounted, setMounted] = useState(false);
-  const [pointer, setPointer] = useState<{ x: number; y: number; active: boolean }>({
-    x: -1000,
-    y: -1000,
-    active: false,
-  });
 
   const mouseRef = useRef<{ x: number; y: number; active: boolean }>({
     x: -1000,
@@ -113,23 +109,37 @@ export function SiteBackground() {
 
     window.addEventListener('resize', handleResize, { passive: true });
 
-    // Fare / Dokunma Pozisyon Takibi
+    // Fare / Dokunma Pozisyon Takibi.
+    // İmleç ışığı doğrudan DOM'a yazılır: setState her mousemove'da kök seviyedeki
+    // bu bileşeni yeniden render ederdi (saniyede 100+ commit, her sayfada).
+    let glowFrame = 0;
+
+    const syncGlow = () => {
+      glowFrame = 0;
+      const glow = glowRef.current;
+      if (!glow) return;
+      const { x, y, active } = mouseRef.current;
+      glow.style.transform = `translate3d(${x}px, ${y}px, 0) translate(-50%, -50%)`;
+      glow.style.opacity = active ? '1' : '0';
+    };
+
+    const scheduleGlow = () => {
+      if (glowFrame) return;
+      glowFrame = requestAnimationFrame(syncGlow);
+    };
+
     const handlePointerMove = (e: MouseEvent) => {
       mouseRef.current = {
         x: e.clientX,
         y: e.clientY,
         active: true,
       };
-      setPointer({
-        x: e.clientX,
-        y: e.clientY,
-        active: true,
-      });
+      scheduleGlow();
     };
 
     const handlePointerLeave = () => {
       mouseRef.current.active = false;
-      setPointer((prev) => ({ ...prev, active: false }));
+      scheduleGlow();
     };
 
     window.addEventListener('mousemove', handlePointerMove, { passive: true });
@@ -226,7 +236,9 @@ export function SiteBackground() {
         }
 
         const floatY = g.y + Math.sin(g.phase) * 5;
-        ctx.font = `600 ${g.size}px var(--font-display), "Baloo 2", sans-serif`;
+        // Canvas 2D `font` CSS değişkeni çözemez; var(--font-display) yazıldığında
+        // atama sessizce yok sayılır ve glifler varsayılan 10px ile çizilir.
+        ctx.font = `600 ${g.size}px "Baloo 2", system-ui, sans-serif`;
 
         if (isLight) {
           ctx.shadowColor = 'rgba(99, 102, 241, 0.25)';
@@ -269,6 +281,7 @@ export function SiteBackground() {
 
     return () => {
       cancelAnimationFrame(animId);
+      if (glowFrame) cancelAnimationFrame(glowFrame);
       window.removeEventListener('resize', handleResize);
       window.removeEventListener('mousemove', handlePointerMove);
       document.removeEventListener('mouseleave', handlePointerLeave);
@@ -327,19 +340,17 @@ export function SiteBackground() {
           }`}
         />
 
-        {/* İmleç Manyetik Işık Halkası */}
-        {pointer.active ? (
-          <div
-            className="pointer-events-none absolute h-[26rem] w-[26rem] -translate-x-1/2 -translate-y-1/2 rounded-full blur-3xl transition-opacity duration-300"
-            style={{
-              left: pointer.x,
-              top: pointer.y,
-              background: isLight
-                ? 'radial-gradient(circle, rgba(99, 102, 241, 0.22) 0%, rgba(236, 72, 153, 0.12) 45%, transparent 70%)'
-                : 'radial-gradient(circle, rgba(139, 92, 246, 0.25) 0%, rgba(6, 182, 212, 0.12) 45%, transparent 70%)',
-            }}
-          />
-        ) : null}
+        {/* İmleç Manyetik Işık Halkası — konum/görünürlük rAF ile doğrudan DOM'a yazılır */}
+        <div
+          ref={glowRef}
+          className="pointer-events-none absolute left-0 top-0 h-[26rem] w-[26rem] rounded-full opacity-0 blur-3xl transition-opacity duration-300"
+          style={{
+            willChange: 'transform, opacity',
+            background: isLight
+              ? 'radial-gradient(circle, rgba(99, 102, 241, 0.22) 0%, rgba(236, 72, 153, 0.12) 45%, transparent 70%)'
+              : 'radial-gradient(circle, rgba(139, 92, 246, 0.25) 0%, rgba(6, 182, 212, 0.12) 45%, transparent 70%)',
+          }}
+        />
       </div>
 
       {/* KATMAN 2: Mimari Koordinat & Mavi Kopya Izgarası (Blueprint Mesh) */}

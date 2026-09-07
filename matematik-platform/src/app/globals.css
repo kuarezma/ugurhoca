@@ -777,8 +777,6 @@ html[data-theme='light'] ::-webkit-scrollbar-thumb:hover {
     rgba(49, 46, 129, 0.32) 50%,
     rgba(15, 23, 42, 0.78) 100%
   );
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
 }
 
 .theme-toggle:hover {
@@ -786,15 +784,6 @@ html[data-theme='light'] ::-webkit-scrollbar-thumb:hover {
 }
 
 @supports (background: color-mix(in srgb, white 80%, black)) {
-  .gradient-bg {
-    background: linear-gradient(
-      135deg,
-      var(--bg) 0%,
-      color-mix(in srgb, var(--bg) 85%, #4f46e5) 50%,
-      var(--bg) 100%
-    );
-  }
-
   .theme-toggle:hover {
     background: color-mix(in srgb, var(--bg-soft) 88%, var(--bg-elevated));
   }
@@ -1108,8 +1097,6 @@ html[data-theme='dark'] .btn-secondary:hover {
 .page-surface {
   min-height: 100vh;
   background-color: rgba(15, 23, 42, 0.65);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
   color: var(--text-primary);
 }
 
@@ -1528,7 +1515,8 @@ html[data-theme='light'] .ui-chip[data-tone='slate'] {
 
 .grid-shimmer-beam {
   position: absolute;
-  inset-x: 0;
+  left: 0;
+  right: 0;
   height: 18rem;
   background: linear-gradient(
     180deg,
