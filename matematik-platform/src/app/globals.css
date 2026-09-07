@@ -257,6 +257,8 @@ html[data-theme='light'] {
 html {
   scroll-behavior: smooth;
   scroll-padding-top: 4.5rem;
+  scrollbar-gutter: stable both-edges;
+  overflow-y: scroll;
   -webkit-text-size-adjust: 100%;
   min-height: 100%;
   /*
@@ -272,8 +274,48 @@ html {
   text-rendering: optimizeLegibility;
 }
 
+/* Mobil 300ms dokunma gecikmesini CSS motoru seviyesinde kaldırır */
+html,
+body,
+button,
+a,
+input,
+select,
+textarea,
+label {
+  touch-action: manipulation;
+}
+
+/* Dynamic Viewport & iOS Safari Adres Çubuğu Değişimlerini Dengeleme */
+:root {
+  --site-dvh: 100dvh;
+}
+
+.min-h-screen-dynamic {
+  min-height: 100vh;
+  min-height: var(--site-dvh);
+}
+
+.cv-auto {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 420px;
+}
+
 @view-transition {
   navigation: auto;
+}
+
+/* Üst ve alt gezinme çubukları sayfa geçişinde titreşmez */
+header,
+nav,
+.mobile-bottom-nav {
+  view-transition-name: persistent-site-nav;
+}
+
+::view-transition-old(persistent-site-nav),
+::view-transition-new(persistent-site-nav) {
+  animation: none !important;
+  mix-blend-mode: normal;
 }
 
 ::view-transition-old(root) {
@@ -281,24 +323,28 @@ html {
 }
 
 ::view-transition-new(root) {
-  animation: 180ms cubic-bezier(0, 0, 0.2, 1) both fade-in;
+  animation: 200ms cubic-bezier(0, 0, 0.2, 1) 20ms both fade-in;
 }
 
 @keyframes fade-out {
   from {
     opacity: 1;
+    transform: scale(1);
   }
   to {
     opacity: 0;
+    transform: scale(0.994);
   }
 }
 
 @keyframes fade-in {
   from {
     opacity: 0;
+    transform: scale(1.006);
   }
   to {
     opacity: 1;
+    transform: scale(1);
   }
 }
 

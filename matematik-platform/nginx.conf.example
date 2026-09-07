@@ -1,0 +1,33 @@
+# ----------------------------------------------------------------------
+# UĞUR HOCA NGINX REVERSE PROXY VE CACHE-CONTROL DİREKTİFLERİ
+# ----------------------------------------------------------------------
+
+# 1. Next.js Hashed Statik Dosyalar (1 Yıl Değişmez Önbellek)
+location /_next/static/ {
+    alias /var/www/ugurhoca/matematik-platform/.next/static/;
+    expires 365d;
+    access_log off;
+    add_header Cache-Control "public, max-age=31536000, immutable";
+    add_header Access-Control-Allow-Origin "*";
+}
+
+# 2. Resimler, İkonlar ve Fontlar (30 Günlük + SWR)
+location ~* \.(?:ico|png|jpg|jpeg|webp|avif|svg|woff2|woff)$ {
+    expires 30d;
+    access_log off;
+    add_header Cache-Control "public, max-age=2592000, stale-while-revalidate=86400";
+    add_header X-Content-Type-Options "nosniff";
+}
+
+# 3. HTML Sayfaları ve Dinamik Proxy Geçişi (BFCache Uyumlu SWR)
+location / {
+    proxy_pass http://127.0.0.1:3000;
+    proxy_http_version 1.1;
+    proxy_set_header Upgrade $http_upgrade;
+    proxy_set_header Connection 'upgrade';
+    proxy_set_header Host $host;
+    proxy_cache_bypass $http_upgrade;
+
+    # HTML sayfalarının istemcide taze kalmasını ve anında arka plan doğrulamasını sağlar
+    add_header Cache-Control "public, max-age=0, must-revalidate, stale-while-revalidate=60" always;
+}

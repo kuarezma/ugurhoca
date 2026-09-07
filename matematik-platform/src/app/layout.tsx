@@ -4,6 +4,7 @@ import { SpeedInsights } from "@vercel/speed-insights/next";
 import { MobileBottomNav } from "@/components/MobileBottomNav";
 import { Providers } from "@/components/Providers";
 import { SiteBackground } from "@/components/SiteBackground";
+import { PerformanceRuntimeProvider } from "@/components/PerformanceRuntimeProvider";
 import { THEME_STORAGE_KEY } from "@/components/theme-constants";
 import { SITE_URL, SITE_NAME } from "@/lib/site-metadata";
 // Not: `@livekit/components-styles` ve `katex/dist/katex.min.css` buradan
@@ -107,13 +108,78 @@ export const metadata: Metadata = {
   },
 };
 
+// Mobil klavye açılmalarında CLS'yi engelleyen interactive-widget ve dynamic viewport ayarları
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
+  maximumScale: 5,
   viewportFit: "cover",
+  interactiveWidget: "resizes-visual",
   themeColor: [
     { media: "(prefers-color-scheme: dark)", color: "#0f172a" },
     { media: "(prefers-color-scheme: light)", color: "#ffffff" },
+  ],
+};
+
+// Speculation Rules: Masaüstü hover (moderate) ve Mobil touch/click (conservative) kuralları ayrılmış
+const speculationRulesConfig = {
+  prerender: [
+    {
+      source: "document",
+      where: {
+        and: [
+          { href_matches: "/*" },
+          {
+            not: {
+              href_matches: [
+                "/api/*",
+                "/admin/*",
+                "/giris*",
+                "/kayit*",
+                "/cikis*",
+                "/canli-ders/*",
+                "/*\\?*logout*",
+                "/*\\?*auth*",
+              ],
+            },
+          },
+          {
+            not: {
+              selector_matches:
+                "[rel~=nofollow], [data-no-prerender], [target=_blank]",
+            },
+          },
+        ],
+      },
+      eagerness: "moderate",
+    },
+  ],
+  prefetch: [
+    {
+      source: "document",
+      where: {
+        and: [
+          { href_matches: "/*" },
+          {
+            not: {
+              href_matches: [
+                "/api/*",
+                "/admin/*",
+                "/cikis*",
+                "/canli-ders/*",
+              ],
+            },
+          },
+          {
+            not: {
+              selector_matches:
+                "[rel~=nofollow], [data-no-prefetch], [target=_blank]",
+            },
+          },
+        ],
+      },
+      eagerness: "conservative",
+    },
   ],
 };
 
@@ -136,6 +202,18 @@ export default function RootLayout({
       className={`${poppins.variable} ${displayFont.variable}`}
     >
       <head>
+        {/* Güvenlik & Referrer Politikaları */}
+        <meta name="referrer" content="strict-origin-when-cross-origin" />
+        <meta httpEquiv="X-Content-Type-Options" content="nosniff" />
+
+        {/* Speculation Rules API (Chrome 109+, Edge 109+) */}
+        <script
+          type="speculationrules"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(speculationRulesConfig),
+          }}
+        />
+
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
@@ -161,12 +239,15 @@ export default function RootLayout({
             <link rel="preconnect" href={supabaseOrigin} crossOrigin="anonymous" />
           </>
         ) : null}
+        <link rel="dns-prefetch" href="https://vitals.vercel-insights.com" />
+        <link rel="preconnect" href="https://vitals.vercel-insights.com" crossOrigin="anonymous" />
       </head>
       <body>
         <a href="#ana-icerik" className="skip-link">
           Ana içeriğe geç
         </a>
         <Providers>
+          <PerformanceRuntimeProvider />
           <SiteBackground />
           <div id="ana-icerik" tabIndex={-1} className="relative z-10 w-full max-w-full overflow-x-clip">
             {children}
