@@ -265,7 +265,7 @@ export default function OdevlerPage({
 
   if (loading) {
     return (
-      <main className={`page-surface min-h-screen ${isLight ? 'bg-slate-50' : 'dark:bg-slate-900'} pb-20`}>
+      <main className={`page-surface min-h-screen ${isLight ? 'bg-transparent' : 'dark:bg-slate-900'} pb-20`}>
         <div className="max-w-5xl mx-auto px-4 py-10 space-y-6" aria-busy="true" aria-live="polite">
           <Skeleton className="h-10 w-64" />
           <Skeleton className="h-4 w-96" />
@@ -316,10 +316,10 @@ export default function OdevlerPage({
     : undefined;
 
   return (
-    <main className={`page-surface min-h-screen ${isLight ? 'bg-slate-50' : 'dark:bg-slate-900'} pb-20`}>
+    <main className={`page-surface min-h-screen ${isLight ? 'bg-transparent' : 'dark:bg-slate-900'} pb-20`}>
       {/* Header */}
       <header className={`sticky top-0 z-40 backdrop-blur-lg border-b ${
-        isLight ? 'bg-white/80 border-slate-200 shadow-sm' : 'bg-slate-900/80 border-slate-800'
+        isLight ? 'bg-white/85 border-slate-200/80 shadow-sm' : 'bg-slate-900/80 border-slate-800'
       }`}>
         <div className="max-w-5xl mx-auto px-4 h-16 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2 text-slate-400 hover:text-indigo-400 transition-colors">

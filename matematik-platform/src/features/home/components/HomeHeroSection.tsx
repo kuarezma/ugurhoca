@@ -236,7 +236,7 @@ export function HomeHeroSection({
         <div
           className={`relative overflow-hidden rounded-3xl border px-4 py-7 sm:px-10 sm:py-12 transition-all duration-300 ${
             isLight
-              ? 'border-slate-200/90 bg-gradient-to-br from-white via-slate-50/60 to-indigo-50/40 shadow-bento'
+              ? 'border-slate-200/90 bg-white shadow-xl shadow-indigo-950/5'
               : 'border-white/10 bg-gradient-to-br from-slate-900/95 via-slate-900/85 to-slate-950 shadow-2xl backdrop-blur-xl'
           }`}
         >
@@ -378,7 +378,11 @@ export function HomeHeroSection({
           <SafeLink
             href="/icerikler?type=ders-notlari"
             aria-label="Yaprak Testler"
-            className="col-span-1 group relative overflow-hidden rounded-2xl sm:rounded-3xl p-4 sm:p-6 border border-teal-400/40 bg-gradient-to-br from-emerald-700 via-teal-700 to-cyan-800 text-white shadow-lg shadow-teal-700/25 transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl hover:shadow-teal-700/40 active:scale-[0.99] cursor-pointer"
+            className={`col-span-1 group relative overflow-hidden rounded-2xl sm:rounded-3xl p-4 sm:p-6 border text-white transition-all duration-300 hover:-translate-y-1 active:scale-[0.99] cursor-pointer ${
+              isLight
+                ? 'border-emerald-300/80 bg-gradient-to-br from-emerald-700 via-teal-700 to-cyan-800 shadow-lg shadow-emerald-950/10 hover:shadow-xl hover:shadow-emerald-950/15'
+                : 'border-teal-400/40 bg-gradient-to-br from-emerald-700 via-teal-700 to-cyan-800 shadow-lg shadow-teal-700/25 hover:shadow-2xl hover:shadow-teal-700/40'
+            }`}
           >
             {/* Parlak Arka Plan Işık Efekti */}
             <div
@@ -425,7 +429,11 @@ export function HomeHeroSection({
           <SafeLink
             href="/oyunlar"
             aria-label="Matematik Oyunları"
-            className="col-span-1 group relative overflow-hidden rounded-2xl sm:rounded-3xl p-4 sm:p-6 border border-purple-400/40 bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-500 text-white shadow-lg shadow-purple-600/25 transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl hover:shadow-purple-600/40 active:scale-[0.99] cursor-pointer"
+            className={`col-span-1 group relative overflow-hidden rounded-2xl sm:rounded-3xl p-4 sm:p-6 border text-white transition-all duration-300 hover:-translate-y-1 active:scale-[0.99] cursor-pointer ${
+              isLight
+                ? 'border-purple-200/90 bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-500 shadow-lg shadow-indigo-950/10 hover:shadow-xl hover:shadow-indigo-950/15'
+                : 'border-purple-400/40 bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-500 shadow-lg shadow-purple-600/25 hover:shadow-2xl hover:shadow-purple-600/40'
+            }`}
           >
             {/* Parlak Arka Plan Işık Efekti */}
             <div
@@ -472,7 +480,11 @@ export function HomeHeroSection({
           <SafeLink
             href="/canli-ders"
             aria-label="Canlı Dersler"
-            className="col-span-1 group relative overflow-hidden rounded-2xl sm:rounded-3xl p-4 sm:p-6 border border-red-400/40 bg-gradient-to-br from-red-700 via-rose-700 to-amber-700 text-white shadow-lg shadow-rose-700/25 transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl hover:shadow-rose-700/40 active:scale-[0.99] cursor-pointer"
+            className={`col-span-1 group relative overflow-hidden rounded-2xl sm:rounded-3xl p-4 sm:p-6 border text-white transition-all duration-300 hover:-translate-y-1 active:scale-[0.99] cursor-pointer ${
+              isLight
+                ? 'border-rose-200/90 bg-gradient-to-br from-rose-600 via-red-600 to-amber-600 shadow-lg shadow-rose-950/10 hover:shadow-xl hover:shadow-rose-950/15'
+                : 'border-red-400/40 bg-gradient-to-br from-red-700 via-rose-700 to-amber-700 shadow-lg shadow-rose-700/25 hover:shadow-2xl hover:shadow-rose-700/40'
+            }`}
           >
             {/* Parlak Arka Plan Işık Efekti */}
             <div
@@ -522,7 +534,11 @@ export function HomeHeroSection({
           <SafeLink
             href="/meydan-okuma"
             aria-label="Meydan Okuma"
-            className="col-span-1 group relative overflow-hidden rounded-2xl sm:rounded-3xl p-4 sm:p-6 border border-amber-400/40 bg-gradient-to-br from-amber-700 via-orange-700 to-rose-700 text-white shadow-lg shadow-orange-700/25 transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl hover:shadow-orange-700/40 active:scale-[0.99] cursor-pointer"
+            className={`col-span-1 group relative overflow-hidden rounded-2xl sm:rounded-3xl p-4 sm:p-6 border text-white transition-all duration-300 hover:-translate-y-1 active:scale-[0.99] cursor-pointer ${
+              isLight
+                ? 'border-amber-300/80 bg-gradient-to-br from-amber-700 via-orange-700 to-rose-700 shadow-lg shadow-amber-950/10 hover:shadow-xl hover:shadow-amber-950/15'
+                : 'border-amber-400/40 bg-gradient-to-br from-amber-700 via-orange-700 to-rose-700 shadow-lg shadow-orange-700/25 hover:shadow-2xl hover:shadow-orange-700/40'
+            }`}
           >
             {/* Parlak Arka Plan Işık Efekti */}
             <div
@@ -570,9 +586,11 @@ export function HomeHeroSection({
         <div
           className={`mt-4 sm:mt-5 overflow-hidden rounded-2xl sm:rounded-3xl border transition-all duration-300 ${
             isLessonsOpen
-              ? 'border-indigo-500/50 bg-indigo-50/20 dark:bg-indigo-950/15 shadow-md'
+              ? isLight
+                ? 'border-indigo-200 bg-white shadow-md shadow-indigo-950/5'
+                : 'border-indigo-500/50 bg-indigo-50/20 dark:bg-indigo-950/15 shadow-md'
               : isLight
-                ? 'border-slate-200/90 bg-white/90 shadow-bento hover:border-indigo-300/80 hover:shadow-bento-hover'
+                ? 'border-slate-200/90 bg-white shadow-sm hover:border-indigo-300/80 hover:shadow-md'
                 : 'border-white/10 bg-slate-900/80 hover:border-white/20'
           }`}
         >
@@ -696,9 +714,11 @@ export function HomeHeroSection({
           <div
             className={`mt-3.5 sm:mt-4 overflow-hidden rounded-2xl sm:rounded-3xl border transition-all duration-300 ${
               isToolsOpen
-                ? 'border-amber-500/50 bg-amber-50/20 dark:bg-amber-950/15 shadow-md'
+                ? isLight
+                  ? 'border-amber-200 bg-white shadow-md shadow-amber-950/5'
+                  : 'border-amber-500/50 bg-amber-50/20 dark:bg-amber-950/15 shadow-md'
                 : isLight
-                  ? 'border-slate-200/90 bg-white/90 shadow-bento hover:border-amber-300/80 hover:shadow-bento-hover'
+                  ? 'border-slate-200/90 bg-white shadow-sm hover:border-amber-300/80 hover:shadow-md'
                   : 'border-white/10 bg-slate-900/80 hover:border-white/20'
             }`}
           >

@@ -208,7 +208,7 @@ export default function HomePage({ liveLessonSlot, initialFeed }: HomePageProps)
     <main
       className={`home-page relative min-h-screen overflow-x-clip ${
         isLight
-          ? 'bg-white light-atmosphere'
+          ? 'bg-transparent light-atmosphere'
           : 'bg-gradient-to-br from-slate-900 via-slate-900 to-slate-800'
       }`}
     >
