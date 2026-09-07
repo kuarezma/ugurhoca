@@ -283,7 +283,7 @@ export default function FormulaSpeedDrillModal({
         type="button"
         aria-label="Pencereyi kapat"
         onClick={onClose}
-        className="fixed inset-0 bg-slate-950/85 backdrop-blur-md transition-opacity"
+        className="fixed inset-0 bg-slate-900/60 dark:bg-slate-950/85 backdrop-blur-md transition-opacity"
       />
 
       {/* Modal Dialog */}
@@ -293,11 +293,11 @@ export default function FormulaSpeedDrillModal({
         aria-modal="true"
         aria-label="60 Saniye Formül Eşleştirme Antrenmanı"
         tabIndex={-1}
-        className="relative z-10 flex h-full max-h-[92vh] w-full max-w-4xl flex-col overflow-hidden rounded-3xl border border-white/10 bg-slate-900 text-white shadow-2xl dark:border-white/10 dark:bg-slate-900"
+        className="relative z-10 flex h-full max-h-[92vh] w-full max-w-4xl flex-col overflow-hidden rounded-3xl border border-slate-200 dark:border-white/10 bg-white dark:bg-slate-900 text-slate-900 dark:text-white shadow-2xl"
       >
         <ErrorBoundary
           fallback={({ reset }) => (
-            <div className="flex flex-1 flex-col items-center justify-center p-8 text-center text-slate-300 gap-4">
+            <div className="flex flex-1 flex-col items-center justify-center p-8 text-center text-slate-600 dark:text-slate-300 gap-4">
               <p className="text-sm">Formül antrenmanı yüklenirken bir sorun oluştu.</p>
               <button
                 type="button"
@@ -310,19 +310,19 @@ export default function FormulaSpeedDrillModal({
           )}
         >
           {/* Header */}
-          <div className="flex items-center justify-between border-b border-white/10 bg-slate-950/80 px-4 py-3 sm:px-6">
+          <div className="flex items-center justify-between border-b border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-slate-950/80 px-4 py-3 sm:px-6">
             <div className="flex items-center gap-3">
-              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-amber-500/20 text-amber-400">
+              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-amber-500/20 text-amber-600 dark:text-amber-400">
                 <Zap className="h-5 w-5" />
               </div>
               <div>
-                <h2 className="text-sm sm:text-base font-bold text-white flex items-center gap-2">
+                <h2 className="text-sm sm:text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
                   <span>60 Saniye Hızlı Formül Antrenmanı</span>
-                  <span className="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/30">
+                  <span className="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-800 dark:text-amber-300 border border-amber-500/30">
                     Aktif Hatırlama
                   </span>
                 </h2>
-                <p className="text-[11px] text-slate-400">
+                <p className="text-[11px] text-slate-500 dark:text-slate-400">
                   Formül adını matematiksel ifadesiyle doğru eşleştir, süreni en verimli kullan!
                 </p>
               </div>
@@ -333,7 +333,7 @@ export default function FormulaSpeedDrillModal({
                 type="button"
                 onClick={toggleMute}
                 title={isMuted ? 'Sesi Aç' : 'Sesi Kapat'}
-                className="flex h-8 w-8 items-center justify-center rounded-lg border border-white/10 bg-white/5 text-slate-300 hover:text-white transition"
+                className="flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 dark:border-white/10 bg-slate-100 dark:bg-white/5 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white transition"
               >
                 {isMuted ? <VolumeX className="h-4 w-4" /> : <Volume2 className="h-4 w-4" />}
               </button>
@@ -342,7 +342,7 @@ export default function FormulaSpeedDrillModal({
                 type="button"
                 onClick={onClose}
                 aria-label="Antrenmanı kapat"
-                className="flex h-8 w-8 items-center justify-center rounded-lg border border-white/10 bg-white/5 text-slate-400 hover:text-white hover:bg-white/10 transition"
+                className="flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 dark:border-white/10 bg-slate-100 dark:bg-white/5 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200 dark:hover:bg-white/10 transition"
               >
                 <X className="h-4 w-4" />
               </button>
@@ -350,9 +350,9 @@ export default function FormulaSpeedDrillModal({
           </div>
 
           {/* Sub-header Bar: Stats & Controls */}
-          <div className="flex flex-wrap items-center justify-between gap-3 border-b border-white/10 bg-slate-950/40 px-4 py-2.5 sm:px-6">
+          <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-200 dark:border-white/10 bg-slate-100/70 dark:bg-slate-950/40 px-4 py-2.5 sm:px-6">
             {/* Category Filter */}
-            <div className="flex items-center gap-1 rounded-xl bg-white/5 p-1 border border-white/10 text-xs">
+            <div className="flex items-center gap-1 rounded-xl bg-slate-200/60 dark:bg-white/5 p-1 border border-slate-200 dark:border-white/10 text-xs">
               <button
                 type="button"
                 onClick={() => {
@@ -363,7 +363,7 @@ export default function FormulaSpeedDrillModal({
                 className={`rounded-lg px-2.5 py-1 font-semibold transition ${
                   category === 'all'
                     ? 'bg-amber-500 text-slate-950 font-bold'
-                    : 'text-slate-300 hover:text-white disabled:opacity-50'
+                    : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white disabled:opacity-50'
                 }`}
               >
                 Tümü
@@ -378,7 +378,7 @@ export default function FormulaSpeedDrillModal({
                 className={`rounded-lg px-2.5 py-1 font-semibold transition ${
                   category === 'lgs'
                     ? 'bg-indigo-600 text-white font-bold'
-                    : 'text-slate-300 hover:text-white disabled:opacity-50'
+                    : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white disabled:opacity-50'
                 }`}
               >
                 LGS (8. Sınıf)
@@ -393,7 +393,7 @@ export default function FormulaSpeedDrillModal({
                 className={`rounded-lg px-2.5 py-1 font-semibold transition ${
                   category === 'yks'
                     ? 'bg-purple-600 text-white font-bold'
-                    : 'text-slate-300 hover:text-white disabled:opacity-50'
+                    : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white disabled:opacity-50'
                 }`}
               >
                 YKS (TYT & AYT)
@@ -406,29 +406,29 @@ export default function FormulaSpeedDrillModal({
               <div
                 className={`flex items-center gap-1.5 px-3 py-1 rounded-xl font-mono font-bold border transition ${
                   timeLeft <= 10 && gameState === 'playing'
-                    ? 'bg-rose-500/20 border-rose-500/40 text-rose-300 animate-pulse'
-                    : 'bg-white/5 border-white/10 text-slate-200'
+                    ? 'bg-rose-500/20 border-rose-500/40 text-rose-700 dark:text-rose-300 animate-pulse'
+                    : 'bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 text-slate-800 dark:text-slate-200'
                 }`}
               >
-                <Timer className="h-4 w-4 text-amber-400" />
+                <Timer className="h-4 w-4 text-amber-500 dark:text-amber-400" />
                 <span>{timeLeft}s</span>
                 {bonusNotification && (
-                  <span className="text-[11px] font-bold text-emerald-400 ml-1">
+                  <span className="text-[11px] font-bold text-emerald-600 dark:text-emerald-400 ml-1">
                     {bonusNotification}
                   </span>
                 )}
               </div>
 
               {/* Score */}
-              <div className="flex items-center gap-1.5 px-3 py-1 rounded-xl bg-white/5 border border-white/10 text-slate-200 font-semibold">
-                <Trophy className="h-3.5 w-3.5 text-amber-400" />
-                <span>Skor: <strong className="text-amber-300">{score}</strong></span>
+              <div className="flex items-center gap-1.5 px-3 py-1 rounded-xl bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 text-slate-800 dark:text-slate-200 font-semibold">
+                <Trophy className="h-3.5 w-3.5 text-amber-500 dark:text-amber-400" />
+                <span>Skor: <strong className="text-amber-600 dark:text-amber-300">{score}</strong></span>
               </div>
 
               {/* Combo Multiplier */}
               {combo > 1 && gameState === 'playing' && (
-                <div className="flex items-center gap-1 px-2.5 py-1 rounded-xl bg-orange-500/20 border border-orange-500/30 text-orange-300 font-bold text-xs animate-bounce">
-                  <Flame className="h-3.5 w-3.5 text-orange-400" />
+                <div className="flex items-center gap-1 px-2.5 py-1 rounded-xl bg-orange-500/20 border border-orange-500/30 text-orange-700 dark:text-orange-300 font-bold text-xs animate-bounce">
+                  <Flame className="h-3.5 w-3.5 text-orange-500 dark:text-orange-400" />
                   <span>x{Math.min(3, 1 + (combo - 1) * 0.25).toFixed(1)} Combo!</span>
                 </div>
               )}
@@ -439,16 +439,16 @@ export default function FormulaSpeedDrillModal({
           <div className="flex-1 overflow-y-auto p-4 sm:p-6">
             {gameState === 'idle' && (
               <div className="flex flex-col items-center justify-center py-8 text-center max-w-md mx-auto">
-                <div className="h-20 w-20 rounded-3xl bg-gradient-to-tr from-amber-500/20 to-orange-500/20 border border-amber-500/30 flex items-center justify-center mb-5 text-amber-400 shadow-lg">
+                <div className="h-20 w-20 rounded-3xl bg-gradient-to-tr from-amber-500/20 to-orange-500/20 border border-amber-500/30 flex items-center justify-center mb-5 text-amber-500 dark:text-amber-400 shadow-lg">
                   <Zap className="h-10 w-10" />
                 </div>
-                <h3 className="text-xl font-bold text-white mb-2">Formül Hız Eşleştirmesi</h3>
-                <p className="text-xs sm:text-sm text-slate-300 mb-6 leading-relaxed">
+                <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-2">Formül Hız Eşleştirmesi</h3>
+                <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 mb-6 leading-relaxed">
                   60 saniyede ekrana gelen formül ve kural başlıklarını KaTeX matematiksel gösterimleriyle eşleştir. Ardışık doğru eşleştirmelerle <strong>Combo çarpanını</strong> yükselt, her temizlenen set için <strong>+5 saniye bonus</strong> kazan!
                 </p>
 
                 {bestScore > 0 && (
-                  <div className="mb-6 flex items-center gap-2 rounded-2xl bg-amber-500/10 border border-amber-500/20 px-4 py-2 text-xs text-amber-300 font-semibold">
+                  <div className="mb-6 flex items-center gap-2 rounded-2xl bg-amber-500/10 border border-amber-500/30 px-4 py-2 text-xs text-amber-800 dark:text-amber-300 font-semibold">
                     <Trophy className="h-4 w-4" />
                     <span>Mevcut En Yüksek Skorun: <strong>{bestScore} Puan</strong></span>
                   </div>
@@ -469,7 +469,7 @@ export default function FormulaSpeedDrillModal({
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 h-full">
                 {/* Sol Kolon: Formül Başlıkları */}
                 <div className="flex flex-col gap-3">
-                  <div className="text-xs font-bold text-slate-400 uppercase tracking-wider px-1">
+                  <div className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider px-1">
                     1. Adım: Formül / Kural Adı
                   </div>
                   <div className="flex flex-col gap-2.5">
@@ -486,16 +486,16 @@ export default function FormulaSpeedDrillModal({
                           onClick={() => handleLeftClick(card.id)}
                           className={`flex items-center justify-between p-3.5 rounded-2xl border text-left transition-all relative ${
                             isMatched
-                              ? 'border-emerald-500/40 bg-emerald-500/10 text-emerald-300 opacity-60 pointer-events-none'
+                              ? 'border-emerald-500/40 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 opacity-60 pointer-events-none'
                               : isMismatch
-                              ? 'border-rose-500 bg-rose-500/20 text-rose-200 ring-2 ring-rose-500'
+                              ? 'border-rose-500 bg-rose-500/20 text-rose-700 dark:text-rose-200 ring-2 ring-rose-500'
                               : isSelected
-                              ? 'border-amber-400 bg-amber-500/20 text-white ring-2 ring-amber-400 shadow-md scale-[1.01]'
-                              : 'border-white/10 bg-slate-800/80 hover:bg-slate-800 text-slate-200 hover:border-white/20'
+                              ? 'border-amber-400 bg-amber-500/20 text-slate-900 dark:text-white ring-2 ring-amber-400 shadow-md scale-[1.01]'
+                              : 'border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-slate-800/80 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-800 dark:text-slate-200 hover:border-slate-300 dark:hover:border-white/20'
                           }`}
                         >
                           <div className="flex flex-col">
-                            <span className="text-[10px] uppercase font-bold text-amber-400/90 tracking-wide">
+                            <span className="text-[10px] uppercase font-bold text-amber-600 dark:text-amber-400/90 tracking-wide">
                               {card.flashcard.subject}
                             </span>
                             <span className="text-xs sm:text-sm font-semibold">
@@ -503,7 +503,7 @@ export default function FormulaSpeedDrillModal({
                             </span>
                           </div>
                           {isMatched && (
-                            <CheckCircle2 className="h-4 w-4 text-emerald-400 shrink-0 ml-2" />
+                            <CheckCircle2 className="h-4 w-4 text-emerald-500 dark:text-emerald-400 shrink-0 ml-2" />
                           )}
                         </button>
                       );
@@ -513,7 +513,7 @@ export default function FormulaSpeedDrillModal({
 
                 {/* Sağ Kolon: KaTeX Formülleri */}
                 <div className="flex flex-col gap-3">
-                  <div className="text-xs font-bold text-slate-400 uppercase tracking-wider px-1">
+                  <div className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider px-1">
                     2. Adım: KaTeX Matematiksel İfadesi
                   </div>
                   <div className="flex flex-col gap-2.5">
@@ -530,12 +530,12 @@ export default function FormulaSpeedDrillModal({
                           onClick={() => handleRightClick(card.id)}
                           className={`flex items-center justify-center p-3.5 rounded-2xl border text-center transition-all min-h-[64px] ${
                             isMatched
-                              ? 'border-emerald-500/40 bg-emerald-500/10 text-emerald-300 opacity-60 pointer-events-none'
+                              ? 'border-emerald-500/40 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 opacity-60 pointer-events-none'
                               : isMismatch
-                              ? 'border-rose-500 bg-rose-500/20 text-rose-200 ring-2 ring-rose-500'
+                              ? 'border-rose-500 bg-rose-500/20 text-rose-700 dark:text-rose-200 ring-2 ring-rose-500'
                               : isSelected
-                              ? 'border-cyan-400 bg-cyan-500/20 text-white ring-2 ring-cyan-400 shadow-md scale-[1.01]'
-                              : 'border-white/10 bg-slate-800/80 hover:bg-slate-800 text-slate-200 hover:border-white/20'
+                              ? 'border-cyan-400 bg-cyan-500/20 text-slate-900 dark:text-white ring-2 ring-cyan-400 shadow-md scale-[1.01]'
+                              : 'border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-slate-800/80 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-800 dark:text-slate-200 hover:border-slate-300 dark:hover:border-white/20'
                           }`}
                         >
                           <div className="text-xs sm:text-sm pointer-events-none">
@@ -551,48 +551,48 @@ export default function FormulaSpeedDrillModal({
 
             {gameState === 'finished' && (
               <div className="flex flex-col items-center justify-center py-6 text-center max-w-md mx-auto">
-                <div className="h-20 w-20 rounded-3xl bg-gradient-to-tr from-amber-500/20 to-emerald-500/20 border border-amber-500/30 flex items-center justify-center mb-4 text-amber-400 shadow-xl">
+                <div className="h-20 w-20 rounded-3xl bg-gradient-to-tr from-amber-500/20 to-emerald-500/20 border border-amber-500/30 flex items-center justify-center mb-4 text-amber-500 dark:text-amber-400 shadow-xl">
                   <Sparkles className="h-10 w-10" />
                 </div>
-                <h3 className="text-2xl font-bold text-white mb-1">Antrenman Tamamlandı!</h3>
-                <p className="text-xs text-slate-300 mb-6">
+                <h3 className="text-2xl font-bold text-slate-900 dark:text-white mb-1">Antrenman Tamamlandı!</h3>
+                <p className="text-xs text-slate-600 dark:text-slate-300 mb-6">
                   60 saniyelik odaklanma ve aktif hatırlama seansını tamamladın.
                 </p>
 
                 {/* Score Summary Grid */}
                 <div className="grid grid-cols-2 gap-3 w-full mb-6">
-                  <div className="p-3.5 rounded-2xl bg-white/5 border border-white/10 flex flex-col items-center">
-                    <span className="text-[11px] text-slate-400 font-medium">Toplam Skor</span>
-                    <span className="text-xl sm:text-2xl font-black text-amber-400 mt-0.5 font-mono">
+                  <div className="p-3.5 rounded-2xl bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 flex flex-col items-center">
+                    <span className="text-[11px] text-slate-500 dark:text-slate-400 font-medium">Toplam Skor</span>
+                    <span className="text-xl sm:text-2xl font-black text-amber-600 dark:text-amber-400 mt-0.5 font-mono">
                       {score}
                     </span>
                   </div>
 
-                  <div className="p-3.5 rounded-2xl bg-white/5 border border-white/10 flex flex-col items-center">
-                    <span className="text-[11px] text-slate-400 font-medium">Doğru Eşleşme</span>
-                    <span className="text-xl sm:text-2xl font-black text-emerald-400 mt-0.5 font-mono">
+                  <div className="p-3.5 rounded-2xl bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 flex flex-col items-center">
+                    <span className="text-[11px] text-slate-500 dark:text-slate-400 font-medium">Doğru Eşleşme</span>
+                    <span className="text-xl sm:text-2xl font-black text-emerald-600 dark:text-emerald-400 mt-0.5 font-mono">
                       {correctMatches}
                     </span>
                   </div>
 
-                  <div className="p-3.5 rounded-2xl bg-white/5 border border-white/10 flex flex-col items-center">
-                    <span className="text-[11px] text-slate-400 font-medium">İsabet Oranı</span>
-                    <span className="text-lg sm:text-xl font-bold text-cyan-400 mt-0.5 font-mono">
+                  <div className="p-3.5 rounded-2xl bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 flex flex-col items-center">
+                    <span className="text-[11px] text-slate-500 dark:text-slate-400 font-medium">İsabet Oranı</span>
+                    <span className="text-lg sm:text-xl font-bold text-cyan-600 dark:text-cyan-400 mt-0.5 font-mono">
                       %{accuracy}
                     </span>
                   </div>
 
-                  <div className="p-3.5 rounded-2xl bg-white/5 border border-white/10 flex flex-col items-center">
-                    <span className="text-[11px] text-slate-400 font-medium">Maks Combo</span>
-                    <span className="text-lg sm:text-xl font-bold text-orange-400 mt-0.5 font-mono">
+                  <div className="p-3.5 rounded-2xl bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 flex flex-col items-center">
+                    <span className="text-[11px] text-slate-500 dark:text-slate-400 font-medium">Maks Combo</span>
+                    <span className="text-lg sm:text-xl font-bold text-orange-600 dark:text-orange-400 mt-0.5 font-mono">
                       {maxCombo}x
                     </span>
                   </div>
                 </div>
 
                 {score >= bestScore && score > 0 && (
-                  <div className="mb-6 flex items-center gap-2 rounded-2xl bg-emerald-500/15 border border-emerald-500/30 px-4 py-2.5 text-xs text-emerald-300 font-bold">
-                    <Trophy className="h-4 w-4 text-emerald-400" />
+                  <div className="mb-6 flex items-center gap-2 rounded-2xl bg-emerald-500/15 border border-emerald-500/30 px-4 py-2.5 text-xs text-emerald-700 dark:text-emerald-300 font-bold">
+                    <Trophy className="h-4 w-4 text-emerald-500 dark:text-emerald-400" />
                     <span>🎉 Tebrikler! Yeni En Yüksek Skorun: {score} Puan!</span>
                   </div>
                 )}
@@ -614,7 +614,7 @@ export default function FormulaSpeedDrillModal({
                         onClose();
                         onOpenFlashcards();
                       }}
-                      className="w-full sm:flex-1 py-3 px-4 rounded-2xl border border-white/15 bg-white/5 hover:bg-white/10 text-white font-semibold text-xs transition flex items-center justify-center gap-2"
+                      className="w-full sm:flex-1 py-3 px-4 rounded-2xl border border-slate-200 dark:border-white/15 bg-slate-100 dark:bg-white/5 hover:bg-slate-200 dark:hover:bg-white/10 text-slate-700 dark:text-white font-semibold text-xs transition flex items-center justify-center gap-2"
                     >
                       <span>Kartları İncele 📖</span>
                     </button>

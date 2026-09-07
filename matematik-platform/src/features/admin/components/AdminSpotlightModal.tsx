@@ -215,10 +215,10 @@ export default function AdminSpotlightModal({
           role="dialog"
           aria-modal="true"
           aria-label="Admin Spotlight Evrensel Arama"
-          className="relative w-full max-w-2xl overflow-hidden rounded-2xl border border-white/15 bg-slate-900 shadow-2xl shadow-black/80"
+          className="relative w-full max-w-2xl overflow-hidden rounded-2xl border border-slate-200 dark:border-white/15 bg-white dark:bg-slate-900 shadow-2xl shadow-slate-900/10 dark:shadow-black/80"
         >
           {/* Arama Input Çubuğu */}
-          <div className="flex items-center gap-3 border-b border-white/10 px-4 py-3.5 bg-slate-950/60">
+          <div className="flex items-center gap-3 border-b border-slate-200 dark:border-white/10 px-4 py-3.5 bg-slate-50 dark:bg-slate-950/60">
             <Search className="h-5 w-5 text-slate-400 shrink-0" />
             <input
               ref={inputRef}
@@ -226,19 +226,19 @@ export default function AdminSpotlightModal({
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder="Öğrenci, test, çalışma kağıdı veya işlem ara..."
-              className="flex-1 bg-transparent text-sm sm:text-base text-white placeholder:text-slate-500 outline-none"
+              className="flex-1 bg-transparent text-sm sm:text-base text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 outline-none"
             />
             {query && (
               <button
                 type="button"
                 onClick={() => setQuery('')}
-                className="rounded-lg p-1 text-slate-400 hover:text-white"
+                className="rounded-lg p-1 text-slate-400 hover:text-slate-900 dark:hover:text-white"
                 title="Temizle"
               >
                 <X className="h-4 w-4" />
               </button>
             )}
-            <kbd className="hidden sm:inline-flex items-center gap-1 rounded-md border border-white/10 bg-white/5 px-2 py-0.5 text-[10px] font-semibold text-slate-400">
+            <kbd className="hidden sm:inline-flex items-center gap-1 rounded-md border border-slate-200 dark:border-white/10 bg-slate-100 dark:bg-white/5 px-2 py-0.5 text-[10px] font-semibold text-slate-600 dark:text-slate-400">
               <Command className="h-3 w-3" /> ESC
             </kbd>
           </div>
@@ -248,7 +248,7 @@ export default function AdminSpotlightModal({
             {/* Öğrenciler */}
             {filteredStudents.length > 0 && (
               <div>
-                <div className="flex items-center gap-1.5 px-2 mb-1 text-[11px] font-bold uppercase tracking-wider text-cyan-400">
+                <div className="flex items-center gap-1.5 px-2 mb-1 text-[11px] font-bold uppercase tracking-wider text-cyan-600 dark:text-cyan-400">
                   <User className="h-3.5 w-3.5" />
                   <span>Öğrenciler</span>
                 </div>
@@ -261,20 +261,20 @@ export default function AdminSpotlightModal({
                         onClose();
                         onSelectStudent(student);
                       }}
-                      className="flex w-full items-center justify-between rounded-xl px-3 py-2 text-left transition hover:bg-white/5 group"
+                      className="flex w-full items-center justify-between rounded-xl px-3 py-2 text-left transition hover:bg-slate-100 dark:hover:bg-white/5 group"
                     >
                       <div className="min-w-0 flex items-center gap-2.5">
-                        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-cyan-500/20 text-cyan-300 font-bold text-xs">
+                        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-cyan-500/20 text-cyan-700 dark:text-cyan-300 font-bold text-xs">
                           {(student.name || student.email || '?')[0].toUpperCase()}
                         </div>
                         <div className="truncate">
-                          <p className="text-sm font-semibold text-white group-hover:text-cyan-300 transition-colors truncate">
+                          <p className="text-sm font-semibold text-slate-900 dark:text-white group-hover:text-cyan-600 dark:group-hover:text-cyan-300 transition-colors truncate">
                             {student.name || 'İsimsiz Öğrenci'}
                           </p>
-                          <p className="text-xs text-slate-400 truncate">{student.email}</p>
+                          <p className="text-xs text-slate-500 dark:text-slate-400 truncate">{student.email}</p>
                         </div>
                       </div>
-                      <span className="shrink-0 rounded-full bg-white/10 px-2.5 py-0.5 text-[11px] font-medium text-slate-300">
+                      <span className="shrink-0 rounded-full bg-slate-100 dark:bg-white/10 px-2.5 py-0.5 text-[11px] font-medium text-slate-700 dark:text-slate-300">
                         {student.grade === 'Mezun' ? 'Mezun' : `${student.grade}. Sınıf`}
                       </span>
                     </button>
@@ -286,7 +286,7 @@ export default function AdminSpotlightModal({
             {/* Testler */}
             {filteredQuizzes.length > 0 && (
               <div>
-                <div className="flex items-center gap-1.5 px-2 mb-1 text-[11px] font-bold uppercase tracking-wider text-violet-400">
+                <div className="flex items-center gap-1.5 px-2 mb-1 text-[11px] font-bold uppercase tracking-wider text-violet-600 dark:text-violet-400">
                   <CheckCircle2 className="h-3.5 w-3.5" />
                   <span>Testler</span>
                 </div>
@@ -299,15 +299,15 @@ export default function AdminSpotlightModal({
                         onClose();
                         onSelectTab('quizzes');
                       }}
-                      className="flex w-full items-center justify-between rounded-xl px-3 py-2 text-left transition hover:bg-white/5 group"
+                      className="flex w-full items-center justify-between rounded-xl px-3 py-2 text-left transition hover:bg-slate-100 dark:hover:bg-white/5 group"
                     >
                       <div className="min-w-0">
-                        <p className="text-sm font-semibold text-white group-hover:text-violet-300 transition-colors truncate">
+                        <p className="text-sm font-semibold text-slate-900 dark:text-white group-hover:text-violet-600 dark:group-hover:text-violet-300 transition-colors truncate">
                           {quiz.title}
                         </p>
-                        <p className="text-xs text-slate-400 truncate">{quiz.difficulty || 'Normal'}</p>
+                        <p className="text-xs text-slate-500 dark:text-slate-400 truncate">{quiz.difficulty || 'Normal'}</p>
                       </div>
-                      <span className="shrink-0 rounded-full bg-violet-500/20 text-violet-300 px-2.5 py-0.5 text-[11px] font-medium">
+                      <span className="shrink-0 rounded-full bg-violet-500/20 text-violet-700 dark:text-violet-300 px-2.5 py-0.5 text-[11px] font-medium">
                         {String(quiz.grade) === 'Mezun' ? 'Mezun' : `${quiz.grade}. Sınıf`}
                       </span>
                     </button>
@@ -319,7 +319,7 @@ export default function AdminSpotlightModal({
             {/* Belgeler / İçerikler */}
             {filteredDocuments.length > 0 && (
               <div>
-                <div className="flex items-center gap-1.5 px-2 mb-1 text-[11px] font-bold uppercase tracking-wider text-blue-400">
+                <div className="flex items-center gap-1.5 px-2 mb-1 text-[11px] font-bold uppercase tracking-wider text-blue-600 dark:text-blue-400">
                   <FileText className="h-3.5 w-3.5" />
                   <span>Belgeler & Çalışma Kağıtları</span>
                 </div>
@@ -332,15 +332,15 @@ export default function AdminSpotlightModal({
                         onClose();
                         onSelectTab('documents');
                       }}
-                      className="flex w-full items-center justify-between rounded-xl px-3 py-2 text-left transition hover:bg-white/5 group"
+                      className="flex w-full items-center justify-between rounded-xl px-3 py-2 text-left transition hover:bg-slate-100 dark:hover:bg-white/5 group"
                     >
                       <div className="min-w-0">
-                        <p className="text-sm font-semibold text-white group-hover:text-blue-300 transition-colors truncate">
+                        <p className="text-sm font-semibold text-slate-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-300 transition-colors truncate">
                           {doc.title}
                         </p>
-                        <p className="text-xs text-slate-400 truncate">{doc.type || 'Doküman'}</p>
+                        <p className="text-xs text-slate-500 dark:text-slate-400 truncate">{doc.type || 'Doküman'}</p>
                       </div>
-                      <span className="shrink-0 rounded-full bg-blue-500/20 text-blue-300 px-2.5 py-0.5 text-[11px] font-medium">
+                      <span className="shrink-0 rounded-full bg-blue-500/20 text-blue-700 dark:text-blue-300 px-2.5 py-0.5 text-[11px] font-medium">
                         Aç
                       </span>
                     </button>
@@ -352,7 +352,7 @@ export default function AdminSpotlightModal({
             {/* Canlı Dersler */}
             {filteredLessons.length > 0 && (
               <div>
-                <div className="flex items-center gap-1.5 px-2 mb-1 text-[11px] font-bold uppercase tracking-wider text-sky-400">
+                <div className="flex items-center gap-1.5 px-2 mb-1 text-[11px] font-bold uppercase tracking-wider text-sky-600 dark:text-sky-400">
                   <Video className="h-3.5 w-3.5" />
                   <span>Canlı Dersler</span>
                 </div>
@@ -365,17 +365,17 @@ export default function AdminSpotlightModal({
                         onClose();
                         onSelectTab('liveLessons');
                       }}
-                      className="flex w-full items-center justify-between rounded-xl px-3 py-2 text-left transition hover:bg-white/5 group"
+                      className="flex w-full items-center justify-between rounded-xl px-3 py-2 text-left transition hover:bg-slate-100 dark:hover:bg-white/5 group"
                     >
                       <div className="min-w-0">
-                        <p className="text-sm font-semibold text-white group-hover:text-sky-300 transition-colors truncate">
+                        <p className="text-sm font-semibold text-slate-900 dark:text-white group-hover:text-sky-600 dark:group-hover:text-sky-300 transition-colors truncate">
                           {lesson.title}
                         </p>
-                        <p className="text-xs text-slate-400 truncate">
+                        <p className="text-xs text-slate-500 dark:text-slate-400 truncate">
                           Hedef: {lesson.target_grade === 'all' ? 'Herkese açık' : `${lesson.target_grade}. sınıf`}
                         </p>
                       </div>
-                      <span className="shrink-0 rounded-full bg-sky-500/20 text-sky-300 px-2.5 py-0.5 text-[11px] font-medium">
+                      <span className="shrink-0 rounded-full bg-sky-500/20 text-sky-700 dark:text-sky-300 px-2.5 py-0.5 text-[11px] font-medium">
                         {lesson.status}
                       </span>
                     </button>
@@ -387,7 +387,7 @@ export default function AdminSpotlightModal({
             {/* Hızlı İşlemler */}
             {filteredQuickActions.length > 0 && (
               <div>
-                <div className="flex items-center gap-1.5 px-2 mb-1 text-[11px] font-bold uppercase tracking-wider text-amber-400">
+                <div className="flex items-center gap-1.5 px-2 mb-1 text-[11px] font-bold uppercase tracking-wider text-amber-600 dark:text-amber-400">
                   <Sparkles className="h-3.5 w-3.5" />
                   <span>Hızlı Eylemler & Kısayollar</span>
                 </div>
@@ -399,12 +399,12 @@ export default function AdminSpotlightModal({
                         key={action.id}
                         type="button"
                         onClick={action.onClick}
-                        className="flex items-center gap-2.5 rounded-xl border border-white/5 bg-white/[0.02] px-3 py-2 text-left transition hover:bg-white/10 group"
+                        className="flex items-center gap-2.5 rounded-xl border border-slate-200/80 dark:border-white/5 bg-slate-50/70 dark:bg-white/[0.02] px-3 py-2 text-left transition hover:bg-slate-100 dark:hover:bg-white/10 group"
                       >
-                        <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-amber-500/20 text-amber-400">
+                        <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-amber-500/20 text-amber-600 dark:text-amber-400">
                           <ActionIcon className="h-3.5 w-3.5" />
                         </div>
-                        <span className="text-xs font-semibold text-white group-hover:text-amber-300 transition-colors truncate">
+                        <span className="text-xs font-semibold text-slate-900 dark:text-white group-hover:text-amber-600 dark:group-hover:text-amber-300 transition-colors truncate">
                           {action.title}
                         </span>
                       </button>
@@ -415,14 +415,14 @@ export default function AdminSpotlightModal({
             )}
 
             {totalResults === 0 && (
-              <div className="py-8 text-center text-sm text-slate-400">
+              <div className="py-8 text-center text-sm text-slate-500 dark:text-slate-400">
                 "{query}" ile eşleşen öğrenci, test veya içerik bulunamadı.
               </div>
             )}
           </div>
 
           {/* Alt Kısayol Bilgilendirmesi */}
-          <div className="border-t border-white/10 px-4 py-2.5 bg-slate-950/40 flex items-center justify-between text-[11px] text-slate-400">
+          <div className="border-t border-slate-200 dark:border-white/10 px-4 py-2.5 bg-slate-50 dark:bg-slate-950/40 flex items-center justify-between text-[11px] text-slate-500 dark:text-slate-400">
             <span>Seçmek veya sekmeye gitmek için bir sonuca tıklayın</span>
             <span>Kapatmak için ESC</span>
           </div>

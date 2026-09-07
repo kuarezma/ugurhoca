@@ -110,15 +110,15 @@ export default function LoginPage() {
       <div className="absolute inset-0 -z-10 bg-gradient-to-br from-brand-primary/20 via-brand-pink/10 to-brand-orange/10" aria-hidden="true" />
 
       <div className="mx-auto flex min-h-screen max-w-6xl flex-col items-stretch gap-10 px-6 py-10 lg:flex-row lg:items-center">
-        <aside className="relative hidden flex-1 items-center justify-center overflow-hidden rounded-[2rem] border border-slate-800/80 bg-gradient-to-br from-slate-950 via-indigo-950 to-purple-950 p-10 text-white shadow-2xl lg:flex">
-          <div aria-hidden="true" className="absolute -left-16 -top-16 h-72 w-72 rounded-full bg-brand-primary/30 blur-3xl" />
-          <div aria-hidden="true" className="absolute -bottom-20 -right-20 h-80 w-80 rounded-full bg-brand-pink/30 blur-3xl" />
+        <aside className="relative hidden flex-1 items-center justify-center overflow-hidden rounded-[2rem] border border-slate-200 dark:border-slate-800/80 bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 dark:from-slate-950 dark:via-indigo-950 dark:to-purple-950 p-10 text-slate-900 dark:text-white shadow-2xl lg:flex">
+          <div aria-hidden="true" className="absolute -left-16 -top-16 h-72 w-72 rounded-full bg-brand-primary/20 dark:bg-brand-primary/30 blur-3xl" />
+          <div aria-hidden="true" className="absolute -bottom-20 -right-20 h-80 w-80 rounded-full bg-brand-pink/20 dark:bg-brand-pink/30 blur-3xl" />
           <div className="relative max-w-sm text-center">
             <Mascot pose="waving" size={200} className="mx-auto animate-float-y" />
-            <p className="mt-6 font-display text-2xl font-bold">
+            <p className="mt-6 font-display text-2xl font-bold text-slate-900 dark:text-white">
               Hoş geldin! Seni tekrar görmek güzel.
             </p>
-            <p className="mt-3 text-sm text-slate-200">
+            <p className="mt-3 text-sm text-slate-600 dark:text-slate-200">
               Kaldığın yerden devam et, rozetlerini topla ve seviyeni yükselt.
             </p>
           </div>
@@ -196,7 +196,7 @@ export default function LoginPage() {
               {error && (
                 <div
                   role="alert"
-                  className="animate-fade-in rounded-xl border border-red-500/40 bg-red-500/15 px-4 py-3 text-sm font-medium text-red-300"
+                  className="animate-fade-in rounded-xl border border-red-500/40 bg-red-500/15 px-4 py-3 text-sm font-medium text-red-700 dark:text-red-300"
                 >
                   {error}
                 </div>

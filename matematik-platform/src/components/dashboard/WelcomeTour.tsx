@@ -177,7 +177,7 @@ export default function WelcomeTour({ userId, userName }: WelcomeTourProps) {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
-        className="fixed inset-0 z-[130] flex items-center justify-center bg-slate-950/75 p-4 backdrop-blur-sm"
+        className="fixed inset-0 z-[130] flex items-center justify-center bg-slate-900/60 dark:bg-slate-950/75 p-4 backdrop-blur-sm"
         role="dialog"
         aria-modal="true"
         aria-labelledby={headingId}
@@ -192,29 +192,29 @@ export default function WelcomeTour({ userId, userName }: WelcomeTourProps) {
           initial={{ opacity: 0, scale: 0.95, y: 20 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.95, y: 10 }}
-          className="relative z-10 w-full max-w-md overflow-hidden rounded-3xl border border-white/10 bg-slate-900 shadow-2xl"
+          className="relative z-10 w-full max-w-md overflow-hidden rounded-3xl border border-slate-200 dark:border-white/10 bg-white dark:bg-slate-900 shadow-2xl"
         >
           <div
             className={`relative bg-gradient-to-br ${slide.tone} px-6 pb-5 pt-7`}
           >
-            <div className="flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.18em] text-white/70">
+            <div className="flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.18em] text-slate-700 dark:text-white/70">
               <Sparkles className="h-3.5 w-3.5" aria-hidden="true" />
               {slide.badge}
             </div>
             <div className="mt-3 flex items-start gap-4">
-              <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-white/10 text-white">
+              <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-white/80 dark:bg-white/10 text-slate-800 dark:text-white shadow-sm dark:shadow-none">
                 <Icon className="h-6 w-6" aria-hidden="true" />
               </span>
               <div className="min-w-0">
                 <h2
                   id={headingId}
-                  className="font-display text-xl font-bold text-white"
+                  className="font-display text-xl font-bold text-slate-900 dark:text-white"
                 >
                   {slide.title}
                 </h2>
                 {userName && stepIndex === 0 ? (
-                  <p className="mt-1 text-sm text-slate-200">
-                    Selam <strong className="text-white">{userName}</strong>,
+                  <p className="mt-1 text-sm text-slate-700 dark:text-slate-200">
+                    Selam <strong className="text-slate-900 dark:text-white">{userName}</strong>,
                     seni aramızda görmek güzel.
                   </p>
                 ) : null}
@@ -223,12 +223,12 @@ export default function WelcomeTour({ userId, userName }: WelcomeTourProps) {
           </div>
 
           <div className="px-6 py-5">
-            <p className="text-sm leading-relaxed text-slate-300">
+            <p className="text-sm leading-relaxed text-slate-700 dark:text-slate-300">
               {slide.description}
             </p>
           </div>
 
-          <div className="flex items-center justify-between gap-4 border-t border-white/10 px-6 py-4">
+          <div className="flex items-center justify-between gap-4 border-t border-slate-200 dark:border-white/10 px-6 py-4 bg-slate-50/70 dark:bg-transparent">
             <div
               role="tablist"
               aria-label="Tur ilerlemesi"
@@ -244,8 +244,8 @@ export default function WelcomeTour({ userId, userName }: WelcomeTourProps) {
                   onClick={() => setStepIndex(index)}
                   className={`h-1.5 rounded-full transition-all ${
                     index === stepIndex
-                      ? 'w-6 bg-white'
-                      : 'w-1.5 bg-white/25 hover:bg-white/40'
+                      ? 'w-6 bg-brand-primary dark:bg-white'
+                      : 'w-1.5 bg-slate-300 dark:bg-white/25 hover:bg-slate-400 dark:hover:bg-white/40'
                   }`}
                 />
               ))}
@@ -254,7 +254,7 @@ export default function WelcomeTour({ userId, userName }: WelcomeTourProps) {
               <button
                 type="button"
                 onClick={dismiss}
-                className="rounded-full px-3 py-1.5 text-xs font-semibold text-slate-400 hover:text-white"
+                className="rounded-full px-3 py-1.5 text-xs font-semibold text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-white"
               >
                 Atla
               </button>
@@ -270,7 +270,7 @@ export default function WelcomeTour({ userId, userName }: WelcomeTourProps) {
                 <button
                   type="button"
                   onClick={() => setStepIndex((idx) => idx + 1)}
-                  className="rounded-full bg-white/10 px-4 py-1.5 text-sm font-semibold text-white hover:bg-white/20"
+                  className="rounded-full bg-slate-200 dark:bg-white/10 px-4 py-1.5 text-sm font-semibold text-slate-800 dark:text-white hover:bg-slate-300 dark:hover:bg-white/20"
                 >
                   Sonraki
                 </button>

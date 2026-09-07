@@ -207,10 +207,10 @@ export default function AdminWorksheetCandidatesTab({
               <FileSearch className="h-3.5 w-3.5" />
               Test Adayları
             </div>
-            <h3 className="text-lg font-bold text-white">
+            <h3 className="text-lg font-bold text-slate-900 dark:text-white">
               Bulunan Yaprak Test Adayları
             </h3>
-            <p className="mt-1 max-w-2xl text-sm text-slate-400">
+            <p className="mt-1 max-w-2xl text-sm text-slate-600 dark:text-slate-400">
               Bu ekran adayları kontrol etmek ve uygun olmayanları reddetmek
               için hazırlandı. Yayınlanan PDF, bağlı Google Drive hesabına
               kopyalanır ve öğrenciye Drive bağlantısı gösterilir.
@@ -237,8 +237,8 @@ export default function AdminWorksheetCandidatesTab({
                   key={filter.status}
                   className={`rounded-xl border px-3 py-2 text-sm font-semibold transition ${
                     activeFilter === filter.status
-                      ? "border-amber-300/40 bg-amber-500/20 text-amber-100"
-                      : "border-white/10 bg-slate-900/70 text-slate-300 hover:border-white/20 hover:text-white"
+                      ? "border-amber-400/50 bg-amber-500/20 text-amber-900 dark:text-amber-100"
+                      : "border-slate-200 dark:border-white/10 bg-slate-100 dark:bg-slate-900/70 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:border-white/20 dark:hover:text-white"
                   }`}
                   onClick={() => setActiveFilter(filter.status)}
                   type="button"
@@ -310,10 +310,10 @@ export default function AdminWorksheetCandidatesTab({
               )}
               Kaynak Ayarları
             </div>
-            <h3 className="text-lg font-bold text-white">
+            <h3 className="text-lg font-bold text-slate-900 dark:text-white">
               {sourcePanelStyle.title}
             </h3>
-            <p className="mt-1 text-sm text-slate-300">
+            <p className="mt-1 text-sm text-slate-600 dark:text-slate-300">
               {invalidSourceCount > 0
                 ? `${invalidSourceCount} kaynak URL geçersiz. Lütfen http/https bağlantılarını kontrol edin.`
                 : invalidAllowedHostCount > 0
@@ -325,22 +325,22 @@ export default function AdminWorksheetCandidatesTab({
                 : "Bu Haftayı Tara için WORKSHEET_CANDIDATE_SOURCE_URLS ayarlanmalı."}
             </p>
             {invalidSourceCount > 0 && (
-              <p className="mt-2 text-xs text-red-100/80">
+              <p className="mt-2 text-xs text-red-600 dark:text-red-100/80">
                 İlk hatalı kaynak: {sourceStatus?.invalidSourceUrls?.[0]}
               </p>
             )}
             {invalidAllowedHostCount > 0 && (
-              <p className="mt-2 text-xs text-red-100/80">
+              <p className="mt-2 text-xs text-red-600 dark:text-red-100/80">
                 İlk hatalı alan adı: {sourceStatus?.invalidAllowedHosts?.[0]}
               </p>
             )}
             {unreachableSourceCount > 0 && (
-              <p className="mt-2 text-xs text-amber-100/90">
+              <p className="mt-2 text-xs text-amber-600 dark:text-amber-100/90">
                 İlk erişilemeyen kaynak: {sourceStatus?.unreachableSourceUrls?.[0]}
               </p>
             )}
             {sourceStatus?.health && (
-              <p className="mt-2 text-xs text-slate-300">
+              <p className="mt-2 text-xs text-slate-500 dark:text-slate-300">
                 Kaynak özeti: {sourceStatus.health.validSources} geçerli,{" "}
                 {typeof sourceStatus.health.reachableSources === "number"
                   ? `${sourceStatus.health.reachableSources} erişilebilir, `
@@ -356,14 +356,14 @@ export default function AdminWorksheetCandidatesTab({
               <div className="mt-3 grid gap-2 sm:grid-cols-2">
                 {sourceStatus?.sourceChecks?.slice(0, 4).map((check) => (
                   <div
-                    className="rounded-xl border border-white/10 bg-slate-950/30 px-3 py-2 text-xs text-slate-200"
+                    className="rounded-xl border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-slate-950/30 px-3 py-2 text-xs text-slate-800 dark:text-slate-200"
                     key={check.url}
                   >
                     <div className="flex items-center gap-2">
                       {check.ok ? (
-                        <CheckCircle2 className="h-3.5 w-3.5 text-emerald-300" />
+                        <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600 dark:text-emerald-300" />
                       ) : (
-                        <AlertTriangle className="h-3.5 w-3.5 text-amber-300" />
+                        <AlertTriangle className="h-3.5 w-3.5 text-amber-600 dark:text-amber-300" />
                       )}
                       <span className="font-semibold">
                         {check.ok
@@ -373,20 +373,20 @@ export default function AdminWorksheetCandidatesTab({
                             : "Ulaşılamadı"}
                       </span>
                     </div>
-                    <p className="mt-1 truncate text-slate-400">{check.url}</p>
+                    <p className="mt-1 truncate text-slate-500 dark:text-slate-400">{check.url}</p>
                   </div>
                 ))}
               </div>
             )}
           </div>
           {sourceStatus?.configured && (
-            <div className="max-w-xl text-xs text-emerald-100/80 lg:text-right">
+            <div className="max-w-xl text-xs text-emerald-700 dark:text-emerald-100/80 lg:text-right">
               {sourceStatus.allowedHosts.slice(0, 4).join(", ")}
               {sourceStatus.allowedHosts.length > 4 ? " ..." : ""}
             </div>
           )}
           <button
-            className="inline-flex min-h-10 items-center justify-center gap-2 rounded-xl border border-white/10 bg-slate-900/70 px-3 py-2 text-xs font-bold text-slate-200 transition hover:border-white/20 hover:text-white disabled:cursor-not-allowed disabled:opacity-60"
+            className="inline-flex min-h-10 items-center justify-center gap-2 rounded-xl border border-slate-200 dark:border-white/10 bg-slate-100 hover:bg-slate-200 dark:bg-slate-900/70 px-3 py-2 text-xs font-bold text-slate-700 dark:text-slate-200 transition dark:hover:border-white/20 dark:hover:text-white disabled:cursor-not-allowed disabled:opacity-60"
             disabled={isRefreshingSourceStatus}
             onClick={handleRefreshSourceStatus}
             type="button"
@@ -404,18 +404,18 @@ export default function AdminWorksheetCandidatesTab({
       <div className="glass rounded-2xl p-4 sm:p-6">
         <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
           <div>
-            <div className="mb-2 inline-flex items-center gap-2 rounded-full border border-sky-400/20 bg-sky-500/10 px-3 py-1 text-xs font-semibold text-sky-200">
+            <div className="mb-2 inline-flex items-center gap-2 rounded-full border border-sky-400/20 bg-sky-500/10 px-3 py-1 text-xs font-semibold text-sky-700 dark:text-sky-200">
               <Cloud className="h-3.5 w-3.5" />
               Google Drive
             </div>
-            <h3 className="text-lg font-bold text-white">
+            <h3 className="text-lg font-bold text-slate-900 dark:text-white">
               {!driveConfigured
                 ? "Drive ayarları eksik"
                 : driveConnection?.connected
                   ? "Drive hesabı bağlı"
                   : "Drive hesabı bağlı değil"}
             </h3>
-            <p className="mt-1 text-sm text-slate-400">
+            <p className="mt-1 text-sm text-slate-600 dark:text-slate-400">
               {!driveConfigured
                 ? "GOOGLE_DRIVE_CLIENT_ID, GOOGLE_DRIVE_CLIENT_SECRET ve GOOGLE_DRIVE_REDIRECT_URI ayarlanmalı."
                 : driveConnection?.connected
@@ -423,14 +423,14 @@ export default function AdminWorksheetCandidatesTab({
                   : "PDF’leri Drive’a kopyalama için Google hesabınızı bağlayın."}
             </p>
             {!driveConfigured && driveConnection?.missingKeys?.length ? (
-              <p className="mt-2 text-xs text-red-200">
+              <p className="mt-2 text-xs text-red-600 dark:text-red-200">
                 Eksik: {driveConnection.missingKeys.join(", ")}
               </p>
             ) : null}
           </div>
           {driveConnection?.connected ? (
             <button
-              className="inline-flex min-h-11 items-center justify-center rounded-xl border border-red-400/20 bg-red-500/10 px-4 py-2 text-sm font-bold text-red-100 transition hover:bg-red-500/20 disabled:cursor-not-allowed disabled:opacity-60"
+              className="inline-flex min-h-11 items-center justify-center rounded-xl border border-red-200 dark:border-red-400/20 bg-red-50 dark:bg-red-500/10 px-4 py-2 text-sm font-bold text-red-700 dark:text-red-100 transition hover:bg-red-100 dark:hover:bg-red-500/20 disabled:cursor-not-allowed disabled:opacity-60"
               disabled={isDriveBusy}
               onClick={onDisconnectDrive}
               type="button"
@@ -451,11 +451,9 @@ export default function AdminWorksheetCandidatesTab({
       </div>
 
       {filteredCandidates.length === 0 ? (
-        <div className="glass rounded-2xl p-12 text-center">
-          <FileSearch className="mx-auto mb-4 h-16 w-16 text-slate-500" />
-          <p className="text-slate-400">
-            Bu filtrede gösterilecek test adayı yok.
-          </p>
+        <div className="glass rounded-2xl p-12 text-center text-slate-500 dark:text-slate-400">
+          <FileSearch className="mx-auto mb-4 h-16 w-16 opacity-50" />
+          <p>Bu filtrede gösterilecek test adayı yok.</p>
         </div>
       ) : (
         <div className="space-y-4">
@@ -484,26 +482,26 @@ export default function AdminWorksheetCandidatesTab({
                       )}
                       {STATUS_LABEL[candidate.status] || "Bekliyor"}
                     </span>
-                    <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs font-semibold text-slate-300">
+                    <span className="rounded-full border border-slate-200 dark:border-white/10 bg-slate-100 dark:bg-white/5 px-3 py-1 text-xs font-semibold text-slate-700 dark:text-slate-300">
                       {candidate.grade}. Sınıf
                     </span>
-                    <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs font-semibold text-slate-300">
+                    <span className="rounded-full border border-slate-200 dark:border-white/10 bg-slate-100 dark:bg-white/5 px-3 py-1 text-xs font-semibold text-slate-700 dark:text-slate-300">
                       Eşleşme %{candidate.match_score}
                     </span>
                   </div>
 
-                  <h3 className="truncate text-lg font-bold text-white">
+                  <h3 className="truncate text-lg font-bold text-slate-900 dark:text-white">
                     {candidate.title}
                   </h3>
-                  <p className="mt-1 text-sm text-slate-400">
+                  <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
                     {formatShortDate(candidate.week_start)} -{" "}
                     {formatShortDate(candidate.week_end)} · {candidate.subject}
                   </p>
-                  <p className="mt-2 line-clamp-2 text-sm text-slate-300">
+                  <p className="mt-2 line-clamp-2 text-sm text-slate-600 dark:text-slate-300">
                     {candidate.learning_outcome}
                   </p>
                   {candidate.match_reason && (
-                    <p className="mt-2 rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-xs text-slate-300">
+                    <p className="mt-2 rounded-xl border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-white/5 px-3 py-2 text-xs text-slate-600 dark:text-slate-300">
                       Eşleşme nedeni: {candidate.match_reason}
                     </p>
                   )}
@@ -511,7 +509,7 @@ export default function AdminWorksheetCandidatesTab({
                     Kaynak: {candidate.source_name || "İzinli kaynak"}
                   </p>
                   {candidate.rejection_reason && (
-                    <p className="mt-3 rounded-xl border border-red-400/20 bg-red-500/10 px-3 py-2 text-sm text-red-100">
+                    <p className="mt-3 rounded-xl border border-red-200 dark:border-red-400/20 bg-red-50 dark:bg-red-500/10 px-3 py-2 text-sm text-red-700 dark:text-red-100">
                       Ret nedeni: {candidate.rejection_reason}
                     </p>
                   )}
@@ -519,7 +517,7 @@ export default function AdminWorksheetCandidatesTab({
 
                 <div className="grid gap-2 sm:grid-cols-2 lg:w-96">
                   <a
-                    className="inline-flex items-center justify-center gap-2 rounded-xl border border-white/10 bg-slate-900/70 px-3 py-2 text-sm font-semibold text-slate-200 transition hover:border-white/20 hover:text-white"
+                    className="inline-flex items-center justify-center gap-2 rounded-xl border border-slate-200 dark:border-white/10 bg-slate-100 hover:bg-slate-200 dark:bg-slate-900/70 px-3 py-2 text-sm font-semibold text-slate-700 dark:text-slate-200 transition dark:hover:border-white/20 dark:hover:text-white"
                     href={candidate.file_url}
                     rel="noreferrer"
                     target="_blank"
@@ -528,7 +526,7 @@ export default function AdminWorksheetCandidatesTab({
                     PDF
                   </a>
                   <a
-                    className="inline-flex items-center justify-center gap-2 rounded-xl border border-white/10 bg-slate-900/70 px-3 py-2 text-sm font-semibold text-slate-200 transition hover:border-white/20 hover:text-white"
+                    className="inline-flex items-center justify-center gap-2 rounded-xl border border-slate-200 dark:border-white/10 bg-slate-100 hover:bg-slate-200 dark:bg-slate-900/70 px-3 py-2 text-sm font-semibold text-slate-700 dark:text-slate-200 transition dark:hover:border-white/20 dark:hover:text-white"
                     href={candidate.source_url}
                     rel="noreferrer"
                     target="_blank"

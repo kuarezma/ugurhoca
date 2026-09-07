@@ -74,10 +74,10 @@ export function MathInputToolbar({ onInsertSymbol, className = '' }: MathInputTo
   const quickSymbols = ['²', '√', 'π', '≤', '≥', '≠', '±', '°'];
 
   return (
-    <div className={`rounded-xl border border-white/10 bg-slate-900/80 backdrop-blur-sm p-1.5 text-xs ${className}`}>
+    <div className={`rounded-xl border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-slate-900/80 backdrop-blur-sm p-1.5 text-xs ${className}`}>
       <div className="flex items-center justify-between gap-1">
         <div className="flex items-center gap-1 overflow-x-auto [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-          <span className="text-[10px] font-bold text-indigo-400 px-1.5 flex items-center gap-1 shrink-0">
+          <span className="text-[10px] font-bold text-indigo-600 dark:text-indigo-400 px-1.5 flex items-center gap-1 shrink-0">
             <Calculator className="w-3 h-3" />
             <span className="hidden sm:inline">Sembol:</span>
           </span>
@@ -87,7 +87,7 @@ export function MathInputToolbar({ onInsertSymbol, className = '' }: MathInputTo
               key={sym}
               type="button"
               onClick={() => onInsertSymbol(sym)}
-              className="h-7 min-w-[28px] px-1.5 rounded-lg bg-white/5 hover:bg-white/15 text-white font-mono font-bold text-xs transition active:scale-95 shrink-0"
+              className="h-7 min-w-[28px] px-1.5 rounded-lg bg-white dark:bg-white/5 hover:bg-slate-200/70 dark:hover:bg-white/15 text-slate-800 dark:text-white border border-slate-200 dark:border-transparent font-mono font-bold text-xs transition active:scale-95 shrink-0 shadow-sm dark:shadow-none"
               title={`${sym} ekle`}
             >
               {sym}
@@ -98,7 +98,7 @@ export function MathInputToolbar({ onInsertSymbol, className = '' }: MathInputTo
         <button
           type="button"
           onClick={() => setIsExpanded((prev) => !prev)}
-          className="inline-flex items-center gap-1 px-2 py-1 rounded-lg bg-indigo-600/20 text-indigo-300 hover:bg-indigo-600/30 text-[10px] font-bold transition shrink-0"
+          className="inline-flex items-center gap-1 px-2 py-1 rounded-lg bg-indigo-50 dark:bg-indigo-600/20 text-indigo-700 dark:text-indigo-300 hover:bg-indigo-100 dark:hover:bg-indigo-600/30 border border-indigo-200 dark:border-transparent text-[10px] font-bold transition shrink-0"
         >
           <span>{isExpanded ? 'Kapat' : 'Tümü'}</span>
           {isExpanded ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
@@ -106,7 +106,7 @@ export function MathInputToolbar({ onInsertSymbol, className = '' }: MathInputTo
       </div>
 
       {isExpanded && (
-        <div className="mt-2 pt-2 border-t border-white/10 space-y-2 animate-fade-in">
+        <div className="mt-2 pt-2 border-t border-slate-200 dark:border-white/10 space-y-2 animate-fade-in">
           {/* Grup Tabları */}
           <div className="flex items-center gap-1 overflow-x-auto pb-1">
             {MATH_SYMBOL_GROUPS.map((group, idx) => (
@@ -117,7 +117,7 @@ export function MathInputToolbar({ onInsertSymbol, className = '' }: MathInputTo
                 className={`px-2 py-0.5 rounded text-[10px] font-semibold whitespace-nowrap transition ${
                   activeGroupIndex === idx
                     ? 'bg-indigo-600 text-white'
-                    : 'bg-white/5 text-slate-400 hover:text-white'
+                    : 'bg-white dark:bg-white/5 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white border border-slate-200 dark:border-transparent'
                 }`}
               >
                 {group.name}
@@ -132,7 +132,7 @@ export function MathInputToolbar({ onInsertSymbol, className = '' }: MathInputTo
                 key={item.value}
                 type="button"
                 onClick={() => onInsertSymbol(item.value)}
-                className="h-8 rounded-lg bg-slate-800 hover:bg-indigo-600/40 border border-white/5 text-white font-mono font-bold text-xs flex items-center justify-center transition active:scale-95"
+                className="h-8 rounded-lg bg-white dark:bg-slate-800 hover:bg-indigo-50 dark:hover:bg-indigo-600/40 border border-slate-200 dark:border-white/5 text-slate-800 dark:text-white font-mono font-bold text-xs flex items-center justify-center transition active:scale-95 shadow-sm dark:shadow-none"
                 title={item.title}
               >
                 {item.label}

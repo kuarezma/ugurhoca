@@ -173,10 +173,10 @@ export default function AdminAnnualPlanTab({
               <CalendarDays className="h-3.5 w-3.5" />
               Yıllık Plan
             </div>
-            <h3 className="text-lg font-bold text-white">
+            <h3 className="text-lg font-bold text-slate-900 dark:text-white">
               Plan Dosyası Yükle
             </h3>
-            <p className="mt-1 max-w-2xl text-sm text-slate-400">
+            <p className="mt-1 max-w-2xl text-sm text-slate-600 dark:text-slate-400">
               CSV/XLSX için sinif, hafta_baslangic, hafta_bitis, konu ve
               kazanim kolonları gerekir. DOCX tablolarında Tarih, Öğrenme Alanı
               ve Kazanımlar başlıkları da okunur.
@@ -184,9 +184,9 @@ export default function AdminAnnualPlanTab({
           </div>
 
           <div className="grid gap-3 sm:grid-cols-[minmax(0,1fr)_auto] lg:w-[34rem]">
-            <div className="flex min-h-12 items-center overflow-hidden rounded-xl border border-white/10 bg-slate-900/70 text-sm text-slate-300 transition focus-within:border-emerald-400/40 hover:border-emerald-400/40">
+            <div className="flex min-h-12 items-center overflow-hidden rounded-xl border border-slate-200 dark:border-white/10 bg-slate-100 dark:bg-slate-900/70 text-sm text-slate-700 dark:text-slate-300 transition focus-within:border-emerald-500 hover:border-emerald-500">
               <label className="flex min-w-0 flex-1 cursor-pointer items-center gap-3 px-4 py-3">
-                <FileSpreadsheet className="h-5 w-5 shrink-0 text-emerald-300" />
+                <FileSpreadsheet className="h-5 w-5 shrink-0 text-emerald-600 dark:text-emerald-300" />
                 <span className="min-w-0 flex-1 truncate">
                   {selectedFile?.name || "Dosya seç"}
                 </span>
@@ -215,7 +215,7 @@ export default function AdminAnnualPlanTab({
               {selectedFile && (
                 <button
                   aria-label="Seçilen dosyayı temizle"
-                  className="flex h-12 w-12 shrink-0 items-center justify-center border-l border-white/10 text-slate-400 transition hover:bg-white/5 hover:text-white disabled:cursor-not-allowed disabled:opacity-50"
+                  className="flex h-12 w-12 shrink-0 items-center justify-center border-l border-slate-200 dark:border-white/10 text-slate-500 dark:text-slate-400 transition hover:bg-slate-200 dark:hover:bg-white/5 hover:text-slate-900 dark:hover:text-white disabled:cursor-not-allowed disabled:opacity-50"
                   disabled={isImporting}
                   onClick={() => setSelectedFile(null)}
                   type="button"
@@ -234,7 +234,7 @@ export default function AdminAnnualPlanTab({
               {isImporting ? "Yükleniyor" : "İçe Aktar"}
             </button>
             <button
-              className="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl border border-emerald-400/20 bg-emerald-500/10 px-5 py-3 text-sm font-bold text-emerald-100 transition hover:bg-emerald-500/20 sm:col-span-2"
+              className="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl border border-emerald-200 dark:border-emerald-400/20 bg-emerald-50 dark:bg-emerald-500/10 px-5 py-3 text-sm font-bold text-emerald-700 dark:text-emerald-100 transition hover:bg-emerald-100 dark:hover:bg-emerald-500/20 sm:col-span-2"
               onClick={handleDownloadSample}
               type="button"
             >
@@ -245,14 +245,14 @@ export default function AdminAnnualPlanTab({
         </div>
 
         {!sourcesReady && (
-          <div className="mt-4 flex items-start gap-3 rounded-xl border border-amber-400/20 bg-amber-500/10 px-4 py-3 text-sm text-amber-100">
+          <div className="mt-4 flex items-start gap-3 rounded-xl border border-amber-400/20 bg-amber-500/10 px-4 py-3 text-sm text-amber-900 dark:text-amber-100">
             <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" />
             <p>{getSourceWarningMessage(sourceStatus)}</p>
           </div>
         )}
 
         {lastResult && (
-          <div className="mt-4 rounded-xl border border-emerald-400/20 bg-emerald-500/10 px-4 py-3 text-sm text-emerald-100">
+          <div className="mt-4 rounded-xl border border-emerald-400/20 bg-emerald-500/10 px-4 py-3 text-sm text-emerald-900 dark:text-emerald-100">
             Son işlem: {lastResult.inserted} yeni satır eklendi,{" "}
             {lastResult.skipped} tekrar atlandı.
           </div>
@@ -260,26 +260,26 @@ export default function AdminAnnualPlanTab({
       </div>
 
       {items.length === 0 ? (
-        <div className="glass rounded-2xl p-12 text-center">
-          <FileSpreadsheet className="mx-auto mb-4 h-16 w-16 text-slate-500" />
-          <p className="text-slate-400">Henüz yıllık plan yüklenmedi.</p>
+        <div className="glass rounded-2xl p-12 text-center text-slate-500 dark:text-slate-400">
+          <FileSpreadsheet className="mx-auto mb-4 h-16 w-16 opacity-50" />
+          <p>Henüz yıllık plan yüklenmedi.</p>
         </div>
       ) : (
         <div className="space-y-4">
           {groupedItems.map(([grade, gradeItems]) => (
             <section key={grade} className="glass rounded-2xl p-4 sm:p-6">
               <div className="mb-4 flex items-center justify-between gap-3">
-                <h3 className="text-lg font-bold text-white">
+                <h3 className="text-lg font-bold text-slate-900 dark:text-white">
                   {grade}. Sınıf
                 </h3>
-                <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs font-semibold text-slate-300">
+                <span className="rounded-full border border-slate-200 dark:border-white/10 bg-slate-100 dark:bg-white/5 px-3 py-1 text-xs font-semibold text-slate-700 dark:text-slate-300">
                   {gradeItems.length} kayıt
                 </span>
               </div>
               <div className="overflow-x-auto">
                 <table className="min-w-[860px] w-full text-left text-sm">
-                  <thead className="text-xs uppercase text-slate-500">
-                    <tr className="border-b border-white/10">
+                  <thead className="text-xs uppercase text-slate-500 dark:text-slate-400">
+                    <tr className="border-b border-slate-200 dark:border-white/10">
                       <th className="px-3 py-3 font-semibold">Hafta</th>
                       <th className="px-3 py-3 font-semibold">Konu</th>
                       <th className="px-3 py-3 font-semibold">Kazanım</th>
@@ -291,22 +291,22 @@ export default function AdminAnnualPlanTab({
                     {gradeItems.map((item) => (
                       <tr
                         key={item.id}
-                        className="border-b border-white/5 text-slate-300 last:border-0"
+                        className="border-b border-slate-100 dark:border-white/5 text-slate-700 dark:text-slate-300 last:border-0"
                       >
-                        <td className="whitespace-nowrap px-3 py-3 text-slate-400">
+                        <td className="whitespace-nowrap px-3 py-3 text-slate-500 dark:text-slate-400">
                           {formatShortDate(item.week_start)} -{" "}
                           {formatShortDate(item.week_end)}
                         </td>
-                        <td className="px-3 py-3 font-medium text-white">
+                        <td className="px-3 py-3 font-medium text-slate-900 dark:text-white">
                           {item.subject}
                         </td>
                         <td className="px-3 py-3">{item.learning_outcome}</td>
-                        <td className="px-3 py-3 text-slate-400">
+                        <td className="px-3 py-3 text-slate-500 dark:text-slate-400">
                           {item.description || "-"}
                         </td>
                         <td className="whitespace-nowrap px-3 py-3">
                           <button
-                            className="inline-flex items-center justify-center gap-2 rounded-xl border border-amber-400/20 bg-amber-500/10 px-3 py-2 text-xs font-bold text-amber-100 transition hover:bg-amber-500/20 disabled:cursor-not-allowed disabled:opacity-60"
+                            className="inline-flex items-center justify-center gap-2 rounded-xl border border-amber-200 dark:border-amber-400/20 bg-amber-50 dark:bg-amber-500/10 px-3 py-2 text-xs font-bold text-amber-700 dark:text-amber-100 transition hover:bg-amber-100 dark:hover:bg-amber-500/20 disabled:cursor-not-allowed disabled:opacity-60"
                             disabled={discoveringItemId !== null || !sourcesReady}
                             onClick={() => handleDiscoverCandidates(item)}
                             type="button"

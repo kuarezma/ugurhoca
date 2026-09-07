@@ -154,18 +154,18 @@ export function SubmissionDrawingModal({
       aria-label="Ödev Çizim ve İnceleme Paneli"
       className="fixed inset-0 z-[160] flex items-center justify-center bg-slate-950/85 p-2 sm:p-4 backdrop-blur-md"
     >
-      <div className="relative flex flex-col w-full max-w-5xl max-h-[94vh] bg-slate-900 border border-slate-700/80 rounded-3xl shadow-2xl overflow-hidden text-slate-100">
+      <div className="relative flex flex-col w-full max-w-5xl max-h-[94vh] bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700/80 rounded-3xl shadow-2xl overflow-hidden text-slate-900 dark:text-slate-100">
         {/* HEADER */}
-        <div className="flex flex-wrap items-center justify-between gap-3 p-4 border-b border-slate-700/80 bg-slate-950/70">
+        <div className="flex flex-wrap items-center justify-between gap-3 p-4 border-b border-slate-200 dark:border-slate-700/80 bg-slate-50 dark:bg-slate-950/70">
           <div className="flex items-center gap-2.5">
-            <div className="p-2 rounded-xl bg-rose-500/20 text-rose-400 border border-rose-500/30">
+            <div className="p-2 rounded-xl bg-rose-500/20 text-rose-600 dark:text-rose-400 border border-rose-500/30">
               <PenTool className="w-5 h-5" />
             </div>
             <div>
-              <h3 className="font-bold text-base sm:text-lg text-white">
+              <h3 className="font-bold text-base sm:text-lg text-slate-900 dark:text-white">
                 Ödev İnceleme & Çizim Notu
               </h3>
-              <p className="text-xs text-slate-400">
+              <p className="text-xs text-slate-500 dark:text-slate-400">
                 {studentName} adlı öğrencinin ödev görseli üzerine kırmızı kalemle işaretleme yapın
               </p>
             </div>
@@ -175,7 +175,7 @@ export function SubmissionDrawingModal({
             <button
               type="button"
               onClick={handleDownload}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-slate-200 border border-slate-700 transition"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-xs font-semibold text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 transition"
               title="İşaretli görseli indir"
             >
               <Download className="w-3.5 h-3.5" />
@@ -185,7 +185,7 @@ export function SubmissionDrawingModal({
               type="button"
               onClick={onClose}
               aria-label="Kapat"
-              className="p-1.5 rounded-xl text-slate-400 hover:bg-white/10 hover:text-white transition"
+              className="p-1.5 rounded-xl text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-white/10 hover:text-slate-900 dark:hover:text-white transition"
             >
               <X className="w-5 h-5" />
             </button>
@@ -193,9 +193,9 @@ export function SubmissionDrawingModal({
         </div>
 
         {/* TOOLBAR */}
-        <div className="flex flex-wrap items-center justify-between gap-3 px-4 py-2.5 bg-slate-800/60 border-b border-slate-700/60 text-xs">
+        <div className="flex flex-wrap items-center justify-between gap-3 px-4 py-2.5 bg-slate-100/80 dark:bg-slate-800/60 border-b border-slate-200 dark:border-slate-700/60 text-xs">
           <div className="flex items-center gap-2">
-            <span className="text-slate-400 font-semibold mr-1 flex items-center gap-1">
+            <span className="text-slate-600 dark:text-slate-400 font-semibold mr-1 flex items-center gap-1">
               <Palette className="w-3.5 h-3.5" />
               Renk:
             </span>
@@ -209,7 +209,7 @@ export function SubmissionDrawingModal({
                 }}
                 className={`w-6 h-6 rounded-full transition-transform ${
                   currentColor === c.value && !isEraser
-                    ? 'ring-2 ring-white scale-110'
+                    ? 'ring-2 ring-indigo-500 dark:ring-white scale-110'
                     : 'opacity-80 hover:opacity-100'
                 }`}
                 style={{ backgroundColor: c.value }}
@@ -222,8 +222,8 @@ export function SubmissionDrawingModal({
               onClick={() => setIsEraser(!isEraser)}
               className={`flex items-center gap-1 px-2.5 py-1 rounded-lg border transition ${
                 isEraser
-                  ? 'bg-rose-500/20 text-rose-300 border-rose-500/30'
-                  : 'bg-slate-700/60 text-slate-300 border-slate-600'
+                  ? 'bg-rose-500/20 text-rose-700 dark:text-rose-300 border-rose-500/30'
+                  : 'bg-white dark:bg-slate-700/60 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-600'
               }`}
             >
               <Eraser className="w-3.5 h-3.5" />
@@ -233,7 +233,7 @@ export function SubmissionDrawingModal({
 
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-2">
-              <span className="text-slate-400">Kalınlık:</span>
+              <span className="text-slate-600 dark:text-slate-400">Kalınlık:</span>
               <input
                 type="range"
                 min="1"
@@ -247,7 +247,7 @@ export function SubmissionDrawingModal({
             <button
               type="button"
               onClick={handleClear}
-              className="flex items-center gap-1 text-slate-400 hover:text-rose-400 font-medium transition"
+              className="flex items-center gap-1 text-slate-500 hover:text-rose-600 dark:text-slate-400 dark:hover:text-rose-400 font-medium transition"
             >
               <RotateCcw className="w-3.5 h-3.5" />
               <span>Temizle</span>
@@ -256,7 +256,7 @@ export function SubmissionDrawingModal({
         </div>
 
         {/* CANVAS WORKSPACE */}
-        <div className="flex-1 overflow-auto p-4 flex items-center justify-center bg-slate-950/80 min-h-[400px]">
+        <div className="flex-1 overflow-auto p-4 flex items-center justify-center bg-slate-100 dark:bg-slate-950/80 min-h-[400px]">
           <canvas
             ref={canvasRef}
             onMouseDown={startDrawing}
@@ -266,20 +266,20 @@ export function SubmissionDrawingModal({
             onTouchStart={startDrawing}
             onTouchMove={draw}
             onTouchEnd={stopDrawing}
-            className="border border-slate-700/60 rounded-xl shadow-lg cursor-crosshair max-w-full max-h-[65vh] object-contain bg-slate-900"
+            className="border border-slate-200 dark:border-slate-700/60 rounded-xl shadow-lg cursor-crosshair max-w-full max-h-[65vh] object-contain bg-white dark:bg-slate-900"
           />
         </div>
 
         {/* FOOTER */}
-        <div className="flex items-center justify-between p-4 border-t border-slate-700/80 bg-slate-950/70 text-xs">
-          <span className="text-slate-400">
+        <div className="flex items-center justify-between p-4 border-t border-slate-200 dark:border-slate-700/80 bg-slate-50 dark:bg-slate-950/70 text-xs">
+          <span className="text-slate-500 dark:text-slate-400">
             {hasDrawn ? '✏️ Görsel üzerine notlar çizildi' : 'Çizim yapmak için tıklayıp sürükleyin'}
           </span>
           <div className="flex items-center gap-2">
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 rounded-xl text-slate-300 hover:bg-slate-800 transition font-medium"
+              className="px-4 py-2 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-800 transition font-medium"
             >
               İptal
             </button>

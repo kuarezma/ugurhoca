@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useMemo, useState } from "react";
-import { PlayCircle, FileText, Download } from "lucide-react";
+import { PlayCircle, Download, FileText } from "lucide-react";
 import type {
   LiveLesson,
   LiveLessonDashboardData,
@@ -293,11 +293,11 @@ export default function AdminLiveLessonsTab({ data, onRefresh, students }: Props
 
   return (
     <div className="space-y-5">
-      <div className="rounded-2xl border border-white/10 bg-slate-900/80 p-5">
+      <div className="rounded-2xl border border-slate-200/80 dark:border-white/10 bg-white/80 dark:bg-slate-900/80 p-5 shadow-sm">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h2 className="text-2xl font-bold text-white">Canlı Dersler</h2>
-            <p className="text-sm text-slate-400">
+            <h2 className="text-2xl font-bold text-slate-900 dark:text-white">Canlı Dersler</h2>
+            <p className="text-sm text-slate-600 dark:text-slate-400">
               Planlama, aktif dersler, yoklama ve soru cevap kayıtları.
             </p>
           </div>
@@ -306,10 +306,10 @@ export default function AdminLiveLessonsTab({ data, onRefresh, students }: Props
               <button
                 type="button"
                 onClick={() => exportAllAttendanceCsv(data)}
-                className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl bg-white/10 px-4 text-sm font-semibold text-white hover:bg-white/20 transition-colors"
+                className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl border border-slate-200 dark:border-transparent bg-slate-100 hover:bg-slate-200 dark:bg-white/10 dark:hover:bg-white/20 px-4 text-sm font-semibold text-slate-700 dark:text-white transition-colors"
                 title="Tüm canlı derslerin yoklama verisini Excel / CSV olarak indir"
               >
-                <Download className="w-4 h-4 text-emerald-400" />
+                <Download className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
                 <span>Tüm Katılım Özeti (CSV)</span>
               </button>
             )}
@@ -325,7 +325,7 @@ export default function AdminLiveLessonsTab({ data, onRefresh, students }: Props
 
       <div className="grid gap-4">
         {data.lessons.length === 0 ? (
-          <div className="rounded-2xl border border-white/10 bg-slate-900/70 p-6 text-slate-300">
+          <div className="rounded-2xl border border-slate-200/80 dark:border-white/10 bg-white/80 dark:bg-slate-900/70 p-6 text-slate-600 dark:text-slate-300 shadow-sm">
             Henüz canlı ders planlanmadı.
           </div>
         ) : (
@@ -341,17 +341,17 @@ export default function AdminLiveLessonsTab({ data, onRefresh, students }: Props
             return (
               <article
                 key={lesson.id}
-                className="rounded-2xl border border-white/10 bg-slate-900/80 p-5 text-white"
+                className="rounded-2xl border border-slate-200/80 dark:border-white/10 bg-white/80 dark:bg-slate-900/80 p-5 text-slate-900 dark:text-white shadow-sm"
               >
                 <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
                   <div>
-                    <h3 className="text-lg font-bold">{lesson.title}</h3>
-                    <p className="mt-1 text-sm text-slate-400">
+                    <h3 className="text-lg font-bold text-slate-900 dark:text-white">{lesson.title}</h3>
+                    <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
                       {formatDate(lesson.starts_at)} · {formatAudience(lesson, students)} ·{" "}
                       {lesson.duration_minutes} dk
                     </p>
                     {lesson.description ? (
-                      <p className="mt-2 text-sm text-slate-300">{lesson.description}</p>
+                      <p className="mt-2 text-sm text-slate-600 dark:text-slate-300">{lesson.description}</p>
                     ) : null}
                   </div>
                   <div className="flex flex-wrap items-center gap-2">
@@ -360,14 +360,14 @@ export default function AdminLiveLessonsTab({ data, onRefresh, students }: Props
                         href={lesson.recording_url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex items-center gap-1 rounded-full border border-purple-500/40 bg-purple-500/15 px-2.5 py-0.5 text-xs font-semibold text-purple-300 hover:bg-purple-500/25 transition"
+                        className="inline-flex items-center gap-1 rounded-full border border-purple-500/40 bg-purple-500/15 px-2.5 py-0.5 text-xs font-semibold text-purple-700 dark:text-purple-300 hover:bg-purple-500/25 transition"
                         title="Ders kaydını aç"
                       >
                         <PlayCircle className="h-3 w-3" />
                         <span>Kayıt İzle</span>
                       </a>
                     ) : lesson.status === "ended" ? (
-                      <span className="inline-flex items-center gap-1 rounded-full border border-slate-700 bg-slate-800/60 px-2.5 py-0.5 text-xs text-slate-400">
+                      <span className="inline-flex items-center gap-1 rounded-full border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800/60 px-2.5 py-0.5 text-xs text-slate-600 dark:text-slate-400">
                         Kayıt Yok
                       </span>
                     ) : null}
@@ -377,7 +377,7 @@ export default function AdminLiveLessonsTab({ data, onRefresh, students }: Props
                         href={lesson.materials_url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex items-center gap-1 rounded-full border border-blue-500/40 bg-blue-500/15 px-2.5 py-0.5 text-xs font-semibold text-blue-300 hover:bg-blue-500/25 transition"
+                        className="inline-flex items-center gap-1 rounded-full border border-blue-500/40 bg-blue-500/15 px-2.5 py-0.5 text-xs font-semibold text-blue-700 dark:text-blue-300 hover:bg-blue-500/25 transition"
                         title="Ders notlarını aç"
                       >
                         <FileText className="h-3 w-3" />
@@ -385,55 +385,71 @@ export default function AdminLiveLessonsTab({ data, onRefresh, students }: Props
                       </a>
                     ) : null}
 
-                    <span className="w-fit rounded-full bg-white/10 px-3 py-1 text-xs font-semibold">
-                      {lesson.status}
+                    <span
+                      className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-semibold ${
+                        lesson.status === "active"
+                          ? "bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 animate-pulse"
+                          : lesson.status === "scheduled"
+                            ? "bg-amber-500/20 text-amber-700 dark:text-amber-300"
+                            : lesson.status === "cancelled"
+                              ? "bg-red-500/20 text-red-700 dark:text-red-300"
+                              : "bg-slate-500/20 text-slate-700 dark:text-slate-300"
+                      }`}
+                    >
+                      {lesson.status === "active"
+                        ? "Canlı"
+                        : lesson.status === "scheduled"
+                          ? "Planlandı"
+                          : lesson.status === "cancelled"
+                            ? "İptal"
+                            : "Bitti"}
                     </span>
                   </div>
                 </div>
 
-                <div className="mt-4 grid gap-3 sm:grid-cols-3">
-                  <div className="rounded-xl bg-white/5 p-3">
-                    <p className="text-xs text-slate-400">Yoklama</p>
+                <div className="mt-4 grid grid-cols-3 gap-2 sm:max-w-md">
+                  <div className="rounded-xl bg-slate-50 dark:bg-white/5 border border-slate-100 dark:border-transparent p-3">
+                    <p className="text-xs text-slate-500 dark:text-slate-400">Katılımcı</p>
                     <p className="text-xl font-bold">{participants}</p>
                   </div>
-                  <div className="rounded-xl bg-white/5 p-3">
-                    <p className="text-xs text-slate-400">Cevap</p>
+                  <div className="rounded-xl bg-slate-50 dark:bg-white/5 border border-slate-100 dark:border-transparent p-3">
+                    <p className="text-xs text-slate-500 dark:text-slate-400">Cevap</p>
                     <p className="text-xl font-bold">{answers}</p>
                   </div>
-                  <div className="rounded-xl bg-white/5 p-3">
-                    <p className="text-xs text-slate-400">Sohbet</p>
+                  <div className="rounded-xl bg-slate-50 dark:bg-white/5 border border-slate-100 dark:border-transparent p-3">
+                    <p className="text-xs text-slate-500 dark:text-slate-400">Sohbet</p>
                     <p className="text-xl font-bold">{chats}</p>
                   </div>
                 </div>
 
-                <div className="mt-4 rounded-xl border border-white/10 bg-slate-950/50 p-4">
+                <div className="mt-4 rounded-xl border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-slate-950/50 p-4">
                   <div className="flex items-center justify-between">
                     <p className="text-sm font-semibold">Yoklama raporu</p>
                     {attendanceRows.length > 0 && (
                       <button
                         type="button"
                         onClick={() => exportAttendanceCsv(lesson, attendanceRows)}
-                        className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-white/10 hover:bg-white/20 text-xs font-semibold text-slate-200 transition-colors"
+                        className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg border border-slate-300/60 dark:border-transparent bg-slate-200/80 hover:bg-slate-300/80 dark:bg-white/10 dark:hover:bg-white/20 text-xs font-semibold text-slate-700 dark:text-slate-200 transition-colors"
                         title="Bu dersin yoklamasını CSV olarak indir"
                       >
-                        <Download className="w-3.5 h-3.5 text-emerald-400" />
+                        <Download className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
                         Yoklama İndir (CSV)
                       </button>
                     )}
                   </div>
                   {attendanceRows.length === 0 ? (
-                    <p className="mt-2 text-sm text-slate-400">Bu derse henüz öğrenci katılmadı.</p>
+                    <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">Bu derse henüz öğrenci katılmadı.</p>
                   ) : (
                     <div className="mt-3 grid gap-2">
                       {attendanceRows.map((row) => (
                         <div
                           key={row.id}
-                          className="grid gap-2 rounded-lg bg-white/5 p-3 text-sm sm:grid-cols-4"
+                          className="grid gap-2 rounded-lg bg-white dark:bg-white/5 border border-slate-200/60 dark:border-transparent p-3 text-sm sm:grid-cols-4 shadow-xs"
                         >
                           <span className="font-semibold">{row.name}</span>
-                          <span className="text-slate-300">Giriş: {formatTime(row.joinedAt)}</span>
-                          <span className="text-slate-300">Çıkış: {formatTime(row.leftAt)}</span>
-                          <span className="text-slate-300">
+                          <span className="text-slate-600 dark:text-slate-300">Giriş: {formatTime(row.joinedAt)}</span>
+                          <span className="text-slate-600 dark:text-slate-300">Çıkış: {formatTime(row.leftAt)}</span>
+                          <span className="text-slate-600 dark:text-slate-300">
                             Süre: {formatDuration(row.joinedAt, row.leftAt)}
                             {row.sessions > 1 ? ` · ${row.sessions} oturum` : ""}
                           </span>
@@ -444,26 +460,26 @@ export default function AdminLiveLessonsTab({ data, onRefresh, students }: Props
                 </div>
 
                 {isEditing ? (
-                  <div className="mt-4 rounded-xl border border-brand-primary/40 bg-slate-950 p-4">
+                  <div className="mt-4 rounded-xl border border-brand-primary/40 bg-slate-50/80 dark:bg-slate-950 p-4">
                     <div className="grid gap-3 md:grid-cols-2">
                       <label className="space-y-1">
-                        <span className="text-sm text-slate-300">Başlık</span>
+                        <span className="text-sm text-slate-700 dark:text-slate-300">Başlık</span>
                         <input
                           value={editForm.title}
                           onChange={(event) =>
                             setEditForm({ ...editForm, title: event.target.value })
                           }
-                          className="min-h-11 w-full rounded-xl border border-white/10 bg-slate-900 px-3 outline-none focus:ring-2 focus:ring-brand-primary"
+                          className="min-h-11 w-full rounded-xl border border-slate-200 dark:border-white/10 bg-white dark:bg-slate-900 text-slate-900 dark:text-white px-3 outline-none focus:ring-2 focus:ring-brand-primary"
                         />
                       </label>
                       <label className="space-y-1">
-                        <span className="text-sm text-slate-300">Ders hedefi</span>
+                        <span className="text-sm text-slate-700 dark:text-slate-300">Ders hedefi</span>
                         <select
                           value={editForm.targetGrade}
                           onChange={(event) =>
                             setEditForm({ ...editForm, targetGrade: event.target.value })
                           }
-                          className="min-h-11 w-full rounded-xl border border-white/10 bg-slate-900 px-3 outline-none focus:ring-2 focus:ring-brand-primary"
+                          className="min-h-11 w-full rounded-xl border border-slate-200 dark:border-white/10 bg-white dark:bg-slate-900 text-slate-900 dark:text-white px-3 outline-none focus:ring-2 focus:ring-brand-primary"
                         >
                           {gradeOptions.map((grade) => (
                             <option key={grade.value} value={grade.value}>
@@ -475,8 +491,8 @@ export default function AdminLiveLessonsTab({ data, onRefresh, students }: Props
                       {editForm.targetGrade === "selected" ? (
                         <div className="space-y-2 md:col-span-2">
                           <div className="flex flex-wrap items-center justify-between gap-2">
-                            <span className="text-sm text-slate-300">Öğrenci seç</span>
-                            <span className="text-xs text-slate-400">
+                            <span className="text-sm text-slate-700 dark:text-slate-300">Öğrenci seç</span>
+                            <span className="text-xs text-slate-500 dark:text-slate-400">
                               {editForm.targetStudentIds.length} öğrenci seçildi
                             </span>
                           </div>
@@ -485,15 +501,15 @@ export default function AdminLiveLessonsTab({ data, onRefresh, students }: Props
                             value={editStudentSearchQuery}
                             onChange={(event) => setEditStudentSearchQuery(event.target.value)}
                             placeholder="Öğrenci adı veya e-posta ara"
-                            className="min-h-11 w-full rounded-xl border border-white/10 bg-slate-900 px-3 text-sm outline-none focus:ring-2 focus:ring-brand-primary"
+                            className="min-h-11 w-full rounded-xl border border-slate-200 dark:border-white/10 bg-white dark:bg-slate-900 text-slate-900 dark:text-white px-3 text-sm outline-none focus:ring-2 focus:ring-brand-primary"
                           />
-                          <div className="max-h-56 overflow-y-auto rounded-xl border border-white/10 bg-slate-900 p-2">
+                          <div className="max-h-56 overflow-y-auto rounded-xl border border-slate-200 dark:border-white/10 bg-white dark:bg-slate-900 p-2">
                             {students.length === 0 ? (
-                              <p className="px-2 py-3 text-sm text-slate-400">
+                              <p className="px-2 py-3 text-sm text-slate-500 dark:text-slate-400">
                                 Seçilecek öğrenci kaydı bulunamadı.
                               </p>
                             ) : filteredEditStudents.length === 0 ? (
-                              <p className="px-2 py-3 text-sm text-slate-400">
+                              <p className="px-2 py-3 text-sm text-slate-500 dark:text-slate-400">
                                 Aramaya uygun öğrenci bulunamadı.
                               </p>
                             ) : (
@@ -501,7 +517,7 @@ export default function AdminLiveLessonsTab({ data, onRefresh, students }: Props
                                 {filteredEditStudents.map((student) => (
                                 <label
                                   key={student.id}
-                                  className="flex min-h-12 cursor-pointer items-center gap-3 rounded-lg border border-white/10 px-3 py-2 text-sm hover:bg-white/5"
+                                  className="flex min-h-12 cursor-pointer items-center gap-3 rounded-lg border border-slate-200 dark:border-white/10 px-3 py-2 text-sm hover:bg-slate-100 dark:hover:bg-white/5"
                                 >
                                   <input
                                     type="checkbox"
@@ -514,7 +530,7 @@ export default function AdminLiveLessonsTab({ data, onRefresh, students }: Props
                                     <span className="block truncate font-semibold">
                                       {student.name || student.email}
                                     </span>
-                                    <span className="block truncate text-xs text-slate-400">
+                                    <span className="block truncate text-xs text-slate-500 dark:text-slate-400">
                                       {formatGrade(student.grade)}
                                     </span>
                                   </span>
@@ -526,18 +542,18 @@ export default function AdminLiveLessonsTab({ data, onRefresh, students }: Props
                         </div>
                       ) : null}
                       <label className="space-y-1">
-                        <span className="text-sm text-slate-300">Tarih ve saat</span>
+                        <span className="text-sm text-slate-700 dark:text-slate-300">Tarih ve saat</span>
                         <input
                           type="datetime-local"
                           value={editForm.startsAt}
                           onChange={(event) =>
                             setEditForm({ ...editForm, startsAt: event.target.value })
                           }
-                          className="min-h-11 w-full rounded-xl border border-white/10 bg-slate-900 px-3 outline-none focus:ring-2 focus:ring-brand-primary"
+                          className="min-h-11 w-full rounded-xl border border-slate-200 dark:border-white/10 bg-white dark:bg-slate-900 text-slate-900 dark:text-white px-3 outline-none focus:ring-2 focus:ring-brand-primary"
                         />
                       </label>
                       <label className="space-y-1">
-                        <span className="text-sm text-slate-300">Süre</span>
+                        <span className="text-sm text-slate-700 dark:text-slate-300">Süre</span>
                         <input
                           type="number"
                           min={15}
@@ -549,21 +565,21 @@ export default function AdminLiveLessonsTab({ data, onRefresh, students }: Props
                               durationMinutes: Number(event.target.value),
                             })
                           }
-                          className="min-h-11 w-full rounded-xl border border-white/10 bg-slate-900 px-3 outline-none focus:ring-2 focus:ring-brand-primary"
+                          className="min-h-11 w-full rounded-xl border border-slate-200 dark:border-white/10 bg-white dark:bg-slate-900 text-slate-900 dark:text-white px-3 outline-none focus:ring-2 focus:ring-brand-primary"
                         />
                       </label>
                       <label className="space-y-1 md:col-span-2">
-                        <span className="text-sm text-slate-300">Açıklama</span>
+                        <span className="text-sm text-slate-700 dark:text-slate-300">Açıklama</span>
                         <textarea
                           value={editForm.description}
                           onChange={(event) =>
                             setEditForm({ ...editForm, description: event.target.value })
                           }
-                          className="min-h-20 w-full rounded-xl border border-white/10 bg-slate-900 px-3 py-2 outline-none focus:ring-2 focus:ring-brand-primary"
+                          className="min-h-20 w-full rounded-xl border border-slate-200 dark:border-white/10 bg-white dark:bg-slate-900 text-slate-900 dark:text-white px-3 py-2 outline-none focus:ring-2 focus:ring-brand-primary"
                         />
                       </label>
                       <label className="space-y-1">
-                        <span className="text-sm text-slate-300">Ders Kayıt Linki (YouTube / Drive)</span>
+                        <span className="text-sm text-slate-700 dark:text-slate-300">Ders Kayıt Linki (YouTube / Drive)</span>
                         <input
                           type="url"
                           placeholder="https://youtube.com/... veya video linki"
@@ -571,11 +587,11 @@ export default function AdminLiveLessonsTab({ data, onRefresh, students }: Props
                           onChange={(event) =>
                             setEditForm({ ...editForm, recordingUrl: event.target.value })
                           }
-                          className="min-h-11 w-full rounded-xl border border-white/10 bg-slate-900 px-3 text-sm outline-none focus:ring-2 focus:ring-brand-primary"
+                          className="min-h-11 w-full rounded-xl border border-slate-200 dark:border-white/10 bg-white dark:bg-slate-900 text-slate-900 dark:text-white px-3 text-sm outline-none focus:ring-2 focus:ring-brand-primary"
                         />
                       </label>
                       <label className="space-y-1">
-                        <span className="text-sm text-slate-300">Ders Notu / PDF Materyal Linki</span>
+                        <span className="text-sm text-slate-700 dark:text-slate-300">Ders Notu / PDF Materyal Linki</span>
                         <input
                           type="url"
                           placeholder="https://... PDF veya doküman linki"
@@ -583,17 +599,17 @@ export default function AdminLiveLessonsTab({ data, onRefresh, students }: Props
                           onChange={(event) =>
                             setEditForm({ ...editForm, materialsUrl: event.target.value })
                           }
-                          className="min-h-11 w-full rounded-xl border border-white/10 bg-slate-900 px-3 text-sm outline-none focus:ring-2 focus:ring-brand-primary"
+                          className="min-h-11 w-full rounded-xl border border-slate-200 dark:border-white/10 bg-white dark:bg-slate-900 text-slate-900 dark:text-white px-3 text-sm outline-none focus:ring-2 focus:ring-brand-primary"
                         />
                       </label>
                     </div>
-                    {editError ? <p className="mt-3 text-sm text-red-300">{editError}</p> : null}
+                    {editError ? <p className="mt-3 text-sm text-red-500 dark:text-red-300">{editError}</p> : null}
                     <div className="mt-4 flex flex-wrap gap-2">
                       <button
                         type="button"
                         onClick={() => void saveEdit(lesson)}
                         disabled={savingLessonId === lesson.id}
-                        className="rounded-xl bg-brand-primary px-4 py-2 text-sm font-semibold hover:bg-brand-primary-deep disabled:opacity-50"
+                        className="rounded-xl bg-brand-primary px-4 py-2 text-sm font-semibold text-white hover:bg-brand-primary-deep disabled:opacity-50"
                       >
                         {savingLessonId === lesson.id ? "Kaydediliyor..." : "Kaydet"}
                       </button>
@@ -604,7 +620,7 @@ export default function AdminLiveLessonsTab({ data, onRefresh, students }: Props
                           setEditForm(null);
                           setEditError(null);
                         }}
-                        className="rounded-xl border border-white/10 px-4 py-2 text-sm font-semibold hover:bg-white/5"
+                        className="rounded-xl border border-slate-200 dark:border-white/10 px-4 py-2 text-sm font-semibold text-slate-700 dark:text-white hover:bg-slate-100 dark:hover:bg-white/5"
                       >
                         Vazgeç
                       </button>
@@ -615,7 +631,7 @@ export default function AdminLiveLessonsTab({ data, onRefresh, students }: Props
                 <div className="mt-4 flex flex-wrap gap-2">
                   <Link
                     href={`/canli-ders/d/${lesson.room_id}`}
-                    className="rounded-xl bg-brand-primary px-4 py-2 text-sm font-semibold hover:bg-brand-primary-deep"
+                    className="rounded-xl bg-brand-primary px-4 py-2 text-sm font-semibold text-white hover:bg-brand-primary-deep"
                   >
                     Odaya gir
                   </Link>
@@ -624,7 +640,7 @@ export default function AdminLiveLessonsTab({ data, onRefresh, students }: Props
                       <button
                         type="button"
                         onClick={() => openEditForm(lesson)}
-                        className="rounded-xl border border-white/10 px-4 py-2 text-sm font-semibold hover:bg-white/5"
+                        className="rounded-xl border border-slate-200 dark:border-white/10 px-4 py-2 text-sm font-semibold text-slate-700 dark:text-white hover:bg-slate-100 dark:hover:bg-white/5"
                       >
                         Düzenle
                       </button>
@@ -633,14 +649,14 @@ export default function AdminLiveLessonsTab({ data, onRefresh, students }: Props
                           <button
                             type="button"
                             onClick={() => void updateStatus(lesson, "ended")}
-                            className="rounded-xl border border-white/10 px-4 py-2 text-sm font-semibold hover:bg-white/5"
+                            className="rounded-xl border border-slate-200 dark:border-white/10 px-4 py-2 text-sm font-semibold text-slate-700 dark:text-white hover:bg-slate-100 dark:hover:bg-white/5"
                           >
                             Dersi bitir
                           </button>
                           <button
                             type="button"
                             onClick={() => void updateStatus(lesson, "cancelled")}
-                            className="rounded-xl border border-red-400/40 px-4 py-2 text-sm font-semibold text-red-200 hover:bg-red-500/10"
+                            className="rounded-xl border border-red-400/40 px-4 py-2 text-sm font-semibold text-red-600 dark:text-red-200 hover:bg-red-500/10"
                           >
                             İptal et
                           </button>

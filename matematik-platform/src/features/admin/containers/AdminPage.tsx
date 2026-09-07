@@ -893,17 +893,17 @@ export default function AdminPage() {
 
   return (
     <main className="admin-page min-h-screen gradient-bg pb-20">
-      <nav className="fixed top-0 left-0 right-0 z-50 bg-slate-950/90 backdrop-blur-xl border-b border-white/10 py-2.5 px-4 sm:py-3 sm:px-6 shadow-xl shadow-black/20">
+      <nav className="fixed top-0 left-0 right-0 z-50 bg-white/90 dark:bg-slate-950/90 backdrop-blur-xl border-b border-slate-200/80 dark:border-white/10 py-2.5 px-4 sm:py-3 sm:px-6 shadow-sm dark:shadow-xl dark:shadow-black/20">
         <div className="container mx-auto flex min-w-0 items-center justify-between gap-3">
           <Link href="/" className="flex min-w-0 items-center gap-3 group">
             <div className="w-9 h-9 sm:w-10 sm:h-10 bg-gradient-to-tr from-brand-primary via-indigo-600 to-brand-secondary rounded-2xl flex items-center justify-center flex-shrink-0 shadow-lg shadow-violet-500/25 group-hover:scale-105 transition-transform duration-200">
               <Calculator className="w-5 h-5 text-white" />
             </div>
             <div className="min-w-0">
-              <span className="block truncate text-sm sm:text-base font-bold bg-gradient-to-r from-white via-slate-100 to-slate-300 bg-clip-text text-transparent leading-tight">
+              <span className="block truncate text-sm sm:text-base font-bold text-slate-900 dark:text-transparent dark:bg-gradient-to-r dark:from-white dark:via-slate-100 dark:to-slate-300 dark:bg-clip-text leading-tight">
                 Uğur Hoca
               </span>
-              <span className="hidden sm:flex items-center gap-1 text-[11px] font-semibold text-cyan-300 tracking-wide">
+              <span className="hidden sm:flex items-center gap-1 text-[11px] font-semibold text-indigo-600 dark:text-cyan-300 tracking-wide">
                 <ShieldCheck className="w-3 h-3" />
                 Yönetici Portalı
               </span>
@@ -913,31 +913,31 @@ export default function AdminPage() {
           <div className="flex shrink-0 items-center gap-2 sm:gap-3">
             <Link
               href="/"
-              className="hidden md:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-white/10 bg-white/5 text-slate-300 hover:text-white hover:bg-white/10 transition-colors text-xs font-semibold"
+              className="hidden md:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-slate-200 dark:border-white/10 bg-slate-100/80 dark:bg-white/5 text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200/70 dark:hover:bg-white/10 transition-colors text-xs font-semibold"
             >
-              <Globe className="w-3.5 h-3.5 text-cyan-400" />
+              <Globe className="w-3.5 h-3.5 text-cyan-500 dark:text-cyan-400" />
               Siteyi Gör
             </Link>
 
             <button
               type="button"
               onClick={() => setIsSpotlightOpen(true)}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-white/10 bg-white/5 text-slate-300 hover:text-white hover:bg-white/10 transition-colors text-xs font-semibold h-9"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-slate-200 dark:border-white/10 bg-slate-100/80 dark:bg-white/5 text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200/70 dark:hover:bg-white/10 transition-colors text-xs font-semibold h-9"
               title="Hızlı Ara (⌘K)"
             >
-              <Search className="w-3.5 h-3.5 text-cyan-400" />
+              <Search className="w-3.5 h-3.5 text-cyan-500 dark:text-cyan-400" />
               <span className="hidden sm:inline">Hızlı Ara</span>
-              <kbd className="hidden md:inline rounded bg-white/10 px-1.5 py-0.5 text-[10px] font-mono text-slate-400">
+              <kbd className="hidden md:inline rounded bg-slate-200/80 dark:bg-white/10 px-1.5 py-0.5 text-[10px] font-mono text-slate-600 dark:text-slate-400">
                 ⌘K
               </kbd>
             </button>
 
-            <ThemeToggle compact className="h-9 w-9 rounded-xl border-white/10 bg-white/5 hover:bg-white/10" />
+            <ThemeToggle compact className="h-9 w-9 rounded-xl border-slate-200 dark:border-white/10 bg-slate-100/80 dark:bg-white/5 hover:bg-slate-200/70 dark:hover:bg-white/10" />
 
             <button
               onClick={() => setShowNotifications((v) => !v)}
               aria-label="Bildirimler"
-              className="relative h-9 w-9 flex items-center justify-center rounded-xl border border-white/10 bg-white/5 text-slate-300 hover:text-white hover:bg-white/10 transition-colors"
+              className="relative h-9 w-9 flex items-center justify-center rounded-xl border border-slate-200 dark:border-white/10 bg-slate-100/80 dark:bg-white/5 text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200/70 dark:hover:bg-white/10 transition-colors"
             >
               <Bell className="w-4 h-4" />
               {unreadNotifications.length > 0 && (
@@ -947,7 +947,7 @@ export default function AdminPage() {
               )}
             </button>
 
-            <div className="h-5 w-px bg-white/10 mx-0.5 hidden sm:block" />
+            <div className="h-5 w-px bg-slate-200 dark:bg-white/10 mx-0.5 hidden sm:block" />
 
             <button
               onClick={handleLogout}
@@ -991,7 +991,7 @@ export default function AdminPage() {
       <div className="pt-20 sm:pt-24 px-4 sm:px-6 overflow-x-clip">
         <div className="container mx-auto min-w-0">
           {/* Executive Welcome & KPI Summary Hero */}
-          <div className="glass rounded-3xl p-5 sm:p-7 mb-8 border border-white/10 shadow-2xl relative overflow-hidden animate-fade-up">
+          <div className="glass rounded-3xl p-5 sm:p-7 mb-8 border border-slate-200/80 dark:border-white/10 shadow-lg dark:shadow-2xl relative overflow-hidden animate-fade-up bg-white/80 dark:bg-slate-900/60">
             <div className="absolute -right-16 -top-16 w-64 h-64 bg-violet-600/15 rounded-full blur-3xl pointer-events-none" />
             <div className="absolute -left-16 -bottom-16 w-64 h-64 bg-cyan-600/15 rounded-full blur-3xl pointer-events-none" />
 
@@ -1000,55 +1000,55 @@ export default function AdminPage() {
                 <div className="flex flex-wrap items-center gap-2 mb-2.5">
                   <Link
                     href="/profil"
-                    className="inline-flex items-center gap-1.5 text-xs text-slate-400 hover:text-white transition-colors mr-2 group"
+                    className="inline-flex items-center gap-1.5 text-xs text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors mr-2 group"
                   >
                     <ArrowLeft className="w-3.5 h-3.5 group-hover:-translate-x-0.5 transition-transform" />
                     Profil'e Dön
                   </Link>
-                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-violet-500/20 text-violet-300 border border-violet-500/30">
+                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-violet-100 dark:bg-violet-500/20 text-violet-700 dark:text-violet-300 border border-violet-200 dark:border-violet-500/30">
                     <ShieldCheck className="w-3.5 h-3.5" />
                     Yönetici Portalı
                   </span>
-                  <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
-                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                  <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-100 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-500/30">
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 dark:bg-emerald-400 animate-pulse" />
                     Sistem Aktif
                   </span>
                 </div>
-                <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-white tracking-tight">
+                <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight">
                   Hoş Geldiniz, {user.name || 'Uğur Hoca'} 👋
                 </h1>
-                <p className="text-slate-300/80 text-sm sm:text-base mt-1.5 max-w-xl leading-relaxed">
+                <p className="text-slate-600 dark:text-slate-300/80 text-sm sm:text-base mt-1.5 max-w-xl leading-relaxed">
                   Öğrenci takibi, çalışma kağıtları, sınavlar ve canlı derslerinizi tek merkezden uyumla yönetin.
                 </p>
               </div>
 
               {/* Quick KPI Counters */}
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 w-full lg:w-auto">
-                <div className="glass rounded-2xl p-3 sm:p-4 text-center border border-white/10 hover:border-violet-500/40 transition-colors">
-                  <div className="text-xl sm:text-2xl font-black text-white">{studentUsers.length}</div>
-                  <div className="text-xs text-slate-400 font-medium mt-0.5">Öğrenci</div>
+                <div className="glass rounded-2xl p-3 sm:p-4 text-center border border-slate-200 dark:border-white/10 hover:border-violet-500/40 transition-colors bg-slate-50/80 dark:bg-white/5">
+                  <div className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white">{studentUsers.length}</div>
+                  <div className="text-xs text-slate-500 dark:text-slate-400 font-medium mt-0.5">Öğrenci</div>
                 </div>
-                <div className="glass rounded-2xl p-3 sm:p-4 text-center border border-white/10 hover:border-blue-500/40 transition-colors">
-                  <div className="text-xl sm:text-2xl font-black text-white">{documents.length}</div>
-                  <div className="text-xs text-slate-400 font-medium mt-0.5">İçerik & Belge</div>
+                <div className="glass rounded-2xl p-3 sm:p-4 text-center border border-slate-200 dark:border-white/10 hover:border-blue-500/40 transition-colors bg-slate-50/80 dark:bg-white/5">
+                  <div className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white">{documents.length}</div>
+                  <div className="text-xs text-slate-500 dark:text-slate-400 font-medium mt-0.5">İçerik & Belge</div>
                 </div>
-                <div className="glass rounded-2xl p-3 sm:p-4 text-center border border-white/10 hover:border-pink-500/40 transition-colors">
-                  <div className="text-xl sm:text-2xl font-black text-white">{quizzes.length}</div>
-                  <div className="text-xs text-slate-400 font-medium mt-0.5">Test / Sınav</div>
+                <div className="glass rounded-2xl p-3 sm:p-4 text-center border border-slate-200 dark:border-white/10 hover:border-pink-500/40 transition-colors bg-slate-50/80 dark:bg-white/5">
+                  <div className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white">{quizzes.length}</div>
+                  <div className="text-xs text-slate-500 dark:text-slate-400 font-medium mt-0.5">Test / Sınav</div>
                 </div>
-                <div className="glass rounded-2xl p-3 sm:p-4 text-center border border-white/10 hover:border-amber-500/40 transition-colors">
-                  <div className="text-xl sm:text-2xl font-black text-amber-300">
+                <div className="glass rounded-2xl p-3 sm:p-4 text-center border border-slate-200 dark:border-white/10 hover:border-amber-500/40 transition-colors bg-slate-50/80 dark:bg-white/5">
+                  <div className="text-xl sm:text-2xl font-black text-amber-600 dark:text-amber-300">
                     {worksheetCandidates.filter((c) => c.status === 'pending').length}
                   </div>
-                  <div className="text-xs text-slate-400 font-medium mt-0.5">Aday Test</div>
+                  <div className="text-xs text-slate-500 dark:text-slate-400 font-medium mt-0.5">Aday Test</div>
                 </div>
               </div>
             </div>
 
             {/* Quick Action Buttons Strip */}
-            <div className="relative z-10 mt-6 pt-4 border-t border-white/10 flex flex-wrap items-center gap-2">
-              <span className="text-xs font-semibold text-slate-400 mr-1 flex items-center gap-1.5">
-                <Sparkles className="w-3.5 h-3.5 text-violet-400" />
+            <div className="relative z-10 mt-6 pt-4 border-t border-slate-200/80 dark:border-white/10 flex flex-wrap items-center gap-2">
+              <span className="text-xs font-semibold text-slate-500 dark:text-slate-400 mr-1 flex items-center gap-1.5">
+                <Sparkles className="w-3.5 h-3.5 text-violet-500 dark:text-violet-400" />
                 Hızlı Eylemler:
               </span>
               <button
@@ -1062,28 +1062,28 @@ export default function AdminPage() {
                 onClick={() => openModal('announcement')}
                 className="btn-secondary text-xs py-2 px-3 sm:px-4 rounded-xl"
               >
-                <Megaphone className="w-3.5 h-3.5 text-pink-400" />
+                <Megaphone className="w-3.5 h-3.5 text-pink-500 dark:text-pink-400" />
                 Yeni Duyuru
               </button>
               <button
                 onClick={() => setIsBroadcastOpen(true)}
                 className="btn-secondary text-xs py-2 px-3 sm:px-4 rounded-xl"
               >
-                <Send className="w-3.5 h-3.5 text-indigo-400" />
+                <Send className="w-3.5 h-3.5 text-indigo-500 dark:text-indigo-400" />
                 Toplu Bildirim
               </button>
               <button
                 onClick={() => openModal('quiz')}
                 className="btn-secondary text-xs py-2 px-3 sm:px-4 rounded-xl"
               >
-                <CheckCircle2 className="w-3.5 h-3.5 text-violet-400" />
+                <CheckCircle2 className="w-3.5 h-3.5 text-violet-500 dark:text-violet-400" />
                 Yeni Test
               </button>
               <button
                 onClick={() => openModal('assignment')}
                 className="btn-secondary text-xs py-2 px-3 sm:px-4 rounded-xl"
               >
-                <ClipboardList className="w-3.5 h-3.5 text-rose-400" />
+                <ClipboardList className="w-3.5 h-3.5 text-rose-500 dark:text-rose-400" />
                 Ödev Ver
               </button>
               <Link
@@ -1092,7 +1092,7 @@ export default function AdminPage() {
                 className="btn-secondary text-xs py-2 px-3 sm:px-4 rounded-xl ml-auto"
                 title="Platformun ön yüzünü yeni sekmede aç"
               >
-                <ExternalLink className="w-3.5 h-3.5 text-cyan-400" />
+                <ExternalLink className="w-3.5 h-3.5 text-cyan-500 dark:text-cyan-400" />
                 <span>Siteyi Aç</span>
               </Link>
             </div>
@@ -1112,7 +1112,7 @@ export default function AdminPage() {
           />
 
           {/* Category Filter Pills & Tab Navigation */}
-          <div className="sticky top-14 sm:top-16 z-40 -mx-4 sm:mx-0 mb-6 sm:mb-8 px-4 sm:px-0 py-3 backdrop-blur-md bg-slate-950/40 rounded-2xl border border-white/5">
+          <div className="sticky top-14 sm:top-16 z-40 -mx-4 sm:mx-0 mb-6 sm:mb-8 px-4 sm:px-0 py-3 backdrop-blur-md bg-white/80 dark:bg-slate-950/40 rounded-2xl border border-slate-200/80 dark:border-white/5 shadow-sm">
             {/* Category Segment Filter */}
             <div className="flex items-center gap-1.5 mb-3 overflow-x-auto pb-1 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
               {[
@@ -1127,7 +1127,7 @@ export default function AdminPage() {
                   className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all whitespace-nowrap ${
                     tabCategory === cat.id
                       ? 'bg-brand-primary text-white shadow-md shadow-violet-500/25'
-                      : 'bg-white/5 text-slate-400 hover:text-white hover:bg-white/10'
+                      : 'bg-slate-100 dark:bg-white/5 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200/70 dark:hover:bg-white/10'
                   }`}
                 >
                   {cat.label}
@@ -1254,10 +1254,10 @@ export default function AdminPage() {
                   <button
                     key={tab.id}
                     onClick={() => setActiveTab(tab.id as AdminActiveTab)}
-                    className={`relative overflow-hidden px-3 py-2 sm:px-4 sm:py-3 rounded-xl flex items-center gap-1.5 sm:gap-2 transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] whitespace-nowrap shrink-0 border shadow-md ${
+                    className={`relative overflow-hidden px-3 py-2 sm:px-4 sm:py-3 rounded-xl flex items-center gap-1.5 sm:gap-2 transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] whitespace-nowrap shrink-0 border ${
                       activeTab === tab.id
                         ? `bg-gradient-to-r ${tab.color} text-white border-white/25 shadow-lg shadow-violet-500/20 ring-1 ring-white/20`
-                        : `bg-slate-900/80 border-white/10 text-slate-300 hover:text-white hover:border-white/20 hover:bg-slate-800/80`
+                        : `bg-white dark:bg-slate-900/80 border-slate-200 dark:border-white/10 text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:border-slate-300 dark:hover:border-white/20 hover:bg-slate-50 dark:hover:bg-slate-800/80 shadow-sm dark:shadow-md`
                     }`}
                   >
                     {activeTab === tab.id && (
@@ -1274,7 +1274,7 @@ export default function AdminPage() {
                             ? 'bg-amber-400 text-slate-950 animate-pulse'
                             : activeTab === tab.id
                               ? 'bg-white/25 text-white'
-                              : 'bg-white/10 text-slate-400'
+                              : 'bg-slate-100 dark:bg-white/10 text-slate-600 dark:text-slate-400'
                         }`}
                       >
                         {tab.badge}

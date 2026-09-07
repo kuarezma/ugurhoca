@@ -725,7 +725,7 @@ export default function ScratchpadModal({
         type="button"
         aria-label="Pencereyi kapat"
         onClick={onClose}
-        className="fixed inset-0 bg-slate-950/85 backdrop-blur-md"
+        className="fixed inset-0 bg-slate-900/60 dark:bg-slate-950/85 backdrop-blur-md"
       />
       <div
         ref={modalRef}
@@ -739,7 +739,7 @@ export default function ScratchpadModal({
       >
         <ErrorBoundary
           fallback={({ reset }) => (
-            <div className="flex flex-1 flex-col items-center justify-center p-8 text-center text-slate-300 gap-4">
+            <div className="flex flex-1 flex-col items-center justify-center p-8 text-center text-slate-600 dark:text-slate-300 gap-4">
               <p className="text-sm">Karalama tahtası yüklenirken beklenmedik bir durum oluştu.</p>
               <div className="flex gap-2">
                 <button
@@ -752,7 +752,7 @@ export default function ScratchpadModal({
                 <button
                   type="button"
                   onClick={onClose}
-                  className="px-4 py-2 bg-white/10 hover:bg-white/20 rounded-xl text-white font-semibold text-xs transition"
+                  className="px-4 py-2 bg-slate-100 dark:bg-white/10 hover:bg-slate-200 dark:hover:bg-white/20 rounded-xl text-slate-700 dark:text-white font-semibold text-xs transition"
                 >
                   Kapat
                 </button>
@@ -778,7 +778,9 @@ export default function ScratchpadModal({
                 onClick={() => setShowQuestionPanel((prev) => !prev)}
                 className={`hidden md:inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-semibold border transition ${
                   showQuestionPanel
-                    ? 'bg-amber-500/20 border-amber-500/30 text-amber-300'
+                    ? 'bg-amber-500/20 border-amber-500/30 text-amber-700 dark:text-amber-300'
+                    : isLight
+                    ? 'bg-white border-slate-200 text-slate-700 hover:bg-slate-100'
                     : 'bg-white/5 border-white/10 text-slate-300 hover:text-white'
                 }`}
                 title="Soru panelini aç/kapat"
@@ -791,7 +793,9 @@ export default function ScratchpadModal({
 
           <div className="flex flex-wrap items-center gap-1 sm:gap-2">
             {/* Araç Seçimi: Kalem, Fosforlu, Çizgi, Silgi */}
-            <div className="flex items-center rounded-xl bg-white/5 p-0.5 border border-white/10">
+            <div className={`flex items-center rounded-xl p-0.5 border ${
+              isLight ? 'bg-slate-100 border-slate-200' : 'bg-white/5 border-white/10'
+            }`}>
               <button
                 type="button"
                 onClick={() => setActiveTool('pen')}
@@ -799,6 +803,8 @@ export default function ScratchpadModal({
                 className={`inline-flex h-8 items-center gap-1 rounded-lg px-2.5 text-xs font-semibold transition ${
                   activeTool === 'pen'
                     ? 'bg-amber-500 text-slate-950 font-bold shadow-md'
+                    : isLight
+                    ? 'text-slate-700 hover:text-slate-900'
                     : 'text-slate-300 hover:text-white'
                 }`}
               >
@@ -813,6 +819,8 @@ export default function ScratchpadModal({
                 className={`inline-flex h-8 items-center gap-1 rounded-lg px-2.5 text-xs font-semibold transition ${
                   activeTool === 'highlighter'
                     ? 'bg-amber-400/90 text-slate-950 font-bold shadow-md'
+                    : isLight
+                    ? 'text-slate-700 hover:text-slate-900'
                     : 'text-slate-300 hover:text-white'
                 }`}
               >
@@ -827,6 +835,8 @@ export default function ScratchpadModal({
                 className={`inline-flex h-8 items-center gap-1 rounded-lg px-2.5 text-xs font-semibold transition ${
                   activeTool === 'line'
                     ? 'bg-cyan-500 text-slate-950 font-bold shadow-md'
+                    : isLight
+                    ? 'text-slate-700 hover:text-slate-900'
                     : 'text-slate-300 hover:text-white'
                 }`}
               >
@@ -841,6 +851,8 @@ export default function ScratchpadModal({
                 className={`inline-flex h-8 items-center gap-1 rounded-lg px-2.5 text-xs font-semibold transition ${
                   activeTool === 'eraser'
                     ? 'bg-rose-500 text-white font-bold shadow-md'
+                    : isLight
+                    ? 'text-slate-700 hover:text-slate-900'
                     : 'text-slate-300 hover:text-white'
                 }`}
               >
@@ -855,9 +867,13 @@ export default function ScratchpadModal({
                 type="button"
                 onClick={drawCoordinatePlane}
                 title="Kartezyen Koordinat Düzlemi Ekle (x, y eksenleri)"
-                className="inline-flex h-8 items-center gap-1 rounded-lg px-2 text-xs font-semibold text-indigo-300 hover:bg-indigo-500/20 hover:text-white transition"
+                className={`inline-flex h-8 items-center gap-1 rounded-lg px-2 text-xs font-semibold transition ${
+                  isLight
+                    ? 'text-indigo-700 hover:bg-indigo-100 hover:text-indigo-900'
+                    : 'text-indigo-300 hover:bg-indigo-500/20 hover:text-white'
+                }`}
               >
-                <Compass className="h-3.5 w-3.5 text-cyan-400" />
+                <Compass className="h-3.5 w-3.5 text-cyan-600 dark:text-cyan-400" />
                 <span className="hidden sm:inline">Koordinat</span>
               </button>
 
@@ -865,9 +881,13 @@ export default function ScratchpadModal({
                 type="button"
                 onClick={drawNumberLine}
                 title="Sayı Doğrusu Ekle"
-                className="inline-flex h-8 items-center gap-1 rounded-lg px-2 text-xs font-semibold text-indigo-300 hover:bg-indigo-500/20 hover:text-white transition"
+                className={`inline-flex h-8 items-center gap-1 rounded-lg px-2 text-xs font-semibold transition ${
+                  isLight
+                    ? 'text-indigo-700 hover:bg-indigo-100 hover:text-indigo-900'
+                    : 'text-indigo-300 hover:bg-indigo-500/20 hover:text-white'
+                }`}
               >
-                <Minus className="h-3.5 w-3.5 text-amber-400" />
+                <Minus className="h-3.5 w-3.5 text-amber-600 dark:text-amber-400" />
                 <span className="hidden sm:inline">Sayı Doğrusu</span>
               </button>
 
@@ -878,10 +898,12 @@ export default function ScratchpadModal({
                 className={`inline-flex h-8 items-center gap-1 rounded-lg px-2 text-xs font-semibold transition ${
                   showProtractor
                     ? 'bg-amber-500 text-slate-950 font-bold shadow-md'
+                    : isLight
+                    ? 'text-indigo-700 hover:bg-indigo-100 hover:text-indigo-900'
                     : 'text-indigo-300 hover:bg-indigo-500/20 hover:text-white'
                 }`}
               >
-                <Compass className="h-3.5 w-3.5 text-amber-400" />
+                <Compass className="h-3.5 w-3.5 text-amber-600 dark:text-amber-400" />
                 <span className="hidden sm:inline">Açıölçer</span>
               </button>
 
@@ -889,30 +911,42 @@ export default function ScratchpadModal({
                 <button
                   type="button"
                   title="Geometrik Şekil Ekle"
-                  className="inline-flex h-8 items-center gap-1 rounded-lg px-2 text-xs font-semibold text-indigo-300 hover:bg-indigo-500/20 hover:text-white transition"
+                  className={`inline-flex h-8 items-center gap-1 rounded-lg px-2 text-xs font-semibold transition ${
+                    isLight
+                      ? 'text-indigo-700 hover:bg-indigo-100 hover:text-indigo-900'
+                      : 'text-indigo-300 hover:bg-indigo-500/20 hover:text-white'
+                  }`}
                 >
-                  <Shapes className="h-3.5 w-3.5 text-pink-400" />
+                  <Shapes className="h-3.5 w-3.5 text-pink-600 dark:text-pink-400" />
                   <span className="hidden sm:inline">Şekil</span>
                 </button>
-                <div className="absolute left-0 top-full mt-1 hidden group-hover:flex flex-col gap-1 rounded-xl border border-white/10 bg-slate-900 p-1.5 shadow-xl z-50 min-w-[130px]">
+                <div className={`absolute left-0 top-full mt-1 hidden group-hover:flex flex-col gap-1 rounded-xl border p-1.5 shadow-xl z-50 min-w-[130px] ${
+                  isLight ? 'border-slate-200 bg-white text-slate-900' : 'border-white/10 bg-slate-900 text-white'
+                }`}>
                   <button
                     type="button"
                     onClick={() => drawGeometricShape('triangle')}
-                    className="flex items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs text-slate-200 hover:bg-white/10 hover:text-white text-left font-medium"
+                    className={`flex items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs text-left font-medium ${
+                      isLight ? 'text-slate-700 hover:bg-slate-100 hover:text-slate-900' : 'text-slate-200 hover:bg-white/10 hover:text-white'
+                    }`}
                   >
                     <span>📐 Dik Üçgen</span>
                   </button>
                   <button
                     type="button"
                     onClick={() => drawGeometricShape('circle')}
-                    className="flex items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs text-slate-200 hover:bg-white/10 hover:text-white text-left font-medium"
+                    className={`flex items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs text-left font-medium ${
+                      isLight ? 'text-slate-700 hover:bg-slate-100 hover:text-slate-900' : 'text-slate-200 hover:bg-white/10 hover:text-white'
+                    }`}
                   >
                     <span>⭕ Çember (r)</span>
                   </button>
                   <button
                     type="button"
                     onClick={() => drawGeometricShape('rectangle')}
-                    className="flex items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs text-slate-200 hover:bg-white/10 hover:text-white text-left font-medium"
+                    className={`flex items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs text-left font-medium ${
+                      isLight ? 'text-slate-700 hover:bg-slate-100 hover:text-slate-900' : 'text-slate-200 hover:bg-white/10 hover:text-white'
+                    }`}
                   >
                     <span>▭ Dikdörtgen</span>
                   </button>
@@ -947,12 +981,14 @@ export default function ScratchpadModal({
             )}
 
             {/* Çizgi Kalınlığı */}
-            <div className="flex items-center gap-1 rounded-xl bg-white/5 px-2 py-1 border border-white/10 text-xs text-slate-300">
+            <div className={`flex items-center gap-1 rounded-xl px-2 py-1 border text-xs ${
+              isLight ? 'bg-slate-100 border-slate-200 text-slate-700' : 'bg-white/5 border-white/10 text-slate-300'
+            }`}>
               <button
                 type="button"
                 onClick={() => setLineWidth((prev) => Math.max(1, prev - 1))}
                 aria-label="Kalınlığı azalt"
-                className="rounded p-1 hover:bg-white/10"
+                className={`rounded p-1 ${isLight ? 'hover:bg-slate-200' : 'hover:bg-white/10'}`}
               >
                 <Minus className="h-3 w-3" />
               </button>
@@ -961,22 +997,26 @@ export default function ScratchpadModal({
                 type="button"
                 onClick={() => setLineWidth((prev) => Math.min(12, prev + 1))}
                 aria-label="Kalınlığı artır"
-                className="rounded p-1 hover:bg-white/10"
+                className={`rounded p-1 ${isLight ? 'hover:bg-slate-200' : 'hover:bg-white/10'}`}
               >
                 <Plus className="h-3 w-3" />
               </button>
             </div>
 
             {/* Arka Plan Deseni & Doğrudan Zemin Seçici */}
-            <div className="relative flex items-center rounded-xl bg-white/5 p-0.5 border border-white/10">
+            <div className={`relative flex items-center rounded-xl p-0.5 border ${
+              isLight ? 'bg-slate-100 border-slate-200' : 'bg-white/5 border-white/10'
+            }`}>
               <button
                 type="button"
                 onClick={handlePatternToggle}
                 title={`Zemin Deseni: ${PATTERN_NAMES[backgroundPattern]}`}
-                className="inline-flex h-8 items-center gap-1 px-2 text-xs font-semibold text-slate-300 hover:text-white"
+                className={`inline-flex h-8 items-center gap-1 px-2 text-xs font-semibold ${
+                  isLight ? 'text-slate-700 hover:text-slate-900' : 'text-slate-300 hover:text-white'
+                }`}
               >
                 {backgroundPattern === 'dot' ? (
-                  <CircleDot className="h-3.5 w-3.5 text-indigo-400" />
+                  <CircleDot className="h-3.5 w-3.5 text-indigo-500 dark:text-indigo-400" />
                 ) : (
                   <Grid className="h-3.5 w-3.5" />
                 )}
@@ -987,15 +1027,23 @@ export default function ScratchpadModal({
                 onClick={() => setShowPatternMenu((prev) => !prev)}
                 title="Zemin Menüsünü Aç"
                 aria-label="Zemin Menüsünü Aç"
-                className="h-8 px-1 text-slate-400 hover:text-white hover:bg-white/10 rounded-r-lg border-l border-white/10 transition-colors"
+                className={`h-8 px-1 rounded-r-lg border-l transition-colors ${
+                  isLight
+                    ? 'text-slate-500 hover:text-slate-900 hover:bg-slate-200 border-slate-200'
+                    : 'text-slate-400 hover:text-white hover:bg-white/10 border-white/10'
+                }`}
               >
                 <ChevronDown className="h-3 w-3" />
               </button>
 
               {/* Zemin Hızlı Seçim Popover */}
               {showPatternMenu && (
-                <div className="absolute top-full mt-1.5 left-0 z-50 w-44 rounded-2xl border border-slate-700/80 bg-slate-900/95 p-1.5 shadow-2xl backdrop-blur-xl animate-in fade-in zoom-in-95">
-                  <div className="px-2 py-1 text-[10px] font-bold uppercase tracking-wider text-slate-400 border-b border-white/10 mb-1">
+                <div className={`absolute top-full mt-1.5 left-0 z-50 w-44 rounded-2xl border p-1.5 shadow-2xl backdrop-blur-xl animate-in fade-in zoom-in-95 ${
+                  isLight ? 'border-slate-200 bg-white/95 text-slate-900' : 'border-slate-700/80 bg-slate-900/95 text-white'
+                }`}>
+                  <div className={`px-2 py-1 text-[10px] font-bold uppercase tracking-wider border-b mb-1 ${
+                    isLight ? 'text-slate-500 border-slate-200' : 'text-slate-400 border-white/10'
+                  }`}>
                     Zemin Şablonu Seç
                   </div>
                   {(
@@ -1015,6 +1063,8 @@ export default function ScratchpadModal({
                       className={`w-full flex items-center justify-between rounded-xl px-2.5 py-1.5 text-left text-xs transition-all ${
                         backgroundPattern === item.id
                           ? 'bg-indigo-600 text-white font-bold shadow-sm'
+                          : isLight
+                          ? 'text-slate-700 hover:bg-slate-100 hover:text-slate-900'
                           : 'text-slate-300 hover:bg-white/10 hover:text-white'
                       }`}
                     >
@@ -1036,7 +1086,9 @@ export default function ScratchpadModal({
               disabled={history.length <= 1}
               title="Geri al"
               aria-label="Geri al"
-              className="inline-flex h-8 w-8 items-center justify-center rounded-xl bg-white/5 text-slate-300 hover:bg-white/10 hover:text-white disabled:opacity-40"
+              className={`inline-flex h-8 w-8 items-center justify-center rounded-xl disabled:opacity-40 transition ${
+                isLight ? 'bg-slate-100 text-slate-700 hover:bg-slate-200 hover:text-slate-900' : 'bg-white/5 text-slate-300 hover:bg-white/10 hover:text-white'
+              }`}
             >
               <RotateCcw className="h-3.5 w-3.5" />
             </button>
@@ -1048,7 +1100,9 @@ export default function ScratchpadModal({
               disabled={redoHistory.length === 0}
               title="İleri al"
               aria-label="İleri al"
-              className="inline-flex h-8 w-8 items-center justify-center rounded-xl bg-white/5 text-slate-300 hover:bg-white/10 hover:text-white disabled:opacity-40"
+              className={`inline-flex h-8 w-8 items-center justify-center rounded-xl disabled:opacity-40 transition ${
+                isLight ? 'bg-slate-100 text-slate-700 hover:bg-slate-200 hover:text-slate-900' : 'bg-white/5 text-slate-300 hover:bg-white/10 hover:text-white'
+              }`}
             >
               <RotateCw className="h-3.5 w-3.5" />
             </button>
@@ -1059,7 +1113,9 @@ export default function ScratchpadModal({
               onClick={handleDownload}
               title="Çizimi PNG Olarak İndir"
               aria-label="Çizimi PNG Olarak İndir"
-              className="hidden sm:inline-flex h-8 w-8 items-center justify-center rounded-xl bg-white/5 text-slate-300 hover:bg-white/10 hover:text-white"
+              className={`hidden sm:inline-flex h-8 w-8 items-center justify-center rounded-xl transition ${
+                isLight ? 'bg-slate-100 text-slate-700 hover:bg-slate-200 hover:text-slate-900' : 'bg-white/5 text-slate-300 hover:bg-white/10 hover:text-white'
+              }`}
             >
               <Download className="h-3.5 w-3.5" />
             </button>
@@ -1070,7 +1126,7 @@ export default function ScratchpadModal({
               onClick={handleClear}
               title="Tümünü temizle"
               aria-label="Tümünü temizle"
-              className="inline-flex h-8 w-8 items-center justify-center rounded-xl bg-rose-500/15 text-rose-300 hover:bg-rose-500/25 hover:text-rose-200"
+              className="inline-flex h-8 w-8 items-center justify-center rounded-xl bg-rose-500/15 text-rose-700 dark:text-rose-300 hover:bg-rose-500/25 transition"
             >
               <Trash2 className="h-3.5 w-3.5" />
             </button>
@@ -1080,7 +1136,9 @@ export default function ScratchpadModal({
               type="button"
               onClick={onClose}
               aria-label="Karalama tahtasını kapat"
-              className="inline-flex h-8 w-8 items-center justify-center rounded-xl bg-white/10 text-slate-300 hover:bg-white/20 hover:text-white"
+              className={`inline-flex h-8 w-8 items-center justify-center rounded-xl transition ${
+                isLight ? 'bg-slate-100 text-slate-500 hover:bg-slate-200 hover:text-slate-900' : 'bg-white/10 text-slate-300 hover:bg-white/20 hover:text-white'
+              }`}
             >
               <X className="h-4 w-4" />
             </button>

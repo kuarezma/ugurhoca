@@ -300,18 +300,18 @@ export function PizzaChef({
   }, [order.totalSlices]);
 
   return (
-    <div className="mx-auto w-full max-w-2xl rounded-3xl border border-amber-500/20 bg-slate-900/90 p-6 text-white shadow-2xl backdrop-blur-xl">
+    <div className="mx-auto w-full max-w-2xl rounded-3xl border border-amber-500/30 dark:border-amber-500/20 bg-white/95 dark:bg-slate-900/90 p-6 text-slate-900 dark:text-white shadow-2xl backdrop-blur-xl">
       {/* Top Header */}
-      <div className="mb-6 flex flex-wrap items-center justify-between gap-4 border-b border-white/10 pb-4">
+      <div className="mb-6 flex flex-wrap items-center justify-between gap-4 border-b border-slate-200 dark:border-white/10 pb-4">
         <div className="flex items-center gap-3">
           <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-tr from-amber-500 to-red-500 shadow-lg shadow-amber-500/30">
             <ChefHat className="h-7 w-7 text-white" />
           </div>
           <div>
-            <h2 className="font-display text-2xl font-bold text-amber-300">
+            <h2 className="font-display text-2xl font-bold text-amber-600 dark:text-amber-300">
               Pizza Ustası
             </h2>
-            <p className="text-xs text-slate-300">
+            <p className="text-xs text-slate-600 dark:text-slate-300">
               Kesirleri lezzetli pizzalara dönüştür!
             </p>
           </div>
@@ -319,20 +319,20 @@ export function PizzaChef({
 
         {gameState === 'playing' && (
           <div className="flex items-center gap-4 text-sm font-semibold">
-            <div className="flex items-center gap-1 text-red-400">
+            <div className="flex items-center gap-1 text-red-500 dark:text-red-400">
               {Array.from({ length: 3 }).map((_, i) => (
                 <Heart
                   key={i}
                   className={`h-5 w-5 ${
-                    i < lives ? 'fill-red-500 text-red-500' : 'text-slate-600'
+                    i < lives ? 'fill-red-500 text-red-500' : 'text-slate-300 dark:text-slate-600'
                   }`}
                 />
               ))}
             </div>
-            <div className="rounded-xl bg-amber-500/20 px-3 py-1 text-amber-300">
+            <div className="rounded-xl bg-amber-500/10 dark:bg-amber-500/20 px-3 py-1 text-amber-700 dark:text-amber-300">
               Süre: {timeLeft}s
             </div>
-            <div className="rounded-xl bg-purple-500/20 px-3 py-1 text-purple-300">
+            <div className="rounded-xl bg-purple-500/10 dark:bg-purple-500/20 px-3 py-1 text-purple-700 dark:text-purple-300">
               {score} Puan
             </div>
           </div>
@@ -344,10 +344,10 @@ export function PizzaChef({
           <div className="mx-auto mb-6 flex h-24 w-24 items-center justify-center rounded-full bg-gradient-to-tr from-amber-500 to-orange-500 shadow-xl shadow-amber-500/40">
             <Utensils className="h-12 w-12 text-white" />
           </div>
-          <h3 className="text-2xl font-bold text-white">
+          <h3 className="text-2xl font-bold text-slate-900 dark:text-white">
             Siparişler Geliyor, Şef!
           </h3>
-          <p className="mx-auto mt-2 max-w-md text-sm text-slate-300">
+          <p className="mx-auto mt-2 max-w-md text-sm text-slate-600 dark:text-slate-300">
             Müşterilerin sipariş ettiği kesir kadar dilime tıkla, malzemeyi koy
             ve pizzayı fırına ver. Doğru dilimlerle kombo yap, puan rekoru kır!
           </p>
@@ -365,19 +365,19 @@ export function PizzaChef({
       {gameState === 'playing' && (
         <div>
           {/* Order Board */}
-          <div className="mb-6 rounded-2xl border border-amber-500/30 bg-gradient-to-r from-amber-500/10 via-orange-500/10 to-transparent p-4">
+          <div className="mb-6 rounded-2xl border border-amber-500/30 bg-gradient-to-r from-amber-500/10 via-orange-500/10 to-amber-500/5 dark:to-transparent p-4">
             <div className="flex flex-wrap items-center justify-between gap-2">
               <div>
-                <span className="text-xs uppercase tracking-wider text-amber-400 font-bold">
+                <span className="text-xs uppercase tracking-wider text-amber-700 dark:text-amber-400 font-bold">
                   Sipariş #{round}
                 </span>
-                <div className="mt-1 text-lg font-bold text-white">
+                <div className="mt-1 text-lg font-bold text-slate-900 dark:text-white">
                   Pizzanın{' '}
                   <span className="rounded-lg bg-amber-500 px-2 py-0.5 text-slate-950">
                     {order.targetFractionText}
                   </span>{' '}
                   kadarını{' '}
-                  <span className="text-amber-300 font-bold">
+                  <span className="text-amber-700 dark:text-amber-300 font-bold">
                     {order.toppingName}
                   </span>{' '}
                   yap!
@@ -385,8 +385,8 @@ export function PizzaChef({
               </div>
               <div className="flex items-center gap-3">
                 <div className="text-right">
-                  <div className="text-xs text-slate-400">Seçilen Dilim</div>
-                  <div className="font-display text-xl font-black text-amber-400">
+                  <div className="text-xs text-slate-500 dark:text-slate-400">Seçilen Dilim</div>
+                  <div className="font-display text-xl font-black text-amber-600 dark:text-amber-400">
                     {selectedSlices.size} / {order.totalSlices}
                   </div>
                 </div>
@@ -441,7 +441,7 @@ export function PizzaChef({
               </svg>
             </div>
 
-            <p className="mt-3 text-xs text-slate-400">
+            <p className="mt-3 text-xs text-slate-500 dark:text-slate-400">
               Dilimlere dokunarak malzeme ekle veya çıkar.
             </p>
           </div>
@@ -456,8 +456,8 @@ export function PizzaChef({
                   exit={{ opacity: 0 }}
                   className={`rounded-xl px-4 py-2 text-sm font-semibold ${
                     feedback.isCorrect
-                      ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40'
-                      : 'bg-rose-500/20 text-rose-300 border border-rose-500/40'
+                      ? 'bg-emerald-50 dark:bg-emerald-500/20 text-emerald-800 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-500/40'
+                      : 'bg-rose-50 dark:bg-rose-500/20 text-rose-800 dark:text-rose-300 border border-rose-300 dark:border-rose-500/40'
                   }`}
                 >
                   {feedback.message}
@@ -481,23 +481,23 @@ export function PizzaChef({
           <div className="mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-tr from-amber-400 to-yellow-500 text-slate-950 shadow-xl">
             <Trophy className="h-10 w-10" />
           </div>
-          <h3 className="font-display text-3xl font-black text-white">
+          <h3 className="font-display text-3xl font-black text-slate-900 dark:text-white">
             Tebrikler Şef!
           </h3>
-          <p className="mt-2 text-sm text-slate-300">
+          <p className="mt-2 text-sm text-slate-600 dark:text-slate-300">
             Pizzacıdaki mesain bitti, harika siparişler çıkardın!
           </p>
 
-          <div className="mx-auto my-6 grid max-w-sm grid-cols-2 gap-4 rounded-2xl bg-white/5 p-4 border border-white/10">
+          <div className="mx-auto my-6 grid max-w-sm grid-cols-2 gap-4 rounded-2xl bg-slate-50 dark:bg-white/5 p-4 border border-slate-200 dark:border-white/10">
             <div>
-              <div className="text-xs text-slate-400">Toplam Puan</div>
-              <div className="font-display text-2xl font-black text-amber-400">
+              <div className="text-xs text-slate-500 dark:text-slate-400">Toplam Puan</div>
+              <div className="font-display text-2xl font-black text-amber-600 dark:text-amber-400">
                 {score}
               </div>
             </div>
             <div>
-              <div className="text-xs text-slate-400">Tamamlanan Sipariş</div>
-              <div className="font-display text-2xl font-black text-emerald-400">
+              <div className="text-xs text-slate-500 dark:text-slate-400">Tamamlanan Sipariş</div>
+              <div className="font-display text-2xl font-black text-emerald-600 dark:text-emerald-400">
                 {round - 1}
               </div>
             </div>
@@ -513,7 +513,7 @@ export function PizzaChef({
             {onExit && (
               <button
                 onClick={onExit}
-                className="rounded-2xl border border-white/20 bg-white/5 px-6 py-3 font-semibold text-white transition hover:bg-white/10"
+                className="rounded-2xl border border-slate-300 dark:border-white/20 bg-slate-100 dark:bg-white/5 px-6 py-3 font-semibold text-slate-800 dark:text-white transition hover:bg-slate-200 dark:hover:bg-white/10"
               >
                 Oyunlara Dön
               </button>

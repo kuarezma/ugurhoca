@@ -90,19 +90,19 @@ export const LearningOutcomeAnalysisModal: React.FC<LearningOutcomeAnalysisModal
         aria-modal="true"
         tabIndex={-1}
         aria-labelledby="outcome-modal-title"
-        className="relative z-10 w-full max-w-2xl flex flex-col max-h-[90vh] rounded-3xl border border-white/10 bg-slate-900 shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-200 outline-none"
+        className="relative z-10 w-full max-w-2xl flex flex-col max-h-[90vh] rounded-3xl border border-slate-200 dark:border-white/10 bg-white dark:bg-slate-900 shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-200 outline-none"
       >
         {/* Header */}
-        <div className="flex items-center justify-between border-b border-white/10 bg-slate-950/70 px-6 py-4">
+        <div className="flex items-center justify-between border-b border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-slate-950/70 px-6 py-4">
           <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-indigo-500/20 text-indigo-400 border border-indigo-500/30">
+            <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-indigo-500/20 text-indigo-600 dark:text-indigo-400 border border-indigo-500/30">
               <Target className="h-5 w-5" />
             </div>
             <div>
-              <h2 id="outcome-modal-title" className="font-display text-lg font-bold text-white">
+              <h2 id="outcome-modal-title" className="font-display text-lg font-bold text-slate-900 dark:text-white">
                 Kazanım & Eksik Analizi
               </h2>
-              <p className="text-xs text-slate-400">
+              <p className="text-xs text-slate-500 dark:text-slate-400">
                 Testteki başarı durumun ve konuya özel otomatik telafi önerileri
               </p>
             </div>
@@ -111,32 +111,32 @@ export const LearningOutcomeAnalysisModal: React.FC<LearningOutcomeAnalysisModal
             type="button"
             onClick={onClose}
             aria-label="Kapat"
-            className="rounded-xl p-2 text-slate-400 hover:bg-white/5 hover:text-white transition-colors"
+            className="rounded-xl p-2 text-slate-400 hover:bg-slate-100 dark:hover:bg-white/5 hover:text-slate-900 dark:hover:text-white transition-colors"
           >
             <X className="h-5 w-5" />
           </button>
         </div>
 
         {/* Overall Score Summary */}
-        <div className="border-b border-white/5 bg-slate-950/40 px-6 py-4">
+        <div className="border-b border-slate-200 dark:border-white/5 bg-slate-100/50 dark:bg-slate-950/40 px-6 py-4">
           <div className="flex items-center justify-between gap-4">
             <div>
-              <div className="text-xs font-semibold text-slate-400">Genel Başarı Oranı</div>
-              <div className="text-2xl font-black text-white mt-0.5">
+              <div className="text-xs font-semibold text-slate-500 dark:text-slate-400">Genel Başarı Oranı</div>
+              <div className="text-2xl font-black text-slate-900 dark:text-white mt-0.5">
                 %{analysis.overallAccuracy}
               </div>
             </div>
             <div className="flex items-center gap-3 text-xs">
-              <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-500/10 text-emerald-300 border border-emerald-500/20">
+              <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border border-emerald-500/20">
                 <CheckCircle2 className="w-3.5 h-3.5" />
                 <span>{analysis.correctCount} Doğru</span>
               </div>
-              <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-rose-500/10 text-rose-300 border border-rose-500/20">
+              <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-rose-500/10 text-rose-700 dark:text-rose-300 border border-rose-500/20">
                 <X className="w-3.5 h-3.5" />
                 <span>{analysis.wrongCount} Yanlış</span>
               </div>
               {analysis.emptyCount > 0 && (
-                <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-800 text-slate-400 border border-slate-700">
+                <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700">
                   <span>{analysis.emptyCount} Boş</span>
                 </div>
               )}
@@ -147,7 +147,7 @@ export const LearningOutcomeAnalysisModal: React.FC<LearningOutcomeAnalysisModal
         {/* Content Body: Topic breakdown list */}
         <div className="overflow-y-auto p-6 space-y-4 flex-1">
           {analysis.items.length === 0 ? (
-            <div className="text-center py-8 text-slate-400 text-sm">
+            <div className="text-center py-8 text-slate-500 dark:text-slate-400 text-sm">
               Analiz edilecek konu verisi bulunamadı.
             </div>
           ) : (
@@ -158,11 +158,11 @@ export const LearningOutcomeAnalysisModal: React.FC<LearningOutcomeAnalysisModal
               return (
                 <div
                   key={item.topic}
-                  className="rounded-2xl bg-slate-800/40 border border-white/5 p-4 hover:border-white/10 transition-colors"
+                  className="rounded-2xl bg-slate-50 dark:bg-slate-800/40 border border-slate-200 dark:border-white/5 p-4 hover:border-slate-300 dark:hover:border-white/10 transition-colors"
                 >
                   {/* Topic Header & Status */}
                   <div className="flex items-center justify-between gap-2 mb-2">
-                    <div className="font-semibold text-white text-sm tracking-tight">
+                    <div className="font-semibold text-slate-900 dark:text-white text-sm tracking-tight">
                       {item.topic}
                     </div>
                     <span
@@ -175,13 +175,13 @@ export const LearningOutcomeAnalysisModal: React.FC<LearningOutcomeAnalysisModal
 
                   {/* Progress Bar & Stats */}
                   <div className="space-y-1.5 mb-3">
-                    <div className="flex justify-between text-xs text-slate-400">
+                    <div className="flex justify-between text-xs text-slate-500 dark:text-slate-400">
                       <span>
                         {item.correctCount}/{item.totalQuestions} Soru Doğru
                       </span>
-                      <span className="font-bold text-slate-200">%{item.accuracy}</span>
+                      <span className="font-bold text-slate-700 dark:text-slate-200">%{item.accuracy}</span>
                     </div>
-                    <div className="h-2 w-full rounded-full bg-slate-800 overflow-hidden">
+                    <div className="h-2 w-full rounded-full bg-slate-200 dark:bg-slate-800 overflow-hidden">
                       <div
                         className={`h-full rounded-full transition-all duration-500 ${statusCfg.barClass}`}
                         style={{ width: `${item.accuracy}%` }}
@@ -190,17 +190,17 @@ export const LearningOutcomeAnalysisModal: React.FC<LearningOutcomeAnalysisModal
                   </div>
 
                   {/* Remediation Action Links */}
-                  <div className="flex flex-wrap items-center gap-2 pt-2 border-t border-white/5">
+                  <div className="flex flex-wrap items-center gap-2 pt-2 border-t border-slate-200 dark:border-white/5">
                     <Link
                       href={item.worksheetHref}
-                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-indigo-600/20 hover:bg-indigo-600/30 text-indigo-300 border border-indigo-500/30 text-xs font-semibold transition-colors"
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-indigo-50 dark:bg-indigo-600/20 hover:bg-indigo-100 dark:hover:bg-indigo-600/30 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-500/30 text-xs font-semibold transition-colors"
                     >
                       <FileCheck2 className="w-3.5 h-3.5" />
                       Telafi Yaprak Testini Aç
                     </Link>
                     <Link
                       href={item.summaryHref}
-                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-700/40 hover:bg-slate-700/60 text-slate-300 border border-slate-600/40 text-xs font-medium transition-colors"
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-700/40 hover:bg-slate-200 dark:hover:bg-slate-700/60 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-600/40 text-xs font-medium transition-colors"
                     >
                       <BookOpen className="w-3.5 h-3.5" />
                       Konu Özeti
@@ -213,10 +213,10 @@ export const LearningOutcomeAnalysisModal: React.FC<LearningOutcomeAnalysisModal
         </div>
 
         {/* Footer */}
-        <div className="flex items-center justify-between border-t border-white/10 bg-slate-950/70 px-6 py-4">
+        <div className="flex items-center justify-between border-t border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-slate-950/70 px-6 py-4">
           <Link
             href="/icerikler?type=yaprak-test"
-            className="inline-flex items-center gap-1 text-xs font-semibold text-indigo-400 hover:text-indigo-300 transition-colors"
+            className="inline-flex items-center gap-1 text-xs font-semibold text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300 transition-colors"
           >
             <span>Tüm Çalışma Kağıtlarını Keşfet</span>
             <ArrowRight className="w-3.5 h-3.5" />
@@ -224,7 +224,7 @@ export const LearningOutcomeAnalysisModal: React.FC<LearningOutcomeAnalysisModal
           <button
             type="button"
             onClick={onClose}
-            className="px-5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-white text-xs font-bold transition-colors"
+            className="px-5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 dark:bg-slate-800 dark:hover:bg-slate-700 dark:text-white text-xs font-bold transition-colors"
           >
             Tamam
           </button>

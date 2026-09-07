@@ -65,24 +65,24 @@ export function SpotTheMistakeModal({ isOpen, onClose }: SpotTheMistakeModalProp
         aria-modal="true"
         tabIndex={-1}
         aria-labelledby="flaw-modal-title"
-        className="relative flex flex-col w-full max-w-3xl max-h-[92vh] bg-slate-900 border border-amber-500/30 rounded-3xl shadow-2xl overflow-hidden text-white outline-none"
+        className="relative flex flex-col w-full max-w-3xl max-h-[92vh] bg-white dark:bg-slate-900 border border-amber-500/30 rounded-3xl shadow-2xl overflow-hidden text-slate-900 dark:text-white outline-none"
       >
         {/* Üst Başlık & İlerleme */}
-        <div className="flex items-center justify-between border-b border-white/10 bg-slate-950/80 px-6 py-4">
+        <div className="flex items-center justify-between border-b border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-slate-950/80 px-6 py-4">
           <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-amber-500/20 text-amber-400 border border-amber-500/30">
+            <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-amber-500/20 text-amber-500 dark:text-amber-400 border border-amber-500/30">
               <AlertTriangle className="h-5 w-5" />
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <span className="px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-wider bg-amber-500/20 text-amber-300 border border-amber-500/30">
+                <span className="px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-wider bg-amber-500/15 text-amber-700 dark:text-amber-300 border border-amber-500/25">
                   Pedagojik Etkinlik
                 </span>
-                <span className="text-xs text-slate-400">
+                <span className="text-xs text-slate-500 dark:text-slate-400">
                   Soru {currentIndex + 1} / {FLAWED_SOLUTIONS_DATA.length}
                 </span>
               </div>
-              <h2 id="flaw-modal-title" className="font-display text-base sm:text-lg font-bold text-white mt-0.5">
+              <h2 id="flaw-modal-title" className="font-display text-base sm:text-lg font-bold text-slate-900 dark:text-white mt-0.5">
                 “Hatayı Bul”: Çözüm Adımlarını İncele
               </h2>
             </div>
@@ -90,14 +90,14 @@ export function SpotTheMistakeModal({ isOpen, onClose }: SpotTheMistakeModalProp
 
           <div className="flex items-center gap-4">
             <div className="hidden sm:block text-right">
-              <span className="text-[10px] text-slate-400 uppercase font-bold block">Dedektif Puanı</span>
-              <span className="text-sm font-black text-amber-400">{score} P</span>
+              <span className="text-[10px] text-slate-500 dark:text-slate-400 uppercase font-bold block">Dedektif Puanı</span>
+              <span className="text-sm font-black text-amber-600 dark:text-amber-400">{score} P</span>
             </div>
             <button
               type="button"
               onClick={onClose}
               aria-label="Kapat"
-              className="rounded-xl p-1.5 text-slate-400 hover:text-white hover:bg-white/10 transition"
+              className="rounded-xl p-1.5 text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/10 transition"
             >
               <X className="h-5 w-5" />
             </button>
@@ -109,16 +109,16 @@ export function SpotTheMistakeModal({ isOpen, onClose }: SpotTheMistakeModalProp
           {isCompleted ? (
             /* Tamamlanma Ekranı */
             <div className="py-8 text-center space-y-4">
-              <div className="w-16 h-16 mx-auto rounded-3xl bg-amber-500/20 text-amber-400 flex items-center justify-center border border-amber-500/30">
+              <div className="w-16 h-16 mx-auto rounded-3xl bg-amber-500/20 text-amber-500 dark:text-amber-400 flex items-center justify-center border border-amber-500/30">
                 <Sparkles className="w-8 h-8" />
               </div>
-              <h3 className="text-2xl font-bold text-white">Tebrikler! Tüm Çözümleri İnceledin</h3>
-              <p className="text-sm text-slate-300 max-w-md mx-auto">
+              <h3 className="text-2xl font-bold text-slate-900 dark:text-white">Tebrikler! Tüm Çözümleri İnceledin</h3>
+              <p className="text-sm text-slate-600 dark:text-slate-300 max-w-md mx-auto">
                 10 yaygın kavram yanılgısını ve hatalı çözüm adımını analiz ettin. Bu analizler sınavda işlem hatası yapma riskini %40 azaltır!
               </p>
-              <div className="inline-block px-6 py-3 rounded-2xl bg-slate-950 border border-white/10">
-                <span className="text-xs text-slate-400 block font-bold uppercase">Toplam Skor</span>
-                <span className="text-3xl font-black text-amber-400">{score} / 100</span>
+              <div className="inline-block px-6 py-3 rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-white/10">
+                <span className="text-xs text-slate-500 dark:text-slate-400 block font-bold uppercase">Toplam Skor</span>
+                <span className="text-3xl font-black text-amber-600 dark:text-amber-400">{score} / 100</span>
               </div>
               <div className="pt-4 flex justify-center gap-3">
                 <button
@@ -132,7 +132,7 @@ export function SpotTheMistakeModal({ isOpen, onClose }: SpotTheMistakeModalProp
                 <button
                   type="button"
                   onClick={onClose}
-                  className="px-5 py-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-bold text-sm transition"
+                  className="px-5 py-3 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 dark:bg-slate-800 dark:hover:bg-slate-700 dark:text-white font-bold text-sm transition"
                 >
                   Kapat
                 </button>
@@ -142,21 +142,21 @@ export function SpotTheMistakeModal({ isOpen, onClose }: SpotTheMistakeModalProp
             /* Soru & Adımlar */
             <>
               {/* Problem Kartı */}
-              <div className="p-4 sm:p-5 rounded-2xl bg-slate-950/70 border border-white/10">
+              <div className="p-4 sm:p-5 rounded-2xl bg-slate-50 dark:bg-slate-950/70 border border-slate-200 dark:border-white/10">
                 <div className="flex items-center justify-between gap-2 mb-2">
-                  <span className="text-xs font-bold text-indigo-400">{currentItem.topic}</span>
-                  <span className="text-[11px] px-2 py-0.5 rounded-full bg-white/10 text-slate-300">
+                  <span className="text-xs font-bold text-indigo-600 dark:text-indigo-400">{currentItem.topic}</span>
+                  <span className="text-[11px] px-2 py-0.5 rounded-full bg-slate-200 dark:bg-white/10 text-slate-700 dark:text-slate-300">
                     {currentItem.difficulty}
                   </span>
                 </div>
-                <h3 className="text-sm sm:text-base font-semibold text-white">
+                <h3 className="text-sm sm:text-base font-semibold text-slate-900 dark:text-white">
                   {currentItem.problemStatement}
                 </h3>
               </div>
 
               {/* Yönerge */}
-              <div className="flex items-center gap-2 text-xs text-amber-300 bg-amber-500/10 px-3.5 py-2 rounded-xl border border-amber-500/20">
-                <HelpCircle className="w-4 h-4 shrink-0" />
+              <div className="flex items-center gap-2 text-xs text-amber-800 dark:text-amber-300 bg-amber-50 dark:bg-amber-500/10 px-3.5 py-2 rounded-xl border border-amber-200 dark:border-amber-500/20">
+                <HelpCircle className="w-4 h-4 shrink-0 text-amber-600 dark:text-amber-400" />
                 <span>
                   Öğrencinin çözümünde <strong>ilk hata hangi adımda yapılmıştır?</strong> İlgili adıma tıklayın.
                 </span>
@@ -169,15 +169,15 @@ export function SpotTheMistakeModal({ isOpen, onClose }: SpotTheMistakeModalProp
                   const isThisFlawed = step.stepNumber === currentItem.flawedStepNumber;
 
                   let cardStyle =
-                    'border-white/10 bg-slate-800/60 hover:bg-slate-800 hover:border-amber-400/40 text-slate-200';
+                    'border-slate-200 dark:border-white/10 bg-slate-50 hover:bg-slate-100 dark:bg-slate-800/60 dark:hover:bg-slate-800 hover:border-amber-400/40 text-slate-800 dark:text-slate-200';
 
                   if (isSelected) {
                     if (isThisFlawed) {
-                      cardStyle = 'border-rose-500 bg-rose-500/20 text-rose-200 ring-2 ring-rose-500/50';
+                      cardStyle = 'border-rose-500 bg-rose-50 dark:bg-rose-500/20 text-rose-800 dark:text-rose-200 ring-2 ring-rose-500/50';
                     } else if (isThisSelected && !isThisFlawed) {
-                      cardStyle = 'border-amber-500/60 bg-amber-500/15 text-amber-200';
+                      cardStyle = 'border-amber-500 bg-amber-50 dark:bg-amber-500/15 text-amber-800 dark:text-amber-200';
                     } else {
-                      cardStyle = 'border-white/5 bg-slate-950/40 text-slate-500 opacity-60';
+                      cardStyle = 'border-slate-100 dark:border-white/5 bg-slate-100/50 dark:bg-slate-950/40 text-slate-400 dark:text-slate-500 opacity-60';
                     }
                   }
 
@@ -190,7 +190,7 @@ export function SpotTheMistakeModal({ isOpen, onClose }: SpotTheMistakeModalProp
                       className={`w-full p-3.5 sm:p-4 rounded-2xl border text-left transition-all flex items-start justify-between gap-3 ${cardStyle}`}
                     >
                       <div className="flex items-start gap-3">
-                        <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg bg-white/10 text-xs font-bold">
+                        <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg bg-slate-200 dark:bg-white/10 text-xs font-bold text-slate-700 dark:text-white">
                           {step.stepNumber}
                         </span>
                         <div className="text-sm font-medium pt-0.5">
@@ -199,14 +199,14 @@ export function SpotTheMistakeModal({ isOpen, onClose }: SpotTheMistakeModalProp
                       </div>
 
                       {isSelected && isThisFlawed && (
-                        <div className="flex items-center gap-1 text-xs font-bold text-rose-400 shrink-0">
+                        <div className="flex items-center gap-1 text-xs font-bold text-rose-600 dark:text-rose-400 shrink-0">
                           <XCircle className="w-4 h-4" />
                           <span>Hatalı Adım</span>
                         </div>
                       )}
 
                       {isSelected && isThisSelected && !isThisFlawed && (
-                        <div className="flex items-center gap-1 text-xs font-bold text-amber-400 shrink-0">
+                        <div className="flex items-center gap-1 text-xs font-bold text-amber-600 dark:text-amber-400 shrink-0">
                           <CheckCircle2 className="w-4 h-4" />
                           <span>Doğruydu</span>
                         </div>
@@ -221,40 +221,40 @@ export function SpotTheMistakeModal({ isOpen, onClose }: SpotTheMistakeModalProp
                 <div
                   className={`p-4 sm:p-5 rounded-2xl border animate-fade-in text-xs sm:text-sm leading-relaxed ${
                     isCorrectChoice
-                      ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-100'
-                      : 'bg-rose-500/10 border-rose-500/30 text-rose-100'
+                      ? 'bg-emerald-50 border-emerald-300 text-emerald-950 dark:bg-emerald-500/10 dark:border-emerald-500/30 dark:text-emerald-100'
+                      : 'bg-rose-50 border-rose-300 text-rose-950 dark:bg-rose-500/10 dark:border-rose-500/30 dark:text-rose-100'
                   }`}
                 >
                   <div className="flex items-center gap-2 font-bold mb-2">
                     {isCorrectChoice ? (
                       <>
-                        <CheckCircle2 className="w-5 h-5 text-emerald-400" />
-                        <span className="text-emerald-300">Harika Teşhis! İlk hatayı doğru buldun.</span>
+                        <CheckCircle2 className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
+                        <span className="text-emerald-700 dark:text-emerald-300">Harika Teşhis! İlk hatayı doğru buldun.</span>
                       </>
                     ) : (
                       <>
-                        <XCircle className="w-5 h-5 text-rose-400" />
-                        <span className="text-rose-300">
+                        <XCircle className="w-5 h-5 text-rose-600 dark:text-rose-400" />
+                        <span className="text-rose-700 dark:text-rose-300">
                           Seçtiğin adım doğruydu. İlk hata {currentItem.flawedStepNumber}. adımda yapılmıştı.
                         </span>
                       </>
                     )}
                   </div>
 
-                  <p className="mt-1 text-slate-200">
+                  <p className="mt-1 text-slate-700 dark:text-slate-200">
                     <strong>Neden Hatalı:</strong> {currentItem.flawExplanation}
                   </p>
 
-                  <div className="mt-2.5 p-2.5 rounded-xl bg-slate-950/60 border border-white/10 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                  <div className="mt-2.5 p-2.5 rounded-xl bg-white dark:bg-slate-950/60 border border-slate-200 dark:border-white/10 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                     <div>
-                      <span className="text-[11px] text-slate-400 block">Adımın Doğrusu:</span>
-                      <span className="text-white font-semibold">
+                      <span className="text-[11px] text-slate-500 dark:text-slate-400 block">Adımın Doğrusu:</span>
+                      <span className="text-slate-900 dark:text-white font-semibold">
                         <MathText>{currentItem.correctStepContent}</MathText>
                       </span>
                     </div>
-                    <div className="sm:text-right border-t sm:border-t-0 sm:border-l border-white/10 sm:pl-3 pt-2 sm:pt-0">
-                      <span className="text-[11px] text-slate-400 block">Doğru Sonuç:</span>
-                      <span className="text-emerald-400 font-bold">
+                    <div className="sm:text-right border-t sm:border-t-0 sm:border-l border-slate-200 dark:border-white/10 sm:pl-3 pt-2 sm:pt-0">
+                      <span className="text-[11px] text-slate-500 dark:text-slate-400 block">Doğru Sonuç:</span>
+                      <span className="text-emerald-600 dark:text-emerald-400 font-bold">
                         <MathText>{currentItem.correctFinalResult}</MathText>
                       </span>
                     </div>
@@ -267,9 +267,9 @@ export function SpotTheMistakeModal({ isOpen, onClose }: SpotTheMistakeModalProp
 
         {/* Alt Bar */}
         {!isCompleted && isSelected && (
-          <div className="border-t border-white/10 bg-slate-950/80 px-6 py-4 flex items-center justify-between">
-            <span className="text-xs text-slate-400">
-              Kavram Yanılgısı: <strong>{currentItem.conceptMisconception}</strong>
+          <div className="border-t border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-slate-950/80 px-6 py-4 flex items-center justify-between">
+            <span className="text-xs text-slate-600 dark:text-slate-400">
+              Kavram Yanılgısı: <strong className="text-slate-900 dark:text-white">{currentItem.conceptMisconception}</strong>
             </span>
             <button
               type="button"

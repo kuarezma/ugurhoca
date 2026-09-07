@@ -19,27 +19,27 @@ export default function AdminGradeUpdateTab({
 }: AdminGradeUpdateTabProps) {
   return (
     <div className="max-w-2xl mx-auto animate-fade-up">
-      <div className="glass rounded-3xl p-8">
+      <div className="glass rounded-3xl p-8 border border-slate-200/80 dark:border-white/10 bg-white/80 dark:bg-slate-900/60 shadow-md dark:shadow-none">
         <div className="flex items-center gap-4 mb-6">
           <div className="w-16 h-16 bg-gradient-to-br from-teal-500 to-cyan-500 rounded-2xl flex items-center justify-center">
             <GraduationCap className="w-8 h-8 text-white" />
           </div>
           <div>
-            <h2 className="text-2xl font-bold text-white">Sınıf Güncelleme</h2>
-            <p className="text-slate-400">
+            <h2 className="text-2xl font-bold text-slate-900 dark:text-white">Sınıf Güncelleme</h2>
+            <p className="text-slate-500 dark:text-slate-400">
               Tüm öğrencilerin sınıfını bir üst seviyeye taşı
             </p>
           </div>
         </div>
 
-        <div className="bg-teal-500/10 border border-teal-500/30 rounded-xl p-4 mb-6">
+        <div className="bg-teal-50 dark:bg-teal-500/10 border border-teal-200 dark:border-teal-500/30 rounded-xl p-4 mb-6">
           <div className="flex items-start gap-3">
-            <AlertCircle className="w-5 h-5 text-teal-400 mt-0.5" />
+            <AlertCircle className="w-5 h-5 text-teal-600 dark:text-teal-400 mt-0.5" />
             <div className="text-sm">
-              <p className="text-teal-300 font-medium mb-1">
+              <p className="text-teal-800 dark:text-teal-300 font-medium mb-1">
                 Bu işlem ne yapar?
               </p>
-              <p className="text-slate-400">
+              <p className="text-slate-600 dark:text-slate-400">
                 Tüm öğrencilerin sınıfı otomatik olarak +1 artırılır. Örneğin:
                 5. sınıf → 6. sınıf, 12. sınıf → 12. sınıf (sabit kalır)
               </p>
@@ -48,7 +48,7 @@ export default function AdminGradeUpdateTab({
         </div>
 
         <div className="mb-6">
-          <p className="text-slate-300 mb-3">Mevcut durum:</p>
+          <p className="text-slate-700 dark:text-slate-300 mb-3 font-medium">Mevcut durum:</p>
           <div className="grid grid-cols-4 gap-3">
             {[5, 6, 7, 8, 9, 10, 11, 12, 'Mezun'].map((grade) => {
               const count = users.filter(
@@ -58,10 +58,10 @@ export default function AdminGradeUpdateTab({
               return (
                 <div
                   key={grade}
-                  className="bg-slate-800/50 rounded-lg p-3 text-center"
+                  className="bg-slate-50 dark:bg-slate-800/50 border border-slate-200/60 dark:border-transparent rounded-lg p-3 text-center"
                 >
-                  <div className="text-2xl font-bold text-white">{count}</div>
-                  <div className="text-xs text-slate-400">
+                  <div className="text-2xl font-bold text-slate-900 dark:text-white">{count}</div>
+                  <div className="text-xs text-slate-500 dark:text-slate-400">
                     {grade === 'Mezun' ? 'Mezun' : `${grade}. Sınıf`}
                   </div>
                 </div>
@@ -70,9 +70,9 @@ export default function AdminGradeUpdateTab({
           </div>
         </div>
 
-        <div className="text-slate-500 text-sm mb-6">
+        <div className="text-slate-500 dark:text-slate-400 text-sm mb-6">
           Son güncelleme:{' '}
-          <span className="text-slate-300 font-medium">
+          <span className="text-slate-800 dark:text-slate-300 font-medium">
             {lastGradeUpdate || 'Henüz yapılmadı'}
           </span>
         </div>

@@ -109,28 +109,28 @@ export function InteractiveMathLabModal({ isOpen, onClose }: InteractiveMathLabM
   };
 
   return (
-    <div className="fixed inset-0 z-[160] flex items-center justify-center bg-slate-950/85 p-3 sm:p-5 backdrop-blur-md overflow-y-auto">
+    <div className="fixed inset-0 z-[160] flex items-center justify-center bg-slate-900/60 dark:bg-slate-950/85 p-3 sm:p-5 backdrop-blur-md overflow-y-auto">
       <div
         ref={containerRef}
         role="dialog"
         aria-modal="true"
         tabIndex={-1}
         aria-labelledby="math-lab-title"
-        className="relative flex flex-col w-full max-w-4xl max-h-[94vh] bg-slate-900 border border-indigo-500/30 rounded-3xl shadow-2xl overflow-hidden text-white outline-none"
+        className="relative flex flex-col w-full max-w-4xl max-h-[94vh] bg-white dark:bg-slate-900 border border-slate-200 dark:border-indigo-500/30 rounded-3xl shadow-2xl overflow-hidden text-slate-900 dark:text-white outline-none"
       >
         {/* Başlık */}
-        <div className="flex flex-wrap items-center justify-between border-b border-white/10 bg-slate-950/80 px-6 py-4 gap-3">
+        <div className="flex flex-wrap items-center justify-between border-b border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-slate-950/80 px-6 py-4 gap-3">
           <div className="flex items-center gap-3">
-            <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-indigo-500/20 text-indigo-400 border border-indigo-500/30">
+            <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-indigo-500/20 text-indigo-600 dark:text-indigo-400 border border-indigo-500/30">
               <Compass className="h-6 w-6" />
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <span className="px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-wider bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">
+                <span className="px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-wider bg-indigo-500/20 text-indigo-700 dark:text-indigo-300 border border-indigo-500/30">
                   Etkileşimli Keşif Laboratuvarı
                 </span>
               </div>
-              <h2 id="math-lab-title" className="font-display text-base sm:text-lg font-bold text-white mt-0.5">
+              <h2 id="math-lab-title" className="font-display text-base sm:text-lg font-bold text-slate-900 dark:text-white mt-0.5">
                 Matematiği Dokunarak Keşfet: Tahmin Et → Sürükle → Gör
               </h2>
             </div>
@@ -138,7 +138,7 @@ export function InteractiveMathLabModal({ isOpen, onClose }: InteractiveMathLabM
 
           <div className="flex items-center gap-2">
             {/* Mod Seçimi */}
-            <div className="flex rounded-xl bg-slate-950 border border-white/10 p-1 text-xs font-bold">
+            <div className="flex rounded-xl bg-slate-100 dark:bg-slate-950 border border-slate-200 dark:border-white/10 p-1 text-xs font-bold">
               <button
                 type="button"
                 onClick={() => {
@@ -146,7 +146,7 @@ export function InteractiveMathLabModal({ isOpen, onClose }: InteractiveMathLabM
                   setCurrentStep('predict');
                 }}
                 className={`px-3 py-1.5 rounded-lg transition ${
-                  activeMode === 'triangle' ? 'bg-indigo-600 text-white' : 'text-slate-400 hover:text-white'
+                  activeMode === 'triangle' ? 'bg-indigo-600 text-white' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
                 }`}
               >
                 Üçgen Açıları
@@ -158,7 +158,7 @@ export function InteractiveMathLabModal({ isOpen, onClose }: InteractiveMathLabM
                   setCurrentStep('predict');
                 }}
                 className={`px-3 py-1.5 rounded-lg transition ${
-                  activeMode === 'slope' ? 'bg-indigo-600 text-white' : 'text-slate-400 hover:text-white'
+                  activeMode === 'slope' ? 'bg-indigo-600 text-white' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
                 }`}
               >
                 Doğrunun Eğimi
@@ -169,7 +169,7 @@ export function InteractiveMathLabModal({ isOpen, onClose }: InteractiveMathLabM
               type="button"
               onClick={onClose}
               aria-label="Kapat"
-              className="rounded-xl p-1.5 text-slate-400 hover:text-white hover:bg-white/10 transition ml-2"
+              className="rounded-xl p-1.5 text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/10 transition ml-2"
             >
               <X className="h-5 w-5" />
             </button>
@@ -177,37 +177,37 @@ export function InteractiveMathLabModal({ isOpen, onClose }: InteractiveMathLabM
         </div>
 
         {/* 3 Aşamalı Pedagojik Adım Navigasyonu */}
-        <div className="flex border-b border-white/10 bg-slate-950/60 px-6 py-2.5 gap-4 text-xs font-bold">
+        <div className="flex border-b border-slate-200 dark:border-white/10 bg-slate-100/70 dark:bg-slate-950/60 px-6 py-2.5 gap-4 text-xs font-bold">
           <button
             type="button"
             onClick={() => setCurrentStep('predict')}
             className={`flex items-center gap-1.5 transition ${
-              currentStep === 'predict' ? 'text-amber-400' : 'text-slate-500 hover:text-slate-300'
+              currentStep === 'predict' ? 'text-amber-600 dark:text-amber-400' : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'
             }`}
           >
-            <span className="w-5 h-5 rounded-full flex items-center justify-center bg-white/10 text-[10px]">1</span>
+            <span className="w-5 h-5 rounded-full flex items-center justify-center bg-slate-200 dark:bg-white/10 text-slate-700 dark:text-white text-[10px]">1</span>
             <span>1. Tahmin Et</span>
           </button>
-          <span className="text-slate-700">→</span>
+          <span className="text-slate-400 dark:text-slate-700">→</span>
           <button
             type="button"
             onClick={() => setCurrentStep('explore')}
             className={`flex items-center gap-1.5 transition ${
-              currentStep === 'explore' ? 'text-indigo-400' : 'text-slate-500 hover:text-slate-300'
+              currentStep === 'explore' ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'
             }`}
           >
-            <span className="w-5 h-5 rounded-full flex items-center justify-center bg-white/10 text-[10px]">2</span>
+            <span className="w-5 h-5 rounded-full flex items-center justify-center bg-slate-200 dark:bg-white/10 text-slate-700 dark:text-white text-[10px]">2</span>
             <span>2. Sürükle & Dene</span>
           </button>
-          <span className="text-slate-700">→</span>
+          <span className="text-slate-400 dark:text-slate-700">→</span>
           <button
             type="button"
             onClick={() => setCurrentStep('explain')}
             className={`flex items-center gap-1.5 transition ${
-              currentStep === 'explain' ? 'text-emerald-400' : 'text-slate-500 hover:text-slate-300'
+              currentStep === 'explain' ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'
             }`}
           >
-            <span className="w-5 h-5 rounded-full flex items-center justify-center bg-white/10 text-[10px]">3</span>
+            <span className="w-5 h-5 rounded-full flex items-center justify-center bg-slate-200 dark:bg-white/10 text-slate-700 dark:text-white text-[10px]">3</span>
             <span>3. İspat & Açıklama</span>
           </button>
         </div>
@@ -346,36 +346,36 @@ export function InteractiveMathLabModal({ isOpen, onClose }: InteractiveMathLabM
             {/* Canlı İstatistik Çubuğu */}
             {activeMode === 'triangle' ? (
               <div className="w-full mt-3 grid grid-cols-4 gap-2 text-center text-xs">
-                <div className="p-2 rounded-xl bg-slate-950/80 border border-indigo-500/30">
-                  <span className="text-slate-400 block text-[10px]">A Açısı</span>
-                  <span className="font-bold text-indigo-300">{angleA}°</span>
+                <div className="p-2 rounded-xl bg-slate-50 dark:bg-slate-950/80 border border-slate-200 dark:border-indigo-500/30">
+                  <span className="text-slate-500 dark:text-slate-400 block text-[10px]">A Açısı</span>
+                  <span className="font-bold text-indigo-600 dark:text-indigo-300">{angleA}°</span>
                 </div>
-                <div className="p-2 rounded-xl bg-slate-950/80 border border-pink-500/30">
-                  <span className="text-slate-400 block text-[10px]">B Açısı</span>
-                  <span className="font-bold text-pink-300">{angleB}°</span>
+                <div className="p-2 rounded-xl bg-slate-50 dark:bg-slate-950/80 border border-slate-200 dark:border-pink-500/30">
+                  <span className="text-slate-500 dark:text-slate-400 block text-[10px]">B Açısı</span>
+                  <span className="font-bold text-pink-600 dark:text-pink-300">{angleB}°</span>
                 </div>
-                <div className="p-2 rounded-xl bg-slate-950/80 border border-emerald-500/30">
-                  <span className="text-slate-400 block text-[10px]">C Açısı</span>
-                  <span className="font-bold text-emerald-300">{angleC}°</span>
+                <div className="p-2 rounded-xl bg-slate-50 dark:bg-slate-950/80 border border-slate-200 dark:border-emerald-500/30">
+                  <span className="text-slate-500 dark:text-slate-400 block text-[10px]">C Açısı</span>
+                  <span className="font-bold text-emerald-600 dark:text-emerald-300">{angleC}°</span>
                 </div>
-                <div className="p-2 rounded-xl bg-slate-950/80 border border-amber-500/30">
-                  <span className="text-slate-400 block text-[10px]">Toplam</span>
-                  <span className="font-black text-amber-300">180°</span>
+                <div className="p-2 rounded-xl bg-slate-50 dark:bg-slate-950/80 border border-slate-200 dark:border-amber-500/30">
+                  <span className="text-slate-500 dark:text-slate-400 block text-[10px]">Toplam</span>
+                  <span className="font-black text-amber-600 dark:text-amber-300">180°</span>
                 </div>
               </div>
             ) : (
               <div className="w-full mt-3 grid grid-cols-3 gap-2 text-center text-xs">
-                <div className="p-2 rounded-xl bg-slate-950/80 border border-amber-500/30">
-                  <span className="text-slate-400 block text-[10px]">Dikey Değişim (Δy)</span>
-                  <span className="font-bold text-amber-300">{dy.toFixed(1)}</span>
+                <div className="p-2 rounded-xl bg-slate-50 dark:bg-slate-950/80 border border-slate-200 dark:border-amber-500/30">
+                  <span className="text-slate-500 dark:text-slate-400 block text-[10px]">Dikey Değişim (Δy)</span>
+                  <span className="font-bold text-amber-600 dark:text-amber-300">{dy.toFixed(1)}</span>
                 </div>
-                <div className="p-2 rounded-xl bg-slate-950/80 border border-cyan-500/30">
-                  <span className="text-slate-400 block text-[10px]">Yatay Değişim (Δx)</span>
-                  <span className="font-bold text-cyan-300">{dx.toFixed(1)}</span>
+                <div className="p-2 rounded-xl bg-slate-50 dark:bg-slate-950/80 border border-slate-200 dark:border-cyan-500/30">
+                  <span className="text-slate-500 dark:text-slate-400 block text-[10px]">Yatay Değişim (Δx)</span>
+                  <span className="font-bold text-cyan-600 dark:text-cyan-300">{dx.toFixed(1)}</span>
                 </div>
-                <div className="p-2 rounded-xl bg-slate-950/80 border border-indigo-500/30">
-                  <span className="text-slate-400 block text-[10px]">Eğim (m = Δy/Δx)</span>
-                  <span className="font-black text-indigo-300">{slope}</span>
+                <div className="p-2 rounded-xl bg-slate-50 dark:bg-slate-950/80 border border-slate-200 dark:border-indigo-500/30">
+                  <span className="text-slate-500 dark:text-slate-400 block text-[10px]">Eğim (m = Δy/Δx)</span>
+                  <span className="font-black text-indigo-600 dark:text-indigo-300">{slope}</span>
                 </div>
               </div>
             )}
@@ -384,12 +384,12 @@ export function InteractiveMathLabModal({ isOpen, onClose }: InteractiveMathLabM
           {/* Sağ Panel: Pedagojik Akış & Keşif Kartları (5 Kolon) */}
           <div className="lg:col-span-5 flex flex-col justify-between space-y-4">
             {currentStep === 'predict' && (
-              <div className="p-4 sm:p-5 rounded-2xl bg-amber-500/10 border border-amber-500/25 space-y-3.5">
-                <div className="flex items-center gap-2 text-amber-400 font-bold text-sm">
+              <div className="p-4 sm:p-5 rounded-2xl bg-amber-500/10 border border-amber-500/30 space-y-3.5">
+                <div className="flex items-center gap-2 text-amber-700 dark:text-amber-400 font-bold text-sm">
                   <HelpCircle className="w-4 h-4" />
                   <span>1. Aşama: Hipotez Kur & Tahmin Et</span>
                 </div>
-                <p className="text-xs sm:text-sm text-slate-200 leading-relaxed">
+                <p className="text-xs sm:text-sm text-slate-800 dark:text-slate-200 leading-relaxed">
                   {activeMode === 'triangle'
                     ? 'A köşesini olabildiğince yukarı çekip üçgeni uzatırsan, üçgenin iç açıları toplamı nasıl değişir?'
                     : 'Doğruyu sağa doğru yatay hale getirirsen (düz bir zemin gibi), eğim değeri neye yaklaşır?'}
@@ -411,7 +411,7 @@ export function InteractiveMathLabModal({ isOpen, onClose }: InteractiveMathLabM
                       className={`w-full p-2.5 rounded-xl border text-left text-xs transition ${
                         prediction === option
                           ? 'bg-amber-500 text-slate-950 font-bold border-amber-400'
-                          : 'bg-slate-950/60 border-white/10 text-slate-300 hover:border-white/20'
+                          : 'bg-white dark:bg-slate-950/60 border-slate-200 dark:border-white/10 text-slate-700 dark:text-slate-300 hover:border-slate-300 dark:hover:border-white/20'
                       }`}
                     >
                       {option}
@@ -433,28 +433,28 @@ export function InteractiveMathLabModal({ isOpen, onClose }: InteractiveMathLabM
             )}
 
             {currentStep === 'explore' && (
-              <div className="p-4 sm:p-5 rounded-2xl bg-indigo-500/10 border border-indigo-500/25 space-y-3.5">
-                <div className="flex items-center gap-2 text-indigo-400 font-bold text-sm">
+              <div className="p-4 sm:p-5 rounded-2xl bg-indigo-50 dark:bg-indigo-500/10 border border-indigo-200 dark:border-indigo-500/25 space-y-3.5">
+                <div className="flex items-center gap-2 text-indigo-700 dark:text-indigo-400 font-bold text-sm">
                   <Sparkles className="w-4 h-4" />
                   <span>2. Aşama: Serbest Deney & Gözlem</span>
                 </div>
-                <p className="text-xs sm:text-sm text-slate-200 leading-relaxed">
+                <p className="text-xs sm:text-sm text-slate-800 dark:text-slate-200 leading-relaxed">
                   Kanvas üzerindeki renkli noktaları istediğin yöne sürükle.
                   Açılar anlık değişirken toplamın hiçbir zaman değişmediğini fark ettin mi?
                 </p>
 
-                <div className="p-3 rounded-xl bg-slate-950/80 border border-white/10 text-xs space-y-1.5">
-                  <div className="flex justify-between text-slate-400">
+                <div className="p-3 rounded-xl bg-white dark:bg-slate-950/80 border border-slate-200 dark:border-white/10 text-xs space-y-1.5">
+                  <div className="flex justify-between text-slate-500 dark:text-slate-400">
                     <span>Senin Tahminin:</span>
                   </div>
-                  <div className="font-semibold text-amber-300">{prediction || 'Tahmin yapılmadı'}</div>
+                  <div className="font-semibold text-amber-600 dark:text-amber-300">{prediction || 'Tahmin yapılmadı'}</div>
                 </div>
 
                 <div className="flex gap-2 pt-2">
                   <button
                     type="button"
                     onClick={handleResetTriangle}
-                    className="flex-1 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-bold text-slate-300 flex items-center justify-center gap-1.5 transition"
+                    className="flex-1 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-xs font-bold text-slate-700 dark:text-slate-300 flex items-center justify-center gap-1.5 transition"
                   >
                     <RotateCcw className="w-3.5 h-3.5" />
                     <span>Konumu Sıfırla</span>
@@ -475,32 +475,32 @@ export function InteractiveMathLabModal({ isOpen, onClose }: InteractiveMathLabM
             )}
 
             {currentStep === 'explain' && (
-              <div className="p-4 sm:p-5 rounded-2xl bg-emerald-500/10 border border-emerald-500/25 space-y-3.5">
-                <div className="flex items-center gap-2 text-emerald-400 font-bold text-sm">
+              <div className="p-4 sm:p-5 rounded-2xl bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-200 dark:border-emerald-500/25 space-y-3.5">
+                <div className="flex items-center gap-2 text-emerald-700 dark:text-emerald-400 font-bold text-sm">
                   <CheckCircle2 className="w-4 h-4" />
                   <span>3. Aşama: Matematiksel İspat & Kavrayış</span>
                 </div>
 
                 {activeMode === 'triangle' ? (
-                  <div className="text-xs text-slate-200 space-y-2.5 leading-relaxed">
+                  <div className="text-xs text-slate-800 dark:text-slate-200 space-y-2.5 leading-relaxed">
                     <p>
                       <strong>Öklid'in İspatı (Z Kuralı):</strong> A köşesinden [BC] tabanına paralel bir doğru
                       çizdiğimizde, iç ters açılardan dolayı B açısı tepeye, C açısı da diğer yana taşınır.
                     </p>
-                    <div className="p-2.5 rounded-xl bg-slate-950 border border-emerald-500/30 text-emerald-300 font-mono text-center">
+                    <div className="p-2.5 rounded-xl bg-white dark:bg-slate-950 border border-emerald-300 dark:border-emerald-500/30 text-emerald-700 dark:text-emerald-300 font-mono text-center">
                       A + B + C = Doğru Açı = 180°
                     </div>
-                    <p className="text-slate-400 text-[11px]">
+                    <p className="text-slate-500 dark:text-slate-400 text-[11px]">
                       Bu kural evrendeki tüm düzlemsel üçgenler için (ne kadar uzatırsan uzat) istisnasız geçerlidir!
                     </p>
                   </div>
                 ) : (
-                  <div className="text-xs text-slate-200 space-y-2.5 leading-relaxed">
+                  <div className="text-xs text-slate-800 dark:text-slate-200 space-y-2.5 leading-relaxed">
                     <p>
                       <strong>Eğim Analizi:</strong> Eğim, dikeydeki değişimin yataydaki değişime oranıdır. Doğru
                       sağa yatıkken eğim pozitif (+), sola yatıkken negatif (-), tamamen yatayken sıfırdır (0).
                     </p>
-                    <div className="p-2.5 rounded-xl bg-slate-950 border border-emerald-500/30 text-emerald-300 font-mono text-center">
+                    <div className="p-2.5 rounded-xl bg-white dark:bg-slate-950 border border-emerald-300 dark:border-emerald-500/30 text-emerald-700 dark:text-emerald-300 font-mono text-center">
                       m = (y₂ - y₁) / (x₂ - x₁)
                     </div>
                   </div>
@@ -511,7 +511,7 @@ export function InteractiveMathLabModal({ isOpen, onClose }: InteractiveMathLabM
                     <button
                       type="button"
                       onClick={() => setShowProofLines(!showProofLines)}
-                      className="flex-1 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-bold text-amber-300 border border-amber-500/30 flex items-center justify-center gap-1.5 transition"
+                      className="flex-1 py-2 rounded-xl bg-amber-100 dark:bg-slate-800 hover:bg-amber-200 dark:hover:bg-slate-700 text-xs font-bold text-amber-800 dark:text-amber-300 border border-amber-300 dark:border-amber-500/30 flex items-center justify-center gap-1.5 transition"
                     >
                       <Layers className="w-3.5 h-3.5" />
                       <span>{showProofLines ? 'Paralel Çizgiyi Gizle' : 'Paralel Çizgiyi Göster'}</span>

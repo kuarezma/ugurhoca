@@ -165,24 +165,24 @@ export function OfflineStudyPackageModal({
     >
       <div
         ref={modalRef}
-        className="relative flex flex-col w-full max-w-2xl max-h-[90vh] rounded-3xl border border-white/10 bg-slate-900 text-white shadow-2xl overflow-hidden"
+        className="relative flex flex-col w-full max-w-2xl max-h-[90vh] rounded-3xl border border-slate-200 dark:border-white/10 bg-white dark:bg-slate-900 text-slate-900 dark:text-white shadow-2xl overflow-hidden"
       >
         {/* Başlık */}
-        <div className="flex items-center justify-between border-b border-white/10 px-5 py-4 bg-slate-900/90">
+        <div className="flex items-center justify-between border-b border-slate-200 dark:border-white/10 px-5 py-4 bg-slate-50 dark:bg-slate-900/90">
           <div className="flex items-center gap-3">
             <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-600 text-white shadow-md shadow-emerald-500/25">
               <HardDrive className="h-5 w-5" />
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h2 id={titleId} className="text-base font-bold tracking-tight text-white">
+                <h2 id={titleId} className="text-base font-bold tracking-tight text-slate-900 dark:text-white">
                   Çevrimdışı Çalışma Modu
                 </h2>
                 <span
                   className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-bold ${
                     isOnline
-                      ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30'
-                      : 'bg-amber-500/20 text-amber-300 border border-amber-500/30'
+                      ? 'bg-emerald-500/10 text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-300 border border-emerald-500/20'
+                      : 'bg-amber-500/10 text-amber-700 dark:bg-amber-500/20 dark:text-amber-300 border border-amber-500/20'
                   }`}
                 >
                   {isOnline ? (
@@ -196,7 +196,7 @@ export function OfflineStudyPackageModal({
                   )}
                 </span>
               </div>
-              <p className="text-xs text-slate-400">
+              <p className="text-xs text-slate-500 dark:text-slate-400">
                 Testleri önceden indirin; internet bağlantınız olmadan çözün, bağlanınca otomatik senkronize edilsin.
               </p>
             </div>
@@ -206,19 +206,19 @@ export function OfflineStudyPackageModal({
             type="button"
             onClick={onClose}
             aria-label="Kapat"
-            className="flex h-9 w-9 items-center justify-center rounded-xl text-slate-400 hover:bg-white/10 hover:text-white transition"
+            className="flex h-9 w-9 items-center justify-center rounded-xl text-slate-400 hover:bg-slate-100 dark:hover:bg-white/10 hover:text-slate-900 dark:hover:text-white transition"
           >
             <X className="h-5 w-5" />
           </button>
         </div>
 
         {/* Depolama & Durum Özeti */}
-        <div className="p-4 border-b border-white/10 bg-slate-950/40 flex items-center justify-between text-xs">
+        <div className="p-4 border-b border-slate-200 dark:border-white/10 bg-slate-100/60 dark:bg-slate-950/40 flex items-center justify-between text-xs">
           <div className="flex items-center gap-4">
-            <span className="text-slate-300">
+            <span className="text-slate-700 dark:text-slate-300">
               İndirilen Setler: <strong>{packages.length}</strong>
             </span>
-            <span className="text-slate-400">
+            <span className="text-slate-500 dark:text-slate-400">
               Cihaz Depolaması: <strong>~{totalSizeKb} KB</strong>
             </span>
           </div>
@@ -227,7 +227,7 @@ export function OfflineStudyPackageModal({
             <button
               type="button"
               onClick={handleClearAll}
-              className="text-xs text-rose-400 hover:text-rose-300 transition underline underline-offset-2"
+              className="text-xs text-rose-600 dark:text-rose-400 hover:text-rose-500 transition underline underline-offset-2"
             >
               Hepsini Temizle
             </button>
@@ -238,14 +238,14 @@ export function OfflineStudyPackageModal({
         <div className="flex-1 overflow-y-auto p-4 sm:p-5 space-y-5">
           {/* Cihazdaki İndirilmiş Setler */}
           <div className="space-y-3">
-            <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
-              <CheckCircle2 className="w-4 h-4 text-emerald-400" /> Cihazınızda Hazır Soru Setleri
+            <h3 className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
+              <CheckCircle2 className="w-4 h-4 text-emerald-500 dark:text-emerald-400" /> Cihazınızda Hazır Soru Setleri
             </h3>
 
             {packages.length === 0 ? (
-              <div className="rounded-2xl border border-dashed border-white/15 p-6 text-center">
-                <HardDrive className="w-8 h-8 text-slate-500 mx-auto mb-2" />
-                <p className="text-sm font-semibold text-slate-300">Henüz indirilmiş bir soru seti yok</p>
+              <div className="rounded-2xl border border-dashed border-slate-200 dark:border-white/15 p-6 text-center">
+                <HardDrive className="w-8 h-8 text-slate-400 dark:text-slate-500 mx-auto mb-2" />
+                <p className="text-sm font-semibold text-slate-700 dark:text-slate-300">Henüz indirilmiş bir soru seti yok</p>
                 <p className="text-xs text-slate-500 mt-1">
                   Aşağıdaki önerilen soru setlerinden birini indirerek internetsiz çözmeye başlayabilirsiniz.
                 </p>
@@ -255,16 +255,16 @@ export function OfflineStudyPackageModal({
                 {packages.map((pkg) => (
                   <div
                     key={pkg.id}
-                    className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 p-3.5 rounded-2xl bg-white/5 border border-white/10 hover:border-emerald-500/30 transition"
+                    className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 p-3.5 rounded-2xl bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 hover:border-emerald-500/30 transition"
                   >
                     <div className="space-y-1">
                       <div className="flex items-center gap-2">
-                        <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500/20 text-emerald-300">
+                        <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500/10 text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-300">
                           {pkg.grade}. Sınıf
                         </span>
-                        <h4 className="text-xs sm:text-sm font-bold text-white">{pkg.title}</h4>
+                        <h4 className="text-xs sm:text-sm font-bold text-slate-900 dark:text-white">{pkg.title}</h4>
                       </div>
-                      <p className="text-[11px] text-slate-400">
+                      <p className="text-[11px] text-slate-500 dark:text-slate-400">
                         {pkg.questionsCount} Soru • İndirilme: {new Date(pkg.downloadedAt).toLocaleDateString('tr-TR')} • {pkg.sizeKb} KB
                       </p>
                     </div>
@@ -273,7 +273,7 @@ export function OfflineStudyPackageModal({
                       <button
                         type="button"
                         onClick={() => handleDelete(pkg.id)}
-                        className="p-2 rounded-xl text-slate-400 hover:text-rose-400 hover:bg-rose-500/10 transition"
+                        className="p-2 rounded-xl text-slate-400 hover:text-rose-500 hover:bg-rose-500/10 transition"
                         title="Cihazdan sil"
                       >
                         <Trash2 className="w-4 h-4" />
@@ -300,9 +300,9 @@ export function OfflineStudyPackageModal({
           </div>
 
           {/* Önerilen Çevrimdışı Soru Setleri (1 Tıkla İndir) */}
-          <div className="space-y-3 border-t border-white/10 pt-4">
-            <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
-              <Sparkles className="w-4 h-4 text-amber-400" /> Hızlı İndirilebilir Soru Seti Havuzu
+          <div className="space-y-3 border-t border-slate-200 dark:border-white/10 pt-4">
+            <h3 className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
+              <Sparkles className="w-4 h-4 text-amber-500 dark:text-amber-400" /> Hızlı İndirilebilir Soru Seti Havuzu
             </h3>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
@@ -312,15 +312,15 @@ export function OfflineStudyPackageModal({
                 return (
                   <div
                     key={preset.id}
-                    className="p-3 rounded-2xl bg-slate-800/60 border border-white/5 flex flex-col justify-between gap-3"
+                    className="p-3 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-white/5 flex flex-col justify-between gap-3"
                   >
                     <div>
-                      <div className="flex items-center justify-between text-[10px] text-slate-400 mb-1">
-                        <span className="font-bold text-amber-400">{preset.grade}. Sınıf</span>
+                      <div className="flex items-center justify-between text-[10px] text-slate-500 dark:text-slate-400 mb-1">
+                        <span className="font-bold text-amber-600 dark:text-amber-400">{preset.grade}. Sınıf</span>
                         <span>{preset.sizeKb} KB</span>
                       </div>
-                      <h4 className="text-xs font-semibold text-white leading-snug">{preset.title}</h4>
-                      <p className="text-[11px] text-slate-400 mt-1">{preset.questionsCount} Soru & Çözüm Notu</p>
+                      <h4 className="text-xs font-semibold text-slate-900 dark:text-white leading-snug">{preset.title}</h4>
+                      <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-1">{preset.questionsCount} Soru & Çözüm Notu</p>
                     </div>
 
                     <button
@@ -329,7 +329,7 @@ export function OfflineStudyPackageModal({
                       onClick={() => handleDownloadPreset(preset)}
                       className={`inline-flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition ${
                         isDownloaded
-                          ? 'bg-white/10 text-emerald-300 cursor-default'
+                          ? 'bg-slate-200 dark:bg-white/10 text-emerald-700 dark:text-emerald-300 cursor-default'
                           : 'bg-indigo-600 hover:bg-indigo-500 text-white shadow-sm'
                       }`}
                     >

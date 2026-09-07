@@ -125,19 +125,19 @@ export const AdminBroadcastModal: React.FC<AdminBroadcastModalProps> = ({
         role="dialog"
         aria-modal="true"
         aria-labelledby="broadcast-modal-title"
-        className="relative z-10 w-full max-w-xl bg-slate-900 border border-slate-800 rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh] animate-in fade-in zoom-in-95 duration-200"
+        className="relative z-10 w-full max-w-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh] animate-in fade-in zoom-in-95 duration-200"
       >
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-slate-800 bg-slate-900/80">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/80">
           <div className="flex items-center gap-3">
-            <div className="p-2.5 rounded-xl bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">
+            <div className="p-2.5 rounded-xl bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border border-indigo-500/20">
               <Send className="w-5 h-5" />
             </div>
             <div>
-              <h3 id="broadcast-modal-title" className="text-lg font-bold text-white">
+              <h3 id="broadcast-modal-title" className="text-lg font-bold text-slate-900 dark:text-white">
                 Sınıfa Özel Toplu Bildirim
               </h3>
-              <p className="text-xs text-slate-400">
+              <p className="text-xs text-slate-500 dark:text-slate-400">
                 Seçtiğiniz kademedeki tüm öğrencilere anlık bildirim gönderin
               </p>
             </div>
@@ -146,7 +146,7 @@ export const AdminBroadcastModal: React.FC<AdminBroadcastModalProps> = ({
             type="button"
             onClick={onClose}
             aria-label="Kapat"
-            className="p-1.5 text-slate-400 hover:text-white rounded-lg hover:bg-slate-800 transition-colors"
+            className="p-1.5 text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
           >
             <X className="w-5 h-5" />
           </button>
@@ -155,7 +155,7 @@ export const AdminBroadcastModal: React.FC<AdminBroadcastModalProps> = ({
         {/* Body */}
         <form onSubmit={handleSubmit} className="p-6 overflow-y-auto space-y-4 flex-1">
           {errorMsg && (
-            <div className="flex items-center gap-2.5 p-3.5 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-300 text-sm">
+            <div className="flex items-center gap-2.5 p-3.5 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-700 dark:text-rose-300 text-sm">
               <AlertCircle className="w-4 h-4 shrink-0" />
               <span>{errorMsg}</span>
             </div>
@@ -164,10 +164,10 @@ export const AdminBroadcastModal: React.FC<AdminBroadcastModalProps> = ({
           {/* Grade Selector & Recipient Badge */}
           <div className="space-y-1.5">
             <div className="flex items-center justify-between">
-              <label htmlFor="broadcast-target-grade" className="text-xs font-semibold text-slate-300">
+              <label htmlFor="broadcast-target-grade" className="text-xs font-semibold text-slate-700 dark:text-slate-300">
                 Hedef Kitle / Sınıf
               </label>
-              <div className="flex items-center gap-1.5 text-xs px-2.5 py-1 rounded-full bg-indigo-500/10 text-indigo-300 border border-indigo-500/20">
+              <div className="flex items-center gap-1.5 text-xs px-2.5 py-1 rounded-full bg-indigo-500/10 text-indigo-700 dark:text-indigo-300 border border-indigo-500/20">
                 <Users className="w-3.5 h-3.5" />
                 <span>
                   <strong>{recipientCount}</strong> Öğrenciye Ulaşacak
@@ -178,7 +178,7 @@ export const AdminBroadcastModal: React.FC<AdminBroadcastModalProps> = ({
               id="broadcast-target-grade"
               value={targetGrade}
               onChange={(e) => setTargetGrade(e.target.value)}
-              className="w-full px-3.5 py-2.5 rounded-xl bg-slate-800/80 border border-slate-700 text-white text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
+              className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
             >
               {GRADE_OPTIONS.map((opt) => (
                 <option key={opt.value} value={opt.value}>
@@ -190,8 +190,8 @@ export const AdminBroadcastModal: React.FC<AdminBroadcastModalProps> = ({
 
           {/* Title */}
           <div className="space-y-1.5">
-            <label htmlFor="broadcast-title" className="text-xs font-semibold text-slate-300">
-              Bildirim Başlığı <span className="text-rose-400">*</span>
+            <label htmlFor="broadcast-title" className="text-xs font-semibold text-slate-700 dark:text-slate-300">
+              Bildirim Başlığı <span className="text-rose-500">*</span>
             </label>
             <input
               id="broadcast-title"
@@ -201,14 +201,14 @@ export const AdminBroadcastModal: React.FC<AdminBroadcastModalProps> = ({
               placeholder="Örn: 8. Sınıf Haftalık Deneme Sınavı Yayında!"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              className="w-full px-3.5 py-2.5 rounded-xl bg-slate-800/80 border border-slate-700 text-white text-sm placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
+              className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white text-sm placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
             />
           </div>
 
           {/* Message Content */}
           <div className="space-y-1.5">
-            <label htmlFor="broadcast-message" className="text-xs font-semibold text-slate-300">
-              Bildirim Metni <span className="text-rose-400">*</span>
+            <label htmlFor="broadcast-message" className="text-xs font-semibold text-slate-700 dark:text-slate-300">
+              Bildirim Metni <span className="text-rose-500">*</span>
             </label>
             <textarea
               id="broadcast-message"
@@ -218,14 +218,14 @@ export const AdminBroadcastModal: React.FC<AdminBroadcastModalProps> = ({
               placeholder="Öğrencilerin bildirim kutusunda göreceği mesaj metni..."
               value={message}
               onChange={(e) => setMessage(e.target.value)}
-              className="w-full px-3.5 py-2.5 rounded-xl bg-slate-800/80 border border-slate-700 text-white text-sm placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all resize-none"
+              className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white text-sm placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all resize-none"
             />
           </div>
 
           {/* Optional Links / Image */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
             <div className="space-y-1">
-              <label htmlFor="broadcast-link" className="flex items-center gap-1.5 text-xs font-semibold text-slate-400">
+              <label htmlFor="broadcast-link" className="flex items-center gap-1.5 text-xs font-semibold text-slate-600 dark:text-slate-400">
                 <LinkIcon className="w-3.5 h-3.5" />
                 Yönlendirme Linki (İsteğe Bağlı)
               </label>
@@ -235,12 +235,12 @@ export const AdminBroadcastModal: React.FC<AdminBroadcastModalProps> = ({
                 placeholder="/testler veya https://..."
                 value={linkUrl}
                 onChange={(e) => setLinkUrl(e.target.value)}
-                className="w-full px-3 py-2 rounded-xl bg-slate-800/60 border border-slate-700 text-xs text-white placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all"
+                className="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 text-xs text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all"
               />
             </div>
 
             <div className="space-y-1">
-              <label htmlFor="broadcast-image" className="flex items-center gap-1.5 text-xs font-semibold text-slate-400">
+              <label htmlFor="broadcast-image" className="flex items-center gap-1.5 text-xs font-semibold text-slate-600 dark:text-slate-400">
                 <ImageIcon className="w-3.5 h-3.5" />
                 Görsel Linki (İsteğe Bağlı)
               </label>
@@ -250,18 +250,18 @@ export const AdminBroadcastModal: React.FC<AdminBroadcastModalProps> = ({
                 placeholder="https://... görsel URL"
                 value={imageUrl}
                 onChange={(e) => setImageUrl(e.target.value)}
-                className="w-full px-3 py-2 rounded-xl bg-slate-800/60 border border-slate-700 text-xs text-white placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all"
+                className="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 text-xs text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all"
               />
             </div>
           </div>
 
           {/* Footer Buttons */}
-          <div className="flex items-center justify-end gap-3 pt-4 border-t border-slate-800">
+          <div className="flex items-center justify-end gap-3 pt-4 border-t border-slate-200 dark:border-slate-800">
             <button
               type="button"
               onClick={onClose}
               disabled={isSubmitting}
-              className="px-4 py-2 text-sm font-medium text-slate-300 hover:text-white hover:bg-slate-800 rounded-xl transition-colors disabled:opacity-50"
+              className="px-4 py-2 text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-colors disabled:opacity-50"
             >
               Vazgeç
             </button>

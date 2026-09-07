@@ -1889,7 +1889,7 @@ export default function ContentsPage(props: ContentsPageProps) {
   return (
     <Suspense
       fallback={
-        <div className="min-h-screen bg-slate-900 px-4 py-24">
+        <div className="min-h-screen bg-surface-0 px-4 py-24">
           <div className="mx-auto max-w-6xl space-y-6">
             <Skeleton className="h-10 w-64" />
             <Skeleton className="h-24 w-full" />
@@ -1897,7 +1897,7 @@ export default function ContentsPage(props: ContentsPageProps) {
               {[...Array(6)].map((_, i) => (
                 <div
                   key={i}
-                  className="glass rounded-3xl border border-white/10 p-4 sm:p-6 space-y-4"
+                  className="glass rounded-3xl border border-slate-200 dark:border-white/10 p-4 sm:p-6 space-y-4"
                 >
                   <div className="flex items-start gap-3">
                     <Skeleton className="h-14 w-14 rounded-xl" />

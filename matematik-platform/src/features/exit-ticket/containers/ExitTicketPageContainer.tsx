@@ -113,7 +113,7 @@ export function ExitTicketPageContainer() {
                     setCurrentSession(null);
                     setSavedSessions(getSavedSessions());
                   }}
-                  className="text-xs font-semibold text-slate-400 hover:text-white transition flex items-center gap-1.5"
+                  className="text-xs font-semibold text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition flex items-center gap-1.5"
                 >
                   ← Oturum Listesine Dön
                 </button>
@@ -129,15 +129,15 @@ export function ExitTicketPageContainer() {
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
               {/* Sol: Yeni Oturum Başlatma Kartları */}
               <div className="lg:col-span-2 space-y-6">
-                <div className="rounded-3xl border border-white/10 bg-gradient-to-br from-violet-900/30 via-slate-900 to-slate-950 p-6 sm:p-8 relative overflow-hidden shadow-2xl">
+                <div className="rounded-3xl border border-slate-200 dark:border-white/10 bg-gradient-to-br from-violet-50 via-white to-slate-50 dark:from-violet-900/30 dark:via-slate-900 dark:to-slate-950 p-6 sm:p-8 relative overflow-hidden shadow-xl">
                   <div className="relative z-10">
-                    <span className="px-3 py-1 rounded-full text-xs font-bold bg-violet-500/20 text-violet-300 border border-violet-500/30">
+                    <span className="px-3 py-1 rounded-full text-xs font-bold bg-violet-500/10 dark:bg-violet-500/20 text-violet-700 dark:text-violet-300 border border-violet-500/30">
                       Sınıf Sunumu Modu
                     </span>
-                    <h2 className="text-xl sm:text-2xl font-black text-white mt-3">
+                    <h2 className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white mt-3">
                       Akıllı Tahtada Çıkış Bileti Başlatın
                     </h2>
-                    <p className="text-slate-300 text-sm mt-2 max-w-lg leading-relaxed">
+                    <p className="text-slate-600 dark:text-slate-300 text-sm mt-2 max-w-lg leading-relaxed">
                       Öğrencileriniz üye olmadan, sadece ekranda görecekleri 6 haneli kod ile telefon veya tabletlerinden bağlanır. Seçilen şıklar ve kavram yanılgıları tahtada anlık olarak analiz edilir.
                     </p>
 
@@ -154,9 +154,9 @@ export function ExitTicketPageContainer() {
                       <button
                         type="button"
                         onClick={handleLaunchQuickDemo}
-                        className="px-5 py-3 rounded-xl font-semibold bg-white/10 hover:bg-white/15 text-white transition flex items-center gap-2"
+                        className="px-5 py-3 rounded-xl font-semibold bg-slate-100 hover:bg-slate-200 text-slate-800 dark:bg-white/10 dark:hover:bg-white/15 dark:text-white transition flex items-center gap-2 border border-slate-200 dark:border-transparent"
                       >
-                        <Sparkles className="w-5 h-5 text-amber-400" />
+                        <Sparkles className="w-5 h-5 text-amber-500 dark:text-amber-400" />
                         <span>Hızlı Demo (Kesirler)</span>
                       </button>
                     </div>
@@ -165,32 +165,32 @@ export function ExitTicketPageContainer() {
 
                 {/* Pedagojik Özellikler Listesi */}
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                  <div className="p-4 rounded-2xl bg-slate-900/60 border border-white/10 text-sm">
-                    <div className="w-8 h-8 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center font-bold mb-2">
+                  <div className="p-4 rounded-2xl bg-white dark:bg-slate-900/60 border border-slate-200 dark:border-white/10 text-sm shadow-xs">
+                    <div className="w-8 h-8 rounded-xl bg-amber-500/20 text-amber-600 dark:text-amber-400 flex items-center justify-center font-bold mb-2">
                       1
                     </div>
-                    <h4 className="font-bold text-white text-sm">10 Saniyede Katılım</h4>
-                    <p className="text-xs text-slate-400 mt-1">
+                    <h4 className="font-bold text-slate-900 dark:text-white text-sm">10 Saniyede Katılım</h4>
+                    <p className="text-xs text-slate-600 dark:text-slate-400 mt-1">
                       Kayıt yok, şifre yok. 6 haneli PIN ile her cihazdan doğrudan bağlantı.
                     </p>
                   </div>
 
-                  <div className="p-4 rounded-2xl bg-slate-900/60 border border-white/10 text-sm">
-                    <div className="w-8 h-8 rounded-xl bg-sky-500/20 text-sky-400 flex items-center justify-center font-bold mb-2">
+                  <div className="p-4 rounded-2xl bg-white dark:bg-slate-900/60 border border-slate-200 dark:border-white/10 text-sm shadow-xs">
+                    <div className="w-8 h-8 rounded-xl bg-sky-500/20 text-sky-600 dark:text-sky-400 flex items-center justify-center font-bold mb-2">
                       2
                     </div>
-                    <h4 className="font-bold text-white text-sm">Canlı Dağılım</h4>
-                    <p className="text-xs text-slate-400 mt-1">
+                    <h4 className="font-bold text-slate-900 dark:text-white text-sm">Canlı Dağılım</h4>
+                    <p className="text-xs text-slate-600 dark:text-slate-400 mt-1">
                       Tüm sınıfın A, B, C, D dağılımını yüzde ve adet olarak tahtada gösterin.
                     </p>
                   </div>
 
-                  <div className="p-4 rounded-2xl bg-slate-900/60 border border-white/10 text-sm">
-                    <div className="w-8 h-8 rounded-xl bg-rose-500/20 text-rose-400 flex items-center justify-center font-bold mb-2">
+                  <div className="p-4 rounded-2xl bg-white dark:bg-slate-900/60 border border-slate-200 dark:border-white/10 text-sm shadow-xs">
+                    <div className="w-8 h-8 rounded-xl bg-rose-500/20 text-rose-600 dark:text-rose-400 flex items-center justify-center font-bold mb-2">
                       3
                     </div>
-                    <h4 className="font-bold text-white text-sm">Yanılgı Teşhisi</h4>
-                    <p className="text-xs text-slate-400 mt-1">
+                    <h4 className="font-bold text-slate-900 dark:text-white text-sm">Yanılgı Teşhisi</h4>
+                    <p className="text-xs text-slate-600 dark:text-slate-400 mt-1">
                       Öğrenci neden B şıkkına gitti? Çeldiriciye özel pedagojik uyarı anında devrede.
                     </p>
                   </div>
@@ -198,9 +198,9 @@ export function ExitTicketPageContainer() {
               </div>
 
               {/* Sağ: Kayıtlı & Geçmiş Oturumlar */}
-              <div className="rounded-3xl border border-white/10 bg-slate-900/80 p-5 backdrop-blur-xl flex flex-col">
-                <div className="flex items-center gap-2 mb-4 text-xs font-semibold text-slate-300">
-                  <History className="w-4 h-4 text-violet-400" />
+              <div className="rounded-3xl border border-slate-200 dark:border-white/10 bg-white dark:bg-slate-900/80 p-5 backdrop-blur-xl flex flex-col shadow-lg">
+                <div className="flex items-center gap-2 mb-4 text-xs font-semibold text-slate-700 dark:text-slate-300">
+                  <History className="w-4 h-4 text-violet-600 dark:text-violet-400" />
                   <span>Son Oturumlarınız</span>
                 </div>
 
@@ -216,22 +216,22 @@ export function ExitTicketPageContainer() {
                         key={s.id}
                         type="button"
                         onClick={() => handleSelectSavedSession(s)}
-                        className="w-full text-left p-3.5 rounded-2xl bg-slate-950/60 border border-white/5 hover:border-violet-500/40 hover:bg-violet-500/10 transition flex items-center justify-between group"
+                        className="w-full text-left p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-950/60 border border-slate-200 dark:border-white/5 hover:border-violet-500/40 hover:bg-violet-50 dark:hover:bg-violet-500/10 transition flex items-center justify-between group"
                       >
                         <div>
                           <div className="flex items-center gap-2">
-                            <span className="font-mono text-amber-400 font-bold text-xs bg-amber-500/10 px-1.5 py-0.5 rounded">
+                            <span className="font-mono text-amber-700 dark:text-amber-400 font-bold text-xs bg-amber-500/10 px-1.5 py-0.5 rounded">
                               {s.code}
                             </span>
-                            <span className="text-xs text-slate-400">
+                            <span className="text-xs text-slate-500 dark:text-slate-400">
                               {s.responses.length} Cevap
                             </span>
                           </div>
-                          <h4 className="font-semibold text-sm text-white mt-1 group-hover:text-violet-300 transition line-clamp-1">
+                          <h4 className="font-semibold text-sm text-slate-900 dark:text-white mt-1 group-hover:text-violet-600 dark:group-hover:text-violet-300 transition line-clamp-1">
                             {s.title}
                           </h4>
                         </div>
-                        <ArrowRight className="w-4 h-4 text-slate-500 group-hover:text-white transition" />
+                        <ArrowRight className="w-4 h-4 text-slate-400 dark:text-slate-500 group-hover:text-slate-900 dark:group-hover:text-white transition" />
                       </button>
                     ))}
                   </div>

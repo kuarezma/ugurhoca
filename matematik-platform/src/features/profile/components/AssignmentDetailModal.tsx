@@ -36,14 +36,14 @@ export default function AssignmentDetailModal({
         aria-modal="true"
         aria-labelledby="assignment-detail-title"
         tabIndex={-1}
-        className="w-full max-w-lg rounded-3xl border border-slate-700 bg-slate-900 p-6 shadow-2xl sm:p-8"
+        className="w-full max-w-lg rounded-3xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-6 shadow-2xl sm:p-8"
       >
         <div className="mb-4 flex items-start justify-between gap-4">
           <div>
-            <p className="mb-2 text-xs uppercase tracking-[0.2em] text-purple-300">
+            <p className="mb-2 text-xs uppercase tracking-[0.2em] text-purple-600 dark:text-purple-300">
               Ödev
             </p>
-            <h3 id="assignment-detail-title" className="text-2xl font-bold text-white">
+            <h3 id="assignment-detail-title" className="text-2xl font-bold text-slate-900 dark:text-white">
               {assignment.title}
             </h3>
           </div>
@@ -51,26 +51,26 @@ export default function AssignmentDetailModal({
             type="button"
             onClick={onClose}
             aria-label="Kapat"
-            className="text-slate-400 hover:text-white"
+            className="text-slate-400 hover:text-slate-900 dark:hover:text-white"
           >
             <ChevronRight className="h-6 w-6 rotate-45" />
           </button>
         </div>
-        <p className="whitespace-pre-line leading-relaxed text-slate-300">
+        <p className="whitespace-pre-line leading-relaxed text-slate-700 dark:text-slate-300">
           {assignment.description || 'Ayrıntı bulunmuyor.'}
         </p>
         <div className="mt-6 flex justify-between gap-3">
           <button
             type="button"
             onClick={onOpenAssignments}
-            className="rounded-xl bg-purple-500 px-4 py-2 text-white transition-colors hover:bg-purple-600"
+            className="rounded-xl bg-purple-600 px-4 py-2 text-white transition-colors hover:bg-purple-700"
           >
             Ödev Sayfasına Git
           </button>
           <button
             type="button"
             onClick={onClose}
-            className="rounded-xl bg-white/10 px-4 py-2 font-medium text-white transition-colors hover:bg-white/15"
+            className="rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 dark:bg-white/10 dark:hover:bg-white/15 dark:text-white px-4 py-2 font-medium transition-colors"
           >
             Kapat
           </button>

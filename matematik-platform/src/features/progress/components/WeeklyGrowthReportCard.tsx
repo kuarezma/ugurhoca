@@ -71,7 +71,7 @@ export const WeeklyGrowthReportCard: React.FC<WeeklyGrowthReportCardProps> = ({
   }, [weekStats.progressPercent, streak]);
 
   return (
-    <div className="relative overflow-hidden rounded-3xl border border-violet-500/20 bg-gradient-to-br from-slate-900/90 via-slate-900/95 to-indigo-950/40 p-6 sm:p-7 shadow-2xl backdrop-blur-md">
+    <div className="relative overflow-hidden rounded-3xl border border-violet-500/20 bg-gradient-to-br from-white via-slate-50 to-indigo-50/50 dark:from-slate-900/90 dark:via-slate-900/95 dark:to-indigo-950/40 p-6 sm:p-7 shadow-xl dark:shadow-2xl backdrop-blur-md">
       {/* Decorative Glows */}
       <div className="absolute -right-12 -top-12 h-40 w-40 rounded-full bg-violet-600/15 blur-3xl pointer-events-none" />
       <div className="absolute -left-12 -bottom-12 h-40 w-40 rounded-full bg-cyan-600/15 blur-3xl pointer-events-none" />
@@ -79,21 +79,21 @@ export const WeeklyGrowthReportCard: React.FC<WeeklyGrowthReportCardProps> = ({
       <div className="relative z-10 flex flex-col md:flex-row md:items-center md:justify-between gap-6">
         <div>
           <div className="flex items-center gap-2 mb-2">
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-violet-500/15 text-violet-300 border border-violet-500/25">
-              <Sparkles className="w-3.5 h-3.5 text-violet-400" />
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-violet-500/10 dark:bg-violet-500/15 text-violet-700 dark:text-violet-300 border border-violet-500/20 dark:border-violet-500/25">
+              <Sparkles className="w-3.5 h-3.5 text-violet-500 dark:text-violet-400" />
               Haftalık Gelişim Karnesi
             </span>
             {streak > 0 && (
-              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold bg-amber-500/15 text-amber-300 border border-amber-500/25">
-                <Flame className="w-3.5 h-3.5 text-amber-400" />
+              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold bg-amber-500/10 dark:bg-amber-500/15 text-amber-700 dark:text-amber-300 border border-amber-500/20 dark:border-amber-500/25">
+                <Flame className="w-3.5 h-3.5 text-amber-500 dark:text-amber-400" />
                 {streak} Gün Seri
               </span>
             )}
           </div>
-          <h3 className="text-xl sm:text-2xl font-extrabold text-white tracking-tight">
+          <h3 className="text-xl sm:text-2xl font-extrabold text-slate-900 dark:text-white tracking-tight">
             Harika Gidiyorsun, {studentName}! 🚀
           </h3>
-          <p className="mt-1 text-xs sm:text-sm text-slate-300/90 max-w-lg leading-relaxed">
+          <p className="mt-1 text-xs sm:text-sm text-slate-600 dark:text-slate-300/90 max-w-lg leading-relaxed">
             {motivationalMessage}
           </p>
         </div>
@@ -109,7 +109,7 @@ export const WeeklyGrowthReportCard: React.FC<WeeklyGrowthReportCardProps> = ({
           </Link>
           <Link
             href="/odevler"
-            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold border border-white/10 transition-colors"
+            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-white hover:bg-slate-100 text-slate-700 border border-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 dark:text-slate-200 dark:border-white/10 text-xs font-semibold transition-colors"
           >
             <span>Ödevlerim</span>
             <ArrowRight className="w-3 h-3" />
@@ -120,64 +120,64 @@ export const WeeklyGrowthReportCard: React.FC<WeeklyGrowthReportCardProps> = ({
       {/* KPI Cards Grid */}
       <div className="mt-6 grid grid-cols-2 sm:grid-cols-4 gap-3">
         {/* Weekly Study Minutes */}
-        <div className="rounded-2xl border border-white/5 bg-slate-800/40 p-4 transition-colors hover:border-violet-500/30">
-          <div className="flex items-center justify-between text-xs text-slate-400 mb-1">
+        <div className="rounded-2xl border border-slate-200/80 bg-white/80 dark:border-white/5 dark:bg-slate-800/40 p-4 transition-colors hover:border-violet-500/30 shadow-sm dark:shadow-none">
+          <div className="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400 mb-1">
             <span>Çalışma Süresi</span>
-            <Clock className="w-4 h-4 text-violet-400" />
+            <Clock className="w-4 h-4 text-violet-500 dark:text-violet-400" />
           </div>
-          <div className="text-xl sm:text-2xl font-black text-white">
-            {weekStats.totalMinutes} <span className="text-xs text-slate-400 font-normal">dk</span>
+          <div className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white">
+            {weekStats.totalMinutes} <span className="text-xs text-slate-500 dark:text-slate-400 font-normal">dk</span>
           </div>
-          <div className="mt-2 h-1.5 w-full rounded-full bg-slate-800 overflow-hidden">
+          <div className="mt-2 h-1.5 w-full rounded-full bg-slate-100 dark:bg-slate-800 overflow-hidden">
             <div
               className="h-full rounded-full bg-violet-500 transition-all duration-500"
               style={{ width: `${weekStats.progressPercent}%` }}
             />
           </div>
-          <div className="mt-1 text-[11px] text-slate-400 flex justify-between">
+          <div className="mt-1 text-[11px] text-slate-500 dark:text-slate-400 flex justify-between">
             <span>Hedef: {weekStats.targetMinutes} dk</span>
-            <span className="font-bold text-violet-300">%{weekStats.progressPercent}</span>
+            <span className="font-bold text-violet-700 dark:text-violet-300">%{weekStats.progressPercent}</span>
           </div>
         </div>
 
         {/* Questions Solved */}
-        <div className="rounded-2xl border border-white/5 bg-slate-800/40 p-4 transition-colors hover:border-cyan-500/30">
-          <div className="flex items-center justify-between text-xs text-slate-400 mb-1">
+        <div className="rounded-2xl border border-slate-200/80 bg-white/80 dark:border-white/5 dark:bg-slate-800/40 p-4 transition-colors hover:border-cyan-500/30 shadow-sm dark:shadow-none">
+          <div className="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400 mb-1">
             <span>Çözülen Soru</span>
-            <CheckCircle2 className="w-4 h-4 text-cyan-400" />
+            <CheckCircle2 className="w-4 h-4 text-cyan-500 dark:text-cyan-400" />
           </div>
-          <div className="text-xl sm:text-2xl font-black text-cyan-300">
+          <div className="text-xl sm:text-2xl font-black text-cyan-700 dark:text-cyan-300">
             {solvedQuestionsCount}
           </div>
-          <p className="mt-2 text-[11px] text-slate-400">
+          <p className="mt-2 text-[11px] text-slate-500 dark:text-slate-400">
             Bu hafta çözülen test soruları
           </p>
         </div>
 
         {/* Live Lessons Attended */}
-        <div className="rounded-2xl border border-white/5 bg-slate-800/40 p-4 transition-colors hover:border-amber-500/30">
-          <div className="flex items-center justify-between text-xs text-slate-400 mb-1">
+        <div className="rounded-2xl border border-slate-200/80 bg-white/80 dark:border-white/5 dark:bg-slate-800/40 p-4 transition-colors hover:border-amber-500/30 shadow-sm dark:shadow-none">
+          <div className="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400 mb-1">
             <span>Canlı Dersler</span>
-            <Target className="w-4 h-4 text-amber-400" />
+            <Target className="w-4 h-4 text-amber-500 dark:text-amber-400" />
           </div>
-          <div className="text-xl sm:text-2xl font-black text-amber-300">
-            {liveLessonsCount} <span className="text-xs text-slate-400 font-normal">oturum</span>
+          <div className="text-xl sm:text-2xl font-black text-amber-700 dark:text-amber-300">
+            {liveLessonsCount} <span className="text-xs text-slate-500 dark:text-slate-400 font-normal">oturum</span>
           </div>
-          <p className="mt-2 text-[11px] text-slate-400">
+          <p className="mt-2 text-[11px] text-slate-500 dark:text-slate-400">
             Katılınan canlı ders sayısı
           </p>
         </div>
 
         {/* Study Habit / Score */}
-        <div className="rounded-2xl border border-white/5 bg-slate-800/40 p-4 transition-colors hover:border-emerald-500/30">
-          <div className="flex items-center justify-between text-xs text-slate-400 mb-1">
+        <div className="rounded-2xl border border-slate-200/80 bg-white/80 dark:border-white/5 dark:bg-slate-800/40 p-4 transition-colors hover:border-emerald-500/30 shadow-sm dark:shadow-none">
+          <div className="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400 mb-1">
             <span>Gelişim Skoru</span>
-            <TrendingUp className="w-4 h-4 text-emerald-400" />
+            <TrendingUp className="w-4 h-4 text-emerald-500 dark:text-emerald-400" />
           </div>
-          <div className="text-xl sm:text-2xl font-black text-emerald-300">
-            {Math.round(weekStats.progressPercent * 0.7 + Math.min(30, streak * 5))} <span className="text-xs text-slate-400 font-normal">XP</span>
+          <div className="text-xl sm:text-2xl font-black text-emerald-700 dark:text-emerald-300">
+            {Math.round(weekStats.progressPercent * 0.7 + Math.min(30, streak * 5))} <span className="text-xs text-slate-500 dark:text-slate-400 font-normal">XP</span>
           </div>
-          <p className="mt-2 text-[11px] text-slate-400">
+          <p className="mt-2 text-[11px] text-slate-500 dark:text-slate-400">
             Haftalık düzenli çalışma puanı
           </p>
         </div>

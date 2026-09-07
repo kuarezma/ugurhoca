@@ -149,10 +149,10 @@ export function AdminLatexHelperModal({
     >
       <div
         ref={modalRef}
-        className="relative flex flex-col w-full max-w-2xl max-h-[90vh] rounded-3xl border border-white/10 bg-slate-900 text-white shadow-2xl overflow-hidden"
+        className="relative flex flex-col w-full max-w-2xl max-h-[90vh] rounded-3xl border border-slate-200 dark:border-white/10 bg-white dark:bg-slate-900 text-slate-900 dark:text-white shadow-2xl overflow-hidden"
       >
         {/* Header */}
-        <div className="flex items-center justify-between border-b border-white/10 px-5 py-4">
+        <div className="flex items-center justify-between border-b border-slate-200 dark:border-white/10 px-5 py-4 bg-slate-50/50 dark:bg-transparent">
           <div className="flex items-center gap-3">
             <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-br from-violet-500 to-indigo-600 text-white shadow-md">
               <FunctionSquare className="h-5 w-5" />
@@ -162,11 +162,11 @@ export function AdminLatexHelperModal({
                 <h2 id={titleId} className="text-base font-bold tracking-tight">
                   Akıllı LaTeX & Matematik Formül Asistanı
                 </h2>
-                <span className="rounded-full bg-violet-500/20 px-2 py-0.5 text-[10px] font-bold text-violet-300">
+                <span className="rounded-full bg-violet-500/20 px-2 py-0.5 text-[10px] font-bold text-violet-700 dark:text-violet-300">
                   KaTeX Önizleme
                 </span>
               </div>
-              <p className="text-xs text-slate-400">
+              <p className="text-xs text-slate-500 dark:text-slate-400">
                 Soru ve çözümlere tek tıkla şık matematiksel semboller ekleyin.
               </p>
             </div>
@@ -176,17 +176,17 @@ export function AdminLatexHelperModal({
             type="button"
             onClick={onClose}
             aria-label="Kapat"
-            className="flex h-9 w-9 items-center justify-center rounded-xl text-slate-400 hover:bg-white/10 hover:text-white transition"
+            className="flex h-9 w-9 items-center justify-center rounded-xl text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-white/10 hover:text-slate-900 dark:hover:text-white transition"
           >
             <X className="h-5 w-5" />
           </button>
         </div>
 
         {/* Live Preview Box */}
-        <div className="p-4 sm:p-5 border-b border-white/10 bg-slate-950/40 space-y-3">
+        <div className="p-4 sm:p-5 border-b border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-slate-950/40 space-y-3">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-bold uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
-              <Sparkles className="h-3.5 w-3.5 text-violet-400" />
+            <span className="text-xs font-bold uppercase tracking-wider text-slate-600 dark:text-slate-400 flex items-center gap-1.5">
+              <Sparkles className="h-3.5 w-3.5 text-violet-600 dark:text-violet-400" />
               Canlı Formül Önizlemesi
             </span>
             <div className="flex items-center gap-2">
@@ -194,22 +194,22 @@ export function AdminLatexHelperModal({
                 type="button"
                 onClick={handleAutoFormat}
                 title="Düz metin yazımını LaTeX formatına dönüştür"
-                className="inline-flex items-center gap-1 rounded-lg border border-white/10 bg-white/5 px-2.5 py-1 text-[11px] font-semibold text-slate-300 hover:bg-white/10 hover:text-white transition"
+                className="inline-flex items-center gap-1 rounded-lg border border-slate-200 dark:border-white/10 bg-white dark:bg-white/5 px-2.5 py-1 text-[11px] font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-white/10 hover:text-slate-900 dark:hover:text-white transition shadow-xs"
               >
-                <Wand2 className="h-3 w-3 text-amber-400" />
+                <Wand2 className="h-3 w-3 text-amber-500 dark:text-amber-400" />
                 Otomatik Dönüştür
               </button>
             </div>
           </div>
 
           {/* Formül Render Alanı */}
-          <div className="flex min-h-[64px] items-center justify-center rounded-2xl border border-violet-500/30 bg-violet-950/20 p-4 text-center">
+          <div className="flex min-h-[64px] items-center justify-center rounded-2xl border border-violet-300 dark:border-violet-500/30 bg-violet-50/60 dark:bg-violet-950/20 p-4 text-center">
             {customFormula.trim() ? (
-              <MathText className="text-xl sm:text-2xl font-serif text-white">
+              <MathText className="text-xl sm:text-2xl font-serif text-slate-900 dark:text-white">
                 {customFormula.startsWith('$') ? customFormula : `$${customFormula}$`}
               </MathText>
             ) : (
-              <span className="text-xs text-slate-500">
+              <span className="text-xs text-slate-400 dark:text-slate-500">
                 Aşağıdaki sembollere tıklayın veya formül yazın...
               </span>
             )}
@@ -222,16 +222,16 @@ export function AdminLatexHelperModal({
               value={customFormula}
               onChange={(e) => setCustomFormula(e.target.value)}
               placeholder="LaTeX kodu (Örn: \frac{a}{b})"
-              className="flex-1 h-10 rounded-xl border border-white/15 bg-white/5 px-3.5 font-mono text-xs text-white focus:outline-none focus:ring-2 focus:ring-violet-500"
+              className="flex-1 h-10 rounded-xl border border-slate-200 dark:border-white/15 bg-white dark:bg-white/5 px-3.5 font-mono text-xs text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-violet-500 shadow-xs"
             />
             <button
               type="button"
               onClick={handleCopy}
-              className="inline-flex h-10 items-center gap-1.5 rounded-xl border border-white/15 bg-white/5 px-3 text-xs font-bold text-slate-300 hover:bg-white/10 hover:text-white transition shrink-0"
+              className="inline-flex h-10 items-center gap-1.5 rounded-xl border border-slate-200 dark:border-white/15 bg-white dark:bg-white/5 px-3 text-xs font-bold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-white/10 hover:text-slate-900 dark:hover:text-white transition shrink-0 shadow-xs"
             >
               {copied ? (
                 <>
-                  <Check className="h-3.5 w-3.5 text-emerald-400" />
+                  <Check className="h-3.5 w-3.5 text-emerald-600 dark:text-emerald-400" />
                   <span>Kopyalandı</span>
                 </>
               ) : (
@@ -255,7 +255,7 @@ export function AdminLatexHelperModal({
         </div>
 
         {/* Category Tabs */}
-        <div className="flex border-b border-white/10 px-4 py-2 gap-1.5 overflow-x-auto scrollbar-none bg-slate-900/50">
+        <div className="flex border-b border-slate-200 dark:border-white/10 px-4 py-2 gap-1.5 overflow-x-auto scrollbar-none bg-slate-50/70 dark:bg-slate-900/50">
           {SYMBOL_GROUPS.map((group) => (
             <button
               key={group.category}
@@ -264,7 +264,7 @@ export function AdminLatexHelperModal({
               className={`rounded-xl px-3 py-1.5 text-xs font-bold transition whitespace-nowrap ${
                 activeCategory === group.category
                   ? 'bg-violet-600 text-white shadow-md'
-                  : 'text-slate-400 hover:bg-white/5 hover:text-white'
+                  : 'text-slate-600 dark:text-slate-400 hover:bg-slate-200/60 dark:hover:bg-white/5 hover:text-slate-900 dark:hover:text-white'
               }`}
             >
               {group.label}
@@ -286,17 +286,17 @@ export function AdminLatexHelperModal({
                     onClose();
                   }
                 }}
-                className="flex flex-col items-center justify-center p-3 rounded-2xl border border-white/5 bg-white/5 hover:border-violet-500/40 hover:bg-violet-500/10 transition group text-center"
+                className="flex flex-col items-center justify-center p-3 rounded-2xl border border-slate-200 dark:border-white/5 bg-slate-50 dark:bg-white/5 hover:border-violet-400 dark:hover:border-violet-500/40 hover:bg-violet-50 dark:hover:bg-violet-500/10 transition group text-center shadow-xs"
               >
                 <div className="min-h-[32px] flex items-center justify-center mb-1">
-                  <MathText className="text-base text-white group-hover:text-violet-300">
+                  <MathText className="text-base text-slate-900 dark:text-white group-hover:text-violet-600 dark:group-hover:text-violet-300">
                     {item.preview}
                   </MathText>
                 </div>
-                <span className="text-[11px] font-bold text-slate-400 group-hover:text-slate-200">
+                <span className="text-[11px] font-bold text-slate-600 dark:text-slate-400 group-hover:text-slate-900 dark:group-hover:text-slate-200">
                   {item.label}
                 </span>
-                <span className="text-[9px] font-mono text-slate-500 truncate max-w-full">
+                <span className="text-[9px] font-mono text-slate-400 dark:text-slate-500 truncate max-w-full">
                   {item.latex}
                 </span>
               </button>

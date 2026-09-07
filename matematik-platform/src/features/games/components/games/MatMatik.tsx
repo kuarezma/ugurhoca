@@ -533,12 +533,12 @@ export function MatMatik({
           </div>
         </div>
 
-        <aside className="rounded-3xl border border-white/10 bg-slate-950/70 p-5 shadow-2xl">
-          <div className="mb-5 rounded-2xl border border-white/10 bg-white/5 p-4 text-center">
+        <aside className="rounded-3xl border border-slate-200 dark:border-white/10 bg-white dark:bg-slate-950/70 p-5 shadow-2xl">
+          <div className="mb-5 rounded-2xl border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-white/5 p-4 text-center">
             <p className="text-xs font-semibold uppercase tracking-widest text-slate-500">
               Çarpım
             </p>
-            <p className="mt-2 min-h-10 text-3xl font-black text-white">
+            <p className="mt-2 min-h-10 text-3xl font-black text-slate-900 dark:text-white">
               {selectedFactors.top} × {selectedFactors.bottom} ={' '}
               {selectedProduct}
             </p>
@@ -547,7 +547,7 @@ export function MatMatik({
           <button
             type="button"
             onClick={resetToSetup}
-            className="w-full rounded-2xl border border-white/10 bg-white/5 px-5 py-3 font-bold text-slate-200 transition hover:border-white/30"
+            className="w-full rounded-2xl border border-slate-300 dark:border-white/10 bg-slate-100 hover:bg-slate-200 dark:bg-white/5 dark:hover:bg-white/10 px-5 py-3 font-bold text-slate-800 dark:text-slate-200 transition hover:border-slate-400 dark:hover:border-white/30"
           >
             Ayarlara Dön
           </button>
@@ -566,23 +566,23 @@ export function MatMatik({
           <motion.div
             initial={{ scale: 0.92, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
-            className="w-full max-w-md rounded-3xl border border-white/10 bg-slate-900 p-6 text-center shadow-2xl"
+            className="w-full max-w-md rounded-3xl border border-slate-200 dark:border-white/10 bg-white dark:bg-slate-900 p-6 text-center shadow-2xl"
           >
             <div className="mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-br from-yellow-300 to-orange-500">
               <Trophy className="h-10 w-10 text-white" />
             </div>
-            <h3 className="mb-2 text-3xl font-black text-white">
+            <h3 className="mb-2 text-3xl font-black text-slate-900 dark:text-white">
               {winner === 'draw'
                 ? 'Berabere'
                 : `${playerNames[winner ?? 1]} Kazandı`}
             </h3>
-            <p className="mb-6 text-slate-400">
+            <p className="mb-6 text-slate-600 dark:text-slate-400">
               {winner === 'draw'
                 ? 'Tüm hamleler tamamlandı, kazanan çıkmadı.'
                 : 'Dört hücrelik diziyi tamamladı.'}
             </p>
             {resultScore > 0 && (
-              <p className="mb-6 text-4xl font-black text-yellow-300">
+              <p className="mb-6 text-4xl font-black text-amber-600 dark:text-yellow-300">
                 +{resultScore} Puan
               </p>
             )}
@@ -598,7 +598,7 @@ export function MatMatik({
               <button
                 type="button"
                 onClick={onExit ?? resetToSetup}
-                className="rounded-2xl border border-white/10 bg-white/5 px-5 py-3 font-bold text-slate-200"
+                className="rounded-2xl border border-slate-300 dark:border-white/10 bg-slate-100 hover:bg-slate-200 dark:bg-white/5 dark:hover:bg-white/10 px-5 py-3 font-bold text-slate-800 dark:text-slate-200 transition"
               >
                 Oyunlara Dön
               </button>

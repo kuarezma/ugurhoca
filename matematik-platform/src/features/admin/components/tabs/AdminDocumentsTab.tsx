@@ -51,20 +51,20 @@ export default function AdminDocumentsTab({
       className="space-y-4"
     >
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <h3 className="text-lg font-bold text-white">
+        <h3 className="text-lg font-bold text-slate-900 dark:text-white">
           Tüm İçerikler ({documents.length})
         </h3>
         <div className="grid grid-cols-1 gap-2 sm:flex sm:flex-wrap sm:items-center sm:justify-end">
           <button
             onClick={onMigrateWorksheets}
-            className="px-4 py-2 bg-brand-primary/15 border border-brand-primary/25 text-violet-300 rounded-xl hover:bg-brand-primary/25 transition-all text-xs sm:text-sm font-semibold flex items-center justify-center gap-1.5"
+            className="px-4 py-2 bg-violet-50 dark:bg-brand-primary/15 border border-violet-200 dark:border-brand-primary/25 text-violet-700 dark:text-violet-300 rounded-xl hover:bg-violet-100 dark:hover:bg-brand-primary/25 transition-all text-xs sm:text-sm font-semibold flex items-center justify-center gap-1.5"
           >
             <FolderTree className="w-4 h-4" />
             Yaprak Test Geçişi
           </button>
           <button
             onClick={onRefreshCategories}
-            className="px-4 py-2 bg-amber-500/15 border border-amber-500/25 text-amber-300 rounded-xl hover:bg-amber-500/25 transition-all text-xs sm:text-sm font-semibold flex items-center justify-center gap-1.5"
+            className="px-4 py-2 bg-amber-50 dark:bg-amber-500/15 border border-amber-200 dark:border-amber-500/25 text-amber-700 dark:text-amber-300 rounded-xl hover:bg-amber-100 dark:hover:bg-amber-500/25 transition-all text-xs sm:text-sm font-semibold flex items-center justify-center gap-1.5"
           >
             Kategorileri Güncelle
           </button>
@@ -72,9 +72,9 @@ export default function AdminDocumentsTab({
       </div>
 
       {documents.length === 0 ? (
-        <div className="glass rounded-2xl p-12 text-center border border-white/10">
-          <FileText className="w-16 h-16 mx-auto mb-4 text-slate-500" />
-          <p className="text-slate-400">Henüz içerik yok</p>
+        <div className="glass rounded-2xl p-12 text-center border border-slate-200/80 dark:border-white/10 bg-white/80 dark:bg-slate-900/60">
+          <FileText className="w-16 h-16 mx-auto mb-4 text-slate-400" />
+          <p className="text-slate-500 dark:text-slate-400">Henüz içerik yok</p>
         </div>
       ) : (
         documents.map((document, index) => {
@@ -89,7 +89,7 @@ export default function AdminDocumentsTab({
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.05 }}
-              className="glass rounded-2xl p-4 sm:p-5 card-hover overflow-hidden border border-white/10 hover:border-white/20 transition-all duration-300"
+              className="glass rounded-2xl p-4 sm:p-5 card-hover overflow-hidden border border-slate-200/80 dark:border-white/10 hover:border-violet-500/40 dark:hover:border-white/20 transition-all duration-300 bg-white/80 dark:bg-slate-900/60 shadow-sm dark:shadow-none"
             >
               <div className="flex min-w-0 flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
                 <div className="flex min-w-0 flex-1 items-start gap-3 sm:items-center sm:gap-4">
@@ -103,7 +103,7 @@ export default function AdminDocumentsTab({
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex min-w-0 flex-col gap-2 mb-1 sm:flex-row sm:items-center sm:gap-3">
-                      <h3 className="text-base sm:text-lg font-bold text-white truncate">
+                      <h3 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white truncate">
                         {document.title}
                       </h3>
                       <span
@@ -115,18 +115,18 @@ export default function AdminDocumentsTab({
                         {ADMIN_DOCUMENT_TYPE_LABELS[document.type] || document.type}
                       </span>
                     </div>
-                    <p className="text-slate-400 text-sm line-clamp-1">
+                    <p className="text-slate-600 dark:text-slate-400 text-sm line-clamp-1">
                       {visibleDescription}
                     </p>
                     {worksheetDocument && (
-                      <div className="mt-2 inline-flex max-w-full items-center gap-2 rounded-full border border-purple-400/20 bg-purple-500/10 px-3 py-1 text-xs text-purple-100">
+                      <div className="mt-2 inline-flex max-w-full items-center gap-2 rounded-full border border-purple-300 dark:border-purple-400/20 bg-purple-50 dark:bg-purple-500/10 px-3 py-1 text-xs text-purple-800 dark:text-purple-100 font-medium">
                         <FolderTree className="w-3 h-3 shrink-0" />
                         <span className="truncate">
                           {getWorksheetOutcomeLabel(document)}
                         </span>
                       </div>
                     )}
-                    <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mt-2 text-xs text-slate-500">
+                    <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mt-2 text-xs text-slate-500 dark:text-slate-400">
                       <span className="flex items-center gap-1">
                         <Calendar className="w-3 h-3" />
                         {formatDate(document.created_at)}
@@ -168,14 +168,14 @@ export default function AdminDocumentsTab({
                         video_url: document.video_url ?? "",
                       })
                     }
-                    className="p-2.5 rounded-xl text-slate-400 hover:text-cyan-300 hover:bg-cyan-500/10 transition-all"
+                    className="p-2.5 rounded-xl text-slate-400 hover:text-cyan-600 dark:hover:text-cyan-300 hover:bg-cyan-50 dark:hover:bg-cyan-500/10 transition-all"
                     title="Düzenle"
                   >
                     <Edit3 className="w-4 h-4 sm:w-5 sm:h-5" />
                   </button>
                   <button
                     onClick={() => onDelete(document.id)}
-                    className="p-2.5 rounded-xl text-slate-400 hover:text-rose-400 hover:bg-rose-500/10 transition-all"
+                    className="p-2.5 rounded-xl text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-500/10 transition-all"
                     title="Sil"
                   >
                     <Trash2 className="w-4 h-4 sm:w-5 sm:h-5" />

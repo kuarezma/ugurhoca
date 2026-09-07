@@ -190,9 +190,9 @@ export default function NotesSection({ userId }: NotesSectionProps) {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <StickyNote className="w-6 h-6 text-purple-400" />
-          <h2 className="text-xl font-bold text-white">Notlarım</h2>
-          <span className="px-2 py-0.5 bg-purple-500/20 text-purple-300 text-sm rounded-full">
+          <StickyNote className="w-6 h-6 text-purple-600 dark:text-purple-400" />
+          <h2 className="text-xl font-bold text-slate-900 dark:text-white">Notlarım</h2>
+          <span className="px-2 py-0.5 bg-purple-500/20 text-purple-700 dark:text-purple-300 text-sm rounded-full">
             {filteredNotes.length}
           </span>
         </div>
@@ -213,7 +213,7 @@ export default function NotesSection({ userId }: NotesSectionProps) {
             placeholder="Notlarda ara..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-10 pr-4 py-2 bg-white/5 border border-white/10 rounded-xl text-white placeholder-slate-400 focus:outline-none focus:border-purple-500/50"
+            className="w-full pl-10 pr-4 py-2 bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:border-purple-500/50"
           />
         </div>
 
@@ -221,7 +221,7 @@ export default function NotesSection({ userId }: NotesSectionProps) {
           <select
             value={selectedCategory || ''}
             onChange={(e) => setSelectedCategory(e.target.value || null)}
-            className="px-4 py-2 bg-white/5 border border-white/10 rounded-xl text-white focus:outline-none focus:border-purple-500/50"
+            className="px-4 py-2 bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl text-slate-800 dark:text-white focus:outline-none focus:border-purple-500/50"
           >
             <option value="">Tüm Kategoriler</option>
             {categories.map(cat => (
@@ -234,7 +234,7 @@ export default function NotesSection({ userId }: NotesSectionProps) {
           <select
             value={selectedTag || ''}
             onChange={(e) => setSelectedTag(e.target.value || null)}
-            className="px-4 py-2 bg-white/5 border border-white/10 rounded-xl text-white focus:outline-none focus:border-purple-500/50"
+            className="px-4 py-2 bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl text-slate-800 dark:text-white focus:outline-none focus:border-purple-500/50"
           >
             <option value="">Tüm Etiketler</option>
             {allTags.map(tag => (
@@ -246,8 +246,8 @@ export default function NotesSection({ userId }: NotesSectionProps) {
 
       {filteredNotes.length === 0 ? (
         <div className="text-center py-12">
-          <StickyNote className="w-16 h-16 mx-auto mb-4 text-slate-600" />
-          <p className="text-slate-400">
+          <StickyNote className="w-16 h-16 mx-auto mb-4 text-slate-400 dark:text-slate-600" />
+          <p className="text-slate-500 dark:text-slate-400">
             {searchQuery || selectedCategory || selectedTag ? 'Arama sonucu bulunamadı' : 'Henüz not eklemediniz'}
           </p>
           {!searchQuery && !selectedCategory && !selectedTag && (
@@ -266,48 +266,48 @@ export default function NotesSection({ userId }: NotesSectionProps) {
               key={note.id}
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              className="bg-white/5 border border-white/10 rounded-xl p-4 hover:bg-white/10 transition-colors group"
+              className="bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl p-4 hover:border-purple-500/40 dark:hover:bg-white/10 shadow-sm dark:shadow-none transition-all group"
             >
               <div className="flex items-start justify-between gap-2 mb-2">
-                <h3 className="text-white font-semibold truncate flex-1">
+                <h3 className="text-slate-900 dark:text-white font-semibold truncate flex-1">
                   {note.title || 'Başlıksız Not'}
                 </h3>
                 <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                   <button
                     onClick={() => handleTogglePin(note)}
-                    className="p-1.5 hover:bg-white/10 rounded-lg transition-colors"
+                    className="p-1.5 hover:bg-slate-100 dark:hover:bg-white/10 rounded-lg transition-colors"
                     title={note.is_pinned ? 'Sabitlemeyi kaldır' : 'Sabitle'}
                   >
                     {note.is_pinned ? (
-                      <PinOff className="w-4 h-4 text-amber-400" />
+                      <PinOff className="w-4 h-4 text-amber-500 dark:text-amber-400" />
                     ) : (
                       <Pin className="w-4 h-4 text-slate-400" />
                     )}
                   </button>
                   <button
                     onClick={() => handleOpenModal(note)}
-                    className="p-1.5 hover:bg-white/10 rounded-lg transition-colors"
+                    className="p-1.5 hover:bg-slate-100 dark:hover:bg-white/10 rounded-lg transition-colors"
                   >
-                    <Edit2 className="w-4 h-4 text-slate-400" />
+                    <Edit2 className="w-4 h-4 text-slate-500 dark:text-slate-400" />
                   </button>
                   <button
                     onClick={() => handleDelete(note.id)}
                     className="p-1.5 hover:bg-red-500/20 rounded-lg transition-colors"
                   >
-                    <Trash2 className="w-4 h-4 text-red-400" />
+                    <Trash2 className="w-4 h-4 text-red-500 dark:text-red-400" />
                   </button>
                 </div>
               </div>
 
               {note.category && (
                 <div className="flex items-center gap-1 mb-2">
-                  <Folder className="w-3 h-3 text-purple-400" />
-                  <span className="text-xs text-purple-300">{note.category}</span>
+                  <Folder className="w-3 h-3 text-purple-600 dark:text-purple-400" />
+                  <span className="text-xs text-purple-700 dark:text-purple-300 font-medium">{note.category}</span>
                 </div>
               )}
 
               <SafeHtml
-                className="text-slate-300 text-sm line-clamp-4 prose prose-sm prose-invert max-w-none mb-3 [&>ul]:list-disc [&>ol]:list-decimal [&>li]:ml-4"
+                className="text-slate-700 dark:text-slate-300 text-sm line-clamp-4 prose prose-sm dark:prose-invert max-w-none mb-3 [&>ul]:list-disc [&>ol]:list-decimal [&>li]:ml-4"
                 html={note.content}
               />
 
@@ -316,7 +316,7 @@ export default function NotesSection({ userId }: NotesSectionProps) {
                   {note.tags.map(tag => (
                     <span
                       key={tag}
-                      className="px-2 py-0.5 bg-slate-700/50 text-slate-300 text-xs rounded-full"
+                      className="px-2 py-0.5 bg-slate-100 dark:bg-slate-700/50 text-slate-700 dark:text-slate-300 text-xs rounded-full border border-slate-200 dark:border-transparent"
                     >
                       #{tag}
                     </span>
@@ -324,7 +324,7 @@ export default function NotesSection({ userId }: NotesSectionProps) {
                 </div>
               )}
 
-              <div className="flex items-center gap-2 text-xs text-slate-400">
+              <div className="flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400">
                 <Clock className="w-3 h-3" />
                 {new Date(note.updated_at).toLocaleDateString('tr-TR')}
               </div>
@@ -354,18 +354,18 @@ export default function NotesSection({ userId }: NotesSectionProps) {
               role="dialog"
               aria-modal="true"
               aria-labelledby="notes-modal-title"
-              className="relative w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-3xl bg-slate-900 border border-slate-700 shadow-2xl"
+              className="relative w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 shadow-2xl"
             >
-              <div className="sticky top-0 bg-slate-900 border-b border-slate-700 p-4 flex items-center justify-between">
-                <h3 id="notes-modal-title" className="text-xl font-bold text-white">
+              <div className="sticky top-0 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-700 p-4 flex items-center justify-between">
+                <h3 id="notes-modal-title" className="text-xl font-bold text-slate-900 dark:text-white">
                   {editingNote ? 'Notu Düzenle' : 'Yeni Not'}
                 </h3>
                 <button
                   onClick={handleCloseModal}
                   aria-label="Not düzenleme penceresini kapat"
-                  className="p-2 hover:bg-white/10 rounded-xl transition-colors"
+                  className="p-2 hover:bg-slate-100 dark:hover:bg-white/10 rounded-xl transition-colors"
                 >
-                  <X className="w-5 h-5 text-slate-400" />
+                  <X className="w-5 h-5 text-slate-500 dark:text-slate-400" />
                 </button>
               </div>
 
@@ -373,7 +373,7 @@ export default function NotesSection({ userId }: NotesSectionProps) {
                 <div>
                   <label
                     htmlFor={titleInputId}
-                    className="block text-sm text-slate-400 mb-2"
+                    className="block text-sm text-slate-600 dark:text-slate-400 mb-2 font-medium"
                   >
                     Başlık
                   </label>
@@ -383,14 +383,14 @@ export default function NotesSection({ userId }: NotesSectionProps) {
                     value={formData.title}
                     onChange={(e) => setFormData({ ...formData, title: e.target.value })}
                     placeholder="Not başlığı..."
-                    className="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-xl text-white placeholder-slate-400 focus:outline-none focus:border-purple-500/50"
+                    className="w-full px-4 py-2 bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:border-purple-500/50"
                   />
                 </div>
 
                 <div>
                   <label
                     htmlFor={showCategoryInput ? newCategoryInputId : categorySelectId}
-                    className="block text-sm text-slate-400 mb-2"
+                    className="block text-sm text-slate-600 dark:text-slate-400 mb-2 font-medium"
                   >
                     Kategori
                   </label>
@@ -402,7 +402,7 @@ export default function NotesSection({ userId }: NotesSectionProps) {
                         value={newCategory}
                         onChange={(e) => setNewCategory(e.target.value)}
                         placeholder="Yeni kategori..."
-                        className="flex-1 px-4 py-2 bg-white/5 border border-white/10 rounded-xl text-white placeholder-slate-400 focus:outline-none focus:border-purple-500/50"
+                        className="flex-1 px-4 py-2 bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:border-purple-500/50"
                       />
                       <button
                         onClick={() => {
@@ -417,7 +417,7 @@ export default function NotesSection({ userId }: NotesSectionProps) {
                       </button>
                       <button
                         onClick={() => setShowCategoryInput(false)}
-                        className="px-4 py-2 bg-white/10 text-slate-300 rounded-xl hover:bg-white/15 transition-colors"
+                        className="px-4 py-2 bg-slate-100 dark:bg-white/10 text-slate-700 dark:text-slate-300 rounded-xl hover:bg-slate-200 dark:hover:bg-white/15 transition-colors"
                       >
                         İptal
                       </button>
@@ -428,7 +428,7 @@ export default function NotesSection({ userId }: NotesSectionProps) {
                         id={categorySelectId}
                         value={formData.category}
                         onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                        className="flex-1 px-4 py-2 bg-white/5 border border-white/10 rounded-xl text-white focus:outline-none focus:border-purple-500/50"
+                        className="flex-1 px-4 py-2 bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl text-slate-900 dark:text-white focus:outline-none focus:border-purple-500/50"
                       >
                         <option value="">Kategori seç...</option>
                         {categories.map(cat => (
@@ -437,7 +437,7 @@ export default function NotesSection({ userId }: NotesSectionProps) {
                       </select>
                       <button
                         onClick={() => setShowCategoryInput(true)}
-                        className="px-4 py-2 bg-white/10 text-white rounded-xl hover:bg-white/15 transition-colors flex items-center gap-2"
+                        className="px-4 py-2 bg-slate-100 dark:bg-white/10 text-slate-700 dark:text-white rounded-xl hover:bg-slate-200 dark:hover:bg-white/15 transition-colors flex items-center gap-2"
                       >
                         <Plus className="w-4 h-4" />
                         Yeni
@@ -449,25 +449,25 @@ export default function NotesSection({ userId }: NotesSectionProps) {
                 <div>
                   <span
                     id={contentLabelId}
-                    className="block text-sm text-slate-400 mb-2"
+                    className="block text-sm text-slate-600 dark:text-slate-400 mb-2 font-medium"
                   >
                     İçerik
                   </span>
                   <div
                     role="group"
                     aria-labelledby={contentLabelId}
-                    className="border border-white/10 rounded-xl overflow-hidden"
+                    className="border border-slate-200 dark:border-white/10 rounded-xl overflow-hidden"
                   >
-                    <div className="flex flex-wrap gap-1 p-2 bg-white/5 border-b border-white/10">
+                    <div className="flex flex-wrap gap-1 p-2 bg-slate-50 dark:bg-white/5 border-b border-slate-200 dark:border-white/10">
                       <ToolbarButton icon={Bold} title="Kalın" onClick={() => execCommand('bold')} />
                       <ToolbarButton icon={Italic} title="İtalik" onClick={() => execCommand('italic')} />
                       <ToolbarButton icon={Underline} title="Altı çizili" onClick={() => execCommand('underline')} />
-                      <div className="w-px h-6 bg-white/10 mx-1" />
+                      <div className="w-px h-6 bg-slate-200 dark:bg-white/10 mx-1" />
                       <ToolbarButton icon={Heading1} title="Başlık" onClick={() => execCommand('formatBlock', 'h1')} />
-                      <div className="w-px h-6 bg-white/10 mx-1" />
+                      <div className="w-px h-6 bg-slate-200 dark:bg-white/10 mx-1" />
                       <ToolbarButton icon={List} title="Liste" onClick={() => execCommand('insertUnorderedList')} />
                       <ToolbarButton icon={ListOrdered} title="Numaralı Liste" onClick={() => execCommand('insertOrderedList')} />
-                      <div className="w-px h-6 bg-white/10 mx-1" />
+                      <div className="w-px h-6 bg-slate-200 dark:bg-white/10 mx-1" />
                       <ToolbarButton
                         icon={LinkIcon}
                         title="Bağlantı"
@@ -487,7 +487,7 @@ export default function NotesSection({ userId }: NotesSectionProps) {
                       contentEditable
                       suppressContentEditableWarning
                       onInput={(e) => setFormData({ ...formData, content: e.currentTarget.innerHTML })}
-                      className="min-h-[200px] p-4 text-white focus:outline-none prose prose-sm prose-invert max-w-none [&>h1]:text-2xl [&>h1]:font-bold [&>ul]:list-disc [&>ol]:list-decimal [&>li]:ml-4 [&>a]:text-purple-400 [&>a]:underline"
+                      className="min-h-[200px] p-4 bg-white dark:bg-slate-900 text-slate-900 dark:text-white focus:outline-none prose prose-sm dark:prose-invert max-w-none [&>h1]:text-2xl [&>h1]:font-bold [&>ul]:list-disc [&>ol]:list-decimal [&>li]:ml-4 [&>a]:text-purple-600 dark:[&>a]:text-purple-400 [&>a]:underline"
                       style={{ whiteSpace: 'pre-wrap' }}
                       dangerouslySetInnerHTML={{
                         __html: editingNote
@@ -501,7 +501,7 @@ export default function NotesSection({ userId }: NotesSectionProps) {
                 <div>
                   <label
                     htmlFor={tagInputId}
-                    className="block text-sm text-slate-400 mb-2"
+                    className="block text-sm text-slate-600 dark:text-slate-400 mb-2 font-medium"
                   >
                     Etiketler
                   </label>
@@ -509,12 +509,12 @@ export default function NotesSection({ userId }: NotesSectionProps) {
                     {formData.tags.map(tag => (
                       <span
                         key={tag}
-                        className="flex items-center gap-1 px-2 py-1 bg-purple-500/20 text-purple-300 text-sm rounded-lg"
+                        className="flex items-center gap-1 px-2 py-1 bg-purple-500/20 text-purple-700 dark:text-purple-300 text-sm rounded-lg"
                       >
                         #{tag}
                         <button
                           onClick={() => removeTag(tag)}
-                          className="hover:text-white"
+                          className="hover:text-purple-900 dark:hover:text-white"
                         >
                           <X className="w-3 h-3" />
                         </button>
@@ -529,11 +529,11 @@ export default function NotesSection({ userId }: NotesSectionProps) {
                       onChange={(e) => setNewTag(e.target.value)}
                       onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), addTag())}
                       placeholder="Etiket ekle..."
-                      className="flex-1 px-4 py-2 bg-white/5 border border-white/10 rounded-xl text-white placeholder-slate-400 focus:outline-none focus:border-purple-500/50"
+                      className="flex-1 px-4 py-2 bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:border-purple-500/50"
                     />
                     <button
                       onClick={addTag}
-                      className="px-4 py-2 bg-white/10 text-white rounded-xl hover:bg-white/15 transition-colors"
+                      className="px-4 py-2 bg-slate-100 dark:bg-white/10 text-slate-700 dark:text-white rounded-xl hover:bg-slate-200 dark:hover:bg-white/15 transition-colors"
                     >
                       <Plus className="w-4 h-4" />
                     </button>
@@ -541,10 +541,10 @@ export default function NotesSection({ userId }: NotesSectionProps) {
                 </div>
               </div>
 
-              <div className="sticky bottom-0 bg-slate-900 border-t border-slate-700 p-4 flex justify-end gap-3">
+              <div className="sticky bottom-0 bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-700 p-4 flex justify-end gap-3">
                 <button
                   onClick={handleCloseModal}
-                  className="px-6 py-2 bg-white/10 text-white rounded-xl hover:bg-white/15 transition-colors"
+                  className="px-6 py-2 bg-slate-100 dark:bg-white/10 text-slate-700 dark:text-white rounded-xl hover:bg-slate-200 dark:hover:bg-white/15 transition-colors"
                 >
                   İptal
                 </button>
@@ -620,7 +620,7 @@ function ToolbarButton({
       onClick={onClick}
       title={title}
       aria-label={title}
-      className="inline-flex h-9 w-9 items-center justify-center rounded-lg text-slate-400 transition-colors hover:bg-white/10 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary"
+      className="inline-flex h-9 w-9 items-center justify-center rounded-lg text-slate-500 dark:text-slate-400 transition-colors hover:bg-slate-100 dark:hover:bg-white/10 hover:text-slate-900 dark:hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary"
     >
       <Icon className="h-4 w-4" aria-hidden="true" />
     </button>

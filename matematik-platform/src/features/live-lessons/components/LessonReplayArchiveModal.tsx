@@ -152,19 +152,19 @@ export function LessonReplayArchiveModal({
         role="dialog"
         aria-modal="true"
         aria-label="Canlı Ders Kayıtları & Ders Arşivi"
-        className="relative z-10 flex h-full max-h-[92vh] w-full max-w-5xl flex-col overflow-hidden rounded-3xl border border-white/15 bg-slate-900 shadow-2xl"
+        className="relative z-10 flex h-full max-h-[92vh] w-full max-w-5xl flex-col overflow-hidden rounded-3xl border border-slate-200 dark:border-white/15 bg-white dark:bg-slate-900 shadow-2xl"
       >
         {/* Header */}
-        <div className="flex items-center justify-between border-b border-white/10 bg-slate-950/80 px-4 sm:px-6 py-3 sm:py-4">
+        <div className="flex items-center justify-between border-b border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-slate-950/80 px-4 sm:px-6 py-3 sm:py-4">
           <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
             <div className="flex h-9 w-9 sm:h-10 sm:w-10 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-rose-500 to-indigo-600 text-white shadow-md">
               <Video className="h-5 w-5" />
             </div>
             <div className="min-w-0">
-              <h2 className="font-display text-sm sm:text-base font-bold text-white truncate">
+              <h2 className="font-display text-sm sm:text-base font-bold text-slate-900 dark:text-white truncate">
                 Canlı Ders Kayıtları & Zaman Damgalı Arşiv
               </h2>
-              <p className="text-[11px] text-slate-400 truncate">
+              <p className="text-[11px] text-slate-500 dark:text-slate-400 truncate">
                 Kaçırdığın veya tekrar etmek istediğin canlı derslerin video kayıtları ve tahta notları
               </p>
             </div>
@@ -174,14 +174,14 @@ export function LessonReplayArchiveModal({
             type="button"
             onClick={onClose}
             aria-label="Kapat"
-            className="inline-flex h-9 w-9 items-center justify-center rounded-xl bg-white/10 text-slate-300 hover:bg-white/20 hover:text-white transition"
+            className="inline-flex h-9 w-9 items-center justify-center rounded-xl bg-slate-100 dark:bg-white/10 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-white/20 hover:text-slate-900 dark:hover:text-white transition"
           >
             <X className="h-4 w-4" />
           </button>
         </div>
 
         {/* Ana Sahne & Oynatıcı Paneli */}
-        <div className="flex-1 overflow-y-auto grid grid-cols-1 lg:grid-cols-3 divide-y lg:divide-y-0 lg:divide-x divide-white/10">
+        <div className="flex-1 overflow-y-auto grid grid-cols-1 lg:grid-cols-3 divide-y lg:divide-y-0 lg:divide-x divide-slate-200 dark:divide-white/10">
           {/* Sol / Ana Alan: Video Oynatıcı & Zaman Damgalı Bölümler (2 Kolon) */}
           <div className="lg:col-span-2 p-4 sm:p-6 space-y-5">
             {/* Simüle Edilmiş Video Oynatıcı Sahnesi */}
@@ -263,11 +263,11 @@ export function LessonReplayArchiveModal({
             {/* Zaman Damgalı Bölümler (Chapters) */}
             <div className="space-y-3">
               <div className="flex items-center justify-between">
-                <h3 className="text-xs sm:text-sm font-bold text-white flex items-center gap-1.5">
-                  <Bookmark className="h-4 w-4 text-indigo-400" />
+                <h3 className="text-xs sm:text-sm font-bold text-slate-900 dark:text-white flex items-center gap-1.5">
+                  <Bookmark className="h-4 w-4 text-indigo-500 dark:text-indigo-400" />
                   <span>Ders Zaman Damgaları & Konu Başlıkları</span>
                 </h3>
-                <span className="text-[11px] text-slate-400">Tıkla ve ilgili dakikaya atla</span>
+                <span className="text-[11px] text-slate-500 dark:text-slate-400">Tıkla ve ilgili dakikaya atla</span>
               </div>
 
               <div className="space-y-2">
@@ -276,17 +276,17 @@ export function LessonReplayArchiveModal({
                     key={idx}
                     type="button"
                     onClick={() => handleJumpToChapter(ch.timeSeconds)}
-                    className="w-full flex items-center justify-between rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 p-2.5 sm:p-3 text-left transition group"
+                    className="w-full flex items-center justify-between rounded-xl border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-white/5 hover:bg-slate-100 dark:hover:bg-white/10 p-2.5 sm:p-3 text-left transition group"
                   >
                     <div className="flex items-center gap-3">
-                      <span className="font-mono text-xs font-bold text-amber-300 rounded bg-amber-500/10 px-2 py-1 border border-amber-500/20 group-hover:bg-amber-500/20">
+                      <span className="font-mono text-xs font-bold text-amber-700 dark:text-amber-300 rounded bg-amber-500/10 px-2 py-1 border border-amber-500/20 group-hover:bg-amber-500/20">
                         {ch.timeFormatted}
                       </span>
-                      <span className="text-xs font-semibold text-slate-200 group-hover:text-white">
+                      <span className="text-xs font-semibold text-slate-800 dark:text-slate-200 group-hover:text-slate-950 dark:group-hover:text-white">
                         {ch.title}
                       </span>
                     </div>
-                    <span className="text-[10px] font-bold text-indigo-300 rounded bg-indigo-500/15 px-2 py-0.5 border border-indigo-500/25">
+                    <span className="text-[10px] font-bold text-indigo-700 dark:text-indigo-300 rounded bg-indigo-50 dark:bg-indigo-500/15 px-2 py-0.5 border border-indigo-200 dark:border-indigo-500/25">
                       {ch.topicTag}
                     </span>
                   </button>
@@ -295,9 +295,9 @@ export function LessonReplayArchiveModal({
             </div>
 
             {/* Tahta Notları & PDF İndirme Şeridi */}
-            <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-indigo-500/30 bg-indigo-950/30 p-3.5 text-xs">
-              <div className="flex items-center gap-2 text-indigo-200">
-                <FileText className="h-4 w-4 text-indigo-400" />
+            <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-indigo-200 dark:border-indigo-500/30 bg-indigo-50/70 dark:bg-indigo-950/30 p-3.5 text-xs">
+              <div className="flex items-center gap-2 text-indigo-900 dark:text-indigo-200">
+                <FileText className="h-4 w-4 text-indigo-600 dark:text-indigo-400" />
                 <span>Bu derste karalama tahtasında çözülen tüm soru ve notlar</span>
               </div>
 
@@ -317,15 +317,15 @@ export function LessonReplayArchiveModal({
           {/* Sağ Kolon: Arşivdeki Tüm Dersler Listesi */}
           <div className="p-4 sm:p-6 space-y-4">
             <div>
-              <h3 className="text-xs sm:text-sm font-bold text-white flex items-center gap-1.5">
-                <Video className="h-4 w-4 text-rose-400" />
+              <h3 className="text-xs sm:text-sm font-bold text-slate-900 dark:text-white flex items-center gap-1.5">
+                <Video className="h-4 w-4 text-rose-500 dark:text-rose-400" />
                 <span>Arşivdeki Kayıtlar ({filteredLessons.length})</span>
               </h3>
-              <p className="text-[11px] text-slate-400 mt-0.5">İzlemek istediğin dersi seç</p>
+              <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">İzlemek istediğin dersi seç</p>
             </div>
 
             {/* Sınıf Filtresi */}
-            <div className="flex items-center gap-1 rounded-xl bg-white/5 p-1 border border-white/10 overflow-x-auto text-[11px]">
+            <div className="flex items-center gap-1 rounded-xl bg-slate-100 dark:bg-white/5 p-1 border border-slate-200 dark:border-white/10 overflow-x-auto text-[11px]">
               {['all', '8', 'Mezun'].map((g) => (
                 <button
                   key={g}
@@ -334,7 +334,7 @@ export function LessonReplayArchiveModal({
                   className={`rounded-lg px-2.5 py-1 font-bold whitespace-nowrap transition ${
                     activeGradeTab === g
                       ? 'bg-brand-primary text-white'
-                      : 'text-slate-400 hover:text-white'
+                      : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
                   }`}
                 >
                   {g === 'all' ? 'Tümü' : g === '8' ? '8. Sınıf LGS' : 'YKS / TYT'}
@@ -350,7 +350,7 @@ export function LessonReplayArchiveModal({
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Ders veya konu ara..."
-                className="w-full rounded-xl border border-white/10 bg-white/5 pl-8 pr-3 py-1.5 text-xs text-white placeholder-slate-500 outline-none focus:border-brand-primary"
+                className="w-full rounded-xl border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-white/5 pl-8 pr-3 py-1.5 text-xs text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 outline-none focus:border-brand-primary"
               />
             </div>
 
@@ -370,22 +370,22 @@ export function LessonReplayArchiveModal({
                     className={`w-full rounded-2xl border p-3 text-left transition ${
                       isSelected
                         ? 'border-rose-500/60 bg-rose-500/10 shadow-lg'
-                        : 'border-white/10 bg-white/5 hover:bg-white/10'
+                        : 'border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-white/5 hover:bg-slate-100 dark:hover:bg-white/10'
                     }`}
                   >
                     <div className="flex items-center justify-between text-[11px] mb-1">
-                      <span className="font-bold text-rose-400">{lesson.grade}. Sınıf</span>
-                      <span className="text-slate-400 flex items-center gap-1">
+                      <span className="font-bold text-rose-600 dark:text-rose-400">{lesson.grade}. Sınıf</span>
+                      <span className="text-slate-500 dark:text-slate-400 flex items-center gap-1">
                         <Calendar className="h-3 w-3" />
                         {lesson.dateStr}
                       </span>
                     </div>
 
-                    <div className="font-bold text-xs text-white leading-snug line-clamp-2">
+                    <div className="font-bold text-xs text-slate-900 dark:text-white leading-snug line-clamp-2">
                       {lesson.title}
                     </div>
 
-                    <div className="mt-2 flex items-center justify-between text-[10px] text-slate-400 border-t border-white/5 pt-2">
+                    <div className="mt-2 flex items-center justify-between text-[10px] text-slate-500 dark:text-slate-400 border-t border-slate-200 dark:border-white/5 pt-2">
                       <span className="flex items-center gap-1">
                         <Clock className="h-3 w-3" />
                         {lesson.durationMinutes} dakika

@@ -134,10 +134,10 @@ export default function AdminStatistics() {
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
         <div>
-          <h2 className="text-2xl font-bold text-white">Site İstatistikleri</h2>
-          <p className="text-slate-400 text-sm mt-1">Platformun genel durumu</p>
+          <h2 className="text-2xl font-bold text-slate-900 dark:text-white">Site İstatistikleri</h2>
+          <p className="text-slate-500 dark:text-slate-400 text-sm mt-1">Platformun genel durumu</p>
         </div>
-        <div className="flex gap-1.5 p-1 bg-white/5 rounded-xl border border-white/10">
+        <div className="flex gap-1.5 p-1 bg-slate-100 dark:bg-white/5 rounded-xl border border-slate-200 dark:border-white/10">
           {(['week', 'month', 'all'] as const).map((range) => (
             <button
               key={range}
@@ -145,7 +145,7 @@ export default function AdminStatistics() {
               className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all ${
                 timeRange === range
                   ? 'bg-brand-primary text-white shadow-md shadow-violet-500/25'
-                  : 'text-slate-400 hover:text-white hover:bg-white/5'
+                  : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200/70 dark:hover:bg-white/5'
               }`}
             >
               {range === 'week'
@@ -227,19 +227,19 @@ export default function AdminStatistics() {
         />
       </div>
 
-      <div className="glass rounded-2xl p-6">
-        <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
-          <TrendingUp className="w-5 h-5 text-green-400" />
+      <div className="glass rounded-2xl p-6 border border-slate-200/80 dark:border-white/10 bg-white/80 dark:bg-slate-900/60">
+        <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
+          <TrendingUp className="w-5 h-5 text-green-500 dark:text-green-400" />
           Sınıflara Göre Dağılım
         </h3>
         <div className="grid grid-cols-3 sm:grid-cols-5 md:grid-cols-9 gap-3">
           {stats.usersByGrade.map(({ grade, count }) => (
             <div
               key={grade}
-              className="animate-fade-in bg-white/5 rounded-xl p-3 text-center hover:bg-white/10 transition-colors"
+              className="animate-fade-in bg-slate-50 dark:bg-white/5 border border-slate-200/60 dark:border-transparent rounded-xl p-3 text-center hover:bg-slate-100 dark:hover:bg-white/10 transition-colors"
             >
-              <div className="text-2xl font-bold text-white">{count}</div>
-              <div className="text-xs text-slate-400 mt-1">{grade}</div>
+              <div className="text-2xl font-bold text-slate-900 dark:text-white">{count}</div>
+              <div className="text-xs text-slate-500 dark:text-slate-400 mt-1">{grade}</div>
             </div>
           ))}
         </div>
@@ -268,7 +268,7 @@ export default function AdminStatistics() {
           <div className="flex gap-1 mt-2">
             {stats.usersByGrade.map(({ grade }) => (
               <div key={grade} className="flex-1 text-center">
-                <span className="text-[10px] text-slate-400 font-medium truncate block">
+                <span className="text-[10px] text-slate-500 dark:text-slate-400 font-medium truncate block">
                   {grade.replace('. Sınıf', '')}
                 </span>
               </div>
@@ -278,37 +278,37 @@ export default function AdminStatistics() {
       </div>
 
       <div className="grid sm:grid-cols-2 gap-4">
-        <div className="glass rounded-2xl p-6 border border-white/10">
-          <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
-            <Calendar className="w-5 h-5 text-cyan-400" />
+        <div className="glass rounded-2xl p-6 border border-slate-200/80 dark:border-white/10 bg-white/80 dark:bg-slate-900/60">
+          <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
+            <Calendar className="w-5 h-5 text-cyan-500 dark:text-cyan-400" />
             Sistem Özeti & Verim
           </h3>
           <div className="space-y-3 text-sm">
-            <div className="flex items-center justify-between pb-2 border-b border-white/5">
-              <span className="text-slate-400">Kullanıcı Başına İçerik</span>
-              <span className="text-white font-semibold">
+            <div className="flex items-center justify-between pb-2 border-b border-slate-200/60 dark:border-white/5">
+              <span className="text-slate-600 dark:text-slate-400">Kullanıcı Başına İçerik</span>
+              <span className="text-slate-900 dark:text-white font-semibold">
                 {(stats.totalUsers / Math.max(stats.totalDocuments, 1)).toFixed(
                   1,
                 )}
               </span>
             </div>
-            <div className="flex items-center justify-between pb-2 border-b border-white/5">
-              <span className="text-slate-400">Belge Başına Ort. İndirme</span>
-              <span className="text-white font-semibold">
+            <div className="flex items-center justify-between pb-2 border-b border-slate-200/60 dark:border-white/5">
+              <span className="text-slate-600 dark:text-slate-400">Belge Başına Ort. İndirme</span>
+              <span className="text-slate-900 dark:text-white font-semibold">
                 {Math.round(
                   stats.totalDownloads / Math.max(stats.totalDocuments, 1),
                 )}
               </span>
             </div>
-            <div className="flex items-center justify-between pb-2 border-b border-white/5">
-              <span className="text-slate-400">Öğrenci Not Ortalaması</span>
-              <span className="text-white font-semibold">
+            <div className="flex items-center justify-between pb-2 border-b border-slate-200/60 dark:border-white/5">
+              <span className="text-slate-600 dark:text-slate-400">Öğrenci Not Ortalaması</span>
+              <span className="text-slate-900 dark:text-white font-semibold">
                 {Math.round(stats.totalNotes / Math.max(stats.totalUsers, 1))}
               </span>
             </div>
             <div className="flex items-center justify-between">
-              <span className="text-slate-400">Etkinlik Oranı</span>
-              <span className="text-emerald-400 font-bold">
+              <span className="text-slate-600 dark:text-slate-400">Etkinlik Oranı</span>
+              <span className="text-emerald-600 dark:text-emerald-400 font-bold">
                 {(
                   ((stats.totalNotes + stats.totalAssignments) /
                     Math.max(stats.totalUsers, 1)) *
@@ -342,21 +342,21 @@ function StatCard({
   suffix?: string;
 }) {
   return (
-    <div className="glass rounded-2xl p-4 sm:p-5 card-hover animate-fade-up relative overflow-hidden group border border-white/10 hover:border-white/20 transition-all duration-300">
+    <div className="glass rounded-2xl p-4 sm:p-5 card-hover animate-fade-up relative overflow-hidden group border border-slate-200/80 dark:border-white/10 hover:border-violet-500/40 dark:hover:border-white/20 transition-all duration-300 bg-white/80 dark:bg-slate-900/60 shadow-sm dark:shadow-md">
       <div className="flex items-center justify-between">
         <div
-          className={`w-11 h-11 sm:w-12 sm:h-12 rounded-2xl bg-gradient-to-br ${color} flex items-center justify-center shadow-lg shadow-black/20 group-hover:scale-105 transition-transform duration-200`}
+          className={`w-11 h-11 sm:w-12 sm:h-12 rounded-2xl bg-gradient-to-br ${color} flex items-center justify-center shadow-lg shadow-black/10 dark:shadow-black/20 group-hover:scale-105 transition-transform duration-200`}
         >
           <Icon className={`w-5 h-5 sm:w-6 sm:h-6 ${iconColor}`} />
         </div>
       </div>
       <div className="mt-3.5 sm:mt-4">
-        <p className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
+        <p className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">
           {value.toLocaleString('tr-TR')}
           {suffix}
         </p>
-        <p className="text-slate-300 font-medium text-xs sm:text-sm mt-1">{label}</p>
-        {subtext && <p className="text-slate-400 text-[11px] sm:text-xs mt-0.5 truncate">{subtext}</p>}
+        <p className="text-slate-600 dark:text-slate-300 font-medium text-xs sm:text-sm mt-1">{label}</p>
+        {subtext && <p className="text-slate-500 dark:text-slate-400 text-[11px] sm:text-xs mt-0.5 truncate">{subtext}</p>}
       </div>
     </div>
   );

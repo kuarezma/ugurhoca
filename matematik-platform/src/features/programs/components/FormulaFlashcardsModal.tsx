@@ -454,7 +454,7 @@ export function FormulaFlashcardsModal({
         type="button"
         aria-label="Pencereyi kapat"
         onClick={onClose}
-        className="fixed inset-0 bg-slate-950/85 backdrop-blur-md"
+        className="fixed inset-0 bg-slate-900/60 dark:bg-slate-950/85 backdrop-blur-md"
       />
       <style dangerouslySetInnerHTML={{ __html: `
         @media print {
@@ -486,11 +486,11 @@ export function FormulaFlashcardsModal({
         role="dialog"
         aria-modal="true"
         aria-label="Matematik Formül & Bilgi Kartları"
-        className="relative z-10 print-flashcards-area flex h-full max-h-[90vh] w-full max-w-2xl flex-col overflow-hidden rounded-3xl border border-white/15 bg-slate-900 shadow-2xl"
+        className="relative z-10 print-flashcards-area flex h-full max-h-[90vh] w-full max-w-2xl flex-col overflow-hidden rounded-3xl border border-slate-200 dark:border-white/15 bg-white dark:bg-slate-900 shadow-2xl"
       >
         <ErrorBoundary
           fallback={({ reset }) => (
-            <div className="flex flex-1 flex-col items-center justify-center p-8 text-center text-slate-300 gap-4">
+            <div className="flex flex-1 flex-col items-center justify-center p-8 text-center text-slate-600 dark:text-slate-300 gap-4">
               <p className="text-sm">Formül kartları yüklenirken beklenmedik bir durum oluştu.</p>
               <div className="flex gap-2">
                 <button
@@ -503,7 +503,7 @@ export function FormulaFlashcardsModal({
                 <button
                   type="button"
                   onClick={onClose}
-                  className="px-4 py-2 bg-white/10 hover:bg-white/20 rounded-xl text-white font-semibold text-xs transition"
+                  className="px-4 py-2 bg-slate-100 dark:bg-white/10 hover:bg-slate-200 dark:hover:bg-white/20 rounded-xl text-slate-700 dark:text-white font-semibold text-xs transition"
                 >
                   Kapat
                 </button>
@@ -543,16 +543,16 @@ export function FormulaFlashcardsModal({
         </div>
 
         {/* Header */}
-        <div className="no-print flex items-center justify-between gap-2.5 border-b border-white/10 bg-slate-950/80 px-4 sm:px-6 py-3 sm:py-4">
+        <div className="no-print flex items-center justify-between gap-2.5 border-b border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-slate-950/80 px-4 sm:px-6 py-3 sm:py-4">
           <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
             <div className="flex h-9 w-9 sm:h-10 sm:w-10 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 text-white shadow-md">
               <Sparkles className="h-4 w-4 sm:h-5 sm:w-5" />
             </div>
             <div className="min-w-0">
-              <h2 className="font-display text-sm sm:text-lg font-bold text-white truncate">
+              <h2 className="font-display text-sm sm:text-lg font-bold text-slate-900 dark:text-white truncate">
                 Formül & Bilgi Kartları
               </h2>
-              <p className="text-[11px] sm:text-xs text-slate-400 truncate">
+              <p className="text-[11px] sm:text-xs text-slate-500 dark:text-slate-400 truncate">
                 Leitner aralıklı tekrar sistemiyle kalıcı matematik hafızası
               </p>
             </div>
@@ -563,9 +563,9 @@ export function FormulaFlashcardsModal({
               type="button"
               onClick={() => setIsSpeedDrillOpen(true)}
               title="60 Saniye Hızlı Formül Eşleştirme Antrenmanı"
-              className="inline-flex items-center gap-1.5 rounded-xl bg-amber-500/20 border border-amber-500/30 px-2.5 py-1.5 text-xs font-semibold text-amber-300 hover:bg-amber-500/30 hover:text-amber-200 transition-colors"
+              className="inline-flex items-center gap-1.5 rounded-xl bg-amber-500/20 border border-amber-500/30 px-2.5 py-1.5 text-xs font-semibold text-amber-700 dark:text-amber-300 hover:bg-amber-500/30 hover:text-amber-800 dark:hover:text-amber-200 transition-colors"
             >
-              <Zap className="h-4 w-4 text-amber-400" />
+              <Zap className="h-4 w-4 text-amber-500 dark:text-amber-400" />
               <span className="hidden sm:inline">60s Hız Antrenmanı</span>
             </button>
             <button
@@ -573,9 +573,9 @@ export function FormulaFlashcardsModal({
               onClick={() => typeof window !== 'undefined' && window.print()}
               aria-label="A4 Formül Kitapçığı Yazdır"
               title="Tüm formülleri A4 formatında yazdır veya PDF al"
-              className="inline-flex items-center gap-1.5 rounded-xl bg-white/5 px-2.5 py-1.5 text-xs font-semibold text-slate-300 hover:bg-white/10 hover:text-white transition-colors"
+              className="inline-flex items-center gap-1.5 rounded-xl bg-slate-100 dark:bg-white/5 px-2.5 py-1.5 text-xs font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-white/10 hover:text-slate-900 dark:hover:text-white transition-colors"
             >
-              <Printer className="h-4 w-4 text-slate-400" />
+              <Printer className="h-4 w-4 text-slate-500 dark:text-slate-400" />
               <span className="hidden sm:inline">A4 Yazdır</span>
             </button>
             <button
@@ -583,7 +583,7 @@ export function FormulaFlashcardsModal({
               onClick={handleShuffle}
               aria-label="Kartları karıştır"
               title="Rastgele kart seç"
-              className="inline-flex h-9 w-9 items-center justify-center rounded-xl bg-white/5 text-slate-300 hover:bg-white/10 hover:text-white"
+              className="inline-flex h-9 w-9 items-center justify-center rounded-xl bg-slate-100 dark:bg-white/5 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-white/10 hover:text-slate-900 dark:hover:text-white"
             >
               <Shuffle className="h-4 w-4" />
             </button>
@@ -591,7 +591,7 @@ export function FormulaFlashcardsModal({
               type="button"
               onClick={onClose}
               aria-label="Kapat"
-              className="inline-flex h-9 w-9 items-center justify-center rounded-xl bg-white/10 text-slate-300 hover:bg-white/20 hover:text-white"
+              className="inline-flex h-9 w-9 items-center justify-center rounded-xl bg-slate-100 dark:bg-white/10 text-slate-500 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-white/20 hover:text-slate-900 dark:hover:text-white"
             >
               <X className="h-4 w-4" />
             </button>
@@ -599,7 +599,7 @@ export function FormulaFlashcardsModal({
         </div>
 
         {/* Filtre Çipleri */}
-        <div className="no-print flex flex-wrap sm:flex-nowrap items-center justify-between gap-2 border-b border-white/10 bg-slate-950/40 px-4 sm:px-6 py-2 sm:py-2.5">
+        <div className="no-print flex flex-wrap sm:flex-nowrap items-center justify-between gap-2 border-b border-slate-200 dark:border-white/10 bg-slate-100/70 dark:bg-slate-950/40 px-4 sm:px-6 py-2 sm:py-2.5">
           <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
             <button
               type="button"
@@ -611,7 +611,7 @@ export function FormulaFlashcardsModal({
               className={`rounded-xl px-3 py-1 text-xs font-semibold transition ${
                 categoryFilter === 'all'
                   ? 'bg-brand-primary text-white'
-                  : 'bg-white/5 text-slate-300 hover:bg-white/10'
+                  : 'bg-white dark:bg-white/5 text-slate-600 dark:text-slate-300 hover:bg-slate-200/60 dark:hover:bg-white/10 border border-slate-200 dark:border-transparent'
               }`}
             >
               Tümü ({FLASHCARDS_DATA.length})
@@ -626,7 +626,7 @@ export function FormulaFlashcardsModal({
               className={`rounded-xl px-3 py-1 text-xs font-semibold transition flex items-center gap-1 ${
                 categoryFilter === 'due'
                   ? 'bg-amber-500 text-slate-950 font-bold'
-                  : 'bg-white/5 text-amber-300 hover:bg-white/10'
+                  : 'bg-amber-50 dark:bg-white/5 text-amber-700 dark:text-amber-300 hover:bg-amber-100 dark:hover:bg-white/10 border border-amber-200 dark:border-transparent'
               }`}
             >
               <span>Tekrar Vakti</span>
@@ -644,7 +644,7 @@ export function FormulaFlashcardsModal({
               className={`rounded-xl px-3 py-1 text-xs font-semibold transition flex items-center gap-1 ${
                 categoryFilter === 'starred'
                   ? 'bg-amber-400 text-slate-950 font-bold'
-                  : 'bg-white/5 text-amber-300 hover:bg-white/10'
+                  : 'bg-amber-50 dark:bg-white/5 text-amber-700 dark:text-amber-300 hover:bg-amber-100 dark:hover:bg-white/10 border border-amber-200 dark:border-transparent'
               }`}
             >
               <Star className="h-3 w-3 fill-amber-300 text-amber-300" />
@@ -663,7 +663,7 @@ export function FormulaFlashcardsModal({
               className={`rounded-xl px-3 py-1 text-xs font-semibold transition flex items-center gap-1 ${
                 categoryFilter === 'learned'
                   ? 'bg-emerald-500 text-white font-bold'
-                  : 'bg-white/5 text-emerald-300 hover:bg-white/10'
+                  : 'bg-emerald-50 dark:bg-white/5 text-emerald-700 dark:text-emerald-300 hover:bg-emerald-100 dark:hover:bg-white/10 border border-emerald-200 dark:border-transparent'
               }`}
             >
               <CheckCircle className="h-3 w-3" />
@@ -682,7 +682,7 @@ export function FormulaFlashcardsModal({
               className={`rounded-xl px-3 py-1 text-xs font-semibold transition ${
                 categoryFilter === 'lgs'
                   ? 'bg-cyan-500 text-slate-950 font-bold'
-                  : 'bg-white/5 text-slate-300 hover:bg-white/10'
+                  : 'bg-white dark:bg-white/5 text-slate-600 dark:text-slate-300 hover:bg-slate-200/60 dark:hover:bg-white/10 border border-slate-200 dark:border-transparent'
               }`}
             >
               LGS (8. Sınıf)
@@ -697,20 +697,20 @@ export function FormulaFlashcardsModal({
               className={`rounded-xl px-3 py-1 text-xs font-semibold transition ${
                 categoryFilter === 'yks'
                   ? 'bg-pink-500 text-white font-bold'
-                  : 'bg-white/5 text-slate-300 hover:bg-white/10'
+                  : 'bg-white dark:bg-white/5 text-slate-600 dark:text-slate-300 hover:bg-slate-200/60 dark:hover:bg-white/10 border border-slate-200 dark:border-transparent'
               }`}
             >
               YKS (TYT / AYT)
             </button>
           </div>
 
-          <span className="text-xs font-medium text-slate-400">
+          <span className="text-xs font-medium text-slate-500 dark:text-slate-400">
             {filteredCards.length > 0 ? `${currentIndex + 1} / ${filteredCards.length}` : '0 / 0'}
           </span>
         </div>
 
         {/* Kart Sahnesi */}
-        <div className="no-print flex flex-1 flex-col items-center justify-center p-4 sm:p-6">
+        <div className="no-print flex flex-1 flex-col items-center justify-center p-4 sm:p-6 bg-slate-100/40 dark:bg-slate-950/20">
           {currentCard ? (
             <div
               role="button"
@@ -723,10 +723,10 @@ export function FormulaFlashcardsModal({
                   setIsFlipped((prev) => !prev);
                 }
               }}
-              className="group relative flex min-h-[300px] w-full max-w-lg cursor-pointer flex-col justify-between rounded-3xl border border-white/15 bg-gradient-to-br from-slate-900/90 via-slate-800/80 to-slate-900/90 p-5 sm:p-6 text-center shadow-2xl transition-all duration-300 hover:border-brand-primary/50 hover:shadow-brand-glow focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary"
+              className="group relative flex min-h-[300px] w-full max-w-lg cursor-pointer flex-col justify-between rounded-3xl border border-slate-200 dark:border-white/15 bg-white dark:bg-gradient-to-br dark:from-slate-900/90 dark:via-slate-800/80 dark:to-slate-900/90 p-5 sm:p-6 text-center shadow-lg dark:shadow-2xl transition-all duration-300 hover:border-brand-primary/50 hover:shadow-brand-glow focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary"
             >
               {/* Üst Bilgi */}
-              <div className="flex items-center justify-between text-xs text-slate-400">
+              <div className="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400">
                 <div className="flex items-center gap-1.5">
                   <span className="rounded-lg bg-white/10 px-2.5 py-1 font-semibold text-brand-primary-soft">
                     {currentCard.subject}
@@ -751,8 +751,8 @@ export function FormulaFlashcardsModal({
                       }}
                       className={`p-1.5 rounded-xl transition ${
                         isSpeaking
-                          ? 'text-cyan-400 bg-cyan-500/20 animate-pulse'
-                          : 'text-slate-400 hover:text-white hover:bg-white/10'
+                          ? 'text-cyan-500 dark:text-cyan-400 bg-cyan-500/20 animate-pulse'
+                          : 'text-slate-400 hover:text-slate-700 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/10'
                       }`}
                       title={isSpeaking ? 'Seslendirmeyi durdur' : 'Formülü sesli dinle'}
                       aria-label={isSpeaking ? 'Seslendirmeyi durdur' : 'Formülü sesli dinle'}
@@ -768,15 +768,15 @@ export function FormulaFlashcardsModal({
                     }}
                     className={`p-1.5 rounded-xl transition ${
                       starredCards.has(currentCard.id)
-                        ? 'text-amber-400 bg-amber-500/20 hover:bg-amber-500/30'
-                        : 'text-slate-400 hover:text-white hover:bg-white/10'
+                        ? 'text-amber-500 dark:text-amber-400 bg-amber-500/20 hover:bg-amber-500/30'
+                        : 'text-slate-400 hover:text-slate-700 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/10'
                     }`}
                     title={starredCards.has(currentCard.id) ? 'Yıldızı kaldır' : 'Kritik formül olarak yıldızla'}
                     aria-label={starredCards.has(currentCard.id) ? 'Yıldızı kaldır' : 'Yıldızla'}
                   >
-                    <Star className={`h-4 w-4 ${starredCards.has(currentCard.id) ? 'fill-amber-400 text-amber-400' : ''}`} />
+                    <Star className={`h-4 w-4 ${starredCards.has(currentCard.id) ? 'fill-amber-400 text-amber-500 dark:text-amber-400' : ''}`} />
                   </button>
-                  <span className="flex items-center gap-1 text-[11px] text-slate-400 group-hover:text-white">
+                  <span className="flex items-center gap-1 text-[11px] text-slate-500 dark:text-slate-400 group-hover:text-slate-800 dark:group-hover:text-white">
                     <RotateCw className="h-3 w-3" />
                     {isFlipped ? 'Ön yüze dön' : 'Cevap için tıkla'}
                   </span>
@@ -787,32 +787,32 @@ export function FormulaFlashcardsModal({
               <div className="my-auto py-4">
                 {!isFlipped ? (
                   <div className="space-y-3">
-                    <h3 className="font-display text-xl font-bold text-white sm:text-2xl">
+                    <h3 className="font-display text-xl font-bold text-slate-900 dark:text-white sm:text-2xl">
                       {currentCard.title}
                     </h3>
-                    <p className="text-sm leading-relaxed text-slate-300 sm:text-base">
+                    <p className="text-sm leading-relaxed text-slate-600 dark:text-slate-300 sm:text-base">
                       {currentCard.frontText}
                     </p>
                   </div>
                 ) : (
                   <div className="space-y-3 animate-fade-in">
-                    <div className="text-base sm:text-lg font-bold text-amber-300">
+                    <div className="text-base sm:text-lg font-bold text-amber-700 dark:text-amber-300">
                       <MathText>{currentCard.formula}</MathText>
                     </div>
                     {currentCard.tip && (
-                      <p className="rounded-xl border border-emerald-500/20 bg-emerald-500/10 p-2.5 text-xs text-emerald-200">
+                      <p className="rounded-xl border border-emerald-500/30 bg-emerald-500/10 p-2.5 text-xs text-emerald-800 dark:text-emerald-200">
                         💡 {currentCard.tip}
                       </p>
                     )}
                     {currentCard.example && (
-                      <p className="text-xs text-slate-300 font-mono">
+                      <p className="text-xs text-slate-600 dark:text-slate-300 font-mono">
                         Örn: <MathText>{currentCard.example}</MathText>
                       </p>
                     )}
 
                     {/* Leitner Puanlama Aksiyonları (Arka Yüz) */}
-                    <div className="mt-4 pt-3 border-t border-white/10">
-                      <div className="text-[11px] text-slate-400 mb-2 font-semibold">Bu formülü ne kadar hatırladın?</div>
+                    <div className="mt-4 pt-3 border-t border-slate-200 dark:border-white/10">
+                      <div className="text-[11px] text-slate-600 dark:text-slate-400 mb-2 font-semibold">Bu formülü ne kadar hatırladın?</div>
                       <div className="grid grid-cols-3 gap-2">
                         <button
                           type="button"
@@ -820,7 +820,7 @@ export function FormulaFlashcardsModal({
                             e.stopPropagation();
                             handleLeitnerReview(currentCard.id, 'forgot');
                           }}
-                          className="rounded-xl border border-rose-500/30 bg-rose-500/15 py-1.5 px-2 text-[11px] font-bold text-rose-300 hover:bg-rose-500/25 transition"
+                          className="rounded-xl border border-rose-500/30 bg-rose-500/15 py-1.5 px-2 text-[11px] font-bold text-rose-700 dark:text-rose-300 hover:bg-rose-500/25 transition"
                           title="Kutu 1'e geri dön (1 gün sonra tekrar)"
                         >
                           Unuttum (K1)
@@ -831,7 +831,7 @@ export function FormulaFlashcardsModal({
                             e.stopPropagation();
                             handleLeitnerReview(currentCard.id, 'hard');
                           }}
-                          className="rounded-xl border border-amber-500/30 bg-amber-500/15 py-1.5 px-2 text-[11px] font-bold text-amber-300 hover:bg-amber-500/25 transition"
+                          className="rounded-xl border border-amber-500/30 bg-amber-500/15 py-1.5 px-2 text-[11px] font-bold text-amber-700 dark:text-amber-300 hover:bg-amber-500/25 transition"
                           title="Aynı kutuda kal (yarın tekrar)"
                         >
                           Zorlandım
@@ -842,7 +842,7 @@ export function FormulaFlashcardsModal({
                             e.stopPropagation();
                             handleLeitnerReview(currentCard.id, 'known');
                           }}
-                          className="rounded-xl border border-emerald-500/30 bg-emerald-500/15 py-1.5 px-2 text-[11px] font-bold text-emerald-300 hover:bg-emerald-500/25 transition"
+                          className="rounded-xl border border-emerald-500/30 bg-emerald-500/15 py-1.5 px-2 text-[11px] font-bold text-emerald-700 dark:text-emerald-300 hover:bg-emerald-500/25 transition"
                           title="Sonraki kutuya ilerlet"
                         >
                           Biliyorum (+1)
@@ -854,7 +854,7 @@ export function FormulaFlashcardsModal({
               </div>
 
               {/* Alt Bilgi */}
-              <div className="flex items-center justify-between text-xs text-slate-400 border-t border-white/5 pt-3">
+              <div className="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400 border-t border-slate-200 dark:border-white/5 pt-3">
                 <button
                   type="button"
                   onClick={(e) => {
@@ -863,43 +863,43 @@ export function FormulaFlashcardsModal({
                   }}
                   className={`inline-flex items-center gap-1 rounded-lg px-2.5 py-1 transition ${
                     learnedCards.has(currentCard.id)
-                      ? 'bg-emerald-500/20 text-emerald-300 font-bold'
-                      : 'hover:bg-white/10 text-slate-400 hover:text-white'
+                      ? 'bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 font-bold'
+                      : 'hover:bg-slate-100 dark:hover:bg-white/10 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
                   }`}
                 >
                   <CheckCircle className="h-3.5 w-3.5" />
                   {learnedCards.has(currentCard.id) ? 'Öğrenildi' : 'Öğrendim olarak işaretle'}
                 </button>
-                <span className="text-[11px] text-slate-500">Kartı çevirmek için tıkla</span>
+                <span className="text-[11px] text-slate-400 dark:text-slate-500">Kartı çevirmek için tıkla</span>
               </div>
             </div>
           ) : (
             <div className="text-center py-12">
-              <p className="text-sm font-semibold text-slate-300">Bu filtrede gösterilecek kart bulunamadı.</p>
+              <p className="text-sm font-semibold text-slate-600 dark:text-slate-300">Bu filtrede gösterilecek kart bulunamadı.</p>
             </div>
           )}
         </div>
 
         {/* Alt Navigasyon & Leitner Dağılımı */}
-        <div className="no-print flex items-center justify-between border-t border-white/10 bg-slate-950/80 px-3 sm:px-6 py-3 sm:py-4 gap-2">
+        <div className="no-print flex items-center justify-between border-t border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-slate-950/80 px-3 sm:px-6 py-3 sm:py-4 gap-2">
           <button
             type="button"
             onClick={handlePrev}
             aria-label="Önceki Kart"
             disabled={filteredCards.length === 0}
-            className="inline-flex items-center gap-1.5 rounded-xl bg-white/5 px-3 sm:px-4 py-2 sm:py-2.5 text-xs font-bold text-white hover:bg-white/10 disabled:opacity-40 shrink-0"
+            className="inline-flex items-center gap-1.5 rounded-xl bg-slate-100 dark:bg-white/5 px-3 sm:px-4 py-2 sm:py-2.5 text-xs font-bold text-slate-800 dark:text-white hover:bg-slate-200 dark:hover:bg-white/10 disabled:opacity-40 shrink-0"
           >
             <ChevronLeft className="h-4 w-4" />
             <span>Önceki <span className="hidden sm:inline">Kart</span></span>
           </button>
 
-          <div className="flex items-center gap-1 sm:gap-2 text-[10px] sm:text-xs text-slate-400 font-mono">
+          <div className="flex items-center gap-1 sm:gap-2 text-[10px] sm:text-xs text-slate-500 dark:text-slate-400 font-mono">
             <span className="text-slate-500 font-sans hidden sm:inline">Hafıza Kutuları:</span>
-            <span className="px-1.5 py-0.5 rounded bg-white/5 border border-white/10" title="Kutu 1: Günlük">K1:{boxCounts[1]}</span>
-            <span className="px-1.5 py-0.5 rounded bg-white/5 border border-white/10" title="Kutu 2: 3 Günlük">K2:{boxCounts[2]}</span>
-            <span className="px-1.5 py-0.5 rounded bg-white/5 border border-white/10" title="Kutu 3: 7 Günlük">K3:{boxCounts[3]}</span>
-            <span className="px-1.5 py-0.5 rounded bg-white/5 border border-white/10" title="Kutu 4: 14 Günlük">K4:{boxCounts[4]}</span>
-            <span className="px-1.5 py-0.5 rounded bg-white/5 border border-white/10 text-emerald-400" title="Kutu 5: Kalıcı (30 Gün)">K5:{boxCounts[5]}</span>
+            <span className="px-1.5 py-0.5 rounded bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 text-slate-700 dark:text-slate-300" title="Kutu 1: Günlük">K1:{boxCounts[1]}</span>
+            <span className="px-1.5 py-0.5 rounded bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 text-slate-700 dark:text-slate-300" title="Kutu 2: 3 Günlük">K2:{boxCounts[2]}</span>
+            <span className="px-1.5 py-0.5 rounded bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 text-slate-700 dark:text-slate-300" title="Kutu 3: 7 Günlük">K3:{boxCounts[3]}</span>
+            <span className="px-1.5 py-0.5 rounded bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 text-slate-700 dark:text-slate-300" title="Kutu 4: 14 Günlük">K4:{boxCounts[4]}</span>
+            <span className="px-1.5 py-0.5 rounded bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 text-emerald-600 dark:text-emerald-400" title="Kutu 5: Kalıcı (30 Gün)">K5:{boxCounts[5]}</span>
           </div>
 
           <button

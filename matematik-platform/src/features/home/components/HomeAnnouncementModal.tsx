@@ -133,7 +133,7 @@ export function HomeAnnouncementModal({
             exit={{ scale: 0.95, opacity: 0, y: 20 }}
             onClick={(event) => event.stopPropagation()}
             ref={modalRef}
-            className="w-full max-w-5xl max-h-[90vh] overflow-y-auto rounded-3xl bg-slate-900 border border-slate-700 shadow-2xl"
+            className="w-full max-w-5xl max-h-[90vh] overflow-y-auto rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 shadow-2xl"
             role="dialog"
             aria-modal="true"
             aria-labelledby="duyuru-baslik"
@@ -141,7 +141,7 @@ export function HomeAnnouncementModal({
           >
             {images.length > 0 ? (
               <div className="grid md:grid-cols-2 gap-0">
-                <div className="bg-slate-950 p-2">
+                <div className="bg-slate-100 dark:bg-slate-950 p-2">
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                     {images
                       .filter(
@@ -166,13 +166,13 @@ export function HomeAnnouncementModal({
                 </div>
                 <div className="p-6 sm:p-8">
                   <div className="flex items-center justify-between mb-4">
-                    <span className="px-3 py-1 rounded-full bg-pink-500/20 text-pink-300 text-xs font-semibold">
+                    <span className="px-3 py-1 rounded-full bg-pink-500/20 text-pink-600 dark:text-pink-300 text-xs font-semibold">
                       Haber
                     </span>
                     <button
                       type="button"
                       onClick={onClose}
-                      className="text-slate-400 hover:text-white"
+                      className="text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white"
                       aria-label="Kapat"
                     >
                       <X className="w-6 h-6" />
@@ -180,15 +180,15 @@ export function HomeAnnouncementModal({
                   </div>
                   <h2
                     id="duyuru-baslik"
-                    className="text-2xl sm:text-3xl font-bold text-white mb-3"
+                    className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white mb-3"
                   >
                     {announcement.title}
                   </h2>
-                  <p className="text-slate-300 leading-relaxed whitespace-pre-line">
+                  <p className="text-slate-700 dark:text-slate-300 leading-relaxed whitespace-pre-line">
                     {announcement.content}
                   </p>
                   {renderAnnouncementLink(announcement)}
-                  <p className="text-slate-400 text-sm mt-6">
+                  <p className="text-slate-500 dark:text-slate-400 text-sm mt-6">
                     {new Date(announcement.created_at).toLocaleDateString(
                       'tr-TR',
                     )}
@@ -198,13 +198,13 @@ export function HomeAnnouncementModal({
             ) : (
               <div className="p-6 sm:p-8">
                 <div className="mb-4 flex items-center justify-between">
-                  <span className="rounded-full bg-pink-500/20 px-3 py-1 text-xs font-semibold text-pink-300">
+                  <span className="rounded-full bg-pink-500/20 px-3 py-1 text-xs font-semibold text-pink-600 dark:text-pink-300">
                     Haber
                   </span>
                   <button
                     type="button"
                     onClick={onClose}
-                    className="text-slate-400 hover:text-white"
+                    className="text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white"
                     aria-label="Kapat"
                   >
                     <X className="h-6 w-6" />
@@ -212,15 +212,15 @@ export function HomeAnnouncementModal({
                 </div>
                 <h2
                   id="duyuru-baslik"
-                  className="mb-3 text-2xl font-bold text-white sm:text-3xl"
+                  className="mb-3 text-2xl font-bold text-slate-900 dark:text-white sm:text-3xl"
                 >
                   {announcement.title}
                 </h2>
-                <p className="whitespace-pre-line leading-relaxed text-slate-300">
+                <p className="whitespace-pre-line leading-relaxed text-slate-700 dark:text-slate-300">
                   {announcement.content}
                 </p>
                 {renderAnnouncementLink(announcement)}
-                <p className="mt-6 text-sm text-slate-400">
+                <p className="mt-6 text-sm text-slate-500 dark:text-slate-400">
                   {new Date(announcement.created_at).toLocaleDateString(
                     'tr-TR',
                   )}

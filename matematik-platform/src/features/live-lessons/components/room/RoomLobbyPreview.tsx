@@ -117,13 +117,13 @@ export function RoomLobbyPreview({
   const isTeacher = role === 'teacher';
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center bg-slate-950 px-4 py-8 text-white sm:px-6">
-      <div className="w-full max-w-xl space-y-6 rounded-3xl border border-white/10 bg-slate-900/90 p-6 shadow-2xl backdrop-blur-2xl sm:p-8">
+    <div className="flex min-h-screen flex-col items-center justify-center bg-surface-0 px-4 py-8 text-slate-900 dark:text-white sm:px-6">
+      <div className="w-full max-w-xl space-y-6 rounded-3xl border border-slate-200 dark:border-white/10 bg-white/95 dark:bg-slate-900/90 p-6 shadow-2xl backdrop-blur-2xl sm:p-8">
         {/* Üst Başlık */}
-        <div className="flex items-center justify-between border-b border-white/10 pb-4">
+        <div className="flex items-center justify-between border-b border-slate-200 dark:border-white/10 pb-4">
           <Link
             href="/canli-ders"
-            className="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-400 transition hover:text-white"
+            className="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white transition"
           >
             <ArrowLeft className="h-4 w-4" />
             <span>Ders Listesine Dön</span>
@@ -131,7 +131,9 @@ export function RoomLobbyPreview({
 
           <span
             className={`rounded-full px-3 py-1 text-xs font-bold ${
-              isTeacher ? 'bg-indigo-500/20 text-indigo-300' : 'bg-emerald-500/20 text-emerald-300'
+              isTeacher
+                ? 'bg-indigo-50 text-indigo-700 dark:bg-indigo-500/20 dark:text-indigo-300'
+                : 'bg-emerald-50 text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-300'
             }`}
           >
             {isTeacher ? 'Öğretmen Girişi' : 'Öğrenci Girişi'}
@@ -140,16 +142,16 @@ export function RoomLobbyPreview({
 
         {/* Ders Bilgi Kartı */}
         <div className="space-y-3 text-center">
-          <div className="inline-flex items-center gap-1.5 rounded-full bg-rose-500/15 px-3 py-1 text-xs font-bold text-rose-400">
+          <div className="inline-flex items-center gap-1.5 rounded-full bg-rose-500/10 dark:bg-rose-500/15 px-3 py-1 text-xs font-bold text-rose-600 dark:text-rose-400">
             <Radio className="h-3.5 w-3.5 animate-pulse" />
             <span>Canlı Ders Lobisi</span>
           </div>
 
-          <h1 className="text-2xl font-black tracking-tight sm:text-3xl text-white">
+          <h1 className="text-2xl font-black tracking-tight sm:text-3xl text-slate-900 dark:text-white">
             {lesson.title}
           </h1>
 
-          <div className="flex flex-wrap items-center justify-center gap-3 text-xs text-slate-400">
+          <div className="flex flex-wrap items-center justify-center gap-3 text-xs text-slate-500 dark:text-slate-400">
             <span className="flex items-center gap-1">
               <Clock className="h-3.5 w-3.5 text-slate-400" />
               <span>{lesson.duration_minutes} dakika</span>
@@ -157,18 +159,18 @@ export function RoomLobbyPreview({
             <span>•</span>
             <span className="flex items-center gap-1">
               <Users className="h-3.5 w-3.5 text-slate-400" />
-              <span>Oda: <strong className="font-mono text-slate-200">{lesson.room_id}</strong></span>
+              <span>Oda: <strong className="font-mono text-slate-800 dark:text-slate-200">{lesson.room_id}</strong></span>
             </span>
           </div>
 
-          <p className="text-sm text-slate-300">
-            Katılımcı: <strong className="text-white">{displayName}</strong>
+          <p className="text-sm text-slate-600 dark:text-slate-300">
+            Katılımcı: <strong className="text-slate-900 dark:text-white">{displayName}</strong>
           </p>
         </div>
 
         {/* Cihaz ve Önizleme Kontrolleri */}
-        <div className="rounded-2xl border border-white/10 bg-slate-950/60 p-5 space-y-4">
-          <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400">
+        <div className="rounded-2xl border border-slate-200 dark:border-white/10 bg-slate-50/80 dark:bg-slate-950/60 p-5 space-y-4">
+          <h3 className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
             Cihaz ve Katılım Ayarları
           </h3>
 
@@ -178,8 +180,8 @@ export function RoomLobbyPreview({
               onClick={onMicToggle}
               className={`flex items-center gap-2 rounded-xl border px-4 py-2.5 text-sm font-semibold transition ${
                 initialMicOn
-                  ? 'border-emerald-500/40 bg-emerald-500/20 text-emerald-300'
-                  : 'border-white/10 bg-white/5 text-slate-400 hover:text-white'
+                  ? 'border-emerald-500/40 bg-emerald-500/20 text-emerald-700 dark:text-emerald-300'
+                  : 'border-slate-200 dark:border-white/10 bg-white dark:bg-white/5 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
               }`}
             >
               {initialMicOn ? <Mic className="h-4 w-4" /> : <MicOff className="h-4 w-4" />}
@@ -192,8 +194,8 @@ export function RoomLobbyPreview({
                 onClick={onCameraToggle}
                 className={`flex items-center gap-2 rounded-xl border px-4 py-2.5 text-sm font-semibold transition ${
                   initialCameraOn
-                    ? 'border-violet-500/40 bg-violet-500/20 text-violet-300'
-                    : 'border-white/10 bg-white/5 text-slate-400 hover:text-white'
+                    ? 'border-violet-500/40 bg-violet-500/20 text-violet-700 dark:text-violet-300'
+                    : 'border-slate-200 dark:border-white/10 bg-white dark:bg-white/5 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
                 }`}
               >
                 {initialCameraOn ? <Video className="h-4 w-4" /> : <VideoOff className="h-4 w-4" />}
@@ -204,7 +206,7 @@ export function RoomLobbyPreview({
             <button
               type="button"
               onClick={micTesting ? stopMicTest : startMicTest}
-              className="flex items-center gap-1.5 text-xs text-brand-primary-light hover:underline ml-auto"
+              className="flex items-center gap-1.5 text-xs text-brand-primary hover:underline ml-auto"
             >
               <Volume2 className="h-3.5 w-3.5" />
               <span>{micTesting ? 'Mikrofon Testini Durdur' : 'Mikrofonunu Test Et'}</span>
@@ -213,12 +215,12 @@ export function RoomLobbyPreview({
 
           {/* Ses Seviyesi Göstergesi */}
           {micTesting && (
-            <div className="space-y-1 rounded-xl bg-slate-900 p-3 border border-white/10 animate-in fade-in">
-              <div className="flex justify-between text-[11px] text-slate-400 font-medium">
+            <div className="space-y-1 rounded-xl bg-white dark:bg-slate-900 p-3 border border-slate-200 dark:border-white/10 animate-in fade-in">
+              <div className="flex justify-between text-[11px] text-slate-500 dark:text-slate-400 font-medium">
                 <span>Konuşun ve çubuğu gözlemleyin:</span>
                 <span>%{micLevel}</span>
               </div>
-              <div className="h-2 w-full overflow-hidden rounded-full bg-slate-800">
+              <div className="h-2 w-full overflow-hidden rounded-full bg-slate-200 dark:bg-slate-800">
                 <div
                   className="h-full bg-gradient-to-r from-emerald-500 to-teal-400 transition-all duration-75"
                   style={{ width: `${micLevel}%` }}
@@ -230,18 +232,18 @@ export function RoomLobbyPreview({
 
         {/* Öğretmen İçin Hızlı Link Paylaşımı */}
         {isTeacher && (
-          <div className="rounded-2xl border border-indigo-500/20 bg-indigo-500/5 p-4 space-y-2">
-            <div className="flex items-center justify-between text-xs font-semibold text-indigo-300">
+          <div className="rounded-2xl border border-indigo-200 dark:border-indigo-500/20 bg-indigo-50/60 dark:bg-indigo-500/5 p-4 space-y-2">
+            <div className="flex items-center justify-between text-xs font-semibold text-indigo-700 dark:text-indigo-300">
               <span>Öğrenci Katılım Bağlantısı:</span>
               <button
                 type="button"
                 onClick={copyStudentLink}
-                className="inline-flex items-center gap-1 rounded-md px-2 py-1 hover:bg-indigo-500/20"
+                className="inline-flex items-center gap-1 rounded-md px-2 py-1 hover:bg-indigo-100 dark:hover:bg-indigo-500/20"
               >
                 {linkCopied ? (
                   <>
-                    <Check className="h-3.5 w-3.5 text-emerald-400" />
-                    <span className="text-emerald-300">Kopyalandı</span>
+                    <Check className="h-3.5 w-3.5 text-emerald-600 dark:text-emerald-400" />
+                    <span className="text-emerald-700 dark:text-emerald-300">Kopyalandı</span>
                   </>
                 ) : (
                   <>
@@ -251,7 +253,7 @@ export function RoomLobbyPreview({
                 )}
               </button>
             </div>
-            <p className="truncate font-mono text-xs text-slate-400">
+            <p className="truncate font-mono text-xs text-slate-500 dark:text-slate-400">
               {typeof window !== 'undefined' ? `${window.location.origin}/canli-ders/d/${lesson.room_id}` : ''}
             </p>
           </div>

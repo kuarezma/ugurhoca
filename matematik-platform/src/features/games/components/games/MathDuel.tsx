@@ -312,35 +312,35 @@ export function MathDuel({
   }, [totalAnswered, totalCorrect]);
 
   return (
-    <div className="w-full max-w-4xl mx-auto p-4 sm:p-6 bg-slate-900/90 backdrop-blur-md rounded-2xl border border-slate-700/60 shadow-2xl text-slate-100 min-h-[560px] flex flex-col justify-between">
+    <div className="w-full max-w-4xl mx-auto p-4 sm:p-6 bg-white/95 dark:bg-slate-900/90 backdrop-blur-md rounded-2xl border border-slate-200 dark:border-slate-700/60 shadow-2xl text-slate-900 dark:text-slate-100 min-h-[560px] flex flex-col justify-between">
       {/* HEADER: Title, Modes, Timer */}
-      <div className="flex flex-wrap items-center justify-between gap-4 pb-4 border-b border-slate-700/60">
+      <div className="flex flex-wrap items-center justify-between gap-4 pb-4 border-b border-slate-200 dark:border-slate-700/60">
         <div className="flex items-center gap-3">
           <div className="p-2.5 rounded-xl bg-gradient-to-tr from-amber-500 to-rose-500 text-white shadow-lg shadow-rose-500/20">
             <Swords className="w-6 h-6 animate-pulse" />
           </div>
           <div>
-            <h2 className="text-xl sm:text-2xl font-black tracking-tight text-white flex items-center gap-2">
+            <h2 className="text-xl sm:text-2xl font-black tracking-tight text-slate-900 dark:text-white flex items-center gap-2">
               Matematik Düellosu
-              <span className="text-xs px-2 py-0.5 rounded-full bg-rose-500/20 text-rose-300 border border-rose-500/30">
+              <span className="text-xs px-2 py-0.5 rounded-full bg-rose-500/10 dark:bg-rose-500/20 text-rose-700 dark:text-rose-300 border border-rose-500/30">
                 1v1 Hızlı İşlem
               </span>
             </h2>
-            <p className="text-xs sm:text-sm text-slate-400">
+            <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400">
               Süreyle yarış, kombo yap, rakibine fark at!
             </p>
           </div>
         </div>
 
         {gameState === 'idle' && (
-          <div className="flex items-center gap-1.5 p-1 bg-slate-800/80 rounded-xl border border-slate-700">
+          <div className="flex items-center gap-1.5 p-1 bg-slate-100 dark:bg-slate-800/80 rounded-xl border border-slate-200 dark:border-slate-700">
             <button
               type="button"
               onClick={() => setMode('bot')}
               className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
                 mode === 'bot'
                   ? 'bg-amber-500 text-slate-950 shadow-md font-bold'
-                  : 'text-slate-300 hover:text-white'
+                  : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white'
               }`}
             >
               <Bot className="w-4 h-4" />
@@ -352,7 +352,7 @@ export function MathDuel({
               className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
                 mode === 'solo'
                   ? 'bg-amber-500 text-slate-950 shadow-md font-bold'
-                  : 'text-slate-300 hover:text-white'
+                  : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white'
               }`}
             >
               <Zap className="w-4 h-4" />
@@ -362,11 +362,11 @@ export function MathDuel({
         )}
 
         {gameState === 'playing' && (
-          <div className="flex items-center gap-2 px-3 py-1.5 bg-slate-800/80 rounded-xl border border-slate-700">
-            <Timer className="w-5 h-5 text-amber-400 animate-spin" style={{ animationDuration: '4s' }} />
+          <div className="flex items-center gap-2 px-3 py-1.5 bg-slate-100 dark:bg-slate-800/80 rounded-xl border border-slate-200 dark:border-slate-700">
+            <Timer className="w-5 h-5 text-amber-500 dark:text-amber-400 animate-spin" style={{ animationDuration: '4s' }} />
             <span
               className={`font-mono text-lg font-black ${
-                timeLeft <= 10 ? 'text-rose-400 animate-pulse' : 'text-amber-300'
+                timeLeft <= 10 ? 'text-rose-600 dark:text-rose-400 animate-pulse' : 'text-amber-700 dark:text-amber-300'
               }`}
             >
               {timeLeft} sn
@@ -388,33 +388,33 @@ export function MathDuel({
           </div>
 
           <div className="max-w-md space-y-2">
-            <h3 className="text-xl font-bold text-slate-100">
+            <h3 className="text-xl font-bold text-slate-900 dark:text-slate-100">
               {mode === 'bot'
                 ? 'Siber Matematikçi Bot seni bekliyor!'
                 : 'Zamana karşı kendi rekorunu kırmaya hazır mısın?'}
             </h3>
-            <p className="text-sm text-slate-300 leading-relaxed">
+            <p className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
               Dört işlem, parantezli öncelik ve temel denklemleri en hızlı çözen
               kazanır. Ardı ardına doğru cevaplarla kombo bonusu kazan!
             </p>
           </div>
 
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 w-full max-w-lg text-left">
-            <div className="p-3 bg-slate-800/60 rounded-xl border border-slate-700/50">
-              <div className="text-xs text-slate-400">Süre</div>
-              <div className="text-base font-bold text-slate-200">60 Saniye</div>
+            <div className="p-3 bg-slate-50 dark:bg-slate-800/60 rounded-xl border border-slate-200 dark:border-slate-700/50">
+              <div className="text-xs text-slate-500 dark:text-slate-400">Süre</div>
+              <div className="text-base font-bold text-slate-800 dark:text-slate-200">60 Saniye</div>
             </div>
-            <div className="p-3 bg-slate-800/60 rounded-xl border border-slate-700/50">
-              <div className="text-xs text-slate-400">Hedef</div>
-              <div className="text-base font-bold text-slate-200">Yüksek Puan</div>
+            <div className="p-3 bg-slate-50 dark:bg-slate-800/60 rounded-xl border border-slate-200 dark:border-slate-700/50">
+              <div className="text-xs text-slate-500 dark:text-slate-400">Hedef</div>
+              <div className="text-base font-bold text-slate-800 dark:text-slate-200">Yüksek Puan</div>
             </div>
-            <div className="p-3 bg-slate-800/60 rounded-xl border border-slate-700/50">
-              <div className="text-xs text-slate-400">Kombo Çarpanı</div>
-              <div className="text-base font-bold text-amber-400">+20 Bonus</div>
+            <div className="p-3 bg-slate-50 dark:bg-slate-800/60 rounded-xl border border-slate-200 dark:border-slate-700/50">
+              <div className="text-xs text-slate-500 dark:text-slate-400">Kombo Çarpanı</div>
+              <div className="text-base font-bold text-amber-600 dark:text-amber-400">+20 Bonus</div>
             </div>
-            <div className="p-3 bg-slate-800/60 rounded-xl border border-slate-700/50">
-              <div className="text-xs text-slate-400">Klavye Kısayolu</div>
-              <div className="text-base font-bold text-slate-200">1 - 2 - 3 - 4</div>
+            <div className="p-3 bg-slate-50 dark:bg-slate-800/60 rounded-xl border border-slate-200 dark:border-slate-700/50">
+              <div className="text-xs text-slate-500 dark:text-slate-400">Klavye Kısayolu</div>
+              <div className="text-base font-bold text-slate-800 dark:text-slate-200">1 - 2 - 3 - 4</div>
             </div>
           </div>
 
@@ -435,27 +435,27 @@ export function MathDuel({
           {/* DUAL SCOREBOARD / DUEL BARS */}
           <div className="grid grid-cols-2 gap-4">
             {/* Player Side */}
-            <div className="p-4 rounded-xl bg-gradient-to-br from-indigo-950/60 to-slate-900 border border-indigo-500/30">
+            <div className="p-4 rounded-xl bg-gradient-to-br from-indigo-50 to-white dark:from-indigo-950/60 dark:to-slate-900 border border-indigo-200 dark:border-indigo-500/30">
               <div className="flex items-center justify-between mb-2">
                 <div className="flex items-center gap-2">
-                  <div className="w-8 h-8 rounded-lg bg-indigo-500/20 text-indigo-400 flex items-center justify-center">
+                  <div className="w-8 h-8 rounded-lg bg-indigo-500/10 dark:bg-indigo-500/20 text-indigo-600 dark:text-indigo-400 flex items-center justify-center">
                     <User className="w-4 h-4" />
                   </div>
-                  <span className="text-sm font-bold text-indigo-300">Sen</span>
+                  <span className="text-sm font-bold text-indigo-700 dark:text-indigo-300">Sen</span>
                 </div>
                 <div className="flex items-center gap-1.5">
                   {streak >= 2 && (
-                    <span className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/30 text-xs font-bold animate-pulse">
-                      <Flame className="w-3.5 h-3.5 fill-amber-400" />
+                    <span className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-amber-500/10 dark:bg-amber-500/20 text-amber-700 dark:text-amber-300 border border-amber-500/30 text-xs font-bold animate-pulse">
+                      <Flame className="w-3.5 h-3.5 fill-amber-500 dark:fill-amber-400" />
                       x{streak}
                     </span>
                   )}
-                  <span className="text-xl sm:text-2xl font-black text-white">
+                  <span className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white">
                     {playerScore}
                   </span>
                 </div>
               </div>
-              <div className="w-full bg-slate-800 rounded-full h-2 overflow-hidden">
+              <div className="w-full bg-slate-200 dark:bg-slate-800 rounded-full h-2 overflow-hidden">
                 <motion.div
                   className="bg-indigo-500 h-2 rounded-full"
                   animate={{
@@ -467,25 +467,25 @@ export function MathDuel({
             </div>
 
             {/* Opponent Side */}
-            <div className="p-4 rounded-xl bg-gradient-to-br from-rose-950/60 to-slate-900 border border-rose-500/30">
+            <div className="p-4 rounded-xl bg-gradient-to-br from-rose-50 to-white dark:from-rose-950/60 dark:to-slate-900 border border-rose-200 dark:border-rose-500/30">
               <div className="flex items-center justify-between mb-2">
                 <div className="flex items-center gap-2">
-                  <div className="w-8 h-8 rounded-lg bg-rose-500/20 text-rose-400 flex items-center justify-center">
+                  <div className="w-8 h-8 rounded-lg bg-rose-500/10 dark:bg-rose-500/20 text-rose-600 dark:text-rose-400 flex items-center justify-center">
                     {mode === 'bot' ? (
                       <Bot className="w-4 h-4" />
                     ) : (
                       <Sparkles className="w-4 h-4" />
                     )}
                   </div>
-                  <span className="text-sm font-bold text-rose-300">
+                  <span className="text-sm font-bold text-rose-700 dark:text-rose-300">
                     {mode === 'bot' ? 'Siber Bot 🤖' : 'Zaman Hedefi'}
                   </span>
                 </div>
-                <span className="text-xl sm:text-2xl font-black text-white">
+                <span className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white">
                   {mode === 'bot' ? opponentScore : '1200'}
                 </span>
               </div>
-              <div className="w-full bg-slate-800 rounded-full h-2 overflow-hidden">
+              <div className="w-full bg-slate-200 dark:bg-slate-800 rounded-full h-2 overflow-hidden">
                 <motion.div
                   className="bg-rose-500 h-2 rounded-full"
                   animate={{
@@ -502,12 +502,12 @@ export function MathDuel({
           </div>
 
           {/* QUESTION BOX */}
-          <div className="p-6 sm:p-8 bg-slate-800/80 rounded-2xl border border-slate-700 text-center shadow-inner relative overflow-hidden">
-            <div className="inline-block px-3 py-1 rounded-full bg-slate-700/60 text-slate-300 text-xs font-semibold uppercase tracking-wider mb-3">
+          <div className="p-6 sm:p-8 bg-slate-50 dark:bg-slate-800/80 rounded-2xl border border-slate-200 dark:border-slate-700 text-center shadow-inner relative overflow-hidden">
+            <div className="inline-block px-3 py-1 rounded-full bg-slate-200 dark:bg-slate-700/60 text-slate-700 dark:text-slate-300 text-xs font-semibold uppercase tracking-wider mb-3">
               {currentQuestion.category}
             </div>
 
-            <h3 className="text-3xl sm:text-5xl font-black tracking-wider text-amber-300 font-mono my-2 select-none">
+            <h3 className="text-3xl sm:text-5xl font-black tracking-wider text-amber-600 dark:text-amber-300 font-mono my-2 select-none">
               {currentQuestion.prompt}
             </h3>
 
@@ -522,8 +522,8 @@ export function MathDuel({
                     exit={{ opacity: 0, y: -5 }}
                     className={`text-xs sm:text-sm font-bold ${
                       feedback.type === 'correct'
-                        ? 'text-emerald-400'
-                        : 'text-rose-400'
+                        ? 'text-emerald-600 dark:text-emerald-400'
+                        : 'text-rose-600 dark:text-rose-400'
                     }`}
                   >
                     {feedback.message}
@@ -540,9 +540,9 @@ export function MathDuel({
                 key={`${opt}-${idx}`}
                 type="button"
                 onClick={() => handleSelectAnswer(opt)}
-                className="relative py-4 px-6 rounded-xl bg-slate-800/90 hover:bg-indigo-600/30 active:bg-indigo-600/50 border-2 border-slate-700 hover:border-indigo-400 text-xl sm:text-2xl font-black font-mono text-white transition-all transform active:scale-95 shadow-md group flex items-center justify-center gap-3"
+                className="relative py-4 px-6 rounded-xl bg-slate-100 dark:bg-slate-800/90 hover:bg-indigo-50 dark:hover:bg-indigo-600/30 active:bg-indigo-100 dark:active:bg-indigo-600/50 border-2 border-slate-300 dark:border-slate-700 hover:border-indigo-500 dark:hover:border-indigo-400 text-xl sm:text-2xl font-black font-mono text-slate-900 dark:text-white transition-all transform active:scale-95 shadow-md group flex items-center justify-center gap-3"
               >
-                <span className="absolute left-3 top-2.5 text-xs text-slate-500 font-normal group-hover:text-indigo-300">
+                <span className="absolute left-3 top-2.5 text-xs text-slate-400 dark:text-slate-500 font-normal group-hover:text-indigo-600 dark:group-hover:text-indigo-300">
                   [{idx + 1}]
                 </span>
                 <span>{opt}</span>
@@ -555,12 +555,12 @@ export function MathDuel({
       {/* END SCREEN (RESULTS) */}
       {gameState === 'ended' && (
         <div className="py-6 sm:py-8 flex flex-col items-center text-center space-y-6">
-          <div className="p-4 rounded-3xl bg-slate-800/90 border border-slate-700 flex flex-col items-center shadow-xl">
+          <div className="p-4 rounded-3xl bg-slate-50 dark:bg-slate-800/90 border border-slate-200 dark:border-slate-700 flex flex-col items-center shadow-xl">
             <div className="w-20 h-20 rounded-2xl bg-gradient-to-tr from-amber-500 to-rose-500 flex items-center justify-center mb-3 shadow-lg">
               <Award className="w-10 h-10 text-white" />
             </div>
 
-            <h3 className="text-2xl sm:text-3xl font-black text-white">
+            <h3 className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white">
               {mode === 'bot'
                 ? playerScore > opponentScore
                   ? '🎉 Zafer! Düelloyu Kazandın!'
@@ -569,7 +569,7 @@ export function MathDuel({
                   : '⚡ Tebrikler! İyi Mücadele Ettin!'
                 : '🏁 Hız Antrenmanı Tamamlandı!'}
             </h3>
-            <p className="text-sm text-slate-300 mt-1">
+            <p className="text-sm text-slate-600 dark:text-slate-300 mt-1">
               {mode === 'bot'
                 ? `Sen: ${playerScore} Puan  ·  Siber Bot: ${opponentScore} Puan`
                 : `60 saniyede toplam ${playerScore} puan topladın!`}
@@ -577,27 +577,27 @@ export function MathDuel({
           </div>
 
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 w-full max-w-xl">
-            <div className="p-3 bg-slate-800/80 rounded-xl border border-slate-700/60">
-              <div className="text-xs text-slate-400">Kazanılan Skor</div>
-              <div className="text-xl font-black text-amber-400">
+            <div className="p-3 bg-white dark:bg-slate-800/80 rounded-xl border border-slate-200 dark:border-slate-700/60 shadow-xs">
+              <div className="text-xs text-slate-500 dark:text-slate-400">Kazanılan Skor</div>
+              <div className="text-xl font-black text-amber-600 dark:text-amber-400">
                 {Math.round(playerScore * (scoreMultiplier || 1))}
               </div>
             </div>
-            <div className="p-3 bg-slate-800/80 rounded-xl border border-slate-700/60">
-              <div className="text-xs text-slate-400">Doğruluk</div>
-              <div className="text-xl font-black text-emerald-400">
+            <div className="p-3 bg-white dark:bg-slate-800/80 rounded-xl border border-slate-200 dark:border-slate-700/60 shadow-xs">
+              <div className="text-xs text-slate-500 dark:text-slate-400">Doğruluk</div>
+              <div className="text-xl font-black text-emerald-600 dark:text-emerald-400">
                 %{accuracy}
               </div>
             </div>
-            <div className="p-3 bg-slate-800/80 rounded-xl border border-slate-700/60">
-              <div className="text-xs text-slate-400">En Uzun Kombo</div>
-              <div className="text-xl font-black text-indigo-400">
+            <div className="p-3 bg-white dark:bg-slate-800/80 rounded-xl border border-slate-200 dark:border-slate-700/60 shadow-xs">
+              <div className="text-xs text-slate-500 dark:text-slate-400">En Uzun Kombo</div>
+              <div className="text-xl font-black text-indigo-600 dark:text-indigo-400">
                 {maxStreak}
               </div>
             </div>
-            <div className="p-3 bg-slate-800/80 rounded-xl border border-slate-700/60">
-              <div className="text-xs text-slate-400">Doğru / Toplam</div>
-              <div className="text-xl font-black text-white">
+            <div className="p-3 bg-white dark:bg-slate-800/80 rounded-xl border border-slate-200 dark:border-slate-700/60 shadow-xs">
+              <div className="text-xs text-slate-500 dark:text-slate-400">Doğru / Toplam</div>
+              <div className="text-xl font-black text-slate-900 dark:text-white">
                 {totalCorrect} / {totalAnswered}
               </div>
             </div>
@@ -616,7 +616,7 @@ export function MathDuel({
               <button
                 type="button"
                 onClick={onExit}
-                className="px-5 py-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white font-bold transition-all"
+                className="px-5 py-3 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 hover:text-slate-900 dark:bg-slate-800 dark:hover:bg-slate-700 dark:text-slate-300 dark:hover:text-white font-bold transition-all border border-slate-200 dark:border-transparent"
               >
                 Çıkış
               </button>
@@ -626,7 +626,7 @@ export function MathDuel({
       )}
 
       {/* FOOTER TIPS */}
-      <div className="pt-4 border-t border-slate-700/60 flex items-center justify-between text-xs text-slate-500">
+      <div className="pt-4 border-t border-slate-200 dark:border-slate-700/60 flex items-center justify-between text-xs text-slate-500">
         <span>Klavye tuşları [1, 2, 3, 4] ile hızlıca cevap verebilirsin.</span>
         <span>Çarpan: x{scoreMultiplier}</span>
       </div>

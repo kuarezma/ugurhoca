@@ -39,18 +39,18 @@ export function ExitTicketCreateModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm animate-in fade-in duration-200">
-      <div className="w-full max-w-2xl bg-slate-900 border border-white/10 rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
+      <div className="w-full max-w-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
         {/* Modal Başlık */}
-        <div className="p-5 sm:p-6 border-b border-white/10 flex items-center justify-between">
+        <div className="p-5 sm:p-6 border-b border-slate-200 dark:border-white/10 bg-slate-50/80 dark:bg-slate-950/80 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-violet-500/20 border border-violet-500/30 flex items-center justify-center text-violet-400">
+            <div className="w-10 h-10 rounded-xl bg-violet-500/20 border border-violet-500/30 flex items-center justify-center text-violet-600 dark:text-violet-400">
               <Sparkles className="w-5 h-5" />
             </div>
             <div>
-              <h3 className="text-lg sm:text-xl font-bold text-white">
+              <h3 className="text-lg sm:text-xl font-bold text-slate-900 dark:text-white">
                 Yeni Çıkış Bileti Oturumu Başlat
               </h3>
-              <p className="text-xs sm:text-sm text-slate-400">
+              <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400">
                 Ders sonu 3 dakikalık hızlı teşhis oturumu açın ve tahtaya yansıtın
               </p>
             </div>
@@ -58,7 +58,7 @@ export function ExitTicketCreateModal({
           <button
             type="button"
             onClick={onClose}
-            className="p-2 rounded-xl text-slate-400 hover:text-white hover:bg-white/10 transition"
+            className="p-2 rounded-xl text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/10 transition"
           >
             <X className="w-5 h-5" />
           </button>
@@ -66,7 +66,7 @@ export function ExitTicketCreateModal({
 
         {/* Modal Gövde - Şablon Seçimi */}
         <div className="p-5 sm:p-6 overflow-y-auto space-y-4">
-          <div className="block text-xs font-semibold text-slate-400 uppercase tracking-wider">
+          <div className="block text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
             Hazır Pedagojik Teşhis Şablonu Seçin
           </div>
 
@@ -81,12 +81,12 @@ export function ExitTicketCreateModal({
                   className={`p-4 rounded-2xl border text-left transition relative flex flex-col justify-between ${
                     isSelected
                       ? 'border-violet-500 bg-violet-500/15 ring-2 ring-violet-500/40'
-                      : 'border-white/10 bg-slate-950/40 hover:border-white/20 hover:bg-white/5'
+                      : 'border-slate-200 dark:border-white/10 bg-slate-50/60 dark:bg-slate-950/40 hover:border-slate-300 dark:hover:border-white/20 hover:bg-slate-100 dark:hover:bg-white/5'
                   }`}
                 >
                   <div>
                     <div className="flex items-center justify-between gap-2 mb-2">
-                      <span className="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-violet-500/20 text-violet-300 border border-violet-500/30">
+                      <span className="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-violet-500/10 dark:bg-violet-500/20 text-violet-700 dark:text-violet-300 border border-violet-500/30">
                         {tmpl.grade}. Sınıf
                       </span>
                       {isSelected && (
@@ -95,16 +95,16 @@ export function ExitTicketCreateModal({
                         </span>
                       )}
                     </div>
-                    <h4 className="font-bold text-sm sm:text-base text-white leading-snug">
+                    <h4 className="font-bold text-sm sm:text-base text-slate-900 dark:text-white leading-snug">
                       {tmpl.title}
                     </h4>
-                    <p className="text-xs text-slate-400 mt-1 flex items-center gap-1.5">
-                      <BookOpen className="w-3.5 h-3.5 text-slate-500" />
+                    <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 flex items-center gap-1.5">
+                      <BookOpen className="w-3.5 h-3.5 text-slate-400 dark:text-slate-500" />
                       {tmpl.subject} • {tmpl.questions.length} Soru
                     </p>
                   </div>
 
-                  <div className="mt-4 pt-3 border-t border-white/5 text-[11px] text-slate-400">
+                  <div className="mt-4 pt-3 border-t border-slate-200 dark:border-white/5 text-[11px] text-slate-500 dark:text-slate-400">
                     Çeldiricilere özel kavram yanılgısı açıklamaları hazır
                   </div>
                 </button>
@@ -113,18 +113,18 @@ export function ExitTicketCreateModal({
           </div>
 
           {/* Seçilen Şablon Soruları Önizleme */}
-          <div className="mt-4 rounded-2xl bg-slate-950/60 border border-white/10 p-4">
-            <div className="flex items-center gap-2 mb-3 text-xs font-semibold text-slate-300">
-              <Layers className="w-4 h-4 text-amber-400" />
+          <div className="mt-4 rounded-2xl bg-slate-50 dark:bg-slate-950/60 border border-slate-200 dark:border-white/10 p-4">
+            <div className="flex items-center gap-2 mb-3 text-xs font-semibold text-slate-700 dark:text-slate-300">
+              <Layers className="w-4 h-4 text-amber-500 dark:text-amber-400" />
               <span>Oturum İçeriği ({selectedTemplate.questions.length} Soru)</span>
             </div>
             <div className="space-y-2">
               {selectedTemplate.questions.map((q, idx) => (
                 <div
                   key={q.id}
-                  className="text-xs p-2.5 rounded-xl bg-white/5 border border-white/5 flex items-start gap-2 text-slate-300"
+                  className="text-xs p-2.5 rounded-xl bg-white dark:bg-white/5 border border-slate-200 dark:border-white/5 flex items-start gap-2 text-slate-700 dark:text-slate-300"
                 >
-                  <span className="font-bold text-amber-400 flex-shrink-0">
+                  <span className="font-bold text-amber-600 dark:text-amber-400 flex-shrink-0">
                     {idx + 1}.
                   </span>
                   <span className="truncate">{q.prompt}</span>
@@ -135,11 +135,11 @@ export function ExitTicketCreateModal({
         </div>
 
         {/* Modal Alt Panel */}
-        <div className="p-5 sm:p-6 border-t border-white/10 bg-slate-950/40 flex items-center justify-end gap-3">
+        <div className="p-5 sm:p-6 border-t border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-slate-950/40 flex items-center justify-end gap-3">
           <button
             type="button"
             onClick={onClose}
-            className="px-4 py-2.5 rounded-xl text-sm font-semibold text-slate-400 hover:text-white hover:bg-white/10 transition"
+            className="px-4 py-2.5 rounded-xl text-sm font-semibold text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/10 transition"
           >
             Vazgeç
           </button>

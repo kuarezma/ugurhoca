@@ -56,17 +56,17 @@ export default function AdminNotificationDetailModal({
         aria-modal="true"
         aria-labelledby="admin-notification-title"
         tabIndex={-1}
-        className="relative w-full max-w-2xl rounded-3xl border border-slate-700 bg-slate-900 shadow-2xl overflow-hidden animate-fade-up"
+        className="relative w-full max-w-2xl rounded-3xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 shadow-2xl overflow-hidden animate-fade-up"
       >
-        <div className="p-5 border-b border-slate-700 flex items-start justify-between gap-4">
+        <div className="p-5 border-b border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/80 flex items-start justify-between gap-4">
           <div>
-            <p className="text-xs uppercase tracking-[0.2em] text-indigo-300 mb-2">
+            <p className="text-xs uppercase tracking-[0.2em] text-indigo-600 dark:text-indigo-300 mb-2">
               Öğrenci Mesajı
             </p>
-            <h3 id="admin-notification-title" className="text-2xl font-bold text-white">
+            <h3 id="admin-notification-title" className="text-2xl font-bold text-slate-900 dark:text-white">
               {notification.title}
             </h3>
-            <p className="text-slate-500 text-sm mt-1">
+            <p className="text-slate-500 dark:text-slate-400 text-sm mt-1">
               {new Date(notification.created_at).toLocaleDateString('tr-TR')}
             </p>
           </div>
@@ -74,7 +74,7 @@ export default function AdminNotificationDetailModal({
             <button
               type="button"
               onClick={() => onDelete(notification.id)}
-              className="inline-flex items-center gap-2 rounded-xl bg-red-500/20 px-3 py-2 text-red-300 hover:bg-red-500/30"
+              className="inline-flex items-center gap-2 rounded-xl bg-red-500/20 px-3 py-2 text-red-700 dark:text-red-300 hover:bg-red-500/30"
             >
               <Trash2 className="w-4 h-4" />
               Sil
@@ -83,18 +83,18 @@ export default function AdminNotificationDetailModal({
               type="button"
               onClick={onClose}
               aria-label="Kapat"
-              className="text-slate-400 hover:text-white"
+              className="text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"
             >
               <X className="w-6 h-6" />
             </button>
           </div>
         </div>
         <div className="p-5 space-y-4">
-          <p className="text-slate-200 whitespace-pre-line leading-relaxed">
+          <p className="text-slate-800 dark:text-slate-200 whitespace-pre-line leading-relaxed">
             {getNotificationBody(notification)}
           </p>
           {payload?.metadata && (
-            <div className="rounded-xl bg-slate-800/60 border border-slate-700 p-3 text-xs text-slate-300 space-y-1">
+            <div className="rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 p-3 text-xs text-slate-600 dark:text-slate-300 space-y-1">
               <p>IP: {getMetadataText(payload.metadata.ip)}</p>
               <p className="truncate">
                 Cihaz: {getMetadataText(payload.metadata.user_agent)}
@@ -110,12 +110,12 @@ export default function AdminNotificationDetailModal({
           {payload?.sender_id && (
             <div className="flex flex-wrap items-center gap-2">
               {status.blocked && (
-                <span className="px-2 py-1 rounded-full text-[11px] bg-red-500/20 text-red-300">
+                <span className="px-2 py-1 rounded-full text-[11px] bg-red-500/20 text-red-700 dark:text-red-300">
                   Bu kullanıcı engelli
                 </span>
               )}
               {status.muted && status.expires_at && (
-                <span className="px-2 py-1 rounded-full text-[11px] bg-amber-500/20 text-amber-300">
+                <span className="px-2 py-1 rounded-full text-[11px] bg-amber-500/20 text-amber-700 dark:text-amber-300">
                   Sessizde (bitiş:{' '}
                   {new Date(status.expires_at).toLocaleDateString('tr-TR')})
                 </span>
@@ -124,7 +124,7 @@ export default function AdminNotificationDetailModal({
           )}
           {(payload?.attachments?.length ?? 0) > 0 && (
             <div className="space-y-2">
-              <p className="text-sm font-semibold text-white">Ekler</p>
+              <p className="text-sm font-semibold text-slate-900 dark:text-white">Ekler</p>
               <div className="flex flex-wrap gap-2">
                 {payload?.attachments?.map((file) => (
                   <a
@@ -132,7 +132,7 @@ export default function AdminNotificationDetailModal({
                     href={file.url}
                     target="_blank"
                     rel="noreferrer"
-                    className="inline-flex items-center gap-2 px-3 py-2 rounded-xl bg-white/5 border border-white/10 text-slate-200 hover:bg-white/10 transition-colors"
+                    className="inline-flex items-center gap-2 px-3 py-2 rounded-xl bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 text-slate-700 dark:text-slate-200 hover:bg-slate-200 dark:hover:bg-white/10 transition-colors"
                   >
                     <Paperclip className="w-4 h-4" />
                     {file.name}
@@ -142,12 +142,12 @@ export default function AdminNotificationDetailModal({
             </div>
           )}
           {notification.type === 'message' && payload?.sender_id && (
-            <div className="space-y-3 pt-4 border-t border-slate-700">
+            <div className="space-y-3 pt-4 border-t border-slate-200 dark:border-slate-700">
               <div className="flex flex-wrap gap-2">
                 <button
                   type="button"
                   onClick={() => onModerationAction('report')}
-                  className="inline-flex items-center gap-2 rounded-xl bg-slate-700/60 px-3 py-2 text-slate-200 hover:bg-slate-700"
+                  className="inline-flex items-center gap-2 rounded-xl bg-slate-100 dark:bg-slate-700/60 border border-slate-200 dark:border-transparent px-3 py-2 text-slate-700 dark:text-slate-200 hover:bg-slate-200 dark:hover:bg-slate-700"
                 >
                   <Flag className="w-4 h-4" />
                   Raporla
@@ -155,14 +155,14 @@ export default function AdminNotificationDetailModal({
                 <button
                   type="button"
                   onClick={() => onModerationAction('mute')}
-                  className="inline-flex items-center gap-2 rounded-xl bg-amber-500/20 px-3 py-2 text-amber-300 hover:bg-amber-500/30"
+                  className="inline-flex items-center gap-2 rounded-xl bg-amber-500/20 px-3 py-2 text-amber-700 dark:text-amber-300 hover:bg-amber-500/30"
                 >
                   <VolumeX className="w-4 h-4" />7 Gün Sessize Al
                 </button>
                 <button
                   type="button"
                   onClick={() => onModerationAction('block')}
-                  className="inline-flex items-center gap-2 rounded-xl bg-red-500/20 px-3 py-2 text-red-300 hover:bg-red-500/30"
+                  className="inline-flex items-center gap-2 rounded-xl bg-red-500/20 px-3 py-2 text-red-700 dark:text-red-300 hover:bg-red-500/30"
                 >
                   <Ban className="w-4 h-4" />
                   Engelle
@@ -170,7 +170,7 @@ export default function AdminNotificationDetailModal({
               </div>
               <label
                 htmlFor="admin-notification-reply"
-                className="block text-slate-300 text-sm"
+                className="block text-slate-700 dark:text-slate-300 text-sm font-medium"
               >
                 Cevap yaz
               </label>
@@ -179,7 +179,7 @@ export default function AdminNotificationDetailModal({
                 rows={4}
                 value={replyText}
                 onChange={(event) => onReplyTextChange(event.target.value)}
-                className="w-full bg-slate-800/60 border border-slate-700 rounded-2xl px-4 py-3 text-white placeholder:text-slate-500 focus:outline-none focus:border-indigo-500 transition-colors resize-none"
+                className="w-full bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 rounded-2xl px-4 py-3 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:border-indigo-500 transition-colors resize-none"
                 placeholder="Öğrenciye cevap yaz..."
               />
               <div className="flex justify-end">

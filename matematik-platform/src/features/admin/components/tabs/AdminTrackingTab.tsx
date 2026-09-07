@@ -274,27 +274,27 @@ export default function AdminTrackingTab({
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
-    URL.revokeObjectURL(url);
+URL.revokeObjectURL(url);
   };
 
   return (
     <div className="space-y-5 animate-fade-up">
-      <section className="rounded-2xl border border-cyan-400/20 bg-cyan-500/10 p-5">
-        <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+      <section className="relative overflow-hidden rounded-3xl border border-slate-200/80 dark:border-white/10 bg-white/80 dark:bg-slate-900/60 p-6 shadow-sm dark:shadow-xl dark:shadow-black/20">
+        <div className="relative z-10 flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
           <div>
-            <div className="mb-2 inline-flex items-center gap-2 rounded-full bg-cyan-400/10 px-3 py-1 text-xs font-bold text-cyan-200">
+            <div className="mb-2 inline-flex items-center gap-2 rounded-full bg-cyan-100 dark:bg-cyan-400/10 px-3 py-1 text-xs font-bold text-cyan-700 dark:text-cyan-200">
               <ShieldCheck className="h-4 w-4" />
               Canlı Dashboard
             </div>
-            <h2 className="text-2xl font-bold text-white">Takip Merkezi</h2>
-            <p className="mt-1 text-sm text-slate-400">
+            <h2 className="text-2xl font-bold text-slate-900 dark:text-white">Takip Merkezi</h2>
+            <p className="mt-1 text-sm text-slate-600 dark:text-slate-400">
               Risk, pasiflik, ödev, test, hedef ve mesaj sinyalleri tek ekranda.
             </p>
             <div className="mt-3">
               <button
                 type="button"
                 onClick={handleExportCsv}
-                className="inline-flex items-center gap-1.5 rounded-xl border border-emerald-500/30 bg-emerald-500/15 px-3 py-1.5 text-xs font-semibold text-emerald-300 transition hover:bg-emerald-500/25 active:scale-95"
+                className="inline-flex items-center gap-1.5 rounded-xl border border-emerald-500/30 bg-emerald-500/15 px-3 py-1.5 text-xs font-semibold text-emerald-700 dark:text-emerald-300 transition hover:bg-emerald-500/25 active:scale-95"
                 title="Filtrelenen öğrenci takip listesini Excel/CSV olarak indir"
               >
                 <Download className="h-3.5 w-3.5" />
@@ -311,16 +311,16 @@ export default function AdminTrackingTab({
         </div>
       </section>
 
-      <section className="rounded-2xl border border-white/10 bg-white/5 p-4">
+      <section className="rounded-2xl border border-slate-200/80 dark:border-white/10 bg-white/80 dark:bg-white/5 p-4 shadow-sm">
         <div className="grid gap-3 lg:grid-cols-[minmax(0,1fr)_auto_auto_auto_auto_auto]">
           <label className="relative block">
             <span className="sr-only">Öğrenci ara</span>
-            <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500" />
+            <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400 dark:text-slate-500" />
             <input
               value={searchQuery}
               onChange={(event) => setSearchQuery(event.target.value)}
               placeholder="Öğrenci ara..."
-              className="w-full rounded-xl border border-white/10 bg-slate-950/60 py-2.5 pl-10 pr-3 text-sm text-white placeholder:text-slate-500 outline-none focus:border-cyan-400/60 focus:ring-2 focus:ring-cyan-400/20"
+              className="w-full rounded-xl border border-slate-200 dark:border-white/10 bg-white dark:bg-slate-950/60 py-2.5 pl-10 pr-3 text-sm text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 outline-none focus:border-cyan-500 dark:focus:border-cyan-400/60 focus:ring-2 focus:ring-cyan-500/20"
             />
           </label>
           <Select value={riskFilter} onChange={(value) => setRiskFilter(value as RiskFilter)}>
@@ -355,20 +355,20 @@ export default function AdminTrackingTab({
           </Select>
           <label className="relative block">
             <span className="sr-only">Takip etiketi</span>
-            <Filter className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500" />
+            <Filter className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400 dark:text-slate-500" />
             <input
               value={labelFilter}
               onChange={(event) => setLabelFilter(event.target.value)}
               placeholder="Etiket"
-              className="w-full rounded-xl border border-white/10 bg-slate-950/60 py-2.5 pl-10 pr-3 text-sm text-white placeholder:text-slate-500 outline-none focus:border-cyan-400/60 focus:ring-2 focus:ring-cyan-400/20 lg:w-36"
+              className="w-full rounded-xl border border-slate-200 dark:border-white/10 bg-white dark:bg-slate-950/60 py-2.5 pl-10 pr-3 text-sm text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 outline-none focus:border-cyan-500 dark:focus:border-cyan-400/60 focus:ring-2 focus:ring-cyan-500/20 lg:w-36"
             />
           </label>
         </div>
       </section>
 
       <section className="grid gap-4 xl:grid-cols-[0.75fr_1fr_1fr]">
-        <div className="rounded-2xl border border-white/10 bg-white/5 p-5">
-          <h3 className="mb-4 text-base font-bold text-white">
+        <div className="rounded-2xl border border-slate-200/80 dark:border-white/10 bg-white/80 dark:bg-white/5 p-5 shadow-sm">
+          <h3 className="mb-4 text-base font-bold text-slate-900 dark:text-white">
             Canlı Ölçüm
           </h3>
           <div className="grid grid-cols-2 gap-3">
@@ -392,12 +392,12 @@ export default function AdminTrackingTab({
           </div>
         </div>
 
-        <div className="rounded-2xl border border-white/10 bg-white/5 p-5">
-          <h3 className="mb-4 text-base font-bold text-white">
+        <div className="rounded-2xl border border-slate-200/80 dark:border-white/10 bg-white/80 dark:bg-white/5 p-5 shadow-sm">
+          <h3 className="mb-4 text-base font-bold text-slate-900 dark:text-white">
             En Çok Kullanılan İçerikler
           </h3>
           {activityAnalytics.topContent.length === 0 ? (
-            <p className="rounded-xl border border-dashed border-white/10 px-4 py-8 text-center text-sm text-slate-500">
+            <p className="rounded-xl border border-dashed border-slate-200 dark:border-white/10 px-4 py-8 text-center text-sm text-slate-400 dark:text-slate-500">
               İçerik kullanım kaydı birikince burada listelenecek.
             </p>
           ) : (
@@ -405,15 +405,15 @@ export default function AdminTrackingTab({
               {activityAnalytics.topContent.map((item) => (
                 <div
                   key={item.id}
-                  className="flex items-center justify-between gap-3 rounded-xl bg-slate-950/45 px-3 py-2"
+                  className="flex items-center justify-between gap-3 rounded-xl bg-slate-50 dark:bg-slate-950/45 border border-slate-200/60 dark:border-transparent px-3 py-2"
                 >
                   <div className="min-w-0">
-                    <p className="truncate text-sm font-semibold text-white">
+                    <p className="truncate text-sm font-semibold text-slate-900 dark:text-white">
                       {item.title}
                     </p>
-                    <p className="text-xs text-slate-500">{item.type}</p>
+                    <p className="text-xs text-slate-500 dark:text-slate-400">{item.type}</p>
                   </div>
-                  <span className="rounded-full bg-cyan-400/10 px-3 py-1 text-xs font-bold text-cyan-200">
+                  <span className="rounded-full bg-cyan-100 dark:bg-cyan-400/10 px-3 py-1 text-xs font-bold text-cyan-700 dark:text-cyan-200">
                     {item.count}
                   </span>
                 </div>
@@ -422,12 +422,12 @@ export default function AdminTrackingTab({
           )}
         </div>
 
-        <div className="rounded-2xl border border-white/10 bg-white/5 p-5">
-          <h3 className="mb-4 text-base font-bold text-white">
+        <div className="rounded-2xl border border-slate-200/80 dark:border-white/10 bg-white/80 dark:bg-white/5 p-5 shadow-sm">
+          <h3 className="mb-4 text-base font-bold text-slate-900 dark:text-white">
             Az Kullanılan İçerikler
           </h3>
           {activityAnalytics.lowContent.length === 0 ? (
-            <p className="rounded-xl border border-dashed border-white/10 px-4 py-8 text-center text-sm text-slate-500">
+            <p className="rounded-xl border border-dashed border-slate-200 dark:border-white/10 px-4 py-8 text-center text-sm text-slate-400 dark:text-slate-500">
               İçerik eklenince burada kullanım açığı görülecek.
             </p>
           ) : (
@@ -435,15 +435,15 @@ export default function AdminTrackingTab({
               {activityAnalytics.lowContent.map((item) => (
                 <div
                   key={item.id}
-                  className="flex items-center justify-between gap-3 rounded-xl bg-slate-950/45 px-3 py-2"
+                  className="flex items-center justify-between gap-3 rounded-xl bg-slate-50 dark:bg-slate-950/45 border border-slate-200/60 dark:border-transparent px-3 py-2"
                 >
                   <div className="min-w-0">
-                    <p className="truncate text-sm font-semibold text-white">
+                    <p className="truncate text-sm font-semibold text-slate-900 dark:text-white">
                       {item.title}
                     </p>
-                    <p className="text-xs text-slate-500">{item.type}</p>
+                    <p className="text-xs text-slate-500 dark:text-slate-400">{item.type}</p>
                   </div>
-                  <span className="rounded-full bg-amber-400/10 px-3 py-1 text-xs font-bold text-amber-200">
+                  <span className="rounded-full bg-amber-100 dark:bg-amber-400/10 px-3 py-1 text-xs font-bold text-amber-700 dark:text-amber-200">
                     {item.count}
                   </span>
                 </div>
@@ -454,7 +454,7 @@ export default function AdminTrackingTab({
       </section>
 
       {filteredInsights.length === 0 ? (
-        <div className="rounded-2xl border border-dashed border-white/10 bg-white/5 p-10 text-center text-slate-400">
+        <div className="rounded-2xl border border-dashed border-slate-200 dark:border-white/10 bg-white/80 dark:bg-white/5 p-10 text-center text-slate-500 dark:text-slate-400">
           {studentUsers.length === 0
             ? 'Takip edilecek öğrenci kaydı henüz yok.'
             : 'Filtrelere uygun öğrenci bulunamadı.'}
@@ -464,7 +464,7 @@ export default function AdminTrackingTab({
           {filteredInsights.map((insight) => (
             <article
               key={insight.student.id}
-              className="rounded-2xl border border-white/10 bg-slate-950/55 p-4 shadow-lg shadow-black/10"
+              className="rounded-2xl border border-slate-200/80 dark:border-white/10 bg-white/80 dark:bg-slate-950/55 p-4 shadow-sm dark:shadow-lg dark:shadow-black/10"
             >
               <div className="flex flex-col gap-4 xl:flex-row xl:items-start xl:justify-between">
                 <div className="min-w-0 flex-1">
@@ -472,10 +472,10 @@ export default function AdminTrackingTab({
                     <span
                       className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-bold ${
                         insight.riskLevel === 'high'
-                          ? 'bg-red-500/15 text-red-200'
+                          ? 'bg-red-500/15 text-red-700 dark:text-red-200'
                           : insight.riskLevel === 'medium'
-                            ? 'bg-amber-500/15 text-amber-200'
-                            : 'bg-emerald-500/15 text-emerald-200'
+                            ? 'bg-amber-500/15 text-amber-700 dark:text-amber-200'
+                            : 'bg-emerald-500/15 text-emerald-700 dark:text-emerald-200'
                       }`}
                     >
                       <AlertTriangle className="h-3.5 w-3.5" />
@@ -485,11 +485,11 @@ export default function AdminTrackingTab({
                           ? 'Takipte'
                           : 'Normal'}
                     </span>
-                    <span className="rounded-full bg-white/5 px-2.5 py-1 text-xs font-semibold text-slate-300">
+                    <span className="rounded-full bg-slate-100 dark:bg-white/5 px-2.5 py-1 text-xs font-semibold text-slate-700 dark:text-slate-300">
                       {formatGrade(insight.student.grade)}
                     </span>
                     {insight.student.is_favorite ? (
-                      <span className="inline-flex items-center gap-1 rounded-full border border-amber-300/25 bg-amber-300/10 px-2.5 py-1 text-xs font-semibold text-amber-200">
+                      <span className="inline-flex items-center gap-1 rounded-full border border-amber-300/25 bg-amber-300/10 px-2.5 py-1 text-xs font-semibold text-amber-600 dark:text-amber-200">
                         <Star className="h-3.5 w-3.5 fill-current" />
                         Favori
                       </span>
@@ -497,14 +497,14 @@ export default function AdminTrackingTab({
                     {insight.status?.labels?.map((label) => (
                       <span
                         key={label}
-                        className="rounded-full border border-cyan-400/20 bg-cyan-400/10 px-2.5 py-1 text-xs font-semibold text-cyan-200"
+                        className="rounded-full border border-cyan-400/20 bg-cyan-400/10 px-2.5 py-1 text-xs font-semibold text-cyan-700 dark:text-cyan-200"
                       >
                         {label}
                       </span>
                     ))}
                   </div>
 
-                  <h3 className="truncate text-lg font-bold text-white">
+                  <h3 className="truncate text-lg font-bold text-slate-900 dark:text-white">
                     {insight.student.name || 'İsimsiz öğrenci'}
                   </h3>
                   <p className="mt-1 break-all text-sm text-slate-500">
@@ -545,14 +545,14 @@ export default function AdminTrackingTab({
 
                   <div className="mt-4 flex flex-wrap gap-2">
                     {insight.riskReasons.length === 0 ? (
-                      <span className="rounded-full bg-emerald-500/10 px-3 py-1 text-xs font-semibold text-emerald-200">
+                      <span className="rounded-full border border-emerald-500/20 bg-emerald-500/10 px-3 py-1 text-xs font-semibold text-emerald-700 dark:text-emerald-200">
                         Kritik sinyal yok
                       </span>
                     ) : (
                       insight.riskReasons.map((reason) => (
                         <span
                           key={reason}
-                          className="rounded-full bg-red-500/10 px-3 py-1 text-xs font-semibold text-red-200"
+                          className="rounded-full border border-red-500/20 bg-red-500/10 px-3 py-1 text-xs font-semibold text-red-700 dark:text-red-200"
                         >
                           {reason}
                         </span>
@@ -565,7 +565,7 @@ export default function AdminTrackingTab({
                   <button
                     type="button"
                     onClick={() => onViewProfile(insight.student)}
-                    className="inline-flex items-center justify-center gap-2 rounded-xl bg-cyan-500/15 px-4 py-2.5 text-sm font-bold text-cyan-200 transition hover:bg-cyan-500/25"
+                    className="inline-flex items-center justify-center gap-2 rounded-xl border border-cyan-500/20 bg-cyan-500/15 px-4 py-2.5 text-sm font-bold text-cyan-700 dark:text-cyan-200 transition hover:bg-cyan-500/25 active:scale-95"
                   >
                     <UserRound className="h-4 w-4" />
                     Profil Aç
@@ -573,7 +573,7 @@ export default function AdminTrackingTab({
                   <button
                     type="button"
                     onClick={() => onSendMessage(insight.student)}
-                    className="inline-flex items-center justify-center gap-2 rounded-xl bg-violet-500/15 px-4 py-2.5 text-sm font-bold text-violet-200 transition hover:bg-violet-500/25"
+                    className="inline-flex items-center justify-center gap-2 rounded-xl border border-violet-500/20 bg-violet-500/15 px-4 py-2.5 text-sm font-bold text-violet-700 dark:text-violet-200 transition hover:bg-violet-500/25 active:scale-95"
                   >
                     <Send className="h-4 w-4" />
                     Mesaj Gönder
@@ -581,7 +581,7 @@ export default function AdminTrackingTab({
                   <button
                     type="button"
                     onClick={() => onCreateWeeklyPlan(insight.student)}
-                    className="inline-flex items-center justify-center gap-2 rounded-xl bg-emerald-500/15 px-4 py-2.5 text-sm font-bold text-emerald-200 transition hover:bg-emerald-500/25"
+                    className="inline-flex items-center justify-center gap-2 rounded-xl border border-emerald-500/20 bg-emerald-500/15 px-4 py-2.5 text-sm font-bold text-emerald-700 dark:text-emerald-200 transition hover:bg-emerald-500/25 active:scale-95"
                   >
                     <CalendarClock className="h-4 w-4" />
                     Plan Oluştur
@@ -594,7 +594,7 @@ export default function AdminTrackingTab({
                         insight.riskLevel === 'high' ? 'risk' : 'watch',
                       )
                     }
-                    className="inline-flex items-center justify-center gap-2 rounded-xl bg-amber-500/15 px-4 py-2.5 text-sm font-bold text-amber-200 transition hover:bg-amber-500/25"
+                    className="inline-flex items-center justify-center gap-2 rounded-xl border border-amber-500/20 bg-amber-500/15 px-4 py-2.5 text-sm font-bold text-amber-700 dark:text-amber-200 transition hover:bg-amber-500/25 active:scale-95"
                   >
                     <MessageCircle className="h-4 w-4" />
                     Takibe Al
@@ -622,7 +622,7 @@ function Select({
     <select
       value={value}
       onChange={(event) => onChange(event.target.value)}
-      className="w-full rounded-xl border border-white/10 bg-slate-950/60 px-3 py-2.5 text-sm text-white outline-none focus:border-cyan-400/60 focus:ring-2 focus:ring-cyan-400/20 lg:w-40"
+      className="w-full rounded-xl border border-slate-200 dark:border-white/10 bg-white dark:bg-slate-950/60 px-3 py-2.5 text-sm text-slate-900 dark:text-white outline-none focus:border-cyan-500 dark:focus:border-cyan-400/60 focus:ring-2 focus:ring-cyan-500/20 lg:w-40"
     >
       {children}
     </select>
@@ -631,9 +631,9 @@ function Select({
 
 function Metric({ label, value }: { label: string; value: number }) {
   return (
-    <div className="rounded-xl border border-white/10 bg-slate-950/50 px-4 py-3">
-      <p className="text-2xl font-black text-white">{value}</p>
-      <p className="text-xs font-semibold text-slate-400">{label}</p>
+    <div className="rounded-xl border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-slate-950/50 px-4 py-3">
+      <p className="text-2xl font-black text-slate-900 dark:text-white">{value}</p>
+      <p className="text-xs font-semibold text-slate-500 dark:text-slate-400">{label}</p>
     </div>
   );
 }
@@ -650,13 +650,13 @@ function MiniSignal({
   value: string;
 }) {
   return (
-    <div className="rounded-xl border border-white/10 bg-white/5 px-3 py-3">
-      <div className="mb-2 flex items-center gap-2 text-slate-400">
+    <div className="rounded-xl border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-white/5 px-3 py-3">
+      <div className="mb-2 flex items-center gap-2 text-slate-500 dark:text-slate-400">
         {icon}
         <span className="text-xs font-semibold">{label}</span>
       </div>
-      <p className="text-base font-bold text-white">{value}</p>
-      {meta ? <p className="text-xs text-slate-500">{meta}</p> : null}
+      <p className="text-base font-bold text-slate-900 dark:text-white">{value}</p>
+      {meta ? <p className="text-xs text-slate-500 dark:text-slate-400">{meta}</p> : null}
     </div>
   );
 }

@@ -247,17 +247,25 @@ export function HomeDailyChallenge({ isLight }: { isLight: boolean }) {
                   initial={{ opacity: 0, height: 0 }}
                   animate={{ opacity: 1, height: 'auto' }}
                   exit={{ opacity: 0, height: 0 }}
-                  className="mt-6 overflow-hidden rounded-2xl border border-white/10 bg-slate-950/60 p-5 space-y-3"
+                  className={`mt-6 overflow-hidden rounded-2xl border p-5 space-y-3 ${
+                    isLight
+                      ? 'border-slate-200 bg-slate-50 text-slate-800'
+                      : 'border-white/10 bg-slate-950/60 text-slate-200'
+                  }`}
                 >
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
                       {isCorrect ? (
-                        <div className="flex items-center gap-2 text-emerald-400 font-bold text-sm">
+                        <div className={`flex items-center gap-2 font-bold text-sm ${
+                          isLight ? 'text-emerald-600' : 'text-emerald-400'
+                        }`}>
                           <Award className="h-5 w-5" />
                           <span>Tebrikler! Doğru Cevap.</span>
                         </div>
                       ) : (
-                        <div className="flex items-center gap-2 text-rose-400 font-bold text-sm">
+                        <div className={`flex items-center gap-2 font-bold text-sm ${
+                          isLight ? 'text-rose-600' : 'text-rose-400'
+                        }`}>
                           <XCircle className="h-5 w-5" />
                           <span>İpuçlarına dikkat! Doğru seçenek {String.fromCharCode(65 + challenge.correctIndex)}.</span>
                         </div>
@@ -273,14 +281,24 @@ export function HomeDailyChallenge({ isLight }: { isLight: boolean }) {
                     </button>
                   </div>
 
-                  <div className="text-xs text-slate-300 leading-relaxed border-t border-white/10 pt-3">
-                    <span className="font-bold text-white block mb-1">Ayrıntılı Çözüm:</span>
+                  <div className={`text-xs leading-relaxed border-t pt-3 ${
+                    isLight ? 'text-slate-700 border-slate-200' : 'text-slate-300 border-white/10'
+                  }`}>
+                    <span className={`font-bold block mb-1 ${
+                      isLight ? 'text-slate-900' : 'text-white'
+                    }`}>Ayrıntılı Çözüm:</span>
                     <MathText>{challenge.explanation}</MathText>
                   </div>
 
                   {challenge.tip && (
-                    <div className="flex items-start gap-2 rounded-xl bg-amber-500/10 border border-amber-500/20 p-2.5 text-xs text-amber-200">
-                      <Lightbulb className="h-4 w-4 shrink-0 text-amber-400 mt-0.5" />
+                    <div className={`flex items-start gap-2 rounded-xl border p-2.5 text-xs ${
+                      isLight
+                        ? 'bg-amber-50 border-amber-200 text-amber-900'
+                        : 'bg-amber-500/10 border-amber-500/20 text-amber-200'
+                    }`}>
+                      <Lightbulb className={`h-4 w-4 shrink-0 mt-0.5 ${
+                        isLight ? 'text-amber-600' : 'text-amber-400'
+                      }`} />
                       <span>{challenge.tip}</span>
                     </div>
                   )}

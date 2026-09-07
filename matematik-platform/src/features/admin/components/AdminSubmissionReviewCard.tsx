@@ -121,17 +121,17 @@ export default function AdminSubmissionReviewCard({
   };
 
   return (
-    <div className="glass p-5 rounded-2xl border border-white/5 space-y-4">
+    <div className="glass p-5 rounded-2xl border border-slate-200/80 dark:border-white/5 space-y-4">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 bg-gradient-to-br from-indigo-500 to-purple-500 rounded-xl flex items-center justify-center font-bold text-white">
             {submission.student_name?.[0] || "Ö"}
           </div>
           <div>
-            <p className="text-white font-bold">
+            <p className="text-slate-900 dark:text-white font-bold">
               {submission.student_name || "Öğrenci"}
             </p>
-            <p className="text-slate-500 text-[10px]">
+            <p className="text-slate-500 dark:text-slate-400 text-[10px]">
               {submission.submitted_at
                 ? new Date(submission.submitted_at).toLocaleString("tr-TR")
                 : "Tarih yok"}
@@ -154,7 +154,7 @@ export default function AdminSubmissionReviewCard({
               <button
                 type="button"
                 onClick={() => setIsDrawingOpen(true)}
-                className="px-3 py-2 bg-rose-500/20 text-rose-300 border border-rose-500/30 hover:bg-rose-500/30 text-xs font-bold rounded-xl flex items-center gap-1.5 transition-all"
+                className="px-3 py-2 bg-rose-500/10 text-rose-700 dark:text-rose-300 border border-rose-500/30 hover:bg-rose-500/20 text-xs font-bold rounded-xl flex items-center gap-1.5 transition-all"
                 title="Öğrencinin ödev görseli üzerine çizim yap"
               >
                 <PenTool className="w-4 h-4" />
@@ -166,8 +166,8 @@ export default function AdminSubmissionReviewCard({
           <span
             className={`px-3 py-1.5 rounded-lg text-xs font-bold ${
               submission.status === "reviewed"
-                ? "bg-emerald-500/20 text-emerald-400"
-                : "bg-amber-500/20 text-amber-400"
+                ? "bg-emerald-500/20 text-emerald-700 dark:text-emerald-400"
+                : "bg-amber-500/20 text-amber-700 dark:text-amber-400"
             }`}
           >
             {submission.status === "reviewed"
@@ -178,11 +178,11 @@ export default function AdminSubmissionReviewCard({
       </div>
 
       {submission.comment && (
-        <div className="bg-white/5 p-3 rounded-xl border border-white/5">
+        <div className="bg-slate-50 dark:bg-white/5 p-3 rounded-xl border border-slate-200/60 dark:border-white/5">
           <p className="text-xs text-slate-500 mb-1 font-bold uppercase tracking-wider">
             Öğrenci Notu
           </p>
-          <p className="text-sm text-slate-300 italic">"{submission.comment}"</p>
+          <p className="text-sm text-slate-700 dark:text-slate-300 italic">"{submission.comment}"</p>
         </div>
       )}
 
@@ -191,7 +191,7 @@ export default function AdminSubmissionReviewCard({
         <div className="flex flex-wrap items-center justify-between gap-2">
           <div className="flex flex-wrap items-center gap-1.5">
             <span className="text-xs text-slate-500 flex items-center gap-1 font-semibold mr-1">
-              <Sparkles className="w-3 h-3 text-amber-400" />
+              <Sparkles className="w-3 h-3 text-amber-500 dark:text-amber-400" />
               Hızlı Şablon:
             </span>
             {FEEDBACK_TEMPLATES.map((tmpl) => (
@@ -199,7 +199,7 @@ export default function AdminSubmissionReviewCard({
                 key={tmpl.label}
                 type="button"
                 onClick={() => handleApplyTemplate(tmpl)}
-                className="px-2.5 py-1 rounded-lg bg-slate-800/80 hover:bg-slate-700/80 border border-slate-700/60 text-xs text-slate-300 hover:text-white transition"
+                className="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-800/80 dark:hover:bg-slate-700/80 border border-slate-200 dark:border-slate-700/60 text-xs text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white transition"
               >
                 {tmpl.label}
               </button>
@@ -212,17 +212,17 @@ export default function AdminSubmissionReviewCard({
               setSelectedStep(null);
               setIsLibraryOpen(true);
             }}
-            className="px-3 py-1.5 rounded-xl bg-indigo-600/20 hover:bg-indigo-600/30 text-indigo-300 border border-indigo-500/30 text-xs font-bold flex items-center gap-1.5 transition shadow-sm"
+            className="px-3 py-1.5 rounded-xl bg-indigo-50 hover:bg-indigo-100 dark:bg-indigo-600/20 dark:hover:bg-indigo-600/30 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-500/30 text-xs font-bold flex items-center gap-1.5 transition shadow-sm"
           >
-            <BookOpen className="w-3.5 h-3.5 text-indigo-400" />
+            <BookOpen className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400" />
             <span>📚 Geri Bildirim Kütüphanesi</span>
           </button>
         </div>
 
         {/* STEP ATTACHMENT SHORTCUTS */}
-        <div className="flex flex-wrap items-center gap-1.5 bg-slate-900/40 p-2 rounded-xl border border-white/5 text-xs">
-          <span className="text-slate-400 font-medium flex items-center gap-1">
-            <Layers className="w-3 h-3 text-cyan-400" />
+        <div className="flex flex-wrap items-center gap-1.5 bg-slate-50 dark:bg-slate-900/40 p-2 rounded-xl border border-slate-200/60 dark:border-white/5 text-xs">
+          <span className="text-slate-600 dark:text-slate-400 font-medium flex items-center gap-1">
+            <Layers className="w-3 h-3 text-cyan-600 dark:text-cyan-400" />
             Adıma Not İliştir:
           </span>
           {[
@@ -235,7 +235,7 @@ export default function AdminSubmissionReviewCard({
               key={step.label}
               type="button"
               onClick={() => handleAttachStep(step.prefix)}
-              className="px-2 py-0.5 rounded-lg bg-cyan-950/40 text-cyan-300 border border-cyan-800/40 hover:bg-cyan-900/50 hover:border-cyan-700 transition text-[11px] font-medium"
+              className="px-2 py-0.5 rounded-lg bg-cyan-50 dark:bg-cyan-950/40 text-cyan-800 dark:text-cyan-300 border border-cyan-200 dark:border-cyan-800/40 hover:bg-cyan-100 dark:hover:bg-cyan-900/50 hover:border-cyan-300 dark:hover:border-cyan-700 transition text-[11px] font-medium"
               title={`${step.prefix} için kütüphaneden not seç`}
             >
               🪜 {step.label}
@@ -252,9 +252,9 @@ export default function AdminSubmissionReviewCard({
               placeholder="Geri bildirim yazın..."
               value={feedback}
               onChange={(event) => setFeedback(event.target.value)}
-              className="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2.5 pl-11 text-sm text-white focus:outline-none focus:border-indigo-500 transition-colors resize-y min-h-[44px]"
+              className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2.5 pl-11 text-sm text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:border-indigo-500 transition-colors resize-y min-h-[44px]"
             />
-            <MessageSquareText className="absolute left-4 top-3.5 w-4 h-4 text-slate-500" />
+            <MessageSquareText className="absolute left-4 top-3.5 w-4 h-4 text-slate-400" />
           </div>
 
           <button
@@ -263,7 +263,7 @@ export default function AdminSubmissionReviewCard({
             className={`p-2.5 rounded-xl border transition flex items-center gap-1.5 shrink-0 text-xs font-bold mt-0.5 ${
               isRecording
                 ? "bg-rose-500 text-white border-rose-400 animate-pulse"
-                : "bg-slate-800 text-slate-300 border-slate-700 hover:bg-slate-700"
+                : "bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:bg-slate-200 dark:hover:bg-slate-700"
             }`}
             title={isRecording ? "Kaydı bitir" : "Sesli not kaydet"}
           >
@@ -273,13 +273,13 @@ export default function AdminSubmissionReviewCard({
                 <span>0:{recordingSeconds.toString().padStart(2, "0")}</span>
               </>
             ) : (
-              <Mic className="w-4 h-4 text-slate-400" />
+              <Mic className="w-4 h-4 text-slate-500 dark:text-slate-400" />
             )}
           </button>
         </div>
 
         <div className="flex flex-col gap-2 w-full sm:w-auto mt-2 sm:mt-0 sm:flex-row">
-          <div className="flex items-center justify-center p-2 bg-slate-800 border border-slate-700 rounded-xl">
+          <div className="flex items-center justify-center p-2 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl">
             {[1, 2, 3, 4, 5].map((star) => {
               const isFilled = grade >= star * 20;
 
@@ -294,7 +294,7 @@ export default function AdminSubmissionReviewCard({
                     className={`w-5 h-5 transition-colors ${
                       isFilled
                         ? "text-amber-400 fill-amber-400"
-                        : "text-slate-600"
+                        : "text-slate-300 dark:text-slate-600"
                     }`}
                   />
                 </button>
@@ -309,7 +309,7 @@ export default function AdminSubmissionReviewCard({
             min="0"
             value={grade}
             onChange={(event) => setGrade(Number(event.target.value) || 0)}
-            className="w-full sm:w-20 bg-slate-800 border border-slate-700 rounded-xl px-4 py-2.5 text-sm font-bold text-center text-white focus:outline-none focus:border-indigo-500 transition-colors"
+            className="w-full sm:w-20 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2.5 text-sm font-bold text-center text-slate-900 dark:text-white focus:outline-none focus:border-indigo-500 transition-colors"
           />
 
           <button

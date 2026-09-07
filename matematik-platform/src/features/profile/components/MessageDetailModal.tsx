@@ -36,14 +36,14 @@ export default function MessageDetailModal({
         aria-modal="true"
         aria-labelledby="message-detail-title"
         tabIndex={-1}
-        className="w-full max-w-lg rounded-3xl border border-slate-700 bg-slate-900 p-6 shadow-2xl sm:p-8"
+        className="w-full max-w-lg rounded-3xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-6 shadow-2xl sm:p-8"
       >
         <div className="mb-4 flex items-start justify-between gap-4">
           <div>
-            <p className="mb-2 text-xs uppercase tracking-[0.2em] text-indigo-300">
+            <p className="mb-2 text-xs uppercase tracking-[0.2em] text-indigo-600 dark:text-indigo-300">
               Mesaj
             </p>
-            <h3 id="message-detail-title" className="text-2xl font-bold text-white">
+            <h3 id="message-detail-title" className="text-2xl font-bold text-slate-900 dark:text-white">
               {message.title}
             </h3>
           </div>
@@ -51,7 +51,7 @@ export default function MessageDetailModal({
             type="button"
             onClick={onClose}
             aria-label="Kapat"
-            className="text-slate-400 hover:text-white"
+            className="text-slate-400 hover:text-slate-900 dark:hover:text-white"
           >
             <ChevronRight className="h-6 w-6 rotate-45" />
           </button>
@@ -62,19 +62,19 @@ export default function MessageDetailModal({
             <img
               src={message.metadata.image_url}
               alt="Mesaj resmi"
-              className="max-h-64 rounded-lg border border-white/10"
+              className="max-h-64 rounded-lg border border-slate-200 dark:border-white/10"
             />
           </div>
         ) : null}
 
-        <p className="whitespace-pre-line leading-relaxed text-slate-300">
+        <p className="whitespace-pre-line leading-relaxed text-slate-700 dark:text-slate-300">
           {message.message || 'Bu bildirim için ek içerik yok.'}
         </p>
         <div className="mt-6 flex justify-end">
           <button
             type="button"
             onClick={onClose}
-            className="rounded-xl bg-white/10 px-4 py-2 font-medium text-white transition-colors hover:bg-white/15"
+            className="rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 dark:bg-white/10 dark:hover:bg-white/15 dark:text-white px-4 py-2 font-medium transition-colors"
           >
             Kapat
           </button>

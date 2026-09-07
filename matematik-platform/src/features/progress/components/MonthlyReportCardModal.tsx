@@ -108,19 +108,19 @@ export function MonthlyReportCardModal({
         role="dialog"
         aria-modal="true"
         aria-label="Aylık Matematik Gelişim Raporu & Başarı Belgesi"
-        className="relative z-10 print-monthly-report flex h-full max-h-[92vh] w-full max-w-4xl flex-col overflow-hidden rounded-3xl border border-white/15 bg-slate-900 shadow-2xl"
+        className="relative z-10 print-monthly-report flex h-full max-h-[92vh] w-full max-w-4xl flex-col overflow-hidden rounded-3xl border border-slate-200 dark:border-white/15 bg-white dark:bg-slate-900 shadow-2xl"
       >
         {/* Header (Screen View) */}
-        <div className="no-print flex items-center justify-between border-b border-white/10 bg-slate-950/80 px-4 sm:px-6 py-3 sm:py-4">
+        <div className="no-print flex items-center justify-between border-b border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-slate-950/80 px-4 sm:px-6 py-3 sm:py-4">
           <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
             <div className="flex h-9 w-9 sm:h-10 sm:w-10 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-amber-500 to-orange-500 text-white shadow-md">
               <Award className="h-5 w-5" />
             </div>
             <div className="min-w-0">
-              <h2 className="font-display text-sm sm:text-base font-bold text-white truncate">
+              <h2 className="font-display text-sm sm:text-base font-bold text-slate-900 dark:text-white truncate">
                 Aylık Matematik Gelişim Raporu & Başarı Belgesi
               </h2>
-              <p className="text-[11px] text-slate-400 truncate">
+              <p className="text-[11px] text-slate-500 dark:text-slate-400 truncate">
                 {studentName} — {grade}. Sınıf Matematik Karne & Onur Belgesi
               </p>
             </div>
@@ -132,7 +132,7 @@ export function MonthlyReportCardModal({
               onClick={() => typeof window !== 'undefined' && window.print()}
               aria-label="Karneni Yazdır"
               title="A4 Formatında Resmi Karne & Başarı Belgesini Yazdır"
-              className="inline-flex items-center gap-1.5 rounded-xl bg-amber-500/20 border border-amber-500/40 px-3 py-1.5 text-xs font-bold text-amber-300 hover:bg-amber-500/30 transition"
+              className="inline-flex items-center gap-1.5 rounded-xl bg-amber-500/20 border border-amber-500/40 px-3 py-1.5 text-xs font-bold text-amber-700 dark:text-amber-300 hover:bg-amber-500/30 transition"
             >
               <Printer className="h-4 w-4" />
               <span className="hidden sm:inline">A4 Yazdır / PDF Al</span>
@@ -142,7 +142,7 @@ export function MonthlyReportCardModal({
               type="button"
               onClick={onClose}
               aria-label="Kapat"
-              className="inline-flex h-9 w-9 items-center justify-center rounded-xl bg-white/10 text-slate-300 hover:bg-white/20 hover:text-white transition"
+              className="inline-flex h-9 w-9 items-center justify-center rounded-xl bg-slate-100 dark:bg-white/10 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-white/20 hover:text-slate-900 dark:hover:text-white transition"
             >
               <X className="h-4 w-4" />
             </button>
@@ -150,15 +150,15 @@ export function MonthlyReportCardModal({
         </div>
 
         {/* Tab Seçimi & Dönem */}
-        <div className="no-print flex items-center justify-between border-b border-white/10 bg-slate-950/40 px-4 sm:px-6 py-2.5 gap-2">
-          <div className="flex items-center gap-1 rounded-xl bg-white/5 p-0.5 border border-white/10">
+        <div className="no-print flex items-center justify-between border-b border-slate-200 dark:border-white/10 bg-slate-100/50 dark:bg-slate-950/40 px-4 sm:px-6 py-2.5 gap-2">
+          <div className="flex items-center gap-1 rounded-xl bg-slate-200/60 dark:bg-white/5 p-0.5 border border-slate-300/60 dark:border-white/10">
             <button
               type="button"
               onClick={() => setActiveTab('card')}
               className={`rounded-lg px-3 py-1.5 text-xs font-bold transition ${
                 activeTab === 'card'
                   ? 'bg-brand-primary text-white shadow'
-                  : 'text-slate-400 hover:text-white'
+                  : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
               }`}
             >
               <span className="flex items-center gap-1.5">
@@ -172,7 +172,7 @@ export function MonthlyReportCardModal({
               className={`rounded-lg px-3 py-1.5 text-xs font-bold transition ${
                 activeTab === 'certificate'
                   ? 'bg-amber-500 text-slate-950 shadow'
-                  : 'text-slate-400 hover:text-white'
+                  : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
               }`}
             >
               <span className="flex items-center gap-1.5">
@@ -182,7 +182,7 @@ export function MonthlyReportCardModal({
             </button>
           </div>
 
-          <span className="text-xs font-semibold text-slate-400 flex items-center gap-1.5">
+          <span className="text-xs font-semibold text-slate-500 dark:text-slate-400 flex items-center gap-1.5">
             <Calendar className="h-3.5 w-3.5 text-brand-primary-soft" />
             <span>{selectedMonth}</span>
           </span>
@@ -195,66 +195,66 @@ export function MonthlyReportCardModal({
             <div className="space-y-6">
               {/* Üst İstatistik Kartları */}
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                <div className="rounded-2xl border border-white/10 bg-white/5 p-3.5">
-                  <div className="flex items-center gap-2 text-xs font-semibold text-slate-400">
-                    <Clock className="h-4 w-4 text-cyan-400" />
+                <div className="rounded-2xl border border-slate-200 dark:border-white/10 bg-slate-50/80 dark:bg-white/5 p-3.5">
+                  <div className="flex items-center gap-2 text-xs font-semibold text-slate-600 dark:text-slate-400">
+                    <Clock className="h-4 w-4 text-cyan-500 dark:text-cyan-400" />
                     <span>Toplam Çalışma</span>
                   </div>
-                  <div className="mt-2 text-2xl font-extrabold text-white">{totalHours} Saat</div>
+                  <div className="mt-2 text-2xl font-extrabold text-slate-900 dark:text-white">{totalHours} Saat</div>
                   <span className="text-[11px] text-slate-500">Planlanan hedefin %{completionRate}'i</span>
                 </div>
 
-                <div className="rounded-2xl border border-white/10 bg-white/5 p-3.5">
-                  <div className="flex items-center gap-2 text-xs font-semibold text-slate-400">
-                    <CheckCircle2 className="h-4 w-4 text-emerald-400" />
+                <div className="rounded-2xl border border-slate-200 dark:border-white/10 bg-slate-50/80 dark:bg-white/5 p-3.5">
+                  <div className="flex items-center gap-2 text-xs font-semibold text-slate-600 dark:text-slate-400">
+                    <CheckCircle2 className="h-4 w-4 text-emerald-500 dark:text-emerald-400" />
                     <span>Çözülen Soru</span>
                   </div>
-                  <div className="mt-2 text-2xl font-extrabold text-white">{solvedQuestions} Soru</div>
-                  <span className="text-[11px] text-emerald-400 font-semibold">%86 Ortalama Başarı</span>
+                  <div className="mt-2 text-2xl font-extrabold text-slate-900 dark:text-white">{solvedQuestions} Soru</div>
+                  <span className="text-[11px] text-emerald-600 dark:text-emerald-400 font-semibold">%86 Ortalama Başarı</span>
                 </div>
 
-                <div className="rounded-2xl border border-white/10 bg-white/5 p-3.5">
-                  <div className="flex items-center gap-2 text-xs font-semibold text-slate-400">
-                    <Flame className="h-4 w-4 text-orange-400" />
+                <div className="rounded-2xl border border-slate-200 dark:border-white/10 bg-slate-50/80 dark:bg-white/5 p-3.5">
+                  <div className="flex items-center gap-2 text-xs font-semibold text-slate-600 dark:text-slate-400">
+                    <Flame className="h-4 w-4 text-orange-500 dark:text-orange-400" />
                     <span>Çalışma Serisi</span>
                   </div>
-                  <div className="mt-2 text-2xl font-extrabold text-white">{streak} Gün</div>
-                  <span className="text-[11px] text-orange-300 font-semibold">Kesintisiz İstikrar</span>
+                  <div className="mt-2 text-2xl font-extrabold text-slate-900 dark:text-white">{streak} Gün</div>
+                  <span className="text-[11px] text-orange-600 dark:text-orange-300 font-semibold">Kesintisiz İstikrar</span>
                 </div>
 
-                <div className="rounded-2xl border border-white/10 bg-white/5 p-3.5">
-                  <div className="flex items-center gap-2 text-xs font-semibold text-slate-400">
-                    <TrendingUp className="h-4 w-4 text-purple-400" />
+                <div className="rounded-2xl border border-slate-200 dark:border-white/10 bg-slate-50/80 dark:bg-white/5 p-3.5">
+                  <div className="flex items-center gap-2 text-xs font-semibold text-slate-600 dark:text-slate-400">
+                    <TrendingUp className="h-4 w-4 text-purple-500 dark:text-purple-400" />
                     <span>Aylık Seviye</span>
                   </div>
-                  <div className="mt-2 text-2xl font-extrabold text-white">İleri Düzey</div>
-                  <span className="text-[11px] text-purple-300 font-semibold">LGS Hedef Yolunda</span>
+                  <div className="mt-2 text-2xl font-extrabold text-slate-900 dark:text-white">İleri Düzey</div>
+                  <span className="text-[11px] text-purple-600 dark:text-purple-300 font-semibold">LGS Hedef Yolunda</span>
                 </div>
               </div>
 
               {/* Kazanım & Konu Not Çizelgesi */}
-              <div className="rounded-2xl border border-white/10 bg-white/5 p-4 sm:p-5">
-                <div className="flex items-center justify-between border-b border-white/10 pb-3 mb-3">
-                  <h3 className="font-bold text-sm text-white flex items-center gap-2">
+              <div className="rounded-2xl border border-slate-200 dark:border-white/10 bg-slate-50/80 dark:bg-white/5 p-4 sm:p-5">
+                <div className="flex items-center justify-between border-b border-slate-200 dark:border-white/10 pb-3 mb-3">
+                  <h3 className="font-bold text-sm text-slate-900 dark:text-white flex items-center gap-2">
                     <BookOpen className="h-4 w-4 text-brand-primary-soft" />
                     <span>Aylık Matematik Kazanım Başarı Çizelgesi</span>
                   </h3>
-                  <span className="text-xs text-slate-400">Öğrenci Not Skalası</span>
+                  <span className="text-xs text-slate-500 dark:text-slate-400">Öğrenci Not Skalası</span>
                 </div>
 
-                <div className="divide-y divide-white/5">
+                <div className="divide-y divide-slate-100 dark:divide-white/5">
                   {topicGrades.map((t, idx) => (
                     <div key={idx} className="flex items-center justify-between py-2.5 text-xs">
-                      <div className="font-semibold text-slate-200">{t.topic}</div>
+                      <div className="font-semibold text-slate-800 dark:text-slate-200">{t.topic}</div>
                       <div className="flex items-center gap-3">
-                        <div className="w-28 sm:w-36 bg-slate-800 rounded-full h-2 overflow-hidden border border-white/10">
+                        <div className="w-28 sm:w-36 bg-slate-200 dark:bg-slate-800 rounded-full h-2 overflow-hidden border border-slate-300 dark:border-white/10">
                           <div
                             className="h-full bg-gradient-to-r from-indigo-500 to-emerald-400 rounded-full"
                             style={{ width: `${t.score}%` }}
                           />
                         </div>
-                        <span className="font-mono font-bold text-amber-300 w-8 text-right">%{t.score}</span>
-                        <span className="rounded px-2 py-0.5 text-[10px] font-bold bg-white/10 text-emerald-300 w-16 text-center">
+                        <span className="font-mono font-bold text-amber-600 dark:text-amber-300 w-8 text-right">%{t.score}</span>
+                        <span className="rounded px-2 py-0.5 text-[10px] font-bold bg-slate-200/80 dark:bg-white/10 text-emerald-700 dark:text-emerald-300 w-16 text-center">
                           {t.status}
                         </span>
                       </div>
@@ -264,16 +264,16 @@ export function MonthlyReportCardModal({
               </div>
 
               {/* Uğur Hoca Pedagojik Değerlendirme Görüşü */}
-              <div className="rounded-2xl border border-indigo-500/30 bg-indigo-950/30 p-4 sm:p-5 flex items-start gap-3.5 text-xs leading-relaxed text-indigo-100">
-                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-indigo-500/20 text-indigo-300">
-                  <Star className="h-5 w-5 fill-indigo-300 text-indigo-300" />
+              <div className="rounded-2xl border border-indigo-200 dark:border-indigo-500/30 bg-indigo-50/70 dark:bg-indigo-950/30 p-4 sm:p-5 flex items-start gap-3.5 text-xs leading-relaxed text-indigo-950 dark:text-indigo-100">
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-indigo-100 dark:bg-indigo-500/20 text-indigo-600 dark:text-indigo-300">
+                  <Star className="h-5 w-5 fill-indigo-600 dark:fill-indigo-300 text-indigo-600 dark:text-indigo-300" />
                 </div>
                 <div className="space-y-1">
-                  <div className="font-bold text-sm text-white">Uğur Hoca'nın Öğrenci Gelişim Notu:</div>
-                  <p className="text-slate-300">
+                  <div className="font-bold text-sm text-slate-900 dark:text-white">Uğur Hoca'nın Öğrenci Gelişim Notu:</div>
+                  <p className="text-slate-700 dark:text-slate-300">
                     Sevgili {studentName}, bu ay gösterdiğin düzenli çalışma temposu ve yeni nesil soru analizlerindeki titizliğin takdire şayan. Problem çözme adımlarını karalama tahtasında planlayarak işlem hatası oranını belirgin şekilde azalttın. Gelecek ay özellikle geometri sorularında süre yönetimini pekiştirerek başarını zirveye taşıyacağız.
                   </p>
-                  <div className="pt-2 text-[11px] font-bold text-indigo-300">
+                  <div className="pt-2 text-[11px] font-bold text-indigo-700 dark:text-indigo-300">
                     Uğur Hoca — Matematik Eğitim Koordinatörü
                   </div>
                 </div>
@@ -283,9 +283,9 @@ export function MonthlyReportCardModal({
 
           {/* TAB 2: RESMİ ONUR & BAŞARI BELGESİ */}
           {activeTab === 'certificate' && (
-            <div className="relative rounded-3xl border-4 border-amber-500/50 bg-gradient-to-b from-slate-900 via-slate-950 to-slate-900 p-8 sm:p-12 text-center shadow-2xl overflow-hidden">
+            <div className="relative rounded-3xl border-4 border-amber-500/50 bg-gradient-to-b from-amber-50/50 via-white to-amber-50/30 dark:from-slate-900 dark:via-slate-950 dark:to-slate-900 p-8 sm:p-12 text-center shadow-2xl overflow-hidden">
               {/* Belge Dekoratif Çerçevesi */}
-              <div className="absolute inset-2 rounded-2xl border border-amber-500/20 pointer-events-none" />
+              <div className="absolute inset-2 rounded-2xl border border-amber-500/30 dark:border-amber-500/20 pointer-events-none" />
 
               <div className="relative z-10 space-y-6">
                 <div className="flex justify-center">
@@ -295,30 +295,30 @@ export function MonthlyReportCardModal({
                 </div>
 
                 <div>
-                  <div className="text-xs uppercase tracking-[0.25em] font-extrabold text-amber-400">
+                  <div className="text-xs uppercase tracking-[0.25em] font-extrabold text-amber-600 dark:text-amber-400">
                     Uğur Hoca Matematik Platformu
                   </div>
-                  <h1 className="mt-2 font-display text-2xl sm:text-4xl font-black text-white tracking-tight">
+                  <h1 className="mt-2 font-display text-2xl sm:text-4xl font-black text-slate-900 dark:text-white tracking-tight">
                     MATEMATİK ÜSTÜN GELİŞİM & BAŞARI BELGESİ
                   </h1>
-                  <p className="mt-1 text-xs text-slate-400">Dönem: {selectedMonth}</p>
+                  <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">Dönem: {selectedMonth}</p>
                 </div>
 
-                <div className="my-6 max-w-xl mx-auto border-y border-white/10 py-6 text-sm text-slate-200 leading-relaxed">
-                  Bu belge, <span className="font-black text-white text-lg underline decoration-amber-400">{studentName}</span> isimli öğrencimizin
+                <div className="my-6 max-w-xl mx-auto border-y border-slate-200 dark:border-white/10 py-6 text-sm text-slate-700 dark:text-slate-200 leading-relaxed">
+                  Bu belge, <span className="font-black text-slate-900 dark:text-white text-lg underline decoration-amber-400">{studentName}</span> isimli öğrencimizin
                   matematik derslerindeki üstün devamlılığı, {totalHours} saatlik disiplinli çalışma performansı ve hedeflerine ulaşmadaki kararlılığı vesilesiyle takdim edilmiştir.
                 </div>
 
                 <div className="flex flex-col sm:flex-row items-center justify-between max-w-lg mx-auto pt-4 gap-6">
                   <div className="text-left">
                     <div className="text-[11px] text-slate-500 font-semibold">Tarih</div>
-                    <div className="text-xs font-bold text-slate-300">{currentDateStr}</div>
+                    <div className="text-xs font-bold text-slate-800 dark:text-slate-300">{currentDateStr}</div>
                   </div>
 
                   <div className="text-right">
-                    <div className="text-xs font-bold text-amber-400 italic">Uğur Hoca</div>
-                    <div className="text-[11px] text-slate-400">Matematik Öğretmeni & Rehber</div>
-                    <div className="text-[10px] text-emerald-400 font-bold">✓ Sistem Tarafından Onaylandı</div>
+                    <div className="text-xs font-bold text-amber-600 dark:text-amber-400 italic">Uğur Hoca</div>
+                    <div className="text-[11px] text-slate-500 dark:text-slate-400">Matematik Öğretmeni & Rehber</div>
+                    <div className="text-[10px] text-emerald-600 dark:text-emerald-400 font-bold">✓ Sistem Tarafından Onaylandı</div>
                   </div>
                 </div>
               </div>

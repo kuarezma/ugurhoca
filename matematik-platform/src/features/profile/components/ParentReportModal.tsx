@@ -127,19 +127,19 @@ export default function ParentReportModal({
           role="dialog"
           aria-modal="true"
           aria-labelledby={titleId}
-          className="relative flex max-h-[92vh] w-full max-w-2xl flex-col overflow-hidden rounded-3xl border border-white/10 bg-slate-900 shadow-2xl"
+          className="relative flex max-h-[92vh] w-full max-w-2xl flex-col overflow-hidden rounded-3xl border border-slate-200 dark:border-white/10 bg-white dark:bg-slate-900 shadow-2xl"
         >
           {/* Header */}
-          <div className="flex items-center justify-between border-b border-white/10 px-6 py-4 bg-slate-950/60">
+          <div className="flex items-center justify-between border-b border-slate-200 dark:border-white/10 px-6 py-4 bg-slate-50 dark:bg-slate-950/60">
             <div className="flex items-center gap-3">
               <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-600 text-white shadow-md">
                 <FileSpreadsheet className="h-5 w-5" />
               </div>
               <div>
-                <h2 id={titleId} className="text-base sm:text-lg font-bold text-white">
+                <h2 id={titleId} className="text-base sm:text-lg font-bold text-slate-900 dark:text-white">
                   Haftalık Gelişim Raporu & Karne
                 </h2>
-                <p className="text-xs text-slate-400">
+                <p className="text-xs text-slate-500 dark:text-slate-400">
                   Öğrencinin haftalık başarı karnesini WhatsApp ile paylaş veya PDF indir.
                 </p>
               </div>
@@ -147,7 +147,7 @@ export default function ParentReportModal({
             <button
               type="button"
               onClick={onClose}
-              className="rounded-full p-2 text-slate-400 hover:bg-white/10 hover:text-white transition-colors"
+              className="rounded-full p-2 text-slate-400 hover:bg-slate-100 dark:hover:bg-white/10 hover:text-slate-900 dark:hover:text-white transition-colors"
               aria-label="Kapat"
             >
               <X className="h-5 w-5" />
@@ -159,72 +159,72 @@ export default function ParentReportModal({
             {/* Printable Preview Card */}
             <div
               id="parent-report-card"
-              className="rounded-3xl border border-emerald-500/20 bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 p-6 sm:p-8 text-white shadow-xl"
+              className="rounded-3xl border border-emerald-500/30 bg-gradient-to-br from-emerald-50/50 via-white to-teal-50/40 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 p-6 sm:p-8 text-slate-900 dark:text-white shadow-xl"
             >
               {/* Report Header */}
-              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-white/10 pb-5">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-slate-200 dark:border-white/10 pb-5">
                 <div>
-                  <div className="inline-flex items-center gap-1.5 rounded-full bg-emerald-500/20 px-3 py-1 text-xs font-bold text-emerald-300 mb-2">
+                  <div className="inline-flex items-center gap-1.5 rounded-full bg-emerald-500/10 dark:bg-emerald-500/20 px-3 py-1 text-xs font-bold text-emerald-700 dark:text-emerald-300 mb-2">
                     <Sparkles className="h-3.5 w-3.5" />
                     Uğur Hoca Matematik
                   </div>
-                  <h3 className="text-xl sm:text-2xl font-black tracking-tight text-white">
+                  <h3 className="text-xl sm:text-2xl font-black tracking-tight text-slate-900 dark:text-white">
                     Haftalık Gelişim Karnesi
                   </h3>
-                  <p className="text-xs text-slate-400 mt-0.5">{todayStr}</p>
+                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">{todayStr}</p>
                 </div>
                 <div className="text-left sm:text-right">
-                  <p className="text-base sm:text-lg font-bold text-white">{studentName}</p>
-                  <p className="text-xs font-semibold text-emerald-400">{studentGrade}. Sınıf Öğrencisi</p>
+                  <p className="text-base sm:text-lg font-bold text-slate-900 dark:text-white">{studentName}</p>
+                  <p className="text-xs font-semibold text-emerald-600 dark:text-emerald-400">{studentGrade}. Sınıf Öğrencisi</p>
                 </div>
               </div>
 
               {/* Metrics Grid */}
               <div className="grid grid-cols-2 gap-3 sm:gap-4 my-6">
-                <div className="rounded-2xl border border-white/10 bg-white/5 p-4 text-center">
-                  <Target className="h-5 w-5 text-emerald-400 mx-auto mb-1.5" />
-                  <p className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Hedef Tamamlama</p>
-                  <p className="text-2xl font-black text-emerald-400">%{progressPercent}</p>
+                <div className="rounded-2xl border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-white/5 p-4 text-center">
+                  <Target className="h-5 w-5 text-emerald-600 dark:text-emerald-400 mx-auto mb-1.5" />
+                  <p className="text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">Hedef Tamamlama</p>
+                  <p className="text-2xl font-black text-emerald-600 dark:text-emerald-400">%{progressPercent}</p>
                 </div>
-                <div className="rounded-2xl border border-white/10 bg-white/5 p-4 text-center">
-                  <Flame className="h-5 w-5 text-amber-400 mx-auto mb-1.5" />
-                  <p className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Çalışma Serisi</p>
-                  <p className="text-2xl font-black text-amber-400">{streakCount} Gün</p>
+                <div className="rounded-2xl border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-white/5 p-4 text-center">
+                  <Flame className="h-5 w-5 text-amber-600 dark:text-amber-400 mx-auto mb-1.5" />
+                  <p className="text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">Çalışma Serisi</p>
+                  <p className="text-2xl font-black text-amber-600 dark:text-amber-400">{streakCount} Gün</p>
                 </div>
-                <div className="rounded-2xl border border-white/10 bg-white/5 p-4 text-center">
-                  <GraduationCap className="h-5 w-5 text-cyan-400 mx-auto mb-1.5" />
-                  <p className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Çözülen Test</p>
-                  <p className="text-2xl font-black text-cyan-400">{totalQuizzesSolved}</p>
+                <div className="rounded-2xl border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-white/5 p-4 text-center">
+                  <GraduationCap className="h-5 w-5 text-cyan-600 dark:text-cyan-400 mx-auto mb-1.5" />
+                  <p className="text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">Çözülen Test</p>
+                  <p className="text-2xl font-black text-cyan-600 dark:text-cyan-400">{totalQuizzesSolved}</p>
                 </div>
-                <div className="rounded-2xl border border-white/10 bg-white/5 p-4 text-center">
-                  <Award className="h-5 w-5 text-purple-400 mx-auto mb-1.5" />
-                  <p className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Ortalama Başarı</p>
-                  <p className="text-2xl font-black text-purple-400">{averageScore !== null ? `%${averageScore}` : 'Düzenli'}</p>
+                <div className="rounded-2xl border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-white/5 p-4 text-center">
+                  <Award className="h-5 w-5 text-purple-600 dark:text-purple-400 mx-auto mb-1.5" />
+                  <p className="text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">Ortalama Başarı</p>
+                  <p className="text-2xl font-black text-purple-600 dark:text-purple-400">{averageScore !== null ? `%${averageScore}` : 'Düzenli'}</p>
                 </div>
               </div>
 
               {/* Topic Highlights */}
               {(strongTopic || focusTopic) && (
-                <div className="rounded-2xl border border-white/5 bg-white/[0.03] p-4 mb-5 space-y-2 text-xs">
+                <div className="rounded-2xl border border-slate-200 dark:border-white/5 bg-slate-50/70 dark:bg-white/[0.03] p-4 mb-5 space-y-2 text-xs">
                   {strongTopic && (
                     <div className="flex items-center justify-between">
-                      <span className="text-slate-400">💪 En Başarılı Konu:</span>
-                      <span className="font-bold text-emerald-300">{strongTopic}</span>
+                      <span className="text-slate-500 dark:text-slate-400">💪 En Başarılı Konu:</span>
+                      <span className="font-bold text-emerald-600 dark:text-emerald-300">{strongTopic}</span>
                     </div>
                   )}
                   {focusTopic && (
                     <div className="flex items-center justify-between">
-                      <span className="text-slate-400">🎯 Pekiştirilecek Alan:</span>
-                      <span className="font-bold text-amber-300">{focusTopic}</span>
+                      <span className="text-slate-500 dark:text-slate-400">🎯 Pekiştirilecek Alan:</span>
+                      <span className="font-bold text-amber-600 dark:text-amber-300">{focusTopic}</span>
                     </div>
                   )}
                 </div>
               )}
 
               {/* Teacher Note */}
-              <div className="rounded-2xl border border-emerald-500/20 bg-emerald-500/10 p-4">
-                <p className="text-xs font-semibold text-emerald-200 leading-relaxed">
-                  💬 <strong className="text-white font-bold">Öğretmen Notu:</strong> Öğrencimiz bu hafta gösterdiği istikrarlı çalışma disiplini ve gayreti ile tebrikleri hak ediyor. Başarılarının devamını dilerim!
+              <div className="rounded-2xl border border-emerald-500/20 bg-emerald-50 dark:bg-emerald-500/10 p-4">
+                <p className="text-xs font-semibold text-emerald-900 dark:text-emerald-200 leading-relaxed">
+                  💬 <strong className="text-slate-900 dark:text-white font-bold">Öğretmen Notu:</strong> Öğrencimiz bu hafta gösterdiği istikrarlı çalışma disiplini ve gayreti ile tebrikleri hak ediyor. Başarılarının devamını dilerim!
                 </p>
               </div>
             </div>
@@ -243,9 +243,9 @@ export default function ParentReportModal({
               <button
                 type="button"
                 onClick={handleCopy}
-                className="flex items-center justify-center gap-2 rounded-2xl border border-white/10 bg-white/5 hover:bg-white/10 px-4 py-3 text-sm font-semibold text-slate-200 transition-all active:scale-95"
+                className="flex items-center justify-center gap-2 rounded-2xl border border-slate-200 dark:border-white/10 bg-slate-50 hover:bg-slate-100 dark:bg-white/5 dark:hover:bg-white/10 px-4 py-3 text-sm font-semibold text-slate-700 dark:text-slate-200 transition-all active:scale-95"
               >
-                {copied ? <Check className="h-4 w-4 text-emerald-400" /> : <Copy className="h-4 w-4" />}
+                {copied ? <Check className="h-4 w-4 text-emerald-500 dark:text-emerald-400" /> : <Copy className="h-4 w-4" />}
                 <span>{copied ? 'Kopyalandı!' : 'Metni Kopyala'}</span>
               </button>
 
@@ -253,7 +253,7 @@ export default function ParentReportModal({
                 type="button"
                 onClick={handleDownloadPdf}
                 disabled={isExportingPdf}
-                className="flex items-center justify-center gap-2 rounded-2xl border border-purple-500/30 bg-purple-500/15 hover:bg-purple-500/25 px-4 py-3 text-sm font-semibold text-purple-200 transition-all active:scale-95 disabled:opacity-50"
+                className="flex items-center justify-center gap-2 rounded-2xl border border-purple-500/30 bg-purple-50 hover:bg-purple-100 text-purple-700 dark:bg-purple-500/15 dark:hover:bg-purple-500/25 dark:text-purple-200 px-4 py-3 text-sm font-semibold transition-all active:scale-95 disabled:opacity-50"
               >
                 <Download className="h-4 w-4" />
                 <span>{isExportingPdf ? 'Hazırlanıyor...' : 'A4 PDF İndir'}</span>

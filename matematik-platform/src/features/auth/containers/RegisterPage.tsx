@@ -188,15 +188,15 @@ export default function RegisterPage() {
       />
 
       <div className="mx-auto flex min-h-screen max-w-6xl flex-col items-stretch gap-10 px-6 py-10 lg:flex-row lg:items-center">
-        <aside className="relative hidden flex-1 items-center justify-center overflow-hidden rounded-[2rem] border border-slate-800/80 bg-gradient-to-br from-slate-950 via-indigo-950 to-purple-950 p-10 text-white shadow-2xl lg:flex">
-          <div aria-hidden="true" className="absolute -right-16 -top-16 h-72 w-72 rounded-full bg-brand-secondary/30 blur-3xl" />
-          <div aria-hidden="true" className="absolute -bottom-20 -left-20 h-80 w-80 rounded-full bg-brand-primary/30 blur-3xl" />
+        <aside className="relative hidden flex-1 items-center justify-center overflow-hidden rounded-[2rem] border border-slate-200 dark:border-slate-800/80 bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 dark:from-slate-950 dark:via-indigo-950 dark:to-purple-950 p-10 text-slate-900 dark:text-white shadow-2xl lg:flex">
+          <div aria-hidden="true" className="absolute -right-16 -top-16 h-72 w-72 rounded-full bg-brand-secondary/20 dark:bg-brand-secondary/30 blur-3xl" />
+          <div aria-hidden="true" className="absolute -bottom-20 -left-20 h-80 w-80 rounded-full bg-brand-primary/20 dark:bg-brand-primary/30 blur-3xl" />
           <div className="relative max-w-sm text-center">
             <Mascot pose="study" size={200} className="mx-auto animate-float-y" />
-            <p className="mt-6 font-display text-2xl font-bold">
+            <p className="mt-6 font-display text-2xl font-bold text-slate-900 dark:text-white">
               Birlikte matematiği parçalayacağız!
             </p>
-            <ul className="mx-auto mt-5 space-y-2 text-left text-sm text-slate-200">
+            <ul className="mx-auto mt-5 space-y-2 text-left text-sm text-slate-700 dark:text-slate-200">
               <li className="flex items-start gap-2"><span>✨</span> Seviyene özel içerikler</li>
               <li className="flex items-start gap-2"><span>🏆</span> Rozetler ve XP ile motivasyon</li>
               <li className="flex items-start gap-2"><span>📊</span> İlerlemen gerçek zamanlı grafiklerde</li>
@@ -320,7 +320,7 @@ export default function RegisterPage() {
               {error && (
                 <div
                   role="alert"
-                  className="animate-fade-in rounded-xl border border-red-500/40 bg-red-500/15 px-4 py-3 text-sm font-medium text-red-300"
+                  className="animate-fade-in rounded-xl border border-red-500/40 bg-red-500/15 px-4 py-3 text-sm font-medium text-red-700 dark:text-red-300"
                 >
                   {error}
                 </div>

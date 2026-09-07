@@ -71,7 +71,7 @@ export function QuizResultsView({
 
   return (
     <div className="max-w-4xl mx-auto">
-      <div className="bg-slate-900/60 border border-slate-800 backdrop-blur-xl rounded-3xl p-8 sm:p-12 text-center shadow-2xl relative overflow-hidden">
+      <div className="bg-white/95 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 backdrop-blur-xl rounded-3xl p-8 sm:p-12 text-center shadow-2xl relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-b from-purple-500/10 via-transparent to-transparent pointer-events-none" />
 
         <div className="relative z-10 flex flex-col items-center">
@@ -79,36 +79,36 @@ export function QuizResultsView({
             <Mascot pose={mascotPose} size={140} ariaLabel="Test sonucu maskot tepkisi" />
           </div>
 
-          <span className="inline-block px-3 py-1 rounded-full bg-purple-500/10 border border-purple-500/20 text-purple-300 text-xs font-bold uppercase tracking-wider mb-2">
+          <span className="inline-block px-3 py-1 rounded-full bg-purple-500/10 border border-purple-500/20 text-purple-700 dark:text-purple-300 text-xs font-bold uppercase tracking-wider mb-2">
             Test Tamamlandı!
           </span>
 
-          <h2 className="text-3xl sm:text-4xl font-black text-white mb-2 tracking-tight">
+          <h2 className="text-3xl sm:text-4xl font-black text-slate-900 dark:text-white mb-2 tracking-tight">
             {quiz?.title}
           </h2>
 
           <div
             className={`text-6xl sm:text-7xl font-black mb-6 tracking-tight bg-gradient-to-r bg-clip-text text-transparent ${
               score >= 70
-                ? 'from-green-400 to-emerald-400'
+                ? 'from-green-500 to-emerald-500 dark:from-green-400 dark:to-emerald-400'
                 : score >= 40
-                ? 'from-amber-400 to-orange-400'
-                : 'from-red-400 to-pink-400'
+                ? 'from-amber-500 to-orange-500 dark:from-amber-400 dark:to-orange-400'
+                : 'from-red-500 to-pink-500 dark:from-red-400 dark:to-pink-400'
             }`}
           >
             {score}%
           </div>
 
           <div className="grid grid-cols-2 gap-4 mb-8 w-full max-w-sm">
-            <div className="bg-emerald-500/10 border border-emerald-500/20 rounded-2xl p-4">
-              <div className="text-4xl font-black text-emerald-400 mb-1">{correctCount}</div>
-              <div className="text-emerald-500/80 font-bold uppercase text-xs tracking-wider">
+            <div className="bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-200 dark:border-emerald-500/20 rounded-2xl p-4">
+              <div className="text-4xl font-black text-emerald-600 dark:text-emerald-400 mb-1">{correctCount}</div>
+              <div className="text-emerald-700 dark:text-emerald-500/80 font-bold uppercase text-xs tracking-wider">
                 Doğru
               </div>
             </div>
-            <div className="bg-red-500/10 border border-red-500/20 rounded-2xl p-4">
-              <div className="text-4xl font-black text-red-400 mb-1">{wrongCount}</div>
-              <div className="text-red-500/80 font-bold uppercase text-xs tracking-wider">
+            <div className="bg-rose-50 dark:bg-red-500/10 border border-rose-200 dark:border-red-500/20 rounded-2xl p-4">
+              <div className="text-4xl font-black text-rose-600 dark:text-red-400 mb-1">{wrongCount}</div>
+              <div className="text-rose-700 dark:text-red-500/80 font-bold uppercase text-xs tracking-wider">
                 Yanlış
               </div>
             </div>
@@ -136,29 +136,29 @@ export function QuizResultsView({
             ).length;
 
             return (
-              <div className="mb-8 w-full p-4 sm:p-5 rounded-2xl bg-indigo-950/40 border border-indigo-500/30 text-left">
+              <div className="mb-8 w-full p-4 sm:p-5 rounded-2xl bg-indigo-50 dark:bg-indigo-950/40 border border-indigo-200 dark:border-indigo-500/30 text-left">
                 <div className="flex items-center gap-2 mb-3">
-                  <Sparkles className="w-4 h-4 text-indigo-400" />
-                  <h4 className="text-xs sm:text-sm font-bold text-white uppercase tracking-wider">
+                  <Sparkles className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
+                  <h4 className="text-xs sm:text-sm font-bold text-slate-900 dark:text-white uppercase tracking-wider">
                     Metakognitif Analiz (Öz Güven & Tahmin Karnesi)
                   </h4>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
-                  <div className="p-3 rounded-xl bg-rose-500/10 border border-rose-500/20">
-                    <span className="font-bold text-rose-300 block">
+                  <div className="p-3 rounded-xl bg-white dark:bg-rose-500/10 border border-rose-200 dark:border-rose-500/20 shadow-xs">
+                    <span className="font-bold text-rose-700 dark:text-rose-300 block">
                       🚨 Emin Olup Yanlış Yapılan: {sureWrongCount} Soru
                     </span>
-                    <p className="text-slate-300 mt-1 leading-relaxed">
+                    <p className="text-slate-600 dark:text-slate-300 mt-1 leading-relaxed">
                       {sureWrongCount > 0
                         ? 'Bu sorularda güçlü bir kavram yanılgısı tespit edildi. Hata defterinden çözüm adımlarını özellikle incele.'
                         : 'Harika! Kendinden emin olduğun hiçbir soruda yanılgıya düşmedin.'}
                     </p>
                   </div>
-                  <div className="p-3 rounded-xl bg-amber-500/10 border border-amber-500/20">
-                    <span className="font-bold text-amber-300 block">
+                  <div className="p-3 rounded-xl bg-white dark:bg-amber-500/10 border border-amber-200 dark:border-amber-500/20 shadow-xs">
+                    <span className="font-bold text-amber-700 dark:text-amber-300 block">
                       🎲 Tahmin Edip Doğru Çıkan: {guessCorrectCount} Soru
                     </span>
-                    <p className="text-slate-300 mt-1 leading-relaxed">
+                    <p className="text-slate-600 dark:text-slate-300 mt-1 leading-relaxed">
                       {guessCorrectCount > 0
                         ? 'Şans faktörüyle tutturulmuş olabilir. Konuyu kalıcı kılmak için soru çözümünü gözden geçir.'
                         : 'Tahmin ettiğin soru bulunmuyor.'}
@@ -170,9 +170,9 @@ export function QuizResultsView({
           })()}
 
           {/* Soru Soru Sınav Analizi */}
-          <div className="text-left bg-slate-800/30 border border-slate-700/50 rounded-2xl p-6 mb-8 max-h-[400px] overflow-y-auto custom-scrollbar w-full">
-            <h3 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
-              <Target className="w-5 h-5 text-purple-400" /> Sınav Analizi
+          <div className="text-left bg-slate-50 dark:bg-slate-800/30 border border-slate-200 dark:border-slate-700/50 rounded-2xl p-6 mb-8 max-h-[400px] overflow-y-auto custom-scrollbar w-full">
+            <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
+              <Target className="w-5 h-5 text-purple-600 dark:text-purple-400" /> Sınav Analizi
             </h3>
             <div className="space-y-4">
               {quizQuestions.map((q, index) => {
@@ -186,8 +186,8 @@ export function QuizResultsView({
                     key={index}
                     className={`p-4 rounded-xl border ${
                       isCorrect
-                        ? 'bg-emerald-500/5 border-emerald-500/20'
-                        : 'bg-red-500/5 border-red-500/20'
+                        ? 'bg-emerald-50/70 border-emerald-200 dark:bg-emerald-500/5 dark:border-emerald-500/20'
+                        : 'bg-rose-50/70 border-rose-200 dark:bg-red-500/5 dark:border-red-500/20'
                     }`}
                   >
                     <div className="flex items-start justify-between gap-4 mb-2">
@@ -195,7 +195,7 @@ export function QuizResultsView({
                         <MathText
                           as="p"
                           className={`font-semibold text-sm ${
-                            isCorrect ? 'text-emerald-300' : 'text-red-300'
+                            isCorrect ? 'text-emerald-800 dark:text-emerald-300' : 'text-rose-800 dark:text-red-300'
                           }`}
                         >
                           {`${index + 1}. ${q.question}`}
@@ -207,12 +207,12 @@ export function QuizResultsView({
                             <span
                               className={`inline-flex items-center gap-1 rounded-md px-2 py-0.5 text-[11px] font-semibold border ${
                                 timeSpent > 150
-                                  ? 'bg-rose-500/15 border-rose-500/30 text-rose-300'
+                                  ? 'bg-rose-500/15 border-rose-500/30 text-rose-700 dark:text-rose-300'
                                   : timeSpent > 110
-                                  ? 'bg-amber-500/15 border-amber-500/30 text-amber-300'
+                                  ? 'bg-amber-500/15 border-amber-500/30 text-amber-700 dark:text-amber-300'
                                   : timeSpent >= 45
-                                  ? 'bg-cyan-500/15 border-cyan-500/30 text-cyan-300'
-                                  : 'bg-emerald-500/15 border-emerald-500/30 text-emerald-300'
+                                  ? 'bg-cyan-500/15 border-cyan-500/30 text-cyan-700 dark:text-cyan-300'
+                                  : 'bg-emerald-500/15 border-emerald-500/30 text-emerald-700 dark:text-emerald-300'
                               }`}
                             >
                               <Clock className="h-3 w-3" />
@@ -231,22 +231,22 @@ export function QuizResultsView({
                       </div>
 
                       {isCorrect ? (
-                        <CheckCircle2 className="w-5 h-5 text-emerald-400 shrink-0" />
+                        <CheckCircle2 className="w-5 h-5 text-emerald-600 dark:text-emerald-400 shrink-0" />
                       ) : (
-                        <XCircle className="w-5 h-5 text-red-400 shrink-0" />
+                        <XCircle className="w-5 h-5 text-rose-600 dark:text-red-400 shrink-0" />
                       )}
                     </div>
 
                     <div className="space-y-2 mt-3">
-                      <div className="flex items-center gap-2 text-sm text-slate-300">
-                        <span className="opacity-50 w-20 text-xs uppercase tracking-wider">
+                      <div className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-300">
+                        <span className="opacity-70 w-20 text-xs uppercase tracking-wider">
                           Cevabın:
                         </span>
                         <MathText
                           className={`font-medium px-2 py-0.5 rounded ${
                             isCorrect
-                              ? 'bg-emerald-500/20 text-emerald-200'
-                              : 'bg-red-500/20 text-red-200'
+                              ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-500/20 dark:text-emerald-200'
+                              : 'bg-rose-100 text-rose-800 dark:bg-red-500/20 dark:text-red-200'
                           }`}
                         >
                           {isUnanswered ? 'Boş Bırakıldı' : q.options[userAnswer]}
@@ -254,11 +254,11 @@ export function QuizResultsView({
                       </div>
 
                       {!isCorrect && (
-                        <div className="flex items-center gap-2 text-sm text-slate-300">
-                          <span className="opacity-50 w-20 text-xs uppercase tracking-wider">
+                        <div className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-300">
+                          <span className="opacity-70 w-20 text-xs uppercase tracking-wider">
                             Doğrusu:
                           </span>
-                          <MathText className="font-medium px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-200">
+                          <MathText className="font-medium px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 dark:bg-emerald-500/20 dark:text-emerald-200">
                             {q.options[q.correct_index]}
                           </MathText>
                         </div>
@@ -269,13 +269,13 @@ export function QuizResultsView({
                         !isUnanswered &&
                         userAnswer !== undefined &&
                         q.distractor_explanations?.[userAnswer] && (
-                          <div className="mt-3 p-3 bg-rose-500/10 border border-rose-500/30 rounded-xl text-xs text-rose-200 flex items-start gap-2.5">
-                            <AlertCircle className="w-4 h-4 text-rose-400 shrink-0 mt-0.5" />
+                          <div className="mt-3 p-3 bg-rose-50 border border-rose-200 dark:bg-rose-500/10 dark:border-rose-500/30 rounded-xl text-xs text-rose-900 dark:text-rose-200 flex items-start gap-2.5">
+                            <AlertCircle className="w-4 h-4 text-rose-600 dark:text-rose-400 shrink-0 mt-0.5" />
                             <div>
-                              <span className="font-bold block text-rose-300">
+                              <span className="font-bold block text-rose-800 dark:text-rose-300">
                                 💡 Kavram Yanılgısı Teşhisi ({String.fromCharCode(65 + userAnswer)} Şıkkı):
                               </span>
-                              <p className="mt-0.5 leading-relaxed text-slate-300">
+                              <p className="mt-0.5 leading-relaxed text-slate-700 dark:text-slate-300">
                                 {q.distractor_explanations[userAnswer]}
                               </p>
                             </div>
@@ -283,7 +283,7 @@ export function QuizResultsView({
                         )}
 
                       {q.explanation && (
-                        <div className="mt-3 p-3 bg-slate-900/50 rounded-lg text-xs text-slate-400 flex items-start gap-2">
+                        <div className="mt-3 p-3 bg-slate-100 dark:bg-slate-900/50 rounded-lg text-xs text-slate-700 dark:text-slate-400 flex items-start gap-2">
                           <AlertCircle className="w-4 h-4 text-amber-500 shrink-0 mt-0.5" />
                           <MathText as="p">{q.explanation}</MathText>
                         </div>
@@ -304,7 +304,7 @@ export function QuizResultsView({
                                 }),
                               );
                             }}
-                            className="inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1 text-xs font-semibold bg-indigo-500/15 text-indigo-300 border border-indigo-500/30 hover:bg-indigo-500/25 transition shadow-xs"
+                            className="inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1 text-xs font-semibold bg-indigo-50 text-indigo-700 border border-indigo-200 hover:bg-indigo-100 dark:bg-indigo-500/15 dark:text-indigo-300 dark:border-indigo-500/30 dark:hover:bg-indigo-500/25 transition shadow-xs"
                           >
                             <MessageCircle className="h-3.5 w-3.5" />
                             <span>Bu Soruyu Uğur Hoca'ya Sor</span>
@@ -347,7 +347,7 @@ export function QuizResultsView({
             <button
               type="button"
               onClick={onBackToLobby}
-              className="flex-1 py-4 bg-slate-800 hover:bg-slate-700 text-white font-semibold rounded-xl flex items-center justify-center gap-2 transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]"
+              className="flex-1 py-4 bg-slate-100 hover:bg-slate-200 text-slate-800 dark:bg-slate-800 dark:hover:bg-slate-700 dark:text-white font-semibold rounded-xl flex items-center justify-center gap-2 transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] border border-slate-200 dark:border-transparent"
             >
               <ArrowLeft className="w-5 h-5" />
               Testlere Dön
@@ -359,18 +359,18 @@ export function QuizResultsView({
               type="button"
               onClick={onDownloadPDF}
               disabled={pdfLoading}
-              className="flex items-center justify-center gap-2 py-3 px-4 bg-slate-800/80 hover:bg-slate-700/80 disabled:opacity-50 disabled:cursor-not-allowed text-white text-sm font-semibold rounded-xl border border-slate-700/50 transition"
+              className="flex items-center justify-center gap-2 py-3 px-4 bg-slate-100 hover:bg-slate-200 text-slate-800 dark:bg-slate-800/80 dark:hover:bg-slate-700/80 disabled:opacity-50 disabled:cursor-not-allowed dark:text-white text-sm font-semibold rounded-xl border border-slate-200 dark:border-slate-700/50 transition"
             >
-              <FileDown className="w-4 h-4 text-purple-400" />
+              <FileDown className="w-4 h-4 text-purple-600 dark:text-purple-400" />
               {pdfLoading ? 'PDF Hazırlanıyor...' : 'Sonuç Karnesini İndir (PDF)'}
             </button>
             {onDownloadWord && (
               <button
                 type="button"
                 onClick={onDownloadWord}
-                className="flex items-center justify-center gap-2 py-3 px-4 bg-slate-800/80 hover:bg-slate-700/80 text-white text-sm font-semibold rounded-xl border border-slate-700/50 transition"
+                className="flex items-center justify-center gap-2 py-3 px-4 bg-slate-100 hover:bg-slate-200 text-slate-800 dark:bg-slate-800/80 dark:hover:bg-slate-700/80 dark:text-white text-sm font-semibold rounded-xl border border-slate-200 dark:border-slate-700/50 transition"
               >
-                <FileDown className="w-4 h-4 text-blue-400" />
+                <FileDown className="w-4 h-4 text-blue-600 dark:text-blue-400" />
                 Testi Word (DOCX) İndir
               </button>
             )}
@@ -381,7 +381,7 @@ export function QuizResultsView({
               <button
                 type="button"
                 onClick={onShareResult}
-                className="flex items-center justify-center gap-2 py-3 px-4 bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-300 text-sm font-semibold rounded-xl border border-cyan-500/30 transition"
+                className="flex items-center justify-center gap-2 py-3 px-4 bg-cyan-50 hover:bg-cyan-100 text-cyan-800 dark:bg-cyan-500/10 dark:hover:bg-cyan-500/20 dark:text-cyan-300 text-sm font-semibold rounded-xl border border-cyan-200 dark:border-cyan-500/30 transition"
               >
                 <Share2 className="w-4 h-4" />
                 Sonucu Paylaş
@@ -391,7 +391,7 @@ export function QuizResultsView({
               <button
                 type="button"
                 onClick={onOpenMistakeNotebook}
-                className="flex items-center justify-center gap-2 py-3 px-4 bg-amber-500/10 hover:bg-amber-500/20 text-amber-300 text-sm font-semibold rounded-xl border border-amber-500/30 transition"
+                className="flex items-center justify-center gap-2 py-3 px-4 bg-amber-50 hover:bg-amber-100 text-amber-800 dark:bg-amber-500/10 dark:hover:bg-amber-500/20 dark:text-amber-300 text-sm font-semibold rounded-xl border border-amber-200 dark:border-amber-500/30 transition"
               >
                 <BookOpen className="w-4 h-4" />
                 Hata Defterimi Aç
@@ -401,7 +401,7 @@ export function QuizResultsView({
               <button
                 type="button"
                 onClick={onOpenWorksheet}
-                className="flex items-center justify-center gap-2 py-3 px-4 bg-indigo-500/10 hover:bg-indigo-500/20 text-indigo-300 text-sm font-semibold rounded-xl border border-indigo-500/30 transition"
+                className="flex items-center justify-center gap-2 py-3 px-4 bg-indigo-50 hover:bg-indigo-100 text-indigo-800 dark:bg-indigo-500/10 dark:hover:bg-indigo-500/20 dark:text-indigo-300 text-sm font-semibold rounded-xl border border-indigo-200 dark:border-indigo-500/30 transition"
               >
                 <Printer className="w-4 h-4" />
                 A4 Test Yazdır

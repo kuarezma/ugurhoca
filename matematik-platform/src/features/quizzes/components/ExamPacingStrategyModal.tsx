@@ -238,17 +238,17 @@ export function ExamPacingStrategyModal({ isOpen, onClose }: ExamPacingStrategyM
         {/* İçerik Alanı (Kaydırılabilir) */}
         <div className="flex-1 overflow-y-auto px-5 py-3 space-y-4 [scrollbar-width:thin]">
           {/* Süre Dengesi & İlerleme Çubuğu */}
-          <div className="rounded-2xl border border-white/10 bg-slate-950/40 p-4 space-y-2.5">
+          <div className="rounded-2xl border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-slate-950/40 p-4 space-y-2.5">
             <div className="flex items-center justify-between text-xs">
-              <span className="font-semibold text-slate-300">
+              <span className="font-semibold text-slate-700 dark:text-slate-300">
                 Planlanan Toplam Süre:{' '}
                 <strong
                   className={`text-sm font-mono font-bold ${
                     remainingTime < 0
-                      ? 'text-rose-400'
+                      ? 'text-rose-500 dark:text-rose-400'
                       : remainingTime === 0
-                      ? 'text-emerald-400'
-                      : 'text-amber-400'
+                      ? 'text-emerald-600 dark:text-emerald-400'
+                      : 'text-amber-600 dark:text-amber-400'
                   }`}
                 >
                   {currentTotal} / {maxOfficialTime} Dk
@@ -258,10 +258,10 @@ export function ExamPacingStrategyModal({ isOpen, onClose }: ExamPacingStrategyM
               <span
                 className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
                   remainingTime < 0
-                    ? 'bg-rose-500/20 text-rose-300 border border-rose-500/30'
+                    ? 'bg-rose-500/10 dark:bg-rose-500/20 text-rose-600 dark:text-rose-300 border border-rose-500/30'
                     : remainingTime === 0
-                    ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30'
-                    : 'bg-amber-500/20 text-amber-300 border border-amber-500/30'
+                    ? 'bg-emerald-500/10 dark:bg-emerald-500/20 text-emerald-600 dark:text-emerald-300 border border-emerald-500/30'
+                    : 'bg-amber-500/10 dark:bg-amber-500/20 text-amber-600 dark:text-amber-300 border border-amber-500/30'
                 }`}
               >
                 {remainingTime < 0
@@ -273,7 +273,7 @@ export function ExamPacingStrategyModal({ isOpen, onClose }: ExamPacingStrategyM
             </div>
 
             {/* Renkli Dağılım Çubuğu */}
-            <div className="h-3 w-full rounded-full overflow-hidden bg-slate-800 flex shadow-inner">
+            <div className="h-3 w-full rounded-full overflow-hidden bg-slate-200 dark:bg-slate-800 flex shadow-inner">
               {activeTab === 'lgs' ? (
                 <>
                   <div
@@ -328,17 +328,17 @@ export function ExamPacingStrategyModal({ isOpen, onClose }: ExamPacingStrategyM
           {activeTab === 'lgs' && (
             <div className="space-y-3">
               {/* Matematik */}
-              <div className="rounded-2xl border border-emerald-500/20 bg-emerald-950/20 p-3.5 space-y-2">
+              <div className="rounded-2xl border border-emerald-500/20 bg-emerald-50/60 dark:bg-emerald-950/20 p-3.5 space-y-2">
                 <div className="flex items-center justify-between text-xs">
-                  <div className="flex items-center gap-2 font-bold text-emerald-300">
-                    <span className="h-2.5 w-2.5 rounded-full bg-emerald-400" />
+                  <div className="flex items-center gap-2 font-bold text-emerald-700 dark:text-emerald-300">
+                    <span className="h-2.5 w-2.5 rounded-full bg-emerald-500" />
                     <span>Matematik (20 Soru)</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <span className="font-mono text-xs font-bold text-white bg-slate-900/80 px-2.5 py-1 rounded-lg border border-white/10">
+                    <span className="font-mono text-xs font-bold text-emerald-900 dark:text-white bg-white dark:bg-slate-900/80 px-2.5 py-1 rounded-lg border border-emerald-200 dark:border-white/10 shadow-sm">
                       {lgsPacing.matematik} Dakika
                     </span>
-                    <span className="text-[11px] font-semibold text-emerald-400">
+                    <span className="text-[11px] font-semibold text-emerald-600 dark:text-emerald-400">
                       ~{Math.round(lgsMetrics.matSecPerQ)} sn / soru
                     </span>
                   </div>
@@ -355,25 +355,25 @@ export function ExamPacingStrategyModal({ isOpen, onClose }: ExamPacingStrategyM
                   className="w-full accent-emerald-500 cursor-pointer"
                   aria-label="LGS Matematik süresi (dakika)"
                 />
-                <div className="flex justify-between text-[10px] text-slate-400">
+                <div className="flex justify-between text-[10px] text-slate-500 dark:text-slate-400">
                   <span>Minimum 25 dk (75 sn/soru)</span>
-                  <span className="text-emerald-300 font-medium">Önerilen: 45 dk (135 sn/soru)</span>
+                  <span className="text-emerald-700 dark:text-emerald-300 font-semibold">Önerilen: 45 dk (135 sn/soru)</span>
                   <span>Maksimum 60 dk (180 sn/soru)</span>
                 </div>
               </div>
 
               {/* Fen Bilimleri */}
-              <div className="rounded-2xl border border-cyan-500/20 bg-cyan-950/20 p-3.5 space-y-2">
+              <div className="rounded-2xl border border-cyan-500/20 bg-cyan-50/60 dark:bg-cyan-950/20 p-3.5 space-y-2">
                 <div className="flex items-center justify-between text-xs">
-                  <div className="flex items-center gap-2 font-bold text-cyan-300">
-                    <span className="h-2.5 w-2.5 rounded-full bg-cyan-400" />
+                  <div className="flex items-center gap-2 font-bold text-cyan-700 dark:text-cyan-300">
+                    <span className="h-2.5 w-2.5 rounded-full bg-cyan-500" />
                     <span>Fen Bilimleri (20 Soru)</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <span className="font-mono text-xs font-bold text-white bg-slate-900/80 px-2.5 py-1 rounded-lg border border-white/10">
+                    <span className="font-mono text-xs font-bold text-cyan-900 dark:text-white bg-white dark:bg-slate-900/80 px-2.5 py-1 rounded-lg border border-cyan-200 dark:border-white/10 shadow-sm">
                       {lgsPacing.fen} Dakika
                     </span>
-                    <span className="text-[11px] font-semibold text-cyan-400">
+                    <span className="text-[11px] font-semibold text-cyan-600 dark:text-cyan-400">
                       ~{Math.round(lgsMetrics.fenSecPerQ)} sn / soru
                     </span>
                   </div>
@@ -390,21 +390,21 @@ export function ExamPacingStrategyModal({ isOpen, onClose }: ExamPacingStrategyM
                   className="w-full accent-cyan-500 cursor-pointer"
                   aria-label="LGS Fen Bilimleri süresi (dakika)"
                 />
-                <div className="flex justify-between text-[10px] text-slate-400">
+                <div className="flex justify-between text-[10px] text-slate-500 dark:text-slate-400">
                   <span>Minimum 15 dk (45 sn/soru)</span>
-                  <span className="text-cyan-300 font-medium">Önerilen: 25 dk (75 sn/soru)</span>
+                  <span className="text-cyan-700 dark:text-cyan-300 font-semibold">Önerilen: 25 dk (75 sn/soru)</span>
                   <span>Maksimum 45 dk (135 sn/soru)</span>
                 </div>
               </div>
 
               {/* Turlama ve Kontrol Payı */}
-              <div className="rounded-2xl border border-amber-500/20 bg-amber-950/20 p-3.5 space-y-2">
+              <div className="rounded-2xl border border-amber-500/20 bg-amber-50/60 dark:bg-amber-950/20 p-3.5 space-y-2">
                 <div className="flex items-center justify-between text-xs">
-                  <div className="flex items-center gap-2 font-bold text-amber-300">
-                    <Sparkles className="h-3.5 w-3.5 text-amber-400" />
+                  <div className="flex items-center gap-2 font-bold text-amber-700 dark:text-amber-300">
+                    <Sparkles className="h-3.5 w-3.5 text-amber-500 dark:text-amber-400" />
                     <span>Turlama & Geriye Dönüş Payı</span>
                   </div>
-                  <span className="font-mono text-xs font-bold text-white bg-slate-900/80 px-2.5 py-1 rounded-lg border border-white/10">
+                  <span className="font-mono text-xs font-bold text-amber-900 dark:text-white bg-white dark:bg-slate-900/80 px-2.5 py-1 rounded-lg border border-amber-200 dark:border-white/10 shadow-sm">
                     {lgsPacing.turlama} Dakika
                   </span>
                 </div>
@@ -420,7 +420,7 @@ export function ExamPacingStrategyModal({ isOpen, onClose }: ExamPacingStrategyM
                   className="w-full accent-amber-500 cursor-pointer"
                   aria-label="LGS Turlama süresi (dakika)"
                 />
-                <p className="text-[11px] text-slate-400 leading-relaxed">
+                <p className="text-[11px] text-slate-600 dark:text-slate-400 leading-relaxed">
                   İlk turda boş bıraktığın zor sorulara dönmek ve optik işaretlemeleri son kez kontrol etmek için ayrılan altın rezerv süredir.
                 </p>
               </div>
@@ -431,17 +431,17 @@ export function ExamPacingStrategyModal({ isOpen, onClose }: ExamPacingStrategyM
           {activeTab === 'tyt' && (
             <div className="space-y-3">
               {/* Türkçe */}
-              <div className="rounded-2xl border border-blue-500/20 bg-blue-950/20 p-3.5 space-y-2">
+              <div className="rounded-2xl border border-blue-500/20 bg-blue-50/60 dark:bg-blue-950/20 p-3.5 space-y-2">
                 <div className="flex items-center justify-between text-xs">
-                  <div className="flex items-center gap-2 font-bold text-blue-300">
-                    <span className="h-2.5 w-2.5 rounded-full bg-blue-400" />
+                  <div className="flex items-center gap-2 font-bold text-blue-700 dark:text-blue-300">
+                    <span className="h-2.5 w-2.5 rounded-full bg-blue-500" />
                     <span>Türkçe (40 Soru)</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <span className="font-mono text-xs font-bold text-white bg-slate-900/80 px-2.5 py-1 rounded-lg border border-white/10">
+                    <span className="font-mono text-xs font-bold text-blue-900 dark:text-white bg-white dark:bg-slate-900/80 px-2.5 py-1 rounded-lg border border-blue-200 dark:border-white/10 shadow-sm">
                       {tytPacing.turkce} Dakika
                     </span>
-                    <span className="text-[11px] font-semibold text-blue-400">
+                    <span className="text-[11px] font-semibold text-blue-600 dark:text-blue-400">
                       ~{Math.round(tytMetrics.turkceSec)} sn / soru
                     </span>
                   </div>
@@ -461,17 +461,17 @@ export function ExamPacingStrategyModal({ isOpen, onClose }: ExamPacingStrategyM
               </div>
 
               {/* Temel Matematik */}
-              <div className="rounded-2xl border border-emerald-500/20 bg-emerald-950/20 p-3.5 space-y-2">
+              <div className="rounded-2xl border border-emerald-500/20 bg-emerald-50/60 dark:bg-emerald-950/20 p-3.5 space-y-2">
                 <div className="flex items-center justify-between text-xs">
-                  <div className="flex items-center gap-2 font-bold text-emerald-300">
-                    <span className="h-2.5 w-2.5 rounded-full bg-emerald-400" />
+                  <div className="flex items-center gap-2 font-bold text-emerald-700 dark:text-emerald-300">
+                    <span className="h-2.5 w-2.5 rounded-full bg-emerald-500" />
                     <span>Temel Matematik (40 Soru)</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <span className="font-mono text-xs font-bold text-white bg-slate-900/80 px-2.5 py-1 rounded-lg border border-white/10">
+                    <span className="font-mono text-xs font-bold text-emerald-900 dark:text-white bg-white dark:bg-slate-900/80 px-2.5 py-1 rounded-lg border border-emerald-200 dark:border-white/10 shadow-sm">
                       {tytPacing.matematik} Dakika
                     </span>
-                    <span className="text-[11px] font-semibold text-emerald-400">
+                    <span className="text-[11px] font-semibold text-emerald-600 dark:text-emerald-400">
                       ~{Math.round(tytMetrics.matSec)} sn / soru
                     </span>
                   </div>
@@ -491,17 +491,17 @@ export function ExamPacingStrategyModal({ isOpen, onClose }: ExamPacingStrategyM
               </div>
 
               {/* Fen Bilimleri */}
-              <div className="rounded-2xl border border-cyan-500/20 bg-cyan-950/20 p-3.5 space-y-2">
+              <div className="rounded-2xl border border-cyan-500/20 bg-cyan-50/60 dark:bg-cyan-950/20 p-3.5 space-y-2">
                 <div className="flex items-center justify-between text-xs">
-                  <div className="flex items-center gap-2 font-bold text-cyan-300">
-                    <span className="h-2.5 w-2.5 rounded-full bg-cyan-400" />
+                  <div className="flex items-center gap-2 font-bold text-cyan-700 dark:text-cyan-300">
+                    <span className="h-2.5 w-2.5 rounded-full bg-cyan-500" />
                     <span>Fen Bilimleri (20 Soru)</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <span className="font-mono text-xs font-bold text-white bg-slate-900/80 px-2.5 py-1 rounded-lg border border-white/10">
+                    <span className="font-mono text-xs font-bold text-cyan-900 dark:text-white bg-white dark:bg-slate-900/80 px-2.5 py-1 rounded-lg border border-cyan-200 dark:border-white/10 shadow-sm">
                       {tytPacing.fen} Dakika
                     </span>
-                    <span className="text-[11px] font-semibold text-cyan-400">
+                    <span className="text-[11px] font-semibold text-cyan-600 dark:text-cyan-400">
                       ~{Math.round(tytMetrics.fenSec)} sn / soru
                     </span>
                   </div>
@@ -521,17 +521,17 @@ export function ExamPacingStrategyModal({ isOpen, onClose }: ExamPacingStrategyM
               </div>
 
               {/* Sosyal Bilimler */}
-              <div className="rounded-2xl border border-orange-500/20 bg-orange-950/20 p-3.5 space-y-2">
+              <div className="rounded-2xl border border-orange-500/20 bg-orange-50/60 dark:bg-orange-950/20 p-3.5 space-y-2">
                 <div className="flex items-center justify-between text-xs">
-                  <div className="flex items-center gap-2 font-bold text-orange-300">
-                    <span className="h-2.5 w-2.5 rounded-full bg-orange-400" />
+                  <div className="flex items-center gap-2 font-bold text-orange-700 dark:text-orange-300">
+                    <span className="h-2.5 w-2.5 rounded-full bg-orange-500" />
                     <span>Sosyal Bilimler (20 Soru)</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <span className="font-mono text-xs font-bold text-white bg-slate-900/80 px-2.5 py-1 rounded-lg border border-white/10">
+                    <span className="font-mono text-xs font-bold text-orange-900 dark:text-white bg-white dark:bg-slate-900/80 px-2.5 py-1 rounded-lg border border-orange-200 dark:border-white/10 shadow-sm">
                       {tytPacing.sosyal} Dakika
                     </span>
-                    <span className="text-[11px] font-semibold text-orange-400">
+                    <span className="text-[11px] font-semibold text-orange-600 dark:text-orange-400">
                       ~{Math.round(tytMetrics.sosyalSec)} sn / soru
                     </span>
                   </div>
@@ -551,13 +551,13 @@ export function ExamPacingStrategyModal({ isOpen, onClose }: ExamPacingStrategyM
               </div>
 
               {/* Turlama Payı */}
-              <div className="rounded-2xl border border-amber-500/20 bg-amber-950/20 p-3.5 space-y-2">
+              <div className="rounded-2xl border border-amber-500/20 bg-amber-50/60 dark:bg-amber-950/20 p-3.5 space-y-2">
                 <div className="flex items-center justify-between text-xs">
-                  <div className="flex items-center gap-2 font-bold text-amber-300">
-                    <Sparkles className="h-3.5 w-3.5 text-amber-400" />
+                  <div className="flex items-center gap-2 font-bold text-amber-700 dark:text-amber-300">
+                    <Sparkles className="h-3.5 w-3.5 text-amber-500 dark:text-amber-400" />
                     <span>Turlama & Rezerv Süre</span>
                   </div>
-                  <span className="font-mono text-xs font-bold text-white bg-slate-900/80 px-2.5 py-1 rounded-lg border border-white/10">
+                  <span className="font-mono text-xs font-bold text-amber-900 dark:text-white bg-white dark:bg-slate-900/80 px-2.5 py-1 rounded-lg border border-amber-200 dark:border-white/10 shadow-sm">
                     {tytPacing.turlama} Dakika
                   </span>
                 </div>
@@ -578,11 +578,11 @@ export function ExamPacingStrategyModal({ isOpen, onClose }: ExamPacingStrategyM
           )}
 
           {/* Pedagojik Strateji İpuçları */}
-          <div className="rounded-2xl border border-white/10 bg-slate-950/40 p-3.5 flex items-start gap-2.5 text-xs text-slate-300">
-            <Info className="h-4 w-4 text-amber-400 shrink-0 mt-0.5" />
+          <div className="rounded-2xl border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-slate-950/40 p-3.5 flex items-start gap-2.5 text-xs text-slate-700 dark:text-slate-300">
+            <Info className="h-4 w-4 text-amber-500 shrink-0 mt-0.5" />
             <div className="space-y-1 text-[11px]">
-              <strong className="text-white block font-medium">Uğur Hoca Pedagojik Zaman Kuralı:</strong>
-              <p className="text-slate-400 leading-relaxed">
+              <strong className="text-slate-900 dark:text-white block font-medium">Uğur Hoca Pedagojik Zaman Kuralı:</strong>
+              <p className="text-slate-600 dark:text-slate-400 leading-relaxed">
                 Bir soruda 2. dakikayı aştığında çözüme yaklaşamadıysan hemen yanına işaret koyup sonraki soruya geçmelisin. 
                 Turlama payı (10-15 dk), sınavın sonunda zihnin açılmışken o soruları çok daha hızlı çözmeni sağlar.
               </p>
@@ -591,11 +591,11 @@ export function ExamPacingStrategyModal({ isOpen, onClose }: ExamPacingStrategyM
         </div>
 
         {/* Alt Eylemler */}
-        <div className="border-t border-white/10 px-5 py-3.5 bg-slate-950/60 flex flex-wrap items-center justify-between gap-3 shrink-0 no-print">
+        <div className="border-t border-slate-200 dark:border-white/10 px-5 py-3.5 bg-slate-50 dark:bg-slate-950/60 flex flex-wrap items-center justify-between gap-3 shrink-0 no-print">
           <button
             type="button"
             onClick={handleResetDefaults}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-white/10 text-xs text-slate-400 hover:text-white hover:bg-white/5 transition"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-slate-200 dark:border-white/10 text-xs text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/5 transition"
           >
             <RotateCcw className="h-3.5 w-3.5" />
             <span>Varsayılan Temposu</span>
@@ -617,7 +617,7 @@ export function ExamPacingStrategyModal({ isOpen, onClose }: ExamPacingStrategyM
             <button
               type="button"
               onClick={onClose}
-              className="px-3.5 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-white text-xs font-semibold transition"
+              className="px-3.5 py-2 rounded-xl bg-slate-200 hover:bg-slate-300 dark:bg-white/10 dark:hover:bg-white/20 text-slate-800 dark:text-white text-xs font-semibold transition"
             >
               Kapat
             </button>
