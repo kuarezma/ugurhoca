@@ -81,16 +81,16 @@ export function PwaInstallPrompt() {
         aria-label="Uygulama Yükleme Bildirimi"
         className="fixed bottom-40 sm:bottom-6 right-4 z-40 max-w-sm animate-fade-up"
       >
-        <div className="flex items-center gap-3 rounded-2xl border border-indigo-500/30 bg-slate-900/95 p-3.5 shadow-2xl backdrop-blur-xl text-white">
-          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 shadow-md">
+        <div className="flex items-center gap-3 rounded-2xl border border-default bg-surface-1 p-3.5 shadow-2xl backdrop-blur-xl text-primary">
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-600 to-purple-600 shadow-md">
             <Smartphone className="h-5 w-5 text-white" />
           </div>
 
           <div className="flex-1 min-w-0 pr-1">
-            <h4 className="text-xs font-bold leading-tight truncate">
+            <h4 className="text-xs font-bold leading-tight truncate text-primary">
               Uğur Hoca Uygulamasını Yükle
             </h4>
-            <p className="text-[11px] text-slate-400 leading-snug mt-0.5">
+            <p className="text-[11px] text-secondary leading-snug mt-0.5">
               Hızlı erişim ve tam ekran deneyimi için ana ekrana ekle.
             </p>
           </div>
@@ -99,7 +99,7 @@ export function PwaInstallPrompt() {
             <button
               type="button"
               onClick={handleInstallClick}
-              className="inline-flex items-center gap-1 rounded-xl bg-indigo-600 px-3 py-1.5 text-xs font-bold text-white shadow transition hover:bg-indigo-500 active:scale-95"
+              className="inline-flex items-center gap-1 rounded-xl bg-indigo-600 px-3 py-1.5 text-xs font-bold text-white shadow border border-indigo-500 hover:bg-indigo-700 active:scale-95"
             >
               <Download className="h-3 w-3" />
               <span>Yükle</span>
@@ -109,7 +109,7 @@ export function PwaInstallPrompt() {
               type="button"
               onClick={handleDismiss}
               aria-label="Kapat"
-              className="rounded-lg p-1 text-slate-400 transition hover:bg-white/10 hover:text-white"
+              className="rounded-lg p-1 text-secondary transition hover:bg-overlay-2 hover:text-primary"
             >
               <X className="h-4 w-4" />
             </button>
@@ -123,36 +123,36 @@ export function PwaInstallPrompt() {
           role="dialog"
           aria-modal="true"
           aria-label="iOS Ana Ekrana Ekleme Rehberi"
-          className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/80 p-4 backdrop-blur-md"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-scrim p-4 backdrop-blur-md"
         >
-          <div className="w-full max-w-sm rounded-3xl border border-white/15 bg-slate-900 p-6 text-white shadow-2xl">
+          <div className="w-full max-w-sm rounded-3xl border border-default bg-surface-1 p-6 text-primary shadow-2xl">
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-2">
-                <Smartphone className="h-5 w-5 text-indigo-400" />
-                <h3 className="font-bold text-sm">iPhone / iPad&apos;e Yükle</h3>
+                <Smartphone className="h-5 w-5 text-accent-brand-ink" />
+                <h3 className="font-bold text-sm text-primary">iPhone / iPad&apos;e Yükle</h3>
               </div>
               <button
                 type="button"
                 onClick={() => setIsIosModalOpen(false)}
-                className="p-1 text-slate-400 hover:text-white"
+                className="p-1 text-secondary hover:text-primary"
               >
                 <X className="h-5 w-5" />
               </button>
             </div>
 
-            <div className="space-y-3 text-xs text-slate-300">
-              <div className="flex items-start gap-2.5 rounded-xl bg-white/5 p-3 border border-white/5">
-                <Share2 className="h-5 w-5 text-indigo-400 shrink-0 mt-0.5" />
+            <div className="space-y-3 text-xs text-secondary">
+              <div className="flex items-start gap-2.5 rounded-xl bg-surface-2 p-3 border border-hairline">
+                <Share2 className="h-5 w-5 text-accent-brand-ink shrink-0 mt-0.5" />
                 <div>
-                  <strong className="text-white block">1. Adım:</strong>
+                  <strong className="text-primary block">1. Adım:</strong>
                   Safari alt çubuğundaki <strong>Paylaş</strong> simgesine dokun.
                 </div>
               </div>
 
-              <div className="flex items-start gap-2.5 rounded-xl bg-white/5 p-3 border border-white/5">
-                <PlusSquare className="h-5 w-5 text-emerald-400 shrink-0 mt-0.5" />
+              <div className="flex items-start gap-2.5 rounded-xl bg-surface-2 p-3 border border-hairline">
+                <PlusSquare className="h-5 w-5 text-accent-success-ink shrink-0 mt-0.5" />
                 <div>
-                  <strong className="text-white block">2. Adım:</strong>
+                  <strong className="text-primary block">2. Adım:</strong>
                   Menüyü aşağı kaydırıp <strong>&apos;Ana Ekrana Ekle&apos;</strong> seçeneğini seç.
                 </div>
               </div>
@@ -164,7 +164,7 @@ export function PwaInstallPrompt() {
                 setIsIosModalOpen(false);
                 setIsVisible(false);
               }}
-              className="mt-5 w-full py-2.5 rounded-xl text-xs font-bold bg-indigo-600 hover:bg-indigo-500 text-white shadow transition"
+              className="mt-5 w-full py-2.5 rounded-xl text-xs font-bold bg-indigo-600 hover:bg-indigo-700 text-white shadow border border-indigo-500 transition"
             >
               Anladım
             </button>

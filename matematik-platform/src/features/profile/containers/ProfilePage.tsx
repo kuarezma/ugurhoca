@@ -570,8 +570,8 @@ export default function ProfilePage({ initialData }: ProfilePageProps) {
   if (!user) return null;
 
   return (
-    <main className="profil-page page-surface min-h-screen dark:bg-gradient-to-br dark:from-slate-900 dark:via-slate-900 dark:to-slate-800">
-      <nav className="fixed left-0 right-0 top-0 z-50 border-b border-white/10 bg-slate-950/80 backdrop-blur-xl transition-all duration-300">
+    <main className="profil-page page-surface min-h-screen">
+      <nav className="fixed left-0 right-0 top-0 z-50 border-b border-default bg-surface-1/90 backdrop-blur-xl transition-all duration-300">
         <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 sm:px-6">
           <Link href="/" className="group flex items-center gap-3">
             <div className="relative flex h-10 w-10 items-center justify-center overflow-hidden rounded-xl bg-gradient-to-br from-brand-primary via-brand-pink to-brand-orange p-0.5 shadow-md transition-transform duration-300 group-hover:scale-105">
@@ -584,10 +584,10 @@ export default function ProfilePage({ initialData }: ProfilePageProps) {
               />
             </div>
             <div className="flex flex-col">
-              <span className="font-display text-base font-extrabold tracking-tight text-white">
+              <span className="font-display text-base font-extrabold tracking-tight text-primary">
                 Uğur Hoca
               </span>
-              <span className="text-[10px] font-bold text-slate-400">Öğrenci Paneli</span>
+              <span className="text-[10px] font-bold text-secondary">Öğrenci Paneli</span>
             </div>
           </Link>
 
@@ -604,12 +604,12 @@ export default function ProfilePage({ initialData }: ProfilePageProps) {
               <button
                 type="button"
                 onClick={() => setShowNotifications((prev) => !prev)}
-                className="relative flex h-9 w-9 items-center justify-center rounded-xl border border-white/10 bg-white/5 text-slate-400 transition-colors hover:bg-white/10 hover:text-white"
+                className="relative flex h-9 w-9 items-center justify-center rounded-xl border border-default bg-surface-2 text-secondary transition-colors hover:bg-overlay-2 hover:text-primary"
                 aria-label="Bildirimler"
               >
                 <Bell className="h-4.5 w-4.5" />
                 {unreadCount > 0 && (
-                  <span className="absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[10px] font-bold text-white">
+                  <span className="absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-600 text-[10px] font-bold text-white">
                     {unreadCount}
                   </span>
                 )}
@@ -617,7 +617,7 @@ export default function ProfilePage({ initialData }: ProfilePageProps) {
             )}
             <Link
               href="/"
-              className="flex items-center gap-1.5 rounded-xl border border-white/10 bg-white/5 px-3 py-1.5 text-xs font-semibold text-slate-300 transition-colors hover:bg-white/10 hover:text-white sm:text-sm"
+              className="flex items-center gap-1.5 rounded-xl border border-default bg-surface-2 px-3 py-1.5 text-xs font-semibold text-secondary transition-colors hover:bg-overlay-2 hover:text-primary sm:text-sm"
             >
               <ArrowLeft className="h-4 w-4" />
               <span className="hidden sm:inline">Ana Sayfa</span>
@@ -625,7 +625,7 @@ export default function ProfilePage({ initialData }: ProfilePageProps) {
             <button
               type="button"
               onClick={handleLogout}
-              className="flex h-9 w-9 items-center justify-center rounded-xl border border-white/10 bg-white/5 text-slate-400 transition-colors hover:bg-red-500/20 hover:text-red-300"
+              className="flex h-9 w-9 items-center justify-center rounded-xl border border-default bg-surface-2 text-secondary transition-colors hover:bg-red-500/20 hover:text-red-400"
               aria-label="Çıkış Yap"
             >
               <LogOut className="h-4.5 w-4.5" />
@@ -654,7 +654,7 @@ export default function ProfilePage({ initialData }: ProfilePageProps) {
             <motion.section
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              className="rounded-3xl border border-white/10 bg-white/5 p-8"
+              className="rounded-3xl border border-default bg-surface-1 p-8"
             >
               <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
                 <div className="flex items-center gap-5">
@@ -662,13 +662,13 @@ export default function ProfilePage({ initialData }: ProfilePageProps) {
                     {user.name?.[0] || '?'}
                   </div>
                   <div>
-                    <h1 className="text-2xl font-bold text-white">
+                    <h1 className="text-2xl font-bold text-primary">
                       {user.name}
                     </h1>
-                    <p className="mt-1 text-sm text-slate-400">{user.email}</p>
-                    <div className="mt-3 inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-orange-500/20 to-red-500/20 px-4 py-1.5">
-                      <Shield className="h-4 w-4 text-orange-400" />
-                      <span className="text-sm font-semibold text-orange-300">
+                    <p className="mt-1 text-sm text-secondary">{user.email}</p>
+                    <div className="mt-3 inline-flex items-center gap-2 rounded-full border border-hairline bg-accent-warning-tint px-4 py-1.5">
+                      <Shield className="h-4 w-4 text-accent-warning-ink" />
+                      <span className="text-sm font-semibold text-accent-warning-ink">
                         Yönetici
                       </span>
                     </div>
@@ -677,7 +677,7 @@ export default function ProfilePage({ initialData }: ProfilePageProps) {
 
                 <Link
                   href="/admin"
-                  className="inline-flex items-center gap-2 rounded-2xl bg-white/10 px-5 py-3 font-semibold text-white transition-colors hover:bg-white/15"
+                  className="inline-flex items-center gap-2 rounded-2xl border border-default bg-surface-2 px-5 py-3 font-semibold text-primary transition-colors hover:bg-overlay-2"
                 >
                   <Settings className="h-5 w-5" />
                   Admin Paneline Git
@@ -706,7 +706,7 @@ export default function ProfilePage({ initialData }: ProfilePageProps) {
                 <div
                   role="tablist"
                   aria-label="Profil bölümleri"
-                  className="flex flex-1 gap-2 overflow-x-auto rounded-2xl border border-white/10 bg-white/5 p-1.5 backdrop-blur"
+                  className="flex flex-1 gap-2 overflow-x-auto rounded-2xl border border-default bg-surface-1 p-1.5 backdrop-blur"
                 >
                   {PROFILE_TABS.map((tab) => {
                     const TabIcon = tab.icon;
@@ -720,10 +720,10 @@ export default function ProfilePage({ initialData }: ProfilePageProps) {
                         id={`profile-tab-${tab.id}`}
                         aria-controls={`profile-panel-${tab.id}`}
                         onClick={() => setActiveTab(tab.id)}
-                        className={`relative flex flex-1 items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-slate-900 ${
+                        className={`relative flex flex-1 items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-accent ${
                           isActive
-                            ? 'bg-gradient-to-r from-amber-400/90 via-orange-400/90 to-pink-500/90 text-slate-900 shadow-lg'
-                            : 'text-white/70 hover:bg-white/5 hover:text-white'
+                            ? 'bg-gradient-to-r from-amber-500 via-orange-500 to-pink-600 text-white shadow-lg'
+                            : 'text-secondary hover:bg-overlay-2 hover:text-primary'
                         }`}
                       >
                         <TabIcon className="h-4 w-4" />
@@ -735,55 +735,55 @@ export default function ProfilePage({ initialData }: ProfilePageProps) {
                 <button
                   type="button"
                   onClick={() => setIsParentReportOpen(true)}
-                  className="inline-flex shrink-0 items-center justify-center gap-2 rounded-2xl border border-emerald-500/30 bg-emerald-500/10 px-4 py-2.5 text-sm font-semibold text-emerald-300 transition-all hover:bg-emerald-500/20 hover:text-emerald-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400"
+                  className="inline-flex shrink-0 items-center justify-center gap-2 rounded-2xl border border-default bg-surface-2 px-4 py-2.5 text-sm font-semibold text-primary transition-all hover:bg-overlay-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent"
                   title="WhatsApp gelişim özeti ve karne PDF'i oluştur"
                 >
-                  <FileSpreadsheet className="h-4 w-4" />
+                  <FileSpreadsheet className="h-4 w-4 text-accent-success-ink" />
                   <span className="whitespace-nowrap">Gelişim Raporu</span>
                 </button>
                 <button
                   type="button"
                   onClick={() => setIsPortfolioOpen(true)}
-                  className="inline-flex shrink-0 items-center justify-center gap-2 rounded-2xl border border-indigo-500/30 bg-indigo-500/10 px-4 py-2.5 text-sm font-semibold text-indigo-300 transition-all hover:bg-indigo-500/20 hover:text-indigo-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400"
+                  className="inline-flex shrink-0 items-center justify-center gap-2 rounded-2xl border border-default bg-surface-2 px-4 py-2.5 text-sm font-semibold text-primary transition-all hover:bg-overlay-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent"
                   title="Öğrenci matematik gelişim dosyası ve portfolyosu"
                 >
-                  <FolderKanban className="h-4 w-4" />
+                  <FolderKanban className="h-4 w-4 text-accent-brand-ink" />
                   <span className="whitespace-nowrap">Gelişim Portfolyosu</span>
                 </button>
                 <button
                   type="button"
                   onClick={() => setIsAhaModalOpen(true)}
-                  className="inline-flex shrink-0 items-center justify-center gap-2 rounded-2xl border border-amber-500/30 bg-amber-500/10 px-4 py-2.5 text-sm font-semibold text-amber-300 transition-all hover:bg-amber-500/20 hover:text-amber-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-400"
+                  className="inline-flex shrink-0 items-center justify-center gap-2 rounded-2xl border border-default bg-surface-2 px-4 py-2.5 text-sm font-semibold text-primary transition-all hover:bg-overlay-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent"
                   title="Aha! Anları ve Matematik Keşif Günlüğü"
                 >
-                  <Lightbulb className="h-4 w-4" />
+                  <Lightbulb className="h-4 w-4 text-accent-warning-ink" />
                   <span className="whitespace-nowrap">Aha! Keşif Günlüğü</span>
                 </button>
                 <button
                   type="button"
                   onClick={() => setIsTimeCapsuleOpen(true)}
-                  className="inline-flex shrink-0 items-center justify-center gap-2 rounded-2xl border border-orange-500/30 bg-orange-500/10 px-4 py-2.5 text-sm font-semibold text-orange-300 transition-all hover:bg-orange-500/20 hover:text-orange-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-orange-400"
+                  className="inline-flex shrink-0 items-center justify-center gap-2 rounded-2xl border border-default bg-surface-2 px-4 py-2.5 text-sm font-semibold text-primary transition-all hover:bg-overlay-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent"
                   title="Sene başı - sene sonu hedef zaman kapsülü"
                 >
-                  <Clock className="h-4 w-4" />
+                  <Clock className="h-4 w-4 text-accent-info-ink" />
                   <span className="whitespace-nowrap">Hedef Zaman Kapsülü</span>
                 </button>
                 <button
                   type="button"
                   onClick={() => setIsAuthoringModalOpen(true)}
-                  className="inline-flex shrink-0 items-center justify-center gap-2 rounded-2xl border border-purple-500/30 bg-purple-500/10 px-4 py-2.5 text-sm font-semibold text-purple-300 transition-all hover:bg-purple-500/20 hover:text-purple-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-purple-400"
+                  className="inline-flex shrink-0 items-center justify-center gap-2 rounded-2xl border border-default bg-surface-2 px-4 py-2.5 text-sm font-semibold text-primary transition-all hover:bg-overlay-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent"
                   title="Kendi matematik sorularını yaz ve çeldiricilerini kurgula"
                 >
-                  <PenTool className="h-4 w-4" />
+                  <PenTool className="h-4 w-4 text-accent-brand-ink" />
                   <span className="whitespace-nowrap">Soru Yazarlık</span>
                 </button>
                 <button
                   type="button"
                   onClick={() => setIsFeynmanModalOpen(true)}
-                  className="inline-flex shrink-0 items-center justify-center gap-2 rounded-2xl border border-rose-500/30 bg-rose-500/10 px-4 py-2.5 text-sm font-semibold text-rose-300 transition-all hover:bg-rose-500/20 hover:text-rose-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-rose-400"
+                  className="inline-flex shrink-0 items-center justify-center gap-2 rounded-2xl border border-default bg-surface-2 px-4 py-2.5 text-sm font-semibold text-primary transition-all hover:bg-overlay-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent"
                   title="60 saniyede sesli Feynman anlatımı"
                 >
-                  <Mic className="h-4 w-4" />
+                  <Mic className="h-4 w-4 text-accent-danger-ink" />
                   <span className="whitespace-nowrap">Feynman Anlatımı</span>
                 </button>
               </div>
@@ -801,23 +801,23 @@ export default function ProfilePage({ initialData }: ProfilePageProps) {
                     </div>
 
                     {pendingMistakesCount > 0 && (
-                      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 rounded-3xl border border-amber-500/30 bg-gradient-to-r from-amber-500/10 via-orange-500/5 to-rose-500/10 p-5 shadow-xl backdrop-blur-xl">
+                      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 rounded-3xl border border-tone-warn-border bg-tone-warn-bg p-5 shadow-xl backdrop-blur-xl">
                         <div className="flex items-center gap-3.5">
                           <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-amber-500 to-rose-600 text-white shadow-lg shadow-amber-500/20">
                             <BookOpen className="h-5 w-5" />
                           </div>
                           <div>
-                            <h3 className="text-sm sm:text-base font-bold text-white">
+                            <h3 className="text-sm sm:text-base font-bold text-primary">
                               Akıllı Hata Defteri: {pendingMistakesCount} Soru Pekiştirilmeyi Bekliyor
                             </h3>
-                            <p className="text-xs text-slate-400">
+                            <p className="text-xs text-secondary">
                               Geçmiş testlerde yanlış yaptığın soruları telafi ederek eksik kazanımlarını kapat.
                             </p>
                           </div>
                         </div>
                         <Link
                           href="/testler?mode=mistakes"
-                          className="shrink-0 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 px-4 py-2.5 text-xs sm:text-sm font-bold text-slate-950 transition-all hover:brightness-110 active:scale-95 shadow-md shadow-amber-500/20"
+                          className="shrink-0 rounded-xl bg-gradient-to-r from-amber-600 to-orange-600 px-4 py-2.5 text-xs sm:text-sm font-bold text-white transition-all hover:brightness-110 active:scale-95 shadow-md shadow-amber-500/20"
                         >
                           Hataları Tekrar Çöz ➔
                         </Link>
@@ -825,7 +825,7 @@ export default function ProfilePage({ initialData }: ProfilePageProps) {
                     )}
 
                     <StudyPrescriptionCard
-                      isLight={false}
+                      isLight={isLightNav}
                       onStartQuiz={(_questions, topic) => {
                         router.push(
                           `/testler?mode=prescription&topic=${encodeURIComponent(topic)}`,
@@ -839,10 +839,10 @@ export default function ProfilePage({ initialData }: ProfilePageProps) {
                     />
 
                     <div className="mx-auto w-full max-w-full space-y-6">
-                      <StudyActivityHeatmap isLight={false} />
-                      <ExamTrendChart isLight={false} />
-                      <TargetSchoolGapCard isLight={false} />
-                      <ExamCountdownCard userGrade={user?.grade} isLight={false} />
+                      <StudyActivityHeatmap isLight={isLightNav} />
+                      <ExamTrendChart isLight={isLightNav} />
+                      <TargetSchoolGapCard isLight={isLightNav} />
+                      <ExamCountdownCard userGrade={user?.grade} isLight={isLightNav} />
                     </div>
 
                     <div className="grid gap-6 xl:grid-cols-[0.95fr_1.05fr]">
@@ -1009,37 +1009,37 @@ function WeeklyPlanCard({
       initial={{ opacity: 0, y: 16 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.06 }}
-      className="rounded-3xl border border-cyan-400/20 bg-cyan-500/10 p-6 sm:p-8"
+      className="rounded-3xl border border-default bg-surface-1 p-6 sm:p-8 shadow-sm"
     >
       <div className="mb-5 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div>
-          <div className="mb-2 inline-flex items-center gap-2 rounded-full bg-cyan-400/15 px-3 py-1 text-[11px] font-bold uppercase tracking-[0.18em] text-cyan-100">
+          <div className="mb-2 inline-flex items-center gap-2 rounded-full border border-hairline bg-accent-info-tint px-3 py-1 text-[11px] font-bold uppercase tracking-[0.18em] text-accent-info-ink">
             <CalendarClock className="h-3.5 w-3.5" />
             Bu Haftaki Plan
           </div>
-          <h2 className="text-2xl font-bold text-white">
+          <h2 className="text-2xl font-bold text-primary">
             {plan?.title || 'Bu Haftaki Plan'}
           </h2>
-          <p className="mt-1 text-sm text-slate-300">
+          <p className="mt-1 text-sm text-secondary">
             Planını sadece sen ve Uğur Hoca görebilir.
           </p>
         </div>
-        <div className="rounded-2xl bg-white/10 px-4 py-2 text-right">
-          <p className="text-xs uppercase tracking-[0.18em] text-slate-300">
+        <div className="rounded-2xl border border-default bg-surface-2 px-4 py-2 text-right">
+          <p className="text-xs uppercase tracking-[0.18em] text-secondary">
             Tamamlanan
           </p>
-          <p className="text-xl font-black text-white">
+          <p className="text-xl font-black text-primary">
             {completedCount}/{items.length}
           </p>
         </div>
       </div>
 
       {!plan ? (
-        <div className="rounded-2xl border border-dashed border-white/15 px-5 py-7 text-center text-sm text-slate-300">
+        <div className="rounded-2xl border border-dashed border-default px-5 py-7 text-center text-sm text-secondary">
           Bu hafta için özel plan henüz eklenmedi.
         </div>
       ) : items.length === 0 ? (
-        <div className="rounded-2xl border border-dashed border-white/15 px-5 py-7 text-center text-sm text-slate-300">
+        <div className="rounded-2xl border border-dashed border-default px-5 py-7 text-center text-sm text-secondary">
           Plan başlığı hazır, maddeler eklendiğinde burada görünecek.
         </div>
       ) : (
@@ -1053,20 +1053,20 @@ function WeeklyPlanCard({
                 onClick={() => onToggleItem(item)}
                 className={`flex min-h-16 items-center gap-3 rounded-2xl border px-4 py-3 text-left transition ${
                   completed
-                    ? 'border-emerald-400/30 bg-emerald-500/10'
-                    : 'border-white/10 bg-slate-950/40 hover:border-cyan-300/30 hover:bg-slate-900/70'
+                    ? 'border-tone-success-border bg-tone-success-bg'
+                    : 'border-default bg-surface-2 hover:border-accent hover:bg-surface-3'
                 }`}
               >
                 <CheckCircle2
                   className={`h-5 w-5 shrink-0 ${
-                    completed ? 'text-emerald-300' : 'text-slate-500'
+                    completed ? 'text-accent-success-ink' : 'text-secondary'
                   }`}
                 />
                 <span
                   className={`text-sm font-semibold ${
                     completed
-                      ? 'text-emerald-100 line-through decoration-emerald-200/60'
-                      : 'text-white'
+                      ? 'text-accent-success-ink line-through'
+                      : 'text-primary'
                   }`}
                 >
                   {item.title}

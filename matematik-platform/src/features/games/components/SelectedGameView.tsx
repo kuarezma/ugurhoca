@@ -24,14 +24,14 @@ export function SelectedGameView({
   const GameComponent = game.component;
 
   return (
-    <main className="oyunlar-page page-surface min-h-screen dark:bg-gradient-to-br dark:from-slate-900 dark:via-slate-900 dark:to-slate-800">
+    <main className="oyunlar-page page-surface min-h-screen">
       <FloatingParticles />
 
-      <nav className="fixed top-0 left-0 right-0 z-50 glass py-3 sm:py-4 px-4 sm:px-6">
+      <nav className="fixed top-0 left-0 right-0 z-50 border-b border-default bg-surface-1/90 backdrop-blur-xl py-3 sm:py-4 px-4 sm:px-6">
         <div className="container mx-auto flex justify-between items-center gap-2">
           <button
             onClick={onBack}
-            className="flex items-center gap-2 text-white hover:text-purple-400 transition-colors min-w-0"
+            className="flex items-center gap-2 text-primary hover:text-accent transition-colors min-w-0"
           >
             <ArrowLeft className="w-5 h-5 sm:w-6 sm:h-6 shrink-0" />
             <span className="font-bold text-sm sm:text-base truncate">Oyunlara Dön</span>
@@ -41,24 +41,24 @@ export function SelectedGameView({
             <button
               type="button"
               onClick={toggleMute}
-              className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 text-white transition-colors text-xs"
+              className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl border border-default bg-surface-2 hover:bg-overlay-2 text-primary transition-colors text-xs"
               aria-label={isMuted ? 'Oyun sesini aç' : 'Oyun sesini kapat'}
               title={isMuted ? 'Ses Kapalı (Açmak için tıkla)' : 'Ses Açık (Kapatmak için tıkla)'}
             >
               {isMuted ? (
                 <>
-                  <VolumeX className="w-4 h-4 text-rose-400 shrink-0" />
-                  <span className="hidden sm:inline text-rose-300">Sessiz</span>
+                  <VolumeX className="w-4 h-4 text-accent-danger-ink shrink-0" />
+                  <span className="hidden sm:inline text-accent-danger-ink font-semibold">Sessiz</span>
                 </>
               ) : (
                 <>
-                  <Volume2 className="w-4 h-4 text-emerald-400 shrink-0" />
-                  <span className="hidden sm:inline text-emerald-300">Ses Açık</span>
+                  <Volume2 className="w-4 h-4 text-accent-success-ink shrink-0" />
+                  <span className="hidden sm:inline text-accent-success-ink font-semibold">Ses Açık</span>
                 </>
               )}
             </button>
 
-            <div className="px-3 py-1.5 sm:px-4 sm:py-2 bg-gradient-to-r from-purple-500 to-pink-500 rounded-xl text-white font-bold text-xs sm:text-base">
+            <div className="px-3 py-1.5 sm:px-4 sm:py-2 bg-gradient-to-r from-purple-600 to-pink-600 rounded-xl text-white font-bold text-xs sm:text-base shadow">
               Toplam: {totalScore} Puan
             </div>
           </div>

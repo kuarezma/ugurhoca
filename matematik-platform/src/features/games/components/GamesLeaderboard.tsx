@@ -76,19 +76,19 @@ const medalClasses = [
   {
     container:
       'bg-gradient-to-br from-amber-300 to-amber-500 text-amber-900 shadow-[0_0_20px_rgba(251,191,36,0.3)]',
-    score: 'text-amber-400',
+    score: 'text-amber-600 dark:text-amber-400',
     row: 'bg-amber-500/10 border-amber-500/20 hover:bg-amber-500/20',
   },
   {
     container:
       'bg-gradient-to-br from-slate-200 to-slate-400 text-slate-800 shadow-[0_0_20px_rgba(203,213,225,0.3)]',
-    score: 'text-slate-300',
+    score: 'text-slate-600 dark:text-slate-300',
     row: 'bg-slate-300/10 border-slate-300/20 hover:bg-slate-300/20',
   },
   {
     container:
       'bg-gradient-to-br from-amber-600 to-amber-800 text-amber-100 shadow-[0_0_20px_rgba(180,83,9,0.3)]',
-    score: 'text-amber-600',
+    score: 'text-amber-700 dark:text-amber-400',
     row: 'bg-amber-700/10 border-amber-700/20 hover:bg-amber-700/20',
   },
 ];
@@ -96,9 +96,9 @@ const medalClasses = [
 const getLeaderboardClasses = (index: number) => {
   return (
     medalClasses[index] || {
-      container: 'bg-slate-800 text-slate-400 border border-slate-700',
-      score: 'text-green-400',
-      row: 'bg-white/5 border-transparent hover:bg-white/10',
+      container: 'bg-surface-2 text-secondary border border-default',
+      score: 'text-emerald-700 dark:text-emerald-400',
+      row: 'bg-surface-2 border-default hover:bg-surface-3',
     }
   );
 };
@@ -112,12 +112,12 @@ function GamesLeaderboardInner({
     <motion.div
       initial={{ opacity: 0, scale: 0.95 }}
       animate={{ opacity: 1, scale: 1 }}
-      className="mt-16 max-w-5xl mx-auto glass rounded-3xl overflow-hidden"
+      className="mt-16 max-w-5xl mx-auto rounded-3xl overflow-hidden border border-default bg-surface-1 shadow-sm"
     >
-      <div className="bg-gradient-to-r from-amber-500/20 to-orange-500/20 py-5 px-6 border-b border-white/5 flex flex-col items-center gap-4 sm:flex-row sm:justify-between">
+      <div className="bg-gradient-to-r from-amber-500/10 to-orange-500/10 py-5 px-6 border-b border-default flex flex-col items-center gap-4 sm:flex-row sm:justify-between">
         <div className="flex items-center gap-3">
-          <Trophy className="w-8 h-8 text-amber-400" />
-          <h2 className="text-xl sm:text-2xl font-bold text-white tracking-wide">
+          <Trophy className="w-8 h-8 text-amber-500" />
+          <h2 className="text-xl sm:text-2xl font-bold text-primary tracking-wide">
             {PERIOD_TITLE[period]}
           </h2>
         </div>
@@ -125,7 +125,7 @@ function GamesLeaderboardInner({
           <div
             role="tablist"
             aria-label="Liderlik tablosu dönemi"
-            className="inline-flex rounded-full border border-white/10 bg-slate-900/40 p-1"
+            className="inline-flex rounded-full border border-default bg-surface-2 p-1"
           >
             {PERIOD_OPTIONS.map((option) => {
               const active = option.id === period;
@@ -138,8 +138,8 @@ function GamesLeaderboardInner({
                   onClick={() => onPeriodChange(option.id)}
                   className={`rounded-full px-3 py-1 text-xs font-semibold transition-colors ${
                     active
-                      ? 'bg-amber-400 text-slate-900 shadow'
-                      : 'text-slate-300 hover:bg-white/5'
+                      ? 'bg-amber-600 text-white shadow'
+                      : 'text-secondary hover:bg-overlay-2 hover:text-primary'
                   }`}
                 >
                   {option.label}
@@ -152,7 +152,7 @@ function GamesLeaderboardInner({
 
       <div className="p-6">
         {leaderboard.length === 0 ? (
-          <div className="text-center py-8 text-slate-400">
+          <div className="text-center py-8 text-secondary">
             Henüz hiç skor kaydedilmemiş. İlk skor senin olabilir!
           </div>
         ) : (
@@ -181,10 +181,10 @@ function GamesLeaderboardInner({
                           aria-hidden="true"
                         />
                       </div>
-                      <p className="text-center text-sm font-bold text-white line-clamp-1">
+                      <p className="text-center text-sm font-bold text-primary line-clamp-1">
                         {entry.alias || 'Gizemli Şampiyon'}
                       </p>
-                      <p className="text-xs uppercase tracking-wider text-slate-400 mb-3">
+                      <p className="text-xs uppercase tracking-wider text-secondary mb-3">
                         {podium.label}
                       </p>
                       <div
@@ -199,7 +199,7 @@ function GamesLeaderboardInner({
                           style={{ backgroundSize: '200% 100%' }}
                         />
                       </div>
-                      <span className="mt-1 text-[10px] font-bold uppercase tracking-wider text-slate-400">
+                      <span className="mt-1 text-[10px] font-bold uppercase tracking-wider text-secondary">
                         #{podium.rank}
                       </span>
                     </motion.div>
@@ -226,10 +226,10 @@ function GamesLeaderboardInner({
                         {index + 1}
                       </div>
                       <div>
-                        <span className="font-bold text-white text-lg block">
+                        <span className="font-bold text-primary text-lg block">
                           {entry.alias || 'Gizemli Şampiyon'}
                         </span>
-                        <span className="text-xs text-slate-400">
+                        <span className="text-xs text-secondary">
                           Genel Ortalama Sıralaması
                         </span>
                       </div>
@@ -240,7 +240,7 @@ function GamesLeaderboardInner({
                         <span className={`font-bold text-2xl ${classes.score}`}>
                           {entry.total_score}
                         </span>
-                        <span className="text-slate-400 text-xs uppercase tracking-wider">
+                        <span className="text-secondary text-xs uppercase tracking-wider">
                           Puan
                         </span>
                       </div>

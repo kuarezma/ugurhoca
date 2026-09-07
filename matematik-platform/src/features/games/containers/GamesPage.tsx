@@ -33,26 +33,26 @@ function GameAliasModal({
   };
 
   return (
-    <div className="fixed inset-0 z-[120] flex items-center justify-center bg-slate-950/85 px-4 backdrop-blur-sm">
+    <div className="fixed inset-0 z-[120] flex items-center justify-center bg-scrim px-4 backdrop-blur-sm">
       <form
         onSubmit={handleSubmit}
-        className="relative w-full max-w-sm rounded-3xl border border-white/10 bg-slate-900 p-5 shadow-2xl"
+        className="relative w-full max-w-sm rounded-3xl border border-default bg-surface-1 p-5 shadow-2xl text-primary"
       >
         <button
           type="button"
           onClick={onClose}
           aria-label="Rumuz penceresini kapat"
-          className="absolute right-4 top-4 inline-flex h-9 w-9 items-center justify-center rounded-xl text-slate-400 transition hover:bg-white/10 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400"
+          className="absolute right-4 top-4 inline-flex h-9 w-9 items-center justify-center rounded-xl text-secondary transition hover:bg-overlay-2 hover:text-primary focus:outline-none focus-visible:ring-2 focus-visible:ring-accent"
         >
           <X className="h-5 w-5" aria-hidden="true" />
         </button>
         <div className="mb-4 flex items-center gap-3">
-          <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-emerald-500/15 text-emerald-300">
+          <div className="flex h-11 w-11 items-center justify-center rounded-2xl border border-hairline bg-accent-success-tint text-accent-success-ink">
             <ShieldCheck className="h-6 w-6" aria-hidden="true" />
           </div>
           <div>
-            <h2 className="text-lg font-bold text-white">Oyun rumuzunu seç</h2>
-            <p className="text-xs text-slate-400">
+            <h2 className="text-lg font-bold text-primary">Oyun rumuzunu seç</h2>
+            <p className="text-xs text-secondary">
               Liderlik tablosunda gerçek adın görünmez.
             </p>
           </div>
@@ -65,17 +65,17 @@ function GameAliasModal({
             minLength={3}
             maxLength={16}
             placeholder="Örn: SayıUstası"
-            className="h-11 w-full rounded-xl border border-slate-700 bg-slate-950 px-3 text-sm text-white outline-none placeholder:text-slate-500 focus:border-emerald-400 focus:ring-2 focus:ring-emerald-400/20"
+            className="h-11 w-full rounded-xl border border-default bg-surface-0 px-3 text-sm text-primary outline-none placeholder:text-tertiary focus:border-accent focus:ring-2 focus:ring-accent/20"
           />
         </label>
-        <p className="mt-2 text-xs leading-relaxed text-slate-400">
+        <p className="mt-2 text-xs leading-relaxed text-secondary">
           3-16 karakter. E-posta, telefon, link veya gerçek ad kullanılmaz.
         </p>
-        {error ? <p className="mt-3 text-xs text-red-300">{error}</p> : null}
+        {error ? <p className="mt-3 text-xs text-accent-danger-ink font-semibold">{error}</p> : null}
         <button
           type="submit"
           disabled={saving || alias.trim().length < 3}
-          className="mt-4 inline-flex h-11 w-full items-center justify-center rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 text-sm font-bold text-white transition hover:opacity-95 disabled:cursor-not-allowed disabled:opacity-50"
+          className="mt-4 inline-flex h-11 w-full items-center justify-center rounded-xl bg-emerald-600 hover:bg-emerald-700 border border-emerald-500 text-sm font-bold text-white transition disabled:cursor-not-allowed disabled:opacity-50 shadow"
         >
           {saving ? 'Kaydediliyor...' : 'Rumuzu Kaydet'}
         </button>

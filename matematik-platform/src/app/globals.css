@@ -97,8 +97,48 @@
   --shadow: rgba(15, 23, 42, 0.35);
   --scrollbar-track: #1e293b;
   --scrollbar-thumb-start: #7c3aed;
-  --scrollbar-thumb-end: #ec4899;
   --ring: rgb(var(--brand-primary-rgb) / 0.55);
+
+  /* Katman & Yüzey: bg-white/x yerine overlay ve hairline token'ları */
+  --overlay-1: rgba(255, 255, 255, 0.05);
+  --overlay-2: rgba(255, 255, 255, 0.10);
+  --overlay-3: rgba(255, 255, 255, 0.15);
+  --hairline: rgba(255, 255, 255, 0.10);
+  --hairline-strong: rgba(255, 255, 255, 0.20);
+  --scrim: rgba(0, 0, 0, 0.40);
+
+  /* Aksan ve Zemin Üstü Metin */
+  --on-brand: #ffffff;
+  --on-tint: #f8fafc;
+  --on-tint-muted: #cbd5e1;
+
+  /* Koyu Temada Ek Yüzey */
+  --surface-4: #241d3d;
+
+  /* 6 Semantik Rol: canlı / mürekkep (-ink) / zemin (-tint) */
+  --accent-brand: #8b5cf6;
+  --accent-brand-ink: #c4b5fd;
+  --accent-brand-tint: rgba(139, 92, 246, 0.12);
+
+  --accent-info: #06b6d4;
+  --accent-info-ink: #67e8f9;
+  --accent-info-tint: rgba(6, 182, 212, 0.12);
+
+  --accent-success: #10b981;
+  --accent-success-ink: #6ee7b7;
+  --accent-success-tint: rgba(16, 185, 129, 0.12);
+
+  --accent-warning: #f59e0b;
+  --accent-warning-ink: #fcd34d;
+  --accent-warning-tint: rgba(245, 158, 11, 0.12);
+
+  --accent-danger: #f43f5e;
+  --accent-danger-ink: #fda4af;
+  --accent-danger-tint: rgba(244, 63, 94, 0.12);
+
+  --accent-play: #ec4899;
+  --accent-play-ink: #f9a8d4;
+  --accent-play-tint: rgba(236, 72, 153, 0.12);
 }
 
 html[data-theme='light'] {
@@ -167,8 +207,47 @@ html[data-theme='light'] {
   --shadow: rgba(71, 85, 105, 0.18);
   --scrollbar-track: #e2e8f0;
   --scrollbar-thumb-start: #5b21b6;
-  --scrollbar-thumb-end: #be185d;
   --ring: rgb(var(--brand-primary-rgb) / 0.4);
+
+  /* Katman & Yüzey: Açık temada mürekkep alfası */
+  --overlay-1: rgba(15, 23, 42, 0.03);
+  --overlay-2: rgba(15, 23, 42, 0.06);
+  --overlay-3: rgba(15, 23, 42, 0.09);
+  --hairline: rgba(15, 23, 42, 0.08);
+  --hairline-strong: rgba(15, 23, 42, 0.17);
+  --scrim: rgba(30, 27, 49, 0.60);
+
+  /* Aksan ve Zemin Üstü Metin */
+  --on-brand: #ffffff;
+  --on-tint: #1b1626;
+  --on-tint-muted: #4a4358;
+
+  --surface-4: #f5f3ff;
+
+  /* 6 Semantik Rol: mürekkep 700 basamağında (≥ 4.5:1), zemin düşük opaklıkta */
+  --accent-brand: #8b5cf6;
+  --accent-brand-ink: #6d28d9;
+  --accent-brand-tint: rgba(139, 92, 246, 0.08);
+
+  --accent-info: #06b6d4;
+  --accent-info-ink: #0e7490;
+  --accent-info-tint: rgba(6, 182, 212, 0.08);
+
+  --accent-success: #10b981;
+  --accent-success-ink: #047857;
+  --accent-success-tint: rgba(16, 185, 129, 0.08);
+
+  --accent-warning: #f59e0b;
+  --accent-warning-ink: #b45309;
+  --accent-warning-tint: rgba(245, 158, 11, 0.10);
+
+  --accent-danger: #f43f5e;
+  --accent-danger-ink: #be123c;
+  --accent-danger-tint: rgba(244, 63, 94, 0.08);
+
+  --accent-play: #ec4899;
+  --accent-play-ink: #be185d;
+  --accent-play-tint: rgba(236, 72, 153, 0.08);
 }
 
 * {
@@ -1220,13 +1299,15 @@ html[data-theme='light'] .ui-chip[data-tone='slate'] {
   left: -9999px;
   top: 0;
   z-index: 9999;
-  padding: 0.5rem 1rem;
-  border-radius: 0.5rem;
-  background-color: #4f46e5;
-  color: #fff;
+  padding: 0.625rem 1.25rem;
+  border-radius: 0.75rem;
+  background-color: #4338ca;
+  color: #ffffff;
   font-size: 0.875rem;
-  font-weight: 600;
+  font-weight: 700;
   text-decoration: none;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3);
+  border: 2px solid #ffffff;
 }
 
 .skip-link:focus {
@@ -1235,8 +1316,8 @@ html[data-theme='light'] .ui-chip[data-tone='slate'] {
 }
 
 .skip-link:focus-visible {
-  outline: 2px solid #fff;
-  outline-offset: 2px;
+  outline: 3px solid #6366f1;
+  outline-offset: 3px;
 }
 
 /* ==========================================================================

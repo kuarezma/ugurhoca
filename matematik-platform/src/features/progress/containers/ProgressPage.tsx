@@ -425,10 +425,10 @@ export default function IlerlemePage({ initialData }: ProgressPageProps) {
             <button
               type="button"
               onClick={() => setShowMonthlyReportModal(true)}
-              className="px-4 py-3 bg-amber-500/15 border border-amber-500/30 hover:bg-amber-500/25 text-amber-300 font-bold rounded-2xl flex items-center gap-2 transition-transform hover:scale-105 shadow-sm"
+              className="px-4 py-3 bg-amber-500/15 border border-amber-500/30 hover:bg-amber-500/25 text-amber-800 dark:text-amber-300 font-bold rounded-2xl flex items-center gap-2 transition-transform hover:scale-105 shadow-sm"
               title="Aylık Karne ve Başarı Belgesini Görüntüle"
             >
-              <Award className="w-5 h-5 text-amber-400" />
+              <Award className="w-5 h-5 text-amber-600 dark:text-amber-400" />
               <span>Aylık Karne & Belge</span>
             </button>
             <button 
@@ -471,10 +471,10 @@ export default function IlerlemePage({ initialData }: ProgressPageProps) {
                   <div>
                     <div className="flex items-center gap-2 mb-1">
                       <Target className={`w-5 h-5 ${isLight ? 'text-orange-500' : 'text-orange-400'}`} />
-                      <h3 className={`font-bold uppercase tracking-wider text-xs ${isLight ? 'text-slate-400' : 'text-slate-400'}`}>Haftalık Hedef</h3>
+                      <h3 className={`font-bold uppercase tracking-wider text-xs ${isLight ? 'text-slate-600' : 'text-slate-400'}`}>Haftalık Hedef</h3>
                     </div>
                     <p className={`text-3xl font-bold ${isLight ? 'text-slate-900' : 'text-white'}`}>
-                      {currentWeekTotal} <span className={`text-lg font-medium ${isLight ? 'text-slate-400' : 'text-slate-400'}`}>/ {goal?.target_duration || 0} dk</span>
+                      {currentWeekTotal} <span className={`text-lg font-medium ${isLight ? 'text-slate-600' : 'text-slate-400'}`}>/ {goal?.target_duration || 0} dk</span>
                     </p>
                   </div>
                   <div className="text-right">
@@ -504,22 +504,22 @@ export default function IlerlemePage({ initialData }: ProgressPageProps) {
                 <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${isLight ? 'bg-indigo-100 text-indigo-600' : 'bg-indigo-500/20 text-indigo-400'}`}>
                   <Award className="w-4 h-4" />
                 </div>
-                <h3 className={`text-sm font-bold uppercase tracking-wider ${isLight ? 'text-indigo-900/70' : 'text-indigo-200/70'}`}>Rozetlerim</h3>
+                <h3 className={`text-sm font-bold uppercase tracking-wider ${isLight ? 'text-indigo-950 font-bold' : 'text-indigo-200/70'}`}>Rozetlerim</h3>
               </div>
               <button
                 type="button"
                 onClick={() => setShowBadgesModal(true)}
-                className="inline-flex items-center gap-1 text-xs font-bold text-amber-500 hover:text-amber-400 transition"
+                className="inline-flex items-center gap-1 text-xs font-bold text-amber-700 dark:text-amber-400 hover:underline transition"
               >
                 <span>Tüm Rozetler</span>
-                <span className={`text-sm font-black ${isLight ? 'text-indigo-900' : 'text-white'}`}>({badges.length}) &rarr;</span>
+                <span className={`text-sm font-black ${isLight ? 'text-indigo-950' : 'text-white'}`}>({badges.length}) &rarr;</span>
               </button>
             </div>
             
             {badges.length === 0 ? (
-              <div className="flex-1 flex flex-col items-center justify-center text-center opacity-50">
-                <Target className={`w-8 h-8 mb-2 ${isLight ? 'text-indigo-900/50' : 'text-indigo-200/50'}`} />
-                <p className={`text-xs font-semibold ${isLight ? 'text-indigo-900/60' : 'text-indigo-200/60'}`}>Test çöz rozet kazan!</p>
+              <div className="flex-1 flex flex-col items-center justify-center text-center opacity-70">
+                <Target className={`w-8 h-8 mb-2 ${isLight ? 'text-indigo-900' : 'text-indigo-200'}`} />
+                <p className={`text-xs font-semibold ${isLight ? 'text-indigo-950' : 'text-indigo-200'}`}>Test çöz rozet kazan!</p>
               </div>
             ) : (
               <div className="flex-1 grid grid-cols-2 gap-2 mt-2">

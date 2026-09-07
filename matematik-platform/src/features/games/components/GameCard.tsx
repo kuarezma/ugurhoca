@@ -26,7 +26,7 @@ function GameCardInner({ game, onClick }: GameCardProps) {
       onClick={onClick}
       onKeyDown={handleKeyDown}
       aria-label={`${game.title} oyununu oyna`}
-      className="tilt-on-hover glass group relative flex w-full flex-col overflow-hidden rounded-3xl text-left transition-all hover:shadow-brand-glow focus:outline-none focus-visible:ring-4 focus-visible:ring-brand-primary/50"
+      className="tilt-on-hover group relative flex w-full flex-col overflow-hidden rounded-3xl border border-default bg-surface-1 text-left transition-all hover:shadow-lg focus:outline-none focus-visible:ring-4 focus-visible:ring-brand-primary/50"
     >
       <div
         className={`relative h-40 overflow-hidden bg-gradient-to-br ${game.color}`}
@@ -44,18 +44,18 @@ function GameCardInner({ game, onClick }: GameCardProps) {
           transition={{ duration: 3, repeat: Infinity }}
         />
         <div className="absolute inset-0 flex items-center justify-center">
-          <game.icon className="h-20 w-20 text-white/80" aria-hidden="true" />
+          <game.icon className="h-20 w-20 text-white/90" aria-hidden="true" />
         </div>
-        <div className="absolute right-3 top-3 rounded-full bg-white/20 px-3 py-1 text-sm font-semibold text-white backdrop-blur-sm">
+        <div className="absolute right-3 top-3 rounded-full bg-black/40 px-3 py-1 text-sm font-semibold text-white backdrop-blur-sm">
           {game.grade}. Sınıf
         </div>
       </div>
       <div className="p-5">
-        <h3 className="mb-2 font-display text-xl font-bold text-white">
+        <h3 className="mb-2 font-display text-xl font-bold text-primary">
           {game.title}
         </h3>
-        <p className="mb-4 text-sm text-slate-300">{game.description}</p>
-        <div className="flex items-center gap-4 text-sm text-slate-400">
+        <p className="mb-4 text-sm text-secondary">{game.description}</p>
+        <div className="flex items-center gap-4 text-sm text-secondary">
           <span className="flex items-center gap-1">
             <Star
               className="h-4 w-4 fill-current text-yellow-400"

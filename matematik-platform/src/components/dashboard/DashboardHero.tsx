@@ -37,19 +37,16 @@ export default function DashboardHero({
   primaryTask,
   user,
 }: DashboardHeroProps) {
-  const heroAccent =
-    primaryTask?.accentClass ||
-    'from-sky-500/20 via-blue-500/15 to-indigo-500/10';
   const hasImageAvatar = isAvatarImage(user.avatar_id);
 
   return (
     <motion.section
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className={`relative overflow-hidden rounded-[2.5rem] border border-white/10 bg-gradient-to-br ${heroAccent} p-8 shadow-2xl sm:p-12`}
+      className="relative overflow-hidden rounded-[2.5rem] border border-default bg-surface-1 dark:bg-slate-900/90 p-8 shadow-xl sm:p-12"
     >
-      <div className="absolute -right-10 -top-10 h-56 w-56 rounded-full bg-white/10 blur-3xl" />
-      <div className="absolute -left-12 bottom-0 h-40 w-40 rounded-full bg-black/10 blur-3xl" />
+      <div className="absolute -right-10 -top-10 h-56 w-56 rounded-full bg-accent-brand-tint blur-3xl pointer-events-none" />
+      <div className="absolute -left-12 bottom-0 h-40 w-40 rounded-full bg-overlay-1 blur-3xl pointer-events-none" />
 
       <div className="relative grid gap-8 xl:grid-cols-[1.35fr_0.9fr] xl:items-center">
         <div className="space-y-6">
@@ -71,7 +68,7 @@ export default function DashboardHero({
                   cx="60"
                   cy="60"
                   r="54"
-                  stroke="rgba(255,255,255,0.15)"
+                  stroke="var(--border-subtle)"
                   strokeWidth="6"
                   fill="none"
                 />
@@ -92,7 +89,7 @@ export default function DashboardHero({
                 onClick={onAvatarClick}
                 whileHover={{ scale: 1.04 }}
                 aria-label="Avatarı değiştir"
-                className="group relative flex h-24 w-24 shrink-0 items-center justify-center overflow-hidden rounded-full border border-white/20 bg-gradient-to-br from-white/20 to-white/5 text-4xl font-bold text-white shadow-xl backdrop-blur-md transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-slate-900"
+                className="group relative flex h-24 w-24 shrink-0 items-center justify-center overflow-hidden rounded-full border border-default bg-surface-2 text-4xl font-bold text-primary shadow-xl backdrop-blur-md transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-accent"
               >
                 {hasImageAvatar ? (
                   <Image
@@ -122,14 +119,14 @@ export default function DashboardHero({
             </div>
 
             <div>
-              <div className="mb-3 inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-1.5 text-xs font-bold uppercase tracking-[0.2em] text-white backdrop-blur-md">
-                <Sparkles className="h-4 w-4 text-amber-300" />
+              <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-hairline bg-accent-brand-tint px-4 py-1.5 text-xs font-bold uppercase tracking-[0.2em] text-accent-brand-ink">
+                <Sparkles className="h-4 w-4 text-accent-warning-ink" />
                 Öğrenci Günlük Merkez
               </div>
-              <h1 className="text-3xl font-black text-white sm:text-4xl">
+              <h1 className="text-3xl font-black text-primary sm:text-4xl">
                 Hoş geldin, {user.name?.split(' ')[0] || 'Öğrenci'}
               </h1>
-              <p className="mt-3 max-w-2xl text-sm leading-relaxed text-white/70 sm:text-base">
+              <p className="mt-3 max-w-2xl text-sm leading-relaxed text-secondary sm:text-base">
                 Bugünkü ritmini, haftalık hedefini ve bir sonraki en iyi adımı
                 tek ekranda toparladık.
               </p>
@@ -137,41 +134,41 @@ export default function DashboardHero({
           </div>
 
           <div className="flex flex-wrap gap-3">
-            <div className="inline-flex items-center gap-2 rounded-full bg-black/20 px-4 py-2 text-sm font-semibold text-white/90 backdrop-blur-sm">
-              <BookOpen className="h-4 w-4 text-white/70" />
+            <div className="inline-flex items-center gap-2 rounded-full border border-default bg-surface-2 px-4 py-2 text-sm font-semibold text-primary">
+              <BookOpen className="h-4 w-4 text-secondary" />
               {formatGradeLabel(user.grade)}
             </div>
-            <div className="inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-2 text-sm font-semibold text-white/90 backdrop-blur-sm">
-              <Flame className="h-4 w-4 text-orange-300" />
+            <div className="inline-flex items-center gap-2 rounded-full border border-default bg-surface-2 px-4 py-2 text-sm font-semibold text-primary">
+              <Flame className="h-4 w-4 text-accent-warning-ink" />
               {user.current_streak || 0} günlük seri
             </div>
-            <div className="inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-2 text-sm font-semibold text-white/90 backdrop-blur-sm">
-              <Trophy className="h-4 w-4 text-emerald-300" />
+            <div className="inline-flex items-center gap-2 rounded-full border border-default bg-surface-2 px-4 py-2 text-sm font-semibold text-primary">
+              <Trophy className="h-4 w-4 text-accent-success-ink" />
               {latestScore !== null
                 ? `%${latestScore} son test`
                 : 'İlk test seni bekliyor'}
             </div>
           </div>
 
-          <div className="rounded-3xl border border-white/10 bg-black/20 p-5 backdrop-blur-md">
+          <div className="rounded-3xl border border-default bg-surface-2 p-5">
             <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
               <div>
-                <div className="mb-2 inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1 text-[11px] font-bold uppercase tracking-[0.18em] text-white/80">
-                  <Target className="h-3.5 w-3.5 text-cyan-200" />
+                <div className="mb-2 inline-flex items-center gap-2 rounded-full border border-hairline bg-surface-1 px-3 py-1 text-[11px] font-bold uppercase tracking-[0.18em] text-secondary">
+                  <Target className="h-3.5 w-3.5 text-accent-info-ink" />
                   Haftalık Hedef
                 </div>
-                <p className="text-3xl font-black text-white">
+                <p className="text-3xl font-black text-primary">
                   {goalSnapshot.completedMinutes}
-                  <span className="ml-2 text-lg font-semibold text-white/60">
+                  <span className="ml-2 text-lg font-semibold text-secondary">
                     / {goalSnapshot.targetMinutes} dk
                   </span>
                 </p>
               </div>
               <div className="text-left sm:text-right">
-                <p className="text-sm font-medium text-white/70">
+                <p className="text-sm font-medium text-secondary">
                   {goalSnapshot.activeDays} aktif gün
                 </p>
-                <p className="text-sm font-medium text-white/70">
+                <p className="text-sm font-medium text-secondary">
                   {goalSnapshot.remainingMinutes > 0
                     ? `${goalSnapshot.remainingMinutes} dk kaldı`
                     : 'Hedef tamamlandı'}
@@ -179,9 +176,9 @@ export default function DashboardHero({
               </div>
             </div>
 
-            <div className="h-3 overflow-hidden rounded-full bg-white/10">
+            <div className="h-3 overflow-hidden rounded-full bg-surface-3">
               <div
-                className="h-full rounded-full bg-gradient-to-r from-cyan-300 via-sky-300 to-emerald-300 transition-all"
+                className="h-full rounded-full bg-gradient-to-r from-cyan-500 via-sky-500 to-emerald-500 transition-all"
                 style={{ width: `${goalSnapshot.progressPercent}%` }}
               />
             </div>
@@ -192,28 +189,28 @@ export default function DashboardHero({
           initial={{ opacity: 0, x: 20 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ delay: 0.15 }}
-          className="rounded-3xl border border-white/10 bg-black/20 p-6 backdrop-blur-md"
+          className="rounded-3xl border border-default bg-surface-2 p-6"
         >
-          <div className="mb-3 inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1 text-[11px] font-bold uppercase tracking-[0.18em] text-white/80">
-            <Sparkles className="h-3.5 w-3.5 text-amber-300" />
+          <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-hairline bg-surface-1 px-3 py-1 text-[11px] font-bold uppercase tracking-[0.18em] text-secondary">
+            <Sparkles className="h-3.5 w-3.5 text-accent-warning-ink" />
             Günün Ana Adımı
           </div>
 
           {primaryTask ? (
             <>
-              <p className="text-xs font-bold uppercase tracking-[0.18em] text-white/50">
+              <p className="text-xs font-bold uppercase tracking-[0.18em] text-tertiary">
                 {primaryTask.badge} • {primaryTask.meta}
               </p>
-              <h2 className="mt-3 text-2xl font-bold text-white">
+              <h2 className="mt-3 text-2xl font-bold text-primary">
                 {primaryTask.title}
               </h2>
-              <p className="mt-3 text-sm leading-relaxed text-white/70">
+              <p className="mt-3 text-sm leading-relaxed text-secondary">
                 {primaryTask.description}
               </p>
               <button
                 type="button"
                 onClick={onPrimaryAction}
-                className="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-white px-5 py-3 text-sm font-bold text-slate-900 transition-all hover:scale-[1.01] hover:bg-slate-100"
+                className="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-indigo-600 px-5 py-3 text-sm font-bold text-white shadow border border-indigo-500 transition-all hover:bg-indigo-700 active:scale-[0.99]"
               >
                 {primaryTask.actionLabel}
                 <ChevronRight className="h-4 w-4" />
@@ -221,10 +218,10 @@ export default function DashboardHero({
             </>
           ) : (
             <>
-              <h2 className="mt-3 text-2xl font-bold text-white">
+              <h2 className="mt-3 text-2xl font-bold text-primary">
                 Bugünü dengede götürüyorsun
               </h2>
-              <p className="mt-3 text-sm leading-relaxed text-white/70">
+              <p className="mt-3 text-sm leading-relaxed text-secondary">
                 Büyük bir açık görünmüyor. İstersen kısa bir test ya da tekrar
                 ile tempoyu koruyabilirsin.
               </p>
