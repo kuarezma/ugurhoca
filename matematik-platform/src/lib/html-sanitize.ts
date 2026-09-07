@@ -14,18 +14,13 @@ if (typeof DOMPurify.addHook === 'function') {
 }
 
 /**
- * Yalnızca tarayıcıda çalışır — DOMPurify penceresiz ortamda (Node/SSR)
- * gerçek bir DOM'a erişemediği için no-op değil, `.sanitize` bile tanımsız
- * kalan bir factory döner ve çağrıldığında TypeError fırlatır. Sunucuda
- * kullanıcı HTML'i render eden bir yol gerekiyorsa `sanitizeRichTextHtml`'i
- * `@/lib/html-sanitize.server` dosyasından (jsdom destekli) içe aktarın.
+ * Yalnızca tarayıcıda çalışır — DOMPurify istemci tarafında zengin metinleri
+ * temizlemek ve XSS açıklarını engellemek için kullanılır.
  */
 export function sanitizeRichTextHtml(html: string) {
   if (typeof window === 'undefined') {
     throw new Error(
-      "sanitizeRichTextHtml yalnızca tarayıcıda çalışır (DOMPurify penceresiz ortamda işlevsizdir). " +
-        "Sunucu tarafında kullanıcı HTML'i temizlemek için '@/lib/html-sanitize.server' modülündeki " +
-        'sanitizeRichTextHtml fonksiyonunu kullanın.',
+      'sanitizeRichTextHtml yalnızca tarayıcı ortamında çalışır (DOMPurify penceresiz ortamda işlevsizdir).',
     );
   }
 

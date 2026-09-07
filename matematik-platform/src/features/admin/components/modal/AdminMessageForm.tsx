@@ -95,7 +95,8 @@ export default function AdminMessageForm({
             <button
               type="button"
               onClick={onClearImage}
-              className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 rounded-full flex items-center justify-center text-white hover:bg-red-600"
+              aria-label="Önizleme resmini kaldır"
+              className="absolute -top-2.5 -right-2.5 min-w-[32px] min-h-[32px] p-1.5 bg-red-500 rounded-full flex items-center justify-center text-white hover:bg-red-600 shadow-md transition-transform hover:scale-110 active:scale-95"
             >
               <X className="w-4 h-4" />
             </button>

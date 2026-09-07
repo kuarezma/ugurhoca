@@ -2,7 +2,6 @@ import type { Metadata, Viewport } from "next";
 import { Poppins, Baloo_2 } from "next/font/google";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { MobileBottomNav } from "@/components/MobileBottomNav";
-import { PwaInstallPrompt } from "@/components/PwaInstallPrompt";
 import { Providers } from "@/components/Providers";
 import { SiteBackground } from "@/components/SiteBackground";
 import { THEME_STORAGE_KEY } from "@/components/theme-constants";
@@ -179,7 +178,6 @@ export default function RootLayout({
             {children}
           </div>
           <MobileBottomNav />
-          <PwaInstallPrompt />
         </Providers>
         <SpeedInsights />
       </body>

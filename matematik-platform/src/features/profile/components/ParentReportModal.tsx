@@ -16,7 +16,6 @@ import {
   Sparkles,
 } from 'lucide-react';
 import { useToast } from '@/components/Toast';
-import { generatePDF } from '@/lib/pdf-export';
 
 export type ParentReportModalProps = {
   isOpen: boolean;
@@ -96,6 +95,7 @@ export default function ParentReportModal({
   const handleDownloadPdf = async () => {
     setIsExportingPdf(true);
     try {
+      const { generatePDF } = await import('@/lib/pdf-export');
       await generatePDF(
         'parent-report-card',
         `Ugur-Hoca-Gelisim-Raporu-${studentName.replace(/\s+/g, '-')}.pdf`,
@@ -111,7 +111,7 @@ export default function ParentReportModal({
 
   return (
     <AnimatePresence>
-      <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6">
+      <div className="fixed inset-0 z-[60] flex items-center justify-center p-3 sm:p-6">
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}

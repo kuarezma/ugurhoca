@@ -7,10 +7,11 @@ export const getNotificationStyle = (
 ): ProfileNotificationStyle => {
   if (notification.is_read) {
     return {
-      wrapper: 'border-slate-700/60 bg-slate-700/20 hover:bg-slate-700/35',
+      wrapper:
+        'border-slate-300 dark:border-slate-700/60 bg-slate-100/60 dark:bg-slate-700/20 hover:bg-slate-200/60 dark:hover:bg-slate-700/35',
       icon: CheckCircle2,
-      iconWrap: 'bg-emerald-500/15 text-emerald-400',
-      badge: 'bg-emerald-500/15 text-emerald-300',
+      iconWrap: 'bg-emerald-500/15 text-emerald-600 dark:text-emerald-400',
+      badge: 'bg-emerald-500/15 text-emerald-700 dark:text-emerald-300',
       status: 'Görüldü',
     };
   }

@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from 'vitest';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import ProgramsHubPage from './ProgramsHubPage';
 
 vi.mock('next/link', () => ({
@@ -18,12 +18,36 @@ vi.mock('next/link', () => ({
   ),
 }));
 
+vi.mock('next/dynamic', async () => {
+  const React = await import('react');
+  return {
+    default: (loader: () => Promise<any>) => {
+      let ResolvedComponent: any = null;
+      const promise = loader().then((mod) => {
+        ResolvedComponent = mod.default || mod;
+      });
+      return function DynamicWrapper(props: any) {
+        const [Loaded, setLoaded] = React.useState<any>(() => ResolvedComponent);
+        React.useEffect(() => {
+          if (!Loaded) {
+            promise.then(() => {
+              setLoaded(() => ResolvedComponent);
+            });
+          }
+        }, [Loaded]);
+        if (!Loaded) return null;
+        return React.createElement(Loaded, props);
+      };
+    },
+  };
+});
+
 vi.mock('@/components/ThemeProvider', () => ({
   useTheme: () => ({ theme: 'dark' }),
 }));
 
 describe('ProgramsHubPage', () => {
-  it('renders all 4 educational program cards and triggers calculator/checklist modals', () => {
+  it('renders all 4 educational program cards and triggers calculator/checklist modals', async () => {
     render(<ProgramsHubPage />);
 
     expect(screen.getByText('LGS Puan ve Lise Tercih Sihirbazı')).toBeInTheDocument();
@@ -34,12 +58,16 @@ describe('ProgramsHubPage', () => {
     // Hesaplayıcıyı aç
     const calcBtn = screen.getByRole('button', { name: /İnteraktif Sınav Puanı & Net Hesaplayıcı aracını aç/i });
     fireEvent.click(calcBtn);
-    expect(screen.getAllByText(/İnteraktif Sınav Puanı & Net Hesaplayıcı/i).length).toBe(2);
+    await waitFor(() => {
+      expect(screen.getAllByText(/İnteraktif Sınav Puanı & Net Hesaplayıcı/i)).toHaveLength(2);
+    });
 
     // Çizelgeyi aç
     const checklistBtn = screen.getByRole('button', { name: /MEB Matematik Konu Takip Çizelgesi aracını aç/i });
     fireEvent.click(checklistBtn);
-    expect(screen.getAllByText('MEB Matematik Konu Takip Çizelgesi').length).toBe(2);
+    await waitFor(() => {
+      expect(screen.getAllByText('MEB Matematik Konu Takip Çizelgesi')).toHaveLength(2);
+    });
 
     // Proje Atölyesini doğrula
     expect(screen.getByText('Matematik Proje Atölyesi & Araştırma Görevleri')).toBeInTheDocument();

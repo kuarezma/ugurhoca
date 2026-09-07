@@ -14,29 +14,31 @@ import {
   Variable,
   WholeWord,
 } from 'lucide-react';
-import { BalloonPop } from './games/BalloonPop';
+import dynamic from 'next/dynamic';
 import { Boxes, Car, ChefHat, Compass, Hammer } from 'lucide-react';
 import { FloatingParticles } from './FloatingParticles';
 import { GameCard } from './GameCard';
-import { ColorMath } from './games/ColorMath';
-import { Hangman } from './games/Hangman';
-import { MatMatik } from './games/MatMatik';
-import { MathNinja } from './games/MathNinja';
-import { MathPuzzle } from './games/MathPuzzle';
-import { MemoryGame } from './games/MemoryGame';
-import { MoleWhack } from './games/MoleWhack';
-import { MultiplicationRace } from './games/MultiplicationRace';
-import { EquationHunter } from './games/EquationHunter';
-import { FractionDuel } from './games/FractionDuel';
-import { NumberPuzzle } from './games/NumberPuzzle';
-import { PercentStorm } from './games/PercentStorm';
-import { PizzaChef } from './games/PizzaChef';
-import { SpaceRocket } from './games/SpaceRocket';
-import { SpeedRacer } from './games/SpeedRacer';
-import { TowerBlock } from './games/TowerBlock';
-import { TreasurePirate } from './games/TreasurePirate';
-import { MathDuel } from './games/MathDuel';
 import type { GameDefinition } from '../types';
+
+const BalloonPop = dynamic(() => import('./games/BalloonPop').then(m => ({ default: m.BalloonPop })), { ssr: false });
+const ColorMath = dynamic(() => import('./games/ColorMath').then(m => ({ default: m.ColorMath })), { ssr: false });
+const Hangman = dynamic(() => import('./games/Hangman').then(m => ({ default: m.Hangman })), { ssr: false });
+const MatMatik = dynamic(() => import('./games/MatMatik').then(m => ({ default: m.MatMatik })), { ssr: false });
+const MathNinja = dynamic(() => import('./games/MathNinja').then(m => ({ default: m.MathNinja })), { ssr: false });
+const MathPuzzle = dynamic(() => import('./games/MathPuzzle').then(m => ({ default: m.MathPuzzle })), { ssr: false });
+const MemoryGame = dynamic(() => import('./games/MemoryGame').then(m => ({ default: m.MemoryGame })), { ssr: false });
+const MoleWhack = dynamic(() => import('./games/MoleWhack').then(m => ({ default: m.MoleWhack })), { ssr: false });
+const MultiplicationRace = dynamic(() => import('./games/MultiplicationRace').then(m => ({ default: m.MultiplicationRace })), { ssr: false });
+const EquationHunter = dynamic(() => import('./games/EquationHunter').then(m => ({ default: m.EquationHunter })), { ssr: false });
+const FractionDuel = dynamic(() => import('./games/FractionDuel').then(m => ({ default: m.FractionDuel })), { ssr: false });
+const NumberPuzzle = dynamic(() => import('./games/NumberPuzzle').then(m => ({ default: m.NumberPuzzle })), { ssr: false });
+const PercentStorm = dynamic(() => import('./games/PercentStorm').then(m => ({ default: m.PercentStorm })), { ssr: false });
+const PizzaChef = dynamic(() => import('./games/PizzaChef').then(m => ({ default: m.PizzaChef })), { ssr: false });
+const SpaceRocket = dynamic(() => import('./games/SpaceRocket').then(m => ({ default: m.SpaceRocket })), { ssr: false });
+const SpeedRacer = dynamic(() => import('./games/SpeedRacer').then(m => ({ default: m.SpeedRacer })), { ssr: false });
+const TowerBlock = dynamic(() => import('./games/TowerBlock').then(m => ({ default: m.TowerBlock })), { ssr: false });
+const TreasurePirate = dynamic(() => import('./games/TreasurePirate').then(m => ({ default: m.TreasurePirate })), { ssr: false });
+const MathDuel = dynamic(() => import('./games/MathDuel').then(m => ({ default: m.MathDuel })), { ssr: false });
 
 export { FloatingParticles, GameCard };
 export type {

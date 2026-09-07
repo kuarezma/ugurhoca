@@ -18,13 +18,50 @@ import {
   type LucideIcon,
 } from 'lucide-react';
 import dynamic from 'next/dynamic';
-import { FormulaFlashcardsModal } from '@/features/programs/components/FormulaFlashcardsModal';
-import { ExamScoreCalculatorModal } from '@/components/ExamScoreCalculatorModal';
-import { TopicChecklistModal } from '@/features/programs/components/TopicChecklistModal';
-import { GeometryMathLabModal } from '@/features/programs/components/GeometryMathLabModal';
-import { CurriculumCoverageMatrixModal } from '@/features/programs/components/CurriculumCoverageMatrixModal';
-import { MathGlossaryModal } from '@/features/programs/components/MathGlossaryModal';
 import { PenTool, Mic } from 'lucide-react';
+
+const FormulaFlashcardsModal = dynamic(
+  () =>
+    import('@/features/programs/components/FormulaFlashcardsModal').then(
+      (m) => ({ default: m.FormulaFlashcardsModal }),
+    ),
+  { ssr: false },
+);
+const ExamScoreCalculatorModal = dynamic(
+  () =>
+    import('@/components/ExamScoreCalculatorModal').then((m) => ({
+      default: m.ExamScoreCalculatorModal,
+    })),
+  { ssr: false },
+);
+const TopicChecklistModal = dynamic(
+  () =>
+    import('@/features/programs/components/TopicChecklistModal').then((m) => ({
+      default: m.TopicChecklistModal,
+    })),
+  { ssr: false },
+);
+const GeometryMathLabModal = dynamic(
+  () =>
+    import('@/features/programs/components/GeometryMathLabModal').then((m) => ({
+      default: m.GeometryMathLabModal,
+    })),
+  { ssr: false },
+);
+const CurriculumCoverageMatrixModal = dynamic(
+  () =>
+    import(
+      '@/features/programs/components/CurriculumCoverageMatrixModal'
+    ).then((m) => ({ default: m.CurriculumCoverageMatrixModal })),
+  { ssr: false },
+);
+const MathGlossaryModal = dynamic(
+  () =>
+    import('@/features/programs/components/MathGlossaryModal').then((m) => ({
+      default: m.MathGlossaryModal,
+    })),
+  { ssr: false },
+);
 
 const MathProjectWorkshopModal = dynamic(
   () => import('@/features/projects/components/MathProjectWorkshopModal'),

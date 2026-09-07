@@ -48,7 +48,7 @@ const VARIANTS: Record<ButtonVariant, string> = {
 const SIZES: Record<ButtonSize, string> = {
   sm: 'h-10 px-4 text-sm min-w-[2.75rem]',
   md: 'h-11 px-5 text-sm sm:text-base min-w-[2.75rem]',
-  lg: 'h-13 px-7 text-base font-display text-lg min-w-[2.75rem]',
+  lg: 'h-13 px-7 font-display text-lg min-w-[2.75rem]',
 };
 
 function createRipple(event: MouseEvent<HTMLButtonElement>) {

@@ -53,6 +53,7 @@ export function HomeNavbar({ onLogout, user }: HomeNavbarProps) {
                 alt="Uğur Hoca"
                 width={40}
                 height={40}
+                priority
                 className="h-full w-full rounded-[14px] object-cover"
               />
             </div>

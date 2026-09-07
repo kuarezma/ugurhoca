@@ -62,6 +62,8 @@ export default function MessageDetailModal({
             <img
               src={message.metadata.image_url}
               alt="Mesaj resmi"
+              loading="lazy"
+              decoding="async"
               className="max-h-64 rounded-lg border border-slate-200 dark:border-white/10"
             />
           </div>

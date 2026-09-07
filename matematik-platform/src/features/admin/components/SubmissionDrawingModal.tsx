@@ -207,13 +207,14 @@ export function SubmissionDrawingModal({
                   setCurrentColor(c.value);
                   setIsEraser(false);
                 }}
-                className={`w-6 h-6 rounded-full transition-transform ${
+                className={`w-7 h-7 sm:w-8 sm:h-8 rounded-full transition-transform flex items-center justify-center shrink-0 ${
                   currentColor === c.value && !isEraser
-                    ? 'ring-2 ring-indigo-500 dark:ring-white scale-110'
+                    ? 'ring-2 ring-indigo-500 dark:ring-white scale-110 shadow-sm'
                     : 'opacity-80 hover:opacity-100'
                 }`}
                 style={{ backgroundColor: c.value }}
                 title={c.name}
+                aria-label={`Çizim rengi: ${c.name}`}
               />
             ))}
 

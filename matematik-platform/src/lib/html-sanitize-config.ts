@@ -1,8 +1,6 @@
 /**
- * `html-sanitize.ts` (istemci) ve `html-sanitize.server.ts` (sunucu) aynı
- * politikayı paylaşmalı — aksi halde bir tarafta izin verilen bir etiket
- * diğer tarafta süzülür ve render sonucu ortama göre değişir. Bu dosya salt
- * sabit içerir, DOM/jsdom bağımlılığı taşımaz; her iki paket için de güvenli.
+ * Zengin metin izin verilen HTML etiket ve öznitelik sabitleri.
+ * DOMPurify süzgeci bu güvenli beyaz listeyi (allowlist) esas alır.
  */
 export const RICH_TEXT_ALLOWED_TAGS = [
   'a',

@@ -7,6 +7,9 @@ const config: Config = {
   content: ['./src/**/*.{js,ts,jsx,tsx,mdx}'],
   theme: {
     extend: {
+      spacing: {
+        13: '3.25rem',
+      },
       borderColor: {
         DEFAULT: 'var(--border-default)',
         subtle: 'var(--border-subtle)',

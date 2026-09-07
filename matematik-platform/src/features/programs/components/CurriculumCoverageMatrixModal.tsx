@@ -190,7 +190,7 @@ export function CurriculumCoverageMatrixModal({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 overflow-hidden animate-in fade-in duration-200 print:p-0 print:static">
+    <div className="fixed inset-0 z-[60] flex items-center justify-center p-3 sm:p-6 overflow-hidden animate-in fade-in duration-200 print:p-0 print:static">
       <div
         className="fixed inset-0 bg-slate-950/80 backdrop-blur-md print:hidden"
         onClick={onClose}
@@ -353,7 +353,7 @@ export function CurriculumCoverageMatrixModal({
         {/* Tablo İçeriği */}
         <div className="overflow-y-auto p-4 sm:p-6 flex-1">
           <div className="overflow-x-auto rounded-2xl border border-slate-200/80 dark:border-white/10 shadow-sm">
-            <table className="w-full text-left border-collapse text-xs">
+            <table className="w-full min-w-[640px] text-left border-collapse text-xs">
               <thead>
                 <tr className="bg-slate-100/90 dark:bg-slate-800/90 text-slate-700 dark:text-slate-200 border-b border-slate-200 dark:border-white/10 font-bold uppercase tracking-wider text-[10px]">
                   <th className="py-3 px-4 w-12 text-center">#</th>
