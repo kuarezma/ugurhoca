@@ -773,10 +773,12 @@ html[data-theme='light'] ::-webkit-scrollbar-thumb:hover {
 .gradient-bg {
   background: linear-gradient(
     135deg,
-    var(--bg) 0%,
-    #312e81 50%,
-    var(--bg) 100%
+    rgba(15, 23, 42, 0.72) 0%,
+    rgba(49, 46, 129, 0.32) 50%,
+    rgba(15, 23, 42, 0.78) 100%
   );
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
 }
 
 .theme-toggle:hover {
@@ -1105,7 +1107,9 @@ html[data-theme='dark'] .btn-secondary:hover {
 /* Tema bağımsız ortak yüzeyler: sayfalar yalnızca bu semantic sınıfa bağlanır. */
 .page-surface {
   min-height: 100vh;
-  background-color: var(--surface-0);
+  background-color: rgba(15, 23, 42, 0.65);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   color: var(--text-primary);
 }
 
@@ -1404,3 +1408,115 @@ html[data-theme='light'] .ui-chip[data-tone='slate'] {
   width: 1px;
   overflow: hidden;
 }
+
+/* ==========================================================================
+   Modern ve Dinamik Site Arka Planı (SiteBackground Ekosistemi)
+   ========================================================================== */
+
+@keyframes aurora-drift-1 {
+  0%, 100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  33% {
+    transform: translate3d(6vw, 8vh, 0) scale(1.12);
+  }
+  66% {
+    transform: translate3d(-5vw, 12vh, 0) scale(0.94);
+  }
+}
+
+@keyframes aurora-drift-2 {
+  0%, 100% {
+    transform: translate3d(0, 0, 0) scale(1.05);
+  }
+  40% {
+    transform: translate3d(-8vw, -6vh, 0) scale(0.92);
+  }
+  75% {
+    transform: translate3d(5vw, -4vh, 0) scale(1.15);
+  }
+}
+
+@keyframes aurora-drift-3 {
+  0%, 100% {
+    transform: translate3d(0, 0, 0) scale(0.95);
+  }
+  50% {
+    transform: translate3d(9vw, -9vh, 0) scale(1.10);
+  }
+}
+
+@keyframes grid-shimmer-sweep {
+  0% {
+    transform: translateY(-120%);
+    opacity: 0;
+  }
+  20% {
+    opacity: 0.7;
+  }
+  80% {
+    opacity: 0.7;
+  }
+  100% {
+    transform: translateY(220%);
+    opacity: 0;
+  }
+}
+
+.aurora-orb {
+  position: absolute;
+  border-radius: 9999px;
+  pointer-events: none;
+  will-change: transform;
+  filter: blur(95px);
+  -webkit-filter: blur(95px);
+}
+
+.aurora-orb-1 {
+  animation: aurora-drift-1 22s cubic-bezier(0.45, 0.05, 0.55, 0.95) infinite;
+}
+
+.aurora-orb-2 {
+  animation: aurora-drift-2 26s cubic-bezier(0.45, 0.05, 0.55, 0.95) infinite;
+}
+
+.aurora-orb-3 {
+  animation: aurora-drift-3 20s cubic-bezier(0.45, 0.05, 0.55, 0.95) infinite;
+}
+
+.grid-shimmer-beam {
+  position: absolute;
+  inset-x: 0;
+  height: 18rem;
+  background: linear-gradient(
+    180deg,
+    transparent 0%,
+    rgba(99, 102, 241, 0.06) 45%,
+    rgba(6, 182, 212, 0.09) 55%,
+    transparent 100%
+  );
+  animation: grid-shimmer-sweep 14s ease-in-out infinite;
+  pointer-events: none;
+  will-change: transform, opacity;
+}
+
+html[data-theme='light'] .grid-shimmer-beam {
+  background: linear-gradient(
+    180deg,
+    transparent 0%,
+    rgba(99, 102, 241, 0.025) 45%,
+    rgba(14, 165, 233, 0.035) 55%,
+    transparent 100%
+  );
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .aurora-orb-1,
+  .aurora-orb-2,
+  .aurora-orb-3,
+  .grid-shimmer-beam {
+    animation: none !important;
+    transform: none !important;
+  }
+}
+

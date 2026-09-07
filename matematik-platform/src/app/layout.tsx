@@ -4,6 +4,7 @@ import { SpeedInsights } from "@vercel/speed-insights/next";
 import { MobileBottomNav } from "@/components/MobileBottomNav";
 import { PwaInstallPrompt } from "@/components/PwaInstallPrompt";
 import { Providers } from "@/components/Providers";
+import { SiteBackground } from "@/components/SiteBackground";
 import { THEME_STORAGE_KEY } from "@/components/theme-constants";
 import { SITE_URL, SITE_NAME } from "@/lib/site-metadata";
 // Not: `@livekit/components-styles` ve `katex/dist/katex.min.css` buradan
@@ -173,7 +174,8 @@ export default function RootLayout({
           Ana içeriğe geç
         </a>
         <Providers>
-          <div id="ana-icerik" tabIndex={-1} className="w-full max-w-full overflow-x-clip">
+          <SiteBackground />
+          <div id="ana-icerik" tabIndex={-1} className="relative z-10 w-full max-w-full overflow-x-clip">
             {children}
           </div>
           <MobileBottomNav />

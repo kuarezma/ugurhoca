@@ -209,7 +209,7 @@ export default function HomePage({ liveLessonSlot, initialFeed }: HomePageProps)
       className={`home-page relative min-h-screen overflow-x-clip ${
         isLight
           ? 'bg-transparent light-atmosphere'
-          : 'bg-gradient-to-br from-slate-900 via-slate-900 to-slate-800'
+          : 'bg-transparent'
       }`}
     >
       <HomeNavbar user={user} onLogout={handleLogout} />
