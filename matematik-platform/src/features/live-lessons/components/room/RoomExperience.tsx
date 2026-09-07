@@ -31,6 +31,7 @@ import { TeacherModerationPanel } from '@/features/live-lessons/components/room/
 import { TeacherToolbar } from '@/features/live-lessons/components/room/TeacherToolbar';
 import { RoomLobbyPreview } from '@/features/live-lessons/components/room/RoomLobbyPreview';
 import { LivePollStudentOverlay } from '@/features/live-lessons/components/room/LivePollStudentOverlay';
+import { deriveLiveKitIdentity } from '@/features/live-lessons/lib/lesson-identity';
 import type { LiveLessonDisplaySettings } from '@/features/live-lessons/lib/room-data';
 import type { LiveLesson, LiveLessonRole } from '@/features/live-lessons/types';
 
@@ -50,11 +51,6 @@ const defaultDisplaySettings: LiveLessonDisplaySettings = {
 
 type DockTab = 'chat' | 'participants' | 'quiz' | 'settings';
 
-function newIdentity(userId: string, role: LiveLessonRole): string {
-  const prefix = role === 'teacher' ? 'teacher' : 'student';
-  return `${prefix}_${userId.slice(0, 24)}`;
-}
-
 type Props = {
   displayName: string;
   lesson: LiveLesson;
@@ -72,7 +68,7 @@ export function RoomExperience({
 }: Props) {
   const roomId = lesson.room_id;
   const router = useRouter();
-  const [identity] = useState(() => newIdentity(userId, role));
+  const [identity] = useState(() => deriveLiveKitIdentity(role, userId));
   const [token, setToken] = useState<string | null>(null);
   const [persistToken, setPersistToken] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);

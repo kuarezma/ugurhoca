@@ -4,7 +4,7 @@ import { createPageMetadata } from '@/lib/site-metadata';
 import { buildHowToJsonLd, buildToolJsonLd } from '@/lib/schema-org';
 
 export const metadata: Metadata = createPageMetadata({
-  title: 'Adım Adım EBOB - EKOK Hesaplayıcı & Asal Çarpan Tablosu | Uğur Hoca',
+  title: 'Adım Adım EBOB - EKOK Hesaplayıcı & Asal Çarpan Tablosu',
   description:
     'İki sayının EBOB ve EKOK değerlerini bölen listesi algoritması ile adım adım hesapla ve ortak asal çarpanları gör.',
   path: '/araclar/ebob-ekok-hesaplayici',

@@ -58,12 +58,21 @@ export async function POST(request: Request) {
       if (profile) {
         studentName = profile.name || '';
         studentId = profile.id;
+      } else {
+        // Eşleşme yoksa bu adres hakkında bir sonraki adıma hiç geçilmez —
+        // fonksiyon en altta, bulunsa da bulunmasa da aynı jenerik yanıtı
+        // döner (hesap varlığını sızdırmamak için).
+        targetEmail = '';
       }
     } else {
       const displayName = identifier.trim();
       studentName = displayName;
       const nameNormalized = normalizeFullNameForMatch(displayName);
 
+      // Yalnızca tam eşleşme kabul edilir. Daha önce burada bir de bulanık
+      // `.ilike('name', '%ad%')` düşüşü vardı: "Ahmet" yazan biri "Ahmet
+      // Yılmaz"ın hesabına eşleşip ona ait sıfırlama bildirimini
+      // tetikleyebiliyordu.
       const { data: rpcMatches, error: rpcError } = await adminClient.rpc(
         'find_login_email',
         {
@@ -77,31 +86,24 @@ export async function POST(request: Request) {
       }
 
       const matches = (rpcMatches ?? []) as Array<{ email: string; id?: string }>;
-      if (matches.length > 0) {
+      if (matches.length === 1) {
         targetEmail = matches[0].email;
-      } else {
-        const { data: profileMatch } = await adminClient
-          .from('profiles')
-          .select('id, name, email')
-          .ilike('name', `%${displayName}%`)
-          .limit(1)
-          .maybeSingle();
-
-        if (profileMatch) {
-          targetEmail = profileMatch.email || '';
-          studentName = profileMatch.name || displayName;
-          studentId = profileMatch.id;
-        }
       }
+      // matches.length > 1 (aynı isimde birden fazla öğrenci) durumunda da
+      // kasıtlı olarak hiçbir hesap seçilmez — hangi öğrenciye bildirim
+      // gideceğine dair belirsiz bir tahminde bulunmaktansa jenerik yanıta
+      // düşülür; öğrenci öğretmeniyle iletişime geçer.
     }
 
-    if (!targetEmail) {
-      return NextResponse.json({
+    const genericResponse = () =>
+      NextResponse.json({
         success: true,
-        mode: 'not_found',
         message:
-          'Kayıtlı bir hesap bulunamadı. Lütfen adınızı ve soyadınızı tam olarak girdiğinizden emin olun veya öğretmeninize danışın.',
+          'Talebiniz alındı. Bu ad soyad veya e-posta ile kayıtlı bir hesap varsa, sıfırlama bilgisi kısa süre içinde iletilecek. Hesabınız yoksa veya bilgileri hatalı girdiyseniz herhangi bir işlem yapılmaz.',
       });
+
+    if (!targetEmail) {
+      return genericResponse();
     }
 
     const isLocalStudentEmail = targetEmail.endsWith('@ugurhoca.local');
@@ -135,12 +137,7 @@ export async function POST(request: Request) {
         }
       }
 
-      return NextResponse.json({
-        success: true,
-        mode: 'admin_notified',
-        message:
-          'Şifre sıfırlama talebiniz Uğur Hoca\'ya başarıyla iletildi. Öğretmeniniz şifrenizi güncellediğinde giriş yapabilirsiniz.',
-      });
+      return genericResponse();
     }
 
     const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://ugurhoca.com';
@@ -159,12 +156,7 @@ export async function POST(request: Request) {
       );
     }
 
-    return NextResponse.json({
-      success: true,
-      mode: 'email_sent',
-      message:
-        'Şifre sıfırlama bağlantısı e-posta adresinize gönderildi. Lütfen gelen kutunuzu (ve spam klasörünü) kontrol edin.',
-    });
+    return genericResponse();
   } catch (error) {
     log.error('Unexpected error in forgot-password', error);
     return NextResponse.json(

@@ -1,7 +1,6 @@
 import { z } from 'zod';
 import { apiError, apiOk } from '@/lib/api-response';
-import { isAdminEmail } from '@/lib/admin';
-import { getServerAccessToken } from '@/lib/auth-snapshot.server';
+import { requireAdmin } from '@/lib/api-auth';
 import { createLogger } from '@/lib/logger';
 import {
   discoverWorksheetCandidatesFromSources,
@@ -10,52 +9,12 @@ import {
   parseSourceUrls,
   type WorksheetCandidatePlanItem,
 } from '@/lib/worksheet-candidate-discovery';
-import {
-  createServerSupabaseClient,
-  createServiceRoleClient,
-} from '@/lib/supabase/server';
 
 const log = createLogger('worksheet-candidates-discover');
 
 const discoverSchema = z.object({
   annual_plan_item_id: z.string().uuid('Yıllık plan kaydı geçersiz.'),
 });
-
-const getAccessToken = async (request: Request) => {
-  const authHeader = request.headers.get('authorization');
-
-  if (!authHeader?.startsWith('Bearer ')) {
-    return (await getServerAccessToken()) ?? '';
-  }
-
-  return authHeader.slice(7).trim();
-};
-
-const requireAdmin = async (request: Request) => {
-  const accessToken = await getAccessToken(request);
-
-  if (!accessToken) {
-    return {
-      error: apiError('Oturum açmanız gerekiyor.', 401, 'missing_access_token'),
-    };
-  }
-
-  const supabase = createServerSupabaseClient(accessToken);
-  const {
-    data: { user },
-    error,
-  } = await supabase.auth.getUser(accessToken);
-
-  if (error || !user?.id) {
-    return { error: apiError('Oturum açmanız gerekiyor.', 401, 'invalid_session') };
-  }
-
-  if (!isAdminEmail(user.email)) {
-    return { error: apiError('Bu işlem için yetkiniz yok.', 403, 'not_admin') };
-  }
-
-  return { serviceRole: createServiceRoleClient() };
-};
 
 export async function POST(request: Request) {
   const auth = await requireAdmin(request);

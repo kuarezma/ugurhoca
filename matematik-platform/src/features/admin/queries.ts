@@ -48,6 +48,16 @@ import type {
   WorksheetCandidateWeekScanResult,
 } from '@/features/admin/types';
 
+// PostgREST varsayılan olarak limitsiz bir sorguyu sessizce 1000 satırda
+// keser — hiçbir hata, hiçbir uyarı vermeden. Panelin toplu sorgularından
+// hiçbiri açıkça sınırlandırılmamıştı; öğrenci/kayıt sayısı bu eşiği
+// geçtiği anda panel eski verileri "tam veri" gibi göstermeye başlardı
+// (bkz. denetim bulgusu H-02). Sınırlar burada açık ve cömert tutulur —
+// gerçek sayfalama (sekme bazlı, sunucu tarafı) ayrı ve daha büyük bir iş;
+// bu yalnızca sessiz veri kaybını görünür/kontrollü bir üst sınıra çevirir.
+const ADMIN_QUERY_LIMIT = 2000;
+const ADMIN_USERS_QUERY_LIMIT = 5000;
+
 type ResolveAdminAuthResult =
   | { status: 'ok'; session: Session; user: AdminUser }
   | { status: 'unauthenticated' | 'unauthorized' };
@@ -313,7 +323,8 @@ export const refreshAdminUsers = async () => {
   const { data } = await supabase
     .from('profiles')
     .select('*')
-    .order('created_at', { ascending: false });
+    .order('created_at', { ascending: false })
+    .limit(ADMIN_USERS_QUERY_LIMIT);
 
   return (data || []) as AdminUser[];
 };
@@ -416,47 +427,53 @@ export const loadAdminDashboardData = async (
     liveLessonEventsRes,
     liveLessonChatRes,
   ] = await Promise.all([
-    supabase.from('announcements').select('*').order('created_at', { ascending: false }),
-    supabase.from('documents').select('*').order('created_at', { ascending: false }),
-    supabase.from('profiles').select('*').order('created_at', { ascending: false }),
-    supabase.from('assignments').select('*').order('created_at', { ascending: false }),
-    supabase.from('shared_documents').select('*').order('created_at', { ascending: false }),
-    supabase.from('quizzes').select('*').order('created_at', { ascending: false }),
+    supabase.from('announcements').select('*').order('created_at', { ascending: false }).limit(ADMIN_QUERY_LIMIT),
+    supabase.from('documents').select('*').order('created_at', { ascending: false }).limit(ADMIN_QUERY_LIMIT),
+    supabase.from('profiles').select('*').order('created_at', { ascending: false }).limit(ADMIN_USERS_QUERY_LIMIT),
+    supabase.from('assignments').select('*').order('created_at', { ascending: false }).limit(ADMIN_QUERY_LIMIT),
+    supabase.from('shared_documents').select('*').order('created_at', { ascending: false }).limit(ADMIN_QUERY_LIMIT),
+    supabase.from('quizzes').select('*').order('created_at', { ascending: false }).limit(ADMIN_QUERY_LIMIT),
     adminUserId
       ? supabase
           .from('notifications')
           .select('*')
           .eq('user_id', adminUserId)
           .order('created_at', { ascending: false })
+          .limit(ADMIN_QUERY_LIMIT)
       : Promise.resolve({ data: [], error: null }),
     supabase
       .from('assignment_submissions')
       .select('*')
-      .order('submitted_at', { ascending: false }),
+      .order('submitted_at', { ascending: false })
+      .limit(ADMIN_QUERY_LIMIT),
     supabase
       .from('quiz_results')
       .select('id, user_id, quiz_id, score, total_questions, completed_at, quizzes(title, difficulty, grade)')
-      .order('completed_at', { ascending: false }),
+      .order('completed_at', { ascending: false })
+      .limit(ADMIN_QUERY_LIMIT),
     supabase
       .from('study_sessions')
       .select('id, user_id, duration, date, activity_type, topics')
       .order('date', { ascending: false })
       .limit(1000),
-    supabase.from('study_goals').select('user_id, target_duration, week_start'),
-    supabase.from('student_admin_statuses').select('*'),
+    supabase.from('study_goals').select('user_id, target_duration, week_start').limit(ADMIN_USERS_QUERY_LIMIT),
+    supabase.from('student_admin_statuses').select('*').limit(ADMIN_USERS_QUERY_LIMIT),
     supabase
       .from('student_weekly_plans')
       .select('*, student_weekly_plan_items(*)')
-      .order('week_start', { ascending: false }),
+      .order('week_start', { ascending: false })
+      .limit(ADMIN_QUERY_LIMIT),
     supabase
       .from('annual_plan_items')
       .select('*')
       .order('grade', { ascending: true })
-      .order('week_start', { ascending: true }),
+      .order('week_start', { ascending: true })
+      .limit(ADMIN_QUERY_LIMIT),
     supabase
       .from('worksheet_candidates')
       .select('*')
-      .order('created_at', { ascending: false }),
+      .order('created_at', { ascending: false })
+      .limit(ADMIN_QUERY_LIMIT),
     supabase
       .from('student_activity_events')
       .select('*')

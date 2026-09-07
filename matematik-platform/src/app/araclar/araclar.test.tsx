@@ -19,7 +19,7 @@ describe('Public /araclar pages', () => {
     render(<LgsCalculatorPage />);
     expect(screen.getByText(/2026\/2027 MEB LGS Puan & Yüzdelik Dilim Robotu/i)).toBeInTheDocument();
 
-    const turkceCorrect = screen.getByLabelText(/Turkce doğru/i);
+    const turkceCorrect = screen.getByLabelText(/Türkçe doğru/i);
     fireEvent.change(turkceCorrect, { target: { value: '18' } });
 
     expect(screen.getByText(/Tahmini LGS Puanı/i)).toBeInTheDocument();

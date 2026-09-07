@@ -56,23 +56,23 @@ export type YksScoreRow = {
 export const yksScoreTypes: YksScoreType[] = ['TYT', 'SAY', 'EA', 'SOZ'];
 
 export const lgsSubjects: LgsSubjectMeta[] = [
-  { key: 'turkce', label: 'Turkce', questions: 20, coefficient: 4 },
+  { key: 'turkce', label: 'Türkçe', questions: 20, coefficient: 4 },
   { key: 'matematik', label: 'Matematik', questions: 20, coefficient: 4 },
   { key: 'fen', label: 'Fen Bilimleri', questions: 20, coefficient: 4 },
-  { key: 'inkilap', label: 'T.C. Inkilap', questions: 10, coefficient: 1 },
-  { key: 'din', label: 'Din Kulturu', questions: 10, coefficient: 1 },
-  { key: 'ingilizce', label: 'Ingilizce', questions: 10, coefficient: 1 },
+  { key: 'inkilap', label: 'T.C. İnkılap Tarihi', questions: 10, coefficient: 1 },
+  { key: 'din', label: 'Din Kültürü', questions: 10, coefficient: 1 },
+  { key: 'ingilizce', label: 'İngilizce', questions: 10, coefficient: 1 },
 ];
 
 export const yksSubjects: YksSubjectMeta[] = [
-  { key: 'tytTurkce', label: 'TYT Turkce', questions: 40 },
+  { key: 'tytTurkce', label: 'TYT Türkçe', questions: 40 },
   { key: 'tytSosyal', label: 'TYT Sosyal', questions: 20 },
   { key: 'tytMatematik', label: 'TYT Matematik', questions: 40 },
   { key: 'tytFen', label: 'TYT Fen', questions: 20 },
   { key: 'aytMatematik', label: 'AYT Matematik', questions: 40 },
   { key: 'aytFen', label: 'AYT Fen', questions: 40 },
-  { key: 'aytEdebiyat', label: 'AYT Edebiyat-Sos1', questions: 40 },
-  { key: 'aytSosyal', label: 'AYT Sosyal Bilimler-2', questions: 40 },
+  { key: 'aytEdebiyat', label: 'AYT Edebiyat–Sosyal 1', questions: 40 },
+  { key: 'aytSosyal', label: 'AYT Sosyal Bilimler 2', questions: 40 },
 ];
 
 export const tytSubjectKeys: YksSubjectKey[] = [

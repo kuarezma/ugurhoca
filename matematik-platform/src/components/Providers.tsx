@@ -4,6 +4,7 @@ import dynamic from 'next/dynamic';
 import { ReactNode } from 'react';
 import { MotionConfig } from 'framer-motion';
 import AuthCookieSync from '@/components/AuthCookieSync';
+import CookieBanner from '@/components/CookieBanner';
 import { ToastProvider } from '@/components/Toast';
 import { ThemeProvider } from '@/components/ThemeProvider';
 import { FloatingThemeToggle } from '@/components/ThemeToggle';
@@ -27,6 +28,7 @@ export function Providers({ children }: { children: ReactNode }) {
           <FloatingThemeToggle />
           <CommandPalette />
           <ChatBubbleLoader />
+          <CookieBanner />
         </ToastProvider>
       </MotionConfig>
     </ThemeProvider>

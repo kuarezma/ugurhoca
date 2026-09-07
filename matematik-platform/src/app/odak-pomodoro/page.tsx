@@ -7,6 +7,7 @@ export const metadata: Metadata = createPageMetadata({
   description:
     "Matematik çalışmalarında kesintisiz odaklanma seansları, arka plan ambiyans sesleri ve mola yönetimi ile verimli ders çalışma.",
   path: "/odak-pomodoro",
+  noIndex: true,
 });
 
 export default function OdakPomodoroPage() {

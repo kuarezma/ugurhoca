@@ -408,9 +408,9 @@ export function HomeHeroSection({
               </div>
 
               <div>
-                <h3 className="font-display text-base sm:text-2xl font-black tracking-tight text-white flex items-center gap-2">
+                <h2 className="font-display text-base sm:text-2xl font-black tracking-tight text-white flex items-center gap-2">
                   Yaprak Test
-                </h3>
+                </h2>
                 <p className="mt-0.5 sm:mt-1 text-[11px] sm:text-sm text-white/90 leading-snug sm:leading-relaxed line-clamp-2">
                   Müfredatla uyumlu konu testleri, yeni nesil soru föyleri ve kazanım özetleri.
                 </p>
@@ -455,9 +455,9 @@ export function HomeHeroSection({
               </div>
 
               <div>
-                <h3 className="font-display text-base sm:text-2xl font-black tracking-tight text-white flex items-center gap-2">
+                <h2 className="font-display text-base sm:text-2xl font-black tracking-tight text-white flex items-center gap-2">
                   Oyunlar
-                </h3>
+                </h2>
                 <p className="mt-0.5 sm:mt-1 text-[11px] sm:text-sm text-white/90 leading-snug sm:leading-relaxed line-clamp-2">
                   Zihinden işlem, koordinat ve hız oyunlarıyla eğlenerek öğren, reflekslerini geliştir!
                 </p>
@@ -505,9 +505,9 @@ export function HomeHeroSection({
               </div>
 
               <div>
-                <h3 className="font-display text-base sm:text-2xl font-black tracking-tight text-white flex items-center gap-2">
+                <h2 className="font-display text-base sm:text-2xl font-black tracking-tight text-white flex items-center gap-2">
                   Canlı Ders
-                </h3>
+                </h2>
                 <p className="mt-0.5 sm:mt-1 text-[11px] sm:text-sm text-white/90 leading-snug sm:leading-relaxed line-clamp-2">
                   Öğretmenle birebir etkileşimli yayınlar, anlık soru masası ve ders kayıtları.
                 </p>
@@ -552,9 +552,9 @@ export function HomeHeroSection({
               </div>
 
               <div>
-                <h3 className="font-display text-base sm:text-2xl font-black tracking-tight text-white flex items-center gap-2">
+                <h2 className="font-display text-base sm:text-2xl font-black tracking-tight text-white flex items-center gap-2">
                   Meydan Okuma
-                </h3>
+                </h2>
                 <p className="mt-0.5 sm:mt-1 text-[11px] sm:text-sm text-white/90 leading-snug sm:leading-relaxed line-clamp-2">
                   Günün sorusu, soru hedefi, LGS taktikleri ve başarı yol haritası.
                 </p>
@@ -597,13 +597,13 @@ export function HomeHeroSection({
               {/* Orta: Başlık, 6 KATEGORİ Rozeti ve Açıklama */}
               <div className="min-w-0">
                 <div className="flex items-center gap-2">
-                  <h3
+                  <h2
                     className={`font-display text-base sm:text-lg font-bold ${
                       isLight ? 'text-slate-900' : 'text-white'
                     }`}
                   >
                     Ders
-                  </h3>
+                  </h2>
                   <span
                     className={`rounded-full px-2.5 py-0.5 text-[10px] sm:text-xs font-bold uppercase tracking-wider ${
                       isLight
@@ -673,13 +673,13 @@ export function HomeHeroSection({
                           <item.icon className="h-5 w-5" />
                         </div>
                         <div className="min-w-0 flex-1">
-                          <h4
+                          <h3
                             className={`text-xs sm:text-sm font-bold truncate ${
                               isLight ? 'text-slate-900' : 'text-white'
                             }`}
                           >
                             {item.title}
-                          </h4>
+                          </h3>
                           <p
                             className={`text-[11px] sm:text-xs line-clamp-1 mt-0.5 ${
                               isLight ? 'text-slate-500' : 'text-slate-400'
@@ -723,13 +723,13 @@ export function HomeHeroSection({
                 {/* Orta: Başlık, 12 ARAÇ Rozeti ve Açıklama */}
                 <div className="min-w-0">
                   <div className="flex items-center gap-2">
-                    <h3
+                    <h2
                       className={`font-display text-base sm:text-lg font-bold ${
                         isLight ? 'text-slate-900' : 'text-white'
                       }`}
                     >
                       Araçlar
-                    </h3>
+                    </h2>
                     <span
                       className={`rounded-full px-2.5 py-0.5 text-[10px] sm:text-xs font-bold uppercase tracking-wider ${
                         isLight
@@ -797,13 +797,13 @@ export function HomeHeroSection({
                           <tool.icon className="h-5 w-5" />
                         </div>
                         <div className="min-w-0 flex-1">
-                          <h4
+                          <h3
                             className={`text-xs sm:text-sm font-bold truncate ${
                               isLight ? 'text-slate-900' : 'text-white'
                             }`}
                           >
                             {tool.title}
-                          </h4>
+                          </h3>
                           <p
                             className={`text-[11px] sm:text-xs line-clamp-1 mt-0.5 ${
                               isLight ? 'text-slate-500' : 'text-slate-400'

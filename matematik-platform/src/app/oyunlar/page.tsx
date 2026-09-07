@@ -7,6 +7,7 @@ export const metadata: Metadata = createPageMetadata({
   description:
     'Eğlenceli matematik oyunlarıyla pratik yap, puan topla ve liderlik tablosunda yerini al.',
   path: '/oyunlar',
+  noIndex: true,
 });
 
 export default function OyunlarRoute() {

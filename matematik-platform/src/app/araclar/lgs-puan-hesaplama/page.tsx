@@ -4,7 +4,7 @@ import { createPageMetadata } from '@/lib/site-metadata';
 import { buildFaqJsonLd, buildToolJsonLd } from '@/lib/schema-org';
 
 export const metadata: Metadata = createPageMetadata({
-  title: '2026/2027 MEB LGS Puan & Yüzdelik Dilim Hesaplama Robotu | Uğur Hoca',
+  title: '2026 MEB LGS Puan & Yüzdelik Dilim Hesaplama',
   description:
     'LGS netlerine göre güncel MEB standart sapma katsayılarıyla anlık puanını ve tahmini yüzdelik dilimini hesapla.',
   path: '/araclar/lgs-puan-hesaplama',

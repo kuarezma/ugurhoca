@@ -6,32 +6,13 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
   return [
     { url: buildCanonicalUrl('/'), lastModified, changeFrequency: 'weekly', priority: 1 },
-    {
-      url: buildCanonicalUrl('/testler'),
-      lastModified,
-      changeFrequency: 'daily',
-      priority: 0.9,
-    },
-    {
-      url: buildCanonicalUrl('/oyunlar'),
-      lastModified,
-      changeFrequency: 'weekly',
-      priority: 0.8,
-    },
+    // /testler, /oyunlar, /meydan-okuma, /odak-pomodoro buradan çıkarıldı:
+    // hepsi oturum gerektiriyor ve artık middleware anonim ziyaretçiyi
+    // /giris'e yönlendiriyor (bkz. src/middleware.ts). Bir sitemap girdisi
+    // yönlendiren bir URL'yi işaret edemez — sayfa meta verisinde de
+    // `noIndex: true` var (bkz. ilgili page.tsx dosyaları).
     {
       url: buildCanonicalUrl('/icerikler'),
-      lastModified,
-      changeFrequency: 'daily',
-      priority: 0.9,
-    },
-    {
-      url: buildCanonicalUrl('/meydan-okuma'),
-      lastModified,
-      changeFrequency: 'daily',
-      priority: 0.9,
-    },
-    {
-      url: buildCanonicalUrl('/odak-pomodoro'),
       lastModified,
       changeFrequency: 'daily',
       priority: 0.9,

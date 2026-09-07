@@ -1,7 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Poppins, Baloo_2 } from "next/font/google";
 import { SpeedInsights } from "@vercel/speed-insights/next";
-import CookieBanner from "@/components/CookieBanner";
 import { MobileBottomNav } from "@/components/MobileBottomNav";
 import { PwaInstallPrompt } from "@/components/PwaInstallPrompt";
 import { Providers } from "@/components/Providers";
@@ -180,7 +179,6 @@ export default function RootLayout({
           <MobileBottomNav />
           <PwaInstallPrompt />
         </Providers>
-        <CookieBanner />
         <SpeedInsights />
       </body>
     </html>

@@ -17,7 +17,7 @@ describe('ExamScoreCalculatorModal', () => {
       screen.getByText('İnteraktif Sınav Puanı & Net Hesaplayıcı'),
     ).toBeInTheDocument();
     expect(screen.getAllByText('LGS Puanı')[0]).toBeInTheDocument();
-    expect(screen.getAllByText('Turkce')[0]).toBeInTheDocument();
+    expect(screen.getAllByText('Türkçe')[0]).toBeInTheDocument();
 
     // YKS sekmesine geçiş
     const yksTabBtn = screen.getByRole('button', { name: 'YKS (TYT & AYT)' });

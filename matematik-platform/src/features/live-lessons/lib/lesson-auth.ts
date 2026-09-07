@@ -161,6 +161,20 @@ export function readBearerToken(headerValue: string | null): string | null {
   return m ? m[1].trim() : null;
 }
 
+/**
+ * livekit-server-sdk'nın RoomServiceClient'ı http(s) host bekler; ws(s)://
+ * şemasını sessizce reddetmez ama isteği hiç tamamlamaz. Bağlantı için
+ * kullanılan LIVEKIT_URL/NEXT_PUBLIC_LIVEKIT_URL genelde wss:// biçiminde
+ * tanımlı olduğundan, sunucu API çağrıları için şema dönüştürülür.
+ */
+export function getLiveKitServiceHost(): string | null {
+  const raw = process.env.LIVEKIT_URL || process.env.NEXT_PUBLIC_LIVEKIT_URL;
+  if (!raw) return null;
+  if (raw.startsWith('wss://')) return `https://${raw.slice('wss://'.length)}`;
+  if (raw.startsWith('ws://')) return `http://${raw.slice('ws://'.length)}`;
+  return raw;
+}
+
 export function generateRoomId(): string {
   const chars = "abcdefghijklmnopqrstuvwxyz0123456789";
   const buf = randomBytes(8);

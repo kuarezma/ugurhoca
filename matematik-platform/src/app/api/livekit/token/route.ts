@@ -7,6 +7,7 @@ import {
   isLiveLessonAdmin,
   requireLiveLessonUser,
 } from '@/features/live-lessons/server/liveLessons';
+import { deriveLiveKitIdentity } from '@/features/live-lessons/lib/lesson-identity';
 import type { LiveLesson } from '@/features/live-lessons/types';
 import {
   isValidRoomId,
@@ -14,6 +15,13 @@ import {
 } from '@/features/live-lessons/lib/lesson-auth';
 
 export const runtime = 'nodejs';
+
+// RoomExperience.tsx'teki aynı adlı sabitle birebir aynı olmalı: ikisi de
+// öğrencinin bekleme odasında mı yoksa yayın yapabilir mi olduğuna karar
+// verir. Buradaki karar otoritatiftir (LiveKit izni); istemcideki yalnızca
+// arayüzü kilitler.
+const requireStudentApproval =
+  process.env.NEXT_PUBLIC_REQUIRE_STUDENT_APPROVAL !== 'false';
 
 type Body = {
   identity: string;
@@ -70,13 +78,36 @@ export async function POST(request: Request) {
   const isAdmin = isLiveLessonAdmin(auth.user);
   // Rol ve kimlik istemciden değil, sunucu tarafında doğrulanmış kullanıcıdan türetilir
   const role: 'teacher' | 'student' = isAdmin ? 'teacher' : 'student';
-  const identity = `${role}_${auth.user.id.slice(0, 24)}`;
+  const identity = deriveLiveKitIdentity(role, auth.user.id);
 
   if (body.role === 'teacher' && !isAdmin) {
     return NextResponse.json({ error: 'Öğretmen yetkisi doğrulanamadı.' }, { status: 403 });
   }
   if (role === 'student' && !canUserAccessLiveLesson(lesson as LiveLesson, auth.user)) {
     return NextResponse.json({ error: 'Bu ders size açık değil.' }, { status: 403 });
+  }
+
+  // Öğretmen onayı zorunluysa, öğrenci daha önce onaylanmış mı diye kontrol
+  // edilir (ör. sayfayı yenileyip yeniden bağlanıyor olabilir). Onaylanmamış
+  // öğrenciye canPublish: false verilir — bekleme odası artık yalnızca bir
+  // arayüz durumu değil, gerçek bir LiveKit yayın kısıtlaması. Öğrenci yine
+  // de odaya katılıp izleyebilir ve join_request veri mesajını gönderebilir
+  // (canPublishData açık kalır); onay POST'unda RoomServiceClient ile
+  // izin anlık olarak yükseltilir.
+  let canPublish = true;
+  if (role === 'student' && requireStudentApproval) {
+    const { data: approvalEvents } = await supabase
+      .from('live_lesson_events')
+      .select('payload')
+      .eq('lesson_id', body.lessonId)
+      .eq('event_type', 'join_approved')
+      .order('created_at', { ascending: false })
+      .limit(200);
+
+    canPublish = (approvalEvents || []).some((event) => {
+      const payload = event.payload as Record<string, unknown> | null;
+      return payload?.target_identity === identity;
+    });
   }
 
   const token = new AccessToken(apiKey, apiSecret, {
@@ -86,7 +117,7 @@ export async function POST(request: Request) {
   });
 
   const grant: VideoGrant = {
-    canPublish: true,
+    canPublish,
     canPublishData: true,
     canSubscribe: true,
     room: body.roomName,

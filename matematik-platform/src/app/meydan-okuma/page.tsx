@@ -7,6 +7,7 @@ export const metadata: Metadata = createPageMetadata({
   description:
     'Günün matematik meydan okuması, günlük soru hedefi, LGS matematik taktik köşesi ve başarı yol haritası ile hedeflerine adım adım ulaş.',
   path: '/meydan-okuma',
+  noIndex: true,
 });
 
 export default function MeydanOkumaPage() {

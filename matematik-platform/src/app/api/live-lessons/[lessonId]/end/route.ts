@@ -5,6 +5,7 @@ import {
   requireLiveLessonUser,
   updateLiveLessonStatus,
 } from '@/features/live-lessons/server/liveLessons';
+import { getLiveKitServiceHost } from '@/features/live-lessons/lib/lesson-auth';
 
 export const runtime = 'nodejs';
 
@@ -27,7 +28,7 @@ export async function POST(request: Request, context: RouteContext) {
     const lesson = await updateLiveLessonStatus({ lessonId, status });
 
     // LiveKit bulut odasını anında kapat ve katılımcıları düşürerek kota tüketimini kes
-    const livekitHost = process.env.LIVEKIT_URL || process.env.NEXT_PUBLIC_LIVEKIT_URL;
+    const livekitHost = getLiveKitServiceHost();
     const apiKey = process.env.LIVEKIT_API_KEY;
     const apiSecret = process.env.LIVEKIT_API_SECRET;
 

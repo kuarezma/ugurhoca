@@ -4,7 +4,7 @@ import { createPageMetadata } from '@/lib/site-metadata';
 import { buildFaqJsonLd, buildToolJsonLd } from '@/lib/schema-org';
 
 export const metadata: Metadata = createPageMetadata({
-  title: '2026/2027 ÖSYM YKS (TYT-AYT) Puan & Sıralama Hesaplayıcı | Uğur Hoca',
+  title: '2026 ÖSYM YKS (TYT-AYT) Puan & Sıralama Hesaplayıcı',
   description:
     'TYT, Sayısal, Eşit Ağırlık ve Sözel yerleştirme puanlarını OBP diploma notuyla hesapla, tahmini başarı sıranı öğren.',
   path: '/araclar/yks-puan-hesaplama',

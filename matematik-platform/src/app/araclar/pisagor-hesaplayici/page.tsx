@@ -4,7 +4,7 @@ import { createPageMetadata } from '@/lib/site-metadata';
 import { buildHowToJsonLd, buildToolJsonLd } from '@/lib/schema-org';
 
 export const metadata: Metadata = createPageMetadata({
-  title: 'Dik Üçgen Pisagor Bağıntısı & Hipotenüs Hesaplayıcı | Uğur Hoca',
+  title: 'Dik Üçgen Pisagor Bağıntısı & Hipotenüs Hesaplayıcı',
   description:
     'a² + b² = c² bağıntısıyla hipotenüs ve dik kenarı adım adım hesapla, özel dik üçgenleri anında tespit et.',
   path: '/araclar/pisagor-hesaplayici',

@@ -219,13 +219,13 @@ export function ExamCountdown({
               </span>
             )}
           </div>
-          <h3
+          <h2
             className={`truncate font-display text-base sm:text-lg font-bold ${
               isLight ? "text-slate-900" : "text-white"
             }`}
           >
             {exam.title}
-          </h3>
+          </h2>
         </div>
 
         <div

@@ -9,6 +9,7 @@ export const metadata: Metadata = createPageMetadata({
   description:
     'Konu testleri ve denemelerle kendini dene; çözümlerle pekiştir.',
   path: '/testler',
+  noIndex: true,
 });
 
 export default async function TestlerPage() {
