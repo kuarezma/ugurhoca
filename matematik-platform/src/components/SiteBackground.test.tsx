@@ -44,6 +44,20 @@ describe('SiteBackground Component', () => {
     expect(canvas).toBeInTheDocument();
 
     const orbs = container.querySelectorAll('.aurora-orb');
-    expect(orbs.length).toBeGreaterThanOrEqual(3);
+    expect(orbs.length).toBeGreaterThanOrEqual(4);
+  });
+
+  it('açık temada gradyan zemin katmanını render eder', () => {
+    window.localStorage.setItem('ugurhoca_theme', 'light');
+    document.documentElement.dataset.theme = 'light';
+
+    const { container } = render(
+      <ThemeProvider>
+        <SiteBackground />
+      </ThemeProvider>,
+    );
+
+    const mesh = container.querySelector('.light-gradient-mesh');
+    expect(mesh).toBeInTheDocument();
   });
 });

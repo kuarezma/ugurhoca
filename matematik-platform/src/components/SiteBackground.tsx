@@ -30,6 +30,12 @@ export function SiteBackground() {
   const isLight = theme === 'light';
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const [mounted, setMounted] = useState(false);
+  const [pointer, setPointer] = useState<{ x: number; y: number; active: boolean }>({
+    x: -1000,
+    y: -1000,
+    active: false,
+  });
+
   const mouseRef = useRef<{ x: number; y: number; active: boolean }>({
     x: -1000,
     y: -1000,
@@ -91,7 +97,7 @@ export function SiteBackground() {
         vy: (Math.random() - 0.5) * 0.22,
         symbol: GLYPHS[i % GLYPHS.length],
         size: Math.floor(Math.random() * 8) + 16,
-        alpha: Math.random() * 0.12 + 0.08,
+        alpha: Math.random() * 0.14 + 0.1,
         phase: Math.random() * Math.PI * 2,
       }));
     };
@@ -114,10 +120,16 @@ export function SiteBackground() {
         y: e.clientY,
         active: true,
       };
+      setPointer({
+        x: e.clientX,
+        y: e.clientY,
+        active: true,
+      });
     };
 
     const handlePointerLeave = () => {
       mouseRef.current.active = false;
+      setPointer((prev) => ({ ...prev, active: false }));
     };
 
     window.addEventListener('mousemove', handlePointerMove, { passive: true });
@@ -170,7 +182,7 @@ export function SiteBackground() {
         ctx.beginPath();
         ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
         ctx.fillStyle = isLight
-          ? `rgba(99, 102, 241, ${p.baseAlpha * 0.55})`
+          ? `rgba(79, 70, 229, ${p.baseAlpha * 0.75})`
           : `rgba(167, 139, 250, ${p.baseAlpha})`;
         ctx.fill();
 
@@ -179,7 +191,7 @@ export function SiteBackground() {
           const p2 = particles[j];
           const dist = Math.hypot(p.x - p2.x, p.y - p2.y);
           if (dist < maxDist) {
-            const alpha = (1 - dist / maxDist) * (isLight ? 0.12 : 0.22);
+            const alpha = (1 - dist / maxDist) * (isLight ? 0.18 : 0.22);
             ctx.beginPath();
             ctx.moveTo(p.x, p.y);
             ctx.lineTo(p2.x, p2.y);
@@ -217,7 +229,9 @@ export function SiteBackground() {
         ctx.font = `600 ${g.size}px var(--font-display), "Baloo 2", sans-serif`;
 
         if (isLight) {
-          ctx.fillStyle = `rgba(71, 85, 105, ${g.alpha * 0.85})`;
+          ctx.shadowColor = 'rgba(99, 102, 241, 0.25)';
+          ctx.shadowBlur = 6;
+          ctx.fillStyle = `rgba(67, 56, 202, ${g.alpha * 1.5})`;
         } else {
           ctx.shadowColor = 'rgba(167, 139, 250, 0.4)';
           ctx.shadowBlur = 10;
@@ -268,34 +282,64 @@ export function SiteBackground() {
       aria-hidden="true"
       data-testid="site-background"
     >
+      {/* KATMAN 0: Açık Modda Çok Tonlu Akıcı Gradyan Zemin (Gradient Mesh) */}
+      {isLight ? (
+        <div className="absolute inset-0 light-gradient-mesh" />
+      ) : (
+        <div className="absolute inset-0 bg-gradient-to-b from-[#090d16] via-[#0f172a] to-[#090d16]" />
+      )}
+
       {/* KATMAN 1: Donanım Hızlandırmalı Akıcı Aurora Küreleri (GPU CSS) */}
       <div className="absolute inset-0 overflow-hidden">
         {/* Küre 1: Sol Üst / İndigo-Mor Parıltı */}
         <div
-          className={`aurora-orb aurora-orb-1 -top-24 -left-24 h-[34rem] w-[34rem] sm:h-[48rem] sm:w-[48rem] ${
+          className={`aurora-orb aurora-orb-1 -top-24 -left-24 h-[36rem] w-[36rem] sm:h-[52rem] sm:w-[52rem] ${
             isLight
-              ? 'bg-gradient-to-br from-indigo-500/10 via-purple-400/5 to-transparent'
-              : 'bg-gradient-to-br from-indigo-600/20 via-violet-600/15 to-transparent'
+              ? 'bg-gradient-to-br from-indigo-500/25 via-purple-500/18 to-pink-400/12'
+              : 'bg-gradient-to-br from-indigo-600/22 via-violet-600/16 to-transparent'
           }`}
         />
 
-        {/* Küre 2: Sağ Üst / Camgöbeği-Mavi Işıma */}
+        {/* Küre 2: Sağ Üst / Camgöbeği-Gök Mavisi Işıma */}
         <div
-          className={`aurora-orb aurora-orb-2 -top-20 -right-20 h-[32rem] w-[32rem] sm:h-[44rem] sm:w-[44rem] ${
+          className={`aurora-orb aurora-orb-2 -top-20 -right-20 h-[34rem] w-[34rem] sm:h-[48rem] sm:w-[48rem] ${
             isLight
-              ? 'bg-gradient-to-bl from-sky-400/8 via-cyan-300/4 to-transparent'
-              : 'bg-gradient-to-bl from-cyan-500/18 via-blue-600/12 to-transparent'
+              ? 'bg-gradient-to-bl from-cyan-400/22 via-sky-400/16 to-indigo-300/10'
+              : 'bg-gradient-to-bl from-cyan-500/20 via-blue-600/14 to-transparent'
           }`}
         />
 
-        {/* Küre 3: Orta-Alt / Sıcak Fuşya-Lavanta Işıma */}
+        {/* Küre 3: Orta-Alt / Sıcak Gül-Lavanta Işıma */}
         <div
-          className={`aurora-orb aurora-orb-3 top-1/2 left-1/3 -translate-x-1/2 h-[30rem] w-[30rem] sm:h-[42rem] sm:w-[42rem] ${
+          className={`aurora-orb aurora-orb-3 top-1/2 left-1/3 -translate-x-1/2 h-[32rem] w-[32rem] sm:h-[46rem] sm:w-[46rem] ${
             isLight
-              ? 'bg-gradient-to-tr from-pink-400/6 via-rose-300/3 to-transparent'
-              : 'bg-gradient-to-tr from-fuchsia-600/14 via-pink-600/8 to-transparent'
+              ? 'bg-gradient-to-tr from-rose-400/20 via-fuchsia-400/14 to-amber-300/10'
+              : 'bg-gradient-to-tr from-fuchsia-600/16 via-pink-600/10 to-transparent'
           }`}
         />
+
+        {/* Küre 4: Sağ Alt / İris-Mavi Işıma */}
+        <div
+          className={`aurora-orb aurora-orb-4 -bottom-24 -right-16 h-[30rem] w-[30rem] sm:h-[42rem] sm:w-[42rem] ${
+            isLight
+              ? 'bg-gradient-to-tl from-purple-400/20 via-indigo-400/14 to-cyan-300/10'
+              : 'bg-gradient-to-tl from-violet-600/18 via-indigo-700/12 to-transparent'
+          }`}
+        />
+
+        {/* İmleç Manyetik Işık Halkası */}
+        {pointer.active ? (
+          <div
+            className="pointer-events-none absolute h-[26rem] w-[26rem] -translate-x-1/2 -translate-y-1/2 rounded-full blur-3xl transition-opacity duration-300"
+            style={{
+              left: pointer.x,
+              top: pointer.y,
+              background: isLight
+                ? 'radial-gradient(circle, rgba(99, 102, 241, 0.22) 0%, rgba(236, 72, 153, 0.12) 45%, transparent 70%)'
+                : 'radial-gradient(circle, rgba(139, 92, 246, 0.25) 0%, rgba(6, 182, 212, 0.12) 45%, transparent 70%)',
+            }}
+          />
+        ) : null}
       </div>
 
       {/* KATMAN 2: Mimari Koordinat & Mavi Kopya Izgarası (Blueprint Mesh) */}
@@ -303,9 +347,9 @@ export function SiteBackground() {
         className="absolute inset-0"
         style={{
           backgroundImage: isLight
-            ? `radial-gradient(ellipse 85% 70% at 50% 30%, rgba(99, 102, 241, 0.04) 0%, transparent 80%),
-               linear-gradient(to right, rgba(99, 102, 241, 0.035) 1px, transparent 1px),
-               linear-gradient(to bottom, rgba(99, 102, 241, 0.035) 1px, transparent 1px)`
+            ? `radial-gradient(ellipse 85% 70% at 50% 30%, rgba(99, 102, 241, 0.05) 0%, transparent 80%),
+               linear-gradient(to right, rgba(99, 102, 241, 0.045) 1px, transparent 1px),
+               linear-gradient(to bottom, rgba(99, 102, 241, 0.045) 1px, transparent 1px)`
             : `radial-gradient(ellipse 85% 70% at 50% 30%, rgba(139, 92, 246, 0.06) 0%, transparent 80%),
                linear-gradient(to right, rgba(255, 255, 255, 0.022) 1px, transparent 1px),
                linear-gradient(to bottom, rgba(255, 255, 255, 0.022) 1px, transparent 1px)`,
@@ -330,7 +374,7 @@ export function SiteBackground() {
       <div
         className={`absolute inset-0 ${
           isLight
-            ? 'bg-radial-gradient-vignette opacity-20'
+            ? 'bg-gradient-to-t from-indigo-100/30 via-transparent to-white/40'
             : 'bg-gradient-to-t from-slate-950/60 via-transparent to-slate-950/40'
         }`}
       />

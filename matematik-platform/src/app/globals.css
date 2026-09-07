@@ -1484,6 +1484,48 @@ html[data-theme='light'] .ui-chip[data-tone='slate'] {
   animation: aurora-drift-3 20s cubic-bezier(0.45, 0.05, 0.55, 0.95) infinite;
 }
 
+@keyframes aurora-drift-4 {
+  0%, 100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  35% {
+    transform: translate3d(-7vw, 10vh, 0) scale(1.14);
+  }
+  70% {
+    transform: translate3d(8vw, -8vh, 0) scale(0.92);
+  }
+}
+
+.aurora-orb-4 {
+  animation: aurora-drift-4 24s cubic-bezier(0.45, 0.05, 0.55, 0.95) infinite;
+}
+
+@keyframes lightGradientFlow {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.light-gradient-mesh {
+  background: linear-gradient(
+    -45deg,
+    #eef2ff 0%,
+    #fdf4ff 20%,
+    #f0fdfa 40%,
+    #fdf2f8 60%,
+    #f5f3ff 80%,
+    #eff6ff 100%
+  );
+  background-size: 260% 260%;
+  animation: lightGradientFlow 22s ease-in-out infinite;
+}
+
 .grid-shimmer-beam {
   position: absolute;
   inset-x: 0;
@@ -1504,8 +1546,8 @@ html[data-theme='light'] .grid-shimmer-beam {
   background: linear-gradient(
     180deg,
     transparent 0%,
-    rgba(99, 102, 241, 0.025) 45%,
-    rgba(14, 165, 233, 0.035) 55%,
+    rgba(99, 102, 241, 0.035) 45%,
+    rgba(14, 165, 233, 0.045) 55%,
     transparent 100%
   );
 }
@@ -1514,7 +1556,9 @@ html[data-theme='light'] .grid-shimmer-beam {
   .aurora-orb-1,
   .aurora-orb-2,
   .aurora-orb-3,
-  .grid-shimmer-beam {
+  .aurora-orb-4,
+  .grid-shimmer-beam,
+  .light-gradient-mesh {
     animation: none !important;
     transform: none !important;
   }
