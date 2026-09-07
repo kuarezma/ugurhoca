@@ -8,17 +8,13 @@ type HomeFooterProps = {
   isLight: boolean;
 };
 
-export function HomeFooter({ isLight }: HomeFooterProps) {
+export function HomeFooter({ isLight: _isLight }: HomeFooterProps) {
   return (
     <footer
-      className={`border-t mt-12 px-4 py-12 transition-colors duration-300 ${
-        isLight
-          ? 'border-slate-200 bg-slate-50/80 backdrop-blur-md text-slate-700'
-          : 'border-white/10 bg-slate-950/80 backdrop-blur-md text-slate-300'
-      }`}
+      className="border-t border-default dark:border-slate-500/30 mt-12 px-4 py-12 bg-surface-1 transition-colors duration-300"
     >
       <div className="mx-auto max-w-6xl">
-        <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4 pb-8 border-b border-white/5">
+        <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4 pb-8 border-b border-default">
           {/* Marka & Misyon */}
           <div className="space-y-3 lg:col-span-2">
             <div className="flex items-center gap-2.5">
@@ -31,21 +27,17 @@ export function HomeFooter({ isLight }: HomeFooterProps) {
                   className="h-full w-full rounded-[10px] object-cover"
                 />
               </div>
-              <span
-                className={`font-display text-lg font-bold ${
-                  isLight ? 'text-slate-900' : 'text-white'
-                }`}
-              >
+              <span className="font-display text-lg font-bold text-primary">
                 Uğur Hoca Matematik
               </span>
             </div>
 
-            <p className="text-xs leading-relaxed max-w-sm text-slate-400">
+            <p className="text-xs leading-relaxed max-w-sm text-slate-600 dark:text-slate-400">
               LGS ve YKS hazırlığında tüm öğrencilere %100 ücretsiz, reklamsız, nitelikli ders notları,
               yaprak testler ve interaktif çalışma ortamı sunar.
             </p>
 
-            <div className="inline-flex items-center gap-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 px-3 py-1 text-[11px] font-bold text-emerald-400">
+            <div className="inline-flex items-center gap-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 px-3 py-1 text-[11px] font-bold text-emerald-800 dark:text-emerald-400">
               <Shield className="h-3.5 w-3.5" />
               <span>%100 Ücretsiz & Gizlilik Korumalı</span>
             </div>
@@ -53,14 +45,10 @@ export function HomeFooter({ isLight }: HomeFooterProps) {
 
           {/* Hızlı Erişim */}
           <div className="space-y-2.5">
-            <h4
-              className={`font-display text-xs font-bold uppercase tracking-wider ${
-                isLight ? 'text-slate-900' : 'text-white'
-              }`}
-            >
+            <h4 className="font-display text-xs font-bold uppercase tracking-wider text-primary">
               Eğitim Modülleri
             </h4>
-            <ul className="space-y-1.5 text-xs text-slate-400">
+            <ul className="space-y-1.5 text-xs text-slate-600 dark:text-slate-400">
               <li>
                 <SafeLink href="/icerikler" className="hover:text-brand-primary-soft transition">
                   Ders Notları & PDF'ler
@@ -96,14 +84,10 @@ export function HomeFooter({ isLight }: HomeFooterProps) {
 
           {/* Yasal & İletişim */}
           <div className="space-y-2.5">
-            <h4
-              className={`font-display text-xs font-bold uppercase tracking-wider ${
-                isLight ? 'text-slate-900' : 'text-white'
-              }`}
-            >
+            <h4 className="font-display text-xs font-bold uppercase tracking-wider text-primary">
               Kurumsal & Destek
             </h4>
-            <ul className="space-y-1.5 text-xs text-slate-400">
+            <ul className="space-y-1.5 text-xs text-slate-600 dark:text-slate-400">
               <li>
                 <SafeLink href="/gizlilik" className="hover:text-brand-primary-soft transition">
                   Gizlilik Politikası
@@ -132,7 +116,7 @@ export function HomeFooter({ isLight }: HomeFooterProps) {
         </div>
 
         {/* Alt Telif Şeridi */}
-        <div className="mt-8 flex flex-wrap items-center justify-between gap-3 text-xs text-slate-500">
+        <div className="mt-8 flex flex-wrap items-center justify-between gap-3 text-xs text-slate-600 dark:text-slate-400">
           <p>© 2026 Uğur Hoca Matematik Platformu. Tüm hakları saklıdır.</p>
           <div className="flex items-center gap-1">
             <span>Öğrenciler için sevgiyle geliştirildi</span>

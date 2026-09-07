@@ -37,3 +37,5 @@ next-env.d.ts
 coverage/
 bundle-reports/
 .nyc_output/
+test-results/
+playwright-report/

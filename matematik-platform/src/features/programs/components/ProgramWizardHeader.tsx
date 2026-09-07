@@ -16,7 +16,7 @@ export function ProgramWizardHeader({
   dataYear,
   dataYearNote,
   description,
-  isLight,
+  isLight: _isLight,
   title,
 }: ProgramWizardHeaderProps) {
   return (
@@ -28,32 +28,18 @@ export function ProgramWizardHeader({
           <Sparkles className="h-3.5 w-3.5" />
           {badgeLabel}
         </div>
-        <h1
-          className={`text-2xl font-black sm:text-4xl ${
-            isLight ? 'light-text-strong' : 'text-white'
-          }`}
-        >
+        <h1 className="text-2xl font-black text-primary sm:text-4xl">
           {title}
         </h1>
-        <p
-          className={`mt-3 max-w-3xl text-sm sm:text-base ${
-            isLight ? 'light-text-muted' : 'text-slate-300'
-          }`}
-        >
+        <p className="mt-3 max-w-3xl text-sm sm:text-base text-secondary">
           {description}
         </p>
       </div>
 
-      <div
-        className={`rounded-2xl border px-4 py-3 text-sm ${
-          isLight
-            ? 'bg-slate-50 border-slate-200 text-slate-700'
-            : 'bg-white/5 border-white/10 text-slate-200'
-        }`}
-      >
-        Veri Yili: <span className="font-bold">{dataYear}</span>
+      <div className="rounded-2xl border border-default dark:border-slate-500 bg-surface-1 px-4 py-3 text-sm text-primary shadow-xs">
+        Veri Yılı: <span className="font-bold">{dataYear}</span>
         {dataYearNote ? (
-          <div className={`mt-1 text-[11px] ${isLight ? 'text-slate-500' : 'text-slate-400'}`}>
+          <div className="mt-1 text-[11px] text-secondary">
             {dataYearNote}
           </div>
         ) : null}

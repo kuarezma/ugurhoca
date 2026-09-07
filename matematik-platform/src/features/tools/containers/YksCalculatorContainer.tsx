@@ -97,33 +97,33 @@ export function YksCalculatorContainer() {
   };
 
   return (
-    <main className="min-h-screen gradient-bg px-4 pb-16 pt-20 sm:px-6 sm:pt-24">
+    <main className="page-surface min-h-screen gradient-bg px-4 pb-16 pt-20 sm:px-6 sm:pt-24">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
       <div className="mx-auto max-w-4xl">
-        <div className="mb-6 flex items-center gap-2 text-xs font-semibold text-slate-400">
-          <Link href="/araclar" className="hover:text-white transition flex items-center gap-1">
+        <div className="mb-6 flex items-center gap-2 text-xs font-semibold text-secondary">
+          <Link href="/araclar" className="hover:text-primary transition flex items-center gap-1">
             <ArrowLeft className="h-3.5 w-3.5" />
             Tüm Araçlar
           </Link>
           <span>/</span>
-          <span className="text-purple-400 font-bold">YKS Puan & Sıralama Hesaplayıcı</span>
+          <span className="text-accent-fg font-bold">YKS Puan & Sıralama Hesaplayıcı</span>
         </div>
 
-        <div className="rounded-3xl border border-purple-500/20 bg-gradient-to-r from-purple-950/40 via-slate-900/80 to-pink-950/40 p-6 sm:p-8 backdrop-blur-md shadow-2xl mb-8">
+        <div className="rounded-3xl border border-default bg-surface-1 dark:bg-slate-900/80 p-6 sm:p-8 backdrop-blur-md shadow-2xl mb-8">
           <div className="flex flex-wrap items-center justify-between gap-4">
             <div className="flex items-center gap-3">
               <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-purple-500 to-pink-600 text-white shadow-lg">
                 <GraduationCap className="h-6 w-6" />
               </div>
               <div>
-                <h1 className="text-xl sm:text-3xl font-black text-white font-display">
+                <h1 className="text-xl sm:text-3xl font-black text-primary font-display">
                   2026/2027 ÖSYM YKS (TYT-AYT) Puan & Sıralama Hesaplayıcı
                 </h1>
-                <p className="text-xs sm:text-sm text-slate-300 mt-1">
+                <p className="text-xs sm:text-sm text-secondary mt-1">
                   ÖSYM standart sapma verileri ve güncel yerleştirme katsayılarıyla puan ve başarı sıranı hesapla.
                 </p>
               </div>
@@ -132,7 +132,7 @@ export function YksCalculatorContainer() {
             <button
               type="button"
               onClick={handleReset}
-              className="inline-flex items-center gap-1.5 rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-xs font-bold text-slate-300 hover:bg-white/10 hover:text-white transition"
+              className="inline-flex items-center gap-1.5 rounded-xl border border-default bg-surface-2 px-3 py-2 text-xs font-bold text-secondary hover:bg-surface-3 hover:text-primary transition"
             >
               <RotateCcw className="h-3.5 w-3.5" />
               Sıfırla
@@ -140,12 +140,12 @@ export function YksCalculatorContainer() {
           </div>
         </div>
 
-        <div className="rounded-3xl border border-white/10 bg-slate-900/80 p-5 shadow-xl backdrop-blur-md mb-6">
+        <div className="rounded-3xl border border-default bg-surface-1 p-5 shadow-xl backdrop-blur-md mb-6">
           <div className="grid grid-cols-1 sm:grid-cols-12 gap-4 items-center">
             <div className="sm:col-span-8 space-y-1">
               <div className="flex justify-between text-xs font-bold">
-                <span className="text-slate-200">Diploma Notu (OBP)</span>
-                <span className="text-purple-400 font-mono text-sm">{obp.toFixed(1)} / 100</span>
+                <span className="text-primary">Diploma Notu (OBP)</span>
+                <span className="text-accent-fg font-mono text-sm">{obp.toFixed(1)} / 100</span>
               </div>
               <input
                 type="range"
@@ -157,18 +157,18 @@ export function YksCalculatorContainer() {
                 className="w-full accent-purple-500 cursor-pointer"
                 aria-label="Diploma Notu"
               />
-              <span className="text-[10px] text-slate-400">
+              <span className="text-[10px] text-secondary">
                 Yerleştirmeye eklenen net katkı: +{(obp * 5 * (prevYearPlaced ? 0.06 : 0.12)).toFixed(2)} puan
               </span>
             </div>
 
             <div className="sm:col-span-4 flex items-center justify-end">
-              <label className="flex items-center gap-2 text-xs font-semibold text-slate-300 cursor-pointer">
+              <label className="flex items-center gap-2 text-xs font-semibold text-secondary cursor-pointer">
                 <input
                   type="checkbox"
                   checked={prevYearPlaced}
                   onChange={(e) => setPrevYearPlaced(e.target.checked)}
-                  className="rounded border-white/20 bg-white/10 text-purple-600 focus:ring-purple-500"
+                  className="rounded border-default bg-surface-2 text-purple-600 focus:ring-purple-500"
                 />
                 <span>Önceki yıl yerleştim (Kırık OBP)</span>
               </label>
@@ -178,14 +178,14 @@ export function YksCalculatorContainer() {
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
           <div className="lg:col-span-7 space-y-4">
-            <div className="flex rounded-2xl border border-white/10 bg-white/5 p-1 text-xs font-bold">
+            <div className="flex rounded-2xl border border-default bg-surface-2 p-1 text-xs font-bold">
               <button
                 type="button"
                 onClick={() => setActiveTab('tyt')}
                 className={`flex-1 py-2 rounded-xl transition ${
                   activeTab === 'tyt'
                     ? 'bg-purple-600 text-white shadow-md'
-                    : 'text-slate-300 hover:text-white'
+                    : 'text-secondary hover:text-primary'
                 }`}
               >
                 TYT Testleri (120 Soru)
@@ -196,20 +196,20 @@ export function YksCalculatorContainer() {
                 className={`flex-1 py-2 rounded-xl transition ${
                   activeTab === 'ayt'
                     ? 'bg-purple-600 text-white shadow-md'
-                    : 'text-slate-300 hover:text-white'
+                    : 'text-secondary hover:text-primary'
                 }`}
               >
                 AYT Testleri (160 Soru)
               </button>
             </div>
 
-            <div className="rounded-3xl border border-white/10 bg-slate-900/80 p-5 shadow-xl backdrop-blur-md">
-              <div className="flex items-center justify-between border-b border-white/10 pb-3 mb-4 text-xs font-bold text-slate-300">
+            <div className="rounded-3xl border border-default bg-surface-1 p-5 shadow-xl backdrop-blur-md">
+              <div className="flex items-center justify-between border-b border-default pb-3 mb-4 text-xs font-bold text-secondary">
                 <span>Ders Adı</span>
                 <div className="flex items-center gap-6 pr-2">
-                  <span className="text-emerald-400">Doğru</span>
-                  <span className="text-rose-400">Yanlış</span>
-                  <span className="text-purple-400">Net</span>
+                  <span className="text-emerald-800 dark:text-emerald-300">Doğru</span>
+                  <span className="text-rose-800 dark:text-rose-300">Yanlış</span>
+                  <span className="text-accent-fg">Net</span>
                 </div>
               </div>
 
@@ -223,11 +223,11 @@ export function YksCalculatorContainer() {
                   return (
                     <div
                       key={key}
-                      className="flex items-center justify-between gap-2 rounded-2xl border border-white/5 bg-white/5 p-3 text-xs"
+                      className="flex items-center justify-between gap-2 rounded-2xl border border-default bg-surface-2 p-3 text-xs"
                     >
                       <div className="flex-1">
-                        <span className="font-bold text-white block">{meta.label}</span>
-                        <span className="text-[10px] text-slate-400">{meta.questions} Soru</span>
+                        <span className="font-bold text-primary block">{meta.label}</span>
+                        <span className="text-[10px] text-secondary">{meta.questions} Soru</span>
                       </div>
 
                       <div className="flex items-center gap-3">
@@ -241,7 +241,7 @@ export function YksCalculatorContainer() {
                             handleInputChange(key, 'correct', parseInt(e.target.value, 10))
                           }
                           aria-label={`${meta.label} doğru`}
-                          className="h-9 w-12 rounded-xl border border-emerald-500/30 bg-emerald-950/20 text-center font-mono font-bold text-emerald-300 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                          className="h-9 w-12 rounded-xl border border-emerald-500/40 bg-surface-1 text-center font-mono font-bold text-emerald-600 dark:text-emerald-300 focus:outline-none focus:ring-2 focus:ring-emerald-500"
                         />
 
                         <input
@@ -254,10 +254,10 @@ export function YksCalculatorContainer() {
                             handleInputChange(key, 'wrong', parseInt(e.target.value, 10))
                           }
                           aria-label={`${meta.label} yanlış`}
-                          className="h-9 w-12 rounded-xl border border-rose-500/30 bg-rose-950/20 text-center font-mono font-bold text-rose-300 focus:outline-none focus:ring-2 focus:ring-rose-500"
+                          className="h-9 w-12 rounded-xl border border-rose-500/40 bg-surface-1 text-center font-mono font-bold text-rose-600 dark:text-rose-300 focus:outline-none focus:ring-2 focus:ring-rose-500"
                         />
 
-                        <div className="h-9 w-14 rounded-xl border border-purple-500/30 bg-purple-950/20 flex items-center justify-center font-mono font-black text-purple-300">
+                        <div className="h-9 w-14 rounded-xl border border-purple-500/40 bg-surface-1 flex items-center justify-center font-mono font-black text-accent-fg">
                           {netVal.toFixed(2)}
                         </div>
                       </div>
@@ -269,8 +269,8 @@ export function YksCalculatorContainer() {
           </div>
 
           <div className="lg:col-span-5 space-y-4">
-            <div className="rounded-3xl border border-purple-500/30 bg-gradient-to-b from-purple-950/60 to-slate-900/90 p-5 shadow-2xl backdrop-blur-md space-y-4">
-              <div className="text-xs font-bold uppercase tracking-wider text-purple-300 flex items-center gap-1.5">
+            <div className="rounded-3xl border border-default bg-surface-1 p-5 shadow-2xl backdrop-blur-md space-y-4">
+              <div className="text-xs font-bold uppercase tracking-wider text-accent-fg flex items-center gap-1.5">
                 <Sparkles className="h-3.5 w-3.5" />
                 Yerleştirme Puanları & Sıralamalar
               </div>
@@ -282,24 +282,24 @@ export function YksCalculatorContainer() {
                 return (
                   <div
                     key={type}
-                    className="rounded-2xl border border-white/10 bg-white/5 p-3.5 space-y-1"
+                    className="rounded-2xl border border-default bg-surface-2 p-3.5 space-y-1"
                   >
                     <div className="flex items-center justify-between text-xs">
-                      <span className="font-bold text-purple-300">
+                      <span className="font-bold text-accent-fg">
                         {type === 'TYT' ? 'Temel Yeterlilik (TYT)' : `${type} Puanı`}
                       </span>
-                      <span className="text-[11px] text-slate-400">
+                      <span className="text-[11px] text-secondary">
                         Ham: {row.rawScore.toFixed(2)}
                       </span>
                     </div>
 
                     <div className="flex items-baseline justify-between pt-1">
-                      <span className="text-2xl font-black font-mono text-white">
+                      <span className="text-2xl font-black font-mono text-primary">
                         {row.placementScore.toFixed(2)}
                       </span>
                       <div className="text-right">
-                        <span className="text-[10px] text-slate-400 block">Tahmini Sıra:</span>
-                        <span className="text-sm font-bold font-mono text-emerald-400">
+                        <span className="text-[10px] text-secondary block">Tahmini Sıra:</span>
+                        <span className="text-sm font-bold font-mono text-emerald-800 dark:text-emerald-300">
                           ~{row.placementRank.toLocaleString('tr-TR')}
                         </span>
                       </div>

@@ -22,30 +22,20 @@ const scoreTypeLabels: Record<YksScoreType, string> = {
 
 export function YksScoreTable({
   activeScoreType,
-  isLight,
+  isLight: _isLight,
   onScoreTypeChange,
   rows,
 }: YksScoreTableProps) {
-  const headerClassName = isLight
-    ? 'bg-slate-100 text-slate-600'
-    : 'bg-white/5 text-slate-300';
-
   return (
-    <div
-      className={`overflow-hidden rounded-3xl border ${isLight ? 'border-slate-200 bg-white' : 'border-white/10 bg-white/5'}`}
-    >
-      <div
-        className={`px-4 py-3 ${isLight ? 'border-b border-slate-200' : 'border-b border-white/10'}`}
-      >
-        <h2
-          className={`text-base font-black ${isLight ? 'text-slate-950' : 'text-white'}`}
-        >
+    <div className="overflow-hidden rounded-3xl border border-default bg-surface-1 shadow-sm">
+      <div className="border-b border-default px-4 py-3">
+        <h2 className="text-base font-black text-primary">
           Puan ve Sıralama Sonuçları
         </h2>
       </div>
       <div className="overflow-x-auto">
         <table className="w-full min-w-[700px] border-collapse text-left text-sm tabular-nums">
-          <thead className={headerClassName}>
+          <thead className="bg-surface-2 text-secondary">
             <tr>
               <th className="px-4 py-3 text-xs font-black uppercase tracking-[0.14em]">
                 Puan Türü
@@ -74,47 +64,23 @@ export function YksScoreTable({
               return (
                 <tr
                   key={row.scoreType}
-                  className={`border-t transition ${
-                    isLight
-                      ? active
-                        ? 'border-cyan-100 bg-cyan-50/70'
-                        : 'border-slate-100 bg-white'
-                      : active
-                        ? 'border-cyan-300/20 bg-cyan-300/10'
-                        : 'border-white/10 bg-transparent'
+                  className={`border-t border-default transition ${
+                    active ? 'bg-accent/10' : 'bg-transparent'
                   }`}
                 >
-                  <td
-                    className={`px-4 py-3 font-black ${isLight ? 'text-slate-950' : 'text-white'}`}
-                  >
+                  <td className="px-4 py-3 font-black text-primary">
                     {scoreTypeLabels[row.scoreType]}
                   </td>
-                  <td
-                    className={
-                      isLight
-                        ? 'px-4 py-3 text-right text-slate-700'
-                        : 'px-4 py-3 text-right text-slate-200'
-                    }
-                  >
+                  <td className="px-4 py-3 text-right text-secondary">
                     {row.rawScore.toFixed(2)}
                   </td>
-                  <td
-                    className={
-                      isLight
-                        ? 'px-4 py-3 text-right text-slate-700'
-                        : 'px-4 py-3 text-right text-slate-200'
-                    }
-                  >
+                  <td className="px-4 py-3 text-right text-secondary">
                     {formatRank(row.rawRank)}
                   </td>
-                  <td
-                    className={`px-4 py-3 text-right font-bold ${isLight ? 'text-slate-950' : 'text-white'}`}
-                  >
+                  <td className="px-4 py-3 text-right font-bold text-primary">
                     {row.placementScore.toFixed(2)}
                   </td>
-                  <td
-                    className={`px-4 py-3 text-right font-bold ${isLight ? 'text-slate-950' : 'text-white'}`}
-                  >
+                  <td className="px-4 py-3 text-right font-bold text-primary">
                     {formatRank(row.placementRank)}
                   </td>
                   <td className="px-4 py-3">
@@ -123,10 +89,8 @@ export function YksScoreTable({
                       onClick={() => onScoreTypeChange(row.scoreType)}
                       className={`rounded-full border px-3 py-1 text-xs font-bold transition ${
                         active
-                          ? 'border-transparent bg-gradient-to-r from-cyan-500 to-fuchsia-500 text-white'
-                          : isLight
-                            ? 'border-slate-200 bg-white text-slate-700 hover:border-cyan-300'
-                            : 'border-white/10 bg-white/5 text-slate-200 hover:border-cyan-300/50'
+                          ? 'border-purple-300 dark:border-purple-300 bg-gradient-to-r from-purple-700 to-fuchsia-700 text-white shadow-sm'
+                          : 'border-default dark:border-slate-500 bg-surface-1 text-secondary hover:border-accent hover:text-primary'
                       }`}
                     >
                       {active ? 'Seçili' : 'Seç'}

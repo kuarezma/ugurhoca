@@ -5,6 +5,7 @@ import {
   FileText,
   Gamepad2,
 } from 'lucide-react';
+import type { ChipTone } from '@/components/ui/Chip';
 import type { ContentDocument } from '@/types';
 
 export const CONTENT_PAGE_SIZE = 5;
@@ -135,29 +136,29 @@ export const getContentKindLabel = (content: ContentDocument) => {
   return 'Dosya';
 };
 
-const CONTENT_PRIMARY_GRADE_BADGE_STYLES: Record<string, string> = {
-  5: 'bg-emerald-500/35 text-emerald-50 border border-emerald-200/80 shadow-sm shadow-emerald-500/30',
-  6: 'bg-blue-500/35 text-blue-50 border border-blue-200/80 shadow-sm shadow-blue-500/30',
-  7: 'bg-yellow-500/35 text-yellow-50 border border-yellow-200/80 shadow-sm shadow-yellow-500/30',
-  8: 'bg-violet-500/35 text-violet-50 border border-violet-200/80 shadow-sm shadow-violet-500/30',
-  9: 'bg-rose-500/35 text-rose-50 border border-rose-200/80 shadow-sm shadow-rose-500/30',
-  10: 'bg-cyan-500/35 text-cyan-50 border border-cyan-200/80 shadow-sm shadow-cyan-500/30',
-  11: 'bg-lime-500/35 text-lime-50 border border-lime-200/80 shadow-sm shadow-lime-500/30',
-  12: 'bg-orange-500/35 text-orange-50 border border-orange-200/80 shadow-sm shadow-orange-500/30',
-  Mezun: 'bg-zinc-500/40 text-zinc-50 border border-zinc-200/80 shadow-sm shadow-zinc-500/30',
-  all: 'bg-slate-500/35 text-slate-50 border border-slate-200/70 shadow-sm shadow-slate-500/20',
+const CONTENT_PRIMARY_GRADE_BADGE_TONES: Record<string, ChipTone> = {
+  5: 'emerald',
+  6: 'blue',
+  7: 'yellow',
+  8: 'violet',
+  9: 'rose',
+  10: 'cyan',
+  11: 'lime',
+  12: 'orange',
+  Mezun: 'zinc',
+  all: 'slate',
 };
 
-export const getContentPrimaryGradeBadgeClass = (
+export const getContentPrimaryGradeBadgeTone = (
   content: Pick<ContentDocument, 'grade'>,
-) => {
+): ChipTone => {
   const primaryGrade =
     Array.isArray(content.grade) && content.grade.length > 0
       ? String(content.grade[0])
       : 'all';
 
   return (
-    CONTENT_PRIMARY_GRADE_BADGE_STYLES[primaryGrade] ||
-    CONTENT_PRIMARY_GRADE_BADGE_STYLES.all
+    CONTENT_PRIMARY_GRADE_BADGE_TONES[primaryGrade] ||
+    CONTENT_PRIMARY_GRADE_BADGE_TONES.all
   );
 };

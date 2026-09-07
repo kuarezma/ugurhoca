@@ -242,8 +242,8 @@ export function FocusPomodoroPageContainer() {
 
   return (
     <div
-      className={`min-h-screen transition-colors duration-300 ${
-        isLight ? "bg-slate-50 text-slate-900" : "bg-slate-950 text-white"
+      className={`page-surface min-h-screen transition-colors duration-300 ${
+        isLight ? "bg-slate-50 text-slate-900" : "dark:bg-slate-950 text-white"
       }`}
     >
       <HomeNavbar user={user} onLogout={handleLogout} />
@@ -408,7 +408,7 @@ export function FocusPomodoroPageContainer() {
                 />
               </div>
 
-              <div className="text-xs font-semibold text-slate-400 flex items-center gap-1.5">
+              <div className="text-xs font-semibold text-slate-500 dark:text-slate-400 flex items-center gap-1.5">
                 {isBreak ? <Coffee className="h-4 w-4 text-emerald-400" /> : <Brain className="h-4 w-4 text-rose-400" />}
                 <span>{MODE_LABELS[mode].subtitle}</span>
               </div>
@@ -492,7 +492,7 @@ export function FocusPomodoroPageContainer() {
                     <h3 className="text-sm font-bold text-slate-900 dark:text-white">
                       Tamamlanan Seanslar
                     </h3>
-                    <p className="text-xs text-slate-400">Bugünkü odak blokların</p>
+                    <p className="text-xs text-slate-500 dark:text-slate-400">Bugünkü odak blokların</p>
                   </div>
                 </div>
                 <span className="text-2xl font-black text-amber-500">
@@ -523,7 +523,7 @@ export function FocusPomodoroPageContainer() {
                   </span>
                 )}
               </div>
-              <p className="text-xs text-slate-400 mb-3">
+              <p className="text-xs text-slate-500 dark:text-slate-400 mb-3">
                 Doğal ses dalgalarıyla dikkatini topla (Durdurmak için seçili karta tekrar dokun):
               </p>
               <div className="grid grid-cols-2 gap-2 mb-4">

@@ -295,22 +295,14 @@ export function ExamCountdown({
               <button
                 type="button"
                 onClick={() => onOpenCalculator(exam.id.includes('lgs') ? 'lgs' : 'yks')}
-                className={`shrink-0 inline-flex items-center gap-1.5 rounded-xl px-3 py-1.5 text-xs font-bold transition-all ${
-                  isLight
-                    ? "bg-indigo-600 text-white shadow-sm hover:bg-indigo-700"
-                    : "bg-white/15 text-white hover:bg-white/25 border border-white/10"
-                }`}
+                className="shrink-0 inline-flex items-center gap-1.5 rounded-xl px-3 py-1.5 text-xs font-bold transition-all bg-indigo-600 text-white hover:bg-indigo-700 border border-indigo-500 dark:border-indigo-400 shadow-sm"
               >
                 Net & Puan Hesapla →
               </button>
             ) : (
               <Link
                 href={exam.toolHref}
-                className={`shrink-0 inline-flex items-center gap-1.5 rounded-xl px-3 py-1.5 text-xs font-bold transition-all ${
-                  isLight
-                    ? "bg-indigo-600 text-white shadow-sm hover:bg-indigo-700"
-                    : "bg-white/15 text-white hover:bg-white/25 border border-white/10"
-                }`}
+                className="shrink-0 inline-flex items-center gap-1.5 rounded-xl px-3 py-1.5 text-xs font-bold transition-all bg-indigo-600 text-white hover:bg-indigo-700 border border-indigo-500 dark:border-indigo-400 shadow-sm"
               >
                 Puan Hesapla →
               </Link>
@@ -330,7 +322,7 @@ export function ExamCountdown({
                     : "bg-white/10 text-slate-300 border border-white/10",
                 ].join(" ")}
               >
-                <span className="font-bold text-indigo-500 dark:text-indigo-400">{item.label}:</span> {item.dateLabel}
+                <span className="font-bold text-indigo-700 dark:text-indigo-300">{item.label}:</span> {item.dateLabel}
               </div>
             ))}
           </div>
@@ -344,7 +336,7 @@ export function ExamCountdown({
               <span className="text-[11px] font-medium text-slate-500 dark:text-slate-400">
                 Hedef Netim:
               </span>
-              <span className="font-bold text-amber-600 dark:text-amber-400">
+              <span className="font-bold text-amber-800 dark:text-amber-300">
                 {targetNet ? `${targetNet} / ${maxNet} Net` : 'Belirlenmedi'}
               </span>
             </div>

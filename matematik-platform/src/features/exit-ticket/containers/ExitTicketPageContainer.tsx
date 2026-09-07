@@ -56,30 +56,30 @@ export function ExitTicketPageContainer() {
   };
 
   return (
-    <div className="w-full min-h-[calc(100vh-80px)] py-8 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto flex flex-col gap-8">
+    <div className="page-surface w-full min-h-[calc(100vh-80px)] py-8 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto flex flex-col gap-8">
       {/* Üst Mod Değiştirici (Öğrenci / Öğretmen Sekmeleri) - Oturum sunulmuyorsa göster */}
       {!currentSession && (
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 border-b border-white/10 pb-6">
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 border-b border-default pb-6">
           <div>
-            <span className="text-xs font-bold uppercase tracking-wider text-violet-400">
+            <span className="text-xs font-bold uppercase tracking-wider text-violet-700 dark:text-violet-300">
               Sınıf İçi Anlık Değerlendirme
             </span>
-            <h1 className="text-2xl sm:text-3xl font-black text-white mt-1">
+            <h1 className="text-2xl sm:text-3xl font-black text-primary mt-1">
               Ders Sonu Çıkış Bileti (Exit Ticket)
             </h1>
-            <p className="text-slate-400 text-sm mt-1">
+            <p className="text-secondary text-sm mt-1">
               3 soruda sınıfın konuyu ne kadar kavradığını ve kavram yanılgılarını canlı görün.
             </p>
           </div>
 
-          <div className="flex items-center p-1.5 rounded-2xl bg-slate-900 border border-white/10">
+          <div className="flex items-center p-1.5 rounded-2xl bg-surface-2 border border-default">
             <button
               type="button"
               onClick={() => setActiveTab('student')}
               className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition ${
                 activeTab === 'student'
                   ? 'bg-amber-500 text-slate-950 shadow-md shadow-amber-500/20'
-                  : 'text-slate-400 hover:text-white'
+                  : 'text-secondary hover:text-primary'
               }`}
             >
               <Smartphone className="w-4 h-4" />
@@ -90,8 +90,8 @@ export function ExitTicketPageContainer() {
               onClick={() => setActiveTab('teacher')}
               className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition ${
                 activeTab === 'teacher'
-                  ? 'bg-violet-600 text-white shadow-md shadow-violet-600/30'
-                  : 'text-slate-400 hover:text-white'
+                  ? 'bg-violet-700 text-white shadow-md shadow-violet-700/30'
+                  : 'text-secondary hover:text-primary'
               }`}
             >
               <Presentation className="w-4 h-4" />

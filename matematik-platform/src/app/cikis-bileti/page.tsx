@@ -14,7 +14,7 @@ export default function ExitTicketPage() {
   return (
     <Suspense
       fallback={
-        <div className="w-full min-h-[60vh] flex items-center justify-center text-slate-400">
+        <div className="w-full min-h-[60vh] flex items-center justify-center text-secondary">
           <div className="flex flex-col items-center gap-3">
             <div className="w-8 h-8 rounded-full border-2 border-violet-500 border-t-transparent animate-spin" />
             <span className="text-sm">Çıkış bileti yükleniyor...</span>

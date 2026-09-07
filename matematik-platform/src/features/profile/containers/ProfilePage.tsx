@@ -548,7 +548,7 @@ export default function ProfilePage({ initialData }: ProfilePageProps) {
 
   if (loading) {
     return (
-      <main className="profil-page min-h-screen bg-gradient-to-br from-slate-900 via-slate-900 to-slate-800 px-4 pb-12 pt-20">
+      <main className="profil-page page-surface min-h-screen dark:bg-gradient-to-br dark:from-slate-900 dark:via-slate-900 dark:to-slate-800 px-4 pb-12 pt-20">
         <div className="mx-auto max-w-6xl space-y-6">
           <Skeleton className="h-48 rounded-[2.5rem]" />
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
@@ -570,7 +570,7 @@ export default function ProfilePage({ initialData }: ProfilePageProps) {
   if (!user) return null;
 
   return (
-    <main className="profil-page min-h-screen bg-gradient-to-br from-slate-900 via-slate-900 to-slate-800">
+    <main className="profil-page page-surface min-h-screen dark:bg-gradient-to-br dark:from-slate-900 dark:via-slate-900 dark:to-slate-800">
       <nav className="fixed left-0 right-0 top-0 z-50 border-b border-white/10 bg-slate-950/80 backdrop-blur-xl transition-all duration-300">
         <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 sm:px-6">
           <Link href="/" className="group flex items-center gap-3">

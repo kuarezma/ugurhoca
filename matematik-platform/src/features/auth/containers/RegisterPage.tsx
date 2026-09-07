@@ -171,8 +171,8 @@ export default function RegisterPage() {
           <div className="mx-auto mt-4 inline-flex h-16 w-16 animate-pop items-center justify-center rounded-full bg-gradient-to-br from-emerald-400 to-teal-500">
             <CheckCircle2 className="h-8 w-8 text-white" aria-hidden="true" />
           </div>
-          <h2 className="mt-4 font-display text-3xl font-bold text-white">Harika!</h2>
-          <p className="mt-2 text-slate-300">
+          <h2 className="mt-4 font-display text-3xl font-bold text-primary">Harika!</h2>
+          <p className="mt-2 text-secondary">
             Hesabın oluşturuldu. Profilin hazırlanıyor, bir saniye...
           </p>
         </div>
@@ -188,7 +188,7 @@ export default function RegisterPage() {
       />
 
       <div className="mx-auto flex min-h-screen max-w-6xl flex-col items-stretch gap-10 px-6 py-10 lg:flex-row lg:items-center">
-        <aside className="relative hidden flex-1 items-center justify-center overflow-hidden rounded-[2rem] border border-white/10 bg-gradient-to-br from-brand-secondary/20 via-brand-primary/15 to-brand-pink/20 p-10 text-white lg:flex">
+        <aside className="relative hidden flex-1 items-center justify-center overflow-hidden rounded-[2rem] border border-slate-800/80 bg-gradient-to-br from-slate-950 via-indigo-950 to-purple-950 p-10 text-white shadow-2xl lg:flex">
           <div aria-hidden="true" className="absolute -right-16 -top-16 h-72 w-72 rounded-full bg-brand-secondary/30 blur-3xl" />
           <div aria-hidden="true" className="absolute -bottom-20 -left-20 h-80 w-80 rounded-full bg-brand-primary/30 blur-3xl" />
           <div className="relative max-w-sm text-center">
@@ -213,22 +213,22 @@ export default function RegisterPage() {
         >
           <Link
             href="/"
-            className="mb-6 inline-flex items-center gap-2 text-sm font-semibold text-slate-300 hover:text-white"
+            className="mb-6 inline-flex items-center gap-2 text-sm font-semibold text-secondary hover:text-primary"
           >
             <ArrowLeft className="h-4 w-4" aria-hidden="true" />
             Ana sayfa
           </Link>
 
-          <div className="glass rounded-3xl border border-white/10 bg-slate-900/70 p-8 shadow-brand-glow backdrop-blur-xl">
+          <div className="glass rounded-3xl border border-default bg-surface-1 p-8 shadow-brand-glow backdrop-blur-xl">
             <div className="mb-6 flex items-center gap-3">
               <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-brand-primary via-brand-pink to-brand-orange text-white shadow-brand-glow">
                 <Sparkles className="h-6 w-6" aria-hidden="true" />
               </div>
               <div>
-                <h1 className="font-display text-2xl font-bold text-white">
+                <h1 className="font-display text-2xl font-bold text-primary">
                   Hemen kayıt ol
                 </h1>
-                <p className="text-sm text-slate-400">30 saniyede hesap oluştur</p>
+                <p className="text-sm text-secondary">30 saniyede hesap oluştur</p>
               </div>
             </div>
 
@@ -280,7 +280,7 @@ export default function RegisterPage() {
                       type="button"
                       onClick={() => setShowPassword((v) => !v)}
                       aria-label={showPassword ? 'Şifreyi gizle' : 'Şifreyi göster'}
-                      className="inline-flex h-9 w-9 items-center justify-center rounded-lg text-slate-400 hover:bg-white/10 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary"
+                      className="inline-flex h-9 w-9 items-center justify-center rounded-lg text-secondary hover:bg-surface-2 hover:text-primary focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-fg"
                     >
                       {showPassword ? (
                         <EyeOff className="h-4 w-4" aria-hidden="true" />
@@ -297,7 +297,7 @@ export default function RegisterPage() {
                         className={`h-full transition-all ${STRENGTH_TO_TONE[strength.score].width} ${STRENGTH_TO_TONE[strength.score].color}`}
                       />
                     </div>
-                    <p className="text-xs text-slate-400">
+                    <p className="text-xs text-secondary">
                       Şifre gücü: <span className="font-semibold">{strength.label}</span>
                     </p>
                   </div>
@@ -331,28 +331,28 @@ export default function RegisterPage() {
               </Button>
             </form>
 
-            <p className="mt-6 text-center text-sm text-slate-400">
+            <p className="mt-6 text-center text-sm text-secondary">
               Zaten hesabın var mı?{' '}
               <Link
                 href="/giris"
-                className="font-semibold text-brand-primary-soft hover:text-white"
+                className="font-semibold text-accent-fg hover:text-primary"
               >
                 Giriş yap
               </Link>
             </p>
-            <p className="mt-4 flex items-start gap-2 rounded-2xl border border-emerald-400/20 bg-emerald-500/10 px-4 py-3 text-xs leading-relaxed text-emerald-100/90">
+            <p className="mt-4 flex items-start gap-2 rounded-2xl border border-emerald-400/20 bg-emerald-500/10 px-4 py-3 text-xs leading-relaxed text-emerald-900 dark:text-emerald-200">
               <ShieldCheck className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
               Platform öğrencilerin faydalanması için ücretsizdir. Profilin,
               mesajların, ödevlerin ve çalışma verilerin başka öğrencilerle
               paylaşılmaz.
             </p>
-            <p className="mt-4 text-center text-xs text-slate-400">
+            <p className="mt-4 text-center text-xs text-secondary">
               Devam ederek{' '}
-              <Link href="/gizlilik" className="underline-offset-4 hover:underline">
+              <Link href="/gizlilik" className="text-accent-fg underline-offset-4 hover:text-primary hover:underline">
                 Gizlilik Politikası
               </Link>{' '}
               ve{' '}
-              <Link href="/kvkk" className="underline-offset-4 hover:underline">
+              <Link href="/kvkk" className="text-accent-fg underline-offset-4 hover:text-primary hover:underline">
                 KVKK
               </Link>{' '}
               metinlerini kabul etmiş olursun.

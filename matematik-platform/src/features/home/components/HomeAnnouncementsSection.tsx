@@ -27,18 +27,10 @@ export function HomeAnnouncementsSection({
       >
         <div className="flex items-center justify-between mb-4">
           <div>
-            <h2
-              className={`text-lg sm:text-2xl font-bold ${
-                isLight ? 'light-text-strong' : 'text-white'
-              }`}
-            >
+            <h2 className="text-lg sm:text-2xl font-bold text-primary">
               Haberler
             </h2>
-            <p
-              className={`text-sm ${
-                isLight ? 'light-text-muted' : 'text-slate-400'
-              }`}
-            >
+            <p className="text-sm text-secondary">
               Kısa duyuru başlıkları. Detay için tıkla.
             </p>
           </div>
@@ -57,15 +49,11 @@ export function HomeAnnouncementsSection({
               <button
                 key={item.id}
                 onClick={() => onSelectAnnouncement(item)}
-                className={`animate-fade-up relative text-left rounded-2xl overflow-hidden transition-all min-w-[82vw] sm:min-w-[46vw] md:min-w-0 md:w-full ${
-                  isLight
-                    ? 'light-card hover:-translate-y-0.5'
-                    : 'glass hover:-translate-y-0.5'
-                }`}
+                className="animate-fade-up relative text-left rounded-2xl overflow-hidden transition-all min-w-[82vw] sm:min-w-[46vw] md:min-w-0 md:w-full border border-default dark:border-slate-500 bg-surface-1 hover:bg-surface-2 hover:-translate-y-0.5"
                 style={{ animationDelay: `${index * 0.05}s` }}
               >
                 {isNewContent(item.created_at) && (
-                  <span className="absolute top-3 right-3 z-10 px-2 py-1 rounded-full bg-pink-500 text-white text-[10px] font-bold shadow-lg">
+                  <span className="absolute top-3 right-3 z-10 px-2 py-1 rounded-full bg-pink-700 text-white text-[10px] font-bold shadow-lg">
                     Yeni
                   </span>
                 )}
@@ -83,29 +71,17 @@ export function HomeAnnouncementsSection({
                   </div>
                 )}
                 <div className="p-3 sm:p-4">
-                  <div
-                    className={`flex items-center gap-2 mb-2 text-xs ${
-                      isLight ? 'text-slate-400' : 'text-slate-400'
-                    }`}
-                  >
+                  <div className="flex items-center gap-2 mb-2 text-xs text-secondary">
                     <Bell className="w-4 h-4 text-pink-400" />
                     {new Date(item.created_at).toLocaleDateString('tr-TR', {
                       day: 'numeric',
                       month: 'short',
                     })}
                   </div>
-                  <h3
-                    className={`text-sm sm:text-base font-bold line-clamp-2 mb-1 sm:mb-2 ${
-                      isLight ? 'text-slate-900' : 'text-white'
-                    }`}
-                  >
+                  <h3 className="text-sm sm:text-base font-bold line-clamp-2 mb-1 sm:mb-2 text-primary">
                     {item.title}
                   </h3>
-                  <p
-                    className={`text-xs sm:text-sm line-clamp-2 ${
-                      isLight ? 'text-slate-600' : 'text-slate-400'
-                    }`}
-                  >
+                  <p className="text-xs sm:text-sm line-clamp-2 text-secondary">
                     {item.content}
                   </p>
                 </div>

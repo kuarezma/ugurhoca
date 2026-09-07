@@ -87,33 +87,33 @@ export function PisagorCalculatorContainer() {
   };
 
   return (
-    <main className="min-h-screen gradient-bg px-4 pb-16 pt-20 sm:px-6 sm:pt-24">
+    <main className="page-surface min-h-screen gradient-bg px-4 pb-16 pt-20 sm:px-6 sm:pt-24">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
       <div className="mx-auto max-w-4xl">
-        <div className="mb-6 flex items-center gap-2 text-xs font-semibold text-slate-400">
-          <Link href="/araclar" className="hover:text-white transition flex items-center gap-1">
+        <div className="mb-6 flex items-center gap-2 text-xs font-semibold text-secondary">
+          <Link href="/araclar" className="hover:text-primary transition flex items-center gap-1">
             <ArrowLeft className="h-3.5 w-3.5" />
             Tüm Araçlar
           </Link>
           <span>/</span>
-          <span className="text-amber-400 font-bold">Pisagor & Hipotenüs Hesaplayıcı</span>
+          <span className="text-amber-800 dark:text-amber-300 font-bold">Pisagor & Hipotenüs Hesaplayıcı</span>
         </div>
 
-        <div className="rounded-3xl border border-amber-500/20 bg-gradient-to-r from-amber-950/40 via-slate-900/80 to-rose-950/40 p-6 sm:p-8 backdrop-blur-md shadow-2xl mb-8">
+        <div className="rounded-3xl border border-default bg-surface-1 p-6 sm:p-8 backdrop-blur-md shadow-2xl mb-8">
           <div className="flex flex-wrap items-center justify-between gap-4">
             <div className="flex items-center gap-3">
               <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-amber-500 to-rose-600 text-white shadow-lg">
                 <Triangle className="h-6 w-6" />
               </div>
               <div>
-                <h1 className="text-xl sm:text-3xl font-black text-white font-display">
+                <h1 className="text-xl sm:text-3xl font-black text-primary font-display">
                   Pisagor Bağıntısı & Hipotenüs Hesaplayıcı
                 </h1>
-                <p className="text-xs sm:text-sm text-slate-300 mt-1">
+                <p className="text-xs sm:text-sm text-secondary mt-1">
                   a² + b² = c² bağıntısıyla dik kenar ve hipotenüsü adım adım çöz.
                 </p>
               </div>
@@ -127,7 +127,7 @@ export function PisagorCalculatorContainer() {
                 setValC(5);
                 setMode('hypotenuse');
               }}
-              className="inline-flex items-center gap-1.5 rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-xs font-bold text-slate-300 hover:bg-white/10 hover:text-white transition"
+              className="inline-flex items-center gap-1.5 rounded-xl border border-default bg-surface-2 px-3 py-2 text-xs font-bold text-secondary hover:bg-surface-3 hover:text-primary transition"
             >
               <RotateCcw className="h-3.5 w-3.5" />
               Sıfırla
@@ -137,14 +137,14 @@ export function PisagorCalculatorContainer() {
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
           <div className="lg:col-span-6 space-y-4">
-            <div className="flex rounded-2xl border border-white/10 bg-white/5 p-1 text-xs font-bold">
+            <div className="flex rounded-2xl border border-default bg-surface-2 p-1 text-xs font-bold">
               <button
                 type="button"
                 onClick={() => setMode('hypotenuse')}
                 className={`flex-1 py-2 rounded-xl transition ${
                   mode === 'hypotenuse'
                     ? 'bg-amber-500 text-slate-950 shadow-md'
-                    : 'text-slate-300 hover:text-white'
+                    : 'text-secondary hover:text-primary'
                 }`}
               >
                 Hipotenüs Bul (c)
@@ -155,16 +155,16 @@ export function PisagorCalculatorContainer() {
                 className={`flex-1 py-2 rounded-xl transition ${
                   mode === 'leg'
                     ? 'bg-amber-500 text-slate-950 shadow-md'
-                    : 'text-slate-300 hover:text-white'
+                    : 'text-secondary hover:text-primary'
                 }`}
               >
                 Dik Kenar Bul (b)
               </button>
             </div>
 
-            <div className="rounded-3xl border border-white/10 bg-slate-900/80 p-5 shadow-xl backdrop-blur-md space-y-4">
+            <div className="rounded-3xl border border-default bg-surface-1 p-5 shadow-xl backdrop-blur-md space-y-4">
               <div>
-                <label htmlFor="valA-input" className="text-xs font-semibold text-slate-300 block mb-1.5">
+                <label htmlFor="valA-input" className="text-xs font-semibold text-secondary block mb-1.5">
                   1. Dik Kenar (a)
                 </label>
                 <input
@@ -174,13 +174,13 @@ export function PisagorCalculatorContainer() {
                   step={0.5}
                   value={valA}
                   onChange={(e) => setValA(Math.max(0.1, parseFloat(e.target.value) || 1))}
-                  className="w-full h-11 rounded-xl border border-white/15 bg-white/5 px-4 font-mono text-base font-bold text-white focus:outline-none focus:ring-2 focus:ring-amber-500"
+                  className="w-full h-11 rounded-xl border border-default bg-surface-2 px-4 font-mono text-base font-bold text-primary focus:outline-none focus:ring-2 focus:ring-amber-500"
                 />
               </div>
 
               {mode === 'hypotenuse' ? (
                 <div>
-                  <label htmlFor="valB-input" className="text-xs font-semibold text-slate-300 block mb-1.5">
+                  <label htmlFor="valB-input" className="text-xs font-semibold text-secondary block mb-1.5">
                     2. Dik Kenar (b)
                   </label>
                   <input
@@ -190,12 +190,12 @@ export function PisagorCalculatorContainer() {
                     step={0.5}
                     value={valB}
                     onChange={(e) => setValB(Math.max(0.1, parseFloat(e.target.value) || 1))}
-                    className="w-full h-11 rounded-xl border border-white/15 bg-white/5 px-4 font-mono text-base font-bold text-white focus:outline-none focus:ring-2 focus:ring-amber-500"
+                    className="w-full h-11 rounded-xl border border-default bg-surface-2 px-4 font-mono text-base font-bold text-primary focus:outline-none focus:ring-2 focus:ring-amber-500"
                   />
                 </div>
               ) : (
                 <div>
-                  <label htmlFor="valC-input" className="text-xs font-semibold text-slate-300 block mb-1.5">
+                  <label htmlFor="valC-input" className="text-xs font-semibold text-secondary block mb-1.5">
                     Hipotenüs (c)
                   </label>
                   <input
@@ -205,7 +205,7 @@ export function PisagorCalculatorContainer() {
                     step={0.5}
                     value={valC}
                     onChange={(e) => setValC(parseFloat(e.target.value) || valA + 1)}
-                    className="w-full h-11 rounded-xl border border-white/15 bg-white/5 px-4 font-mono text-base font-bold text-white focus:outline-none focus:ring-2 focus:ring-amber-500"
+                    className="w-full h-11 rounded-xl border border-default bg-surface-2 px-4 font-mono text-base font-bold text-primary focus:outline-none focus:ring-2 focus:ring-amber-500"
                   />
                 </div>
               )}
@@ -229,7 +229,7 @@ export function PisagorCalculatorContainer() {
                         setValC(Math.hypot(a, b));
                       }
                     }}
-                    className="px-2.5 py-1 text-xs font-mono font-bold rounded-lg border border-white/10 bg-white/5 text-slate-300 hover:bg-white/10 hover:text-white transition"
+                    className="px-2.5 py-1 text-xs font-mono font-bold rounded-lg border border-default bg-surface-2 text-secondary hover:bg-surface-3 hover:text-primary transition"
                   >
                     {a}, {b}
                   </button>
@@ -237,23 +237,23 @@ export function PisagorCalculatorContainer() {
               </div>
             </div>
 
-            <div className="rounded-3xl border border-amber-500/30 bg-gradient-to-b from-amber-950/60 to-slate-900/90 p-5 shadow-2xl backdrop-blur-md space-y-3">
+            <div className="rounded-3xl border border-default bg-surface-1 p-5 shadow-2xl backdrop-blur-md space-y-3">
               <div className="flex items-center justify-between">
-                <span className="text-xs font-bold text-slate-400">
+                <span className="text-xs font-bold text-secondary">
                   {mode === 'hypotenuse' ? 'Hipotenüs (c)' : '2. Dik Kenar (b)'}
                 </span>
-                <span className="text-3xl font-black font-mono text-amber-400">
+                <span className="text-3xl font-black font-mono text-amber-600 dark:text-amber-400">
                   ≈ {result.toFixed(2)}
                 </span>
               </div>
 
-              <div className="rounded-2xl border border-white/10 bg-white/5 p-3 text-xs font-mono text-slate-300 leading-relaxed">
+              <div className="rounded-2xl border border-default bg-surface-2 p-3 text-xs font-mono text-secondary leading-relaxed">
                 {explanation}
               </div>
 
               {specialTriple && (
-                <div className="flex items-center gap-2 rounded-xl border border-emerald-500/30 bg-emerald-500/10 px-3 py-2 text-xs font-bold text-emerald-300">
-                  <CheckCircle2 className="h-4 w-4 shrink-0 text-emerald-400" />
+                <div className="flex items-center gap-2 rounded-xl border border-emerald-500/30 bg-emerald-500/10 px-3 py-2 text-xs font-bold text-emerald-700 dark:text-emerald-300">
+                  <CheckCircle2 className="h-4 w-4 shrink-0 text-emerald-600 dark:text-emerald-400" />
                   <span>{specialTriple}</span>
                 </div>
               )}
@@ -261,31 +261,31 @@ export function PisagorCalculatorContainer() {
           </div>
 
           <div className="lg:col-span-6">
-            <div className="rounded-3xl border border-white/10 bg-slate-900/80 p-6 shadow-xl backdrop-blur-md flex flex-col items-center justify-center min-h-[360px]">
-              <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-6 flex items-center gap-1.5">
-                <Sparkles className="h-3.5 w-3.5 text-amber-400" />
+            <div className="rounded-3xl border border-default bg-surface-1 p-6 shadow-xl backdrop-blur-md flex flex-col items-center justify-center min-h-[360px]">
+              <h3 className="text-xs font-bold uppercase tracking-wider text-secondary mb-6 flex items-center gap-1.5">
+                <Sparkles className="h-3.5 w-3.5 text-amber-600 dark:text-amber-400" />
                 Dinamik Üçgen Önizlemesi
               </h3>
 
               <div className="relative w-64 h-64 flex items-center justify-center">
                 <svg viewBox="0 0 200 200" className="w-full h-full">
-                  <line x1="20" y1="20" x2="20" y2="180" stroke="#334155" strokeWidth="1" strokeDasharray="2,2" />
-                  <line x1="20" y1="180" x2="180" y2="180" stroke="#334155" strokeWidth="1" strokeDasharray="2,2" />
+                  <line x1="20" y1="20" x2="20" y2="180" stroke="currentColor" className="text-slate-300 dark:text-slate-700" strokeWidth="1" strokeDasharray="2,2" />
+                  <line x1="20" y1="180" x2="180" y2="180" stroke="currentColor" className="text-slate-300 dark:text-slate-700" strokeWidth="1" strokeDasharray="2,2" />
                   <polygon points="30,170 170,170 30,30" fill="rgba(245, 158, 11, 0.15)" stroke="#f59e0b" strokeWidth="3" />
                   <path d="M30,154 L46,154 L46,170" fill="none" stroke="#f59e0b" strokeWidth="2" />
-                  <text x="100" y="190" textAnchor="middle" fill="#f8fafc" fontSize="12" fontWeight="bold" fontFamily="monospace">
+                  <text x="100" y="190" textAnchor="middle" fill="currentColor" className="text-primary" fontSize="12" fontWeight="bold" fontFamily="monospace">
                     a = {valA}
                   </text>
-                  <text x="14" y="105" textAnchor="middle" fill="#f8fafc" fontSize="12" fontWeight="bold" fontFamily="monospace">
+                  <text x="14" y="105" textAnchor="middle" fill="currentColor" className="text-primary" fontSize="12" fontWeight="bold" fontFamily="monospace">
                     b = {mode === 'hypotenuse' ? valB : result.toFixed(1)}
                   </text>
-                  <text x="115" y="90" textAnchor="middle" fill="#ec4899" fontSize="14" fontWeight="bold" fontFamily="monospace">
+                  <text x="115" y="90" textAnchor="middle" fill="currentColor" className="text-pink-600 dark:text-pink-400" fontSize="14" fontWeight="bold" fontFamily="monospace">
                     c = {mode === 'hypotenuse' ? result.toFixed(1) : valC}
                   </text>
                 </svg>
               </div>
 
-              <div className="text-[11px] text-slate-400 text-center mt-4">
+              <div className="text-[11px] text-secondary text-center mt-4">
                 Dik üçgende 90° açının karşısındaki en uzun kenara <strong>hipotenüs</strong> denir.
               </div>
             </div>
@@ -295,7 +295,7 @@ export function PisagorCalculatorContainer() {
         <FaqAccordion
           title="Pisagor Bağıntısı ve Özel Üçgenler İpuçları"
           items={PISAGOR_FAQS}
-          iconColorClass="text-amber-400"
+          iconColorClass="text-amber-600 dark:text-amber-400"
         />
       </div>
     </main>

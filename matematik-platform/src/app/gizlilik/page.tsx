@@ -12,20 +12,20 @@ export const metadata: Metadata = createPageMetadata({
 
 export default function GizlilikPage() {
   return (
-    <main className="relative z-10 min-h-screen bg-gradient-to-br from-slate-900 via-slate-900 to-slate-800 px-4 py-16 text-slate-100">
+    <main className="page-surface relative z-10 min-h-screen dark:bg-gradient-to-br dark:from-slate-900 dark:via-slate-900 dark:to-slate-800 px-4 py-16 text-primary">
       <article className="mx-auto max-w-3xl space-y-8">
         <header className="space-y-3">
-          <div className="inline-flex items-center gap-2 rounded-full bg-brand-secondary/15 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-cyan-300">
+          <div className="inline-flex items-center gap-2 rounded-full border border-tone-info-border bg-tone-info-bg px-3 py-1 text-xs font-semibold uppercase tracking-wider text-tone-info-fg">
             <Lock className="h-3.5 w-3.5" aria-hidden="true" />
             Gizliliğin bizim için önemli
           </div>
-          <h1 className="font-display text-3xl font-bold text-white sm:text-4xl">
+          <h1 className="font-display text-3xl font-bold text-primary sm:text-4xl">
             Gizlilik politikası
           </h1>
-          <p className="text-sm text-slate-400">Son güncelleme: 19 Nisan 2026</p>
+          <p className="text-sm text-tertiary">Son güncelleme: 19 Nisan 2026</p>
         </header>
 
-        <section className="space-y-4 text-sm leading-relaxed text-slate-200 sm:text-base">
+        <section className="space-y-4 text-sm leading-relaxed text-secondary sm:text-base">
           <p>
             Uğur Hoca Matematik platformu (“Platform”), öğrencilerin matematik
             çalışmalarını destekleyen bir eğitim uygulamasıdır. Bu politika;
@@ -33,7 +33,7 @@ export default function GizlilikPage() {
             toplandığını, işlendiğini ve korunduğunu açıklar.
           </p>
 
-          <h2 className="font-display text-xl font-bold text-white">
+          <h2 className="font-display text-xl font-bold text-primary">
             Hangi verileri topluyoruz?
           </h2>
           <ul className="list-disc space-y-1 pl-5">
@@ -46,7 +46,7 @@ export default function GizlilikPage() {
             <li>Hata raporları ve performans metrikleri (anonim)</li>
           </ul>
 
-          <h2 id="cerezler" className="font-display text-xl font-bold text-white">
+          <h2 id="cerezler" className="font-display text-xl font-bold text-primary">
             Çerez kullanımı
           </h2>
           <p>
@@ -56,7 +56,7 @@ export default function GizlilikPage() {
             temizleyebilirsiniz.
           </p>
 
-          <h2 className="font-display text-xl font-bold text-white">
+          <h2 className="font-display text-xl font-bold text-primary">
             Verilerin kimlerle paylaşılabileceği
           </h2>
           <p>
@@ -66,7 +66,7 @@ export default function GizlilikPage() {
             kuruluşlar veriyi yalnızca sözleşme kapsamında işler.
           </p>
 
-          <h2 className="font-display text-xl font-bold text-white">
+          <h2 className="font-display text-xl font-bold text-primary">
             Güvenlik önlemleri
           </h2>
           <ul className="list-disc space-y-1 pl-5">
@@ -77,7 +77,7 @@ export default function GizlilikPage() {
             <li>Erişim günlükleri ve düzenli yedekleme</li>
           </ul>
 
-          <h2 className="font-display text-xl font-bold text-white">
+          <h2 className="font-display text-xl font-bold text-primary">
             Öğrenci hesapları
           </h2>
           <p>
@@ -87,7 +87,7 @@ export default function GizlilikPage() {
             ve Uğur Hoca tarafından görülebilir.
           </p>
 
-          <h2 className="font-display text-xl font-bold text-white">
+          <h2 className="font-display text-xl font-bold text-primary">
             Haklarınız
           </h2>
           <p>
@@ -95,7 +95,7 @@ export default function GizlilikPage() {
             kullanabilirsiniz. Detaylı bilgi ve başvuru için{' '}
             <Link
               href="/kvkk"
-              className="text-brand-primary-soft underline-offset-4 hover:underline"
+              className="text-accent-fg underline underline-offset-4 hover:text-primary transition-colors"
             >
               KVKK aydınlatma metni
             </Link>{' '}
@@ -103,13 +103,13 @@ export default function GizlilikPage() {
           </p>
         </section>
 
-        <div className="rounded-2xl border border-amber-500/30 bg-amber-500/10 p-5 text-sm text-amber-100/90">
+        <div className="rounded-2xl border border-tone-warn-border bg-tone-warn-bg p-5 text-sm text-tone-warn-fg">
           Sorularınız için Platform’daki destek formunu kullanabilirsiniz.
         </div>
 
         <Link
           href="/"
-          className="inline-flex items-center gap-2 text-sm font-semibold text-brand-primary-soft hover:text-white"
+          className="inline-flex items-center gap-2 text-sm font-semibold text-accent-fg hover:text-primary transition-colors"
         >
           <ArrowLeft className="h-4 w-4" aria-hidden="true" />
           Ana sayfaya dön

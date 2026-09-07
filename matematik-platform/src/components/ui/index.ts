@@ -7,6 +7,8 @@ export { Input, Textarea, Select } from './Input';
 export type { InputProps, TextareaProps, SelectProps } from './Input';
 export { Badge } from './Badge';
 export type { BadgeTone } from './Badge';
+export { Chip } from './Chip';
+export type { ChipTone } from './Chip';
 export { Avatar } from './Avatar';
 export { EmptyState } from './EmptyState';
 export { Skeleton, SkeletonText } from './Skeleton';

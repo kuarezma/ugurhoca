@@ -110,7 +110,7 @@ export default function LoginPage() {
       <div className="absolute inset-0 -z-10 bg-gradient-to-br from-brand-primary/20 via-brand-pink/10 to-brand-orange/10" aria-hidden="true" />
 
       <div className="mx-auto flex min-h-screen max-w-6xl flex-col items-stretch gap-10 px-6 py-10 lg:flex-row lg:items-center">
-        <aside className="relative hidden flex-1 items-center justify-center overflow-hidden rounded-[2rem] border border-white/10 bg-gradient-to-br from-brand-primary/20 via-brand-pink/10 to-brand-orange/20 p-10 text-white lg:flex">
+        <aside className="relative hidden flex-1 items-center justify-center overflow-hidden rounded-[2rem] border border-slate-800/80 bg-gradient-to-br from-slate-950 via-indigo-950 to-purple-950 p-10 text-white shadow-2xl lg:flex">
           <div aria-hidden="true" className="absolute -left-16 -top-16 h-72 w-72 rounded-full bg-brand-primary/30 blur-3xl" />
           <div aria-hidden="true" className="absolute -bottom-20 -right-20 h-80 w-80 rounded-full bg-brand-pink/30 blur-3xl" />
           <div className="relative max-w-sm text-center">
@@ -132,22 +132,22 @@ export default function LoginPage() {
         >
           <Link
             href="/"
-            className="mb-6 inline-flex items-center gap-2 text-sm font-semibold text-slate-300 hover:text-white"
+            className="mb-6 inline-flex items-center gap-2 text-sm font-semibold text-secondary hover:text-primary"
           >
             <ArrowLeft className="h-4 w-4" aria-hidden="true" />
             Ana sayfa
           </Link>
 
-          <div className="glass rounded-3xl border border-white/10 bg-slate-900/70 p-8 shadow-brand-glow backdrop-blur-xl">
+          <div className="glass rounded-3xl border border-default bg-surface-1 p-8 shadow-brand-glow backdrop-blur-xl">
             <div className="mb-6 flex items-center gap-3">
               <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-brand-primary via-brand-pink to-brand-orange text-white shadow-brand-glow">
                 <Sparkles className="h-6 w-6" aria-hidden="true" />
               </div>
               <div>
-                <h1 className="font-display text-2xl font-bold text-white">
+                <h1 className="font-display text-2xl font-bold text-primary">
                   Giriş yap
                 </h1>
-                <p className="text-sm text-slate-400">Hesabına eriş</p>
+                <p className="text-sm text-secondary">Hesabına eriş</p>
               </div>
             </div>
 
@@ -182,7 +182,7 @@ export default function LoginPage() {
                     type="button"
                     onClick={() => setShowPassword((v) => !v)}
                     aria-label={showPassword ? 'Şifreyi gizle' : 'Şifreyi göster'}
-                    className="inline-flex h-9 w-9 items-center justify-center rounded-lg text-slate-400 hover:bg-white/10 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary"
+                    className="inline-flex h-9 w-9 items-center justify-center rounded-lg text-secondary hover:bg-surface-2 hover:text-primary focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-fg"
                   >
                     {showPassword ? (
                       <EyeOff className="h-4 w-4" aria-hidden="true" />
@@ -207,26 +207,26 @@ export default function LoginPage() {
               </Button>
             </form>
 
-            <div className="mt-4 rounded-xl border border-slate-800/80 bg-slate-900/40 p-3 text-center text-xs text-slate-400">
-              <span className="font-medium text-slate-300">🔑 Şifreni mi unuttun?</span>{' '}
+            <div className="mt-4 rounded-xl border border-default bg-surface-2 p-3 text-center text-xs text-secondary">
+              <span className="font-medium text-primary">🔑 Şifreni mi unuttun?</span>{' '}
               <Link
                 href="/sifremi-unuttum"
-                className="font-semibold text-brand-primary-soft hover:text-white underline underline-offset-2 transition-colors"
+                className="font-semibold text-accent-fg underline underline-offset-2 transition-colors hover:text-primary"
               >
                 Şifre sıfırlama talebi oluştur
               </Link>
             </div>
 
-            <p className="mt-6 text-center text-sm text-slate-400">
+            <p className="mt-6 text-center text-sm text-secondary">
               Hesabın yok mu?{' '}
               <Link
                 href="/kayit"
-                className="font-semibold text-brand-primary-soft hover:text-white"
+                className="font-semibold text-accent-fg hover:text-primary"
               >
                 Hemen kayıt ol
               </Link>
             </p>
-            <p className="mt-4 flex items-start gap-2 rounded-2xl border border-emerald-400/20 bg-emerald-500/10 px-4 py-3 text-xs leading-relaxed text-emerald-100/90">
+            <p className="mt-4 flex items-start gap-2 rounded-2xl border border-emerald-400/20 bg-emerald-500/10 px-4 py-3 text-xs leading-relaxed text-emerald-900 dark:text-emerald-200">
               <ShieldCheck className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
               Öğrenci verileri gizlidir. Başka öğrenciler profilini, mesajlarını,
               ödevlerini, test sonuçlarını veya çalışma hareketlerini göremez.

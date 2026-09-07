@@ -48,24 +48,24 @@ export default function ForgotPasswordPage() {
   };
 
   return (
-    <main className="relative min-h-screen overflow-hidden bg-slate-950 text-white">
+    <main className="page-surface relative min-h-screen overflow-hidden dark:bg-slate-950 text-primary">
       <div
         className="absolute inset-0 -z-10 bg-gradient-to-br from-indigo-500/20 via-purple-500/10 to-pink-500/10"
         aria-hidden="true"
       />
 
       <div className="mx-auto flex min-h-screen max-w-6xl flex-col items-stretch gap-10 px-6 py-10 lg:flex-row lg:items-center">
-        <aside className="relative hidden flex-1 items-center justify-center overflow-hidden rounded-[2rem] border border-white/10 bg-gradient-to-br from-indigo-500/20 via-purple-500/10 to-pink-500/20 p-10 text-white lg:flex">
+        <aside className="relative hidden flex-1 items-center justify-center overflow-hidden rounded-[2rem] border border-default bg-surface-1/60 p-10 text-primary lg:flex">
           <div
             aria-hidden="true"
             className="absolute -left-16 -top-16 h-72 w-72 rounded-full bg-indigo-500/30 blur-3xl"
           />
           <div className="relative max-w-sm text-center">
             <Mascot pose="waving" size={200} className="mx-auto animate-float-y" />
-            <p className="mt-6 font-display text-2xl font-bold">
+            <p className="mt-6 font-display text-2xl font-bold text-primary">
               Endişelenme, hesabın güvende!
             </p>
-            <p className="mt-3 text-sm text-slate-300">
+            <p className="mt-3 text-sm text-secondary">
               Adını ve soyadını yazarak şifre sıfırlama talebini anında oluşturabilirsin.
             </p>
           </div>
@@ -79,35 +79,35 @@ export default function ForgotPasswordPage() {
         >
           <Link
             href="/giris"
-            className="mb-6 inline-flex items-center gap-2 text-sm font-semibold text-slate-300 hover:text-white"
+            className="mb-6 inline-flex items-center gap-2 text-sm font-semibold text-secondary hover:text-primary transition-colors"
           >
             <ArrowLeft className="h-4 w-4" aria-hidden="true" />
             Giriş sayfasına dön
           </Link>
 
-          <div className="glass rounded-3xl border border-white/10 bg-slate-900/80 p-8 shadow-2xl backdrop-blur-xl">
+          <div className="glass rounded-3xl border border-default bg-surface-1 p-8 shadow-2xl backdrop-blur-xl">
             <div className="mb-6 flex items-center gap-3">
               <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 text-white shadow-lg shadow-indigo-500/30">
                 <KeyRound className="h-6 w-6" aria-hidden="true" />
               </div>
               <div>
-                <h1 className="font-display text-2xl font-bold text-white">
+                <h1 className="font-display text-2xl font-bold text-primary">
                   Şifremi Unuttum
                 </h1>
-                <p className="text-sm text-slate-400">Hesap kurtarma</p>
+                <p className="text-sm text-secondary">Hesap kurtarma</p>
               </div>
             </div>
 
             {successMessage ? (
               <div className="space-y-5 animate-fade-in">
-                <div className="rounded-2xl border border-emerald-500/30 bg-emerald-500/10 p-5 text-emerald-200">
+                <div className="rounded-2xl border border-tone-success-border bg-tone-success-bg p-5 text-tone-success-fg">
                   <div className="flex items-start gap-3">
-                    <CheckCircle2 className="h-5 w-5 shrink-0 text-emerald-400 mt-0.5" />
+                    <CheckCircle2 className="h-5 w-5 shrink-0 text-tone-success-fg mt-0.5" />
                     <div>
-                      <h3 className="font-bold text-sm text-white mb-1">
+                      <h3 className="font-bold text-sm text-primary mb-1">
                         Talebiniz Alındı
                       </h3>
-                      <p className="text-xs leading-relaxed text-emerald-200/90">
+                      <p className="text-xs leading-relaxed text-secondary">
                         {successMessage}
                       </p>
                     </div>
@@ -123,7 +123,7 @@ export default function ForgotPasswordPage() {
               </div>
             ) : (
               <form onSubmit={handleSubmit} className="space-y-5">
-                <p className="text-xs text-slate-300 leading-relaxed">
+                <p className="text-xs text-secondary leading-relaxed">
                   Kayıt olurken kullandığın <strong>Ad ve Soyadı</strong> veya yöneticiysen <strong>e-posta adresini</strong> girerek şifreni kurtarabilirsin.
                 </p>
 
@@ -154,7 +154,7 @@ export default function ForgotPasswordPage() {
               </form>
             )}
 
-            <p className="mt-6 flex items-start gap-2 rounded-2xl border border-emerald-400/20 bg-emerald-500/10 px-4 py-3 text-xs leading-relaxed text-emerald-100/90">
+            <p className="mt-6 flex items-start gap-2 rounded-2xl border border-emerald-400/20 bg-emerald-500/10 px-4 py-3 text-xs leading-relaxed text-emerald-900 dark:text-emerald-200">
               <ShieldCheck className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
               Hesap kurtarma güvenliği: Öğrenci hesapları için şifre sıfırlama talepleri doğrudan sistem öğretmenine iletilir ve yetkisiz erişimler engellenir.
             </p>

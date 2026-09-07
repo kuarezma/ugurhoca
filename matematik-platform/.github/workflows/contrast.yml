@@ -1,0 +1,59 @@
+name: Tema kontrast kapısı
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  contrast:
+    name: Chromium kontrast denetimi
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      CI: true
+      CONTRAST_REPORT_PATH: artifacts/contrast-report.json
+    steps:
+      - name: Depoyu al
+        uses: actions/checkout@v4
+
+      - name: Node kur
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Bağımlılıkları kur
+        run: npm ci
+
+      - name: Üretim derlemesi
+        run: npm run build
+
+      - name: Chromium kur
+        run: npx playwright install --with-deps chromium
+
+      - name: Kontrast kapısını çalıştır
+        id: contrast_gate
+        continue-on-error: true
+        run: npx playwright test e2e/contrast.spec.ts
+
+      - name: JSON kontrast raporunu doğrula
+        id: contrast_report
+        if: always()
+        continue-on-error: true
+        run: node scripts/contrast-report.mjs "$CONTRAST_REPORT_PATH"
+
+      - name: Kontrast raporunu yükle
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: contrast-report
+          path: artifacts/contrast-report.json
+          if-no-files-found: error
+
+      - name: Kontrast kapısını zorunlu kıl
+        if: always()
+        run: |
+          test "${{ steps.contrast_gate.outcome }}" = "success"
+          test "${{ steps.contrast_report.outcome }}" = "success"

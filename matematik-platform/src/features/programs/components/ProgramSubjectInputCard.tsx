@@ -19,7 +19,7 @@ export function ProgramSubjectInputCard({
   accentClassName,
   helperText,
   idPrefix,
-  isLight,
+  isLight: _isLight,
   maxQuestions,
   net,
   onChange,
@@ -27,42 +27,19 @@ export function ProgramSubjectInputCard({
   title,
   value,
 }: ProgramSubjectInputCardProps) {
-  const fieldClassName = `w-full rounded-xl border px-3 py-2 text-right text-sm font-semibold tabular-nums outline-none transition focus:ring-2 ${
-    isLight
-      ? 'border-slate-200 bg-slate-50 text-slate-900 focus:border-cyan-300 focus:ring-cyan-100'
-      : 'border-white/10 bg-slate-950/70 text-white focus:border-cyan-300/70 focus:ring-cyan-300/10'
-  }`;
+  const fieldClassName =
+    'w-full rounded-xl border border-default dark:border-slate-500 bg-surface-0 px-3 py-2 text-right text-sm font-semibold tabular-nums text-primary outline-none transition focus:border-accent focus:ring-2 focus:ring-accent/20';
 
   return (
-    <div
-      className={`overflow-hidden rounded-2xl border ${
-        isLight
-          ? 'border-slate-200 bg-white shadow-sm'
-          : 'border-white/10 bg-white/5'
-      }`}
-    >
+    <div className="overflow-hidden rounded-2xl border border-default bg-surface-1 shadow-sm">
       <div className={`h-1.5 ${accentClassName}`} />
       <div className="p-4">
         <div className="flex items-start justify-between gap-3">
           <div>
-            <div
-              className={`text-sm font-black ${isLight ? 'text-slate-950' : 'text-white'}`}
-            >
-              {title}
-            </div>
-            <div
-              className={`mt-1 text-xs ${isLight ? 'text-slate-500' : 'text-slate-400'}`}
-            >
-              {helperText}
-            </div>
+            <div className="text-sm font-black text-primary">{title}</div>
+            <div className="mt-1 text-xs text-secondary">{helperText}</div>
           </div>
-          <div
-            className={`min-w-16 rounded-xl border px-3 py-2 text-center ${
-              isLight
-                ? 'border-cyan-100 bg-cyan-50 text-cyan-700'
-                : 'border-cyan-300/20 bg-cyan-300/10 text-cyan-100'
-            }`}
-          >
+          <div className="min-w-16 rounded-xl border border-cyan-200 dark:border-cyan-300/20 bg-cyan-50 dark:bg-cyan-300/10 text-cyan-800 dark:text-cyan-100 px-3 py-2 text-center">
             <div className="text-[10px] font-bold uppercase tracking-[0.14em]">
               Net
             </div>
@@ -74,9 +51,7 @@ export function ProgramSubjectInputCard({
           <div>
             <label
               htmlFor={`${idPrefix}-${subjectKey}-correct`}
-              className={`mb-1 block text-[11px] font-semibold uppercase tracking-[0.14em] ${
-                isLight ? 'text-slate-500' : 'text-slate-400'
-              }`}
+              className="mb-1 block text-[11px] font-semibold uppercase tracking-[0.14em] text-secondary"
             >
               Doğru
             </label>
@@ -93,9 +68,7 @@ export function ProgramSubjectInputCard({
           <div>
             <label
               htmlFor={`${idPrefix}-${subjectKey}-wrong`}
-              className={`mb-1 block text-[11px] font-semibold uppercase tracking-[0.14em] ${
-                isLight ? 'text-slate-500' : 'text-slate-400'
-              }`}
+              className="mb-1 block text-[11px] font-semibold uppercase tracking-[0.14em] text-secondary"
             >
               Yanlış
             </label>

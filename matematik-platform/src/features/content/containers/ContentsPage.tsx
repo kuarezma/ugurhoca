@@ -1316,21 +1316,21 @@ function ContentsPageInner({
   const profileHref = user?.isAdmin ? '/admin' : user ? '/profil' : '/giris';
 
   return (
-    <main className="icerikler-page min-h-screen gradient-bg pb-20">
-      <nav className="fixed top-0 left-0 right-0 z-50 bg-[#0b1220]/95 backdrop-blur-md border-b border-white/10 py-3 sm:py-4 px-4 sm:px-6 xl:px-8">
+    <main className="page-surface icerikler-page min-h-screen gradient-bg pb-20">
+      <nav className="fixed top-0 left-0 right-0 z-50 bg-surface-0/95 backdrop-blur-md border-b border-default py-3 sm:py-4 px-4 sm:px-6 xl:px-8">
         <div className="max-w-[1760px] mx-auto flex justify-between items-center gap-3">
           <Link href="/" className="flex items-center gap-2.5 min-w-0">
             <div className="w-8 h-8 sm:w-10 sm:h-10 shrink-0 bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl flex items-center justify-center">
               <Calculator className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
             </div>
-            <span className="text-base sm:text-xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent truncate">
+            <span className="text-base sm:text-xl font-bold bg-gradient-to-r from-purple-700 via-fuchsia-700 to-pink-700 dark:from-purple-300 dark:via-fuchsia-300 dark:to-pink-300 bg-clip-text text-transparent truncate">
               Uğur Hoca Matematik
             </span>
           </Link>
 
           <Link
             href={profileHref}
-            className="text-slate-300 hover:text-white flex items-center gap-1.5 text-xs sm:text-base shrink-0"
+            className="text-secondary hover:text-primary flex items-center gap-1.5 text-xs sm:text-base shrink-0"
           >
             <ArrowLeft className="w-4 h-4 sm:w-5 sm:h-5" />
             <span>{user?.isAdmin ? 'Admin Panel' : 'Profil'}</span>
@@ -1346,10 +1346,10 @@ function ContentsPageInner({
             className="mb-8 flex flex-col md:flex-row justify-between items-start md:items-center gap-4"
           >
             <div>
-              <h1 className="text-2xl sm:text-4xl font-bold tracking-tight text-white mb-2">
+              <h1 className="text-2xl sm:text-4xl font-bold tracking-tight text-primary mb-2">
                 {getContentPageTitle(selectedType)}
               </h1>
-              <p className="text-sm sm:text-base text-slate-400 max-w-2xl leading-relaxed">
+              <p className="text-sm sm:text-base text-secondary max-w-2xl leading-relaxed">
                 {getContentPageDescription(selectedType, selectedGrade)}
               </p>
             </div>
@@ -1370,7 +1370,7 @@ function ContentsPageInner({
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
-            className="glass rounded-2xl p-4 sm:p-6 mb-8 border border-white/10 shadow-brand-glow/40 backdrop-blur-xl"
+            className="rounded-2xl p-4 sm:p-6 mb-8 border border-default bg-surface-1 shadow-brand-glow/40 backdrop-blur-xl"
           >
             <ContentFilterBar
               isWorksheetBrowser={isWorksheetBrowser}
@@ -1396,7 +1396,7 @@ function ContentsPageInner({
                       updateWorksheetBrowserUrl(null);
                       setSearchTerm('');
                     }}
-                    className="px-4 py-2 rounded-xl border border-slate-700 bg-slate-800/50 text-xs sm:text-sm font-semibold text-slate-200 transition-colors hover:text-white"
+                    className="px-4 py-2 rounded-xl border border-default bg-surface-2 text-xs sm:text-sm font-semibold text-secondary transition-colors hover:text-primary"
                   >
                     Sınıf Kartları
                   </button>
@@ -1408,7 +1408,7 @@ function ContentsPageInner({
                       updateWorksheetBrowserUrl(selectedWorksheetGrade);
                       setSearchTerm('');
                     }}
-                    className="px-4 py-2 rounded-xl border border-purple-500/30 bg-purple-500/15 text-xs sm:text-sm font-semibold text-purple-100 transition-colors hover:bg-purple-500/25"
+                    className="px-4 py-2 rounded-xl border border-purple-500/30 bg-purple-500/15 text-xs sm:text-sm font-semibold text-purple-800 dark:text-purple-100 transition-colors hover:bg-purple-500/25"
                   >
                     Kazanımlara Dön
                   </button>
@@ -1417,7 +1417,7 @@ function ContentsPageInner({
             )}
 
             {!isWorksheetBrowser && (
-              <div className="mt-4 border-t border-white/10 pt-3">
+              <div className="mt-4 border-t border-default pt-3">
                 <ContentCategoryChips
                   selectedGrade={String(selectedGrade)}
                   selectedType={selectedType}
@@ -1442,7 +1442,7 @@ function ContentsPageInner({
               initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.15 }}
-              className="mb-6 flex flex-wrap items-center gap-2 text-sm text-slate-300"
+              className="mb-6 flex flex-wrap items-center gap-2 text-sm text-secondary"
             >
               <button
                 onClick={() => {
@@ -1452,15 +1452,15 @@ function ContentsPageInner({
                 }}
                 className={`rounded-full border px-4 py-2 transition-colors ${
                   selectedWorksheetGrade
-                    ? 'border-slate-700 bg-slate-800/50 hover:text-white'
-                    : 'border-purple-500/30 bg-purple-500/15 text-purple-100'
+                    ? 'border-default bg-surface-2 text-secondary hover:text-primary'
+                    : 'border-purple-500/30 bg-purple-500/15 text-purple-800 dark:text-purple-100'
                 }`}
               >
                 Sınıf Düzeyleri
               </button>
               {worksheetGradeLabel && (
                 <>
-                  <ChevronRight className="w-4 h-4 text-slate-400" />
+                  <ChevronRight className="w-4 h-4 text-secondary" />
                   <button
                     onClick={() => {
                       setSelectedWorksheetOutcome(null);
@@ -1468,8 +1468,8 @@ function ContentsPageInner({
                     }}
                     className={`rounded-full border px-4 py-2 transition-colors ${
                       selectedWorksheetOutcome
-                        ? 'border-slate-700 bg-slate-800/50 hover:text-white'
-                        : 'border-purple-500/30 bg-purple-500/15 text-purple-100'
+                        ? 'border-default bg-surface-2 text-secondary hover:text-primary'
+                        : 'border-purple-500/30 bg-purple-500/15 text-purple-800 dark:text-purple-100'
                     }`}
                   >
                     {worksheetGradeLabel}
@@ -1478,8 +1478,8 @@ function ContentsPageInner({
               )}
               {selectedWorksheetOutcome && (
                 <>
-                  <ChevronRight className="w-4 h-4 text-slate-400" />
-                  <span className="rounded-full border border-purple-500/30 bg-purple-500/15 px-4 py-2 text-purple-100">
+                  <ChevronRight className="w-4 h-4 text-secondary" />
+                  <span className="rounded-full border border-purple-500/30 bg-purple-500/15 px-4 py-2 text-purple-800 dark:text-purple-100">
                     {selectedWorksheetOutcome}
                   </span>
                 </>
@@ -1493,11 +1493,11 @@ function ContentsPageInner({
             transition={{ delay: 0.2 }}
             className="flex items-center gap-2 mb-6"
           >
-            <Filter className="w-5 h-5 text-slate-400" />
+            <Filter className="w-5 h-5 text-secondary" />
             {loading || worksheetLoading || worksheetCatalogLoading ? (
-              <span className="text-slate-400">Yükleniyor...</span>
+              <span className="text-secondary">Yükleniyor...</span>
             ) : (
-              <span className="text-slate-400">{resultLabel}</span>
+              <span className="text-secondary">{resultLabel}</span>
             )}
           </motion.div>
 
@@ -1521,7 +1521,7 @@ function ContentsPageInner({
                     >
                       <Layers3 className="h-7 w-7 text-white" />
                     </div>
-                    <h3 className="text-lg font-bold text-white">
+                    <h3 className="text-lg font-bold text-primary">
                       {grade === 'Mezun' ? grade : `${grade}. Sınıf`}
                     </h3>
                   </motion.button>
@@ -1536,7 +1536,7 @@ function ContentsPageInner({
                 {[...Array(6)].map((_, index) => (
                   <div
                     key={index}
-                    className="glass rounded-3xl overflow-hidden border border-white/10 p-4 sm:p-6 space-y-4"
+                    className="rounded-3xl overflow-hidden border border-default bg-surface-1 p-4 sm:p-6 space-y-4"
                   >
                     <Skeleton className="h-14 w-14 rounded-xl" />
                     <Skeleton className="h-5 w-2/3" />
@@ -1549,13 +1549,13 @@ function ContentsPageInner({
                 <div className="space-y-8">
                   {worksheetOutcomeGroups.map((group, groupIndex) => (
                     <div key={group.key} className="space-y-3">
-                      <div className="rounded-2xl border border-cyan-400/15 bg-cyan-500/10 px-4 py-3">
+                      <div className="rounded-2xl border border-default bg-surface-2 px-4 py-3">
                         <div className="flex items-center gap-3">
-                          <div className="worksheet-unit-line h-px flex-1 bg-gradient-to-r from-cyan-400/70 to-transparent" />
-                          <p className="shrink-0 text-sm font-extrabold uppercase tracking-[0.24em] text-cyan-100 sm:text-base">
+                          <div className="worksheet-unit-line h-px flex-1 bg-gradient-to-r from-accent-fg/40 to-transparent" />
+                          <p className="shrink-0 text-sm font-extrabold uppercase tracking-[0.24em] text-accent-fg sm:text-base">
                             {group.title}
                           </p>
-                          <div className="worksheet-unit-line h-px flex-1 bg-gradient-to-l from-cyan-400/70 to-transparent" />
+                          <div className="worksheet-unit-line h-px flex-1 bg-gradient-to-l from-accent-fg/40 to-transparent" />
                         </div>
                       </div>
                       <div className="space-y-3">
@@ -1579,16 +1579,16 @@ function ContentsPageInner({
                                   entry.outcome,
                                 );
                               }}
-                              className="group flex w-full items-center gap-4 rounded-2xl border border-cyan-500/15 bg-slate-900/50 px-4 py-4 text-left transition-all hover:border-cyan-400/35 hover:bg-slate-900/70 sm:px-5"
+                              className="group flex w-full items-center gap-4 rounded-2xl border border-default bg-surface-1 px-4 py-4 text-left transition-all hover:border-accent-fg/40 hover:bg-surface-2 sm:px-5"
                             >
                               <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-cyan-500 to-blue-500">
                                 <FolderOpen className="h-6 w-6 text-white" />
                               </div>
                               <div className="min-w-0 flex-1">
-                                <h3 className="worksheet-outcome-title text-sm font-semibold leading-relaxed text-white transition-colors group-hover:text-cyan-200 sm:text-base">
+                                <h3 className="worksheet-outcome-title text-sm font-semibold leading-relaxed text-primary transition-colors group-hover:text-accent-fg sm:text-base">
                                   {outcomeHeading.code ? (
                                     <>
-                                      <span className="text-red-400">
+                                      <span className="text-red-600 dark:text-red-400">
                                         {outcomeHeading.code}
                                       </span>{' '}
                                       <span>{outcomeHeading.label}</span>
@@ -1599,10 +1599,10 @@ function ContentsPageInner({
                                 </h3>
                               </div>
                               <div className="ml-auto flex shrink-0 items-center gap-3">
-                                <span className="rounded-full border border-cyan-400/20 bg-cyan-500/10 px-3 py-1 text-xs font-semibold text-cyan-200">
+                                <span className="rounded-full border border-cyan-400/30 bg-cyan-500/10 px-3 py-1 text-xs font-semibold text-cyan-800 dark:text-cyan-200">
                                   {entry.count} test
                                 </span>
-                                <ChevronRight className="h-5 w-5 text-slate-400 transition-colors group-hover:text-cyan-200" />
+                                <ChevronRight className="h-5 w-5 text-secondary transition-colors group-hover:text-accent-fg" />
                               </div>
                             </motion.button>
                           );

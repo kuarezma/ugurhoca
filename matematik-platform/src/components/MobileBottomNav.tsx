@@ -78,7 +78,7 @@ export function MobileBottomNav() {
       className="fixed bottom-0 left-0 right-0 z-40 block md:hidden pointer-events-none"
     >
       <div className="mx-auto max-w-md px-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] pt-2 pointer-events-auto">
-        <div className="flex items-center justify-around rounded-2xl border px-2 py-2 backdrop-blur-xl transition-colors duration-200 border-slate-200/90 bg-white/92 shadow-[0_-4px_20px_rgba(15,23,42,0.08)] dark:border-white/10 dark:bg-slate-900/92 dark:shadow-[0_-8px_32px_rgba(0,0,0,0.4)]">
+        <div className="flex items-center justify-around rounded-2xl border border-default bg-surface-1/92 px-2 py-2 shadow-[0_-4px_20px_rgba(15,23,42,0.08)] backdrop-blur-xl transition-colors duration-200 dark:shadow-[0_-8px_32px_rgba(0,0,0,0.4)]">
           {NAV_ITEMS.map((item) => {
             const isRouteActive =
               item.href === '/'
@@ -103,8 +103,8 @@ export function MobileBottomNav() {
                 }}
                 className={`relative flex min-h-[44px] min-w-[52px] flex-col items-center justify-center rounded-xl px-2 py-1 text-[11px] font-semibold transition-colors duration-150 ${
                   isActive
-                    ? 'text-indigo-600 dark:text-indigo-400 font-bold'
-                    : 'text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white'
+                    ? 'text-accent-fg font-bold'
+                    : 'text-secondary hover:text-primary'
                 }`}
               >
                 {isActive && (

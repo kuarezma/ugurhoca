@@ -52,8 +52,8 @@ export function ChallengePageContainer() {
 
   return (
     <div
-      className={`min-h-screen transition-colors duration-300 ${
-        isLight ? 'bg-slate-50 text-slate-900' : 'bg-slate-950 text-white'
+      className={`page-surface min-h-screen transition-colors duration-300 ${
+        isLight ? 'bg-slate-50 text-slate-900' : 'dark:bg-slate-950 text-white'
       }`}
     >
       <HomeNavbar user={user} onLogout={handleLogout} />

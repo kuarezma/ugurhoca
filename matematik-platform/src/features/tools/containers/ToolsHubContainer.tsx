@@ -24,7 +24,7 @@ export const PUBLIC_TOOLS = [
     icon: School,
     gradient: 'from-cyan-500 via-blue-600 to-indigo-600',
     tag: 'LGS 2026/2027',
-    badgeColor: 'bg-cyan-500/20 text-cyan-300 border-cyan-500/30',
+    badgeColor: 'bg-cyan-500/15 text-cyan-800 dark:text-cyan-300 border-cyan-500/30',
   },
   {
     id: 'yks',
@@ -35,7 +35,7 @@ export const PUBLIC_TOOLS = [
     icon: GraduationCap,
     gradient: 'from-violet-500 via-purple-600 to-pink-600',
     tag: 'YKS (TYT / AYT)',
-    badgeColor: 'bg-purple-500/20 text-purple-300 border-purple-500/30',
+    badgeColor: 'bg-purple-500/15 text-purple-800 dark:text-purple-300 border-purple-500/30',
   },
   {
     id: 'ebob-ekok',
@@ -46,7 +46,7 @@ export const PUBLIC_TOOLS = [
     icon: Layers,
     gradient: 'from-emerald-500 via-teal-600 to-cyan-600',
     tag: '8. Sınıf & TYT',
-    badgeColor: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30',
+    badgeColor: 'bg-emerald-500/15 text-emerald-800 dark:text-emerald-300 border-emerald-500/30',
   },
   {
     id: 'pisagor',
@@ -57,7 +57,7 @@ export const PUBLIC_TOOLS = [
     icon: Triangle,
     gradient: 'from-amber-500 via-orange-600 to-rose-600',
     tag: 'Geometri',
-    badgeColor: 'bg-amber-500/20 text-amber-300 border-amber-500/30',
+    badgeColor: 'bg-amber-500/15 text-amber-900 dark:text-amber-300 border-amber-500/30',
   },
 ];
 
@@ -78,7 +78,7 @@ export function ToolsHubContainer() {
   };
 
   return (
-    <main className="min-h-screen gradient-bg px-4 pb-16 pt-20 sm:px-6 sm:pt-24">
+    <main className="page-surface min-h-screen gradient-bg px-4 pb-16 pt-20 sm:px-6 sm:pt-24">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
@@ -87,28 +87,28 @@ export function ToolsHubContainer() {
       <div className="mx-auto max-w-5xl">
         {/* Header Hero */}
         <div className="text-center max-w-3xl mx-auto mb-12">
-          <div className="inline-flex items-center gap-2 rounded-full border border-indigo-500/30 bg-indigo-500/10 px-4 py-1.5 text-xs font-bold text-indigo-300 shadow-sm mb-4">
-            <Sparkles className="h-3.5 w-3.5 text-indigo-400" />
+          <div className="inline-flex items-center gap-2 rounded-full border border-indigo-500/30 bg-indigo-500/10 px-4 py-1.5 text-xs font-bold text-indigo-700 dark:text-indigo-300 shadow-sm mb-4">
+            <Sparkles className="h-3.5 w-3.5 text-indigo-600 dark:text-indigo-400" />
             <span>%100 Ücretsiz · Reklamsız · Kayıt Gerektirmez</span>
           </div>
 
-          <h1 className="text-3xl sm:text-5xl font-black tracking-tight text-white font-display">
+          <h1 className="text-3xl sm:text-5xl font-black tracking-tight text-primary font-display">
             İnteraktif Matematik & Sınav Araçları
           </h1>
 
-          <p className="mt-4 text-base sm:text-lg text-slate-300 leading-relaxed">
+          <p className="mt-4 text-base sm:text-lg text-secondary leading-relaxed">
             LGS ve YKS hazırlığında ihtiyacın olan en güncel puan hesaplayıcılar,
             adım adım matematik çözücüleri ve görsel simülatörler tek çatı altında.
           </p>
 
-          <div className="mt-6 flex flex-wrap items-center justify-center gap-4 text-xs text-slate-400">
+          <div className="mt-6 flex flex-wrap items-center justify-center gap-4 text-xs text-secondary">
             <div className="flex items-center gap-1.5">
-              <Shield className="h-4 w-4 text-emerald-400" />
+              <Shield className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
               <span>Verileriniz Kaydedilmez</span>
             </div>
             <span>•</span>
             <div className="flex items-center gap-1.5">
-              <TrendingUp className="h-4 w-4 text-sky-400" />
+              <TrendingUp className="h-4 w-4 text-sky-600 dark:text-sky-400" />
               <span>2026/2027 MEB & ÖSYM Katsayıları</span>
             </div>
           </div>
@@ -122,7 +122,7 @@ export function ToolsHubContainer() {
               <Link
                 key={tool.id}
                 href={tool.href}
-                className="group relative flex flex-col justify-between rounded-3xl border border-white/10 bg-slate-900/80 p-6 sm:p-8 shadow-xl backdrop-blur-md transition-all duration-300 hover:border-indigo-500/50 hover:bg-slate-900/95 hover:shadow-2xl hover:-translate-y-1"
+                className="group relative flex flex-col justify-between rounded-3xl border border-default bg-surface-1 p-6 sm:p-8 shadow-xl backdrop-blur-md transition-all duration-300 hover:border-indigo-500/50 hover:bg-surface-2 hover:shadow-2xl hover:-translate-y-1"
               >
                 <div>
                   <div className="flex items-center justify-between mb-4">
@@ -138,16 +138,16 @@ export function ToolsHubContainer() {
                     </span>
                   </div>
 
-                  <h2 className="text-xl font-bold text-white group-hover:text-indigo-300 transition-colors">
+                  <h2 className="text-xl font-bold text-primary group-hover:text-accent-fg transition-colors">
                     {tool.title}
                   </h2>
 
-                  <p className="mt-2 text-sm text-slate-400 leading-relaxed">
+                  <p className="mt-2 text-sm text-secondary leading-relaxed">
                     {tool.description}
                   </p>
                 </div>
 
-                <div className="mt-6 flex items-center gap-2 text-sm font-bold text-indigo-400 group-hover:text-indigo-300">
+                <div className="mt-6 flex items-center gap-2 text-sm font-bold text-indigo-600 dark:text-indigo-400 group-hover:text-indigo-500">
                   <span>Hesaplamaya Başla</span>
                   <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
                 </div>
@@ -157,16 +157,16 @@ export function ToolsHubContainer() {
         </div>
 
         {/* Bottom Platform Invitation Banner */}
-        <div className="mt-12 rounded-3xl border border-white/10 bg-gradient-to-r from-indigo-950/60 via-purple-950/60 to-slate-900/80 p-6 sm:p-8 text-center backdrop-blur-md">
+        <div className="mt-12 rounded-3xl border border-default bg-surface-1 p-6 sm:p-8 text-center backdrop-blur-md">
           <div className="flex justify-center mb-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-indigo-500/20 text-indigo-400">
+            <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-indigo-500/15 text-indigo-600 dark:text-indigo-400">
               <Compass className="h-5 w-5" />
             </div>
           </div>
-          <h3 className="text-lg sm:text-xl font-bold text-white">
+          <h3 className="text-lg sm:text-xl font-bold text-primary">
             Matematik netlerini artırmak için eksiklerini keşfet
           </h3>
-          <p className="mt-2 text-xs sm:text-sm text-slate-300 max-w-xl mx-auto">
+          <p className="mt-2 text-xs sm:text-sm text-secondary max-w-xl mx-auto">
             Uğur Hoca Matematik Platformu'nda binlerce ücretsiz yaprak test,
             aralıklı tekrar formül kartları ve canlı dersler seni bekliyor.
           </p>
@@ -179,7 +179,7 @@ export function ToolsHubContainer() {
             </Link>
             <Link
               href="/programlar"
-              className="rounded-xl border border-white/20 bg-white/5 px-5 py-2.5 text-xs sm:text-sm font-bold text-white transition hover:bg-white/10"
+              className="rounded-xl border border-default bg-surface-2 px-5 py-2.5 text-xs sm:text-sm font-bold text-primary transition hover:bg-surface-3"
             >
               LGS & YKS Tercih Sihirbazı
             </Link>

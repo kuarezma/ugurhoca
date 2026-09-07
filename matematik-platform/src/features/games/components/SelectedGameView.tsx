@@ -24,7 +24,7 @@ export function SelectedGameView({
   const GameComponent = game.component;
 
   return (
-    <main className="oyunlar-page min-h-screen bg-gradient-to-br from-slate-900 via-slate-900 to-slate-800">
+    <main className="oyunlar-page page-surface min-h-screen dark:bg-gradient-to-br dark:from-slate-900 dark:via-slate-900 dark:to-slate-800">
       <FloatingParticles />
 
       <nav className="fixed top-0 left-0 right-0 z-50 glass py-3 sm:py-4 px-4 sm:px-6">

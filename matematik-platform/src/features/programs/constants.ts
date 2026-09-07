@@ -7,20 +7,20 @@ export const PROGRAM_LEVEL_TONES: Record<ProgramTargetLevel, ProgramLevelTone> =
   iddiali: {
     darkBadge: 'bg-rose-500/20 text-rose-200',
     darkCard: 'border-rose-500/30 bg-rose-500/10',
-    lightBadge: 'bg-rose-500/20 text-rose-700',
-    lightCard: 'border-rose-300/70 bg-rose-50/60',
+    lightBadge: 'bg-rose-100 text-rose-800',
+    lightCard: 'border-rose-300 bg-rose-50/70',
   },
   dengeli: {
     darkBadge: 'bg-amber-500/20 text-amber-200',
     darkCard: 'border-amber-500/30 bg-amber-500/10',
-    lightBadge: 'bg-amber-500/20 text-amber-700',
-    lightCard: 'border-amber-300/70 bg-amber-50/60',
+    lightBadge: 'bg-amber-100 text-amber-900',
+    lightCard: 'border-amber-300 bg-amber-50/70',
   },
   guvenli: {
     darkBadge: 'bg-emerald-500/20 text-emerald-200',
     darkCard: 'border-emerald-500/30 bg-emerald-500/10',
-    lightBadge: 'bg-emerald-500/20 text-emerald-700',
-    lightCard: 'border-emerald-300/70 bg-emerald-50/60',
+    lightBadge: 'bg-emerald-100 text-emerald-800',
+    lightCard: 'border-emerald-300 bg-emerald-50/70',
   },
 };
 

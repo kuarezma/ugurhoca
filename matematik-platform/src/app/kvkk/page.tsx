@@ -12,21 +12,21 @@ export const metadata: Metadata = createPageMetadata({
 
 export default function KvkkPage() {
   return (
-    <main className="relative z-10 min-h-screen bg-gradient-to-br from-slate-900 via-slate-900 to-slate-800 px-4 py-16 text-slate-100">
+    <main className="page-surface relative z-10 min-h-screen dark:bg-gradient-to-br dark:from-slate-900 dark:via-slate-900 dark:to-slate-800 px-4 py-16 text-primary">
       <article className="mx-auto max-w-3xl space-y-8">
         <header className="space-y-3">
-          <div className="inline-flex items-center gap-2 rounded-full bg-brand-primary/15 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-brand-primary-soft">
+          <div className="inline-flex items-center gap-2 rounded-full border border-tone-info-border bg-tone-info-bg px-3 py-1 text-xs font-semibold uppercase tracking-wider text-tone-info-fg">
             <ShieldCheck className="h-3.5 w-3.5" aria-hidden="true" />
             Yasal bilgi
           </div>
-          <h1 className="font-display text-3xl font-bold text-white sm:text-4xl">
+          <h1 className="font-display text-3xl font-bold text-primary sm:text-4xl">
             KVKK aydınlatma metni
           </h1>
-          <p className="text-sm text-slate-400">Son güncelleme: 19 Nisan 2026</p>
+          <p className="text-sm text-tertiary">Son güncelleme: 19 Nisan 2026</p>
         </header>
 
-        <section className="space-y-4 text-sm leading-relaxed text-slate-200 sm:text-base">
-          <h2 className="font-display text-xl font-bold text-white">1. Veri sorumlusu</h2>
+        <section className="space-y-4 text-sm leading-relaxed text-secondary sm:text-base">
+          <h2 className="font-display text-xl font-bold text-primary">1. Veri sorumlusu</h2>
           <p>
             6698 sayılı Kişisel Verilerin Korunması Kanunu (“KVKK”) uyarınca, Uğur
             Hoca Matematik platformunu işleten Uğur Hoca (“Veri Sorumlusu”), öğrenci
@@ -35,7 +35,7 @@ export default function KvkkPage() {
             kullanabilirsiniz.
           </p>
 
-          <h2 className="font-display text-xl font-bold text-white">
+          <h2 className="font-display text-xl font-bold text-primary">
             2. İşlenen kişisel veri kategorileri
           </h2>
           <ul className="list-disc space-y-1 pl-5">
@@ -46,7 +46,7 @@ export default function KvkkPage() {
             <li>Destek: destek formu mesajları ve ekleri</li>
           </ul>
 
-          <h2 className="font-display text-xl font-bold text-white">3. İşleme amaçları</h2>
+          <h2 className="font-display text-xl font-bold text-primary">3. İşleme amaçları</h2>
           <ul className="list-disc space-y-1 pl-5">
             <li>Öğrenci hesabının oluşturulması ve yürütülmesi</li>
             <li>Eğitim içeriği, ödev ve sınav hizmetlerinin sunulması</li>
@@ -58,7 +58,7 @@ export default function KvkkPage() {
             </li>
           </ul>
 
-          <h2 className="font-display text-xl font-bold text-white">4. Hukuki sebepler</h2>
+          <h2 className="font-display text-xl font-bold text-primary">4. Hukuki sebepler</h2>
           <p>
             Kişisel verileriniz; KVKK 5/2 (c) sözleşmenin kurulması/ifası, (ç) veri
             sorumlusunun hukuki yükümlülüğü, (f) meşru menfaat ve 5/1 açık rıza
@@ -66,7 +66,7 @@ export default function KvkkPage() {
             açık rıza talep edilir.
           </p>
 
-          <h2 className="font-display text-xl font-bold text-white">
+          <h2 className="font-display text-xl font-bold text-primary">
             5. Aktarım
           </h2>
           <p>
@@ -76,7 +76,7 @@ export default function KvkkPage() {
             verileri yalnızca hizmet sunumu amacıyla işlemekle yükümlüdür.
           </p>
 
-          <h2 className="font-display text-xl font-bold text-white">
+          <h2 className="font-display text-xl font-bold text-primary">
             6. Saklama süreleri
           </h2>
           <p>
@@ -85,7 +85,7 @@ export default function KvkkPage() {
             saklanır. Bu süreler dolduğunda veriler anonimleştirilir veya silinir.
           </p>
 
-          <h2 className="font-display text-xl font-bold text-white">
+          <h2 className="font-display text-xl font-bold text-primary">
             7. KVKK 11. madde kapsamında haklarınız
           </h2>
           <ul className="list-disc space-y-1 pl-5">
@@ -102,14 +102,14 @@ export default function KvkkPage() {
           </p>
         </section>
 
-        <div className="rounded-2xl border border-amber-500/30 bg-amber-500/10 p-5 text-sm text-amber-100/90">
+        <div className="rounded-2xl border border-tone-warn-border bg-tone-warn-bg p-5 text-sm text-tone-warn-fg">
           Bu metin genel bilgilendirme amacıyla hazırlanmıştır; kurumsal başvurular
           için hukuki danışmanlık alınarak detaylandırılmalıdır.
         </div>
 
         <Link
           href="/"
-          className="inline-flex items-center gap-2 text-sm font-semibold text-brand-primary-soft hover:text-white"
+          className="inline-flex items-center gap-2 text-sm font-semibold text-accent-fg hover:text-primary transition-colors"
         >
           <ArrowLeft className="h-4 w-4" aria-hidden="true" />
           Ana sayfaya dön

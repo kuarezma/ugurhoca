@@ -17,11 +17,12 @@ import {
   Users,
 } from 'lucide-react';
 import {
-  getContentPrimaryGradeBadgeClass,
+  getContentPrimaryGradeBadgeTone,
   getContentTypeColor,
   getContentTypeIcon,
   getContentTypeLabel,
 } from '@/features/content/constants';
+import { Chip } from '@/components/ui/Chip';
 import {
   formatContentDate,
   getContentAuthorLabel,
@@ -86,7 +87,7 @@ function ContentCard({
       ? getGoogleDriveThumbnailUrl(content.file_url, 'w400')
       : null;
   const showDriveThumbnail = Boolean(driveThumbnailSrc) && !thumbnailFailed;
-  const gradeBadgeClass = getContentPrimaryGradeBadgeClass(content);
+  const gradeBadgeTone = getContentPrimaryGradeBadgeTone(content);
   const hasSolution = Boolean(
     content.solution_url?.trim() || content.answer_key_text?.trim(),
   );
@@ -109,7 +110,7 @@ function ContentCard({
         whileHover={{ scale: 1.02 }}
         whileTap={{ scale: 0.98 }}
         onClick={() => onPreview(content)}
-        className={`col-span-1 flex w-full items-center justify-center gap-2 rounded-2xl border border-white/10 bg-slate-800/70 px-4 py-2.5 text-xs font-semibold text-slate-100 transition-all hover:bg-slate-700/70 sm:flex-1 sm:py-3 sm:text-base ${!content.file_url ? 'col-span-2' : ''} ${viewMode === 'grid' ? 'sm:min-w-[150px]' : 'sm:min-w-[180px]'}`}
+        className={`col-span-1 flex w-full items-center justify-center gap-2 rounded-2xl border border-default dark:border-slate-500 bg-surface-2 px-4 py-2.5 text-xs font-semibold text-primary transition-all hover:bg-surface-3 sm:flex-1 sm:py-3 sm:text-base ${!content.file_url ? 'col-span-2' : ''} ${viewMode === 'grid' ? 'sm:min-w-[150px]' : 'sm:min-w-[180px]'}`}
       >
         {content.type === 'ders-videolari' ? (
           <Play className="w-4 h-4" />
@@ -123,7 +124,7 @@ function ContentCard({
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
           onClick={() => onDownload(content)}
-          className="col-span-1 flex w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-indigo-500 to-cyan-500 px-4 py-2.5 text-xs font-semibold text-white transition-all shadow-lg shadow-cyan-500/20 hover:from-indigo-600 hover:to-cyan-600 sm:w-auto sm:px-5 sm:py-3 sm:text-base"
+          className="col-span-1 flex w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-indigo-600 to-cyan-700 px-4 py-2.5 text-xs font-semibold text-white transition-all shadow-lg shadow-cyan-700/20 hover:from-indigo-700 hover:to-cyan-800 sm:w-auto sm:px-5 sm:py-3 sm:text-base"
         >
           <Download className="w-4 h-4" /> İndir
         </motion.button>
@@ -153,21 +154,21 @@ function ContentCard({
 
   const statsBar = (
     <div
-      className={`flex flex-wrap items-center gap-2 text-[11px] text-slate-300 sm:gap-4 sm:text-sm ${viewMode === 'grid' ? 'mb-4 sm:mb-5' : ''}`}
+      className={`flex flex-wrap items-center gap-2 text-[11px] text-secondary sm:gap-4 sm:text-sm ${viewMode === 'grid' ? 'mb-4 sm:mb-5' : ''}`}
     >
       <button
         onClick={() => onPreview(content)}
         title="Görüntülenme sayısı"
-        className="flex min-w-0 items-center justify-center gap-1.5 rounded-xl bg-slate-800/40 px-2 py-2 transition-colors hover:text-cyan-300 sm:justify-start sm:rounded-none sm:bg-transparent sm:px-0 sm:py-0"
+        className="flex min-w-0 items-center justify-center gap-1.5 rounded-xl bg-surface-2 px-2 py-2 transition-colors hover:text-accent-fg sm:justify-start sm:rounded-none sm:bg-transparent sm:px-0 sm:py-0"
       >
-        <Eye className="w-4 h-4 sm:w-5 sm:h-5 text-slate-400" />
+        <Eye className="w-4 h-4 sm:w-5 sm:h-5 text-secondary" />
         {content.views || 0}
       </button>
 
       <button
         onClick={() => onToggleLike(content)}
         title="Beğen"
-        className={`flex min-w-0 items-center justify-center gap-1.5 rounded-xl bg-slate-800/40 px-2 py-2 transition-colors sm:justify-start sm:rounded-none sm:bg-transparent sm:px-0 sm:py-0 ${isLiked ? 'text-red-400' : 'hover:text-red-400'}`}
+        className={`flex min-w-0 items-center justify-center gap-1.5 rounded-xl bg-surface-2 px-2 py-2 transition-colors sm:justify-start sm:rounded-none sm:bg-transparent sm:px-0 sm:py-0 ${isLiked ? 'text-red-500 dark:text-red-400' : 'hover:text-red-500'}`}
       >
         <Heart className={`w-4 h-4 sm:w-5 sm:h-5 ${isLiked ? 'fill-current' : ''}`} />
         {content.likes || 0}
@@ -177,13 +178,13 @@ function ContentCard({
         <button
           onClick={() => onOpenComments(content)}
           title="Yorumlar"
-          className="flex min-w-0 items-center justify-center gap-1.5 rounded-xl bg-slate-800/40 px-2 py-2 transition-colors hover:text-cyan-300 sm:justify-start sm:rounded-none sm:bg-transparent sm:px-0 sm:py-0"
+          className="flex min-w-0 items-center justify-center gap-1.5 rounded-xl bg-surface-2 px-2 py-2 transition-colors hover:text-accent-fg sm:justify-start sm:rounded-none sm:bg-transparent sm:px-0 sm:py-0"
         >
           <MessageCircle className="w-4 h-4 sm:w-5 sm:h-5" />
           {content.comments_count || 0}
         </button>
       ) : (
-        <div className="flex min-w-0 items-center justify-center gap-1.5 rounded-xl bg-slate-800/40 px-2 py-2 transition-colors hover:text-cyan-300 sm:justify-start sm:rounded-none sm:bg-transparent sm:px-0 sm:py-0">
+        <div className="flex min-w-0 items-center justify-center gap-1.5 rounded-xl bg-surface-2 px-2 py-2 transition-colors hover:text-accent-fg sm:justify-start sm:rounded-none sm:bg-transparent sm:px-0 sm:py-0">
           <MessageCircle className="w-4 h-4 sm:w-5 sm:h-5" />
           {content.comments_count || 0}
         </div>
@@ -193,13 +194,13 @@ function ContentCard({
         <button
           onClick={() => onDownload(content)}
           title="İndirme sayısı"
-          className="flex min-w-0 items-center justify-center gap-1.5 rounded-xl bg-slate-800/40 px-2 py-2 transition-colors hover:text-cyan-300 sm:justify-start sm:rounded-none sm:bg-transparent sm:px-0 sm:py-0"
+          className="flex min-w-0 items-center justify-center gap-1.5 rounded-xl bg-surface-2 px-2 py-2 transition-colors hover:text-accent-fg sm:justify-start sm:rounded-none sm:bg-transparent sm:px-0 sm:py-0"
         >
           <Download className="w-4 h-4 sm:w-5 sm:h-5" />
           {content.downloads || 0}
         </button>
       ) : (
-        <div className="flex min-w-0 items-center justify-center gap-1.5 rounded-xl bg-slate-800/40 px-2 py-2 sm:justify-start sm:rounded-none sm:bg-transparent sm:px-0 sm:py-0">
+        <div className="flex min-w-0 items-center justify-center gap-1.5 rounded-xl bg-surface-2 px-2 py-2 sm:justify-start sm:rounded-none sm:bg-transparent sm:px-0 sm:py-0">
           <Download className="w-4 h-4 sm:w-5 sm:h-5" />
           {content.downloads || 0}
         </div>
@@ -208,7 +209,7 @@ function ContentCard({
       <button
         onClick={() => onToggleFavorite(content.id)}
         title="Favori"
-        className={`flex min-w-0 items-center justify-center gap-1.5 rounded-xl bg-slate-800/40 px-2 py-2 transition-colors sm:justify-start sm:rounded-none sm:bg-transparent sm:px-0 sm:py-0 ${isFavorite ? 'text-amber-400' : 'hover:text-amber-400'}`}
+        className={`flex min-w-0 items-center justify-center gap-1.5 rounded-xl bg-surface-2 px-2 py-2 transition-colors sm:justify-start sm:rounded-none sm:bg-transparent sm:px-0 sm:py-0 ${isFavorite ? 'text-amber-500 dark:text-amber-400' : 'hover:text-amber-500'}`}
       >
         <Star className={`w-4 h-4 sm:w-5 sm:h-5 ${isFavorite ? 'fill-current' : ''}`} />
         <span className="hidden sm:inline text-xs">
@@ -220,9 +221,9 @@ function ContentCard({
         <button
           onClick={() => onToggleCompleted(content)}
           title={isCompleted ? 'Çözüldü işaretini kaldır' : 'Çözüldü olarak işaretle'}
-          className={`flex min-w-0 items-center justify-center gap-1.5 rounded-xl bg-slate-800/40 px-2 py-2 transition-colors sm:justify-start sm:rounded-none sm:bg-transparent sm:px-0 sm:py-0 ${isCompleted ? 'text-emerald-400 font-semibold' : 'hover:text-emerald-400'}`}
+          className={`flex min-w-0 items-center justify-center gap-1.5 rounded-xl bg-surface-2 px-2 py-2 transition-colors sm:justify-start sm:rounded-none sm:bg-transparent sm:px-0 sm:py-0 ${isCompleted ? 'text-emerald-600 dark:text-emerald-400 font-semibold' : 'hover:text-emerald-600'}`}
         >
-          <CheckCircle2 className={`w-4 h-4 sm:w-5 sm:h-5 ${isCompleted ? 'fill-emerald-400/20 text-emerald-400' : 'text-slate-400'}`} />
+          <CheckCircle2 className={`w-4 h-4 sm:w-5 sm:h-5 ${isCompleted ? 'fill-emerald-400/20 text-emerald-600 dark:text-emerald-400' : 'text-secondary'}`} />
           <span className="hidden sm:inline text-xs">
             {isCompleted ? 'Çözüldü' : 'Tamamla'}
           </span>
@@ -232,12 +233,12 @@ function ContentCard({
       <button
         onClick={handleCopyLink}
         title="Bağlantıyı Kopyala"
-        className={`flex min-w-0 items-center justify-center gap-1.5 rounded-xl bg-slate-800/40 px-2 py-2 transition-colors sm:justify-start sm:rounded-none sm:bg-transparent sm:px-0 sm:py-0 ${copiedLink ? 'text-cyan-400 font-semibold' : 'hover:text-cyan-400'}`}
+        className={`flex min-w-0 items-center justify-center gap-1.5 rounded-xl bg-surface-2 px-2 py-2 transition-colors sm:justify-start sm:rounded-none sm:bg-transparent sm:px-0 sm:py-0 ${copiedLink ? 'text-accent-fg font-semibold' : 'hover:text-accent-fg'}`}
       >
         {copiedLink ? (
-          <Check className="w-4 h-4 sm:w-5 sm:h-5 text-cyan-400" />
+          <Check className="w-4 h-4 sm:w-5 sm:h-5 text-accent-fg" />
         ) : (
-          <Share2 className="w-4 h-4 sm:w-5 sm:h-5 text-slate-400" />
+          <Share2 className="w-4 h-4 sm:w-5 sm:h-5 text-secondary" />
         )}
         <span className="hidden sm:inline text-xs">
           {copiedLink ? 'Kopyalandı!' : 'Paylaş'}
@@ -253,13 +254,13 @@ function ContentCard({
         initial={{ opacity: 0, x: -20 }}
         animate={{ opacity: 1, x: 0 }}
         transition={{ delay: index * 0.05 }}
-        className="glass rounded-3xl border border-white/10 p-4 sm:p-6 card-hover group defer-card-list"
+        className="rounded-3xl border border-default bg-surface-1 p-4 sm:p-6 card-hover group defer-card-list"
       >
         <div className="space-y-4">
           <div className="flex items-start justify-between gap-2 sm:gap-3">
             <div className="flex items-center gap-3 min-w-0">
               {showDriveThumbnail ? (
-                <div className="relative h-11 w-11 flex-shrink-0 overflow-hidden rounded-xl border border-white/10 sm:h-14 sm:w-14">
+                <div className="relative h-11 w-11 flex-shrink-0 overflow-hidden rounded-xl border border-default sm:h-14 sm:w-14">
                   <Image
                     src={driveThumbnailSrc || ''}
                     alt={content.title}
@@ -277,49 +278,50 @@ function ContentCard({
                 <ContentTypeIcon type={content.type} />
               </div>
               <div className="min-w-0">
-                <h3 className="text-lg sm:text-2xl font-bold leading-tight text-white group-hover:text-cyan-300 transition-colors truncate">
+                <h3 className="text-lg sm:text-2xl font-bold leading-tight text-primary group-hover:text-accent-fg transition-colors truncate">
                   {content.title}
                 </h3>
-                <p className="text-sm sm:text-base text-slate-400">
+                <p className="text-sm sm:text-base text-secondary">
                   {getContentTypeLabel(content.type)}
                 </p>
               </div>
             </div>
             <div className="flex max-w-[52%] flex-wrap justify-end gap-1.5 sm:max-w-none sm:items-center sm:gap-2">
               {content.isNew && (
-                <span className="px-2.5 sm:px-3 py-1 rounded-full bg-emerald-500/15 text-emerald-300 text-[10px] sm:text-xs font-semibold border border-emerald-400/20">
+                <span className="px-2.5 sm:px-3 py-1 rounded-full bg-emerald-500/15 text-emerald-800 dark:text-emerald-300 text-[10px] sm:text-xs font-semibold border border-emerald-500/30">
                   Yeni
                 </span>
               )}
               {isCompleted && (
-                <span className="flex items-center gap-1 px-2.5 sm:px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-300 text-[10px] sm:text-xs font-semibold border border-emerald-400/30 shadow-sm shadow-emerald-500/20">
+                <span className="flex items-center gap-1 px-2.5 sm:px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-800 dark:text-emerald-300 text-[10px] sm:text-xs font-semibold border border-emerald-500/30 shadow-sm shadow-emerald-500/20">
                   <CheckCircle2 className="w-3 h-3" />
                   Çözüldü
                 </span>
               )}
               {hasSolution && (
-                <span className="px-2.5 sm:px-3 py-1 rounded-full bg-green-500/15 text-green-300 text-[10px] sm:text-xs font-semibold border border-green-400/30">
+                <span className="px-2.5 sm:px-3 py-1 rounded-full bg-green-500/15 text-green-800 dark:text-green-300 text-[10px] sm:text-xs font-semibold border border-green-500/30">
                   ÇÖZÜMLÜ
                 </span>
               )}
-              <span
-                className={`ml-auto px-3.5 sm:px-4 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-bold tracking-wide ${gradeBadgeClass}`}
+              <Chip
+                tone={gradeBadgeTone}
+                className="ml-auto px-3.5 py-1.5 text-xs sm:px-4 sm:py-2 sm:text-sm"
               >
                 {getContentPrimaryGradeLabel(content)}
-              </span>
+              </Chip>
             </div>
 
           </div>
 
-          <div className="border-t border-white/10" />
+          <div className="border-t border-default" />
 
           {visibleDescription ? (
-            <p className="text-slate-400 text-sm sm:text-base line-clamp-2">
+            <p className="text-secondary text-sm sm:text-base line-clamp-2">
               {visibleDescription}
             </p>
           ) : null}
 
-          <div className="flex flex-wrap items-center gap-3 sm:gap-4 text-[11px] sm:text-sm text-slate-400">
+          <div className="flex flex-wrap items-center gap-3 sm:gap-4 text-[11px] sm:text-sm text-secondary">
             <div className="flex items-center gap-2">
               <Users className="w-4 h-4" />
               <span>{getContentAuthorLabel(content)}</span>
@@ -342,13 +344,13 @@ function ContentCard({
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: index * 0.05 }}
-      className="glass rounded-3xl overflow-hidden border border-white/10 card-hover group defer-card"
+      className="rounded-3xl overflow-hidden border border-default bg-surface-1 card-hover group defer-card"
     >
       <div className={`h-2 bg-gradient-to-r ${getContentTypeColor(content.type)}`} />
       <div className="p-4 sm:p-6">
         <div className="flex items-start justify-between gap-2 sm:gap-3 mb-4 sm:mb-5">
           {showDriveThumbnail ? (
-            <div className="relative h-11 w-11 overflow-hidden rounded-xl border border-white/10 sm:h-14 sm:w-14">
+            <div className="relative h-11 w-11 overflow-hidden rounded-xl border border-default sm:h-14 sm:w-14">
               <Image
                 src={driveThumbnailSrc || ''}
                 alt={content.title}
@@ -366,44 +368,45 @@ function ContentCard({
             <ContentTypeIcon type={content.type} />
           </div>
           <div className="flex max-w-[52%] flex-wrap justify-end gap-1.5 sm:max-w-none sm:items-center sm:gap-2">
-            <span className="px-2.5 sm:px-3 py-1 rounded-full bg-amber-500/15 text-amber-300 text-[10px] sm:text-xs font-semibold border border-amber-400/20">
+            <span className="px-2.5 sm:px-3 py-1 rounded-full bg-amber-500/15 text-amber-900 dark:text-amber-300 text-[10px] sm:text-xs font-semibold border border-amber-500/30">
               {getContentTypeLabel(content.type)}
             </span>
             {content.isNew && (
-              <span className="px-2.5 sm:px-3 py-1 rounded-full bg-emerald-500/15 text-emerald-300 text-[10px] sm:text-xs font-semibold border border-emerald-400/20">
+              <span className="px-2.5 sm:px-3 py-1 rounded-full bg-emerald-500/15 text-emerald-800 dark:text-emerald-300 text-[10px] sm:text-xs font-semibold border border-emerald-500/30">
                 Yeni
               </span>
             )}
             {isCompleted && (
-              <span className="flex items-center gap-1 px-2.5 sm:px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-300 text-[10px] sm:text-xs font-semibold border border-emerald-400/30 shadow-sm shadow-emerald-500/20">
+              <span className="flex items-center gap-1 px-2.5 sm:px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-800 dark:text-emerald-300 text-[10px] sm:text-xs font-semibold border border-emerald-500/30 shadow-sm shadow-emerald-500/20">
                 <CheckCircle2 className="w-3 h-3" />
                 Çözüldü
               </span>
             )}
             {hasSolution && (
-              <span className="px-2.5 sm:px-3 py-1 rounded-full bg-green-500/15 text-green-300 text-[10px] sm:text-xs font-semibold border border-green-400/30">
+              <span className="px-2.5 sm:px-3 py-1 rounded-full bg-green-500/15 text-green-800 dark:text-green-300 text-[10px] sm:text-xs font-semibold border border-green-500/30">
                 ÇÖZÜMLÜ
               </span>
             )}
 
-            <span
-              className={`ml-auto px-3.5 sm:px-4 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-bold tracking-wide ${gradeBadgeClass}`}
+            <Chip
+              tone={gradeBadgeTone}
+              className="ml-auto px-3.5 py-1.5 text-xs sm:px-4 sm:py-2 sm:text-sm"
             >
               {getContentPrimaryGradeLabel(content)}
-            </span>
+            </Chip>
           </div>
         </div>
 
-        <h3 className="text-lg sm:text-2xl font-bold leading-tight text-white mb-2 line-clamp-2 group-hover:text-cyan-300 transition-colors">
+        <h3 className="text-lg sm:text-2xl font-bold leading-tight text-primary mb-2 line-clamp-2 group-hover:text-accent-fg transition-colors">
           {content.title}
         </h3>
-        <p className="text-slate-400 text-sm sm:text-base mb-4 line-clamp-2">
+        <p className="text-secondary text-sm sm:text-base mb-4 line-clamp-2">
           {visibleDescription || getContentTypeLabel(content.type)}
         </p>
 
-        <div className="border-t border-white/10 my-4" />
+        <div className="border-t border-default my-4" />
 
-        <div className="flex flex-wrap items-center gap-2 sm:gap-4 text-slate-400 text-[11px] sm:text-sm mb-4">
+        <div className="flex flex-wrap items-center gap-2 sm:gap-4 text-secondary text-[11px] sm:text-sm mb-4">
           <div className="flex items-center gap-2 min-w-0">
             <Users className="w-4 h-4" />
             <span className="truncate">{getContentAuthorLabel(content)}</span>

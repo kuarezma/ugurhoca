@@ -64,7 +64,7 @@ export function HomeNavbar({ onLogout, user }: HomeNavbarProps) {
               >
                 Uğur Hoca
               </span>
-              <span className="text-[9px] sm:text-[10px] font-semibold text-indigo-500 dark:text-indigo-400 uppercase tracking-wider truncate">
+              <span className="text-[9px] sm:text-[10px] font-semibold text-indigo-700 dark:text-indigo-300 uppercase tracking-wider truncate">
                 Matematik Platformu
               </span>
             </div>

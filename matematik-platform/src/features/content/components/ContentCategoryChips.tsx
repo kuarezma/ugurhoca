@@ -35,14 +35,14 @@ export function ContentCategoryChips({
   selectedType,
   onSelectGrade,
   onSelectType,
-  isLight = false,
+  isLight: _isLight = false,
 }: ContentCategoryChipsProps) {
   return (
     <div className="space-y-3">
       {/* Sınıf Çipleri */}
       <div>
         <div className="mb-1.5 flex items-center justify-between">
-          <span className="text-xs font-bold uppercase tracking-wider text-slate-400">
+          <span className="text-xs font-bold uppercase tracking-wider text-secondary">
             Sınıf Seviyesi
           </span>
         </div>
@@ -57,9 +57,7 @@ export function ContentCategoryChips({
                 className={`shrink-0 rounded-xl px-3.5 py-1.5 text-xs font-semibold transition-all ${
                   isSelected
                     ? 'bg-gradient-to-r from-brand-primary via-brand-pink to-brand-orange text-white shadow-md'
-                    : isLight
-                    ? 'bg-slate-100 text-slate-700 hover:bg-slate-200 border border-slate-200'
-                    : 'bg-slate-800/80 text-slate-300 hover:bg-slate-700/80 border border-white/10'
+                    : 'border border-default dark:border-slate-500 bg-surface-2 text-secondary hover:bg-surface-3 hover:text-primary'
                 }`}
               >
                 {g.label}
@@ -72,7 +70,7 @@ export function ContentCategoryChips({
       {/* Tür Çipleri */}
       <div>
         <div className="mb-1.5 flex items-center justify-between">
-          <span className="text-xs font-bold uppercase tracking-wider text-slate-400">
+          <span className="text-xs font-bold uppercase tracking-wider text-secondary">
             İçerik Türü
           </span>
         </div>
@@ -86,10 +84,8 @@ export function ContentCategoryChips({
                 onClick={() => onSelectType(t.id)}
                 className={`shrink-0 rounded-xl px-3.5 py-1.5 text-xs font-semibold transition-all ${
                   isSelected
-                    ? 'bg-brand-secondary text-white shadow-md'
-                    : isLight
-                    ? 'bg-slate-100 text-slate-700 hover:bg-slate-200 border border-slate-200'
-                    : 'bg-slate-800/80 text-slate-300 hover:bg-slate-700/80 border border-white/10'
+                    ? 'bg-cyan-700 text-white shadow-md'
+                    : 'border border-default dark:border-slate-500 bg-surface-2 text-secondary hover:bg-surface-3 hover:text-primary'
                 }`}
               >
                 {t.label}

@@ -44,12 +44,8 @@ const levelSectionLabels: Record<ProgramTargetLevel, string> = {
 
 const INITIAL_VISIBLE_SCHOOL_COUNT = 24;
 
-const buildSourceLinkClassName = (isLight: boolean) =>
-  `inline-flex items-center gap-1.5 rounded-xl border px-3 py-2 text-xs font-bold transition-colors ${
-    isLight
-      ? 'border-slate-200 bg-white/80 text-slate-700 hover:border-cyan-300 hover:text-cyan-700'
-      : 'border-white/10 bg-white/10 text-slate-100 hover:border-cyan-300/50 hover:text-cyan-100'
-  }`;
+const buildSourceLinkClassName = (_isLight: boolean) =>
+  `inline-flex items-center gap-1.5 rounded-xl border border-default dark:border-slate-500 bg-surface-1 px-3 py-2 text-xs font-bold text-primary hover:border-accent transition-colors`;
 
 const getLgsSourceLabel = (sourceUrl: string) =>
   sourceUrl.includes('meb.gov.tr') ? 'MEB kaynağı' : 'Veri kaynağı';
@@ -300,10 +296,10 @@ export default function LgsWizardPage() {
         <motion.section
           initial={{ opacity: 0, y: 18 }}
           animate={{ opacity: 1, y: 0 }}
-          className={`rounded-3xl border p-5 sm:p-7 ${isLight ? 'light-section' : 'glass border-white/10'}`}
+          className="rounded-3xl border border-default bg-surface-1 p-5 shadow-sm sm:p-7"
         >
           <ProgramWizardHeader
-            badgeClassName="bg-gradient-to-r from-cyan-500 via-blue-500 to-indigo-500"
+            badgeClassName="bg-gradient-to-r from-blue-600 via-indigo-600 to-violet-600 text-white"
             badgeLabel="LGS 2026 Sihirbazı"
             dataYear={dataYear}
             dataYearNote={
@@ -318,12 +314,8 @@ export default function LgsWizardPage() {
 
           <ProgramStepTabs
             activeStep={step}
-            activeStepClassName="bg-gradient-to-r from-indigo-500 to-fuchsia-500 text-white border-transparent shadow-lg"
-            inactiveStepClassName={
-              isLight
-                ? 'bg-white border-slate-200 text-slate-700 hover:border-indigo-300'
-                : 'bg-white/5 border-white/10 text-slate-300 hover:border-indigo-400/50'
-            }
+            activeStepClassName="bg-gradient-to-r from-blue-600 via-indigo-600 to-violet-600 text-white border-blue-500 dark:border-blue-400 shadow-lg"
+            inactiveStepClassName="border border-default dark:border-slate-500 bg-surface-1 text-secondary hover:text-primary hover:border-accent"
             onStepChange={setStep}
             steps={steps}
           />
@@ -337,7 +329,7 @@ export default function LgsWizardPage() {
                   return (
                     <ProgramSubjectInputCard
                       key={subject.key}
-                      accentClassName="bg-gradient-to-r from-cyan-500 via-blue-500 to-indigo-500"
+                      accentClassName="bg-gradient-to-r from-blue-600 via-indigo-600 to-violet-600"
                       helperText={`${subject.questions} soru · katsayı ${subject.coefficient}`}
                       idPrefix="lgs"
                       isLight={isLight}
@@ -354,9 +346,7 @@ export default function LgsWizardPage() {
                 })}
               </div>
 
-              <div
-                className={`rounded-3xl border p-5 ${isLight ? 'light-soft-panel' : 'bg-white/5 border-white/10'}`}
-              >
+              <div className="rounded-3xl border border-default bg-surface-2 p-5">
                 <div className="grid gap-3 sm:grid-cols-3">
                   <ProgramMetricCard
                     isLight={isLight}
@@ -381,7 +371,7 @@ export default function LgsWizardPage() {
                 <button
                   type="button"
                   onClick={() => setStep(2)}
-                  className="mt-4 inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-cyan-500 via-blue-500 to-indigo-500 px-4 py-2 text-sm font-bold text-white shadow-lg"
+                  className="mt-4 inline-flex items-center gap-2 rounded-xl border border-blue-400/80 dark:border-blue-300/80 bg-gradient-to-r from-blue-600 via-indigo-600 to-violet-600 px-4 py-2 text-sm font-bold text-white shadow-lg transition hover:scale-[1.01] active:scale-[0.99]"
                 >
                   Hedef Filtrelerine Geç
                   <ChevronRight className="h-4 w-4" />
@@ -392,16 +382,10 @@ export default function LgsWizardPage() {
 
           {step === 2 && (
             <div className="space-y-5">
-              <div
-                className={`rounded-3xl border p-5 ${isLight ? 'bg-white border-slate-200' : 'bg-white/5 border-white/10'}`}
-              >
+              <div className="rounded-3xl border border-default bg-surface-1 p-5 shadow-sm">
                 <div className="mb-4 flex items-center gap-2">
-                  <Filter
-                    className={`h-5 w-5 ${isLight ? 'text-indigo-600' : 'text-indigo-300'}`}
-                  />
-                  <h2
-                    className={`text-lg font-bold ${isLight ? 'text-slate-900' : 'text-white'}`}
-                  >
+                  <Filter className="h-5 w-5 text-accent-fg" />
+                  <h2 className="text-lg font-bold text-primary">
                     Lise Tercih Filtreleri
                   </h2>
                 </div>
@@ -411,11 +395,7 @@ export default function LgsWizardPage() {
                     value={query}
                     onChange={(event) => setQuery(event.target.value)}
                     placeholder="Okul adı veya il ara"
-                    className={`rounded-xl border px-3 py-2 text-sm ${
-                      isLight
-                        ? 'bg-slate-50 border-slate-200 text-slate-900'
-                        : 'bg-slate-900/70 border-white/10 text-white'
-                    }`}
+                    className="w-full rounded-xl border border-default dark:border-slate-500 bg-surface-0 px-3 py-2 text-sm font-semibold text-primary outline-none transition focus:border-accent focus:ring-2 focus:ring-accent/20"
                   />
 
                   <select
@@ -424,11 +404,7 @@ export default function LgsWizardPage() {
                       setProvince(event.target.value);
                       setDistrict('all');
                     }}
-                    className={`rounded-xl border px-3 py-2 text-sm ${
-                      isLight
-                        ? 'bg-slate-50 border-slate-200 text-slate-900'
-                        : 'bg-slate-900/70 border-white/10 text-white'
-                    }`}
+                    className="w-full rounded-xl border border-default dark:border-slate-500 bg-surface-0 px-3 py-2 text-sm font-semibold text-primary outline-none transition focus:border-accent focus:ring-2 focus:ring-accent/20"
                   >
                     <option value="all">Tüm İller</option>
                     {provinces.map((item) => (
@@ -441,11 +417,7 @@ export default function LgsWizardPage() {
                   <select
                     value={district}
                     onChange={(event) => setDistrict(event.target.value)}
-                    className={`rounded-xl border px-3 py-2 text-sm ${
-                      isLight
-                        ? 'bg-slate-50 border-slate-200 text-slate-900'
-                        : 'bg-slate-900/70 border-white/10 text-white'
-                    }`}
+                    className="w-full rounded-xl border border-default dark:border-slate-500 bg-surface-0 px-3 py-2 text-sm font-semibold text-primary outline-none transition focus:border-accent focus:ring-2 focus:ring-accent/20"
                   >
                     <option value="all">Tüm İlçeler</option>
                     {districts.map((item) => (
@@ -458,11 +430,7 @@ export default function LgsWizardPage() {
                   <select
                     value={schoolType}
                     onChange={(event) => setSchoolType(event.target.value)}
-                    className={`rounded-xl border px-3 py-2 text-sm ${
-                      isLight
-                        ? 'bg-slate-50 border-slate-200 text-slate-900'
-                        : 'bg-slate-900/70 border-white/10 text-white'
-                    }`}
+                    className="w-full rounded-xl border border-default dark:border-slate-500 bg-surface-0 px-3 py-2 text-sm font-semibold text-primary outline-none transition focus:border-accent focus:ring-2 focus:ring-accent/20"
                   >
                     <option value="all">Tüm Okul Türleri</option>
                     {schoolTypes.map((item) => (
@@ -475,11 +443,7 @@ export default function LgsWizardPage() {
                   <select
                     value={language}
                     onChange={(event) => setLanguage(event.target.value)}
-                    className={`rounded-xl border px-3 py-2 text-sm ${
-                      isLight
-                        ? 'bg-slate-50 border-slate-200 text-slate-900'
-                        : 'bg-slate-900/70 border-white/10 text-white'
-                    }`}
+                    className="w-full rounded-xl border border-default dark:border-slate-500 bg-surface-0 px-3 py-2 text-sm font-semibold text-primary outline-none transition focus:border-accent focus:ring-2 focus:ring-accent/20"
                   >
                     <option value="all">Tüm Diller</option>
                     {languages.map((item) => (
@@ -495,11 +459,7 @@ export default function LgsWizardPage() {
                       onChange={(event) =>
                         setBoarding(event.target.value as 'all' | 'yes' | 'no')
                       }
-                      className={`rounded-xl border px-3 py-2 text-sm ${
-                        isLight
-                          ? 'bg-slate-50 border-slate-200 text-slate-900'
-                          : 'bg-slate-900/70 border-white/10 text-white'
-                      }`}
+                      className="w-full rounded-xl border border-default dark:border-slate-500 bg-surface-0 px-3 py-2 text-sm font-semibold text-primary outline-none transition focus:border-accent focus:ring-2 focus:ring-accent/20"
                     >
                       <option value="all">Pansiyon Durumu (Hepsi)</option>
                       <option value="yes">Pansiyonlu</option>
@@ -514,11 +474,7 @@ export default function LgsWizardPage() {
                         event.target.value as 'all' | ProgramTargetLevel,
                       )
                     }
-                    className={`rounded-xl border px-3 py-2 text-sm ${
-                      isLight
-                        ? 'bg-slate-50 border-slate-200 text-slate-900'
-                        : 'bg-slate-900/70 border-white/10 text-white'
-                    }`}
+                    className="w-full rounded-xl border border-default dark:border-slate-500 bg-surface-0 px-3 py-2 text-sm font-semibold text-primary outline-none transition focus:border-accent focus:ring-2 focus:ring-accent/20"
                   >
                     <option value="all">Hedef Seviyesi (Hepsi)</option>
                     <option value="iddiali">İddialı</option>
@@ -527,38 +483,28 @@ export default function LgsWizardPage() {
                   </select>
                 </div>
 
-                <div
-                  className={`mt-4 rounded-2xl border p-3 text-sm ${isLight ? 'bg-slate-50 border-slate-200 text-slate-700' : 'bg-white/5 border-white/10 text-slate-300'}`}
-                >
+                <div className="mt-4 rounded-2xl border border-default bg-surface-2 p-3 text-sm text-secondary">
                   Filtreye uygun okul sayısı:{' '}
-                  <span className="font-bold">{evaluatedSchools.length}</span>
+                  <span className="font-bold text-primary">{evaluatedSchools.length}</span>
                 </div>
 
                 {error ? (
-                  <div
-                    className={`mt-3 rounded-2xl border p-3 text-sm ${
-                      isLight
-                        ? 'bg-rose-50 border-rose-200 text-rose-700'
-                        : 'bg-rose-500/10 border-rose-500/30 text-rose-200'
-                    }`}
-                  >
+                  <div className="mt-3 rounded-2xl border border-rose-300 dark:border-rose-500/30 bg-rose-50 dark:bg-rose-500/10 p-3 text-sm text-rose-800 dark:text-rose-200">
                     {error}
                   </div>
                 ) : null}
 
-                <div
-                  className={`mt-3 rounded-2xl border p-3 text-sm ${isLight ? 'bg-indigo-50 border-indigo-100 text-slate-700' : 'bg-indigo-500/10 border-indigo-400/20 text-slate-200'}`}
-                >
+                <div className="mt-3 rounded-2xl border border-indigo-200 dark:border-indigo-500/30 bg-indigo-50 dark:bg-indigo-500/10 p-3 text-sm text-indigo-900 dark:text-indigo-200">
                   Veritabanı kapsamı:{' '}
-                  <span className="font-bold">{provinces.length} il</span>,{' '}
-                  <span className="font-bold">{totalDistrictCount} ilçe</span>,{' '}
-                  <span className="font-bold">
+                  <span className="font-bold text-primary">{provinces.length} il</span>,{' '}
+                  <span className="font-bold text-primary">{totalDistrictCount} ilçe</span>,{' '}
+                  <span className="font-bold text-primary">
                     {groupedSchools.length} okul
                   </span>
                   {orderedHistoryYears.length ? (
                     <>
                       ,{' '}
-                      <span className="font-bold">
+                      <span className="font-bold text-primary">
                         {orderedHistoryYears.length} yıl trendi
                       </span>{' '}
                       ({orderedHistoryYears.join(', ')})
@@ -570,18 +516,14 @@ export default function LgsWizardPage() {
                   <button
                     type="button"
                     onClick={() => setStep(1)}
-                    className={`rounded-xl border px-4 py-2 text-sm font-semibold ${
-                      isLight
-                        ? 'bg-white border-slate-200 text-slate-700'
-                        : 'bg-white/5 border-white/10 text-slate-200'
-                    }`}
+                    className="rounded-xl border border-default dark:border-slate-500 bg-surface-1 px-4 py-2 text-sm font-semibold text-primary hover:bg-surface-2 transition"
                   >
                     Geri Dön
                   </button>
                   <button
                     type="button"
                     onClick={() => setStep(3)}
-                    className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-cyan-500 via-blue-500 to-indigo-500 px-4 py-2 text-sm font-bold text-white shadow-lg"
+                    className="inline-flex items-center gap-2 rounded-xl border border-blue-400/80 dark:border-blue-300/80 bg-gradient-to-r from-blue-600 via-indigo-600 to-violet-600 px-4 py-2 text-sm font-bold text-white shadow-lg transition hover:scale-[1.01] active:scale-[0.99]"
                   >
                     Önerileri Göster
                     <ChevronRight className="h-4 w-4" />
@@ -593,51 +535,37 @@ export default function LgsWizardPage() {
 
           {step === 3 && (
             <div className="space-y-4">
-              <div
-                className={`rounded-3xl border p-4 ${isLight ? 'bg-slate-50 border-slate-200' : 'bg-white/5 border-white/10'}`}
-              >
+              <div className="rounded-3xl border border-default bg-surface-2 p-4">
                 <div className="flex flex-wrap items-center justify-between gap-3">
                   <div>
-                    <div
-                      className={`text-[11px] font-bold uppercase tracking-[0.18em] ${isLight ? 'text-slate-500' : 'text-slate-400'}`}
-                    >
+                    <div className="text-[11px] font-bold uppercase tracking-[0.18em] text-secondary">
                       LGS Tahmini Puan
                     </div>
-                    <div
-                      className={`text-2xl font-black tabular-nums ${isLight ? 'text-slate-950' : 'text-white'}`}
-                    >
+                    <div className="text-2xl font-black tabular-nums text-primary">
                       {lgsResult.estimatedScore.toFixed(2)}
                     </div>
                   </div>
-                  <div
-                    className={`text-sm ${isLight ? 'text-slate-600' : 'text-slate-300'}`}
-                  >
+                  <div className="text-sm text-secondary">
                     Filtreye uygun toplam okul:{' '}
-                    <span className="font-bold">{evaluatedSchools.length}</span>
+                    <span className="font-bold text-primary">{evaluatedSchools.length}</span>
                   </div>
                 </div>
               </div>
 
               {loading && (
-                <div
-                  className={`rounded-3xl border p-5 text-sm ${isLight ? 'bg-white border-slate-200 text-slate-600' : 'bg-white/5 border-white/10 text-slate-300'}`}
-                >
+                <div className="rounded-3xl border border-default bg-surface-1 p-5 text-sm text-secondary">
                   Okul verileri yükleniyor...
                 </div>
               )}
               {!loading && error && (
-                <div
-                  className={`rounded-3xl border p-5 text-sm ${isLight ? 'bg-rose-50 border-rose-200 text-rose-700' : 'bg-rose-500/10 border-rose-500/30 text-rose-200'}`}
-                >
+                <div className="rounded-3xl border border-rose-300 dark:border-rose-500/30 bg-rose-50 dark:bg-rose-500/10 p-5 text-sm text-rose-800 dark:text-rose-200">
                   {error}
                 </div>
               )}
 
               {!loading && !error && !evaluatedSchools.length && (
-                <div
-                  className={`rounded-3xl border p-6 ${isLight ? 'bg-white border-slate-200' : 'bg-white/5 border-white/10'}`}
-                >
-                  <p className={isLight ? 'text-slate-700' : 'text-slate-200'}>
+                <div className="rounded-3xl border border-default bg-surface-1 p-6">
+                  <p className="text-secondary">
                     Seçilen filtrelere uygun okul bulunamadı.
                   </p>
                 </div>
@@ -662,9 +590,7 @@ export default function LgsWizardPage() {
                   return (
                     <section key={level} className="space-y-3">
                       <div className="flex items-center justify-between">
-                        <h2
-                          className={`text-lg font-bold ${isLight ? 'text-slate-900' : 'text-white'}`}
-                        >
+                        <h2 className="text-lg font-bold text-primary">
                           {levelSectionLabels[level]}
                         </h2>
                         <span
@@ -688,14 +614,10 @@ export default function LgsWizardPage() {
                             >
                               <div className="flex items-start justify-between gap-3">
                                 <div>
-                                  <h3
-                                    className={`text-sm font-black sm:text-base ${isLight ? 'text-slate-900' : 'text-white'}`}
-                                  >
+                                  <h3 className="text-sm font-black text-primary sm:text-base">
                                     {school.school_name}
                                   </h3>
-                                  <p
-                                    className={`mt-1 inline-flex items-center gap-1 text-xs ${isLight ? 'text-slate-600' : 'text-slate-300'}`}
-                                  >
+                                  <p className="mt-1 inline-flex items-center gap-1 text-xs text-secondary">
                                     <MapPin className="h-3.5 w-3.5" />
                                     {formatProgramOptionLabel(
                                       school.province,
@@ -712,120 +634,68 @@ export default function LgsWizardPage() {
                               </div>
 
                               <div className="mt-3 grid grid-cols-2 gap-2 text-xs sm:text-sm">
-                                <div
-                                  className={`rounded-xl border px-3 py-2 ${isLight ? 'bg-white/80 border-white/70' : 'bg-black/20 border-white/10'}`}
-                                >
-                                  <div
-                                    className={
-                                      isLight
-                                        ? 'text-slate-500'
-                                        : 'text-slate-400'
-                                    }
-                                  >
+                                <div className="rounded-xl border border-default dark:border-slate-500 bg-surface-1 px-3 py-2">
+                                  <div className="text-secondary">
                                     Taban Puan
                                   </div>
-                                  <div
-                                    className={`font-black tabular-nums ${isLight ? 'text-slate-900' : 'text-white'}`}
-                                  >
+                                  <div className="font-black tabular-nums text-primary">
                                     {school.baseScore.toFixed(2)}
                                   </div>
                                 </div>
-                                <div
-                                  className={`rounded-xl border px-3 py-2 ${isLight ? 'bg-white/80 border-white/70' : 'bg-black/20 border-white/10'}`}
-                                >
-                                  <div
-                                    className={
-                                      isLight
-                                        ? 'text-slate-500'
-                                        : 'text-slate-400'
-                                    }
-                                  >
+                                <div className="rounded-xl border border-default dark:border-slate-500 bg-surface-1 px-3 py-2">
+                                  <div className="text-secondary">
                                     Puan Farkı
                                   </div>
                                   <div
-                                    className={`font-black tabular-nums ${school.delta >= 0 ? 'text-emerald-600' : 'text-rose-600'}`}
+                                    className={`font-black tabular-nums ${school.delta >= 0 ? 'text-emerald-700 dark:text-emerald-400' : 'text-rose-700 dark:text-rose-400'}`}
                                   >
                                     {school.delta >= 0 ? '+' : ''}
                                     {school.delta.toFixed(2)}
                                   </div>
                                 </div>
-                                <div
-                                  className={`rounded-xl border px-3 py-2 ${isLight ? 'bg-white/80 border-white/70' : 'bg-black/20 border-white/10'}`}
-                                >
-                                  <div
-                                    className={
-                                      isLight
-                                        ? 'text-slate-500'
-                                        : 'text-slate-400'
-                                    }
-                                  >
+                                <div className="rounded-xl border border-default dark:border-slate-500 bg-surface-1 px-3 py-2">
+                                  <div className="text-secondary">
                                     Son Yüzdelik
                                   </div>
-                                  <div
-                                    className={`font-black tabular-nums ${isLight ? 'text-slate-900' : 'text-white'}`}
-                                  >
+                                  <div className="font-black tabular-nums text-primary">
                                     {school.national_percentile !== null
                                       ? `%${school.national_percentile.toFixed(2)}`
                                       : '-'}
                                   </div>
                                 </div>
-                                <div
-                                  className={`rounded-xl border px-3 py-2 ${isLight ? 'bg-white/80 border-white/70' : 'bg-black/20 border-white/10'}`}
-                                >
-                                  <div
-                                    className={
-                                      isLight
-                                        ? 'text-slate-500'
-                                        : 'text-slate-400'
-                                    }
-                                  >
+                                <div className="rounded-xl border border-default dark:border-slate-500 bg-surface-1 px-3 py-2">
+                                  <div className="text-secondary">
                                     Baz Yıl
                                   </div>
-                                  <div
-                                    className={`font-black ${isLight ? 'text-slate-900' : 'text-white'}`}
-                                  >
+                                  <div className="font-black text-primary">
                                     {school.latest_year}
                                   </div>
                                 </div>
                               </div>
 
-                              <div
-                                className={`mt-3 flex flex-wrap gap-2 text-[11px] ${isLight ? 'text-slate-700' : 'text-slate-200'}`}
-                              >
-                                <span
-                                  className={`rounded-full px-2 py-1 ${isLight ? 'bg-white/80' : 'bg-white/10'}`}
-                                >
+                              <div className="mt-3 flex flex-wrap gap-2 text-[11px] text-secondary">
+                                <span className="rounded-full border border-default dark:border-slate-500 bg-surface-1 px-2.5 py-0.5 font-medium">
                                   {formatProgramOptionLabel(school.school_type)}
                                 </span>
-                                <span
-                                  className={`rounded-full px-2 py-1 ${isLight ? 'bg-white/80' : 'bg-white/10'}`}
-                                >
+                                <span className="rounded-full border border-default dark:border-slate-500 bg-surface-1 px-2.5 py-0.5 font-medium">
                                   {formatProgramOptionLabel(
                                     school.instruction_language,
                                   )}
                                 </span>
                                 {hasBoardingData && school.boarding ? (
-                                  <span
-                                    className={`rounded-full px-2 py-1 ${isLight ? 'bg-white/80' : 'bg-white/10'}`}
-                                  >
+                                  <span className="rounded-full border border-default dark:border-slate-500 bg-surface-1 px-2.5 py-0.5 font-medium">
                                     Pansiyonlu
                                   </span>
                                 ) : null}
                                 {school.quota_total ? (
-                                  <span
-                                    className={`rounded-full px-2 py-1 ${isLight ? 'bg-white/80' : 'bg-white/10'}`}
-                                  >
+                                  <span className="rounded-full border border-default dark:border-slate-500 bg-surface-1 px-2.5 py-0.5 font-medium">
                                     Kontenjan: {school.quota_total}
                                   </span>
                                 ) : null}
                               </div>
 
-                              <div
-                                className={`mt-4 rounded-2xl border p-3 ${isLight ? 'bg-white/70 border-white/80' : 'bg-black/10 border-white/10'}`}
-                              >
-                                <div
-                                  className={`mb-2 text-[11px] font-bold uppercase tracking-[0.16em] ${isLight ? 'text-slate-500' : 'text-slate-400'}`}
-                                >
+                              <div className="mt-4 rounded-2xl border border-default bg-surface-2 p-3">
+                                <div className="mb-2 text-[11px] font-bold uppercase tracking-[0.16em] text-secondary">
                                   {orderedHistoryYears.join(', ')} Yüzdelik ve
                                   Taban Puan
                                 </div>
@@ -838,11 +708,9 @@ export default function LgsWizardPage() {
                                     return (
                                       <div
                                         key={year}
-                                        className={`rounded-xl border px-2 py-2 text-[10px] tabular-nums sm:px-3 sm:text-[11px] ${isLight ? 'bg-slate-50 border-slate-200 text-slate-700' : 'bg-white/5 border-white/10 text-slate-200'}`}
+                                        className="rounded-xl border border-default dark:border-slate-500 bg-surface-1 px-2 py-2 text-[10px] tabular-nums sm:px-3 sm:text-[11px] text-secondary"
                                       >
-                                        <div
-                                          className={`font-bold ${isLight ? 'text-slate-900' : 'text-white'}`}
-                                        >
+                                        <div className="font-bold text-primary">
                                           {year}
                                         </div>
                                         <div className="mt-1">
@@ -889,11 +757,7 @@ export default function LgsWizardPage() {
                           <button
                             type="button"
                             onClick={() => showMoreSchools(level)}
-                            className={`rounded-xl border px-4 py-2 text-sm font-semibold ${
-                              isLight
-                                ? 'bg-white border-slate-200 text-slate-700'
-                                : 'bg-white/5 border-white/10 text-slate-200'
-                            }`}
+                            className="rounded-xl border border-default dark:border-slate-500 bg-surface-1 px-4 py-2 text-sm font-semibold text-primary hover:bg-surface-2 transition"
                           >
                             Daha Fazla Göster ({visibleItems.length}/
                             {items.length})
@@ -904,9 +768,7 @@ export default function LgsWizardPage() {
                   );
                 })}
 
-              <div
-                className={`rounded-2xl border p-3 text-xs ${isLight ? 'bg-indigo-50 border-indigo-100 text-indigo-700' : 'bg-indigo-500/10 border-indigo-500/30 text-indigo-200'}`}
-              >
+              <div className="rounded-2xl border border-indigo-200 dark:border-indigo-500/30 bg-indigo-50 dark:bg-indigo-500/10 p-3 text-xs text-indigo-900 dark:text-indigo-200">
                 <div className="flex items-start gap-2">
                   <Info className="mt-0.5 h-4 w-4 shrink-0" />
                   <p>
@@ -921,18 +783,14 @@ export default function LgsWizardPage() {
                 <button
                   type="button"
                   onClick={() => setStep(2)}
-                  className={`rounded-xl border px-4 py-2 text-sm font-semibold ${
-                    isLight
-                      ? 'bg-white border-slate-200 text-slate-700'
-                      : 'bg-white/5 border-white/10 text-slate-200'
-                  }`}
+                  className="rounded-xl border border-default dark:border-slate-500 bg-surface-1 px-4 py-2 text-sm font-semibold text-primary hover:bg-surface-2 transition"
                 >
                   Filtreleri Düzenle
                 </button>
                 <button
                   type="button"
                   onClick={() => setStep(1)}
-                  className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-cyan-500 via-blue-500 to-indigo-500 px-4 py-2 text-sm font-bold text-white"
+                  className="inline-flex items-center gap-2 rounded-xl border border-blue-400/80 dark:border-blue-300/80 bg-gradient-to-r from-blue-600 via-indigo-600 to-violet-600 px-4 py-2 text-sm font-bold text-white shadow-lg transition hover:scale-[1.01] active:scale-[0.99]"
                 >
                   Netleri Güncelle
                   <Target className="h-4 w-4" />

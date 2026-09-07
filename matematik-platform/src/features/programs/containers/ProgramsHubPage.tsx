@@ -18,7 +18,6 @@ import {
   type LucideIcon,
 } from 'lucide-react';
 import dynamic from 'next/dynamic';
-import { useTheme } from '@/components/ThemeProvider';
 import { FormulaFlashcardsModal } from '@/features/programs/components/FormulaFlashcardsModal';
 import { ExamScoreCalculatorModal } from '@/components/ExamScoreCalculatorModal';
 import { TopicChecklistModal } from '@/features/programs/components/TopicChecklistModal';
@@ -57,8 +56,6 @@ type ProgramTool = {
 };
 
 export default function ProgramsHubPage() {
-  const { theme } = useTheme();
-  const isLight = theme === 'light';
   const [isFlashcardsOpen, setIsFlashcardsOpen] = useState(false);
   const [isCalculatorOpen, setIsCalculatorOpen] = useState(false);
   const [isChecklistOpen, setIsChecklistOpen] = useState(false);
@@ -77,7 +74,7 @@ export default function ProgramsHubPage() {
       subtitle: 'Ortaokul seviyesi için puan hesaplama ve hedef belirleme',
       href: '/programlar/lgs',
       icon: School,
-      gradient: 'from-cyan-500 via-blue-500 to-indigo-500',
+      gradient: 'from-cyan-700 via-blue-700 to-indigo-700',
       bullets: [
         'Net tabanlı tahmini puan',
         'Lise hedef seviyesi',
@@ -91,7 +88,7 @@ export default function ProgramsHubPage() {
       subtitle: 'Lise grubu için puan hesaplama ve üniversite tercih yardımı',
       href: '/programlar/yks',
       icon: GraduationCap,
-      gradient: 'from-violet-500 via-fuchsia-500 to-orange-400',
+      gradient: 'from-violet-700 via-fuchsia-700 to-pink-700',
       bullets: [
         'TYT / SAY / EA / SOZ puan tahmini',
         'Başarı sırası odaklı filtreleme',
@@ -105,7 +102,7 @@ export default function ProgramsHubPage() {
       subtitle: 'Pisagor, birim çember, trigonometri, parabol ve eğim canlı görselleştiricisi',
       onClick: () => setIsGeometryLabOpen(true),
       icon: Compass,
-      gradient: 'from-amber-500 via-orange-500 to-rose-500',
+      gradient: 'from-amber-700 via-orange-700 to-rose-700',
       bullets: [
         'Pisagor teoremi ve özel dik üçgenler',
         'Birim çember, sinüs, kosinüs ve tanjant',
@@ -119,7 +116,7 @@ export default function ProgramsHubPage() {
       subtitle: 'LGS ve YKS için güncel katsayılarla anlık net ve puan hesabı',
       onClick: () => setIsCalculatorOpen(true),
       icon: Calculator,
-      gradient: 'from-indigo-500 via-purple-500 to-pink-500',
+      gradient: 'from-indigo-700 via-purple-700 to-pink-700',
       bullets: [
         '3 yanlış 1 doğru kuralı (LGS)',
         'Diploma notu (OBP) ve sıralama bandı',
@@ -133,7 +130,7 @@ export default function ProgramsHubPage() {
       subtitle: '5-12. sınıf müfredat kazanım takip listesi ve A4 duvara asılabilir çıktı',
       onClick: () => setIsChecklistOpen(true),
       icon: ListChecks,
-      gradient: 'from-emerald-500 via-teal-500 to-cyan-600',
+      gradient: 'from-emerald-700 via-teal-700 to-cyan-800',
       bullets: [
         'Konu anlatımı, 50+ soru ve tekrar adımları',
         'Dinamik yüzde tamamlama göstergesi',
@@ -147,7 +144,7 @@ export default function ProgramsHubPage() {
       subtitle: 'Anlatım, örnek, test ve çalışma kâğıdı eksiklerini tek tabloda tespit et',
       onClick: () => setIsCoverageMatrixOpen(true),
       icon: Layers,
-      gradient: 'from-teal-600 via-emerald-600 to-green-500',
+      gradient: 'from-teal-700 via-emerald-700 to-green-700',
       bullets: [
         '5-12. sınıf konu bazlı 4 içerik kanalı',
         'Eksikli konuları anlık filtreleme',
@@ -161,7 +158,7 @@ export default function ProgramsHubPage() {
       subtitle: 'Kritik kavramlar, sık yapılan tuzaklar ve kendi açıklamalarını ekleme',
       onClick: () => setIsGlossaryOpen(true),
       icon: BookOpen,
-      gradient: 'from-indigo-600 via-purple-600 to-pink-500',
+      gradient: 'from-indigo-700 via-purple-700 to-pink-700',
       bullets: [
         'Kavram tanımları ve KaTeX matematik modelleri',
         'Sık yapılan kavram yanılgıları ve tuzak uyarıları',
@@ -175,7 +172,7 @@ export default function ProgramsHubPage() {
       subtitle: 'Gerçek hayat senaryoları, aşamalı teslim adımları ve 100 puanlık değerlendirme rubriği',
       onClick: () => setIsProjectWorkshopOpen(true),
       icon: Compass,
-      gradient: 'from-amber-500 via-rose-500 to-purple-600',
+      gradient: 'from-amber-700 via-rose-700 to-purple-700',
       bullets: [
         'Evimizin enerji verimliliği ve doğrusal modelleme',
         'Altın oran, mimari plan ve Fibonacci analizi',
@@ -189,7 +186,7 @@ export default function ProgramsHubPage() {
       subtitle: 'Pisagor, iki kare farkı, üçgen açıları ve Gauss toplamının görsel mantıksal ispatları',
       onClick: () => setIsProofsOpen(true),
       icon: Compass,
-      gradient: 'from-cyan-500 via-blue-500 to-indigo-600',
+      gradient: 'from-cyan-700 via-blue-700 to-indigo-700',
       bullets: [
         'Ezber yerine mantık: Pisagor, iki kare farkı, Gauss toplamı',
         'Adım adım geometrik ve cebirsel kanıt kartları',
@@ -203,11 +200,11 @@ export default function ProgramsHubPage() {
       subtitle: 'Bloom yaratma basamağı: Kendi sorunu yaz, çeldiricilerini kurgula ve havuza katıl',
       onClick: () => setIsAuthoringOpen(true),
       icon: PenTool,
-      gradient: 'from-indigo-500 via-purple-500 to-pink-500',
+      gradient: 'from-indigo-700 via-purple-700 to-pink-700',
       bullets: [
-        'Kendi matematik sorunu yazma ve çeldirici analizi',
-        'Öğretmen onayıyla genel soru havuzuna katılım',
-        'Genç Yazar rozeti ve pedagojik geri bildirimler',
+        'Kavram tanımları ve KaTeX matematik modelleri',
+        'Sık yapılan kavram yanılgıları ve tuzak uyarıları',
+        'Kişisel terimlerini ve özel notlarını kaydetme',
       ],
       ctaLabel: 'Atölyeye Katıl',
     },
@@ -217,7 +214,7 @@ export default function ProgramsHubPage() {
       subtitle: '«Bir konuyu basitçe anlatabiliyorsan anlamışsındır» sesli anlatım vitrini',
       onClick: () => setIsFeynmanOpen(true),
       icon: Mic,
-      gradient: 'from-rose-500 via-pink-500 to-orange-400',
+      gradient: 'from-rose-700 via-pink-700 to-orange-700',
       bullets: [
         '60 saniyelik sesli mikrofon kaydı ve kavram özeti',
         'Akranların anlatımlarını dinleme ve beğenme vitrini',
@@ -228,16 +225,12 @@ export default function ProgramsHubPage() {
   ];
 
   return (
-    <main className="programlar-page min-h-screen gradient-bg px-4 pb-12 pt-16 sm:px-6 sm:pt-20">
+    <main className="page-surface programlar-page min-h-screen gradient-bg px-4 pb-12 pt-16 sm:px-6 sm:pt-20">
       <div className="mx-auto max-w-6xl">
         <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
           <Link
             href="/"
-            className={`inline-flex items-center gap-2 text-sm font-semibold transition-colors ${
-              isLight
-                ? 'text-slate-700 hover:text-slate-950'
-                : 'text-slate-300 hover:text-white'
-            }`}
+            className="inline-flex items-center gap-2 text-sm font-semibold transition-colors text-secondary hover:text-primary"
           >
             <ArrowLeft className="h-4 w-4" />
             Ana Sayfa
@@ -246,7 +239,7 @@ export default function ProgramsHubPage() {
           <button
             type="button"
             onClick={() => setIsFlashcardsOpen(true)}
-            className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-purple-500 via-pink-500 to-orange-400 px-4 py-2 text-xs sm:text-sm font-bold text-white shadow-lg transition hover:scale-[1.02] active:scale-[0.98]"
+            className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-purple-700 via-pink-700 to-rose-700 px-4 py-2 text-xs sm:text-sm font-bold text-white shadow-lg transition hover:scale-[1.02] active:scale-[0.98]"
           >
             <BookOpen className="h-4 w-4" />
             Formül & Bilgi Kartları
@@ -256,36 +249,26 @@ export default function ProgramsHubPage() {
         <motion.section
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
-          className={`rounded-3xl border p-6 sm:p-8 ${
-            isLight ? 'light-section' : 'glass border-white/10'
-          }`}
+          className="rounded-3xl border border-default bg-surface-1 p-6 sm:p-8 shadow-sm"
         >
           <div className="flex items-start justify-between gap-4">
             <div>
-              <div className="mb-3 inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-indigo-500 to-fuchsia-500 px-3 py-1 text-xs font-bold uppercase tracking-[0.18em] text-white">
+              <div className="mb-3 inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-indigo-700 to-fuchsia-700 px-3 py-1 text-xs font-bold uppercase tracking-[0.18em] text-white">
                 <Sparkles className="h-3.5 w-3.5" />
                 Programlar Merkezi
               </div>
-              <h1
-                className={`text-2xl font-black sm:text-4xl ${isLight ? 'light-text-strong' : 'text-white'}`}
-              >
+              <h1 className="text-2xl font-black sm:text-4xl text-primary">
                 Hedefine Göre Akıllı Puan ve Tercih Sihirbazları
               </h1>
-              <p
-                className={`mt-3 text-sm sm:text-base ${isLight ? 'light-text-muted' : 'text-slate-300'}`}
-              >
+              <p className="mt-3 text-sm sm:text-base text-secondary">
                 LGS ve YKS için puanını hesapla, sonra hedef listeni oluştur.
                 Sonuçlar kaydedilmez; tamamen anlık hesaplama ve rehberlik
                 sunar.
               </p>
             </div>
 
-            <div
-              className={`hidden rounded-2xl border p-3 sm:block ${isLight ? 'bg-slate-50 border-slate-200' : 'bg-white/10 border-white/10'}`}
-            >
-              <Calculator
-                className={`h-8 w-8 ${isLight ? 'text-indigo-600' : 'text-indigo-300'}`}
-              />
+            <div className="hidden rounded-2xl border border-default bg-surface-2 p-3 sm:block">
+              <Calculator className="h-8 w-8 text-accent-fg" />
             </div>
           </div>
 
@@ -297,9 +280,7 @@ export default function ProgramsHubPage() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.1 + index * 0.08 }}
                 whileHover={{ y: -4 }}
-                className={`tilt-on-hover group relative overflow-hidden rounded-3xl border p-5 sm:p-6 ${
-                  isLight ? 'light-card' : 'bg-slate-900/70 border-white/10'
-                }`}
+                className="tilt-on-hover group relative overflow-hidden rounded-3xl border border-default bg-surface-1 p-5 sm:p-6 shadow-sm hover:bg-surface-2 transition-colors"
               >
                 <div
                   className={`absolute inset-x-0 top-0 h-1.5 bg-gradient-to-r ${tool.gradient}`}
@@ -315,19 +296,13 @@ export default function ProgramsHubPage() {
                     >
                       <tool.icon className="h-6 w-6 text-white" />
                     </div>
-                    <Target
-                      className={`h-5 w-5 ${isLight ? 'text-slate-400' : 'text-slate-500'}`}
-                    />
+                    <Target className="h-5 w-5 text-secondary" />
                   </div>
 
-                  <h2
-                    className={`text-lg font-black sm:text-xl ${isLight ? 'text-slate-900' : 'text-white'}`}
-                  >
+                  <h2 className="text-lg font-black sm:text-xl text-primary">
                     {tool.title}
                   </h2>
-                  <p
-                    className={`mt-2 text-sm ${isLight ? 'text-slate-600' : 'text-slate-300'}`}
-                  >
+                  <p className="mt-2 text-sm text-secondary">
                     {tool.subtitle}
                   </p>
 
@@ -335,7 +310,7 @@ export default function ProgramsHubPage() {
                     {tool.bullets.map((bullet) => (
                       <li
                         key={bullet}
-                        className={`flex items-center gap-2 text-sm ${isLight ? 'text-slate-700' : 'text-slate-200'}`}
+                        className="flex items-center gap-2 text-sm text-secondary"
                       >
                         <span
                           className={`h-1.5 w-1.5 rounded-full bg-gradient-to-r ${tool.gradient}`}

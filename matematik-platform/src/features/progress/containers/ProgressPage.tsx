@@ -283,7 +283,7 @@ export default function IlerlemePage({ initialData }: ProgressPageProps) {
 
   if (loading) {
     return (
-      <main className={`min-h-screen pb-20 ${isLight ? 'bg-slate-50' : 'bg-slate-900'}`}>
+      <main className={`page-surface min-h-screen pb-20 ${isLight ? 'bg-slate-50' : 'dark:bg-slate-900'}`}>
         <div
           className="max-w-6xl mx-auto px-4 py-10 space-y-6"
           aria-busy="true"
@@ -379,7 +379,7 @@ export default function IlerlemePage({ initialData }: ProgressPageProps) {
   };
 
   return (
-    <main className={`min-h-screen pb-20 ${isLight ? 'bg-slate-50' : 'bg-slate-900'}`}>
+    <main className={`page-surface min-h-screen pb-20 ${isLight ? 'bg-slate-50' : 'dark:bg-slate-900'}`}>
       <header className={`sticky top-0 z-40 backdrop-blur-lg border-b ${isLight ? 'bg-white/80 border-slate-200' : 'bg-slate-900/80 border-slate-800'}`}>
         <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
           <Link href="/profil" className="flex items-center gap-2 text-slate-400 hover:text-indigo-400 font-medium">

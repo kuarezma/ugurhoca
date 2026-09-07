@@ -192,8 +192,8 @@ export function ExitTicketStudentPad({ initialCode = '', onExit }: ExitTicketStu
           </button>
         </form>
 
-        <div className="mt-6 text-center text-xs text-slate-500">
-          Örnek demo test oturumu için PIN kodu: <strong className="text-slate-400 font-mono">123456</strong>
+        <div className="mt-6 text-center text-xs text-slate-300">
+          Örnek demo test oturumu için PIN kodu: <strong className="text-slate-200 font-mono">123456</strong>
         </div>
       </div>
     );

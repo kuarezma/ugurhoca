@@ -313,11 +313,7 @@ export function HomeHeroSection({
                 </SafeLink>
                 <SafeLink
                   href="/oyunlar"
-                  className={`inline-flex h-11 sm:h-12 items-center justify-center gap-2 rounded-2xl border px-5 text-sm font-semibold transition-all duration-200 hover:-translate-y-0.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 ${
-                    isLight
-                      ? 'border-slate-200 bg-white text-slate-800 hover:bg-slate-50 shadow-sm'
-                      : 'border-white/10 bg-white/5 text-white hover:bg-white/10'
-                  }`}
+                  className="inline-flex h-11 sm:h-12 items-center justify-center gap-2 rounded-2xl border border-default dark:border-slate-500 bg-surface-1 px-5 text-sm font-semibold text-primary transition-all duration-200 hover:-translate-y-0.5 hover:bg-surface-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2"
                 >
                   Oyunla öğren
                 </SafeLink>
@@ -325,7 +321,7 @@ export function HomeHeroSection({
 
               {/* Hızlı Sınıf Başlangıç Çipleri */}
               <div className="pt-2 w-full min-w-0">
-                <span className="text-xs font-bold uppercase tracking-wider text-slate-400 block mb-2">
+                <span className="text-xs font-bold uppercase tracking-wider text-secondary block mb-2">
                   Sınıfını Seç ve Hemen Başla:
                 </span>
                 <div className="flex items-center gap-2 overflow-x-auto pb-1 max-w-full [scrollbar-width:none]">
@@ -346,9 +342,7 @@ export function HomeHeroSection({
                       className={`shrink-0 rounded-xl px-3.5 py-1.5 text-xs font-semibold transition-all duration-200 ${
                         item.highlight
                           ? 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-sm hover:scale-105'
-                          : isLight
-                          ? 'bg-slate-100 text-slate-700 hover:bg-slate-200/80 border border-slate-200/80'
-                          : 'bg-white/5 text-slate-300 hover:bg-white/10 hover:text-white border border-white/10'
+                          : 'border border-default dark:border-slate-500 bg-surface-1 text-secondary hover:text-primary'
                       }`}
                     >
                       {item.label}
@@ -384,7 +378,7 @@ export function HomeHeroSection({
           <SafeLink
             href="/icerikler?type=ders-notlari"
             aria-label="Yaprak Testler"
-            className="col-span-1 group relative overflow-hidden rounded-2xl sm:rounded-3xl p-4 sm:p-6 border border-teal-400/40 bg-gradient-to-br from-emerald-600 via-teal-600 to-cyan-600 text-white shadow-lg shadow-teal-600/25 transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl hover:shadow-teal-600/40 active:scale-[0.99] cursor-pointer"
+            className="col-span-1 group relative overflow-hidden rounded-2xl sm:rounded-3xl p-4 sm:p-6 border border-teal-400/40 bg-gradient-to-br from-emerald-700 via-teal-700 to-cyan-800 text-white shadow-lg shadow-teal-700/25 transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl hover:shadow-teal-700/40 active:scale-[0.99] cursor-pointer"
           >
             {/* Parlak Arka Plan Işık Efekti */}
             <div
@@ -411,7 +405,7 @@ export function HomeHeroSection({
                 <h2 className="font-display text-base sm:text-2xl font-black tracking-tight text-white flex items-center gap-2">
                   Yaprak Test
                 </h2>
-                <p className="mt-0.5 sm:mt-1 text-[11px] sm:text-sm text-white/90 leading-snug sm:leading-relaxed line-clamp-2">
+                <p className="mt-0.5 sm:mt-1 text-[11px] sm:text-sm text-white font-medium leading-snug sm:leading-relaxed line-clamp-2">
                   Müfredatla uyumlu konu testleri, yeni nesil soru föyleri ve kazanım özetleri.
                 </p>
               </div>
@@ -478,7 +472,7 @@ export function HomeHeroSection({
           <SafeLink
             href="/canli-ders"
             aria-label="Canlı Dersler"
-            className="col-span-1 group relative overflow-hidden rounded-2xl sm:rounded-3xl p-4 sm:p-6 border border-red-400/40 bg-gradient-to-br from-red-600 via-rose-600 to-amber-600 text-white shadow-lg shadow-rose-600/25 transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl hover:shadow-rose-600/40 active:scale-[0.99] cursor-pointer"
+            className="col-span-1 group relative overflow-hidden rounded-2xl sm:rounded-3xl p-4 sm:p-6 border border-red-400/40 bg-gradient-to-br from-red-700 via-rose-700 to-amber-700 text-white shadow-lg shadow-rose-700/25 transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl hover:shadow-rose-700/40 active:scale-[0.99] cursor-pointer"
           >
             {/* Parlak Arka Plan Işık Efekti */}
             <div
@@ -508,7 +502,7 @@ export function HomeHeroSection({
                 <h2 className="font-display text-base sm:text-2xl font-black tracking-tight text-white flex items-center gap-2">
                   Canlı Ders
                 </h2>
-                <p className="mt-0.5 sm:mt-1 text-[11px] sm:text-sm text-white/90 leading-snug sm:leading-relaxed line-clamp-2">
+                <p className="mt-0.5 sm:mt-1 text-[11px] sm:text-sm text-white font-medium leading-snug sm:leading-relaxed line-clamp-2">
                   Öğretmenle birebir etkileşimli yayınlar, anlık soru masası ve ders kayıtları.
                 </p>
               </div>
@@ -528,7 +522,7 @@ export function HomeHeroSection({
           <SafeLink
             href="/meydan-okuma"
             aria-label="Meydan Okuma"
-            className="col-span-1 group relative overflow-hidden rounded-2xl sm:rounded-3xl p-4 sm:p-6 border border-amber-400/40 bg-gradient-to-br from-amber-500 via-orange-600 to-rose-600 text-white shadow-lg shadow-orange-600/25 transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl hover:shadow-orange-600/40 active:scale-[0.99] cursor-pointer"
+            className="col-span-1 group relative overflow-hidden rounded-2xl sm:rounded-3xl p-4 sm:p-6 border border-amber-400/40 bg-gradient-to-br from-amber-700 via-orange-700 to-rose-700 text-white shadow-lg shadow-orange-700/25 transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl hover:shadow-orange-700/40 active:scale-[0.99] cursor-pointer"
           >
             {/* Parlak Arka Plan Işık Efekti */}
             <div
@@ -555,7 +549,7 @@ export function HomeHeroSection({
                 <h2 className="font-display text-base sm:text-2xl font-black tracking-tight text-white flex items-center gap-2">
                   Meydan Okuma
                 </h2>
-                <p className="mt-0.5 sm:mt-1 text-[11px] sm:text-sm text-white/90 leading-snug sm:leading-relaxed line-clamp-2">
+                <p className="mt-0.5 sm:mt-1 text-[11px] sm:text-sm text-white font-medium leading-snug sm:leading-relaxed line-clamp-2">
                   Günün sorusu, soru hedefi, LGS taktikleri ve başarı yol haritası.
                 </p>
               </div>
@@ -785,11 +779,7 @@ export function HomeHeroSection({
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.25, delay: idx * 0.025 }}
                         onClick={tool.action}
-                        className={`flex items-center gap-3 rounded-xl sm:rounded-2xl border p-3 text-left transition-all hover:-translate-y-0.5 active:scale-[0.99] cursor-pointer ${
-                          isLight
-                            ? 'border-slate-200/80 bg-slate-50/60 hover:bg-white hover:border-amber-300 hover:shadow-sm'
-                            : 'border-white/10 bg-white/5 hover:bg-white/10 hover:border-white/20'
-                        }`}
+                        className="flex items-center gap-3 rounded-xl sm:rounded-2xl border border-default dark:border-slate-500 bg-surface-1 p-3 text-left transition-all hover:-translate-y-0.5 active:scale-[0.99] cursor-pointer hover:bg-surface-2"
                       >
                         <div
                           className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br ${tool.gradient} text-white shadow-xs`}
@@ -797,22 +787,14 @@ export function HomeHeroSection({
                           <tool.icon className="h-5 w-5" />
                         </div>
                         <div className="min-w-0 flex-1">
-                          <h3
-                            className={`text-xs sm:text-sm font-bold truncate ${
-                              isLight ? 'text-slate-900' : 'text-white'
-                            }`}
-                          >
+                          <h3 className="text-xs sm:text-sm font-bold truncate text-primary">
                             {tool.title}
                           </h3>
-                          <p
-                            className={`text-[11px] sm:text-xs line-clamp-1 mt-0.5 ${
-                              isLight ? 'text-slate-500' : 'text-slate-400'
-                            }`}
-                          >
+                          <p className="text-[11px] sm:text-xs line-clamp-1 mt-0.5 text-secondary">
                             {tool.description}
                           </p>
                         </div>
-                        <ArrowRight className="h-4 w-4 shrink-0 text-slate-400" />
+                        <ArrowRight className="h-4 w-4 shrink-0 text-secondary" />
                       </motion.button>
                     ))}
                   </div>

@@ -12,7 +12,7 @@ export function HomeSupportHeader({ isLight, user }: HomeSupportHeaderProps) {
   return (
     <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6 mb-6">
       <div className="max-w-2xl">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/15 text-indigo-300 text-xs font-semibold mb-3">
+        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/15 text-indigo-800 dark:text-indigo-200 text-xs font-semibold mb-3">
           <MessageSquareText className="w-4 h-4" />
           Uğur Hoca'ya Yaz
         </div>
