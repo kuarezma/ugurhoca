@@ -3,9 +3,11 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import { SafeLink } from './SafeLink';
 
 const mockPush = vi.fn();
+const mockPrefetch = vi.fn();
 vi.mock('next/navigation', () => ({
   useRouter: () => ({
     push: mockPush,
+    prefetch: mockPrefetch,
   }),
 }));
 
@@ -57,5 +59,28 @@ describe('SafeLink', () => {
     const event = new MouseEvent('click', { bubbles: true, cancelable: true, metaKey: true });
     link.dispatchEvent(event);
     expect(mockPush).not.toHaveBeenCalled();
+  });
+
+  it('prefetches route on pointerEnter and touchStart for internal links', () => {
+    mockPrefetch.mockClear();
+    render(<SafeLink href="/programlar">Programlar</SafeLink>);
+    const link = screen.getByRole('link', { name: 'Programlar' });
+
+    fireEvent.pointerEnter(link);
+    expect(mockPrefetch).toHaveBeenCalledWith('/programlar');
+
+    // Duplicate immediate hover does not trigger duplicate prefetch within TTL
+    mockPrefetch.mockClear();
+    fireEvent.pointerEnter(link);
+    expect(mockPrefetch).not.toHaveBeenCalled();
+  });
+
+  it('does not prefetch external or relative-protocol links', () => {
+    mockPrefetch.mockClear();
+    render(<SafeLink href="https://example.com" target="_blank">Dış Bağlantı</SafeLink>);
+    const link = screen.getByRole('link', { name: 'Dış Bağlantı' });
+
+    fireEvent.pointerEnter(link);
+    expect(mockPrefetch).not.toHaveBeenCalled();
   });
 });

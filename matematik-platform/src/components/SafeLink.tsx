@@ -8,8 +8,31 @@ export type SafeLinkProps = React.AnchorHTMLAttributes<HTMLAnchorElement> & {
   children: React.ReactNode;
 };
 
-// Modül seviyesinde önceden prefetch edilmiş URL'ler (mükerrer istekleri sıfırlar)
-const prefetchedUrls = new Set<string>();
+// Modül seviyesinde önceden prefetch edilmiş URL'ler ve zaman damgaları (TTL: 25sn)
+const prefetchedUrls = new Map<string, number>();
+const PREFETCH_TTL_MS = 25_000;
+const MAX_PREFETCH_CACHE_SIZE = 150;
+
+function shouldPrefetch(url: string): boolean {
+  if (!url || !url.startsWith('/') || url.startsWith('//')) {
+    return false;
+  }
+  const now = Date.now();
+  const lastPrefetched = prefetchedUrls.get(url);
+  if (lastPrefetched && now - lastPrefetched < PREFETCH_TTL_MS) {
+    return false;
+  }
+  if (prefetchedUrls.size >= MAX_PREFETCH_CACHE_SIZE) {
+    const cutoff = now - PREFETCH_TTL_MS;
+    for (const [entryUrl, timestamp] of prefetchedUrls.entries()) {
+      if (timestamp < cutoff) {
+        prefetchedUrls.delete(entryUrl);
+      }
+    }
+  }
+  prefetchedUrls.set(url, now);
+  return true;
+}
 
 /**
  * SafeLink renders a clean HTML <a> tag with intent-based (hover/touch) prefetching
@@ -32,23 +55,21 @@ export function SafeLink({
   let router: ReturnType<typeof useRouter> | null = null;
   try {
     // eslint-disable-next-line react-hooks/rules-of-hooks
-    router = useRouter();
+    if (typeof useRouter === 'function') {
+      // eslint-disable-next-line react-hooks/rules-of-hooks
+      router = useRouter();
+    }
   } catch {
     router = null;
   }
+  const [isPending, startTransition] = React.useTransition();
 
   const prefetchRoute = (targetHref: string) => {
-    if (
-      !targetHref ||
-      !targetHref.startsWith('/') ||
-      targetHref.startsWith('//') ||
-      prefetchedUrls.has(targetHref)
-    ) {
+    if (!shouldPrefetch(targetHref)) {
       return;
     }
-    prefetchedUrls.add(targetHref);
     try {
-      router?.prefetch(targetHref);
+      router?.prefetch?.(targetHref);
     } catch {
       // prefetch hatası kritik değildir
     }
@@ -85,15 +106,11 @@ export function SafeLink({
       if (router) {
         event.preventDefault();
 
-        // Not: Burada daha önce `document.startViewTransition(() => router.push(href))`
-        // çağrılıyordu. `router.push` asenkron olduğu için geri çağrım DOM değişmeden
-        // dönüyor; tarayıcı bu yüzden birbirinin aynısı iki tam sayfa anlık görüntüsü
-        // alıp aralarında geçiş yapıyordu. Sonuç: her sekme geçişinde iki kez tam sayfa
-        // rasterleştirme ve geçiş süresince `pointer-events: none` ile donan bir arayüz —
-        // üstelik gerçek gezinme bu geçiş bittikten sonra, animasyonsuz gerçekleşiyordu.
-        // Gerçek bir geçiş isteniyorsa Next.js'in `experimental.viewTransition` desteği
-        // kullanılmalı; elle sarmalamak yalnızca gecikme ekliyor.
-        router.push(href);
+        // React 19 startTransition: gezinme geçişini arka planda eşzamanlı
+        // yürütür ve ana thread'i dondurmadan sayfa geçişini başlatır.
+        startTransition(() => {
+          router.push(href);
+        });
       }
     }
   };
@@ -106,6 +123,8 @@ export function SafeLink({
       onPointerEnter={handlePointerEnter}
       onTouchStart={handleTouchStart}
       onClick={handleClick}
+      data-pending={isPending ? 'true' : undefined}
+      aria-busy={isPending ? 'true' : undefined}
       {...props}
     >
       {children}

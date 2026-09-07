@@ -15,14 +15,14 @@ import "./globals.css";
 
 const poppins = Poppins({
   subsets: ["latin", "latin-ext"],
-  weight: ["400", "500", "600", "700", "800"],
+  weight: ["400", "600", "700"],
   variable: "--font-poppins",
   display: "swap",
 });
 
 const displayFont = Baloo_2({
   subsets: ["latin", "latin-ext"],
-  weight: ["500", "600", "700", "800"],
+  weight: "variable",
   variable: "--font-display",
   display: "swap",
 });
@@ -161,12 +161,6 @@ export default function RootLayout({
             <link rel="preconnect" href={supabaseOrigin} crossOrigin="anonymous" />
           </>
         ) : null}
-        {/* Eski service worker temizliği (PWA kaldırıldı) */}
-        <script
-          dangerouslySetInnerHTML={{
-            __html: legacyServiceWorkerCleanup,
-          }}
-        />
       </head>
       <body>
         <a href="#ana-icerik" className="skip-link">
@@ -180,6 +174,12 @@ export default function RootLayout({
           <MobileBottomNav />
         </Providers>
         <SpeedInsights />
+        {/* Eski service worker temizliği (PWA kaldırıldı - ilk boyamayı bloke etmez) */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: legacyServiceWorkerCleanup,
+          }}
+        />
       </body>
     </html>
   );

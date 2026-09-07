@@ -73,9 +73,9 @@ export function SiteBackground() {
       canvas.style.height = `${height}px`;
       ctx.scale(dpr, dpr);
 
-      // Ekran genişliğine göre partikül yoğunluğu (mobilde az, masaüstünde zengin)
-      const particleCount = width < 768 ? 26 : width < 1280 ? 44 : 58;
-      const glyphCount = width < 768 ? 6 : 10;
+      // Ekran genişliğine göre partikül yoğunluğu (mobilde hafif, masaüstünde akıcı)
+      const particleCount = width < 768 ? 16 : width < 1280 ? 28 : 38;
+      const glyphCount = width < 768 ? 4 : 7;
 
       particles = Array.from({ length: particleCount }, () => ({
         x: Math.random() * width,
@@ -197,10 +197,14 @@ export function SiteBackground() {
         ctx.fill();
 
         // 2. Komşu partiküller arası geometrik kafes çizgileri (Delaunay/Truss estetiği)
+        const maxDistSq = maxDist * maxDist;
         for (let j = i + 1; j < particles.length; j++) {
           const p2 = particles[j];
-          const dist = Math.hypot(p.x - p2.x, p.y - p2.y);
-          if (dist < maxDist) {
+          const dx = p.x - p2.x;
+          const dy = p.y - p2.y;
+          const distSq = dx * dx + dy * dy;
+          if (distSq < maxDistSq) {
+            const dist = Math.sqrt(distSq);
             const alpha = (1 - dist / maxDist) * (isLight ? 0.18 : 0.22);
             ctx.beginPath();
             ctx.moveTo(p.x, p.y);
@@ -241,17 +245,12 @@ export function SiteBackground() {
         ctx.font = `600 ${g.size}px "Baloo 2", system-ui, sans-serif`;
 
         if (isLight) {
-          ctx.shadowColor = 'rgba(99, 102, 241, 0.25)';
-          ctx.shadowBlur = 6;
           ctx.fillStyle = `rgba(67, 56, 202, ${g.alpha * 1.5})`;
         } else {
-          ctx.shadowColor = 'rgba(167, 139, 250, 0.4)';
-          ctx.shadowBlur = 10;
           ctx.fillStyle = `rgba(226, 232, 240, ${g.alpha * 1.2})`;
         }
 
         ctx.fillText(g.symbol, g.x, floatY);
-        ctx.shadowBlur = 0; // Sıfırla
       }
     };
 

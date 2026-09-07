@@ -2,7 +2,6 @@
 
 import dynamic from 'next/dynamic';
 import { ReactNode } from 'react';
-import { MotionConfig } from 'framer-motion';
 import AuthCookieSync from '@/components/AuthCookieSync';
 import CookieBanner from '@/components/CookieBanner';
 import { ToastProvider } from '@/components/Toast';
@@ -21,16 +20,14 @@ const ChatBubbleLoader = dynamic(
 export function Providers({ children }: { children: ReactNode }) {
   return (
     <ThemeProvider>
-      <MotionConfig reducedMotion="user">
-        <AuthCookieSync />
-        <ToastProvider>
-          {children}
-          <FloatingThemeToggle />
-          <CommandPalette />
-          <ChatBubbleLoader />
-          <CookieBanner />
-        </ToastProvider>
-      </MotionConfig>
+      <AuthCookieSync />
+      <ToastProvider>
+        {children}
+        <FloatingThemeToggle />
+        <CommandPalette />
+        <ChatBubbleLoader />
+        <CookieBanner />
+      </ToastProvider>
     </ThemeProvider>
   );
 }

@@ -73,9 +73,20 @@ function tokenize(input: string): Segment[] {
   return segments;
 }
 
+// Tekrarlanan LaTeX ifadeleri için bellek içi önbellek (soru listeleri, şıklar ve kartlarda CPU yükünü sıfırlar)
+const mathRenderCache = new Map<string, string>();
+const MAX_MATH_CACHE_SIZE = 600;
+
 function renderMath(expr: string, display: boolean): string {
+  const cacheKey = `${display ? 'D:' : 'I:'}${expr}`;
+  const cached = mathRenderCache.get(cacheKey);
+  if (cached !== undefined) {
+    return cached;
+  }
+
+  let html: string;
   try {
-    return katex.renderToString(expr, {
+    html = katex.renderToString(expr, {
       displayMode: display,
       throwOnError: false,
       strict: 'ignore',
@@ -83,8 +94,19 @@ function renderMath(expr: string, display: boolean): string {
       trust: false,
     });
   } catch {
-    return (display ? '$$' : '$') + expr + (display ? '$$' : '$');
+    html = (display ? '$$' : '$') + expr + (display ? '$$' : '$');
   }
+
+  if (mathRenderCache.size >= MAX_MATH_CACHE_SIZE) {
+    // En eski 100 kaydı temizle
+    const keysToDelete = Array.from(mathRenderCache.keys()).slice(0, 100);
+    for (const key of keysToDelete) {
+      mathRenderCache.delete(key);
+    }
+  }
+
+  mathRenderCache.set(cacheKey, html);
+  return html;
 }
 
 function MathTextInner({ children, className, as: Tag = 'span' }: MathTextProps) {

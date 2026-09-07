@@ -122,4 +122,7 @@ module.exports = withSentryConfig(withBundleAnalyzer(nextConfig), {
   widenClientFileUpload: true,
   tunnelRoute: '/monitoring',
   hideSourceMaps: true,
+  bundleSizeOptimizations: {
+    excludeDebugStatements: true,
+  },
 });
