@@ -38,11 +38,12 @@ export function ContentCategoryChips({
   isLight: _isLight = false,
 }: ContentCategoryChipsProps) {
   return (
-    <div className="space-y-3">
+    <div className="space-y-4">
       {/* Sınıf Çipleri */}
       <div>
-        <div className="mb-1.5 flex items-center justify-between">
-          <span className="text-xs font-bold uppercase tracking-wider text-secondary">
+        <div className="mb-2 flex items-center justify-between">
+          <span className="flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-widest text-secondary">
+            <span className="h-1.5 w-1.5 rounded-full bg-purple-500 shadow-[0_0_8px_rgba(168,85,247,0.8)]" />
             Sınıf Seviyesi
           </span>
         </div>
@@ -54,10 +55,10 @@ export function ContentCategoryChips({
                 key={g.id}
                 type="button"
                 onClick={() => onSelectGrade(g.id)}
-                className={`shrink-0 rounded-xl px-3.5 py-1.5 text-xs font-semibold transition-all ${
+                className={`shrink-0 rounded-full px-4 py-2 text-xs font-semibold transition-all duration-200 ${
                   isSelected
-                    ? 'bg-gradient-to-r from-brand-primary via-brand-pink to-brand-orange text-white shadow-md'
-                    : 'border border-default dark:border-slate-500 bg-surface-2 text-secondary hover:bg-surface-3 hover:text-primary'
+                    ? 'bg-gradient-to-r from-purple-600 via-fuchsia-600 to-pink-600 text-white shadow-lg shadow-purple-600/25 border border-purple-400/30 scale-[1.02]'
+                    : 'border border-default dark:border-white/[0.08] bg-surface-2/70 text-secondary hover:bg-surface-3 hover:text-primary hover:border-slate-600'
                 }`}
               >
                 {g.label}
@@ -69,8 +70,9 @@ export function ContentCategoryChips({
 
       {/* Tür Çipleri */}
       <div>
-        <div className="mb-1.5 flex items-center justify-between">
-          <span className="text-xs font-bold uppercase tracking-wider text-secondary">
+        <div className="mb-2 flex items-center justify-between">
+          <span className="flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-widest text-secondary">
+            <span className="h-1.5 w-1.5 rounded-full bg-cyan-500 shadow-[0_0_8px_rgba(6,182,212,0.8)]" />
             İçerik Türü
           </span>
         </div>
@@ -82,10 +84,10 @@ export function ContentCategoryChips({
                 key={t.id}
                 type="button"
                 onClick={() => onSelectType(t.id)}
-                className={`shrink-0 rounded-xl px-3.5 py-1.5 text-xs font-semibold transition-all ${
+                className={`shrink-0 rounded-full px-4 py-2 text-xs font-semibold transition-all duration-200 ${
                   isSelected
-                    ? 'bg-cyan-700 text-white shadow-md'
-                    : 'border border-default dark:border-slate-500 bg-surface-2 text-secondary hover:bg-surface-3 hover:text-primary'
+                    ? 'bg-gradient-to-r from-indigo-600 via-blue-600 to-cyan-500 text-white shadow-lg shadow-cyan-600/25 border border-cyan-400/30 scale-[1.02]'
+                    : 'border border-default dark:border-white/[0.08] bg-surface-2/70 text-secondary hover:bg-surface-3 hover:text-primary hover:border-slate-600'
                 }`}
               >
                 {t.label}

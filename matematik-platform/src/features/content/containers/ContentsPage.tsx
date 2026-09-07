@@ -1444,8 +1444,11 @@ function ContentsPageInner({
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
-            className="rounded-2xl p-4 sm:p-6 mb-8 border border-default bg-surface-1 shadow-brand-glow/40 backdrop-blur-xl"
+            className="relative overflow-hidden rounded-3xl p-5 sm:p-7 mb-8 border border-default dark:border-white/[0.08] bg-surface-1/90 shadow-2xl backdrop-blur-2xl"
           >
+            {/* Top ambient aura */}
+            <div className="absolute top-0 inset-x-0 h-[2px] bg-gradient-to-r from-transparent via-purple-500/40 to-transparent" />
+
             <ContentFilterBar
               isWorksheetBrowser={isWorksheetBrowser}
               onClearSearch={() => setSearchTerm('')}
@@ -1462,7 +1465,7 @@ function ContentsPageInner({
             />
 
             {isWorksheetBrowser && (
-              <div className="mt-3 flex gap-2 flex-wrap">
+              <div className="mt-4 flex gap-2 flex-wrap">
                 {selectedWorksheetGrade && (
                   <button
                     onClick={() => {
@@ -1470,7 +1473,7 @@ function ContentsPageInner({
                       updateWorksheetBrowserUrl(null);
                       setSearchTerm('');
                     }}
-                    className="px-4 py-2 rounded-xl border border-default bg-surface-2 text-xs sm:text-sm font-semibold text-secondary transition-colors hover:text-primary"
+                    className="px-4 py-2 rounded-full border border-default dark:border-white/[0.08] bg-surface-2/70 text-xs sm:text-sm font-semibold text-secondary transition-colors hover:text-primary"
                   >
                     Sınıf Kartları
                   </button>
@@ -1482,7 +1485,7 @@ function ContentsPageInner({
                       updateWorksheetBrowserUrl(selectedWorksheetGrade);
                       setSearchTerm('');
                     }}
-                    className="px-4 py-2 rounded-xl border border-purple-500/30 bg-purple-500/15 text-xs sm:text-sm font-semibold text-purple-800 dark:text-purple-100 transition-colors hover:bg-purple-500/25"
+                    className="px-4 py-2 rounded-full border border-purple-500/30 bg-purple-500/15 text-xs sm:text-sm font-semibold text-purple-800 dark:text-purple-100 transition-colors hover:bg-purple-500/25"
                   >
                     Kazanımlara Dön
                   </button>
@@ -1491,7 +1494,7 @@ function ContentsPageInner({
             )}
 
             {!isWorksheetBrowser && (
-              <div className="mt-4 border-t border-default pt-3">
+              <div className="mt-5 border-t border-default dark:border-white/[0.08] pt-4">
                 <ContentCategoryChips
                   selectedGrade={String(selectedGrade)}
                   selectedType={selectedType}
