@@ -20,14 +20,19 @@ vi.mock('next/link', () => ({
 
 vi.mock('next/dynamic', async () => {
   const React = await import('react');
+  type DynamicComponent = React.ComponentType<Record<string, unknown>>;
+  type LoaderResult = { default: DynamicComponent } | DynamicComponent;
+
   return {
-    default: (loader: () => Promise<any>) => {
-      let ResolvedComponent: any = null;
+    default: (loader: () => Promise<LoaderResult>) => {
+      let ResolvedComponent: DynamicComponent | null = null;
       const promise = loader().then((mod) => {
-        ResolvedComponent = mod.default || mod;
+        ResolvedComponent = 'default' in mod ? mod.default : mod;
       });
-      return function DynamicWrapper(props: any) {
-        const [Loaded, setLoaded] = React.useState<any>(() => ResolvedComponent);
+      return function DynamicWrapper(props: Record<string, unknown>) {
+        const [Loaded, setLoaded] = React.useState<DynamicComponent | null>(
+          () => ResolvedComponent,
+        );
         React.useEffect(() => {
           if (!Loaded) {
             promise.then(() => {
