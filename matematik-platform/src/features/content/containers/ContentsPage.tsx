@@ -692,6 +692,18 @@ function ContentsPageInner({
   ]);
 
   const handledRequestedDocIdRef = useRef<string | null>(null);
+  // Önizlemenin geçmiş yönetimi tek noktadan yürür: URL tek doğruluk kaynağıdır.
+  // `previewHistoryRef` bizim pushState ile eklediğimiz kaydın doc id'sini tutar;
+  // `previewUrlSyncedRef` ise `?id=` parametresinin router'a yansıdığını doğrular.
+  // İkincisi olmadan, açılış ile useSearchParams güncellemesi arasındaki boşlukta
+  // "URL'de id yok" görünüp modal daha açılır açılmaz kapanırdı.
+  const previewHistoryRef = useRef<string | null>(null);
+  const previewUrlSyncedRef = useRef(false);
+  const previewDocRef = useRef<ContentDocument | null>(null);
+
+  useEffect(() => {
+    previewDocRef.current = previewDoc;
+  }, [previewDoc]);
 
   const handleOpenPreview = useCallback(
     (content: ContentDocument) => {
@@ -716,20 +728,61 @@ function ContentsPageInner({
 
       try {
         const url = new URL(window.location.href);
+        // Derin bağlantıyla gelindiyse kayıt zaten mevcut; yenisini eklemeyiz.
+        const alreadyOnDoc = url.searchParams.get('id') === content.id;
         url.searchParams.set('id', content.id);
-        window.history.replaceState({}, '', url.toString());
+
+        if (alreadyOnDoc) {
+          window.history.replaceState({}, '', url.toString());
+          previewHistoryRef.current = null;
+          previewUrlSyncedRef.current = true;
+        } else {
+          // Yeni geçmiş kaydı: geri tuşu bu kayıttan çıkıp önizlemeyi kapatır.
+          window.history.pushState({}, '', url.toString());
+          previewHistoryRef.current = content.id;
+          previewUrlSyncedRef.current = false;
+        }
       } catch {
-        // ignore
+        previewHistoryRef.current = null;
+        previewUrlSyncedRef.current = false;
       }
     },
     [applyDocumentPatch, user?.id],
   );
 
   const handleClosePreview = useCallback(() => {
-    const currentRequestedId = searchParams.get('id') || searchParams.get('doc');
-    handledRequestedDocIdRef.current = currentRequestedId || '__dismissed__';
+    const closingId =
+      previewDocRef.current?.id ||
+      searchParams.get('id') ||
+      searchParams.get('doc') ||
+      null;
+
     setPreviewDoc(null);
     setShowAnswerKey(false);
+    handledRequestedDocIdRef.current = closingId;
+    previewUrlSyncedRef.current = false;
+
+    let currentUrlId: string | null = null;
+    try {
+      currentUrlId = new URL(window.location.href).searchParams.get('id');
+    } catch {
+      currentUrlId = null;
+    }
+
+    // Açılışta kaydı biz eklediysek ve hâlâ o kayıttaysak, kaydı geri alarak
+    // kapatırız: geçmişte ölü kayıt birikmez ve geri tuşu önizlemeden önceki
+    // duruma döner. URL temizliğini popstate'in kendisi yapar.
+    if (
+      previewHistoryRef.current &&
+      previewHistoryRef.current === closingId &&
+      currentUrlId === closingId
+    ) {
+      previewHistoryRef.current = null;
+      window.history.back();
+      return;
+    }
+
+    previewHistoryRef.current = null;
 
     try {
       const url = new URL(window.location.href);
@@ -753,9 +806,30 @@ function ContentsPageInner({
   const requestedDocId = searchParams.get('id') || searchParams.get('doc');
   useEffect(() => {
     if (!requestedDocId) {
-      handledRequestedDocIdRef.current = null;
+      // Geri tuşu veya harici gezinme `?id=` parametresini düşürdüyse önizlemeyi
+      // de kapat. `previewUrlSyncedRef` koşulu şart: açılış ile router'ın
+      // useSearchParams güncellemesi arasındaki boşlukta burası "id yok" görür ve
+      // modalı daha görünmeden kapatırdı.
+      if (previewUrlSyncedRef.current && previewDocRef.current) {
+        previewUrlSyncedRef.current = false;
+        previewHistoryRef.current = null;
+        handledRequestedDocIdRef.current = null;
+        setPreviewDoc(null);
+        setShowAnswerKey(false);
+      } else if (!previewDocRef.current) {
+        handledRequestedDocIdRef.current = null;
+      }
+      // Önizleme açık ama URL henüz senkron değilse `handledRequestedDocIdRef`e
+      // dokunulmaz: sıfırlanırsa, `?id=` nihayet geldiğinde efekt aynı belgeyi
+      // ikinci kez açar (görüntülenme sayısı iki artar ve geçmiş kaydımız
+      // `replaceState` ile ezilir).
       return;
     }
+
+    if (previewDocRef.current?.id === requestedDocId) {
+      previewUrlSyncedRef.current = true;
+    }
+
     if (handledRequestedDocIdRef.current === requestedDocId) {
       return;
     }

@@ -46,7 +46,12 @@ export default function ContentPreviewModal({
 }: ContentPreviewModalProps) {
   const [copiedLink, setCopiedLink] = useState(false);
   const [isScratchpadOpen, setIsScratchpadOpen] = useState(false);
-  const modalRef = useAccessibleModal<HTMLDivElement>(true, onClose);
+  // Geçmiş girdisini ContentsPage yönetiyor (`?id=` parametresi). Modal ikinci bir
+  // girdi daha push ederse App Router'ın kendi geçmiş senkronizasyonu `popstate`
+  // yayıyor, hook bunu "geri tuşuna basıldı" sanıp modalı kendiliğinden kapatıyor.
+  const modalRef = useAccessibleModal<HTMLDivElement>(true, onClose, {
+    enableHistoryBack: false,
+  });
   const visibleDescription = getWorksheetVisibleDescription(previewDoc);
   const previewVideoId = previewDoc.video_url
     ? getYouTubeId(previewDoc.video_url)
