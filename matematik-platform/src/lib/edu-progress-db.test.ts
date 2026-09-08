@@ -15,7 +15,7 @@ describe('EduProgressDB', () => {
       objectStoreNames: {
         contains: vi.fn().mockReturnValue(true),
       },
-      transaction: vi.fn().mockImplementation((storeNames: string[]) => {
+      transaction: vi.fn().mockImplementation((_storeNames: string[]) => {
         return {
           objectStore: vi.fn().mockImplementation((name: string) => ({
             put: vi.fn().mockImplementation((val: { id?: string; key?: string }) => {
