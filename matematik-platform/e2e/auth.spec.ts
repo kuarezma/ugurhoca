@@ -6,10 +6,10 @@ test.describe('1. Kimlik Doğrulama & Giriş Akışı (Auth Flow)', () => {
 
     // Başlık ve form alanları kontrolü
     await expect(page).toHaveTitle(/Giriş/i);
-    const emailInput = page.locator('input[type="email"]');
-    const passwordInput = page.locator('input[type="password"]');
+    const fullNameInput = page.getByLabel('Ad ve soyad');
+    const passwordInput = page.getByLabel('Şifre', { exact: true });
 
-    await expect(emailInput).toBeVisible();
+    await expect(fullNameInput).toBeVisible();
     await expect(passwordInput).toBeVisible();
 
     // Boş form gönderildiğinde native veya özel validasyon
@@ -20,10 +20,19 @@ test.describe('1. Kimlik Doğrulama & Giriş Akışı (Auth Flow)', () => {
   test('kayıt sayfasına geçiş bağlantısı çalışmalıdır', async ({ page }) => {
     await page.goto('/giris');
 
-    const registerLink = page.getByRole('link', { name: /Kayıt Ol|Hesap Oluştur/i });
-    if (await registerLink.isVisible()) {
-      await registerLink.click();
-      await expect(page).toHaveURL(/.*kayit/);
+    const registerLink = page.getByRole('link', {
+      name: /Kayıt Ol|Hesap Oluştur/i,
+    });
+    await expect(registerLink).toBeVisible();
+
+    const acceptCookiesButton = page.getByRole('button', {
+      name: /Tümünü kabul et/i,
+    });
+    if (await acceptCookiesButton.isVisible()) {
+      await acceptCookiesButton.click();
     }
+
+    await registerLink.click();
+    await expect(page).toHaveURL(/\/kayit$/);
   });
 });

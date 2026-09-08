@@ -14,7 +14,9 @@ test.describe('3. Çıkış Bileti (Exit Ticket) Sınıf Değerlendirme Akışı
     await page.goto('/cikis-bileti');
 
     // Öğretmen sekmesine tıkla
-    const teacherTab = page.getByRole('button', { name: /Öğretmen \/ Akıllı Tahta/i });
+    const teacherTab = page.getByRole('button', {
+      name: /Öğretmen \/ Akıllı Tahta/i,
+    });
     await teacherTab.click();
 
     // Hızlı Demo butonunu gör ve tıkla
@@ -24,6 +26,10 @@ test.describe('3. Çıkış Bileti (Exit Ticket) Sınıf Değerlendirme Akışı
 
     // Akıllı tahta sunum ekranında PIN ve soru dağılım paneli görünmeli
     await expect(page.getByText(/Öğrenci Katılım Kodu/i)).toBeVisible();
-    await expect(page.getByText(/Dağılımı Göster|Dağılımı Gizle/i)).toBeVisible();
+    await expect(
+      page.getByRole('button', {
+        name: /Cevap Dağılımını Göster|Dağılımı Gizle/i,
+      }),
+    ).toBeVisible();
   });
 });
