@@ -1605,3 +1605,49 @@ html[data-theme='light'] .grid-shimmer-beam {
   }
 }
 
+/* ==========================================================================
+   Akıllı Tahta & Sunum / Ders Modu Stilleri
+   ========================================================================== */
+:root {
+  --board-scale: 1;
+}
+
+body.board-mode-large {
+  --board-scale: 1.25;
+}
+
+body.board-mode-xlarge {
+  --board-scale: 1.5;
+}
+
+body.board-mode-large p,
+body.board-mode-large li,
+body.board-mode-large .math-formula,
+body.board-mode-large math {
+  font-size: calc(1rem * var(--board-scale)) !important;
+  line-height: 1.6 !important;
+}
+
+body.board-mode-xlarge p,
+body.board-mode-xlarge li,
+body.board-mode-xlarge .math-formula,
+body.board-mode-xlarge math {
+  font-size: calc(1.15rem * var(--board-scale)) !important;
+  line-height: 1.7 !important;
+}
+
+body.in-lesson-mode header,
+body.in-lesson-mode footer,
+body.in-lesson-mode aside,
+body.in-lesson-mode .site-header,
+body.in-lesson-mode .mobile-bottom-nav {
+  display: none !important;
+}
+
+body.in-lesson-mode main {
+  max-width: 100% !important;
+  width: 100vw !important;
+  margin: 0 !important;
+  padding: 1.5rem 3rem !important;
+}
+

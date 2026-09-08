@@ -91,3 +91,107 @@ export function buildHowToJsonLd({
     })),
   };
 }
+
+export type EduQuestionAnswer = {
+  text: string;
+  isCorrect: boolean;
+  comment?: string;
+};
+
+export type EduQuestionItem = {
+  name: string;
+  text: string;
+  answers: EduQuestionAnswer[];
+};
+
+export type EduQuizOptions = {
+  name: string;
+  description: string;
+  path: string;
+  educationalLevel?: string;
+  mebOutcomeCode?: string;
+  mebOutcomeName?: string;
+  questions?: EduQuestionItem[];
+};
+
+export function buildEduQuizJsonLd({
+  name,
+  description,
+  path,
+  educationalLevel = '8. Sınıf LGS',
+  mebOutcomeCode,
+  mebOutcomeName,
+  questions = [],
+}: EduQuizOptions) {
+  const url = `${SITE_URL}${path.startsWith('/') ? path : `/${path}`}`;
+  const resourceId = `${url}#resource`;
+  const quizId = `${url}#quiz`;
+
+  const learningResource: Record<string, unknown> = {
+    '@type': 'LearningResource',
+    '@id': resourceId,
+    name,
+    description,
+    learningResourceType: 'Interactive resource',
+    educationalLevel,
+    inLanguage: 'tr-TR',
+    isAccessibleForFree: true,
+  };
+
+  if (mebOutcomeCode || mebOutcomeName) {
+    learningResource.educationalAlignment = [
+      {
+        '@type': 'AlignmentObject',
+        alignmentType: 'educationalSubject',
+        educationalFramework: 'MEB Matematik Müfredatı',
+        targetName: [mebOutcomeCode, mebOutcomeName].filter(Boolean).join(' - '),
+      },
+    ];
+  }
+
+  const quiz: Record<string, unknown> = {
+    '@type': 'Quiz',
+    '@id': quizId,
+    name,
+    educationalLevel,
+    isPartOf: {
+      '@id': resourceId,
+    },
+  };
+
+  if (questions.length > 0) {
+    quiz.hasPart = questions.map((q) => {
+      const accepted = q.answers.find((a) => a.isCorrect);
+      const suggested = q.answers.filter((a) => !a.isCorrect);
+
+      return {
+        '@type': 'Question',
+        eduQuestionType: 'Multiple choice',
+        name: q.name,
+        text: q.text,
+        suggestedAnswer: suggested.map((s) => ({
+          '@type': 'Answer',
+          text: s.text,
+          ...(s.comment ? { comment: { '@type': 'Comment', text: s.comment } } : {}),
+        })),
+        ...(accepted
+          ? {
+              acceptedAnswer: {
+                '@type': 'Answer',
+                text: accepted.text,
+                ...(accepted.comment
+                  ? { comment: { '@type': 'Comment', text: accepted.comment } }
+                  : {}),
+              },
+            }
+          : {}),
+      };
+    });
+  }
+
+  return {
+    '@context': 'https://schema.org',
+    '@graph': [learningResource, quiz],
+  };
+}
+
