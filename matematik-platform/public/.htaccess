@@ -14,10 +14,12 @@
     Header set Cache-Control "public, max-age=2592000, stale-while-revalidate=86400"
   </FilesMatch>
 
-  # 3. HTML Sayfaları ve Dinamik Çıktılar (BFCache Uyumlu SWR)
+  # 3. HTML Sayfaları ve Dinamik Çıktılar (BFCache Uyumlu SWR + İzolasyon Başlıkları)
   <FilesMatch "\.(html|htm)$">
     Header set Cache-Control "public, max-age=0, must-revalidate, stale-while-revalidate=60"
     Header set X-Content-Type-Options "nosniff"
+    Header set Cross-Origin-Opener-Policy "same-origin"
+    Header set Cross-Origin-Embedder-Policy "credentialless"
   </FilesMatch>
 
   # 4. JSON ve Speculation Kuralları
