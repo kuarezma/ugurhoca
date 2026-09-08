@@ -183,9 +183,8 @@ const speculationRulesConfig = {
   ],
 };
 
-// Eski PWA kaldırıldı: daha önce service worker kaydetmiş istemcilerde kalan
-// kayıtları ve ugur-hoca-v* önbelleklerini tek seferlik temizler.
-const legacyServiceWorkerCleanup = `if('serviceWorker' in navigator){window.addEventListener('load',function(){navigator.serviceWorker.getRegistrations().then(function(registrations){return Promise.all(registrations.map(function(registration){return registration.unregister();}));}).catch(function(){});if('caches' in window){caches.keys().then(function(cacheNames){return Promise.all(cacheNames.filter(function(name){return name.indexOf('ugur-hoca-v')===0;}).map(function(name){return caches.delete(name);}));}).catch(function(){});}});}`;
+// Service worker kaydı: Sayfa yükleme süresini (FCP/LCP) etkilememesi için load sonrasında çalışır
+const serviceWorkerRegistrationScript = `if('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost')){window.addEventListener('load',function(){navigator.serviceWorker.register('/sw.js').catch(function(){});});}`;
 
 export default function RootLayout({
   children,
@@ -255,10 +254,10 @@ export default function RootLayout({
           <MobileBottomNav />
         </Providers>
         <SpeedInsights />
-        {/* Eski service worker temizliği (PWA kaldırıldı - ilk boyamayı bloke etmez) */}
+        {/* Service Worker kaydı (sayfa ilk boyamasını bloke etmez) */}
         <script
           dangerouslySetInnerHTML={{
-            __html: legacyServiceWorkerCleanup,
+            __html: serviceWorkerRegistrationScript,
           }}
         />
       </body>
