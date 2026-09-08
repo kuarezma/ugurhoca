@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { Suspense } from 'react';
+import { HomeAnnouncementsFeed } from '@/features/home/components/HomeAnnouncementsFeed';
 import HomePage from '@/features/home/containers/HomePage';
 import { loadInitialHomeFeed } from '@/features/home/server/loadHomeFeed';
 import { ActiveLiveLessonBadge } from '@/features/live-lessons/components/ActiveLiveLessonBadge';
@@ -12,29 +13,25 @@ export const metadata: Metadata = createPageMetadata({
   path: '/',
 });
 
-async function HomeWithFeed() {
-  // Sayfa yalnızca duyuru sorgusunu bekler (tek indeksli sorgu, limit 4).
-  // Aktif ders rozeti kendi verisini çeker ve aşağıda `<Suspense>` içinde
-  // stream edilir; gerektirdiği iki kimlik doğrulama turu artık hero'nun
-  // boyanmasını geciktirmiyor.
+async function HomeAnnouncementsSlot() {
   const initialFeed = await loadInitialHomeFeed();
 
+  return <HomeAnnouncementsFeed announcements={initialFeed.announcements} />;
+}
+
+export default function Home() {
   return (
     <HomePage
-      initialFeed={initialFeed}
+      announcementsSlot={
+        <Suspense fallback={null}>
+          <HomeAnnouncementsSlot />
+        </Suspense>
+      }
       liveLessonSlot={
         <Suspense fallback={null}>
           <ActiveLiveLessonBadge />
         </Suspense>
       }
     />
-  );
-}
-
-export default function Home() {
-  return (
-    <Suspense fallback={null}>
-      <HomeWithFeed />
-    </Suspense>
   );
 }

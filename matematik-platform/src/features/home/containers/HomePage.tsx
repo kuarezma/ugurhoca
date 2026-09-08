@@ -3,23 +3,13 @@
 import { useEffect, useState, type ReactNode } from 'react';
 import dynamic from 'next/dynamic';
 import { useTheme } from '@/components/ThemeProvider';
-import { HomeAnnouncementsSection } from '@/features/home/components/HomeAnnouncementsSection';
 import { HomeDailyQuote } from '@/features/home/components/HomeDailyQuote';
 import { HomeExamCountdownSection } from '@/features/home/components/HomeExamCountdownSection';
 import { HomeFooter } from '@/features/home/components/HomeFooter';
 import { HomeHeroSection } from '@/features/home/components/HomeHeroSection';
 import { HomeNavbar } from '@/features/home/components/HomeNavbar';
 import { HomeSupportSection } from '@/features/home/components/HomeSupportSection';
-import type { HomeInitialFeed } from '@/features/home/home-initial-feed';
 import { useHomePageData } from '@/features/home/hooks/useHomePageData';
-
-const HomeAnnouncementModal = dynamic(
-  () =>
-    import('@/features/home/components/HomeAnnouncementModal').then((m) => ({
-      default: m.HomeAnnouncementModal,
-    })),
-  { ssr: false },
-);
 
 const ExamScoreCalculatorModal = dynamic(
   () =>
@@ -111,16 +101,17 @@ const FormulaSpeedDrillModal = dynamic(
 );
 
 type HomePageProps = {
+  /** Duyurular kendi Suspense sınırında stream edilir; hero bu sorguyu beklemez. */
+  announcementsSlot?: ReactNode;
   /**
    * Aktif canlı ders rozeti. Sunucuda `<Suspense>` içinde stream edilen bir
    * slot olarak geçilir; böylece rozetin gerektirdiği kimlik doğrulama
    * (auth.getUser + profiles) ana sayfanın ilk boyamasını bekletmez.
    */
   liveLessonSlot?: ReactNode;
-  initialFeed?: HomeInitialFeed | null;
 };
 
-export default function HomePage({ liveLessonSlot, initialFeed }: HomePageProps) {
+export default function HomePage({ announcementsSlot, liveLessonSlot }: HomePageProps) {
   const { theme } = useTheme();
   const isLight = theme === 'light';
   const [isFlashcardsOpen, setIsFlashcardsOpen] = useState(false);
@@ -196,13 +187,7 @@ export default function HomePage({ liveLessonSlot, initialFeed }: HomePageProps)
     return () => window.removeEventListener('ugurhoca:open-tool', handleToolEvent);
   }, []);
 
-  const {
-    announcements,
-    handleLogout,
-    selectedAnnouncement,
-    setSelectedAnnouncement,
-    user,
-  } = useHomePageData(initialFeed);
+  const { handleLogout, user } = useHomePageData();
 
   return (
     <main
@@ -235,13 +220,7 @@ export default function HomePage({ liveLessonSlot, initialFeed }: HomePageProps)
         />
 
         {/* 2. Duyurular */}
-        <div className="defer-section">
-          <HomeAnnouncementsSection
-            announcements={announcements}
-            isLight={isLight}
-            onSelectAnnouncement={setSelectedAnnouncement}
-          />
-        </div>
+        {announcementsSlot}
 
         {/* 3. LGS ve YKS Sayacı */}
         <HomeExamCountdownSection
@@ -265,12 +244,6 @@ export default function HomePage({ liveLessonSlot, initialFeed }: HomePageProps)
           <HomeFooter isLight={isLight} />
         </div>
       </div>
-      {selectedAnnouncement ? (
-        <HomeAnnouncementModal
-          announcement={selectedAnnouncement}
-          onClose={() => setSelectedAnnouncement(null)}
-        />
-      ) : null}
       {isFlashcardsOpen ? (
         <FormulaFlashcardsModal
           isOpen={isFlashcardsOpen}

@@ -37,3 +37,8 @@ Platformda öğrenci gizliliği en üst düzeyde korunur:
 
 - **Web Sitesi:** [ugurhoca.com](https://ugurhoca.com)
 
+---
+
+## Değişiklik Notları
+
+- **2026-09-08:** Ana sayfadaki hero içeriği, duyuru servisinin yanıtını beklemeden gösterilecek şekilde hızlandırıldı; duyuru kartları ve detay penceresi bağımsız olarak yüklenirken mevcut görünüm ve işlevler korundu.
