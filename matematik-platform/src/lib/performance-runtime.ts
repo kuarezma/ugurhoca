@@ -38,7 +38,15 @@ export async function yieldToMain(): Promise<void> {
   if (typeof MessageChannel !== 'undefined') {
     return new Promise((resolve) => {
       const channel = new MessageChannel();
-      channel.port1.onmessage = () => resolve();
+      channel.port1.onmessage = () => {
+        try {
+          channel.port1.close();
+          channel.port2.close();
+        } catch {
+          // noop
+        }
+        resolve();
+      };
       channel.port2.postMessage(null);
     });
   }
@@ -56,6 +64,8 @@ const activePrefetchUrls = new Set<string>();
  */
 export function initPerformanceRuntime(): () => void {
   if (typeof window === 'undefined') return () => {};
+
+  const pendingTimeouts = new Set<ReturnType<typeof setTimeout>>();
 
   // 1. BFCache Uyumluluğu:
   // 'unload' olayı BFCache'i devre dışı bırakır. Bu nedenle yalnızca 'pageshow' ve 'pagehide' dinlenir.
@@ -112,12 +122,14 @@ export function initPerformanceRuntime(): () => void {
         prefetchLink.setAttribute('data-runtime-prefetch', 'true');
         document.head.appendChild(prefetchLink);
 
-        setTimeout(() => {
+        const timeoutId = setTimeout(() => {
+          pendingTimeouts.delete(timeoutId);
           activePrefetchUrls.delete(href);
           if (prefetchLink.parentNode) {
             prefetchLink.parentNode.removeChild(prefetchLink);
           }
         }, 15000);
+        pendingTimeouts.add(timeoutId);
       } catch {
         // Prefetch DOM ekleme hatası gezinmeyi engellememelidir
       }
@@ -144,6 +156,10 @@ export function initPerformanceRuntime(): () => void {
     window.removeEventListener('pagehide', handlePageHide);
     document.removeEventListener('touchstart', handleTouchStart, { capture: true });
     document.removeEventListener('touchmove', handleTouchMove, { capture: true });
+    for (const tid of pendingTimeouts) {
+      clearTimeout(tid);
+    }
+    pendingTimeouts.clear();
     activePrefetchUrls.clear();
   };
 }

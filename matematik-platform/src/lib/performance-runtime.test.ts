@@ -50,12 +50,7 @@ describe('performance-runtime', () => {
   });
 
   it('yieldToMain resolves cleanly', async () => {
-    let completed = false;
-    yieldToMain().then(() => {
-      completed = true;
-    });
-    await new Promise((r) => setTimeout(r, 10));
-    expect(completed).toBe(true);
+    await expect(yieldToMain()).resolves.toBeUndefined();
   });
 
   it('initializes runtime and cleans up event listeners properly', () => {

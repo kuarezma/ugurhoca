@@ -16,7 +16,7 @@ vi.mock('@/features/games/utils/gameAudio', () => ({
 describe('MathDuel Component', () => {
   it('renders initial idle view with game instructions and start button', () => {
     const onScore = vi.fn();
-    render(<MathDuel onScore={onScore} scoreMultiplier={1} />);
+    const { unmount } = render(<MathDuel onScore={onScore} scoreMultiplier={1} />);
 
     expect(screen.getByText('Matematik Düellosu')).toBeInTheDocument();
     expect(screen.getByText('1v1 Hızlı İşlem')).toBeInTheDocument();
@@ -25,10 +25,11 @@ describe('MathDuel Component', () => {
     ).toBeInTheDocument();
     expect(screen.getByText('Robot Düellosu')).toBeInTheDocument();
     expect(screen.getByText('Hız Antrenmanı')).toBeInTheDocument();
+    unmount();
   });
 
   it('allows switching game mode between bot and solo blitz', () => {
-    render(<MathDuel onScore={vi.fn()} scoreMultiplier={1} />);
+    const { unmount } = render(<MathDuel onScore={vi.fn()} scoreMultiplier={1} />);
 
     const soloButton = screen.getByRole('button', { name: /Hız Antrenmanı/i });
     fireEvent.click(soloButton);
@@ -36,11 +37,12 @@ describe('MathDuel Component', () => {
     expect(
       screen.getByText(/kendi rekorunu kırmaya hazır mısın/i),
     ).toBeInTheDocument();
+    unmount();
   });
 
   it('starts the game when start button is clicked and shows questions & answer options', () => {
     const onScore = vi.fn();
-    render(<MathDuel onScore={onScore} scoreMultiplier={1} />);
+    const { unmount } = render(<MathDuel onScore={onScore} scoreMultiplier={1} />);
 
     const startButton = screen.getByRole('button', {
       name: /Düelloyu Başlat/i,
@@ -66,5 +68,7 @@ describe('MathDuel Component', () => {
     expect(
       screen.getByText(/Doğru!|Yanlış!|Harika!/i),
     ).toBeInTheDocument();
+
+    unmount();
   });
 });
