@@ -1,8 +1,8 @@
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { SafeLink } from '@/components/SafeLink';
-import { usePathname, useRouter } from 'next/navigation';
+import { usePathname } from 'next/navigation';
 import { Home, FileCheck, Timer, Gamepad2, User } from 'lucide-react';
 
 const NAV_ITEMS = [
@@ -15,13 +15,6 @@ const NAV_ITEMS = [
 
 export function MobileBottomNav() {
   const pathname = usePathname();
-  let router: ReturnType<typeof useRouter> | null = null;
-  try {
-    // eslint-disable-next-line react-hooks/rules-of-hooks
-    router = useRouter();
-  } catch {
-    router = null;
-  }
 
   const [pendingHref, setPendingHref] = useState<string | null>(null);
 
@@ -29,43 +22,6 @@ export function MobileBottomNav() {
   useEffect(() => {
     setPendingHref(null);
   }, [pathname]);
-
-  // 5 ana sekmenin rotalarını boşta iken (idle) önceden yükle
-  useEffect(() => {
-    if (!router) return;
-    const prefetchRoutes = () => {
-      NAV_ITEMS.forEach((item) => {
-        if (item.href !== pathname) {
-          try {
-            router?.prefetch(item.href);
-          } catch {
-            // prefetch hatası yok sayılır
-          }
-        }
-      });
-    };
-
-    if (typeof window !== 'undefined' && 'requestIdleCallback' in window) {
-      const handle = window.requestIdleCallback(prefetchRoutes, { timeout: 1500 });
-      return () => window.cancelIdleCallback(handle);
-    } else {
-      const timer = setTimeout(prefetchRoutes, 100);
-      return () => clearTimeout(timer);
-    }
-  }, [pathname, router]);
-
-  const handlePointerDown = useCallback(
-    (href: string) => {
-      if (router && href !== pathname) {
-        try {
-          router.prefetch(href);
-        } catch {
-          // ignore
-        }
-      }
-    },
-    [pathname, router],
-  );
 
   // Canlı ders odasında tam ekran deneyimini bozmamak için gizle
   if (pathname?.startsWith('/canli-ders/d/')) {
@@ -84,7 +40,9 @@ export function MobileBottomNav() {
               item.href === '/'
                 ? pathname === '/'
                 : pathname?.startsWith(item.href);
-            const isActive = pendingHref ? pendingHref === item.href : isRouteActive;
+            const isActive = pendingHref
+              ? pendingHref === item.href
+              : isRouteActive;
             const Icon = item.icon;
 
             return (
@@ -92,7 +50,6 @@ export function MobileBottomNav() {
                 key={item.href}
                 href={item.href}
                 aria-current={isRouteActive ? 'page' : undefined}
-                onPointerDown={() => handlePointerDown(item.href)}
                 onClick={(e) => {
                   if (isRouteActive) {
                     e.preventDefault();

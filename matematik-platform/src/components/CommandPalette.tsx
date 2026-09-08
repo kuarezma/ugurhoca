@@ -43,26 +43,33 @@ export type CommandItem = {
 
 const ACTIONABLE_SELECTOR = 'input, textarea, select, [contenteditable="true"]';
 
-export default function CommandPalette() {
+type CommandPaletteProps = {
+  initiallyOpen?: boolean;
+};
+
+export default function CommandPalette({ initiallyOpen = false }: CommandPaletteProps) {
   const router = useRouter();
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(initiallyOpen);
   const [query, setQuery] = useState('');
   const [activeIndex, setActiveIndex] = useState(0);
   const inputRef = useRef<HTMLInputElement>(null);
   const listboxId = useId();
 
-  const openTool = useCallback((tool: string, fallbackPath = '/?tool=' + tool) => {
-    if (typeof window !== 'undefined') {
-      window.dispatchEvent(new CustomEvent('ugurhoca:open-tool', { detail: { tool } }));
-      if (tool === 'mistakes' && !window.location.pathname.startsWith('/testler')) {
-        router.push('/testler?tool=mistakes');
-        return;
+  const openTool = useCallback(
+    (tool: string, fallbackPath = '/?tool=' + tool) => {
+      if (typeof window !== 'undefined') {
+        window.dispatchEvent(new CustomEvent('ugurhoca:open-tool', { detail: { tool } }));
+        if (tool === 'mistakes' && !window.location.pathname.startsWith('/testler')) {
+          router.push('/testler?tool=mistakes');
+          return;
+        }
+        if (tool !== 'mistakes' && window.location.pathname !== '/') {
+          router.push(fallbackPath);
+        }
       }
-      if (tool !== 'mistakes' && window.location.pathname !== '/') {
-        router.push(fallbackPath);
-      }
-    }
-  }, [router]);
+    },
+    [router],
+  );
 
   const commands = useMemo<CommandItem[]>(
     () => [
@@ -419,9 +426,7 @@ export default function CommandPalette() {
       return commands;
     }
     return commands.filter((command) => {
-      const haystack = [command.label, command.hint ?? '', ...command.keywords]
-        .map(normalize)
-        .join(' ');
+      const haystack = [command.label, command.hint ?? '', ...command.keywords].map(normalize).join(' ');
       return haystack.includes(normalized);
     });
   }, [commands, query]);
@@ -433,9 +438,7 @@ export default function CommandPalette() {
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
       const target = event.target as HTMLElement | null;
-      const inField = Boolean(
-        target && typeof target.closest === 'function' && target.closest(ACTIONABLE_SELECTOR),
-      );
+      const inField = Boolean(target && typeof target.closest === 'function' && target.closest(ACTIONABLE_SELECTOR));
       const isPaletteOpen = open;
 
       if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'k') {
@@ -486,7 +489,7 @@ export default function CommandPalette() {
       role="dialog"
       aria-modal="true"
       aria-label="Komut paleti"
-      className="fixed inset-0 z-[120] flex items-start justify-center overflow-y-auto bg-slate-950/70 px-4 pb-20 pt-16 backdrop-blur-sm sm:pt-24"
+      className="fixed inset-0 z-[120] flex items-start justify-center overflow-y-auto bg-slate-950/70 px-4 pb-20 pt-16 backdrop-blur-sm dark:bg-slate-950/70 sm:pt-24"
     >
       <button
         type="button"
@@ -505,18 +508,10 @@ export default function CommandPalette() {
             onKeyDown={(event) => {
               if (event.key === 'ArrowDown') {
                 event.preventDefault();
-                setActiveIndex((prev) =>
-                  filtered.length === 0
-                    ? 0
-                    : (prev + 1) % filtered.length,
-                );
+                setActiveIndex((prev) => (filtered.length === 0 ? 0 : (prev + 1) % filtered.length));
               } else if (event.key === 'ArrowUp') {
                 event.preventDefault();
-                setActiveIndex((prev) =>
-                  filtered.length === 0
-                    ? 0
-                    : (prev - 1 + filtered.length) % filtered.length,
-                );
+                setActiveIndex((prev) => (filtered.length === 0 ? 0 : (prev - 1 + filtered.length) % filtered.length));
               } else if (event.key === 'Enter') {
                 event.preventDefault();
                 const target = filtered[activeIndex];
@@ -534,12 +529,7 @@ export default function CommandPalette() {
             ESC
           </kbd>
         </div>
-        <ul
-          id={listboxId}
-          role="listbox"
-          aria-label="Komutlar"
-          className="max-h-[60vh] overflow-y-auto p-2"
-        >
+        <ul id={listboxId} role="listbox" aria-label="Komutlar" className="max-h-[60vh] overflow-y-auto p-2">
           {filtered.length === 0 ? (
             <li className="flex items-center gap-3 rounded-xl px-3 py-4 text-sm text-slate-500 dark:text-slate-400">
               <Sparkles className="h-4 w-4" aria-hidden="true" />
@@ -583,10 +573,10 @@ export default function CommandPalette() {
                               command.category === 'Araç'
                                 ? 'bg-indigo-50 dark:bg-indigo-500/15 border-indigo-200 dark:border-indigo-500/25 text-indigo-700 dark:text-indigo-400'
                                 : command.category === 'Oyun'
-                                ? 'bg-purple-50 dark:bg-purple-500/15 border-purple-200 dark:border-purple-500/25 text-purple-700 dark:text-purple-400'
-                                : command.category === 'Konu'
-                                ? 'bg-amber-50 dark:bg-amber-500/15 border-amber-200 dark:border-amber-500/25 text-amber-800 dark:text-amber-400'
-                                : 'bg-slate-100 dark:bg-slate-700/30 border-slate-200 dark:border-slate-600/30 text-slate-600 dark:text-slate-400'
+                                  ? 'bg-purple-50 dark:bg-purple-500/15 border-purple-200 dark:border-purple-500/25 text-purple-700 dark:text-purple-400'
+                                  : command.category === 'Konu'
+                                    ? 'bg-amber-50 dark:bg-amber-500/15 border-amber-200 dark:border-amber-500/25 text-amber-800 dark:text-amber-400'
+                                    : 'bg-slate-100 dark:bg-slate-700/30 border-slate-200 dark:border-slate-600/30 text-slate-600 dark:text-slate-400'
                             }`}
                           >
                             {command.category}

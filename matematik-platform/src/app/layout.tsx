@@ -46,19 +46,8 @@ export const metadata: Metadata = {
     default: `${SITE_NAME} - Matematik Öğrenme Platformu`,
     template: `%s | ${SITE_NAME}`,
   },
-  description:
-    "Çalışma kağıtları, testler, oyunlar ve daha fazlasıyla matematik öğrenmeyi keşfet!",
-  keywords: [
-    "matematik",
-    "ders",
-    "test",
-    "sorular",
-    "lgs",
-    "yks",
-    "çözüm",
-    "eğitim",
-    "uğur hoca",
-  ],
+  description: "Çalışma kağıtları, testler, oyunlar ve daha fazlasıyla matematik öğrenmeyi keşfet!",
+  keywords: ["matematik", "ders", "test", "sorular", "lgs", "yks", "çözüm", "eğitim", "uğur hoca"],
   authors: [{ name: "Uğur Hoca" }],
   formatDetection: {
     address: false,
@@ -68,16 +57,15 @@ export const metadata: Metadata = {
   },
   icons: {
     icon: [
-      { url: '/favicon.ico', sizes: '32x32' },
-      { url: '/icon.svg', type: 'image/svg+xml' },
-      { url: '/icon-512.png', sizes: '512x512', type: 'image/png' },
+      { url: "/favicon.ico", sizes: "32x32" },
+      { url: "/icon.svg", type: "image/svg+xml" },
+      { url: "/icon-512.png", sizes: "512x512", type: "image/png" },
     ],
-    apple: [{ url: '/apple-icon.png', sizes: '180x180', type: 'image/png' }],
+    apple: [{ url: "/apple-icon.png", sizes: "180x180", type: "image/png" }],
   },
   openGraph: {
     title: SITE_NAME,
-    description:
-      "Çalışma kağıtları, testler, oyunlar ve daha fazlasıyla matematik öğrenmeyi keşfet!",
+    description: "Çalışma kağıtları, testler, oyunlar ve daha fazlasıyla matematik öğrenmeyi keşfet!",
     type: "website",
     locale: "tr_TR",
     siteName: SITE_NAME,
@@ -94,8 +82,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: SITE_NAME,
-    description:
-      "Çalışma kağıtları, testler, oyunlar ve daha fazlasıyla matematik öğrenmeyi keşfet!",
+    description: "Çalışma kağıtları, testler, oyunlar ve daha fazlasıyla matematik öğrenmeyi keşfet!",
     images: [`${SITE_URL}/icon-512.png`],
   },
   robots: {
@@ -133,11 +120,18 @@ const speculationRulesConfig = {
             not: {
               href_matches: [
                 "/api/*",
-                "/admin/*",
+                "/admin*",
                 "/giris*",
                 "/kayit*",
                 "/cikis*",
-                "/canli-ders/*",
+                "/canli-ders*",
+                "/profil*",
+                "/testler*",
+                "/odevler*",
+                "/ilerleme*",
+                "/oyunlar*",
+                "/meydan-okuma*",
+                "/odak-pomodoro*",
                 "/*\\?*logout*",
                 "/*\\?*auth*",
               ],
@@ -145,8 +139,7 @@ const speculationRulesConfig = {
           },
           {
             not: {
-              selector_matches:
-                "[rel~=nofollow], [data-no-prerender], [target=_blank]",
+              selector_matches: "[rel~=nofollow], [data-no-prerender], [target=_blank]",
             },
           },
         ],
@@ -164,16 +157,26 @@ const speculationRulesConfig = {
             not: {
               href_matches: [
                 "/api/*",
-                "/admin/*",
+                "/admin*",
+                "/giris*",
+                "/kayit*",
                 "/cikis*",
-                "/canli-ders/*",
+                "/canli-ders*",
+                "/profil*",
+                "/testler*",
+                "/odevler*",
+                "/ilerleme*",
+                "/oyunlar*",
+                "/meydan-okuma*",
+                "/odak-pomodoro*",
+                "/*\\?*logout*",
+                "/*\\?*auth*",
               ],
             },
           },
           {
             not: {
-              selector_matches:
-                "[rel~=nofollow], [data-no-prefetch], [target=_blank]",
+              selector_matches: "[rel~=nofollow], [data-no-prefetch], [target=_blank]",
             },
           },
         ],
@@ -186,11 +189,7 @@ const speculationRulesConfig = {
 // Service worker kaydı: Sayfa yükleme süresini (FCP/LCP) etkilememesi için load sonrasında çalışır
 const serviceWorkerRegistrationScript = `if('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost')){window.addEventListener('load',function(){navigator.serviceWorker.register('/sw.js').catch(function(){});});}`;
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   const supabaseOrigin = getSupabasePreconnectOrigin();
 
   return (
@@ -221,8 +220,7 @@ export default function RootLayout({
               "@type": "EducationalOrganization",
               name: SITE_NAME,
               url: SITE_URL,
-              description:
-                "Çalışma kağıtları, testler, oyunlar ve daha fazlasıyla matematik öğrenme platformu.",
+              description: "Çalışma kağıtları, testler, oyunlar ve daha fazlasıyla matematik öğrenme platformu.",
               inLanguage: "tr-TR",
             }),
           }}

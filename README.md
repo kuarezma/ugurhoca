@@ -41,4 +41,5 @@ Platformda öğrenci gizliliği en üst düzeyde korunur:
 
 ## Değişiklik Notları
 
+- **2026-09-08:** Komut paleti kullanıcı niyetine, sohbet balonu tarayıcının boşta kalmasına ertelendi; tekrar eden ön yüklemeler kaldırıldı, giriş gerektiren rotalar tahmini ön getirmeden çıkarıldı ve eski E2E akışları güncel yönlendirme davranışıyla eşleştirildi.
 - **2026-09-08:** Ana sayfadaki hero içeriği, duyuru servisinin yanıtını beklemeden gösterilecek şekilde hızlandırıldı; duyuru kartları ve detay penceresi bağımsız olarak yüklenirken mevcut görünüm ve işlevler korundu.
