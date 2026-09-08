@@ -137,7 +137,8 @@ export const useProfileDashboardData = (
           return;
         }
 
-        const collections = await loadClientProfileDashboardCollections(nextUser);
+        const collections =
+          await loadClientProfileDashboardCollections(nextUser);
 
         setBadges(collections.badges);
         setGoal(collections.goal);
@@ -159,7 +160,7 @@ export const useProfileDashboardData = (
     };
 
     loadData();
-  }, [initialData?.isHydrated, initialUserKey, router]);
+  }, [initialData?.isHydrated, initialData?.user, initialUserKey, router]);
 
   useEffect(() => {
     const userId = user?.id;

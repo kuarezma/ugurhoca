@@ -54,7 +54,6 @@ export function SafeLink({
 }: SafeLinkProps) {
   let router: ReturnType<typeof useRouter> | null = null;
   try {
-    // eslint-disable-next-line react-hooks/rules-of-hooks
     if (typeof useRouter === 'function') {
       // eslint-disable-next-line react-hooks/rules-of-hooks
       router = useRouter();

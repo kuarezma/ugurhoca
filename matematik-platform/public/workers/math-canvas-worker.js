@@ -1,4 +1,3 @@
-/* eslint-disable */
 /**
  * Web Worker & OffscreenCanvas İzolasyon Scripti
  * Ağır matematiksel hesaplamaları ve dinamik geometri/grafik çizimlerini
@@ -16,11 +15,19 @@ self.onmessage = function (e) {
   } else if (type === 'CALCULATE_PRIMES') {
     var max = data.max || 100000;
     var primes = findPrimes(max);
-    self.postMessage({ type: 'PRIMES_RESULT', primes: primes, count: primes.length });
+    self.postMessage({
+      type: 'PRIMES_RESULT',
+      primes: primes,
+      count: primes.length,
+    });
   } else if (type === 'FACTORIZE') {
     var num = data.number || 0;
     var factors = primeFactors(num);
-    self.postMessage({ type: 'FACTORIZE_RESULT', number: num, factors: factors });
+    self.postMessage({
+      type: 'FACTORIZE_RESULT',
+      number: num,
+      factors: factors,
+    });
   } else if (type === 'START_ANIMATION') {
     startAnimation(data.speed || 1);
   } else if (type === 'STOP_ANIMATION') {

@@ -1,4 +1,3 @@
-/* eslint-disable */
 (function () {
   'use strict';
   window.loadDeferredScript = function (src, attributes) {
@@ -33,16 +32,31 @@
       window.removeEventListener('keydown', triggerEarly);
     }
 
-    window.addEventListener('scroll', triggerEarly, { passive: true, once: true });
-    window.addEventListener('touchstart', triggerEarly, { passive: true, once: true });
-    window.addEventListener('click', triggerEarly, { passive: true, once: true });
-    window.addEventListener('keydown', triggerEarly, { passive: true, once: true });
+    window.addEventListener('scroll', triggerEarly, {
+      passive: true,
+      once: true,
+    });
+    window.addEventListener('touchstart', triggerEarly, {
+      passive: true,
+      once: true,
+    });
+    window.addEventListener('click', triggerEarly, {
+      passive: true,
+      once: true,
+    });
+    window.addEventListener('keydown', triggerEarly, {
+      passive: true,
+      once: true,
+    });
 
     if ('requestIdleCallback' in window) {
-      window.requestIdleCallback(function () {
-        inject();
-        cleanup();
-      }, { timeout: 3500 });
+      window.requestIdleCallback(
+        function () {
+          inject();
+          cleanup();
+        },
+        { timeout: 3500 },
+      );
     } else {
       setTimeout(function () {
         inject();
