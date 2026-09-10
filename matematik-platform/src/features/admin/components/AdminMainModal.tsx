@@ -129,6 +129,19 @@ export default function AdminMainModal({
     const file = event.target.files?.[0];
     if (!file) return;
 
+    // Önizleme parse'u tarayıcıda yapılır: devasa dosyayı exceljs/jszip'e
+    // vermeden önce kapıda çevir (tarayıcı kilitlenmesin).
+    const maxBytes = file.name.toLowerCase().endsWith('.zip')
+      ? 20 * 1024 * 1024
+      : 5 * 1024 * 1024;
+    if (file.size > maxBytes) {
+      showToast(
+        'error',
+        `Dosya çok büyük (en fazla ${maxBytes / 1024 / 1024} MB).`,
+      );
+      return;
+    }
+
     try {
       const buffer = await file.arrayBuffer();
       const { parseExcelFile, parseQuizBundleFile } = await import(

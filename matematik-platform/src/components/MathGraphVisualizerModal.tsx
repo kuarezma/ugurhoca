@@ -452,6 +452,7 @@ export function MathGraphVisualizerModal({
                         max="4"
                         step="0.5"
                         value={m}
+                        aria-label="Eğim (m)"
                         onChange={(e) => setM(parseFloat(e.target.value))}
                         className="w-full accent-indigo-500 cursor-pointer"
                       />
@@ -467,6 +468,7 @@ export function MathGraphVisualizerModal({
                         max="6"
                         step="1"
                         value={b}
+                        aria-label="y-Keseni (b)"
                         onChange={(e) => setB(parseInt(e.target.value))}
                         className="w-full accent-pink-500 cursor-pointer"
                       />
@@ -487,6 +489,7 @@ export function MathGraphVisualizerModal({
                         max="2"
                         step="0.25"
                         value={a}
+                        aria-label="Baş Katsayı (a)"
                         onChange={(e) => {
                           const val = parseFloat(e.target.value);
                           setA(val === 0 ? 0.25 : val);
@@ -505,6 +508,7 @@ export function MathGraphVisualizerModal({
                         max="4"
                         step="0.5"
                         value={quadB}
+                        aria-label="x Katsayısı (b)"
                         onChange={(e) => setQuadB(parseFloat(e.target.value))}
                         className="w-full accent-amber-500 cursor-pointer"
                       />
@@ -520,6 +524,7 @@ export function MathGraphVisualizerModal({
                         max="6"
                         step="1"
                         value={c}
+                        aria-label="Sabit Terim (c)"
                         onChange={(e) => setC(parseInt(e.target.value))}
                         className="w-full accent-emerald-500 cursor-pointer"
                       />
@@ -539,6 +544,7 @@ export function MathGraphVisualizerModal({
                       max="360"
                       step="5"
                       value={angleDeg}
+                      aria-label="Açı (θ)"
                       onChange={(e) => setAngleDeg(parseInt(e.target.value))}
                       className="w-full accent-pink-500 cursor-pointer"
                     />

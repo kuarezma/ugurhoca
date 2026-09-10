@@ -6,7 +6,7 @@ export default defineConfig({
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
   workers: process.env.CI ? 1 : undefined,
-  reporter: 'list',
+  reporter: process.env.CI ? [['list'], ['html', { open: 'never' }]] : 'list',
   use: {
     baseURL: process.env.PLAYWRIGHT_TEST_BASE_URL || 'http://localhost:3000',
     trace: 'on-first-retry',
@@ -16,6 +16,12 @@ export default defineConfig({
     {
       name: 'chromium',
       use: { ...devices['Desktop Chrome'] },
+    },
+    // Mobil gerçekliği: kullanıcıların önemli kısmı telefonda. Spec'lerde
+    // viewport sabiti yok, o yüzden tüm E2E mobilde de koşar.
+    {
+      name: 'mobile',
+      use: { ...devices['Pixel 7'] },
     },
   ],
   webServer: process.env.CI

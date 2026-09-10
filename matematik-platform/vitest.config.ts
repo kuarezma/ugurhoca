@@ -16,10 +16,13 @@ export default defineConfig({
         'src/features/games/utils/ambientAudio.ts',
       ],
       thresholds: {
-        branches: 50,
+        // Ölçülen (2026-09): branches ~54, functions ~60, lines ~64, statements ~62.6.
+        // Eşikler bilerek ölçümün altında: gerilemeyi yakalar,
+        // v8 dalgalanmasında CI'ı kırmaz (statements marjı ince olduğundan 61).
+        branches: 52,
         functions: 58,
-        lines: 60,
-        statements: 60,
+        lines: 62,
+        statements: 61,
       },
       provider: 'v8',
       reporter: ['text', 'html'],

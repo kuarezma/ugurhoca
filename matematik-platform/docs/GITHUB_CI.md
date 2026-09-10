@@ -2,7 +2,13 @@
 
 ## CI ne çalıştırır?
 
-`.github/workflows/ci.yml`: `npm ci` → `typecheck` → `lint` → `test` → `build`.
+- `.github/workflows/ci.yml`: `npm ci` → `npm audit --audit-level=high` → `typecheck` → `lint` → `test` (coverage eşikli) → `build`. `working-directory: matematik-platform`.
+- `.github/workflows/contrast.yml`: üretim derlemesi + Chromium kontrast kapısı (`e2e/contrast.spec.ts` → `scripts/contrast-report.mjs` doğrulaması). NOT: Bu dosya eskiden `matematik-platform/.github/workflows/` altındaydı — GitHub o konumu okumaz; 2026-09-10'da köke taşındı.
+- `.github/workflows/lighthouse-ci.yml`: derleme + LHCI (`.lighthouserc.json`: `/`, `/programlar/lgs`, `/araclar`, `/icerikler`, desktop). Eşikler bilerek `warn`: LCP bütçesi (2000ms) baz ölçümün (~4000ms) altında; önce performans işi, sonra error'a çevir.
+
+## Hızlı test
+
+Tam coverage'lı `npm run test` yavaşsa yerel döngüde `npm run test:fast` (eşiksiz) kullanın; CI her zaman coverage'lı koşar.
 
 ## Secret’lar (önerilir)
 

@@ -72,9 +72,9 @@ export const metadata: Metadata = {
     url: SITE_URL,
     images: [
       {
-        url: `${SITE_URL}/icon-512.png`,
-        width: 512,
-        height: 512,
+        url: `${SITE_URL}/opengraph-image`,
+        width: 1200,
+        height: 630,
         alt: SITE_NAME,
       },
     ],
@@ -83,7 +83,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: SITE_NAME,
     description: "Çalışma kağıtları, testler, oyunlar ve daha fazlasıyla matematik öğrenmeyi keşfet!",
-    images: [`${SITE_URL}/icon-512.png`],
+    images: [`${SITE_URL}/opengraph-image`],
   },
   robots: {
     index: true,

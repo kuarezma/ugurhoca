@@ -6,7 +6,9 @@
       "startServerReadyPattern": "Ready in",
       "url": [
         "http://localhost:3000/",
-        "http://localhost:3000/programlar/lgs"
+        "http://localhost:3000/programlar/lgs",
+        "http://localhost:3000/araclar",
+        "http://localhost:3000/icerikler"
       ],
       "settings": {
         "preset": "desktop"

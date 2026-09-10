@@ -1185,10 +1185,12 @@ export function SupportChatPanel({
                   >
                     <Image
                       src={att.url}
-                      alt=""
+                      alt={att.name ? `${att.name} önizlemesi` : 'Ek önizlemesi'}
                       width={32}
                       height={32}
                       className="h-8 w-8 rounded-lg object-cover"
+                      // Zorunlu: att.url blob: object URL'dir, Next Image
+                      // optimizer blob/data URL işleyemez.
                       unoptimized
                     />
                   </button>

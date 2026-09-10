@@ -3,6 +3,7 @@ import { Resend } from 'resend';
 import { createLogger } from '@/lib/logger';
 import { forgotPasswordSchema } from '@/lib/route-schemas';
 import { enforceRateLimit } from '@/lib/rate-limit';
+import { ADMIN_EMAIL } from '@/lib/admin';
 import { normalizeFullNameForMatch } from '@/lib/student-identity';
 import { createServiceRoleClient } from '@/lib/supabase/server';
 import { getResendApiKey } from '@/lib/env.server';
@@ -13,7 +14,8 @@ export const runtime = 'nodejs';
 
 export async function POST(request: Request) {
   try {
-    const ip = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || 'anon';
+    const ip =
+      request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || 'anon';
     const rateLimited = await enforceRateLimit('forgot-password', ip, {
       limit: 5,
       windowSeconds: 60,
@@ -85,7 +87,10 @@ export async function POST(request: Request) {
         log.error('find_login_email RPC error', rpcError);
       }
 
-      const matches = (rpcMatches ?? []) as Array<{ email: string; id?: string }>;
+      const matches = (rpcMatches ?? []) as Array<{
+        email: string;
+        id?: string;
+      }>;
       if (matches.length === 1) {
         targetEmail = matches[0].email;
       }
@@ -110,10 +115,18 @@ export async function POST(request: Request) {
 
     if (isLocalStudentEmail) {
       const resendApiKey = getResendApiKey();
+      if (!resendApiKey) {
+        // Sessiz düşme yok: admin, şifre talebinden haberdar edilemediğini
+        // logdan görür; öğrenciye yine jenerik yanıt döner (hesap sızdırmama).
+        log.warn(
+          'RESEND_API_KEY tanımsız: şifre talebi admin e-postasına iletilemedi',
+          { studentName },
+        );
+      }
       if (resendApiKey) {
         try {
           const resend = new Resend(resendApiKey);
-          const adminEmail = process.env.ADMIN_EMAIL || 'ugur@ugurhoca.com';
+          const adminEmail = process.env.ADMIN_EMAIL || ADMIN_EMAIL;
           await resend.emails.send({
             from: 'Uğur Hoca Platformu <noreply@resend.dev>',
             to: adminEmail,
@@ -131,7 +144,10 @@ export async function POST(request: Request) {
               </div>
             `,
           });
-          log.info('Admin notified via Resend for password reset', { studentName, targetEmail });
+          log.info('Admin notified via Resend for password reset', {
+            studentName,
+            targetEmail,
+          });
         } catch (mailErr) {
           log.warn('Resend notification failed', { error: String(mailErr) });
         }
@@ -151,7 +167,10 @@ export async function POST(request: Request) {
     if (resetError) {
       log.error('resetPasswordForEmail error', resetError);
       return NextResponse.json(
-        { error: 'Şifre sıfırlama bağlantısı gönderilemedi: ' + resetError.message },
+        {
+          error:
+            'Şifre sıfırlama bağlantısı gönderilemedi: ' + resetError.message,
+        },
         { status: 500 },
       );
     }

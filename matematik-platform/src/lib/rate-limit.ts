@@ -8,6 +8,29 @@ const url = process.env.UPSTASH_REDIS_REST_URL;
 const token = process.env.UPSTASH_REDIS_REST_TOKEN;
 const redis = url && token ? new Redis({ url, token }) : null;
 
+let missingConfigWarned = false;
+
+/** Upstash Redis yapılandırılmış mı? Health-check / admin teşhis için. */
+export function isRateLimitConfigured(): boolean {
+  return redis !== null;
+}
+
+function warnIfUnconfigured() {
+  if (redis || missingConfigWarned) {
+    return;
+  }
+  missingConfigWarned = true;
+  // Fail-closed prod'u kilitler (Upstash kurulmadan deploy kırılır), bu
+  // yüzden graceful degradation korunur — ama sessiz kalınmaz: prod'da tek
+  // seferlik yüksek görünürlüklü uyarı basılır.
+  if (process.env.NODE_ENV === 'production') {
+    console.warn(
+      '[rate-limit] UPSTASH_REDIS_REST_URL/TOKEN tanımsız: API rate limiting DEVRE DIŞI. ' +
+        'Kötüye kullanıma açıksınız — https://console.upstash.com adresinden ücretsiz Redis oluşturup env ekleyin.',
+    );
+  }
+}
+
 const limiters = new Map<string, Ratelimit>();
 
 function getLimiter(
@@ -27,7 +50,10 @@ function getLimiter(
 
   const limiter = new Ratelimit({
     redis,
-    limiter: Ratelimit.slidingWindow(limit, `${windowSeconds} s` as `${number} s`),
+    limiter: Ratelimit.slidingWindow(
+      limit,
+      `${windowSeconds} s` as `${number} s`,
+    ),
     prefix: `rl:${name}`,
     analytics: false,
   });
@@ -53,6 +79,7 @@ type RateLimitOptions = { limit: number; windowSeconds: number };
  * İstek limiti aşıldıysa hazır 429 yanıtı, aksi halde null döndürür.
  * Upstash env (UPSTASH_REDIS_REST_URL/TOKEN) tanımlı değilse limiter devre dışı
  * kalır ve null döner (graceful degradation) — Upstash kurulmadan prod kırılmaz.
+ * Bu durumda prod'da tek seferlik uyarı loglanır (warnIfUnconfigured).
  */
 export async function enforceRateLimit(
   name: string,
@@ -61,6 +88,7 @@ export async function enforceRateLimit(
 ): Promise<NextResponse | null> {
   const limiter = getLimiter(name, options.limit, options.windowSeconds);
   if (!limiter) {
+    warnIfUnconfigured();
     return null;
   }
 

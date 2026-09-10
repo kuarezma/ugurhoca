@@ -281,6 +281,7 @@ export function NumberPuzzle({ onScore, scoreMultiplier }: GameComponentProps) {
           value={input}
           onChange={(event) => setInput(event.target.value)}
           placeholder="Cevabını yaz..."
+          aria-label="Cevabın"
           // eslint-disable-next-line jsx-a11y/no-autofocus -- oyun karesi açıldığında cevap inputuna otomatik odak
           autoFocus
           className="flex-1 bg-slate-800 border border-slate-700 rounded-2xl px-6 py-4 text-white text-2xl font-bold text-center focus:outline-none focus:border-amber-500 transition-colors"

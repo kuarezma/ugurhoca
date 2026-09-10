@@ -6,10 +6,10 @@ const withBundleAnalyzer = require('@next/bundle-analyzer')({
 });
 
 const isProd = process.env.NODE_ENV === 'production';
-// Kademeli sertleştirme: 'unsafe-eval' kaldırıldı, frame-src daraltıldı ve ihlal
-// raporlaması eklendi. Politika hâlâ Report-Only — Vercel loglarındaki ihlaller
-// temiz çıkınca zorlamaya (Content-Security-Policy) geçilecek.
-const cspReportOnly = [
+// CSP ZORLAMADA (Content-Security-Policy): ihlaller /api/csp-report'a raporlanır.
+// 'unsafe-eval' kaldırıldı, frame-src daraltıldı. Gevşetme gerekiyorsa önce
+// report-uri loglarını incele, sonra bu listeyi genişlet.
+const cspEnforced = [
   "base-uri 'self'",
   "default-src 'self'",
   "font-src 'self' data:",
@@ -28,7 +28,7 @@ const cspReportOnly = [
 ].join('; ');
 
 const globalSecurityHeaders = [
-  { key: 'Content-Security-Policy', value: cspReportOnly },
+  { key: 'Content-Security-Policy', value: cspEnforced },
   { key: 'Reporting-Endpoints', value: 'csp-endpoint="/api/csp-report"' },
   { key: 'X-Content-Type-Options', value: 'nosniff' },
   { key: 'X-Frame-Options', value: 'DENY' },
@@ -43,7 +43,8 @@ const globalSecurityHeaders = [
   },
   {
     key: 'Permissions-Policy',
-    value: 'camera=(self), microphone=(self), display-capture=(self), geolocation=()',
+    value:
+      'camera=(self), microphone=(self), display-capture=(self), geolocation=()',
   },
 ];
 
@@ -90,11 +91,13 @@ const nextConfig = {
       },
       {
         // Tüm HTML rotaları: Anında yükleme ve arka planda bayatlık kontrolü (SWR)
-        source: '/((?!api|_next/static|_next/image|favicon.ico|icon.svg|icon-512.png|apple-icon.png).*)',
+        source:
+          '/((?!api|_next/static|_next/image|favicon.ico|icon.svg|icon-512.png|apple-icon.png).*)',
         headers: [
           {
             key: 'Cache-Control',
-            value: 'public, max-age=0, must-revalidate, stale-while-revalidate=60',
+            value:
+              'public, max-age=0, must-revalidate, stale-while-revalidate=60',
           },
         ],
       },

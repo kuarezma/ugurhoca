@@ -11,7 +11,10 @@ describe('LiveLessonCard', () => {
     description: 'Önemli yeni nesil soru çözümleri',
     target_grade: '8',
     target_student_ids: null,
-    starts_at: '2026-09-10T15:00:00.000Z',
+    // Sabit gelecek tarih: testin koştuğu güne göre "canlı" durumuna düşmemesi
+    // için. Eskiden 2026-09-10 yazıyordu — o gün gelince isLiveNow true olup
+    // 'Derse Giriş Yap' yerine 'Canlı Derse Katıl' render edildi (tarih bağımlı test).
+    starts_at: '2027-06-10T15:00:00.000Z',
     duration_minutes: 60,
     status: 'scheduled',
   };

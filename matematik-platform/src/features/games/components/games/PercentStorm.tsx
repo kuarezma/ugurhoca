@@ -337,6 +337,7 @@ export function PercentStorm({ onScore, scoreMultiplier }: GameComponentProps) {
           value={input}
           onChange={(e) => setInput(e.target.value)}
           placeholder="Cevap"
+          aria-label="Cevabın"
           // eslint-disable-next-line jsx-a11y/no-autofocus -- oyun ekranında hızlı giriş
           autoFocus
           className={`flex-1 rounded-2xl border border-slate-700 bg-slate-800 px-6 py-4 text-center text-2xl font-bold text-white transition-colors focus:border-cyan-500 focus:outline-none ${mathClass}`}

@@ -909,6 +909,7 @@ export function ExamScoreCalculatorModal({
                             max={sub.questions}
                             value={current.correct || ''}
                             placeholder="0"
+                            aria-label={`${sub.label} doğru sayısı`}
                             onChange={(e) => handleLgsChange(sub.key, 'correct', parseInt(e.target.value, 10), sub.questions)}
                             className="w-full min-w-0 rounded-lg sm:rounded-xl border border-slate-200 dark:border-white/10 bg-white dark:bg-slate-800 px-1 sm:px-2 py-1 sm:py-1.5 text-center text-xs sm:text-sm font-bold text-slate-900 dark:text-white focus:border-indigo-500 focus:outline-none"
                           />
@@ -920,6 +921,7 @@ export function ExamScoreCalculatorModal({
                             max={sub.questions}
                             value={current.wrong || ''}
                             placeholder="0"
+                            aria-label={`${sub.label} yanlış sayısı`}
                             onChange={(e) => handleLgsChange(sub.key, 'wrong', parseInt(e.target.value, 10), sub.questions)}
                             className="w-full min-w-0 rounded-lg sm:rounded-xl border border-slate-200 dark:border-white/10 bg-white dark:bg-slate-800 px-1 sm:px-2 py-1 sm:py-1.5 text-center text-xs sm:text-sm font-bold text-red-500 focus:border-red-500 focus:outline-none"
                           />
@@ -1254,6 +1256,7 @@ export function ExamScoreCalculatorModal({
                               min="0"
                               max={meta?.questions || 40}
                               placeholder="D"
+                              aria-label={`${meta?.label || 'Test'} doğru sayısı`}
                               value={current.correct || ''}
                               onChange={(e) => handleYksChange(key, 'correct', parseInt(e.target.value, 10), meta?.questions || 40)}
                               className="w-10 sm:w-12 rounded-lg border border-slate-200 dark:border-white/10 bg-white dark:bg-slate-800 p-1 text-center font-bold text-xs"
@@ -1263,6 +1266,7 @@ export function ExamScoreCalculatorModal({
                               min="0"
                               max={meta?.questions || 40}
                               placeholder="Y"
+                              aria-label={`${meta?.label || 'Test'} yanlış sayısı`}
                               value={current.wrong || ''}
                               onChange={(e) => handleYksChange(key, 'wrong', parseInt(e.target.value, 10), meta?.questions || 40)}
                               className="w-10 sm:w-12 rounded-lg border border-slate-200 dark:border-white/10 bg-white dark:bg-slate-800 p-1 text-center font-bold text-red-500 text-xs"
@@ -1299,6 +1303,7 @@ export function ExamScoreCalculatorModal({
                               min="0"
                               max={meta?.questions || 40}
                               placeholder="D"
+                              aria-label={`${meta?.label || 'Test'} doğru sayısı`}
                               value={current.correct || ''}
                               onChange={(e) => handleYksChange(key, 'correct', parseInt(e.target.value, 10), meta?.questions || 40)}
                               className="w-10 sm:w-12 rounded-lg border border-slate-200 dark:border-white/10 bg-white dark:bg-slate-800 p-1 text-center font-bold text-xs"
@@ -1308,6 +1313,7 @@ export function ExamScoreCalculatorModal({
                               min="0"
                               max={meta?.questions || 40}
                               placeholder="Y"
+                              aria-label={`${meta?.label || 'Test'} yanlış sayısı`}
                               value={current.wrong || ''}
                               onChange={(e) => handleYksChange(key, 'wrong', parseInt(e.target.value, 10), meta?.questions || 40)}
                               className="w-10 sm:w-12 rounded-lg border border-slate-200 dark:border-white/10 bg-white dark:bg-slate-800 p-1 text-center font-bold text-red-500 text-xs"

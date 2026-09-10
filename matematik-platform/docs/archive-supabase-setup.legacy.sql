@@ -1,3 +1,10 @@
+-- ######################################################################
+-- ARŞİV — ÇALIŞTIRMAYIN. Bu dosya eski bootstrap betiğidir; gevşek RLS
+-- politikaları içerir (örn. announcements insert/delete USING(true)).
+-- Tek doğruluk kaynağı: supabase/migrations/ (sıkı own-row + is_admin_email).
+-- Bu dosyayı Supabase'e uygularsanız güvenlik açığı açarsınız. Tarihçe için
+-- saklanır; 2026-09-10'da docs/ altına taşındı.
+-- ######################################################################
 -- ============================================
 -- announcements Tablosu
 -- ============================================

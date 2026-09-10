@@ -10,14 +10,17 @@ export interface PDFOptions {
 
 /**
  * Verilen HTML element ID'sini PDF'e dönüştürerek indirir.
- * @param elementId - PDF'e alınacak DOM elementinin ID'si
- * @param filename - İndirilecek dosyanın adı (.pdf uzantısı dahil)
- * @param options - Opsiyonel PDF ayarları
+ *
+ * NOT: html2canvas bakımsızdır (son stable 2022) ama yalnızca kullanıcı
+ * tetiklemesiyle dinamik import edilir — ana bundle'a girmez. Oklid dışı
+ * karmaşık stillerde render farkı çıkarırsa geçiş adayı: `html-to-image`
+ * (aktif, benzer API) veya server Puppeteer. Değişimde bu dosyanın imzası
+ * (generatePDF) korunmalı; 2 bileşen çağrı noktası + 3 dahili sarmalayıcı etkilenir.
  */
 export async function generatePDF(
   elementId: string,
   filename: string,
-  options: PDFOptions = {}
+  options: PDFOptions = {},
 ): Promise<void> {
   const [{ default: html2canvas }, { default: jsPDF }] = await Promise.all([
     import('html2canvas'),
@@ -80,19 +83,36 @@ export async function generatePDF(
         const pixelSlice = (sliceHeight / contentHeight) * canvas.height;
 
         sliceCanvas.width = canvas.width;
-        sliceCanvas.height = Math.min(pixelSlice, canvas.height - yOffset * (canvas.height / contentHeight));
+        sliceCanvas.height = Math.min(
+          pixelSlice,
+          canvas.height - yOffset * (canvas.height / contentHeight),
+        );
 
         sliceCtx.fillStyle = background;
         sliceCtx.fillRect(0, 0, sliceCanvas.width, sliceCanvas.height);
         sliceCtx.drawImage(
-          canvas, 0, yOffset * (canvas.height / contentHeight),
-          canvas.width, sliceCanvas.height,
-          0, 0, sliceCanvas.width, sliceCanvas.height
+          canvas,
+          0,
+          yOffset * (canvas.height / contentHeight),
+          canvas.width,
+          sliceCanvas.height,
+          0,
+          0,
+          sliceCanvas.width,
+          sliceCanvas.height,
         );
 
         const sliceData = sliceCanvas.toDataURL('image/png');
-        const sliceHeightMM = (sliceCanvas.height / canvas.height) * contentHeight;
-        pdf.addImage(sliceData, 'PNG', margin, margin, contentWidth, sliceHeightMM);
+        const sliceHeightMM =
+          (sliceCanvas.height / canvas.height) * contentHeight;
+        pdf.addImage(
+          sliceData,
+          'PNG',
+          margin,
+          margin,
+          contentWidth,
+          sliceHeightMM,
+        );
 
         remainingHeight -= sliceHeight;
         yOffset += sliceHeight;
@@ -110,10 +130,12 @@ export async function generatePDF(
       pdf.text(
         `Uğur Hoca Matematik Platformu  •  ugurhoca.com  •  ${new Date().toLocaleDateString('tr-TR')}`,
         margin,
-        pageHeight - 4
+        pageHeight - 4,
       );
       if (totalPages > 1) {
-        pdf.text(`${i} / ${totalPages}`, pageWidth - margin, pageHeight - 4, { align: 'right' });
+        pdf.text(`${i} / ${totalPages}`, pageWidth - margin, pageHeight - 4, {
+          align: 'right',
+        });
       }
     }
 
@@ -129,7 +151,7 @@ export function downloadQuizPDF(quizTitle: string) {
   return generatePDF(
     'quiz-result-pdf',
     `ugur-hoca-test-${quizTitle.replace(/\s+/g, '-').toLowerCase()}.pdf`,
-    { background: '#0f172a' }
+    { background: '#0f172a' },
   );
 }
 
@@ -138,7 +160,7 @@ export function downloadProgressPDF() {
   return generatePDF(
     'ilerleme-pdf-content',
     `ugur-hoca-gelisim-raporu-${new Date().toLocaleDateString('tr-TR').replace(/\./g, '-')}.pdf`,
-    { background: '#0f172a' }
+    { background: '#0f172a' },
   );
 }
 
@@ -147,6 +169,6 @@ export function downloadStudentListPDF() {
   return generatePDF(
     'admin-student-list-pdf',
     `ugur-hoca-ogrenci-listesi-${new Date().toLocaleDateString('tr-TR').replace(/\./g, '-')}.pdf`,
-    { background: '#0f172a', orientation: 'landscape' }
+    { background: '#0f172a', orientation: 'landscape' },
   );
 }

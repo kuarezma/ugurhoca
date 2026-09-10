@@ -22,8 +22,8 @@ Bu dosya, depo kökünde saklanan kalite yol haritasının kaynağıdır. Uygula
 ## Teknik temel (repo)
 
 - Next.js **16**, React **19**, Tailwind, Supabase: `matematik-platform/package.json`.
-- Kök layout ve meta: `matematik-platform/src/app/layout.tsx`; fontlar **`next/font`** (Poppins + Space Grotesk) + `globals.css` içinde `--font-poppins` / `--font-space-grotesk`.
-- PWA: `matematik-platform/public/manifest.json`, `public/sw.js`.
+- Kök layout ve meta: `matematik-platform/src/app/layout.tsx`; fontlar **`next/font`** (Poppins + Baloo_2) + `globals.css` içinde `--font-poppins` / `--font-display`.
+- PWA: `matematik-platform/src/app/manifest.ts` (tek kaynak; eski `public/manifest.json` 2026-09-10'da silindi), `public/sw.js`.
 - SEO: `matematik-platform/src/app/robots.ts`, `sitemap.ts`.
 
 ---
@@ -103,3 +103,12 @@ CI’da lint, typecheck, test; kritik akış testleri.
 Sonraki adımlar: Lighthouse / gerçek cihaz ölçümü, diğer sayfalarda `img`→`next/image`, güvenlik başlıkları (HSTS/CSP üretimde test), yasal sayfalar (içerik onayıyla).
 
 **GitHub CI / Secrets:** [matematik-platform/docs/GITHUB_CI.md](../matematik-platform/docs/GITHUB_CI.md)
+
+## Karar kaydı (10 Eylül 2026)
+
+- **Tasarım yasağı devam**: opus.md Faz1 (yeniden tasarım: palet/font/maskot değişimi) uygulanMAyacak. Bu dosyanın §"Sizin kriterleriniz" §2 bağlayıcı kalır — yalnızca teknik optimizasyon.
+- **CSP üretimde zorlamada**: `next.config.js` `Content-Security-Policy` başlığı gönderir (değişken adı `cspEnforced`).
+- **Sitemap `lastModified` kaldırıldı**: her build `new Date()` yazıyordu; gerçek tarih boru hattı kurulana kadar alan boş.
+- **OG görseli**: `src/app/opengraph-image.tsx` (1200x630) + `NEXT_PUBLIC_SITE_URL` override (`.env.example`).
+- **Contrast workflow konumu**: kök `.github/workflows/contrast.yml` (app altındaki ölü kopya taşındı).
+- **Tailwind v4 yükseltmesi ertelendi**: v3 çalışıyor; ayrı görevde ele alınacak.

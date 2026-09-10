@@ -1,4 +1,8 @@
-import { buildCanonicalUrl, createPageMetadata, SITE_URL } from '@/lib/site-metadata';
+import {
+  buildCanonicalUrl,
+  createPageMetadata,
+  SITE_URL,
+} from '@/lib/site-metadata';
 
 describe('site-metadata', () => {
   it('builds canonical urls from relative paths', () => {
@@ -20,7 +24,7 @@ describe('site-metadata', () => {
     expect(metadata.alternates?.canonical).toBe(`${SITE_URL}/testler`);
     expect(metadata.openGraph?.url).toBe(`${SITE_URL}/testler`);
     expect(twitter.card).toBe('summary_large_image');
-    expect(twitter.images).toContain(`${SITE_URL}/icon-512.png`);
+    expect(twitter.images).toContain(`${SITE_URL}/opengraph-image`);
   });
 
   it('marks noindex pages consistently for robots and googleBot', () => {

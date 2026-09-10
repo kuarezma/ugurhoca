@@ -1,8 +1,28 @@
 import ExcelJS from 'exceljs';
 import JSZip from 'jszip';
 
+// NOT: Bu modül admin önizlemesi için istemcide de dinamik import edilir
+// (AdminMainModal handleQuestionImportUpload). Bu yüzden exceljs+jszip admin
+// chunk'ına girer — bilinçli tercih: /admin zaten korumalı rota, parse yalnız
+// önizleme içindir, kayıt her zaman server API üzerinden olur. Public
+// bundle'a exceljs ekleyen import YASAK: yeni istemci kullanımı gerekiyorsa
+// önce server preview endpoint'i tercih et.
 const MAX_QUESTIONS = 30;
 const IMAGE_PREFIX = 'images/';
+// Güvenlik sınırları: admin-only import akışlarında bile zip-bomb / devasa
+// dosya ile sunucuyu kilitlememek için. Route katmanındaki limitlerle
+// (bkz. import-questions-bundle MAX_BUNDLE_BYTES) birlikte savunma sağlar.
+const MAX_EXCEL_BYTES = 5 * 1024 * 1024;
+const MAX_BUNDLE_BYTES = 20 * 1024 * 1024;
+const MAX_QUIZ_JSON_BYTES = 1 * 1024 * 1024;
+const MAX_BUNDLE_ASSETS = 120;
+const MAX_ASSET_BYTES = 5 * 1024 * 1024;
+const MAX_TOTAL_ASSET_BYTES = 20 * 1024 * 1024;
+const MAX_CELL_TEXT_LENGTH = 10_000;
+// Kötü niyetli dosyadaki milyon satırı taramamak için üst sınır. Normal
+// şablonlar zaten MAX_QUESTIONS (30) ile sınırlı.
+const MAX_SCANNED_DATA_ROWS = 500;
+const ALLOWED_IMAGE_EXTENSIONS = new Set(['png', 'jpg', 'jpeg', 'webp', 'gif']);
 
 export interface ParsedQuestion {
   question: string;
@@ -47,7 +67,12 @@ const TEMPLATE_MIME_TYPE =
   'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
 
 const getCellText = (row: ExcelJS.Row, column: number) =>
-  row.getCell(column).text.trim();
+  truncateCellText(row.getCell(column).text.trim());
+
+const truncateCellText = (value: string) =>
+  value.length > MAX_CELL_TEXT_LENGTH
+    ? value.slice(0, MAX_CELL_TEXT_LENGTH)
+    : value;
 
 const getHeaderIndexes = (row: ExcelJS.Row) => {
   const headerIndexes = new Map<string, number>();
@@ -64,7 +89,14 @@ const getHeaderIndexes = (row: ExcelJS.Row) => {
 };
 
 /** Excel dosyasını (ArrayBuffer) parse eder ve ImportResult döner */
-export async function parseExcelFile(buffer: ArrayBuffer): Promise<ImportResult> {
+export async function parseExcelFile(
+  buffer: ArrayBuffer,
+): Promise<ImportResult> {
+  assertBufferSize(
+    buffer,
+    MAX_EXCEL_BYTES,
+    'Excel dosyası en fazla 5 MB olabilir.',
+  );
   const workbook = new ExcelJS.Workbook();
   await workbook.xlsx.load(buffer);
 
@@ -109,6 +141,7 @@ export async function parseExcelFile(buffer: ArrayBuffer): Promise<ImportResult>
   const headerIndexes = getHeaderIndexes(soruSheet.getRow(1));
   const valid: ParsedQuestion[] = [];
   const errors: { row: number; message: string }[] = [];
+  let scannedDataRows = 0;
 
   soruSheet.eachRow({ includeEmpty: false }, (row, rowNumber) => {
     if (rowNumber === 1) {
@@ -118,6 +151,15 @@ export async function parseExcelFile(buffer: ArrayBuffer): Promise<ImportResult>
     const q = getCellText(row, headerIndexes.get('Soru') || 1);
 
     if (!q) return;
+
+    scannedDataRows += 1;
+    if (scannedDataRows > MAX_SCANNED_DATA_ROWS) {
+      errors.push({
+        row: rowNumber,
+        message: `Dosyada çok fazla satır var. İlk ${MAX_SCANNED_DATA_ROWS} satır işlendi, kalanı atlandı.`,
+      });
+      return;
+    }
 
     if (valid.length >= MAX_QUESTIONS) {
       errors.push({
@@ -139,8 +181,10 @@ export async function parseExcelFile(buffer: ArrayBuffer): Promise<ImportResult>
 
     const msgs: string[] = [];
 
-    if (!a || !b || !c || !d) msgs.push('A, B, C veya D şıkları boş bırakılamaz');
-    if (!(correctRaw in CORRECT_MAP)) msgs.push('Doğru cevap A, B, C veya D olmalıdır');
+    if (!a || !b || !c || !d)
+      msgs.push('A, B, C veya D şıkları boş bırakılamaz');
+    if (!(correctRaw in CORRECT_MAP))
+      msgs.push('Doğru cevap A, B, C veya D olmalıdır');
 
     if (msgs.length > 0) {
       errors.push({ row: rowNumber, message: msgs.join(' | ') });
@@ -178,6 +222,7 @@ export async function parseQuizBundleArchive(
   buffer: ArrayBuffer,
   options?: { createPreviewUrls?: boolean; fileName?: string },
 ): Promise<ParsedQuizBundle> {
+  assertBufferSize(buffer, MAX_BUNDLE_BYTES, 'ZIP dosyası çok büyük.');
   const zip = await JSZip.loadAsync(buffer);
   const quizFile = zip.file('quiz.json');
 
@@ -186,6 +231,9 @@ export async function parseQuizBundleArchive(
   }
 
   const quizJson = await quizFile.async('text');
+  if (quizJson.length > MAX_QUIZ_JSON_BYTES) {
+    throw new Error('quiz.json dosyası çok büyük.');
+  }
   let parsed: {
     meta?: Record<string, unknown>;
     questions?: unknown[];
@@ -209,8 +257,11 @@ export async function parseQuizBundleArchive(
   const valid: ParsedQuestion[] = [];
   const errors: { row: number; message: string }[] = [];
   const rawQuestions = Array.isArray(parsed.questions) ? parsed.questions : [];
+  // Yanıt şişmesini önlemek için en fazla MAX_QUESTIONS + 1 kayıt işlenir;
+  // fazlası tek özet hatayla bildirilir.
+  const questionsToProcess = rawQuestions.slice(0, MAX_QUESTIONS + 1);
 
-  rawQuestions.forEach((rawQuestion, index) => {
+  questionsToProcess.forEach((rawQuestion, index) => {
     const row = index + 1;
 
     if (valid.length >= MAX_QUESTIONS) {
@@ -259,6 +310,13 @@ export async function parseQuizBundleArchive(
 
     valid.push(question);
   });
+
+  if (rawQuestions.length > questionsToProcess.length) {
+    errors.push({
+      row: questionsToProcess.length + 1,
+      message: `Maksimum ${MAX_QUESTIONS} soru sınırına ulaşıldı. Kalan ${rawQuestions.length - questionsToProcess.length} kayıt atlandı.`,
+    });
+  }
 
   return {
     assetFiles,
@@ -335,19 +393,23 @@ export function downloadExcelTemplate(): void {
   });
 }
 
-const normalizeBundleMeta = (rawMeta: Record<string, unknown>): ParsedQuizMeta => {
+const normalizeBundleMeta = (
+  rawMeta: Record<string, unknown>,
+): ParsedQuizMeta => {
   const rawGrade = Number(rawMeta.grade || 0);
   const rawTime = Number(rawMeta.time_limit || 0);
   const rawDifficulty = String(rawMeta.difficulty || 'Orta').trim();
 
   return {
-    description: String(rawMeta.description || '').trim(),
+    description: truncateCellText(String(rawMeta.description || '').trim()),
     difficulty: VALID_DIFFICULTIES.includes(rawDifficulty)
       ? (rawDifficulty as ParsedQuizMeta['difficulty'])
       : 'Orta',
     grade: rawGrade >= 5 && rawGrade <= 12 ? rawGrade : 5,
     time_limit: rawTime > 0 && rawTime <= 180 ? rawTime : 20,
-    title: String(rawMeta.title || 'İsimsiz Test').trim() || 'İsimsiz Test',
+    title:
+      truncateCellText(String(rawMeta.title || 'İsimsiz Test').trim()) ||
+      'İsimsiz Test',
   };
 };
 
@@ -357,12 +419,14 @@ const normalizeBundleQuestion = (rawQuestion: unknown): ParsedQuestion => {
       ? (rawQuestion as Record<string, unknown>)
       : {};
   const options = Array.isArray(record.options)
-    ? record.options.map((option) => String(option || '').trim())
+    ? record.options.map((option) =>
+        truncateCellText(String(option || '').trim()),
+      )
     : [];
 
   return {
     correct_index: Number(record.correct_index),
-    explanation: String(record.explanation || '').trim(),
+    explanation: truncateCellText(String(record.explanation || '').trim()),
     option_image_files: normalizeOptionImageFiles(record.option_image_files),
     options: [
       options[0] || '',
@@ -370,7 +434,7 @@ const normalizeBundleQuestion = (rawQuestion: unknown): ParsedQuestion => {
       options[2] || '',
       options[3] || '',
     ],
-    question: String(record.question || '').trim(),
+    question: truncateCellText(String(record.question || '').trim()),
     question_image_files: normalizeStringArray(record.question_image_files),
   };
 };
@@ -389,7 +453,8 @@ const normalizeStringArray = (value: unknown): string[] => {
   }
 
   return value
-    .map((item) => String(item || '').trim())
+    .slice(0, 10)
+    .map((item) => truncateCellText(String(item || '').trim()).slice(0, 200))
     .filter(Boolean);
 };
 
@@ -408,27 +473,70 @@ const normalizeOptionImageFiles = (
 
 const loadBundleAssets = async (zip: JSZip) => {
   const assetFiles = new Map<string, QuizBundleAsset>();
+  let totalAssetBytes = 0;
 
-  await Promise.all(
-    Object.values(zip.files).map(async (entry) => {
-      if (entry.dir || !entry.name.startsWith(IMAGE_PREFIX)) {
-        return;
-      }
+  // Sıralı işlem: zip-bomb durumunda erken çıkış için sayaçlar her dosyada
+  // kontrol edilir (Promise.all ile paralel şişirme yok).
+  for (const entry of Object.values(zip.files)) {
+    if (entry.dir || !entry.name.startsWith(IMAGE_PREFIX)) {
+      continue;
+    }
 
-      const bytes = new Uint8Array(await entry.async('uint8array'));
-      const fileName = entry.name.slice(IMAGE_PREFIX.length);
-      const asset = {
-        bytes,
-        contentType: guessImageContentType(fileName),
-        fileName,
-      };
+    assertSafeAssetPath(entry.name);
 
-      assetFiles.set(fileName, asset);
-      assetFiles.set(entry.name, asset);
-    }),
-  );
+    if (assetFiles.size >= MAX_BUNDLE_ASSETS * 2) {
+      throw new Error(
+        `ZIP içinde çok fazla görsel var (en fazla ${MAX_BUNDLE_ASSETS}).`,
+      );
+    }
+
+    const bytes = new Uint8Array(await entry.async('uint8array'));
+    if (bytes.byteLength > MAX_ASSET_BYTES) {
+      throw new Error(
+        `Görsel dosyası çok büyük: ${entry.name} (en fazla 5 MB).`,
+      );
+    }
+    totalAssetBytes += bytes.byteLength;
+    if (totalAssetBytes > MAX_TOTAL_ASSET_BYTES) {
+      throw new Error('ZIP içindeki görsellerin toplam boyutu çok büyük.');
+    }
+
+    const fileName = entry.name.slice(IMAGE_PREFIX.length);
+    const asset = {
+      bytes,
+      contentType: guessImageContentType(fileName),
+      fileName,
+    };
+
+    assetFiles.set(fileName, asset);
+    assetFiles.set(entry.name, asset);
+  }
 
   return assetFiles;
+};
+
+// ZIP girdilerinde dizin dışına taşma (`../`, mutlak yol, sürücü harfi)
+// engellenir. JSZip diske yazmaz ama `images/../../x` gibi anahtarlar
+// resolveAsset eşleşmelerini ve storage yolunu kirletebilirdi.
+const assertSafeAssetPath = (entryName: string) => {
+  const normalized = entryName.replace(/\\/g, '/');
+  if (
+    normalized.includes('..') ||
+    normalized.startsWith('/') ||
+    /^[a-zA-Z]:\//.test(normalized)
+  ) {
+    throw new Error(`ZIP içinde geçersiz dosya yolu: ${entryName}`);
+  }
+};
+
+const assertBufferSize = (
+  buffer: ArrayBuffer,
+  maxBytes: number,
+  message: string,
+) => {
+  if (buffer.byteLength > maxBytes) {
+    throw new Error(message);
+  }
 };
 
 const createAssetPreviewUrls = (
@@ -467,6 +575,15 @@ const resolveAsset = (
 const guessImageContentType = (fileName: string) => {
   const extension = fileName.split('.').pop()?.toLowerCase();
 
+  // SVG bilerek desteklenmez: public bucket'a yüklenen SVG doğrudan
+  // açıldığında içindeki script çalışır (stored XSS). Dönüştürücü çıktısı
+  // PNG/JPEG/WebP/GIF kullanır.
+  if (extension === 'svg') {
+    throw new Error(
+      `Desteklenmeyen görsel türü (SVG güvenlik nedeniyle engelli): ${fileName}`,
+    );
+  }
+
   switch (extension) {
     case 'jpg':
     case 'jpeg':
@@ -475,9 +592,16 @@ const guessImageContentType = (fileName: string) => {
       return 'image/webp';
     case 'gif':
       return 'image/gif';
-    case 'svg':
-      return 'image/svg+xml';
     default:
+      // Uzantısız dosya adı (nokta yoksa) PNG sayılır; bilinmeyen uzantılı
+      // dosyalar engellenir (yanlış content-type ile serve edilmesin).
+      if (
+        extension &&
+        fileName.includes('.') &&
+        !ALLOWED_IMAGE_EXTENSIONS.has(extension)
+      ) {
+        throw new Error(`Desteklenmeyen görsel türü: ${fileName}`);
+      }
       return 'image/png';
   }
 };

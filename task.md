@@ -68,7 +68,11 @@ Bu dosya, projenin tamamlanmış ve devam eden görevlerini özetler.
 - [x] Realtime entegrasyonu yapıldı
 - [x] Admin Panel UI eklendi
 
-### 9. Premium Mükemmelleştirmeler (V2)
+### 9. Deneyim Mükemmelleştirmeleri (V2)
+
+> Not (2026-09-10): Eski başlık "Premium ..." idi. Buradaki "premium" yalnızca
+> kalite çıtası anlamındadır; site.md gereği ücretli paket/abonelik/ödeme yoktur.
+> Karışıklığı önlemek için başlık değiştirildi, içerik aynı.
 
 - [x] Test Sistemi V2 (konfeti, zaman sayacı, analiz arayüzü)
 - [x] Ödev Teslim V2 (drag & drop, yükleme çubuğu, star rating)
@@ -203,7 +207,7 @@ Bu dosya, projenin tamamlanmış ve devam eden görevlerini özetler.
 - [x] `ChatBubbleLoader` admin/page.tsx'e eklendi
 - [x] Artık sadece admin sayfasında chat balonu görünecek
 
-### 16. Premium Öğrenci Dashboard UI/UX İyileştirmesi (10 Nisan 2026)
+### 16. Öğrenci Dashboard UI/UX İyileştirmesi (10 Nisan 2026)
 
 - [x] `DashboardHero` devasa, modern glassmorphism banner'a çevrildi ve `ContinueCard` Hero'ya CTA (Call to Action) olarak dahil edildi.
 - [x] `QuickActionGrid` büyük kartlardan zarif ve ince yatay düğmelere çevrildi, hiyerarşi rahatlatıldı.
@@ -327,6 +331,20 @@ Bu dosya, projenin tamamlanmış ve devam eden görevlerini özetler.
 - [x] **Sekme Geçişleri Performans Optimizasyonu:** `MobileBottomNav` 5 ana sekmesine arka plan prefetch ve anlık optimistik aktiflik göstergesi getirildi; `AdminTabPanels` ve `ProfilePage` üzerinde `<AnimatePresence mode="wait">` blokajı kaldırılarak visited-tabs keep-alive ve CSS `hidden` toggle yapısına geçildi; `AdminStatistics` için 60s bellek önbelleği eklendi (0ms sekme geçişi).
 - [x] **Platform Genel Hız & Akıcılık Motoru:** `SafeLink` ile niyet-bazlı prefetch (`pointerenter`/`touchstart`) ve native View Transitions API entegrasyonu; `TestsPage` üzerindeki 7 ağır modalın `dynamic` import ile sayfa açılışından ayrıştırılması; `ContentCard` için `React.memo` ve CSS `content-visibility: auto` sanallaştırması; `ContentsPage` üzerinde React 19 `startTransition` eşzamanlı render kontrolü ve mobil GPU `backdrop-blur` optimizasyonu tamamlandı.
 
+### 25–26. Sekme Keep-Alive & Prefetch Derinleştirme (progress.md kaydı)
+
+- [x] progress.md §25 (sekme keep-alive) ve §26 (SafeLink prefetch + dynamic modal + memo + content-visibility) tamamlandı olarak işlendi; bu maddeler task.md'de ayrı başlık açmadan burada kapatıldı (çift kayıt önlenir).
+- Sayı yöntemi (tek kaynak): test dosyası = `find matematik-platform/src -name "*.test.*" | wc -l`; rota = `next build` çıktısı. progress.md'deki eski sayılar (167 dosya/614 test) tarihsel kayıttır, güncel sayım build/test çıktısından okunur.
+
+### 27. Güvenlik & Kalite Sertleştirme (10 Eylül 2026)
+
+- [x] Import hardening: ZIP/XLSX/CSV boyut-satır-hücre sınırları, SVG engeli, yol geçişi koruması, yükleme boyutu kontrolü (`question-import.ts`, `annual-plan-import.ts`, `import-questions-bundle/route.ts`, `AdminMainModal.tsx`)
+- [x] Rate-limit prod uyarısı (`rate-limit.ts`), CSP enforce yorumu düzeltmesi (`next.config.js`)
+- [x] `supabase-setup.sql` arşive taşındı (`docs/archive-supabase-setup.legacy.sql`), admin allowlist belgelendi, Resend eksik-anahtar uyarısı, pdf-export geçiş notu
+- [x] SEO: 1200x630 `opengraph-image.tsx`, manifest tekilleştirme, sitemap `lastModified` gürültüsü kaldırma, `NEXT_PUBLIC_SITE_URL` override
+- [x] A11y: oyun/modal input `aria-label`leri, `admin/error.tsx` + `canli-ders/error.tsx` segment sınırları
+- [x] CI: `contrast.yml` köke taşındı + `working-directory` düzeltmesi, Lighthouse 4 URL, Playwright mobil proje + html rapor, coverage eşikleri güncellendi, `test:fast` eklendi
+
 ---
 
-_Son güncelleme: 6 Eylül 2026 — Platform genel hız motoru, niyet-bazlı prefetch, dynamic modal ayrıştırması, React.memo & content-visibility sanallaştırması ve mobil GPU optimizasyonu tamamlandı._
+_Son güncelleme: 10 Eylül 2026 — §27 güvenlik & kalite sertleştirme tamamlandı (typecheck+lint+test+build sıfır hata hedefiyle)._

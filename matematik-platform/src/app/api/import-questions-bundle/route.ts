@@ -44,13 +44,10 @@ export async function POST(request: Request) {
     }
 
     const { buffer, fileName, previewOnly } = filePayload;
-    const archive = await parseQuizBundleArchive(
-      buffer,
-      {
-        createPreviewUrls: previewOnly,
-        fileName,
-      },
-    );
+    const archive = await parseQuizBundleArchive(buffer, {
+      createPreviewUrls: previewOnly,
+      fileName,
+    });
 
     if (archive.importResult.valid.length === 0) {
       return apiError(
@@ -73,7 +70,11 @@ export async function POST(request: Request) {
     if (error instanceof Error && isBundleInputError(error.message)) {
       return apiError(error.message, 400, 'invalid_bundle_payload');
     }
-    return apiError('Bundle içe aktarımı sırasında sunucu hatası oluştu.', 500, 'quiz_bundle_import_failed');
+    return apiError(
+      'Bundle içe aktarımı sırasında sunucu hatası oluştu.',
+      500,
+      'quiz_bundle_import_failed',
+    );
   }
 }
 
@@ -86,10 +87,12 @@ const getBundlePayloadFromRequest = async (
 } | null> => {
   const contentType = request.headers.get('content-type')?.toLowerCase() || '';
   if (contentType.includes('application/json')) {
-    const payload = (await request.json().catch(() => null)) as
-      | { bundle_url?: unknown; preview?: unknown }
-      | null;
-    const bundleUrl = typeof payload?.bundle_url === 'string' ? payload.bundle_url.trim() : '';
+    const payload = (await request.json().catch(() => null)) as {
+      bundle_url?: unknown;
+      preview?: unknown;
+    } | null;
+    const bundleUrl =
+      typeof payload?.bundle_url === 'string' ? payload.bundle_url.trim() : '';
     if (!bundleUrl) {
       return null;
     }
@@ -113,13 +116,8 @@ const getBundlePayloadFromRequest = async (
   }
 
   const bundleName =
-    typeof bundleFile.name === 'string'
-      ? bundleFile.name
-      : 'quiz-bundle.zip';
-  const bundleType =
-    typeof bundleFile.type === 'string'
-      ? bundleFile.type
-      : '';
+    typeof bundleFile.name === 'string' ? bundleFile.name : 'quiz-bundle.zip';
+  const bundleType = typeof bundleFile.type === 'string' ? bundleFile.type : '';
 
   if (
     !bundleName.toLowerCase().endsWith('.zip') &&
@@ -128,8 +126,15 @@ const getBundlePayloadFromRequest = async (
     throw new Error('Yalnızca ZIP bundle dosyası yükleyebilirsiniz.');
   }
 
+  const buffer = await bundleFile.arrayBuffer();
+  // URL yolundaki MAX_BUNDLE_BYTES kontrolünün yükleme karşılığı:
+  // devasa ZIP ile sunucu belleğini şişirme.
+  if (buffer.byteLength > MAX_BUNDLE_BYTES) {
+    throw new Error('ZIP dosyası çok büyük.');
+  }
+
   return {
-    buffer: await bundleFile.arrayBuffer(),
+    buffer,
     fileName: bundleName,
     previewOnly: false,
   };
@@ -230,6 +235,9 @@ const isBundleInputError = (message: string) =>
   message.includes('Eksik görsel') ||
   message.includes('izinli değil') ||
   message.includes('özel ağ') ||
+  message.includes('Desteklenmeyen') ||
+  message.includes('geçersiz dosya yolu') ||
+  message.includes('çok fazla') ||
   message.includes('çok büyük');
 
 const parseAllowlist = (raw: string | undefined) =>
@@ -272,7 +280,11 @@ const isPrivateOrLocalHost = (host: string) => {
     );
   }
   if (ipKind === 6) {
-    return lowerHost === '::1' || lowerHost.startsWith('fc') || lowerHost.startsWith('fd');
+    return (
+      lowerHost === '::1' ||
+      lowerHost.startsWith('fc') ||
+      lowerHost.startsWith('fd')
+    );
   }
   return false;
 };

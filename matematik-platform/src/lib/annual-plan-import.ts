@@ -11,7 +11,12 @@ const REQUIRED_COLUMNS = [
 
 const HEADER_ALIASES: Record<string, string[]> = {
   aciklama: ['aciklama', 'aciklamalar', 'not', 'notlar'],
-  hafta_baslangic: ['haftabaslangic', 'haftabaslangici', 'baslangic', 'weekstart'],
+  hafta_baslangic: [
+    'haftabaslangic',
+    'haftabaslangici',
+    'baslangic',
+    'weekstart',
+  ],
   hafta_bitis: ['haftabitis', 'haftabitisi', 'bitis', 'weekend'],
   tarih_araligi: ['tarih', 'tarihler', 'haftatarihi', 'sure', 'süre'],
   kazanim: [
@@ -59,10 +64,25 @@ export type AnnualPlanParseResult = {
 
 type RawCell = string | number | Date | null | undefined;
 
+// Güvenlik sınırları: admin-only akışta bile devasa dosyayla sunucuyu
+// kilitlememek için. Route katmanındaki 5 MB kontrolüne ek savunma.
+const MAX_PLAN_FILE_BYTES = 5 * 1024 * 1024;
+const MAX_PLAN_ROWS = 2000;
+const MAX_PLAN_CELL_LENGTH = 10_000;
+
 export async function parseAnnualPlanFile(
   buffer: ArrayBuffer,
   fileName: string,
 ): Promise<AnnualPlanParseResult> {
+  if (buffer.byteLength > MAX_PLAN_FILE_BYTES) {
+    return {
+      errors: [
+        { row: 1, message: 'Yıllık plan dosyası en fazla 5 MB olabilir.' },
+      ],
+      rows: [],
+      skippedDuplicates: 0,
+    };
+  }
   const lowerName = fileName.toLocaleLowerCase('tr');
   const defaultGrade = parseGrade(fileName);
   const rawRows = await readAnnualPlanRawRows(buffer, fileName);
@@ -93,10 +113,9 @@ export async function parseAnnualPlanFile(
     errors: [
       {
         row: 1,
-        message:
-          lowerName.endsWith('.doc')
-            ? "Eski DOC dosyası desteklenmez. Word'de DOCX olarak kaydedip yükleyin."
-            : 'Yalnızca CSV, XLSX veya DOCX yıllık plan dosyası yükleyebilirsiniz.',
+        message: lowerName.endsWith('.doc')
+          ? "Eski DOC dosyası desteklenmez. Word'de DOCX olarak kaydedip yükleyin."
+          : 'Yalnızca CSV, XLSX veya DOCX yıllık plan dosyası yükleyebilirsiniz.',
       },
     ],
     rows: [],
@@ -144,7 +163,10 @@ export async function readAnnualPlanRawRows(
 
 export function parseAnnualPlanRows(
   rows: RawCell[][],
-  options: { academicStartYear?: number | null; defaultGrade?: number | null } = {},
+  options: {
+    academicStartYear?: number | null;
+    defaultGrade?: number | null;
+  } = {},
 ): AnnualPlanParseResult {
   const headerRowIndex = rows.findIndex((row) =>
     row.some((cell) => toCellText(cell).trim().length > 0),
@@ -192,7 +214,19 @@ export function parseAnnualPlanRows(
   const seenKeys = new Set<string>();
   let skippedDuplicates = 0;
 
-  for (let rowIndex = headerRowIndex + 1; rowIndex < rows.length; rowIndex += 1) {
+  // Kötü niyetli dosyadaki on binlerce satırı işlememek için üst sınır.
+  // Normal yıllık planlar birkaç yüz satırı geçmez.
+  const lastRowIndex = Math.min(
+    rows.length,
+    headerRowIndex + 1 + MAX_PLAN_ROWS,
+  );
+  const truncated = rows.length > lastRowIndex;
+
+  for (
+    let rowIndex = headerRowIndex + 1;
+    rowIndex < lastRowIndex;
+    rowIndex += 1
+  ) {
     const row = rows[rowIndex] ?? [];
 
     if (!row || row.every((cell) => toCellText(cell).trim().length === 0)) {
@@ -203,7 +237,10 @@ export function parseAnnualPlanRows(
     const dateRange =
       headers.tarih_araligi === undefined
         ? null
-        : parseDateRangeCell(row[headers.tarih_araligi], options.academicStartYear);
+        : parseDateRangeCell(
+            row[headers.tarih_araligi],
+            options.academicStartYear,
+          );
     const grade =
       headers.sinif === undefined
         ? (options.defaultGrade ?? null)
@@ -233,11 +270,17 @@ export function parseAnnualPlanRows(
     }
 
     if (!grade) {
-      errors.push({ row: rowNumber, message: 'Geçersiz sınıf. Sınıf 5 ile 12 arasında olmalı.' });
+      errors.push({
+        row: rowNumber,
+        message: 'Geçersiz sınıf. Sınıf 5 ile 12 arasında olmalı.',
+      });
     }
 
     if (!weekStart) {
-      errors.push({ row: rowNumber, message: 'Geçersiz hafta başlangıç tarihi.' });
+      errors.push({
+        row: rowNumber,
+        message: 'Geçersiz hafta başlangıç tarihi.',
+      });
     }
 
     if (!weekEnd) {
@@ -245,7 +288,10 @@ export function parseAnnualPlanRows(
     }
 
     if (weekStart && weekEnd && weekStart > weekEnd) {
-      errors.push({ row: rowNumber, message: 'Hafta başlangıcı, hafta bitişinden sonra olamaz.' });
+      errors.push({
+        row: rowNumber,
+        message: 'Hafta başlangıcı, hafta bitişinden sonra olamaz.',
+      });
     }
 
     if (!subject) {
@@ -256,7 +302,14 @@ export function parseAnnualPlanRows(
       errors.push({ row: rowNumber, message: 'Kazanım alanı boş olamaz.' });
     }
 
-    if (!grade || !weekStart || !weekEnd || !subject || !learningOutcome || weekStart > weekEnd) {
+    if (
+      !grade ||
+      !weekStart ||
+      !weekEnd ||
+      !subject ||
+      !learningOutcome ||
+      weekStart > weekEnd
+    ) {
       continue;
     }
 
@@ -277,7 +330,18 @@ export function parseAnnualPlanRows(
     });
   }
 
-  return { errors, rows: errors.length > 0 ? [] : resultRows, skippedDuplicates };
+  if (truncated) {
+    errors.push({
+      row: lastRowIndex + 1,
+      message: `Dosyada çok fazla satır var. İlk ${MAX_PLAN_ROWS} satır işlendi.`,
+    });
+  }
+
+  return {
+    errors,
+    rows: errors.length > 0 ? [] : resultRows,
+    skippedDuplicates,
+  };
 }
 
 function decodeBuffer(buffer: ArrayBuffer) {
@@ -341,6 +405,11 @@ function parseCsvRows(text: string): RawCell[][] {
       rows.push(row);
       row = [];
       current = '';
+      // Satır üst sınırı: CSV okuma sırasında erken dur (MAX_PLAN_ROWS +
+      // başlık payı). Kalan metin işlenmez.
+      if (rows.length > MAX_PLAN_ROWS + 10) {
+        break;
+      }
       continue;
     }
 
@@ -352,7 +421,13 @@ function parseCsvRows(text: string): RawCell[][] {
     rows.push(row);
   }
 
-  return rows;
+  return rows.map((csvRow) =>
+    csvRow.map((cell) =>
+      cell.length > MAX_PLAN_CELL_LENGTH
+        ? cell.slice(0, MAX_PLAN_CELL_LENGTH)
+        : cell,
+    ),
+  );
 }
 
 async function parseDocxTableRows(buffer: ArrayBuffer): Promise<RawCell[][]> {
@@ -363,7 +438,9 @@ async function parseDocxTableRows(buffer: ArrayBuffer): Promise<RawCell[][]> {
     return [];
   }
 
-  const tableMatches = Array.from(documentXml.matchAll(/<w:tbl[\s\S]*?<\/w:tbl>/g));
+  const tableMatches = Array.from(
+    documentXml.matchAll(/<w:tbl[\s\S]*?<\/w:tbl>/g),
+  );
   const tables = tableMatches
     .map((match) => parseDocxRowsFromTable(match[0]))
     .filter((tableRows) => tableRows.length > 0);
@@ -378,8 +455,8 @@ async function parseDocxTableRows(buffer: ArrayBuffer): Promise<RawCell[][]> {
 function parseDocxRowsFromTable(tableXml: string): RawCell[][] {
   return Array.from(tableXml.matchAll(/<w:tr[\s\S]*?<\/w:tr>/g))
     .map((rowMatch) =>
-      Array.from(rowMatch[0].matchAll(/<w:tc[\s\S]*?<\/w:tc>/g)).map((cellMatch) =>
-        extractDocxCellText(cellMatch[0]),
+      Array.from(rowMatch[0].matchAll(/<w:tc[\s\S]*?<\/w:tc>/g)).map(
+        (cellMatch) => extractDocxCellText(cellMatch[0]),
       ),
     )
     .filter((row) => row.some((cell) => cell.trim().length > 0));
@@ -388,7 +465,9 @@ function parseDocxRowsFromTable(tableXml: string): RawCell[][] {
 function extractDocxCellText(cellXml: string) {
   const paragraphTexts = Array.from(cellXml.matchAll(/<w:p[\s\S]*?<\/w:p>/g))
     .map((paragraphMatch) =>
-      Array.from(paragraphMatch[0].matchAll(/<w:t(?:\s[^>]*)?>([\s\S]*?)<\/w:t>/g))
+      Array.from(
+        paragraphMatch[0].matchAll(/<w:t(?:\s[^>]*)?>([\s\S]*?)<\/w:t>/g),
+      )
         .map((textMatch) => decodeXmlText(textMatch[1] || ''))
         .join(''),
     )
@@ -445,7 +524,10 @@ function toCellText(value: RawCell) {
     return '';
   }
 
-  return String(value);
+  const text = String(value);
+  return text.length > MAX_PLAN_CELL_LENGTH
+    ? text.slice(0, MAX_PLAN_CELL_LENGTH)
+    : text;
 }
 
 function cleanImportedText(value: RawCell) {
@@ -495,12 +577,20 @@ function parseDateCell(value: RawCell) {
 
   const isoMatch = text.match(/^(\d{4})-(\d{1,2})-(\d{1,2})$/);
   if (isoMatch) {
-    return buildDateString(Number(isoMatch[1]), Number(isoMatch[2]), Number(isoMatch[3]));
+    return buildDateString(
+      Number(isoMatch[1]),
+      Number(isoMatch[2]),
+      Number(isoMatch[3]),
+    );
   }
 
   const trMatch = text.match(/^(\d{1,2})[./](\d{1,2})[./](\d{4})$/);
   if (trMatch) {
-    return buildDateString(Number(trMatch[3]), Number(trMatch[2]), Number(trMatch[1]));
+    return buildDateString(
+      Number(trMatch[3]),
+      Number(trMatch[2]),
+      Number(trMatch[1]),
+    );
   }
 
   return null;
@@ -611,9 +701,14 @@ function parseTurkishMonth(value: string) {
   return months[normalized] ?? 0;
 }
 
-function inferAcademicYearForMonth(month: number, providedAcademicStartYear?: number | null) {
+function inferAcademicYearForMonth(
+  month: number,
+  providedAcademicStartYear?: number | null,
+) {
   if (providedAcademicStartYear) {
-    return month >= 8 ? providedAcademicStartYear : providedAcademicStartYear + 1;
+    return month >= 8
+      ? providedAcademicStartYear
+      : providedAcademicStartYear + 1;
   }
 
   const now = new Date();
@@ -647,7 +742,11 @@ function formatDate(date: Date) {
 }
 
 function normalizeExcelCellValue(value: ExcelJS.CellValue): RawCell {
-  if (value instanceof Date || typeof value === 'number' || typeof value === 'string') {
+  if (
+    value instanceof Date ||
+    typeof value === 'number' ||
+    typeof value === 'string'
+  ) {
     return value;
   }
 
