@@ -46,7 +46,7 @@ const writeAuthSnapshotCookie = (snapshot: AuthSnapshot | null) => {
   document.cookie = `${AUTH_SNAPSHOT_COOKIE_NAME}=${serializeAuthSnapshot(snapshot)}; path=/; max-age=${AUTH_SNAPSHOT_MAX_AGE}; samesite=lax${secure}`;
 };
 
-const writeAccessTokenCookie = (accessToken: string | null) => {
+export const writeAccessTokenCookie = (accessToken: string | null) => {
   if (typeof document === 'undefined') {
     return;
   }
@@ -85,8 +85,22 @@ const redirectToPath = (href: string, router?: RouterLike) => {
   }
 };
 
-export const redirectToLogin = (router?: RouterLike) => {
-  redirectToPath('/giris', router);
+export const redirectToLogin = (router?: RouterLike, redirectTarget?: string) => {
+  const target =
+    redirectTarget ||
+    (typeof window !== 'undefined'
+      ? window.location.pathname + window.location.search
+      : '');
+  const isValidTarget =
+    target &&
+    target.startsWith('/') &&
+    !target.startsWith('//') &&
+    target !== '/' &&
+    !target.startsWith('/giris');
+  const loginPath = isValidTarget
+    ? `/giris?redirect=${encodeURIComponent(target)}`
+    : '/giris';
+  redirectToPath(loginPath, router);
 };
 
 export const redirectToHome = (router?: RouterLike) => {

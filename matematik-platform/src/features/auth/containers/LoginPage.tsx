@@ -6,7 +6,12 @@ import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { ArrowLeft, Eye, EyeOff, ShieldCheck, Sparkles } from 'lucide-react';
 import { supabase } from '@/lib/supabase/client';
-import { getClientSession } from '@/lib/auth-client';
+import {
+  clearUserProfileCache,
+  getClientSession,
+  syncCurrentUserSnapshotCookie,
+  writeAccessTokenCookie,
+} from '@/lib/auth-client';
 import { normalizeFullNameForMatch } from '@/lib/student-identity';
 import { loginSchema } from '@/lib/validation/auth';
 import { createLogger } from '@/lib/logger';
@@ -15,6 +20,21 @@ import { Input } from '@/components/ui/Input';
 import { Button } from '@/components/ui/Button';
 
 const log = createLogger('login-page');
+
+const getTargetRedirect = () => {
+  if (typeof window === 'undefined') return '/profil';
+  const searchParams = new URLSearchParams(window.location.search);
+  const redirect = searchParams.get('redirect');
+  if (
+    redirect &&
+    redirect.startsWith('/') &&
+    !redirect.startsWith('//') &&
+    !redirect.startsWith('/giris')
+  ) {
+    return redirect;
+  }
+  return '/profil';
+};
 
 export default function LoginPage() {
   const [formData, setFormData] = useState({
@@ -31,7 +51,10 @@ export default function LoginPage() {
     const checkSession = async () => {
       const session = await getClientSession();
       if (session) {
-        router.push('/profil');
+        if (session.access_token) {
+          writeAccessTokenCookie(session.access_token);
+        }
+        router.push(getTargetRedirect());
       }
     };
     checkSession();
@@ -82,14 +105,21 @@ export default function LoginPage() {
         return;
       }
 
-      const { error: signInError } = await supabase.auth.signInWithPassword({
-        email: profileMatches[0].email,
-        password: parsed.data.password,
-      });
+      const { data: signInData, error: signInError } =
+        await supabase.auth.signInWithPassword({
+          email: profileMatches[0].email,
+          password: parsed.data.password,
+        });
 
       if (signInError) throw signInError;
 
-      router.push('/profil');
+      clearUserProfileCache();
+      if (signInData?.session?.access_token) {
+        writeAccessTokenCookie(signInData.session.access_token);
+      }
+      await syncCurrentUserSnapshotCookie();
+
+      router.push(getTargetRedirect());
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : String(err);
       log.warn('Login failure', { message: msg });

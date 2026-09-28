@@ -15,6 +15,11 @@ import { motion } from 'framer-motion';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase/client';
 import {
+  clearUserProfileCache,
+  syncCurrentUserSnapshotCookie,
+  writeAccessTokenCookie,
+} from '@/lib/auth-client';
+import {
   formatSignupError,
   normalizeFullNameForMatch,
   studentLoginEmail,
@@ -148,6 +153,12 @@ export default function RegisterPage() {
           created_at: new Date().toISOString(),
         });
         if (profileErr) throw profileErr;
+      }
+
+      clearUserProfileCache();
+      if (data.session?.access_token) {
+        writeAccessTokenCookie(data.session.access_token);
+        void syncCurrentUserSnapshotCookie();
       }
 
       setSuccess(true);

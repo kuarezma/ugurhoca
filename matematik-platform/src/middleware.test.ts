@@ -15,7 +15,7 @@ describe('middleware', () => {
     const response = middleware(buildRequest('/profil'));
 
     expect(response.status).toBe(307);
-    expect(response.headers.get('location')).toBe('https://ugurhoca.com/giris');
+    expect(response.headers.get('location')).toBe('https://ugurhoca.com/giris?redirect=%2Fprofil');
   });
 
   it('oturum çerezi varsa korunan rotayı olduğu gibi geçirir', () => {
@@ -27,13 +27,13 @@ describe('middleware', () => {
   it('admin rotasını da aynı şekilde korur', () => {
     const response = middleware(buildRequest('/admin'));
 
-    expect(response.headers.get('location')).toBe('https://ugurhoca.com/giris');
+    expect(response.headers.get('location')).toBe('https://ugurhoca.com/giris?redirect=%2Fadmin');
   });
 
   it('anonim ziyaretçiye tüm eski bekleme-odası rotalarında yönlendirme uygular', () => {
     for (const path of ['/testler', '/oyunlar', '/meydan-okuma', '/odak-pomodoro', '/odevler', '/ilerleme', '/canli-ders']) {
       const response = middleware(buildRequest(path));
-      expect(response.headers.get('location')).toBe('https://ugurhoca.com/giris');
+      expect(response.headers.get('location')).toBe(`https://ugurhoca.com/giris?redirect=${encodeURIComponent(path)}`);
     }
   });
 });

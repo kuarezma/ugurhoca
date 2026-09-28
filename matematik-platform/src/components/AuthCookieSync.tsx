@@ -3,7 +3,9 @@
 import { useEffect } from 'react';
 import {
   clearClientAuthSnapshotCookie,
+  clearUserProfileCache,
   syncCurrentUserSnapshotCookie,
+  writeAccessTokenCookie,
 } from '@/lib/auth-client';
 import { supabase } from '@/lib/supabase/client';
 
@@ -22,7 +24,7 @@ export default function AuthCookieSync() {
 
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange((event) => {
+    } = supabase.auth.onAuthStateChange((event, session) => {
       if (event === 'SIGNED_OUT') {
         if (syncTimeout) clearTimeout(syncTimeout);
         clearClientAuthSnapshotCookie();
@@ -35,6 +37,10 @@ export default function AuthCookieSync() {
         event === 'TOKEN_REFRESHED' ||
         event === 'USER_UPDATED'
       ) {
+        clearUserProfileCache();
+        if (session?.access_token) {
+          writeAccessTokenCookie(session.access_token);
+        }
         scheduleSync();
       }
     });

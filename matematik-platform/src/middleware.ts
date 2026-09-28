@@ -26,7 +26,12 @@ export function middleware(request: NextRequest) {
   );
 
   if (!hasSession) {
-    return NextResponse.redirect(new URL('/giris', request.url));
+    const redirectUrl = new URL('/giris', request.url);
+    const target = request.nextUrl.pathname + request.nextUrl.search;
+    if (target && target !== '/' && target !== '/giris') {
+      redirectUrl.searchParams.set('redirect', target);
+    }
+    return NextResponse.redirect(redirectUrl);
   }
 
   return NextResponse.next();
