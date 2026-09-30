@@ -3,8 +3,8 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { ActiveLiveLessonBadge } from './ActiveLiveLessonBadge';
 
 vi.mock('@/components/SafeLink', () => ({
-  SafeLink: (props: React.AnchorHTMLAttributes<HTMLAnchorElement>) => (
-    <a {...props} />
+  SafeLink: ({ children, ...props }: React.AnchorHTMLAttributes<HTMLAnchorElement>) => (
+    <a {...props}>{children}</a>
   ),
 }));
 
