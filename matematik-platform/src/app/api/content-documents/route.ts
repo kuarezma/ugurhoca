@@ -1,3 +1,4 @@
+import { revalidatePath, revalidateTag } from 'next/cache';
 import { apiError, apiOk } from '@/lib/api-response';
 import { isAdminEmail } from '@/lib/admin';
 import { createLogger } from '@/lib/logger';
@@ -70,6 +71,8 @@ export async function POST(request: Request) {
       );
     }
 
+    revalidateTag('content-documents', { expire: 0 });
+    revalidatePath('/icerikler');
     return apiOk((data || null) as ContentDocument | null);
   } catch (error) {
     log.error('Content document route failed', error);

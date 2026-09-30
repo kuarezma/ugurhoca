@@ -239,6 +239,15 @@ type ContentsPageProps = {
   initialType?: string;
 };
 
+// URL okuması yalnızca bu görünmez bileşeni askıya alır; içerik HTML'de kalır.
+function ContentUrlFilters({ onChange }: { onChange: (params: URLSearchParams) => void }) {
+  const searchParams = useSearchParams();
+  useEffect(() => {
+    onChange(new URLSearchParams(searchParams.toString()));
+  }, [onChange, searchParams]);
+  return null;
+}
+
 function ContentsPageInner({
   initialDocuments = [],
   initialGrade = 'all',
@@ -247,7 +256,7 @@ function ContentsPageInner({
 }: ContentsPageProps) {
   const router = useRouter();
   const pathname = usePathname();
-  const searchParams = useSearchParams();
+  const [searchParams, setSearchParams] = useState(() => new URLSearchParams());
   const { showToast } = useToast();
   const requestedTypeFromUrl = searchParams.get('type') || 'all';
   const typeFromUrl =
@@ -436,6 +445,12 @@ function ContentsPageInner({
   }, [initialDocuments, initialGrade, initialTotalCount, initialType]);
 
   useEffect(() => {
+    if (worksheetGradeFromUrl) {
+      setSelectedGrade(normalizeContentGrade(worksheetGradeFromUrl));
+    }
+  }, [worksheetGradeFromUrl]);
+
+  useEffect(() => {
     if (typeFromUrl !== selectedType) {
       setSelectedType(typeFromUrl);
     }
@@ -545,9 +560,11 @@ function ContentsPageInner({
 
 
   useEffect(() => {
+    let disposed = false;
     const checkSession = async () => {
       try {
         const resolvedUser = await resolveContentUser();
+        if (disposed) return;
 
         if (!resolvedUser) {
           setUser(null);
@@ -555,17 +572,19 @@ function ContentsPageInner({
         }
 
         setUser(resolvedUser);
-        setSelectedGrade(
-          resolvedUser.isAdmin
-            ? 'all'
-            : normalizeContentGrade(String(resolvedUser.grade)),
-        );
+        // Açık URL filtresi, öğrencinin varsayılan sınıfından önce gelir.
+        if (!new URLSearchParams(window.location.search).get('grade')) {
+          setSelectedGrade(
+            resolvedUser.isAdmin ? 'all' : normalizeContentGrade(resolvedUser.grade),
+          );
+        }
       } finally {
-        setAuthResolved(true);
+        if (!disposed) setAuthResolved(true);
       }
     };
 
     void checkSession();
+    return () => { disposed = true; };
   }, []);
 
 
@@ -1391,6 +1410,9 @@ function ContentsPageInner({
 
   return (
     <main className="page-surface icerikler-page min-h-screen gradient-bg pb-20">
+      <Suspense fallback={null}>
+        <ContentUrlFilters onChange={setSearchParams} />
+      </Suspense>
       <nav className="fixed top-0 left-0 right-0 z-50 bg-surface-0/95 backdrop-blur-md border-b border-default py-3 sm:py-4 px-4 sm:px-6 xl:px-8">
         <div className="max-w-[1760px] mx-auto flex justify-between items-center gap-3">
           <Link href="/" className="flex items-center gap-2.5 min-w-0">

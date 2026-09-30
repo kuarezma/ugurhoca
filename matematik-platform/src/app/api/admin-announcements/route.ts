@@ -1,3 +1,4 @@
+import { revalidatePath, revalidateTag } from 'next/cache';
 import { apiError, apiOk } from '@/lib/api-response';
 import { requireAdmin } from '@/lib/api-auth';
 import {
@@ -9,6 +10,11 @@ import { createLogger } from '@/lib/logger';
 import { enforceRateLimit } from '@/lib/rate-limit';
 
 const log = createLogger('admin-announcements');
+
+const invalidateAnnouncements = () => {
+  revalidateTag('home-announcements', { expire: 0 });
+  revalidatePath('/');
+};
 
 const normalizeAnnouncementPayload = (
   payload: Partial<{
@@ -74,6 +80,8 @@ export async function POST(request: Request) {
     log.error('Announcement insert failed', error);
     return apiError('Duyuru kaydedilemedi.', 500, 'announcement_insert_failed');
   }
+
+  invalidateAnnouncements();
 
   if (parsed.data.recipient_user_ids.length > 0) {
     const { error: notificationError } = await auth.serviceRole
@@ -141,6 +149,7 @@ export async function PATCH(request: Request) {
     return apiError('Duyuru güncellenemedi.', 500, 'announcement_update_failed');
   }
 
+  invalidateAnnouncements();
   return apiOk(data);
 }
 
@@ -185,5 +194,6 @@ export async function DELETE(request: Request) {
     return apiError('Duyuru bulunamadı.', 404, 'announcement_not_found');
   }
 
+  invalidateAnnouncements();
   return apiOk({ ok: true });
 }

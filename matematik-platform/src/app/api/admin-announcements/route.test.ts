@@ -1,4 +1,5 @@
 import { POST } from '@/app/api/admin-announcements/route';
+import { revalidatePath, revalidateTag } from 'next/cache';
 import { getServerAccessToken } from '@/lib/auth-snapshot.server';
 import {
   createServerSupabaseClient,
@@ -13,6 +14,8 @@ vi.mock('@/lib/supabase/server', () => ({
   createServerSupabaseClient: vi.fn(),
   createServiceRoleClient: vi.fn(),
 }));
+
+vi.mock('next/cache', () => ({ revalidatePath: vi.fn(), revalidateTag: vi.fn() }));
 
 describe('POST /api/admin-announcements', () => {
   beforeEach(() => {
@@ -87,6 +90,8 @@ describe('POST /api/admin-announcements', () => {
     }
 
     expect(response.status).toBe(200);
+    expect(revalidateTag).toHaveBeenCalledWith('home-announcements', { expire: 0 });
+    expect(revalidatePath).toHaveBeenCalledWith('/');
     expect(getServerAccessToken).toHaveBeenCalledTimes(1);
     expect(createServerSupabaseClient).toHaveBeenCalledWith('cookie-token');
     await expect(response.json()).resolves.toEqual({

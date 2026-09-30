@@ -1,13 +1,13 @@
 import 'server-only';
 
 import { hasSupabasePublicEnv } from '@/lib/env.server';
-import { createServerSupabaseClient } from '@/lib/supabase/server';
+import { createCachedPublicSupabaseClient } from '@/lib/supabase/server';
 import { resolveYandexPublicDownloadUrl } from '@/lib/yandex-public-download';
 import type { HomeInitialFeed } from '@/features/home/home-initial-feed';
 import type { Announcement } from '@/types';
 
 async function fetchAnnouncementsServer(
-  supabase: ReturnType<typeof createServerSupabaseClient>,
+  supabase: ReturnType<typeof createCachedPublicSupabaseClient>,
 ) {
   const { data } = await supabase
     .from('announcements')
@@ -61,7 +61,7 @@ export async function loadInitialHomeFeed(): Promise<HomeInitialFeed> {
     return { announcements: [] };
   }
 
-  const supabase = createServerSupabaseClient();
+  const supabase = createCachedPublicSupabaseClient('home-announcements');
 
   // Not: Burada eskiden `documents` listesi ve dört adet `count: 'exact'` sayımı
   // (students/quizzes/documents/assignments) da çekiliyordu. Exact count Postgres’te

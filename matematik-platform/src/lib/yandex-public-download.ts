@@ -26,7 +26,10 @@ const inFlightResolutions = new Map<string, Promise<string>>();
 async function fetchResolvedUrl(url: string): Promise<string> {
   const res = await fetch(
     `https://cloud-api.yandex.net/v1/disk/public/resources/download?public_key=${encodeURIComponent(url)}`,
-    { cache: 'no-store', signal: AbortSignal.timeout(RESOLVE_TIMEOUT_MS) },
+    {
+      next: { revalidate: 1800 },
+      signal: AbortSignal.timeout(RESOLVE_TIMEOUT_MS),
+    },
   );
 
   const data = (await res.json()) as { href?: string };

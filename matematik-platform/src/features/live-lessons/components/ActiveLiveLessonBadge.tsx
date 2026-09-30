@@ -1,18 +1,43 @@
-import { loadActiveLiveLessonForCurrentUser } from '@/features/live-lessons/server/liveLessons';
+'use client';
+
+import { useEffect, useState } from 'react';
 import { SafeLink } from '@/components/SafeLink';
 
-/**
- * Ana sayfadaki "şu an ders var" rozeti.
- *
- * Kendi verisini çeken bir sunucu bileşeni olarak ayrıldı: aktif ders sorgusu
- * kimlik doğrulaması gerektiriyor (Supabase auth.getUser + profiles = iki ağ
- * gidiş-dönüşü) ve daha önce bu maliyet ana sayfanın TTFB'sine ekleniyordu.
- * Artık `<Suspense>` içinde stream ediliyor: sayfanın HTML'i duyuru sorgusu
- * biter bitmez akmaya başlıyor, rozet hazır olduğunda ekleniyor. Rozet `fixed`
- * konumlandığı için sonradan gelmesi düzen kaymasına yol açmaz.
- */
-export async function ActiveLiveLessonBadge() {
-  const activeLiveLesson = await loadActiveLiveLessonForCurrentUser();
+type ActiveLesson = { room_id: string; title: string };
+
+// Kişisel veri HTML önbelleğinden ayrı yüklenir; fixed rozet yer kaplamaz.
+export function ActiveLiveLessonBadge({ userId }: { userId?: string }) {
+  const [result, setResult] = useState<{
+    userId: string;
+    lesson: ActiveLesson | null;
+  } | null>(null);
+
+  useEffect(() => {
+    if (!userId) return;
+    const controller = new AbortController();
+
+    const loadLesson = async () => {
+      try {
+        const response = await fetch('/api/live-lessons/active', {
+          cache: 'no-store',
+          credentials: 'same-origin',
+          signal: controller.signal,
+        });
+        if (!response.ok) return;
+        const data = (await response.json()) as { lesson: ActiveLesson | null };
+        if (!controller.signal.aborted) {
+          setResult({ userId, lesson: data.lesson });
+        }
+      } catch {
+        // Rozetin yüklenememesi ana sayfanın kullanımını engellemez.
+      }
+    };
+
+    void loadLesson();
+    return () => controller.abort();
+  }, [userId]);
+
+  const activeLiveLesson = result?.userId === userId ? result?.lesson : null;
 
   if (!activeLiveLesson) {
     return null;

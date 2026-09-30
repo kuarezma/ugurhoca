@@ -9,7 +9,7 @@ vi.mock('@/lib/env.server', () => ({
 }));
 
 vi.mock('@/lib/supabase/server', () => ({
-  createServerSupabaseClient: () => ({
+  createCachedPublicSupabaseClient: () => ({
     from: mockFrom,
   }),
 }));
@@ -71,9 +71,12 @@ describe('loadInitialHomeFeed', () => {
 
   it('Supabase env yoksa boş akış döner', async () => {
     vi.resetModules();
-    vi.doMock('@/lib/env.server', () => ({ hasSupabasePublicEnv: () => false }));
+    vi.doMock('@/lib/env.server', () => ({
+      hasSupabasePublicEnv: () => false,
+    }));
 
-    const { loadInitialHomeFeed: loadWithoutEnv } = await import('./loadHomeFeed');
+    const { loadInitialHomeFeed: loadWithoutEnv } =
+      await import('./loadHomeFeed');
     await expect(loadWithoutEnv()).resolves.toEqual({ announcements: [] });
 
     vi.doUnmock('@/lib/env.server');

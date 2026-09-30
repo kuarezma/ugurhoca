@@ -10,6 +10,7 @@ import { HomeHeroSection } from '@/features/home/components/HomeHeroSection';
 import { HomeNavbar } from '@/features/home/components/HomeNavbar';
 import { HomeSupportSection } from '@/features/home/components/HomeSupportSection';
 import { useHomePageData } from '@/features/home/hooks/useHomePageData';
+import { ActiveLiveLessonBadge } from '@/features/live-lessons/components/ActiveLiveLessonBadge';
 
 const ExamScoreCalculatorModal = dynamic(
   () =>
@@ -108,10 +109,9 @@ type HomePageProps = {
    * slot olarak geçilir; böylece rozetin gerektirdiği kimlik doğrulama
    * (auth.getUser + profiles) ana sayfanın ilk boyamasını bekletmez.
    */
-  liveLessonSlot?: ReactNode;
 };
 
-export default function HomePage({ announcementsSlot, liveLessonSlot }: HomePageProps) {
+export default function HomePage({ announcementsSlot }: HomePageProps) {
   const { theme } = useTheme();
   const isLight = theme === 'light';
   const [isFlashcardsOpen, setIsFlashcardsOpen] = useState(false);
@@ -198,7 +198,7 @@ export default function HomePage({ announcementsSlot, liveLessonSlot }: HomePage
       }`}
     >
       <HomeNavbar user={user} onLogout={handleLogout} />
-      {liveLessonSlot}
+      <ActiveLiveLessonBadge userId={user?.id} />
       <div className="pt-[calc(4.5rem+env(safe-area-inset-top))] md:pt-20">
         {/* 1. Karşılama Ekranı (Hero - Hızlı Erişim ve Açılır 12 Araç Kartı) */}
         <HomeHeroSection
