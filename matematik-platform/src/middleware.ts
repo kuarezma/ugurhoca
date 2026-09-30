@@ -21,6 +21,11 @@ import { AUTH_ACCESS_TOKEN_COOKIE_NAME } from '@/lib/auth-snapshot';
 // `config.matcher` zaten hangi rotalarda çalışacağını sınırlar; bu fonksiyon
 // yalnızca eşleşen istekler için çağrılır. İkisini senkron tutun.
 export function middleware(request: NextRequest) {
+  if (/%5c|\\/i.test(request.nextUrl.pathname)) {
+    // Bozuk yolu yönlendirmeden normal 404 sayfasına taşı; sayfa çözümleyicisine ulaşmasın.
+    return NextResponse.rewrite(new URL('/_not-found', request.url), { status: 404 });
+  }
+
   const hasSession = Boolean(
     request.cookies.get(AUTH_ACCESS_TOKEN_COOKIE_NAME)?.value,
   );
@@ -39,6 +44,7 @@ export function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
+    '/(.*(?:%5[Cc]|\\\\).*)',
     '/profil/:path*',
     '/odevler/:path*',
     '/ilerleme/:path*',

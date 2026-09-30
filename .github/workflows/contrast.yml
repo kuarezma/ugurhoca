@@ -20,6 +20,18 @@ jobs:
       - name: Depoyu al
         uses: actions/checkout@v4
 
+      - name: Gerekli secret değerlerini doğrula
+        shell: bash
+        run: |
+          missing=0
+          for name in NEXT_PUBLIC_SUPABASE_URL NEXT_PUBLIC_SUPABASE_ANON_KEY; do
+            if [[ -z "${!name}" ]]; then
+              echo "::error::Missing secret $name. Add it in Settings > Secrets and variables > Actions."
+              missing=1
+            fi
+          done
+          exit "$missing"
+
       - name: Node kur
         uses: actions/setup-node@v4
         with:
