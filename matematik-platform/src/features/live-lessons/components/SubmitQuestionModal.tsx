@@ -83,7 +83,7 @@ export function SubmitQuestionModal({
       role="dialog"
       aria-modal="true"
       aria-label="Canlı Derse Soru Gönder"
-      className="fixed inset-0 z-[140] flex items-center justify-center bg-slate-950/80 p-3 sm:p-4 backdrop-blur-md overflow-y-auto"
+      className="fixed inset-0 z-[140] flex items-center justify-center bg-slate-950/80 dark:bg-slate-950/80 p-3 sm:p-4 backdrop-blur-md overflow-y-auto"
     >
       <div
         className={`relative w-full max-w-lg overflow-hidden rounded-3xl border shadow-2xl transition-all my-auto ${
@@ -151,7 +151,7 @@ export function SubmitQuestionModal({
                 <button
                   type="button"
                   onClick={handleReset}
-                  className="px-5 py-2 rounded-xl text-xs font-bold bg-indigo-600 hover:bg-indigo-500 text-white shadow-md transition"
+                  className="px-5 py-2 rounded-xl text-xs font-bold bg-indigo-600 hover:bg-indigo-500 text-white dark:text-white shadow-md transition"
                 >
                   Tamam, Kapat
                 </button>

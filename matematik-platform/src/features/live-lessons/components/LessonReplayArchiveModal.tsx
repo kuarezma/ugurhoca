@@ -157,7 +157,7 @@ export function LessonReplayArchiveModal({
         {/* Header */}
         <div className="flex items-center justify-between border-b border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-slate-950/80 px-4 sm:px-6 py-3 sm:py-4">
           <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
-            <div className="flex h-9 w-9 sm:h-10 sm:w-10 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-rose-500 to-indigo-600 text-white shadow-md">
+            <div className="flex h-9 w-9 sm:h-10 sm:w-10 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-rose-500 to-indigo-600 text-white dark:text-white shadow-md">
               <Video className="h-5 w-5" />
             </div>
             <div className="min-w-0">
@@ -185,7 +185,7 @@ export function LessonReplayArchiveModal({
           {/* Sol / Ana Alan: Video Oynatıcı & Zaman Damgalı Bölümler (2 Kolon) */}
           <div className="lg:col-span-2 p-4 sm:p-6 space-y-5">
             {/* Simüle Edilmiş Video Oynatıcı Sahnesi */}
-            <div className="relative rounded-2xl overflow-hidden bg-slate-950 border border-white/15 aspect-video flex flex-col justify-between p-4 shadow-inner">
+            <div className="relative rounded-2xl overflow-hidden bg-slate-950 dark:bg-slate-950 border border-white/15 aspect-video flex flex-col justify-between p-4 shadow-inner">
               {/* Oynatıcı Üst Bar */}
               <div className="flex items-center justify-between text-xs text-white/80 z-10">
                 <span className="rounded-lg bg-black/60 px-2.5 py-1 font-bold backdrop-blur-md">
@@ -202,7 +202,7 @@ export function LessonReplayArchiveModal({
                   type="button"
                   onClick={() => setIsPlaying((p) => !p)}
                   aria-label={isPlaying ? 'Dersi Duraklat' : 'Dersi Oynat'}
-                  className="flex h-16 w-16 items-center justify-center rounded-full bg-rose-500/90 hover:bg-rose-500 text-white shadow-2xl shadow-rose-500/50 hover:scale-110 transition-transform"
+                  className="flex h-16 w-16 items-center justify-center rounded-full bg-rose-500/90 hover:bg-rose-500 text-white dark:text-white shadow-2xl shadow-rose-500/50 hover:scale-110 transition-transform"
                 >
                   {isPlaying ? (
                     <Pause className="h-8 w-8 fill-white" />
@@ -306,7 +306,7 @@ export function LessonReplayArchiveModal({
                 onClick={() => {
                   alert('Tahta notları PDF olarak indiriliyor.');
                 }}
-                className="inline-flex items-center gap-1.5 rounded-xl bg-indigo-600 px-3 py-1.5 font-bold text-white shadow-md hover:bg-indigo-500 transition"
+                className="inline-flex items-center gap-1.5 rounded-xl bg-indigo-600 px-3 py-1.5 font-bold text-white dark:text-white shadow-md hover:bg-indigo-500 transition"
               >
                 <Download className="h-3.5 w-3.5" />
                 <span>Tahta Notlarını İndir (PDF)</span>

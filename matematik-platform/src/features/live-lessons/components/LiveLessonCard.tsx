@@ -141,7 +141,7 @@ export function LiveLessonCard({
           <div className="min-w-0 flex-1">
             <div className="flex flex-wrap items-center gap-2">
               {isActuallyLive ? (
-                <span className="inline-flex items-center gap-1.5 rounded-full bg-rose-500 px-2.5 py-0.5 text-xs font-bold text-white shadow-sm animate-pulse">
+                <span className="inline-flex items-center gap-1.5 rounded-full bg-rose-500 px-2.5 py-0.5 text-xs font-bold text-white dark:text-white shadow-sm animate-pulse">
                   <Radio className="h-3 w-3" /> CANLI YAYIN
                 </span>
               ) : isCancelled ? (

@@ -271,7 +271,7 @@ export function RoomLobbyPreview({
           type="button"
           onClick={onJoin}
           disabled={connecting}
-          className="flex min-h-12 w-full items-center justify-center gap-2 rounded-2xl bg-brand-primary py-3.5 text-base font-bold text-white shadow-lg shadow-brand-primary/30 transition-all duration-200 hover:bg-brand-primary-deep active:scale-98 disabled:opacity-50"
+          className="flex min-h-12 w-full items-center justify-center gap-2 rounded-2xl bg-brand-primary py-3.5 text-base font-bold text-white dark:text-white shadow-lg shadow-brand-primary/30 transition-all duration-200 hover:bg-brand-primary-deep active:scale-98 disabled:opacity-50"
         >
           {connecting ? (
             <span>Odaya Bağlanılıyor...</span>

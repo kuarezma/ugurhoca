@@ -88,7 +88,7 @@ export function TeacherQuestionPoolModal({
       role="dialog"
       aria-modal="true"
       aria-label="Öğrenci Soru Havuzu Masası"
-      className="fixed inset-0 z-[140] flex items-center justify-center bg-slate-950/80 p-3 sm:p-4 backdrop-blur-md overflow-y-auto"
+      className="fixed inset-0 z-[140] flex items-center justify-center bg-slate-950/80 dark:bg-slate-950/80 p-3 sm:p-4 backdrop-blur-md overflow-y-auto"
     >
       <div
         className={`relative w-full max-w-3xl overflow-hidden rounded-3xl border shadow-2xl transition-all my-auto max-h-[90vh] flex flex-col ${
@@ -229,7 +229,7 @@ export function TeacherQuestionPoolModal({
 
                   {/* Varsa Görsel */}
                   {q.image_url && (
-                    <div className="relative h-32 w-full max-w-sm mb-3 overflow-hidden rounded-xl border border-white/10 bg-slate-900">
+                    <div className="relative h-32 w-full max-w-sm mb-3 overflow-hidden rounded-xl border border-white/10 bg-slate-900 dark:bg-slate-900">
                       <Image
                         src={q.image_url}
                         alt="Öğrenci Soru Görseli"
@@ -263,7 +263,7 @@ export function TeacherQuestionPoolModal({
                         <button
                           type="button"
                           onClick={() => handleResolve(q.id)}
-                          className="px-3 py-1.5 rounded-xl text-xs font-bold bg-emerald-600 hover:bg-emerald-500 text-white flex items-center gap-1 transition"
+                          className="px-3 py-1.5 rounded-xl text-xs font-bold bg-emerald-600 hover:bg-emerald-500 text-white dark:text-white flex items-center gap-1 transition"
                         >
                           <CheckCircle2 className="h-3 w-3" />
                           <span>Çözüldü</span>

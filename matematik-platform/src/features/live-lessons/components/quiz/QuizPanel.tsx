@@ -384,7 +384,7 @@ export function QuizPanel({
           <button
             type="button"
             onClick={() => void sendQuestion()}
-            className="touch-target flex-1 rounded-xl bg-accent px-4 py-3 text-sm font-medium text-white hover:bg-accent-muted"
+            className="touch-target flex-1 rounded-xl bg-accent px-4 py-3 text-sm font-medium text-white dark:text-white hover:bg-accent-muted"
           >
             Soruyu gönder
           </button>

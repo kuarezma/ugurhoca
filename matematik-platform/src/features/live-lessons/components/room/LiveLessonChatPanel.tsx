@@ -85,7 +85,7 @@ export function LiveLessonChatPanel({ lessonId }: Props) {
           type="button"
           onClick={() => void sendMessage()}
           disabled={sending || !text.trim()}
-          className="rounded-lg bg-brand-primary px-3 text-sm font-semibold text-white disabled:opacity-50"
+          className="rounded-lg bg-brand-primary px-3 text-sm font-semibold text-white dark:text-white disabled:opacity-50"
         >
           Gönder
         </button>

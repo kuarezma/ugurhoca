@@ -400,7 +400,7 @@ export function LiveLessonsPage({ initialLessons, students, user }: Props) {
                   <button
                     type="button"
                     onClick={() => setIsPlanFormOpen((v) => !v)}
-                    className="inline-flex min-h-11 items-center gap-2 rounded-xl bg-brand-primary px-4 py-2.5 text-xs sm:text-sm font-bold text-white shadow-lg shadow-brand-primary/25 transition-all duration-200 hover:bg-brand-primary-deep active:scale-95"
+                    className="inline-flex min-h-11 items-center gap-2 rounded-xl bg-brand-primary px-4 py-2.5 text-xs sm:text-sm font-bold text-white dark:text-white shadow-lg shadow-brand-primary/25 transition-all duration-200 hover:bg-brand-primary-deep active:scale-95"
                   >
                     <Plus className="h-4 w-4" />
                     <span>Ders Planla</span>
@@ -666,7 +666,7 @@ export function LiveLessonsPage({ initialLessons, students, user }: Props) {
                 <button
                   type="submit"
                   disabled={saving || (targetGrade === 'selected' && selectedStudentIds.length === 0)}
-                  className="rounded-xl bg-brand-primary px-6 py-2.5 text-xs sm:text-sm font-bold text-white shadow-md hover:bg-brand-primary-deep disabled:opacity-50"
+                  className="rounded-xl bg-brand-primary px-6 py-2.5 text-xs sm:text-sm font-bold text-white dark:text-white shadow-md hover:bg-brand-primary-deep disabled:opacity-50"
                 >
                   {saving ? 'Planlanıyor...' : 'Dersi Takvime Ekle'}
                 </button>
@@ -779,7 +779,7 @@ export function LiveLessonsPage({ initialLessons, students, user }: Props) {
                 <button
                   type="button"
                   onClick={() => setIsPlanFormOpen(true)}
-                  className="mt-4 inline-flex items-center gap-2 rounded-xl bg-brand-primary px-4 py-2 text-xs font-bold text-white hover:bg-brand-primary-deep"
+                  className="mt-4 inline-flex items-center gap-2 rounded-xl bg-brand-primary px-4 py-2 text-xs font-bold text-white dark:text-white hover:bg-brand-primary-deep"
                 >
                   <Plus className="h-3.5 w-3.5" />
                   <span>İlk Dersi Planla</span>

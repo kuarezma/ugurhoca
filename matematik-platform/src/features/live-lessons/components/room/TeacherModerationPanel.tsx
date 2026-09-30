@@ -251,7 +251,7 @@ export function TeacherModerationPanel({
                 <button
                   type="button"
                   onClick={() => void setMicrophonePermission(r.identity, true)}
-                  className="rounded-md bg-emerald-600 px-2 py-1 text-[10px] font-semibold text-white hover:bg-emerald-500"
+                  className="rounded-md bg-emerald-600 px-2 py-1 text-[10px] font-semibold text-white dark:text-white hover:bg-emerald-500"
                 >
                   {micPermissions[r.identity] ? "Ses açık" : "Ses ver"}
                 </button>
@@ -267,7 +267,7 @@ export function TeacherModerationPanel({
                   onClick={() => void setWhiteboardPermission(r.identity, !whiteboardPermissions[r.identity])}
                   className={`rounded-md px-2 py-1 text-[10px] font-semibold transition ${
                     whiteboardPermissions[r.identity]
-                      ? "bg-sky-600 text-white hover:bg-sky-500"
+                      ? "bg-sky-600 text-white dark:text-white hover:bg-sky-500"
                       : "border border-border hover:bg-foreground/5"
                   }`}
                   title="Ortak beyaz tahta çizim izni"
@@ -295,7 +295,7 @@ export function TeacherModerationPanel({
                 <button
                   type="button"
                   onClick={() => void approveJoin(id)}
-                  className="shrink-0 rounded-lg bg-accent px-2 py-1 text-[11px] font-medium text-white hover:bg-accent-muted"
+                  className="shrink-0 rounded-lg bg-accent px-2 py-1 text-[11px] font-medium text-white dark:text-white hover:bg-accent-muted"
                 >
                   Onayla
                 </button>
@@ -321,7 +321,7 @@ export function TeacherModerationPanel({
                   <button
                     type="button"
                     onClick={() => void setMicrophonePermission(id, true)}
-                    className="rounded-lg bg-emerald-600 px-2 py-1 text-[11px] font-medium text-white hover:bg-emerald-500"
+                    className="rounded-lg bg-emerald-600 px-2 py-1 text-[11px] font-medium text-white dark:text-white hover:bg-emerald-500"
                   >
                     Ses ver
                   </button>
@@ -360,7 +360,7 @@ export function TeacherModerationPanel({
                   <button
                     type="button"
                     onClick={() => void giveSpeakingTurn(id)}
-                    className="rounded-lg bg-emerald-600 px-2 py-1 text-[11px] font-bold text-white hover:bg-emerald-500 transition shadow-sm"
+                    className="rounded-lg bg-emerald-600 px-2 py-1 text-[11px] font-bold text-white dark:text-white hover:bg-emerald-500 transition shadow-sm"
                     title="Öğrenciye mikrofon izni ver ve elini indir"
                   >
                     Söz Ver
@@ -370,7 +370,7 @@ export function TeacherModerationPanel({
                     onClick={() => void setWhiteboardPermission(id, !whiteboardPermissions[id])}
                     className={`rounded-lg px-2 py-1 text-[11px] font-semibold transition ${
                       whiteboardPermissions[id]
-                        ? "bg-sky-600 text-white hover:bg-sky-500"
+                        ? "bg-sky-600 text-white dark:text-white hover:bg-sky-500"
                         : "border border-border hover:bg-foreground/5 text-foreground/80"
                     }`}
                     title="Ortak beyaz tahta çizim yetkisi"
