@@ -216,7 +216,7 @@ export function BadgesShowcaseModal({
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           onClick={onClose}
-          className="fixed inset-0 bg-slate-950/80 backdrop-blur-md"
+          className="fixed inset-0 bg-slate-950/80 dark:bg-slate-950/80 backdrop-blur-md"
           aria-hidden="true"
         />
 
@@ -236,7 +236,7 @@ export function BadgesShowcaseModal({
           {/* Başlık */}
           <div className="flex items-center justify-between border-b border-slate-200 dark:border-white/10 px-5 py-4 sm:px-6">
             <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-tr from-amber-400 to-rose-500 text-white shadow-md shadow-amber-500/30">
+              <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-tr from-amber-400 to-rose-500 text-white dark:text-white shadow-md shadow-amber-500/30">
                 <Award className="h-5 w-5" />
               </div>
               <div>

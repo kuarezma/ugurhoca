@@ -100,7 +100,7 @@ export function UserDataBackupModal({
   };
 
   return (
-    <div className="fixed inset-0 z-[160] flex items-center justify-center bg-slate-950/80 p-4 backdrop-blur-md animate-fade-in">
+    <div className="fixed inset-0 z-[160] flex items-center justify-center bg-slate-950/80 dark:bg-slate-950/80 p-4 backdrop-blur-md animate-fade-in">
       <div
         ref={containerRef}
         role="dialog"
@@ -183,7 +183,7 @@ export function UserDataBackupModal({
                 <button
                   type="button"
                   onClick={handleReload}
-                  className="mt-3 inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-medium text-xs transition shadow"
+                  className="mt-3 inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white dark:text-white font-medium text-xs transition shadow"
                 >
                   <RefreshCw className="h-3 w-3" />
                   Sayfayı Yenile
@@ -213,7 +213,7 @@ export function UserDataBackupModal({
             <button
               type="button"
               onClick={handleExport}
-              className="w-full py-2.5 px-4 rounded-xl font-bold text-xs bg-purple-600 hover:bg-purple-500 text-white transition flex items-center justify-center gap-2 shadow"
+              className="w-full py-2.5 px-4 rounded-xl font-bold text-xs bg-purple-600 hover:bg-purple-500 text-white dark:text-white transition flex items-center justify-center gap-2 shadow"
             >
               <Download className="h-3.5 w-3.5" />
               Yedeği İndir (.json)
@@ -248,7 +248,7 @@ export function UserDataBackupModal({
               type="button"
               disabled={isProcessing}
               onClick={() => fileInputRef.current?.click()}
-              className="w-full py-2.5 px-4 rounded-xl font-bold text-xs bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 text-white transition flex items-center justify-center gap-2 shadow"
+              className="w-full py-2.5 px-4 rounded-xl font-bold text-xs bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 text-white dark:text-white transition flex items-center justify-center gap-2 shadow"
             >
               <Upload className="h-3.5 w-3.5" />
               {isProcessing ? 'İşleniyor...' : 'Dosya Seç & Yükle'}

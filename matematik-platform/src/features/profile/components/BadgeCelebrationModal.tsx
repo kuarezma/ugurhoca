@@ -147,7 +147,7 @@ export function BadgeCelebrationModal({
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           onClick={onClose}
-          className="fixed inset-0 bg-slate-950/85 backdrop-blur-md"
+          className="fixed inset-0 bg-slate-950/85 dark:bg-slate-950/85 backdrop-blur-md"
           aria-hidden="true"
         />
 
@@ -176,8 +176,8 @@ export function BadgeCelebrationModal({
 
           {/* İkon / Rozet Vitrini */}
           <div className="relative mx-auto flex h-24 w-24 items-center justify-center rounded-3xl bg-gradient-to-tr from-amber-400 via-orange-500 to-rose-600 shadow-xl shadow-amber-500/30">
-            <Award className="h-12 w-12 text-white" />
-            <span className="absolute -bottom-2 -right-2 flex h-8 w-8 items-center justify-center rounded-full bg-emerald-500 text-white shadow-md border-2 border-white dark:border-slate-900">
+            <Award className="h-12 w-12 text-white dark:text-white" />
+            <span className="absolute -bottom-2 -right-2 flex h-8 w-8 items-center justify-center rounded-full bg-emerald-500 text-white dark:text-white shadow-md border-2 border-white dark:border-slate-900">
               <CheckCircle2 className="h-5 w-5" />
             </span>
           </div>

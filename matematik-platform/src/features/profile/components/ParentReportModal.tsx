@@ -132,7 +132,7 @@ export default function ParentReportModal({
           {/* Header */}
           <div className="flex items-center justify-between border-b border-slate-200 dark:border-white/10 px-6 py-4 bg-slate-50 dark:bg-slate-950/60">
             <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-600 text-white shadow-md">
+              <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-600 text-white dark:text-white shadow-md">
                 <FileSpreadsheet className="h-5 w-5" />
               </div>
               <div>
@@ -234,7 +234,7 @@ export default function ParentReportModal({
               <button
                 type="button"
                 onClick={handleOpenWhatsApp}
-                className="flex items-center justify-center gap-2 rounded-2xl bg-emerald-600 hover:bg-emerald-500 px-4 py-3 text-sm font-bold text-white transition-all active:scale-95 shadow-lg shadow-emerald-600/20"
+                className="flex items-center justify-center gap-2 rounded-2xl bg-emerald-600 hover:bg-emerald-500 px-4 py-3 text-sm font-bold text-white dark:text-white transition-all active:scale-95 shadow-lg shadow-emerald-600/20"
               >
                 <Share2 className="h-4 w-4" />
                 <span>WhatsApp ile İlet</span>

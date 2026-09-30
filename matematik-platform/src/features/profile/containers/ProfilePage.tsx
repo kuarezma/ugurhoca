@@ -609,7 +609,7 @@ export default function ProfilePage({ initialData }: ProfilePageProps) {
               >
                 <Bell className="h-4.5 w-4.5" />
                 {unreadCount > 0 && (
-                  <span className="absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-600 text-[10px] font-bold text-white">
+                  <span className="absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-600 text-[10px] font-bold text-white dark:text-white">
                     {unreadCount}
                   </span>
                 )}
@@ -658,7 +658,7 @@ export default function ProfilePage({ initialData }: ProfilePageProps) {
             >
               <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
                 <div className="flex items-center gap-5">
-                  <div className="flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-br from-orange-500 to-red-500 text-3xl font-bold text-white">
+                  <div className="flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-br from-orange-500 to-red-500 text-3xl font-bold text-white dark:text-white">
                     {user.name?.[0] || '?'}
                   </div>
                   <div>
@@ -803,7 +803,7 @@ export default function ProfilePage({ initialData }: ProfilePageProps) {
                     {pendingMistakesCount > 0 && (
                       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 rounded-3xl border border-tone-warn-border bg-tone-warn-bg p-5 shadow-xl backdrop-blur-xl">
                         <div className="flex items-center gap-3.5">
-                          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-amber-500 to-rose-600 text-white shadow-lg shadow-amber-500/20">
+                          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-amber-500 to-rose-600 text-white dark:text-white shadow-lg shadow-amber-500/20">
                             <BookOpen className="h-5 w-5" />
                           </div>
                           <div>

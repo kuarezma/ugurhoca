@@ -220,7 +220,7 @@ export default function TargetSchoolGapCard({
       {/* Üst Başlık & Hedef Seçici */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 border-b border-slate-200/80 dark:border-white/10 pb-4">
         <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-amber-500 to-rose-600 text-white shadow-md">
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-amber-500 to-rose-600 text-white dark:text-white shadow-md">
             <School className="h-5 w-5" />
           </div>
           <div>

@@ -190,7 +190,7 @@ export function MathAhaMomentsModal({
 
           <button
             onClick={() => setIsAddingNew(!isAddingNew)}
-            className="px-3.5 py-1.5 bg-amber-600 hover:bg-amber-700 text-white rounded-xl text-xs font-semibold inline-flex items-center gap-1.5 transition-colors shadow-sm"
+            className="px-3.5 py-1.5 bg-amber-600 hover:bg-amber-700 text-white dark:text-white rounded-xl text-xs font-semibold inline-flex items-center gap-1.5 transition-colors shadow-sm"
           >
             {isAddingNew ? <X className="w-3.5 h-3.5" /> : <Plus className="w-3.5 h-3.5" />}
             {isAddingNew ? 'Formu Kapat' : 'Yeni Keşif Ekle'}
@@ -295,7 +295,7 @@ export function MathAhaMomentsModal({
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-1.5 bg-amber-600 hover:bg-amber-700 text-white rounded-xl text-xs font-semibold shadow-sm"
+                  className="px-4 py-1.5 bg-amber-600 hover:bg-amber-700 text-white dark:text-white rounded-xl text-xs font-semibold shadow-sm"
                 >
                   Keşfi Kaydet
                 </button>

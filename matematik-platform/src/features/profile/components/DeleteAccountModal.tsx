@@ -71,26 +71,26 @@ export function DeleteAccountModal({
   };
 
   return (
-    <div className="fixed inset-0 z-[160] flex items-center justify-center bg-slate-950/80 p-4 backdrop-blur-md animate-fade-in">
+    <div className="fixed inset-0 z-[160] flex items-center justify-center bg-slate-950/80 dark:bg-slate-950/80 p-4 backdrop-blur-md animate-fade-in">
       <div
         ref={containerRef}
         role="dialog"
         aria-modal="true"
         tabIndex={-1}
         aria-labelledby="delete-account-title"
-        className="w-full max-w-md rounded-3xl border border-rose-500/30 bg-slate-900 p-6 text-white shadow-2xl outline-none"
+        className="w-full max-w-md rounded-3xl border border-rose-500/30 bg-white dark:bg-slate-900 p-6 text-slate-900 dark:text-white shadow-2xl outline-none"
       >
         {/* Başlık */}
-        <div className="flex items-center justify-between pb-4 border-b border-white/10 mb-4">
+        <div className="flex items-center justify-between pb-4 border-b border-slate-200 dark:border-white/10 mb-4">
           <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-rose-500/20 text-rose-400">
+            <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-rose-500/20 text-rose-500 dark:text-rose-400">
               <AlertTriangle className="h-5 w-5" />
             </div>
             <div>
-              <h3 id="delete-account-title" className="font-display font-bold text-lg text-white">
+              <h3 id="delete-account-title" className="font-display font-bold text-lg text-slate-900 dark:text-white">
                 Hesabımı Kalıcı Olarak Sil
               </h3>
-              <p className="text-xs text-rose-300">Bu işlem geri alınamaz (KVKK)</p>
+              <p className="text-xs text-rose-600 dark:text-rose-300">Bu işlem geri alınamaz (KVKK)</p>
             </div>
           </div>
 
@@ -99,28 +99,28 @@ export function DeleteAccountModal({
             onClick={onClose}
             disabled={isDeleting}
             aria-label="Pencereyi kapat"
-            className="rounded-xl p-1.5 text-slate-400 hover:text-white hover:bg-white/10 transition"
+            className="rounded-xl p-1.5 text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/10 transition"
           >
             <X className="h-5 w-5" />
           </button>
         </div>
 
         {/* Uyarı Açıklaması */}
-        <div className="text-xs text-slate-300 space-y-2 mb-5 leading-relaxed bg-rose-500/10 p-3.5 rounded-2xl border border-rose-500/20">
+        <div className="text-xs text-slate-700 dark:text-slate-300 space-y-2 mb-5 leading-relaxed bg-rose-500/10 p-3.5 rounded-2xl border border-rose-500/20">
           <p>
             Hesabınızı sildiğinizde <strong>tüm sınav geçmişiniz, çözülen testler, hata defteri, rozetler ve çalışma verileriniz</strong> geri getirilemeyecek şekilde kalıcı olarak silinecektir.
           </p>
           {userEmail && (
-            <p className="text-[11px] text-slate-400">
-              İlişkili hesap: <span className="text-white font-mono">{userEmail}</span>
+            <p className="text-[11px] text-slate-500 dark:text-slate-400">
+              İlişkili hesap: <span className="text-slate-900 dark:text-white font-mono">{userEmail}</span>
             </p>
           )}
         </div>
 
         {/* Güvenlik Doğrulaması */}
         <div className="mb-5">
-          <label htmlFor="confirm-delete-input" className="block text-xs font-bold text-slate-300 mb-2">
-            Onaylamak için aşağıdaki kutuya <span className="text-rose-400 font-mono">HESABIMI SİL</span> yazın:
+          <label htmlFor="confirm-delete-input" className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-2">
+            Onaylamak için aşağıdaki kutuya <span className="text-rose-600 dark:text-rose-400 font-mono">HESABIMI SİL</span> yazın:
           </label>
           <input
             id="confirm-delete-input"
@@ -129,12 +129,12 @@ export function DeleteAccountModal({
             onChange={(e) => setConfirmText(e.target.value)}
             disabled={isDeleting}
             placeholder="HESABIMI SİL"
-            className="w-full px-4 py-2.5 rounded-xl bg-slate-950 border border-slate-700 text-white text-sm focus:outline-none focus:border-rose-500 transition placeholder:text-slate-600"
+            className="w-full px-4 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white text-sm focus:outline-none focus:border-rose-500 transition placeholder:text-slate-400 dark:placeholder:text-slate-600"
           />
         </div>
 
         {errorMessage && (
-          <div className="mb-4 p-3 rounded-xl bg-rose-500/20 border border-rose-500/30 text-rose-300 text-xs font-medium">
+          <div className="mb-4 p-3 rounded-xl bg-rose-500/20 border border-rose-500/30 text-rose-600 dark:text-rose-300 text-xs font-medium">
             {errorMessage}
           </div>
         )}
@@ -145,7 +145,7 @@ export function DeleteAccountModal({
             type="button"
             onClick={onClose}
             disabled={isDeleting}
-            className="flex-1 py-2.5 px-4 rounded-xl border border-white/10 bg-slate-800 hover:bg-slate-700 text-white text-xs font-bold transition"
+            className="flex-1 py-2.5 px-4 rounded-xl border border-slate-200 dark:border-white/10 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-white text-xs font-bold transition"
           >
             Vazgeç
           </button>
@@ -153,7 +153,7 @@ export function DeleteAccountModal({
             type="button"
             onClick={handleDelete}
             disabled={!isConfirmed || isDeleting}
-            className="flex-1 py-2.5 px-4 rounded-xl bg-rose-600 hover:bg-rose-500 disabled:opacity-40 disabled:cursor-not-allowed text-white text-xs font-bold flex items-center justify-center gap-2 transition shadow-lg shadow-rose-600/20"
+            className="flex-1 py-2.5 px-4 rounded-xl bg-rose-600 hover:bg-rose-500 disabled:opacity-40 disabled:cursor-not-allowed text-white dark:text-white text-xs font-bold flex items-center justify-center gap-2 transition shadow-lg shadow-rose-600/20"
           >
             {isDeleting ? (
               <>

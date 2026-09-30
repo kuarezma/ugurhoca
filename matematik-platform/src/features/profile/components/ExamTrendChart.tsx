@@ -261,7 +261,7 @@ export default function ExamTrendChart({
             <button
               type="button"
               onClick={onOpenCalculator}
-              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-xs transition shadow-sm"
+              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white dark:text-white font-semibold text-xs transition shadow-sm"
             >
               <span>Deneme Puanı Hesapla & Kaydet</span>
               <ChevronRight className="h-3.5 w-3.5" />

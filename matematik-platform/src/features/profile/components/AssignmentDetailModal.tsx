@@ -63,7 +63,7 @@ export default function AssignmentDetailModal({
           <button
             type="button"
             onClick={onOpenAssignments}
-            className="rounded-xl bg-purple-600 px-4 py-2 text-white transition-colors hover:bg-purple-700"
+            className="rounded-xl bg-purple-600 px-4 py-2 text-white dark:text-white transition-colors hover:bg-purple-700"
           >
             Ödev Sayfasına Git
           </button>

@@ -192,7 +192,7 @@ export default function StudyActivityHeatmap({
       {/* Başlık ve Özet Sayaçlar */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between border-b pb-4 border-slate-200/60 dark:border-white/10">
         <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-600 text-white shadow-md shadow-emerald-500/20">
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-600 text-white dark:text-white shadow-md shadow-emerald-500/20">
             <Calendar className="h-5 w-5" />
           </div>
           <div>
