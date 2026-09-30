@@ -35,10 +35,10 @@ export default function AdminNotificationsPanel({
       <div className="p-5 border-b border-white/5 bg-gradient-to-r from-indigo-500/10 to-purple-500/10 flex items-center justify-between shadow-sm">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-500 flex items-center justify-center shadow-lg shadow-indigo-500/20">
-            <BellRing className="w-5 h-5 text-white" />
+            <BellRing className="w-5 h-5 text-white dark:text-white" />
           </div>
           <div>
-            <h3 className="text-white font-bold text-lg">Bildirimler</h3>
+            <h3 className="text-white dark:text-white font-bold text-lg">Bildirimler</h3>
             <p className="text-indigo-200/60 text-xs font-medium">
               Öğrenci mesajları ve istekler
             </p>

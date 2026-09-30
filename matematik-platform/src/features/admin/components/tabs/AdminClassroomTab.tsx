@@ -243,7 +243,7 @@ export default function AdminClassroomTab({
       {/* 1. Header & Sınıf Şube Seçici */}
       <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 bg-white/80 dark:bg-slate-900/80 border border-slate-200/80 dark:border-white/10 rounded-3xl p-6 backdrop-blur-xl shadow-xl">
         <div className="flex items-center gap-4">
-          <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-amber-500 via-orange-500 to-rose-600 text-white shadow-lg shadow-orange-500/25 shrink-0">
+          <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-amber-500 via-orange-500 to-rose-600 text-white dark:text-white shadow-lg shadow-orange-500/25 shrink-0">
             <GraduationCap className="h-7 w-7" />
           </div>
           <div>
@@ -474,7 +474,7 @@ export default function AdminClassroomTab({
                         </td>
                         <td className="py-3 px-4">
                           <div className="flex items-center gap-3">
-                            <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center font-bold text-white text-xs shrink-0">
+                            <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center font-bold text-white dark:text-white text-xs shrink-0">
                               {student.name?.[0] || 'Ö'}
                             </div>
                             <div>

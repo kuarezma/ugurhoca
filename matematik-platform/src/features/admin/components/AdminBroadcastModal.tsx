@@ -268,7 +268,7 @@ export const AdminBroadcastModal: React.FC<AdminBroadcastModalProps> = ({
             <button
               type="submit"
               disabled={isSubmitting || !title.trim() || !message.trim()}
-              className="flex items-center gap-2 px-5 py-2 text-sm font-semibold text-white bg-indigo-600 hover:bg-indigo-500 active:scale-98 rounded-xl transition-all shadow-lg shadow-indigo-500/20 disabled:opacity-50 disabled:pointer-events-none"
+              className="flex items-center gap-2 px-5 py-2 text-sm font-semibold text-white dark:text-white bg-indigo-600 hover:bg-indigo-500 active:scale-98 rounded-xl transition-all shadow-lg shadow-indigo-500/20 disabled:opacity-50 disabled:pointer-events-none"
             >
               {isSubmitting ? (
                 <>

@@ -41,7 +41,7 @@ export default function AdminQuestionImportFields({
                 <FileArchive className="h-5 w-5 text-cyan-300" />
               </div>
               <div>
-                <h3 className="font-semibold text-white">PDF/Drive ZIP yükle</h3>
+                <h3 className="font-semibold text-primary">PDF/Drive ZIP yükle</h3>
                 <p className="mt-1 text-sm leading-6 text-slate-400">
                   1. Converter app ile PDF&apos;yi işle
                   <br />
@@ -52,7 +52,7 @@ export default function AdminQuestionImportFields({
               </div>
             </div>
 
-            <div className="rounded-2xl border-2 border-dashed border-cyan-400/30 bg-slate-900/20 p-6 text-center transition-colors hover:border-cyan-300/50">
+            <div className="rounded-2xl border-2 border-dashed border-cyan-400/30 bg-surface-2/40 dark:bg-slate-900/20 p-6 text-center transition-colors hover:border-cyan-300/50">
               <input
                 type="file"
                 accept=".zip"
@@ -68,7 +68,7 @@ export default function AdminQuestionImportFields({
                 </p>
               </label>
             </div>
-            <div className="mt-4 rounded-2xl border border-cyan-400/25 bg-slate-900/30 p-4">
+            <div className="mt-4 rounded-2xl border border-cyan-400/25 bg-surface-2/60 dark:bg-slate-900/30 p-4">
               <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-cyan-300">
                 veya Drive ZIP linki
               </p>
@@ -77,7 +77,7 @@ export default function AdminQuestionImportFields({
                   type="url"
                   value={bundleUrl}
                   onChange={(event) => setBundleUrl(event.target.value)}
-                  className="w-full rounded-lg border border-slate-700 bg-slate-950/70 px-3 py-2 text-sm text-slate-100 placeholder:text-slate-500 focus:border-cyan-400 focus:outline-none"
+                  className="w-full rounded-lg border border-default dark:border-slate-700 bg-surface-1 dark:bg-slate-950/70 px-3 py-2 text-sm text-primary dark:text-slate-100 placeholder:text-slate-500 focus:border-cyan-400 focus:outline-none"
                   placeholder="https://drive.google.com/file/d/.../view?usp=sharing"
                 />
                 <button
@@ -101,7 +101,7 @@ export default function AdminQuestionImportFields({
                 <FileSpreadsheet className="h-5 w-5 text-emerald-300" />
               </div>
               <div className="flex-1">
-                <h3 className="font-semibold text-white">Excel fallback</h3>
+                <h3 className="font-semibold text-primary">Excel fallback</h3>
                 <p className="mt-1 text-sm leading-6 text-slate-400">
                   Mevcut .xlsx akışı korunur. Hazır şablon indirip manuel yükleme
                   yapabilirsiniz.
@@ -110,13 +110,13 @@ export default function AdminQuestionImportFields({
               <button
                 type="button"
                 onClick={handleDownloadTemplate}
-                className="rounded-lg bg-emerald-500 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-emerald-600"
+                className="rounded-lg bg-emerald-500 px-4 py-2 text-sm font-medium text-white dark:text-white transition-colors hover:bg-emerald-600"
               >
                 İndir
               </button>
             </div>
 
-            <div className="rounded-2xl border-2 border-dashed border-emerald-400/30 bg-slate-900/20 p-6 text-center transition-colors hover:border-emerald-300/50">
+            <div className="rounded-2xl border-2 border-dashed border-emerald-400/30 bg-surface-2/40 dark:bg-slate-900/20 p-6 text-center transition-colors hover:border-emerald-300/50">
               <input
                 type="file"
                 accept=".xlsx"
@@ -136,10 +136,10 @@ export default function AdminQuestionImportFields({
         </div>
 
         {importResult && (
-          <div className="space-y-4 rounded-2xl border border-slate-700/70 bg-slate-900/30 p-4">
-            <div className="flex flex-col justify-between gap-3 rounded-xl bg-slate-800/50 p-4 lg:flex-row lg:items-center">
+          <div className="space-y-4 rounded-2xl border border-default dark:border-slate-700/70 bg-surface-2/40 dark:bg-slate-900/30 p-4">
+            <div className="flex flex-col justify-between gap-3 rounded-xl bg-surface-2 dark:bg-slate-800/50 p-4 lg:flex-row lg:items-center">
               <div>
-                <p className="font-medium text-white">{importResult.meta.title}</p>
+                <p className="font-medium text-primary">{importResult.meta.title}</p>
                 <p className="text-sm text-slate-400">
                   {importResult.meta.grade}. Sınıf • {importResult.meta.difficulty} •{' '}
                   {importResult.meta.time_limit} dk
@@ -158,7 +158,7 @@ export default function AdminQuestionImportFields({
                 >
                   {isBundle ? 'ZIP bundle' : 'Excel'}
                 </span>
-                <span className="rounded-full bg-slate-700/60 px-3 py-1 text-xs font-semibold text-slate-200">
+                <span className="rounded-full bg-surface-3 dark:bg-slate-700/60 px-3 py-1 text-xs font-semibold text-secondary dark:text-slate-200">
                   {importResult.valid.length} soru
                 </span>
               </div>
@@ -190,7 +190,7 @@ export default function AdminQuestionImportFields({
                 return (
                   <div
                     key={`${question.question}-${index}`}
-                    className="rounded-xl border border-slate-700/60 bg-slate-800/40 p-3"
+                    className="rounded-xl border border-default dark:border-slate-700/60 bg-surface-2/80 dark:bg-slate-800/40 p-3"
                   >
                     <div className="flex items-start justify-between gap-3">
                       <div className="min-w-0 flex-1">
@@ -202,7 +202,7 @@ export default function AdminQuestionImportFields({
                         </p>
                       </div>
                       {(questionPreview || optionPreviewCount > 0) && (
-                        <div className="flex shrink-0 items-center gap-2 rounded-full bg-slate-900/60 px-3 py-1 text-[11px] text-slate-300">
+                        <div className="flex shrink-0 items-center gap-2 rounded-full bg-surface-3 dark:bg-slate-900/60 px-3 py-1 text-[11px] text-secondary dark:text-slate-300">
                           <ImageIcon className="h-3.5 w-3.5 text-cyan-300" />
                           {questionPreview ? 'Soru görseli' : `${optionPreviewCount} şık görseli`}
                         </div>
@@ -213,7 +213,7 @@ export default function AdminQuestionImportFields({
                       <img
                         src={questionPreview}
                         alt={`Soru ${index + 1} görseli`}
-                        className="mt-3 max-h-40 w-full rounded-lg object-contain bg-slate-950/60"
+                        className="mt-3 max-h-40 w-full rounded-lg object-contain bg-surface-2 dark:bg-slate-950/60"
                       />
                     ) : null}
 
@@ -229,7 +229,7 @@ export default function AdminQuestionImportFields({
                         return (
                           <div
                             key={`${index}-${optionIndex}`}
-                            className="rounded-lg border border-slate-700/50 bg-slate-900/40 p-2"
+                            className="rounded-lg border border-default dark:border-slate-700/50 bg-surface-2/60 dark:bg-slate-900/40 p-2"
                           >
                             <div className="text-xs font-semibold text-slate-300">
                               {OPTION_LETTERS[optionIndex]}
@@ -241,7 +241,7 @@ export default function AdminQuestionImportFields({
                               <img
                                 src={optionPreview}
                                 alt={`Şık ${OPTION_LETTERS[optionIndex]} görseli`}
-                                className="mt-2 max-h-24 w-full rounded-md object-contain bg-slate-950/60"
+                                className="mt-2 max-h-24 w-full rounded-md object-contain bg-surface-2 dark:bg-slate-950/60"
                               />
                             ) : null}
                           </div>

@@ -22,7 +22,7 @@ export default function AdminGradeUpdateTab({
       <div className="glass rounded-3xl p-8 border border-slate-200/80 dark:border-white/10 bg-white/80 dark:bg-slate-900/60 shadow-md dark:shadow-none">
         <div className="flex items-center gap-4 mb-6">
           <div className="w-16 h-16 bg-gradient-to-br from-teal-500 to-cyan-500 rounded-2xl flex items-center justify-center">
-            <GraduationCap className="w-8 h-8 text-white" />
+            <GraduationCap className="w-8 h-8 text-white dark:text-white" />
           </div>
           <div>
             <h2 className="text-2xl font-bold text-slate-900 dark:text-white">Sınıf Güncelleme</h2>

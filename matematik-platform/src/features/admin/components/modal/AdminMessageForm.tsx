@@ -40,11 +40,11 @@ export default function AdminMessageForm({
     <form onSubmit={onSubmit} className="space-y-5">
       {adminMsgRecipient && (
         <div className="flex items-center gap-3 p-3 rounded-xl bg-white/5 border border-white/10">
-          <div className="w-10 h-10 bg-gradient-to-br from-green-500 to-emerald-500 rounded-full flex items-center justify-center text-lg font-bold text-white">
+          <div className="w-10 h-10 bg-gradient-to-br from-green-500 to-emerald-500 rounded-full flex items-center justify-center text-lg font-bold text-white dark:text-white">
             {adminMsgRecipient.name?.[0] || "?"}
           </div>
           <div>
-            <p className="text-white font-semibold">
+            <p className="text-primary font-semibold">
               {adminMsgRecipient.name || "İsimsiz"}
             </p>
             <p className="text-slate-400 text-xs">{adminMsgRecipient.email}</p>
@@ -60,7 +60,7 @@ export default function AdminMessageForm({
           type="text"
           value={adminMsgTitle}
           onChange={(event) => setAdminMsgTitle(event.target.value)}
-          className="w-full bg-slate-800/50 border border-slate-700 rounded-xl px-4 py-3 text-white
+          className="w-full bg-surface-2 dark:bg-slate-800/50 border border-default dark:border-slate-700 rounded-xl px-4 py-3 text-primary
                    focus:outline-none focus:border-purple-500 transition-colors"
           placeholder="Mesaj başlığı..."
         />
@@ -79,7 +79,7 @@ export default function AdminMessageForm({
           />
           <label
             htmlFor={imageId}
-            className="flex items-center justify-center gap-2 w-full bg-slate-800/50 border border-slate-700 border-dashed rounded-xl px-4 py-4 text-slate-400 cursor-pointer hover:bg-slate-800 hover:border-purple-500 transition-colors"
+            className="flex items-center justify-center gap-2 w-full bg-surface-2 dark:bg-slate-800/50 border border-default dark:border-slate-700 border-dashed rounded-xl px-4 py-4 text-secondary cursor-pointer hover:bg-surface-3 dark:hover:bg-slate-800 hover:border-purple-500 transition-colors"
           >
             <ImageIcon className="w-5 h-5" />
             <span>Resim seç veya sürükle</span>
@@ -96,7 +96,7 @@ export default function AdminMessageForm({
               type="button"
               onClick={onClearImage}
               aria-label="Önizleme resmini kaldır"
-              className="absolute -top-2.5 -right-2.5 min-w-[32px] min-h-[32px] p-1.5 bg-red-500 rounded-full flex items-center justify-center text-white hover:bg-red-600 shadow-md transition-transform hover:scale-110 active:scale-95"
+              className="absolute -top-2.5 -right-2.5 min-w-[32px] min-h-[32px] p-1.5 bg-red-500 rounded-full flex items-center justify-center text-white dark:text-white hover:bg-red-600 shadow-md transition-transform hover:scale-110 active:scale-95"
             >
               <X className="w-4 h-4" />
             </button>
@@ -112,7 +112,7 @@ export default function AdminMessageForm({
           value={adminMsgText}
           onChange={(event) => setAdminMsgText(event.target.value)}
           rows={5}
-          className="w-full bg-slate-800/50 border border-slate-700 rounded-xl px-4 py-3 text-white
+          className="w-full bg-surface-2 dark:bg-slate-800/50 border border-default dark:border-slate-700 rounded-xl px-4 py-3 text-primary
                    focus:outline-none focus:border-purple-500 transition-colors resize-none"
           placeholder="Öğrenciye mesajınızı yazın..."
         />

@@ -38,7 +38,7 @@ export default function AdminQuizSettingsFields({
           onChange={(event) =>
             updateFormData({ grade: parseInt(event.target.value) })
           }
-          className="w-full bg-slate-800/50 border border-slate-700 rounded-xl px-4 py-3 text-white
+          className="w-full bg-surface-2 dark:bg-slate-800/50 border border-default dark:border-slate-700 rounded-xl px-4 py-3 text-primary
                    focus:outline-none focus:border-violet-500 transition-colors"
         >
           <option value="">Sınıf seçin</option>
@@ -65,7 +65,7 @@ export default function AdminQuizSettingsFields({
           onChange={(event) =>
             updateFormData({ time_limit: parseInt(event.target.value) })
           }
-          className="w-full bg-slate-800/50 border border-slate-700 rounded-xl px-4 py-3 text-white
+          className="w-full bg-surface-2 dark:bg-slate-800/50 border border-default dark:border-slate-700 rounded-xl px-4 py-3 text-primary
                    focus:outline-none focus:border-violet-500 transition-colors"
           placeholder="Örn: 15"
         />
@@ -84,7 +84,7 @@ export default function AdminQuizSettingsFields({
           onChange={(event) =>
             updateFormData({ difficulty: event.target.value })
           }
-          className="w-full bg-slate-800/50 border border-slate-700 rounded-xl px-4 py-3 text-white
+          className="w-full bg-surface-2 dark:bg-slate-800/50 border border-default dark:border-slate-700 rounded-xl px-4 py-3 text-primary
                    focus:outline-none focus:border-violet-500 transition-colors"
         >
           <option value="">Zorluk seçin</option>

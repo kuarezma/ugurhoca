@@ -36,7 +36,7 @@ export default function AdminDescriptionField({
         }
         value={formData.description || ""}
         onChange={(event) => updateFormData({ description: event.target.value })}
-        className="w-full bg-slate-800/50 border border-slate-700 rounded-xl px-4 py-3 text-white
+        className="w-full bg-surface-2 dark:bg-slate-800/50 border border-default dark:border-slate-700 rounded-xl px-4 py-3 text-primary
                  focus:outline-none focus:border-purple-500 transition-colors resize-none"
         placeholder={getDescriptionPlaceholder(modalType)}
       />

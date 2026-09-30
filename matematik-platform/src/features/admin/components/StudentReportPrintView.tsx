@@ -41,9 +41,9 @@ export function StudentReportPrintView({
       role="dialog"
       aria-modal="true"
       aria-label="Öğrenci Gelişim ve Takip Raporu"
-      className="fixed inset-0 z-[160] flex items-center justify-center bg-slate-950/80 p-4 backdrop-blur-md print:p-0 print:bg-white"
+      className="fixed inset-0 z-[160] flex items-center justify-center bg-slate-950/80 dark:bg-slate-950/80 p-4 backdrop-blur-md print:p-0 print:bg-white"
     >
-      <div className="flex max-h-[92vh] w-full max-w-3xl flex-col overflow-hidden rounded-3xl border border-white/15 bg-slate-900 shadow-2xl print:max-h-none print:w-full print:border-none print:bg-white print:text-black print:shadow-none">
+      <div id="printable-worksheet-content" className="flex max-h-[92vh] w-full max-w-3xl flex-col overflow-hidden rounded-3xl border border-white/15 bg-slate-900 dark:bg-slate-900 shadow-2xl print:max-h-none print:w-full print:border-none print:bg-white print:text-black print:shadow-none">
         {/* Header - Ekranda görünen, baskıda gizlenen */}
         <div className="flex items-center justify-between border-b border-white/10 bg-slate-950/80 px-6 py-4 print:hidden">
           <div>

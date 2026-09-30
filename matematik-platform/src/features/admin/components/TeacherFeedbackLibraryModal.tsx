@@ -256,7 +256,7 @@ export function TeacherFeedbackLibraryModal({
 
   return (
     <div
-      className="fixed inset-0 z-[160] flex items-center justify-center p-3 sm:p-4 bg-slate-950/80 backdrop-blur-md animate-fade-in"
+      className="fixed inset-0 z-[160] flex items-center justify-center p-3 sm:p-4 bg-slate-950/80 dark:bg-slate-950/80 backdrop-blur-md animate-fade-in"
       role="dialog"
       aria-modal="true"
       aria-labelledby={titleId}
@@ -268,7 +268,7 @@ export function TeacherFeedbackLibraryModal({
         {/* Başlık */}
         <div className="flex items-center justify-between border-b border-slate-200 dark:border-white/10 px-5 py-4 bg-slate-50 dark:bg-slate-900/90">
           <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-600 text-white shadow-md shadow-indigo-500/25">
+            <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-600 text-white dark:text-white shadow-md shadow-indigo-500/25">
               <BookOpen className="h-5 w-5" />
             </div>
             <div>
@@ -313,7 +313,7 @@ export function TeacherFeedbackLibraryModal({
             <button
               type="button"
               onClick={() => setIsAddingNew((prev) => !prev)}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold transition shadow-sm shrink-0"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white dark:text-white text-xs font-bold transition shadow-sm shrink-0"
             >
               <Plus className="w-3.5 h-3.5" />
               <span>{isAddingNew ? 'İptal' : 'Yeni Not Ekle'}</span>
@@ -409,7 +409,7 @@ export function TeacherFeedbackLibraryModal({
 
               <button
                 type="submit"
-                className="px-4 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold transition shadow-sm"
+                className="px-4 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white dark:text-white text-xs font-bold transition shadow-sm"
               >
                 Kütüphaneye Kaydet
               </button>
@@ -461,7 +461,7 @@ export function TeacherFeedbackLibraryModal({
                   <button
                     type="button"
                     onClick={() => onSelectTemplate(item, 'append')}
-                    className="px-3 py-1 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold transition flex items-center gap-1 shadow-sm"
+                    className="px-3 py-1 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white dark:text-white text-xs font-bold transition flex items-center gap-1 shadow-sm"
                     title="Mevcut geri bildirimin sonuna yeni satır olarak ekle"
                   >
                     <CheckCircle2 className="w-3.5 h-3.5" />

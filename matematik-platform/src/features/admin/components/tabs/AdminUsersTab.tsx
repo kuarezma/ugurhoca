@@ -247,7 +247,7 @@ export default function AdminUsersTab({
       >
         <div className="flex min-w-0 flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex min-w-0 items-center gap-3 sm:gap-4">
-            <div className="w-11 h-11 sm:w-12 sm:h-12 bg-gradient-to-tr from-brand-primary via-indigo-600 to-brand-secondary rounded-2xl flex shrink-0 items-center justify-center text-lg sm:text-xl font-bold text-white shadow-md shadow-violet-500/20">
+            <div className="w-11 h-11 sm:w-12 sm:h-12 bg-gradient-to-tr from-brand-primary via-indigo-600 to-brand-secondary rounded-2xl flex shrink-0 items-center justify-center text-lg sm:text-xl font-bold text-white dark:text-white shadow-md shadow-violet-500/20">
               {user.name?.[0] || '?'}
             </div>
             <div className="min-w-0">

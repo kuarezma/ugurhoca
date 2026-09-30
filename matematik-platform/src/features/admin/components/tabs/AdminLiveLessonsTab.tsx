@@ -315,7 +315,7 @@ export default function AdminLiveLessonsTab({ data, onRefresh, students }: Props
             )}
             <Link
               href="/canli-ders"
-              className="inline-flex min-h-11 items-center justify-center rounded-xl bg-brand-primary px-4 text-sm font-semibold text-white hover:bg-brand-primary-deep"
+              className="inline-flex min-h-11 items-center justify-center rounded-xl bg-brand-primary px-4 text-sm font-semibold text-white dark:text-white hover:bg-brand-primary-deep"
             >
               Ders planla
             </Link>
@@ -609,7 +609,7 @@ export default function AdminLiveLessonsTab({ data, onRefresh, students }: Props
                         type="button"
                         onClick={() => void saveEdit(lesson)}
                         disabled={savingLessonId === lesson.id}
-                        className="rounded-xl bg-brand-primary px-4 py-2 text-sm font-semibold text-white hover:bg-brand-primary-deep disabled:opacity-50"
+                        className="rounded-xl bg-brand-primary px-4 py-2 text-sm font-semibold text-white dark:text-white hover:bg-brand-primary-deep disabled:opacity-50"
                       >
                         {savingLessonId === lesson.id ? "Kaydediliyor..." : "Kaydet"}
                       </button>
@@ -631,7 +631,7 @@ export default function AdminLiveLessonsTab({ data, onRefresh, students }: Props
                 <div className="mt-4 flex flex-wrap gap-2">
                   <Link
                     href={`/canli-ders/d/${lesson.room_id}`}
-                    className="rounded-xl bg-brand-primary px-4 py-2 text-sm font-semibold text-white hover:bg-brand-primary-deep"
+                    className="rounded-xl bg-brand-primary px-4 py-2 text-sm font-semibold text-white dark:text-white hover:bg-brand-primary-deep"
                   >
                     Odaya gir
                   </Link>

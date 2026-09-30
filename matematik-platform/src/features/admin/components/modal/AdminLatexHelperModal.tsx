@@ -154,7 +154,7 @@ export function AdminLatexHelperModal({
         {/* Header */}
         <div className="flex items-center justify-between border-b border-slate-200 dark:border-white/10 px-5 py-4 bg-slate-50/50 dark:bg-transparent">
           <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-br from-violet-500 to-indigo-600 text-white shadow-md">
+            <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-br from-violet-500 to-indigo-600 text-white dark:text-white shadow-md">
               <FunctionSquare className="h-5 w-5" />
             </div>
             <div>
@@ -245,7 +245,7 @@ export function AdminLatexHelperModal({
               <button
                 type="button"
                 onClick={() => handleInsert(customFormula)}
-                className="inline-flex h-10 items-center gap-1.5 rounded-xl bg-violet-600 px-4 text-xs font-bold text-white shadow-md hover:bg-violet-500 transition shrink-0"
+                className="inline-flex h-10 items-center gap-1.5 rounded-xl bg-violet-600 px-4 text-xs font-bold text-white dark:text-white shadow-md hover:bg-violet-500 transition shrink-0"
               >
                 <Plus className="h-3.5 w-3.5" />
                 <span>Soruya Ekle</span>

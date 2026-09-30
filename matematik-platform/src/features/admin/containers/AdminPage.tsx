@@ -897,7 +897,7 @@ export default function AdminPage() {
         <div className="container mx-auto flex min-w-0 items-center justify-between gap-3">
           <Link href="/" className="flex min-w-0 items-center gap-3 group">
             <div className="w-9 h-9 sm:w-10 sm:h-10 bg-gradient-to-tr from-brand-primary via-indigo-600 to-brand-secondary rounded-2xl flex items-center justify-center flex-shrink-0 shadow-lg shadow-violet-500/25 group-hover:scale-105 transition-transform duration-200">
-              <Calculator className="w-5 h-5 text-white" />
+              <Calculator className="w-5 h-5 text-white dark:text-white" />
             </div>
             <div className="min-w-0">
               <span className="block truncate text-sm sm:text-base font-bold text-slate-900 dark:text-transparent dark:bg-gradient-to-r dark:from-white dark:via-slate-100 dark:to-slate-300 dark:bg-clip-text leading-tight">
@@ -941,7 +941,7 @@ export default function AdminPage() {
             >
               <Bell className="w-4 h-4" />
               {unreadNotifications.length > 0 && (
-                <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 bg-rose-500 rounded-full text-[10px] text-white flex items-center justify-center font-bold shadow-md shadow-rose-500/50 animate-pulse">
+                <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 bg-rose-500 rounded-full text-[10px] text-white dark:text-white flex items-center justify-center font-bold shadow-md shadow-rose-500/50 animate-pulse">
                   {unreadNotifications.length}
                 </span>
               )}

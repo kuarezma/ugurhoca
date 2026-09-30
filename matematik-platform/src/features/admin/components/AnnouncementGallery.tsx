@@ -44,7 +44,7 @@ export function AnnouncementGallery({
   }, [images]);
 
   return (
-    <div className="relative min-h-[320px] bg-slate-900">
+    <div className="relative min-h-[320px] bg-slate-900 dark:bg-slate-900">
       <Image
         src={getRemoteImageSrc(resolvedImages[current] || images[current])}
         alt={title}
@@ -95,7 +95,7 @@ export function AnnouncementGallery({
             />
           ))}
         </div>
-        <span className="rounded-full bg-black/40 px-2 py-1 text-xs text-white">
+        <span className="rounded-full bg-black/40 px-2 py-1 text-xs text-white dark:text-white">
           {current + 1}/{resolvedImages.length}
         </span>
       </div>

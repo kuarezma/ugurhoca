@@ -47,7 +47,7 @@ export default function AdminQuestionFields({
           rows={3}
           value={formData.question || ""}
           onChange={(event) => updateFormData({ question: event.target.value })}
-          className="w-full bg-slate-800/50 border border-slate-700/50 rounded-2xl px-4 py-4 text-white
+          className="w-full bg-surface-2 dark:bg-slate-800/50 border border-default dark:border-slate-700/50 rounded-2xl px-4 py-4 text-primary
                    focus:outline-none focus:ring-2 focus:ring-violet-500 transition-all resize-none shadow-inner"
           placeholder="Soruyu buraya yazın..."
         />
@@ -102,7 +102,7 @@ export default function AdminQuestionFields({
                     nextOptions[index] = event.target.value;
                     updateFormData({ options: nextOptions });
                   }}
-                  className="flex-1 bg-transparent border-none text-white focus:outline-none focus:ring-0 placeholder:text-slate-500 text-sm py-2"
+                  className="flex-1 bg-transparent border-none text-primary focus:outline-none focus:ring-0 placeholder:text-slate-500 text-sm py-2"
                   placeholder={`${OPTION_LETTERS[index]} Şıkkını girin...`}
                 />
               </div>
@@ -126,7 +126,7 @@ export default function AdminQuestionFields({
           onChange={(event) =>
             updateFormData({ explanation: event.target.value })
           }
-          className="w-full bg-slate-800/50 border border-slate-700/50 rounded-2xl px-4 py-3 text-white
+          className="w-full bg-surface-2 dark:bg-slate-800/50 border border-default dark:border-slate-700/50 rounded-2xl px-4 py-3 text-primary
                    focus:outline-none focus:ring-2 focus:ring-amber-500 transition-all resize-none"
           placeholder="Öğrenci soruyu yanlış yaptığında göreceği açıklama..."
         />

@@ -70,7 +70,7 @@ export default function AdminGenericContentForm({
             required
             value={formData.title || ""}
             onChange={(event) => updateFormData({ title: event.target.value })}
-            className="w-full bg-slate-800/50 border border-slate-700 rounded-xl px-4 py-3 text-white
+            className="w-full bg-surface-2 dark:bg-slate-800/50 border border-default dark:border-slate-700 rounded-xl px-4 py-3 text-primary
                    focus:outline-none focus:border-purple-500 transition-colors"
             placeholder="Başlık girin..."
           />
@@ -97,7 +97,7 @@ export default function AdminGenericContentForm({
             required
             value={formData.type || ""}
             onChange={(event) => updateFormData({ type: event.target.value })}
-            className="w-full bg-slate-800/50 border border-slate-700 rounded-xl px-4 py-3 text-white
+            className="w-full bg-surface-2 dark:bg-slate-800/50 border border-default dark:border-slate-700 rounded-xl px-4 py-3 text-primary
                      focus:outline-none focus:border-purple-500 transition-colors"
           >
             <option value="">Kategori seçin</option>

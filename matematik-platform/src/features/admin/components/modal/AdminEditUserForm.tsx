@@ -105,7 +105,7 @@ export default function AdminEditUserForm({
           required
           value={formData.name || ""}
           onChange={(event) => updateFormData({ name: event.target.value })}
-          className="w-full bg-slate-800/50 border border-slate-700 rounded-xl px-4 py-3 text-white
+          className="w-full bg-surface-2 dark:bg-slate-800/50 border border-default dark:border-slate-700 rounded-xl px-4 py-3 text-primary
                    focus:outline-none focus:border-green-500 transition-colors"
           placeholder="Adını girin..."
         />
@@ -125,7 +125,7 @@ export default function AdminEditUserForm({
                   : parseInt(event.target.value),
             })
           }
-          className="w-full bg-slate-800/50 border border-slate-700 rounded-xl px-4 py-3 text-white
+          className="w-full bg-surface-2 dark:bg-slate-800/50 border border-default dark:border-slate-700 rounded-xl px-4 py-3 text-primary
                    focus:outline-none focus:border-green-500 transition-colors"
         >
           <option value="">Sınıf seçin</option>
@@ -170,7 +170,7 @@ export default function AdminEditUserForm({
               value={newPassword}
               onChange={(e) => setNewPassword(e.target.value)}
               placeholder="Yeni şifre (en az 6 karakter)"
-              className="flex-1 bg-slate-800/50 border border-slate-700 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-amber-500 transition-colors"
+              className="flex-1 bg-surface-2 dark:bg-slate-800/50 border border-default dark:border-slate-700 rounded-xl px-4 py-2.5 text-primary text-sm focus:outline-none focus:border-amber-500 transition-colors"
             />
             <button
               type="button"

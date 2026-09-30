@@ -339,7 +339,7 @@ export default function AdminMainModal({
         className="glass rounded-3xl p-8 w-full max-w-2xl max-h-[90vh] overflow-y-auto"
       >
         <div className="flex items-center justify-between mb-6">
-          <h2 id="admin-main-modal-title" className="text-2xl font-bold text-white">
+          <h2 id="admin-main-modal-title" className="text-2xl font-bold text-primary">
             {getModalTitle(modalType)}
           </h2>
           <button

@@ -99,7 +99,7 @@ export default function AdminDocumentsTab({
                       "from-slate-500 to-slate-600"
                     } flex items-center justify-center flex-shrink-0 shadow-md shadow-black/20`}
                   >
-                    <FileText className="w-6 h-6 sm:w-7 sm:h-7 text-white" />
+                    <FileText className="w-6 h-6 sm:w-7 sm:h-7 text-white dark:text-white" />
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex min-w-0 flex-col gap-2 mb-1 sm:flex-row sm:items-center sm:gap-3">

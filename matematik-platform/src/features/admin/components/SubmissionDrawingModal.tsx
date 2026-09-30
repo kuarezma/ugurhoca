@@ -152,7 +152,7 @@ export function SubmissionDrawingModal({
       role="dialog"
       aria-modal="true"
       aria-label="Ödev Çizim ve İnceleme Paneli"
-      className="fixed inset-0 z-[160] flex items-center justify-center bg-slate-950/85 p-2 sm:p-4 backdrop-blur-md"
+      className="fixed inset-0 z-[160] flex items-center justify-center bg-slate-950/85 dark:bg-slate-950/85 p-2 sm:p-4 backdrop-blur-md"
     >
       <div className="relative flex flex-col w-full max-w-5xl max-h-[94vh] bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700/80 rounded-3xl shadow-2xl overflow-hidden text-slate-900 dark:text-slate-100">
         {/* HEADER */}
@@ -287,7 +287,7 @@ export function SubmissionDrawingModal({
             <button
               type="button"
               onClick={handleCompleteAnnotation}
-              className="flex items-center gap-1.5 px-5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold transition shadow-lg shadow-emerald-600/20"
+              className="flex items-center gap-1.5 px-5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white dark:text-white font-bold transition shadow-lg shadow-emerald-600/20"
             >
               <Check className="w-4 h-4" />
               <span>Değerlendirmeyi Tamamla</span>

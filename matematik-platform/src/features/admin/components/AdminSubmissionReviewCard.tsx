@@ -124,7 +124,7 @@ export default function AdminSubmissionReviewCard({
     <div className="glass p-5 rounded-2xl border border-slate-200/80 dark:border-white/5 space-y-4">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 bg-gradient-to-br from-indigo-500 to-purple-500 rounded-xl flex items-center justify-center font-bold text-white">
+          <div className="w-10 h-10 bg-gradient-to-br from-indigo-500 to-purple-500 rounded-xl flex items-center justify-center font-bold text-white dark:text-white">
             {submission.student_name?.[0] || "Ö"}
           </div>
           <div>
@@ -145,7 +145,7 @@ export default function AdminSubmissionReviewCard({
                 href={submission.file_url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="px-3 py-2 bg-indigo-500 hover:bg-indigo-600 text-white text-xs font-bold rounded-xl flex items-center gap-1.5 transition-all shadow-lg shadow-indigo-500/20"
+                className="px-3 py-2 bg-indigo-500 hover:bg-indigo-600 text-white dark:text-white text-xs font-bold rounded-xl flex items-center gap-1.5 transition-all shadow-lg shadow-indigo-500/20"
               >
                 <FileText className="w-4 h-4" />
                 <span>Dosyayı Aç</span>
@@ -269,7 +269,7 @@ export default function AdminSubmissionReviewCard({
           >
             {isRecording ? (
               <>
-                <MicOff className="w-4 h-4 text-white" />
+                <MicOff className="w-4 h-4 text-white dark:text-white" />
                 <span>0:{recordingSeconds.toString().padStart(2, "0")}</span>
               </>
             ) : (

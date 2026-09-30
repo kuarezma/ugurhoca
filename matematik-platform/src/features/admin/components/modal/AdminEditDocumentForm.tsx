@@ -58,7 +58,7 @@ export default function AdminEditDocumentForm({
             required
             value={formData.title || ""}
             onChange={(event) => updateFormData({ title: event.target.value })}
-            className="w-full bg-slate-800/50 border border-slate-700 rounded-xl px-4 py-3 text-white
+            className="w-full bg-surface-2 dark:bg-slate-800/50 border border-default dark:border-slate-700 rounded-xl px-4 py-3 text-primary
                    focus:outline-none focus:border-blue-500 transition-colors"
           />
         </div>
@@ -75,7 +75,7 @@ export default function AdminEditDocumentForm({
           rows={3}
           value={formData.description || ""}
           onChange={(event) => updateFormData({ description: event.target.value })}
-          className="w-full bg-slate-800/50 border border-slate-700 rounded-xl px-4 py-3 text-white
+          className="w-full bg-surface-2 dark:bg-slate-800/50 border border-default dark:border-slate-700 rounded-xl px-4 py-3 text-primary
                    focus:outline-none focus:border-blue-500 transition-colors resize-none"
         />
       </div>
@@ -87,7 +87,7 @@ export default function AdminEditDocumentForm({
           id={typeId}
           value={formData.type || ""}
           onChange={(event) => updateFormData({ type: event.target.value })}
-          className="w-full bg-slate-800/50 border border-slate-700 rounded-xl px-4 py-3 text-white
+          className="w-full bg-surface-2 dark:bg-slate-800/50 border border-default dark:border-slate-700 rounded-xl px-4 py-3 text-primary
                    focus:outline-none focus:border-blue-500 transition-colors"
         >
           <option value="">Kategori seçin</option>
@@ -121,7 +121,7 @@ export default function AdminEditDocumentForm({
                     : [],
                 })
               }
-              className="w-full bg-slate-800/50 border border-slate-700 rounded-xl px-4 py-3 text-white
+              className="w-full bg-surface-2 dark:bg-slate-800/50 border border-default dark:border-slate-700 rounded-xl px-4 py-3 text-primary
                    focus:outline-none focus:border-blue-500 transition-colors"
             >
               <option value="">Sınıf düzeyi seçin</option>
@@ -146,7 +146,7 @@ export default function AdminEditDocumentForm({
               onChange={(event) =>
                 updateFormData({ learning_outcome: event.target.value })
               }
-              className="w-full bg-slate-800/50 border border-slate-700 rounded-xl px-4 py-3 text-white
+              className="w-full bg-surface-2 dark:bg-slate-800/50 border border-default dark:border-slate-700 rounded-xl px-4 py-3 text-primary
                    focus:outline-none focus:border-blue-500 transition-colors"
             />
           </div>
@@ -161,7 +161,7 @@ export default function AdminEditDocumentForm({
           type="url"
           value={formData.file_url || ""}
           onChange={(event) => updateFormData({ file_url: event.target.value })}
-          className="w-full bg-slate-800/50 border border-slate-700 rounded-xl px-4 py-3 text-white
+          className="w-full bg-surface-2 dark:bg-slate-800/50 border border-default dark:border-slate-700 rounded-xl px-4 py-3 text-primary
                    focus:outline-none focus:border-blue-500 transition-colors"
         />
       </div>
@@ -174,7 +174,7 @@ export default function AdminEditDocumentForm({
           type="url"
           value={formData.video_url || ""}
           onChange={(event) => updateFormData({ video_url: event.target.value })}
-          className="w-full bg-slate-800/50 border border-slate-700 rounded-xl px-4 py-3 text-white
+          className="w-full bg-surface-2 dark:bg-slate-800/50 border border-default dark:border-slate-700 rounded-xl px-4 py-3 text-primary
                    focus:outline-none focus:border-blue-500 transition-colors"
         />
       </div>
@@ -192,7 +192,7 @@ export default function AdminEditDocumentForm({
             updateFormData({ answer_key_text: event.target.value })
           }
           rows={3}
-          className="w-full bg-slate-800/50 border border-slate-700 rounded-xl px-4 py-3 text-white
+          className="w-full bg-surface-2 dark:bg-slate-800/50 border border-default dark:border-slate-700 rounded-xl px-4 py-3 text-primary
                    focus:outline-none focus:border-green-500 transition-colors resize-none"
           placeholder="Cevap anahtarını buraya yazın... (opsiyonel)"
         />
@@ -209,7 +209,7 @@ export default function AdminEditDocumentForm({
           type="url"
           value={formData.solution_url || ""}
           onChange={(event) => updateFormData({ solution_url: event.target.value })}
-          className="w-full bg-slate-800/50 border border-slate-700 rounded-xl px-4 py-3 text-white
+          className="w-full bg-surface-2 dark:bg-slate-800/50 border border-default dark:border-slate-700 rounded-xl px-4 py-3 text-primary
                    focus:outline-none focus:border-green-500 transition-colors"
           placeholder="https://drive.google.com/... (çözümlü PDF varsa)"
         />

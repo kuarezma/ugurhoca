@@ -53,7 +53,7 @@ export default function AdminDocumentFields({
           />
           <label
             htmlFor={fileInputId}
-            className="flex items-center justify-center gap-2 w-full bg-slate-800/50 border border-slate-700 border-dashed rounded-xl px-4 py-6 text-slate-400 cursor-pointer hover:bg-slate-800 hover:border-purple-500 transition-colors"
+            className="flex items-center justify-center gap-2 w-full bg-surface-2 dark:bg-slate-800/50 border border-default dark:border-slate-700 border-dashed rounded-xl px-4 py-6 text-secondary cursor-pointer hover:bg-surface-3 dark:hover:bg-slate-800 hover:border-purple-500 transition-colors"
           >
             <Upload className="w-5 h-5" />
             <span>
@@ -81,7 +81,7 @@ export default function AdminDocumentFields({
               file_url: event.target.value,
             })
           }
-          className="w-full bg-slate-800/50 border border-slate-700 rounded-xl px-4 py-3 text-white
+          className="w-full bg-surface-2 dark:bg-slate-800/50 border border-default dark:border-slate-700 rounded-xl px-4 py-3 text-primary
                    focus:outline-none focus:border-purple-500 transition-colors"
           placeholder="https://drive.google.com/..."
         />
@@ -98,7 +98,7 @@ export default function AdminDocumentFields({
           type="url"
           value={formData.video_url || ""}
           onChange={(event) => updateFormData({ video_url: event.target.value })}
-          className="w-full bg-slate-800/50 border border-slate-700 rounded-xl px-4 py-3 text-white
+          className="w-full bg-surface-2 dark:bg-slate-800/50 border border-default dark:border-slate-700 rounded-xl px-4 py-3 text-primary
                    focus:outline-none focus:border-purple-500 transition-colors"
           placeholder="https://www.youtube.com/watch?v=..."
         />
@@ -117,7 +117,7 @@ export default function AdminDocumentFields({
             updateFormData({ answer_key_text: event.target.value })
           }
           rows={3}
-          className="w-full bg-slate-800/50 border border-slate-700 rounded-xl px-4 py-3 text-white
+          className="w-full bg-surface-2 dark:bg-slate-800/50 border border-default dark:border-slate-700 rounded-xl px-4 py-3 text-primary
                    focus:outline-none focus:border-green-500 transition-colors resize-none"
           placeholder="Cevap anahtarını buraya yazın... (opsiyonel)"
         />
@@ -136,7 +136,7 @@ export default function AdminDocumentFields({
           onChange={(event) =>
             updateFormData({ solution_url: event.target.value })
           }
-          className="w-full bg-slate-800/50 border border-slate-700 rounded-xl px-4 py-3 text-white
+          className="w-full bg-surface-2 dark:bg-slate-800/50 border border-default dark:border-slate-700 rounded-xl px-4 py-3 text-primary
                    focus:outline-none focus:border-green-500 transition-colors"
           placeholder="https://drive.google.com/... (çözümlü PDF varsa)"
         />
@@ -178,7 +178,7 @@ export default function AdminDocumentFields({
                       : [],
                   })
                 }
-                className="w-full bg-slate-800/50 border border-slate-700 rounded-xl px-4 py-3 text-white
+                className="w-full bg-surface-2 dark:bg-slate-800/50 border border-default dark:border-slate-700 rounded-xl px-4 py-3 text-primary
                    focus:outline-none focus:border-purple-500 transition-colors"
               >
                 <option value="">Sınıf düzeyi seçin</option>
@@ -204,7 +204,7 @@ export default function AdminDocumentFields({
                 onChange={(event) =>
                   updateFormData({ learning_outcome: event.target.value })
                 }
-                className="w-full bg-slate-800/50 border border-slate-700 rounded-xl px-4 py-3 text-white
+                className="w-full bg-surface-2 dark:bg-slate-800/50 border border-default dark:border-slate-700 rounded-xl px-4 py-3 text-primary
                    focus:outline-none focus:border-purple-500 transition-colors"
                 placeholder="Örn. Cebirsel ifadelerle işlemler"
               />
@@ -236,7 +236,7 @@ export default function AdminDocumentFields({
                     }
                     className="w-4 h-4 accent-purple-500"
                   />
-                  <span className="text-white text-sm">{grade}. Sınıf</span>
+                  <span className="text-primary text-sm">{grade}. Sınıf</span>
                 </label>
               ))}
               <label className="flex items-center gap-2 px-3 py-2 glass rounded-lg cursor-pointer hover:bg-white/10 min-w-[calc(50%-0.25rem)] sm:min-w-0">
@@ -248,7 +248,7 @@ export default function AdminDocumentFields({
                   }
                   className="w-4 h-4 accent-purple-500"
                 />
-                <span className="text-white text-sm">Mezun</span>
+                <span className="text-primary text-sm">Mezun</span>
               </label>
             </div>
           </>

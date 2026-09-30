@@ -70,10 +70,10 @@ export default function AdminSubmissionsModal({
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 pb-4 border-b border-white/10">
           <div className="flex items-center gap-4">
             <div className="w-12 h-12 bg-indigo-500 rounded-2xl flex items-center justify-center shrink-0">
-              <ClipboardList className="w-6 h-6 text-white" />
+              <ClipboardList className="w-6 h-6 text-white dark:text-white" />
             </div>
             <div>
-              <h2 className="text-2xl font-bold text-white leading-tight">
+              <h2 className="text-2xl font-bold text-primary leading-tight">
                 {assignment.title}
               </h2>
               <div className="flex items-center gap-2 text-slate-400 text-xs sm:text-sm mt-0.5">
@@ -140,7 +140,7 @@ export default function AdminSubmissionsModal({
                 <span className="text-xs font-bold text-amber-400 uppercase tracking-wider">
                   Öğrenci {currentIndex + 1} / {submissions.length}
                 </span>
-                <span className="text-sm font-semibold text-white">
+                <span className="text-sm font-semibold text-primary">
                   {currentSubmission?.student_name || 'Öğrenci'}
                 </span>
                 {currentSubmission?.grade !== null && currentSubmission?.grade !== undefined && (
@@ -156,7 +156,7 @@ export default function AdminSubmissionsModal({
                   type="button"
                   onClick={handlePrev}
                   disabled={currentIndex === 0}
-                  className="flex items-center gap-1 px-3 py-1.5 rounded-xl border border-white/10 bg-white/5 text-xs font-semibold text-white hover:bg-white/10 disabled:opacity-40 disabled:cursor-not-allowed transition"
+                  className="flex items-center gap-1 px-3 py-1.5 rounded-xl border border-default dark:border-white/10 bg-surface-2 dark:bg-white/5 text-xs font-semibold text-primary dark:text-white hover:bg-surface-3 dark:hover:bg-white/10 disabled:opacity-40 disabled:cursor-not-allowed transition"
                 >
                   <ChevronLeft className="w-4 h-4" />
                   <span className="hidden sm:inline">Önceki</span>
