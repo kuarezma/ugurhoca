@@ -167,7 +167,7 @@ export function VisualMathProofsModal({
           <div className="p-6 rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-850/40 space-y-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <span className="w-7 h-7 rounded-xl bg-cyan-600 text-white text-xs font-bold flex items-center justify-center shadow-sm">
+                <span className="w-7 h-7 rounded-xl bg-cyan-600 text-white dark:text-white text-xs font-bold flex items-center justify-center shadow-sm">
                   {currentStep.stepNumber}
                 </span>
                 <h4 className="text-sm font-bold text-slate-900 dark:text-white">
@@ -214,7 +214,7 @@ export function VisualMathProofsModal({
                 type="button"
                 disabled={currentStepIndex === selectedProof.steps.length - 1}
                 onClick={() => setCurrentStepIndex((prev) => Math.min(selectedProof.steps.length - 1, prev + 1))}
-                className="px-3.5 py-1.5 rounded-xl bg-cyan-600 hover:bg-cyan-700 text-white text-xs font-semibold disabled:opacity-40 disabled:cursor-not-allowed flex items-center gap-1 shadow-sm"
+                className="px-3.5 py-1.5 rounded-xl bg-cyan-600 hover:bg-cyan-700 text-white dark:text-white text-xs font-semibold disabled:opacity-40 disabled:cursor-not-allowed flex items-center gap-1 shadow-sm"
               >
                 Sonraki Adım
                 <ChevronRight className="w-4 h-4" />
