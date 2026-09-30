@@ -166,9 +166,9 @@ export function MultiplicationRace({
               boxShadow: '0 0 60px rgba(236, 72, 153, 0.4)',
             }}
           >
-            <span className="text-5xl font-bold text-white">×</span>
+            <span className="text-5xl font-bold text-white dark:text-white">×</span>
           </motion.div>
-          <h2 className="text-3xl font-bold text-white mb-4">
+          <h2 className="text-3xl font-bold text-primary mb-4">
             Çarpım Tablosu Yarışı
           </h2>
           <p className="text-slate-400 mb-6 max-w-md mx-auto">
@@ -179,7 +179,7 @@ export function MultiplicationRace({
             {[2, 3, 4, 5, 6, 7, 8, 9].map((currentTable) => (
               <span
                 key={currentTable}
-                className="px-3 py-1 rounded-full text-white font-bold"
+                className="px-3 py-1 rounded-full text-white dark:text-white font-bold"
                 style={{ backgroundColor: getTableColor(currentTable) }}
               >
                 {currentTable}×
@@ -214,9 +214,9 @@ export function MultiplicationRace({
           className="w-32 h-32 mx-auto mb-6 bg-gradient-to-br from-green-400 to-emerald-500 rounded-full flex items-center justify-center"
           style={{ boxShadow: '0 0 60px rgba(16, 185, 129, 0.4)' }}
         >
-          <Trophy className="w-16 h-16 text-white" />
+          <Trophy className="w-16 h-16 text-white dark:text-white" />
         </motion.div>
-        <h2 className="text-3xl font-bold text-white mb-2">Süre Doldu!</h2>
+        <h2 className="text-3xl font-bold text-primary mb-2">Süre Doldu!</h2>
         <p className="text-5xl font-bold text-green-400 mb-2">{score} Puan</p>
         <p className="text-slate-400 mb-2">
           {tablesCompleted.length} tablo tamamladın!
@@ -241,13 +241,13 @@ export function MultiplicationRace({
   return (
     <div className="max-w-xl mx-auto">
       <div className="flex justify-between items-center mb-6">
-        <div className="px-4 py-2 bg-black/50 backdrop-blur-sm rounded-xl text-white font-bold">
+        <div className="px-4 py-2 bg-black/50 backdrop-blur-sm rounded-xl text-white dark:text-white font-bold">
           Puan: <span className="text-green-400">{score}</span>
         </div>
-        <div className="px-4 py-2 bg-black/50 backdrop-blur-sm rounded-xl text-white font-bold">
+        <div className="px-4 py-2 bg-black/50 backdrop-blur-sm rounded-xl text-white dark:text-white font-bold">
           Seviye {level}
         </div>
-        <div className="px-4 py-2 bg-black/50 backdrop-blur-sm rounded-xl text-white font-bold">
+        <div className="px-4 py-2 bg-black/50 backdrop-blur-sm rounded-xl text-white dark:text-white font-bold">
           {timeLeft}s
         </div>
       </div>
@@ -257,7 +257,7 @@ export function MultiplicationRace({
           <motion.div
             key={currentTable}
             whileHover={{ scale: 1.1 }}
-            className="w-12 h-12 rounded-xl flex items-center justify-center text-white font-bold text-lg"
+            className="w-12 h-12 rounded-xl flex items-center justify-center text-white dark:text-white font-bold text-lg"
             style={{
               backgroundColor: tablesCompleted.includes(currentTable)
                 ? '#22c55e'
@@ -280,7 +280,7 @@ export function MultiplicationRace({
       </div>
 
       <div className="mb-4">
-        <div className="h-3 bg-slate-700 rounded-full overflow-hidden">
+        <div className="h-3 bg-surface-3 dark:bg-slate-700 rounded-full overflow-hidden">
           <motion.div
             className="h-full rounded-full"
             initial={{ width: 0 }}
@@ -304,7 +304,7 @@ export function MultiplicationRace({
       >
         <motion.div
           animate={selected === problem.answer ? { scale: [1, 1.1, 1] } : {}}
-          className="text-7xl font-bold text-white mb-4"
+          className="text-7xl font-bold text-white dark:text-white mb-4"
         >
           {problem.a} <span style={{ color: getTableColor(table) }}>×</span>{' '}
           {problem.b}
@@ -353,7 +353,7 @@ export function MultiplicationRace({
           className="mt-8 p-4 bg-green-500/20 border border-green-500/30 rounded-xl text-center"
         >
           <p className="text-green-400 font-bold">🎉 Tamamlanan Tablolar!</p>
-          <p className="text-white text-xl font-bold">
+          <p className="text-primary text-xl font-bold">
             {tablesCompleted.join(', ')}
           </p>
         </motion.div>

@@ -316,7 +316,7 @@ export function MathDuel({
       {/* HEADER: Title, Modes, Timer */}
       <div className="flex flex-wrap items-center justify-between gap-4 pb-4 border-b border-slate-200 dark:border-slate-700/60">
         <div className="flex items-center gap-3">
-          <div className="p-2.5 rounded-xl bg-gradient-to-tr from-amber-500 to-rose-500 text-white shadow-lg shadow-rose-500/20">
+          <div className="p-2.5 rounded-xl bg-gradient-to-tr from-amber-500 to-rose-500 text-white dark:text-white shadow-lg shadow-rose-500/20">
             <Swords className="w-6 h-6 animate-pulse" />
           </div>
           <div>
@@ -380,7 +380,7 @@ export function MathDuel({
         <div className="py-8 sm:py-12 flex flex-col items-center text-center space-y-6">
           <div className="relative">
             <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-3xl bg-gradient-to-tr from-amber-500 to-rose-600 flex items-center justify-center shadow-xl shadow-rose-500/20">
-              <Swords className="w-12 h-12 sm:w-14 sm:h-14 text-white" />
+              <Swords className="w-12 h-12 sm:w-14 sm:h-14 text-white dark:text-white" />
             </div>
             <div className="absolute -bottom-2 -right-2 px-2.5 py-1 bg-emerald-500 text-slate-950 rounded-full text-xs font-black shadow-lg">
               60 SN
@@ -557,7 +557,7 @@ export function MathDuel({
         <div className="py-6 sm:py-8 flex flex-col items-center text-center space-y-6">
           <div className="p-4 rounded-3xl bg-slate-50 dark:bg-slate-800/90 border border-slate-200 dark:border-slate-700 flex flex-col items-center shadow-xl">
             <div className="w-20 h-20 rounded-2xl bg-gradient-to-tr from-amber-500 to-rose-500 flex items-center justify-center mb-3 shadow-lg">
-              <Award className="w-10 h-10 text-white" />
+              <Award className="w-10 h-10 text-white dark:text-white" />
             </div>
 
             <h3 className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white">

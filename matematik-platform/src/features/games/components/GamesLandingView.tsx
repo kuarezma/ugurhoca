@@ -42,7 +42,7 @@ export function GamesLandingView({
         <div className="container mx-auto flex justify-between items-center gap-3">
           <Link href="/" className="flex items-center gap-2.5 min-w-0">
             <div className="w-8 h-8 sm:w-10 sm:h-10 shrink-0 bg-gradient-to-br from-purple-600 to-pink-600 rounded-xl flex items-center justify-center">
-              <Calculator className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
+              <Calculator className="w-5 h-5 sm:w-6 sm:h-6 text-white dark:text-white" />
             </div>
             <span className="text-base sm:text-xl font-bold bg-gradient-to-r from-purple-700 via-fuchsia-700 to-pink-700 dark:from-purple-300 dark:via-fuchsia-300 dark:to-pink-300 bg-clip-text text-transparent truncate">
               Uğur Hoca Matematik

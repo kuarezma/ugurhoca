@@ -305,7 +305,7 @@ export function PizzaChef({
       <div className="mb-6 flex flex-wrap items-center justify-between gap-4 border-b border-slate-200 dark:border-white/10 pb-4">
         <div className="flex items-center gap-3">
           <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-tr from-amber-500 to-red-500 shadow-lg shadow-amber-500/30">
-            <ChefHat className="h-7 w-7 text-white" />
+            <ChefHat className="h-7 w-7 text-white dark:text-white" />
           </div>
           <div>
             <h2 className="font-display text-2xl font-bold text-amber-600 dark:text-amber-300">
@@ -342,7 +342,7 @@ export function PizzaChef({
       {gameState === 'idle' && (
         <div className="py-10 text-center">
           <div className="mx-auto mb-6 flex h-24 w-24 items-center justify-center rounded-full bg-gradient-to-tr from-amber-500 to-orange-500 shadow-xl shadow-amber-500/40">
-            <Utensils className="h-12 w-12 text-white" />
+            <Utensils className="h-12 w-12 text-white dark:text-white" />
           </div>
           <h3 className="text-2xl font-bold text-slate-900 dark:text-white">
             Siparişler Geliyor, Şef!

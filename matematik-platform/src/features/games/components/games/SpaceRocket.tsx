@@ -224,9 +224,9 @@ export function SpaceRocket({ onScore, scoreMultiplier }: GameComponentProps) {
             transition={{ duration: 2, repeat: Infinity }}
             className="mx-auto mb-6 flex h-32 w-32 items-center justify-center rounded-3xl bg-gradient-to-br from-indigo-500 via-sky-500 to-amber-400 shadow-lg shadow-sky-500/30"
           >
-            <Rocket className="h-16 w-16 text-white" />
+            <Rocket className="h-16 w-16 text-white dark:text-white" />
           </motion.div>
-          <h2 className="mb-4 text-3xl font-bold text-white">Uzay Roketi</h2>
+          <h2 className="mb-4 text-3xl font-bold text-primary">Uzay Roketi</h2>
           <p className="mx-auto mb-6 max-w-md text-slate-400">
             Roketi doğru cevap kapısına uçur. Yıldızları topla, yakıtı bitirme!
           </p>
@@ -257,9 +257,9 @@ export function SpaceRocket({ onScore, scoreMultiplier }: GameComponentProps) {
           transition={{ duration: 0.9, repeat: Infinity }}
           className="mx-auto mb-6 flex h-32 w-32 items-center justify-center rounded-full bg-gradient-to-br from-yellow-300 to-indigo-500"
         >
-          <Trophy className="h-16 w-16 text-white" />
+          <Trophy className="h-16 w-16 text-white dark:text-white" />
         </motion.div>
-        <h2 className="mb-2 text-3xl font-bold text-white">
+        <h2 className="mb-2 text-3xl font-bold text-primary">
           Görev Tamamlandı!
         </h2>
         <p className="mb-2 text-5xl font-bold text-amber-300">{score} Puan</p>
@@ -281,22 +281,22 @@ export function SpaceRocket({ onScore, scoreMultiplier }: GameComponentProps) {
   return (
     <div className="mx-auto max-w-4xl">
       <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
-        <div className="rounded-xl bg-black/50 px-4 py-2 font-bold text-white backdrop-blur-sm">
+        <div className="rounded-xl bg-black/50 px-4 py-2 font-bold text-white dark:text-white backdrop-blur-sm">
           Puan: <span className="text-amber-300">{score}</span>
         </div>
-        <div className="flex items-center gap-2 rounded-xl bg-black/50 px-4 py-2 font-bold text-white backdrop-blur-sm">
+        <div className="flex items-center gap-2 rounded-xl bg-black/50 px-4 py-2 font-bold text-white dark:text-white backdrop-blur-sm">
           <Star className="h-5 w-5 fill-yellow-300 text-yellow-300" />
           {stars}
         </div>
-        <div className="rounded-xl bg-black/50 px-4 py-2 font-bold text-white backdrop-blur-sm">
+        <div className="rounded-xl bg-black/50 px-4 py-2 font-bold text-white dark:text-white backdrop-blur-sm">
           Seviye {level}
         </div>
-        <div className="rounded-xl bg-black/50 px-4 py-2 font-bold text-white backdrop-blur-sm">
+        <div className="rounded-xl bg-black/50 px-4 py-2 font-bold text-white dark:text-white backdrop-blur-sm">
           {timeLeft}s
         </div>
       </div>
 
-      <div className="mb-6 h-3 overflow-hidden rounded-full bg-slate-700">
+      <div className="mb-6 h-3 overflow-hidden rounded-full bg-surface-3 dark:bg-slate-700">
         <motion.div
           className="h-full bg-gradient-to-r from-amber-400 to-emerald-400"
           animate={{ width: `${fuel}%` }}
@@ -346,7 +346,7 @@ export function SpaceRocket({ onScore, scoreMultiplier }: GameComponentProps) {
           <p className="text-sm font-semibold uppercase tracking-widest text-cyan-200">
             Doğru kapıyı seç
           </p>
-          <p className="mt-2 text-2xl font-bold leading-relaxed text-white md:text-3xl">
+          <p className="mt-2 text-2xl font-bold leading-relaxed text-white dark:text-white md:text-3xl">
             {problem.prompt}
           </p>
         </div>

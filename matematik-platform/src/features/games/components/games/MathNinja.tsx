@@ -296,12 +296,12 @@ export function MathNinja({
   };
 
   return (
-    <div className="relative mx-auto w-full max-w-2xl select-none overflow-hidden rounded-3xl border border-rose-500/30 bg-slate-950 p-6 text-white shadow-2xl backdrop-blur-xl">
+    <div className="relative mx-auto w-full max-w-2xl select-none overflow-hidden rounded-3xl border border-rose-500/30 bg-slate-950 dark:bg-slate-950 p-6 text-white dark:text-white shadow-2xl backdrop-blur-xl">
       {/* Header */}
       <div className="mb-4 flex flex-wrap items-center justify-between gap-4 border-b border-white/10 pb-4">
         <div className="flex items-center gap-3">
           <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-tr from-rose-500 to-red-600 shadow-lg shadow-rose-500/30">
-            <Swords className="h-7 w-7 text-white" />
+            <Swords className="h-7 w-7 text-white dark:text-white" />
           </div>
           <div>
             <h2 className="font-display text-2xl font-bold text-rose-300">
@@ -338,9 +338,9 @@ export function MathNinja({
       {gameState === 'idle' && (
         <div className="py-12 text-center">
           <div className="mx-auto mb-6 flex h-24 w-24 items-center justify-center rounded-full bg-gradient-to-tr from-rose-500 to-amber-500 shadow-xl shadow-rose-500/40">
-            <Swords className="h-12 w-12 text-white" />
+            <Swords className="h-12 w-12 text-white dark:text-white" />
           </div>
-          <h3 className="text-2xl font-bold text-white">
+          <h3 className="text-2xl font-bold text-white dark:text-white">
             Hazır mısın Genç Ninja?
           </h3>
           <p className="mx-auto mt-2 max-w-md text-sm text-slate-300">
@@ -368,7 +368,7 @@ export function MathNinja({
                 <span className="text-xs uppercase tracking-wider text-rose-400 font-bold">
                   NİNJA GÖREVİ
                 </span>
-                <div className="text-lg font-bold text-white">
+                <div className="text-lg font-bold text-white dark:text-white">
                   {mission.title}
                 </div>
               </div>
@@ -423,12 +423,12 @@ export function MathNinja({
                     {item.emoji}
                   </div>
                   {!item.isBomb && (
-                    <div className="absolute -bottom-2 rounded-lg bg-slate-950/90 px-2 py-0.5 font-display text-sm font-black text-amber-300 shadow border border-white/20">
+                    <div className="absolute -bottom-2 rounded-lg bg-slate-950/90 dark:bg-slate-950/90 px-2 py-0.5 font-display text-sm font-black text-amber-300 shadow border border-white/20">
                       {item.num}
                     </div>
                   )}
                   {item.isBomb && (
-                    <div className="absolute -bottom-2 rounded-lg bg-red-600/90 px-1.5 py-0.5 text-[10px] font-black text-white">
+                    <div className="absolute -bottom-2 rounded-lg bg-red-600/90 px-1.5 py-0.5 text-[10px] font-black text-white dark:text-white">
                       DOKUNMA!
                     </div>
                   )}
@@ -461,10 +461,10 @@ export function MathNinja({
 
       {gameState === 'ended' && (
         <div className="py-8 text-center">
-          <div className="mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-tr from-rose-500 to-amber-500 text-white shadow-xl">
+          <div className="mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-tr from-rose-500 to-amber-500 text-white dark:text-white shadow-xl">
             <Trophy className="h-10 w-10" />
           </div>
-          <h3 className="font-display text-3xl font-black text-white">
+          <h3 className="font-display text-3xl font-black text-white dark:text-white">
             Oyun Bitti!
           </h3>
           <p className="mt-2 text-sm text-slate-300">
@@ -489,14 +489,14 @@ export function MathNinja({
           <div className="flex justify-center gap-4">
             <button
               onClick={startNewGame}
-              className="inline-flex items-center gap-2 rounded-2xl bg-rose-500 px-6 py-3 font-bold text-white transition hover:bg-rose-600"
+              className="inline-flex items-center gap-2 rounded-2xl bg-rose-500 px-6 py-3 font-bold text-white dark:text-white transition hover:bg-rose-600"
             >
               <RotateCcw className="h-5 w-5" /> Yeniden Başla
             </button>
             {onExit && (
               <button
                 onClick={onExit}
-                className="rounded-2xl border border-white/20 bg-white/5 px-6 py-3 font-semibold text-white transition hover:bg-white/10"
+                className="rounded-2xl border border-white/20 bg-white/5 px-6 py-3 font-semibold text-white dark:text-white transition hover:bg-white/10"
               >
                 Oyunlara Dön
               </button>

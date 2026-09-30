@@ -174,7 +174,7 @@ export function NumberPuzzle({ onScore, scoreMultiplier }: GameComponentProps) {
           >
             <span className="text-5xl">🔢</span>
           </motion.div>
-          <h2 className="text-3xl font-bold text-white mb-4">Sayı Bulmaca</h2>
+          <h2 className="text-3xl font-bold text-primary mb-4">Sayı Bulmaca</h2>
           <p className="text-slate-400 mb-6 max-w-md mx-auto">
             Eksik sayıyı bul! Dört işlem, kare, küp, karekök... 90 saniyede en
             yüksek skoru yap!
@@ -205,9 +205,9 @@ export function NumberPuzzle({ onScore, scoreMultiplier }: GameComponentProps) {
           transition={{ duration: 0.5 }}
           className="w-32 h-32 mx-auto mb-6 bg-gradient-to-br from-green-400 to-emerald-500 rounded-full flex items-center justify-center"
         >
-          <Trophy className="w-16 h-16 text-white" />
+          <Trophy className="w-16 h-16 text-white dark:text-white" />
         </motion.div>
-        <h2 className="text-3xl font-bold text-white mb-2">Süre Doldu!</h2>
+        <h2 className="text-3xl font-bold text-primary mb-2">Süre Doldu!</h2>
         <p className="text-5xl font-bold text-green-400 mb-2">{score} Puan</p>
         <p className="text-slate-400 mb-8">Seviye {level}'e ulaştın!</p>
         <motion.button
@@ -226,13 +226,13 @@ export function NumberPuzzle({ onScore, scoreMultiplier }: GameComponentProps) {
   return (
     <div className="max-w-xl mx-auto">
       <div className="flex justify-between items-center mb-6">
-        <div className="px-4 py-2 bg-black/50 backdrop-blur-sm rounded-xl text-white font-bold">
+        <div className="px-4 py-2 bg-black/50 backdrop-blur-sm rounded-xl text-white dark:text-white font-bold">
           Puan: <span className="text-green-400">{score}</span>
         </div>
-        <div className="px-4 py-2 bg-black/50 backdrop-blur-sm rounded-xl text-white font-bold">
+        <div className="px-4 py-2 bg-black/50 backdrop-blur-sm rounded-xl text-white dark:text-white font-bold">
           Seviye <span className="text-amber-400">{level}</span>
         </div>
-        <div className="px-4 py-2 bg-black/50 backdrop-blur-sm rounded-xl text-white font-bold">
+        <div className="px-4 py-2 bg-black/50 backdrop-blur-sm rounded-xl text-white dark:text-white font-bold">
           {timeLeft}s
         </div>
       </div>
@@ -253,7 +253,7 @@ export function NumberPuzzle({ onScore, scoreMultiplier }: GameComponentProps) {
               : 'border-slate-700'
         }`}
       >
-        <p className="text-5xl font-bold text-white mb-2">{problem.text}</p>
+        <p className="text-5xl font-bold text-white dark:text-white mb-2">{problem.text}</p>
         <p className="text-slate-400 text-sm mt-2">{problem.hint}</p>
         {feedback === 'correct' && (
           <p className="text-green-400 font-bold text-xl mt-3">✓ Doğru!</p>
@@ -284,7 +284,7 @@ export function NumberPuzzle({ onScore, scoreMultiplier }: GameComponentProps) {
           aria-label="Cevabın"
           // eslint-disable-next-line jsx-a11y/no-autofocus -- oyun karesi açıldığında cevap inputuna otomatik odak
           autoFocus
-          className="flex-1 bg-slate-800 border border-slate-700 rounded-2xl px-6 py-4 text-white text-2xl font-bold text-center focus:outline-none focus:border-amber-500 transition-colors"
+          className="flex-1 bg-surface-2 dark:bg-slate-800 border border-default dark:border-slate-700 rounded-2xl px-6 py-4 text-primary dark:text-white text-2xl font-bold text-center focus:outline-none focus:border-amber-500 transition-colors"
         />
         <motion.button
           type="submit"

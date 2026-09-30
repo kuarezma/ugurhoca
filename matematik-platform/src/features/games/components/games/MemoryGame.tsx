@@ -136,7 +136,7 @@ export function MemoryGame({ onScore, scoreMultiplier }: GameComponentProps) {
           >
             <span className="text-5xl">🧠</span>
           </motion.div>
-          <h2 className="text-3xl font-bold text-white mb-4">
+          <h2 className="text-3xl font-bold text-primary mb-4">
             Matematik Memory
           </h2>
           <p className="text-slate-400 mb-6 max-w-md mx-auto">
@@ -169,9 +169,9 @@ export function MemoryGame({ onScore, scoreMultiplier }: GameComponentProps) {
           transition={{ duration: 0.5 }}
           className="w-32 h-32 mx-auto mb-6 bg-gradient-to-br from-yellow-400 to-amber-500 rounded-full flex items-center justify-center"
         >
-          <Trophy className="w-16 h-16 text-white" />
+          <Trophy className="w-16 h-16 text-white dark:text-white" />
         </motion.div>
-        <h2 className="text-3xl font-bold text-white mb-2">Tebrikler!</h2>
+        <h2 className="text-3xl font-bold text-primary mb-2">Tebrikler!</h2>
         <p className="text-slate-400 mb-2">{moves} hamlede tamamladın!</p>
         <p className="text-5xl font-bold text-yellow-400 mb-6">{score} Puan</p>
         <motion.button
@@ -190,13 +190,13 @@ export function MemoryGame({ onScore, scoreMultiplier }: GameComponentProps) {
   return (
     <div className="max-w-lg mx-auto">
       <div className="flex justify-between items-center mb-6">
-        <div className="px-4 py-2 bg-black/50 backdrop-blur-sm rounded-xl text-white font-bold">
+        <div className="px-4 py-2 bg-black/50 backdrop-blur-sm rounded-xl text-white dark:text-white font-bold">
           Puan: <span className="text-green-400">{score}</span>
         </div>
-        <div className="px-4 py-2 bg-black/50 backdrop-blur-sm rounded-xl text-white font-bold">
+        <div className="px-4 py-2 bg-black/50 backdrop-blur-sm rounded-xl text-white dark:text-white font-bold">
           Hamle: {moves}
         </div>
-        <div className="px-4 py-2 bg-black/50 backdrop-blur-sm rounded-xl text-white font-bold">
+        <div className="px-4 py-2 bg-black/50 backdrop-blur-sm rounded-xl text-white dark:text-white font-bold">
           {timeLeft}s
         </div>
       </div>

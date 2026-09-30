@@ -158,7 +158,7 @@ export function TreasurePirate({
   };
 
   return (
-    <div className="mx-auto w-full max-w-2xl select-none rounded-3xl border border-amber-500/30 bg-slate-950 p-6 text-white shadow-2xl backdrop-blur-xl">
+    <div className="mx-auto w-full max-w-2xl select-none rounded-3xl border border-amber-500/30 bg-slate-950 dark:bg-slate-950 p-6 text-white dark:text-white shadow-2xl backdrop-blur-xl">
       {/* Header */}
       <div className="mb-4 flex flex-wrap items-center justify-between gap-4 border-b border-white/10 pb-4">
         <div className="flex items-center gap-3">
@@ -202,7 +202,7 @@ export function TreasurePirate({
           <div className="mx-auto mb-6 flex h-24 w-24 items-center justify-center rounded-full bg-gradient-to-tr from-amber-500 to-yellow-500 text-slate-950 shadow-xl shadow-amber-500/40">
             <Compass className="h-12 w-12" />
           </div>
-          <h3 className="text-2xl font-bold text-white">
+          <h3 className="text-2xl font-bold text-white dark:text-white">
             Ahoy Kaptan! Harita Açıldı!
           </h3>
           <p className="mx-auto mt-2 max-w-md text-sm text-slate-300">
@@ -228,7 +228,7 @@ export function TreasurePirate({
               <span className="text-xs uppercase tracking-wider text-amber-400 font-bold">
                 KORSANIN HEDEFİ (#{round})
               </span>
-              <div className="flex items-center gap-2 font-display text-2xl font-black text-white">
+              <div className="flex items-center gap-2 font-display text-2xl font-black text-white dark:text-white">
                 <MapPin className="h-6 w-6 text-red-500 animate-bounce" />
                 (X: <span className="text-amber-400">{target.x}</span>, Y:{' '}
                 <span className="text-cyan-400">{target.y}</span>)
@@ -334,7 +334,7 @@ export function TreasurePirate({
           <div className="mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-tr from-amber-400 to-yellow-500 text-slate-950 shadow-xl">
             <Trophy className="h-10 w-10" />
           </div>
-          <h3 className="font-display text-3xl font-black text-white">
+          <h3 className="font-display text-3xl font-black text-white dark:text-white">
             Ada Feth Edildi!
           </h3>
           <p className="mt-2 text-sm text-slate-300">
@@ -366,7 +366,7 @@ export function TreasurePirate({
             {onExit && (
               <button
                 onClick={onExit}
-                className="rounded-2xl border border-white/20 bg-white/5 px-6 py-3 font-semibold text-white transition hover:bg-white/10"
+                className="rounded-2xl border border-white/20 bg-white/5 px-6 py-3 font-semibold text-white dark:text-white transition hover:bg-white/10"
               >
                 Oyunlara Dön
               </button>

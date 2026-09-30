@@ -176,9 +176,9 @@ export function BalloonPop({ onScore, scoreMultiplier }: GameComponentProps) {
             transition={{ duration: 2.2, repeat: Infinity }}
             className="mx-auto mb-6 flex h-32 w-32 items-center justify-center rounded-full bg-gradient-to-br from-pink-400 via-fuchsia-500 to-cyan-400 shadow-lg shadow-pink-500/30"
           >
-            <Sparkles className="h-16 w-16 text-white" />
+            <Sparkles className="h-16 w-16 text-white dark:text-white" />
           </motion.div>
-          <h2 className="mb-4 text-3xl font-bold text-white">Balon Patlatma</h2>
+          <h2 className="mb-4 text-3xl font-bold text-primary">Balon Patlatma</h2>
           <p className="mx-auto mb-6 max-w-md text-slate-400">
             İşlemi çöz, doğru cevabın balonunu patlat. Seri yapınca puanlar
             parlıyor!
@@ -210,9 +210,9 @@ export function BalloonPop({ onScore, scoreMultiplier }: GameComponentProps) {
           transition={{ duration: 0.8, repeat: Infinity }}
           className="mx-auto mb-6 flex h-32 w-32 items-center justify-center rounded-full bg-gradient-to-br from-yellow-300 to-pink-500"
         >
-          <Trophy className="h-16 w-16 text-white" />
+          <Trophy className="h-16 w-16 text-white dark:text-white" />
         </motion.div>
-        <h2 className="mb-2 text-3xl font-bold text-white">Balonlar Harika!</h2>
+        <h2 className="mb-2 text-3xl font-bold text-primary">Balonlar Harika!</h2>
         <p className="mb-2 text-5xl font-bold text-pink-300">{score} Puan</p>
         <p className="mb-8 text-slate-400">{round - 1} balon turu oynadın.</p>
         <motion.button
@@ -232,7 +232,7 @@ export function BalloonPop({ onScore, scoreMultiplier }: GameComponentProps) {
   return (
     <div className="mx-auto max-w-3xl">
       <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
-        <div className="rounded-xl bg-black/50 px-4 py-2 font-bold text-white backdrop-blur-sm">
+        <div className="rounded-xl bg-black/50 px-4 py-2 font-bold text-white dark:text-white backdrop-blur-sm">
           Puan: <span className="text-pink-300">{score}</span>
         </div>
         <div className="flex gap-2">
@@ -245,7 +245,7 @@ export function BalloonPop({ onScore, scoreMultiplier }: GameComponentProps) {
             />
           ))}
         </div>
-        <div className="rounded-xl bg-black/50 px-4 py-2 font-bold text-white backdrop-blur-sm">
+        <div className="rounded-xl bg-black/50 px-4 py-2 font-bold text-white dark:text-white backdrop-blur-sm">
           {timeLeft}s
         </div>
       </div>
@@ -259,7 +259,7 @@ export function BalloonPop({ onScore, scoreMultiplier }: GameComponentProps) {
         <p className="mb-2 text-sm font-semibold uppercase tracking-widest text-cyan-300">
           Seviye {level} · Seri {streak}
         </p>
-        <p className="text-5xl font-black text-white sm:text-6xl">
+        <p className="text-5xl font-black text-white dark:text-white sm:text-6xl">
           {problem.question}
         </p>
         <p className="mt-3 text-slate-400">Doğru cevabın balonunu patlat.</p>

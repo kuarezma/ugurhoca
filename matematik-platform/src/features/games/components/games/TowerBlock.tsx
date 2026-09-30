@@ -238,12 +238,12 @@ export function TowerBlock({
   };
 
   return (
-    <div className="mx-auto w-full max-w-2xl select-none rounded-3xl border border-indigo-500/30 bg-slate-950 p-6 text-white shadow-2xl backdrop-blur-xl">
+    <div className="mx-auto w-full max-w-2xl select-none rounded-3xl border border-indigo-500/30 bg-slate-950 dark:bg-slate-950 p-6 text-white dark:text-white shadow-2xl backdrop-blur-xl">
       {/* Header */}
       <div className="mb-4 flex flex-wrap items-center justify-between gap-4 border-b border-white/10 pb-4">
         <div className="flex items-center gap-3">
           <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-tr from-indigo-500 to-purple-600 shadow-lg shadow-indigo-500/30">
-            <Boxes className="h-7 w-7 text-white" />
+            <Boxes className="h-7 w-7 text-white dark:text-white" />
           </div>
           <div>
             <h2 className="font-display text-2xl font-bold text-indigo-300">
@@ -280,9 +280,9 @@ export function TowerBlock({
       {gameState === 'idle' && (
         <div className="py-12 text-center">
           <div className="mx-auto mb-6 flex h-24 w-24 items-center justify-center rounded-full bg-gradient-to-tr from-indigo-500 to-purple-600 shadow-xl shadow-indigo-500/40">
-            <Layers className="h-12 w-12 text-white" />
+            <Layers className="h-12 w-12 text-white dark:text-white" />
           </div>
-          <h3 className="text-2xl font-bold text-white">Gökyüzüne Kule Dik!</h3>
+          <h3 className="text-2xl font-bold text-white dark:text-white">Gökyüzüne Kule Dik!</h3>
           <p className="mx-auto mt-2 max-w-md text-sm text-slate-300">
             Sayı dizisini incele, sıradaki örüntü kuralını çöz. Doğru sayı
             bloğunu seçerek kulenin üstüne yerleştir ve bulutlara kadar yüksel!
@@ -313,7 +313,7 @@ export function TowerBlock({
               {challenge.sequence.map((num, i) => (
                 <div
                   key={i}
-                  className="flex h-12 w-12 sm:h-14 sm:w-14 items-center justify-center rounded-xl border border-indigo-400/40 bg-slate-900 font-display text-lg sm:text-xl font-black text-indigo-300 shadow"
+                  className="flex h-12 w-12 sm:h-14 sm:w-14 items-center justify-center rounded-xl border border-indigo-400/40 bg-slate-900 dark:bg-slate-900 font-display text-lg sm:text-xl font-black text-indigo-300 shadow"
                 >
                   {num}
                 </div>
@@ -402,7 +402,7 @@ export function TowerBlock({
           <div className="mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-tr from-indigo-400 to-purple-500 text-slate-950 shadow-xl">
             <Trophy className="h-10 w-10" />
           </div>
-          <h3 className="font-display text-3xl font-black text-white">
+          <h3 className="font-display text-3xl font-black text-white dark:text-white">
             İnşaat Tamamlandı!
           </h3>
           <p className="mt-2 text-sm text-slate-300">
@@ -427,14 +427,14 @@ export function TowerBlock({
           <div className="flex justify-center gap-4">
             <button
               onClick={startNewGame}
-              className="inline-flex items-center gap-2 rounded-2xl bg-indigo-500 px-6 py-3 font-bold text-white transition hover:bg-indigo-600"
+              className="inline-flex items-center gap-2 rounded-2xl bg-indigo-500 px-6 py-3 font-bold text-white dark:text-white transition hover:bg-indigo-600"
             >
               <RotateCcw className="h-5 w-5" /> Tekrar İnşa Et
             </button>
             {onExit && (
               <button
                 onClick={onExit}
-                className="rounded-2xl border border-white/20 bg-white/5 px-6 py-3 font-semibold text-white transition hover:bg-white/10"
+                className="rounded-2xl border border-white/20 bg-white/5 px-6 py-3 font-semibold text-white dark:text-white transition hover:bg-white/10"
               >
                 Oyunlara Dön
               </button>

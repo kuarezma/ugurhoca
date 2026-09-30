@@ -334,9 +334,9 @@ export function MatMatik({
       >
         <div className="mb-8 text-center">
           <div className="mx-auto mb-5 flex h-28 w-28 items-center justify-center rounded-3xl bg-gradient-to-br from-emerald-500 to-cyan-500 shadow-2xl shadow-emerald-500/30">
-            <span className="text-5xl font-black text-white">×</span>
+            <span className="text-5xl font-black text-white dark:text-white">×</span>
           </div>
-          <h2 className="mb-3 text-4xl font-bold text-white">MatMatik</h2>
+          <h2 className="mb-3 text-4xl font-bold text-primary">MatMatik</h2>
           <p className="mx-auto max-w-xl text-slate-400">
             İki sayı seç, çarpımı tabloda işaretle. Kendi renginle yatay, dikey
             veya çapraz dört hücreyi ilk tamamlayan kazanır.
@@ -368,7 +368,7 @@ export function MatMatik({
                 value={player1Input}
                 onChange={(event) => setPlayer1Input(event.target.value)}
                 placeholder="Oyuncu 1"
-                className="w-full rounded-2xl border border-white/10 bg-slate-950/70 px-4 py-3 text-white outline-none transition focus:border-emerald-400"
+                className="w-full rounded-2xl border border-default dark:border-white/10 bg-surface-2 dark:bg-slate-950/70 px-4 py-3 text-primary dark:text-white outline-none transition focus:border-emerald-400"
               />
             </label>
             {mode === 'two' && (
@@ -380,7 +380,7 @@ export function MatMatik({
                   value={player2Input}
                   onChange={(event) => setPlayer2Input(event.target.value)}
                   placeholder="Oyuncu 2"
-                  className="w-full rounded-2xl border border-white/10 bg-slate-950/70 px-4 py-3 text-white outline-none transition focus:border-rose-400"
+                  className="w-full rounded-2xl border border-default dark:border-white/10 bg-surface-2 dark:bg-slate-950/70 px-4 py-3 text-primary dark:text-white outline-none transition focus:border-rose-400"
                 />
               </label>
             )}
@@ -434,7 +434,7 @@ export function MatMatik({
           player={1}
           thinking={false}
         />
-        <div className="flex min-h-20 flex-col items-center justify-center rounded-3xl border border-white/10 bg-slate-950/60 px-4 py-3 text-center">
+        <div className="flex min-h-20 flex-col items-center justify-center rounded-3xl border border-default dark:border-white/10 bg-surface-2 dark:bg-slate-950/60 px-4 py-3 text-center">
           <p className="text-xs font-semibold uppercase tracking-widest text-slate-500">
             Durum
           </p>
@@ -485,7 +485,7 @@ export function MatMatik({
               </p>
             </div>
             <div
-              className="rounded-2xl border border-cyan-300/20 bg-slate-950/80 p-3 shadow-inner"
+              className="rounded-2xl border border-cyan-300/20 bg-surface-3 dark:bg-slate-950/80 p-3 shadow-inner"
               aria-label="MatMatik sayı hattı"
             >
               <div
@@ -562,14 +562,14 @@ export function MatMatik({
       </div>
 
       {phase === 'ended' && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/80 p-4 backdrop-blur-sm">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/80 dark:bg-slate-950/80 p-4 backdrop-blur-sm">
           <motion.div
             initial={{ scale: 0.92, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             className="w-full max-w-md rounded-3xl border border-slate-200 dark:border-white/10 bg-white dark:bg-slate-900 p-6 text-center shadow-2xl"
           >
             <div className="mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-br from-yellow-300 to-orange-500">
-              <Trophy className="h-10 w-10 text-white" />
+              <Trophy className="h-10 w-10 text-white dark:text-white" />
             </div>
             <h3 className="mb-2 text-3xl font-black text-slate-900 dark:text-white">
               {winner === 'draw'

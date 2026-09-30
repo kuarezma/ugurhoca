@@ -144,9 +144,9 @@ export function ColorMath({ onScore, scoreMultiplier }: GameComponentProps) {
             transition={{ duration: 3, repeat: Infinity, ease: 'linear' }}
             className="w-32 h-32 mx-auto mb-6 bg-gradient-to-br from-cyan-500 to-blue-500 rounded-3xl flex items-center justify-center"
           >
-            <Sparkles className="w-16 h-16 text-white" />
+            <Sparkles className="w-16 h-16 text-white dark:text-white" />
           </motion.div>
-          <h2 className="text-3xl font-bold text-white mb-4">
+          <h2 className="text-3xl font-bold text-primary mb-4">
             Renkli Matematik
           </h2>
           <p className="text-slate-400 mb-6 max-w-md mx-auto">
@@ -179,9 +179,9 @@ export function ColorMath({ onScore, scoreMultiplier }: GameComponentProps) {
           transition={{ duration: 1, repeat: Infinity }}
           className="w-32 h-32 mx-auto mb-6 bg-gradient-to-br from-red-500 to-orange-500 rounded-full flex items-center justify-center"
         >
-          <Trophy className="w-16 h-16 text-white" />
+          <Trophy className="w-16 h-16 text-white dark:text-white" />
         </motion.div>
-        <h2 className="text-3xl font-bold text-white mb-2">Oyun Bitti!</h2>
+        <h2 className="text-3xl font-bold text-primary mb-2">Oyun Bitti!</h2>
         <p className="text-5xl font-bold text-cyan-400 mb-2">{score} Puan</p>
         <p className="text-slate-400 mb-2">{round} soru cevapladın</p>
         <p className="text-slate-400 mb-8">Gözlem yeteneğin harika!</p>
@@ -203,7 +203,7 @@ export function ColorMath({ onScore, scoreMultiplier }: GameComponentProps) {
   return (
     <div className="max-w-2xl mx-auto">
       <div className="flex justify-between items-center mb-8">
-        <div className="px-4 py-2 bg-black/50 backdrop-blur-sm rounded-xl text-white font-bold">
+        <div className="px-4 py-2 bg-black/50 backdrop-blur-sm rounded-xl text-white dark:text-white font-bold">
           Puan: <span className="text-cyan-400">{score}</span>
         </div>
         <div className="flex gap-2">
@@ -215,11 +215,11 @@ export function ColorMath({ onScore, scoreMultiplier }: GameComponentProps) {
               }
               className="w-8 h-8 bg-red-500 rounded-full flex items-center justify-center"
             >
-              <span className="text-white text-sm">♥</span>
+              <span className="text-white dark:text-white text-sm">♥</span>
             </motion.div>
           ))}
         </div>
-        <div className="px-4 py-2 bg-black/50 backdrop-blur-sm rounded-xl text-white font-bold">
+        <div className="px-4 py-2 bg-black/50 backdrop-blur-sm rounded-xl text-white dark:text-white font-bold">
           {round}. Soru
         </div>
       </div>
@@ -249,7 +249,7 @@ export function ColorMath({ onScore, scoreMultiplier }: GameComponentProps) {
       </motion.div>
 
       <div className="mb-6">
-        <div className="h-3 bg-slate-700 rounded-full overflow-hidden">
+        <div className="h-3 bg-surface-3 dark:bg-slate-700 rounded-full overflow-hidden">
           <motion.div
             className="h-full bg-gradient-to-r from-green-500 to-emerald-500"
             initial={{ width: '100%' }}

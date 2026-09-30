@@ -288,7 +288,7 @@ export function Hangman({ onScore, scoreMultiplier }: GameComponentProps) {
           >
             <span className="text-5xl">🔤</span>
           </motion.div>
-          <h2 className="text-3xl font-bold text-white mb-4">
+          <h2 className="text-3xl font-bold text-primary mb-4">
             Matematik Adam Asmaca
           </h2>
           <p className="text-slate-400 mb-6 max-w-md mx-auto">
@@ -323,8 +323,8 @@ export function Hangman({ onScore, scoreMultiplier }: GameComponentProps) {
         >
           <span className="text-5xl">💀</span>
         </motion.div>
-        <h2 className="text-3xl font-bold text-white mb-2">Kaybettin!</h2>
-        <p className="text-2xl text-white mb-2">
+        <h2 className="text-3xl font-bold text-primary mb-2">Kaybettin!</h2>
+        <p className="text-2xl text-secondary mb-2">
           Doğru cevap: <span className="text-yellow-400 font-bold">{word}</span>
         </p>
         <p className="text-4xl font-bold text-green-400 mb-6">{score} Puan</p>
@@ -344,13 +344,13 @@ export function Hangman({ onScore, scoreMultiplier }: GameComponentProps) {
   return (
     <div className="max-w-xl mx-auto">
       <div className="flex justify-between items-center mb-6">
-        <div className="px-4 py-2 bg-black/50 backdrop-blur-sm rounded-xl text-white font-bold">
+        <div className="px-4 py-2 bg-black/50 backdrop-blur-sm rounded-xl text-white dark:text-white font-bold">
           Puan: <span className="text-green-400">{score}</span>
         </div>
-        <div className="px-4 py-2 bg-black/50 backdrop-blur-sm rounded-xl text-white font-bold">
+        <div className="px-4 py-2 bg-black/50 backdrop-blur-sm rounded-xl text-white dark:text-white font-bold">
           Tur {round}
         </div>
-        <div className="px-4 py-2 bg-black/50 backdrop-blur-sm rounded-xl text-white font-bold">
+        <div className="px-4 py-2 bg-black/50 backdrop-blur-sm rounded-xl text-white dark:text-white font-bold">
           Kalan: {maxWrong - wrongCount} ❌
         </div>
       </div>
@@ -370,7 +370,7 @@ export function Hangman({ onScore, scoreMultiplier }: GameComponentProps) {
         animate={gameState === 'won' ? { scale: [1, 1.05, 1] } : {}}
         className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-3xl p-8 mb-8 text-center"
       >
-        <div className="text-5xl font-bold text-white tracking-widest mb-4">
+        <div className="text-5xl font-bold text-white dark:text-white tracking-widest mb-4">
           {getDisplay()}
         </div>
         {gameState === 'won' && (

@@ -228,12 +228,12 @@ export function SpeedRacer({
   const lanePositions = ['16%', '50%', '84%'];
 
   return (
-    <div className="mx-auto w-full max-w-2xl select-none overflow-hidden rounded-3xl border border-cyan-500/30 bg-slate-950 p-6 text-white shadow-2xl backdrop-blur-xl">
+    <div className="mx-auto w-full max-w-2xl select-none overflow-hidden rounded-3xl border border-cyan-500/30 bg-slate-950 dark:bg-slate-950 p-6 text-white dark:text-white shadow-2xl backdrop-blur-xl">
       {/* Header */}
       <div className="mb-4 flex flex-wrap items-center justify-between gap-4 border-b border-white/10 pb-4">
         <div className="flex items-center gap-3">
           <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-tr from-cyan-500 to-blue-600 shadow-lg shadow-cyan-500/30">
-            <Car className="h-7 w-7 text-white" />
+            <Car className="h-7 w-7 text-white dark:text-white" />
           </div>
           <div>
             <h2 className="font-display text-2xl font-bold text-cyan-300">
@@ -270,9 +270,9 @@ export function SpeedRacer({
       {gameState === 'idle' && (
         <div className="py-12 text-center">
           <div className="mx-auto mb-6 flex h-24 w-24 items-center justify-center rounded-full bg-gradient-to-tr from-cyan-500 to-blue-600 shadow-xl shadow-cyan-500/40">
-            <Car className="h-12 w-12 text-white" />
+            <Car className="h-12 w-12 text-white dark:text-white" />
           </div>
-          <h3 className="text-2xl font-bold text-white">
+          <h3 className="text-2xl font-bold text-white dark:text-white">
             Yarış Pisti Seni Bekliyor!
           </h3>
           <p className="mx-auto mt-2 max-w-md text-sm text-slate-300">
@@ -299,7 +299,7 @@ export function SpeedRacer({
               <span className="text-xs uppercase tracking-wider text-cyan-400 font-bold">
                 İŞLEMİ ÇÖZ & ŞERİT SEÇ
               </span>
-              <div className="font-display text-2xl font-black text-white">
+              <div className="font-display text-2xl font-black text-white dark:text-white">
                 {question.text}
               </div>
             </div>
@@ -385,7 +385,7 @@ export function SpeedRacer({
                     : 'shadow-cyan-500/50'
                 }`}
               >
-                <Car className="h-10 w-10 text-white" />
+                <Car className="h-10 w-10 text-white dark:text-white" />
               </div>
               {/* Flame exhaust when nitro is active */}
               {isNitro && (
@@ -426,7 +426,7 @@ export function SpeedRacer({
           <div className="mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-tr from-cyan-400 to-blue-500 text-slate-950 shadow-xl">
             <Trophy className="h-10 w-10" />
           </div>
-          <h3 className="font-display text-3xl font-black text-white">
+          <h3 className="font-display text-3xl font-black text-white dark:text-white">
             Yarış Tamamlandı!
           </h3>
           <p className="mt-2 text-sm text-slate-300">
@@ -458,7 +458,7 @@ export function SpeedRacer({
             {onExit && (
               <button
                 onClick={onExit}
-                className="rounded-2xl border border-white/20 bg-white/5 px-6 py-3 font-semibold text-white transition hover:bg-white/10"
+                className="rounded-2xl border border-white/20 bg-white/5 px-6 py-3 font-semibold text-white dark:text-white transition hover:bg-white/10"
               >
                 Oyunlara Dön
               </button>

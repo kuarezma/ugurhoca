@@ -140,9 +140,9 @@ export function MathPuzzle({ onScore, scoreMultiplier }: GameComponentProps) {
             transition={{ duration: 2, repeat: Infinity }}
             className="w-32 h-32 mx-auto mb-6 bg-gradient-to-br from-purple-500 to-pink-500 rounded-3xl flex items-center justify-center"
           >
-            <Brain className="w-16 h-16 text-white" />
+            <Brain className="w-16 h-16 text-white dark:text-white" />
           </motion.div>
-          <h2 className="text-3xl font-bold text-white mb-4">
+          <h2 className="text-3xl font-bold text-primary mb-4">
             Matematik Zihin Jimnastiği
           </h2>
           <p className="text-slate-400 mb-6 max-w-md mx-auto">
@@ -175,9 +175,9 @@ export function MathPuzzle({ onScore, scoreMultiplier }: GameComponentProps) {
           transition={{ duration: 0.5 }}
           className="w-32 h-32 mx-auto mb-6 bg-gradient-to-br from-green-400 to-emerald-500 rounded-full flex items-center justify-center"
         >
-          <Trophy className="w-16 h-16 text-white" />
+          <Trophy className="w-16 h-16 text-white dark:text-white" />
         </motion.div>
-        <h2 className="text-3xl font-bold text-white mb-2">Süre Doldu!</h2>
+        <h2 className="text-3xl font-bold text-primary mb-2">Süre Doldu!</h2>
         <p className="text-5xl font-bold text-green-400 mb-2">{score} Puan</p>
         <p className="text-slate-400 mb-2">Seviye {level}'e ulaştın!</p>
         <p className="text-slate-400 mb-8">Harika bir performans!</p>
@@ -197,13 +197,13 @@ export function MathPuzzle({ onScore, scoreMultiplier }: GameComponentProps) {
   return (
     <div className="max-w-xl mx-auto">
       <div className="flex justify-between items-center mb-8">
-        <div className="px-4 py-2 bg-black/50 backdrop-blur-sm rounded-xl text-white font-bold">
+        <div className="px-4 py-2 bg-black/50 backdrop-blur-sm rounded-xl text-white dark:text-white font-bold">
           Puan: <span className="text-green-400">{score}</span>
         </div>
-        <div className="px-4 py-2 bg-black/50 backdrop-blur-sm rounded-xl text-white font-bold">
+        <div className="px-4 py-2 bg-black/50 backdrop-blur-sm rounded-xl text-white dark:text-white font-bold">
           Seviye: <span className="text-purple-400">{level}</span>
         </div>
-        <div className="px-4 py-2 bg-black/50 backdrop-blur-sm rounded-xl text-white font-bold">
+        <div className="px-4 py-2 bg-black/50 backdrop-blur-sm rounded-xl text-white dark:text-white font-bold">
           {timeLeft}s
         </div>
       </div>
@@ -214,7 +214,7 @@ export function MathPuzzle({ onScore, scoreMultiplier }: GameComponentProps) {
         animate={{ scale: 1, opacity: 1 }}
         className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-3xl p-8 mb-8 text-center"
       >
-        <div className="text-6xl font-bold text-white mb-4">
+        <div className="text-6xl font-bold text-white dark:text-white mb-4">
           {problem.a} <span className="text-purple-400">{problem.op}</span>{' '}
           {problem.b}
         </div>
@@ -253,7 +253,7 @@ export function MathPuzzle({ onScore, scoreMultiplier }: GameComponentProps) {
         <motion.div
           initial={{ y: 20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
-          className="mt-6 px-6 py-3 bg-gradient-to-r from-orange-500 to-red-500 rounded-xl text-white font-bold text-center flex items-center justify-center gap-2"
+          className="mt-6 px-6 py-3 bg-gradient-to-r from-orange-500 to-red-500 rounded-xl text-white dark:text-white font-bold text-center flex items-center justify-center gap-2"
         >
           <Flame className="w-6 h-6" />
           {streak} Doğru! Kombo Bonusu +{streak * 5}

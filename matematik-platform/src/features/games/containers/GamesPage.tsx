@@ -75,7 +75,7 @@ function GameAliasModal({
         <button
           type="submit"
           disabled={saving || alias.trim().length < 3}
-          className="mt-4 inline-flex h-11 w-full items-center justify-center rounded-xl bg-emerald-600 hover:bg-emerald-700 border border-emerald-500 text-sm font-bold text-white transition disabled:cursor-not-allowed disabled:opacity-50 shadow"
+          className="mt-4 inline-flex h-11 w-full items-center justify-center rounded-xl bg-emerald-600 hover:bg-emerald-700 border border-emerald-500 text-sm font-bold text-white dark:text-white transition disabled:cursor-not-allowed disabled:opacity-50 shadow"
         >
           {saving ? 'Kaydediliyor...' : 'Rumuzu Kaydet'}
         </button>
