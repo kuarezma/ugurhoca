@@ -192,7 +192,7 @@ export function CurriculumCoverageMatrixModal({
   return (
     <div className="fixed inset-0 z-[60] flex items-center justify-center p-3 sm:p-6 overflow-hidden animate-in fade-in duration-200 print:p-0 print:static">
       <div
-        className="fixed inset-0 bg-slate-950/80 backdrop-blur-md print:hidden"
+        className="fixed inset-0 bg-slate-950/80 dark:bg-slate-950/80 backdrop-blur-md print:hidden"
         onClick={onClose}
         aria-hidden="true"
       />
@@ -209,7 +209,7 @@ export function CurriculumCoverageMatrixModal({
         <div className="border-b border-slate-200/80 dark:border-white/10 bg-slate-50/80 dark:bg-slate-950/80 p-4 sm:p-5 flex flex-col gap-3.5 print:hidden">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-emerald-600 to-teal-600 flex items-center justify-center text-white shadow-md">
+              <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-emerald-600 to-teal-600 flex items-center justify-center text-white dark:text-white shadow-md">
                 <Layers className="w-5 h-5" />
               </div>
               <div>
@@ -540,7 +540,7 @@ export function CurriculumCoverageMatrixModal({
           <button
             type="button"
             onClick={onClose}
-            className="px-4 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs shadow transition-colors"
+            className="px-4 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white dark:text-white font-bold text-xs shadow transition-colors"
           >
             Tamam
           </button>

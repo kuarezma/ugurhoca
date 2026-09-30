@@ -496,7 +496,7 @@ export function FormulaFlashcardsModal({
                 <button
                   type="button"
                   onClick={reset}
-                  className="px-4 py-2 bg-brand-primary hover:bg-brand-primary-deep rounded-xl text-white font-semibold text-xs transition"
+                  className="px-4 py-2 bg-brand-primary hover:bg-brand-primary-deep rounded-xl text-white dark:text-white font-semibold text-xs transition"
                 >
                   Yeniden Dene
                 </button>
@@ -545,7 +545,7 @@ export function FormulaFlashcardsModal({
         {/* Header */}
         <div className="no-print flex items-center justify-between gap-2.5 border-b border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-slate-950/80 px-4 sm:px-6 py-3 sm:py-4">
           <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
-            <div className="flex h-9 w-9 sm:h-10 sm:w-10 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 text-white shadow-md">
+            <div className="flex h-9 w-9 sm:h-10 sm:w-10 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 text-white dark:text-white shadow-md">
               <Sparkles className="h-4 w-4 sm:h-5 sm:w-5" />
             </div>
             <div className="min-w-0">
@@ -907,7 +907,7 @@ export function FormulaFlashcardsModal({
             onClick={handleNext}
             aria-label="Sonraki Kart"
             disabled={filteredCards.length === 0}
-            className="inline-flex items-center gap-1.5 rounded-xl bg-brand-primary px-3 sm:px-4 py-2 sm:py-2.5 text-xs font-bold text-white shadow-md hover:bg-brand-primary-deep disabled:opacity-40 shrink-0"
+            className="inline-flex items-center gap-1.5 rounded-xl bg-brand-primary px-3 sm:px-4 py-2 sm:py-2.5 text-xs font-bold text-white dark:text-white shadow-md hover:bg-brand-primary-deep disabled:opacity-40 shrink-0"
           >
             <span>Sonraki <span className="hidden sm:inline">Kart</span></span>
             <ChevronRight className="h-4 w-4" />

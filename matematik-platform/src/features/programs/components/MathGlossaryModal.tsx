@@ -193,7 +193,7 @@ export const MathGlossaryModal: React.FC<MathGlossaryModalProps> = ({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 overflow-hidden animate-in fade-in duration-200">
       <div
-        className="fixed inset-0 bg-slate-950/80 backdrop-blur-md"
+        className="fixed inset-0 bg-slate-950/80 dark:bg-slate-950/80 backdrop-blur-md"
         onClick={onClose}
         aria-hidden="true"
       />
@@ -218,7 +218,7 @@ export const MathGlossaryModal: React.FC<MathGlossaryModalProps> = ({
         >
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-indigo-600 to-purple-600 flex items-center justify-center text-white shadow-md">
+              <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-indigo-600 to-purple-600 flex items-center justify-center text-white dark:text-white shadow-md">
                 <BookOpen className="w-5 h-5" />
               </div>
               <div>
@@ -366,7 +366,7 @@ export const MathGlossaryModal: React.FC<MathGlossaryModalProps> = ({
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-1.5 text-xs font-bold rounded-xl bg-indigo-600 text-white hover:bg-indigo-500 shadow"
+                  className="px-4 py-1.5 text-xs font-bold rounded-xl bg-indigo-600 text-white dark:text-white hover:bg-indigo-500 shadow"
                 >
                   Sözlüğüme Kaydet
                 </button>
@@ -646,7 +646,7 @@ export const MathGlossaryModal: React.FC<MathGlossaryModalProps> = ({
                           <button
                             type="button"
                             onClick={() => handleSaveNote(item.id)}
-                            className="inline-flex items-center gap-1 px-3 py-1 text-[11px] font-bold rounded-lg bg-indigo-600 text-white hover:bg-indigo-500 shadow"
+                            className="inline-flex items-center gap-1 px-3 py-1 text-[11px] font-bold rounded-lg bg-indigo-600 text-white dark:text-white hover:bg-indigo-500 shadow"
                           >
                             <Check className="w-3 h-3" />
                             <span>Kaydet</span>
@@ -705,7 +705,7 @@ export const MathGlossaryModal: React.FC<MathGlossaryModalProps> = ({
           <button
             type="button"
             onClick={onClose}
-            className="px-4 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs transition-colors"
+            className="px-4 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white dark:text-white font-bold text-xs transition-colors"
           >
             Tamam
           </button>

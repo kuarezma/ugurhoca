@@ -216,7 +216,7 @@ export function InteractiveMathLabModal({ isOpen, onClose }: InteractiveMathLabM
         <div className="flex-1 overflow-y-auto p-5 sm:p-6 grid grid-cols-1 lg:grid-cols-12 gap-6">
           {/* Sol Panel: İnteraktif SVG Kanvas (7 Kolon) */}
           <div className="lg:col-span-7 flex flex-col items-center">
-            <div className="w-full relative rounded-2xl bg-slate-950 border border-white/15 overflow-hidden shadow-inner touch-none">
+            <div className="w-full relative rounded-2xl bg-slate-950 dark:bg-slate-950 border border-white/15 overflow-hidden shadow-inner touch-none">
               <svg
                 ref={svgRef}
                 viewBox="0 0 500 350"
@@ -423,7 +423,7 @@ export function InteractiveMathLabModal({ isOpen, onClose }: InteractiveMathLabM
                   <button
                     type="button"
                     onClick={() => setCurrentStep('explore')}
-                    className="w-full mt-3 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs flex items-center justify-center gap-2 transition"
+                    className="w-full mt-3 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white dark:text-white font-bold text-xs flex items-center justify-center gap-2 transition"
                   >
                     <span>Tahmini Test Etmek İçin Sürükle</span>
                     <ArrowRight className="w-4 h-4" />
@@ -465,7 +465,7 @@ export function InteractiveMathLabModal({ isOpen, onClose }: InteractiveMathLabM
                       setCurrentStep('explain');
                       setShowProofLines(true);
                     }}
-                    className="flex-1 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-xs font-bold text-white flex items-center justify-center gap-1.5 transition"
+                    className="flex-1 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-xs font-bold text-white dark:text-white flex items-center justify-center gap-1.5 transition"
                   >
                     <Eye className="w-3.5 h-3.5" />
                     <span>İspatı Açıkla</span>
@@ -523,7 +523,7 @@ export function InteractiveMathLabModal({ isOpen, onClose }: InteractiveMathLabM
                       setCurrentStep('predict');
                       setPrediction(null);
                     }}
-                    className="flex-1 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-xs font-bold text-white flex items-center justify-center gap-1.5 transition"
+                    className="flex-1 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-xs font-bold text-white dark:text-white flex items-center justify-center gap-1.5 transition"
                   >
                     <RotateCcw className="w-3.5 h-3.5" />
                     <span>Yeni Deney</span>

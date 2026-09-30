@@ -473,7 +473,7 @@ export function GeometryMathLabModal({
         {/* Header */}
         <div className="flex items-center justify-between border-b border-white/10 px-5 py-4 sm:px-6">
           <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-600 text-white shadow-md">
+            <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-600 text-white dark:text-white shadow-md">
               <Compass className="h-5 w-5" />
             </div>
             <div>
@@ -573,7 +573,7 @@ export function GeometryMathLabModal({
           {/* TAB 1: PYTHAGORAS */}
           {activeTab === 'pythagoras' && (
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-              <div className="lg:col-span-7 flex flex-col items-center justify-center rounded-2xl border border-white/10 bg-slate-950/40 p-3 shadow-inner">
+              <div className="lg:col-span-7 flex flex-col items-center justify-center rounded-2xl border border-white/10 bg-slate-950/40 dark:bg-slate-950/40 p-3 shadow-inner">
                 <canvas
                   ref={pythagorasCanvasRef}
                   width={420}
@@ -650,7 +650,7 @@ export function GeometryMathLabModal({
           {/* TAB 2: CIRCLE & TRIGONOMETRY */}
           {activeTab === 'circle' && (
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-              <div className="lg:col-span-7 flex flex-col items-center justify-center rounded-2xl border border-white/10 bg-slate-950/40 p-3 shadow-inner">
+              <div className="lg:col-span-7 flex flex-col items-center justify-center rounded-2xl border border-white/10 bg-slate-950/40 dark:bg-slate-950/40 p-3 shadow-inner">
                 <canvas
                   ref={circleCanvasRef}
                   width={420}
@@ -726,7 +726,7 @@ export function GeometryMathLabModal({
           {/* TAB 3: PARABOLA */}
           {activeTab === 'parabola' && (
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-              <div className="lg:col-span-7 flex flex-col items-center justify-center rounded-2xl border border-white/10 bg-slate-950/40 p-3 shadow-inner">
+              <div className="lg:col-span-7 flex flex-col items-center justify-center rounded-2xl border border-white/10 bg-slate-950/40 dark:bg-slate-950/40 p-3 shadow-inner">
                 <canvas
                   ref={parabolaCanvasRef}
                   width={420}
@@ -820,7 +820,7 @@ export function GeometryMathLabModal({
           {/* TAB 4: SLOPE & LINE */}
           {activeTab === 'slope' && (
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-              <div className="lg:col-span-7 flex flex-col items-center justify-center rounded-2xl border border-white/10 bg-slate-950/40 p-3 shadow-inner">
+              <div className="lg:col-span-7 flex flex-col items-center justify-center rounded-2xl border border-white/10 bg-slate-950/40 dark:bg-slate-950/40 p-3 shadow-inner">
                 <canvas
                   ref={slopeCanvasRef}
                   width={420}
