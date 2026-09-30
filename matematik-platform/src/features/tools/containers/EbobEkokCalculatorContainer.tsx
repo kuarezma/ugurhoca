@@ -106,7 +106,7 @@ export function EbobEkokCalculatorContainer() {
         <div className="rounded-3xl border border-default bg-surface-1 p-6 sm:p-8 backdrop-blur-md shadow-2xl mb-8">
           <div className="flex flex-wrap items-center justify-between gap-4">
             <div className="flex items-center gap-3">
-              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-600 text-white shadow-lg">
+              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-600 text-white dark:text-white shadow-lg">
                 <Layers className="h-6 w-6" />
               </div>
               <div>

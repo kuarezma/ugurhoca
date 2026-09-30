@@ -173,7 +173,7 @@ export function ToolsHubContainer() {
           <div className="mt-5 flex flex-wrap items-center justify-center gap-3">
             <Link
               href="/testler"
-              className="rounded-xl bg-indigo-600 px-5 py-2.5 text-xs sm:text-sm font-bold text-white shadow-lg transition hover:bg-indigo-500"
+              className="rounded-xl bg-indigo-600 px-5 py-2.5 text-xs sm:text-sm font-bold text-white dark:text-white shadow-lg transition hover:bg-indigo-500"
             >
               Ücretsiz Test Çöz
             </Link>
