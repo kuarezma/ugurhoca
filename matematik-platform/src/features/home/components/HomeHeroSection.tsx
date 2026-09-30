@@ -799,11 +799,7 @@ export function HomeHeroSection({
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.25, delay: idx * 0.025 }}
                         onClick={tool.action}
-                        className={`flex items-center gap-3 rounded-xl sm:rounded-2xl border p-3 text-left transition-all hover:-translate-y-0.5 active:scale-[0.99] cursor-pointer ${
-                          isLight
-                            ? 'border-slate-200/80 bg-slate-50/60 hover:bg-white hover:border-amber-300 hover:shadow-sm'
-                            : 'border-white/10 bg-white/5 hover:bg-white/10 hover:border-white/20'
-                        }`}
+                        className="flex items-center gap-3 rounded-xl sm:rounded-2xl border border-default dark:border-slate-500 bg-surface-2/60 hover:bg-surface-3 hover:border-amber-400 dark:hover:border-amber-400/60 p-3 text-left transition-all hover:-translate-y-0.5 active:scale-[0.99] cursor-pointer"
                       >
                         <div
                           className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br ${tool.gradient} text-white shadow-xs`}
@@ -811,22 +807,14 @@ export function HomeHeroSection({
                           <tool.icon className="h-5 w-5" />
                         </div>
                         <div className="min-w-0 flex-1">
-                          <h3
-                            className={`text-xs sm:text-sm font-bold truncate ${
-                              isLight ? 'text-slate-900' : 'text-white'
-                            }`}
-                          >
+                          <h3 className="text-xs sm:text-sm font-bold truncate text-primary">
                             {tool.title}
                           </h3>
-                          <p
-                            className={`text-[11px] sm:text-xs line-clamp-1 mt-0.5 ${
-                              isLight ? 'text-slate-500' : 'text-slate-400'
-                            }`}
-                          >
+                          <p className="text-[11px] sm:text-xs line-clamp-1 mt-0.5 text-secondary">
                             {tool.description}
                           </p>
                         </div>
-                        <ArrowRight className="h-4 w-4 shrink-0 text-slate-400" />
+                        <ArrowRight className="h-4 w-4 shrink-0 text-secondary" />
                       </motion.button>
                     ))}
                   </div>

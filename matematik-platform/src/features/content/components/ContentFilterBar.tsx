@@ -68,7 +68,7 @@ export default function ContentFilterBar({
                 placeholder={searchPlaceholder}
                 value={searchTerm}
                 onChange={(e) => onSearchChange(e.target.value)}
-                className="w-full rounded-2xl border border-default dark:border-white/[0.08] bg-surface-2/60 py-3 pl-12 pr-10 text-sm sm:text-base text-primary placeholder:text-secondary backdrop-blur-md transition-all focus:border-purple-500/50 focus:bg-surface-1 focus:outline-none focus:ring-2 focus:ring-purple-500/20"
+                className="w-full rounded-2xl border border-default dark:border-slate-500 bg-surface-2/60 py-3 pl-12 pr-10 text-sm sm:text-base text-primary placeholder:text-secondary backdrop-blur-md transition-all focus:border-purple-500/50 focus:bg-surface-1 focus:outline-none focus:ring-2 focus:ring-purple-500/20"
               />
               {searchTerm && (
                 <button
@@ -89,7 +89,7 @@ export default function ContentFilterBar({
                   <select
                     value={sortBy}
                     onChange={(e) => onSortChange(e.target.value as ContentSortOrder)}
-                    className="appearance-none rounded-2xl border border-default dark:border-white/[0.08] bg-surface-2/60 py-3 pl-9 pr-8 text-xs sm:text-sm font-semibold text-primary backdrop-blur-md transition-all hover:bg-surface-3 focus:border-purple-500/50 focus:outline-none focus:ring-2 focus:ring-purple-500/20"
+                    className="appearance-none rounded-2xl border border-default dark:border-slate-500 bg-surface-2/60 py-3 pl-9 pr-8 text-xs sm:text-sm font-semibold text-primary backdrop-blur-md transition-all hover:bg-surface-3 focus:border-purple-500/50 focus:outline-none focus:ring-2 focus:ring-purple-500/20"
                   >
                     {CONTENT_SORT_OPTIONS.map((opt) => (
                       <option key={opt.id} value={opt.id} className="bg-surface-1 text-primary">
@@ -101,7 +101,7 @@ export default function ContentFilterBar({
               )}
 
               {/* View Mode Switcher */}
-              <div className="flex items-center rounded-2xl border border-default dark:border-white/[0.08] bg-surface-2/60 p-1 backdrop-blur-md shadow-xs">
+              <div className="flex items-center rounded-2xl border border-default dark:border-slate-500 bg-surface-2/60 p-1 backdrop-blur-md shadow-xs">
                 <button
                   onClick={() => onViewModeChange('grid')}
                   title="Kılavuz Görünümü"
@@ -150,8 +150,8 @@ export default function ContentFilterBar({
                   onClick={() => onQuickFilterChange('all')}
                   className={`rounded-full px-3.5 py-1.5 text-xs font-semibold transition-all duration-200 ${
                     quickFilter === 'all'
-                      ? 'border border-purple-500/40 bg-purple-500/15 text-purple-700 dark:text-purple-300 shadow-sm shadow-purple-500/20'
-                      : 'border border-default dark:border-white/[0.08] bg-surface-2/60 text-secondary hover:bg-surface-3 hover:text-primary'
+                      ? 'border border-purple-600 dark:border-purple-400 bg-purple-500/15 text-purple-700 dark:text-purple-300 shadow-sm shadow-purple-500/20'
+                      : 'border border-default dark:border-slate-500 bg-surface-2/60 text-secondary hover:bg-surface-3 hover:text-primary'
                   }`}
                 >
                   Tümü
@@ -160,8 +160,8 @@ export default function ContentFilterBar({
                   onClick={() => onQuickFilterChange('favorites')}
                   className={`flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-xs font-semibold transition-all duration-200 ${
                     quickFilter === 'favorites'
-                      ? 'border border-amber-500/40 bg-amber-500/15 text-amber-700 dark:text-amber-300 shadow-sm shadow-amber-500/20'
-                      : 'border border-default dark:border-white/[0.08] bg-surface-2/60 text-secondary hover:bg-surface-3 hover:text-primary'
+                      ? 'border border-amber-600 dark:border-amber-400 bg-amber-500/15 text-amber-700 dark:text-amber-300 shadow-sm shadow-amber-500/20'
+                      : 'border border-default dark:border-slate-500 bg-surface-2/60 text-secondary hover:bg-surface-3 hover:text-primary'
                   }`}
                 >
                   <Star className="h-3.5 w-3.5 fill-current text-amber-500 dark:text-amber-400" />
@@ -171,8 +171,8 @@ export default function ContentFilterBar({
                   onClick={() => onQuickFilterChange('completed')}
                   className={`flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-xs font-semibold transition-all duration-200 ${
                     quickFilter === 'completed'
-                      ? 'border border-emerald-500/40 bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 shadow-sm shadow-emerald-500/20'
-                      : 'border border-default dark:border-white/[0.08] bg-surface-2/60 text-secondary hover:bg-surface-3 hover:text-primary'
+                      ? 'border border-emerald-600 dark:border-emerald-400 bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 shadow-sm shadow-emerald-500/20'
+                      : 'border border-default dark:border-slate-500 bg-surface-2/60 text-secondary hover:bg-surface-3 hover:text-primary'
                   }`}
                 >
                   <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600 dark:text-emerald-400" />
@@ -182,8 +182,8 @@ export default function ContentFilterBar({
                   onClick={() => onQuickFilterChange('with_solution')}
                   className={`flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-xs font-semibold transition-all duration-200 ${
                     quickFilter === 'with_solution'
-                      ? 'border border-teal-500/40 bg-teal-500/15 text-teal-700 dark:text-teal-300 shadow-sm shadow-teal-500/20'
-                      : 'border border-default dark:border-white/[0.08] bg-surface-2/60 text-secondary hover:bg-surface-3 hover:text-primary'
+                      ? 'border border-teal-600 dark:border-teal-400 bg-teal-500/15 text-teal-700 dark:text-teal-300 shadow-sm shadow-teal-500/20'
+                      : 'border border-default dark:border-slate-500 bg-surface-2/60 text-secondary hover:bg-surface-3 hover:text-primary'
                   }`}
                 >
                   <BookOpen className="h-3.5 w-3.5 text-teal-600 dark:text-teal-400" />
@@ -193,8 +193,8 @@ export default function ContentFilterBar({
                   onClick={() => onQuickFilterChange('with_video')}
                   className={`flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-xs font-semibold transition-all duration-200 ${
                     quickFilter === 'with_video'
-                      ? 'border border-rose-500/40 bg-rose-500/15 text-rose-700 dark:text-rose-300 shadow-sm shadow-rose-500/20'
-                      : 'border border-default dark:border-white/[0.08] bg-surface-2/60 text-secondary hover:bg-surface-3 hover:text-primary'
+                      ? 'border border-rose-600 dark:border-rose-400 bg-rose-500/15 text-rose-700 dark:text-rose-300 shadow-sm shadow-rose-500/20'
+                      : 'border border-default dark:border-slate-500 bg-surface-2/60 text-secondary hover:bg-surface-3 hover:text-primary'
                   }`}
                 >
                   <Video className="h-3.5 w-3.5 text-rose-600 dark:text-rose-400" />

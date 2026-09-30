@@ -110,7 +110,7 @@ function ContentCard({
         whileHover={{ scale: 1.02 }}
         whileTap={{ scale: 0.98 }}
         onClick={() => onPreview(content)}
-        className={`col-span-1 flex w-full items-center justify-center gap-2 rounded-2xl border border-default dark:border-white/[0.1] bg-surface-2/80 hover:bg-surface-3 px-4 py-2.5 sm:py-3 text-xs sm:text-sm font-semibold text-primary transition-all duration-200 backdrop-blur-md shadow-xs hover:border-purple-500/40 sm:flex-1 ${
+        className={`col-span-1 flex w-full items-center justify-center gap-2 rounded-2xl border border-default dark:border-slate-500 bg-surface-2/80 hover:bg-surface-3 px-4 py-2.5 sm:py-3 text-xs sm:text-sm font-semibold text-primary transition-all duration-200 backdrop-blur-md shadow-xs hover:border-purple-500/40 sm:flex-1 ${
           !content.file_url ? 'col-span-2' : ''
         } ${viewMode === 'grid' ? 'sm:min-w-[130px]' : 'sm:min-w-[160px]'}`}
       >
@@ -138,7 +138,7 @@ function ContentCard({
             whileTap={{ scale: 0.95 }}
             onClick={() => onEdit(content)}
             title="Düzenle"
-            className="flex-1 sm:flex-none flex items-center justify-center rounded-2xl border border-default dark:border-white/[0.08] bg-surface-2/60 p-2.5 text-secondary transition-all hover:bg-blue-600 hover:border-blue-500 hover:text-white"
+            className="flex-1 sm:flex-none flex items-center justify-center rounded-2xl border border-default dark:border-slate-500 bg-surface-2/60 p-2.5 text-secondary transition-all hover:bg-blue-600 hover:border-blue-500 hover:text-white"
           >
             <Edit3 className="w-4 h-4" />
           </motion.button>
@@ -147,7 +147,7 @@ function ContentCard({
             whileTap={{ scale: 0.95 }}
             onClick={() => onDelete(content)}
             title="Sil"
-            className="flex-1 sm:flex-none flex items-center justify-center rounded-2xl border border-red-500/30 bg-red-500/10 p-2.5 text-red-600 dark:text-red-400 transition-all hover:bg-red-600 hover:border-red-600 hover:text-white"
+            className="flex-1 sm:flex-none flex items-center justify-center rounded-2xl border border-red-500/60 dark:border-red-400 bg-red-500/10 p-2.5 text-red-600 dark:text-red-400 transition-all hover:bg-red-600 hover:border-red-600 hover:text-white"
           >
             <Trash2 className="w-4 h-4" />
           </motion.button>
@@ -224,8 +224,8 @@ function ContentCard({
           title="Favori"
           className={`flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs transition-all duration-200 ${
             isFavorite
-              ? 'border border-amber-500/40 bg-amber-500/15 text-amber-700 dark:text-amber-300 font-semibold shadow-xs'
-              : 'border border-default dark:border-white/[0.08] bg-surface-2/60 text-secondary hover:bg-surface-3 hover:text-primary'
+              ? 'border border-amber-600 dark:border-amber-400 bg-amber-500/15 text-amber-700 dark:text-amber-300 font-semibold shadow-xs'
+              : 'border border-default dark:border-slate-500 bg-surface-2/60 text-secondary hover:bg-surface-3 hover:text-primary'
           }`}
         >
           <Star className={`w-3.5 h-3.5 ${isFavorite ? 'fill-current' : ''}`} />
@@ -240,8 +240,8 @@ function ContentCard({
             title={isCompleted ? 'Çözüldü işaretini kaldır' : 'Çözüldü olarak işaretle'}
             className={`flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs transition-all duration-200 ${
               isCompleted
-                ? 'border border-emerald-500/40 bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 font-semibold shadow-xs'
-                : 'border border-default dark:border-white/[0.08] bg-surface-2/60 text-secondary hover:bg-surface-3 hover:text-primary'
+                ? 'border border-emerald-600 dark:border-emerald-400 bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 font-semibold shadow-xs'
+                : 'border border-default dark:border-slate-500 bg-surface-2/60 text-secondary hover:bg-surface-3 hover:text-primary'
             }`}
           >
             <CheckCircle2 className={`w-3.5 h-3.5 ${isCompleted ? 'fill-emerald-400/20 text-emerald-600 dark:text-emerald-400' : ''}`} />
@@ -256,8 +256,8 @@ function ContentCard({
           title="Bağlantıyı Kopyala"
           className={`flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs transition-all duration-200 ${
             copiedLink
-              ? 'border border-purple-500/40 bg-purple-500/15 text-purple-700 dark:text-purple-300 font-semibold shadow-xs'
-              : 'border border-default dark:border-white/[0.08] bg-surface-2/60 text-secondary hover:bg-surface-3 hover:text-primary'
+              ? 'border border-purple-600 dark:border-purple-400 bg-purple-500/15 text-purple-700 dark:text-purple-300 font-semibold shadow-xs'
+              : 'border border-default dark:border-slate-500 bg-surface-2/60 text-secondary hover:bg-surface-3 hover:text-primary'
           }`}
         >
           {copiedLink ? (

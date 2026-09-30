@@ -1495,7 +1495,7 @@ function ContentsPageInner({
                       updateWorksheetBrowserUrl(null);
                       setSearchTerm('');
                     }}
-                    className="px-4 py-2 rounded-full border border-default dark:border-white/[0.08] bg-surface-2/70 text-xs sm:text-sm font-semibold text-secondary transition-colors hover:text-primary"
+                    className="px-4 py-2 rounded-full border border-default dark:border-slate-500 bg-surface-2/70 text-xs sm:text-sm font-semibold text-secondary transition-colors hover:text-primary"
                   >
                     Sınıf Kartları
                   </button>
@@ -1507,7 +1507,7 @@ function ContentsPageInner({
                       updateWorksheetBrowserUrl(selectedWorksheetGrade);
                       setSearchTerm('');
                     }}
-                    className="px-4 py-2 rounded-full border border-purple-500/30 bg-purple-500/15 text-xs sm:text-sm font-semibold text-purple-800 dark:text-purple-100 transition-colors hover:bg-purple-500/25"
+                    className="px-4 py-2 rounded-full border border-purple-600 dark:border-purple-400 bg-purple-500/15 text-xs sm:text-sm font-semibold text-purple-800 dark:text-purple-100 transition-colors hover:bg-purple-500/25"
                   >
                     Kazanımlara Dön
                   </button>
@@ -1551,8 +1551,8 @@ function ContentsPageInner({
                 }}
                 className={`rounded-full border px-4 py-2 transition-colors ${
                   selectedWorksheetGrade
-                    ? 'border-default bg-surface-2 text-secondary hover:text-primary'
-                    : 'border-purple-500/30 bg-purple-500/15 text-purple-800 dark:text-purple-100'
+                    ? 'border-default dark:border-slate-500 bg-surface-2 text-secondary hover:text-primary'
+                    : 'border-purple-600 dark:border-purple-400 bg-purple-500/15 text-purple-800 dark:text-purple-100'
                 }`}
               >
                 Sınıf Düzeyleri
@@ -1567,8 +1567,8 @@ function ContentsPageInner({
                     }}
                     className={`rounded-full border px-4 py-2 transition-colors ${
                       selectedWorksheetOutcome
-                        ? 'border-default bg-surface-2 text-secondary hover:text-primary'
-                        : 'border-purple-500/30 bg-purple-500/15 text-purple-800 dark:text-purple-100'
+                        ? 'border-default dark:border-slate-500 bg-surface-2 text-secondary hover:text-primary'
+                        : 'border-purple-600 dark:border-purple-400 bg-purple-500/15 text-purple-800 dark:text-purple-100'
                     }`}
                   >
                     {worksheetGradeLabel}
