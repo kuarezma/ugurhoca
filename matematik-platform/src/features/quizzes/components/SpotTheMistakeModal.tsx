@@ -58,7 +58,7 @@ export function SpotTheMistakeModal({ isOpen, onClose }: SpotTheMistakeModalProp
   };
 
   return (
-    <div className="fixed inset-0 z-[160] flex items-center justify-center bg-slate-950/85 p-3 sm:p-5 backdrop-blur-md overflow-y-auto">
+    <div className="fixed inset-0 z-[160] flex items-center justify-center bg-slate-950/85 dark:bg-slate-950/85 p-3 sm:p-5 backdrop-blur-md overflow-y-auto">
       <div
         ref={containerRef}
         role="dialog"
@@ -274,7 +274,7 @@ export function SpotTheMistakeModal({ isOpen, onClose }: SpotTheMistakeModalProp
             <button
               type="button"
               onClick={handleNext}
-              className="px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold flex items-center gap-2 transition shadow-lg shadow-indigo-600/20"
+              className="px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white dark:text-white text-xs font-bold flex items-center gap-2 transition shadow-lg shadow-indigo-600/20"
             >
               <span>{currentIndex + 1 === FLAWED_SOLUTIONS_DATA.length ? 'Sonuçları Gör' : 'Sonraki Çözüm'}</span>
               <ArrowRight className="w-4 h-4" />

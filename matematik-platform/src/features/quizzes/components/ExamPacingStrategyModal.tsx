@@ -164,22 +164,22 @@ export function ExamPacingStrategyModal({ isOpen, onClose }: ExamPacingStrategyM
       <div
         ref={modalRef}
         tabIndex={-1}
-        className="print-strategy-area relative flex h-full max-h-[92vh] w-full max-w-2xl flex-col overflow-hidden rounded-3xl border border-white/15 bg-slate-900 shadow-2xl text-slate-100 focus:outline-none"
+        className="print-strategy-area relative flex h-full max-h-[92vh] w-full max-w-2xl flex-col overflow-hidden rounded-3xl border border-slate-200 dark:border-white/15 bg-white dark:bg-slate-900 shadow-2xl text-slate-900 dark:text-slate-100 focus:outline-none"
       >
         {/* Üst Başlık */}
-        <div className="flex items-center justify-between border-b border-white/10 px-5 py-4 shrink-0 bg-slate-950/40">
+        <div className="flex items-center justify-between border-b border-slate-200 dark:border-white/10 px-5 py-4 shrink-0 bg-slate-50 dark:bg-slate-950/40">
           <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-amber-500/15 text-amber-400 border border-amber-500/20 shadow-inner">
+            <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-amber-500/15 text-amber-500 dark:text-amber-400 border border-amber-500/20 shadow-inner">
               <Timer className="h-5 w-5" />
             </div>
             <div>
-              <h2 id={titleId} className="font-display text-sm sm:text-base font-bold text-white flex items-center gap-2">
+              <h2 id={titleId} className="font-display text-sm sm:text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
                 <span>Sınav Bölüm Süresi & Zaman Yönetimi</span>
-                <span className="rounded-full bg-amber-500/20 px-2 py-0.5 text-[10px] font-bold text-amber-300">
+                <span className="rounded-full bg-amber-500/20 px-2 py-0.5 text-[10px] font-bold text-amber-700 dark:text-amber-300">
                   Simülatör
                 </span>
               </h2>
-              <p id={descId} className="text-xs text-slate-400">
+              <p id={descId} className="text-xs text-slate-500 dark:text-slate-400">
                 Sınavda panik yaşamamak için ders bazlı dakika dağılımını ve turlama payını planla
               </p>
             </div>
@@ -190,14 +190,14 @@ export function ExamPacingStrategyModal({ isOpen, onClose }: ExamPacingStrategyM
               type="button"
               onClick={handlePrint}
               title="A4 Strateji Çıktısı Al"
-              className="p-2 rounded-xl text-slate-400 hover:text-white hover:bg-white/10 transition"
+              className="p-2 rounded-xl text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/10 transition"
             >
               <Printer className="h-4 w-4" />
             </button>
             <button
               type="button"
               onClick={onClose}
-              className="p-2 rounded-xl text-slate-400 hover:text-white hover:bg-white/10 transition"
+              className="p-2 rounded-xl text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/10 transition"
               aria-label="Modalı kapat"
             >
               <X className="h-5 w-5" />
@@ -207,7 +207,7 @@ export function ExamPacingStrategyModal({ isOpen, onClose }: ExamPacingStrategyM
 
         {/* Sekme Değiştirici: LGS vs TYT */}
         <div className="px-5 pt-4 pb-1 no-print">
-          <div className="flex rounded-2xl bg-slate-950/60 p-1 border border-white/10 text-xs font-semibold">
+          <div className="flex rounded-2xl bg-slate-100 dark:bg-slate-950/60 p-1 border border-slate-200 dark:border-white/10 text-xs font-semibold">
             <button
               type="button"
               onClick={() => setActiveTab('lgs')}

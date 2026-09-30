@@ -88,7 +88,7 @@ export function PrintableWorksheetModal({
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           onClick={onClose}
-          className="fixed inset-0 bg-slate-950/80 backdrop-blur-md print:hidden"
+          className="fixed inset-0 bg-slate-950/80 dark:bg-slate-950/80 backdrop-blur-md print:hidden"
           aria-hidden="true"
         />
 
@@ -107,7 +107,7 @@ export function PrintableWorksheetModal({
           {/* Üst Eylem Çubuğu (Print esnasında gizlenir) */}
           <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-200/80 dark:border-white/10 bg-slate-50 dark:bg-slate-950/80 px-5 py-3.5 print:hidden">
             <div className="flex items-center gap-2.5">
-              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-indigo-600 text-white shadow-sm">
+              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-indigo-600 text-white dark:text-white shadow-sm">
                 <Printer className="h-5 w-5" />
               </div>
               <div>

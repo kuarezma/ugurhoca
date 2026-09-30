@@ -274,7 +274,7 @@ export function QuestionDrawingOverlay({
       />
 
       {/* Yüzen Kontrol Çubuğu (Floating Toolbar) */}
-      <div className="absolute top-3 right-3 z-40 pointer-events-auto flex flex-wrap items-center gap-1.5 rounded-2xl border border-white/20 bg-slate-900/90 p-1.5 shadow-2xl backdrop-blur-xl transition-all">
+      <div className="absolute top-3 right-3 z-40 pointer-events-auto flex flex-wrap items-center gap-1.5 rounded-2xl border border-white/20 bg-slate-900/90 dark:bg-slate-900/90 p-1.5 shadow-2xl backdrop-blur-xl transition-all">
         {/* Kalem Modu */}
         <button
           type="button"

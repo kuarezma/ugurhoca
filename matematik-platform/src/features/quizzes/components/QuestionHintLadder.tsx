@@ -381,7 +381,7 @@ export function QuestionHintLadder({
   };
 
   const renderMistakeBookmarkCard = () => (
-    <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2.5 rounded-xl border border-white/10 bg-slate-900/80 p-3">
+    <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2.5 rounded-xl border border-white/10 bg-slate-900/80 dark:bg-slate-900/80 p-3">
       <div className="space-y-0.5">
         <div className="flex items-center gap-1.5 text-xs font-semibold text-slate-200">
           <BookmarkPlus className="h-3.5 w-3.5 text-amber-400" />
@@ -471,7 +471,7 @@ export function QuestionHintLadder({
             className="overflow-hidden pt-3 space-y-3"
           >
             {/* Sekme Değiştirici */}
-            <div className="flex rounded-xl bg-slate-950/40 p-1 border border-white/10">
+            <div className="flex rounded-xl bg-slate-950/40 dark:bg-slate-950/40 p-1 border border-white/10">
               <button
                 type="button"
                 onClick={() => setActiveMode('ladder')}
@@ -501,7 +501,7 @@ export function QuestionHintLadder({
             {activeMode === 'ladder' ? (
               <div className="space-y-3">
                 {/* 1. Kademe: Temel Kural & Formül */}
-                <div className="rounded-xl border border-white/10 bg-slate-900/60 p-3 space-y-2">
+                <div className="rounded-xl border border-white/10 bg-slate-900/60 dark:bg-slate-900/60 p-3 space-y-2">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-1.5 text-xs font-bold text-amber-300">
                       <BookOpen className="h-3.5 w-3.5" />

@@ -204,7 +204,7 @@ function QuestionImage({
   src: string;
 }) {
   return (
-    <div className="mt-4 overflow-hidden rounded-2xl border border-white/10 bg-slate-950/40 p-3">
+    <div className="mt-4 overflow-hidden rounded-2xl border border-white/10 bg-slate-950/40 dark:bg-slate-950/40 p-3">
       <div className="relative mx-auto h-72 w-full max-w-xl">
         <Image
           src={src}
@@ -226,7 +226,7 @@ function OptionMedia({
   src: string;
 }) {
   return (
-    <div className="mt-3 overflow-hidden rounded-xl border border-white/10 bg-slate-950/50 p-2">
+    <div className="mt-3 overflow-hidden rounded-xl border border-white/10 bg-slate-950/50 dark:bg-slate-950/50 p-2">
       <div className="relative h-28 w-full">
         <Image
           src={src}
@@ -1497,7 +1497,7 @@ export default function TestsPage({
                         Doğru Cevap: {String.fromCharCode(65 + question.correct_index)}) {question.options[question.correct_index]}
                       </div>
                       {question.explanation && (
-                        <div className="text-xs sm:text-sm leading-relaxed text-slate-300 bg-slate-950/60 p-3 rounded-xl border border-white/5">
+                        <div className="text-xs sm:text-sm leading-relaxed text-slate-300 bg-slate-950/60 dark:bg-slate-950/60 p-3 rounded-xl border border-white/5">
                           <MathText>{question.explanation}</MathText>
                         </div>
                       )}
@@ -1744,7 +1744,7 @@ export default function TestsPage({
         <div className="container mx-auto flex justify-between items-center gap-3">
           <Link href="/" className="flex items-center gap-2.5 min-w-0">
             <div className="w-8 h-8 sm:w-10 sm:h-10 shrink-0 bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl flex items-center justify-center">
-              <Calculator className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
+              <Calculator className="w-5 h-5 sm:w-6 sm:h-6 text-white dark:text-white" />
             </div>
             <span className="text-base sm:text-xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent truncate">
               Uğur Hoca Matematik
@@ -1770,7 +1770,7 @@ export default function TestsPage({
           )}
           <div className="mb-8 flex flex-col sm:flex-row sm:items-center justify-between gap-4 animate-fade-up">
             <div>
-              <h1 className="text-3xl sm:text-4xl font-bold text-white mb-2">
+              <h1 className="text-3xl sm:text-4xl font-bold text-slate-900 dark:text-white mb-2">
                 Online Testler
               </h1>
               <p className="text-slate-400">
@@ -1823,7 +1823,7 @@ export default function TestsPage({
                   </div>
                   <div>
                     <div className="flex items-center gap-2">
-                      <h2 className="text-base sm:text-lg font-bold text-white font-display">
+                      <h2 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white font-display">
                         Yarım Kalan Sınavınız Bulundu
                       </h2>
                       <span className="rounded-full bg-amber-500/30 px-2.5 py-0.5 text-xs font-extrabold text-amber-300 border border-amber-400/30">
@@ -1862,12 +1862,12 @@ export default function TestsPage({
             <div className="mb-8 rounded-3xl border border-amber-500/30 bg-gradient-to-br from-amber-500/10 via-orange-500/5 to-purple-500/10 p-5 sm:p-6 backdrop-blur-xl shadow-xl animate-fade-up">
               <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div className="flex items-start gap-3.5">
-                  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-amber-500 to-rose-600 text-white shadow-lg shadow-amber-500/25">
+                  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-amber-500 to-rose-600 text-white dark:text-white shadow-lg shadow-amber-500/25">
                     <Target className="h-6 w-6" />
                   </div>
                   <div>
                     <div className="flex items-center gap-2">
-                      <h2 className="text-base sm:text-lg font-bold text-white font-display">
+                      <h2 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white font-display">
                         Kişisel Akıllı Telafi Testi Hazır!
                       </h2>
                       <span className="rounded-full bg-amber-500/20 px-2.5 py-0.5 text-xs font-extrabold text-amber-300">
@@ -1893,7 +1893,7 @@ export default function TestsPage({
                     <button
                       type="button"
                       onClick={() => handleStartAdaptiveQuiz(10)}
-                      className="inline-flex items-center gap-1.5 rounded-xl border border-white/15 bg-white/10 px-4 py-2.5 text-xs font-bold text-white hover:bg-white/15 active:scale-95 transition"
+                      className="inline-flex items-center gap-1.5 rounded-xl border border-amber-500/30 dark:border-white/15 bg-amber-500/15 dark:bg-white/10 px-4 py-2.5 text-xs font-bold text-slate-900 dark:text-white hover:bg-amber-500/25 dark:hover:bg-white/15 active:scale-95 transition"
                     >
                       <Zap className="h-3.5 w-3.5 text-amber-300" />
                       <span>10 Soruluk Kapsamlı</span>
@@ -1964,7 +1964,7 @@ export default function TestsPage({
               visibleQuizzes.map((quiz, i: number) => (
                 <div
                   key={quiz.id}
-                  className="rounded-3xl border border-white/10 bg-slate-900/80 backdrop-blur-xl shadow-xl hover:shadow-2xl hover:border-white/20 transition-all duration-300 hover:-translate-y-1 overflow-hidden animate-slide-up"
+                  className="rounded-3xl border border-slate-200 dark:border-white/10 bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl shadow-xl hover:shadow-2xl hover:border-slate-300 dark:hover:border-white/20 transition-all duration-300 hover:-translate-y-1 overflow-hidden animate-slide-up"
                   style={{ animationDelay: `${i * 80}ms` }}
                 >
                   <div
@@ -1973,14 +1973,14 @@ export default function TestsPage({
                   <div className="p-6">
                     <div className="flex items-start justify-between mb-4">
                       <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-md">
-                        <FileText className="w-6 h-6 text-white" />
+                        <FileText className="w-6 h-6 text-white dark:text-white" />
                       </div>
                       <span className="rounded-full px-2.5 py-0.5 text-[11px] font-bold bg-white/10 text-slate-300 border border-white/10">
                         {quiz.grade}. Sınıf
                       </span>
                     </div>
 
-                    <h3 className="font-display text-xl font-bold text-white mb-2">
+                    <h3 className="font-display text-xl font-bold text-slate-900 dark:text-white mb-2">
                       {quiz.title}
                     </h3>
                     <p className="text-slate-400 text-xs sm:text-sm leading-relaxed mb-4 line-clamp-2">

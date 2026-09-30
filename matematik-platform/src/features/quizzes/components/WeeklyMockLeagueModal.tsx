@@ -97,7 +97,7 @@ export function WeeklyMockLeagueModal({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-[150] flex items-center justify-center bg-slate-950/80 p-3 sm:p-5 backdrop-blur-md overflow-y-auto">
+    <div className="fixed inset-0 z-[150] flex items-center justify-center bg-slate-950/80 dark:bg-slate-950/80 p-3 sm:p-5 backdrop-blur-md overflow-y-auto">
       <div
         ref={containerRef}
         role="dialog"
@@ -109,7 +109,7 @@ export function WeeklyMockLeagueModal({
         {/* HEADER */}
         <div className="flex flex-wrap items-center justify-between gap-3 p-5 sm:p-6 border-b border-slate-200 dark:border-slate-800 bg-gradient-to-r from-amber-500/10 via-rose-500/5 to-transparent dark:from-amber-500/15 dark:via-rose-500/10 dark:to-transparent">
           <div className="flex items-center gap-3.5">
-            <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-amber-500 to-rose-600 text-white flex items-center justify-center shadow-lg shadow-rose-500/20">
+            <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-amber-500 to-rose-600 text-white dark:text-white flex items-center justify-center shadow-lg shadow-rose-500/20">
               <Trophy className="w-6 h-6" />
             </div>
             <div>

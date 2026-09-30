@@ -68,7 +68,7 @@ export function QuizShortcutsModal({
       role="dialog"
       aria-modal="true"
       aria-label="Test Klavye Kısayolları"
-      className="fixed inset-0 z-[160] flex items-center justify-center bg-slate-950/80 p-4 backdrop-blur-md"
+      className="fixed inset-0 z-[160] flex items-center justify-center bg-slate-950/80 dark:bg-slate-950/80 p-4 backdrop-blur-md"
     >
       <div
         className={`w-full max-w-md rounded-3xl border shadow-2xl p-6 transition-all ${
@@ -114,7 +114,7 @@ export function QuizShortcutsModal({
                 {item.keys.map((k) => (
                   <kbd
                     key={k}
-                    className="flex h-6 min-w-[24px] items-center justify-center rounded-lg border border-white/20 bg-slate-800 px-1.5 font-mono text-xs font-bold text-amber-300 shadow-sm"
+                    className="flex h-6 min-w-[24px] items-center justify-center rounded-lg border border-white/20 bg-slate-800 dark:bg-slate-800 px-1.5 font-mono text-xs font-bold text-amber-300 shadow-sm"
                   >
                     {k}
                   </kbd>
@@ -125,7 +125,7 @@ export function QuizShortcutsModal({
                     {item.altKeys.slice(0, 3).map((k) => (
                       <kbd
                         key={k}
-                        className="flex h-6 min-w-[20px] items-center justify-center rounded-lg border border-white/10 bg-slate-800/80 px-1 font-mono text-[11px] text-slate-300"
+                        className="flex h-6 min-w-[20px] items-center justify-center rounded-lg border border-white/10 bg-slate-800/80 dark:bg-slate-800/80 px-1 font-mono text-[11px] text-slate-300"
                       >
                         {k}
                       </kbd>
@@ -145,7 +145,7 @@ export function QuizShortcutsModal({
         <button
           type="button"
           onClick={onClose}
-          className="mt-5 w-full py-2.5 rounded-xl text-xs font-bold bg-indigo-600 hover:bg-indigo-500 text-white shadow transition"
+          className="mt-5 w-full py-2.5 rounded-xl text-xs font-bold bg-indigo-600 hover:bg-indigo-500 text-white dark:text-white shadow transition"
         >
           Anladım
         </button>

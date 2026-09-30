@@ -62,7 +62,7 @@ export const QuizOpticalSheetModal: React.FC<QuizOpticalSheetModalProps> = ({
         <div className="flex items-center justify-between">
           <div>
             <div className="flex items-center gap-2">
-              <span className="px-2 py-0.5 rounded text-[11px] font-black uppercase tracking-wider bg-amber-500 text-white dark:bg-amber-600">
+              <span className="px-2 py-0.5 rounded text-[11px] font-black uppercase tracking-wider bg-amber-500 text-white dark:text-white dark:bg-amber-600">
                 OPTİK FORM
               </span>
               <h2 id="optical-sheet-title" className="text-base font-bold text-slate-900 dark:text-white tracking-tight">
@@ -210,7 +210,7 @@ export const QuizOpticalSheetModal: React.FC<QuizOpticalSheetModalProps> = ({
                 if (!isDocked) onClose();
                 onSubmit();
               }}
-              className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold transition-all shadow-md shadow-emerald-600/20 active:scale-95"
+              className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white dark:text-white text-xs font-bold transition-all shadow-md shadow-emerald-600/20 active:scale-95"
             >
               <CheckCircle2 className="w-3.5 h-3.5" />
               <span>Optik Formu Teslim Et</span>
@@ -220,7 +220,7 @@ export const QuizOpticalSheetModal: React.FC<QuizOpticalSheetModalProps> = ({
             <button
               type="button"
               onClick={onClose}
-              className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold transition-colors shadow-md shadow-indigo-600/20"
+              className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white dark:text-white text-xs font-bold transition-colors shadow-md shadow-indigo-600/20"
             >
               <span>Teste Devam Et</span>
               <ArrowRight className="w-3.5 h-3.5" />

@@ -164,7 +164,7 @@ export function QuizPacingCoach({
             <TrendingUp className="h-4 w-4" />
           </div>
           <div>
-            <h3 className="font-display text-sm sm:text-base font-bold text-white">
+            <h3 className="font-display text-sm sm:text-base font-bold text-white dark:text-white">
               Sınav Tempo Koçu & Soru Süre Analizi
             </h3>
             <p className="text-[11px] text-slate-400">
@@ -208,10 +208,10 @@ export function QuizPacingCoach({
           {stats.topSlowQuestions.map((q) => (
             <div
               key={q.questionIndex}
-              className="flex items-center justify-between rounded-xl border border-white/10 bg-slate-950/40 p-2.5 text-xs"
+              className="flex items-center justify-between rounded-xl border border-white/10 bg-slate-950/40 dark:bg-slate-950/40 p-2.5 text-xs"
             >
               <div className="flex items-center gap-2">
-                <span className="font-bold text-white">Soru {q.questionIndex + 1}</span>
+                <span className="font-bold text-white dark:text-white">Soru {q.questionIndex + 1}</span>
                 {q.isCorrect ? (
                   <span className="rounded bg-emerald-500/20 text-emerald-300 text-[10px] px-1.5 py-0.5 font-semibold">
                     Doğru

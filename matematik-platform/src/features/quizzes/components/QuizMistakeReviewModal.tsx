@@ -39,7 +39,7 @@ export function QuizMistakeReviewModal({
   };
 
   return (
-    <div className="fixed inset-0 z-[140] flex items-center justify-center bg-slate-950/80 p-4 backdrop-blur-md">
+    <div className="fixed inset-0 z-[140] flex items-center justify-center bg-slate-950/80 dark:bg-slate-950/80 p-4 backdrop-blur-md">
       <div
         ref={containerRef}
         role="dialog"
