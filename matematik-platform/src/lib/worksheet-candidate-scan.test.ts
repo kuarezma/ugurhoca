@@ -1,5 +1,8 @@
-import { describe, expect, it } from 'vitest';
-import { selectWorksheetPlanItemsForScan } from '@/lib/worksheet-candidate-scan';
+import type { SupabaseClient } from '@supabase/supabase-js';
+import {
+  scanCurrentWeekWorksheetCandidates,
+  selectWorksheetPlanItemsForScan,
+} from '@/lib/worksheet-candidate-scan';
 import type { WorksheetCandidatePlanItem } from '@/lib/worksheet-candidate-discovery';
 
 const createPlanItem = (
@@ -53,5 +56,45 @@ describe('worksheet candidate scan plan selection', () => {
       '7:Grafikler',
       '8:Geometrik Cisimler',
     ]);
+  });
+
+  describe('scanCurrentWeekWorksheetCandidates', () => {
+    it('throws error when source urls are not configured', async () => {
+      const origUrls = process.env.WORKSHEET_CANDIDATE_SOURCE_URLS;
+      delete process.env.WORKSHEET_CANDIDATE_SOURCE_URLS;
+
+      const mockSupabase = {} as unknown as SupabaseClient;
+      try {
+        await expect(
+          scanCurrentWeekWorksheetCandidates(mockSupabase),
+        ).rejects.toThrow('İzinli kaynak listesi boş.');
+      } finally {
+        process.env.WORKSHEET_CANDIDATE_SOURCE_URLS = origUrls;
+      }
+    });
+
+    it('throws error when annual plan query fails', async () => {
+      process.env.WORKSHEET_CANDIDATE_SOURCE_URLS = 'https://example.com/plan';
+      process.env.WORKSHEET_CANDIDATE_ALLOWED_HOSTS = 'example.com';
+
+      const mockSupabase = {
+        from: vi.fn().mockReturnValue({
+          select: vi.fn().mockReturnValue({
+            order: vi.fn().mockReturnValue({
+              order: vi.fn().mockReturnValue({
+                limit: vi.fn().mockResolvedValue({
+                  data: null,
+                  error: new Error('Database connection failed'),
+                }),
+              }),
+            }),
+          }),
+        }),
+      } as unknown as SupabaseClient;
+
+      await expect(
+        scanCurrentWeekWorksheetCandidates(mockSupabase),
+      ).rejects.toThrow('Yıllık plan satırları alınamadı.');
+    });
   });
 });

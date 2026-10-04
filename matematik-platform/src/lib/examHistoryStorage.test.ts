@@ -75,4 +75,25 @@ describe('examHistoryStorage', () => {
     clearAllExamTrials();
     expect(getSavedExamTrials().length).toBe(0);
   });
+
+  it('generates a default title when title is empty whitespace', () => {
+    const trial = saveExamTrial({
+      examType: 'lgs',
+      mathNet: 10,
+      score: 300,
+      title: '   ',
+      totalNet: 40,
+    });
+
+    expect(trial.title).toBe('LGS Deneme #1');
+  });
+
+  it('cleans up corrupted non-array storage gracefully', () => {
+    localStorage.setItem('ugurhoca_exam_trials_history_v1', JSON.stringify({ not: 'an-array' }));
+    expect(getSavedExamTrials()).toEqual([]);
+    expect(localStorage.getItem('ugurhoca_exam_trials_history_v1')).toBeNull();
+
+    localStorage.setItem('ugurhoca_exam_trials_history_v1', 'not valid json {{{');
+    expect(getSavedExamTrials()).toEqual([]);
+  });
 });
