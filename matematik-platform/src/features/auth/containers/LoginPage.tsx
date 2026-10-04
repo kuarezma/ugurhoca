@@ -47,7 +47,8 @@ export default function LoginPage() {
       const session = await getClientSession();
       if (session) {
         if (session.access_token) {
-          writeAccessTokenCookie(session.access_token);
+          // Proxy korumalı rotada HttpOnly çerezi arar; yönlendirmeden önce yazılsın.
+          await writeAccessTokenCookie(session.access_token);
         }
         router.push(getTargetRedirect());
       }
@@ -110,7 +111,7 @@ export default function LoginPage() {
 
       clearUserProfileCache();
       if (signInData?.session?.access_token) {
-        writeAccessTokenCookie(signInData.session.access_token);
+        await writeAccessTokenCookie(signInData.session.access_token);
       }
       await syncCurrentUserSnapshotCookie();
 

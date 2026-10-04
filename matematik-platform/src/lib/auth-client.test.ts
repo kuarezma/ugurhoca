@@ -30,6 +30,7 @@ import {
   requireClientSession,
   signOutClient,
   syncCurrentUserSnapshotCookie,
+  writeAccessTokenCookie,
 } from '@/lib/auth-client';
 
 const createSession = () =>
@@ -49,6 +50,14 @@ const createSession = () =>
     },
   }) as unknown as Session;
 
+const mockFetch = vi.fn();
+
+const sessionCalls = () =>
+  mockFetch.mock.calls.filter(([url]) => url === '/api/auth/session');
+
+const sessionCallMethods = () =>
+  sessionCalls().map(([, init]) => (init as RequestInit | undefined)?.method);
+
 const getCookieValue = (name: string) =>
   document.cookie
     .split('; ')
@@ -60,7 +69,11 @@ const getCookieValue = (name: string) =>
 describe('auth-client', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    // Sunucu oturum senkronu modül/global durumda tekilleştirilir; testler arası sızmasın.
+    delete (globalThis as { __ugurhoca_auth_store__?: unknown }).__ugurhoca_auth_store__;
     clearUserProfileCache();
+    mockFetch.mockResolvedValue(new Response(null, { status: 200 }));
+    vi.stubGlobal('fetch', mockFetch);
 
     document.cookie = `${AUTH_ACCESS_TOKEN_COOKIE_NAME}=; path=/; max-age=0`;
     document.cookie = `${AUTH_SNAPSHOT_COOKIE_NAME}=; path=/; max-age=0`;
@@ -72,6 +85,10 @@ describe('auth-client', () => {
         }),
       }),
     });
+  });
+
+  afterEach(() => {
+    vi.unstubAllGlobals();
   });
 
   it.each([String.raw`/\evil.com`, '/%5Cevil.com', '//evil.com'])
@@ -123,7 +140,7 @@ describe('auth-client', () => {
     expect(router.push).not.toHaveBeenCalled();
   });
 
-  it('stores the access token cookie when a session exists', async () => {
+  it('hands the access token to the HttpOnly session route instead of document.cookie', async () => {
     const session = createSession();
     mockGetSession.mockResolvedValue({
       data: { session },
@@ -131,11 +148,97 @@ describe('auth-client', () => {
     });
 
     await expect(getClientSession()).resolves.toBe(session);
-    expect(getCookieValue(AUTH_ACCESS_TOKEN_COOKIE_NAME)).toBe('token-123');
+
+    expect(getCookieValue(AUTH_ACCESS_TOKEN_COOKIE_NAME)).toBeUndefined();
+    expect(document.cookie).not.toContain('token-123');
+    expect(sessionCalls()).toHaveLength(1);
+    const [, init] = sessionCalls()[0] as [string, RequestInit];
+    expect(init.method).toBe('POST');
+    expect(init.credentials).toBe('same-origin');
+    expect(JSON.parse(String(init.body))).toEqual({ access_token: 'token-123' });
+  });
+
+  it('posts the same token only once while it is in flight or already synced', async () => {
+    mockGetSession.mockResolvedValue({ data: { session: createSession() }, error: null });
+
+    await Promise.all([
+      getClientSession({ forceRefresh: true }),
+      getClientSession({ forceRefresh: true }),
+      writeAccessTokenCookie('token-123'),
+    ]);
+    await getClientSession({ forceRefresh: true });
+
+    expect(sessionCallMethods()).toEqual(['POST']);
+  });
+
+  it('posts again when the token is refreshed', async () => {
+    await writeAccessTokenCookie('token-123');
+    await writeAccessTokenCookie('token-456');
+
+    expect(sessionCallMethods()).toEqual(['POST', 'POST']);
+    expect(JSON.parse(String((sessionCalls()[1][1] as RequestInit).body))).toEqual({
+      access_token: 'token-456',
+    });
+  });
+
+  it('sends DELETE only after an in-flight POST settles so a late POST cannot resurrect the cookie', async () => {
+    let finishPost: (response: Response) => void = () => undefined;
+    mockFetch.mockReturnValueOnce(
+      new Promise<Response>((resolve) => {
+        finishPost = resolve;
+      }),
+    );
+
+    const post = writeAccessTokenCookie('token-123');
+    const del = writeAccessTokenCookie(null);
+    await Promise.resolve();
+
+    expect(sessionCallMethods()).toEqual(['POST']);
+    finishPost(new Response(null, { status: 200 }));
+    await Promise.all([post, del]);
+
+    expect(sessionCallMethods()).toEqual(['POST', 'DELETE']);
+  });
+
+  it('keeps the client session when the session route is unreachable and retries later', async () => {
+    const session = createSession();
+    mockGetSession.mockResolvedValue({ data: { session }, error: null });
+    mockFetch.mockRejectedValueOnce(new TypeError('Failed to fetch'));
+
+    await expect(writeAccessTokenCookie('token-123')).resolves.toBe(false);
+    await expect(getClientSession({ forceRefresh: true })).resolves.toBe(session);
+
+    expect(sessionCallMethods()).toEqual(['POST', 'POST']);
+  });
+
+  it('treats a rejected token (non-2xx) as not synced so the next call retries', async () => {
+    mockFetch.mockResolvedValueOnce(new Response(null, { status: 401 }));
+
+    await expect(writeAccessTokenCookie('token-123')).resolves.toBe(false);
+    await expect(writeAccessTokenCookie('token-123')).resolves.toBe(true);
+
+    expect(sessionCallMethods()).toEqual(['POST', 'POST']);
+  });
+
+  it('does not call the session route for an anonymous visitor without auth cookies', async () => {
+    mockGetSession.mockResolvedValue({ data: { session: null }, error: null });
+
+    await expect(getClientSession()).resolves.toBeNull();
+
+    expect(sessionCalls()).toHaveLength(0);
+  });
+
+  it('clears the server cookie when the local session is gone but an auth cookie remains', async () => {
+    document.cookie = `${AUTH_SNAPSHOT_COOKIE_NAME}=stale-snapshot; path=/`;
+    mockGetSession.mockResolvedValue({ data: { session: null }, error: null });
+
+    await expect(getClientSession()).resolves.toBeNull();
+
+    expect(sessionCallMethods()).toEqual(['DELETE']);
+    expect(getCookieValue(AUTH_SNAPSHOT_COOKIE_NAME)).toBeUndefined();
   });
 
   it('signs out locally and clears cookies for invalid refresh tokens', async () => {
-    document.cookie = `${AUTH_ACCESS_TOKEN_COOKIE_NAME}=stale-token; path=/`;
     document.cookie = `${AUTH_SNAPSHOT_COOKIE_NAME}=stale-snapshot; path=/`;
 
     mockGetSession.mockResolvedValue({
@@ -146,7 +249,7 @@ describe('auth-client', () => {
 
     await expect(getClientSession()).resolves.toBeNull();
     expect(mockSignOut).toHaveBeenCalledWith({ scope: 'local' });
-    expect(getCookieValue(AUTH_ACCESS_TOKEN_COOKIE_NAME)).toBeUndefined();
+    expect(sessionCallMethods()).toEqual(['DELETE']);
     expect(getCookieValue(AUTH_SNAPSHOT_COOKIE_NAME)).toBeUndefined();
   });
 
@@ -257,25 +360,38 @@ describe('auth-client', () => {
     expect(mockProfileSingle).toHaveBeenCalledTimes(1);
   });
 
-  it('clears client cookies and user profile cache via clearClientAuthSnapshotCookie', () => {
-    document.cookie = `${AUTH_ACCESS_TOKEN_COOKIE_NAME}=test-token; path=/`;
+  it('clears client cookies and asks the server to drop the HttpOnly cookie via clearClientAuthSnapshotCookie', async () => {
     document.cookie = `${AUTH_SNAPSHOT_COOKIE_NAME}=test-snapshot; path=/`;
 
     clearClientAuthSnapshotCookie();
+    // Aynı (null) hedef için ikinci çağrı yeni istek açmaz, bekleyen DELETE'i döndürür.
+    await writeAccessTokenCookie(null);
 
-    expect(getCookieValue(AUTH_ACCESS_TOKEN_COOKIE_NAME)).toBeUndefined();
+    expect(sessionCallMethods()).toEqual(['DELETE']);
     expect(getCookieValue(AUTH_SNAPSHOT_COOKIE_NAME)).toBeUndefined();
   });
 
-  it('signs out user from Supabase and clears cookies via signOutClient', async () => {
-    document.cookie = `${AUTH_ACCESS_TOKEN_COOKIE_NAME}=test-token; path=/`;
+  it('signs out user from Supabase and clears the server cookie via signOutClient', async () => {
     document.cookie = `${AUTH_SNAPSHOT_COOKIE_NAME}=test-snapshot; path=/`;
+    await writeAccessTokenCookie('token-123');
 
     await signOutClient();
 
     expect(mockSignOut).toHaveBeenCalledTimes(1);
-    expect(getCookieValue(AUTH_ACCESS_TOKEN_COOKIE_NAME)).toBeUndefined();
+    expect(sessionCallMethods()).toEqual(['POST', 'DELETE']);
     expect(getCookieValue(AUTH_SNAPSHOT_COOKIE_NAME)).toBeUndefined();
+  });
+
+  it('never writes the access token cookie from JavaScript', async () => {
+    const cookieSetter = vi.spyOn(document, 'cookie', 'set');
+
+    await writeAccessTokenCookie('token-123');
+    await writeAccessTokenCookie(null);
+
+    for (const [value] of cookieSetter.mock.calls) {
+      expect(String(value)).not.toContain(AUTH_ACCESS_TOKEN_COOKIE_NAME);
+    }
+    cookieSetter.mockRestore();
   });
 
   it('synchronizes current user profile snapshot cookie via syncCurrentUserSnapshotCookie', async () => {

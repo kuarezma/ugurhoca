@@ -52,20 +52,71 @@ const writeAuthSnapshotCookie = (snapshot: AuthSnapshot | null) => {
   if (previousUserId !== snapshot.id) window.dispatchEvent(new Event('ugurhoca:daily-goal-updated'));
 };
 
-export const writeAccessTokenCookie = (accessToken: string | null) => {
-  if (typeof document === 'undefined') {
-    return;
+const AUTH_SESSION_ROUTE = '/api/auth/session';
+
+/**
+ * Erişim token'ı artık yalnız sunucunun yazdığı HttpOnly çerezde durur
+ * (bkz. src/app/api/auth/session/route.ts); bu modül çereze dokunmaz, yalnızca
+ * rotayı çağırır. Aynı token için tekrar eden çağrılar (getClientSession her
+ * önbellek ıskasında, onAuthStateChange olayları, giriş akışı) tek isteğe
+ * indirgenir; başarısız istek durumu sıfırlar ki sonraki çağrı yeniden denesin.
+ *
+ * Hiçbir zaman reddetmez: ağ hatası istemci oturumunu bozmaz, en kötü ihtimalle
+ * proxy bir sonraki korumalı istekte /giris'e yönlendirir ve oradaki oturum
+ * kontrolü token'ı yeniden gönderir.
+ */
+export const writeAccessTokenCookie = (accessToken: string | null): Promise<boolean> => {
+  if (typeof window === 'undefined') {
+    return Promise.resolve(false);
   }
 
-  const secure = getSecureCookieFlag();
+  const token = accessToken || null;
+  const store = getGlobalAuthStore();
 
-  if (!accessToken) {
-    document.cookie = `${AUTH_ACCESS_TOKEN_COOKIE_NAME}=; path=/; max-age=0; samesite=lax${secure}`;
-    return;
+  if (store.serverSessionSync && store.serverSessionSync.token === token) {
+    return store.serverSessionSync.promise;
   }
 
-  document.cookie = `${AUTH_ACCESS_TOKEN_COOKIE_NAME}=${encodeURIComponent(accessToken)}; path=/; max-age=${AUTH_SNAPSHOT_MAX_AGE}; samesite=lax${secure}`;
+  const request: RequestInit = token
+    ? {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ access_token: token }),
+        credentials: 'same-origin',
+        cache: 'no-store',
+      }
+    : { method: 'DELETE', credentials: 'same-origin', cache: 'no-store' };
+
+  // İstekler sıraya alınır: Supabase doğrulaması yüzünden yavaş olan bir POST,
+  // ardından gelen çıkış DELETE'inden sonra yanıtlanıp çerezi geri yazmasın.
+  const previous = store.serverSessionSync?.promise ?? Promise.resolve(true);
+  const promise = previous
+    .then(() => fetch(AUTH_SESSION_ROUTE, request))
+    .then((response) => response.ok)
+    .catch(() => false)
+    .then((ok) => {
+      if (!ok && store.serverSessionSync?.promise === promise) {
+        store.serverSessionSync = null;
+      }
+      return ok;
+    });
+
+  store.serverSessionSync = { promise, token };
+  return promise;
 };
+
+// Yerel Supabase oturumu yokken sunucu çerezini silmek için yalnızca bir iz
+// varsa istek atılır; aksi halde her anonim sayfa görüntüleme bir DELETE olurdu.
+// HttpOnly çerez görünmez; snapshot çerezi onunla birlikte yazılıp silinir,
+// eski sürümün JS ile yazdığı token çerezi ise hâlâ görünür olabilir.
+const hasClientAuthCookieHint = () =>
+  typeof document !== 'undefined' &&
+  document.cookie
+    .split(';')
+    .some((entry) => {
+      const name = entry.trim().split('=')[0];
+      return name === AUTH_SNAPSHOT_COOKIE_NAME || name === AUTH_ACCESS_TOKEN_COOKIE_NAME;
+    });
 
 const createAuthSnapshot = (profile: AppUser): AuthSnapshot => ({
   email: profile.email,
@@ -120,6 +171,7 @@ type AuthGlobalStore = {
   inFlightProfilePromise: Promise<{ profile: AppUser; session: Session } | null> | null;
   inFlightSessionPromise: Promise<Session | null> | null;
   profileCache: CachedProfileEntry | null;
+  serverSessionSync?: { promise: Promise<boolean>; token: string | null } | null;
 };
 
 const getGlobalAuthStore = (): AuthGlobalStore => {
@@ -166,10 +218,12 @@ export const getClientSession = async (options: { forceRefresh?: boolean } = {})
       }
 
       if (!session) {
-        writeAccessTokenCookie(null);
+        if (hasClientAuthCookieHint()) {
+          void writeAccessTokenCookie(null);
+        }
         writeAuthSnapshotCookie(null);
       } else {
-        writeAccessTokenCookie(session.access_token);
+        void writeAccessTokenCookie(session.access_token);
       }
 
       store.cachedSession = {
@@ -181,7 +235,7 @@ export const getClientSession = async (options: { forceRefresh?: boolean } = {})
     } catch (error) {
       if (isInvalidRefreshTokenError(error)) {
         await supabase.auth.signOut({ scope: 'local' }).catch(() => undefined);
-        writeAccessTokenCookie(null);
+        void writeAccessTokenCookie(null);
         writeAuthSnapshotCookie(null);
         store.cachedSession = null;
         return null;
@@ -306,14 +360,19 @@ export const getCurrentUserProfile = async <TProfile extends AppUser = AppUser>(
 export const clearClientAuthSnapshotCookie = () => {
   clearLegacyUserStorage();
   clearUserProfileCache();
-  writeAccessTokenCookie(null);
+  void writeAccessTokenCookie(null);
   writeAuthSnapshotCookie(null);
 };
 
 export const signOutClient = async () => {
   clearUserProfileCache();
-  await supabase.auth.signOut();
-  clearClientAuthSnapshotCookie();
+  try {
+    await supabase.auth.signOut();
+  } finally {
+    clearClientAuthSnapshotCookie();
+    // Çıkıştan hemen sonraki yönlendirme silinmiş HttpOnly çerezi görsün.
+    await writeAccessTokenCookie(null);
+  }
 };
 
 export const syncCurrentUserSnapshotCookie = async () => {

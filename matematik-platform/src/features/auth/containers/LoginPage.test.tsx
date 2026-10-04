@@ -5,12 +5,13 @@ const mocks = vi.hoisted(() => ({
   getSession: vi.fn(),
   rpc: vi.fn(),
   signIn: vi.fn(),
+  writeToken: vi.fn(),
 }));
 vi.mock('next/navigation', () => ({ useRouter: () => ({ push: mocks.push }) }));
 vi.mock('@/lib/auth-client', () => ({
   getClientSession: mocks.getSession,
   clearUserProfileCache: vi.fn(),
-  writeAccessTokenCookie: vi.fn(),
+  writeAccessTokenCookie: mocks.writeToken,
   syncCurrentUserSnapshotCookie: vi.fn(),
 }));
 vi.mock('@/lib/supabase/client', () => ({
@@ -63,6 +64,34 @@ describe('login redirect and errors', () => {
     await waitFor(() =>
       expect(mocks.push).toHaveBeenCalledWith('/icerikler?grade=8'),
     );
+  });
+  it('waits for the HttpOnly session cookie before redirecting after login', async () => {
+    let finishSync: (ok: boolean) => void = () => undefined;
+    mocks.writeToken.mockReturnValueOnce(
+      new Promise<boolean>((resolve) => {
+        finishSync = resolve;
+      }),
+    );
+    mocks.rpc.mockResolvedValue({
+      data: [{ email: 'ada@ugurhoca.local' }],
+      error: null,
+    });
+    mocks.signIn.mockResolvedValue({
+      data: { session: { access_token: 'token' } },
+      error: null,
+    });
+    render(<LoginPage />);
+    fireEvent.change(screen.getByLabelText('Ad ve soyad'), {
+      target: { value: 'Ada Öğrenci' },
+    });
+    fireEvent.change(screen.getByLabelText('Şifre'), {
+      target: { value: 'password123' },
+    });
+    fireEvent.click(screen.getByRole('button', { name: 'Giriş yap' }));
+    await waitFor(() => expect(mocks.writeToken).toHaveBeenCalledWith('token'));
+    expect(mocks.push).not.toHaveBeenCalled();
+    finishSync(true);
+    await waitFor(() => expect(mocks.push).toHaveBeenCalledWith('/profil'));
   });
   it('hides unknown Supabase errors in Turkish', async () => {
     mocks.rpc.mockResolvedValue({
