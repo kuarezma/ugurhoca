@@ -1,4 +1,5 @@
 import { NextResponse, type NextRequest } from 'next/server';
+import { safeRedirectPath } from '@/lib/safe-redirect-path';
 import { AUTH_ACCESS_TOKEN_COOKIE_NAME } from '@/lib/auth-snapshot';
 
 /**
@@ -32,7 +33,7 @@ export function proxy(request: NextRequest) {
 
   if (!hasSession) {
     const redirectUrl = new URL('/giris', request.url);
-    const target = request.nextUrl.pathname + request.nextUrl.search;
+    const target = safeRedirectPath(request.nextUrl.pathname + request.nextUrl.search);
     if (target && target !== '/' && target !== '/giris') {
       redirectUrl.searchParams.set('redirect', target);
     }

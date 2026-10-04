@@ -74,6 +74,13 @@ describe('auth-client', () => {
     });
   });
 
+  it.each([String.raw`/\evil.com`, '/%5Cevil.com', '//evil.com'])
+    ('does not forward an unsafe login return target %s', (target) => {
+      const router = { push: vi.fn(), replace: vi.fn() };
+      redirectToLogin(router, target);
+      expect(router.replace).toHaveBeenCalledWith('/giris');
+    });
+
   it('clears only legacy learning keys on logout and keeps both users scoped data', async () => {
     localStorage.clear();
     mockSignOut.mockResolvedValue({ error: null });
