@@ -1,6 +1,7 @@
 import 'server-only';
 
 import { cache } from 'react';
+import { resolveAccessGrade } from '@/lib/access-grade';
 import { isAdminEmail } from '@/lib/admin';
 import type { AuthSnapshot } from '@/lib/auth-snapshot';
 import { getServerAccessToken } from '@/lib/auth-snapshot.server';
@@ -9,6 +10,14 @@ import {
   createServiceRoleClient,
 } from '@/lib/supabase/server';
 import type { GradeValue } from '@/types';
+
+export type VerifiedServerUser = AuthSnapshot & {
+  /**
+   * Yetki kararları için sınıf (bkz. src/lib/access-grade.ts). `grade` yalnız
+   * görüntüleme içindir ve sınıf bilinmiyorsa 5'e düşer; bu alan düşmez (null).
+   */
+  accessGrade: string | null;
+};
 
 const isGradeValue = (value: unknown): value is GradeValue =>
   value === 'Mezun' || typeof value === 'number';
@@ -32,7 +41,7 @@ const normalizeGrade = (value: unknown): GradeValue => {
  * (auth.getUser + profiles) maliyetinde olan bu doğrulama, tek bir istek içinde
  * kaç sunucu bileşeni/yardımcısı çağırırsa çağırsın yalnızca bir kez çalışır.
  */
-export const getVerifiedServerUser = cache(async (): Promise<AuthSnapshot | null> => {
+export const getVerifiedServerUser = cache(async (): Promise<VerifiedServerUser | null> => {
   const accessToken = await getServerAccessToken();
   if (!accessToken) {
     return null;
@@ -68,6 +77,7 @@ export const getVerifiedServerUser = cache(async (): Promise<AuthSnapshot | null
         : 'Öğrenci';
 
   return {
+    accessGrade: resolveAccessGrade(profile?.grade, metadata.grade),
     email,
     grade: normalizeGrade(profile?.grade ?? metadata.grade),
     id: user.id,
