@@ -378,7 +378,7 @@ export function HomeHeroSection({
           <SafeLink
             href="/icerikler?type=ders-notlari"
             aria-label="Yaprak Testler"
-            className={`col-span-1 group relative overflow-hidden rounded-2xl sm:rounded-3xl p-4 sm:p-6 border text-white transition-all duration-300 hover:-translate-y-1 active:scale-[0.99] cursor-pointer ${
+            className={`col-span-1 group relative overflow-hidden rounded-2xl sm:rounded-3xl p-3.5 sm:p-6 border text-white transition-all duration-300 hover:-translate-y-1 active:scale-[0.99] cursor-pointer ${
               isLight
                 ? 'border-emerald-300/80 bg-gradient-to-br from-emerald-700 via-teal-700 to-cyan-800 shadow-lg shadow-emerald-950/10 hover:shadow-xl hover:shadow-emerald-950/15'
                 : 'border-teal-400/40 bg-gradient-to-br from-emerald-700 via-teal-700 to-cyan-800 shadow-lg shadow-teal-700/25 hover:shadow-2xl hover:shadow-teal-700/40'
@@ -429,7 +429,7 @@ export function HomeHeroSection({
           <SafeLink
             href="/oyunlar"
             aria-label="Matematik Oyunları"
-            className={`col-span-1 group relative overflow-hidden rounded-2xl sm:rounded-3xl p-4 sm:p-6 border text-white transition-all duration-300 hover:-translate-y-1 active:scale-[0.99] cursor-pointer ${
+            className={`col-span-1 group relative overflow-hidden rounded-2xl sm:rounded-3xl p-3.5 sm:p-6 border text-white transition-all duration-300 hover:-translate-y-1 active:scale-[0.99] cursor-pointer ${
               isLight
                 ? 'border-purple-200/90 bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-500 shadow-lg shadow-indigo-950/10 hover:shadow-xl hover:shadow-indigo-950/15'
                 : 'border-purple-400/40 bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-500 shadow-lg shadow-purple-600/25 hover:shadow-2xl hover:shadow-purple-600/40'
@@ -480,7 +480,7 @@ export function HomeHeroSection({
           <SafeLink
             href="/canli-ders"
             aria-label="Canlı Dersler"
-            className={`col-span-1 group relative overflow-hidden rounded-2xl sm:rounded-3xl p-4 sm:p-6 border text-white transition-all duration-300 hover:-translate-y-1 active:scale-[0.99] cursor-pointer ${
+            className={`col-span-1 group relative overflow-hidden rounded-2xl sm:rounded-3xl p-3.5 sm:p-6 border text-white transition-all duration-300 hover:-translate-y-1 active:scale-[0.99] cursor-pointer ${
               isLight
                 ? 'border-rose-200/90 bg-gradient-to-br from-rose-600 via-red-600 to-amber-600 shadow-lg shadow-rose-950/10 hover:shadow-xl hover:shadow-rose-950/15'
                 : 'border-red-400/40 bg-gradient-to-br from-red-700 via-rose-700 to-amber-700 shadow-lg shadow-rose-700/25 hover:shadow-2xl hover:shadow-rose-700/40'
@@ -534,7 +534,7 @@ export function HomeHeroSection({
           <SafeLink
             href="/meydan-okuma"
             aria-label="Meydan Okuma"
-            className={`col-span-1 group relative overflow-hidden rounded-2xl sm:rounded-3xl p-4 sm:p-6 border text-white transition-all duration-300 hover:-translate-y-1 active:scale-[0.99] cursor-pointer ${
+            className={`col-span-1 group relative overflow-hidden rounded-2xl sm:rounded-3xl p-3.5 sm:p-6 border text-white transition-all duration-300 hover:-translate-y-1 active:scale-[0.99] cursor-pointer ${
               isLight
                 ? 'border-amber-300/80 bg-gradient-to-br from-amber-700 via-orange-700 to-rose-700 shadow-lg shadow-amber-950/10 hover:shadow-xl hover:shadow-amber-950/15'
                 : 'border-amber-400/40 bg-gradient-to-br from-amber-700 via-orange-700 to-rose-700 shadow-lg shadow-orange-700/25 hover:shadow-2xl hover:shadow-orange-700/40'

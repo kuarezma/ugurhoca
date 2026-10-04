@@ -4,7 +4,9 @@ import {
   loadLiveLessonsForCurrentUser,
   requireLiveLessonUser,
   isLiveLessonAdmin,
+  LiveLessonInputError,
 } from '@/features/live-lessons/server/liveLessons';
+import { logger } from '@/lib/logger';
 
 export const runtime = 'nodejs';
 
@@ -48,10 +50,10 @@ export async function POST(request: Request) {
     });
     return NextResponse.json({ lesson: lessons[0], lessons });
   } catch (error) {
-    console.error('Canlı ders planlama hatası:', error);
-    return NextResponse.json(
-      { error: error instanceof Error ? error.message : 'Ders planlanamadı.' },
-      { status: 400 },
-    );
+    if (error instanceof LiveLessonInputError) {
+      return NextResponse.json({ error: error.message }, { status: 400 });
+    }
+    logger.error('Canlı ders planlama hatası', error);
+    return NextResponse.json({ error: 'Ders planlanamadı.' }, { status: 400 });
   }
 }

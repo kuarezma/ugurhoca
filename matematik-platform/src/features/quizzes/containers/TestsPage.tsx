@@ -1768,7 +1768,7 @@ export default function TestsPage({
 
   return (
     <main className="testler-page min-h-screen gradient-bg pb-20">
-      <nav className="fixed top-0 left-0 right-0 z-50 glass py-3 sm:py-4 px-4 sm:px-6">
+      <nav className="fixed top-0 left-0 right-0 z-50 glass py-3 sm:py-4 px-4 sm:px-6 pt-[max(0.75rem,env(safe-area-inset-top))] pl-[max(1rem,env(safe-area-inset-left))] pr-[max(1rem,env(safe-area-inset-right))]">
         <div className="container mx-auto flex justify-between items-center gap-3">
           <Link href="/" className="flex items-center gap-2.5 min-w-0">
             <div className="w-8 h-8 sm:w-10 sm:h-10 shrink-0 bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl flex items-center justify-center">
@@ -1789,7 +1789,7 @@ export default function TestsPage({
         </div>
       </nav>
 
-      <div className="pt-20 sm:pt-24 px-4 sm:px-6">
+      <div className="pt-[calc(4.5rem+env(safe-area-inset-top))] sm:pt-24 px-4 sm:px-6">
         <div className="container mx-auto">
           {error && (
             <div className="mb-6 rounded-2xl border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-200">

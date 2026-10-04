@@ -239,9 +239,9 @@ export default function ProgramsHubPage() {
       icon: PenTool,
       gradient: 'from-indigo-700 via-purple-700 to-pink-700',
       bullets: [
-        'Kavram tanımları ve KaTeX matematik modelleri',
-        'Sık yapılan kavram yanılgıları ve tuzak uyarıları',
-        'Kişisel terimlerini ve özel notlarını kaydetme',
+        'Özgün soru, 4 çeldirici ve adım adım çözüm kurgusu',
+        'KaTeX matematik formül editörü ve ipucu sistemi',
+        'Öğretmen onayından geçip soru havuzunda yayınlanma',
       ],
       ctaLabel: 'Atölyeye Katıl',
     },
@@ -262,7 +262,7 @@ export default function ProgramsHubPage() {
   ];
 
   return (
-    <main className="page-surface programlar-page min-h-screen gradient-bg px-4 pb-12 pt-16 sm:px-6 sm:pt-20">
+    <main className="page-surface programlar-page min-h-screen gradient-bg px-4 pb-[max(3rem,calc(env(safe-area-inset-bottom)+1.5rem))] pt-[calc(4.5rem+env(safe-area-inset-top))] sm:px-6 sm:pt-24">
       <div className="mx-auto max-w-6xl">
         <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
           <Link

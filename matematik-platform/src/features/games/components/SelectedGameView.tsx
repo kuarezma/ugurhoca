@@ -27,7 +27,7 @@ export function SelectedGameView({
     <main className="oyunlar-page page-surface min-h-screen">
       <FloatingParticles />
 
-      <nav className="fixed top-0 left-0 right-0 z-50 border-b border-default bg-surface-1/90 backdrop-blur-xl py-3 sm:py-4 px-4 sm:px-6">
+      <nav className="fixed top-0 left-0 right-0 z-50 border-b border-default bg-surface-1/90 backdrop-blur-xl py-3 sm:py-4 px-4 sm:px-6 pt-[max(0.75rem,env(safe-area-inset-top))] pl-[max(1rem,env(safe-area-inset-left))] pr-[max(1rem,env(safe-area-inset-right))]">
         <div className="container mx-auto flex justify-between items-center gap-2">
           <button
             onClick={onBack}
@@ -65,7 +65,7 @@ export function SelectedGameView({
         </div>
       </nav>
 
-      <div className="pt-20 sm:pt-24 px-4 sm:px-6">
+      <div className="pt-[calc(4.5rem+env(safe-area-inset-top))] sm:pt-24 px-4 sm:px-6">
         <div className="container mx-auto max-w-4xl">
           <GameComponent
             onExit={onBack}
