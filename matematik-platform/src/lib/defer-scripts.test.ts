@@ -47,4 +47,47 @@ describe('loadDeferredScript', () => {
     expect(removeSpy).toHaveBeenCalledWith('click', expect.any(Function));
     expect(removeSpy).toHaveBeenCalledWith('scroll', expect.any(Function));
   });
+
+  it('injects script via requestIdleCallback and cancels with cancelIdleCallback', () => {
+    let idleCb: (() => void) | undefined;
+    const cancelIdleMock = vi.fn();
+    (window as unknown as { requestIdleCallback?: unknown; cancelIdleCallback?: unknown }).requestIdleCallback = vi.fn((cb: () => void) => {
+      idleCb = cb;
+      return 42;
+    });
+    (window as unknown as { cancelIdleCallback?: unknown }).cancelIdleCallback = cancelIdleMock;
+
+    try {
+      const cleanup = loadDeferredScript('https://example.com/idle-script.js');
+
+      // Trigger idle callback
+      if (idleCb) {
+        (idleCb as () => void)();
+      }
+
+      const script = document.querySelector('script[src="https://example.com/idle-script.js"]');
+      expect(script).not.toBeNull();
+
+      cleanup();
+      expect(cancelIdleMock).toHaveBeenCalledWith(42);
+    } finally {
+      delete (window as unknown as { requestIdleCallback?: unknown }).requestIdleCallback;
+      delete (window as unknown as { cancelIdleCallback?: unknown }).cancelIdleCallback;
+    }
+  });
+
+  it('injects script via setTimeout when requestIdleCallback is unavailable', () => {
+    vi.useFakeTimers();
+    try {
+      const cleanup = loadDeferredScript('https://example.com/timeout-script.js');
+      expect(document.querySelector('script[src="https://example.com/timeout-script.js"]')).toBeNull();
+
+      vi.advanceTimersByTime(2600);
+
+      expect(document.querySelector('script[src="https://example.com/timeout-script.js"]')).not.toBeNull();
+      cleanup();
+    } finally {
+      vi.useRealTimers();
+    }
+  });
 });

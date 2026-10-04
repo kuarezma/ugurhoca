@@ -34,4 +34,91 @@ describe('mathSpeechSynthesizer', () => {
   it('handles empty input gracefully', () => {
     expect(formulaToSpokenTurkish('')).toBe('');
   });
+
+  describe('useMathSpeech hook', () => {
+    it('manages speech synthesis lifecycle: speak, stop, toggle', async () => {
+      const { act, renderHook } = await import('@testing-library/react');
+      const { useFormulaSpeech } = await import('./mathSpeechSynthesizer');
+
+      const mockCancel = vi.fn();
+      let lastUtterance: {
+        lang?: string;
+        onend?: (() => void) | null;
+        onerror?: (() => void) | null;
+        onstart?: (() => void) | null;
+      } | null = null;
+
+      const mockSpeak = vi.fn().mockImplementation((utt) => {
+        lastUtterance = utt;
+        utt.onstart?.();
+      });
+      const getLastUtterance = () => lastUtterance;
+
+      vi.stubGlobal('speechSynthesis', {
+        cancel: mockCancel,
+        speak: mockSpeak,
+      });
+
+      class MockUtterance {
+        lang = '';
+        onerror: (() => void) | null = null;
+        onend: (() => void) | null = null;
+        onstart: (() => void) | null = null;
+        pitch = 1.0;
+        rate = 1.0;
+        text: string;
+        constructor(text: string) {
+          this.text = text;
+        }
+      }
+      vi.stubGlobal('SpeechSynthesisUtterance', MockUtterance);
+
+      const { result, unmount } = renderHook(() => useFormulaSpeech());
+
+      expect(result.current.isSupported).toBe(true);
+      expect(result.current.isSpeaking).toBe(false);
+
+      // 1. Speak
+      act(() => {
+        result.current.speak('a + b = c');
+      });
+
+      expect(mockCancel).toHaveBeenCalled();
+      expect(mockSpeak).toHaveBeenCalled();
+      expect(getLastUtterance()?.lang).toBe('tr-TR');
+      expect(result.current.isSpeaking).toBe(true);
+
+      // Utterance ends
+      act(() => {
+        getLastUtterance()?.onend?.();
+      });
+      expect(result.current.isSpeaking).toBe(false);
+
+      // 2. Toggle when not speaking -> speaks
+      act(() => {
+        result.current.toggle('x^2');
+      });
+      expect(result.current.isSpeaking).toBe(true);
+
+      // 3. Toggle when speaking -> stops
+      act(() => {
+        result.current.toggle('x^2');
+      });
+      expect(result.current.isSpeaking).toBe(false);
+
+      // 4. Utterance error callback
+      act(() => {
+        result.current.speak('y = mx + b');
+      });
+      expect(result.current.isSpeaking).toBe(true);
+      act(() => {
+        getLastUtterance()?.onerror?.();
+      });
+      expect(result.current.isSpeaking).toBe(false);
+
+      // 5. Unmount cleans up
+      unmount();
+      expect(mockCancel).toHaveBeenCalled();
+    });
+  });
 });

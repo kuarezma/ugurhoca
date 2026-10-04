@@ -78,6 +78,7 @@ describe('loadActiveLiveLessonForCurrentUser', () => {
     // dersleri limitsiz çekip istemcide aktif olanı arıyordu; tablo büyüdükçe
     // sorgu maliyeti ana sayfanın TTFB'sine ekleniyordu.
     mockGetVerifiedServerUser.mockResolvedValue({
+      accessGrade: '8',
       email: 'ogrenci@example.com',
       grade: 8,
       id: 'user-1',

@@ -21,12 +21,15 @@ vi.mock('@/lib/supabase/client', () => ({
 }));
 
 import {
+  clearClientAuthSnapshotCookie,
   clearUserProfileCache,
   getClientSession,
   getCurrentUserProfile,
   redirectToHome,
   redirectToLogin,
   requireClientSession,
+  signOutClient,
+  syncCurrentUserSnapshotCookie,
 } from '@/lib/auth-client';
 
 const createSession = () =>
@@ -224,5 +227,48 @@ describe('auth-client', () => {
     const r4 = await getCurrentUserProfile({ redirectToLogin: false });
     expect(r4?.profile.name).toBe('Ada Profil');
     expect(mockProfileSingle).toHaveBeenCalledTimes(1);
+  });
+
+  it('clears client cookies and user profile cache via clearClientAuthSnapshotCookie', () => {
+    document.cookie = `${AUTH_ACCESS_TOKEN_COOKIE_NAME}=test-token; path=/`;
+    document.cookie = `${AUTH_SNAPSHOT_COOKIE_NAME}=test-snapshot; path=/`;
+
+    clearClientAuthSnapshotCookie();
+
+    expect(getCookieValue(AUTH_ACCESS_TOKEN_COOKIE_NAME)).toBeUndefined();
+    expect(getCookieValue(AUTH_SNAPSHOT_COOKIE_NAME)).toBeUndefined();
+  });
+
+  it('signs out user from Supabase and clears cookies via signOutClient', async () => {
+    document.cookie = `${AUTH_ACCESS_TOKEN_COOKIE_NAME}=test-token; path=/`;
+    document.cookie = `${AUTH_SNAPSHOT_COOKIE_NAME}=test-snapshot; path=/`;
+
+    await signOutClient();
+
+    expect(mockSignOut).toHaveBeenCalledTimes(1);
+    expect(getCookieValue(AUTH_ACCESS_TOKEN_COOKIE_NAME)).toBeUndefined();
+    expect(getCookieValue(AUTH_SNAPSHOT_COOKIE_NAME)).toBeUndefined();
+  });
+
+  it('synchronizes current user profile snapshot cookie via syncCurrentUserSnapshotCookie', async () => {
+    const session = createSession();
+    mockGetSession.mockResolvedValue({
+      data: { session },
+      error: null,
+    });
+    mockProfileSingle.mockResolvedValue({
+      data: {
+        email: 'ogrenci@example.com',
+        grade: 8,
+        id: 'user-1',
+        isAdmin: false,
+        name: 'Ada Profil',
+      },
+    });
+
+    const profile = await syncCurrentUserSnapshotCookie();
+    expect(profile?.id).toBe('user-1');
+    expect(profile?.name).toBe('Ada Profil');
+    expect(getCookieValue(AUTH_SNAPSHOT_COOKIE_NAME)).toBeDefined();
   });
 });

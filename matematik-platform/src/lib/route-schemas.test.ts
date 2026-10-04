@@ -1,4 +1,5 @@
 import {
+  adminAnnouncementUpdateSchema,
   adminMessageSchema,
   contentDocumentCreateSchema,
   quizImportSchema,
@@ -116,5 +117,15 @@ describe('route-schemas', () => {
     });
 
     expect(parsed.success).toBe(false);
+  });
+
+  it('validates adminAnnouncementUpdateSchema', () => {
+    const valid = adminAnnouncementUpdateSchema.safeParse({
+      announcement_id: 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11',
+      updates: {
+        title: 'Güncel Başlık',
+      },
+    });
+    expect(valid.success).toBe(true);
   });
 });
