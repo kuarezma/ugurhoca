@@ -1,0 +1,1 @@
+select exists (select 1 from pg_proc where pronamespace='public'::regnamespace and proname='is_admin_email') and exists (select 1 from pg_proc where pronamespace='public'::regnamespace and proname='get_admin_profile_id') as ok, (select count(*) from pg_policies where coalesce(qual,'')||coalesce(with_check,'') like '%matematiklab%') as policies_with_retired_admin;

@@ -94,7 +94,13 @@ describe('single admin migration', () => {
   const before = effectiveDefinitions(
     files.filter((file) => file < migrationName),
   );
-  const after = effectiveDefinitions(files);
+  // Equality is checked against this migration's own effect; later files
+  // (e.g. 20261004130500, rebuilt from the production catalog) may redefine
+  // the same policies in a different but equivalent form.
+  const after = effectiveDefinitions(
+    files.filter((file) => file <= migrationName),
+  );
+  const latest = effectiveDefinitions(files);
   const replacement = effectiveDefinitions([migrationName]);
   const sql = fs.readFileSync(
     path.join(migrationDirectory, migrationName),
@@ -127,7 +133,12 @@ describe('single admin migration', () => {
 
   it('leaves no retired admin in the latest effective policies or function bodies', () => {
     expect(
-      [...after.policies.values(), ...after.functions.values()].join('\n'),
+      [
+        ...after.policies.values(),
+        ...after.functions.values(),
+        ...latest.policies.values(),
+        ...latest.functions.values(),
+      ].join('\n'),
     ).not.toContain(retiredEmail);
   });
 
@@ -141,6 +152,7 @@ describe('single admin migration', () => {
         withoutRetiredEmail(previous!),
       );
       expect(after.functions.get(name)).toBe(replacement.functions.get(name));
+      expect(latest.functions.get(name)).not.toContain(retiredEmail);
       expect(normalizeSql(sql)).toContain(
         `REVOKE ALL ON FUNCTION public.${name}() FROM PUBLIC, anon;`,
       );

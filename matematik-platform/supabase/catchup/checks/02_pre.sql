@@ -1,0 +1,1 @@
+select exists (select 1 from pg_proc where pronamespace='public'::regnamespace and proname='touch_daily_streak' and prosrc like '%') and not exists (select 1 from pg_proc where pronamespace='public'::regnamespace and proname='touch_daily_streak' and prosrc like '%public.profiles AS p%') as ok;

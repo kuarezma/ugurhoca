@@ -1,0 +1,1 @@
+select exists (select 1 from information_schema.columns where table_schema='public' and table_name='profiles' and column_name='is_favorite' and is_nullable='NO' and column_default='false') and exists (select 1 from pg_indexes where schemaname='public' and indexname='profiles_is_favorite_idx') as ok;

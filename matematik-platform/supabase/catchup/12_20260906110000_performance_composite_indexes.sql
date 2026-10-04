@@ -1,3 +1,6 @@
+-- catchup: BİREBİR KOPYA — kaynak supabase/migrations/20260906110000_performance_composite_indexes.sql (bu dal)
+-- catchup: "-- catchup" ile işaretli satırlar dışında kaynakla aynıdır (verify-copies.sh).
+SET lock_timeout = '5s'; -- catchup
 -- Performance Composite Indexes for Scalability
 -- Ensures fast queries for student progress, quiz histories, and study sessions
 

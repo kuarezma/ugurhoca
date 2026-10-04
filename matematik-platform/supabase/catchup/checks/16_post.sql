@@ -1,0 +1,2 @@
+select not exists (select 1 from pg_proc where pronamespace='public'::regnamespace and prosrc like '%matematiklab%')
+   and not exists (select 1 from pg_policies where schemaname='public' and policyname in ('profiles_admin_all','documents_update','assignments_admin_write','shared_documents_admin_write','notifications_admin_all','quizzes_admin_write','quiz_questions_admin_write') and coalesce(qual,'')||coalesce(with_check,'') like '%matematiklab%') as ok;

@@ -1,0 +1,1 @@
+select (to_regclass('public.student_groups') is not null) and (to_regclass('public.student_group_members') is not null) and exists (select 1 from pg_constraint where conname='student_group_members_user_id_fkey') and not has_table_privilege('anon','public.student_groups','SELECT') as ok;
