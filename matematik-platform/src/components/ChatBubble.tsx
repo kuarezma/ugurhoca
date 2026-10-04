@@ -862,7 +862,7 @@ export default function ChatBubble() {
         whileHover={{ scale: 1.06 }}
         whileTap={{ scale: 0.94 }}
         onClick={() => setOpen((o) => !o)}
-        className="fixed bottom-20 sm:bottom-6 right-4 sm:right-6 z-40 flex h-14 w-14 sm:h-[60px] sm:w-[60px] items-center justify-center rounded-full bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-500 text-white shadow-2xl shadow-purple-500/40 focus:outline-none focus-visible:ring-4 focus-visible:ring-purple-400"
+        className="fixed bottom-[calc(4.75rem+env(safe-area-inset-bottom))] sm:bottom-6 right-4 sm:right-6 z-40 flex h-14 w-14 sm:h-[60px] sm:w-[60px] items-center justify-center rounded-full bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-500 text-white shadow-2xl shadow-purple-500/40 focus:outline-none focus-visible:ring-4 focus-visible:ring-purple-400"
         aria-label={
           currentUser?.isAdmin
             ? 'Öğrenci mesajları'
@@ -906,7 +906,7 @@ export default function ChatBubble() {
             aria-modal="true"
             aria-label="Uğur Hoca ile Sohbet"
             style={{ overscrollBehavior: 'contain' }}
-            className={`fixed bottom-24 sm:bottom-24 right-3 sm:right-6 z-40 flex h-[min(600px,calc(100dvh-7.5rem))] min-h-0 w-[calc(100vw-1.5rem)] sm:w-[420px] flex-col overflow-hidden overscroll-contain rounded-3xl border shadow-2xl backdrop-blur-2xl transition-colors ${
+            className={`fixed bottom-[calc(5.25rem+env(safe-area-inset-bottom))] sm:bottom-24 right-3 sm:right-6 z-40 flex h-[min(600px,calc(100dvh-7.5rem-env(safe-area-inset-bottom)))] min-h-0 w-[calc(100vw-1.5rem)] sm:w-[420px] flex-col overflow-hidden overscroll-contain rounded-3xl border shadow-2xl backdrop-blur-2xl transition-colors ${
               isLight
                 ? 'border-slate-200/90 bg-white/95 text-slate-800 shadow-indigo-950/15'
                 : 'border-slate-700/80 bg-slate-900/95 text-slate-100 shadow-black/50'

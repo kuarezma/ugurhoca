@@ -337,7 +337,7 @@ export function LiveLessonsPage({ initialLessons, students, user }: Props) {
     >
       <HomeNavbar user={appUser} onLogout={handleLogout} />
 
-      <main className="mx-auto max-w-6xl px-4 pt-20 pb-28 sm:px-6 md:pt-24 md:pb-16">
+      <main className="mx-auto max-w-6xl px-4 pt-[calc(4.5rem+env(safe-area-inset-top))] pb-28 sm:px-6 md:pt-24 md:pb-16">
         {/* Üst Hero Başlık */}
         <section className="relative overflow-hidden rounded-3xl border border-border/80 bg-card/80 p-6 shadow-xl backdrop-blur-xl sm:p-8">
           <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
