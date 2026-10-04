@@ -4,8 +4,10 @@ import {
   isLiveLessonAdmin,
   requireLiveLessonUser,
   updateLiveLessonStatus,
+  LiveLessonInputError,
 } from '@/features/live-lessons/server/liveLessons';
 import { getLiveKitServiceHost } from '@/features/live-lessons/lib/lesson-auth';
+import { logger } from '@/lib/logger';
 
 export const runtime = 'nodejs';
 
@@ -43,9 +45,10 @@ export async function POST(request: Request, context: RouteContext) {
 
     return NextResponse.json({ lesson });
   } catch (error) {
-    return NextResponse.json(
-      { error: error instanceof Error ? error.message : 'Ders güncellenemedi.' },
-      { status: 400 },
-    );
+    if (error instanceof LiveLessonInputError) {
+      return NextResponse.json({ error: error.message }, { status: 400 });
+    }
+    logger.error('Canlı ders sonlandırma hatası', error);
+    return NextResponse.json({ error: 'Ders güncellenemedi.' }, { status: 400 });
   }
 }
