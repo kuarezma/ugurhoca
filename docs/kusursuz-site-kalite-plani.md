@@ -143,6 +143,13 @@ flowchart LR
 | Final review ve merge kararı | Şef, Opus 5.5 medium |
 | `task.md` §28 ve `docs/web-kalite-ve-profesyonellik-plan.md` karar kaydı | Gemini 3.8 Flash high |
 
+## Ürün kararları (kullanıcı, 4 Ekim 2026)
+
+- Tek admin `admin@ugurhoca.com`. `admin@matematiklab.com` SQL fonksiyon ve politikalardan da kaldırılır (dal `kalite/faz-1-admin-allowlist`). Production'da `ADMIN_EXTRA_EMAILS` / `ADMIN_EMAIL` tanımlı değil.
+- Öğrenci kendi sınıfını seçebilir. Sınıf hedeflemesi güvenlik sınırı değil, filtredir; `profiles.grade` kilitlenmez.
+- Sınıfı çözülemeyen kullanıcı (profil ve metadata yok) sınıf derslerini görmez; önceki "varsayılan 5. sınıf" yetki kararında kullanılmaz.
+- Açık: Mezun öğrenciler `grade=0` olarak kaydediliyor, `'Mezun'` hedefli dersleri görmüyor (önceden de böyle). Faz 2'de ele alınacak.
+
 ## Değişmezler ve varsayımlar
 
 - Görsel kimlik, veritabanı verisi (yalnız RLS/kısıt migration'ları eklenir), ürün kapsamı değişmez.
