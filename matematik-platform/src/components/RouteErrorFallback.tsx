@@ -14,6 +14,8 @@ type RouteErrorFallbackProps = {
   description: string;
   homeHref: string;
   homeLabel: string;
+  mascotSize?: number;
+  minHeight?: string;
 };
 
 /**
@@ -29,18 +31,26 @@ export function RouteErrorFallback({
   description,
   homeHref,
   homeLabel,
+  mascotSize = 120,
+  minHeight = 'min-h-[60vh]',
 }: RouteErrorFallbackProps) {
   useEffect(() => {
-    logger.error(`Route error boundary triggered (${scope})`, error, {
+    const message =
+      scope === 'app'
+        ? 'App error boundary triggered'
+        : `Route error boundary triggered (${scope})`;
+    logger.error(message, error, {
       digest: error.digest,
     });
   }, [error, scope]);
 
   return (
-    <main className="relative z-10 flex min-h-[60vh] flex-col items-center justify-center gap-6 px-6 py-16 text-center">
+    <main
+      className={`relative z-10 flex ${minHeight} flex-col items-center justify-center gap-6 px-6 py-16 text-center`}
+    >
       <Mascot
         pose="confused"
-        size={120}
+        size={mascotSize}
         ariaLabel="Hata ile karşılaşan maskot Pi"
       />
       <div className="max-w-md space-y-2">
