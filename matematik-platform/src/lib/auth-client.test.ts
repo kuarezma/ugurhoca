@@ -313,7 +313,7 @@ describe('auth-client', () => {
   });
 
   it('clears the local Supabase session itself when both sign-out attempts fail and never re-posts it after reload', async () => {
-    localStorage.setItem(SUPABASE_STORAGE_KEY, '{"opaque":"session"}');
+    localStorage.setItem(SUPABASE_STORAGE_KEY, JSON.stringify(createSession()));
     localStorage.setItem(`${SUPABASE_STORAGE_KEY}-code-verifier`, 'verifier');
     // Kurulu SDK: 'local' kapsamı da sunucuya gider ve 503'te yerel oturumu silmez.
     mockSignOut.mockResolvedValue({ error: new Error('503 Service Unavailable') });
@@ -327,6 +327,7 @@ describe('auth-client', () => {
     expect(localStorage.getItem(`${SUPABASE_STORAGE_KEY}-code-verifier`)).toBeNull();
     expect(localStorage.getItem(SIGNED_OUT_MARKER_KEY)).toBe('1');
     expect(JSON.stringify(Object.entries(localStorage))).not.toContain('token-123');
+    expect(sessionCallMethods()).toEqual(['POST', 'DELETE']);
 
     // Yeniden yükleme: yeni modül durumu; en kötü durumda SDK eski oturumu hâlâ veriyor.
     delete (globalThis as { __ugurhoca_auth_store__?: unknown }).__ugurhoca_auth_store__;
@@ -341,6 +342,50 @@ describe('auth-client', () => {
     clearSignedOutMarker();
     await expect(writeAccessTokenCookie('token-123')).resolves.toBe(true);
     expect(sessionCallMethods()).toContain('POST');
+  });
+
+  it('keeps a session another tab opened while both sign-out attempts were failing', async () => {
+    localStorage.setItem(SUPABASE_STORAGE_KEY, JSON.stringify(createSession()));
+    const otherTabSession = {
+      ...createSession(),
+      access_token: 'token-b',
+      refresh_token: 'refresh-b',
+      user: { ...createSession().user, id: 'user-b' },
+    };
+    mockSignOut.mockImplementation(async (options?: { scope?: string }) => {
+      if (options?.scope === 'local') {
+        // A'nın ikinci denemesi beklerken B sekmesinde giriş başarılı oldu.
+        localStorage.setItem(SUPABASE_STORAGE_KEY, JSON.stringify(otherTabSession));
+        mockGetSession.mockResolvedValue({ data: { session: otherTabSession }, error: null });
+      }
+      return { error: new Error('503 Service Unavailable') };
+    });
+    await getClientSession();
+    await writeAccessTokenCookie('token-123');
+
+    await signOutClient();
+
+    expect(JSON.parse(localStorage.getItem(SUPABASE_STORAGE_KEY) ?? 'null')).toMatchObject({
+      access_token: 'token-b',
+    });
+    expect(localStorage.getItem(SIGNED_OUT_MARKER_KEY)).toBeNull();
+    // A'nın temizlik isteği B'nin oturumunu silmez, onu yazar.
+    expect(sessionCallMethods()).toEqual(['POST', 'POST']);
+    expect(JSON.parse(String((sessionCalls()[1][1] as RequestInit).body))).toEqual({
+      access_token: 'token-b',
+    });
+    await expect(writeAccessTokenCookie('token-b')).resolves.toBe(true);
+  });
+
+  it('does not set the signed-out marker on SIGNED_OUT cleanup when a different session is stored', () => {
+    localStorage.setItem(
+      SUPABASE_STORAGE_KEY,
+      JSON.stringify({ ...createSession(), access_token: 'token-b', user: { id: 'user-b' } }),
+    );
+
+    clearClientAuthSnapshotCookie();
+
+    expect(localStorage.getItem(SIGNED_OUT_MARKER_KEY)).toBeNull();
   });
 
   it('turns a queued cleanup DELETE into a POST when another tab signed in meanwhile', async () => {

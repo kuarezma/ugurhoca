@@ -261,17 +261,92 @@ export const writeAccessTokenCookie = (accessToken: string | null): Promise<bool
   return entry.promise;
 };
 
-const removeLocalSupabaseSession = () => {
+type StoredSessionIdentity = {
+  accessToken?: string;
+  refreshToken?: string;
+  userId?: string;
+};
+
+/**
+ * supabase-js'in ortak localStorage'daki oturumunu SDK'yı atlayarak okur.
+ * null: depoda oturum yok; undefined: okunamadı/çözümlenemedi (bilinmiyor).
+ * Değerler yalnız bellekte karşılaştırılır, hiçbir yere yazılmaz.
+ */
+const readStoredSupabaseSession = (): StoredSessionIdentity | null | undefined => {
   try {
     const storageKey = getSupabaseAuthStorageKey();
     if (!storageKey) {
-      return;
+      return undefined;
+    }
+    const raw = localStorage.getItem(storageKey);
+    if (!raw) {
+      return null;
+    }
+    const parsed = JSON.parse(raw) as {
+      access_token?: unknown;
+      refresh_token?: unknown;
+      user?: { id?: unknown };
+    } | null;
+    if (!parsed || typeof parsed !== 'object') {
+      return undefined;
+    }
+    return {
+      accessToken: typeof parsed.access_token === 'string' ? parsed.access_token : undefined,
+      refreshToken: typeof parsed.refresh_token === 'string' ? parsed.refresh_token : undefined,
+      userId: typeof parsed.user?.id === 'string' ? parsed.user.id : undefined,
+    };
+  } catch {
+    return undefined;
+  }
+};
+
+const isSameStoredSession = (
+  a: StoredSessionIdentity | null | undefined,
+  b: StoredSessionIdentity | null | undefined,
+) =>
+  Boolean(
+    a &&
+      b &&
+      a.userId &&
+      a.userId === b.userId &&
+      ((a.accessToken && a.accessToken === b.accessToken) ||
+        (a.refreshToken && a.refreshToken === b.refreshToken)),
+  );
+
+/**
+ * Çıkış işareti yalnız depoda oturum yoksa ya da depodaki oturum çıkış
+ * yapılanla aynıysa yazılır: arada başka sekmede açılan yeni oturum (ortak
+ * localStorage) işaretle engellenmesin. Depo okunamıyorsa güvenli taraf seçilir.
+ */
+const canMarkSignedOut = (signedOut: StoredSessionIdentity | null | undefined) => {
+  const current = readStoredSupabaseSession();
+  return current == null || isSameStoredSession(current, signedOut);
+};
+
+const markSignedOutIfSameSession = (signedOut: StoredSessionIdentity | null | undefined) => {
+  if (canMarkSignedOut(signedOut)) {
+    writeStorage(SIGNED_OUT_MARKER_KEY, '1');
+  }
+};
+
+// Yalnız depodaki oturum hâlâ çıkış yapılan oturumsa siler; başka sekmede
+// açılmış yeni bir oturuma dokunmaz. Silinip silinmediğini döndürür.
+const removeLocalSupabaseSession = (signedOut: StoredSessionIdentity | null | undefined) => {
+  if (!isSameStoredSession(readStoredSupabaseSession(), signedOut)) {
+    return false;
+  }
+  try {
+    const storageKey = getSupabaseAuthStorageKey();
+    if (!storageKey) {
+      return false;
     }
     for (const suffix of ['', '-code-verifier', '-user']) {
       localStorage.removeItem(`${storageKey}${suffix}`);
     }
+    return true;
   } catch {
     // Silinemezse SIGNED_OUT_MARKER_KEY eski oturumun POST edilmesini yine engeller.
+    return false;
   }
 };
 
@@ -350,6 +425,7 @@ type AuthGlobalStore = {
     token: string | null;
   } | null;
   signedOutAccessToken?: string | null;
+  signedOutSession?: StoredSessionIdentity | null;
 };
 
 const getGlobalAuthStore = (): AuthGlobalStore => {
@@ -536,7 +612,7 @@ export const getCurrentUserProfile = async <TProfile extends AppUser = AppUser>(
 };
 
 export const clearClientAuthSnapshotCookie = () => {
-  writeStorage(SIGNED_OUT_MARKER_KEY, '1');
+  markSignedOutIfSameSession(getGlobalAuthStore().signedOutSession);
   clearLegacyUserStorage();
   clearUserProfileCache();
   void writeAccessTokenCookie(null);
@@ -546,11 +622,16 @@ export const clearClientAuthSnapshotCookie = () => {
 export const signOutClient = async () => {
   const store = getGlobalAuthStore();
   // Çıkış yarıda kalsa bile bu sekme eski token'ı sunucu çerezine geri yazmasın.
+  const storedSession = readStoredSupabaseSession();
+  store.signedOutSession = storedSession;
   store.signedOutAccessToken =
-    store.cachedSession?.session?.access_token ?? store.serverSessionSync?.token ?? null;
+    storedSession?.accessToken ??
+    store.cachedSession?.session?.access_token ??
+    store.serverSessionSync?.token ??
+    null;
   // Kalıcı ve sekmeler arası: yeniden yüklemede de eski oturum POST edilmez;
   // yalnız yeni bir SIGNED_IN olayı kaldırır.
-  writeStorage(SIGNED_OUT_MARKER_KEY, '1');
+  markSignedOutIfSameSession(storedSession);
   clearUserProfileCache();
   try {
     const result = await supabase.auth.signOut();
@@ -563,8 +644,12 @@ export const signOutClient = async () => {
     const local = await supabase.auth
       .signOut({ scope: 'local' })
       .catch((error: unknown) => ({ error }));
-    if (!local || local.error) {
-      removeLocalSupabaseSession();
+    if ((!local || local.error) && !removeLocalSupabaseSession(storedSession)) {
+      // Depoda artık başka bir oturum var (ör. başka sekmede giriş): o geçerli,
+      // silinmez ve onu engelleyecek çıkış işareti geri alınır.
+      if (!canMarkSignedOut(storedSession)) {
+        writeStorage(SIGNED_OUT_MARKER_KEY, null);
+      }
     }
   } finally {
     clearClientAuthSnapshotCookie();
