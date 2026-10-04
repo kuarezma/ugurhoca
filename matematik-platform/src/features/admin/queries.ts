@@ -15,6 +15,7 @@ import {
   isWorksheetType,
   prepareWorksheetDocumentPayload,
 } from '@/features/content/worksheet';
+import { LIVE_LESSON_CLIENT_COLUMNS } from '@/features/live-lessons/lib/lesson-access';
 import { normalizeDashboardBadges } from '@/features/profile/utils/dashboard-view-model';
 import { resolveCurrentGoal } from '@/features/progress/utils';
 import type {
@@ -481,7 +482,7 @@ export const loadAdminDashboardData = async (
       .limit(1000),
     supabase
       .from('live_lessons')
-      .select('*')
+      .select(LIVE_LESSON_CLIENT_COLUMNS)
       .order('starts_at', { ascending: false })
       .limit(100),
     supabase

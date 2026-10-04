@@ -2,11 +2,12 @@ import 'server-only';
 
 import { revalidatePath } from 'next/cache';
 import { NextResponse } from 'next/server';
-import type { AuthSnapshot } from '@/lib/auth-snapshot';
-import { getVerifiedServerUser } from '@/lib/auth-verify.server';
+import { getVerifiedServerUser, type VerifiedServerUser } from '@/lib/auth-verify.server';
 import { createServiceRoleClient } from '@/lib/supabase/server';
 import {
+  canUserAccessLiveLesson,
   isLiveLessonAdmin,
+  liveLessonAudienceFilter,
   toClientLiveLesson,
 } from '@/features/live-lessons/lib/lesson-access';
 import { generateRoomId, signTeacherProof } from '@/features/live-lessons/lib/lesson-auth';
@@ -25,7 +26,7 @@ const MAX_RECURRING_LESSONS = 16;
 const VALID_TARGET_GRADES = ['5', '6', '7', '8', 'Mezun', 'all', 'selected'];
 
 type RouteAuth =
-  | { ok: true; user: AuthSnapshot }
+  | { ok: true; user: VerifiedServerUser }
   | { ok: false; response: NextResponse };
 
 export async function requireLiveLessonUser(): Promise<RouteAuth> {
@@ -47,6 +48,21 @@ export {
   toClientLiveLesson,
 } from '@/features/live-lessons/lib/lesson-access';
 
+// service_role RLS'i atlar; öğrenciye dönen her satır sorgu filtresinden
+// bağımsız olarak tek kaynak kuraldan (canUserAccessLiveLesson) geçer.
+function toAccessibleClientLessons(rows: unknown[] | null, user: VerifiedServerUser) {
+  return ((rows || []) as LiveLesson[])
+    .filter((lesson) => canUserAccessLiveLesson(lesson, user))
+    .map(toClientLiveLesson);
+}
+
+// target_student_ids kolonu olmayan eski şemada kullanılan, diziye bakmayan filtre.
+function gradeOnlyAudienceFilter(user: VerifiedServerUser) {
+  return user.accessGrade === null
+    ? 'target_grade.eq.all'
+    : `target_grade.eq.all,target_grade.eq.${user.accessGrade}`;
+}
+
 export async function loadLiveLessonsForCurrentUser(): Promise<LiveLesson[]> {
   const user = await getVerifiedServerUser();
 
@@ -55,30 +71,26 @@ export async function loadLiveLessonsForCurrentUser(): Promise<LiveLesson[]> {
   }
 
   const supabase = createServiceRoleClient();
-  const query = supabase
-    .from('live_lessons')
-    .select('*')
-    .in('status', ['scheduled', 'active', 'ended'])
-    .order('starts_at', { ascending: false });
-
-  const { data, error } = isLiveLessonAdmin(user)
-    ? await query
-    : await query.or(
-        `target_grade.eq.${user.grade},target_grade.eq.all,target_student_ids.cs.{${user.id}}`,
-      );
-
-  if (error && !isLiveLessonAdmin(user)) {
-    const { data: gradeData } = await supabase
+  const buildQuery = () =>
+    supabase
       .from('live_lessons')
       .select('*')
       .in('status', ['scheduled', 'active', 'ended'])
-      .or(`target_grade.eq.${user.grade},target_grade.eq.all`)
       .order('starts_at', { ascending: false });
 
-    return ((gradeData || []) as LiveLesson[]).map(toClientLiveLesson);
+  if (isLiveLessonAdmin(user)) {
+    const { data } = await buildQuery();
+    return ((data || []) as LiveLesson[]).map(toClientLiveLesson);
   }
 
-  return ((data || []) as LiveLesson[]).map(toClientLiveLesson);
+  const { data, error } = await buildQuery().or(liveLessonAudienceFilter(user));
+
+  if (error) {
+    const { data: gradeData } = await buildQuery().or(gradeOnlyAudienceFilter(user));
+    return toAccessibleClientLessons(gradeData, user);
+  }
+
+  return toAccessibleClientLessons(data, user);
 }
 
 /**
@@ -105,24 +117,23 @@ export async function loadActiveLiveLessonForCurrentUser(): Promise<LiveLesson |
       .order('starts_at', { ascending: false })
       .limit(1);
 
-  const { data, error } = isLiveLessonAdmin(user)
-    ? await buildQuery()
-    : await buildQuery().or(
-        `target_grade.eq.${user.grade},target_grade.eq.all,target_student_ids.cs.{${user.id}}`,
-      );
-
-  // `target_student_ids` kolonu yoksa (eski şema) sınıf bazlı filtreye düş.
-  if (error && !isLiveLessonAdmin(user)) {
-    const { data: gradeData } = await buildQuery().or(
-      `target_grade.eq.${user.grade},target_grade.eq.all`,
-    );
-
-    const fallback = (gradeData || [])[0] as LiveLesson | undefined;
-    return fallback ? toClientLiveLesson(fallback) : null;
+  if (isLiveLessonAdmin(user)) {
+    const { data } = await buildQuery();
+    const lesson = (data || [])[0] as LiveLesson | undefined;
+    return lesson ? toClientLiveLesson(lesson) : null;
   }
 
-  const lesson = (data || [])[0] as LiveLesson | undefined;
-  return lesson ? toClientLiveLesson(lesson) : null;
+  // limit(1) süzmeden önce uygulandığı için sorgu filtresi kuralla birebir
+  // olmalı; aksi hâlde erişilemeyen ilk satır erişilebilen dersi gizlerdi.
+  const { data, error } = await buildQuery().or(liveLessonAudienceFilter(user));
+
+  // `target_student_ids` kolonu yoksa (eski şema) sınıf bazlı filtreye düş.
+  if (error) {
+    const { data: gradeData } = await buildQuery().or(gradeOnlyAudienceFilter(user));
+    return toAccessibleClientLessons(gradeData, user)[0] ?? null;
+  }
+
+  return toAccessibleClientLessons(data, user)[0] ?? null;
 }
 
 export async function loadLiveLessonStudentOptions(): Promise<AppUser[]> {
@@ -427,9 +438,9 @@ export async function updateLiveLesson(input: {
     updatePayload.materials_url = input.materialsUrl?.trim() || null;
   }
 
-  if (input.targetGrade === 'selected') {
-    updatePayload.target_student_ids = nextTargetStudentIds;
-  }
+  // Her zaman yazılır: hedef 'selected' dışına çevrilince eski dizi null'a
+  // çekilir, aksi hâlde bayat liste sınıf dersinde de taşınırdı.
+  updatePayload.target_student_ids = nextTargetStudentIds;
 
   let lesson: LiveLesson;
   const { data, error } = await supabase
