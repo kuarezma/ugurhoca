@@ -47,7 +47,7 @@ export function Modal({
   return (
     <AnimatePresence>
       {open ? (
-        <div className="fixed inset-0 z-[80] flex items-center justify-center p-4 sm:p-6">
+        <div className="fixed inset-0 z-[80] flex items-center justify-center p-4 pt-[max(1rem,env(safe-area-inset-top))] pb-[max(1rem,env(safe-area-inset-bottom))] pl-[max(1rem,env(safe-area-inset-left))] pr-[max(1rem,env(safe-area-inset-right))] sm:p-6">
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -69,7 +69,7 @@ export function Modal({
             exit={{ opacity: 0, scale: 0.96, y: 8 }}
             transition={{ duration: 0.2, ease: [0.2, 0.8, 0.2, 1] }}
             className={cn(
-              'relative flex max-h-[calc(100dvh-2rem)] w-full flex-col overflow-hidden rounded-3xl border shadow-2xl outline-none sm:max-h-[calc(100dvh-3rem)]',
+              'relative flex max-h-[calc(100dvh-max(2rem,env(safe-area-inset-top)+env(safe-area-inset-bottom)))] w-full flex-col overflow-hidden rounded-3xl border shadow-2xl outline-none sm:max-h-[calc(100dvh-3rem)]',
               'bg-white text-slate-900 border-slate-200',
               'dark:bg-slate-900 dark:text-white dark:border-white/10',
               SIZE[size],

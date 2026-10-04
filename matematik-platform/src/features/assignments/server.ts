@@ -1,5 +1,7 @@
 import 'server-only';
 
+import { toStoredGrade } from '@/lib/grade';
+
 import { getServerAccessToken, getServerAuthSnapshot } from '@/lib/auth-snapshot.server';
 import { createServerSupabaseClient } from '@/lib/supabase/server';
 import type { AppUser, Assignment, Submission } from '@/types';
@@ -41,10 +43,7 @@ export const loadInitialAssignmentsPageData =
     }
 
     const supabase = createServerSupabaseClient(accessToken);
-    const gradeOrStudentClause =
-      typeof snapshot.grade === 'string'
-        ? `grade.eq.${snapshot.grade},student_id.eq.${snapshot.id}`
-        : `grade.eq.${Number(snapshot.grade)},student_id.eq.${snapshot.id}`;
+    const gradeOrStudentClause = `grade.eq.${toStoredGrade(snapshot.grade)},student_id.eq.${snapshot.id}`;
 
     const [assignmentsRes, submissionsRes] = await Promise.all([
       supabase

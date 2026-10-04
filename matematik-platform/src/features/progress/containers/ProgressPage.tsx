@@ -1,5 +1,6 @@
 'use client';
 
+import { toDisplayGrade } from '@/lib/grade';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
@@ -141,9 +142,10 @@ export default function IlerlemePage({ initialData }: ProgressPageProps) {
       .single();
 
     const resolvedUser =
-      profile || {
+      profile ? { ...profile, grade: toDisplayGrade(profile.grade) } : {
         id: session.user.id,
         name: 'Öğrenci',
+        grade: toDisplayGrade(session.user.user_metadata?.grade),
         email: session.user.email,
         current_streak: 0,
       };
@@ -380,7 +382,7 @@ export default function IlerlemePage({ initialData }: ProgressPageProps) {
 
   return (
     <main className={`page-surface min-h-screen pb-20 ${isLight ? 'bg-transparent' : 'dark:bg-slate-900'}`}>
-      <header className={`sticky top-0 z-40 backdrop-blur-lg border-b ${isLight ? 'bg-white/85 border-slate-200/80 shadow-sm' : 'bg-slate-900/80 border-slate-800'}`}>
+      <header className={`sticky top-0 z-40 backdrop-blur-lg border-b pt-[env(safe-area-inset-top)] pl-[max(1rem,env(safe-area-inset-left))] pr-[max(1rem,env(safe-area-inset-right))] ${isLight ? 'bg-white/85 border-slate-200/80 shadow-sm' : 'bg-slate-900/80 border-slate-800'}`}>
         <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
           <Link href="/profil" className="flex items-center gap-2 text-slate-400 hover:text-indigo-400 font-medium">
             <ArrowLeft className="w-5 h-5" /> Geri Dön

@@ -78,7 +78,7 @@ export function ToolsHubContainer() {
   };
 
   return (
-    <main className="page-surface min-h-screen gradient-bg px-4 pb-16 pt-20 sm:px-6 sm:pt-24">
+    <main className="page-surface min-h-screen gradient-bg px-4 pb-[max(4rem,calc(env(safe-area-inset-bottom)+2rem))] pt-[calc(4.5rem+env(safe-area-inset-top))] sm:px-6 sm:pt-24">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
@@ -122,7 +122,7 @@ export function ToolsHubContainer() {
               <Link
                 key={tool.id}
                 href={tool.href}
-                className="group relative flex flex-col justify-between rounded-3xl border border-default bg-surface-1 p-6 sm:p-8 shadow-xl backdrop-blur-md transition-all duration-300 hover:border-indigo-500/50 hover:bg-surface-2 hover:shadow-2xl hover:-translate-y-1"
+                className="group relative flex flex-col justify-between rounded-3xl border border-default bg-surface-1 p-5 sm:p-8 shadow-xl backdrop-blur-md transition-all duration-300 hover:border-indigo-500/50 hover:bg-surface-2 hover:shadow-2xl hover:-translate-y-1"
               >
                 <div>
                   <div className="flex items-center justify-between mb-4">

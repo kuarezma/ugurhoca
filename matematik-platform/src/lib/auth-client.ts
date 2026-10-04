@@ -1,3 +1,4 @@
+import { toDisplayGrade } from '@/lib/grade';
 import type { Session } from '@supabase/supabase-js';
 import { isAdminEmail } from '@/lib/admin';
 import {
@@ -367,7 +368,7 @@ const hasClientAuthCookieHint = () =>
 
 const createAuthSnapshot = (profile: AppUser): AuthSnapshot => ({
   email: profile.email,
-  grade: profile.grade,
+  grade: toDisplayGrade(profile.grade),
   id: profile.id,
   isAdmin: profile.isAdmin ?? isAdminEmail(profile.email),
   name: profile.name,
@@ -560,6 +561,7 @@ export const getCurrentUserProfile = async <TProfile extends AppUser = AppUser>(
     if (profile) {
       const resolvedProfile = {
         ...(profile as Record<string, unknown>),
+        grade: toDisplayGrade(profile.grade),
         email: session.user.email ?? '',
         isAdmin:
           typeof profile.isAdmin === 'boolean'
@@ -576,7 +578,7 @@ export const getCurrentUserProfile = async <TProfile extends AppUser = AppUser>(
     } else {
       const fallbackProfile = {
         email: session.user.email ?? '',
-        grade: session.user.user_metadata?.grade ?? 5,
+        grade: toDisplayGrade(session.user.user_metadata?.grade),
         id: session.user.id,
         isAdmin: isAdminEmail(session.user.email),
         name: session.user.user_metadata?.name ?? 'Öğrenci',

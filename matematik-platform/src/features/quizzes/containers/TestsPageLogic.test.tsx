@@ -125,6 +125,11 @@ describe('quiz completion and offline ownership', () => {
     ];
   });
 
+  it('Mezun öğrenciye integer 0 hedefli testi gösterir', async () => {
+    render(<TestsPage initialUser={{ ...user, grade: 'Mezun' }} initialQuizzes={[{ ...quiz, grade: 0, title: 'Mezun denemesi' }]} isHydrated />);
+    expect(await screen.findByText('Mezun denemesi')).toBeInTheDocument();
+  });
+
   it('counts a completed quiz only once when two finish events arrive together', async () => {
     await mountResumedQuiz();
     finishTwice();

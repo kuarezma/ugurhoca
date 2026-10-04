@@ -1,3 +1,4 @@
+import { toStoredGrade } from '@/lib/grade';
 import { z } from 'zod';
 import { apiError, apiOk } from '@/lib/api-response';
 import { requireAdmin } from '@/lib/api-auth';
@@ -47,8 +48,7 @@ export async function POST(request: Request) {
     const normalizedGrade = String(target_grade).trim();
 
     if (normalizedGrade !== 'all') {
-      const num = Number(normalizedGrade);
-      query = query.eq('grade', Number.isFinite(num) ? num : normalizedGrade);
+      query = query.eq('grade', toStoredGrade(normalizedGrade));
     }
 
     const { data: students, error: queryError } = await query;

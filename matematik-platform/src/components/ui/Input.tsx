@@ -13,7 +13,7 @@ type FieldProps = {
 };
 
 const FIELD_BASE =
-  'w-full h-11 rounded-xl border bg-white/70 px-4 text-sm text-slate-900 placeholder:text-slate-400 transition-colors outline-none focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/40 disabled:cursor-not-allowed disabled:opacity-60 dark:bg-slate-900/60 dark:text-white dark:placeholder:text-slate-500';
+  'w-full h-11 rounded-xl border bg-white/70 px-4 text-base sm:text-sm text-slate-900 placeholder:text-slate-400 transition-colors outline-none focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/40 disabled:cursor-not-allowed disabled:opacity-60 dark:bg-slate-900/60 dark:text-white dark:placeholder:text-slate-500';
 
 const BORDER_OK = 'border-default dark:border-slate-500';
 const BORDER_ERR = 'border-rose-500 focus:border-rose-500 focus:ring-rose-500/40';
@@ -99,7 +99,7 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(function 
         aria-invalid={error ? true : undefined}
         aria-describedby={describedBy.length > 0 ? describedBy.join(' ') : undefined}
         className={cn(
-          'w-full min-h-[7rem] rounded-xl border bg-white/70 px-4 py-3 text-sm text-slate-900 placeholder:text-slate-400 transition-colors outline-none focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/40 disabled:cursor-not-allowed disabled:opacity-60 dark:bg-slate-900/60 dark:text-white dark:placeholder:text-slate-500',
+          'w-full min-h-[7rem] rounded-xl border bg-white/70 px-4 py-3 text-base sm:text-sm text-slate-900 placeholder:text-slate-400 transition-colors outline-none focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/40 disabled:cursor-not-allowed disabled:opacity-60 dark:bg-slate-900/60 dark:text-white dark:placeholder:text-slate-500',
           error ? BORDER_ERR : BORDER_OK,
           className,
         )}

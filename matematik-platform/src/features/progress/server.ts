@@ -1,5 +1,7 @@
 import 'server-only';
 
+import { toDisplayGrade } from '@/lib/grade';
+
 import { getServerAccessToken, getServerAuthSnapshot } from '@/lib/auth-snapshot.server';
 import { createServerSupabaseClient } from '@/lib/supabase/server';
 import type { AppUser } from '@/types';
@@ -61,6 +63,7 @@ export const loadInitialProgressPageData =
     const user: AppUser = profile
       ? {
           ...profile,
+          grade: toDisplayGrade(profile.grade),
           email: snapshot.email,
           isAdmin: snapshot.isAdmin,
         }

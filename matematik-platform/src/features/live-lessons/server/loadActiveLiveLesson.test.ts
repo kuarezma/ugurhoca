@@ -1,3 +1,4 @@
+import { resolveAccessGrade } from '@/lib/access-grade';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
 const mockGetVerifiedServerUser = vi.fn();
@@ -18,12 +19,13 @@ type QueryCall = {
   table: string;
   eq: Array<[string, unknown]>;
   limit: number | null;
+  filters: string[];
 };
 
 let calls: QueryCall[] = [];
 
 const buildQueryStub = (table: string, rows: unknown[]) => {
-  const call: QueryCall = { table, eq: [], limit: null };
+  const call: QueryCall = { table, eq: [], limit: null, filters: [] };
   calls.push(call);
 
   const stub = {
@@ -36,10 +38,12 @@ const buildQueryStub = (table: string, rows: unknown[]) => {
       call.limit = value;
       return stub;
     },
-    or: () => Promise.resolve({ data: rows, error: null }),
-    then: (
-      resolve: (value: { data: unknown[]; error: null }) => unknown,
-    ) => Promise.resolve({ data: rows, error: null }).then(resolve),
+    or: (filter: string) => {
+      call.filters.push(filter);
+      return Promise.resolve({ data: rows, error: null });
+    },
+    then: (resolve: (value: { data: unknown[]; error: null }) => unknown) =>
+      Promise.resolve({ data: rows, error: null }).then(resolve),
   };
 
   return stub;
@@ -67,7 +71,8 @@ describe('loadActiveLiveLessonForCurrentUser', () => {
   it('oturum yoksa sorgu çalıştırmadan null döner', async () => {
     mockGetVerifiedServerUser.mockResolvedValue(null);
 
-    const { loadActiveLiveLessonForCurrentUser } = await import('./liveLessons');
+    const { loadActiveLiveLessonForCurrentUser } =
+      await import('./liveLessons');
 
     await expect(loadActiveLiveLessonForCurrentUser()).resolves.toBeNull();
     expect(mockFrom).not.toHaveBeenCalled();
@@ -86,7 +91,8 @@ describe('loadActiveLiveLessonForCurrentUser', () => {
       name: 'Öğrenci',
     });
 
-    const { loadActiveLiveLessonForCurrentUser } = await import('./liveLessons');
+    const { loadActiveLiveLessonForCurrentUser } =
+      await import('./liveLessons');
     const lesson = await loadActiveLiveLessonForCurrentUser();
 
     expect(lesson?.id).toBe('lesson-1');
@@ -96,5 +102,24 @@ describe('loadActiveLiveLessonForCurrentUser', () => {
     expect(calls[0].table).toBe('live_lessons');
     expect(calls[0].eq).toContainEqual(['status', 'active']);
     expect(calls[0].limit).toBe(1);
+  });
+  it('0 profiline Mezun hedefli aktif dersi ve doğru sorgu filtresini verir', async () => {
+    mockGetVerifiedServerUser.mockResolvedValue({
+      accessGrade: resolveAccessGrade(0, 8),
+      email: 'graduate@example.com',
+      grade: 'Mezun',
+      id: 'user-1',
+    });
+    mockFrom.mockImplementation((table: string) => ({
+      select: () =>
+        buildQueryStub(table, [{ ...activeLesson, target_grade: 'Mezun' }]),
+    }));
+    const { loadActiveLiveLessonForCurrentUser } =
+      await import('./liveLessons');
+    await expect(loadActiveLiveLessonForCurrentUser()).resolves.toMatchObject({
+      target_grade: 'Mezun',
+    });
+    expect(calls[0].filters[0]).toContain('target_grade.eq.Mezun');
+    expect(calls[0].filters[0]).not.toContain('target_grade.eq.0');
   });
 });

@@ -276,8 +276,8 @@ export function ExamCountdown({
             : "border-white/10 bg-white/5 text-slate-200 backdrop-blur-sm",
         ].join(" ")}
       >
-        <div className="flex items-center justify-between gap-2">
-          <div className="min-w-0">
+        <div className="flex flex-wrap sm:flex-nowrap items-center justify-between gap-2">
+          <div className="min-w-0 flex-1">
             <div
               className={`text-[10px] font-bold uppercase tracking-wider ${
                 isLight ? "text-indigo-600" : "text-indigo-300"
@@ -295,14 +295,14 @@ export function ExamCountdown({
               <button
                 type="button"
                 onClick={() => onOpenCalculator(exam.id.includes('lgs') ? 'lgs' : 'yks')}
-                className="shrink-0 inline-flex items-center gap-1.5 rounded-xl px-3 py-1.5 text-xs font-bold transition-all bg-indigo-600 text-white hover:bg-indigo-700 shadow-sm"
+                className="shrink-0 inline-flex min-h-[38px] items-center gap-1.5 rounded-xl px-3 py-1.5 text-xs font-bold transition-all bg-indigo-600 text-white hover:bg-indigo-700 shadow-sm"
               >
                 Net & Puan Hesapla →
               </button>
             ) : (
               <Link
                 href={exam.toolHref}
-                className="shrink-0 inline-flex items-center gap-1.5 rounded-xl px-3 py-1.5 text-xs font-bold transition-all bg-indigo-600 text-white hover:bg-indigo-700 shadow-sm"
+                className="shrink-0 inline-flex min-h-[38px] items-center gap-1.5 rounded-xl px-3 py-1.5 text-xs font-bold transition-all bg-indigo-600 text-white hover:bg-indigo-700 shadow-sm"
               >
                 Puan Hesapla →
               </Link>

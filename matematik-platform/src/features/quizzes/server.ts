@@ -1,5 +1,7 @@
 import 'server-only';
 
+import { toStoredGrade } from '@/lib/grade';
+
 import { getServerAccessToken, getServerAuthSnapshot } from '@/lib/auth-snapshot.server';
 import { createServerSupabaseClient } from '@/lib/supabase/server';
 import type { AppUser } from '@/types';
@@ -44,8 +46,8 @@ export const loadInitialTestsPageData = async (): Promise<InitialTestsPageData> 
     .eq('is_active', true)
     .order('created_at', { ascending: false });
 
-  if (!snapshot.isAdmin && typeof snapshot.grade === 'number') {
-    query = query.eq('grade', snapshot.grade);
+  if (!snapshot.isAdmin) {
+    query = query.eq('grade', toStoredGrade(snapshot.grade));
   }
 
   const { data } = await query;
