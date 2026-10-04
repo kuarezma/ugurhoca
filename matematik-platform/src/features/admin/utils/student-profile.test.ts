@@ -146,4 +146,38 @@ describe('buildAdminStudentProfileSummary', () => {
     expect(summary.currentStreak).toBe(6);
     expect(summary.totalAssignments).toBe(1);
   });
+
+  it('handles missing row/session ids and fallback streak of 0', () => {
+    const summary = buildAdminStudentProfileSummary(
+      createProfileData({
+        progressRows: [
+          {
+            id: '',
+            mastery_level: 50,
+            topic: 'Cebir',
+            user_id: 'student-1',
+          },
+        ],
+        student: {
+          current_streak: undefined,
+          email: 'test@example.com',
+          grade: 7,
+          id: 'student-2',
+          isAdmin: false,
+          name: 'Ali',
+        },
+        studySessions: [
+          {
+            date: '2026-04-14',
+            duration: 20,
+            id: '',
+          },
+        ],
+      }),
+      referenceDate,
+    );
+
+    expect(summary.currentStreak).toBe(0);
+    expect(summary.goalSnapshot.completedMinutes).toBe(20);
+  });
 });

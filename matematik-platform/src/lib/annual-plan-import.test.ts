@@ -184,6 +184,55 @@ describe('annual plan import parser', () => {
       "Eski DOC dosyası desteklenmez. Word'de DOCX olarak kaydedip yükleyin.",
     );
   });
+
+  it('rejects files larger than 5 MB', async () => {
+    const largeBuffer = new ArrayBuffer(5 * 1024 * 1024 + 1);
+    const result = await parseAnnualPlanFile(largeBuffer, 'yillik-plan.xlsx');
+
+    expect(result.rows).toEqual([]);
+    expect(result.errors[0]?.message).toBe(
+      'Yıllık plan dosyası en fazla 5 MB olabilir.',
+    );
+  });
+
+  it('rejects unsupported file formats', async () => {
+    const result = await parseAnnualPlanFile(new ArrayBuffer(10), 'yillik-plan.pdf');
+
+    expect(result.rows).toEqual([]);
+    expect(result.errors[0]?.message).toBe(
+      'Yalnızca CSV, XLSX veya DOCX yıllık plan dosyası yükleyebilirsiniz.',
+    );
+  });
+
+  it('parses valid XLSX annual plan files', async () => {
+    const ExcelJS = (await import('exceljs')).default;
+    const workbook = new ExcelJS.Workbook();
+    const sheet = workbook.addWorksheet('Yıllık Plan');
+
+    sheet.addRow(['sinif', 'hafta_baslangic', 'hafta_bitis', 'konu', 'kazanim', 'aciklama']);
+    sheet.addRow([8, new Date('2026-09-14'), new Date('2026-09-18'), 'Üslü İfadeler', 'M.8.1.2.1', 'Excel Notu']);
+    const row3 = sheet.addRow(['', '2026-09-21', '2026-09-25', '', 'M.8.1.3.1', 'Rich']);
+    row3.getCell(1).value = { formula: '="8"', result: 8 };
+    row3.getCell(4).value = { richText: [{ text: 'Kareköklü İfadeler' }] };
+
+    const buffer = await workbook.xlsx.writeBuffer();
+    const result = await parseAnnualPlanFile(buffer as ArrayBuffer, '8-sinif-plan.xlsx');
+
+    expect(result.errors).toEqual([]);
+    expect(result.rows.length).toBe(2);
+    expect(result.rows[0]?.subject).toBe('Üslü İfadeler');
+    expect(result.rows[1]?.grade).toBe(8);
+  });
+
+  it('returns an error when file has no header row', () => {
+    const result = parseAnnualPlanRows([
+      ['', '  ', null],
+      [null, undefined],
+    ]);
+
+    expect(result.rows).toEqual([]);
+    expect(result.errors[0]?.message).toBe('Dosyada başlık satırı bulunamadı.');
+  });
 });
 
 function buildDocxRow(cells: string[]) {

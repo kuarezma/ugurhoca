@@ -2,8 +2,10 @@ import {
   calculateLgsScore,
   calculateYksScore,
   classifyLgsTarget,
+  classifyYksTarget,
   createInitialLgsInputs,
   createInitialYksInputs,
+  formatRank,
   resolveYksPreferenceRank,
   yksScoreTypes,
 } from '@/lib/examCalculators';
@@ -80,5 +82,39 @@ describe('examCalculators', () => {
     expect(classifyLgsTarget(420, 435).level).toBe('iddiali');
     expect(classifyLgsTarget(440, 435).level).toBe('dengeli');
     expect(classifyLgsTarget(470, 435).level).toBe('guvenli');
+  });
+
+  it('classifies YKS targets by rank ratio or score delta', () => {
+    // Rank ratio
+    expect(
+      classifyYksTarget({ userScore: 400, userRank: 12000, baseRank: 10000 }).level,
+    ).toBe('iddiali');
+    expect(
+      classifyYksTarget({ userScore: 400, userRank: 10000, baseRank: 10000 }).level,
+    ).toBe('dengeli');
+    expect(
+      classifyYksTarget({ userScore: 400, userRank: 8000, baseRank: 10000 }).level,
+    ).toBe('guvenli');
+
+    // Missing baseScore
+    expect(classifyYksTarget({ userScore: 400 }).level).toBe('dengeli');
+
+    // Score delta
+    expect(
+      classifyYksTarget({ userScore: 380, baseScore: 400 }).level,
+    ).toBe('iddiali');
+    expect(
+      classifyYksTarget({ userScore: 405, baseScore: 400 }).level,
+    ).toBe('dengeli');
+    expect(
+      classifyYksTarget({ userScore: 425, baseScore: 400 }).level,
+    ).toBe('guvenli');
+  });
+
+  it('formats rank numbers in Turkish locale with fallback', () => {
+    expect(formatRank(null)).toBe('-');
+    expect(formatRank(undefined)).toBe('-');
+    expect(formatRank(NaN)).toBe('-');
+    expect(formatRank(125000)).toMatch(/125[.\s,]000/);
   });
 });

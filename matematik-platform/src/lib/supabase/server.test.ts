@@ -3,6 +3,7 @@ import { createClient } from '@supabase/supabase-js';
 import {
   createCachedPublicSupabaseClient,
   createServerSupabaseClient,
+  createServiceRoleClient,
 } from './server';
 
 vi.mock('@supabase/supabase-js', () => ({ createClient: vi.fn() }));
@@ -10,6 +11,10 @@ vi.mock('@/lib/env.server', () => ({
   getSupabasePublicEnv: () => ({
     url: 'https://example.test',
     anonKey: 'public-key',
+  }),
+  getSupabaseServiceEnv: () => ({
+    url: 'https://example.test',
+    serviceRoleKey: 'service-key',
   }),
 }));
 
@@ -47,5 +52,19 @@ describe('server Supabase caching', () => {
       Authorization: 'Bearer user-token',
     });
     expect(options.global?.fetch).toBeUndefined();
+  });
+
+  it('creates service role client with service role key and no session persistence', () => {
+    createServiceRoleClient();
+    expect(createClient).toHaveBeenLastCalledWith(
+      'https://example.test',
+      'service-key',
+      expect.objectContaining({
+        auth: {
+          autoRefreshToken: false,
+          persistSession: false,
+        },
+      }),
+    );
   });
 });
