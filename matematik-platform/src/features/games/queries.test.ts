@@ -64,6 +64,40 @@ describe('games queries', () => {
     });
   });
 
+  it.each(['week', 'month'] as const)(
+    'does not present all-time fallback totals as %s scores',
+    async (period) => {
+      vi.mocked(supabase.rpc).mockResolvedValue({
+        data: null,
+        error: { code: 'PGRST202' },
+      } as never);
+      const select = vi.fn().mockResolvedValue({
+        data: [{ alias: 'SayiUstasi', total_score: 999 }],
+        error: null,
+      });
+      vi.mocked(supabase.from).mockReturnValue({ select } as never);
+      await expect(loadGamesLeaderboard(period)).resolves.toEqual([]);
+      expect(supabase.from).not.toHaveBeenCalled();
+    },
+  );
+
+  it('preserves the all-time legacy fallback', async () => {
+    vi.mocked(supabase.rpc).mockResolvedValue({
+      data: null,
+      error: { code: 'PGRST202' },
+    } as never);
+    const select = vi
+      .fn()
+      .mockResolvedValue({
+        data: [{ alias: 'SayiUstasi', total_score: 999 }],
+        error: null,
+      });
+    vi.mocked(supabase.from).mockReturnValue({ select } as never);
+    await expect(loadGamesLeaderboard('all')).resolves.toEqual([
+      { alias: 'SayiUstasi', rank: 1, total_score: 999 },
+    ]);
+  });
+
   it('saves aliases through the validation RPC', async () => {
     const alias = {
       alias: 'SayiUstasi',
