@@ -1,4 +1,4 @@
-import { describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { render, screen, fireEvent, act } from '@testing-library/react';
 import { MathDuel } from './MathDuel';
 
@@ -14,6 +14,16 @@ vi.mock('@/features/games/utils/gameAudio', () => ({
 }));
 
 describe('MathDuel Component', () => {
+  // Oyun setInterval + özyinelemeli setTimeout kullanıyor; gerçek zamanlayıcılar
+  // CI runner'ında worker'ı açık tutup job'ı zaman aşımına sokuyordu (bkz. 7807103).
+  beforeEach(() => {
+    vi.useFakeTimers();
+  });
+  afterEach(() => {
+    vi.clearAllTimers();
+    vi.useRealTimers();
+  });
+
   it('renders initial idle view with game instructions and start button', () => {
     const onScore = vi.fn();
     const { unmount } = render(<MathDuel onScore={onScore} scoreMultiplier={1} />);
