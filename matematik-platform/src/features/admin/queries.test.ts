@@ -1,5 +1,6 @@
 import {
   addStudentAdminNote,
+  loadAdminDashboardData,
   createAdminWeeklyPlan,
   updateWorksheetCandidateStatus,
   upsertStudentAdminStatus,
@@ -200,4 +201,86 @@ describe('admin tracking queries', () => {
     });
     expect(eq).toHaveBeenCalledWith('id', 'candidate-1');
   });
+});
+
+
+describe('admin dashboard pagination', () => {
+  const tables = [
+    'study_sessions',
+    'student_activity_events',
+    'live_lesson_participants',
+    'live_lesson_events',
+    'live_lesson_chat_messages',
+  ];
+
+  it('loads records beyond 1000 without changing dashboard collection shapes', async () => {
+    const records = Array.from({ length: 1001 }, (_, index) => ({
+      id: `row-${index}`,
+    }));
+    vi.mocked(supabase.from).mockImplementation((table) => {
+      const data = tables.includes(table) ? records : [];
+      const builder = {
+        select: vi.fn().mockReturnThis(),
+        order: vi.fn().mockReturnThis(),
+        delete: vi.fn().mockReturnThis(),
+        in: vi.fn().mockReturnThis(),
+        lt: vi.fn().mockResolvedValue({ error: null }),
+        limit: vi
+          .fn()
+          .mockImplementation((limit: number) =>
+            Promise.resolve({ data: data.slice(0, limit), error: null }),
+          ),
+        range: vi
+          .fn()
+          .mockImplementation((start: number, end: number) =>
+            Promise.resolve({ data: data.slice(start, end + 1), error: null }),
+          ),
+      };
+      return builder as never;
+    });
+    const dashboard = await loadAdminDashboardData(30);
+    expect(dashboard.studySessions).toHaveLength(1001);
+    expect(dashboard.activityEvents).toHaveLength(1001);
+    expect(dashboard.liveLessons.participants).toHaveLength(1001);
+    expect(dashboard.liveLessons.events).toHaveLength(1001);
+    expect(dashboard.liveLessons.chatMessages).toHaveLength(1001);
+    expect(dashboard.studySessions.at(-1)).toEqual({ id: 'row-1000' });
+  });
+});
+
+it('preserves dashboard loading on a page error and warns instead of returning partial activity', async () => {
+  const warning = vi.spyOn(console, 'warn').mockImplementation(() => {});
+  const page = Array.from({ length: 500 }, (_, index) => ({
+    id: `row-${index}`,
+  }));
+  vi.mocked(supabase.from).mockImplementation(
+    (table) =>
+      ({
+        select: vi.fn().mockReturnThis(),
+        order: vi.fn().mockReturnThis(),
+        delete: vi.fn().mockReturnThis(),
+        in: vi.fn().mockReturnThis(),
+        lt: vi.fn().mockResolvedValue({ error: null }),
+        limit: vi.fn().mockResolvedValue({ data: [], error: null }),
+        range: vi
+          .fn()
+          .mockImplementation((start: number) =>
+            Promise.resolve(
+              table !== 'study_sessions'
+                ? { data: [], error: null }
+                : start === 0
+                  ? { data: page, error: null }
+                  : { data: null, error: { message: 'Page failed' } },
+            ),
+          ),
+      }) as never,
+  );
+  try {
+    const dashboard = await loadAdminDashboardData(30);
+    expect(dashboard.studySessions).toEqual([]);
+    expect(dashboard.assignments).toEqual([]);
+    expect(warning).toHaveBeenCalled();
+  } finally {
+    warning.mockRestore();
+  }
 });

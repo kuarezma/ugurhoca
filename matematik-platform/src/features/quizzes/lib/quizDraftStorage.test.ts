@@ -12,6 +12,17 @@ describe('quizDraftStorage', () => {
     vi.restoreAllMocks();
   });
 
+  it('does not leave an active pointer when the draft write is rejected', () => {
+    const originalSet = localStorage.setItem.bind(localStorage);
+    vi.spyOn(localStorage, 'setItem').mockImplementation((key, value) => {
+      if (key.startsWith('ugurhoca_quiz_draft_')) throw new Error('quota');
+      originalSet(key, value);
+    });
+    saveQuizDraft({ quizId: 'rejected', quizTitle: 'Test', currentQuestion: 0,
+      answers: {}, flaggedQuestions: [], questionTimes: {}, startTime: Date.now(), timeLeft: 60 });
+    expect(localStorage.getItem('ugurhoca_active_draft_quiz_id')).toBeNull();
+  });
+
   it('saves and retrieves a quiz draft correctly', () => {
     const draft = {
       quizId: 'quiz_1',
@@ -76,6 +87,23 @@ describe('quizDraftStorage', () => {
 
     const restored = getQuizDraft('quiz_old');
     expect(restored).toBeNull();
+  });
+
+  it('removes a draft and active pointer once its remaining time expires', () => {
+    vi.spyOn(Date, 'now').mockReturnValue(1000000);
+    saveQuizDraft({ quizId: 'expired', quizTitle: 'Test', currentQuestion: 1,
+      answers: { 0: 1 }, flaggedQuestions: [], questionTimes: {}, startTime: 900000, timeLeft: 30 });
+    vi.spyOn(Date, 'now').mockReturnValue(1030000);
+    expect(getActiveQuizDraft()).toBeNull();
+    expect(localStorage.getItem('ugurhoca_quiz_draft_expired')).toBeNull();
+    expect(localStorage.getItem('ugurhoca_active_draft_quiz_id')).toBeNull();
+  });
+
+  it('does not persist a draft with zero remaining time', () => {
+    saveQuizDraft({ quizId: 'zero', quizTitle: 'Test', currentQuestion: 1,
+      answers: { 0: 1 }, flaggedQuestions: [], questionTimes: {}, startTime: Date.now(), timeLeft: 0 });
+    expect(localStorage.getItem('ugurhoca_quiz_draft_zero')).toBeNull();
+    expect(getActiveQuizDraft()).toBeNull();
   });
 
   it('clears draft and removes active draft pointer', () => {

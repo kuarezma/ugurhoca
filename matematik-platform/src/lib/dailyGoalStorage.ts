@@ -1,3 +1,6 @@
+import { toLocalDateKey } from '@/lib/localDate';
+import { getStorageUserId, userScopedStorage } from '@/lib/userScopedStorage';
+
 export interface DailyQuestStatus {
   challengeDone: boolean; // 1. Kademe: Günün sorusu çözüldü (10 XP)
   targetProgressDone: boolean; // 2. Kademe: En az 15 soru çözüldü (25 XP)
@@ -21,12 +24,7 @@ const STORAGE_KEY = 'ugurhoca_daily_goal_v1';
 const DEFAULT_TARGET = 20;
 const DEFAULT_FREEZE_TOKENS = 1;
 
-export const getLocalDateString = (d: Date = new Date()): string => {
-  const year = d.getFullYear();
-  const month = String(d.getMonth() + 1).padStart(2, '0');
-  const day = String(d.getDate()).padStart(2, '0');
-  return `${year}-${month}-${day}`;
-};
+export const getLocalDateString = toLocalDateKey;
 
 export const getYesterdayDateString = (): string => {
   const d = new Date();
@@ -34,15 +32,15 @@ export const getYesterdayDateString = (): string => {
   return getLocalDateString(d);
 };
 
-const notifyUpdate = (data: DailyGoalData) => {
-  if (typeof window !== 'undefined') {
+const notifyUpdate = (data: DailyGoalData, userId: string | null) => {
+  if (typeof window !== 'undefined' && userId === getStorageUserId()) {
     window.dispatchEvent(
       new CustomEvent<DailyGoalData>('ugurhoca:daily-goal-updated', { detail: data }),
     );
   }
 };
 
-export const getDailyGoal = (): DailyGoalData => {
+export const getDailyGoal = (userId: string | null = getStorageUserId()): DailyGoalData => {
   const today = getLocalDateString();
   const yesterday = getYesterdayDateString();
 
@@ -63,12 +61,12 @@ export const getDailyGoal = (): DailyGoalData => {
   if (typeof window === 'undefined') return fallback;
 
   try {
-    const raw = localStorage.getItem(STORAGE_KEY);
+    const raw = userScopedStorage(userId).getItem(STORAGE_KEY);
     if (!raw) return fallback;
 
     const parsed = JSON.parse(raw);
     if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) {
-      localStorage.removeItem(STORAGE_KEY);
+      userScopedStorage(userId).removeItem(STORAGE_KEY);
       return fallback;
     }
 
@@ -119,7 +117,7 @@ export const getDailyGoal = (): DailyGoalData => {
           reviewDone: false,
         },
       };
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
+      userScopedStorage(userId).setItem(STORAGE_KEY, JSON.stringify(updated));
       return updated;
     }
 
@@ -146,8 +144,8 @@ export const getDailyGoal = (): DailyGoalData => {
   }
 };
 
-export const setDailyTarget = (target: number): DailyGoalData => {
-  const current = getDailyGoal();
+export const setDailyTarget = (target: number, userId: string | null = getStorageUserId()): DailyGoalData => {
+  const current = getDailyGoal(userId);
   const validTarget = Math.max(5, Math.min(500, Math.round(target)));
   const updated: DailyGoalData = {
     ...current,
@@ -156,8 +154,8 @@ export const setDailyTarget = (target: number): DailyGoalData => {
 
   if (typeof window !== 'undefined') {
     try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
-      notifyUpdate(updated);
+      userScopedStorage(userId).setItem(STORAGE_KEY, JSON.stringify(updated));
+      notifyUpdate(updated, userId);
     } catch {
       // Ignore quota errors
     }
@@ -166,8 +164,8 @@ export const setDailyTarget = (target: number): DailyGoalData => {
   return updated;
 };
 
-export const incrementQuestionsSolved = (amount: number = 1): DailyGoalData => {
-  const current = getDailyGoal();
+export const incrementQuestionsSolved = (amount: number = 1, userId: string | null = getStorageUserId()): DailyGoalData => {
+  const current = getDailyGoal(userId);
   const safeAmount = Math.max(0, Math.round(amount));
   const newSolved = current.solved + safeAmount;
   const today = getLocalDateString();
@@ -236,8 +234,8 @@ export const incrementQuestionsSolved = (amount: number = 1): DailyGoalData => {
 
   if (typeof window !== 'undefined') {
     try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
-      notifyUpdate(updated);
+      userScopedStorage(userId).setItem(STORAGE_KEY, JSON.stringify(updated));
+      notifyUpdate(updated, userId);
     } catch {
       // Ignore quota errors
     }
@@ -246,8 +244,8 @@ export const incrementQuestionsSolved = (amount: number = 1): DailyGoalData => {
   return updated;
 };
 
-export const decrementQuestionsSolved = (amount: number = 1): DailyGoalData => {
-  const current = getDailyGoal();
+export const decrementQuestionsSolved = (amount: number = 1, userId: string | null = getStorageUserId()): DailyGoalData => {
+  const current = getDailyGoal(userId);
   const safeAmount = Math.max(0, Math.round(amount));
   const newSolved = Math.max(0, current.solved - safeAmount);
   const today = getLocalDateString();
@@ -265,8 +263,8 @@ export const decrementQuestionsSolved = (amount: number = 1): DailyGoalData => {
 
   if (typeof window !== 'undefined') {
     try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
-      notifyUpdate(updated);
+      userScopedStorage(userId).setItem(STORAGE_KEY, JSON.stringify(updated));
+      notifyUpdate(updated, userId);
     } catch {
       // Ignore quota errors
     }
@@ -275,8 +273,8 @@ export const decrementQuestionsSolved = (amount: number = 1): DailyGoalData => {
   return updated;
 };
 
-export const resetTodaySolved = (): DailyGoalData => {
-  const current = getDailyGoal();
+export const resetTodaySolved = (userId: string | null = getStorageUserId()): DailyGoalData => {
+  const current = getDailyGoal(userId);
   const today = getLocalDateString();
   const updated: DailyGoalData = {
     ...current,
@@ -289,8 +287,8 @@ export const resetTodaySolved = (): DailyGoalData => {
 
   if (typeof window !== 'undefined') {
     try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
-      notifyUpdate(updated);
+      userScopedStorage(userId).setItem(STORAGE_KEY, JSON.stringify(updated));
+      notifyUpdate(updated, userId);
     } catch {
       // Ignore quota errors
     }
@@ -299,8 +297,8 @@ export const resetTodaySolved = (): DailyGoalData => {
   return updated;
 };
 
-export const grantFreezeToken = (amount: number = 1): DailyGoalData => {
-  const current = getDailyGoal();
+export const grantFreezeToken = (amount: number = 1, userId: string | null = getStorageUserId()): DailyGoalData => {
+  const current = getDailyGoal(userId);
   const nextTokens = Math.min(2, (current.freezeTokens || 0) + Math.max(0, amount));
   const updated: DailyGoalData = {
     ...current,
@@ -309,8 +307,8 @@ export const grantFreezeToken = (amount: number = 1): DailyGoalData => {
 
   if (typeof window !== 'undefined') {
     try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
-      notifyUpdate(updated);
+      userScopedStorage(userId).setItem(STORAGE_KEY, JSON.stringify(updated));
+      notifyUpdate(updated, userId);
     } catch {
       // Ignore quota errors
     }
@@ -319,8 +317,8 @@ export const grantFreezeToken = (amount: number = 1): DailyGoalData => {
   return updated;
 };
 
-export const repairStreak = (): DailyGoalData => {
-  const current = getDailyGoal();
+export const repairStreak = (userId: string | null = getStorageUserId()): DailyGoalData => {
+  const current = getDailyGoal(userId);
   const prev = current.previousStreakBeforeReset || 0;
   if (prev > 0 && current.streak === 0) {
     const today = getLocalDateString();
@@ -333,8 +331,8 @@ export const repairStreak = (): DailyGoalData => {
 
     if (typeof window !== 'undefined') {
       try {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
-        notifyUpdate(updated);
+        userScopedStorage(userId).setItem(STORAGE_KEY, JSON.stringify(updated));
+        notifyUpdate(updated, userId);
       } catch {
         // Ignore quota errors
       }
@@ -346,8 +344,8 @@ export const repairStreak = (): DailyGoalData => {
   return current;
 };
 
-export const activateFreezeTokenForToday = (): DailyGoalData => {
-  const current = getDailyGoal();
+export const activateFreezeTokenForToday = (userId: string | null = getStorageUserId()): DailyGoalData => {
+  const current = getDailyGoal(userId);
   if ((current.freezeTokens || 0) > 0) {
     const today = getLocalDateString();
     const updated: DailyGoalData = {
@@ -359,8 +357,8 @@ export const activateFreezeTokenForToday = (): DailyGoalData => {
 
     if (typeof window !== 'undefined') {
       try {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
-        notifyUpdate(updated);
+        userScopedStorage(userId).setItem(STORAGE_KEY, JSON.stringify(updated));
+        notifyUpdate(updated, userId);
       } catch {
         // Ignore quota errors
       }
@@ -372,8 +370,8 @@ export const activateFreezeTokenForToday = (): DailyGoalData => {
   return current;
 };
 
-export const getDailyQuestStatus = (data?: DailyGoalData): DailyQuestStatus => {
-  const current = data || getDailyGoal();
+export const getDailyQuestStatus = (data?: DailyGoalData, userId: string | null = getStorageUserId()): DailyQuestStatus => {
+  const current = data || getDailyGoal(userId);
   return {
     challengeDone: Boolean(current.dailyQuests?.challengeDone),
     targetProgressDone: current.solved >= 15,
@@ -384,8 +382,9 @@ export const getDailyQuestStatus = (data?: DailyGoalData): DailyQuestStatus => {
 export const markDailyQuest = (
   questType: 'challenge' | 'review',
   status: boolean = true,
+  userId: string | null = getStorageUserId(),
 ): DailyGoalData => {
-  const current = getDailyGoal();
+  const current = getDailyGoal(userId);
   const currentQuests = getDailyQuestStatus(current);
   const updatedQuests: DailyQuestStatus = {
     ...currentQuests,
@@ -410,8 +409,8 @@ export const markDailyQuest = (
 
   if (typeof window !== 'undefined') {
     try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
-      notifyUpdate(updated);
+      userScopedStorage(userId).setItem(STORAGE_KEY, JSON.stringify(updated));
+      notifyUpdate(updated, userId);
     } catch {
       // Ignore quota errors
     }

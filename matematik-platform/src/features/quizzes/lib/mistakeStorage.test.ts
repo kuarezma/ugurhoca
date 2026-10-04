@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import {
   getSavedMistakes,
   saveMistakesToBank,
@@ -25,6 +25,14 @@ const mockQuestion: QuizQuestion = {
 describe('mistakeStorage', () => {
   beforeEach(() => {
     localStorage.clear();
+  });
+
+  afterEach(() => vi.restoreAllMocks());
+
+  it('reports zero additions when storage rejects the notebook write', () => {
+    vi.spyOn(localStorage, 'setItem').mockImplementation(() => { throw new Error('quota'); });
+    expect(saveMistakesToBank([mockQuestion])).toBe(0);
+    expect(getSavedMistakes()).toEqual([]);
   });
 
   it('saves mistakes and prevents duplicates', () => {
