@@ -11,8 +11,10 @@ vi.mock('@/lib/rate-limit', () => ({
   getClientIp: () => '203.0.113.7',
 }));
 
+const mockLogError = vi.hoisted(() => vi.fn());
+
 vi.mock('@/lib/logger', () => ({
-  createLogger: () => ({ info: vi.fn(), warn: vi.fn(), error: vi.fn() }),
+  createLogger: () => ({ info: vi.fn(), warn: vi.fn(), error: mockLogError }),
 }));
 
 vi.mock('@/lib/supabase/server', () => ({
@@ -151,6 +153,18 @@ describe('/api/auth/session', () => {
 
     expect(res.status).toBe(503);
     expect(tokenCookie(res)).toBeUndefined();
+  });
+
+  it('istisnayı loglarken token veya hata metnini hiçbir alana koymaz', async () => {
+    mockGetUser.mockRejectedValue(new Error('rejected token valid.jwt.token'));
+
+    await POST(post({ access_token: 'valid.jwt.token' }));
+
+    expect(mockLogError).toHaveBeenCalledTimes(1);
+    const logged = JSON.stringify(mockLogError.mock.calls[0], (_key, value: unknown) =>
+      value instanceof Error ? { message: value.message, stack: value.stack } : value,
+    );
+    expect(logged).not.toContain('valid.jwt.token');
   });
 
   it('DELETE çerezi aynı bayraklarla siler', async () => {

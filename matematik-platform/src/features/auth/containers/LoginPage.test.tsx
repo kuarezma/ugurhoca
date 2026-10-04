@@ -22,6 +22,7 @@ describe('login redirect and errors', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mocks.getSession.mockResolvedValue(null);
+    mocks.writeToken.mockResolvedValue(true);
     window.history.replaceState({}, '', '/giris');
   });
   it.each([
@@ -92,6 +93,38 @@ describe('login redirect and errors', () => {
     expect(mocks.push).not.toHaveBeenCalled();
     finishSync(true);
     await waitFor(() => expect(mocks.push).toHaveBeenCalledWith('/profil'));
+  });
+  it('stays on the login page with a Turkish message when the session cookie cannot be written', async () => {
+    mocks.writeToken.mockResolvedValue(false);
+    mocks.rpc.mockResolvedValue({
+      data: [{ email: 'ada@ugurhoca.local' }],
+      error: null,
+    });
+    mocks.signIn.mockResolvedValue({
+      data: { session: { access_token: 'token' } },
+      error: null,
+    });
+    render(<LoginPage />);
+    fireEvent.change(screen.getByLabelText('Ad ve soyad'), {
+      target: { value: 'Ada Öğrenci' },
+    });
+    fireEvent.change(screen.getByLabelText('Şifre'), {
+      target: { value: 'password123' },
+    });
+    fireEvent.click(screen.getByRole('button', { name: 'Giriş yap' }));
+    expect(await screen.findByRole('alert')).toHaveTextContent(
+      'Oturum başlatılamadı, lütfen birkaç saniye sonra tekrar deneyin.',
+    );
+    expect(mocks.push).not.toHaveBeenCalled();
+  });
+  it('does not bounce an already signed-in user when the session cookie cannot be written', async () => {
+    mocks.getSession.mockResolvedValue({ access_token: 'token' });
+    mocks.writeToken.mockResolvedValue(false);
+    render(<LoginPage />);
+    expect(await screen.findByRole('alert')).toHaveTextContent(
+      'Oturum başlatılamadı, lütfen birkaç saniye sonra tekrar deneyin.',
+    );
+    expect(mocks.push).not.toHaveBeenCalled();
   });
   it('hides unknown Supabase errors in Turkish', async () => {
     mocks.rpc.mockResolvedValue({

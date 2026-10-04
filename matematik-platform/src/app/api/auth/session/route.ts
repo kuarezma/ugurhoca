@@ -17,6 +17,11 @@ export const runtime = 'nodejs';
  * (HttpOnly olmadan) yazıyordu. Çerez kimliği ad + alan + yol olduğundan, bu
  * rotanın ilk başarılı POST'u eski çerezin üzerine HttpOnly olarak yazar; o
  * zamana kadar eski çerez sunucuda aynı adla okunmaya devam eder.
+ *
+ * Bilinen geçiş açığı: ilk başarılı POST'a kadar eski, HttpOnly olmayan çerez
+ * istemci JS'i (dolayısıyla olası bir XSS) tarafından okunabilir kalır. İstemci
+ * onu kendisi silmez; silmek proxy'nin oturum kontrolünü POST tamamlanmadan
+ * düşürürdü. Yeni paketin ilk sayfa yüklemesindeki POST bu pencereyi kapatır.
  */
 
 // Önceki istemci çereziyle aynı ömür: süresi dolmuş token ile dönen kullanıcı
@@ -105,7 +110,12 @@ export async function POST(request: Request) {
       );
     }
   } catch (error) {
-    log.error('Session token verification failed', error);
+    // Hata nesnesi/mesajı loglanmaz: Supabase hata metni token'ı içerebilir.
+    // İstek gövdesi Sentry'ye HTTP entegrasyonu üzerinden de eklenir; o yol
+    // beforeSend'deki scrubSentryEvent ile temizlenir.
+    log.error('Session token verification failed', undefined, {
+      errorName: error instanceof Error ? error.name : typeof error,
+    });
     return NextResponse.json(
       { error: 'Oturum şu anda doğrulanamıyor.' },
       { status: 503, headers: noStore },

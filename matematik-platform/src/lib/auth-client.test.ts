@@ -29,6 +29,7 @@ import {
   redirectToLogin,
   requireClientSession,
   signOutClient,
+  PENDING_COOKIE_CLEANUP_KEY,
   syncCurrentUserSnapshotCookie,
   writeAccessTokenCookie,
 } from '@/lib/auth-client';
@@ -72,7 +73,10 @@ describe('auth-client', () => {
     // Sunucu oturum senkronu modül/global durumda tekilleştirilir; testler arası sızmasın.
     delete (globalThis as { __ugurhoca_auth_store__?: unknown }).__ugurhoca_auth_store__;
     clearUserProfileCache();
-    mockFetch.mockResolvedValue(new Response(null, { status: 200 }));
+    localStorage.clear();
+    // Kilit içindeki ön kontrol güncel oturumu okur; varsayılan: token-123 ile oturum açık.
+    mockGetSession.mockResolvedValue({ data: { session: createSession() }, error: null });
+    mockFetch.mockImplementation(async () => new Response(null, { status: 200 }));
     vi.stubGlobal('fetch', mockFetch);
 
     document.cookie = `${AUTH_ACCESS_TOKEN_COOKIE_NAME}=; path=/; max-age=0`;
@@ -173,6 +177,10 @@ describe('auth-client', () => {
 
   it('posts again when the token is refreshed', async () => {
     await writeAccessTokenCookie('token-123');
+    mockGetSession.mockResolvedValue({
+      data: { session: { ...createSession(), access_token: 'token-456' } },
+      error: null,
+    });
     await writeAccessTokenCookie('token-456');
 
     expect(sessionCallMethods()).toEqual(['POST', 'POST']);
@@ -191,12 +199,108 @@ describe('auth-client', () => {
 
     const post = writeAccessTokenCookie('token-123');
     const del = writeAccessTokenCookie(null);
-    await Promise.resolve();
+    await vi.waitFor(() => expect(sessionCallMethods()).toEqual(['POST']));
+    await new Promise((resolve) => setTimeout(resolve, 0));
 
     expect(sessionCallMethods()).toEqual(['POST']);
     finishPost(new Response(null, { status: 200 }));
     await Promise.all([post, del]);
 
+    expect(sessionCallMethods()).toEqual(['POST', 'DELETE']);
+  });
+
+  it('does not post a token whose Supabase session is already gone (signed out elsewhere)', async () => {
+    mockGetSession.mockResolvedValue({ data: { session: null }, error: null });
+
+    await expect(writeAccessTokenCookie('token-123')).resolves.toBe(false);
+
+    expect(sessionCallMethods()).toEqual(['DELETE']);
+  });
+
+  it('skips a stale token when Supabase already holds a newer one', async () => {
+    mockGetSession.mockResolvedValue({
+      data: { session: { ...createSession(), access_token: 'token-456' } },
+      error: null,
+    });
+
+    await expect(writeAccessTokenCookie('token-123')).resolves.toBe(false);
+
+    expect(sessionCalls()).toHaveLength(0);
+  });
+
+  it('serialises session writes across tabs with the Web Locks API', async () => {
+    let tail: Promise<unknown> = Promise.resolve();
+    const request = vi.fn((_name: string, task: () => Promise<unknown>) => {
+      const run = tail.then(task);
+      tail = run.catch(() => undefined);
+      return run;
+    });
+    Object.defineProperty(navigator, 'locks', { configurable: true, value: { request } });
+
+    try {
+      // Diğer sekme: kilidi tutar, bu sırada çıkış yapar (ortak localStorage oturumu silinir).
+      let releaseOtherTab: () => void = () => undefined;
+      const otherTab = request(
+        'ugurhoca-auth-session',
+        () =>
+          new Promise<void>((resolve) => {
+            releaseOtherTab = resolve;
+          }),
+      );
+
+      const thisTab = writeAccessTokenCookie('token-123');
+      await new Promise((resolve) => setTimeout(resolve, 0));
+      expect(sessionCalls()).toHaveLength(0);
+
+      mockGetSession.mockResolvedValue({ data: { session: null }, error: null });
+      releaseOtherTab();
+      await otherTab;
+
+      await expect(thisTab).resolves.toBe(false);
+      expect(request).toHaveBeenCalledWith('ugurhoca-auth-session', expect.any(Function));
+      expect(sessionCallMethods()).toEqual(['DELETE']);
+    } finally {
+      delete (navigator as { locks?: unknown }).locks;
+    }
+  });
+
+  it('keeps a token-free cleanup marker when the logout DELETE fails and retries on the next load', async () => {
+    mockSignOut.mockResolvedValue({ error: null });
+    mockFetch.mockImplementation(async (_url: string, init?: RequestInit) =>
+      init?.method === 'DELETE'
+        ? Promise.reject(new TypeError('Failed to fetch'))
+        : new Response(null, { status: 200 }),
+    );
+
+    await signOutClient();
+
+    expect(localStorage.getItem(PENDING_COOKIE_CLEANUP_KEY)).toBe('1');
+    expect(JSON.stringify(Object.entries(localStorage))).not.toContain('token-123');
+
+    // Sonraki sayfa yüklemesi: yeni modül durumu, snapshot çerezi yok, oturum yok.
+    delete (globalThis as { __ugurhoca_auth_store__?: unknown }).__ugurhoca_auth_store__;
+    mockFetch.mockImplementation(async () => new Response(null, { status: 200 }));
+    mockGetSession.mockResolvedValue({ data: { session: null }, error: null });
+
+    await getClientSession();
+    await writeAccessTokenCookie(null);
+
+    expect(sessionCallMethods()).toEqual(['DELETE', 'DELETE']);
+    expect(localStorage.getItem(PENDING_COOKIE_CLEANUP_KEY)).toBeNull();
+  });
+
+  it('falls back to a local sign-out when Supabase sign-out returns an error and never re-posts the old token', async () => {
+    mockSignOut.mockImplementation(async (options?: { scope?: string }) =>
+      options?.scope === 'local' ? { error: null } : { error: new Error('network') },
+    );
+    await getClientSession();
+    await writeAccessTokenCookie('token-123');
+
+    await signOutClient();
+
+    expect(mockSignOut).toHaveBeenNthCalledWith(2, { scope: 'local' });
+    // Yerel silme de başarısız kalsa (oturum hâlâ okunuyor) eski token geri yazılmaz.
+    await expect(writeAccessTokenCookie('token-123')).resolves.toBe(false);
     expect(sessionCallMethods()).toEqual(['POST', 'DELETE']);
   });
 
