@@ -1,3 +1,5 @@
+import { toLocalDateKey } from '@/lib/localDate';
+import { getStorageUserId, userScopedStorage } from '@/lib/userScopedStorage';
 import type { QuizQuestion } from '@/types/quiz';
 
 export type MistakeReason = 'careless' | 'concept' | 'reading' | 'time';
@@ -56,14 +58,14 @@ export type SpacedReviewStats = {
 };
 
 export const getSpacedReviewStats = (mistakes: SavedMistakeQuestion[]): SpacedReviewStats => {
-  const today = new Date().toISOString().split('T')[0];
+  const today = toLocalDateKey(new Date());
   const tomorrowDate = new Date();
   tomorrowDate.setDate(tomorrowDate.getDate() + 1);
-  const tomorrow = tomorrowDate.toISOString().split('T')[0];
+  const tomorrow = toLocalDateKey(tomorrowDate);
 
   const weekDate = new Date();
   weekDate.setDate(weekDate.getDate() + 7);
-  const nextWeek = weekDate.toISOString().split('T')[0];
+  const nextWeek = toLocalDateKey(weekDate);
 
   const stats: SpacedReviewStats = {
     box1: 0,
@@ -106,10 +108,10 @@ export const getSpacedReviewStats = (mistakes: SavedMistakeQuestion[]): SpacedRe
 const STORAGE_KEY = 'ugur_hoca_mistakes_bank_v1';
 const MAX_MISTAKES = 200;
 
-export const getSavedMistakes = (): SavedMistakeQuestion[] => {
+export const getSavedMistakes = (userId: string | null = getStorageUserId()): SavedMistakeQuestion[] => {
   if (typeof window === 'undefined') return [];
   try {
-    const raw = localStorage.getItem(STORAGE_KEY);
+    const raw = userScopedStorage(userId).getItem(STORAGE_KEY);
     if (!raw) return [];
     const parsed = JSON.parse(raw);
     if (Array.isArray(parsed)) {
@@ -118,25 +120,25 @@ export const getSavedMistakes = (): SavedMistakeQuestion[] => {
       );
     }
     // Bozuk veri varsa temizle ve kendini onar
-    localStorage.removeItem(STORAGE_KEY);
+    userScopedStorage(userId).removeItem(STORAGE_KEY);
     return [];
   } catch {
     return [];
   }
 };
 
-export const getDueMistakes = (): SavedMistakeQuestion[] => {
-  const mistakes = getSavedMistakes();
-  const today = new Date().toISOString().split('T')[0];
+export const getDueMistakes = (userId: string | null = getStorageUserId()): SavedMistakeQuestion[] => {
+  const mistakes = getSavedMistakes(userId);
+  const today = toLocalDateKey(new Date());
   return mistakes.filter(
     (m) => !m.mastered && (!m.nextReviewDate || m.nextReviewDate <= today)
   );
 };
 
-export const advanceMistakeReview = (questionText: string, correct = true): void => {
+export const advanceMistakeReview = (questionText: string, correct = true, userId: string | null = getStorageUserId()): void => {
   if (typeof window === 'undefined') return;
   try {
-    const existing = getSavedMistakes();
+    const existing = getSavedMistakes(userId);
     const today = new Date();
     const next = existing.map((m) => {
       if (m.question.question !== questionText) return m;
@@ -157,7 +159,7 @@ export const advanceMistakeReview = (questionText: string, correct = true): void
           ...m,
           reviewStage: nextStage,
           mastered: false,
-          nextReviewDate: nextDate.toISOString().split('T')[0],
+          nextReviewDate: toLocalDateKey(nextDate),
           lastReviewedAt: today.toISOString(),
           reviewCount: (m.reviewCount || 0) + 1,
         };
@@ -168,13 +170,13 @@ export const advanceMistakeReview = (questionText: string, correct = true): void
           ...m,
           reviewStage: 0,
           mastered: false,
-          nextReviewDate: tomorrow.toISOString().split('T')[0],
+          nextReviewDate: toLocalDateKey(tomorrow),
           lastReviewedAt: today.toISOString(),
           reviewCount: (m.reviewCount || 0) + 1,
         };
       }
     });
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
+    userScopedStorage(userId).setItem(STORAGE_KEY, JSON.stringify(next));
   } catch {
     // ignore
   }
@@ -184,14 +186,15 @@ export const saveMistakesToBank = (
   questions: QuizQuestion[],
   quizTitle?: string,
   userAnswers?: Record<string, number>,
+  userId: string | null = getStorageUserId(),
 ): number => {
   if (typeof window === 'undefined' || !questions.length) return 0;
   try {
-    const existing = getSavedMistakes();
+    const existing = getSavedMistakes(userId);
     const existingMap = new Map(existing.map((m) => [m.question.question, m]));
     const tomorrow = new Date();
     tomorrow.setDate(tomorrow.getDate() + 1);
-    const tomorrowStr = tomorrow.toISOString().split('T')[0];
+    const tomorrowStr = toLocalDateKey(tomorrow);
 
     let addedCount = 0;
     for (const q of questions) {
@@ -213,42 +216,42 @@ export const saveMistakesToBank = (
 
     // Kota aşımını önlemek için en fazla MAX_MISTAKES soru sakla (FIFO)
     const nextList = Array.from(existingMap.values()).slice(-MAX_MISTAKES);
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(nextList));
-    return addedCount;
+    const saved = userScopedStorage(userId).setItem(STORAGE_KEY, JSON.stringify(nextList));
+    return saved ? addedCount : 0;
   } catch {
     return 0;
   }
 };
 
-export const markMistakeMastered = (questionText: string, mastered = true): void => {
+export const markMistakeMastered = (questionText: string, mastered = true, userId: string | null = getStorageUserId()): void => {
   if (typeof window === 'undefined') return;
   try {
-    const existing = getSavedMistakes();
+    const existing = getSavedMistakes(userId);
     const next = existing.map((m) =>
       m.question.question === questionText ? { ...m, mastered } : m,
     );
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
+    userScopedStorage(userId).setItem(STORAGE_KEY, JSON.stringify(next));
   } catch {
     // ignore
   }
 };
 
-export const removeMistakeFromBank = (questionText: string): void => {
+export const removeMistakeFromBank = (questionText: string, userId: string | null = getStorageUserId()): void => {
   if (typeof window === 'undefined') return;
   try {
-    const existing = getSavedMistakes();
+    const existing = getSavedMistakes(userId);
     const next = existing.filter((m) => m.question.question !== questionText);
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
+    userScopedStorage(userId).setItem(STORAGE_KEY, JSON.stringify(next));
   } catch {
     // ignore
   }
 };
 
-export const saveMistakesList = (items: SavedMistakeQuestion[]): void => {
+export const saveMistakesList = (items: SavedMistakeQuestion[], userId: string | null = getStorageUserId()): void => {
   if (typeof window === 'undefined') return;
   try {
     const limited = items.slice(-MAX_MISTAKES);
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(limited));
+    userScopedStorage(userId).setItem(STORAGE_KEY, JSON.stringify(limited));
   } catch {
     // ignore
   }
@@ -257,23 +260,24 @@ export const saveMistakesList = (items: SavedMistakeQuestion[]): void => {
 export const updateMistakeReason = (
   questionText: string,
   reason?: MistakeReason,
+  userId: string | null = getStorageUserId(),
 ): void => {
   if (typeof window === 'undefined') return;
   try {
-    const existing = getSavedMistakes();
+    const existing = getSavedMistakes(userId);
     const next = existing.map((m) =>
       m.question.question === questionText ? { ...m, reason } : m,
     );
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
+    userScopedStorage(userId).setItem(STORAGE_KEY, JSON.stringify(next));
   } catch {
     // ignore
   }
 };
 
-export const clearAllMistakes = (): void => {
+export const clearAllMistakes = (userId: string | null = getStorageUserId()): void => {
   if (typeof window === 'undefined') return;
   try {
-    localStorage.removeItem(STORAGE_KEY);
+    userScopedStorage(userId).removeItem(STORAGE_KEY);
   } catch {
     // ignore
   }

@@ -95,14 +95,15 @@ export async function syncMistakesWithCloud(userId?: string): Promise<SyncResult
     return { success: false, count: 0, mistakes: [] };
   }
 
+  let activeUserId = userId;
   if (syncInProgress) {
-    return { success: true, count: getSavedMistakes().length, mistakes: getSavedMistakes() };
+    const local = getSavedMistakes(activeUserId);
+    return { success: true, count: local.length, mistakes: local };
   }
 
   syncInProgress = true;
 
   try {
-    let activeUserId = userId;
     if (!activeUserId) {
       const { data } = await supabase.auth.getUser();
       activeUserId = data?.user?.id;
@@ -110,11 +111,11 @@ export async function syncMistakesWithCloud(userId?: string): Promise<SyncResult
 
     if (!activeUserId) {
       // Oturum yok, sadece yerel veriyi döndür
-      const local = getSavedMistakes();
+      const local = getSavedMistakes(activeUserId ?? null);
       return { success: true, count: local.length, mistakes: local };
     }
 
-    const localMistakes = getSavedMistakes();
+    const localMistakes = getSavedMistakes(activeUserId ?? null);
 
     // 1. Buluttaki hataları çek
     const { data: cloudRows, error: fetchError } = await supabase
@@ -145,7 +146,7 @@ export async function syncMistakesWithCloud(userId?: string): Promise<SyncResult
     const merged = mergeMistakes(localMistakes, remoteMistakes);
 
     // 3. Yerel depolamaya kaydet
-    saveMistakesList(merged);
+    saveMistakesList(merged, activeUserId);
 
     // 4. Bulutu güncelle (Upsert)
     if (merged.length > 0) {
@@ -179,9 +180,9 @@ export async function syncMistakesWithCloud(userId?: string): Promise<SyncResult
     const message = err instanceof Error ? err.message : 'Senkronizasyon hatası';
     return {
       success: false,
-      count: getSavedMistakes().length,
+      count: getSavedMistakes(activeUserId ?? null).length,
       error: message,
-      mistakes: getSavedMistakes(),
+      mistakes: getSavedMistakes(activeUserId ?? null),
     };
   } finally {
     syncInProgress = false;

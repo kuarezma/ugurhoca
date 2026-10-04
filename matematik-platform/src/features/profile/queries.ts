@@ -255,7 +255,11 @@ export const markProfileNotificationsAsRead = async (ids: string[]) => {
     return;
   }
 
-  await supabase.from('notifications').update({ is_read: true }).in('id', ids);
+  const { error } = await supabase
+    .from('notifications')
+    .update({ is_read: true })
+    .in('id', ids);
+  if (error) throw error;
 };
 
 export const updateProfileAvatar = async (userId: string, avatarId: string) => {

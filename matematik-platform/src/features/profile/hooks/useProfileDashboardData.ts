@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { requireClientSession } from '@/lib/auth-client';
 import { supabase } from '@/lib/supabase/client';
 import type {
@@ -64,6 +64,7 @@ export const useProfileDashboardData = (
   router: RouterLike,
   initialData?: InitialProfileDashboardData,
 ) => {
+  const pendingReadIds = useRef(new Set<string>());
   const [user, setUser] = useState<StudentProfile | null>(
     initialData?.user ?? null,
   );
@@ -240,17 +241,32 @@ export const useProfileDashboardData = (
 
   const markAllAsRead = useCallback(async () => {
     const unreadIds = notifications
-      .filter((notification) => !notification.is_read)
+      .filter(
+        (notification) =>
+          !notification.is_read && !pendingReadIds.current.has(notification.id),
+      )
       .map((notification) => notification.id);
 
     if (unreadIds.length === 0) {
       return;
     }
 
-    await markProfileNotificationsAsRead(unreadIds);
-    setNotifications((prev) =>
-      prev.map((notification) => ({ ...notification, is_read: true })),
-    );
+    const requestedIds = new Set(unreadIds);
+    unreadIds.forEach((id) => pendingReadIds.current.add(id));
+    try {
+      await markProfileNotificationsAsRead(unreadIds);
+      setNotifications((prev) =>
+        prev.map((notification) =>
+          requestedIds.has(notification.id)
+            ? { ...notification, is_read: true }
+            : notification,
+        ),
+      );
+    } catch {
+      // Keep unread state on failure so the next click can retry.
+    } finally {
+      unreadIds.forEach((id) => pendingReadIds.current.delete(id));
+    }
   }, [notifications]);
 
   return {

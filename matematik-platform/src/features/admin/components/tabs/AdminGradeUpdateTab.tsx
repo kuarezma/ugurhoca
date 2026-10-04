@@ -51,9 +51,20 @@ export default function AdminGradeUpdateTab({
           <p className="text-slate-700 dark:text-slate-300 mb-3 font-medium">Mevcut durum:</p>
           <div className="grid grid-cols-4 gap-3">
             {[5, 6, 7, 8, 9, 10, 11, 12, 'Mezun'].map((grade) => {
-              const count = users.filter(
-                (user) => user.grade === grade && user.email !== ADMIN_EMAIL,
-              ).length;
+              const count = users.filter((user) => {
+                const value = user.grade;
+                const normalizedGrade =
+                  value == null || String(value).trim() === ''
+                    ? null
+                    : value === 'Mezun'
+                      ? '0'
+                      : String(value);
+                return (
+                  normalizedGrade ===
+                    (grade === 'Mezun' ? '0' : String(grade)) &&
+                  user.email !== ADMIN_EMAIL
+                );
+              }).length;
 
               return (
                 <div

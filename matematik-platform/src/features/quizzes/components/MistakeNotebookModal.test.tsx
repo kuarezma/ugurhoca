@@ -1,11 +1,27 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { MistakeNotebookModal } from './MistakeNotebookModal';
-import { saveMistakesToBank } from '@/features/quizzes/lib/mistakeStorage';
+import { saveMistakesToBank, saveMistakesList } from '@/features/quizzes/lib/mistakeStorage';
 
 describe('MistakeNotebookModal', () => {
   beforeEach(() => {
     localStorage.clear();
+  });
+
+  afterEach(() => { vi.useRealTimers(); vi.unstubAllEnvs(); });
+
+  it('shows only today’s local reviews at Monday 00:30', () => {
+    vi.stubEnv('TZ', 'Europe/Istanbul');
+    vi.useFakeTimers(); vi.setSystemTime(new Date('2026-10-05T00:30:00+03:00'));
+    const question = { id: 'today-q', quiz_id: 'quiz', question: 'Bugünün sorusu', options: ['1', '2'], correct_index: 1, question_order: 1, explanation: null, created_at: '' };
+    saveMistakesList([
+      { id: 'today', question, savedAt: '', mastered: false, nextReviewDate: '2026-10-05' },
+      { id: 'tomorrow', question: { ...question, id: 'tomorrow-q', question: 'Yarının sorusu' }, savedAt: '', mastered: false, nextReviewDate: '2026-10-06' },
+    ]);
+    render(<MistakeNotebookModal isOpen onClose={vi.fn()} />);
+    expect(screen.getByRole('button', { name: /Bugünkü Tekrarları Çöz \(1\)/ })).toBeInTheDocument();
+    expect(screen.getAllByText('Bugünün sorusu')[0]).toBeInTheDocument();
+    expect(screen.queryByText('Yarının sorusu')).not.toBeInTheDocument();
   });
 
   it('renders empty state when no mistakes exist', () => {

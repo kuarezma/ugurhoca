@@ -1,6 +1,6 @@
 "use client";
 
-import type { Dispatch, SetStateAction } from "react";
+import { useRef, type Dispatch, type SetStateAction } from "react";
 import { useToast } from "@/components/Toast";
 import { ADMIN_EMAIL } from "@/lib/admin";
 import {
@@ -57,6 +57,7 @@ export function useAdminListActions({
   quizzes,
 }: UseAdminListActionsOptions) {
   const { showToast } = useToast();
+  const deletingIds = useRef(new Set<string>());
   const studentUsers = allUsers.filter((user) => user.email !== ADMIN_EMAIL);
 
   const handleToggleFavoriteStudent = async (student: AdminUser) => {
@@ -108,36 +109,55 @@ export function useAdminListActions({
       return;
     }
 
-    if (type === "assignment") {
-      await deleteAdminEntity("assignment", id);
-      setAssignments(assignments.filter((assignment) => assignment.id !== id));
-      return;
-    }
+    const entityType =
+      type === "assignment" ||
+      type === "shared_document" ||
+      type === "announcement" ||
+      type === "quiz"
+        ? type
+        : "document";
+    const key = `${entityType}:${id}`;
+    if (deletingIds.current.has(key)) return;
+    deletingIds.current.add(key);
 
-    if (type === "shared_document") {
-      await deleteAdminEntity("shared_document", id);
-      setSharedDocs(
-        sharedDocs.filter((sharedDocument) => sharedDocument.id !== id),
-      );
-      return;
-    }
+    const removeItem = async <T extends { id: string }>(
+      items: T[],
+      setItems: Dispatch<SetStateAction<T[]>>,
+    ) => {
+      const originalIndex = items.findIndex((item) => item.id === id);
+      const originalItem = items[originalIndex];
+      setItems((current) => current.filter((item) => item.id !== id));
+      try {
+        const { error } = await deleteAdminEntity(entityType, id);
+        if (error) throw error;
+      } catch {
+        // Restore only this item; preserve changes made while deletion was pending.
+        if (originalItem) {
+          setItems((current) => {
+            if (current.some((item) => item.id === id)) return current;
+            const restored = [...current];
+            restored.splice(
+              Math.min(originalIndex, restored.length),
+              0,
+              originalItem,
+            );
+            return restored;
+          });
+        }
+        showToast("error", "İçerik silinemedi. Lütfen tekrar deneyin.");
+      } finally {
+        deletingIds.current.delete(key);
+      }
+    };
 
-    if (type === "announcement") {
-      await deleteAdminEntity("announcement", id);
-      setAnnouncements(
-        announcements.filter((announcement) => announcement.id !== id),
-      );
-      return;
-    }
-
-    if (type === "quiz") {
-      await deleteAdminEntity("quiz", id);
-      setQuizzes(quizzes.filter((quiz) => quiz.id !== id));
-      return;
-    }
-
-    await deleteAdminEntity("document", id);
-    setDocuments(documents.filter((document) => document.id !== id));
+    if (entityType === "assignment")
+      return removeItem(assignments, setAssignments);
+    if (entityType === "shared_document")
+      return removeItem(sharedDocs, setSharedDocs);
+    if (entityType === "announcement")
+      return removeItem(announcements, setAnnouncements);
+    if (entityType === "quiz") return removeItem(quizzes, setQuizzes);
+    return removeItem(documents, setDocuments);
   };
 
   const editAssignment = async (assignment: AdminAssignment) => {
