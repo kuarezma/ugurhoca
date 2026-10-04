@@ -102,4 +102,28 @@ describe('buildTrackingActivityAnalytics', () => {
       topTypes: [],
     });
   });
+
+  it('sorts topTypes by count and sorts lowContent by title alphabetically when counts are equal', () => {
+    const mixedEvents = [
+      event('e1', '2026-04-29T12:00:00Z', { event_type: 'content_viewed' }),
+      event('e2', '2026-04-29T12:00:00Z', { event_type: 'content_viewed' }),
+      event('e3', '2026-04-29T12:00:00Z', { event_type: 'quiz_submitted' }),
+    ];
+
+    const docsWithEqualCount: AdminDocument[] = [
+      { created_at: '2026-04-01T10:00:00Z', grade: [8], id: 'doc-z', title: 'Zor Problemler', type: 'yaprak-test' },
+      { created_at: '2026-04-01T10:00:00Z', grade: [8], id: 'doc-a', title: 'Aritmetik', type: 'yaprak-test' },
+    ];
+
+    const analytics = buildTrackingActivityAnalytics(mixedEvents, docsWithEqualCount, now);
+
+    expect(analytics.topTypes).toEqual([
+      { count: 2, type: 'content_viewed' },
+      { count: 1, type: 'quiz_submitted' },
+    ]);
+    expect(analytics.lowContent.map((d) => d.title)).toEqual([
+      'Aritmetik',
+      'Zor Problemler',
+    ]);
+  });
 });

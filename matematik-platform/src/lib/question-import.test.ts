@@ -1,6 +1,7 @@
 import ExcelJS from 'exceljs';
 import JSZip from 'jszip';
 import {
+  downloadExcelTemplate,
   parseExcelFile,
   parseQuizBundleArchive,
   parseQuizBundleFile,
@@ -151,5 +152,58 @@ describe('question-import', () => {
 
     expect(result.valid).toHaveLength(0);
     expect(result.errors[0]?.message).toContain('4 şıklı');
+  });
+
+  it('triggers download of excel template in browser environment', async () => {
+    const origCreateObjectURL = URL.createObjectURL;
+    const origRevokeObjectURL = URL.revokeObjectURL;
+    const origCreateElement = document.createElement.bind(document);
+    const clickMock = vi.fn();
+
+    URL.createObjectURL = vi.fn().mockReturnValue('blob:excel-template');
+    URL.revokeObjectURL = vi.fn();
+
+    vi.spyOn(document, 'createElement').mockImplementation((tagName: string) => {
+      if (tagName === 'a') {
+        return {
+          click: clickMock,
+          download: '',
+          href: '',
+        } as unknown as HTMLAnchorElement;
+      }
+      return origCreateElement(tagName);
+    });
+
+    try {
+      downloadExcelTemplate();
+      await new Promise((resolve) => setTimeout(resolve, 80));
+      expect(clickMock).toHaveBeenCalledTimes(1);
+    } finally {
+      URL.createObjectURL = origCreateObjectURL;
+      URL.revokeObjectURL = origRevokeObjectURL;
+    }
+  });
+
+  it('rejects unsupported image extensions like SVG in quiz bundles', async () => {
+    const zip = new JSZip();
+    zip.file(
+      'quiz.json',
+      JSON.stringify({
+        meta: { title: 'Test', grade: 8, difficulty: 'Orta', time_limit: 20 },
+        questions: [
+          {
+            question: 'Soru 1',
+            options: ['A', 'B', 'C', 'D'],
+            correct_index: 0,
+            question_image_files: ['image.svg'],
+          },
+        ],
+      }),
+    );
+    zip.file('images/image.svg', '<svg></svg>');
+
+    await expect(
+      parseQuizBundleArchive(await zip.generateAsync({ type: 'arraybuffer' })),
+    ).rejects.toThrow('Desteklenmeyen görsel türü');
   });
 });

@@ -1,4 +1,4 @@
-import { userScopedStorage } from '@/lib/userScopedStorage';
+import { scopedStorageKey, userScopedStorage } from '@/lib/userScopedStorage';
 
 export const BACKUP_SCHEMA_VERSION = 1;
 export const BACKUP_APP_IDENTIFIER = 'ugur-hoca-matematik';
@@ -174,15 +174,13 @@ export function importUserDataBackup(jsonContent: string): {
     const { data } = validation.data;
 
     if (typeof window !== 'undefined') {
+      // Doğrudan yazılır ki kota hatası aşağıdaki QuotaExceededError dalına ulaşsın;
+      // userScopedStorage().setItem hatayı yutup yalnız false döndürür.
       if (data.dailyGoal) {
-        if (!userScopedStorage().setItem(STORAGE_KEYS.dailyGoal, JSON.stringify(data.dailyGoal))) {
-          return { success: false, message: 'Günlük hedef kaydedilemedi. Tarayıcı depolama izinlerini ve boş alanı kontrol edin.' };
-        }
+        localStorage.setItem(scopedStorageKey(STORAGE_KEYS.dailyGoal), JSON.stringify(data.dailyGoal));
       }
       if (Array.isArray(data.mistakesBank)) {
-        if (!userScopedStorage().setItem(STORAGE_KEYS.mistakesBank, JSON.stringify(data.mistakesBank))) {
-          return { success: false, message: 'Hata defteri kaydedilemedi. Tarayıcı depolama izinlerini ve boş alanı kontrol edin.' };
-        }
+        localStorage.setItem(scopedStorageKey(STORAGE_KEYS.mistakesBank), JSON.stringify(data.mistakesBank));
       }
       if (data.topicChecklist) {
         localStorage.setItem(STORAGE_KEYS.topicChecklist, JSON.stringify(data.topicChecklist));

@@ -1,12 +1,13 @@
-import { describe, it, expect, beforeEach, afterEach } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { AUTH_SNAPSHOT_COOKIE_NAME, serializeAuthSnapshot } from './auth-snapshot';
 import {
-  generateUserDataBackup,
-  exportUserDataBackupJson,
-  validateUserDataBackup,
-  importUserDataBackup,
   BACKUP_APP_IDENTIFIER,
   BACKUP_SCHEMA_VERSION,
+  downloadUserDataBackupFile,
+  exportUserDataBackupJson,
+  generateUserDataBackup,
+  importUserDataBackup,
+  validateUserDataBackup,
 } from './userDataBackup';
 
 describe('userDataBackup lib', () => {
@@ -97,5 +98,54 @@ describe('userDataBackup lib', () => {
     const res = importUserDataBackup('invalid json content');
     expect(res.success).toBe(false);
     expect(res.message).toContain('JSON dosyası çözümlenemedi');
+  });
+
+  it('triggers download of backup file in browser', () => {
+    const origCreateObjectURL = URL.createObjectURL;
+    const origRevokeObjectURL = URL.revokeObjectURL;
+    const origCreateElement = document.createElement.bind(document);
+    const clickMock = vi.fn();
+
+    URL.createObjectURL = vi.fn().mockReturnValue('blob:user-backup');
+    URL.revokeObjectURL = vi.fn();
+
+    vi.spyOn(document, 'createElement').mockImplementation((tagName: string) => {
+      if (tagName === 'a') {
+        const el = origCreateElement('a');
+        el.click = clickMock;
+        return el;
+      }
+      return origCreateElement(tagName);
+    });
+
+    try {
+      downloadUserDataBackupFile();
+      expect(clickMock).toHaveBeenCalledTimes(1);
+      expect(URL.revokeObjectURL).toHaveBeenCalledWith('blob:user-backup');
+    } finally {
+      URL.createObjectURL = origCreateObjectURL;
+      URL.revokeObjectURL = origRevokeObjectURL;
+    }
+  });
+
+  it('handles storage quota exceeded error gracefully during import', () => {
+    const setItemSpy = vi.spyOn(window.localStorage, 'setItem').mockImplementation(() => {
+      const error = new DOMException('The quota has been exceeded.', 'QuotaExceededError');
+      throw error;
+    });
+
+    const payload = {
+      app: BACKUP_APP_IDENTIFIER,
+      data: {
+        dailyGoal: { currentStreak: 3 },
+      },
+      exportedAt: new Date().toISOString(),
+      version: 1,
+    };
+
+    const res = importUserDataBackup(JSON.stringify(payload));
+    expect(res.success).toBe(false);
+    expect(res.message).toContain('Tarayıcı depolama alanı yetersiz');
+    setItemSpy.mockRestore();
   });
 });

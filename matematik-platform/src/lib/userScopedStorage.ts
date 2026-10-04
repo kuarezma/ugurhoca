@@ -65,6 +65,14 @@ export const migrateLegacyUserStorage = (userId: string): void => {
   }
 };
 
+export const scopedStorageKey = (
+  key: string,
+  userId: string | null = getStorageUserId(),
+): string => {
+  if (userId) migrateLegacyUserStorage(userId);
+  return userId ? `${key}:${userId}` : key;
+};
+
 export const userScopedStorage = (
   userId: string | null = getStorageUserId(),
 ) => {
