@@ -571,7 +571,7 @@ export default function ProfilePage({ initialData }: ProfilePageProps) {
 
   return (
     <main className="profil-page page-surface min-h-screen">
-      <nav className="fixed left-0 right-0 top-0 z-50 border-b border-default bg-surface-1/90 backdrop-blur-xl transition-all duration-300">
+      <nav className="fixed left-0 right-0 top-0 z-50 border-b border-default bg-surface-1/90 backdrop-blur-xl transition-all duration-300 pt-[env(safe-area-inset-top)] pl-[max(1rem,env(safe-area-inset-left))] pr-[max(1rem,env(safe-area-inset-right))]">
         <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 sm:px-6">
           <Link href="/" className="group flex items-center gap-3">
             <div className="relative flex h-10 w-10 items-center justify-center overflow-hidden rounded-xl bg-gradient-to-br from-brand-primary via-brand-pink to-brand-orange p-0.5 shadow-md transition-transform duration-300 group-hover:scale-105">
@@ -648,7 +648,7 @@ export default function ProfilePage({ initialData }: ProfilePageProps) {
         />
       )}
 
-      <div className="px-4 pb-12 pt-20">
+      <div className="px-4 pb-12 pt-[calc(4.5rem+env(safe-area-inset-top))] sm:pt-20">
         <div className="mx-auto max-w-6xl">
           {user.isAdmin ? (
             <motion.section

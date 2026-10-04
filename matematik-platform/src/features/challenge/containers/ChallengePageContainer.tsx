@@ -58,7 +58,7 @@ export function ChallengePageContainer() {
     >
       <HomeNavbar user={user} onLogout={handleLogout} />
 
-      <main className="mx-auto max-w-6xl px-4 pt-20 pb-28 sm:px-6 md:pt-24 md:pb-16">
+      <main className="mx-auto max-w-6xl px-4 pt-[calc(4.5rem+env(safe-area-inset-top))] pb-28 sm:px-6 md:pt-24 md:pb-16">
         {/* Geri Dön Butonu */}
         <div className="mb-6">
           <SafeLink

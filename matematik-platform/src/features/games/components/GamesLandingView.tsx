@@ -38,7 +38,7 @@ export function GamesLandingView({
     <main className="oyunlar-page page-surface min-h-screen pb-20">
       <FloatingParticles />
 
-      <nav className="fixed top-0 left-0 right-0 z-50 border-b border-default bg-surface-1/90 backdrop-blur-xl py-3 sm:py-4 px-4 sm:px-6">
+      <nav className="fixed top-0 left-0 right-0 z-50 border-b border-default bg-surface-1/90 backdrop-blur-xl py-3 sm:py-4 px-4 sm:px-6 pt-[max(0.75rem,env(safe-area-inset-top))] pl-[max(1rem,env(safe-area-inset-left))] pr-[max(1rem,env(safe-area-inset-right))]">
         <div className="container mx-auto flex justify-between items-center gap-3">
           <Link href="/" className="flex items-center gap-2.5 min-w-0">
             <div className="w-8 h-8 sm:w-10 sm:h-10 shrink-0 bg-gradient-to-br from-purple-600 to-pink-600 rounded-xl flex items-center justify-center">
@@ -81,7 +81,7 @@ export function GamesLandingView({
         </div>
       </nav>
 
-      <div className="pt-20 sm:pt-24 px-4 sm:px-6">
+      <div className="pt-[calc(4.5rem+env(safe-area-inset-top))] sm:pt-24 px-4 sm:px-6">
         <div className="container mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
