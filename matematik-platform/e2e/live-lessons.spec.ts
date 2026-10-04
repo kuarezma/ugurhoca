@@ -4,7 +4,7 @@ test.describe('5. Canlı Ders & Matematik Araçları Akışı', () => {
   test('anonim kullanıcıyı giriş sayfasına yönlendirir', async ({ page }) => {
     await page.goto('/canli-ders');
 
-    await expect(page).toHaveURL(/\/giris$/);
+    await expect(page).toHaveURL(/\/giris\?redirect=%2Fcanli-ders$/);
     await expect(page.getByRole('heading', { name: /Giriş yap/i })).toBeVisible();
   });
 
