@@ -64,7 +64,7 @@ describe('resolveAccessGrade — SQL ile ortak vaka tablosu', () => {
   const cases = readGradeCases();
 
   it('tablo okunur ve SQL tarafındaki satır sayısıyla eşleşir', () => {
-    expect(cases.length).toBe(36);
+    expect(cases.length).toBe(40);
     expect(cases.map(({ n }) => n)).toEqual(cases.map((_, index) => index + 1));
   });
 

@@ -32,4 +32,32 @@ describe('sendDueAssignmentReminders', () => {
     expect(result.assignmentCount).toBe(0);
     expect(result.sentCount).toBe(0);
   });
+  it.each([0, 'Mezun'])(
+    'Mezun ödevi %s için profilleri integer 0 ile hedefler',
+    async (grade) => {
+      const eq = vi.fn().mockResolvedValue({ data: [] });
+      mockFrom.mockImplementation((table: string) =>
+        table === 'assignments'
+          ? {
+              select: () => ({
+                gte: () => ({
+                  lte: () =>
+                    Promise.resolve({
+                      data: [
+                        {
+                          id: 'assignment',
+                          grade,
+                          due_date: '2026-10-05T12:00:00Z',
+                        },
+                      ],
+                    }),
+                }),
+              }),
+            }
+          : { select: () => ({ eq }) },
+      );
+      await sendDueAssignmentReminders();
+      expect(eq).toHaveBeenCalledWith('grade', 0);
+    },
+  );
 });

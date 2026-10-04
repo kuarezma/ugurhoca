@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import {
   Presentation,
@@ -9,6 +10,7 @@ import {
   History,
   Sparkles,
   ArrowRight,
+  ArrowLeft,
   School,
 } from 'lucide-react';
 import type { ExitTicketSession } from '../types';
@@ -56,7 +58,15 @@ export function ExitTicketPageContainer() {
   };
 
   return (
-    <div className="page-surface w-full min-h-[calc(100vh-80px)] py-8 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto flex flex-col gap-8">
+    <div className="page-surface w-full min-h-[calc(100dvh-80px)] pt-[max(1.5rem,calc(env(safe-area-inset-top)+1rem))] pb-[max(2rem,calc(env(safe-area-inset-bottom)+1.5rem))] px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto flex flex-col gap-8">
+      <Link
+        href="/"
+        className="inline-flex items-center gap-1.5 text-xs font-semibold text-secondary hover:text-primary transition-colors -mb-4 w-fit"
+      >
+        <ArrowLeft className="h-4 w-4" aria-hidden="true" />
+        <span>Ana Sayfaya Dön</span>
+      </Link>
+
       {/* Üst Mod Değiştirici (Öğrenci / Öğretmen Sekmeleri) - Oturum sunulmuyorsa göster */}
       {!currentSession && (
         <div className="flex flex-col sm:flex-row items-center justify-between gap-4 border-b border-default pb-6">

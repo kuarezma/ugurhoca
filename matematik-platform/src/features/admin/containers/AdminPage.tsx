@@ -893,7 +893,7 @@ export default function AdminPage() {
 
   return (
     <main className="admin-page min-h-screen gradient-bg pb-20">
-      <nav className="fixed top-0 left-0 right-0 z-50 bg-white/90 dark:bg-slate-950/90 backdrop-blur-xl border-b border-slate-200/80 dark:border-white/10 py-2.5 px-4 sm:py-3 sm:px-6 shadow-sm dark:shadow-xl dark:shadow-black/20">
+      <nav className="fixed top-0 left-0 right-0 z-50 bg-white/90 dark:bg-slate-950/90 backdrop-blur-xl border-b border-slate-200/80 dark:border-white/10 py-2.5 px-4 sm:py-3 sm:px-6 shadow-sm dark:shadow-xl dark:shadow-black/20 pt-[max(0.625rem,env(safe-area-inset-top))] pl-[max(1rem,env(safe-area-inset-left))] pr-[max(1rem,env(safe-area-inset-right))]">
         <div className="container mx-auto flex min-w-0 items-center justify-between gap-3">
           <Link href="/" className="flex min-w-0 items-center gap-3 group">
             <div className="w-9 h-9 sm:w-10 sm:h-10 bg-gradient-to-tr from-brand-primary via-indigo-600 to-brand-secondary rounded-2xl flex items-center justify-center flex-shrink-0 shadow-lg shadow-violet-500/25 group-hover:scale-105 transition-transform duration-200">
@@ -988,7 +988,7 @@ export default function AdminPage() {
         />
       )}
 
-      <div className="pt-20 sm:pt-24 px-4 sm:px-6 overflow-x-clip">
+      <div className="pt-[calc(4.5rem+env(safe-area-inset-top))] sm:pt-24 px-4 sm:px-6 overflow-x-clip">
         <div className="container mx-auto min-w-0">
           {/* Executive Welcome & KPI Summary Hero */}
           <div className="glass rounded-3xl p-5 sm:p-7 mb-8 border border-slate-200/80 dark:border-white/10 shadow-lg dark:shadow-2xl relative overflow-hidden animate-fade-up bg-white/80 dark:bg-slate-900/60">

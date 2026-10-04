@@ -1,0 +1,1 @@
+select (to_regclass('public.announcements') is not null) and (to_regclass('public.documents') is not null) as ok, (select count(*) from pg_policies where coalesce(qual,'')||coalesce(with_check,'') like '%matematiklab%') as policies_with_retired_admin;

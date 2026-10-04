@@ -1,0 +1,1 @@
+select exists (select 1 from pg_proc where pronamespace='public'::regnamespace and proname='game_score_limit') as ok, exists (select 1 from pg_proc where pronamespace='public'::regnamespace and proname='game_score_limit' and prosrc like '%WHEN 13 %') as already_has_13;

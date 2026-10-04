@@ -1,0 +1,1 @@
+select (to_regclass('public.quiz_questions') is not null) and exists (select 1 from storage.buckets where id='quiz-images' and public) and not exists (select 1 from information_schema.columns where table_schema='public' and table_name='quiz_questions' and column_name='question_image_url') as ok;

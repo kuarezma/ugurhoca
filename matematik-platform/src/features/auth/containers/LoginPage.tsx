@@ -128,7 +128,7 @@ export default function LoginPage() {
     <main className="giris-page relative min-h-screen overflow-hidden">
       <div className="absolute inset-0 -z-10 bg-gradient-to-br from-brand-primary/20 via-brand-pink/10 to-brand-orange/10" aria-hidden="true" />
 
-      <div className="mx-auto flex min-h-screen max-w-6xl flex-col items-stretch gap-10 px-6 py-10 lg:flex-row lg:items-center">
+      <div className="mx-auto flex min-h-screen max-w-6xl flex-col items-stretch gap-8 sm:gap-10 px-4 sm:px-6 py-8 sm:py-10 pt-[max(2rem,env(safe-area-inset-top))] pb-[max(2.5rem,env(safe-area-inset-bottom))] lg:flex-row lg:items-center">
         <aside className="relative hidden flex-1 items-center justify-center overflow-hidden rounded-[2rem] border border-slate-200 dark:border-slate-800/80 bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 dark:from-slate-950 dark:via-indigo-950 dark:to-purple-950 p-10 text-slate-900 dark:text-white shadow-2xl lg:flex">
           <div aria-hidden="true" className="absolute -left-16 -top-16 h-72 w-72 rounded-full bg-brand-primary/20 dark:bg-brand-primary/30 blur-3xl" />
           <div aria-hidden="true" className="absolute -bottom-20 -right-20 h-80 w-80 rounded-full bg-brand-pink/20 dark:bg-brand-pink/30 blur-3xl" />
@@ -157,7 +157,7 @@ export default function LoginPage() {
             Ana sayfa
           </Link>
 
-          <div className="glass rounded-3xl border border-default bg-surface-1 p-8 shadow-brand-glow backdrop-blur-xl">
+          <div className="glass rounded-3xl border border-default bg-surface-1 p-5 sm:p-8 shadow-brand-glow backdrop-blur-xl">
             <div className="mb-6 flex items-center gap-3">
               <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-brand-primary via-brand-pink to-brand-orange text-white shadow-brand-glow">
                 <Sparkles className="h-6 w-6" aria-hidden="true" />

@@ -1,6 +1,6 @@
-BEGIN;
-
-SET LOCAL lock_timeout = '5s';
+-- No BEGIN/COMMIT: the runner (supabase CLI or the operator) owns the
+-- transaction; a nested BEGIN only warns and an inner COMMIT would end it early.
+SET lock_timeout = '5s';
 
 ALTER TABLE public.assignment_submissions
   ADD COLUMN IF NOT EXISTS late boolean NOT NULL DEFAULT false;
@@ -30,18 +30,28 @@ BEFORE INSERT ON public.assignment_submissions
 FOR EACH ROW EXECUTE FUNCTION public.set_assignment_submission_late();
 
 -- Permit cleanup of a losing concurrent upload, never a recorded delivery.
-DROP POLICY IF EXISTS submissions_student_delete_orphan ON storage.objects;
-CREATE POLICY submissions_student_delete_orphan ON storage.objects
-FOR DELETE TO authenticated
-USING (
-  bucket_id = 'submissions'
-  AND (SELECT auth.uid())::text = (storage.foldername(name))[1]
-  AND NOT EXISTS (
-    SELECT 1 FROM public.assignment_submissions s
-    WHERE s.student_id = (SELECT auth.uid())
-      AND right(s.file_url, length('/submissions/' || name)) = '/submissions/' || name
-  )
-);
+-- storage.objects belongs to supabase_storage_admin; on hosted projects the
+-- postgres role may not be allowed to change its policies. The failure is
+-- turned into a warning (the sub-block rolls back) so the column, trigger and
+-- constraint still apply; the post-check query reports a missing policy.
+DO $do$
+BEGIN
+  DROP POLICY IF EXISTS submissions_student_delete_orphan ON storage.objects;
+  CREATE POLICY submissions_student_delete_orphan ON storage.objects
+  FOR DELETE TO authenticated
+  USING (
+    bucket_id = 'submissions'
+    AND (SELECT auth.uid())::text = (storage.foldername(name))[1]
+    AND NOT EXISTS (
+      SELECT 1 FROM public.assignment_submissions s
+      WHERE s.student_id = (SELECT auth.uid())
+        AND right(s.file_url, length('/submissions/' || name)) = '/submissions/' || name
+    )
+  );
+EXCEPTION WHEN insufficient_privilege THEN
+  RAISE WARNING 'storage.objects policy submissions_student_delete_orphan was not changed (ownership); apply it from Dashboard > Storage > Policies.';
+END;
+$do$;
 
 -- Retain every existing submission. Duplicates require a separate data decision.
 DO $$
@@ -67,4 +77,4 @@ BEGIN
 END;
 $$;
 
-COMMIT;
+RESET lock_timeout;

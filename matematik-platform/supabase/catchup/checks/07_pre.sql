@@ -1,0 +1,1 @@
+select (to_regclass('public.profiles') is not null) and not exists (select 1 from information_schema.columns where table_schema='public' and table_name='profiles' and column_name='is_favorite') as ok;

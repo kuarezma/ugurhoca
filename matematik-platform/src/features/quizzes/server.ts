@@ -2,6 +2,7 @@ import 'server-only';
 
 import { getServerAccessToken, getServerAuthSkeleton } from '@/lib/auth-snapshot.server';
 import { getVerifiedServerUser } from '@/lib/auth-verify.server';
+import { toStoredGrade } from '@/lib/grade';
 import { createServerSupabaseClient } from '@/lib/supabase/server';
 import type { AppUser } from '@/types';
 import type { Quiz } from '@/types/quiz';
@@ -40,8 +41,8 @@ export const loadInitialTestsPageData = async (): Promise<InitialTestsPageData> 
     .eq('is_active', true)
     .order('created_at', { ascending: false });
 
-  if (!verifiedUser.isAdmin && typeof verifiedUser.grade === 'number') {
-    query = query.eq('grade', verifiedUser.grade);
+  if (!verifiedUser.isAdmin) {
+    query = query.eq('grade', toStoredGrade(verifiedUser.grade));
   }
 
   const { data } = await query;

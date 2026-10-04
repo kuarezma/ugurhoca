@@ -1,3 +1,4 @@
+import { isGraduateGrade, toDisplayGrade, toStoredGrade } from '@/lib/grade';
 import type { Session } from '@supabase/supabase-js';
 import { ADMIN_EMAIL, isAdminEmail } from '@/lib/admin';
 import { getClientSession } from '@/lib/auth-client';
@@ -541,7 +542,7 @@ export const loadAdminDashboardData = async (
 
   return {
     activityEvents: (activityEventsRes.data || []) as StudentActivityEvent[],
-    allUsers: (allUsersRes.data || []) as AdminUser[],
+    allUsers: ((allUsersRes.data || []) as AdminUser[]).map((user) => ({ ...user, grade: toDisplayGrade(user.grade) })),
     announcements: ((announcementsRes.data || []) as AdminDashboardData['announcements']).sort(
       (left, right) =>
         new Date(right.created_at || 0).getTime() -
@@ -591,7 +592,7 @@ export const loadAdminStudentProfile = async (
     created_at: profile.created_at ?? null,
     current_streak: profile.current_streak ?? 0,
     email: profile.email || '',
-    grade: profile.grade ?? 5,
+    grade: toDisplayGrade(profile.grade),
     id: profile.id,
     isAdmin: false,
     name: profile.name || 'Öğrenci',
@@ -602,10 +603,7 @@ export const loadAdminStudentProfile = async (
       ? student.grade
       : 5;
 
-  const gradeClause =
-    typeof gradeValue === 'string'
-      ? `grade.eq.${gradeValue},student_id.eq.${student.id}`
-      : `grade.eq.${Number(gradeValue)},student_id.eq.${student.id}`;
+  const gradeClause = `grade.eq.${toStoredGrade(gradeValue)},student_id.eq.${student.id}`;
 
   const [
     studySessionsRes,
@@ -839,7 +837,7 @@ export const createAdminAssignment = async ({
       {
         description,
         due_date: due_date || null,
-        grade: grade || null,
+        grade: grade == null ? null : toStoredGrade(grade),
         student_id: student_id || null,
         title,
       },
@@ -1134,7 +1132,8 @@ export const updateAdminUser = async (
     name?: string | null;
   },
 ) => {
-  return supabase.from('profiles').update(updates).eq('id', userId);
+  const payload = updates.grade == null ? updates : { ...updates, grade: toStoredGrade(updates.grade) };
+  return supabase.from('profiles').update(payload).eq('id', userId);
 };
 
 export const createAdminSharedDocument = async ({
@@ -1213,11 +1212,12 @@ export const refreshAdminDocumentCategories = async () => {
 };
 
 const getNextAdminGrade = (grade: AdminUser['grade']): AdminUser['grade'] => {
-  if (grade === 'Mezun') {
+  if (isGraduateGrade(grade)) {
     return 'Mezun';
   }
 
-  return grade >= 12 ? 12 : ((grade + 1) as AdminUser['grade']);
+  const numericGrade = toStoredGrade(grade);
+  return numericGrade >= 12 ? 12 : numericGrade + 1;
 };
 
 export const advanceAdminUserGrades = async (users: AdminUser[]) => {
@@ -1226,7 +1226,7 @@ export const advanceAdminUserGrades = async (users: AdminUser[]) => {
   for (const user of users) {
     if (
       user.isAdmin ||
-      user.grade === 'Mezun' ||
+      isGraduateGrade(user.grade) ||
       getNextAdminGrade(user.grade) === user.grade
     ) {
       continue;

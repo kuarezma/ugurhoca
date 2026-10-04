@@ -11,7 +11,7 @@ type HomeFooterProps = {
 export function HomeFooter({ isLight: _isLight }: HomeFooterProps) {
   return (
     <footer
-      className="border-t border-default dark:border-slate-500/30 mt-12 px-4 py-12 bg-surface-1 transition-colors duration-300"
+      className="border-t border-default dark:border-slate-500/30 mt-12 px-4 pt-12 pb-[calc(5rem+env(safe-area-inset-bottom))] md:pb-12 bg-surface-1 transition-colors duration-300"
     >
       <div className="mx-auto max-w-6xl">
         <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4 pb-8 border-b border-default">

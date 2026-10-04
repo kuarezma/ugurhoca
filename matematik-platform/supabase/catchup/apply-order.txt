@@ -1,0 +1,26 @@
+# Production DB catch-up — uygulama sırası (2026-10-04)
+# Biçim: adım | dosya | schema_migrations.version | schema_migrations.name | ön kontrol | son kontrol
+# Her adım: ön kontrol (ok = true) → dosya tek transaction içinde → kayıt INSERT'i (aynı transaction) → son kontrol (ok = true).
+# storage_ok = false ise storage politikası sahiplik nedeniyle değişmemiştir (APPLY.md §Storage).
+# "@" satırları SQL değil, operatör eylemidir.
+01 | 01_20261004170000_lock_down_public_reads.sql | 20261004170000 | lock_down_public_reads | checks/01_pre.sql | checks/01_post.sql
+02 | 02_20260429130000_fix_daily_streak_rpc.sql | 20260429130000 | fix_daily_streak_rpc | checks/02_pre.sql | checks/02_post.sql
+03 | 03_20260904000000_add_kids_games_score_limits.sql | 20260904000000 | add_kids_games_score_limits | checks/03_pre.sql | checks/03_post.sql
+04 | 04_20261004170100_game_19_score_limit.sql | 20261004170100 | game_19_score_limit | checks/04_pre.sql | checks/04_post.sql
+05 | 05_20260515110000_live_lesson_selected_students.sql | 20260515110000 | live_lesson_selected_students | checks/05_pre.sql | checks/05_post.sql
+06 | 06_20260905100000_live_lesson_recording_and_materials.sql | 20260905100000 | live_lesson_recording_and_materials | checks/06_pre.sql | checks/06_post.sql
+07 | 07_20260428120000_profile_favorites.sql | 20260428120000 | profile_favorites | checks/07_pre.sql | checks/07_post.sql
+08 | 08_20260420131000_quiz_bundle_images.sql | 20260420131000 | quiz_bundle_images | checks/08_pre.sql | checks/08_post.sql
+09 | 09_20260906100000_user_mistakes.sql | 20260906100000 | user_mistakes | checks/09_pre.sql | checks/09_post.sql
+10 | 10_20261004170200_restore_tracking_tables.sql | 20261004170200 | restore_tracking_tables | checks/10_pre.sql | checks/10_post.sql
+11 | 11_20260906123000_student_groups.sql | 20260906123000 | student_groups | checks/11_pre.sql | checks/11_post.sql
+12 | 12_20260906110000_performance_composite_indexes.sql | 20260906110000 | performance_composite_indexes | checks/12_pre.sql | checks/12_post.sql
+13 | 13_20261004150000_document_counter_rpc.sql | 20261004150000 | document_counter_rpc | checks/13_pre.sql | checks/13_post.sql
+14 | 14_20261004150100_revoke_stray_anon_grants.sql | 20261004150100 | revoke_stray_anon_grants | checks/14_pre.sql | checks/14_post.sql
+15 | 15_20261004140000_assignment_submissions_unique_late.sql | 20261004140000 | assignment_submissions_unique_late | checks/15_pre.sql | checks/15_post.sql
+16 | 16_20261004130000_single_admin_email.sql | 20261004130000 | single_admin_email | checks/16_pre.sql | checks/16_post.sql
+17 | 17_20261004130500_single_admin_email_remaining.sql | 20261004130500 | single_admin_email_remaining | checks/17_pre.sql | checks/17_post.sql
+@  | DEPLOY: PR #10 (kalite/faz-1b-hardening) içeren uygulama sürümü production'a; LIVE_LESSON_CLIENT_COLUMNS kullanan admin paneli canlıda olmalı
+18 | 18_20261004120000_live_lesson_rls_scope.sql | 20261004120000 | live_lesson_rls_scope | checks/18_pre.sql | checks/18_post.sql
+90 | 90_register_history_only.sql | (36 sürüm, dosyanın içinde) | — | — | (APPLY.md §Geçmiş)
+19 | 19_20261004160000_grade_graduate_alias.sql | 20261004160000 | grade_graduate_alias | checks/19_pre.sql | checks/19_post.sql

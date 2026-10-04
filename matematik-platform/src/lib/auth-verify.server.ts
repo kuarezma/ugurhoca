@@ -1,5 +1,6 @@
 import 'server-only';
 
+import { toDisplayGrade } from '@/lib/grade';
 import { cache } from 'react';
 import { resolveAccessGrade } from '@/lib/access-grade';
 import { isAdminEmail } from '@/lib/admin';
@@ -9,7 +10,6 @@ import {
   createServerSupabaseClient,
   createServiceRoleClient,
 } from '@/lib/supabase/server';
-import type { GradeValue } from '@/types';
 
 export type VerifiedServerUser = AuthSnapshot & {
   /**
@@ -17,18 +17,6 @@ export type VerifiedServerUser = AuthSnapshot & {
    * görüntüleme içindir ve sınıf bilinmiyorsa 5'e düşer; bu alan düşmez (null).
    */
   accessGrade: string | null;
-};
-
-const isGradeValue = (value: unknown): value is GradeValue =>
-  value === 'Mezun' || typeof value === 'number';
-
-const normalizeGrade = (value: unknown): GradeValue => {
-  if (isGradeValue(value)) {
-    return value;
-  }
-
-  const numeric = Number(value);
-  return Number.isFinite(numeric) ? numeric : 5;
 };
 
 /**
@@ -79,7 +67,7 @@ export const getVerifiedServerUser = cache(async (): Promise<VerifiedServerUser 
   return {
     accessGrade: resolveAccessGrade(profile?.grade, metadata.grade),
     email,
-    grade: normalizeGrade(profile?.grade ?? metadata.grade),
+    grade: toDisplayGrade(profile?.grade ?? metadata.grade),
     id: user.id,
     isAdmin: isAdminEmail(email),
     name,

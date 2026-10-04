@@ -1,5 +1,6 @@
 'use client';
 
+import { isGraduateGrade, toDisplayGrade } from '@/lib/grade';
 import { useMemo, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -87,7 +88,7 @@ export function LiveLessonsPage({ initialLessons, students, user }: Props) {
     toLocalInputValue(new Date(Date.now() + 60 * 60 * 1000)),
   );
   const [durationMinutes, setDurationMinutes] = useState(60);
-  const [targetGrade, setTargetGrade] = useState(String(user.grade || 'all'));
+  const [targetGrade, setTargetGrade] = useState(String(toDisplayGrade(user.grade)));
   const [selectedStudentIds, setSelectedStudentIds] = useState<string[]>([]);
   const [studentSearchQuery, setStudentSearchQuery] = useState('');
   const [repeatWeekly, setRepeatWeekly] = useState(false);
@@ -337,7 +338,7 @@ export function LiveLessonsPage({ initialLessons, students, user }: Props) {
     >
       <HomeNavbar user={appUser} onLogout={handleLogout} />
 
-      <main className="mx-auto max-w-6xl px-4 pt-20 pb-28 sm:px-6 md:pt-24 md:pb-16">
+      <main className="mx-auto max-w-6xl px-4 pt-[calc(4.5rem+env(safe-area-inset-top))] pb-28 sm:px-6 md:pt-24 md:pb-16">
         {/* Üst Hero Başlık */}
         <section className="relative overflow-hidden rounded-3xl border border-border/80 bg-card/80 p-6 shadow-xl backdrop-blur-xl sm:p-8">
           <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
@@ -467,7 +468,7 @@ export function LiveLessonsPage({ initialLessons, students, user }: Props) {
                 <span>Sınıf / Rol</span>
               </div>
               <p className="mt-2 text-lg font-black text-foreground sm:text-xl truncate">
-                {user.isAdmin ? 'Öğretmen' : user.grade ? `${user.grade}. Sınıf` : 'Öğrenci'}
+                {user.isAdmin ? 'Öğretmen' : isGraduateGrade(user.grade) ? 'Mezun' : user.grade ? `${user.grade}. Sınıf` : 'Öğrenci'}
               </p>
               <span className="text-[11px] text-foreground/50">{user.name}</span>
             </div>

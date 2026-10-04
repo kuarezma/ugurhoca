@@ -76,3 +76,34 @@ describe('loadInitialTestsPageData — SSR kimlik sınırı', () => {
     expect(result.initialUser?.isAdmin).toBe(false);
   });
 });
+
+describe('Mezun sunucu test filtresi', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    cookieJar.clear();
+    cookieJar.set(AUTH_SNAPSHOT_COOKIE_NAME, serializeAuthSnapshot(VICTIM_SNAPSHOT));
+    cookieJar.set(AUTH_ACCESS_TOKEN_COOKIE_NAME, 'graduate-token');
+  });
+  it.each([0, 'Mezun'])(
+    '%s görünümünü integer 0 ile sorgular',
+    async (grade) => {
+      const { calls, client } = createRecordingSupabase();
+      mockCreateClient.mockReturnValue(client);
+      mockGetVerifiedServerUser.mockResolvedValue({
+        ...VERIFIED_ATTACKER,
+        id: 'graduate',
+        name: 'Ada',
+        email: 'a@example.com',
+        grade,
+        accessGrade: 'Mezun',
+        isAdmin: false,
+      });
+      await loadInitialTestsPageData();
+      expect(calls).toContainEqual({
+        table: 'quizzes',
+        method: 'eq',
+        args: ['grade', 0],
+      });
+    },
+  );
+});

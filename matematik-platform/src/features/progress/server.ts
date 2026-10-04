@@ -2,6 +2,7 @@ import 'server-only';
 
 import { getServerAccessToken, getServerAuthSkeleton } from '@/lib/auth-snapshot.server';
 import { getVerifiedServerUser } from '@/lib/auth-verify.server';
+import { toDisplayGrade } from '@/lib/grade';
 import { createServerSupabaseClient } from '@/lib/supabase/server';
 import type { AppUser } from '@/types';
 import type {
@@ -73,6 +74,7 @@ export const loadInitialProgressPageData =
     const user: AppUser = profile
       ? {
           ...profile,
+          grade: toDisplayGrade(profile.grade),
           email: verifiedUser.email,
           isAdmin: verifiedUser.isAdmin,
         }
