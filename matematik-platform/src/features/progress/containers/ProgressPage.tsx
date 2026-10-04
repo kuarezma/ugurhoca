@@ -67,8 +67,8 @@ const ProgressCharts = dynamic(
     ssr: false,
     loading: () => (
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2" aria-hidden>
-        <div className="h-80 min-h-[16rem] animate-pulse rounded-3xl border border-slate-700/40 bg-slate-800/25" />
-        <div className="h-80 min-h-[16rem] animate-pulse rounded-3xl border border-slate-700/40 bg-slate-800/25" />
+        <div className="h-80 min-h-[16rem] animate-pulse rounded-3xl border border-slate-200 dark:border-slate-700/40 bg-slate-200/50 dark:bg-slate-800/25" />
+        <div className="h-80 min-h-[16rem] animate-pulse rounded-3xl border border-slate-200 dark:border-slate-700/40 bg-slate-200/50 dark:bg-slate-800/25" />
       </div>
     ),
   },
@@ -529,7 +529,7 @@ export default function IlerlemePage({ initialData }: ProgressPageProps) {
                   <div key={badge.id} className="relative group cursor-pointer">
                     <div className="relative h-12 w-12 overflow-hidden rounded-xl bg-gradient-to-br from-amber-400 via-orange-400 to-pink-500 shadow-lg shadow-orange-500/25 animate-wiggle-hover">
                       <div className="flex h-full w-full items-center justify-center">
-                        <Award className="h-6 w-6 text-white drop-shadow" aria-hidden="true" />
+                        <Award className="h-6 w-6 text-white dark:text-white drop-shadow" aria-hidden="true" />
                       </div>
                       <span
                         aria-hidden="true"
@@ -537,7 +537,7 @@ export default function IlerlemePage({ initialData }: ProgressPageProps) {
                         style={{ backgroundSize: '200% 100%' }}
                       />
                     </div>
-                    <div className="absolute opacity-0 group-hover:opacity-100 bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 bg-slate-800 text-white text-[10px] whitespace-nowrap rounded font-medium transition-opacity pointer-events-none z-10">
+                    <div className="absolute opacity-0 group-hover:opacity-100 bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 bg-slate-900 dark:bg-slate-800 text-white dark:text-white text-[10px] whitespace-nowrap rounded font-medium transition-opacity pointer-events-none z-10">
                       {badge.name}
                     </div>
                   </div>

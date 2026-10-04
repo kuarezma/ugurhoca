@@ -49,7 +49,7 @@ export class ErrorBoundary extends Component<Props, State> {
             <button
               type="button"
               onClick={this.reset}
-              className="rounded-xl border border-white/20 bg-white/10 px-4 py-1.5 text-xs font-semibold text-white hover:bg-white/20 transition active:scale-95"
+              className="rounded-xl border border-slate-300 dark:border-white/20 bg-slate-100 dark:bg-white/10 px-4 py-1.5 text-xs font-semibold text-slate-800 dark:text-white hover:bg-slate-200 dark:hover:bg-white/20 transition active:scale-95"
             >
               Yeniden Dene
             </button>

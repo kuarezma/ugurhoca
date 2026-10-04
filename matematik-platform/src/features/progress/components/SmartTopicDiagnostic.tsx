@@ -172,7 +172,7 @@ export function SmartTopicDiagnostic({
           </p>
           <Link
             href="/testler"
-            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold bg-indigo-600 hover:bg-indigo-500 text-white shadow-md transition"
+            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold bg-indigo-600 hover:bg-indigo-500 text-white dark:text-white shadow-md transition"
           >
             <BookOpen className="h-3.5 w-3.5" />
             <span>Test Çözmeye Başla</span>
@@ -212,7 +212,7 @@ export function SmartTopicDiagnostic({
                 <button
                   type="button"
                   onClick={onStartRecoveryQuiz}
-                  className="px-4 py-2.5 rounded-xl text-xs font-bold bg-rose-600 hover:bg-rose-500 text-white shadow-md flex items-center justify-center gap-1.5 transition"
+                  className="px-4 py-2.5 rounded-xl text-xs font-bold bg-rose-600 hover:bg-rose-500 text-white dark:text-white shadow-md flex items-center justify-center gap-1.5 transition"
                 >
                   <RotateCcw className="h-3.5 w-3.5" />
                   <span>Telafi Testini Çöz ({diagnosticResult.unmasteredCount} Soru)</span>
@@ -220,7 +220,7 @@ export function SmartTopicDiagnostic({
               ) : (
                 <Link
                   href="/testler"
-                  className="px-4 py-2.5 rounded-xl text-xs font-bold bg-rose-600 hover:bg-rose-500 text-white shadow-md flex items-center justify-center gap-1.5 transition"
+                  className="px-4 py-2.5 rounded-xl text-xs font-bold bg-rose-600 hover:bg-rose-500 text-white dark:text-white shadow-md flex items-center justify-center gap-1.5 transition"
                 >
                   <RotateCcw className="h-3.5 w-3.5" />
                   <span>Testlerde Telafi Et</span>

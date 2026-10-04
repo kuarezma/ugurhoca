@@ -26,7 +26,7 @@ export default function DashboardSettings() {
               <Database className="h-5 w-5" />
             </div>
             <div>
-              <h2 className="text-lg font-bold text-white">Çalışma Verilerini Yedekle & Taşı</h2>
+              <h2 className="text-lg font-bold text-slate-900 dark:text-white">Çalışma Verilerini Yedekle & Taşı</h2>
               <p className="mt-0.5 text-xs text-slate-400">
                 Günlük seri (streak), çözülen soru sayıları ve hata defterini tek tıkla dışa aktar veya yeni cihaza yükle.
               </p>
@@ -36,7 +36,7 @@ export default function DashboardSettings() {
           <button
             type="button"
             onClick={() => setIsBackupModalOpen(true)}
-            className="inline-flex items-center justify-center gap-2 rounded-xl bg-indigo-600 px-4 py-2.5 text-xs font-bold text-white transition hover:bg-indigo-500 shadow-md shrink-0"
+            className="inline-flex items-center justify-center gap-2 rounded-xl bg-indigo-600 px-4 py-2.5 text-xs font-bold text-white dark:text-white transition hover:bg-indigo-500 shadow-md shrink-0"
           >
             <span>Yedekle / Yükle</span>
             <ArrowRight className="h-3.5 w-3.5" />
@@ -56,7 +56,7 @@ export default function DashboardSettings() {
             <Settings className="h-5 w-5 text-slate-200" />
           </div>
           <div>
-            <h2 className="text-xl font-bold text-white">Şifre Değişikliği</h2>
+            <h2 className="text-xl font-bold text-slate-900 dark:text-white">Şifre Değişikliği</h2>
             <p className="mt-1 text-sm text-slate-400">
               Hesap şifreni buradan güvenle güncelleyebilirsin.
             </p>
@@ -79,7 +79,7 @@ export default function DashboardSettings() {
               <AlertTriangle className="h-5 w-5" />
             </div>
             <div>
-              <h2 className="text-lg font-bold text-white">Hesap ve Verileri Sil (KVKK)</h2>
+              <h2 className="text-lg font-bold text-slate-900 dark:text-white">Hesap ve Verileri Sil (KVKK)</h2>
               <p className="mt-0.5 text-xs text-slate-400">
                 Tüm sınav geçmişin, çözülen sorular, rozetler ve kişisel verilerin kalıcı olarak silinir.
               </p>

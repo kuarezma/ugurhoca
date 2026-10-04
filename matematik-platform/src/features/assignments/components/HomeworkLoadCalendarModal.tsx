@@ -109,7 +109,7 @@ export function HomeworkLoadCalendarModal({
 
   return (
     <div
-      className="fixed inset-0 z-[160] flex items-center justify-center p-3 sm:p-4 bg-slate-950/80 backdrop-blur-md animate-fade-in"
+      className="fixed inset-0 z-[160] flex items-center justify-center p-3 sm:p-4 bg-black/70 backdrop-blur-md animate-fade-in"
       role="dialog"
       aria-modal="true"
       aria-labelledby={titleId}
@@ -121,7 +121,7 @@ export function HomeworkLoadCalendarModal({
         {/* Header */}
         <div className="flex items-center justify-between border-b border-slate-200 dark:border-white/10 px-5 py-4 bg-slate-50 dark:bg-slate-900/90">
           <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-br from-amber-500 to-orange-600 text-white shadow-md shadow-amber-500/25">
+            <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-br from-amber-500 to-orange-600 text-white dark:text-white shadow-md shadow-amber-500/25">
               <CalendarIcon className="h-5 w-5" />
             </div>
             <div>

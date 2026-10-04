@@ -1069,7 +1069,7 @@ export default function ChatBubble() {
                               : 'border-slate-800/80 hover:bg-slate-800/50'
                           }`}
                         >
-                          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 text-sm font-bold text-white shadow-sm">
+                          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 text-sm font-bold text-white dark:text-white shadow-sm">
                             {(c.studentName[0] || '?').toUpperCase()}
                           </div>
                           <div className="min-w-0 flex-1">

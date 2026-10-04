@@ -374,7 +374,7 @@ export default function OdevlerPage({
           </Link>
           <div className="flex items-center gap-4">
             <ThemeToggle compact />
-            <div className={`w-8 h-8 rounded-lg bg-indigo-500 flex items-center justify-center text-white font-bold text-sm`}>
+            <div className={`w-8 h-8 rounded-lg bg-indigo-500 flex items-center justify-center text-white dark:text-white font-bold text-sm`}>
               {user?.name?.[0] || 'Ö'}
             </div>
           </div>

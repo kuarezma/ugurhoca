@@ -135,7 +135,7 @@ export function AssignmentSubmissionModal({
                   <span className="text-sm font-bold text-emerald-500">
                     Uğur Hoca&apos;nın Notu
                   </span>
-                  <div className="rounded-lg bg-emerald-500 px-3 py-1 text-xs font-bold text-white">
+                  <div className="rounded-lg bg-emerald-500 px-3 py-1 text-xs font-bold text-white dark:text-white">
                     {activeSubmission.grade ?? '-'} / 100
                   </div>
                 </div>
@@ -168,7 +168,7 @@ export function AssignmentSubmissionModal({
                 placeholder="Ödevle ilgili eklemek istediğin bir şey var mı?"
                 value={comment}
                 onChange={(e) => onCommentChange(e.target.value)}
-                className="h-24 w-full resize-none rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-white transition-colors focus:border-indigo-500 focus:outline-none"
+                className="h-24 w-full resize-none rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-slate-900 dark:text-white transition-colors focus:border-indigo-500 focus:outline-none"
               />
               <div className="mt-1.5">
                 <MathInputToolbar onInsertSymbol={(sym) => onCommentChange(comment ? `${comment} ${sym}` : sym)} />

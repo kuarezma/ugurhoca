@@ -113,7 +113,7 @@ export function InteractiveMathCanvas({
         </span>
       </div>
 
-      <div className="relative overflow-hidden rounded-lg bg-slate-950/80 border border-slate-800/80 shadow-inner flex items-center justify-center">
+      <div className="relative overflow-hidden rounded-lg bg-slate-950 dark:bg-slate-950 border border-slate-800 dark:border-slate-800 shadow-inner flex items-center justify-center">
         <canvas
           ref={canvasRef}
           width={width}
@@ -129,7 +129,7 @@ export function InteractiveMathCanvas({
             type="button"
             onClick={toggleAnimation}
             disabled={!isWorkerReady}
-            className="px-3 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-500 disabled:opacity-50 text-white font-medium transition-colors"
+            className="px-3 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-500 disabled:opacity-50 text-white dark:text-white font-medium transition-colors"
           >
             {animating ? 'Animasyonu Durdur' : 'Animasyonu Başlat'}
           </button>

@@ -7,13 +7,11 @@ import { isNewContent, proxiedImageSrc } from '@/features/home/queries';
 
 type HomeAnnouncementsSectionProps = {
   announcements: Announcement[];
-  isLight: boolean;
   onSelectAnnouncement: (announcement: Announcement) => void;
 };
 
 export function HomeAnnouncementsSection({
   announcements,
-  isLight,
   onSelectAnnouncement,
 }: HomeAnnouncementsSectionProps) {
   if (announcements.length === 0) {
@@ -23,7 +21,7 @@ export function HomeAnnouncementsSection({
   return (
     <section className="px-4 pt-2 pb-3 sm:py-6">
       <div
-        className={`max-w-6xl mx-auto ${isLight ? 'light-section p-5 sm:p-6' : ''}`}
+        className="max-w-6xl mx-auto light-section light:p-5 light:sm:p-6"
       >
         <div className="flex items-center justify-between mb-4">
           <div>
@@ -53,7 +51,7 @@ export function HomeAnnouncementsSection({
                 style={{ animationDelay: `${index * 0.05}s` }}
               >
                 {isNewContent(item.created_at) && (
-                  <span className="absolute top-3 right-3 z-10 px-2 py-1 rounded-full bg-pink-700 text-white text-[10px] font-bold shadow-lg">
+                  <span className="absolute top-3 right-3 z-10 px-2 py-1 rounded-full bg-pink-700 text-white dark:text-white text-[10px] font-bold shadow-lg">
                     Yeni
                   </span>
                 )}

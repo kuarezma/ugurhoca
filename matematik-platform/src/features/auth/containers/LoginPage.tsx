@@ -169,7 +169,7 @@ export default function LoginPage() {
 
           <div className="glass rounded-3xl border border-default bg-surface-1 p-5 sm:p-8 shadow-brand-glow backdrop-blur-xl">
             <div className="mb-6 flex items-center gap-3">
-              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-brand-primary via-brand-pink to-brand-orange text-white shadow-brand-glow">
+              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-brand-primary via-brand-pink to-brand-orange text-white dark:text-white shadow-brand-glow">
                 <Sparkles className="h-6 w-6" aria-hidden="true" />
               </div>
               <div>

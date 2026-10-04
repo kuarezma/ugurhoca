@@ -113,6 +113,8 @@ type HomePageProps = {
 
 export default function HomePage({ announcementsSlot }: HomePageProps) {
   const { theme } = useTheme();
+  // Only the tool modals below read this; they mount after a click, when the
+  // JS theme already matches data-theme. Page sections pick theme classes in CSS.
   const isLight = theme === 'light';
   const [isFlashcardsOpen, setIsFlashcardsOpen] = useState(false);
   const [isSpeedDrillOpen, setIsSpeedDrillOpen] = useState(false);
@@ -191,18 +193,13 @@ export default function HomePage({ announcementsSlot }: HomePageProps) {
 
   return (
     <main
-      className={`home-page relative min-h-screen overflow-x-clip ${
-        isLight
-          ? 'bg-transparent light-atmosphere'
-          : 'bg-transparent'
-      }`}
+      className="home-page relative min-h-screen overflow-x-clip bg-transparent light-atmosphere"
     >
       <HomeNavbar user={user} onLogout={handleLogout} />
       <ActiveLiveLessonBadge userId={user?.id} />
       <div className="pt-[calc(4.5rem+env(safe-area-inset-top))] md:pt-20">
         {/* 1. Karşılama Ekranı (Hero - Hızlı Erişim ve Açılır 12 Araç Kartı) */}
         <HomeHeroSection
-          isLight={isLight}
           user={user}
           onOpenFlashcards={() => setIsFlashcardsOpen(true)}
           onOpenScratchpad={() => setIsScratchpadOpen(true)}
@@ -224,24 +221,23 @@ export default function HomePage({ announcementsSlot }: HomePageProps) {
 
         {/* 3. LGS ve YKS Sayacı */}
         <HomeExamCountdownSection
-          isLight={isLight}
           onOpenCalculator={(tab) => setCalculatorState({ isOpen: true, tab })}
           userGrade={user?.grade}
         />
 
         {/* 4. Günün Sözü */}
         <div className="defer-section">
-          <HomeDailyQuote isLight={isLight} />
+          <HomeDailyQuote />
         </div>
 
         {/* 5. Uğur Hoca'ya Yaz */}
         <div className="defer-section">
-          <HomeSupportSection isLight={isLight} user={user} />
+          <HomeSupportSection user={user} />
         </div>
 
         {/* 6. Footer */}
         <div className="defer-section">
-          <HomeFooter isLight={isLight} />
+          <HomeFooter />
         </div>
       </div>
       {isFlashcardsOpen ? (

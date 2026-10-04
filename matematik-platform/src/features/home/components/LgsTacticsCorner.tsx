@@ -177,7 +177,7 @@ export function LgsTacticsCorner({ isLight = false }: { isLight?: boolean }) {
         {/* Header with Title & LGS Countdown Pill */}
         <div className="flex flex-wrap items-center justify-between gap-3 pb-4 border-b border-slate-200/60 dark:border-white/10">
           <div className="flex items-center gap-3">
-            <div className="p-2.5 rounded-2xl bg-gradient-to-tr from-amber-500 to-rose-500 text-white shadow-md shadow-rose-500/20">
+            <div className="p-2.5 rounded-2xl bg-gradient-to-tr from-amber-500 to-rose-500 text-white dark:text-white shadow-md shadow-rose-500/20">
               <Lightbulb className="w-5 h-5" />
             </div>
             <div>

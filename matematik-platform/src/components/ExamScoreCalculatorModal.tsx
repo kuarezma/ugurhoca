@@ -574,7 +574,7 @@ export function ExamScoreCalculatorModal({
         {/* Başlık ve Sekmeler */}
         <div className="no-print flex flex-col gap-3 border-b border-slate-200/80 dark:border-white/10 bg-slate-50/80 dark:bg-slate-950/80 px-5 py-4 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-600 text-white shadow-md">
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-600 text-white dark:text-white shadow-md">
               <Calculator className="h-5 w-5" />
             </div>
             <div>
@@ -1236,7 +1236,7 @@ export function ExamScoreCalculatorModal({
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                 {/* TYT Bölümü */}
                 <div className="rounded-2xl border border-slate-200 dark:border-white/10 overflow-hidden">
-                  <div className="bg-indigo-600 text-white px-4 py-2 text-xs font-bold flex justify-between items-center">
+                  <div className="bg-indigo-600 text-white dark:text-white px-4 py-2 text-xs font-bold flex justify-between items-center">
                     <span>TYT Testleri (120 Soru)</span>
                     <span>Net: {yksResult.tytNet}</span>
                   </div>
@@ -1283,7 +1283,7 @@ export function ExamScoreCalculatorModal({
 
                 {/* AYT Bölümü */}
                 <div className="rounded-2xl border border-slate-200 dark:border-white/10 overflow-hidden">
-                  <div className="bg-purple-600 text-white px-4 py-2 text-xs font-bold flex justify-between items-center">
+                  <div className="bg-purple-600 text-white dark:text-white px-4 py-2 text-xs font-bold flex justify-between items-center">
                     <span>AYT Testleri (Seçilenler)</span>
                     <span>Net: {yksResult.aytNet}</span>
                   </div>

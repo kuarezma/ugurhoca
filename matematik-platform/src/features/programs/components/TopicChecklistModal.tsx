@@ -153,7 +153,7 @@ export function TopicChecklistModal({
         }
       `}} />
       <div
-        className="no-print fixed inset-0 -z-10 bg-slate-950/80 backdrop-blur-md"
+        className="no-print fixed inset-0 -z-10 bg-black/70 backdrop-blur-md"
         onClick={onClose}
         aria-hidden="true"
       />
@@ -179,7 +179,7 @@ export function TopicChecklistModal({
         {/* Başlık ve Sınıf Seçimi */}
         <div className="no-print flex flex-col gap-3 border-b border-slate-200/80 dark:border-white/10 bg-slate-50/80 dark:bg-slate-950/80 px-4 sm:px-5 py-3 sm:py-4 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
-            <div className="flex h-9 w-9 sm:h-10 sm:w-10 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-600 text-white shadow-md">
+            <div className="flex h-9 w-9 sm:h-10 sm:w-10 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-600 text-white dark:text-white shadow-md">
               <ListChecks className="h-4 w-4 sm:h-5 sm:w-5" />
             </div>
             <div className="min-w-0">

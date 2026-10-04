@@ -15,24 +15,24 @@ export default function NotFound() {
           <p className="font-display text-[8rem] leading-none font-black bg-gradient-to-r from-brand-primary via-brand-pink to-brand-orange bg-clip-text text-transparent sm:text-[10rem]">
             404
           </p>
-          <h1 className="mt-2 font-display text-3xl font-bold text-white sm:text-4xl">
+          <h1 className="mt-2 font-display text-3xl font-bold text-slate-900 dark:text-white sm:text-4xl">
             Bu sayfayı çözemedik
           </h1>
-          <p className="mx-auto mt-3 max-w-md text-base text-slate-300">
+          <p className="mx-auto mt-3 max-w-md text-base text-slate-600 dark:text-slate-300">
             Aradığın sayfa sınavdan çıkmış olabilir. Aşağıdaki butonlarla
             güvenli bir yere dönebilirsin.
           </p>
           <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
             <Link
               href="/"
-              className="inline-flex h-11 items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-brand-primary via-brand-pink to-brand-orange px-6 text-sm font-semibold text-white shadow-brand-glow transition-transform hover:-translate-y-0.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:ring-offset-2"
+              className="inline-flex h-11 items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-brand-primary via-brand-pink to-brand-orange px-6 text-sm font-semibold text-white dark:text-white shadow-brand-glow transition-transform hover:-translate-y-0.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:ring-offset-2"
             >
               <Home className="h-5 w-5" aria-hidden="true" />
               Ana sayfaya dön
             </Link>
             <Link
               href="/icerikler"
-              className="inline-flex h-11 items-center justify-center gap-2 rounded-xl border border-white/15 bg-white/5 px-5 text-sm font-semibold text-white hover:bg-white/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:ring-offset-2"
+              className="inline-flex h-11 items-center justify-center gap-2 rounded-xl border border-slate-200 dark:border-white/15 bg-slate-100 dark:bg-white/5 px-5 text-sm font-semibold text-slate-800 dark:text-white hover:bg-slate-200 dark:hover:bg-white/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:ring-offset-2"
             >
               <Search className="h-5 w-5" aria-hidden="true" />
               İçeriklere göz at
@@ -41,7 +41,7 @@ export default function NotFound() {
               variant="ghost"
               leadingIcon={<ArrowLeft className="h-4 w-4" aria-hidden="true" />}
               onClick={() => window.history.back()}
-              className="text-white"
+              className="text-slate-700 dark:text-white hover:text-slate-900 dark:hover:text-white"
             >
               Geri dön
             </Button>

@@ -6,7 +6,6 @@ import { LogOut, Menu, X } from 'lucide-react';
 import { useState } from 'react';
 import { SafeLink } from '@/components/SafeLink';
 import { ThemeToggle } from '@/components/ThemeToggle';
-import { useTheme } from '@/components/ThemeProvider';
 import { HOME_CATEGORIES } from '@/features/home/constants';
 import { HomeNavbarMessagesButton } from '@/features/home/components/HomeNavbarMessagesButton';
 import { HomeNavbarNotificationBell } from '@/features/home/components/HomeNavbarNotificationBell';
@@ -20,8 +19,6 @@ type HomeNavbarProps = {
 export function HomeNavbar({ onLogout, user }: HomeNavbarProps) {
   const [isOpen, setIsOpen] = useState(false);
   const pathname = usePathname();
-  const { theme } = useTheme();
-  const isLight = theme === 'light';
   const isHomePage = pathname === '/';
   const profileHref = user?.isAdmin ? '/admin' : '/profil';
   const showBell = Boolean(user?.id);
@@ -29,11 +26,7 @@ export function HomeNavbar({ onLogout, user }: HomeNavbarProps) {
 
   return (
     <nav
-      className={`fixed left-0 right-0 top-0 z-50 border-b backdrop-blur-xl transition-all duration-300 pt-[env(safe-area-inset-top)] ${
-        isLight
-          ? 'border-slate-200/90 bg-white/90 shadow-sm'
-          : 'border-white/10 bg-slate-900/90 shadow-xl'
-      }`}
+      className="fixed left-0 right-0 top-0 z-50 border-b backdrop-blur-xl transition-all duration-300 pt-[env(safe-area-inset-top)] light:border-slate-200/90 light:bg-white/90 light:shadow-sm dark:border-white/10 dark:bg-slate-900/90 dark:shadow-xl"
     >
       <div className="mx-auto max-w-6xl px-4 pl-[max(1rem,env(safe-area-inset-left))] pr-[max(1rem,env(safe-area-inset-right))]">
         <div className="flex h-16 w-full items-center justify-between gap-3 sm:gap-4">
@@ -59,9 +52,7 @@ export function HomeNavbar({ onLogout, user }: HomeNavbarProps) {
             </div>
             <div className="flex flex-col min-w-0">
               <span
-                className={`font-display text-sm sm:text-lg font-bold leading-tight truncate ${
-                  isLight ? 'text-slate-900' : 'text-white'
-                }`}
+                className="font-display text-sm sm:text-lg font-bold leading-tight truncate light:text-slate-900 dark:text-white"
               >
                 Uğur Hoca
               </span>
@@ -78,23 +69,18 @@ export function HomeNavbar({ onLogout, user }: HomeNavbarProps) {
                 userId={user.id}
                 userName={user.name || ''}
                 userEmail={user.email || ''}
-                isLight={isLight}
               />
             ) : null}
             {showBell && user?.id ? (
-              <HomeNavbarNotificationBell userId={user.id} isLight={isLight} />
+              <HomeNavbarNotificationBell userId={user.id} />
             ) : null}
             {user ? (
               <>
                 <SafeLink
                   href={profileHref}
-                  className={`flex items-center gap-2.5 rounded-2xl border px-3 py-1.5 transition-all ${
-                    isLight
-                      ? 'border-slate-200 bg-slate-50 text-slate-900 hover:bg-slate-100'
-                      : 'border-white/10 bg-white/5 text-white hover:bg-white/10'
-                  }`}
+                  className="flex items-center gap-2.5 rounded-2xl border px-3 py-1.5 transition-all light:border-slate-200 light:bg-slate-50 light:text-slate-900 light:hover:bg-slate-100 dark:border-white/10 dark:bg-white/5 dark:text-white dark:hover:bg-white/10"
                 >
-                  <div className="flex h-7 w-7 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-600 to-purple-600 text-xs font-bold text-white shadow">
+                  <div className="flex h-7 w-7 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-600 to-purple-600 text-xs font-bold text-white dark:text-white shadow">
                     {user.name?.[0] || '?'}
                   </div>
                   <span className="font-semibold text-xs xl:inline">
@@ -106,11 +92,7 @@ export function HomeNavbar({ onLogout, user }: HomeNavbarProps) {
                   onClick={onLogout}
                   aria-label="Çıkış yap"
                   title="Çıkış yap"
-                  className={`inline-flex h-9 w-9 items-center justify-center rounded-xl transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 ${
-                    isLight
-                      ? 'text-slate-400 hover:bg-slate-100 hover:text-slate-900'
-                      : 'text-slate-400 hover:bg-white/5 hover:text-white'
-                  }`}
+                  className="inline-flex h-9 w-9 items-center justify-center rounded-xl transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 text-slate-400 light:hover:bg-slate-100 light:hover:text-slate-900 dark:hover:bg-white/5 dark:hover:text-white"
                 >
                   <LogOut className="h-4 w-4" aria-hidden="true" />
                 </button>
@@ -125,7 +107,7 @@ export function HomeNavbar({ onLogout, user }: HomeNavbarProps) {
                 </SafeLink>
                 <SafeLink
                   href="/kayit"
-                  className="rounded-xl bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-500 px-4 py-2 text-xs font-bold text-white shadow-md transition-all duration-200 hover:shadow-lg hover:scale-105 active:scale-95"
+                  className="rounded-xl bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-500 px-4 py-2 text-xs font-bold text-white dark:text-white shadow-md transition-all duration-200 hover:shadow-lg hover:scale-105 active:scale-95"
                 >
                   Ücretsiz Kayıt
                 </SafeLink>
@@ -139,11 +121,10 @@ export function HomeNavbar({ onLogout, user }: HomeNavbarProps) {
                 userId={user.id}
                 userName={user.name || ''}
                 userEmail={user.email || ''}
-                isLight={isLight}
               />
             ) : null}
             {showBell && user?.id ? (
-              <HomeNavbarNotificationBell userId={user.id} isLight={isLight} />
+              <HomeNavbarNotificationBell userId={user.id} />
             ) : null}
             <button
               type="button"
@@ -162,11 +143,7 @@ export function HomeNavbar({ onLogout, user }: HomeNavbarProps) {
       {isOpen && (
         <div
           id="mobile-navigation"
-          className={`animate-fade-in border-t max-h-[calc(100dvh-4.5rem-env(safe-area-inset-top))] overflow-y-auto pb-[calc(1.5rem+env(safe-area-inset-bottom))] lg:hidden ${
-            isLight
-              ? 'border-slate-200 bg-white/95 backdrop-blur-xl'
-              : 'border-white/10 bg-slate-950/95 backdrop-blur-xl'
-          }`}
+          className="animate-fade-in border-t max-h-[calc(100dvh-4.5rem-env(safe-area-inset-top))] overflow-y-auto pb-[calc(1.5rem+env(safe-area-inset-bottom))] lg:hidden light:border-slate-200 light:bg-white/95 backdrop-blur-xl dark:border-white/10 dark:bg-slate-950/95"
         >
           <div className="space-y-1.5 px-4 py-4">
             {HOME_CATEGORIES.map((category) => (
@@ -174,20 +151,14 @@ export function HomeNavbar({ onLogout, user }: HomeNavbarProps) {
                 key={category.id}
                 href={category.href}
                 onClick={() => setIsOpen(false)}
-                className={`flex items-center gap-3 rounded-xl px-3.5 py-2.5 text-sm font-semibold transition-colors ${
-                  isLight
-                    ? 'text-slate-700 hover:bg-slate-100 hover:text-slate-900'
-                    : 'text-slate-300 hover:bg-white/10 hover:text-white'
-                }`}
+                className="flex items-center gap-3 rounded-xl px-3.5 py-2.5 text-sm font-semibold transition-colors light:text-slate-700 light:hover:bg-slate-100 light:hover:text-slate-900 dark:text-slate-300 dark:hover:bg-white/10 dark:hover:text-white"
               >
                 <category.icon className="h-5 w-5 text-brand-primary-soft" />
                 {category.title}
               </SafeLink>
             ))}
             <div
-              className={`mt-3 border-t pt-3 ${
-                isLight ? 'border-slate-200' : 'border-white/10'
-              }`}
+              className="mt-3 border-t pt-3 light:border-slate-200 dark:border-white/10"
             >
               <div className="mb-3">
                 <ThemeToggle className="w-full justify-center" />
@@ -197,11 +168,7 @@ export function HomeNavbar({ onLogout, user }: HomeNavbarProps) {
                   <SafeLink
                     href={profileHref}
                     onClick={() => setIsOpen(false)}
-                    className={`block rounded-xl px-3.5 py-2.5 text-sm font-semibold ${
-                      isLight
-                        ? 'text-slate-700 hover:bg-slate-100 hover:text-slate-900'
-                        : 'text-slate-300 hover:bg-white/10 hover:text-white'
-                    }`}
+                    className="block rounded-xl px-3.5 py-2.5 text-sm font-semibold light:text-slate-700 light:hover:bg-slate-100 light:hover:text-slate-900 dark:text-slate-300 dark:hover:bg-white/10 dark:hover:text-white"
                   >
                     {user.isAdmin ? 'Admin Paneli' : 'Öğrenci Profili'}
                   </SafeLink>
@@ -221,18 +188,14 @@ export function HomeNavbar({ onLogout, user }: HomeNavbarProps) {
                   <SafeLink
                     href="/giris"
                     onClick={() => setIsOpen(false)}
-                    className={`flex items-center justify-center rounded-xl border px-3 py-2.5 text-center text-xs font-bold transition-colors ${
-                      isLight
-                        ? 'border-slate-200 text-slate-700 hover:bg-slate-100'
-                        : 'border-white/10 text-slate-300 hover:bg-white/10'
-                    }`}
+                    className="flex items-center justify-center rounded-xl border px-3 py-2.5 text-center text-xs font-bold transition-colors light:border-slate-200 light:text-slate-700 light:hover:bg-slate-100 dark:border-white/10 dark:text-slate-300 dark:hover:bg-white/10"
                   >
                     Giriş Yap
                   </SafeLink>
                   <SafeLink
                     href="/kayit"
                     onClick={() => setIsOpen(false)}
-                    className="flex items-center justify-center rounded-xl bg-gradient-to-r from-brand-primary via-brand-pink to-brand-orange px-3 py-2.5 text-center text-xs font-bold text-white shadow-md transition-transform active:scale-95"
+                    className="flex items-center justify-center rounded-xl bg-gradient-to-r from-brand-primary via-brand-pink to-brand-orange px-3 py-2.5 text-center text-xs font-bold text-white dark:text-white shadow-md transition-transform active:scale-95"
                   >
                     Ücretsiz Kayıt
                   </SafeLink>

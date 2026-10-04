@@ -64,7 +64,7 @@ describe('HomeNavbarNotificationBell Component', () => {
   });
 
   it('bildirim rozetini ve açıldığında sekmeleri render eder', () => {
-    render(<HomeNavbarNotificationBell userId="user-1" isLight={true} />);
+    render(<HomeNavbarNotificationBell userId="user-1" />);
 
     const bellBtn = screen.getByRole('button', { name: /Bildirimler/i });
     expect(bellBtn).toBeInTheDocument();
@@ -80,7 +80,7 @@ describe('HomeNavbarNotificationBell Component', () => {
   });
 
   it('sekmeler arasında filtreleme yapar', () => {
-    render(<HomeNavbarNotificationBell userId="user-1" isLight={true} />);
+    render(<HomeNavbarNotificationBell userId="user-1" />);
     fireEvent.click(screen.getByRole('button', { name: /Bildirimler/i }));
 
     expect(screen.getByText('Yeni Ödev: Çarpanlar ve Katlar')).toBeInTheDocument();
@@ -93,7 +93,7 @@ describe('HomeNavbarNotificationBell Component', () => {
   });
 
   it('bildirime tıklandığında akıllı yönlendirmeyi (deep linking) çalıştırır', async () => {
-    render(<HomeNavbarNotificationBell userId="user-1" isLight={true} />);
+    render(<HomeNavbarNotificationBell userId="user-1" />);
     fireEvent.click(screen.getByRole('button', { name: /Bildirimler/i }));
 
     const assignmentItem = screen.getByText('Yeni Ödev: Çarpanlar ve Katlar');
@@ -106,7 +106,7 @@ describe('HomeNavbarNotificationBell Component', () => {
   });
 
   it('tekil bildirim silme butonuna tıklandığında deleteNotification servisini tetikler', () => {
-    render(<HomeNavbarNotificationBell userId="user-1" isLight={true} />);
+    render(<HomeNavbarNotificationBell userId="user-1" />);
     fireEvent.click(screen.getByRole('button', { name: /Bildirimler/i }));
 
     const deleteBtns = screen.getAllByRole('button', { name: /Bildirimi sil/i });

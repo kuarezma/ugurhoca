@@ -5,10 +5,11 @@ import Image from 'next/image';
 import { Sparkles, Shield, Heart } from 'lucide-react';
 
 type HomeFooterProps = {
-  isLight: boolean;
+  /** @deprecated Ignored: theme classes come from CSS. Kept for callers outside the home feature. */
+  isLight?: boolean;
 };
 
-export function HomeFooter({ isLight: _isLight }: HomeFooterProps) {
+export function HomeFooter(_props: HomeFooterProps) {
   return (
     <footer
       className="border-t border-default dark:border-slate-500/30 mt-12 px-4 pt-12 pb-[calc(5rem+env(safe-area-inset-bottom))] md:pb-12 bg-surface-1 transition-colors duration-300"

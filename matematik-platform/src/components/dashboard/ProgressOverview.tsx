@@ -67,7 +67,7 @@ export default function ProgressOverview({
             <BarChart3 className="h-3.5 w-3.5" />
             Haftalık İlerleme
           </div>
-          <h2 className="text-2xl font-bold text-white">
+          <h2 className="text-2xl font-bold text-slate-900 dark:text-white">
             Hedefini küçük adımlarla kapat
           </h2>
           <p className="mt-1 text-sm text-slate-400">
@@ -78,7 +78,7 @@ export default function ProgressOverview({
           href={detailHref}
           className="group flex h-11 w-11 items-center justify-center rounded-full bg-white/10 transition-colors hover:bg-white/20"
         >
-          <ArrowUpRight className="h-5 w-5 text-white transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+          <ArrowUpRight className="h-5 w-5 text-slate-900 dark:text-white transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
         </Link>
       </div>
 
@@ -94,7 +94,7 @@ export default function ProgressOverview({
             <p className="text-xs font-bold uppercase tracking-[0.18em] text-slate-400">
               {item.label}
             </p>
-            <p className="mt-2 text-lg font-bold text-white">{item.value}</p>
+            <p className="mt-2 text-lg font-bold text-slate-900 dark:text-white">{item.value}</p>
           </div>
         ))}
       </div>
@@ -105,7 +105,7 @@ export default function ProgressOverview({
             <p className="text-xs font-bold uppercase tracking-[0.18em] text-slate-400">
               Haftalık çizgi
             </p>
-            <p className="mt-2 text-3xl font-black text-white">
+            <p className="mt-2 text-3xl font-black text-slate-900 dark:text-white">
               {goalSnapshot.completedMinutes}
               <span className="ml-2 text-base font-semibold text-slate-400">
                 / {goalSnapshot.targetMinutes} dk
@@ -141,7 +141,7 @@ export default function ProgressOverview({
                 <p className="mt-3 text-xs font-bold uppercase tracking-[0.18em] text-slate-400">
                   {day.label}
                 </p>
-                <p className="mt-1 text-sm font-semibold text-white">
+                <p className="mt-1 text-sm font-semibold text-slate-900 dark:text-white">
                   {day.minutes} dk
                 </p>
               </div>
@@ -155,7 +155,7 @@ export default function ProgressOverview({
           <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-emerald-300">
             Güçlü Alan
           </p>
-          <p className="mt-2 text-base font-bold text-white">
+          <p className="mt-2 text-base font-bold text-slate-900 dark:text-white">
             {strongTopic || 'Veri birikiyor'}
           </p>
         </div>
@@ -163,7 +163,7 @@ export default function ProgressOverview({
           <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-amber-300">
             Tekrar Önerisi
           </p>
-          <p className="mt-2 text-base font-bold text-white">
+          <p className="mt-2 text-base font-bold text-slate-900 dark:text-white">
             {focusTopic || 'Şu an belirgin açık görünmüyor'}
           </p>
         </div>

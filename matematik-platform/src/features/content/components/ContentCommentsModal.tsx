@@ -47,14 +47,14 @@ export default function ContentCommentsModal({
         className="glass rounded-3xl p-6 w-full max-w-lg max-h-[80vh] overflow-hidden flex flex-col"
       >
         <div className="flex items-center justify-between mb-4">
-          <h3 id="content-comments-title" className="text-xl font-bold text-white">
+          <h3 id="content-comments-title" className="text-xl font-bold text-slate-900 dark:text-white">
             Yorumlar
           </h3>
           <button
             type="button"
             onClick={onClose}
             aria-label="Kapat"
-            className="text-slate-400 hover:text-white"
+            className="text-slate-400 hover:text-slate-900 dark:hover:text-white"
           >
             <X className="w-6 h-6" />
           </button>
@@ -67,9 +67,9 @@ export default function ContentCommentsModal({
             </p>
           ) : (
             comments.map((comment) => (
-              <div key={comment.id} className="bg-slate-800/50 rounded-lg p-3">
+              <div key={comment.id} className="bg-slate-100 dark:bg-slate-800/50 rounded-lg p-3">
                 <div className="flex items-center gap-2 mb-1">
-                  <span className="text-white font-medium text-sm">
+                  <span className="text-slate-900 dark:text-white font-medium text-sm">
                     {comment.user_name || 'Anonim'}
                   </span>
                   <span className="text-slate-400 text-xs">
@@ -78,7 +78,7 @@ export default function ContentCommentsModal({
                       : '-'}
                   </span>
                 </div>
-                <p className="text-slate-300 text-sm">{comment.content}</p>
+                <p className="text-slate-600 dark:text-slate-300 text-sm">{comment.content}</p>
               </div>
             ))
           )}
@@ -91,11 +91,11 @@ export default function ContentCommentsModal({
               value={newComment}
               onChange={(event) => onNewCommentChange(event.target.value)}
               placeholder="Yorum yaz..."
-              className="flex-1 bg-slate-800 border border-slate-700 rounded-lg px-4 py-2 text-white placeholder-slate-400 focus:outline-none focus:border-purple-500"
+              className="flex-1 bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-lg px-4 py-2 text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:border-purple-500"
             />
             <button
               type="submit"
-              className="px-4 py-2 bg-purple-500 text-white rounded-lg hover:bg-purple-600 transition-colors"
+              className="px-4 py-2 bg-purple-500 text-white dark:text-white rounded-lg hover:bg-purple-600 transition-colors"
             >
               Gönder
             </button>

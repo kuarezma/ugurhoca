@@ -343,14 +343,14 @@ export function PersonalStreakHub({ isLight }: PersonalStreakHubProps) {
               <button
                 type="button"
                 onClick={handleSaveTarget}
-                className="px-4 py-1.5 rounded-xl text-xs font-bold bg-emerald-600 hover:bg-emerald-500 text-white shadow"
+                className="px-4 py-1.5 rounded-xl text-xs font-bold bg-emerald-600 hover:bg-emerald-500 text-white dark:text-white shadow"
               >
                 Kaydet
               </button>
               <button
                 type="button"
                 onClick={() => setIsEditingTarget(false)}
-                className="text-xs text-slate-400 hover:text-white"
+                className="text-xs text-slate-400 hover:text-slate-900 dark:hover:text-white"
               >
                 İptal
               </button>

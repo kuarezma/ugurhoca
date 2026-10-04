@@ -207,7 +207,7 @@ export function QuickFormulaCheatSheetModal({
       role="dialog"
       aria-modal="true"
       aria-label="Hızlı Formül Cep Notu"
-      className="fixed inset-0 z-[160] flex items-center justify-center bg-slate-950/80 p-2 sm:p-4 backdrop-blur-md animate-fade-in"
+      className="fixed inset-0 z-[160] flex items-center justify-center bg-black/70 p-2 sm:p-4 backdrop-blur-md animate-fade-in"
     >
       <div
         className={`w-full max-w-4xl max-h-[90vh] flex flex-col rounded-3xl border shadow-2xl overflow-hidden transition-all ${

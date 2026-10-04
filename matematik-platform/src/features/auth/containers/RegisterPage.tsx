@@ -179,7 +179,7 @@ export default function RegisterPage() {
         <div className="glass animate-fade-up relative z-10 w-full max-w-md rounded-3xl p-10 text-center">
           <Mascot pose="celebrate" size={160} className="mx-auto" />
           <div className="mx-auto mt-4 inline-flex h-16 w-16 animate-pop items-center justify-center rounded-full bg-gradient-to-br from-emerald-400 to-teal-500">
-            <CheckCircle2 className="h-8 w-8 text-white" aria-hidden="true" />
+            <CheckCircle2 className="h-8 w-8 text-white dark:text-white" aria-hidden="true" />
           </div>
           <h2 className="mt-4 font-display text-3xl font-bold text-primary">Harika!</h2>
           <p className="mt-2 text-secondary">
@@ -231,7 +231,7 @@ export default function RegisterPage() {
 
           <div className="glass rounded-3xl border border-default bg-surface-1 p-5 sm:p-8 shadow-brand-glow backdrop-blur-xl">
             <div className="mb-6 flex items-center gap-3">
-              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-brand-primary via-brand-pink to-brand-orange text-white shadow-brand-glow">
+              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-brand-primary via-brand-pink to-brand-orange text-white dark:text-white shadow-brand-glow">
                 <Sparkles className="h-6 w-6" aria-hidden="true" />
               </div>
               <div>

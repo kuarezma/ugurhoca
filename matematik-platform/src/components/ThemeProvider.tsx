@@ -1,6 +1,6 @@
 'use client';
 
-import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
+import { createContext, useCallback, useContext, useMemo, useSyncExternalStore, type ReactNode } from 'react';
 import { THEME_STORAGE_KEY } from '@/components/theme-constants';
 
 type Theme = 'dark' | 'light';
@@ -19,22 +19,30 @@ const applyTheme = (theme: Theme) => {
   document.documentElement.classList.toggle('light', theme === 'light');
 };
 
-export function ThemeProvider({ children }: { children: ReactNode }) {
-  const [theme, setThemeState] = useState<Theme>('dark');
+// The inline script in the root layout writes data-theme before first paint, so
+// the attribute is the source of truth. The server cannot see it: hydration
+// renders with the server snapshot and React re-renders with the real theme
+// right after, which avoids hydration mismatches in components that still pick
+// classes from `theme` in JS.
+const readTheme = (): Theme =>
+  document.documentElement.dataset.theme === 'light' ? 'light' : 'dark';
 
-  useEffect(() => {
-    const savedTheme = window.localStorage.getItem(THEME_STORAGE_KEY);
-    const nextTheme: Theme =
-      savedTheme === 'light' || document.documentElement.dataset.theme === 'light'
-        ? 'light'
-        : 'dark';
-    setThemeState(nextTheme);
-    applyTheme(nextTheme);
-  }, []);
+const readServerTheme = (): Theme => 'dark';
+
+const subscribeToTheme = (onChange: () => void) => {
+  const observer = new MutationObserver(onChange);
+  observer.observe(document.documentElement, {
+    attributes: true,
+    attributeFilter: ['data-theme'],
+  });
+  return () => observer.disconnect();
+};
+
+export function ThemeProvider({ children }: { children: ReactNode }) {
+  const theme = useSyncExternalStore(subscribeToTheme, readTheme, readServerTheme);
 
   const setTheme = useCallback((nextTheme: Theme) => {
     const update = () => {
-      setThemeState(nextTheme);
       applyTheme(nextTheme);
       window.localStorage.setItem(THEME_STORAGE_KEY, nextTheme);
     };

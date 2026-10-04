@@ -43,10 +43,10 @@ export default function ImageViewerLightbox({
       aria-modal="true"
       aria-label={alt}
       style={{ overscrollBehavior: 'contain' }}
-      className="fixed inset-0 z-[160] flex flex-col bg-slate-950/92 backdrop-blur-md overscroll-contain"
+      className="fixed inset-0 z-[160] flex flex-col bg-black/90 backdrop-blur-md overscroll-contain"
     >
       {/* Kontrol Çubuğu */}
-      <div className="flex items-center justify-between border-b border-white/10 bg-slate-900/80 px-4 py-3 text-white">
+      <div className="flex items-center justify-between border-b border-white/10 bg-black/60 px-4 py-3 text-white dark:text-white">
         <div className="flex items-center gap-2 truncate pr-2 text-sm font-semibold">
           <span className="truncate">{alt}</span>
           <span className="rounded-full bg-white/10 px-2 py-0.5 text-xs text-slate-300">

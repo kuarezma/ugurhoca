@@ -102,7 +102,7 @@ export const WeeklyGrowthReportCard: React.FC<WeeklyGrowthReportCardProps> = ({
         <div className="flex flex-wrap items-center gap-2.5">
           <Link
             href="/testler"
-            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-violet-600 hover:bg-violet-500 text-white text-xs font-bold transition-all shadow-lg shadow-violet-500/25 hover:scale-[1.02] active:scale-[0.98]"
+            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-violet-600 hover:bg-violet-500 text-white dark:text-white text-xs font-bold transition-all shadow-lg shadow-violet-500/25 hover:scale-[1.02] active:scale-[0.98]"
           >
             <FileCheck2 className="w-3.5 h-3.5" />
             <span>Test Çöz</span>

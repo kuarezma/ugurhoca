@@ -669,7 +669,7 @@ export function SupportChatPanel({
               />
             ) : (
               <div
-                className="flex h-9 w-9 items-center justify-center rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 text-xs font-bold text-white shadow-sm"
+                className="flex h-9 w-9 items-center justify-center rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 text-xs font-bold text-white dark:text-white shadow-sm"
                 aria-hidden
               >
                 {(peerDisplayName.trim()[0] || '?').toUpperCase()}
@@ -1236,7 +1236,7 @@ export function SupportChatPanel({
                 type="button"
                 onClick={stopRecordingAndSend}
                 aria-label="Kaydı tamamla ve gönder"
-                className="rounded-lg bg-red-500 p-1.5 text-white hover:bg-red-600 transition"
+                className="rounded-lg bg-red-500 p-1.5 text-white dark:text-white hover:bg-red-600 transition"
               >
                 <Square className="h-3.5 w-3.5 fill-current" />
               </button>
