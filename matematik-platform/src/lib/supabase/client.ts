@@ -2,6 +2,26 @@ import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 
 import { trackRecoverySession } from '@/lib/auth-recovery';
 
+/**
+ * supabase-js'in oturumu tuttuğu localStorage anahtarı. Değer SDK varsayılanıyla
+ * aynıdır (`sb-<proje-ref>-auth-token`), böylece mevcut oturumlar korunur; burada
+ * açıkça yapılandırılır ki SDK atlanarak yerel oturum silinmesi gerektiğinde
+ * (bkz. auth-client signOutClient) aynı anahtar kullanılsın.
+ */
+export const getSupabaseAuthStorageKey = (
+  supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL,
+) => {
+  if (!supabaseUrl) {
+    return null;
+  }
+
+  try {
+    return `sb-${new URL(supabaseUrl).hostname.split('.')[0]}-auth-token`;
+  } catch {
+    return null;
+  }
+};
+
 let browserClient:
   | SupabaseClient
   | undefined;
@@ -20,10 +40,9 @@ const createBrowserSupabaseClient = () => {
     );
   }
 
-  browserClient = createClient(
-    supabaseUrl,
-    supabaseAnonKey,
-  ) as SupabaseClient;
+  browserClient = createClient(supabaseUrl, supabaseAnonKey, {
+    auth: { storageKey: getSupabaseAuthStorageKey(supabaseUrl) ?? undefined },
+  }) as SupabaseClient;
 
   // Sayfa mount olmadan gelen recovery olayını da yakala (SDK hash'i temizler).
   browserClient.auth.onAuthStateChange(trackRecoverySession);

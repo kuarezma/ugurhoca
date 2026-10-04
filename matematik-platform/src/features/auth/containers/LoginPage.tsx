@@ -23,6 +23,9 @@ import { Button } from '@/components/ui/Button';
 
 const log = createLogger('login-page');
 
+const SESSION_START_ERROR =
+  'Oturum başlatılamadı, lütfen birkaç saniye sonra tekrar deneyin.';
+
 const getTargetRedirect = () => {
   if (typeof window === 'undefined') return '/profil';
   const searchParams = new URLSearchParams(window.location.search);
@@ -46,8 +49,11 @@ export default function LoginPage() {
     const checkSession = async () => {
       const session = await getClientSession();
       if (session) {
-        if (session.access_token) {
-          writeAccessTokenCookie(session.access_token);
+        // Proxy korumalı rotada HttpOnly çerezi arar; yönlendirmeden önce yazılsın.
+        // Yazılamazsa yönlendirme proxy'den /giris'e geri döner (ör. 429'da döngü).
+        if (session.access_token && !(await writeAccessTokenCookie(session.access_token))) {
+          setError(SESSION_START_ERROR);
+          return;
         }
         router.push(getTargetRedirect());
       }
@@ -109,8 +115,12 @@ export default function LoginPage() {
       if (signInError) throw signInError;
 
       clearUserProfileCache();
-      if (signInData?.session?.access_token) {
-        writeAccessTokenCookie(signInData.session.access_token);
+      if (
+        signInData?.session?.access_token &&
+        !(await writeAccessTokenCookie(signInData.session.access_token))
+      ) {
+        setError(SESSION_START_ERROR);
+        return;
       }
       await syncCurrentUserSnapshotCookie();
 
