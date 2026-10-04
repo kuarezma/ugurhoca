@@ -1,0 +1,1 @@
+select (to_regclass('public.live_lessons') is not null) and not exists (select 1 from information_schema.columns where table_schema='public' and table_name='live_lessons' and column_name='target_student_ids') as ok;

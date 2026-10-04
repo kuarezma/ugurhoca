@@ -13,7 +13,9 @@ it('adds an idempotent late column and unique constraint without deleting duplic
     .replace(/--[^\n]*/g, '')
     .replace(/\s+/g, ' ')
     .trim();
-  expect(sql).toContain("SET LOCAL lock_timeout = '5s'");
+  expect(sql).toContain("SET lock_timeout = '5s'");
+  // The runner owns the transaction; an inner COMMIT would end it early.
+  expect(sql).not.toMatch(/\b(BEGIN|COMMIT)\s*;/i);
   expect(sql).toMatch(
     /ADD COLUMN IF NOT EXISTS late boolean NOT NULL DEFAULT false/i,
   );

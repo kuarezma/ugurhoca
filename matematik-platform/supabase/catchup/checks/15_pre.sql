@@ -1,0 +1,1 @@
+select (to_regclass('public.assignment_submissions') is not null) and not exists (select 1 from public.assignment_submissions group by assignment_id, student_id having count(*) > 1) as ok, (select count(*) from public.assignment_submissions) as submissions;

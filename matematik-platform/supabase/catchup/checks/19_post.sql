@@ -1,0 +1,1 @@
+select (public.live_lesson_normalize_grade('0'::jsonb) = 'Mezun' and public.live_lesson_normalize_grade('"0"'::jsonb) = 'Mezun' and public.live_lesson_normalize_grade('7'::jsonb) = '7' and public.live_lesson_normalize_grade('"Mezun"'::jsonb) = 'Mezun') as ok;

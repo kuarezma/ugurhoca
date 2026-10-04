@@ -1,0 +1,1 @@
+select exists (select 1 from information_schema.columns where table_schema='public' and table_name='live_lessons' and column_name='target_student_ids') and exists (select 1 from pg_indexes where schemaname='public' and indexname='live_lessons_target_student_ids_idx') as ok;

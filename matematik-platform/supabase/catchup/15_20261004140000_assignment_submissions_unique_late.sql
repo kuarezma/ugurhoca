@@ -1,3 +1,5 @@
+-- catchup: BİREBİR KOPYA — kaynak supabase/migrations/20261004140000_assignment_submissions_unique_late.sql (bu dal)
+-- catchup: "-- catchup" ile işaretli satırlar dışında kaynakla aynıdır (verify-copies.sh).
 -- No BEGIN/COMMIT: the runner (supabase CLI or the operator) owns the
 -- transaction; a nested BEGIN only warns and an inner COMMIT would end it early.
 SET lock_timeout = '5s';
