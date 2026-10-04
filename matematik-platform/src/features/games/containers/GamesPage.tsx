@@ -1,12 +1,20 @@
 'use client';
 
-import { useCallback, useState, type FormEvent } from 'react';
+import {
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  type FormEvent,
+} from 'react';
 import { useRouter } from 'next/navigation';
 import { Gamepad2, ShieldCheck, X } from 'lucide-react';
 import { GamesLandingView } from '@/features/games/components/GamesLandingView';
 import { SelectedGameView } from '@/features/games/components/SelectedGameView';
 import { useGamesPageData } from '@/features/games/hooks/useGamesPageData';
 import type { GameDefinition } from '@/features/games/types';
+import { useToast } from '@/components/Toast';
+import { games } from '@/features/games/components/gameLibrary';
 import { Skeleton } from '@/components/ui/Skeleton';
 
 const GAME_SCORE_MULTIPLIER = 1;
@@ -51,7 +59,9 @@ function GameAliasModal({
             <ShieldCheck className="h-6 w-6" aria-hidden="true" />
           </div>
           <div>
-            <h2 className="text-lg font-bold text-primary">Oyun rumuzunu seç</h2>
+            <h2 className="text-lg font-bold text-primary">
+              Oyun rumuzunu seç
+            </h2>
             <p className="text-xs text-secondary">
               Liderlik tablosunda gerçek adın görünmez.
             </p>
@@ -71,7 +81,11 @@ function GameAliasModal({
         <p className="mt-2 text-xs leading-relaxed text-secondary">
           3-16 karakter. E-posta, telefon, link veya gerçek ad kullanılmaz.
         </p>
-        {error ? <p className="mt-3 text-xs text-accent-danger-ink font-semibold">{error}</p> : null}
+        {error ? (
+          <p className="mt-3 text-xs text-accent-danger-ink font-semibold">
+            {error}
+          </p>
+        ) : null}
         <button
           type="submit"
           disabled={saving || alias.trim().length < 3}
@@ -88,6 +102,8 @@ export default function GamesPage() {
   const [selectedGame, setSelectedGame] = useState<GameDefinition | null>(null);
   const [aliasModalDismissed, setAliasModalDismissed] = useState(false);
   const router = useRouter();
+  const { warning } = useToast();
+  const deepLinkChecked = useRef(false);
   const {
     aliasError,
     aliasSaving,
@@ -102,11 +118,37 @@ export default function GamesPage() {
     user,
   } = useGamesPageData(router);
 
+  useEffect(() => {
+    if (loading || !user || deepLinkChecked.current) return;
+    deepLinkChecked.current = true;
+    const gameId = new URLSearchParams(window.location.search).get('id');
+    if (gameId !== null && !games.some((game) => String(game.id) === gameId)) {
+      warning(
+        'Bağlantıdaki oyun bulunamadı. Oyun listesinden bir oyun seçebilirsin.',
+      );
+    }
+  }, [loading, user, warning]);
+
+  const dismissAliasModal = () => {
+    setAliasModalDismissed(true);
+    warning(
+      'Skorların rumuz seçene kadar bu sayfada bekletilecek. Sayfadan ayrılmadan rumuzunu kaydet.',
+      {
+        action: {
+          label: 'Rumuz seç',
+          onClick: () => setAliasModalDismissed(false),
+        },
+        durationMs: 0,
+      },
+    );
+  };
+
   const handleScore = useCallback(
     async (score: number) => {
+      if (score > 0 && !gameAlias) setAliasModalDismissed(false);
       await recordScore(score, selectedGame);
     },
-    [recordScore, selectedGame],
+    [gameAlias, recordScore, selectedGame],
   );
 
   if (loading || !user) {
@@ -148,7 +190,7 @@ export default function GamesPage() {
         {!gameAlias && !aliasModalDismissed && (
           <GameAliasModal
             error={aliasError}
-            onClose={() => setAliasModalDismissed(true)}
+            onClose={dismissAliasModal}
             onSubmit={submitAlias}
             saving={aliasSaving}
           />
@@ -170,7 +212,7 @@ export default function GamesPage() {
       {!gameAlias && !aliasModalDismissed && (
         <GameAliasModal
           error={aliasError}
-          onClose={() => setAliasModalDismissed(true)}
+          onClose={dismissAliasModal}
           onSubmit={submitAlias}
           saving={aliasSaving}
         />

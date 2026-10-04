@@ -5,7 +5,7 @@ import { motion } from 'framer-motion';
 import { Play, RotateCcw } from 'lucide-react';
 import type { GameComponentProps } from '@/features/games/types';
 
-const mathTerms = [
+export const mathTerms = [
   'ÇARPIM',
   'BÖLÜM',
   'FAKTÖRİYEL',
@@ -120,7 +120,7 @@ export function Hangman({ onScore, scoreMultiplier }: GameComponentProps) {
 
   const startGame = () => {
     const index = Math.floor(Math.random() * mathTerms.length);
-    setWord(mathTerms[index]);
+    setWord(mathTerms[index].toLocaleUpperCase('tr-TR'));
     setGuessed(new Set());
     setScore(0);
     setRound(1);
@@ -130,7 +130,9 @@ export function Hangman({ onScore, scoreMultiplier }: GameComponentProps) {
   const getDisplay = () =>
     word
       .split('')
-      .map((character) => (guessed.has(character) ? character : '_'))
+      .map((character) =>
+        !/\p{L}/u.test(character) || guessed.has(character) ? character : '_',
+      )
       .join(' ');
 
   const wrongCount = [...guessed].filter(
@@ -148,7 +150,9 @@ export function Hangman({ onScore, scoreMultiplier }: GameComponentProps) {
 
     const nextWon = word
       .split('')
-      .every((character) => nextGuessed.has(character));
+      .every(
+        (character) => !/\p{L}/u.test(character) || nextGuessed.has(character),
+      );
     const nextWrongCount = [...nextGuessed].filter(
       (character) => !word.includes(character),
     ).length;
@@ -165,7 +169,7 @@ export function Hangman({ onScore, scoreMultiplier }: GameComponentProps) {
       setTimeout(() => {
         setRound((currentRound) => currentRound + 1);
         const index = Math.floor(Math.random() * mathTerms.length);
-        setWord(mathTerms[index]);
+        setWord(mathTerms[index].toLocaleUpperCase('tr-TR'));
         setGuessed(new Set());
         setGameState('playing');
       }, 1500);

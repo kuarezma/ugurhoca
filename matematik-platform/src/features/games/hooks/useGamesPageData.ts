@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import type { AppUser } from '@/types';
 import type {
   GameAlias,
@@ -31,6 +31,8 @@ export const useGamesPageData = (router: RouterLike) => {
   const [gameAlias, setGameAlias] = useState<GameAlias | null>(null);
   const [aliasSaving, setAliasSaving] = useState(false);
   const [aliasError, setAliasError] = useState<string | null>(null);
+
+  const pendingScores = useRef<Parameters<typeof insertGameScore>[0][]>([]);
 
   const refreshLeaderboard = useCallback(
     async (period: LeaderboardPeriod = leaderboardPeriod) => {
@@ -65,6 +67,16 @@ export const useGamesPageData = (router: RouterLike) => {
       setAliasError(null);
       try {
         const nextAlias = await saveGameAlias(alias);
+        // Remove only saved entries so a failed submission can be retried.
+        while (pendingScores.current.length > 0) {
+          const isSaved = await insertGameScore(pendingScores.current[0]);
+          if (!isSaved) {
+            throw new Error(
+              'Bekleyen skor kaydedilemedi. Lütfen tekrar deneyin.',
+            );
+          }
+          pendingScores.current.shift();
+        }
         setGameAlias(nextAlias);
         await refreshLeaderboard();
         return true;
@@ -82,15 +94,17 @@ export const useGamesPageData = (router: RouterLike) => {
     async (score: number, game: GameDefinition | null) => {
       setTotalScore((currentScore) => currentScore + score);
 
-      if (score <= 0 || !user || !game || !gameAlias) {
+      if (score <= 0 || !user || !game) {
         return;
       }
 
-      const isSaved = await insertGameScore({
-        gameId: game.id,
-        score,
-        user,
-      });
+      const payload = { gameId: game.id, score, user };
+      if (!gameAlias) {
+        pendingScores.current.push(payload);
+        return;
+      }
+
+      const isSaved = await insertGameScore(payload);
 
       if (isSaved) {
         await refreshLeaderboard();

@@ -71,6 +71,10 @@ export const loadGamesLeaderboard = async (
 
   if (error) {
     if (isMissingSchemaError(error)) {
+      // The legacy view has no dated scores, only all-time aggregates.
+      if (period !== 'all') {
+        return [];
+      }
       const { data: legacyData, error: legacyError } = await supabase
         .from('global_leaderboard')
         .select('*');
