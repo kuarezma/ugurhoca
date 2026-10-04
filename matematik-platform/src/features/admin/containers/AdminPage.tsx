@@ -28,11 +28,13 @@ import {
   ExternalLink,
   Send,
   GraduationCap,
+  User,
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { signOutClient } from '@/lib/auth-client';
 import { useToast } from '@/components/Toast';
 import { ThemeToggle } from '@/components/ThemeToggle';
+import { ThemeSelectorDropdown } from '@/components/ThemeSelectorDropdown';
 import { useAdminListActions } from '@/features/admin/hooks/useAdminListActions';
 import { useAdminModalState } from '@/features/admin/hooks/useAdminModalState';
 import { useAdminModalSubmitHandlers } from '@/features/admin/hooks/useAdminModalSubmitHandlers';
@@ -917,31 +919,42 @@ export default function AdminPage() {
           <div className="flex shrink-0 items-center gap-2 sm:gap-3">
             <Link
               href="/"
-              className="hidden md:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-slate-200 dark:border-white/10 bg-slate-100/80 dark:bg-white/5 text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200/70 dark:hover:bg-white/10 transition-colors text-xs font-semibold"
+              className="hidden md:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-slate-200 bg-white text-slate-700 hover:text-slate-900 hover:bg-slate-100 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-300 dark:hover:text-white dark:hover:bg-slate-800 transition-colors text-xs font-semibold h-9"
             >
               <Globe className="w-3.5 h-3.5 text-cyan-500 dark:text-cyan-400" />
               Siteyi Gör
             </Link>
 
+            <Link
+              href="/profil"
+              className="hidden md:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-slate-200 bg-white text-slate-700 hover:text-slate-900 hover:bg-slate-100 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-300 dark:hover:text-white dark:hover:bg-slate-800 transition-colors text-xs font-semibold h-9"
+              title="Kullanıcı / Öğrenci Profiline Git"
+            >
+              <User className="w-3.5 h-3.5 text-indigo-500 dark:text-indigo-400" />
+              Profilim
+            </Link>
+
             <button
               type="button"
               onClick={() => setIsSpotlightOpen(true)}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-slate-200 dark:border-white/10 bg-slate-100/80 dark:bg-white/5 text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200/70 dark:hover:bg-white/10 transition-colors text-xs font-semibold h-9"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-slate-200 bg-white text-slate-700 hover:text-slate-900 hover:bg-slate-100 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-300 dark:hover:text-white dark:hover:bg-slate-800 transition-colors text-xs font-semibold h-9"
               title="Hızlı Ara (⌘K)"
             >
               <Search className="w-3.5 h-3.5 text-cyan-500 dark:text-cyan-400" />
               <span className="hidden sm:inline">Hızlı Ara</span>
-              <kbd className="hidden md:inline rounded bg-slate-200/80 dark:bg-white/10 px-1.5 py-0.5 text-[10px] font-mono text-slate-600 dark:text-slate-400">
+              <kbd className="hidden md:inline rounded bg-slate-100 dark:bg-slate-800 px-1.5 py-0.5 text-[10px] font-mono text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700">
                 ⌘K
               </kbd>
             </button>
 
-            <ThemeToggle compact className="h-9 w-9 rounded-xl border-slate-200 dark:border-white/10 bg-slate-100/80 dark:bg-white/5 hover:bg-slate-200/70 dark:hover:bg-white/10" />
+            <ThemeSelectorDropdown buttonClassName="h-9 px-3 rounded-xl border border-slate-200 bg-white text-slate-700 hover:text-slate-900 hover:bg-slate-100 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-300 dark:hover:text-white dark:hover:bg-slate-800" />
+
+            <ThemeToggle compact className="h-9 w-9 rounded-xl border-slate-200 bg-white hover:bg-slate-100 text-slate-700 hover:text-slate-900 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-white" />
 
             <button
               onClick={() => setShowNotifications((v) => !v)}
               aria-label="Bildirimler"
-              className="relative h-9 w-9 flex items-center justify-center rounded-xl border border-slate-200 dark:border-white/10 bg-slate-100/80 dark:bg-white/5 text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200/70 dark:hover:bg-white/10 transition-colors"
+              className="relative h-9 w-9 flex items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-700 hover:text-slate-900 hover:bg-slate-100 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-300 dark:hover:text-white dark:hover:bg-slate-800 transition-colors"
             >
               <Bell className="w-4 h-4" />
               {unreadNotifications.length > 0 && (
@@ -951,7 +964,7 @@ export default function AdminPage() {
               )}
             </button>
 
-            <div className="h-5 w-px bg-slate-200 dark:bg-white/10 mx-0.5 hidden sm:block" />
+            <div className="h-5 w-px bg-slate-200 dark:bg-slate-800 mx-0.5 hidden sm:block" />
 
             <button
               onClick={handleLogout}

@@ -20,6 +20,7 @@ vi.mock('@/components/Toast', () => ({
   useToast: () => ({ showToast: ui.showToast }),
 }));
 vi.mock('@/components/ThemeToggle', () => ({ ThemeToggle: () => null }));
+vi.mock('@/components/ThemeSelectorDropdown', () => ({ ThemeSelectorDropdown: () => null }));
 vi.mock('@/features/admin/queries', () => ({
   loadAdminDashboardData: vi.fn(),
   loadGoogleDriveConnectionStatus: vi.fn(),

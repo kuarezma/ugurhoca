@@ -6,6 +6,7 @@ import { LogOut, Menu, X } from 'lucide-react';
 import { useState } from 'react';
 import { SafeLink } from '@/components/SafeLink';
 import { ThemeToggle } from '@/components/ThemeToggle';
+import { ThemeSelectorDropdown } from '@/components/ThemeSelectorDropdown';
 import { HOME_CATEGORIES } from '@/features/home/constants';
 import { HomeNavbarMessagesButton } from '@/features/home/components/HomeNavbarMessagesButton';
 import { HomeNavbarNotificationBell } from '@/features/home/components/HomeNavbarNotificationBell';
@@ -63,6 +64,7 @@ export function HomeNavbar({ onLogout, user }: HomeNavbarProps) {
           </SafeLink>
 
           <div className="hidden shrink-0 items-center gap-2 lg:flex">
+            <ThemeSelectorDropdown />
             <ThemeToggle compact />
             {showMessages && user?.id ? (
               <HomeNavbarMessagesButton
@@ -160,8 +162,9 @@ export function HomeNavbar({ onLogout, user }: HomeNavbarProps) {
             <div
               className="mt-3 border-t pt-3 light:border-slate-200 dark:border-white/10"
             >
-              <div className="mb-3">
-                <ThemeToggle className="w-full justify-center" />
+              <div className="mb-3 flex items-center gap-2">
+                <ThemeSelectorDropdown className="flex-1" buttonClassName="w-full h-11 justify-center" align="left" />
+                <ThemeToggle compact className="shrink-0" />
               </div>
               {user ? (
                 <>
@@ -172,6 +175,15 @@ export function HomeNavbar({ onLogout, user }: HomeNavbarProps) {
                   >
                     {user.isAdmin ? 'Admin Paneli' : 'Öğrenci Profili'}
                   </SafeLink>
+                  {user.isAdmin && (
+                    <SafeLink
+                      href="/profil"
+                      onClick={() => setIsOpen(false)}
+                      className="block rounded-xl px-3.5 py-2.5 text-sm font-semibold light:text-slate-700 light:hover:bg-slate-100 light:hover:text-slate-900 dark:text-slate-300 dark:hover:bg-white/10 dark:hover:text-white"
+                    >
+                      Kullanıcı / Öğrenci Profili
+                    </SafeLink>
+                  )}
                   <button
                     type="button"
                     onClick={() => {
