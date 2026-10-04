@@ -90,18 +90,6 @@ const nextConfig = {
         headers: globalSecurityHeaders,
       },
       {
-        // Tüm HTML rotaları: Anında yükleme ve arka planda bayatlık kontrolü (SWR)
-        source:
-          '/((?!api|_next/static|_next/image|favicon.ico|icon.svg|icon-512.png|apple-icon.png).*)',
-        headers: [
-          {
-            key: 'Cache-Control',
-            value:
-              'public, max-age=0, must-revalidate, stale-while-revalidate=60',
-          },
-        ],
-      },
-      {
         // Statik medya ve yazı tipleri (Fonts / Icons / WebP / AVIF)
         source: '/:path*.(png|jpg|jpeg|webp|avif|svg|ico|woff|woff2)',
         headers: [
