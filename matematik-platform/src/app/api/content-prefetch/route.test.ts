@@ -35,12 +35,22 @@ describe('Content Prefetch Route (/api/content-prefetch)', () => {
       documents: [{ id: 'doc-1' }, { id: 'doc-2' }],
     });
 
-    const req = new Request('https://ugurhoca.com/api/content-prefetch?type=worksheet');
-    const res = await GET(req);
-    expect(res.status).toBe(200);
-    const body = await res.json();
+    const req = new Request('http://localhost/api/content-prefetch?type=yaprak-test');
+    const response = await GET(req);
+
+    expect(response.status).toBe(200);
+    expect(response.headers.get('Cache-Control')).toBe('private, no-cache');
+    expect(response.headers.get('Vary')).toBe('Cookie');
+    expect(mockLoadInitialContentDocuments).toHaveBeenCalledWith(
+      1,
+      5,
+      '5',
+      'yaprak-test',
+    );
+    const body = await response.json();
     expect(body.data.count).toBe(2);
     expect(body.data.grade).toBe('5');
+    expect(body.data.documents).toEqual([{ id: 'doc-1' }, { id: 'doc-2' }]);
   });
 
   it('hata oluştuğunda ham error.message sızdırılmaz, genel Türkçe mesaj döner ve logger çağrılır', async () => {

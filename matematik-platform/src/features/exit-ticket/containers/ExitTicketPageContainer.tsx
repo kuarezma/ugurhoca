@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, startTransition } from 'react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import {
@@ -19,9 +19,14 @@ import {
   createExitTicketSession,
 } from '../lib/exitTicketStorage';
 import { EXIT_TICKET_TEMPLATES } from '../lib/exitTicketTemplates';
-import { ExitTicketTeacherPresenter } from '../components/ExitTicketTeacherPresenter';
+import dynamic from 'next/dynamic';
+
 import { ExitTicketStudentPad } from '../components/ExitTicketStudentPad';
 import { ExitTicketCreateModal } from '../components/ExitTicketCreateModal';
+
+const ExitTicketTeacherPresenter = dynamic(() =>
+  import('../components/ExitTicketTeacherPresenter').then((module) => module.ExitTicketTeacherPresenter),
+);
 
 export function ExitTicketPageContainer() {
   const searchParams = useSearchParams();
@@ -48,12 +53,12 @@ export function ExitTicketPageContainer() {
       template.grade,
       template.questions,
     );
-    setCurrentSession(session);
+    startTransition(() => setCurrentSession(session));
     setActiveTab('teacher');
   };
 
   const handleSelectSavedSession = (session: ExitTicketSession) => {
-    setCurrentSession(session);
+    startTransition(() => setCurrentSession(session));
     setActiveTab('teacher');
   };
 
@@ -264,7 +269,7 @@ export function ExitTicketPageContainer() {
         isOpen={isCreateModalOpen}
         onClose={() => setIsCreateModalOpen(false)}
         onSessionCreated={(session) => {
-          setCurrentSession(session);
+          startTransition(() => setCurrentSession(session));
           setSavedSessions(getSavedSessions());
           setActiveTab('teacher');
         }}

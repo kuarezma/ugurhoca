@@ -1,7 +1,7 @@
 'use client';
 
 import dynamic from 'next/dynamic';
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
 import {
@@ -181,6 +181,7 @@ export default function AdminPage() {
   const RETENTION_DAYS = 180;
   const { showToast } = useToast();
   const [user, setUser] = useState<AdminUser | null>(null);
+  const adminUserIdRef = useRef<string | null>(null);
   const [activeTab, setActiveTab] = useState<AdminActiveTab>('statistics');
   const [tabCategory, setTabCategory] = useState<
     'all' | 'general' | 'education' | 'curriculum'
@@ -362,10 +363,10 @@ export default function AdminPage() {
   const loadData = useCallback(
     async (adminUserId?: string | null) => {
       applyDashboardData(
-        await loadAdminDashboardData(RETENTION_DAYS, adminUserId ?? user?.id),
+        await loadAdminDashboardData(RETENTION_DAYS, adminUserId ?? adminUserIdRef.current),
       );
     },
-    [RETENTION_DAYS, applyDashboardData, user?.id],
+    [RETENTION_DAYS, applyDashboardData],
   );
 
   const refreshGoogleDriveConnection = useCallback(async () => {
@@ -503,9 +504,10 @@ export default function AdminPage() {
         return;
       }
 
+      adminUserIdRef.current = authResult.user.id;
       setUser(authResult.user);
-      await loadData(authResult.user.id);
       await Promise.all([
+        loadData(authResult.user.id),
         refreshGoogleDriveConnection(),
         refreshWorksheetSourceStatus(),
       ]);
@@ -542,9 +544,11 @@ export default function AdminPage() {
 
   // Kullanıcı listesini görünür sekmede periyodik olarak yenile
   useEffect(() => {
+    if (!user?.id) return;
+
     const interval = setInterval(() => {
       void refreshUsers();
-    }, 30000);
+    }, 120000);
 
     const handleVisibilityChange = () => {
       if (document.visibilityState === 'visible') {
@@ -558,7 +562,7 @@ export default function AdminPage() {
       clearInterval(interval);
       document.removeEventListener('visibilitychange', handleVisibilityChange);
     };
-  }, [refreshUsers]);
+  }, [refreshUsers, user?.id]);
 
   useEffect(() => {
     if (!activeStudentProfileId || !activeStudentProfileUser) {

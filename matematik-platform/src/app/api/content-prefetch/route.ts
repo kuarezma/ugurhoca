@@ -23,12 +23,11 @@ export async function GET(request: Request) {
       type,
     );
 
-    return apiOk<ContentPrefetchPayload>({
-      count,
-      documents,
-      grade,
-      type,
-    });
+    // Sınıf oturum çerezinden gelir; ortak CDN önbelleğine giremez.
+    return apiOk<ContentPrefetchPayload>(
+      { count, documents, grade, type },
+      { headers: { 'Cache-Control': 'private, no-cache', Vary: 'Cookie' } },
+    );
   } catch (error) {
     log.error('İçerik ön yükleme sırasında hata oluştu', error);
     return apiError(

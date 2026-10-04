@@ -1,7 +1,7 @@
 'use client';
 
+import { useState, useEffect, useCallback, useMemo, useRef, startTransition } from 'react';
 import { toStoredGrade } from '@/lib/grade';
-import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import {
@@ -20,7 +20,6 @@ import {
   Minimize2,
   WifiOff,
   BookOpen,
-  Printer,
   Keyboard,
   Volume2,
   VolumeX,
@@ -36,10 +35,8 @@ import {
 import { useRouter, useSearchParams } from 'next/navigation';
 import dynamic from 'next/dynamic';
 import { useToast } from '@/components/Toast';
-import MathText from '@/components/MathText';
 import { fireConfetti } from '@/components/ConfettiBurst';
 import { QuizQuestionPalette } from '@/features/quizzes/components/QuizQuestionPalette';
-import { QuestionHintLadder } from '@/features/quizzes/components/QuestionHintLadder';
 import { QuizPacingCoach } from '@/features/quizzes/components/QuizPacingCoach';
 import { useQuestionSpeech } from '@/features/quizzes/hooks/useQuestionSpeech';
 import { QuestionDrawingOverlay } from '@/features/quizzes/components/QuestionDrawingOverlay';
@@ -166,7 +163,6 @@ import { userScopedStorage } from '@/lib/userScopedStorage';
 import { incrementQuestionsSolved } from '@/lib/dailyGoalStorage';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { Skeleton } from '@/components/ui/Skeleton';
-import { QuizResultsView } from '@/features/quizzes/components/QuizResultsView';
 import { getCurrentUserProfile } from '@/lib/auth-client';
 import { getErrorMessage } from '@/lib/error-utils';
 import { createLogger } from '@/lib/logger';
@@ -176,6 +172,16 @@ import { trackStudentActivityEvent } from '@/features/analytics/trackActivity';
 
 const log = createLogger('tests-page');
 import { Quiz, QuizQuestion } from '@/types/quiz';
+import { QuizListCard, getDifficultyColor } from '@/features/quizzes/components/QuizListCard';
+
+// SSR açık; geçiş sırasında mevcut ekran matematik chunk'ı hazır olana kadar korunur.
+const MathText = dynamic(() => import('@/components/MathText'));
+const QuestionHintLadder = dynamic(() =>
+  import('@/features/quizzes/components/QuestionHintLadder').then((m) => m.QuestionHintLadder),
+);
+const QuizResultsView = dynamic(() =>
+  import('@/features/quizzes/components/QuizResultsView').then((m) => m.QuizResultsView),
+);
 import type { AppUser } from '@/types';
 
 type TestsPageProps = {
@@ -536,7 +542,7 @@ export default function TestsPage({
       if (!success) return;
 
       setSelectedQuiz(targetQuiz);
-      setQuizStarted(true);
+      startTransition(() => setQuizStarted(true));
       setCurrentQuestion(draft.currentQuestion);
       setAnswers(draft.answers || {});
       setSelectedAnswer(draft.answers[draft.currentQuestion] ?? null);
@@ -569,7 +575,7 @@ export default function TestsPage({
       if (!success) return;
 
       setSelectedQuiz(quiz);
-      setQuizStarted(true);
+      startTransition(() => setQuizStarted(true));
       setCurrentQuestion(0);
       setAnswers({});
       setSelectedAnswer(null);
@@ -607,13 +613,13 @@ export default function TestsPage({
     }
   }, [quizIdParam, topicParam, quizzes, quizStarted, startQuiz]);
 
-  const handleOpenWorksheetPreview = async (quiz: Quiz) => {
+  const handleOpenWorksheetPreview = useCallback(async (quiz: Quiz) => {
     setSelectedQuiz(quiz);
     const success = await loadQuizQuestions(quiz.id);
     if (success) {
       setIsWorksheetModalOpen(true);
     }
-  };
+  }, [loadQuizQuestions]);
 
   const selectAnswer = (index: number, targetQuestionIndex?: number) => {
     const qIdx = targetQuestionIndex !== undefined ? targetQuestionIndex : currentQuestion;
@@ -683,7 +689,7 @@ export default function TestsPage({
     setAnswers({});
     setSelectedAnswer(null);
     setShowResult(false);
-    setQuizStarted(true);
+    startTransition(() => setQuizStarted(true));
     setStartTime(Date.now());
     setTimeLeft(mistakeQuestions.length * 90);
     setFlaggedQuestions(new Set());
@@ -707,7 +713,7 @@ export default function TestsPage({
     setAnswers({});
     setSelectedAnswer(null);
     setShowResult(false);
-    setQuizStarted(true);
+    startTransition(() => setQuizStarted(true));
     setStartTime(Date.now());
     setTimeLeft(pkg.questions.length * 90);
     setFlaggedQuestions(new Set());
@@ -740,7 +746,7 @@ export default function TestsPage({
           : null,
       );
     } else {
-      setShowResult(true);
+      startTransition(() => setShowResult(true));
       saveQuizResult();
     }
   };
@@ -958,7 +964,7 @@ export default function TestsPage({
   ]);
 
   const handleFinishQuiz = useCallback(() => {
-    setShowResult(true);
+    startTransition(() => setShowResult(true));
     saveQuizResult();
   }, [saveQuizResult]);
 
@@ -974,7 +980,7 @@ export default function TestsPage({
       }, 1000);
       return () => clearInterval(timer);
     } else if (timeLeft === 0 && quizStarted && !showResult) {
-      setShowResult(true);
+      startTransition(() => setShowResult(true));
       saveQuizResult();
     }
   }, [currentQuestion, quizStarted, saveQuizResult, showResult, timeLeft]);
@@ -1020,18 +1026,6 @@ export default function TestsPage({
     return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
   };
 
-  const getDifficultyColor = (difficulty: string) => {
-    switch (difficulty) {
-      case 'Kolay':
-        return 'from-green-500 to-emerald-500';
-      case 'Orta':
-        return 'from-yellow-500 to-orange-500';
-      case 'Zor':
-        return 'from-red-500 to-pink-500';
-      default:
-        return 'from-blue-500 to-cyan-500';
-    }
-  };
 
   if (!user) return null;
 
@@ -1989,63 +1983,14 @@ export default function TestsPage({
                 />
               </div>
             ) : (
-              visibleQuizzes.map((quiz, i: number) => (
-                <div
+              visibleQuizzes.map((quiz, index) => (
+                <QuizListCard
                   key={quiz.id}
-                  className="rounded-3xl border border-slate-200 dark:border-white/10 bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl shadow-xl hover:shadow-2xl hover:border-slate-300 dark:hover:border-white/20 transition-all duration-300 hover:-translate-y-1 overflow-hidden animate-slide-up"
-                  style={{ animationDelay: `${i * 80}ms` }}
-                >
-                  <div
-                    className={`h-1.5 bg-gradient-to-r ${getDifficultyColor(quiz.difficulty)}`}
-                  />
-                  <div className="p-6">
-                    <div className="flex items-start justify-between mb-4">
-                      <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-md">
-                        <FileText className="w-6 h-6 text-white dark:text-white" />
-                      </div>
-                      <span className="rounded-full px-2.5 py-0.5 text-[11px] font-bold bg-white/10 text-slate-300 border border-white/10">
-                        {quiz.grade}. Sınıf
-                      </span>
-                    </div>
-
-                    <h3 className="font-display text-xl font-bold text-slate-900 dark:text-white mb-2">
-                      {quiz.title}
-                    </h3>
-                    <p className="text-slate-400 text-xs sm:text-sm leading-relaxed mb-4 line-clamp-2">
-                      {quiz.description}
-                    </p>
-
-                    <div className="flex items-center gap-4 text-xs text-slate-400 mb-6">
-                      <span className="flex items-center gap-1.5">
-                        <Clock className="w-4 h-4 text-indigo-400" />
-                        {quiz.time_limit} dk
-                      </span>
-                      <span className="capitalize">{quiz.difficulty}</span>
-                    </div>
-
-                    <div className="flex gap-2">
-                      <button
-                        onClick={() => startQuiz(quiz)}
-                        className="flex-1 py-3 bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-500 text-white font-bold rounded-2xl flex items-center justify-center gap-2 shadow-md transition-all duration-200 hover:shadow-lg hover:scale-[1.02] active:scale-[0.98]"
-                      >
-                        <Play className="w-4 h-4 fill-white" />
-                        Teste Başla
-                      </button>
-                      <button
-                        type="button"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          void handleOpenWorksheetPreview(quiz);
-                        }}
-                        className="px-3.5 py-3 rounded-2xl border border-white/10 bg-white/5 hover:bg-white/10 text-slate-300 hover:text-white font-semibold flex items-center justify-center gap-1.5 transition active:scale-95"
-                        title="A4 Yazdırılabilir Yaprak Test"
-                      >
-                        <Printer className="w-4 h-4 text-indigo-400" />
-                        <span className="text-xs hidden sm:inline">Yaprak Test</span>
-                      </button>
-                    </div>
-                  </div>
-                </div>
+                  quiz={quiz}
+                  index={index}
+                  onStart={startQuiz}
+                  onWorksheetPreview={handleOpenWorksheetPreview}
+                />
               ))
             )}
           </div>

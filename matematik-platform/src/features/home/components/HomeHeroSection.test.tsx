@@ -5,7 +5,8 @@ import { HomeHeroSection } from './HomeHeroSection';
 
 vi.mock('framer-motion', () => ({
   AnimatePresence: ({ children }: { children: ReactNode }) => <>{children}</>,
-  motion: {
+  LazyMotion: ({ children }: { children: ReactNode }) => <>{children}</>,
+  m: {
     div: ({ children, ...props }: ComponentPropsWithoutRef<'div'>) => (
       <div {...props}>{children}</div>
     ),
@@ -95,14 +96,18 @@ describe('HomeHeroSection', () => {
     expect(defaultProps.onOpenCalculator).toHaveBeenCalledWith('lgs');
 
     // Araçlar başlığına tıklandığında kapanabilmeli
-    const toolsButton = screen.getByRole('button', { name: /Araçlar 12 ARAÇ/i });
+    const toolsButton = screen.getByRole('button', {
+      name: /Araçlar 12 ARAÇ/i,
+    });
     fireEvent.click(toolsButton);
     expect(
       screen.queryByText('LGS Puan & Net Hesaplama'),
     ).not.toBeInTheDocument();
 
     // Ders başlığına tıklandığında kapanabilmeli
-    const lessonsButton = screen.getByRole('button', { name: /Ders 6 KATEGORİ/i });
+    const lessonsButton = screen.getByRole('button', {
+      name: /Ders 6 KATEGORİ/i,
+    });
     fireEvent.click(lessonsButton);
     expect(screen.queryByText('Kitaplar')).not.toBeInTheDocument();
   });

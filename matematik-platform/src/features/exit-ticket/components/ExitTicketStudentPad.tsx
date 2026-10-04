@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, startTransition } from 'react';
 import {
   CheckCircle2,
   XCircle,
@@ -12,12 +12,15 @@ import {
   User,
   Hash,
 } from 'lucide-react';
-import MathText from '@/components/MathText';
+import dynamic from 'next/dynamic';
+
 import type { ExitTicketSession } from '../types';
 import {
   getSessionByCode,
   submitExitTicketResponse,
 } from '../lib/exitTicketStorage';
+
+const MathText = dynamic(() => import('@/components/MathText'));
 
 export interface ExitTicketStudentPadProps {
   initialCode?: string;
@@ -115,7 +118,7 @@ export function ExitTicketStudentPad({ initialCode = '', onExit }: ExitTicketStu
     }
 
     setSession(found);
-    setIsJoined(true);
+    startTransition(() => setIsJoined(true));
   };
 
   const handleSelectOption = (optionIndex: number) => {

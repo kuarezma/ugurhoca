@@ -1,4 +1,4 @@
-import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { act, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { renderToString } from 'react-dom/server';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import ContentsPage from './ContentsPage';
@@ -130,6 +130,46 @@ describe('ContentsPage static feed and client filters', () => {
       screen.queryByText('7. sınıf için tüm içerikler'),
     ).not.toBeInTheDocument();
   });
+
+  it.each([0, 1])(
+    'aynı sınıf ve kategori için geçerli SSR seedini tekrar çekmez (count=%i)',
+    async (count) => {
+      window.history.replaceState({}, '', '/icerikler?type=kitaplar');
+      navigation.params = new URLSearchParams('type=kitaplar');
+      vi.mocked(resolveContentUser).mockResolvedValue({
+        id: 'student',
+        grade: 7,
+        isAdmin: false,
+      } as never);
+      render(
+        <ContentsPage
+          initialGrade={7}
+          initialType="kitaplar"
+          initialTotalCount={count}
+          initialDocuments={
+            count
+              ? [
+                  {
+                    id: 'seed',
+                    title: 'SSR kitap',
+                    grade: [7],
+                    type: 'kitaplar',
+                  },
+                ]
+              : []
+          }
+        />,
+      );
+      await act(async () => {
+        await Promise.resolve();
+      });
+      expect(
+        screen.getByText('Seçili kategorideki içerikler'),
+      ).toBeInTheDocument();
+      await waitFor(() => expect(resolveContentUser).toHaveBeenCalledOnce());
+      expect(loadContentDocuments).not.toHaveBeenCalled();
+    },
+  );
 
   it('beğeniyi geri almak sayaç rotasına ikinci bir +1 göndermez', async () => {
     vi.mocked(updateDocumentMetric).mockResolvedValue(undefined);

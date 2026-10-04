@@ -2,13 +2,18 @@ import 'server-only';
 
 import {
   MINIMUM_FULL_LGS_ROW_COUNT,
+  MINIMUM_FULL_YKS_ROW_COUNT,
 } from '@/features/programs/constants';
 import type {
   LgsSchoolPageData,
   LgsSchoolTarget,
   LgsSchoolWithHistory,
+  YksProgramTarget,
 } from '@/features/programs/types';
-import { createServiceRoleClient } from '@/lib/supabase/server';
+import {
+  createServiceRoleClient,
+  createServerSupabaseClient,
+} from '@/lib/supabase/server';
 
 const PROGRAM_QUERY_PAGE_SIZE = 1000;
 
@@ -49,14 +54,16 @@ export async function loadLgsSchoolPageData(
 ): Promise<LgsSchoolPageData> {
   const supabase = createServiceRoleClient();
 
-  const yearListQuery = await fetchAllProgramRows<{ year: number }>((from, to) =>
-    supabase.from('lgs_school_targets').select('year').range(from, to),
+  const yearListQuery = await fetchAllProgramRows<{ year: number }>(
+    (from, to) =>
+      supabase.from('lgs_school_targets').select('year').range(from, to),
   );
 
   if (yearListQuery.error) {
     return {
       dataYear: preferredYear,
-      error: 'LGS okul verileri okunamadı. Lütfen veritabanı tablosunu kontrol et.',
+      error:
+        'LGS okul verileri okunamadı. Lütfen veritabanı tablosunu kontrol et.',
       historyYears: [],
       schools: [],
     };
@@ -84,11 +91,13 @@ export async function loadLgsSchoolPageData(
   const selectedYear =
     preferredCount >= MINIMUM_FULL_LGS_ROW_COUNT
       ? preferredYear
-      : availableYears.find(
+      : (availableYears.find(
           (year) => (counts.get(year) ?? 0) >= MINIMUM_FULL_LGS_ROW_COUNT,
-        ) ?? availableYears[0];
+        ) ?? availableYears[0]);
 
-  const historyYears = availableYears.filter((year) => year <= selectedYear).slice(0, 5);
+  const historyYears = availableYears
+    .filter((year) => year <= selectedYear)
+    .slice(0, 5);
 
   const rowsQuery = await fetchAllProgramRows<LgsSchoolTarget>((from, to) =>
     supabase
@@ -103,7 +112,8 @@ export async function loadLgsSchoolPageData(
   if (rowsQuery.error) {
     return {
       dataYear: selectedYear,
-      error: 'LGS okul verileri okunamadı. Lütfen veritabanı tablosunu kontrol et.',
+      error:
+        'LGS okul verileri okunamadı. Lütfen veritabanı tablosunu kontrol et.',
       historyYears: [...historyYears].sort((a, b) => a - b),
       schools: [],
     };
@@ -121,7 +131,8 @@ export async function loadLgsSchoolPageData(
   const schools = [...grouped.values()]
     .map((rows) => {
       const sortedRows = [...rows].sort((a, b) => b.year - a.year);
-      const latestRow = sortedRows.find((row) => row.year === selectedYear) || sortedRows[0];
+      const latestRow =
+        sortedRows.find((row) => row.year === selectedYear) || sortedRows[0];
 
       if (!latestRow || latestRow.placement_mode !== 'central') {
         return null;
@@ -166,5 +177,78 @@ export async function loadLgsSchoolPageData(
       : 'LGS hedef okul verisi bulunamadı. Supabase tablosuna resmi veriler yüklenmeli.',
     historyYears: [...historyYears].sort((a, b) => a - b),
     schools,
+  };
+}
+
+export async function loadYksProgramPageData(
+  preferredYear = 2026,
+): Promise<{ dataYear: number; error: string; rows: YksProgramTarget[] }> {
+  const supabase = createServerSupabaseClient();
+  const yearListQuery = await fetchAllProgramRows<{ year: number }>(
+    (from, to) =>
+      supabase.from('yks_program_targets').select('year').range(from, to),
+  );
+
+  if (yearListQuery.error) {
+    return {
+      dataYear: preferredYear,
+      error:
+        'YKS program verileri okunamadı. Lütfen veritabanı tablosunu kontrol et.',
+      rows: [],
+    };
+  }
+
+  const counts = new Map<number, number>();
+
+  for (const row of yearListQuery.data ?? []) {
+    counts.set(row.year, (counts.get(row.year) ?? 0) + 1);
+  }
+
+  const availableYears = [...counts.keys()].sort((a, b) => b - a);
+
+  if (!availableYears.length) {
+    return {
+      dataYear: preferredYear,
+      error:
+        'YKS hedef program verisi bulunamadı. Supabase tablosuna resmi veriler yüklenmeli.',
+      rows: [],
+    };
+  }
+
+  const preferredCount = counts.get(preferredYear) ?? 0;
+  const selectedYear =
+    preferredCount >= MINIMUM_FULL_YKS_ROW_COUNT
+      ? preferredYear
+      : (availableYears.find(
+          (year) => (counts.get(year) ?? 0) >= MINIMUM_FULL_YKS_ROW_COUNT,
+        ) ?? availableYears[0]);
+
+  const selectedRowsQuery = await fetchAllProgramRows<YksProgramTarget>(
+    (from, to) =>
+      supabase
+        .from('yks_program_targets')
+        .select('*')
+        .eq('year', selectedYear)
+        .order('base_rank', { ascending: true })
+        .range(from, to),
+  );
+
+  if (selectedRowsQuery.error) {
+    return {
+      dataYear: selectedYear,
+      error:
+        'YKS program verileri okunamadı. Lütfen veritabanı tablosunu kontrol et.',
+      rows: [],
+    };
+  }
+
+  const rows = (selectedRowsQuery.data || []) as YksProgramTarget[];
+
+  return {
+    dataYear: selectedYear,
+    error: rows.length
+      ? ''
+      : 'YKS hedef program verisi bulunamadı. Supabase tablosuna resmi veriler yüklenmeli.',
+    rows,
   };
 }
