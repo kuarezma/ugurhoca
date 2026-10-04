@@ -18,7 +18,7 @@ export default function TodayPlanCard({
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.08 }}
-      className="rounded-3xl border border-slate-200/80 bg-white shadow-sm dark:border-white/10 dark:bg-white/5 p-6 sm:p-8"
+      className="rounded-3xl border border-slate-200/80 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-900 p-6 sm:p-8"
     >
       <div className="mb-6 flex items-start justify-between gap-4">
         <div>
@@ -33,7 +33,7 @@ export default function TodayPlanCard({
             Öncelik sırasına göre seçilmiş üç kısa adım.
           </p>
         </div>
-        <div className="rounded-2xl border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-white/5 px-4 py-2 text-right">
+        <div className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/90 px-4 py-2 text-right">
           <p className="text-xs uppercase tracking-[0.18em] text-slate-500 dark:text-slate-400">
             Görev
           </p>
@@ -42,7 +42,7 @@ export default function TodayPlanCard({
       </div>
 
       {tasks.length === 0 ? (
-        <div className="rounded-2xl border border-dashed border-slate-200 dark:border-white/10 px-5 py-8 text-center">
+        <div className="rounded-2xl border border-dashed border-slate-200 dark:border-slate-800 px-5 py-8 text-center">
           <p className="text-lg font-semibold text-slate-900 dark:text-white">
             Bugünkü plan temiz.
           </p>

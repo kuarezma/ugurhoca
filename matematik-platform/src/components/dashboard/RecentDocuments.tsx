@@ -15,7 +15,7 @@ function RecentDocuments({ documents }: RecentDocumentsProps) {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.16 }}
-      className="rounded-3xl border border-slate-200/80 bg-white shadow-sm dark:border-white/10 dark:bg-white/5 p-6"
+      className="rounded-3xl border border-slate-200/80 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-900 p-6"
     >
       <div className="mb-5">
         <h2 className="text-xl font-bold text-slate-900 dark:text-white">Son Belgeler</h2>
@@ -25,7 +25,7 @@ function RecentDocuments({ documents }: RecentDocumentsProps) {
       </div>
 
       {documents.length === 0 ? (
-        <div className="rounded-2xl border border-dashed border-slate-200 dark:border-white/10 px-5 py-8 text-center">
+        <div className="rounded-2xl border border-dashed border-slate-200 dark:border-slate-800 px-5 py-8 text-center">
           <FileText className="mx-auto h-10 w-10 text-slate-400 dark:text-slate-600" />
           <p className="mt-3 font-semibold text-slate-900 dark:text-white">Henüz sana özel belge görünmüyor.</p>
           <p className="mt-1 text-sm text-slate-600 dark:text-slate-400">
@@ -40,7 +40,7 @@ function RecentDocuments({ documents }: RecentDocumentsProps) {
               href={doc.file_url}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-4 rounded-2xl border border-slate-200/80 dark:border-white/10 bg-slate-50 dark:bg-white/5 p-4 transition-colors hover:bg-slate-100 dark:hover:bg-white/10"
+              className="flex items-center gap-4 rounded-2xl border border-slate-200/80 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/90 p-4 transition-colors hover:bg-slate-100 dark:hover:bg-slate-800"
             >
               <div
                 className={`flex h-11 w-11 items-center justify-center rounded-xl ${

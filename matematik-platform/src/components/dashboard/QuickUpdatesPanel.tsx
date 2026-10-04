@@ -34,10 +34,10 @@ export default function QuickUpdatesPanel({
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.16 }}
-      className="rounded-3xl border border-slate-200/80 bg-white shadow-sm dark:border-white/10 dark:bg-white/5 p-6 sm:p-8"
+      className="rounded-3xl border border-slate-200/80 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-900 p-6 sm:p-8"
     >
       <div className="mb-5">
-        <div className="mb-2 inline-flex items-center gap-2 rounded-full bg-slate-100 dark:bg-white/10 px-3 py-1 text-[11px] font-bold uppercase tracking-[0.18em] text-slate-700 dark:text-slate-200">
+        <div className="mb-2 inline-flex items-center gap-2 rounded-full bg-slate-100 dark:bg-slate-800 px-3 py-1 text-[11px] font-bold uppercase tracking-[0.18em] text-slate-700 dark:text-slate-200">
           <BellRing className="h-3.5 w-3.5 text-amber-500 dark:text-amber-300" />
           Kısa Güncellemeler
         </div>
@@ -59,7 +59,7 @@ export default function QuickUpdatesPanel({
               key={item.id}
               type="button"
               onClick={() => onSelectUpdate(item)}
-              className="group flex h-full flex-col rounded-2xl border border-slate-200/80 dark:border-white/10 bg-slate-50 dark:bg-white/5 p-4 text-left transition-all hover:bg-slate-100 dark:hover:bg-white/10"
+              className="group flex h-full flex-col rounded-2xl border border-slate-200/80 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/90 p-4 text-left transition-all hover:bg-slate-100 dark:hover:bg-slate-800"
             >
               <div className="mb-4 flex items-start justify-between gap-3">
                 <div
@@ -67,7 +67,7 @@ export default function QuickUpdatesPanel({
                 >
                   <Icon className="h-5 w-5" />
                 </div>
-                <span className="rounded-full bg-slate-200/70 dark:bg-white/10 px-2.5 py-1 text-[11px] font-bold uppercase tracking-[0.18em] text-slate-700 dark:text-white/80">
+                <span className="rounded-full bg-slate-200/70 dark:bg-slate-700 px-2.5 py-1 text-[11px] font-bold uppercase tracking-[0.18em] text-slate-700 dark:text-slate-200">
                   {item.badge}
                 </span>
               </div>

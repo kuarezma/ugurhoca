@@ -75,7 +75,7 @@ export default function MessageSummaryCard({
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.1 }}
-      className="rounded-3xl border border-slate-200/80 bg-white shadow-sm dark:border-white/10 dark:bg-white/5 p-6"
+      className="rounded-3xl border border-slate-200/80 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-900 p-6"
     >
       <div className="mb-5 flex items-start justify-between gap-4">
         <div>
@@ -106,7 +106,7 @@ export default function MessageSummaryCard({
             className={`rounded-full px-3 py-1.5 text-xs font-bold uppercase tracking-[0.18em] transition-colors ${
               activeFilter === filter.id
                 ? 'bg-violet-600 text-white dark:bg-violet-500/20 dark:text-violet-100'
-                : 'bg-slate-100 dark:bg-white/5 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-white/10 hover:text-slate-900 dark:hover:text-white'
+                : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700 hover:text-slate-900 dark:hover:text-white'
             }`}
           >
             {filter.label}
@@ -114,7 +114,7 @@ export default function MessageSummaryCard({
         ))}
       </div>
 
-      <div className="rounded-2xl border border-slate-200/80 dark:border-white/10 bg-slate-50 dark:bg-white/5 p-4">
+      <div className="rounded-2xl border border-slate-200/80 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/90 p-4">
         <p className="text-sm font-semibold text-slate-900 dark:text-white">
           {latestNotification?.title || 'Henüz bildirim görünmüyor'}
         </p>
@@ -131,7 +131,7 @@ export default function MessageSummaryCard({
               key={notification.id}
               type="button"
               onClick={() => onOpenNotification(notification)}
-              className="flex w-full items-start justify-between gap-3 rounded-2xl border border-slate-200/80 dark:border-white/10 bg-slate-50 dark:bg-white/5 px-4 py-3 text-left transition-colors hover:bg-slate-100 dark:hover:bg-white/10"
+              className="flex w-full items-start justify-between gap-3 rounded-2xl border border-slate-200/80 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/90 px-4 py-3 text-left transition-colors hover:bg-slate-100 dark:hover:bg-slate-800"
             >
               <div className="min-w-0">
                 <div className="flex items-center gap-2">

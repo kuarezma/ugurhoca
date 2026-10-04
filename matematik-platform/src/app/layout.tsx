@@ -5,7 +5,7 @@ import { MobileBottomNav } from "@/components/MobileBottomNav";
 import { Providers } from "@/components/Providers";
 import { SiteBackground } from "@/components/SiteBackground";
 import { PerformanceRuntimeProvider } from "@/components/PerformanceRuntimeProvider";
-import { THEME_STORAGE_KEY } from "@/components/theme-constants";
+import { THEME_STORAGE_KEY, PALETTE_STORAGE_KEY } from "@/components/theme-constants";
 import { SITE_URL, SITE_NAME } from "@/lib/site-metadata";
 // Not: `@livekit/components-styles` ve `katex/dist/katex.min.css` buradan
 // kaldirildi. Kok layout'tan import edilen her stil sayfasi TUM rotalarda
@@ -227,7 +227,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         />
         <script
           dangerouslySetInnerHTML={{
-            __html: `(function(){try{var theme=localStorage.getItem('${THEME_STORAGE_KEY}');var nextTheme=theme==='light'?'light':'dark';document.documentElement.dataset.theme=nextTheme;document.documentElement.classList.add(nextTheme);}catch(e){document.documentElement.dataset.theme='dark';document.documentElement.classList.add('dark');}})();`,
+            __html: `(function(){try{var theme=localStorage.getItem('${THEME_STORAGE_KEY}');var nextTheme=theme==='light'?'light':'dark';document.documentElement.dataset.theme=nextTheme;document.documentElement.classList.add(nextTheme);var palette=localStorage.getItem('${PALETTE_STORAGE_KEY}')||'classic';document.documentElement.dataset.palette=palette;}catch(e){document.documentElement.dataset.theme='dark';document.documentElement.classList.add('dark');document.documentElement.dataset.palette='classic';}})();`,
           }}
         />
         {supabaseOrigin ? (

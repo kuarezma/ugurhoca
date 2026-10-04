@@ -169,10 +169,7 @@ export function ExamCountdown({
 
   return (
     <div
-      className={[
-        "exam-countdown relative overflow-hidden rounded-3xl border p-4 sm:p-5 transition-all duration-300",
-        'light:border-slate-200/90 light:bg-white/95 light:shadow-bento light:hover:shadow-bento-hover light:hover:border-indigo-300/60 dark:border-white/10 dark:bg-slate-900/90 dark:backdrop-blur-xl dark:shadow-xl dark:hover:border-white/20 dark:hover:shadow-2xl',
-      ].join(" ")}
+      className="exam-countdown relative overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-xl shadow-indigo-950/5 hover:border-indigo-300/60 dark:border-slate-800 dark:bg-slate-900 dark:shadow-2xl p-4 sm:p-5 transition-all duration-300"
     >
       {/* Üst İnce Gradyan Aksan Çizgisi */}
       <div
@@ -184,19 +181,19 @@ export function ExamCountdown({
         <div className="min-w-0">
           <div className="mb-1.5 flex flex-wrap items-center gap-2">
             <span
-              className="inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[11px] font-bold uppercase tracking-wider light:bg-slate-100 light:text-slate-700 border light:border-slate-200/80 dark:bg-white/10 dark:text-white dark:border-white/15"
+              className="inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[11px] font-bold uppercase tracking-wider bg-slate-100 text-slate-700 border border-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:border-slate-700"
             >
               <Clock3 className="w-3 h-3" />
               {exam.provider}
             </span>
             <span
-              className={`inline-flex items-center rounded-full bg-gradient-to-r ${exam.accent} px-2.5 py-0.5 text-[11px] font-bold text-white shadow-sm`}
+              className={`inline-flex items-center rounded-full bg-gradient-to-r ${exam.accent} px-2.5 py-0.5 text-[11px] font-bold text-white shadow-xs`}
             >
               {status}
             </span>
             {remainingWeeks > 0 && (
               <span
-                className="inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[11px] font-bold light:bg-amber-50 light:text-amber-800 border light:border-amber-300/70 dark:bg-amber-500/15 dark:text-amber-300 dark:border-amber-500/30"
+                className="inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[11px] font-bold bg-amber-50 text-amber-800 border border-amber-200 dark:bg-amber-500/15 dark:text-amber-300 dark:border-amber-500/30"
               >
                 ⏳ {remainingWeeks} Hafta Kaldı
               </span>
@@ -208,7 +205,7 @@ export function ExamCountdown({
             )}
           </div>
           <h2
-            className="truncate font-display text-base sm:text-lg font-bold light:text-slate-900 dark:text-white"
+            className="truncate font-display text-base sm:text-lg font-bold text-slate-900 dark:text-white"
           >
             {exam.title}
           </h2>
@@ -226,18 +223,15 @@ export function ExamCountdown({
         {countdownItems.map((item) => (
           <div
             key={item.label}
-            className={[
-              "rounded-2xl border p-2.5 sm:p-3 text-center transition-transform hover:-translate-y-0.5",
-              'light:border-slate-200/80 light:bg-slate-50/80 light:shadow-sm dark:border-white/10 dark:bg-white/5 dark:backdrop-blur-sm',
-            ].join(" ")}
+            className="rounded-2xl border border-slate-200 bg-slate-50 shadow-xs hover:-translate-y-0.5 dark:border-slate-800 dark:bg-slate-800/90 p-2.5 sm:p-3 text-center transition-transform"
           >
             <div
-              className="font-display text-2xl sm:text-3xl font-extrabold tabular-nums leading-none light:text-slate-900 dark:bg-gradient-to-br dark:from-white dark:via-slate-100 dark:to-slate-300 dark:bg-clip-text dark:text-transparent"
+              className="font-display text-2xl sm:text-3xl font-extrabold tabular-nums leading-none text-slate-900 dark:text-white"
             >
               {item.value}
             </div>
             <div
-              className="mt-1.5 text-[10px] font-bold uppercase tracking-wider light:text-slate-500 dark:text-slate-400"
+              className="mt-1.5 text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400"
             >
               {item.label}
             </div>
@@ -247,15 +241,12 @@ export function ExamCountdown({
 
       {/* Alt Bilgi & Takvim Kutusu */}
       <div
-        className={[
-          "relative mt-3.5 rounded-2xl border p-3",
-          'light:border-slate-200/70 light:bg-indigo-50/40 light:text-slate-700 dark:border-white/10 dark:bg-white/5 dark:text-slate-200 dark:backdrop-blur-sm',
-        ].join(" ")}
+        className="relative mt-3.5 rounded-2xl border border-slate-200 bg-indigo-50/50 text-slate-800 dark:border-slate-800 dark:bg-slate-800/90 dark:text-slate-100 p-3"
       >
         <div className="flex flex-wrap sm:flex-nowrap items-center justify-between gap-2">
           <div className="min-w-0 flex-1">
             <div
-              className="text-[10px] font-bold uppercase tracking-wider light:text-indigo-600 dark:text-indigo-300"
+              className="text-[10px] font-bold uppercase tracking-wider text-indigo-700 dark:text-indigo-400"
             >
               Sınav Tarihi
             </div>
@@ -269,14 +260,14 @@ export function ExamCountdown({
               <button
                 type="button"
                 onClick={() => onOpenCalculator(exam.id.includes('lgs') ? 'lgs' : 'yks')}
-                className="shrink-0 inline-flex min-h-[38px] items-center gap-1.5 rounded-xl px-3 py-1.5 text-xs font-bold transition-all bg-indigo-600 text-white dark:text-white hover:bg-indigo-700 shadow-sm"
+                className="shrink-0 inline-flex min-h-[38px] items-center gap-1.5 rounded-xl px-3 py-1.5 text-xs font-bold transition-all bg-indigo-600 text-white dark:text-white hover:bg-indigo-700 shadow-xs"
               >
                 Net & Puan Hesapla →
               </button>
             ) : (
               <Link
                 href={exam.toolHref}
-                className="shrink-0 inline-flex min-h-[38px] items-center gap-1.5 rounded-xl px-3 py-1.5 text-xs font-bold transition-all bg-indigo-600 text-white dark:text-white hover:bg-indigo-700 shadow-sm"
+                className="shrink-0 inline-flex min-h-[38px] items-center gap-1.5 rounded-xl px-3 py-1.5 text-xs font-bold transition-all bg-indigo-600 text-white dark:text-white hover:bg-indigo-700 shadow-xs"
               >
                 Puan Hesapla →
               </Link>
@@ -285,14 +276,11 @@ export function ExamCountdown({
         </div>
 
         {exam.subItems?.length ? (
-          <div className="mt-2.5 flex flex-wrap gap-1.5 border-t border-slate-200/50 dark:border-white/10 pt-2">
+          <div className="mt-2.5 flex flex-wrap gap-1.5 border-t border-slate-200/80 dark:border-slate-700 pt-2">
             {exam.subItems.map((item) => (
               <div
                 key={item.label}
-                className={[
-                  "rounded-lg px-2 py-0.5 text-[10px] font-semibold",
-                  'light:bg-white light:text-slate-700 light:shadow-sm border light:border-slate-200/80 dark:bg-white/10 dark:text-slate-300 dark:border-white/10',
-                ].join(" ")}
+                className="rounded-lg px-2 py-0.5 text-[10px] font-semibold bg-white text-slate-700 shadow-xs border border-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:border-slate-700"
               >
                 <span className="font-bold text-indigo-700 dark:text-indigo-300">{item.label}:</span> {item.dateLabel}
               </div>

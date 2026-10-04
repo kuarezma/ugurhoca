@@ -248,6 +248,132 @@ html[data-theme='light'] {
   --accent-play-tint: rgba(219, 39, 119, 0.08);
 }
 
+/* ==========================================================================
+   Tema Paletleri (Theme Palettes)
+   data-palette="classic|ocean|emerald|sunset|midnight"
+   ========================================================================== */
+
+/* 1. Okyanus (Ocean - Derin Mavi & Turkuaz) */
+html[data-palette='ocean'] {
+  --brand-primary-rgb: 37 99 235;
+  --brand-primary-soft-rgb: 96 165 250;
+  --brand-primary-deep-rgb: 29 78 216;
+  --brand-secondary-rgb: 6 182 212;
+  --brand-secondary-soft-rgb: 103 232 249;
+  --brand-indigo-rgb: 37 99 235;
+  --brand-gradient-middle: #2563eb;
+  --brand-primary: rgb(var(--brand-primary-rgb));
+  --brand-primary-soft: rgb(var(--brand-primary-soft-rgb));
+  --brand-primary-deep: rgb(var(--brand-primary-deep-rgb));
+  --accent-fg: var(--brand-primary-soft);
+  --accent-bg: var(--brand-primary);
+  --accent-brand: #3b82f6;
+  --accent-brand-ink: #93c5fd;
+  --accent-brand-tint: rgba(59, 130, 246, 0.12);
+  --ring: rgb(var(--brand-primary-rgb) / 0.55);
+}
+html[data-theme='light'][data-palette='ocean'] {
+  --brand-primary-rgb: 29 78 216;
+  --brand-primary-soft-rgb: 37 99 235;
+  --brand-primary-deep-rgb: 30 64 175;
+  --accent-brand: #2563eb;
+  --accent-brand-ink: #1d4ed8;
+  --accent-brand-tint: rgba(37, 99, 235, 0.08);
+}
+
+/* 2. Zümrüt (Emerald - Doğa Yeşili & Nane) */
+html[data-palette='emerald'] {
+  --brand-primary-rgb: 16 185 129;
+  --brand-primary-soft-rgb: 52 211 153;
+  --brand-primary-deep-rgb: 5 150 105;
+  --brand-secondary-rgb: 20 184 166;
+  --brand-secondary-soft-rgb: 94 234 212;
+  --brand-indigo-rgb: 16 185 129;
+  --brand-gradient-middle: #10b981;
+  --brand-primary: rgb(var(--brand-primary-rgb));
+  --brand-primary-soft: rgb(var(--brand-primary-soft-rgb));
+  --brand-primary-deep: rgb(var(--brand-primary-deep-rgb));
+  --accent-fg: var(--brand-primary-soft);
+  --accent-bg: var(--brand-primary);
+  --accent-brand: #10b981;
+  --accent-brand-ink: #6ee7b7;
+  --accent-brand-tint: rgba(16, 185, 129, 0.12);
+  --ring: rgb(var(--brand-primary-rgb) / 0.55);
+}
+html[data-theme='light'][data-palette='emerald'] {
+  --brand-primary-rgb: 5 150 105;
+  --brand-primary-soft-rgb: 16 185 129;
+  --brand-primary-deep-rgb: 4 120 87;
+  --accent-brand: #059669;
+  --accent-brand-ink: #047857;
+  --accent-brand-tint: rgba(5, 150, 105, 0.08);
+}
+
+/* 3. Gün Batımı (Sunset - Kehribar & Sıcak Turuncu) */
+html[data-palette='sunset'] {
+  --brand-primary-rgb: 245 158 11;
+  --brand-primary-soft-rgb: 251 191 36;
+  --brand-primary-deep-rgb: 217 119 6;
+  --brand-secondary-rgb: 244 63 94;
+  --brand-secondary-soft-rgb: 251 113 133;
+  --brand-indigo-rgb: 234 88 12;
+  --brand-gradient-middle: #f59e0b;
+  --brand-primary: rgb(var(--brand-primary-rgb));
+  --brand-primary-soft: rgb(var(--brand-primary-soft-rgb));
+  --brand-primary-deep: rgb(var(--brand-primary-deep-rgb));
+  --accent-fg: var(--brand-primary-soft);
+  --accent-bg: var(--brand-primary);
+  --accent-brand: #f59e0b;
+  --accent-brand-ink: #fde68a;
+  --accent-brand-tint: rgba(245, 158, 11, 0.12);
+  --ring: rgb(var(--brand-primary-rgb) / 0.55);
+}
+html[data-theme='light'][data-palette='sunset'] {
+  --brand-primary-rgb: 217 119 6;
+  --brand-primary-soft-rgb: 245 158 11;
+  --brand-primary-deep-rgb: 180 83 9;
+  --accent-brand: #d97706;
+  --accent-brand-ink: #b45309;
+  --accent-brand-tint: rgba(217, 119, 6, 0.08);
+}
+
+/* 4. AMOLED Gece (Midnight - Saf Siyah & Neon İndigo) */
+html[data-palette='midnight'] {
+  --brand-primary-rgb: 99 102 241;
+  --brand-primary-soft-rgb: 129 140 248;
+  --brand-primary-deep-rgb: 79 70 229;
+  --brand-secondary-rgb: 168 85 247;
+  --brand-secondary-soft-rgb: 192 132 252;
+  --brand-indigo-rgb: 99 102 241;
+  --brand-gradient-middle: #6366f1;
+  --brand-primary: rgb(var(--brand-primary-rgb));
+  --brand-primary-soft: rgb(var(--brand-primary-soft-rgb));
+  --brand-primary-deep: rgb(var(--brand-primary-deep-rgb));
+  --accent-fg: var(--brand-primary-soft);
+  --accent-bg: var(--brand-primary);
+  --accent-brand: #6366f1;
+  --accent-brand-ink: #c7d2fe;
+  --accent-brand-tint: rgba(99, 102, 241, 0.15);
+  --ring: rgb(var(--brand-primary-rgb) / 0.55);
+}
+html[data-theme='dark'][data-palette='midnight'] {
+  --surface-0-rgb: 0 0 0;
+  --surface-1-rgb: 9 9 11;
+  --surface-2-rgb: 18 18 20;
+  --surface-3-rgb: 24 24 27;
+  --surface-0: #000000;
+  --surface-1: #09090b;
+  --surface-2: #121214;
+  --surface-3: #18181b;
+  --surface-4: #202024;
+  --border-default: #27272a;
+  --border-subtle: #18181b;
+  --border-strong: #3f3f46;
+  --bg: #000000;
+  --bg-elevated: #121214;
+}
+
+
 * {
   margin: 0;
   padding: 0;

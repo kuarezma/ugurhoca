@@ -59,7 +59,7 @@ export default function ProgressOverview({
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.1 }}
-      className="rounded-3xl border border-slate-200/80 bg-white shadow-sm dark:border-white/10 dark:bg-white/5 p-6 sm:p-8"
+      className="rounded-3xl border border-slate-200/80 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-900 p-6 sm:p-8"
     >
       <div className="mb-8 flex items-start justify-between gap-4">
         <div>
@@ -76,7 +76,7 @@ export default function ProgressOverview({
         </div>
         <Link
           href={detailHref}
-          className="group flex h-11 w-11 items-center justify-center rounded-full bg-slate-100 dark:bg-white/10 transition-colors hover:bg-slate-200 dark:hover:bg-white/20"
+          className="group flex h-11 w-11 items-center justify-center rounded-full bg-slate-100 dark:bg-slate-800 transition-colors hover:bg-slate-200 dark:hover:bg-slate-700"
         >
           <ArrowUpRight className="h-5 w-5 text-slate-900 dark:text-white transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
         </Link>
@@ -86,9 +86,9 @@ export default function ProgressOverview({
         {stats.map((item) => (
           <div
             key={item.label}
-            className="rounded-2xl border border-slate-200/80 dark:border-white/10 bg-slate-50 dark:bg-black/15 p-4"
+            className="rounded-2xl border border-slate-200/80 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/90 p-4"
           >
-            <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-xl bg-slate-100 dark:bg-white/10">
+            <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-xl bg-slate-100 dark:bg-slate-700">
               <item.icon className={`h-5 w-5 ${item.tone}`} />
             </div>
             <p className="text-xs font-bold uppercase tracking-[0.18em] text-slate-500 dark:text-slate-400">
@@ -99,7 +99,7 @@ export default function ProgressOverview({
         ))}
       </div>
 
-      <div className="mt-6 rounded-3xl border border-slate-200/80 dark:border-white/10 bg-slate-50 dark:bg-black/15 p-5">
+      <div className="mt-6 rounded-3xl border border-slate-200/80 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/90 p-5">
         <div className="mb-4 flex items-end justify-between gap-4">
           <div>
             <p className="text-xs font-bold uppercase tracking-[0.18em] text-slate-500 dark:text-slate-400">
@@ -126,7 +126,7 @@ export default function ProgressOverview({
             return (
               <div
                 key={day.label}
-                className="rounded-2xl border border-slate-200/80 dark:border-white/10 bg-white dark:bg-white/5 p-3 text-center"
+                className="rounded-2xl border border-slate-200/80 dark:border-slate-700 bg-white dark:bg-slate-800 p-3 text-center"
               >
                 <div className="flex h-28 items-end justify-center">
                   <div
