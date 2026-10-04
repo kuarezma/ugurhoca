@@ -39,11 +39,11 @@ export default function ContentQuickAddModal({
         className="glass rounded-3xl p-8 w-full max-w-2xl max-h-[90vh] overflow-y-auto relative"
       >
         <div className="flex items-center justify-between mb-6">
-          <h2 className="text-2xl font-bold text-white flex items-center gap-2">
+          <h2 className="text-2xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
             <Upload className="w-6 h-6 text-purple-400" />
             Yeni İçerik Ekle
           </h2>
-          <button onClick={onClose} className="text-slate-400 hover:text-white">
+          <button onClick={onClose} className="text-slate-400 hover:text-slate-900 dark:hover:text-white">
             <X className="w-6 h-6" />
           </button>
         </div>
@@ -55,9 +55,9 @@ export default function ContentQuickAddModal({
             className="text-center py-12"
           >
             <div className="w-20 h-20 mx-auto mb-4 rounded-full bg-gradient-to-br from-green-400 to-emerald-500 flex items-center justify-center">
-              <Check className="w-10 h-10 text-white" />
+              <Check className="w-10 h-10 text-white dark:text-white" />
             </div>
-            <h3 className="text-2xl font-bold text-white mb-2">Başarılı!</h3>
+            <h3 className="text-2xl font-bold text-slate-900 dark:text-white mb-2">Başarılı!</h3>
             <p className="text-slate-400">
               İçeriğiniz anında eklendi ve yayınlandı.
             </p>

@@ -236,7 +236,7 @@ export function StudentQuestionAuthoringModal({
                   </p>
                   <button
                     onClick={() => setActiveTab('create')}
-                    className="mt-4 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-semibold inline-flex items-center gap-1.5 transition-colors"
+                    className="mt-4 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white dark:text-white rounded-xl text-xs font-semibold inline-flex items-center gap-1.5 transition-colors"
                   >
                     <Plus className="w-3.5 h-3.5" />
                     Hemen Soru Yazmaya Başla
@@ -498,7 +498,7 @@ export function StudentQuestionAuthoringModal({
                 </button>
                 <button
                   type="submit"
-                  className="px-5 py-2 text-xs font-semibold text-white bg-indigo-600 hover:bg-indigo-700 rounded-xl shadow-md inline-flex items-center gap-1.5"
+                  className="px-5 py-2 text-xs font-semibold text-white dark:text-white bg-indigo-600 hover:bg-indigo-700 rounded-xl shadow-md inline-flex items-center gap-1.5"
                 >
                   <Sparkles className="w-3.5 h-3.5" />
                   Soruyu İncelemeye Gönder

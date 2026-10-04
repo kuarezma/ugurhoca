@@ -87,7 +87,7 @@ export default function ForgotPasswordPage() {
 
           <div className="glass rounded-3xl border border-default bg-surface-1 p-8 shadow-2xl backdrop-blur-xl">
             <div className="mb-6 flex items-center gap-3">
-              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 text-white shadow-lg shadow-indigo-500/30">
+              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 text-white dark:text-white shadow-lg shadow-indigo-500/30">
                 <KeyRound className="h-6 w-6" aria-hidden="true" />
               </div>
               <div>

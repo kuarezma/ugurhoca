@@ -319,7 +319,7 @@ export default function ContentDocumentForm({
           value={formData.answer_key_text || ''}
           onChange={(event) => onChange({ answer_key_text: event.target.value })}
           rows={3}
-          className="w-full bg-slate-800/50 border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-green-500 transition-colors resize-none"
+          className="w-full bg-slate-100 dark:bg-slate-800/50 border border-slate-300 dark:border-slate-700 rounded-xl px-4 py-3 text-slate-900 dark:text-white focus:outline-none focus:border-green-500 transition-colors resize-none"
           placeholder="Cevap anahtarını buraya yazın... (opsiyonel)"
         />
       </div>
@@ -336,7 +336,7 @@ export default function ContentDocumentForm({
           type="url"
           value={formData.solution_url || ''}
           onChange={(event) => onChange({ solution_url: event.target.value })}
-          className="w-full bg-slate-800/50 border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-green-500 transition-colors"
+          className="w-full bg-slate-100 dark:bg-slate-800/50 border border-slate-300 dark:border-slate-700 rounded-xl px-4 py-3 text-slate-900 dark:text-white focus:outline-none focus:border-green-500 transition-colors"
           placeholder="https://drive.google.com/... (çözümlü PDF varsa)"
         />
         {formData.solution_url && (
@@ -371,7 +371,7 @@ export default function ContentDocumentForm({
                     onChange={(event) => updateGrades(grade, event.target.checked)}
                     className={`w-4 h-4 ${CHECKBOX_ACCENT_CLASS[accent]}`}
                   />
-                  <span className="text-white text-sm">{grade}. Sınıf</span>
+                  <span className="text-slate-900 dark:text-white text-sm">{grade}. Sınıf</span>
                 </label>
               ),
             )}
@@ -382,7 +382,7 @@ export default function ContentDocumentForm({
                 onChange={(event) => updateGrades('Mezun', event.target.checked)}
                 className={`w-4 h-4 ${CHECKBOX_ACCENT_CLASS[accent]}`}
               />
-              <span className="text-white text-sm">Mezun</span>
+              <span className="text-slate-900 dark:text-white text-sm">Mezun</span>
             </label>
           </div>
         </div>

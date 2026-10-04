@@ -34,10 +34,10 @@ export default function QuickActionGrid({ items }: QuickActionGridProps) {
         >
           <div className="flex items-center gap-4">
             <div className={`relative flex h-12 w-12 items-center justify-center rounded-xl bg-white/5 border border-white/10 group-hover:scale-110 transition-transform ${item.iconClass}`}>
-              <item.icon className="h-5 w-5 text-white" />
+              <item.icon className="h-5 w-5 text-white dark:text-white" />
             </div>
             <div>
-              <h2 className="text-base font-bold text-white group-hover:text-emerald-300 transition-colors">{item.title}</h2>
+              <h2 className="text-base font-bold text-white dark:text-white group-hover:text-emerald-300 transition-colors">{item.title}</h2>
               <div className="flex items-center gap-2 mt-0.5">
                 <span className="text-sm font-semibold text-white/90">{item.stat}</span>
                 {item.badge ? (

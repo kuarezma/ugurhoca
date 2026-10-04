@@ -26,7 +26,7 @@ export default function TodayPlanCard({
             <ListTodo className="h-3.5 w-3.5" />
             Bugünkü Plan
           </div>
-          <h2 className="text-2xl font-bold text-white">
+          <h2 className="text-2xl font-bold text-slate-900 dark:text-white">
             Bugün ne yapmalıyım?
           </h2>
           <p className="mt-1 text-sm text-slate-400">
@@ -37,13 +37,13 @@ export default function TodayPlanCard({
           <p className="text-xs uppercase tracking-[0.18em] text-slate-400">
             Görev
           </p>
-          <p className="text-xl font-black text-white">{tasks.length}</p>
+          <p className="text-xl font-black text-slate-900 dark:text-white">{tasks.length}</p>
         </div>
       </div>
 
       {tasks.length === 0 ? (
         <div className="rounded-2xl border border-dashed border-white/10 px-5 py-8 text-center">
-          <p className="text-lg font-semibold text-white">
+          <p className="text-lg font-semibold text-slate-900 dark:text-white">
             Bugünkü plan temiz.
           </p>
           <p className="mt-2 text-sm text-slate-400">
@@ -63,7 +63,7 @@ export default function TodayPlanCard({
               <div className="absolute inset-y-0 right-0 w-24 bg-gradient-to-l from-white/10 to-transparent opacity-70" />
               <div className="relative flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                 <div className="flex items-start gap-4">
-                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-black/15 text-sm font-black text-white">
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-black/15 text-sm font-black text-white dark:text-white">
                     {index + 1}
                   </div>
                   <div className="min-w-0">
@@ -75,7 +75,7 @@ export default function TodayPlanCard({
                         {task.meta}
                       </span>
                     </div>
-                    <h3 className="text-lg font-bold text-white">
+                    <h3 className="text-lg font-bold text-white dark:text-white">
                       {task.title}
                     </h3>
                     <p className="mt-1 text-sm leading-relaxed text-slate-200">
@@ -84,7 +84,7 @@ export default function TodayPlanCard({
                   </div>
                 </div>
 
-                <span className="inline-flex items-center gap-2 self-start rounded-xl bg-white/10 px-4 py-2 text-sm font-bold text-white transition-colors group-hover:bg-white/15 sm:self-center">
+                <span className="inline-flex items-center gap-2 self-start rounded-xl bg-white/10 px-4 py-2 text-sm font-bold text-white dark:text-white transition-colors group-hover:bg-white/15 sm:self-center">
                   {task.actionLabel}
                   <ChevronRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
                 </span>

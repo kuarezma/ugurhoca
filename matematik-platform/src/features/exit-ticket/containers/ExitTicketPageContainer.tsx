@@ -160,7 +160,7 @@ export function ExitTicketPageContainer() {
                       <button
                         type="button"
                         onClick={() => setIsCreateModalOpen(true)}
-                        className="px-5 py-3 rounded-xl font-bold bg-violet-600 hover:bg-violet-500 text-white transition flex items-center gap-2 shadow-lg shadow-violet-600/30"
+                        className="px-5 py-3 rounded-xl font-bold bg-violet-600 hover:bg-violet-500 text-white dark:text-white transition flex items-center gap-2 shadow-lg shadow-violet-600/30"
                       >
                         <PlusCircle className="w-5 h-5" />
                         <span>Şablonla Yeni Oturum Aç</span>

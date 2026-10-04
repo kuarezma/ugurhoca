@@ -293,7 +293,7 @@ export function ExitTicketTeacherPresenter({
                 <button
                   type="button"
                   onClick={() => changeQuestion(currentQIndex + 1)}
-                  className="inline-flex items-center gap-1 rounded-xl bg-violet-600 hover:bg-violet-500 px-4 py-2 text-xs sm:text-sm font-bold text-white shadow-lg transition active:scale-95"
+                  className="inline-flex items-center gap-1 rounded-xl bg-violet-600 hover:bg-violet-500 px-4 py-2 text-xs sm:text-sm font-bold text-white dark:text-white shadow-lg transition active:scale-95"
                 >
                   Sonraki Soru <ChevronRight className="w-4 h-4" />
                 </button>

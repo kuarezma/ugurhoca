@@ -102,7 +102,7 @@ export function VisualMathProofsModal({
       role="dialog"
       aria-modal="true"
       aria-label="İnteraktif Görsel Formül İspatları"
-      className="fixed inset-0 z-[120] flex items-center justify-center bg-slate-950/80 p-2 sm:p-4 backdrop-blur-md overflow-y-auto"
+      className="fixed inset-0 z-[120] flex items-center justify-center bg-black/70 p-2 sm:p-4 backdrop-blur-md overflow-y-auto"
     >
       <div
         className={`relative flex w-full max-w-5xl flex-col overflow-hidden rounded-3xl border shadow-2xl transition-all my-auto max-h-[95vh] ${
@@ -118,7 +118,7 @@ export function VisualMathProofsModal({
           }`}
         >
           <div className="flex items-center gap-2.5">
-            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-500 to-purple-500 text-white shadow-md">
+            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-500 to-purple-500 text-white dark:text-white shadow-md">
               <Compass className="h-5 w-5" />
             </div>
             <div>
@@ -222,7 +222,7 @@ export function VisualMathProofsModal({
             <div className="space-y-6">
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
                 {/* Sol İnteraktif SVG */}
-                <div className="lg:col-span-7 flex flex-col items-center justify-center rounded-2xl border border-white/10 bg-slate-950 p-4 min-h-[300px]">
+                <div className="lg:col-span-7 flex flex-col items-center justify-center rounded-2xl border border-slate-200 dark:border-white/10 bg-slate-100 dark:bg-slate-950 p-4 min-h-[300px]">
                   <svg viewBox="0 0 400 320" className="w-full max-h-[320px] select-none">
                     {/* Koordinat merkezli üçgen ve kareler */}
                     {/* Dik üçgen: Köşeler (150, 200), (150 + pythA*22, 200), (150, 200 - pythB*22) */}
@@ -333,7 +333,7 @@ export function VisualMathProofsModal({
 
                 {/* Sağ Kontrol Paneli */}
                 <div className="lg:col-span-5 space-y-4">
-                  <div className="rounded-2xl border border-white/10 bg-slate-950/50 p-4 space-y-4">
+                  <div className="rounded-2xl border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-slate-950/50 p-4 space-y-4">
                     <span className="text-xs font-bold uppercase tracking-wider text-indigo-400">
                       Kenar Uzunluklarını Değiştir:
                     </span>
@@ -388,7 +388,7 @@ export function VisualMathProofsModal({
                     <div className="text-xs font-semibold text-indigo-300 mb-1">
                       Pisagor Özdeşliği Doğrulaması:
                     </div>
-                    <div className="text-lg sm:text-xl font-mono font-black text-white">
+                    <div className="text-lg sm:text-xl font-mono font-black text-slate-900 dark:text-white">
                       <span className="text-blue-400">{pythAreaA}</span> +{' '}
                       <span className="text-emerald-400">{pythAreaB}</span> ={' '}
                       <span className="text-amber-400">{pythAreaA + pythAreaB}</span>
@@ -415,7 +415,7 @@ export function VisualMathProofsModal({
             <div className="space-y-6">
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
                 {/* Sol İnteraktif SVG */}
-                <div className="lg:col-span-7 flex flex-col items-center justify-center rounded-2xl border border-white/10 bg-slate-950 p-4 min-h-[300px]">
+                <div className="lg:col-span-7 flex flex-col items-center justify-center rounded-2xl border border-slate-200 dark:border-white/10 bg-slate-100 dark:bg-slate-950 p-4 min-h-[300px]">
                   <svg viewBox="0 0 380 280" className="w-full max-h-[300px] select-none">
                     {(() => {
                       const scale = 22;
@@ -505,13 +505,13 @@ export function VisualMathProofsModal({
                     })()}
                   </svg>
                   <span className="text-[11px] text-slate-400 mt-2">
-                    Pembe parça kaydırıldığında tek parça bir <strong className="text-white">(a - b) × (a + b)</strong> dikdörtgeni oluşur!
+                    Pembe parça kaydırıldığında tek parça bir <strong className="text-slate-900 dark:text-white">(a - b) × (a + b)</strong> dikdörtgeni oluşur!
                   </span>
                 </div>
 
                 {/* Sağ Kontrol Paneli */}
                 <div className="lg:col-span-5 space-y-4">
-                  <div className="rounded-2xl border border-white/10 bg-slate-950/50 p-4 space-y-4">
+                  <div className="rounded-2xl border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-slate-950/50 p-4 space-y-4">
                     <span className="text-xs font-bold uppercase tracking-wider text-pink-400">
                       Kare Kenarlarını Ayarla:
                     </span>
@@ -566,7 +566,7 @@ export function VisualMathProofsModal({
                     <div className="text-xs font-semibold text-pink-300 mb-1">
                       İki Kare Farkı Formülü:
                     </div>
-                    <div className="text-base sm:text-lg font-mono font-black text-white">
+                    <div className="text-base sm:text-lg font-mono font-black text-slate-900 dark:text-white">
                       {diffA}² - {safeDiffB}² = ({diffA} - {safeDiffB}) × ({diffA} + {safeDiffB})
                     </div>
                     <div className="text-sm font-bold text-pink-400 mt-1">
@@ -591,7 +591,7 @@ export function VisualMathProofsModal({
             <div className="space-y-6">
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
                 {/* Sol İnteraktif Birim Çember */}
-                <div className="lg:col-span-7 flex flex-col items-center justify-center rounded-2xl border border-white/10 bg-slate-950 p-4 min-h-[300px]">
+                <div className="lg:col-span-7 flex flex-col items-center justify-center rounded-2xl border border-slate-200 dark:border-white/10 bg-slate-100 dark:bg-slate-950 p-4 min-h-[300px]">
                   <svg viewBox="-140 -140 280 280" className="w-full max-h-[300px] select-none">
                     {/* Eksenler */}
                     <line x1="-125" y1="0" x2="125" y2="0" stroke="rgba(255,255,255,0.2)" strokeWidth="1.5" />
@@ -637,7 +637,7 @@ export function VisualMathProofsModal({
 
                 {/* Sağ Kontrol Paneli */}
                 <div className="lg:col-span-5 space-y-4">
-                  <div className="rounded-2xl border border-white/10 bg-slate-950/50 p-4 space-y-4">
+                  <div className="rounded-2xl border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-slate-950/50 p-4 space-y-4">
                     <span className="text-xs font-bold uppercase tracking-wider text-cyan-400">
                       Açıyı Değiştir (θ):
                     </span>
@@ -660,13 +660,13 @@ export function VisualMathProofsModal({
                     <div className="grid grid-cols-2 gap-2 text-xs">
                       <div className="rounded-xl border border-sky-500/20 bg-sky-950/30 p-2.5">
                         <span className="text-sky-300 font-bold">cos²({trigAngle}°)</span>
-                        <div className="font-mono text-base font-bold text-white mt-0.5">
+                        <div className="font-mono text-base font-bold text-slate-900 dark:text-white mt-0.5">
                           {cosSq.toFixed(4)}
                         </div>
                       </div>
                       <div className="rounded-xl border border-rose-500/20 bg-rose-950/30 p-2.5">
                         <span className="text-rose-300 font-bold">sin²({trigAngle}°)</span>
-                        <div className="font-mono text-base font-bold text-white mt-0.5">
+                        <div className="font-mono text-base font-bold text-slate-900 dark:text-white mt-0.5">
                           {sinSq.toFixed(4)}
                         </div>
                       </div>
@@ -678,7 +678,7 @@ export function VisualMathProofsModal({
                     <div className="text-xs font-semibold text-emerald-300 mb-1">
                       Özdeşlik Doğrulaması:
                     </div>
-                    <div className="text-lg font-mono font-black text-white">
+                    <div className="text-lg font-mono font-black text-slate-900 dark:text-white">
                       sin²(θ) + cos²(θ) = 1
                     </div>
                     <div className="text-sm font-bold text-emerald-400 mt-1">
@@ -703,7 +703,7 @@ export function VisualMathProofsModal({
             <div className="space-y-6">
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
                 {/* Sol Görsel Pascal Üçgeni */}
-                <div className="lg:col-span-7 flex flex-col items-center justify-center rounded-2xl border border-white/10 bg-slate-950 p-6 min-h-[300px]">
+                <div className="lg:col-span-7 flex flex-col items-center justify-center rounded-2xl border border-slate-200 dark:border-white/10 bg-slate-100 dark:bg-slate-950 p-6 min-h-[300px]">
                   <div className="space-y-2.5 text-center">
                     {PASCAL_ROWS.map((row, rIdx) => {
                       const isSelected = rIdx === binomialPower;
@@ -735,14 +735,14 @@ export function VisualMathProofsModal({
 
                 {/* Sağ Kontrol Paneli */}
                 <div className="lg:col-span-5 space-y-4">
-                  <div className="rounded-2xl border border-white/10 bg-slate-950/50 p-4 space-y-4">
+                  <div className="rounded-2xl border border-slate-200 dark:border-white/10 bg-slate-100/50 dark:bg-slate-950/50 p-4 space-y-4">
                     <span className="text-xs font-bold uppercase tracking-wider text-amber-400">
                       Kuvvet Derecesi (n):
                     </span>
 
                     <div>
                       <div className="flex justify-between text-xs font-semibold mb-1">
-                        <span className="text-white">(a + b)ⁿ açılımı için n = {binomialPower}</span>
+                        <span className="text-slate-900 dark:text-white">(a + b)ⁿ açılımı için n = {binomialPower}</span>
                       </div>
                       <input
                         type="range"
@@ -777,7 +777,7 @@ export function VisualMathProofsModal({
                     <div className="text-xs font-semibold text-amber-300 mb-1">
                       (a + b)^{binomialPower} Cebirsel Açılımı:
                     </div>
-                    <div className="text-sm sm:text-base font-mono font-bold text-white leading-relaxed">
+                    <div className="text-sm sm:text-base font-mono font-bold text-slate-900 dark:text-white leading-relaxed">
                       {BINOMIAL_EXPANSIONS[binomialPower]}
                     </div>
                     <div className="text-xs text-slate-300 mt-2">
@@ -802,7 +802,7 @@ export function VisualMathProofsModal({
             <div className="space-y-6">
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
                 {/* Sol İnteraktif SVG */}
-                <div className="lg:col-span-7 flex flex-col items-center justify-center rounded-2xl border border-white/10 bg-slate-950 p-4 min-h-[320px]">
+                <div className="lg:col-span-7 flex flex-col items-center justify-center rounded-2xl border border-slate-200 dark:border-white/10 bg-slate-100 dark:bg-slate-950 p-4 min-h-[320px]">
                   <svg viewBox="0 0 340 320" className="w-full max-h-[320px] select-none">
                     {/* Arka plan daire */}
                     <circle
@@ -917,16 +917,16 @@ export function VisualMathProofsModal({
 
                 {/* Sağ Kontroller ve Hesaplamalar */}
                 <div className="lg:col-span-5 space-y-4">
-                  <div className="rounded-2xl border border-white/10 bg-slate-950/60 p-4 space-y-3">
-                    <h4 className="text-xs font-bold text-slate-300 uppercase tracking-wider">
+                  <div className="rounded-2xl border border-slate-200 dark:border-white/10 bg-slate-100/60 dark:bg-slate-950/60 p-4 space-y-3">
+                    <h4 className="text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">
                       Dinamik Parametreler
                     </h4>
 
                     {/* Yarıçap (r) */}
                     <div>
                       <div className="flex justify-between text-xs mb-1">
-                        <span className="text-slate-400">Yarıçap (r):</span>
-                        <span className="font-mono font-bold text-amber-400">
+                        <span className="text-slate-600 dark:text-slate-400">Yarıçap (r):</span>
+                        <span className="font-mono font-bold text-amber-500 dark:text-amber-400">
                           {circleRadius} cm
                         </span>
                       </div>
@@ -943,8 +943,8 @@ export function VisualMathProofsModal({
                     {/* Merkez Açı (theta) */}
                     <div>
                       <div className="flex justify-between text-xs mb-1">
-                        <span className="text-slate-400">Merkez Açı (θ):</span>
-                        <span className="font-mono font-bold text-pink-400">
+                        <span className="text-slate-600 dark:text-slate-400">Merkez Açı (θ):</span>
+                        <span className="font-mono font-bold text-pink-500 dark:text-pink-400">
                           {circleAngle}°
                         </span>
                       </div>
@@ -966,7 +966,7 @@ export function VisualMathProofsModal({
                       <div className="text-[11px] text-pink-300 font-medium">
                         Yay Uzunluğu (L)
                       </div>
-                      <div className="text-lg font-black font-mono text-white mt-1">
+                      <div className="text-lg font-black font-mono text-slate-900 dark:text-white mt-1">
                         {arcLength} cm
                       </div>
                       <div className="text-[10px] text-slate-400 mt-1">
@@ -978,7 +978,7 @@ export function VisualMathProofsModal({
                       <div className="text-[11px] text-amber-300 font-medium">
                         Dilim Alanı (A)
                       </div>
-                      <div className="text-lg font-black font-mono text-white mt-1">
+                      <div className="text-lg font-black font-mono text-slate-900 dark:text-white mt-1">
                         {sectorArea} cm²
                       </div>
                       <div className="text-[10px] text-slate-400 mt-1">
@@ -987,7 +987,7 @@ export function VisualMathProofsModal({
                     </div>
                   </div>
 
-                  <div className="rounded-2xl border border-white/10 bg-slate-800/40 p-3 text-xs text-slate-300 flex justify-between">
+                  <div className="rounded-2xl border border-slate-200 dark:border-white/10 bg-slate-100/40 dark:bg-slate-800/40 p-3 text-xs text-slate-700 dark:text-slate-300 flex justify-between">
                     <span>Toplam Daire Alanı: <strong>{totalCircleArea} cm²</strong></span>
                     <span>Oran: <strong>%{Math.round((circleAngle / 360) * 100)}</strong></span>
                   </div>
@@ -1017,7 +1017,7 @@ export function VisualMathProofsModal({
           <button
             type="button"
             onClick={onClose}
-            className="w-full sm:w-auto px-5 py-2 rounded-xl text-xs font-bold bg-indigo-600 hover:bg-indigo-500 text-white shadow-md transition"
+            className="w-full sm:w-auto px-5 py-2 rounded-xl text-xs font-bold bg-indigo-600 hover:bg-indigo-500 text-white dark:text-white shadow-md transition"
           >
             Anladım, Kapat
           </button>

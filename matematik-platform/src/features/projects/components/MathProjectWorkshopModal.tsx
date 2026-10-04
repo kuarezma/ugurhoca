@@ -55,24 +55,24 @@ export function MathProjectWorkshopModal({
 
   return (
     <div
-      className="fixed inset-0 z-[160] flex items-center justify-center p-3 sm:p-4 bg-slate-950/80 backdrop-blur-md animate-fade-in"
+      className="fixed inset-0 z-[160] flex items-center justify-center p-3 sm:p-4 bg-black/70 backdrop-blur-md animate-fade-in"
       role="dialog"
       aria-modal="true"
       aria-labelledby={titleId}
     >
       <div
         ref={modalRef}
-        className="relative flex flex-col w-full max-w-4xl max-h-[92vh] rounded-3xl border border-white/10 bg-slate-900 text-white shadow-2xl overflow-hidden"
+        className="relative flex flex-col w-full max-w-4xl max-h-[92vh] rounded-3xl border border-slate-200 dark:border-white/10 bg-white dark:bg-slate-900 text-slate-900 dark:text-white shadow-2xl overflow-hidden"
       >
         {/* Başlık */}
-        <div className="flex items-center justify-between border-b border-white/10 px-5 py-4 bg-slate-900/90">
+        <div className="flex items-center justify-between border-b border-slate-200 dark:border-white/10 px-5 py-4 bg-slate-50 dark:bg-slate-900/90">
           <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-br from-amber-500 to-rose-600 text-white shadow-md shadow-amber-500/25">
+            <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-br from-amber-500 to-rose-600 text-white dark:text-white shadow-md shadow-amber-500/25">
               <Compass className="h-5 w-5" />
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h2 id={titleId} className="text-base font-bold tracking-tight text-white">
+                <h2 id={titleId} className="text-base font-bold tracking-tight text-slate-900 dark:text-white">
                   Matematik Proje Atölyesi
                 </h2>
                 <span className="rounded-full bg-amber-500/20 px-2 py-0.5 text-[10px] font-bold text-amber-300">
@@ -96,9 +96,9 @@ export function MathProjectWorkshopModal({
         </div>
 
         {/* İçerik: Sol Proje Menüsü & Sağ Detay Paneli */}
-        <div className="flex-1 overflow-y-auto grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-white/10">
+        <div className="flex-1 overflow-y-auto grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-slate-200 dark:divide-white/10">
           {/* Sol Kolon: Proje Seçici */}
-          <div className="p-4 space-y-2.5 bg-slate-950/40">
+          <div className="p-4 space-y-2.5 bg-slate-50 dark:bg-slate-950/40">
             <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">
               Aktif Proje Konuları ({MATH_PROJECTS.length})
             </h3>
@@ -123,7 +123,7 @@ export function MathProjectWorkshopModal({
                     <span className="font-bold text-amber-400">{proj.grade}. Sınıf</span>
                     <span className="px-1.5 py-0.5 rounded bg-white/5">{proj.difficulty}</span>
                   </div>
-                  <h4 className="text-xs font-bold text-white leading-snug line-clamp-2">{proj.title}</h4>
+                  <h4 className="text-xs font-bold text-slate-900 dark:text-white leading-snug line-clamp-2">{proj.title}</h4>
                   <div className="flex items-center justify-between text-[11px] text-slate-400 mt-2 pt-2 border-t border-white/5">
                     <span>{proj.durationWeeks} Hafta</span>
                     <span className="text-emerald-400 font-semibold">{pCount}/{proj.milestones.length} Aşama</span>
@@ -142,9 +142,9 @@ export function MathProjectWorkshopModal({
                   {selectedProject.difficulty} Düzey • {selectedProject.durationWeeks} Haftalık Proje
                 </span>
 
-                <div className="flex items-center gap-2 text-xs font-bold text-slate-300">
+                <div className="flex items-center gap-2 text-xs font-bold text-slate-700 dark:text-slate-300">
                   <span>İlerleme: %{progressPercent}</span>
-                  <div className="w-24 h-2 rounded-full bg-slate-800 overflow-hidden border border-white/10">
+                  <div className="w-24 h-2 rounded-full bg-slate-200 dark:bg-slate-800 overflow-hidden border border-slate-200 dark:border-white/10">
                     <div
                       className="h-full bg-gradient-to-r from-amber-500 to-emerald-500 transition-all duration-300"
                       style={{ width: `${progressPercent}%` }}
@@ -153,16 +153,16 @@ export function MathProjectWorkshopModal({
                 </div>
               </div>
 
-              <h3 className="text-lg font-bold text-white">{selectedProject.title}</h3>
-              <p className="text-xs text-slate-300 leading-relaxed">{selectedProject.summary}</p>
+              <h3 className="text-lg font-bold text-slate-900 dark:text-white">{selectedProject.title}</h3>
+              <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">{selectedProject.summary}</p>
             </div>
 
             {/* Gerçek Hayat Senaryosu */}
             <div className="p-3.5 rounded-2xl bg-amber-500/10 border border-amber-500/20 space-y-1">
-              <h4 className="text-xs font-bold text-amber-300 flex items-center gap-1.5">
+              <h4 className="text-xs font-bold text-amber-500 dark:text-amber-300 flex items-center gap-1.5">
                 <Lightbulb className="w-4 h-4" /> Gerçek Hayat Rolü & Senaryo
               </h4>
-              <p className="text-xs text-amber-100/90 leading-relaxed">
+              <p className="text-xs text-amber-900 dark:text-amber-100/90 leading-relaxed">
                 {selectedProject.realWorldScenario}
               </p>
             </div>
@@ -191,15 +191,15 @@ export function MathProjectWorkshopModal({
                       <div
                         className={`w-5 h-5 rounded-lg border flex items-center justify-center shrink-0 mt-0.5 transition ${
                           isDone
-                            ? 'border-emerald-400 bg-emerald-500 text-white'
-                            : 'border-slate-600 bg-slate-800 text-transparent'
+                            ? 'border-emerald-400 bg-emerald-500 text-white dark:text-white'
+                            : 'border-slate-300 dark:border-slate-600 bg-slate-100 dark:bg-slate-800 text-transparent'
                         }`}
                       >
                         <CheckCircle2 className="w-3.5 h-3.5" />
                       </div>
                       <div>
                         <div className="flex items-center gap-2">
-                          <span className="text-xs font-bold text-white">{ms.step}. Aşama: {ms.title}</span>
+                          <span className="text-xs font-bold text-slate-900 dark:text-white">{ms.step}. Aşama: {ms.title}</span>
                           {isDone && (
                             <span className="text-[10px] font-bold text-emerald-400">Tamamlandı</span>
                           )}
@@ -218,8 +218,8 @@ export function MathProjectWorkshopModal({
                 <Award className="w-4 h-4 text-purple-400" /> Değerlendirme Rubriği (100 Puan)
               </h4>
 
-              <div className="rounded-2xl border border-white/10 overflow-hidden text-xs">
-                <div className="grid grid-cols-12 bg-white/5 p-2.5 font-bold text-slate-300 border-b border-white/10">
+              <div className="rounded-2xl border border-slate-200 dark:border-white/10 overflow-hidden text-xs">
+                <div className="grid grid-cols-12 bg-slate-100 dark:bg-white/5 p-2.5 font-bold text-slate-700 dark:text-slate-300 border-b border-slate-200 dark:border-white/10">
                   <span className="col-span-4">Ölçüt</span>
                   <span className="col-span-2 text-center">Puan</span>
                   <span className="col-span-6">Beklenti</span>
@@ -228,12 +228,12 @@ export function MathProjectWorkshopModal({
                   <div
                     key={r.criterion}
                     className={`grid grid-cols-12 p-2.5 items-center ${
-                      i !== selectedProject.rubric.length - 1 ? 'border-b border-white/5' : ''
+                      i !== selectedProject.rubric.length - 1 ? 'border-b border-slate-200 dark:border-white/5' : ''
                     }`}
                   >
-                    <span className="col-span-4 font-semibold text-white">{r.criterion}</span>
-                    <span className="col-span-2 text-center font-bold text-amber-400">{r.maxPoints} P</span>
-                    <span className="col-span-6 text-slate-400 text-[11px]">{r.description}</span>
+                    <span className="col-span-4 font-semibold text-slate-900 dark:text-white">{r.criterion}</span>
+                    <span className="col-span-2 text-center font-bold text-amber-500 dark:text-amber-400">{r.maxPoints} P</span>
+                    <span className="col-span-6 text-slate-500 dark:text-slate-400 text-[11px]">{r.description}</span>
                   </div>
                 ))}
               </div>

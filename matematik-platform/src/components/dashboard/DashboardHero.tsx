@@ -105,7 +105,7 @@ export default function DashboardHero({
                   <span>{user.name?.[0] || '?'}</span>
                 )}
                 <div className="absolute inset-0 flex items-center justify-center rounded-full bg-black/40 opacity-0 transition-opacity group-hover:opacity-100">
-                  <span className="text-xs font-bold uppercase tracking-wider text-white">
+                  <span className="text-xs font-bold uppercase tracking-wider text-white dark:text-white">
                     Değiştir
                   </span>
                 </div>
@@ -210,7 +210,7 @@ export default function DashboardHero({
               <button
                 type="button"
                 onClick={onPrimaryAction}
-                className="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-indigo-600 px-5 py-3 text-sm font-bold text-white shadow border border-indigo-500 transition-all hover:bg-indigo-700 active:scale-[0.99]"
+                className="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-indigo-600 px-5 py-3 text-sm font-bold text-white dark:text-white shadow border border-indigo-500 transition-all hover:bg-indigo-700 active:scale-[0.99]"
               >
                 {primaryTask.actionLabel}
                 <ChevronRight className="h-4 w-4" />

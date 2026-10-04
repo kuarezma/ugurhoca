@@ -290,7 +290,7 @@ export default function ProgramsHubPage() {
         >
           <div className="flex items-start justify-between gap-4">
             <div>
-              <div className="mb-3 inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-indigo-700 to-fuchsia-700 px-3 py-1 text-xs font-bold uppercase tracking-[0.18em] text-white">
+              <div className="mb-3 inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-indigo-700 to-fuchsia-700 px-3 py-1 text-xs font-bold uppercase tracking-[0.18em] text-white dark:text-white">
                 <Sparkles className="h-3.5 w-3.5" />
                 Programlar Merkezi
               </div>
@@ -331,7 +331,7 @@ export default function ProgramsHubPage() {
                     <div
                       className={`inline-flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br ${tool.gradient} shadow-lg`}
                     >
-                      <tool.icon className="h-6 w-6 text-white" />
+                      <tool.icon className="h-6 w-6 text-white dark:text-white" />
                     </div>
                     <Target className="h-5 w-5 text-secondary" />
                   </div>

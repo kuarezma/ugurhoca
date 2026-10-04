@@ -113,7 +113,7 @@ export function MonthlyReportCardModal({
         {/* Header (Screen View) */}
         <div className="no-print flex items-center justify-between border-b border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-slate-950/80 px-4 sm:px-6 py-3 sm:py-4">
           <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
-            <div className="flex h-9 w-9 sm:h-10 sm:w-10 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-amber-500 to-orange-500 text-white shadow-md">
+            <div className="flex h-9 w-9 sm:h-10 sm:w-10 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-amber-500 to-orange-500 text-white dark:text-white shadow-md">
               <Award className="h-5 w-5" />
             </div>
             <div className="min-w-0">

@@ -275,7 +275,7 @@ export function HomeDailyChallenge({ isLight }: { isLight: boolean }) {
                     <button
                       type="button"
                       onClick={handleNextChallenge}
-                      className="rounded-xl bg-brand-primary px-3.5 py-1.5 text-xs font-bold text-white shadow transition hover:bg-brand-primary-deep"
+                      className="rounded-xl bg-brand-primary px-3.5 py-1.5 text-xs font-bold text-white dark:text-white shadow transition hover:bg-brand-primary-deep"
                     >
                       Sıradaki Soruya Geç →
                     </button>

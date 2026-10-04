@@ -745,7 +745,7 @@ export default function ScratchpadModal({
                 <button
                   type="button"
                   onClick={reset}
-                  className="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 rounded-xl text-white font-semibold text-xs transition"
+                  className="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 rounded-xl text-white dark:text-white font-semibold text-xs transition"
                 >
                   Tuvali Yeniden Başlat
                 </button>

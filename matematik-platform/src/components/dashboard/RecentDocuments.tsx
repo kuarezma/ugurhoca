@@ -18,7 +18,7 @@ function RecentDocuments({ documents }: RecentDocumentsProps) {
       className="rounded-3xl border border-white/10 bg-white/5 p-6"
     >
       <div className="mb-5">
-        <h2 className="text-xl font-bold text-white">Son Belgeler</h2>
+        <h2 className="text-xl font-bold text-slate-900 dark:text-white">Son Belgeler</h2>
         <p className="mt-1 text-sm text-slate-400">
           Uğur Hoca tarafından paylaşılan son belgeler.
         </p>
@@ -27,7 +27,7 @@ function RecentDocuments({ documents }: RecentDocumentsProps) {
       {documents.length === 0 ? (
         <div className="rounded-2xl border border-dashed border-white/10 px-5 py-8 text-center">
           <FileText className="mx-auto h-10 w-10 text-slate-600" />
-          <p className="mt-3 text-white">Henüz sana özel belge görünmüyor.</p>
+          <p className="mt-3 text-slate-900 dark:text-white">Henüz sana özel belge görünmüyor.</p>
           <p className="mt-1 text-sm text-slate-400">
             Yeni belge paylaşıldığında burada kısa liste halinde yer alacak.
           </p>
@@ -44,7 +44,7 @@ function RecentDocuments({ documents }: RecentDocumentsProps) {
             >
               <div
                 className={`flex h-11 w-11 items-center justify-center rounded-xl ${
-                  doc.is_read ? "bg-slate-700" : "bg-indigo-500/20"
+                  doc.is_read ? "bg-slate-200 dark:bg-slate-700" : "bg-indigo-500/20"
                 }`}
               >
                 <FileText
@@ -54,7 +54,7 @@ function RecentDocuments({ documents }: RecentDocumentsProps) {
                 />
               </div>
               <div className="min-w-0 flex-1">
-                <p className="truncate font-medium text-white">
+                <p className="truncate font-medium text-slate-900 dark:text-white">
                   {doc.document_title}
                 </p>
                 <p className="mt-1 text-sm text-slate-400">

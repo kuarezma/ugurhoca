@@ -52,7 +52,7 @@ export default function ContentEditModal({
         <div className="flex items-center justify-between mb-6">
           <h2
             id="content-edit-title"
-            className="text-2xl font-bold text-white flex items-center gap-2"
+            className="text-2xl font-bold text-slate-900 dark:text-white flex items-center gap-2"
           >
             <Edit3 className="w-6 h-6 text-blue-400" />
             İçeriği Düzenle
@@ -61,7 +61,7 @@ export default function ContentEditModal({
             type="button"
             onClick={onClose}
             aria-label="Kapat"
-            className="text-slate-400 hover:text-white"
+            className="text-slate-400 hover:text-slate-900 dark:hover:text-white"
           >
             <X className="w-6 h-6" />
           </button>
@@ -74,9 +74,9 @@ export default function ContentEditModal({
             className="text-center py-12"
           >
             <div className="w-20 h-20 mx-auto mb-4 rounded-full bg-gradient-to-br from-green-400 to-emerald-500 flex items-center justify-center">
-              <Check className="w-10 h-10 text-white" />
+              <Check className="w-10 h-10 text-white dark:text-white" />
             </div>
-            <h3 className="text-2xl font-bold text-white mb-2">Güncellendi!</h3>
+            <h3 className="text-2xl font-bold text-slate-900 dark:text-white mb-2">Güncellendi!</h3>
             <p className="text-slate-400">
               İçeriğiniz başarıyla güncellendi.
             </p>

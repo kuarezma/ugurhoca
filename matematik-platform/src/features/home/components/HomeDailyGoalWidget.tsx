@@ -230,7 +230,7 @@ export function HomeDailyGoalWidget({ isLight }: { isLight: boolean }) {
                 <button
                   type="button"
                   onClick={() => handleAdd(1)}
-                  className="flex-1 sm:flex-initial inline-flex items-center justify-center gap-1 rounded-xl bg-emerald-600 px-3.5 py-2 text-xs font-bold text-white shadow-sm hover:bg-emerald-500 transition active:scale-95"
+                  className="flex-1 sm:flex-initial inline-flex items-center justify-center gap-1 rounded-xl bg-emerald-600 px-3.5 py-2 text-xs font-bold text-white dark:text-white shadow-sm hover:bg-emerald-500 transition active:scale-95"
                   aria-label="1 soru çözüldü ekle"
                 >
                   <Plus className="h-3.5 w-3.5" /> +1 Soru
@@ -323,7 +323,7 @@ export function HomeDailyGoalWidget({ isLight }: { isLight: boolean }) {
                     <button
                       type="button"
                       onClick={handleSaveTarget}
-                      className="rounded-lg bg-brand-primary px-2.5 py-1 font-bold text-white hover:bg-brand-primary/90"
+                      className="rounded-lg bg-brand-primary px-2.5 py-1 font-bold text-white dark:text-white hover:bg-brand-primary/90"
                     >
                       Kaydet
                     </button>

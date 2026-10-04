@@ -1421,7 +1421,7 @@ function ContentsPageInner({
         <div className="max-w-[1760px] mx-auto flex justify-between items-center gap-3">
           <Link href="/" className="flex items-center gap-2.5 min-w-0">
             <div className="w-8 h-8 sm:w-10 sm:h-10 shrink-0 bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl flex items-center justify-center">
-              <Calculator className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
+              <Calculator className="w-5 h-5 sm:w-6 sm:h-6 text-white dark:text-white" />
             </div>
             <span className="text-base sm:text-xl font-bold bg-gradient-to-r from-purple-700 via-fuchsia-700 to-pink-700 dark:from-purple-300 dark:via-fuchsia-300 dark:to-pink-300 bg-clip-text text-transparent truncate">
               Uğur Hoca Matematik
@@ -1622,7 +1622,7 @@ function ContentsPageInner({
                     <div
                       className={`mx-auto mb-5 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br ${WORKSHEET_GRADE_CARD_STYLES[grade].folder}`}
                     >
-                      <Layers3 className="h-7 w-7 text-white" />
+                      <Layers3 className="h-7 w-7 text-white dark:text-white" />
                     </div>
                     <h3 className="text-lg font-bold text-primary">
                       {grade === 'Mezun' ? grade : `${grade}. Sınıf`}
@@ -1685,7 +1685,7 @@ function ContentsPageInner({
                               className="group flex w-full items-center gap-4 rounded-2xl border border-default bg-surface-1 px-4 py-4 text-left transition-all hover:border-accent-fg/40 hover:bg-surface-2 sm:px-5"
                             >
                               <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-cyan-500 to-blue-500">
-                                <FolderOpen className="h-6 w-6 text-white" />
+                                <FolderOpen className="h-6 w-6 text-white dark:text-white" />
                               </div>
                               <div className="min-w-0 flex-1">
                                 <h3 className="worksheet-outcome-title text-sm font-semibold leading-relaxed text-primary transition-colors group-hover:text-accent-fg sm:text-base">

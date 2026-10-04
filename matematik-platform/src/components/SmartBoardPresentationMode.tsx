@@ -157,13 +157,13 @@ export function SmartBoardPresentationMode() {
       {/* Akıllı Tahta Araç Çubuğu */}
       <nav
         aria-label="Akıllı Tahta ve Sunum Araç Çubuğu"
-        className="fixed bottom-4 left-1/2 -translate-x-1/2 z-[9999] flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-slate-900 border border-slate-700 shadow-2xl text-slate-100 text-xs font-medium select-none"
+        className="fixed bottom-4 left-1/2 -translate-x-1/2 z-[9999] flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 shadow-2xl text-slate-800 dark:text-slate-100 text-xs font-medium select-none"
       >
         <button
           type="button"
           onClick={toggleLessonFullscreen}
           className={`px-2.5 py-1 rounded-full transition-colors ${
-            isFullscreen ? 'bg-indigo-600 text-slate-50 font-semibold' : 'hover:bg-slate-800 text-slate-200'
+            isFullscreen ? 'bg-indigo-600 text-white dark:text-slate-50 font-semibold' : 'hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200'
           }`}
           title="Ders / Tam Ekran Modu"
         >
@@ -173,19 +173,19 @@ export function SmartBoardPresentationMode() {
         <button
           type="button"
           onClick={cycleFontScale}
-          className="px-2.5 py-1 rounded-full hover:bg-slate-800 text-slate-200 transition-colors"
+          className="px-2.5 py-1 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 transition-colors"
           title="Yazı Boyutunu Büyüt (Arka Sıra Modu)"
         >
           Yazı: {fontLabel}
         </button>
 
-        <span className="w-px h-4 bg-slate-700 mx-0.5" aria-hidden="true" />
+        <span className="w-px h-4 bg-slate-200 dark:bg-slate-700 mx-0.5" aria-hidden="true" />
 
         <button
           type="button"
           onClick={() => handleSetMode('pen')}
           className={`px-2.5 py-1 rounded-full transition-colors ${
-            mode === 'pen' ? 'bg-red-600 text-slate-50 font-semibold' : 'hover:bg-slate-800 text-slate-200'
+            mode === 'pen' ? 'bg-red-600 text-white dark:text-slate-50 font-semibold' : 'hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200'
           }`}
           title="Kırmızı Çizim Kalemi"
         >
@@ -196,7 +196,7 @@ export function SmartBoardPresentationMode() {
           type="button"
           onClick={() => handleSetMode('highlighter')}
           className={`px-2.5 py-1 rounded-full transition-colors ${
-            mode === 'highlighter' ? 'bg-amber-500 text-slate-950 font-bold' : 'hover:bg-slate-800 text-slate-200'
+            mode === 'highlighter' ? 'bg-amber-500 text-slate-950 font-bold' : 'hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200'
           }`}
           title="Fosforlu Sarı Vurgu"
         >
@@ -207,7 +207,7 @@ export function SmartBoardPresentationMode() {
           type="button"
           onClick={() => handleSetMode('eraser')}
           className={`px-2.5 py-1 rounded-full transition-colors ${
-            mode === 'eraser' ? 'bg-slate-200 text-slate-950 font-bold' : 'hover:bg-slate-800 text-slate-200'
+            mode === 'eraser' ? 'bg-slate-200 dark:bg-slate-700 text-slate-900 dark:text-white font-bold' : 'hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200'
           }`}
           title="Silgi"
         >
@@ -217,7 +217,7 @@ export function SmartBoardPresentationMode() {
         <button
           type="button"
           onClick={clearCanvas}
-          className="px-2.5 py-1 rounded-full hover:bg-rose-900 text-rose-300 transition-colors"
+          className="px-2.5 py-1 rounded-full hover:bg-rose-100 dark:hover:bg-rose-950/50 text-rose-600 dark:text-rose-300 transition-colors"
           title="Çizimleri Temizle"
         >
           Temizle

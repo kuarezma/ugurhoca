@@ -34,7 +34,7 @@ export function AccessibilitySettingsModal({
   return (
     <div className="fixed inset-0 z-[180] flex items-center justify-center p-3 pt-[max(0.75rem,env(safe-area-inset-top))] pb-[max(0.75rem,env(safe-area-inset-bottom))] sm:p-6 overflow-hidden animate-in fade-in duration-200">
       <div
-        className="fixed inset-0 bg-slate-950/80 backdrop-blur-md"
+        className="fixed inset-0 bg-black/70 backdrop-blur-md"
         onClick={onClose}
         aria-hidden="true"
       />
@@ -50,7 +50,7 @@ export function AccessibilitySettingsModal({
         {/* Başlık */}
         <div className="border-b border-slate-200/80 dark:border-white/10 bg-slate-50/80 dark:bg-slate-950/80 p-4 sm:p-5 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-sky-600 to-indigo-600 flex items-center justify-center text-white shadow-md">
+            <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-sky-600 to-indigo-600 flex items-center justify-center text-white dark:text-white shadow-md">
               <Eye className="w-5 h-5" />
             </div>
             <div>
@@ -253,7 +253,7 @@ export function AccessibilitySettingsModal({
           <button
             type="button"
             onClick={onClose}
-            className="px-5 py-2 rounded-xl bg-sky-600 hover:bg-sky-500 text-white font-bold text-xs shadow transition-colors"
+            className="px-5 py-2 rounded-xl bg-sky-600 hover:bg-sky-500 text-white dark:text-white font-bold text-xs shadow transition-colors"
           >
             Ayarları Kaydet & Kapat
           </button>
