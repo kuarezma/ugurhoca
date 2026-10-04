@@ -6,6 +6,8 @@ import type {
   AdminStudySessionRow,
   AdminSubmission,
   AdminUser,
+  StudentAdminStatus,
+  StudentWeeklyPlan,
 } from '@/features/admin/types';
 import {
   buildTrackingDashboard,
@@ -81,6 +83,7 @@ const notification = (
 });
 
 const build = (overrides: {
+  adminStatuses?: StudentAdminStatus[];
   assignments?: AdminAssignment[];
   notifications?: AdminNotification[];
   quizResults?: AdminQuizResultRow[];
@@ -88,10 +91,11 @@ const build = (overrides: {
   studySessions?: AdminStudySessionRow[];
   students?: AdminUser[];
   submissions?: AdminSubmission[];
+  weeklyPlans?: StudentWeeklyPlan[];
 } = {}) =>
   buildTrackingInsights({
     activityEvents: [],
-    adminStatuses: [],
+    adminStatuses: overrides.adminStatuses ?? [],
     assignments: overrides.assignments ?? [],
     notifications: overrides.notifications ?? [],
     now,
@@ -102,7 +106,7 @@ const build = (overrides: {
     submissions: overrides.submissions ?? [],
     todayStart,
     weekStart,
-    weeklyPlans: [],
+    weeklyPlans: overrides.weeklyPlans ?? [],
   });
 
 describe('buildTrackingInsights', () => {
@@ -182,5 +186,43 @@ describe('buildTrackingInsights', () => {
       inactive: 2,
       unreadMessages: 1,
     });
+  });
+
+  it('populates student status, weekly plan and handles student-specific assignments', () => {
+    const [insight] = build({
+      adminStatuses: [
+        {
+          labels: ['takip'],
+          status: 'contact_needed',
+          student_id: 'student-1',
+        },
+      ],
+      assignments: [
+        {
+          created_at: '2026-04-20T08:00:00Z',
+          due_date: '2026-04-25T12:00:00Z',
+          grade: null,
+          id: 'universal-assignment',
+          student_id: 'student-1',
+          title: 'Özel Ödev',
+        },
+      ],
+      weeklyPlans: [
+        {
+          id: 'plan-1',
+          status: 'active',
+          student_id: 'student-1',
+          target_minutes: 200,
+          title: 'Bu haftaki plan',
+          week_start: '2026-04-27',
+        },
+      ],
+    });
+
+    expect(insight.status?.status).toBe('contact_needed');
+    expect(insight.currentWeekPlan?.id).toBe('plan-1');
+    expect(insight.overdueAssignments.map((a) => a.id)).toContain(
+      'universal-assignment',
+    );
   });
 });

@@ -18,6 +18,7 @@ import type { StudyGoal } from '@/features/progress/types';
 import {
   buildDashboardGoalSnapshot,
   buildProfileDashboardViewModel,
+  normalizeDashboardBadges,
 } from '@/features/profile/utils/dashboard-view-model';
 
 const referenceDate = new Date('2026-04-15T12:00:00Z');
@@ -273,5 +274,94 @@ describe('dashboard view model', () => {
     });
 
     expect(viewModel.updates).toEqual([]);
+  });
+
+  describe('normalizeDashboardBadges', () => {
+    it('returns empty array when badges input is null or undefined', () => {
+      expect(normalizeDashboardBadges(null)).toEqual([]);
+      expect(normalizeDashboardBadges(undefined)).toEqual([]);
+    });
+
+    it('normalizes badge row fields and sorts them by earnedAt descending', () => {
+      const normalized = normalizeDashboardBadges([
+        {
+          badge_name: 'Eski Rozet',
+          earned_at: '2026-04-01T10:00:00Z',
+          icon_name: 'Trophy',
+          id: 'b1',
+        },
+        {
+          earned_at: '2026-04-10T10:00:00Z',
+          icon: 'Star',
+          id: 'b2',
+          name: 'Yeni Rozet',
+        },
+        {
+          id: 'b3',
+        },
+      ]);
+
+      expect(normalized).toHaveLength(3);
+      expect(normalized[0]?.id).toBe('b2');
+      expect(normalized[0]?.name).toBe('Yeni Rozet');
+      expect(normalized[0]?.icon).toBe('Star');
+
+      expect(normalized[1]?.id).toBe('b1');
+      expect(normalized[1]?.name).toBe('Eski Rozet');
+      expect(normalized[1]?.icon).toBe('Trophy');
+
+      expect(normalized[2]?.id).toBe('b3');
+      expect(normalized[2]?.name).toBe('Rozet');
+      expect(normalized[2]?.icon).toBe('Award');
+    });
+  });
+
+  describe('motivation message rules', () => {
+    it('shows momentum message when streak is 7+ and goal progress is 70%+', () => {
+      const viewModel = createViewModel({
+        goal: { target_duration: 60, week_start: '2026-04-13' },
+        progressRows: [{ id: 'p1', mastery_level: 90, topic: 'Geometri' }],
+        studySessions: [{ date: '2026-04-14', duration: 50, id: 's1' }],
+        user: { ...baseUser, current_streak: 8 },
+      });
+
+      expect(viewModel.motivationMessage).toContain('Ritmin güçlü');
+    });
+
+    it('shows quiz encouragement when score is 80+ without streak bonus', () => {
+      const viewModel = createViewModel({
+        goal: { target_duration: 300, week_start: '2026-04-13' },
+        progressRows: [{ id: 'p1', mastery_level: 90, topic: 'Geometri' }],
+        quizResults: [{ completed_at: '2026-04-14T10:00:00Z', id: 'q1', score: 85, total_questions: 100 }],
+        studySessions: [],
+        user: { ...baseUser, current_streak: 2 },
+      });
+
+      expect(viewModel.motivationMessage).toContain('Son test sonucunda güçlü görünüyorsun');
+    });
+
+    it('shows remaining minutes message when no focus topic exists', () => {
+      const viewModel = createViewModel({
+        goal: { target_duration: 100, week_start: '2026-04-13' },
+        progressRows: [], // No focus topic
+        quizResults: [],
+        studySessions: [{ date: '2026-04-14', duration: 40, id: 's1' }],
+        user: { ...baseUser, current_streak: 2 },
+      });
+
+      expect(viewModel.motivationMessage).toContain('Haftalık hedef için 60 dakika daha ayırman yeterli');
+    });
+
+    it('shows baseline message when all goals met and no focus topic', () => {
+      const viewModel = createViewModel({
+        goal: { target_duration: 40, week_start: '2026-04-13' },
+        progressRows: [], // No focus topic
+        quizResults: [],
+        studySessions: [{ date: '2026-04-14', duration: 40, id: 's1' }],
+        user: { ...baseUser, current_streak: 2 },
+      });
+
+      expect(viewModel.motivationMessage).toContain('Bugün için temel çizgiyi korudun');
+    });
   });
 });
