@@ -128,7 +128,8 @@ jobs:
             exit 1
           fi
           npx playwright install --with-deps chromium
-          npm run test:e2e
+          # Kontrast kapısı contrast.yml'de ayrı koşar; burada tekrar etme.
+          npx playwright test --grep-invert "kontrast kapısı"
       - name: Başarısız E2E raporunu yükle
         if: failure()
         uses: actions/upload-artifact@v5
