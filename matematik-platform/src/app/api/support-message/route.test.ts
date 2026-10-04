@@ -1,7 +1,6 @@
 import { POST } from '@/app/api/support-message/route';
 import {
   buildSupportNotificationPayload,
-  cleanupExpiredNotifications,
   findActiveModerationAction,
   notifyAdminForSupportMessage,
   recordSelfCopyForStudent,
@@ -15,7 +14,6 @@ vi.mock('@/lib/supabase/server', () => ({
 
 vi.mock('@/features/support/server/supportMessages', () => ({
   buildSupportNotificationPayload: vi.fn(),
-  cleanupExpiredNotifications: vi.fn(),
   findActiveModerationAction: vi.fn(),
   notifyAdminForSupportMessage: vi.fn(),
   recordSelfCopyForStudent: vi.fn(),
@@ -97,7 +95,6 @@ describe('POST /api/support-message', () => {
     );
 
     expect(response.status).toBe(200);
-    expect(cleanupExpiredNotifications).toHaveBeenCalledWith(supabaseClient);
     expect(findActiveModerationAction).toHaveBeenCalledWith(
       supabaseClient,
       'admin-1',

@@ -3,6 +3,7 @@ import { isAuthorizedCronRequest } from '@/lib/cron-auth';
 import { sendDueAssignmentReminders } from '@/features/assignments/server/assignmentReminders';
 import { sendDueLiveLessonReminders } from '@/features/live-lessons/server/liveLessons';
 import { sendDueStreakReminders } from '@/features/profile/server/streakReminders';
+import { cleanupExpiredNotifications } from '@/features/support/server/notificationRetention';
 import { scanCurrentWeekWorksheetCandidates } from '@/lib/worksheet-candidate-scan';
 import { createServiceRoleClient } from '@/lib/supabase/server';
 import { createLogger } from '@/lib/logger';
@@ -94,6 +95,18 @@ export async function GET(request: Request) {
       const msg = err instanceof Error ? err.message : String(err);
       log.error('Cron job failed: streak-reminders', { error: msg });
       errors.streakReminders = msg;
+    }
+  }
+
+  // 6. Eski destek ve moderasyon bildirimleri (günlük)
+  if (!specificJob || specificJob === 'daily' || specificJob === 'notification-retention') {
+    try {
+      await cleanupExpiredNotifications(createServiceRoleClient());
+      results.notificationRetention = { ok: true };
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : String(err);
+      log.error('Cron job failed: notification-retention', { error: msg });
+      errors.notificationRetention = msg;
     }
   }
 

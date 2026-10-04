@@ -17,6 +17,10 @@ vi.mock('@/features/profile/server/streakReminders', () => ({
   sendDueStreakReminders: vi.fn().mockResolvedValue({ remindedCount: 3, studentIds: ['s-1'] }),
 }));
 
+vi.mock('@/features/support/server/notificationRetention', () => ({
+  cleanupExpiredNotifications: vi.fn(),
+}));
+
 vi.mock('@/lib/worksheet-candidate-scan', () => ({
   scanCurrentWeekWorksheetCandidates: vi.fn(),
 }));
@@ -41,6 +45,7 @@ import { isAuthorizedCronRequest } from '@/lib/cron-auth';
 import { sendDueAssignmentReminders } from '@/features/assignments/server/assignmentReminders';
 import { sendDueLiveLessonReminders } from '@/features/live-lessons/server/liveLessons';
 import { scanCurrentWeekWorksheetCandidates } from '@/lib/worksheet-candidate-scan';
+import { cleanupExpiredNotifications } from '@/features/support/server/notificationRetention';
 
 describe('Cron Dispatch Route (/api/cron/dispatch)', () => {
   beforeEach(() => {
@@ -77,6 +82,7 @@ describe('Cron Dispatch Route (/api/cron/dispatch)', () => {
     expect(data.ok).toBe(true);
     expect(sendDueAssignmentReminders).toHaveBeenCalledTimes(1);
     expect(sendDueLiveLessonReminders).toHaveBeenCalledTimes(1);
+    expect(cleanupExpiredNotifications).toHaveBeenCalledTimes(1);
     expect(scanCurrentWeekWorksheetCandidates).not.toHaveBeenCalled();
     expect(data.results.assignmentReminders).toEqual({
       assignmentCount: 3,
@@ -134,6 +140,38 @@ describe('Cron Dispatch Route (/api/cron/dispatch)', () => {
     expect(data.results.streakReminders).toEqual({
       remindedCount: 3,
       studentIds: ['s-1'],
+    });
+  });
+
+  it('job=notification-retention yalnız eski bildirim temizliğini çalıştırır', async () => {
+    vi.mocked(isAuthorizedCronRequest).mockReturnValue(true);
+
+    const response = await GET(
+      new Request('https://ugurhoca.com/api/cron/dispatch?job=notification-retention'),
+    );
+
+    expect(response.status).toBe(200);
+    expect(cleanupExpiredNotifications).toHaveBeenCalledTimes(1);
+    expect(sendDueAssignmentReminders).not.toHaveBeenCalled();
+    expect(sendDueLiveLessonReminders).not.toHaveBeenCalled();
+    await expect(response.json()).resolves.toMatchObject({
+      ok: true,
+      results: { notificationRetention: { ok: true } },
+    });
+  });
+
+  it('bildirim temizliği başarısızsa cron hatasını görünür kılar', async () => {
+    vi.mocked(isAuthorizedCronRequest).mockReturnValue(true);
+    vi.mocked(cleanupExpiredNotifications).mockRejectedValueOnce(new Error('Veritabanı hatası'));
+
+    const response = await GET(
+      new Request('https://ugurhoca.com/api/cron/dispatch?job=notification-retention'),
+    );
+
+    expect(response.status).toBe(207);
+    await expect(response.json()).resolves.toMatchObject({
+      ok: false,
+      errors: { notificationRetention: 'Veritabanı hatası' },
     });
   });
 });

@@ -7,7 +7,6 @@ const log = createLogger('support-message');
 import { createServerSupabaseClient } from '@/lib/supabase/server';
 import {
   buildSupportNotificationPayload,
-  cleanupExpiredNotifications,
   findActiveModerationAction,
   notifyAdminForSupportMessage,
   recordSelfCopyForStudent,
@@ -59,8 +58,6 @@ export async function POST(request: Request) {
 
   const { data: adminIdFromRpc } = await supabase.rpc('get_admin_profile_id');
   const adminId = (adminIdFromRpc as string | null) || 'admin-1';
-
-  await cleanupExpiredNotifications(supabase);
 
   const activeAction = await findActiveModerationAction(
     supabase,

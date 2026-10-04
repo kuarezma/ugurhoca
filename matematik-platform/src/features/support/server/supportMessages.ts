@@ -3,8 +3,6 @@ import { Resend } from 'resend';
 import { getResendApiKey } from '@/lib/env.server';
 import type { SupportAttachment } from '@/types';
 
-const RETENTION_DAYS = 180;
-
 type SupportBody = {
   attachments: SupportAttachment[];
   sender_email?: string;
@@ -40,21 +38,6 @@ export const parseModerationPayload = (value: string | null) => {
   } catch {
     return null;
   }
-};
-
-export const cleanupExpiredNotifications = async (
-  supabase: SupabaseClient,
-  retentionDays = RETENTION_DAYS,
-) => {
-  const cutoffIso = new Date(
-    Date.now() - retentionDays * 24 * 60 * 60 * 1000,
-  ).toISOString();
-
-  await supabase
-    .from('notifications')
-    .delete()
-    .in('type', ['message', 'moderation', 'report'])
-    .lt('created_at', cutoffIso);
 };
 
 export const findActiveModerationAction = async (
