@@ -23,7 +23,6 @@ vi.mock('@/lib/supabase/client', () => ({
 import {
   clearClientAuthSnapshotCookie,
   clearUserProfileCache,
-  signOutClient,
   getClientSession,
   getCurrentUserProfile,
   redirectToHome,
