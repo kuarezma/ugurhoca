@@ -74,6 +74,34 @@ describe('auth-client', () => {
     });
   });
 
+  it('clears only legacy learning keys on logout and keeps both users scoped data', async () => {
+    localStorage.clear();
+    mockSignOut.mockResolvedValue({ error: null });
+    for (const key of ['favorites', 'matematiklab_completed_docs', 'ugurhoca_daily_goal_v1', 'ugur_hoca_mistakes_bank_v1', 'ugurhoca_pending_quiz_results', 'ugurhoca_active_draft_quiz_id', 'ugurhoca_quiz_draft_quiz-1']) {
+      localStorage.setItem(key, 'legacy');
+      localStorage.setItem(`${key}:user-a`, 'saved-a');
+      localStorage.setItem(`${key}:user-b`, 'saved-b');
+    }
+    localStorage.setItem('theme', 'dark');
+    await signOutClient();
+    expect(localStorage.getItem('favorites')).toBeNull();
+    expect(localStorage.getItem('ugurhoca_quiz_draft_quiz-1')).toBeNull();
+    expect(localStorage.getItem('favorites:user-a')).toBe('saved-a');
+    expect(localStorage.getItem('favorites:user-b')).toBe('saved-b');
+    expect(localStorage.getItem('ugurhoca_quiz_draft_quiz-1:user-a')).toBe('saved-a');
+    expect(localStorage.getItem('theme')).toBe('dark');
+  });
+
+  it('assigns legacy data to the first authenticated profile before any learning screen opens', async () => {
+    localStorage.clear();
+    localStorage.setItem('favorites', '["legacy"]');
+    mockGetSession.mockResolvedValue({ data: { session: createSession() }, error: null });
+    mockProfileSingle.mockResolvedValue({ data: { id: 'user-1', name: 'Ada', grade: 7 }, error: null });
+    await getCurrentUserProfile({ redirectToLogin: false });
+    expect(localStorage.getItem('favorites:user-1')).toBe('["legacy"]');
+    expect(localStorage.getItem('favorites')).toBeNull();
+  });
+
   it('prefers router.replace for redirects', () => {
     const router = {
       push: vi.fn(),

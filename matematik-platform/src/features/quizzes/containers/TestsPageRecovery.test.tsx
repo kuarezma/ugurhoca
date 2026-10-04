@@ -84,7 +84,7 @@ describe('TestsPage State Recovery (Kesinti Koruması)', () => {
     const discardBtn = screen.getByRole('button', { name: 'Taslağı Sil' });
     fireEvent.click(discardBtn);
 
-    expect(clearDraftSpy).toHaveBeenCalledWith('quiz-101');
+    expect(clearDraftSpy).toHaveBeenCalledWith('quiz-101', 'test_user');
     expect(screen.queryByText('Yarım Kalan Sınavınız Bulundu')).not.toBeInTheDocument();
   });
 });

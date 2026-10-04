@@ -79,6 +79,15 @@ describe('QuizResultsView', () => {
     expect(onBack).toHaveBeenCalledTimes(1);
   });
 
+  it('counts the original question indices when earlier questions are skipped', () => {
+    render(<QuizResultsView score={50} quiz={mockQuiz} quizQuestions={mockQuestions}
+      answers={{ 1: 0 }} questionTimes={{}} startTime={null}
+      onRetake={vi.fn()} onBackToLobby={vi.fn()} onOpenOutcomeAnalysis={vi.fn()}
+      onOpenMistakeModal={vi.fn()} onDownloadPDF={vi.fn()} />);
+    expect(screen.getAllByText('Doğru')[0].previousElementSibling).toHaveTextContent('1');
+    expect(screen.getAllByText('Yanlış')[0].previousElementSibling).toHaveTextContent('0');
+  });
+
   it('confidenceRatings verildiğinde metakognitif analiz kartını gösterir', () => {
     render(
       <QuizResultsView

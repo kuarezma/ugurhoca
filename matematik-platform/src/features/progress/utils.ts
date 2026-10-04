@@ -1,3 +1,4 @@
+import { toLocalDateKey } from '@/lib/localDate';
 import type {
   ProgressRow,
   StudyGoal,
@@ -9,7 +10,7 @@ export const getCurrentWeekStart = (referenceDate = new Date()) => {
   const dayOfWeek = nextDate.getDay();
   const diff = nextDate.getDate() - dayOfWeek + (dayOfWeek === 0 ? -6 : 1);
   nextDate.setDate(diff);
-  return nextDate.toISOString().split('T')[0] ?? '';
+  return toLocalDateKey(nextDate);
 };
 
 export const resolveCurrentGoal = (
