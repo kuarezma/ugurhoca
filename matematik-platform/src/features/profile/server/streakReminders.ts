@@ -12,7 +12,7 @@ export async function sendDueStreakReminders() {
   // Dün aktif olan, bugün henüz girmeyen ve serisi en az 2 gün olan öğrencileri bul
   const { data: atRiskProfiles, error: fetchError } = await supabase
     .from('profiles')
-    .select('id, current_streak, full_name, email')
+    .select('id, current_streak')
     .gte('current_streak', 2)
     .eq('last_active_date', yesterdayStr);
 

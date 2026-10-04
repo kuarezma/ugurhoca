@@ -1,0 +1,1 @@
+select (to_regclass('public.user_mistakes') is not null) and (select count(*) from pg_policies where schemaname='public' and tablename='user_mistakes')=4 and not has_table_privilege('anon','public.user_mistakes','SELECT') and has_table_privilege('authenticated','public.user_mistakes','SELECT') as ok;

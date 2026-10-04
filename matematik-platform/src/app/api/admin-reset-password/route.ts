@@ -72,7 +72,7 @@ export async function POST(request: Request) {
       log.error('Service role client oluşturulamadı', serviceError);
       return NextResponse.json(
         {
-          error: 'Sunucu yapılandırması eksik (SUPABASE_SERVICE_ROLE_KEY).',
+          error: 'İşlem şu anda tamamlanamadı. Lütfen daha sonra tekrar deneyin.',
         },
         { status: 500 },
       );
@@ -84,12 +84,11 @@ export async function POST(request: Request) {
       });
 
     if (updateError) {
-      log.error('Admin password update error', {
+      log.error('Admin password update error', updateError, {
         student_id,
-        error: updateError.message,
       });
       return NextResponse.json(
-        { error: updateError.message || 'Şifre güncellenemedi.' },
+        { error: 'Şifre güncellenemedi. Lütfen daha sonra tekrar deneyin.' },
         { status: 500 },
       );
     }
@@ -106,6 +105,9 @@ export async function POST(request: Request) {
     });
   } catch (err) {
     log.error('Admin reset password unexpected error', err);
-    return NextResponse.json({ error: 'Sunucu hatası.' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'İşlem şu anda tamamlanamadı. Lütfen daha sonra tekrar deneyin.' },
+      { status: 500 },
+    );
   }
 }

@@ -1,3 +1,4 @@
+import { toDisplayGrade } from '@/lib/grade';
 import type { GradeValue } from '@/types';
 
 export const AUTH_SNAPSHOT_COOKIE_NAME = 'ugurhoca_auth_snapshot';
@@ -36,6 +37,7 @@ export const parseAuthSnapshot = (value: string | undefined) => {
 
     return {
       ...parsed,
+      grade: toDisplayGrade(parsed.grade),
       name:
         typeof parsed.name === 'string' && parsed.name.length > 0
           ? parsed.name

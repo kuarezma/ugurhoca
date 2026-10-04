@@ -1,10 +1,13 @@
 import { apiError, apiOk } from '@/lib/api-response';
+import { createLogger } from '@/lib/logger';
 import { CONTENT_PAGE_SIZE } from '@/features/content/constants';
 import {
   getInitialContentGradeFilter,
   loadInitialContentDocuments,
 } from '@/features/content/server';
 import type { ContentPrefetchPayload } from '@/features/content/types';
+
+const log = createLogger('content-prefetch');
 
 export async function GET(request: Request) {
   try {
@@ -26,10 +29,9 @@ export async function GET(request: Request) {
       { headers: { 'Cache-Control': 'private, no-cache', Vary: 'Cookie' } },
     );
   } catch (error) {
+    log.error('İçerik ön yükleme sırasında hata oluştu', error);
     return apiError(
-      error instanceof Error
-        ? error.message
-        : 'İçerik ön hazırlığı yüklenemedi.',
+      'İçerik ön hazırlığı yüklenemedi. Lütfen daha sonra tekrar deneyin.',
       500,
       'content_prefetch_failed',
     );

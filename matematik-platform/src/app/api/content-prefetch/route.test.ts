@@ -1,79 +1,73 @@
-import { GET } from '@/app/api/content-prefetch/route';
-import { CONTENT_PAGE_SIZE } from '@/features/content/constants';
-import {
-  getInitialContentGradeFilter,
-  loadInitialContentDocuments,
-} from '@/features/content/server';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
+
+const { mockLogError, mockLoadInitialContentDocuments, mockGetInitialContentGradeFilter } =
+  vi.hoisted(() => ({
+    mockLogError: vi.fn(),
+    mockLoadInitialContentDocuments: vi.fn(),
+    mockGetInitialContentGradeFilter: vi.fn(),
+  }));
 
 vi.mock('@/features/content/server', () => ({
-  getInitialContentGradeFilter: vi.fn(),
-  loadInitialContentDocuments: vi.fn(),
+  loadInitialContentDocuments: mockLoadInitialContentDocuments,
+  getInitialContentGradeFilter: mockGetInitialContentGradeFilter,
 }));
 
-describe('GET /api/content-prefetch', () => {
+vi.mock('@/lib/logger', () => ({
+  createLogger: () => ({
+    error: mockLogError,
+    warn: vi.fn(),
+    info: vi.fn(),
+    debug: vi.fn(),
+  }),
+}));
+
+import { GET } from './route';
+
+describe('Content Prefetch Route (/api/content-prefetch)', () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
 
-  it('returns prefetched content using the resolved grade filter', async () => {
-    vi.mocked(getInitialContentGradeFilter).mockResolvedValue(7);
-    vi.mocked(loadInitialContentDocuments).mockResolvedValue({
+  it('başarılı durumda 200 ve içerik listesini döner', async () => {
+    mockGetInitialContentGradeFilter.mockResolvedValue('5');
+    mockLoadInitialContentDocuments.mockResolvedValue({
       count: 2,
-      documents: [
-        {
-          grade: [7],
-          id: 'doc-1',
-          title: 'Çarpanlar',
-          type: 'yaprak-test',
-        },
-      ],
+      documents: [{ id: 'doc-1' }, { id: 'doc-2' }],
     });
 
-    const response = await GET(
-      new Request('http://localhost/api/content-prefetch?type=yaprak-test'),
-    );
+    const req = new Request('http://localhost/api/content-prefetch?type=yaprak-test');
+    const response = await GET(req);
 
     expect(response.status).toBe(200);
     expect(response.headers.get('Cache-Control')).toBe('private, no-cache');
     expect(response.headers.get('Vary')).toBe('Cookie');
-    expect(loadInitialContentDocuments).toHaveBeenCalledWith(
+    expect(mockLoadInitialContentDocuments).toHaveBeenCalledWith(
       1,
-      CONTENT_PAGE_SIZE,
-      7,
+      5,
+      '5',
       'yaprak-test',
     );
-    await expect(response.json()).resolves.toEqual({
-      data: {
-        count: 2,
-        documents: [
-          {
-            grade: [7],
-            id: 'doc-1',
-            title: 'Çarpanlar',
-            type: 'yaprak-test',
-          },
-        ],
-        grade: 7,
-        type: 'yaprak-test',
-      },
-    });
+    const body = await response.json();
+    expect(body.data.count).toBe(2);
+    expect(body.data.grade).toBe('5');
+    expect(body.data.documents).toEqual([{ id: 'doc-1' }, { id: 'doc-2' }]);
   });
 
-  it('returns a standardized error payload when prefetch fails', async () => {
-    vi.mocked(getInitialContentGradeFilter).mockRejectedValue(
-      new Error('snapshot failed'),
+  it('hata oluştuğunda ham error.message sızdırılmaz, genel Türkçe mesaj döner ve logger çağrılır', async () => {
+    mockGetInitialContentGradeFilter.mockRejectedValue(
+      new Error('Internal database connection pool timeout at TCP 5432'),
     );
 
-    const response = await GET(
-      new Request('http://localhost/api/content-prefetch?type=deneme-sinav'),
+    const req = new Request('https://ugurhoca.com/api/content-prefetch');
+    const res = await GET(req);
+    expect(res.status).toBe(500);
+    const body = await res.json();
+    expect(body.error.message).not.toContain('database connection pool');
+    expect(body.error.message).not.toContain('TCP 5432');
+    expect(body.error.message).toBe('İçerik ön hazırlığı yüklenemedi. Lütfen daha sonra tekrar deneyin.');
+    expect(mockLogError).toHaveBeenCalledWith(
+      expect.stringContaining('İçerik ön yükleme'),
+      expect.any(Error),
     );
-
-    expect(response.status).toBe(500);
-    await expect(response.json()).resolves.toEqual({
-      error: {
-        code: 'content_prefetch_failed',
-        message: 'snapshot failed',
-      },
-    });
   });
 });

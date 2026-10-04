@@ -1,10 +1,11 @@
-import { act, render, screen, waitFor } from '@testing-library/react';
+import { act, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { renderToString } from 'react-dom/server';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import ContentsPage from './ContentsPage';
 import {
   loadContentDocuments,
   resolveContentUser,
+  updateDocumentMetric,
 } from '@/features/content/queries';
 
 const navigation = vi.hoisted(() => ({
@@ -26,6 +27,10 @@ vi.mock('@/features/content/queries', () => ({
   resolveContentUser: vi.fn(),
   loadContentDocuments: vi.fn(),
   seedContentDocumentCache: vi.fn(),
+  updateDocumentMetric: vi.fn(),
+}));
+vi.mock('@/features/analytics/trackActivity', () => ({
+  trackStudentActivityEvent: vi.fn(),
 }));
 vi.mock('@/features/content/hooks/useCloudFavorites', () => ({
   useCloudFavorites: () => ({
@@ -165,4 +170,25 @@ describe('ContentsPage static feed and client filters', () => {
       expect(loadContentDocuments).not.toHaveBeenCalled();
     },
   );
+
+  it('beğeniyi geri almak sayaç rotasına ikinci bir +1 göndermez', async () => {
+    vi.mocked(updateDocumentMetric).mockResolvedValue(undefined);
+    render(
+      <ContentsPage
+        initialDocuments={[
+          { id: 'doc-1', title: 'Beğenilen içerik', type: 'kitaplar', grade: [7], likes: 2 },
+        ]}
+        initialTotalCount={1}
+      />,
+    );
+
+    const likeButton = await screen.findByTitle('Beğen');
+    fireEvent.click(likeButton);
+    await waitFor(() => expect(likeButton).toHaveTextContent('3'));
+    fireEvent.click(likeButton);
+    await waitFor(() => expect(likeButton).toHaveTextContent('2'));
+
+    expect(updateDocumentMetric).toHaveBeenCalledTimes(1);
+    expect(updateDocumentMetric).toHaveBeenCalledWith('doc-1', { likes: 3 });
+  });
 });

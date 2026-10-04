@@ -295,7 +295,7 @@ CREATE TEMP TABLE grade_cases (n int PRIMARY KEY, c jsonb NOT NULL);
 -- BEGIN access-grade-cases
 INSERT INTO grade_cases (n, c) VALUES
   (1, '{"name":"profil 7","profile":7,"grade":"7","sees":"G7"}'),
-  (2, '{"name":"profil 0 (kayıt formu Mezun için 0 yazar)","profile":0,"grade":"0","sees":""}'),
+  (2, '{"name":"profil 0 (kayıt formu Mezun için 0 yazar)","profile":0,"grade":"Mezun","sees":"GM"}'),
   (3, '{"name":"profil metin 07","profile":"07","grade":"7","sees":"G7"}'),
   (4, '{"name":"profil metin Mezun","profile":"Mezun","grade":"Mezun","sees":"GM"}'),
   (5, '{"name":"geçersiz profil metadataya düşmez","profile":"abc","metadata":{"grade":7},"grade":null,"sees":""}'),
@@ -306,7 +306,7 @@ INSERT INTO grade_cases (n, c) VALUES
   (10, '{"name":"profilsiz, metadata metin 05","metadata":{"grade":"05"},"grade":"5","sees":"G5"}'),
   (11, '{"name":"profilsiz, metadata 7.0","sqlOnly":true,"metadata":{"grade":7.0},"grade":null,"sees":""}'),
   (12, '{"name":"profilsiz, metadata 0007","metadata":{"grade":"0007"},"grade":"7","sees":"G7"}'),
-  (13, '{"name":"profilsiz, metadata 000","metadata":{"grade":"000"},"grade":"0","sees":""}'),
+  (13, '{"name":"profilsiz, metadata 000","metadata":{"grade":"000"},"grade":"Mezun","sees":"GM"}'),
   (14, '{"name":"profilsiz, metadata Mezun","metadata":{"grade":"Mezun"},"grade":"Mezun","sees":"GM"}'),
   (15, '{"name":"profilsiz, metadata küçük harf mezun","metadata":{"grade":"mezun"},"grade":null,"sees":""}'),
   (16, '{"name":"profilsiz, metadata 7.5","metadata":{"grade":7.5},"grade":null,"sees":""}'),
@@ -327,9 +327,13 @@ INSERT INTO grade_cases (n, c) VALUES
   (31, '{"name":"profilsiz, metadata metin 7.0","metadata":{"grade":"7.0"},"grade":null,"sees":""}'),
   (32, '{"name":"profilsiz, metadata metin 1e1","metadata":{"grade":"1e1"},"grade":null,"sees":""}'),
   (33, '{"name":"profilsiz, metadata metin 7.0000000000000001","metadata":{"grade":"7.0000000000000001"},"grade":null,"sees":""}'),
-  (34, '{"name":"profilsiz, metadata sayı 0","metadata":{"grade":0},"grade":"0","sees":""}'),
+  (34, '{"name":"profilsiz, metadata sayı 0","metadata":{"grade":0},"grade":"Mezun","sees":"GM"}'),
   (35, '{"name":"profilsiz, metadata en büyük güvenli tam sayı","metadata":{"grade":9007199254740991},"grade":"9007199254740991","sees":""}'),
-  (36, '{"name":"profilsiz, metadata güvenli sınır üstü","metadata":{"grade":9007199254740992},"grade":null,"sees":""}');
+  (36, '{"name":"profilsiz, metadata güvenli sınır üstü","metadata":{"grade":9007199254740992},"grade":null,"sees":""}'),
+  (37, '{"name":"profil metin 00","profile":"00","grade":"Mezun","sees":"GM"}'),
+  (38, '{"name":"profil NULL, metadata sayı 0","profile":null,"metadata":{"grade":0},"grade":"Mezun","sees":"GM"}'),
+  (39, '{"name":"profilsiz, metadata metin 0","metadata":{"grade":"0"},"grade":"Mezun","sees":"GM"}'),
+  (40, '{"name":"Mezun profil metadata sınıfına üstün","profile":0,"metadata":{"grade":8},"grade":"Mezun","sees":"GM"}');
 -- END access-grade-cases
 
 DO $$
@@ -375,7 +379,7 @@ BEGIN
     checked := checked + 1;
   END LOOP;
 
-  IF checked < 34 THEN
+  IF checked < 38 THEN
     RAISE EXCEPTION 'FAIL sınıf vakaları: yalnız % vaka koşuldu (% atlandı)', checked, skipped;
   END IF;
   RAISE NOTICE 'ok  sınıf vakaları: % koşuldu, % atlandı', checked, skipped;

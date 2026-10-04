@@ -1,9 +1,11 @@
 -- Performance Composite Indexes for Scalability
 -- Ensures fast queries for student progress, quiz histories, and study sessions
 
--- 1. quiz_results: Index for user's past quizzes sorted by creation date
-CREATE INDEX IF NOT EXISTS idx_quiz_results_user_created 
-  ON public.quiz_results(user_id, created_at DESC);
+-- 1. quiz_results: Index for user's past quizzes sorted by completion date.
+-- quiz_results has no created_at column (20260408130000 defines completed_at);
+-- the original created_at version failed on every database.
+CREATE INDEX IF NOT EXISTS idx_quiz_results_user_created
+  ON public.quiz_results(user_id, completed_at DESC);
 
 -- 2. study_sessions: Missing user and created_at indexes
 CREATE INDEX IF NOT EXISTS idx_study_sessions_user_id 

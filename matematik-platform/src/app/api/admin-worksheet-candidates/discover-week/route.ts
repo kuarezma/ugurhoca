@@ -17,9 +17,7 @@ export async function POST(request: Request) {
   } catch (error) {
     log.error('Haftalık aday tarama hatası', error);
     return apiError(
-      error instanceof Error
-        ? error.message
-        : 'Haftalık test adayı taraması yapılamadı.',
+      'Haftalık test adayı taraması yapılamadı. Lütfen daha sonra tekrar deneyin.',
       500,
       'worksheet_candidate_week_scan_failed',
     );

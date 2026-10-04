@@ -1,3 +1,4 @@
+import { isGraduateGrade } from '@/lib/grade';
 import type { GradeValue } from '@/types';
 
 const DEFAULT_GRADE_KEY = '5';
@@ -98,7 +99,7 @@ export const GRADE_TOPIC_OPTIONS: Record<string, readonly string[]> = {
 };
 
 const normalizeGradeToTopicKey = (grade?: GradeValue | string | null) => {
-  if (grade === 'Mezun') {
+  if (isGraduateGrade(grade)) {
     return MEZUN_GRADE_KEY;
   }
 

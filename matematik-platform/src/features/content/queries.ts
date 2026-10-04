@@ -461,23 +461,32 @@ export const updateDocumentMetric = async (
   documentId: string,
   payload: Partial<Pick<ContentDocument, 'comments_count' | 'downloads' | 'likes' | 'views'>>,
 ) => {
-  const { error } = await supabase
-    .from('documents')
-    .update(payload)
-    .eq('id', documentId);
+  const metricKey = Object.keys(payload)[0] as keyof typeof payload | undefined;
 
-  if (error) {
+  if (metricKey === 'comments_count') {
+    // Sayaç rotası comments_count'u desteklemiyor; bu yol değişmedi
+    // (RLS gereği yalnız admin güncelleyebilir).
+    await supabase.from('documents').update(payload).eq('id', documentId);
+  } else if (metricKey) {
+    // Doğrudan UPDATE denenmez: RLS engellediğinde hata değil 0 satır döner,
+    // bu yüzden öğrenci sayaçları hiç artmıyordu. Rota +1 artırır; gönderilen
+    // değer yalnız yerel iyimser gösterim içindir.
     try {
-      const metricKey = Object.keys(payload)[0] as 'views' | 'downloads' | 'likes';
-      if (metricKey) {
-        await fetch('/api/content-documents', {
-          method: 'PATCH',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ document_id: documentId, metric: metricKey }),
-        });
+      const headers: Record<string, string> = { 'Content-Type': 'application/json' };
+      if (metricKey === 'likes') {
+        const session = await getClientSession();
+        if (session?.access_token) {
+          headers.Authorization = `Bearer ${session.access_token}`;
+        }
       }
+      await fetch('/api/content-documents', {
+        method: 'PATCH',
+        credentials: 'same-origin',
+        headers,
+        body: JSON.stringify({ document_id: documentId, metric: metricKey }),
+      });
     } catch {
-      // ignore
+      // Sayaç güncellemesi sayfa akışını bozmamalı.
     }
   }
 

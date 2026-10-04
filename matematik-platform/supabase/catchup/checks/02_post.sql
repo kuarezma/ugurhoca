@@ -1,0 +1,1 @@
+select exists (select 1 from pg_proc where pronamespace='public'::regnamespace and proname='touch_daily_streak' and prosrc like '%public.profiles AS p%') and not has_function_privilege('anon','public.touch_daily_streak()','EXECUTE') as ok;

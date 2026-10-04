@@ -1,123 +1,83 @@
-import { describe, expect, it, vi, beforeEach } from 'vitest';
-import { loadInitialProgressPageData } from './server';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import {
-  getServerAccessToken,
-  getServerAuthSnapshot,
-} from '@/lib/auth-snapshot.server';
-import { createServerSupabaseClient } from '@/lib/supabase/server';
+  createRecordingSupabase,
+  serializedCalls,
+  VERIFIED_ATTACKER,
+  VICTIM_SNAPSHOT,
+} from '@/test/ssr-auth-fixtures';
+import {
+  AUTH_ACCESS_TOKEN_COOKIE_NAME,
+  AUTH_SNAPSHOT_COOKIE_NAME,
+  serializeAuthSnapshot,
+} from '@/lib/auth-snapshot';
 
-vi.mock('@/lib/auth-snapshot.server', () => ({
-  getServerAccessToken: vi.fn(),
-  getServerAuthSnapshot: vi.fn(),
+const { mockGetVerifiedServerUser, mockCreateClient, cookieJar } = vi.hoisted(() => ({
+  mockGetVerifiedServerUser: vi.fn(),
+  mockCreateClient: vi.fn(),
+  cookieJar: new Map<string, string>(),
+}));
+
+vi.mock('@/lib/auth-verify.server', () => ({
+  getVerifiedServerUser: mockGetVerifiedServerUser,
+}));
+vi.mock('next/headers', () => ({
+  cookies: async () => ({
+    get: (name: string) =>
+      cookieJar.has(name) ? { name, value: cookieJar.get(name) } : undefined,
+  }),
 }));
 vi.mock('@/lib/supabase/server', () => ({
-  createServerSupabaseClient: vi.fn(),
+  createServerSupabaseClient: mockCreateClient,
 }));
 
-const snapshot = {
-  id: 'student',
-  name: 'Öğrenci',
-  email: 'student@example.test',
-  grade: 7,
-  isAdmin: false,
-};
+import { loadInitialProgressPageData } from '@/features/progress/server';
 
-describe('Progress SSR query concurrency', () => {
+describe('loadInitialProgressPageData — SSR kimlik sınırı', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    vi.mocked(getServerAuthSnapshot).mockResolvedValue(snapshot);
-    vi.mocked(getServerAccessToken).mockResolvedValue('test-token');
+    // Saldırgan kendi geçerli token'ını taşır ama istemcide yazılabilen
+    // snapshot çerezini kurbanın kimliği + admin bayrağıyla değiştirir.
+    cookieJar.clear();
+    cookieJar.set(AUTH_SNAPSHOT_COOKIE_NAME, serializeAuthSnapshot(VICTIM_SNAPSHOT));
+    cookieJar.set(AUTH_ACCESS_TOKEN_COOKIE_NAME, 'attacker-token');
   });
 
-  it('auth bilgisi gelmeden sorgulamaz; profil beklerken dört koleksiyonu da başlatır', async () => {
-    const auth = Promise.withResolvers<typeof snapshot>();
-    const profile = Promise.withResolvers<{ data: typeof snapshot | null }>();
-    const verification = Promise.withResolvers<{
-      data: { user: { id: string } };
-      error: null;
-    }>();
-    const getUser = vi.fn(() => verification.promise);
-    vi.mocked(getServerAuthSnapshot).mockReturnValue(auth.promise);
-    const filters: string[][] = [];
-    const started: string[] = [];
-    const from = vi.fn((table: string) => {
-      const query = {
-        select: vi.fn(() => query),
-        eq: vi.fn((column: string, id: string) => {
-          filters.push([column, id]);
-          return query;
-        }),
-        order: vi.fn(() => query),
-        single: vi.fn(() => {
-          started.push(table);
-          return profile.promise;
-        }),
-        then: (resolve: (value: { data: [] }) => void) => {
-          started.push(table);
-          return Promise.resolve({ data: [] as [] }).then(resolve);
-        },
-      };
-      return query;
-    });
-    vi.mocked(createServerSupabaseClient).mockReturnValue({
-      from,
-      auth: { getUser },
-    } as unknown as ReturnType<typeof createServerSupabaseClient>);
+  it('sahte snapshot çereziyle başka kullanıcının ilerleme verisini sorgulamaz', async () => {
+    const { calls, client } = createRecordingSupabase();
+    mockCreateClient.mockReturnValue(client);
+    mockGetVerifiedServerUser.mockResolvedValue(VERIFIED_ATTACKER);
 
-    const pending = loadInitialProgressPageData();
-    await Promise.resolve();
-    expect(from).not.toHaveBeenCalled();
-    auth.resolve(snapshot);
-    await vi.waitFor(() => expect(getUser).toHaveBeenCalledWith('test-token'));
-    expect(from).not.toHaveBeenCalled();
-    verification.resolve({ data: { user: { id: snapshot.id } }, error: null });
-    // PostgREST sorguları Promise.all tarafından başlatılan thenable nesnelerdir.
-    await vi.waitFor(() => expect(started).toHaveLength(5));
-    expect(filters).toEqual([
-      ['id', 'student'],
-      ['user_id', 'student'],
-      ['user_id', 'student'],
-      ['user_id', 'student'],
-      ['user_id', 'student'],
-    ]);
-    expect(createServerSupabaseClient).toHaveBeenCalledWith('test-token');
-    profile.resolve({ data: snapshot });
-    expect(await pending).toMatchObject({
-      isHydrated: true,
-      user: snapshot,
-      sessions: [],
-      progressData: [],
-      badges: [],
-    });
-  });
+    const result = await loadInitialProgressPageData();
 
-  it.each(['snapshot', 'token'])(
-    'eksik %s varken veri sorgusu açmaz',
-    async (missing) => {
-      if (missing === 'snapshot')
-        vi.mocked(getServerAuthSnapshot).mockResolvedValue(null);
-      else vi.mocked(getServerAccessToken).mockResolvedValue(null);
-      expect((await loadInitialProgressPageData()).isHydrated).toBe(false);
-      expect(createServerSupabaseClient).not.toHaveBeenCalled();
-    },
-  );
-
-  it.each(['other-user', null])(
-    'token kimliği snapshot ile eşleşmezse sorgulamaz: %s',
-    async (id) => {
-      const from = vi.fn();
-      const getUser = vi
-        .fn()
-        .mockResolvedValue({ data: { user: id ? { id } : null }, error: null });
-      vi.mocked(createServerSupabaseClient).mockReturnValue({
-        from,
-        auth: { getUser },
-      } as unknown as ReturnType<typeof createServerSupabaseClient>);
-      expect(await loadInitialProgressPageData()).toMatchObject({
-        isHydrated: false,
-        user: null,
+    const serialized = serializedCalls(calls);
+    expect(serialized).not.toContain(VICTIM_SNAPSHOT.id);
+    for (const table of ['study_sessions', 'user_progress', 'study_goals', 'user_badges']) {
+      expect(calls).toContainEqual({
+        table,
+        method: 'eq',
+        args: ['user_id', VERIFIED_ATTACKER.id],
       });
-      expect(from).not.toHaveBeenCalled();
-    },
-  );
+    }
+    expect(calls).toContainEqual({
+      table: 'profiles',
+      method: 'eq',
+      args: ['id', VERIFIED_ATTACKER.id],
+    });
+    expect(result.user?.id).toBe(VERIFIED_ATTACKER.id);
+    expect(result.user?.isAdmin).toBe(false);
+    expect(result.isHydrated).toBe(true);
+  });
+
+  it('doğrulama başarısızsa veri sorgusu yapmaz; snapshot yalnız yetkisiz iskelet olur', async () => {
+    const { calls, client } = createRecordingSupabase();
+    mockCreateClient.mockReturnValue(client);
+    mockGetVerifiedServerUser.mockResolvedValue(null);
+
+    const result = await loadInitialProgressPageData();
+
+    expect(calls).toHaveLength(0);
+    expect(result.isHydrated).toBe(false);
+    expect(result.sessions).toEqual([]);
+    expect(result.user?.isAdmin).toBe(false);
+  });
 });

@@ -1,9 +1,8 @@
 import 'server-only';
 
-import {
-  getServerAccessToken,
-  getServerAuthSnapshot,
-} from '@/lib/auth-snapshot.server';
+import { getServerAccessToken, getServerAuthSkeleton } from '@/lib/auth-snapshot.server';
+import { getVerifiedServerUser } from '@/lib/auth-verify.server';
+import { toDisplayGrade } from '@/lib/grade';
 import { createServerSupabaseClient } from '@/lib/supabase/server';
 import type { AppUser } from '@/types';
 import type {
@@ -25,83 +24,62 @@ export type InitialProgressPageData = {
 
 export const loadInitialProgressPageData =
   async (): Promise<InitialProgressPageData> => {
-    const [snapshot, accessToken] = await Promise.all([
-      getServerAuthSnapshot(),
+    // Sorgu kimliği yalnızca doğrulanmış kullanıcıdan gelir; imzasız snapshot
+    // çerezi doğrulama başarısızsa yalnız yükleme iskeleti için kullanılır.
+    const [verifiedUser, skeleton, accessToken] = await Promise.all([
+      getVerifiedServerUser(),
+      getServerAuthSkeleton(),
       getServerAccessToken(),
     ]);
 
-    if (!snapshot) {
+    if (!verifiedUser || !accessToken) {
       return {
         badges: [],
         goal: null,
         isHydrated: false,
         progressData: [],
         sessions: [],
-        user: null,
-      };
-    }
-
-    if (!accessToken) {
-      return {
-        badges: [],
-        goal: null,
-        isHydrated: false,
-        progressData: [],
-        sessions: [],
-        user: {
-          ...snapshot,
-        },
+        user: skeleton,
       };
     }
 
     const supabase = createServerSupabaseClient(accessToken);
-    const {
-      data: { user: verifiedUser },
-      error: authError,
-    } = await supabase.auth.getUser(accessToken);
-
-    // Snapshot tek başına kimlik kanıtı değildir; aynı token kullanıcısını koru.
-    if (authError || !verifiedUser || verifiedUser.id !== snapshot.id) {
-      return {
-        badges: [],
-        goal: null,
-        isHydrated: false,
-        progressData: [],
-        sessions: [],
-        user: null,
-      };
-    }
-
-    const [profileRes, sessionsRes, progressRes, goalRes, badgesRes] =
-      await Promise.all([
-        supabase.from('profiles').select('*').eq('id', snapshot.id).single(),
-        supabase
-          .from('study_sessions')
-          .select('*')
-          .eq('user_id', snapshot.id)
-          .order('date', { ascending: false }),
-        supabase
-          .from('user_progress')
-          .select('*')
-          .eq('user_id', snapshot.id)
-          .order('mastery_level', { ascending: false }),
-        supabase.from('study_goals').select('*').eq('user_id', snapshot.id),
-        supabase
-          .from('user_badges')
-          .select('*')
-          .eq('user_id', snapshot.id)
-          .order('earned_at', { ascending: false }),
-      ]);
+    // Kimlik zaten doğrulandığı için profil sorgusu diğerlerini beklemez;
+    // doğrulamanın eklediği gidiş-dönüş burada geri kazanılır.
+    const [profileRes, sessionsRes, progressRes, goalRes, badgesRes] = await Promise.all([
+      supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', verifiedUser.id)
+        .single(),
+      supabase
+        .from('study_sessions')
+        .select('*')
+        .eq('user_id', verifiedUser.id)
+        .order('date', { ascending: false }),
+      supabase
+        .from('user_progress')
+        .select('*')
+        .eq('user_id', verifiedUser.id)
+        .order('mastery_level', { ascending: false }),
+      supabase.from('study_goals').select('*').eq('user_id', verifiedUser.id),
+      supabase
+        .from('user_badges')
+        .select('*')
+        .eq('user_id', verifiedUser.id)
+        .order('earned_at', { ascending: false }),
+    ]);
 
     const profile = profileRes.data;
     const user: AppUser = profile
       ? {
           ...profile,
-          email: snapshot.email,
-          isAdmin: snapshot.isAdmin,
+          grade: toDisplayGrade(profile.grade),
+          email: verifiedUser.email,
+          isAdmin: verifiedUser.isAdmin,
         }
       : {
-          ...snapshot,
+          ...verifiedUser,
           current_streak: 0,
         };
 

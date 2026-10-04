@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback, useMemo, useRef, startTransition } from 'react';
+import { toStoredGrade } from '@/lib/grade';
 import Image from 'next/image';
 import Link from 'next/link';
 import {
@@ -456,7 +457,7 @@ export default function TestsPage({
       return quizzes;
     }
 
-    return quizzes.filter((quiz) => quiz.grade === Number(user.grade));
+    return quizzes.filter((quiz) => quiz.grade === toStoredGrade(user.grade));
   }, [quizzes, user]);
 
   useEffect(() => {
@@ -486,8 +487,8 @@ export default function TestsPage({
           .eq('is_active', true)
           .order('created_at', { ascending: false });
 
-        if (!user.isAdmin && Number.isFinite(Number(user.grade))) {
-          query = query.eq('grade', Number(user.grade));
+        if (!user.isAdmin) {
+          query = query.eq('grade', toStoredGrade(user.grade));
         }
 
         const { data, error: quizError } = await query;

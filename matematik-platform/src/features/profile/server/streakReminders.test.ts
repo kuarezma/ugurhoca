@@ -96,4 +96,20 @@ describe('sendDueStreakReminders', () => {
     expect(result.remindedCount).toBe(0);
     expect(mockInsert).not.toHaveBeenCalled();
   });
+
+  it('profiles tablosundan yalnız var olan sütunları seçer', async () => {
+    const mockSelect = vi.fn(() => ({
+      gte: () => ({
+        eq: vi.fn().mockResolvedValue({ data: [], error: null }),
+      }),
+    }));
+    mockFrom.mockImplementation((table: string) =>
+      table === 'profiles' ? { select: mockSelect } : {},
+    );
+
+    await sendDueStreakReminders();
+
+    // profiles'ta full_name yok (sütun: name); PostgREST 42703 ile cron'u düşürür.
+    expect(mockSelect).toHaveBeenCalledWith('id, current_streak');
+  });
 });

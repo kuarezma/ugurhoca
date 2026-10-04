@@ -64,24 +64,25 @@ export async function POST(request: Request) {
       // 20260907090000_cascade_delete_user_owned_tables.sql) — buradaki
       // açık silme, o migration henüz uygulanmamış bir ortamda da hesap
       // silmenin eksiksiz çalışmasını garanti eden bağımsız bir savunma
-      // katmanıdır. Önce veri, sonra auth hesabı silinir: veri silme
-      // başarısız olursa hesap silinmez, aksi halde sahipsiz PII kalır ve
-      // kullanıcı bir daha talebi tekrar edemez.
-      const deletions: Array<{ table: string; promise: PromiseLike<{ error: { message: string } | null }> }> = [
-        { table: 'assignment_submissions', promise: adminClient.from('assignment_submissions').delete().eq('student_id', userId) },
-        { table: 'game_scores', promise: adminClient.from('game_scores').delete().eq('user_id', userId) },
-        { table: 'quiz_results', promise: adminClient.from('quiz_results').delete().eq('user_id', userId) },
-        { table: 'student_activity_events', promise: adminClient.from('student_activity_events').delete().eq('user_id', userId) },
-        { table: 'student_group_members', promise: adminClient.from('student_group_members').delete().eq('user_id', userId) },
-        { table: 'study_goals', promise: adminClient.from('study_goals').delete().eq('user_id', userId) },
-        { table: 'study_sessions', promise: adminClient.from('study_sessions').delete().eq('user_id', userId) },
-        { table: 'user_badges', promise: adminClient.from('user_badges').delete().eq('user_id', userId) },
-        { table: 'user_mistakes', promise: adminClient.from('user_mistakes').delete().eq('user_id', userId) },
-        { table: 'user_progress', promise: adminClient.from('user_progress').delete().eq('user_id', userId) },
-        { table: 'profiles', promise: adminClient.from('profiles').delete().eq('id', userId) },
+      // katmanıdır. Sıra: bağımlı tablolar → profil → auth hesabı. Bir adım
+      // başarısız olursa sonrakiler çalışmaz; profil ve hesap yerinde kalır,
+      // kullanıcı talebi tekrar edebilir (bağımlı silmeler idempotenttir).
+      // Profil bağımlılarla aynı anda silinirse, bağımlı bir tablo hata
+      // verdiğinde hesap profilsiz kalırdı.
+      const deletions: Array<{ table: string; run: () => PromiseLike<{ error: { message: string } | null }> }> = [
+        { table: 'assignment_submissions', run: () => adminClient.from('assignment_submissions').delete().eq('student_id', userId) },
+        { table: 'game_scores', run: () => adminClient.from('game_scores').delete().eq('user_id', userId) },
+        { table: 'quiz_results', run: () => adminClient.from('quiz_results').delete().eq('user_id', userId) },
+        { table: 'student_activity_events', run: () => adminClient.from('student_activity_events').delete().eq('user_id', userId) },
+        { table: 'student_group_members', run: () => adminClient.from('student_group_members').delete().eq('user_id', userId) },
+        { table: 'study_goals', run: () => adminClient.from('study_goals').delete().eq('user_id', userId) },
+        { table: 'study_sessions', run: () => adminClient.from('study_sessions').delete().eq('user_id', userId) },
+        { table: 'user_badges', run: () => adminClient.from('user_badges').delete().eq('user_id', userId) },
+        { table: 'user_mistakes', run: () => adminClient.from('user_mistakes').delete().eq('user_id', userId) },
+        { table: 'user_progress', run: () => adminClient.from('user_progress').delete().eq('user_id', userId) },
       ];
 
-      const results = await Promise.allSettled(deletions.map((d) => d.promise));
+      const results = await Promise.allSettled(deletions.map((d) => d.run()));
       const failures = results
         .map((result, index) => ({ result, table: deletions[index].table }))
         .filter(
@@ -101,6 +102,21 @@ export async function POST(request: Request) {
                 : result.value.error?.message,
           })),
         });
+        return NextResponse.json(
+          {
+            error:
+              'Verileriniz tam olarak silinemedi. Hesabınız güvenlik amacıyla silinmedi; lütfen tekrar deneyin veya destek ekibiyle iletişime geçin.',
+          },
+          { status: 500 },
+        );
+      }
+
+      const { error: profileDeleteError } = await adminClient
+        .from('profiles')
+        .delete()
+        .eq('id', userId);
+      if (profileDeleteError) {
+        logger.error('Hesap silme: profil silinemedi', { error: profileDeleteError.message, userId });
         return NextResponse.json(
           {
             error:
