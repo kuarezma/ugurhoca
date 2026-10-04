@@ -1,3 +1,5 @@
+import { normalizeGrade } from '@/lib/grade';
+
 // Yetki kararlarında (canlı ders hedeflemesi) kullanılan sınıf çözümü.
 //
 // Bu kural SQL'de birebir aynalanır: public.live_lesson_normalize_grade(jsonb)
@@ -11,31 +13,7 @@
 // doğrulanmış kaynaktan çözülemeyen kullanıcı yalnızca 'all' ve kendisinin
 // seçildiği dersleri görür.
 
-/**
- * Kabul edilen biçimler (başka her şey → null):
- * - tam 'Mezun' metni → 'Mezun'
- * - yalnız ASCII rakamlardan oluşan metin → baştaki sıfırları atılmış hâli ('07' → '7')
- * - negatif olmayan güvenli tam sayı → metin
- * SQL ile fark yalnız JS’in üretemediği ham JSON sayı temsillerinde (7.0 vb.) kalır.
- * Boşluk kırpılmaz; boolean, dizi, nesne, negatif ve kesirli değerler reddedilir.
- */
-export function normalizeAccessGrade(value: unknown): string | null {
-  if (typeof value === 'number') {
-    return Number.isSafeInteger(value) && value >= 0 ? String(value) : null;
-  }
-
-  if (typeof value === 'string') {
-    if (value === 'Mezun') {
-      return 'Mezun';
-    }
-    if (/^[0-9]+$/.test(value)) {
-      return value.replace(/^0+/, '') || '0';
-    }
-    return null;
-  }
-
-  return null;
-}
+export const normalizeAccessGrade = normalizeGrade;
 
 /**
  * Profil sınıfı null/undefined değilse o (geçersizse metadata'ya düşmez),

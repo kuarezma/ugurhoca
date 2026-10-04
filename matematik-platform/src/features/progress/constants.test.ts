@@ -19,6 +19,7 @@ describe('progress topic constants', () => {
 
   it('maps mezun users to the twelfth grade topic list', () => {
     expect(getTopicsForGrade('Mezun')).toEqual(GRADE_TOPIC_OPTIONS['12']);
+    expect(getTopicsForGrade(0)).toEqual(GRADE_TOPIC_OPTIONS['12']);
   });
 
   it('returns a defensive copy of the topic list', () => {

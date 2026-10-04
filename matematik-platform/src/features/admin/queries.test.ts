@@ -1,5 +1,8 @@
 import {
   addStudentAdminNote,
+  createAdminAssignment,
+  updateAdminUser,
+  advanceAdminUserGrades,
   loadAdminDashboardData,
   createAdminWeeklyPlan,
   updateWorksheetCandidateStatus,
@@ -77,9 +80,15 @@ describe('admin tracking queries', () => {
       },
       { onConflict: 'student_id,week_start' },
     );
-    expect(supabase.from).toHaveBeenNthCalledWith(2, 'student_weekly_plan_items');
+    expect(supabase.from).toHaveBeenNthCalledWith(
+      2,
+      'student_weekly_plan_items',
+    );
     expect(deleteEq).toHaveBeenCalledWith('plan_id', 'plan-1');
-    expect(supabase.from).toHaveBeenNthCalledWith(3, 'student_weekly_plan_items');
+    expect(supabase.from).toHaveBeenNthCalledWith(
+      3,
+      'student_weekly_plan_items',
+    );
     expect(itemsInsertBuilder.insert).toHaveBeenCalledWith([
       {
         kind: 'custom',
@@ -203,7 +212,6 @@ describe('admin tracking queries', () => {
   });
 });
 
-
 describe('admin dashboard pagination', () => {
   const tables = [
     'study_sessions',
@@ -283,4 +291,33 @@ it('preserves dashboard loading on a page error and warns instead of returning p
   } finally {
     warning.mockRestore();
   }
+});
+
+describe('Mezun admin yazma sınırı', () => {
+  beforeEach(() => vi.clearAllMocks());
+  it.each([0, 'Mezun'] as const)(
+    'ödev sınıfını 0 saklar: %s',
+    async (grade) => {
+      const select = mockSingleSelect({ id: 'assignment' });
+      const insert = vi.fn().mockReturnValue({ select: select.select });
+      vi.mocked(supabase.from).mockReturnValue({ insert } as never);
+      await createAdminAssignment({ grade, title: 'Mezun ödevi' });
+      expect(insert).toHaveBeenCalledWith([
+        expect.objectContaining({ grade: 0 }),
+      ]);
+    },
+  );
+  it('profil güncellemesinde Mezun metnini 0 yazar', async () => {
+    const eq = vi.fn().mockResolvedValue({ error: null });
+    const update = vi.fn().mockReturnValue({ eq });
+    vi.mocked(supabase.from).mockReturnValue({ update } as never);
+    await updateAdminUser('graduate', { grade: 'Mezun' });
+    expect(update).toHaveBeenCalledWith({ grade: 0 });
+  });
+  it('Mezunu birinci sınıfa atlatmaz', async () => {
+    await expect(
+      advanceAdminUserGrades([{ id: 'graduate', grade: 0 } as never]),
+    ).resolves.toBe(0);
+    expect(supabase.from).not.toHaveBeenCalled();
+  });
 });

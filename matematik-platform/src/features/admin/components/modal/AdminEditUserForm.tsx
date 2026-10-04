@@ -1,3 +1,4 @@
+import { toDisplayGrade } from '@/lib/grade';
 import { useId, useState } from "react";
 import { motion } from "framer-motion";
 import { supabase } from "@/lib/supabase/client";
@@ -116,7 +117,7 @@ export default function AdminEditUserForm({
         </label>
         <select
           id={gradeId}
-          value={formData.grade || ""}
+          value={formData.grade == null ? "" : toDisplayGrade(formData.grade)}
           onChange={(event) =>
             updateFormData({
               grade:

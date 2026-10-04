@@ -1,5 +1,6 @@
 'use client';
 
+import { toStoredGrade } from '@/lib/grade';
 import { useMemo, useState } from 'react';
 import Link from 'next/link';
 import {
@@ -109,9 +110,7 @@ export default function RegisterPage() {
         return;
       }
 
-      const userGrade =
-        formData.grade === 'Mezun' ? 0 : Number.parseInt(formData.grade, 10);
-      const gradeValue = Number.isNaN(userGrade) ? 0 : userGrade;
+      const gradeValue = toStoredGrade(formData.grade);
 
       const { data: existsReason, error: existsErr } = await supabase.rpc(
         'profile_exists_for_register',
