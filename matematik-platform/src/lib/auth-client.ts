@@ -6,7 +6,7 @@ import {
   serializeAuthSnapshot,
   type AuthSnapshot,
 } from '@/lib/auth-snapshot';
-import { supabase } from '@/lib/supabase/client';
+import { getSupabaseAuthStorageKey, supabase } from '@/lib/supabase/client';
 import { clearLegacyUserStorage, getStorageUserId, migrateLegacyUserStorage } from '@/lib/userScopedStorage';
 import type { AppUser } from '@/types';
 import { safeRedirectPath } from '@/lib/safe-redirect-path';
@@ -55,28 +55,44 @@ const writeAuthSnapshotCookie = (snapshot: AuthSnapshot | null) => {
 const AUTH_SESSION_ROUTE = '/api/auth/session';
 const AUTH_SESSION_LOCK = 'ugurhoca-auth-session';
 const AUTH_SESSION_REQUEST_TIMEOUT_MS = 10_000;
-// Token içermez; yalnız "sunucu çerezi silinemedi, yeniden dene" işaretidir.
+// Aşağıdaki üç localStorage anahtarı token içermez ve sekmeler arası ortaktır.
+// "Sunucu çerezi silinemedi, yeniden dene."
 export const PENDING_COOKIE_CLEANUP_KEY = 'ugurhoca_auth_cookie_cleanup_pending';
+// "Kullanıcı çıkış yaptı; yeni bir SIGNED_IN olayına kadar hiçbir oturumu POST etme."
+export const SIGNED_OUT_MARKER_KEY = 'ugurhoca_auth_signed_out';
+// Sunucu çerezinin son bilinen durumu ('deleted' veya kullanıcı kimliği + oturum
+// bitiş zamanı). Başka sekme çerezi değiştirdiyse bu sekmenin önbelleği geçersizdir.
+export const COOKIE_STATE_KEY = 'ugurhoca_auth_cookie_state';
 
-const setPendingCookieCleanup = (pending: boolean) => {
+const readStorage = (key: string): string | null | undefined => {
   try {
-    if (pending) {
-      localStorage.setItem(PENDING_COOKIE_CLEANUP_KEY, '1');
+    return localStorage.getItem(key);
+  } catch {
+    return undefined;
+  }
+};
+
+const writeStorage = (key: string, value: string | null) => {
+  try {
+    if (value === null) {
+      localStorage.removeItem(key);
     } else {
-      localStorage.removeItem(PENDING_COOKIE_CLEANUP_KEY);
+      localStorage.setItem(key, value);
     }
   } catch {
-    // Depolama kapalıysa yeniden deneme yalnız bu sayfa ömrüyle sınırlı kalır.
+    // Depolama kapalıysa işaretler yalnız bu sayfa ömrüyle sınırlı kalır.
   }
 };
 
-const hasPendingCookieCleanup = () => {
-  try {
-    return localStorage.getItem(PENDING_COOKIE_CLEANUP_KEY) === '1';
-  } catch {
-    return false;
-  }
-};
+const setPendingCookieCleanup = (pending: boolean) =>
+  writeStorage(PENDING_COOKIE_CLEANUP_KEY, pending ? '1' : null);
+
+const hasPendingCookieCleanup = () => readStorage(PENDING_COOKIE_CLEANUP_KEY) === '1';
+
+const isSignedOutMarked = () => readStorage(SIGNED_OUT_MARKER_KEY) === '1';
+
+/** Yalnız gerçek bir SIGNED_IN olayında çağrılır (bkz. AuthCookieSync). */
+export const clearSignedOutMarker = () => writeStorage(SIGNED_OUT_MARKER_KEY, null);
 
 /**
  * Web Locks ile sekmeler arası sıralama: bir sekmenin bekleyen POST'u, başka
@@ -113,46 +129,84 @@ const sendSessionRequest = async (token: string | null) => {
   return response.ok;
 };
 
-const deleteServerSession = async () => {
+type SyncResult = { ok: boolean; state?: string };
+
+const deleteServerSession = async (): Promise<SyncResult> => {
   setPendingCookieCleanup(true);
-  const ok = await sendSessionRequest(null);
-  if (ok) {
-    setPendingCookieCleanup(false);
+  if (!(await sendSessionRequest(null))) {
+    return { ok: false };
   }
-  return ok;
+  setPendingCookieCleanup(false);
+  writeStorage(COOKIE_STATE_KEY, 'deleted');
+  return { ok: true, state: 'deleted' };
 };
 
-// Kilit içinde çalışır. POST'tan hemen önce güncel Supabase oturumu yeniden
-// okunur (localStorage sekmeler arası ortaktır): oturum bu arada kapandıysa
-// çerez yazılmaz, silinir; token yenilendiyse yeni token kendi isteğini atar.
-const syncServerSession = async (token: string | null, store: AuthGlobalStore) => {
+const postServerSession = async (session: Session): Promise<SyncResult> => {
+  if (!(await sendSessionRequest(session.access_token))) {
+    return { ok: false };
+  }
+  const state = `session:${session.user.id}:${session.expires_at ?? ''}`;
+  setPendingCookieCleanup(false);
+  writeStorage(COOKIE_STATE_KEY, state);
+  return { ok: true, state };
+};
+
+const readCurrentSession = async () => {
+  if (isSignedOutMarked()) {
+    return null;
+  }
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
+  return session;
+};
+
+/**
+ * Kilit içinde çalışır; istek atılmadan hemen önce güncel Supabase oturumu
+ * yeniden okunur (localStorage sekmeler arası ortaktır):
+ *  - POST: oturum bu arada kapandıysa (başka sekmede çıkış) çerez silinir;
+ *    token yenilendiyse yeni token kendi isteğini atar.
+ *  - DELETE: kuyrukta beklerken başka sekmede giriş yapıldıysa yeni oturum
+ *    silinmez, yazılır. Sonuç yine `false`dır: istenen silme yapılmadı.
+ */
+const syncServerSession = async (
+  token: string | null,
+  store: AuthGlobalStore,
+): Promise<SyncResult> => {
+  const session = await readCurrentSession();
+
   if (!token) {
+    if (session && session.access_token !== store.signedOutAccessToken) {
+      await postServerSession(session);
+      return { ok: false };
+    }
     return deleteServerSession();
   }
 
   if (token === store.signedOutAccessToken) {
-    return false;
+    return { ok: false };
   }
-
-  const {
-    data: { session },
-  } = await supabase.auth.getSession();
 
   if (!session) {
     await deleteServerSession();
-    return false;
+    return { ok: false };
   }
 
   if (session.access_token !== token) {
-    return false;
+    return { ok: false };
   }
 
-  const ok = await sendSessionRequest(token);
-  // Ardından bir DELETE kuyruğa girdiyse temizlik işareti onun sonucuna kalır.
-  if (ok && store.serverSessionSync?.token === token) {
-    setPendingCookieCleanup(false);
+  return postServerSession(session);
+};
+
+// Başarılı bir senkron, başka sekme çerezi değiştirmediyse hâlâ geçerlidir.
+// Depolama okunamıyorsa önbellek geçerli sayılır (aksi halde her çağrı istek atar).
+const isServerSessionSyncCurrent = (sync: NonNullable<AuthGlobalStore['serverSessionSync']>) => {
+  if (sync.state === undefined) {
+    return true;
   }
-  return ok;
+  const current = readStorage(COOKIE_STATE_KEY);
+  return current === undefined || current === sync.state;
 };
 
 /**
@@ -160,7 +214,8 @@ const syncServerSession = async (token: string | null, store: AuthGlobalStore) =
  * (bkz. src/app/api/auth/session/route.ts); bu modül çereze dokunmaz, yalnızca
  * rotayı çağırır. Aynı token için tekrar eden çağrılar (getClientSession her
  * önbellek ıskasında, onAuthStateChange olayları, giriş akışı) tek isteğe
- * indirgenir; başarısız istek durumu sıfırlar ki sonraki çağrı yeniden denesin.
+ * indirgenir; başarısız istek ya da başka sekmenin çerezi değiştirmesi
+ * önbelleği geçersiz kılar ki sonraki çağrı yeniden denesin.
  *
  * Hiçbir zaman reddetmez: ağ hatası istemci oturumunu bozmaz. `false` dönerse
  * çerez yazılamamış/silinememiştir; başarısız silme kalıcı bir işaretle
@@ -173,9 +228,10 @@ export const writeAccessTokenCookie = (accessToken: string | null): Promise<bool
 
   const token = accessToken || null;
   const store = getGlobalAuthStore();
+  const current = store.serverSessionSync;
 
-  if (store.serverSessionSync && store.serverSessionSync.token === token) {
-    return store.serverSessionSync.promise;
+  if (current && current.token === token && isServerSessionSyncCurrent(current)) {
+    return current.promise;
   }
 
   if (!token) {
@@ -185,19 +241,38 @@ export const writeAccessTokenCookie = (accessToken: string | null): Promise<bool
 
   // İstekler sıraya alınır: Supabase doğrulaması yüzünden yavaş olan bir POST,
   // ardından gelen çıkış DELETE'inden sonra yanıtlanıp çerezi geri yazmasın.
-  const previous = store.serverSessionSync?.promise ?? Promise.resolve(true);
-  const promise = previous
+  const previous = current?.promise ?? Promise.resolve(true);
+  const entry: NonNullable<AuthGlobalStore['serverSessionSync']> = {
+    promise: Promise.resolve(false),
+    token,
+  };
+  entry.promise = previous
     .then(() => withAuthSessionLock(() => syncServerSession(token, store)))
-    .catch(() => false)
-    .then((ok) => {
-      if (!ok && store.serverSessionSync?.promise === promise) {
+    .catch((): SyncResult => ({ ok: false }))
+    .then(({ ok, state }) => {
+      if (!ok && store.serverSessionSync === entry) {
         store.serverSessionSync = null;
       }
+      entry.state = state ?? null;
       return ok;
     });
 
-  store.serverSessionSync = { promise, token };
-  return promise;
+  store.serverSessionSync = entry;
+  return entry.promise;
+};
+
+const removeLocalSupabaseSession = () => {
+  try {
+    const storageKey = getSupabaseAuthStorageKey();
+    if (!storageKey) {
+      return;
+    }
+    for (const suffix of ['', '-code-verifier', '-user']) {
+      localStorage.removeItem(`${storageKey}${suffix}`);
+    }
+  } catch {
+    // Silinemezse SIGNED_OUT_MARKER_KEY eski oturumun POST edilmesini yine engeller.
+  }
 };
 
 // Yerel Supabase oturumu yokken sunucu çerezini silmek için yalnızca bir iz
@@ -268,7 +343,12 @@ type AuthGlobalStore = {
   inFlightProfilePromise: Promise<{ profile: AppUser; session: Session } | null> | null;
   inFlightSessionPromise: Promise<Session | null> | null;
   profileCache: CachedProfileEntry | null;
-  serverSessionSync?: { promise: Promise<boolean>; token: string | null } | null;
+  serverSessionSync?: {
+    promise: Promise<boolean>;
+    // undefined: istek sürüyor; null: durum bilinmiyor; string: yazılan çerez durumu.
+    state?: string | null;
+    token: string | null;
+  } | null;
   signedOutAccessToken?: string | null;
 };
 
@@ -456,6 +536,7 @@ export const getCurrentUserProfile = async <TProfile extends AppUser = AppUser>(
 };
 
 export const clearClientAuthSnapshotCookie = () => {
+  writeStorage(SIGNED_OUT_MARKER_KEY, '1');
   clearLegacyUserStorage();
   clearUserProfileCache();
   void writeAccessTokenCookie(null);
@@ -467,6 +548,9 @@ export const signOutClient = async () => {
   // Çıkış yarıda kalsa bile bu sekme eski token'ı sunucu çerezine geri yazmasın.
   store.signedOutAccessToken =
     store.cachedSession?.session?.access_token ?? store.serverSessionSync?.token ?? null;
+  // Kalıcı ve sekmeler arası: yeniden yüklemede de eski oturum POST edilmez;
+  // yalnız yeni bir SIGNED_IN olayı kaldırır.
+  writeStorage(SIGNED_OUT_MARKER_KEY, '1');
   clearUserProfileCache();
   try {
     const result = await supabase.auth.signOut();
@@ -474,9 +558,14 @@ export const signOutClient = async () => {
       throw result.error;
     }
   } catch {
-    // Sunucu tarafı çıkış başarısız (ör. ağ): yerel oturum yine de silinsin ki
-    // getSession kontrolü kuyruktaki/sonraki POST'ları durdursun.
-    await supabase.auth.signOut({ scope: 'local' }).catch(() => undefined);
+    // Sunucu tarafı çıkış başarısız (ör. ağ). SDK'nın 'local' kapsamı da sunucuya
+    // gider ve 5xx'te yerel oturumu silmez; o da başarısızsa SDK atlanır.
+    const local = await supabase.auth
+      .signOut({ scope: 'local' })
+      .catch((error: unknown) => ({ error }));
+    if (!local || local.error) {
+      removeLocalSupabaseSession();
+    }
   } finally {
     clearClientAuthSnapshotCookie();
     // Çıkıştan hemen sonraki yönlendirme silinmiş HttpOnly çerezi görsün.

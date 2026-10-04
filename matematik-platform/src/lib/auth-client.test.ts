@@ -10,7 +10,10 @@ const mockSignOut = vi.fn();
 const mockProfileSingle = vi.fn();
 const mockFrom = vi.fn();
 
+const SUPABASE_STORAGE_KEY = 'sb-testref-auth-token';
+
 vi.mock('@/lib/supabase/client', () => ({
+  getSupabaseAuthStorageKey: () => SUPABASE_STORAGE_KEY,
   supabase: {
     auth: {
       getSession: (...args: unknown[]) => mockGetSession(...args),
@@ -29,7 +32,10 @@ import {
   redirectToLogin,
   requireClientSession,
   signOutClient,
+  clearSignedOutMarker,
+  COOKIE_STATE_KEY,
   PENDING_COOKIE_CLEANUP_KEY,
+  SIGNED_OUT_MARKER_KEY,
   syncCurrentUserSnapshotCookie,
   writeAccessTokenCookie,
 } from '@/lib/auth-client';
@@ -203,6 +209,8 @@ describe('auth-client', () => {
     await new Promise((resolve) => setTimeout(resolve, 0));
 
     expect(sessionCallMethods()).toEqual(['POST']);
+    // Çıkış: yerel oturum POST yoldayken silindi.
+    mockGetSession.mockResolvedValue({ data: { session: null }, error: null });
     finishPost(new Response(null, { status: 200 }));
     await Promise.all([post, del]);
 
@@ -302,6 +310,91 @@ describe('auth-client', () => {
     // Yerel silme de başarısız kalsa (oturum hâlâ okunuyor) eski token geri yazılmaz.
     await expect(writeAccessTokenCookie('token-123')).resolves.toBe(false);
     expect(sessionCallMethods()).toEqual(['POST', 'DELETE']);
+  });
+
+  it('clears the local Supabase session itself when both sign-out attempts fail and never re-posts it after reload', async () => {
+    localStorage.setItem(SUPABASE_STORAGE_KEY, '{"opaque":"session"}');
+    localStorage.setItem(`${SUPABASE_STORAGE_KEY}-code-verifier`, 'verifier');
+    // Kurulu SDK: 'local' kapsamı da sunucuya gider ve 503'te yerel oturumu silmez.
+    mockSignOut.mockResolvedValue({ error: new Error('503 Service Unavailable') });
+    await getClientSession();
+    await writeAccessTokenCookie('token-123');
+
+    await signOutClient();
+
+    expect(mockSignOut).toHaveBeenNthCalledWith(2, { scope: 'local' });
+    expect(localStorage.getItem(SUPABASE_STORAGE_KEY)).toBeNull();
+    expect(localStorage.getItem(`${SUPABASE_STORAGE_KEY}-code-verifier`)).toBeNull();
+    expect(localStorage.getItem(SIGNED_OUT_MARKER_KEY)).toBe('1');
+    expect(JSON.stringify(Object.entries(localStorage))).not.toContain('token-123');
+
+    // Yeniden yükleme: yeni modül durumu; en kötü durumda SDK eski oturumu hâlâ veriyor.
+    delete (globalThis as { __ugurhoca_auth_store__?: unknown }).__ugurhoca_auth_store__;
+    mockFetch.mockClear();
+
+    await expect(getClientSession()).resolves.not.toBeNull();
+    await writeAccessTokenCookie('token-123');
+
+    expect(sessionCallMethods()).not.toContain('POST');
+
+    // Yeni giriş (SIGNED_IN) işareti kaldırır ve oturum yeniden yazılır.
+    clearSignedOutMarker();
+    await expect(writeAccessTokenCookie('token-123')).resolves.toBe(true);
+    expect(sessionCallMethods()).toContain('POST');
+  });
+
+  it('turns a queued cleanup DELETE into a POST when another tab signed in meanwhile', async () => {
+    let tail: Promise<unknown> = Promise.resolve();
+    const request = vi.fn((_name: string, task: () => Promise<unknown>) => {
+      const run = tail.then(task);
+      tail = run.catch(() => undefined);
+      return run;
+    });
+    Object.defineProperty(navigator, 'locks', { configurable: true, value: { request } });
+
+    try {
+      mockGetSession.mockResolvedValue({ data: { session: null }, error: null });
+      let releaseOtherTab: () => void = () => undefined;
+      const otherTab = request(
+        'ugurhoca-auth-session',
+        () =>
+          new Promise<void>((resolve) => {
+            releaseOtherTab = resolve;
+          }),
+      );
+
+      // Bu sekme (A): oturum yok gördü, gecikmiş temizliği kuyruğa aldı.
+      const cleanup = writeAccessTokenCookie(null);
+      await new Promise((resolve) => setTimeout(resolve, 0));
+
+      // Diğer sekme (B) kilit altındayken giriş yaptı; ortak oturum artık token-456.
+      mockGetSession.mockResolvedValue({
+        data: { session: { ...createSession(), access_token: 'token-456' } },
+        error: null,
+      });
+      releaseOtherTab();
+      await otherTab;
+      await cleanup;
+
+      expect(sessionCallMethods()).toEqual(['POST']);
+      expect(JSON.parse(String((sessionCalls()[0][1] as RequestInit).body))).toEqual({
+        access_token: 'token-456',
+      });
+    } finally {
+      delete (navigator as { locks?: unknown }).locks;
+    }
+  });
+
+  it('re-posts a cached token after another tab changed the server cookie', async () => {
+    await writeAccessTokenCookie('token-123');
+    await writeAccessTokenCookie('token-123');
+    expect(sessionCallMethods()).toEqual(['POST']);
+
+    // Diğer sekme çerezi sildi (ör. gecikmiş temizlik).
+    localStorage.setItem(COOKIE_STATE_KEY, 'deleted');
+
+    await expect(writeAccessTokenCookie('token-123')).resolves.toBe(true);
+    expect(sessionCallMethods()).toEqual(['POST', 'POST']);
   });
 
   it('keeps the client session when the session route is unreachable and retries later', async () => {

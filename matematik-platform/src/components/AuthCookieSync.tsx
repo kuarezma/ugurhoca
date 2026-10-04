@@ -3,6 +3,7 @@
 import { useEffect } from 'react';
 import {
   clearClientAuthSnapshotCookie,
+  clearSignedOutMarker,
   clearUserProfileCache,
   syncCurrentUserSnapshotCookie,
   writeAccessTokenCookie,
@@ -37,6 +38,10 @@ export default function AuthCookieSync() {
         event === 'TOKEN_REFRESHED' ||
         event === 'USER_UPDATED'
       ) {
+        if (event === 'SIGNED_IN') {
+          // Yeni giriş: önceki çıkışın "POST etme" işareti kalkar.
+          clearSignedOutMarker();
+        }
         clearUserProfileCache();
         if (session?.access_token) {
           writeAccessTokenCookie(session.access_token);
