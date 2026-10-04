@@ -253,7 +253,6 @@ export type StudentActivityEvent = {
 };
 
 export type AdminDashboardData = {
-  activityEvents: StudentActivityEvent[];
   allUsers: AdminUser[];
   announcements: AdminAnnouncement[];
   annualPlanItems: AnnualPlanItem[];
@@ -265,11 +264,10 @@ export type AdminDashboardData = {
   quizzes: AdminQuiz[];
   sharedDocs: AdminSharedDocument[];
   studyGoals: AdminStudyGoalRow[];
-  studySessions: AdminStudySessionRow[];
   submissions: AdminSubmission[];
   worksheetCandidates: WorksheetCandidate[];
   weeklyPlans: StudentWeeklyPlan[];
-  liveLessons: LiveLessonDashboardData;
+  liveLessons: Pick<LiveLessonDashboardData, 'lessons'>;
 };
 
 export type ModerationPayload = {

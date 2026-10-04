@@ -4,6 +4,8 @@ import {
   updateAdminUser,
   advanceAdminUserGrades,
   loadAdminDashboardData,
+  loadAdminLearningActivity,
+  loadAdminLiveLessonActivity,
   createAdminWeeklyPlan,
   updateWorksheetCandidateStatus,
   upsertStudentAdminStatus,
@@ -246,13 +248,36 @@ describe('admin dashboard pagination', () => {
       };
       return builder as never;
     });
-    const dashboard = await loadAdminDashboardData(30);
-    expect(dashboard.studySessions).toHaveLength(1001);
-    expect(dashboard.activityEvents).toHaveLength(1001);
-    expect(dashboard.liveLessons.participants).toHaveLength(1001);
-    expect(dashboard.liveLessons.events).toHaveLength(1001);
-    expect(dashboard.liveLessons.chatMessages).toHaveLength(1001);
-    expect(dashboard.studySessions.at(-1)).toEqual({ id: 'row-1000' });
+    const [learning, liveLessons] = await Promise.all([
+      loadAdminLearningActivity(),
+      loadAdminLiveLessonActivity(),
+    ]);
+    expect(learning.studySessions).toHaveLength(1001);
+    expect(learning.activityEvents).toHaveLength(1001);
+    expect(liveLessons.participants).toHaveLength(1001);
+    expect(liveLessons.events).toHaveLength(1001);
+    expect(liveLessons.chatMessages).toHaveLength(1001);
+    expect(learning.studySessions.at(-1)).toEqual({ id: 'row-1000' });
+  });
+
+  it('does not scan activity tables when loading the initial dashboard', async () => {
+    const requestedTables: string[] = [];
+    vi.mocked(supabase.from).mockImplementation((table) => {
+      requestedTables.push(table);
+      return {
+        select: vi.fn().mockReturnThis(),
+        order: vi.fn().mockReturnThis(),
+        limit: vi.fn().mockResolvedValue({ data: [], error: null }),
+      } as never;
+    });
+
+    await loadAdminDashboardData();
+
+    expect(requestedTables).not.toContain('study_sessions');
+    expect(requestedTables).not.toContain('student_activity_events');
+    expect(requestedTables).not.toContain('live_lesson_participants');
+    expect(requestedTables).not.toContain('live_lesson_events');
+    expect(requestedTables).not.toContain('live_lesson_chat_messages');
   });
 });
 
@@ -284,9 +309,9 @@ it('preserves dashboard loading on a page error and warns instead of returning p
       }) as never,
   );
   try {
-    const dashboard = await loadAdminDashboardData(30);
-    expect(dashboard.studySessions).toEqual([]);
-    expect(dashboard.assignments).toEqual([]);
+    await expect(loadAdminLearningActivity()).rejects.toThrow(
+      'Öğrenci etkinlikleri yüklenemedi.',
+    );
     expect(warning).toHaveBeenCalled();
   } finally {
     warning.mockRestore();

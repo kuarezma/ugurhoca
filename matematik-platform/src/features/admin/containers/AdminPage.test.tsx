@@ -1,9 +1,11 @@
-import { act, render, waitFor } from '@testing-library/react';
+import { act, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import AdminPage from './AdminPage';
 import type { AdminDashboardData } from '@/features/admin/types';
 import {
   loadAdminDashboardData,
+  loadAdminLearningActivity,
+  loadAdminLiveLessonActivity,
   loadGoogleDriveConnectionStatus,
   loadWorksheetCandidateSourceStatus,
   refreshAdminUsers,
@@ -23,6 +25,8 @@ vi.mock('@/components/ThemeToggle', () => ({ ThemeToggle: () => null }));
 vi.mock('@/components/ThemeSelectorDropdown', () => ({ ThemeSelectorDropdown: () => null }));
 vi.mock('@/features/admin/queries', () => ({
   loadAdminDashboardData: vi.fn(),
+  loadAdminLearningActivity: vi.fn(),
+  loadAdminLiveLessonActivity: vi.fn(),
   loadGoogleDriveConnectionStatus: vi.fn(),
   loadWorksheetCandidateSourceStatus: vi.fn(),
   refreshAdminUsers: vi.fn(),
@@ -30,7 +34,6 @@ vi.mock('@/features/admin/queries', () => ({
 }));
 
 const emptyDashboard: AdminDashboardData = {
-  activityEvents: [],
   allUsers: [],
   announcements: [],
   annualPlanItems: [],
@@ -42,11 +45,10 @@ const emptyDashboard: AdminDashboardData = {
   quizzes: [],
   sharedDocs: [],
   studyGoals: [],
-  studySessions: [],
   submissions: [],
   worksheetCandidates: [],
   weeklyPlans: [],
-  liveLessons: { chatMessages: [], events: [], lessons: [], participants: [] },
+  liveLessons: { lessons: [] },
 };
 
 describe('Admin initial data flow', () => {
@@ -60,6 +62,15 @@ describe('Admin initial data flow', () => {
       session: {},
     } as never);
     vi.mocked(loadAdminDashboardData).mockResolvedValue(emptyDashboard);
+    vi.mocked(loadAdminLearningActivity).mockResolvedValue({
+      activityEvents: [],
+      studySessions: [],
+    });
+    vi.mocked(loadAdminLiveLessonActivity).mockResolvedValue({
+      chatMessages: [],
+      events: [],
+      participants: [],
+    });
     vi.mocked(loadGoogleDriveConnectionStatus).mockResolvedValue({
       connected: false,
     });
@@ -85,9 +96,45 @@ describe('Admin initial data flow', () => {
       expect(loadWorksheetCandidateSourceStatus).toHaveBeenCalledOnce();
     });
     expect(resolveAdminAuth).toHaveBeenCalledOnce();
-    expect(loadAdminDashboardData).toHaveBeenCalledWith(180, 'admin');
+    expect(loadAdminDashboardData).toHaveBeenCalledWith('admin');
+    expect(loadAdminLearningActivity).not.toHaveBeenCalled();
+    expect(loadAdminLiveLessonActivity).not.toHaveBeenCalled();
     await act(async () => dashboard.resolve(emptyDashboard));
     expect(loadAdminDashboardData).toHaveBeenCalledOnce();
+  });
+
+  it('loads learning and live lesson history only when their tabs open', async () => {
+    render(<AdminPage />);
+    await waitFor(() => expect(loadAdminDashboardData).toHaveBeenCalledOnce());
+    expect(loadAdminLearningActivity).not.toHaveBeenCalled();
+    expect(loadAdminLiveLessonActivity).not.toHaveBeenCalled();
+
+    fireEvent.click(screen.getByRole('button', { name: /Takip Merkezi/ }));
+    await waitFor(() => expect(loadAdminLearningActivity).toHaveBeenCalledOnce());
+    expect(loadAdminLiveLessonActivity).not.toHaveBeenCalled();
+
+    fireEvent.click(screen.getByRole('button', { name: /Canlı Dersler/ }));
+    await waitFor(() => expect(loadAdminLiveLessonActivity).toHaveBeenCalledOnce());
+
+    fireEvent.click(screen.getByRole('button', { name: /Sınıfım/ }));
+    expect(loadAdminLearningActivity).toHaveBeenCalledOnce();
+  });
+
+  it('does not start a second activity scan while the first scan is pending', async () => {
+    const learning = Promise.withResolvers<{
+      activityEvents: [];
+      studySessions: [];
+    }>();
+    vi.mocked(loadAdminLearningActivity).mockReturnValue(learning.promise);
+    render(<AdminPage />);
+    await waitFor(() => expect(loadAdminDashboardData).toHaveBeenCalledOnce());
+
+    fireEvent.click(screen.getByRole('button', { name: /Takip Merkezi/ }));
+    await waitFor(() => expect(loadAdminLearningActivity).toHaveBeenCalledOnce());
+    fireEvent.click(screen.getByRole('button', { name: /Sınıfım/ }));
+    expect(loadAdminLearningActivity).toHaveBeenCalledOnce();
+
+    await act(async () => learning.resolve({ activityEvents: [], studySessions: [] }));
   });
 
   it('polling 120 saniyede yeniler; gizli sekmede sorgulamaz ve dönüşte yeniler', async () => {

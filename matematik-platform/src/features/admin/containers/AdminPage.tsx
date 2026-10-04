@@ -33,6 +33,7 @@ import {
 import { useRouter } from 'next/navigation';
 import { signOutClient } from '@/lib/auth-client';
 import { useToast } from '@/components/Toast';
+import { createLogger } from '@/lib/logger';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { ThemeSelectorDropdown } from '@/components/ThemeSelectorDropdown';
 import { useAdminListActions } from '@/features/admin/hooks/useAdminListActions';
@@ -49,6 +50,8 @@ import {
   importAdminAnnualPlan,
   loadAdminAssignmentSubmissions,
   loadAdminDashboardData,
+  loadAdminLearningActivity,
+  loadAdminLiveLessonActivity,
   loadGoogleDriveAuthUrl,
   loadGoogleDriveConnectionStatus,
   loadWorksheetCandidateSourceStatus,
@@ -179,8 +182,9 @@ const GOOGLE_DRIVE_CALLBACK_MESSAGES: Record<
   },
 };
 
+const log = createLogger('admin-page');
+
 export default function AdminPage() {
-  const RETENTION_DAYS = 180;
   const { showToast } = useToast();
   const [user, setUser] = useState<AdminUser | null>(null);
   const adminUserIdRef = useRef<string | null>(null);
@@ -233,6 +237,17 @@ export default function AdminPage() {
     lessons: [],
     participants: [],
   });
+  const [learningActivityStatus, setLearningActivityStatus] = useState<
+    'idle' | 'loading' | 'ready' | 'error'
+  >('idle');
+  const [liveLessonActivityStatus, setLiveLessonActivityStatus] = useState<
+    'idle' | 'loading' | 'ready' | 'error'
+  >('idle');
+  const [dashboardLoaded, setDashboardLoaded] = useState(false);
+  const learningActivityLoadedRef = useRef(false);
+  const liveLessonActivityLoadedRef = useRef(false);
+  const learningActivityRequestRef = useRef<Promise<void> | null>(null);
+  const liveLessonActivityRequestRef = useRef<Promise<void> | null>(null);
   const [activeStudentProfileId, setActiveStudentProfileId] = useState<string | null>(null);
   const [activeStudentProfileData, setActiveStudentProfileData] =
     useState<AdminStudentProfileData | null>(null);
@@ -356,19 +371,67 @@ export default function AdminPage() {
     setWeeklyPlans(data.weeklyPlans);
     setDashboardSubmissions(data.submissions);
     setDashboardQuizResults(data.quizResults);
-    setDashboardStudySessions(data.studySessions);
     setDashboardStudyGoals(data.studyGoals);
-    setActivityEvents(data.activityEvents);
-    setLiveLessons(data.liveLessons);
+    setLiveLessons((current) => ({ ...current, lessons: data.liveLessons.lessons }));
+  }, []);
+
+  const refreshLearningActivity = useCallback((): Promise<void> => {
+    if (learningActivityRequestRef.current) return learningActivityRequestRef.current;
+
+    const request = (async () => {
+      if (!learningActivityLoadedRef.current) setLearningActivityStatus('loading');
+      try {
+        const data = await loadAdminLearningActivity();
+        setActivityEvents(data.activityEvents);
+        setDashboardStudySessions(data.studySessions);
+        learningActivityLoadedRef.current = true;
+        setLearningActivityStatus('ready');
+      } catch (error) {
+        log.error('Öğrenci etkinlikleri yüklenemedi', error);
+        if (!learningActivityLoadedRef.current) setLearningActivityStatus('error');
+      }
+    })();
+    learningActivityRequestRef.current = request;
+    void request.finally(() => {
+      learningActivityRequestRef.current = null;
+    });
+    return request;
+  }, []);
+
+  const refreshLiveLessonActivity = useCallback((): Promise<void> => {
+    if (liveLessonActivityRequestRef.current) return liveLessonActivityRequestRef.current;
+
+    const request = (async () => {
+      if (!liveLessonActivityLoadedRef.current) setLiveLessonActivityStatus('loading');
+      try {
+        const data = await loadAdminLiveLessonActivity();
+        setLiveLessons((current) => ({ ...current, ...data }));
+        liveLessonActivityLoadedRef.current = true;
+        setLiveLessonActivityStatus('ready');
+      } catch (error) {
+        log.error('Canlı ders ayrıntıları yüklenemedi', error);
+        if (!liveLessonActivityLoadedRef.current) setLiveLessonActivityStatus('error');
+      }
+    })();
+    liveLessonActivityRequestRef.current = request;
+    void request.finally(() => {
+      liveLessonActivityRequestRef.current = null;
+    });
+    return request;
   }, []);
 
   const loadData = useCallback(
     async (adminUserId?: string | null) => {
       applyDashboardData(
-        await loadAdminDashboardData(RETENTION_DAYS, adminUserId ?? adminUserIdRef.current),
+        await loadAdminDashboardData(adminUserId ?? adminUserIdRef.current),
       );
+      setDashboardLoaded(true);
+      await Promise.all([
+        learningActivityLoadedRef.current ? refreshLearningActivity() : Promise.resolve(),
+        liveLessonActivityLoadedRef.current ? refreshLiveLessonActivity() : Promise.resolve(),
+      ]);
     },
-    [RETENTION_DAYS, applyDashboardData],
+    [applyDashboardData, refreshLearningActivity, refreshLiveLessonActivity],
   );
 
   const refreshGoogleDriveConnection = useCallback(async () => {
@@ -521,6 +584,20 @@ export default function AdminPage() {
     refreshWorksheetSourceStatus,
     router,
   ]);
+
+  useEffect(() => {
+    if (!user || !dashboardLoaded || learningActivityStatus !== 'idle') return;
+    if (activeTab === 'tracking' || activeTab === 'classroom') {
+      void refreshLearningActivity();
+    }
+  }, [activeTab, dashboardLoaded, learningActivityStatus, refreshLearningActivity, user]);
+
+  useEffect(() => {
+    if (!user || !dashboardLoaded || liveLessonActivityStatus !== 'idle') return;
+    if (activeTab === 'liveLessons') {
+      void refreshLiveLessonActivity();
+    }
+  }, [activeTab, dashboardLoaded, liveLessonActivityStatus, refreshLiveLessonActivity, user]);
 
   useEffect(() => {
     if (!user || typeof window === 'undefined') return;
@@ -1349,6 +1426,10 @@ export default function AdminPage() {
           <AdminTabPanels
             activeTab={activeTab}
             activityEvents={activityEvents}
+            learningActivityStatus={learningActivityStatus}
+            liveLessonActivityStatus={liveLessonActivityStatus}
+            onRetryLearningActivity={refreshLearningActivity}
+            onRetryLiveLessonActivity={refreshLiveLessonActivity}
             adminStatuses={adminStatuses}
             announcements={announcements}
             annualPlanItems={annualPlanItems}

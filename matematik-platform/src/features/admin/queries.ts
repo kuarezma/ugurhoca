@@ -416,19 +416,8 @@ export const updateWorksheetCandidateStatus = async ({
 };
 
 export const loadAdminDashboardData = async (
-  retentionDays: number,
   adminUserId?: string | null,
 ): Promise<AdminDashboardData> => {
-  const retentionCutoff = new Date(
-    Date.now() - retentionDays * 24 * 60 * 60 * 1000,
-  ).toISOString();
-
-  await supabase
-    .from('notifications')
-    .delete()
-    .in('type', ['message', 'moderation', 'report'])
-    .lt('created_at', retentionCutoff);
-
   const [
     announcementsRes,
     documentsRes,
@@ -439,17 +428,12 @@ export const loadAdminDashboardData = async (
     notificationsRes,
     submissionsRes,
     quizResultsRes,
-    studySessionsRes,
     studyGoalsRes,
     adminStatusesRes,
     weeklyPlansRes,
     annualPlanItemsRes,
     worksheetCandidatesRes,
-    activityEventsRes,
     liveLessonsRes,
-    liveLessonParticipantsRes,
-    liveLessonEventsRes,
-    liveLessonChatRes,
   ] = await Promise.all([
     supabase.from('announcements').select('*').order('created_at', { ascending: false }).limit(ADMIN_QUERY_LIMIT),
     supabase.from('documents').select('*').order('created_at', { ascending: false }).limit(ADMIN_QUERY_LIMIT),
@@ -475,14 +459,6 @@ export const loadAdminDashboardData = async (
       .select('id, user_id, quiz_id, score, total_questions, completed_at, quizzes(title, difficulty, grade)')
       .order('completed_at', { ascending: false })
       .limit(ADMIN_QUERY_LIMIT),
-    loadAllAdminRows((from, to) =>
-      supabase
-        .from('study_sessions')
-        .select('id, user_id, duration, date, activity_type, topics')
-        .order('date', { ascending: false })
-        .order('id', { ascending: false })
-        .range(from, to),
-    ),
     supabase.from('study_goals').select('user_id, target_duration, week_start').limit(ADMIN_USERS_QUERY_LIMIT),
     supabase.from('student_admin_statuses').select('*').limit(ADMIN_USERS_QUERY_LIMIT),
     supabase
@@ -501,6 +477,48 @@ export const loadAdminDashboardData = async (
       .select('*')
       .order('created_at', { ascending: false })
       .limit(ADMIN_QUERY_LIMIT),
+    supabase
+      .from('live_lessons')
+      .select(LIVE_LESSON_CLIENT_COLUMNS)
+      .order('starts_at', { ascending: false })
+      .limit(100),
+  ]);
+
+  return {
+    allUsers: ((allUsersRes.data || []) as AdminUser[]).map((user) => ({ ...user, grade: toDisplayGrade(user.grade) })),
+    announcements: ((announcementsRes.data || []) as AdminDashboardData['announcements']).sort(
+      (left, right) =>
+        new Date(right.created_at || 0).getTime() -
+        new Date(left.created_at || 0).getTime(),
+    ),
+    annualPlanItems: (annualPlanItemsRes.data || []) as AnnualPlanItem[],
+    adminStatuses: (adminStatusesRes.data || []) as StudentAdminStatus[],
+    assignments: (assignmentsRes.data || []) as AdminDashboardData['assignments'],
+    documents: (documentsRes.data || []) as AdminDashboardData['documents'],
+    notifications: (notificationsRes.data || []) as AdminDashboardData['notifications'],
+    quizResults: (quizResultsRes.data || []) as AdminQuizResultRow[],
+    quizzes: (quizzesRes.data || []) as AdminDashboardData['quizzes'],
+    sharedDocs: (sharedDocsRes.data || []) as AdminDashboardData['sharedDocs'],
+    studyGoals: (studyGoalsRes.data || []) as AdminStudyGoalRow[],
+    submissions: (submissionsRes.data || []) as AdminSubmission[],
+    weeklyPlans: (weeklyPlansRes.data || []) as StudentWeeklyPlan[],
+    worksheetCandidates: (worksheetCandidatesRes.data || []) as WorksheetCandidate[],
+    liveLessons: {
+      lessons: liveLessonsRes.data || [],
+    },
+  };
+};
+
+export const loadAdminLearningActivity = async () => {
+  const [sessions, events] = await Promise.all([
+    loadAllAdminRows((from, to) =>
+      supabase
+        .from('study_sessions')
+        .select('id, user_id, duration, date, activity_type, topics')
+        .order('date', { ascending: false })
+        .order('id', { ascending: false })
+        .range(from, to),
+    ),
     loadAllAdminRows((from, to) =>
       supabase
         .from('student_activity_events')
@@ -509,11 +527,20 @@ export const loadAdminDashboardData = async (
         .order('id', { ascending: false })
         .range(from, to),
     ),
-    supabase
-      .from('live_lessons')
-      .select(LIVE_LESSON_CLIENT_COLUMNS)
-      .order('starts_at', { ascending: false })
-      .limit(100),
+  ]);
+
+  if (sessions.error || events.error) {
+    throw new Error('Öğrenci etkinlikleri yüklenemedi.');
+  }
+
+  return {
+    activityEvents: (events.data || []) as StudentActivityEvent[],
+    studySessions: (sessions.data || []) as AdminStudySessionRow[],
+  };
+};
+
+export const loadAdminLiveLessonActivity = async () => {
+  const [participants, events, chatMessages] = await Promise.all([
     loadAllAdminRows((from, to) =>
       supabase
         .from('live_lesson_participants')
@@ -540,33 +567,14 @@ export const loadAdminDashboardData = async (
     ),
   ]);
 
+  if (participants.error || events.error || chatMessages.error) {
+    throw new Error('Canlı ders ayrıntıları yüklenemedi.');
+  }
+
   return {
-    activityEvents: (activityEventsRes.data || []) as StudentActivityEvent[],
-    allUsers: ((allUsersRes.data || []) as AdminUser[]).map((user) => ({ ...user, grade: toDisplayGrade(user.grade) })),
-    announcements: ((announcementsRes.data || []) as AdminDashboardData['announcements']).sort(
-      (left, right) =>
-        new Date(right.created_at || 0).getTime() -
-        new Date(left.created_at || 0).getTime(),
-    ),
-    annualPlanItems: (annualPlanItemsRes.data || []) as AnnualPlanItem[],
-    adminStatuses: (adminStatusesRes.data || []) as StudentAdminStatus[],
-    assignments: (assignmentsRes.data || []) as AdminDashboardData['assignments'],
-    documents: (documentsRes.data || []) as AdminDashboardData['documents'],
-    notifications: (notificationsRes.data || []) as AdminDashboardData['notifications'],
-    quizResults: (quizResultsRes.data || []) as AdminQuizResultRow[],
-    quizzes: (quizzesRes.data || []) as AdminDashboardData['quizzes'],
-    sharedDocs: (sharedDocsRes.data || []) as AdminDashboardData['sharedDocs'],
-    studyGoals: (studyGoalsRes.data || []) as AdminStudyGoalRow[],
-    studySessions: (studySessionsRes.data || []) as AdminStudySessionRow[],
-    submissions: (submissionsRes.data || []) as AdminSubmission[],
-    weeklyPlans: (weeklyPlansRes.data || []) as StudentWeeklyPlan[],
-    worksheetCandidates: (worksheetCandidatesRes.data || []) as WorksheetCandidate[],
-    liveLessons: {
-      chatMessages: liveLessonChatRes.data || [],
-      events: liveLessonEventsRes.data || [],
-      lessons: liveLessonsRes.data || [],
-      participants: liveLessonParticipantsRes.data || [],
-    },
+    chatMessages: chatMessages.data || [],
+    events: events.data || [],
+    participants: participants.data || [],
   };
 };
 

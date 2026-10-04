@@ -43,6 +43,10 @@ import type { LiveLessonDashboardData } from "@/features/live-lessons/types";
 type AdminTabPanelsProps = {
   activeTab: AdminActiveTab;
   activityEvents: StudentActivityEvent[];
+  learningActivityStatus: 'idle' | 'loading' | 'ready' | 'error';
+  liveLessonActivityStatus: 'idle' | 'loading' | 'ready' | 'error';
+  onRetryLearningActivity: () => Promise<void>;
+  onRetryLiveLessonActivity: () => Promise<void>;
   adminStatuses: StudentAdminStatus[];
   announcements: AdminAnnouncement[];
   annualPlanItems: AnnualPlanItem[];
@@ -162,9 +166,40 @@ function AdminTabPanel({
   );
 }
 
+function ActivityDataBoundary({
+  children,
+  onRetry,
+  status,
+}: {
+  children: ReactNode;
+  onRetry: () => Promise<void>;
+  status: 'idle' | 'loading' | 'ready' | 'error';
+}) {
+  if (status === 'ready') return children;
+
+  return (
+    <div className="rounded-2xl border border-border-subtle bg-surface-1 p-6 text-center text-secondary">
+      {status === 'error' ? (
+        <div role="alert">
+          <p>Veriler yüklenemedi.</p>
+          <button className="btn-secondary mt-3" onClick={() => void onRetry()} type="button">
+            Yeniden dene
+          </button>
+        </div>
+      ) : (
+        <p role="status">Veriler yükleniyor...</p>
+      )}
+    </div>
+  );
+}
+
 export default function AdminTabPanels({
   activeTab,
   activityEvents,
+  learningActivityStatus,
+  liveLessonActivityStatus,
+  onRetryLearningActivity,
+  onRetryLiveLessonActivity,
   adminStatuses,
   announcements,
   annualPlanItems,
@@ -245,36 +280,40 @@ export default function AdminTabPanels({
       </AdminTabPanel>
 
       <AdminTabPanel activeTab={activeTab} tab="tracking" visitedTabs={visitedTabs}>
-        <AdminTrackingTab
-          activityEvents={activityEvents}
-          adminStatuses={adminStatuses}
-          assignments={assignments}
-          documents={documents}
-          notifications={notifications}
-          onCreateWeeklyPlan={onCreateWeeklyPlan}
-          onSendMessage={onSendAdminMessage}
-          onUpdateStatus={onUpdateStudentStatus}
-          onViewProfile={onViewStudentProfile}
-          quizResults={dashboardQuizResults}
-          studyGoals={dashboardStudyGoals}
-          studySessions={dashboardStudySessions}
-          students={studentUsers}
-          submissions={dashboardSubmissions}
-          weeklyPlans={weeklyPlans}
-        />
+        <ActivityDataBoundary status={learningActivityStatus} onRetry={onRetryLearningActivity}>
+          <AdminTrackingTab
+            activityEvents={activityEvents}
+            adminStatuses={adminStatuses}
+            assignments={assignments}
+            documents={documents}
+            notifications={notifications}
+            onCreateWeeklyPlan={onCreateWeeklyPlan}
+            onSendMessage={onSendAdminMessage}
+            onUpdateStatus={onUpdateStudentStatus}
+            onViewProfile={onViewStudentProfile}
+            quizResults={dashboardQuizResults}
+            studyGoals={dashboardStudyGoals}
+            studySessions={dashboardStudySessions}
+            students={studentUsers}
+            submissions={dashboardSubmissions}
+            weeklyPlans={weeklyPlans}
+          />
+        </ActivityDataBoundary>
       </AdminTabPanel>
 
       <AdminTabPanel activeTab={activeTab} tab="classroom" visitedTabs={visitedTabs}>
-        <AdminClassroomTab
-          students={studentUsers}
-          assignments={assignments}
-          quizResults={dashboardQuizResults}
-          submissions={dashboardSubmissions}
-          studySessions={dashboardStudySessions}
-          onSendMessage={onSendAdminMessage}
-          onViewProfile={onViewStudentProfile}
-          onQuickResetPassword={onEditUser}
-        />
+        <ActivityDataBoundary status={learningActivityStatus} onRetry={onRetryLearningActivity}>
+          <AdminClassroomTab
+            students={studentUsers}
+            assignments={assignments}
+            quizResults={dashboardQuizResults}
+            submissions={dashboardSubmissions}
+            studySessions={dashboardStudySessions}
+            onSendMessage={onSendAdminMessage}
+            onViewProfile={onViewStudentProfile}
+            onQuickResetPassword={onEditUser}
+          />
+        </ActivityDataBoundary>
       </AdminTabPanel>
 
       <AdminTabPanel activeTab={activeTab} tab="announcements" visitedTabs={visitedTabs}>
@@ -371,11 +410,13 @@ export default function AdminTabPanels({
       </AdminTabPanel>
 
       <AdminTabPanel activeTab={activeTab} tab="liveLessons" visitedTabs={visitedTabs}>
-        <AdminLiveLessonsTab
-          data={liveLessons}
-          onRefresh={onRefreshUsers}
-          students={studentUsers}
-        />
+        <ActivityDataBoundary status={liveLessonActivityStatus} onRetry={onRetryLiveLessonActivity}>
+          <AdminLiveLessonsTab
+            data={liveLessons}
+            onRefresh={onRefreshUsers}
+            students={studentUsers}
+          />
+        </ActivityDataBoundary>
       </AdminTabPanel>
     </div>
   );
