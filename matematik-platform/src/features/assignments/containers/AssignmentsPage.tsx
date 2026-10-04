@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -66,6 +66,7 @@ export default function OdevlerPage({
   const [submissions, setSubmissions] = useState<Record<string, Submission>>(
     initialSubmissions,
   );
+  const uploadInFlight = useRef(false);
   const [uploading, setUploading] = useState<string | null>(null);
   const [selectedAssignment, setSelectedAssignment] = useState<Assignment | null>(null);
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
@@ -169,7 +170,7 @@ export default function OdevlerPage({
   }, [initialUserKey, isHydrated, router]);
 
   const handleFileUpload = async (assignmentId: string, file: File) => {
-    if (!user) return;
+    if (!user || uploadInFlight.current) return;
     
     // Güvenlik kontrolleri
     if (file.size > 5 * 1024 * 1024) {
@@ -183,16 +184,43 @@ export default function OdevlerPage({
       return;
     }
 
+    uploadInFlight.current = true;
     setUploading(assignmentId);
+    let progressInterval: ReturnType<typeof setInterval> | undefined;
+
+    const readExistingSubmission = () =>
+      supabase
+        .from('assignment_submissions')
+        .select('*')
+        .eq('assignment_id', assignmentId)
+        .eq('student_id', user.id)
+        // Legacy databases may contain multiple deliveries for this pair.
+        .limit(1)
+        .maybeSingle();
+
+    const notifyAlreadySubmitted = (submission: Submission | null) => {
+      if (submission) {
+        setSubmissions(prev => ({ ...prev, [assignmentId]: submission }));
+      }
+      setUploadProgress(null);
+      showToast('warning', 'Bu ödevi zaten teslim ettin.');
+    };
 
     try {
+      const { data: existingSubmission, error: lookupError } =
+        await readExistingSubmission();
+      if (lookupError) throw lookupError;
+      if (existingSubmission) {
+        notifyAlreadySubmitted(existingSubmission);
+        return;
+      }
       const fileExt = file.name.split('.').pop();
-      const fileName = `${user.id}/${assignmentId}_${Date.now()}.${fileExt}`;
+      const fileName = `${user.id}/${assignmentId}_${crypto.randomUUID()}.${fileExt}`;
       const filePath = `${fileName}`;
 
       // Fake progress animation for better UX
       setUploadProgress(10);
-      const progressInterval = setInterval(() => {
+      progressInterval = setInterval(() => {
         setUploadProgress(prev => prev && prev < 90 ? prev + Math.random() * 15 : prev);
       }, 300);
 
@@ -211,16 +239,31 @@ export default function OdevlerPage({
 
       const { data: submissionData, error: dbError } = await supabase
         .from('assignment_submissions')
-        .insert([{
-          assignment_id: assignmentId,
-          student_id: user.id,
-          student_name: user.name,
-          file_url: publicUrl,
-          comment: comment
-        }])
+        .insert([
+          {
+            assignment_id: assignmentId,
+            student_id: user.id,
+            student_name: user.name,
+            file_url: publicUrl,
+            comment: comment,
+            submitted_at: new Date().toISOString(),
+          },
+        ])
         .select()
         .single();
 
+      if (dbError?.code === '23505') {
+        // Another request won the race; remove only this request's unique file.
+        const { error: cleanupError } = await supabase.storage
+          .from('submissions')
+          .remove([filePath]);
+        if (cleanupError) log.error('Teslim dosyası temizlenemedi', cleanupError);
+        const { data: existingSubmission, error: lookupError } =
+          await readExistingSubmission();
+        if (lookupError) log.error('Mevcut teslim okunamadı', lookupError);
+        notifyAlreadySubmitted(existingSubmission);
+        return;
+      }
       if (dbError) throw dbError;
 
       setTimeout(() => {
@@ -239,6 +282,8 @@ export default function OdevlerPage({
       );
       setUploadProgress(null);
     } finally {
+      clearInterval(progressInterval);
+      uploadInFlight.current = false;
       setUploading(null);
     }
   };

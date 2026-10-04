@@ -1,6 +1,7 @@
 import type { Session } from '@supabase/supabase-js';
 import { ADMIN_EMAIL, isAdminEmail } from '@/lib/admin';
 import { getClientSession } from '@/lib/auth-client';
+import { createLogger } from '@/lib/logger';
 import { decodeQuizMediaExplanation } from '@/lib/quiz-media';
 import { supabase } from '@/lib/supabase/client';
 import {
@@ -58,6 +59,27 @@ import type {
 // bu yalnızca sessiz veri kaybını görünür/kontrollü bir üst sınıra çevirir.
 const ADMIN_QUERY_LIMIT = 2000;
 const ADMIN_USERS_QUERY_LIMIT = 5000;
+const log = createLogger('admin-queries');
+
+// Keep the dashboard API unchanged while reading every page of activity rows.
+const loadAllAdminRows = async <TRow>(
+  queryPage: (from: number, to: number) => PromiseLike<{
+    data: TRow[] | null;
+    error: unknown;
+  }>,
+) => {
+  const pageSize = 500;
+  const rows: TRow[] = [];
+  for (let from = 0; ; from += pageSize) {
+    const { data, error } = await queryPage(from, from + pageSize - 1);
+    if (error) {
+      log.warn('Admin kayıtları tam yüklenemedi; kısmi sonuç kullanılmadı.', { error });
+      return { data: null, error };
+    }
+    rows.push(...(data || []));
+    if (!data || data.length < pageSize) return { data: rows, error: null };
+  }
+};
 
 type ResolveAdminAuthResult =
   | { status: 'ok'; session: Session; user: AdminUser }
@@ -452,11 +474,14 @@ export const loadAdminDashboardData = async (
       .select('id, user_id, quiz_id, score, total_questions, completed_at, quizzes(title, difficulty, grade)')
       .order('completed_at', { ascending: false })
       .limit(ADMIN_QUERY_LIMIT),
-    supabase
-      .from('study_sessions')
-      .select('id, user_id, duration, date, activity_type, topics')
-      .order('date', { ascending: false })
-      .limit(1000),
+    loadAllAdminRows((from, to) =>
+      supabase
+        .from('study_sessions')
+        .select('id, user_id, duration, date, activity_type, topics')
+        .order('date', { ascending: false })
+        .order('id', { ascending: false })
+        .range(from, to),
+    ),
     supabase.from('study_goals').select('user_id, target_duration, week_start').limit(ADMIN_USERS_QUERY_LIMIT),
     supabase.from('student_admin_statuses').select('*').limit(ADMIN_USERS_QUERY_LIMIT),
     supabase
@@ -475,31 +500,43 @@ export const loadAdminDashboardData = async (
       .select('*')
       .order('created_at', { ascending: false })
       .limit(ADMIN_QUERY_LIMIT),
-    supabase
-      .from('student_activity_events')
-      .select('*')
-      .order('created_at', { ascending: false })
-      .limit(1000),
+    loadAllAdminRows((from, to) =>
+      supabase
+        .from('student_activity_events')
+        .select('*')
+        .order('created_at', { ascending: false })
+        .order('id', { ascending: false })
+        .range(from, to),
+    ),
     supabase
       .from('live_lessons')
       .select(LIVE_LESSON_CLIENT_COLUMNS)
       .order('starts_at', { ascending: false })
       .limit(100),
-    supabase
-      .from('live_lesson_participants')
-      .select('*')
-      .order('joined_at', { ascending: false })
-      .limit(1000),
-    supabase
-      .from('live_lesson_events')
-      .select('*')
-      .order('created_at', { ascending: false })
-      .limit(1000),
-    supabase
-      .from('live_lesson_chat_messages')
-      .select('*')
-      .order('created_at', { ascending: false })
-      .limit(1000),
+    loadAllAdminRows((from, to) =>
+      supabase
+        .from('live_lesson_participants')
+        .select('*')
+        .order('joined_at', { ascending: false })
+        .order('id', { ascending: false })
+        .range(from, to),
+    ),
+    loadAllAdminRows((from, to) =>
+      supabase
+        .from('live_lesson_events')
+        .select('*')
+        .order('created_at', { ascending: false })
+        .order('id', { ascending: false })
+        .range(from, to),
+    ),
+    loadAllAdminRows((from, to) =>
+      supabase
+        .from('live_lesson_chat_messages')
+        .select('*')
+        .order('created_at', { ascending: false })
+        .order('id', { ascending: false })
+        .range(from, to),
+    ),
   ]);
 
   return {
