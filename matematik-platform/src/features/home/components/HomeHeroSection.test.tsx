@@ -22,7 +22,6 @@ vi.mock('@/components/Mascot', () => ({
 
 describe('HomeHeroSection', () => {
   const defaultProps = {
-    isLight: false,
     user: null,
     onOpenFlashcards: vi.fn(),
     onOpenScratchpad: vi.fn(),

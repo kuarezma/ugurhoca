@@ -7,7 +7,6 @@ import type { SupportAttachment } from '@/types';
 import { HomeSupportAttachmentList } from '@/features/home/components/support/HomeSupportAttachmentList';
 
 type HomeSupportFormProps = {
-  isLight: boolean;
   onRemoveSupportAttachment: (index: number) => void;
   onSubmit: (event: FormEvent) => void;
   onSupportMessageChange: (message: string) => void;
@@ -19,7 +18,6 @@ type HomeSupportFormProps = {
 };
 
 export function HomeSupportForm({
-  isLight,
   onRemoveSupportAttachment,
   onSubmit,
   onSupportMessageChange,
@@ -39,9 +37,7 @@ export function HomeSupportForm({
       <div>
         <label
           htmlFor={messageId}
-          className={`block mb-2 text-sm ${
-            isLight ? 'text-slate-700' : 'text-slate-300'
-          }`}
+          className="block mb-2 text-sm light:text-slate-700 dark:text-slate-300"
         >
           Mesajın
         </label>
@@ -51,20 +47,14 @@ export function HomeSupportForm({
           value={supportMessage}
           onChange={(event) => onSupportMessageChange(event.target.value)}
           placeholder="Uğur Hoca, ..."
-          className={`w-full rounded-2xl px-4 py-3 focus:outline-none focus:border-indigo-500 transition-colors resize-none ${
-            isLight
-              ? 'bg-white border border-slate-300 text-slate-900 placeholder:text-slate-400'
-              : 'bg-slate-800/60 border border-slate-700 text-white placeholder:text-slate-400'
-          }`}
+          className="w-full rounded-2xl px-4 py-3 focus:outline-none light:focus:border-indigo-500 dark:focus:border-indigo-500 transition-colors resize-none light:bg-white border light:border-slate-300 light:text-slate-900 placeholder:text-slate-400 dark:bg-slate-800/60 dark:border-slate-700 dark:text-white"
         />
       </div>
 
       <div>
         <label
           htmlFor={uploadId}
-          className={`block mb-2 text-sm ${
-            isLight ? 'text-slate-700' : 'text-slate-300'
-          }`}
+          className="block mb-2 text-sm light:text-slate-700 dark:text-slate-300"
         >
           Fotoğraf Ekle
         </label>
@@ -87,11 +77,7 @@ export function HomeSupportForm({
         />
         <label
           htmlFor={uploadId}
-          className={`flex items-center justify-center gap-2 w-full rounded-2xl border border-dashed px-4 py-5 transition-colors cursor-pointer ${
-            isLight
-              ? 'border-slate-300 bg-slate-50 text-slate-700 hover:bg-slate-100 hover:border-indigo-500'
-              : 'border-slate-700 bg-slate-800/50 text-slate-300 hover:bg-slate-800 hover:border-indigo-500'
-          }`}
+          className="flex items-center justify-center gap-2 w-full rounded-2xl border border-dashed px-4 py-5 transition-colors cursor-pointer light:border-slate-300 light:bg-slate-50 light:text-slate-700 light:hover:bg-slate-100 light:hover:border-indigo-500 dark:hover:border-indigo-500 dark:border-slate-700 dark:bg-slate-800/50 dark:text-slate-300 dark:hover:bg-slate-800"
         >
           <Upload className="w-5 h-5" />
           Fotoğraf seç
@@ -100,13 +86,12 @@ export function HomeSupportForm({
 
       <HomeSupportAttachmentList
         attachments={supportAttachments}
-        isLight={isLight}
         onRemove={onRemoveSupportAttachment}
       />
 
       <div className="flex flex-col sm:flex-row sm:items-center gap-3 justify-between">
         <p
-          className={`text-xs ${isLight ? 'text-slate-600' : 'text-slate-400'}`}
+          className="text-xs light:text-slate-600 dark:text-slate-400"
         >
           Gönderdiğin mesaj anında bildirim olarak iletilir.
         </p>

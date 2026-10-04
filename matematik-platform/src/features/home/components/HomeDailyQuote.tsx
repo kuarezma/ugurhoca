@@ -4,10 +4,6 @@ import { memo, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { Quote, Sparkles } from 'lucide-react';
 
-type HomeDailyQuoteProps = {
-  isLight: boolean;
-};
-
 type MathQuote = {
   text: string;
   author: string;
@@ -56,7 +52,7 @@ const QUOTES: MathQuote[] = [
   },
 ];
 
-function HomeDailyQuoteInner({ isLight }: HomeDailyQuoteProps) {
+function HomeDailyQuoteInner() {
   const quote = useMemo(() => {
     const now = new Date();
     const start = Date.UTC(now.getUTCFullYear(), 0, 0);
@@ -75,11 +71,7 @@ function HomeDailyQuoteInner({ isLight }: HomeDailyQuoteProps) {
       className="mx-auto mt-8 w-full max-w-6xl px-4 sm:mt-10"
     >
       <div
-        className={`relative overflow-hidden rounded-3xl border p-6 sm:p-8 ${
-          isLight
-            ? 'border-slate-200 bg-white shadow-sm'
-            : 'border-white/10 bg-gradient-to-br from-slate-900/80 via-slate-900/60 to-slate-900/80 backdrop-blur'
-        }`}
+        className="relative overflow-hidden rounded-3xl border p-6 sm:p-8 light:border-slate-200 light:bg-white light:shadow-sm dark:border-white/10 dark:bg-gradient-to-br dark:from-slate-900/80 dark:via-slate-900/60 dark:to-slate-900/80 dark:backdrop-blur"
       >
         <div
           className="pointer-events-none absolute -right-16 -top-16 h-48 w-48 rounded-full bg-gradient-to-br from-amber-400/30 via-pink-500/30 to-violet-500/30 blur-3xl"
@@ -100,26 +92,18 @@ function HomeDailyQuoteInner({ isLight }: HomeDailyQuoteProps) {
 
           <div className="flex-1">
             <div
-              className={`mb-2 inline-flex items-center gap-2 rounded-full px-3 py-1 text-[11px] font-black uppercase tracking-[0.2em] ${
-                isLight
-                  ? 'bg-amber-100 text-amber-700'
-                  : 'bg-amber-400/20 text-amber-200'
-              }`}
+              className="mb-2 inline-flex items-center gap-2 rounded-full px-3 py-1 text-[11px] font-black uppercase tracking-[0.2em] light:bg-amber-100 light:text-amber-700 dark:bg-amber-400/20 dark:text-amber-200"
             >
               <Sparkles className="h-3.5 w-3.5" aria-hidden="true" />
               <span id="daily-quote-heading">Günün Sözü</span>
             </div>
             <p
-              className={`font-display text-lg font-bold leading-snug sm:text-2xl ${
-                isLight ? 'text-slate-900' : 'text-white'
-              }`}
+              className="font-display text-lg font-bold leading-snug sm:text-2xl light:text-slate-900 dark:text-white"
             >
               “{quote.text}”
             </p>
             <p
-              className={`mt-3 text-sm font-semibold ${
-                isLight ? 'text-slate-500' : 'text-slate-300'
-              }`}
+              className="mt-3 text-sm font-semibold light:text-slate-500 dark:text-slate-300"
             >
               — {quote.author}
             </p>

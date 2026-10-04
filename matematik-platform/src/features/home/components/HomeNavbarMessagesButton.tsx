@@ -11,6 +11,7 @@ import {
   useState,
   type FormEvent,
 } from 'react';
+import { useTheme } from '@/components/ThemeProvider';
 import { supabase } from '@/lib/supabase/client';
 import {
   sendSupportMessage,
@@ -38,17 +39,19 @@ type HomeNavbarMessagesButtonProps = {
   userId: string;
   userName: string;
   userEmail: string;
-  isLight: boolean;
+  /** @deprecated Ignored: theme classes come from CSS. Kept for callers outside the home feature. */
+  isLight?: boolean;
 };
 
 export function HomeNavbarMessagesButton({
   userId,
   userName,
   userEmail,
-  isLight,
 }: HomeNavbarMessagesButtonProps) {
   const { appendMessage, markAllAsRead, messages, refetch, unreadCount } =
     useNavbarMessages(userId);
+  // The chat panel only mounts after a click, so the JS theme is settled by then.
+  const { theme } = useTheme();
   const [open, setOpen] = useState(false);
   const [draft, setDraft] = useState('');
   const [sending, setSending] = useState(false);
@@ -216,11 +219,7 @@ export function HomeNavbarMessagesButton({
     ],
   );
 
-  const buttonClasses = `relative inline-flex h-11 w-11 items-center justify-center rounded-xl transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary ${
-    isLight
-      ? 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
-      : 'text-slate-300 hover:bg-white/5 hover:text-white'
-  }`;
+  const buttonClasses = `relative inline-flex h-11 w-11 items-center justify-center rounded-xl transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary light:text-slate-600 light:hover:bg-slate-100 light:hover:text-slate-900 dark:text-slate-300 dark:hover:bg-white/5 dark:hover:text-white`;
 
   return (
     <div ref={containerRef} className="relative">
@@ -238,7 +237,7 @@ export function HomeNavbarMessagesButton({
       >
         <MessageCircle className="h-5 w-5" aria-hidden="true" />
         {unreadCount > 0 && (
-          <span className="absolute -right-0.5 -top-0.5 flex h-5 min-w-[1.25rem] items-center justify-center rounded-full bg-red-500 px-1 text-[11px] font-bold text-white">
+          <span className="absolute -right-0.5 -top-0.5 flex h-5 min-w-[1.25rem] items-center justify-center rounded-full bg-red-500 px-1 text-[11px] font-bold text-white dark:text-white">
             {unreadCount > 9 ? '9+' : unreadCount}
           </span>
         )}
@@ -255,17 +254,13 @@ export function HomeNavbarMessagesButton({
             role="dialog"
             aria-label="Uğur Hoca ile mesajlaşma"
             style={{ overscrollBehavior: 'contain' }}
-            className={`fixed left-4 right-4 top-[calc(3.5rem+0.25rem+env(safe-area-inset-top))] z-50 flex h-[min(80vh,28rem)] min-h-0 flex-col overflow-hidden overscroll-contain rounded-2xl border shadow-2xl sm:absolute sm:left-auto sm:right-0 sm:top-auto sm:mt-2 sm:w-[24rem] md:w-[26rem] ${
-              isLight
-                ? 'border-slate-200 bg-white'
-                : 'border-slate-700 bg-slate-900'
-            }`}
+            className="fixed left-4 right-4 top-[calc(3.5rem+0.25rem+env(safe-area-inset-top))] z-50 flex h-[min(80vh,28rem)] min-h-0 flex-col overflow-hidden overscroll-contain rounded-2xl border shadow-2xl sm:absolute sm:left-auto sm:right-0 sm:top-auto sm:mt-2 sm:w-[24rem] md:w-[26rem] light:border-slate-200 light:bg-white dark:border-slate-700 dark:bg-slate-900"
           >
             <SupportChatPanel
               appearance="navbar"
               draft={draft}
               error={error}
-              isLight={isLight}
+              isLight={theme === 'light'}
               messages={threadMessages}
               onClose={() => setOpen(false)}
               onAttachmentRemove={clearAttachment}

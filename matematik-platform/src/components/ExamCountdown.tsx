@@ -8,7 +8,6 @@ import { getSavedExamTrials, type ExamHistoryType } from "@/lib/examHistoryStora
 
 type ExamCountdownProps = {
   exam: FeaturedExam;
-  isLight: boolean;
   onOpenCalculator?: (examType: 'lgs' | 'yks') => void;
   userGrade?: number | string | null;
 };
@@ -40,7 +39,6 @@ function formatUnit(value: number) {
 
 export function ExamCountdown({
   exam,
-  isLight,
   onOpenCalculator,
   userGrade,
 }: ExamCountdownProps) {
@@ -173,9 +171,7 @@ export function ExamCountdown({
     <div
       className={[
         "exam-countdown relative overflow-hidden rounded-3xl border p-4 sm:p-5 transition-all duration-300",
-        isLight
-          ? "border-slate-200/90 bg-white/95 shadow-bento hover:shadow-bento-hover hover:border-indigo-300/60"
-          : "border-white/10 bg-slate-900/90 backdrop-blur-xl shadow-xl hover:border-white/20 hover:shadow-2xl",
+        'light:border-slate-200/90 light:bg-white/95 light:shadow-bento light:hover:shadow-bento-hover light:hover:border-indigo-300/60 dark:border-white/10 dark:bg-slate-900/90 dark:backdrop-blur-xl dark:shadow-xl dark:hover:border-white/20 dark:hover:shadow-2xl',
       ].join(" ")}
     >
       {/* Üst İnce Gradyan Aksan Çizgisi */}
@@ -188,11 +184,7 @@ export function ExamCountdown({
         <div className="min-w-0">
           <div className="mb-1.5 flex flex-wrap items-center gap-2">
             <span
-              className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[11px] font-bold uppercase tracking-wider ${
-                isLight
-                  ? "bg-slate-100 text-slate-700 border border-slate-200/80"
-                  : "bg-white/10 text-white border border-white/15"
-              }`}
+              className="inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[11px] font-bold uppercase tracking-wider light:bg-slate-100 light:text-slate-700 border light:border-slate-200/80 dark:bg-white/10 dark:text-white dark:border-white/15"
             >
               <Clock3 className="w-3 h-3" />
               {exam.provider}
@@ -204,11 +196,7 @@ export function ExamCountdown({
             </span>
             {remainingWeeks > 0 && (
               <span
-                className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[11px] font-bold ${
-                  isLight
-                    ? "bg-amber-50 text-amber-800 border border-amber-300/70"
-                    : "bg-amber-500/15 text-amber-300 border border-amber-500/30"
-                }`}
+                className="inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[11px] font-bold light:bg-amber-50 light:text-amber-800 border light:border-amber-300/70 dark:bg-amber-500/15 dark:text-amber-300 dark:border-amber-500/30"
               >
                 ⏳ {remainingWeeks} Hafta Kaldı
               </span>
@@ -220,9 +208,7 @@ export function ExamCountdown({
             )}
           </div>
           <h2
-            className={`truncate font-display text-base sm:text-lg font-bold ${
-              isLight ? "text-slate-900" : "text-white"
-            }`}
+            className="truncate font-display text-base sm:text-lg font-bold light:text-slate-900 dark:text-white"
           >
             {exam.title}
           </h2>
@@ -231,7 +217,7 @@ export function ExamCountdown({
         <div
           className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br ${exam.accent} shadow-md`}
         >
-          <Clock className="h-5 w-5 text-white" />
+          <Clock className="h-5 w-5 text-white dark:text-white" />
         </div>
       </div>
 
@@ -242,24 +228,16 @@ export function ExamCountdown({
             key={item.label}
             className={[
               "rounded-2xl border p-2.5 sm:p-3 text-center transition-transform hover:-translate-y-0.5",
-              isLight
-                ? "border-slate-200/80 bg-slate-50/80 shadow-sm"
-                : "border-white/10 bg-white/5 backdrop-blur-sm",
+              'light:border-slate-200/80 light:bg-slate-50/80 light:shadow-sm dark:border-white/10 dark:bg-white/5 dark:backdrop-blur-sm',
             ].join(" ")}
           >
             <div
-              className={`font-display text-2xl sm:text-3xl font-extrabold tabular-nums leading-none ${
-                isLight
-                  ? "text-slate-900"
-                  : "bg-gradient-to-br from-white via-slate-100 to-slate-300 bg-clip-text text-transparent"
-              }`}
+              className="font-display text-2xl sm:text-3xl font-extrabold tabular-nums leading-none light:text-slate-900 dark:bg-gradient-to-br dark:from-white dark:via-slate-100 dark:to-slate-300 dark:bg-clip-text dark:text-transparent"
             >
               {item.value}
             </div>
             <div
-              className={`mt-1.5 text-[10px] font-bold uppercase tracking-wider ${
-                isLight ? "text-slate-500" : "text-slate-400"
-              }`}
+              className="mt-1.5 text-[10px] font-bold uppercase tracking-wider light:text-slate-500 dark:text-slate-400"
             >
               {item.label}
             </div>
@@ -271,17 +249,13 @@ export function ExamCountdown({
       <div
         className={[
           "relative mt-3.5 rounded-2xl border p-3",
-          isLight
-            ? "border-slate-200/70 bg-indigo-50/40 text-slate-700"
-            : "border-white/10 bg-white/5 text-slate-200 backdrop-blur-sm",
+          'light:border-slate-200/70 light:bg-indigo-50/40 light:text-slate-700 dark:border-white/10 dark:bg-white/5 dark:text-slate-200 dark:backdrop-blur-sm',
         ].join(" ")}
       >
         <div className="flex flex-wrap sm:flex-nowrap items-center justify-between gap-2">
           <div className="min-w-0 flex-1">
             <div
-              className={`text-[10px] font-bold uppercase tracking-wider ${
-                isLight ? "text-indigo-600" : "text-indigo-300"
-              }`}
+              className="text-[10px] font-bold uppercase tracking-wider light:text-indigo-600 dark:text-indigo-300"
             >
               Sınav Tarihi
             </div>
@@ -295,14 +269,14 @@ export function ExamCountdown({
               <button
                 type="button"
                 onClick={() => onOpenCalculator(exam.id.includes('lgs') ? 'lgs' : 'yks')}
-                className="shrink-0 inline-flex min-h-[38px] items-center gap-1.5 rounded-xl px-3 py-1.5 text-xs font-bold transition-all bg-indigo-600 text-white hover:bg-indigo-700 shadow-sm"
+                className="shrink-0 inline-flex min-h-[38px] items-center gap-1.5 rounded-xl px-3 py-1.5 text-xs font-bold transition-all bg-indigo-600 text-white dark:text-white hover:bg-indigo-700 shadow-sm"
               >
                 Net & Puan Hesapla →
               </button>
             ) : (
               <Link
                 href={exam.toolHref}
-                className="shrink-0 inline-flex min-h-[38px] items-center gap-1.5 rounded-xl px-3 py-1.5 text-xs font-bold transition-all bg-indigo-600 text-white hover:bg-indigo-700 shadow-sm"
+                className="shrink-0 inline-flex min-h-[38px] items-center gap-1.5 rounded-xl px-3 py-1.5 text-xs font-bold transition-all bg-indigo-600 text-white dark:text-white hover:bg-indigo-700 shadow-sm"
               >
                 Puan Hesapla →
               </Link>
@@ -317,9 +291,7 @@ export function ExamCountdown({
                 key={item.label}
                 className={[
                   "rounded-lg px-2 py-0.5 text-[10px] font-semibold",
-                  isLight
-                    ? "bg-white text-slate-700 shadow-sm border border-slate-200/80"
-                    : "bg-white/10 text-slate-300 border border-white/10",
+                  'light:bg-white light:text-slate-700 light:shadow-sm border light:border-slate-200/80 dark:bg-white/10 dark:text-slate-300 dark:border-white/10',
                 ].join(" ")}
               >
                 <span className="font-bold text-indigo-700 dark:text-indigo-300">{item.label}:</span> {item.dateLabel}

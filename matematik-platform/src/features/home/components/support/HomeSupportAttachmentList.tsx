@@ -5,13 +5,11 @@ import type { SupportAttachment } from '@/types';
 
 type HomeSupportAttachmentListProps = {
   attachments: SupportAttachment[];
-  isLight: boolean;
   onRemove: (index: number) => void;
 };
 
 export function HomeSupportAttachmentList({
   attachments,
-  isLight,
   onRemove,
 }: HomeSupportAttachmentListProps) {
   if (attachments.length === 0) {
@@ -23,11 +21,7 @@ export function HomeSupportAttachmentList({
       {attachments.map((file, index) => (
         <div
           key={`${file.url}-${index}`}
-          className={`flex items-center gap-2 px-3 py-2 rounded-xl border text-sm ${
-            isLight
-              ? 'bg-slate-50 border-slate-200 text-slate-700'
-              : 'bg-white/5 border-white/10 text-slate-200'
-          }`}
+          className="flex items-center gap-2 px-3 py-2 rounded-xl border text-sm light:bg-slate-50 light:border-slate-200 light:text-slate-700 dark:bg-white/5 dark:border-white/10 dark:text-slate-200"
         >
           {file.kind === 'image' ? (
             <ImageIcon className="w-4 h-4 text-pink-300" />

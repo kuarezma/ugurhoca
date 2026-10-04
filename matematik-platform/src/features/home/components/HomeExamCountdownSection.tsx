@@ -4,13 +4,11 @@ import { ExamCountdown } from '@/components/ExamCountdown';
 import { featuredExams } from '@/lib/examDates';
 
 type HomeExamCountdownSectionProps = {
-  isLight: boolean;
   onOpenCalculator?: (examType: 'lgs' | 'yks') => void;
   userGrade?: number | string | null;
 };
 
 export function HomeExamCountdownSection({
-  isLight,
   onOpenCalculator,
   userGrade,
 }: HomeExamCountdownSectionProps) {
@@ -23,7 +21,6 @@ export function HomeExamCountdownSection({
             <ExamCountdown
               key={exam.id}
               exam={exam}
-              isLight={isLight}
               onOpenCalculator={onOpenCalculator}
               userGrade={userGrade}
             />

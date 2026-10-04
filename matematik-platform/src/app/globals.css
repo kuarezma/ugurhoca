@@ -1050,7 +1050,9 @@ html[data-theme='dark'] .light-atmosphere::after {
   display: none;
 }
 
-.light-section {
+/* Theme-scoped so components can keep the class in both themes and let
+   data-theme decide on first paint. */
+html[data-theme='light'] .light-section {
   background: linear-gradient(
     180deg,
     rgba(248, 250, 252, 0.88) 0%,
@@ -1322,7 +1324,7 @@ html[data-theme='light'] .ui-chip[data-tone='slate'] {
     box-shadow: 0 8px 24px rgba(15, 23, 42, 0.24);
   }
 
-  .home-page .light-section,
+  html[data-theme='light'] .home-page .light-section,
   .home-page .light-card {
     box-shadow: 0 10px 24px rgba(148, 163, 184, 0.1);
   }

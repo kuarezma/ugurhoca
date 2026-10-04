@@ -1,4 +1,5 @@
 import type { Config } from 'tailwindcss';
+import plugin from 'tailwindcss/plugin';
 
 const tokenColor = (token: string) => `rgb(var(${token}) / <alpha-value>)`;
 
@@ -223,6 +224,13 @@ const config: Config = {
       },
     },
   },
-  plugins: [],
+  plugins: [
+    // Mirror of the `dark:` variant above. Pairing `light:` with `dark:` lets a
+    // component pick theme classes in CSS, so the first paint matches the
+    // data-theme the inline script wrote, before React knows the theme.
+    plugin(({ addVariant }) => {
+      addVariant('light', '&:is([data-theme="light"] *)');
+    }),
+  ],
 };
 export default config;

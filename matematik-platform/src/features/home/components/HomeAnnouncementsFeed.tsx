@@ -2,7 +2,6 @@
 
 import dynamic from 'next/dynamic';
 import { useState } from 'react';
-import { useTheme } from '@/components/ThemeProvider';
 import { HomeAnnouncementsSection } from '@/features/home/components/HomeAnnouncementsSection';
 import type { Announcement } from '@/types';
 
@@ -23,7 +22,6 @@ type HomeAnnouncementsFeedProps = {
 export function HomeAnnouncementsFeed({
   announcements,
 }: HomeAnnouncementsFeedProps) {
-  const { theme } = useTheme();
   const [selectedAnnouncement, setSelectedAnnouncement] =
     useState<Announcement | null>(null);
 
@@ -35,7 +33,6 @@ export function HomeAnnouncementsFeed({
     <div className="defer-section">
       <HomeAnnouncementsSection
         announcements={announcements}
-        isLight={theme === 'light'}
         onSelectAnnouncement={setSelectedAnnouncement}
       />
       {selectedAnnouncement ? (

@@ -25,7 +25,6 @@ describe('ExamCountdown', () => {
     render(
       <ExamCountdown
         exam={mockExam}
-        isLight={false}
         userGrade={8}
       />,
     );
@@ -39,7 +38,6 @@ describe('ExamCountdown', () => {
     render(
       <ExamCountdown
         exam={mockExam}
-        isLight={false}
         userGrade={8}
       />,
     );
@@ -60,7 +58,6 @@ describe('ExamCountdown', () => {
     render(
       <ExamCountdown
         exam={mockExam}
-        isLight={false}
         userGrade={8}
       />,
     );
@@ -89,7 +86,6 @@ describe('ExamCountdown', () => {
     render(
       <ExamCountdown
         exam={mockExam}
-        isLight={true}
       />,
     );
 
@@ -113,7 +109,6 @@ describe('ExamCountdown', () => {
     render(
       <ExamCountdown
         exam={mockExam}
-        isLight={true}
         onOpenCalculator={onOpenCalculator}
       />,
     );

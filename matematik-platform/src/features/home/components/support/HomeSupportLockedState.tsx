@@ -1,19 +1,8 @@
 'use client';
 
-type HomeSupportLockedStateProps = {
-  isLight: boolean;
-};
-
-export function HomeSupportLockedState({
-  isLight,
-}: HomeSupportLockedStateProps) {
+export function HomeSupportLockedState() {
   return (
-    <div
-      className={`rounded-2xl border p-5 ${
-        isLight
-          ? 'border-slate-200 bg-slate-50 text-slate-700'
-          : 'border-white/10 bg-white/5 text-slate-300'
-      }`}
+    <div className="rounded-2xl border p-5 light:border-slate-200 light:bg-slate-50 light:text-slate-700 dark:border-white/10 dark:bg-white/5 dark:text-slate-300"
     >
       Mesaj göndermek için giriş yapman gerekiyor.
     </div>
