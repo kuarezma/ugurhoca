@@ -58,9 +58,13 @@ export function ExamCountdownCard({
     [selectedExamId],
   );
 
-  const [timeLeft, setTimeLeft] = useState<TimeLeft>(() =>
-    getTimeRemaining(currentExam.targetDate),
-  );
+  // Sunucu ve ilk istemci renderı aynı değerleri kullanır; saat yalnız effect'te okunur.
+  const [timeLeft, setTimeLeft] = useState<TimeLeft>({
+    days: 0,
+    hours: 0,
+    minutes: 0,
+    isCompleted: false,
+  });
 
   useEffect(() => {
     setTimeLeft(getTimeRemaining(currentExam.targetDate));
@@ -75,15 +79,22 @@ export function ExamCountdownCard({
     [timeLeft.days, timeLeft.isCompleted, currentExam.title],
   );
 
-  const targetNet = useMemo(() => {
-    if (typeof window !== 'undefined') {
-      const saved = localStorage.getItem(`ugurhoca_exam_target_${currentExam.id}`);
-      if (saved) {
-        const val = parseFloat(saved);
-        if (!isNaN(val) && val > 0) return val;
-      }
+  const [targetNet, setTargetNet] = useState(
+    currentExam.id.includes('lgs') ? 18 : 32,
+  );
+
+  useEffect(() => {
+    let target = currentExam.id.includes('lgs') ? 18 : 32;
+    try {
+      const saved = localStorage.getItem(
+        `ugurhoca_exam_target_${currentExam.id}`,
+      );
+      const value = saved ? parseFloat(saved) : NaN;
+      if (Number.isFinite(value) && value > 0) target = value;
+    } catch {
+      // Depolama kapalıysa sınavın varsayılan hedefi kullanılır.
     }
-    return currentExam.id.includes('lgs') ? 18 : 32;
+    setTargetNet(target);
   }, [currentExam.id]);
 
   return (

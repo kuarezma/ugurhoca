@@ -34,6 +34,8 @@ describe('GET /api/content-prefetch', () => {
     );
 
     expect(response.status).toBe(200);
+    expect(response.headers.get('Cache-Control')).toBe('private, no-cache');
+    expect(response.headers.get('Vary')).toBe('Cookie');
     expect(loadInitialContentDocuments).toHaveBeenCalledWith(
       1,
       CONTENT_PAGE_SIZE,

@@ -17,13 +17,12 @@ export function useLgsSchoolTargets(preferredYear = 2026) {
       setLoading(true);
       setError('');
 
-      const response = await fetch('/api/lgs-targets', {
-        cache: 'no-store',
-      });
+      const response = await fetch('/api/lgs-targets');
 
-      const payload = (await response.json().catch(() => null)) as
-        | { data?: LgsSchoolPageData; error?: { message?: string } }
-        | null;
+      const payload = (await response.json().catch(() => null)) as {
+        data?: LgsSchoolPageData;
+        error?: { message?: string };
+      } | null;
 
       const result = payload?.data;
 

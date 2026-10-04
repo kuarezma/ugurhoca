@@ -1,11 +1,17 @@
-import { useId, useState } from "react";
+import { useId, useState, startTransition } from "react";
 import { AlertCircle, FunctionSquare } from "lucide-react";
 import type { AdminFormState } from "@/features/admin/types";
 import {
   OPTION_LETTERS,
   type AdminFormUpdate,
 } from "@/features/admin/components/modal/shared";
-import { AdminLatexHelperModal } from "@/features/admin/components/modal/AdminLatexHelperModal";
+import dynamic from "next/dynamic";
+
+const AdminLatexHelperModal = dynamic(() =>
+  import("@/features/admin/components/modal/AdminLatexHelperModal").then(
+    (module) => module.AdminLatexHelperModal,
+  ),
+);
 
 type AdminQuestionFieldsProps = {
   formData: AdminFormState;
@@ -17,6 +23,7 @@ export default function AdminQuestionFields({
   updateFormData,
 }: AdminQuestionFieldsProps) {
   const [isLatexModalOpen, setIsLatexModalOpen] = useState(false);
+  const [hasOpenedLatexModal, setHasOpenedLatexModal] = useState(false);
   const baseId = useId();
   const questionId = `${baseId}-question`;
   const optionsGroupLabelId = `${baseId}-options-label`;
@@ -34,7 +41,10 @@ export default function AdminQuestionFields({
           </label>
           <button
             type="button"
-            onClick={() => setIsLatexModalOpen(true)}
+            onClick={() => startTransition(() => {
+              setHasOpenedLatexModal(true);
+              setIsLatexModalOpen(true);
+            })}
             className="inline-flex items-center gap-1.5 rounded-lg border border-violet-500/30 bg-violet-500/10 px-2.5 py-1 text-xs font-bold text-violet-300 hover:bg-violet-500/20 hover:text-white transition"
           >
             <FunctionSquare className="w-3.5 h-3.5" />
@@ -53,14 +63,17 @@ export default function AdminQuestionFields({
         />
       </div>
 
-      <AdminLatexHelperModal
-        isOpen={isLatexModalOpen}
-        onClose={() => setIsLatexModalOpen(false)}
-        onInsertFormula={(formula) => {
-          const current = formData.question || "";
-          updateFormData({ question: current ? `${current} ${formula}` : formula });
-        }}
-      />
+      {/* İlk açılıştan sonra formül taslağını korumak için modal bağlı kalır. */}
+      {hasOpenedLatexModal && (
+        <AdminLatexHelperModal
+          isOpen={isLatexModalOpen}
+          onClose={() => setIsLatexModalOpen(false)}
+          onInsertFormula={(formula) => {
+            const current = formData.question || "";
+            updateFormData({ question: current ? `${current} ${formula}` : formula });
+          }}
+        />
+      )}
 
       <div role="group" aria-labelledby={optionsGroupLabelId}>
         <span

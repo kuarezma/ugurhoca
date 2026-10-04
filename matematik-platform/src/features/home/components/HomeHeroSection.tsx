@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { m, LazyMotion, AnimatePresence } from 'framer-motion';
 import {
   Sparkles,
   Zap,
@@ -29,6 +29,21 @@ import {
 import { Mascot } from '@/components/Mascot';
 import { SafeLink } from '@/components/SafeLink';
 import type { AppUser } from '@/types';
+
+// Feature motoru ilk boyamadan sonra yüklenir; m aynı DOM ve başlangıç stillerini korur.
+const loadAnimationFeatures = () =>
+  new Promise<typeof import('framer-motion').domAnimation>(
+    (resolve, reject) => {
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          import('./homeAnimationFeatures').then(
+            (module) => resolve(module.default),
+            reject,
+          );
+        });
+      });
+    },
+  );
 
 type HomeHeroSectionProps = {
   isLight: boolean;
@@ -231,6 +246,7 @@ export function HomeHeroSection({
   ];
 
   return (
+    <LazyMotion features={loadAnimationFeatures}>
     <section className="relative px-4 pb-12 pt-6 sm:pt-10">
       <div className="relative mx-auto max-w-6xl">
         <div
@@ -352,7 +368,7 @@ export function HomeHeroSection({
               </div>
             </div>
 
-            <motion.div
+            <m.div
               initial={{ opacity: 0, scale: 0.92, rotate: -4 }}
               animate={{ opacity: 1, scale: 1, rotate: 0 }}
               transition={{ duration: 0.5, ease: [0.2, 0.8, 0.2, 1] }}
@@ -368,7 +384,7 @@ export function HomeHeroSection({
                 className="relative animate-float-y"
                 ariaLabel={user ? 'Seni tebrik eden maskot Pi' : 'Selamlayan maskot Pi'}
               />
-            </motion.div>
+            </m.div>
           </div>
         </div>
 
@@ -655,7 +671,7 @@ export function HomeHeroSection({
           {/* Tıklandığında içindeki 7 ders kategorisi sıralanır */}
           <AnimatePresence initial={false}>
             {isLessonsOpen && (
-              <motion.div
+              <m.div
                 initial={{ opacity: 0, height: 0 }}
                 animate={{ opacity: 1, height: 'auto' }}
                 exit={{ opacity: 0, height: 0 }}
@@ -664,7 +680,7 @@ export function HomeHeroSection({
               >
                 <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3">
                   {lessonCategories.map((item, index) => (
-                    <motion.div
+                    <m.div
                       key={item.id}
                       initial={{ opacity: 0, y: 8 }}
                       animate={{ opacity: 1, y: 0 }}
@@ -702,10 +718,10 @@ export function HomeHeroSection({
                         </div>
                         <ArrowRight className="h-4 w-4 shrink-0 text-slate-400" />
                       </SafeLink>
-                    </motion.div>
+                    </m.div>
                   ))}
                 </div>
-              </motion.div>
+              </m.div>
             )}
           </AnimatePresence>
         </div>
@@ -783,7 +799,7 @@ export function HomeHeroSection({
             {/* Tıklandığında içindeki 12 araç sırayla aşağıya doğru sıralanır */}
             <AnimatePresence initial={false}>
               {isToolsOpen && (
-                <motion.div
+                <m.div
                   initial={{ opacity: 0, height: 0 }}
                   animate={{ opacity: 1, height: 'auto' }}
                   exit={{ opacity: 0, height: 0 }}
@@ -792,7 +808,7 @@ export function HomeHeroSection({
                 >
                   <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3">
                     {quickTools.map((tool, idx) => (
-                      <motion.button
+                      <m.button
                         key={tool.id}
                         type="button"
                         initial={{ opacity: 0, y: 8 }}
@@ -815,14 +831,15 @@ export function HomeHeroSection({
                           </p>
                         </div>
                         <ArrowRight className="h-4 w-4 shrink-0 text-secondary" />
-                      </motion.button>
+                      </m.button>
                     ))}
                   </div>
-                </motion.div>
+                </m.div>
               )}
             </AnimatePresence>
           </div>
         </div>
       </section>
+    </LazyMotion>
     );
   }

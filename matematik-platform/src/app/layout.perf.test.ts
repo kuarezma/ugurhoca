@@ -47,6 +47,33 @@ describe('kök layout kritik yol', () => {
     }
   });
 
+  it('test lobisi KaTeX kullanan çözüm ve ipucu modüllerini statik yüklemez', () => {
+    const source = read('src/features/quizzes/containers/TestsPage.tsx');
+    for (const name of ['MathText', 'QuestionHintLadder', 'QuizResultsView']) {
+      expect(source).not.toMatch(new RegExp(`^import .*${name}.* from`, 'm'));
+      expect(source).toMatch(new RegExp(`const ${name} = dynamic\\(`));
+    }
+  });
+
+  it('çıkış bileti girişi ve kapalı LaTeX asistanı KaTeX’i statik yüklemez', () => {
+    const student = read(
+      'src/features/exit-ticket/components/ExitTicketStudentPad.tsx',
+    );
+    expect(student).not.toMatch(/^import MathText from/m);
+    expect(student).toContain("dynamic(() => import('@/components/MathText'))");
+    const container = read(
+      'src/features/exit-ticket/containers/ExitTicketPageContainer.tsx',
+    );
+    expect(container).not.toMatch(
+      /^import .*ExitTicketTeacherPresenter.* from/m,
+    );
+    const admin = read(
+      'src/features/admin/components/modal/generic/AdminQuestionFields.tsx',
+    );
+    expect(admin).not.toMatch(/^import .*AdminLatexHelperModal.* from/m);
+    expect(admin).toMatch(/hasOpenedLatexModal &&/);
+  });
+
   it('global-error Sentry SDK’sini statik import etmez', () => {
     // Statik import edilirse SDK çekirdeği her sayfa paketine girer.
     const globalError = read('src/app/global-error.tsx');

@@ -1,6 +1,9 @@
 import 'server-only';
 
-import { getServerAccessToken, getServerAuthSnapshot } from '@/lib/auth-snapshot.server';
+import {
+  getServerAccessToken,
+  getServerAuthSnapshot,
+} from '@/lib/auth-snapshot.server';
 import { createServerSupabaseClient } from '@/lib/supabase/server';
 import type { AppUser } from '@/types';
 import type {
@@ -52,12 +55,45 @@ export const loadInitialProgressPageData =
     }
 
     const supabase = createServerSupabaseClient(accessToken);
-    const { data: profile } = await supabase
-      .from('profiles')
-      .select('*')
-      .eq('id', snapshot.id)
-      .single();
+    const {
+      data: { user: verifiedUser },
+      error: authError,
+    } = await supabase.auth.getUser(accessToken);
 
+    // Snapshot tek başına kimlik kanıtı değildir; aynı token kullanıcısını koru.
+    if (authError || !verifiedUser || verifiedUser.id !== snapshot.id) {
+      return {
+        badges: [],
+        goal: null,
+        isHydrated: false,
+        progressData: [],
+        sessions: [],
+        user: null,
+      };
+    }
+
+    const [profileRes, sessionsRes, progressRes, goalRes, badgesRes] =
+      await Promise.all([
+        supabase.from('profiles').select('*').eq('id', snapshot.id).single(),
+        supabase
+          .from('study_sessions')
+          .select('*')
+          .eq('user_id', snapshot.id)
+          .order('date', { ascending: false }),
+        supabase
+          .from('user_progress')
+          .select('*')
+          .eq('user_id', snapshot.id)
+          .order('mastery_level', { ascending: false }),
+        supabase.from('study_goals').select('*').eq('user_id', snapshot.id),
+        supabase
+          .from('user_badges')
+          .select('*')
+          .eq('user_id', snapshot.id)
+          .order('earned_at', { ascending: false }),
+      ]);
+
+    const profile = profileRes.data;
     const user: AppUser = profile
       ? {
           ...profile,
@@ -68,25 +104,6 @@ export const loadInitialProgressPageData =
           ...snapshot,
           current_streak: 0,
         };
-
-    const [sessionsRes, progressRes, goalRes, badgesRes] = await Promise.all([
-      supabase
-        .from('study_sessions')
-        .select('*')
-        .eq('user_id', snapshot.id)
-        .order('date', { ascending: false }),
-      supabase
-        .from('user_progress')
-        .select('*')
-        .eq('user_id', snapshot.id)
-        .order('mastery_level', { ascending: false }),
-      supabase.from('study_goals').select('*').eq('user_id', snapshot.id),
-      supabase
-        .from('user_badges')
-        .select('*')
-        .eq('user_id', snapshot.id)
-        .order('earned_at', { ascending: false }),
-    ]);
 
     return {
       badges: (badgesRes.data || []) as UserBadge[],

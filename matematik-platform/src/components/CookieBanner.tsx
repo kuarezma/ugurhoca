@@ -2,8 +2,8 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { AnimatePresence, motion } from 'framer-motion';
 import { Cookie, X } from 'lucide-react';
+import styles from './CookieBanner.module.css';
 
 const STORAGE_KEY = 'ugurhoca:cookie-consent';
 
@@ -11,6 +11,7 @@ type ConsentValue = 'accepted' | 'rejected';
 
 export default function CookieBanner() {
   const [visible, setVisible] = useState(false);
+  const [exiting, setExiting] = useState(false);
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
@@ -31,21 +32,21 @@ export default function CookieBanner() {
     } catch {
       // storage may be disabled
     }
-    setVisible(false);
+    setExiting(true);
   };
 
   return (
-    <AnimatePresence>
+    <>
       {visible ? (
-        <motion.div
+        <div
           role="dialog"
           aria-live="polite"
           aria-label="Çerez tercihleri"
-          initial={{ y: 60, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          exit={{ y: 60, opacity: 0 }}
-          transition={{ duration: 0.35, ease: 'easeOut' }}
-          className="fixed inset-x-3 bottom-3 z-[1000] sm:inset-x-auto sm:right-4 sm:bottom-4 sm:max-w-md"
+          onAnimationEnd={(event) => {
+            if (exiting && event.target === event.currentTarget)
+              setVisible(false);
+          }}
+          className={`${exiting ? styles.exit : styles.enter} fixed inset-x-3 bottom-3 z-[1000] sm:inset-x-auto sm:right-4 sm:bottom-4 sm:max-w-md`}
         >
           <div className="relative overflow-hidden rounded-3xl border border-default bg-surface-1/95 p-5 shadow-2xl backdrop-blur">
             <div
@@ -103,8 +104,8 @@ export default function CookieBanner() {
               </button>
             </div>
           </div>
-        </motion.div>
+        </div>
       ) : null}
-    </AnimatePresence>
+    </>
   );
 }

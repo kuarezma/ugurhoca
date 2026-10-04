@@ -1,8 +1,5 @@
 import { supabase } from '@/lib/supabase/client';
-import {
-  MINIMUM_FULL_LGS_ROW_COUNT,
-  MINIMUM_FULL_YKS_ROW_COUNT,
-} from '@/features/programs/constants';
+import { MINIMUM_FULL_LGS_ROW_COUNT } from '@/features/programs/constants';
 import type {
   LgsSchoolTarget,
   YksProgramTarget,
@@ -52,90 +49,36 @@ async function fetchAllProgramRows<T>(
 export async function loadYksProgramTargets(
   preferredYear = 2026,
 ): Promise<ProgramLoadResult<YksProgramTarget>> {
-  const yearListQuery = await fetchAllProgramRows<{ year: number }>((from, to) =>
-    supabase
-      .from('yks_program_targets')
-      .select('year')
-      .range(from, to),
-  );
-
-  if (yearListQuery.error) {
-    return {
-      dataYear: preferredYear,
-      error:
-        'YKS program verileri okunamadı. Lütfen veritabanı tablosunu kontrol et.',
-      rows: [],
+  try {
+    const response = await fetch(`/api/yks-targets?year=${preferredYear}`);
+    const payload = (await response.json()) as {
+      data?: ProgramLoadResult<YksProgramTarget>;
     };
+    if (response.ok && payload.data) return payload.data;
+  } catch {
+    // Geçici ağ hatası mevcut hata görünümüyle gösterilir.
   }
-
-  const counts = new Map<number, number>();
-
-  for (const row of yearListQuery.data ?? []) {
-    counts.set(row.year, (counts.get(row.year) ?? 0) + 1);
-  }
-
-  const availableYears = [...counts.keys()].sort((a, b) => b - a);
-
-  if (!availableYears.length) {
-    return {
-      dataYear: preferredYear,
-      error:
-        'YKS hedef program verisi bulunamadı. Supabase tablosuna resmi veriler yüklenmeli.',
-      rows: [],
-    };
-  }
-
-  const preferredCount = counts.get(preferredYear) ?? 0;
-  const selectedYear =
-    preferredCount >= MINIMUM_FULL_YKS_ROW_COUNT
-      ? preferredYear
-      : availableYears.find(
-          (year) => (counts.get(year) ?? 0) >= MINIMUM_FULL_YKS_ROW_COUNT,
-        ) ?? availableYears[0];
-
-  const selectedRowsQuery = await fetchAllProgramRows<YksProgramTarget>((from, to) =>
-    supabase
-      .from('yks_program_targets')
-      .select('*')
-      .eq('year', selectedYear)
-      .order('base_rank', { ascending: true })
-      .range(from, to),
-  );
-
-  if (selectedRowsQuery.error) {
-    return {
-      dataYear: selectedYear,
-      error:
-        'YKS program verileri okunamadı. Lütfen veritabanı tablosunu kontrol et.',
-      rows: [],
-    };
-  }
-
-  const rows = (selectedRowsQuery.data || []) as YksProgramTarget[];
-
   return {
-    dataYear: selectedYear,
-    error: rows.length
-      ? ''
-      : 'YKS hedef program verisi bulunamadı. Supabase tablosuna resmi veriler yüklenmeli.',
-    rows,
+    dataYear: preferredYear,
+    error:
+      'YKS program verileri okunamadı. Lütfen veritabanı tablosunu kontrol et.',
+    rows: [],
   };
 }
 
 export async function loadLgsSchoolTargets(
   preferredYear = 2026,
 ): Promise<ProgramLoadResult<LgsSchoolTarget>> {
-  const yearListQuery = await fetchAllProgramRows<{ year: number }>((from, to) =>
-    supabase
-      .from('lgs_school_targets')
-      .select('year')
-      .range(from, to),
+  const yearListQuery = await fetchAllProgramRows<{ year: number }>(
+    (from, to) =>
+      supabase.from('lgs_school_targets').select('year').range(from, to),
   );
 
   if (yearListQuery.error) {
     return {
       dataYear: preferredYear,
-      error: 'LGS okul verileri okunamadı. Lütfen veritabanı tablosunu kontrol et.',
+      error:
+        'LGS okul verileri okunamadı. Lütfen veritabanı tablosunu kontrol et.',
       rows: [],
     };
   }
@@ -151,7 +94,8 @@ export async function loadLgsSchoolTargets(
   if (!availableYears.length) {
     return {
       dataYear: preferredYear,
-      error: 'LGS hedef okul verisi bulunamadı. Supabase tablosuna resmi veriler yüklenmeli.',
+      error:
+        'LGS hedef okul verisi bulunamadı. Supabase tablosuna resmi veriler yüklenmeli.',
       rows: [],
     };
   }
@@ -160,27 +104,30 @@ export async function loadLgsSchoolTargets(
   const selectedYear =
     preferredCount >= MINIMUM_FULL_LGS_ROW_COUNT
       ? preferredYear
-      : availableYears.find((year) => (counts.get(year) ?? 0) >= MINIMUM_FULL_LGS_ROW_COUNT) ??
-        availableYears[0];
+      : (availableYears.find(
+          (year) => (counts.get(year) ?? 0) >= MINIMUM_FULL_LGS_ROW_COUNT,
+        ) ?? availableYears[0]);
 
   const historyYears = availableYears
     .filter((year) => year <= selectedYear)
     .slice(0, 5);
 
-  const selectedRowsQuery = await fetchAllProgramRows<LgsSchoolTarget>((from, to) =>
-    supabase
-      .from('lgs_school_targets')
-      .select('*')
-      .in('year', historyYears)
-      .order('year', { ascending: false })
-      .order('base_score', { ascending: false })
-      .range(from, to),
+  const selectedRowsQuery = await fetchAllProgramRows<LgsSchoolTarget>(
+    (from, to) =>
+      supabase
+        .from('lgs_school_targets')
+        .select('*')
+        .in('year', historyYears)
+        .order('year', { ascending: false })
+        .order('base_score', { ascending: false })
+        .range(from, to),
   );
 
   if (selectedRowsQuery.error) {
     return {
       dataYear: selectedYear,
-      error: 'LGS okul verileri okunamadı. Lütfen veritabanı tablosunu kontrol et.',
+      error:
+        'LGS okul verileri okunamadı. Lütfen veritabanı tablosunu kontrol et.',
       historyYears,
       rows: [],
     };
