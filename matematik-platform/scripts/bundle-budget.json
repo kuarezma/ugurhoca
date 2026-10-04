@@ -1,0 +1,5 @@
+{
+  "metric": "first-load-uncompressed-js-bytes",
+  "baselineBytes": 1292598,
+  "maxBytes": 1421858
+}

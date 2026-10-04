@@ -24,12 +24,13 @@ export default defineConfig({
       use: { ...devices['Pixel 7'] },
     },
   ],
-  webServer: process.env.CI
-    ? {
-        command: 'npm run start',
-        url: 'http://localhost:3000',
-        reuseExistingServer: !process.env.CI,
-        timeout: 120000,
-      }
-    : undefined,
+  webServer:
+    process.env.CI && !process.env.PLAYWRIGHT_TEST_BASE_URL
+      ? {
+          command: 'npm run start',
+          url: 'http://localhost:3000',
+          reuseExistingServer: !process.env.CI,
+          timeout: 120000,
+        }
+      : undefined,
 });
