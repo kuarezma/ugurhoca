@@ -1,18 +1,26 @@
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { trackStudentActivityEvent } from '@/features/analytics/trackActivity';
+import { userScopedStorage } from '@/lib/userScopedStorage';
 import type { ContentDocument } from '@/types';
 
 const FAVORITES_STORAGE_KEY = 'favorites';
 
 export const useCloudFavorites = (userId?: string | null) => {
-  const [favorites, setFavorites] = useState<Set<string>>(new Set());
+  const [savedFavorites, setFavorites] = useState<Set<string>>(new Set());
+  const [loadedUserId, setLoadedUserId] = useState<string | null | undefined>(undefined);
+  const scopeId = userId ?? null;
+  const isCurrentUser = loadedUserId === scopeId;
+  // Hesap değişiminin ilk renderında bile önceki hesabın verisini gösterme.
+  const favorites = useMemo(() => isCurrentUser ? savedFavorites : new Set<string>(), [isCurrentUser, savedFavorites]);
   const [isLoaded, setIsLoaded] = useState(false);
 
   useEffect(() => {
+    setFavorites(new Set());
+    setIsLoaded(false);
     try {
-      const saved = localStorage.getItem(FAVORITES_STORAGE_KEY);
+      const saved = userScopedStorage(userId ?? null).getItem(FAVORITES_STORAGE_KEY);
       if (saved) {
         const parsed = JSON.parse(saved);
         if (Array.isArray(parsed)) {
@@ -22,9 +30,10 @@ export const useCloudFavorites = (userId?: string | null) => {
     } catch {
       // ignore
     } finally {
+      setLoadedUserId(userId ?? null);
       setIsLoaded(true);
     }
-  }, []);
+  }, [userId]);
 
   const isFavorite = useCallback(
     (docId: string) => favorites.has(docId),
@@ -38,14 +47,14 @@ export const useCloudFavorites = (userId?: string | null) => {
       const nextFav = !isFav;
 
       setFavorites((current) => {
-        const next = new Set(current);
+        const next = new Set(isCurrentUser ? current : []);
         if (nextFav) {
           next.add(docId);
         } else {
           next.delete(docId);
         }
         try {
-          localStorage.setItem(FAVORITES_STORAGE_KEY, JSON.stringify([...next]));
+          userScopedStorage(userId ?? null).setItem(FAVORITES_STORAGE_KEY, JSON.stringify([...next]));
         } catch {
           // ignore
         }
@@ -66,13 +75,13 @@ export const useCloudFavorites = (userId?: string | null) => {
         });
       }
     },
-    [favorites, userId],
+    [favorites, isCurrentUser, userId],
   );
 
   return {
     favorites,
     isFavorite,
-    isLoaded,
+    isLoaded: isLoaded && isCurrentUser,
     setFavorites,
     toggleFavorite,
   };

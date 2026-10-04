@@ -13,6 +13,7 @@ import {
   Activity,
   MessageCircle,
 } from 'lucide-react';
+import { toLocalDateKey } from '@/lib/localDate';
 import MathText from '@/components/MathText';
 import type { QuizQuestion } from '@/types/quiz';
 import {
@@ -54,7 +55,7 @@ export function MistakeNotebookModal({
     const list = getSavedMistakes();
     setMistakes(list);
     // Eğer bugün tekrar edilecek yoksa ve ilk açılışsa bekleyenlere geç
-    const today = new Date().toISOString().split('T')[0];
+    const today = toLocalDateKey();
     const dueCount = list.filter((m) => !m.mastered && (!m.nextReviewDate || m.nextReviewDate <= today)).length;
     if (dueCount === 0 && filter === 'due') {
       setFilter('pending');
@@ -75,7 +76,7 @@ export function MistakeNotebookModal({
   }, [isOpen, reloadMistakes]);
 
   const stats = useMemo(() => {
-    const today = new Date().toISOString().split('T')[0];
+    const today = toLocalDateKey();
     const total = mistakes.length;
     const mastered = mistakes.filter((m) => m.mastered).length;
     const pending = total - mastered;
@@ -160,7 +161,7 @@ export function MistakeNotebookModal({
   }, [mistakes]);
 
   const filteredList = useMemo(() => {
-    const today = new Date().toISOString().split('T')[0];
+    const today = toLocalDateKey();
     return mistakes.filter((m) => {
       if (filter === 'due') {
         if (m.mastered) return false;
@@ -207,7 +208,7 @@ export function MistakeNotebookModal({
   };
 
   const handleStartPractice = (count?: number, dueOnly = false) => {
-    const today = new Date().toISOString().split('T')[0];
+    const today = toLocalDateKey();
     let pool = dueOnly
       ? mistakes.filter((m) => !m.mastered && (!m.nextReviewDate || m.nextReviewDate <= today))
       : filter === 'due'
@@ -706,7 +707,7 @@ export function MistakeNotebookModal({
           ) : (
             filteredList.map((item, index) => {
               const q = item.question;
-              const today = new Date().toISOString().split('T')[0];
+              const today = toLocalDateKey();
               const stage = item.reviewStage ?? 0;
               const isDue = !item.mastered && (!item.nextReviewDate || item.nextReviewDate <= today);
 

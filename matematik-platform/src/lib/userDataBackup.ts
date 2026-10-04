@@ -1,3 +1,5 @@
+import { userScopedStorage } from '@/lib/userScopedStorage';
+
 export const BACKUP_SCHEMA_VERSION = 1;
 export const BACKUP_APP_IDENTIFIER = 'ugur-hoca-matematik';
 
@@ -29,16 +31,16 @@ export function generateUserDataBackup(): UserBackupPayload {
   let topicChecklist: Record<string, boolean> | null = null;
   let liveQuestions: unknown[] = [];
 
-  if (typeof window !== 'undefined' && window.localStorage) {
+  if (typeof window !== 'undefined') {
     try {
-      const dg = localStorage.getItem(STORAGE_KEYS.dailyGoal);
+      const dg = userScopedStorage().getItem(STORAGE_KEYS.dailyGoal);
       if (dg) dailyGoal = JSON.parse(dg) as Record<string, unknown>;
     } catch {
       // ignore
     }
 
     try {
-      const mb = localStorage.getItem(STORAGE_KEYS.mistakesBank);
+      const mb = userScopedStorage().getItem(STORAGE_KEYS.mistakesBank);
       if (mb) {
         const parsed = JSON.parse(mb);
         if (Array.isArray(parsed)) mistakesBank = parsed;
@@ -171,12 +173,16 @@ export function importUserDataBackup(jsonContent: string): {
 
     const { data } = validation.data;
 
-    if (typeof window !== 'undefined' && window.localStorage) {
+    if (typeof window !== 'undefined') {
       if (data.dailyGoal) {
-        localStorage.setItem(STORAGE_KEYS.dailyGoal, JSON.stringify(data.dailyGoal));
+        if (!userScopedStorage().setItem(STORAGE_KEYS.dailyGoal, JSON.stringify(data.dailyGoal))) {
+          return { success: false, message: 'Günlük hedef kaydedilemedi. Tarayıcı depolama izinlerini ve boş alanı kontrol edin.' };
+        }
       }
       if (Array.isArray(data.mistakesBank)) {
-        localStorage.setItem(STORAGE_KEYS.mistakesBank, JSON.stringify(data.mistakesBank));
+        if (!userScopedStorage().setItem(STORAGE_KEYS.mistakesBank, JSON.stringify(data.mistakesBank))) {
+          return { success: false, message: 'Hata defteri kaydedilemedi. Tarayıcı depolama izinlerini ve boş alanı kontrol edin.' };
+        }
       }
       if (data.topicChecklist) {
         localStorage.setItem(STORAGE_KEYS.topicChecklist, JSON.stringify(data.topicChecklist));

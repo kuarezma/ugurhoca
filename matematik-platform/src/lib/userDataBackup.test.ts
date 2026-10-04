@@ -1,4 +1,5 @@
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach } from 'vitest';
+import { AUTH_SNAPSHOT_COOKIE_NAME, serializeAuthSnapshot } from './auth-snapshot';
 import {
   generateUserDataBackup,
   exportUserDataBackupJson,
@@ -11,6 +12,26 @@ import {
 describe('userDataBackup lib', () => {
   beforeEach(() => {
     localStorage.clear();
+  });
+
+  afterEach(() => { document.cookie = `${AUTH_SNAPSHOT_COOKIE_NAME}=; path=/; max-age=0`; });
+
+  it('exports and restores only the current user’s daily goal and mistakes', () => {
+    const signIn = (id: string) => { document.cookie = `${AUTH_SNAPSHOT_COOKIE_NAME}=${serializeAuthSnapshot({ id, email: 'student@example.com', name: 'Öğrenci', grade: 8, isAdmin: false })}; path=/`; };
+    localStorage.setItem('ugurhoca_user_storage_migrated_v1', 'true');
+    localStorage.setItem('ugurhoca_daily_goal_v1:user-a', '{"solved":7}');
+    localStorage.setItem('ugur_hoca_mistakes_bank_v1:user-a', '[{"id":"a"}]');
+    signIn('user-a');
+    expect(generateUserDataBackup().data.dailyGoal).toEqual({ solved: 7 });
+    expect(generateUserDataBackup().data.mistakesBank).toEqual([{ id: 'a' }]);
+    signIn('user-b');
+    expect(generateUserDataBackup().data.dailyGoal).toBeNull();
+    const backup = { app: BACKUP_APP_IDENTIFIER, version: 1, exportedAt: '', data: { dailyGoal: { solved: 2 }, mistakesBank: [{ id: 'b' }], topicChecklist: null, liveQuestions: [] } };
+    expect(importUserDataBackup(JSON.stringify(backup)).success).toBe(true);
+    expect(localStorage.getItem('ugurhoca_daily_goal_v1:user-a')).toBe('{"solved":7}');
+    expect(localStorage.getItem('ugurhoca_daily_goal_v1:user-b')).toBe('{"solved":2}');
+    expect(localStorage.getItem('ugur_hoca_mistakes_bank_v1:user-b')).toBe('[{"id":"b"}]');
+    expect(localStorage.getItem('ugurhoca_daily_goal_v1')).toBeNull();
   });
 
   it('generates a backup with correct metadata and empty defaults', () => {
