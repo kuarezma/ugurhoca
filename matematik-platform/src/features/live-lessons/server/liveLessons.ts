@@ -1,5 +1,7 @@
 import 'server-only';
 
+import { toDisplayGrade, toStoredGrade } from '@/lib/grade';
+
 import { revalidatePath } from 'next/cache';
 import { NextResponse } from 'next/server';
 import { getVerifiedServerUser, type VerifiedServerUser } from '@/lib/auth-verify.server';
@@ -149,7 +151,7 @@ export async function loadLiveLessonStudentOptions(): Promise<AppUser[]> {
     .select('id, name, email, grade, is_favorite, created_at')
     .order('name', { ascending: true });
 
-  return ((data || []) as AppUser[]).filter((user) => !isLiveLessonAdmin(user));
+  return ((data || []) as AppUser[]).filter((user) => !isLiveLessonAdmin(user)).map((user) => ({ ...user, grade: toDisplayGrade(user.grade) }));
 }
 
 export async function loadLiveLessonDashboardData(): Promise<LiveLessonDashboardData> {
@@ -201,7 +203,7 @@ async function notifyGrade({
   const { data: students } =
     grade === 'all'
       ? await studentsQuery
-      : await studentsQuery.eq('grade', Number.isFinite(Number(grade)) ? Number(grade) : grade);
+      : await studentsQuery.eq('grade', toStoredGrade(grade));
 
   const rows = (students || [])
     .filter((student: { id?: string | null }) => student.id)

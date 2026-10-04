@@ -35,6 +35,19 @@ describe('AdminEditUserForm', () => {
     vi.clearAllMocks();
   });
 
+  it('saklanan 0 sınıfını Mezun seçili gösterir', () => {
+    render(
+      <AdminEditUserForm
+        editingUser={{ ...dummyUser, grade: 0 }}
+        formData={{ ...dummyFormData, grade: 0 }}
+        isSubmitting={false}
+        onSubmit={vi.fn()}
+        updateFormData={vi.fn()}
+      />,
+    );
+    expect(screen.getByLabelText('Sınıf')).toHaveValue('Mezun');
+  });
+
   it('şifre sıfırlama arayüzünü ve rastgele şifre üreticiyi görüntüler', () => {
     render(
       <AdminEditUserForm
@@ -52,7 +65,9 @@ describe('AdminEditUserForm', () => {
     const randomBtn = screen.getByText('Rastgele Şifre Üret');
     fireEvent.click(randomBtn);
 
-    const passwordInput = screen.getByPlaceholderText(/Yeni şifre/i) as HTMLInputElement;
+    const passwordInput = screen.getByPlaceholderText(
+      /Yeni şifre/i,
+    ) as HTMLInputElement;
     expect(passwordInput.value.length).toBe(8);
   });
 
@@ -90,7 +105,9 @@ describe('AdminEditUserForm', () => {
           }),
         }),
       );
-      expect(screen.getByText(/Şifre başarıyla güncellendi/i)).toBeInTheDocument();
+      expect(
+        screen.getByText(/Şifre başarıyla güncellendi/i),
+      ).toBeInTheDocument();
     });
   });
 });

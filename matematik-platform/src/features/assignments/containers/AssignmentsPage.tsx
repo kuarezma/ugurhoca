@@ -1,5 +1,6 @@
 'use client';
 
+import { isGraduateGrade, toDisplayGrade, toStoredGrade } from '@/lib/grade';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
@@ -93,7 +94,7 @@ export default function OdevlerPage({
         .single();
 
       if (profile) {
-        const resolvedUser = { ...profile, email: session.user.email };
+        const resolvedUser = { ...profile, grade: toDisplayGrade(profile.grade), email: session.user.email };
         setUser(resolvedUser);
 
         if (
@@ -108,7 +109,7 @@ export default function OdevlerPage({
           supabase
             .from('assignments')
             .select('*')
-            .or(`grade.eq.${profile.grade},student_id.eq.${profile.id}`)
+            .or(`grade.eq.${toStoredGrade(profile.grade)},student_id.eq.${profile.id}`)
             .order('created_at', { ascending: false }),
           supabase
             .from('assignment_submissions')
@@ -129,7 +130,7 @@ export default function OdevlerPage({
           id: session.user.id,
           name: session.user.user_metadata?.name || 'Öğrenci',
           email: session.user.email ?? '',
-          grade: session.user.user_metadata?.grade ?? 5,
+          grade: toDisplayGrade(session.user.user_metadata?.grade),
         };
 
         setUser(fallbackUser);
@@ -146,7 +147,7 @@ export default function OdevlerPage({
           supabase
             .from('assignments')
             .select('*')
-            .or(`grade.eq.${fallbackUser.grade},student_id.eq.${fallbackUser.id}`)
+            .or(`grade.eq.${toStoredGrade(fallbackUser.grade)},student_id.eq.${fallbackUser.id}`)
             .order('created_at', { ascending: false }),
           supabase
             .from('assignment_submissions')
@@ -385,7 +386,7 @@ export default function OdevlerPage({
           <div>
             <h1 className={`text-3xl font-bold mb-2 ${isLight ? 'text-slate-900' : 'text-white'}`}>Önemli Ödevlerin</h1>
             <p className={isLight ? 'text-slate-600' : 'text-slate-400'}>
-              {user?.grade}. Sınıf için atanan ödevlerini buradan takip edip teslim edebilirsin.
+              {isGraduateGrade(user?.grade) ? 'Mezun' : `${user?.grade}. Sınıf`} için atanan ödevlerini buradan takip edip teslim edebilirsin.
             </p>
           </div>
           <button

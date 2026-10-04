@@ -1,5 +1,6 @@
 'use client';
 
+import { toDisplayGrade } from '@/lib/grade';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
@@ -141,9 +142,10 @@ export default function IlerlemePage({ initialData }: ProgressPageProps) {
       .single();
 
     const resolvedUser =
-      profile || {
+      profile ? { ...profile, grade: toDisplayGrade(profile.grade) } : {
         id: session.user.id,
         name: 'Öğrenci',
+        grade: toDisplayGrade(session.user.user_metadata?.grade),
         email: session.user.email,
         current_streak: 0,
       };

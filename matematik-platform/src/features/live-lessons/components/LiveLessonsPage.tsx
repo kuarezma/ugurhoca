@@ -1,5 +1,6 @@
 'use client';
 
+import { isGraduateGrade, toDisplayGrade } from '@/lib/grade';
 import { useMemo, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -87,7 +88,7 @@ export function LiveLessonsPage({ initialLessons, students, user }: Props) {
     toLocalInputValue(new Date(Date.now() + 60 * 60 * 1000)),
   );
   const [durationMinutes, setDurationMinutes] = useState(60);
-  const [targetGrade, setTargetGrade] = useState(String(user.grade || 'all'));
+  const [targetGrade, setTargetGrade] = useState(String(toDisplayGrade(user.grade)));
   const [selectedStudentIds, setSelectedStudentIds] = useState<string[]>([]);
   const [studentSearchQuery, setStudentSearchQuery] = useState('');
   const [repeatWeekly, setRepeatWeekly] = useState(false);
@@ -467,7 +468,7 @@ export function LiveLessonsPage({ initialLessons, students, user }: Props) {
                 <span>Sınıf / Rol</span>
               </div>
               <p className="mt-2 text-lg font-black text-foreground sm:text-xl truncate">
-                {user.isAdmin ? 'Öğretmen' : user.grade ? `${user.grade}. Sınıf` : 'Öğrenci'}
+                {user.isAdmin ? 'Öğretmen' : isGraduateGrade(user.grade) ? 'Mezun' : user.grade ? `${user.grade}. Sınıf` : 'Öğrenci'}
               </p>
               <span className="text-[11px] text-foreground/50">{user.name}</span>
             </div>
