@@ -392,9 +392,9 @@ export default function OdevlerPage({
           <button
             type="button"
             onClick={() => setIsCalendarOpen(true)}
-            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-amber-500/20 text-amber-300 border border-amber-500/30 hover:bg-amber-500/30 font-bold text-xs sm:text-sm transition shadow-sm self-start sm:self-auto"
+            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-amber-500/10 dark:bg-amber-500/20 text-amber-800 dark:text-amber-300 border border-amber-500/30 hover:bg-amber-500/20 dark:hover:bg-amber-500/30 font-bold text-xs sm:text-sm transition shadow-sm self-start sm:self-auto"
           >
-            <Calendar className="w-4 h-4 text-amber-400" />
+            <Calendar className="w-4 h-4 text-amber-600 dark:text-amber-400" />
             <span>Ödev Yükü Takvimi & Radar</span>
           </button>
         </div>
@@ -465,7 +465,7 @@ export default function OdevlerPage({
                   </p>
 
                   {assignment.due_date && (
-                    <p className={`mb-4 text-xs font-medium ${isLight ? 'text-slate-400' : 'text-slate-400'}`}>
+                    <p className="mb-4 text-xs font-medium text-slate-500 dark:text-slate-400">
                       Son teslim:{' '}
                       {new Date(assignment.due_date).toLocaleDateString('tr-TR', {
                         day: 'numeric',
@@ -485,7 +485,7 @@ export default function OdevlerPage({
                           : 'Bekliyor'}
                       </div>
                     ) : (
-                      <div className="text-xs font-semibold uppercase tracking-wider text-slate-400">
+                      <div className="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">
                         Teslim bekliyor
                       </div>
                     )}
@@ -496,8 +496,8 @@ export default function OdevlerPage({
                       aria-label={isSubmitted ? 'Teslim detaylarını gör' : 'Ödev teslim et'}
                       className={`inline-flex items-center gap-2 px-5 h-11 rounded-xl text-sm font-bold transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:ring-offset-2 ${
                         isSubmitted
-                          ? 'bg-slate-700 text-white hover:bg-slate-600'
-                          : 'bg-gradient-to-r from-brand-primary via-brand-pink to-brand-orange text-white shadow-brand-glow hover:-translate-y-0.5'
+                          ? 'bg-slate-100 text-slate-700 hover:bg-slate-200 dark:bg-slate-700 dark:text-white dark:hover:bg-slate-600'
+                          : 'bg-gradient-to-r from-brand-primary via-brand-pink to-brand-orange text-white dark:text-white shadow-brand-glow hover:-translate-y-0.5'
                       }`}
                     >
                       {isSubmitted ? 'Detayları gör' : 'Ödev teslim et'}

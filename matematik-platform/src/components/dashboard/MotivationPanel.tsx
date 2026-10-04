@@ -88,25 +88,25 @@ export default function MotivationPanel({
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.12 }}
-      className="rounded-3xl border border-white/10 bg-gradient-to-br from-slate-900/90 via-slate-900/75 to-slate-800/70 p-6 sm:p-8"
+      className="rounded-3xl border border-slate-200/80 bg-white shadow-sm dark:border-white/10 dark:bg-gradient-to-br dark:from-slate-900/90 dark:via-slate-900/75 dark:to-slate-800/70 p-6 sm:p-8"
     >
       <div className="mb-6 flex items-start justify-between gap-4">
         <div>
-          <div className="mb-2 inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1 text-[11px] font-bold uppercase tracking-[0.18em] text-slate-200">
-            <Sparkles className="h-3.5 w-3.5 text-amber-300" />
+          <div className="mb-2 inline-flex items-center gap-2 rounded-full bg-amber-500/10 dark:bg-white/10 px-3 py-1 text-[11px] font-bold uppercase tracking-[0.18em] text-amber-800 dark:text-slate-200 border border-amber-500/20 dark:border-transparent">
+            <Sparkles className="h-3.5 w-3.5 text-amber-500 dark:text-amber-300" />
             Motivasyon
           </div>
           <h2 className="text-2xl font-bold text-slate-900 dark:text-white">Ritmini koru</h2>
-          <p className="mt-1 text-sm leading-relaxed text-slate-400">
+          <p className="mt-1 text-sm leading-relaxed text-slate-600 dark:text-slate-400">
             {message}
           </p>
         </div>
-        <div className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-right">
-          <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-slate-400">
+        <div className="rounded-2xl border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-white/5 px-4 py-3 text-right">
+          <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-slate-500 dark:text-slate-400">
             Sıradaki hedef
           </p>
           <p className="mt-1 text-xl font-black text-slate-900 dark:text-white">{nextTarget} gün</p>
-          <p className="text-xs text-slate-400">
+          <p className="text-xs text-slate-500 dark:text-slate-400">
             {daysLeft === 0 ? 'Hazır' : `${daysLeft} gün kaldı`}
           </p>
         </div>
@@ -116,12 +116,12 @@ export default function MotivationPanel({
         {stats.map((stat) => (
           <div
             key={stat.label}
-            className="rounded-2xl border border-white/10 bg-white/5 p-4"
+            className="rounded-2xl border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-white/5 p-4"
           >
-            <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-xl bg-white/10">
+            <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-xl bg-slate-100 dark:bg-white/10">
               <stat.icon className={`h-5 w-5 ${stat.tone}`} />
             </div>
-            <p className="text-xs font-bold uppercase tracking-[0.18em] text-slate-400">
+            <p className="text-xs font-bold uppercase tracking-[0.18em] text-slate-500 dark:text-slate-400">
               {stat.label}
             </p>
             <p className="mt-2 text-lg font-bold text-slate-900 dark:text-white">{stat.value}</p>
@@ -129,12 +129,12 @@ export default function MotivationPanel({
         ))}
       </div>
 
-      <div className="mt-6 rounded-2xl border border-white/10 bg-white/5 p-4">
+      <div className="mt-6 rounded-2xl border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-white/5 p-4">
         <div className="mb-3 flex items-center justify-between gap-3">
-          <h3 className="text-sm font-bold uppercase tracking-[0.18em] text-slate-400">
+          <h3 className="text-sm font-bold uppercase tracking-[0.18em] text-slate-700 dark:text-slate-400">
             Rozet Yolculuğu
           </h3>
-          <span className="text-xs text-slate-400">
+          <span className="text-xs text-slate-500 dark:text-slate-400">
             {badges.length} / {BADGE_CATALOG.length}
           </span>
         </div>
@@ -161,15 +161,15 @@ export default function MotivationPanel({
                 className={`flex items-start gap-3 rounded-xl border p-3 transition-colors ${
                   isEarned
                     ? 'border-amber-500/30 bg-amber-500/10'
-                    : 'border-white/5 bg-white/[0.03]'
+                    : 'border-slate-200/80 dark:border-white/5 bg-white dark:bg-white/[0.03]'
                 }`}
                 title={entry.description}
               >
                 <span
                   className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-lg ${
                     isEarned
-                      ? 'bg-amber-500/30 text-amber-100'
-                      : 'bg-white/10 text-slate-500'
+                      ? 'bg-amber-500/30 text-amber-900 dark:text-amber-100'
+                      : 'bg-slate-100 dark:bg-white/10 text-slate-400 dark:text-slate-500'
                   }`}
                   aria-hidden="true"
                 >
@@ -182,12 +182,12 @@ export default function MotivationPanel({
                 <div className="min-w-0 flex-1">
                   <p
                     className={`text-xs font-bold ${
-                      isEarned ? 'text-white' : 'text-slate-300'
+                      isEarned ? 'text-slate-900 dark:text-white' : 'text-slate-700 dark:text-slate-300'
                     }`}
                   >
                     {entry.name}
                   </p>
-                  <p className="mt-0.5 line-clamp-2 text-[11px] text-slate-400">
+                  <p className="mt-0.5 line-clamp-2 text-[11px] text-slate-500 dark:text-slate-400">
                     {entry.description}
                   </p>
                 </div>

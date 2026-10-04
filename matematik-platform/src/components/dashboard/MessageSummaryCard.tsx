@@ -75,11 +75,11 @@ export default function MessageSummaryCard({
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.1 }}
-      className="rounded-3xl border border-white/10 bg-white/5 p-6"
+      className="rounded-3xl border border-slate-200/80 bg-white shadow-sm dark:border-white/10 dark:bg-white/5 p-6"
     >
       <div className="mb-5 flex items-start justify-between gap-4">
         <div>
-          <div className="mb-2 inline-flex items-center gap-2 rounded-full bg-violet-500/15 px-3 py-1 text-[11px] font-bold uppercase tracking-[0.18em] text-violet-200">
+          <div className="mb-2 inline-flex items-center gap-2 rounded-full bg-violet-500/15 px-3 py-1 text-[11px] font-bold uppercase tracking-[0.18em] text-violet-700 dark:text-violet-200 border border-violet-500/20 dark:border-transparent">
             <MessageSquareText className="h-3.5 w-3.5" />
             Bildirim Akışı
           </div>
@@ -88,12 +88,12 @@ export default function MessageSummaryCard({
               ? `${unreadCount} okunmamış bildirim var`
               : 'Bildirimlerin güncel'}
           </h2>
-          <p className="mt-1 text-sm text-slate-400">
+          <p className="mt-1 text-sm text-slate-600 dark:text-slate-400">
             Mesaj, ödev ve belge sinyallerini tek blokta yönet.
           </p>
         </div>
         <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-violet-500/15">
-          <Bell className="h-6 w-6 text-violet-300" />
+          <Bell className="h-6 w-6 text-violet-600 dark:text-violet-300" />
         </div>
       </div>
 
@@ -105,8 +105,8 @@ export default function MessageSummaryCard({
             onClick={() => setActiveFilter(filter.id)}
             className={`rounded-full px-3 py-1.5 text-xs font-bold uppercase tracking-[0.18em] transition-colors ${
               activeFilter === filter.id
-                ? 'bg-violet-500/20 text-violet-100'
-                : 'bg-white/5 text-slate-400 hover:bg-white/10 hover:text-white'
+                ? 'bg-violet-600 text-white dark:bg-violet-500/20 dark:text-violet-100'
+                : 'bg-slate-100 dark:bg-white/5 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-white/10 hover:text-slate-900 dark:hover:text-white'
             }`}
           >
             {filter.label}
@@ -114,11 +114,11 @@ export default function MessageSummaryCard({
         ))}
       </div>
 
-      <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
+      <div className="rounded-2xl border border-slate-200/80 dark:border-white/10 bg-slate-50 dark:bg-white/5 p-4">
         <p className="text-sm font-semibold text-slate-900 dark:text-white">
           {latestNotification?.title || 'Henüz bildirim görünmüyor'}
         </p>
-        <p className="mt-2 line-clamp-2 text-sm text-slate-400">
+        <p className="mt-2 line-clamp-2 text-sm text-slate-600 dark:text-slate-400">
           {latestNotification?.message ||
             'Yeni bir hareket olduğunda burada kısa özetini göreceksin.'}
         </p>
@@ -131,7 +131,7 @@ export default function MessageSummaryCard({
               key={notification.id}
               type="button"
               onClick={() => onOpenNotification(notification)}
-              className="flex w-full items-start justify-between gap-3 rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-left transition-colors hover:bg-white/10"
+              className="flex w-full items-start justify-between gap-3 rounded-2xl border border-slate-200/80 dark:border-white/10 bg-slate-50 dark:bg-white/5 px-4 py-3 text-left transition-colors hover:bg-slate-100 dark:hover:bg-white/10"
             >
               <div className="min-w-0">
                 <div className="flex items-center gap-2">
@@ -139,17 +139,17 @@ export default function MessageSummaryCard({
                     {notification.title}
                   </p>
                   {!notification.is_read ? (
-                    <span className="h-2.5 w-2.5 rounded-full bg-violet-400" />
+                    <span className="h-2.5 w-2.5 rounded-full bg-violet-500 dark:bg-violet-400" />
                   ) : null}
                 </div>
-                <p className="mt-1 line-clamp-2 text-xs text-slate-400">
+                <p className="mt-1 line-clamp-2 text-xs text-slate-600 dark:text-slate-400">
                   {notification.type === 'message-read' && !notification.message
                     ? 'Mesajının görüldüğüne dair kısa bilgi.'
                     : notification.message || 'Ek içerik bulunmuyor.'}
                 </p>
               </div>
               <div className="flex shrink-0 items-center gap-2">
-                <span className="text-xs text-slate-400">
+                <span className="text-xs text-slate-500 dark:text-slate-400">
                   {new Date(notification.created_at).toLocaleDateString(
                     'tr-TR',
                   )}
@@ -160,11 +160,11 @@ export default function MessageSummaryCard({
           ))}
         </div>
       ) : (
-        <div className="mt-4 rounded-2xl border border-dashed border-white/10 px-5 py-7 text-center">
+        <div className="mt-4 rounded-2xl border border-dashed border-slate-200 dark:border-white/10 px-5 py-7 text-center">
           <p className="text-sm font-semibold text-slate-900 dark:text-white">
             Bu filtrede bildirim yok
           </p>
-          <p className="mt-1 text-sm text-slate-400">
+          <p className="mt-1 text-sm text-slate-600 dark:text-slate-400">
             Farklı bir filtre seçebilir ya da tüm akışı açabilirsin.
           </p>
         </div>
@@ -174,7 +174,7 @@ export default function MessageSummaryCard({
         <button
           type="button"
           onClick={onOpenPanel}
-          className="inline-flex items-center justify-center gap-2 rounded-xl bg-violet-500/15 px-4 py-2.5 text-sm font-semibold text-violet-200 transition-colors hover:bg-violet-500/20"
+          className="inline-flex items-center justify-center gap-2 rounded-xl bg-violet-500/15 px-4 py-2.5 text-sm font-semibold text-violet-700 dark:text-violet-200 border border-violet-500/20 transition-colors hover:bg-violet-500/25"
         >
           Tüm Akışı Aç
         </button>
@@ -182,7 +182,7 @@ export default function MessageSummaryCard({
           type="button"
           disabled={unreadCount === 0}
           onClick={onMarkAllAsRead}
-          className="inline-flex items-center justify-center gap-2 rounded-xl bg-white/10 px-4 py-2.5 text-sm font-semibold text-slate-900 dark:text-white transition-colors hover:bg-white/15 disabled:cursor-not-allowed disabled:opacity-50"
+          className="inline-flex items-center justify-center gap-2 rounded-xl bg-slate-100 dark:bg-white/10 px-4 py-2.5 text-sm font-semibold text-slate-800 dark:text-white transition-colors hover:bg-slate-200 dark:hover:bg-white/15 disabled:cursor-not-allowed disabled:opacity-50"
         >
           Tümünü Okundu Yap
         </button>

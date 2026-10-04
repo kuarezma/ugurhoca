@@ -18,23 +18,23 @@ export default function TodayPlanCard({
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.08 }}
-      className="rounded-3xl border border-white/10 bg-white/5 p-6 sm:p-8"
+      className="rounded-3xl border border-slate-200/80 bg-white shadow-sm dark:border-white/10 dark:bg-white/5 p-6 sm:p-8"
     >
       <div className="mb-6 flex items-start justify-between gap-4">
         <div>
-          <div className="mb-2 inline-flex items-center gap-2 rounded-full bg-emerald-500/15 px-3 py-1 text-[11px] font-bold uppercase tracking-[0.18em] text-emerald-200">
+          <div className="mb-2 inline-flex items-center gap-2 rounded-full bg-emerald-500/15 px-3 py-1 text-[11px] font-bold uppercase tracking-[0.18em] text-emerald-800 dark:text-emerald-200 border border-emerald-500/20 dark:border-transparent">
             <ListTodo className="h-3.5 w-3.5" />
             Bugünkü Plan
           </div>
           <h2 className="text-2xl font-bold text-slate-900 dark:text-white">
             Bugün ne yapmalıyım?
           </h2>
-          <p className="mt-1 text-sm text-slate-400">
+          <p className="mt-1 text-sm text-slate-600 dark:text-slate-400">
             Öncelik sırasına göre seçilmiş üç kısa adım.
           </p>
         </div>
-        <div className="rounded-2xl bg-white/5 px-4 py-2 text-right">
-          <p className="text-xs uppercase tracking-[0.18em] text-slate-400">
+        <div className="rounded-2xl border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-white/5 px-4 py-2 text-right">
+          <p className="text-xs uppercase tracking-[0.18em] text-slate-500 dark:text-slate-400">
             Görev
           </p>
           <p className="text-xl font-black text-slate-900 dark:text-white">{tasks.length}</p>
@@ -42,11 +42,11 @@ export default function TodayPlanCard({
       </div>
 
       {tasks.length === 0 ? (
-        <div className="rounded-2xl border border-dashed border-white/10 px-5 py-8 text-center">
+        <div className="rounded-2xl border border-dashed border-slate-200 dark:border-white/10 px-5 py-8 text-center">
           <p className="text-lg font-semibold text-slate-900 dark:text-white">
             Bugünkü plan temiz.
           </p>
-          <p className="mt-2 text-sm text-slate-400">
+          <p className="mt-2 text-sm text-slate-600 dark:text-slate-400">
             Hedeflerini kapatmışsın. İstersen bir test daha çözüp ritmi sıcak
             tutabilirsin.
           </p>

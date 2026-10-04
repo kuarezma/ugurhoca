@@ -1775,7 +1775,7 @@ export default function TestsPage({
 
           <Link
             href={profileHref}
-            className="text-slate-300 hover:text-white flex items-center gap-1.5 text-xs sm:text-base shrink-0"
+            className="text-slate-600 hover:text-slate-900 dark:text-slate-300 dark:hover:text-white flex items-center gap-1.5 text-xs sm:text-base shrink-0 transition-colors"
           >
             <ArrowLeft className="w-4 h-4 sm:w-5 sm:h-5" />
             <span>{user.isAdmin ? 'Admin Panel' : 'Profil'}</span>
@@ -1795,7 +1795,7 @@ export default function TestsPage({
               <h1 className="text-3xl sm:text-4xl font-bold text-slate-900 dark:text-white mb-2">
                 Online Testler
               </h1>
-              <p className="text-slate-400">
+              <p className="text-slate-600 dark:text-slate-400">
                 Bilginizi test edin ve kendinizi geliştirin
               </p>
             </div>
@@ -1803,33 +1803,33 @@ export default function TestsPage({
               <button
                 type="button"
                 onClick={() => setIsPacingStrategyModalOpen(true)}
-                className="inline-flex items-center gap-2 rounded-2xl border border-indigo-500/30 bg-indigo-500/15 hover:bg-indigo-500/25 px-4 py-2.5 text-xs sm:text-sm font-bold text-indigo-300 shadow-md transition-all active:scale-95"
+                className="inline-flex items-center gap-2 rounded-2xl border border-indigo-500/30 bg-indigo-500/15 hover:bg-indigo-500/25 px-4 py-2.5 text-xs sm:text-sm font-bold text-indigo-700 dark:text-indigo-300 shadow-md transition-all active:scale-95"
               >
-                <Timer className="w-4 h-4 text-indigo-400" />
+                <Timer className="w-4 h-4 text-indigo-500 dark:text-indigo-400" />
                 <span>Süre Simülatörü</span>
               </button>
               <button
                 type="button"
                 onClick={() => setIsLeagueModalOpen(true)}
-                className="inline-flex items-center gap-2 rounded-2xl border border-rose-500/30 bg-rose-500/15 hover:bg-rose-500/25 px-4 py-2.5 text-xs sm:text-sm font-bold text-rose-300 shadow-md transition-all active:scale-95"
+                className="inline-flex items-center gap-2 rounded-2xl border border-rose-500/30 bg-rose-500/15 hover:bg-rose-500/25 px-4 py-2.5 text-xs sm:text-sm font-bold text-rose-700 dark:text-rose-300 shadow-md transition-all active:scale-95"
               >
-                <Trophy className="w-4 h-4 text-rose-400" />
+                <Trophy className="w-4 h-4 text-rose-500 dark:text-rose-400" />
                 <span>Deneme Ligi</span>
               </button>
               <button
                 type="button"
                 onClick={() => setIsMistakeNotebookOpen(true)}
-                className="inline-flex items-center gap-2 rounded-2xl border border-amber-500/30 bg-amber-500/15 hover:bg-amber-500/25 px-4 py-2.5 text-xs sm:text-sm font-bold text-amber-300 shadow-md transition-all active:scale-95"
+                className="inline-flex items-center gap-2 rounded-2xl border border-amber-500/30 bg-amber-500/15 hover:bg-amber-500/25 px-4 py-2.5 text-xs sm:text-sm font-bold text-amber-800 dark:text-amber-300 shadow-md transition-all active:scale-95"
               >
-                <BookOpen className="w-4 h-4 text-amber-400" />
+                <BookOpen className="w-4 h-4 text-amber-600 dark:text-amber-400" />
                 <span>Akıllı Hata Defterim</span>
               </button>
               <button
                 type="button"
                 onClick={() => setIsOfflinePackageModalOpen(true)}
-                className="inline-flex items-center gap-2 rounded-2xl border border-emerald-500/30 bg-emerald-500/15 hover:bg-emerald-500/25 px-4 py-2.5 text-xs sm:text-sm font-bold text-emerald-300 shadow-md transition-all active:scale-95"
+                className="inline-flex items-center gap-2 rounded-2xl border border-emerald-500/30 bg-emerald-500/15 hover:bg-emerald-500/25 px-4 py-2.5 text-xs sm:text-sm font-bold text-emerald-800 dark:text-emerald-300 shadow-md transition-all active:scale-95"
               >
-                <HardDrive className="w-4 h-4 text-emerald-400" />
+                <HardDrive className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
                 <span>Çevrimdışı Setler</span>
               </button>
             </div>
@@ -1840,7 +1840,7 @@ export default function TestsPage({
             <div className="mb-8 rounded-3xl border border-amber-400/40 bg-gradient-to-r from-amber-500/20 via-orange-500/15 to-amber-500/10 p-5 sm:p-6 backdrop-blur-xl shadow-2xl animate-fade-in">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div className="flex items-center gap-3.5">
-                  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-amber-500/30 text-amber-300 border border-amber-400/30 shadow-md">
+                  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-amber-500/30 text-amber-800 dark:text-amber-300 border border-amber-400/30 shadow-md">
                     <RotateCcw className="h-6 w-6" />
                   </div>
                   <div>
@@ -1848,11 +1848,11 @@ export default function TestsPage({
                       <h2 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white font-display">
                         Yarım Kalan Sınavınız Bulundu
                       </h2>
-                      <span className="rounded-full bg-amber-500/30 px-2.5 py-0.5 text-xs font-extrabold text-amber-300 border border-amber-400/30">
+                      <span className="rounded-full bg-amber-500/20 px-2.5 py-0.5 text-xs font-extrabold text-amber-800 dark:text-amber-300 border border-amber-400/30">
                         Kesinti Koruması Aktif
                       </span>
                     </div>
-                    <p className="text-xs sm:text-sm text-slate-200 mt-1 max-w-xl">
+                    <p className="text-xs sm:text-sm text-slate-700 dark:text-slate-200 mt-1 max-w-xl">
                       <strong>{activeDraft.quizTitle}</strong> sınavında {activeDraft.currentQuestion + 1}. soruda kalmıştınız ({Object.keys(activeDraft.answers).length} cevap işaretli). Kalan süreniz ve işaretleriniz korundu.
                     </p>
                   </div>
