@@ -16,6 +16,10 @@ import {
 
 export const getInitialContentGradeFilter =
   async (): Promise<ContentGradeFilter> => {
+    // Bilinçli olarak imzasız snapshot: yalnızca herkese açık belgelerin
+    // (token'sız, önbellekli istemciyle) varsayılan sınıf filtresini seçen bir
+    // UX ipucu. Sahte çerez yalnız başka sınıfın açık içeriğini önce gösterir;
+    // kişisel veri çekilmez, bu yüzden istek başına doğrulama maliyeti eklenmez.
     const snapshot = await getServerAuthSnapshot();
 
     if (!snapshot || snapshot.isAdmin) {

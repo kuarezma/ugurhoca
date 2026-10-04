@@ -1,8 +1,8 @@
 import 'server-only';
 
+import { getServerAccessToken, getServerAuthSkeleton } from '@/lib/auth-snapshot.server';
+import { getVerifiedServerUser } from '@/lib/auth-verify.server';
 import { toStoredGrade } from '@/lib/grade';
-
-import { getServerAccessToken, getServerAuthSnapshot } from '@/lib/auth-snapshot.server';
 import { createServerSupabaseClient } from '@/lib/supabase/server';
 import type { AppUser } from '@/types';
 import type { Quiz } from '@/types/quiz';
@@ -14,30 +14,25 @@ type InitialTestsPageData = {
 };
 
 export const loadInitialTestsPageData = async (): Promise<InitialTestsPageData> => {
-  const [snapshot, accessToken] = await Promise.all([
-    getServerAuthSnapshot(),
+  // Sınıf filtresi ve admin bayrağı yalnızca doğrulanmış kullanıcıdan gelir;
+  // imzasız snapshot çerezi doğrulama başarısızsa yalnız yükleme iskeleti.
+  const [verifiedUser, skeleton, accessToken] = await Promise.all([
+    getVerifiedServerUser(),
+    getServerAuthSkeleton(),
     getServerAccessToken(),
   ]);
 
-  if (!snapshot) {
+  if (!verifiedUser || !accessToken) {
     return {
       initialQuizzes: [],
-      initialUser: null,
+      initialUser: skeleton,
       isHydrated: false,
     };
   }
 
   const initialUser: AppUser = {
-    ...snapshot,
+    ...verifiedUser,
   };
-
-  if (!accessToken) {
-    return {
-      initialQuizzes: [],
-      initialUser,
-      isHydrated: false,
-    };
-  }
 
   const supabase = createServerSupabaseClient(accessToken);
   let query = supabase
@@ -46,8 +41,8 @@ export const loadInitialTestsPageData = async (): Promise<InitialTestsPageData> 
     .eq('is_active', true)
     .order('created_at', { ascending: false });
 
-  if (!snapshot.isAdmin) {
-    query = query.eq('grade', toStoredGrade(snapshot.grade));
+  if (!verifiedUser.isAdmin) {
+    query = query.eq('grade', toStoredGrade(verifiedUser.grade));
   }
 
   const { data } = await query;

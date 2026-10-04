@@ -83,7 +83,7 @@ export const contentDocumentCreateSchema = z.object({
 });
 
 export const contentDocumentMetricUpdateSchema = z.object({
-  document_id: z.string().min(1, 'Doküman ID gereklidir.'),
+  document_id: z.string().uuid('Doküman ID geçersiz.'),
   metric: z.enum(['views', 'downloads', 'likes']),
 });
 

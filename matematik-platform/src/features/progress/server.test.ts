@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import {
   createRecordingSupabase,
+  serializedCalls,
   VERIFIED_ATTACKER,
   VICTIM_SNAPSHOT,
 } from '@/test/ssr-auth-fixtures';
@@ -29,9 +30,9 @@ vi.mock('@/lib/supabase/server', () => ({
   createServerSupabaseClient: mockCreateClient,
 }));
 
-import { loadInitialTestsPageData } from '@/features/quizzes/server';
+import { loadInitialProgressPageData } from '@/features/progress/server';
 
-describe('loadInitialTestsPageData — SSR kimlik sınırı', () => {
+describe('loadInitialProgressPageData — SSR kimlik sınırı', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     // Saldırgan kendi geçerli token'ını taşır ama istemcide yazılabilen
@@ -41,25 +42,29 @@ describe('loadInitialTestsPageData — SSR kimlik sınırı', () => {
     cookieJar.set(AUTH_ACCESS_TOKEN_COOKIE_NAME, 'attacker-token');
   });
 
-  it('sınıf filtresini ve admin bayrağını sahte snapshot yerine doğrulanmış kullanıcıdan alır', async () => {
+  it('sahte snapshot çereziyle başka kullanıcının ilerleme verisini sorgulamaz', async () => {
     const { calls, client } = createRecordingSupabase();
     mockCreateClient.mockReturnValue(client);
     mockGetVerifiedServerUser.mockResolvedValue(VERIFIED_ATTACKER);
 
-    const result = await loadInitialTestsPageData();
+    const result = await loadInitialProgressPageData();
 
+    const serialized = serializedCalls(calls);
+    expect(serialized).not.toContain(VICTIM_SNAPSHOT.id);
+    for (const table of ['study_sessions', 'user_progress', 'study_goals', 'user_badges']) {
+      expect(calls).toContainEqual({
+        table,
+        method: 'eq',
+        args: ['user_id', VERIFIED_ATTACKER.id],
+      });
+    }
     expect(calls).toContainEqual({
-      table: 'quizzes',
+      table: 'profiles',
       method: 'eq',
-      args: ['grade', VERIFIED_ATTACKER.grade],
+      args: ['id', VERIFIED_ATTACKER.id],
     });
-    expect(calls).not.toContainEqual({
-      table: 'quizzes',
-      method: 'eq',
-      args: ['grade', VICTIM_SNAPSHOT.grade],
-    });
-    expect(result.initialUser?.id).toBe(VERIFIED_ATTACKER.id);
-    expect(result.initialUser?.isAdmin).toBe(false);
+    expect(result.user?.id).toBe(VERIFIED_ATTACKER.id);
+    expect(result.user?.isAdmin).toBe(false);
     expect(result.isHydrated).toBe(true);
   });
 
@@ -68,42 +73,11 @@ describe('loadInitialTestsPageData — SSR kimlik sınırı', () => {
     mockCreateClient.mockReturnValue(client);
     mockGetVerifiedServerUser.mockResolvedValue(null);
 
-    const result = await loadInitialTestsPageData();
+    const result = await loadInitialProgressPageData();
 
     expect(calls).toHaveLength(0);
     expect(result.isHydrated).toBe(false);
-    expect(result.initialQuizzes).toEqual([]);
-    expect(result.initialUser?.isAdmin).toBe(false);
+    expect(result.sessions).toEqual([]);
+    expect(result.user?.isAdmin).toBe(false);
   });
-});
-
-describe('Mezun sunucu test filtresi', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-    cookieJar.clear();
-    cookieJar.set(AUTH_SNAPSHOT_COOKIE_NAME, serializeAuthSnapshot(VICTIM_SNAPSHOT));
-    cookieJar.set(AUTH_ACCESS_TOKEN_COOKIE_NAME, 'graduate-token');
-  });
-  it.each([0, 'Mezun'])(
-    '%s görünümünü integer 0 ile sorgular',
-    async (grade) => {
-      const { calls, client } = createRecordingSupabase();
-      mockCreateClient.mockReturnValue(client);
-      mockGetVerifiedServerUser.mockResolvedValue({
-        ...VERIFIED_ATTACKER,
-        id: 'graduate',
-        name: 'Ada',
-        email: 'a@example.com',
-        grade,
-        accessGrade: 'Mezun',
-        isAdmin: false,
-      });
-      await loadInitialTestsPageData();
-      expect(calls).toContainEqual({
-        table: 'quizzes',
-        method: 'eq',
-        args: ['grade', 0],
-      });
-    },
-  );
 });

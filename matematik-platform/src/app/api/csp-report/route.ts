@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { enforceRateLimit, getClientIp } from '@/lib/rate-limit';
 
 export const runtime = 'nodejs';
 
@@ -9,6 +10,19 @@ export const runtime = 'nodejs';
 const MAX_LOGGED_CHARS = 2000;
 
 export async function POST(request: Request) {
+  const clientIp = getClientIp(request);
+  const limited = await enforceRateLimit('csp-report', clientIp, {
+    limit: 30,
+    windowSeconds: 60,
+  });
+
+  if (limited) {
+    return new NextResponse(null, {
+      status: 429,
+      headers: limited.headers,
+    });
+  }
+
   try {
     const report = await request.json();
     console.warn('[csp-report]', JSON.stringify(report).slice(0, MAX_LOGGED_CHARS));
