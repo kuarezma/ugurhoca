@@ -29,7 +29,7 @@ export function HomeNavbar({ onLogout, user }: HomeNavbarProps) {
 
   return (
     <nav
-      className={`fixed left-0 right-0 top-0 z-50 border-b backdrop-blur-xl transition-all duration-300 ${
+      className={`fixed left-0 right-0 top-0 z-50 border-b backdrop-blur-xl transition-all duration-300 pt-[env(safe-area-inset-top)] ${
         isLight
           ? 'border-slate-200/90 bg-white/90 shadow-sm'
           : 'border-white/10 bg-slate-900/90 shadow-xl'
@@ -162,7 +162,7 @@ export function HomeNavbar({ onLogout, user }: HomeNavbarProps) {
       {isOpen && (
         <div
           id="mobile-navigation"
-          className={`animate-fade-in border-t lg:hidden ${
+          className={`animate-fade-in border-t max-h-[calc(100dvh-4.5rem-env(safe-area-inset-top))] overflow-y-auto pb-[calc(1.5rem+env(safe-area-inset-bottom))] lg:hidden ${
             isLight
               ? 'border-slate-200 bg-white/95 backdrop-blur-xl'
               : 'border-white/10 bg-slate-950/95 backdrop-blur-xl'

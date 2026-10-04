@@ -3,7 +3,9 @@ import {
   isLiveLessonAdmin,
   requireLiveLessonUser,
   updateLiveLesson,
+  LiveLessonInputError,
 } from '@/features/live-lessons/server/liveLessons';
+import { logger } from '@/lib/logger';
 
 export const runtime = 'nodejs';
 
@@ -46,9 +48,10 @@ export async function PATCH(request: Request, context: RouteContext) {
     });
     return NextResponse.json({ lesson });
   } catch (error) {
-    return NextResponse.json(
-      { error: error instanceof Error ? error.message : 'Ders güncellenemedi.' },
-      { status: 400 },
-    );
+    if (error instanceof LiveLessonInputError) {
+      return NextResponse.json({ error: error.message }, { status: 400 });
+    }
+    logger.error('Canlı ders güncelleme hatası', error);
+    return NextResponse.json({ error: 'Ders güncellenemedi.' }, { status: 400 });
   }
 }
