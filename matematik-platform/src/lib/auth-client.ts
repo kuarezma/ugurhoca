@@ -8,6 +8,7 @@ import {
 } from '@/lib/auth-snapshot';
 import { supabase } from '@/lib/supabase/client';
 import type { AppUser } from '@/types';
+import { safeRedirectPath } from '@/lib/safe-redirect-path';
 
 type RouterLike = {
   push: (href: string) => void;
@@ -86,17 +87,13 @@ const redirectToPath = (href: string, router?: RouterLike) => {
 };
 
 export const redirectToLogin = (router?: RouterLike, redirectTarget?: string) => {
-  const target =
+  const target = safeRedirectPath(
     redirectTarget ||
-    (typeof window !== 'undefined'
-      ? window.location.pathname + window.location.search
-      : '');
-  const isValidTarget =
-    target &&
-    target.startsWith('/') &&
-    !target.startsWith('//') &&
-    target !== '/' &&
-    !target.startsWith('/giris');
+      (typeof window !== 'undefined'
+        ? window.location.pathname + window.location.search
+        : ''),
+  );
+  const isValidTarget = target !== '/' && !target.startsWith('/giris');
   const loginPath = isValidTarget
     ? `/giris?redirect=${encodeURIComponent(target)}`
     : '/giris';

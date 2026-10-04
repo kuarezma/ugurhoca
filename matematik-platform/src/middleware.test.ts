@@ -42,11 +42,11 @@ describe('middleware', () => {
     expect(middleware(request).status).toBe(404);
   });
 
-  it('sorgu parametresindeki kodlanmış ters eğik çizgi auth yönlendirmesini değiştirmez', () => {
+  it('kodlanmış ters eğik çizgi içeren dönüş hedefini giriş URL’sine eklemez', () => {
     const response = middleware(buildRequest('/profil?search=%5C'));
 
     expect(response.status).toBe(307);
-    expect(response.headers.get('location')).toBe('https://ugurhoca.com/giris?redirect=%2Fprofil%3Fsearch%3D%255C');
+    expect(response.headers.get('location')).toBe('https://ugurhoca.com/giris');
   });
 
   it('oturum çerezi yoksa korunan bir rotayı /giris\'e yönlendirir', () => {
