@@ -5,6 +5,8 @@
  * Kullanım (matematik-platform kökünden):
  *   npm run analyze:compare -- HEAD~1
  *   npm run analyze:compare -- 30b413b
+ *   npm run analyze:compare -- --measure  (npm run build sonrası baseline)
+ *   npm run analyze:compare -- --budget   (sabit baseline + %10 CI kapısı)
  *
  * - BASE_REF: karşılaştırılacaki eski commit (varsayılan: HEAD~1)
  * - "Güncel": çalışma ağacındaki (staged/unstaged dahil) kaynak + mevcut HEAD
@@ -26,6 +28,13 @@ import {
 import { tmpdir } from 'node:os';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
+
+// CI kapısı mevcut üretim derlemesini kullanır; eski commit/worktree oluşturmaz.
+if (['--budget', '--measure'].includes(process.argv[2])) {
+  const { checkBundleBudget } = await import('./bundle-budget.mjs');
+  await checkBundleBudget({ measureOnly: process.argv[2] === '--measure' });
+  process.exit(0);
+}
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const MP = resolve(__dirname, '..');
