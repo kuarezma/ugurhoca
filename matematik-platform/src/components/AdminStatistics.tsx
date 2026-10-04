@@ -1,5 +1,6 @@
 'use client';
 
+import { isGraduateGrade } from '@/lib/grade';
 import React, { useCallback, useEffect, useState } from 'react';
 import {
   Users,
@@ -75,7 +76,7 @@ export default function AdminStatistics() {
 
     const gradeCounts: Record<string, number> = {};
     nonAdminUsers.forEach((u) => {
-      const grade = u.grade === 'Mezun' ? 'Mezun' : `${u.grade}. Sınıf`;
+      const grade = isGraduateGrade(u.grade) ? 'Mezun' : `${u.grade}. Sınıf`;
       gradeCounts[grade] = (gradeCounts[grade] || 0) + 1;
     });
 

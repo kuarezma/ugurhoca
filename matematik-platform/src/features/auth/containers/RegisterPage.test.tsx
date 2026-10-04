@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { fireEvent, render, screen } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 const mocks = vi.hoisted(() => ({
   rpc: vi.fn(),
   signUp: vi.fn(),
@@ -21,12 +21,12 @@ vi.mock('@/lib/supabase/client', () => ({
   },
 }));
 import RegisterPage from './RegisterPage';
-const submitRegister = () => {
+const submitRegister = (grade = '8') => {
   fireEvent.change(screen.getByLabelText('Ad ve soyad'), {
     target: { value: 'Ada Öğrenci' },
   });
   fireEvent.change(screen.getByLabelText('Sınıf düzeyi'), {
-    target: { value: '8' },
+    target: { value: grade },
   });
   fireEvent.change(screen.getByLabelText('Şifre'), {
     target: { value: 'password123' },
@@ -54,6 +54,24 @@ describe('register user errors', () => {
     submitRegister();
     expect(await screen.findByRole('alert')).toHaveTextContent(
       'Çok fazla deneme yapıldı.',
+    );
+  });
+  it('Mezun kaydında metadata ve integer profil kolonuna 0 yazar', async () => {
+    mocks.signUp.mockResolvedValue({
+      data: { user: { id: 'graduate' }, session: null },
+      error: null,
+    });
+    render(<RegisterPage />);
+    submitRegister('Mezun');
+    await waitFor(() =>
+      expect(mocks.upsert).toHaveBeenCalledWith(
+        expect.objectContaining({ grade: 0, id: 'graduate' }),
+      ),
+    );
+    expect(mocks.signUp).toHaveBeenCalledWith(
+      expect.objectContaining({
+        options: { data: { name: 'Ada Öğrenci', grade: 0 } },
+      }),
     );
   });
 });

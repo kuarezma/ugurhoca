@@ -1,5 +1,6 @@
 "use client";
 
+import { toDisplayGrade } from '@/lib/grade';
 import { useState } from "react";
 import type {
   AdminAnnouncement,
@@ -90,7 +91,7 @@ export function useAdminModalState() {
   const openEditUser = (user: AdminUser) => {
     setEditingUser(user);
     setFormData({
-      grade: user.grade || 5,
+      grade: toDisplayGrade(user.grade),
       name: user.name || "",
     });
     setModalType("editUser");

@@ -489,7 +489,7 @@ export default function CommandPalette({ initiallyOpen = false }: CommandPalette
       role="dialog"
       aria-modal="true"
       aria-label="Komut paleti"
-      className="fixed inset-0 z-[120] flex items-start justify-center overflow-y-auto bg-slate-950/70 px-4 pb-20 pt-16 backdrop-blur-sm dark:bg-slate-950/70 sm:pt-24"
+      className="fixed inset-0 z-[120] flex items-start justify-center overflow-y-auto bg-slate-950/70 px-4 pb-[max(5rem,calc(env(safe-area-inset-bottom)+2rem))] pt-[max(4.5rem,calc(env(safe-area-inset-top)+1.5rem))] backdrop-blur-sm dark:bg-slate-950/70 sm:pt-24"
     >
       <button
         type="button"

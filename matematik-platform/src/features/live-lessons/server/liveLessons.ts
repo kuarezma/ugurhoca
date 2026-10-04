@@ -1,5 +1,7 @@
 import 'server-only';
 
+import { toDisplayGrade, toStoredGrade } from '@/lib/grade';
+
 import { revalidatePath } from 'next/cache';
 import { NextResponse } from 'next/server';
 import { getVerifiedServerUser, type VerifiedServerUser } from '@/lib/auth-verify.server';
@@ -24,6 +26,13 @@ const NOTIFICATION_TYPE = 'live-lesson';
 const REMINDER_TYPE = 'thirty_minutes';
 const MAX_RECURRING_LESSONS = 16;
 const VALID_TARGET_GRADES = ['5', '6', '7', '8', 'Mezun', 'all', 'selected'];
+
+export class LiveLessonInputError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = 'LiveLessonInputError';
+  }
+}
 
 type RouteAuth =
   | { ok: true; user: VerifiedServerUser }
@@ -149,7 +158,7 @@ export async function loadLiveLessonStudentOptions(): Promise<AppUser[]> {
     .select('id, name, email, grade, is_favorite, created_at')
     .order('name', { ascending: true });
 
-  return ((data || []) as AppUser[]).filter((user) => !isLiveLessonAdmin(user));
+  return ((data || []) as AppUser[]).filter((user) => !isLiveLessonAdmin(user)).map((user) => ({ ...user, grade: toDisplayGrade(user.grade) }));
 }
 
 export async function loadLiveLessonDashboardData(): Promise<LiveLessonDashboardData> {
@@ -201,7 +210,7 @@ async function notifyGrade({
   const { data: students } =
     grade === 'all'
       ? await studentsQuery
-      : await studentsQuery.eq('grade', Number.isFinite(Number(grade)) ? Number(grade) : grade);
+      : await studentsQuery.eq('grade', toStoredGrade(grade));
 
   const rows = (students || [])
     .filter((student: { id?: string | null }) => student.id)
@@ -309,18 +318,18 @@ export async function createLiveLessons(input: {
   const startsAt = new Date(input.startsAt);
 
   if (!input.title.trim()) {
-    throw new Error('Ders başlığı gerekli.');
+    throw new LiveLessonInputError('Ders başlığı gerekli.');
   }
   if (!Number.isFinite(startsAt.getTime())) {
-    throw new Error('Geçerli bir tarih ve saat seçin.');
+    throw new LiveLessonInputError('Geçerli bir tarih ve saat seçin.');
   }
   const targetStudentIds = [...new Set(input.targetStudentIds || [])].filter(Boolean);
 
   if (!VALID_TARGET_GRADES.includes(input.targetGrade)) {
-    throw new Error('Geçerli bir sınıf seçin.');
+    throw new LiveLessonInputError('Geçerli bir sınıf seçin.');
   }
   if (input.targetGrade === 'selected' && targetStudentIds.length === 0) {
-    throw new Error('En az bir öğrenci seçin.');
+    throw new LiveLessonInputError('En az bir öğrenci seçin.');
   }
 
   const startsAtValues = buildRecurringStartsAtValues(startsAt, input.repeatWeeklyUntil);
@@ -386,18 +395,18 @@ export async function updateLiveLesson(input: {
   const startsAt = new Date(input.startsAt);
 
   if (!input.title.trim()) {
-    throw new Error('Ders başlığı gerekli.');
+    throw new LiveLessonInputError('Ders başlığı gerekli.');
   }
   if (!Number.isFinite(startsAt.getTime())) {
-    throw new Error('Geçerli bir tarih ve saat seçin.');
+    throw new LiveLessonInputError('Geçerli bir tarih ve saat seçin.');
   }
   if (!VALID_TARGET_GRADES.includes(input.targetGrade)) {
-    throw new Error('Geçerli bir ders hedefi seçin.');
+    throw new LiveLessonInputError('Geçerli bir ders hedefi seçin.');
   }
 
   const targetStudentIds = [...new Set(input.targetStudentIds || [])].filter(Boolean);
   if (input.targetGrade === 'selected' && targetStudentIds.length === 0) {
-    throw new Error('En az bir öğrenci seçin.');
+    throw new LiveLessonInputError('En az bir öğrenci seçin.');
   }
 
   const { data: current, error: currentError } = await supabase
@@ -407,12 +416,12 @@ export async function updateLiveLesson(input: {
     .single();
 
   if (currentError || !current) {
-    throw new Error('Ders bulunamadı.');
+    throw new LiveLessonInputError('Ders bulunamadı.');
   }
 
   const currentLesson = current as LiveLesson;
   if (currentLesson.status === 'cancelled') {
-    throw new Error('İptal edilmiş ders düzenlenemez.');
+    throw new LiveLessonInputError('İptal edilmiş ders düzenlenemez.');
   }
 
   const nextTargetStudentIds = input.targetGrade === 'selected' ? targetStudentIds : null;
@@ -584,10 +593,10 @@ function buildRecurringStartsAtValues(startsAt: Date, repeatWeeklyUntil?: string
 
   const repeatUntil = new Date(repeatWeeklyUntil);
   if (!Number.isFinite(repeatUntil.getTime())) {
-    throw new Error('Geçerli bir tekrar bitiş tarihi seçin.');
+    throw new LiveLessonInputError('Geçerli bir tekrar bitiş tarihi seçin.');
   }
   if (repeatUntil.getTime() < startsAt.getTime()) {
-    throw new Error('Tekrar bitiş tarihi ders başlangıcından önce olamaz.');
+    throw new LiveLessonInputError('Tekrar bitiş tarihi ders başlangıcından önce olamaz.');
   }
 
   const values: Date[] = [];
@@ -602,7 +611,7 @@ function buildRecurringStartsAtValues(startsAt: Date, repeatWeeklyUntil?: string
   if (values.length === MAX_RECURRING_LESSONS) {
     const nextAfterLimit = new Date(startsAt.getTime() + MAX_RECURRING_LESSONS * 7 * 24 * 60 * 60 * 1000);
     if (nextAfterLimit.getTime() <= repeatUntil.getTime()) {
-      throw new Error('Tekrar eden dersler en fazla 16 hafta planlanabilir.');
+      throw new LiveLessonInputError('Tekrar eden dersler en fazla 16 hafta planlanabilir.');
     }
   }
 

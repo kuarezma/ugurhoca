@@ -1,3 +1,4 @@
+import { toStoredGrade } from '@/lib/grade';
 import { createServiceRoleClient } from '@/lib/supabase/server';
 import { createLogger } from '@/lib/logger';
 import type { Assignment, Submission } from '@/types';
@@ -43,8 +44,7 @@ export async function sendDueAssignmentReminders(): Promise<AssignmentReminderRe
     if (assignment.student_id) {
       studentIds = [assignment.student_id];
     } else if (assignment.grade !== undefined && assignment.grade !== null) {
-      const numGrade = Number(assignment.grade);
-      const gradeFilter = Number.isFinite(numGrade) ? numGrade : assignment.grade;
+      const gradeFilter = toStoredGrade(assignment.grade);
       const { data: students } = await supabase
         .from('profiles')
         .select('id')

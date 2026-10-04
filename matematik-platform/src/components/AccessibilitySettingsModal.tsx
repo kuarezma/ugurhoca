@@ -32,7 +32,7 @@ export function AccessibilitySettingsModal({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-[180] flex items-center justify-center p-3 sm:p-6 overflow-hidden animate-in fade-in duration-200">
+    <div className="fixed inset-0 z-[180] flex items-center justify-center p-3 pt-[max(0.75rem,env(safe-area-inset-top))] pb-[max(0.75rem,env(safe-area-inset-bottom))] sm:p-6 overflow-hidden animate-in fade-in duration-200">
       <div
         className="fixed inset-0 bg-slate-950/80 backdrop-blur-md"
         onClick={onClose}
@@ -45,7 +45,7 @@ export function AccessibilitySettingsModal({
         aria-modal="true"
         aria-labelledby={titleId}
         tabIndex={-1}
-        className="relative z-10 w-full max-w-2xl max-h-[92vh] flex flex-col rounded-3xl border border-slate-200/80 dark:border-white/10 bg-white dark:bg-slate-900 text-slate-900 dark:text-white shadow-2xl overflow-hidden transition-all"
+        className="relative z-10 w-full max-w-2xl max-h-[calc(100dvh-max(1.5rem,env(safe-area-inset-top)+env(safe-area-inset-bottom)))] flex flex-col rounded-3xl border border-slate-200/80 dark:border-white/10 bg-white dark:bg-slate-900 text-slate-900 dark:text-white shadow-2xl overflow-hidden transition-all"
       >
         {/* Başlık */}
         <div className="border-b border-slate-200/80 dark:border-white/10 bg-slate-50/80 dark:bg-slate-950/80 p-4 sm:p-5 flex items-center justify-between">
