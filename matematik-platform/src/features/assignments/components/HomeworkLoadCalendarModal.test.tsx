@@ -1,4 +1,4 @@
-import { describe, expect, it, vi } from 'vitest';
+import { describe, expect, it, vi, afterEach } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import HomeworkLoadCalendarModal, { calculateEstimatedMinutes } from './HomeworkLoadCalendarModal';
 import type { Assignment } from '@/types';
@@ -25,6 +25,17 @@ describe('HomeworkLoadCalendarModal Component', () => {
       created_at: '2026-09-01T10:00:00Z',
     },
   ];
+
+  afterEach(() => { vi.useRealTimers(); vi.unstubAllEnvs(); });
+
+  it.each(['2026-10-05T00:30:00+03:00', '2026-10-04T23:30:00+03:00'])('already uses the local calendar day at %s', (instant) => {
+    vi.stubEnv('TZ', 'Europe/Istanbul');
+    vi.useFakeTimers(); vi.setSystemTime(new Date(instant));
+    const localDay = instant.slice(0, 10);
+    render(<HomeworkLoadCalendarModal isOpen onClose={vi.fn()} submissions={{}}
+      assignments={[{ ...mockAssignments[0], title: 'Yerel güne ait ödev', due_date: `${localDay}T12:00:00` }]} />);
+    expect(screen.getByText('Yerel güne ait ödev')).toBeInTheDocument();
+  });
 
   it('calculates estimated minutes correctly from description', () => {
     expect(calculateEstimatedMinutes(mockAssignments[0])).toBe(50); // 20 * 2.5 = 50

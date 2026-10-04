@@ -1,18 +1,26 @@
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { trackStudentActivityEvent } from '@/features/analytics/trackActivity';
+import { userScopedStorage } from '@/lib/userScopedStorage';
 import type { ContentDocument } from '@/types';
 
 const COMPLETED_DOCS_KEY = 'matematiklab_completed_docs';
 
 export const useContentCompletion = (userId?: string | null) => {
-  const [completedDocIds, setCompletedDocIds] = useState<Set<string>>(new Set());
+  const [savedCompletedDocIds, setCompletedDocIds] = useState<Set<string>>(new Set());
+  const [loadedUserId, setLoadedUserId] = useState<string | null | undefined>(undefined);
+  const scopeId = userId ?? null;
+  const isCurrentUser = loadedUserId === scopeId;
+  // Hesap değişiminin ilk renderında bile önceki hesabın verisini gösterme.
+  const completedDocIds = useMemo(() => isCurrentUser ? savedCompletedDocIds : new Set<string>(), [isCurrentUser, savedCompletedDocIds]);
   const [isLoaded, setIsLoaded] = useState(false);
 
   useEffect(() => {
+    setCompletedDocIds(new Set());
+    setIsLoaded(false);
     try {
-      const saved = localStorage.getItem(COMPLETED_DOCS_KEY);
+      const saved = userScopedStorage(userId ?? null).getItem(COMPLETED_DOCS_KEY);
       if (saved) {
         const parsed = JSON.parse(saved);
         if (Array.isArray(parsed)) {
@@ -22,9 +30,10 @@ export const useContentCompletion = (userId?: string | null) => {
     } catch {
       // ignore
     } finally {
+      setLoadedUserId(userId ?? null);
       setIsLoaded(true);
     }
-  }, []);
+  }, [userId]);
 
   const isCompleted = useCallback(
     (docId: string) => completedDocIds.has(docId),
@@ -37,14 +46,14 @@ export const useContentCompletion = (userId?: string | null) => {
       const nextCompleted = !wasCompleted;
 
       setCompletedDocIds((current) => {
-        const next = new Set(current);
+        const next = new Set(isCurrentUser ? current : []);
         if (nextCompleted) {
           next.add(content.id);
         } else {
           next.delete(content.id);
         }
         try {
-          localStorage.setItem(COMPLETED_DOCS_KEY, JSON.stringify([...next]));
+          userScopedStorage(userId ?? null).setItem(COMPLETED_DOCS_KEY, JSON.stringify([...next]));
         } catch {
           // ignore
         }
@@ -63,13 +72,13 @@ export const useContentCompletion = (userId?: string | null) => {
         userId,
       });
     },
-    [completedDocIds, userId],
+    [completedDocIds, isCurrentUser, userId],
   );
 
   return {
     completedDocIds,
     isCompleted,
-    isLoaded,
+    isLoaded: isLoaded && isCurrentUser,
     toggleCompleted,
   };
 };

@@ -20,10 +20,10 @@ import {
   writeAccessTokenCookie,
 } from '@/lib/auth-client';
 import {
-  formatSignupError,
   normalizeFullNameForMatch,
   studentLoginEmail,
 } from '@/lib/student-identity';
+import { toUserMessage } from '@/lib/auth-user-message';
 import { createLogger } from '@/lib/logger';
 import { passwordStrength } from '@/lib/validation/auth';
 import { Mascot } from '@/components/Mascot';
@@ -168,7 +168,7 @@ export default function RegisterPage() {
       }, 1800);
     } catch (err: unknown) {
       log.warn('Register failure', { message: err instanceof Error ? err.message : String(err) });
-      setError(formatSignupError(err));
+      setError(toUserMessage(err));
     } finally {
       setLoading(false);
     }

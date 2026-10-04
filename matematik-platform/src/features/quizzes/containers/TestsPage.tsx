@@ -161,6 +161,7 @@ import {
   getActiveQuizDraft,
   type QuizDraft,
 } from '@/features/quizzes/lib/quizDraftStorage';
+import { userScopedStorage } from '@/lib/userScopedStorage';
 import { incrementQuestionsSolved } from '@/lib/dailyGoalStorage';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { Skeleton } from '@/components/ui/Skeleton';
@@ -292,12 +293,10 @@ export default function TestsPage({
 
   useEffect(() => {
     if (typeof window !== 'undefined' && !quizStarted) {
-      const draft = getActiveQuizDraft();
-      if (draft) {
-        setActiveDraft(draft);
-      }
+      const draft = getActiveQuizDraft(user?.id ?? null);
+      setActiveDraft(draft);
     }
-  }, [quizStarted]);
+  }, [quizStarted, user?.id]);
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -337,12 +336,12 @@ export default function TestsPage({
 
   useEffect(() => {
     try {
-      const list = getSavedMistakes();
+      const list = getSavedMistakes(user?.id ?? null);
       setPendingMistakesCount(list.filter((m) => !m.mastered).length);
     } catch {
       // ignore
     }
-  }, [isMistakeNotebookOpen, isMistakeModalOpen, quizStarted]);
+  }, [isMistakeNotebookOpen, isMistakeModalOpen, quizStarted, user?.id]);
   const resultSavedRef = useRef(false);
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -355,22 +354,41 @@ export default function TestsPage({
     }
   }, [modeParam]);
 
+  const pendingFlushUsersRef = useRef(new Set<string>());
   const flushPendingQuizResults = useCallback(async () => {
+    const userId = user?.id;
+    if (!userId || pendingFlushUsersRef.current.has(userId)) return;
+    pendingFlushUsersRef.current.add(userId);
+    const storage = userScopedStorage(userId);
     try {
-      const raw = localStorage.getItem('ugurhoca_pending_quiz_results');
+      const raw = storage.getItem('ugurhoca_pending_quiz_results');
       if (!raw) return;
-      const pending = JSON.parse(raw);
-      if (!Array.isArray(pending) || pending.length === 0) return;
+      const parsed = JSON.parse(raw);
+      if (!Array.isArray(parsed)) return;
+      // Eski kuyruk karışmış olabilir: yalnız oturumdaki kullanıcı adına gönder.
+      const pending = parsed.filter((result) => result?.user_id === userId);
+      if (pending.length === 0) return;
 
       const { error: insertError } = await supabase.from('quiz_results').insert(pending);
       if (!insertError) {
-        localStorage.removeItem('ugurhoca_pending_quiz_results');
+        // İstek sürerken eklenen sonuçları silme; yalnız onaylanan kayıtları çıkar.
+        const remaining = JSON.parse(storage.getItem('ugurhoca_pending_quiz_results') || '[]');
+        if (Array.isArray(remaining)) {
+          for (const result of pending) {
+            const index = remaining.findIndex((item) => JSON.stringify(item) === JSON.stringify(result));
+            if (index >= 0) remaining.splice(index, 1);
+          }
+          if (remaining.length > 0) storage.setItem('ugurhoca_pending_quiz_results', JSON.stringify(remaining));
+          else storage.removeItem('ugurhoca_pending_quiz_results');
+        }
         showToast('success', 'Çevrimdışıyken tamamlanan test sonuçlarınız senkronize edildi.');
       }
     } catch {
       // ignore
+    } finally {
+      pendingFlushUsersRef.current.delete(userId);
     }
-  }, [showToast]);
+  }, [showToast, user?.id]);
 
   useEffect(() => {
     const handleOnline = () => {
@@ -392,7 +410,7 @@ export default function TestsPage({
 
   // Aktif test durumunu (cevaplar, kalan süre, bayraklar, soru süreleri) anlık güvenceye al
   useEffect(() => {
-    if (quizStarted && selectedQuiz && (Object.keys(answers).length > 0 || currentQuestion > 0)) {
+    if (quizStarted && !showResult && timeLeft !== 0 && selectedQuiz && (Object.keys(answers).length > 0 || currentQuestion > 0)) {
       saveQuizDraft({
         quizId: selectedQuiz.id,
         quizTitle: selectedQuiz.title,
@@ -402,10 +420,12 @@ export default function TestsPage({
         questionTimes,
         startTime: startTime || Date.now(),
         timeLeft: timeLeft ?? (selectedQuiz.time_limit * 60),
-      });
+      }, user?.id ?? null);
     }
   }, [
     quizStarted,
+    showResult,
+    user?.id,
     selectedQuiz,
     answers,
     currentQuestion,
@@ -506,7 +526,7 @@ export default function TestsPage({
     async (draft: QuizDraft) => {
       const targetQuiz = quizzes.find((q) => q.id === draft.quizId);
       if (!targetQuiz) {
-        clearQuizDraft(draft.quizId);
+        clearQuizDraft(draft.quizId, user?.id ?? null);
         setActiveDraft(null);
         return;
       }
@@ -528,17 +548,17 @@ export default function TestsPage({
       setActiveDraft(null);
       showToast('success', `${targetQuiz.title} sınavına kaldığınız yerden devam ediyorsunuz.`);
     },
-    [loadQuizQuestions, quizzes, showToast],
+    [loadQuizQuestions, quizzes, showToast, user?.id],
   );
 
   const handleDiscardDraft = useCallback((quizId: string) => {
-    clearQuizDraft(quizId);
+    clearQuizDraft(quizId, user?.id ?? null);
     setActiveDraft(null);
-  }, []);
+  }, [user?.id]);
 
   const startQuiz = useCallback(
     async (quiz: Quiz) => {
-      const existingDraft = getQuizDraft(quiz.id);
+      const existingDraft = getQuizDraft(quiz.id, user?.id ?? null);
       if (existingDraft && (Object.keys(existingDraft.answers).length > 0 || existingDraft.currentQuestion > 0)) {
         await handleResumeDraft(existingDraft);
         return;
@@ -559,7 +579,7 @@ export default function TestsPage({
       setQuestionTimes({});
       resultSavedRef.current = false;
     },
-    [handleResumeDraft, loadQuizQuestions],
+    [handleResumeDraft, loadQuizQuestions, user?.id],
   );
 
   const quizIdParam = searchParams?.get('quizId');
@@ -695,7 +715,7 @@ export default function TestsPage({
   };
 
   const handleStartAdaptiveQuiz = (count?: number) => {
-    const list = getSavedMistakes();
+    const list = getSavedMistakes(user?.id ?? null);
     const pending = list.filter((m) => !m.mastered);
     if (pending.length === 0) {
       showToast('info', 'Hata defterinde henüz çözülecek yanlış soru bulunmuyor. Tebrikler!');
@@ -840,8 +860,15 @@ export default function TestsPage({
   }, [answers, quizQuestions]);
 
   const saveQuizResult = useCallback(async () => {
+    // Kilit yerel sayaçları, hata defterini ve uzak kaydı birlikte korur.
+    if (resultSavedRef.current) return;
+    resultSavedRef.current = true;
+    if (selectedQuiz) {
+      clearQuizDraft(selectedQuiz.id, user?.id ?? null);
+      setActiveDraft(null);
+    }
     // Hata defterine yanlışları otomatik ekle, doğru çözülenleri öğrenildi işaretle
-    const mistakes = quizQuestions.filter((q, i) => answers[i] !== q.correct_index);
+    const mistakes = quizQuestions.filter((q, i) => answers[i] !== undefined && answers[i] !== q.correct_index);
     if (mistakes.length > 0) {
       const userAnswersMap: Record<string, number> = {};
       quizQuestions.forEach((q, i) => {
@@ -849,20 +876,18 @@ export default function TestsPage({
           userAnswersMap[q.id] = answers[i];
         }
       });
-      saveMistakesToBank(mistakes, selectedQuiz?.title, userAnswersMap);
+      saveMistakesToBank(mistakes, selectedQuiz?.title, userAnswersMap, user?.id ?? null);
     }
     const corrects = quizQuestions.filter((q, i) => answers[i] === q.correct_index);
     for (const c of corrects) {
-      markMistakeMastered(c.question, true);
+      markMistakeMastered(c.question, true, user?.id ?? null);
     }
     if (user?.id) {
       void syncMistakesWithCloud(user.id);
     }
-    incrementQuestionsSolved(quizQuestions.length);
+    incrementQuestionsSolved(quizQuestions.length, user?.id ?? null);
 
     if (!user || !selectedQuiz || !startTime) return;
-    if (resultSavedRef.current) return;
-    resultSavedRef.current = true;
     const score = calculateScore();
     const timeSpent = Math.round((Date.now() - startTime) / 1000);
 
@@ -879,7 +904,7 @@ export default function TestsPage({
       ]);
       if (saveError) throw saveError;
       try {
-        clearQuizDraft(selectedQuiz.id);
+        clearQuizDraft(selectedQuiz.id, user?.id ?? null);
         sessionStorage.removeItem(`ugurhoca_active_quiz_${selectedQuiz.id}`);
         setActiveDraft(null);
       } catch {
@@ -902,8 +927,10 @@ export default function TestsPage({
     } catch (err) {
       log.error('Sonuç kaydedilirken hata', err);
       try {
-        const raw = localStorage.getItem('ugurhoca_pending_quiz_results') || '[]';
-        const pending = JSON.parse(raw);
+        const storage = userScopedStorage(user.id);
+        const raw = storage.getItem('ugurhoca_pending_quiz_results') || '[]';
+        const parsed = JSON.parse(raw);
+        const pending = Array.isArray(parsed) ? parsed : [];
         pending.push({
           user_id: user.id,
           quiz_id: selectedQuiz.id,
@@ -912,12 +939,12 @@ export default function TestsPage({
           answers,
           time_spent: timeSpent,
         });
-        localStorage.setItem('ugurhoca_pending_quiz_results', JSON.stringify(pending));
-        showToast('info', 'Sonucunuz yerel hafızaya kaydedildi. İnternet bağlandığında otomatik kaydedilecek.');
+        const queued = storage.setItem('ugurhoca_pending_quiz_results', JSON.stringify(pending));
+        if (queued) showToast('info', 'Sonucunuz yerel hafızaya kaydedildi. İnternet bağlandığında otomatik kaydedilecek.');
       } catch {
         // ignore
       }
-      resultSavedRef.current = false;
+      // Yerel yan etkiler zaten işlendi; ağ hatası kilidi yeniden açmaz.
     }
   }, [
     answers,
@@ -966,7 +993,7 @@ export default function TestsPage({
 
   const resetQuiz = () => {
     if (selectedQuiz) {
-      clearQuizDraft(selectedQuiz.id);
+      clearQuizDraft(selectedQuiz.id, user?.id ?? null);
     }
     setActiveDraft(null);
     setSelectedQuiz(null);

@@ -59,12 +59,13 @@ export function QuizResultsView({
   onOpenMistakeNotebook,
   onOpenWorksheet,
 }: QuizResultsViewProps) {
-  const correctCount = Object.values(answers).filter(
+  const indexedAnswers = quizQuestions.map((_, i) => answers[i]);
+  const correctCount = indexedAnswers.filter(
     (a, i) => a === quizQuestions[i]?.correct_index,
   ).length;
 
-  const wrongCount = Object.values(answers).filter(
-    (a, i) => a !== quizQuestions[i]?.correct_index,
+  const wrongCount = indexedAnswers.filter(
+    (a, i) => a !== undefined && a !== quizQuestions[i]?.correct_index,
   ).length;
 
   const mascotPose = score >= 80 ? 'celebrate' : score >= 50 ? 'waving' : 'thinking';

@@ -21,12 +21,15 @@ vi.mock('@/lib/supabase/client', () => ({
 }));
 
 import {
+  clearClientAuthSnapshotCookie,
   clearUserProfileCache,
   getClientSession,
   getCurrentUserProfile,
   redirectToHome,
   redirectToLogin,
   requireClientSession,
+  signOutClient,
+  syncCurrentUserSnapshotCookie,
 } from '@/lib/auth-client';
 
 const createSession = () =>
@@ -69,6 +72,41 @@ describe('auth-client', () => {
         }),
       }),
     });
+  });
+
+  it.each([String.raw`/\evil.com`, '/%5Cevil.com', '//evil.com'])
+    ('does not forward an unsafe login return target %s', (target) => {
+      const router = { push: vi.fn(), replace: vi.fn() };
+      redirectToLogin(router, target);
+      expect(router.replace).toHaveBeenCalledWith('/giris');
+    });
+
+  it('clears only legacy learning keys on logout and keeps both users scoped data', async () => {
+    localStorage.clear();
+    mockSignOut.mockResolvedValue({ error: null });
+    for (const key of ['favorites', 'matematiklab_completed_docs', 'ugurhoca_daily_goal_v1', 'ugur_hoca_mistakes_bank_v1', 'ugurhoca_pending_quiz_results', 'ugurhoca_active_draft_quiz_id', 'ugurhoca_quiz_draft_quiz-1']) {
+      localStorage.setItem(key, 'legacy');
+      localStorage.setItem(`${key}:user-a`, 'saved-a');
+      localStorage.setItem(`${key}:user-b`, 'saved-b');
+    }
+    localStorage.setItem('theme', 'dark');
+    await signOutClient();
+    expect(localStorage.getItem('favorites')).toBeNull();
+    expect(localStorage.getItem('ugurhoca_quiz_draft_quiz-1')).toBeNull();
+    expect(localStorage.getItem('favorites:user-a')).toBe('saved-a');
+    expect(localStorage.getItem('favorites:user-b')).toBe('saved-b');
+    expect(localStorage.getItem('ugurhoca_quiz_draft_quiz-1:user-a')).toBe('saved-a');
+    expect(localStorage.getItem('theme')).toBe('dark');
+  });
+
+  it('assigns legacy data to the first authenticated profile before any learning screen opens', async () => {
+    localStorage.clear();
+    localStorage.setItem('favorites', '["legacy"]');
+    mockGetSession.mockResolvedValue({ data: { session: createSession() }, error: null });
+    mockProfileSingle.mockResolvedValue({ data: { id: 'user-1', name: 'Ada', grade: 7 }, error: null });
+    await getCurrentUserProfile({ redirectToLogin: false });
+    expect(localStorage.getItem('favorites:user-1')).toBe('["legacy"]');
+    expect(localStorage.getItem('favorites')).toBeNull();
   });
 
   it('prefers router.replace for redirects', () => {
@@ -217,5 +255,48 @@ describe('auth-client', () => {
     const r4 = await getCurrentUserProfile({ redirectToLogin: false });
     expect(r4?.profile.name).toBe('Ada Profil');
     expect(mockProfileSingle).toHaveBeenCalledTimes(1);
+  });
+
+  it('clears client cookies and user profile cache via clearClientAuthSnapshotCookie', () => {
+    document.cookie = `${AUTH_ACCESS_TOKEN_COOKIE_NAME}=test-token; path=/`;
+    document.cookie = `${AUTH_SNAPSHOT_COOKIE_NAME}=test-snapshot; path=/`;
+
+    clearClientAuthSnapshotCookie();
+
+    expect(getCookieValue(AUTH_ACCESS_TOKEN_COOKIE_NAME)).toBeUndefined();
+    expect(getCookieValue(AUTH_SNAPSHOT_COOKIE_NAME)).toBeUndefined();
+  });
+
+  it('signs out user from Supabase and clears cookies via signOutClient', async () => {
+    document.cookie = `${AUTH_ACCESS_TOKEN_COOKIE_NAME}=test-token; path=/`;
+    document.cookie = `${AUTH_SNAPSHOT_COOKIE_NAME}=test-snapshot; path=/`;
+
+    await signOutClient();
+
+    expect(mockSignOut).toHaveBeenCalledTimes(1);
+    expect(getCookieValue(AUTH_ACCESS_TOKEN_COOKIE_NAME)).toBeUndefined();
+    expect(getCookieValue(AUTH_SNAPSHOT_COOKIE_NAME)).toBeUndefined();
+  });
+
+  it('synchronizes current user profile snapshot cookie via syncCurrentUserSnapshotCookie', async () => {
+    const session = createSession();
+    mockGetSession.mockResolvedValue({
+      data: { session },
+      error: null,
+    });
+    mockProfileSingle.mockResolvedValue({
+      data: {
+        email: 'ogrenci@example.com',
+        grade: 8,
+        id: 'user-1',
+        isAdmin: false,
+        name: 'Ada Profil',
+      },
+    });
+
+    const profile = await syncCurrentUserSnapshotCookie();
+    expect(profile?.id).toBe('user-1');
+    expect(profile?.name).toBe('Ada Profil');
+    expect(getCookieValue(AUTH_SNAPSHOT_COOKIE_NAME)).toBeDefined();
   });
 });

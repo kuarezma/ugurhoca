@@ -1,5 +1,7 @@
 import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 
+import { trackRecoverySession } from '@/lib/auth-recovery';
+
 let browserClient:
   | SupabaseClient
   | undefined;
@@ -23,6 +25,8 @@ const createBrowserSupabaseClient = () => {
     supabaseAnonKey,
   ) as SupabaseClient;
 
+  // Sayfa mount olmadan gelen recovery olayını da yakala (SDK hash'i temizler).
+  browserClient.auth.onAuthStateChange(trackRecoverySession);
   return browserClient;
 };
 

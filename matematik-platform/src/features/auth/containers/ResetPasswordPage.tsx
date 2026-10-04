@@ -1,11 +1,13 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { ArrowLeft, Lock, CheckCircle2, Eye, EyeOff, ShieldCheck } from 'lucide-react';
 import { supabase } from '@/lib/supabase/client';
+import { isRecoverySession, trackRecoverySession } from '@/lib/auth-recovery';
+import { toUserMessage } from '@/lib/auth-user-message';
 import { passwordStrength } from '@/lib/validation/auth';
 import { Mascot } from '@/components/Mascot';
 import { fireConfetti } from '@/components/ConfettiBurst';
@@ -30,7 +32,40 @@ export default function ResetPasswordPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
+  const [recoveryReady, setRecoveryReady] = useState(false);
   const router = useRouter();
+
+  useEffect(() => {
+    let active = true;
+    const rejectRecovery = () => {
+      setRecoveryReady(false);
+      router.replace('/sifremi-unuttum');
+    };
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      trackRecoverySession(event, session);
+      if (!active) return;
+      if (event === 'PASSWORD_RECOVERY' || event === 'TOKEN_REFRESHED') {
+        if (isRecoverySession(session)) setRecoveryReady(true);
+      } else if (event === 'SIGNED_OUT' || (event === 'SIGNED_IN' && !isRecoverySession(session))) {
+        rejectRecovery();
+      }
+    });
+    // SDK recovery bildirimini initialization'dan sonraki timer'da gönderir.
+    let checkTimer: ReturnType<typeof setTimeout> | undefined;
+    void supabase.auth.getSession().then(({ data, error }) => {
+      if (!active) return;
+      checkTimer = setTimeout(() => {
+        if (!active) return;
+        if (!error && isRecoverySession(data.session)) setRecoveryReady(true);
+        else rejectRecovery();
+      }, 0);
+    }).catch(() => { if (active) rejectRecovery(); });
+    return () => {
+      active = false;
+      clearTimeout(checkTimer);
+      subscription.unsubscribe();
+    };
+  }, [router]);
 
   const strength = useMemo(
     () => passwordStrength(newPassword),
@@ -40,6 +75,7 @@ export default function ResetPasswordPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
+    if (!recoveryReady) return;
 
     if (!newPassword || newPassword.length < 6) {
       setError('Şifre en az 6 karakter olmalıdır.');
@@ -53,6 +89,12 @@ export default function ResetPasswordPage() {
 
     setLoading(true);
     try {
+      const { data, error: sessionError } = await supabase.auth.getSession();
+      if (sessionError || !isRecoverySession(data.session)) {
+        setRecoveryReady(false);
+        router.replace('/sifremi-unuttum');
+        return;
+      }
       const { error: updateError } = await supabase.auth.updateUser({
         password: newPassword,
       });
@@ -67,8 +109,7 @@ export default function ResetPasswordPage() {
         router.push('/profil');
       }, 2500);
     } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : String(err);
-      setError('Şifre güncellenemedi: ' + msg);
+      setError(toUserMessage(err));
     } finally {
       setLoading(false);
     }
@@ -148,7 +189,7 @@ export default function ResetPasswordPage() {
                   <span>Profile Git</span>
                 </Link>
               </div>
-            ) : (
+            ) : recoveryReady ? (
               <form onSubmit={handleSubmit} className="space-y-5">
                 <div>
                   <Input
@@ -212,6 +253,10 @@ export default function ResetPasswordPage() {
                   Şifreyi Güncelle ve Giriş Yap
                 </Button>
               </form>
+            ) : (
+              <p role="status" className="text-sm text-secondary">
+                Şifre sıfırlama bağlantınız kontrol ediliyor. Geçersizse yeni bağlantı isteyebilirsiniz.
+              </p>
             )}
 
             <p className="mt-6 flex items-start gap-2 rounded-2xl border border-emerald-400/20 bg-emerald-500/10 px-4 py-3 text-xs leading-relaxed text-emerald-900 dark:text-emerald-200">

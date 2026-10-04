@@ -29,7 +29,7 @@ export async function GET(_request: Request, context: RouteContext) {
     return NextResponse.json({ error: 'Ders bulunamadı.' }, { status: 404 });
   }
 
-  if (!canUserAccessLiveLesson(lesson as LiveLesson, auth.user)) {
+  if (!isLiveLessonAdmin(auth.user) && !canUserAccessLiveLesson(lesson as LiveLesson, auth.user)) {
     return NextResponse.json({ error: 'Bu dersin sohbetine erişim yetkiniz yok.' }, { status: 403 });
   }
 
@@ -65,7 +65,7 @@ export async function POST(request: Request, context: RouteContext) {
     return NextResponse.json({ error: 'Ders aktif değil veya bulunamadı.' }, { status: 404 });
   }
 
-  if (!canUserAccessLiveLesson(lesson as LiveLesson, auth.user)) {
+  if (!isLiveLessonAdmin(auth.user) && !canUserAccessLiveLesson(lesson as LiveLesson, auth.user)) {
     return NextResponse.json({ error: 'Bu dersin sohbetine mesaj gönderme yetkiniz yok.' }, { status: 403 });
   }
   const role = isLiveLessonAdmin(auth.user) ? 'teacher' : 'student';

@@ -13,7 +13,9 @@ import {
   writeAccessTokenCookie,
 } from '@/lib/auth-client';
 import { normalizeFullNameForMatch } from '@/lib/student-identity';
+import { safeRedirectPath } from '@/lib/safe-redirect-path';
 import { loginSchema } from '@/lib/validation/auth';
+import { toUserMessage } from '@/lib/auth-user-message';
 import { createLogger } from '@/lib/logger';
 import { Mascot } from '@/components/Mascot';
 import { Input } from '@/components/ui/Input';
@@ -24,16 +26,9 @@ const log = createLogger('login-page');
 const getTargetRedirect = () => {
   if (typeof window === 'undefined') return '/profil';
   const searchParams = new URLSearchParams(window.location.search);
-  const redirect = searchParams.get('redirect');
-  if (
-    redirect &&
-    redirect.startsWith('/') &&
-    !redirect.startsWith('//') &&
-    !redirect.startsWith('/giris')
-  ) {
-    return redirect;
-  }
-  return '/profil';
+  if (!searchParams.has('redirect')) return '/profil';
+  const target = safeRedirectPath(searchParams.get('redirect'));
+  return target.startsWith('/giris') ? '/profil' : target;
 };
 
 export default function LoginPage() {
@@ -123,13 +118,7 @@ export default function LoginPage() {
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : String(err);
       log.warn('Login failure', { message: msg });
-      if (msg === 'Invalid login credentials') {
-        setError('Ad soyad veya şifre hatalı.');
-      } else if (msg === 'Email not confirmed') {
-        setError('E-posta onayı bekleniyor.');
-      } else {
-        setError('Giriş başarısız: ' + msg);
-      }
+      setError(toUserMessage(err));
     } finally {
       setLoading(false);
     }

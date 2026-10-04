@@ -7,7 +7,9 @@ import {
   type AuthSnapshot,
 } from '@/lib/auth-snapshot';
 import { supabase } from '@/lib/supabase/client';
+import { clearLegacyUserStorage, getStorageUserId, migrateLegacyUserStorage } from '@/lib/userScopedStorage';
 import type { AppUser } from '@/types';
+import { safeRedirectPath } from '@/lib/safe-redirect-path';
 
 type RouterLike = {
   push: (href: string) => void;
@@ -36,14 +38,18 @@ const writeAuthSnapshotCookie = (snapshot: AuthSnapshot | null) => {
     return;
   }
 
+  const previousUserId = getStorageUserId();
   const secure = getSecureCookieFlag();
 
   if (!snapshot) {
     document.cookie = `${AUTH_SNAPSHOT_COOKIE_NAME}=; path=/; max-age=0; samesite=lax${secure}`;
+    if (previousUserId) window.dispatchEvent(new Event('ugurhoca:daily-goal-updated'));
     return;
   }
 
   document.cookie = `${AUTH_SNAPSHOT_COOKIE_NAME}=${serializeAuthSnapshot(snapshot)}; path=/; max-age=${AUTH_SNAPSHOT_MAX_AGE}; samesite=lax${secure}`;
+  migrateLegacyUserStorage(snapshot.id);
+  if (previousUserId !== snapshot.id) window.dispatchEvent(new Event('ugurhoca:daily-goal-updated'));
 };
 
 export const writeAccessTokenCookie = (accessToken: string | null) => {
@@ -86,17 +92,13 @@ const redirectToPath = (href: string, router?: RouterLike) => {
 };
 
 export const redirectToLogin = (router?: RouterLike, redirectTarget?: string) => {
-  const target =
+  const target = safeRedirectPath(
     redirectTarget ||
-    (typeof window !== 'undefined'
-      ? window.location.pathname + window.location.search
-      : '');
-  const isValidTarget =
-    target &&
-    target.startsWith('/') &&
-    !target.startsWith('//') &&
-    target !== '/' &&
-    !target.startsWith('/giris');
+      (typeof window !== 'undefined'
+        ? window.location.pathname + window.location.search
+        : ''),
+  );
+  const isValidTarget = target !== '/' && !target.startsWith('/giris');
   const loginPath = isValidTarget
     ? `/giris?redirect=${encodeURIComponent(target)}`
     : '/giris';
@@ -302,6 +304,7 @@ export const getCurrentUserProfile = async <TProfile extends AppUser = AppUser>(
 };
 
 export const clearClientAuthSnapshotCookie = () => {
+  clearLegacyUserStorage();
   clearUserProfileCache();
   writeAccessTokenCookie(null);
   writeAuthSnapshotCookie(null);

@@ -1,4 +1,5 @@
 import { NextResponse, type NextRequest } from 'next/server';
+import { safeRedirectPath } from '@/lib/safe-redirect-path';
 import { AUTH_ACCESS_TOKEN_COOKIE_NAME } from '@/lib/auth-snapshot';
 
 /**
@@ -20,7 +21,7 @@ import { AUTH_ACCESS_TOKEN_COOKIE_NAME } from '@/lib/auth-snapshot';
  */
 // `config.matcher` zaten hangi rotalarda çalışacağını sınırlar; bu fonksiyon
 // yalnızca eşleşen istekler için çağrılır. İkisini senkron tutun.
-export function middleware(request: NextRequest) {
+export function proxy(request: NextRequest) {
   if (/%5c|\\/i.test(request.nextUrl.pathname)) {
     // Bozuk yolu yönlendirmeden normal 404 sayfasına taşı; sayfa çözümleyicisine ulaşmasın.
     return NextResponse.rewrite(new URL('/_not-found', request.url), { status: 404 });
@@ -32,7 +33,7 @@ export function middleware(request: NextRequest) {
 
   if (!hasSession) {
     const redirectUrl = new URL('/giris', request.url);
-    const target = request.nextUrl.pathname + request.nextUrl.search;
+    const target = safeRedirectPath(request.nextUrl.pathname + request.nextUrl.search);
     if (target && target !== '/' && target !== '/giris') {
       redirectUrl.searchParams.set('redirect', target);
     }
