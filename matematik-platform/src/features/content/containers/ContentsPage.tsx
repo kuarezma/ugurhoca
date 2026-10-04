@@ -916,7 +916,11 @@ function ContentsPageInner({
         return next;
       });
 
-      await updateDocumentMetric(content.id, { likes: nextLikes });
+      // Sayaç rotası yalnız +1 artırır; geri almayı sunucuya göndermek
+      // sayacı düşürmek yerine artırırdı (azaltma bilinçli olarak yok).
+      if (!isLiked) {
+        await updateDocumentMetric(content.id, { likes: nextLikes });
+      }
       applyDocumentPatch(content.id, { likes: nextLikes });
       void trackStudentActivityEvent({
         entityId: content.id,

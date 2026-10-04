@@ -108,4 +108,29 @@ describe('Admin Reset Password Route (/api/admin-reset-password)', () => {
     expect(res.status).toBe(400);
     expect(mockUpdateUserById).not.toHaveBeenCalled();
   });
+
+  it('Supabase şifre güncelleme hatası verirse ham hata mesajı sızdırılmaz ve 500 döner', async () => {
+    mockGetUser.mockResolvedValue({
+      data: { user: { email: 'admin@ugurhoca.com', id: 'admin-1' } },
+      error: null,
+    });
+    vi.mocked(isAdminEmail).mockReturnValue(true);
+    mockUpdateUserById.mockResolvedValue({
+      data: { user: null },
+      error: { message: 'Database connection failed: fatal socket error', code: 'PGRST500' },
+    });
+
+    const req = new Request('https://ugurhoca.com/api/admin-reset-password', {
+      method: 'POST',
+      headers: { authorization: 'Bearer valid-token' },
+      body: JSON.stringify({ student_id: 'stu-1', new_password: 'newpassword123' }),
+    });
+    const res = await POST(req);
+    expect(res.status).toBe(500);
+    const body = await res.json();
+    expect(body.error).not.toContain('Database connection failed');
+    expect(body.error).not.toContain('socket');
+    expect(body.error).toBe('Şifre güncellenemedi. Lütfen daha sonra tekrar deneyin.');
+  });
 });
+

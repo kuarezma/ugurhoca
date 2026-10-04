@@ -1,6 +1,7 @@
 import 'server-only';
 
-import { getServerAccessToken, getServerAuthSnapshot } from '@/lib/auth-snapshot.server';
+import { getServerAccessToken, getServerAuthSkeleton } from '@/lib/auth-snapshot.server';
+import { getVerifiedServerUser } from '@/lib/auth-verify.server';
 import { createServerSupabaseClient } from '@/lib/supabase/server';
 import type { AppUser, Assignment, Submission } from '@/types';
 
@@ -13,38 +14,32 @@ type InitialAssignmentsPageData = {
 
 export const loadInitialAssignmentsPageData =
   async (): Promise<InitialAssignmentsPageData> => {
-    const [snapshot, accessToken] = await Promise.all([
-      getServerAuthSnapshot(),
+    // Sorgu kimliği yalnızca doğrulanmış kullanıcıdan gelir; imzasız snapshot
+    // çerezi doğrulama başarısızsa yalnız yükleme iskeleti için kullanılır.
+    const [verifiedUser, skeleton, accessToken] = await Promise.all([
+      getVerifiedServerUser(),
+      getServerAuthSkeleton(),
       getServerAccessToken(),
     ]);
 
-    if (!snapshot) {
+    if (!verifiedUser || !accessToken) {
       return {
         initialAssignments: [],
         initialSubmissions: {},
-        initialUser: null,
+        initialUser: skeleton,
         isHydrated: false,
       };
     }
 
     const initialUser: AppUser = {
-      ...snapshot,
+      ...verifiedUser,
     };
-
-    if (!accessToken) {
-      return {
-        initialAssignments: [],
-        initialSubmissions: {},
-        initialUser,
-        isHydrated: false,
-      };
-    }
 
     const supabase = createServerSupabaseClient(accessToken);
     const gradeOrStudentClause =
-      typeof snapshot.grade === 'string'
-        ? `grade.eq.${snapshot.grade},student_id.eq.${snapshot.id}`
-        : `grade.eq.${Number(snapshot.grade)},student_id.eq.${snapshot.id}`;
+      typeof verifiedUser.grade === 'string'
+        ? `grade.eq.${verifiedUser.grade},student_id.eq.${verifiedUser.id}`
+        : `grade.eq.${Number(verifiedUser.grade)},student_id.eq.${verifiedUser.id}`;
 
     const [assignmentsRes, submissionsRes] = await Promise.all([
       supabase
@@ -55,7 +50,7 @@ export const loadInitialAssignmentsPageData =
       supabase
         .from('assignment_submissions')
         .select('*')
-        .eq('student_id', snapshot.id),
+        .eq('student_id', verifiedUser.id),
     ]);
 
     const initialSubmissions = ((submissionsRes.data || []) as Submission[]).reduce<

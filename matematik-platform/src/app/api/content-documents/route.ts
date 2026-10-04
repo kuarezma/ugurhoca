@@ -1,7 +1,9 @@
 import { revalidatePath, revalidateTag } from 'next/cache';
+import { getBearerOrCookieAccessToken } from '@/lib/api-auth';
 import { apiError, apiOk } from '@/lib/api-response';
 import { isAdminEmail } from '@/lib/admin';
 import { createLogger } from '@/lib/logger';
+import { enforceRateLimit, getClientIp } from '@/lib/rate-limit';
 import {
   contentDocumentCreateSchema,
   contentDocumentMetricUpdateSchema,
@@ -80,6 +82,10 @@ export async function POST(request: Request) {
   }
 }
 
+// Aynı IP'nin aynı belgedeki tüm sayaç artışları (görüntüleme + indirme +
+// beğeni) tek pencerede sayılır; normal gezinme bunun çok altında kalır.
+const METRIC_RATE_LIMIT = { limit: 10, windowSeconds: 600 } as const;
+
 export async function PATCH(request: Request) {
   try {
     const body = await request.json().catch(() => null);
@@ -89,29 +95,48 @@ export async function PATCH(request: Request) {
     }
 
     const { document_id, metric } = parsed.data;
-    const adminClient = createServiceRoleClient();
 
-    const { data: doc, error: fetchError } = await adminClient
-      .from('documents')
-      .select(metric)
-      .eq('id', document_id)
-      .single();
-
-    if (fetchError || !doc) {
-      return apiError('Doküman bulunamadı.', 404, 'document_not_found');
+    const limited = await enforceRateLimit(
+      'content-document-metric',
+      `${getClientIp(request)}:${document_id}`,
+      METRIC_RATE_LIMIT,
+    );
+    if (limited) {
+      return limited;
     }
 
-    const currentVal = (doc as Record<string, number | null | undefined>)[metric] ?? 0;
-    const nextVal = (typeof currentVal === 'number' ? currentVal : 0) + 1;
+    // Beğeni kullanıcı başına tekil tutulmuyor (bunu sağlayan tablo yok);
+    // en azından anonim şişirmeyi kapatmak için doğrulanmış oturum şart.
+    // Görüntüleme/indirme anonim de sayılır; token'a bakılmaz (süresi dolmuş
+    // bir çerez token'ı sayımı bozmasın).
+    if (metric === 'likes') {
+      const accessToken = await getBearerOrCookieAccessToken(request);
+      if (!accessToken) {
+        return apiError('Oturum açmanız gerekiyor.', 401, 'missing_session');
+      }
+      const {
+        data: { user },
+        error: userError,
+      } = await createServerSupabaseClient(accessToken).auth.getUser(accessToken);
+      if (userError || !user?.id) {
+        return apiError('Oturum açmanız gerekiyor.', 401, 'invalid_session');
+      }
+    }
 
-    const { error: updateError } = await adminClient
-      .from('documents')
-      .update({ [metric]: nextVal })
-      .eq('id', document_id);
+    // EXECUTE yalnız service_role'de (PostgREST'ten doğrudan çağrı rate
+    // limit'i atlamasın). Bu istemci yalnız bu dar RPC için kullanılır.
+    const { data: nextVal, error: rpcError } = await createServiceRoleClient().rpc(
+      'increment_document_counter',
+      { counter: metric, doc_id: document_id },
+    );
 
-    if (updateError) {
-      log.error('Metric update failed', updateError);
+    if (rpcError) {
+      log.error('Metric update failed', rpcError);
       return apiError('Sayaç güncellenemedi.', 500, 'metric_update_failed');
+    }
+
+    if (typeof nextVal !== 'number') {
+      return apiError('Doküman bulunamadı.', 404, 'document_not_found');
     }
 
     return apiOk({ document_id, [metric]: nextVal });
