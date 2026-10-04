@@ -4,7 +4,7 @@ import { renderToString } from 'react-dom/server';
 import { render, screen, waitFor } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { ThemeProvider, useTheme } from './ThemeProvider';
-import { THEME_STORAGE_KEY } from './theme-constants';
+import { THEME_STORAGE_KEY, PALETTE_STORAGE_KEY } from './theme-constants';
 
 function ThemeProbe({ seen }: { seen?: string[] }) {
   const { theme } = useTheme();
@@ -17,6 +17,20 @@ function ThemeSetter() {
   return (
     <button type="button" onClick={() => setTheme('light')}>
       light
+    </button>
+  );
+}
+
+function PaletteProbe() {
+  const { palette } = useTheme();
+  return <span data-testid="palette">{palette}</span>;
+}
+
+function PaletteSetter() {
+  const { setPalette } = useTheme();
+  return (
+    <button type="button" onClick={() => setPalette('ocean')}>
+      ocean
     </button>
   );
 }
@@ -103,5 +117,22 @@ describe('ThemeProvider', () => {
     expect(document.documentElement.classList.contains('light')).toBe(true);
     expect(window.localStorage.getItem(THEME_STORAGE_KEY)).toBe('light');
     await waitFor(() => expect(screen.getByTestId('theme')).toHaveTextContent('light'));
+  });
+
+  it('setPalette data-palette ve localStorage’ı günceller', async () => {
+    document.documentElement.dataset.palette = 'classic';
+
+    render(
+      <ThemeProvider>
+        <PaletteProbe />
+        <PaletteSetter />
+      </ThemeProvider>,
+    );
+
+    act(() => screen.getByRole('button', { name: 'ocean' }).click());
+
+    expect(document.documentElement.dataset.palette).toBe('ocean');
+    expect(window.localStorage.getItem(PALETTE_STORAGE_KEY)).toBe('ocean');
+    await waitFor(() => expect(screen.getByTestId('palette')).toHaveTextContent('ocean'));
   });
 });

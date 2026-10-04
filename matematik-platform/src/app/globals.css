@@ -139,6 +139,43 @@
   --accent-play: #ec4899;
   --accent-play-ink: #f9a8d4;
   --accent-play-tint: rgba(236, 72, 153, 0.12);
+
+  /* Tema Palet Renk Tokenları (Dinamik Indigo / Purple / Violet Aksanları) */
+  --theme-indigo-50-rgb: 238 242 255;
+  --theme-indigo-100-rgb: 224 231 255;
+  --theme-indigo-200-rgb: 199 210 254;
+  --theme-indigo-300-rgb: 165 180 252;
+  --theme-indigo-400-rgb: 129 140 248;
+  --theme-indigo-500-rgb: 99 102 241;
+  --theme-indigo-600-rgb: 79 70 229;
+  --theme-indigo-700-rgb: 67 56 202;
+  --theme-indigo-800-rgb: 55 48 163;
+  --theme-indigo-900-rgb: 49 46 129;
+  --theme-indigo-950-rgb: 30 27 75;
+
+  --theme-purple-50-rgb: 250 245 255;
+  --theme-purple-100-rgb: 243 232 255;
+  --theme-purple-200-rgb: 233 213 255;
+  --theme-purple-300-rgb: 216 180 254;
+  --theme-purple-400-rgb: 192 132 252;
+  --theme-purple-500-rgb: 168 85 247;
+  --theme-purple-600-rgb: 147 51 234;
+  --theme-purple-700-rgb: 126 34 206;
+  --theme-purple-800-rgb: 107 33 168;
+  --theme-purple-900-rgb: 88 28 135;
+  --theme-purple-950-rgb: 59 7 100;
+
+  --theme-violet-50-rgb: 245 243 255;
+  --theme-violet-100-rgb: 237 233 254;
+  --theme-violet-200-rgb: 221 214 254;
+  --theme-violet-300-rgb: 196 181 253;
+  --theme-violet-400-rgb: 167 139 250;
+  --theme-violet-500-rgb: 139 92 246;
+  --theme-violet-600-rgb: 124 58 237;
+  --theme-violet-700-rgb: 109 40 217;
+  --theme-violet-800-rgb: 91 33 182;
+  --theme-violet-900-rgb: 76 29 149;
+  --theme-violet-950-rgb: 46 16 101;
 }
 
 html[data-theme='light'] {
@@ -271,6 +308,44 @@ html[data-palette='ocean'] {
   --accent-brand-ink: #93c5fd;
   --accent-brand-tint: rgba(59, 130, 246, 0.12);
   --ring: rgb(var(--brand-primary-rgb) / 0.55);
+
+  /* Dinamik Indigo -> Mavi */
+  --theme-indigo-50-rgb: 239 246 255;
+  --theme-indigo-100-rgb: 219 234 254;
+  --theme-indigo-200-rgb: 191 219 254;
+  --theme-indigo-300-rgb: 147 197 253;
+  --theme-indigo-400-rgb: 96 165 250;
+  --theme-indigo-500-rgb: 59 130 246;
+  --theme-indigo-600-rgb: 37 99 235;
+  --theme-indigo-700-rgb: 29 78 216;
+  --theme-indigo-800-rgb: 30 64 175;
+  --theme-indigo-900-rgb: 30 58 138;
+  --theme-indigo-950-rgb: 23 37 84;
+
+  /* Dinamik Purple/Violet -> Camgöbeği/Turkuaz */
+  --theme-purple-50-rgb: 240 253 250;
+  --theme-purple-100-rgb: 204 251 241;
+  --theme-purple-200-rgb: 153 246 228;
+  --theme-purple-300-rgb: 94 234 212;
+  --theme-purple-400-rgb: 56 189 248;
+  --theme-purple-500-rgb: 6 182 212;
+  --theme-purple-600-rgb: 2 132 199;
+  --theme-purple-700-rgb: 3 105 161;
+  --theme-purple-800-rgb: 7 89 133;
+  --theme-purple-900-rgb: 12 74 110;
+  --theme-purple-950-rgb: 8 47 73;
+
+  --theme-violet-50-rgb: 240 249 255;
+  --theme-violet-100-rgb: 224 242 254;
+  --theme-violet-200-rgb: 186 230 253;
+  --theme-violet-300-rgb: 125 211 252;
+  --theme-violet-400-rgb: 56 189 248;
+  --theme-violet-500-rgb: 14 165 233;
+  --theme-violet-600-rgb: 2 132 199;
+  --theme-violet-700-rgb: 3 105 161;
+  --theme-violet-800-rgb: 7 89 133;
+  --theme-violet-900-rgb: 12 74 110;
+  --theme-violet-950-rgb: 8 47 73;
 }
 html[data-theme='light'][data-palette='ocean'] {
   --brand-primary-rgb: 29 78 216;
@@ -299,6 +374,44 @@ html[data-palette='emerald'] {
   --accent-brand-ink: #6ee7b7;
   --accent-brand-tint: rgba(16, 185, 129, 0.12);
   --ring: rgb(var(--brand-primary-rgb) / 0.55);
+
+  /* Dinamik Indigo -> Zümrüt Yeşili */
+  --theme-indigo-50-rgb: 236 253 245;
+  --theme-indigo-100-rgb: 209 250 229;
+  --theme-indigo-200-rgb: 167 243 208;
+  --theme-indigo-300-rgb: 110 231 183;
+  --theme-indigo-400-rgb: 52 211 153;
+  --theme-indigo-500-rgb: 16 185 129;
+  --theme-indigo-600-rgb: 5 150 105;
+  --theme-indigo-700-rgb: 4 120 87;
+  --theme-indigo-800-rgb: 6 95 70;
+  --theme-indigo-900-rgb: 6 78 59;
+  --theme-indigo-950-rgb: 2 44 34;
+
+  /* Dinamik Purple/Violet -> Nane & Teal */
+  --theme-purple-50-rgb: 240 253 250;
+  --theme-purple-100-rgb: 204 251 241;
+  --theme-purple-200-rgb: 153 246 228;
+  --theme-purple-300-rgb: 94 234 212;
+  --theme-purple-400-rgb: 45 212 191;
+  --theme-purple-500-rgb: 20 184 166;
+  --theme-purple-600-rgb: 13 148 136;
+  --theme-purple-700-rgb: 15 118 110;
+  --theme-purple-800-rgb: 17 94 89;
+  --theme-purple-900-rgb: 19 78 74;
+  --theme-purple-950-rgb: 4 47 46;
+
+  --theme-violet-50-rgb: 236 253 245;
+  --theme-violet-100-rgb: 209 250 229;
+  --theme-violet-200-rgb: 167 243 208;
+  --theme-violet-300-rgb: 110 231 183;
+  --theme-violet-400-rgb: 52 211 153;
+  --theme-violet-500-rgb: 16 185 129;
+  --theme-violet-600-rgb: 5 150 105;
+  --theme-violet-700-rgb: 4 120 87;
+  --theme-violet-800-rgb: 6 95 70;
+  --theme-violet-900-rgb: 6 78 59;
+  --theme-violet-950-rgb: 2 44 34;
 }
 html[data-theme='light'][data-palette='emerald'] {
   --brand-primary-rgb: 5 150 105;
@@ -327,6 +440,44 @@ html[data-palette='sunset'] {
   --accent-brand-ink: #fde68a;
   --accent-brand-tint: rgba(245, 158, 11, 0.12);
   --ring: rgb(var(--brand-primary-rgb) / 0.55);
+
+  /* Dinamik Indigo -> Kehribar & Sıcak Turuncu */
+  --theme-indigo-50-rgb: 255 251 235;
+  --theme-indigo-100-rgb: 254 243 199;
+  --theme-indigo-200-rgb: 253 230 138;
+  --theme-indigo-300-rgb: 252 211 77;
+  --theme-indigo-400-rgb: 251 191 36;
+  --theme-indigo-500-rgb: 245 158 11;
+  --theme-indigo-600-rgb: 217 119 6;
+  --theme-indigo-700-rgb: 180 83 9;
+  --theme-indigo-800-rgb: 146 64 14;
+  --theme-indigo-900-rgb: 120 53 15;
+  --theme-indigo-950-rgb: 69 26 3;
+
+  /* Dinamik Purple/Violet -> Gül & Mercan */
+  --theme-purple-50-rgb: 255 241 242;
+  --theme-purple-100-rgb: 255 228 230;
+  --theme-purple-200-rgb: 254 205 211;
+  --theme-purple-300-rgb: 253 164 175;
+  --theme-purple-400-rgb: 251 113 133;
+  --theme-purple-500-rgb: 244 63 94;
+  --theme-purple-600-rgb: 225 29 72;
+  --theme-purple-700-rgb: 190 18 60;
+  --theme-purple-800-rgb: 159 18 57;
+  --theme-purple-900-rgb: 136 19 55;
+  --theme-purple-950-rgb: 76 5 25;
+
+  --theme-violet-50-rgb: 255 247 237;
+  --theme-violet-100-rgb: 255 237 213;
+  --theme-violet-200-rgb: 254 215 170;
+  --theme-violet-300-rgb: 253 186 116;
+  --theme-violet-400-rgb: 251 146 60;
+  --theme-violet-500-rgb: 249 115 22;
+  --theme-violet-600-rgb: 234 88 12;
+  --theme-violet-700-rgb: 194 65 12;
+  --theme-violet-800-rgb: 154 52 18;
+  --theme-violet-900-rgb: 124 45 18;
+  --theme-violet-950-rgb: 67 20 7;
 }
 html[data-theme='light'][data-palette='sunset'] {
   --brand-primary-rgb: 217 119 6;
@@ -355,6 +506,10 @@ html[data-palette='midnight'] {
   --accent-brand-ink: #c7d2fe;
   --accent-brand-tint: rgba(99, 102, 241, 0.15);
   --ring: rgb(var(--brand-primary-rgb) / 0.55);
+
+  --theme-indigo-400-rgb: 129 140 248;
+  --theme-indigo-500-rgb: 99 102 241;
+  --theme-indigo-600-rgb: 79 70 229;
 }
 html[data-theme='dark'][data-palette='midnight'] {
   --surface-0-rgb: 0 0 0;
@@ -371,6 +526,19 @@ html[data-theme='dark'][data-palette='midnight'] {
   --border-strong: #3f3f46;
   --bg: #000000;
   --bg-elevated: #121214;
+}
+
+html[data-theme='dark'][data-palette='midnight'] body {
+  background-color: #000000 !important;
+}
+
+html[data-theme='dark'][data-palette='midnight'] .dark\:bg-slate-900,
+html[data-theme='dark'][data-palette='midnight'] .dark\:bg-slate-950 {
+  background-color: #09090b !important;
+}
+
+html[data-theme='dark'][data-palette='midnight'] .dark\:border-slate-800 {
+  border-color: #27272a !important;
 }
 
 

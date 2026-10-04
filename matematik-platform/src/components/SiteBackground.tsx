@@ -26,7 +26,7 @@ interface MathGlyph {
 const GLYPHS = ['π', '∑', '∞', '√x', '∫', 'Δ', 'φ', 'f(x)', 'e', 'θ'];
 
 export function SiteBackground() {
-  const { theme } = useTheme();
+  const { theme, palette } = useTheme();
   const isLight = theme === 'light';
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const glowRef = useRef<HTMLDivElement | null>(null);
@@ -191,9 +191,23 @@ export function SiteBackground() {
         // Partikül çizimi
         ctx.beginPath();
         ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
-        ctx.fillStyle = isLight
-          ? `rgba(79, 70, 229, ${p.baseAlpha * 0.75})`
-          : `rgba(167, 139, 250, ${p.baseAlpha})`;
+        if (palette === 'ocean') {
+          ctx.fillStyle = isLight
+            ? `rgba(37, 99, 235, ${p.baseAlpha * 0.75})`
+            : `rgba(96, 165, 250, ${p.baseAlpha})`;
+        } else if (palette === 'emerald') {
+          ctx.fillStyle = isLight
+            ? `rgba(5, 150, 105, ${p.baseAlpha * 0.75})`
+            : `rgba(52, 211, 153, ${p.baseAlpha})`;
+        } else if (palette === 'sunset') {
+          ctx.fillStyle = isLight
+            ? `rgba(217, 119, 6, ${p.baseAlpha * 0.75})`
+            : `rgba(251, 191, 36, ${p.baseAlpha})`;
+        } else {
+          ctx.fillStyle = isLight
+            ? `rgba(79, 70, 229, ${p.baseAlpha * 0.75})`
+            : `rgba(167, 139, 250, ${p.baseAlpha})`;
+        }
         ctx.fill();
 
         // 2. Komşu partiküller arası geometrik kafes çizgileri (Delaunay/Truss estetiği)
@@ -209,9 +223,23 @@ export function SiteBackground() {
             ctx.beginPath();
             ctx.moveTo(p.x, p.y);
             ctx.lineTo(p2.x, p2.y);
-            ctx.strokeStyle = isLight
-              ? `rgba(99, 102, 241, ${alpha})`
-              : `rgba(139, 92, 246, ${alpha})`;
+            if (palette === 'ocean') {
+              ctx.strokeStyle = isLight
+                ? `rgba(37, 99, 235, ${alpha})`
+                : `rgba(59, 130, 246, ${alpha})`;
+            } else if (palette === 'emerald') {
+              ctx.strokeStyle = isLight
+                ? `rgba(5, 150, 105, ${alpha})`
+                : `rgba(16, 185, 129, ${alpha})`;
+            } else if (palette === 'sunset') {
+              ctx.strokeStyle = isLight
+                ? `rgba(217, 119, 6, ${alpha})`
+                : `rgba(245, 158, 11, ${alpha})`;
+            } else {
+              ctx.strokeStyle = isLight
+                ? `rgba(99, 102, 241, ${alpha})`
+                : `rgba(139, 92, 246, ${alpha})`;
+            }
             ctx.lineWidth = 0.85;
             ctx.stroke();
           }
@@ -286,7 +314,7 @@ export function SiteBackground() {
       document.removeEventListener('mouseleave', handlePointerLeave);
       document.removeEventListener('visibilitychange', handleVisibilityChange);
     };
-  }, [mounted, isLight]);
+  }, [mounted, isLight, palette]);
 
   return (
     <div
@@ -297,6 +325,8 @@ export function SiteBackground() {
       {/* KATMAN 0: Açık Modda Çok Tonlu Akıcı Gradyan Zemin (Gradient Mesh) */}
       {isLight ? (
         <div className="absolute inset-0 light-gradient-mesh" />
+      ) : palette === 'midnight' ? (
+        <div className="absolute inset-0 bg-black" />
       ) : (
         <div className="absolute inset-0 bg-gradient-to-b from-[#090d16] via-[#0f172a] to-[#090d16]" />
       )}
@@ -345,9 +375,22 @@ export function SiteBackground() {
           className="pointer-events-none absolute left-0 top-0 h-[26rem] w-[26rem] rounded-full opacity-0 blur-3xl transition-opacity duration-300"
           style={{
             willChange: 'transform, opacity',
-            background: isLight
-              ? 'radial-gradient(circle, rgba(99, 102, 241, 0.22) 0%, rgba(236, 72, 153, 0.12) 45%, transparent 70%)'
-              : 'radial-gradient(circle, rgba(139, 92, 246, 0.25) 0%, rgba(6, 182, 212, 0.12) 45%, transparent 70%)',
+            background:
+              palette === 'ocean'
+                ? isLight
+                  ? 'radial-gradient(circle, rgba(37, 99, 235, 0.22) 0%, rgba(6, 182, 212, 0.12) 45%, transparent 70%)'
+                  : 'radial-gradient(circle, rgba(59, 130, 246, 0.25) 0%, rgba(6, 182, 212, 0.12) 45%, transparent 70%)'
+                : palette === 'emerald'
+                ? isLight
+                  ? 'radial-gradient(circle, rgba(16, 185, 129, 0.22) 0%, rgba(20, 184, 166, 0.12) 45%, transparent 70%)'
+                  : 'radial-gradient(circle, rgba(16, 185, 129, 0.25) 0%, rgba(52, 211, 153, 0.12) 45%, transparent 70%)'
+                : palette === 'sunset'
+                ? isLight
+                  ? 'radial-gradient(circle, rgba(245, 158, 11, 0.22) 0%, rgba(244, 63, 94, 0.12) 45%, transparent 70%)'
+                  : 'radial-gradient(circle, rgba(245, 158, 11, 0.25) 0%, rgba(244, 63, 94, 0.12) 45%, transparent 70%)'
+                : isLight
+                ? 'radial-gradient(circle, rgba(99, 102, 241, 0.22) 0%, rgba(236, 72, 153, 0.12) 45%, transparent 70%)'
+                : 'radial-gradient(circle, rgba(139, 92, 246, 0.25) 0%, rgba(6, 182, 212, 0.12) 45%, transparent 70%)',
           }}
         />
       </div>
