@@ -1,6 +1,8 @@
 import 'server-only';
 
 import { cookies } from 'next/headers';
+import { createServerClient } from '@supabase/ssr';
+import { hasSupabaseSessionCookie } from '@/lib/supabase/session-cookie';
 import {
   AUTH_ACCESS_TOKEN_COOKIE_NAME,
   AUTH_SNAPSHOT_COOKIE_NAME,
@@ -26,6 +28,16 @@ export const getServerAuthSkeleton = async (): Promise<AuthSnapshot | null> => {
 
 export const getServerAccessToken = async () => {
   const cookieStore = await cookies();
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+  if (url && anonKey && hasSupabaseSessionCookie(cookieStore.getAll(), url)) {
+    const supabase = createServerClient(url, anonKey, {
+      cookies: { getAll: () => cookieStore.getAll() },
+    });
+    const { data: { session } } = await supabase.auth.getSession();
+    if (session?.access_token) return session.access_token;
+  }
+
   const value = cookieStore.get(AUTH_ACCESS_TOKEN_COOKIE_NAME)?.value;
 
   if (!value) {

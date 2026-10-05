@@ -14,6 +14,7 @@ const SUPABASE_STORAGE_KEY = 'sb-testref-auth-token';
 
 vi.mock('@/lib/supabase/client', () => ({
   getSupabaseAuthStorageKey: () => SUPABASE_STORAGE_KEY,
+  migrateLegacySupabaseSession: vi.fn().mockResolvedValue(undefined),
   supabase: {
     auth: {
       getSession: (...args: unknown[]) => mockGetSession(...args),

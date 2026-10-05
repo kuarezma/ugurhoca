@@ -24,6 +24,7 @@ import type {
   AdminDocument,
   AdminFormState,
 } from "@/features/admin/types";
+import { useAdminPagedRows } from "@/features/admin/hooks/useAdminPagedRows";
 
 type AdminDocumentsTabProps = {
   documents: AdminDocument[];
@@ -42,6 +43,9 @@ export default function AdminDocumentsTab({
   onMigrateWorksheets,
   onRefreshCategories,
 }: AdminDocumentsTabProps) {
+  const { error: loadError, loading, page, pageSize, retry, rows: pageDocuments,
+    setPage, total: totalDocuments } = useAdminPagedRows<AdminDocument>("documents", documents);
+
   return (
     <motion.div
       key="documents"
@@ -52,7 +56,7 @@ export default function AdminDocumentsTab({
     >
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <h3 className="text-lg font-bold text-slate-900 dark:text-white">
-          Tüm İçerikler ({documents.length})
+          Tüm İçerikler ({totalDocuments})
         </h3>
         <div className="grid grid-cols-1 gap-2 sm:flex sm:flex-wrap sm:items-center sm:justify-end">
           <button
@@ -71,13 +75,22 @@ export default function AdminDocumentsTab({
         </div>
       </div>
 
-      {documents.length === 0 ? (
+      {loadError ? (
+        <div className="rounded-2xl border border-border-subtle bg-surface-1 p-6 text-center text-secondary" role="alert">
+          <p>İçerikler yüklenemedi.</p>
+          <button className="btn-secondary mt-3" onClick={retry} type="button">
+            Yeniden dene
+          </button>
+        </div>
+      ) : loading ? (
+        <p className="p-6 text-center text-secondary" role="status">İçerikler yükleniyor...</p>
+      ) : pageDocuments.length === 0 ? (
         <div className="glass rounded-2xl p-12 text-center border border-slate-200/80 dark:border-white/10 bg-white/80 dark:bg-slate-900/60">
           <FileText className="w-16 h-16 mx-auto mb-4 text-slate-400" />
           <p className="text-slate-500 dark:text-slate-400">Henüz içerik yok</p>
         </div>
       ) : (
-        documents.map((document, index) => {
+        pageDocuments.map((document, index) => {
           const worksheetDocument = isWorksheetType(document.type);
           const visibleDescription = worksheetDocument
             ? getWorksheetVisibleDescription(document)
@@ -185,6 +198,13 @@ export default function AdminDocumentsTab({
             </motion.div>
           );
         })
+      )}
+      {!loadError && !loading && totalDocuments > pageSize && (
+        <nav aria-label="İçerik sayfaları" className="flex items-center justify-center gap-3 text-sm text-secondary">
+          <button className="btn-secondary" disabled={page === 0} onClick={() => setPage(page - 1)} type="button">Önceki</button>
+          <span>{page + 1} / {Math.ceil(totalDocuments / pageSize)}</span>
+          <button className="btn-secondary" disabled={(page + 1) * pageSize >= totalDocuments} onClick={() => setPage(page + 1)} type="button">Sonraki</button>
+        </nav>
       )}
     </motion.div>
   );

@@ -42,6 +42,7 @@ import type { LiveLessonDashboardData } from "@/features/live-lessons/types";
 
 type AdminTabPanelsProps = {
   activeTab: AdminActiveTab;
+  dashboardVersion: number;
   activityEvents: StudentActivityEvent[];
   learningActivityStatus: 'idle' | 'loading' | 'ready' | 'error';
   liveLessonActivityStatus: 'idle' | 'loading' | 'ready' | 'error';
@@ -195,6 +196,7 @@ function ActivityDataBoundary({
 
 export default function AdminTabPanels({
   activeTab,
+  dashboardVersion,
   activityEvents,
   learningActivityStatus,
   liveLessonActivityStatus,
@@ -373,6 +375,7 @@ export default function AdminTabPanels({
           onToggleFavorite={onToggleFavoriteStudent}
           onViewProfile={onViewStudentProfile}
           pdfStudentsLoading={pdfStudentsLoading}
+          refreshVersion={dashboardVersion}
           students={studentUsers}
         />
       </AdminTabPanel>

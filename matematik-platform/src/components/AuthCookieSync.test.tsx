@@ -17,6 +17,7 @@ vi.mock('@/lib/auth-client', () => ({
 }));
 
 vi.mock('@/lib/supabase/client', () => ({
+  migrateLegacySupabaseSession: vi.fn().mockResolvedValue(undefined),
   supabase: {
     auth: {
       onAuthStateChange: (listener: (event: string, session: unknown) => void) => {

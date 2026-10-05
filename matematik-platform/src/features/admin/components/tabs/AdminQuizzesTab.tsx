@@ -2,6 +2,7 @@
 
 import { CheckCircle2, Trash2, Printer } from 'lucide-react';
 import type { AdminQuiz } from '@/features/admin/types';
+import { useAdminPagedRows } from '@/features/admin/hooks/useAdminPagedRows';
 
 type AdminQuizzesTabProps = {
   onAddQuestion: (quiz: AdminQuiz) => Promise<void> | void;
@@ -18,6 +19,9 @@ export default function AdminQuizzesTab({
   onPrintWorksheet,
   quizzes,
 }: AdminQuizzesTabProps) {
+  const { error, loading, page, pageSize, retry, rows, setPage, total } =
+    useAdminPagedRows<AdminQuiz>('quizzes', quizzes);
+
   return (
     <div className="space-y-6 animate-fade-up">
       <div>
@@ -27,14 +31,21 @@ export default function AdminQuizzesTab({
         </p>
       </div>
 
-      {quizzes.length === 0 ? (
+      {error ? (
+        <div className="rounded-2xl border border-border-subtle bg-surface-1 p-6 text-center text-secondary" role="alert">
+          <p>Testler yüklenemedi.</p>
+          <button className="btn-secondary mt-3" onClick={retry} type="button">Yeniden dene</button>
+        </div>
+      ) : loading ? (
+        <p className="p-6 text-center text-secondary" role="status">Testler yükleniyor...</p>
+      ) : rows.length === 0 ? (
         <div className="glass rounded-2xl p-8 sm:p-12 text-center border border-slate-200/80 dark:border-white/10 bg-white/80 dark:bg-slate-900/60">
           <CheckCircle2 className="w-16 h-16 mx-auto mb-4 text-slate-400" />
           <p className="text-slate-500 dark:text-slate-400">Henüz test yok</p>
         </div>
       ) : (
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {quizzes.map((quiz, index) => (
+          {rows.map((quiz, index) => (
             <div
               key={quiz.id}
               className="glass rounded-2xl p-4 sm:p-6 animate-slide-up border border-slate-200/80 dark:border-white/10 hover:border-violet-500/40 dark:hover:border-white/20 transition-all duration-300 card-hover flex flex-col justify-between bg-white/80 dark:bg-slate-900/60 shadow-sm dark:shadow-none"
@@ -104,6 +115,13 @@ export default function AdminQuizzesTab({
             </div>
           ))}
         </div>
+      )}
+      {!error && !loading && total > pageSize && (
+        <nav aria-label="Test sayfaları" className="flex items-center justify-center gap-3 text-sm text-secondary">
+          <button className="btn-secondary" disabled={page === 0} onClick={() => setPage(page - 1)} type="button">Önceki</button>
+          <span>{page + 1} / {Math.ceil(total / pageSize)}</span>
+          <button className="btn-secondary" disabled={(page + 1) * pageSize >= total} onClick={() => setPage(page + 1)} type="button">Sonraki</button>
+        </nav>
       )}
     </div>
   );

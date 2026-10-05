@@ -244,6 +244,7 @@ export default function AdminPage() {
     'idle' | 'loading' | 'ready' | 'error'
   >('idle');
   const [dashboardLoaded, setDashboardLoaded] = useState(false);
+  const [dashboardVersion, setDashboardVersion] = useState(0);
   const learningActivityLoadedRef = useRef(false);
   const liveLessonActivityLoadedRef = useRef(false);
   const learningActivityRequestRef = useRef<Promise<void> | null>(null);
@@ -425,6 +426,7 @@ export default function AdminPage() {
       applyDashboardData(
         await loadAdminDashboardData(adminUserId ?? adminUserIdRef.current),
       );
+      setDashboardVersion((version) => version + 1);
       setDashboardLoaded(true);
       await Promise.all([
         learningActivityLoadedRef.current ? refreshLearningActivity() : Promise.resolve(),
@@ -1425,6 +1427,7 @@ export default function AdminPage() {
 
           <AdminTabPanels
             activeTab={activeTab}
+            dashboardVersion={dashboardVersion}
             activityEvents={activityEvents}
             learningActivityStatus={learningActivityStatus}
             liveLessonActivityStatus={liveLessonActivityStatus}

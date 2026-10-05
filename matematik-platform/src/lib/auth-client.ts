@@ -7,7 +7,7 @@ import {
   serializeAuthSnapshot,
   type AuthSnapshot,
 } from '@/lib/auth-snapshot';
-import { getSupabaseAuthStorageKey, supabase } from '@/lib/supabase/client';
+import { getSupabaseAuthStorageKey, migrateLegacySupabaseSession, supabase } from '@/lib/supabase/client';
 import { clearLegacyUserStorage, getStorageUserId, migrateLegacyUserStorage } from '@/lib/userScopedStorage';
 import type { AppUser } from '@/types';
 import { safeRedirectPath } from '@/lib/safe-redirect-path';
@@ -463,6 +463,7 @@ export const getClientSession = async (options: { forceRefresh?: boolean } = {})
 
   const sessionPromise = (async () => {
     try {
+      await migrateLegacySupabaseSession();
       const {
         data: { session },
         error,

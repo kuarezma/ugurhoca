@@ -1,6 +1,5 @@
 'use client';
 
-import { isGraduateGrade } from '@/lib/grade';
 import React, { useCallback, useEffect, useState } from 'react';
 import {
   Users,
@@ -14,8 +13,7 @@ import {
   Download,
   Eye,
 } from 'lucide-react';
-import { supabase } from '@/lib/supabase/client';
-import { isAdminEmail } from '@/lib/admin';
+import { getClientSession } from '@/lib/auth-client';
 
 interface SiteStats {
   totalUsers: number;
@@ -35,6 +33,7 @@ const CACHE_TTL_MS = 60 * 1000;
 export default function AdminStatistics() {
   const [stats, setStats] = useState<SiteStats | null>(null);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState(false);
   const [timeRange, setTimeRange] = useState<'week' | 'month' | 'all'>('all');
 
   const loadStats = useCallback(async () => {
@@ -46,75 +45,28 @@ export default function AdminStatistics() {
     }
 
     setLoading(true);
+    setLoadError(false);
+    setStats(null);
 
-    const now = new Date();
-    let dateFilter = '';
-
-    if (timeRange === 'week') {
-      const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
-      dateFilter = weekAgo.toISOString();
-    } else if (timeRange === 'month') {
-      const monthAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
-      dateFilter = monthAgo.toISOString();
-    }
-
-    // `notes` ve `assignments` yalnızca satır sayısı için kullanılıyor: `head: true`
-    // ile satırlar hiç indirilmez. `profiles` ve `documents` için satır gerekiyor ama
-    // `select('*')` tüm kolonları (ve dokümanlarda uzun metin alanlarını) çekiyordu;
-    // yalnızca gerçekten okunan kolonlar isteniyor.
-    const [usersRes, docsRes, notesRes, assignmentsRes] = await Promise.all([
-      supabase.from('profiles').select('email, grade, created_at'),
-      supabase.from('documents').select('downloads, views'),
-      supabase.from('notes').select('id', { count: 'exact', head: true }),
-      supabase.from('assignments').select('id', { count: 'exact', head: true }),
-    ]);
-
-    const users = usersRes.data || [];
-    const documents = docsRes.data || [];
-
-    const nonAdminUsers = users.filter((u) => !isAdminEmail(u.email));
-
-    const gradeCounts: Record<string, number> = {};
-    nonAdminUsers.forEach((u) => {
-      const grade = isGraduateGrade(u.grade) ? 'Mezun' : `${u.grade}. Sınıf`;
-      gradeCounts[grade] = (gradeCounts[grade] || 0) + 1;
-    });
-
-    const usersByGrade = Object.entries(gradeCounts)
-      .map(([grade, count]) => ({ grade, count }))
-      .sort((a, b) => {
-        if (a.grade === 'Mezun') return 1;
-        if (b.grade === 'Mezun') return -1;
-        return parseInt(a.grade) - parseInt(b.grade);
+    try {
+      const session = await getClientSession();
+      const response = await fetch(`/api/admin/site-statistics?range=${timeRange}`, {
+        credentials: 'same-origin',
+        headers: session?.access_token
+          ? { Authorization: `Bearer ${session.access_token}` }
+          : undefined,
       });
+      if (!response.ok) throw new Error('İstatistik isteği başarısız.');
+      const payload = (await response.json()) as { data: SiteStats };
+      if (!payload.data) throw new Error('İstatistik yanıtı boş.');
 
-    const totalDownloads = documents.reduce(
-      (sum, d) => sum + (d.downloads || 0),
-      0,
-    );
-    const totalViews = documents.reduce((sum, d) => sum + (d.views || 0), 0);
-
-    const recentSignups = dateFilter
-      ? nonAdminUsers.filter(
-          (u) => u.created_at && new Date(u.created_at) >= new Date(dateFilter),
-        ).length
-      : nonAdminUsers.length;
-
-    const nextStats: SiteStats = {
-      totalUsers: nonAdminUsers.length,
-      totalDocuments: documents.length,
-      totalNotes: notesRes.count || 0,
-      totalAssignments: assignmentsRes.count || 0,
-      totalDownloads,
-      totalViews,
-      usersByGrade,
-      recentSignups,
-      mostActiveDay: '-',
-    };
-
-    statsCache.set(timeRange, { data: nextStats, timestamp: Date.now() });
-    setStats(nextStats);
-    setLoading(false);
+      statsCache.set(timeRange, { data: payload.data, timestamp: Date.now() });
+      setStats(payload.data);
+    } catch {
+      setLoadError(true);
+    } finally {
+      setLoading(false);
+    }
   }, [timeRange]);
 
   useEffect(() => {
@@ -125,6 +77,17 @@ export default function AdminStatistics() {
     return (
       <div className="flex items-center justify-center py-20">
         <div className="w-10 h-10 border-3 border-purple-500 border-t-transparent rounded-full animate-spin" />
+      </div>
+    );
+  }
+
+  if (loadError) {
+    return (
+      <div className="rounded-2xl border border-border-subtle bg-surface-1 p-6 text-center text-secondary" role="alert">
+        <p>İstatistikler yüklenemedi.</p>
+        <button className="btn-secondary mt-3" onClick={() => void loadStats()} type="button">
+          Yeniden dene
+        </button>
       </div>
     );
   }

@@ -19,6 +19,7 @@ const successResponse = (data: unknown) => ({
   error: null,
   status: 200,
   statusText: 'OK',
+  success: true as const,
 });
 
 const postgrestError = (message: string): PostgrestError => ({
@@ -27,7 +28,7 @@ const postgrestError = (message: string): PostgrestError => ({
   hint: '',
   message,
   name: 'PostgrestError',
-});
+} as PostgrestError);
 
 describe('profile weekly plan queries', () => {
   beforeEach(() => {
@@ -82,6 +83,7 @@ describe('profile weekly plan queries', () => {
       error: postgrestError('Plan maddesi bulunamadı.'),
       status: 400,
       statusText: 'Bad Request',
+      success: false,
     });
 
     await expect(completeWeeklyPlanItem('item-404', true)).rejects.toThrow(

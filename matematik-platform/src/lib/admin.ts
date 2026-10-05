@@ -28,3 +28,7 @@ export function isAdminEmail(email: string | null | undefined) {
   if (!email) return false;
   return ADMIN_EMAIL_ALLOWLIST.has(email.trim().toLowerCase());
 }
+
+export function getAdminEmailAllowlist(): string[] {
+  return [...ADMIN_EMAIL_ALLOWLIST];
+}

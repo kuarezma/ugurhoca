@@ -9,6 +9,7 @@ import {
   writeAccessTokenCookie,
 } from '@/lib/auth-client';
 import { supabase } from '@/lib/supabase/client';
+import { migrateLegacySupabaseSession } from '@/lib/supabase/client';
 
 export default function AuthCookieSync() {
   useEffect(() => {
@@ -23,6 +24,7 @@ export default function AuthCookieSync() {
       }, 150);
     };
 
+    void migrateLegacySupabaseSession();
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((event, session) => {

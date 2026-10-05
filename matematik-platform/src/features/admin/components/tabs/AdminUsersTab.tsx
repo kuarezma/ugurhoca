@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import {
   Download,
   Edit3,
@@ -12,6 +12,7 @@ import {
   Users,
 } from 'lucide-react';
 import type { AdminUser } from '@/features/admin/types';
+import { getClientSession } from '@/lib/auth-client';
 
 type AdminUsersTabProps = {
   formatDate: (dateString?: string | null) => string;
@@ -22,14 +23,12 @@ type AdminUsersTabProps = {
   onToggleFavorite: (user: AdminUser) => Promise<void> | void;
   onViewProfile: (user: AdminUser) => Promise<void> | void;
   pdfStudentsLoading: boolean;
+  refreshVersion: number;
   students: AdminUser[];
 };
 
 type StudentFilter = 'all' | 'favorites';
 type StudentSort = 'name' | 'created_at';
-
-const normalizeSearchText = (value: string) =>
-  value.trim().toLocaleLowerCase('tr-TR');
 
 const gradeLabel = (grade: AdminUser['grade']) =>
   grade === 'Mezun' ? 'Mezun' : `${grade}. Sınıf`;
@@ -43,15 +42,77 @@ export default function AdminUsersTab({
   onToggleFavorite,
   onViewProfile,
   pdfStudentsLoading,
+  refreshVersion,
   students,
 }: AdminUsersTabProps) {
   const [searchQuery, setSearchQuery] = useState('');
   const [studentFilter, setStudentFilter] = useState<StudentFilter>('all');
   const [gradeFilter, setGradeFilter] = useState('all');
   const [studentSort, setStudentSort] = useState<StudentSort>('name');
+  const [debouncedSearch, setDebouncedSearch] = useState('');
+  const [page, setPage] = useState(0);
+  const [pageStudents, setPageStudents] = useState<AdminUser[]>([]);
+  const [totalStudents, setTotalStudents] = useState(0);
+  const [pageSize, setPageSize] = useState(40);
+  const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState(false);
+  const [retryCount, setRetryCount] = useState(0);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setDebouncedSearch(searchQuery.trim()), 250);
+    return () => clearTimeout(timer);
+  }, [searchQuery]);
+
+  useEffect(() => {
+    let active = true;
+    setLoading(true);
+    setLoadError(false);
+
+    void (async () => {
+      try {
+        const session = await getClientSession();
+        const params = new URLSearchParams({
+          page: String(page),
+          search: debouncedSearch,
+          favorite: studentFilter === 'favorites' ? '1' : '0',
+          grade: gradeFilter,
+          sort: studentSort,
+        });
+        const response = await fetch(`/api/admin/students?${params}`, {
+          credentials: 'same-origin',
+          headers: session?.access_token
+            ? { Authorization: `Bearer ${session.access_token}` }
+            : undefined,
+        });
+        if (!response.ok) throw new Error('Öğrenci listesi isteği başarısız.');
+        const payload = (await response.json()) as {
+          data: { items: AdminUser[]; pageSize: number; total: number };
+        };
+        if (!active) return;
+        const { items, pageSize: size, total } = payload.data;
+        if (page > 0 && page * size >= total) {
+          setPage(Math.max(0, Math.ceil(total / size) - 1));
+        } else {
+          setPageStudents(items);
+          setTotalStudents(total);
+          setPageSize(size);
+        }
+      } catch {
+        if (active) setLoadError(true);
+      } finally {
+        if (active) setLoading(false);
+      }
+    })();
+
+    return () => { active = false; };
+  }, [debouncedSearch, gradeFilter, page, refreshVersion, retryCount, studentFilter, studentSort]);
 
   const gradeOptions = useMemo(() => {
-    const grades = new Set(students.map((student) => String(student.grade)));
+    const grades = new Set([
+      ...Array.from({ length: 12 }, (_, index) => String(index + 1)),
+      ...students.map((student) => String(student.grade)),
+      'Mezun',
+    ]);
 
     return Array.from(grades).sort((left, right) => {
       if (left === 'Mezun') return 1;
@@ -61,32 +122,7 @@ export default function AdminUsersTab({
     });
   }, [students]);
 
-  const visibleStudents = useMemo(() => {
-    const normalizedQuery = normalizeSearchText(searchQuery);
-
-    return students
-      .filter((student) => {
-        const matchesSearch =
-          normalizedQuery.length === 0 ||
-          normalizeSearchText(student.name || '').includes(normalizedQuery);
-        const matchesFavorite =
-          studentFilter === 'all' || Boolean(student.is_favorite);
-        const matchesGrade =
-          gradeFilter === 'all' || String(student.grade) === gradeFilter;
-
-        return matchesSearch && matchesFavorite && matchesGrade;
-      })
-      .sort((left, right) => {
-        if (studentSort === 'created_at') {
-          return (
-            new Date(right.created_at || 0).getTime() -
-            new Date(left.created_at || 0).getTime()
-          );
-        }
-
-        return (left.name || '').localeCompare(right.name || '', 'tr');
-      });
-  }, [gradeFilter, searchQuery, studentFilter, studentSort, students]);
+  const visibleStudents = pageStudents;
 
   const favoriteStudents = visibleStudents.filter(
     (student) => student.is_favorite,
@@ -97,6 +133,7 @@ export default function AdminUsersTab({
     gradeFilter !== 'all';
 
   const resetFilters = () => {
+    setPage(0);
     setSearchQuery('');
     setStudentFilter('all');
     setGradeFilter('all');
@@ -107,44 +144,8 @@ export default function AdminUsersTab({
     : 'Henüz kullanıcı yok';
 
   const resultSummary = hasActiveFilters
-    ? `${visibleStudents.length} sonuç • ${students.length} öğrenci`
-    : `${students.length} öğrenci`;
-
-  if (students.length === 0) {
-    return (
-      <div className="space-y-4 animate-fade-up">
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-          <p className="text-slate-400">0 öğrenci • 0 favori</p>
-          <div className="grid grid-cols-2 gap-2 sm:flex sm:items-center">
-            <button
-              onClick={onDownloadPdf}
-              disabled={pdfStudentsLoading}
-              className="min-w-0 justify-center px-3 py-2 sm:px-4 bg-emerald-500/10 border border-emerald-500/20 rounded-lg text-emerald-400 hover:text-emerald-300 hover:bg-emerald-500/20 transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] text-xs sm:text-sm flex items-center gap-2 disabled:opacity-50"
-            >
-              {pdfStudentsLoading ? (
-                <div className="w-4 h-4 border-2 border-emerald-400 border-t-transparent rounded-full animate-spin" />
-              ) : (
-                <Download className="w-4 h-4" />
-              )}
-              {pdfStudentsLoading ? 'PDF Hazırlanıyor...' : 'PDF İndir'}
-            </button>
-            <button
-              onClick={onRefresh}
-              className="justify-center px-3 py-2 sm:px-4 bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-lg text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200/70 dark:hover:bg-white/10 transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] text-xs sm:text-sm flex items-center gap-2"
-            >
-              <RefreshCw className="w-4 h-4" />
-              Yenile
-            </button>
-          </div>
-        </div>
-
-        <div className="glass rounded-2xl p-12 text-center border border-slate-200/80 dark:border-white/10 bg-white/80 dark:bg-slate-900/60">
-          <Users className="w-16 h-16 mx-auto mb-4 text-slate-400" />
-          <p className="text-slate-600 dark:text-slate-400">{emptyMessage}</p>
-        </div>
-      </div>
-    );
-  }
+    ? `${totalStudents} sonuç`
+    : `${totalStudents} öğrenci`;
 
   const renderControls = () => (
     <div className="glass rounded-2xl p-4 border border-slate-200/80 dark:border-white/10 shadow-sm dark:shadow-lg bg-white/80 dark:bg-slate-900/60">
@@ -154,7 +155,7 @@ export default function AdminUsersTab({
           <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
           <input
             value={searchQuery}
-            onChange={(event) => setSearchQuery(event.target.value)}
+            onChange={(event) => { setPage(0); setSearchQuery(event.target.value); }}
             placeholder="Öğrenci ismi ara..."
             className="w-full rounded-xl border border-slate-200 dark:border-white/10 bg-white dark:bg-slate-900/60 py-2.5 pl-10 pr-3 text-sm text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 outline-none transition focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/25"
           />
@@ -164,9 +165,7 @@ export default function AdminUsersTab({
           <span className="sr-only">Favori filtresi</span>
           <select
             value={studentFilter}
-            onChange={(event) =>
-              setStudentFilter(event.target.value as StudentFilter)
-            }
+            onChange={(event) => { setPage(0); setStudentFilter(event.target.value as StudentFilter); }}
             className="w-full rounded-xl border border-slate-200 dark:border-white/10 bg-white dark:bg-slate-900/60 px-3 py-2.5 text-sm text-slate-900 dark:text-white outline-none transition focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/25 lg:w-44"
           >
             <option value="all">Tüm öğrenciler</option>
@@ -178,7 +177,7 @@ export default function AdminUsersTab({
           <span className="sr-only">Sınıf filtresi</span>
           <select
             value={gradeFilter}
-            onChange={(event) => setGradeFilter(event.target.value)}
+            onChange={(event) => { setPage(0); setGradeFilter(event.target.value); }}
             className="w-full rounded-xl border border-slate-200 dark:border-white/10 bg-white dark:bg-slate-900/60 px-3 py-2.5 text-sm text-slate-900 dark:text-white outline-none transition focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/25 lg:w-36"
           >
             <option value="all">Tüm sınıflar</option>
@@ -194,9 +193,7 @@ export default function AdminUsersTab({
           <span className="sr-only">Sıralama</span>
           <select
             value={studentSort}
-            onChange={(event) =>
-              setStudentSort(event.target.value as StudentSort)
-            }
+            onChange={(event) => { setPage(0); setStudentSort(event.target.value as StudentSort); }}
             className="w-full rounded-xl border border-slate-200 dark:border-white/10 bg-white dark:bg-slate-900/60 px-3 py-2.5 text-sm text-slate-900 dark:text-white outline-none transition focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/25 lg:w-52"
           >
             <option value="name">Alfabetik sırala</option>
@@ -207,7 +204,7 @@ export default function AdminUsersTab({
 
       <div className="mt-3 flex flex-col gap-2 text-sm text-slate-600 dark:text-slate-400 sm:flex-row sm:items-center sm:justify-between">
         <p>
-          {resultSummary} • {favoriteStudents.length} favori
+          {resultSummary} • Bu sayfada {favoriteStudents.length} favori
         </p>
         {hasActiveFilters && (
           <button
@@ -271,7 +268,7 @@ export default function AdminUsersTab({
           </div>
           <div className="grid grid-cols-1 gap-2 sm:flex sm:flex-wrap sm:items-center sm:justify-end">
             <button
-              onClick={() => onToggleFavorite(user)}
+              onClick={() => { void Promise.resolve(onToggleFavorite(user)).then(() => setRetryCount((value) => value + 1)).catch(() => setLoadError(true)); }}
               className={`justify-center px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold flex items-center gap-1.5 transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] border ${
                 user.is_favorite
                   ? 'bg-amber-100 dark:bg-amber-400/20 text-amber-700 dark:text-amber-300 border-amber-300 dark:border-amber-400/30 hover:bg-amber-200 dark:hover:bg-amber-400/30'
@@ -315,7 +312,7 @@ export default function AdminUsersTab({
     <div className="space-y-4 animate-fade-up">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <p className="text-slate-600 dark:text-slate-400">
-          {resultSummary} • {favoriteStudents.length} favori
+          {resultSummary} • Bu sayfada {favoriteStudents.length} favori
         </p>
         <div className="grid grid-cols-2 gap-2 sm:flex sm:items-center">
           <button
@@ -328,10 +325,10 @@ export default function AdminUsersTab({
             ) : (
               <Download className="w-4 h-4" />
             )}
-            {pdfStudentsLoading ? 'PDF Hazırlanıyor...' : 'PDF İndir'}
+            {pdfStudentsLoading ? 'PDF Hazırlanıyor...' : 'Bu Sayfayı PDF İndir'}
           </button>
           <button
-            onClick={onRefresh}
+            onClick={() => { void onRefresh(); setRetryCount((value) => value + 1); }}
             className="justify-center px-3 py-2 sm:px-4 bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-lg text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200/70 dark:hover:bg-white/10 transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] text-xs sm:text-sm flex items-center gap-2"
           >
             <RefreshCw className="w-4 h-4" />
@@ -342,7 +339,14 @@ export default function AdminUsersTab({
 
       {renderControls()}
 
-      {visibleStudents.length === 0 ? (
+      {loadError ? (
+        <div className="rounded-2xl border border-border-subtle bg-surface-1 p-6 text-center text-secondary" role="alert">
+          <p>Öğrenciler yüklenemedi.</p>
+          <button className="btn-secondary mt-3" onClick={() => setRetryCount((value) => value + 1)} type="button">Yeniden dene</button>
+        </div>
+      ) : loading ? (
+        <p className="p-6 text-center text-secondary" role="status">Öğrenciler yükleniyor...</p>
+      ) : visibleStudents.length === 0 ? (
         renderEmptyState()
       ) : (
         <div id="admin-student-list-pdf" className="space-y-5">
@@ -379,6 +383,13 @@ export default function AdminUsersTab({
             )}
           </div>
         </div>
+      )}
+      {!loadError && !loading && totalStudents > pageSize && (
+        <nav aria-label="Öğrenci sayfaları" className="flex items-center justify-center gap-3 text-sm text-secondary">
+          <button className="btn-secondary" disabled={page === 0} onClick={() => setPage(page - 1)} type="button">Önceki</button>
+          <span>{page + 1} / {Math.ceil(totalStudents / pageSize)}</span>
+          <button className="btn-secondary" disabled={(page + 1) * pageSize >= totalStudents} onClick={() => setPage(page + 1)} type="button">Sonraki</button>
+        </nav>
       )}
     </div>
   );
