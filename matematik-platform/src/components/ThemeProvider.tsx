@@ -4,8 +4,11 @@ import { createContext, useCallback, useContext, useMemo, useSyncExternalStore, 
 import {
   THEME_STORAGE_KEY,
   PALETTE_STORAGE_KEY,
+  DESIGN_MODE_STORAGE_KEY,
   type ThemePalette,
+  type DesignMode,
   DEFAULT_PALETTE,
+  DEFAULT_DESIGN_MODE,
 } from '@/components/theme-constants';
 
 type Theme = 'dark' | 'light';
@@ -16,6 +19,9 @@ type ThemeContextValue = {
   setTheme: (theme: Theme) => void;
   palette: ThemePalette;
   setPalette: (palette: ThemePalette) => void;
+  designMode: DesignMode;
+  setDesignMode: (mode: DesignMode) => void;
+  toggleDesignMode: () => void;
 };
 
 const ThemeContext = createContext<ThemeContextValue | undefined>(undefined);
@@ -30,6 +36,10 @@ const applyPalette = (palette: ThemePalette) => {
   document.documentElement.dataset.palette = palette;
 };
 
+const applyDesignMode = (mode: DesignMode) => {
+  document.documentElement.dataset.designMode = mode;
+};
+
 const readTheme = (): Theme =>
   document.documentElement.dataset.theme === 'light' ? 'light' : 'dark';
 
@@ -40,11 +50,16 @@ const readPalette = (): ThemePalette =>
 
 const readServerPalette = (): ThemePalette => DEFAULT_PALETTE;
 
+const readDesignMode = (): DesignMode =>
+  (document.documentElement.dataset.designMode as DesignMode) || DEFAULT_DESIGN_MODE;
+
+const readServerDesignMode = (): DesignMode => DEFAULT_DESIGN_MODE;
+
 const subscribeToTheme = (onChange: () => void) => {
   const observer = new MutationObserver(onChange);
   observer.observe(document.documentElement, {
     attributes: true,
-    attributeFilter: ['data-theme', 'data-palette'],
+    attributeFilter: ['data-theme', 'data-palette', 'data-design-mode'],
   });
   return () => observer.disconnect();
 };
@@ -52,6 +67,7 @@ const subscribeToTheme = (onChange: () => void) => {
 export function ThemeProvider({ children }: { children: ReactNode }) {
   const theme = useSyncExternalStore(subscribeToTheme, readTheme, readServerTheme);
   const palette = useSyncExternalStore(subscribeToTheme, readPalette, readServerPalette);
+  const designMode = useSyncExternalStore(subscribeToTheme, readDesignMode, readServerDesignMode);
 
   const setTheme = useCallback((nextTheme: Theme) => {
     const update = () => {
@@ -79,13 +95,39 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     }
   }, []);
 
+  const setDesignMode = useCallback((nextMode: DesignMode) => {
+    const update = () => {
+      applyDesignMode(nextMode);
+      window.localStorage.setItem(DESIGN_MODE_STORAGE_KEY, nextMode);
+    };
+
+    if (typeof document !== 'undefined' && 'startViewTransition' in document) {
+      (document as unknown as { startViewTransition: (cb: () => void) => void }).startViewTransition(update);
+    } else {
+      update();
+    }
+  }, []);
+
   const toggleTheme = useCallback(() => {
     setTheme(theme === 'dark' ? 'light' : 'dark');
   }, [setTheme, theme]);
 
+  const toggleDesignMode = useCallback(() => {
+    setDesignMode(designMode === 'adventure' ? 'classic' : 'adventure');
+  }, [setDesignMode, designMode]);
+
   const value = useMemo(
-    () => ({ theme, toggleTheme, setTheme, palette, setPalette }),
-    [setTheme, theme, toggleTheme, palette, setPalette]
+    () => ({
+      theme,
+      toggleTheme,
+      setTheme,
+      palette,
+      setPalette,
+      designMode,
+      setDesignMode,
+      toggleDesignMode,
+    }),
+    [setTheme, theme, toggleTheme, palette, setPalette, designMode, setDesignMode, toggleDesignMode]
   );
 
   return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>;

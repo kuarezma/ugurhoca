@@ -7,6 +7,7 @@ import { HomeDailyQuote } from '@/features/home/components/HomeDailyQuote';
 import { HomeExamCountdownSection } from '@/features/home/components/HomeExamCountdownSection';
 import { HomeFooter } from '@/features/home/components/HomeFooter';
 import { HomeHeroSection } from '@/features/home/components/HomeHeroSection';
+import { HomeAdventureView } from '@/features/home/components/adventure/HomeAdventureView';
 import { HomeNavbar } from '@/features/home/components/HomeNavbar';
 import { HomeSupportSection } from '@/features/home/components/HomeSupportSection';
 import { useHomePageData } from '@/features/home/hooks/useHomePageData';
@@ -112,10 +113,11 @@ type HomePageProps = {
 };
 
 export default function HomePage({ announcementsSlot }: HomePageProps) {
-  const { theme } = useTheme();
+  const { theme, designMode } = useTheme();
   // Only the tool modals below read this; they mount after a click, when the
   // JS theme already matches data-theme. Page sections pick theme classes in CSS.
   const isLight = theme === 'light';
+  const isAdventure = designMode === 'adventure';
   const [isFlashcardsOpen, setIsFlashcardsOpen] = useState(false);
   const [isSpeedDrillOpen, setIsSpeedDrillOpen] = useState(false);
   const [isScratchpadOpen, setIsScratchpadOpen] = useState(false);
@@ -198,23 +200,35 @@ export default function HomePage({ announcementsSlot }: HomePageProps) {
       <HomeNavbar user={user} onLogout={handleLogout} />
       <ActiveLiveLessonBadge userId={user?.id} />
       <div className="pt-[calc(4.5rem+env(safe-area-inset-top))] md:pt-20">
-        {/* 1. Karşılama Ekranı (Hero - Hızlı Erişim ve Açılır 12 Araç Kartı) */}
-        <HomeHeroSection
-          user={user}
-          onOpenFlashcards={() => setIsFlashcardsOpen(true)}
-          onOpenScratchpad={() => setIsScratchpadOpen(true)}
-          onOpenCalculator={(tab) =>
-            setCalculatorState({ isOpen: true, tab: tab || 'lgs' })
-          }
-          onOpenPomodoro={() => setIsPomodoroOpen(true)}
-          onOpenGraph={() => setIsGraphOpen(true)}
-          onOpenProofs={() => setIsProofsOpen(true)}
-          onOpenCheatSheet={() => setIsCheatSheetOpen(true)}
-          onOpenGlossary={() => setIsGlossaryOpen(true)}
-          onOpenTopicWeights={() => setIsTopicWeightsOpen(true)}
-          onOpenWeeklyPlanner={() => setIsWeeklyPlannerOpen(true)}
-          onOpenSpeedDrill={() => setIsSpeedDrillOpen(true)}
-        />
+        {/* 1. Karşılama Ekranı (Macera Patikası vs. Klasik Hero) */}
+        {isAdventure ? (
+          <HomeAdventureView
+            user={user}
+            onOpenFlashcards={() => setIsFlashcardsOpen(true)}
+            onOpenScratchpad={() => setIsScratchpadOpen(true)}
+            onOpenCalculator={(tab) =>
+              setCalculatorState({ isOpen: true, tab: tab || 'lgs' })
+            }
+            onOpenPomodoro={() => setIsPomodoroOpen(true)}
+          />
+        ) : (
+          <HomeHeroSection
+            user={user}
+            onOpenFlashcards={() => setIsFlashcardsOpen(true)}
+            onOpenScratchpad={() => setIsScratchpadOpen(true)}
+            onOpenCalculator={(tab) =>
+              setCalculatorState({ isOpen: true, tab: tab || 'lgs' })
+            }
+            onOpenPomodoro={() => setIsPomodoroOpen(true)}
+            onOpenGraph={() => setIsGraphOpen(true)}
+            onOpenProofs={() => setIsProofsOpen(true)}
+            onOpenCheatSheet={() => setIsCheatSheetOpen(true)}
+            onOpenGlossary={() => setIsGlossaryOpen(true)}
+            onOpenTopicWeights={() => setIsTopicWeightsOpen(true)}
+            onOpenWeeklyPlanner={() => setIsWeeklyPlannerOpen(true)}
+            onOpenSpeedDrill={() => setIsSpeedDrillOpen(true)}
+          />
+        )}
 
         {/* 2. Duyurular */}
         {announcementsSlot}

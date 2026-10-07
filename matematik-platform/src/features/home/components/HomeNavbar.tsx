@@ -7,6 +7,7 @@ import { useState } from 'react';
 import { SafeLink } from '@/components/SafeLink';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { ThemeSelectorDropdown } from '@/components/ThemeSelectorDropdown';
+import { DesignModeToggle } from '@/components/DesignModeToggle';
 import { HOME_CATEGORIES } from '@/features/home/constants';
 import { HomeNavbarMessagesButton } from '@/features/home/components/HomeNavbarMessagesButton';
 import { HomeNavbarNotificationBell } from '@/features/home/components/HomeNavbarNotificationBell';
@@ -64,6 +65,7 @@ export function HomeNavbar({ onLogout, user }: HomeNavbarProps) {
           </SafeLink>
 
           <div className="hidden shrink-0 items-center gap-2 lg:flex">
+            <DesignModeToggle />
             <ThemeSelectorDropdown />
             <ThemeToggle compact />
             {showMessages && user?.id ? (
@@ -162,6 +164,9 @@ export function HomeNavbar({ onLogout, user }: HomeNavbarProps) {
             <div
               className="mt-3 border-t pt-3 light:border-slate-200 dark:border-white/10"
             >
+              <div className="mb-3 flex justify-center">
+                <DesignModeToggle className="w-full justify-between px-3 py-1.5" />
+              </div>
               <div className="mb-3 flex items-center gap-2">
                 <ThemeSelectorDropdown className="flex-1" buttonClassName="w-full h-11 justify-center" align="left" />
                 <ThemeToggle compact className="shrink-0" />
