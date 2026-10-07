@@ -322,10 +322,74 @@ export const DAILY_QUESTS_MOCK = [
   },
 ];
 
-export const LEADERBOARD_MOCK = [
-  { rank: 1, name: 'Deniz Yılmaz', grade: '8. Sınıf', xp: 2450, avatar: '🦁', medal: '🥇' },
-  { rank: 2, name: 'Ahmet Karaca', grade: '8. Sınıf', xp: 2120, avatar: '🚀', medal: '🥈' },
-  { rank: 3, name: 'Uğur (Sen)', grade: '8. Sınıf', xp: 1850, avatar: '🦉', medal: '🥉', isCurrentUser: true },
-  { rank: 4, name: 'Elif Şahin', grade: '8. Sınıf', xp: 1600, avatar: '⭐' },
-  { rank: 5, name: 'Can Tekin', grade: '8. Sınıf', xp: 1420, avatar: '⚡' },
+export interface DailyChallenge {
+  id: string;
+  title: string;
+  topic: string;
+  difficulty: 'Kolay' | 'Orta' | 'Efsane';
+  estimatedMinutes: number;
+  xpReward: number;
+  diamondReward: number;
+  href: string;
+  questionPreview: string;
+}
+
+export const DAILY_CHALLENGE_MOCK: DailyChallenge = {
+  id: 'dc-today',
+  title: 'Pisagor Teoremi & Dik Üçgen Avı',
+  topic: '8. Sınıf Geometri',
+  difficulty: 'Orta',
+  estimatedMinutes: 3,
+  xpReward: 120,
+  diamondReward: 5,
+  href: '/meydan-okuma',
+  questionPreview: 'Bir dik üçgende hipotenüs uzunluğu 25 cm ve bir dik kenar 15 cm ise...',
+};
+
+export interface BadgeItem {
+  id: string;
+  title: string;
+  description: string;
+  icon: string;
+  unlocked: boolean;
+  color: 'amber' | 'purple' | 'cyan' | 'emerald';
+  progress?: { current: number; max: number };
+}
+
+export const BADGES_SHOWCASE_MOCK: BadgeItem[] = [
+  {
+    id: 'b1',
+    title: 'Ateşli Seri',
+    description: '5 gün kesintisiz çalışma',
+    icon: '🔥',
+    unlocked: true,
+    color: 'amber',
+  },
+  {
+    id: 'b2',
+    title: 'Denklem Ustası',
+    description: '1. derece denklemleri bitir',
+    icon: '⚡',
+    unlocked: true,
+    color: 'purple',
+  },
+  {
+    id: 'b3',
+    title: 'Hız Canavarı',
+    description: '30 saniyede 5 doğru cevap',
+    icon: '🚀',
+    unlocked: false,
+    color: 'cyan',
+    progress: { current: 3, max: 5 },
+  },
+  {
+    id: 'b4',
+    title: 'Efsane Şampiyon',
+    description: 'Boss deneme sınavını fethet',
+    icon: '👑',
+    unlocked: false,
+    color: 'emerald',
+    progress: { current: 1, max: 3 },
+  },
 ];
+

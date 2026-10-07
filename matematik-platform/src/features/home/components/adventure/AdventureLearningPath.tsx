@@ -66,10 +66,10 @@ export function AdventureLearningPath({
               key={tab.id}
               type="button"
               onClick={() => setSelectedGrade(tab.id)}
-              className={`shrink-0 rounded-xl px-3.5 py-1.5 text-xs font-bold transition-all duration-200 cursor-pointer ${
+              className={`shrink-0 rounded-xl px-3.5 py-1.5 text-xs font-black transition-all duration-150 cursor-pointer select-none ${
                 selectedGrade === tab.id
-                  ? 'bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-500 text-white shadow-md shadow-purple-500/20 scale-105'
-                  : 'bg-surface-2 text-secondary hover:text-primary hover:bg-surface-3 border border-default'
+                  ? 'bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-500 text-white shadow-[0_3px_0_#3730a3] scale-105 active:translate-y-0.5 active:shadow-none'
+                  : 'bg-surface-2 text-secondary hover:text-primary hover:bg-surface-3 border border-default shadow-xs active:translate-y-0.5'
               }`}
             >
               {tab.label}
@@ -79,18 +79,21 @@ export function AdventureLearningPath({
       </div>
 
       {/* Dikey / Kıvrımlı Patika Alanı */}
-      <div className="relative max-w-xl mx-auto py-8 sm:py-12">
-        {/* Kıvrımlı Arka Plan Çizgisi (SVG Yolu) */}
-        <div className="absolute inset-y-8 left-1/2 -translate-x-1/2 w-1 border-r-2 border-dashed border-indigo-500/25 pointer-events-none" />
+      <div className="relative max-w-xl mx-auto py-8 sm:py-14">
+        {/* Kıvrımlı Arka Plan Çizgisi ve Enerji Yolu */}
+        <div
+          aria-hidden="true"
+          className="absolute inset-y-10 left-1/2 -translate-x-1/2 w-1 border-r-2 border-dashed border-indigo-500/30 pointer-events-none"
+        />
 
-        <div className="relative space-y-10 sm:space-y-14">
+        <div className="relative space-y-12 sm:space-y-16">
           {topics.map((topic, index) => {
             // Zigzag ofset hesaplama (Sol - Orta - Sağ)
             const alignment =
               index % 3 === 0
-                ? 'justify-center sm:-translate-x-12'
+                ? 'justify-center sm:-translate-x-14'
                 : index % 3 === 1
-                ? 'justify-center sm:translate-x-12'
+                ? 'justify-center sm:translate-x-14'
                 : 'justify-center';
 
             const isCompleted = topic.status === 'completed';
@@ -100,69 +103,79 @@ export function AdventureLearningPath({
             return (
               <div key={topic.id} className={`flex ${alignment} relative group`}>
                 <div className="flex flex-col items-center">
-                  {/* Aktif Düğümde "BURADASIN" Rozeti */}
+                  {/* Aktif Düğümde "BURADAN BAŞLA" Çizgi Film Rozeti */}
                   {isActive && (
-                    <div className="mb-2 animate-bounce flex items-center gap-1 rounded-full bg-gradient-to-r from-amber-400 via-pink-500 to-indigo-500 px-3 py-1 text-[11px] font-black uppercase text-white shadow-lg shadow-pink-500/30">
+                    <div className="mb-3 animate-bounce flex items-center gap-1.5 rounded-full bg-gradient-to-r from-amber-400 via-pink-500 to-indigo-500 px-3.5 py-1 text-xs font-black uppercase tracking-wider text-white shadow-lg shadow-pink-500/30 border border-white/30">
                       <Play className="h-3 w-3 fill-white" />
-                      <span>Buradan Başla!</span>
+                      <span>Buradasın!</span>
                     </div>
                   )}
 
-                  {/* Düğüm Butonu */}
-                  <button
-                    type="button"
-                    onClick={() => setActiveNodeDetail(topic)}
-                    aria-label={`${topic.unitNumber}. Ünite: ${topic.title}`}
-                    className={`relative flex h-20 w-20 sm:h-24 sm:w-24 items-center justify-center rounded-3xl transition-all duration-300 focus:outline-none focus-visible:ring-4 focus-visible:ring-indigo-500 cursor-pointer ${
-                      isActive
-                        ? 'bg-gradient-to-br from-indigo-500 via-purple-600 to-pink-500 text-white shadow-xl shadow-purple-600/40 scale-110 ring-4 ring-purple-400/50 hover:scale-115'
-                        : isCompleted
-                        ? 'bg-gradient-to-br from-emerald-500 to-teal-700 text-white shadow-lg shadow-emerald-500/25 hover:scale-105 hover:shadow-xl'
-                        : topic.boss
-                        ? 'bg-gradient-to-br from-amber-500 via-orange-600 to-rose-700 text-white shadow-xl shadow-amber-600/30 hover:scale-105'
-                        : 'bg-surface-2 text-tertiary border-2 border-default opacity-80 hover:opacity-100 hover:bg-surface-3'
-                    }`}
-                  >
-                    {/* Düğüm İçi İkon */}
-                    {topic.boss ? (
-                      <Crown className="h-9 w-9 text-amber-200 animate-pulse" />
-                    ) : isCompleted ? (
-                      <CheckCircle2 className="h-9 w-9 text-white" />
-                    ) : isActive ? (
-                      <Play className="h-9 w-9 fill-white text-white animate-pulse" />
-                    ) : (
-                      <Lock className="h-7 w-7 text-secondary/60" />
+                  {/* 3D TACTILE GAME BUTTON (Duolingo / Brawl Stars Hissiyatı) */}
+                  <div className="relative">
+                    {/* Aktif Düğüm Dış Halo Işıması */}
+                    {isActive && (
+                      <div
+                        aria-hidden="true"
+                        className="absolute -inset-2.5 rounded-3xl bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 opacity-50 blur-lg animate-pulse pointer-events-none"
+                      />
                     )}
 
-                    {/* Düğüm Üzerinde Yıldızlar (Eğer tamamlandıysa) */}
-                    {isCompleted && (
-                      <div className="absolute -bottom-2 flex items-center gap-0.5 rounded-full bg-slate-950/80 px-2 py-0.5 border border-emerald-400/40 shadow">
-                        {Array.from({ length: 3 }).map((_, i) => (
-                          <Star
-                            key={i}
-                            className={`h-3 w-3 ${
-                              i < topic.stars
-                                ? 'fill-amber-400 text-amber-400'
-                                : 'text-slate-600'
-                            }`}
-                          />
-                        ))}
+                    <button
+                      type="button"
+                      onClick={() => setActiveNodeDetail(topic)}
+                      aria-label={`${topic.unitNumber}. Ünite: ${topic.title}`}
+                      className={`relative flex h-20 w-20 sm:h-24 sm:w-24 items-center justify-center rounded-3xl font-black transition-all duration-150 focus:outline-none focus-visible:ring-4 focus-visible:ring-indigo-500 cursor-pointer select-none ${
+                        isActive
+                          ? 'bg-gradient-to-b from-indigo-500 via-purple-600 to-indigo-700 text-white shadow-[0_8px_0_#3730a3,0_16px_25px_rgba(79,70,229,0.35)] active:translate-y-2 active:shadow-[0_0px_0_#3730a3] scale-105 ring-4 ring-purple-400/40'
+                          : isCompleted
+                          ? 'bg-gradient-to-b from-emerald-400 to-emerald-600 text-white shadow-[0_8px_0_#065f46,0_12px_20px_rgba(5,150,105,0.25)] active:translate-y-2 active:shadow-[0_0px_0_#065f46] hover:scale-105'
+                          : topic.boss
+                          ? 'bg-gradient-to-b from-amber-400 via-orange-500 to-rose-600 text-white shadow-[0_8px_0_#9a3412,0_16px_25px_rgba(234,88,12,0.35)] active:translate-y-2 active:shadow-[0_0px_0_#9a3412] hover:scale-105'
+                          : 'bg-surface-2 text-tertiary border-2 border-default shadow-[0_6px_0_rgba(15,23,42,0.35)] opacity-80 hover:opacity-100 hover:bg-surface-3 active:translate-y-1.5 active:shadow-[0_0px_0_rgba(0,0,0,0.2)]'
+                      }`}
+                    >
+                      {/* Düğüm İçi İkon */}
+                      {topic.boss ? (
+                        <Crown className="h-9 w-9 text-amber-200 drop-shadow-md animate-pulse" />
+                      ) : isCompleted ? (
+                        <CheckCircle2 className="h-9 w-9 text-white drop-shadow-md" />
+                      ) : isActive ? (
+                        <Play className="h-9 w-9 fill-white text-white drop-shadow-md" />
+                      ) : (
+                        <Lock className="h-7 w-7 text-secondary/60" />
+                      )}
+
+                      {/* Düğüm Üzerinde Yıldızlar (Eğer tamamlandıysa) */}
+                      {isCompleted && (
+                        <div className="absolute -bottom-2.5 flex items-center gap-0.5 rounded-full bg-slate-950/85 px-2.5 py-0.5 border border-emerald-400/40 shadow-md">
+                          {Array.from({ length: 3 }).map((_, i) => (
+                            <Star
+                              key={i}
+                              className={`h-3 w-3 ${
+                                i < topic.stars
+                                  ? 'fill-amber-400 text-amber-400'
+                                  : 'text-slate-600'
+                              }`}
+                            />
+                          ))}
+                        </div>
+                      )}
+
+                      {/* XP Ödül Rozeti */}
+                      <div className="absolute -top-2.5 -right-2.5 flex items-center gap-0.5 rounded-full bg-indigo-950/90 px-2 py-0.5 text-[10px] font-black text-indigo-300 border border-indigo-500/40 shadow-md">
+                        <Zap className="h-2.5 w-2.5 fill-indigo-400 text-indigo-400" />
+                        +{topic.xpReward}
                       </div>
-                    )}
+                    </button>
+                  </div>
 
-                    {/* XP Ödül Rozeti */}
-                    <div className="absolute -top-2 -right-2 flex items-center gap-0.5 rounded-full bg-indigo-950 px-2 py-0.5 text-[10px] font-bold text-indigo-300 border border-indigo-500/30 shadow">
-                      <Zap className="h-2.5 w-2.5 fill-indigo-400 text-indigo-400" />
-                      +{topic.xpReward}
-                    </div>
-                  </button>
-
-                  {/* Düğüm Altı Başlık */}
-                  <div className="mt-3 text-center max-w-[180px]">
-                    <span className="block text-[11px] font-bold uppercase tracking-wider text-secondary">
-                      {topic.boss ? 'Bölüm Sonu Sınavı' : `${topic.unitNumber}. Ünite`}
+                  {/* Düğüm Altı Başlık Kapsülü */}
+                  <div className="mt-3.5 text-center max-w-[200px] rounded-2xl px-3 py-1.5 bg-surface-2/80 backdrop-blur-xs border border-default/70 shadow-xs">
+                    <span className="block text-[10px] font-black uppercase tracking-wider text-secondary">
+                      {topic.boss ? '👑 Bölüm Sonu Sınavı' : `${topic.unitNumber}. Ünite`}
                     </span>
-                    <h3 className="font-display text-xs sm:text-sm font-bold text-primary truncate">
+                    <h3 className="font-display text-xs sm:text-sm font-bold text-primary truncate mt-0.5">
                       {topic.title}
                     </h3>
                   </div>
