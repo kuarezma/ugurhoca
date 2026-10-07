@@ -195,9 +195,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html
       lang="tr"
+      data-theme="dark"
       suppressHydrationWarning
       data-scroll-behavior="smooth"
-      className={`${poppins.variable} ${displayFont.variable}`}
+      className={`${poppins.variable} ${displayFont.variable} dark`}
     >
       <head>
         {/* Güvenlik & Referrer Politikaları */}
@@ -227,7 +228,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         />
         <script
           dangerouslySetInnerHTML={{
-            __html: `(function(){try{var theme=localStorage.getItem('${THEME_STORAGE_KEY}');var nextTheme=theme==='light'?'light':'dark';document.documentElement.dataset.theme=nextTheme;document.documentElement.classList.add(nextTheme);var palette=localStorage.getItem('${PALETTE_STORAGE_KEY}')||'classic';document.documentElement.dataset.palette=palette;}catch(e){document.documentElement.dataset.theme='dark';document.documentElement.classList.add('dark');document.documentElement.dataset.palette='classic';}})();`,
+            __html: `(function(){try{var theme=localStorage.getItem('${THEME_STORAGE_KEY}');var nextTheme=theme==='light'?'light':'dark';document.documentElement.dataset.theme=nextTheme;document.documentElement.classList.toggle('dark',nextTheme==='dark');document.documentElement.classList.toggle('light',nextTheme==='light');var palette=localStorage.getItem('${PALETTE_STORAGE_KEY}')||'classic';document.documentElement.dataset.palette=palette;}catch(e){document.documentElement.dataset.theme='dark';document.documentElement.classList.add('dark');document.documentElement.dataset.palette='classic';}})();`,
           }}
         />
         {supabaseOrigin ? (

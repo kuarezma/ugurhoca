@@ -248,7 +248,7 @@ export function HomeHeroSection({
     <section className="relative px-4 pb-12 pt-6 sm:pt-10">
       <div className="relative mx-auto max-w-6xl">
         <div
-          className="relative overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-xl shadow-indigo-950/5 dark:border-slate-800 dark:bg-slate-900 dark:shadow-2xl px-4 py-7 sm:px-10 sm:py-12 transition-all duration-300"
+          className="relative overflow-hidden rounded-3xl border light:border-slate-200/90 dark:border-slate-800 bg-surface-1 shadow-xl light:shadow-indigo-950/5 dark:shadow-2xl px-4 py-7 sm:px-10 sm:py-12 transition-all duration-300"
         >
           <div
             aria-hidden="true"
@@ -269,14 +269,14 @@ export function HomeHeroSection({
             <div className="space-y-5 min-w-0 w-full">
               <div className="flex flex-wrap items-center gap-2">
                 <div
-                  className="inline-flex max-w-full items-center gap-1.5 sm:gap-2 rounded-full px-3 py-1 text-[11px] sm:text-xs font-bold uppercase tracking-wider bg-amber-50 text-amber-800 border border-amber-200 shadow-xs dark:bg-amber-400/10 dark:text-amber-300 dark:border-amber-400/20"
+                  className="inline-flex max-w-full items-center gap-1.5 sm:gap-2 rounded-full px-3 py-1 text-[11px] sm:text-xs font-bold uppercase tracking-wider light:bg-amber-50 light:text-amber-800 light:border-amber-200 shadow-xs dark:bg-amber-400/10 dark:text-amber-300 dark:border-amber-400/20 border"
                 >
                   <Sparkles className="h-3.5 w-3.5 shrink-0 text-amber-500 animate-pulse" aria-hidden="true" />
                   <span className="truncate">🎉 2026-2027 Yeni Eğitim Öğretim Yılı</span>
                 </div>
 
                 <div
-                  className="inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-[11px] sm:text-xs font-semibold bg-indigo-50 text-indigo-700 border border-indigo-100 dark:bg-indigo-500/15 dark:text-indigo-300 dark:border-indigo-500/20"
+                  className="inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-[11px] sm:text-xs font-semibold light:bg-indigo-50 light:text-indigo-700 light:border-indigo-100 dark:bg-indigo-500/15 dark:text-indigo-300 dark:border-indigo-500/20 border"
                 >
                   {user ? 'Hedefe Tam Odaklan!' : 'Ücretsiz & Tam Kapsamlı'}
                 </div>
@@ -288,13 +288,13 @@ export function HomeHeroSection({
                 <span className="bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-500 bg-clip-text text-transparent dark:from-indigo-400 dark:via-purple-400 dark:to-pink-400">
                   {greeting}
                 </span>{' '}
-                <span className="text-slate-800 dark:text-slate-100">
+                <span className="text-primary">
                   Bu Yıl Matematikte Zirveye!
                 </span>
               </h1>
 
               <p
-                className="w-full max-w-lg text-sm sm:text-lg leading-relaxed text-slate-600 dark:text-slate-300"
+                className="w-full max-w-lg text-sm sm:text-lg leading-relaxed text-secondary"
               >
                 LGS ve YKS için müfredatla birebir ders notları, yaprak testler, formül kartları,
                 karalama tahtası ve canlı dersler seni bekliyor.
@@ -568,8 +568,8 @@ export function HomeHeroSection({
         <div
           className={`mt-4 sm:mt-5 overflow-hidden rounded-2xl sm:rounded-3xl border transition-all duration-300 ${
             isLessonsOpen
-              ? 'border-indigo-200 bg-white shadow-md shadow-indigo-950/5 dark:border-indigo-500/50 dark:bg-slate-900'
-              : 'border-slate-200 bg-white shadow-xs hover:border-indigo-300 hover:shadow-md dark:border-slate-800 dark:bg-slate-900 dark:hover:border-slate-700'
+              ? 'border-indigo-200 bg-surface-1 shadow-md shadow-indigo-950/5 dark:border-indigo-500/50'
+              : 'light:border-slate-200 border-default bg-surface-1 shadow-xs hover:border-indigo-300 hover:shadow-md dark:border-slate-800 dark:hover:border-slate-700'
           }`}
         >
           <button
@@ -674,8 +674,8 @@ export function HomeHeroSection({
           <div
             className={`mt-3.5 sm:mt-4 overflow-hidden rounded-2xl sm:rounded-3xl border transition-all duration-300 ${
               isToolsOpen
-                ? 'border-amber-200 bg-white shadow-md shadow-amber-950/5 dark:border-amber-500/50 dark:bg-slate-900'
-                : 'border-slate-200 bg-white shadow-xs hover:border-amber-300 hover:shadow-md dark:border-slate-800 dark:bg-slate-900 dark:hover:border-slate-700'
+                ? 'border-amber-200 bg-surface-1 shadow-md shadow-amber-950/5 dark:border-amber-500/50'
+                : 'light:border-slate-200 border-default bg-surface-1 shadow-xs hover:border-amber-300 hover:shadow-md dark:border-slate-800 dark:hover:border-slate-700'
             }`}
           >
             <button
