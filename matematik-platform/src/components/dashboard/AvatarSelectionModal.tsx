@@ -175,7 +175,7 @@ export default function AvatarSelectionModal({
                     type="button"
                     onClick={() => fileInputRef.current?.click()}
                     disabled={uploading}
-                    className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-brand-primary text-white hover:bg-brand-primary-deep dark:bg-white dark:text-slate-900 dark:hover:bg-slate-100 px-4 py-3 text-sm font-bold transition-colors disabled:cursor-not-allowed disabled:opacity-60 shadow-md"
+                    className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-2xl dark:bg-white dark:hover:bg-slate-100 px-4 py-3 text-sm font-bold transition-colors disabled:cursor-not-allowed disabled:opacity-60 bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none"
                   >
                     {uploading ? (
                       <>
@@ -213,7 +213,7 @@ export default function AvatarSelectionModal({
                       }}
                       className={`flex aspect-square items-center justify-center rounded-2xl text-4xl transition-all hover:scale-110 ${
                         currentAvatar === avatar
-                          ? 'border-2 border-emerald-500/50 bg-emerald-500/20 shadow-[0_0_15px_rgba(16,185,129,0.3)]'
+                          ? 'border-2 border-brand-primary/50 bg-brand-primary/20 shadow-[0_0_15px_rgba(16,185,129,0.3)]'
                           : 'border border-slate-200 dark:border-white/5 bg-slate-50 dark:bg-white/5 hover:bg-slate-100 dark:hover:bg-white/10'
                       }`}
                     >

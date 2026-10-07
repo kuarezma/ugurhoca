@@ -98,7 +98,7 @@ export function HomeSupportForm({
         <button
           type="submit"
           disabled={supportSending}
-          className="inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-indigo-500 to-purple-500 px-5 py-3 text-white font-semibold hover:from-indigo-600 hover:to-purple-600 transition-all disabled:opacity-60"
+          className="inline-flex items-center justify-center gap-2 rounded-xl px-5 py-3 font-semibold transition-all disabled:opacity-60 bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none"
         >
           <Send className="w-4 h-4" />
           {supportSending ? 'Gönderiliyor...' : 'Gönder'}

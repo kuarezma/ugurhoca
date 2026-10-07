@@ -195,7 +195,7 @@ export function FeynmanVoiceExplanationModal({
               onClick={() => setActiveTab('showcase')}
               className={`px-4 py-2 rounded-xl text-sm font-semibold transition-all ${
                 activeTab === 'showcase'
-                  ? 'bg-rose-600 text-white shadow-sm'
+                  ? 'bg-brand-primary shadow-sm text-slate-950 dark:text-slate-950'
                   : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800'
               }`}
             >
@@ -205,7 +205,7 @@ export function FeynmanVoiceExplanationModal({
               onClick={() => setActiveTab('record')}
               className={`px-4 py-2 rounded-xl text-sm font-semibold flex items-center gap-1.5 transition-all ${
                 activeTab === 'record'
-                  ? 'bg-rose-600 text-white shadow-sm'
+                  ? 'bg-brand-primary shadow-sm text-slate-950 dark:text-slate-950'
                   : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800'
               }`}
             >
@@ -276,7 +276,7 @@ export function FeynmanVoiceExplanationModal({
                           className="w-9 h-9 rounded-full bg-rose-600 text-white dark:text-white flex items-center justify-center shadow-md hover:bg-rose-700 transition-colors"
                           aria-label={isPlaying ? 'Durdur' : 'Sesli Dinle'}
                         >
-                          {isPlaying ? <Square className="w-4 h-4 fill-white" /> : <Play className="w-4 h-4 fill-white ml-0.5" />}
+                          {isPlaying ? (<Square className="w-4 h-4 fill-white" /> ): (<Play className="w-4 h-4 fill-white ml-0.5" />)}
                         </button>
                         <div>
                           <div className="text-xs font-semibold text-slate-800 dark:text-slate-200 flex items-center gap-2">
@@ -310,7 +310,7 @@ export function FeynmanVoiceExplanationModal({
                       <div className="p-2.5 bg-amber-50/70 dark:bg-amber-950/30 border border-amber-100 dark:border-amber-900/40 rounded-xl text-xs text-amber-900 dark:text-amber-200 flex items-center gap-2">
                         <Award className="w-4 h-4 text-amber-600 dark:text-amber-400 shrink-0" />
                         <span>
-                          <strong>Uğur Hoca Rozet Notu:</strong> {rec.teacherNote}
+                          <strong>Uğur Hoca Rozet Notu:</strong> {' '}{rec.teacherNote}
                         </span>
                       </div>
                     )}
@@ -372,7 +372,7 @@ export function FeynmanVoiceExplanationModal({
                         : 'bg-rose-500 text-white hover:bg-rose-600'
                     }`}
                   >
-                    {isRecording ? <MicOff className="w-8 h-8" /> : <Mic className="w-8 h-8" />}
+                    {isRecording ? (<MicOff className="w-8 h-8" /> ): (<Mic className="w-8 h-8" />)}
                   </button>
                   {isRecording && (
                     <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-rose-500 animate-ping" />

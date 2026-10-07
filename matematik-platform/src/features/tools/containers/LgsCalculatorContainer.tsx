@@ -230,7 +230,7 @@ export function LgsCalculatorContainer() {
               <div className="pt-2">
                 <Link
                   href="/programlar/lgs"
-                  className="w-full flex items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-cyan-700 to-blue-700 px-4 py-3 text-xs sm:text-sm font-bold text-white shadow-lg transition hover:scale-[1.02] active:scale-[0.98]"
+                  className="w-full flex items-center justify-center gap-2 rounded-2xl px-4 py-3 text-xs sm:text-sm font-bold transition hover:scale-[1.02] active:scale-[0.98] bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none"
                 >
                   <Target className="h-4 w-4" />
                   Bu Puanla Hangi Liselere Girersin?
@@ -258,7 +258,7 @@ export function LgsCalculatorContainer() {
                         <span className="text-secondary">{preset.score}</span>
                         <span
                           className={`font-bold ${
-                            reached ? 'text-emerald-800 dark:text-emerald-300' : 'text-rose-800 dark:text-rose-300'
+                            reached ? "text-emerald-800 dark:text-emerald-300" : "text-rose-800 dark:text-rose-300"
                           }`}
                         >
                           {reached ? `+${diff.toFixed(1)}` : `${diff.toFixed(1)}`}

@@ -115,7 +115,7 @@ export function MathProjectWorkshopModal({
                   onClick={() => setSelectedProject(proj)}
                   className={`w-full text-left p-3 rounded-2xl border transition ${
                     isSelected
-                      ? 'border-amber-500/60 bg-amber-500/10 shadow-lg'
+                      ? 'border-brand-primary/60 bg-brand-primary/10 shadow-lg'
                       : 'border-white/5 bg-white/5 hover:bg-white/10'
                   }`}
                 >
@@ -139,7 +139,7 @@ export function MathProjectWorkshopModal({
             <div className="space-y-2">
               <div className="flex flex-wrap items-center justify-between gap-2">
                 <span className="px-2.5 py-1 rounded-xl bg-amber-500/20 text-amber-300 border border-amber-500/30 text-xs font-bold">
-                  {selectedProject.difficulty} Düzey • {selectedProject.durationWeeks} Haftalık Proje
+                  {selectedProject.difficulty} Düzey • {' '}{selectedProject.durationWeeks} Haftalık Proje
                 </span>
 
                 <div className="flex items-center gap-2 text-xs font-bold text-slate-700 dark:text-slate-300">

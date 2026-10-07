@@ -182,7 +182,7 @@ export function StudentQuestionAuthoringModal({
               onClick={() => setActiveTab('list')}
               className={`px-4 py-2 rounded-xl text-sm font-semibold transition-all ${
                 activeTab === 'list'
-                  ? 'bg-indigo-600 text-white shadow-sm'
+                  ? 'bg-brand-primary shadow-sm text-slate-950 dark:text-slate-950'
                   : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800'
               }`}
             >
@@ -192,7 +192,7 @@ export function StudentQuestionAuthoringModal({
               onClick={() => setActiveTab('create')}
               className={`px-4 py-2 rounded-xl text-sm font-semibold flex items-center gap-1.5 transition-all ${
                 activeTab === 'create'
-                  ? 'bg-indigo-600 text-white shadow-sm'
+                  ? 'bg-brand-primary shadow-sm text-slate-950 dark:text-slate-950'
                   : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800'
               }`}
             >
@@ -236,7 +236,7 @@ export function StudentQuestionAuthoringModal({
                   </p>
                   <button
                     onClick={() => setActiveTab('create')}
-                    className="mt-4 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white dark:text-white rounded-xl text-xs font-semibold inline-flex items-center gap-1.5 transition-colors"
+                    className="mt-4 px-4 py-2 rounded-xl text-xs font-semibold inline-flex items-center gap-1.5 transition-colors bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none"
                   >
                     <Plus className="w-3.5 h-3.5" />
                     Hemen Soru Yazmaya Başla
@@ -302,7 +302,8 @@ export function StudentQuestionAuthoringModal({
                           >
                             <div className="flex items-center justify-between">
                               <span>
-                                <strong className="mr-1.5">{String.fromCharCode(65 + optIdx)})</strong> {opt}
+                                <strong className="mr-1.5">{String.fromCharCode(65 + optIdx)})</strong> {' '}
+                                {opt}
                               </span>
                               {isCorrect && (
                                 <span className="text-[10px] font-bold text-emerald-600 dark:text-emerald-400">
@@ -498,7 +499,7 @@ export function StudentQuestionAuthoringModal({
                 </button>
                 <button
                   type="submit"
-                  className="px-5 py-2 text-xs font-semibold text-white dark:text-white bg-indigo-600 hover:bg-indigo-700 rounded-xl shadow-md inline-flex items-center gap-1.5"
+                  className="px-5 py-2 text-xs font-semibold rounded-xl inline-flex items-center gap-1.5 bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none"
                 >
                   <Sparkles className="w-3.5 h-3.5" />
                   Soruyu İncelemeye Gönder

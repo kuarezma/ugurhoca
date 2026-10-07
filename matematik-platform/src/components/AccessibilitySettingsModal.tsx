@@ -101,7 +101,7 @@ export function AccessibilitySettingsModal({
                     onClick={() => updateSetting('fontSize', size)}
                     className={`py-2 px-3 rounded-xl text-xs font-bold transition flex flex-col items-center gap-1 border ${
                       active
-                        ? 'bg-sky-600 text-white border-sky-600 shadow-sm'
+                        ? 'bg-brand-primary border-brand-primary shadow-sm text-slate-950 dark:text-slate-950'
                         : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-white/10 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-white/5'
                     }`}
                   >
@@ -163,12 +163,12 @@ export function AccessibilitySettingsModal({
                     onClick={() => updateSetting('touchTarget', opt.id)}
                     className={`p-3 rounded-xl text-left text-xs font-semibold transition border ${
                       active
-                        ? 'bg-indigo-600 text-white border-indigo-600 shadow-sm'
+                        ? 'bg-brand-primary border-brand-primary shadow-sm text-slate-950 dark:text-slate-950'
                         : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-white/10 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-white/5'
                     }`}
                   >
                     <strong className="block font-bold">{opt.title}</strong>
-                    <span className={`text-[10px] block mt-0.5 ${active ? 'text-indigo-100' : 'text-slate-500'}`}>
+                    <span className={`text-[10px] block mt-0.5 ${active ? 'text-brand-primary-soft' : 'text-slate-500'}`}>
                       {opt.desc}
                     </span>
                   </button>
@@ -197,7 +197,7 @@ export function AccessibilitySettingsModal({
                 aria-checked={settings.reducedMotion}
                 onClick={() => updateSetting('reducedMotion', !settings.reducedMotion)}
                 className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
-                  settings.reducedMotion ? 'bg-amber-600' : 'bg-slate-300 dark:bg-slate-700'
+                  settings.reducedMotion ? 'bg-brand-primary text-slate-950 dark:text-slate-950' : 'bg-slate-300 dark:bg-slate-700'
                 }`}
               >
                 <span
@@ -226,7 +226,7 @@ export function AccessibilitySettingsModal({
                 aria-checked={settings.spaciousOptions}
                 onClick={() => updateSetting('spaciousOptions', !settings.spaciousOptions)}
                 className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
-                  settings.spaciousOptions ? 'bg-emerald-600' : 'bg-slate-300 dark:bg-slate-700'
+                  settings.spaciousOptions ? 'bg-brand-primary text-slate-950 dark:text-slate-950' : 'bg-slate-300 dark:bg-slate-700'
                 }`}
               >
                 <span
@@ -253,7 +253,7 @@ export function AccessibilitySettingsModal({
           <button
             type="button"
             onClick={onClose}
-            className="px-5 py-2 rounded-xl bg-sky-600 hover:bg-sky-500 text-white dark:text-white font-bold text-xs shadow transition-colors"
+            className="px-5 py-2 rounded-xl font-bold text-xs transition-colors bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none"
           >
             Ayarları Kaydet & Kapat
           </button>

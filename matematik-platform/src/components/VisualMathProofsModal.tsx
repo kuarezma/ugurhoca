@@ -4,10 +4,10 @@ import { useState, useMemo } from 'react';
 import {
   X,
   Compass,
-  Lightbulb,
+  Lightbulb
 } from 'lucide-react';
 
-export type VisualProofTab = 'pythagoras' | 'difference_of_squares' | 'trig_identity' | 'pascal_binomial' | 'circle_sector';
+export type VisualProofTab = |'pythagoras' | 'difference_of_squares' | 'trig_identity' | 'pascal_binomial' | 'circle_sector';
 
 type VisualMathProofsModalProps = {
   isOpen: boolean;
@@ -118,7 +118,7 @@ export function VisualMathProofsModal({
           }`}
         >
           <div className="flex items-center gap-2.5">
-            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-500 to-purple-500 text-white dark:text-white shadow-md">
+            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl shadow-md bg-brand-secondary text-slate-950 dark:text-slate-950">
               <Compass className="h-5 w-5" />
             </div>
             <div>
@@ -159,7 +159,7 @@ export function VisualMathProofsModal({
             onClick={() => setActiveTab('pythagoras')}
             className={`px-3 py-1.5 rounded-xl text-xs font-bold transition shrink-0 ${
               activeTab === 'pythagoras'
-                ? 'bg-indigo-600 text-white shadow'
+                ? 'bg-brand-primary shadow text-slate-950 dark:text-slate-950'
                 : 'text-slate-400 hover:text-white hover:bg-white/5'
             }`}
           >
@@ -171,7 +171,7 @@ export function VisualMathProofsModal({
             onClick={() => setActiveTab('difference_of_squares')}
             className={`px-3 py-1.5 rounded-xl text-xs font-bold transition shrink-0 ${
               activeTab === 'difference_of_squares'
-                ? 'bg-indigo-600 text-white shadow'
+                ? 'bg-brand-primary shadow text-slate-950 dark:text-slate-950'
                 : 'text-slate-400 hover:text-white hover:bg-white/5'
             }`}
           >
@@ -183,7 +183,7 @@ export function VisualMathProofsModal({
             onClick={() => setActiveTab('trig_identity')}
             className={`px-3 py-1.5 rounded-xl text-xs font-bold transition shrink-0 ${
               activeTab === 'trig_identity'
-                ? 'bg-indigo-600 text-white shadow'
+                ? 'bg-brand-primary shadow text-slate-950 dark:text-slate-950'
                 : 'text-slate-400 hover:text-white hover:bg-white/5'
             }`}
           >
@@ -195,7 +195,7 @@ export function VisualMathProofsModal({
             onClick={() => setActiveTab('pascal_binomial')}
             className={`px-3 py-1.5 rounded-xl text-xs font-bold transition shrink-0 ${
               activeTab === 'pascal_binomial'
-                ? 'bg-indigo-600 text-white shadow'
+                ? 'bg-brand-primary shadow text-slate-950 dark:text-slate-950'
                 : 'text-slate-400 hover:text-white hover:bg-white/5'
             }`}
           >
@@ -207,7 +207,7 @@ export function VisualMathProofsModal({
             onClick={() => setActiveTab('circle_sector')}
             className={`px-3 py-1.5 rounded-xl text-xs font-bold transition shrink-0 ${
               activeTab === 'circle_sector'
-                ? 'bg-indigo-600 text-white shadow'
+                ? 'bg-brand-primary shadow text-slate-950 dark:text-slate-950'
                 : 'text-slate-400 hover:text-white hover:bg-white/5'
             }`}
           >
@@ -404,7 +404,7 @@ export function VisualMathProofsModal({
               <div className="flex items-start gap-3 rounded-2xl border border-amber-500/25 bg-amber-500/10 p-4">
                 <Lightbulb className="h-5 w-5 text-amber-400 shrink-0 mt-0.5" />
                 <div className="text-xs leading-relaxed text-slate-200">
-                  <strong className="text-amber-300">Uğur Hoca Pedagojik İpucu:</strong> Pisagor teoremi bir sayı oyunu değil, <strong>alan korunumudur</strong>. İki dik kenar üzerine kurulan karelerin toplam yüzey alanı, daima hipotenüs üzerine kurulan karenin yüzey alanına birebir eşittir.
+                  <strong className="text-amber-300">Uğur Hoca Pedagojik İpucu:</strong> {' '}Pisagor teoremi bir sayı oyunu değil, {' '}<strong>alan korunumudur</strong>. İki dik kenar üzerine kurulan karelerin toplam yüzey alanı, daima hipotenüs üzerine kurulan karenin yüzey alanına birebir eşittir.
                 </div>
               </div>
             </div>
@@ -505,14 +505,14 @@ export function VisualMathProofsModal({
                     })()}
                   </svg>
                   <span className="text-[11px] text-slate-400 mt-2">
-                    Pembe parça kaydırıldığında tek parça bir <strong className="text-slate-900 dark:text-white">(a - b) × (a + b)</strong> dikdörtgeni oluşur!
+                    Pembe parça kaydırıldığında tek parça bir {' '}<strong className="text-slate-900 dark:text-white">(a - b) × (a + b)</strong> {' '}dikdörtgeni oluşur!
                   </span>
                 </div>
 
                 {/* Sağ Kontrol Paneli */}
                 <div className="lg:col-span-5 space-y-4">
                   <div className="rounded-2xl border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-slate-950/50 p-4 space-y-4">
-                    <span className="text-xs font-bold uppercase tracking-wider text-pink-400">
+                    <span className="text-xs font-bold uppercase tracking-wider text-purple-400">
                       Kare Kenarlarını Ayarla:
                     </span>
 
@@ -570,7 +570,7 @@ export function VisualMathProofsModal({
                       {diffA}² - {safeDiffB}² = ({diffA} - {safeDiffB}) × ({diffA} + {safeDiffB})
                     </div>
                     <div className="text-sm font-bold text-pink-400 mt-1">
-                      {diffAreaOrig} = {diffA - safeDiffB} × {diffA + safeDiffB} = {diffFactored}
+                      {diffAreaOrig} = {diffA - safeDiffB} × {diffA + safeDiffB} {' '}= {diffFactored}
                     </div>
                   </div>
                 </div>
@@ -580,7 +580,7 @@ export function VisualMathProofsModal({
               <div className="flex items-start gap-3 rounded-2xl border border-indigo-500/25 bg-indigo-500/10 p-4">
                 <Lightbulb className="h-5 w-5 text-indigo-400 shrink-0 mt-0.5" />
                 <div className="text-xs leading-relaxed text-slate-200">
-                  <strong className="text-indigo-300">Neden (a - b)(a + b)?</strong> Büyük kareden küçük kare kesildiğinde kalan L-şeklindeki parça, ortasından kesilip yan yana konduğunda yüksekliği <strong>(a - b)</strong>, tabanı ise <strong>(a + b)</strong> olan mükemmel bir dikdörtgene dönüşür.
+                  <strong className="text-indigo-300">Neden (a - b)(a + b)?</strong> {' '}Büyük kareden küçük kare kesildiğinde kalan L-şeklindeki parça, ortasından kesilip yan yana konduğunda yüksekliği {' '}<strong>(a - b)</strong>, tabanı ise <strong>(a + b)</strong> {' '}olan mükemmel bir dikdörtgene dönüşür.
                 </div>
               </div>
             </div>
@@ -682,7 +682,8 @@ export function VisualMathProofsModal({
                       sin²(θ) + cos²(θ) = 1
                     </div>
                     <div className="text-sm font-bold text-emerald-400 mt-1">
-                      {sinSq.toFixed(3)} + {cosSq.toFixed(3)} = {(sinSq + cosSq).toFixed(3)}
+                      {sinSq.toFixed(3)} + {cosSq.toFixed(3)} = {' '}
+                      {(sinSq + cosSq).toFixed(3)}
                     </div>
                   </div>
                 </div>
@@ -692,7 +693,7 @@ export function VisualMathProofsModal({
               <div className="flex items-start gap-3 rounded-2xl border border-sky-500/25 bg-sky-500/10 p-4">
                 <Lightbulb className="h-5 w-5 text-sky-400 shrink-0 mt-0.5" />
                 <div className="text-xs leading-relaxed text-slate-200">
-                  <strong className="text-sky-300">Birim Çember Sırrı:</strong> Birim çemberin yarıçapı daima <strong>1</strong> olduğu için, çember üzerindeki herhangi bir noktanın oluşturduğu dik üçgende Pisagor teoremi doğrudan <strong>cos²θ + sin²θ = 1² = 1</strong> verir. Bu eşitlik 360 derecenin tamamında ve negatif bölgelerde de karesi alındığı için daima 1 çıkar!
+                  <strong className="text-sky-300">Birim Çember Sırrı:</strong> {' '}Birim çemberin yarıçapı daima <strong>1</strong> olduğu için, çember üzerindeki herhangi bir noktanın oluşturduğu dik üçgende Pisagor teoremi doğrudan {' '}<strong>cos²θ + sin²θ = 1² = 1</strong> verir. Bu eşitlik 360 derecenin tamamında ve negatif bölgelerde de karesi alındığı için daima 1 çıkar!
                 </div>
               </div>
             </div>
@@ -716,7 +717,7 @@ export function VisualMathProofsModal({
                                 key={cIdx}
                                 className={`flex h-8 w-8 sm:h-9 sm:w-9 items-center justify-center rounded-xl font-mono text-xs sm:text-sm font-bold transition-all ${
                                   isSelected
-                                    ? 'bg-gradient-to-br from-amber-400 to-orange-500 text-slate-950 shadow-lg scale-110'
+                                    ? 'shadow-lg scale-110 bg-brand-primary text-slate-950 dark:text-slate-950'
                                     : 'bg-white/5 border border-white/10 text-slate-300'
                                 }`}
                               >
@@ -762,7 +763,7 @@ export function VisualMathProofsModal({
                           onClick={() => setBinomialPower(pow)}
                           className={`flex-1 py-1 rounded-lg text-xs font-bold transition ${
                             binomialPower === pow
-                              ? 'bg-amber-500 text-slate-950'
+                              ? 'bg-brand-primary text-slate-950 dark:text-slate-950'
                               : 'bg-white/5 text-slate-300 hover:bg-white/10'
                           }`}
                         >
@@ -791,7 +792,7 @@ export function VisualMathProofsModal({
               <div className="flex items-start gap-3 rounded-2xl border border-amber-500/25 bg-amber-500/10 p-4">
                 <Lightbulb className="h-5 w-5 text-amber-400 shrink-0 mt-0.5" />
                 <div className="text-xs leading-relaxed text-slate-200">
-                  <strong className="text-amber-300">Kombinasyon Bağlantısı:</strong> Pascal üçgenindeki her eleman aslında bir kombinasyondur: C(n, r). (a + b)³ açılımında a²b teriminin katsayısının 3 olmasının sebebi, 3 parantezden birini seçmenin 3 farklı yolu olmasıdır!
+                  <strong className="text-amber-300">Kombinasyon Bağlantısı:</strong> {' '}Pascal üçgenindeki her eleman aslında bir kombinasyondur: C(n, r). (a + b)³ açılımında a²b teriminin katsayısının 3 olmasının sebebi, 3 parantezden birini seçmenin 3 farklı yolu olmasıdır!
                 </div>
               </div>
             </div>
@@ -989,7 +990,7 @@ export function VisualMathProofsModal({
 
                   <div className="rounded-2xl border border-slate-200 dark:border-white/10 bg-slate-100/40 dark:bg-slate-800/40 p-3 text-xs text-slate-700 dark:text-slate-300 flex justify-between">
                     <span>Toplam Daire Alanı: <strong>{totalCircleArea} cm²</strong></span>
-                    <span>Oran: <strong>%{Math.round((circleAngle / 360) * 100)}</strong></span>
+                    <span>Oran: {' '}<strong>%{Math.round((circleAngle / 360) * 100)}</strong></span>
                   </div>
                 </div>
               </div>
@@ -998,7 +999,7 @@ export function VisualMathProofsModal({
               <div className="flex items-start gap-3 rounded-2xl border border-amber-500/25 bg-amber-500/10 p-4">
                 <Lightbulb className="h-5 w-5 text-amber-400 shrink-0 mt-0.5" />
                 <div className="text-xs leading-relaxed text-slate-200">
-                  <strong className="text-amber-300">LGS Soru Çözüm İpucu:</strong> Daire diliminde hem alan hem de yay uzunluğu, merkez açının 360 dereceye oranıyla doğru orantılıdır. Örneğin 60° tam altıda bir (1/6), 90° çeyrek (1/4), 180° ise yarım (1/2) dairedir!
+                  <strong className="text-amber-300">LGS Soru Çözüm İpucu:</strong> {' '}Daire diliminde hem alan hem de yay uzunluğu, merkez açının 360 dereceye oranıyla doğru orantılıdır. Örneğin 60° tam altıda bir (1/6), 90° çeyrek (1/4), 180° ise yarım (1/2) dairedir!
                 </div>
               </div>
             </div>
@@ -1017,7 +1018,7 @@ export function VisualMathProofsModal({
           <button
             type="button"
             onClick={onClose}
-            className="w-full sm:w-auto px-5 py-2 rounded-xl text-xs font-bold bg-indigo-600 hover:bg-indigo-500 text-white dark:text-white shadow-md transition"
+            className="w-full sm:w-auto px-5 py-2 rounded-xl text-xs font-bold shadow-md transition bg-surface-2 hover:bg-surface-3 text-primary border border-default"
           >
             Anladım, Kapat
           </button>

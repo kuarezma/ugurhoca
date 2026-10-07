@@ -1,7 +1,9 @@
 'use client';
 
+import Image from 'next/image';
+
 import { motion } from 'framer-motion';
-import { ArrowLeft, Calculator, Trophy, Volume2, VolumeX } from 'lucide-react';
+import { ArrowLeft, Trophy, Volume2, VolumeX } from 'lucide-react';
 import Link from 'next/link';
 import { useGameSoundMute } from '@/features/games/hooks/useGameSoundMute';
 import type { AppUser } from '@/types';
@@ -41,10 +43,16 @@ export function GamesLandingView({
       <nav className="fixed top-0 left-0 right-0 z-50 border-b border-default bg-surface-1/90 backdrop-blur-xl py-3 sm:py-4 px-4 sm:px-6 pt-[max(0.75rem,env(safe-area-inset-top))] pl-[max(1rem,env(safe-area-inset-left))] pr-[max(1rem,env(safe-area-inset-right))]">
         <div className="container mx-auto flex justify-between items-center gap-3">
           <Link href="/" className="flex items-center gap-2.5 min-w-0">
-            <div className="w-8 h-8 sm:w-10 sm:h-10 shrink-0 bg-gradient-to-br from-purple-600 to-pink-600 rounded-xl flex items-center justify-center">
-              <Calculator className="w-5 h-5 sm:w-6 sm:h-6 text-white dark:text-white" />
+            <div className="h-10 w-10 shrink-0 overflow-hidden rounded-2xl border-2 border-brand-accent bg-brand-accent/20 p-0.5 shadow-btn-3d-yellow">
+              <Image
+                src="/ugur.jpeg"
+                alt="Uğur Hoca"
+                width={44}
+                height={44}
+                className="h-full w-full rounded-xl object-cover"
+              />
             </div>
-            <span className="text-base sm:text-xl font-bold bg-gradient-to-r from-purple-700 via-fuchsia-700 to-pink-700 dark:from-purple-300 dark:via-fuchsia-300 dark:to-pink-300 bg-clip-text text-transparent truncate">
+            <span className="font-display text-base sm:text-xl font-bold text-primary truncate">
               Uğur Hoca Matematik
             </span>
           </Link>

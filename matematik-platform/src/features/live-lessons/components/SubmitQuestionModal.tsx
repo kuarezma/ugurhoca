@@ -5,7 +5,7 @@ import {
   X,
   Send,
   HelpCircle,
-  CheckCircle2,
+  CheckCircle2
 } from 'lucide-react';
 import type { LiveLesson } from '@/features/live-lessons/types';
 import {
@@ -151,7 +151,7 @@ export function SubmitQuestionModal({
                 <button
                   type="button"
                   onClick={handleReset}
-                  className="px-5 py-2 rounded-xl text-xs font-bold bg-indigo-600 hover:bg-indigo-500 text-white dark:text-white shadow-md transition"
+                  className="px-5 py-2 rounded-xl text-xs font-bold shadow-md transition bg-surface-2 hover:bg-surface-3 text-primary border border-default"
                 >
                   Tamam, Kapat
                 </button>
@@ -238,7 +238,7 @@ export function SubmitQuestionModal({
                         onClick={() => setDifficulty(dif)}
                         className={`flex-1 py-2 rounded-xl text-xs font-bold transition border ${
                           difficulty === dif
-                            ? 'bg-indigo-600 text-white border-indigo-500 shadow'
+                            ? 'bg-brand-primary border-brand-primary shadow text-slate-950 dark:text-slate-950'
                             : isLight
                             ? 'bg-slate-100 border-slate-200 text-slate-600 hover:bg-slate-200'
                             : 'bg-slate-800 border-white/10 text-slate-300 hover:bg-white/10'
@@ -306,7 +306,7 @@ export function SubmitQuestionModal({
                 </button>
                 <button
                   type="submit"
-                  className="px-5 py-2.5 rounded-xl text-xs font-bold bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white shadow-lg shadow-orange-500/20 flex items-center gap-1.5 transition"
+                  className="px-5 py-2.5 rounded-xl text-xs font-bold flex items-center gap-1.5 transition bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none"
                 >
                   <Send className="h-3.5 w-3.5" />
                   <span>Soruyu Derse Gönder</span>

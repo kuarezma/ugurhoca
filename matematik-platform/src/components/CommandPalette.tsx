@@ -508,10 +508,10 @@ export default function CommandPalette({ initiallyOpen = false }: CommandPalette
             onKeyDown={(event) => {
               if (event.key === 'ArrowDown') {
                 event.preventDefault();
-                setActiveIndex((prev) => (filtered.length === 0 ? 0 : (prev + 1) % filtered.length));
+                setActiveIndex((prev) => filtered.length === 0 ? 0 : (prev + 1) % filtered.length,);
               } else if (event.key === 'ArrowUp') {
                 event.preventDefault();
-                setActiveIndex((prev) => (filtered.length === 0 ? 0 : (prev - 1 + filtered.length) % filtered.length));
+                setActiveIndex((prev) => filtered.length === 0 ? 0 : (prev - 1 + filtered.length) % filtered.length,);
               } else if (event.key === 'Enter') {
                 event.preventDefault();
                 const target = filtered[activeIndex];
@@ -556,7 +556,7 @@ export default function CommandPalette({ initiallyOpen = false }: CommandPalette
                     <span
                       className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-lg ${
                         isActive
-                          ? 'bg-brand-primary text-white shadow-sm'
+                          ? 'bg-brand-primary shadow-sm text-slate-950 dark:text-slate-950'
                           : 'bg-slate-100 dark:bg-white/5 text-slate-600 dark:text-slate-300'
                       }`}
                     >

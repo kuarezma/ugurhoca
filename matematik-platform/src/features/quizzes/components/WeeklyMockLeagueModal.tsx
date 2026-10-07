@@ -107,7 +107,7 @@ export function WeeklyMockLeagueModal({
         className="relative flex flex-col w-full max-w-4xl max-h-[92vh] bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700/80 rounded-3xl shadow-2xl overflow-hidden text-slate-900 dark:text-slate-100 outline-none"
       >
         {/* HEADER */}
-        <div className="flex flex-wrap items-center justify-between gap-3 p-5 sm:p-6 border-b border-slate-200 dark:border-slate-800 bg-gradient-to-r from-amber-500/10 via-rose-500/5 to-transparent dark:from-amber-500/15 dark:via-rose-500/10 dark:to-transparent">
+        <div className="flex flex-wrap items-center justify-between gap-3 p-5 sm:p-6 border-b border-slate-200 dark:border-slate-800 bg-brand-accent/10 dark:bg-brand-accent/15">
           <div className="flex items-center gap-3.5">
             <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-amber-500 to-rose-600 text-white dark:text-white flex items-center justify-center shadow-lg shadow-rose-500/20">
               <Trophy className="w-6 h-6" />
@@ -164,7 +164,7 @@ export function WeeklyMockLeagueModal({
             onClick={() => setActiveTab('leaderboard')}
             className={`pb-2.5 transition border-b-2 flex items-center gap-1.5 ${
               activeTab === 'leaderboard'
-                ? 'border-amber-500 text-amber-600 dark:text-amber-400'
+                ? 'border-brand-primary text-tone-success-fg dark:text-brand-primary-soft'
                 : 'border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
             }`}
           >
@@ -176,7 +176,7 @@ export function WeeklyMockLeagueModal({
             onClick={() => setActiveTab('analysis')}
             className={`pb-2.5 transition border-b-2 flex items-center gap-1.5 ${
               activeTab === 'analysis'
-                ? 'border-amber-500 text-amber-600 dark:text-amber-400'
+                ? 'border-brand-primary text-tone-success-fg dark:text-brand-primary-soft'
                 : 'border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
             }`}
           >
@@ -322,7 +322,7 @@ export function WeeklyMockLeagueModal({
                   onStartExam();
                   onClose();
                 }}
-                className="flex items-center gap-1.5 px-5 py-2 rounded-xl bg-gradient-to-r from-amber-500 to-rose-600 hover:from-amber-400 hover:to-rose-500 text-slate-950 font-black shadow-lg shadow-rose-500/20 transition active:scale-95"
+                className="flex items-center gap-1.5 px-5 py-2 rounded-xl font-black transition active:scale-95 bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none"
               >
                 <Play className="w-4 h-4 fill-current" />
                 <span>Denemeye Başla</span>

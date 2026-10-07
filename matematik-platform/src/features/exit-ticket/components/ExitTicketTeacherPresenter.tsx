@@ -113,7 +113,7 @@ export function ExitTicketTeacherPresenter({
             title="Kodu Kopyala"
             className="p-2 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-white/5 dark:hover:bg-white/10 text-slate-600 hover:text-slate-900 dark:text-slate-300 dark:hover:text-white transition"
           >
-            {copied ? <Check className="w-5 h-5 text-emerald-600 dark:text-emerald-400" /> : <Copy className="w-5 h-5" />}
+            {copied ? (<Check className="w-5 h-5 text-emerald-600 dark:text-emerald-400" /> ): (<Copy className="w-5 h-5" />)}
           </button>
         </div>
       </div>
@@ -128,7 +128,7 @@ export function ExitTicketTeacherPresenter({
               onClick={() => changeQuestion(idx)}
               className={`rounded-2xl px-4 py-2.5 text-xs sm:text-sm font-bold transition flex items-center gap-2 ${
                 currentQIndex === idx
-                  ? 'bg-violet-600 text-white shadow-lg shadow-violet-500/30 ring-2 ring-violet-400'
+                  ? 'bg-brand-primary shadow-lg shadow-brand-primary/30 ring-2 ring-brand-primary text-slate-950 dark:text-slate-950'
                   : 'bg-white dark:bg-slate-900/60 border border-slate-200 dark:border-white/10 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800'
               }`}
             >
@@ -293,7 +293,7 @@ export function ExitTicketTeacherPresenter({
                 <button
                   type="button"
                   onClick={() => changeQuestion(currentQIndex + 1)}
-                  className="inline-flex items-center gap-1 rounded-xl bg-violet-600 hover:bg-violet-500 px-4 py-2 text-xs sm:text-sm font-bold text-white dark:text-white shadow-lg transition active:scale-95"
+                  className="inline-flex items-center gap-1 rounded-xl px-4 py-2 text-xs sm:text-sm font-bold transition active:scale-95 bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none"
                 >
                   Sonraki Soru <ChevronRight className="w-4 h-4" />
                 </button>
@@ -301,7 +301,7 @@ export function ExitTicketTeacherPresenter({
                 <button
                   type="button"
                   onClick={handleCompleteSession}
-                  className="inline-flex items-center gap-1.5 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 px-4 py-2 text-xs sm:text-sm font-bold text-slate-950 shadow-lg transition active:scale-95"
+                  className="inline-flex items-center gap-1.5 rounded-xl px-4 py-2 text-xs sm:text-sm font-bold transition active:scale-95 bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none"
                 >
                   <Award className="w-4 h-4" /> Çıkış Biletini Tamamla
                 </button>
@@ -313,7 +313,7 @@ export function ExitTicketTeacherPresenter({
 
       {/* Oturum Tamamlandığında: Bir Sonraki Ders Tekrar Raporu */}
       {isCompleted && (
-        <div className="rounded-3xl border border-emerald-200 dark:border-emerald-500/30 bg-gradient-to-br from-emerald-50 via-white to-teal-50 dark:from-emerald-500/10 dark:via-slate-900 dark:to-teal-950/40 p-6 sm:p-8 backdrop-blur-xl shadow-2xl space-y-4 animate-fade-in">
+        <div className="rounded-3xl border border-emerald-200 dark:border-emerald-500/30 p-6 sm:p-8 backdrop-blur-xl shadow-2xl space-y-4 animate-fade-in bg-surface-1 dark:bg-brand-primary/10">
           <div className="flex items-center gap-3">
             <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-500 text-slate-950 shadow-lg">
               <Sparkles className="w-6 h-6" />

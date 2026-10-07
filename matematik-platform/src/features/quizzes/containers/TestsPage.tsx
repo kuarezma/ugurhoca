@@ -5,7 +5,7 @@ import { toStoredGrade } from '@/lib/grade';
 import Image from 'next/image';
 import Link from 'next/link';
 import {
-  Calculator,
+
   FileText,
   Clock,
   Trophy,
@@ -45,7 +45,7 @@ import { useAccessibilitySettings } from '@/hooks/useAccessibilitySettings';
 
 const ScratchpadModal = dynamic(
   () => import('@/components/ScratchpadModal'),
-  { ssr: false },
+  { ssr: false }
 );
 
 const QuizMistakeReviewModal = dynamic(
@@ -206,10 +206,10 @@ const normalizeQuizQuestion = (question: QuizQuestion): QuizQuestion => {
 
 function QuestionImage({
   alt,
-  src,
+  src
 }: {
   alt: string;
-  src: string;
+  src: string
 }) {
   return (
     <div className="mt-4 overflow-hidden rounded-2xl border border-white/10 bg-slate-950/40 dark:bg-slate-950/40 p-3">
@@ -228,10 +228,10 @@ function QuestionImage({
 
 function OptionMedia({
   alt,
-  src,
+  src
 }: {
   alt: string;
-  src: string;
+  src: string
 }) {
   return (
     <div className="mt-3 overflow-hidden rounded-xl border border-white/10 bg-slate-950/50 dark:bg-slate-950/50 p-2">
@@ -426,7 +426,7 @@ export default function TestsPage({
         flaggedQuestions: Array.from(flaggedQuestions),
         questionTimes,
         startTime: startTime || Date.now(),
-        timeLeft: timeLeft ?? (selectedQuiz.time_limit * 60),
+        timeLeft: timeLeft ?? selectedQuiz.time_limit * 60,
       }, user?.id ?? null);
     }
   }, [
@@ -666,7 +666,7 @@ export default function TestsPage({
     if (index >= 0 && index < quizQuestions.length) {
       setCurrentQuestion(index);
       setSelectedAnswer(
-        answers[index] !== undefined ? answers[index] : null,
+        answers[index] !== undefined ? answers[index] : null
       );
     }
   };
@@ -1080,7 +1080,7 @@ export default function TestsPage({
                     onClick={() => setIsDrawingOverlayActive((prev) => !prev)}
                     className={`inline-flex items-center gap-1.5 rounded-xl border px-3 py-1.5 text-xs font-bold transition ${
                       isDrawingOverlayActive
-                        ? 'border-indigo-500 bg-indigo-500/20 text-indigo-700 dark:text-indigo-300 shadow-sm'
+                        ? 'border-brand-primary bg-brand-primary/20 text-tone-success-fg dark:text-brand-primary-soft shadow-sm'
                         : 'border-slate-200 dark:border-white/10 bg-slate-100 dark:bg-white/5 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-white/10'
                     }`}
                     title="Soru kartı üzerine doğrudan çizim ve not alma katmanını aç/kapat"
@@ -1117,7 +1117,7 @@ export default function TestsPage({
                     }}
                     className={`inline-flex items-center gap-1.5 rounded-xl border px-3 py-1.5 text-xs font-bold transition ${
                       isOpticalDocked
-                        ? 'border-amber-500 bg-amber-500/20 text-amber-900 dark:text-amber-200'
+                        ? 'border-brand-primary bg-brand-primary/20 text-tone-success-fg dark:text-brand-primary-soft'
                         : 'border-amber-300 dark:border-amber-500/30 bg-amber-100/80 dark:bg-amber-500/10 text-amber-800 dark:text-amber-300 hover:bg-amber-200/80 hover:text-amber-900'
                     }`}
                     title="LGS / YKS dijital optik form simülasyonunu aç / sabitle (O)"
@@ -1174,7 +1174,7 @@ export default function TestsPage({
                     onClick={toggleDyslexicMode}
                     className={`inline-flex items-center gap-1.5 rounded-xl border px-3 py-1.5 text-xs font-bold transition ${
                       isDyslexicMode
-                        ? 'border-emerald-500/40 bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 shadow-sm'
+                        ? 'border-brand-primary/40 bg-brand-primary/20 text-tone-success-fg dark:text-brand-primary-soft shadow-sm'
                         : 'border-slate-300 dark:border-white/10 bg-slate-100 dark:bg-white/5 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-white/10'
                     }`}
                     title={isDyslexicMode ? 'Normal yazı tipine dön' : 'Disleksi dostu rahat okuma modunu aç (D)'}
@@ -1190,7 +1190,7 @@ export default function TestsPage({
                     onClick={() => setIsSmartboardMode((prev) => !prev)}
                     className={`inline-flex items-center gap-1.5 rounded-xl border px-3 py-1.5 text-xs font-bold transition ${
                       isSmartboardMode
-                        ? 'border-amber-500 bg-amber-500/20 text-amber-300 shadow-md'
+                        ? 'border-brand-primary bg-brand-primary/20 text-brand-primary-soft shadow-md'
                         : 'border-slate-300 dark:border-white/10 bg-slate-100 dark:bg-white/5 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-white/10'
                     }`}
                     title={isSmartboardMode ? 'Standart görünüme dön' : 'Sınıf akıllı tahta projeksiyon modunu aç'}
@@ -1217,7 +1217,7 @@ export default function TestsPage({
                   onClick={() => setIsFocusMode((prev) => !prev)}
                   className={`inline-flex items-center gap-1.5 rounded-xl border px-3 py-1.5 text-xs font-bold transition ${
                     isFocusMode
-                      ? 'border-purple-500/40 bg-purple-500/20 text-purple-200'
+                      ? 'border-brand-primary/40 bg-brand-primary/20 text-brand-primary-soft'
                       : 'border-white/10 bg-white/5 text-slate-300 hover:bg-white/10 hover:text-white'
                   }`}
                   title={isFocusMode ? 'Normal görünüme dön' : 'Tam odaklanma modunu aç'}
@@ -1299,7 +1299,7 @@ export default function TestsPage({
 
               <div className="h-2 bg-slate-200 dark:bg-slate-800 rounded-full overflow-hidden border border-slate-300 dark:border-white/5">
                 <div
-                  className="h-full bg-gradient-to-r from-purple-500 via-pink-500 to-orange-400 transition-all duration-300 ease-out"
+                  className="h-full transition-all duration-300 ease-out bg-brand-pink"
                   style={{
                     width: `${((currentQuestion + 1) / quizQuestions.length) * 100}%`,
                   }}
@@ -1404,14 +1404,14 @@ export default function TestsPage({
                           : 'min-h-[3.25rem] p-4'
                       } ${
                         selected
-                          ? 'bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-500 text-white shadow-md scale-[1.01]'
+                          ? 'shadow-md scale-[1.01] bg-brand-primary text-slate-950 dark:text-slate-950'
                           : 'bg-slate-100 hover:bg-slate-200/80 dark:bg-slate-800/60 dark:hover:bg-slate-700/60 text-slate-800 dark:text-slate-200 hover:translate-x-0.5 border border-slate-200 dark:border-white/5 shadow-sm'
                       }`}
                     >
                       <span
                         className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl font-bold text-sm ${
                           selected
-                            ? 'bg-white/25 text-white shadow-sm'
+                            ? 'bg-white/25 text-slate-950 dark:text-slate-950 shadow-sm'
                             : 'bg-slate-200 dark:bg-white/10 text-slate-700 dark:text-slate-300'
                         }`}
                         aria-hidden="true"
@@ -1452,7 +1452,7 @@ export default function TestsPage({
                       }
                       className={`px-3 py-1 rounded-xl font-bold transition ${
                         confidenceRatings[currentQuestion] === 'sure'
-                          ? 'bg-emerald-500 text-slate-950 shadow-sm'
+                          ? 'bg-brand-primary shadow-sm text-slate-950 dark:text-slate-950'
                           : 'bg-white/10 text-slate-300 hover:bg-white/15'
                       }`}
                     >
@@ -1465,7 +1465,7 @@ export default function TestsPage({
                       }
                       className={`px-3 py-1 rounded-xl font-bold transition ${
                         confidenceRatings[currentQuestion] === 'unsure'
-                          ? 'bg-amber-500 text-slate-950 shadow-sm'
+                          ? 'bg-brand-primary shadow-sm text-slate-950 dark:text-slate-950'
                           : 'bg-white/10 text-slate-300 hover:bg-white/15'
                       }`}
                     >
@@ -1478,7 +1478,7 @@ export default function TestsPage({
                       }
                       className={`px-3 py-1 rounded-xl font-bold transition ${
                         confidenceRatings[currentQuestion] === 'guess'
-                          ? 'bg-purple-500 text-white shadow-sm'
+                          ? 'bg-brand-primary shadow-sm text-slate-950 dark:text-slate-950'
                           : 'bg-white/10 text-slate-300 hover:bg-white/15'
                       }`}
                     >
@@ -1508,7 +1508,7 @@ export default function TestsPage({
                     <button
                       type="button"
                       onClick={() => setShowSmartboardSolution((prev) => !prev)}
-                      className="px-3 py-1 rounded-xl bg-amber-500 text-slate-950 text-xs font-bold transition hover:bg-amber-400"
+                      className="px-3 py-1 rounded-xl text-xs font-bold transition bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none"
                     >
                       {showSmartboardSolution ? 'Çözümü Gizle' : 'Çözümü Tahtada Aç'}
                     </button>
@@ -1516,7 +1516,8 @@ export default function TestsPage({
                   {showSmartboardSolution && (
                     <div className="mt-3 pt-3 border-t border-amber-500/20 text-sm text-slate-200 space-y-2">
                       <div className="font-bold text-emerald-400">
-                        Doğru Cevap: {String.fromCharCode(65 + question.correct_index)}) {question.options[question.correct_index]}
+                        Doğru Cevap: {' '}
+                          {String.fromCharCode(65 + question.correct_index)}) {' '}{question.options[question.correct_index]}
                       </div>
                       {question.explanation && (
                         <div className="text-xs sm:text-sm leading-relaxed text-slate-300 bg-slate-950/60 dark:bg-slate-950/60 p-3 rounded-xl border border-white/5">
@@ -1546,7 +1547,7 @@ export default function TestsPage({
                 disabled={selectedAnswer === null}
                 className={`inline-flex h-12 items-center justify-center gap-2 rounded-xl font-bold transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:ring-offset-2 focus-visible:ring-offset-slate-900 ${
                   selectedAnswer !== null
-                    ? 'bg-gradient-to-r from-brand-primary via-brand-pink to-brand-orange text-white shadow-brand-glow hover:-translate-y-0.5'
+                    ? 'hover:-translate-y-0.5 bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none'
                     : 'bg-slate-200 dark:bg-slate-700/60 text-slate-400 dark:text-slate-500 border border-slate-300 dark:border-transparent cursor-not-allowed'
                 }`}
               >
@@ -1765,10 +1766,16 @@ export default function TestsPage({
       <nav className="fixed top-0 left-0 right-0 z-50 glass py-3 sm:py-4 px-4 sm:px-6 pt-[max(0.75rem,env(safe-area-inset-top))] pl-[max(1rem,env(safe-area-inset-left))] pr-[max(1rem,env(safe-area-inset-right))]">
         <div className="container mx-auto flex justify-between items-center gap-3">
           <Link href="/" className="flex items-center gap-2.5 min-w-0">
-            <div className="w-8 h-8 sm:w-10 sm:h-10 shrink-0 bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl flex items-center justify-center">
-              <Calculator className="w-5 h-5 sm:w-6 sm:h-6 text-white dark:text-white" />
+            <div className="h-10 w-10 shrink-0 overflow-hidden rounded-2xl border-2 border-brand-accent bg-brand-accent/20 p-0.5 shadow-btn-3d-yellow">
+              <Image
+                src="/ugur.jpeg"
+                alt="Uğur Hoca"
+                width={44}
+                height={44}
+                className="h-full w-full rounded-xl object-cover"
+              />
             </div>
-            <span className="text-base sm:text-xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent truncate">
+            <span className="font-display text-base sm:text-xl font-bold text-primary truncate">
               Uğur Hoca Matematik
             </span>
           </Link>
@@ -1837,7 +1844,7 @@ export default function TestsPage({
 
           {/* Yarım Kalan Sınav Taslağı Kurtarma Banner'ı */}
           {activeDraft && (
-            <div className="mb-8 rounded-3xl border border-amber-400/40 bg-gradient-to-r from-amber-500/20 via-orange-500/15 to-amber-500/10 p-5 sm:p-6 backdrop-blur-xl shadow-2xl animate-fade-in">
+            <div className="mb-8 rounded-3xl border border-amber-400/40 p-5 sm:p-6 backdrop-blur-xl shadow-2xl animate-fade-in bg-brand-accent/20">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div className="flex items-center gap-3.5">
                   <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-amber-500/30 text-amber-800 dark:text-amber-300 border border-amber-400/30 shadow-md">
@@ -1853,7 +1860,7 @@ export default function TestsPage({
                       </span>
                     </div>
                     <p className="text-xs sm:text-sm text-slate-700 dark:text-slate-200 mt-1 max-w-xl">
-                      <strong>{activeDraft.quizTitle}</strong> sınavında {activeDraft.currentQuestion + 1}. soruda kalmıştınız ({Object.keys(activeDraft.answers).length} cevap işaretli). Kalan süreniz ve işaretleriniz korundu.
+                      <strong>{activeDraft.quizTitle}</strong> sınavında {' '}{activeDraft.currentQuestion + 1}. soruda kalmıştınız ({Object.keys(activeDraft.answers).length} cevap işaretli). Kalan süreniz ve işaretleriniz korundu.
                     </p>
                   </div>
                 </div>
@@ -1862,7 +1869,7 @@ export default function TestsPage({
                   <button
                     type="button"
                     onClick={() => handleResumeDraft(activeDraft)}
-                    className="flex-1 sm:flex-initial inline-flex items-center justify-center gap-2 rounded-xl bg-amber-500 hover:bg-amber-400 px-4 py-2.5 text-xs sm:text-sm font-bold text-slate-950 shadow-lg shadow-amber-500/25 transition active:scale-95"
+                    className="flex-1 sm:flex-initial inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-xs sm:text-sm font-bold transition active:scale-95 bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none"
                   >
                     <Play className="w-4 h-4 fill-slate-950" />
                     <span>Kaldığım Yerden Devam Et</span>
@@ -1881,7 +1888,7 @@ export default function TestsPage({
 
           {/* Akıllı Telafi Testi Kartı */}
           {pendingMistakesCount > 0 && (
-            <div className="mb-8 rounded-3xl border border-amber-500/30 bg-gradient-to-br from-amber-500/10 via-orange-500/5 to-purple-500/10 p-5 sm:p-6 backdrop-blur-xl shadow-xl animate-fade-up">
+            <div className="mb-8 rounded-3xl border border-amber-500/30 p-5 sm:p-6 backdrop-blur-xl shadow-xl animate-fade-up bg-brand-accent/10">
               <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div className="flex items-start gap-3.5">
                   <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-amber-500 to-rose-600 text-white dark:text-white shadow-lg shadow-amber-500/25">
@@ -1906,7 +1913,7 @@ export default function TestsPage({
                   <button
                     type="button"
                     onClick={() => handleStartAdaptiveQuiz(5)}
-                    className="inline-flex items-center gap-1.5 rounded-xl bg-gradient-to-r from-amber-500 to-rose-600 px-4 py-2.5 text-xs font-bold text-white shadow-lg shadow-amber-500/20 hover:brightness-110 active:scale-95 transition"
+                    className="inline-flex items-center gap-1.5 rounded-xl px-4 py-2.5 text-xs font-bold hover:brightness-110 active:scale-95 transition bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none"
                   >
                     <Play className="h-3.5 w-3.5 fill-current" />
                     <span>5 Soruluk Hızlı Telafi</span>
@@ -1975,7 +1982,7 @@ export default function TestsPage({
                   action={
                     <Link
                       href="/icerikler"
-                      className="inline-flex h-11 items-center justify-center rounded-xl bg-gradient-to-r from-brand-primary via-brand-pink to-brand-orange px-5 text-sm font-semibold text-white shadow-brand-glow transition-transform hover:-translate-y-0.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary"
+                      className="inline-flex h-11 items-center justify-center rounded-xl px-5 text-sm font-semibold transition-transform hover:-translate-y-0.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none"
                     >
                       İçeriklere git
                     </Link>

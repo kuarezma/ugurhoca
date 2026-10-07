@@ -22,7 +22,7 @@ export const PUBLIC_TOOLS = [
       '3 yanlış 1 doğru kuralına göre güncel standart sapma ve katsayılarla anlık LGS puanı ve tahmini yüzdelik dilimini hesapla.',
     href: '/araclar/lgs-puan-hesaplama',
     icon: School,
-    gradient: 'from-cyan-500 via-blue-600 to-indigo-600',
+    gradient: 'from-brand-secondary to-brand-secondary',
     tag: 'LGS 2026/2027',
     badgeColor: 'bg-cyan-500/15 text-cyan-800 dark:text-cyan-300 border-cyan-500/30',
   },
@@ -33,7 +33,7 @@ export const PUBLIC_TOOLS = [
       'TYT, Sayısal, Eşit Ağırlık ve Sözel puanlarını OBP diploma notuyla birlikte hesapla, tahmini başarı sıranı öğren.',
     href: '/araclar/yks-puan-hesaplama',
     icon: GraduationCap,
-    gradient: 'from-violet-500 via-purple-600 to-pink-600',
+    gradient: 'from-brand-pink to-brand-pink',
     tag: 'YKS (TYT / AYT)',
     badgeColor: 'bg-purple-500/15 text-purple-800 dark:text-purple-300 border-purple-500/30',
   },
@@ -44,7 +44,7 @@ export const PUBLIC_TOOLS = [
       'İki veya üç sayının bölen listesi algoritmasını adım adım gör. Ortak bölenler, en küçük ortak kat ve aralarında asallık analizi.',
     href: '/araclar/ebob-ekok-hesaplayici',
     icon: Layers,
-    gradient: 'from-emerald-500 via-teal-600 to-cyan-600',
+    gradient: 'from-brand-primary to-brand-primary',
     tag: '8. Sınıf & TYT',
     badgeColor: 'bg-emerald-500/15 text-emerald-800 dark:text-emerald-300 border-emerald-500/30',
   },
@@ -55,7 +55,7 @@ export const PUBLIC_TOOLS = [
       'Dik kenarları gir, hipotenüsü ve kareler toplamı adımlarını anında gör. 3-4-5, 5-12-13 gibi özel üçgen dedektörü.',
     href: '/araclar/pisagor-hesaplayici',
     icon: Triangle,
-    gradient: 'from-amber-500 via-orange-600 to-rose-600',
+    gradient: 'from-brand-accent to-brand-accent',
     tag: 'Geometri',
     badgeColor: 'bg-amber-500/15 text-amber-900 dark:text-amber-300 border-amber-500/30',
   },
@@ -173,7 +173,7 @@ export function ToolsHubContainer() {
           <div className="mt-5 flex flex-wrap items-center justify-center gap-3">
             <Link
               href="/testler"
-              className="rounded-xl bg-indigo-600 px-5 py-2.5 text-xs sm:text-sm font-bold text-white dark:text-white shadow-lg transition hover:bg-indigo-500"
+              className="rounded-xl px-5 py-2.5 text-xs sm:text-sm font-bold transition bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none"
             >
               Ücretsiz Test Çöz
             </Link>

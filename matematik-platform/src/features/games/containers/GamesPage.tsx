@@ -89,7 +89,7 @@ function GameAliasModal({
         <button
           type="submit"
           disabled={saving || alias.trim().length < 3}
-          className="mt-4 inline-flex h-11 w-full items-center justify-center rounded-xl bg-emerald-600 hover:bg-emerald-700 border border-emerald-500 text-sm font-bold text-white dark:text-white transition disabled:cursor-not-allowed disabled:opacity-50 shadow"
+          className="mt-4 inline-flex h-11 w-full items-center justify-center rounded-xl border border-emerald-500 text-sm font-bold transition disabled:cursor-not-allowed disabled:opacity-50 bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none"
         >
           {saving ? 'Kaydediliyor...' : 'Rumuzu Kaydet'}
         </button>
@@ -155,7 +155,7 @@ export default function GamesPage() {
 
   if (loading || !user) {
     return (
-      <div className="page-surface min-h-screen bg-slate-50 dark:bg-gradient-to-b dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 pt-20">
+      <div className="page-surface min-h-screen pt-20 dark:bg-surface-0">
         <div className="mx-auto max-w-6xl px-4 py-10">
           <div className="mb-8 flex items-center gap-3" aria-hidden="true">
             <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-brand-primary/20 text-brand-primary-soft">

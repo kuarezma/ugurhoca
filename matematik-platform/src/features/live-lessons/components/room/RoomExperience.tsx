@@ -327,7 +327,7 @@ export function RoomExperience({
             className="rounded-xl border border-border bg-card p-2 text-foreground/70 hover:bg-foreground/5 hover:text-foreground transition"
             title={isFullscreen ? 'Tam Ekrandan Çık' : 'Tam Ekran'}
           >
-            {isFullscreen ? <Minimize2 className="h-3.5 w-3.5" /> : <Maximize2 className="h-3.5 w-3.5" />}
+            {isFullscreen ? (<Minimize2 className="h-3.5 w-3.5" /> ): (<Maximize2 className="h-3.5 w-3.5" />)}
           </button>
 
           {role === 'teacher' && (
@@ -424,7 +424,7 @@ export function RoomExperience({
               onClick={() => setActiveTab('chat')}
               className={`flex flex-1 items-center justify-center gap-1.5 rounded-lg py-1.5 text-xs font-semibold transition ${
                 activeTab === 'chat'
-                  ? 'bg-brand-primary text-white shadow-sm'
+                  ? 'bg-brand-primary shadow-sm text-slate-950 dark:text-slate-950'
                   : 'text-foreground/70 hover:bg-foreground/5'
               }`}
             >
@@ -437,7 +437,7 @@ export function RoomExperience({
               onClick={() => setActiveTab('participants')}
               className={`flex flex-1 items-center justify-center gap-1.5 rounded-lg py-1.5 text-xs font-semibold transition ${
                 activeTab === 'participants'
-                  ? 'bg-brand-primary text-white shadow-sm'
+                  ? 'bg-brand-primary shadow-sm text-slate-950 dark:text-slate-950'
                   : 'text-foreground/70 hover:bg-foreground/5'
               }`}
             >
@@ -450,7 +450,7 @@ export function RoomExperience({
               onClick={() => setActiveTab('quiz')}
               className={`flex flex-1 items-center justify-center gap-1.5 rounded-lg py-1.5 text-xs font-semibold transition ${
                 activeTab === 'quiz'
-                  ? 'bg-brand-primary text-white shadow-sm'
+                  ? 'bg-brand-primary shadow-sm text-slate-950 dark:text-slate-950'
                   : 'text-foreground/70 hover:bg-foreground/5'
               }`}
             >
@@ -464,7 +464,7 @@ export function RoomExperience({
                 onClick={() => setActiveTab('settings')}
                 className={`flex items-center justify-center rounded-lg px-2.5 py-1.5 text-xs font-semibold transition ${
                   activeTab === 'settings'
-                    ? 'bg-brand-primary text-white shadow-sm'
+                    ? 'bg-brand-primary shadow-sm text-slate-950 dark:text-slate-950'
                     : 'text-foreground/70 hover:bg-foreground/5'
                 }`}
                 title="Görünüm Ayarları"

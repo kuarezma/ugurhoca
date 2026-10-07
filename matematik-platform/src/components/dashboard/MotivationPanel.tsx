@@ -88,7 +88,7 @@ export default function MotivationPanel({
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.12 }}
-      className="rounded-3xl border border-slate-200/80 bg-white shadow-sm dark:border-white/10 dark:bg-gradient-to-br dark:from-slate-900/90 dark:via-slate-900/75 dark:to-slate-800/70 p-6 sm:p-8"
+      className="rounded-3xl border border-slate-200/80 bg-white shadow-sm dark:border-white/10 p-6 sm:p-8 dark:bg-surface-1"
     >
       <div className="mb-6 flex items-start justify-between gap-4">
         <div>

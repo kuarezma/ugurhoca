@@ -442,7 +442,7 @@ export function QuestionHintLadder({
               onClick={() => setActiveMode((m) => (m === 'ladder' ? 'socratic' : 'ladder'))}
               className={`hidden sm:inline-flex items-center gap-1 rounded-xl px-2.5 py-1 text-xs font-semibold transition ${
                 activeMode === 'socratic'
-                  ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/30'
+                  ? 'bg-brand-primary/20 text-brand-primary-soft border border-brand-primary/30'
                   : 'bg-white/5 text-slate-300 border border-white/10 hover:text-white'
               }`}
             >
@@ -457,7 +457,7 @@ export function QuestionHintLadder({
             className="rounded-lg p-1 text-slate-400 hover:text-white transition"
             aria-label={isOpen ? 'İpuçlarını daralt' : 'İpuçlarını genişlet'}
           >
-            {isOpen ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+            {isOpen ? (<ChevronUp className="h-4 w-4" /> ): (<ChevronDown className="h-4 w-4" />)}
           </button>
         </div>
       </div>
@@ -477,7 +477,7 @@ export function QuestionHintLadder({
                 onClick={() => setActiveMode('ladder')}
                 className={`flex flex-1 items-center justify-center gap-1.5 rounded-lg py-1.5 text-xs font-semibold transition ${
                   activeMode === 'ladder'
-                    ? 'bg-amber-500/20 text-amber-300 shadow'
+                    ? 'bg-brand-primary/20 text-brand-primary-soft shadow'
                     : 'text-slate-400 hover:text-white'
                 }`}
               >
@@ -489,7 +489,7 @@ export function QuestionHintLadder({
                 onClick={() => setActiveMode('socratic')}
                 className={`flex flex-1 items-center justify-center gap-1.5 rounded-lg py-1.5 text-xs font-semibold transition ${
                   activeMode === 'socratic'
-                    ? 'bg-cyan-500/20 text-cyan-300 shadow'
+                    ? 'bg-brand-primary/20 text-brand-primary-soft shadow'
                     : 'text-slate-400 hover:text-white'
                 }`}
               >

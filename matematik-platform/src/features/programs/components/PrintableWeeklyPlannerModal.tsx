@@ -166,7 +166,7 @@ export function PrintableWeeklyPlannerModal({
             <button
               type="button"
               onClick={handlePrint}
-              className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 px-4 py-2 text-xs font-bold text-white shadow-md transition hover:scale-[1.02] active:scale-[0.98]"
+              className="inline-flex items-center gap-2 rounded-xl px-4 py-2 text-xs font-bold transition hover:scale-[1.02] active:scale-[0.98] bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none"
             >
               <Printer className="h-4 w-4" />
               <span>Yazdır / PDF Olarak Kaydet</span>
@@ -210,7 +210,7 @@ export function PrintableWeeklyPlannerModal({
           <div className="flex items-center gap-3 font-semibold text-[11px] text-slate-600 dark:text-slate-300">
             <span className="inline-flex items-center gap-1 text-emerald-600 dark:text-emerald-400">
               <Flame className="h-3.5 w-3.5" />
-              Haftalık Hedef: <strong className="text-slate-900 dark:text-white">{totalWeeklyQuestions} Soru</strong>
+              Haftalık Hedef: {' '}<strong className="text-slate-900 dark:text-white">{totalWeeklyQuestions} Soru</strong>
             </span>
             <span>•</span>
             <span>{totalPomodoros} Pomodoro Seansı</span>
@@ -231,14 +231,15 @@ export function PrintableWeeklyPlannerModal({
                 </p>
               </div>
               <div className="text-right text-xs font-semibold text-slate-700 print:text-black">
-                <p>İsim: <span className="font-bold underline">{studentName || '...........................................'}</span></p>
+                <p>İsim: {' '}<span className="font-bold underline">{studentName || '...........................................'}</span></p>
                 <p className="mt-1">Hafta: Tarih: _____ / _____ / 2026</p>
               </div>
             </div>
 
             <div className="mt-3 flex flex-wrap items-center justify-between rounded-xl bg-slate-100 print:bg-slate-50 p-2.5 text-xs font-medium">
-              <span>🎯 <strong>Hedef:</strong> {examGoal || 'LGS & YKS Matematik Başarısı'}</span>
-              <span>📊 <strong>Haftalık Toplam Hedef:</strong> {totalWeeklyQuestions} Soru / {totalPomodoros} Pomodoro</span>
+              <span>🎯 <strong>Hedef:</strong> {' '}
+                {examGoal || 'LGS & YKS Matematik Başarısı'}</span>
+              <span>📊 <strong>Haftalık Toplam Hedef:</strong> {' '}{totalWeeklyQuestions} Soru / {totalPomodoros} Pomodoro</span>
             </div>
           </div>
 
@@ -299,7 +300,7 @@ export function PrintableWeeklyPlannerModal({
                       </div>
                       <div className="hidden print:block">
                         <p className="font-bold text-black">{day.focusTopics}</p>
-                        {day.note && <p className="text-[10px] text-slate-600 mt-0.5 italic">{day.note}</p>}
+                        {day.note && (<p className="text-[10px] text-slate-600 mt-0.5 italic">{day.note}</p>)}
                       </div>
                     </td>
 

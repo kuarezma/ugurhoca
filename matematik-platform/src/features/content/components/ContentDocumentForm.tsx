@@ -34,14 +34,14 @@ const UPLOAD_HOVER_CLASS: Record<Accent, string> = {
 };
 
 const CHECKBOX_ACCENT_CLASS: Record<Accent, string> = {
-  blue: 'accent-blue-500',
-  purple: 'accent-purple-500',
+  blue: 'accent-brand-primary',
+  purple: 'accent-brand-primary',
 };
 
 const BUTTON_CLASS: Record<Accent, string> = {
-  blue: 'from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 shadow-blue-500/25',
+  blue: 'bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none',
   purple:
-    'from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 shadow-purple-500/25',
+    'bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none',
 };
 
 const WORKSHEET_FORM_GRADE_OPTIONS = [5, 6, 7, 8];
@@ -393,7 +393,7 @@ export default function ContentDocumentForm({
         whileHover={{ scale: 1.02 }}
         whileTap={{ scale: 0.98 }}
         disabled={isSubmitting}
-        className={`w-full py-4 bg-gradient-to-r text-white font-semibold rounded-xl transition-all shadow-lg flex items-center justify-center gap-2 ${BUTTON_CLASS[accent]}`}
+        className={`w-full py-4 font-semibold rounded-xl transition-all flex items-center justify-center gap-2 ${BUTTON_CLASS[accent]}`}
       >
         {isSubmitting ? (
           <>

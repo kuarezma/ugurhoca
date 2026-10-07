@@ -172,7 +172,7 @@ export function SmartTopicDiagnostic({
           </p>
           <Link
             href="/testler"
-            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold bg-indigo-600 hover:bg-indigo-500 text-white dark:text-white shadow-md transition"
+            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold transition bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none"
           >
             <BookOpen className="h-3.5 w-3.5" />
             <span>Test Çözmeye Başla</span>

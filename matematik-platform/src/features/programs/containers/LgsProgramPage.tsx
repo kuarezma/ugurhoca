@@ -299,7 +299,7 @@ export default function LgsWizardPage() {
           className="rounded-3xl border border-default bg-surface-1 p-5 shadow-sm sm:p-7"
         >
           <ProgramWizardHeader
-            badgeClassName="bg-gradient-to-r from-blue-600 via-indigo-600 to-violet-600 text-white"
+            badgeClassName="text-white bg-brand-secondary"
             badgeLabel="LGS 2026 Sihirbazı"
             dataYear={dataYear}
             dataYearNote={
@@ -314,7 +314,7 @@ export default function LgsWizardPage() {
 
           <ProgramStepTabs
             activeStep={step}
-            activeStepClassName="bg-gradient-to-r from-blue-600 via-indigo-600 to-violet-600 text-white border-blue-500 dark:border-blue-400 shadow-lg"
+            activeStepClassName="bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none"
             inactiveStepClassName="border border-default dark:border-slate-500 bg-surface-1 text-secondary hover:text-primary hover:border-accent"
             onStepChange={setStep}
             steps={steps}
@@ -329,7 +329,7 @@ export default function LgsWizardPage() {
                   return (
                     <ProgramSubjectInputCard
                       key={subject.key}
-                      accentClassName="bg-gradient-to-r from-blue-600 via-indigo-600 to-violet-600"
+                      accentClassName="bg-brand-secondary"
                       helperText={`${subject.questions} soru · katsayı ${subject.coefficient}`}
                       idPrefix="lgs"
                       isLight={isLight}
@@ -371,7 +371,7 @@ export default function LgsWizardPage() {
                 <button
                   type="button"
                   onClick={() => setStep(2)}
-                  className="mt-4 inline-flex items-center gap-2 rounded-xl border border-blue-400/80 dark:border-blue-300/80 bg-gradient-to-r from-blue-600 via-indigo-600 to-violet-600 px-4 py-2 text-sm font-bold text-white shadow-lg transition hover:scale-[1.01] active:scale-[0.99]"
+                  className="mt-4 inline-flex items-center gap-2 rounded-xl border border-blue-400/80 dark:border-blue-300/80 px-4 py-2 text-sm font-bold transition hover:scale-[1.01] active:scale-[0.99] bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none"
                 >
                   Hedef Filtrelerine Geç
                   <ChevronRight className="h-4 w-4" />
@@ -523,7 +523,7 @@ export default function LgsWizardPage() {
                   <button
                     type="button"
                     onClick={() => setStep(3)}
-                    className="inline-flex items-center gap-2 rounded-xl border border-blue-400/80 dark:border-blue-300/80 bg-gradient-to-r from-blue-600 via-indigo-600 to-violet-600 px-4 py-2 text-sm font-bold text-white shadow-lg transition hover:scale-[1.01] active:scale-[0.99]"
+                    className="inline-flex items-center gap-2 rounded-xl border border-blue-400/80 dark:border-blue-300/80 px-4 py-2 text-sm font-bold transition hover:scale-[1.01] active:scale-[0.99] bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none"
                   >
                     Önerileri Göster
                     <ChevronRight className="h-4 w-4" />
@@ -790,7 +790,7 @@ export default function LgsWizardPage() {
                 <button
                   type="button"
                   onClick={() => setStep(1)}
-                  className="inline-flex items-center gap-2 rounded-xl border border-blue-400/80 dark:border-blue-300/80 bg-gradient-to-r from-blue-600 via-indigo-600 to-violet-600 px-4 py-2 text-sm font-bold text-white shadow-lg transition hover:scale-[1.01] active:scale-[0.99]"
+                  className="inline-flex items-center gap-2 rounded-xl border border-blue-400/80 dark:border-blue-300/80 px-4 py-2 text-sm font-bold transition hover:scale-[1.01] active:scale-[0.99] bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none"
                 >
                   Netleri Güncelle
                   <Target className="h-4 w-4" />

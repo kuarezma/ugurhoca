@@ -61,7 +61,7 @@ export default function AdminMessageForm({
           value={adminMsgTitle}
           onChange={(event) => setAdminMsgTitle(event.target.value)}
           className="w-full bg-surface-2 dark:bg-slate-800/50 border border-default dark:border-slate-700 rounded-xl px-4 py-3 text-primary
-                   focus:outline-none focus:border-purple-500 transition-colors"
+ focus:outline-none focus:border-purple-500 transition-colors"
           placeholder="Mesaj başlığı..."
         />
       </div>
@@ -113,7 +113,7 @@ export default function AdminMessageForm({
           onChange={(event) => setAdminMsgText(event.target.value)}
           rows={5}
           className="w-full bg-surface-2 dark:bg-slate-800/50 border border-default dark:border-slate-700 rounded-xl px-4 py-3 text-primary
-                   focus:outline-none focus:border-purple-500 transition-colors resize-none"
+ focus:outline-none focus:border-purple-500 transition-colors resize-none"
           placeholder="Öğrenciye mesajınızı yazın..."
         />
       </div>
@@ -126,7 +126,7 @@ export default function AdminMessageForm({
           (!adminMsgText.trim() && !adminMsgImagePreview) ||
           !adminMsgRecipient
         }
-        className="w-full py-4 bg-gradient-to-r from-purple-500 to-pink-500 text-white font-semibold rounded-xl hover:from-purple-600 hover:to-pink-600 transition-all flex items-center justify-center gap-2 disabled:opacity-60"
+        className="w-full py-4 font-semibold rounded-xl transition-all flex items-center justify-center gap-2 disabled:opacity-60 bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none"
       >
         {isSubmitting ? (
           "Gönderiliyor..."

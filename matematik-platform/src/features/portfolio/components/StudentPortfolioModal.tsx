@@ -113,7 +113,7 @@ export function StudentPortfolioModal({
         {/* Başlık */}
         <div className="flex items-center justify-between border-b border-slate-200 dark:border-white/10 px-5 py-4 bg-slate-50 dark:bg-slate-900/90 print:hidden">
           <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-600 text-white dark:text-white shadow-md shadow-indigo-500/25">
+            <div className="flex h-10 w-10 items-center justify-center rounded-2xl shadow-md shadow-indigo-500/25 bg-brand-secondary text-slate-950 dark:text-slate-950">
               <FolderKanban className="h-5 w-5" />
             </div>
             <div>
@@ -157,7 +157,8 @@ export function StudentPortfolioModal({
         <div className="hidden print:block p-6 border-b border-slate-300">
           <h1 className="text-2xl font-bold text-slate-900">Uğur Hoca Matematik Platformu</h1>
           <h2 className="text-lg font-semibold text-slate-700">Öğrenci Gelişim Portfolyosu & Dosyası</h2>
-          <p className="text-sm text-slate-600 mt-1">Öğrenci: {studentName} • {grade}. Sınıf • Tarih: {new Date().toLocaleDateString('tr-TR')}</p>
+          <p className="text-sm text-slate-600 mt-1">Öğrenci: {studentName} • {grade}. Sınıf • Tarih: {' '}
+            {new Date().toLocaleDateString('tr-TR')}</p>
         </div>
 
         {/* Araç Çubuğu: Kategori Filtresi & Yeni Ekle */}
@@ -175,7 +176,7 @@ export function StudentPortfolioModal({
                 onClick={() => setActiveCategory(cat.id)}
                 className={`px-3 py-1 rounded-xl text-xs font-semibold whitespace-nowrap transition ${
                   activeCategory === cat.id
-                    ? 'bg-indigo-600 text-white dark:text-white shadow-sm'
+                    ? 'bg-brand-primary shadow-sm text-slate-950 dark:text-slate-950'
                     : 'bg-white/5 text-slate-400 hover:text-slate-900 dark:hover:text-white'
                 }`}
               >
@@ -187,7 +188,7 @@ export function StudentPortfolioModal({
           <button
             type="button"
             onClick={() => setIsAddingNew((prev) => !prev)}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white dark:text-white text-xs font-bold transition shadow-sm shrink-0"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition shadow-sm shrink-0 bg-surface-2 hover:bg-surface-3 text-primary border border-default"
           >
             <Plus className="w-3.5 h-3.5" />
             <span>{isAddingNew ? 'İptal' : 'Yeni Çalışma Ekle'}</span>
@@ -247,7 +248,7 @@ export function StudentPortfolioModal({
               />
               <button
                 type="submit"
-                className="px-4 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white dark:text-white text-xs font-bold transition shadow-sm"
+                className="px-4 py-1.5 rounded-xl text-xs font-bold transition bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none"
               >
                 Portfolyoma Kaydet
               </button>
@@ -279,7 +280,8 @@ export function StudentPortfolioModal({
                       </span>
                       {item.score !== undefined && (
                         <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500/20 text-emerald-300 flex items-center gap-1">
-                          <Star className="w-3 h-3 text-emerald-400 fill-emerald-400" /> {item.score} Puan
+                          <Star className="w-3 h-3 text-emerald-400 fill-emerald-400" /> {' '}
+                          {item.score} Puan
                         </span>
                       )}
                     </div>

@@ -48,7 +48,7 @@ export default function AdminSendDocumentForm({
           value={formData.document_id || ""}
           onChange={(event) => onDocumentSelect(event.target.value)}
           className="w-full bg-surface-2 dark:bg-slate-800/50 border border-default dark:border-slate-700 rounded-xl px-4 py-3 text-primary
-                   focus:outline-none focus:border-rose-500 transition-colors"
+ focus:outline-none focus:border-rose-500 transition-colors"
         >
           <option value="">Belge seçin</option>
           {documents.map((document) => (
@@ -68,7 +68,7 @@ export default function AdminSendDocumentForm({
           value={formData.student_id || ""}
           onChange={(event) => updateFormData({ student_id: event.target.value })}
           className="w-full bg-surface-2 dark:bg-slate-800/50 border border-default dark:border-slate-700 rounded-xl px-4 py-3 text-primary
-                   focus:outline-none focus:border-rose-500 transition-colors"
+ focus:outline-none focus:border-rose-500 transition-colors"
         >
           <option value="">Öğrenci seçin</option>
           {studentUsers.map((student) => (
@@ -84,7 +84,7 @@ export default function AdminSendDocumentForm({
         whileHover={{ scale: 1.02 }}
         whileTap={{ scale: 0.98 }}
         disabled={isSubmitting || !selectedDoc}
-        className="w-full py-4 bg-gradient-to-r from-rose-500 to-pink-500 text-white font-semibold rounded-xl hover:from-rose-600 hover:to-pink-600 transition-all flex items-center justify-center gap-2 disabled:opacity-60"
+        className="w-full py-4 font-semibold rounded-xl transition-all flex items-center justify-center gap-2 disabled:opacity-60 bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none"
       >
         {isSubmitting ? (
           "Gönderiliyor..."

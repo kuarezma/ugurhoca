@@ -350,7 +350,7 @@ export function MathNinja({
           <div className="mt-8 flex justify-center">
             <button
               onClick={startNewGame}
-              className="inline-flex items-center gap-2 rounded-2xl bg-gradient-to-r from-rose-500 to-red-600 px-8 py-3.5 text-base font-bold text-white shadow-lg transition hover:scale-105 active:scale-95"
+              className="inline-flex items-center gap-2 rounded-2xl px-8 py-3.5 text-base font-bold transition hover:scale-105 active:scale-95 bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none"
             >
               <Play className="h-5 w-5" /> Kılıcını Çek & Başla
             </button>
@@ -489,7 +489,7 @@ export function MathNinja({
           <div className="flex justify-center gap-4">
             <button
               onClick={startNewGame}
-              className="inline-flex items-center gap-2 rounded-2xl bg-rose-500 px-6 py-3 font-bold text-white dark:text-white transition hover:bg-rose-600"
+              className="inline-flex items-center gap-2 rounded-2xl px-6 py-3 font-bold transition bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none"
             >
               <RotateCcw className="h-5 w-5" /> Yeniden Başla
             </button>

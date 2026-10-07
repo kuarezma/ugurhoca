@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import {
   AlertTriangle,
-  Sparkles,
+  Sparkles
 } from 'lucide-react';
 import type { QuizPsychometricReport } from '@/features/quizzes/lib/itemAnalysis';
 
@@ -51,7 +51,7 @@ export function AdminItemAnalysisCard({ report, quizTitle = 'Test Analizi' }: Ad
             onClick={() => setFilterProblematicOnly(!filterProblematicOnly)}
             className={`px-3.5 py-2 rounded-2xl border text-center transition ${
               filterProblematicOnly
-                ? 'bg-rose-500/20 border-rose-500 text-rose-700 dark:text-rose-300'
+                ? 'bg-brand-primary/20 border-brand-primary text-tone-success-fg dark:text-brand-primary-soft'
                 : 'bg-slate-50 dark:bg-slate-950/60 border-slate-200 dark:border-white/10 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:border-white/20'
             }`}
           >
@@ -114,7 +114,7 @@ export function AdminItemAnalysisCard({ report, quizTitle = 'Test Analizi' }: Ad
                       key={optIdx}
                       className="px-2 py-1 rounded bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/5"
                     >
-                      {String.fromCharCode(65 + optIdx)}: <strong className="text-slate-900 dark:text-white">{count}</strong>
+                      {String.fromCharCode(65 + optIdx)}: {' '}<strong className="text-slate-900 dark:text-white">{count}</strong>
                     </span>
                   ))}
                 </div>

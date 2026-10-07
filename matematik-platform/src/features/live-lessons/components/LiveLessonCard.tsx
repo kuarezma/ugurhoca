@@ -116,7 +116,7 @@ export function LiveLessonCard({
     <article
       className={`group relative flex flex-col justify-between overflow-hidden rounded-2xl border backdrop-blur-xl transition-all duration-300 ${
         isActuallyLive
-          ? 'border-rose-500/60 bg-gradient-to-br from-rose-500/10 via-card to-card shadow-[0_8px_30px_rgba(244,63,94,0.15)] ring-1 ring-rose-500/40'
+          ? 'border-rose-500/60 shadow-[0_8px_30px_rgba(244,63,94,0.15)] ring-1 ring-rose-500/40 bg-brand-danger/10'
           : isEnded || isCancelled
             ? 'border-border/60 bg-card/60 opacity-80 shadow-sm hover:opacity-100'
             : 'border-border/90 bg-card shadow-md hover:border-brand-primary/40 hover:shadow-xl dark:shadow-black/20'
@@ -159,7 +159,7 @@ export function LiveLessonCard({
               )}
 
               <span className="inline-flex items-center gap-1 rounded-full border border-border bg-foreground/5 px-2.5 py-0.5 text-xs font-medium text-foreground/80">
-                <Users className="h-3 w-3" /> {formatAudienceLabel(lesson, students)}
+                <Users className="h-3 w-3" /> {' '}{formatAudienceLabel(lesson, students)}
               </span>
 
               <span className="inline-flex items-center gap-1 rounded-full border border-border bg-foreground/5 px-2.5 py-0.5 text-xs font-medium text-foreground/70">
@@ -213,10 +213,10 @@ export function LiveLessonCard({
           {!isEnded && !isCancelled ? (
             <Link
               href={`/canli-ders/d/${lesson.room_id}`}
-              className={`inline-flex min-h-10 items-center justify-center gap-2 rounded-xl px-4 py-2 text-sm font-semibold text-white shadow-sm transition-all duration-200 active:scale-95 ${
+              className={`inline-flex min-h-10 items-center justify-center gap-2 rounded-xl px-4 py-2 text-sm font-semibold shadow-sm transition-all duration-200 active:scale-95 text-slate-950 dark:text-slate-950 ${
                 isActuallyLive
                   ? 'bg-rose-600 hover:bg-rose-500 shadow-rose-600/30 ring-2 ring-rose-500/50'
-                  : 'bg-brand-primary hover:bg-brand-primary-deep shadow-brand-primary/20'
+                  : 'shadow-brand-primary/20 bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none'
               }`}
             >
               <Video className="h-4 w-4" />

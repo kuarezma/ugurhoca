@@ -3,7 +3,7 @@ import {
   AppWindow,
   BookOpen,
   FileText,
-  Gamepad2,
+  Gamepad2
 } from 'lucide-react';
 import type { ChipTone } from '@/components/ui/Chip';
 import type { ContentDocument } from '@/types';
@@ -72,7 +72,7 @@ export const getContentTypeColor = (type: string) => {
     case 'kitaplar':
       return 'from-indigo-500 to-violet-500';
     case 'yaprak-test':
-      return 'from-purple-500 to-pink-500';
+      return 'from-purple-500 to-purple-500';
     case 'ders-videolari':
       return 'from-red-500 to-orange-500';
     case 'deneme-sinav':
@@ -80,7 +80,7 @@ export const getContentTypeColor = (type: string) => {
     case 'oyunlar':
       return 'from-yellow-500 to-amber-500';
     case 'programlar':
-      return 'from-pink-500 to-rose-500';
+      return 'from-purple-500 to-rose-500';
     default:
       return 'from-slate-500 to-slate-600';
   }

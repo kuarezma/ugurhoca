@@ -54,7 +54,7 @@ export function HomeQuickToolsGrid({
       title: 'Hızlı Formül Cep Notu (LGS & YKS)',
       description: 'Sınav öncesi 1 dakikalık son tekrar, tüm kritik MEB & ÖSYM formülleri ve yazdırılabilir A4 özeti.',
       icon: BookMarked,
-      gradient: 'from-amber-500 via-orange-500 to-red-500',
+      gradient: 'from-brand-accent to-brand-accent',
       actionType: onOpenCheatSheet ? 'modal' : 'link',
       action: onOpenCheatSheet,
       href: '#',
@@ -66,7 +66,7 @@ export function HomeQuickToolsGrid({
       title: 'İnteraktif Görsel Formül İspatları',
       description: 'Pisagor, iki kare farkı, sin²θ+cos²θ=1 ve Pascal üçgenini gözlerinle keşfet.',
       icon: Compass,
-      gradient: 'from-fuchsia-600 via-purple-600 to-indigo-600',
+      gradient: 'from-brand-pink to-brand-pink',
       actionType: onOpenProofs ? 'modal' : 'link',
       action: onOpenProofs,
       href: '#',
@@ -78,7 +78,7 @@ export function HomeQuickToolsGrid({
       title: 'Fonksiyon & Grafik Laboratuvarı',
       description: 'Doğrusal fonksiyon, parabol ve birim çemberi anlık canlı grafik ve slider ile keşfet.',
       icon: Activity,
-      gradient: 'from-blue-600 via-indigo-600 to-purple-600',
+      gradient: 'from-brand-secondary to-brand-secondary',
       actionType: onOpenGraph ? 'modal' : 'link',
       action: onOpenGraph,
       href: '#',
@@ -90,7 +90,7 @@ export function HomeQuickToolsGrid({
       title: 'Formül & Bilgi Kartları',
       description: 'LGS ve YKS için 3D çevrilebilir KaTeX formül kartlarıyla anında pratik yap.',
       icon: BookOpen,
-      gradient: 'from-indigo-500 via-purple-500 to-pink-500',
+      gradient: 'from-brand-secondary to-brand-secondary',
       actionType: 'modal',
       action: onOpenFlashcards,
       buttonLabel: 'Kartları Aç',
@@ -101,7 +101,7 @@ export function HomeQuickToolsGrid({
       title: '60 Saniye Formül Eşleştirme',
       description: 'Zamana karşı kural ve KaTeX formüllerini aktif hatırlamayla eşleştir, serilik kazan.',
       icon: Zap,
-      gradient: 'from-amber-400 via-yellow-500 to-orange-500',
+      gradient: 'from-brand-accent to-brand-accent',
       actionType: onOpenSpeedDrill ? 'modal' : 'link',
       action: onOpenSpeedDrill,
       href: '#',
@@ -113,7 +113,7 @@ export function HomeQuickToolsGrid({
       title: 'Karalama & İşlem Tahtası',
       description: 'Serbest çizim ve hesaplama yapabileceğin dijital beyaz tahta.',
       icon: PenTool,
-      gradient: 'from-amber-400 via-orange-500 to-rose-500',
+      gradient: 'from-brand-accent to-brand-accent',
       actionType: 'modal',
       action: onOpenScratchpad,
       buttonLabel: 'Tahtayı Başlat',
@@ -124,7 +124,7 @@ export function HomeQuickToolsGrid({
       title: 'Matematik Odak & Pomodoro',
       description: '25/50 dk odaklanma zamanlayıcısı ile soru çözerken dikkatini en üst seviyede tut.',
       icon: Sparkles,
-      gradient: 'from-rose-500 via-pink-500 to-amber-500',
+      gradient: 'from-brand-danger to-brand-danger',
       actionType: onOpenPomodoro ? 'modal' : 'link',
       action: onOpenPomodoro,
       href: '#',
@@ -136,7 +136,7 @@ export function HomeQuickToolsGrid({
       title: 'Matematik Kavram Sözlüğü',
       description: 'Asal sayılardan türeve tüm LGS & YKS terimleri, KaTeX formülleri ve kritik tuzak uyarıları.',
       icon: BookOpen,
-      gradient: 'from-blue-500 via-indigo-600 to-violet-600',
+      gradient: 'from-brand-secondary to-brand-secondary',
       actionType: onOpenGlossary ? 'modal' : 'link',
       action: onOpenGlossary,
       href: '#',
@@ -148,7 +148,7 @@ export function HomeQuickToolsGrid({
       title: 'LGS & YKS Çıkmış Soru Dağılım Matrisi',
       description: 'Son 5 yılın MEB & ÖSYM soru adetleri, konu ağırlıkları ve yüksek getirili kritik kazanımlar.',
       icon: TrendingUp,
-      gradient: 'from-amber-500 via-rose-500 to-indigo-600',
+      gradient: 'from-brand-accent to-brand-accent',
       actionType: onOpenTopicWeights ? 'modal' : 'link',
       action: onOpenTopicWeights,
       href: '#',
@@ -160,7 +160,7 @@ export function HomeQuickToolsGrid({
       title: 'A4 Masabaşı Haftalık Çalışma Çizelgesi',
       description: 'Kişiselleştirilebilir gün gün soru hedefi, Pomodoro blokları ve mürekkep tasarruflu A4 çıktısı.',
       icon: Calendar,
-      gradient: 'from-emerald-500 via-teal-600 to-sky-600',
+      gradient: 'from-brand-primary to-brand-primary',
       actionType: onOpenWeeklyPlanner ? 'modal' : 'link',
       action: onOpenWeeklyPlanner,
       href: '#',
@@ -172,7 +172,7 @@ export function HomeQuickToolsGrid({
       title: 'MEB Konu Takip Çizelgesi',
       description: '5. sınıftan YKS\'ye tüm matematik kazanımlarını checklist ile adım adım takip et.',
       icon: Target,
-      gradient: 'from-emerald-500 via-teal-500 to-cyan-500',
+      gradient: 'from-brand-primary to-brand-primary',
       actionType: onOpenChecklist ? 'modal' : 'link',
       action: onOpenChecklist,
       href: '/programlar',
@@ -184,7 +184,7 @@ export function HomeQuickToolsGrid({
       title: 'LGS & YKS Puan/Net Hesaplayıcı',
       description: 'Doğru ve yanlışlarını gir, MEB/ÖSYM formülüyle anında net ve puanını öğren.',
       icon: Target,
-      gradient: 'from-cyan-500 via-blue-500 to-indigo-500',
+      gradient: 'from-brand-secondary to-brand-secondary',
       actionType: onOpenCalculator ? 'modal' : 'link',
       action: onOpenCalculator,
       href: '/programlar',
@@ -196,7 +196,7 @@ export function HomeQuickToolsGrid({
       title: 'Matematik Oyunları',
       description: 'Hızlı işlem, aritmetik yarışlar ve refleks geliştirici mini oyunlar.',
       icon: Gamepad2,
-      gradient: 'from-teal-400 via-emerald-500 to-cyan-500',
+      gradient: 'from-brand-primary to-brand-primary',
       actionType: 'link',
       href: '/oyunlar',
       buttonLabel: 'Oyunları Oyna',
@@ -252,7 +252,7 @@ export function HomeQuickToolsGrid({
               <div>
                 <div className="mb-4 flex items-center justify-between">
                   <div
-                    className={`flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br ${tool.gradient} text-white shadow-md transition-transform duration-300 group-hover:scale-105`}
+                    className={`flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br ${tool.gradient} text-slate-950 dark:text-slate-950 shadow-md transition-transform duration-300 group-hover:scale-105`}
                   >
                     <tool.icon className="h-6 w-6" />
                   </div>
@@ -288,14 +288,14 @@ export function HomeQuickToolsGrid({
                   <button
                     type="button"
                     onClick={tool.action}
-                    className={`inline-flex w-full items-center justify-center gap-1.5 rounded-xl bg-gradient-to-r ${tool.gradient} px-4 py-2.5 text-xs font-bold text-white shadow-md transition-all duration-200 hover:shadow-lg active:scale-[0.98]`}>
+                    className="inline-flex w-full items-center justify-center gap-1.5 rounded-xl px-4 py-2.5 text-xs font-bold transition-all duration-200 active:scale-[0.98] bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none">
                     <span>{tool.buttonLabel}</span>
                     <ChevronRight className="h-3.5 w-3.5" />
                   </button>
                 ) : (
                   <SafeLink
                     href={tool.href || '/'}
-                    className={`inline-flex w-full items-center justify-center gap-1.5 rounded-xl bg-gradient-to-r ${tool.gradient} px-4 py-2.5 text-xs font-bold text-white shadow-md transition-all duration-200 hover:shadow-lg active:scale-[0.98]`}>
+                    className="inline-flex w-full items-center justify-center gap-1.5 rounded-xl px-4 py-2.5 text-xs font-bold transition-all duration-200 active:scale-[0.98] bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none">
                     <span>{tool.buttonLabel}</span>
                     <ChevronRight className="h-3.5 w-3.5" />
                   </SafeLink>

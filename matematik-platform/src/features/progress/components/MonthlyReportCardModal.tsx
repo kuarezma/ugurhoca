@@ -157,7 +157,7 @@ export function MonthlyReportCardModal({
               onClick={() => setActiveTab('card')}
               className={`rounded-lg px-3 py-1.5 text-xs font-bold transition ${
                 activeTab === 'card'
-                  ? 'bg-brand-primary text-white shadow'
+                  ? 'bg-brand-primary shadow text-slate-950 dark:text-slate-950'
                   : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
               }`}
             >
@@ -171,7 +171,7 @@ export function MonthlyReportCardModal({
               onClick={() => setActiveTab('certificate')}
               className={`rounded-lg px-3 py-1.5 text-xs font-bold transition ${
                 activeTab === 'certificate'
-                  ? 'bg-amber-500 text-slate-950 shadow'
+                  ? 'bg-brand-primary shadow text-slate-950 dark:text-slate-950'
                   : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
               }`}
             >
@@ -283,7 +283,7 @@ export function MonthlyReportCardModal({
 
           {/* TAB 2: RESMİ ONUR & BAŞARI BELGESİ */}
           {activeTab === 'certificate' && (
-            <div className="relative rounded-3xl border-4 border-amber-500/50 bg-gradient-to-b from-amber-50/50 via-white to-amber-50/30 dark:from-slate-900 dark:via-slate-950 dark:to-slate-900 p-8 sm:p-12 text-center shadow-2xl overflow-hidden">
+            <div className="relative rounded-3xl border-4 border-amber-500/50 p-8 sm:p-12 text-center shadow-2xl overflow-hidden bg-surface-1 dark:bg-surface-1">
               {/* Belge Dekoratif Çerçevesi */}
               <div className="absolute inset-2 rounded-2xl border border-amber-500/30 dark:border-amber-500/20 pointer-events-none" />
 
@@ -305,8 +305,8 @@ export function MonthlyReportCardModal({
                 </div>
 
                 <div className="my-6 max-w-xl mx-auto border-y border-slate-200 dark:border-white/10 py-6 text-sm text-slate-700 dark:text-slate-200 leading-relaxed">
-                  Bu belge, <span className="font-black text-slate-900 dark:text-white text-lg underline decoration-amber-400">{studentName}</span> isimli öğrencimizin
-                  matematik derslerindeki üstün devamlılığı, {totalHours} saatlik disiplinli çalışma performansı ve hedeflerine ulaşmadaki kararlılığı vesilesiyle takdim edilmiştir.
+                  Bu belge, {' '}<span className="font-black text-slate-900 dark:text-white text-lg underline decoration-amber-400">{studentName}</span> {' '}isimli öğrencimizin
+                  matematik derslerindeki üstün devamlılığı, {' '}{totalHours} saatlik disiplinli çalışma performansı ve hedeflerine ulaşmadaki kararlılığı vesilesiyle takdim edilmiştir.
                 </div>
 
                 <div className="flex flex-col sm:flex-row items-center justify-between max-w-lg mx-auto pt-4 gap-6">

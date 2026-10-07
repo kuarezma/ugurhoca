@@ -125,7 +125,7 @@ export function FractionDuel({ onScore, scoreMultiplier }: GameComponentProps) {
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
           onClick={startGame}
-          className="rounded-2xl bg-gradient-to-r from-rose-500 to-red-600 px-8 py-4 text-xl font-bold text-white shadow-lg"
+          className="rounded-2xl px-8 py-4 text-xl font-bold bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none"
         >
           <Play className="mr-2 inline h-6 w-6" />
           Oyunu Başlat
@@ -155,7 +155,7 @@ export function FractionDuel({ onScore, scoreMultiplier }: GameComponentProps) {
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
           onClick={startGame}
-          className="rounded-2xl bg-gradient-to-r from-rose-500 to-red-600 px-8 py-4 text-xl font-bold text-white"
+          className="rounded-2xl px-8 py-4 text-xl font-bold bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none"
         >
           <RotateCcw className="mr-2 inline h-6 w-6" />
           Tekrar Oyna
@@ -249,7 +249,7 @@ export function FractionDuel({ onScore, scoreMultiplier }: GameComponentProps) {
             {
               key: 'left' as Cmp,
               className:
-                'border-rose-400/40 bg-gradient-to-br from-rose-500 to-pink-600 text-white shadow-lg shadow-rose-500/25 hover:brightness-110',
+                'border-rose-400/40 bg-gradient-to-br from-rose-500 to-purple-600 text-white shadow-lg shadow-rose-500/25 hover:brightness-110',
               label: (
                 <span className="flex flex-col items-center gap-2">
                   <span className="text-[11px] font-bold uppercase tracking-wide opacity-95">

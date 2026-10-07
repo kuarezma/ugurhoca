@@ -138,7 +138,7 @@ function GamesLeaderboardInner({
                   onClick={() => onPeriodChange(option.id)}
                   className={`rounded-full px-3 py-1 text-xs font-semibold transition-colors ${
                     active
-                      ? 'bg-amber-600 text-white shadow'
+                      ? 'bg-brand-primary shadow text-slate-950 dark:text-slate-950'
                       : 'text-secondary hover:bg-overlay-2 hover:text-primary'
                   }`}
                 >

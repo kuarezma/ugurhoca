@@ -239,7 +239,7 @@ export function OfflineStudyPackageModal({
           {/* Cihazdaki İndirilmiş Setler */}
           <div className="space-y-3">
             <h3 className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
-              <CheckCircle2 className="w-4 h-4 text-emerald-500 dark:text-emerald-400" /> Cihazınızda Hazır Soru Setleri
+              <CheckCircle2 className="w-4 h-4 text-emerald-500 dark:text-emerald-400" /> {' '}Cihazınızda Hazır Soru Setleri
             </h3>
 
             {packages.length === 0 ? (
@@ -265,7 +265,8 @@ export function OfflineStudyPackageModal({
                         <h4 className="text-xs sm:text-sm font-bold text-slate-900 dark:text-white">{pkg.title}</h4>
                       </div>
                       <p className="text-[11px] text-slate-500 dark:text-slate-400">
-                        {pkg.questionsCount} Soru • İndirilme: {new Date(pkg.downloadedAt).toLocaleDateString('tr-TR')} • {pkg.sizeKb} KB
+                        {pkg.questionsCount} Soru • İndirilme: {' '}
+                        {new Date(pkg.downloadedAt).toLocaleDateString('tr-TR')}{' '} • {pkg.sizeKb} KB
                       </p>
                     </div>
 
@@ -287,7 +288,7 @@ export function OfflineStudyPackageModal({
                           }
                           onClose();
                         }}
-                        className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white dark:text-white text-xs font-bold transition shadow-md shadow-emerald-600/20"
+                        className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-bold transition bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none"
                       >
                         <Play className="w-3.5 h-3.5" />
                         <span>Çözmeye Başla</span>
@@ -302,7 +303,7 @@ export function OfflineStudyPackageModal({
           {/* Önerilen Çevrimdışı Soru Setleri (1 Tıkla İndir) */}
           <div className="space-y-3 border-t border-slate-200 dark:border-white/10 pt-4">
             <h3 className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
-              <Sparkles className="w-4 h-4 text-amber-500 dark:text-amber-400" /> Hızlı İndirilebilir Soru Seti Havuzu
+              <Sparkles className="w-4 h-4 text-amber-500 dark:text-amber-400" /> {' '}Hızlı İndirilebilir Soru Seti Havuzu
             </h3>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
@@ -330,7 +331,7 @@ export function OfflineStudyPackageModal({
                       className={`inline-flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition ${
                         isDownloaded
                           ? 'bg-slate-200 dark:bg-white/10 text-emerald-700 dark:text-emerald-300 cursor-default'
-                          : 'bg-indigo-600 hover:bg-indigo-500 text-white shadow-sm'
+                          : 'bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none'
                       }`}
                     >
                       {isDownloaded ? (

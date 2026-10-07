@@ -504,7 +504,7 @@ export default function ChatBubble() {
               }, 3000);
             }
           }
-        },
+        }
       )
       .subscribe();
 
@@ -862,7 +862,7 @@ export default function ChatBubble() {
         whileHover={{ scale: 1.06 }}
         whileTap={{ scale: 0.94 }}
         onClick={() => setOpen((o) => !o)}
-        className="fixed bottom-[calc(4.75rem+env(safe-area-inset-bottom))] sm:bottom-6 right-4 sm:right-6 z-40 flex h-14 w-14 sm:h-[60px] sm:w-[60px] items-center justify-center rounded-full bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-500 text-white shadow-2xl shadow-purple-500/40 focus:outline-none focus-visible:ring-4 focus-visible:ring-purple-400"
+        className="fixed bottom-[calc(4.75rem+env(safe-area-inset-bottom))] sm:bottom-6 right-4 sm:right-6 z-40 flex h-14 w-14 sm:h-[60px] sm:w-[60px] items-center justify-center rounded-full focus:outline-none focus-visible:ring-4 focus-visible:ring-purple-400 bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none"
         aria-label={
           currentUser?.isAdmin
             ? 'Öğrenci mesajları'
@@ -887,7 +887,7 @@ export default function ChatBubble() {
         )}
 
         {unreadCountBadge > 0 && (
-          <span className="absolute -right-1 -top-1 flex h-5 min-w-[1.25rem] animate-pulse items-center justify-center rounded-full bg-red-500 px-1 text-[11px] font-bold text-white shadow-md">
+          <span className="absolute -right-1 -top-1 flex h-5 min-w-[1.25rem] animate-pulse items-center justify-center rounded-full bg-red-500 px-1 text-[11px] font-bold shadow-md text-slate-950 dark:text-slate-950">
             {unreadCountBadge > 9 ? '9+' : unreadCountBadge}
           </span>
         )}
@@ -963,7 +963,7 @@ export default function ChatBubble() {
                     <Link
                       href="/giris"
                       onClick={() => setOpen(false)}
-                      className="flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 px-4 py-3 text-sm font-semibold text-white shadow-md hover:from-indigo-500 hover:to-purple-500 transition-all"
+                      className="flex items-center justify-center gap-2 rounded-xl px-4 py-3 text-sm font-semibold transition-all bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none"
                     >
                       <LogIn className="h-4 w-4" /> Giriş Yap
                     </Link>
@@ -1069,7 +1069,7 @@ export default function ChatBubble() {
                               : 'border-slate-800/80 hover:bg-slate-800/50'
                           }`}
                         >
-                          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 text-sm font-bold text-white dark:text-white shadow-sm">
+                          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-sm font-bold shadow-sm bg-brand-secondary text-slate-950 dark:text-slate-950">
                             {(c.studentName[0] || '?').toUpperCase()}
                           </div>
                           <div className="min-w-0 flex-1">

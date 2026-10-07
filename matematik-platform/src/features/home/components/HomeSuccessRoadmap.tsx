@@ -35,7 +35,7 @@ export function HomeSuccessRoadmap({
       title: 'Soru ve Test Çöz',
       desc: 'Yaprak testler ve interaktif denemeleri çöz, karalama tahtasında işlemlerini yap.',
       icon: FileCheck,
-      gradient: 'from-purple-500 to-pink-500',
+      gradient: 'from-purple-500 to-purple-500',
       actionLabel: 'Testlere Başla',
       href: '/testler',
     },
@@ -63,7 +63,7 @@ export function HomeSuccessRoadmap({
     <section className="relative px-4 py-8 sm:py-10">
       <div className="relative mx-auto max-w-6xl">
         <div className="mb-8 text-center">
-          <div className="mb-2 inline-flex items-center gap-1.5 rounded-full bg-gradient-to-r from-purple-500/20 to-pink-500/20 px-3 py-1 text-xs font-bold text-brand-primary-soft">
+          <div className="mb-2 inline-flex items-center gap-1.5 rounded-full bg-gradient-to-r from-purple-500/20 to-purple-500/20 px-3 py-1 text-xs font-bold text-brand-primary-soft">
             <GraduationCap className="h-4 w-4" />
             2026-2027 Başarı Yol Haritası
           </div>
@@ -104,7 +104,7 @@ export function HomeSuccessRoadmap({
                     {item.step}
                   </span>
                   <div
-                    className={`flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-br ${item.gradient} text-white shadow-md`}
+                    className="flex h-10 w-10 items-center justify-center rounded-2xl bg-brand-secondary text-slate-950 dark:text-slate-950 shadow-md"
                   >
                     <item.icon className="h-5 w-5" />
                   </div>

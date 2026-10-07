@@ -59,7 +59,7 @@ export default function AdminEditDocumentForm({
             value={formData.title || ""}
             onChange={(event) => updateFormData({ title: event.target.value })}
             className="w-full bg-surface-2 dark:bg-slate-800/50 border border-default dark:border-slate-700 rounded-xl px-4 py-3 text-primary
-                   focus:outline-none focus:border-blue-500 transition-colors"
+ focus:outline-none focus:border-blue-500 transition-colors"
           />
         </div>
       )}
@@ -76,7 +76,7 @@ export default function AdminEditDocumentForm({
           value={formData.description || ""}
           onChange={(event) => updateFormData({ description: event.target.value })}
           className="w-full bg-surface-2 dark:bg-slate-800/50 border border-default dark:border-slate-700 rounded-xl px-4 py-3 text-primary
-                   focus:outline-none focus:border-blue-500 transition-colors resize-none"
+ focus:outline-none focus:border-blue-500 transition-colors resize-none"
         />
       </div>
       <div>
@@ -88,7 +88,7 @@ export default function AdminEditDocumentForm({
           value={formData.type || ""}
           onChange={(event) => updateFormData({ type: event.target.value })}
           className="w-full bg-surface-2 dark:bg-slate-800/50 border border-default dark:border-slate-700 rounded-xl px-4 py-3 text-primary
-                   focus:outline-none focus:border-blue-500 transition-colors"
+ focus:outline-none focus:border-blue-500 transition-colors"
         >
           <option value="">Kategori seçin</option>
           {DOCUMENT_CATEGORY_OPTIONS.map((option) => (
@@ -122,7 +122,7 @@ export default function AdminEditDocumentForm({
                 })
               }
               className="w-full bg-surface-2 dark:bg-slate-800/50 border border-default dark:border-slate-700 rounded-xl px-4 py-3 text-primary
-                   focus:outline-none focus:border-blue-500 transition-colors"
+ focus:outline-none focus:border-blue-500 transition-colors"
             >
               <option value="">Sınıf düzeyi seçin</option>
               {WORKSHEET_GRADE_OPTIONS.map((grade) => (
@@ -147,7 +147,7 @@ export default function AdminEditDocumentForm({
                 updateFormData({ learning_outcome: event.target.value })
               }
               className="w-full bg-surface-2 dark:bg-slate-800/50 border border-default dark:border-slate-700 rounded-xl px-4 py-3 text-primary
-                   focus:outline-none focus:border-blue-500 transition-colors"
+ focus:outline-none focus:border-blue-500 transition-colors"
             />
           </div>
         </>
@@ -162,7 +162,7 @@ export default function AdminEditDocumentForm({
           value={formData.file_url || ""}
           onChange={(event) => updateFormData({ file_url: event.target.value })}
           className="w-full bg-surface-2 dark:bg-slate-800/50 border border-default dark:border-slate-700 rounded-xl px-4 py-3 text-primary
-                   focus:outline-none focus:border-blue-500 transition-colors"
+ focus:outline-none focus:border-blue-500 transition-colors"
         />
       </div>
       <div>
@@ -175,7 +175,7 @@ export default function AdminEditDocumentForm({
           value={formData.video_url || ""}
           onChange={(event) => updateFormData({ video_url: event.target.value })}
           className="w-full bg-surface-2 dark:bg-slate-800/50 border border-default dark:border-slate-700 rounded-xl px-4 py-3 text-primary
-                   focus:outline-none focus:border-blue-500 transition-colors"
+ focus:outline-none focus:border-blue-500 transition-colors"
         />
       </div>
       <div>
@@ -193,7 +193,7 @@ export default function AdminEditDocumentForm({
           }
           rows={3}
           className="w-full bg-surface-2 dark:bg-slate-800/50 border border-default dark:border-slate-700 rounded-xl px-4 py-3 text-primary
-                   focus:outline-none focus:border-green-500 transition-colors resize-none"
+ focus:outline-none focus:border-green-500 transition-colors resize-none"
           placeholder="Cevap anahtarını buraya yazın... (opsiyonel)"
         />
       </div>
@@ -210,7 +210,7 @@ export default function AdminEditDocumentForm({
           value={formData.solution_url || ""}
           onChange={(event) => updateFormData({ solution_url: event.target.value })}
           className="w-full bg-surface-2 dark:bg-slate-800/50 border border-default dark:border-slate-700 rounded-xl px-4 py-3 text-primary
-                   focus:outline-none focus:border-green-500 transition-colors"
+ focus:outline-none focus:border-green-500 transition-colors"
           placeholder="https://drive.google.com/... (çözümlü PDF varsa)"
         />
         {formData.solution_url && (
@@ -224,7 +224,7 @@ export default function AdminEditDocumentForm({
         whileHover={{ scale: 1.02 }}
         whileTap={{ scale: 0.98 }}
         disabled={isSubmitting || !editingDoc}
-        className="w-full py-4 bg-gradient-to-r from-blue-500 to-cyan-500 text-white font-semibold rounded-xl hover:from-blue-600 hover:to-cyan-600 transition-all flex items-center justify-center gap-2 disabled:opacity-60"
+        className="w-full py-4 font-semibold rounded-xl transition-all flex items-center justify-center gap-2 disabled:opacity-60 bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none"
       >
         {isSubmitting ? "Kaydediliyor..." : "Kaydet"}
       </motion.button>

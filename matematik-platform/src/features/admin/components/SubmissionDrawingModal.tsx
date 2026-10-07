@@ -209,7 +209,7 @@ export function SubmissionDrawingModal({
                 }}
                 className={`w-7 h-7 sm:w-8 sm:h-8 rounded-full transition-transform flex items-center justify-center shrink-0 ${
                   currentColor === c.value && !isEraser
-                    ? 'ring-2 ring-indigo-500 dark:ring-white scale-110 shadow-sm'
+                    ? 'ring-2 ring-brand-primary dark:ring-white scale-110 shadow-sm'
                     : 'opacity-80 hover:opacity-100'
                 }`}
                 style={{ backgroundColor: c.value }}
@@ -223,7 +223,7 @@ export function SubmissionDrawingModal({
               onClick={() => setIsEraser(!isEraser)}
               className={`flex items-center gap-1 px-2.5 py-1 rounded-lg border transition ${
                 isEraser
-                  ? 'bg-rose-500/20 text-rose-700 dark:text-rose-300 border-rose-500/30'
+                  ? 'bg-brand-primary/20 text-tone-success-fg dark:text-brand-primary-soft border-brand-primary/30'
                   : 'bg-white dark:bg-slate-700/60 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-600'
               }`}
             >
@@ -287,7 +287,7 @@ export function SubmissionDrawingModal({
             <button
               type="button"
               onClick={handleCompleteAnnotation}
-              className="flex items-center gap-1.5 px-5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white dark:text-white font-bold transition shadow-lg shadow-emerald-600/20"
+              className="flex items-center gap-1.5 px-5 py-2 rounded-xl font-bold transition bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none"
             >
               <Check className="w-4 h-4" />
               <span>Değerlendirmeyi Tamamla</span>

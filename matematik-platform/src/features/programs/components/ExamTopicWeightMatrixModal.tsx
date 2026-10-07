@@ -78,7 +78,7 @@ export function ExamTopicWeightMatrixModal({
         {/* Başlık */}
         <div className="flex flex-col gap-3 border-b border-slate-200/80 dark:border-white/10 bg-slate-50/80 dark:bg-slate-950/80 px-5 py-4 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-indigo-500 to-rose-600 text-white dark:text-white shadow-md">
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl shadow-md bg-brand-secondary text-slate-950 dark:text-slate-950">
               <BarChart3 className="h-5 w-5" />
             </div>
             <div>
@@ -116,7 +116,7 @@ export function ExamTopicWeightMatrixModal({
                   }}
                   className={`rounded-xl px-3.5 py-1.5 font-bold transition-all ${
                     active
-                      ? 'bg-indigo-600 text-white shadow-sm'
+                      ? 'bg-brand-primary shadow-sm text-slate-950 dark:text-slate-950'
                       : 'bg-slate-200/70 dark:bg-white/10 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-white/15'
                   }`}
                 >
@@ -168,7 +168,7 @@ export function ExamTopicWeightMatrixModal({
                   onClick={() => setSelectedYield(active ? 'all' : level)}
                   className={`inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1 font-medium border transition-all ${
                     active
-                      ? 'border-indigo-500 bg-indigo-500 text-white font-bold'
+                      ? 'border-brand-primary bg-brand-primary font-bold text-slate-950 dark:text-slate-950'
                       : 'border-transparent ' + meta.badgeClass
                   }`}
                 >
@@ -242,7 +242,7 @@ export function ExamTopicWeightMatrixModal({
                           {yieldMeta.label}
                         </span>
                         <span className="text-[11px] font-semibold text-slate-500 dark:text-slate-400">
-                          Ort. <strong className="text-slate-800 dark:text-slate-200">{topic.avgQuestions}</strong> soru/yıl
+                          Ort. {' '}<strong className="text-slate-800 dark:text-slate-200">{topic.avgQuestions}</strong> {' '}soru/yıl
                         </span>
                       </div>
                     </div>

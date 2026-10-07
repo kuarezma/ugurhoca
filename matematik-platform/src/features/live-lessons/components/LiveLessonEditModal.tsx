@@ -321,7 +321,7 @@ function LiveLessonEditModalContent({
             <button
               type="submit"
               disabled={saving}
-              className="rounded-xl bg-brand-primary px-5 py-2 text-sm font-semibold text-white dark:text-white hover:bg-brand-primary-deep disabled:opacity-50"
+              className="rounded-xl px-5 py-2 text-sm font-semibold disabled:opacity-50 bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none"
             >
               {saving ? 'Kaydediliyor...' : 'Değişiklikleri Kaydet'}
             </button>

@@ -159,7 +159,7 @@ function VoiceNotePlayer({
         className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full transition shadow-sm ${
           isOwn
             ? 'bg-white text-indigo-600 hover:bg-slate-100'
-            : 'bg-indigo-600 text-white hover:bg-indigo-700'
+            : 'bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none'
         }`}
       >
         {isPlaying ? (
@@ -622,7 +622,7 @@ export function SupportChatPanel({
   const ownBubble =
     appearance === 'navbar'
       ? 'rounded-br-sm bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-md'
-      : 'rounded-br-sm bg-gradient-to-r from-violet-600 to-fuchsia-600 text-white shadow-md';
+      : 'rounded-br-sm bg-gradient-to-r from-violet-600 to-purple-600 text-white shadow-md';
 
   const peerBubble = (() => {
     if (appearance === 'navbar') {
@@ -669,7 +669,7 @@ export function SupportChatPanel({
               />
             ) : (
               <div
-                className="flex h-9 w-9 items-center justify-center rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 text-xs font-bold text-white dark:text-white shadow-sm"
+                className="flex h-9 w-9 items-center justify-center rounded-full text-xs font-bold shadow-sm bg-brand-secondary text-slate-950 dark:text-slate-950"
                 aria-hidden
               >
                 {(peerDisplayName.trim()[0] || '?').toUpperCase()}
@@ -889,7 +889,7 @@ export function SupportChatPanel({
                               >
                                 <Image
                                   src={att.url}
-                                  alt={att.name || 'Ek görsel'}
+                                  alt={att.name || "Ek görsel"}
                                   width={260}
                                   height={190}
                                   className="h-auto w-full max-w-[260px] rounded-xl object-cover shadow-xs"
@@ -1325,7 +1325,7 @@ export function SupportChatPanel({
               disabled={!canSend}
               aria-busy={sending}
               aria-label={sending ? 'Gönderiliyor' : 'Gönder'}
-              className="inline-flex h-10 min-w-[5.25rem] flex-shrink-0 items-center justify-center rounded-xl bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 px-3 text-sm font-semibold text-white shadow-md transition-all hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-50"
+              className="inline-flex h-10 min-w-[5.25rem] flex-shrink-0 items-center justify-center rounded-xl px-3 text-sm font-semibold transition-all hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-50 bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none"
             >
               {sending ? (
                 <Loader2 className="h-5 w-5 animate-spin" aria-hidden="true" />

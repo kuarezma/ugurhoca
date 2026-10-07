@@ -145,11 +145,11 @@ function exportAttendanceCsv(lesson: LiveLesson, rows: ReturnType<typeof attenda
   ];
 
   const csvRows = rows.map((r) => {
-    const escape = (val: unknown) => `"${String(val ?? '').replace(/"/g, '""')}"`;
+    const escape = (val: unknown) => `"${String(val ?? "").replace(/"/g, '""')}"`;
     return [
       escape(r.name),
       escape(lesson.title),
-      escape(new Date(lesson.starts_at).toLocaleDateString('tr-TR')),
+      escape(new Date(lesson.starts_at).toLocaleDateString("tr-TR")),
       escape(formatTime(r.joinedAt)),
       escape(formatTime(r.leftAt)),
       escape(formatDuration(r.joinedAt, r.leftAt)),
@@ -182,13 +182,13 @@ function exportAllAttendanceCsv(data: LiveLessonDashboardData) {
   const lessonMap = new Map(data.lessons.map((l) => [l.id, l]));
 
   const rows = data.participants
-    .filter((p) => p.role === 'student')
+    .filter((p) => p.role === "student")
     .map((p) => {
       const lesson = lessonMap.get(p.lesson_id);
-      const escape = (val: unknown) => `"${String(val ?? '').replace(/"/g, '""')}"`;
+      const escape = (val: unknown) => `"${String(val ?? "").replace(/"/g, '""')}"`;
       return [
         escape(lesson?.title || 'Bilinmeyen Ders'),
-        escape(lesson ? new Date(lesson.starts_at).toLocaleDateString('tr-TR') : '-'),
+        escape(lesson ? new Date(lesson.starts_at).toLocaleDateString("tr-TR") : "-"),
         escape(p.user_name),
         escape(formatTime(p.joined_at)),
         escape(formatTime(p.left_at)),
@@ -278,7 +278,7 @@ export default function AdminLiveLessonsTab({ data, onRefresh, students }: Props
         headers: { "Content-Type": "application/json" },
         method: "PATCH",
       });
-      const payload = (await response.json().catch(() => null)) as { error?: string } | null;
+      const payload = (await response.json().catch(() => null)) as { error?: string ;} | null;
       if (!response.ok) {
         setEditError(payload?.error || "Ders güncellenemedi.");
         return;
@@ -315,7 +315,7 @@ export default function AdminLiveLessonsTab({ data, onRefresh, students }: Props
             )}
             <Link
               href="/canli-ders"
-              className="inline-flex min-h-11 items-center justify-center rounded-xl bg-brand-primary px-4 text-sm font-semibold text-white dark:text-white hover:bg-brand-primary-deep"
+              className="inline-flex min-h-11 items-center justify-center rounded-xl px-4 text-sm font-semibold bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none"
             >
               Ders planla
             </Link>
@@ -347,7 +347,7 @@ export default function AdminLiveLessonsTab({ data, onRefresh, students }: Props
                   <div>
                     <h3 className="text-lg font-bold text-slate-900 dark:text-white">{lesson.title}</h3>
                     <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
-                      {formatDate(lesson.starts_at)} · {formatAudience(lesson, students)} ·{" "}
+                      {formatDate(lesson.starts_at)} · {" "}{formatAudience(lesson, students)} ·{" "}
                       {lesson.duration_minutes} dk
                     </p>
                     {lesson.description ? (
@@ -603,13 +603,13 @@ export default function AdminLiveLessonsTab({ data, onRefresh, students }: Props
                         />
                       </label>
                     </div>
-                    {editError ? <p className="mt-3 text-sm text-red-500 dark:text-red-300">{editError}</p> : null}
+                    {editError ? (<p className="mt-3 text-sm text-red-500 dark:text-red-300">{editError}</p> ): null}
                     <div className="mt-4 flex flex-wrap gap-2">
                       <button
                         type="button"
                         onClick={() => void saveEdit(lesson)}
                         disabled={savingLessonId === lesson.id}
-                        className="rounded-xl bg-brand-primary px-4 py-2 text-sm font-semibold text-white dark:text-white hover:bg-brand-primary-deep disabled:opacity-50"
+                        className="rounded-xl px-4 py-2 text-sm font-semibold disabled:opacity-50 bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none"
                       >
                         {savingLessonId === lesson.id ? "Kaydediliyor..." : "Kaydet"}
                       </button>
@@ -631,7 +631,7 @@ export default function AdminLiveLessonsTab({ data, onRefresh, students }: Props
                 <div className="mt-4 flex flex-wrap gap-2">
                   <Link
                     href={`/canli-ders/d/${lesson.room_id}`}
-                    className="rounded-xl bg-brand-primary px-4 py-2 text-sm font-semibold text-white dark:text-white hover:bg-brand-primary-deep"
+                    className="rounded-xl px-4 py-2 text-sm font-semibold bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none"
                   >
                     Odaya gir
                   </Link>

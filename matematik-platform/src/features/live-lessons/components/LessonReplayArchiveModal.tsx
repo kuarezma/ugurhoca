@@ -234,7 +234,7 @@ export function LessonReplayArchiveModal({
                   <div className="flex items-center gap-2 font-mono text-[11px]">
                     <Clock className="h-3.5 w-3.5 text-rose-400" />
                     <span>
-                      {formatSeconds(currentSeconds)} / {selectedLesson.durationMinutes}:00
+                      {formatSeconds(currentSeconds)} / {' '}{selectedLesson.durationMinutes}:00
                     </span>
                   </div>
 
@@ -248,7 +248,7 @@ export function LessonReplayArchiveModal({
                         onClick={() => setPlaybackSpeed(speed)}
                         className={`rounded px-1.5 py-0.5 text-[10px] font-bold transition ${
                           playbackSpeed === speed
-                            ? 'bg-rose-500 text-white'
+                            ? 'bg-brand-primary text-slate-950 dark:text-slate-950'
                             : 'bg-white/10 text-slate-400 hover:text-white'
                         }`}
                       >
@@ -306,7 +306,7 @@ export function LessonReplayArchiveModal({
                 onClick={() => {
                   alert('Tahta notları PDF olarak indiriliyor.');
                 }}
-                className="inline-flex items-center gap-1.5 rounded-xl bg-indigo-600 px-3 py-1.5 font-bold text-white dark:text-white shadow-md hover:bg-indigo-500 transition"
+                className="inline-flex items-center gap-1.5 rounded-xl px-3 py-1.5 font-bold transition bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none"
               >
                 <Download className="h-3.5 w-3.5" />
                 <span>Tahta Notlarını İndir (PDF)</span>
@@ -333,7 +333,7 @@ export function LessonReplayArchiveModal({
                   onClick={() => setActiveGradeTab(g)}
                   className={`rounded-lg px-2.5 py-1 font-bold whitespace-nowrap transition ${
                     activeGradeTab === g
-                      ? 'bg-brand-primary text-white'
+                      ? 'bg-brand-primary text-slate-950 dark:text-slate-950'
                       : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
                   }`}
                 >
@@ -369,7 +369,7 @@ export function LessonReplayArchiveModal({
                     }}
                     className={`w-full rounded-2xl border p-3 text-left transition ${
                       isSelected
-                        ? 'border-rose-500/60 bg-rose-500/10 shadow-lg'
+                        ? 'border-brand-primary/60 bg-brand-primary/10 shadow-lg'
                         : 'border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-white/5 hover:bg-slate-100 dark:hover:bg-white/10'
                     }`}
                   >

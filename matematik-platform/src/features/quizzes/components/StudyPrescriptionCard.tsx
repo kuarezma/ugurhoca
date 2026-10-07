@@ -57,8 +57,8 @@ export function StudyPrescriptionCard({
     <div
       className={`relative overflow-hidden rounded-3xl border p-5 sm:p-6 transition-all shadow-md ${
         isLight
-          ? 'border-indigo-100 bg-gradient-to-br from-indigo-50/80 via-white to-purple-50/50 text-slate-900'
-          : 'border-indigo-500/20 bg-gradient-to-br from-indigo-950/40 via-slate-900 to-purple-950/30 text-white'
+          ? 'border-indigo-100 text-slate-900 bg-surface-1'
+          : 'border-indigo-500/20 text-white bg-brand-secondary/40'
       }`}
     >
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -77,7 +77,7 @@ export function StudyPrescriptionCard({
           <div>
             <h3 className="text-base sm:text-lg font-bold">
               Hedef Konu:{' '}
-              <span className="bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
+              <span className="text-primary">
                 {prescription.focusTopic}
               </span>
             </h3>
@@ -107,7 +107,7 @@ export function StudyPrescriptionCard({
               prescription.focusTopic,
             )
           }
-          className="inline-flex items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-indigo-600 to-purple-600 px-5 py-3 text-xs sm:text-sm font-bold text-white shadow-lg shadow-indigo-500/25 transition-all hover:scale-105 active:scale-95 shrink-0"
+          className="inline-flex items-center justify-center gap-2 rounded-2xl px-5 py-3 text-xs sm:text-sm font-bold transition-all hover:scale-105 active:scale-95 shrink-0 bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none"
         >
           <span>Reçeteyi Çöz</span>
           <ArrowRight className="h-4 w-4" />

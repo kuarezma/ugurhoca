@@ -167,8 +167,8 @@ export function LgsTacticsCorner({ isLight = false }: { isLight?: boolean }) {
       <div
         className={`rounded-3xl p-5 sm:p-7 border shadow-xl transition-all relative overflow-hidden ${
           isLight
-            ? 'bg-gradient-to-br from-amber-50/90 via-orange-50/50 to-white border-amber-200/80 text-slate-800'
-            : 'bg-gradient-to-br from-slate-900/95 via-indigo-950/40 to-slate-900 border-indigo-500/20 text-slate-100'
+            ? 'border-amber-200/80 text-slate-800 bg-surface-1'
+            : 'border-indigo-500/20 text-slate-100 bg-surface-1'
         }`}
       >
         {/* Glow ambient decoration */}
@@ -265,7 +265,7 @@ export function LgsTacticsCorner({ isLight = false }: { isLight?: boolean }) {
             onClick={() => toggleApplied(currentTactic.id)}
             className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl font-bold transition-all ${
               isCurrentApplied
-                ? 'bg-emerald-500 text-white shadow-sm'
+                ? 'bg-brand-primary shadow-sm text-slate-950 dark:text-slate-950'
                 : 'bg-slate-100 dark:bg-white/10 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-white/15'
             }`}
           >

@@ -130,7 +130,7 @@ export function LivePollStudentOverlay({
 
   const handleClearPoll = async () => {
     try {
-      const clearMsg: QuizMessage = { kind: 'clear_question', fromIdentity: identity };
+      const clearMsg: QuizMessage = { kind: "clear_question", fromIdentity: identity };
       await room.localParticipant.publishData(encodeQuizMessage(clearMsg), {
         reliable: true,
       });
@@ -192,7 +192,7 @@ export function LivePollStudentOverlay({
               aria-label={isMinimized ? 'Genişlet' : 'Küçült'}
               className="rounded-lg p-1 text-slate-400 hover:bg-slate-100 dark:hover:bg-white/10 hover:text-slate-900 dark:hover:text-white transition-colors"
             >
-              {isMinimized ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+              {isMinimized ? (<ChevronUp className="h-4 w-4" /> ): (<ChevronDown className="h-4 w-4" />)}
             </button>
             <button
               type="button"
@@ -240,7 +240,7 @@ export function LivePollStudentOverlay({
                     onClick={() => void handleSelectChoice(idx)}
                     className={`relative overflow-hidden rounded-xl border p-3 text-left transition-all text-xs font-semibold ${
                       isSelected
-                        ? 'border-violet-500 bg-violet-600/20 text-violet-900 dark:text-white shadow-md shadow-violet-500/20'
+                        ? 'border-brand-primary bg-brand-primary/20 text-tone-success-fg dark:text-white shadow-md shadow-brand-primary/20'
                         : showStats
                           ? 'border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-slate-800/60 text-slate-800 dark:text-slate-200'
                           : 'border-slate-200 dark:border-white/10 bg-slate-50 hover:bg-slate-100 dark:bg-slate-800/80 hover:border-violet-500/40 dark:hover:bg-slate-700/80 text-slate-900 dark:text-white active:scale-98'
@@ -250,7 +250,7 @@ export function LivePollStudentOverlay({
                     {showStats && stat && (
                       <div
                         className={`absolute inset-y-0 left-0 transition-all duration-500 ${
-                          isSelected ? 'bg-violet-500/30' : 'bg-violet-500/15'
+                          isSelected ? 'bg-brand-primary/30' : 'bg-violet-500/15'
                         }`}
                         style={{ width: `${stat.percent}%` }}
                       />

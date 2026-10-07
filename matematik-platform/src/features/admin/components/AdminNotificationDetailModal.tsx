@@ -186,7 +186,7 @@ export default function AdminNotificationDetailModal({
                 <button
                   type="button"
                   onClick={onSendReply}
-                  className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-indigo-500 to-purple-500 px-4 py-2 text-white font-semibold hover:from-indigo-600 hover:to-purple-600 transition-all"
+                  className="inline-flex items-center gap-2 rounded-xl px-4 py-2 font-semibold transition-all bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none"
                 >
                   <Send className="w-4 h-4" />
                   Gönder

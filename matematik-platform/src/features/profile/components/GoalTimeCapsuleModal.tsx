@@ -267,7 +267,7 @@ export function GoalTimeCapsuleModal({
                 )}
                 <button
                   type="submit"
-                  className="px-5 py-2 text-xs font-semibold text-white dark:text-white bg-amber-600 hover:bg-amber-700 rounded-xl shadow-md inline-flex items-center gap-1.5"
+                  className="px-5 py-2 text-xs font-semibold rounded-xl inline-flex items-center gap-1.5 bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none"
                 >
                   <Lock className="w-3.5 h-3.5" />
                   Kapsülü Mühürle ve Kaydet
@@ -279,8 +279,8 @@ export function GoalTimeCapsuleModal({
               {/* Capsule Status Card */}
               <div className={`p-6 rounded-3xl border ${
                 isUnlocked
-                  ? 'bg-gradient-to-br from-emerald-500/10 via-teal-500/5 to-transparent border-emerald-300 dark:border-emerald-800'
-                  : 'bg-gradient-to-br from-amber-500/10 via-orange-500/5 to-transparent border-amber-300 dark:border-amber-800'
+                  ? 'border-emerald-300 dark:border-emerald-800 bg-brand-primary/10'
+                  : 'border-amber-300 dark:border-amber-800 bg-brand-accent/10'
               } flex flex-col sm:flex-row items-center justify-between gap-4`}>
                 <div className="flex items-center gap-4 text-center sm:text-left">
                   <div className={`w-16 h-16 rounded-2xl flex items-center justify-center shadow-lg ${
@@ -288,14 +288,14 @@ export function GoalTimeCapsuleModal({
                       ? 'bg-emerald-600 text-white'
                       : 'bg-amber-600 text-white animate-pulse'
                   }`}>
-                    {isUnlocked ? <Unlock className="w-8 h-8" /> : <Lock className="w-8 h-8" />}
+                    {isUnlocked ? (<Unlock className="w-8 h-8" /> ): (<Lock className="w-8 h-8" />)}
                   </div>
                   <div>
                     <h3 className="text-base font-bold text-slate-900 dark:text-white">
                       {isUnlocked ? 'Zaman Kapsülü Kilidi Açıldı!' : 'Zaman Kapsülü Mühürlendi'}
                     </h3>
                     <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-                      Hedef Açılış Tarihi: {capsule.unlockDate} • Oluşturulma: {new Date(capsule.createdAt).toLocaleDateString('tr-TR')}
+                      Hedef Açılış Tarihi: {capsule.unlockDate} • Oluşturulma: {' '}{new Date(capsule.createdAt).toLocaleDateString('tr-TR')}
                     </p>
                   </div>
                 </div>
@@ -304,7 +304,7 @@ export function GoalTimeCapsuleModal({
                   {!isUnlocked ? (
                     <button
                       onClick={handleUnlock}
-                      className="px-5 py-2.5 bg-amber-600 hover:bg-amber-700 text-white dark:text-white rounded-xl text-xs font-bold shadow-md inline-flex items-center gap-2 transition-transform hover:scale-105"
+                      className="px-5 py-2.5 rounded-xl text-xs font-bold inline-flex items-center gap-2 transition-transform hover:scale-105 bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none"
                     >
                       <Unlock className="w-4 h-4" />
                       Kapsülü Şimdi Aç

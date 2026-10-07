@@ -82,7 +82,7 @@ export default function IlerlemePage({ initialData }: ProgressPageProps) {
   const { theme } = useTheme();
   const router = useRouter();
   const isLight = theme === 'light';
-  
+
   const [user, setUser] = useState<AppUser | null>(initialData?.user ?? null);
   const [loading, setLoading] = useState(!(initialData?.isHydrated ?? false));
   const [sessions, setSessions] = useState<StudySession[]>(
@@ -96,7 +96,7 @@ export default function IlerlemePage({ initialData }: ProgressPageProps) {
   const [pdfLoading, setPdfLoading] = useState(false);
   const [showBadgesModal, setShowBadgesModal] = useState(false);
   const [showMonthlyReportModal, setShowMonthlyReportModal] = useState(false);
-  
+
   // Modal states
   const [showAddModal, setShowAddModal] = useState(false);
   const [activityType, setActivityType] = useState('test');
@@ -171,7 +171,7 @@ export default function IlerlemePage({ initialData }: ProgressPageProps) {
     setProgressData(progressRes.data || []);
     setBadges(badgesRes.data || []);
     setGoal(resolveCurrentGoal(goalRes.data || []));
-    
+
     setLoading(false);
   }, [initialData?.isHydrated, initialUserKey, router]);
 
@@ -194,10 +194,10 @@ export default function IlerlemePage({ initialData }: ProgressPageProps) {
     if (!duration || isNaN(Number(duration)) || Number(duration) <= 0) return;
     if (!resolvedTopic) return;
     if (!user) return;
-    
+
     setAddingSession(true);
     setAddSessionError(null);
-    
+
     try {
       const durationNum = parseInt(duration);
       const sessionDate = new Date().toISOString().split('T')[0] || '';
@@ -264,7 +264,7 @@ export default function IlerlemePage({ initialData }: ProgressPageProps) {
       setDuration('');
       setSelectedTopic('');
       setCustomTopic('');
-      
+
     } catch (error) {
       log.error('Ders saati kayıt hatası', error);
       const message =
@@ -312,9 +312,9 @@ export default function IlerlemePage({ initialData }: ProgressPageProps) {
   const getWeeklyChartData = () => {
     const days = ['Pzt', 'Sal', 'Çar', 'Per', 'Cum', 'Cmt', 'Paz'];
     const data = days.map(d => ({ name: d, duration: 0 }));
-    
+
     const today = new Date();
-    const dayOfWeek = today.getDay() === 0 ? 6 : today.getDay() - 1; 
+    const dayOfWeek = today.getDay() === 0 ? 6 : today.getDay() - 1;
     const startOfWeek = new Date(today);
     startOfWeek.setDate(today.getDate() - dayOfWeek);
     startOfWeek.setHours(0,0,0,0);
@@ -350,14 +350,14 @@ export default function IlerlemePage({ initialData }: ProgressPageProps) {
     100,
     Math.round((currentWeekTotal / weeklyTarget) * 100),
   );
-  
+
   // Radar data hazırlama: Sadece bir kez veya daha fazla çalışılmış top 6 konu
   const radarData = [...progressData].slice(0, 6).map(p => ({
     subject: p.topic.split(' ')[0], // İlk kelimesini al ekrana sığsın
     A: p.mastery_level,
     fullMark: 100,
   }));
-  
+
   // Eğre yetersiz veri varsa Dummy radar
   const displayRadarData: RadarChartPoint[] =
     radarData.length > 2
@@ -405,9 +405,9 @@ export default function IlerlemePage({ initialData }: ProgressPageProps) {
               }`}
             >
               {pdfLoading
-                ? <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
-                : <Download className="w-4 h-4" />
-              }
+                ? (<div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
+                ): (<Download className="w-4 h-4" />
+              )}
               <span className="hidden sm:inline">{pdfLoading ? 'Hazırlanıyor...' : 'PDF'}</span>
             </motion.button>
             <ThemeToggle compact />
@@ -416,7 +416,7 @@ export default function IlerlemePage({ initialData }: ProgressPageProps) {
       </header>
 
       <div id="ilerleme-pdf-content" className="max-w-6xl mx-auto px-4 py-8 space-y-6">
-        
+
         {/* Başlık ve Çalışma Ekle */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <div>
@@ -433,13 +433,13 @@ export default function IlerlemePage({ initialData }: ProgressPageProps) {
               <Award className="w-5 h-5 text-amber-600 dark:text-amber-400" />
               <span>Aylık Karne & Belge</span>
             </button>
-            <button 
+            <button
               onClick={() => {
                 setAddSessionError(null);
                 setCustomTopic('');
                 setShowAddModal(true);
               }}
-              className="px-6 py-3 bg-gradient-to-r from-indigo-500 to-purple-500 hover:from-indigo-600 hover:to-purple-600 text-white font-bold rounded-2xl shadow-lg shadow-indigo-500/25 flex items-center gap-2 transition-transform hover:scale-105"
+              className="px-6 py-3 font-bold rounded-2xl flex items-center gap-2 transition-transform hover:scale-105 bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none"
             >
               <Plus className="w-5 h-5" /> Çalışma Ekle
             </button>
@@ -462,11 +462,11 @@ export default function IlerlemePage({ initialData }: ProgressPageProps) {
 
         {/* Üst Paneller */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          
+
           {/* Haftalık Hedef */}
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className={`col-span-1 md:col-span-2 rounded-3xl p-6 sm:p-8 relative overflow-hidden border ${isLight ? 'bg-white border-slate-200 shadow-sm' : 'bg-slate-800/50 border-slate-700'}`}>
             <div className={`absolute top-0 right-0 w-64 h-64 bg-gradient-to-br blur-3xl opacity-20 pointer-events-none ${isLight ? 'from-orange-500 to-red-500' : 'from-orange-500 to-red-500'}`} />
-            
+
             <div className="relative z-10 flex flex-col md:flex-row gap-8 items-center">
               <div className="flex-1 w-full relative">
                 <div className="flex justify-between items-end mb-4">
@@ -476,7 +476,7 @@ export default function IlerlemePage({ initialData }: ProgressPageProps) {
                       <h3 className={`font-bold uppercase tracking-wider text-xs ${isLight ? 'text-slate-600' : 'text-slate-400'}`}>Haftalık Hedef</h3>
                     </div>
                     <p className={`text-3xl font-bold ${isLight ? 'text-slate-900' : 'text-white'}`}>
-                      {currentWeekTotal} <span className={`text-lg font-medium ${isLight ? 'text-slate-600' : 'text-slate-400'}`}>/ {goal?.target_duration || 0} dk</span>
+                      {currentWeekTotal}{' '} <span className={`text-lg font-medium ${isLight ? 'text-slate-600' : 'text-slate-400'}`}>/ {goal?.target_duration || 0} dk</span>
                     </p>
                   </div>
                   <div className="text-right">
@@ -485,10 +485,10 @@ export default function IlerlemePage({ initialData }: ProgressPageProps) {
                     </p>
                   </div>
                 </div>
-                
+
                 {/* Progress Bar */}
                 <div className={`h-4 w-full rounded-full overflow-hidden ${isLight ? 'bg-slate-100' : 'bg-slate-900'}`}>
-                  <motion.div 
+                  <motion.div
                     initial={{ width: 0 }}
                     animate={{ width: `${goalPercentage}%` }}
                     transition={{ duration: 1, ease: 'easeOut' }}
@@ -517,7 +517,7 @@ export default function IlerlemePage({ initialData }: ProgressPageProps) {
                 <span className={`text-sm font-black ${isLight ? 'text-indigo-950' : 'text-white'}`}>({badges.length}) &rarr;</span>
               </button>
             </div>
-            
+
             {badges.length === 0 ? (
               <div className="flex-1 flex flex-col items-center justify-center text-center opacity-70">
                 <Target className={`w-8 h-8 mb-2 ${isLight ? 'text-indigo-900' : 'text-indigo-200'}`} />
@@ -527,9 +527,9 @@ export default function IlerlemePage({ initialData }: ProgressPageProps) {
               <div className="flex-1 grid grid-cols-2 gap-2 mt-2">
                 {badges.slice(0, 4).map((badge) => (
                   <div key={badge.id} className="relative group cursor-pointer">
-                    <div className="relative h-12 w-12 overflow-hidden rounded-xl bg-gradient-to-br from-amber-400 via-orange-400 to-pink-500 shadow-lg shadow-orange-500/25 animate-wiggle-hover">
+                    <div className="relative h-12 w-12 overflow-hidden rounded-xl shadow-lg shadow-orange-500/25 animate-wiggle-hover bg-brand-accent">
                       <div className="flex h-full w-full items-center justify-center">
-                        <Award className="h-6 w-6 text-white dark:text-white drop-shadow" aria-hidden="true" />
+                        <Award className="h-6 w-6 drop-shadow text-slate-950 dark:text-slate-950" aria-hidden="true" />
                       </div>
                       <span
                         aria-hidden="true"
@@ -566,7 +566,7 @@ export default function IlerlemePage({ initialData }: ProgressPageProps) {
                     <span className={`font-bold ${prog.mastery_level > 80 ? 'text-emerald-500' : prog.mastery_level < 40 ? 'text-red-500' : 'text-amber-500'}`}>%{prog.mastery_level}</span>
                   </div>
                   <div className={`h-2.5 w-full rounded-full ${isLight ? 'bg-slate-100' : 'bg-slate-900'}`}>
-                    <div 
+                    <div
                       className={`h-full rounded-full ${prog.mastery_level > 80 ? 'bg-emerald-500' : prog.mastery_level < 40 ? 'bg-red-500' : 'bg-amber-500'}`}
                       style={{ width: `${prog.mastery_level}%` }}
                     />

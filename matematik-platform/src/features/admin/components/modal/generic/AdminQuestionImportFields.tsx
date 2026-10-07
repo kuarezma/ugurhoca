@@ -84,7 +84,7 @@ export default function AdminQuestionImportFields({
                   type="button"
                   disabled={isSubmitting || !bundleUrl.trim()}
                   onClick={() => onQuestionImportFromUrl(bundleUrl)}
-                  className="rounded-lg bg-cyan-500 px-4 py-2 text-sm font-semibold text-slate-950 transition-colors hover:bg-cyan-400 disabled:cursor-not-allowed disabled:opacity-60"
+                  className="rounded-lg px-4 py-2 text-sm font-semibold transition-colors disabled:cursor-not-allowed disabled:opacity-60 bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none"
                 >
                   URL&apos;den yükle
                 </button>
@@ -110,7 +110,7 @@ export default function AdminQuestionImportFields({
               <button
                 type="button"
                 onClick={handleDownloadTemplate}
-                className="rounded-lg bg-emerald-500 px-4 py-2 text-sm font-medium text-white dark:text-white transition-colors hover:bg-emerald-600"
+                className="rounded-lg px-4 py-2 text-sm font-medium transition-colors bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none"
               >
                 İndir
               </button>
@@ -141,7 +141,8 @@ export default function AdminQuestionImportFields({
               <div>
                 <p className="font-medium text-primary">{importResult.meta.title}</p>
                 <p className="text-sm text-slate-400">
-                  {importResult.meta.grade}. Sınıf • {importResult.meta.difficulty} •{' '}
+                  {importResult.meta.grade}. Sınıf • {' '}
+                  {importResult.meta.difficulty} •{' '}
                   {importResult.meta.time_limit} dk
                 </p>
                 {importResult.file_name ? (
@@ -268,10 +269,10 @@ export default function AdminQuestionImportFields({
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
           disabled={isSubmitting || formData.importResult.valid.length === 0}
-          className={`w-full rounded-xl py-4 font-semibold text-white transition-all flex items-center justify-center gap-2 disabled:opacity-60 ${
+          className={`w-full rounded-xl py-4 font-semibold transition-all flex items-center justify-center gap-2 disabled:opacity-60 text-slate-950 dark:text-slate-950 ${
             isBundle
-              ? 'bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600'
-              : 'bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600'
+              ? 'bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none'
+              : 'bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none'
           }`}
         >
           {isSubmitting

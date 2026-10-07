@@ -102,7 +102,7 @@ export function HomeworkLoadCalendarModal({
 
   const activeDay = useMemo(() => {
     if (!selectedDate) return daysForecast[0];
-    return daysForecast.find((d) => d.dateStr === selectedDate) || daysForecast[0];
+    return (daysForecast.find((d) => d.dateStr === selectedDate) || daysForecast[0]);
   }, [selectedDate, daysForecast]);
 
   if (!isOpen) return null;
@@ -189,7 +189,7 @@ export function HomeworkLoadCalendarModal({
                   type="button"
                   onClick={() => setSelectedDate(day.dateStr)}
                   className={`flex flex-col items-center justify-between p-2 rounded-xl border text-center transition ${barColor} ${
-                    isSelected ? 'ring-2 ring-indigo-400 scale-105 shadow-md' : 'hover:opacity-90'
+                    isSelected ? 'ring-2 ring-brand-primary scale-105 shadow-md' : 'hover:opacity-90'
                   }`}
                 >
                   <span className="text-[10px] font-bold uppercase">{day.dayName}</span>
@@ -220,7 +220,7 @@ export function HomeworkLoadCalendarModal({
                 )}
               </h3>
               <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-                Toplam Tahmini Süre: <strong className="text-slate-900 dark:text-white">{activeDay?.totalEstimatedMinutes} dakika</strong> • {activeDay?.assignments.length} Ödev
+                Toplam Tahmini Süre: {' '}<strong className="text-slate-900 dark:text-white">{activeDay?.totalEstimatedMinutes} dakika</strong> {' '}• {activeDay?.assignments.length} Ödev
               </p>
             </div>
 
@@ -270,7 +270,7 @@ export function HomeworkLoadCalendarModal({
                           </span>
                         ) : (
                           <span className="flex items-center gap-1 text-amber-600 dark:text-amber-300 font-semibold">
-                            <Flame className="w-3.5 h-3.5 text-amber-500 dark:text-amber-400" /> Teslim Bekleniyor
+                            <Flame className="w-3.5 h-3.5 text-amber-500 dark:text-amber-400" /> {' '}Teslim Bekleniyor
                           </span>
                         )}
                       </div>
@@ -283,7 +283,7 @@ export function HomeworkLoadCalendarModal({
                           onSelectAssignment(assignment);
                           onClose();
                         }}
-                        className="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold text-xs transition shadow-sm shrink-0"
+                        className="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl font-bold text-xs transition shrink-0 bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none"
                       >
                         Ödevi Aç
                       </button>

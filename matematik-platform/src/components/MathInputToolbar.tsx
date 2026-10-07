@@ -101,7 +101,7 @@ export function MathInputToolbar({ onInsertSymbol, className = '' }: MathInputTo
           className="inline-flex items-center gap-1 px-2 py-1 rounded-lg bg-indigo-50 dark:bg-indigo-600/20 text-indigo-700 dark:text-indigo-300 hover:bg-indigo-100 dark:hover:bg-indigo-600/30 border border-indigo-200 dark:border-transparent text-[10px] font-bold transition shrink-0"
         >
           <span>{isExpanded ? 'Kapat' : 'Tümü'}</span>
-          {isExpanded ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
+          {isExpanded ? (<ChevronUp className="w-3 h-3" /> ): (<ChevronDown className="w-3 h-3" />)}
         </button>
       </div>
 
@@ -116,7 +116,7 @@ export function MathInputToolbar({ onInsertSymbol, className = '' }: MathInputTo
                 onClick={() => setActiveGroupIndex(idx)}
                 className={`px-2 py-0.5 rounded text-[10px] font-semibold whitespace-nowrap transition ${
                   activeGroupIndex === idx
-                    ? 'bg-indigo-600 text-white'
+                    ? 'bg-brand-primary text-slate-950 dark:text-slate-950'
                     : 'bg-white dark:bg-white/5 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white border border-slate-200 dark:border-transparent'
                 }`}
               >

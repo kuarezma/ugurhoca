@@ -156,7 +156,7 @@ export function MathGraphVisualizerModal({
                     <button
                       type="button"
                       onClick={reset}
-                      className="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 rounded-xl text-white dark:text-white font-semibold text-xs transition"
+                      className="px-4 py-2 rounded-xl font-semibold text-xs transition bg-surface-2 hover:bg-surface-3 text-primary border border-default"
                     >
                       Grafiği Sıfırla
                     </button>
@@ -174,7 +174,7 @@ export function MathGraphVisualizerModal({
             {/* Üst Başlık Şeridi */}
           <div className="flex items-center justify-between border-b border-white/10 px-5 py-4 sm:px-6">
             <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-tr from-indigo-500 via-purple-500 to-pink-500 text-white dark:text-white shadow-md shadow-indigo-500/30">
+              <div className="flex h-10 w-10 items-center justify-center rounded-2xl shadow-md shadow-indigo-500/30 bg-brand-secondary text-slate-950 dark:text-slate-950">
                 <Activity className="h-5 w-5" />
               </div>
               <div>
@@ -204,7 +204,7 @@ export function MathGraphVisualizerModal({
               onClick={() => setActiveTab('linear')}
               className={`flex items-center gap-2 border-b-2 py-3 px-4 text-xs sm:text-sm font-semibold transition ${
                 activeTab === 'linear'
-                  ? 'border-indigo-500 text-indigo-400'
+                  ? 'border-brand-primary text-brand-primary-soft'
                   : 'border-transparent text-slate-400 hover:text-slate-200'
               }`}
             >
@@ -216,7 +216,7 @@ export function MathGraphVisualizerModal({
               onClick={() => setActiveTab('quadratic')}
               className={`flex items-center gap-2 border-b-2 py-3 px-4 text-xs sm:text-sm font-semibold transition ${
                 activeTab === 'quadratic'
-                  ? 'border-purple-500 text-purple-400'
+                  ? 'border-brand-primary text-brand-primary-soft'
                   : 'border-transparent text-slate-400 hover:text-slate-200'
               }`}
             >
@@ -228,7 +228,7 @@ export function MathGraphVisualizerModal({
               onClick={() => setActiveTab('trig')}
               className={`flex items-center gap-2 border-b-2 py-3 px-4 text-xs sm:text-sm font-semibold transition ${
                 activeTab === 'trig'
-                  ? 'border-pink-500 text-pink-400'
+                  ? 'border-brand-primary text-brand-primary-soft'
                   : 'border-transparent text-slate-400 hover:text-slate-200'
               }`}
             >
@@ -405,16 +405,16 @@ export function MathGraphVisualizerModal({
               {/* Canlı Denklem Gösterimi */}
               <div className="mt-3 text-center">
                 <span className="text-xs text-slate-400 font-medium">Güncel Fonksiyon:</span>
-                <div className="text-lg font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 via-purple-300 to-pink-400">
-                  {activeTab === 'linear' && (
+                <div className="text-lg font-extrabold text-blue-700 dark:text-blue-300">
+                  {activeTab === 'linear' &&
                     `y = ${m !== 1 && m !== -1 ? m : m === -1 ? '-' : ''}x ${b > 0 ? `+ ${b}` : b < 0 ? `- ${Math.abs(b)}` : ''}`
-                  )}
-                  {activeTab === 'quadratic' && (
+                  }
+                  {activeTab === 'quadratic' &&
                     `y = ${a !== 1 && a !== -1 ? a : a === -1 ? '-' : ''}x² ${quadB > 0 ? `+ ${quadB}x` : quadB < 0 ? `- ${Math.abs(quadB)}x` : ''} ${c > 0 ? `+ ${c}` : c < 0 ? `- ${Math.abs(c)}` : ''}`
-                  )}
-                  {activeTab === 'trig' && (
+                  }
+                  {activeTab === 'trig' &&
                     `θ = ${angleDeg}° (${(angleDeg / 180).toFixed(2)}π radyan)`
-                  )}
+                  }
                 </div>
               </div>
             </div>
@@ -443,7 +443,7 @@ export function MathGraphVisualizerModal({
                   <>
                     <div>
                       <div className="flex justify-between text-xs font-semibold mb-1">
-                        <span>Eğim (m): <strong className="text-indigo-400">{m}</strong></span>
+                        <span>Eğim (m): {' '}<strong className="text-indigo-400">{m}</strong></span>
                         <span className="text-slate-400">Doğrunun dikliği/açısı</span>
                       </div>
                       <input
@@ -459,7 +459,7 @@ export function MathGraphVisualizerModal({
                     </div>
                     <div>
                       <div className="flex justify-between text-xs font-semibold mb-1">
-                        <span>y-Keseni (b): <strong className="text-pink-400">{b}</strong></span>
+                        <span>y-Keseni (b): {' '}<strong className="text-pink-400">{b}</strong></span>
                         <span className="text-slate-400">Eksen kesim noktası</span>
                       </div>
                       <input
@@ -480,7 +480,7 @@ export function MathGraphVisualizerModal({
                   <>
                     <div>
                       <div className="flex justify-between text-xs font-semibold mb-1">
-                        <span>Baş Katsayı (a): <strong className="text-purple-400">{a}</strong></span>
+                        <span>Baş Katsayı (a): {' '}<strong className="text-purple-400">{a}</strong></span>
                         <span className="text-slate-400">Kolların yönü ve darlığı</span>
                       </div>
                       <input
@@ -499,7 +499,7 @@ export function MathGraphVisualizerModal({
                     </div>
                     <div>
                       <div className="flex justify-between text-xs font-semibold mb-1">
-                        <span>x Katsayısı (b): <strong className="text-amber-400">{quadB}</strong></span>
+                        <span>x Katsayısı (b): {' '}<strong className="text-amber-400">{quadB}</strong></span>
                         <span className="text-slate-400">Simetri ekseni kayması</span>
                       </div>
                       <input
@@ -515,7 +515,7 @@ export function MathGraphVisualizerModal({
                     </div>
                     <div>
                       <div className="flex justify-between text-xs font-semibold mb-1">
-                        <span>Sabit Terim (c): <strong className="text-emerald-400">{c}</strong></span>
+                        <span>Sabit Terim (c): {' '}<strong className="text-emerald-400">{c}</strong></span>
                         <span className="text-slate-400">y-keseni</span>
                       </div>
                       <input
@@ -535,7 +535,7 @@ export function MathGraphVisualizerModal({
                 {activeTab === 'trig' && (
                   <div>
                     <div className="flex justify-between text-xs font-semibold mb-1">
-                      <span>Açı (θ): <strong className="text-pink-400">{angleDeg}°</strong></span>
+                      <span>Açı (θ): {' '}<strong className="text-pink-400">{angleDeg}°</strong></span>
                       <span className="text-slate-400">Dönme açısı</span>
                     </div>
                     <input
@@ -653,13 +653,14 @@ export function MathGraphVisualizerModal({
                 {activeTab === 'linear' && (
                   <ul className="text-xs text-slate-300 space-y-1.5 list-disc pl-4">
                     <li>
-                      <strong>Eğim Durumu:</strong> {linearMetrics.isIncreasing ? 'm > 0 olduğundan fonksiyon daima ARTANDIR.' : linearMetrics.isDecreasing ? 'm < 0 olduğundan fonksiyon daima AZALANDIR.' : 'm = 0 olduğundan x eksenine PARALEL sabit doğrudur.'}
+                      <strong>Eğim Durumu:</strong> {' '}
+                          {linearMetrics.isIncreasing ? 'm > 0 olduğundan fonksiyon daima ARTANDIR.' : linearMetrics.isDecreasing ? 'm < 0 olduğundan fonksiyon daima AZALANDIR.' : 'm = 0 olduğundan x eksenine PARALEL sabit doğrudur.'}
                     </li>
                     <li>
                       <strong>y-Eksenini Kestiği Yer:</strong> (0, {b}) noktasıdır.
                     </li>
                     <li>
-                      <strong>x-Eksenini Kestiği Yer:</strong> {linearMetrics.xIntercept !== null ? `(${linearMetrics.xIntercept.toFixed(2)}, 0) noktasıdır.` : 'x eksenini kesmez.'}
+                      <strong>x-Eksenini Kestiği Yer:</strong> {' '}{linearMetrics.xIntercept !== null ? `(${linearMetrics.xIntercept.toFixed(2)}, 0) noktasıdır.` : 'x eksenini kesmez.'}
                     </li>
                   </ul>
                 )}
@@ -667,14 +668,16 @@ export function MathGraphVisualizerModal({
                 {activeTab === 'quadratic' && (
                   <ul className="text-xs text-slate-300 space-y-1.5 list-disc pl-4">
                     <li>
-                      <strong>Tepe Noktası T(r, k):</strong> T({quadMetrics.r.toFixed(2)}, {quadMetrics.k.toFixed(2)}) noktasıdır. Parabolün en {quadMetrics.armsUp ? 'küçük (minimum)' : 'büyük (maksimum)'} değeri k = {quadMetrics.k.toFixed(2)} olur.
+                      <strong>Tepe Noktası T(r, k):</strong> T({quadMetrics.r.toFixed(2)}, {quadMetrics.k.toFixed(2)}) noktasıdır. Parabolün en {' '}
+                          {quadMetrics.armsUp ? 'küçük (minimum)' : 'büyük (maksimum)'}{' '} değeri k = {quadMetrics.k.toFixed(2)} olur.
                     </li>
                     <li>
-                      <strong>Diskriminant (Δ = b² - 4ac):</strong> Δ = {quadMetrics.delta.toFixed(2)} &rarr; {quadMetrics.delta > 0 ? 'Δ > 0 olduğu için parabol x eksenini 2 farklı noktada keser.' : quadMetrics.delta === 0 ? 'Δ = 0 olduğu için parabol x eksenine teğettir (çift katlı kök).' : 'Δ < 0 olduğu için parabol x eksenini kesmez (reel kök yoktur).'}
+                      <strong>Diskriminant (Δ = b² - 4ac):</strong> Δ = {' '}
+                          {quadMetrics.delta.toFixed(2)} &rarr; {' '}{quadMetrics.delta > 0 ? 'Δ > 0 olduğu için parabol x eksenini 2 farklı noktada keser.' : quadMetrics.delta === 0 ? 'Δ = 0 olduğu için parabol x eksenine teğettir (çift katlı kök).' : 'Δ < 0 olduğu için parabol x eksenini kesmez (reel kök yoktur).'}
                     </li>
                     {quadMetrics.roots.length > 0 && (
                       <li>
-                        <strong>Kökler:</strong> x₁ = {quadMetrics.roots[0].toFixed(2)}{quadMetrics.roots[1] !== undefined ? `, x₂ = ${quadMetrics.roots[1].toFixed(2)}` : ''}
+                        <strong>Kökler:</strong> x₁ = {' '}{quadMetrics.roots[0].toFixed(2)}{quadMetrics.roots[1] !== undefined ? `, x₂ = ${quadMetrics.roots[1].toFixed(2)}` : ''}
                       </li>
                     )}
                   </ul>
@@ -686,13 +689,15 @@ export function MathGraphVisualizerModal({
                       <strong>Bölge:</strong> {trigMetrics.region}. Bölge
                     </li>
                     <li>
-                      <strong>cos({angleDeg}°):</strong> {trigMetrics.cosVal.toFixed(3)} (Yatay mavi uzunluk)
+                      <strong>cos({angleDeg}°):</strong> {' '}
+                          {trigMetrics.cosVal.toFixed(3)} (Yatay mavi uzunluk)
                     </li>
                     <li>
-                      <strong>sin({angleDeg}°):</strong> {trigMetrics.sinVal.toFixed(3)} (Dikey yeşil uzunluk)
+                      <strong>sin({angleDeg}°):</strong> {' '}
+                          {trigMetrics.sinVal.toFixed(3)} (Dikey yeşil uzunluk)
                     </li>
                     <li>
-                      <strong>tan({angleDeg}°):</strong> {trigMetrics.tanVal !== null ? trigMetrics.tanVal.toFixed(3) : 'Tanımsız (90°/270°)'}
+                      <strong>tan({angleDeg}°):</strong> {' '}{trigMetrics.tanVal !== null ? trigMetrics.tanVal.toFixed(3) : 'Tanımsız (90°/270°)'}
                     </li>
                   </ul>
                 )}
@@ -705,7 +710,7 @@ export function MathGraphVisualizerModal({
             <button
               type="button"
               onClick={onClose}
-              className="rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 px-5 py-2 text-xs sm:text-sm font-bold text-white shadow-lg shadow-indigo-500/25 transition hover:brightness-110 active:scale-95"
+              className="rounded-xl px-5 py-2 text-xs sm:text-sm font-bold shadow-lg transition hover:brightness-110 active:scale-95 bg-surface-2 hover:bg-surface-3 text-primary border border-default"
             >
               Anladım, Kapat
             </button>

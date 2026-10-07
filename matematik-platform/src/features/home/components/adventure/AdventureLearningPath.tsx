@@ -257,7 +257,7 @@ export function AdventureLearningPath({
 
               <SafeLink
                 href={activeNodeDetail.testsHref}
-                className="flex items-center justify-between p-3.5 rounded-2xl border border-purple-500/30 bg-gradient-to-r from-purple-500/15 to-pink-500/15 hover:from-purple-500/25 hover:to-pink-500/25 transition-all hover:scale-[1.01] group"
+                className="flex items-center justify-between p-3.5 rounded-2xl border border-purple-500/30 transition-all hover:scale-[1.01] group bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none"
               >
                 <div className="flex items-center gap-3">
                   <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-purple-500/20 text-purple-300">
@@ -281,7 +281,7 @@ export function AdventureLearningPath({
                   className="flex items-center justify-between p-3.5 rounded-2xl border border-default bg-surface-2 hover:bg-surface-3 transition-all hover:scale-[1.01] group"
                 >
                   <div className="flex items-center gap-3">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-pink-500/15 text-pink-400">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-purple-500/15 text-purple-400">
                       <Gamepad2 className="h-5 w-5" />
                     </div>
                     <div>

@@ -354,7 +354,7 @@ export function PizzaChef({
           <div className="mt-6 flex justify-center gap-3">
             <button
               onClick={startNewGame}
-              className="inline-flex items-center gap-2 rounded-2xl bg-gradient-to-r from-amber-500 to-orange-500 px-8 py-3.5 text-base font-bold text-white shadow-lg transition hover:scale-105 active:scale-95"
+              className="inline-flex items-center gap-2 rounded-2xl px-8 py-3.5 text-base font-bold transition hover:scale-105 active:scale-95 bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none"
             >
               <Play className="h-5 w-5" /> Oyuna Başla
             </button>
@@ -365,7 +365,7 @@ export function PizzaChef({
       {gameState === 'playing' && (
         <div>
           {/* Order Board */}
-          <div className="mb-6 rounded-2xl border border-amber-500/30 bg-gradient-to-r from-amber-500/10 via-orange-500/10 to-amber-500/5 dark:to-transparent p-4">
+          <div className="mb-6 rounded-2xl border border-amber-500/30 dark:to-transparent p-4 bg-brand-accent/10">
             <div className="flex flex-wrap items-center justify-between gap-2">
               <div>
                 <span className="text-xs uppercase tracking-wider text-amber-700 dark:text-amber-400 font-bold">
@@ -468,7 +468,7 @@ export function PizzaChef({
             <button
               onClick={submitPizza}
               disabled={isBaking || selectedSlices.size === 0}
-              className="inline-flex items-center gap-2 rounded-2xl bg-gradient-to-r from-amber-500 via-orange-500 to-red-500 px-8 py-3 text-base font-bold text-white shadow-xl shadow-orange-500/30 transition hover:scale-105 active:scale-95 disabled:cursor-not-allowed disabled:opacity-40"
+              className="inline-flex items-center gap-2 rounded-2xl px-8 py-3 text-base font-bold transition hover:scale-105 active:scale-95 disabled:cursor-not-allowed disabled:opacity-40 bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none"
             >
               <ChefHat className="h-5 w-5" /> Fırına Ver! 🍕
             </button>
@@ -506,7 +506,7 @@ export function PizzaChef({
           <div className="flex justify-center gap-4">
             <button
               onClick={startNewGame}
-              className="inline-flex items-center gap-2 rounded-2xl bg-amber-500 px-6 py-3 font-bold text-slate-950 transition hover:bg-amber-400"
+              className="inline-flex items-center gap-2 rounded-2xl px-6 py-3 font-bold transition bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none"
             >
               <RotateCcw className="h-5 w-5" /> Tekrar Oyna
             </button>

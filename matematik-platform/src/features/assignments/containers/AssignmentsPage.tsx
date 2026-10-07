@@ -65,7 +65,7 @@ export default function OdevlerPage({
   const [loading, setLoading] = useState(!isHydrated);
   const [assignments, setAssignments] = useState<Assignment[]>(initialAssignments);
   const [submissions, setSubmissions] = useState<Record<string, Submission>>(
-    initialSubmissions,
+    initialSubmissions
   );
   const uploadInFlight = useRef(false);
   const [uploading, setUploading] = useState<string | null>(null);
@@ -172,7 +172,7 @@ export default function OdevlerPage({
 
   const handleFileUpload = async (assignmentId: string, file: File) => {
     if (!user || uploadInFlight.current) return;
-    
+
     // Güvenlik kontrolleri
     if (file.size > 5 * 1024 * 1024) {
       showToast('warning', "Dosya boyutu 5MB'dan küçük olmalıdır.");
@@ -231,7 +231,7 @@ export default function OdevlerPage({
 
       clearInterval(progressInterval);
       if (uploadError) throw uploadError;
-      
+
       setUploadProgress(100);
 
       const { data: { publicUrl } } = supabase.storage
@@ -274,7 +274,7 @@ export default function OdevlerPage({
         setUploadProgress(null);
         showToast('success', 'Ödev başarıyla yüklendi.');
       }, 500);
-      
+
     } catch (error) {
       log.error('Yükleme hatası', error);
       showToast(
@@ -302,9 +302,9 @@ export default function OdevlerPage({
   const handleDrop = (e: React.DragEvent, assignmentId: string) => {
     e.preventDefault();
     setIsDragging(false);
-    
+
     if (uploading) return;
-    
+
     const file = e.dataTransfer.files?.[0];
     if (file) handleFileUpload(assignmentId, file);
   };
@@ -386,7 +386,7 @@ export default function OdevlerPage({
           <div>
             <h1 className={`text-3xl font-bold mb-2 ${isLight ? 'text-slate-900' : 'text-white'}`}>Önemli Ödevlerin</h1>
             <p className={isLight ? 'text-slate-600' : 'text-slate-400'}>
-              {isGraduateGrade(user?.grade) ? 'Mezun' : `${user?.grade}. Sınıf`} için atanan ödevlerini buradan takip edip teslim edebilirsin.
+              {isGraduateGrade(user?.grade) ? 'Mezun' : `${user?.grade}. Sınıf`} {' '}için atanan ödevlerini buradan takip edip teslim edebilirsin.
             </p>
           </div>
           <button
@@ -408,7 +408,7 @@ export default function OdevlerPage({
             action={
               <Link
                 href="/testler"
-                className="inline-flex h-11 items-center justify-center rounded-xl bg-gradient-to-r from-brand-primary via-brand-pink to-brand-orange px-5 text-sm font-semibold text-white shadow-brand-glow transition-transform hover:-translate-y-0.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary"
+                className="inline-flex h-11 items-center justify-center rounded-xl px-5 text-sm font-semibold transition-transform hover:-translate-y-0.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none"
               >
                 Test çözmeye git
               </Link>
@@ -496,8 +496,8 @@ export default function OdevlerPage({
                       aria-label={isSubmitted ? 'Teslim detaylarını gör' : 'Ödev teslim et'}
                       className={`inline-flex items-center gap-2 px-5 h-11 rounded-xl text-sm font-bold transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:ring-offset-2 ${
                         isSubmitted
-                          ? 'bg-slate-100 text-slate-700 hover:bg-slate-200 dark:bg-slate-700 dark:text-white dark:hover:bg-slate-600'
-                          : 'bg-gradient-to-r from-brand-primary via-brand-pink to-brand-orange text-white dark:text-white shadow-brand-glow hover:-translate-y-0.5'
+                          ? 'bg-slate-100 text-slate-700 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 dark:text-white'
+                          : 'hover:-translate-y-0.5 bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none'
                       }`}
                     >
                       {isSubmitted ? 'Detayları gör' : 'Ödev teslim et'}

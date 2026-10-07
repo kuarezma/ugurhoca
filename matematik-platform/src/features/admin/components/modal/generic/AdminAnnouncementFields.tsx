@@ -30,7 +30,7 @@ export default function AdminAnnouncementFields({
           value={formData.image_urls || ""}
           onChange={(event) => updateFormData({ image_urls: event.target.value })}
           className="w-full bg-surface-2 dark:bg-slate-800/50 border border-default dark:border-slate-700 rounded-xl px-4 py-3 text-primary
-                   focus:outline-none focus:border-pink-500 transition-colors resize-none"
+ focus:outline-none focus:border-purple-500 transition-colors resize-none"
           placeholder={`Her satıra bir Yandex görsel linki yapıştır\nhttps://.../foto1.jpg\nhttps://.../foto2.jpg`}
         />
         <p className="text-xs text-slate-500 mt-2">
@@ -51,7 +51,7 @@ export default function AdminAnnouncementFields({
           value={formData.link_url || ""}
           onChange={(event) => updateFormData({ link_url: event.target.value })}
           className="w-full bg-surface-2 dark:bg-slate-800/50 border border-default dark:border-slate-700 rounded-xl px-4 py-3 text-primary
-                   focus:outline-none focus:border-pink-500 transition-colors"
+ focus:outline-none focus:border-purple-500 transition-colors"
           placeholder="PDF ya da site linki"
         />
         <p className="text-xs text-slate-500 mt-2">

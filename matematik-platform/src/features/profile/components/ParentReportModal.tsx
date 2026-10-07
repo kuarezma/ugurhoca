@@ -159,7 +159,7 @@ export default function ParentReportModal({
             {/* Printable Preview Card */}
             <div
               id="parent-report-card"
-              className="rounded-3xl border border-emerald-500/30 bg-gradient-to-br from-emerald-50/50 via-white to-teal-50/40 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 p-6 sm:p-8 text-slate-900 dark:text-white shadow-xl"
+              className="rounded-3xl border border-emerald-500/30 p-6 sm:p-8 text-slate-900 dark:text-white shadow-xl bg-surface-1 dark:bg-surface-1"
             >
               {/* Report Header */}
               <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-slate-200 dark:border-white/10 pb-5">
@@ -224,7 +224,7 @@ export default function ParentReportModal({
               {/* Teacher Note */}
               <div className="rounded-2xl border border-emerald-500/20 bg-emerald-50 dark:bg-emerald-500/10 p-4">
                 <p className="text-xs font-semibold text-emerald-900 dark:text-emerald-200 leading-relaxed">
-                  💬 <strong className="text-slate-900 dark:text-white font-bold">Öğretmen Notu:</strong> Öğrencimiz bu hafta gösterdiği istikrarlı çalışma disiplini ve gayreti ile tebrikleri hak ediyor. Başarılarının devamını dilerim!
+                  💬 {' '}<strong className="text-slate-900 dark:text-white font-bold">Öğretmen Notu:</strong> {' '}Öğrencimiz bu hafta gösterdiği istikrarlı çalışma disiplini ve gayreti ile tebrikleri hak ediyor. Başarılarının devamını dilerim!
                 </p>
               </div>
             </div>
@@ -234,7 +234,7 @@ export default function ParentReportModal({
               <button
                 type="button"
                 onClick={handleOpenWhatsApp}
-                className="flex items-center justify-center gap-2 rounded-2xl bg-emerald-600 hover:bg-emerald-500 px-4 py-3 text-sm font-bold text-white dark:text-white transition-all active:scale-95 shadow-lg shadow-emerald-600/20"
+                className="flex items-center justify-center gap-2 rounded-2xl px-4 py-3 text-sm font-bold transition-all active:scale-95 bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none"
               >
                 <Share2 className="h-4 w-4" />
                 <span>WhatsApp ile İlet</span>
@@ -245,7 +245,7 @@ export default function ParentReportModal({
                 onClick={handleCopy}
                 className="flex items-center justify-center gap-2 rounded-2xl border border-slate-200 dark:border-white/10 bg-slate-50 hover:bg-slate-100 dark:bg-white/5 dark:hover:bg-white/10 px-4 py-3 text-sm font-semibold text-slate-700 dark:text-slate-200 transition-all active:scale-95"
               >
-                {copied ? <Check className="h-4 w-4 text-emerald-500 dark:text-emerald-400" /> : <Copy className="h-4 w-4" />}
+                {copied ? (<Check className="h-4 w-4 text-emerald-500 dark:text-emerald-400" /> ): (<Copy className="h-4 w-4" />)}
                 <span>{copied ? 'Kopyalandı!' : 'Metni Kopyala'}</span>
               </button>
 

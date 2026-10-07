@@ -1,5 +1,7 @@
 'use client';
 
+import Image from 'next/image';
+
 import { useState, useEffect, useCallback, Suspense, useRef, startTransition } from 'react';
 import dynamic from 'next/dynamic';
 import { AnimatePresence, motion } from 'framer-motion';
@@ -8,7 +10,6 @@ import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import {
   ArrowLeft,
   ChevronRight,
-  Calculator,
   Filter,
   FolderOpen,
   Layers3,
@@ -137,7 +138,7 @@ const WORKSHEET_GRADE_CARD_STYLES: Record<
   },
   7: {
     border: 'border-violet-400/30 hover:border-violet-300/55',
-    folder: 'from-violet-400 to-fuchsia-500',
+    folder: 'from-violet-400 to-purple-500',
     surface: 'bg-violet-500/10 hover:bg-violet-500/15',
   },
   8: {
@@ -241,7 +242,7 @@ type ContentsPageProps = {
 };
 
 // URL okuması yalnızca bu görünmez bileşeni askıya alır; içerik HTML'de kalır.
-function ContentUrlFilters({ onChange }: { onChange: (params: URLSearchParams) => void }) {
+function ContentUrlFilters({ onChange }: { onChange: (params: URLSearchParams) => void ;}) {
   const searchParams = useSearchParams();
   useEffect(() => {
     onChange(new URLSearchParams(searchParams.toString()));
@@ -267,7 +268,7 @@ function ContentsPageInner({
   const searchFromUrl = searchParams.get('q') || '';
   const [user, setUser] = useState<ContentPageUser | null>(null);
   const [documents, setDocuments] = useState<ContentDocument[]>(
-    initialDocuments,
+    initialDocuments
   );
   const [searchTerm, setSearchTerm] = useState('');
   useEffect(() => { setSearchTerm(searchFromUrl); }, [searchFromUrl]);
@@ -310,7 +311,7 @@ function ContentsPageInner({
   const [loading, setLoading] = useState(false);
   const [contentLoadError, setContentLoadError] = useState<string | null>(null);
   const [worksheetDocuments, setWorksheetDocuments] = useState<ContentDocument[]>(
-    [],
+    []
   );
   const [worksheetOutcomeCatalog, setWorksheetOutcomeCatalog] = useState<
     Record<number, WorksheetCatalogItem[]>
@@ -1185,7 +1186,7 @@ function ContentsPageInner({
       } catch (error) {
         showToast(
           'error',
-          `Dosya yüklenemedi: ${getErrorMessage(error)}`,
+          `Dosya yüklenemedi: ${getErrorMessage(error)}`
         );
       } finally {
         setIsEditing(false);
@@ -1223,7 +1224,7 @@ function ContentsPageInner({
       } catch (error) {
         showToast(
           'error',
-          `Güncelleme hatası: ${getErrorMessage(error)}`,
+          `Güncelleme hatası: ${getErrorMessage(error)}`
         );
       } finally {
         setIsEditing(false);
@@ -1434,13 +1435,19 @@ function ContentsPageInner({
       <Suspense fallback={null}>
         <ContentUrlFilters onChange={setSearchParams} />
       </Suspense>
-      <nav className="fixed top-0 left-0 right-0 z-50 bg-surface-0/95 backdrop-blur-md border-b border-default py-3 sm:py-4 px-4 sm:px-6 xl:px-8 pt-[max(0.75rem,env(safe-area-inset-top))] pl-[max(1rem,env(safe-area-inset-left))] pr-[max(1rem,env(safe-area-inset-right))]">
+      <nav className="fixed top-0 left-0 right-0 z-50 bg-surface-1/95 backdrop-blur-md border-b-2 border-default py-3 sm:py-4 px-4 sm:px-6 xl:px-8 pt-[max(0.75rem,env(safe-area-inset-top))] pl-[max(1rem,env(safe-area-inset-left))] pr-[max(1rem,env(safe-area-inset-right))]">
         <div className="max-w-[1760px] mx-auto flex justify-between items-center gap-3">
           <Link href="/" className="flex items-center gap-2.5 min-w-0">
-            <div className="w-8 h-8 sm:w-10 sm:h-10 shrink-0 bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl flex items-center justify-center">
-              <Calculator className="w-5 h-5 sm:w-6 sm:h-6 text-white dark:text-white" />
+            <div className="h-10 w-10 shrink-0 overflow-hidden rounded-2xl border-2 border-brand-accent bg-brand-accent/20 p-0.5 shadow-btn-3d-yellow">
+              <Image
+                src="/ugur.jpeg"
+                alt="Uğur Hoca"
+                width={44}
+                height={44}
+                className="h-full w-full rounded-xl object-cover"
+              />
             </div>
-            <span className="text-base sm:text-xl font-bold bg-gradient-to-r from-purple-700 via-fuchsia-700 to-pink-700 dark:from-purple-300 dark:via-fuchsia-300 dark:to-pink-300 bg-clip-text text-transparent truncate">
+            <span className="font-display text-base sm:text-xl font-bold text-primary truncate">
               Uğur Hoca Matematik
             </span>
           </Link>
@@ -1475,7 +1482,7 @@ function ContentsPageInner({
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.98 }}
                 onClick={handleQuickAddOpen}
-                className="w-full sm:w-auto px-4 sm:px-6 py-2.5 sm:py-3 bg-gradient-to-r from-purple-500 to-pink-500 text-sm sm:text-base text-white dark:text-white font-semibold rounded-2xl hover:from-purple-600 hover:to-pink-600 transition-all shadow-lg flex items-center justify-center gap-2"
+                className="w-full sm:w-auto px-4 sm:px-6 py-2.5 sm:py-3 text-sm sm:text-base font-semibold rounded-2xl transition-all flex items-center justify-center gap-2 bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none"
               >
                 <Plus className="w-5 h-5" />
                 Hızlı İçerik Ekle
@@ -1490,9 +1497,9 @@ function ContentsPageInner({
             className="relative overflow-hidden rounded-3xl p-5 sm:p-7 mb-8 border border-default dark:border-white/[0.08] bg-surface-1/90 shadow-2xl backdrop-blur-2xl"
           >
             {/* Top ambient aura */}
-            <div className="absolute top-0 inset-x-0 h-[2px] bg-gradient-to-r from-transparent via-purple-500/40 to-transparent" />
+            <div className="absolute top-0 inset-x-0 h-[2px] bg-brand-secondary" />
 
-            {contentLoadError && <p role="alert" className="mb-3 text-sm text-tone-danger-fg">{contentLoadError}</p>}
+            {contentLoadError && (<p role="alert" className="mb-3 text-sm text-tone-danger-fg">{contentLoadError}</p>)}
             <ContentFilterBar
               isWorksheetBrowser={isWorksheetBrowser}
               onClearSearch={() => setSearchTerm('')}
@@ -1574,7 +1581,7 @@ function ContentsPageInner({
                 className={`rounded-full border px-4 py-2 transition-colors ${
                   selectedWorksheetGrade
                     ? 'border-default dark:border-slate-500 bg-surface-2 text-secondary hover:text-primary'
-                    : 'border-purple-600 dark:border-purple-400 bg-purple-500/15 text-purple-800 dark:text-purple-100'
+                    : 'border-brand-primary dark:border-brand-primary bg-brand-primary/15 text-tone-success-fg dark:text-brand-primary-soft'
                 }`}
               >
                 Sınıf Düzeyleri
@@ -1590,7 +1597,7 @@ function ContentsPageInner({
                     className={`rounded-full border px-4 py-2 transition-colors ${
                       selectedWorksheetOutcome
                         ? 'border-default dark:border-slate-500 bg-surface-2 text-secondary hover:text-primary'
-                        : 'border-purple-600 dark:border-purple-400 bg-purple-500/15 text-purple-800 dark:text-purple-100'
+                        : 'border-brand-primary dark:border-brand-primary bg-brand-primary/15 text-tone-success-fg dark:text-brand-primary-soft'
                     }`}
                   >
                     {worksheetGradeLabel}

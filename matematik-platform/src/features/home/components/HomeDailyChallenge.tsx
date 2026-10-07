@@ -216,7 +216,7 @@ export function HomeDailyChallenge({ isLight }: { isLight: boolean }) {
                       <span
                         className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-lg text-xs font-bold ${
                           isSelected
-                            ? 'bg-brand-primary text-white'
+                            ? 'bg-brand-primary text-slate-950 dark:text-slate-950'
                             : isLight
                             ? 'bg-slate-100 text-slate-700'
                             : 'bg-white/10 text-slate-300'
@@ -267,7 +267,8 @@ export function HomeDailyChallenge({ isLight }: { isLight: boolean }) {
                           isLight ? 'text-rose-600' : 'text-rose-400'
                         }`}>
                           <XCircle className="h-5 w-5" />
-                          <span>İpuçlarına dikkat! Doğru seçenek {String.fromCharCode(65 + challenge.correctIndex)}.</span>
+                          <span>İpuçlarına dikkat! Doğru seçenek {' '}
+                            {String.fromCharCode(65 + challenge.correctIndex)}.</span>
                         </div>
                       )}
                     </div>
@@ -275,7 +276,7 @@ export function HomeDailyChallenge({ isLight }: { isLight: boolean }) {
                     <button
                       type="button"
                       onClick={handleNextChallenge}
-                      className="rounded-xl bg-brand-primary px-3.5 py-1.5 text-xs font-bold text-white dark:text-white shadow transition hover:bg-brand-primary-deep"
+                      className="rounded-xl px-3.5 py-1.5 text-xs font-bold transition bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none"
                     >
                       Sıradaki Soruya Geç →
                     </button>

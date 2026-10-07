@@ -241,7 +241,7 @@ export function LiveLessonsPage({ initialLessons, students, user }: Props) {
       body: JSON.stringify({ status: 'cancelled' }),
     });
 
-    const payload = (await res.json().catch(() => null)) as { lesson?: LiveLesson } | null;
+    const payload = (await res.json().catch(() => null)) as { lesson?: LiveLesson ;} | null;
     if (res.ok && payload?.lesson) {
       setLessons((prev) => prev.map((l) => (l.id === lesson.id ? payload.lesson! : l)));
     }
@@ -260,7 +260,7 @@ export function LiveLessonsPage({ initialLessons, students, user }: Props) {
       body: JSON.stringify({ status: 'ended' }),
     });
 
-    const payload = (await res.json().catch(() => null)) as { lesson?: LiveLesson } | null;
+    const payload = (await res.json().catch(() => null)) as { lesson?: LiveLesson ;} | null;
     if (res.ok && payload?.lesson) {
       setLessons((prev) => prev.map((l) => (l.id === lesson.id ? payload.lesson! : l)));
     }
@@ -360,7 +360,7 @@ export function LiveLessonsPage({ initialLessons, students, user }: Props) {
               <button
                 type="button"
                 onClick={() => setIsSubmitQuestionOpen(true)}
-                className="inline-flex min-h-11 items-center gap-2 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 px-4 py-2.5 text-xs sm:text-sm font-bold text-white shadow-lg shadow-orange-500/25 transition-all duration-200 hover:brightness-110 active:scale-95"
+                className="inline-flex min-h-11 items-center gap-2 rounded-xl px-4 py-2.5 text-xs sm:text-sm font-bold transition-all duration-200 hover:brightness-110 active:scale-95 bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none"
                 title="Yapamadığın soruyu gönder, canlı derste tahtada çözelim"
               >
                 <HelpCircle className="h-4 w-4" />
@@ -392,7 +392,7 @@ export function LiveLessonsPage({ initialLessons, students, user }: Props) {
                     type="button"
                     onClick={handleQuickLaunch}
                     disabled={quickStarting}
-                    className="inline-flex min-h-11 items-center gap-2 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 px-4 py-2.5 text-xs sm:text-sm font-bold text-white shadow-lg shadow-emerald-500/25 transition-all duration-200 hover:brightness-110 active:scale-95 disabled:opacity-50"
+                    className="inline-flex min-h-11 items-center gap-2 rounded-xl px-4 py-2.5 text-xs sm:text-sm font-bold transition-all duration-200 hover:brightness-110 active:scale-95 disabled:opacity-50 bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none"
                   >
                     <Zap className="h-4 w-4 fill-white" />
                     <span>{quickStarting ? 'Başlatılıyor...' : 'Hızlı Ders Başlat'}</span>
@@ -401,11 +401,11 @@ export function LiveLessonsPage({ initialLessons, students, user }: Props) {
                   <button
                     type="button"
                     onClick={() => setIsPlanFormOpen((v) => !v)}
-                    className="inline-flex min-h-11 items-center gap-2 rounded-xl bg-brand-primary px-4 py-2.5 text-xs sm:text-sm font-bold text-white dark:text-white shadow-lg shadow-brand-primary/25 transition-all duration-200 hover:bg-brand-primary-deep active:scale-95"
+                    className="inline-flex min-h-11 items-center gap-2 rounded-xl px-4 py-2.5 text-xs sm:text-sm font-bold shadow-brand-primary/25 transition-all duration-200 active:scale-95 bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none"
                   >
                     <Plus className="h-4 w-4" />
                     <span>Ders Planla</span>
-                    {isPlanFormOpen ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+                    {isPlanFormOpen ? (<ChevronUp className="h-4 w-4" /> ): (<ChevronDown className="h-4 w-4" />)}
                   </button>
                 </>
               )}
@@ -667,7 +667,7 @@ export function LiveLessonsPage({ initialLessons, students, user }: Props) {
                 <button
                   type="submit"
                   disabled={saving || (targetGrade === 'selected' && selectedStudentIds.length === 0)}
-                  className="rounded-xl bg-brand-primary px-6 py-2.5 text-xs sm:text-sm font-bold text-white dark:text-white shadow-md hover:bg-brand-primary-deep disabled:opacity-50"
+                  className="rounded-xl px-6 py-2.5 text-xs sm:text-sm font-bold disabled:opacity-50 bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none"
                 >
                   {saving ? 'Planlanıyor...' : 'Dersi Takvime Ekle'}
                 </button>
@@ -686,7 +686,7 @@ export function LiveLessonsPage({ initialLessons, students, user }: Props) {
                 onClick={() => setActiveTab('upcoming')}
                 className={`flex items-center gap-2 rounded-xl px-4 py-2 text-xs sm:text-sm font-bold transition-all ${
                   activeTab === 'upcoming'
-                    ? 'bg-brand-primary text-white shadow-sm'
+                    ? 'bg-brand-primary shadow-sm text-slate-950 dark:text-slate-950'
                     : 'text-foreground/70 hover:text-foreground'
                 }`}
               >
@@ -708,7 +708,7 @@ export function LiveLessonsPage({ initialLessons, students, user }: Props) {
                 onClick={() => setActiveTab('past')}
                 className={`flex items-center gap-2 rounded-xl px-4 py-2 text-xs sm:text-sm font-bold transition-all ${
                   activeTab === 'past'
-                    ? 'bg-brand-primary text-white shadow-sm'
+                    ? 'bg-brand-primary shadow-sm text-slate-950 dark:text-slate-950'
                     : 'text-foreground/70 hover:text-foreground'
                 }`}
               >
@@ -766,7 +766,7 @@ export function LiveLessonsPage({ initialLessons, students, user }: Props) {
           {displayedLessons.length === 0 ? (
             <div className="flex flex-col items-center justify-center rounded-3xl border border-dashed border-border p-12 text-center bg-card/40">
               <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-foreground/5 text-foreground/40">
-                {activeTab === 'upcoming' ? <Calendar className="h-7 w-7" /> : <History className="h-7 w-7" />}
+                {activeTab === 'upcoming' ? (<Calendar className="h-7 w-7" /> ): (<History className="h-7 w-7" />)}
               </div>
               <h3 className="mt-4 text-base font-bold text-foreground">
                 {activeTab === 'upcoming' ? 'Yaklaşan Ders Bulunmuyor' : 'Geçmiş Ders Kaydı Yok'}
@@ -780,7 +780,7 @@ export function LiveLessonsPage({ initialLessons, students, user }: Props) {
                 <button
                   type="button"
                   onClick={() => setIsPlanFormOpen(true)}
-                  className="mt-4 inline-flex items-center gap-2 rounded-xl bg-brand-primary px-4 py-2 text-xs font-bold text-white dark:text-white hover:bg-brand-primary-deep"
+                  className="mt-4 inline-flex items-center gap-2 rounded-xl px-4 py-2 text-xs font-bold bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none"
                 >
                   <Plus className="h-3.5 w-3.5" />
                   <span>İlk Dersi Planla</span>

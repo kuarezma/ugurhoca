@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import { supabase } from "@/lib/supabase/client";
 import type {
   AdminFormState,
-  AdminUser,
+  AdminUser
 } from "@/features/admin/types";
 import {
   PRIVATE_STUDENT_GRADES,
@@ -107,7 +107,7 @@ export default function AdminEditUserForm({
           value={formData.name || ""}
           onChange={(event) => updateFormData({ name: event.target.value })}
           className="w-full bg-surface-2 dark:bg-slate-800/50 border border-default dark:border-slate-700 rounded-xl px-4 py-3 text-primary
-                   focus:outline-none focus:border-green-500 transition-colors"
+ focus:outline-none focus:border-green-500 transition-colors"
           placeholder="Adını girin..."
         />
       </div>
@@ -127,7 +127,7 @@ export default function AdminEditUserForm({
             })
           }
           className="w-full bg-surface-2 dark:bg-slate-800/50 border border-default dark:border-slate-700 rounded-xl px-4 py-3 text-primary
-                   focus:outline-none focus:border-green-500 transition-colors"
+ focus:outline-none focus:border-green-500 transition-colors"
         >
           <option value="">Sınıf seçin</option>
           {PRIVATE_STUDENT_GRADES.map((grade) => (
@@ -143,7 +143,7 @@ export default function AdminEditUserForm({
         whileHover={{ scale: 1.02 }}
         whileTap={{ scale: 0.98 }}
         disabled={isSubmitting || !editingUser}
-        className="w-full py-4 bg-gradient-to-r from-green-500 to-emerald-500 text-white font-semibold rounded-xl hover:from-green-600 hover:to-emerald-600 transition-all flex items-center justify-center gap-2 disabled:opacity-60"
+        className="w-full py-4 font-semibold rounded-xl transition-all flex items-center justify-center gap-2 disabled:opacity-60 bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none"
       >
         {isSubmitting ? "Kaydediliyor..." : "Kaydet"}
       </motion.button>

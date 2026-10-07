@@ -145,7 +145,7 @@ export function QuizShortcutsModal({
         <button
           type="button"
           onClick={onClose}
-          className="mt-5 w-full py-2.5 rounded-xl text-xs font-bold bg-indigo-600 hover:bg-indigo-500 text-white dark:text-white shadow transition"
+          className="mt-5 w-full py-2.5 rounded-xl text-xs font-bold transition bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none"
         >
           Anladım
         </button>

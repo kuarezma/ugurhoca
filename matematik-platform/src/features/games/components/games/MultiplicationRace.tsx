@@ -161,7 +161,7 @@ export function MultiplicationRace({
           <motion.div
             animate={{ scale: [1, 1.05, 1], rotate: [0, 5, -5, 0] }}
             transition={{ duration: 2, repeat: Infinity }}
-            className="w-32 h-32 mx-auto mb-6 bg-gradient-to-br from-pink-500 to-purple-500 rounded-3xl flex items-center justify-center shadow-lg"
+            className="w-32 h-32 mx-auto mb-6 bg-gradient-to-br from-purple-500 to-purple-500 rounded-3xl flex items-center justify-center shadow-lg"
             style={{
               boxShadow: '0 0 60px rgba(236, 72, 153, 0.4)',
             }}
@@ -191,7 +191,7 @@ export function MultiplicationRace({
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
           onClick={startGame}
-          className="px-8 py-4 bg-gradient-to-r from-pink-500 to-purple-500 text-white font-bold rounded-2xl text-xl shadow-lg"
+          className="px-8 py-4 font-bold rounded-2xl text-xl bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none"
           style={{ boxShadow: '0 0 40px rgba(236, 72, 153, 0.4)' }}
         >
           <Play className="w-6 h-6 inline mr-2" />
@@ -229,7 +229,7 @@ export function MultiplicationRace({
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
           onClick={startGame}
-          className="px-8 py-4 bg-gradient-to-r from-pink-500 to-purple-500 text-white font-bold rounded-2xl text-xl"
+          className="px-8 py-4 font-bold rounded-2xl text-xl bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none"
         >
           <RotateCcw className="w-6 h-6 inline mr-2" />
           Tekrar Oyna
@@ -336,9 +336,9 @@ export function MultiplicationRace({
             className={`py-6 rounded-2xl text-3xl font-bold transition-all ${
               selected === option
                 ? option === problem.answer
-                  ? 'bg-green-500 text-white scale-110'
-                  : 'bg-red-500 text-white'
-                : 'bg-gradient-to-br from-slate-700 to-slate-800 text-white hover:from-slate-600 hover:to-slate-700'
+                  ? 'scale-110 bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none'
+                  : 'bg-red-500 text-slate-950 dark:text-slate-950'
+                : 'bg-gradient-to-br from-slate-700 to-slate-800 text-white dark:text-white hover:from-slate-600 hover:to-slate-700'
             }`}
           >
             {option}

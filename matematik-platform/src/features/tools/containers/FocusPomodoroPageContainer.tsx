@@ -207,10 +207,10 @@ export function FocusPomodoroPageContainer() {
     void ambientAudio.resume();
 
     // Aynı sese tekrar tıklandıysa kapat
-    const nextType: AmbientSoundType = ambientSound === type ? 'none' : type;
+    const nextType: AmbientSoundType = ambientSound === type ? "none" : type;
     setAmbientSound(nextType);
 
-    if (nextType === 'none') {
+    if (nextType === "none") {
       ambientAudio.stop();
       return;
     }
@@ -268,8 +268,8 @@ export function FocusPomodoroPageContainer() {
         <div
           className={`relative overflow-hidden rounded-3xl border px-6 py-8 sm:px-10 sm:py-9 mb-8 transition-all duration-300 ${
             isLight
-              ? "border-rose-200/80 bg-gradient-to-br from-rose-50/80 via-white to-amber-50/50 shadow-bento"
-              : "border-white/10 bg-gradient-to-br from-slate-900 via-rose-950/20 to-slate-950 shadow-2xl backdrop-blur-xl"
+              ? 'border-rose-200/80 shadow-bento bg-surface-1'
+              : 'border-white/10 shadow-2xl backdrop-blur-xl bg-surface-1'
           }`}
         >
           <div
@@ -368,8 +368,8 @@ export function FocusPomodoroPageContainer() {
                   className={`rounded-2xl p-3 text-xs sm:text-sm font-bold transition-all border text-center ${
                     mode === m.id
                       ? isBreak
-                        ? "border-emerald-500 bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 shadow-sm"
-                        : "border-rose-500 bg-rose-500/15 text-rose-600 dark:text-rose-400 shadow-sm"
+                        ? 'border-brand-primary bg-tone-success-bg text-tone-success-fg dark:text-brand-primary-soft shadow-sm'
+                        : 'border-brand-primary bg-tone-success-bg text-tone-success-fg dark:text-brand-primary-soft shadow-sm'
                       : isLight
                         ? "border-slate-200 bg-slate-50/70 text-slate-600 hover:bg-slate-100"
                         : "border-white/10 bg-white/5 text-slate-400 hover:bg-white/10 hover:text-white"
@@ -402,14 +402,14 @@ export function FocusPomodoroPageContainer() {
                   className={`h-full transition-all duration-1000 rounded-full ${
                     isBreak
                       ? "bg-gradient-to-r from-emerald-500 to-teal-400"
-                      : "bg-gradient-to-r from-rose-500 via-amber-500 to-orange-500"
+                      : 'bg-brand-danger'
                   }`}
                   style={{ width: `${progressPercent}%` }}
                 />
               </div>
 
               <div className="text-xs font-semibold text-slate-500 dark:text-slate-400 flex items-center gap-1.5">
-                {isBreak ? <Coffee className="h-4 w-4 text-emerald-400" /> : <Brain className="h-4 w-4 text-rose-400" />}
+                {isBreak ? (<Coffee className="h-4 w-4 text-emerald-400" /> ): (<Brain className="h-4 w-4 text-rose-400" />)}
                 <span>{MODE_LABELS[mode].subtitle}</span>
               </div>
             </div>
@@ -437,12 +437,12 @@ export function FocusPomodoroPageContainer() {
               <button
                 type="button"
                 onClick={handleToggleTimer}
-                className={`inline-flex items-center justify-center gap-2 rounded-2xl px-8 py-3.5 text-sm sm:text-base font-bold text-white shadow-lg transition-all hover:scale-105 active:scale-95 ${
+                className={`inline-flex items-center justify-center gap-2 rounded-2xl px-8 py-3.5 text-sm sm:text-base font-bold shadow-lg transition-all hover:scale-105 active:scale-95 text-slate-950 dark:text-slate-950 ${
                   isRunning
-                    ? "bg-amber-600 hover:bg-amber-700 shadow-amber-600/30"
+                    ? 'bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none'
                     : isBreak
-                      ? "bg-gradient-to-r from-emerald-600 to-teal-600 shadow-emerald-600/30"
-                      : "bg-gradient-to-r from-rose-600 via-pink-600 to-amber-600 shadow-rose-600/30"
+                      ? 'bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none'
+                      : 'bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none'
                 }`}
               >
                 {isRunning ? (
@@ -536,7 +536,7 @@ export function FocusPomodoroPageContainer() {
                       onClick={() => handleSelectAmbient(snd.id)}
                       className={`rounded-xl px-3 py-2.5 text-xs font-bold text-left transition-all border flex items-center justify-between gap-2 ${
                         isSelected
-                          ? "border-indigo-500 bg-indigo-50 dark:bg-indigo-500/20 text-indigo-700 dark:text-indigo-300 shadow-sm ring-1 ring-indigo-500/50"
+                          ? 'border-brand-primary bg-tone-success-bg dark:bg-brand-primary/20 text-tone-success-fg dark:text-brand-primary-soft shadow-sm ring-1 ring-brand-primary/50'
                           : isLight
                             ? "border-slate-200 bg-slate-50/80 text-slate-600 hover:bg-slate-100 hover:border-slate-300"
                             : "border-white/10 bg-white/5 text-slate-400 hover:bg-white/10 hover:text-white"

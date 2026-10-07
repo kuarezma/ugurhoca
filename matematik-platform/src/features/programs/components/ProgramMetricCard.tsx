@@ -13,8 +13,8 @@ const toneClassNames = {
     dark: 'border-cyan-300/20 bg-cyan-300/10 text-cyan-100',
   },
   fuchsia: {
-    light: 'border-fuchsia-200 bg-fuchsia-50 text-fuchsia-800',
-    dark: 'border-fuchsia-300/20 bg-fuchsia-300/10 text-fuchsia-100',
+    light: 'border-purple-200 bg-purple-50 text-purple-800',
+    dark: 'border-purple-300/20 bg-purple-300/10 text-purple-100',
   },
   indigo: {
     light: 'border-indigo-200 bg-indigo-50 text-indigo-800',

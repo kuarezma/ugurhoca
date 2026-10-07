@@ -245,7 +245,7 @@ export function TeacherFeedbackLibraryModal({
     return true;
   });
 
-  const categories: { id: FeedbackCategory; label: string; icon: React.ComponentType<{ className?: string }> }[] = [
+  const categories: { id: FeedbackCategory; label: string; icon: React.ComponentType<{ className?: string }> ;}[] = [
     { id: 'all', label: 'Tümü', icon: BookOpen },
     { id: 'concept', label: 'Kavram Yanılgısı', icon: HelpCircle },
     { id: 'calculation', label: 'İşlem & İşaret', icon: AlertTriangle },
@@ -268,7 +268,7 @@ export function TeacherFeedbackLibraryModal({
         {/* Başlık */}
         <div className="flex items-center justify-between border-b border-slate-200 dark:border-white/10 px-5 py-4 bg-slate-50 dark:bg-slate-900/90">
           <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-600 text-white dark:text-white shadow-md shadow-indigo-500/25">
+            <div className="flex h-10 w-10 items-center justify-center rounded-2xl shadow-md shadow-indigo-500/25 bg-brand-secondary text-slate-950 dark:text-slate-950">
               <BookOpen className="h-5 w-5" />
             </div>
             <div>
@@ -313,7 +313,7 @@ export function TeacherFeedbackLibraryModal({
             <button
               type="button"
               onClick={() => setIsAddingNew((prev) => !prev)}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white dark:text-white text-xs font-bold transition shadow-sm shrink-0"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition shadow-sm shrink-0 bg-surface-2 hover:bg-surface-3 text-primary border border-default"
             >
               <Plus className="w-3.5 h-3.5" />
               <span>{isAddingNew ? 'İptal' : 'Yeni Not Ekle'}</span>
@@ -332,7 +332,7 @@ export function TeacherFeedbackLibraryModal({
                   onClick={() => setActiveCategory(cat.id)}
                   className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold whitespace-nowrap transition ${
                     isActive
-                      ? 'bg-indigo-600 text-white shadow-sm'
+                      ? 'bg-brand-primary shadow-sm text-slate-950 dark:text-slate-950'
                       : 'bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-transparent text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-white/10 hover:text-slate-900 dark:hover:text-white'
                   }`}
                 >
@@ -409,7 +409,7 @@ export function TeacherFeedbackLibraryModal({
 
               <button
                 type="submit"
-                className="px-4 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white dark:text-white text-xs font-bold transition shadow-sm"
+                className="px-4 py-1.5 rounded-xl text-xs font-bold transition bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none"
               >
                 Kütüphaneye Kaydet
               </button>
@@ -461,7 +461,7 @@ export function TeacherFeedbackLibraryModal({
                   <button
                     type="button"
                     onClick={() => onSelectTemplate(item, 'append')}
-                    className="px-3 py-1 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white dark:text-white text-xs font-bold transition flex items-center gap-1 shadow-sm"
+                    className="px-3 py-1 rounded-lg text-xs font-bold transition flex items-center gap-1 bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none"
                     title="Mevcut geri bildirimin sonuna yeni satır olarak ekle"
                   >
                     <CheckCircle2 className="w-3.5 h-3.5" />

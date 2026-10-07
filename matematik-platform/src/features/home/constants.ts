@@ -44,7 +44,7 @@ export const HOME_CATEGORIES: HomeCategory[] = [
   {
     bgColor: 'bg-purple-500/10',
     borderColor: 'border-purple-500/30',
-    color: 'from-purple-500 to-pink-500',
+    color: 'from-purple-500 to-purple-500',
     contentType: 'yaprak-test',
     href: '/icerikler?type=yaprak-test',
     icon: ClipboardList,
@@ -99,9 +99,9 @@ export const HOME_CATEGORIES: HomeCategory[] = [
     title: 'Çıkış Bileti',
   },
   {
-    bgColor: 'bg-pink-500/10',
-    borderColor: 'border-pink-500/30',
-    color: 'from-pink-500 to-rose-500',
+    bgColor: 'bg-purple-500/10',
+    borderColor: 'border-purple-500/30',
+    color: 'from-purple-500 to-rose-500',
     href: '/programlar',
     icon: AppWindow,
     id: 'programlar',

@@ -158,7 +158,7 @@ export function MathDuel({
     (currentStreak: number) => {
       setCurrentQuestion(generateDuelQuestion(currentStreak));
     },
-    [],
+    []
   );
 
   const startGame = useCallback(() => {
@@ -339,7 +339,7 @@ export function MathDuel({
               onClick={() => setMode('bot')}
               className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
                 mode === 'bot'
-                  ? 'bg-amber-500 text-slate-950 shadow-md font-bold'
+                  ? 'bg-brand-primary shadow-md font-bold text-slate-950 dark:text-slate-950'
                   : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white'
               }`}
             >
@@ -351,7 +351,7 @@ export function MathDuel({
               onClick={() => setMode('solo')}
               className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
                 mode === 'solo'
-                  ? 'bg-amber-500 text-slate-950 shadow-md font-bold'
+                  ? 'bg-brand-primary shadow-md font-bold text-slate-950 dark:text-slate-950'
                   : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white'
               }`}
             >
@@ -421,7 +421,7 @@ export function MathDuel({
           <button
             type="button"
             onClick={startGame}
-            className="flex items-center gap-2 px-8 py-3.5 rounded-xl bg-gradient-to-r from-amber-500 via-rose-500 to-pink-500 hover:from-amber-400 hover:to-pink-400 text-slate-950 font-black text-lg shadow-lg shadow-rose-500/25 hover:shadow-rose-500/40 transition-all transform active:scale-95"
+            className="flex items-center gap-2 px-8 py-3.5 rounded-xl font-black text-lg transition-all transform active:scale-95 bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none"
           >
             <Play className="w-6 h-6 fill-current" />
             Düelloyu Başlat
@@ -607,7 +607,7 @@ export function MathDuel({
             <button
               type="button"
               onClick={startGame}
-              className="flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-amber-500 to-rose-500 hover:from-amber-400 hover:to-rose-400 text-slate-950 font-black shadow-lg shadow-rose-500/20 active:scale-95 transition-all"
+              className="flex items-center gap-2 px-6 py-3 rounded-xl font-black active:scale-95 transition-all bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none"
             >
               <RotateCcw className="w-5 h-5" />
               Tekrar Oyna / Rövanş

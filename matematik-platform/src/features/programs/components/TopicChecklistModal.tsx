@@ -241,7 +241,7 @@ export function TopicChecklistModal({
           </div>
           <div className="h-3 w-full overflow-hidden rounded-full bg-slate-200 dark:bg-white/10">
             <div
-              className="h-full bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500 transition-all duration-500 rounded-full"
+              className="h-full transition-all duration-500 rounded-full bg-brand-primary"
               style={{ width: `${stats.percent}%` }}
             />
           </div>
@@ -280,13 +280,13 @@ export function TopicChecklistModal({
                     onClick={() => handleToggle(topic, 'studied')}
                     className={`inline-flex items-center gap-1 sm:gap-1.5 rounded-xl border px-2.5 sm:px-3 py-1 sm:py-1.5 text-[11px] sm:text-xs font-semibold transition-all ${
                       status.studied
-                        ? 'border-indigo-500/50 bg-indigo-50 dark:bg-indigo-500/20 text-indigo-700 dark:text-indigo-300'
+                        ? 'border-brand-primary/50 bg-tone-success-bg dark:bg-brand-primary/20 text-tone-success-fg dark:text-brand-primary-soft'
                         : 'border-slate-200 dark:border-white/10 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200'
                     }`}
                   >
                     <BookOpen className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
                     <span>Konu</span>
-                    {status.studied && <CheckCircle2 className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-indigo-500" />}
+                    {status.studied && (<CheckCircle2 className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-indigo-500" />)}
                   </button>
 
                   <button
@@ -294,13 +294,13 @@ export function TopicChecklistModal({
                     onClick={() => handleToggle(topic, 'solved')}
                     className={`inline-flex items-center gap-1 sm:gap-1.5 rounded-xl border px-2.5 sm:px-3 py-1 sm:py-1.5 text-[11px] sm:text-xs font-semibold transition-all ${
                       status.solved
-                        ? 'border-purple-500/50 bg-purple-50 dark:bg-purple-500/20 text-purple-700 dark:text-purple-300'
+                        ? 'border-brand-primary/50 bg-tone-success-bg dark:bg-brand-primary/20 text-tone-success-fg dark:text-brand-primary-soft'
                         : 'border-slate-200 dark:border-white/10 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200'
                     }`}
                   >
                     <PenTool className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
                     <span>Soru (50+)</span>
-                    {status.solved && <CheckCircle2 className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-purple-500" />}
+                    {status.solved && (<CheckCircle2 className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-purple-500" />)}
                   </button>
 
                   <button
@@ -308,13 +308,13 @@ export function TopicChecklistModal({
                     onClick={() => handleToggle(topic, 'reviewed')}
                     className={`inline-flex items-center gap-1 sm:gap-1.5 rounded-xl border px-2.5 sm:px-3 py-1 sm:py-1.5 text-[11px] sm:text-xs font-semibold transition-all ${
                       status.reviewed
-                        ? 'border-emerald-500/50 bg-emerald-50 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-300'
+                        ? 'border-brand-primary/50 bg-tone-success-bg dark:bg-brand-primary/20 text-tone-success-fg dark:text-brand-primary-soft'
                         : 'border-slate-200 dark:border-white/10 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200'
                     }`}
                   >
                     <RotateCcw className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
                     <span>Tekrar</span>
-                    {status.reviewed && <CheckCircle2 className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-emerald-500" />}
+                    {status.reviewed && (<CheckCircle2 className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-emerald-500" />)}
                   </button>
                 </div>
               </div>

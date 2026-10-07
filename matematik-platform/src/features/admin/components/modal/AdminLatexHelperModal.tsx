@@ -45,10 +45,21 @@ const SYMBOL_GROUPS: {
     category: 'geometry',
     label: 'Geometri & Açı',
     items: [
-      { label: 'Açı', latex: 'm(\\widehat{ABC})', preview: '$m(\\widehat{ABC})$' },
+      {
+        label: 'Açı',
+        latex: 'm(\\widehat{ABC})',
+        preview: '$m(\\widehat{ABC})$',
+      },
       { label: 'Derece', latex: '60^\\circ', preview: '$60^\\circ$' },
-      { label: 'Diklik', latex: '[AB] \\perp [BC]', preview: '$[AB] \\perp [BC]$' },
-      { label: 'Paralellik', latex: 'd_1 \\parallel d_2', preview: '$d_1 \\parallel d_2$' },
+      {
+        label: 'Diklik',
+        latex: '[AB] \\perp [BC]',
+        preview: '$[AB] \\perp [BC]$',
+      },
+      {
+        label: 'Paralellik',
+        latex: 'd_1 \\parallel d_2',
+        preview: '$d_1 \\parallel d_2$',},
       { label: 'Üçgen', latex: '\\triangle ABC', preview: '$\\triangle ABC$' },
       { label: 'Kenar Uzunluğu', latex: '|AB|', preview: '$|AB|$' },
       { label: 'Pi Sayısı', latex: '\\pi', preview: '$\\pi$' },
@@ -79,7 +90,8 @@ const SYMBOL_GROUPS: {
       { label: 'Doğal Logaritma', latex: '\\ln(x)', preview: '$\\ln(x)$' },
       { label: 'Toplam Sembolü', latex: '\\sum_{i=1}^{n} a_i', preview: '$\\sum_{i=1}^{n} a_i$' },
       { label: 'Limit', latex: '\\lim_{x \\to a} f(x)', preview: '$\\lim_{x \\to a} f(x)$' },
-      { label: 'İntegral', latex: '\\int_{a}^{b} f(x)\\,dx', preview: '$\\int_{a}^{b} f(x)\\,dx$' },
+      { label: 'İntegral', latex: '\\int_{a}^{b} f(x)\\,dx', preview: '$\\int_{a}^{b} f(x)\\,dx$' ,
+       },
       { label: 'Sonsuz', latex: '\\infty', preview: '$\\infty$' },
     ],
   },
@@ -154,7 +166,7 @@ export function AdminLatexHelperModal({
         {/* Header */}
         <div className="flex items-center justify-between border-b border-slate-200 dark:border-white/10 px-5 py-4 bg-slate-50/50 dark:bg-transparent">
           <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-br from-violet-500 to-indigo-600 text-white dark:text-white shadow-md">
+            <div className="flex h-10 w-10 items-center justify-center rounded-2xl shadow-md bg-brand-secondary text-slate-950 dark:text-slate-950">
               <FunctionSquare className="h-5 w-5" />
             </div>
             <div>
@@ -245,7 +257,7 @@ export function AdminLatexHelperModal({
               <button
                 type="button"
                 onClick={() => handleInsert(customFormula)}
-                className="inline-flex h-10 items-center gap-1.5 rounded-xl bg-violet-600 px-4 text-xs font-bold text-white dark:text-white shadow-md hover:bg-violet-500 transition shrink-0"
+                className="inline-flex h-10 items-center gap-1.5 rounded-xl px-4 text-xs font-bold transition shrink-0 bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none"
               >
                 <Plus className="h-3.5 w-3.5" />
                 <span>Soruya Ekle</span>
@@ -263,7 +275,7 @@ export function AdminLatexHelperModal({
               onClick={() => setActiveCategory(group.category)}
               className={`rounded-xl px-3 py-1.5 text-xs font-bold transition whitespace-nowrap ${
                 activeCategory === group.category
-                  ? 'bg-violet-600 text-white shadow-md'
+                  ? 'bg-brand-primary shadow-md text-slate-950 dark:text-slate-950'
                   : 'text-slate-600 dark:text-slate-400 hover:bg-slate-200/60 dark:hover:bg-white/5 hover:text-slate-900 dark:hover:text-white'
               }`}
             >

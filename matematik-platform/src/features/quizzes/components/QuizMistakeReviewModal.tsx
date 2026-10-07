@@ -169,7 +169,7 @@ export function QuizMistakeReviewModal({
             <button
               type="button"
               onClick={handleStartMistakesQuiz}
-              className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 px-5 py-2.5 text-xs font-bold text-slate-950 shadow-lg transition hover:scale-[1.02]"
+              className="inline-flex items-center gap-2 rounded-xl px-5 py-2.5 text-xs font-bold transition hover:scale-[1.02] bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none"
             >
               <RotateCcw className="h-4 w-4" />
               Sadece Bu {mistakes.length} Yanlışı Tekrar Çöz

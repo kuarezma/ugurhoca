@@ -152,7 +152,7 @@ export function ExamCountdown({
   }, [timeLeft]);
 
   const remainingTrialsNeeded = Math.max(0, targetTrials - completedTrialsCount);
-  const weeklyPace = remainingWeeks > 0 ? (remainingTrialsNeeded / remainingWeeks).toFixed(1) : '0';
+  const weeklyPace = remainingWeeks > 0 ? (remainingTrialsNeeded / remainingWeeks).toFixed(1) : "0";
   const trialsProgressPct = Math.min(100, Math.round((completedTrialsCount / targetTrials) * 100));
 
   const countdownItems = timeLeft
@@ -260,14 +260,14 @@ export function ExamCountdown({
               <button
                 type="button"
                 onClick={() => onOpenCalculator(exam.id.includes('lgs') ? 'lgs' : 'yks')}
-                className="shrink-0 inline-flex min-h-[38px] items-center gap-1.5 rounded-xl px-3 py-1.5 text-xs font-bold transition-all bg-indigo-600 text-white dark:text-white hover:bg-indigo-700 shadow-xs"
+                className="shrink-0 inline-flex min-h-[38px] items-center gap-1.5 rounded-xl px-3 py-1.5 text-xs font-bold transition-all bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none"
               >
                 Net & Puan Hesapla →
               </button>
             ) : (
               <Link
                 href={exam.toolHref}
-                className="shrink-0 inline-flex min-h-[38px] items-center gap-1.5 rounded-xl px-3 py-1.5 text-xs font-bold transition-all bg-indigo-600 text-white dark:text-white hover:bg-indigo-700 shadow-xs"
+                className="shrink-0 inline-flex min-h-[38px] items-center gap-1.5 rounded-xl px-3 py-1.5 text-xs font-bold transition-all bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none"
               >
                 Puan Hesapla →
               </Link>
@@ -282,7 +282,8 @@ export function ExamCountdown({
                 key={item.label}
                 className="rounded-lg px-2 py-0.5 text-[10px] font-semibold bg-white text-slate-700 shadow-xs border border-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:border-slate-700"
               >
-                <span className="font-bold text-indigo-700 dark:text-indigo-300">{item.label}:</span> {item.dateLabel}
+                <span className="font-bold text-indigo-700 dark:text-indigo-300">{item.label}:</span> {' '}
+                {item.dateLabel}
               </div>
             ))}
           </div>
@@ -319,7 +320,7 @@ export function ExamCountdown({
                   onClick={() => handleSelectTarget(opt)}
                   className={`rounded-lg px-2 py-0.5 text-[11px] font-bold transition-all ${
                     targetNet === opt
-                      ? 'bg-amber-500 text-white shadow-sm ring-2 ring-amber-500/30'
+                      ? 'bg-brand-primary shadow-sm ring-2 ring-brand-primary/30 text-slate-950 dark:text-slate-950'
                       : 'border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700'
                   }`}
                 >
@@ -381,7 +382,7 @@ export function ExamCountdown({
                   onClick={() => handleSelectTrialsTarget(opt)}
                   className={`rounded-lg px-2 py-0.5 text-[11px] font-bold transition-all ${
                     targetTrials === opt
-                      ? 'bg-indigo-600 text-white shadow-sm ring-2 ring-indigo-500/30'
+                      ? 'bg-brand-primary shadow-sm ring-2 ring-brand-primary/30 text-slate-950 dark:text-slate-950'
                       : 'border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700'
                   }`}
                 >

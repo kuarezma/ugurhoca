@@ -155,7 +155,7 @@ export function PrintableWorksheetModal({
                 <span className="hidden sm:inline text-[11px] text-slate-400">Çözüm Erişimi:</span>
                 <select
                   value={unlockSchedule}
-                  onChange={(e) => setUnlockSchedule(e.target.value as 'instant' | 'after_class' | 'next_day' | 'locked')}
+                  onChange={(e) => setUnlockSchedule(e.target.value as |'instant' | 'after_class' | 'next_day' | 'locked')}
                   className="bg-transparent border-none text-xs font-semibold focus:outline-none cursor-pointer"
                   title="Öğrenciler QR kodu okuttuğunda çözümlerin açılma zamanı"
                 >
@@ -171,7 +171,7 @@ export function PrintableWorksheetModal({
                 onClick={() => setShowAnswerKey((prev) => !prev)}
                 className="inline-flex items-center gap-1.5 rounded-xl border border-slate-200 dark:border-white/10 px-3 py-1.5 text-xs font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-white/5 transition"
               >
-                {showAnswerKey ? <EyeOff className="h-3.5 w-3.5 text-amber-500" /> : <Eye className="h-3.5 w-3.5 text-amber-500" />}
+                {showAnswerKey ? (<EyeOff className="h-3.5 w-3.5 text-amber-500" /> ): (<Eye className="h-3.5 w-3.5 text-amber-500" />)}
                 <span>{showAnswerKey ? 'Cevap Anahtarını Gizle' : 'Cevap Anahtarını Ekle'}</span>
               </button>
 
@@ -188,7 +188,7 @@ export function PrintableWorksheetModal({
                 type="button"
                 onClick={handleExportPDF}
                 disabled={isExporting}
-                className="inline-flex items-center gap-1.5 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 hover:brightness-110 text-white px-3.5 py-1.5 text-xs font-bold shadow-md transition active:scale-95 disabled:opacity-50"
+                className="inline-flex items-center gap-1.5 rounded-xl hover:brightness-110 px-3.5 py-1.5 text-xs font-bold transition active:scale-95 disabled:opacity-50 bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none"
               >
                 <FileDown className="h-3.5 w-3.5" />
                 <span>{isExporting ? 'Oluşturuluyor...' : 'PDF İndir'}</span>
@@ -308,7 +308,7 @@ export function PrintableWorksheetModal({
                     </div>
 
                     {/* Soru Çözüm Boşluğu */}
-                    {workspaceMode === 'compact' && <div className="h-6 mt-2" />}
+                    {workspaceMode === 'compact' && (<div className="h-6 mt-2" />)}
                     {workspaceMode === 'standard' && (
                       <div className="h-16 mt-2.5 rounded-lg border border-dashed border-slate-300 bg-slate-50/50 p-1 flex items-start">
                         <span className="text-[9px] text-slate-400 font-mono select-none">Çözüm Alanı</span>

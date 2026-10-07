@@ -107,7 +107,7 @@ export default function ContentFilterBar({
                   title="Kılavuz Görünümü"
                   className={`rounded-xl p-2 transition-all ${
                     viewMode === 'grid'
-                      ? 'bg-gradient-to-r from-purple-600 to-indigo-600 text-white shadow-md shadow-purple-600/25 font-semibold'
+                      ? 'shadow-md shadow-brand-primary/25 font-semibold bg-brand-primary text-slate-950 dark:text-slate-950'
                       : 'text-secondary hover:text-primary hover:bg-surface-3/50'
                   }`}
                 >
@@ -118,7 +118,7 @@ export default function ContentFilterBar({
                   title="Liste Görünümü"
                   className={`rounded-xl p-2 transition-all ${
                     viewMode === 'list'
-                      ? 'bg-gradient-to-r from-purple-600 to-indigo-600 text-white shadow-md shadow-purple-600/25 font-semibold'
+                      ? 'shadow-md shadow-brand-primary/25 font-semibold bg-brand-primary text-slate-950 dark:text-slate-950'
                       : 'text-secondary hover:text-primary hover:bg-surface-3/50'
                   }`}
                 >
@@ -130,7 +130,7 @@ export default function ContentFilterBar({
                     title="Konu Paketleri"
                     className={`flex items-center gap-1.5 rounded-xl px-2.5 py-2 text-xs font-semibold transition-all ${
                       viewMode === 'packs'
-                        ? 'bg-gradient-to-r from-purple-600 via-fuchsia-600 to-pink-600 text-white shadow-md shadow-purple-600/25'
+                        ? 'shadow-md shadow-brand-primary/25 bg-brand-primary text-slate-950 dark:text-slate-950'
                         : 'text-secondary hover:text-primary hover:bg-surface-3/50'
                     }`}
                   >
@@ -150,7 +150,7 @@ export default function ContentFilterBar({
                   onClick={() => onQuickFilterChange('all')}
                   className={`rounded-full px-3.5 py-1.5 text-xs font-semibold transition-all duration-200 ${
                     quickFilter === 'all'
-                      ? 'border border-purple-600 dark:border-purple-400 bg-purple-500/15 text-purple-700 dark:text-purple-300 shadow-sm shadow-purple-500/20'
+                      ? 'border border-brand-primary dark:border-brand-primary bg-brand-primary/15 text-tone-success-fg dark:text-brand-primary-soft shadow-sm shadow-brand-primary/20'
                       : 'border border-default dark:border-slate-500 bg-surface-2/60 text-secondary hover:bg-surface-3 hover:text-primary'
                   }`}
                 >
@@ -160,7 +160,7 @@ export default function ContentFilterBar({
                   onClick={() => onQuickFilterChange('favorites')}
                   className={`flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-xs font-semibold transition-all duration-200 ${
                     quickFilter === 'favorites'
-                      ? 'border border-amber-600 dark:border-amber-400 bg-amber-500/15 text-amber-700 dark:text-amber-300 shadow-sm shadow-amber-500/20'
+                      ? 'border border-brand-primary dark:border-brand-primary bg-brand-primary/15 text-tone-success-fg dark:text-brand-primary-soft shadow-sm shadow-brand-primary/20'
                       : 'border border-default dark:border-slate-500 bg-surface-2/60 text-secondary hover:bg-surface-3 hover:text-primary'
                   }`}
                 >
@@ -171,7 +171,7 @@ export default function ContentFilterBar({
                   onClick={() => onQuickFilterChange('completed')}
                   className={`flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-xs font-semibold transition-all duration-200 ${
                     quickFilter === 'completed'
-                      ? 'border border-emerald-600 dark:border-emerald-400 bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 shadow-sm shadow-emerald-500/20'
+                      ? 'border border-brand-primary dark:border-brand-primary bg-brand-primary/15 text-tone-success-fg dark:text-brand-primary-soft shadow-sm shadow-brand-primary/20'
                       : 'border border-default dark:border-slate-500 bg-surface-2/60 text-secondary hover:bg-surface-3 hover:text-primary'
                   }`}
                 >
@@ -193,7 +193,7 @@ export default function ContentFilterBar({
                   onClick={() => onQuickFilterChange('with_video')}
                   className={`flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-xs font-semibold transition-all duration-200 ${
                     quickFilter === 'with_video'
-                      ? 'border border-rose-600 dark:border-rose-400 bg-rose-500/15 text-rose-700 dark:text-rose-300 shadow-sm shadow-rose-500/20'
+                      ? 'border border-brand-primary dark:border-brand-primary bg-brand-primary/15 text-tone-success-fg dark:text-brand-primary-soft shadow-sm shadow-brand-primary/20'
                       : 'border border-default dark:border-slate-500 bg-surface-2/60 text-secondary hover:bg-surface-3 hover:text-primary'
                   }`}
                 >

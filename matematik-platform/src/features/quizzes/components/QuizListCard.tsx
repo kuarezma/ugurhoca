@@ -40,8 +40,8 @@ function QuizListCardInner({
       />
       <div className="p-6">
         <div className="flex items-start justify-between mb-4">
-          <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-md">
-            <FileText className="w-6 h-6 text-white dark:text-white" />
+          <div className="w-12 h-12 rounded-2xl flex items-center justify-center shadow-md bg-brand-secondary">
+            <FileText className="w-6 h-6 text-slate-950 dark:text-slate-950" />
           </div>
           <span className="rounded-full px-2.5 py-0.5 text-[11px] font-bold bg-white/10 text-slate-300 border border-white/10">
             {quiz.grade}. Sınıf
@@ -66,7 +66,7 @@ function QuizListCardInner({
         <div className="flex gap-2">
           <button
             onClick={() => onStart(quiz)}
-            className="flex-1 py-3 bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-500 text-white font-bold rounded-2xl flex items-center justify-center gap-2 shadow-md transition-all duration-200 hover:shadow-lg hover:scale-[1.02] active:scale-[0.98]"
+            className="flex-1 py-3 font-bold rounded-2xl flex items-center justify-center gap-2 transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none"
           >
             <Play className="w-4 h-4 fill-white" />
             Teste Başla

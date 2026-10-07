@@ -94,7 +94,7 @@ export function QuizResultsView({
                 ? 'from-green-500 to-emerald-500 dark:from-green-400 dark:to-emerald-400'
                 : score >= 40
                 ? 'from-amber-500 to-orange-500 dark:from-amber-400 dark:to-orange-400'
-                : 'from-red-500 to-pink-500 dark:from-red-400 dark:to-pink-400'
+                : 'from-red-500 to-purple-500 dark:from-red-400 dark:to-purple-400'
             }`}
           >
             {score}%
@@ -173,7 +173,7 @@ export function QuizResultsView({
           {/* Soru Soru Sınav Analizi */}
           <div className="text-left bg-slate-50 dark:bg-slate-800/30 border border-slate-200 dark:border-slate-700/50 rounded-2xl p-6 mb-8 max-h-[400px] overflow-y-auto custom-scrollbar w-full">
             <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
-              <Target className="w-5 h-5 text-purple-600 dark:text-purple-400" /> Sınav Analizi
+              <Target className="w-5 h-5 text-purple-600 dark:text-purple-400" /> {' '}Sınav Analizi
             </h3>
             <div className="space-y-4">
               {quizQuestions.map((q, index) => {
@@ -324,7 +324,7 @@ export function QuizResultsView({
             <button
               type="button"
               onClick={onOpenOutcomeAnalysis}
-              className="flex-1 py-4 bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 text-white font-bold rounded-xl flex items-center justify-center gap-2 shadow-lg shadow-indigo-500/25 transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]"
+              className="flex-1 py-4 font-bold rounded-xl flex items-center justify-center gap-2 transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none"
             >
               <Target className="w-5 h-5 text-indigo-200" />
               Kazanım & Eksik Analizi
@@ -332,7 +332,7 @@ export function QuizResultsView({
             <button
               type="button"
               onClick={onOpenMistakeModal}
-              className="flex-1 py-4 bg-gradient-to-r from-amber-500 to-orange-500 text-slate-950 font-bold rounded-xl flex items-center justify-center gap-2 shadow-lg transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]"
+              className="flex-1 py-4 font-bold rounded-xl flex items-center justify-center gap-2 transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none"
             >
               <AlertCircle className="w-5 h-5 text-slate-950" />
               Hata Defteri & Yanlışlarım
@@ -340,7 +340,7 @@ export function QuizResultsView({
             <button
               type="button"
               onClick={onRetake}
-              className="flex-1 py-4 bg-gradient-to-r from-purple-500 to-pink-500 text-white font-semibold rounded-xl flex items-center justify-center gap-2 shadow-lg shadow-purple-500/20 transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]"
+              className="flex-1 py-4 font-semibold rounded-xl flex items-center justify-center gap-2 transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none"
             >
               <RotateCcw className="w-5 h-5" />
               Tekrar Dene

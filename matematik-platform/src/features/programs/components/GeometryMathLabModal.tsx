@@ -473,7 +473,7 @@ export function GeometryMathLabModal({
         {/* Header */}
         <div className="flex items-center justify-between border-b border-white/10 px-5 py-4 sm:px-6">
           <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-600 text-white dark:text-white shadow-md">
+            <div className="flex h-10 w-10 items-center justify-center rounded-2xl shadow-md bg-brand-secondary text-slate-950 dark:text-slate-950">
               <Compass className="h-5 w-5" />
             </div>
             <div>
@@ -512,7 +512,7 @@ export function GeometryMathLabModal({
             onClick={() => setActiveTab('pythagoras')}
             className={`inline-flex items-center gap-2 rounded-xl px-3.5 py-2 text-xs font-bold transition whitespace-nowrap ${
               activeTab === 'pythagoras'
-                ? 'bg-indigo-600 text-white shadow-md'
+                ? 'bg-brand-primary shadow-md text-slate-950 dark:text-slate-950'
                 : isLight
                 ? 'text-slate-600 hover:bg-slate-100'
                 : 'text-slate-400 hover:bg-white/5 hover:text-white'
@@ -527,7 +527,7 @@ export function GeometryMathLabModal({
             onClick={() => setActiveTab('circle')}
             className={`inline-flex items-center gap-2 rounded-xl px-3.5 py-2 text-xs font-bold transition whitespace-nowrap ${
               activeTab === 'circle'
-                ? 'bg-sky-600 text-white shadow-md'
+                ? 'bg-brand-primary shadow-md text-slate-950 dark:text-slate-950'
                 : isLight
                 ? 'text-slate-600 hover:bg-slate-100'
                 : 'text-slate-400 hover:bg-white/5 hover:text-white'
@@ -542,7 +542,7 @@ export function GeometryMathLabModal({
             onClick={() => setActiveTab('parabola')}
             className={`inline-flex items-center gap-2 rounded-xl px-3.5 py-2 text-xs font-bold transition whitespace-nowrap ${
               activeTab === 'parabola'
-                ? 'bg-purple-600 text-white shadow-md'
+                ? 'bg-brand-primary shadow-md text-slate-950 dark:text-slate-950'
                 : isLight
                 ? 'text-slate-600 hover:bg-slate-100'
                 : 'text-slate-400 hover:bg-white/5 hover:text-white'
@@ -557,7 +557,7 @@ export function GeometryMathLabModal({
             onClick={() => setActiveTab('slope')}
             className={`inline-flex items-center gap-2 rounded-xl px-3.5 py-2 text-xs font-bold transition whitespace-nowrap ${
               activeTab === 'slope'
-                ? 'bg-emerald-600 text-white shadow-md'
+                ? 'bg-brand-primary shadow-md text-slate-950 dark:text-slate-950'
                 : isLight
                 ? 'text-slate-600 hover:bg-slate-100'
                 : 'text-slate-400 hover:bg-white/5 hover:text-white'
@@ -630,10 +630,11 @@ export function GeometryMathLabModal({
                     a² + b² = c²
                   </div>
                   <div className="text-xs text-slate-300 font-mono">
-                    {sideA}² + {sideB}² = {sideA * sideA} + {sideB * sideB} = {sideA * sideA + sideB * sideB}
+                    {sideA}² + {sideB}² = {sideA * sideA} + {sideB * sideB} = {' '}
+                    {sideA * sideA + sideB * sideB}
                   </div>
-                  <div className="text-base font-black text-pink-400 font-mono pt-1">
-                    c = √{sideA * sideA + sideB * sideB} ≈ {hypotenuse.toFixed(2)} birim
+                  <div className="text-base font-black text-purple-400 font-mono pt-1">
+                    c = √{sideA * sideA + sideB * sideB} ≈ {' '}{hypotenuse.toFixed(2)} birim
                   </div>
                 </div>
 
@@ -684,7 +685,7 @@ export function GeometryMathLabModal({
                         onClick={() => setAngleDeg(deg)}
                         className={`px-2 py-0.5 text-[11px] font-bold rounded-lg border transition ${
                           angleDeg === deg
-                            ? 'bg-sky-500 text-slate-950 border-sky-400'
+                            ? 'bg-brand-primary border-brand-primary text-slate-950 dark:text-slate-950'
                             : 'border-white/10 hover:bg-white/10 text-slate-300'
                         }`}
                       >
@@ -700,8 +701,8 @@ export function GeometryMathLabModal({
                     <span className="text-emerald-400 font-bold block">cos({angleDeg}°) =</span>
                     <span className="text-base font-black">{cosVal.toFixed(3)}</span>
                   </div>
-                  <div className="rounded-xl border border-pink-500/20 bg-pink-500/10 p-2.5">
-                    <span className="text-pink-400 font-bold block">sin({angleDeg}°) =</span>
+                  <div className="rounded-xl border border-purple-500/20 bg-purple-500/10 p-2.5">
+                    <span className="text-purple-400 font-bold block">sin({angleDeg}°) =</span>
                     <span className="text-base font-black">{sinVal.toFixed(3)}</span>
                   </div>
                   <div className="rounded-xl border border-amber-500/20 bg-amber-500/10 p-2.5 col-span-2">
@@ -796,7 +797,8 @@ export function GeometryMathLabModal({
                 {/* Parabola Metrics */}
                 <div className="rounded-2xl border border-purple-500/20 bg-purple-500/10 p-3.5 space-y-2 text-xs">
                   <div className="font-mono font-bold text-sm text-purple-300">
-                    f(x) = {paramA}x² {paramB >= 0 ? `+ ${paramB}` : `- ${Math.abs(paramB)}`}x {paramC >= 0 ? `+ ${paramC}` : `- ${Math.abs(paramC)}`}
+                    f(x) = {paramA}x² {' '}
+                    {paramB >= 0 ? `+ ${paramB}` : `- ${Math.abs(paramB)}`}x {' '}{paramC >= 0 ? `+ ${paramC}` : `- ${Math.abs(paramC)}`}
                   </div>
                   <div className="grid grid-cols-2 gap-2 font-mono pt-1">
                     <div>

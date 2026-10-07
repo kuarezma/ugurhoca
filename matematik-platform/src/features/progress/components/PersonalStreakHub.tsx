@@ -73,7 +73,7 @@ export function PersonalStreakHub({ isLight }: PersonalStreakHubProps) {
       const day = String(d.getDate()).padStart(2, '0');
       const dateKey = `${year}-${month}-${day}`;
 
-      const count = i === 0 ? goalData.solved : (history[dateKey] || 0);
+      const count = i === 0 ? goalData.solved : history[dateKey] || 0;
       const isTargetReached = count >= goalData.target;
       const dayName = new Intl.DateTimeFormat('tr-TR', { weekday: 'short' }).format(d);
 
@@ -165,7 +165,7 @@ export function PersonalStreakHub({ isLight }: PersonalStreakHubProps) {
           <button
             type="button"
             onClick={handleRepairStreak}
-            className="inline-flex items-center gap-1.5 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 px-3.5 py-2 text-xs font-bold text-white shadow-sm hover:scale-[1.02] active:scale-[0.98] transition"
+            className="inline-flex items-center gap-1.5 rounded-xl px-3.5 py-2 text-xs font-bold hover:scale-[1.02] active:scale-[0.98] transition bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none"
           >
             <Sparkles className="h-3.5 w-3.5" />
             <span>Seriyi Kurtar & Devam Et</span>
@@ -264,7 +264,7 @@ export function PersonalStreakHub({ isLight }: PersonalStreakHubProps) {
           <div className="mt-2">
             <div className="flex justify-between text-[10px] font-semibold text-slate-400 mb-1">
               <span>%{progressPercent} Tamamlandı</span>
-              {isGoalReached && <span className="text-emerald-400 font-bold">🎉 Hedef Bitti!</span>}
+              {isGoalReached && (<span className="text-emerald-400 font-bold">🎉 Hedef Bitti!</span>)}
             </div>
             <div className="h-2 rounded-full overflow-hidden bg-white/10">
               <div
@@ -332,7 +332,7 @@ export function PersonalStreakHub({ isLight }: PersonalStreakHubProps) {
                     onClick={() => setNewTargetInput(String(num))}
                     className={`px-2.5 py-1 rounded-lg text-xs font-bold transition ${
                       newTargetInput === String(num)
-                        ? 'bg-indigo-600 text-white'
+                        ? 'bg-brand-primary text-slate-950 dark:text-slate-950'
                         : 'bg-white/10 text-slate-300 hover:bg-white/20'
                     }`}
                   >
@@ -343,7 +343,7 @@ export function PersonalStreakHub({ isLight }: PersonalStreakHubProps) {
               <button
                 type="button"
                 onClick={handleSaveTarget}
-                className="px-4 py-1.5 rounded-xl text-xs font-bold bg-emerald-600 hover:bg-emerald-500 text-white dark:text-white shadow"
+                className="px-4 py-1.5 rounded-xl text-xs font-bold bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none"
               >
                 Kaydet
               </button>
@@ -376,7 +376,7 @@ export function PersonalStreakHub({ isLight }: PersonalStreakHubProps) {
                 onClick={() => setTimeframe(days)}
                 className={`px-2.5 py-1 rounded-lg transition-all ${
                   timeframe === days
-                    ? 'bg-white dark:bg-slate-800 text-emerald-600 dark:text-emerald-400 font-bold shadow-sm'
+                    ? 'bg-white dark:bg-slate-800 text-tone-success-fg dark:text-brand-primary-soft font-bold shadow-sm'
                     : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
                 }`}
               >
@@ -413,19 +413,19 @@ export function PersonalStreakHub({ isLight }: PersonalStreakHubProps) {
           <span>Son {timeframe} günlük kümülatif çalışma yoğunluğun:</span>
           <div className="flex items-center gap-2">
             <span className="flex items-center gap-1">
-              <span className="h-2.5 w-2.5 rounded-sm bg-slate-200 dark:bg-slate-800 inline-block border border-slate-300 dark:border-white/10" /> 0
+              <span className="h-2.5 w-2.5 rounded-sm bg-slate-200 dark:bg-slate-800 inline-block border border-slate-300 dark:border-white/10" /> {' '}0
             </span>
             <span className="flex items-center gap-1">
-              <span className="h-2.5 w-2.5 rounded-sm bg-amber-400/70 inline-block" /> Hafif
+              <span className="h-2.5 w-2.5 rounded-sm bg-amber-400/70 inline-block" /> {' '}Hafif
             </span>
             <span className="flex items-center gap-1">
-              <span className="h-2.5 w-2.5 rounded-sm bg-emerald-400 inline-block" /> Orta
+              <span className="h-2.5 w-2.5 rounded-sm bg-emerald-400 inline-block" /> {' '}Orta
             </span>
             <span className="flex items-center gap-1">
-              <span className="h-2.5 w-2.5 rounded-sm bg-emerald-500 inline-block" /> Hedef
+              <span className="h-2.5 w-2.5 rounded-sm bg-emerald-500 inline-block" /> {' '}Hedef
             </span>
             <span className="flex items-center gap-1">
-              <span className="h-2.5 w-2.5 rounded-sm bg-teal-400 inline-block" /> Maraton
+              <span className="h-2.5 w-2.5 rounded-sm bg-teal-400 inline-block" /> {' '}Maraton
             </span>
           </div>
         </div>
@@ -465,7 +465,7 @@ export function PersonalStreakHub({ isLight }: PersonalStreakHubProps) {
                 key={day.dateKey}
                 title={`${day.dateKey} (${day.dayName}): ${day.count} soru çözüldü`}
                 className={`flex flex-col items-center justify-center p-1.5 rounded-xl border text-center transition-transform hover:scale-110 cursor-default ${bgColor} ${
-                  day.isToday ? 'ring-2 ring-indigo-400 ring-offset-1 ring-offset-slate-900' : ''
+                  day.isToday ? 'ring-2 ring-indigo-400 ring-offset-1 ring-offset-slate-900' : ""
                 }`}
               >
                 <span className="text-[9px] font-semibold opacity-75 leading-none">{day.dayName}</span>

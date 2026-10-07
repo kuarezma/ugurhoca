@@ -28,7 +28,7 @@ export function EmptyState({ icon, title, description, action, secondaryAction, 
       )}
     >
       {icon ? (
-        <div className="mb-4 inline-flex h-20 w-20 items-center justify-center rounded-3xl bg-gradient-to-br from-brand-primary/20 via-brand-pink/20 to-brand-orange/20 text-brand-primary dark:text-brand-primary-soft">
+        <div className="mb-4 inline-flex h-20 w-20 items-center justify-center rounded-3xl text-brand-primary dark:text-brand-primary-soft bg-brand-primary/20">
           {icon}
         </div>
       ) : null}
@@ -36,7 +36,7 @@ export function EmptyState({ icon, title, description, action, secondaryAction, 
       {description ? (
         <p className="mt-2 max-w-md text-sm sm:text-base text-slate-600 dark:text-slate-400">{description}</p>
       ) : null}
-      {(action || secondaryAction) ? (
+      {action || secondaryAction ? (
         <div className="mt-5 flex flex-col sm:flex-row items-center gap-3">
           {action}
           {secondaryAction}

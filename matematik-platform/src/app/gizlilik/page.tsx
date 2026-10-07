@@ -12,7 +12,7 @@ export const metadata: Metadata = createPageMetadata({
 
 export default function GizlilikPage() {
   return (
-    <main className="page-surface relative z-10 min-h-screen dark:bg-gradient-to-br dark:from-slate-900 dark:via-slate-900 dark:to-slate-800 px-4 py-16 text-primary">
+    <main className="page-surface relative z-10 min-h-screen px-4 py-16 text-primary dark:bg-surface-0">
       <article className="mx-auto max-w-3xl space-y-8">
         <header className="space-y-3">
           <div className="inline-flex items-center gap-2 rounded-full border border-tone-info-border bg-tone-info-bg px-3 py-1 text-xs font-semibold uppercase tracking-wider text-tone-info-fg">

@@ -20,25 +20,25 @@ export function DesignModeToggle({ compact = false, className = '' }: DesignMode
       title={isAdventure ? 'Klasik platform görünümüne geç' : 'Oyunlaştırılmış macera moduna geç'}
       className={`relative inline-flex items-center gap-1.5 rounded-full p-1 transition-all duration-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 cursor-pointer ${
         isAdventure
-          ? 'bg-gradient-to-r from-amber-500/20 via-purple-500/20 to-pink-500/20 border border-amber-400/40 shadow-sm shadow-amber-500/10'
+          ? 'border border-brand-primary/40 shadow-sm shadow-brand-primary/10 bg-brand-primary text-slate-950 dark:text-slate-950'
           : 'bg-surface-2 border border-default hover:bg-surface-3'
       } ${className}`}
     >
       <div
         className={`flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-bold transition-all duration-300 ${
           isAdventure
-            ? 'bg-gradient-to-r from-amber-500 to-pink-500 text-white shadow-md shadow-pink-500/25 scale-[1.02]'
+            ? 'shadow-md shadow-brand-primary/25 scale-[1.02] bg-brand-primary text-slate-950 dark:text-slate-950'
             : 'text-secondary hover:text-primary'
         }`}
       >
-        <Sparkles className={`h-3.5 w-3.5 ${isAdventure ? 'text-amber-200 animate-pulse' : ''}`} />
+        <Sparkles className={`h-3.5 w-3.5 ${isAdventure ? 'text-slate-950 animate-pulse' : ''}`} />
         <span>Macera</span>
       </div>
 
       <div
         className={`flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-semibold transition-all duration-300 ${
           !isAdventure
-            ? 'bg-surface-1 text-primary shadow-sm border border-default font-bold'
+            ? 'bg-brand-primary text-slate-950 dark:text-slate-950 shadow-sm border border-brand-primary-deep font-bold'
             : 'text-tertiary hover:text-secondary'
         }`}
       >

@@ -126,7 +126,7 @@ function ContentCard({
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
           onClick={() => onDownload(content)}
-          className="col-span-1 flex w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-purple-600 via-indigo-600 to-cyan-600 hover:from-purple-500 hover:to-cyan-500 px-4 py-2.5 sm:py-3 text-xs sm:text-sm font-semibold text-white transition-all shadow-lg shadow-purple-600/25 hover:shadow-purple-600/40 sm:w-auto sm:px-5"
+          className="col-span-1 flex w-full items-center justify-center gap-2 rounded-2xl px-4 py-2.5 sm:py-3 text-xs sm:text-sm font-semibold transition-all sm:w-auto sm:px-5 bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none"
         >
           <Download className="w-4 h-4" /> İndir
         </motion.button>
@@ -230,7 +230,7 @@ function ContentCard({
         >
           <Star className={`w-3.5 h-3.5 ${isFavorite ? 'fill-current' : ''}`} />
           <span className="text-xs">
-            {isFavorite ? 'Favori' : 'Ekle'}
+            {isFavorite ? "Favori" : 'Ekle'}
           </span>
         </button>
 
@@ -281,7 +281,7 @@ function ContentCard({
         transition={{ delay: index * 0.05 }}
         className="group relative overflow-hidden rounded-3xl border border-default dark:border-white/[0.08] bg-surface-1/90 backdrop-blur-xl p-5 sm:p-6 shadow-xl hover:shadow-[0_20px_50px_rgba(0,0,0,0.35),0_0_30px_rgba(168,85,247,0.12)] hover:border-purple-500/40 transition-all duration-300 defer-card-list"
       >
-        <div className="absolute top-0 inset-x-0 h-[2px] bg-gradient-to-r from-transparent via-purple-500/40 to-transparent group-hover:via-purple-400 transition-all duration-500" />
+        <div className="absolute top-0 inset-x-0 h-[2px] group-hover:bg-brand-pink/60 transition-all duration-500 bg-brand-secondary" />
         <div className="space-y-4">
           <div className="flex items-start justify-between gap-3 sm:gap-4">
             <div className="flex items-center gap-3 sm:gap-4 min-w-0">
@@ -371,7 +371,7 @@ function ContentCard({
       className="group relative flex flex-col justify-between overflow-hidden rounded-3xl border border-default dark:border-white/[0.08] bg-surface-1/90 backdrop-blur-xl shadow-xl hover:shadow-[0_20px_50px_rgba(0,0,0,0.35),0_0_30px_rgba(168,85,247,0.12)] hover:border-purple-500/40 hover:-translate-y-1 transition-all duration-300 defer-card"
     >
       {/* Ambient glowing top accent line */}
-      <div className="absolute top-0 inset-x-0 h-[2px] bg-gradient-to-r from-transparent via-purple-500/50 to-transparent group-hover:via-purple-400 group-hover:h-[3px] transition-all duration-500" />
+      <div className="absolute top-0 inset-x-0 h-[2px] group-hover:bg-brand-pink/60 group-hover:h-[3px] transition-all duration-500 bg-brand-secondary" />
 
       {/* Subtle corner light glow */}
       <div className="pointer-events-none absolute -top-20 -right-20 h-40 w-40 rounded-full bg-purple-500/5 blur-3xl group-hover:bg-purple-500/10 transition-colors duration-500" />

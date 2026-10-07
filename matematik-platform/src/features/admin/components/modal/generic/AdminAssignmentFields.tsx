@@ -33,7 +33,7 @@ export default function AdminAssignmentFields({
             })
           }
           className="w-full bg-surface-2 dark:bg-slate-800/50 border border-default dark:border-slate-700 rounded-xl px-4 py-3 text-primary
-                   focus:outline-none focus:border-purple-500 transition-colors"
+ focus:outline-none focus:border-purple-500 transition-colors"
         >
           <option value="">Sınıf seçin</option>
           {PRIVATE_STUDENT_GRADES.map((grade) => (
@@ -57,7 +57,7 @@ export default function AdminAssignmentFields({
           value={formData.due_date || ""}
           onChange={(event) => updateFormData({ due_date: event.target.value })}
           className="w-full bg-surface-2 dark:bg-slate-800/50 border border-default dark:border-slate-700 rounded-xl px-4 py-3 text-primary
-                   focus:outline-none focus:border-purple-500 transition-colors"
+ focus:outline-none focus:border-purple-500 transition-colors"
         />
       </div>
     </div>

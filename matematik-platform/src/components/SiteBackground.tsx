@@ -328,7 +328,7 @@ export function SiteBackground() {
       ) : palette === 'midnight' ? (
         <div className="absolute inset-0 bg-black" />
       ) : (
-        <div className="absolute inset-0 bg-gradient-to-b from-[#090d16] via-[#0f172a] to-[#090d16]" />
+        <div className="absolute inset-0 bg-surface-1" />
       )}
 
       {/* KATMAN 1: Donanım Hızlandırmalı Akıcı Aurora Küreleri (GPU CSS) */}
@@ -337,8 +337,8 @@ export function SiteBackground() {
         <div
           className={`aurora-orb aurora-orb-1 -top-24 -left-24 h-[36rem] w-[36rem] sm:h-[52rem] sm:w-[52rem] ${
             isLight
-              ? 'bg-gradient-to-br from-indigo-500/25 via-purple-500/18 to-pink-400/12'
-              : 'bg-gradient-to-br from-indigo-600/22 via-violet-600/16 to-transparent'
+              ? 'bg-brand-secondary/25'
+              : 'bg-brand-secondary/[0.22]'
           }`}
         />
 
@@ -346,8 +346,8 @@ export function SiteBackground() {
         <div
           className={`aurora-orb aurora-orb-2 -top-20 -right-20 h-[34rem] w-[34rem] sm:h-[48rem] sm:w-[48rem] ${
             isLight
-              ? 'bg-gradient-to-bl from-cyan-400/22 via-sky-400/16 to-indigo-300/10'
-              : 'bg-gradient-to-bl from-cyan-500/20 via-blue-600/14 to-transparent'
+              ? 'bg-brand-secondary/[0.22]'
+              : 'bg-brand-secondary/20'
           }`}
         />
 
@@ -355,8 +355,8 @@ export function SiteBackground() {
         <div
           className={`aurora-orb aurora-orb-3 top-1/2 left-1/3 -translate-x-1/2 h-[32rem] w-[32rem] sm:h-[46rem] sm:w-[46rem] ${
             isLight
-              ? 'bg-gradient-to-tr from-rose-400/20 via-fuchsia-400/14 to-amber-300/10'
-              : 'bg-gradient-to-tr from-fuchsia-600/16 via-pink-600/10 to-transparent'
+              ? 'bg-brand-danger/20'
+              : 'bg-brand-pink/[0.16]'
           }`}
         />
 
@@ -364,8 +364,8 @@ export function SiteBackground() {
         <div
           className={`aurora-orb aurora-orb-4 -bottom-24 -right-16 h-[30rem] w-[30rem] sm:h-[42rem] sm:w-[42rem] ${
             isLight
-              ? 'bg-gradient-to-tl from-purple-400/20 via-indigo-400/14 to-cyan-300/10'
-              : 'bg-gradient-to-tl from-violet-600/18 via-indigo-700/12 to-transparent'
+              ? 'bg-brand-pink/20'
+              : 'bg-brand-pink/[0.18]'
           }`}
         />
 
@@ -427,8 +427,8 @@ export function SiteBackground() {
       <div
         className={`absolute inset-0 ${
           isLight
-            ? 'bg-gradient-to-t from-indigo-100/30 via-transparent to-white/40'
-            : 'bg-gradient-to-t from-slate-950/60 via-transparent to-slate-950/40'
+            ? 'bg-surface-1'
+            : 'bg-surface-1'
         }`}
       />
     </div>

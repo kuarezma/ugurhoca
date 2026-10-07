@@ -35,29 +35,29 @@ const BASE =
 
 const VARIANTS: Record<ButtonVariant, string> = {
   primary:
-    'bg-[#58cc02] hover:bg-[#61e002] text-white shadow-[0_5px_0_#46a302] active:shadow-[0_1px_0_#46a302]',
+    'bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-[0_5px_0_#46a302] active:shadow-[0_1px_0_#46a302]',
   secondary:
-    'bg-[#1cb0f6] hover:bg-[#33beff] text-white shadow-[0_5px_0_#1899d6] active:shadow-[0_1px_0_#1899d6]',
+    'bg-brand-secondary hover:bg-brand-secondary-soft text-slate-950 dark:text-slate-950 shadow-[0_5px_0_#1899d6] active:shadow-[0_1px_0_#1899d6]',
   ghost:
     'bg-transparent text-current hover:bg-slate-100 dark:hover:bg-white/5 active:translate-y-0.5',
   outline:
     'bg-transparent border-2 border-default text-primary hover:bg-surface-2 active:translate-y-0.5',
   destructive:
-    'bg-[#ff4b4b] hover:bg-[#ff6161] text-white shadow-[0_5px_0_#ea2b2b] active:shadow-[0_1px_0_#ea2b2b]',
+    'bg-brand-danger hover:bg-brand-danger/90 text-slate-950 dark:text-slate-950 shadow-[0_5px_0_#ea2b2b] active:shadow-[0_1px_0_#ea2b2b]',
   success:
-    'bg-[#58cc02] hover:bg-[#61e002] text-white shadow-[0_5px_0_#46a302] active:shadow-[0_1px_0_#46a302]',
+    'bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-[0_5px_0_#46a302] active:shadow-[0_1px_0_#46a302]',
   xp:
-    'bg-[#ffc800] hover:bg-[#ffd426] text-amber-950 shadow-[0_5px_0_#e5b400] active:shadow-[0_1px_0_#e5b400]',
+    'bg-brand-accent hover:bg-brand-accent-soft text-amber-950 shadow-[0_5px_0_#e5b400] active:shadow-[0_1px_0_#e5b400]',
   'playful-green':
-    'bg-[#58cc02] hover:bg-[#61e002] text-white shadow-[0_5px_0_#46a302] active:shadow-[0_1px_0_#46a302]',
+    'bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-[0_5px_0_#46a302] active:shadow-[0_1px_0_#46a302]',
   'playful-blue':
-    'bg-[#1cb0f6] hover:bg-[#33beff] text-white shadow-[0_5px_0_#1899d6] active:shadow-[0_1px_0_#1899d6]',
+    'bg-brand-secondary hover:bg-brand-secondary-soft text-slate-950 dark:text-slate-950 shadow-[0_5px_0_#1899d6] active:shadow-[0_1px_0_#1899d6]',
   'playful-yellow':
-    'bg-[#ffc800] hover:bg-[#ffd426] text-amber-950 shadow-[0_5px_0_#e5b400] active:shadow-[0_1px_0_#e5b400]',
+    'bg-brand-accent hover:bg-brand-accent-soft text-amber-950 shadow-[0_5px_0_#e5b400] active:shadow-[0_1px_0_#e5b400]',
   'playful-white':
     'bg-white text-slate-900 border-2 border-slate-200 shadow-[0_4px_0_#cbd5e1] hover:bg-slate-50 dark:bg-slate-800 dark:text-white dark:border-slate-700 dark:shadow-[0_4px_0_#0f172a] active:shadow-[0_1px_0_#cbd5e1] dark:active:shadow-[0_1px_0_#0f172a]',
   'playful-purple':
-    'bg-[#ce82ff] hover:bg-[#d896ff] text-white shadow-[0_5px_0_#a545e8] active:shadow-[0_1px_0_#a545e8]',
+    'bg-brand-pink hover:bg-brand-pink/90 text-slate-950 dark:text-slate-950 shadow-[0_5px_0_#a545e8] active:shadow-[0_1px_0_#a545e8]',
 };
 
 const SIZES: Record<ButtonSize, string> = {

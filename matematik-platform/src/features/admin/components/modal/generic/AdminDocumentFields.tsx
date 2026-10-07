@@ -82,7 +82,7 @@ export default function AdminDocumentFields({
             })
           }
           className="w-full bg-surface-2 dark:bg-slate-800/50 border border-default dark:border-slate-700 rounded-xl px-4 py-3 text-primary
-                   focus:outline-none focus:border-purple-500 transition-colors"
+ focus:outline-none focus:border-purple-500 transition-colors"
           placeholder="https://drive.google.com/..."
         />
       </div>
@@ -99,7 +99,7 @@ export default function AdminDocumentFields({
           value={formData.video_url || ""}
           onChange={(event) => updateFormData({ video_url: event.target.value })}
           className="w-full bg-surface-2 dark:bg-slate-800/50 border border-default dark:border-slate-700 rounded-xl px-4 py-3 text-primary
-                   focus:outline-none focus:border-purple-500 transition-colors"
+ focus:outline-none focus:border-purple-500 transition-colors"
           placeholder="https://www.youtube.com/watch?v=..."
         />
       </div>
@@ -118,7 +118,7 @@ export default function AdminDocumentFields({
           }
           rows={3}
           className="w-full bg-surface-2 dark:bg-slate-800/50 border border-default dark:border-slate-700 rounded-xl px-4 py-3 text-primary
-                   focus:outline-none focus:border-green-500 transition-colors resize-none"
+ focus:outline-none focus:border-green-500 transition-colors resize-none"
           placeholder="Cevap anahtarını buraya yazın... (opsiyonel)"
         />
       </div>
@@ -137,7 +137,7 @@ export default function AdminDocumentFields({
             updateFormData({ solution_url: event.target.value })
           }
           className="w-full bg-surface-2 dark:bg-slate-800/50 border border-default dark:border-slate-700 rounded-xl px-4 py-3 text-primary
-                   focus:outline-none focus:border-green-500 transition-colors"
+ focus:outline-none focus:border-green-500 transition-colors"
           placeholder="https://drive.google.com/... (çözümlü PDF varsa)"
         />
         {formData.solution_url && (
@@ -179,7 +179,7 @@ export default function AdminDocumentFields({
                   })
                 }
                 className="w-full bg-surface-2 dark:bg-slate-800/50 border border-default dark:border-slate-700 rounded-xl px-4 py-3 text-primary
-                   focus:outline-none focus:border-purple-500 transition-colors"
+ focus:outline-none focus:border-purple-500 transition-colors"
               >
                 <option value="">Sınıf düzeyi seçin</option>
                 {WORKSHEET_GRADE_OPTIONS.map((grade) => (
@@ -205,7 +205,7 @@ export default function AdminDocumentFields({
                   updateFormData({ learning_outcome: event.target.value })
                 }
                 className="w-full bg-surface-2 dark:bg-slate-800/50 border border-default dark:border-slate-700 rounded-xl px-4 py-3 text-primary
-                   focus:outline-none focus:border-purple-500 transition-colors"
+ focus:outline-none focus:border-purple-500 transition-colors"
                 placeholder="Örn. Cebirsel ifadelerle işlemler"
               />
             </div>

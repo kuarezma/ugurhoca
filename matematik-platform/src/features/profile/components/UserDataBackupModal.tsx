@@ -147,8 +147,8 @@ export function UserDataBackupModal({
         >
           <ShieldCheck className="h-4 w-4 shrink-0 mt-0.5" />
           <span>
-            Yedekleme dosyası; <strong>çözülen sorularını</strong>, <strong>günlük seri (streak)</strong> geçmişini,
-            <strong>hata defteri bankanı</strong> ve <strong>konu takip listeni</strong> içerir. Verileriniz tamamen sizin cihazınızda kalır.
+            Yedekleme dosyası; <strong>çözülen sorularını</strong>, {' '}<strong>günlük seri (streak)</strong> geçmişini,
+            <strong>hata defteri bankanı</strong> ve {' '}<strong>konu takip listeni</strong> içerir. Verileriniz tamamen sizin cihazınızda kalır.
           </span>
         </div>
 
@@ -174,16 +174,16 @@ export function UserDataBackupModal({
               <p className="font-semibold">{feedback.message}</p>
               {feedback.stats && (
                 <div className="mt-2 space-y-1 text-[11px] opacity-90">
-                  <div>🔥 Günlük Seri: <strong>{feedback.stats.dailyStreak} gün</strong></div>
-                  <div>📓 Hata Defteri: <strong>{feedback.stats.mistakesCount} soru</strong></div>
-                  <div>✅ Tamamlanan Konu: <strong>{feedback.stats.topicsCount} kazanım</strong></div>
+                  <div>🔥 Günlük Seri: {' '}<strong>{feedback.stats.dailyStreak} gün</strong></div>
+                  <div>📓 Hata Defteri: {' '}<strong>{feedback.stats.mistakesCount} soru</strong></div>
+                  <div>✅ Tamamlanan Konu: {' '}<strong>{feedback.stats.topicsCount} kazanım</strong></div>
                 </div>
               )}
               {feedback.type === 'success' && feedback.stats && (
                 <button
                   type="button"
                   onClick={handleReload}
-                  className="mt-3 inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white dark:text-white font-medium text-xs transition shadow"
+                  className="mt-3 inline-flex items-center gap-1.5 px-3 py-1 rounded-lg font-medium text-xs transition bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none"
                 >
                   <RefreshCw className="h-3 w-3" />
                   Sayfayı Yenile
@@ -213,7 +213,7 @@ export function UserDataBackupModal({
             <button
               type="button"
               onClick={handleExport}
-              className="w-full py-2.5 px-4 rounded-xl font-bold text-xs bg-purple-600 hover:bg-purple-500 text-white dark:text-white transition flex items-center justify-center gap-2 shadow"
+              className="w-full py-2.5 px-4 rounded-xl font-bold text-xs transition flex items-center justify-center gap-2 bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none"
             >
               <Download className="h-3.5 w-3.5" />
               Yedeği İndir (.json)
@@ -248,7 +248,7 @@ export function UserDataBackupModal({
               type="button"
               disabled={isProcessing}
               onClick={() => fileInputRef.current?.click()}
-              className="w-full py-2.5 px-4 rounded-xl font-bold text-xs bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 text-white dark:text-white transition flex items-center justify-center gap-2 shadow"
+              className="w-full py-2.5 px-4 rounded-xl font-bold text-xs disabled:opacity-50 transition flex items-center justify-center gap-2 bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none"
             >
               <Upload className="h-3.5 w-3.5" />
               {isProcessing ? 'İşleniyor...' : 'Dosya Seç & Yükle'}

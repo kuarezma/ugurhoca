@@ -148,7 +148,7 @@ export function MemoryGame({ onScore, scoreMultiplier }: GameComponentProps) {
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
           onClick={startGame}
-          className="px-8 py-4 bg-gradient-to-r from-emerald-500 to-teal-500 text-white font-bold rounded-2xl text-xl shadow-lg"
+          className="px-8 py-4 font-bold rounded-2xl text-xl bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none"
         >
           <Play className="w-6 h-6 inline mr-2" />
           Oyunu Başlat
@@ -178,7 +178,7 @@ export function MemoryGame({ onScore, scoreMultiplier }: GameComponentProps) {
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
           onClick={startGame}
-          className="px-8 py-4 bg-gradient-to-r from-emerald-500 to-teal-500 text-white font-bold rounded-2xl text-xl"
+          className="px-8 py-4 font-bold rounded-2xl text-xl bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none"
         >
           <RotateCcw className="w-6 h-6 inline mr-2" />
           Tekrar Oyna

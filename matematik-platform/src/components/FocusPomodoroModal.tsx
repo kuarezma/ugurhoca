@@ -199,7 +199,7 @@ export function FocusPomodoroModal({ isOpen, onClose }: FocusPomodoroModalProps)
             <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl text-white shadow-md ${
               isBreak ? 'bg-emerald-500' : 'bg-gradient-to-br from-rose-500 to-amber-500'
             }`}>
-              {isBreak ? <Coffee className="h-5 w-5" /> : <Brain className="h-5 w-5" />}
+              {isBreak ? (<Coffee className="h-5 w-5" /> ): (<Brain className="h-5 w-5" />)}
             </div>
             <div>
               <h2 id={titleId} className="font-display text-base sm:text-lg font-bold text-slate-900 dark:text-white">
@@ -219,7 +219,7 @@ export function FocusPomodoroModal({ isOpen, onClose }: FocusPomodoroModalProps)
               aria-label={soundEnabled ? 'Sesi Kapat' : 'Sesi Aç'}
               className="flex h-8 w-8 items-center justify-center rounded-xl text-slate-400 hover:bg-slate-100 dark:hover:bg-white/10 hover:text-slate-700 dark:hover:text-white transition-colors"
             >
-              {soundEnabled ? <Volume2 className="h-4 w-4 text-indigo-500" /> : <VolumeX className="h-4 w-4" />}
+              {soundEnabled ? (<Volume2 className="h-4 w-4 text-indigo-500" /> ): (<VolumeX className="h-4 w-4" />)}
             </button>
             <button
               type="button"
@@ -241,7 +241,7 @@ export function FocusPomodoroModal({ isOpen, onClose }: FocusPomodoroModalProps)
               onClick={() => handleSelectMode('focus25')}
               className={`rounded-2xl p-2.5 text-xs font-bold transition-all border ${
                 mode === 'focus25'
-                  ? 'border-rose-500 bg-rose-50 dark:bg-rose-500/15 text-rose-700 dark:text-rose-300 shadow-sm'
+                  ? 'border-brand-primary bg-tone-success-bg dark:bg-brand-primary/15 text-tone-success-fg dark:text-brand-primary-soft shadow-sm'
                   : 'border-slate-200 dark:border-white/10 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-white/5'
               }`}
             >
@@ -252,7 +252,7 @@ export function FocusPomodoroModal({ isOpen, onClose }: FocusPomodoroModalProps)
               onClick={() => handleSelectMode('focus50')}
               className={`rounded-2xl p-2.5 text-xs font-bold transition-all border ${
                 mode === 'focus50'
-                  ? 'border-amber-500 bg-amber-50 dark:bg-amber-500/15 text-amber-700 dark:text-amber-300 shadow-sm'
+                  ? 'border-brand-primary bg-tone-success-bg dark:bg-brand-primary/15 text-tone-success-fg dark:text-brand-primary-soft shadow-sm'
                   : 'border-slate-200 dark:border-white/10 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-white/5'
               }`}
             >
@@ -263,7 +263,7 @@ export function FocusPomodoroModal({ isOpen, onClose }: FocusPomodoroModalProps)
               onClick={() => handleSelectMode('break5')}
               className={`rounded-2xl p-2.5 text-xs font-bold transition-all border ${
                 mode === 'break5'
-                  ? 'border-emerald-500 bg-emerald-50 dark:bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 shadow-sm'
+                  ? 'border-brand-primary bg-tone-success-bg dark:bg-brand-primary/15 text-tone-success-fg dark:text-brand-primary-soft shadow-sm'
                   : 'border-slate-200 dark:border-white/10 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-white/5'
               }`}
             >
@@ -316,7 +316,7 @@ export function FocusPomodoroModal({ isOpen, onClose }: FocusPomodoroModalProps)
                 {timeString}
               </span>
               <span className="mt-1 text-xs font-bold uppercase tracking-wider text-slate-400">
-                {isRunning ? (isBreak ? 'Dinleniyorsun' : 'Odaklanıyorsun') : (timeLeft === 0 ? 'Süre Doldu!' : 'Hazır')}
+                {isRunning ? isBreak ? 'Dinleniyorsun' : 'Odaklanıyorsun' : timeLeft === 0 ? 'Süre Doldu!' : 'Hazır'}
               </span>
             </div>
           </div>
@@ -335,12 +335,12 @@ export function FocusPomodoroModal({ isOpen, onClose }: FocusPomodoroModalProps)
             <button
               type="button"
               onClick={() => setIsRunning(!isRunning)}
-              className={`flex h-14 px-8 items-center justify-center gap-2 rounded-2xl font-display text-base font-bold text-white shadow-lg transition-all active:scale-95 ${
+              className={`flex h-14 px-8 items-center justify-center gap-2 rounded-2xl font-display text-base font-bold shadow-lg transition-all active:scale-95 text-slate-950 dark:text-slate-950 ${
                 isRunning
-                  ? 'bg-amber-600 hover:bg-amber-700 shadow-amber-500/20'
+                  ? 'bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none'
                   : isBreak
-                  ? 'bg-emerald-600 hover:bg-emerald-700 shadow-emerald-500/20'
-                  : 'bg-gradient-to-r from-rose-600 via-pink-600 to-amber-600 hover:opacity-95 shadow-rose-500/25'
+                  ? 'bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none'
+                  : 'bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none'
               }`}
             >
               {isRunning ? (
@@ -382,7 +382,7 @@ export function FocusPomodoroModal({ isOpen, onClose }: FocusPomodoroModalProps)
                     title={opt.description}
                     className={`flex flex-col items-center justify-center p-2 rounded-xl text-center border transition-all ${
                       isSelected
-                        ? 'border-indigo-500 bg-indigo-50 dark:bg-indigo-500/20 text-indigo-700 dark:text-indigo-200 shadow-sm'
+                        ? 'border-brand-primary bg-tone-success-bg dark:bg-brand-primary/20 text-tone-success-fg dark:text-brand-primary-soft shadow-sm'
                         : 'border-slate-200/70 dark:border-white/5 bg-white dark:bg-slate-900/60 text-slate-600 dark:text-slate-400 hover:border-slate-300 dark:hover:border-white/10'
                     }`}
                   >

@@ -130,7 +130,7 @@ export function ProgressCharts({
       >
         <div className="mb-2 flex items-center gap-2">
           <Brain
-            className={`h-5 w-5 ${isLight ? 'text-pink-500' : 'text-pink-400'}`}
+            className={`h-5 w-5 ${isLight ? 'text-purple-500' : 'text-purple-400'}`}
           />
           <h2
             className={`text-lg font-bold ${isLight ? 'text-slate-900' : 'text-white'}`}
@@ -249,7 +249,7 @@ export function ProgressCharts({
                 name="Çalışma"
                 stroke="#10b981"
                 strokeWidth={3}
-                dot={{ fill: '#10b981', r: 4 }}
+                dot={{ fill: "#10b981", r: 4 }}
                 activeDot={{ r: 6 }}
               />
             </LineChart>

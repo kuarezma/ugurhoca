@@ -107,13 +107,13 @@ export function ExamCountdownCard({
     >
       {/* Background Subtle Gradient Glow */}
       <div
-        className="absolute -top-24 -right-24 h-56 w-56 rounded-full bg-gradient-to-br from-indigo-500/20 via-purple-500/15 to-transparent blur-3xl pointer-events-none"
+        className="absolute -top-24 -right-24 h-56 w-56 rounded-full blur-3xl pointer-events-none bg-brand-secondary/20"
         aria-hidden="true"
       />
 
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-white/10">
         <div className="flex items-center gap-3">
-          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 text-white dark:text-white shadow-lg shadow-indigo-500/20">
+          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl shadow-lg shadow-indigo-500/20 bg-brand-secondary text-slate-950 dark:text-slate-950">
             <Flame className="h-5 w-5" />
           </div>
           <div>
@@ -140,7 +140,7 @@ export function ExamCountdownCard({
               onClick={() => setSelectedExamId(exam.id)}
               className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
                 selectedExamId === exam.id
-                  ? 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-sm'
+                  ? 'shadow-sm bg-brand-primary text-slate-950 dark:text-slate-950'
                   : 'text-slate-400 hover:text-white'
               }`}
             >

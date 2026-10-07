@@ -111,7 +111,7 @@ export default function ProgramsHubPage() {
       subtitle: 'Ortaokul seviyesi için puan hesaplama ve hedef belirleme',
       href: '/programlar/lgs',
       icon: School,
-      gradient: 'from-cyan-700 via-blue-700 to-indigo-700',
+      gradient: 'from-brand-secondary to-brand-secondary',
       bullets: [
         'Net tabanlı tahmini puan',
         'Lise hedef seviyesi',
@@ -125,7 +125,7 @@ export default function ProgramsHubPage() {
       subtitle: 'Lise grubu için puan hesaplama ve üniversite tercih yardımı',
       href: '/programlar/yks',
       icon: GraduationCap,
-      gradient: 'from-violet-700 via-fuchsia-700 to-pink-700',
+      gradient: 'from-brand-pink to-brand-pink',
       bullets: [
         'TYT / SAY / EA / SOZ puan tahmini',
         'Başarı sırası odaklı filtreleme',
@@ -139,7 +139,7 @@ export default function ProgramsHubPage() {
       subtitle: 'Pisagor, birim çember, trigonometri, parabol ve eğim canlı görselleştiricisi',
       onClick: () => setIsGeometryLabOpen(true),
       icon: Compass,
-      gradient: 'from-amber-700 via-orange-700 to-rose-700',
+      gradient: 'from-brand-accent to-brand-accent',
       bullets: [
         'Pisagor teoremi ve özel dik üçgenler',
         'Birim çember, sinüs, kosinüs ve tanjant',
@@ -153,7 +153,7 @@ export default function ProgramsHubPage() {
       subtitle: 'LGS ve YKS için güncel katsayılarla anlık net ve puan hesabı',
       onClick: () => setIsCalculatorOpen(true),
       icon: Calculator,
-      gradient: 'from-indigo-700 via-purple-700 to-pink-700',
+      gradient: 'from-brand-secondary to-brand-secondary',
       bullets: [
         '3 yanlış 1 doğru kuralı (LGS)',
         'Diploma notu (OBP) ve sıralama bandı',
@@ -167,7 +167,7 @@ export default function ProgramsHubPage() {
       subtitle: '5-12. sınıf müfredat kazanım takip listesi ve A4 duvara asılabilir çıktı',
       onClick: () => setIsChecklistOpen(true),
       icon: ListChecks,
-      gradient: 'from-emerald-700 via-teal-700 to-cyan-800',
+      gradient: 'from-brand-primary to-brand-primary',
       bullets: [
         'Konu anlatımı, 50+ soru ve tekrar adımları',
         'Dinamik yüzde tamamlama göstergesi',
@@ -181,7 +181,7 @@ export default function ProgramsHubPage() {
       subtitle: 'Anlatım, örnek, test ve çalışma kâğıdı eksiklerini tek tabloda tespit et',
       onClick: () => setIsCoverageMatrixOpen(true),
       icon: Layers,
-      gradient: 'from-teal-700 via-emerald-700 to-green-700',
+      gradient: 'from-brand-primary to-brand-primary',
       bullets: [
         '5-12. sınıf konu bazlı 4 içerik kanalı',
         'Eksikli konuları anlık filtreleme',
@@ -195,7 +195,7 @@ export default function ProgramsHubPage() {
       subtitle: 'Kritik kavramlar, sık yapılan tuzaklar ve kendi açıklamalarını ekleme',
       onClick: () => setIsGlossaryOpen(true),
       icon: BookOpen,
-      gradient: 'from-indigo-700 via-purple-700 to-pink-700',
+      gradient: 'from-brand-secondary to-brand-secondary',
       bullets: [
         'Kavram tanımları ve KaTeX matematik modelleri',
         'Sık yapılan kavram yanılgıları ve tuzak uyarıları',
@@ -209,7 +209,7 @@ export default function ProgramsHubPage() {
       subtitle: 'Gerçek hayat senaryoları, aşamalı teslim adımları ve 100 puanlık değerlendirme rubriği',
       onClick: () => setIsProjectWorkshopOpen(true),
       icon: Compass,
-      gradient: 'from-amber-700 via-rose-700 to-purple-700',
+      gradient: 'from-brand-accent to-brand-accent',
       bullets: [
         'Evimizin enerji verimliliği ve doğrusal modelleme',
         'Altın oran, mimari plan ve Fibonacci analizi',
@@ -223,7 +223,7 @@ export default function ProgramsHubPage() {
       subtitle: 'Pisagor, iki kare farkı, üçgen açıları ve Gauss toplamının görsel mantıksal ispatları',
       onClick: () => setIsProofsOpen(true),
       icon: Compass,
-      gradient: 'from-cyan-700 via-blue-700 to-indigo-700',
+      gradient: 'from-brand-secondary to-brand-secondary',
       bullets: [
         'Ezber yerine mantık: Pisagor, iki kare farkı, Gauss toplamı',
         'Adım adım geometrik ve cebirsel kanıt kartları',
@@ -237,7 +237,7 @@ export default function ProgramsHubPage() {
       subtitle: 'Bloom yaratma basamağı: Kendi sorunu yaz, çeldiricilerini kurgula ve havuza katıl',
       onClick: () => setIsAuthoringOpen(true),
       icon: PenTool,
-      gradient: 'from-indigo-700 via-purple-700 to-pink-700',
+      gradient: 'from-brand-secondary to-brand-secondary',
       bullets: [
         'Özgün soru, 4 çeldirici ve adım adım çözüm kurgusu',
         'KaTeX matematik formül editörü ve ipucu sistemi',
@@ -251,7 +251,7 @@ export default function ProgramsHubPage() {
       subtitle: '«Bir konuyu basitçe anlatabiliyorsan anlamışsındır» sesli anlatım vitrini',
       onClick: () => setIsFeynmanOpen(true),
       icon: Mic,
-      gradient: 'from-rose-700 via-pink-700 to-orange-700',
+      gradient: 'from-brand-danger to-brand-danger',
       bullets: [
         '60 saniyelik sesli mikrofon kaydı ve kavram özeti',
         'Akranların anlatımlarını dinleme ve beğenme vitrini',
@@ -276,7 +276,7 @@ export default function ProgramsHubPage() {
           <button
             type="button"
             onClick={() => setIsFlashcardsOpen(true)}
-            className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-purple-700 via-pink-700 to-rose-700 px-4 py-2 text-xs sm:text-sm font-bold text-white shadow-lg transition hover:scale-[1.02] active:scale-[0.98]"
+            className="inline-flex items-center gap-2 rounded-xl px-4 py-2 text-xs sm:text-sm font-bold transition hover:scale-[1.02] active:scale-[0.98] bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none"
           >
             <BookOpen className="h-4 w-4" />
             Formül & Bilgi Kartları
@@ -290,7 +290,7 @@ export default function ProgramsHubPage() {
         >
           <div className="flex items-start justify-between gap-4">
             <div>
-              <div className="mb-3 inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-indigo-700 to-fuchsia-700 px-3 py-1 text-xs font-bold uppercase tracking-[0.18em] text-white dark:text-white">
+              <div className="mb-3 inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-indigo-700 to-purple-700 px-3 py-1 text-xs font-bold uppercase tracking-[0.18em] text-white dark:text-white">
                 <Sparkles className="h-3.5 w-3.5" />
                 Programlar Merkezi
               </div>
@@ -361,7 +361,7 @@ export default function ProgramsHubPage() {
                     <button
                       type="button"
                       onClick={tool.onClick}
-                      className={`mt-5 inline-flex items-center gap-2 rounded-xl bg-gradient-to-r ${tool.gradient} px-4 py-2 text-sm font-bold text-white shadow-lg transition hover:scale-[1.02] focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-slate-900`}
+                      className="mt-5 inline-flex items-center gap-2 rounded-xl px-4 py-2 text-sm font-bold transition hover:scale-[1.02] focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-slate-900 bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none"
                       aria-label={`${tool.title} aracını aç`}
                     >
                       {tool.ctaLabel || 'Aracı Aç'}
@@ -370,7 +370,7 @@ export default function ProgramsHubPage() {
                   ) : (
                     <Link
                       href={tool.href || '#'}
-                      className={`mt-5 inline-flex items-center gap-2 rounded-xl bg-gradient-to-r ${tool.gradient} px-4 py-2 text-sm font-bold text-white shadow-lg transition hover:scale-[1.02] focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-slate-900`}
+                      className="mt-5 inline-flex items-center gap-2 rounded-xl px-4 py-2 text-sm font-bold transition hover:scale-[1.02] focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-slate-900 bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none"
                       aria-label={`${tool.title} sihirbazını aç`}
                     >
                       {tool.ctaLabel || 'Sihirbazı Aç'}

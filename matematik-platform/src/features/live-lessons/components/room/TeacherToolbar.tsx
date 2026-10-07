@@ -87,7 +87,7 @@ export function TeacherToolbar({ onOpenModeration }: TeacherToolbarProps = {}) {
         disabled={micBusy}
         className={`rounded-lg px-3 py-1.5 text-xs font-semibold transition disabled:opacity-50 ${
           isMicrophoneEnabled
-            ? "bg-sky-600 text-white hover:bg-sky-500"
+            ? 'bg-brand-primary hover:bg-brand-primary text-slate-950 dark:text-slate-950'
             : "border border-border bg-card hover:bg-foreground/5"
         }`}
       >
@@ -99,7 +99,7 @@ export function TeacherToolbar({ onOpenModeration }: TeacherToolbarProps = {}) {
         disabled={cameraBusy}
         className={`rounded-lg px-3 py-1.5 text-xs font-semibold transition disabled:opacity-50 ${
           isCameraEnabled
-            ? "bg-violet-600 text-white hover:bg-violet-500"
+            ? 'bg-brand-primary hover:bg-brand-primary text-slate-950 dark:text-slate-950'
             : "border border-border bg-card hover:bg-foreground/5"
         }`}
       >
@@ -111,8 +111,8 @@ export function TeacherToolbar({ onOpenModeration }: TeacherToolbarProps = {}) {
         disabled={screenBusy}
         className={`rounded-lg px-3 py-1.5 text-xs font-semibold transition disabled:opacity-50 ${
           screenOn
-            ? "bg-red-600 text-white hover:bg-red-500"
-            : "bg-emerald-600 text-white hover:bg-emerald-500"
+            ? "bg-red-600 hover:bg-red-500 text-slate-950 dark:text-slate-950"
+            : 'bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none'
         }`}
       >
         {screenBusy ? "…" : screenOn ? "Paylaşımı durdur" : "Ekranı paylaş"}

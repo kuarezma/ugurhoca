@@ -80,7 +80,7 @@ export function ExitTicketCreateModal({
                   onClick={() => setSelectedTemplateId(tmpl.id)}
                   className={`p-4 rounded-2xl border text-left transition relative flex flex-col justify-between ${
                     isSelected
-                      ? 'border-violet-500 bg-violet-500/15 ring-2 ring-violet-500/40'
+                      ? 'border-brand-primary bg-brand-primary/15 ring-2 ring-brand-primary/40'
                       : 'border-slate-200 dark:border-white/10 bg-slate-50/60 dark:bg-slate-950/40 hover:border-slate-300 dark:hover:border-white/20 hover:bg-slate-100 dark:hover:bg-white/5'
                   }`}
                 >
@@ -146,7 +146,7 @@ export function ExitTicketCreateModal({
           <button
             type="button"
             onClick={handleLaunch}
-            className="px-6 py-2.5 rounded-xl text-sm font-bold bg-violet-600 hover:bg-violet-500 text-white dark:text-white transition flex items-center gap-2 shadow-lg shadow-violet-600/30 active:scale-[0.98]"
+            className="px-6 py-2.5 rounded-xl text-sm font-bold transition flex items-center gap-2 active:scale-[0.98] bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none"
           >
             <span>Oturumu Başlat</span>
             <ArrowRight className="w-4 h-4" />

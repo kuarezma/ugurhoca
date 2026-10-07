@@ -32,7 +32,7 @@ function colorFromName(name: string | null | undefined) {
     'from-emerald-400 to-teal-500',
     'from-indigo-500 to-sky-400',
     'from-rose-400 to-amber-400',
-    'from-violet-500 to-fuchsia-400',
+    'from-violet-500 to-purple-400',
   ];
   return palettes[Math.abs(hash) % palettes.length];
 }

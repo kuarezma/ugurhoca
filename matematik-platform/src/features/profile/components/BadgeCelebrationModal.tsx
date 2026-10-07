@@ -175,9 +175,9 @@ export function BadgeCelebrationModal({
           </button>
 
           {/* İkon / Rozet Vitrini */}
-          <div className="relative mx-auto flex h-24 w-24 items-center justify-center rounded-3xl bg-gradient-to-tr from-amber-400 via-orange-500 to-rose-600 shadow-xl shadow-amber-500/30">
-            <Award className="h-12 w-12 text-white dark:text-white" />
-            <span className="absolute -bottom-2 -right-2 flex h-8 w-8 items-center justify-center rounded-full bg-emerald-500 text-white dark:text-white shadow-md border-2 border-white dark:border-slate-900">
+          <div className="relative mx-auto flex h-24 w-24 items-center justify-center rounded-3xl shadow-xl shadow-amber-500/30 bg-brand-accent">
+            <Award className="h-12 w-12 text-slate-950 dark:text-slate-950" />
+            <span className="absolute -bottom-2 -right-2 flex h-8 w-8 items-center justify-center rounded-full bg-emerald-500 shadow-md border-2 border-white dark:border-slate-900 text-slate-950 dark:text-slate-950">
               <CheckCircle2 className="h-5 w-5" />
             </span>
           </div>
@@ -209,7 +209,7 @@ export function BadgeCelebrationModal({
             <button
               type="button"
               onClick={handleDownloadCard}
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-amber-500 via-orange-500 to-rose-600 px-5 py-2.5 text-xs font-bold text-white shadow-lg shadow-amber-500/20 transition hover:scale-[1.02] active:scale-[0.98]"
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl px-5 py-2.5 text-xs font-bold transition hover:scale-[1.02] active:scale-[0.98] bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none"
             >
               <Download className="h-4 w-4" />
               <span>Başarı Kartını İndir (PNG)</span>

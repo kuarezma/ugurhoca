@@ -111,7 +111,7 @@ export default function DashboardHero({
                 </div>
               </motion.button>
               <span
-                className="absolute -bottom-1 left-1/2 -translate-x-1/2 rounded-full bg-gradient-to-r from-amber-400 via-orange-400 to-pink-500 px-3 py-0.5 text-[10px] font-black uppercase tracking-wider text-slate-900 shadow-lg"
+                className="absolute -bottom-1 left-1/2 -translate-x-1/2 rounded-full px-3 py-0.5 text-[10px] font-black uppercase tracking-wider text-slate-900 shadow-lg bg-brand-accent"
                 aria-label={`Haftalık hedef yüzdesi ${goalSnapshot.progressPercent}%`}
               >
                 %{goalSnapshot.progressPercent}
@@ -178,7 +178,7 @@ export default function DashboardHero({
 
             <div className="h-3 overflow-hidden rounded-full bg-surface-3">
               <div
-                className="h-full rounded-full bg-gradient-to-r from-cyan-500 via-sky-500 to-emerald-500 transition-all"
+                className="h-full rounded-full transition-all bg-brand-secondary"
                 style={{ width: `${goalSnapshot.progressPercent}%` }}
               />
             </div>
@@ -210,7 +210,7 @@ export default function DashboardHero({
               <button
                 type="button"
                 onClick={onPrimaryAction}
-                className="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-indigo-600 px-5 py-3 text-sm font-bold text-white dark:text-white shadow border border-indigo-500 transition-all hover:bg-indigo-700 active:scale-[0.99]"
+                className="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-2xl px-5 py-3 text-sm font-bold border border-indigo-500 transition-all active:scale-[0.99] bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none"
               >
                 {primaryTask.actionLabel}
                 <ChevronRight className="h-4 w-4" />

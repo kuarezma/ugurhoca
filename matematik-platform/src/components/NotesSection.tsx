@@ -7,7 +7,7 @@ import { Modal } from '@/components/ui/Modal';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { sanitizeRichTextHtml } from '@/lib/html-sanitize';
-import { 
+import {
   StickyNote, Plus, Search, X, Edit2, Trash2, Pin, PinOff,
   Bold, Italic, Underline, Heading1, List, ListOrdered, Link as LinkIcon, Folder, Clock
 } from 'lucide-react';
@@ -125,7 +125,7 @@ export default function NotesSection({ userId }: NotesSectionProps) {
 
   const handleSave = async () => {
     const content = editorRef.current?.innerHTML || '';
-    
+
     if (editingNote) {
       await supabase.from('notes').update({
         title: formData.title || null,
@@ -198,7 +198,7 @@ export default function NotesSection({ userId }: NotesSectionProps) {
         </div>
         <button
           onClick={() => handleOpenModal()}
-          className="flex items-center gap-2 px-4 py-2 bg-purple-500 hover:bg-purple-600 text-white dark:text-white rounded-xl font-medium transition-colors"
+          className="flex items-center gap-2 px-4 py-2 rounded-xl font-medium transition-colors bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none"
         >
           <Plus className="w-4 h-4" />
           Yeni Not
@@ -253,7 +253,7 @@ export default function NotesSection({ userId }: NotesSectionProps) {
           {!searchQuery && !selectedCategory && !selectedTag && (
             <button
               onClick={() => handleOpenModal()}
-              className="mt-4 px-4 py-2 bg-purple-500 hover:bg-purple-600 text-white dark:text-white rounded-xl font-medium transition-colors"
+              className="mt-4 px-4 py-2 rounded-xl font-medium transition-colors bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none"
             >
               İlk notunu ekle
             </button>
@@ -411,7 +411,7 @@ export default function NotesSection({ userId }: NotesSectionProps) {
                             setShowCategoryInput(false);
                           }
                         }}
-                        className="px-4 py-2 bg-purple-500 text-white dark:text-white rounded-xl hover:bg-purple-600 transition-colors"
+                        className="px-4 py-2 rounded-xl transition-colors bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none"
                       >
                         Ekle
                       </button>
@@ -550,7 +550,7 @@ export default function NotesSection({ userId }: NotesSectionProps) {
                 </button>
                 <button
                   onClick={handleSave}
-                  className="px-6 py-2 bg-purple-500 text-white dark:text-white rounded-xl hover:bg-purple-600 transition-colors font-medium"
+                  className="px-6 py-2 rounded-xl transition-colors font-medium bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none"
                 >
                   {editingNote ? 'Güncelle' : 'Kaydet'}
                 </button>

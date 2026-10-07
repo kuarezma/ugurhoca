@@ -163,7 +163,7 @@ export function SmartBoardPresentationMode() {
           type="button"
           onClick={toggleLessonFullscreen}
           className={`px-2.5 py-1 rounded-full transition-colors ${
-            isFullscreen ? 'bg-indigo-600 text-white dark:text-slate-50 font-semibold' : 'hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200'
+            isFullscreen ? 'dark:text-slate-50 font-semibold bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none' : 'hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200'
           }`}
           title="Ders / Tam Ekran Modu"
         >
@@ -196,7 +196,7 @@ export function SmartBoardPresentationMode() {
           type="button"
           onClick={() => handleSetMode('highlighter')}
           className={`px-2.5 py-1 rounded-full transition-colors ${
-            mode === 'highlighter' ? 'bg-amber-500 text-slate-950 font-bold' : 'hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200'
+            mode === 'highlighter' ? 'bg-brand-primary font-bold text-slate-950 dark:text-slate-950' : 'hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200'
           }`}
           title="Fosforlu Sarı Vurgu"
         >

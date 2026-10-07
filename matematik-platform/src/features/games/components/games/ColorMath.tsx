@@ -158,7 +158,7 @@ export function ColorMath({ onScore, scoreMultiplier }: GameComponentProps) {
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
           onClick={startGame}
-          className="px-8 py-4 bg-gradient-to-r from-cyan-500 to-blue-500 text-white font-bold rounded-2xl text-xl shadow-lg shadow-cyan-500/30"
+          className="px-8 py-4 font-bold rounded-2xl text-xl bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none"
         >
           <Play className="w-6 h-6 inline mr-2" />
           Oyunu Başlat
@@ -189,7 +189,7 @@ export function ColorMath({ onScore, scoreMultiplier }: GameComponentProps) {
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
           onClick={startGame}
-          className="px-8 py-4 bg-gradient-to-r from-cyan-500 to-blue-500 text-white font-bold rounded-2xl text-xl"
+          className="px-8 py-4 font-bold rounded-2xl text-xl bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none"
         >
           <RotateCcw className="w-6 h-6 inline mr-2" />
           Tekrar Oyna
@@ -265,7 +265,7 @@ export function ColorMath({ onScore, scoreMultiplier }: GameComponentProps) {
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
           onClick={() => handleAnswer(true)}
-          className="py-8 bg-gradient-to-br from-green-500 to-emerald-500 rounded-2xl text-white text-2xl font-bold"
+          className="py-8 rounded-2xl text-2xl font-bold bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none"
         >
           ✓ Doğru
         </motion.button>

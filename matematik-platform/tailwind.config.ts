@@ -3,6 +3,35 @@ import plugin from 'tailwindcss/plugin';
 
 const tokenColor = (token: string) => `rgb(var(${token}) / <alpha-value>)`;
 
+// 400–500 marka tonlarını, 600–950 beyaz zeminde AA metin kontrastını korur.
+const brandBlueScale = {
+  50: '#f0faff',
+  100: '#dff3fe',
+  200: '#bde9fd',
+  300: '#8dd9fb',
+  400: '#50c6f8',
+  500: '#1cb0f6',
+  600: '#1176a5',
+  700: '#0e6289',
+  800: '#0b4e6d',
+  900: '#083a52',
+  950: '#052737',
+};
+
+const brandPurpleScale = {
+  50: '#fcf7ff',
+  100: '#f5eaff',
+  200: '#ebd5ff',
+  300: '#e1b8ff',
+  400: '#d79cff',
+  500: '#ce82ff',
+  600: '#8f4eb5',
+  700: '#773f98',
+  800: '#60337a',
+  900: '#48265c',
+  950: '#30193d',
+};
+
 const config: Config = {
   darkMode: ['class', '[data-theme="dark"]'],
   content: ['./src/**/*.{js,ts,jsx,tsx,mdx}'],
@@ -106,45 +135,10 @@ const config: Config = {
           orange: tokenColor('--brand-orange-rgb'),
           indigo: tokenColor('--brand-indigo-rgb'),
         },
-        indigo: {
-          50: tokenColor('--theme-indigo-50-rgb'),
-          100: tokenColor('--theme-indigo-100-rgb'),
-          200: tokenColor('--theme-indigo-200-rgb'),
-          300: tokenColor('--theme-indigo-300-rgb'),
-          400: tokenColor('--theme-indigo-400-rgb'),
-          500: tokenColor('--theme-indigo-500-rgb'),
-          600: tokenColor('--theme-indigo-600-rgb'),
-          700: tokenColor('--theme-indigo-700-rgb'),
-          800: tokenColor('--theme-indigo-800-rgb'),
-          900: tokenColor('--theme-indigo-900-rgb'),
-          950: tokenColor('--theme-indigo-950-rgb'),
-        },
-        purple: {
-          50: tokenColor('--theme-purple-50-rgb'),
-          100: tokenColor('--theme-purple-100-rgb'),
-          200: tokenColor('--theme-purple-200-rgb'),
-          300: tokenColor('--theme-purple-300-rgb'),
-          400: tokenColor('--theme-purple-400-rgb'),
-          500: tokenColor('--theme-purple-500-rgb'),
-          600: tokenColor('--theme-purple-600-rgb'),
-          700: tokenColor('--theme-purple-700-rgb'),
-          800: tokenColor('--theme-purple-800-rgb'),
-          900: tokenColor('--theme-purple-900-rgb'),
-          950: tokenColor('--theme-purple-950-rgb'),
-        },
-        violet: {
-          50: tokenColor('--theme-violet-50-rgb'),
-          100: tokenColor('--theme-violet-100-rgb'),
-          200: tokenColor('--theme-violet-200-rgb'),
-          300: tokenColor('--theme-violet-300-rgb'),
-          400: tokenColor('--theme-violet-400-rgb'),
-          500: tokenColor('--theme-violet-500-rgb'),
-          600: tokenColor('--theme-violet-600-rgb'),
-          700: tokenColor('--theme-violet-700-rgb'),
-          800: tokenColor('--theme-violet-800-rgb'),
-          900: tokenColor('--theme-violet-900-rgb'),
-          950: tokenColor('--theme-violet-950-rgb'),
-        },
+        indigo: brandBlueScale,
+        blue: brandBlueScale,
+        violet: brandPurpleScale,
+        purple: brandPurpleScale,
         xp: {
           bronze: '#C27C3C',
           silver: '#94A3B8',

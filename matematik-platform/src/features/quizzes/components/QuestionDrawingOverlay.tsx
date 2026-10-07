@@ -286,7 +286,7 @@ export function QuestionDrawingOverlay({
           aria-label="Tükenmez Kalem"
           className={`flex h-8 w-8 items-center justify-center rounded-xl transition ${
             tool === 'pen' && !isPassthrough
-              ? 'bg-amber-500 text-slate-950 font-bold shadow-md scale-105'
+              ? 'bg-brand-primary font-bold shadow-md scale-105 text-slate-950 dark:text-slate-950'
               : 'text-slate-300 hover:bg-white/10 hover:text-white'
           }`}
         >
@@ -304,7 +304,7 @@ export function QuestionDrawingOverlay({
           aria-label="Fosforlu Kalem"
           className={`flex h-8 w-8 items-center justify-center rounded-xl transition ${
             tool === 'highlighter' && !isPassthrough
-              ? 'bg-yellow-400 text-slate-950 font-bold shadow-md scale-105'
+              ? 'bg-brand-primary text-slate-950 dark:text-slate-950 font-bold shadow-md scale-105'
               : 'text-slate-300 hover:bg-white/10 hover:text-white'
           }`}
         >
@@ -322,7 +322,7 @@ export function QuestionDrawingOverlay({
           aria-label="Silgi"
           className={`flex h-8 w-8 items-center justify-center rounded-xl transition ${
             tool === 'eraser' && !isPassthrough
-              ? 'bg-rose-500 text-white font-bold shadow-md scale-105'
+              ? 'bg-brand-primary font-bold shadow-md scale-105 text-slate-950 dark:text-slate-950'
               : 'text-slate-300 hover:bg-white/10 hover:text-white'
           }`}
         >
@@ -365,7 +365,7 @@ export function QuestionDrawingOverlay({
           aria-label={isPassthrough ? 'Çizime Dön' : 'Şık İşaretle'}
           className={`flex items-center gap-1 px-2 py-1 rounded-xl text-xs font-semibold transition ${
             isPassthrough
-              ? 'bg-emerald-500 text-slate-950 font-bold shadow-md'
+              ? 'bg-brand-primary font-bold shadow-md text-slate-950 dark:text-slate-950'
               : 'text-slate-300 hover:bg-white/10 hover:text-white'
           }`}
         >

@@ -129,7 +129,7 @@ export function InteractiveMathCanvas({
             type="button"
             onClick={toggleAnimation}
             disabled={!isWorkerReady}
-            className="px-3 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-500 disabled:opacity-50 text-white dark:text-white font-medium transition-colors"
+            className="px-3 py-1.5 rounded-lg disabled:opacity-50 font-medium transition-colors bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none"
           >
             {animating ? 'Animasyonu Durdur' : 'Animasyonu Başlat'}
           </button>
@@ -145,7 +145,7 @@ export function InteractiveMathCanvas({
 
         {primeCount !== null && (
           <span className="text-slate-400">
-            Sonuç: <strong className="text-blue-400 font-semibold">{primeCount.toLocaleString('tr-TR')}</strong> adet asal sayı
+            Sonuç: {' '}<strong className="text-blue-400 font-semibold">{primeCount.toLocaleString('tr-TR')}</strong> {' '}adet asal sayı
           </span>
         )}
       </div>

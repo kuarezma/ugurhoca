@@ -93,7 +93,7 @@ export function ExitTicketPageContainer() {
               onClick={() => setActiveTab('student')}
               className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition ${
                 activeTab === 'student'
-                  ? 'bg-amber-500 text-slate-950 shadow-md shadow-amber-500/20'
+                  ? 'bg-brand-primary shadow-md shadow-brand-primary/20 text-slate-950 dark:text-slate-950'
                   : 'text-secondary hover:text-primary'
               }`}
             >
@@ -105,7 +105,7 @@ export function ExitTicketPageContainer() {
               onClick={() => setActiveTab('teacher')}
               className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition ${
                 activeTab === 'teacher'
-                  ? 'bg-violet-700 text-white shadow-md shadow-violet-700/30'
+                  ? 'bg-brand-primary shadow-md shadow-brand-primary/30 text-slate-950 dark:text-slate-950'
                   : 'text-secondary hover:text-primary'
               }`}
             >
@@ -144,7 +144,7 @@ export function ExitTicketPageContainer() {
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
               {/* Sol: Yeni Oturum Başlatma Kartları */}
               <div className="lg:col-span-2 space-y-6">
-                <div className="rounded-3xl border border-slate-200 dark:border-white/10 bg-gradient-to-br from-violet-50 via-white to-slate-50 dark:from-violet-900/30 dark:via-slate-900 dark:to-slate-950 p-6 sm:p-8 relative overflow-hidden shadow-xl">
+                <div className="rounded-3xl border border-slate-200 dark:border-white/10 p-6 sm:p-8 relative overflow-hidden shadow-xl bg-surface-1 dark:bg-surface-1">
                   <div className="relative z-10">
                     <span className="px-3 py-1 rounded-full text-xs font-bold bg-violet-500/10 dark:bg-violet-500/20 text-violet-700 dark:text-violet-300 border border-violet-500/30">
                       Sınıf Sunumu Modu
@@ -160,7 +160,7 @@ export function ExitTicketPageContainer() {
                       <button
                         type="button"
                         onClick={() => setIsCreateModalOpen(true)}
-                        className="px-5 py-3 rounded-xl font-bold bg-violet-600 hover:bg-violet-500 text-white dark:text-white transition flex items-center gap-2 shadow-lg shadow-violet-600/30"
+                        className="px-5 py-3 rounded-xl font-bold transition flex items-center gap-2 bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none"
                       >
                         <PlusCircle className="w-5 h-5" />
                         <span>Şablonla Yeni Oturum Aç</span>

@@ -167,7 +167,7 @@ export function MathAhaMomentsModal({
               onClick={() => setSelectedCategory('all')}
               className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition-colors ${
                 selectedCategory === 'all'
-                  ? 'bg-amber-600 text-white shadow-sm'
+                  ? 'bg-brand-primary shadow-sm text-slate-950 dark:text-slate-950'
                   : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800'
               }`}
             >
@@ -179,7 +179,7 @@ export function MathAhaMomentsModal({
                 onClick={() => setSelectedCategory(cat)}
                 className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition-colors ${
                   selectedCategory === cat
-                    ? 'bg-amber-600 text-white shadow-sm'
+                    ? 'bg-brand-primary shadow-sm text-slate-950 dark:text-slate-950'
                     : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800'
                 }`}
               >
@@ -190,9 +190,9 @@ export function MathAhaMomentsModal({
 
           <button
             onClick={() => setIsAddingNew(!isAddingNew)}
-            className="px-3.5 py-1.5 bg-amber-600 hover:bg-amber-700 text-white dark:text-white rounded-xl text-xs font-semibold inline-flex items-center gap-1.5 transition-colors shadow-sm"
+            className="px-3.5 py-1.5 rounded-xl text-xs font-semibold inline-flex items-center gap-1.5 transition-colors shadow-sm bg-surface-2 hover:bg-surface-3 text-primary border border-default"
           >
-            {isAddingNew ? <X className="w-3.5 h-3.5" /> : <Plus className="w-3.5 h-3.5" />}
+            {isAddingNew ? (<X className="w-3.5 h-3.5" /> ): (<Plus className="w-3.5 h-3.5" />)}
             {isAddingNew ? 'Formu Kapat' : 'Yeni Keşif Ekle'}
           </button>
         </div>
@@ -273,7 +273,7 @@ export function MathAhaMomentsModal({
                         onClick={() => setReaction(rk)}
                         className={`p-2 rounded-xl text-xs font-medium border flex items-center justify-center gap-1.5 transition-all ${
                           reaction === rk
-                            ? 'border-amber-500 ring-2 ring-amber-500/20 bg-amber-50 dark:bg-amber-950/40 text-amber-900 dark:text-amber-200 font-bold'
+                            ? 'border-brand-primary ring-2 ring-brand-primary/20 bg-tone-success-bg dark:bg-tone-success-bg text-tone-success-fg dark:text-brand-primary-soft font-bold'
                             : 'border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400'
                         }`}
                       >
@@ -295,7 +295,7 @@ export function MathAhaMomentsModal({
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-1.5 bg-amber-600 hover:bg-amber-700 text-white dark:text-white rounded-xl text-xs font-semibold shadow-sm"
+                  className="px-4 py-1.5 rounded-xl text-xs font-semibold bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none"
                 >
                   Keşfi Kaydet
                 </button>

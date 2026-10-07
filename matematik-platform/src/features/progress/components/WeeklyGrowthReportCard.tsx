@@ -71,7 +71,7 @@ export const WeeklyGrowthReportCard: React.FC<WeeklyGrowthReportCardProps> = ({
   }, [weekStats.progressPercent, streak]);
 
   return (
-    <div className="relative overflow-hidden rounded-3xl border border-violet-500/20 bg-gradient-to-br from-white via-slate-50 to-indigo-50/50 dark:from-slate-900/90 dark:via-slate-900/95 dark:to-indigo-950/40 p-6 sm:p-7 shadow-xl dark:shadow-2xl backdrop-blur-md">
+    <div className="relative overflow-hidden rounded-3xl border border-violet-500/20 p-6 sm:p-7 shadow-xl dark:shadow-2xl backdrop-blur-md bg-surface-1 dark:bg-surface-1">
       {/* Decorative Glows */}
       <div className="absolute -right-12 -top-12 h-40 w-40 rounded-full bg-violet-600/15 blur-3xl pointer-events-none" />
       <div className="absolute -left-12 -bottom-12 h-40 w-40 rounded-full bg-cyan-600/15 blur-3xl pointer-events-none" />
@@ -102,7 +102,7 @@ export const WeeklyGrowthReportCard: React.FC<WeeklyGrowthReportCardProps> = ({
         <div className="flex flex-wrap items-center gap-2.5">
           <Link
             href="/testler"
-            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-violet-600 hover:bg-violet-500 text-white dark:text-white text-xs font-bold transition-all shadow-lg shadow-violet-500/25 hover:scale-[1.02] active:scale-[0.98]"
+            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold transition-all hover:scale-[1.02] active:scale-[0.98] bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none"
           >
             <FileCheck2 className="w-3.5 h-3.5" />
             <span>Test Çöz</span>
@@ -126,7 +126,7 @@ export const WeeklyGrowthReportCard: React.FC<WeeklyGrowthReportCardProps> = ({
             <Clock className="w-4 h-4 text-violet-500 dark:text-violet-400" />
           </div>
           <div className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white">
-            {weekStats.totalMinutes} <span className="text-xs text-slate-500 dark:text-slate-400 font-normal">dk</span>
+            {weekStats.totalMinutes} {' '}<span className="text-xs text-slate-500 dark:text-slate-400 font-normal">dk</span>
           </div>
           <div className="mt-2 h-1.5 w-full rounded-full bg-slate-100 dark:bg-slate-800 overflow-hidden">
             <div
@@ -161,7 +161,7 @@ export const WeeklyGrowthReportCard: React.FC<WeeklyGrowthReportCardProps> = ({
             <Target className="w-4 h-4 text-amber-500 dark:text-amber-400" />
           </div>
           <div className="text-xl sm:text-2xl font-black text-amber-700 dark:text-amber-300">
-            {liveLessonsCount} <span className="text-xs text-slate-500 dark:text-slate-400 font-normal">oturum</span>
+            {liveLessonsCount} {' '}<span className="text-xs text-slate-500 dark:text-slate-400 font-normal">oturum</span>
           </div>
           <p className="mt-2 text-[11px] text-slate-500 dark:text-slate-400">
             Katılınan canlı ders sayısı
@@ -175,7 +175,7 @@ export const WeeklyGrowthReportCard: React.FC<WeeklyGrowthReportCardProps> = ({
             <TrendingUp className="w-4 h-4 text-emerald-500 dark:text-emerald-400" />
           </div>
           <div className="text-xl sm:text-2xl font-black text-emerald-700 dark:text-emerald-300">
-            {Math.round(weekStats.progressPercent * 0.7 + Math.min(30, streak * 5))} <span className="text-xs text-slate-500 dark:text-slate-400 font-normal">XP</span>
+            {Math.round(weekStats.progressPercent * 0.7 + Math.min(30, streak * 5))}{' '} <span className="text-xs text-slate-500 dark:text-slate-400 font-normal">XP</span>
           </div>
           <p className="mt-2 text-[11px] text-slate-500 dark:text-slate-400">
             Haftalık düzenli çalışma puanı

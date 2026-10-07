@@ -209,10 +209,10 @@ export default function ChangePasswordForm({
         disabled={
           sending || !currentPassword || !newPassword || !confirmPassword
         }
-        className={`inline-flex items-center gap-2 rounded-xl px-5 py-2.5 text-sm font-bold text-white transition-all ${
+        className={`inline-flex items-center gap-2 rounded-xl px-5 py-2.5 text-sm font-bold transition-all text-slate-950 dark:text-slate-950 ${
           sending || !currentPassword || !newPassword || !confirmPassword
             ? "bg-slate-500/40 cursor-not-allowed"
-            : "bg-gradient-to-r from-indigo-500 to-fuchsia-500 hover:from-indigo-600 hover:to-fuchsia-600 shadow-lg"
+            : 'bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none'
         }`}
       >
         {sending ? "Güncelleniyor..." : "Şifreyi Güncelle"}

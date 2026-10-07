@@ -143,7 +143,7 @@ export function PisagorCalculatorContainer() {
                 onClick={() => setMode('hypotenuse')}
                 className={`flex-1 py-2 rounded-xl transition ${
                   mode === 'hypotenuse'
-                    ? 'bg-amber-500 text-slate-950 shadow-md'
+                    ? 'bg-brand-primary shadow-md text-slate-950 dark:text-slate-950'
                     : 'text-secondary hover:text-primary'
                 }`}
               >
@@ -154,7 +154,7 @@ export function PisagorCalculatorContainer() {
                 onClick={() => setMode('leg')}
                 className={`flex-1 py-2 rounded-xl transition ${
                   mode === 'leg'
-                    ? 'bg-amber-500 text-slate-950 shadow-md'
+                    ? 'bg-brand-primary shadow-md text-slate-950 dark:text-slate-950'
                     : 'text-secondary hover:text-primary'
                 }`}
               >
@@ -286,7 +286,7 @@ export function PisagorCalculatorContainer() {
               </div>
 
               <div className="text-[11px] text-secondary text-center mt-4">
-                Dik üçgende 90° açının karşısındaki en uzun kenara <strong>hipotenüs</strong> denir.
+                Dik üçgende 90° açının karşısındaki en uzun kenara {' '}<strong>hipotenüs</strong> denir.
               </div>
             </div>
           </div>

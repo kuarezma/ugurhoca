@@ -89,7 +89,7 @@ export function YksScoreTable({
                       onClick={() => onScoreTypeChange(row.scoreType)}
                       className={`rounded-full border px-3 py-1 text-xs font-bold transition ${
                         active
-                          ? 'border-purple-300 dark:border-purple-300 bg-gradient-to-r from-purple-700 to-fuchsia-700 text-white shadow-sm'
+                          ? 'border-brand-primary dark:border-brand-primary shadow-sm bg-brand-primary text-slate-950 dark:text-slate-950'
                           : 'border-default dark:border-slate-500 bg-surface-1 text-secondary hover:border-accent hover:text-primary'
                       }`}
                     >

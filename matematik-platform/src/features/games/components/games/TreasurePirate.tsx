@@ -212,7 +212,7 @@ export function TreasurePirate({
           <div className="mt-8 flex justify-center">
             <button
               onClick={startNewGame}
-              className="inline-flex items-center gap-2 rounded-2xl bg-gradient-to-r from-amber-500 to-yellow-500 px-8 py-3.5 text-base font-bold text-slate-950 shadow-lg transition hover:scale-105 active:scale-95"
+              className="inline-flex items-center gap-2 rounded-2xl px-8 py-3.5 text-base font-bold transition hover:scale-105 active:scale-95 bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none"
             >
               <Play className="h-5 w-5" /> Haritayı Aç & Başla
             </button>
@@ -359,7 +359,7 @@ export function TreasurePirate({
           <div className="flex justify-center gap-4">
             <button
               onClick={startNewGame}
-              className="inline-flex items-center gap-2 rounded-2xl bg-amber-500 px-6 py-3 font-bold text-slate-950 transition hover:bg-amber-400"
+              className="inline-flex items-center gap-2 rounded-2xl px-6 py-3 font-bold transition bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none"
             >
               <RotateCcw className="h-5 w-5" /> Tekrar Keşfe Çık
             </button>

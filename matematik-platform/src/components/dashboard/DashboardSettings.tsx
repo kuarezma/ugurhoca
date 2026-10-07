@@ -46,7 +46,7 @@ export default function DashboardSettings() {
           <button
             type="button"
             onClick={() => setIsBackupModalOpen(true)}
-            className="inline-flex items-center justify-center gap-2 rounded-xl bg-indigo-600 px-4 py-2.5 text-xs font-bold text-white dark:text-white transition hover:bg-indigo-700 shadow-xs shrink-0"
+            className="inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-xs font-bold transition shrink-0 bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none"
           >
             <span>Yedekle / Yükle</span>
             <ArrowRight className="h-3.5 w-3.5" />

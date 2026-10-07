@@ -78,8 +78,8 @@ export function ChallengePageContainer() {
         <section
           className={`relative overflow-hidden rounded-3xl border px-6 py-8 sm:px-10 sm:py-10 mb-8 transition-all duration-300 ${
             isLight
-              ? 'border-amber-200/80 bg-gradient-to-br from-amber-50/80 via-white to-orange-50/50 shadow-bento'
-              : 'border-white/10 bg-gradient-to-br from-slate-900 via-amber-950/20 to-slate-950 shadow-2xl backdrop-blur-xl'
+              ? 'border-amber-200/80 shadow-bento bg-surface-1'
+              : 'border-white/10 shadow-2xl backdrop-blur-xl bg-surface-1'
           }`}
         >
           <div

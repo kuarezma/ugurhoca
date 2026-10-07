@@ -105,7 +105,7 @@ export default function MessageSummaryCard({
             onClick={() => setActiveFilter(filter.id)}
             className={`rounded-full px-3 py-1.5 text-xs font-bold uppercase tracking-[0.18em] transition-colors ${
               activeFilter === filter.id
-                ? 'bg-violet-600 text-white dark:bg-violet-500/20 dark:text-violet-100'
+                ? 'bg-brand-primary dark:bg-brand-primary/20 dark:text-brand-primary-soft text-slate-950 dark:text-slate-950'
                 : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700 hover:text-slate-900 dark:hover:text-white'
             }`}
           >

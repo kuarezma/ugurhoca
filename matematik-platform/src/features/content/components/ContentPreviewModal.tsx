@@ -17,7 +17,7 @@ import {
 
 const ScratchpadModal = dynamic(
   () => import('@/components/ScratchpadModal'),
-  { ssr: false },
+  { ssr: false }
 );
 import { getDriveId, getYouTubeId } from '@/features/content/utils';
 import { getWorksheetVisibleDescription } from '@/features/content/worksheet-display';
@@ -166,7 +166,7 @@ export default function ContentPreviewModal({
               </p>
               <button
                 onClick={() => onDownload(previewDoc)}
-                className="flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-purple-500 to-pink-500 px-4 py-3 text-sm font-semibold text-white dark:text-white transition-all hover:from-purple-600 hover:to-pink-600 sm:w-auto sm:px-6 sm:text-base"
+                className="flex w-full items-center justify-center gap-2 rounded-xl px-4 py-3 text-sm font-semibold transition-all sm:w-auto sm:px-6 sm:text-base bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none"
               >
                 <Download className="h-4 w-4 sm:h-5 sm:w-5" />
                 İndir ve Görüntüle
@@ -273,7 +273,7 @@ export default function ContentPreviewModal({
             )}
             <button
               onClick={() => onDownload(previewDoc)}
-              className="flex w-full items-center justify-center gap-2 rounded-xl bg-purple-500 px-3 py-2.5 text-xs font-semibold text-white dark:text-white transition-colors hover:bg-purple-600 sm:w-auto sm:px-4 sm:text-sm"
+              className="flex w-full items-center justify-center gap-2 rounded-xl px-3 py-2.5 text-xs font-semibold transition-colors sm:w-auto sm:px-4 sm:text-sm bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none"
             >
               <Download className="h-4 w-4" />
               İndir

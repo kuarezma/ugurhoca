@@ -33,7 +33,7 @@ const SLIDES: Slide[] = [
     description:
       'Burada çalışma kağıtların, testlerin, ödevlerin ve ilerleme panelin bir arada. Her gün bir adım daha yaklaş.',
     badge: '1. Adım',
-    tone: 'from-fuchsia-500/20 to-violet-500/20',
+    tone: 'from-purple-500/20 to-violet-500/20',
   },
   {
     icon: BookOpen,
@@ -65,7 +65,7 @@ const SLIDES: Slide[] = [
     description:
       'İstediğin sayfaya anında atlamak için ⌘K / Ctrl+K tuşlarını kullan. Tuş takımı olmadan da alttaki menüden gezinebilirsin.',
     badge: 'Bonus',
-    tone: 'from-pink-500/20 to-rose-500/20',
+    tone: 'from-purple-500/20 to-rose-500/20',
   },
 ];
 
@@ -214,7 +214,7 @@ export default function WelcomeTour({ userId, userName }: WelcomeTourProps) {
                 </h2>
                 {userName && stepIndex === 0 ? (
                   <p className="mt-1 text-sm text-slate-700 dark:text-slate-200">
-                    Selam <strong className="text-slate-900 dark:text-white">{userName}</strong>,
+                    Selam {' '}<strong className="text-slate-900 dark:text-white">{userName}</strong>,
                     seni aramızda görmek güzel.
                   </p>
                 ) : null}
@@ -244,7 +244,7 @@ export default function WelcomeTour({ userId, userName }: WelcomeTourProps) {
                   onClick={() => setStepIndex(index)}
                   className={`h-1.5 rounded-full transition-all ${
                     index === stepIndex
-                      ? 'w-6 bg-brand-primary dark:bg-white'
+                      ? 'w-6 bg-brand-primary dark:bg-white text-slate-950 dark:text-slate-950'
                       : 'w-1.5 bg-slate-300 dark:bg-white/25 hover:bg-slate-400 dark:hover:bg-white/40'
                   }`}
                 />
@@ -262,7 +262,7 @@ export default function WelcomeTour({ userId, userName }: WelcomeTourProps) {
                 <button
                   type="button"
                   onClick={dismiss}
-                  className="rounded-full bg-gradient-to-r from-brand-primary to-brand-pink px-4 py-1.5 text-sm font-bold text-white shadow hover:brightness-110"
+                  className="rounded-full px-4 py-1.5 text-sm font-bold hover:brightness-110 bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none"
                 >
                   Hadi başlayalım
                 </button>

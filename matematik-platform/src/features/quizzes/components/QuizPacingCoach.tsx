@@ -156,7 +156,7 @@ export function QuizPacingCoach({
   }
 
   return (
-    <div className="rounded-3xl border border-white/15 bg-gradient-to-br from-slate-900/90 via-slate-800/80 to-slate-900/90 p-5 sm:p-6 shadow-xl space-y-5 text-left">
+    <div className="rounded-3xl border border-white/15 p-5 sm:p-6 shadow-xl space-y-5 text-left bg-surface-1">
       {/* Başlık */}
       <div className="flex items-center justify-between border-b border-white/10 pb-3">
         <div className="flex items-center gap-2.5">

@@ -108,7 +108,7 @@ export default function AdminStatistics() {
               onClick={() => setTimeRange(range)}
               className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all ${
                 timeRange === range
-                  ? 'bg-brand-primary text-white shadow-md shadow-violet-500/25'
+                  ? 'bg-brand-primary shadow-md shadow-brand-primary/25 text-slate-950 dark:text-slate-950'
                   : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200/70 dark:hover:bg-white/5'
               }`}
             >
@@ -141,7 +141,7 @@ export default function AdminStatistics() {
           icon={StickyNote}
           label="Toplam Not"
           value={stats.totalNotes}
-          color="from-purple-500 to-pink-500"
+          color="from-purple-500 to-purple-500"
           subtext="öğrenciler tarafından"
         />
         <StatCard
@@ -172,7 +172,7 @@ export default function AdminStatistics() {
           icon={Activity}
           label="Aktif Kullanıcı"
           value={stats.totalUsers}
-          color="from-rose-500 to-pink-500"
+          color="from-rose-500 to-purple-500"
           iconColor="text-rose-400"
           subtext="kayıtlı"
         />
@@ -219,7 +219,7 @@ export default function AdminStatistics() {
               return (
                 <div
                   key={grade}
-                  className="flex-1 bg-gradient-to-t from-brand-primary via-indigo-500 to-cyan-400 rounded-t-lg min-h-[8px] transition-[height] duration-500 ease-out hover:brightness-110"
+                  className="flex-1 rounded-t-lg min-h-[8px] transition-[height] duration-500 ease-out hover:brightness-110 bg-brand-primary"
                   style={{
                     height: `${height}%`,
                     transitionDelay: `${i * 50}ms`,
@@ -233,7 +233,7 @@ export default function AdminStatistics() {
             {stats.usersByGrade.map(({ grade }) => (
               <div key={grade} className="flex-1 text-center">
                 <span className="text-[10px] text-slate-500 dark:text-slate-400 font-medium truncate block">
-                  {grade.replace('. Sınıf', '')}
+                  {grade.replace('. Sınıf', "")}
                 </span>
               </div>
             ))}
@@ -295,7 +295,7 @@ function StatCard({
   color,
   subtext,
   iconColor = 'text-white',
-  suffix = '',
+  suffix = "",
 }: {
   icon: React.ComponentType<{ className?: string }>;
   label: string;
@@ -320,7 +320,7 @@ function StatCard({
           {suffix}
         </p>
         <p className="text-slate-600 dark:text-slate-300 font-medium text-xs sm:text-sm mt-1">{label}</p>
-        {subtext && <p className="text-slate-500 dark:text-slate-400 text-[11px] sm:text-xs mt-0.5 truncate">{subtext}</p>}
+        {subtext && (<p className="text-slate-500 dark:text-slate-400 text-[11px] sm:text-xs mt-0.5 truncate">{subtext}</p>)}
       </div>
     </div>
   );

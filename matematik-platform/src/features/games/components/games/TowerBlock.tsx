@@ -290,7 +290,7 @@ export function TowerBlock({
           <div className="mt-8 flex justify-center">
             <button
               onClick={startNewGame}
-              className="inline-flex items-center gap-2 rounded-2xl bg-gradient-to-r from-indigo-500 to-purple-600 px-8 py-3.5 text-base font-bold text-white shadow-lg transition hover:scale-105 active:scale-95"
+              className="inline-flex items-center gap-2 rounded-2xl px-8 py-3.5 text-base font-bold transition hover:scale-105 active:scale-95 bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none"
             >
               <Play className="h-5 w-5" /> İnşaata Başla
             </button>
@@ -367,7 +367,7 @@ export function TowerBlock({
                   type="button"
                   onClick={() => selectOption(opt)}
                   disabled={feedback !== null}
-                  className="flex-1 max-w-[140px] rounded-2xl border-2 border-indigo-400/40 bg-gradient-to-tr from-indigo-600 to-purple-600 py-3 font-display text-2xl font-black text-white shadow-xl shadow-indigo-500/20 transition hover:scale-105 active:scale-95 disabled:opacity-50"
+                  className="flex-1 max-w-[140px] rounded-2xl border-2 border-indigo-400/40 py-3 font-display text-2xl font-black transition hover:scale-105 active:scale-95 disabled:opacity-50 bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none"
                 >
                   {opt}
                 </button>
@@ -427,7 +427,7 @@ export function TowerBlock({
           <div className="flex justify-center gap-4">
             <button
               onClick={startNewGame}
-              className="inline-flex items-center gap-2 rounded-2xl bg-indigo-500 px-6 py-3 font-bold text-white dark:text-white transition hover:bg-indigo-600"
+              className="inline-flex items-center gap-2 rounded-2xl px-6 py-3 font-bold transition bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none"
             >
               <RotateCcw className="h-5 w-5" /> Tekrar İnşa Et
             </button>

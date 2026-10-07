@@ -219,7 +219,7 @@ export default function AdminWorksheetCandidatesTab({
 
           <div className="flex flex-col gap-3">
             <button
-              className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 px-4 py-2 text-sm font-bold text-white transition hover:opacity-95 disabled:cursor-not-allowed disabled:opacity-60"
+              className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl px-4 py-2 text-sm font-bold transition hover:opacity-95 disabled:cursor-not-allowed disabled:opacity-60 bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none"
               disabled={isWeekScanRunning || !sourcesReady}
               onClick={onScanCurrentWeek}
               type="button"
@@ -237,7 +237,7 @@ export default function AdminWorksheetCandidatesTab({
                   key={filter.status}
                   className={`rounded-xl border px-3 py-2 text-sm font-semibold transition ${
                     activeFilter === filter.status
-                      ? "border-amber-400/50 bg-amber-500/20 text-amber-900 dark:text-amber-100"
+                      ? 'border-brand-primary/50 bg-brand-primary/20 text-tone-success-fg dark:text-brand-primary-soft'
                       : "border-slate-200 dark:border-white/10 bg-slate-100 dark:bg-slate-900/70 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:border-white/20 dark:hover:text-white"
                   }`}
                   onClick={() => setActiveFilter(filter.status)}
@@ -336,7 +336,8 @@ export default function AdminWorksheetCandidatesTab({
             )}
             {unreachableSourceCount > 0 && (
               <p className="mt-2 text-xs text-amber-600 dark:text-amber-100/90">
-                İlk erişilemeyen kaynak: {sourceStatus?.unreachableSourceUrls?.[0]}
+                İlk erişilemeyen kaynak: {" "}
+                {sourceStatus?.unreachableSourceUrls?.[0]}
               </p>
             )}
             {sourceStatus?.health && (
@@ -439,7 +440,7 @@ export default function AdminWorksheetCandidatesTab({
             </button>
           ) : (
             <button
-              className="inline-flex min-h-11 items-center justify-center rounded-xl bg-gradient-to-r from-sky-500 to-blue-500 px-4 py-2 text-sm font-bold text-white transition hover:opacity-95 disabled:cursor-not-allowed disabled:opacity-60"
+              className="inline-flex min-h-11 items-center justify-center rounded-xl px-4 py-2 text-sm font-bold transition hover:opacity-95 disabled:cursor-not-allowed disabled:opacity-60 bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none"
               disabled={isDriveBusy || !driveConfigured}
               onClick={onConnectDrive}
               type="button"

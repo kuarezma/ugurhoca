@@ -50,7 +50,7 @@ export default function CookieBanner() {
         >
           <div className="relative overflow-hidden rounded-3xl border border-default bg-surface-1/95 p-5 shadow-2xl backdrop-blur">
             <div
-              className="pointer-events-none absolute -right-10 -top-10 h-32 w-32 rounded-full bg-gradient-to-br from-amber-400/30 to-pink-500/30 blur-3xl"
+              className="pointer-events-none absolute -right-10 -top-10 h-32 w-32 rounded-full bg-gradient-to-br from-amber-400/30 to-purple-500/30 blur-3xl"
               aria-hidden="true"
             />
             <button
@@ -64,7 +64,7 @@ export default function CookieBanner() {
 
             <div className="relative flex items-start gap-3">
               <div
-                className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-amber-400 via-orange-400 to-pink-500 text-slate-900 shadow-lg"
+                className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl text-slate-900 shadow-lg bg-brand-accent"
                 aria-hidden="true"
               >
                 <Cookie className="h-5 w-5" />
@@ -98,7 +98,7 @@ export default function CookieBanner() {
               <button
                 type="button"
                 onClick={() => persist('accepted')}
-                className="flex-1 rounded-2xl border border-purple-400/80 dark:border-purple-300/80 bg-gradient-to-r from-fuchsia-700 via-purple-700 to-cyan-800 px-4 py-2.5 text-sm font-bold text-white shadow-lg transition hover:brightness-110 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-fg"
+                className="flex-1 rounded-2xl border border-purple-400/80 dark:border-purple-300/80 px-4 py-2.5 text-sm font-bold transition hover:brightness-110 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-fg bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none"
               >
                 Tümünü kabul et
               </button>

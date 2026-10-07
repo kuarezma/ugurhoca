@@ -151,7 +151,7 @@ export default function AdminClassroomTab({
       studentResults.forEach((r) => r.completed_at && allDates.push(new Date(r.completed_at).getTime()));
       studentSubmissions.forEach((s) => s.submitted_at && allDates.push(new Date(s.submitted_at).getTime()));
       studentSessions.forEach((s) => s.date && allDates.push(new Date(s.date).getTime()));
-      
+
       const lastActiveTime = allDates.length > 0 ? Math.max(...allDates) : null;
       const isInactive = !lastActiveTime || now - lastActiveTime > sevenDaysMs;
 
@@ -243,7 +243,7 @@ export default function AdminClassroomTab({
       {/* 1. Header & Sınıf Şube Seçici */}
       <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 bg-white/80 dark:bg-slate-900/80 border border-slate-200/80 dark:border-white/10 rounded-3xl p-6 backdrop-blur-xl shadow-xl">
         <div className="flex items-center gap-4">
-          <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-amber-500 via-orange-500 to-rose-600 text-white dark:text-white shadow-lg shadow-orange-500/25 shrink-0">
+          <div className="flex h-14 w-14 items-center justify-center rounded-2xl shadow-lg shadow-orange-500/25 shrink-0 bg-brand-accent text-slate-950 dark:text-slate-950">
             <GraduationCap className="h-7 w-7" />
           </div>
           <div>
@@ -272,7 +272,7 @@ export default function AdminClassroomTab({
                 onClick={() => setSelectedGrade(grade)}
                 className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${
                   selectedGrade === grade
-                    ? 'bg-gradient-to-r from-amber-500 to-orange-500 text-slate-950 shadow-md font-black'
+                    ? 'shadow-md font-black bg-brand-primary text-slate-950 dark:text-slate-950'
                     : 'text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white'
                 }`}
               >
@@ -303,7 +303,7 @@ export default function AdminClassroomTab({
             </div>
           </div>
           <div className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white mt-2">
-            {classStudents.length} <span className="text-sm font-semibold text-slate-500 dark:text-slate-400">Öğrenci</span>
+            {classStudents.length} {' '}<span className="text-sm font-semibold text-slate-500 dark:text-slate-400">Öğrenci</span>
           </div>
           <div className="flex items-center gap-1.5 text-xs text-emerald-600 dark:text-emerald-400 mt-1">
             <CheckCircle2 className="w-3.5 h-3.5" />
@@ -319,10 +319,10 @@ export default function AdminClassroomTab({
             </div>
           </div>
           <div className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white mt-2">
-            {totalClassWeekQuestions.toLocaleString('tr-TR')} <span className="text-sm font-semibold text-slate-500 dark:text-slate-400">Soru</span>
+            {totalClassWeekQuestions.toLocaleString('tr-TR')} {' '}<span className="text-sm font-semibold text-slate-500 dark:text-slate-400">Soru</span>
           </div>
           <p className="text-xs text-slate-600 dark:text-slate-400 mt-1">
-            Öğrenci başına ortalama: <strong className="text-amber-600 dark:text-amber-300">{avgWeekQuestions} soru</strong>
+            Öğrenci başına ortalama: {' '}<strong className="text-amber-600 dark:text-amber-300">{avgWeekQuestions} soru</strong>
           </p>
         </div>
 
@@ -334,7 +334,7 @@ export default function AdminClassroomTab({
             </div>
           </div>
           <div className="text-2xl sm:text-3xl font-black text-rose-600 dark:text-rose-300 mt-2">
-            {atRiskCount} <span className="text-sm font-semibold text-slate-500 dark:text-slate-400">Öğrenci</span>
+            {atRiskCount}{' '} <span className="text-sm font-semibold text-slate-500 dark:text-slate-400">Öğrenci</span>
           </div>
           <p className="text-xs text-slate-600 dark:text-slate-400 mt-1">
             Son 7 günde hareketsiz veya ödevi eksik
@@ -366,7 +366,7 @@ export default function AdminClassroomTab({
               onClick={() => setViewMode('roster')}
               className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
                 viewMode === 'roster'
-                  ? 'bg-indigo-600 text-white shadow-sm'
+                  ? 'bg-brand-primary shadow-sm text-slate-950 dark:text-slate-950'
                   : 'text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white'
               }`}
             >
@@ -377,7 +377,7 @@ export default function AdminClassroomTab({
               onClick={() => setViewMode('matrix')}
               className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
                 viewMode === 'matrix'
-                  ? 'bg-indigo-600 text-white shadow-sm'
+                  ? 'bg-brand-primary shadow-sm text-slate-950 dark:text-slate-950'
                   : 'text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white'
               }`}
             >
@@ -388,7 +388,7 @@ export default function AdminClassroomTab({
               onClick={() => setViewMode('risk')}
               className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
                 viewMode === 'risk'
-                  ? 'bg-rose-600 text-white shadow-sm'
+                  ? 'bg-brand-primary shadow-sm text-slate-950 dark:text-slate-950'
                   : 'text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white'
               }`}
             >
@@ -474,7 +474,7 @@ export default function AdminClassroomTab({
                         </td>
                         <td className="py-3 px-4">
                           <div className="flex items-center gap-3">
-                            <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center font-bold text-white dark:text-white text-xs shrink-0">
+                            <div className="w-8 h-8 rounded-xl flex items-center justify-center font-bold text-xs shrink-0 bg-brand-secondary text-slate-950 dark:text-slate-950">
                               {student.name?.[0] || 'Ö'}
                             </div>
                             <div>
@@ -652,7 +652,7 @@ export default function AdminClassroomTab({
                           <td key={ass.id} className="py-2.5 px-4 text-center">
                             {sub ? (
                               <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 font-bold">
-                                ✓ {sub.grade !== null ? `${sub.grade}P` : 'Tamam'}
+                                ✓ {' '}{sub.grade !== null ? `${sub.grade}P` : 'Tamam'}
                               </span>
                             ) : (
                               <span className="inline-flex items-center px-2 py-0.5 rounded-lg bg-rose-500/20 text-rose-600 dark:text-rose-400 font-bold">

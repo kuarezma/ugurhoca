@@ -58,7 +58,7 @@ export default function AdminQuestionFields({
           value={formData.question || ""}
           onChange={(event) => updateFormData({ question: event.target.value })}
           className="w-full bg-surface-2 dark:bg-slate-800/50 border border-default dark:border-slate-700/50 rounded-2xl px-4 py-4 text-primary
-                   focus:outline-none focus:ring-2 focus:ring-violet-500 transition-all resize-none shadow-inner"
+ focus:outline-none focus:ring-2 focus:ring-violet-500 transition-all resize-none shadow-inner"
           placeholder="Soruyu buraya yazın..."
         />
       </div>
@@ -140,7 +140,7 @@ export default function AdminQuestionFields({
             updateFormData({ explanation: event.target.value })
           }
           className="w-full bg-surface-2 dark:bg-slate-800/50 border border-default dark:border-slate-700/50 rounded-2xl px-4 py-3 text-primary
-                   focus:outline-none focus:ring-2 focus:ring-amber-500 transition-all resize-none"
+ focus:outline-none focus:ring-2 focus:ring-amber-500 transition-all resize-none"
           placeholder="Öğrenci soruyu yanlış yaptığında göreceği açıklama..."
         />
       </div>

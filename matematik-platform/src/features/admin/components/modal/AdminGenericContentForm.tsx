@@ -10,7 +10,7 @@ import AdminQuestionImportFields from "@/features/admin/components/modal/generic
 import AdminQuizSettingsFields from "@/features/admin/components/modal/generic/AdminQuizSettingsFields";
 import type {
   AdminFormState,
-  AdminModalType,
+  AdminModalType
 } from "@/features/admin/types";
 import {
   DOCUMENT_CATEGORY_OPTIONS,
@@ -71,7 +71,7 @@ export default function AdminGenericContentForm({
             value={formData.title || ""}
             onChange={(event) => updateFormData({ title: event.target.value })}
             className="w-full bg-surface-2 dark:bg-slate-800/50 border border-default dark:border-slate-700 rounded-xl px-4 py-3 text-primary
-                   focus:outline-none focus:border-purple-500 transition-colors"
+ focus:outline-none focus:border-purple-500 transition-colors"
             placeholder="Başlık girin..."
           />
         </div>
@@ -98,7 +98,7 @@ export default function AdminGenericContentForm({
             value={formData.type || ""}
             onChange={(event) => updateFormData({ type: event.target.value })}
             className="w-full bg-surface-2 dark:bg-slate-800/50 border border-default dark:border-slate-700 rounded-xl px-4 py-3 text-primary
-                     focus:outline-none focus:border-purple-500 transition-colors"
+ focus:outline-none focus:border-purple-500 transition-colors"
           >
             <option value="">Kategori seçin</option>
             {DOCUMENT_CATEGORY_OPTIONS.map((option) => (
@@ -155,7 +155,7 @@ export default function AdminGenericContentForm({
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
           disabled={isSubmitting}
-          className="w-full py-4 bg-gradient-to-r from-purple-500 to-pink-500 text-white font-semibold rounded-xl hover:from-purple-600 hover:to-pink-600 transition-all glow-button flex items-center justify-center gap-2"
+          className="w-full py-4 font-semibold rounded-xl transition-all glow-button flex items-center justify-center gap-2 bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none"
         >
           {isSubmitting ? (
             <>

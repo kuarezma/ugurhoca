@@ -181,7 +181,7 @@ export function HomeDailyGoalWidget({ isLight }: { isLight: boolean }) {
               <div className="mt-4">
                 <div className="flex items-center justify-between text-xs font-semibold mb-1.5">
                   <span className={isLight ? 'text-slate-700' : 'text-slate-300'}>
-                    <strong data-testid="solved-count" className="text-sm font-bold text-emerald-500">{goalData.solved}</strong> / {goalData.target} Soru
+                    <strong data-testid="solved-count" className="text-sm font-bold text-emerald-500">{goalData.solved}</strong> {' '}/ {goalData.target} Soru
                   </span>
                   <div className="flex items-center gap-2">
                     <span className={`text-[11px] ${isLight ? 'text-slate-500' : 'text-slate-400'}`}>
@@ -215,7 +215,7 @@ export function HomeDailyGoalWidget({ isLight }: { isLight: boolean }) {
                   aria-label={`Günlük hedef ilerlemesi: ${goalData.solved} / ${goalData.target}`}
                 >
                   <motion.div
-                    className="h-full rounded-full bg-gradient-to-r from-emerald-500 via-teal-400 to-cyan-400"
+                    className="h-full rounded-full bg-brand-primary"
                     initial={{ width: 0 }}
                     animate={{ width: `${progressPercent}%` }}
                     transition={{ duration: 0.5, ease: 'easeOut' }}
@@ -230,7 +230,7 @@ export function HomeDailyGoalWidget({ isLight }: { isLight: boolean }) {
                 <button
                   type="button"
                   onClick={() => handleAdd(1)}
-                  className="flex-1 sm:flex-initial inline-flex items-center justify-center gap-1 rounded-xl bg-emerald-600 px-3.5 py-2 text-xs font-bold text-white dark:text-white shadow-sm hover:bg-emerald-500 transition active:scale-95"
+                  className="flex-1 sm:flex-initial inline-flex items-center justify-center gap-1 rounded-xl px-3.5 py-2 text-xs font-bold transition active:scale-95 bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none"
                   aria-label="1 soru çözüldü ekle"
                 >
                   <Plus className="h-3.5 w-3.5" /> +1 Soru
@@ -297,7 +297,7 @@ export function HomeDailyGoalWidget({ isLight }: { isLight: boolean }) {
                       }}
                       className={`rounded-lg px-2.5 py-1 font-semibold transition ${
                         goalData.target === preset
-                          ? 'bg-emerald-600 text-white'
+                          ? 'bg-brand-primary text-slate-950 dark:text-slate-950'
                           : isLight
                           ? 'bg-slate-100 text-slate-700 hover:bg-slate-200'
                           : 'bg-white/5 text-slate-300 hover:bg-white/10'
@@ -323,7 +323,7 @@ export function HomeDailyGoalWidget({ isLight }: { isLight: boolean }) {
                     <button
                       type="button"
                       onClick={handleSaveTarget}
-                      className="rounded-lg bg-brand-primary px-2.5 py-1 font-bold text-white dark:text-white hover:bg-brand-primary/90"
+                      className="rounded-lg px-2.5 py-1 font-bold bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none"
                     >
                       Kaydet
                     </button>

@@ -74,15 +74,15 @@ describe('QuestionDrawingOverlay', () => {
 
     const highlighterBtn = screen.getByLabelText('Fosforlu Kalem');
     fireEvent.click(highlighterBtn);
-    expect(highlighterBtn).toHaveClass('bg-yellow-400');
+    expect(highlighterBtn).toHaveClass('bg-brand-primary');
 
     const eraserBtn = screen.getByLabelText('Silgi');
     fireEvent.click(eraserBtn);
-    expect(eraserBtn).toHaveClass('bg-rose-500');
+    expect(eraserBtn).toHaveClass('bg-brand-primary');
 
     const penBtn = screen.getByLabelText('Tükenmez Kalem');
     fireEvent.click(penBtn);
-    expect(penBtn).toHaveClass('bg-amber-500');
+    expect(penBtn).toHaveClass('bg-brand-primary');
   });
 
   it('toggles passthrough mode for answering questions underneath', () => {

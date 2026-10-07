@@ -50,7 +50,7 @@ export default function ForgotPasswordPage() {
   return (
     <main className="page-surface relative min-h-screen overflow-hidden dark:bg-slate-950 text-primary">
       <div
-        className="absolute inset-0 -z-10 bg-gradient-to-br from-indigo-500/20 via-purple-500/10 to-pink-500/10"
+        className="absolute inset-0 -z-10 bg-transparent"
         aria-hidden="true"
       />
 
@@ -87,7 +87,7 @@ export default function ForgotPasswordPage() {
 
           <div className="glass rounded-3xl border border-default bg-surface-1 p-8 shadow-2xl backdrop-blur-xl">
             <div className="mb-6 flex items-center gap-3">
-              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 text-white dark:text-white shadow-lg shadow-indigo-500/30">
+              <div className="flex h-12 w-12 items-center justify-center rounded-2xl shadow-lg shadow-indigo-500/30 bg-brand-secondary text-slate-950 dark:text-slate-950">
                 <KeyRound className="h-6 w-6" aria-hidden="true" />
               </div>
               <div>
@@ -116,7 +116,7 @@ export default function ForgotPasswordPage() {
 
                 <Link
                   href="/giris"
-                  className="flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 py-3 text-sm font-bold text-white shadow-lg shadow-indigo-600/25 hover:brightness-110 transition"
+                  className="flex w-full items-center justify-center gap-2 rounded-xl py-3 text-sm font-bold hover:brightness-110 transition bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none"
                 >
                   <span>Giriş Sayfasına Dön</span>
                 </Link>

@@ -278,7 +278,7 @@ export default function TargetSchoolGapCard({
               onClick={() => setSelectedSchoolId(school.id)}
               className={`rounded-xl px-3 py-1.5 text-xs font-semibold transition-all ${
                 isSelected
-                  ? 'bg-indigo-600 text-white shadow-md ring-2 ring-indigo-500/30 font-bold'
+                  ? 'bg-brand-primary shadow-md ring-2 ring-brand-primary/30 font-bold text-slate-950 dark:text-slate-950'
                   : isLight
                   ? 'border border-slate-200 bg-slate-50 text-slate-700 hover:bg-slate-100'
                   : 'border border-white/10 bg-white/5 text-slate-300 hover:bg-white/10'
@@ -301,7 +301,8 @@ export default function TargetSchoolGapCard({
             Henüz Kayıtlı {examType === 'lgs' ? 'LGS' : 'YKS'} Denemen Bulunmuyor
           </h4>
           <p className={`mt-1 text-xs max-w-md mx-auto ${isLight ? 'text-slate-500' : 'text-slate-400'}`}>
-            Puan ve Net Hesaplayıcıdan son denemeni kaydederek {selectedSchool.name} için kalan net açığını ve ders çalışma önceliklerini anında görebilirsin.
+            Puan ve Net Hesaplayıcıdan son denemeni kaydederek {' '}
+            {selectedSchool.name} için kalan net açığını ve ders çalışma önceliklerini anında görebilirsin.
           </p>
         </div>
       ) : (
@@ -323,7 +324,7 @@ export default function TargetSchoolGapCard({
                   {activeTrial.score.toFixed(1)} Puan
                 </strong>
                 <span className="font-bold">
-                  ({comparison.scoreDelta >= 0 ? `+${comparison.scoreDelta}` : comparison.scoreDelta} Puan)
+                  ({comparison.scoreDelta >= 0 ? `+${comparison.scoreDelta}` : comparison.scoreDelta} {' '}Puan)
                 </span>
               </div>
             </div>
@@ -350,7 +351,7 @@ export default function TargetSchoolGapCard({
 
                 <div className="flex items-baseline justify-between text-xs mt-1">
                   <span className="text-[11px] text-slate-500 dark:text-slate-400">
-                    Mevcut: <strong className="text-slate-900 dark:text-white">{comparison.actualMath}</strong> / Hedef: {comparison.targetMath} Net
+                    Mevcut: {' '}<strong className="text-slate-900 dark:text-white">{comparison.actualMath}</strong> {' '}/ Hedef: {comparison.targetMath} Net
                   </span>
                   <span className="text-[10px] font-bold text-slate-500 dark:text-slate-400">
                     %{comparison.mathPct}
@@ -387,7 +388,7 @@ export default function TargetSchoolGapCard({
 
                 <div className="flex items-baseline justify-between text-xs mt-1">
                   <span className="text-[11px] text-slate-500 dark:text-slate-400">
-                    Mevcut: <strong className="text-slate-900 dark:text-white">{comparison.actualTotal}</strong> / Hedef: {comparison.targetTotal} Net
+                    Mevcut: {' '}<strong className="text-slate-900 dark:text-white">{comparison.actualTotal}</strong> {' '}/ Hedef: {comparison.targetTotal} Net
                   </span>
                   <span className="text-[10px] font-bold text-slate-500 dark:text-slate-400">
                     %{comparison.totalPct}

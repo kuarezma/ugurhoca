@@ -79,7 +79,7 @@ export function ThemeSelector({ className = '', showModeToggle = true }: ThemeSe
               onClick={() => setPalette(item.id)}
               className={`group relative flex flex-col justify-between rounded-2xl border p-4 text-left transition-all ${
                 isSelected
-                  ? 'border-indigo-600 bg-indigo-50/60 shadow-sm dark:border-indigo-500 dark:bg-slate-800'
+                  ? 'border-brand-primary bg-tone-success-bg shadow-sm dark:border-brand-primary dark:bg-slate-800'
                   : 'border-slate-200 bg-slate-50 hover:border-slate-300 hover:bg-white dark:border-slate-800 dark:bg-slate-800/60 dark:hover:border-slate-700 dark:hover:bg-slate-800'
               }`}
             >
@@ -99,7 +99,7 @@ export function ThemeSelector({ className = '', showModeToggle = true }: ThemeSe
                   </div>
 
                   {isSelected && (
-                    <span className="inline-flex items-center gap-1 rounded-full bg-indigo-600 px-2.5 py-0.5 text-[11px] font-bold text-white dark:text-white shadow-xs">
+                    <span className="inline-flex items-center gap-1 rounded-full bg-brand-primary px-2.5 py-0.5 text-[11px] font-bold shadow-xs text-slate-950 dark:text-slate-950">
                       <Check className="h-3 w-3 stroke-[3]" />
                       Seçili
                     </span>

@@ -38,18 +38,18 @@ export function AdventureTopHUD({
       {/* Arka plan aurora ışıması */}
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute -right-16 -top-16 h-72 w-72 rounded-full bg-gradient-to-br from-amber-500/20 via-pink-500/15 to-transparent blur-3xl"
+        className="pointer-events-none absolute -right-16 -top-16 h-72 w-72 rounded-full blur-3xl bg-brand-accent/20"
       />
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute -left-16 -bottom-16 h-72 w-72 rounded-full bg-gradient-to-tr from-indigo-500/20 via-purple-500/15 to-transparent blur-3xl"
+        className="pointer-events-none absolute -left-16 -bottom-16 h-72 w-72 rounded-full blur-3xl bg-brand-secondary/20"
       />
 
       <div className="relative flex flex-col lg:flex-row items-center justify-between gap-6">
         {/* Sol: Maskot Pi ve Konuşma Balonu */}
         <div className="flex items-center gap-4 sm:gap-6 min-w-0 w-full lg:w-auto">
           <div className="relative shrink-0">
-            <div className="absolute -inset-2.5 rounded-full bg-gradient-to-br from-amber-400 via-pink-500 to-indigo-600 opacity-35 blur-md animate-pulse" />
+            <div className="absolute -inset-2.5 rounded-full opacity-35 blur-md animate-pulse bg-brand-accent" />
             <Mascot
               pose={user ? 'celebrate' : 'waving'}
               size={96}
@@ -73,7 +73,7 @@ export function AdventureTopHUD({
 
             <h1 className="font-display text-lg sm:text-xl lg:text-2xl font-black text-primary leading-tight truncate">
               Hoş geldin,{' '}
-              <span className="bg-gradient-to-r from-amber-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
+              <span className="text-blue-700 dark:text-blue-300">
                 {userName}
               </span>
               !

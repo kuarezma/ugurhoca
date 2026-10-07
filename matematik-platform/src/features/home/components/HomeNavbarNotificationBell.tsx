@@ -255,7 +255,7 @@ export function HomeNavbarNotificationBell({
     return notifications.filter((n) => {
       if (showOnlyUnread && n.is_read) return false;
       if (filterTab === 'assignments') {
-        return n.type === 'assignment' || n.title.toLowerCase().includes('ödev');
+        return (n.type === 'assignment' || n.title.toLowerCase().includes('ödev'));
       }
       if (filterTab === 'classes') {
         return (
@@ -370,7 +370,7 @@ export function HomeNavbarNotificationBell({
                   onClick={() => setFilterTab('all')}
                   className={`px-2.5 py-1 rounded-lg font-medium transition-colors whitespace-nowrap text-xs ${
                     filterTab === 'all'
-                      ? 'bg-indigo-600 text-white font-semibold shadow-xs'
+                      ? 'bg-brand-primary font-semibold shadow-xs text-slate-950 dark:text-slate-950'
                       : 'light:text-slate-600 light:hover:bg-slate-200/60 dark:text-slate-300 dark:hover:bg-white/10'
                   }`}
                 >
@@ -381,7 +381,7 @@ export function HomeNavbarNotificationBell({
                   onClick={() => setFilterTab('assignments')}
                   className={`flex items-center gap-1 px-2.5 py-1 rounded-lg font-medium transition-colors whitespace-nowrap text-xs ${
                     filterTab === 'assignments'
-                      ? 'bg-indigo-600 text-white font-semibold shadow-xs'
+                      ? 'bg-brand-primary font-semibold shadow-xs text-slate-950 dark:text-slate-950'
                       : 'light:text-slate-600 light:hover:bg-slate-200/60 dark:text-slate-300 dark:hover:bg-white/10'
                   }`}
                 >
@@ -393,7 +393,7 @@ export function HomeNavbarNotificationBell({
                   onClick={() => setFilterTab('classes')}
                   className={`flex items-center gap-1 px-2.5 py-1 rounded-lg font-medium transition-colors whitespace-nowrap text-xs ${
                     filterTab === 'classes'
-                      ? 'bg-indigo-600 text-white font-semibold shadow-xs'
+                      ? 'bg-brand-primary font-semibold shadow-xs text-slate-950 dark:text-slate-950'
                       : 'light:text-slate-600 light:hover:bg-slate-200/60 dark:text-slate-300 dark:hover:bg-white/10'
                   }`}
                 >
@@ -405,7 +405,7 @@ export function HomeNavbarNotificationBell({
                   onClick={() => setFilterTab('messages')}
                   className={`flex items-center gap-1 px-2.5 py-1 rounded-lg font-medium transition-colors whitespace-nowrap text-xs ${
                     filterTab === 'messages'
-                      ? 'bg-indigo-600 text-white font-semibold shadow-xs'
+                      ? 'bg-brand-primary font-semibold shadow-xs text-slate-950 dark:text-slate-950'
                       : 'light:text-slate-600 light:hover:bg-slate-200/60 dark:text-slate-300 dark:hover:bg-white/10'
                   }`}
                 >
@@ -419,7 +419,7 @@ export function HomeNavbarNotificationBell({
                 onClick={() => setShowOnlyUnread((prev) => !prev)}
                 className={`shrink-0 px-2 py-1 rounded-lg font-medium transition border text-[11px] ${
                   showOnlyUnread
-                    ? 'border-indigo-400 bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 font-semibold'
+                    ? 'border-brand-primary bg-brand-primary/10 text-tone-success-fg dark:text-brand-primary-soft font-semibold'
                     : 'light:border-slate-200 light:text-slate-500 light:hover:bg-slate-100 dark:border-slate-700 dark:text-slate-400 dark:hover:bg-slate-800'
                 }`}
               >
@@ -435,7 +435,7 @@ export function HomeNavbarNotificationBell({
                 <button
                   type="button"
                   onClick={requestDesktopPermission}
-                  className="rounded-lg bg-indigo-600 px-2 py-0.5 font-semibold text-white dark:text-white transition hover:bg-indigo-500 shadow-xs"
+                  className="rounded-lg px-2 py-0.5 font-semibold transition bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none"
                 >
                   İzin Ver
                 </button>

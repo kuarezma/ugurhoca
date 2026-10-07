@@ -94,7 +94,7 @@ export default function AdminSubmissionsModal({
                   onClick={() => setViewMode('list')}
                   className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
                     viewMode === 'list'
-                      ? 'bg-indigo-600 text-white shadow-sm'
+                      ? 'bg-brand-primary shadow-sm text-slate-950 dark:text-slate-950'
                       : 'text-slate-400 hover:text-white'
                   }`}
                 >
@@ -106,7 +106,7 @@ export default function AdminSubmissionsModal({
                   onClick={() => setViewMode('speedGrader')}
                   className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
                     viewMode === 'speedGrader'
-                      ? 'bg-gradient-to-r from-amber-500 to-orange-500 text-slate-950 font-bold shadow-sm'
+                      ? 'font-bold shadow-sm bg-brand-primary text-slate-950 dark:text-slate-950'
                       : 'text-slate-400 hover:text-white'
                   }`}
                 >
@@ -165,7 +165,7 @@ export default function AdminSubmissionsModal({
                   type="button"
                   onClick={handleNext}
                   disabled={currentIndex === submissions.length - 1}
-                  className="flex items-center gap-1 px-3 py-1.5 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 text-xs font-bold text-slate-950 hover:brightness-110 disabled:opacity-40 disabled:cursor-not-allowed transition"
+                  className="flex items-center gap-1 px-3 py-1.5 rounded-xl text-xs font-bold hover:brightness-110 disabled:opacity-40 disabled:cursor-not-allowed transition bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none"
                 >
                   <span className="hidden sm:inline">Sonraki</span>
                   <ChevronRight className="w-4 h-4" />
@@ -185,7 +185,7 @@ export default function AdminSubmissionsModal({
                     onClick={() => setCurrentIndex(idx)}
                     className={`shrink-0 px-3 py-1 rounded-xl text-xs font-medium transition-all ${
                       isSelected
-                        ? 'bg-indigo-600 text-white font-bold ring-2 ring-indigo-400'
+                        ? 'bg-brand-primary font-bold ring-2 ring-brand-primary text-slate-950 dark:text-slate-950'
                         : isGraded
                           ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 hover:bg-emerald-500/30'
                           : 'bg-white/5 text-slate-400 border border-white/10 hover:bg-white/10 hover:text-white'

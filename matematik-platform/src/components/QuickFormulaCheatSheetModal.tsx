@@ -269,7 +269,7 @@ export function QuickFormulaCheatSheetModal({
               onClick={() => setActiveTab('lgs')}
               className={`flex-1 sm:flex-none flex items-center justify-center gap-1.5 px-4 py-1.5 rounded-xl text-xs font-bold transition ${
                 activeTab === 'lgs'
-                  ? 'bg-amber-500 text-slate-950 shadow-md'
+                  ? 'bg-brand-primary shadow-md text-slate-950 dark:text-slate-950'
                   : 'text-slate-400 hover:text-white'
               }`}
             >
@@ -281,7 +281,7 @@ export function QuickFormulaCheatSheetModal({
               onClick={() => setActiveTab('yks')}
               className={`flex-1 sm:flex-none flex items-center justify-center gap-1.5 px-4 py-1.5 rounded-xl text-xs font-bold transition ${
                 activeTab === 'yks'
-                  ? 'bg-indigo-600 text-white shadow-md'
+                  ? 'bg-brand-primary shadow-md text-slate-950 dark:text-slate-950'
                   : 'text-slate-400 hover:text-white'
               }`}
             >

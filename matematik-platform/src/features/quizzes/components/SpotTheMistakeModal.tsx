@@ -124,7 +124,7 @@ export function SpotTheMistakeModal({ isOpen, onClose }: SpotTheMistakeModalProp
                 <button
                   type="button"
                   onClick={handleRestart}
-                  className="px-5 py-3 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-sm flex items-center gap-2 transition"
+                  className="px-5 py-3 rounded-xl font-bold text-sm flex items-center gap-2 transition bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none"
                 >
                   <RotateCcw className="w-4 h-4" />
                   <span>Tekrar Çöz</span>
@@ -158,7 +158,7 @@ export function SpotTheMistakeModal({ isOpen, onClose }: SpotTheMistakeModalProp
               <div className="flex items-center gap-2 text-xs text-amber-800 dark:text-amber-300 bg-amber-50 dark:bg-amber-500/10 px-3.5 py-2 rounded-xl border border-amber-200 dark:border-amber-500/20">
                 <HelpCircle className="w-4 h-4 shrink-0 text-amber-600 dark:text-amber-400" />
                 <span>
-                  Öğrencinin çözümünde <strong>ilk hata hangi adımda yapılmıştır?</strong> İlgili adıma tıklayın.
+                  Öğrencinin çözümünde {' '}<strong>ilk hata hangi adımda yapılmıştır?</strong> İlgili adıma tıklayın.
                 </span>
               </div>
 
@@ -235,7 +235,8 @@ export function SpotTheMistakeModal({ isOpen, onClose }: SpotTheMistakeModalProp
                       <>
                         <XCircle className="w-5 h-5 text-rose-600 dark:text-rose-400" />
                         <span className="text-rose-700 dark:text-rose-300">
-                          Seçtiğin adım doğruydu. İlk hata {currentItem.flawedStepNumber}. adımda yapılmıştı.
+                          Seçtiğin adım doğruydu. İlk hata {' '}
+                          {currentItem.flawedStepNumber}. adımda yapılmıştı.
                         </span>
                       </>
                     )}
@@ -269,12 +270,12 @@ export function SpotTheMistakeModal({ isOpen, onClose }: SpotTheMistakeModalProp
         {!isCompleted && isSelected && (
           <div className="border-t border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-slate-950/80 px-6 py-4 flex items-center justify-between">
             <span className="text-xs text-slate-600 dark:text-slate-400">
-              Kavram Yanılgısı: <strong className="text-slate-900 dark:text-white">{currentItem.conceptMisconception}</strong>
+              Kavram Yanılgısı: {' '}<strong className="text-slate-900 dark:text-white">{currentItem.conceptMisconception}</strong>
             </span>
             <button
               type="button"
               onClick={handleNext}
-              className="px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white dark:text-white text-xs font-bold flex items-center gap-2 transition shadow-lg shadow-indigo-600/20"
+              className="px-5 py-2.5 rounded-xl text-xs font-bold flex items-center gap-2 transition bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none"
             >
               <span>{currentIndex + 1 === FLAWED_SOLUTIONS_DATA.length ? 'Sonuçları Gör' : 'Sonraki Çözüm'}</span>
               <ArrowRight className="w-4 h-4" />

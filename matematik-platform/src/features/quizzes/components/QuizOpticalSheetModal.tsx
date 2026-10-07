@@ -82,7 +82,7 @@ export const QuizOpticalSheetModal: React.FC<QuizOpticalSheetModalProps> = ({
                 aria-label={isDocked ? 'Görünümü pop-up modala al' : 'Ekranın sağına sabitle'}
                 className="rounded-xl p-2 text-slate-600 dark:text-slate-400 hover:bg-black/5 dark:hover:bg-white/10 transition-colors"
               >
-                {isDocked ? <Minimize2 className="w-4 h-4" /> : <PanelRight className="w-4 h-4" />}
+                {isDocked ? (<Minimize2 className="w-4 h-4" /> ): (<PanelRight className="w-4 h-4" />)}
               </button>
             )}
             <button
@@ -129,7 +129,7 @@ export const QuizOpticalSheetModal: React.FC<QuizOpticalSheetModalProps> = ({
                 key={qIdx}
                 className={`flex items-center justify-between p-2.5 rounded-xl border transition-all ${
                   isCurrent
-                    ? 'border-indigo-500 bg-indigo-50/80 dark:bg-indigo-950/40 ring-1 ring-indigo-500/50'
+                    ? 'border-brand-primary bg-tone-success-bg dark:bg-tone-success-bg ring-1 ring-brand-primary/50'
                     : selectedChoice !== undefined
                       ? 'border-emerald-200 dark:border-emerald-500/30 bg-emerald-50/40 dark:bg-emerald-950/10'
                       : 'border-slate-200 dark:border-slate-800 bg-white/80 dark:bg-slate-800/50'
@@ -168,7 +168,7 @@ export const QuizOpticalSheetModal: React.FC<QuizOpticalSheetModalProps> = ({
                         }}
                         className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold transition-all relative ${
                           isBubbled
-                            ? 'bg-slate-900 text-white dark:bg-emerald-400 dark:text-slate-950 ring-2 ring-slate-900 dark:ring-emerald-400 scale-105 shadow-sm shadow-slate-950/40'
+                            ? 'bg-slate-900 text-white dark:bg-brand-primary dark:text-slate-950 ring-2 ring-slate-900 dark:ring-brand-primary scale-105 shadow-sm shadow-slate-950/40'
                             : 'border-2 border-slate-300 dark:border-slate-600 text-slate-600 dark:text-slate-400 hover:border-slate-500 dark:hover:border-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700/50'
                         }`}
                         title={`${qIdx + 1}. Soru için ${letter} şıkkını işaretle`}
@@ -210,7 +210,7 @@ export const QuizOpticalSheetModal: React.FC<QuizOpticalSheetModalProps> = ({
                 if (!isDocked) onClose();
                 onSubmit();
               }}
-              className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white dark:text-white text-xs font-bold transition-all shadow-md shadow-emerald-600/20 active:scale-95"
+              className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold transition-all active:scale-95 bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none"
             >
               <CheckCircle2 className="w-3.5 h-3.5" />
               <span>Optik Formu Teslim Et</span>
@@ -220,7 +220,7 @@ export const QuizOpticalSheetModal: React.FC<QuizOpticalSheetModalProps> = ({
             <button
               type="button"
               onClick={onClose}
-              className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white dark:text-white text-xs font-bold transition-colors shadow-md shadow-indigo-600/20"
+              className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold transition-colors bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none"
             >
               <span>Teste Devam Et</span>
               <ArrowRight className="w-3.5 h-3.5" />

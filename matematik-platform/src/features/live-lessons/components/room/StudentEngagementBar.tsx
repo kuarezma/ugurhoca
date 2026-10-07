@@ -51,7 +51,7 @@ export function StudentEngagementBar({
       { credentials: "same-origin" },
     );
     if (!response.ok) return;
-    const payload = (await response.json().catch(() => null)) as { approved?: boolean } | null;
+    const payload = (await response.json().catch(() => null)) as { approved?: boolean ;} | null;
     if (payload?.approved) unlockAfterApproval();
   }, [identity, lessonId, unlockAfterApproval]);
 
@@ -212,7 +212,7 @@ export function StudentEngagementBar({
           onClick={() => void toggleRaise()}
           className={`touch-target rounded-xl px-4 py-2 text-sm font-medium transition ${
             raised
-              ? "bg-amber-500 text-white hover:bg-amber-400"
+              ? 'bg-brand-primary hover:bg-brand-primary text-slate-950 dark:text-slate-950'
               : "border border-border hover:bg-foreground/5"
           }`}
         >
@@ -224,7 +224,7 @@ export function StudentEngagementBar({
           disabled={micBusy}
           className={`touch-target rounded-xl px-4 py-2 text-sm font-medium transition disabled:opacity-60 ${
             isMicrophoneEnabled
-              ? "bg-emerald-600 text-white hover:bg-emerald-500"
+              ? 'bg-brand-primary hover:bg-brand-primary text-slate-950 dark:text-slate-950'
               : "border border-border hover:bg-foreground/5"
           }`}
         >

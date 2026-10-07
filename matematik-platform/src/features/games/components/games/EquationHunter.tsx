@@ -240,7 +240,7 @@ export function EquationHunter({
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
           onClick={startGame}
-          className="rounded-2xl bg-gradient-to-r from-violet-600 to-indigo-600 px-8 py-4 text-xl font-bold text-white shadow-lg"
+          className="rounded-2xl px-8 py-4 text-xl font-bold bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none"
         >
           <Play className="mr-2 inline h-6 w-6" />
           Oyunu Başlat
@@ -270,7 +270,7 @@ export function EquationHunter({
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
           onClick={startGame}
-          className="rounded-2xl bg-gradient-to-r from-violet-600 to-indigo-600 px-8 py-4 text-xl font-bold text-white"
+          className="rounded-2xl px-8 py-4 text-xl font-bold bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none"
         >
           <RotateCcw className="mr-2 inline h-6 w-6" />
           Tekrar Oyna
@@ -346,7 +346,7 @@ export function EquationHunter({
           type="submit"
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
-          className="rounded-2xl bg-gradient-to-r from-violet-600 to-indigo-600 px-8 py-4 text-xl font-bold text-white shadow-lg shadow-violet-500/25"
+          className="rounded-2xl px-8 py-4 text-xl font-bold bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none"
         >
           Gönder
         </motion.button>

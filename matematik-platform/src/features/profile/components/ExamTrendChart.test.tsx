@@ -75,11 +75,11 @@ describe('ExamTrendChart', () => {
 
     const mathBtn = screen.getByRole('button', { name: 'Matematik' });
     fireEvent.click(mathBtn);
-    expect(mathBtn).toHaveClass('bg-emerald-600');
+    expect(mathBtn).toHaveClass('bg-brand-primary');
 
     const totalBtn = screen.getByRole('button', { name: 'Toplam Net' });
     fireEvent.click(totalBtn);
-    expect(totalBtn).toHaveClass('bg-purple-600');
+    expect(totalBtn).toHaveClass('bg-brand-primary');
   });
 
   it('updates selected trial on point interaction', () => {

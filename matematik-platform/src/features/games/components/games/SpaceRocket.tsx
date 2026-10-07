@@ -222,9 +222,9 @@ export function SpaceRocket({ onScore, scoreMultiplier }: GameComponentProps) {
           <motion.div
             animate={{ y: [0, -16, 0], rotate: [-8, 8, -8] }}
             transition={{ duration: 2, repeat: Infinity }}
-            className="mx-auto mb-6 flex h-32 w-32 items-center justify-center rounded-3xl bg-gradient-to-br from-indigo-500 via-sky-500 to-amber-400 shadow-lg shadow-sky-500/30"
+            className="mx-auto mb-6 flex h-32 w-32 items-center justify-center rounded-3xl shadow-lg shadow-sky-500/30 bg-brand-secondary"
           >
-            <Rocket className="h-16 w-16 text-white dark:text-white" />
+            <Rocket className="h-16 w-16 text-slate-950 dark:text-slate-950" />
           </motion.div>
           <h2 className="mb-4 text-3xl font-bold text-primary">Uzay Roketi</h2>
           <p className="mx-auto mb-6 max-w-md text-slate-400">
@@ -236,7 +236,7 @@ export function SpaceRocket({ onScore, scoreMultiplier }: GameComponentProps) {
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
           onClick={startGame}
-          className="rounded-2xl bg-gradient-to-r from-indigo-500 to-amber-400 px-8 py-4 text-xl font-bold text-white shadow-lg shadow-indigo-500/30"
+          className="rounded-2xl px-8 py-4 text-xl font-bold bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none"
         >
           <Play className="mr-2 inline h-6 w-6" />
           Roketi Fırlat
@@ -269,7 +269,7 @@ export function SpaceRocket({ onScore, scoreMultiplier }: GameComponentProps) {
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
           onClick={startGame}
-          className="rounded-2xl bg-gradient-to-r from-indigo-500 to-amber-400 px-8 py-4 text-xl font-bold text-white"
+          className="rounded-2xl px-8 py-4 text-xl font-bold bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none"
         >
           <RotateCcw className="mr-2 inline h-6 w-6" />
           Tekrar Uç

@@ -321,7 +321,7 @@ export const buildProfileDashboardViewModel = ({
   // Odak Görev 1: Yaklaşan Ödev (Varsa en yakın teslim tarihli ödev)
   if (nearestAssignment) {
     tasks.push({
-      accentClass: 'from-orange-500/20 via-amber-500/15 to-yellow-500/10',
+      accentClass: 'from-brand-accent/20 to-brand-accent/20',
       action: {
         assignmentId: nearestAssignment.id,
         type: 'open-assignment',
@@ -340,7 +340,7 @@ export const buildProfileDashboardViewModel = ({
   // Odak Görev 2: Zamanı Gelen Tekrar (Leitner aralıklı tekrar vadesi dolmuş yanlış sorular)
   if (dueMistakesCount > 0) {
     tasks.push({
-      accentClass: 'from-amber-500/20 via-orange-500/15 to-rose-500/10',
+      accentClass: 'from-brand-accent/20 to-brand-accent/20',
       action: { type: 'start-mistake-review' },
       actionLabel: 'Tekrarı Başlat',
       badge: 'Tekrar',
@@ -358,7 +358,7 @@ export const buildProfileDashboardViewModel = ({
     );
 
     tasks.push({
-      accentClass: 'from-rose-500/20 via-orange-500/15 to-amber-500/10',
+      accentClass: 'from-brand-danger/20 to-brand-danger/20',
       action: {
         type: 'start-quiz',
         quizId: matchingQuiz?.id,
@@ -375,7 +375,7 @@ export const buildProfileDashboardViewModel = ({
 
   if (weeklyWorksheet) {
     tasks.push({
-      accentClass: 'from-cyan-500/20 via-blue-500/15 to-indigo-500/10',
+      accentClass: 'from-brand-secondary/20 to-brand-secondary/20',
       action: {
         type: 'open-document',
         url: weeklyWorksheet.href,
@@ -391,7 +391,7 @@ export const buildProfileDashboardViewModel = ({
 
   if (availableQuizzes[0]) {
     tasks.push({
-      accentClass: 'from-emerald-500/20 via-teal-500/15 to-cyan-500/10',
+      accentClass: 'from-brand-primary/20 to-brand-primary/20',
       action: {
         type: 'start-quiz',
         quizId: availableQuizzes[0].id,
@@ -407,7 +407,7 @@ export const buildProfileDashboardViewModel = ({
 
   if (goalSnapshot.remainingMinutes > 0) {
     tasks.push({
-      accentClass: 'from-sky-500/20 via-blue-500/15 to-indigo-500/10',
+      accentClass: 'from-brand-secondary/20 to-brand-secondary/20',
       action: { type: 'go-progress' },
       actionLabel: 'Hedefe Dön',
       badge: 'Hedef',
@@ -420,7 +420,7 @@ export const buildProfileDashboardViewModel = ({
 
   if (unreadImportantNotification) {
     tasks.push({
-      accentClass: 'from-violet-500/20 via-fuchsia-500/15 to-pink-500/10',
+      accentClass: 'from-brand-pink/20 to-brand-pink/20',
       action: {
         notificationId: unreadImportantNotification.id,
         type: 'open-notification',

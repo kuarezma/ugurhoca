@@ -116,7 +116,7 @@ export function YksCalculatorContainer() {
         <div className="rounded-3xl border border-default bg-surface-1 dark:bg-slate-900/80 p-6 sm:p-8 backdrop-blur-md shadow-2xl mb-8">
           <div className="flex flex-wrap items-center justify-between gap-4">
             <div className="flex items-center gap-3">
-              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-purple-500 to-pink-600 text-white dark:text-white shadow-lg">
+              <div className="flex h-12 w-12 items-center justify-center rounded-2xl shadow-lg bg-brand-secondary text-slate-950 dark:text-slate-950">
                 <GraduationCap className="h-6 w-6" />
               </div>
               <div>
@@ -184,7 +184,7 @@ export function YksCalculatorContainer() {
                 onClick={() => setActiveTab('tyt')}
                 className={`flex-1 py-2 rounded-xl transition ${
                   activeTab === 'tyt'
-                    ? 'bg-purple-600 text-white shadow-md'
+                    ? 'bg-brand-primary shadow-md text-slate-950 dark:text-slate-950'
                     : 'text-secondary hover:text-primary'
                 }`}
               >
@@ -195,7 +195,7 @@ export function YksCalculatorContainer() {
                 onClick={() => setActiveTab('ayt')}
                 className={`flex-1 py-2 rounded-xl transition ${
                   activeTab === 'ayt'
-                    ? 'bg-purple-600 text-white shadow-md'
+                    ? 'bg-brand-primary shadow-md text-slate-950 dark:text-slate-950'
                     : 'text-secondary hover:text-primary'
                 }`}
               >
@@ -311,7 +311,7 @@ export function YksCalculatorContainer() {
               <div className="pt-2">
                 <Link
                   href="/programlar/yks"
-                  className="w-full flex items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-purple-600 to-pink-600 px-4 py-3 text-xs sm:text-sm font-bold text-white shadow-lg transition hover:scale-[1.02] active:scale-[0.98]"
+                  className="w-full flex items-center justify-center gap-2 rounded-2xl px-4 py-3 text-xs sm:text-sm font-bold transition hover:scale-[1.02] active:scale-[0.98] bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none"
                 >
                   <Target className="h-4 w-4" />
                   Bu Puanla Üniversite Tercih Sihirbazı

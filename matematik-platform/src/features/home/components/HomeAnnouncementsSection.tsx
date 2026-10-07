@@ -51,7 +51,7 @@ export function HomeAnnouncementsSection({
                 style={{ animationDelay: `${index * 0.05}s` }}
               >
                 {isNewContent(item.created_at) && (
-                  <span className="absolute top-3 right-3 z-10 px-2 py-1 rounded-full bg-pink-700 text-white dark:text-white text-[10px] font-bold shadow-lg">
+                  <span className="absolute top-3 right-3 z-10 px-2 py-1 rounded-full bg-purple-700 text-white dark:text-white text-[10px] font-bold shadow-lg">
                     Yeni
                   </span>
                 )}
@@ -70,7 +70,7 @@ export function HomeAnnouncementsSection({
                 )}
                 <div className="p-3 sm:p-4">
                   <div className="flex items-center gap-2 mb-2 text-xs text-secondary">
-                    <Bell className="w-4 h-4 text-pink-400" />
+                    <Bell className="w-4 h-4 text-purple-400" />
                     {new Date(item.created_at).toLocaleDateString('tr-TR', {
                       day: 'numeric',
                       month: 'short',

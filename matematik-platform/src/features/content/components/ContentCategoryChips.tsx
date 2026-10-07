@@ -57,7 +57,7 @@ export function ContentCategoryChips({
                 onClick={() => onSelectGrade(g.id)}
                 className={`shrink-0 rounded-full px-4 py-2 text-xs font-semibold transition-all duration-200 ${
                   isSelected
-                    ? 'bg-gradient-to-r from-purple-600 via-fuchsia-600 to-pink-600 text-white shadow-lg shadow-purple-600/25 border-0 scale-[1.02]'
+                    ? 'shadow-lg shadow-brand-primary/25 border-0 scale-[1.02] bg-brand-primary text-slate-950 dark:text-slate-950'
                     : 'border border-default dark:border-slate-500 bg-surface-2/70 text-secondary hover:bg-surface-3 hover:text-primary hover:border-slate-600'
                 }`}
               >
@@ -86,7 +86,7 @@ export function ContentCategoryChips({
                 onClick={() => onSelectType(t.id)}
                 className={`shrink-0 rounded-full px-4 py-2 text-xs font-semibold transition-all duration-200 ${
                   isSelected
-                    ? 'bg-gradient-to-r from-indigo-600 via-blue-600 to-cyan-500 text-white shadow-lg shadow-cyan-600/25 border-0 scale-[1.02]'
+                    ? 'shadow-lg shadow-brand-primary/25 border-0 scale-[1.02] bg-brand-primary text-slate-950 dark:text-slate-950'
                     : 'border border-default dark:border-slate-500 bg-surface-2/70 text-secondary hover:bg-surface-3 hover:text-primary hover:border-slate-600'
                 }`}
               >

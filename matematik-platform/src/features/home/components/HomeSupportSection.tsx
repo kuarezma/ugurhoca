@@ -21,7 +21,7 @@ type HomeSupportSectionProps = {
 };
 
 export function HomeSupportSection({
-  user,
+  user
 }: HomeSupportSectionProps) {
   const { showToast } = useToast();
   const [supportMessage, setSupportMessage] = useState('');
@@ -108,7 +108,7 @@ export function HomeSupportSection({
     <section className="defer-section px-4 py-8 sm:py-12">
       <div className="max-w-6xl mx-auto">
         <div
-          className="relative overflow-hidden rounded-3xl border backdrop-blur-xl light-section dark:border-indigo-500/20 dark:bg-gradient-to-br dark:from-slate-900/90 dark:via-slate-900/80 dark:to-slate-800/90"
+          className="relative overflow-hidden rounded-3xl border backdrop-blur-xl light-section dark:border-indigo-500/20 dark:bg-surface-1"
         >
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(99,102,241,0.18),transparent_30%),radial-gradient(circle_at_bottom_left,rgba(236,72,153,0.14),transparent_30%)]" />
           <div className="relative p-6 sm:p-8">

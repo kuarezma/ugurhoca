@@ -58,7 +58,7 @@ export function SelectedGameView({
               )}
             </button>
 
-            <div className="px-3 py-1.5 sm:px-4 sm:py-2 bg-gradient-to-r from-purple-600 to-pink-600 rounded-xl text-white dark:text-white font-bold text-xs sm:text-base shadow">
+            <div className="px-3 py-1.5 sm:px-4 sm:py-2 bg-gradient-to-r from-purple-600 to-purple-600 rounded-xl text-white dark:text-white font-bold text-xs sm:text-base shadow">
               Toplam: {totalScore} Puan
             </div>
           </div>

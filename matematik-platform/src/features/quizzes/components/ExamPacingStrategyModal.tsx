@@ -213,7 +213,7 @@ export function ExamPacingStrategyModal({ isOpen, onClose }: ExamPacingStrategyM
               onClick={() => setActiveTab('lgs')}
               className={`flex flex-1 items-center justify-center gap-2 py-2 rounded-xl transition ${
                 activeTab === 'lgs'
-                  ? 'bg-amber-500/20 text-amber-300 border border-amber-500/30 shadow'
+                  ? 'bg-brand-primary/20 text-brand-primary-soft border border-brand-primary/30 shadow'
                   : 'text-slate-400 hover:text-white'
               }`}
             >
@@ -225,7 +225,7 @@ export function ExamPacingStrategyModal({ isOpen, onClose }: ExamPacingStrategyM
               onClick={() => setActiveTab('tyt')}
               className={`flex flex-1 items-center justify-center gap-2 py-2 rounded-xl transition ${
                 activeTab === 'tyt'
-                  ? 'bg-purple-500/20 text-purple-300 border border-purple-500/30 shadow'
+                  ? 'bg-brand-primary/20 text-brand-primary-soft border border-brand-primary/30 shadow'
                   : 'text-slate-400 hover:text-white'
               }`}
             >
@@ -583,7 +583,7 @@ export function ExamPacingStrategyModal({ isOpen, onClose }: ExamPacingStrategyM
             <div className="space-y-1 text-[11px]">
               <strong className="text-slate-900 dark:text-white block font-medium">Uğur Hoca Pedagojik Zaman Kuralı:</strong>
               <p className="text-slate-600 dark:text-slate-400 leading-relaxed">
-                Bir soruda 2. dakikayı aştığında çözüme yaklaşamadıysan hemen yanına işaret koyup sonraki soruya geçmelisin. 
+                Bir soruda 2. dakikayı aştığında çözüme yaklaşamadıysan hemen yanına işaret koyup sonraki soruya geçmelisin.
                 Turlama payı (10-15 dk), sınavın sonunda zihnin açılmışken o soruları çok daha hızlı çözmeni sağlar.
               </p>
             </div>
@@ -607,11 +607,11 @@ export function ExamPacingStrategyModal({ isOpen, onClose }: ExamPacingStrategyM
               onClick={handleSaveStrategy}
               className={`inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold transition shadow-sm ${
                 savedNotice
-                  ? 'bg-emerald-600 text-white'
-                  : 'bg-amber-500 hover:bg-amber-400 text-slate-950'
+                  ? 'bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none'
+                  : 'bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none'
               }`}
             >
-              {savedNotice ? <Check className="h-4 w-4" /> : <BookmarkCheck className="h-4 w-4" />}
+              {savedNotice ? (<Check className="h-4 w-4" /> ): (<BookmarkCheck className="h-4 w-4" />)}
               <span>{savedNotice ? 'Strateji Kaydedildi!' : 'Stratejimi Kaydet'}</span>
             </button>
             <button

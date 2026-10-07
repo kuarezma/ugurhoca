@@ -159,12 +159,12 @@ export function RoomLobbyPreview({
             <span>•</span>
             <span className="flex items-center gap-1">
               <Users className="h-3.5 w-3.5 text-slate-400" />
-              <span>Oda: <strong className="font-mono text-slate-800 dark:text-slate-200">{lesson.room_id}</strong></span>
+              <span>Oda: {' '}<strong className="font-mono text-slate-800 dark:text-slate-200">{lesson.room_id}</strong></span>
             </span>
           </div>
 
           <p className="text-sm text-slate-600 dark:text-slate-300">
-            Katılımcı: <strong className="text-slate-900 dark:text-white">{displayName}</strong>
+            Katılımcı: {' '}<strong className="text-slate-900 dark:text-white">{displayName}</strong>
           </p>
         </div>
 
@@ -180,11 +180,11 @@ export function RoomLobbyPreview({
               onClick={onMicToggle}
               className={`flex items-center gap-2 rounded-xl border px-4 py-2.5 text-sm font-semibold transition ${
                 initialMicOn
-                  ? 'border-emerald-500/40 bg-emerald-500/20 text-emerald-700 dark:text-emerald-300'
+                  ? 'border-brand-primary/40 bg-brand-primary/20 text-tone-success-fg dark:text-brand-primary-soft'
                   : 'border-slate-200 dark:border-white/10 bg-white dark:bg-white/5 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
               }`}
             >
-              {initialMicOn ? <Mic className="h-4 w-4" /> : <MicOff className="h-4 w-4" />}
+              {initialMicOn ? (<Mic className="h-4 w-4" /> ): (<MicOff className="h-4 w-4" />)}
               <span>{initialMicOn ? 'Mikrofon Açık' : 'Mikrofon Kapalı'}</span>
             </button>
 
@@ -194,11 +194,11 @@ export function RoomLobbyPreview({
                 onClick={onCameraToggle}
                 className={`flex items-center gap-2 rounded-xl border px-4 py-2.5 text-sm font-semibold transition ${
                   initialCameraOn
-                    ? 'border-violet-500/40 bg-violet-500/20 text-violet-700 dark:text-violet-300'
+                    ? 'border-brand-primary/40 bg-brand-primary/20 text-tone-success-fg dark:text-brand-primary-soft'
                     : 'border-slate-200 dark:border-white/10 bg-white dark:bg-white/5 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
                 }`}
               >
-                {initialCameraOn ? <Video className="h-4 w-4" /> : <VideoOff className="h-4 w-4" />}
+                {initialCameraOn ? (<Video className="h-4 w-4" /> ): (<VideoOff className="h-4 w-4" />)}
                 <span>{initialCameraOn ? 'Kamera Açık' : 'Kamera Kapalı'}</span>
               </button>
             )}
@@ -271,7 +271,7 @@ export function RoomLobbyPreview({
           type="button"
           onClick={onJoin}
           disabled={connecting}
-          className="flex min-h-12 w-full items-center justify-center gap-2 rounded-2xl bg-brand-primary py-3.5 text-base font-bold text-white dark:text-white shadow-lg shadow-brand-primary/30 transition-all duration-200 hover:bg-brand-primary-deep active:scale-98 disabled:opacity-50"
+          className="flex min-h-12 w-full items-center justify-center gap-2 rounded-2xl py-3.5 text-base font-bold shadow-brand-primary/30 transition-all duration-200 active:scale-98 disabled:opacity-50 bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none"
         >
           {connecting ? (
             <span>Odaya Bağlanılıyor...</span>

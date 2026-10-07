@@ -45,7 +45,7 @@ export default function GlobalError({
           <button
             type="button"
             onClick={() => reset()}
-            className="rounded-xl bg-gradient-to-r from-indigo-500 to-purple-500 px-6 py-3 text-sm font-semibold text-white dark:text-white shadow-lg transition hover:from-indigo-600 hover:to-purple-600"
+            className="rounded-xl px-6 py-3 text-sm font-semibold transition bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none"
           >
             Tekrar dene
           </button>

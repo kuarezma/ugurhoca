@@ -174,9 +174,9 @@ export function BalloonPop({ onScore, scoreMultiplier }: GameComponentProps) {
           <motion.div
             animate={{ y: [0, -12, 0], rotate: [0, 4, -4, 0] }}
             transition={{ duration: 2.2, repeat: Infinity }}
-            className="mx-auto mb-6 flex h-32 w-32 items-center justify-center rounded-full bg-gradient-to-br from-pink-400 via-fuchsia-500 to-cyan-400 shadow-lg shadow-pink-500/30"
+            className="mx-auto mb-6 flex h-32 w-32 items-center justify-center rounded-full shadow-lg shadow-purple-500/30 bg-brand-pink"
           >
-            <Sparkles className="h-16 w-16 text-white dark:text-white" />
+            <Sparkles className="h-16 w-16 text-slate-950 dark:text-slate-950" />
           </motion.div>
           <h2 className="mb-4 text-3xl font-bold text-primary">Balon Patlatma</h2>
           <p className="mx-auto mb-6 max-w-md text-slate-400">
@@ -189,7 +189,7 @@ export function BalloonPop({ onScore, scoreMultiplier }: GameComponentProps) {
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
           onClick={startGame}
-          className="rounded-2xl bg-gradient-to-r from-pink-500 to-cyan-500 px-8 py-4 text-xl font-bold text-white shadow-lg shadow-cyan-500/30"
+          className="rounded-2xl px-8 py-4 text-xl font-bold bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none"
         >
           <Play className="mr-2 inline h-6 w-6" />
           Oyunu Başlat
@@ -208,19 +208,19 @@ export function BalloonPop({ onScore, scoreMultiplier }: GameComponentProps) {
         <motion.div
           animate={{ scale: [1, 1.14, 1], rotate: [0, 8, -8, 0] }}
           transition={{ duration: 0.8, repeat: Infinity }}
-          className="mx-auto mb-6 flex h-32 w-32 items-center justify-center rounded-full bg-gradient-to-br from-yellow-300 to-pink-500"
+          className="mx-auto mb-6 flex h-32 w-32 items-center justify-center rounded-full bg-gradient-to-br from-yellow-300 to-purple-500"
         >
           <Trophy className="h-16 w-16 text-white dark:text-white" />
         </motion.div>
         <h2 className="mb-2 text-3xl font-bold text-primary">Balonlar Harika!</h2>
-        <p className="mb-2 text-5xl font-bold text-pink-300">{score} Puan</p>
+        <p className="mb-2 text-5xl font-bold text-purple-300">{score} Puan</p>
         <p className="mb-8 text-slate-400">{round - 1} balon turu oynadın.</p>
         <motion.button
           type="button"
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
           onClick={startGame}
-          className="rounded-2xl bg-gradient-to-r from-pink-500 to-cyan-500 px-8 py-4 text-xl font-bold text-white"
+          className="rounded-2xl px-8 py-4 text-xl font-bold bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none"
         >
           <RotateCcw className="mr-2 inline h-6 w-6" />
           Tekrar Oyna
@@ -233,7 +233,7 @@ export function BalloonPop({ onScore, scoreMultiplier }: GameComponentProps) {
     <div className="mx-auto max-w-3xl">
       <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
         <div className="rounded-xl bg-black/50 px-4 py-2 font-bold text-white dark:text-white backdrop-blur-sm">
-          Puan: <span className="text-pink-300">{score}</span>
+          Puan: <span className="text-purple-300">{score}</span>
         </div>
         <div className="flex gap-2">
           {Array.from({ length: 3 }).map((_, index) => (

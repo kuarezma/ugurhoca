@@ -124,7 +124,7 @@ export default function AdminSubmissionReviewCard({
     <div className="glass p-5 rounded-2xl border border-slate-200/80 dark:border-white/5 space-y-4">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 bg-gradient-to-br from-indigo-500 to-purple-500 rounded-xl flex items-center justify-center font-bold text-white dark:text-white">
+          <div className="w-10 h-10 rounded-xl flex items-center justify-center font-bold bg-brand-secondary text-slate-950 dark:text-slate-950">
             {submission.student_name?.[0] || "Ö"}
           </div>
           <div>
@@ -314,7 +314,7 @@ export default function AdminSubmissionReviewCard({
 
           <button
             onClick={() => onUpdateSubmission(submission.id, grade, feedback)}
-            className="w-full sm:w-auto px-6 py-2.5 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white text-sm font-bold rounded-xl transition-all shadow-lg shadow-emerald-500/20 flex items-center justify-center gap-2"
+            className="w-full sm:w-auto px-6 py-2.5 text-sm font-bold rounded-xl transition-all flex items-center justify-center gap-2 bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none"
           >
             <CheckCircle2 className="w-4 h-4" />
             Puanla

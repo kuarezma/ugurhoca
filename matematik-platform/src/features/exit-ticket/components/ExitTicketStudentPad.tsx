@@ -32,22 +32,22 @@ const OPTION_THEMES = [
   {
     letterBg: 'bg-rose-500 text-white',
     border: 'border-rose-500/40 hover:border-rose-400 bg-rose-500/10 active:bg-rose-500/20',
-    selected: 'border-rose-500 bg-rose-500/25 ring-2 ring-rose-500',
+    selected: 'border-brand-primary bg-brand-primary/25 ring-2 ring-brand-primary',
   },
   {
     letterBg: 'bg-sky-500 text-white',
     border: 'border-sky-500/40 hover:border-sky-400 bg-sky-500/10 active:bg-sky-500/20',
-    selected: 'border-sky-500 bg-sky-500/25 ring-2 ring-sky-500',
+    selected: 'border-brand-primary bg-brand-primary/25 ring-2 ring-brand-primary',
   },
   {
     letterBg: 'bg-amber-500 text-white',
     border: 'border-amber-500/40 hover:border-amber-400 bg-amber-500/10 active:bg-amber-500/20',
-    selected: 'border-amber-500 bg-amber-500/25 ring-2 ring-amber-500',
+    selected: 'border-brand-primary bg-brand-primary/25 ring-2 ring-brand-primary',
   },
   {
     letterBg: 'bg-emerald-500 text-white',
     border: 'border-emerald-500/40 hover:border-emerald-400 bg-emerald-500/10 active:bg-emerald-500/20',
-    selected: 'border-emerald-500 bg-emerald-500/25 ring-2 ring-emerald-500',
+    selected: 'border-brand-primary bg-brand-primary/25 ring-2 ring-brand-primary',
   },
 ];
 
@@ -188,7 +188,7 @@ export function ExitTicketStudentPad({ initialCode = '', onExit }: ExitTicketStu
 
           <button
             type="submit"
-            className="w-full mt-2 py-3.5 px-6 rounded-xl font-bold text-slate-950 bg-gradient-to-r from-amber-400 to-amber-300 hover:from-amber-300 hover:to-amber-200 active:scale-[0.99] transition shadow-lg shadow-amber-500/20 flex items-center justify-center gap-2"
+            className="w-full mt-2 py-3.5 px-6 rounded-xl font-bold active:scale-[0.99] transition flex items-center justify-center gap-2 bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none"
           >
             <span>Derse Bağlan</span>
             <ArrowRight className="w-5 h-5" />
@@ -196,7 +196,7 @@ export function ExitTicketStudentPad({ initialCode = '', onExit }: ExitTicketStu
         </form>
 
         <div className="mt-6 text-center text-xs text-slate-600 dark:text-slate-300">
-          Örnek demo test oturumu için PIN kodu: <strong className="text-slate-900 dark:text-slate-200 font-mono">123456</strong>
+          Örnek demo test oturumu için PIN kodu: {' '}<strong className="text-slate-900 dark:text-slate-200 font-mono">123456</strong>
         </div>
       </div>
     );
@@ -373,7 +373,7 @@ export function ExitTicketStudentPad({ initialCode = '', onExit }: ExitTicketStu
           <div className="rounded-2xl bg-amber-50 dark:bg-amber-500/10 border border-amber-200 dark:border-amber-500/30 p-4 flex items-center gap-3 text-amber-800 dark:text-amber-300 text-sm">
             <CheckCircle2 className="w-5 h-5 flex-shrink-0 text-amber-500 dark:text-amber-400" />
             <div>
-              <p className="font-semibold">Cevabın Alındı: {OPTION_LETTERS[studentResponse.selectedIndex]} Şıkkı</p>
+              <p className="font-semibold">Cevabın Alındı: {OPTION_LETTERS[studentResponse.selectedIndex]} {' '}Şıkkı</p>
               <p className="text-xs text-amber-700 dark:text-amber-400/80">
                 Öğretmen sınıf dağılımını açtığında doğru cevabı ve pedagojik açıklamayı burada göreceksin. Şıkkını değiştirmek istersen başka bir şıkka dokunabilirsin.
               </p>
@@ -394,7 +394,7 @@ export function ExitTicketStudentPad({ initialCode = '', onExit }: ExitTicketStu
                   </div>
                   <div>
                     <h4 className="font-bold text-rose-800 dark:text-rose-300 text-sm flex items-center gap-2">
-                      💡 Kavram Yanılgısı Teşhisi: Neden {OPTION_LETTERS[studentResponse.selectedIndex]} Şıkkını Seçtin?
+                      💡 Kavram Yanılgısı Teşhisi: Neden {' '}{OPTION_LETTERS[studentResponse.selectedIndex]} Şıkkını Seçtin?
                     </h4>
                     <p className="text-xs sm:text-sm text-slate-700 dark:text-slate-300 mt-1.5 leading-relaxed">
                       {currentQ.distractorExplanations[studentResponse.selectedIndex]}

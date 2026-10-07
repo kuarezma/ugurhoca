@@ -1,11 +1,13 @@
 'use client';
 
+import Image from 'next/image';
+
 import dynamic from 'next/dynamic';
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
 import {
-  Calculator,
+
   LogOut,
   ArrowLeft,
   Plus,
@@ -977,15 +979,21 @@ export default function AdminPage() {
   if (!user) return null;
 
   return (
-    <main className="admin-page min-h-screen gradient-bg pb-20">
+    <main className="page-surface admin-page min-h-screen pb-20">
       <nav className="fixed top-0 left-0 right-0 z-50 bg-white/90 dark:bg-slate-950/90 backdrop-blur-xl border-b border-slate-200/80 dark:border-white/10 py-2.5 px-4 sm:py-3 sm:px-6 shadow-sm dark:shadow-xl dark:shadow-black/20 pt-[max(0.625rem,env(safe-area-inset-top))] pl-[max(1rem,env(safe-area-inset-left))] pr-[max(1rem,env(safe-area-inset-right))]">
         <div className="container mx-auto flex min-w-0 items-center justify-between gap-3">
           <Link href="/" className="flex min-w-0 items-center gap-3 group">
-            <div className="w-9 h-9 sm:w-10 sm:h-10 bg-gradient-to-tr from-brand-primary via-indigo-600 to-brand-secondary rounded-2xl flex items-center justify-center flex-shrink-0 shadow-lg shadow-violet-500/25 group-hover:scale-105 transition-transform duration-200">
-              <Calculator className="w-5 h-5 text-white dark:text-white" />
+            <div className="h-10 w-10 shrink-0 overflow-hidden rounded-2xl border-2 border-brand-accent bg-brand-accent/20 p-0.5 shadow-btn-3d-yellow">
+              <Image
+                src="/ugur.jpeg"
+                alt='Uğur Hoca'
+                width={44}
+                height={44}
+                className="h-full w-full rounded-xl object-cover"
+              />
             </div>
             <div className="min-w-0">
-              <span className="block truncate text-sm sm:text-base font-bold text-slate-900 dark:text-transparent dark:bg-gradient-to-r dark:from-white dark:via-slate-100 dark:to-slate-300 dark:bg-clip-text leading-tight">
+              <span className="font-display text-base sm:text-xl font-bold text-primary truncate">
                 Uğur Hoca
               </span>
               <span className="hidden sm:flex items-center gap-1 text-[11px] font-semibold text-indigo-600 dark:text-cyan-300 tracking-wide">
@@ -1128,7 +1136,7 @@ export default function AdminPage() {
                   <div className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white">{documents.length}</div>
                   <div className="text-xs text-slate-500 dark:text-slate-400 font-medium mt-0.5">İçerik & Belge</div>
                 </div>
-                <div className="glass rounded-2xl p-3 sm:p-4 text-center border border-slate-200 dark:border-white/10 hover:border-pink-500/40 transition-colors bg-slate-50/80 dark:bg-white/5">
+                <div className="glass rounded-2xl p-3 sm:p-4 text-center border border-slate-200 dark:border-white/10 hover:border-purple-500/40 transition-colors bg-slate-50/80 dark:bg-white/5">
                   <div className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white">{quizzes.length}</div>
                   <div className="text-xs text-slate-500 dark:text-slate-400 font-medium mt-0.5">Test / Sınav</div>
                 </div>
@@ -1158,7 +1166,7 @@ export default function AdminPage() {
                 onClick={() => openModal('announcement')}
                 className="btn-secondary text-xs py-2 px-3 sm:px-4 rounded-xl"
               >
-                <Megaphone className="w-3.5 h-3.5 text-pink-500 dark:text-pink-400" />
+                <Megaphone className="w-3.5 h-3.5 text-purple-500 dark:text-purple-400" />
                 Yeni Duyuru
               </button>
               <button
@@ -1222,7 +1230,7 @@ export default function AdminPage() {
                   onClick={() => setTabCategory(cat.id as typeof tabCategory)}
                   className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all whitespace-nowrap ${
                     tabCategory === cat.id
-                      ? 'bg-brand-primary text-white shadow-md shadow-violet-500/25'
+                      ? 'bg-brand-primary text-slate-950 dark:text-slate-950 shadow-btn-3d-green'
                       : 'bg-slate-100 dark:bg-white/5 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200/70 dark:hover:bg-white/10'
                   }`}
                 >
@@ -1258,7 +1266,7 @@ export default function AdminPage() {
                   label: 'Sınıfım & Şube Masası',
                   shortLabel: 'Sınıfım',
                   icon: GraduationCap,
-                  color: 'from-amber-500 via-orange-500 to-rose-500',
+                  color: 'from-brand-accent to-brand-accent',
                   category: 'general',
                   badge: studentUsers.length > 0 ? studentUsers.length : null,
                 },
@@ -1294,7 +1302,7 @@ export default function AdminPage() {
                   label: 'Ödevlendirme',
                   shortLabel: 'Ödevler',
                   icon: ClipboardList,
-                  color: 'from-rose-500 to-pink-500',
+                  color: 'from-rose-500 to-purple-500',
                   category: 'education',
                   badge: assignments.length,
                 },
@@ -1349,7 +1357,7 @@ export default function AdminPage() {
                   label: 'Duyurular',
                   shortLabel: 'Duyurular',
                   icon: Megaphone,
-                  color: 'from-pink-500 to-rose-500',
+                  color: 'from-purple-500 to-rose-500',
                   category: 'curriculum',
                   badge: announcements.length,
                 },
@@ -1361,7 +1369,7 @@ export default function AdminPage() {
                     onClick={() => setActiveTab(tab.id as AdminActiveTab)}
                     className={`relative overflow-hidden px-3 py-2 sm:px-4 sm:py-3 rounded-xl flex items-center gap-1.5 sm:gap-2 transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] whitespace-nowrap shrink-0 border ${
                       activeTab === tab.id
-                        ? `bg-gradient-to-r ${tab.color} text-white border-white/25 shadow-lg shadow-violet-500/20 ring-1 ring-white/20`
+                        ? 'bg-brand-primary text-slate-950 dark:text-slate-950 border-brand-primary-deep shadow-btn-3d-green ring-1 ring-brand-primary-deep/20'
                         : `bg-white dark:bg-slate-900/80 border-slate-200 dark:border-white/10 text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:border-slate-300 dark:hover:border-white/20 hover:bg-slate-50 dark:hover:bg-slate-800/80 shadow-sm dark:shadow-md`
                     }`}
                   >
@@ -1427,7 +1435,7 @@ export default function AdminPage() {
               </button>
               <button
                 onClick={() => openModal('importQuestions')}
-                className="bg-gradient-to-r from-emerald-500 to-teal-500 text-white px-4 py-2.5 rounded-xl flex items-center gap-2 hover:opacity-95 transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] w-full sm:w-auto justify-center"
+                className="px-4 py-2.5 rounded-xl flex items-center gap-2 hover:opacity-95 transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] w-full sm:w-auto justify-center bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none"
               >
                 <Upload className="w-5 h-5" />
                 Toplu Yükle

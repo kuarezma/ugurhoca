@@ -399,7 +399,7 @@ export function MatMatik({
                     onClick={() => setDifficulty(level)}
                     className={`rounded-2xl border px-4 py-3 font-bold transition ${
                       difficulty === level
-                        ? 'border-cyan-300 bg-cyan-400 text-slate-950'
+                        ? 'border-brand-primary bg-brand-primary text-slate-950 dark:text-slate-950'
                         : 'border-white/10 bg-slate-950/60 text-slate-300 hover:border-cyan-300/60'
                     }`}
                   >
@@ -415,7 +415,7 @@ export function MatMatik({
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
             onClick={startGame}
-            className="mt-7 flex w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-emerald-500 to-cyan-500 px-8 py-4 text-xl font-bold text-white shadow-lg shadow-cyan-500/20"
+            className="mt-7 flex w-full items-center justify-center gap-2 rounded-2xl px-8 py-4 text-xl font-bold bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none"
           >
             <Play className="h-6 w-6" />
             Oyuna Başla
@@ -590,7 +590,7 @@ export function MatMatik({
               <button
                 type="button"
                 onClick={restartSameGame}
-                className="flex items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-emerald-500 to-cyan-500 px-5 py-3 font-bold text-white"
+                className="flex items-center justify-center gap-2 rounded-2xl px-5 py-3 font-bold bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none"
               >
                 <RotateCcw className="h-5 w-5" />
                 Yeniden Oyna
@@ -818,7 +818,7 @@ function ModeButton({
       onClick={onClick}
       className={`flex items-center justify-center gap-2 rounded-2xl border px-5 py-4 font-bold transition ${
         active
-          ? 'border-emerald-300 bg-emerald-400 text-slate-950'
+          ? 'border-brand-primary bg-brand-primary text-slate-950 dark:text-slate-950'
           : 'border-white/10 bg-slate-950/60 text-slate-300 hover:border-emerald-300/60'
       }`}
     >

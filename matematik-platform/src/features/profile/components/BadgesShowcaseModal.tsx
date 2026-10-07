@@ -82,7 +82,7 @@ const ALL_BADGES: BadgeDefinition[] = [
     description: 'Bir ay boyunca her gün matematik çalışarak zirveye adını yazdırdın.',
     requirement: '30 günlük çalışma serisi yap',
     icon: Sparkles,
-    gradient: 'from-yellow-400 via-amber-500 to-red-600',
+    gradient: 'from-brand-accent to-brand-accent',
     checkUnlocked: ({ earnedBadgeIds, streak }) =>
       earnedBadgeIds.has('streak_30') || streak >= 30,
   },
@@ -115,7 +115,7 @@ const ALL_BADGES: BadgeDefinition[] = [
     description: 'Tam 500 soru çözerek konu hakimiyetini en üst seviyeye taşıdın.',
     requirement: 'Toplam 500 soru çöz',
     icon: Award,
-    gradient: 'from-purple-600 to-pink-600',
+    gradient: 'from-purple-600 to-purple-600',
     checkUnlocked: ({ earnedBadgeIds, questionsSolved }) =>
       earnedBadgeIds.has('master_500') || questionsSolved >= 500,
   },
@@ -137,7 +137,7 @@ const ALL_BADGES: BadgeDefinition[] = [
     description: 'Pomodoro zamanlayıcısı ile kesintisiz bir odaklanma seansı bitirdin.',
     requirement: '1 Pomodoro odak oturumu tamamla',
     icon: Clock,
-    gradient: 'from-rose-500 to-pink-600',
+    gradient: 'from-rose-500 to-purple-600',
     checkUnlocked: ({ earnedBadgeIds }) =>
       earnedBadgeIds.has('deep_focus') || earnedBadgeIds.has('pomodoro_done'),
   },
@@ -148,7 +148,7 @@ const ALL_BADGES: BadgeDefinition[] = [
     description: 'Saat 22:00\'den sonra azimle soru çözerek hedefine bir adım daha yaklaştın.',
     requirement: 'Gece 22:00\'den sonra çalış',
     icon: Sparkles,
-    gradient: 'from-indigo-900 via-purple-800 to-slate-900',
+    gradient: 'from-brand-secondary to-brand-secondary',
     checkUnlocked: ({ earnedBadgeIds }) => earnedBadgeIds.has('night_owl'),
   },
   {
@@ -169,7 +169,7 @@ const ALL_BADGES: BadgeDefinition[] = [
     description: 'Matematik Ninja veya Hızlı Şoför oyununda 1.000+ puan barajını geçtin.',
     requirement: 'Oyunda 1000+ puan kazan',
     icon: Award,
-    gradient: 'from-fuchsia-500 to-rose-500',
+    gradient: 'from-purple-500 to-rose-500',
     checkUnlocked: ({ earnedBadgeIds }) =>
       earnedBadgeIds.has('speed_champion') || earnedBadgeIds.has('high_scorer'),
   },
@@ -267,7 +267,7 @@ export function BadgesShowcaseModal({
             </div>
             <div className="h-2 w-full rounded-full bg-slate-200 dark:bg-white/10 overflow-hidden">
               <div
-                className="h-full bg-gradient-to-r from-amber-400 via-orange-500 to-pink-500 transition-all duration-500"
+                className="h-full transition-all duration-500 bg-brand-accent"
                 style={{ width: `${(earnedCount / ALL_BADGES.length) * 100}%` }}
               />
             </div>
@@ -358,7 +358,7 @@ export function BadgesShowcaseModal({
             <button
               type="button"
               onClick={onClose}
-              className="rounded-xl bg-gradient-to-r from-amber-500 to-rose-600 px-4 py-2 text-xs font-bold text-white shadow-md transition hover:scale-[1.02] active:scale-[0.98]"
+              className="rounded-xl px-4 py-2 text-xs font-bold transition hover:scale-[1.02] active:scale-[0.98] bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none"
             >
               Tamam
             </button>

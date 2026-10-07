@@ -71,10 +71,10 @@ function HomeDailyQuoteInner() {
       className="mx-auto mt-8 w-full max-w-6xl px-4 sm:mt-10"
     >
       <div
-        className="relative overflow-hidden rounded-3xl border p-6 sm:p-8 light:border-slate-200 light:bg-white light:shadow-sm dark:border-white/10 dark:bg-gradient-to-br dark:from-slate-900/80 dark:via-slate-900/60 dark:to-slate-900/80 dark:backdrop-blur"
+        className="relative overflow-hidden rounded-3xl border p-6 sm:p-8 light:border-slate-200 light:bg-white light:shadow-sm dark:border-white/10 dark:backdrop-blur dark:bg-surface-1"
       >
         <div
-          className="pointer-events-none absolute -right-16 -top-16 h-48 w-48 rounded-full bg-gradient-to-br from-amber-400/30 via-pink-500/30 to-violet-500/30 blur-3xl"
+          className="pointer-events-none absolute -right-16 -top-16 h-48 w-48 rounded-full blur-3xl bg-brand-accent/30"
           aria-hidden="true"
         />
         <div
@@ -84,7 +84,7 @@ function HomeDailyQuoteInner() {
 
         <div className="relative flex flex-col gap-5 sm:flex-row sm:items-start">
           <div
-            className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-amber-400 via-orange-400 to-pink-500 text-slate-900 shadow-lg"
+            className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl text-slate-900 shadow-lg bg-brand-accent"
             aria-hidden="true"
           >
             <Quote className="h-7 w-7" />

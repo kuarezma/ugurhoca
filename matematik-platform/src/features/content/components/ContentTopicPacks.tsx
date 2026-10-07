@@ -139,7 +139,7 @@ export default function ContentTopicPacks({
               className="flex w-full flex-col gap-4 p-5 text-left transition-colors hover:bg-slate-50 dark:hover:bg-white/[0.02] sm:flex-row sm:items-center sm:justify-between sm:p-6"
             >
               <div className="flex items-start gap-4">
-                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-purple-500 to-pink-500 text-white dark:text-white shadow-lg shadow-purple-500/20">
+                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl shadow-lg shadow-purple-500/20 bg-brand-secondary text-slate-950 dark:text-slate-950">
                   <FolderTree className="h-6 w-6" />
                 </div>
                 <div>

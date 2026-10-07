@@ -192,7 +192,7 @@ export default function AdminStudentProfileDrawer({
               <span>{formatGradeLabel(student?.grade || data?.student.grade)}</span>
             </div>
             <p className="mt-2 text-xs text-slate-500">
-              Kayıt: {formatDate(student?.created_at || data?.student.created_at)}
+              Kayıt: {' '}{formatDate(student?.created_at || data?.student.created_at)}
             </p>
           </div>
           <div className="flex items-center gap-2">
@@ -561,7 +561,7 @@ export default function AdminStudentProfileDrawer({
                         </div>
                         <div className="h-2.5 rounded-full bg-surface-3 dark:bg-slate-800">
                           <div
-                            className="h-2.5 rounded-full bg-gradient-to-r from-violet-500 to-fuchsia-500"
+                            className="h-2.5 rounded-full bg-gradient-to-r from-violet-500 to-purple-500"
                             style={{ width: `${Math.max(0, Math.min(100, row.mastery_level))}%` }}
                           />
                         </div>
@@ -697,7 +697,7 @@ export default function AdminStudentProfileDrawer({
                 id: effectiveStudent.id,
                 name: effectiveStudent.name,
                 grade:
-                  typeof effectiveStudent.grade === 'number'
+                  typeof effectiveStudent.grade === "number"
                     ? effectiveStudent.grade
                     : undefined,
                 email: effectiveStudent.email,
@@ -744,10 +744,10 @@ function SummaryCard({
 
 function MiniStat({
   label,
-  value,
+  value
 }: {
   label: string;
-  value: number | string;
+  value: number | string
 }) {
   return (
     <div className="rounded-2xl border border-default dark:border-white/10 bg-surface-2 dark:bg-slate-900/60 px-3 py-3 text-center">

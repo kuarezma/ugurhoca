@@ -1,5 +1,5 @@
 'use client';
- 
+
 import { useState, useEffect } from 'react';
 import { useAccessibleModal } from '@/hooks/useAccessibleModal';
 import {
@@ -400,7 +400,7 @@ export function FormulaFlashcardsModal({
     if (categoryFilter === 'all') return true;
     if (categoryFilter === 'due') return isDueCard(card);
     if (categoryFilter === 'starred') return starredCards.has(card.id);
-    if (categoryFilter === 'learned') return learnedCards.has(card.id) || (leitnerStates[card.id]?.box || 1) >= 4;
+    if (categoryFilter === 'learned') return (learnedCards.has(card.id) || (leitnerStates[card.id]?.box || 1) >= 4);
     return card.category === categoryFilter;
   });
 
@@ -499,7 +499,7 @@ export function FormulaFlashcardsModal({
                 <button
                   type="button"
                   onClick={reset}
-                  className="px-4 py-2 bg-brand-primary hover:bg-brand-primary-deep rounded-xl text-white dark:text-white font-semibold text-xs transition"
+                  className="px-4 py-2 rounded-xl font-semibold text-xs transition bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none"
                 >
                   Yeniden Dene
                 </button>
@@ -519,7 +519,8 @@ export function FormulaFlashcardsModal({
           <div className="flex justify-between items-center">
             <div>
               <h1 className="text-xl font-bold">Uğur Hoca Matematik — Formül & Bilgi Cep Kitapçığı</h1>
-              <p className="mt-1 text-xs text-gray-700">Kategori: {categoryFilter === 'all' ? 'Tüm Konular (LGS & YKS)' : categoryFilter.toUpperCase()} | Öğrenci Çalışma Notu</p>
+              <p className="mt-1 text-xs text-gray-700">Kategori: {' '}
+                  {categoryFilter === 'all' ? 'Tüm Konular (LGS & YKS)' : categoryFilter.toUpperCase()}{' '} | Öğrenci Çalışma Notu</p>
             </div>
             <div className="text-right">
               <span className="text-xs font-bold text-gray-600">Toplam {filteredCards.length} Formül Kartı</span>
@@ -548,7 +549,7 @@ export function FormulaFlashcardsModal({
         {/* Header */}
         <div className="no-print flex items-center justify-between gap-2.5 border-b border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-slate-950/80 px-4 sm:px-6 py-3 sm:py-4">
           <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
-            <div className="flex h-9 w-9 sm:h-10 sm:w-10 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 text-white dark:text-white shadow-md">
+            <div className="flex h-9 w-9 sm:h-10 sm:w-10 shrink-0 items-center justify-center rounded-2xl shadow-md bg-brand-secondary text-slate-950 dark:text-slate-950">
               <Sparkles className="h-4 w-4 sm:h-5 sm:w-5" />
             </div>
             <div className="min-w-0">
@@ -613,7 +614,7 @@ export function FormulaFlashcardsModal({
               }}
               className={`rounded-xl px-3 py-1 text-xs font-semibold transition ${
                 categoryFilter === 'all'
-                  ? 'bg-brand-primary text-white'
+                  ? 'bg-brand-primary text-slate-950 dark:text-slate-950'
                   : 'bg-white dark:bg-white/5 text-slate-600 dark:text-slate-300 hover:bg-slate-200/60 dark:hover:bg-white/10 border border-slate-200 dark:border-transparent'
               }`}
             >
@@ -628,7 +629,7 @@ export function FormulaFlashcardsModal({
               }}
               className={`rounded-xl px-3 py-1 text-xs font-semibold transition flex items-center gap-1 ${
                 categoryFilter === 'due'
-                  ? 'bg-amber-500 text-slate-950 font-bold'
+                  ? 'bg-brand-primary font-bold text-slate-950 dark:text-slate-950'
                   : 'bg-amber-50 dark:bg-white/5 text-amber-700 dark:text-amber-300 hover:bg-amber-100 dark:hover:bg-white/10 border border-amber-200 dark:border-transparent'
               }`}
             >
@@ -646,7 +647,7 @@ export function FormulaFlashcardsModal({
               }}
               className={`rounded-xl px-3 py-1 text-xs font-semibold transition flex items-center gap-1 ${
                 categoryFilter === 'starred'
-                  ? 'bg-amber-400 text-slate-950 font-bold'
+                  ? 'bg-brand-primary font-bold text-slate-950 dark:text-slate-950'
                   : 'bg-amber-50 dark:bg-white/5 text-amber-700 dark:text-amber-300 hover:bg-amber-100 dark:hover:bg-white/10 border border-amber-200 dark:border-transparent'
               }`}
             >
@@ -665,7 +666,7 @@ export function FormulaFlashcardsModal({
               }}
               className={`rounded-xl px-3 py-1 text-xs font-semibold transition flex items-center gap-1 ${
                 categoryFilter === 'learned'
-                  ? 'bg-emerald-500 text-white font-bold'
+                  ? 'bg-brand-primary font-bold text-slate-950 dark:text-slate-950'
                   : 'bg-emerald-50 dark:bg-white/5 text-emerald-700 dark:text-emerald-300 hover:bg-emerald-100 dark:hover:bg-white/10 border border-emerald-200 dark:border-transparent'
               }`}
             >
@@ -684,7 +685,7 @@ export function FormulaFlashcardsModal({
               }}
               className={`rounded-xl px-3 py-1 text-xs font-semibold transition ${
                 categoryFilter === 'lgs'
-                  ? 'bg-cyan-500 text-slate-950 font-bold'
+                  ? 'bg-brand-primary font-bold text-slate-950 dark:text-slate-950'
                   : 'bg-white dark:bg-white/5 text-slate-600 dark:text-slate-300 hover:bg-slate-200/60 dark:hover:bg-white/10 border border-slate-200 dark:border-transparent'
               }`}
             >
@@ -699,7 +700,7 @@ export function FormulaFlashcardsModal({
               }}
               className={`rounded-xl px-3 py-1 text-xs font-semibold transition ${
                 categoryFilter === 'yks'
-                  ? 'bg-pink-500 text-white font-bold'
+                  ? 'bg-brand-primary font-bold text-slate-950 dark:text-slate-950'
                   : 'bg-white dark:bg-white/5 text-slate-600 dark:text-slate-300 hover:bg-slate-200/60 dark:hover:bg-white/10 border border-slate-200 dark:border-transparent'
               }`}
             >
@@ -726,7 +727,7 @@ export function FormulaFlashcardsModal({
                   setIsFlipped((prev) => !prev);
                 }
               }}
-              className="group relative flex min-h-[300px] w-full max-w-lg cursor-pointer flex-col justify-between rounded-3xl border border-slate-200 dark:border-white/15 bg-white dark:bg-gradient-to-br dark:from-slate-900/90 dark:via-slate-800/80 dark:to-slate-900/90 p-5 sm:p-6 text-center shadow-lg dark:shadow-2xl transition-all duration-300 hover:border-brand-primary/50 hover:shadow-brand-glow focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary"
+              className="group relative flex min-h-[300px] w-full max-w-lg cursor-pointer flex-col justify-between rounded-3xl border border-slate-200 dark:border-white/15 bg-white p-5 sm:p-6 text-center shadow-lg dark:shadow-2xl transition-all duration-300 hover:border-brand-primary/50 hover:shadow-brand-glow focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary dark:bg-surface-1"
             >
               {/* Üst Bilgi */}
               <div className="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400">
@@ -760,7 +761,7 @@ export function FormulaFlashcardsModal({
                       title={isSpeaking ? 'Seslendirmeyi durdur' : 'Formülü sesli dinle'}
                       aria-label={isSpeaking ? 'Seslendirmeyi durdur' : 'Formülü sesli dinle'}
                     >
-                      {isSpeaking ? <VolumeX className="h-4 w-4" /> : <Volume2 className="h-4 w-4" />}
+                      {isSpeaking ? (<VolumeX className="h-4 w-4" /> ): (<Volume2 className="h-4 w-4" />)}
                     </button>
                   )}
                   <button
@@ -910,7 +911,7 @@ export function FormulaFlashcardsModal({
             onClick={handleNext}
             aria-label="Sonraki Kart"
             disabled={filteredCards.length === 0}
-            className="inline-flex items-center gap-1.5 rounded-xl bg-brand-primary px-3 sm:px-4 py-2 sm:py-2.5 text-xs font-bold text-white dark:text-white shadow-md hover:bg-brand-primary-deep disabled:opacity-40 shrink-0"
+            className="inline-flex items-center gap-1.5 rounded-xl px-3 sm:px-4 py-2 sm:py-2.5 text-xs font-bold disabled:opacity-40 shrink-0 bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none"
           >
             <span>Sonraki <span className="hidden sm:inline">Kart</span></span>
             <ChevronRight className="h-4 w-4" />

@@ -280,7 +280,7 @@ export function MistakeNotebookModal({
             <div>
               <h1 className="text-xl font-bold">Uğur Hoca Matematik — Kişisel Hata Defteri & Odak Telafi Föyü</h1>
               <p className="mt-1 text-xs text-gray-700">
-                Tarih: {new Date().toLocaleDateString('tr-TR')} | Toplam {filteredList.length} Soru | Kişisel Teşhis & Telafi Çalışması
+                Tarih: {new Date().toLocaleDateString('tr-TR')} | Toplam {' '}{filteredList.length} Soru | Kişisel Teşhis & Telafi Çalışması
               </p>
             </div>
             <div className="text-right">
@@ -316,7 +316,8 @@ export function MistakeNotebookModal({
               <div key={item.id || idx} className="border border-gray-400 rounded-xl p-3.5 break-inside-avoid text-xs">
                 <div className="flex justify-between items-center mb-2 border-b border-gray-200 pb-1.5">
                   <span className="font-bold text-sm">
-                    Soru #{idx + 1} {item.quizTitle ? `• ${item.quizTitle}` : ''}
+                    Soru #{idx + 1} {' '}
+                    {item.quizTitle ? `• ${item.quizTitle}` : ''}
                   </span>
                   <span className="font-semibold px-2 py-0.5 border border-gray-400 rounded text-[11px]">
                     {item.reason ? MISTAKE_REASON_LABELS[item.reason].label : 'Teşhis Bekleniyor'}
@@ -329,7 +330,7 @@ export function MistakeNotebookModal({
                   <div className="grid grid-cols-2 gap-2 my-2 text-gray-800">
                     {item.question.options.map((opt, optIdx) => (
                       <div key={optIdx} className="border border-gray-300 rounded px-2.5 py-1 text-xs">
-                        <strong className="mr-1">{String.fromCharCode(65 + optIdx)})</strong> {opt}
+                        <strong className="mr-1">{String.fromCharCode(65 + optIdx)})</strong> {' '}{opt}
                       </div>
                     ))}
                   </div>
@@ -372,7 +373,7 @@ export function MistakeNotebookModal({
               <button
                 type="button"
                 onClick={() => handleStartPractice(undefined, true)}
-                className="inline-flex items-center gap-1.5 rounded-xl bg-gradient-to-r from-rose-500 to-amber-500 px-3.5 py-2 text-xs font-bold text-white shadow-md transition hover:scale-[1.02] active:scale-[0.98]"
+                className="inline-flex items-center gap-1.5 rounded-xl px-3.5 py-2 text-xs font-bold bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none transition hover:scale-[1.02] active:scale-[0.98]"
               >
                 <Sparkles className="h-3.5 w-3.5 fill-white" />
                 <span>Bugünkü Tekrarları Çöz ({stats.due})</span>
@@ -450,7 +451,7 @@ export function MistakeNotebookModal({
                 onClick={() => setFilter('due')}
                 className={`rounded-lg px-2.5 py-1 font-bold transition-all ${
                   filter === 'due'
-                    ? 'bg-rose-500 text-white shadow-sm'
+                    ? 'bg-brand-primary shadow-sm text-slate-950 dark:text-slate-950'
                     : 'bg-slate-200/70 dark:bg-white/10 text-slate-700 dark:text-slate-300'
                 }`}
               >
@@ -461,7 +462,7 @@ export function MistakeNotebookModal({
                 onClick={() => setFilter('pending')}
                 className={`rounded-lg px-2.5 py-1 font-bold transition-all ${
                   filter === 'pending'
-                    ? 'bg-amber-500 text-white shadow-sm'
+                    ? 'bg-brand-primary shadow-sm text-slate-950 dark:text-slate-950'
                     : 'bg-slate-200/70 dark:bg-white/10 text-slate-700 dark:text-slate-300'
                 }`}
               >
@@ -472,7 +473,7 @@ export function MistakeNotebookModal({
                 onClick={() => setFilter('mastered')}
                 className={`rounded-lg px-2.5 py-1 font-bold transition-all ${
                   filter === 'mastered'
-                    ? 'bg-emerald-500 text-white shadow-sm'
+                    ? 'bg-brand-primary shadow-sm text-slate-950 dark:text-slate-950'
                     : 'bg-slate-200/70 dark:bg-white/10 text-slate-700 dark:text-slate-300'
                 }`}
               >
@@ -483,7 +484,7 @@ export function MistakeNotebookModal({
                 onClick={() => setFilter('all')}
                 className={`rounded-lg px-2.5 py-1 font-bold transition-all ${
                   filter === 'all'
-                    ? 'bg-indigo-600 text-white shadow-sm'
+                    ? 'bg-brand-primary shadow-sm text-slate-950 dark:text-slate-950'
                     : 'bg-slate-200/70 dark:bg-white/10 text-slate-700 dark:text-slate-300'
                 }`}
               >
@@ -526,7 +527,7 @@ export function MistakeNotebookModal({
                   onClick={() => setReasonFilter(reasonFilter === rKey ? 'all' : rKey)}
                   className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-md font-medium transition-all ${
                     reasonFilter === rKey
-                      ? 'bg-indigo-600 text-white shadow-sm font-bold'
+                      ? 'bg-brand-primary shadow-sm font-bold text-slate-950 dark:text-slate-950'
                       : 'bg-slate-100 dark:bg-white/5 text-slate-600 dark:text-slate-300 hover:bg-slate-200/60'
                   }`}
                 >
@@ -876,7 +877,7 @@ export function MistakeNotebookModal({
                       <div className="mt-3 rounded-xl bg-rose-50/80 dark:bg-rose-950/20 border border-rose-200 dark:border-rose-500/30 p-3 text-xs text-rose-900 dark:text-rose-200 flex items-start gap-2">
                         <div>
                           <span className="font-bold block text-rose-700 dark:text-rose-400">
-                            💡 Kavram Yanılgısı Teşhisi ({String.fromCharCode(65 + item.userSelectedOption)} Şıkkı):
+                            💡 Kavram Yanılgısı Teşhisi ({String.fromCharCode(65 + item.userSelectedOption)} {' '}Şıkkı):
                           </span>
                           <p className="mt-0.5 leading-relaxed text-slate-700 dark:text-slate-300">
                             {q.distractor_explanations[item.userSelectedOption]}
@@ -908,7 +909,7 @@ export function MistakeNotebookModal({
                           onClick={() => handleSetReason(q.question, isSelected ? undefined : rKey)}
                           className={`inline-flex items-center gap-1 rounded-lg px-2 py-0.5 text-[11px] font-medium transition-all ${
                             isSelected
-                              ? 'bg-indigo-600 text-white shadow-sm font-bold scale-[1.02]'
+                              ? 'bg-brand-primary shadow-sm font-bold scale-[1.02] text-slate-950 dark:text-slate-950'
                               : 'bg-slate-100 dark:bg-white/5 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-white/10'
                           }`}
                         >

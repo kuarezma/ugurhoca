@@ -148,7 +148,7 @@ export function TeacherQuestionPoolModal({
               onClick={() => setFilter(f)}
               className={`px-3 py-1 rounded-lg font-bold transition ${
                 filter === f
-                  ? 'bg-indigo-600 text-white shadow'
+                  ? 'bg-brand-primary shadow text-slate-950 dark:text-slate-950'
                   : 'text-slate-400 hover:text-white hover:bg-white/5'
               }`}
             >
@@ -253,7 +253,7 @@ export function TeacherQuestionPoolModal({
                       <button
                         type="button"
                         onClick={() => handleProject(q)}
-                        className="px-3 py-1.5 rounded-xl text-xs font-bold bg-amber-500 hover:bg-amber-400 text-slate-950 flex items-center gap-1.5 shadow transition"
+                        className="px-3 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 transition bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none"
                       >
                         <Copy className="h-3 w-3" />
                         <span>{copiedId === q.id ? 'Kopyalandı!' : 'Tahtaya Yansıt'}</span>
@@ -263,7 +263,7 @@ export function TeacherQuestionPoolModal({
                         <button
                           type="button"
                           onClick={() => handleResolve(q.id)}
-                          className="px-3 py-1.5 rounded-xl text-xs font-bold bg-emerald-600 hover:bg-emerald-500 text-white dark:text-white flex items-center gap-1 transition"
+                          className="px-3 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1 transition bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none"
                         >
                           <CheckCircle2 className="h-3 w-3" />
                           <span>Çözüldü</span>

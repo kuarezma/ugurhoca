@@ -110,11 +110,11 @@ export function VisualMathProofsModal({
                   onClick={() => handleSelectProof(p)}
                   className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition-all ${
                     active
-                      ? 'bg-cyan-600 text-white shadow-sm'
+                      ? 'bg-brand-primary shadow-sm text-slate-950 dark:text-slate-950'
                       : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200'
                   }`}
                 >
-                  {done && <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />}
+                  {done && (<CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />)}
                   <span>{p.title.split(' ')[0]} {p.formula}</span>
                 </button>
               );
@@ -132,7 +132,7 @@ export function VisualMathProofsModal({
         {/* Main Proof Content */}
         <div className="flex-1 overflow-y-auto p-6 space-y-5">
           {/* Active Proof Overview Card */}
-          <div className="p-5 rounded-2xl bg-gradient-to-r from-cyan-500/10 via-blue-500/5 to-transparent border border-cyan-200/60 dark:border-cyan-900/40 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div className="p-5 rounded-2xl border border-cyan-200/60 dark:border-cyan-900/40 flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-brand-secondary/10">
             <div>
               <div className="flex items-center gap-2">
                 <span className="text-xs font-bold px-2.5 py-0.5 rounded-lg bg-cyan-100 dark:bg-cyan-950/60 text-cyan-800 dark:text-cyan-300">
@@ -154,11 +154,11 @@ export function VisualMathProofsModal({
               onClick={handleToggleComplete}
               className={`px-4 py-2 rounded-xl text-xs font-semibold flex items-center gap-2 shrink-0 transition-all ${
                 isCompleted
-                  ? 'bg-emerald-600 text-white shadow-md'
+                  ? 'bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none'
                   : 'bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-200 hover:border-emerald-500'
               }`}
             >
-              <CheckCircle2 className={`w-4 h-4 ${isCompleted ? 'text-white' : 'text-slate-400'}`} />
+              <CheckCircle2 className={`w-4 h-4 ${isCompleted ? 'text-slate-950 dark:text-slate-950' : 'text-slate-400'}`} />
               {isCompleted ? 'Kavrandı (Rozet Kazanıldı)' : 'İspatı İnceledim & Anladım'}
             </button>
           </div>
@@ -214,7 +214,7 @@ export function VisualMathProofsModal({
                 type="button"
                 disabled={currentStepIndex === selectedProof.steps.length - 1}
                 onClick={() => setCurrentStepIndex((prev) => Math.min(selectedProof.steps.length - 1, prev + 1))}
-                className="px-3.5 py-1.5 rounded-xl bg-cyan-600 hover:bg-cyan-700 text-white dark:text-white text-xs font-semibold disabled:opacity-40 disabled:cursor-not-allowed flex items-center gap-1 shadow-sm"
+                className="px-3.5 py-1.5 rounded-xl text-xs font-semibold disabled:opacity-40 disabled:cursor-not-allowed flex items-center gap-1 bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none"
               >
                 Sonraki Adım
                 <ChevronRight className="w-4 h-4" />

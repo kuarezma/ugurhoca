@@ -97,7 +97,7 @@ export default function FormulaSpeedDrillModal({
   const [selectedLeftId, setSelectedLeftId] = useState<string | null>(null);
   const [selectedRightId, setSelectedRightId] = useState<string | null>(null);
   const [matchedIds, setMatchedIds] = useState<Set<string>>(new Set());
-  const [mismatchedPair, setMismatchedPair] = useState<{ left: string; right: string } | null>(null);
+  const [mismatchedPair, setMismatchedPair] = useState<{ left: string; right: string ;} | null>(null);
 
   const timerRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -302,7 +302,7 @@ export default function FormulaSpeedDrillModal({
               <button
                 type="button"
                 onClick={reset}
-                className="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 rounded-xl text-white dark:text-white font-semibold text-xs"
+                className="px-4 py-2 rounded-xl font-semibold text-xs bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none"
               >
                 Yeniden Dene
               </button>
@@ -335,7 +335,7 @@ export default function FormulaSpeedDrillModal({
                 title={isMuted ? 'Sesi Aç' : 'Sesi Kapat'}
                 className="flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 dark:border-white/10 bg-slate-100 dark:bg-white/5 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white transition"
               >
-                {isMuted ? <VolumeX className="h-4 w-4" /> : <Volume2 className="h-4 w-4" />}
+                {isMuted ? (<VolumeX className="h-4 w-4" /> ): (<Volume2 className="h-4 w-4" />)}
               </button>
 
               <button
@@ -362,7 +362,7 @@ export default function FormulaSpeedDrillModal({
                 disabled={gameState === 'playing'}
                 className={`rounded-lg px-2.5 py-1 font-semibold transition ${
                   category === 'all'
-                    ? 'bg-amber-500 text-slate-950 font-bold'
+                    ? 'bg-brand-primary font-bold text-slate-950 dark:text-slate-950'
                     : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white disabled:opacity-50'
                 }`}
               >
@@ -377,7 +377,7 @@ export default function FormulaSpeedDrillModal({
                 disabled={gameState === 'playing'}
                 className={`rounded-lg px-2.5 py-1 font-semibold transition ${
                   category === 'lgs'
-                    ? 'bg-indigo-600 text-white font-bold'
+                    ? 'bg-brand-primary font-bold text-slate-950 dark:text-slate-950'
                     : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white disabled:opacity-50'
                 }`}
               >
@@ -392,7 +392,7 @@ export default function FormulaSpeedDrillModal({
                 disabled={gameState === 'playing'}
                 className={`rounded-lg px-2.5 py-1 font-semibold transition ${
                   category === 'yks'
-                    ? 'bg-purple-600 text-white font-bold'
+                    ? 'bg-brand-primary font-bold text-slate-950 dark:text-slate-950'
                     : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white disabled:opacity-50'
                 }`}
               >
@@ -422,7 +422,7 @@ export default function FormulaSpeedDrillModal({
               {/* Score */}
               <div className="flex items-center gap-1.5 px-3 py-1 rounded-xl bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 text-slate-800 dark:text-slate-200 font-semibold">
                 <Trophy className="h-3.5 w-3.5 text-amber-500 dark:text-amber-400" />
-                <span>Skor: <strong className="text-amber-600 dark:text-amber-300">{score}</strong></span>
+                <span>Skor: {' '}<strong className="text-amber-600 dark:text-amber-300">{score}</strong></span>
               </div>
 
               {/* Combo Multiplier */}
@@ -457,7 +457,7 @@ export default function FormulaSpeedDrillModal({
                 <button
                   type="button"
                   onClick={startGame}
-                  className="w-full sm:w-auto px-8 py-3.5 rounded-2xl bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 text-slate-950 font-bold text-sm shadow-xl transition-all transform hover:scale-[1.02] flex items-center justify-center gap-2"
+                  className="w-full sm:w-auto px-8 py-3.5 rounded-2xl font-bold text-sm transition-all transform hover:scale-[1.02] flex items-center justify-center gap-2 bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none"
                 >
                   <Zap className="h-4 w-4" />
                   <span>Antrenmanı Başlat (60s)</span>
@@ -490,7 +490,7 @@ export default function FormulaSpeedDrillModal({
                               : isMismatch
                               ? 'border-rose-500 bg-rose-500/20 text-rose-700 dark:text-rose-200 ring-2 ring-rose-500'
                               : isSelected
-                              ? 'border-amber-400 bg-amber-500/20 text-slate-900 dark:text-white ring-2 ring-amber-400 shadow-md scale-[1.01]'
+                              ? 'border-brand-primary bg-brand-primary/20 text-slate-900 dark:text-white ring-2 ring-brand-primary shadow-md scale-[1.01]'
                               : 'border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-slate-800/80 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-800 dark:text-slate-200 hover:border-slate-300 dark:hover:border-white/20'
                           }`}
                         >
@@ -534,7 +534,7 @@ export default function FormulaSpeedDrillModal({
                               : isMismatch
                               ? 'border-rose-500 bg-rose-500/20 text-rose-700 dark:text-rose-200 ring-2 ring-rose-500'
                               : isSelected
-                              ? 'border-cyan-400 bg-cyan-500/20 text-slate-900 dark:text-white ring-2 ring-cyan-400 shadow-md scale-[1.01]'
+                              ? 'border-brand-primary bg-brand-primary/20 text-slate-900 dark:text-white ring-2 ring-brand-primary shadow-md scale-[1.01]'
                               : 'border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-slate-800/80 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-800 dark:text-slate-200 hover:border-slate-300 dark:hover:border-white/20'
                           }`}
                         >
@@ -601,7 +601,7 @@ export default function FormulaSpeedDrillModal({
                   <button
                     type="button"
                     onClick={startGame}
-                    className="w-full sm:flex-1 py-3 px-4 rounded-2xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs shadow-lg transition flex items-center justify-center gap-2"
+                    className="w-full sm:flex-1 py-3 px-4 rounded-2xl font-bold text-xs transition flex items-center justify-center gap-2 bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none"
                   >
                     <RotateCcw className="h-4 w-4" />
                     <span>Tekrar Oyna</span>

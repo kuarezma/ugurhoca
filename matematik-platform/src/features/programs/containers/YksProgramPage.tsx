@@ -339,7 +339,7 @@ export default function YksWizardPage() {
           className="rounded-3xl border border-default bg-surface-1 p-5 shadow-sm sm:p-7"
         >
           <ProgramWizardHeader
-            badgeClassName="bg-gradient-to-r from-purple-700 via-fuchsia-700 to-pink-700 text-white"
+            badgeClassName="text-white bg-brand-pink"
             badgeLabel="YKS Tercih Sihirbazı"
             dataYear={dataYear}
             dataYearNote={
@@ -354,7 +354,7 @@ export default function YksWizardPage() {
 
           <ProgramStepTabs
             activeStep={step}
-            activeStepClassName="bg-gradient-to-r from-purple-700 via-fuchsia-700 to-pink-700 text-white border-purple-500 dark:border-purple-400 shadow-lg"
+            activeStepClassName="bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none"
             inactiveStepClassName="border border-default dark:border-slate-500 bg-surface-1 text-secondary hover:text-primary hover:border-accent"
             onStepChange={setStep}
             steps={steps}
@@ -419,14 +419,14 @@ export default function YksWizardPage() {
                       <button
                         type="button"
                         onClick={() => setPlacedLastYear(false)}
-                        className={`px-3 py-2 transition ${!placedLastYear ? 'bg-gradient-to-r from-indigo-600 to-fuchsia-600 text-white' : 'text-secondary hover:text-primary'}`}
+                        className={`px-3 py-2 transition ${!placedLastYear ? 'bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none' : 'text-secondary hover:text-primary'}`}
                       >
                         Yerleşmedim
                       </button>
                       <button
                         type="button"
                         onClick={() => setPlacedLastYear(true)}
-                        className={`px-3 py-2 transition ${placedLastYear ? 'bg-gradient-to-r from-indigo-600 to-fuchsia-600 text-white' : 'text-secondary hover:text-primary'}`}
+                        className={`px-3 py-2 transition ${placedLastYear ? 'bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none' : 'text-secondary hover:text-primary'}`}
                       >
                         Yerleştim
                       </button>
@@ -479,7 +479,7 @@ export default function YksWizardPage() {
                   <h2 className="text-base font-black text-primary">
                     AYT Puan Hesaplama
                   </h2>
-                  <span className="rounded-full px-3 py-1 text-xs font-bold border border-fuchsia-200 dark:border-fuchsia-300/20 bg-fuchsia-50 dark:bg-fuchsia-300/10 text-fuchsia-800 dark:text-fuchsia-100">
+                  <span className="rounded-full px-3 py-1 text-xs font-bold border border-purple-200 dark:border-purple-300/20 bg-purple-50 dark:bg-purple-300/10 text-purple-800 dark:text-purple-100">
                     Puan türüne göre ağırlıklandırılır
                   </span>
                 </div>
@@ -491,7 +491,7 @@ export default function YksWizardPage() {
                     return (
                       <ProgramSubjectInputCard
                         key={subject.key}
-                        accentClassName="bg-gradient-to-r from-fuchsia-600 to-purple-600"
+                        accentClassName="bg-gradient-to-r from-purple-600 to-purple-600"
                         helperText={`${subject.questions} soru`}
                         idPrefix="yks"
                         isLight={isLight}
@@ -592,7 +592,7 @@ export default function YksWizardPage() {
                 <button
                   type="button"
                   onClick={() => setStep(2)}
-                  className="mt-4 inline-flex items-center gap-2 rounded-xl border border-purple-400/80 dark:border-purple-300/80 bg-gradient-to-r from-purple-700 via-fuchsia-700 to-pink-700 px-4 py-2 text-sm font-bold text-white shadow-lg transition hover:scale-[1.01] active:scale-[0.99]"
+                  className="mt-4 inline-flex items-center gap-2 rounded-xl border border-purple-400/80 dark:border-purple-300/80 px-4 py-2 text-sm font-bold transition hover:scale-[1.01] active:scale-[0.99] bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none"
                 >
                   Tercih Filtrelerine Geç
                   <ChevronRight className="h-4 w-4" />
@@ -704,7 +704,7 @@ export default function YksWizardPage() {
                     value={scholarship}
                     onChange={(event) =>
                       setScholarship(
-                        event.target.value as 'all' | 'none' | 'partial' | 'full',
+                        event.target.value as |'all' | 'none' | 'partial' | 'full',
                       )
                     }
                     className="w-full rounded-xl border border-default dark:border-slate-500 bg-surface-0 px-3 py-2 text-sm font-semibold text-primary outline-none transition focus:border-accent focus:ring-2 focus:ring-accent/20"
@@ -761,7 +761,7 @@ export default function YksWizardPage() {
                   <button
                     type="button"
                     onClick={() => setStep(3)}
-                    className="inline-flex items-center gap-2 rounded-xl border border-purple-400/80 dark:border-purple-300/80 bg-gradient-to-r from-purple-700 via-fuchsia-700 to-pink-700 px-4 py-2 text-sm font-bold text-white shadow-lg transition hover:scale-[1.01] active:scale-[0.99]"
+                    className="inline-flex items-center gap-2 rounded-xl border border-purple-400/80 dark:border-purple-300/80 px-4 py-2 text-sm font-bold transition hover:scale-[1.01] active:scale-[0.99] bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none"
                   >
                     Önerileri Göster
                     <ChevronRight className="h-4 w-4" />
@@ -780,7 +780,7 @@ export default function YksWizardPage() {
                       Tahmini Puan / Sıralama
                     </div>
                     <div className="text-2xl font-black tabular-nums text-primary">
-                      {yksResult.estimatedScore.toFixed(2)} / {formatRank(activeRank)}
+                      {yksResult.estimatedScore.toFixed(2)} / {' '}{formatRank(activeRank)}
                     </div>
                   </div>
                   <div className="text-sm text-secondary">
@@ -977,7 +977,7 @@ export default function YksWizardPage() {
                 <button
                   type="button"
                   onClick={() => setStep(1)}
-                  className="inline-flex items-center gap-2 rounded-xl border border-purple-400/80 dark:border-purple-300/80 bg-gradient-to-r from-purple-700 via-fuchsia-700 to-pink-700 px-4 py-2 text-sm font-bold text-white shadow-lg transition hover:scale-[1.01] active:scale-[0.99]"
+                  className="inline-flex items-center gap-2 rounded-xl border border-purple-400/80 dark:border-purple-300/80 px-4 py-2 text-sm font-bold transition hover:scale-[1.01] active:scale-[0.99] bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none"
                 >
                   Netleri Güncelle
                   <Target className="h-4 w-4" />

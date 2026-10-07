@@ -90,7 +90,7 @@
   --brand-pink-rgb: 206 130 255;
   --brand-orange-rgb: 255 150 0;
   --brand-indigo-rgb: 28 176 246;
-  --brand-gradient-middle: #8b5cf6;
+  --brand-gradient-middle: var(--brand-pink);
   --brand-primary: rgb(var(--brand-primary-rgb));
   --brand-primary-soft: rgb(var(--brand-primary-soft-rgb));
   --brand-primary-deep: rgb(var(--brand-primary-deep-rgb));
@@ -159,9 +159,9 @@
   --accent-danger-ink: #fda4af;
   --accent-danger-tint: rgba(244, 63, 94, 0.12);
 
-  --accent-play: #ec4899;
-  --accent-play-ink: #f9a8d4;
-  --accent-play-tint: rgba(236, 72, 153, 0.12);
+  --accent-play: var(--brand-pink);
+  --accent-play-ink: #e1b8ff;
+  --accent-play-tint: rgb(var(--brand-pink-rgb) / 0.12);
 
   /* Tema Palet Renk Tokenları (Dinamik Indigo / Purple / Violet Aksanları) */
   --theme-indigo-50-rgb: 238 242 255;
@@ -303,9 +303,9 @@ html[data-theme='light'] {
   --accent-danger-ink: #be123c;
   --accent-danger-tint: rgba(225, 29, 72, 0.08);
 
-  --accent-play: #db2777;
-  --accent-play-ink: #be185d;
-  --accent-play-tint: rgba(219, 39, 119, 0.08);
+  --accent-play: var(--brand-pink);
+  --accent-play-ink: #773f98;
+  --accent-play-tint: rgb(var(--brand-pink-rgb) / 0.08);
 }
 
 /* ==========================================================================
@@ -1163,12 +1163,7 @@ html[data-theme='light'] ::-webkit-scrollbar-thumb:hover {
 }
 
 .gradient-bg {
-  background: linear-gradient(
-    135deg,
-    rgba(15, 23, 42, 0.72) 0%,
-    rgba(49, 46, 129, 0.32) 50%,
-    rgba(15, 23, 42, 0.78) 100%
-  );
+  background: rgb(var(--surface-0-rgb) / 0.72);
 }
 
 .theme-toggle:hover {
@@ -1421,15 +1416,10 @@ html[data-theme='light'] .light-section {
   border-radius: 0.9rem;
   padding: 0.65rem 1.1rem;
   font-weight: 700;
-  color: #ffffff;
-  background: linear-gradient(
-    135deg,
-    var(--brand-indigo) 0%,
-    var(--brand-gradient-middle) 52%,
-    var(--brand-pink) 100%
-  );
-  border: 1px solid rgba(99, 102, 241, 0.28);
-  box-shadow: 0 10px 26px rgba(99, 102, 241, 0.28);
+  color: #0f172a;
+  background: var(--brand-primary);
+  border: 1px solid var(--brand-primary-deep);
+  box-shadow: 0 5px 0 var(--brand-primary-deep);
   transition:
     transform 0.16s ease,
     box-shadow 0.16s ease,
@@ -1439,7 +1429,12 @@ html[data-theme='light'] .light-section {
 .btn-primary:hover {
   transform: translateY(-1px);
   filter: brightness(1.02);
-  box-shadow: 0 14px 30px rgba(99, 102, 241, 0.32);
+  box-shadow: 0 6px 0 var(--brand-primary-deep);
+}
+
+.btn-primary:active {
+  transform: translateY(4px);
+  box-shadow: 0 1px 0 var(--brand-primary-deep);
 }
 
 .btn-primary:focus-visible,
@@ -1449,7 +1444,7 @@ a:focus-visible,
 input:focus-visible,
 select:focus-visible,
 textarea:focus-visible {
-  outline: 2px solid rgba(99, 102, 241, 0.55);
+  outline: 2px solid rgb(var(--brand-primary-rgb) / 0.55);
   outline-offset: 2px;
 }
 

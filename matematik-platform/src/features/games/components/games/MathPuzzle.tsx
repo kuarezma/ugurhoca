@@ -138,7 +138,7 @@ export function MathPuzzle({ onScore, scoreMultiplier }: GameComponentProps) {
           <motion.div
             animate={{ y: [0, -10, 0] }}
             transition={{ duration: 2, repeat: Infinity }}
-            className="w-32 h-32 mx-auto mb-6 bg-gradient-to-br from-purple-500 to-pink-500 rounded-3xl flex items-center justify-center"
+            className="w-32 h-32 mx-auto mb-6 bg-gradient-to-br from-purple-500 to-purple-500 rounded-3xl flex items-center justify-center"
           >
             <Brain className="w-16 h-16 text-white dark:text-white" />
           </motion.div>
@@ -154,7 +154,7 @@ export function MathPuzzle({ onScore, scoreMultiplier }: GameComponentProps) {
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
           onClick={startGame}
-          className="px-8 py-4 bg-gradient-to-r from-purple-500 to-pink-500 text-white font-bold rounded-2xl text-xl shadow-lg shadow-purple-500/30"
+          className="px-8 py-4 font-bold rounded-2xl text-xl bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none"
         >
           <Play className="w-6 h-6 inline mr-2" />
           Oyunu Başlat
@@ -185,7 +185,7 @@ export function MathPuzzle({ onScore, scoreMultiplier }: GameComponentProps) {
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
           onClick={startGame}
-          className="px-8 py-4 bg-gradient-to-r from-purple-500 to-pink-500 text-white font-bold rounded-2xl text-xl"
+          className="px-8 py-4 font-bold rounded-2xl text-xl bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none"
         >
           <RotateCcw className="w-6 h-6 inline mr-2" />
           Tekrar Oyna
@@ -239,9 +239,9 @@ export function MathPuzzle({ onScore, scoreMultiplier }: GameComponentProps) {
             className={`py-6 rounded-2xl text-3xl font-bold transition-all ${
               selected === option
                 ? correct
-                  ? 'bg-green-500 text-white'
-                  : 'bg-red-500 text-white'
-                : 'bg-gradient-to-br from-slate-700 to-slate-800 text-white hover:from-slate-600 hover:to-slate-700'
+                  ? 'bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none'
+                  : 'bg-red-500 text-slate-950 dark:text-slate-950'
+                : 'bg-gradient-to-br from-slate-700 to-slate-800 text-white dark:text-white hover:from-slate-600 hover:to-slate-700'
             }`}
           >
             {option}

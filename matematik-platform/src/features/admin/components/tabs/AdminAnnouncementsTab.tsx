@@ -50,7 +50,7 @@ export default function AdminAnnouncementsTab({
         </div>
         <button
           onClick={onCreate}
-          className="w-full px-5 py-3 bg-gradient-to-r from-blue-500 to-cyan-500 text-white font-semibold rounded-xl hover:from-blue-600 hover:to-cyan-600 transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center gap-2 shadow-lg shadow-blue-500/20 sm:w-auto"
+          className="w-full px-5 py-3 font-semibold rounded-xl transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center gap-2 sm:w-auto bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none"
         >
           <Megaphone className="w-5 h-5" />
           Yeni Duyuru Ekle

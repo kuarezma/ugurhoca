@@ -1,17 +1,23 @@
-import { Calculator, Filter, Grid, Search } from 'lucide-react';
+import Image from 'next/image';import {  Filter, Grid, Search } from 'lucide-react';
 
 const SKELETON_CARDS = Array.from({ length: 6 });
 
 export default function Loading() {
   return (
-    <main className="icerikler-page min-h-screen gradient-bg pb-20">
-      <nav className="fixed left-0 right-0 top-0 z-50 border-b border-white/10 bg-[#0b1220]/95 px-4 py-4 backdrop-blur-md sm:px-6 xl:px-8">
+    <main className="page-surface icerikler-page min-h-screen pb-20">
+      <nav className="fixed left-0 right-0 top-0 z-50 border-b-2 border-default bg-surface-1/95 px-4 py-4 backdrop-blur-md sm:px-6 xl:px-8">
         <div className="mx-auto flex max-w-[1760px] items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-purple-500 to-pink-500">
-              <Calculator className="h-6 w-6 text-white dark:text-white" />
+            <div className="h-10 w-10 shrink-0 overflow-hidden rounded-2xl border-2 border-brand-accent bg-brand-accent/20 p-0.5 shadow-btn-3d-yellow">
+              <Image
+                src="/ugur.jpeg"
+                alt="Uğur Hoca"
+                width={44}
+                height={44}
+                className="h-full w-full rounded-xl object-cover"
+              />
             </div>
-            <span className="text-xl font-bold text-slate-900 dark:text-white">
+            <span className="font-display text-base sm:text-xl font-bold text-primary truncate">
               Uğur Hoca Matematik
             </span>
           </div>

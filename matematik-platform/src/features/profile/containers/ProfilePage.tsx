@@ -433,7 +433,7 @@ export default function ProfilePage({ initialData }: ProfilePageProps) {
           availableQuizzes[0]?.title ||
           'Sınıfına uygun testleri çözerek kendini dene.',
         stat: `${availableQuizzes.length}`,
-        accentClass: 'from-emerald-500/20 via-teal-500/15 to-cyan-500/10',
+        accentClass: 'from-brand-primary/20 to-brand-primary/20',
         iconClass: 'bg-emerald-500/30',
         actionLabel: 'Testlere Git',
         onAction: () => router.push('/testler'),
@@ -446,7 +446,7 @@ export default function ProfilePage({ initialData }: ProfilePageProps) {
           pendingAssignments[0]?.title ||
           'Teslim edilmesi gereken ödevlerini buradan takip et.',
         stat: `${pendingAssignments.length}`,
-        accentClass: 'from-orange-500/20 via-amber-500/15 to-yellow-500/10',
+        accentClass: 'from-brand-accent/20 to-brand-accent/20',
         iconClass: 'bg-orange-500/30',
         actionLabel: 'Ödevlere Git',
         onAction: () => router.push('/odevler'),
@@ -460,7 +460,7 @@ export default function ProfilePage({ initialData }: ProfilePageProps) {
             ? `Bu hafta odağını ${focusTopic || strongTopic} çevresinde tut.`
             : 'Haftalık hedef ve konu akışını tek ekranda incele.',
         stat: `%${goalSnapshot.progressPercent}`,
-        accentClass: 'from-blue-500/20 via-cyan-500/15 to-sky-500/10',
+        accentClass: 'from-brand-secondary/20 to-brand-secondary/20',
         iconClass: 'bg-blue-500/30',
         actionLabel: 'İlerlemeyi Aç',
         onAction: () => router.push('/ilerleme'),
@@ -473,7 +473,7 @@ export default function ProfilePage({ initialData }: ProfilePageProps) {
           latestNotification?.title ||
           'Bildirim akışından yeni mesaj ve belge sinyallerini kontrol et.',
         stat: `${unreadCount}`,
-        accentClass: 'from-indigo-500/20 via-violet-500/15 to-fuchsia-500/10',
+        accentClass: 'from-brand-secondary/20 to-brand-secondary/20',
         iconClass: 'bg-indigo-500/30',
         actionLabel: 'Akışı Aç',
         onAction: () => {
@@ -548,7 +548,7 @@ export default function ProfilePage({ initialData }: ProfilePageProps) {
 
   if (loading) {
     return (
-      <main className="profil-page page-surface min-h-screen dark:bg-gradient-to-br dark:from-slate-900 dark:via-slate-900 dark:to-slate-800 px-4 pb-12 pt-20">
+      <main className="profil-page page-surface min-h-screen px-4 pb-12 pt-20 dark:bg-surface-0">
         <div className="mx-auto max-w-6xl space-y-6">
           <Skeleton className="h-48 rounded-[2.5rem]" />
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
@@ -574,7 +574,7 @@ export default function ProfilePage({ initialData }: ProfilePageProps) {
       <nav className="fixed left-0 right-0 top-0 z-50 border-b border-default bg-surface-1/90 backdrop-blur-xl transition-all duration-300 pt-[env(safe-area-inset-top)] pl-[max(1rem,env(safe-area-inset-left))] pr-[max(1rem,env(safe-area-inset-right))]">
         <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 sm:px-6">
           <Link href="/" className="group flex items-center gap-3">
-            <div className="relative flex h-10 w-10 items-center justify-center overflow-hidden rounded-xl bg-gradient-to-br from-brand-primary via-brand-pink to-brand-orange p-0.5 shadow-md transition-transform duration-300 group-hover:scale-105">
+            <div className="relative flex h-10 w-10 items-center justify-center overflow-hidden rounded-xl p-0.5 shadow-md transition-transform duration-300 group-hover:scale-105 bg-brand-primary">
               <Image
                 src="/ugur.jpeg"
                 alt="Uğur Hoca"
@@ -722,7 +722,7 @@ export default function ProfilePage({ initialData }: ProfilePageProps) {
                         onClick={() => setActiveTab(tab.id)}
                         className={`relative flex flex-1 items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-accent ${
                           isActive
-                            ? 'bg-gradient-to-r from-amber-500 via-orange-500 to-pink-600 text-white shadow-lg'
+                            ? 'shadow-lg bg-brand-primary text-slate-950 dark:text-slate-950'
                             : 'text-secondary hover:bg-overlay-2 hover:text-primary'
                         }`}
                       >
@@ -817,7 +817,7 @@ export default function ProfilePage({ initialData }: ProfilePageProps) {
                         </div>
                         <Link
                           href="/testler?mode=mistakes"
-                          className="shrink-0 rounded-xl bg-gradient-to-r from-amber-600 to-orange-600 px-4 py-2.5 text-xs sm:text-sm font-bold text-white transition-all hover:brightness-110 active:scale-95 shadow-md shadow-amber-500/20"
+                          className="shrink-0 rounded-xl px-4 py-2.5 text-xs sm:text-sm font-bold transition-all hover:brightness-110 active:scale-95 bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none"
                         >
                           Hataları Tekrar Çöz ➔
                         </Link>
@@ -898,9 +898,9 @@ export default function ProfilePage({ initialData }: ProfilePageProps) {
                 aria-labelledby="profile-tab-notes"
                 className={activeTab === 'notes' ? 'block' : 'hidden'}
               >
-                {visitedTabs.has('notes') && (
+                {visitedTabs.has('notes') &&
                   <NotesSection userId={user.id} />
-                )}
+                }
               </div>
 
               <div
@@ -909,9 +909,9 @@ export default function ProfilePage({ initialData }: ProfilePageProps) {
                 aria-labelledby="profile-tab-settings"
                 className={activeTab === 'settings' ? 'block' : 'hidden'}
               >
-                {visitedTabs.has('settings') && (
+                {visitedTabs.has('settings') &&
                   <DashboardSettings />
-                )}
+                }
               </div>
 
               <AvatarSelectionModal

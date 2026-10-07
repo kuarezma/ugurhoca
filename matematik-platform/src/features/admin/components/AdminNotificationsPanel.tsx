@@ -34,8 +34,8 @@ export default function AdminNotificationsPanel({
     <div className="fixed top-20 right-4 left-4 sm:left-auto sm:w-[450px] z-50 max-h-[75vh] flex flex-col rounded-3xl border border-slate-700/60 bg-[#0f172a]/95 backdrop-blur-2xl shadow-[0_10px_40px_rgba(0,0,0,0.5)] animate-fade-up">
       <div className="p-5 border-b border-white/5 bg-gradient-to-r from-indigo-500/10 to-purple-500/10 flex items-center justify-between shadow-sm">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-500 flex items-center justify-center shadow-lg shadow-indigo-500/20">
-            <BellRing className="w-5 h-5 text-white dark:text-white" />
+          <div className="w-10 h-10 rounded-2xl flex items-center justify-center shadow-lg shadow-indigo-500/20 bg-brand-secondary">
+            <BellRing className="w-5 h-5 text-slate-950 dark:text-slate-950" />
           </div>
           <div>
             <h3 className="text-white dark:text-white font-bold text-lg">Bildirimler</h3>

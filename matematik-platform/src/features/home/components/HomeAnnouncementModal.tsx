@@ -166,7 +166,7 @@ export function HomeAnnouncementModal({
                 </div>
                 <div className="p-6 sm:p-8">
                   <div className="flex items-center justify-between mb-4">
-                    <span className="px-3 py-1 rounded-full bg-pink-500/20 text-pink-600 dark:text-pink-300 text-xs font-semibold">
+                    <span className="px-3 py-1 rounded-full bg-purple-500/20 text-purple-600 dark:text-purple-300 text-xs font-semibold">
                       Haber
                     </span>
                     <button
@@ -198,7 +198,7 @@ export function HomeAnnouncementModal({
             ) : (
               <div className="p-6 sm:p-8">
                 <div className="mb-4 flex items-center justify-between">
-                  <span className="rounded-full bg-pink-500/20 px-3 py-1 text-xs font-semibold text-pink-600 dark:text-pink-300">
+                  <span className="rounded-full bg-purple-500/20 px-3 py-1 text-xs font-semibold text-purple-600 dark:text-purple-300">
                     Haber
                   </span>
                   <button

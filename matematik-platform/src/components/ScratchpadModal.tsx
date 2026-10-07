@@ -49,7 +49,7 @@ export type ScratchpadModalProps = {
 };
 
 type ToolType = 'pen' | 'highlighter' | 'line' | 'eraser';
-export type BackgroundPattern = 'dark' | 'grid' | 'dot' | 'lined' | 'isometric' | 'coordinate';
+export type BackgroundPattern = |'dark' | 'grid' | 'dot' | 'lined' | 'isometric' | 'coordinate';
 
 const PATTERN_NAMES: Record<BackgroundPattern, string> = {
   grid: 'Kareli',
@@ -745,7 +745,7 @@ export default function ScratchpadModal({
                 <button
                   type="button"
                   onClick={reset}
-                  className="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 rounded-xl text-white dark:text-white font-semibold text-xs transition"
+                  className="px-4 py-2 rounded-xl font-semibold text-xs transition bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none"
                 >
                   Tuvali Yeniden Başlat
                 </button>
@@ -778,14 +778,14 @@ export default function ScratchpadModal({
                 onClick={() => setShowQuestionPanel((prev) => !prev)}
                 className={`hidden md:inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-semibold border transition ${
                   showQuestionPanel
-                    ? 'bg-amber-500/20 border-amber-500/30 text-amber-700 dark:text-amber-300'
+                    ? 'bg-brand-primary/20 border-brand-primary/30 text-tone-success-fg dark:text-brand-primary-soft'
                     : isLight
                     ? 'bg-white border-slate-200 text-slate-700 hover:bg-slate-100'
                     : 'bg-white/5 border-white/10 text-slate-300 hover:text-white'
                 }`}
                 title="Soru panelini aç/kapat"
               >
-                {showQuestionPanel ? <EyeOff className="h-3 w-3" /> : <Eye className="h-3 w-3" />}
+                {showQuestionPanel ? (<EyeOff className="h-3 w-3" /> ): (<Eye className="h-3 w-3" />)}
                 <span>{showQuestionPanel ? 'Soruyu Gizle' : 'Soruyu Gör'}</span>
               </button>
             )}
@@ -802,7 +802,7 @@ export default function ScratchpadModal({
                 title="Kalem"
                 className={`inline-flex h-8 items-center gap-1 rounded-lg px-2.5 text-xs font-semibold transition ${
                   activeTool === 'pen'
-                    ? 'bg-amber-500 text-slate-950 font-bold shadow-md'
+                    ? 'bg-brand-primary font-bold shadow-md text-slate-950 dark:text-slate-950'
                     : isLight
                     ? 'text-slate-700 hover:text-slate-900'
                     : 'text-slate-300 hover:text-white'
@@ -818,7 +818,7 @@ export default function ScratchpadModal({
                 title="Fosforlu Kalem"
                 className={`inline-flex h-8 items-center gap-1 rounded-lg px-2.5 text-xs font-semibold transition ${
                   activeTool === 'highlighter'
-                    ? 'bg-amber-400/90 text-slate-950 font-bold shadow-md'
+                    ? 'bg-brand-primary/90 text-slate-950 font-bold shadow-md'
                     : isLight
                     ? 'text-slate-700 hover:text-slate-900'
                     : 'text-slate-300 hover:text-white'
@@ -834,7 +834,7 @@ export default function ScratchpadModal({
                 title="Düz Çizgi / Cetvel"
                 className={`inline-flex h-8 items-center gap-1 rounded-lg px-2.5 text-xs font-semibold transition ${
                   activeTool === 'line'
-                    ? 'bg-cyan-500 text-slate-950 font-bold shadow-md'
+                    ? 'bg-brand-primary font-bold shadow-md text-slate-950 dark:text-slate-950'
                     : isLight
                     ? 'text-slate-700 hover:text-slate-900'
                     : 'text-slate-300 hover:text-white'
@@ -850,7 +850,7 @@ export default function ScratchpadModal({
                 title="Silgi"
                 className={`inline-flex h-8 items-center gap-1 rounded-lg px-2.5 text-xs font-semibold transition ${
                   activeTool === 'eraser'
-                    ? 'bg-rose-500 text-white font-bold shadow-md'
+                    ? 'bg-brand-primary font-bold shadow-md text-slate-950 dark:text-slate-950'
                     : isLight
                     ? 'text-slate-700 hover:text-slate-900'
                     : 'text-slate-300 hover:text-white'
@@ -897,7 +897,7 @@ export default function ScratchpadModal({
                 title={showProtractor ? 'Açıölçeri Gizle' : 'Açıölçer (İletki) Aç'}
                 className={`inline-flex h-8 items-center gap-1 rounded-lg px-2 text-xs font-semibold transition ${
                   showProtractor
-                    ? 'bg-amber-500 text-slate-950 font-bold shadow-md'
+                    ? 'bg-brand-primary font-bold shadow-md text-slate-950 dark:text-slate-950'
                     : isLight
                     ? 'text-indigo-700 hover:bg-indigo-100 hover:text-indigo-900'
                     : 'text-indigo-300 hover:bg-indigo-500/20 hover:text-white'
@@ -917,7 +917,7 @@ export default function ScratchpadModal({
                       : 'text-indigo-300 hover:bg-indigo-500/20 hover:text-white'
                   }`}
                 >
-                  <Shapes className="h-3.5 w-3.5 text-pink-600 dark:text-pink-400" />
+                  <Shapes className="h-3.5 w-3.5 text-purple-600 dark:text-purple-400" />
                   <span className="hidden sm:inline">Şekil</span>
                 </button>
                 <div className={`absolute left-0 top-full mt-1 hidden group-hover:flex flex-col gap-1 rounded-xl border p-1.5 shadow-xl z-50 min-w-[130px] ${
@@ -1062,7 +1062,7 @@ export default function ScratchpadModal({
                       onClick={() => handleSelectPattern(item.id)}
                       className={`w-full flex items-center justify-between rounded-xl px-2.5 py-1.5 text-left text-xs transition-all ${
                         backgroundPattern === item.id
-                          ? 'bg-indigo-600 text-white font-bold shadow-sm'
+                          ? 'bg-brand-primary font-bold shadow-sm text-slate-950 dark:text-slate-950'
                           : isLight
                           ? 'text-slate-700 hover:bg-slate-100 hover:text-slate-900'
                           : 'text-slate-300 hover:bg-white/10 hover:text-white'
@@ -1072,7 +1072,7 @@ export default function ScratchpadModal({
                         <div className="font-semibold">{item.label}</div>
                         <div className="text-[9px] opacity-75">{item.desc}</div>
                       </div>
-                      {backgroundPattern === item.id && <Check className="h-3.5 w-3.5" />}
+                      {backgroundPattern === item.id && (<Check className="h-3.5 w-3.5" />)}
                     </button>
                   ))}
                 </div>
@@ -1214,7 +1214,7 @@ export default function ScratchpadModal({
                           <span className="flex-1 truncate">
                             <MathText>{opt}</MathText>
                           </span>
-                          {isEliminated && <X className="h-3.5 w-3.5 text-rose-500 shrink-0" />}
+                          {isEliminated && (<X className="h-3.5 w-3.5 text-rose-500 shrink-0" />)}
                         </button>
                       );
                     })}

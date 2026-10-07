@@ -24,7 +24,7 @@ export function HomeSupportAttachmentList({
           className="flex items-center gap-2 px-3 py-2 rounded-xl border text-sm light:bg-slate-50 light:border-slate-200 light:text-slate-700 dark:bg-white/5 dark:border-white/10 dark:text-slate-200"
         >
           {file.kind === 'image' ? (
-            <ImageIcon className="w-4 h-4 text-pink-300" />
+            <ImageIcon className="w-4 h-4 text-purple-300" />
           ) : (
             <FileDoc className="w-4 h-4 text-sky-300" />
           )}

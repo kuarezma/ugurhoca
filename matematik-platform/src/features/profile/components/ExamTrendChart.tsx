@@ -207,7 +207,7 @@ export default function ExamTrendChart({
               onClick={() => setViewMode('all')}
               className={`px-2.5 py-1 rounded-lg font-semibold transition ${
                 viewMode === 'all'
-                  ? 'bg-indigo-600 text-white shadow-sm'
+                  ? 'bg-brand-primary shadow-sm text-slate-950 dark:text-slate-950'
                   : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
               }`}
             >
@@ -218,7 +218,7 @@ export default function ExamTrendChart({
               onClick={() => setViewMode('math')}
               className={`px-2.5 py-1 rounded-lg font-semibold transition ${
                 viewMode === 'math'
-                  ? 'bg-emerald-600 text-white shadow-sm'
+                  ? 'bg-brand-primary shadow-sm text-slate-950 dark:text-slate-950'
                   : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
               }`}
             >
@@ -229,7 +229,7 @@ export default function ExamTrendChart({
               onClick={() => setViewMode('total')}
               className={`px-2.5 py-1 rounded-lg font-semibold transition ${
                 viewMode === 'total'
-                  ? 'bg-purple-600 text-white shadow-sm'
+                  ? 'bg-brand-primary shadow-sm text-slate-950 dark:text-slate-950'
                   : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
               }`}
             >
@@ -261,7 +261,7 @@ export default function ExamTrendChart({
             <button
               type="button"
               onClick={onOpenCalculator}
-              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white dark:text-white font-semibold text-xs transition shadow-sm"
+              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl font-semibold text-xs transition bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none"
             >
               <span>Deneme Puanı Hesapla & Kaydet</span>
               <ChevronRight className="h-3.5 w-3.5" />
@@ -468,7 +468,7 @@ export default function ExamTrendChart({
                       y={padTop + plotHeight + 18}
                       textAnchor="middle"
                       fontSize="9"
-                      fill={isSelected ? (isLight ? '#0f172a' : '#ffffff') : isLight ? '#64748b' : '#94a3b8'}
+                      fill={isSelected ? isLight ? '#0f172a' : '#ffffff' : isLight ? '#64748b' : '#94a3b8'}
                       fontWeight={isSelected ? 'bold' : 'normal'}
                       className="font-mono select-none"
                     >
@@ -548,7 +548,7 @@ export default function ExamTrendChart({
                     {activePoint.trial.date}
                   </span>
                   <span>•</span>
-                  <span>Skor: <strong className="text-slate-800 dark:text-slate-200">{activePoint.trial.score.toFixed(1)} Puan</strong></span>
+                  <span>Skor: {' '}<strong className="text-slate-800 dark:text-slate-200">{activePoint.trial.score.toFixed(1)} Puan</strong></span>
                 </div>
               </div>
 

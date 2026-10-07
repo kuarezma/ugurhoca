@@ -58,7 +58,7 @@ export function StudentReportPrintView({
             <button
               type="button"
               onClick={handlePrint}
-              className="inline-flex items-center gap-2 rounded-xl bg-brand-primary px-4 py-2 text-xs font-bold text-white shadow-md hover:bg-brand-primary-deep"
+              className="inline-flex items-center gap-2 rounded-xl px-4 py-2 text-xs font-bold bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none"
             >
               <Printer className="h-4 w-4" />
               Yazdır / PDF Kaydet
@@ -132,7 +132,7 @@ export function StudentReportPrintView({
             </div>
 
             <div className="rounded-2xl border border-white/10 bg-slate-950/50 p-4 print:border print:border-slate-200 print:bg-white">
-              <div className="flex items-center gap-2 text-pink-400 print:text-pink-600">
+              <div className="flex items-center gap-2 text-purple-400 print:text-purple-600">
                 <FileText className="h-4 w-4" />
                 <span className="text-xs font-semibold">Ödev Teslimleri</span>
               </div>
