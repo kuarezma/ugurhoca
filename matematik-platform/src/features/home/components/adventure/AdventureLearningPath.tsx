@@ -46,7 +46,7 @@ export function AdventureLearningPath({
   return (
     <div className="card-playful relative overflow-hidden rounded-3xl p-5 sm:p-8 transition-all duration-300">
       {/* Başlık ve Sınıf Seçici */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b-2 border-default">
+      <div className="flex flex-col sm:flex-row sm:items-center lg:flex-col lg:items-stretch justify-between gap-4 pb-6 border-b-2 border-default">
         <div>
           <div className="inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-black uppercase tracking-wider bg-[#ddf4ff] text-[#0c6999] dark:bg-sky-950/40 dark:text-sky-300 border border-[#1899d6]/30 mb-1.5">
             <Sparkles className="h-3.5 w-3.5 text-[#1cb0f6]" />
@@ -62,7 +62,7 @@ export function AdventureLearningPath({
         </div>
 
         {/* Sınıf Çipleri (3D Butonlar) */}
-        <div className="flex items-center gap-2 overflow-x-auto pb-1 max-w-full [scrollbar-width:none]">
+        <div className="flex items-center gap-2 overflow-x-auto pb-1 max-w-full [scrollbar-width:none] lg:flex-wrap lg:overflow-visible">
           {[
             { label: '5. Sınıf', id: '5' },
             { label: '6. Sınıf', id: '6' },
@@ -91,14 +91,14 @@ export function AdventureLearningPath({
       </div>
 
       {/* Dikey / Kıvrımlı Patika Alanı */}
-      <div className="relative max-w-xl mx-auto py-8 sm:py-14">
+      <div className="relative max-w-xl mx-auto py-8 sm:py-14 lg:max-w-none lg:py-5">
         {/* Kıvrımlı Arka Plan Çizgisi ve Enerji Yolu */}
         <div
           aria-hidden="true"
-          className="absolute inset-y-10 left-1/2 -translate-x-1/2 w-1 border-r-2 border-dashed border-indigo-500/30 pointer-events-none"
+          className="lg:hidden absolute inset-y-10 left-1/2 -translate-x-1/2 w-1 border-r-2 border-dashed border-indigo-500/30 pointer-events-none"
         />
 
-        <div className="relative space-y-12 sm:space-y-16">
+        <div className="relative space-y-12 sm:space-y-16 lg:grid lg:grid-cols-2 lg:gap-3 lg:space-y-0">
           {topics.map((topic, index) => {
             // Zigzag ofset hesaplama (Sol - Orta - Sağ)
             const alignment =
@@ -114,19 +114,23 @@ export function AdventureLearningPath({
             return (
               <div
                 key={topic.id}
-                className={`flex ${alignment} relative group`}
+                className={`flex ${alignment} relative group lg:transform-none lg:justify-start lg:rounded-2xl lg:border lg:p-3 ${
+                  isActive
+                    ? 'lg:border-brand-primary lg:bg-accent-bg'
+                    : 'lg:border-default lg:bg-surface-2/40'
+                }`}
               >
-                <div className="flex flex-col items-center">
+                <div className="flex flex-col items-center lg:w-full lg:flex-row lg:gap-3">
                   {/* Aktif Düğümde "BURADAN BAŞLA" Çizgi Film Rozeti */}
                   {isActive && (
-                    <div className="mb-3 animate-bounce flex items-center gap-1.5 rounded-full bg-[#58cc02] px-3.5 py-1 text-xs font-black uppercase tracking-wider text-white dark:text-white shadow-[0_3px_0_#46a302]">
+                    <div className="lg:hidden mb-3 animate-bounce flex items-center gap-1.5 rounded-full bg-[#58cc02] px-3.5 py-1 text-xs font-black uppercase tracking-wider text-white dark:text-white shadow-[0_3px_0_#46a302]">
                       <Play className="h-3 w-3 fill-current" />
                       <span>Buradasın!</span>
                     </div>
                   )}
 
                   {/* 3D TACTILE GAME BUTTON (Duolingo Tarzı) */}
-                  <div className="relative">
+                  <div className="relative lg:shrink-0">
                     {/* Aktif Düğüm Dış Halo Işıması */}
                     {isActive && (
                       <div
@@ -139,7 +143,7 @@ export function AdventureLearningPath({
                       type="button"
                       onClick={() => setActiveNodeId(topic.id)}
                       aria-label={`${topic.unitNumber}. Ünite: ${topic.title}`}
-                      className={`relative flex h-20 w-20 sm:h-24 sm:w-24 items-center justify-center rounded-3xl font-black transition-all duration-150 focus:outline-none focus-visible:ring-4 focus-visible:ring-indigo-500 cursor-pointer select-none ${
+                      className={`relative flex h-20 w-20 sm:h-24 sm:w-24 lg:h-12 lg:w-12 lg:rounded-2xl items-center justify-center rounded-3xl font-black transition-all duration-150 focus:outline-none focus-visible:ring-4 focus-visible:ring-indigo-500 cursor-pointer select-none ${
                         isActive
                           ? 'bg-[#58cc02] text-white dark:text-white shadow-[0_8px_0_#46a302] hover:bg-[#61e002] active:translate-y-2 active:shadow-[0_1px_0_#46a302] scale-105'
                           : isCompleted
@@ -149,11 +153,11 @@ export function AdventureLearningPath({
                     >
                       {/* Düğüm İçi İkon */}
                       {isCompleted ? (
-                        <CheckCircle2 className="h-9 w-9 text-white dark:text-white drop-shadow-xs" />
+                        <CheckCircle2 className="h-9 w-9 lg:h-6 lg:w-6 text-white dark:text-white drop-shadow-xs" />
                       ) : isActive ? (
-                        <Play className="h-9 w-9 fill-white text-white dark:text-white drop-shadow-xs" />
+                        <Play className="h-9 w-9 lg:h-6 lg:w-6 fill-white text-white dark:text-white drop-shadow-xs" />
                       ) : (
-                        <BookOpen className="h-7 w-7 text-secondary/60" />
+                        <BookOpen className="h-7 w-7 lg:h-5 lg:w-5 text-secondary/60" />
                       )}
 
                       {/* Düğüm Üzerinde Yıldızlar (Eğer tamamlandıysa) */}
@@ -178,14 +182,30 @@ export function AdventureLearningPath({
                   </div>
 
                   {/* Düğüm Altı Başlık Kapsülü */}
-                  <div className="mt-3.5 text-center max-w-[200px] rounded-2xl px-3 py-1.5 bg-surface-2/80 backdrop-blur-xs border border-default/70 shadow-xs">
+                  <div className="lg:mt-0 lg:min-w-0 lg:max-w-none lg:flex-1 lg:border-0 lg:bg-transparent lg:p-0 lg:text-left lg:shadow-none mt-3.5 text-center max-w-[200px] rounded-2xl px-3 py-1.5 bg-surface-2/80 backdrop-blur-xs border border-default/70 shadow-xs">
                     <span className="block text-[10px] font-black uppercase tracking-wider text-secondary">
                       {`${topic.unitNumber}. Ünite`} ·{' '}
                       {isCompleted ? 'Tamamlandı' : isActive ? 'Aktif' : 'Açık'}
                     </span>
-                    <h3 className="font-display text-xs sm:text-sm font-bold text-primary truncate mt-0.5">
+                    <h3 className="font-display text-xs sm:text-sm font-bold text-primary truncate mt-0.5 lg:whitespace-normal lg:leading-tight">
                       {topic.title}
                     </h3>
+                    <div className="hidden lg:mt-2 lg:flex lg:flex-wrap lg:gap-x-3 lg:gap-y-1 lg:text-xs lg:font-bold">
+                      <SafeLink
+                        href={topic.notesHref}
+                        aria-label={`${topic.title}: Ders notu`}
+                        className={`${isActive ? 'text-slate-950' : 'text-secondary'} hover:underline`}
+                      >
+                        Ders notu
+                      </SafeLink>
+                      <SafeLink
+                        href={topic.testsHref}
+                        aria-label={`${topic.title}: Yaprak test`}
+                        className={`${isActive ? 'text-slate-950 underline' : 'text-accent-fg'} hover:underline`}
+                      >
+                        Yaprak test
+                      </SafeLink>
+                    </div>
                   </div>
                 </div>
               </div>

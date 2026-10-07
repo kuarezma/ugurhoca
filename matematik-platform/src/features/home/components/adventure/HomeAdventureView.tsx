@@ -62,7 +62,7 @@ export function HomeAdventureView({
         {/* 2. Ana Gövde (Sol: Patika, Sağ: Görevler & Liderlik) */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
           {/* Sol Kolon: Öğrenme Patikası Düğümleri */}
-          <div className="lg:col-span-8">
+          <div className="lg:min-w-0 lg:col-span-8">
             <AdventureLearningPath
               selectedGrade={selectedGrade}
               onGradeChange={(grade) =>
@@ -75,7 +75,7 @@ export function HomeAdventureView({
           </div>
 
           {/* Sağ Kolon: Günlük Görevler, Liderlik & Hızlı Araçlar */}
-          <div className="lg:col-span-4">
+          <div className="lg:col-span-4 lg:sticky lg:top-[calc(5rem+env(safe-area-inset-top))]">
             <AdventureSideQuests
               activeTopic={activeTopic}
               onOpenCalculator={() => onOpenCalculator?.('lgs')}

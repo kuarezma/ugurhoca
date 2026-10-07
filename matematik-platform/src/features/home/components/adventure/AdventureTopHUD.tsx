@@ -34,7 +34,7 @@ export function AdventureTopHUD({
   const userName = user?.name ? user.name.split(' ')[0] : 'Şampiyon';
 
   return (
-    <div className="card-playful-hero relative overflow-hidden rounded-3xl p-5 sm:p-8 transition-all duration-300">
+    <div className="card-playful-hero relative overflow-hidden rounded-3xl p-5 sm:p-8 lg:grid lg:grid-cols-[minmax(0,1fr)_22rem] lg:gap-x-6 transition-all duration-300">
       {/* Arka plan aurora ışıması */}
       <div
         aria-hidden="true"
@@ -45,9 +45,9 @@ export function AdventureTopHUD({
         className="pointer-events-none absolute -left-16 -bottom-16 h-72 w-72 rounded-full blur-3xl bg-brand-secondary/20"
       />
 
-      <div className="relative flex flex-col lg:flex-row items-center justify-between gap-6">
+      <div className="relative flex flex-col lg:contents items-center justify-between gap-6">
         {/* Sol: Maskot Pi ve Konuşma Balonu */}
-        <div className="flex items-center gap-4 sm:gap-6 min-w-0 w-full lg:w-auto">
+        <div className="flex items-center gap-4 sm:gap-6 min-w-0 w-full">
           <div className="relative shrink-0">
             <div className="absolute -inset-2.5 rounded-full opacity-35 blur-md animate-pulse bg-brand-accent" />
             <Mascot
@@ -96,7 +96,7 @@ export function AdventureTopHUD({
 
         {/* Sağ: Oyun Göstergeleri (Seri, Test, Konu, Rozet - 3D Tactile Kapsüller) */}
         {user && progress && (
-          <div className="grid grid-cols-2 sm:flex items-center gap-2.5 sm:gap-3.5 w-full lg:w-auto shrink-0">
+          <div className="grid grid-cols-2 sm:flex items-center gap-2.5 sm:gap-3.5 w-full lg:grid lg:grid-cols-2 shrink-0">
             {/* 1. Günlük Seri (Streak) */}
             <div className="flex flex-col items-center justify-center rounded-2xl border-2 border-[#ff9600] bg-[#fff5cc] dark:bg-amber-950/40 px-3 sm:px-4 py-2.5 shadow-[0_4px_0_#d87e00] hover:-translate-y-0.5 active:translate-y-1 active:shadow-[0_1px_0_#d87e00] transition-all duration-150">
               <div className="flex items-center gap-1.5 text-[#d87e00] dark:text-amber-400">
@@ -151,9 +151,15 @@ export function AdventureTopHUD({
       </div>
 
       {!user && (
-        <SafeLink href="/giris" className="btn-3d btn-green mt-5">
-          Giriş yap, ilerlemen kaydedilsin
-        </SafeLink>
+        <div className="contents lg:flex lg:flex-col lg:justify-center lg:gap-3">
+          <p className="hidden text-sm text-secondary lg:block">
+            Konunu seç, ders notuyla hazırlan ve yaprak testlerle öğrendiklerini
+            pekiştir. Giriş yaparak yıldızlarını ve ilerlemeni takip et.
+          </p>
+          <SafeLink href="/giris" className="btn-3d btn-green mt-5 lg:mt-0">
+            Giriş yap, ilerlemen kaydedilsin
+          </SafeLink>
+        </div>
       )}
       {user && loading && (
         <p role="status" className="mt-5 text-sm text-secondary">
@@ -171,7 +177,7 @@ export function AdventureTopHUD({
 
       {/* Seviye İlerleme Çubuğu */}
       {user && progress && (
-        <div className="mt-5 pt-4 border-t-2 border-default flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 text-xs text-secondary">
+        <div className="lg:col-span-2 mt-5 pt-4 border-t-2 border-default flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 text-xs text-secondary">
           <div className="flex items-center gap-2">
             <Trophy className="h-4 w-4 text-amber-500 shrink-0" />
             <span className="font-bold text-primary">Konu İlerlemen</span>
