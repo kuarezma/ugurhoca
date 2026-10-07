@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import { SafeLink } from '@/components/SafeLink';
 import { Sparkles, Shield, Heart } from 'lucide-react';
 
@@ -18,8 +19,14 @@ export function HomeFooter(_props: HomeFooterProps) {
           {/* Marka & Misyon */}
           <div className="space-y-3 lg:col-span-2">
             <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-[#fff5cc] border-2 border-[#ffc800] shadow-[0_3px_0_#e5b400] text-xl select-none">
-                🦉
+              <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-[#fff5cc] border-2 border-[#ffc800] shadow-[0_3px_0_#e5b400] overflow-hidden p-0.5 select-none">
+                <Image
+                  src="/ugur.jpeg"
+                  alt="Uğur Hoca"
+                  width={40}
+                  height={40}
+                  className="h-full w-full rounded-[14px] object-cover"
+                />
               </div>
               <span className="font-display text-xl font-black text-primary">
                 Uğur Hoca Matematik

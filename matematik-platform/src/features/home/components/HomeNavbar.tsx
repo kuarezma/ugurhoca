@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { LogOut, Menu, X } from 'lucide-react';
 import { useState } from 'react';
@@ -41,8 +42,15 @@ export function HomeNavbar({ onLogout, user }: HomeNavbarProps) {
             }}
             className="group flex min-w-0 shrink items-center gap-2.5 sm:gap-3"
           >
-            <div className="relative flex h-10 w-10 sm:h-11 sm:w-11 shrink-0 items-center justify-center rounded-2xl bg-[#fff5cc] border-2 border-[#ffc800] shadow-[0_3px_0_#e5b400] text-xl sm:text-2xl transition-transform duration-200 group-hover:scale-105 select-none">
-              🦉
+            <div className="relative flex h-10 w-10 sm:h-11 sm:w-11 shrink-0 items-center justify-center rounded-2xl bg-[#fff5cc] border-2 border-[#ffc800] shadow-[0_3px_0_#e5b400] text-xl sm:text-2xl transition-transform duration-200 group-hover:scale-105 select-none overflow-hidden p-0.5">
+              <Image
+                src="/ugur.jpeg"
+                alt="Uğur Hoca"
+                width={44}
+                height={44}
+                priority
+                className="h-full w-full rounded-[14px] object-cover"
+              />
             </div>
             <div className="flex flex-col min-w-0">
               <span className="font-display text-base sm:text-xl font-black leading-tight truncate text-primary">
@@ -54,23 +62,6 @@ export function HomeNavbar({ onLogout, user }: HomeNavbarProps) {
             </div>
           </SafeLink>
 
-          {/* Gamified Stat Bar (Masaüstü Oyunsu Çubuk) */}
-          <div className="hidden xl:flex items-center gap-4 bg-surface-2 border-2 border-default px-4 py-1.5 rounded-full shadow-xs">
-            <div className="flex items-center gap-1.5 font-display text-sm font-bold text-amber-500" title="Günlük Çalışma Serisi!">
-              <span>🔥</span>
-              <span>7 GÜN</span>
-            </div>
-            <div className="h-4 w-px bg-border-default opacity-40" />
-            <div className="flex items-center gap-1.5 font-display text-sm font-bold text-cyan-500" title="Kazanılan Kristal Puan">
-              <span>💎</span>
-              <span>520 XP</span>
-            </div>
-            <div className="h-4 w-px bg-border-default opacity-40" />
-            <div className="flex items-center gap-1.5 font-display text-sm font-bold text-rose-500" title="Kalan Canın">
-              <span>❤️</span>
-              <span>5/5</span>
-            </div>
-          </div>
 
           <div className="hidden shrink-0 items-center gap-2 lg:flex">
             <DesignModeToggle />
