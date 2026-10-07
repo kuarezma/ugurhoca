@@ -32,6 +32,7 @@ export type AdminActiveTab =
   | 'classroom'
   | 'announcements'
   | 'documents'
+  | 'contentCoverage'
   | 'annualPlan'
   | 'worksheetCandidates'
   | 'users'

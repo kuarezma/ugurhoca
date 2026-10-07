@@ -34,10 +34,11 @@ export const Card = forwardRef<HTMLDivElement, CardProps>(function Card(
       ref={ref}
       className={cn(
         'relative transition-all duration-200',
-        isBento ? 'rounded-3xl bento-card' : 'rounded-2xl border',
-        !isBento && 'bg-white/70 dark:bg-slate-900/60 backdrop-blur border-slate-200/80 dark:border-white/10',
-        glow && 'shadow-soft-card hover:shadow-pop-card',
-        interactive && (isBento ? 'bento-interactive' : 'tilt-on-hover cursor-pointer hover:border-brand-primary/40'),
+        'rounded-3xl border-3 border-default bg-surface-1 shadow-[0_6px_0_var(--border-default)]',
+        isBento && 'bento-card',
+        glow && 'shadow-[0_8px_0_var(--border-default)]',
+        interactive &&
+          'cursor-pointer hover:-translate-y-1 hover:shadow-[0_10px_0_var(--border-default)] active:translate-y-0.5 active:shadow-[0_2px_0_var(--border-default)]',
         PADDING[padding],
         className,
       )}
@@ -60,7 +61,7 @@ export function CardHeader({ className, children, ...rest }: CardPartProps) {
 
 export function CardTitle({ className, children, ...rest }: CardPartProps) {
   return (
-    <h3 className={cn('font-display text-xl font-bold text-slate-900 dark:text-white', className)} {...rest}>
+    <h3 className={cn('font-display text-xl font-bold text-primary', className)} {...rest}>
       {children}
     </h3>
   );
@@ -68,7 +69,7 @@ export function CardTitle({ className, children, ...rest }: CardPartProps) {
 
 export function CardBody({ className, children, ...rest }: CardPartProps) {
   return (
-    <div className={cn('text-slate-700 dark:text-slate-300', className)} {...rest}>
+    <div className={cn('text-secondary', className)} {...rest}>
       {children}
     </div>
   );

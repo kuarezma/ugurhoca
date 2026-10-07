@@ -119,6 +119,7 @@ export default function HomePage({ announcementsSlot }: HomePageProps) {
   const isLight = theme === 'light';
   const isAdventure = designMode === 'adventure';
   const [isFlashcardsOpen, setIsFlashcardsOpen] = useState(false);
+  const [flashcardSubject, setFlashcardSubject] = useState<string | undefined>();
   const [isSpeedDrillOpen, setIsSpeedDrillOpen] = useState(false);
   const [isScratchpadOpen, setIsScratchpadOpen] = useState(false);
   const [calculatorState, setCalculatorState] = useState<{
@@ -204,7 +205,7 @@ export default function HomePage({ announcementsSlot }: HomePageProps) {
         {isAdventure ? (
           <HomeAdventureView
             user={user}
-            onOpenFlashcards={() => setIsFlashcardsOpen(true)}
+            onOpenFlashcards={(subject) => { setFlashcardSubject(subject); setIsFlashcardsOpen(true); }}
             onOpenScratchpad={() => setIsScratchpadOpen(true)}
             onOpenCalculator={(tab) =>
               setCalculatorState({ isOpen: true, tab: tab || 'lgs' })
@@ -257,7 +258,8 @@ export default function HomePage({ announcementsSlot }: HomePageProps) {
       {isFlashcardsOpen ? (
         <FormulaFlashcardsModal
           isOpen={isFlashcardsOpen}
-          onClose={() => setIsFlashcardsOpen(false)}
+          initialSubject={flashcardSubject}
+          onClose={() => { setIsFlashcardsOpen(false); setFlashcardSubject(undefined); }}
         />
       ) : null}
       {isScratchpadOpen ? (

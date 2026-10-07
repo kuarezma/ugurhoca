@@ -1,395 +1,73 @@
+import { GRADE_TOPIC_OPTIONS } from '@/features/progress/constants';
+import { getCurriculumContentHref } from '@/features/content/curriculum-coverage';
+
 export interface AdventureTopicNode {
   id: string;
   unitNumber: number;
   title: string;
-  subtitle: string;
-  grade: number | 'Mezun';
-  status: 'completed' | 'active' | 'locked';
-  stars: number; // 0 - 3
-  xpReward: number;
+  grade: number;
   notesHref: string;
   testsHref: string;
-  gameHref: string;
-  flashcardTopic?: string;
-  boss?: boolean;
+  gameHref?: string;
+  flashcardSubject?: string;
 }
 
-export const ADVENTURE_CURRICULUM: Record<string, AdventureTopicNode[]> = {
-  '8': [
-    {
-      id: 'lgs-1',
-      unitNumber: 1,
-      title: 'Çarpanlar ve Katlar',
-      subtitle: 'Asal Çarpanlar, EBOB & EKOK Problemleri',
-      grade: 8,
-      status: 'completed',
-      stars: 3,
-      xpReward: 150,
-      notesHref: '/icerikler?grade=8&type=ders-notlari',
-      testsHref: '/icerikler?grade=8&type=yaprak-test',
-      gameHref: '/oyunlar',
-      flashcardTopic: 'ebob-ekok',
-    },
-    {
-      id: 'lgs-2',
-      unitNumber: 2,
-      title: 'Üslü İfadeler',
-      subtitle: 'Üslü Sayı Kuralları, Ondalık Gösterim, Bilimsel Gösterim',
-      grade: 8,
-      status: 'active',
-      stars: 1,
-      xpReward: 200,
-      notesHref: '/icerikler?grade=8&type=ders-notlari',
-      testsHref: '/icerikler?grade=8&type=yaprak-test',
-      gameHref: '/oyunlar',
-      flashcardTopic: 'uslu-sayilar',
-    },
-    {
-      id: 'lgs-3',
-      unitNumber: 3,
-      title: 'Kareköklü İfadeler',
-      subtitle: 'Tam Kare Sayılar, Karekökte Çarpma/Bölme, Gerçek Sayılar',
-      grade: 8,
-      status: 'locked',
-      stars: 0,
-      xpReward: 220,
-      notesHref: '/icerikler?grade=8&type=ders-notlari',
-      testsHref: '/icerikler?grade=8&type=yaprak-test',
-      gameHref: '/oyunlar',
-      flashcardTopic: 'karekok',
-    },
-    {
-      id: 'lgs-4',
-      unitNumber: 4,
-      title: 'Veri Analizi',
-      subtitle: 'Çizgi, Sütun ve Daire Grafikleri Arası Dönüşümler',
-      grade: 8,
-      status: 'locked',
-      stars: 0,
-      xpReward: 180,
-      notesHref: '/icerikler?grade=8&type=ders-notlari',
-      testsHref: '/icerikler?grade=8&type=yaprak-test',
-      gameHref: '/oyunlar',
-    },
-    {
-      id: 'lgs-5',
-      unitNumber: 5,
-      title: 'Basit Olayların Olasılığı',
-      subtitle: 'Olası Durumlar, İstenen Olayın Olasılığı',
-      grade: 8,
-      status: 'locked',
-      stars: 0,
-      xpReward: 160,
-      notesHref: '/icerikler?grade=8&type=ders-notlari',
-      testsHref: '/icerikler?grade=8&type=yaprak-test',
-      gameHref: '/oyunlar',
-    },
-    {
-      id: 'lgs-6',
-      unitNumber: 6,
-      title: 'Üçgenler ve Pisagor',
-      subtitle: 'Açıortay, Kenarortay, Yükseklik ve Pisagor Bağıntısı',
-      grade: 8,
-      status: 'locked',
-      stars: 0,
-      xpReward: 250,
-      notesHref: '/icerikler?grade=8&type=ders-notlari',
-      testsHref: '/icerikler?grade=8&type=yaprak-test',
-      gameHref: '/oyunlar',
-    },
-    {
-      id: 'lgs-boss',
-      unitNumber: 7,
-      title: '👑 LGS Efsane Deneme Sınavı',
-      subtitle: 'Bölüm Sonu Canavarı: 20 Yeni Nesil LGS Matematik Sorusu',
-      grade: 8,
-      status: 'locked',
-      stars: 0,
-      xpReward: 500,
-      boss: true,
-      notesHref: '/testler',
-      testsHref: '/testler',
-      gameHref: '/meydan-okuma',
-    },
-  ],
-  '5': [
-    {
-      id: 'g5-1',
-      unitNumber: 1,
-      title: 'Doğal Sayılar & İşlemler',
-      subtitle: 'Milyonlu Sayılar, Zihinden İşlemler, Tahmin',
-      grade: 5,
-      status: 'completed',
-      stars: 3,
-      xpReward: 120,
-      notesHref: '/icerikler?grade=5',
-      testsHref: '/icerikler?grade=5',
-      gameHref: '/oyunlar',
-    },
-    {
-      id: 'g5-2',
-      unitNumber: 2,
-      title: 'Kesirler Dünyası',
-      subtitle: 'Bileşik Kesirler, Sayı Doğrusu ve Sıralama',
-      grade: 5,
-      status: 'active',
-      stars: 2,
-      xpReward: 150,
-      notesHref: '/icerikler?grade=5',
-      testsHref: '/icerikler?grade=5',
-      gameHref: '/oyunlar',
-    },
-    {
-      id: 'g5-3',
-      unitNumber: 3,
-      title: 'Ondalık Gösterim & Yüzdeler',
-      subtitle: 'Virgüllü Sayılar ve Alışveriş Hesapları',
-      grade: 5,
-      status: 'locked',
-      stars: 0,
-      xpReward: 180,
-      notesHref: '/icerikler?grade=5',
-      testsHref: '/icerikler?grade=5',
-      gameHref: '/oyunlar',
-    },
-  ],
-  '6': [
-    {
-      id: 'g6-1',
-      unitNumber: 1,
-      title: 'Doğal Sayılarla İşlemler',
-      subtitle: 'İşlem Önceliği, Ortak Çarpan ve Dağılma',
-      grade: 6,
-      status: 'completed',
-      stars: 3,
-      xpReward: 130,
-      notesHref: '/icerikler?grade=6',
-      testsHref: '/icerikler?grade=6',
-      gameHref: '/oyunlar',
-    },
-    {
-      id: 'g6-2',
-      unitNumber: 2,
-      title: 'Tam Sayılar & Mutlak Değer',
-      subtitle: 'Sıfırın Altında Matematik, Negatif Sayılar',
-      grade: 6,
-      status: 'active',
-      stars: 1,
-      xpReward: 160,
-      notesHref: '/icerikler?grade=6',
-      testsHref: '/icerikler?grade=6',
-      gameHref: '/oyunlar',
-    },
-    {
-      id: 'g6-3',
-      unitNumber: 3,
-      title: 'Kesirlerle İşlemler',
-      subtitle: 'Kesirlerde Çarpma ve Bölme Sihirleri',
-      grade: 6,
-      status: 'locked',
-      stars: 0,
-      xpReward: 180,
-      notesHref: '/icerikler?grade=6',
-      testsHref: '/icerikler?grade=6',
-      gameHref: '/oyunlar',
-    },
-  ],
-  '7': [
-    {
-      id: 'g7-1',
-      unitNumber: 1,
-      title: 'Tam Sayılarla İşlemler',
-      subtitle: 'Toplama, Çıkarma, Çarpma, Bölme ve Sayı Pulları',
-      grade: 7,
-      status: 'completed',
-      stars: 3,
-      xpReward: 140,
-      notesHref: '/icerikler?grade=7',
-      testsHref: '/icerikler?grade=7',
-      gameHref: '/oyunlar',
-    },
-    {
-      id: 'g7-2',
-      unitNumber: 2,
-      title: 'Rasyonel Sayılar',
-      subtitle: 'Devirli Sayılar, Sayı Doğrusu ve Dört İşlem',
-      grade: 7,
-      status: 'active',
-      stars: 2,
-      xpReward: 170,
-      notesHref: '/icerikler?grade=7',
-      testsHref: '/icerikler?grade=7',
-      gameHref: '/oyunlar',
-    },
-    {
-      id: 'g7-3',
-      unitNumber: 3,
-      title: 'Cebirsel İfadeler & Denklemler',
-      subtitle: 'Bilinmeyeni Bulma Sanatı, 1. Dereceden Denklemler',
-      grade: 7,
-      status: 'locked',
-      stars: 0,
-      xpReward: 200,
-      notesHref: '/icerikler?grade=7',
-      testsHref: '/icerikler?grade=7',
-      gameHref: '/oyunlar',
-    },
-  ],
-  'YKS': [
-    {
-      id: 'yks-1',
-      unitNumber: 1,
-      title: 'Temel Kavramlar & Sayılar',
-      subtitle: 'Asal Sayılar, Ardışık Sayılar, Faktöriyel ve Basamak Kavramı',
-      grade: 12,
-      status: 'completed',
-      stars: 3,
-      xpReward: 160,
-      notesHref: '/icerikler?grade=12',
-      testsHref: '/icerikler?grade=12',
-      gameHref: '/oyunlar',
-    },
-    {
-      id: 'yks-2',
-      unitNumber: 2,
-      title: 'Fonksiyonlar (TYT / AYT)',
-      subtitle: 'Bileşke, Ters Fonksiyon, Fonksiyon Grafikleri',
-      grade: 12,
-      status: 'active',
-      stars: 1,
-      xpReward: 240,
-      notesHref: '/icerikler?grade=12',
-      testsHref: '/icerikler?grade=12',
-      gameHref: '/oyunlar',
-    },
-    {
-      id: 'yks-3',
-      unitNumber: 3,
-      title: 'Türev & İntegral Ustası',
-      subtitle: 'Teğet Denklemi, Ekstremum Noktalar, Alan Hesabı',
-      grade: 12,
-      status: 'locked',
-      stars: 0,
-      xpReward: 350,
-      notesHref: '/icerikler?grade=12',
-      testsHref: '/icerikler?grade=12',
-      gameHref: '/oyunlar',
-    },
-    {
-      id: 'yks-boss',
-      unitNumber: 4,
-      title: '👑 AYT Matematik Zirve Denemesi',
-      subtitle: 'Bölüm Sonu Canavarı: 40 AYT Matematik & Geometri Sorusu',
-      grade: 12,
-      status: 'locked',
-      stars: 0,
-      xpReward: 600,
-      boss: true,
-      notesHref: '/testler',
-      testsHref: '/testler',
-      gameHref: '/meydan-okuma',
-    },
-  ],
+// Yalnız mevcut, konuya özel araçlar. Genel oyun/kart bağlantısı üniteye eklenmez.
+const TOPIC_GAMES: Record<string, Record<string, number>> = {
+  '5': { 'Doğal Sayılarla İşlemler': 1 },
+  '6': { 'Doğal Sayılarla İşlemler': 1, 'Kesirlerle İşlemler': 7, Oran: 9 },
+  '7': { Yüzdeler: 9, 'Eşitlik ve Denklem': 8 },
+  '8': { 'Doğrusal Denklemler': 8 },
+};
+const TOPIC_FLASHCARDS: Record<string, Record<string, string>> = {
+  '8': {
+    'Çarpanlar ve Katlar': 'Çarpanlar ve Katlar',
+    'Üslü İfadeler': 'Üslü İfadeler',
+    'Kareköklü İfadeler': 'Kareköklü İfadeler',
+    'Doğrusal Denklemler': 'Doğrusal Denklemler',
+    Üçgenler: 'Geometri / Üçgenler',
+    Olasılık: 'Olasılık',
+  },
+  '10': {
+    'İkinci Dereceden Denklemler': 'İkinci Dereceden Denklemler',
+    'Permütasyon ve Kombinasyon': 'Kombinatorik',
+  },
+  '11': {
+    Trigonometri: 'Trigonometri',
+    Logaritma: 'Logaritma',
+    Diziler: 'Diziler',
+  },
+  '12': {
+    Trigonometri: 'Trigonometri',
+    Türev: 'Türev',
+    İntegral: 'İntegral',
+    'Binom ve Diziler': 'Diziler',
+  },
 };
 
-export const DAILY_QUESTS_MOCK = [
-  {
-    id: 'q1',
-    title: 'Günün Matematik Özetini İncele',
-    progress: 1,
-    total: 1,
-    xp: 40,
-    completed: true,
-    icon: 'book',
-  },
-  {
-    id: 'q2',
-    title: '10 Yeni Nesil Test Sorusu Çöz',
-    progress: 6,
-    total: 10,
-    xp: 100,
-    completed: false,
-    icon: 'pen',
-  },
-  {
-    id: 'q3',
-    title: '1 Zihin Açıcı Matematik Oyunu Oyna',
-    progress: 0,
-    total: 1,
-    xp: 50,
-    completed: false,
-    icon: 'gamepad',
-  },
-];
-
-export interface DailyChallenge {
-  id: string;
-  title: string;
-  topic: string;
-  difficulty: 'Kolay' | 'Orta' | 'Efsane';
-  estimatedMinutes: number;
-  xpReward: number;
-  diamondReward: number;
-  href: string;
-  questionPreview: string;
-}
-
-export const DAILY_CHALLENGE_MOCK: DailyChallenge = {
-  id: 'dc-today',
-  title: 'Pisagor Teoremi & Dik Üçgen Avı',
-  topic: '8. Sınıf Geometri',
-  difficulty: 'Orta',
-  estimatedMinutes: 3,
-  xpReward: 120,
-  diamondReward: 5,
-  href: '/meydan-okuma',
-  questionPreview: 'Bir dik üçgende hipotenüs uzunluğu 25 cm ve bir dik kenar 15 cm ise...',
-};
-
-export interface BadgeItem {
-  id: string;
-  title: string;
-  description: string;
-  icon: string;
-  unlocked: boolean;
-  color: 'amber' | 'purple' | 'cyan' | 'emerald';
-  progress?: { current: number; max: number };
-}
-
-export const BADGES_SHOWCASE_MOCK: BadgeItem[] = [
-  {
-    id: 'b1',
-    title: 'Ateşli Seri',
-    description: '5 gün kesintisiz çalışma',
-    icon: '🔥',
-    unlocked: true,
-    color: 'amber',
-  },
-  {
-    id: 'b2',
-    title: 'Denklem Ustası',
-    description: '1. derece denklemleri bitir',
-    icon: '⚡',
-    unlocked: true,
-    color: 'purple',
-  },
-  {
-    id: 'b3',
-    title: 'Hız Canavarı',
-    description: '30 saniyede 5 doğru cevap',
-    icon: '🚀',
-    unlocked: false,
-    color: 'cyan',
-    progress: { current: 3, max: 5 },
-  },
-  {
-    id: 'b4',
-    title: 'Efsane Şampiyon',
-    description: 'Boss deneme sınavını fethet',
-    icon: '👑',
-    unlocked: false,
-    color: 'emerald',
-    progress: { current: 1, max: 3 },
-  },
-];
-
+export const ADVENTURE_CURRICULUM: Record<string, AdventureTopicNode[]> =
+  Object.fromEntries(
+    Object.entries(GRADE_TOPIC_OPTIONS).map(([gradeKey, topics]) => [
+      gradeKey,
+      topics.map((title, index) => ({
+        id: `g${gradeKey}-${index + 1}`,
+        unitNumber: index + 1,
+        title,
+        grade: Number(gradeKey),
+        notesHref: getCurriculumContentHref(
+          Number(gradeKey),
+          title,
+          'ders-notlari',
+        ),
+        testsHref: getCurriculumContentHref(
+          Number(gradeKey),
+          title,
+          'yaprak-test',
+        ),
+        gameHref: TOPIC_GAMES[gradeKey]?.[title]
+          ? `/oyunlar?id=${TOPIC_GAMES[gradeKey][title]}`
+          : undefined,
+        flashcardSubject: TOPIC_FLASHCARDS[gradeKey]?.[title],
+      })),
+    ]),
+  );

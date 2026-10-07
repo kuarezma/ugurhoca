@@ -14,6 +14,14 @@ describe('FormulaFlashcardsModal', () => {
     expect(container).toBeEmptyDOMElement();
   });
 
+  it('opens only the requested adventure topic cards', () => {
+    render(<FormulaFlashcardsModal isOpen initialSubject="Kareköklü İfadeler" onClose={vi.fn()} />);
+    expect(screen.getByRole('button', { name: /Karekökte Çarpma ve Bölme/i })).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: /Tam Kare Özdeşlikleri/i })).not.toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: /Sonraki Kart/i }));
+    expect(screen.getByRole('button', { name: /Karekökte Çarpma ve Bölme/i })).toBeInTheDocument();
+  });
+
   it('renders flashcard front and flips on click', () => {
     const onClose = vi.fn();
     render(<FormulaFlashcardsModal isOpen={true} onClose={onClose} />);

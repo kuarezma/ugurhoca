@@ -147,7 +147,7 @@ describe('ana sayfa tema sınıfları ilk boyamada CSS’ten gelir', () => {
     );
 
     const brand = screen.getByText('Uğur Hoca', { selector: 'span' });
-    expect(brand).toHaveClass('light:text-slate-900', 'dark:text-white');
+    expect(brand).toHaveClass('text-primary');
     expect(brand).not.toHaveClass('text-white');
   });
 
@@ -165,7 +165,7 @@ describe('ana sayfa tema sınıfları ilk boyamada CSS’ten gelir', () => {
       </ThemeProvider>,
     );
     const heading = screen.getByRole('heading', { level: 1 });
-    expect(heading).toHaveClass('light:text-slate-900', 'dark:text-white');
+    expect(heading).toHaveClass('text-primary');
     expect(heading).not.toHaveClass('text-white');
   });
 

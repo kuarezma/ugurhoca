@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Poppins, Baloo_2 } from "next/font/google";
+import { Quicksand, Baloo_2 } from "next/font/google";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { MobileBottomNav } from "@/components/MobileBottomNav";
 import { Providers } from "@/components/Providers";
@@ -14,14 +14,14 @@ import { SITE_URL, SITE_NAME } from "@/lib/site-metadata";
 // gerekli. Artik ilgili chunk'lariyla birlikte yukleniyorlar.
 import "./globals.css";
 
-const poppins = Poppins({
+const quicksand = Quicksand({
   subsets: ["latin", "latin-ext"],
-  weight: ["400", "600", "700"],
+  weight: ["400", "500", "600", "700"],
   variable: "--font-poppins",
   display: "swap",
 });
 
-const displayFont = Baloo_2({
+const baloo = Baloo_2({
   subsets: ["latin", "latin-ext"],
   weight: "variable",
   variable: "--font-display",
@@ -199,7 +199,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       data-design-mode="adventure"
       suppressHydrationWarning
       data-scroll-behavior="smooth"
-      className={`${poppins.variable} ${displayFont.variable} dark`}
+      className={`${quicksand.variable} ${baloo.variable} dark`}
     >
       <head>
         {/* Güvenlik & Referrer Politikaları */}

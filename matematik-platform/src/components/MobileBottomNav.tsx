@@ -34,7 +34,7 @@ export function MobileBottomNav() {
       className="fixed bottom-0 left-0 right-0 z-40 block md:hidden pointer-events-none"
     >
       <div className="mx-auto max-w-md px-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] pt-2 pointer-events-auto">
-        <div className="flex items-center justify-around rounded-2xl border border-default bg-surface-1/92 px-2 py-2 shadow-[0_-4px_20px_rgba(15,23,42,0.08)] backdrop-blur-xl transition-colors duration-200 dark:shadow-[0_-8px_32px_rgba(0,0,0,0.4)]">
+        <div className="flex items-center justify-around rounded-3xl border-2 sm:border-3 border-default bg-surface-1/95 px-2 py-2 shadow-[0_4px_0_var(--border-default)] backdrop-blur-xl transition-all duration-200">
           {NAV_ITEMS.map((item) => {
             const isRouteActive =
               item.href === '/'
@@ -58,16 +58,16 @@ export function MobileBottomNav() {
                   }
                   setPendingHref(item.href);
                 }}
-                className={`relative flex min-h-[44px] min-w-[52px] flex-col items-center justify-center rounded-xl px-2 py-1 text-[11px] font-semibold transition-colors duration-150 ${
+                className={`relative flex min-h-[46px] min-w-[54px] flex-col items-center justify-center rounded-2xl px-2 py-1.5 font-display text-[11px] font-bold transition-all duration-150 active:scale-95 select-none ${
                   isActive
-                    ? 'text-accent-fg font-bold'
+                    ? 'text-[#58cc02] dark:text-[#61e002] font-black'
                     : 'text-secondary hover:text-primary'
                 }`}
               >
                 {isActive && (
                   <span
                     aria-hidden="true"
-                    className="absolute inset-x-2 -top-1 h-0.5 rounded-full bg-gradient-to-r from-indigo-500 to-purple-500"
+                    className="absolute inset-x-3 -top-1.5 h-1 rounded-full bg-[#58cc02]"
                   />
                 )}
                 <Icon

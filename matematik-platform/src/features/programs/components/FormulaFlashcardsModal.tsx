@@ -312,11 +312,13 @@ export const FLASHCARDS_DATA: Flashcard[] = [
 ];
 
 type FormulaFlashcardsModalProps = {
+  initialSubject?: string;
   isOpen: boolean;
   onClose: () => void;
 };
 
 export function FormulaFlashcardsModal({
+  initialSubject,
   isOpen,
   onClose,
 }: FormulaFlashcardsModalProps) {
@@ -394,6 +396,7 @@ export function FormulaFlashcardsModal({
   const dueCount = FLASHCARDS_DATA.filter(isDueCard).length;
 
   const filteredCards = FLASHCARDS_DATA.filter((card) => {
+    if (initialSubject && card.subject !== initialSubject) return false;
     if (categoryFilter === 'all') return true;
     if (categoryFilter === 'due') return isDueCard(card);
     if (categoryFilter === 'starred') return starredCards.has(card.id);

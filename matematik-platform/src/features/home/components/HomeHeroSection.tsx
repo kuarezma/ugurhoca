@@ -248,19 +248,19 @@ export function HomeHeroSection({
     <section className="relative px-4 pb-12 pt-6 sm:pt-10">
       <div className="relative mx-auto max-w-6xl">
         <div
-          className="relative overflow-hidden rounded-3xl border light:border-slate-200/90 dark:border-slate-800 bg-surface-1 shadow-xl light:shadow-indigo-950/5 dark:shadow-2xl px-4 py-7 sm:px-10 sm:py-12 transition-all duration-300"
+          className="card-playful-hero relative overflow-hidden rounded-3xl p-6 sm:p-12 transition-all duration-300"
         >
           <div
             aria-hidden="true"
-            className="pointer-events-none absolute -right-10 -top-10 h-64 w-64 rounded-full bg-indigo-500/15 blur-3xl"
+            className="pointer-events-none absolute -right-10 -top-10 h-64 w-64 rounded-full bg-[#1cb0f6]/15 blur-3xl"
           />
           <div
             aria-hidden="true"
-            className="pointer-events-none absolute -bottom-12 -left-12 h-72 w-72 rounded-full bg-pink-500/10 blur-3xl"
+            className="pointer-events-none absolute -bottom-12 -left-12 h-72 w-72 rounded-full bg-[#58cc02]/10 blur-3xl"
           />
           <div
             aria-hidden="true"
-            className="pointer-events-none absolute right-12 top-6 text-5xl font-black text-indigo-500/10 sm:text-7xl select-none"
+            className="pointer-events-none absolute right-12 top-6 text-5xl font-black text-[#58cc02]/10 sm:text-7xl select-none"
           >
             π
           </div>
@@ -269,51 +269,48 @@ export function HomeHeroSection({
             <div className="space-y-5 min-w-0 w-full">
               <div className="flex flex-wrap items-center gap-2">
                 <div
-                  className="inline-flex max-w-full items-center gap-1.5 sm:gap-2 rounded-full px-3 py-1 text-[11px] sm:text-xs font-bold uppercase tracking-wider light:bg-amber-50 light:text-amber-800 light:border-amber-200 shadow-xs dark:bg-amber-400/10 dark:text-amber-300 dark:border-amber-400/20 border"
+                  className="inline-flex max-w-full items-center gap-2 rounded-full px-3.5 py-1 text-xs font-black uppercase tracking-wider bg-[#fff5cc] text-[#8a5800] border-2 border-[#ffc800] dark:bg-amber-950/40 dark:text-amber-300 shadow-xs"
                 >
                   <Sparkles className="h-3.5 w-3.5 shrink-0 text-amber-500 animate-pulse" aria-hidden="true" />
-                  <span className="truncate">🎉 2026-2027 Yeni Eğitim Öğretim Yılı</span>
+                  <span className="truncate">🎯 LİSE & YKS MATEMATİK OYUN ALANI</span>
                 </div>
 
                 <div
-                  className="inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-[11px] sm:text-xs font-semibold light:bg-indigo-50 light:text-indigo-700 light:border-indigo-100 dark:bg-indigo-500/15 dark:text-indigo-300 dark:border-indigo-500/20 border"
+                  className="inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-bold bg-[#ddf4ff] text-[#0c6999] border-2 border-[#1899d6]/30 dark:bg-sky-950/40 dark:text-sky-300"
                 >
-                  {user ? 'Hedefe Tam Odaklan!' : 'Ücretsiz & Tam Kapsamlı'}
+                  {user ? 'Hedefe Tam Odaklan!' : '💚 %100 Ücretsiz & Reklamsız'}
                 </div>
               </div>
 
               <h1
-                className="font-display text-2xl xs:text-3xl font-extrabold leading-tight tracking-tight sm:text-5xl lg:text-[3.25rem] light:text-slate-900 dark:text-white"
+                className="font-display text-2xl xs:text-3xl font-black leading-tight tracking-tight sm:text-5xl lg:text-[3.25rem] text-primary"
               >
-                <span className="bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-500 bg-clip-text text-transparent dark:from-indigo-400 dark:via-purple-400 dark:to-pink-400">
-                  {greeting}
-                </span>{' '}
-                <span className="text-primary">
-                  Bu Yıl Matematikte Zirveye!
+                <span>Matematikten Korkma,</span><br />
+                <span className="text-[#58cc02] dark:text-[#61e002]">
+                  Eğlenerek Zirveye Çık!
                 </span>
               </h1>
 
               <p
-                className="w-full max-w-lg text-sm sm:text-lg leading-relaxed text-secondary"
+                className="w-full max-w-lg text-sm sm:text-base lg:text-lg leading-relaxed text-secondary font-medium"
               >
-                LGS ve YKS için müfredatla birebir ders notları, yaprak testler, formül kartları,
-                karalama tahtası ve canlı dersler seni bekliyor.
+                Sıkıcı ezberler tarih oldu! LGS ve YKS müfredatını seviye seviye keşfet,
+                görevleri tamamla, rozetleri kap ve arkadaşlarınla canlı düellolara katıl!
               </p>
 
-              <div className="flex flex-col sm:flex-row gap-2.5 sm:gap-3">
+              <div className="flex flex-col sm:flex-row gap-3">
                 <SafeLink
                   href="/icerikler"
-                  className="group inline-flex h-11 sm:h-12 items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-500 px-5 sm:px-6 text-sm font-bold text-white dark:text-white shadow-md transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2"
+                  className="btn-3d btn-green"
                 >
                   <Zap className="h-4 w-4" aria-hidden="true" />
-                  Çalışmaya başla
-                  <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" aria-hidden="true" />
+                  <span>Hemen Başla! 🚀</span>
                 </SafeLink>
                 <SafeLink
                   href="/oyunlar"
-                  className="inline-flex h-11 sm:h-12 items-center justify-center gap-2 rounded-2xl border border-default dark:border-slate-500 bg-surface-1 px-5 text-sm font-semibold text-primary transition-all duration-200 hover:-translate-y-0.5 hover:bg-surface-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2"
+                  className="btn-3d btn-yellow"
                 >
-                  Oyunla öğren
+                  <span>Macerayı Gör 🗺️</span>
                 </SafeLink>
               </div>
 
@@ -337,10 +334,10 @@ export function HomeHeroSection({
                     <SafeLink
                       key={item.label}
                       href={item.href}
-                      className={`shrink-0 rounded-xl px-3.5 py-1.5 text-xs font-semibold transition-all duration-200 ${
+                      className={`shrink-0 rounded-2xl px-3.5 py-1.5 text-xs font-bold transition-all duration-150 active:translate-y-0.5 ${
                         item.highlight
-                          ? 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-sm hover:scale-105'
-                          : 'border border-default dark:border-slate-500 bg-surface-1 text-secondary hover:text-primary'
+                          ? 'btn-3d btn-green btn-sm'
+                          : 'btn-3d btn-white btn-sm'
                       }`}
                     >
                       {item.label}
@@ -351,21 +348,24 @@ export function HomeHeroSection({
             </div>
 
             <m.div
-              initial={{ opacity: 0, scale: 0.92, rotate: -4 }}
+              initial={{ opacity: 0, scale: 0.92, rotate: -3 }}
               animate={{ opacity: 1, scale: 1, rotate: 0 }}
               transition={{ duration: 0.5, ease: [0.2, 0.8, 0.2, 1] }}
-              className="relative hidden justify-center lg:flex"
+              className="relative hidden flex-col items-center justify-center lg:flex"
             >
               <div
                 aria-hidden="true"
-                className="absolute inset-0 rounded-full bg-gradient-to-br from-brand-primary/30 via-brand-pink/20 to-brand-orange/20 blur-3xl"
+                className="absolute inset-0 rounded-full bg-gradient-to-br from-[#ffc800]/20 via-[#58cc02]/20 to-[#1cb0f6]/20 blur-3xl"
               />
               <Mascot
                 pose={user ? 'celebrate' : 'waving'}
-                size={220}
-                className="relative animate-float-y"
+                size={200}
+                className="relative animate-float-y select-none"
                 ariaLabel={user ? 'Seni tebrik eden maskot Pi' : 'Selamlayan maskot Pi'}
               />
+              <div className="speech-bubble mt-4 max-w-[260px]">
+                &ldquo;{greeting} Bugün 10 soru çözüp serini korumaya hazır mısın?&rdquo;
+              </div>
             </m.div>
           </div>
         </div>

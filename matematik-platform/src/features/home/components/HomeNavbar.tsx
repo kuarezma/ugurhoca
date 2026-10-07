@@ -1,6 +1,5 @@
 'use client';
 
-import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { LogOut, Menu, X } from 'lucide-react';
 import { useState } from 'react';
@@ -28,7 +27,7 @@ export function HomeNavbar({ onLogout, user }: HomeNavbarProps) {
 
   return (
     <nav
-      className="fixed left-0 right-0 top-0 z-50 border-b backdrop-blur-xl transition-all duration-300 pt-[env(safe-area-inset-top)] light:border-slate-200/90 light:bg-white/90 light:shadow-sm dark:border-white/10 dark:bg-slate-900/90 dark:shadow-xl"
+      className="fixed left-0 right-0 top-0 z-50 border-b-2 sm:border-b-3 border-default bg-surface-1/95 backdrop-blur-xl transition-all duration-300 pt-[env(safe-area-inset-top)] shadow-xs"
     >
       <div className="mx-auto max-w-6xl px-4 pl-[max(1rem,env(safe-area-inset-left))] pr-[max(1rem,env(safe-area-inset-right))]">
         <div className="flex h-16 w-full items-center justify-between gap-3 sm:gap-4">
@@ -40,29 +39,38 @@ export function HomeNavbar({ onLogout, user }: HomeNavbarProps) {
                 event.preventDefault();
               }
             }}
-            className="group flex min-w-0 shrink items-center gap-2 sm:gap-2.5"
+            className="group flex min-w-0 shrink items-center gap-2.5 sm:gap-3"
           >
-            <div className="relative flex h-9 w-9 sm:h-10 sm:w-10 shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 p-0.5 shadow-md transition-transform duration-200 group-hover:scale-105">
-              <Image
-                src="/ugur.jpeg"
-                alt="Uğur Hoca"
-                width={40}
-                height={40}
-                priority
-                className="h-full w-full rounded-[14px] object-cover"
-              />
+            <div className="relative flex h-10 w-10 sm:h-11 sm:w-11 shrink-0 items-center justify-center rounded-2xl bg-[#fff5cc] border-2 border-[#ffc800] shadow-[0_3px_0_#e5b400] text-xl sm:text-2xl transition-transform duration-200 group-hover:scale-105 select-none">
+              🦉
             </div>
             <div className="flex flex-col min-w-0">
-              <span
-                className="font-display text-sm sm:text-lg font-bold leading-tight truncate light:text-slate-900 dark:text-white"
-              >
+              <span className="font-display text-base sm:text-xl font-black leading-tight truncate text-primary">
                 Uğur Hoca
               </span>
-              <span className="text-[9px] sm:text-[10px] font-semibold text-indigo-700 dark:text-indigo-300 uppercase tracking-wider truncate">
-                Matematik Platformu
+              <span className="text-[10px] sm:text-[11px] font-black text-[#58cc02] dark:text-[#61e002] uppercase tracking-wider truncate">
+                Matematik Maceraları
               </span>
             </div>
           </SafeLink>
+
+          {/* Gamified Stat Bar (Masaüstü Oyunsu Çubuk) */}
+          <div className="hidden xl:flex items-center gap-4 bg-surface-2 border-2 border-default px-4 py-1.5 rounded-full shadow-xs">
+            <div className="flex items-center gap-1.5 font-display text-sm font-bold text-amber-500" title="Günlük Çalışma Serisi!">
+              <span>🔥</span>
+              <span>7 GÜN</span>
+            </div>
+            <div className="h-4 w-px bg-border-default opacity-40" />
+            <div className="flex items-center gap-1.5 font-display text-sm font-bold text-cyan-500" title="Kazanılan Kristal Puan">
+              <span>💎</span>
+              <span>520 XP</span>
+            </div>
+            <div className="h-4 w-px bg-border-default opacity-40" />
+            <div className="flex items-center gap-1.5 font-display text-sm font-bold text-rose-500" title="Kalan Canın">
+              <span>❤️</span>
+              <span>5/5</span>
+            </div>
+          </div>
 
           <div className="hidden shrink-0 items-center gap-2 lg:flex">
             <DesignModeToggle />
@@ -82,12 +90,12 @@ export function HomeNavbar({ onLogout, user }: HomeNavbarProps) {
               <>
                 <SafeLink
                   href={profileHref}
-                  className="flex items-center gap-2.5 rounded-2xl border px-3 py-1.5 transition-all light:border-slate-200 light:bg-slate-50 light:text-slate-900 light:hover:bg-slate-100 dark:border-white/10 dark:bg-white/5 dark:text-white dark:hover:bg-white/10"
+                  className="flex items-center gap-2.5 rounded-2xl border-2 border-default bg-surface-2 px-3.5 py-1.5 shadow-[0_3px_0_var(--border-default)] transition-all hover:bg-surface-3 active:translate-y-0.5 active:shadow-none text-primary"
                 >
-                  <div className="flex h-7 w-7 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-600 to-purple-600 text-xs font-bold text-white dark:text-white shadow">
+                  <div className="flex h-7 w-7 items-center justify-center rounded-xl bg-[#58cc02] text-xs font-black text-white dark:text-white shadow-xs">
                     {user.name?.[0] || '?'}
                   </div>
-                  <span className="font-semibold text-xs xl:inline">
+                  <span className="font-bold text-xs xl:inline">
                     {user.name?.split(' ')[0]}
                   </span>
                 </SafeLink>
@@ -96,26 +104,26 @@ export function HomeNavbar({ onLogout, user }: HomeNavbarProps) {
                   onClick={onLogout}
                   aria-label="Çıkış yap"
                   title="Çıkış yap"
-                  className="inline-flex h-9 w-9 items-center justify-center rounded-xl transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 text-slate-400 light:hover:bg-slate-100 light:hover:text-slate-900 dark:hover:bg-white/5 dark:hover:text-white"
+                  className="inline-flex h-9 w-9 items-center justify-center rounded-xl border border-default bg-surface-2 transition-colors hover:bg-rose-500/10 hover:text-rose-500 text-secondary"
                 >
                   <LogOut className="h-4 w-4" aria-hidden="true" />
                 </button>
               </>
             ) : (
-              <>
+              <div className="flex items-center gap-2">
                 <SafeLink
                   href="/giris"
-                  className="rounded-xl px-3.5 py-2 text-xs font-bold transition-colors text-slate-700 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-300 dark:hover:bg-white/10 dark:hover:text-white"
+                  className="btn-3d btn-white btn-sm"
                 >
-                  Giriş Yap
+                  Giriş
                 </SafeLink>
                 <SafeLink
                   href="/kayit"
-                  className="rounded-xl bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-500 px-4 py-2 text-xs font-bold text-white dark:text-white shadow-md transition-all duration-200 hover:shadow-lg hover:scale-105 active:scale-95"
+                  className="btn-3d btn-green btn-sm"
                 >
-                  Ücretsiz Kayıt
+                  Ücretsiz Katıl! 🌟
                 </SafeLink>
-              </>
+              </div>
             )}
           </div>
 
@@ -205,16 +213,16 @@ export function HomeNavbar({ onLogout, user }: HomeNavbarProps) {
                   <SafeLink
                     href="/giris"
                     onClick={() => setIsOpen(false)}
-                    className="flex items-center justify-center rounded-xl border px-3 py-2.5 text-center text-xs font-bold transition-colors light:border-slate-200 light:text-slate-700 light:hover:bg-slate-100 dark:border-white/10 dark:text-slate-300 dark:hover:bg-white/10"
+                    className="btn-3d btn-white btn-sm"
                   >
-                    Giriş Yap
+                    Giriş
                   </SafeLink>
                   <SafeLink
                     href="/kayit"
                     onClick={() => setIsOpen(false)}
-                    className="flex items-center justify-center rounded-xl bg-gradient-to-r from-brand-primary via-brand-pink to-brand-orange px-3 py-2.5 text-center text-xs font-bold text-white dark:text-white shadow-md transition-transform active:scale-95"
+                    className="btn-3d btn-green btn-sm"
                   >
-                    Ücretsiz Kayıt
+                    Ücretsiz Katıl! 🌟
                   </SafeLink>
                 </div>
               )}

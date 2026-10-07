@@ -161,6 +161,8 @@ const config: Config = {
           'system-ui',
           'sans-serif',
         ],
+        fun: ['var(--font-display)', 'cursive', 'sans-serif'],
+        body: ['var(--font-poppins)', 'system-ui', 'sans-serif'],
         dyslexic: ['OpenDyslexic', 'Lexend', 'system-ui', 'sans-serif'],
       },
       fontSize: {
@@ -189,6 +191,13 @@ const config: Config = {
           '0 12px 30px -6px rgba(15, 23, 42, 0.14), 0 4px 10px -2px rgba(15, 23, 42, 0.05)',
         'subtle-card':
           '0 1px 3px 0 rgba(0, 0, 0, 0.05), 0 1px 2px -1px rgba(0, 0, 0, 0.05)',
+        'btn-3d-green': '0 5px 0 #46a302',
+        'btn-3d-blue': '0 5px 0 #1899d6',
+        'btn-3d-yellow': '0 5px 0 #e5b400',
+        'btn-3d-purple': '0 5px 0 #a545e8',
+        'btn-3d-white': '0 4px 0 #cbd5e1',
+        'card-playful': '0 6px 0 var(--border-default)',
+        'card-playful-lg': '0 8px 0 var(--border-default)',
       },
       backgroundImage: {
         'brand-gradient':

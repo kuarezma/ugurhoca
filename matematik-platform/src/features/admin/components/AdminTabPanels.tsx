@@ -6,6 +6,7 @@ import AdminAnnouncementsTab from "@/features/admin/components/tabs/AdminAnnounc
 import AdminAnnualPlanTab from "@/features/admin/components/tabs/AdminAnnualPlanTab";
 import AdminAssignmentsTab from "@/features/admin/components/tabs/AdminAssignmentsTab";
 import AdminClassroomTab from "@/features/admin/components/tabs/AdminClassroomTab";
+import AdminContentCoverageTab from "@/features/admin/components/tabs/AdminContentCoverageTab";
 import AdminDocumentsTab from "@/features/admin/components/tabs/AdminDocumentsTab";
 import AdminGradeUpdateTab from "@/features/admin/components/tabs/AdminGradeUpdateTab";
 import AdminQuizzesTab from "@/features/admin/components/tabs/AdminQuizzesTab";
@@ -337,6 +338,10 @@ export default function AdminTabPanels({
           onMigrateWorksheets={onMigrateWorksheets}
           onRefreshCategories={onRefreshDocumentCategories}
         />
+      </AdminTabPanel>
+
+      <AdminTabPanel activeTab={activeTab} tab="contentCoverage" visitedTabs={visitedTabs}>
+        <AdminContentCoverageTab />
       </AdminTabPanel>
 
       <AdminTabPanel activeTab={activeTab} tab="annualPlan" visitedTabs={visitedTabs}>

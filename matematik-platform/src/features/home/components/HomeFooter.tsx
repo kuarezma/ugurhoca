@@ -1,7 +1,6 @@
 'use client';
 
 import { SafeLink } from '@/components/SafeLink';
-import Image from 'next/image';
 import { Sparkles, Shield, Heart } from 'lucide-react';
 
 type HomeFooterProps = {
@@ -12,35 +11,29 @@ type HomeFooterProps = {
 export function HomeFooter(_props: HomeFooterProps) {
   return (
     <footer
-      className="border-t border-default dark:border-slate-500/30 mt-12 px-4 pt-12 pb-[calc(5rem+env(safe-area-inset-bottom))] md:pb-12 bg-surface-1 transition-colors duration-300"
+      className="border-t-2 sm:border-t-3 border-default mt-12 px-4 pt-12 pb-[calc(5rem+env(safe-area-inset-bottom))] md:pb-12 bg-surface-1 transition-colors duration-300"
     >
       <div className="mx-auto max-w-6xl">
-        <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4 pb-8 border-b border-default">
+        <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4 pb-8 border-b-2 border-default">
           {/* Marka & Misyon */}
           <div className="space-y-3 lg:col-span-2">
-            <div className="flex items-center gap-2.5">
-              <div className="relative flex h-9 w-9 items-center justify-center overflow-hidden rounded-xl bg-gradient-to-br from-brand-primary via-brand-pink to-brand-orange p-0.5 shadow-md">
-                <Image
-                  src="/ugur.jpeg"
-                  alt="Uğur Hoca"
-                  width={36}
-                  height={36}
-                  className="h-full w-full rounded-[10px] object-cover"
-                />
+            <div className="flex items-center gap-3">
+              <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-[#fff5cc] border-2 border-[#ffc800] shadow-[0_3px_0_#e5b400] text-xl select-none">
+                🦉
               </div>
-              <span className="font-display text-lg font-bold text-primary">
+              <span className="font-display text-xl font-black text-primary">
                 Uğur Hoca Matematik
               </span>
             </div>
 
-            <p className="text-xs leading-relaxed max-w-sm text-slate-600 dark:text-slate-400">
+            <p className="text-xs leading-relaxed max-w-sm text-secondary">
               LGS ve YKS hazırlığında tüm öğrencilere %100 ücretsiz, reklamsız, nitelikli ders notları,
               yaprak testler ve interaktif çalışma ortamı sunar.
             </p>
 
-            <div className="inline-flex items-center gap-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 px-3 py-1 text-[11px] font-bold text-emerald-800 dark:text-emerald-400">
+            <div className="inline-flex items-center gap-1.5 rounded-full bg-[#d7ffb8] dark:bg-emerald-950/40 border border-[#46a302]/40 px-3.5 py-1 text-xs font-black text-[#276700] dark:text-[#a7f3d0]">
               <Shield className="h-3.5 w-3.5" />
-              <span>%100 Ücretsiz & Gizlilik Korumalı</span>
+              <span>💚 %100 Ücretsiz & Reklamsız</span>
             </div>
           </div>
 

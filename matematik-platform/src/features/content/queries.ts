@@ -1,6 +1,8 @@
 import { isAdminEmail } from '@/lib/admin';
 import { getClientSession, getCurrentUserProfile } from '@/lib/auth-client';
 import { supabase } from '@/lib/supabase/client';
+import { isCurriculumTopic, matchesCurriculumDocument } from './curriculum-coverage';
+import { loadCurriculumGradeDocuments } from './curriculum-queries';
 import type { ApiSuccessResponse } from '@/lib/api-response';
 import type { Comment, ContentDocument } from '@/types';
 import type {
@@ -195,6 +197,56 @@ export const loadContentDocuments = async (
     const to = from + pageSize - 1;
     const normalizedTypeFilter = CONTENT_TYPE_MAPPING[typeFilter] || typeFilter;
     const queryTypes = getContentTypeQueryTypes(normalizedTypeFilter);
+
+    const topic = options?.searchTerm?.trim() || '';
+    if (
+      typeof gradeFilter === 'number' &&
+      isCurriculumTopic(gradeFilter, topic) &&
+      (normalizedTypeFilter === 'ders-notlari' ||
+        normalizedTypeFilter === 'yaprak-test')
+    ) {
+      const allDocuments = await loadCurriculumGradeDocuments(gradeFilter);
+      let matching = allDocuments.filter((document) =>
+        matchesCurriculumDocument(
+          document,
+          gradeFilter,
+          topic,
+          normalizedTypeFilter,
+        ),
+      );
+      if (options?.onlyVideo)
+        matching = matching.filter((document) => document.video_url);
+      if (options?.onlySolution)
+        matching = matching.filter(
+          (document) => document.solution_url || document.answer_key_text,
+        );
+      const metric =
+        options?.sortBy === 'downloads'
+          ? 'downloads'
+          : options?.sortBy === 'views'
+            ? 'views'
+            : options?.sortBy === 'likes'
+              ? 'likes'
+              : null;
+      matching = sortContentDocumentsByNewest(matching);
+      if (metric)
+        matching.sort(
+          (left, right) => (right[metric] || 0) - (left[metric] || 0),
+        );
+      const payload = {
+        count: matching.length,
+        documents: matching.slice(from, to + 1),
+      };
+      seedContentDocumentCache(
+        page,
+        pageSize,
+        gradeFilter,
+        typeFilter,
+        payload,
+        options,
+      );
+      return payload;
+    }
 
     let countQuery = supabase
       .from('documents')
@@ -498,6 +550,17 @@ export const loadWorksheetDocumentsByGrade = async (
 ) => {
   if (grade === 'all') {
     return [] as ContentDocument[];
+  }
+
+  if (typeof grade === 'number') {
+    const documents = await loadCurriculumGradeDocuments(grade);
+    return sortWorksheetDocuments(
+      documents.filter(
+        (document) =>
+          (CONTENT_TYPE_MAPPING[document.type] || document.type) ===
+          'yaprak-test',
+      ),
+    );
   }
 
   const { data, error } = await supabase

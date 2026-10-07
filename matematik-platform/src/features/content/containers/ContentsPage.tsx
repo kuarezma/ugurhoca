@@ -93,6 +93,7 @@ import {
   sortWorksheetDocuments,
   WORKSHEET_GRADE_OPTIONS,
 } from '@/features/content/worksheet-display';
+import { isCurriculumTopic, matchesCurriculumDocument } from '@/features/content/curriculum-coverage';
 import type { WorksheetCatalogItem } from '@/features/content/worksheet-catalog';
 import type { ContentDocument, GradeValue } from '@/types';
 
@@ -263,11 +264,13 @@ function ContentsPageInner({
     CONTENT_TYPE_MAPPING[requestedTypeFromUrl] || requestedTypeFromUrl;
   const worksheetGradeFromUrl = searchParams.get('grade');
   const worksheetOutcomeFromUrl = searchParams.get('outcome');
+  const searchFromUrl = searchParams.get('q') || '';
   const [user, setUser] = useState<ContentPageUser | null>(null);
   const [documents, setDocuments] = useState<ContentDocument[]>(
     initialDocuments,
   );
   const [searchTerm, setSearchTerm] = useState('');
+  useEffect(() => { setSearchTerm(searchFromUrl); }, [searchFromUrl]);
   const [debouncedSearch, setDebouncedSearch] = useState('');
   const [sortBy, setSortBy] = useState<ContentSortOrder>('newest');
   const [quickFilter, setQuickFilter] = useState<ContentQuickFilter>('all');
@@ -305,6 +308,7 @@ function ContentsPageInner({
   const [editSuccess, setEditSuccess] = useState(false);
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(false);
+  const [contentLoadError, setContentLoadError] = useState<string | null>(null);
   const [worksheetDocuments, setWorksheetDocuments] = useState<ContentDocument[]>(
     [],
   );
@@ -393,6 +397,7 @@ function ContentsPageInner({
     ) => {
       const requestId = ++loadRequestIdRef.current;
       setLoading(true);
+      setContentLoadError(null);
       try {
         const { count, documents: nextDocuments } = await loadContentDocuments(
           pageNum,
@@ -428,6 +433,8 @@ function ContentsPageInner({
         }
 
         setTotalCount(count);
+      } catch {
+        if (requestId === loadRequestIdRef.current) setContentLoadError('İçerikler yüklenemedi. Yeniden deneyin.');
       } finally {
         if (requestId === loadRequestIdRef.current) {
           setLoading(false);
@@ -606,6 +613,7 @@ function ContentsPageInner({
     async (grade: WorksheetGradeSelection, preserveOutcome = false) => {
       const requestId = ++worksheetRequestIdRef.current;
       setWorksheetLoading(true);
+      setContentLoadError(null);
       setSelectedWorksheetGrade(grade);
       void ensureWorksheetOutcomeCatalog();
 
@@ -621,6 +629,8 @@ function ContentsPageInner({
         }
 
         setWorksheetDocuments(nextDocuments);
+      } catch {
+        if (requestId === worksheetRequestIdRef.current) setContentLoadError('Yaprak testler yüklenemedi. Yeniden deneyin.');
       } finally {
         if (requestId === worksheetRequestIdRef.current) {
           setWorksheetLoading(false);
@@ -1270,6 +1280,9 @@ function ContentsPageInner({
       return false;
     }
     if (!searchTerm.trim()) return true;
+    if (typeof selectedGrade === 'number' && isCurriculumTopic(selectedGrade, searchTerm.trim()) && (selectedType === 'ders-notlari' || selectedType === 'yaprak-test')) {
+      return matchesCurriculumDocument(content, selectedGrade, searchTerm.trim(), selectedType);
+    }
     const term = searchTerm.toLowerCase();
     return (
       Boolean(content.title && content.title.toLowerCase().includes(term)) ||
@@ -1289,7 +1302,11 @@ function ContentsPageInner({
     return label.toLowerCase().includes(searchTerm.trim().toLowerCase());
   });
 
-  const worksheetDocumentGroups = worksheetDocuments.reduce<
+  const curriculumWorksheetTopic = typeof selectedWorksheetGrade === 'number' && isCurriculumTopic(selectedWorksheetGrade, searchTerm.trim()) ? searchTerm.trim() : null;
+  const matchingWorksheetDocuments = curriculumWorksheetTopic && typeof selectedWorksheetGrade === 'number'
+    ? worksheetDocuments.filter((document) => matchesCurriculumDocument(document, selectedWorksheetGrade, curriculumWorksheetTopic, 'yaprak-test'))
+    : worksheetDocuments;
+  const worksheetDocumentGroups = matchingWorksheetDocuments.reduce<
     Record<string, ContentDocument[]>
   >((groups, document) => {
     const outcome = getWorksheetOutcomeLabel(document);
@@ -1317,8 +1334,8 @@ function ContentsPageInner({
       documents: sortWorksheetDocuments(worksheetDocumentGroups[outcome] || []),
       outcome,
     }))
-    .filter(({ outcome }) =>
-      searchTerm.trim()
+    .filter(({ outcome, count }) =>
+      curriculumWorksheetTopic ? count > 0 : searchTerm.trim()
         ? outcome.toLowerCase().includes(searchTerm.trim().toLowerCase())
         : true,
     )
@@ -1368,7 +1385,7 @@ function ContentsPageInner({
   }, []);
 
   const filteredWorksheetTests = sortWorksheetDocuments(
-    worksheetDocuments.filter((document) => {
+    matchingWorksheetDocuments.filter((document) => {
       if (!selectedWorksheetOutcome) {
         return false;
       }
@@ -1377,7 +1394,7 @@ function ContentsPageInner({
         return false;
       }
 
-      if (!searchTerm.trim()) {
+      if (!searchTerm.trim() || curriculumWorksheetTopic) {
         return true;
       }
 
@@ -1475,6 +1492,7 @@ function ContentsPageInner({
             {/* Top ambient aura */}
             <div className="absolute top-0 inset-x-0 h-[2px] bg-gradient-to-r from-transparent via-purple-500/40 to-transparent" />
 
+            {contentLoadError && <p role="alert" className="mb-3 text-sm text-tone-danger-fg">{contentLoadError}</p>}
             <ContentFilterBar
               isWorksheetBrowser={isWorksheetBrowser}
               onClearSearch={() => setSearchTerm('')}

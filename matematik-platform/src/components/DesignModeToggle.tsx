@@ -1,6 +1,6 @@
 'use client';
 
-import { Sparkles, Compass, BookOpen } from 'lucide-react';
+import { Sparkles, BookOpen } from 'lucide-react';
 import { useTheme } from '@/components/ThemeProvider';
 
 interface DesignModeToggleProps {

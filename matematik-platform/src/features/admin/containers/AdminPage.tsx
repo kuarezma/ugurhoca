@@ -1308,6 +1308,15 @@ export default function AdminPage() {
                   badge: liveLessons.lessons.length > 0 ? liveLessons.lessons.length : null,
                 },
                 {
+                  id: 'contentCoverage',
+                  label: 'İçerik Kapsamı',
+                  shortLabel: 'Kapsam',
+                  icon: FileText,
+                  color: 'from-blue-500 to-cyan-500',
+                  category: 'curriculum',
+                  badge: null,
+                },
+                {
                   id: 'annualPlan',
                   label: 'Yıllık Plan',
                   shortLabel: 'Plan',
@@ -1384,6 +1393,7 @@ export default function AdminPage() {
           {activeTab !== 'statistics' &&
             activeTab !== 'tracking' &&
             activeTab !== 'classroom' &&
+            activeTab !== 'contentCoverage' &&
             activeTab !== 'annualPlan' &&
             activeTab !== 'worksheetCandidates' &&
             activeTab !== 'users' &&

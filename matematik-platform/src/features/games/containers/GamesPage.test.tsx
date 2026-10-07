@@ -59,3 +59,11 @@ it('explains that scores are waiting when the alias modal is dismissed', async (
     screen.getByRole('button', { name: 'Rumuz penceresini kapat' }),
   ).toBeInTheDocument();
 });
+
+
+// A valid adventure link opens that game rather than the generic game list.
+it('opens the game named by an adventure deep link', async () => {
+  window.history.replaceState(null, '', '/oyunlar?id=8');
+  render(<ToastProvider><GamesPage /></ToastProvider>);
+  expect(await screen.findByRole('heading', { name: 'Denklem Avcısı' })).toBeInTheDocument();
+});

@@ -26,20 +26,22 @@ vi.mock('next/dynamic', async () => {
   return {
     default: (loader: () => Promise<LoaderResult>) => {
       let ResolvedComponent: DynamicComponent | null = null;
-      const promise = loader().then((mod) => {
-        ResolvedComponent = 'default' in mod ? mod.default : mod;
-      });
+      let pending: Promise<void> | null = null;
       return function DynamicWrapper(props: Record<string, unknown>) {
         const [Loaded, setLoaded] = React.useState<DynamicComponent | null>(
           () => ResolvedComponent,
         );
         React.useEffect(() => {
-          if (!Loaded) {
-            promise.then(() => {
-              setLoaded(() => ResolvedComponent);
-            });
-          }
-        }, [Loaded]);
+          if (Loaded || props.isOpen === false) return;
+          let disposed = false;
+          pending ??= loader().then((mod) => {
+            ResolvedComponent = 'default' in mod ? mod.default : mod;
+          });
+          void pending.then(() => {
+            if (!disposed) setLoaded(() => ResolvedComponent);
+          });
+          return () => { disposed = true; };
+        }, [Loaded, props.isOpen]);
         if (!Loaded) return null;
         return React.createElement(Loaded, props);
       };

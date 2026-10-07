@@ -1,57 +1,60 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { CurriculumCoverageMatrixModal } from './CurriculumCoverageMatrixModal';
+import { loadCurriculumCoverageDocuments } from '@/features/content/curriculum-queries';
+
+vi.mock('@/features/content/curriculum-queries', () => ({ loadCurriculumCoverageDocuments: vi.fn() }));
 
 describe('CurriculumCoverageMatrixModal', () => {
   beforeEach(() => {
-    localStorage.clear();
+    vi.clearAllMocks();
+    vi.mocked(loadCurriculumCoverageDocuments).mockResolvedValue([
+      { id: 'test', grade: [8], title: 'Çarpanlar ve Katlar', description: null, type: 'yaprak-test' },
+      { id: 'notes', grade: [8], title: 'Çarpanlar ve Katlar', description: null, type: 'ders-notlari' },
+    ]);
   });
 
-  it('does not render when isOpen is false', () => {
-    render(<CurriculumCoverageMatrixModal isOpen={false} onClose={() => {}} />);
+  it('does not query or render when closed', () => {
+    render(<CurriculumCoverageMatrixModal isOpen={false} onClose={vi.fn()} />);
     expect(screen.queryByRole('dialog')).toBeNull();
+    expect(loadCurriculumCoverageDocuments).not.toHaveBeenCalled();
   });
 
-  it('renders modal with title, grade options, stats, and topic matrix', () => {
-    render(<CurriculumCoverageMatrixModal isOpen={true} onClose={() => {}} />);
+  it('renders real counts and readable missing content without manual toggles', async () => {
+    localStorage.setItem('ugurhoca_curriculum_coverage_matrix_v1', '{"8":{}}');
+    const setItem = vi.spyOn(localStorage, 'setItem');
+    const onClose = vi.fn();
+    render(<CurriculumCoverageMatrixModal isOpen onClose={onClose} />);
     expect(screen.getByRole('dialog')).toBeInTheDocument();
     expect(screen.getByText('Kazanım Kapsam & İçerik Haritası')).toBeInTheDocument();
-    expect(screen.getByText('Genel Kapsam Oranı')).toBeInTheDocument();
-    expect(screen.getByText('Çarpanlar ve Katlar')).toBeInTheDocument();
-    expect(screen.getByText('Müfredat Kazanım / Konu Başlığı')).toBeInTheDocument();
+    expect(await screen.findByText(/Genel Kapsam Oranı: %9/)).toBeInTheDocument();
+    expect(screen.getAllByText('1 içerik')).toHaveLength(2);
+    expect(screen.getByText('8. Sınıf · Kareköklü İfadeler: yaprak test yok')).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: /Mevcut/ })).not.toBeInTheDocument();
+    expect(setItem).not.toHaveBeenCalled();
+    fireEvent.click(screen.getByRole('button', { name: 'Kapat' }));
+    expect(onClose).toHaveBeenCalledOnce();
+    setItem.mockRestore();
   });
 
-  it('switches grade and updates topic list', () => {
-    render(<CurriculumCoverageMatrixModal isOpen={true} onClose={() => {}} />);
-
-    // Click 5. Sınıf
-    const grade5Btn = screen.getByRole('button', { name: '5. Sınıf' });
-    fireEvent.click(grade5Btn);
-
-    expect(screen.getByText('Doğal Sayılar')).toBeInTheDocument();
+  it('switches grade and filters topics using actual content', async () => {
+    render(<CurriculumCoverageMatrixModal isOpen onClose={vi.fn()} />);
+    await screen.findByText(/Genel Kapsam Oranı/);
+    fireEvent.click(screen.getByRole('button', { name: 'Tam Hazır' }));
+    expect(screen.getByText('8. Sınıf · Çarpanlar ve Katlar')).toBeInTheDocument();
+    expect(screen.queryByText('8. Sınıf · Kareköklü İfadeler')).not.toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: 'Eksikli Konular' }));
+    expect(screen.queryByText('8. Sınıf · Çarpanlar ve Katlar')).not.toBeInTheDocument();
+    fireEvent.change(screen.getByRole('combobox', { name: 'Sınıf' }), { target: { value: '5' } });
+    expect(screen.getByText('5. Sınıf · Doğal Sayılar')).toBeInTheDocument();
   });
 
-  it('filters topics by incomplete and complete', () => {
-    render(<CurriculumCoverageMatrixModal isOpen={true} onClose={() => {}} />);
-
-    const incompleteBtn = screen.getByRole('button', { name: /Eksikli Konular/i });
-    fireEvent.click(incompleteBtn);
-
-    expect(screen.getByText(/Kazanım Kapsam & İçerik Haritası/i)).toBeInTheDocument();
-  });
-
-  it('toggles channel coverage status on click and calls onClose when closing', () => {
-    const handleClose = vi.fn();
-    render(<CurriculumCoverageMatrixModal isOpen={true} onClose={handleClose} />);
-
-    // Find all Mevcut buttons and click one to toggle to Eksik
-    const mevcutBtns = screen.getAllByRole('button', { name: /Mevcut/i });
-    expect(mevcutBtns.length).toBeGreaterThan(0);
-    fireEvent.click(mevcutBtns[0]);
-
-    // Close modal
-    const closeBtn = screen.getByRole('button', { name: 'Kapat' });
-    fireEvent.click(closeBtn);
-    expect(handleClose).toHaveBeenCalledTimes(1);
+  it('does not report missing documents when the query fails, and can refresh', async () => {
+    vi.mocked(loadCurriculumCoverageDocuments).mockRejectedValueOnce(new Error('offline'));
+    render(<CurriculumCoverageMatrixModal isOpen onClose={vi.fn()} />);
+    expect(await screen.findByRole('alert')).toHaveTextContent('yüklenemedi');
+    expect(screen.queryByText(/yaprak test yok/)).not.toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: 'Yenile' }));
+    expect(await screen.findByText(/Genel Kapsam Oranı/)).toBeInTheDocument();
   });
 });

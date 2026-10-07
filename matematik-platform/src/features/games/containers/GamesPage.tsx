@@ -122,7 +122,9 @@ export default function GamesPage() {
     if (loading || !user || deepLinkChecked.current) return;
     deepLinkChecked.current = true;
     const gameId = new URLSearchParams(window.location.search).get('id');
-    if (gameId !== null && !games.some((game) => String(game.id) === gameId)) {
+    const linkedGame = games.find((game) => String(game.id) === gameId);
+    if (linkedGame) setSelectedGame(linkedGame);
+    if (gameId !== null && !linkedGame) {
       warning(
         'Bağlantıdaki oyun bulunamadı. Oyun listesinden bir oyun seçebilirsin.',
       );

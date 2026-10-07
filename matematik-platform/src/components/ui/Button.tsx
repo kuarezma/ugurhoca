@@ -11,7 +11,12 @@ export type ButtonVariant =
   | 'outline'
   | 'destructive'
   | 'success'
-  | 'xp';
+  | 'xp'
+  | 'playful-green'
+  | 'playful-blue'
+  | 'playful-yellow'
+  | 'playful-white'
+  | 'playful-purple';
 
 export type ButtonSize = 'sm' | 'md' | 'lg';
 
@@ -26,23 +31,33 @@ type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
 };
 
 const BASE =
-  'inline-flex items-center justify-center gap-2 font-semibold rounded-xl transition-all duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-brand-primary disabled:opacity-60 disabled:cursor-not-allowed active:scale-[0.98] select-none ripple-container';
+  'inline-flex items-center justify-center gap-2 font-display font-bold rounded-2xl transition-all duration-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-brand-primary disabled:opacity-60 disabled:cursor-not-allowed select-none ripple-container active:translate-y-1';
 
 const VARIANTS: Record<ButtonVariant, string> = {
   primary:
-    'bg-gradient-to-r from-brand-primary via-brand-pink to-brand-orange text-white shadow-brand-glow hover:shadow-brand-glow-lg hover:-translate-y-0.5',
+    'bg-[#58cc02] hover:bg-[#61e002] text-white shadow-[0_5px_0_#46a302] active:shadow-[0_1px_0_#46a302]',
   secondary:
-    'bg-brand-secondary/15 text-brand-secondary border border-brand-secondary/40 hover:bg-brand-secondary/25',
+    'bg-[#1cb0f6] hover:bg-[#33beff] text-white shadow-[0_5px_0_#1899d6] active:shadow-[0_1px_0_#1899d6]',
   ghost:
-    'bg-transparent text-current hover:bg-white/10 dark:hover:bg-white/5',
+    'bg-transparent text-current hover:bg-slate-100 dark:hover:bg-white/5 active:translate-y-0.5',
   outline:
-    'bg-transparent border border-brand-primary/40 text-brand-primary hover:bg-brand-primary/10',
+    'bg-transparent border-2 border-default text-primary hover:bg-surface-2 active:translate-y-0.5',
   destructive:
-    'bg-gradient-to-r from-rose-500 to-red-500 text-white shadow-lg hover:shadow-rose-500/40 hover:-translate-y-0.5',
+    'bg-[#ff4b4b] hover:bg-[#ff6161] text-white shadow-[0_5px_0_#ea2b2b] active:shadow-[0_1px_0_#ea2b2b]',
   success:
-    'bg-gradient-to-r from-emerald-500 to-teal-500 text-white shadow-lg hover:shadow-emerald-500/40 hover:-translate-y-0.5',
+    'bg-[#58cc02] hover:bg-[#61e002] text-white shadow-[0_5px_0_#46a302] active:shadow-[0_1px_0_#46a302]',
   xp:
-    'bg-gradient-to-r from-amber-400 via-orange-400 to-pink-500 text-slate-900 shadow-accent-glow hover:-translate-y-0.5',
+    'bg-[#ffc800] hover:bg-[#ffd426] text-amber-950 shadow-[0_5px_0_#e5b400] active:shadow-[0_1px_0_#e5b400]',
+  'playful-green':
+    'bg-[#58cc02] hover:bg-[#61e002] text-white shadow-[0_5px_0_#46a302] active:shadow-[0_1px_0_#46a302]',
+  'playful-blue':
+    'bg-[#1cb0f6] hover:bg-[#33beff] text-white shadow-[0_5px_0_#1899d6] active:shadow-[0_1px_0_#1899d6]',
+  'playful-yellow':
+    'bg-[#ffc800] hover:bg-[#ffd426] text-amber-950 shadow-[0_5px_0_#e5b400] active:shadow-[0_1px_0_#e5b400]',
+  'playful-white':
+    'bg-white text-slate-900 border-2 border-slate-200 shadow-[0_4px_0_#cbd5e1] hover:bg-slate-50 dark:bg-slate-800 dark:text-white dark:border-slate-700 dark:shadow-[0_4px_0_#0f172a] active:shadow-[0_1px_0_#cbd5e1] dark:active:shadow-[0_1px_0_#0f172a]',
+  'playful-purple':
+    'bg-[#ce82ff] hover:bg-[#d896ff] text-white shadow-[0_5px_0_#a545e8] active:shadow-[0_1px_0_#a545e8]',
 };
 
 const SIZES: Record<ButtonSize, string> = {

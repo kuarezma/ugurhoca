@@ -4,6 +4,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import ContentsPage from './ContentsPage';
 import {
   loadContentDocuments,
+  loadWorksheetDocumentsByGrade,
   resolveContentUser,
   updateDocumentMetric,
 } from '@/features/content/queries';
@@ -26,6 +27,7 @@ vi.mock('@/components/Toast', () => ({
 vi.mock('@/features/content/queries', () => ({
   resolveContentUser: vi.fn(),
   loadContentDocuments: vi.fn(),
+  loadWorksheetDocumentsByGrade: vi.fn(),
   seedContentDocumentCache: vi.fn(),
   updateDocumentMetric: vi.fn(),
 }));
@@ -52,10 +54,33 @@ describe('ContentsPage static feed and client filters', () => {
     navigation.params = new URLSearchParams();
     navigation.suspend = false;
     vi.mocked(resolveContentUser).mockResolvedValue(null);
+    vi.mocked(loadWorksheetDocumentsByGrade).mockResolvedValue([]);
     vi.mocked(loadContentDocuments).mockResolvedValue({
       count: 0,
       documents: [],
     });
+  });
+
+  it('applies a note topic q from the URL to the editable search and query', async () => {
+    navigation.params = new URLSearchParams({ type: 'ders-notlari', grade: '8', q: 'Kareköklü İfadeler' });
+    window.history.replaceState({}, '', `/icerikler?${navigation.params}`);
+    render(<ContentsPage />);
+    await waitFor(() => expect(screen.getByPlaceholderText('İçerik ara...')).toHaveValue('Kareköklü İfadeler'));
+    await waitFor(() => expect(loadContentDocuments).toHaveBeenCalledWith(1, 5, 8, 'ders-notlari', expect.objectContaining({ searchTerm: 'Kareköklü İfadeler' })));
+  });
+
+  it('uses topic metadata for worksheet q and keeps matching tests visible inside outcomes', async () => {
+    navigation.params = new URLSearchParams({ type: 'yaprak-test', grade: '8', q: 'Kareköklü İfadeler' });
+    window.history.replaceState({}, '', `/icerikler?${navigation.params}`);
+    vi.mocked(loadWorksheetDocumentsByGrade).mockResolvedValue([
+      { id: 'root', title: 'Test - 1', type: 'yaprak-test', grade: [8], description: '__WS_META__{"outcome":"Kareköklü İfadeler","order":1}\nAlıştırmalar' },
+      { id: 'other', title: 'Test - 2', type: 'yaprak-test', grade: [8], description: 'Üslü İfadeler' },
+    ]);
+    render(<ContentsPage />);
+    const outcome = await screen.findByRole('button', { name: /Kareköklü İfadeler/ });
+    expect(screen.queryByRole('button', { name: /Üslü İfadeler/ })).not.toBeInTheDocument();
+    fireEvent.click(outcome);
+    expect(await screen.findByText('Test - 1')).toBeInTheDocument();
   });
 
   it('URL okuması askıya alınsa bile anonim içerikleri HTML içinde tutar', () => {

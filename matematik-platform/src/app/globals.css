@@ -17,6 +17,29 @@
 :root {
   color-scheme: dark;
 
+  --font-fun: var(--font-display);
+  --font-body: var(--font-poppins);
+
+  /* Duolingo Inspired Playful Palette Variables */
+  --duo-green: #58cc02;
+  --duo-green-dark: #46a302;
+  --duo-green-light: #d7ffb8;
+  --duo-blue: #1cb0f6;
+  --duo-blue-dark: #1899d6;
+  --duo-blue-light: #ddf4ff;
+  --duo-purple: #ce82ff;
+  --duo-purple-dark: #a545e8;
+  --duo-purple-light: #f3e5ff;
+  --duo-orange: #ff9600;
+  --duo-orange-dark: #d87e00;
+  --duo-orange-light: #ffe8cc;
+  --duo-yellow: #ffc800;
+  --duo-yellow-dark: #e5b400;
+  --duo-yellow-light: #fff5cc;
+  --duo-red: #ff4b4b;
+  --duo-red-dark: #ea2b2b;
+  --duo-red-light: #ffdfe0;
+
   /* İlkel palet: tema rollerinin tek kaynağıdır. */
   --palette-slate-950: #020617;
   --palette-slate-900: #0f172a;
@@ -26,9 +49,9 @@
   --palette-slate-100: #f1f5f9;
 
   --surface-0-rgb: 15 23 42;
-  --surface-1-rgb: 15 23 42;
-  --surface-2-rgb: 17 24 39;
-  --surface-3-rgb: 30 41 59;
+  --surface-1-rgb: 30 41 59;
+  --surface-2-rgb: 39 53 73;
+  --surface-3-rgb: 51 65 85;
   --surface-0: rgb(var(--surface-0-rgb));
   --surface-1: rgb(var(--surface-1-rgb));
   --surface-2: rgb(var(--surface-2-rgb));
@@ -37,36 +60,36 @@
   --text-secondary: #cbd5e1;
   --text-tertiary: #94a3b8;
   --border-subtle: rgba(255, 255, 255, 0.08);
-  --border-default: rgba(148, 163, 184, 0.65);
-  --border-strong: rgba(148, 163, 184, 0.65);
+  --border-default: #334155;
+  --border-strong: #475569;
   --accent-fg: var(--brand-primary-soft);
   --accent-bg: var(--brand-primary);
   --tone-success-fg: #bbf7d0;
-  --tone-success-bg: rgba(34, 197, 94, 0.16);
-  --tone-success-border: rgba(74, 222, 128, 0.55);
+  --tone-success-bg: rgba(88, 204, 2, 0.18);
+  --tone-success-border: #46a302;
   --tone-warn-fg: #fde68a;
-  --tone-warn-bg: rgba(245, 158, 11, 0.16);
-  --tone-warn-border: rgba(251, 191, 36, 0.55);
+  --tone-warn-bg: rgba(255, 200, 0, 0.18);
+  --tone-warn-border: #e5b400;
   --tone-danger-fg: #fecaca;
-  --tone-danger-bg: rgba(239, 68, 68, 0.16);
-  --tone-danger-border: rgba(248, 113, 113, 0.55);
+  --tone-danger-bg: rgba(255, 75, 75, 0.18);
+  --tone-danger-border: #ea2b2b;
   --tone-info-fg: #bae6fd;
-  --tone-info-bg: rgba(6, 182, 212, 0.16);
-  --tone-info-border: rgba(34, 211, 238, 0.55);
+  --tone-info-bg: rgba(28, 176, 246, 0.18);
+  --tone-info-border: #1899d6;
 
-  --brand-primary-rgb: 124 58 237;
-  --brand-primary-soft-rgb: 167 139 250;
-  --brand-primary-deep-rgb: 91 33 182;
-  --brand-secondary-rgb: 6 182 212;
-  --brand-secondary-soft-rgb: 103 232 249;
-  --brand-accent-rgb: 250 204 21;
-  --brand-accent-soft-rgb: 253 230 138;
-  --brand-success-rgb: 34 197 94;
-  --brand-danger-rgb: 239 68 68;
-  --brand-warning-rgb: 245 158 11;
-  --brand-pink-rgb: 190 24 93;
-  --brand-orange-rgb: 194 65 12;
-  --brand-indigo-rgb: 99 102 241;
+  --brand-primary-rgb: 88 204 2;
+  --brand-primary-soft-rgb: 105 224 2;
+  --brand-primary-deep-rgb: 70 163 2;
+  --brand-secondary-rgb: 28 176 246;
+  --brand-secondary-soft-rgb: 51 190 255;
+  --brand-accent-rgb: 255 200 0;
+  --brand-accent-soft-rgb: 255 212 38;
+  --brand-success-rgb: 88 204 2;
+  --brand-danger-rgb: 255 75 75;
+  --brand-warning-rgb: 255 150 0;
+  --brand-pink-rgb: 206 130 255;
+  --brand-orange-rgb: 255 150 0;
+  --brand-indigo-rgb: 28 176 246;
   --brand-gradient-middle: #8b5cf6;
   --brand-primary: rgb(var(--brand-primary-rgb));
   --brand-primary-soft: rgb(var(--brand-primary-soft-rgb));
@@ -189,55 +212,55 @@ html[data-theme='light'] {
   --palette-slate-400: #94a3b8;
   --palette-slate-100: #f1f5f9;
 
-  --surface-0-rgb: 250 250 252;
+  --surface-0-rgb: 244 247 251;
   --surface-1-rgb: 255 255 255;
-  --surface-2-rgb: 246 248 251;
-  --surface-3-rgb: 238 242 248;
-  --text-primary: #090d16;
-  --text-secondary: #334155;
-  --text-tertiary: #64748b;
-  --border-subtle: rgba(226, 232, 240, 0.9);
-  --border-default: #64748b;
-  --border-strong: #475569;
+  --surface-2-rgb: 248 250 252;
+  --surface-3-rgb: 241 245 249;
+  --text-primary: #1e293b;
+  --text-secondary: #3c4858;
+  --text-tertiary: #778ca3;
+  --border-subtle: #edf2f7;
+  --border-default: #e2e8f0;
+  --border-strong: #cbd5e1;
   --accent-fg: var(--brand-primary);
   --accent-bg: var(--brand-primary);
-  --tone-success-fg: #166534;
-  --tone-success-bg: #dcfce7;
-  --tone-success-border: #15803d;
-  --tone-warn-fg: #78350f;
-  --tone-warn-bg: #fef3c7;
-  --tone-warn-border: #a16207;
-  --tone-danger-fg: #991b1b;
-  --tone-danger-bg: #fee2e2;
-  --tone-danger-border: #b91c1c;
-  --tone-info-fg: #155e75;
-  --tone-info-bg: #cffafe;
-  --tone-info-border: #0e7490;
+  --tone-success-fg: #276700;
+  --tone-success-bg: #d7ffb8;
+  --tone-success-border: #46a302;
+  --tone-warn-fg: #8a5800;
+  --tone-warn-bg: #fff5cc;
+  --tone-warn-border: #e5b400;
+  --tone-danger-fg: #b91c1c;
+  --tone-danger-bg: #ffdfe0;
+  --tone-danger-border: #ea2b2b;
+  --tone-info-fg: #0c6999;
+  --tone-info-bg: #ddf4ff;
+  --tone-info-border: #1899d6;
 
-  --brand-primary-rgb: 67 56 202;
-  --brand-primary-soft-rgb: 79 70 229;
-  --brand-primary-deep-rgb: 55 48 163;
-  --brand-secondary-rgb: 2 132 199;
-  --brand-secondary-soft-rgb: 3 105 161;
-  --brand-accent-rgb: 180 83 9;
-  --brand-accent-soft-rgb: 180 83 9;
-  --brand-success-rgb: 21 128 61;
-  --brand-danger-rgb: 185 28 28;
-  --brand-warning-rgb: 161 98 7;
-  --brand-pink-rgb: 190 24 93;
-  --brand-orange-rgb: 194 65 12;
-  --brand-indigo-rgb: 67 56 202;
-  --brand-gradient-middle: #6d28d9;
+  --brand-primary-rgb: 88 204 2;
+  --brand-primary-soft-rgb: 105 224 2;
+  --brand-primary-deep-rgb: 70 163 2;
+  --brand-secondary-rgb: 28 176 246;
+  --brand-secondary-soft-rgb: 51 190 255;
+  --brand-accent-rgb: 255 200 0;
+  --brand-accent-soft-rgb: 255 212 38;
+  --brand-success-rgb: 88 204 2;
+  --brand-danger-rgb: 255 75 75;
+  --brand-warning-rgb: 255 150 0;
+  --brand-pink-rgb: 206 130 255;
+  --brand-orange-rgb: 255 150 0;
+  --brand-indigo-rgb: 28 176 246;
+  --brand-gradient-middle: #46a302;
 
-  --bg: #fafafc;
+  --bg: #f4f7fb;
   --bg-elevated: #ffffff;
   --bg-soft: #ffffff;
-  --bg-muted: rgba(241, 245, 249, 0.9);
+  --bg-muted: #f1f5f9;
   --text: var(--text-primary);
-  --text-strong: #090d16;
+  --text-strong: #1e293b;
   --text-muted: var(--text-tertiary);
-  --text-soft: #64748b;
-  --surface-4: #f5f3ff;
+  --text-soft: #778ca3;
+  --surface-4: #fff9db;
   --border: var(--border-default);
   --border-soft: var(--border-subtle);
   --border-strong-light: var(--border-strong);
@@ -1967,5 +1990,236 @@ body.in-lesson-mode main {
   width: 100vw !important;
   margin: 0 !important;
   padding: 1.5rem 3rem !important;
+}
+
+/* ==========================================================================
+   OYUNSU & SEVİMLİ TASARIM DİLİ (Duolingo Tarzı 3D Butonlar, Kartlar, Rozetler)
+   ========================================================================== */
+
+/* Arka plan dot dokusu */
+html[data-theme='light'] body {
+  background-color: var(--bg);
+  background-image:
+    radial-gradient(#dce4ee 1.5px, transparent 1.5px),
+    radial-gradient(#dce4ee 1.5px, #f4f7fb 1.5px);
+  background-size: 32px 32px;
+  background-position: 0 0, 16px 16px;
+}
+
+html[data-theme='dark'] body {
+  background-color: var(--bg);
+  background-image:
+    radial-gradient(rgba(255, 255, 255, 0.05) 1.5px, transparent 1.5px),
+    radial-gradient(rgba(255, 255, 255, 0.05) 1.5px, #0f172a 1.5px);
+  background-size: 32px 32px;
+  background-position: 0 0, 16px 16px;
+}
+
+/* DUOLINGO STYLE 3D BUTTONS */
+.btn-3d {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 24px;
+  border-radius: 16px;
+  font-family: var(--font-display), var(--font-fun), cursive, sans-serif;
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  border: none;
+  transition: transform 0.1s ease, box-shadow 0.1s ease, background-color 0.1s ease;
+  user-select: none;
+  white-space: nowrap;
+  text-decoration: none;
+}
+
+.btn-3d:active {
+  transform: translateY(4px);
+}
+
+.btn-3d.btn-green {
+  background-color: #58cc02;
+  color: #ffffff;
+  box-shadow: 0 5px 0 #46a302;
+}
+.btn-3d.btn-green:hover {
+  background-color: #61e002;
+}
+.btn-3d.btn-green:active {
+  box-shadow: 0 1px 0 #46a302;
+}
+
+.btn-3d.btn-blue {
+  background-color: #1cb0f6;
+  color: #ffffff;
+  box-shadow: 0 5px 0 #1899d6;
+}
+.btn-3d.btn-blue:hover {
+  background-color: #33beff;
+}
+.btn-3d.btn-blue:active {
+  box-shadow: 0 1px 0 #1899d6;
+}
+
+.btn-3d.btn-yellow {
+  background-color: #ffc800;
+  color: #5c4200;
+  box-shadow: 0 5px 0 #e5b400;
+}
+.btn-3d.btn-yellow:hover {
+  background-color: #ffd426;
+}
+.btn-3d.btn-yellow:active {
+  box-shadow: 0 1px 0 #e5b400;
+}
+
+.btn-3d.btn-purple {
+  background-color: #ce82ff;
+  color: #ffffff;
+  box-shadow: 0 5px 0 #a545e8;
+}
+.btn-3d.btn-purple:hover {
+  background-color: #d896ff;
+}
+.btn-3d.btn-purple:active {
+  box-shadow: 0 1px 0 #a545e8;
+}
+
+.btn-3d.btn-orange {
+  background-color: #ff9600;
+  color: #ffffff;
+  box-shadow: 0 5px 0 #d87e00;
+}
+.btn-3d.btn-orange:hover {
+  background-color: #ffa726;
+}
+.btn-3d.btn-orange:active {
+  box-shadow: 0 1px 0 #d87e00;
+}
+
+.btn-3d.btn-red {
+  background-color: #ff4b4b;
+  color: #ffffff;
+  box-shadow: 0 5px 0 #ea2b2b;
+}
+.btn-3d.btn-red:hover {
+  background-color: #ff6161;
+}
+.btn-3d.btn-red:active {
+  box-shadow: 0 1px 0 #ea2b2b;
+}
+
+.btn-3d.btn-white {
+  background-color: #ffffff;
+  color: #1e293b;
+  border: 2px solid #e2e8f0;
+  box-shadow: 0 4px 0 #cbd5e1;
+}
+.btn-3d.btn-white:hover {
+  background-color: #f8fafc;
+}
+.btn-3d.btn-white:active {
+  box-shadow: 0 1px 0 #cbd5e1;
+}
+
+html[data-theme='dark'] .btn-3d.btn-white {
+  background-color: #1e293b;
+  color: #f8fafc;
+  border: 2px solid #334155;
+  box-shadow: 0 4px 0 #0f172a;
+}
+html[data-theme='dark'] .btn-3d.btn-white:hover {
+  background-color: #273549;
+}
+html[data-theme='dark'] .btn-3d.btn-white:active {
+  box-shadow: 0 1px 0 #0f172a;
+}
+
+.btn-3d.btn-sm {
+  padding: 8px 16px;
+  font-size: 0.85rem;
+  border-radius: 12px;
+  box-shadow: 0 3px 0 rgba(0, 0, 0, 0.15);
+}
+.btn-3d.btn-sm:active {
+  transform: translateY(2px);
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.15);
+}
+
+/* PLAYFUL CARDS */
+.card-playful {
+  background-color: var(--surface-1);
+  border: 3px solid var(--border-default);
+  border-radius: 24px;
+  box-shadow: 0 6px 0 var(--border-default);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card-playful:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 0 var(--border-default);
+}
+
+.card-playful-hero {
+  background-color: var(--surface-1);
+  border: 3px solid var(--border-default);
+  border-radius: 32px;
+  box-shadow: 0 8px 0 var(--border-default);
+}
+
+/* SPEECH BUBBLE */
+.speech-bubble {
+  background-color: var(--surface-1);
+  border: 3px solid var(--border-default);
+  border-radius: 20px;
+  padding: 12px 20px;
+  font-family: var(--font-display), var(--font-fun), sans-serif;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  box-shadow: 0 4px 0 var(--border-default);
+  position: relative;
+  text-align: center;
+}
+
+/* XP BADGE & STAT PILLS */
+.xp-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-display), var(--font-fun), sans-serif;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #1899d6;
+  background-color: #ddf4ff;
+  padding: 4px 12px;
+  border-radius: 9999px;
+  width: fit-content;
+}
+
+html[data-theme='dark'] .xp-badge {
+  color: #67e8f9;
+  background-color: rgba(28, 176, 246, 0.2);
+}
+
+.game-stats-bar {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background-color: var(--surface-2);
+  border: 2px solid var(--border-default);
+  padding: 6px 16px;
+  border-radius: 9999px;
+}
+
+.stat-pill {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-display), var(--font-fun), sans-serif;
+  font-size: 0.9rem;
+  font-weight: 700;
 }
 
