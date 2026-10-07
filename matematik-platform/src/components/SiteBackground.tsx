@@ -38,8 +38,14 @@ export function SiteBackground() {
     active: false,
   });
 
+  // Canvas döngüsü ilk boyama ve hidrasyonla yarışmasın diye tarayıcı boşa çıkınca başlar.
   useEffect(() => {
-    setMounted(true);
+    if (typeof requestIdleCallback === 'function') {
+      const id = requestIdleCallback(() => setMounted(true), { timeout: 1500 });
+      return () => cancelIdleCallback(id);
+    }
+    const id = setTimeout(() => setMounted(true), 300);
+    return () => clearTimeout(id);
   }, []);
 
   // Canvas Animasyonu: Matematiksel Takımyıldız Ağı ve Süzülen Glifler
