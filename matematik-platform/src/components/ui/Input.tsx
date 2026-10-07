@@ -66,7 +66,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
           {error}
         </p>
       ) : hint ? (
-        <p id={`${inputId}-hint`} className="text-xs text-slate-500 dark:text-slate-400">
+        <p id={`${inputId}-hint`} className="text-xs text-slate-600 dark:text-slate-400">
           {hint}
         </p>
       ) : null}
@@ -110,7 +110,7 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(function 
           {error}
         </p>
       ) : hint ? (
-        <p id={`${inputId}-hint`} className="text-xs text-slate-500 dark:text-slate-400">
+        <p id={`${inputId}-hint`} className="text-xs text-slate-600 dark:text-slate-400">
           {hint}
         </p>
       ) : null}
@@ -165,7 +165,7 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(function Select
           {error}
         </p>
       ) : hint ? (
-        <p id={`${inputId}-hint`} className="text-xs text-slate-500 dark:text-slate-400">
+        <p id={`${inputId}-hint`} className="text-xs text-slate-600 dark:text-slate-400">
           {hint}
         </p>
       ) : null}
