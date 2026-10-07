@@ -47,8 +47,11 @@ export async function proxy(request: NextRequest) {
       },
     });
     try {
-      const { data: { user }, error } = await supabase.auth.getUser();
-      hasSession = !error && Boolean(user?.id);
+      // getClaims asimetrik anahtarlarda JWT'yi yerelde doğrular (JWKS önbellekli);
+      // getUser her gezinmede Supabase'e ağ turu atardı. Simetrik anahtarda
+      // kendiliğinden getUser davranışına düşer.
+      const { data, error } = await supabase.auth.getClaims();
+      hasSession = !error && Boolean(data?.claims?.sub);
     } catch {
       hasSession = false;
     }

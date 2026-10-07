@@ -70,13 +70,13 @@ describe('proxy', () => {
     vi.stubEnv('NEXT_PUBLIC_SUPABASE_ANON_KEY', 'test-public-key');
     ssr.createServerClient.mockImplementation((_url, _key, options) => ({
       auth: {
-        getUser: async () => {
+        getClaims: async () => {
           options.cookies.setAll([{
             name: 'sb-testref-auth-token',
             value: 'renewed',
             options: { path: '/', sameSite: 'lax' },
           }]);
-          return { data: { user: { id: 'student-1' } }, error: null };
+          return { data: { claims: { sub: 'student-1' } }, error: null };
         },
       },
     }));

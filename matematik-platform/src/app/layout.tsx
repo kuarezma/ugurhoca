@@ -108,7 +108,8 @@ export const viewport: Viewport = {
   ],
 };
 
-// Speculation Rules: Masaüstü hover (moderate) ve Mobil touch/click (conservative) kuralları ayrılmış
+// Speculation Rules: prerender hover'da, prefetch ise (mobilde görünür bağlantılar dahil) moderate ile erkenden başlar;
+// hedefler statik/CDN sayfaları olduğundan fazladan maliyeti düşüktür.
 const speculationRulesConfig = {
   prerender: [
     {
@@ -181,7 +182,7 @@ const speculationRulesConfig = {
           },
         ],
       },
-      eagerness: "conservative",
+      eagerness: "moderate",
     },
   ],
 };
