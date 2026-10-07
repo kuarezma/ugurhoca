@@ -56,7 +56,7 @@ export function HomeNavbar({ onLogout, user }: HomeNavbarProps) {
               <span className="font-display text-base sm:text-xl font-black leading-tight truncate text-primary">
                 Uğur Hoca
               </span>
-              <span className="text-[10px] sm:text-[11px] font-black text-[#58cc02] dark:text-[#61e002] uppercase tracking-wider truncate">
+              <span className="text-[10px] sm:text-[11px] font-black text-green-ink dark:text-[#61e002] uppercase tracking-wider truncate">
                 Matematik Maceraları
               </span>
             </div>
@@ -83,7 +83,7 @@ export function HomeNavbar({ onLogout, user }: HomeNavbarProps) {
                   href={profileHref}
                   className="flex items-center gap-2.5 rounded-2xl border-2 border-default bg-surface-2 px-3.5 py-1.5 shadow-[0_3px_0_var(--border-default)] transition-all hover:bg-surface-3 active:translate-y-0.5 active:shadow-none text-primary"
                 >
-                  <div className="flex h-7 w-7 items-center justify-center rounded-xl bg-[#58cc02] text-xs font-black text-white dark:text-white shadow-xs">
+                  <div className="flex h-7 w-7 items-center justify-center rounded-xl bg-[#58cc02] text-xs font-black text-slate-950 dark:text-slate-950 shadow-xs">
                     {user.name?.[0] || '?'}
                   </div>
                   <span className="font-bold text-xs xl:inline">
@@ -156,7 +156,7 @@ export function HomeNavbar({ onLogout, user }: HomeNavbarProps) {
                 onClick={() => setIsOpen(false)}
                 className="flex items-center gap-3 rounded-xl px-3.5 py-2.5 text-sm font-semibold transition-colors light:text-slate-700 light:hover:bg-slate-100 light:hover:text-slate-900 dark:text-slate-300 dark:hover:bg-white/10 dark:hover:text-white"
               >
-                <category.icon className="h-5 w-5 text-brand-primary-soft" />
+                <category.icon className="h-5 w-5 text-brand-ink" />
                 {category.title}
               </SafeLink>
             ))}

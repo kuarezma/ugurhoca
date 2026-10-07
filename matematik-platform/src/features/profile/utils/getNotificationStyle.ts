@@ -10,7 +10,7 @@ export const getNotificationStyle = (
       wrapper:
         'border-slate-300 dark:border-slate-700/60 bg-slate-100/60 dark:bg-slate-700/20 hover:bg-slate-200/60 dark:hover:bg-slate-700/35',
       icon: CheckCircle2,
-      iconWrap: 'bg-emerald-500/15 text-emerald-600 dark:text-emerald-400',
+      iconWrap: 'bg-emerald-500/15 text-accent-success-ink dark:text-emerald-400',
       badge: 'bg-emerald-500/15 text-emerald-700 dark:text-emerald-300',
       status: 'Görüldü',
     };
@@ -60,7 +60,7 @@ export const getNotificationStyle = (
     return {
       wrapper: 'border-emerald-500/20 bg-emerald-500/5 hover:bg-emerald-500/10',
       icon: CheckCircle2,
-      iconWrap: 'bg-emerald-500/10 text-emerald-400',
+      iconWrap: 'bg-emerald-500/10 text-accent-success-ink',
       badge: 'bg-emerald-500/10 text-emerald-300',
       status: 'Okundu',
     };

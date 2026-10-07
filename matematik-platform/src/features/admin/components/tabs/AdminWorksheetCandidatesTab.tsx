@@ -362,7 +362,7 @@ export default function AdminWorksheetCandidatesTab({
                   >
                     <div className="flex items-center gap-2">
                       {check.ok ? (
-                        <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600 dark:text-emerald-300" />
+                        <CheckCircle2 className="h-3.5 w-3.5 text-accent-success-ink dark:text-emerald-300" />
                       ) : (
                         <AlertTriangle className="h-3.5 w-3.5 text-amber-600 dark:text-amber-300" />
                       )}

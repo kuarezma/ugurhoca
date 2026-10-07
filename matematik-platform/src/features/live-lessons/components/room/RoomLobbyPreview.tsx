@@ -206,7 +206,7 @@ export function RoomLobbyPreview({
             <button
               type="button"
               onClick={micTesting ? stopMicTest : startMicTest}
-              className="flex items-center gap-1.5 text-xs text-brand-primary hover:underline ml-auto"
+              className="flex items-center gap-1.5 text-xs text-brand-ink hover:underline ml-auto"
             >
               <Volume2 className="h-3.5 w-3.5" />
               <span>{micTesting ? 'Mikrofon Testini Durdur' : 'Mikrofonunu Test Et'}</span>
@@ -242,7 +242,7 @@ export function RoomLobbyPreview({
               >
                 {linkCopied ? (
                   <>
-                    <Check className="h-3.5 w-3.5 text-emerald-600 dark:text-emerald-400" />
+                    <Check className="h-3.5 w-3.5 text-accent-success-ink dark:text-emerald-400" />
                     <span className="text-emerald-700 dark:text-emerald-300">Kopyalandı</span>
                   </>
                 ) : (

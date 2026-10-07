@@ -113,7 +113,7 @@ export function ExitTicketTeacherPresenter({
             title="Kodu Kopyala"
             className="p-2 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-white/5 dark:hover:bg-white/10 text-slate-600 hover:text-slate-900 dark:text-slate-300 dark:hover:text-white transition"
           >
-            {copied ? (<Check className="w-5 h-5 text-emerald-600 dark:text-emerald-400" /> ): (<Copy className="w-5 h-5" />)}
+            {copied ? (<Check className="w-5 h-5 text-accent-success-ink dark:text-emerald-400" /> ): (<Copy className="w-5 h-5" />)}
           </button>
         </div>
       </div>

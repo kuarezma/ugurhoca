@@ -1180,7 +1180,7 @@ export default function TestsPage({
                     title={isDyslexicMode ? 'Normal yazı tipine dön' : 'Disleksi dostu rahat okuma modunu aç (D)'}
                     aria-pressed={isDyslexicMode}
                   >
-                    <BookOpen className="h-3.5 w-3.5 text-emerald-600 dark:text-emerald-400" />
+                    <BookOpen className="h-3.5 w-3.5 text-accent-success-ink dark:text-emerald-400" />
                     <span className="hidden sm:inline">{isDyslexicMode ? 'Rahat Okuma Açık' : 'Rahat Okuma'}</span>
                   </button>
 
@@ -1190,7 +1190,7 @@ export default function TestsPage({
                     onClick={() => setIsSmartboardMode((prev) => !prev)}
                     className={`inline-flex items-center gap-1.5 rounded-xl border px-3 py-1.5 text-xs font-bold transition ${
                       isSmartboardMode
-                        ? 'border-brand-primary bg-brand-primary/20 text-brand-primary-soft shadow-md'
+                        ? 'border-brand-primary bg-brand-primary/20 text-brand-ink shadow-md'
                         : 'border-slate-300 dark:border-white/10 bg-slate-100 dark:bg-white/5 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-white/10'
                     }`}
                     title={isSmartboardMode ? 'Standart görünüme dön' : 'Sınıf akıllı tahta projeksiyon modunu aç'}
@@ -1217,7 +1217,7 @@ export default function TestsPage({
                   onClick={() => setIsFocusMode((prev) => !prev)}
                   className={`inline-flex items-center gap-1.5 rounded-xl border px-3 py-1.5 text-xs font-bold transition ${
                     isFocusMode
-                      ? 'border-brand-primary/40 bg-brand-primary/20 text-brand-primary-soft'
+                      ? 'border-brand-primary/40 bg-brand-primary/20 text-brand-ink'
                       : 'border-white/10 bg-white/5 text-slate-300 hover:bg-white/10 hover:text-white'
                   }`}
                   title={isFocusMode ? 'Normal görünüme dön' : 'Tam odaklanma modunu aç'}
@@ -1515,7 +1515,7 @@ export default function TestsPage({
                   </div>
                   {showSmartboardSolution && (
                     <div className="mt-3 pt-3 border-t border-amber-500/20 text-sm text-slate-200 space-y-2">
-                      <div className="font-bold text-emerald-400">
+                      <div className="font-bold text-accent-success-ink">
                         Doğru Cevap: {' '}
                           {String.fromCharCode(65 + question.correct_index)}) {' '}{question.options[question.correct_index]}
                       </div>
@@ -1836,7 +1836,7 @@ export default function TestsPage({
                 onClick={() => setIsOfflinePackageModalOpen(true)}
                 className="inline-flex items-center gap-2 rounded-2xl border border-emerald-500/30 bg-emerald-500/15 hover:bg-emerald-500/25 px-4 py-2.5 text-xs sm:text-sm font-bold text-emerald-800 dark:text-emerald-300 shadow-md transition-all active:scale-95"
               >
-                <HardDrive className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
+                <HardDrive className="w-4 h-4 text-accent-success-ink dark:text-emerald-400" />
                 <span>Çevrimdışı Setler</span>
               </button>
             </div>

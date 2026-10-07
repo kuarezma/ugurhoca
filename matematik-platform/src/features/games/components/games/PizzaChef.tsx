@@ -497,7 +497,7 @@ export function PizzaChef({
             </div>
             <div>
               <div className="text-xs text-slate-500 dark:text-slate-400">Tamamlanan Sipariş</div>
-              <div className="font-display text-2xl font-black text-emerald-600 dark:text-emerald-400">
+              <div className="font-display text-2xl font-black text-accent-success-ink dark:text-emerald-400">
                 {round - 1}
               </div>
             </div>

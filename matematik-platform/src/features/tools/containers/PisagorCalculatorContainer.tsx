@@ -253,7 +253,7 @@ export function PisagorCalculatorContainer() {
 
               {specialTriple && (
                 <div className="flex items-center gap-2 rounded-xl border border-emerald-500/30 bg-emerald-500/10 px-3 py-2 text-xs font-bold text-emerald-700 dark:text-emerald-300">
-                  <CheckCircle2 className="h-4 w-4 shrink-0 text-emerald-600 dark:text-emerald-400" />
+                  <CheckCircle2 className="h-4 w-4 shrink-0 text-accent-success-ink dark:text-emerald-400" />
                   <span>{specialTriple}</span>
                 </div>
               )}

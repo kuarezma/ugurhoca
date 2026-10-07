@@ -117,7 +117,7 @@ export function QuizPacingCoach({
     const isDanger = questionElapsedSeconds >= recommendedSecondsPerQuestion * 1.25;
 
     let statusText = 'Normal Tempo';
-    let statusBadge = 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30';
+    let statusBadge = 'bg-emerald-500/10 text-accent-success-ink border-emerald-500/30';
 
     if (isDanger) {
       statusText = 'Turlama Önerisi!';
@@ -184,7 +184,7 @@ export function QuizPacingCoach({
         <div className="rounded-2xl border border-emerald-500/30 bg-emerald-500/10 p-3">
           <div className="text-lg font-extrabold text-emerald-300 font-mono">{stats.fastCount}</div>
           <div className="text-[11px] font-semibold text-emerald-200">Hızlı Çözülen</div>
-          <div className="text-[10px] text-emerald-400/80">&lt; 1 dakika</div>
+          <div className="text-[10px] text-accent-success-ink">&lt; 1 dakika</div>
         </div>
         <div className="rounded-2xl border border-cyan-500/30 bg-cyan-500/10 p-3">
           <div className="text-lg font-extrabold text-cyan-300 font-mono">{stats.balancedCount}</div>
@@ -293,7 +293,7 @@ export function QuizPacingCoach({
         }`}
       >
         {stats.adviceType === 'good' ? (
-          <CheckCircle2 className="h-4 w-4 shrink-0 text-emerald-400 mt-0.5" />
+          <CheckCircle2 className="h-4 w-4 shrink-0 text-accent-success-ink mt-0.5" />
         ) : (
           <AlertCircle className="h-4 w-4 shrink-0 text-amber-400 mt-0.5" />
         )}

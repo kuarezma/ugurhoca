@@ -358,7 +358,7 @@ export function MistakeNotebookModal({
                 <h2 id={titleId} className="font-display text-base sm:text-lg font-bold text-slate-900 dark:text-white">
                   Akıllı Hata Defterim 📓
                 </h2>
-                <span className="inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-bold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
+                <span className="inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-bold bg-emerald-500/10 text-accent-success-ink dark:text-emerald-400">
                   {isSyncing ? 'Bulut Eşitleniyor...' : 'Bulut Senkronize ✓'}
                 </span>
               </div>
@@ -695,7 +695,7 @@ export function MistakeNotebookModal({
         <div className="no-print flex-1 overflow-y-auto p-4 sm:p-6 space-y-4 [scrollbar-width:thin]">
           {filteredList.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-12 text-center">
-              <div className="flex h-16 w-16 items-center justify-center rounded-3xl bg-emerald-50 dark:bg-emerald-500/10 text-emerald-500 mb-3">
+              <div className="flex h-16 w-16 items-center justify-center rounded-3xl bg-emerald-50 dark:bg-emerald-500/10 text-accent-success-ink mb-3">
                 <CheckCircle2 className="h-8 w-8" />
               </div>
               <h3 className="font-display text-base font-bold text-slate-800 dark:text-slate-200">
@@ -853,7 +853,7 @@ export function MistakeNotebookModal({
                           }`}
                         >
                           <span className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-[10px] font-bold ${
-                            isCorrect ? 'bg-emerald-500 text-white' : 'bg-slate-100 dark:bg-white/10'
+                            isCorrect ? 'bg-emerald-500 text-slate-950' : 'bg-slate-100 dark:bg-white/10'
                           }`}>
                             {String.fromCharCode(65 + optIdx)}
                           </span>
@@ -861,7 +861,7 @@ export function MistakeNotebookModal({
                             <MathText>{opt}</MathText>
                           </span>
                           {isCorrect && (
-                            <span className="text-[10px] font-bold text-emerald-600 dark:text-emerald-400">
+                            <span className="text-[10px] font-bold text-accent-success-ink dark:text-emerald-400">
                               Doğru Cevap
                             </span>
                           )}

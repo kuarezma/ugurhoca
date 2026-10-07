@@ -154,7 +154,7 @@ export function HomeworkLoadCalendarModal({
           <div className="flex items-center justify-between text-xs">
             <span className="font-semibold text-slate-700 dark:text-slate-300">Önümüzdeki 14 Günün Ödev Yoğunluğu</span>
             <div className="flex items-center gap-3 text-[11px]">
-              <span className="flex items-center gap-1 text-emerald-600 dark:text-emerald-400">
+              <span className="flex items-center gap-1 text-accent-success-ink dark:text-emerald-400">
                 <span className="w-2 h-2 rounded-full bg-emerald-500" /> Rahat (&lt;45 dk)
               </span>
               <span className="flex items-center gap-1 text-amber-600 dark:text-amber-400">
@@ -234,7 +234,7 @@ export function HomeworkLoadCalendarModal({
 
           {activeDay?.assignments.length === 0 ? (
             <div className="p-8 text-center rounded-2xl border border-dashed border-slate-200 dark:border-white/10">
-              <CheckCircle2 className="w-8 h-8 text-emerald-500 dark:text-emerald-400 mx-auto mb-2 opacity-80" />
+              <CheckCircle2 className="w-8 h-8 text-accent-success-ink dark:text-emerald-400 mx-auto mb-2 opacity-80" />
               <p className="text-sm font-bold text-slate-700 dark:text-slate-300">Bu gün için planlanmış teslim yok</p>
               <p className="text-xs text-slate-500 mt-1">
                 Dinlenmek, konu tekrarı yapmak veya geçmiş eksikleri kapatmak için harika bir fırsat!
@@ -265,7 +265,7 @@ export function HomeworkLoadCalendarModal({
                           Tahmini Süre: ~{estMin} dk
                         </span>
                         {isSubmitted ? (
-                          <span className="flex items-center gap-1 text-emerald-600 dark:text-emerald-400 font-semibold">
+                          <span className="flex items-center gap-1 text-accent-success-ink dark:text-emerald-400 font-semibold">
                             <CheckCircle2 className="w-3.5 h-3.5" /> Teslim Edildi
                           </span>
                         ) : (

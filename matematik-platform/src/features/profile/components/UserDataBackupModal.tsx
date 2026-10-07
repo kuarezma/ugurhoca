@@ -166,7 +166,7 @@ export function UserDataBackupModal({
             }`}
           >
             {feedback.type === 'success' ? (
-              <CheckCircle2 className="h-5 w-5 shrink-0 text-emerald-400" />
+              <CheckCircle2 className="h-5 w-5 shrink-0 text-accent-success-ink" />
             ) : (
               <AlertCircle className="h-5 w-5 shrink-0 text-rose-400" />
             )}

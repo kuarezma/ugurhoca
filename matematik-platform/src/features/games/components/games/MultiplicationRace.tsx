@@ -214,10 +214,10 @@ export function MultiplicationRace({
           className="w-32 h-32 mx-auto mb-6 bg-gradient-to-br from-green-400 to-emerald-500 rounded-full flex items-center justify-center"
           style={{ boxShadow: '0 0 60px rgba(16, 185, 129, 0.4)' }}
         >
-          <Trophy className="w-16 h-16 text-white dark:text-white" />
+          <Trophy className="w-16 h-16 text-slate-950 dark:text-slate-950" />
         </motion.div>
         <h2 className="text-3xl font-bold text-primary mb-2">Süre Doldu!</h2>
-        <p className="text-5xl font-bold text-green-400 mb-2">{score} Puan</p>
+        <p className="text-5xl font-bold text-green-ink mb-2">{score} Puan</p>
         <p className="text-slate-400 mb-2">
           {tablesCompleted.length} tablo tamamladın!
         </p>
@@ -242,7 +242,7 @@ export function MultiplicationRace({
     <div className="max-w-xl mx-auto">
       <div className="flex justify-between items-center mb-6">
         <div className="px-4 py-2 bg-black/50 backdrop-blur-sm rounded-xl text-white dark:text-white font-bold">
-          Puan: <span className="text-green-400">{score}</span>
+          Puan: <span className="text-slate-950 dark:text-green-400">{score}</span>
         </div>
         <div className="px-4 py-2 bg-black/50 backdrop-blur-sm rounded-xl text-white dark:text-white font-bold">
           Seviye {level}
@@ -352,7 +352,7 @@ export function MultiplicationRace({
           animate={{ y: 0, opacity: 1 }}
           className="mt-8 p-4 bg-green-500/20 border border-green-500/30 rounded-xl text-center"
         >
-          <p className="text-green-400 font-bold">🎉 Tamamlanan Tablolar!</p>
+          <p className="text-green-ink font-bold">🎉 Tamamlanan Tablolar!</p>
           <p className="text-primary text-xl font-bold">
             {tablesCompleted.join(', ')}
           </p>

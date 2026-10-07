@@ -183,7 +183,7 @@ export function MonthlyReportCardModal({
           </div>
 
           <span className="text-xs font-semibold text-slate-500 dark:text-slate-400 flex items-center gap-1.5">
-            <Calendar className="h-3.5 w-3.5 text-brand-primary-soft" />
+            <Calendar className="h-3.5 w-3.5 text-brand-ink" />
             <span>{selectedMonth}</span>
           </span>
         </div>
@@ -206,11 +206,11 @@ export function MonthlyReportCardModal({
 
                 <div className="rounded-2xl border border-slate-200 dark:border-white/10 bg-slate-50/80 dark:bg-white/5 p-3.5">
                   <div className="flex items-center gap-2 text-xs font-semibold text-slate-600 dark:text-slate-400">
-                    <CheckCircle2 className="h-4 w-4 text-emerald-500 dark:text-emerald-400" />
+                    <CheckCircle2 className="h-4 w-4 text-accent-success-ink dark:text-emerald-400" />
                     <span>Çözülen Soru</span>
                   </div>
                   <div className="mt-2 text-2xl font-extrabold text-slate-900 dark:text-white">{solvedQuestions} Soru</div>
-                  <span className="text-[11px] text-emerald-600 dark:text-emerald-400 font-semibold">%86 Ortalama Başarı</span>
+                  <span className="text-[11px] text-accent-success-ink dark:text-emerald-400 font-semibold">%86 Ortalama Başarı</span>
                 </div>
 
                 <div className="rounded-2xl border border-slate-200 dark:border-white/10 bg-slate-50/80 dark:bg-white/5 p-3.5">
@@ -236,7 +236,7 @@ export function MonthlyReportCardModal({
               <div className="rounded-2xl border border-slate-200 dark:border-white/10 bg-slate-50/80 dark:bg-white/5 p-4 sm:p-5">
                 <div className="flex items-center justify-between border-b border-slate-200 dark:border-white/10 pb-3 mb-3">
                   <h3 className="font-bold text-sm text-slate-900 dark:text-white flex items-center gap-2">
-                    <BookOpen className="h-4 w-4 text-brand-primary-soft" />
+                    <BookOpen className="h-4 w-4 text-brand-ink" />
                     <span>Aylık Matematik Kazanım Başarı Çizelgesi</span>
                   </h3>
                   <span className="text-xs text-slate-500 dark:text-slate-400">Öğrenci Not Skalası</span>
@@ -318,7 +318,7 @@ export function MonthlyReportCardModal({
                   <div className="text-right">
                     <div className="text-xs font-bold text-amber-600 dark:text-amber-400 italic">Uğur Hoca</div>
                     <div className="text-[11px] text-slate-500 dark:text-slate-400">Matematik Öğretmeni & Rehber</div>
-                    <div className="text-[10px] text-emerald-600 dark:text-emerald-400 font-bold">✓ Sistem Tarafından Onaylandı</div>
+                    <div className="text-[10px] text-accent-success-ink dark:text-emerald-400 font-bold">✓ Sistem Tarafından Onaylandı</div>
                   </div>
                 </div>
               </div>

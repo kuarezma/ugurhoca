@@ -193,7 +193,7 @@ export default function AdminStatistics() {
 
       <div className="glass rounded-2xl p-6 border border-slate-200/80 dark:border-white/10 bg-white/80 dark:bg-slate-900/60">
         <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
-          <TrendingUp className="w-5 h-5 text-green-500 dark:text-green-400" />
+          <TrendingUp className="w-5 h-5 text-green-ink dark:text-green-400" />
           Sınıflara Göre Dağılım
         </h3>
         <div className="grid grid-cols-3 sm:grid-cols-5 md:grid-cols-9 gap-3">
@@ -272,7 +272,7 @@ export default function AdminStatistics() {
             </div>
             <div className="flex items-center justify-between">
               <span className="text-slate-600 dark:text-slate-400">Etkinlik Oranı</span>
-              <span className="text-emerald-600 dark:text-emerald-400 font-bold">
+              <span className="text-accent-success-ink dark:text-emerald-400 font-bold">
                 {(
                   ((stats.totalNotes + stats.totalAssignments) /
                     Math.max(stats.totalUsers, 1)) *

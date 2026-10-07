@@ -190,7 +190,7 @@ export default function ContentPreviewModal({
               {previewDoc.downloads || 0} indirme
             </span>
             {previewDoc.answer_key_text && (
-              <span className="col-span-2 rounded-xl bg-green-500/20 px-3 py-2 text-center text-[11px] font-medium text-green-300 sm:col-auto sm:text-xs">
+              <span className="col-span-2 rounded-xl bg-green-500/20 px-3 py-2 text-center text-[11px] font-medium text-tone-success-fg sm:col-auto sm:text-xs">
                 Cevap Anahtarı Var
               </span>
             )}
@@ -199,7 +199,7 @@ export default function ContentPreviewModal({
             {previewDoc.answer_key_text && (
               <button
                 onClick={onToggleAnswerKey}
-                className="flex w-full items-center justify-center gap-2 rounded-xl border border-green-500/30 bg-green-500/20 px-3 py-2.5 text-xs font-medium text-green-300 transition-colors hover:bg-green-500/30 sm:w-auto sm:px-4 sm:text-sm"
+                className="flex w-full items-center justify-center gap-2 rounded-xl border border-green-500/30 bg-green-500/20 px-3 py-2.5 text-xs font-medium text-tone-success-fg transition-colors hover:bg-green-500/30 sm:w-auto sm:px-4 sm:text-sm"
               >
                 <Key className="h-4 w-4" />
                 Cevap Anahtarı
@@ -210,7 +210,7 @@ export default function ContentPreviewModal({
                 href={previewDoc.solution_url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex w-full items-center justify-center gap-2 rounded-xl bg-green-500 px-3 py-2.5 text-xs font-medium text-white dark:text-white transition-colors hover:bg-green-600 sm:w-auto sm:px-4 sm:text-sm"
+                className="flex w-full items-center justify-center gap-2 rounded-xl bg-green-500 px-3 py-2.5 text-xs font-medium text-slate-950 dark:text-slate-950 transition-colors hover:bg-green-600 sm:w-auto sm:px-4 sm:text-sm"
               >
                 <FileText className="h-4 w-4" />
                 Çözüm PDF
@@ -225,7 +225,7 @@ export default function ContentPreviewModal({
                     : 'border-white/10 bg-slate-800/60 text-slate-300 hover:bg-slate-700'
                 }`}
               >
-                <CheckCircle2 className="h-4 w-4 text-emerald-400" />
+                <CheckCircle2 className="h-4 w-4 text-accent-success-ink" />
                 {isCompleted ? 'Çözüldü' : 'Tamamla'}
               </button>
             )}
@@ -289,7 +289,7 @@ export default function ContentPreviewModal({
             exit={{ opacity: 0, height: 0 }}
             className="mt-4 p-4 bg-green-500/10 border border-green-500/30 rounded-xl"
           >
-            <h4 className="text-green-300 font-semibold mb-2 flex items-center gap-2">
+            <h4 className="text-green-ink font-semibold mb-2 flex items-center gap-2">
               <Key className="w-4 h-4" />
               Cevap Anahtarı
             </h4>

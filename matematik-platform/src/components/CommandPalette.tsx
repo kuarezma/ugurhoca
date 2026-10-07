@@ -549,7 +549,7 @@ export default function CommandPalette({ initiallyOpen = false }: CommandPalette
                     onClick={() => runCommand(command)}
                     className={`flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left transition-colors ${
                       isActive
-                        ? 'bg-brand-primary/15 text-brand-primary dark:text-white font-medium'
+                        ? 'bg-brand-primary/15 text-brand-ink dark:text-white font-medium'
                         : 'text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-white/5'
                     }`}
                   >

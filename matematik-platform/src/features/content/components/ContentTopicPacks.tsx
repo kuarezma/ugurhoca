@@ -166,7 +166,7 @@ export default function ContentTopicPacks({
                     )}
                     {group.testsCount > 0 && (
                       <span className="flex items-center gap-1">
-                        <BookOpen className="h-3.5 w-3.5 text-emerald-500 dark:text-emerald-400" />
+                        <BookOpen className="h-3.5 w-3.5 text-accent-success-ink dark:text-emerald-400" />
                         {group.testsCount} Deneme
                       </span>
                     )}
@@ -178,7 +178,7 @@ export default function ContentTopicPacks({
               <div className="flex items-center justify-between sm:justify-end gap-5">
                 <div className="min-w-[140px] text-right">
                   <div className="flex items-center justify-between text-xs font-medium text-slate-600 dark:text-slate-300 mb-1.5">
-                    <span className="flex items-center gap-1 text-emerald-600 dark:text-emerald-400">
+                    <span className="flex items-center gap-1 text-accent-success-ink dark:text-emerald-400">
                       <CheckCircle2 className="h-3.5 w-3.5" />
                       {group.completedCount} / {totalDocs}
                     </span>

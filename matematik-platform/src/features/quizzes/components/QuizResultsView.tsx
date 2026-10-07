@@ -102,7 +102,7 @@ export function QuizResultsView({
 
           <div className="grid grid-cols-2 gap-4 mb-8 w-full max-w-sm">
             <div className="bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-200 dark:border-emerald-500/20 rounded-2xl p-4">
-              <div className="text-4xl font-black text-emerald-600 dark:text-emerald-400 mb-1">{correctCount}</div>
+              <div className="text-4xl font-black text-accent-success-ink dark:text-emerald-400 mb-1">{correctCount}</div>
               <div className="text-emerald-700 dark:text-emerald-500/80 font-bold uppercase text-xs tracking-wider">
                 Doğru
               </div>
@@ -232,7 +232,7 @@ export function QuizResultsView({
                       </div>
 
                       {isCorrect ? (
-                        <CheckCircle2 className="w-5 h-5 text-emerald-600 dark:text-emerald-400 shrink-0" />
+                        <CheckCircle2 className="w-5 h-5 text-accent-success-ink dark:text-emerald-400 shrink-0" />
                       ) : (
                         <XCircle className="w-5 h-5 text-rose-600 dark:text-red-400 shrink-0" />
                       )}

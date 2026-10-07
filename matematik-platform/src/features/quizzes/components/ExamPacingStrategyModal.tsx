@@ -213,7 +213,7 @@ export function ExamPacingStrategyModal({ isOpen, onClose }: ExamPacingStrategyM
               onClick={() => setActiveTab('lgs')}
               className={`flex flex-1 items-center justify-center gap-2 py-2 rounded-xl transition ${
                 activeTab === 'lgs'
-                  ? 'bg-brand-primary/20 text-brand-primary-soft border border-brand-primary/30 shadow'
+                  ? 'bg-brand-primary/20 text-brand-ink border border-brand-primary/30 shadow'
                   : 'text-slate-400 hover:text-white'
               }`}
             >
@@ -225,7 +225,7 @@ export function ExamPacingStrategyModal({ isOpen, onClose }: ExamPacingStrategyM
               onClick={() => setActiveTab('tyt')}
               className={`flex flex-1 items-center justify-center gap-2 py-2 rounded-xl transition ${
                 activeTab === 'tyt'
-                  ? 'bg-brand-primary/20 text-brand-primary-soft border border-brand-primary/30 shadow'
+                  ? 'bg-brand-primary/20 text-brand-ink border border-brand-primary/30 shadow'
                   : 'text-slate-400 hover:text-white'
               }`}
             >
@@ -247,7 +247,7 @@ export function ExamPacingStrategyModal({ isOpen, onClose }: ExamPacingStrategyM
                     remainingTime < 0
                       ? 'text-rose-500 dark:text-rose-400'
                       : remainingTime === 0
-                      ? 'text-emerald-600 dark:text-emerald-400'
+                      ? 'text-accent-success-ink dark:text-emerald-400'
                       : 'text-amber-600 dark:text-amber-400'
                   }`}
                 >
@@ -260,7 +260,7 @@ export function ExamPacingStrategyModal({ isOpen, onClose }: ExamPacingStrategyM
                   remainingTime < 0
                     ? 'bg-rose-500/10 dark:bg-rose-500/20 text-rose-600 dark:text-rose-300 border border-rose-500/30'
                     : remainingTime === 0
-                    ? 'bg-emerald-500/10 dark:bg-emerald-500/20 text-emerald-600 dark:text-emerald-300 border border-emerald-500/30'
+                    ? 'bg-emerald-500/10 dark:bg-emerald-500/20 text-accent-success-ink dark:text-emerald-300 border border-emerald-500/30'
                     : 'bg-amber-500/10 dark:bg-amber-500/20 text-amber-600 dark:text-amber-300 border border-amber-500/30'
                 }`}
               >
@@ -338,7 +338,7 @@ export function ExamPacingStrategyModal({ isOpen, onClose }: ExamPacingStrategyM
                     <span className="font-mono text-xs font-bold text-emerald-900 dark:text-white bg-white dark:bg-slate-900/80 px-2.5 py-1 rounded-lg border border-emerald-200 dark:border-white/10 shadow-sm">
                       {lgsPacing.matematik} Dakika
                     </span>
-                    <span className="text-[11px] font-semibold text-emerald-600 dark:text-emerald-400">
+                    <span className="text-[11px] font-semibold text-accent-success-ink dark:text-emerald-400">
                       ~{Math.round(lgsMetrics.matSecPerQ)} sn / soru
                     </span>
                   </div>
@@ -471,7 +471,7 @@ export function ExamPacingStrategyModal({ isOpen, onClose }: ExamPacingStrategyM
                     <span className="font-mono text-xs font-bold text-emerald-900 dark:text-white bg-white dark:bg-slate-900/80 px-2.5 py-1 rounded-lg border border-emerald-200 dark:border-white/10 shadow-sm">
                       {tytPacing.matematik} Dakika
                     </span>
-                    <span className="text-[11px] font-semibold text-emerald-600 dark:text-emerald-400">
+                    <span className="text-[11px] font-semibold text-accent-success-ink dark:text-emerald-400">
                       ~{Math.round(tytMetrics.matSec)} sn / soru
                     </span>
                   </div>

@@ -41,7 +41,7 @@ export function AdminItemAnalysisCard({ report, quizTitle = 'Test Analizi' }: Ad
         <div className="flex items-center gap-3">
           <div className="px-3.5 py-2 rounded-2xl bg-slate-50 dark:bg-slate-950/60 border border-slate-200 dark:border-white/10 text-center">
             <span className="block text-[10px] uppercase font-bold text-slate-500 dark:text-slate-400">Test Güvenilirliği (KR-20)</span>
-            <span className="text-base font-black text-emerald-600 dark:text-emerald-400">
+            <span className="text-base font-black text-accent-success-ink dark:text-emerald-400">
               {report.overallReliabilityEstimate.toFixed(2)}
             </span>
           </div>

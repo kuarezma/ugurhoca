@@ -140,7 +140,7 @@ export function PersonalStreakHub({ isLight }: PersonalStreakHubProps) {
           </div>
         </div>
 
-        <div className="inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-[11px] font-semibold bg-emerald-500/10 text-emerald-500 border border-emerald-500/20">
+        <div className="inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-[11px] font-semibold bg-emerald-500/10 text-accent-success-ink border border-emerald-500/20">
           <Lock className="h-3 w-3" />
           <span>Sadece Sana Özel (Sıralama Yok)</span>
         </div>
@@ -208,7 +208,7 @@ export function PersonalStreakHub({ isLight }: PersonalStreakHubProps) {
                   🛡️ Bugün korumada (Dinlenme)
                 </span>
               ) : goalData.lastFreezeUsedDate === getYesterdayDateString() ? (
-                <span className="text-[10px] font-medium text-emerald-600 dark:text-emerald-400">
+                <span className="text-[10px] font-medium text-accent-success-ink dark:text-emerald-400">
                   🛡️ Dün serin korundu!
                 </span>
               ) : (goalData.freezeTokens || 0) > 0 && goalData.streak > 0 && !isGoalReached ? (
@@ -264,7 +264,7 @@ export function PersonalStreakHub({ isLight }: PersonalStreakHubProps) {
           <div className="mt-2">
             <div className="flex justify-between text-[10px] font-semibold text-slate-400 mb-1">
               <span>%{progressPercent} Tamamlandı</span>
-              {isGoalReached && (<span className="text-emerald-400 font-bold">🎉 Hedef Bitti!</span>)}
+              {isGoalReached && (<span className="text-accent-success-ink font-bold">🎉 Hedef Bitti!</span>)}
             </div>
             <div className="h-2 rounded-full overflow-hidden bg-white/10">
               <div
@@ -363,7 +363,7 @@ export function PersonalStreakHub({ isLight }: PersonalStreakHubProps) {
       <div className="pt-2 border-t border-slate-200/60 dark:border-white/5">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-3">
           <div className="flex items-center gap-2 text-xs font-bold text-slate-700 dark:text-slate-300">
-            <Calendar className="h-4 w-4 text-emerald-500" />
+            <Calendar className="h-4 w-4 text-accent-success-ink" />
             <span>Çalışma & Alışkanlık Isı Haritası</span>
           </div>
 
@@ -396,7 +396,7 @@ export function PersonalStreakHub({ isLight }: PersonalStreakHubProps) {
           </div>
           <div>
             <span className="text-[10px] text-slate-600 dark:text-slate-400 block">Aktif Gün Oranı</span>
-            <span className="font-bold text-emerald-600 dark:text-emerald-400 text-sm sm:text-base">
+            <span className="font-bold text-accent-success-ink dark:text-emerald-400 text-sm sm:text-base">
               %{activityStats.completionRate} ({activityStats.activeDays}/{timeframe})
             </span>
           </div>
@@ -450,7 +450,7 @@ export function PersonalStreakHub({ isLight }: PersonalStreakHubProps) {
               bgColor = 'bg-gradient-to-br from-emerald-500 to-teal-400 text-white border-teal-300 shadow-sm';
               countColor = 'text-white font-bold';
             } else if (day.isTargetReached) {
-              bgColor = 'bg-emerald-500 text-white border-emerald-400 shadow-sm';
+              bgColor = 'bg-emerald-500 text-slate-950 border-emerald-400 shadow-sm';
               countColor = 'text-white font-bold';
             } else if (day.count >= goalData.target / 2) {
               bgColor = isLight ? 'bg-emerald-200 border-emerald-300 text-emerald-900' : 'bg-emerald-800/60 border-emerald-700/50 text-emerald-100';

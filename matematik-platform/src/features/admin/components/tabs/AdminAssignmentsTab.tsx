@@ -105,7 +105,7 @@ export default function AdminAssignmentsTab({
                     <span
                       className={`px-2 py-1 rounded-full text-xs ${
                         document.is_read
-                          ? 'bg-green-500/20 text-green-400'
+                          ? 'bg-green-500/20 text-tone-success-fg'
                           : 'bg-yellow-500/20 text-yellow-400'
                       }`}
                     >

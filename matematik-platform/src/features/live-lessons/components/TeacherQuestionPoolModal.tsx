@@ -197,7 +197,7 @@ export function TeacherQuestionPoolModal({
                       <span
                         className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
                           q.difficulty === 'Kolay'
-                            ? 'bg-emerald-500/20 text-emerald-400'
+                            ? 'bg-emerald-500/20 text-accent-success-ink'
                             : q.difficulty === 'Orta'
                             ? 'bg-amber-500/20 text-amber-400'
                             : 'bg-rose-500/20 text-rose-400'
@@ -209,7 +209,7 @@ export function TeacherQuestionPoolModal({
 
                     <div className="flex items-center gap-1.5">
                       {isResolved ? (
-                        <span className="text-[11px] font-bold text-emerald-400 flex items-center gap-1">
+                        <span className="text-[11px] font-bold text-accent-success-ink flex items-center gap-1">
                           <CheckCircle2 className="h-3.5 w-3.5" />
                           Çözüldü
                         </span>

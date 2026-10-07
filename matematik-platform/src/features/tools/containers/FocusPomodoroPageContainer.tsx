@@ -385,7 +385,7 @@ export function FocusPomodoroPageContainer() {
               <div
                 className={`text-6xl sm:text-8xl font-black font-mono tracking-tight select-none transition-colors ${
                   isBreak
-                    ? "text-emerald-500"
+                    ? "text-accent-success-ink"
                     : isRunning
                       ? "text-rose-500 animate-pulse"
                       : isLight
@@ -409,7 +409,7 @@ export function FocusPomodoroPageContainer() {
               </div>
 
               <div className="text-xs font-semibold text-slate-500 dark:text-slate-400 flex items-center gap-1.5">
-                {isBreak ? (<Coffee className="h-4 w-4 text-emerald-400" /> ): (<Brain className="h-4 w-4 text-rose-400" />)}
+                {isBreak ? (<Coffee className="h-4 w-4 text-accent-success-ink" /> ): (<Brain className="h-4 w-4 text-rose-400" />)}
                 <span>{MODE_LABELS[mode].subtitle}</span>
               </div>
             </div>
@@ -518,7 +518,7 @@ export function FocusPomodoroPageContainer() {
                   </h3>
                 </div>
                 {ambientSound !== "none" && (
-                  <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/15 px-2 py-0.5 text-[10px] font-bold text-emerald-600 dark:text-emerald-400 animate-pulse">
+                  <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/15 px-2 py-0.5 text-[10px] font-bold text-accent-success-ink dark:text-emerald-400 animate-pulse">
                     Çalıyor
                   </span>
                 )}
@@ -587,22 +587,22 @@ export function FocusPomodoroPageContainer() {
               }`}
             >
               <div className="flex items-center gap-2 mb-3">
-                <BookOpen className="h-4 w-4 text-emerald-500" />
+                <BookOpen className="h-4 w-4 text-accent-success-ink" />
                 <h3 className="text-sm font-bold text-slate-900 dark:text-white">
                   Matematik Çalışma Taktikleri
                 </h3>
               </div>
               <ul className="space-y-2 text-xs text-slate-600 dark:text-slate-400">
                 <li className="flex items-start gap-2">
-                  <CheckCircle2 className="h-4 w-4 text-emerald-500 shrink-0 mt-0.5" />
+                  <CheckCircle2 className="h-4 w-4 text-accent-success-ink shrink-0 mt-0.5" />
                   <span>Telefonunu sessize alıp çalışma masasından uzağa koy.</span>
                 </li>
                 <li className="flex items-start gap-2">
-                  <CheckCircle2 className="h-4 w-4 text-emerald-500 shrink-0 mt-0.5" />
+                  <CheckCircle2 className="h-4 w-4 text-accent-success-ink shrink-0 mt-0.5" />
                   <span>Yanına mutlaka bir bardak su ve karalama kağıdı al.</span>
                 </li>
                 <li className="flex items-start gap-2">
-                  <CheckCircle2 className="h-4 w-4 text-emerald-500 shrink-0 mt-0.5" />
+                  <CheckCircle2 className="h-4 w-4 text-accent-success-ink shrink-0 mt-0.5" />
                   <span>Takıldığın soruda 3 dakikadan fazla durma; turlama tekniğini uygula.</span>
                 </li>
               </ul>

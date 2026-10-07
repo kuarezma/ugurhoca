@@ -658,7 +658,7 @@ export function ExamScoreCalculatorModal({
 
                 <div className="rounded-2xl border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-white/5 p-4">
                   <div className="flex items-center gap-2 text-slate-700 dark:text-slate-300 text-xs font-bold uppercase tracking-wider">
-                    <TrendingUp className="h-4 w-4 text-emerald-500" />
+                    <TrendingUp className="h-4 w-4 text-accent-success-ink" />
                     <span>Toplam Net</span>
                   </div>
                   <div className="mt-1 font-display text-3xl font-extrabold text-slate-900 dark:text-white tabular-nums">
@@ -859,7 +859,7 @@ export function ExamScoreCalculatorModal({
                 >
                   {lgsGapAnalysis.isReached ? (
                     <div className="flex items-center gap-2 font-bold">
-                      <Sparkles className="h-4 w-4 text-emerald-500 shrink-0" />
+                      <Sparkles className="h-4 w-4 text-accent-success-ink shrink-0" />
                       <span>
                         🎉 Harika Gidiyorsun! Mevcut netlerin ({lgsResult.score.toFixed(2)} puan) {selectedLgsTarget} {' '}taban puanının ({lgsGapAnalysis.targetScore} puan) üzerinde.
                       </span>
@@ -1211,7 +1211,7 @@ export function ExamScoreCalculatorModal({
                 >
                   {yksGapAnalysis.isReached ? (
                     <div className="flex items-center gap-2 font-bold">
-                      <Sparkles className="h-4 w-4 text-emerald-500 shrink-0" />
+                      <Sparkles className="h-4 w-4 text-accent-success-ink shrink-0" />
                       <span>
                         🎉 Harika Gidiyorsun! Yerleştirme puanın ({yksResult.activeRow.placementScore.toFixed(1)}) {' '}
                         {selectedYksTarget} taban puanının ({yksGapAnalysis.targetScore}) üzerinde.

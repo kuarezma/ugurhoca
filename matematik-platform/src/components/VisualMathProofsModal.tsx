@@ -355,7 +355,7 @@ export function VisualMathProofsModal({
 
                     <div>
                       <div className="flex justify-between text-xs font-semibold mb-1">
-                        <span className="text-emerald-400">b Kenarı (Dikey): {pythB} birim</span>
+                        <span className="text-accent-success-ink">b Kenarı (Dikey): {pythB} birim</span>
                         <span className="text-slate-400">b² = {pythAreaB}</span>
                       </div>
                       <input
@@ -390,7 +390,7 @@ export function VisualMathProofsModal({
                     </div>
                     <div className="text-lg sm:text-xl font-mono font-black text-slate-900 dark:text-white">
                       <span className="text-blue-400">{pythAreaA}</span> +{' '}
-                      <span className="text-emerald-400">{pythAreaB}</span> ={' '}
+                      <span className="text-accent-success-ink">{pythAreaB}</span> ={' '}
                       <span className="text-amber-400">{pythAreaA + pythAreaB}</span>
                     </div>
                     <div className="text-xs text-slate-300 mt-1">
@@ -681,7 +681,7 @@ export function VisualMathProofsModal({
                     <div className="text-lg font-mono font-black text-slate-900 dark:text-white">
                       sin²(θ) + cos²(θ) = 1
                     </div>
-                    <div className="text-sm font-bold text-emerald-400 mt-1">
+                    <div className="text-sm font-bold text-accent-success-ink mt-1">
                       {sinSq.toFixed(3)} + {cosSq.toFixed(3)} = {' '}
                       {(sinSq + cosSq).toFixed(3)}
                     </div>

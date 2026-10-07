@@ -186,7 +186,7 @@ export default function AdminAnnualPlanTab({
           <div className="grid gap-3 sm:grid-cols-[minmax(0,1fr)_auto] lg:w-[34rem]">
             <div className="flex min-h-12 items-center overflow-hidden rounded-xl border border-slate-200 dark:border-white/10 bg-slate-100 dark:bg-slate-900/70 text-sm text-slate-700 dark:text-slate-300 transition focus-within:border-emerald-500 hover:border-emerald-500">
               <label className="flex min-w-0 flex-1 cursor-pointer items-center gap-3 px-4 py-3">
-                <FileSpreadsheet className="h-5 w-5 shrink-0 text-emerald-600 dark:text-emerald-300" />
+                <FileSpreadsheet className="h-5 w-5 shrink-0 text-accent-success-ink dark:text-emerald-300" />
                 <span className="min-w-0 flex-1 truncate">
                   {selectedFile?.name || "Dosya seç"}
                 </span>

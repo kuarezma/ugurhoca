@@ -74,7 +74,7 @@ export default function ProfileNotificationsPanel({
                   <ChevronRight
                     className={`mt-1 h-4 w-4 ${
                       notification.is_read
-                        ? 'text-emerald-400'
+                        ? 'text-accent-success-ink'
                         : 'text-amber-300'
                     }`}
                   />

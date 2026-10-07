@@ -45,7 +45,7 @@ const OPTION_THEMES = [
     selected: 'border-brand-primary bg-brand-primary/25 ring-2 ring-brand-primary',
   },
   {
-    letterBg: 'bg-emerald-500 text-white',
+    letterBg: 'bg-emerald-500 text-slate-950',
     border: 'border-emerald-500/40 hover:border-emerald-400 bg-emerald-500/10 active:bg-emerald-500/20',
     selected: 'border-brand-primary bg-brand-primary/25 ring-2 ring-brand-primary',
   },
@@ -225,7 +225,7 @@ export function ExitTicketStudentPad({ initialCode = '', onExit }: ExitTicketStu
 
     return (
       <div className="w-full max-w-lg mx-auto p-6 sm:p-8 rounded-3xl border border-slate-200 dark:border-white/10 bg-white dark:bg-slate-900/95 backdrop-blur-xl shadow-2xl text-slate-900 dark:text-white text-center">
-        <div className="w-20 h-20 rounded-full bg-emerald-500/10 dark:bg-emerald-500/20 border border-emerald-500/30 dark:border-emerald-500/40 mx-auto flex items-center justify-center mb-5 text-emerald-600 dark:text-emerald-400">
+        <div className="w-20 h-20 rounded-full bg-emerald-500/10 dark:bg-emerald-500/20 border border-emerald-500/30 dark:border-emerald-500/40 mx-auto flex items-center justify-center mb-5 text-accent-success-ink dark:text-emerald-400">
           <CheckCircle2 className="w-10 h-10" />
         </div>
         <span className="inline-block px-3 py-1 rounded-full bg-emerald-500/10 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 text-xs font-bold uppercase tracking-wider mb-2">
@@ -244,7 +244,7 @@ export function ExitTicketStudentPad({ initialCode = '', onExit }: ExitTicketStu
           <div className="h-8 w-px bg-slate-200 dark:bg-white/10" />
           <div>
             <span className="block text-xs text-slate-500 uppercase font-semibold">Doğru Cevabın</span>
-            <span className="text-2xl font-black text-emerald-600 dark:text-emerald-400">{correctAnswers}</span>
+            <span className="text-2xl font-black text-accent-success-ink dark:text-emerald-400">{correctAnswers}</span>
           </div>
           <div className="h-8 w-px bg-slate-200 dark:bg-white/10" />
           <div>
@@ -334,7 +334,7 @@ export function ExitTicketStudentPad({ initialCode = '', onExit }: ExitTicketStu
                 <div
                   className={`w-9 h-9 rounded-xl flex items-center justify-center font-bold text-sm flex-shrink-0 shadow-md ${
                     isCorrect
-                      ? 'bg-emerald-500 text-white'
+                      ? 'bg-emerald-500 text-slate-950'
                       : isWrongSelected
                       ? 'bg-rose-500 text-white'
                       : theme.letterBg
@@ -354,7 +354,7 @@ export function ExitTicketStudentPad({ initialCode = '', onExit }: ExitTicketStu
                   </div>
                 )}
                 {isCorrect && (
-                  <div className="text-emerald-600 dark:text-emerald-400 self-center flex-shrink-0">
+                  <div className="text-accent-success-ink dark:text-emerald-400 self-center flex-shrink-0">
                     <CheckCircle2 className="w-6 h-6" />
                   </div>
                 )}
@@ -406,7 +406,7 @@ export function ExitTicketStudentPad({ initialCode = '', onExit }: ExitTicketStu
             {/* Doğru Yapılmışsa Tebrik */}
             {hasAnswered && studentResponse.selectedIndex === currentQ.correctIndex && (
               <div className="rounded-2xl border border-emerald-200 dark:border-emerald-500/40 bg-emerald-50 dark:bg-emerald-500/10 p-4 flex items-center gap-3 text-emerald-800 dark:text-emerald-300">
-                <CheckCircle2 className="w-6 h-6 flex-shrink-0 text-emerald-600 dark:text-emerald-400" />
+                <CheckCircle2 className="w-6 h-6 flex-shrink-0 text-accent-success-ink dark:text-emerald-400" />
                 <div className="text-sm">
                   <span className="font-bold">Tebrikler, doğru cevap! </span>
                   Kazanımı eksiksiz kavramışsın.

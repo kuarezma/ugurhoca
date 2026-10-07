@@ -172,7 +172,7 @@ export const WeeklyGrowthReportCard: React.FC<WeeklyGrowthReportCardProps> = ({
         <div className="rounded-2xl border border-slate-200/80 bg-white/80 dark:border-white/5 dark:bg-slate-800/40 p-4 transition-colors hover:border-emerald-500/30 shadow-sm dark:shadow-none">
           <div className="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400 mb-1">
             <span>Gelişim Skoru</span>
-            <TrendingUp className="w-4 h-4 text-emerald-500 dark:text-emerald-400" />
+            <TrendingUp className="w-4 h-4 text-accent-success-ink dark:text-emerald-400" />
           </div>
           <div className="text-xl sm:text-2xl font-black text-emerald-700 dark:text-emerald-300">
             {Math.round(weekStats.progressPercent * 0.7 + Math.min(30, streak * 5))}{' '} <span className="text-xs text-slate-500 dark:text-slate-400 font-normal">XP</span>

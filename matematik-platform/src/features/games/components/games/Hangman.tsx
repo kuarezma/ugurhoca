@@ -331,7 +331,7 @@ export function Hangman({ onScore, scoreMultiplier }: GameComponentProps) {
         <p className="text-2xl text-secondary mb-2">
           Doğru cevap: <span className="text-yellow-400 font-bold">{word}</span>
         </p>
-        <p className="text-4xl font-bold text-green-400 mb-6">{score} Puan</p>
+        <p className="text-4xl font-bold text-green-ink mb-6">{score} Puan</p>
         <motion.button
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
@@ -349,7 +349,7 @@ export function Hangman({ onScore, scoreMultiplier }: GameComponentProps) {
     <div className="max-w-xl mx-auto">
       <div className="flex justify-between items-center mb-6">
         <div className="px-4 py-2 bg-black/50 backdrop-blur-sm rounded-xl text-white dark:text-white font-bold">
-          Puan: <span className="text-green-400">{score}</span>
+          Puan: <span className="text-slate-950 dark:text-green-400">{score}</span>
         </div>
         <div className="px-4 py-2 bg-black/50 backdrop-blur-sm rounded-xl text-white dark:text-white font-bold">
           Tur {round}
@@ -378,7 +378,7 @@ export function Hangman({ onScore, scoreMultiplier }: GameComponentProps) {
           {getDisplay()}
         </div>
         {gameState === 'won' && (
-          <p className="text-green-400 font-bold text-xl">🎉 Doğru bildin!</p>
+          <p className="text-green-ink font-bold text-xl">🎉 Doğru bildin!</p>
         )}
       </motion.div>
 
@@ -396,7 +396,7 @@ export function Hangman({ onScore, scoreMultiplier }: GameComponentProps) {
             className={`inline-flex h-11 w-11 items-center justify-center rounded-xl font-bold text-lg transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary disabled:cursor-not-allowed ${
               guessed.has(letter)
                 ? word.includes(letter)
-                  ? 'bg-green-500 text-white'
+                  ? 'bg-green-500 text-slate-950'
                   : 'bg-red-500/40 text-red-300'
                 : 'bg-gradient-to-br from-slate-700 to-slate-800 text-white hover:from-slate-600 hover:to-slate-700'
             }`}

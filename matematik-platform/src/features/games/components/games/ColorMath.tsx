@@ -8,7 +8,7 @@ import type { GameComponentProps } from '@/features/games/types';
 const colorMap: Record<string, string> = {
   Kırmızı: 'text-red-500',
   Mavi: 'text-blue-500',
-  Yeşil: 'text-green-500',
+  Yeşil: 'text-green-ink',
   Sarı: 'text-yellow-400',
   Mor: 'text-purple-500',
   Turuncu: 'text-orange-500',

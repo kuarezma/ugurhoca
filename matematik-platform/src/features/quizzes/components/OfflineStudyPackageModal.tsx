@@ -170,7 +170,7 @@ export function OfflineStudyPackageModal({
         {/* Başlık */}
         <div className="flex items-center justify-between border-b border-slate-200 dark:border-white/10 px-5 py-4 bg-slate-50 dark:bg-slate-900/90">
           <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-600 text-white dark:text-white shadow-md shadow-emerald-500/25">
+            <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-600 text-slate-950 dark:text-slate-950 shadow-md shadow-emerald-500/25">
               <HardDrive className="h-5 w-5" />
             </div>
             <div>
@@ -239,7 +239,7 @@ export function OfflineStudyPackageModal({
           {/* Cihazdaki İndirilmiş Setler */}
           <div className="space-y-3">
             <h3 className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
-              <CheckCircle2 className="w-4 h-4 text-emerald-500 dark:text-emerald-400" /> {' '}Cihazınızda Hazır Soru Setleri
+              <CheckCircle2 className="w-4 h-4 text-accent-success-ink dark:text-emerald-400" /> {' '}Cihazınızda Hazır Soru Setleri
             </h3>
 
             {packages.length === 0 ? (

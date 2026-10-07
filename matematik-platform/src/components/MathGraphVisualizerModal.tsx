@@ -204,7 +204,7 @@ export function MathGraphVisualizerModal({
               onClick={() => setActiveTab('linear')}
               className={`flex items-center gap-2 border-b-2 py-3 px-4 text-xs sm:text-sm font-semibold transition ${
                 activeTab === 'linear'
-                  ? 'border-brand-primary text-brand-primary-soft'
+                  ? 'border-brand-primary text-brand-ink'
                   : 'border-transparent text-slate-400 hover:text-slate-200'
               }`}
             >
@@ -216,7 +216,7 @@ export function MathGraphVisualizerModal({
               onClick={() => setActiveTab('quadratic')}
               className={`flex items-center gap-2 border-b-2 py-3 px-4 text-xs sm:text-sm font-semibold transition ${
                 activeTab === 'quadratic'
-                  ? 'border-brand-primary text-brand-primary-soft'
+                  ? 'border-brand-primary text-brand-ink'
                   : 'border-transparent text-slate-400 hover:text-slate-200'
               }`}
             >
@@ -228,7 +228,7 @@ export function MathGraphVisualizerModal({
               onClick={() => setActiveTab('trig')}
               className={`flex items-center gap-2 border-b-2 py-3 px-4 text-xs sm:text-sm font-semibold transition ${
                 activeTab === 'trig'
-                  ? 'border-brand-primary text-brand-primary-soft'
+                  ? 'border-brand-primary text-brand-ink'
                   : 'border-transparent text-slate-400 hover:text-slate-200'
               }`}
             >
@@ -515,7 +515,7 @@ export function MathGraphVisualizerModal({
                     </div>
                     <div>
                       <div className="flex justify-between text-xs font-semibold mb-1">
-                        <span>Sabit Terim (c): {' '}<strong className="text-emerald-400">{c}</strong></span>
+                        <span>Sabit Terim (c): {' '}<strong className="text-accent-success-ink">{c}</strong></span>
                         <span className="text-slate-400">y-keseni</span>
                       </div>
                       <input

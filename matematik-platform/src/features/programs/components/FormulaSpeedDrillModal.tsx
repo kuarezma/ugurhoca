@@ -413,7 +413,7 @@ export default function FormulaSpeedDrillModal({
                 <Timer className="h-4 w-4 text-amber-500 dark:text-amber-400" />
                 <span>{timeLeft}s</span>
                 {bonusNotification && (
-                  <span className="text-[11px] font-bold text-emerald-600 dark:text-emerald-400 ml-1">
+                  <span className="text-[11px] font-bold text-accent-success-ink dark:text-emerald-400 ml-1">
                     {bonusNotification}
                   </span>
                 )}
@@ -503,7 +503,7 @@ export default function FormulaSpeedDrillModal({
                             </span>
                           </div>
                           {isMatched && (
-                            <CheckCircle2 className="h-4 w-4 text-emerald-500 dark:text-emerald-400 shrink-0 ml-2" />
+                            <CheckCircle2 className="h-4 w-4 text-accent-success-ink dark:text-emerald-400 shrink-0 ml-2" />
                           )}
                         </button>
                       );
@@ -570,7 +570,7 @@ export default function FormulaSpeedDrillModal({
 
                   <div className="p-3.5 rounded-2xl bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 flex flex-col items-center">
                     <span className="text-[11px] text-slate-500 dark:text-slate-400 font-medium">Doğru Eşleşme</span>
-                    <span className="text-xl sm:text-2xl font-black text-emerald-600 dark:text-emerald-400 mt-0.5 font-mono">
+                    <span className="text-xl sm:text-2xl font-black text-accent-success-ink dark:text-emerald-400 mt-0.5 font-mono">
                       {correctMatches}
                     </span>
                   </div>
@@ -592,7 +592,7 @@ export default function FormulaSpeedDrillModal({
 
                 {score >= bestScore && score > 0 && (
                   <div className="mb-6 flex items-center gap-2 rounded-2xl bg-emerald-500/15 border border-emerald-500/30 px-4 py-2.5 text-xs text-emerald-700 dark:text-emerald-300 font-bold">
-                    <Trophy className="h-4 w-4 text-emerald-500 dark:text-emerald-400" />
+                    <Trophy className="h-4 w-4 text-accent-success-ink dark:text-emerald-400" />
                     <span>🎉 Tebrikler! Yeni En Yüksek Skorun: {score} Puan!</span>
                   </div>
                 )}

@@ -123,7 +123,7 @@ export function AdventureLearningPath({
                 <div className="flex flex-col items-center lg:w-full lg:flex-row lg:gap-3">
                   {/* Aktif Düğümde "BURADAN BAŞLA" Çizgi Film Rozeti */}
                   {isActive && (
-                    <div className="lg:hidden mb-3 animate-bounce flex items-center gap-1.5 rounded-full bg-[#58cc02] px-3.5 py-1 text-xs font-black uppercase tracking-wider text-white dark:text-white shadow-[0_3px_0_#46a302]">
+                    <div className="lg:hidden mb-3 animate-bounce flex items-center gap-1.5 rounded-full bg-[#58cc02] px-3.5 py-1 text-xs font-black uppercase tracking-wider text-slate-950 dark:text-slate-950 shadow-[0_3px_0_#46a302]">
                       <Play className="h-3 w-3 fill-current" />
                       <span>Buradasın!</span>
                     </div>
@@ -145,7 +145,7 @@ export function AdventureLearningPath({
                       aria-label={`${topic.unitNumber}. Ünite: ${topic.title}`}
                       className={`relative flex h-20 w-20 sm:h-24 sm:w-24 lg:h-12 lg:w-12 lg:rounded-2xl items-center justify-center rounded-3xl font-black transition-all duration-150 focus:outline-none focus-visible:ring-4 focus-visible:ring-indigo-500 cursor-pointer select-none ${
                         isActive
-                          ? 'bg-[#58cc02] text-white dark:text-white shadow-[0_8px_0_#46a302] hover:bg-[#61e002] active:translate-y-2 active:shadow-[0_1px_0_#46a302] scale-105'
+                          ? 'bg-[#58cc02] text-slate-950 dark:text-slate-950 shadow-[0_8px_0_#46a302] hover:bg-[#61e002] active:translate-y-2 active:shadow-[0_1px_0_#46a302] scale-105'
                           : isCompleted
                             ? 'bg-[#1cb0f6] text-white dark:text-white shadow-[0_8px_0_#1899d6] hover:bg-[#33beff] active:translate-y-2 active:shadow-[0_1px_0_#1899d6] hover:scale-105'
                             : 'bg-surface-2 text-tertiary border-2 border-default shadow-[0_6px_0_var(--border-default)] opacity-80 hover:opacity-100 hover:bg-surface-3 active:translate-y-1.5 active:shadow-none'
@@ -155,7 +155,7 @@ export function AdventureLearningPath({
                       {isCompleted ? (
                         <CheckCircle2 className="h-9 w-9 lg:h-6 lg:w-6 text-white dark:text-white drop-shadow-xs" />
                       ) : isActive ? (
-                        <Play className="h-9 w-9 lg:h-6 lg:w-6 fill-white text-white dark:text-white drop-shadow-xs" />
+                        <Play className="h-9 w-9 lg:h-6 lg:w-6 fill-current text-slate-950 dark:text-slate-950 drop-shadow-xs" />
                       ) : (
                         <BookOpen className="h-7 w-7 lg:h-5 lg:w-5 text-secondary/60" />
                       )}
@@ -184,15 +184,15 @@ export function AdventureLearningPath({
                   {/* Düğüm Altı Başlık Kapsülü */}
                   <div className="lg:mt-0 lg:min-w-0 lg:max-w-none lg:flex-1 lg:border-0 lg:bg-transparent lg:p-0 lg:text-left lg:shadow-none mt-3.5 text-center max-w-[200px] rounded-2xl px-3 py-1.5 bg-surface-2/80 backdrop-blur-xs border border-default/70 shadow-xs">
                     {topic.theme && (
-                      <span className="block text-[10px] text-secondary">
+                      <span className={`block text-[10px] text-secondary ${isActive ? 'lg:text-slate-950' : ''}`}>
                         {topic.theme}
                       </span>
                     )}
-                    <span className="block text-[10px] font-black uppercase tracking-wider text-secondary">
+                    <span className={`block text-[10px] font-black uppercase tracking-wider text-secondary ${isActive ? 'lg:text-slate-950' : ''}`}>
                       {`${topic.unitNumber}. Ünite`} ·{' '}
                       {isCompleted ? 'Tamamlandı' : isActive ? 'Aktif' : 'Açık'}
                     </span>
-                    <h3 className="font-display text-xs sm:text-sm font-bold text-primary mt-0.5 whitespace-normal leading-tight">
+                    <h3 className={`font-display text-xs sm:text-sm font-bold text-primary mt-0.5 whitespace-normal leading-tight ${isActive ? 'lg:text-slate-950' : ''}`}>
                       {topic.title}
                     </h3>
                     <div className="hidden lg:mt-2 lg:flex lg:flex-wrap lg:gap-x-3 lg:gap-y-1 lg:text-xs lg:font-bold">
@@ -285,19 +285,19 @@ export function AdventureLearningPath({
                 className="flex items-center justify-between p-3.5 rounded-2xl border border-purple-500/30 transition-all hover:scale-[1.01] group bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none"
               >
                 <div className="flex items-center gap-3">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-purple-500/20 text-purple-300">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-purple-500/20 text-slate-950 dark:text-slate-950">
                     <FileCheck2 className="h-5 w-5" />
                   </div>
                   <div>
-                    <h4 className="text-sm font-bold text-primary">
+                    <h4 className="text-sm font-bold text-slate-950 dark:text-slate-950">
                       Yaprak Testi Çöz
                     </h4>
-                    <p className="text-xs text-secondary">
+                    <p className="text-xs text-slate-950 dark:text-slate-950">
                       Bu konunun kazanımlarına çalış
                     </p>
                   </div>
                 </div>
-                <ChevronRight className="h-4 w-4 text-secondary group-hover:translate-x-0.5 transition-transform" />
+                <ChevronRight className="h-4 w-4 text-slate-950 dark:text-slate-950 group-hover:translate-x-0.5 transition-transform" />
               </SafeLink>
 
               {activeNodeDetail.gameHref && (

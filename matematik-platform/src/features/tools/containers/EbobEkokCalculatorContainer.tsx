@@ -106,7 +106,7 @@ export function EbobEkokCalculatorContainer() {
         <div className="rounded-3xl border border-default bg-surface-1 p-6 sm:p-8 backdrop-blur-md shadow-2xl mb-8">
           <div className="flex flex-wrap items-center justify-between gap-4">
             <div className="flex items-center gap-3">
-              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-600 text-white dark:text-white shadow-lg">
+              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-600 text-slate-950 dark:text-slate-950 shadow-lg">
                 <Layers className="h-6 w-6" />
               </div>
               <div>
@@ -196,7 +196,7 @@ export function EbobEkokCalculatorContainer() {
             <div className="rounded-3xl border border-default bg-surface-1 p-5 shadow-2xl backdrop-blur-md space-y-3">
               <div className="flex items-center justify-between">
                 <span className="text-xs font-bold text-secondary">EBOB({num1}, {num2})</span>
-                <span className="text-2xl font-black font-mono text-emerald-600 dark:text-emerald-400">{ebob}</span>
+                <span className="text-2xl font-black font-mono text-accent-success-ink dark:text-emerald-400">{ebob}</span>
               </div>
               <div className="flex items-center justify-between border-t border-default pt-2">
                 <span className="text-xs font-bold text-secondary">EKOK({num1}, {num2})</span>

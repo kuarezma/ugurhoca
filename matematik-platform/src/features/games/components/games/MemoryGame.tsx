@@ -191,7 +191,7 @@ export function MemoryGame({ onScore, scoreMultiplier }: GameComponentProps) {
     <div className="max-w-lg mx-auto">
       <div className="flex justify-between items-center mb-6">
         <div className="px-4 py-2 bg-black/50 backdrop-blur-sm rounded-xl text-white dark:text-white font-bold">
-          Puan: <span className="text-green-400">{score}</span>
+          Puan: <span className="text-slate-950 dark:text-green-400">{score}</span>
         </div>
         <div className="px-4 py-2 bg-black/50 backdrop-blur-sm rounded-xl text-white dark:text-white font-bold">
           Hamle: {moves}
@@ -224,7 +224,7 @@ export function MemoryGame({ onScore, scoreMultiplier }: GameComponentProps) {
             disabled={card.matched}
             className={`aspect-square rounded-2xl text-3xl font-bold flex items-center justify-center transition-all ${
               card.matched
-                ? 'bg-green-500/40 text-green-300'
+                ? 'bg-green-500/40 text-tone-success-fg'
                 : card.flipped
                   ? 'bg-gradient-to-br from-indigo-500 to-purple-500 text-white shadow-lg'
                   : 'bg-gradient-to-br from-slate-700 to-slate-800 text-slate-400 hover:from-slate-600 hover:to-slate-700'

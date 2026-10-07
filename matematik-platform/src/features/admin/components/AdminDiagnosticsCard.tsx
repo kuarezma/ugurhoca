@@ -39,7 +39,7 @@ export const AdminDiagnosticsCard: React.FC<AdminDiagnosticsCardProps> = ({
       {/* Summary Header */}
       <div className="flex flex-wrap items-center justify-between gap-3 px-5 py-3.5 bg-slate-50 dark:bg-slate-800/40 border-b border-slate-200/80 dark:border-white/5">
         <div className="flex items-center gap-3">
-          <div className="p-2 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
+          <div className="p-2 rounded-xl bg-emerald-500/10 text-accent-success-ink dark:text-emerald-400 border border-emerald-500/20">
             <Activity className="w-4 h-4 animate-pulse" />
           </div>
           <div>
@@ -84,12 +84,12 @@ export const AdminDiagnosticsCard: React.FC<AdminDiagnosticsCardProps> = ({
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 p-4 bg-slate-50/50 dark:bg-slate-900/60">
         {/* Supabase Status */}
         <div className="flex items-center gap-3 p-3 rounded-xl bg-white dark:bg-slate-800/50 border border-slate-200/80 dark:border-slate-700/50 shadow-sm dark:shadow-none">
-          <div className="p-2 rounded-lg bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
+          <div className="p-2 rounded-lg bg-emerald-500/10 text-accent-success-ink dark:text-emerald-400">
             <Database className="w-4 h-4" />
           </div>
           <div>
             <div className="text-xs text-slate-500 dark:text-slate-400 font-medium">Supabase DB</div>
-            <div className="text-xs font-bold text-emerald-600 dark:text-emerald-400 flex items-center gap-1 mt-0.5">
+            <div className="text-xs font-bold text-accent-success-ink dark:text-emerald-400 flex items-center gap-1 mt-0.5">
               <CheckCircle2 className="w-3 h-3" />
               Aktif & Bağlı
             </div>
@@ -100,7 +100,7 @@ export const AdminDiagnosticsCard: React.FC<AdminDiagnosticsCardProps> = ({
         <div className="flex items-center gap-3 p-3 rounded-xl bg-white dark:bg-slate-800/50 border border-slate-200/80 dark:border-slate-700/50 shadow-sm dark:shadow-none">
           <div
             className={`p-2 rounded-lg ${
-              driveConnected ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400' : 'bg-amber-500/10 text-amber-600 dark:text-amber-400'
+              driveConnected ? 'bg-emerald-500/10 text-accent-success-ink dark:text-emerald-400' : 'bg-amber-500/10 text-amber-600 dark:text-amber-400'
             }`}
           >
             <HardDrive className="w-4 h-4" />
@@ -109,7 +109,7 @@ export const AdminDiagnosticsCard: React.FC<AdminDiagnosticsCardProps> = ({
             <div className="text-xs text-slate-500 dark:text-slate-400 font-medium">Google Drive</div>
             <div
               className={`text-xs font-bold flex items-center gap-1 mt-0.5 ${
-                driveConnected ? 'text-emerald-600 dark:text-emerald-400' : 'text-amber-600 dark:text-amber-400'
+                driveConnected ? 'text-accent-success-ink dark:text-emerald-400' : 'text-amber-600 dark:text-amber-400'
               }`}
             >
               {driveConnected ? (

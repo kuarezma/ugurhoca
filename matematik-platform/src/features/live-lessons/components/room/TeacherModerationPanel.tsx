@@ -295,7 +295,7 @@ export function TeacherModerationPanel({
                 <button
                   type="button"
                   onClick={() => void approveJoin(id)}
-                  className="shrink-0 rounded-lg bg-accent px-2 py-1 text-[11px] font-medium text-white dark:text-white hover:bg-accent-muted"
+                  className="shrink-0 rounded-lg bg-accent px-2 py-1 text-[11px] font-medium text-slate-950 dark:text-slate-950 hover:bg-accent-muted"
                 >
                   Onayla
                 </button>

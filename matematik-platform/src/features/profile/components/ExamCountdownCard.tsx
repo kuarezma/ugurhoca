@@ -193,7 +193,7 @@ export function ExamCountdownCard({
         </div>
 
         <div className="flex items-center gap-3 self-end sm:self-center shrink-0">
-          <span className="inline-flex items-center gap-1 text-xs font-bold text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-1 rounded-xl">
+          <span className="inline-flex items-center gap-1 text-xs font-bold text-accent-success-ink bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-1 rounded-xl">
             <Target className="w-3.5 h-3.5" />
             Hedef: {targetNet} Net
           </span>

@@ -149,7 +149,7 @@ export function WeeklyMockLeagueModal({
           </div>
           <div className="p-3 bg-white dark:bg-slate-800/60 rounded-xl border border-slate-200 dark:border-slate-700/50 shadow-sm dark:shadow-none">
             <div className="text-slate-500 dark:text-slate-400 font-medium">Senin Sıralaman</div>
-            <div className="text-lg font-black text-emerald-600 dark:text-emerald-400 mt-0.5">12. / 148</div>
+            <div className="text-lg font-black text-accent-success-ink dark:text-emerald-400 mt-0.5">12. / 148</div>
           </div>
           <div className="p-3 bg-white dark:bg-slate-800/60 rounded-xl border border-slate-200 dark:border-slate-700/50 shadow-sm dark:shadow-none">
             <div className="text-slate-500 dark:text-slate-400 font-medium">Sonraki Deneme</div>
@@ -229,7 +229,7 @@ export function WeeklyMockLeagueModal({
 
                 <div className="flex items-center gap-4 text-xs font-mono">
                   <div className="hidden sm:flex items-center gap-2 text-slate-500 dark:text-slate-400">
-                    <span className="text-emerald-600 dark:text-emerald-400 font-bold">{p.correct} D</span>
+                    <span className="text-accent-success-ink dark:text-emerald-400 font-bold">{p.correct} D</span>
                     <span>·</span>
                     <span className="text-rose-600 dark:text-rose-400 font-bold">{p.wrong} Y</span>
                     <span>·</span>
@@ -260,7 +260,7 @@ export function WeeklyMockLeagueModal({
               <div className="space-y-2 pt-1">
                 <div>
                   <div className="flex justify-between font-semibold mb-1">
-                    <span className="text-emerald-600 dark:text-emerald-400">Kolay Sorular (7 Soru)</span>
+                    <span className="text-accent-success-ink dark:text-emerald-400">Kolay Sorular (7 Soru)</span>
                     <span className="text-slate-700 dark:text-slate-300">%78 Başarı</span>
                   </div>
                   <div className="h-2 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">

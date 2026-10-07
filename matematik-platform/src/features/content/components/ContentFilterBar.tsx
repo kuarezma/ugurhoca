@@ -175,7 +175,7 @@ export default function ContentFilterBar({
                       : 'border border-default dark:border-slate-500 bg-surface-2/60 text-secondary hover:bg-surface-3 hover:text-primary'
                   }`}
                 >
-                  <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600 dark:text-emerald-400" />
+                  <CheckCircle2 className="h-3.5 w-3.5 text-accent-success-ink dark:text-emerald-400" />
                   Çözülenler
                 </button>
                 <button

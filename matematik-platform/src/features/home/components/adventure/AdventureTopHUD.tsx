@@ -66,8 +66,8 @@ export function AdventureTopHUD({
               className="hidden sm:block absolute -left-2 top-8 h-4 w-4 rotate-45 bg-surface-2 border-l border-b border-default/80"
             />
 
-            <div className="inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-[10px] font-black uppercase tracking-wider bg-amber-500/20 text-amber-300 border border-amber-400/30 mb-1 shadow-xs">
-              <Sparkles className="h-3 w-3 text-amber-400" />
+            <div className="inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-[10px] font-black uppercase tracking-wider bg-amber-500/20 text-amber-800 dark:text-amber-300 border border-amber-400/30 mb-1 shadow-xs">
+              <Sparkles className="h-3 w-3 text-amber-700 dark:text-amber-400" />
               <span>Günün Macera Görevi</span>
             </div>
 
@@ -125,7 +125,7 @@ export function AdventureTopHUD({
 
             {/* 3. Tamamlanan Konular */}
             <div className="flex flex-col items-center justify-center rounded-2xl border-2 border-[#58cc02] bg-[#d7ffb8] dark:bg-emerald-950/40 px-3 sm:px-4 py-2.5 shadow-[0_4px_0_#46a302] hover:-translate-y-0.5 active:translate-y-1 active:shadow-[0_1px_0_#46a302] transition-all duration-150">
-              <div className="flex items-center gap-1.5 text-[#46a302] dark:text-emerald-400">
+              <div className="flex items-center gap-1.5 text-green-ink dark:text-emerald-400">
                 <BookOpen className="h-5 w-5 fill-current" />
                 <span className="font-display text-lg sm:text-xl font-black">
                   {completedTopics}/{totalTopics}

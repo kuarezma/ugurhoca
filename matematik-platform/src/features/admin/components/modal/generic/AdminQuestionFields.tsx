@@ -102,7 +102,7 @@ export default function AdminQuestionFields({
                   />
                 </div>
                 <div
-                  className={`w-8 h-8 rounded-xl flex items-center justify-center font-bold text-sm shrink-0 ${isCorrect ? "bg-emerald-500 text-white shadow-lg shadow-emerald-500/20" : "bg-slate-700 text-slate-300"}`}
+                  className={`w-8 h-8 rounded-xl flex items-center justify-center font-bold text-sm shrink-0 ${isCorrect ? "bg-emerald-500 text-slate-950 shadow-lg shadow-emerald-500/20" : "bg-slate-700 text-slate-300"}`}
                 >
                   {OPTION_LETTERS[index]}
                 </div>

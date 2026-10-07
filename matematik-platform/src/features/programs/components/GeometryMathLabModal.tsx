@@ -640,7 +640,7 @@ export function GeometryMathLabModal({
 
                 {specialTriple && (
                   <div className="flex items-center gap-2 rounded-2xl border border-emerald-500/30 bg-emerald-500/10 px-3.5 py-2.5 text-xs font-bold text-emerald-300">
-                    <CheckCircle2 className="h-4 w-4 shrink-0 text-emerald-400" />
+                    <CheckCircle2 className="h-4 w-4 shrink-0 text-accent-success-ink" />
                     <span>{specialTriple}</span>
                   </div>
                 )}
@@ -698,7 +698,7 @@ export function GeometryMathLabModal({
                 {/* Trigonometric Values Grid */}
                 <div className="grid grid-cols-2 gap-2 text-xs font-mono">
                   <div className="rounded-xl border border-emerald-500/20 bg-emerald-500/10 p-2.5">
-                    <span className="text-emerald-400 font-bold block">cos({angleDeg}°) =</span>
+                    <span className="text-accent-success-ink font-bold block">cos({angleDeg}°) =</span>
                     <span className="text-base font-black">{cosVal.toFixed(3)}</span>
                   </div>
                   <div className="rounded-xl border border-purple-500/20 bg-purple-500/10 p-2.5">
@@ -897,7 +897,7 @@ export function GeometryMathLabModal({
 
                 {/* Slope Result Card */}
                 <div className="rounded-2xl border border-emerald-500/20 bg-emerald-500/10 p-3.5 space-y-2 font-mono">
-                  <div className="text-xs font-bold text-emerald-400">
+                  <div className="text-xs font-bold text-accent-success-ink">
                     Eğim Formülü: m = (y₂ - y₁) / (x₂ - x₁)
                   </div>
                   <div className="text-sm">

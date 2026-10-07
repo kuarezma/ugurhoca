@@ -122,7 +122,7 @@ export function StudentReportPrintView({
             </div>
 
             <div className="rounded-2xl border border-white/10 bg-slate-950/50 p-4 print:border print:border-slate-200 print:bg-white">
-              <div className="flex items-center gap-2 text-emerald-400 print:text-emerald-600">
+              <div className="flex items-center gap-2 text-emerald-400 print:text-emerald-700">
                 <CheckCircle2 className="h-4 w-4" />
                 <span className="text-xs font-semibold">Çözülen Testler</span>
               </div>

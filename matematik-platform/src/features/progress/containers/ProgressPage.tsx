@@ -409,7 +409,7 @@ export default function IlerlemePage({ initialData }: ProgressPageProps) {
               className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full border font-semibold text-sm transition-all disabled:opacity-50 ${
                 isLight
                   ? 'border-emerald-200 bg-emerald-50 text-emerald-700 hover:bg-emerald-100'
-                  : 'border-emerald-500/30 bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20'
+                  : 'border-emerald-500/30 bg-emerald-500/10 text-accent-success-ink hover:bg-emerald-500/20'
               }`}
             >
               {pdfLoading
@@ -488,7 +488,7 @@ export default function IlerlemePage({ initialData }: ProgressPageProps) {
                     </p>
                   </div>
                   <div className="text-right">
-                    <p className={`text-4xl font-black flex items-center gap-2 ${goalPercentage >= 100 ? 'text-emerald-500' : isLight ? 'text-orange-500' : 'text-orange-400'}`}>
+                    <p className={`text-4xl font-black flex items-center gap-2 ${goalPercentage >= 100 ? 'text-accent-success-ink' : isLight ? 'text-orange-500' : 'text-orange-400'}`}>
                       %{goalPercentage}
                     </p>
                   </div>
@@ -571,7 +571,7 @@ export default function IlerlemePage({ initialData }: ProgressPageProps) {
                 <div key={prog.id} className="relative">
                   <div className="flex justify-between text-sm mb-1">
                     <span className={`font-medium ${isLight ? 'text-slate-700' : 'text-slate-300'}`}>{prog.topic}</span>
-                    <span className={`font-bold ${prog.mastery_level > 80 ? 'text-emerald-500' : prog.mastery_level < 40 ? 'text-red-500' : 'text-amber-500'}`}>%{prog.mastery_level}</span>
+                    <span className={`font-bold ${prog.mastery_level > 80 ? 'text-accent-success-ink' : prog.mastery_level < 40 ? 'text-red-500' : 'text-amber-500'}`}>%{prog.mastery_level}</span>
                   </div>
                   <div className={`h-2.5 w-full rounded-full ${isLight ? 'bg-slate-100' : 'bg-slate-900'}`}>
                     <div
@@ -631,7 +631,7 @@ export default function IlerlemePage({ initialData }: ProgressPageProps) {
                     aria-pressed={active}
                     className={`flex flex-col items-center gap-2 rounded-xl border-2 p-3 transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary ${
                       active
-                        ? 'border-brand-primary bg-brand-primary/10 text-brand-primary'
+                        ? 'border-brand-primary bg-brand-primary/10 text-brand-ink'
                         : 'border-slate-200 text-slate-400 hover:border-slate-300 dark:border-white/10 dark:text-slate-400 dark:hover:bg-white/5'
                     }`}
                   >

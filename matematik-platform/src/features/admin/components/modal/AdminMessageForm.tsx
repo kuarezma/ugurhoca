@@ -40,7 +40,7 @@ export default function AdminMessageForm({
     <form onSubmit={onSubmit} className="space-y-5">
       {adminMsgRecipient && (
         <div className="flex items-center gap-3 p-3 rounded-xl bg-white/5 border border-white/10">
-          <div className="w-10 h-10 bg-gradient-to-br from-green-500 to-emerald-500 rounded-full flex items-center justify-center text-lg font-bold text-white dark:text-white">
+          <div className="w-10 h-10 bg-gradient-to-br from-green-500 to-emerald-500 rounded-full flex items-center justify-center text-lg font-bold text-slate-950 dark:text-slate-950">
             {adminMsgRecipient.name?.[0] || "?"}
           </div>
           <div>

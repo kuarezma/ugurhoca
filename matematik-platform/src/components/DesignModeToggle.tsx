@@ -39,7 +39,7 @@ export function DesignModeToggle({ compact = false, className = '' }: DesignMode
         className={`flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-semibold transition-all duration-300 ${
           !isAdventure
             ? 'bg-brand-primary text-slate-950 dark:text-slate-950 shadow-sm border border-brand-primary-deep font-bold'
-            : 'text-tertiary hover:text-secondary'
+            : 'text-slate-950 dark:text-slate-950 hover:text-slate-900 dark:hover:text-slate-900'
         }`}
       >
         <BookOpen className="h-3.5 w-3.5" />

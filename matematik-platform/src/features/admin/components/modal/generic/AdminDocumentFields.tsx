@@ -141,7 +141,7 @@ export default function AdminDocumentFields({
           placeholder="https://drive.google.com/... (çözümlü PDF varsa)"
         />
         {formData.solution_url && (
-          <p className="text-green-400 text-xs mt-1">
+          <p className="text-green-ink text-xs mt-1">
             ÇÖZÜMLÜ badge&apos;i otomatik eklenecek
           </p>
         )}

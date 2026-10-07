@@ -299,7 +299,7 @@ export function QuizPanel({
                 setDraftOptions(["Çok İyi Anladım 🚀", "Kısmen Anladım 🤔", "Tekrar Edelim 🙋‍♂️"]);
                 setDraftCorrect(0);
               }}
-              className="rounded-lg border border-border bg-background/60 p-1.5 text-left text-[11px] font-semibold hover:border-accent hover:text-accent transition"
+              className="rounded-lg border border-border bg-background/60 p-1.5 text-left text-[11px] font-semibold hover:border-accent hover:text-brand-ink transition"
             >
               📊 Anlama Oylaması
             </button>
@@ -310,7 +310,7 @@ export function QuizPanel({
                 setDraftOptions(["Doğru (D) ✅", "Yanlış (Y) ❌"]);
                 setDraftCorrect(0);
               }}
-              className="rounded-lg border border-border bg-background/60 p-1.5 text-left text-[11px] font-semibold hover:border-accent hover:text-accent transition"
+              className="rounded-lg border border-border bg-background/60 p-1.5 text-left text-[11px] font-semibold hover:border-accent hover:text-brand-ink transition"
             >
               ✅ Doğru / Yanlış
             </button>
@@ -321,7 +321,7 @@ export function QuizPanel({
                 setDraftOptions(["A", "B", "C", "D"]);
                 setDraftCorrect(0);
               }}
-              className="rounded-lg border border-border bg-background/60 p-1.5 text-left text-[11px] font-semibold hover:border-accent hover:text-accent transition"
+              className="rounded-lg border border-border bg-background/60 p-1.5 text-left text-[11px] font-semibold hover:border-accent hover:text-brand-ink transition"
             >
               🔤 A - B - C - D
             </button>
@@ -332,7 +332,7 @@ export function QuizPanel({
                 setDraftOptions(["Yeni Soru Çözelim 📝", "Konuya Devam Edelim 📚", "Kısa Bir Mola ☕"]);
                 setDraftCorrect(0);
               }}
-              className="rounded-lg border border-border bg-background/60 p-1.5 text-left text-[11px] font-semibold hover:border-accent hover:text-accent transition"
+              className="rounded-lg border border-border bg-background/60 p-1.5 text-left text-[11px] font-semibold hover:border-accent hover:text-brand-ink transition"
             >
               ⏱️ Sıradaki Adım
             </button>
@@ -384,7 +384,7 @@ export function QuizPanel({
           <button
             type="button"
             onClick={() => void sendQuestion()}
-            className="touch-target flex-1 rounded-xl bg-accent px-4 py-3 text-sm font-medium text-white dark:text-white hover:bg-accent-muted"
+            className="touch-target flex-1 rounded-xl bg-accent px-4 py-3 text-sm font-medium text-slate-950 dark:text-slate-950 hover:bg-accent-muted"
           >
             Soruyu gönder
           </button>
@@ -421,7 +421,7 @@ export function QuizPanel({
           <div className="space-y-3 border-t border-border pt-3">
             <div className="flex items-center justify-between">
               <p className="text-xs font-bold text-foreground/80">Canlı Oylama Dağılımı</p>
-              <span className="text-[11px] font-semibold text-accent">{summary.rows.length} Yanıt</span>
+              <span className="text-[11px] font-semibold text-brand-ink">{summary.rows.length} Yanıt</span>
             </div>
             <p className="text-xs font-medium text-foreground">{active.prompt}</p>
 
@@ -460,7 +460,7 @@ export function QuizPanel({
                   key={id}
                   className={
                     row.choiceIndex === active.correctIndex
-                      ? "text-emerald-600 dark:text-emerald-400"
+                      ? "text-accent-success-ink dark:text-emerald-400"
                       : "text-foreground/80"
                   }
                 >
@@ -506,7 +506,7 @@ export function QuizPanel({
             })}
           </div>
           {myChoice !== null && (
-            <p className="text-sm text-emerald-600 dark:text-emerald-400">
+            <p className="text-sm text-accent-success-ink dark:text-emerald-400">
               Cevabınız gönderildi.
             </p>
           )}

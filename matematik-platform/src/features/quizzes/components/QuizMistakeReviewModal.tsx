@@ -79,7 +79,7 @@ export function QuizMistakeReviewModal({
         <div className="flex-1 overflow-y-auto p-6 space-y-4">
           {mistakes.length === 0 ? (
             <div className="py-12 text-center">
-              <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-emerald-500/20 text-emerald-500 dark:text-emerald-400">
+              <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-emerald-500/20 text-accent-success-ink dark:text-emerald-400">
                 <CheckCircle2 className="h-8 w-8" />
               </div>
               <p className="font-display text-lg font-bold text-slate-900 dark:text-white">Tebrikler!</p>
@@ -130,7 +130,7 @@ export function QuizMistakeReviewModal({
                           <MathText>{opt}</MathText>
                         </div>
                         {isCorrectChoice && (
-                          <span className="text-[10px] uppercase tracking-wider text-emerald-600 dark:text-emerald-400 font-bold">
+                          <span className="text-[10px] uppercase tracking-wider text-accent-success-ink dark:text-emerald-400 font-bold">
                             Doğru
                           </span>
                         )}
@@ -145,7 +145,7 @@ export function QuizMistakeReviewModal({
                 </div>
 
                 {question.explanation && (
-                  <div className="rounded-xl border border-brand-primary/20 bg-brand-primary/10 p-3 text-xs text-brand-primary dark:text-brand-primary-soft">
+                  <div className="rounded-xl border border-brand-primary/20 bg-brand-primary/10 p-3 text-xs text-brand-ink dark:text-brand-primary-soft">
                     <span className="font-bold text-slate-900 dark:text-white block mb-1">Çözüm / İpucu:</span>
                     <MathText>{question.explanation}</MathText>
                   </div>

@@ -297,7 +297,7 @@ export function RoomExperience({
               </span>
             </div>
             <div className="flex items-center gap-2 text-[11px] text-foreground/60">
-              <span className="flex items-center gap-1 font-mono font-medium text-emerald-600 dark:text-emerald-400">
+              <span className="flex items-center gap-1 font-mono font-medium text-accent-success-ink dark:text-emerald-400">
                 <Clock className="h-3 w-3" />
                 <span>{formatElapsed(elapsedSeconds)}</span>
               </span>
@@ -316,7 +316,7 @@ export function RoomExperience({
             className="inline-flex items-center gap-1 rounded-xl border border-border bg-card px-2.5 py-1.5 text-xs font-semibold text-foreground/80 hover:bg-foreground/5 hover:text-foreground transition"
             title="Matematik Karalama Tahtasını Aç"
           >
-            <PenTool className="h-3.5 w-3.5 text-brand-primary" />
+            <PenTool className="h-3.5 w-3.5 text-brand-ink" />
             <span className="hidden sm:inline">Tahta</span>
           </button>
 
@@ -339,8 +339,8 @@ export function RoomExperience({
               >
                 {linkCopied ? (
                   <>
-                    <Check className="h-3.5 w-3.5 text-emerald-500" />
-                    <span className="text-emerald-500">Kopyalandı</span>
+                    <Check className="h-3.5 w-3.5 text-accent-success-ink" />
+                    <span className="text-accent-success-ink">Kopyalandı</span>
                   </>
                 ) : (
                   <>
@@ -371,7 +371,7 @@ export function RoomExperience({
         {role === 'student' && requireStudentApproval && !lessonUnlocked && (
           <div className="absolute inset-2 z-20 flex items-center justify-center rounded-2xl bg-background/95 p-6 text-center backdrop-blur-md lg:inset-3 shadow-2xl">
             <div className="max-w-sm space-y-3">
-              <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-brand-primary/10 text-brand-primary">
+              <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-brand-primary/10 text-brand-ink">
                 <Users className="h-6 w-6" />
               </div>
               <h3 className="text-base font-bold text-foreground">Öğretmen Onayı Bekleniyor</h3>
@@ -489,7 +489,7 @@ export function RoomExperience({
                 />
               ) : (
                 <div className="flex flex-1 flex-col items-center justify-center rounded-2xl border border-border bg-card p-6 text-center text-xs text-foreground/70">
-                  <Users className="h-8 w-8 text-brand-primary opacity-60 mb-2" />
+                  <Users className="h-8 w-8 text-brand-ink mb-2" />
                   <p className="font-semibold text-foreground">Sınıf Katılımcıları</p>
                   <p className="mt-1">
                     Öğretmeniniz ve sınıf arkadaşlarınız derse bağlı. Söz hakkı istemek için aşağıdaki el kaldır butonunu kullanabilirsiniz.

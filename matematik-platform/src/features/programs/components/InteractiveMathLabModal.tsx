@@ -146,7 +146,7 @@ export function InteractiveMathLabModal({ isOpen, onClose }: InteractiveMathLabM
                   setCurrentStep('predict');
                 }}
                 className={`px-3 py-1.5 rounded-lg transition ${
-                  activeMode === 'triangle' ? 'bg-brand-primary text-slate-950 dark:text-slate-950' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                  activeMode === 'triangle' ? 'bg-brand-primary text-slate-950 dark:text-slate-950' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-950'
                 }`}
               >
                 Üçgen Açıları
@@ -158,7 +158,7 @@ export function InteractiveMathLabModal({ isOpen, onClose }: InteractiveMathLabM
                   setCurrentStep('predict');
                 }}
                 className={`px-3 py-1.5 rounded-lg transition ${
-                  activeMode === 'slope' ? 'bg-brand-primary text-slate-950 dark:text-slate-950' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                  activeMode === 'slope' ? 'bg-brand-primary text-slate-950 dark:text-slate-950' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-950'
                 }`}
               >
                 Doğrunun Eğimi
@@ -356,7 +356,7 @@ export function InteractiveMathLabModal({ isOpen, onClose }: InteractiveMathLabM
                 </div>
                 <div className="p-2 rounded-xl bg-slate-50 dark:bg-slate-950/80 border border-slate-200 dark:border-emerald-500/30">
                   <span className="text-slate-500 dark:text-slate-400 block text-[10px]">C Açısı</span>
-                  <span className="font-bold text-emerald-600 dark:text-emerald-300">{angleC}°</span>
+                  <span className="font-bold text-accent-success-ink dark:text-emerald-300">{angleC}°</span>
                 </div>
                 <div className="p-2 rounded-xl bg-slate-50 dark:bg-slate-950/80 border border-slate-200 dark:border-amber-500/30">
                   <span className="text-slate-500 dark:text-slate-400 block text-[10px]">Toplam</span>

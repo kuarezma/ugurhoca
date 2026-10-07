@@ -39,7 +39,7 @@ export function StudyPrescriptionCard({
         }`}
       >
         <div className="flex items-center gap-3.5">
-          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-emerald-500/20 text-emerald-500 font-bold">
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-emerald-500/20 text-accent-success-ink font-bold">
             <CheckCircle2 className="h-5 w-5" />
           </div>
           <div>

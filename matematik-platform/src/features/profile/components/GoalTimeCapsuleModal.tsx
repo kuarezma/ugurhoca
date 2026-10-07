@@ -285,7 +285,7 @@ export function GoalTimeCapsuleModal({
                 <div className="flex items-center gap-4 text-center sm:text-left">
                   <div className={`w-16 h-16 rounded-2xl flex items-center justify-center shadow-lg ${
                     isUnlocked
-                      ? 'bg-emerald-600 text-white'
+                      ? 'bg-emerald-600 text-slate-950'
                       : 'bg-amber-600 text-white animate-pulse'
                   }`}>
                     {isUnlocked ? (<Unlock className="w-8 h-8" /> ): (<Lock className="w-8 h-8" />)}
@@ -311,7 +311,7 @@ export function GoalTimeCapsuleModal({
                     </button>
                   ) : (
                     <span className="px-3.5 py-1.5 rounded-full bg-emerald-100 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300 font-semibold text-xs border border-emerald-200 dark:border-emerald-800 flex items-center gap-1.5">
-                      <Award className="w-4 h-4 text-emerald-600" />
+                      <Award className="w-4 h-4 text-accent-success-ink" />
                       Zaman Gezgini Rozeti
                     </span>
                   )}
@@ -342,7 +342,7 @@ export function GoalTimeCapsuleModal({
 
                 <div className="p-4 rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-850/40">
                   <div className="flex items-center gap-1.5 text-xs text-slate-500 mb-1">
-                    <FileText className="w-3.5 h-3.5 text-emerald-500" />
+                    <FileText className="w-3.5 h-3.5 text-accent-success-ink" />
                     <span>Çalışma Taahhüdü</span>
                   </div>
                   <div className="text-xs font-semibold text-slate-800 dark:text-slate-200 truncate">
@@ -366,7 +366,7 @@ export function GoalTimeCapsuleModal({
               {isUnlocked && (
                 <div className="p-5 rounded-2xl border border-emerald-200 dark:border-emerald-900/60 bg-emerald-50/40 dark:bg-emerald-950/20 space-y-2">
                   <h4 className="text-xs font-bold text-emerald-900 dark:text-emerald-300 flex items-center gap-2">
-                    <Award className="w-4 h-4 text-emerald-600" />
+                    <Award className="w-4 h-4 text-accent-success-ink" />
                     Sene Sonu Değerlendirmesi ve Kazanılan Özgüven:
                   </h4>
                   <p className="text-xs text-emerald-800 dark:text-emerald-200">

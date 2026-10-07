@@ -191,7 +191,7 @@ export function ProgressCharts({
         <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
           <div className="flex items-center gap-2">
             <Calendar
-              className={`h-5 w-5 ${isLight ? 'text-emerald-500' : 'text-emerald-400'}`}
+              className="h-5 w-5 text-accent-success-ink"
             />
             <h2
               className={`text-lg font-bold ${isLight ? 'text-slate-900' : 'text-white'}`}

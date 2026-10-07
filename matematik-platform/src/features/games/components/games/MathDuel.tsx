@@ -522,7 +522,7 @@ export function MathDuel({
                     exit={{ opacity: 0, y: -5 }}
                     className={`text-xs sm:text-sm font-bold ${
                       feedback.type === 'correct'
-                        ? 'text-emerald-600 dark:text-emerald-400'
+                        ? 'text-accent-success-ink dark:text-emerald-400'
                         : 'text-rose-600 dark:text-rose-400'
                     }`}
                   >
@@ -585,7 +585,7 @@ export function MathDuel({
             </div>
             <div className="p-3 bg-white dark:bg-slate-800/80 rounded-xl border border-slate-200 dark:border-slate-700/60 shadow-xs">
               <div className="text-xs text-slate-500 dark:text-slate-400">Doğruluk</div>
-              <div className="text-xl font-black text-emerald-600 dark:text-emerald-400">
+              <div className="text-xl font-black text-accent-success-ink dark:text-emerald-400">
                 %{accuracy}
               </div>
             </div>

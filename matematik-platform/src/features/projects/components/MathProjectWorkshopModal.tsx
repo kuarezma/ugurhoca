@@ -126,7 +126,7 @@ export function MathProjectWorkshopModal({
                   <h4 className="text-xs font-bold text-slate-900 dark:text-white leading-snug line-clamp-2">{proj.title}</h4>
                   <div className="flex items-center justify-between text-[11px] text-slate-400 mt-2 pt-2 border-t border-white/5">
                     <span>{proj.durationWeeks} Hafta</span>
-                    <span className="text-emerald-400 font-semibold">{pCount}/{proj.milestones.length} Aşama</span>
+                    <span className="text-accent-success-ink font-semibold">{pCount}/{proj.milestones.length} Aşama</span>
                   </div>
                 </button>
               );
@@ -170,7 +170,7 @@ export function MathProjectWorkshopModal({
             {/* Aşamalar (Milestones) */}
             <div className="space-y-3">
               <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
-                <ListChecks className="w-4 h-4 text-emerald-400" /> Proje Adımları & Teslim Takvimi
+                <ListChecks className="w-4 h-4 text-accent-success-ink" /> Proje Adımları & Teslim Takvimi
               </h4>
 
               <div className="space-y-2">
@@ -191,7 +191,7 @@ export function MathProjectWorkshopModal({
                       <div
                         className={`w-5 h-5 rounded-lg border flex items-center justify-center shrink-0 mt-0.5 transition ${
                           isDone
-                            ? 'border-emerald-400 bg-emerald-500 text-white dark:text-white'
+                            ? 'border-emerald-400 bg-emerald-500 text-slate-950 dark:text-slate-950'
                             : 'border-slate-300 dark:border-slate-600 bg-slate-100 dark:bg-slate-800 text-transparent'
                         }`}
                       >
@@ -201,7 +201,7 @@ export function MathProjectWorkshopModal({
                         <div className="flex items-center gap-2">
                           <span className="text-xs font-bold text-slate-900 dark:text-white">{ms.step}. Aşama: {ms.title}</span>
                           {isDone && (
-                            <span className="text-[10px] font-bold text-emerald-400">Tamamlandı</span>
+                            <span className="text-[10px] font-bold text-accent-success-ink">Tamamlandı</span>
                           )}
                         </div>
                         <p className="text-[11px] text-slate-400 mt-0.5 leading-relaxed">{ms.description}</p>

@@ -31,7 +31,7 @@ export function SelectedGameView({
         <div className="container mx-auto flex justify-between items-center gap-2">
           <button
             onClick={onBack}
-            className="flex items-center gap-2 text-primary hover:text-accent transition-colors min-w-0"
+            className="flex items-center gap-2 text-primary hover:text-brand-ink transition-colors min-w-0"
           >
             <ArrowLeft className="w-5 h-5 sm:w-6 sm:h-6 shrink-0" />
             <span className="font-bold text-sm sm:text-base truncate">Oyunlara Dön</span>

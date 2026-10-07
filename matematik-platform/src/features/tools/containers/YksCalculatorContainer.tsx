@@ -241,7 +241,7 @@ export function YksCalculatorContainer() {
                             handleInputChange(key, 'correct', parseInt(e.target.value, 10))
                           }
                           aria-label={`${meta.label} doğru`}
-                          className="h-9 w-12 rounded-xl border border-emerald-500/40 bg-surface-1 text-center font-mono font-bold text-emerald-600 dark:text-emerald-300 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                          className="h-9 w-12 rounded-xl border border-emerald-500/40 bg-surface-1 text-center font-mono font-bold text-accent-success-ink dark:text-emerald-300 focus:outline-none focus:ring-2 focus:ring-emerald-500"
                         />
 
                         <input

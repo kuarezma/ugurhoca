@@ -225,7 +225,7 @@ export default function AdminUsersTab({
       {hasActiveFilters && (
         <button
           onClick={resetFilters}
-          className="mt-4 rounded-xl bg-brand-primary/20 px-4 py-2 text-sm font-semibold text-brand-primary-soft transition-colors hover:bg-brand-primary/30"
+          className="mt-4 rounded-xl bg-brand-primary/20 px-4 py-2 text-sm font-semibold text-brand-ink transition-colors hover:bg-brand-primary/30"
         >
           Filtreleri temizle
         </button>
@@ -318,7 +318,7 @@ export default function AdminUsersTab({
           <button
             onClick={onDownloadPdf}
             disabled={pdfStudentsLoading}
-            className="min-w-0 justify-center px-3 py-2 sm:px-4 bg-emerald-500/10 border border-emerald-500/20 rounded-lg text-emerald-600 dark:text-emerald-400 hover:text-emerald-700 dark:hover:text-emerald-300 hover:bg-emerald-500/20 transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] text-xs sm:text-sm flex items-center gap-2 disabled:opacity-50"
+            className="min-w-0 justify-center px-3 py-2 sm:px-4 bg-emerald-500/10 border border-emerald-500/20 rounded-lg text-accent-success-ink dark:text-emerald-400 hover:text-accent-success-ink dark:hover:text-emerald-300 hover:bg-emerald-500/20 transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] text-xs sm:text-sm flex items-center gap-2 disabled:opacity-50"
           >
             {pdfStudentsLoading ? (
               <div className="w-4 h-4 border-2 border-emerald-500 border-t-transparent rounded-full animate-spin" />

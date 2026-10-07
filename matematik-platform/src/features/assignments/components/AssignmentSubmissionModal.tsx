@@ -132,14 +132,14 @@ export function AssignmentSubmissionModal({
                 className={`rounded-2xl border p-4 ${isLight ? 'border-emerald-200 bg-emerald-50' : 'border-emerald-500/30 bg-emerald-500/10'}`}
               >
                 <div className="mb-2 flex items-center justify-between">
-                  <span className="text-sm font-bold text-emerald-500">
+                  <span className="text-sm font-bold text-accent-success-ink">
                     Uğur Hoca&apos;nın Notu
                   </span>
-                  <div className="rounded-lg bg-emerald-500 px-3 py-1 text-xs font-bold text-white dark:text-white">
+                  <div className="rounded-lg bg-emerald-500 px-3 py-1 text-xs font-bold text-slate-950 dark:text-slate-950">
                     {activeSubmission.grade ?? '-'} / 100
                   </div>
                 </div>
-                <p className="text-sm leading-relaxed text-emerald-400">
+                <p className="text-sm leading-relaxed text-accent-success-ink">
                   {activeSubmission.feedback ||
                     'Harika iş çıkarmışsın! Başarılarının devamını dilerim.'}
                 </p>

@@ -286,7 +286,7 @@ export function HomeHeroSection({
                 className="font-display text-2xl xs:text-3xl font-black leading-tight tracking-tight sm:text-5xl lg:text-[3.25rem] text-primary"
               >
                 <span>Matematikten Korkma,</span><br />
-                <span className="text-[#58cc02] dark:text-[#61e002]">
+                <span className="text-green-ink dark:text-[#61e002]">
                   Eğlenerek Zirveye Çık!
                 </span>
               </h1>
@@ -390,11 +390,11 @@ export function HomeHeroSection({
 
             <div className="relative flex flex-col justify-between h-full space-y-3 sm:space-y-4">
               <div className="flex items-start justify-between gap-2">
-                <div className="flex h-10 w-10 sm:h-13 sm:w-13 shrink-0 items-center justify-center rounded-xl sm:rounded-2xl bg-white/20 backdrop-blur-md text-white dark:text-white shadow-inner border border-white/30 group-hover:scale-105 transition-transform duration-300">
+                <div className="flex h-10 w-10 sm:h-13 sm:w-13 shrink-0 items-center justify-center rounded-xl sm:rounded-2xl bg-white/20 backdrop-blur-md text-slate-950 dark:text-slate-950 shadow-inner border border-white/30 group-hover:scale-105 transition-transform duration-300">
                   <BookOpen className="h-5 w-5 sm:h-6 sm:w-6" />
                 </div>
-                <span className="inline-flex items-center gap-1 sm:gap-1.5 rounded-full bg-black/25 backdrop-blur-md px-2 py-0.5 sm:px-3 sm:py-1 text-[10px] sm:text-xs font-bold text-white dark:text-white border border-white/20 tracking-wide uppercase">
-                  <BookMarked className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-cyan-200" />
+                <span className="inline-flex items-center gap-1 sm:gap-1.5 rounded-full bg-black/25 backdrop-blur-md px-2 py-0.5 sm:px-3 sm:py-1 text-[10px] sm:text-xs font-bold text-primary-shade-fg border border-white/20 tracking-wide uppercase">
+                  <BookMarked className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-primary-shade-fg" />
                   Test & Soru
                 </span>
               </div>
@@ -437,11 +437,11 @@ export function HomeHeroSection({
 
             <div className="relative flex flex-col justify-between h-full space-y-3 sm:space-y-4">
               <div className="flex items-start justify-between gap-2">
-                <div className="flex h-10 w-10 sm:h-13 sm:w-13 shrink-0 items-center justify-center rounded-xl sm:rounded-2xl bg-white/20 backdrop-blur-md text-white dark:text-white shadow-inner border border-white/30 group-hover:scale-105 transition-transform duration-300">
+                <div className="flex h-10 w-10 sm:h-13 sm:w-13 shrink-0 items-center justify-center rounded-xl sm:rounded-2xl bg-white/20 backdrop-blur-md text-slate-950 dark:text-slate-950 shadow-inner border border-white/30 group-hover:scale-105 transition-transform duration-300">
                   <Gamepad2 className="h-5 w-5 sm:h-6 sm:w-6" />
                 </div>
-                <span className="inline-flex items-center gap-1 sm:gap-1.5 rounded-full bg-black/25 backdrop-blur-md px-2 py-0.5 sm:px-3 sm:py-1 text-[10px] sm:text-xs font-bold text-white dark:text-white border border-white/20 tracking-wide uppercase">
-                  <Sparkles className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-amber-300" />
+                <span className="inline-flex items-center gap-1 sm:gap-1.5 rounded-full bg-black/25 backdrop-blur-md px-2 py-0.5 sm:px-3 sm:py-1 text-[10px] sm:text-xs font-bold text-primary-shade-fg border border-white/20 tracking-wide uppercase">
+                  <Sparkles className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-primary-shade-fg" />
                   18 Oyun
                 </span>
               </div>
@@ -450,7 +450,7 @@ export function HomeHeroSection({
                 <h2 className="font-display text-base sm:text-2xl font-black tracking-tight flex items-center gap-2 text-slate-950 dark:text-slate-950">
                   Oyunlar
                 </h2>
-                <p className="mt-0.5 sm:mt-1 text-[11px] sm:text-sm text-white/90 leading-snug sm:leading-relaxed line-clamp-2">
+                <p className="mt-0.5 sm:mt-1 text-[11px] sm:text-sm text-slate-950 dark:text-slate-950 leading-snug sm:leading-relaxed line-clamp-2">
                   Zihinden işlem, koordinat ve hız oyunlarıyla eğlenerek öğren, reflekslerini geliştir!
                 </p>
               </div>
@@ -534,11 +534,11 @@ export function HomeHeroSection({
 
             <div className="relative flex flex-col justify-between h-full space-y-3 sm:space-y-4">
               <div className="flex items-start justify-between gap-2">
-                <div className="flex h-10 w-10 sm:h-13 sm:w-13 shrink-0 items-center justify-center rounded-xl sm:rounded-2xl bg-white/20 backdrop-blur-md text-white dark:text-white shadow-inner border border-white/30 group-hover:scale-105 transition-transform duration-300">
-                  <Flame className="h-5 w-5 sm:h-6 sm:w-6 text-yellow-200" />
+                <div className="flex h-10 w-10 sm:h-13 sm:w-13 shrink-0 items-center justify-center rounded-xl sm:rounded-2xl bg-white/20 backdrop-blur-md text-slate-950 dark:text-slate-950 shadow-inner border border-white/30 group-hover:scale-105 transition-transform duration-300">
+                  <Flame className="h-5 w-5 sm:h-6 sm:w-6 text-slate-950 dark:text-slate-950" />
                 </div>
-                <span className="inline-flex items-center gap-1 sm:gap-1.5 rounded-full bg-black/25 backdrop-blur-md px-2 py-0.5 sm:px-3 sm:py-1 text-[10px] sm:text-xs font-bold text-white dark:text-white border border-white/20 tracking-wide uppercase">
-                  <Sparkles className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-yellow-300" />
+                <span className="inline-flex items-center gap-1 sm:gap-1.5 rounded-full bg-black/25 backdrop-blur-md px-2 py-0.5 sm:px-3 sm:py-1 text-[10px] sm:text-xs font-bold text-primary-shade-fg border border-white/20 tracking-wide uppercase">
+                  <Sparkles className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-primary-shade-fg" />
                   4 Görev
                 </span>
               </div>

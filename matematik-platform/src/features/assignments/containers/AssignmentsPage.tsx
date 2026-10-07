@@ -477,7 +477,7 @@ export default function OdevlerPage({
 
                   <div className="flex items-center justify-between flex-wrap gap-3">
                     {isSubmitted ? (
-                      <div className="flex items-center gap-2 text-emerald-500 text-sm font-bold">
+                      <div className="flex items-center gap-2 text-accent-success-ink text-sm font-bold">
                         <CheckCircle2 className="w-5 h-5" aria-hidden="true" />
                         Puan:{' '}
                         {submission.grade !== null && submission.grade !== undefined

@@ -228,7 +228,7 @@ export function SpotTheMistakeModal({ isOpen, onClose }: SpotTheMistakeModalProp
                   <div className="flex items-center gap-2 font-bold mb-2">
                     {isCorrectChoice ? (
                       <>
-                        <CheckCircle2 className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
+                        <CheckCircle2 className="w-5 h-5 text-accent-success-ink dark:text-emerald-400" />
                         <span className="text-emerald-700 dark:text-emerald-300">Harika Teşhis! İlk hatayı doğru buldun.</span>
                       </>
                     ) : (
@@ -255,7 +255,7 @@ export function SpotTheMistakeModal({ isOpen, onClose }: SpotTheMistakeModalProp
                     </div>
                     <div className="sm:text-right border-t sm:border-t-0 sm:border-l border-slate-200 dark:border-white/10 sm:pl-3 pt-2 sm:pt-0">
                       <span className="text-[11px] text-slate-500 dark:text-slate-400 block">Doğru Sonuç:</span>
-                      <span className="text-emerald-600 dark:text-emerald-400 font-bold">
+                      <span className="text-accent-success-ink dark:text-emerald-400 font-bold">
                         <MathText>{currentItem.correctFinalResult}</MathText>
                       </span>
                     </div>

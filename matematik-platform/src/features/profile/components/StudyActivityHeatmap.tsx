@@ -192,13 +192,13 @@ export default function StudyActivityHeatmap({
       {/* Başlık ve Özet Sayaçlar */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between border-b pb-4 border-slate-200/60 dark:border-white/10">
         <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-600 text-white dark:text-white shadow-md shadow-emerald-500/20">
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-600 text-slate-950 dark:text-slate-950 shadow-md shadow-emerald-500/20">
             <Calendar className="h-5 w-5" />
           </div>
           <div>
             <h3 className="font-display text-sm sm:text-base font-bold flex items-center gap-2">
               <span>Yıllık Soru Çözüm Isı Haritası</span>
-              <span className="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
+              <span className="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-emerald-500/20 text-accent-success-ink border border-emerald-500/30">
                 365 Gün
               </span>
             </h3>
@@ -211,9 +211,9 @@ export default function StudyActivityHeatmap({
         {/* 3 İstatistik Rozeti */}
         <div className="flex flex-wrap items-center gap-2 text-xs">
           <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-white/5 font-semibold">
-            <TrendingUp className="h-3.5 w-3.5 text-emerald-500" />
+            <TrendingUp className="h-3.5 w-3.5 text-accent-success-ink" />
             <span className="text-slate-600 dark:text-slate-300">Toplam:</span>
-            <strong className="text-emerald-500 dark:text-emerald-400 font-mono">
+            <strong className="text-accent-success-ink dark:text-emerald-400 font-mono">
               {stats.totalSolved} Soru
             </strong>
           </div>
@@ -288,11 +288,11 @@ export default function StudyActivityHeatmap({
                         : 'bg-emerald-900/60 border-emerald-700/60 hover:bg-emerald-800';
                     } else if (cell.level === 2) {
                       bgClass = isLight
-                        ? 'bg-emerald-400 border-emerald-500 hover:bg-emerald-500 text-white'
+                        ? 'bg-emerald-400 border-emerald-500 hover:bg-emerald-500 text-slate-950'
                         : 'bg-emerald-700 border-emerald-500 hover:bg-emerald-600';
                     } else if (cell.level === 3) {
                       bgClass = isLight
-                        ? 'bg-emerald-600 border-emerald-700 hover:bg-emerald-700 text-white'
+                        ? 'bg-emerald-600 border-emerald-700 hover:bg-emerald-700 text-slate-950 hover:text-white dark:hover:text-white'
                         : 'bg-emerald-500 border-emerald-400 hover:bg-emerald-400 shadow-sm shadow-emerald-500/20';
                     } else {
                       bgClass = isLight
@@ -333,7 +333,7 @@ export default function StudyActivityHeatmap({
         <div className="flex items-center gap-2 min-h-[22px]">
           {activeDayForInfo ? (
             <div className="flex items-center gap-1.5 text-slate-700 dark:text-slate-200">
-              <span className="font-semibold text-emerald-500 dark:text-emerald-400">
+              <span className="font-semibold text-accent-success-ink dark:text-emerald-400">
                 {formatTrDate(activeDayForInfo.date)}:
               </span>
               <span className="font-bold">

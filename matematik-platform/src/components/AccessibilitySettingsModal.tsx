@@ -168,7 +168,7 @@ export function AccessibilitySettingsModal({
                     }`}
                   >
                     <strong className="block font-bold">{opt.title}</strong>
-                    <span className={`text-[10px] block mt-0.5 ${active ? 'text-brand-primary-soft' : 'text-slate-500'}`}>
+                    <span className={`text-[10px] block mt-0.5 ${active ? 'text-slate-950 dark:text-slate-950' : 'text-slate-500'}`}>
                       {opt.desc}
                     </span>
                   </button>
@@ -212,7 +212,7 @@ export function AccessibilitySettingsModal({
             <div className="rounded-2xl border border-slate-200 dark:border-white/10 p-4 bg-slate-50/50 dark:bg-slate-950/30 flex items-start justify-between gap-3">
               <div className="space-y-1">
                 <div className="flex items-center gap-1.5 text-xs font-bold text-slate-900 dark:text-white">
-                  <MoveHorizontal className="w-4 h-4 text-emerald-500" />
+                  <MoveHorizontal className="w-4 h-4 text-accent-success-ink" />
                   <span>Geniş Şık Aralığı</span>
                 </div>
                 <p className="text-[11px] text-slate-500 dark:text-slate-400">

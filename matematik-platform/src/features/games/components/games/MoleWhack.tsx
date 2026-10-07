@@ -199,7 +199,7 @@ export function MoleWhack({
       <div className="mb-6 flex flex-wrap items-center justify-between gap-4 border-b border-white/10 pb-4">
         <div className="flex items-center gap-3">
           <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-tr from-emerald-500 to-teal-600 shadow-lg shadow-emerald-500/30">
-            <Hammer className="h-7 w-7 text-white dark:text-white" />
+            <Hammer className="h-7 w-7 text-slate-950 dark:text-slate-950" />
           </div>
           <div>
             <h2 className="font-display text-2xl font-bold text-emerald-300">
@@ -236,7 +236,7 @@ export function MoleWhack({
       {gameState === 'idle' && (
         <div className="py-12 text-center">
           <div className="mx-auto mb-6 flex h-24 w-24 items-center justify-center rounded-full bg-gradient-to-tr from-emerald-500 to-teal-500 shadow-xl shadow-emerald-500/40">
-            <Hammer className="h-12 w-12 text-white dark:text-white" />
+            <Hammer className="h-12 w-12 text-slate-950 dark:text-slate-950" />
           </div>
           <h3 className="text-2xl font-bold text-white dark:text-white">Çekiçleri Hazırla!</h3>
           <p className="mx-auto mt-2 max-w-md text-sm text-slate-300">
@@ -321,7 +321,7 @@ export function MoleWhack({
                           className={`mt-1 rounded-lg px-2.5 py-0.5 font-display text-base font-black shadow-md border ${
                             activeMole.isHit
                               ? activeMole.hitSuccess
-                                ? 'bg-emerald-500 text-white border-emerald-300'
+                                ? 'bg-emerald-500 text-slate-950 border-emerald-300'
                                 : 'bg-red-600 text-white border-red-300'
                               : 'bg-amber-100 text-slate-950 border-amber-400'
                           }`}

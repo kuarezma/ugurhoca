@@ -128,7 +128,7 @@ export function SubmitQuestionModal({
         <div className="p-5 sm:p-6">
           {isSubmitted ? (
             <div className="text-center py-6 space-y-4">
-              <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
+              <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-emerald-500/20 text-accent-success-ink border border-emerald-500/30">
                 <CheckCircle2 className="h-7 w-7" />
               </div>
               <div>

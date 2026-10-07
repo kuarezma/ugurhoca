@@ -132,7 +132,7 @@ export default function ParentReportModal({
           {/* Header */}
           <div className="flex items-center justify-between border-b border-slate-200 dark:border-white/10 px-6 py-4 bg-slate-50 dark:bg-slate-950/60">
             <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-600 text-white dark:text-white shadow-md">
+              <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-600 text-slate-950 dark:text-slate-950 shadow-md">
                 <FileSpreadsheet className="h-5 w-5" />
               </div>
               <div>
@@ -175,16 +175,16 @@ export default function ParentReportModal({
                 </div>
                 <div className="text-left sm:text-right">
                   <p className="text-base sm:text-lg font-bold text-slate-900 dark:text-white">{studentName}</p>
-                  <p className="text-xs font-semibold text-emerald-600 dark:text-emerald-400">{studentGrade}. Sınıf Öğrencisi</p>
+                  <p className="text-xs font-semibold text-accent-success-ink dark:text-emerald-400">{studentGrade}. Sınıf Öğrencisi</p>
                 </div>
               </div>
 
               {/* Metrics Grid */}
               <div className="grid grid-cols-2 gap-3 sm:gap-4 my-6">
                 <div className="rounded-2xl border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-white/5 p-4 text-center">
-                  <Target className="h-5 w-5 text-emerald-600 dark:text-emerald-400 mx-auto mb-1.5" />
+                  <Target className="h-5 w-5 text-accent-success-ink dark:text-emerald-400 mx-auto mb-1.5" />
                   <p className="text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">Hedef Tamamlama</p>
-                  <p className="text-2xl font-black text-emerald-600 dark:text-emerald-400">%{progressPercent}</p>
+                  <p className="text-2xl font-black text-accent-success-ink dark:text-emerald-400">%{progressPercent}</p>
                 </div>
                 <div className="rounded-2xl border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-white/5 p-4 text-center">
                   <Flame className="h-5 w-5 text-amber-600 dark:text-amber-400 mx-auto mb-1.5" />
@@ -209,7 +209,7 @@ export default function ParentReportModal({
                   {strongTopic && (
                     <div className="flex items-center justify-between">
                       <span className="text-slate-500 dark:text-slate-400">💪 En Başarılı Konu:</span>
-                      <span className="font-bold text-emerald-600 dark:text-emerald-300">{strongTopic}</span>
+                      <span className="font-bold text-accent-success-ink dark:text-emerald-300">{strongTopic}</span>
                     </div>
                   )}
                   {focusTopic && (
@@ -245,7 +245,7 @@ export default function ParentReportModal({
                 onClick={handleCopy}
                 className="flex items-center justify-center gap-2 rounded-2xl border border-slate-200 dark:border-white/10 bg-slate-50 hover:bg-slate-100 dark:bg-white/5 dark:hover:bg-white/10 px-4 py-3 text-sm font-semibold text-slate-700 dark:text-slate-200 transition-all active:scale-95"
               >
-                {copied ? (<Check className="h-4 w-4 text-emerald-500 dark:text-emerald-400" /> ): (<Copy className="h-4 w-4" />)}
+                {copied ? (<Check className="h-4 w-4 text-accent-success-ink dark:text-emerald-400" /> ): (<Copy className="h-4 w-4" />)}
                 <span>{copied ? 'Kopyalandı!' : 'Metni Kopyala'}</span>
               </button>
 

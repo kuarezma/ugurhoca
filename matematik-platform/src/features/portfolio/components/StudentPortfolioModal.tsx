@@ -280,7 +280,7 @@ export function StudentPortfolioModal({
                       </span>
                       {item.score !== undefined && (
                         <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500/20 text-emerald-300 flex items-center gap-1">
-                          <Star className="w-3 h-3 text-emerald-400 fill-emerald-400" /> {' '}
+                          <Star className="w-3 h-3 text-accent-success-ink fill-current" /> {' '}
                           {item.score} Puan
                         </span>
                       )}
@@ -314,7 +314,7 @@ export function StudentPortfolioModal({
                 {/* Öğretmen Geri Bildirimi */}
                 {item.teacherFeedback && (
                   <div className="p-3 rounded-xl bg-emerald-950/30 border border-emerald-500/20 space-y-1 print:bg-emerald-50 print:border-emerald-200">
-                    <p className="text-[10px] font-bold text-emerald-400 uppercase tracking-wider flex items-center gap-1">
+                    <p className="text-[10px] font-bold text-accent-success-ink uppercase tracking-wider flex items-center gap-1">
                       <Award className="w-3 h-3" /> Uğur Hoca&apos;nın Pedagojik Değerlendirmesi
                     </p>
                     <p className="text-xs text-emerald-200 print:text-emerald-900 leading-relaxed">

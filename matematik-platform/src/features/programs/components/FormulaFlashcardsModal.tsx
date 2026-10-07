@@ -732,7 +732,7 @@ export function FormulaFlashcardsModal({
               {/* Üst Bilgi */}
               <div className="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400">
                 <div className="flex items-center gap-1.5">
-                  <span className="rounded-lg bg-white/10 px-2.5 py-1 font-semibold text-brand-primary-soft">
+                  <span className="rounded-lg bg-white/10 px-2.5 py-1 font-semibold text-brand-ink">
                     {currentCard.subject}
                   </span>
                   {currentLeitner && (
@@ -903,7 +903,7 @@ export function FormulaFlashcardsModal({
             <span className="px-1.5 py-0.5 rounded bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 text-slate-700 dark:text-slate-300" title="Kutu 2: 3 Günlük">K2:{boxCounts[2]}</span>
             <span className="px-1.5 py-0.5 rounded bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 text-slate-700 dark:text-slate-300" title="Kutu 3: 7 Günlük">K3:{boxCounts[3]}</span>
             <span className="px-1.5 py-0.5 rounded bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 text-slate-700 dark:text-slate-300" title="Kutu 4: 14 Günlük">K4:{boxCounts[4]}</span>
-            <span className="px-1.5 py-0.5 rounded bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 text-emerald-600 dark:text-emerald-400" title="Kutu 5: Kalıcı (30 Gün)">K5:{boxCounts[5]}</span>
+            <span className="px-1.5 py-0.5 rounded bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 text-accent-success-ink dark:text-emerald-400" title="Kutu 5: Kalıcı (30 Gün)">K5:{boxCounts[5]}</span>
           </div>
 
           <button

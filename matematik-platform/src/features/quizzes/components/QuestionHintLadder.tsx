@@ -405,7 +405,7 @@ export function QuestionHintLadder({
       >
         {isSavedToMistakes ? (
           <>
-            <BookmarkCheck className="h-3.5 w-3.5 text-emerald-400" />
+            <BookmarkCheck className="h-3.5 w-3.5 text-accent-success-ink" />
             <span>Hata Defterinde Kayıtlı</span>
           </>
         ) : (
@@ -442,7 +442,7 @@ export function QuestionHintLadder({
               onClick={() => setActiveMode((m) => (m === 'ladder' ? 'socratic' : 'ladder'))}
               className={`hidden sm:inline-flex items-center gap-1 rounded-xl px-2.5 py-1 text-xs font-semibold transition ${
                 activeMode === 'socratic'
-                  ? 'bg-brand-primary/20 text-brand-primary-soft border border-brand-primary/30'
+                  ? 'bg-brand-primary/20 text-brand-ink border border-brand-primary/30'
                   : 'bg-white/5 text-slate-300 border border-white/10 hover:text-white'
               }`}
             >
@@ -477,7 +477,7 @@ export function QuestionHintLadder({
                 onClick={() => setActiveMode('ladder')}
                 className={`flex flex-1 items-center justify-center gap-1.5 rounded-lg py-1.5 text-xs font-semibold transition ${
                   activeMode === 'ladder'
-                    ? 'bg-brand-primary/20 text-brand-primary-soft shadow'
+                    ? 'bg-brand-primary/20 text-brand-ink shadow'
                     : 'text-slate-400 hover:text-white'
                 }`}
               >
@@ -489,7 +489,7 @@ export function QuestionHintLadder({
                 onClick={() => setActiveMode('socratic')}
                 className={`flex flex-1 items-center justify-center gap-1.5 rounded-lg py-1.5 text-xs font-semibold transition ${
                   activeMode === 'socratic'
-                    ? 'bg-brand-primary/20 text-brand-primary-soft shadow'
+                    ? 'bg-brand-primary/20 text-brand-ink shadow'
                     : 'text-slate-400 hover:text-white'
                 }`}
               >

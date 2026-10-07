@@ -41,7 +41,7 @@ const difficultyLabels: Record<MatMatikDifficulty, string> = {
 };
 
 const playerStyles: Record<MatMatikPlayer, string> = {
-  1: 'border-emerald-400 bg-emerald-500 text-white shadow-emerald-500/30',
+  1: 'border-emerald-400 bg-emerald-500 text-slate-950 shadow-emerald-500/30',
   2: 'border-rose-400 bg-rose-500 text-white shadow-rose-500/30',
 };
 

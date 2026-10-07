@@ -275,7 +275,7 @@ export default function ExamTrendChart({
             <div className="rounded-2xl border border-slate-200/80 dark:border-white/10 bg-slate-50 dark:bg-slate-950/40 p-3">
               <span className="text-[11px] text-slate-500 dark:text-slate-400 font-medium">Son Mat Neti</span>
               <div className="mt-1 flex items-baseline gap-1.5">
-                <span className="text-lg font-bold text-emerald-600 dark:text-emerald-400 font-mono">
+                <span className="text-lg font-bold text-accent-success-ink dark:text-emerald-400 font-mono">
                   {stats.latestMath}
                 </span>
                 <span className="text-[10px] text-slate-400">Net</span>
@@ -283,7 +283,7 @@ export default function ExamTrendChart({
                   <span
                     className={`ml-auto text-[10px] font-bold px-1.5 py-0.5 rounded-md ${
                       stats.mathGrowth > 0
-                        ? 'bg-emerald-500/15 text-emerald-600 dark:text-emerald-300'
+                        ? 'bg-emerald-500/15 text-accent-success-ink dark:text-emerald-300'
                         : 'bg-rose-500/15 text-rose-600 dark:text-rose-300'
                     }`}
                   >
@@ -315,7 +315,7 @@ export default function ExamTrendChart({
                   <span
                     className={`ml-auto text-[10px] font-bold px-1.5 py-0.5 rounded-md ${
                       stats.totalGrowth > 0
-                        ? 'bg-emerald-500/15 text-emerald-600 dark:text-emerald-300'
+                        ? 'bg-emerald-500/15 text-accent-success-ink dark:text-emerald-300'
                         : 'bg-rose-500/15 text-rose-600 dark:text-rose-300'
                     }`}
                   >
@@ -555,7 +555,7 @@ export default function ExamTrendChart({
               <div className="flex items-center gap-4 bg-white dark:bg-slate-900 px-3.5 py-2 rounded-xl border border-slate-200 dark:border-white/10 shadow-sm">
                 <div>
                   <span className="text-[10px] text-slate-400 block">Matematik Neti</span>
-                  <strong className="text-emerald-500 text-sm font-mono">{activePoint.trial.mathNet} Net</strong>
+                  <strong className="text-accent-success-ink text-sm font-mono">{activePoint.trial.mathNet} Net</strong>
                 </div>
                 <div className="h-7 w-px bg-slate-200 dark:bg-white/10" />
                 <div>

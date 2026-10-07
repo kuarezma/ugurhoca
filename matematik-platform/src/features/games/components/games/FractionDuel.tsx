@@ -146,10 +146,10 @@ export function FractionDuel({ onScore, scoreMultiplier }: GameComponentProps) {
           transition={{ duration: 0.5 }}
           className="mx-auto mb-6 flex h-32 w-32 items-center justify-center rounded-full bg-gradient-to-br from-green-400 to-emerald-500"
         >
-          <Trophy className="h-16 w-16 text-white dark:text-white" />
+          <Trophy className="h-16 w-16 text-slate-950 dark:text-slate-950" />
         </motion.div>
         <h2 className="mb-2 text-3xl font-bold text-primary">Süre Doldu!</h2>
-        <p className="mb-2 text-5xl font-bold text-green-400">{score} Puan</p>
+        <p className="mb-2 text-5xl font-bold text-green-ink">{score} Puan</p>
         <p className="mb-8 text-slate-400">Seviye {level}</p>
         <motion.button
           whileHover={{ scale: 1.05 }}
@@ -168,7 +168,7 @@ export function FractionDuel({ onScore, scoreMultiplier }: GameComponentProps) {
     <div className="mx-auto max-w-xl">
       <div className="mb-6 flex items-center justify-between">
         <div className="rounded-xl bg-black/50 px-4 py-2 font-bold text-white dark:text-white backdrop-blur-sm">
-          Puan: <span className="text-green-400">{score}</span>
+          Puan: <span className="text-slate-950 dark:text-green-400">{score}</span>
         </div>
         <div className="rounded-xl bg-black/50 px-4 py-2 font-bold text-white dark:text-white backdrop-blur-sm">
           Seviye <span className="text-rose-400">{level}</span>

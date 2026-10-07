@@ -79,7 +79,7 @@ export default function AdminSubmissionsModal({
               <div className="flex items-center gap-2 text-slate-400 text-xs sm:text-sm mt-0.5">
                 <span>Teslim Edilen: {submissions.length}</span>
                 <span>•</span>
-                <span className="text-emerald-400 font-medium">
+                <span className="text-accent-success-ink font-medium">
                   {gradedCount}/{submissions.length} Değerlendirildi
                 </span>
               </div>
@@ -144,7 +144,7 @@ export default function AdminSubmissionsModal({
                   {currentSubmission?.student_name || 'Öğrenci'}
                 </span>
                 {currentSubmission?.grade !== null && currentSubmission?.grade !== undefined && (
-                  <span className="inline-flex items-center gap-1 text-xs font-bold text-emerald-400 bg-emerald-500/15 px-2 py-0.5 rounded-md">
+                  <span className="inline-flex items-center gap-1 text-xs font-bold text-accent-success-ink bg-emerald-500/15 px-2 py-0.5 rounded-md">
                     <CheckCircle2 className="w-3 h-3" />
                     {currentSubmission.grade} Puan
                   </span>

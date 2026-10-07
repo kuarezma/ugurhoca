@@ -51,32 +51,32 @@ export function HomeFooter(_props: HomeFooterProps) {
             </h4>
             <ul className="space-y-1.5 text-xs text-slate-600 dark:text-slate-400">
               <li>
-                <SafeLink href="/icerikler" className="hover:text-brand-primary-soft transition">
+                <SafeLink href="/icerikler" className="hover:text-brand-ink transition">
                   Ders Notları & PDF'ler
                 </SafeLink>
               </li>
               <li>
-                <SafeLink href="/testler" className="hover:text-brand-primary-soft transition">
+                <SafeLink href="/testler" className="hover:text-brand-ink transition">
                   İnteraktif Testler
                 </SafeLink>
               </li>
               <li>
-                <SafeLink href="/programlar" className="hover:text-brand-primary-soft transition">
+                <SafeLink href="/programlar" className="hover:text-brand-ink transition">
                   LGS & YKS Rehberliği
                 </SafeLink>
               </li>
               <li>
-                <SafeLink href="/araclar" className="hover:text-brand-primary-soft transition">
+                <SafeLink href="/araclar" className="hover:text-brand-ink transition">
                   Matematik & Sınav Araçları
                 </SafeLink>
               </li>
               <li>
-                <SafeLink href="/oyunlar" className="hover:text-brand-primary-soft transition">
+                <SafeLink href="/oyunlar" className="hover:text-brand-ink transition">
                   Matematik Oyunları
                 </SafeLink>
               </li>
               <li>
-                <SafeLink href="/canli-ders" className="hover:text-brand-primary-soft transition">
+                <SafeLink href="/canli-ders" className="hover:text-brand-ink transition">
                   Canlı Ders Salonu
                 </SafeLink>
               </li>
@@ -90,24 +90,24 @@ export function HomeFooter(_props: HomeFooterProps) {
             </h4>
             <ul className="space-y-1.5 text-xs text-slate-600 dark:text-slate-400">
               <li>
-                <SafeLink href="/gizlilik" className="hover:text-brand-primary-soft transition">
+                <SafeLink href="/gizlilik" className="hover:text-brand-ink transition">
                   Gizlilik Politikası
                 </SafeLink>
               </li>
               <li>
-                <SafeLink href="/kvkk" className="hover:text-brand-primary-soft transition">
+                <SafeLink href="/kvkk" className="hover:text-brand-ink transition">
                   KVKK Aydınlatma Metni
                 </SafeLink>
               </li>
               <li>
-                <SafeLink href="/gizlilik#cerezler" className="hover:text-brand-primary-soft transition">
+                <SafeLink href="/gizlilik#cerezler" className="hover:text-brand-ink transition">
                   Çerez Tercihleri
                 </SafeLink>
               </li>
               <li>
                 <a
                   href="mailto:yasayanugur@gmail.com"
-                  className="hover:text-brand-primary-soft transition"
+                  className="hover:text-brand-ink transition"
                 >
                   Doğrudan İletişim (E-Posta)
                 </a>

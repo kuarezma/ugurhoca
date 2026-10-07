@@ -133,7 +133,7 @@ export function ExamTopicWeightMatrixModal({
               {criticalCount} Kritik Konu
             </span>
             <span>•</span>
-            <span className="inline-flex items-center gap-1 font-semibold text-emerald-600 dark:text-emerald-400">
+            <span className="inline-flex items-center gap-1 font-semibold text-accent-success-ink dark:text-emerald-400">
               <Award className="h-3.5 w-3.5" />
               {quickWinCount} Hızlı Net
             </span>

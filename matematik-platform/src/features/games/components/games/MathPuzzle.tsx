@@ -175,10 +175,10 @@ export function MathPuzzle({ onScore, scoreMultiplier }: GameComponentProps) {
           transition={{ duration: 0.5 }}
           className="w-32 h-32 mx-auto mb-6 bg-gradient-to-br from-green-400 to-emerald-500 rounded-full flex items-center justify-center"
         >
-          <Trophy className="w-16 h-16 text-white dark:text-white" />
+          <Trophy className="w-16 h-16 text-slate-950 dark:text-slate-950" />
         </motion.div>
         <h2 className="text-3xl font-bold text-primary mb-2">Süre Doldu!</h2>
-        <p className="text-5xl font-bold text-green-400 mb-2">{score} Puan</p>
+        <p className="text-5xl font-bold text-green-ink mb-2">{score} Puan</p>
         <p className="text-slate-400 mb-2">Seviye {level}'e ulaştın!</p>
         <p className="text-slate-400 mb-8">Harika bir performans!</p>
         <motion.button
@@ -198,7 +198,7 @@ export function MathPuzzle({ onScore, scoreMultiplier }: GameComponentProps) {
     <div className="max-w-xl mx-auto">
       <div className="flex justify-between items-center mb-8">
         <div className="px-4 py-2 bg-black/50 backdrop-blur-sm rounded-xl text-white dark:text-white font-bold">
-          Puan: <span className="text-green-400">{score}</span>
+          Puan: <span className="text-slate-950 dark:text-green-400">{score}</span>
         </div>
         <div className="px-4 py-2 bg-black/50 backdrop-blur-sm rounded-xl text-white dark:text-white font-bold">
           Seviye: <span className="text-purple-400">{level}</span>

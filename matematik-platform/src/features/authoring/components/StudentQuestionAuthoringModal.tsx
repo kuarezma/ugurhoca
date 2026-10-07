@@ -202,7 +202,7 @@ export function StudentQuestionAuthoringModal({
           </div>
 
           <div className="flex items-center gap-3 text-xs">
-            <span className="flex items-center gap-1 text-emerald-600 dark:text-emerald-400 font-medium">
+            <span className="flex items-center gap-1 text-accent-success-ink dark:text-emerald-400 font-medium">
               <CheckCircle2 className="w-4 h-4" />
               {approvedCount} Onaylı Soru
             </span>
@@ -306,7 +306,7 @@ export function StudentQuestionAuthoringModal({
                                 {opt}
                               </span>
                               {isCorrect && (
-                                <span className="text-[10px] font-bold text-emerald-600 dark:text-emerald-400">
+                                <span className="text-[10px] font-bold text-accent-success-ink dark:text-emerald-400">
                                   Doğru Cevap
                                 </span>
                               )}
@@ -436,7 +436,7 @@ export function StudentQuestionAuthoringModal({
                         name="correctIndex"
                         checked={correctIndex === item.idx}
                         onChange={() => setCorrectIndex(item.idx)}
-                        className="w-4 h-4 text-emerald-600 focus:ring-emerald-500"
+                        className="w-4 h-4 text-accent-success-ink focus:ring-emerald-500"
                       />
                       <label
                         htmlFor={`correct-${item.label}`}
@@ -444,7 +444,7 @@ export function StudentQuestionAuthoringModal({
                       >
                         {item.label}) Seçeneği
                         {correctIndex === item.idx && (
-                          <span className="ml-2 text-emerald-600 dark:text-emerald-400 font-semibold">
+                          <span className="ml-2 text-accent-success-ink dark:text-emerald-400 font-semibold">
                             (Doğru Cevap)
                           </span>
                         )}

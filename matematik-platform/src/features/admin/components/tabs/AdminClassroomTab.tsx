@@ -305,7 +305,7 @@ export default function AdminClassroomTab({
           <div className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white mt-2">
             {classStudents.length} {' '}<span className="text-sm font-semibold text-slate-500 dark:text-slate-400">Öğrenci</span>
           </div>
-          <div className="flex items-center gap-1.5 text-xs text-emerald-600 dark:text-emerald-400 mt-1">
+          <div className="flex items-center gap-1.5 text-xs text-accent-success-ink dark:text-emerald-400 mt-1">
             <CheckCircle2 className="w-3.5 h-3.5" />
             <span>{activeStudentsCount} Aktif Çalışıyor</span>
           </div>
@@ -519,7 +519,7 @@ export default function AdminClassroomTab({
                         </td>
                         <td className="py-3 px-4">
                           {item.latestSubmission ? (
-                            <span className="inline-flex items-center gap-1 text-emerald-600 dark:text-emerald-400 font-semibold">
+                            <span className="inline-flex items-center gap-1 text-accent-success-ink dark:text-emerald-400 font-semibold">
                               <CheckCircle2 className="w-3.5 h-3.5" />
                               Teslim Edildi
                               {item.latestSubmission.grade !== null && (
@@ -570,7 +570,7 @@ export default function AdminClassroomTab({
                             <button
                               type="button"
                               onClick={() => onOpenReportModal?.(student)}
-                              className="p-1.5 rounded-lg text-slate-500 dark:text-slate-400 hover:text-emerald-600 dark:hover:text-emerald-300 hover:bg-slate-100 dark:hover:bg-white/10 transition"
+                              className="p-1.5 rounded-lg text-slate-500 dark:text-slate-400 hover:text-accent-success-ink dark:hover:text-emerald-300 hover:bg-slate-100 dark:hover:bg-white/10 transition"
                               title="Gelişim karnesini aç & paylaş"
                             >
                               <FileSpreadsheet className="w-4 h-4" />
@@ -606,7 +606,7 @@ export default function AdminClassroomTab({
               </p>
             </div>
             <div className="flex items-center gap-3 text-xs">
-              <span className="flex items-center gap-1 text-emerald-600 dark:text-emerald-400 font-semibold">
+              <span className="flex items-center gap-1 text-accent-success-ink dark:text-emerald-400 font-semibold">
                 <CheckCircle2 className="w-3.5 h-3.5" /> Teslim Edildi
               </span>
               <span className="flex items-center gap-1 text-rose-600 dark:text-rose-400 font-semibold">
@@ -666,7 +666,7 @@ export default function AdminClassroomTab({
                         <span
                           className={`font-black ${
                             ratio >= 80
-                              ? 'text-emerald-600 dark:text-emerald-400'
+                              ? 'text-accent-success-ink dark:text-emerald-400'
                               : ratio >= 50
                                 ? 'text-amber-600 dark:text-amber-400'
                                 : 'text-rose-600 dark:text-rose-400'

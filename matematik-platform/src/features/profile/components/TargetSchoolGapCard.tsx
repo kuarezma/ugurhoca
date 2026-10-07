@@ -320,7 +320,7 @@ export default function TargetSchoolGapCard({
               </div>
               <div className="flex items-center gap-2">
                 <span className="opacity-75">Son Deneme ({activeTrial.title}):</span>
-                <strong className={comparison.isScoreReached ? 'text-emerald-600 dark:text-emerald-400' : 'text-amber-600 dark:text-amber-400'}>
+                <strong className={comparison.isScoreReached ? 'text-accent-success-ink dark:text-emerald-400' : 'text-amber-600 dark:text-amber-400'}>
                   {activeTrial.score.toFixed(1)} Puan
                 </strong>
                 <span className="font-bold">
@@ -413,7 +413,7 @@ export default function TargetSchoolGapCard({
                 : isLight ? 'bg-amber-50 border-amber-200 text-amber-950' : 'bg-amber-950/20 border-amber-500/30 text-amber-200'
             }`}>
               {comparison.isScoreReached ? (
-                <CheckCircle2 className="h-4 w-4 shrink-0 text-emerald-600 dark:text-emerald-400 mt-0.5" />
+                <CheckCircle2 className="h-4 w-4 shrink-0 text-accent-success-ink dark:text-emerald-400 mt-0.5" />
               ) : (
                 <AlertCircle className="h-4 w-4 shrink-0 text-amber-600 dark:text-amber-400 mt-0.5" />
               )}

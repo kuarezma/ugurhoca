@@ -254,7 +254,7 @@ function LiveLessonEditModalContent({
                       onClick={() => toggleStudent(s.id)}
                       className={`flex w-full items-center justify-between rounded-lg px-2.5 py-1.5 text-left text-xs transition ${
                         isChecked
-                          ? 'bg-brand-primary/15 text-brand-primary font-semibold'
+                          ? 'bg-brand-primary/15 text-brand-ink font-semibold'
                           : 'hover:bg-foreground/5 text-foreground/80'
                       }`}
                     >

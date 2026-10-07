@@ -161,7 +161,7 @@ export function SmartTopicDiagnostic({
       {!diagnosticResult ? (
         /* Temiz Durum (Yanlış yok) */
         <div className="flex flex-col items-center justify-center py-8 text-center space-y-3">
-          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-500/15 text-emerald-400 border border-emerald-500/25">
+          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-500/15 text-accent-success-ink border border-emerald-500/25">
             <ShieldCheck className="h-6 w-6" />
           </div>
           <h3 className={`font-bold text-base ${isLight ? 'text-slate-800' : 'text-white'}`}>
@@ -294,7 +294,7 @@ export function SmartTopicDiagnostic({
               }`}
             >
               <div>
-                <span className="text-[10px] font-bold text-emerald-400 uppercase tracking-wider">
+                <span className="text-[10px] font-bold text-accent-success-ink uppercase tracking-wider">
                   Adım 3: İlerleme
                 </span>
                 <h4 className={`text-xs font-bold mt-1 ${isLight ? 'text-slate-800' : 'text-white'}`}>
@@ -305,7 +305,7 @@ export function SmartTopicDiagnostic({
                 </p>
               </div>
               <div className="mt-3 text-right">
-                <span className="text-[11px] font-bold text-emerald-400 flex items-center justify-end gap-1">
+                <span className="text-[11px] font-bold text-accent-success-ink flex items-center justify-end gap-1">
                   <CheckCircle2 className="h-3 w-3" />
                   <span>Sürekli Güncel</span>
                 </span>

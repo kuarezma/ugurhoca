@@ -1386,7 +1386,7 @@ export default function AdminPage() {
                           tab.badgeAlert
                             ? 'bg-amber-400 text-slate-950 animate-pulse'
                             : activeTab === tab.id
-                              ? 'bg-white/25 text-white'
+                              ? 'bg-white/25 text-slate-950 dark:text-slate-950'
                               : 'bg-slate-100 dark:bg-white/10 text-slate-600 dark:text-slate-400'
                         }`}
                       >

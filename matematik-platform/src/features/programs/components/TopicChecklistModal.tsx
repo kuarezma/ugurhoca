@@ -193,7 +193,7 @@ export function TopicChecklistModal({
         {/* Başlık ve Sınıf Seçimi */}
         <div className="no-print flex flex-col gap-3 border-b border-slate-200/80 dark:border-white/10 bg-slate-50/80 dark:bg-slate-950/80 px-4 sm:px-5 py-3 sm:py-4 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
-            <div className="flex h-9 w-9 sm:h-10 sm:w-10 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-600 text-white dark:text-white shadow-md">
+            <div className="flex h-9 w-9 sm:h-10 sm:w-10 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-600 text-slate-950 dark:text-slate-950 shadow-md">
               <ListChecks className="h-4 w-4 sm:h-5 sm:w-5" />
             </div>
             <div className="min-w-0">
@@ -245,7 +245,7 @@ export function TopicChecklistModal({
         {/* İlerleme Göstergesi Bento Bar */}
         <div className="border-b border-slate-100 dark:border-white/5 bg-slate-50/50 dark:bg-white/[0.02] p-4 sm:px-6">
           <div className="flex items-center justify-between text-xs font-bold mb-2">
-            <div className="flex items-center gap-2 text-emerald-600 dark:text-emerald-400">
+            <div className="flex items-center gap-2 text-accent-success-ink dark:text-emerald-400">
               <Sparkles className="h-4 w-4" />
               <span>{GRADE_LABELS[selectedGrade]} Müfredat İlerlemesi</span>
             </div>
@@ -328,7 +328,7 @@ export function TopicChecklistModal({
                   >
                     <RotateCcw className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
                     <span>Tekrar</span>
-                    {status.reviewed && (<CheckCircle2 className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-emerald-500" />)}
+                    {status.reviewed && (<CheckCircle2 className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-accent-success-ink" />)}
                   </button>
                 </div>
               </div>

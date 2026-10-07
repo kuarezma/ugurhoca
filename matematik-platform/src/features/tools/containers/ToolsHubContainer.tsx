@@ -103,7 +103,7 @@ export function ToolsHubContainer() {
 
           <div className="mt-6 flex flex-wrap items-center justify-center gap-4 text-xs text-secondary">
             <div className="flex items-center gap-1.5">
-              <Shield className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
+              <Shield className="h-4 w-4 text-accent-success-ink dark:text-emerald-400" />
               <span>Verileriniz Kaydedilmez</span>
             </div>
             <span>•</span>

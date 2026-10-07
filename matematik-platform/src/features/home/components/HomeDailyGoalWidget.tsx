@@ -136,7 +136,7 @@ export function HomeDailyGoalWidget({ isLight }: { isLight: boolean }) {
                     >
                       Günlük Soru Hedefim
                       {isCompleted && (
-                        <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/15 px-2 py-0.5 text-[11px] font-bold text-emerald-500">
+                        <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/15 px-2 py-0.5 text-[11px] font-bold text-accent-success-ink">
                           <CheckCircle2 className="h-3.5 w-3.5" /> Hedef Tamam!
                         </span>
                       )}
@@ -181,7 +181,7 @@ export function HomeDailyGoalWidget({ isLight }: { isLight: boolean }) {
               <div className="mt-4">
                 <div className="flex items-center justify-between text-xs font-semibold mb-1.5">
                   <span className={isLight ? 'text-slate-700' : 'text-slate-300'}>
-                    <strong data-testid="solved-count" className="text-sm font-bold text-emerald-500">{goalData.solved}</strong> {' '}/ {goalData.target} Soru
+                    <strong data-testid="solved-count" className="text-sm font-bold text-accent-success-ink">{goalData.solved}</strong> {' '}/ {goalData.target} Soru
                   </span>
                   <div className="flex items-center gap-2">
                     <span className={`text-[11px] ${isLight ? 'text-slate-500' : 'text-slate-400'}`}>
@@ -238,7 +238,7 @@ export function HomeDailyGoalWidget({ isLight }: { isLight: boolean }) {
                 <button
                   type="button"
                   onClick={() => handleAdd(5)}
-                  className="flex-1 sm:flex-initial inline-flex items-center justify-center gap-1 rounded-xl bg-emerald-600/20 border border-emerald-500/30 px-3 py-2 text-xs font-bold text-emerald-400 hover:bg-emerald-600/30 transition active:scale-95"
+                  className="flex-1 sm:flex-initial inline-flex items-center justify-center gap-1 rounded-xl bg-emerald-600/20 border border-emerald-500/30 px-3 py-2 text-xs font-bold text-accent-success-ink hover:bg-emerald-600/30 transition active:scale-95"
                   aria-label="5 soru çözüldü ekle"
                 >
                   <Sparkles className="h-3.5 w-3.5" /> +5 Soru
@@ -265,7 +265,7 @@ export function HomeDailyGoalWidget({ isLight }: { isLight: boolean }) {
                 }`}
                 title="Soru ve seri verileriniz yalnızca tarayıcınızda güvenle saklanır, sunucuya aktarılmaz."
               >
-                <ShieldCheck className="h-3.5 w-3.5 text-emerald-500" />
+                <ShieldCheck className="h-3.5 w-3.5 text-accent-success-ink" />
                 <span>Gizli & Yerel</span>
               </div>
             </div>
@@ -353,7 +353,7 @@ export function HomeDailyGoalWidget({ isLight }: { isLight: boolean }) {
                   <span
                     className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
                       allQuestsCompleted
-                        ? 'bg-emerald-500/20 text-emerald-600 dark:text-emerald-400'
+                        ? 'bg-emerald-500/20 text-accent-success-ink dark:text-emerald-400'
                         : isLight
                         ? 'bg-indigo-100 text-indigo-800'
                         : 'bg-indigo-500/20 text-indigo-300'
@@ -398,7 +398,7 @@ export function HomeDailyGoalWidget({ isLight }: { isLight: boolean }) {
                   >
                     <div className="mt-0.5">
                       {questStatus.challengeDone ? (
-                        <CheckCircle2 className="h-4 w-4 text-emerald-500 shrink-0" />
+                        <CheckCircle2 className="h-4 w-4 text-accent-success-ink shrink-0" />
                       ) : (
                         <Circle className="h-4 w-4 text-slate-400 shrink-0" />
                       )}
@@ -409,7 +409,7 @@ export function HomeDailyGoalWidget({ isLight }: { isLight: boolean }) {
                           1. Isınma · 10 XP
                         </span>
                         {questStatus.challengeDone && (
-                          <span className="text-[10px] font-bold text-emerald-500">Bitti</span>
+                          <span className="text-[10px] font-bold text-accent-success-ink">Bitti</span>
                         )}
                       </div>
                       <p
@@ -441,7 +441,7 @@ export function HomeDailyGoalWidget({ isLight }: { isLight: boolean }) {
                   >
                     <div className="mt-0.5">
                       {questStatus.targetProgressDone ? (
-                        <CheckCircle2 className="h-4 w-4 text-emerald-500 shrink-0" />
+                        <CheckCircle2 className="h-4 w-4 text-accent-success-ink shrink-0" />
                       ) : (
                         <Circle className="h-4 w-4 text-slate-400 shrink-0" />
                       )}
@@ -489,7 +489,7 @@ export function HomeDailyGoalWidget({ isLight }: { isLight: boolean }) {
                       aria-label="Formül veya hata tekrarını tamamlandı işaretle"
                     >
                       {questStatus.reviewDone ? (
-                        <CheckCircle2 className="h-4 w-4 text-emerald-500 shrink-0" />
+                        <CheckCircle2 className="h-4 w-4 text-accent-success-ink shrink-0" />
                       ) : (
                         <Circle className="h-4 w-4 text-slate-400 hover:text-indigo-400 shrink-0 transition" />
                       )}
@@ -500,7 +500,7 @@ export function HomeDailyGoalWidget({ isLight }: { isLight: boolean }) {
                           3. Kalıcılık · 15 XP
                         </span>
                         {questStatus.reviewDone && (
-                          <span className="text-[10px] font-bold text-emerald-500">Bitti</span>
+                          <span className="text-[10px] font-bold text-accent-success-ink">Bitti</span>
                         )}
                       </div>
                       <p
@@ -533,7 +533,7 @@ export function HomeDailyGoalWidget({ isLight }: { isLight: boolean }) {
                         : 'bg-emerald-500/15 border-emerald-500/30 text-emerald-300'
                     }`}
                   >
-                    <Sparkles className="h-4 w-4 text-emerald-500" />
+                    <Sparkles className="h-4 w-4 text-accent-success-ink" />
                     <span>Tebrikler! Bugünkü tüm görevleri tamamladın (+50 XP). Seri Kalkanın güvende!</span>
                   </div>
                 )}

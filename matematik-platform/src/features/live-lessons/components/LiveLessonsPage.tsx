@@ -343,7 +343,7 @@ export function LiveLessonsPage({ initialLessons, students, user }: Props) {
         <section className="relative overflow-hidden rounded-3xl border border-border/80 bg-card/80 p-6 shadow-xl backdrop-blur-xl sm:p-8">
           <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
             <div className="space-y-2">
-              <div className="inline-flex items-center gap-2 rounded-full border border-brand-primary/30 bg-brand-primary/10 px-3 py-1 text-xs font-bold text-brand-primary dark:text-brand-primary-light">
+              <div className="inline-flex items-center gap-2 rounded-full border border-brand-primary/30 bg-brand-primary/10 px-3 py-1 text-xs font-bold text-brand-ink dark:text-brand-primary-light">
                 <Video className="h-3.5 w-3.5" />
                 <span>Uğur Hoca Canlı Matematik Sınıfı</span>
               </div>
@@ -440,7 +440,7 @@ export function LiveLessonsPage({ initialLessons, students, user }: Props) {
             {/* 2. Planlanan Ders Sayısı */}
             <div className="rounded-2xl border border-border/60 bg-foreground/[0.02] p-4 transition-transform hover:scale-[1.02]">
               <div className="flex items-center gap-2 text-xs font-semibold text-foreground/60">
-                <Calendar className="h-4 w-4 text-brand-primary" />
+                <Calendar className="h-4 w-4 text-brand-ink" />
                 <span>Yaklaşan Ders</span>
               </div>
               <p className="mt-2 text-xl font-black text-foreground sm:text-2xl">
@@ -452,7 +452,7 @@ export function LiveLessonsPage({ initialLessons, students, user }: Props) {
             {/* 3. Toplam Süre */}
             <div className="rounded-2xl border border-border/60 bg-foreground/[0.02] p-4 transition-transform hover:scale-[1.02]">
               <div className="flex items-center gap-2 text-xs font-semibold text-foreground/60">
-                <Clock className="h-4 w-4 text-emerald-500" />
+                <Clock className="h-4 w-4 text-accent-success-ink" />
                 <span>Toplam Süre</span>
               </div>
               <p className="mt-2 text-xl font-black text-foreground sm:text-2xl">
@@ -480,7 +480,7 @@ export function LiveLessonsPage({ initialLessons, students, user }: Props) {
           <section className="mt-6 rounded-3xl border border-brand-primary/30 bg-card p-6 shadow-2xl backdrop-blur-xl animate-in slide-in-from-top-4 duration-300">
             <div className="flex items-center justify-between border-b border-border pb-4">
               <div className="flex items-center gap-2">
-                <Sparkles className="h-5 w-5 text-brand-primary" />
+                <Sparkles className="h-5 w-5 text-brand-ink" />
                 <h2 className="text-lg font-bold text-foreground">Yeni Canlı Ders Planla</h2>
               </div>
               <button
@@ -539,7 +539,7 @@ export function LiveLessonsPage({ initialLessons, students, user }: Props) {
                 <div className="rounded-2xl border border-border p-4 bg-foreground/[0.02] space-y-3">
                   <div className="flex items-center justify-between">
                     <span className="text-xs font-semibold text-foreground/90">Öğrencileri Seç</span>
-                    <span className="text-xs text-brand-primary font-bold">
+                    <span className="text-xs text-brand-ink font-bold">
                       {selectedStudentIds.length} öğrenci seçildi
                     </span>
                   </div>
@@ -562,7 +562,7 @@ export function LiveLessonsPage({ initialLessons, students, user }: Props) {
                           onClick={() => toggleStudent(s.id)}
                           className={`flex items-center justify-between rounded-xl border p-2 text-left text-xs transition ${
                             isChecked
-                              ? 'border-brand-primary bg-brand-primary/10 text-brand-primary font-semibold'
+                              ? 'border-brand-primary bg-brand-primary/10 text-brand-ink font-semibold'
                               : 'border-border/70 hover:bg-foreground/5 text-foreground/80'
                           }`}
                         >
@@ -695,7 +695,7 @@ export function LiveLessonsPage({ initialLessons, students, user }: Props) {
                 <span
                   className={`rounded-full px-2 py-0.5 text-[10px] font-extrabold ${
                     activeTab === 'upcoming'
-                      ? 'bg-white/20 text-white'
+                      ? 'bg-white/20 text-slate-950 dark:text-slate-950'
                       : 'bg-foreground/10 text-foreground/70'
                   }`}
                 >
@@ -717,7 +717,7 @@ export function LiveLessonsPage({ initialLessons, students, user }: Props) {
                 <span
                   className={`rounded-full px-2 py-0.5 text-[10px] font-extrabold ${
                     activeTab === 'past'
-                      ? 'bg-white/20 text-white'
+                      ? 'bg-white/20 text-slate-950 dark:text-slate-950'
                       : 'bg-foreground/10 text-foreground/70'
                   }`}
                 >

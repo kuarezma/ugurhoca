@@ -230,7 +230,7 @@ export function HomeDailyChallenge({ isLight }: { isLight: boolean }) {
                     </div>
 
                     {isAnswered && isCorrectChoice && (
-                      <CheckCircle2 className="h-5 w-5 text-emerald-400 shrink-0" />
+                      <CheckCircle2 className="h-5 w-5 text-accent-success-ink shrink-0" />
                     )}
                     {isAnswered && isSelected && !isCorrectChoice && (
                       <XCircle className="h-5 w-5 text-rose-400 shrink-0" />
@@ -256,9 +256,7 @@ export function HomeDailyChallenge({ isLight }: { isLight: boolean }) {
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
                       {isCorrect ? (
-                        <div className={`flex items-center gap-2 font-bold text-sm ${
-                          isLight ? 'text-emerald-600' : 'text-emerald-400'
-                        }`}>
+                        <div className="flex items-center gap-2 font-bold text-sm text-accent-success-ink">
                           <Award className="h-5 w-5" />
                           <span>Tebrikler! Doğru Cevap.</span>
                         </div>

@@ -245,7 +245,7 @@ export function QuickFormulaCheatSheetModal({
               className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-slate-300 dark:border-white/10 bg-slate-100 dark:bg-white/5 hover:bg-slate-200 dark:hover:bg-white/10 text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white text-xs font-bold transition shadow-sm"
               title="Yazıcıdan Çıkart veya PDF Kaydet"
             >
-              <Printer className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
+              <Printer className="h-4 w-4 text-accent-success-ink dark:text-emerald-400" />
               <span className="hidden sm:inline">Yazdır / PDF</span>
             </button>
 

@@ -198,7 +198,7 @@ export default function AdminQuestionImportFields({
                         <p className="truncate text-sm font-medium text-slate-100">
                           {index + 1}. {question.question}
                         </p>
-                        <p className="mt-2 text-xs text-emerald-400">
+                        <p className="mt-2 text-xs text-accent-success-ink">
                           Doğru: {OPTION_LETTERS[question.correct_index]}
                         </p>
                       </div>

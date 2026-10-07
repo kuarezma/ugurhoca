@@ -26,7 +26,7 @@ export function QuizQuestionPalette({
     <div className="rounded-2xl border border-slate-200 dark:border-white/10 bg-white/95 dark:bg-slate-900/80 p-4 shadow-xl backdrop-blur-md">
       <div className="mb-3 flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <Sparkles className="h-4 w-4 text-brand-primary dark:text-brand-primary-soft" />
+          <Sparkles className="h-4 w-4 text-brand-ink dark:text-brand-primary-soft" />
           <h3 className="font-display text-sm font-bold text-slate-900 dark:text-white">
             Soru Haritası
           </h3>
@@ -56,7 +56,7 @@ export function QuizQuestionPalette({
             buttonStyle = 'bg-emerald-50 dark:bg-emerald-500/20 text-emerald-800 dark:text-emerald-300 border-emerald-300 dark:border-emerald-500/40 hover:bg-emerald-100 dark:hover:bg-emerald-500/30';
           }
           if (isCurrent) {
-            buttonStyle = 'bg-brand-primary text-white border-brand-primary ring-2 ring-brand-primary/50 shadow-md font-bold';
+            buttonStyle = 'bg-brand-primary text-slate-950 border-brand-primary ring-2 ring-brand-primary/50 shadow-md font-bold';
           }
 
           return (
@@ -70,7 +70,7 @@ export function QuizQuestionPalette({
               <span>{index + 1}</span>
 
               {isAnswered && !isCurrent && (
-                <Check className="absolute bottom-1 right-1 h-3 w-3 text-emerald-600 dark:text-emerald-400" />
+                <Check className="absolute bottom-1 right-1 h-3 w-3 text-accent-success-ink dark:text-emerald-400" />
               )}
 
               {isFlagged && (

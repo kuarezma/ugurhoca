@@ -95,7 +95,7 @@ export default function AdminNotificationsPanel({
                         !isNew
                           ? 'bg-slate-800 border-slate-700/50 text-slate-500'
                           : isReply
-                            ? 'bg-emerald-500/20 border-emerald-500/30 text-emerald-400 shadow-emerald-500/10'
+                            ? 'bg-emerald-500/20 border-emerald-500/30 text-accent-success-ink shadow-emerald-500/10'
                             : isReadReceipt
                               ? 'bg-blue-500/20 border-blue-500/30 text-blue-400 shadow-blue-500/10'
                               : isSubmission

@@ -139,7 +139,7 @@ export function PrintableWeeklyPlannerModal({
         {/* Başlık ve Butonlar (Ekranda görünür, baskıda gizlenir) */}
         <div className="flex flex-col gap-3 border-b border-slate-200/80 dark:border-white/10 bg-slate-50/80 dark:bg-slate-950/80 px-5 py-4 sm:flex-row sm:items-center sm:justify-between print:hidden">
           <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-600 text-white dark:text-white shadow-md">
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-600 text-slate-950 dark:text-slate-950 shadow-md">
               <Calendar className="h-5 w-5" />
             </div>
             <div>
@@ -208,7 +208,7 @@ export function PrintableWeeklyPlannerModal({
           </div>
 
           <div className="flex items-center gap-3 font-semibold text-[11px] text-slate-600 dark:text-slate-300">
-            <span className="inline-flex items-center gap-1 text-emerald-600 dark:text-emerald-400">
+            <span className="inline-flex items-center gap-1 text-accent-success-ink dark:text-emerald-400">
               <Flame className="h-3.5 w-3.5" />
               Haftalık Hedef: {' '}<strong className="text-slate-900 dark:text-white">{totalWeeklyQuestions} Soru</strong>
             </span>
@@ -356,7 +356,7 @@ export function PrintableWeeklyPlannerModal({
           <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div className="rounded-xl border border-slate-300 dark:border-slate-700 print:border-black p-3 text-xs">
               <h4 className="font-bold text-slate-900 print:text-black flex items-center gap-1.5">
-                <CheckSquare className="h-4 w-4 text-emerald-600 print:text-black" />
+                <CheckSquare className="h-4 w-4 text-accent-success-ink print:text-black" />
                 Haftalık Netice & Kazanım Değerlendirmesi:
               </h4>
               <p className="mt-2 text-[11px] text-slate-500 print:text-slate-600 leading-relaxed">

@@ -114,7 +114,7 @@ export function VisualMathProofsModal({
                       : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200'
                   }`}
                 >
-                  {done && (<CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />)}
+                  {done && (<CheckCircle2 className={`w-3.5 h-3.5 ${active ? 'text-slate-950 dark:text-slate-950' : 'text-accent-success-ink'}`} />)}
                   <span>{p.title.split(' ')[0]} {p.formula}</span>
                 </button>
               );
