@@ -7,10 +7,18 @@ import type { QuizQuestion } from '@/types/quiz';
 
 describe('learningOutcomeAnalysis', () => {
   it('detects correct topic from keywords and title', () => {
-    expect(detectTopicFromText('8. Sınıf Üslü İfadeler Denemesi', 8)).toBe('Üslü İfadeler');
-    expect(detectTopicFromText('Kareköklü sayılarda toplama', 8)).toBe('Kareköklü İfadeler');
-    expect(detectTopicFromText('EBOB ve EKOK problemleri', 8)).toBe('Çarpanlar ve Katlar');
-    expect(detectTopicFromText('Rastgele bir soru', 8)).toBe('Çarpanlar ve Katlar');
+    expect(detectTopicFromText('8. Sınıf Üslü İfadeler Denemesi', 8)).toBe(
+      'Üslü İfadeler',
+    );
+    expect(detectTopicFromText('Kareköklü sayılarda toplama', 8)).toBe(
+      'Kareköklü İfadeler',
+    );
+    expect(detectTopicFromText('EBOB ve EKOK problemleri', 8)).toBe(
+      'Çarpanlar ve Katlar',
+    );
+    expect(detectTopicFromText('Rastgele bir soru', 8)).toBe(
+      'Çarpanlar ve Katlar',
+    );
   });
 
   it('correctly aggregates outcomes and generates remediation links', () => {
@@ -52,6 +60,20 @@ describe('learningOutcomeAnalysis', () => {
     expect(result.items.length).toBe(1);
     expect(result.items[0]?.topic).toBe('Üslü İfadeler');
     expect(result.items[0]?.status).toBe('developing');
-    expect(result.items[0]?.worksheetHref).toContain('/icerikler?type=yaprak-test');
+    expect(result.items[0]?.worksheetHref).toContain(
+      '/icerikler?type=yaprak-test',
+    );
   });
+});
+
+it('returns canonical grade-specific topics for legacy labels', () => {
+  expect(detectTopicFromText('Olasılık denemesi', 8)).toBe(
+    'Basit Olayların Olma Olasılığı',
+  );
+  expect(detectTopicFromText('Cebirsel İfadeler testi', 8)).toBe(
+    'Cebirsel İfadeler ve Özdeşlikler',
+  );
+  expect(detectTopicFromText('Doğal Sayılarla İşlemler', 5)).toBe(
+    'Doğal Sayılarla Dört İşlem İçeren Problem Çözme',
+  );
 });

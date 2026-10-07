@@ -10,11 +10,7 @@ describe('TopicChecklistModal', () => {
   it('renders topics for 8th grade and allows toggling status', () => {
     const onClose = vi.fn();
     render(
-      <TopicChecklistModal
-        isOpen={true}
-        onClose={onClose}
-        initialGrade="8"
-      />,
+      <TopicChecklistModal isOpen={true} onClose={onClose} initialGrade="8" />,
     );
 
     expect(
@@ -39,4 +35,24 @@ describe('TopicChecklistModal', () => {
     fireEvent.click(closeBtn);
     expect(onClose).toHaveBeenCalled();
   });
+});
+
+it('reads legacy checkmarks and persists subsequent edits under the new topic', () => {
+  localStorage.setItem(
+    'ugurhoca_topic_checklist_v1',
+    JSON.stringify({
+      '8': { Olasılık: { studied: true, solved: false, reviewed: false } },
+    }),
+  );
+  render(<TopicChecklistModal isOpen onClose={() => {}} initialGrade="8" />);
+  const row = screen.getByText('Basit Olayların Olma Olasılığı').parentElement!
+    .parentElement!;
+  const buttons = row.querySelectorAll('button');
+  expect(buttons[0]).toHaveClass('bg-tone-success-bg');
+  fireEvent.click(buttons[0]);
+  const saved = JSON.parse(
+    localStorage.getItem('ugurhoca_topic_checklist_v1')!,
+  );
+  expect(saved['8']['Basit Olayların Olma Olasılığı'].studied).toBe(false);
+  expect(saved['8'].Olasılık.studied).toBe(true);
 });

@@ -97,3 +97,33 @@ describe('curriculum document queries', () => {
     );
   });
 });
+
+it('finds legacy documents from canonical adventure q links', async () => {
+  vi.clearAllMocks();
+  clearContentDocumentCache();
+  const query = createQuery();
+  query.range.mockResolvedValue({
+    data: [
+      {
+        id: 'legacy',
+        grade: [8],
+        type: 'ders-notlari',
+        title: 'Olasılık',
+        description: null,
+      },
+      {
+        id: 'suffix',
+        grade: [8],
+        type: 'ders-notlari',
+        title: 'Olasılıklar',
+        description: null,
+      },
+    ],
+    error: null,
+  });
+  const result = await loadContentDocuments(1, 5, 8, 'ders-notlari', {
+    searchTerm: 'Basit Olayların Olma Olasılığı',
+  });
+  expect(result.count).toBe(1);
+  expect(result.documents.map((document) => document.id)).toEqual(['legacy']);
+});

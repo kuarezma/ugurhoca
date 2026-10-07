@@ -58,7 +58,11 @@ describe('HomeAdventureView', () => {
       screen.getByRole('link', { name: 'Yaprak Teste Git' }),
     ).toHaveAttribute(
       'href',
-      getCurriculumContentHref(5, 'Doğal Sayılar', 'yaprak-test'),
+      getCurriculumContentHref(
+        5,
+        'Temel Geometrik Çizimler ve İnşalar',
+        'yaprak-test',
+      ),
     );
   });
   it('opens existing topic flashcards and uses grade 12 for graduates', () => {

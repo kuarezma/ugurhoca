@@ -1,3 +1,4 @@
+import { normalizeProgressTopics } from '@/features/progress/constants';
 import { isGraduateGrade, toDisplayGrade, toStoredGrade } from '@/lib/grade';
 import type { Session } from '@supabase/supabase-js';
 import { ADMIN_EMAIL, isAdminEmail } from '@/lib/admin';
@@ -686,7 +687,10 @@ export const loadAdminStudentProfile = async (
     assignments: (assignmentsRes.data || []) as AdminStudentProfileData['assignments'],
     badges: normalizeDashboardBadges(badgesRes.data || []),
     goal: resolveCurrentGoal(goalRes.data || []),
-    progressRows: (progressRes.data || []) as AdminStudentProfileData['progressRows'],
+    progressRows: normalizeProgressTopics(
+      (progressRes.data || []) as AdminStudentProfileData['progressRows'],
+      student.grade,
+    ),
     quizResults: (quizResultsRes.data || []) as AdminStudentProfileData['quizResults'],
     student,
     studySessions: (studySessionsRes.data || []) as AdminStudentProfileData['studySessions'],

@@ -1,3 +1,4 @@
+import { normalizeProgressTopics } from '@/features/progress/constants';
 import 'server-only';
 
 import {
@@ -240,7 +241,10 @@ export const loadInitialProfileDashboardData =
       goal: resolveCurrentGoal(goalRes.data || []),
       isHydrated: true,
       notifications: (notifRes.data || []) as DashboardNotification[],
-      progressRows: (progressRes.data || []) as ProfileProgressRow[],
+      progressRows: normalizeProgressTopics(
+        (progressRes.data || []) as ProfileProgressRow[],
+        user.grade,
+      ),
       quizResults: (quizResultsRes.data || []) as DashboardQuizResult[],
       sharedDocs: (sharedDocsRes.data || []) as DashboardDocument[],
       studySessions: (studySessionsRes.data || []) as ProfileStudySessionRow[],

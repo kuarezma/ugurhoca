@@ -1,0 +1,355 @@
+{
+  "5": [
+    {
+      "topic": "Temel Geometrik Çizimler ve İnşalar",
+      "theme": "Geometrik Şekiller",
+      "aliases": ["Temel Geometrik Kavramlar"]
+    },
+    {
+      "topic": "Açı Ölçme",
+      "theme": "Geometrik Şekiller",
+      "aliases": []
+    },
+    {
+      "topic": "Çokgenler ve Çember",
+      "theme": "Geometrik Şekiller",
+      "aliases": ["Üçgenler ve Dörtgenler"]
+    },
+    {
+      "topic": "Çok Basamaklı Sayıları Okuma ve Yazma",
+      "theme": "Sayılar ve Nicelikler",
+      "aliases": ["Doğal Sayılar"]
+    },
+    {
+      "topic": "Basamak Değerlerini Çözümleme",
+      "theme": "Sayılar ve Nicelikler",
+      "aliases": []
+    },
+    {
+      "topic": "Doğal Sayılarla Dört İşlem İçeren Problem Çözme",
+      "theme": "Sayılar ve Nicelikler",
+      "aliases": ["Doğal Sayılarla İşlemler"]
+    },
+    {
+      "topic": "Dikdörtgenin Çevre Uzunluğu ve Alanı",
+      "theme": "Geometrik Nicelikler",
+      "aliases": ["Alan Ölçme", "Uzunluk ve Zaman Ölçme"]
+    },
+    {
+      "topic": "Kesirlerin Farklı Gösterimleri",
+      "theme": "Sayılar ve Nicelikler",
+      "aliases": ["Kesirler"]
+    },
+    {
+      "topic": "Kesirlerin Karşılaştırılması",
+      "theme": "Sayılar ve Nicelikler",
+      "aliases": []
+    },
+    {
+      "topic": "Kategorik Veri Dağılımları",
+      "theme": "İstatistiksel Araştırma Süreci",
+      "aliases": ["Veri Toplama ve Değerlendirme"]
+    },
+    {
+      "topic": "Eşitliğin Korunumu",
+      "theme": "İşlemlerle Cebirsel Düşünme",
+      "aliases": []
+    },
+    {
+      "topic": "Değişme-Birleşme ve Dağılma Özellikleri",
+      "theme": "İşlemlerle Cebirsel Düşünme",
+      "aliases": []
+    },
+    {
+      "topic": "İşlem Önceliği",
+      "theme": "İşlemlerle Cebirsel Düşünme",
+      "aliases": []
+    },
+    {
+      "topic": "Örüntüler",
+      "theme": "İşlemlerle Cebirsel Düşünme",
+      "aliases": []
+    },
+    {
+      "topic": "Temel Aritmetik İşlemler ve Algoritma",
+      "theme": "İşlemlerle Cebirsel Düşünme",
+      "aliases": []
+    },
+    {
+      "topic": "Öznel Olasılık",
+      "theme": "Veriden Olasılığa",
+      "aliases": []
+    }
+  ],
+  "6": [
+    {
+      "topic": "Bir Doğal Sayının Çarpanları ve Katları",
+      "theme": "Sayılar ve Nicelikler",
+      "aliases": ["Çarpanlar ve Katlar"]
+    },
+    {
+      "topic": "Bölünebilme Kriterleri",
+      "theme": "Sayılar ve Nicelikler",
+      "aliases": []
+    },
+    {
+      "topic": "Asal Sayılar ve Asal Çarpanlar",
+      "theme": "Sayılar ve Nicelikler",
+      "aliases": []
+    },
+    {
+      "topic": "Deneysel Olasılık",
+      "theme": "Veriden Olasılığa",
+      "aliases": []
+    },
+    {
+      "topic": "Ondalık Gösterimleri Çözümleme",
+      "theme": "Sayılar ve Nicelikler",
+      "aliases": ["Ondalık Gösterim"]
+    },
+    {
+      "topic": "Kesir-Bölme İlişkisi",
+      "theme": "Sayılar ve Nicelikler",
+      "aliases": []
+    },
+    {
+      "topic": "Kesirlerle Dört İşlem İçeren Problem Çözme",
+      "theme": "Sayılar ve Nicelikler",
+      "aliases": ["Kesirlerle İşlemler"]
+    },
+    {
+      "topic": "Uzunluk Ölçme",
+      "theme": "Sayılar ve Nicelikler",
+      "aliases": []
+    },
+    {
+      "topic": "Kategorik ve Nicel (Kesikli) Veri Dağılımları",
+      "theme": "İstatistiksel Araştırma Süreci",
+      "aliases": ["Veri Analizi"]
+    },
+    {
+      "topic": "Kategorik ve Nicel (Sürekli) Veri Dağılımları",
+      "theme": "İstatistiksel Araştırma Süreci",
+      "aliases": []
+    },
+    {
+      "topic": "İki Paralel Doğrunun Bir Kesenle Oluşturduğu Açılar",
+      "theme": "Geometrik Şekiller",
+      "aliases": []
+    },
+    {
+      "topic": "Üçgenin Açıları",
+      "theme": "Geometrik Şekiller",
+      "aliases": []
+    },
+    {
+      "topic": "Dörtgenlerin Kenar, Açı ve Köşegen Özellikleri",
+      "theme": "Geometrik Şekiller",
+      "aliases": ["Yamuk", "Paralelkenar", "Eşkenar Dörtgen"]
+    },
+    {
+      "topic": "Bilinmeyen Nicelikler",
+      "theme": "İşlemlerle Cebirsel Düşünme ve Değişimler",
+      "aliases": []
+    },
+    {
+      "topic": "Örüntü",
+      "theme": "İşlemlerle Cebirsel Düşünme ve Değişimler",
+      "aliases": []
+    },
+    {
+      "topic": "Cebirsel İfadeler ve Algoritma",
+      "theme": "İşlemlerle Cebirsel Düşünme ve Değişimler",
+      "aliases": ["Cebirsel İfadeler"]
+    },
+    {
+      "topic": "Uzunluk ve Alan Ölçme Birimleri Arasındaki İlişki",
+      "theme": "Geometrik Nicelikler",
+      "aliases": ["Alan Ölçme"]
+    },
+    {
+      "topic": "Paralelkenar ve Üçgenin Alanı",
+      "theme": "Geometrik Nicelikler",
+      "aliases": []
+    },
+    {
+      "topic": "Çemberin ve Çapın Uzunlukları Arasındaki İlişki",
+      "theme": "Geometrik Nicelikler",
+      "aliases": ["Çember"]
+    },
+    {
+      "topic": "Çemberde Merkez Açı ve Gördüğü Yay Uzunluğu",
+      "theme": "Geometrik Nicelikler",
+      "aliases": []
+    }
+  ],
+  "7": [
+    {
+      "topic": "Tam Sayılar",
+      "theme": "Sayılar ve Nicelikler",
+      "aliases": ["Tam Sayılarla İşlemler"]
+    },
+    {
+      "topic": "Rasyonel Sayılar ve Farklı Temsilleri",
+      "theme": "Sayılar ve Nicelikler",
+      "aliases": ["Rasyonel Sayılar"]
+    },
+    {
+      "topic": "Rasyonel Sayılarda Karşılaştırma ve Sıralama",
+      "theme": "Sayılar ve Nicelikler",
+      "aliases": []
+    },
+    {
+      "topic": "Rasyonel Sayılarla İşlemler ve Problem Çözme",
+      "theme": "Sayılar ve Nicelikler",
+      "aliases": []
+    },
+    {
+      "topic": "Cisimlerin Farklı Yönlerden Görünümleri",
+      "theme": "Geometrik Nicelikler",
+      "aliases": []
+    },
+    {
+      "topic": "Dikdörtgenler Prizmasının Hacmi ve Yüzey Alanı",
+      "theme": "Geometrik Nicelikler",
+      "aliases": []
+    },
+    {
+      "topic": "Hacim Ölçme Birimleri",
+      "theme": "Geometrik Nicelikler",
+      "aliases": []
+    },
+    {
+      "topic": "Kategorik ve Nicel (Sürekli) Veri Dağılımları",
+      "theme": "İstatistiksel Araştırma Süreci",
+      "aliases": ["Veri Analizi"]
+    },
+    {
+      "topic": "Yansıma Dönüşümü",
+      "theme": "Dönüşüm",
+      "aliases": []
+    },
+    {
+      "topic": "Orta Dikme ve Açıortay İnşası",
+      "theme": "Geometrik Şekiller",
+      "aliases": ["Doğrular ve Açılar"]
+    },
+    {
+      "topic": "Üçgenlerde Kenarortay, Açıortay ve Yükseklik",
+      "theme": "Geometrik Şekiller",
+      "aliases": []
+    },
+    {
+      "topic": "Oran",
+      "theme": "Sayılar ve Nicelikler",
+      "aliases": ["Oran ve Orantı"]
+    },
+    {
+      "topic": "Orantılı Durumlar",
+      "theme": "Sayılar ve Nicelikler",
+      "aliases": []
+    },
+    {
+      "topic": "Doğru Orantılı Durumlara İlişkin Problem Çözme",
+      "theme": "Sayılar ve Nicelikler",
+      "aliases": ["Yüzdeler"]
+    },
+    {
+      "topic": "Teorik Olasılık",
+      "theme": "Veriden Olasılığa",
+      "aliases": ["Olasılık"]
+    },
+    {
+      "topic": "Cebirsel İfadelerle İşlemler",
+      "theme": "İşlemlerle Cebirsel Düşünme ve Değişimler",
+      "aliases": ["Cebirsel İfadeler"]
+    },
+    {
+      "topic": "Denklem ve Eşitsizlikler",
+      "theme": "İşlemlerle Cebirsel Düşünme ve Değişimler",
+      "aliases": ["Eşitlik ve Denklem"]
+    },
+    {
+      "topic": "İspat",
+      "theme": "İşlemlerle Cebirsel Düşünme ve Değişimler",
+      "aliases": []
+    },
+    {
+      "topic": "Cebirsel İfadelerle İşlemler ve Algoritma",
+      "theme": "İşlemlerle Cebirsel Düşünme ve Değişimler",
+      "aliases": []
+    },
+    {
+      "topic": "Daire ve Daire Diliminin Alanı",
+      "theme": "Geometrik Nicelikler",
+      "aliases": ["Çember ve Daire"]
+    },
+    {
+      "topic": "Eşkenar Dörtgen ve Yamuk",
+      "theme": "Geometrik Nicelikler",
+      "aliases": ["Çokgenler"]
+    }
+  ],
+  "8": [
+    {
+      "topic": "Çarpanlar ve Katlar",
+      "theme": "Sayılar ve İşlemler",
+      "aliases": []
+    },
+    {
+      "topic": "Üslü İfadeler",
+      "theme": "Sayılar ve İşlemler",
+      "aliases": []
+    },
+    {
+      "topic": "Kareköklü İfadeler",
+      "theme": "Sayılar ve İşlemler",
+      "aliases": []
+    },
+    {
+      "topic": "Veri Analizi",
+      "theme": "Veri İşleme",
+      "aliases": []
+    },
+    {
+      "topic": "Basit Olayların Olma Olasılığı",
+      "theme": "Olasılık",
+      "aliases": ["Olasılık"]
+    },
+    {
+      "topic": "Cebirsel İfadeler ve Özdeşlikler",
+      "theme": "Cebir",
+      "aliases": ["Cebirsel İfadeler"]
+    },
+    {
+      "topic": "Doğrusal Denklemler",
+      "theme": "Cebir",
+      "aliases": []
+    },
+    {
+      "topic": "Eşitsizlikler",
+      "theme": "Cebir",
+      "aliases": []
+    },
+    {
+      "topic": "Üçgenler",
+      "theme": "Geometri ve Ölçme",
+      "aliases": []
+    },
+    {
+      "topic": "Eşlik ve Benzerlik",
+      "theme": "Geometri ve Ölçme",
+      "aliases": []
+    },
+    {
+      "topic": "Dönüşüm Geometrisi",
+      "theme": "Geometri ve Ölçme",
+      "aliases": []
+    },
+    {
+      "topic": "Geometrik Cisimler",
+      "theme": "Geometri ve Ölçme",
+      "aliases": []
+    }
+  ]
+}

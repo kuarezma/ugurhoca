@@ -183,11 +183,16 @@ export function AdventureLearningPath({
 
                   {/* Düğüm Altı Başlık Kapsülü */}
                   <div className="lg:mt-0 lg:min-w-0 lg:max-w-none lg:flex-1 lg:border-0 lg:bg-transparent lg:p-0 lg:text-left lg:shadow-none mt-3.5 text-center max-w-[200px] rounded-2xl px-3 py-1.5 bg-surface-2/80 backdrop-blur-xs border border-default/70 shadow-xs">
+                    {topic.theme && (
+                      <span className="block text-[10px] text-secondary">
+                        {topic.theme}
+                      </span>
+                    )}
                     <span className="block text-[10px] font-black uppercase tracking-wider text-secondary">
                       {`${topic.unitNumber}. Ünite`} ·{' '}
                       {isCompleted ? 'Tamamlandı' : isActive ? 'Aktif' : 'Açık'}
                     </span>
-                    <h3 className="font-display text-xs sm:text-sm font-bold text-primary truncate mt-0.5 lg:whitespace-normal lg:leading-tight">
+                    <h3 className="font-display text-xs sm:text-sm font-bold text-primary mt-0.5 whitespace-normal leading-tight">
                       {topic.title}
                     </h3>
                     <div className="hidden lg:mt-2 lg:flex lg:flex-wrap lg:gap-x-3 lg:gap-y-1 lg:text-xs lg:font-bold">

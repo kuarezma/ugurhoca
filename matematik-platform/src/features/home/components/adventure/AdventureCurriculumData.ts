@@ -1,4 +1,8 @@
-import { GRADE_TOPIC_OPTIONS } from '@/features/progress/constants';
+import {
+  GRADE_TOPIC_OPTIONS,
+  GRADE_TOPIC_META,
+  getTopicNames,
+} from '@/features/progress/constants';
 import { getCurriculumContentHref } from '@/features/content/curriculum-coverage';
 
 export interface AdventureTopicNode {
@@ -6,6 +10,7 @@ export interface AdventureTopicNode {
   unitNumber: number;
   title: string;
   grade: number;
+  theme?: string;
   notesHref: string;
   testsHref: string;
   gameHref?: string;
@@ -49,25 +54,34 @@ export const ADVENTURE_CURRICULUM: Record<string, AdventureTopicNode[]> =
   Object.fromEntries(
     Object.entries(GRADE_TOPIC_OPTIONS).map(([gradeKey, topics]) => [
       gradeKey,
-      topics.map((title, index) => ({
-        id: `g${gradeKey}-${index + 1}`,
-        unitNumber: index + 1,
-        title,
-        grade: Number(gradeKey),
-        notesHref: getCurriculumContentHref(
-          Number(gradeKey),
+      topics.map((title, index) => {
+        const names = getTopicNames(gradeKey, title);
+        const gameId = names
+          .map((name) => TOPIC_GAMES[gradeKey]?.[name])
+          .find(Boolean);
+        return {
+          id: `g${gradeKey}-${index + 1}`,
+          unitNumber: index + 1,
           title,
-          'ders-notlari',
-        ),
-        testsHref: getCurriculumContentHref(
-          Number(gradeKey),
-          title,
-          'yaprak-test',
-        ),
-        gameHref: TOPIC_GAMES[gradeKey]?.[title]
-          ? `/oyunlar?id=${TOPIC_GAMES[gradeKey][title]}`
-          : undefined,
-        flashcardSubject: TOPIC_FLASHCARDS[gradeKey]?.[title],
-      })),
+          grade: Number(gradeKey),
+          theme: GRADE_TOPIC_META[gradeKey]?.find(
+            (item) => item.topic === title,
+          )?.theme,
+          notesHref: getCurriculumContentHref(
+            Number(gradeKey),
+            title,
+            'ders-notlari',
+          ),
+          testsHref: getCurriculumContentHref(
+            Number(gradeKey),
+            title,
+            'yaprak-test',
+          ),
+          gameHref: gameId ? `/oyunlar?id=${gameId}` : undefined,
+          flashcardSubject: names
+            .map((name) => TOPIC_FLASHCARDS[gradeKey]?.[name])
+            .find(Boolean),
+        };
+      }),
     ]),
   );

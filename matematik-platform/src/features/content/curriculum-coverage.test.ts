@@ -119,16 +119,19 @@ describe('curriculum document matching', () => {
       missing: ['8. Sınıf · Kareköklü İfadeler: ders notu yok'],
     });
     expect(
-      rows.find((row) => row.grade === 7 && row.topic === 'Veri Analizi')
-        ?.notes,
+      rows.find(
+        (row) =>
+          row.grade === 7 &&
+          row.topic === 'Kategorik ve Nicel (Sürekli) Veri Dağılımları',
+      )?.notes,
     ).toBe(1);
     expect(
       rows.find((row) => row.grade === 8 && row.topic === 'Veri Analizi')
         ?.notes,
     ).toBe(1);
     expect(calculateCurriculumCoverage([])[0].missing).toEqual([
-      '5. Sınıf · Doğal Sayılar: yaprak test yok',
-      '5. Sınıf · Doğal Sayılar: ders notu yok',
+      '5. Sınıf · Temel Geometrik Çizimler ve İnşalar: yaprak test yok',
+      '5. Sınıf · Temel Geometrik Çizimler ve İnşalar: ders notu yok',
     ]);
   });
 
@@ -143,4 +146,45 @@ describe('curriculum document matching', () => {
       q: 'Kareköklü İfadeler',
     });
   });
+});
+
+it('matches aliases as whole words without crossing grade or type boundaries', () => {
+  const doc = {
+    ...worksheet,
+    grade: [5],
+    title: 'TEMEL GEOMETRİK KAVRAMLAR - Test',
+    description: null,
+  };
+  expect(
+    matchesCurriculumDocument(
+      doc,
+      5,
+      'Temel Geometrik Çizimler ve İnşalar',
+      'yaprak-test',
+    ),
+  ).toBe(true);
+  expect(
+    matchesCurriculumDocument(
+      { ...doc, title: 'Temel Geometrik Kavramlardan' },
+      5,
+      'Temel Geometrik Çizimler ve İnşalar',
+      'yaprak-test',
+    ),
+  ).toBe(false);
+  expect(
+    matchesCurriculumDocument(
+      doc,
+      6,
+      'Temel Geometrik Çizimler ve İnşalar',
+      'yaprak-test',
+    ),
+  ).toBe(false);
+  expect(
+    matchesCurriculumDocument(
+      doc,
+      5,
+      'Temel Geometrik Çizimler ve İnşalar',
+      'ders-notlari',
+    ),
+  ).toBe(false);
 });

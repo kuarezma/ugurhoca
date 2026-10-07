@@ -27,7 +27,7 @@ describe('CurriculumCoverageMatrixModal', () => {
     render(<CurriculumCoverageMatrixModal isOpen onClose={onClose} />);
     expect(screen.getByRole('dialog')).toBeInTheDocument();
     expect(screen.getByText('Kazanım Kapsam & İçerik Haritası')).toBeInTheDocument();
-    expect(await screen.findByText(/Genel Kapsam Oranı: %9/)).toBeInTheDocument();
+    expect(await screen.findByText(/Genel Kapsam Oranı: %8/)).toBeInTheDocument();
     expect(screen.getAllByText('1 içerik')).toHaveLength(2);
     expect(screen.getByText('8. Sınıf · Kareköklü İfadeler: yaprak test yok')).toBeInTheDocument();
     expect(screen.queryByRole('button', { name: /Mevcut/ })).not.toBeInTheDocument();
@@ -46,7 +46,7 @@ describe('CurriculumCoverageMatrixModal', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Eksikli Konular' }));
     expect(screen.queryByText('8. Sınıf · Çarpanlar ve Katlar')).not.toBeInTheDocument();
     fireEvent.change(screen.getByRole('combobox', { name: 'Sınıf' }), { target: { value: '5' } });
-    expect(screen.getByText('5. Sınıf · Doğal Sayılar')).toBeInTheDocument();
+    expect(screen.getByText('5. Sınıf · Temel Geometrik Çizimler ve İnşalar')).toBeInTheDocument();
   });
 
   it('does not report missing documents when the query fails, and can refresh', async () => {

@@ -64,3 +64,38 @@ describe('adventure curriculum and progress', () => {
     expect(calculateAdventureTopics([], [])).toEqual([]);
   });
 });
+
+it('uses highest mastery among aliases and canonical rows regardless of order', () => {
+  const progress = [
+    { topic: 'Temel Geometrik Kavramlar', mastery_level: 90 },
+    { topic: 'Temel Geometrik Çizimler ve İnşalar', mastery_level: 40 },
+    { topic: 'Temel Geometrik Kavramlar', mastery_level: 20 },
+  ];
+  for (const rows of [progress, [...progress].reverse()]) {
+    expect(
+      calculateAdventureTopics(ADVENTURE_CURRICULUM['5'], rows)[0],
+    ).toMatchObject({
+      mastery: 90,
+      stars: 3,
+      status: 'completed',
+      theme: 'Geometrik Şekiller',
+    });
+  }
+  expect(
+    calculateAdventureTopics(ADVENTURE_CURRICULUM['6'], [
+      { topic: 'Cebirsel İfadeler', mastery_level: 85 },
+    ]).find((topic) => topic.title === 'Cebirsel İfadeler ve Algoritma')
+      ?.mastery,
+  ).toBe(85);
+  expect(
+    ADVENTURE_CURRICULUM['5'].find(
+      (topic) =>
+        topic.title === 'Doğal Sayılarla Dört İşlem İçeren Problem Çözme',
+    )?.gameHref,
+  ).toBe('/oyunlar?id=1');
+  expect(
+    ADVENTURE_CURRICULUM['8'].find(
+      (topic) => topic.title === 'Basit Olayların Olma Olasılığı',
+    )?.flashcardSubject,
+  ).toBe('Olasılık');
+});

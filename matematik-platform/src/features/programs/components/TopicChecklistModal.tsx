@@ -11,7 +11,7 @@ import {
   ListChecks,
   Printer,
 } from 'lucide-react';
-import { GRADE_TOPIC_OPTIONS } from '@/features/progress/constants';
+import { GRADE_TOPIC_OPTIONS, getTopicNames } from '@/features/progress/constants';
 
 type TopicStatus = {
   studied: boolean; // Konu anlatımı çalışıldı
@@ -78,8 +78,22 @@ export function TopicChecklistModal({
   }, [selectedGrade]);
 
   const currentGradeData = useMemo(() => {
-    return checklist[selectedGrade] || {};
-  }, [checklist, selectedGrade]);
+    const stored = checklist[selectedGrade] || {};
+    const result = { ...stored };
+    for (const topic of topics) {
+      // Yeni konuya yazıldıktan sonra eski işaretler tekrar açılmaz.
+      if (stored[topic]) continue;
+      const statuses = getTopicNames(selectedGrade, topic).map(
+        (name) => stored[name],
+      );
+      result[topic] = {
+        studied: statuses.some((status) => status?.studied),
+        solved: statuses.some((status) => status?.solved),
+        reviewed: statuses.some((status) => status?.reviewed),
+      };
+    }
+    return result;
+  }, [checklist, selectedGrade, topics]);
 
   // Tamamlanma yüzdesi
   const stats = useMemo(() => {

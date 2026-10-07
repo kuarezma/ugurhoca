@@ -1,4 +1,8 @@
-import { GRADE_TOPIC_OPTIONS } from '@/features/progress/constants';
+import {
+  GRADE_TOPIC_OPTIONS,
+  getTopicNames,
+  matchesTopicText,
+} from '@/features/progress/constants';
 import { CONTENT_TYPE_MAPPING } from './constants';
 import { getWorksheetOutcomeLabel } from './worksheet-display';
 import type { ContentDocument } from '@/types';
@@ -14,9 +18,6 @@ export const CURRICULUM_DOCUMENT_TYPES = Object.keys(
 ).filter((type) =>
   ['yaprak-test', 'ders-notlari'].includes(CONTENT_TYPE_MAPPING[type]),
 );
-
-const normalizeTopicText = (value: string) =>
-  value.normalize('NFC').toLocaleLowerCase('tr').trim().replace(/\s+/g, ' ');
 
 export const isCurriculumTopic = (grade: number, topic: string) =>
   GRADE_TOPIC_OPTIONS[String(grade)]?.includes(topic) ?? false;
@@ -34,16 +35,9 @@ export function matchesCurriculumDocument(
 
   const texts = [document.title, document.description || ''];
   if (type === 'yaprak-test') texts.push(getWorksheetOutcomeLabel(document));
-  const escapedTopic = normalizeTopicText(topic).replace(
-    /[.*+?^${}()|[\]\\]/g,
-    '\\$&',
+  return texts.some((text) =>
+    matchesTopicText(text, getTopicNames(grade, topic)),
   );
-  if (!escapedTopic) return false;
-  const pattern = new RegExp(
-    `(?:^|[^\\p{L}\\p{N}])${escapedTopic}(?=$|[^\\p{L}\\p{N}])`,
-    'u',
-  );
-  return texts.some((text) => pattern.test(normalizeTopicText(text)));
 }
 
 export function getCurriculumContentHref(

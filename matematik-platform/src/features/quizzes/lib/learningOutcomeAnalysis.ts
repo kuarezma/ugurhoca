@@ -1,4 +1,9 @@
-import { GRADE_TOPIC_OPTIONS } from '@/features/progress/constants';
+import {
+  GRADE_TOPIC_OPTIONS,
+  getTopicNames,
+  matchesTopicText,
+  resolveTopicName,
+} from '@/features/progress/constants';
 import type { QuizQuestion } from '@/types/quiz';
 
 export type OutcomeMasteryStatus = 'critical' | 'developing' | 'mastered';
@@ -29,16 +34,23 @@ export type QuizOutcomeAnalysisResult = {
 /**
  * Belirli bir metin veya başlık içinden bilinen müfredat konusunu tespit eder.
  */
-export function detectTopicFromText(text: string, grade: number | string = 8): string {
+export function detectTopicFromText(
+  text: string,
+  grade: number | string = 8,
+): string {
   const gradeKey = String(grade);
-  const candidateTopics = GRADE_TOPIC_OPTIONS[gradeKey] || GRADE_TOPIC_OPTIONS['8'];
+  const candidateTopics =
+    GRADE_TOPIC_OPTIONS[gradeKey] || GRADE_TOPIC_OPTIONS['8'];
 
   const lower = text.toLocaleLowerCase('tr-TR');
 
-  for (const topic of candidateTopics) {
-    if (lower.includes(topic.toLocaleLowerCase('tr-TR'))) {
-      return topic;
-    }
+  const candidates = candidateTopics
+    .flatMap((topic) =>
+      getTopicNames(gradeKey, topic).map((name) => ({ name, topic })),
+    )
+    .sort((left, right) => right.name.length - left.name.length);
+  for (const candidate of candidates) {
+    if (matchesTopicText(text, [candidate.name])) return candidate.topic;
   }
 
   // Sık kullanılan anahtar kelimeler
@@ -62,7 +74,8 @@ export function detectTopicFromText(text: string, grade: number | string = 8): s
 
   for (const [kw, t] of Object.entries(KEYWORD_MAP)) {
     if (lower.includes(kw)) {
-      return t;
+      const canonical = resolveTopicName(gradeKey, t);
+      if (candidateTopics.includes(canonical)) return canonical;
     }
   }
 
@@ -108,8 +121,10 @@ export function analyzeQuizLearningOutcomes(params: {
   questions.forEach((q, idx) => {
     // Soru metni ya da açıklamasından daha spesifik bir konu var mı bak
     const questionText = `${q.question} ${q.explanation || ''}`;
-    const matchedTopic = detectTopicFromText(questionText, grade) || defaultTopicFromTitle;
-    const topic = matchedTopic === 'Genel Matematik' ? defaultTopicFromTitle : matchedTopic;
+    const matchedTopic =
+      detectTopicFromText(questionText, grade) || defaultTopicFromTitle;
+    const topic =
+      matchedTopic === 'Genel Matematik' ? defaultTopicFromTitle : matchedTopic;
 
     if (!topicMap.has(topic)) {
       topicMap.set(topic, { total: 0, correct: 0, wrong: 0, empty: 0 });
@@ -132,7 +147,8 @@ export function analyzeQuizLearningOutcomes(params: {
 
   const items: OutcomeAnalysisItem[] = Array.from(topicMap.entries()).map(
     ([topic, stat]) => {
-      const accuracy = stat.total > 0 ? Math.round((stat.correct / stat.total) * 100) : 0;
+      const accuracy =
+        stat.total > 0 ? Math.round((stat.correct / stat.total) * 100) : 0;
       let status: OutcomeMasteryStatus = 'mastered';
       if (accuracy < 50) {
         status = 'critical';
@@ -162,7 +178,9 @@ export function analyzeQuizLearningOutcomes(params: {
   items.sort((a, b) => a.accuracy - b.accuracy);
 
   const overallAccuracy =
-    questions.length > 0 ? Math.round((totalCorrect / questions.length) * 100) : 0;
+    questions.length > 0
+      ? Math.round((totalCorrect / questions.length) * 100)
+      : 0;
   const criticalCount = items.filter((i) => i.status === 'critical').length;
   const needsRemediation = items.some((i) => i.status !== 'mastered');
 

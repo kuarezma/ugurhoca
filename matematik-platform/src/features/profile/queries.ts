@@ -1,3 +1,4 @@
+import { normalizeProgressTopics } from '@/features/progress/constants';
 import type { Session } from '@supabase/supabase-js';
 import { isAdminEmail } from '@/lib/admin';
 import { supabase } from '@/lib/supabase/client';
@@ -207,7 +208,10 @@ export const loadClientProfileDashboardCollections = async (
     ),
     goal: resolveCurrentGoal(goalRes.data || []),
     notifications: (notifRes.data || []) as DashboardNotification[],
-    progressRows: (progressRes.data || []) as ProfileProgressRow[],
+    progressRows: normalizeProgressTopics(
+      (progressRes.data || []) as ProfileProgressRow[],
+      user.grade,
+    ),
     quizResults: (quizResultsRes.data || []) as DashboardQuizResult[],
     sharedDocs: (sharedDocsRes.data || []) as DashboardDocument[],
     studySessions: (studySessionsRes.data || []) as ProfileStudySessionRow[],

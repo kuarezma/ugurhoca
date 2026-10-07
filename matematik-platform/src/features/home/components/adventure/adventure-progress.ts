@@ -1,3 +1,5 @@
+import { normalizeProgressTopics } from '@/features/progress/constants';
+
 export type AdventureProgressRow = {
   topic: string;
   mastery_level: number | null;
@@ -13,12 +15,14 @@ export function getAdventureStars(mastery: number) {
   return mastery >= 85 ? 3 : mastery >= 60 ? 2 : mastery >= 30 ? 1 : 0;
 }
 
-export function calculateAdventureTopics<T extends { title: string }>(
-  topics: T[],
-  progress: AdventureProgressRow[],
-) {
+export function calculateAdventureTopics<
+  T extends { title: string; grade?: number },
+>(topics: T[], progress: AdventureProgressRow[]) {
   const masteryByTopic = new Map(
-    progress.map((row) => [row.topic, row.mastery_level ?? 0]),
+    normalizeProgressTopics(progress, topics[0]?.grade).map((row) => [
+      row.topic,
+      row.mastery_level ?? 0,
+    ]),
   );
   const activeIndex = topics.findIndex(
     (topic) => (masteryByTopic.get(topic.title) ?? 0) < 70,

@@ -48,7 +48,11 @@ import type {
   StudySession,
   UserBadge,
 } from '@/features/progress/types';
-import { getTopicsForGrade } from '@/features/progress/constants';
+import {
+  getTopicsForGrade,
+  normalizeProgressTopics,
+  resolveTopicName,
+} from '@/features/progress/constants';
 import {
   mergeProgressRow,
   prependStudySession,
@@ -88,8 +92,12 @@ export default function IlerlemePage({ initialData }: ProgressPageProps) {
   const [sessions, setSessions] = useState<StudySession[]>(
     initialData?.sessions ?? [],
   );
-  const [progressData, setProgressData] = useState<ProgressRow[]>(
+  const [rawProgressData, setProgressData] = useState<ProgressRow[]>(
     initialData?.progressData ?? [],
+  );
+  const progressData = useMemo(
+    () => normalizeProgressTopics(rawProgressData, user?.grade),
+    [rawProgressData, user?.grade],
   );
   const [goal, setGoal] = useState<StudyGoal | null>(initialData?.goal ?? null);
   const [badges, setBadges] = useState<UserBadge[]>(initialData?.badges ?? []);
@@ -120,10 +128,10 @@ export default function IlerlemePage({ initialData }: ProgressPageProps) {
   const resolvedTopic = useMemo(() => {
     const custom = customTopic.trim();
     if (custom.length > 0) {
-      return custom.slice(0, 200);
+      return resolveTopicName(user?.grade, custom.slice(0, 200));
     }
-    return selectedTopic.trim();
-  }, [customTopic, selectedTopic]);
+    return resolveTopicName(user?.grade, selectedTopic.trim());
+  }, [customTopic, selectedTopic, user?.grade]);
 
   const totalQuestionsSolved = useMemo(() => {
     return progressData.reduce((acc, row) => acc + (row.practice_count || 0), 0);
@@ -245,7 +253,7 @@ export default function IlerlemePage({ initialData }: ProgressPageProps) {
       );
       setProgressData((current) =>
         mergeProgressRow(
-          current,
+          normalizeProgressTopics(current, user.grade),
           (upsertedProgress || nextProgressRow) as ProgressRow,
         ),
       );
