@@ -120,7 +120,10 @@ const config: Config = {
             border: 'var(--tone-info-border)',
           },
         },
+        'green-ink': tokenColor('--green-ink-rgb'),
+        'primary-shade-fg': 'var(--primary-shade-fg)',
         brand: {
+          ink: tokenColor('--brand-primary-ink-rgb'),
           primary: tokenColor('--brand-primary-rgb'),
           'primary-soft': tokenColor('--brand-primary-soft-rgb'),
           'primary-deep': tokenColor('--brand-primary-deep-rgb'),
