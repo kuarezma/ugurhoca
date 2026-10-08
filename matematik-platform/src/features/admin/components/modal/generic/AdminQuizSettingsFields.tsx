@@ -28,7 +28,7 @@ export default function AdminQuizSettingsFields({
   return (
     <>
       <div>
-        <label htmlFor={gradeId} className="block text-slate-300 mb-2 text-sm">
+        <label htmlFor={gradeId} className="block text-slate-700 dark:text-slate-200 font-semibold mb-2 text-sm">
           Sınıf
         </label>
         <select
@@ -38,8 +38,7 @@ export default function AdminQuizSettingsFields({
           onChange={(event) =>
             updateFormData({ grade: parseInt(event.target.value) })
           }
-          className="w-full bg-surface-2 dark:bg-slate-800/50 border border-default dark:border-slate-700 rounded-xl px-4 py-3 text-primary
- focus:outline-none focus:border-violet-500 transition-colors"
+          className="w-full bg-white dark:bg-slate-800/80 border border-slate-300 dark:border-slate-700 rounded-xl px-4 py-3 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-violet-500/20 focus:border-violet-500 transition-all shadow-xs"
         >
           <option value="">Sınıf seçin</option>
           {QUIZ_GRADES.map((grade) => (
@@ -52,7 +51,7 @@ export default function AdminQuizSettingsFields({
       <div>
         <label
           htmlFor={timeLimitId}
-          className="block text-slate-300 mb-2 text-sm"
+          className="block text-slate-700 dark:text-slate-200 font-semibold mb-2 text-sm"
         >
           Süre (Dakika)
         </label>
@@ -65,15 +64,14 @@ export default function AdminQuizSettingsFields({
           onChange={(event) =>
             updateFormData({ time_limit: parseInt(event.target.value) })
           }
-          className="w-full bg-surface-2 dark:bg-slate-800/50 border border-default dark:border-slate-700 rounded-xl px-4 py-3 text-primary
- focus:outline-none focus:border-violet-500 transition-colors"
+          className="w-full bg-white dark:bg-slate-800/80 border border-slate-300 dark:border-slate-700 rounded-xl px-4 py-3 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-violet-500/20 focus:border-violet-500 transition-all shadow-xs"
           placeholder="Örn: 15"
         />
       </div>
       <div>
         <label
           htmlFor={difficultyId}
-          className="block text-slate-300 mb-2 text-sm"
+          className="block text-slate-700 dark:text-slate-200 font-semibold mb-2 text-sm"
         >
           Zorluk Seviyesi
         </label>
@@ -84,8 +82,7 @@ export default function AdminQuizSettingsFields({
           onChange={(event) =>
             updateFormData({ difficulty: event.target.value })
           }
-          className="w-full bg-surface-2 dark:bg-slate-800/50 border border-default dark:border-slate-700 rounded-xl px-4 py-3 text-primary
- focus:outline-none focus:border-violet-500 transition-colors"
+          className="w-full bg-white dark:bg-slate-800/80 border border-slate-300 dark:border-slate-700 rounded-xl px-4 py-3 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-violet-500/20 focus:border-violet-500 transition-all shadow-xs"
         >
           <option value="">Zorluk seçin</option>
           {QUIZ_DIFFICULTY_OPTIONS.map((difficulty) => (
@@ -97,14 +94,14 @@ export default function AdminQuizSettingsFields({
       </div>
       {modalType === "editQuiz" && (
         <div>
-          <label className="flex items-center gap-2 text-slate-300 mb-2 text-sm cursor-pointer">
+          <label className="flex items-center gap-2 text-slate-700 dark:text-slate-200 font-semibold mb-2 text-sm cursor-pointer">
             <input
               type="checkbox"
               checked={formData.is_active || false}
               onChange={(event) =>
                 updateFormData({ is_active: event.target.checked })
               }
-              className="w-4 h-4 rounded border-slate-600"
+              className="w-4 h-4 rounded border-slate-300 dark:border-slate-600 text-violet-600 focus:ring-violet-500"
             />
             Aktif
           </label>

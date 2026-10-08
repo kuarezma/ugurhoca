@@ -24,8 +24,8 @@ type ContentDocumentFormProps = {
 };
 
 const FIELD_FOCUS_CLASS: Record<Accent, string> = {
-  blue: 'focus:border-blue-500',
-  purple: 'focus:border-purple-500',
+  blue: 'focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20',
+  purple: 'focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20',
 };
 
 const UPLOAD_HOVER_CLASS: Record<Accent, string> = {
@@ -113,16 +113,16 @@ export default function ContentDocumentForm({
   return (
     <form onSubmit={onSubmit} className="space-y-5">
       {isWorksheet ? (
-        <div className="rounded-2xl border border-purple-400/20 bg-purple-500/10 px-4 py-3 text-sm text-purple-100">
+        <div className="rounded-2xl border border-purple-200 dark:border-purple-400/20 bg-purple-50 dark:bg-purple-500/10 px-4 py-3 text-sm text-purple-900 dark:text-purple-100">
           Yaprak testlerde başlık sınıf, konu ve sıraya göre otomatik verilir:
-          <span className="font-semibold">
+          <span className="font-semibold text-purple-950 dark:text-purple-50">
             {" "}
             8. Sınıf Matematik - Üslü İfadeler - Yaprak Test 01
           </span>.
         </div>
       ) : (
         <div>
-          <label htmlFor={titleId} className="block text-slate-300 mb-2 text-sm">
+          <label htmlFor={titleId} className="block text-slate-700 dark:text-slate-200 font-semibold mb-2 text-sm">
             Başlık
           </label>
           <input
@@ -131,14 +131,14 @@ export default function ContentDocumentForm({
             required
             value={formData.title || ''}
             onChange={(event) => onChange({ title: event.target.value })}
-            className={`w-full bg-slate-800/50 border border-slate-700 rounded-xl px-4 py-3 text-white transition-colors ${FIELD_FOCUS_CLASS[accent]} focus:outline-none`}
+            className={`w-full bg-white dark:bg-slate-800/80 border border-slate-300 dark:border-slate-700 rounded-xl px-4 py-3 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 transition-colors ${FIELD_FOCUS_CLASS[accent]} focus:outline-none`}
             placeholder="Başlık girin..."
           />
         </div>
       )}
 
       <div>
-        <label htmlFor={typeId} className="block text-slate-300 mb-2 text-sm">
+        <label htmlFor={typeId} className="block text-slate-700 dark:text-slate-200 font-semibold mb-2 text-sm">
           Kategori
         </label>
         <select
@@ -146,7 +146,7 @@ export default function ContentDocumentForm({
           required
           value={formData.type || ''}
           onChange={(event) => onChange({ type: event.target.value })}
-          className={`w-full bg-slate-800/50 border border-slate-700 rounded-xl px-4 py-3 text-white transition-colors ${FIELD_FOCUS_CLASS[accent]} focus:outline-none`}
+          className={`w-full bg-white dark:bg-slate-800/80 border border-slate-300 dark:border-slate-700 rounded-xl px-4 py-3 text-slate-900 dark:text-white transition-colors ${FIELD_FOCUS_CLASS[accent]} focus:outline-none`}
         >
           <option value="">Kategori seçin</option>
           {CONTENT_TYPE_OPTIONS.map((option) => (
@@ -160,7 +160,7 @@ export default function ContentDocumentForm({
       <div>
         <label
           htmlFor={descriptionId}
-          className="block text-slate-300 mb-2 text-sm"
+          className="block text-slate-700 dark:text-slate-200 font-semibold mb-2 text-sm"
         >
           Açıklama
         </label>
@@ -170,7 +170,7 @@ export default function ContentDocumentForm({
           rows={3}
           value={formData.description || ''}
           onChange={(event) => onChange({ description: event.target.value })}
-          className={`w-full bg-slate-800/50 border border-slate-700 rounded-xl px-4 py-3 text-white resize-none transition-colors ${FIELD_FOCUS_CLASS[accent]} focus:outline-none`}
+          className={`w-full bg-white dark:bg-slate-800/80 border border-slate-300 dark:border-slate-700 rounded-xl px-4 py-3 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 resize-none transition-colors ${FIELD_FOCUS_CLASS[accent]} focus:outline-none`}
           placeholder="İçerik hakkında bilgi..."
         />
       </div>
@@ -180,7 +180,7 @@ export default function ContentDocumentForm({
           <div>
             <label
               htmlFor={worksheetGradeId}
-              className="block text-slate-300 mb-2 text-sm"
+              className="block text-slate-700 dark:text-slate-200 font-semibold mb-2 text-sm"
             >
               Sınıf Düzeyi
             </label>
@@ -196,7 +196,7 @@ export default function ContentDocumentForm({
                   learning_outcome: '',
                 })
               }
-              className={`w-full bg-slate-800/50 border border-slate-700 rounded-xl px-4 py-3 text-white transition-colors ${FIELD_FOCUS_CLASS[accent]} focus:outline-none`}
+              className={`w-full bg-white dark:bg-slate-800/80 border border-slate-300 dark:border-slate-700 rounded-xl px-4 py-3 text-slate-900 dark:text-white transition-colors ${FIELD_FOCUS_CLASS[accent]} focus:outline-none`}
             >
               <option value="">Sınıf düzeyi seçin</option>
               {WORKSHEET_FORM_GRADE_OPTIONS.map((grade) => (
@@ -205,7 +205,7 @@ export default function ContentDocumentForm({
                 </option>
               ))}
             </select>
-            <p className="mt-2 text-xs text-slate-400">
+            <p className="mt-2 text-xs text-slate-600 dark:text-slate-400">
               Yaprak test hızlı ekleme şu anda kataloglu sınıflar için desteklenir.
             </p>
           </div>
@@ -213,7 +213,7 @@ export default function ContentDocumentForm({
           <div>
             <label
               htmlFor={outcomeId}
-              className="block text-slate-300 mb-2 text-sm"
+              className="block text-slate-700 dark:text-slate-200 font-semibold mb-2 text-sm"
             >
               Kazanım
             </label>
@@ -224,7 +224,7 @@ export default function ContentDocumentForm({
               onChange={(event) =>
                 onChange({ learning_outcome: event.target.value })
               }
-              className={`w-full bg-slate-800/50 border border-slate-700 rounded-xl px-4 py-3 text-white transition-colors ${FIELD_FOCUS_CLASS[accent]} focus:outline-none`}
+              className={`w-full bg-white dark:bg-slate-800/80 border border-slate-300 dark:border-slate-700 rounded-xl px-4 py-3 text-slate-900 dark:text-white transition-colors ${FIELD_FOCUS_CLASS[accent]} focus:outline-none`}
               disabled={!selectedWorksheetGrade || worksheetOutcomeOptions.length === 0}
             >
               <option value="">
@@ -245,7 +245,7 @@ export default function ContentDocumentForm({
       <div>
         <label
           htmlFor={fileInputId}
-          className="block text-slate-300 mb-2 text-sm"
+          className="block text-slate-700 dark:text-slate-200 font-semibold mb-2 text-sm"
         >
           Dosya Yükle (Tüm dosya türleri)
         </label>
@@ -258,9 +258,9 @@ export default function ContentDocumentForm({
           />
           <label
             htmlFor={fileInputId}
-            className={`flex items-center justify-center gap-2 w-full bg-slate-800/50 border border-slate-700 border-dashed rounded-xl px-4 py-6 text-slate-400 cursor-pointer hover:bg-slate-800 transition-colors ${UPLOAD_HOVER_CLASS[accent]}`}
+            className={`flex items-center justify-center gap-2 w-full bg-slate-50 dark:bg-slate-800/50 border border-slate-300 dark:border-slate-700 border-dashed rounded-xl px-4 py-6 text-slate-600 dark:text-slate-300 cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors ${UPLOAD_HOVER_CLASS[accent]}`}
           >
-            <Upload className="w-5 h-5" />
+            <Upload className="w-5 h-5 text-purple-600 dark:text-purple-400" />
             <span>
               {formData.file_name ||
                 'Dosya seç (PDF, EXE, MP4...) veya buraya sürükle'}
@@ -269,12 +269,12 @@ export default function ContentDocumentForm({
         </div>
       </div>
 
-      <div className="text-center text-slate-500 text-sm">veya</div>
+      <div className="text-center text-slate-500 dark:text-slate-400 font-medium text-sm">veya</div>
 
       <div>
         <label
           htmlFor={fileUrlId}
-          className="block text-slate-300 mb-2 text-sm"
+          className="block text-slate-700 dark:text-slate-200 font-semibold mb-2 text-sm"
         >
           Tıkla/İndir Linki (Google Drive vb.)
         </label>
@@ -285,7 +285,7 @@ export default function ContentDocumentForm({
           onChange={(event) =>
             onChange({ file_name: '', file_url: event.target.value })
           }
-          className={`w-full bg-slate-800/50 border border-slate-700 rounded-xl px-4 py-3 text-white transition-colors ${FIELD_FOCUS_CLASS[accent]} focus:outline-none`}
+          className={`w-full bg-white dark:bg-slate-800/80 border border-slate-300 dark:border-slate-700 rounded-xl px-4 py-3 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 transition-colors ${FIELD_FOCUS_CLASS[accent]} focus:outline-none`}
           placeholder="https://drive.google.com/..."
         />
       </div>
@@ -293,7 +293,7 @@ export default function ContentDocumentForm({
       <div>
         <label
           htmlFor={videoUrlId}
-          className="block text-slate-300 mb-2 text-sm"
+          className="block text-slate-700 dark:text-slate-200 font-semibold mb-2 text-sm"
         >
           YouTube Video URL
         </label>
@@ -302,7 +302,7 @@ export default function ContentDocumentForm({
           type="url"
           value={formData.video_url || ''}
           onChange={(event) => onChange({ video_url: event.target.value })}
-          className={`w-full bg-slate-800/50 border border-slate-700 rounded-xl px-4 py-3 text-white transition-colors ${FIELD_FOCUS_CLASS[accent]} focus:outline-none`}
+          className={`w-full bg-white dark:bg-slate-800/80 border border-slate-300 dark:border-slate-700 rounded-xl px-4 py-3 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 transition-colors ${FIELD_FOCUS_CLASS[accent]} focus:outline-none`}
           placeholder="https://www.youtube.com/watch?v=..."
         />
       </div>
@@ -310,7 +310,7 @@ export default function ContentDocumentForm({
       <div>
         <label
           htmlFor={answerKeyId}
-          className="block text-slate-300 mb-2 text-sm"
+          className="block text-slate-700 dark:text-slate-200 font-semibold mb-2 text-sm"
         >
           Cevap Anahtarı (Metin)
         </label>
@@ -319,7 +319,7 @@ export default function ContentDocumentForm({
           value={formData.answer_key_text || ''}
           onChange={(event) => onChange({ answer_key_text: event.target.value })}
           rows={3}
-          className="w-full bg-slate-100 dark:bg-slate-800/50 border border-slate-300 dark:border-slate-700 rounded-xl px-4 py-3 text-slate-900 dark:text-white focus:outline-none focus:border-green-500 transition-colors resize-none"
+          className="w-full bg-white dark:bg-slate-800/80 border border-slate-300 dark:border-slate-700 rounded-xl px-4 py-3 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:border-green-500 focus:ring-2 focus:ring-green-500/20 transition-all resize-none"
           placeholder="Cevap anahtarını buraya yazın... (opsiyonel)"
         />
       </div>
@@ -327,7 +327,7 @@ export default function ContentDocumentForm({
       <div>
         <label
           htmlFor={solutionUrlId}
-          className="block text-slate-300 mb-2 text-sm"
+          className="block text-slate-700 dark:text-slate-200 font-semibold mb-2 text-sm"
         >
           Çözüm PDF (Drive Link)
         </label>
@@ -336,11 +336,11 @@ export default function ContentDocumentForm({
           type="url"
           value={formData.solution_url || ''}
           onChange={(event) => onChange({ solution_url: event.target.value })}
-          className="w-full bg-slate-100 dark:bg-slate-800/50 border border-slate-300 dark:border-slate-700 rounded-xl px-4 py-3 text-slate-900 dark:text-white focus:outline-none focus:border-green-500 transition-colors"
+          className="w-full bg-white dark:bg-slate-800/80 border border-slate-300 dark:border-slate-700 rounded-xl px-4 py-3 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:border-green-500 focus:ring-2 focus:ring-green-500/20 transition-all"
           placeholder="https://drive.google.com/... (çözümlü PDF varsa)"
         />
         {formData.solution_url && (
-          <p className="text-green-ink text-xs mt-1">
+          <p className="text-emerald-600 dark:text-accent-success-ink text-xs mt-1 font-medium">
             ÇÖZÜMLÜ badge&apos;i otomatik eklenecek
           </p>
         )}
@@ -350,7 +350,7 @@ export default function ContentDocumentForm({
         <div>
           <span
             id={gradesGroupLabelId}
-            className="block text-slate-300 mb-2 text-sm"
+            className="block text-slate-700 dark:text-slate-200 font-semibold mb-2 text-sm"
           >
             Hedef Sınıflar
           </span>
@@ -363,7 +363,7 @@ export default function ContentDocumentForm({
               (grade) => (
                 <label
                   key={grade}
-                  className="flex items-center gap-2 px-3 py-2 glass rounded-lg cursor-pointer hover:bg-white/10"
+                  className="flex items-center gap-2 px-3 py-2 bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-lg cursor-pointer hover:bg-slate-100 dark:hover:bg-white/10 transition-colors"
                 >
                   <input
                     type="checkbox"
@@ -375,7 +375,7 @@ export default function ContentDocumentForm({
                 </label>
               ),
             )}
-            <label className="flex items-center gap-2 px-3 py-2 glass rounded-lg cursor-pointer hover:bg-white/10">
+            <label className="flex items-center gap-2 px-3 py-2 bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-lg cursor-pointer hover:bg-slate-100 dark:hover:bg-white/10 transition-colors">
               <input
                 type="checkbox"
                 checked={formData.grade?.includes('Mezun') || false}

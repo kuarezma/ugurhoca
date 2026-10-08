@@ -21,7 +21,7 @@ export default function AdminAssignmentFields({
   return (
     <div className="grid grid-cols-1 gap-4">
       <div>
-        <label htmlFor={gradeId} className="block text-slate-300 mb-2 text-sm">
+        <label htmlFor={gradeId} className="block text-slate-700 dark:text-slate-200 font-semibold mb-2 text-sm">
           Sınıf
         </label>
         <select
@@ -32,8 +32,7 @@ export default function AdminAssignmentFields({
               grade: event.target.value ? parseInt(event.target.value) : null,
             })
           }
-          className="w-full bg-surface-2 dark:bg-slate-800/50 border border-default dark:border-slate-700 rounded-xl px-4 py-3 text-primary
- focus:outline-none focus:border-purple-500 transition-colors"
+          className="w-full bg-white dark:bg-slate-800/80 border border-slate-300 dark:border-slate-700 rounded-xl px-4 py-3 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 transition-all shadow-xs"
         >
           <option value="">Sınıf seçin</option>
           {PRIVATE_STUDENT_GRADES.map((grade) => (
@@ -47,7 +46,7 @@ export default function AdminAssignmentFields({
       <div>
         <label
           htmlFor={dueDateId}
-          className="block text-slate-300 mb-2 text-sm"
+          className="block text-slate-700 dark:text-slate-200 font-semibold mb-2 text-sm"
         >
           Teslim Tarihi
         </label>
@@ -56,8 +55,7 @@ export default function AdminAssignmentFields({
           type="datetime-local"
           value={formData.due_date || ""}
           onChange={(event) => updateFormData({ due_date: event.target.value })}
-          className="w-full bg-surface-2 dark:bg-slate-800/50 border border-default dark:border-slate-700 rounded-xl px-4 py-3 text-primary
- focus:outline-none focus:border-purple-500 transition-colors"
+          className="w-full bg-white dark:bg-slate-800/80 border border-slate-300 dark:border-slate-700 rounded-xl px-4 py-3 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 transition-all shadow-xs"
         />
       </div>
     </div>

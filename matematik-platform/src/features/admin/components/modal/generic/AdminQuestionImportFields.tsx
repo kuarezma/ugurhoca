@@ -61,15 +61,15 @@ export default function AdminQuestionImportFields({
                 id="quiz-bundle-upload"
               />
               <label htmlFor="quiz-bundle-upload" className="cursor-pointer">
-                <Upload className="mx-auto mb-3 h-10 w-10 text-cyan-300" />
-                <p className="font-medium text-slate-100">ZIP bundle seç</p>
+                <Upload className="mx-auto mb-3 h-10 w-10 text-cyan-600 dark:text-cyan-300" />
+                <p className="font-semibold text-slate-800 dark:text-slate-100">ZIP bundle seç</p>
                 <p className="mt-1 text-sm text-slate-500">
                   quiz.json + images/ içeren converter çıktısı
                 </p>
               </label>
             </div>
             <div className="mt-4 rounded-2xl border border-cyan-400/25 bg-surface-2/60 dark:bg-slate-900/30 p-4">
-              <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-cyan-300">
+              <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-cyan-700 dark:text-cyan-300">
                 veya Drive ZIP linki
               </p>
               <div className="flex flex-col gap-2 sm:flex-row">
@@ -98,11 +98,11 @@ export default function AdminQuestionImportFields({
           <section className="rounded-2xl border border-emerald-500/30 bg-emerald-500/10 p-5">
             <div className="mb-4 flex items-start gap-3">
               <div className="rounded-xl bg-emerald-400/15 p-3">
-                <FileSpreadsheet className="h-5 w-5 text-emerald-300" />
+                <FileSpreadsheet className="h-5 w-5 text-emerald-600 dark:text-emerald-300" />
               </div>
               <div className="flex-1">
                 <h3 className="font-semibold text-primary">Excel fallback</h3>
-                <p className="mt-1 text-sm leading-6 text-slate-400">
+                <p className="mt-1 text-sm leading-6 text-slate-600 dark:text-slate-400">
                   Mevcut .xlsx akışı korunur. Hazır şablon indirip manuel yükleme
                   yapabilirsiniz.
                 </p>
@@ -125,8 +125,8 @@ export default function AdminQuestionImportFields({
                 id="excel-upload"
               />
               <label htmlFor="excel-upload" className="cursor-pointer">
-                <Upload className="mx-auto mb-3 h-10 w-10 text-emerald-300" />
-                <p className="font-medium text-slate-100">Excel dosyası yükle</p>
+                <Upload className="mx-auto mb-3 h-10 w-10 text-emerald-600 dark:text-emerald-300" />
+                <p className="font-semibold text-slate-800 dark:text-slate-100">Excel dosyası yükle</p>
                 <p className="mt-1 text-sm text-slate-500">
                   Test Bilgileri + Sorular sekmeli .xlsx
                 </p>
@@ -232,10 +232,10 @@ export default function AdminQuestionImportFields({
                             key={`${index}-${optionIndex}`}
                             className="rounded-lg border border-default dark:border-slate-700/50 bg-surface-2/60 dark:bg-slate-900/40 p-2"
                           >
-                            <div className="text-xs font-semibold text-slate-300">
+                            <div className="text-xs font-semibold text-slate-700 dark:text-slate-300">
                               {OPTION_LETTERS[optionIndex]}
                             </div>
-                            <p className="mt-1 line-clamp-2 text-xs text-slate-400">
+                            <p className="mt-1 line-clamp-2 text-xs text-slate-600 dark:text-slate-400">
                               {option}
                             </p>
                             {optionPreview ? (

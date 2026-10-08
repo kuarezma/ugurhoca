@@ -39,20 +39,20 @@ export default function AdminMessageForm({
   return (
     <form onSubmit={onSubmit} className="space-y-5">
       {adminMsgRecipient && (
-        <div className="flex items-center gap-3 p-3 rounded-xl bg-white/5 border border-white/10">
+        <div className="flex items-center gap-3 p-3 rounded-xl bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10">
           <div className="w-10 h-10 bg-gradient-to-br from-green-500 to-emerald-500 rounded-full flex items-center justify-center text-lg font-bold text-slate-950 dark:text-slate-950">
             {adminMsgRecipient.name?.[0] || "?"}
           </div>
           <div>
-            <p className="text-primary font-semibold">
+            <p className="text-slate-900 dark:text-white font-semibold">
               {adminMsgRecipient.name || "İsimsiz"}
             </p>
-            <p className="text-slate-400 text-xs">{adminMsgRecipient.email}</p>
+            <p className="text-slate-500 dark:text-slate-400 text-xs">{adminMsgRecipient.email}</p>
           </div>
         </div>
       )}
       <div>
-        <label htmlFor={titleId} className="block text-slate-300 mb-2 text-sm">
+        <label htmlFor={titleId} className="block text-slate-700 dark:text-slate-200 font-semibold mb-2 text-sm">
           Başlık
         </label>
         <input
@@ -60,13 +60,12 @@ export default function AdminMessageForm({
           type="text"
           value={adminMsgTitle}
           onChange={(event) => setAdminMsgTitle(event.target.value)}
-          className="w-full bg-surface-2 dark:bg-slate-800/50 border border-default dark:border-slate-700 rounded-xl px-4 py-3 text-primary
- focus:outline-none focus:border-purple-500 transition-colors"
+          className="w-full bg-white dark:bg-slate-800/80 border border-slate-300 dark:border-slate-700 rounded-xl px-4 py-3 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 transition-all"
           placeholder="Mesaj başlığı..."
         />
       </div>
       <div>
-        <label htmlFor={imageId} className="block text-slate-300 mb-2 text-sm">
+        <label htmlFor={imageId} className="block text-slate-700 dark:text-slate-200 font-semibold mb-2 text-sm">
           Resim (Opsiyonel)
         </label>
         <div className="relative">
@@ -79,7 +78,7 @@ export default function AdminMessageForm({
           />
           <label
             htmlFor={imageId}
-            className="flex items-center justify-center gap-2 w-full bg-surface-2 dark:bg-slate-800/50 border border-default dark:border-slate-700 border-dashed rounded-xl px-4 py-4 text-secondary cursor-pointer hover:bg-surface-3 dark:hover:bg-slate-800 hover:border-purple-500 transition-colors"
+            className="flex items-center justify-center gap-2 w-full bg-slate-50 dark:bg-slate-800/50 border border-slate-300 dark:border-slate-700 border-dashed rounded-xl px-4 py-4 text-slate-600 dark:text-slate-300 cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-800 hover:border-purple-500 transition-colors"
           >
             <ImageIcon className="w-5 h-5" />
             <span>Resim seç veya sürükle</span>
@@ -90,7 +89,7 @@ export default function AdminMessageForm({
             <img
               src={adminMsgImagePreview}
               alt="Önizleme"
-              className="max-h-32 rounded-lg border border-white/10"
+              className="max-h-32 rounded-lg border border-slate-200 dark:border-white/10"
             />
             <button
               type="button"
@@ -104,7 +103,7 @@ export default function AdminMessageForm({
         )}
       </div>
       <div>
-        <label htmlFor={messageId} className="block text-slate-300 mb-2 text-sm">
+        <label htmlFor={messageId} className="block text-slate-700 dark:text-slate-200 font-semibold mb-2 text-sm">
           Mesaj
         </label>
         <textarea
@@ -112,8 +111,7 @@ export default function AdminMessageForm({
           value={adminMsgText}
           onChange={(event) => setAdminMsgText(event.target.value)}
           rows={5}
-          className="w-full bg-surface-2 dark:bg-slate-800/50 border border-default dark:border-slate-700 rounded-xl px-4 py-3 text-primary
- focus:outline-none focus:border-purple-500 transition-colors resize-none"
+          className="w-full bg-white dark:bg-slate-800/80 border border-slate-300 dark:border-slate-700 rounded-xl px-4 py-3 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 transition-all resize-none"
           placeholder="Öğrenciye mesajınızı yazın..."
         />
       </div>
