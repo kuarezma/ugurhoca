@@ -64,7 +64,7 @@ const ROUTES: RouteDefinition[] = [
   { path: '/araclar/pisagor-hesaplayici' },
   { path: '/canli-ders', authRedirectAllowed: true },
   { path: '/canli-ders/d/contrast-gate', authRedirectAllowed: true },
-  { path: '/cikis-bileti' },
+  { path: '/cikis-bileti', authRedirectAllowed: true },
   { path: '/giris' },
   { path: '/gizlilik' },
   { path: '/icerikler' },
@@ -252,13 +252,26 @@ async function measureRoute(
       measurement,
     };
   } catch (error) {
+    const finalUrl = page.url();
+    // Yönlendirme, goto tamamlanmadan giriş sayfasına geçince goto hata verir.
+    if (isAllowedAuthenticationRedirect(route, finalUrl)) {
+      return {
+        route: route.path,
+        theme,
+        status: 'skipped',
+        reason: 'Kimlik doğrulama gerekli; rota /giris sayfasına yönlendirdi.',
+        skipAllowed: true,
+        requestedUrl,
+        finalUrl,
+      };
+    }
     return {
       route: route.path,
       theme,
       status: 'failed',
       reason: `Gezinme veya ölçüm hatası: ${errorMessage(error)}`,
       requestedUrl,
-      finalUrl: page.url(),
+      finalUrl,
     };
   } finally {
     page.off('pageerror', capturePageError);
