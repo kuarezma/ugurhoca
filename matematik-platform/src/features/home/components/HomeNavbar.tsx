@@ -5,6 +5,7 @@ import { usePathname } from 'next/navigation';
 import { LogOut, Menu, X } from 'lucide-react';
 import { useState } from 'react';
 import { SafeLink } from '@/components/SafeLink';
+import { ThemeToggle } from '@/components/ThemeToggle';
 import { HomeNavbarMessagesButton } from '@/features/home/components/HomeNavbarMessagesButton';
 import { HomeNavbarNotificationBell } from '@/features/home/components/HomeNavbarNotificationBell';
 import type { AppUser } from '@/types';
@@ -63,19 +64,19 @@ export function HomeNavbar({ onLogout, user }: HomeNavbarProps) {
           <div className="hidden lg:flex items-center gap-1.5 xl:gap-2">
             <SafeLink
               href="/icerikler?type=yaprak-test"
-              className="inline-flex items-center gap-1.5 rounded-xl px-3.5 py-2 text-sm font-bold text-secondary transition-all hover:bg-surface-2 hover:text-primary"
+              className="inline-flex items-center gap-1.5 rounded-xl px-3.5 py-2 text-sm font-bold text-slate-700 dark:text-slate-300 transition-all hover:bg-slate-100 dark:hover:bg-white/10 hover:text-slate-900 dark:hover:text-white"
             >
               <span>📄 Yaprak Testler</span>
             </SafeLink>
             <SafeLink
               href="/oyunlar"
-              className="inline-flex items-center gap-1.5 rounded-xl px-3.5 py-2 text-sm font-bold text-secondary transition-all hover:bg-surface-2 hover:text-primary"
+              className="inline-flex items-center gap-1.5 rounded-xl px-3.5 py-2 text-sm font-bold text-slate-700 dark:text-slate-300 transition-all hover:bg-slate-100 dark:hover:bg-white/10 hover:text-slate-900 dark:hover:text-white"
             >
               <span>🎮 Oyunlar</span>
             </SafeLink>
             <SafeLink
               href="/icerikler"
-              className="inline-flex items-center gap-1.5 rounded-xl px-3.5 py-2 text-sm font-bold text-secondary transition-all hover:bg-surface-2 hover:text-primary"
+              className="inline-flex items-center gap-1.5 rounded-xl px-3.5 py-2 text-sm font-bold text-slate-700 dark:text-slate-300 transition-all hover:bg-slate-100 dark:hover:bg-white/10 hover:text-slate-900 dark:hover:text-white"
             >
               <span>📚 Konular & Sınıflar</span>
             </SafeLink>
@@ -92,6 +93,7 @@ export function HomeNavbar({ onLogout, user }: HomeNavbarProps) {
           </div>
 
           <div className="hidden shrink-0 items-center gap-2 lg:flex">
+            <ThemeToggle compact />
             {showMessages && user?.id ? (
               <HomeNavbarMessagesButton
                 userId={user.id}
@@ -144,6 +146,7 @@ export function HomeNavbar({ onLogout, user }: HomeNavbarProps) {
           </div>
 
           <div className="ml-auto flex shrink-0 items-center gap-1 lg:hidden">
+            <ThemeToggle compact />
             {showMessages && user?.id ? (
               <HomeNavbarMessagesButton
                 userId={user.id}
@@ -171,38 +174,42 @@ export function HomeNavbar({ onLogout, user }: HomeNavbarProps) {
       {isOpen && (
         <div
           id="mobile-navigation"
-          className="animate-fade-in border-t max-h-[calc(100dvh-4.5rem-env(safe-area-inset-top))] overflow-y-auto pb-[calc(1.5rem+env(safe-area-inset-bottom))] lg:hidden border-slate-200 bg-white/95 backdrop-blur-xl"
+          className="animate-fade-in border-t max-h-[calc(100dvh-4.5rem-env(safe-area-inset-top))] overflow-y-auto pb-[calc(1.5rem+env(safe-area-inset-bottom))] lg:hidden border-slate-200/80 bg-white/95 dark:border-white/10 dark:bg-slate-950/95 backdrop-blur-xl"
         >
           <div className="space-y-1.5 px-4 py-4">
             <SafeLink
               href="/icerikler?type=yaprak-test"
               onClick={() => setIsOpen(false)}
-              className="flex items-center gap-3 rounded-xl px-3.5 py-2.5 text-sm font-bold text-slate-800 hover:bg-slate-100"
+              className="flex items-center gap-3 rounded-xl px-3.5 py-2.5 text-sm font-bold text-slate-800 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-white/10"
             >
               <span className="text-lg">📄</span> Yaprak Testler & İçerikler
             </SafeLink>
             <SafeLink
               href="/oyunlar"
               onClick={() => setIsOpen(false)}
-              className="flex items-center gap-3 rounded-xl px-3.5 py-2.5 text-sm font-bold text-slate-800 hover:bg-slate-100"
+              className="flex items-center gap-3 rounded-xl px-3.5 py-2.5 text-sm font-bold text-slate-800 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-white/10"
             >
               <span className="text-lg">🎮</span> Matematik Oyunları
             </SafeLink>
             <SafeLink
               href="/icerikler"
               onClick={() => setIsOpen(false)}
-              className="flex items-center gap-3 rounded-xl px-3.5 py-2.5 text-sm font-bold text-slate-800 hover:bg-slate-100"
+              className="flex items-center gap-3 rounded-xl px-3.5 py-2.5 text-sm font-bold text-slate-800 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-white/10"
             >
               <span className="text-lg">📚</span> Konular ve Sınıflar
             </SafeLink>
             <SafeLink
               href="/canli-ders"
               onClick={() => setIsOpen(false)}
-              className="flex items-center gap-3 rounded-xl px-3.5 py-2.5 text-sm font-bold text-rose-700 bg-rose-50 hover:bg-rose-100"
+              className="flex items-center gap-3 rounded-xl px-3.5 py-2.5 text-sm font-bold text-rose-700 bg-rose-50 hover:bg-rose-100 dark:bg-rose-950/40 dark:text-rose-300 dark:hover:bg-rose-950/60"
             >
               <span className="text-lg">🔴</span> Canlı Ders Odası
             </SafeLink>
-            <div className="mt-3 border-t pt-3 border-slate-200">
+            <div className="mt-3 border-t pt-3 border-slate-200 dark:border-white/10">
+              <div className="mb-3 flex items-center justify-between px-2">
+                <span className="text-xs font-bold text-slate-600 dark:text-slate-400">Görünüm</span>
+                <ThemeToggle />
+              </div>
               {user ? (
                 <>
                   <SafeLink

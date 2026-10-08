@@ -39,7 +39,7 @@ export default function AdminDocumentFields({
       <div>
         <label
           htmlFor={fileInputId}
-          className="block text-slate-700 dark:text-slate-300 mb-2 text-sm"
+          className="block text-slate-700 dark:text-slate-200 font-semibold mb-2 text-sm"
         >
           Dosya Yükle (PDF, EXE, MP4 vb.)
         </label>
@@ -53,7 +53,7 @@ export default function AdminDocumentFields({
           />
           <label
             htmlFor={fileInputId}
-            className="flex items-center justify-center gap-2 w-full bg-surface-2 dark:bg-slate-800/50 border border-default dark:border-slate-700 border-dashed rounded-xl px-4 py-6 text-secondary cursor-pointer hover:bg-surface-3 dark:hover:bg-slate-800 hover:border-purple-500 transition-colors"
+            className="flex items-center justify-center gap-2 w-full bg-slate-50 dark:bg-slate-800/50 border border-slate-300 dark:border-slate-700 border-dashed rounded-xl px-4 py-6 text-slate-600 dark:text-slate-300 cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-800 hover:border-purple-500 transition-colors"
           >
             <Upload className="w-5 h-5" />
             <span>
@@ -63,11 +63,11 @@ export default function AdminDocumentFields({
           </label>
         </div>
       </div>
-      <div className="text-center text-slate-500 text-sm">veya</div>
+      <div className="text-center text-slate-500 dark:text-slate-400 font-semibold text-sm">veya</div>
       <div>
         <label
           htmlFor={fileUrlId}
-          className="block text-slate-700 dark:text-slate-300 mb-2 text-sm"
+          className="block text-slate-700 dark:text-slate-200 font-semibold mb-2 text-sm"
         >
           Link (Google Drive, vb.)
         </label>
@@ -81,15 +81,14 @@ export default function AdminDocumentFields({
               file_url: event.target.value,
             })
           }
-          className="w-full bg-surface-2 dark:bg-slate-800/50 border border-default dark:border-slate-700 rounded-xl px-4 py-3 text-primary
- focus:outline-none focus:border-purple-500 transition-colors"
+          className="w-full bg-white dark:bg-slate-800/80 border border-slate-300 dark:border-slate-700 rounded-xl px-4 py-3 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 transition-all shadow-xs"
           placeholder="https://drive.google.com/..."
         />
       </div>
       <div>
         <label
           htmlFor={videoUrlId}
-          className="block text-slate-700 dark:text-slate-300 mb-2 text-sm"
+          className="block text-slate-700 dark:text-slate-200 font-semibold mb-2 text-sm"
         >
           YouTube Video URL
         </label>
@@ -98,15 +97,14 @@ export default function AdminDocumentFields({
           type="url"
           value={formData.video_url || ""}
           onChange={(event) => updateFormData({ video_url: event.target.value })}
-          className="w-full bg-surface-2 dark:bg-slate-800/50 border border-default dark:border-slate-700 rounded-xl px-4 py-3 text-primary
- focus:outline-none focus:border-purple-500 transition-colors"
+          className="w-full bg-white dark:bg-slate-800/80 border border-slate-300 dark:border-slate-700 rounded-xl px-4 py-3 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 transition-all shadow-xs"
           placeholder="https://www.youtube.com/watch?v=..."
         />
       </div>
       <div>
         <label
           htmlFor={answerKeyId}
-          className="block text-slate-700 dark:text-slate-300 mb-2 text-sm"
+          className="block text-slate-700 dark:text-slate-200 font-semibold mb-2 text-sm"
         >
           Cevap Anahtarı (Metin)
         </label>
@@ -117,15 +115,14 @@ export default function AdminDocumentFields({
             updateFormData({ answer_key_text: event.target.value })
           }
           rows={3}
-          className="w-full bg-surface-2 dark:bg-slate-800/50 border border-default dark:border-slate-700 rounded-xl px-4 py-3 text-primary
- focus:outline-none focus:border-green-500 transition-colors resize-none"
+          className="w-full bg-white dark:bg-slate-800/80 border border-slate-300 dark:border-slate-700 rounded-xl px-4 py-3 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-green-500/20 focus:border-green-500 transition-all shadow-xs resize-none"
           placeholder="Cevap anahtarını buraya yazın... (opsiyonel)"
         />
       </div>
       <div>
         <label
           htmlFor={solutionUrlId}
-          className="block text-slate-700 dark:text-slate-300 mb-2 text-sm"
+          className="block text-slate-700 dark:text-slate-200 font-semibold mb-2 text-sm"
         >
           Çözüm PDF (Drive Link)
         </label>
@@ -136,12 +133,11 @@ export default function AdminDocumentFields({
           onChange={(event) =>
             updateFormData({ solution_url: event.target.value })
           }
-          className="w-full bg-surface-2 dark:bg-slate-800/50 border border-default dark:border-slate-700 rounded-xl px-4 py-3 text-primary
- focus:outline-none focus:border-green-500 transition-colors"
+          className="w-full bg-white dark:bg-slate-800/80 border border-slate-300 dark:border-slate-700 rounded-xl px-4 py-3 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-green-500/20 focus:border-green-500 transition-all shadow-xs"
           placeholder="https://drive.google.com/... (çözümlü PDF varsa)"
         />
         {formData.solution_url && (
-          <p className="text-green-ink text-xs mt-1">
+          <p className="text-green-ink text-xs mt-1 font-semibold">
             ÇÖZÜMLÜ badge&apos;i otomatik eklenecek
           </p>
         )}
@@ -149,7 +145,7 @@ export default function AdminDocumentFields({
       <div>
         {isWorksheet ? (
           <div className="space-y-4">
-            <div className="rounded-2xl border border-purple-400/20 bg-purple-500/10 px-4 py-3 text-sm text-purple-100">
+            <div className="rounded-2xl border border-purple-200 dark:border-purple-400/20 bg-purple-50 dark:bg-purple-500/10 px-4 py-3 text-sm text-purple-900 dark:text-purple-100">
               Yaprak testler sınıf, konu ve sıraya göre otomatik adlandırılır:
               <span className="font-semibold">
                 {" "}
@@ -159,7 +155,7 @@ export default function AdminDocumentFields({
             <div>
               <label
                 htmlFor={worksheetGradeId}
-                className="block text-slate-700 dark:text-slate-300 mb-2 text-sm"
+                className="block text-slate-700 dark:text-slate-200 font-semibold mb-2 text-sm"
               >
                 Sınıf Düzeyi
               </label>
@@ -178,8 +174,7 @@ export default function AdminDocumentFields({
                       : [],
                   })
                 }
-                className="w-full bg-surface-2 dark:bg-slate-800/50 border border-default dark:border-slate-700 rounded-xl px-4 py-3 text-primary
- focus:outline-none focus:border-purple-500 transition-colors"
+                className="w-full bg-white dark:bg-slate-800/80 border border-slate-300 dark:border-slate-700 rounded-xl px-4 py-3 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 transition-all shadow-xs"
               >
                 <option value="">Sınıf düzeyi seçin</option>
                 {WORKSHEET_GRADE_OPTIONS.map((grade) => (
@@ -192,7 +187,7 @@ export default function AdminDocumentFields({
             <div>
               <label
                 htmlFor={learningOutcomeId}
-                className="block text-slate-700 dark:text-slate-300 mb-2 text-sm"
+                className="block text-slate-700 dark:text-slate-200 font-semibold mb-2 text-sm"
               >
                 Kazanım
               </label>
@@ -204,8 +199,7 @@ export default function AdminDocumentFields({
                 onChange={(event) =>
                   updateFormData({ learning_outcome: event.target.value })
                 }
-                className="w-full bg-surface-2 dark:bg-slate-800/50 border border-default dark:border-slate-700 rounded-xl px-4 py-3 text-primary
- focus:outline-none focus:border-purple-500 transition-colors"
+                className="w-full bg-white dark:bg-slate-800/80 border border-slate-300 dark:border-slate-700 rounded-xl px-4 py-3 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 transition-all shadow-xs"
                 placeholder="Örn. Cebirsel ifadelerle işlemler"
               />
             </div>
@@ -214,7 +208,7 @@ export default function AdminDocumentFields({
           <>
             <span
               id={gradesGroupLabelId}
-              className="block text-slate-700 dark:text-slate-300 mb-2 text-sm"
+              className="block text-slate-700 dark:text-slate-200 font-semibold mb-2 text-sm"
             >
               Hedef Sınıflar
             </span>
@@ -226,7 +220,7 @@ export default function AdminDocumentFields({
               {PRIVATE_STUDENT_GRADES.map((grade) => (
                 <label
                   key={grade}
-                  className="flex items-center gap-2 px-3 py-2 glass rounded-lg cursor-pointer hover:bg-white/10 min-w-[calc(50%-0.25rem)] sm:min-w-0"
+                  className="flex items-center gap-2 px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700/60 min-w-[calc(50%-0.25rem)] sm:min-w-0"
                 >
                   <input
                     type="checkbox"
@@ -236,10 +230,10 @@ export default function AdminDocumentFields({
                     }
                     className="w-4 h-4 accent-purple-500"
                   />
-                  <span className="text-primary text-sm">{grade}. Sınıf</span>
+                  <span className="text-slate-800 dark:text-slate-200 text-sm font-medium">{grade}. Sınıf</span>
                 </label>
               ))}
-              <label className="flex items-center gap-2 px-3 py-2 glass rounded-lg cursor-pointer hover:bg-white/10 min-w-[calc(50%-0.25rem)] sm:min-w-0">
+              <label className="flex items-center gap-2 px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700/60 min-w-[calc(50%-0.25rem)] sm:min-w-0">
                 <input
                   type="checkbox"
                   checked={formData.grades?.includes("Mezun") || false}
@@ -248,7 +242,7 @@ export default function AdminDocumentFields({
                   }
                   className="w-4 h-4 accent-purple-500"
                 />
-                <span className="text-primary text-sm">Mezun</span>
+                <span className="text-slate-800 dark:text-slate-200 text-sm font-medium">Mezun</span>
               </label>
             </div>
           </>

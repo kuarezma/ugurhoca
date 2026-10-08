@@ -49,7 +49,7 @@ export default function AdminEditDocumentForm({
         </div>
       ) : (
         <div>
-          <label htmlFor={titleId} className="block text-slate-700 dark:text-slate-300 mb-2 text-sm">
+          <label htmlFor={titleId} className="block text-slate-700 dark:text-slate-200 font-semibold mb-2 text-sm">
             Başlık
           </label>
           <input
@@ -58,15 +58,14 @@ export default function AdminEditDocumentForm({
             required
             value={formData.title || ""}
             onChange={(event) => updateFormData({ title: event.target.value })}
-            className="w-full bg-surface-2 dark:bg-slate-800/50 border border-default dark:border-slate-700 rounded-xl px-4 py-3 text-primary
- focus:outline-none focus:border-blue-500 transition-colors"
+            className="w-full bg-white dark:bg-slate-800/80 border border-slate-300 dark:border-slate-700 rounded-xl px-4 py-3 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all shadow-xs"
           />
         </div>
       )}
       <div>
         <label
           htmlFor={descriptionId}
-          className="block text-slate-700 dark:text-slate-300 mb-2 text-sm"
+          className="block text-slate-700 dark:text-slate-200 font-semibold mb-2 text-sm"
         >
           Açıklama
         </label>
@@ -75,20 +74,18 @@ export default function AdminEditDocumentForm({
           rows={3}
           value={formData.description || ""}
           onChange={(event) => updateFormData({ description: event.target.value })}
-          className="w-full bg-surface-2 dark:bg-slate-800/50 border border-default dark:border-slate-700 rounded-xl px-4 py-3 text-primary
- focus:outline-none focus:border-blue-500 transition-colors resize-none"
+          className="w-full bg-white dark:bg-slate-800/80 border border-slate-300 dark:border-slate-700 rounded-xl px-4 py-3 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all shadow-xs resize-none"
         />
       </div>
       <div>
-        <label htmlFor={typeId} className="block text-slate-700 dark:text-slate-300 mb-2 text-sm">
+        <label htmlFor={typeId} className="block text-slate-700 dark:text-slate-200 font-semibold mb-2 text-sm">
           Kategori
         </label>
         <select
           id={typeId}
           value={formData.type || ""}
           onChange={(event) => updateFormData({ type: event.target.value })}
-          className="w-full bg-surface-2 dark:bg-slate-800/50 border border-default dark:border-slate-700 rounded-xl px-4 py-3 text-primary
- focus:outline-none focus:border-blue-500 transition-colors"
+          className="w-full bg-white dark:bg-slate-800/80 border border-slate-300 dark:border-slate-700 rounded-xl px-4 py-3 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all shadow-xs"
         >
           <option value="">Kategori seçin</option>
           {DOCUMENT_CATEGORY_OPTIONS.map((option) => (
@@ -103,7 +100,7 @@ export default function AdminEditDocumentForm({
           <div>
             <label
               htmlFor={worksheetGradeId}
-              className="block text-slate-700 dark:text-slate-300 mb-2 text-sm"
+              className="block text-slate-700 dark:text-slate-200 font-semibold mb-2 text-sm"
             >
               Sınıf Düzeyi
             </label>
@@ -121,8 +118,7 @@ export default function AdminEditDocumentForm({
                     : [],
                 })
               }
-              className="w-full bg-surface-2 dark:bg-slate-800/50 border border-default dark:border-slate-700 rounded-xl px-4 py-3 text-primary
- focus:outline-none focus:border-blue-500 transition-colors"
+              className="w-full bg-white dark:bg-slate-800/80 border border-slate-300 dark:border-slate-700 rounded-xl px-4 py-3 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all shadow-xs"
             >
               <option value="">Sınıf düzeyi seçin</option>
               {WORKSHEET_GRADE_OPTIONS.map((grade) => (
@@ -135,7 +131,7 @@ export default function AdminEditDocumentForm({
           <div>
             <label
               htmlFor={learningOutcomeId}
-              className="block text-slate-700 dark:text-slate-300 mb-2 text-sm"
+              className="block text-slate-700 dark:text-slate-200 font-semibold mb-2 text-sm"
             >
               Kazanım
             </label>
@@ -146,14 +142,13 @@ export default function AdminEditDocumentForm({
               onChange={(event) =>
                 updateFormData({ learning_outcome: event.target.value })
               }
-              className="w-full bg-surface-2 dark:bg-slate-800/50 border border-default dark:border-slate-700 rounded-xl px-4 py-3 text-primary
- focus:outline-none focus:border-blue-500 transition-colors"
+              className="w-full bg-white dark:bg-slate-800/80 border border-slate-300 dark:border-slate-700 rounded-xl px-4 py-3 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all shadow-xs"
             />
           </div>
         </>
       )}
       <div>
-        <label htmlFor={fileUrlId} className="block text-slate-700 dark:text-slate-300 mb-2 text-sm">
+        <label htmlFor={fileUrlId} className="block text-slate-700 dark:text-slate-200 font-semibold mb-2 text-sm">
           Dosya Linki
         </label>
         <input
@@ -161,12 +156,11 @@ export default function AdminEditDocumentForm({
           type="url"
           value={formData.file_url || ""}
           onChange={(event) => updateFormData({ file_url: event.target.value })}
-          className="w-full bg-surface-2 dark:bg-slate-800/50 border border-default dark:border-slate-700 rounded-xl px-4 py-3 text-primary
- focus:outline-none focus:border-blue-500 transition-colors"
+          className="w-full bg-white dark:bg-slate-800/80 border border-slate-300 dark:border-slate-700 rounded-xl px-4 py-3 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all shadow-xs"
         />
       </div>
       <div>
-        <label htmlFor={videoUrlId} className="block text-slate-700 dark:text-slate-300 mb-2 text-sm">
+        <label htmlFor={videoUrlId} className="block text-slate-700 dark:text-slate-200 font-semibold mb-2 text-sm">
           YouTube URL
         </label>
         <input
@@ -174,14 +168,13 @@ export default function AdminEditDocumentForm({
           type="url"
           value={formData.video_url || ""}
           onChange={(event) => updateFormData({ video_url: event.target.value })}
-          className="w-full bg-surface-2 dark:bg-slate-800/50 border border-default dark:border-slate-700 rounded-xl px-4 py-3 text-primary
- focus:outline-none focus:border-blue-500 transition-colors"
+          className="w-full bg-white dark:bg-slate-800/80 border border-slate-300 dark:border-slate-700 rounded-xl px-4 py-3 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all shadow-xs"
         />
       </div>
       <div>
         <label
           htmlFor={answerKeyId}
-          className="block text-slate-700 dark:text-slate-300 mb-2 text-sm"
+          className="block text-slate-700 dark:text-slate-200 font-semibold mb-2 text-sm"
         >
           Cevap Anahtarı (Metin)
         </label>
@@ -192,15 +185,14 @@ export default function AdminEditDocumentForm({
             updateFormData({ answer_key_text: event.target.value })
           }
           rows={3}
-          className="w-full bg-surface-2 dark:bg-slate-800/50 border border-default dark:border-slate-700 rounded-xl px-4 py-3 text-primary
- focus:outline-none focus:border-green-500 transition-colors resize-none"
+          className="w-full bg-white dark:bg-slate-800/80 border border-slate-300 dark:border-slate-700 rounded-xl px-4 py-3 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-green-500/20 focus:border-green-500 transition-all shadow-xs resize-none"
           placeholder="Cevap anahtarını buraya yazın... (opsiyonel)"
         />
       </div>
       <div>
         <label
           htmlFor={solutionUrlId}
-          className="block text-slate-700 dark:text-slate-300 mb-2 text-sm"
+          className="block text-slate-700 dark:text-slate-200 font-semibold mb-2 text-sm"
         >
           Çözüm PDF (Drive Link)
         </label>
@@ -209,12 +201,11 @@ export default function AdminEditDocumentForm({
           type="url"
           value={formData.solution_url || ""}
           onChange={(event) => updateFormData({ solution_url: event.target.value })}
-          className="w-full bg-surface-2 dark:bg-slate-800/50 border border-default dark:border-slate-700 rounded-xl px-4 py-3 text-primary
- focus:outline-none focus:border-green-500 transition-colors"
+          className="w-full bg-white dark:bg-slate-800/80 border border-slate-300 dark:border-slate-700 rounded-xl px-4 py-3 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-green-500/20 focus:border-green-500 transition-all shadow-xs"
           placeholder="https://drive.google.com/... (çözümlü PDF varsa)"
         />
         {formData.solution_url && (
-          <p className="text-green-ink text-xs mt-1">
+          <p className="text-green-ink text-xs mt-1 font-semibold">
             ÇÖZÜMLÜ badge&apos;i otomatik eklenecek
           </p>
         )}

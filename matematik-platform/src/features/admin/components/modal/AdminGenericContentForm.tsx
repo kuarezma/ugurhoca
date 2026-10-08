@@ -61,7 +61,7 @@ export default function AdminGenericContentForm({
 
       {!isWorksheetDocument && (
         <div>
-          <label htmlFor={titleId} className="block text-slate-700 dark:text-slate-300 mb-2 text-sm">
+          <label htmlFor={titleId} className="block text-slate-700 dark:text-slate-200 font-semibold mb-2 text-sm">
             Başlık
           </label>
           <input
@@ -70,8 +70,7 @@ export default function AdminGenericContentForm({
             required
             value={formData.title || ""}
             onChange={(event) => updateFormData({ title: event.target.value })}
-            className="w-full bg-surface-2 dark:bg-slate-800/50 border border-default dark:border-slate-700 rounded-xl px-4 py-3 text-primary
- focus:outline-none focus:border-purple-500 transition-colors"
+            className="w-full bg-white dark:bg-slate-800/80 border border-slate-300 dark:border-slate-700 rounded-xl px-4 py-3 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 transition-all shadow-xs"
             placeholder="Başlık girin..."
           />
         </div>
@@ -88,7 +87,7 @@ export default function AdminGenericContentForm({
         <div>
           <label
             htmlFor={categoryId}
-            className="block text-slate-700 dark:text-slate-300 mb-2 text-sm"
+            className="block text-slate-700 dark:text-slate-200 font-semibold mb-2 text-sm"
           >
             Kategori
           </label>
@@ -97,8 +96,7 @@ export default function AdminGenericContentForm({
             required
             value={formData.type || ""}
             onChange={(event) => updateFormData({ type: event.target.value })}
-            className="w-full bg-surface-2 dark:bg-slate-800/50 border border-default dark:border-slate-700 rounded-xl px-4 py-3 text-primary
- focus:outline-none focus:border-purple-500 transition-colors"
+            className="w-full bg-white dark:bg-slate-800/80 border border-slate-300 dark:border-slate-700 rounded-xl px-4 py-3 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 transition-all shadow-xs"
           >
             <option value="">Kategori seçin</option>
             {DOCUMENT_CATEGORY_OPTIONS.map((option) => (

@@ -164,16 +164,16 @@ export function QuizPacingCoach({
             <TrendingUp className="h-4 w-4" />
           </div>
           <div>
-            <h3 className="font-display text-sm sm:text-base font-bold text-white dark:text-white">
+            <h3 className="font-display text-sm sm:text-base font-bold text-slate-900 dark:text-white">
               Sınav Tempo Koçu & Soru Süre Analizi
             </h3>
-            <p className="text-[11px] text-slate-400">
+            <p className="text-[11px] text-slate-600 dark:text-slate-400">
               LGS ve YKS taktiği: Soru başına harcanan süre ve turlama analizi
             </p>
           </div>
         </div>
 
-        <div className="flex items-center gap-1 text-xs font-mono text-indigo-300 bg-indigo-500/10 px-2.5 py-1 rounded-lg border border-indigo-500/20">
+        <div className="flex items-center gap-1 text-xs font-mono text-indigo-700 dark:text-indigo-300 bg-indigo-50 dark:bg-indigo-500/10 px-2.5 py-1 rounded-lg border border-indigo-200 dark:border-indigo-500/20">
           <Clock className="h-3.5 w-3.5" />
           <span>Ortalama: {formatDuration(stats.avgSeconds)} / soru</span>
         </div>
@@ -182,51 +182,51 @@ export function QuizPacingCoach({
       {/* Tempo Dağılım Çubukları */}
       <div className="grid grid-cols-3 gap-2.5 text-center">
         <div className="rounded-2xl border border-emerald-500/30 bg-emerald-500/10 p-3">
-          <div className="text-lg font-extrabold text-emerald-300 font-mono">{stats.fastCount}</div>
-          <div className="text-[11px] font-semibold text-emerald-200">Hızlı Çözülen</div>
-          <div className="text-[10px] text-accent-success-ink">&lt; 1 dakika</div>
+          <div className="text-lg font-extrabold text-emerald-700 dark:text-emerald-300 font-mono">{stats.fastCount}</div>
+          <div className="text-[11px] font-semibold text-emerald-800 dark:text-emerald-200">Hızlı Çözülen</div>
+          <div className="text-[10px] text-emerald-600 dark:text-accent-success-ink">&lt; 1 dakika</div>
         </div>
         <div className="rounded-2xl border border-cyan-500/30 bg-cyan-500/10 p-3">
-          <div className="text-lg font-extrabold text-cyan-300 font-mono">{stats.balancedCount}</div>
-          <div className="text-[11px] font-semibold text-cyan-200">İdeal Dengeli</div>
-          <div className="text-[10px] text-cyan-400/80">1 - 2 dakika</div>
+          <div className="text-lg font-extrabold text-cyan-700 dark:text-cyan-300 font-mono">{stats.balancedCount}</div>
+          <div className="text-[11px] font-semibold text-cyan-800 dark:text-cyan-200">İdeal Dengeli</div>
+          <div className="text-[10px] text-cyan-600 dark:text-cyan-400/80">1 - 2 dakika</div>
         </div>
         <div className="rounded-2xl border border-amber-500/30 bg-amber-500/10 p-3">
-          <div className="text-lg font-extrabold text-amber-300 font-mono">{stats.slowCount}</div>
-          <div className="text-[11px] font-semibold text-amber-200">Süresi Uzayan</div>
-          <div className="text-[10px] text-amber-400/80">&gt; 2 dakika</div>
+          <div className="text-lg font-extrabold text-amber-700 dark:text-amber-300 font-mono">{stats.slowCount}</div>
+          <div className="text-[11px] font-semibold text-amber-800 dark:text-amber-200">Süresi Uzayan</div>
+          <div className="text-[10px] text-amber-600 dark:text-amber-400/80">&gt; 2 dakika</div>
         </div>
       </div>
 
       {/* En Çok Vakit Harcanan Sorular */}
       <div>
-        <div className="text-xs font-bold text-slate-300 mb-2 flex items-center gap-1.5">
-          <Timer className="h-3.5 w-3.5 text-indigo-400" />
+        <div className="text-xs font-bold text-slate-700 dark:text-slate-300 mb-2 flex items-center gap-1.5">
+          <Timer className="h-3.5 w-3.5 text-indigo-500 dark:text-indigo-400" />
           <span>En Çok Vakit Harcanan Sorular:</span>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
           {stats.topSlowQuestions.map((q) => (
             <div
               key={q.questionIndex}
-              className="flex items-center justify-between rounded-xl border border-white/10 bg-slate-950/40 dark:bg-slate-950/40 p-2.5 text-xs"
+              className="flex items-center justify-between rounded-xl border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-slate-950/40 p-2.5 text-xs"
             >
               <div className="flex items-center gap-2">
-                <span className="font-bold text-white dark:text-white">Soru {q.questionIndex + 1}</span>
+                <span className="font-bold text-slate-900 dark:text-white">Soru {q.questionIndex + 1}</span>
                 {q.isCorrect ? (
-                  <span className="rounded bg-emerald-500/20 text-emerald-300 text-[10px] px-1.5 py-0.5 font-semibold">
+                  <span className="rounded bg-emerald-100 dark:bg-emerald-500/20 text-emerald-800 dark:text-emerald-300 text-[10px] px-1.5 py-0.5 font-semibold">
                     Doğru
                   </span>
                 ) : q.isAnswered ? (
-                  <span className="rounded bg-rose-500/20 text-rose-300 text-[10px] px-1.5 py-0.5 font-semibold">
+                  <span className="rounded bg-rose-100 dark:bg-rose-500/20 text-rose-800 dark:text-rose-300 text-[10px] px-1.5 py-0.5 font-semibold">
                     Yanlış
                   </span>
                 ) : (
-                  <span className="rounded bg-slate-500/20 text-slate-300 text-[10px] px-1.5 py-0.5 font-semibold">
+                  <span className="rounded bg-slate-200 dark:bg-slate-500/20 text-slate-700 dark:text-slate-300 text-[10px] px-1.5 py-0.5 font-semibold">
                     Boş
                   </span>
                 )}
               </div>
-              <span className="font-mono font-bold text-amber-300">
+              <span className="font-mono font-bold text-amber-700 dark:text-amber-300">
                 {formatDuration(q.seconds)}
               </span>
             </div>
@@ -237,12 +237,12 @@ export function QuizPacingCoach({
       {/* Tüm Soruların Tempo Şeridi (Pacing Strip Heatmap) */}
       {stats.records.length > 0 && (
         <div>
-          <div className="text-xs font-bold text-slate-300 mb-2 flex items-center justify-between">
+          <div className="text-xs font-bold text-slate-700 dark:text-slate-300 mb-2 flex items-center justify-between">
             <div className="flex items-center gap-1.5">
-              <Clock className="h-3.5 w-3.5 text-indigo-400" />
+              <Clock className="h-3.5 w-3.5 text-indigo-500 dark:text-indigo-400" />
               <span>Soru Bazlı Tempo Şeridi:</span>
             </div>
-            <span className="text-[10px] text-slate-400 font-normal">
+            <span className="text-[10px] text-slate-600 dark:text-slate-400 font-normal">
               Yeşil: Hızlı · Mavi: Dengeli · Kırmızı: Uzayan
             </span>
           </div>

@@ -97,7 +97,7 @@ export default function AdminEditUserForm({
   return (
     <form onSubmit={onSubmit} className="space-y-5">
       <div>
-        <label htmlFor={nameId} className="block text-slate-700 dark:text-slate-300 mb-2 text-sm">
+        <label htmlFor={nameId} className="block text-slate-700 dark:text-slate-200 font-semibold mb-2 text-sm">
           Ad Soyad
         </label>
         <input
@@ -106,13 +106,12 @@ export default function AdminEditUserForm({
           required
           value={formData.name || ""}
           onChange={(event) => updateFormData({ name: event.target.value })}
-          className="w-full bg-surface-2 dark:bg-slate-800/50 border border-default dark:border-slate-700 rounded-xl px-4 py-3 text-primary
- focus:outline-none focus:border-green-500 transition-colors"
+          className="w-full bg-white dark:bg-slate-800/80 border border-slate-300 dark:border-slate-700 rounded-xl px-4 py-3 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:border-green-500 focus:ring-2 focus:ring-green-500/20 transition-all"
           placeholder="Adını girin..."
         />
       </div>
       <div>
-        <label htmlFor={gradeId} className="block text-slate-700 dark:text-slate-300 mb-2 text-sm">
+        <label htmlFor={gradeId} className="block text-slate-700 dark:text-slate-200 font-semibold mb-2 text-sm">
           Sınıf
         </label>
         <select
@@ -126,8 +125,7 @@ export default function AdminEditUserForm({
                   : parseInt(event.target.value),
             })
           }
-          className="w-full bg-surface-2 dark:bg-slate-800/50 border border-default dark:border-slate-700 rounded-xl px-4 py-3 text-primary
- focus:outline-none focus:border-green-500 transition-colors"
+          className="w-full bg-white dark:bg-slate-800/80 border border-slate-300 dark:border-slate-700 rounded-xl px-4 py-3 text-slate-900 dark:text-white focus:outline-none focus:border-green-500 focus:ring-2 focus:ring-green-500/20 transition-all"
         >
           <option value="">Sınıf seçin</option>
           {PRIVATE_STUDENT_GRADES.map((grade) => (
@@ -149,20 +147,20 @@ export default function AdminEditUserForm({
       </motion.button>
 
       {editingUser && (
-        <div className="mt-8 pt-6 border-t border-slate-700/80">
+        <div className="mt-8 pt-6 border-t border-slate-200 dark:border-slate-700/80">
           <div className="flex items-center justify-between mb-3">
-            <h4 className="text-sm font-semibold text-amber-300 flex items-center gap-1.5">
+            <h4 className="text-sm font-semibold text-amber-700 dark:text-amber-300 flex items-center gap-1.5">
               <span>🔑</span> Şifre Sıfırlama (Öğrenci Kilit Çözümü)
             </h4>
             <button
               type="button"
               onClick={handleGenerateRandomPassword}
-              className="text-xs text-amber-400/90 hover:text-amber-300 underline font-medium"
+              className="text-xs text-amber-600 dark:text-amber-400 hover:text-amber-700 dark:hover:text-amber-300 underline font-medium"
             >
               Rastgele Şifre Üret
             </button>
           </div>
-          <p className="text-xs text-slate-400 mb-3">
+          <p className="text-xs text-slate-600 dark:text-slate-400 mb-3">
             Sahte e-posta (@ugurhoca.local) kullanan veya şifresini unutan öğrencilerin şifresini doğrudan buradan sıfırlayabilirsiniz.
           </p>
           <div className="flex flex-col sm:flex-row gap-2">
@@ -171,13 +169,13 @@ export default function AdminEditUserForm({
               value={newPassword}
               onChange={(e) => setNewPassword(e.target.value)}
               placeholder="Yeni şifre (en az 6 karakter)"
-              className="flex-1 bg-surface-2 dark:bg-slate-800/50 border border-default dark:border-slate-700 rounded-xl px-4 py-2.5 text-primary text-sm focus:outline-none focus:border-amber-500 transition-colors"
+              className="flex-1 bg-white dark:bg-slate-800/80 border border-slate-300 dark:border-slate-700 rounded-xl px-4 py-2.5 text-slate-900 dark:text-white placeholder:text-slate-400 text-sm focus:outline-none focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 transition-all"
             />
             <button
               type="button"
               onClick={handleResetPassword}
               disabled={isResetting || newPassword.length < 6}
-              className="px-4 py-2.5 bg-amber-500/20 border border-amber-500/40 text-amber-800 hover:bg-amber-500/30 hover:text-amber-950 dark:text-amber-200 dark:hover:text-white rounded-xl text-sm font-semibold transition-all disabled:opacity-50 whitespace-nowrap"
+              className="px-4 py-2.5 bg-amber-100 dark:bg-amber-500/20 border border-amber-300 dark:border-amber-500/40 text-amber-900 dark:text-amber-200 hover:bg-amber-200 dark:hover:bg-amber-500/30 hover:text-amber-950 dark:hover:text-white rounded-xl text-sm font-semibold transition-all disabled:opacity-50 whitespace-nowrap"
             >
               {isResetting ? "Sıfırlanıyor..." : "Şifreyi Güncelle"}
             </button>
@@ -186,8 +184,8 @@ export default function AdminEditUserForm({
             <div
               className={`mt-3 p-3 rounded-xl text-xs font-medium ${
                 resetStatus === "success"
-                  ? "bg-emerald-500/10 border border-emerald-500/30 text-emerald-300"
-                  : "bg-red-500/10 border border-red-500/30 text-red-300"
+                  ? "bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-300 dark:border-emerald-500/30 text-emerald-800 dark:text-emerald-300"
+                  : "bg-red-50 dark:bg-red-500/10 border border-red-300 dark:border-red-500/30 text-red-800 dark:text-red-300"
               }`}
             >
               {resetMessage}

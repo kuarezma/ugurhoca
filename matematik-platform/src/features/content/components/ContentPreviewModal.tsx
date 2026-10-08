@@ -96,7 +96,7 @@ export default function ContentPreviewModal({
         aria-modal="true"
         aria-labelledby="content-preview-title"
         tabIndex={-1}
-        className="glass flex max-h-[92vh] w-full max-w-5xl flex-col rounded-3xl p-4 sm:max-h-[90vh] sm:p-6"
+        className="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-2xl flex max-h-[92vh] w-full max-w-5xl flex-col rounded-3xl p-4 sm:max-h-[90vh] sm:p-6"
       >
         <div className="mb-3 flex items-start justify-between gap-3 sm:mb-4 sm:items-center">
           <div className="min-w-0">
@@ -106,7 +106,7 @@ export default function ContentPreviewModal({
             >
               {previewDoc.title}
             </h3>
-            <p className="line-clamp-2 text-xs text-slate-400 sm:text-sm">
+            <p className="line-clamp-2 text-xs text-slate-500 dark:text-slate-400 sm:text-sm">
               {visibleDescription}
             </p>
           </div>
@@ -117,7 +117,7 @@ export default function ContentPreviewModal({
               onClose();
             }}
             aria-label="Kapat"
-            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-slate-400 transition-colors hover:bg-white/5 hover:text-white"
+            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-slate-400 transition-colors hover:bg-slate-100 dark:hover:bg-white/10 hover:text-slate-900 dark:hover:text-white"
           >
             <X className="h-5 w-5 sm:h-6 sm:w-6" />
           </button>
@@ -179,8 +179,8 @@ export default function ContentPreviewModal({
           )}
         </div>
 
-        <div className="mt-4 flex flex-col gap-3 border-t border-slate-700 pt-4 sm:flex-row sm:items-center sm:justify-between">
-          <div className="grid w-full grid-cols-2 gap-2 text-[11px] text-slate-300 sm:flex sm:w-auto sm:flex-wrap sm:items-center sm:gap-3 sm:text-sm">
+        <div className="mt-4 flex flex-col gap-3 border-t border-slate-200 dark:border-slate-700 pt-4 sm:flex-row sm:items-center sm:justify-between">
+          <div className="grid w-full grid-cols-2 gap-2 text-[11px] text-slate-700 dark:text-slate-300 sm:flex sm:w-auto sm:flex-wrap sm:items-center sm:gap-3 sm:text-sm">
             <span className="flex min-w-0 items-center gap-1.5 rounded-xl bg-slate-100 dark:bg-slate-800/60 text-slate-700 dark:text-slate-300 px-3 py-2">
               <Eye className="h-3.5 w-3.5 shrink-0 sm:h-4 sm:w-4" />
               {previewDoc.views || 0} görüntülenme
@@ -190,7 +190,7 @@ export default function ContentPreviewModal({
               {previewDoc.downloads || 0} indirme
             </span>
             {previewDoc.answer_key_text && (
-              <span className="col-span-2 rounded-xl bg-green-500/20 px-3 py-2 text-center text-[11px] font-medium text-tone-success-fg sm:col-auto sm:text-xs">
+              <span className="col-span-2 rounded-xl bg-emerald-100 dark:bg-green-500/20 px-3 py-2 text-center text-[11px] font-semibold text-emerald-800 dark:text-tone-success-fg sm:col-auto sm:text-xs">
                 Cevap Anahtarı Var
               </span>
             )}
@@ -199,7 +199,7 @@ export default function ContentPreviewModal({
             {previewDoc.answer_key_text && (
               <button
                 onClick={onToggleAnswerKey}
-                className="flex w-full items-center justify-center gap-2 rounded-xl border border-green-500/30 bg-green-500/20 px-3 py-2.5 text-xs font-medium text-tone-success-fg transition-colors hover:bg-green-500/30 sm:w-auto sm:px-4 sm:text-sm"
+                className="flex w-full items-center justify-center gap-2 rounded-xl border border-emerald-300 dark:border-green-500/30 bg-emerald-50 dark:bg-green-500/20 px-3 py-2.5 text-xs font-semibold text-emerald-800 dark:text-tone-success-fg transition-colors hover:bg-emerald-100 dark:hover:bg-green-500/30 sm:w-auto sm:px-4 sm:text-sm"
               >
                 <Key className="h-4 w-4" />
                 Cevap Anahtarı
@@ -221,11 +221,11 @@ export default function ContentPreviewModal({
                 onClick={() => onToggleCompleted(previewDoc)}
                 className={`flex w-full items-center justify-center gap-1.5 rounded-xl border px-3 py-2.5 text-xs font-semibold transition-colors sm:w-auto sm:px-4 sm:text-sm ${
                   isCompleted
-                    ? 'border-emerald-500/40 bg-emerald-500/20 text-emerald-300'
-                    : 'border-white/10 bg-slate-800/60 text-slate-300 hover:bg-slate-700'
+                    ? 'border-emerald-300 dark:border-emerald-500/40 bg-emerald-50 dark:bg-emerald-500/20 text-emerald-800 dark:text-emerald-300'
+                    : 'border-slate-200 dark:border-white/10 bg-slate-100 dark:bg-slate-800/60 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700'
                 }`}
               >
-                <CheckCircle2 className="h-4 w-4 text-accent-success-ink" />
+                <CheckCircle2 className="h-4 w-4 text-emerald-600 dark:text-accent-success-ink" />
                 {isCompleted ? 'Çözüldü' : 'Tamamla'}
               </button>
             )}
@@ -233,12 +233,12 @@ export default function ContentPreviewModal({
               onClick={handleCopyLink}
               className={`flex w-full items-center justify-center gap-1.5 rounded-xl border px-3 py-2.5 text-xs font-semibold transition-colors sm:w-auto sm:px-4 sm:text-sm ${
                 copiedLink
-                  ? 'border-cyan-400/40 bg-cyan-500/20 text-cyan-300'
-                  : 'border-white/10 bg-slate-800/60 text-slate-300 hover:bg-slate-700'
+                  ? 'border-cyan-300 dark:border-cyan-400/40 bg-cyan-50 dark:bg-cyan-500/20 text-cyan-800 dark:text-cyan-300'
+                  : 'border-slate-200 dark:border-white/10 bg-slate-100 dark:bg-slate-800/60 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700'
               }`}
             >
               {copiedLink ? (
-                <Check className="h-4 w-4 text-cyan-400" />
+                <Check className="h-4 w-4 text-cyan-600 dark:text-cyan-400" />
               ) : (
                 <Share2 className="h-4 w-4" />
               )}
@@ -247,17 +247,17 @@ export default function ContentPreviewModal({
             <button
               type="button"
               onClick={() => setIsScratchpadOpen(true)}
-              className="flex w-full items-center justify-center gap-1.5 rounded-xl border border-indigo-400/30 bg-indigo-500/20 px-3 py-2.5 text-xs font-semibold text-indigo-200 transition-colors hover:bg-indigo-500/30 sm:w-auto sm:px-4 sm:text-sm"
+              className="flex w-full items-center justify-center gap-1.5 rounded-xl border border-indigo-200 dark:border-indigo-400/30 bg-indigo-50 dark:bg-indigo-500/20 px-3 py-2.5 text-xs font-semibold text-indigo-700 dark:text-indigo-200 transition-colors hover:bg-indigo-100 dark:hover:bg-indigo-500/30 sm:w-auto sm:px-4 sm:text-sm"
             >
-              <PenTool className="h-4 w-4 text-indigo-300" />
+              <PenTool className="h-4 w-4 text-indigo-600 dark:text-indigo-300" />
               İşlem Tahtası
             </button>
             <button
               type="button"
               onClick={handlePrint}
-              className="flex w-full items-center justify-center gap-1.5 rounded-xl border border-white/10 bg-slate-800/60 px-3 py-2.5 text-xs font-semibold text-slate-300 transition-colors hover:bg-slate-700 sm:w-auto sm:px-4 sm:text-sm"
+              className="flex w-full items-center justify-center gap-1.5 rounded-xl border border-slate-200 dark:border-white/10 bg-slate-100 dark:bg-slate-800/60 px-3 py-2.5 text-xs font-semibold text-slate-700 dark:text-slate-300 transition-colors hover:bg-slate-200 dark:hover:bg-slate-700 sm:w-auto sm:px-4 sm:text-sm"
             >
-              <Printer className="h-4 w-4 text-amber-300" />
+              <Printer className="h-4 w-4 text-amber-600 dark:text-amber-300" />
               Yazdır
             </button>
             {previewDoc.file_url && (
@@ -265,9 +265,9 @@ export default function ContentPreviewModal({
                 href={previewDoc.file_url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex w-full items-center justify-center gap-1.5 rounded-xl border border-white/15 bg-white/10 px-3 py-2.5 text-xs font-semibold text-white dark:text-white transition-colors hover:bg-white/20 sm:w-auto sm:px-4 sm:text-sm"
+                className="flex w-full items-center justify-center gap-1.5 rounded-xl border border-slate-200 dark:border-white/15 bg-slate-100 dark:bg-white/10 px-3 py-2.5 text-xs font-semibold text-slate-800 dark:text-white transition-colors hover:bg-slate-200 dark:hover:bg-white/20 sm:w-auto sm:px-4 sm:text-sm"
               >
-                <ExternalLink className="h-4 w-4 text-cyan-300" />
+                <ExternalLink className="h-4 w-4 text-cyan-600 dark:text-cyan-300" />
                 Ayrı Sekmede Aç
               </a>
             )}
@@ -287,13 +287,13 @@ export default function ContentPreviewModal({
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
-            className="mt-4 p-4 bg-green-500/10 border border-green-500/30 rounded-xl"
+            className="mt-4 p-4 bg-green-50 dark:bg-green-500/10 border border-green-200 dark:border-green-500/30 rounded-xl"
           >
-            <h4 className="text-green-ink font-semibold mb-2 flex items-center gap-2">
+            <h4 className="text-emerald-800 dark:text-green-ink font-semibold mb-2 flex items-center gap-2">
               <Key className="w-4 h-4" />
               Cevap Anahtarı
             </h4>
-            <pre className="text-slate-300 text-sm whitespace-pre-wrap font-mono">
+            <pre className="text-slate-800 dark:text-slate-200 text-sm whitespace-pre-wrap font-mono">
               {previewDoc.answer_key_text}
             </pre>
           </motion.div>

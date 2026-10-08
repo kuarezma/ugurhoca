@@ -39,7 +39,7 @@ export default function AdminSendDocumentForm({
   return (
     <form onSubmit={onSubmit} className="space-y-5">
       <div>
-        <label htmlFor={docId} className="block text-slate-700 dark:text-slate-300 mb-2 text-sm">
+        <label htmlFor={docId} className="block text-slate-700 dark:text-slate-200 font-semibold mb-2 text-sm">
           Belge Seç
         </label>
         <select
@@ -47,8 +47,7 @@ export default function AdminSendDocumentForm({
           required
           value={formData.document_id || ""}
           onChange={(event) => onDocumentSelect(event.target.value)}
-          className="w-full bg-surface-2 dark:bg-slate-800/50 border border-default dark:border-slate-700 rounded-xl px-4 py-3 text-primary
- focus:outline-none focus:border-rose-500 transition-colors"
+          className="w-full bg-white dark:bg-slate-800/80 border border-slate-300 dark:border-slate-700 rounded-xl px-4 py-3 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-rose-500/20 focus:border-rose-500 transition-all shadow-xs"
         >
           <option value="">Belge seçin</option>
           {documents.map((document) => (
@@ -59,7 +58,7 @@ export default function AdminSendDocumentForm({
         </select>
       </div>
       <div>
-        <label htmlFor={studentId} className="block text-slate-700 dark:text-slate-300 mb-2 text-sm">
+        <label htmlFor={studentId} className="block text-slate-700 dark:text-slate-200 font-semibold mb-2 text-sm">
           Öğrenci Seç
         </label>
         <select
@@ -67,8 +66,7 @@ export default function AdminSendDocumentForm({
           required
           value={formData.student_id || ""}
           onChange={(event) => updateFormData({ student_id: event.target.value })}
-          className="w-full bg-surface-2 dark:bg-slate-800/50 border border-default dark:border-slate-700 rounded-xl px-4 py-3 text-primary
- focus:outline-none focus:border-rose-500 transition-colors"
+          className="w-full bg-white dark:bg-slate-800/80 border border-slate-300 dark:border-slate-700 rounded-xl px-4 py-3 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-rose-500/20 focus:border-rose-500 transition-all shadow-xs"
         >
           <option value="">Öğrenci seçin</option>
           {studentUsers.map((student) => (

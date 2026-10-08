@@ -35,7 +35,7 @@ export default function AdminQuestionFields({
         <div className="flex items-center justify-between mb-2">
           <label
             htmlFor={questionId}
-            className="block text-slate-700 dark:text-slate-300 font-bold uppercase tracking-wider text-xs"
+            className="block text-slate-700 dark:text-slate-200 font-bold uppercase tracking-wider text-xs"
           >
             Soru Metni
           </label>
@@ -45,7 +45,7 @@ export default function AdminQuestionFields({
               setHasOpenedLatexModal(true);
               setIsLatexModalOpen(true);
             })}
-            className="inline-flex items-center gap-1.5 rounded-lg border border-violet-500/30 bg-violet-500/10 px-2.5 py-1 text-xs font-bold text-violet-700 hover:bg-violet-500/20 hover:text-violet-900 dark:text-violet-300 dark:hover:text-white transition"
+            className="inline-flex items-center gap-1.5 rounded-lg border border-violet-500/30 bg-violet-500/10 px-2.5 py-1 text-xs font-bold text-violet-700 dark:text-violet-300 hover:bg-violet-500/20 hover:text-violet-900 dark:hover:text-white transition"
           >
             <FunctionSquare className="w-3.5 h-3.5" />
             Formül / LaTeX Asistanı
@@ -57,8 +57,7 @@ export default function AdminQuestionFields({
           rows={3}
           value={formData.question || ""}
           onChange={(event) => updateFormData({ question: event.target.value })}
-          className="w-full bg-surface-2 dark:bg-slate-800/50 border border-default dark:border-slate-700/50 rounded-2xl px-4 py-4 text-primary
- focus:outline-none focus:ring-2 focus:ring-violet-500 transition-all resize-none shadow-inner"
+          className="w-full bg-white dark:bg-slate-800/80 border border-slate-300 dark:border-slate-700/60 rounded-2xl px-4 py-4 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-violet-500 transition-all resize-none shadow-xs"
           placeholder="Soruyu buraya yazın..."
         />
       </div>
@@ -78,7 +77,7 @@ export default function AdminQuestionFields({
       <div role="group" aria-labelledby={optionsGroupLabelId}>
         <span
           id={optionsGroupLabelId}
-          className="block text-slate-700 dark:text-slate-300 mb-3 font-bold uppercase tracking-wider text-xs"
+          className="block text-slate-700 dark:text-slate-200 mb-3 font-bold uppercase tracking-wider text-xs"
         >
           Şıklar ve Doğru Cevap
         </span>
@@ -89,7 +88,7 @@ export default function AdminQuestionFields({
             return (
               <div
                 key={index}
-                className={`flex items-center gap-3 p-2 rounded-2xl border transition-all ${isCorrect ? "border-emerald-500/50 bg-emerald-500/10" : "border-slate-700/50 bg-slate-800/30"}`}
+                className={`flex items-center gap-3 p-2 rounded-2xl border transition-all ${isCorrect ? "border-emerald-500 bg-emerald-50 dark:bg-emerald-500/10 shadow-xs" : "border-slate-200 dark:border-slate-700/60 bg-slate-50 dark:bg-slate-800/40"}`}
               >
                 <div className="pl-3 pr-1">
                   <input
@@ -102,7 +101,7 @@ export default function AdminQuestionFields({
                   />
                 </div>
                 <div
-                  className={`w-8 h-8 rounded-xl flex items-center justify-center font-bold text-sm shrink-0 ${isCorrect ? "bg-emerald-500 text-slate-950 shadow-lg shadow-emerald-500/20" : "bg-slate-700 text-slate-700 dark:text-slate-300"}`}
+                  className={`w-8 h-8 rounded-xl flex items-center justify-center font-bold text-sm shrink-0 ${isCorrect ? "bg-emerald-500 text-white shadow-md shadow-emerald-500/20" : "bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-200"}`}
                 >
                   {OPTION_LETTERS[index]}
                 </div>
@@ -115,7 +114,7 @@ export default function AdminQuestionFields({
                     nextOptions[index] = event.target.value;
                     updateFormData({ options: nextOptions });
                   }}
-                  className="flex-1 bg-transparent border-none text-primary focus:outline-none focus:ring-0 placeholder:text-slate-500 text-sm py-2"
+                  className="flex-1 bg-transparent border-none text-slate-900 dark:text-white focus:outline-none focus:ring-0 placeholder:text-slate-400 dark:placeholder:text-slate-500 text-sm py-2"
                   placeholder={`${OPTION_LETTERS[index]} Şıkkını girin...`}
                 />
               </div>
@@ -127,7 +126,7 @@ export default function AdminQuestionFields({
       <div>
         <label
           htmlFor={explanationId}
-          className="block text-amber-500 mb-2 font-bold uppercase tracking-wider text-xs flex items-center gap-1 mt-4"
+          className="block text-amber-600 dark:text-amber-400 mb-2 font-bold uppercase tracking-wider text-xs flex items-center gap-1 mt-4"
         >
           <AlertCircle className="w-3.5 h-3.5" /> Çözüm / Açıklama
           (Opsiyonel)
@@ -139,8 +138,7 @@ export default function AdminQuestionFields({
           onChange={(event) =>
             updateFormData({ explanation: event.target.value })
           }
-          className="w-full bg-surface-2 dark:bg-slate-800/50 border border-default dark:border-slate-700/50 rounded-2xl px-4 py-3 text-primary
- focus:outline-none focus:ring-2 focus:ring-amber-500 transition-all resize-none"
+          className="w-full bg-white dark:bg-slate-800/80 border border-slate-300 dark:border-slate-700/60 rounded-2xl px-4 py-3 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-amber-500 transition-all resize-none shadow-xs"
           placeholder="Öğrenci soruyu yanlış yaptığında göreceği açıklama..."
         />
       </div>
