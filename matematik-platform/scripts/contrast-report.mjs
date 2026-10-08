@@ -7,6 +7,7 @@ const OPAQUE_WHITE = { red: 255, green: 255, blue: 255, alpha: 1 };
 const SMALL_TEXT_THRESHOLD = 4.5;
 const LARGE_TEXT_THRESHOLD = 3;
 const BORDER_THRESHOLD = 3;
+const MAX_BACKGROUND_CANDIDATES = 16;
 
 function clamp(value, minimum, maximum) {
   return Math.min(Math.max(value, minimum), maximum);
@@ -232,7 +233,9 @@ function gradientProgress(element, point, direction) {
 }
 
 function resolveGradientLayer(layer, element, point) {
-  if (!/^(?:repeating-)?linear-gradient\(/i.test(layer)) {
+  const isLinear = /^(?:repeating-)?linear-gradient\(/i.test(layer);
+  const isRadial = /^(?:repeating-)?radial-gradient\(/i.test(layer);
+  if (!isLinear && !isRadial) {
     return {
       color: null,
       reason: `desteklenmeyen_arka_plan:${layer.slice(0, 80)}`,
@@ -245,6 +248,12 @@ function resolveGradientLayer(layer, element, point) {
       color: null,
       reason: `renk_cozulemeyen_gradyan:${layer.slice(0, 80)}`,
     };
+  }
+
+  // Radyal gradyanın konumu burada hesaplanmaz; her renk durağı bir aday olur
+  // ve metin/kenarlık kontrastı en kötü adaya göre değerlendirilir.
+  if (isRadial) {
+    return { color: colors[0], candidates: colors, approximate: false };
   }
 
   if (colors.length === 1) return { color: colors[0], approximate: false };
@@ -264,7 +273,8 @@ function resolveGradientLayer(layer, element, point) {
 }
 
 function resolveBackground(element, point) {
-  let resolved = OPAQUE_WHITE;
+  // Her aday, şimdiye kadar çözülen katmanların bir olasılık kombinasyonudur.
+  let candidates = [OPAQUE_WHITE];
   let approximate = false;
   const ancestry = [];
   let current = element;
@@ -283,7 +293,7 @@ function resolveBackground(element, point) {
         reason: `arka_plan_rengi_cozulemedi:${style.backgroundColor}`,
       };
     }
-    resolved = compositeColors(color, resolved);
+    candidates = candidates.map((base) => compositeColors(color, base));
 
     if (style.backgroundImage === 'none') continue;
     if (
@@ -298,12 +308,38 @@ function resolveBackground(element, point) {
     for (const imageLayer of [...imageLayers].reverse()) {
       const gradient = resolveGradientLayer(imageLayer, layerElement, point);
       if (!gradient.color) return gradient;
-      resolved = compositeColors(gradient.color, resolved);
+      const layerColors = gradient.candidates ?? [gradient.color];
+      if (candidates.length * layerColors.length > MAX_BACKGROUND_CANDIDATES) {
+        return {
+          color: null,
+          reason: `cok_fazla_arka_plan_adayi:${imageLayer.slice(0, 80)}`,
+        };
+      }
+      candidates = candidates.flatMap((base) =>
+        layerColors.map((layerColor) => compositeColors(layerColor, base)),
+      );
       approximate ||= Boolean(gradient.approximate);
     }
   }
 
-  return { color: resolved, approximate };
+  return { color: candidates[0], candidates, approximate };
+}
+
+/**
+ * Metin veya kenarlık rengi için aday arka planların en düşük kontrastlısını
+ * döndürür; tek adaylı arka planlarda sonuç eski tekil hesapla aynıdır.
+ */
+function worstContrast(rawForeground, background) {
+  const candidates = background.candidates ?? [background.color];
+  let worst = null;
+  for (const candidate of candidates) {
+    const foreground = compositeColors(rawForeground, candidate);
+    const ratio = contrastRatio(foreground, candidate);
+    if (!worst || ratio < worst.ratio) {
+      worst = { background: candidate, foreground, ratio };
+    }
+  }
+  return worst;
 }
 
 function isVisible(element) {
@@ -497,21 +533,17 @@ export function collectComputedContrast() {
           continue;
         }
 
-        const effectiveForeground = compositeColors(
-          rawForeground,
-          background.color,
-        );
         const { threshold } = textThreshold(style);
-        const ratio = contrastRatio(effectiveForeground, background.color);
-        if (ratio < threshold) {
+        const worst = worstContrast(rawForeground, background);
+        if (worst.ratio < threshold) {
           result.text.violations.push(
             createTextRecord(
               element,
               sample,
               style,
-              background.color,
-              effectiveForeground,
-              ratio,
+              worst.background,
+              worst.foreground,
+              worst.ratio,
               threshold,
             ),
           );
@@ -555,19 +587,15 @@ export function collectComputedContrast() {
         continue;
       }
 
-      const effectiveBorder = compositeColors(
-        rawBorder,
-        borderBackground.color,
-      );
-      const ratio = contrastRatio(effectiveBorder, borderBackground.color);
-      if (ratio < BORDER_THRESHOLD) {
+      const worst = worstContrast(rawBorder, borderBackground);
+      if (worst.ratio < BORDER_THRESHOLD) {
         result.borders.violations.push({
           selector: elementLabel(element),
           tagName: element.tagName.toLowerCase(),
           side,
-          foreground: formatColor(effectiveBorder),
-          background: formatColor(borderBackground.color),
-          ratio: round(ratio),
+          foreground: formatColor(worst.foreground),
+          background: formatColor(worst.background),
+          ratio: round(worst.ratio),
           threshold: BORDER_THRESHOLD,
         });
       }
@@ -600,6 +628,7 @@ export function createBrowserContrastCollectorScript() {
     interpolateColor,
     gradientProgress,
     resolveGradientLayer,
+    worstContrast,
     resolveBackground,
     isVisible,
     elementLabel,
@@ -616,6 +645,7 @@ export function createBrowserContrastCollectorScript() {
     `const SMALL_TEXT_THRESHOLD = ${SMALL_TEXT_THRESHOLD};`,
     `const LARGE_TEXT_THRESHOLD = ${LARGE_TEXT_THRESHOLD};`,
     `const BORDER_THRESHOLD = ${BORDER_THRESHOLD};`,
+    `const MAX_BACKGROUND_CANDIDATES = ${MAX_BACKGROUND_CANDIDATES};`,
     ...helpers.map((helper) => helper.toString()),
     'globalThis.__ugurhocaCollectComputedContrast = collectComputedContrast;',
   ].join('\n\n');
