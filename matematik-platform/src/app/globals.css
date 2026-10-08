@@ -60,8 +60,8 @@
   --text-secondary: #cbd5e1;
   --text-tertiary: #94a3b8;
   --border-subtle: rgba(255, 255, 255, 0.08);
-  --border-default: #334155;
-  --border-strong: #475569;
+  --border-default: #7b8ba1;
+  --border-strong: var(--border-default);
   --accent-fg: var(--brand-primary-ink);
   --accent-bg: var(--brand-primary);
   --tone-success-fg: #bbf7d0;
@@ -223,10 +223,10 @@ html[data-theme='light'] {
   --surface-3-rgb: 241 245 249;
   --text-primary: #1e293b;
   --text-secondary: #3c4858;
-  --text-tertiary: #778ca3;
+  --text-tertiary: #4f5f76;
   --border-subtle: #edf2f7;
-  --border-default: #e2e8f0;
-  --border-strong: #cbd5e1;
+  --border-default: #6f7f96;
+  --border-strong: var(--border-default);
   --accent-fg: var(--brand-primary-ink);
   --accent-bg: var(--brand-primary);
   --tone-success-fg: #276700;
@@ -2124,7 +2124,7 @@ html[data-theme='dark'] body {
 .btn-3d.btn-white {
   background-color: #ffffff;
   color: #1e293b;
-  border: 2px solid #e2e8f0;
+  border: 2px solid var(--border-default);
   box-shadow: 0 4px 0 #cbd5e1;
 }
 .btn-3d.btn-white:hover {
@@ -2137,7 +2137,7 @@ html[data-theme='dark'] body {
 html[data-theme='dark'] .btn-3d.btn-white {
   background-color: #1e293b;
   color: #f8fafc;
-  border: 2px solid #334155;
+  border: 2px solid var(--border-default);
   box-shadow: 0 4px 0 #0f172a;
 }
 html[data-theme='dark'] .btn-3d.btn-white:hover {
@@ -2233,3 +2233,19 @@ html[data-theme='dark'] .xp-badge {
   font-weight: 700;
 }
 
+
+/* Kontrast kapısı: sabit slate kenarlıkları semantik kenarlık tonuna bağlanır. */
+html[data-theme='light'] .border-slate-200,
+html[data-theme='light'] .light\:border-slate-200,
+html[data-theme='light'] .border-slate-300,
+html[data-theme='light'] .light\:border-slate-300 {
+  border-color: var(--border-default);
+}
+
+:root:not([data-theme='light']) .border-slate-600,
+:root:not([data-theme='light']) .dark\:border-slate-600,
+:root:not([data-theme='light']) .dark\:border-slate-800,
+:root:not([data-theme='light']) .border-slate-700,
+:root:not([data-theme='light']) .dark\:border-slate-700 {
+  border-color: var(--border-default);
+}

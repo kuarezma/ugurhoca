@@ -51,7 +51,7 @@ const levelSectionLabels: Record<ProgramTargetLevel, string> = {
 };
 
 const buildSourceLinkClassName = (_isLight: boolean) =>
-  `inline-flex items-center gap-1.5 rounded-xl border border-default dark:border-slate-500 bg-surface-1 px-3 py-2 text-xs font-bold text-primary hover:border-accent transition-colors`;
+  `inline-flex items-center gap-1.5 rounded-xl border border-default dark:border-slate-400 bg-surface-1 px-3 py-2 text-xs font-bold text-primary hover:border-accent transition-colors`;
 
 export default function YksWizardPage() {
   const { theme } = useTheme();
@@ -339,7 +339,7 @@ export default function YksWizardPage() {
           className="rounded-3xl border border-default bg-surface-1 p-5 shadow-sm sm:p-7"
         >
           <ProgramWizardHeader
-            badgeClassName="text-white bg-brand-pink"
+            badgeClassName="text-white bg-violet-700"
             badgeLabel="YKS Tercih Sihirbazı"
             dataYear={dataYear}
             dataYearNote={
@@ -355,7 +355,7 @@ export default function YksWizardPage() {
           <ProgramStepTabs
             activeStep={step}
             activeStepClassName="bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none"
-            inactiveStepClassName="border border-default dark:border-slate-500 bg-surface-1 text-secondary hover:text-primary hover:border-accent"
+            inactiveStepClassName="border border-default dark:border-slate-400 bg-surface-1 text-secondary hover:text-primary hover:border-accent"
             onStepChange={setStep}
             steps={steps}
           />
@@ -385,7 +385,7 @@ export default function YksWizardPage() {
                           return String(clampProgramValue(parsed, 50, 100));
                         });
                       }}
-                      className="w-full rounded-xl border border-default dark:border-slate-500 bg-surface-0 px-3 py-2 text-sm font-semibold text-primary tabular-nums outline-none transition focus:border-accent focus:ring-2 focus:ring-accent/20"
+                      className="w-full rounded-xl border border-default dark:border-slate-400 bg-surface-0 px-3 py-2 text-sm font-semibold text-primary tabular-nums outline-none transition focus:border-accent focus:ring-2 focus:ring-accent/20"
                     />
                   </div>
 
@@ -402,7 +402,7 @@ export default function YksWizardPage() {
                       onChange={(event) =>
                         setScoreType(event.target.value as YksScoreType)
                       }
-                      className="w-full rounded-xl border border-default dark:border-slate-500 bg-surface-0 px-3 py-2 text-sm font-semibold text-primary outline-none transition focus:border-accent focus:ring-2 focus:ring-accent/20"
+                      className="w-full rounded-xl border border-default dark:border-slate-400 bg-surface-0 px-3 py-2 text-sm font-semibold text-primary outline-none transition focus:border-accent focus:ring-2 focus:ring-accent/20"
                     >
                       <option value="TYT">TYT</option>
                       <option value="SAY">SAY</option>
@@ -415,7 +415,7 @@ export default function YksWizardPage() {
                     <legend className="mb-1 block text-[11px] font-bold uppercase tracking-[0.18em] text-secondary">
                       Önceki Sene Yerleşme
                     </legend>
-                    <div className="grid grid-cols-2 overflow-hidden rounded-xl border border-default dark:border-slate-500 text-sm font-bold bg-surface-0">
+                    <div className="grid grid-cols-2 overflow-hidden rounded-xl border border-default dark:border-slate-400 text-sm font-bold bg-surface-0">
                       <button
                         type="button"
                         onClick={() => setPlacedLastYear(false)}
@@ -514,7 +514,7 @@ export default function YksWizardPage() {
               </section>
 
               <div className="grid gap-3 sm:grid-cols-3">
-                <div className="rounded-2xl border border-default dark:border-slate-500 bg-surface-1 p-4">
+                <div className="rounded-2xl border border-default dark:border-slate-400 bg-surface-1 p-4">
                   <div className="text-[11px] font-bold uppercase tracking-[0.18em] text-secondary">
                     OBP Katkısı
                   </div>
@@ -528,7 +528,7 @@ export default function YksWizardPage() {
                   </div>
                 </div>
 
-                <div className="rounded-2xl border border-default dark:border-slate-500 bg-surface-1 p-4">
+                <div className="rounded-2xl border border-default dark:border-slate-400 bg-surface-1 p-4">
                   <label
                     htmlFor="yks-manual-rank"
                     className="mb-1 block text-[11px] font-bold uppercase tracking-[0.18em] text-secondary"
@@ -555,7 +555,7 @@ export default function YksWizardPage() {
                       });
                     }}
                     placeholder={formatRank(yksResult.estimatedRank)}
-                    className="w-full rounded-xl border border-default dark:border-slate-500 bg-surface-0 px-3 py-2 text-sm font-semibold text-primary tabular-nums outline-none transition focus:border-accent focus:ring-2 focus:ring-accent/20"
+                    className="w-full rounded-xl border border-default dark:border-slate-400 bg-surface-0 px-3 py-2 text-sm font-semibold text-primary tabular-nums outline-none transition focus:border-accent focus:ring-2 focus:ring-accent/20"
                   />
                 </div>
               </div>
@@ -592,7 +592,7 @@ export default function YksWizardPage() {
                 <button
                   type="button"
                   onClick={() => setStep(2)}
-                  className="mt-4 inline-flex items-center gap-2 rounded-xl border border-purple-400/80 dark:border-purple-300/80 px-4 py-2 text-sm font-bold transition hover:scale-[1.01] active:scale-[0.99] bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none"
+                  className="mt-4 inline-flex items-center gap-2 rounded-xl border border-purple-600/80 dark:border-purple-300/80 px-4 py-2 text-sm font-bold transition hover:scale-[1.01] active:scale-[0.99] bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none"
                 >
                   Tercih Filtrelerine Geç
                   <ChevronRight className="h-4 w-4" />
@@ -616,7 +616,7 @@ export default function YksWizardPage() {
                     value={query}
                     onChange={(event) => setQuery(event.target.value)}
                     placeholder="Üniversite veya bölüm ara"
-                    className="w-full rounded-xl border border-default dark:border-slate-500 bg-surface-0 px-3 py-2 text-sm font-semibold text-primary outline-none transition focus:border-accent focus:ring-2 focus:ring-accent/20"
+                    className="w-full rounded-xl border border-default dark:border-slate-400 bg-surface-0 px-3 py-2 text-sm font-semibold text-primary outline-none transition focus:border-accent focus:ring-2 focus:ring-accent/20"
                   />
 
                   <select
@@ -626,7 +626,7 @@ export default function YksWizardPage() {
                         event.target.value as 'all' | 'lisans' | 'onlisans',
                       )
                     }
-                    className="w-full rounded-xl border border-default dark:border-slate-500 bg-surface-0 px-3 py-2 text-sm font-semibold text-primary outline-none transition focus:border-accent focus:ring-2 focus:ring-accent/20"
+                    className="w-full rounded-xl border border-default dark:border-slate-400 bg-surface-0 px-3 py-2 text-sm font-semibold text-primary outline-none transition focus:border-accent focus:ring-2 focus:ring-accent/20"
                   >
                     <option value="all">Lisans + Ön Lisans</option>
                     <option value="lisans">Lisans</option>
@@ -641,7 +641,7 @@ export default function YksWizardPage() {
                       );
                       setCity('all');
                     }}
-                    className="w-full rounded-xl border border-default dark:border-slate-500 bg-surface-0 px-3 py-2 text-sm font-semibold text-primary outline-none transition focus:border-accent focus:ring-2 focus:ring-accent/20"
+                    className="w-full rounded-xl border border-default dark:border-slate-400 bg-surface-0 px-3 py-2 text-sm font-semibold text-primary outline-none transition focus:border-accent focus:ring-2 focus:ring-accent/20"
                   >
                     <option value="all">Tüm Konumlar</option>
                     <option value="domestic">Türkiye</option>
@@ -651,7 +651,7 @@ export default function YksWizardPage() {
                   <select
                     value={city}
                     onChange={(event) => setCity(event.target.value)}
-                    className="w-full rounded-xl border border-default dark:border-slate-500 bg-surface-0 px-3 py-2 text-sm font-semibold text-primary outline-none transition focus:border-accent focus:ring-2 focus:ring-accent/20"
+                    className="w-full rounded-xl border border-default dark:border-slate-400 bg-surface-0 px-3 py-2 text-sm font-semibold text-primary outline-none transition focus:border-accent focus:ring-2 focus:ring-accent/20"
                   >
                     <option value="all">Tüm Şehirler</option>
                     {cities.map((item) => (
@@ -664,7 +664,7 @@ export default function YksWizardPage() {
                   <select
                     value={universityType}
                     onChange={(event) => setUniversityType(event.target.value)}
-                    className="w-full rounded-xl border border-default dark:border-slate-500 bg-surface-0 px-3 py-2 text-sm font-semibold text-primary outline-none transition focus:border-accent focus:ring-2 focus:ring-accent/20"
+                    className="w-full rounded-xl border border-default dark:border-slate-400 bg-surface-0 px-3 py-2 text-sm font-semibold text-primary outline-none transition focus:border-accent focus:ring-2 focus:ring-accent/20"
                   >
                     <option value="all">Tüm Üniversite Tipleri</option>
                     {universityTypes.map((item) => (
@@ -677,7 +677,7 @@ export default function YksWizardPage() {
                   <select
                     value={teachingType}
                     onChange={(event) => setTeachingType(event.target.value)}
-                    className="w-full rounded-xl border border-default dark:border-slate-500 bg-surface-0 px-3 py-2 text-sm font-semibold text-primary outline-none transition focus:border-accent focus:ring-2 focus:ring-accent/20"
+                    className="w-full rounded-xl border border-default dark:border-slate-400 bg-surface-0 px-3 py-2 text-sm font-semibold text-primary outline-none transition focus:border-accent focus:ring-2 focus:ring-accent/20"
                   >
                     <option value="all">Tüm Öğretim Türleri</option>
                     {teachingTypes.map((item) => (
@@ -690,7 +690,7 @@ export default function YksWizardPage() {
                   <select
                     value={language}
                     onChange={(event) => setLanguage(event.target.value)}
-                    className="w-full rounded-xl border border-default dark:border-slate-500 bg-surface-0 px-3 py-2 text-sm font-semibold text-primary outline-none transition focus:border-accent focus:ring-2 focus:ring-accent/20"
+                    className="w-full rounded-xl border border-default dark:border-slate-400 bg-surface-0 px-3 py-2 text-sm font-semibold text-primary outline-none transition focus:border-accent focus:ring-2 focus:ring-accent/20"
                   >
                     <option value="all">Tüm Diller</option>
                     {languages.map((item) => (
@@ -707,7 +707,7 @@ export default function YksWizardPage() {
                         event.target.value as |'all' | 'none' | 'partial' | 'full',
                       )
                     }
-                    className="w-full rounded-xl border border-default dark:border-slate-500 bg-surface-0 px-3 py-2 text-sm font-semibold text-primary outline-none transition focus:border-accent focus:ring-2 focus:ring-accent/20"
+                    className="w-full rounded-xl border border-default dark:border-slate-400 bg-surface-0 px-3 py-2 text-sm font-semibold text-primary outline-none transition focus:border-accent focus:ring-2 focus:ring-accent/20"
                   >
                     <option value="all">Burs Durumu (Hepsi)</option>
                     <option value="none">Ücretli / Burs Yok</option>
@@ -722,7 +722,7 @@ export default function YksWizardPage() {
                         event.target.value as 'all' | ProgramTargetLevel,
                       )
                     }
-                    className="w-full rounded-xl border border-default dark:border-slate-500 bg-surface-0 px-3 py-2 text-sm font-semibold text-primary outline-none transition focus:border-accent focus:ring-2 focus:ring-accent/20"
+                    className="w-full rounded-xl border border-default dark:border-slate-400 bg-surface-0 px-3 py-2 text-sm font-semibold text-primary outline-none transition focus:border-accent focus:ring-2 focus:ring-accent/20"
                   >
                     <option value="all">Hedef Seviyesi (Hepsi)</option>
                     <option value="iddiali">İddialı</option>
@@ -754,14 +754,14 @@ export default function YksWizardPage() {
                   <button
                     type="button"
                     onClick={() => setStep(1)}
-                    className="rounded-xl border border-default dark:border-slate-500 bg-surface-1 px-4 py-2 text-sm font-semibold text-primary hover:bg-surface-2 transition"
+                    className="rounded-xl border border-default dark:border-slate-400 bg-surface-1 px-4 py-2 text-sm font-semibold text-primary hover:bg-surface-2 transition"
                   >
                     Geri Dön
                   </button>
                   <button
                     type="button"
                     onClick={() => setStep(3)}
-                    className="inline-flex items-center gap-2 rounded-xl border border-purple-400/80 dark:border-purple-300/80 px-4 py-2 text-sm font-bold transition hover:scale-[1.01] active:scale-[0.99] bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none"
+                    className="inline-flex items-center gap-2 rounded-xl border border-purple-600/80 dark:border-purple-300/80 px-4 py-2 text-sm font-bold transition hover:scale-[1.01] active:scale-[0.99] bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none"
                   >
                     Önerileri Göster
                     <ChevronRight className="h-4 w-4" />
@@ -872,7 +872,7 @@ export default function YksWizardPage() {
                               </div>
 
                               <div className="mt-3 grid grid-cols-2 gap-2 text-xs sm:text-sm">
-                                <div className="rounded-xl border border-default dark:border-slate-500 bg-surface-1 px-3 py-2">
+                                <div className="rounded-xl border border-default dark:border-slate-400 bg-surface-1 px-3 py-2">
                                   <div className="text-secondary">
                                     Taban Sıralama
                                   </div>
@@ -880,7 +880,7 @@ export default function YksWizardPage() {
                                     {formatRank(program.base_rank)}
                                   </div>
                                 </div>
-                                <div className="rounded-xl border border-default dark:border-slate-500 bg-surface-1 px-3 py-2">
+                                <div className="rounded-xl border border-default dark:border-slate-400 bg-surface-1 px-3 py-2">
                                   <div className="text-secondary">
                                     Taban Puan
                                   </div>
@@ -893,24 +893,24 @@ export default function YksWizardPage() {
                               </div>
 
                               <div className="mt-3 flex flex-wrap gap-2 text-[11px] text-secondary">
-                                <span className="rounded-full px-2 py-1 border border-default dark:border-slate-500 bg-surface-1 font-semibold text-primary">
+                                <span className="rounded-full px-2 py-1 border border-default dark:border-slate-400 bg-surface-1 font-semibold text-primary">
                                   {program.score_type}
                                 </span>
-                                <span className="rounded-full px-2 py-1 border border-default dark:border-slate-500 bg-surface-1 font-semibold text-primary">
+                                <span className="rounded-full px-2 py-1 border border-default dark:border-slate-400 bg-surface-1 font-semibold text-primary">
                                   {program.level === 'lisans'
                                     ? 'Lisans'
                                     : 'Ön Lisans'}
                                 </span>
-                                <span className="rounded-full px-2 py-1 border border-default dark:border-slate-500 bg-surface-1 font-semibold text-primary">
+                                <span className="rounded-full px-2 py-1 border border-default dark:border-slate-400 bg-surface-1 font-semibold text-primary">
                                   {formatProgramOptionLabel(
                                     program.university_type,
                                   )}
                                 </span>
-                                <span className="rounded-full px-2 py-1 border border-default dark:border-slate-500 bg-surface-1 font-semibold text-primary">
+                                <span className="rounded-full px-2 py-1 border border-default dark:border-slate-400 bg-surface-1 font-semibold text-primary">
                                   Burs: %{program.scholarship_rate || 0}
                                 </span>
                                 {program.quota_total ? (
-                                  <span className="rounded-full px-2 py-1 border border-default dark:border-slate-500 bg-surface-1 font-semibold text-primary">
+                                  <span className="rounded-full px-2 py-1 border border-default dark:border-slate-400 bg-surface-1 font-semibold text-primary">
                                     Kontenjan: {program.quota_total}
                                   </span>
                                 ) : null}
@@ -970,14 +970,14 @@ export default function YksWizardPage() {
                 <button
                   type="button"
                   onClick={() => setStep(2)}
-                  className="rounded-xl border border-default dark:border-slate-500 bg-surface-1 px-4 py-2 text-sm font-semibold text-primary hover:bg-surface-2 transition"
+                  className="rounded-xl border border-default dark:border-slate-400 bg-surface-1 px-4 py-2 text-sm font-semibold text-primary hover:bg-surface-2 transition"
                 >
                   Filtreleri Düzenle
                 </button>
                 <button
                   type="button"
                   onClick={() => setStep(1)}
-                  className="inline-flex items-center gap-2 rounded-xl border border-purple-400/80 dark:border-purple-300/80 px-4 py-2 text-sm font-bold transition hover:scale-[1.01] active:scale-[0.99] bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none"
+                  className="inline-flex items-center gap-2 rounded-xl border border-purple-600/80 dark:border-purple-300/80 px-4 py-2 text-sm font-bold transition hover:scale-[1.01] active:scale-[0.99] bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none"
                 >
                   Netleri Güncelle
                   <Target className="h-4 w-4" />

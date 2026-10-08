@@ -745,7 +745,7 @@ export function HomeHeroSection({
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.25, delay: idx * 0.025 }}
                         onClick={tool.action}
-                        className="flex items-center gap-3 rounded-xl sm:rounded-2xl border border-default dark:border-slate-500 bg-surface-2/60 hover:bg-surface-3 hover:border-amber-400 dark:hover:border-amber-400/60 p-3 text-left transition-all hover:-translate-y-0.5 active:scale-[0.99] cursor-pointer"
+                        className="flex items-center gap-3 rounded-xl sm:rounded-2xl border border-default dark:border-slate-400 bg-surface-2/60 hover:bg-surface-3 hover:border-amber-400 dark:hover:border-amber-400/60 p-3 text-left transition-all hover:-translate-y-0.5 active:scale-[0.99] cursor-pointer"
                       >
                         <div
                           className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br ${tool.gradient} text-white shadow-xs`}

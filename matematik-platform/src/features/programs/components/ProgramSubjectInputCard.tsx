@@ -28,7 +28,7 @@ export function ProgramSubjectInputCard({
   value,
 }: ProgramSubjectInputCardProps) {
   const fieldClassName =
-    'w-full rounded-xl border border-default dark:border-slate-500 bg-surface-0 px-3 py-2 text-right text-sm font-semibold tabular-nums text-primary outline-none transition focus:border-accent focus:ring-2 focus:ring-accent/20';
+    'w-full rounded-xl border border-default dark:border-slate-400 bg-surface-0 px-3 py-2 text-right text-sm font-semibold tabular-nums text-primary outline-none transition focus:border-accent focus:ring-2 focus:ring-accent/20';
 
   return (
     <div className="overflow-hidden rounded-2xl border border-default bg-surface-1 shadow-sm">

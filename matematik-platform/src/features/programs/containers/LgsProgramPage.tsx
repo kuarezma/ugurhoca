@@ -45,7 +45,7 @@ const levelSectionLabels: Record<ProgramTargetLevel, string> = {
 const INITIAL_VISIBLE_SCHOOL_COUNT = 24;
 
 const buildSourceLinkClassName = (_isLight: boolean) =>
-  `inline-flex items-center gap-1.5 rounded-xl border border-default dark:border-slate-500 bg-surface-1 px-3 py-2 text-xs font-bold text-primary hover:border-accent transition-colors`;
+  `inline-flex items-center gap-1.5 rounded-xl border border-default dark:border-slate-400 bg-surface-1 px-3 py-2 text-xs font-bold text-primary hover:border-accent transition-colors`;
 
 const getLgsSourceLabel = (sourceUrl: string) =>
   sourceUrl.includes('meb.gov.tr') ? 'MEB kaynağı' : 'Veri kaynağı';
@@ -299,7 +299,7 @@ export default function LgsWizardPage() {
           className="rounded-3xl border border-default bg-surface-1 p-5 shadow-sm sm:p-7"
         >
           <ProgramWizardHeader
-            badgeClassName="text-white bg-brand-secondary"
+            badgeClassName="text-white bg-sky-700"
             badgeLabel="LGS 2026 Sihirbazı"
             dataYear={dataYear}
             dataYearNote={
@@ -315,7 +315,7 @@ export default function LgsWizardPage() {
           <ProgramStepTabs
             activeStep={step}
             activeStepClassName="bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none"
-            inactiveStepClassName="border border-default dark:border-slate-500 bg-surface-1 text-secondary hover:text-primary hover:border-accent"
+            inactiveStepClassName="border border-default dark:border-slate-400 bg-surface-1 text-secondary hover:text-primary hover:border-accent"
             onStepChange={setStep}
             steps={steps}
           />
@@ -371,7 +371,7 @@ export default function LgsWizardPage() {
                 <button
                   type="button"
                   onClick={() => setStep(2)}
-                  className="mt-4 inline-flex items-center gap-2 rounded-xl border border-blue-400/80 dark:border-blue-300/80 px-4 py-2 text-sm font-bold transition hover:scale-[1.01] active:scale-[0.99] bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none"
+                  className="mt-4 inline-flex items-center gap-2 rounded-xl border border-blue-600/80 dark:border-blue-300/80 px-4 py-2 text-sm font-bold transition hover:scale-[1.01] active:scale-[0.99] bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none"
                 >
                   Hedef Filtrelerine Geç
                   <ChevronRight className="h-4 w-4" />
@@ -395,7 +395,7 @@ export default function LgsWizardPage() {
                     value={query}
                     onChange={(event) => setQuery(event.target.value)}
                     placeholder="Okul adı veya il ara"
-                    className="w-full rounded-xl border border-default dark:border-slate-500 bg-surface-0 px-3 py-2 text-sm font-semibold text-primary outline-none transition focus:border-accent focus:ring-2 focus:ring-accent/20"
+                    className="w-full rounded-xl border border-default dark:border-slate-400 bg-surface-0 px-3 py-2 text-sm font-semibold text-primary outline-none transition focus:border-accent focus:ring-2 focus:ring-accent/20"
                   />
 
                   <select
@@ -404,7 +404,7 @@ export default function LgsWizardPage() {
                       setProvince(event.target.value);
                       setDistrict('all');
                     }}
-                    className="w-full rounded-xl border border-default dark:border-slate-500 bg-surface-0 px-3 py-2 text-sm font-semibold text-primary outline-none transition focus:border-accent focus:ring-2 focus:ring-accent/20"
+                    className="w-full rounded-xl border border-default dark:border-slate-400 bg-surface-0 px-3 py-2 text-sm font-semibold text-primary outline-none transition focus:border-accent focus:ring-2 focus:ring-accent/20"
                   >
                     <option value="all">Tüm İller</option>
                     {provinces.map((item) => (
@@ -417,7 +417,7 @@ export default function LgsWizardPage() {
                   <select
                     value={district}
                     onChange={(event) => setDistrict(event.target.value)}
-                    className="w-full rounded-xl border border-default dark:border-slate-500 bg-surface-0 px-3 py-2 text-sm font-semibold text-primary outline-none transition focus:border-accent focus:ring-2 focus:ring-accent/20"
+                    className="w-full rounded-xl border border-default dark:border-slate-400 bg-surface-0 px-3 py-2 text-sm font-semibold text-primary outline-none transition focus:border-accent focus:ring-2 focus:ring-accent/20"
                   >
                     <option value="all">Tüm İlçeler</option>
                     {districts.map((item) => (
@@ -430,7 +430,7 @@ export default function LgsWizardPage() {
                   <select
                     value={schoolType}
                     onChange={(event) => setSchoolType(event.target.value)}
-                    className="w-full rounded-xl border border-default dark:border-slate-500 bg-surface-0 px-3 py-2 text-sm font-semibold text-primary outline-none transition focus:border-accent focus:ring-2 focus:ring-accent/20"
+                    className="w-full rounded-xl border border-default dark:border-slate-400 bg-surface-0 px-3 py-2 text-sm font-semibold text-primary outline-none transition focus:border-accent focus:ring-2 focus:ring-accent/20"
                   >
                     <option value="all">Tüm Okul Türleri</option>
                     {schoolTypes.map((item) => (
@@ -443,7 +443,7 @@ export default function LgsWizardPage() {
                   <select
                     value={language}
                     onChange={(event) => setLanguage(event.target.value)}
-                    className="w-full rounded-xl border border-default dark:border-slate-500 bg-surface-0 px-3 py-2 text-sm font-semibold text-primary outline-none transition focus:border-accent focus:ring-2 focus:ring-accent/20"
+                    className="w-full rounded-xl border border-default dark:border-slate-400 bg-surface-0 px-3 py-2 text-sm font-semibold text-primary outline-none transition focus:border-accent focus:ring-2 focus:ring-accent/20"
                   >
                     <option value="all">Tüm Diller</option>
                     {languages.map((item) => (
@@ -459,7 +459,7 @@ export default function LgsWizardPage() {
                       onChange={(event) =>
                         setBoarding(event.target.value as 'all' | 'yes' | 'no')
                       }
-                      className="w-full rounded-xl border border-default dark:border-slate-500 bg-surface-0 px-3 py-2 text-sm font-semibold text-primary outline-none transition focus:border-accent focus:ring-2 focus:ring-accent/20"
+                      className="w-full rounded-xl border border-default dark:border-slate-400 bg-surface-0 px-3 py-2 text-sm font-semibold text-primary outline-none transition focus:border-accent focus:ring-2 focus:ring-accent/20"
                     >
                       <option value="all">Pansiyon Durumu (Hepsi)</option>
                       <option value="yes">Pansiyonlu</option>
@@ -474,7 +474,7 @@ export default function LgsWizardPage() {
                         event.target.value as 'all' | ProgramTargetLevel,
                       )
                     }
-                    className="w-full rounded-xl border border-default dark:border-slate-500 bg-surface-0 px-3 py-2 text-sm font-semibold text-primary outline-none transition focus:border-accent focus:ring-2 focus:ring-accent/20"
+                    className="w-full rounded-xl border border-default dark:border-slate-400 bg-surface-0 px-3 py-2 text-sm font-semibold text-primary outline-none transition focus:border-accent focus:ring-2 focus:ring-accent/20"
                   >
                     <option value="all">Hedef Seviyesi (Hepsi)</option>
                     <option value="iddiali">İddialı</option>
@@ -516,14 +516,14 @@ export default function LgsWizardPage() {
                   <button
                     type="button"
                     onClick={() => setStep(1)}
-                    className="rounded-xl border border-default dark:border-slate-500 bg-surface-1 px-4 py-2 text-sm font-semibold text-primary hover:bg-surface-2 transition"
+                    className="rounded-xl border border-default dark:border-slate-400 bg-surface-1 px-4 py-2 text-sm font-semibold text-primary hover:bg-surface-2 transition"
                   >
                     Geri Dön
                   </button>
                   <button
                     type="button"
                     onClick={() => setStep(3)}
-                    className="inline-flex items-center gap-2 rounded-xl border border-blue-400/80 dark:border-blue-300/80 px-4 py-2 text-sm font-bold transition hover:scale-[1.01] active:scale-[0.99] bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none"
+                    className="inline-flex items-center gap-2 rounded-xl border border-blue-600/80 dark:border-blue-300/80 px-4 py-2 text-sm font-bold transition hover:scale-[1.01] active:scale-[0.99] bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none"
                   >
                     Önerileri Göster
                     <ChevronRight className="h-4 w-4" />
@@ -634,7 +634,7 @@ export default function LgsWizardPage() {
                               </div>
 
                               <div className="mt-3 grid grid-cols-2 gap-2 text-xs sm:text-sm">
-                                <div className="rounded-xl border border-default dark:border-slate-500 bg-surface-1 px-3 py-2">
+                                <div className="rounded-xl border border-default dark:border-slate-400 bg-surface-1 px-3 py-2">
                                   <div className="text-secondary">
                                     Taban Puan
                                   </div>
@@ -642,7 +642,7 @@ export default function LgsWizardPage() {
                                     {school.baseScore.toFixed(2)}
                                   </div>
                                 </div>
-                                <div className="rounded-xl border border-default dark:border-slate-500 bg-surface-1 px-3 py-2">
+                                <div className="rounded-xl border border-default dark:border-slate-400 bg-surface-1 px-3 py-2">
                                   <div className="text-secondary">
                                     Puan Farkı
                                   </div>
@@ -653,7 +653,7 @@ export default function LgsWizardPage() {
                                     {school.delta.toFixed(2)}
                                   </div>
                                 </div>
-                                <div className="rounded-xl border border-default dark:border-slate-500 bg-surface-1 px-3 py-2">
+                                <div className="rounded-xl border border-default dark:border-slate-400 bg-surface-1 px-3 py-2">
                                   <div className="text-secondary">
                                     Son Yüzdelik
                                   </div>
@@ -663,7 +663,7 @@ export default function LgsWizardPage() {
                                       : '-'}
                                   </div>
                                 </div>
-                                <div className="rounded-xl border border-default dark:border-slate-500 bg-surface-1 px-3 py-2">
+                                <div className="rounded-xl border border-default dark:border-slate-400 bg-surface-1 px-3 py-2">
                                   <div className="text-secondary">
                                     Baz Yıl
                                   </div>
@@ -674,21 +674,21 @@ export default function LgsWizardPage() {
                               </div>
 
                               <div className="mt-3 flex flex-wrap gap-2 text-[11px] text-secondary">
-                                <span className="rounded-full border border-default dark:border-slate-500 bg-surface-1 px-2.5 py-0.5 font-medium">
+                                <span className="rounded-full border border-default dark:border-slate-400 bg-surface-1 px-2.5 py-0.5 font-medium">
                                   {formatProgramOptionLabel(school.school_type)}
                                 </span>
-                                <span className="rounded-full border border-default dark:border-slate-500 bg-surface-1 px-2.5 py-0.5 font-medium">
+                                <span className="rounded-full border border-default dark:border-slate-400 bg-surface-1 px-2.5 py-0.5 font-medium">
                                   {formatProgramOptionLabel(
                                     school.instruction_language,
                                   )}
                                 </span>
                                 {hasBoardingData && school.boarding ? (
-                                  <span className="rounded-full border border-default dark:border-slate-500 bg-surface-1 px-2.5 py-0.5 font-medium">
+                                  <span className="rounded-full border border-default dark:border-slate-400 bg-surface-1 px-2.5 py-0.5 font-medium">
                                     Pansiyonlu
                                   </span>
                                 ) : null}
                                 {school.quota_total ? (
-                                  <span className="rounded-full border border-default dark:border-slate-500 bg-surface-1 px-2.5 py-0.5 font-medium">
+                                  <span className="rounded-full border border-default dark:border-slate-400 bg-surface-1 px-2.5 py-0.5 font-medium">
                                     Kontenjan: {school.quota_total}
                                   </span>
                                 ) : null}
@@ -708,7 +708,7 @@ export default function LgsWizardPage() {
                                     return (
                                       <div
                                         key={year}
-                                        className="rounded-xl border border-default dark:border-slate-500 bg-surface-1 px-2 py-2 text-[10px] tabular-nums sm:px-3 sm:text-[11px] text-secondary"
+                                        className="rounded-xl border border-default dark:border-slate-400 bg-surface-1 px-2 py-2 text-[10px] tabular-nums sm:px-3 sm:text-[11px] text-secondary"
                                       >
                                         <div className="font-bold text-primary">
                                           {year}
@@ -757,7 +757,7 @@ export default function LgsWizardPage() {
                           <button
                             type="button"
                             onClick={() => showMoreSchools(level)}
-                            className="rounded-xl border border-default dark:border-slate-500 bg-surface-1 px-4 py-2 text-sm font-semibold text-primary hover:bg-surface-2 transition"
+                            className="rounded-xl border border-default dark:border-slate-400 bg-surface-1 px-4 py-2 text-sm font-semibold text-primary hover:bg-surface-2 transition"
                           >
                             Daha Fazla Göster ({visibleItems.length}/
                             {items.length})
@@ -783,14 +783,14 @@ export default function LgsWizardPage() {
                 <button
                   type="button"
                   onClick={() => setStep(2)}
-                  className="rounded-xl border border-default dark:border-slate-500 bg-surface-1 px-4 py-2 text-sm font-semibold text-primary hover:bg-surface-2 transition"
+                  className="rounded-xl border border-default dark:border-slate-400 bg-surface-1 px-4 py-2 text-sm font-semibold text-primary hover:bg-surface-2 transition"
                 >
                   Filtreleri Düzenle
                 </button>
                 <button
                   type="button"
                   onClick={() => setStep(1)}
-                  className="inline-flex items-center gap-2 rounded-xl border border-blue-400/80 dark:border-blue-300/80 px-4 py-2 text-sm font-bold transition hover:scale-[1.01] active:scale-[0.99] bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none"
+                  className="inline-flex items-center gap-2 rounded-xl border border-blue-600/80 dark:border-blue-300/80 px-4 py-2 text-sm font-bold transition hover:scale-[1.01] active:scale-[0.99] bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none"
                 >
                   Netleri Güncelle
                   <Target className="h-4 w-4" />

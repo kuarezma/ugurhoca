@@ -20,7 +20,7 @@ export function DesignModeToggle({ compact = false, className = '' }: DesignMode
       title={isAdventure ? 'Klasik platform görünümüne geç' : 'Oyunlaştırılmış macera moduna geç'}
       className={`relative inline-flex items-center gap-1.5 rounded-full p-1 transition-all duration-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 cursor-pointer ${
         isAdventure
-          ? 'border border-brand-primary/40 shadow-sm shadow-brand-primary/10 bg-brand-primary text-slate-950 dark:text-slate-950'
+          ? 'border border-green-700 shadow-sm shadow-brand-primary/10 bg-brand-primary text-slate-950 dark:text-slate-950'
           : 'bg-surface-2 border border-default hover:bg-surface-3'
       } ${className}`}
     >

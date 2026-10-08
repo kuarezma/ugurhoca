@@ -91,7 +91,7 @@ export default function CookieBanner() {
               <button
                 type="button"
                 onClick={() => persist('rejected')}
-                className="flex-1 rounded-2xl border border-default dark:border-slate-500 bg-surface-2 px-4 py-2.5 text-sm font-semibold text-primary transition hover:bg-surface-3 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-fg"
+                className="flex-1 rounded-2xl border border-default dark:border-slate-400 bg-surface-2 px-4 py-2.5 text-sm font-semibold text-primary transition hover:bg-surface-3 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-fg"
               >
                 Sadece zorunlu
               </button>

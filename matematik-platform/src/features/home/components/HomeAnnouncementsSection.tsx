@@ -47,7 +47,7 @@ export function HomeAnnouncementsSection({
               <button
                 key={item.id}
                 onClick={() => onSelectAnnouncement(item)}
-                className="animate-fade-up relative text-left rounded-2xl overflow-hidden transition-all min-w-[82vw] sm:min-w-[46vw] md:min-w-0 md:w-full border border-default dark:border-slate-500 bg-surface-1 hover:bg-surface-2 hover:-translate-y-0.5"
+                className="animate-fade-up relative text-left rounded-2xl overflow-hidden transition-all min-w-[82vw] sm:min-w-[46vw] md:min-w-0 md:w-full border border-default dark:border-slate-400 bg-surface-1 hover:bg-surface-2 hover:-translate-y-0.5"
                 style={{ animationDelay: `${index * 0.05}s` }}
               >
                 {isNewContent(item.created_at) && (

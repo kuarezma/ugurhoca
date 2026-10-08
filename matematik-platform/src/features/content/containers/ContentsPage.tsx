@@ -1524,7 +1524,7 @@ function ContentsPageInner({
                       updateWorksheetBrowserUrl(null);
                       setSearchTerm('');
                     }}
-                    className="px-4 py-2 rounded-full border border-default dark:border-slate-500 bg-surface-2/70 text-xs sm:text-sm font-semibold text-secondary transition-colors hover:text-primary"
+                    className="px-4 py-2 rounded-full border border-default dark:border-slate-400 bg-surface-2/70 text-xs sm:text-sm font-semibold text-secondary transition-colors hover:text-primary"
                   >
                     Sınıf Kartları
                   </button>
@@ -1580,7 +1580,7 @@ function ContentsPageInner({
                 }}
                 className={`rounded-full border px-4 py-2 transition-colors ${
                   selectedWorksheetGrade
-                    ? 'border-default dark:border-slate-500 bg-surface-2 text-secondary hover:text-primary'
+                    ? 'border-default dark:border-slate-400 bg-surface-2 text-secondary hover:text-primary'
                     : 'border-brand-primary dark:border-brand-primary bg-brand-primary/15 text-tone-success-fg dark:text-brand-primary-soft'
                 }`}
               >
@@ -1596,7 +1596,7 @@ function ContentsPageInner({
                     }}
                     className={`rounded-full border px-4 py-2 transition-colors ${
                       selectedWorksheetOutcome
-                        ? 'border-default dark:border-slate-500 bg-surface-2 text-secondary hover:text-primary'
+                        ? 'border-default dark:border-slate-400 bg-surface-2 text-secondary hover:text-primary'
                         : 'border-brand-primary dark:border-brand-primary bg-brand-primary/15 text-tone-success-fg dark:text-brand-primary-soft'
                     }`}
                   >

@@ -36,7 +36,7 @@ export function ProgramWizardHeader({
         </p>
       </div>
 
-      <div className="rounded-2xl border border-default dark:border-slate-500 bg-surface-1 px-4 py-3 text-sm text-primary shadow-xs">
+      <div className="rounded-2xl border border-default dark:border-slate-400 bg-surface-1 px-4 py-3 text-sm text-primary shadow-xs">
         Veri Yılı: <span className="font-bold">{dataYear}</span>
         {dataYearNote ? (
           <div className="mt-1 text-[11px] text-secondary">

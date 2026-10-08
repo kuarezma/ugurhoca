@@ -89,8 +89,8 @@ export function YksScoreTable({
                       onClick={() => onScoreTypeChange(row.scoreType)}
                       className={`rounded-full border px-3 py-1 text-xs font-bold transition ${
                         active
-                          ? 'border-brand-primary dark:border-brand-primary shadow-sm bg-brand-primary text-slate-950 dark:text-slate-950'
-                          : 'border-default dark:border-slate-500 bg-surface-1 text-secondary hover:border-accent hover:text-primary'
+                          ? 'border-green-700 dark:border-brand-primary shadow-sm bg-brand-primary text-slate-950 dark:text-slate-950'
+                          : 'border-default dark:border-slate-400 bg-surface-1 text-secondary hover:border-accent hover:text-primary'
                       }`}
                     >
                       {active ? 'Seçili' : 'Seç'}

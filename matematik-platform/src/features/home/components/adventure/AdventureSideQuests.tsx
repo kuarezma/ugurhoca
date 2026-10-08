@@ -164,7 +164,7 @@ export function AdventureSideQuests({
                   <span className="text-xs font-bold text-primary block">
                     Canlı Ders Odası
                   </span>
-                  <span className="text-[9px] font-black uppercase text-rose-600 dark:text-rose-400 bg-rose-500/20 px-1.5 py-0.5 rounded-md">
+                  <span className="text-[9px] font-black uppercase text-rose-800 dark:text-rose-300 bg-rose-500/20 px-1.5 py-0.5 rounded-md">
                     Ders Odası
                   </span>
                 </div>
