@@ -19,14 +19,11 @@ import {
   Target,
   Calendar,
   Gamepad2,
-  MonitorPlay,
   ClipboardList,
   Video,
   Presentation,
   AppWindow,
-  Flame,
 } from 'lucide-react';
-import { Mascot } from '@/components/Mascot';
 import { SafeLink } from '@/components/SafeLink';
 import type { AppUser } from '@/types';
 
@@ -90,8 +87,8 @@ export function HomeHeroSection({
     },
     {
       id: 'yaprak-test',
-      title: 'Kazanımlar',
-      subtitle: 'Müfredat kazanım testleri ve özetler',
+      title: 'Yaprak Test',
+      subtitle: 'Kazanımlara göre yaprak testler',
       href: '/icerikler?type=yaprak-test',
       icon: ClipboardList,
       color: 'from-purple-500 to-purple-500',
@@ -248,7 +245,7 @@ export function HomeHeroSection({
     <section className="relative px-4 pb-12 pt-6 sm:pt-10">
       <div className="relative mx-auto max-w-6xl">
         <div
-          className="card-playful-hero relative overflow-hidden rounded-3xl p-6 sm:p-12 transition-all duration-300"
+          className="card-playful-hero relative overflow-hidden rounded-3xl p-5 sm:p-8 transition-all duration-300"
         >
           <div
             aria-hidden="true"
@@ -265,25 +262,12 @@ export function HomeHeroSection({
             π
           </div>
 
-          <div className="relative grid gap-8 lg:grid-cols-[1.3fr_1fr] lg:items-center min-w-0 w-full">
+          <div className="relative grid gap-5 lg:grid-cols-[1fr_1.15fr] lg:items-center min-w-0 w-full">
             <div className="space-y-5 min-w-0 w-full">
-              <div className="flex flex-wrap items-center gap-2">
-                <div
-                  className="inline-flex max-w-full items-center gap-2 rounded-full px-3.5 py-1 text-xs font-black uppercase tracking-wider bg-[#fff5cc] text-[#8a5800] border-2 border-[#ffc800] dark:bg-amber-950/40 dark:text-amber-300 shadow-xs"
-                >
-                  <Sparkles className="h-3.5 w-3.5 shrink-0 text-amber-500 animate-pulse" aria-hidden="true" />
-                  <span className="truncate">🎯 LİSE & YKS MATEMATİK OYUN ALANI</span>
-                </div>
-
-                <div
-                  className="inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-bold bg-[#ddf4ff] text-[#0c6999] border-2 border-[#1899d6]/30 dark:bg-sky-950/40 dark:text-sky-300"
-                >
-                  {user ? 'Hedefe Tam Odaklan!' : '💚 %100 Ücretsiz & Reklamsız'}
-                </div>
-              </div>
+              <p className="text-sm font-bold text-secondary">{greeting}</p>
 
               <h1
-                className="font-display text-2xl xs:text-3xl font-black leading-tight tracking-tight sm:text-5xl lg:text-[3.25rem] text-primary"
+                className="font-display text-2xl font-black leading-tight tracking-tight sm:text-4xl lg:text-[2.75rem] text-primary"
               >
                 <span>Matematikten Korkma,</span><br />
                 <span className="text-green-ink dark:text-[#61e002]">
@@ -294,8 +278,7 @@ export function HomeHeroSection({
               <p
                 className="w-full max-w-lg text-sm sm:text-base lg:text-lg leading-relaxed text-secondary font-medium"
               >
-                Sıkıcı ezberler tarih oldu! LGS ve YKS müfredatını seviye seviye keşfet,
-                görevleri tamamla, rozetleri kap ve arkadaşlarınla canlı düellolara katıl!
+                Yaprak testlerle konunu pekiştir, oyunlarla hızlan.
               </p>
 
               <div className="flex flex-col sm:flex-row gap-3">
@@ -306,262 +289,134 @@ export function HomeHeroSection({
                   <Zap className="h-4 w-4" aria-hidden="true" />
                   <span>Hemen Başla! 🚀</span>
                 </SafeLink>
-                <SafeLink
-                  href="/oyunlar"
-                  className="btn-3d btn-yellow"
-                >
-                  <span>Macerayı Gör 🗺️</span>
-                </SafeLink>
               </div>
 
-              {/* Hızlı Sınıf Başlangıç Çipleri */}
-              <div className="pt-2 w-full min-w-0">
-                <span className="text-xs font-bold uppercase tracking-wider text-secondary block mb-2">
-                  Sınıfını Seç ve Hemen Başla:
-                </span>
-                <div className="flex items-center gap-2 overflow-x-auto pb-1 max-w-full [scrollbar-width:none]">
-                  {[
-                    { label: '5. Sınıf', href: '/icerikler?grade=5' },
-                    { label: '6. Sınıf', href: '/icerikler?grade=6' },
-                    { label: '7. Sınıf', href: '/icerikler?grade=7' },
-                    { label: '8. Sınıf (LGS)', href: '/icerikler?grade=8', highlight: true },
-                    { label: '9. Sınıf', href: '/icerikler?grade=9' },
-                    { label: '10. Sınıf', href: '/icerikler?grade=10' },
-                    { label: '11. Sınıf', href: '/icerikler?grade=11' },
-                    { label: '12. Sınıf (YKS)', href: '/icerikler?grade=12', highlight: true },
-                    { label: 'Mezun', href: '/icerikler?grade=Mezun' },
-                  ].map((item) => (
-                    <SafeLink
-                      key={item.label}
-                      href={item.href}
-                      className={`shrink-0 rounded-2xl px-3.5 py-1.5 text-xs font-bold transition-all duration-150 active:translate-y-0.5 ${
-                        item.highlight
-                          ? 'btn-3d btn-green btn-sm'
-                          : 'btn-3d btn-white btn-sm'
-                      }`}
-                    >
-                      {item.label}
-                    </SafeLink>
-                  ))}
-                </div>
-              </div>
             </div>
 
-            <m.div
-              initial={{ opacity: 0, scale: 0.92, rotate: -3 }}
-              animate={{ opacity: 1, scale: 1, rotate: 0 }}
-              transition={{ duration: 0.5, ease: [0.2, 0.8, 0.2, 1] }}
-              className="relative hidden flex-col items-center justify-center lg:flex"
-            >
-              <div
-                aria-hidden="true"
-                className="absolute inset-0 rounded-full blur-3xl bg-surface-1"
-              />
-              <Mascot
-                pose={user ? 'celebrate' : 'waving'}
-                size={200}
-                className="relative animate-float-y select-none"
-                ariaLabel={user ? 'Seni tebrik eden maskot Pi' : 'Selamlayan maskot Pi'}
-              />
-              <div className="speech-bubble mt-4 max-w-[260px]">
-                &ldquo;{greeting} Bugün 10 soru çözüp serini korumaya hazır mısın?&rdquo;
-              </div>
-            </m.div>
+            <div className="grid grid-cols-2 gap-3 sm:gap-4">
+              {/* 1. Yaprak Test Kartı */}
+              <SafeLink
+                href="/icerikler?type=yaprak-test"
+                aria-label="Yaprak Testler"
+                className="col-span-1 group relative h-full overflow-hidden rounded-2xl sm:rounded-3xl p-3.5 sm:p-6 border transition-all duration-300 hover:-translate-y-1 active:scale-[0.99] cursor-pointer border-sky-300/80 dark:border-sky-400/40 bg-brand-secondary hover:bg-brand-secondary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-blue active:translate-y-1 active:shadow-none"
+              >
+                {/* Parlak Arka Plan Işık Efekti */}
+                <div
+                  aria-hidden="true"
+                  className="pointer-events-none absolute -right-8 -top-8 h-36 w-36 rounded-full bg-white/20 blur-2xl transition-transform duration-500 group-hover:scale-125"
+                />
+                <div
+                  aria-hidden="true"
+                  className="pointer-events-none absolute -left-8 -bottom-8 h-28 w-28 rounded-full bg-cyan-300/20 blur-2xl"
+                />
+
+                <div className="relative flex flex-col justify-between h-full space-y-3 sm:space-y-4">
+                  <div className="flex items-start justify-between gap-2">
+                    <div className="flex h-10 w-10 sm:h-13 sm:w-13 shrink-0 items-center justify-center rounded-xl sm:rounded-2xl bg-white/20 backdrop-blur-md text-slate-950 dark:text-slate-950 shadow-inner border border-white/30 group-hover:scale-105 transition-transform duration-300">
+                      <BookOpen className="h-5 w-5 sm:h-6 sm:w-6" />
+                    </div>
+                    <span className="inline-flex items-center gap-1 sm:gap-1.5 rounded-full bg-white/80 backdrop-blur-md px-2 py-0.5 sm:px-3 sm:py-1 text-[10px] sm:text-xs font-bold text-slate-950 border border-white/60 tracking-wide uppercase">
+                      <BookMarked className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-slate-950" />
+                      Test & Soru
+                    </span>
+                  </div>
+
+                  <div>
+                    <h2 className="font-display text-base sm:text-2xl font-black tracking-tight flex items-center gap-2 text-slate-950 dark:text-slate-950">
+                      Yaprak Test
+                    </h2>
+                    <p className="mt-0.5 sm:mt-1 text-[11px] sm:text-sm font-medium leading-snug sm:leading-relaxed line-clamp-2 text-slate-950 dark:text-slate-950">
+                      Müfredatla uyumlu konu testleri, yeni nesil soru föyleri ve kazanım özetleri.
+                    </p>
+                  </div>
+
+                  <div className="pt-2 flex items-center justify-between border-t border-white/20 text-[11px] sm:text-sm font-bold text-slate-950 dark:text-slate-950">
+                    <span className="inline-flex items-center gap-1 opacity-95">
+                      Test Çöz
+                    </span>
+                    <div className="flex h-6 w-6 sm:h-8 sm:w-8 items-center justify-center rounded-lg sm:rounded-xl bg-white/20 backdrop-blur-sm group-hover:bg-white/30 transition-all duration-300 group-hover:translate-x-1">
+                      <ArrowRight className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                    </div>
+                  </div>
+                </div>
+              </SafeLink>
+
+              {/* 2. Oyunlar Kartı */}
+              <SafeLink
+                href="/oyunlar"
+                aria-label="Matematik Oyunları"
+                className="col-span-1 group relative h-full overflow-hidden rounded-2xl sm:rounded-3xl p-3.5 sm:p-6 border transition-all duration-300 hover:-translate-y-1 active:scale-[0.99] cursor-pointer border-purple-200/90 dark:border-purple-400/40 bg-brand-pink hover:bg-brand-pink text-slate-950 dark:text-slate-950 shadow-btn-3d-purple active:translate-y-1 active:shadow-none"
+              >
+                {/* Parlak Arka Plan Işık Efekti */}
+                <div
+                  aria-hidden="true"
+                  className="pointer-events-none absolute -right-8 -top-8 h-36 w-36 rounded-full bg-white/20 blur-2xl transition-transform duration-500 group-hover:scale-125"
+                />
+                <div
+                  aria-hidden="true"
+                  className="pointer-events-none absolute -left-8 -bottom-8 h-28 w-28 rounded-full bg-purple-400/20 blur-2xl"
+                />
+
+                <div className="relative flex flex-col justify-between h-full space-y-3 sm:space-y-4">
+                  <div className="flex items-start justify-between gap-2">
+                    <div className="flex h-10 w-10 sm:h-13 sm:w-13 shrink-0 items-center justify-center rounded-xl sm:rounded-2xl bg-white/20 backdrop-blur-md text-slate-950 dark:text-slate-950 shadow-inner border border-white/30 group-hover:scale-105 transition-transform duration-300">
+                      <Gamepad2 className="h-5 w-5 sm:h-6 sm:w-6" />
+                    </div>
+                    <span className="inline-flex items-center gap-1 sm:gap-1.5 rounded-full bg-white/80 backdrop-blur-md px-2 py-0.5 sm:px-3 sm:py-1 text-[10px] sm:text-xs font-bold text-slate-950 border border-white/60 tracking-wide uppercase">
+                      <Sparkles className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-slate-950" />
+                      18 Oyun
+                    </span>
+                  </div>
+
+                  <div>
+                    <h2 className="font-display text-base sm:text-2xl font-black tracking-tight flex items-center gap-2 text-slate-950 dark:text-slate-950">
+                      Oyunlar
+                    </h2>
+                    <p className="mt-0.5 sm:mt-1 text-[11px] sm:text-sm text-slate-950 dark:text-slate-950 leading-snug sm:leading-relaxed line-clamp-2">
+                      Zihinden işlem, koordinat ve hız oyunlarıyla eğlenerek öğren, reflekslerini geliştir!
+                    </p>
+                  </div>
+
+                  <div className="pt-2 flex items-center justify-between border-t border-white/20 text-[11px] sm:text-sm font-bold text-slate-950 dark:text-slate-950">
+                    <span className="inline-flex items-center gap-1 opacity-95">
+                      Oyun Alanı
+                    </span>
+                    <div className="flex h-6 w-6 sm:h-8 sm:w-8 items-center justify-center rounded-lg sm:rounded-xl bg-white/20 backdrop-blur-sm group-hover:bg-white/30 transition-all duration-300 group-hover:translate-x-1">
+                      <ArrowRight className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                    </div>
+                  </div>
+                </div>
+              </SafeLink>
+            </div>
           </div>
-        </div>
 
-        {/* Karşılama ve Maskotun Hemen Altında: Yaprak Test, Oyunlar, Canlı Ders & Meydan Okuma */}
-        <div className="mt-5 sm:mt-7 grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4.5">
-          {/* 1. Yaprak Test Kartı */}
-          <SafeLink
-            href="/icerikler?type=ders-notlari"
-            aria-label="Yaprak Testler"
-            className="col-span-1 group relative overflow-hidden rounded-2xl sm:rounded-3xl p-3.5 sm:p-6 border transition-all duration-300 hover:-translate-y-1 active:scale-[0.99] cursor-pointer border-sky-300/80 dark:border-sky-400/40 bg-brand-secondary hover:bg-brand-secondary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-blue active:translate-y-1 active:shadow-none"
-          >
-            {/* Parlak Arka Plan Işık Efekti */}
-            <div
-              aria-hidden="true"
-              className="pointer-events-none absolute -right-8 -top-8 h-36 w-36 rounded-full bg-white/20 blur-2xl transition-transform duration-500 group-hover:scale-125"
-            />
-            <div
-              aria-hidden="true"
-              className="pointer-events-none absolute -left-8 -bottom-8 h-28 w-28 rounded-full bg-cyan-300/20 blur-2xl"
-            />
-
-            <div className="relative flex flex-col justify-between h-full space-y-3 sm:space-y-4">
-              <div className="flex items-start justify-between gap-2">
-                <div className="flex h-10 w-10 sm:h-13 sm:w-13 shrink-0 items-center justify-center rounded-xl sm:rounded-2xl bg-white/20 backdrop-blur-md text-slate-950 dark:text-slate-950 shadow-inner border border-white/30 group-hover:scale-105 transition-transform duration-300">
-                  <BookOpen className="h-5 w-5 sm:h-6 sm:w-6" />
-                </div>
-                <span className="inline-flex items-center gap-1 sm:gap-1.5 rounded-full bg-black/25 backdrop-blur-md px-2 py-0.5 sm:px-3 sm:py-1 text-[10px] sm:text-xs font-bold text-primary-shade-fg border border-white/20 tracking-wide uppercase">
-                  <BookMarked className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-primary-shade-fg" />
-                  Test & Soru
-                </span>
-              </div>
-
-              <div>
-                <h2 className="font-display text-base sm:text-2xl font-black tracking-tight flex items-center gap-2 text-slate-950 dark:text-slate-950">
-                  Yaprak Test
-                </h2>
-                <p className="mt-0.5 sm:mt-1 text-[11px] sm:text-sm font-medium leading-snug sm:leading-relaxed line-clamp-2 text-slate-950 dark:text-slate-950">
-                  Müfredatla uyumlu konu testleri, yeni nesil soru föyleri ve kazanım özetleri.
-                </p>
-              </div>
-
-              <div className="pt-2 flex items-center justify-between border-t border-white/20 text-[11px] sm:text-sm font-bold text-slate-950 dark:text-slate-950">
-                <span className="inline-flex items-center gap-1 opacity-95">
-                  Test Çöz
-                </span>
-                <div className="flex h-6 w-6 sm:h-8 sm:w-8 items-center justify-center rounded-lg sm:rounded-xl bg-white/20 backdrop-blur-sm group-hover:bg-white/30 transition-all duration-300 group-hover:translate-x-1">
-                  <ArrowRight className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-                </div>
-              </div>
+          {/* Hızlı Sınıf Başlangıç Çipleri */}
+          <div className="pt-2 w-full min-w-0">
+            <span className="text-xs font-bold uppercase tracking-wider text-secondary block mb-2">
+              Sınıfını Seç ve Hemen Başla:
+            </span>
+            <div className="flex items-center gap-2 overflow-x-auto pb-1 max-w-full [scrollbar-width:none]">
+              {[
+                { label: '5. Sınıf', href: '/icerikler?grade=5' },
+                { label: '6. Sınıf', href: '/icerikler?grade=6' },
+                { label: '7. Sınıf', href: '/icerikler?grade=7' },
+                { label: '8. Sınıf', href: '/icerikler?grade=8' },
+                { label: '9. Sınıf', href: '/icerikler?grade=9' },
+                { label: '10. Sınıf', href: '/icerikler?grade=10' },
+                { label: '11. Sınıf', href: '/icerikler?grade=11' },
+                { label: '12. Sınıf', href: '/icerikler?grade=12' },
+                { label: 'Mezun', href: '/icerikler?grade=Mezun' },
+              ].map((item) => (
+                <SafeLink
+                  key={item.label}
+                  href={item.href}
+                  className="shrink-0 rounded-2xl px-3.5 py-1.5 text-xs font-bold transition-all duration-150 active:translate-y-0.5 btn-3d btn-white btn-sm"
+                >
+                  {item.label}
+                </SafeLink>
+              ))}
             </div>
-          </SafeLink>
-
-          {/* 2. Oyunlar Kartı */}
-          <SafeLink
-            href="/oyunlar"
-            aria-label="Matematik Oyunları"
-            className="col-span-1 group relative overflow-hidden rounded-2xl sm:rounded-3xl p-3.5 sm:p-6 border transition-all duration-300 hover:-translate-y-1 active:scale-[0.99] cursor-pointer border-purple-200/90 dark:border-purple-400/40 bg-brand-pink hover:bg-brand-pink text-slate-950 dark:text-slate-950 shadow-btn-3d-purple active:translate-y-1 active:shadow-none"
-          >
-            {/* Parlak Arka Plan Işık Efekti */}
-            <div
-              aria-hidden="true"
-              className="pointer-events-none absolute -right-8 -top-8 h-36 w-36 rounded-full bg-white/20 blur-2xl transition-transform duration-500 group-hover:scale-125"
-            />
-            <div
-              aria-hidden="true"
-              className="pointer-events-none absolute -left-8 -bottom-8 h-28 w-28 rounded-full bg-purple-400/20 blur-2xl"
-            />
-
-            <div className="relative flex flex-col justify-between h-full space-y-3 sm:space-y-4">
-              <div className="flex items-start justify-between gap-2">
-                <div className="flex h-10 w-10 sm:h-13 sm:w-13 shrink-0 items-center justify-center rounded-xl sm:rounded-2xl bg-white/20 backdrop-blur-md text-slate-950 dark:text-slate-950 shadow-inner border border-white/30 group-hover:scale-105 transition-transform duration-300">
-                  <Gamepad2 className="h-5 w-5 sm:h-6 sm:w-6" />
-                </div>
-                <span className="inline-flex items-center gap-1 sm:gap-1.5 rounded-full bg-black/25 backdrop-blur-md px-2 py-0.5 sm:px-3 sm:py-1 text-[10px] sm:text-xs font-bold text-primary-shade-fg border border-white/20 tracking-wide uppercase">
-                  <Sparkles className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-primary-shade-fg" />
-                  18 Oyun
-                </span>
-              </div>
-
-              <div>
-                <h2 className="font-display text-base sm:text-2xl font-black tracking-tight flex items-center gap-2 text-slate-950 dark:text-slate-950">
-                  Oyunlar
-                </h2>
-                <p className="mt-0.5 sm:mt-1 text-[11px] sm:text-sm text-slate-950 dark:text-slate-950 leading-snug sm:leading-relaxed line-clamp-2">
-                  Zihinden işlem, koordinat ve hız oyunlarıyla eğlenerek öğren, reflekslerini geliştir!
-                </p>
-              </div>
-
-              <div className="pt-2 flex items-center justify-between border-t border-white/20 text-[11px] sm:text-sm font-bold text-slate-950 dark:text-slate-950">
-                <span className="inline-flex items-center gap-1 opacity-95">
-                  Oyun Alanı
-                </span>
-                <div className="flex h-6 w-6 sm:h-8 sm:w-8 items-center justify-center rounded-lg sm:rounded-xl bg-white/20 backdrop-blur-sm group-hover:bg-white/30 transition-all duration-300 group-hover:translate-x-1">
-                  <ArrowRight className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-                </div>
-              </div>
-            </div>
-          </SafeLink>
-
-          {/* 3. Canlı Ders Kartı */}
-          <SafeLink
-            href="/canli-ders"
-            aria-label="Canlı Dersler"
-            className="col-span-1 group relative overflow-hidden rounded-2xl sm:rounded-3xl p-3.5 sm:p-6 border text-white dark:text-white transition-all duration-300 hover:-translate-y-1 active:scale-[0.99] cursor-pointer border-rose-200/90 shadow-lg shadow-rose-950/10 hover:shadow-xl hover:shadow-rose-950/15 dark:border-red-400/40 dark:shadow-rose-700/25 dark:hover:shadow-2xl dark:hover:shadow-rose-700/40 bg-red-600 dark:bg-red-600"
-          >
-            {/* Parlak Arka Plan Işık Efekti */}
-            <div
-              aria-hidden="true"
-              className="pointer-events-none absolute -right-8 -top-8 h-36 w-36 rounded-full bg-white/20 blur-2xl transition-transform duration-500 group-hover:scale-125"
-            />
-            <div
-              aria-hidden="true"
-              className="pointer-events-none absolute -left-8 -bottom-8 h-28 w-28 rounded-full bg-amber-300/20 blur-2xl"
-            />
-
-            <div className="relative flex flex-col justify-between h-full space-y-3 sm:space-y-4">
-              <div className="flex items-start justify-between gap-2">
-                <div className="flex h-10 w-10 sm:h-13 sm:w-13 shrink-0 items-center justify-center rounded-xl sm:rounded-2xl bg-white/20 backdrop-blur-md text-white dark:text-white shadow-inner border border-white/30 group-hover:scale-105 transition-transform duration-300">
-                  <MonitorPlay className="h-5 w-5 sm:h-6 sm:w-6" />
-                </div>
-                <span className="inline-flex items-center gap-1 sm:gap-1.5 rounded-full bg-black/25 backdrop-blur-md px-2 py-0.5 sm:px-3 sm:py-1 text-[10px] sm:text-xs font-bold text-white dark:text-white border border-white/20 tracking-wide uppercase">
-                  <span className="relative flex h-2 w-2">
-                    <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-white opacity-90" />
-                    <span className="relative inline-flex h-2 w-2 rounded-full bg-white" />
-                  </span>
-                  Canlı Yayın
-                </span>
-              </div>
-
-              <div>
-                <h2 className="font-display text-base sm:text-2xl font-black tracking-tight text-white dark:text-white flex items-center gap-2">
-                  Canlı Ders
-                </h2>
-                <p className="mt-0.5 sm:mt-1 text-[11px] sm:text-sm text-white dark:text-white font-medium leading-snug sm:leading-relaxed line-clamp-2">
-                  Öğretmenle birebir etkileşimli yayınlar, anlık soru masası ve ders kayıtları.
-                </p>
-              </div>
-
-              <div className="pt-2 flex items-center justify-between border-t border-white/20 text-[11px] sm:text-sm font-bold text-white dark:text-white">
-                <span className="inline-flex items-center gap-1 opacity-95">
-                  Derse Katıl
-                </span>
-                <div className="flex h-6 w-6 sm:h-8 sm:w-8 items-center justify-center rounded-lg sm:rounded-xl bg-white/20 backdrop-blur-sm group-hover:bg-white/30 transition-all duration-300 group-hover:translate-x-1">
-                  <ArrowRight className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-                </div>
-              </div>
-            </div>
-          </SafeLink>
-
-          {/* 4. Meydan Okuma Kartı */}
-          <SafeLink
-            href="/meydan-okuma"
-            aria-label="Meydan Okuma"
-            className="col-span-1 group relative overflow-hidden rounded-2xl sm:rounded-3xl p-3.5 sm:p-6 border transition-all duration-300 hover:-translate-y-1 active:scale-[0.99] cursor-pointer border-amber-300/80 dark:border-amber-400/40 bg-brand-accent hover:bg-brand-accent-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-yellow active:translate-y-1 active:shadow-none"
-          >
-            {/* Parlak Arka Plan Işık Efekti */}
-            <div
-              aria-hidden="true"
-              className="pointer-events-none absolute -right-8 -top-8 h-36 w-36 rounded-full bg-white/20 blur-2xl transition-transform duration-500 group-hover:scale-125"
-            />
-            <div
-              aria-hidden="true"
-              className="pointer-events-none absolute -left-8 -bottom-8 h-28 w-28 rounded-full bg-yellow-300/20 blur-2xl"
-            />
-
-            <div className="relative flex flex-col justify-between h-full space-y-3 sm:space-y-4">
-              <div className="flex items-start justify-between gap-2">
-                <div className="flex h-10 w-10 sm:h-13 sm:w-13 shrink-0 items-center justify-center rounded-xl sm:rounded-2xl bg-white/20 backdrop-blur-md text-slate-950 dark:text-slate-950 shadow-inner border border-white/30 group-hover:scale-105 transition-transform duration-300">
-                  <Flame className="h-5 w-5 sm:h-6 sm:w-6 text-slate-950 dark:text-slate-950" />
-                </div>
-                <span className="inline-flex items-center gap-1 sm:gap-1.5 rounded-full bg-black/25 backdrop-blur-md px-2 py-0.5 sm:px-3 sm:py-1 text-[10px] sm:text-xs font-bold text-primary-shade-fg border border-white/20 tracking-wide uppercase">
-                  <Sparkles className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-primary-shade-fg" />
-                  4 Görev
-                </span>
-              </div>
-
-              <div>
-                <h2 className="font-display text-base sm:text-2xl font-black tracking-tight flex items-center gap-2 text-slate-950 dark:text-slate-950">
-                  Meydan Okuma
-                </h2>
-                <p className="mt-0.5 sm:mt-1 text-[11px] sm:text-sm font-medium leading-snug sm:leading-relaxed line-clamp-2 text-slate-950 dark:text-slate-950">
-                  Günün sorusu, soru hedefi, LGS taktikleri ve başarı yol haritası.
-                </p>
-              </div>
-
-              <div className="pt-2 flex items-center justify-between border-t border-white/20 text-[11px] sm:text-sm font-bold text-slate-950 dark:text-slate-950">
-                <span className="inline-flex items-center gap-1 opacity-95">
-                  Meydan Oku
-                </span>
-                <div className="flex h-6 w-6 sm:h-8 sm:w-8 items-center justify-center rounded-lg sm:rounded-xl bg-white/20 backdrop-blur-sm group-hover:bg-white/30 transition-all duration-300 group-hover:translate-x-1">
-                  <ArrowRight className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-                </div>
-              </div>
-            </div>
-          </SafeLink>
+          </div>
         </div>
 
         {/* Ders Kategori Kartı (Tıpkı Araçlar Kategori Kartı Tasarımı Gibi) */}
