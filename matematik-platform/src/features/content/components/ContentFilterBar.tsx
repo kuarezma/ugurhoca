@@ -127,7 +127,7 @@ export default function ContentFilterBar({
                 {!isWorksheetBrowser && (
                   <button
                     onClick={() => onViewModeChange('packs')}
-                    title="Konu Paketleri"
+                    title="Konu Setleri"
                     className={`flex items-center gap-1.5 rounded-xl px-2.5 py-2 text-xs font-semibold transition-all ${
                       viewMode === 'packs'
                         ? 'shadow-md shadow-brand-primary/25 bg-brand-primary text-slate-950 dark:text-slate-950'
@@ -135,7 +135,7 @@ export default function ContentFilterBar({
                     }`}
                   >
                     <FolderTree className="h-4 w-4" />
-                    <span className="hidden md:inline">Paketler</span>
+                    <span className="hidden md:inline">Setler</span>
                   </button>
                 )}
               </div>

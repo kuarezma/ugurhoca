@@ -115,7 +115,7 @@ export default function ContentTopicPacks({
     return (
       <div className="rounded-3xl border border-slate-200 dark:border-white/10 bg-white/80 dark:bg-slate-900/60 p-12 text-center backdrop-blur-md">
         <FolderTree className="mx-auto h-12 w-12 text-slate-500 mb-3" />
-        <p className="text-slate-700 dark:text-slate-300 font-semibold">Bu filtrelere uygun konu paketi bulunamadı.</p>
+        <p className="text-slate-700 dark:text-slate-300 font-semibold">Bu filtrelere uygun konu seti bulunamadı.</p>
       </div>
     );
   }
