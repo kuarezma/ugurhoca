@@ -18,28 +18,24 @@ export function DesignModeToggle({ compact = false, className = '' }: DesignMode
       onClick={toggleDesignMode}
       aria-label={`Tasarım modunu değiştir: Şu an ${isAdventure ? 'Macera Patikası' : 'Klasik Liste'}`}
       title={isAdventure ? 'Klasik platform görünümüne geç' : 'Oyunlaştırılmış macera moduna geç'}
-      className={`relative inline-flex items-center gap-1.5 rounded-full p-1 transition-all duration-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 cursor-pointer ${
-        isAdventure
-          ? 'border border-green-700 shadow-sm shadow-brand-primary/10 bg-brand-primary text-slate-950 dark:text-slate-950'
-          : 'bg-surface-2 border border-default hover:bg-surface-3'
-      } ${className}`}
+      className={`relative inline-flex items-center gap-1 rounded-full p-1 transition-all duration-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 cursor-pointer bg-surface-2 border border-default ${className}`}
     >
       <div
         className={`flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-bold transition-all duration-300 ${
           isAdventure
-            ? 'shadow-md shadow-brand-primary/25 scale-[1.02] bg-brand-primary text-slate-950 dark:text-slate-950'
+            ? 'bg-brand-accent text-slate-950 dark:text-slate-950 shadow-md shadow-brand-accent/30'
             : 'text-secondary hover:text-primary'
         }`}
       >
-        <Sparkles className={`h-3.5 w-3.5 ${isAdventure ? 'text-slate-950 animate-pulse' : ''}`} />
+        <Sparkles className={`h-3.5 w-3.5 ${isAdventure ? 'animate-pulse' : ''}`} />
         <span>Macera</span>
       </div>
 
       <div
-        className={`flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-semibold transition-all duration-300 ${
+        className={`flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-bold transition-all duration-300 ${
           !isAdventure
-            ? 'bg-brand-primary text-slate-950 dark:text-slate-950 shadow-sm border border-brand-primary-deep font-bold'
-            : 'text-slate-950 dark:text-slate-950 hover:text-slate-900 dark:hover:text-slate-900'
+            ? 'bg-brand-secondary text-slate-950 dark:text-slate-950 shadow-md shadow-brand-secondary/30'
+            : 'text-secondary hover:text-primary'
         }`}
       >
         <BookOpen className="h-3.5 w-3.5" />

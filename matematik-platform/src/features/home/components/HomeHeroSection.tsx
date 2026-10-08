@@ -470,7 +470,7 @@ export function HomeHeroSection({
           <SafeLink
             href="/canli-ders"
             aria-label="Canlı Dersler"
-            className="col-span-1 group relative overflow-hidden rounded-2xl sm:rounded-3xl p-3.5 sm:p-6 border text-white dark:text-white transition-all duration-300 hover:-translate-y-1 active:scale-[0.99] cursor-pointer border-rose-200/90 shadow-lg shadow-rose-950/10 hover:shadow-xl hover:shadow-rose-950/15 dark:border-red-400/40 dark:shadow-rose-700/25 dark:hover:shadow-2xl dark:hover:shadow-rose-700/40 bg-brand-danger dark:bg-brand-danger"
+            className="col-span-1 group relative overflow-hidden rounded-2xl sm:rounded-3xl p-3.5 sm:p-6 border text-white dark:text-white transition-all duration-300 hover:-translate-y-1 active:scale-[0.99] cursor-pointer border-rose-200/90 shadow-lg shadow-rose-950/10 hover:shadow-xl hover:shadow-rose-950/15 dark:border-red-400/40 dark:shadow-rose-700/25 dark:hover:shadow-2xl dark:hover:shadow-rose-700/40 bg-red-600 dark:bg-red-600"
           >
             {/* Parlak Arka Plan Işık Efekti */}
             <div

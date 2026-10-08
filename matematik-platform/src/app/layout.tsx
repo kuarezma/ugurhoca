@@ -197,7 +197,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html
       lang="tr"
       data-theme="dark"
-      data-design-mode="adventure"
+      data-design-mode="classic"
       suppressHydrationWarning
       data-scroll-behavior="smooth"
       className={`${quicksand.variable} ${baloo.variable} dark`}
@@ -230,7 +230,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         />
         <script
           dangerouslySetInnerHTML={{
-            __html: `(function(){try{var theme=localStorage.getItem('${THEME_STORAGE_KEY}');var nextTheme=theme==='light'?'light':'dark';document.documentElement.dataset.theme=nextTheme;document.documentElement.classList.toggle('dark',nextTheme==='dark');document.documentElement.classList.toggle('light',nextTheme==='light');var palette=localStorage.getItem('${PALETTE_STORAGE_KEY}')||'classic';document.documentElement.dataset.palette=palette;var mode=localStorage.getItem('${DESIGN_MODE_STORAGE_KEY}')||'adventure';document.documentElement.dataset.designMode=mode;}catch(e){document.documentElement.dataset.theme='dark';document.documentElement.classList.add('dark');document.documentElement.dataset.palette='classic';document.documentElement.dataset.designMode='adventure';}})();`,
+            __html: `(function(){try{var theme=localStorage.getItem('${THEME_STORAGE_KEY}');var nextTheme=theme==='light'?'light':'dark';document.documentElement.dataset.theme=nextTheme;document.documentElement.classList.toggle('dark',nextTheme==='dark');document.documentElement.classList.toggle('light',nextTheme==='light');var palette=localStorage.getItem('${PALETTE_STORAGE_KEY}')||'classic';document.documentElement.dataset.palette=palette;var mode=localStorage.getItem('${DESIGN_MODE_STORAGE_KEY}')||'classic';document.documentElement.dataset.designMode=mode;}catch(e){document.documentElement.dataset.theme='dark';document.documentElement.classList.add('dark');document.documentElement.dataset.palette='classic';document.documentElement.dataset.designMode='classic';}})();`,
           }}
         />
         {supabaseOrigin ? (

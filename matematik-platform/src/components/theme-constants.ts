@@ -3,7 +3,7 @@ export const PALETTE_STORAGE_KEY = 'ugurhoca-palette';
 export const DESIGN_MODE_STORAGE_KEY = 'ugurhoca-design-mode';
 
 export type DesignMode = 'classic' | 'adventure';
-export const DEFAULT_DESIGN_MODE: DesignMode = 'adventure';
+export const DEFAULT_DESIGN_MODE: DesignMode = 'classic';
 
 export type ThemePalette = 'classic' | 'ocean' | 'emerald' | 'sunset' | 'midnight';
 export const DEFAULT_PALETTE: ThemePalette = 'classic';
