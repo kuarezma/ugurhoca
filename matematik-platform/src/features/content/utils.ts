@@ -68,7 +68,7 @@ export const sortContentDocumentsByNewest = (documents: ContentDocument[]) =>
 export const getContentPageTitle = (selectedType: string) => {
   switch (selectedType) {
     case 'yaprak-test':
-      return 'Kazanımlar';
+      return 'Yaprak Test';
     case 'deneme-sinav':
     case 'deneme':
     case 'sinav':
@@ -76,7 +76,7 @@ export const getContentPageTitle = (selectedType: string) => {
     case 'oyunlar':
       return 'Oyunlar';
     case 'ders-notlari':
-      return 'Yaprak Test';
+      return 'Ders Notları';
     case 'kitaplar':
       return 'Kitaplar';
     case 'ders-videolari':

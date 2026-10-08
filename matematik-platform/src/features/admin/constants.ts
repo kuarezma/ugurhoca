@@ -15,9 +15,9 @@ export const ADMIN_DOCUMENT_TYPE_COLORS: Record<string, string> = {
 };
 
 export const ADMIN_DOCUMENT_TYPE_LABELS: Record<string, string> = {
-  "ders-notlari": "Yaprak Test",
+  "ders-notlari": "Ders Notları",
   kitaplar: "Kitaplar",
-  "yaprak-test": "Kazanımlar",
+  "yaprak-test": "Yaprak Test",
   "ders-videolari": "Ders Videoları",
   "deneme-sinav": "Deneme-Sınav",
   deneme: "Deneme-Sınav",

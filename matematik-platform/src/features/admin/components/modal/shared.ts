@@ -11,9 +11,9 @@ export type AdminModalSubmitHandler = (
 export type AdminFormUpdate = (nextValue: Partial<AdminFormState>) => void;
 
 export const DOCUMENT_CATEGORY_OPTIONS = [
-  { label: "Yaprak Test", value: "ders-notlari" },
+  { label: "Ders Notları", value: "ders-notlari" },
   { label: "Kitaplar", value: "kitaplar" },
-  { label: "Kazanımlar", value: "yaprak-test" },
+  { label: "Yaprak Test", value: "yaprak-test" },
   { label: "Ders Videoları", value: "ders-videolari" },
   { label: "Deneme-Sınav", value: "deneme-sinav" },
   { label: "Programlar", value: "programlar" },
