@@ -7,8 +7,11 @@ const withBundleAnalyzer = require('@next/bundle-analyzer')({
 
 const isProd = process.env.NODE_ENV === 'production';
 // CSP ZORLAMADA (Content-Security-Policy): ihlaller /api/csp-report'a raporlanır.
-// 'unsafe-eval' kaldırıldı, frame-src daraltıldı. Gevşetme gerekiyorsa önce
-// report-uri loglarını incele, sonra bu listeyi genişlet.
+// Production'da 'unsafe-eval' yok. Next/React geliştirme çalışma zamanı çağrı
+// yığınını eval ile kurar; development'ta eklenmezse istemci olayları bağlanmaz.
+const scriptSrc = isProd
+  ? "script-src 'self' 'unsafe-inline' https://va.vercel-scripts.com"
+  : "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://va.vercel-scripts.com";
 const cspEnforced = [
   "base-uri 'self'",
   "default-src 'self'",
@@ -19,7 +22,7 @@ const cspEnforced = [
   "img-src 'self' data: blob: https:",
   "media-src 'self' data: blob: https:",
   "object-src 'none'",
-  "script-src 'self' 'unsafe-inline' https://va.vercel-scripts.com",
+  scriptSrc,
   "style-src 'self' 'unsafe-inline'",
   "worker-src 'self' blob:",
   "connect-src 'self' https://*.supabase.co wss://*.supabase.co https://*.livekit.cloud wss://*.livekit.cloud https://vitals.vercel-insights.com https://*.ingest.sentry.io https://*.ingest.us.sentry.io https://*.ingest.de.sentry.io",
@@ -56,6 +59,10 @@ if (isProd) {
 }
 
 const nextConfig = {
+  // Browsers that open the dev server as 127.0.0.1 are a different origin
+  // from localhost. Next blocks dev resources (including hydration) unless
+  // that host is listed.
+  allowedDevOrigins: ['127.0.0.1'],
   reactStrictMode: true,
   compress: true,
   experimental: {
