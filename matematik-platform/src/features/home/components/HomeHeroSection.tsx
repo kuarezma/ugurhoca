@@ -376,7 +376,7 @@ export function HomeHeroSection({
           <SafeLink
             href="/icerikler?type=ders-notlari"
             aria-label="Yaprak Testler"
-            className="col-span-1 group relative overflow-hidden rounded-2xl sm:rounded-3xl p-3.5 sm:p-6 border transition-all duration-300 hover:-translate-y-1 active:scale-[0.99] cursor-pointer border-emerald-300/80 dark:border-teal-400/40 bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none"
+            className="col-span-1 group relative overflow-hidden rounded-2xl sm:rounded-3xl p-3.5 sm:p-6 border transition-all duration-300 hover:-translate-y-1 active:scale-[0.99] cursor-pointer border-sky-300/80 dark:border-sky-400/40 bg-brand-secondary hover:bg-brand-secondary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-blue active:translate-y-1 active:shadow-none"
           >
             {/* Parlak Arka Plan Işık Efekti */}
             <div
@@ -423,7 +423,7 @@ export function HomeHeroSection({
           <SafeLink
             href="/oyunlar"
             aria-label="Matematik Oyunları"
-            className="col-span-1 group relative overflow-hidden rounded-2xl sm:rounded-3xl p-3.5 sm:p-6 border transition-all duration-300 hover:-translate-y-1 active:scale-[0.99] cursor-pointer border-purple-200/90 dark:border-purple-400/40 bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none"
+            className="col-span-1 group relative overflow-hidden rounded-2xl sm:rounded-3xl p-3.5 sm:p-6 border transition-all duration-300 hover:-translate-y-1 active:scale-[0.99] cursor-pointer border-purple-200/90 dark:border-purple-400/40 bg-brand-pink hover:bg-brand-pink text-slate-950 dark:text-slate-950 shadow-btn-3d-purple active:translate-y-1 active:shadow-none"
           >
             {/* Parlak Arka Plan Işık Efekti */}
             <div
@@ -520,7 +520,7 @@ export function HomeHeroSection({
           <SafeLink
             href="/meydan-okuma"
             aria-label="Meydan Okuma"
-            className="col-span-1 group relative overflow-hidden rounded-2xl sm:rounded-3xl p-3.5 sm:p-6 border transition-all duration-300 hover:-translate-y-1 active:scale-[0.99] cursor-pointer border-amber-300/80 dark:border-amber-400/40 bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none"
+            className="col-span-1 group relative overflow-hidden rounded-2xl sm:rounded-3xl p-3.5 sm:p-6 border transition-all duration-300 hover:-translate-y-1 active:scale-[0.99] cursor-pointer border-amber-300/80 dark:border-amber-400/40 bg-brand-accent hover:bg-brand-accent-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-yellow active:translate-y-1 active:shadow-none"
           >
             {/* Parlak Arka Plan Işık Efekti */}
             <div
