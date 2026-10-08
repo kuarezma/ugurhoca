@@ -7,8 +7,6 @@ import { HomeDailyQuote } from '@/features/home/components/HomeDailyQuote';
 import { HomeExamCountdownSection } from '@/features/home/components/HomeExamCountdownSection';
 import { HomeFooter } from '@/features/home/components/HomeFooter';
 import { HomeHeroSection } from '@/features/home/components/HomeHeroSection';
-import { HomeAdventureView } from '@/features/home/components/adventure/HomeAdventureView';
-import { HomeMoreLinksSection } from '@/features/home/components/HomeMoreLinksSection';
 import { HomeNavbar } from '@/features/home/components/HomeNavbar';
 import { HomeSupportSection } from '@/features/home/components/HomeSupportSection';
 import { useHomePageData } from '@/features/home/hooks/useHomePageData';
@@ -114,11 +112,10 @@ type HomePageProps = {
 };
 
 export default function HomePage({ announcementsSlot }: HomePageProps) {
-  const { theme, designMode } = useTheme();
+  const { theme } = useTheme();
   // Only the tool modals below read this; they mount after a click, when the
   // JS theme already matches data-theme. Page sections pick theme classes in CSS.
-  const isLight = theme === 'light';
-  const isAdventure = designMode === 'adventure';
+  const isLight = theme === 'light' || true;
   const [isFlashcardsOpen, setIsFlashcardsOpen] = useState(false);
   const [flashcardSubject, setFlashcardSubject] = useState<string | undefined>();
   const [isSpeedDrillOpen, setIsSpeedDrillOpen] = useState(false);
@@ -202,35 +199,23 @@ export default function HomePage({ announcementsSlot }: HomePageProps) {
       <HomeNavbar user={user} onLogout={handleLogout} />
       <ActiveLiveLessonBadge userId={user?.id} />
       <div className="pt-[calc(4.5rem+env(safe-area-inset-top))] md:pt-20">
-        {/* 1. Karşılama Ekranı (Macera Patikası vs. Klasik Hero) */}
-        {isAdventure ? (
-          <HomeAdventureView
-            user={user}
-            onOpenFlashcards={(subject) => { setFlashcardSubject(subject); setIsFlashcardsOpen(true); }}
-            onOpenScratchpad={() => setIsScratchpadOpen(true)}
-            onOpenCalculator={(tab) =>
-              setCalculatorState({ isOpen: true, tab: tab || 'lgs' })
-            }
-            onOpenPomodoro={() => setIsPomodoroOpen(true)}
-          />
-        ) : (
-          <HomeHeroSection
-            user={user}
-            onOpenFlashcards={() => setIsFlashcardsOpen(true)}
-            onOpenScratchpad={() => setIsScratchpadOpen(true)}
-            onOpenCalculator={(tab) =>
-              setCalculatorState({ isOpen: true, tab: tab || 'lgs' })
-            }
-            onOpenPomodoro={() => setIsPomodoroOpen(true)}
-            onOpenGraph={() => setIsGraphOpen(true)}
-            onOpenProofs={() => setIsProofsOpen(true)}
-            onOpenCheatSheet={() => setIsCheatSheetOpen(true)}
-            onOpenGlossary={() => setIsGlossaryOpen(true)}
-            onOpenTopicWeights={() => setIsTopicWeightsOpen(true)}
-            onOpenWeeklyPlanner={() => setIsWeeklyPlannerOpen(true)}
-            onOpenSpeedDrill={() => setIsSpeedDrillOpen(true)}
-          />
-        )}
+        {/* 1. Sade Açık Tema Karşılama, Yaprak Test & Oyunlar Hub'ı */}
+        <HomeHeroSection
+          user={user}
+          onOpenFlashcards={() => setIsFlashcardsOpen(true)}
+          onOpenScratchpad={() => setIsScratchpadOpen(true)}
+          onOpenCalculator={(tab) =>
+            setCalculatorState({ isOpen: true, tab: tab || 'lgs' })
+          }
+          onOpenPomodoro={() => setIsPomodoroOpen(true)}
+          onOpenGraph={() => setIsGraphOpen(true)}
+          onOpenProofs={() => setIsProofsOpen(true)}
+          onOpenCheatSheet={() => setIsCheatSheetOpen(true)}
+          onOpenGlossary={() => setIsGlossaryOpen(true)}
+          onOpenTopicWeights={() => setIsTopicWeightsOpen(true)}
+          onOpenWeeklyPlanner={() => setIsWeeklyPlannerOpen(true)}
+          onOpenSpeedDrill={() => setIsSpeedDrillOpen(true)}
+        />
 
         {/* 2. Duyurular */}
         {announcementsSlot}
@@ -241,20 +226,17 @@ export default function HomePage({ announcementsSlot }: HomePageProps) {
           userGrade={user?.grade}
         />
 
-        {/* 4. Klasikte Daha Fazlası */}
-        {!isAdventure ? <HomeMoreLinksSection /> : null}
+        {/* 4. Günün Sözü */}
+        <div className="defer-section">
+          <HomeDailyQuote />
+        </div>
 
         {/* 5. Uğur Hoca'ya Yaz */}
         <div className="defer-section">
           <HomeSupportSection user={user} />
         </div>
 
-        {/* 6. Günün Sözü (en altta, her iki görünümde) */}
-        <div className="defer-section">
-          <HomeDailyQuote />
-        </div>
-
-        {/* 7. Footer */}
+        {/* 6. Footer */}
         <div className="defer-section">
           <HomeFooter />
         </div>

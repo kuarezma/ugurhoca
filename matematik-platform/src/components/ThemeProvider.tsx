@@ -41,9 +41,9 @@ const applyDesignMode = (mode: DesignMode) => {
 };
 
 const readTheme = (): Theme =>
-  document.documentElement.dataset.theme === 'light' ? 'light' : 'dark';
+  document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light';
 
-const readServerTheme = (): Theme => 'dark';
+const readServerTheme = (): Theme => 'light';
 
 const readPalette = (): ThemePalette =>
   (document.documentElement.dataset.palette as ThemePalette) || DEFAULT_PALETTE;

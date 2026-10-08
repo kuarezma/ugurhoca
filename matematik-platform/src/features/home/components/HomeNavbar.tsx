@@ -5,10 +5,6 @@ import { usePathname } from 'next/navigation';
 import { LogOut, Menu, X } from 'lucide-react';
 import { useState } from 'react';
 import { SafeLink } from '@/components/SafeLink';
-import { ThemeToggle } from '@/components/ThemeToggle';
-import { ThemeSelectorDropdown } from '@/components/ThemeSelectorDropdown';
-import { DesignModeToggle } from '@/components/DesignModeToggle';
-import { HOME_CATEGORIES } from '@/features/home/constants';
 import { HomeNavbarMessagesButton } from '@/features/home/components/HomeNavbarMessagesButton';
 import { HomeNavbarNotificationBell } from '@/features/home/components/HomeNavbarNotificationBell';
 import type { AppUser } from '@/types';
@@ -63,10 +59,39 @@ export function HomeNavbar({ onLogout, user }: HomeNavbarProps) {
           </SafeLink>
 
 
+          {/* Orta Menü Bağlantıları (Masaüstü) */}
+          <div className="hidden lg:flex items-center gap-1.5 xl:gap-2">
+            <SafeLink
+              href="/testler"
+              className="inline-flex items-center gap-1.5 rounded-xl px-3.5 py-2 text-sm font-bold text-secondary transition-all hover:bg-surface-2 hover:text-primary"
+            >
+              <span>📄 Yaprak Testler</span>
+            </SafeLink>
+            <SafeLink
+              href="/oyunlar"
+              className="inline-flex items-center gap-1.5 rounded-xl px-3.5 py-2 text-sm font-bold text-secondary transition-all hover:bg-surface-2 hover:text-primary"
+            >
+              <span>🎮 Oyunlar</span>
+            </SafeLink>
+            <SafeLink
+              href="/icerikler"
+              className="inline-flex items-center gap-1.5 rounded-xl px-3.5 py-2 text-sm font-bold text-secondary transition-all hover:bg-surface-2 hover:text-primary"
+            >
+              <span>📚 Konular & Sınıflar</span>
+            </SafeLink>
+            <SafeLink
+              href="/canli-ders"
+              className="inline-flex items-center gap-1.5 rounded-xl px-3.5 py-2 text-sm font-bold text-tone-danger-fg bg-tone-danger-bg/50 border border-tone-danger-border transition-all hover:bg-tone-danger-bg"
+            >
+              <span className="relative flex h-2 w-2">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-rose-500"></span>
+              </span>
+              <span>Canlı Ders</span>
+            </SafeLink>
+          </div>
+
           <div className="hidden shrink-0 items-center gap-2 lg:flex">
-            <DesignModeToggle />
-            <ThemeSelectorDropdown />
-            <ThemeToggle compact />
             {showMessages && user?.id ? (
               <HomeNavbarMessagesButton
                 userId={user.id}
@@ -146,30 +171,38 @@ export function HomeNavbar({ onLogout, user }: HomeNavbarProps) {
       {isOpen && (
         <div
           id="mobile-navigation"
-          className="animate-fade-in border-t max-h-[calc(100dvh-4.5rem-env(safe-area-inset-top))] overflow-y-auto pb-[calc(1.5rem+env(safe-area-inset-bottom))] lg:hidden light:border-slate-200 light:bg-white/95 backdrop-blur-xl dark:border-white/10 dark:bg-slate-950/95"
+          className="animate-fade-in border-t max-h-[calc(100dvh-4.5rem-env(safe-area-inset-top))] overflow-y-auto pb-[calc(1.5rem+env(safe-area-inset-bottom))] lg:hidden border-slate-200 bg-white/95 backdrop-blur-xl"
         >
           <div className="space-y-1.5 px-4 py-4">
-            {HOME_CATEGORIES.map((category) => (
-              <SafeLink
-                key={category.id}
-                href={category.href}
-                onClick={() => setIsOpen(false)}
-                className="flex items-center gap-3 rounded-xl px-3.5 py-2.5 text-sm font-semibold transition-colors light:text-slate-700 light:hover:bg-slate-100 light:hover:text-slate-900 dark:text-slate-300 dark:hover:bg-white/10 dark:hover:text-white"
-              >
-                <category.icon className="h-5 w-5 text-brand-ink" />
-                {category.title}
-              </SafeLink>
-            ))}
-            <div
-              className="mt-3 border-t pt-3 light:border-slate-200 dark:border-white/10"
+            <SafeLink
+              href="/testler"
+              onClick={() => setIsOpen(false)}
+              className="flex items-center gap-3 rounded-xl px-3.5 py-2.5 text-sm font-bold text-slate-800 hover:bg-slate-100"
             >
-              <div className="mb-3 flex justify-center">
-                <DesignModeToggle className="w-full justify-between px-3 py-1.5" />
-              </div>
-              <div className="mb-3 flex items-center gap-2">
-                <ThemeSelectorDropdown className="flex-1" buttonClassName="w-full h-11 justify-center" align="left" />
-                <ThemeToggle compact className="shrink-0" />
-              </div>
+              <span className="text-lg">📄</span> Yaprak Testler & Denemeler
+            </SafeLink>
+            <SafeLink
+              href="/oyunlar"
+              onClick={() => setIsOpen(false)}
+              className="flex items-center gap-3 rounded-xl px-3.5 py-2.5 text-sm font-bold text-slate-800 hover:bg-slate-100"
+            >
+              <span className="text-lg">🎮</span> Matematik Oyunları
+            </SafeLink>
+            <SafeLink
+              href="/icerikler"
+              onClick={() => setIsOpen(false)}
+              className="flex items-center gap-3 rounded-xl px-3.5 py-2.5 text-sm font-bold text-slate-800 hover:bg-slate-100"
+            >
+              <span className="text-lg">📚</span> Konular ve Sınıflar
+            </SafeLink>
+            <SafeLink
+              href="/canli-ders"
+              onClick={() => setIsOpen(false)}
+              className="flex items-center gap-3 rounded-xl px-3.5 py-2.5 text-sm font-bold text-rose-700 bg-rose-50 hover:bg-rose-100"
+            >
+              <span className="text-lg">🔴</span> Canlı Ders Odası
+            </SafeLink>
+            <div className="mt-3 border-t pt-3 border-slate-200">
               {user ? (
                 <>
                   <SafeLink

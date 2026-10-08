@@ -196,11 +196,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html
       lang="tr"
-      data-theme="dark"
+      data-theme="light"
       data-design-mode="classic"
       suppressHydrationWarning
       data-scroll-behavior="smooth"
-      className={`${quicksand.variable} ${baloo.variable} dark`}
+      className={`${quicksand.variable} ${baloo.variable} light`}
     >
       <head>
         {/* Güvenlik & Referrer Politikaları */}
@@ -230,7 +230,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         />
         <script
           dangerouslySetInnerHTML={{
-            __html: `(function(){try{var theme=localStorage.getItem('${THEME_STORAGE_KEY}');var nextTheme=theme==='light'?'light':'dark';document.documentElement.dataset.theme=nextTheme;document.documentElement.classList.toggle('dark',nextTheme==='dark');document.documentElement.classList.toggle('light',nextTheme==='light');var palette=localStorage.getItem('${PALETTE_STORAGE_KEY}')||'classic';document.documentElement.dataset.palette=palette;var mode=localStorage.getItem('${DESIGN_MODE_STORAGE_KEY}')||'classic';document.documentElement.dataset.designMode=mode;}catch(e){document.documentElement.dataset.theme='dark';document.documentElement.classList.add('dark');document.documentElement.dataset.palette='classic';document.documentElement.dataset.designMode='classic';}})();`,
+            __html: `(function(){try{document.documentElement.dataset.theme='light';document.documentElement.classList.remove('dark');document.documentElement.classList.add('light');localStorage.setItem('${THEME_STORAGE_KEY}','light');var palette=localStorage.getItem('${PALETTE_STORAGE_KEY}')||'classic';document.documentElement.dataset.palette=palette;document.documentElement.dataset.designMode='classic';}catch(e){document.documentElement.dataset.theme='light';document.documentElement.classList.remove('dark');document.documentElement.classList.add('light');}})();`,
           }}
         />
         {supabaseOrigin ? (

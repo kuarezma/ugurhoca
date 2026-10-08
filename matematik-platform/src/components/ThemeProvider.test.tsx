@@ -60,24 +60,24 @@ describe('ThemeProvider', () => {
     expect(screen.getByTestId('theme')).toHaveTextContent('light');
   });
 
-  it('data-theme yoksa koyu temayla başlar', () => {
+  it('data-theme yoksa açık temayla başlar', () => {
     render(
       <ThemeProvider>
         <ThemeProbe />
       </ThemeProvider>,
     );
 
-    expect(screen.getByTestId('theme')).toHaveTextContent('dark');
+    expect(screen.getByTestId('theme')).toHaveTextContent('light');
   });
 
-  it('sunucu çıktısı koyu kalır ve açık temada hidrasyon uyarısı üretmeden açığa geçer', async () => {
+  it('sunucu çıktısı açık tema kalır ve hidrasyon uyarısı üretmez', async () => {
     const tree = (
       <ThemeProvider>
         <ThemeProbe />
       </ThemeProvider>
     );
     const serverHtml = renderToString(tree);
-    expect(serverHtml).toContain('>dark<');
+    expect(serverHtml).toContain('>light<');
 
     document.documentElement.dataset.theme = 'light';
     const container = document.createElement('div');
