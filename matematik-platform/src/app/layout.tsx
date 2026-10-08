@@ -5,7 +5,7 @@ import { MobileBottomNav } from "@/components/MobileBottomNav";
 import { Providers } from "@/components/Providers";
 import { SiteBackground } from "@/components/SiteBackground";
 import { PerformanceRuntimeProvider } from "@/components/PerformanceRuntimeProvider";
-import { THEME_STORAGE_KEY, PALETTE_STORAGE_KEY, DESIGN_MODE_STORAGE_KEY } from "@/components/theme-constants";
+import { THEME_STORAGE_KEY, PALETTE_STORAGE_KEY } from "@/components/theme-constants";
 import { SITE_URL, SITE_NAME } from "@/lib/site-metadata";
 // Not: `@livekit/components-styles` ve `katex/dist/katex.min.css` buradan
 // kaldirildi. Kok layout'tan import edilen her stil sayfasi TUM rotalarda
