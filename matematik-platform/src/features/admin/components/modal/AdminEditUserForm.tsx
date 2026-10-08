@@ -97,7 +97,7 @@ export default function AdminEditUserForm({
   return (
     <form onSubmit={onSubmit} className="space-y-5">
       <div>
-        <label htmlFor={nameId} className="block text-slate-300 mb-2 text-sm">
+        <label htmlFor={nameId} className="block text-slate-700 dark:text-slate-300 mb-2 text-sm">
           Ad Soyad
         </label>
         <input
@@ -112,7 +112,7 @@ export default function AdminEditUserForm({
         />
       </div>
       <div>
-        <label htmlFor={gradeId} className="block text-slate-300 mb-2 text-sm">
+        <label htmlFor={gradeId} className="block text-slate-700 dark:text-slate-300 mb-2 text-sm">
           Sınıf
         </label>
         <select
@@ -177,7 +177,7 @@ export default function AdminEditUserForm({
               type="button"
               onClick={handleResetPassword}
               disabled={isResetting || newPassword.length < 6}
-              className="px-4 py-2.5 bg-amber-500/20 border border-amber-500/40 text-amber-200 hover:bg-amber-500/30 hover:text-white rounded-xl text-sm font-semibold transition-all disabled:opacity-50 whitespace-nowrap"
+              className="px-4 py-2.5 bg-amber-500/20 border border-amber-500/40 text-amber-800 hover:bg-amber-500/30 hover:text-amber-950 dark:text-amber-200 dark:hover:text-white rounded-xl text-sm font-semibold transition-all disabled:opacity-50 whitespace-nowrap"
             >
               {isResetting ? "Sıfırlanıyor..." : "Şifreyi Güncelle"}
             </button>

@@ -21,7 +21,7 @@ export default function AdminDescriptionField({
 }: AdminDescriptionFieldProps) {
   return (
     <div>
-      <label className="block text-slate-300 mb-2 text-sm">
+      <label className="block text-slate-700 dark:text-slate-300 mb-2 text-sm">
         {getDescriptionLabel(modalType)}
       </label>
       <textarea

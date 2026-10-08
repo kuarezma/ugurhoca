@@ -49,7 +49,7 @@ export default function AdminEditDocumentForm({
         </div>
       ) : (
         <div>
-          <label htmlFor={titleId} className="block text-slate-300 mb-2 text-sm">
+          <label htmlFor={titleId} className="block text-slate-700 dark:text-slate-300 mb-2 text-sm">
             Başlık
           </label>
           <input
@@ -66,7 +66,7 @@ export default function AdminEditDocumentForm({
       <div>
         <label
           htmlFor={descriptionId}
-          className="block text-slate-300 mb-2 text-sm"
+          className="block text-slate-700 dark:text-slate-300 mb-2 text-sm"
         >
           Açıklama
         </label>
@@ -80,7 +80,7 @@ export default function AdminEditDocumentForm({
         />
       </div>
       <div>
-        <label htmlFor={typeId} className="block text-slate-300 mb-2 text-sm">
+        <label htmlFor={typeId} className="block text-slate-700 dark:text-slate-300 mb-2 text-sm">
           Kategori
         </label>
         <select
@@ -103,7 +103,7 @@ export default function AdminEditDocumentForm({
           <div>
             <label
               htmlFor={worksheetGradeId}
-              className="block text-slate-300 mb-2 text-sm"
+              className="block text-slate-700 dark:text-slate-300 mb-2 text-sm"
             >
               Sınıf Düzeyi
             </label>
@@ -135,7 +135,7 @@ export default function AdminEditDocumentForm({
           <div>
             <label
               htmlFor={learningOutcomeId}
-              className="block text-slate-300 mb-2 text-sm"
+              className="block text-slate-700 dark:text-slate-300 mb-2 text-sm"
             >
               Kazanım
             </label>
@@ -153,7 +153,7 @@ export default function AdminEditDocumentForm({
         </>
       )}
       <div>
-        <label htmlFor={fileUrlId} className="block text-slate-300 mb-2 text-sm">
+        <label htmlFor={fileUrlId} className="block text-slate-700 dark:text-slate-300 mb-2 text-sm">
           Dosya Linki
         </label>
         <input
@@ -166,7 +166,7 @@ export default function AdminEditDocumentForm({
         />
       </div>
       <div>
-        <label htmlFor={videoUrlId} className="block text-slate-300 mb-2 text-sm">
+        <label htmlFor={videoUrlId} className="block text-slate-700 dark:text-slate-300 mb-2 text-sm">
           YouTube URL
         </label>
         <input
@@ -181,7 +181,7 @@ export default function AdminEditDocumentForm({
       <div>
         <label
           htmlFor={answerKeyId}
-          className="block text-slate-300 mb-2 text-sm"
+          className="block text-slate-700 dark:text-slate-300 mb-2 text-sm"
         >
           Cevap Anahtarı (Metin)
         </label>
@@ -200,7 +200,7 @@ export default function AdminEditDocumentForm({
       <div>
         <label
           htmlFor={solutionUrlId}
-          className="block text-slate-300 mb-2 text-sm"
+          className="block text-slate-700 dark:text-slate-300 mb-2 text-sm"
         >
           Çözüm PDF (Drive Link)
         </label>

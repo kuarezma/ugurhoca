@@ -39,7 +39,7 @@ export default function AdminSendDocumentForm({
   return (
     <form onSubmit={onSubmit} className="space-y-5">
       <div>
-        <label htmlFor={docId} className="block text-slate-300 mb-2 text-sm">
+        <label htmlFor={docId} className="block text-slate-700 dark:text-slate-300 mb-2 text-sm">
           Belge Seç
         </label>
         <select
@@ -59,7 +59,7 @@ export default function AdminSendDocumentForm({
         </select>
       </div>
       <div>
-        <label htmlFor={studentId} className="block text-slate-300 mb-2 text-sm">
+        <label htmlFor={studentId} className="block text-slate-700 dark:text-slate-300 mb-2 text-sm">
           Öğrenci Seç
         </label>
         <select

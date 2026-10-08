@@ -39,7 +39,7 @@ export default function AdminDocumentFields({
       <div>
         <label
           htmlFor={fileInputId}
-          className="block text-slate-300 mb-2 text-sm"
+          className="block text-slate-700 dark:text-slate-300 mb-2 text-sm"
         >
           Dosya Yükle (PDF, EXE, MP4 vb.)
         </label>
@@ -67,7 +67,7 @@ export default function AdminDocumentFields({
       <div>
         <label
           htmlFor={fileUrlId}
-          className="block text-slate-300 mb-2 text-sm"
+          className="block text-slate-700 dark:text-slate-300 mb-2 text-sm"
         >
           Link (Google Drive, vb.)
         </label>
@@ -89,7 +89,7 @@ export default function AdminDocumentFields({
       <div>
         <label
           htmlFor={videoUrlId}
-          className="block text-slate-300 mb-2 text-sm"
+          className="block text-slate-700 dark:text-slate-300 mb-2 text-sm"
         >
           YouTube Video URL
         </label>
@@ -106,7 +106,7 @@ export default function AdminDocumentFields({
       <div>
         <label
           htmlFor={answerKeyId}
-          className="block text-slate-300 mb-2 text-sm"
+          className="block text-slate-700 dark:text-slate-300 mb-2 text-sm"
         >
           Cevap Anahtarı (Metin)
         </label>
@@ -125,7 +125,7 @@ export default function AdminDocumentFields({
       <div>
         <label
           htmlFor={solutionUrlId}
-          className="block text-slate-300 mb-2 text-sm"
+          className="block text-slate-700 dark:text-slate-300 mb-2 text-sm"
         >
           Çözüm PDF (Drive Link)
         </label>
@@ -159,7 +159,7 @@ export default function AdminDocumentFields({
             <div>
               <label
                 htmlFor={worksheetGradeId}
-                className="block text-slate-300 mb-2 text-sm"
+                className="block text-slate-700 dark:text-slate-300 mb-2 text-sm"
               >
                 Sınıf Düzeyi
               </label>
@@ -192,7 +192,7 @@ export default function AdminDocumentFields({
             <div>
               <label
                 htmlFor={learningOutcomeId}
-                className="block text-slate-300 mb-2 text-sm"
+                className="block text-slate-700 dark:text-slate-300 mb-2 text-sm"
               >
                 Kazanım
               </label>
@@ -214,7 +214,7 @@ export default function AdminDocumentFields({
           <>
             <span
               id={gradesGroupLabelId}
-              className="block text-slate-300 mb-2 text-sm"
+              className="block text-slate-700 dark:text-slate-300 mb-2 text-sm"
             >
               Hedef Sınıflar
             </span>

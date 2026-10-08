@@ -346,7 +346,7 @@ export default function AdminMainModal({
             type="button"
             onClick={onClose}
             aria-label="Kapat"
-            className="text-slate-400 hover:text-white"
+            className="text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white"
           >
             <X className="w-6 h-6" />
           </button>

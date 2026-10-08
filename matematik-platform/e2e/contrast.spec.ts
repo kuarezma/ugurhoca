@@ -103,6 +103,16 @@ async function waitForVisualStability(page: Page) {
         requestAnimationFrame(() => resolve());
       });
     });
+    // Tema geçişi (body background-color 0.2s) bitmeden ölçülürse yarı saydam
+    // ara renkler okunur; kullanıcının göreceği yerleşik son renk ölçülür.
+    // Yalnızca sonlanan geçişler beklenir; sonsuz animasyonlar beklenmez.
+    const transitions = document
+      .getAnimations()
+      .filter((animation) => animation instanceof CSSTransition);
+    await Promise.race([
+      Promise.allSettled(transitions.map((animation) => animation.finished)),
+      new Promise((resolve) => setTimeout(resolve, 2_000)),
+    ]);
   });
 }
 

@@ -20,7 +20,7 @@ export default function AdminAnnouncementFields({
       <div>
         <label
           htmlFor={imageUrlsId}
-          className="block text-slate-300 mb-2 text-sm"
+          className="block text-slate-700 dark:text-slate-300 mb-2 text-sm"
         >
           Görsel Linkleri
         </label>
@@ -41,7 +41,7 @@ export default function AdminAnnouncementFields({
       <div>
         <label
           htmlFor={linkUrlId}
-          className="block text-slate-300 mb-2 text-sm"
+          className="block text-slate-700 dark:text-slate-300 mb-2 text-sm"
         >
           Detay Linki
         </label>

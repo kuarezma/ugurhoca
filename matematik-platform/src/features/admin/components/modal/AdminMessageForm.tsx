@@ -52,7 +52,7 @@ export default function AdminMessageForm({
         </div>
       )}
       <div>
-        <label htmlFor={titleId} className="block text-slate-300 mb-2 text-sm">
+        <label htmlFor={titleId} className="block text-slate-700 dark:text-slate-300 mb-2 text-sm">
           Başlık
         </label>
         <input
@@ -66,7 +66,7 @@ export default function AdminMessageForm({
         />
       </div>
       <div>
-        <label htmlFor={imageId} className="block text-slate-300 mb-2 text-sm">
+        <label htmlFor={imageId} className="block text-slate-700 dark:text-slate-300 mb-2 text-sm">
           Resim (Opsiyonel)
         </label>
         <div className="relative">
@@ -104,7 +104,7 @@ export default function AdminMessageForm({
         )}
       </div>
       <div>
-        <label htmlFor={messageId} className="block text-slate-300 mb-2 text-sm">
+        <label htmlFor={messageId} className="block text-slate-700 dark:text-slate-300 mb-2 text-sm">
           Mesaj
         </label>
         <textarea

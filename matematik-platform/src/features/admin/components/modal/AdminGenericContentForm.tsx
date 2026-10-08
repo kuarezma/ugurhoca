@@ -61,7 +61,7 @@ export default function AdminGenericContentForm({
 
       {!isWorksheetDocument && (
         <div>
-          <label htmlFor={titleId} className="block text-slate-300 mb-2 text-sm">
+          <label htmlFor={titleId} className="block text-slate-700 dark:text-slate-300 mb-2 text-sm">
             Başlık
           </label>
           <input
@@ -88,7 +88,7 @@ export default function AdminGenericContentForm({
         <div>
           <label
             htmlFor={categoryId}
-            className="block text-slate-300 mb-2 text-sm"
+            className="block text-slate-700 dark:text-slate-300 mb-2 text-sm"
           >
             Kategori
           </label>

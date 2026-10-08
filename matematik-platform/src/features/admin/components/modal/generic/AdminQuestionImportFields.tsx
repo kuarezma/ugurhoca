@@ -232,7 +232,7 @@ export default function AdminQuestionImportFields({
                             key={`${index}-${optionIndex}`}
                             className="rounded-lg border border-default dark:border-slate-700/50 bg-surface-2/60 dark:bg-slate-900/40 p-2"
                           >
-                            <div className="text-xs font-semibold text-slate-300">
+                            <div className="text-xs font-semibold text-slate-700 dark:text-slate-300">
                               {OPTION_LETTERS[optionIndex]}
                             </div>
                             <p className="mt-1 line-clamp-2 text-xs text-slate-400">
