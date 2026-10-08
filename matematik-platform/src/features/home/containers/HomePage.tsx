@@ -8,6 +8,7 @@ import { HomeExamCountdownSection } from '@/features/home/components/HomeExamCou
 import { HomeFooter } from '@/features/home/components/HomeFooter';
 import { HomeHeroSection } from '@/features/home/components/HomeHeroSection';
 import { HomeAdventureView } from '@/features/home/components/adventure/HomeAdventureView';
+import { HomeMoreLinksSection } from '@/features/home/components/HomeMoreLinksSection';
 import { HomeNavbar } from '@/features/home/components/HomeNavbar';
 import { HomeSupportSection } from '@/features/home/components/HomeSupportSection';
 import { useHomePageData } from '@/features/home/hooks/useHomePageData';
@@ -240,17 +241,20 @@ export default function HomePage({ announcementsSlot }: HomePageProps) {
           userGrade={user?.grade}
         />
 
-        {/* 4. Günün Sözü */}
-        <div className="defer-section">
-          <HomeDailyQuote />
-        </div>
+        {/* 4. Klasikte Daha Fazlası */}
+        {!isAdventure ? <HomeMoreLinksSection /> : null}
 
         {/* 5. Uğur Hoca'ya Yaz */}
         <div className="defer-section">
           <HomeSupportSection user={user} />
         </div>
 
-        {/* 6. Footer */}
+        {/* 6. Günün Sözü (en altta, her iki görünümde) */}
+        <div className="defer-section">
+          <HomeDailyQuote />
+        </div>
+
+        {/* 7. Footer */}
         <div className="defer-section">
           <HomeFooter />
         </div>

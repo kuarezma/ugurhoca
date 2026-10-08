@@ -7,6 +7,7 @@ import { HomeDailyQuote } from '@/features/home/components/HomeDailyQuote';
 import { HomeExamCountdownSection } from '@/features/home/components/HomeExamCountdownSection';
 import { HomeFooter } from '@/features/home/components/HomeFooter';
 import { HomeHeroSection } from '@/features/home/components/HomeHeroSection';
+import { HomeMoreLinksSection } from '@/features/home/components/HomeMoreLinksSection';
 import { HomeNavbar } from '@/features/home/components/HomeNavbar';
 import { HomeNavbarMessagesButton } from '@/features/home/components/HomeNavbarMessagesButton';
 import { HomeNavbarNotificationBell } from '@/features/home/components/HomeNavbarNotificationBell';
@@ -194,6 +195,10 @@ describe('ana sayfa tema sınıfları ilk boyamada CSS’ten gelir', () => {
 
   it('HomeDailyQuote iki temada aynı işaretlemeyi üretir', () => {
     expectThemeIndependentMarkup(() => <HomeDailyQuote />);
+  });
+
+  it('HomeMoreLinksSection iki temada aynı işaretlemeyi üretir', () => {
+    expectThemeIndependentMarkup(() => <HomeMoreLinksSection />);
   });
 
   it('HomeSupportSection (misafir ve oturum açık) iki temada aynı işaretlemeyi üretir', () => {
