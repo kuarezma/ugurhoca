@@ -21,7 +21,7 @@ export default function AdminAssignmentFields({
   return (
     <div className="grid grid-cols-1 gap-4">
       <div>
-        <label htmlFor={gradeId} className="block text-slate-300 mb-2 text-sm">
+        <label htmlFor={gradeId} className="block text-slate-700 dark:text-slate-300 mb-2 text-sm">
           Sınıf
         </label>
         <select
@@ -47,7 +47,7 @@ export default function AdminAssignmentFields({
       <div>
         <label
           htmlFor={dueDateId}
-          className="block text-slate-300 mb-2 text-sm"
+          className="block text-slate-700 dark:text-slate-300 mb-2 text-sm"
         >
           Teslim Tarihi
         </label>

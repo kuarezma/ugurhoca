@@ -28,7 +28,7 @@ export default function AdminQuizSettingsFields({
   return (
     <>
       <div>
-        <label htmlFor={gradeId} className="block text-slate-300 mb-2 text-sm">
+        <label htmlFor={gradeId} className="block text-slate-700 dark:text-slate-300 mb-2 text-sm">
           Sınıf
         </label>
         <select
@@ -52,7 +52,7 @@ export default function AdminQuizSettingsFields({
       <div>
         <label
           htmlFor={timeLimitId}
-          className="block text-slate-300 mb-2 text-sm"
+          className="block text-slate-700 dark:text-slate-300 mb-2 text-sm"
         >
           Süre (Dakika)
         </label>
@@ -73,7 +73,7 @@ export default function AdminQuizSettingsFields({
       <div>
         <label
           htmlFor={difficultyId}
-          className="block text-slate-300 mb-2 text-sm"
+          className="block text-slate-700 dark:text-slate-300 mb-2 text-sm"
         >
           Zorluk Seviyesi
         </label>
@@ -97,7 +97,7 @@ export default function AdminQuizSettingsFields({
       </div>
       {modalType === "editQuiz" && (
         <div>
-          <label className="flex items-center gap-2 text-slate-300 mb-2 text-sm cursor-pointer">
+          <label className="flex items-center gap-2 text-slate-700 dark:text-slate-300 mb-2 text-sm cursor-pointer">
             <input
               type="checkbox"
               checked={formData.is_active || false}

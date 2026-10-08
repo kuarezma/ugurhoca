@@ -35,7 +35,7 @@ export default function AdminQuestionFields({
         <div className="flex items-center justify-between mb-2">
           <label
             htmlFor={questionId}
-            className="block text-slate-300 font-bold uppercase tracking-wider text-xs"
+            className="block text-slate-700 dark:text-slate-300 font-bold uppercase tracking-wider text-xs"
           >
             Soru Metni
           </label>
@@ -45,7 +45,7 @@ export default function AdminQuestionFields({
               setHasOpenedLatexModal(true);
               setIsLatexModalOpen(true);
             })}
-            className="inline-flex items-center gap-1.5 rounded-lg border border-violet-500/30 bg-violet-500/10 px-2.5 py-1 text-xs font-bold text-violet-300 hover:bg-violet-500/20 hover:text-white transition"
+            className="inline-flex items-center gap-1.5 rounded-lg border border-violet-500/30 bg-violet-500/10 px-2.5 py-1 text-xs font-bold text-violet-700 hover:bg-violet-500/20 hover:text-violet-900 dark:text-violet-300 dark:hover:text-white transition"
           >
             <FunctionSquare className="w-3.5 h-3.5" />
             Formül / LaTeX Asistanı
@@ -78,7 +78,7 @@ export default function AdminQuestionFields({
       <div role="group" aria-labelledby={optionsGroupLabelId}>
         <span
           id={optionsGroupLabelId}
-          className="block text-slate-300 mb-3 font-bold uppercase tracking-wider text-xs"
+          className="block text-slate-700 dark:text-slate-300 mb-3 font-bold uppercase tracking-wider text-xs"
         >
           Şıklar ve Doğru Cevap
         </span>
@@ -102,7 +102,7 @@ export default function AdminQuestionFields({
                   />
                 </div>
                 <div
-                  className={`w-8 h-8 rounded-xl flex items-center justify-center font-bold text-sm shrink-0 ${isCorrect ? "bg-emerald-500 text-slate-950 shadow-lg shadow-emerald-500/20" : "bg-slate-700 text-slate-300"}`}
+                  className={`w-8 h-8 rounded-xl flex items-center justify-center font-bold text-sm shrink-0 ${isCorrect ? "bg-emerald-500 text-slate-950 shadow-lg shadow-emerald-500/20" : "bg-slate-700 text-slate-700 dark:text-slate-300"}`}
                 >
                   {OPTION_LETTERS[index]}
                 </div>
