@@ -38,7 +38,7 @@ export function HomeNavbar({ onLogout, user }: HomeNavbarProps) {
             }}
             className="group flex min-w-0 shrink items-center gap-2.5 sm:gap-3"
           >
-            <div className="relative flex h-10 w-10 sm:h-11 sm:w-11 shrink-0 items-center justify-center rounded-2xl bg-[#fff5cc] border-2 border-[#ffc800] shadow-[0_3px_0_#e5b400] text-xl sm:text-2xl transition-transform duration-200 group-hover:scale-105 select-none overflow-hidden p-0.5">
+            <div className="relative flex h-10 w-10 sm:h-11 sm:w-11 shrink-0 items-center justify-center rounded-2xl bg-[#d7ffb8] border-2 border-[#58cc02] shadow-[0_3px_0_#46a302] text-xl sm:text-2xl transition-transform duration-200 group-hover:scale-105 select-none overflow-hidden p-0.5">
               <Image
                 src="/ugur.jpeg"
                 alt="Uğur Hoca"
