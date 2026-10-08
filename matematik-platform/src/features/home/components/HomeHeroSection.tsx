@@ -4,13 +4,8 @@ import {
   ArrowRight,
   BookOpen,
   Calculator,
-  Compass,
   FileSignature,
-  Flame,
   Gamepad2,
-  GraduationCap,
-  Layers,
-  LineChart,
   PenTool,
   Sparkles,
   Timer,
@@ -37,11 +32,9 @@ type HomeHeroSectionProps = {
 
 export function HomeHeroSection({
   user,
-  onOpenFlashcards,
   onOpenScratchpad,
   onOpenCalculator,
   onOpenPomodoro,
-  onOpenCheatSheet,
 }: HomeHeroSectionProps) {
   const firstName = user?.name?.split(' ')[0];
   const greeting = firstName ? `Merhaba ${firstName}!` : 'Matematiğe Hoş Geldin!';
