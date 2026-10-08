@@ -78,8 +78,8 @@ export function HomeHeroSection({
           
           {/* YAPRAK TESTLER KARTI */}
           <SafeLink
-            href="/testler"
-            aria-label="Yaprak Testler ve Deneme Sınavları"
+            href="/icerikler?type=yaprak-test"
+            aria-label="Yaprak Testler ve Ders İçerikleri"
             className="group relative flex flex-col justify-between overflow-hidden rounded-3xl p-6 sm:p-8 transition-all duration-200 hover:-translate-y-1 bg-gradient-to-br from-sky-50 to-blue-100/70 border-2 border-sky-200 shadow-sm hover:shadow-md hover:border-sky-300"
           >
             <div>
@@ -92,17 +92,17 @@ export function HomeHeroSection({
                 </span>
               </div>
               <h2 className="font-display text-2xl sm:text-3xl font-black text-slate-900 mb-2">
-                Yaprak Testler & Föyler
+                Yaprak Testler & İçerikler
               </h2>
               <p className="text-sm sm:text-base text-slate-700 font-medium leading-relaxed mb-6">
-                5, 6, 7 ve 8. sınıf kazanım testleri, yeni nesil soru föyleri ve süreç izleme sınavlarına anında ulaşın ve çözün.
+                5, 6, 7 ve 8. sınıf kazanım yaprak testleri, yeni nesil soru föyleri, çalışma kağıtları ve ders içeriklerine anında ulaşın.
               </p>
             </div>
 
             <div className="pt-4 border-t border-sky-200/80 flex items-center justify-between text-sm sm:text-base font-bold text-sky-800">
               <span className="flex items-center gap-1.5">
                 <BookOpen className="h-4 w-4" />
-                Hemen Test Çözmeye Başla
+                Yaprak Test İçeriklerini Aç
               </span>
               <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-white text-sky-700 shadow-sm group-hover:translate-x-1 transition-transform">
                 <ArrowRight className="h-4 w-4" />

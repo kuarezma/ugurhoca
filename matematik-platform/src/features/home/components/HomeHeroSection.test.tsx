@@ -16,11 +16,11 @@ describe('HomeHeroSection', () => {
     render(<HomeHeroSection {...defaultProps} />);
 
     // 1. En üstteki iki süper aksiyon kartı
-    expect(screen.getByText('Yaprak Testler & Föyler')).toBeInTheDocument();
+    expect(screen.getByText('Yaprak Testler & İçerikler')).toBeInTheDocument();
     expect(screen.getByText('Matematik Oyunları Dünyası')).toBeInTheDocument();
 
-    const testLink = screen.getByRole('link', { name: /Yaprak Testler ve Deneme Sınavları/i });
-    expect(testLink).toHaveAttribute('href', '/testler');
+    const testLink = screen.getByRole('link', { name: /Yaprak Testler ve Ders İçerikleri/i });
+    expect(testLink).toHaveAttribute('href', '/icerikler?type=yaprak-test');
 
     const gamesLink = screen.getByRole('link', { name: /Matematik Oyunları Dünyası/i });
     expect(gamesLink).toHaveAttribute('href', '/oyunlar');

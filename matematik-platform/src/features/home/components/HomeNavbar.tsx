@@ -62,7 +62,7 @@ export function HomeNavbar({ onLogout, user }: HomeNavbarProps) {
           {/* Orta Menü Bağlantıları (Masaüstü) */}
           <div className="hidden lg:flex items-center gap-1.5 xl:gap-2">
             <SafeLink
-              href="/testler"
+              href="/icerikler?type=yaprak-test"
               className="inline-flex items-center gap-1.5 rounded-xl px-3.5 py-2 text-sm font-bold text-secondary transition-all hover:bg-surface-2 hover:text-primary"
             >
               <span>📄 Yaprak Testler</span>
@@ -175,11 +175,11 @@ export function HomeNavbar({ onLogout, user }: HomeNavbarProps) {
         >
           <div className="space-y-1.5 px-4 py-4">
             <SafeLink
-              href="/testler"
+              href="/icerikler?type=yaprak-test"
               onClick={() => setIsOpen(false)}
               className="flex items-center gap-3 rounded-xl px-3.5 py-2.5 text-sm font-bold text-slate-800 hover:bg-slate-100"
             >
-              <span className="text-lg">📄</span> Yaprak Testler & Denemeler
+              <span className="text-lg">📄</span> Yaprak Testler & İçerikler
             </SafeLink>
             <SafeLink
               href="/oyunlar"
