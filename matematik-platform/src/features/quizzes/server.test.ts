@@ -23,6 +23,7 @@ vi.mock('next/headers', () => ({
   cookies: async () => ({
     get: (name: string) =>
       cookieJar.has(name) ? { name, value: cookieJar.get(name) } : undefined,
+    getAll: () => [...cookieJar].map(([name, value]) => ({ name, value })),
   }),
 }));
 vi.mock('@/lib/supabase/server', () => ({
