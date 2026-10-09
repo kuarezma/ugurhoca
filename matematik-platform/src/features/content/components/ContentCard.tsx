@@ -163,18 +163,18 @@ function ContentCard({
 
   const statsBar = (
     <div
-      className={`flex flex-col gap-2.5 sm:flex-row sm:items-center sm:justify-between pt-3 border-t border-default dark:border-white/[0.06] ${
+      className={`flex flex-col gap-2.5 sm:flex-row sm:items-center sm:justify-between pt-3.5 border-t border-purple-200/80 dark:border-purple-800/40 ${
         viewMode === 'grid' ? 'mb-2' : ''
       }`}
     >
       {/* Metrics counters (left) */}
-      <div className="flex items-center gap-3 text-xs text-secondary">
+      <div className="flex items-center gap-3.5 text-xs font-bold text-slate-700 dark:text-slate-200">
         <button
           onClick={() => onPreview(content)}
           title="Görüntülenme sayısı"
-          className="flex items-center gap-1.5 transition-colors hover:text-primary"
+          className="flex items-center gap-1.5 transition-colors hover:text-purple-600 dark:hover:text-purple-400"
         >
-          <Eye className="w-3.5 h-3.5 text-secondary" />
+          <Eye className="w-4 h-4 text-purple-600 dark:text-purple-400" />
           <span>{content.views || 0}</span>
         </button>
 
@@ -182,10 +182,10 @@ function ContentCard({
           onClick={() => onToggleLike(content)}
           title="Beğen"
           className={`flex items-center gap-1.5 transition-colors ${
-            isLiked ? 'text-rose-500 font-semibold' : 'hover:text-rose-500'
+            isLiked ? 'text-rose-500 font-extrabold' : 'hover:text-rose-500'
           }`}
         >
-          <Heart className={`w-3.5 h-3.5 ${isLiked ? 'fill-current' : ''}`} />
+          <Heart className={`w-4 h-4 ${isLiked ? 'fill-current text-rose-500' : 'text-slate-500 dark:text-slate-400'}`} />
           <span>{content.likes || 0}</span>
         </button>
 
@@ -193,14 +193,14 @@ function ContentCard({
           <button
             onClick={() => onOpenComments(content)}
             title="Yorumlar"
-            className="flex items-center gap-1.5 transition-colors hover:text-primary"
+            className="flex items-center gap-1.5 transition-colors hover:text-purple-600 dark:hover:text-purple-400"
           >
-            <MessageCircle className="w-3.5 h-3.5 text-secondary" />
+            <MessageCircle className="w-4 h-4 text-purple-600 dark:text-purple-400" />
             <span>{content.comments_count || 0}</span>
           </button>
         ) : (
-          <div className="flex items-center gap-1.5 transition-colors hover:text-primary">
-            <MessageCircle className="w-3.5 h-3.5 text-secondary" />
+          <div className="flex items-center gap-1.5 transition-colors hover:text-purple-600 dark:hover:text-purple-400">
+            <MessageCircle className="w-4 h-4 text-purple-600 dark:text-purple-400" />
             <span>{content.comments_count || 0}</span>
           </div>
         )}
@@ -209,14 +209,14 @@ function ContentCard({
           <button
             onClick={() => onDownload(content)}
             title="İndirme sayısı"
-            className="flex items-center gap-1.5 transition-colors hover:text-primary"
+            className="flex items-center gap-1.5 transition-colors hover:text-emerald-600 dark:hover:text-emerald-400"
           >
-            <Download className="w-3.5 h-3.5 text-secondary" />
+            <Download className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
             <span>{content.downloads || 0}</span>
           </button>
         ) : (
           <div className="flex items-center gap-1.5">
-            <Download className="w-3.5 h-3.5 text-secondary" />
+            <Download className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
             <span>{content.downloads || 0}</span>
           </div>
         )}
@@ -229,11 +229,11 @@ function ContentCard({
           title="Favori"
           className={`flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs transition-all duration-200 ${
             isFavorite
-              ? 'border border-amber-500 bg-amber-500/20 text-amber-800 dark:text-amber-200 font-bold shadow-xs'
-              : 'border border-amber-200/80 dark:border-slate-700 bg-white/80 dark:bg-surface-2/60 text-secondary hover:bg-amber-50 dark:hover:bg-surface-3 hover:text-amber-700 dark:hover:text-amber-300'
+              ? 'border-2 border-amber-500 bg-amber-500/25 text-amber-900 dark:text-amber-100 font-extrabold shadow-xs'
+              : 'border-2 border-amber-300/90 dark:border-amber-700/60 bg-white dark:bg-slate-800 text-amber-900 dark:text-amber-200 font-bold hover:bg-amber-50 dark:hover:bg-amber-950/40'
           }`}
         >
-          <Star className={`w-3.5 h-3.5 ${isFavorite ? 'fill-current text-amber-500' : ''}`} />
+          <Star className={`w-3.5 h-3.5 ${isFavorite ? 'fill-current text-amber-500' : 'text-amber-600'}`} />
           <span className="text-xs">
             {isFavorite ? 'Favori' : 'Ekle'}
           </span>
@@ -245,11 +245,11 @@ function ContentCard({
             title={isCompleted ? 'Çözüldü işaretini kaldır' : 'Çözüldü olarak işaretle'}
             className={`flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs transition-all duration-200 ${
               isCompleted
-                ? 'border border-emerald-500 bg-emerald-500/20 text-emerald-800 dark:text-emerald-200 font-bold shadow-xs'
-                : 'border border-emerald-200/80 dark:border-slate-700 bg-white/80 dark:bg-surface-2/60 text-secondary hover:bg-emerald-50 dark:hover:bg-surface-3 hover:text-emerald-700 dark:hover:text-emerald-300'
+                ? 'border-2 border-emerald-500 bg-emerald-500/25 text-emerald-900 dark:text-emerald-100 font-extrabold shadow-xs'
+                : 'border-2 border-emerald-300/90 dark:border-emerald-700/60 bg-white dark:bg-slate-800 text-emerald-900 dark:text-emerald-200 font-bold hover:bg-emerald-50 dark:hover:bg-emerald-950/40'
             }`}
           >
-            <CheckCircle2 className={`w-3.5 h-3.5 ${isCompleted ? 'fill-emerald-400/20 text-emerald-600 dark:text-emerald-400' : ''}`} />
+            <CheckCircle2 className={`w-3.5 h-3.5 ${isCompleted ? 'fill-emerald-400/20 text-emerald-600 dark:text-emerald-400' : 'text-emerald-600'}`} />
             <span className="text-xs">
               {isCompleted ? 'Çözüldü' : 'Tamamla'}
             </span>
@@ -261,14 +261,14 @@ function ContentCard({
           title="Bağlantıyı Kopyala"
           className={`flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs transition-all duration-200 ${
             copiedLink
-              ? 'border border-purple-500 bg-purple-500/20 text-purple-800 dark:text-purple-200 font-bold shadow-xs'
-              : 'border border-purple-200/80 dark:border-slate-700 bg-white/80 dark:bg-surface-2/60 text-secondary hover:bg-purple-50 dark:hover:bg-surface-3 hover:text-purple-700 dark:hover:text-purple-300'
+              ? 'border-2 border-purple-500 bg-purple-500/25 text-purple-900 dark:text-purple-100 font-extrabold shadow-xs'
+              : 'border-2 border-purple-300/90 dark:border-purple-700/60 bg-white dark:bg-slate-800 text-purple-900 dark:text-purple-200 font-bold hover:bg-purple-50 dark:hover:bg-purple-950/40'
           }`}
         >
           {copiedLink ? (
             <Check className="w-3.5 h-3.5 text-purple-600 dark:text-purple-300" />
           ) : (
-            <Share2 className="w-3.5 h-3.5 text-secondary" />
+            <Share2 className="w-3.5 h-3.5 text-purple-600 dark:text-purple-400" />
           )}
           <span className="text-xs">
             {copiedLink ? 'Kopyalandı!' : 'Paylaş'}
@@ -284,14 +284,14 @@ function ContentCard({
         initial={{ opacity: 0, x: -20 }}
         animate={{ opacity: 1, x: 0 }}
         transition={{ delay: index * 0.05 }}
-        className="group relative overflow-hidden rounded-3xl border border-purple-200/80 dark:border-purple-900/40 bg-gradient-to-br from-white via-indigo-50/25 to-purple-50/30 dark:from-surface-1 dark:via-surface-1 dark:to-purple-950/20 backdrop-blur-xl p-5 sm:p-6 shadow-md shadow-purple-500/[0.04] dark:shadow-none hover:shadow-xl hover:shadow-purple-500/10 hover:border-purple-400 dark:hover:border-purple-600 transition-all duration-300 defer-card-list"
+        className="group relative overflow-hidden rounded-3xl border-2 border-purple-400/90 dark:border-purple-600/70 bg-gradient-to-br from-white via-indigo-50/35 to-purple-50/45 dark:from-slate-900 dark:via-slate-900/95 dark:to-purple-950/30 backdrop-blur-xl p-5 sm:p-6 shadow-lg shadow-purple-500/10 hover:shadow-2xl hover:shadow-purple-500/20 hover:border-purple-500 dark:hover:border-purple-500 transition-all duration-300 defer-card-list"
       >
-        <div className="absolute top-0 inset-x-0 h-1.5 bg-gradient-to-r from-violet-500 via-fuchsia-500 to-amber-400 group-hover:h-2 transition-all duration-300" />
+        <div className="absolute top-0 inset-x-0 h-2 bg-gradient-to-r from-violet-600 via-fuchsia-500 to-amber-400 group-hover:h-2.5 transition-all duration-300" />
         <div className="space-y-4">
           <div className="flex items-start justify-between gap-3 sm:gap-4">
             <div className="flex items-center gap-3 sm:gap-4 min-w-0">
               {showDriveThumbnail ? (
-                <div className="relative h-12 w-12 sm:h-14 sm:w-14 flex-shrink-0 overflow-hidden rounded-2xl border border-purple-200/80 dark:border-purple-700/40 shadow-sm ring-2 ring-purple-500/10 group-hover:scale-105 transition-transform duration-300">
+                <div className="relative h-12 w-12 sm:h-14 sm:w-14 flex-shrink-0 overflow-hidden rounded-2xl border-2 border-purple-300 dark:border-purple-700 shadow-md ring-2 ring-purple-500/20 group-hover:scale-105 transition-transform duration-300">
                   <Image
                     src={driveThumbnailSrc || ''}
                     alt={content.title}
@@ -309,34 +309,34 @@ function ContentCard({
                 <ContentTypeIcon type={content.type} />
               </div>
               <div className="min-w-0">
-                <h3 className="text-base sm:text-xl font-extrabold leading-snug text-slate-900 dark:text-slate-100 group-hover:text-purple-600 dark:group-hover:text-purple-400 transition-colors truncate">
+                <h3 className="text-base sm:text-xl font-black leading-snug text-purple-900 dark:text-purple-200 group-hover:text-purple-600 dark:group-hover:text-purple-300 transition-colors truncate">
                   {content.title}
                 </h3>
-                <p className="text-xs sm:text-sm text-secondary font-medium">
+                <p className="text-xs sm:text-sm text-purple-700/80 dark:text-purple-300/80 font-bold">
                   {getContentTypeLabel(content.type)}
                 </p>
               </div>
             </div>
             <div className="flex max-w-[52%] flex-wrap justify-end gap-1.5 sm:max-w-none sm:items-center sm:gap-2">
               {content.isNew && (
-                <span className="px-2.5 sm:px-3 py-1 rounded-full bg-emerald-500/15 text-emerald-800 dark:text-emerald-200 text-[11px] sm:text-xs font-bold border border-emerald-400/30 shadow-2xs">
+                <span className="px-2.5 sm:px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-900 dark:text-emerald-100 text-[11px] sm:text-xs font-black border-2 border-emerald-400/40 shadow-xs">
                   Yeni
                 </span>
               )}
               {isCompleted && (
-                <span className="flex items-center gap-1 px-2.5 sm:px-3 py-1 rounded-full bg-teal-500/15 text-teal-800 dark:text-teal-200 text-[11px] sm:text-xs font-bold border border-teal-400/30 shadow-2xs">
-                  <CheckCircle2 className="w-3 h-3 text-teal-600 dark:text-teal-400" />
+                <span className="flex items-center gap-1 px-2.5 sm:px-3 py-1 rounded-full bg-teal-500/20 text-teal-900 dark:text-teal-100 text-[11px] sm:text-xs font-black border-2 border-teal-400/40 shadow-xs">
+                  <CheckCircle2 className="w-3.5 h-3.5 text-teal-600 dark:text-teal-400" />
                   Çözüldü
                 </span>
               )}
               {hasSolution && (
-                <span className="px-2.5 sm:px-3 py-1 rounded-full bg-cyan-500/15 text-cyan-800 dark:text-cyan-200 text-[11px] sm:text-xs font-bold border border-cyan-400/30 shadow-2xs">
+                <span className="px-2.5 sm:px-3 py-1 rounded-full bg-cyan-500/20 text-cyan-900 dark:text-cyan-100 text-[11px] sm:text-xs font-black border-2 border-cyan-400/40 shadow-xs">
                   ÇÖZÜMLÜ
                 </span>
               )}
               <Chip
                 tone={gradeBadgeTone}
-                className="ml-auto rounded-full px-3.5 py-1 text-xs font-bold shadow-2xs"
+                className="ml-auto rounded-full px-3.5 py-1 text-xs font-black shadow-xs border-2"
               >
                 {getContentPrimaryGradeLabel(content)}
               </Chip>
@@ -344,26 +344,26 @@ function ContentCard({
           </div>
 
           {outcomeLabel && (
-            <div className="inline-flex max-w-full items-center gap-1.5 rounded-xl border border-sky-400/40 bg-gradient-to-r from-sky-500/15 via-blue-500/10 to-transparent px-3 py-1.5 text-[11px] font-semibold text-sky-900 dark:text-sky-200 shadow-2xs">
+            <div className="inline-flex max-w-full items-center gap-1.5 rounded-xl border-2 border-sky-400/60 bg-gradient-to-r from-sky-500/20 via-blue-500/15 to-transparent px-3 py-1.5 text-[11px] font-bold text-sky-950 dark:text-sky-100 shadow-2xs">
               <span className="font-black text-sky-700 dark:text-sky-400 shrink-0">🎯 Kazanım:</span>
               <span className="truncate">{outcomeLabel}</span>
             </div>
           )}
 
           {visibleDescription ? (
-            <p className="text-secondary text-xs sm:text-sm line-clamp-2 leading-relaxed">
+            <p className="text-slate-700 dark:text-slate-300 text-xs sm:text-sm font-semibold line-clamp-2 leading-relaxed">
               {visibleDescription}
             </p>
           ) : null}
 
-          <div className="flex flex-wrap items-center gap-3 sm:gap-4 text-xs text-secondary/80">
+          <div className="flex flex-wrap items-center gap-3 sm:gap-4 text-xs font-bold text-slate-700 dark:text-slate-300">
             <div className="flex items-center gap-1.5 min-w-0">
-              <Users className="w-3.5 h-3.5 text-secondary shrink-0" />
+              <Users className="w-4 h-4 text-purple-600 dark:text-purple-400 shrink-0" />
               <span className="truncate">{getContentAuthorLabel(content)}</span>
             </div>
-            <span className="text-secondary/40">•</span>
+            <span className="text-purple-300 dark:text-purple-700">•</span>
             <div className="flex items-center gap-1.5 shrink-0">
-              <Calendar className="w-3.5 h-3.5 text-secondary shrink-0" />
+              <Calendar className="w-4 h-4 text-purple-600 dark:text-purple-400 shrink-0" />
               <span>{formatContentDate(content.created_at)}</span>
             </div>
           </div>
@@ -380,20 +380,20 @@ function ContentCard({
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: index * 0.05 }}
-      className="group relative flex flex-col justify-between overflow-hidden rounded-3xl border border-purple-200/80 dark:border-purple-900/40 bg-gradient-to-br from-white via-indigo-50/25 to-purple-50/30 dark:from-surface-1 dark:via-surface-1 dark:to-purple-950/20 backdrop-blur-xl shadow-md shadow-purple-500/[0.04] dark:shadow-none hover:shadow-2xl hover:shadow-purple-500/15 hover:border-purple-400 dark:hover:border-purple-600 hover:-translate-y-1 transition-all duration-300 defer-card"
+      className="group relative flex flex-col justify-between overflow-hidden rounded-3xl border-2 border-purple-400/90 dark:border-purple-600/70 bg-gradient-to-br from-white via-indigo-50/35 to-purple-50/45 dark:from-slate-900 dark:via-slate-900/95 dark:to-purple-950/30 backdrop-blur-xl shadow-lg shadow-purple-500/10 hover:shadow-2xl hover:shadow-purple-500/20 hover:border-purple-500 dark:hover:border-purple-500 hover:-translate-y-1 transition-all duration-300 defer-card"
     >
       {/* Ambient glowing top accent line */}
-      <div className="absolute top-0 inset-x-0 h-1.5 bg-gradient-to-r from-violet-500 via-fuchsia-500 to-amber-400 group-hover:h-2 transition-all duration-300" />
+      <div className="absolute top-0 inset-x-0 h-2 bg-gradient-to-r from-violet-600 via-fuchsia-500 to-amber-400 group-hover:h-2.5 transition-all duration-300" />
 
       {/* Subtle corner light glow */}
-      <div className="pointer-events-none absolute -top-20 -right-20 h-44 w-44 rounded-full bg-gradient-to-br from-purple-500/15 via-pink-500/10 to-transparent blur-3xl group-hover:scale-125 transition-transform duration-500" />
+      <div className="pointer-events-none absolute -top-20 -right-20 h-44 w-44 rounded-full bg-gradient-to-br from-purple-500/20 via-pink-500/15 to-transparent blur-3xl group-hover:scale-125 transition-transform duration-500" />
 
       <div className="p-5 sm:p-6 flex flex-col h-full justify-between gap-4">
         <div>
           {/* Header row: thumbnail & badges */}
           <div className="flex items-start justify-between gap-3 mb-4">
             {showDriveThumbnail ? (
-              <div className="relative h-13 w-13 sm:h-14 sm:w-14 shrink-0 overflow-hidden rounded-2xl border border-purple-200/80 dark:border-purple-700/40 shadow-sm ring-2 ring-purple-500/10 group-hover:scale-105 transition-transform duration-300">
+              <div className="relative h-13 w-13 sm:h-14 sm:w-14 shrink-0 overflow-hidden rounded-2xl border-2 border-purple-300 dark:border-purple-700 shadow-md ring-2 ring-purple-500/20 group-hover:scale-105 transition-transform duration-300">
                 <Image
                   src={driveThumbnailSrc || ''}
                   alt={content.title}
@@ -406,35 +406,35 @@ function ContentCard({
               </div>
             ) : null}
             <div
-              className={`h-13 w-13 sm:h-14 sm:w-14 rounded-2xl bg-gradient-to-br ${getContentTypeColor(content.type)} flex items-center justify-center shrink-0 shadow-lg shadow-purple-500/10 group-hover:scale-105 transition-transform duration-300 ${showDriveThumbnail ? 'hidden' : ''}`}
+              className={`h-13 w-13 sm:h-14 sm:w-14 rounded-2xl bg-gradient-to-br ${getContentTypeColor(content.type)} flex items-center justify-center shrink-0 shadow-lg shadow-purple-500/15 group-hover:scale-105 transition-transform duration-300 ${showDriveThumbnail ? 'hidden' : ''}`}
             >
               <ContentTypeIcon type={content.type} />
             </div>
 
             <div className="flex max-w-[65%] flex-wrap items-center justify-end gap-1.5">
-              <span className="px-2.5 py-1 rounded-full bg-amber-500/15 text-amber-800 dark:text-amber-200 text-[11px] font-bold border border-amber-400/30 shadow-2xs">
+              <span className="px-2.5 py-1 rounded-full bg-amber-500/20 text-amber-900 dark:text-amber-100 text-[11px] font-black border-2 border-amber-400/40 shadow-xs">
                 {getContentTypeLabel(content.type)}
               </span>
               {content.isNew && (
-                <span className="px-2.5 py-1 rounded-full bg-emerald-500/15 text-emerald-800 dark:text-emerald-200 text-[11px] font-bold border border-emerald-400/30 shadow-2xs">
+                <span className="px-2.5 py-1 rounded-full bg-emerald-500/20 text-emerald-900 dark:text-emerald-100 text-[11px] font-black border-2 border-emerald-400/40 shadow-xs">
                   Yeni
                 </span>
               )}
               {isCompleted && (
-                <span className="flex items-center gap-1 px-2.5 py-1 rounded-full bg-teal-500/15 text-teal-800 dark:text-teal-200 text-[11px] font-bold border border-teal-400/30 shadow-2xs">
-                  <CheckCircle2 className="w-3 h-3 text-teal-600 dark:text-teal-400" />
+                <span className="flex items-center gap-1 px-2.5 py-1 rounded-full bg-teal-500/20 text-teal-900 dark:text-teal-100 text-[11px] font-black border-2 border-teal-400/40 shadow-xs">
+                  <CheckCircle2 className="w-3.5 h-3.5 text-teal-600 dark:text-teal-400" />
                   Çözüldü
                 </span>
               )}
               {hasSolution && (
-                <span className="px-2.5 py-1 rounded-full bg-cyan-500/15 text-cyan-800 dark:text-cyan-200 text-[11px] font-bold border border-cyan-400/30 shadow-2xs">
+                <span className="px-2.5 py-1 rounded-full bg-cyan-500/20 text-cyan-900 dark:text-cyan-100 text-[11px] font-black border-2 border-cyan-400/40 shadow-xs">
                   ÇÖZÜMLÜ
                 </span>
               )}
 
               <Chip
                 tone={gradeBadgeTone}
-                className="rounded-full px-3 py-1 text-xs font-bold shadow-2xs"
+                className="rounded-full px-3 py-1 text-xs font-black shadow-xs border-2"
               >
                 {getContentPrimaryGradeLabel(content)}
               </Chip>
@@ -442,30 +442,30 @@ function ContentCard({
           </div>
 
           {/* Title & description */}
-          <h3 className="text-base sm:text-lg font-extrabold leading-snug text-slate-900 dark:text-slate-100 mb-2 line-clamp-2 group-hover:text-purple-600 dark:group-hover:text-purple-400 transition-colors">
+          <h3 className="text-base sm:text-lg font-black leading-snug text-purple-900 dark:text-purple-200 mb-2 line-clamp-2 group-hover:text-purple-600 dark:group-hover:text-purple-300 transition-colors">
             {content.title}
           </h3>
 
           {outcomeLabel && (
-            <div className="mb-2.5 inline-flex max-w-full items-center gap-1.5 rounded-xl border border-sky-400/40 bg-gradient-to-r from-sky-500/15 via-blue-500/10 to-transparent px-3 py-1.5 text-[11px] font-semibold text-sky-900 dark:text-sky-200 shadow-2xs">
+            <div className="mb-2.5 inline-flex max-w-full items-center gap-1.5 rounded-xl border-2 border-sky-400/60 bg-gradient-to-r from-sky-500/20 via-blue-500/15 to-transparent px-3 py-1.5 text-[11px] font-bold text-sky-950 dark:text-sky-100 shadow-2xs">
               <span className="font-black text-sky-700 dark:text-sky-400 shrink-0">🎯 Kazanım:</span>
               <span className="truncate">{outcomeLabel}</span>
             </div>
           )}
 
-          <p className="text-secondary text-xs sm:text-sm line-clamp-2 leading-relaxed mb-4 min-h-[2.5rem]">
+          <p className="text-slate-700 dark:text-slate-300 text-xs sm:text-sm font-semibold line-clamp-2 leading-relaxed mb-4 min-h-[2.5rem]">
             {visibleDescription || getContentTypeLabel(content.type)}
           </p>
 
           {/* Meta row */}
-          <div className="flex items-center gap-3 text-xs text-secondary/80 pt-3 border-t border-default dark:border-white/[0.06]">
+          <div className="flex items-center gap-3 text-xs font-bold text-slate-700 dark:text-slate-300 pt-3 border-t border-purple-200/80 dark:border-purple-800/40">
             <div className="flex items-center gap-1.5 min-w-0">
-              <Users className="w-3.5 h-3.5 text-secondary shrink-0" />
+              <Users className="w-4 h-4 text-purple-600 dark:text-purple-400 shrink-0" />
               <span className="truncate">{getContentAuthorLabel(content)}</span>
             </div>
-            <span className="text-secondary/40">•</span>
+            <span className="text-purple-300 dark:text-purple-700">•</span>
             <div className="flex items-center gap-1.5 shrink-0">
-              <Calendar className="w-3.5 h-3.5 text-secondary shrink-0" />
+              <Calendar className="w-4 h-4 text-purple-600 dark:text-purple-400 shrink-0" />
               <span>{formatContentDate(content.created_at)}</span>
             </div>
           </div>
