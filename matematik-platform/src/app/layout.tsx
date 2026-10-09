@@ -117,46 +117,9 @@ export const viewport: Viewport = {
   ],
 };
 
-// Speculation Rules: prerender hover'da, prefetch ise (mobilde görünür bağlantılar dahil) moderate ile erkenden başlar;
-// hedefler statik/CDN sayfaları olduğundan fazladan maliyeti düşüktür.
+// Speculation Rules: prefetch mobilde ve masaüstünde bağlantılar için ağ önbelleğini
+// ısıtır; SPA yönlendirmesini bozmadan 0ms gezinme sağlar.
 const speculationRulesConfig = {
-  prerender: [
-    {
-      source: "document",
-      where: {
-        and: [
-          { href_matches: "/*" },
-          {
-            not: {
-              href_matches: [
-                "/api/*",
-                "/admin*",
-                "/giris*",
-                "/kayit*",
-                "/cikis*",
-                "/canli-ders*",
-                "/profil*",
-                "/testler*",
-                "/odevler*",
-                "/ilerleme*",
-                "/oyunlar*",
-                "/meydan-okuma*",
-                "/odak-pomodoro*",
-                "/*\\?*logout*",
-                "/*\\?*auth*",
-              ],
-            },
-          },
-          {
-            not: {
-              selector_matches: "[rel~=nofollow], [data-no-prerender], [target=_blank]",
-            },
-          },
-        ],
-      },
-      eagerness: "moderate",
-    },
-  ],
   prefetch: [
     {
       source: "document",

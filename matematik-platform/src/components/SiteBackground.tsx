@@ -431,10 +431,10 @@ export function SiteBackground() {
 
       {/* KATMAN 4: Kenar Karartma ve Derinlik Vignette'i */}
       <div
-        className={`absolute inset-0 ${
+        className={`absolute inset-0 pointer-events-none ${
           isLight
-            ? 'bg-surface-1'
-            : 'bg-surface-1'
+            ? 'bg-gradient-to-t from-indigo-100/20 via-transparent to-transparent'
+            : 'bg-gradient-to-t from-slate-950/60 via-transparent to-slate-950/40'
         }`}
       />
     </div>

@@ -5,10 +5,15 @@ const SKELETON_CARDS = Array.from({ length: 6 });
 export default function Loading() {
   return (
     <main className="page-surface icerikler-page min-h-screen pb-20">
-      <nav className="fixed left-0 right-0 top-0 z-50 border-b-2 border-default bg-surface-1/95 px-4 py-4 backdrop-blur-md sm:px-6 xl:px-8">
-        <div className="mx-auto flex max-w-[1760px] items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="h-10 w-10 shrink-0 overflow-hidden rounded-2xl border-2 border-brand-accent bg-brand-accent/20 p-0.5 shadow-btn-3d-yellow">
+      {/* Üst kenar akıcı rota yükleme göstergesi */}
+      <div className="fixed top-0 left-0 right-0 z-50 h-1 overflow-hidden bg-slate-200/40 dark:bg-white/10" aria-hidden="true">
+        <div className="h-full w-2/5 rounded-full bg-gradient-to-r from-[#58cc02] via-[#1cb0f6] to-[#ce82ff] animate-pulse" />
+      </div>
+
+      <nav className="fixed top-0 left-0 right-0 z-50 bg-surface-1/95 backdrop-blur-md border-b-2 border-default py-3 sm:py-4 px-4 sm:px-6 xl:px-8 pt-[max(0.75rem,env(safe-area-inset-top))] pl-[max(1rem,env(safe-area-inset-left))] pr-[max(1rem,env(safe-area-inset-right))]">
+        <div className="max-w-[1760px] mx-auto flex justify-between items-center gap-3">
+          <div className="flex items-center gap-2.5 min-w-0">
+            <div className="h-10 w-10 shrink-0 overflow-hidden rounded-2xl border-2 border-[#58cc02] bg-[#d7ffb8] p-0.5 shadow-[0_3px_0_#46a302]">
               <Image
                 src="/ugur.jpeg"
                 alt="Uğur Hoca"
@@ -21,7 +26,7 @@ export default function Loading() {
               Uğur Hoca Matematik
             </span>
           </div>
-          <div className="h-5 w-24 animate-pulse rounded bg-white/10" />
+          <div className="h-5 w-24 animate-pulse rounded-lg bg-slate-200/60 dark:bg-white/10" />
         </div>
       </nav>
 
