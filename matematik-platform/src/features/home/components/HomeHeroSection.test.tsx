@@ -29,12 +29,12 @@ describe('HomeHeroSection', () => {
     expect(screen.getByText('5. Sınıf Matematik')).toBeInTheDocument();
     expect(screen.getByText('6. Sınıf Matematik')).toBeInTheDocument();
     expect(screen.getByText('7. Sınıf Matematik')).toBeInTheDocument();
-    expect(screen.getByText('8. Sınıf (LGS)')).toBeInTheDocument();
+    expect(screen.getAllByText('8. Sınıf (LGS)')[0]).toBeInTheDocument();
 
     // 3. Popüler Oyunlar
     expect(screen.getByText('Çarpım Yarışı')).toBeInTheDocument();
     expect(screen.getByText('Kesir Pizzacısı')).toBeInTheDocument();
-    expect(screen.getByText('Matematik Düellosu')).toBeInTheDocument();
+    expect(screen.getByText('Sayı Düellosu')).toBeInTheDocument();
     expect(screen.getByText('Balon Patlatma')).toBeInTheDocument();
 
     // 4. Pratik Araçlar

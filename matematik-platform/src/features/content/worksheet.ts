@@ -323,6 +323,14 @@ const getWorksheetOutcomeOverride = (
     return findWorksheetCatalogOutcomeByCode(7, 'M.7.1.4.7.');
   }
 
+  if (
+    grade === 8 &&
+    (normalizedSource.includes('eslik') ||
+      normalizedSource.includes('benzerlik'))
+  ) {
+    return findWorksheetCatalogOutcomeByCode(8, 'M.8.3.3.1.');
+  }
+
   if (grade === 8 && normalizedSource.includes('pisagor')) {
     return findWorksheetCatalogOutcomeByCode(8, 'M.8.3.1.5.');
   }
@@ -366,6 +374,22 @@ const getWorksheetOutcomeOverride = (
 
   if (grade === 8 && normalizedSource.includes('dogrusal denklemler')) {
     return findWorksheetCatalogOutcomeByCode(8, 'M.8.2.2.5.');
+  }
+
+  if (grade === 7 && (normalizedSource.includes('aciortay') || normalizedSource.includes('açıortay'))) {
+    return findWorksheetCatalogOutcomeByCode(7, 'M.7.3.1.1.');
+  }
+
+  if (grade === 7 && normalizedSource.includes('genel tekrar')) {
+    return findWorksheetCatalogOutcomeByCode(7, 'M.7.1.3.5.');
+  }
+
+  if (grade === 7 && (normalizedSource.includes('cember') || normalizedSource.includes('daire'))) {
+    return findWorksheetCatalogOutcomeByCode(7, 'M.7.3.3.1.');
+  }
+
+  if (grade === 7 && (normalizedSource.includes('cokgen') || normalizedSource.includes('dortgen'))) {
+    return findWorksheetCatalogOutcomeByCode(7, 'M.7.3.2.1.');
   }
 
   return '';
@@ -446,12 +470,33 @@ export const getWorksheetOutcomeLabel = (
   const metadata = parseWorksheetMetadata(document.description);
   const grade = getWorksheetGradeValue(document.grade);
 
-  if (
-    metadata.outcome &&
-    typeof grade === 'number' &&
-    isOfficialWorksheetOutcome(grade, metadata.outcome)
-  ) {
-    return metadata.outcome;
+  if (metadata.outcome && typeof grade === 'number') {
+    if (isOfficialWorksheetOutcome(grade, metadata.outcome)) {
+      return metadata.outcome;
+    }
+
+    // Try finding code in metadata.outcome
+    const codeMatch = metadata.outcome.match(/(MAT\.\d+\.\d+\.\d+|M\.\d+\.\d+\.\d+\.\d+)/i);
+    if (codeMatch) {
+      const code = codeMatch[1].toUpperCase();
+      const matched = findWorksheetCatalogOutcomeByCode(grade, `${code}.`);
+      if (matched) return matched;
+      const matchedWithoutDot = (WORKSHEET_OUTCOME_CATALOG[grade] || []).find(
+        (item) => item.code.replace(/\.?$/, '').toUpperCase() === code,
+      )?.full;
+      if (matchedWithoutDot) return matchedWithoutDot;
+    }
+
+    // Strip hour suffixes
+    const cleanOutcome = metadata.outcome.replace(/\s*\(\s*\d+\s*Saat\s*\)/gi, '').trim();
+    const candidate = (WORKSHEET_OUTCOME_CATALOG[grade] || []).find(
+      (item) =>
+        item.full.toLocaleLowerCase('tr').startsWith(cleanOutcome.toLocaleLowerCase('tr')) ||
+        cleanOutcome.toLocaleLowerCase('tr').startsWith(item.full.toLocaleLowerCase('tr')),
+    );
+    if (candidate) {
+      return candidate.full;
+    }
   }
 
   const overriddenOutcome = getWorksheetOutcomeOverride(document);

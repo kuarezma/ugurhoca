@@ -203,6 +203,14 @@ function getWorksheetOutcomeOverride(document, catalog) {
     return findWorksheetCatalogOutcomeByCode(catalog, 7, 'M.7.1.4.7.');
   }
 
+  if (
+    grade === 8 &&
+    (normalizedSource.includes('eslik') ||
+      normalizedSource.includes('benzerlik'))
+  ) {
+    return findWorksheetCatalogOutcomeByCode(catalog, 8, 'M.8.3.3.1.');
+  }
+
   if (grade === 8 && normalizedSource.includes('pisagor')) {
     return findWorksheetCatalogOutcomeByCode(catalog, 8, 'M.8.3.1.5.');
   }
@@ -246,6 +254,22 @@ function getWorksheetOutcomeOverride(document, catalog) {
 
   if (grade === 8 && normalizedSource.includes('dogrusal denklemler')) {
     return findWorksheetCatalogOutcomeByCode(catalog, 8, 'M.8.2.2.5.');
+  }
+
+  if (grade === 7 && (normalizedSource.includes('aciortay') || normalizedSource.includes('açıortay'))) {
+    return findWorksheetCatalogOutcomeByCode(catalog, 7, 'M.7.3.1.1.');
+  }
+
+  if (grade === 7 && normalizedSource.includes('genel tekrar')) {
+    return findWorksheetCatalogOutcomeByCode(catalog, 7, 'M.7.1.3.5.');
+  }
+
+  if (grade === 7 && (normalizedSource.includes('cember') || normalizedSource.includes('daire'))) {
+    return findWorksheetCatalogOutcomeByCode(catalog, 7, 'M.7.3.3.1.');
+  }
+
+  if (grade === 7 && (normalizedSource.includes('cokgen') || normalizedSource.includes('dortgen'))) {
+    return findWorksheetCatalogOutcomeByCode(catalog, 7, 'M.7.3.2.1.');
   }
 
   return '';
@@ -351,12 +375,29 @@ function getWorksheetOutcomeLabel(document, catalog) {
   const metadata = parseWorksheetMetadata(document.description);
   const grade = getWorksheetGradeValue(document.grade);
 
-  if (
-    metadata.outcome &&
-    typeof grade === 'number' &&
-    isOfficialWorksheetOutcome(catalog, grade, metadata.outcome)
-  ) {
-    return metadata.outcome;
+  if (metadata.outcome && typeof grade === 'number') {
+    if (isOfficialWorksheetOutcome(catalog, grade, metadata.outcome)) {
+      return metadata.outcome;
+    }
+
+    // MEB kodunu ara
+    const codeMatch = metadata.outcome.match(/(MAT\.\d+\.\d+\.\d+|M\.\d+\.\d+\.\d+\.\d+)/i);
+    if (codeMatch) {
+      const code = codeMatch[1].toUpperCase();
+      const itemByCode = (catalog[grade] || []).find(
+        (item) => item.code.replace(/\.?$/, '').toUpperCase() === code,
+      );
+      if (itemByCode) return itemByCode.full;
+    }
+
+    // Saat eklerini temizle
+    const cleanOutcome = metadata.outcome.replace(/\s*\(\s*\d+\s*Saat\s*\)/gi, '').trim().toLocaleLowerCase('tr');
+    const cleanMatch = (catalog[grade] || []).find(
+      (item) =>
+        item.full.toLocaleLowerCase('tr').startsWith(cleanOutcome) ||
+        cleanOutcome.startsWith(item.full.toLocaleLowerCase('tr')),
+    );
+    if (cleanMatch) return cleanMatch.full;
   }
 
   const overriddenOutcome = getWorksheetOutcomeOverride(document, catalog);

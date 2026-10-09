@@ -28,7 +28,10 @@ import {
   getContentAuthorLabel,
   getContentPrimaryGradeLabel,
 } from '@/features/content/utils';
-import { getWorksheetVisibleDescription } from '@/features/content/worksheet-display';
+import {
+  getWorksheetVisibleDescription,
+  resolveWorksheetOutcome,
+} from '@/features/content/worksheet-display';
 import { getGoogleDriveThumbnailUrl } from '@/lib/image-url';
 import type { ContentPageUser } from '@/features/content/types';
 import type { ContentDocument } from '@/types';
@@ -88,6 +91,8 @@ function ContentCard({
       : null;
   const showDriveThumbnail = Boolean(driveThumbnailSrc) && !thumbnailFailed;
   const gradeBadgeTone = getContentPrimaryGradeBadgeTone(content);
+  const isWorksheet = content.type === 'yaprak-test';
+  const outcomeLabel = isWorksheet ? resolveWorksheetOutcome(content) : null;
   const hasSolution = Boolean(
     content.solution_url?.trim() || content.answer_key_text?.trim(),
   );
@@ -338,6 +343,13 @@ function ContentCard({
             </div>
           </div>
 
+          {outcomeLabel && (
+            <div className="inline-flex max-w-full items-center gap-1.5 rounded-lg border border-sky-400/30 bg-sky-500/10 px-2.5 py-1 text-[11px] font-semibold text-sky-800 dark:text-sky-300">
+              <span className="font-black text-sky-600 dark:text-sky-400 shrink-0">🎯 Kazanım:</span>
+              <span className="truncate">{outcomeLabel}</span>
+            </div>
+          )}
+
           {visibleDescription ? (
             <p className="text-secondary text-xs sm:text-sm line-clamp-2 leading-relaxed">
               {visibleDescription}
@@ -433,6 +445,14 @@ function ContentCard({
           <h3 className="text-base sm:text-lg font-bold leading-snug text-primary mb-2 line-clamp-2 group-hover:text-purple-600 dark:group-hover:text-purple-300 transition-colors">
             {content.title}
           </h3>
+
+          {outcomeLabel && (
+            <div className="mb-2 inline-flex max-w-full items-center gap-1.5 rounded-lg border border-sky-400/30 bg-sky-500/10 px-2.5 py-1 text-[11px] font-semibold text-sky-800 dark:text-sky-300">
+              <span className="font-black text-sky-600 dark:text-sky-400 shrink-0">🎯 Kazanım:</span>
+              <span className="truncate">{outcomeLabel}</span>
+            </div>
+          )}
+
           <p className="text-secondary text-xs sm:text-sm line-clamp-2 leading-relaxed mb-4 min-h-[2.5rem]">
             {visibleDescription || getContentTypeLabel(content.type)}
           </p>

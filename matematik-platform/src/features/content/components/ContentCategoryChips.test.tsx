@@ -22,7 +22,7 @@ describe('ContentCategoryChips', () => {
     const gradeChip = screen.getByRole('button', { name: '8. Sınıf (LGS)' });
     expect(gradeChip).toBeInTheDocument();
 
-    const typeChip = screen.getByRole('button', { name: 'Ders Notları' });
+    const typeChip = screen.getByRole('button', { name: /Ders Notları/i });
     fireEvent.click(typeChip);
     expect(onSelectType).toHaveBeenCalledWith('ders-notu');
 

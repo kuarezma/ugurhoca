@@ -56,7 +56,7 @@ describe('ContentCard', () => {
       screen.getByText('5. Sınıf Doğal Sayılar ve İşlemler Yaprak Test'),
     ).toBeInTheDocument();
     expect(
-      screen.getByText('Temel kavramlar ve yeni nesil sorular'),
+      screen.getAllByText('Temel kavramlar ve yeni nesil sorular')[0],
     ).toBeInTheDocument();
 
     // Badges

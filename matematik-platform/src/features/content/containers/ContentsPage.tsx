@@ -91,12 +91,16 @@ import {
 import {
   getWorksheetVisibleDescription,
   getWorksheetOutcomeLabel,
+  resolveWorksheetOutcome,
   isWorksheetType,
   sortWorksheetDocuments,
   WORKSHEET_GRADE_OPTIONS,
 } from '@/features/content/worksheet-display';
 import { isCurriculumTopic, matchesCurriculumDocument } from '@/features/content/curriculum-coverage';
-import type { WorksheetCatalogItem } from '@/features/content/worksheet-catalog';
+import {
+  WORKSHEET_OUTCOME_CATALOG,
+  type WorksheetCatalogItem,
+} from '@/features/content/worksheet-catalog';
 import type { ContentDocument, GradeValue } from '@/types';
 
 type WorksheetGradeSelection = number | 'Mezun';
@@ -316,7 +320,7 @@ function ContentsPageInner({
   );
   const [worksheetOutcomeCatalog, setWorksheetOutcomeCatalog] = useState<
     Record<number, WorksheetCatalogItem[]>
-  >({});
+  >(WORKSHEET_OUTCOME_CATALOG);
   const [worksheetCatalogLoading, setWorksheetCatalogLoading] = useState(false);
   const [worksheetLoading, setWorksheetLoading] = useState(false);
   const [selectedWorksheetGrade, setSelectedWorksheetGrade] =
@@ -324,6 +328,7 @@ function ContentsPageInner({
   const [selectedWorksheetOutcome, setSelectedWorksheetOutcome] = useState<
     string | null
   >(null);
+  const [onlyWithTests, setOnlyWithTests] = useState(false);
   const [hasMore, setHasMore] = useState(
     initialDocuments.length < initialTotalCount,
   );
@@ -1311,7 +1316,10 @@ function ContentsPageInner({
   const worksheetDocumentGroups = matchingWorksheetDocuments.reduce<
     Record<string, ContentDocument[]>
   >((groups, document) => {
-    const outcome = getWorksheetOutcomeLabel(document);
+    const outcome = resolveWorksheetOutcome({
+      ...document,
+      grade: document.grade || (typeof selectedWorksheetGrade === 'number' ? [selectedWorksheetGrade] : null),
+    });
     groups[outcome] = [...(groups[outcome] || []), document];
     return groups;
   }, {});
@@ -1353,7 +1361,16 @@ function ContentsPageInner({
       return left.outcome.localeCompare(right.outcome, 'tr');
     });
 
-  const worksheetOutcomeGroups = worksheetOutcomeEntries.reduce<
+  const totalOutcomesCount = worksheetOutcomeEntries.length;
+  const outcomesWithTestsCount = worksheetOutcomeEntries.filter(
+    (e) => e.count > 0,
+  ).length;
+
+  const displayedWorksheetOutcomeEntries = onlyWithTests
+    ? worksheetOutcomeEntries.filter((entry) => entry.count > 0)
+    : worksheetOutcomeEntries;
+
+  const worksheetOutcomeGroups = displayedWorksheetOutcomeEntries.reduce<
     Array<{
       entries: typeof worksheetOutcomeEntries;
       key: string;
@@ -1370,6 +1387,12 @@ function ContentsPageInner({
         ? WORKSHEET_UNIT_LABELS[grade]?.[prefix] || prefix
         : 'Diğer Kazanımlar';
     const key = prefix || 'other';
+
+    // Diğer Kazanımlar grubunda test yoksa arayüzü kirletme
+    if (key === 'other' && entry.count === 0) {
+      return groups;
+    }
+
     const existingGroup = groups.find((group) => group.key === key);
 
     if (existingGroup) {
@@ -1392,7 +1415,12 @@ function ContentsPageInner({
         return false;
       }
 
-      if (getWorksheetOutcomeLabel(document) !== selectedWorksheetOutcome) {
+      const docOutcome = resolveWorksheetOutcome({
+        ...document,
+        grade: document.grade || (typeof selectedWorksheetGrade === 'number' ? [selectedWorksheetGrade] : null),
+      });
+
+      if (docOutcome !== selectedWorksheetOutcome) {
         return false;
       }
 
@@ -1686,70 +1714,144 @@ function ContentsPageInner({
               </div>
             ) : !selectedWorksheetOutcome ? (
               worksheetOutcomeEntries.length > 0 ? (
-                <div className="space-y-8">
-                  {worksheetOutcomeGroups.map((group, groupIndex) => (
-                    <div key={group.key} className="space-y-3">
-                      <div className="rounded-2xl border border-default bg-surface-2 px-4 py-3">
-                        <div className="flex items-center gap-3">
-                          <div className="worksheet-unit-line h-px flex-1 bg-gradient-to-r from-accent-fg/40 to-transparent" />
-                          <p className="shrink-0 text-sm font-extrabold uppercase tracking-[0.24em] text-accent-fg sm:text-base">
-                            {group.title}
-                          </p>
-                          <div className="worksheet-unit-line h-px flex-1 bg-gradient-to-l from-accent-fg/40 to-transparent" />
-                        </div>
-                      </div>
-                      <div className="space-y-3">
-                        {group.entries.map((entry, entryIndex) => {
-                          const outcomeHeading = splitWorksheetOutcomeHeading(
-                            entry.outcome,
-                          );
-
-                          return (
-                            <motion.button
-                              key={entry.outcome}
-                              initial={{ opacity: 0, y: 12 }}
-                              animate={{ opacity: 1, y: 0 }}
-                              transition={{
-                                delay: groupIndex * 0.06 + entryIndex * 0.03,
-                              }}
-                              onClick={() => {
-                                setSelectedWorksheetOutcome(entry.outcome);
-                                updateWorksheetBrowserUrl(
-                                  selectedWorksheetGrade,
-                                  entry.outcome,
-                                );
-                              }}
-                              className="group flex w-full items-center gap-4 rounded-2xl border border-default bg-surface-1 px-4 py-4 text-left transition-all hover:border-accent-fg/40 hover:bg-surface-2 sm:px-5"
-                            >
-                              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-cyan-500 to-blue-500">
-                                <FolderOpen className="h-6 w-6 text-white dark:text-white" />
-                              </div>
-                              <div className="min-w-0 flex-1">
-                                <h3 className="worksheet-outcome-title text-sm font-semibold leading-relaxed text-primary transition-colors group-hover:text-accent-fg sm:text-base">
-                                  {outcomeHeading.code ? (
-                                    <>
-                                      <span className="text-red-600 dark:text-red-400">
-                                        {outcomeHeading.code}
-                                      </span>{' '}
-                                      <span>{outcomeHeading.label}</span>
-                                    </>
-                                  ) : (
-                                    entry.outcome
-                                  )}
-                                </h3>
-                              </div>
-                              <div className="ml-auto flex shrink-0 items-center gap-3">
-                                <span className="rounded-full border border-cyan-400/30 bg-cyan-500/10 px-3 py-1 text-xs font-semibold text-cyan-800 dark:text-cyan-200">
-                                  {entry.count} test
-                                </span>
-                                <ChevronRight className="h-5 w-5 text-secondary transition-colors group-hover:text-accent-fg" />
-                              </div>
-                            </motion.button>
-                          );
-                        })}
+                <div className="space-y-6">
+                  {/* Kazanım Hızlı Filtre Barı */}
+                  <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-default bg-surface-1 p-3 sm:p-4 shadow-xs">
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs sm:text-sm font-bold text-secondary">
+                        Kazanım Görünümü:
+                      </span>
+                      <div className="flex items-center gap-1.5 bg-surface-2 p-1 rounded-xl border border-default">
+                        <button
+                          type="button"
+                          onClick={() => setOnlyWithTests(false)}
+                          className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
+                            !onlyWithTests
+                              ? 'bg-brand-accent text-slate-900 shadow-xs'
+                              : 'text-secondary hover:text-primary'
+                          }`}
+                        >
+                          Tüm Müfredat ({totalOutcomesCount})
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setOnlyWithTests(true)}
+                          className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 ${
+                            onlyWithTests
+                              ? 'bg-emerald-500 text-white shadow-xs'
+                              : 'text-secondary hover:text-primary'
+                          }`}
+                        >
+                          <Sparkles className="h-3.5 w-3.5 text-emerald-400" />
+                          Testi Yayında Olanlar ({outcomesWithTestsCount})
+                        </button>
                       </div>
                     </div>
-                  ))}
+                    <div className="text-xs font-semibold text-secondary">
+                      <span className="font-bold text-emerald-700 dark:text-emerald-400">{outcomesWithTestsCount}</span> kazanıma ait yaprak test hazır
+                    </div>
+                  </div>
+
+                  {displayedWorksheetOutcomeEntries.length === 0 ? (
+                    <EmptyState
+                      tone="soft"
+                      icon={<FolderOpen className="h-6 w-6" aria-hidden="true" />}
+                      title="Seçili filtreye uygun kazanım bulunamadı"
+                      description="Tüm müfredatı görüntülemek için 'Tüm Müfredat' butonuna tıklayabilirsiniz."
+                    />
+                  ) : (
+                    <div className="space-y-8">
+                      {worksheetOutcomeGroups.map((group, groupIndex) => (
+                        <div key={group.key} className="space-y-3">
+                          <div className="rounded-2xl border border-default bg-surface-2 px-4 py-3">
+                            <div className="flex items-center gap-3">
+                              <div className="worksheet-unit-line h-px flex-1 bg-gradient-to-r from-accent-fg/40 to-transparent" />
+                              <p className="shrink-0 text-sm font-extrabold uppercase tracking-[0.24em] text-accent-fg sm:text-base">
+                                {group.title}
+                              </p>
+                              <div className="worksheet-unit-line h-px flex-1 bg-gradient-to-l from-accent-fg/40 to-transparent" />
+                            </div>
+                          </div>
+                          <div className="space-y-3">
+                            {group.entries.map((entry, entryIndex) => {
+                              const outcomeHeading = splitWorksheetOutcomeHeading(
+                                entry.outcome,
+                              );
+                              const hasTests = entry.count > 0;
+
+                              return (
+                                <motion.button
+                                  key={entry.outcome}
+                                  initial={{ opacity: 0, y: 12 }}
+                                  animate={{ opacity: 1, y: 0 }}
+                                  transition={{
+                                    delay: Math.min(groupIndex * 0.04 + entryIndex * 0.02, 0.3),
+                                  }}
+                                  onClick={() => {
+                                    setSelectedWorksheetOutcome(entry.outcome);
+                                    updateWorksheetBrowserUrl(
+                                      selectedWorksheetGrade,
+                                      entry.outcome,
+                                    );
+                                  }}
+                                  className={`group flex w-full items-center gap-4 rounded-2xl border px-4 py-4 text-left transition-all sm:px-5 ${
+                                    hasTests
+                                      ? 'border-emerald-500/40 bg-emerald-500/[0.04] dark:bg-emerald-950/20 hover:border-emerald-500 hover:bg-emerald-500/10 shadow-xs'
+                                      : 'border-default bg-surface-1 hover:border-accent-fg/40 hover:bg-surface-2'
+                                  }`}
+                                >
+                                  <div
+                                    className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl ${
+                                      hasTests
+                                        ? 'bg-gradient-to-br from-emerald-500 to-teal-600 shadow-sm shadow-emerald-500/20'
+                                        : 'bg-gradient-to-br from-slate-400 to-slate-600 opacity-60'
+                                    }`}
+                                  >
+                                    {hasTests ? (
+                                      <Sparkles className="h-6 w-6 text-white" />
+                                    ) : (
+                                      <FolderOpen className="h-6 w-6 text-white" />
+                                    )}
+                                  </div>
+                                  <div className="min-w-0 flex-1">
+                                    <h3 className="worksheet-outcome-title text-sm font-semibold leading-relaxed text-primary transition-colors group-hover:text-accent-fg sm:text-base">
+                                      {outcomeHeading.code ? (
+                                        <>
+                                          <span className="font-bold text-sky-700 dark:text-sky-400">
+                                            {outcomeHeading.code}
+                                          </span>{' '}
+                                          <span>{outcomeHeading.label}</span>
+                                        </>
+                                      ) : (
+                                        entry.outcome
+                                      )}
+                                    </h3>
+                                  </div>
+                                  <div className="ml-auto flex shrink-0 items-center gap-3">
+                                    {hasTests ? (
+                                      <span className="inline-flex items-center gap-1.5 rounded-full border border-emerald-500/40 bg-emerald-500/15 px-3 py-1 text-xs font-bold text-emerald-800 dark:text-emerald-200 shadow-xs">
+                                        <span className="h-2 w-2 rounded-full bg-emerald-500 animate-ping" />
+                                        {entry.count} Test Yayında
+                                      </span>
+                                    ) : (
+                                      <span className="rounded-full border border-default bg-surface-2 px-2.5 py-0.5 text-xs font-medium text-secondary">
+                                        Henüz test yok
+                                      </span>
+                                    )}
+                                    <ChevronRight
+                                      className={`h-5 w-5 transition-transform group-hover:translate-x-0.5 ${
+                                        hasTests ? 'text-emerald-700 dark:text-emerald-400' : 'text-secondary group-hover:text-accent-fg'
+                                      }`}
+                                    />
+                                  </div>
+                                </motion.button>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
               ) : (
                 <EmptyState
