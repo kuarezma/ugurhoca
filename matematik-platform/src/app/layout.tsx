@@ -1,7 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Quicksand, Baloo_2 } from "next/font/google";
 import { SpeedInsights } from "@vercel/speed-insights/next";
-import { MobileBottomNav } from "@/components/MobileBottomNav";
 import { Providers } from "@/components/Providers";
 import { SiteBackground } from "@/components/SiteBackground";
 import { PerformanceRuntimeProvider } from "@/components/PerformanceRuntimeProvider";
@@ -252,7 +251,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <div id="ana-icerik" tabIndex={-1} className="relative z-10 w-full max-w-full overflow-x-clip">
             {children}
           </div>
-          <MobileBottomNav />
         </Providers>
         <SpeedInsights />
         {/* Service Worker kaydı (sayfa ilk boyamasını bloke etmez) */}

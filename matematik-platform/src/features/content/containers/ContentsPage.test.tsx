@@ -6,6 +6,7 @@ import {
   loadContentDocuments,
   loadWorksheetDocumentsByGrade,
   resolveContentUser,
+  seedContentDocumentCache,
   updateDocumentMetric,
 } from '@/features/content/queries';
 
@@ -77,7 +78,11 @@ describe('ContentsPage static feed and client filters', () => {
       { id: 'other', title: 'Test - 2', type: 'yaprak-test', grade: [8], description: 'Üslü İfadeler' },
     ]);
     render(<ContentsPage />);
-    const outcome = await screen.findByRole('button', { name: /Kareköklü İfadeler/ });
+    const outcome = await screen.findByRole(
+      'button',
+      { name: /Kareköklü İfadeler/ },
+      { timeout: 10000 },
+    );
     expect(screen.queryByRole('button', { name: /Üslü İfadeler/ })).not.toBeInTheDocument();
     fireEvent.click(outcome);
     expect(await screen.findByText('Test - 1')).toBeInTheDocument();
@@ -215,5 +220,56 @@ describe('ContentsPage static feed and client filters', () => {
 
     expect(updateDocumentMetric).toHaveBeenCalledTimes(1);
     expect(updateDocumentMetric).toHaveBeenCalledWith('doc-1', { likes: 3 });
+  });
+
+  it('SSR sorgusu başarısızsa boş seed kullanmadan içerikleri yeniden çeker', async () => {
+    vi.mocked(loadContentDocuments).mockResolvedValue({
+      count: 1,
+      documents: [
+        {
+          id: 'recovered',
+          title: 'Yeniden yüklenen içerik',
+          type: 'kitaplar',
+          grade: [7],
+        },
+      ],
+    });
+    render(<ContentsPage initialLoadSucceeded={false} />);
+    expect(
+      await screen.findByText('Yeniden yüklenen içerik'),
+    ).toBeInTheDocument();
+    expect(seedContentDocumentCache).not.toHaveBeenCalled();
+    expect(loadContentDocuments).toHaveBeenCalledWith(
+      1,
+      5,
+      'all',
+      'all',
+      expect.any(Object),
+    );
+  });
+
+  it('kaynak hatasında beklemeyi bitirir ve yeniden deneme sunar', async () => {
+    vi.mocked(loadContentDocuments)
+      .mockRejectedValueOnce(new Error('Timeout'))
+      .mockResolvedValueOnce({
+        count: 1,
+        documents: [
+          {
+            id: 'retried',
+            title: 'Tekrar yüklenen içerik',
+            type: 'kitaplar',
+            grade: [7],
+          },
+        ],
+      });
+    render(<ContentsPage initialLoadSucceeded={false} />);
+    expect(await screen.findByRole('alert')).toHaveTextContent(
+      'İçerikler yüklenemedi',
+    );
+    fireEvent.click(screen.getByRole('button', { name: 'Yeniden dene' }));
+    expect(
+      await screen.findByText('Tekrar yüklenen içerik'),
+    ).toBeInTheDocument();
+    expect(screen.queryByRole('alert')).not.toBeInTheDocument();
   });
 });

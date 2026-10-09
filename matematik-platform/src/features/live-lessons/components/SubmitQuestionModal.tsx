@@ -27,7 +27,6 @@ export function SubmitQuestionModal({
   onClose,
   lessons = [],
   defaultStudentName = '',
-  isLight = false,
 }: SubmitQuestionModalProps) {
   const [studentName, setStudentName] = useState(defaultStudentName || 'Öğrenci');
   const [selectedLessonId, setSelectedLessonId] = useState<string>('');

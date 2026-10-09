@@ -47,7 +47,7 @@ export function HomeHeroSection({
   const greeting = firstName ? `Merhaba ${firstName}!` : 'Matematiğe Hoş Geldin!';
 
   return (
-    <section className="relative px-4 pb-16 pt-4 sm:pt-10">
+    <section className="relative px-4 pb-10 sm:pb-16 pt-2 sm:pt-10">
       {/* 1. Lüks Arka Plan Parıltısı (Ambient Glow Mesh) */}
       <div
         aria-hidden="true"
@@ -58,57 +58,57 @@ export function HomeHeroSection({
         className="pointer-events-none absolute top-1/2 right-0 -z-10 h-72 w-72 rounded-full bg-purple-400/10 blur-3xl dark:bg-purple-600/5"
       />
 
-      <div className="mx-auto max-w-6xl space-y-12 sm:space-y-16">
+      <div className="mx-auto max-w-6xl space-y-6 sm:space-y-16">
 
         {/* 2. Hero Başlık Vitrini & Canlı Göstergeler */}
-        <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 border-b border-slate-200/80 dark:border-white/10 pb-8">
-          <div className="max-w-2xl space-y-4">
+        <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-4 sm:gap-6 border-b border-slate-200/80 dark:border-white/10 pb-5 sm:pb-8">
+          <div className="max-w-2xl space-y-2.5 sm:space-y-4">
             
             {/* Lüks Rozet */}
-            <div className="inline-flex items-center gap-2 rounded-full bg-white/90 dark:bg-slate-900/90 border border-sky-300/80 dark:border-sky-500/40 px-4 py-1.5 text-xs font-black text-sky-900 dark:text-sky-200 uppercase tracking-wider shadow-sm backdrop-blur-md">
-              <Sparkles className="h-4 w-4 text-sky-600 dark:text-sky-400 animate-pulse" />
+            <div className="inline-flex items-center gap-1.5 sm:gap-2 rounded-full bg-white/90 dark:bg-slate-900/90 border border-sky-300/80 dark:border-sky-500/40 px-3 py-1 sm:px-4 sm:py-1.5 text-[11px] sm:text-xs font-black text-sky-900 dark:text-sky-200 uppercase tracking-wider shadow-xs backdrop-blur-md">
+              <Sparkles className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-sky-600 dark:text-sky-400 animate-pulse" />
               <span>Ortaokul Matematik Platformu · MEB 2026-2027</span>
             </div>
 
             {/* H1 Başlık (CLAUDE.md Kuralı: text-primary) */}
-            <h1 className="font-display text-3xl sm:text-5xl lg:text-6xl font-black text-primary tracking-tight leading-[1.12]">
+            <h1 className="font-display text-2xl sm:text-5xl lg:text-6xl font-black text-primary tracking-tight leading-[1.15] sm:leading-[1.12]">
               {greeting}
             </h1>
 
-            <p className="text-base sm:text-lg text-slate-600 dark:text-slate-300 font-medium leading-relaxed max-w-2xl">
+            <p className="text-xs sm:text-base lg:text-lg text-slate-600 dark:text-slate-300 font-medium leading-relaxed max-w-2xl">
               5, 6, 7 ve 8. sınıf MEB müfredatına tam uyumlu yaprak testler, yeni nesil soru föyleri ve zihin açan matematik oyunları tek adreste.
             </p>
 
             {/* Hızlı Sınıf Atlama Butonları (Quick Jump Pills) */}
-            <div className="pt-2 flex flex-wrap items-center gap-2.5">
-              <span className="text-xs font-bold text-slate-500 dark:text-slate-400 mr-1 flex items-center gap-1.5">
+            <div className="pt-1 sm:pt-2 flex flex-wrap items-center gap-1.5 sm:gap-2.5">
+              <span className="text-[11px] sm:text-xs font-bold text-slate-500 dark:text-slate-400 mr-1 flex items-center gap-1.5">
                 <span className="h-1.5 w-1.5 rounded-full bg-slate-400 animate-ping" />
                 Hızlı Sınıf Seçimi:
               </span>
               <SafeLink
                 href="/icerikler?grade=5"
-                className="group inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-bold bg-white dark:bg-slate-800/90 border border-slate-200 dark:border-slate-700 text-sky-800 dark:text-sky-200 hover:bg-sky-50 dark:hover:bg-sky-950/60 hover:border-sky-400 transition-all shadow-xs hover:shadow-md hover:-translate-y-0.5 active:scale-95"
+                className="group inline-flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3.5 py-1 sm:py-1.5 rounded-full text-[11px] sm:text-xs font-bold bg-white dark:bg-slate-800/90 border border-slate-200 dark:border-slate-700 text-sky-800 dark:text-sky-200 hover:bg-sky-50 dark:hover:bg-sky-950/60 hover:border-sky-400 transition-all shadow-xs hover:shadow-md hover:-translate-y-0.5 active:scale-95"
               >
                 <span className="h-2 w-2 rounded-full bg-sky-500" />
                 <span>5. Sınıf</span>
               </SafeLink>
               <SafeLink
                 href="/icerikler?grade=6"
-                className="group inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-bold bg-white dark:bg-slate-800/90 border border-slate-200 dark:border-slate-700 text-amber-800 dark:text-amber-200 hover:bg-amber-50 dark:hover:bg-amber-950/60 hover:border-amber-400 transition-all shadow-xs hover:shadow-md hover:-translate-y-0.5 active:scale-95"
+                className="group inline-flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3.5 py-1 sm:py-1.5 rounded-full text-[11px] sm:text-xs font-bold bg-white dark:bg-slate-800/90 border border-slate-200 dark:border-slate-700 text-amber-800 dark:text-amber-200 hover:bg-amber-50 dark:hover:bg-amber-950/60 hover:border-amber-400 transition-all shadow-xs hover:shadow-md hover:-translate-y-0.5 active:scale-95"
               >
                 <span className="h-2 w-2 rounded-full bg-amber-500" />
                 <span>6. Sınıf</span>
               </SafeLink>
               <SafeLink
                 href="/icerikler?grade=7"
-                className="group inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-bold bg-white dark:bg-slate-800/90 border border-slate-200 dark:border-slate-700 text-purple-800 dark:text-purple-200 hover:bg-purple-50 dark:hover:bg-purple-950/60 hover:border-purple-400 transition-all shadow-xs hover:shadow-md hover:-translate-y-0.5 active:scale-95"
+                className="group inline-flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3.5 py-1 sm:py-1.5 rounded-full text-[11px] sm:text-xs font-bold bg-white dark:bg-slate-800/90 border border-slate-200 dark:border-slate-700 text-purple-800 dark:text-purple-200 hover:bg-purple-50 dark:hover:bg-purple-950/60 hover:border-purple-400 transition-all shadow-xs hover:shadow-md hover:-translate-y-0.5 active:scale-95"
               >
                 <span className="h-2 w-2 rounded-full bg-purple-500" />
                 <span>7. Sınıf</span>
               </SafeLink>
               <SafeLink
                 href="/icerikler?grade=8"
-                className="group inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-bold bg-white dark:bg-slate-800/90 border border-slate-200 dark:border-slate-700 text-rose-800 dark:text-rose-200 hover:bg-rose-50 dark:hover:bg-rose-950/60 hover:border-rose-400 transition-all shadow-xs hover:shadow-md hover:-translate-y-0.5 active:scale-95"
+                className="group inline-flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3.5 py-1 sm:py-1.5 rounded-full text-[11px] sm:text-xs font-bold bg-white dark:bg-slate-800/90 border border-slate-200 dark:border-slate-700 text-rose-800 dark:text-rose-200 hover:bg-rose-50 dark:hover:bg-rose-950/60 hover:border-rose-400 transition-all shadow-xs hover:shadow-md hover:-translate-y-0.5 active:scale-95"
               >
                 <span className="h-2 w-2 rounded-full bg-rose-500 animate-pulse" />
                 <span className="font-black">8. Sınıf (LGS)</span>
@@ -116,8 +116,8 @@ export function HomeHeroSection({
             </div>
           </div>
 
-          {/* İstatistik & Güven Bento Kutuları */}
-          <div className="shrink-0 flex flex-wrap sm:flex-nowrap lg:flex-col gap-3">
+          {/* İstatistik & Güven Bento Kutuları (Masaüstünde gösterilir, mobilde dikey alanı tıkamaması için gizlenir) */}
+          <div className="hidden sm:flex shrink-0 sm:flex-nowrap lg:flex-col gap-3">
             <div className="flex items-center gap-3 rounded-2xl bg-white/95 dark:bg-slate-900/90 border border-slate-200/90 dark:border-slate-800 p-3.5 shadow-sm backdrop-blur-md">
               <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-400 shadow-xs">
                 <span className="h-2.5 w-2.5 rounded-full bg-emerald-500 animate-pulse" />
@@ -141,13 +141,13 @@ export function HomeHeroSection({
         </div>
 
         {/* 3. İki Büyük Süper Eylem Kapısı (The Grand Portals) */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-8">
           
           {/* YAPRAK TESTLER KARTI */}
           <SafeLink
             href="/icerikler?type=yaprak-test"
             aria-label="Yaprak Testler ve Ders İçerikleri"
-            className="group relative flex flex-col justify-between overflow-hidden rounded-3xl p-7 sm:p-9 transition-all duration-300 hover:-translate-y-2 bg-gradient-to-br from-sky-50/90 via-white to-blue-50/70 dark:from-sky-950/50 dark:via-slate-900/95 dark:to-blue-950/40 border-2 border-sky-200/90 dark:border-sky-500/30 shadow-lg shadow-sky-500/5 hover:shadow-2xl hover:shadow-sky-500/15 hover:border-sky-400 dark:hover:border-sky-400/60"
+            className="group relative flex flex-col justify-between overflow-hidden rounded-2xl sm:rounded-3xl p-4 sm:p-9 transition-all duration-300 hover:-translate-y-2 bg-gradient-to-br from-sky-50/90 via-white to-blue-50/70 dark:from-sky-950/50 dark:via-slate-900/95 dark:to-blue-950/40 border-2 border-sky-200/90 dark:border-sky-500/30 shadow-md sm:shadow-lg shadow-sky-500/5 hover:shadow-2xl hover:shadow-sky-500/15 hover:border-sky-400 dark:hover:border-sky-400/60"
           >
             {/* Kart İçi Dekoratif Radyal Işık */}
             <div
@@ -156,25 +156,25 @@ export function HomeHeroSection({
             />
 
             <div className="relative">
-              <div className="flex items-center justify-between gap-3 mb-6">
-                <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-sky-500 via-sky-600 to-blue-700 text-white shadow-xl shadow-sky-500/30 ring-4 ring-sky-500/10 group-hover:scale-105 group-hover:rotate-1 transition-all duration-300">
-                  <FileSignature className="h-8 w-8" />
+              <div className="flex items-center justify-between gap-3 mb-3 sm:mb-6">
+                <div className="flex h-12 w-12 sm:h-16 sm:w-16 shrink-0 items-center justify-center rounded-xl sm:rounded-2xl bg-gradient-to-br from-sky-500 via-sky-600 to-blue-700 text-white dark:text-white shadow-lg sm:shadow-xl shadow-sky-500/30 ring-2 sm:ring-4 ring-sky-500/10 group-hover:scale-105 group-hover:rotate-1 transition-all duration-300">
+                  <FileSignature className="h-6 w-6 sm:h-8 sm:w-8" />
                 </div>
-                <span className="rounded-full bg-sky-600 dark:bg-sky-500 text-white text-[11px] font-black uppercase tracking-wider px-3.5 py-1.5 shadow-xs">
+                <span className="rounded-full bg-sky-600 dark:bg-sky-500 text-white dark:text-white text-[10px] sm:text-[11px] font-black uppercase tracking-wider px-2.5 py-1 sm:px-3.5 sm:py-1.5 shadow-xs">
                   Müfredat 2026-2027
                 </span>
               </div>
 
-              <h2 className="font-display text-2xl sm:text-3xl font-black text-slate-900 dark:text-white mb-2 group-hover:text-sky-600 dark:group-hover:text-sky-400 transition-colors">
+              <h2 className="font-display text-xl sm:text-3xl font-black text-slate-900 dark:text-white mb-1.5 sm:mb-2 group-hover:text-sky-600 dark:group-hover:text-sky-400 transition-colors">
                 Yaprak Testler & İçerikler
               </h2>
 
-              <p className="text-sm sm:text-base text-slate-600 dark:text-slate-300 font-medium leading-relaxed mb-6">
+              <p className="text-xs sm:text-base text-slate-600 dark:text-slate-300 font-medium leading-relaxed mb-3 sm:mb-6 line-clamp-2 sm:line-clamp-none">
                 5, 6, 7 ve 8. sınıf kazanım yaprak testleri, yeni nesil soru föyleri, çalışma kağıtları ve ders içeriklerine anında ulaşın.
               </p>
 
-              {/* Önizleme Konu Etiketleri */}
-              <div className="flex flex-wrap gap-2 mb-8">
+              {/* Önizleme Konu Etiketleri (Mobilde gizlenerek kart yüksekliği optimize edilir, masaüstünde tam gösterilir) */}
+              <div className="hidden sm:flex flex-wrap gap-2 mb-8">
                 <span className="text-[11px] font-bold px-3 py-1.5 rounded-xl bg-white/90 dark:bg-slate-800/90 text-sky-800 dark:text-sky-200 border border-sky-200/90 dark:border-sky-800/60 shadow-2xs">
                   Üslü & Köklü Sayılar
                 </span>
@@ -190,13 +190,13 @@ export function HomeHeroSection({
               </div>
             </div>
 
-            <div className="relative pt-4 border-t border-sky-200/80 dark:border-white/10 flex items-center justify-between text-sm sm:text-base font-bold text-sky-800 dark:text-sky-300">
-              <span className="flex items-center gap-2">
-                <BookOpen className="h-5 w-5 text-sky-600 dark:text-sky-400" />
+            <div className="relative pt-3 sm:pt-4 border-t border-sky-200/80 dark:border-white/10 flex items-center justify-between text-xs sm:text-base font-bold text-sky-800 dark:text-sky-300">
+              <span className="flex items-center gap-1.5 sm:gap-2">
+                <BookOpen className="h-4 w-4 sm:h-5 sm:w-5 text-sky-600 dark:text-sky-400" />
                 Yaprak Test İçeriklerini Aç
               </span>
-              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-white dark:bg-slate-800 text-sky-700 dark:text-sky-300 shadow-sm border border-slate-200/80 dark:border-slate-700 group-hover:bg-sky-600 group-hover:text-white group-hover:border-sky-600 group-hover:translate-x-2 transition-all duration-300">
-                <ArrowRight className="h-4 w-4" />
+              <div className="flex h-7 w-7 sm:h-9 sm:w-9 items-center justify-center rounded-lg sm:rounded-xl bg-white dark:bg-slate-800 text-sky-700 dark:text-sky-300 shadow-xs sm:shadow-sm border border-slate-200/80 dark:border-slate-700 group-hover:bg-sky-600 group-hover:text-white group-hover:border-sky-600 group-hover:translate-x-1.5 sm:group-hover:translate-x-2 transition-all duration-300">
+                <ArrowRight className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
               </div>
             </div>
           </SafeLink>
@@ -205,7 +205,7 @@ export function HomeHeroSection({
           <SafeLink
             href="/oyunlar"
             aria-label="Matematik Oyunları Dünyası"
-            className="group relative flex flex-col justify-between overflow-hidden rounded-3xl p-7 sm:p-9 transition-all duration-300 hover:-translate-y-2 bg-gradient-to-br from-emerald-50/90 via-white to-teal-50/70 dark:from-emerald-950/50 dark:via-slate-900/95 dark:to-teal-950/40 border-2 border-emerald-200/90 dark:border-emerald-500/30 shadow-lg shadow-emerald-500/5 hover:shadow-2xl hover:shadow-emerald-500/15 hover:border-emerald-400 dark:hover:border-emerald-400/60"
+            className="group relative flex flex-col justify-between overflow-hidden rounded-2xl sm:rounded-3xl p-4 sm:p-9 transition-all duration-300 hover:-translate-y-2 bg-gradient-to-br from-emerald-50/90 via-white to-teal-50/70 dark:from-emerald-950/50 dark:via-slate-900/95 dark:to-teal-950/40 border-2 border-emerald-200/90 dark:border-emerald-500/30 shadow-md sm:shadow-lg shadow-emerald-500/5 hover:shadow-2xl hover:shadow-emerald-500/15 hover:border-emerald-400 dark:hover:border-emerald-400/60"
           >
             {/* Kart İçi Dekoratif Radyal Işık */}
             <div
@@ -214,25 +214,25 @@ export function HomeHeroSection({
             />
 
             <div className="relative">
-              <div className="flex items-center justify-between gap-3 mb-6">
-                <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-emerald-500 via-emerald-600 to-teal-700 text-white shadow-xl shadow-emerald-500/30 ring-4 ring-emerald-500/10 group-hover:scale-105 group-hover:rotate-1 transition-all duration-300">
-                  <Gamepad2 className="h-8 w-8" />
+              <div className="flex items-center justify-between gap-3 mb-3 sm:mb-6">
+                <div className="flex h-12 w-12 sm:h-16 sm:w-16 shrink-0 items-center justify-center rounded-xl sm:rounded-2xl bg-gradient-to-br from-emerald-500 via-emerald-600 to-teal-700 text-white dark:text-white shadow-lg sm:shadow-xl shadow-emerald-500/30 ring-2 sm:ring-4 ring-emerald-500/10 group-hover:scale-105 group-hover:rotate-1 transition-all duration-300">
+                  <Gamepad2 className="h-6 w-6 sm:h-8 sm:w-8" />
                 </div>
-                <span className="rounded-full bg-emerald-600 dark:bg-emerald-500 text-white text-[11px] font-black uppercase tracking-wider px-3.5 py-1.5 shadow-xs">
+                <span className="rounded-full bg-emerald-600 dark:bg-emerald-500 text-white dark:text-white text-[10px] sm:text-[11px] font-black uppercase tracking-wider px-2.5 py-1 sm:px-3.5 sm:py-1.5 shadow-xs">
                   19 Eğlenceli Oyun
                 </span>
               </div>
 
-              <h2 className="font-display text-2xl sm:text-3xl font-black text-slate-900 dark:text-white mb-2 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">
+              <h2 className="font-display text-xl sm:text-3xl font-black text-slate-900 dark:text-white mb-1.5 sm:mb-2 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">
                 Matematik Oyunları Dünyası
               </h2>
 
-              <p className="text-sm sm:text-base text-slate-600 dark:text-slate-300 font-medium leading-relaxed mb-6">
+              <p className="text-xs sm:text-base text-slate-600 dark:text-slate-300 font-medium leading-relaxed mb-3 sm:mb-6 line-clamp-2 sm:line-clamp-none">
                 Çarpım tablosu yarışı, kesir pizzacısı, aritmetik düellosu ve zihin açıcı bulmacalarla matematiği eğlenerek öğrenin.
               </p>
 
-              {/* Önizleme Oyun Avatarları */}
-              <div className="flex flex-wrap gap-2 mb-8">
+              {/* Önizleme Oyun Avatarları (Mobilde gizlenerek kart yüksekliği optimize edilir, masaüstünde tam gösterilir) */}
+              <div className="hidden sm:flex flex-wrap gap-2 mb-8">
                 <span className="text-[11px] font-bold px-3 py-1.5 rounded-xl bg-white/90 dark:bg-slate-800/90 text-emerald-800 dark:text-emerald-200 border border-emerald-200/90 dark:border-emerald-800/60 shadow-2xs">
                   🏎️ Çarpım Yarışı
                 </span>
@@ -248,13 +248,13 @@ export function HomeHeroSection({
               </div>
             </div>
 
-            <div className="relative pt-4 border-t border-emerald-200/80 dark:border-white/10 flex items-center justify-between text-sm sm:text-base font-bold text-emerald-800 dark:text-emerald-300">
-              <span className="flex items-center gap-2">
-                <Zap className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
+            <div className="relative pt-3 sm:pt-4 border-t border-emerald-200/80 dark:border-white/10 flex items-center justify-between text-xs sm:text-base font-bold text-emerald-800 dark:text-emerald-300">
+              <span className="flex items-center gap-1.5 sm:gap-2">
+                <Zap className="h-4 w-4 sm:h-5 sm:w-5 text-emerald-600 dark:text-emerald-400" />
                 Oyun Alanına Giriş Yap
               </span>
-              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-white dark:bg-slate-800 text-emerald-700 dark:text-emerald-300 shadow-sm border border-slate-200/80 dark:border-slate-700 group-hover:bg-emerald-600 group-hover:text-white group-hover:border-emerald-600 group-hover:translate-x-2 transition-all duration-300">
-                <ArrowRight className="h-4 w-4" />
+              <div className="flex h-7 w-7 sm:h-9 sm:w-9 items-center justify-center rounded-lg sm:rounded-xl bg-white dark:bg-slate-800 text-emerald-700 dark:text-emerald-300 shadow-xs sm:shadow-sm border border-slate-200/80 dark:border-slate-700 group-hover:bg-emerald-600 group-hover:text-white group-hover:border-emerald-600 group-hover:translate-x-1.5 sm:group-hover:translate-x-2 transition-all duration-300">
+                <ArrowRight className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
               </div>
             </div>
           </SafeLink>

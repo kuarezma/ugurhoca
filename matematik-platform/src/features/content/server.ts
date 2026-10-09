@@ -29,9 +29,6 @@ export const getInitialContentGradeFilter =
     return normalizeContentGrade(snapshot.grade);
   };
 
-// Supabase yanıt vermezse build/ISR 60 sn'lik üretim sınırına takılmasın.
-const CONTENT_QUERY_TIMEOUT_MS = 10_000;
-
 export const loadInitialContentDocuments = async (
   page: number,
   pageSize: number,
@@ -40,7 +37,9 @@ export const loadInitialContentDocuments = async (
 ) => {
   const from = (page - 1) * pageSize;
   const to = from + pageSize - 1;
-  if (!hasSupabasePublicEnv()) return { count: 0, documents: [] };
+  if (!hasSupabasePublicEnv()) {
+    return { count: 0, documents: [], isHydrated: false };
+  }
 
   const serverSupabase = createCachedPublicSupabaseClient('content-documents');
   const normalizedTypeFilter = CONTENT_TYPE_MAPPING[typeFilter] || typeFilter;
@@ -48,8 +47,7 @@ export const loadInitialContentDocuments = async (
   try {
     let countQuery = serverSupabase
       .from('documents')
-      .select('*', { count: 'exact', head: true })
-      .abortSignal(AbortSignal.timeout(CONTENT_QUERY_TIMEOUT_MS));
+      .select('*', { count: 'exact', head: true });
 
     if (gradeFilter !== 'all') {
       countQuery = countQuery.contains('grade', [gradeFilter]);
@@ -65,8 +63,7 @@ export const loadInitialContentDocuments = async (
     let dataQuery = serverSupabase
       .from('documents')
       .select('*')
-      .order('created_at', { ascending: false })
-      .abortSignal(AbortSignal.timeout(CONTENT_QUERY_TIMEOUT_MS));
+      .order('created_at', { ascending: false });
 
     if (gradeFilter !== 'all') {
       dataQuery = dataQuery.contains('grade', [gradeFilter]);
@@ -87,7 +84,7 @@ export const loadInitialContentDocuments = async (
         '[loadInitialContentDocuments] Supabase query error:',
         countError || dataError,
       );
-      return { count: 0, documents: [] };
+      return { count: 0, documents: [], isHydrated: false };
     }
 
     const payload = {
@@ -95,11 +92,12 @@ export const loadInitialContentDocuments = async (
       documents: sortContentDocumentsByNewest(
         (data || []) as ContentDocument[],
       ),
+      isHydrated: true,
     };
 
     return payload;
   } catch (err) {
     console.warn('[loadInitialContentDocuments] Unexpected error:', err);
-    return { count: 0, documents: [] };
+    return { count: 0, documents: [], isHydrated: false };
   }
 };

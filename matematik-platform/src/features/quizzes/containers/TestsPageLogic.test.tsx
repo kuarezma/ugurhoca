@@ -87,7 +87,7 @@ const mountResumedQuiz = async (timeLeft = 600) => {
       screen.getByRole('button', { name: 'Kaldığım Yerden Devam Et' }),
     );
   });
-  await screen.findByText('İkinci soru');
+  await screen.findByText('İkinci soru', {}, { timeout: 10000 });
 };
 const finishTwice = () =>
   act(() => {

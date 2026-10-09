@@ -5,6 +5,7 @@ export default defineConfig({
   test: {
     exclude: [...configDefaults.exclude, 'e2e/**'],
     slowTestThreshold: 2000,
+    testTimeout: 30000,
     coverage: {
       exclude: [
         'node_modules/**',

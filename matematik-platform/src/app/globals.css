@@ -723,7 +723,7 @@ html[data-theme='light'] body::before {
 
 @media (max-width: 767px) {
   #ana-icerik {
-    padding-bottom: calc(4.75rem + env(safe-area-inset-bottom));
+    padding-bottom: env(safe-area-inset-bottom, 0px);
   }
 
   /* iOS Safari Otomatik Zoom Engelleme: 16px altı fontlarda odaklanınca ekran büyütmesini engeller */

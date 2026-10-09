@@ -241,10 +241,13 @@ const normalizeWorksheetQuickAddGrade = (grade?: GradeValue | null) =>
 
 type ContentsPageProps = {
   initialDocuments?: ContentDocument[];
+  initialLoadSucceeded?: boolean;
   initialGrade?: ContentGradeFilter;
   initialTotalCount?: number;
   initialType?: string;
 };
+
+const EMPTY_CONTENT_DOCUMENTS: ContentDocument[] = [];
 
 // URL okuması yalnızca bu görünmez bileşeni askıya alır; içerik HTML'de kalır.
 function ContentUrlFilters({ onChange }: { onChange: (params: URLSearchParams) => void ;}) {
@@ -256,7 +259,8 @@ function ContentUrlFilters({ onChange }: { onChange: (params: URLSearchParams) =
 }
 
 function ContentsPageInner({
-  initialDocuments = [],
+  initialDocuments = EMPTY_CONTENT_DOCUMENTS,
+  initialLoadSucceeded = true,
   initialGrade = 'all',
   initialTotalCount = 0,
   initialType = 'all',
@@ -453,11 +457,19 @@ function ContentsPageInner({
   );
 
   useEffect(() => {
+    // Başarısız SSR sorgusu boş içerik olarak önbelleğe girmemeli.
+    if (!initialLoadSucceeded) return;
     seedContentDocumentCache(1, CONTENT_PAGE_SIZE, initialGrade, initialType, {
       count: initialTotalCount,
       documents: initialDocuments,
     });
-  }, [initialDocuments, initialGrade, initialTotalCount, initialType]);
+  }, [
+    initialDocuments,
+    initialGrade,
+    initialLoadSucceeded,
+    initialTotalCount,
+    initialType,
+  ]);
 
   useEffect(() => {
     if (worksheetGradeFromUrl) {
@@ -496,6 +508,7 @@ function ContentsPageInner({
     );
 
     if (
+      initialLoadSucceeded &&
       !hasCustomFilters &&
       selectedGrade === initialGrade &&
       selectedType === initialType
@@ -516,6 +529,7 @@ function ContentsPageInner({
     debouncedSearch,
     initialDocuments,
     initialGrade,
+    initialLoadSucceeded,
     initialTotalCount,
     initialType,
     loadDocuments,
@@ -1540,7 +1554,40 @@ function ContentsPageInner({
             {/* Top ambient aura */}
             <div className="absolute top-0 inset-x-0 h-[2px] bg-brand-secondary" />
 
-            {contentLoadError && (<p role="alert" className="mb-3 text-sm text-tone-danger-fg">{contentLoadError}</p>)}
+            {contentLoadError && (
+              <div className="mb-3 flex flex-wrap items-center gap-3">
+                <p role="alert" className="text-sm text-tone-danger-fg">
+                  {contentLoadError}
+                </p>
+                <button
+                  type="button"
+                  className="text-sm font-semibold text-primary underline"
+                  onClick={() => {
+                    if (isWorksheetBrowser && selectedWorksheetGrade !== null) {
+                      void loadWorksheetGradeDocuments(
+                        selectedWorksheetGrade,
+                        true,
+                      );
+                    } else {
+                      void loadDocuments(
+                        1,
+                        false,
+                        selectedGrade,
+                        selectedType,
+                        {
+                          onlySolution: quickFilter === 'with_solution',
+                          onlyVideo: quickFilter === 'with_video',
+                          searchTerm: debouncedSearch,
+                          sortBy,
+                        },
+                      );
+                    }
+                  }}
+                >
+                  Yeniden dene
+                </button>
+              </div>
+            )}
             <ContentFilterBar
               isWorksheetBrowser={isWorksheetBrowser}
               onClearSearch={() => setSearchTerm('')}
@@ -1780,9 +1827,9 @@ function ContentsPageInner({
                                     }`}
                                   >
                                     {hasTests ? (
-                                      <Sparkles className="h-6 w-6 text-white" />
+                                      <Sparkles className="h-6 w-6 text-white dark:text-white" />
                                     ) : (
-                                      <FolderOpen className="h-6 w-6 text-white" />
+                                      <FolderOpen className="h-6 w-6 text-white dark:text-white" />
                                     )}
                                   </div>
                                   <div className="min-w-0 flex-1">

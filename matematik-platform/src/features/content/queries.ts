@@ -3,6 +3,7 @@ import { getClientSession, getCurrentUserProfile } from '@/lib/auth-client';
 import { supabase } from '@/lib/supabase/client';
 import { isCurriculumTopic, matchesCurriculumDocument } from './curriculum-coverage';
 import { loadCurriculumGradeDocuments } from './curriculum-queries';
+import { runContentRead } from './read-timeout';
 import type { ApiSuccessResponse } from '@/lib/api-response';
 import type { Comment, ContentDocument } from '@/types';
 import type {
@@ -123,11 +124,14 @@ export const prefetchContentDocuments = async (typeFilter: string) => {
   }
 
   const request = (async () => {
-    const response = await fetch(
-      `/api/content-prefetch?type=${encodeURIComponent(normalizedType)}`,
-      {
-        credentials: 'same-origin',
-      },
+    const response = await runContentRead((signal) =>
+      fetch(
+        `/api/content-prefetch?type=${encodeURIComponent(normalizedType)}`,
+        {
+          credentials: 'same-origin',
+          signal,
+        },
+      ),
     );
     const payload = (await response.json().catch(() => null)) as
       | { data?: ContentPrefetchPayload; error?: { message?: string } }
@@ -320,10 +324,17 @@ export const loadContentDocuments = async (
       dataQuery = dataQuery.order('created_at', { ascending: false });
     }
 
-    const [{ count }, { data }] = await Promise.all([
-      countQuery,
-      dataQuery.range(from, to),
-    ]);
+    const [{ count, error: countError }, { data, error: dataError }] =
+      await runContentRead((signal) =>
+        Promise.all([
+          countQuery.abortSignal(signal),
+          dataQuery.abortSignal(signal).range(from, to),
+        ]),
+      );
+
+    if (countError || dataError) {
+      throw new Error('İçerikler yüklenemedi. Yeniden deneyin.');
+    }
 
     const docs = (data || []) as ContentDocument[];
     const sortedDocs =
@@ -563,11 +574,14 @@ export const loadWorksheetDocumentsByGrade = async (
     );
   }
 
-  const { data, error } = await supabase
-    .from('documents')
-    .select('*')
-    .eq('type', 'yaprak-test')
-    .contains('grade', [grade]);
+  const { data, error } = await runContentRead((signal) =>
+    supabase
+      .from('documents')
+      .select('*')
+      .abortSignal(signal)
+      .eq('type', 'yaprak-test')
+      .contains('grade', [grade]),
+  );
 
   if (error) {
     throw error;

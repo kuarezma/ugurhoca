@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useSyncExternalStore } from 'react';
 import { SafeLink } from '@/components/SafeLink';
 import { usePathname } from 'next/navigation';
 import { Home, FileCheck, Timer, Gamepad2, User } from 'lucide-react';
@@ -13,8 +13,19 @@ const NAV_ITEMS = [
   { href: '/profil', label: 'Profil', icon: User },
 ];
 
+const subscribeToHydration = () => () => {};
+const readHydrated = () => true;
+const readServerHydrated = () => false;
+
 export function MobileBottomNav() {
-  const pathname = usePathname();
+  const routerPathname = usePathname();
+  const hydrated = useSyncExternalStore(
+    subscribeToHydration,
+    readHydrated,
+    readServerHydrated,
+  );
+  // ISR kaynak yolu tarayıcı URL'sinden farklı olabilir; ilk HTML sabit kalır.
+  const pathname = hydrated ? routerPathname : null;
 
   const [pendingHref, setPendingHref] = useState<string | null>(null);
 
@@ -24,7 +35,7 @@ export function MobileBottomNav() {
   }, [pathname]);
 
   // Canlı ders odasında tam ekran deneyimini bozmamak için gizle
-  if (pathname?.startsWith('/canli-ders/d/')) {
+  if (routerPathname?.startsWith('/canli-ders/d/')) {
     return null;
   }
 

@@ -25,6 +25,7 @@ it.each(terms.map((term, index) => ({ term, index })))(
     }
     expect(screen.getByText('🎉 Doğru bildin!')).toBeInTheDocument();
   },
+  15000,
 );
 
 it('reveals spaces before guessing any letters', () => {

@@ -176,8 +176,9 @@ describe('question-import', () => {
 
     try {
       downloadExcelTemplate();
-      await new Promise((resolve) => setTimeout(resolve, 80));
-      expect(clickMock).toHaveBeenCalledTimes(1);
+      await vi.waitFor(() => expect(clickMock).toHaveBeenCalledTimes(1), {
+        timeout: 3000,
+      });
     } finally {
       URL.createObjectURL = origCreateObjectURL;
       URL.revokeObjectURL = origRevokeObjectURL;

@@ -19,6 +19,40 @@ describe('content queries', () => {
     vi.unstubAllGlobals();
   });
 
+  it('kaynak hatasını boş liste diye önbelleğe almadan yeniden dener', async () => {
+    const countQuery = { abortSignal: vi.fn() };
+    const dataQuery = { order: vi.fn(), abortSignal: vi.fn(), range: vi.fn() };
+    dataQuery.order.mockReturnValue(dataQuery);
+    dataQuery.abortSignal.mockReturnValue(dataQuery);
+    vi.mocked(supabase.from).mockImplementation(
+      () =>
+        ({
+          select: (_fields: string, options?: { head?: boolean }) =>
+            options?.head ? countQuery : dataQuery,
+        }) as never,
+    );
+    countQuery.abortSignal.mockResolvedValueOnce({
+      count: null,
+      error: { code: '57014' },
+    });
+    dataQuery.range.mockResolvedValueOnce({
+      data: null,
+      error: { code: '57014' },
+    });
+    await expect(loadContentDocuments(1, 5, 'all', 'all')).rejects.toThrow(
+      'İçerikler yüklenemedi',
+    );
+    countQuery.abortSignal.mockResolvedValueOnce({ count: 1, error: null });
+    dataQuery.range.mockResolvedValueOnce({
+      data: [{ id: 'recovered' }],
+      error: null,
+    });
+    await expect(
+      loadContentDocuments(1, 5, 'all', 'all'),
+    ).resolves.toMatchObject({ count: 1 });
+    expect(supabase.from).toHaveBeenCalledTimes(4);
+  });
+
   it('seeds the first page cache from the prefetch endpoint', async () => {
     vi.stubGlobal(
       'fetch',

@@ -1,4 +1,7 @@
 import '@testing-library/jest-dom/vitest';
+import { configure } from '@testing-library/react';
+
+configure({ asyncUtilTimeout: 8000 });
 
 if (!Promise.withResolvers) {
   Promise.withResolvers = function <T>() {

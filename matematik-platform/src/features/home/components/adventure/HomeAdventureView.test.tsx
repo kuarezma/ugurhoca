@@ -54,18 +54,20 @@ describe('HomeAdventureView', () => {
       screen.getByRole('button', { name: 'Konu penceresini kapat' }),
     );
     fireEvent.click(screen.getByRole('button', { name: '5. Sınıf' }));
-    expect(
-      screen.getByRole('link', { name: 'Yaprak Teste Git' }),
-    ).toHaveAttribute(
-      'href',
-      getCurriculumContentHref(
-        5,
-        'Temel Geometrik Çizimler ve İnşalar',
-        'yaprak-test',
+    await waitFor(() =>
+      expect(
+        screen.getByRole('link', { name: 'Yaprak Teste Git' }),
+      ).toHaveAttribute(
+        'href',
+        getCurriculumContentHref(
+          5,
+          'Temel Geometrik Çizimler ve İnşalar',
+          'yaprak-test',
+        ),
       ),
     );
   });
-  it('opens existing topic flashcards and uses grade 12 for graduates', () => {
+  it('opens existing topic flashcards and uses grade 12 for graduates', async () => {
     vi.mocked(loadAdventureProgress).mockResolvedValue({
       currentStreak: 0,
       quizCount: 0,
@@ -79,7 +81,10 @@ describe('HomeAdventureView', () => {
         onOpenFlashcards={openCards}
       />,
     );
-    fireEvent.click(screen.getByRole('button', { name: '2. Ünite: Türev' }));
+    const unitButton = await screen.findByRole('button', {
+      name: '2. Ünite: Türev',
+    });
+    fireEvent.click(unitButton);
     fireEvent.click(
       screen.getByRole('button', { name: 'Konunun Formül Kartları' }),
     );

@@ -73,7 +73,13 @@ export async function loadInitialHomeFeed(): Promise<HomeInitialFeed> {
   // Ana sayfa bu iki alanın hiçbirini render etmiyor (HomeStatsStrip ve
   // HomeRecentDocumentsSection hiçbir yerde mount edilmiyor), dolayısıyla sonuç
   // doğrudan çöpe gidiyordu. Yalnızca gerçekten gösterilen duyurular çekiliyor.
-  return {
-    announcements: await fetchAnnouncementsServer(supabase),
-  };
+  try {
+    return {
+      announcements: await fetchAnnouncementsServer(supabase),
+    };
+  } catch {
+    // Duyuru kaynağındaki geçici hata ana sayfanın üretimini durdurmamalı.
+    console.warn('[loadInitialHomeFeed] Duyurular yüklenemedi.');
+    return { announcements: [] };
+  }
 }

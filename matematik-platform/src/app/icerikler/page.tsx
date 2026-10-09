@@ -24,6 +24,7 @@ export default async function IceriklerPage() {
   return (
     <ContentsPage
       initialDocuments={initialData.documents}
+      initialLoadSucceeded={initialData.isHydrated}
       initialGrade="all"
       initialTotalCount={initialData.count}
       initialType="all"

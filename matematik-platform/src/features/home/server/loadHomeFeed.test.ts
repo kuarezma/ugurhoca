@@ -84,4 +84,38 @@ describe('loadInitialHomeFeed', () => {
     vi.doUnmock('@/lib/env.server');
     vi.resetModules();
   });
+
+  it('veri kaynağı hata döndürürse ana sayfayı boş duyuru akışıyla üretir', async () => {
+    mockFrom.mockReturnValue({
+      select: () => ({
+        order: () => ({
+          limit: () => ({
+            abortSignal: () =>
+              Promise.resolve({ data: null, error: { code: '57014' } }),
+          }),
+        }),
+      }),
+    });
+    await expect(loadInitialHomeFeed()).resolves.toEqual({ announcements: [] });
+  });
+
+  it('veri kaynağı isteği reddederse ana sayfa üretimi devam eder', async () => {
+    mockFrom.mockReturnValue({
+      select: () => ({
+        order: () => ({
+          limit: () => ({
+            abortSignal: () => Promise.reject(new Error('Network failure')),
+          }),
+        }),
+      }),
+    });
+    const warning = vi.spyOn(console, 'warn').mockImplementation(() => {});
+    try {
+      await expect(loadInitialHomeFeed()).resolves.toEqual({
+        announcements: [],
+      });
+    } finally {
+      warning.mockRestore();
+    }
+  });
 });

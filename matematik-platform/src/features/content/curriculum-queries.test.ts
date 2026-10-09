@@ -11,12 +11,19 @@ vi.mock('@/lib/supabase/client', () => ({ supabase: { from: vi.fn() } }));
 function createQuery() {
   const query = {
     select: vi.fn(),
+    abortSignal: vi.fn(),
     in: vi.fn(),
     contains: vi.fn(),
     order: vi.fn(),
     range: vi.fn(),
   };
-  for (const method of ['select', 'in', 'contains', 'order'] as const)
+  for (const method of [
+    'select',
+    'abortSignal',
+    'in',
+    'contains',
+    'order',
+  ] as const)
     query[method].mockReturnValue(query);
   vi.mocked(supabase.from).mockReturnValue(query as never);
   return query;
