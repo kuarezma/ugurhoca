@@ -262,7 +262,14 @@ export default function ProgramsHubPage() {
   ];
 
   return (
-    <main className="page-surface programlar-page min-h-screen gradient-bg px-4 pb-[max(3rem,calc(env(safe-area-inset-bottom)+1.5rem))] pt-[calc(4.5rem+env(safe-area-inset-top))] sm:px-6 sm:pt-24">
+    <main className="page-surface programlar-page min-h-screen gradient-bg px-4 pb-[max(3rem,calc(env(safe-area-inset-bottom)+1.5rem))] pt-[calc(4.5rem+env(safe-area-inset-top))] sm:px-6 sm:pt-20 relative">
+      {/* Ambient Glow Mesh */}
+      <div className="pointer-events-none fixed inset-0 -z-10 overflow-hidden" aria-hidden="true">
+        <div className="absolute -top-32 -left-32 h-96 w-96 rounded-full bg-indigo-500/10 dark:bg-indigo-500/5 blur-3xl" />
+        <div className="absolute top-48 -right-32 h-96 w-96 rounded-full bg-purple-500/10 dark:bg-purple-500/5 blur-3xl" />
+        <div className="absolute bottom-10 left-1/3 h-96 w-96 rounded-full bg-cyan-500/10 dark:bg-cyan-500/5 blur-3xl" />
+      </div>
+
       <div className="mx-auto max-w-6xl">
         <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
           <Link
@@ -276,7 +283,7 @@ export default function ProgramsHubPage() {
           <button
             type="button"
             onClick={() => setIsFlashcardsOpen(true)}
-            className="inline-flex items-center gap-2 rounded-xl px-4 py-2 text-xs sm:text-sm font-bold transition hover:scale-[1.02] active:scale-[0.98] bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none"
+            className="inline-flex items-center gap-2 rounded-xl px-4 py-2 text-xs sm:text-sm font-bold transition hover:scale-[1.02] active:scale-[0.98] bg-emerald-500 hover:bg-emerald-600 text-white dark:bg-emerald-400 dark:hover:bg-emerald-300 dark:text-slate-950 shadow-md shadow-emerald-500/20 active:translate-y-0.5"
           >
             <BookOpen className="h-4 w-4" />
             Formül & Bilgi Kartları
@@ -286,30 +293,30 @@ export default function ProgramsHubPage() {
         <motion.section
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
-          className="rounded-3xl border border-default bg-surface-1 p-6 sm:p-8 shadow-sm"
+          className="rounded-3xl border border-slate-200/90 dark:border-white/10 bg-white/95 dark:bg-slate-900/90 p-6 sm:p-8 shadow-xl backdrop-blur-xl relative overflow-hidden"
         >
           <div className="flex items-start justify-between gap-4">
             <div>
-              <div className="mb-3 inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-indigo-700 to-purple-700 px-3 py-1 text-xs font-bold uppercase tracking-[0.18em] text-white dark:text-white">
-                <Sparkles className="h-3.5 w-3.5" />
-                Programlar Merkezi
+              <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-indigo-500/30 bg-indigo-50/80 dark:bg-indigo-950/40 px-3.5 py-1 text-xs font-bold text-indigo-700 dark:text-indigo-300 backdrop-blur-md shadow-xs">
+                <Sparkles className="h-3.5 w-3.5 text-indigo-600 dark:text-indigo-400" />
+                <span>Akıllı Rehberlik & Tercih Laboratuvarı</span>
               </div>
-              <h1 className="text-2xl font-black sm:text-4xl text-primary">
-                Hedefine Göre Akıllı Puan ve Tercih Sihirbazları
+              <h1 className="text-3xl sm:text-5xl font-black text-primary font-display mb-2">
+                Hedefine Göre Akıllı Puan & Tercih Sihirbazları
               </h1>
-              <p className="mt-3 text-sm sm:text-base text-secondary">
+              <p className="mt-3 text-sm sm:text-base text-secondary max-w-2xl leading-relaxed">
                 LGS ve YKS için puanını hesapla, sonra hedef listeni oluştur.
                 Sonuçlar kaydedilmez; tamamen anlık hesaplama ve rehberlik
                 sunar.
               </p>
             </div>
 
-            <div className="hidden rounded-2xl border border-default bg-surface-2 p-3 sm:block">
+            <div className="hidden rounded-2xl border border-slate-200/90 dark:border-white/10 bg-surface-2 p-3 sm:block shadow-xs">
               <Calculator className="h-8 w-8 text-accent-fg" />
             </div>
           </div>
 
-          <div className="mt-6 grid gap-4 lg:grid-cols-2">
+          <div className="mt-8 grid gap-5 lg:grid-cols-2">
             {tools.map((tool, index) => (
               <motion.article
                 key={tool.id}
@@ -317,10 +324,10 @@ export default function ProgramsHubPage() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.1 + index * 0.08 }}
                 whileHover={{ y: -4 }}
-                className="tilt-on-hover group relative overflow-hidden rounded-3xl border border-default bg-surface-1 p-5 sm:p-6 shadow-sm hover:bg-surface-2 transition-colors"
+                className="tilt-on-hover group relative overflow-hidden rounded-3xl border border-slate-200/90 dark:border-white/10 bg-white/90 dark:bg-slate-900/80 p-5 sm:p-7 shadow-lg hover:shadow-2xl hover:border-indigo-500/40 backdrop-blur-md transition-all duration-300"
               >
                 <div
-                  className={`absolute inset-x-0 top-0 h-1.5 bg-gradient-to-r ${tool.gradient}`}
+                  className={`absolute inset-x-0 top-0 h-1 bg-gradient-to-r ${tool.gradient}`}
                 />
                 <div
                   className={`absolute -right-10 -top-10 h-28 w-28 rounded-full bg-gradient-to-br ${tool.gradient} opacity-20 blur-3xl transition-opacity duration-500 group-hover:opacity-40`}
@@ -329,14 +336,14 @@ export default function ProgramsHubPage() {
                 <div className="relative">
                   <div className="mb-4 flex items-start justify-between gap-3">
                     <div
-                      className={`inline-flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br ${tool.gradient} shadow-lg`}
+                      className={`inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br ${tool.gradient} shadow-lg text-white group-hover:scale-105 transition-transform`}
                     >
                       <tool.icon className="h-6 w-6 text-white dark:text-white" />
                     </div>
                     <Target className="h-5 w-5 text-secondary" />
                   </div>
 
-                  <h2 className="text-lg font-black sm:text-xl text-primary">
+                  <h2 className="text-lg font-bold sm:text-xl text-primary group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
                     {tool.title}
                   </h2>
                   <p className="mt-2 text-sm text-secondary">
@@ -361,7 +368,7 @@ export default function ProgramsHubPage() {
                     <button
                       type="button"
                       onClick={tool.onClick}
-                      className="mt-5 inline-flex items-center gap-2 rounded-xl px-4 py-2 text-sm font-bold transition hover:scale-[1.02] focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-slate-900 bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none"
+                      className="mt-6 inline-flex items-center gap-2 rounded-xl px-5 py-2.5 text-sm font-bold transition hover:scale-[1.02] bg-emerald-500 hover:bg-emerald-600 text-white dark:bg-emerald-400 dark:hover:bg-emerald-300 dark:text-slate-950 shadow-md shadow-emerald-500/20 active:translate-y-0.5"
                       aria-label={`${tool.title} aracını aç`}
                     >
                       {tool.ctaLabel || 'Aracı Aç'}
@@ -370,7 +377,7 @@ export default function ProgramsHubPage() {
                   ) : (
                     <Link
                       href={tool.href || '#'}
-                      className="mt-5 inline-flex items-center gap-2 rounded-xl px-4 py-2 text-sm font-bold transition hover:scale-[1.02] focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-slate-900 bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none"
+                      className="mt-6 inline-flex items-center gap-2 rounded-xl px-5 py-2.5 text-sm font-bold transition hover:scale-[1.02] bg-emerald-500 hover:bg-emerald-600 text-white dark:bg-emerald-400 dark:hover:bg-emerald-300 dark:text-slate-950 shadow-md shadow-emerald-500/20 active:translate-y-0.5"
                       aria-label={`${tool.title} sihirbazını aç`}
                     >
                       {tool.ctaLabel || 'Sihirbazı Aç'}

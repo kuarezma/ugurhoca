@@ -1,7 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { Star, Zap } from 'lucide-react';
+import { ArrowRight, Star, Zap } from 'lucide-react';
 import { memo, type KeyboardEvent } from 'react';
 import type { GameDefinition } from '@/features/games/types';
 
@@ -26,10 +26,10 @@ function GameCardInner({ game, onClick }: GameCardProps) {
       onClick={onClick}
       onKeyDown={handleKeyDown}
       aria-label={`${game.title} oyununu oyna`}
-      className="tilt-on-hover group relative flex w-full flex-col overflow-hidden rounded-3xl border border-default bg-surface-1 text-left transition-all hover:shadow-lg focus:outline-none focus-visible:ring-4 focus-visible:ring-brand-primary/50"
+      className="tilt-on-hover group relative flex w-full flex-col overflow-hidden rounded-3xl border border-slate-200/90 dark:border-white/10 bg-white/95 dark:bg-slate-900/90 text-left transition-all duration-300 shadow-xl hover:shadow-2xl hover:border-emerald-500/50 backdrop-blur-xl focus:outline-none focus-visible:ring-4 focus-visible:ring-brand-primary/50"
     >
       <div
-        className={`relative h-40 overflow-hidden bg-gradient-to-br ${game.color}`}
+        className={`relative h-44 overflow-hidden bg-gradient-to-br ${game.color}`}
       >
         <div className="absolute inset-0 bg-black/20" />
         <motion.div
@@ -44,29 +44,37 @@ function GameCardInner({ game, onClick }: GameCardProps) {
           transition={{ duration: 3, repeat: Infinity }}
         />
         <div className="absolute inset-0 flex items-center justify-center">
-          <game.icon className="h-20 w-20 text-white/90" aria-hidden="true" />
+          <game.icon className="h-20 w-20 text-white/95 drop-shadow-md group-hover:scale-110 transition-transform duration-300" aria-hidden="true" />
         </div>
-        <div className="absolute right-3 top-3 rounded-full bg-black/40 px-3 py-1 text-sm font-semibold text-white dark:text-white backdrop-blur-sm">
+        <div className="absolute right-3.5 top-3.5 rounded-full bg-black/50 px-3 py-1 text-xs font-bold text-white backdrop-blur-md shadow-xs border border-white/20">
           {game.grade}. Sınıf
         </div>
       </div>
-      <div className="p-5">
-        <h3 className="mb-2 font-display text-xl font-bold text-primary">
-          {game.title}
-        </h3>
-        <p className="mb-4 text-sm text-secondary">{game.description}</p>
-        <div className="flex items-center gap-4 text-sm text-secondary">
-          <span className="flex items-center gap-1">
-            <Star
-              className="h-4 w-4 fill-current text-yellow-400"
-              aria-hidden="true"
-            />
-            <span>{game.rating}</span>
-            <span className="sr-only">yıldız</span>
-          </span>
-          <span className="flex items-center gap-1">
-            <Zap className="h-4 w-4 text-orange-400" aria-hidden="true" />
-            <span>{game.difficulty}</span>
+      <div className="p-5 sm:p-6 flex flex-col justify-between flex-1 w-full">
+        <div>
+          <h3 className="mb-2 font-display text-xl font-bold text-primary group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">
+            {game.title}
+          </h3>
+          <p className="mb-4 text-xs sm:text-sm text-secondary line-clamp-2 leading-relaxed">{game.description}</p>
+        </div>
+        <div className="flex items-center justify-between pt-3 border-t border-slate-100 dark:border-slate-800 text-xs w-full">
+          <div className="flex items-center gap-3 text-secondary font-medium">
+            <span className="flex items-center gap-1 font-bold text-slate-800 dark:text-slate-200">
+              <Star
+                className="h-3.5 w-3.5 fill-amber-400 text-amber-400"
+                aria-hidden="true"
+              />
+              <span>{game.rating}</span>
+            </span>
+            <span>•</span>
+            <span className="flex items-center gap-1">
+              <Zap className="h-3.5 w-3.5 text-orange-400" aria-hidden="true" />
+              <span>{game.difficulty}</span>
+            </span>
+          </div>
+
+          <span className="inline-flex items-center gap-1 font-bold text-emerald-600 dark:text-emerald-400 group-hover:translate-x-1 transition-transform">
+            Oyna <ArrowRight className="h-3.5 w-3.5" />
           </span>
         </div>
       </div>

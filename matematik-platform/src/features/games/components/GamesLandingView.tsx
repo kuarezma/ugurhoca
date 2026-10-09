@@ -3,7 +3,7 @@
 import Image from 'next/image';
 
 import { motion } from 'framer-motion';
-import { ArrowLeft, Trophy, Volume2, VolumeX } from 'lucide-react';
+import { ArrowLeft, Trophy, Volume2, VolumeX, Sparkles } from 'lucide-react';
 import Link from 'next/link';
 import { useGameSoundMute } from '@/features/games/hooks/useGameSoundMute';
 import type { AppUser } from '@/types';
@@ -37,7 +37,14 @@ export function GamesLandingView({
   const { isMuted, toggleMute } = useGameSoundMute();
 
   return (
-    <main className="oyunlar-page page-surface min-h-screen pb-20">
+    <main className="oyunlar-page page-surface min-h-screen pb-20 relative">
+      {/* Ambient Glow Mesh */}
+      <div className="pointer-events-none fixed inset-0 -z-10 overflow-hidden" aria-hidden="true">
+        <div className="absolute -top-32 -left-32 h-96 w-96 rounded-full bg-emerald-500/10 dark:bg-emerald-500/5 blur-3xl" />
+        <div className="absolute top-48 -right-32 h-96 w-96 rounded-full bg-cyan-500/10 dark:bg-cyan-500/5 blur-3xl" />
+        <div className="absolute bottom-10 left-1/3 h-96 w-96 rounded-full bg-purple-500/10 dark:bg-purple-500/5 blur-3xl" />
+      </div>
+
       <FloatingParticles />
 
       <nav className="fixed top-0 left-0 right-0 z-50 border-b border-default bg-surface-1/90 backdrop-blur-xl py-3 sm:py-4 px-4 sm:px-6 pt-[max(0.75rem,env(safe-area-inset-top))] pl-[max(1rem,env(safe-area-inset-left))] pr-[max(1rem,env(safe-area-inset-right))]">
@@ -94,12 +101,18 @@ export function GamesLandingView({
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="mb-8 text-center"
+            className="mb-10 text-center max-w-2xl mx-auto"
           >
-            <h1 className="text-4xl font-bold text-primary mb-2">
-              Eğlenceli Oyunlar
+            <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-emerald-500/30 bg-emerald-50/80 dark:bg-emerald-950/40 px-3.5 py-1 text-xs font-bold text-emerald-700 dark:text-emerald-300 backdrop-blur-md shadow-xs">
+              <Sparkles className="h-3.5 w-3.5 text-emerald-600 dark:text-emerald-400" />
+              <span>19 Eğlenceli Matematik Oyunu · Puan Topla & Yarış</span>
+            </div>
+            <h1 className="text-3xl sm:text-5xl font-black text-primary font-display mb-2">
+              Matematik Oyun Dünyası
             </h1>
-            <p className="text-secondary">Oyna, eğlen ve matematik öğren!</p>
+            <p className="text-sm sm:text-base text-secondary">
+              Hızlı işlem, geometri dedektifliği ve zihin açıcı strateji oyunlarıyla matematiği eğlenerek keşfet.
+            </p>
           </motion.div>
 
           <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">

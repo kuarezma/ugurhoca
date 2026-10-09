@@ -110,14 +110,14 @@ function ContentCard({
         whileHover={{ scale: 1.02 }}
         whileTap={{ scale: 0.98 }}
         onClick={() => onPreview(content)}
-        className={`col-span-1 flex w-full items-center justify-center gap-2 rounded-2xl border border-default dark:border-slate-400 bg-surface-2/80 hover:bg-surface-3 px-4 py-2.5 sm:py-3 text-xs sm:text-sm font-semibold text-primary transition-all duration-200 backdrop-blur-md shadow-xs hover:border-purple-500/40 sm:flex-1 ${
+        className={`col-span-1 flex w-full items-center justify-center gap-2 rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white/95 dark:bg-slate-900/90 hover:bg-slate-100 dark:hover:bg-slate-800 px-4 py-2.5 sm:py-3 text-xs sm:text-sm font-bold text-primary transition-all duration-200 backdrop-blur-md shadow-xs hover:border-purple-500/40 hover:-translate-y-0.5 sm:flex-1 ${
           !content.file_url ? 'col-span-2' : ''
         } ${viewMode === 'grid' ? 'sm:min-w-[130px]' : 'sm:min-w-[160px]'}`}
       >
         {content.type === 'ders-videolari' ? (
-          <Play className="w-4 h-4 text-purple-500" />
+          <Play className="w-4 h-4 text-purple-600 dark:text-purple-400" />
         ) : (
-          <Eye className="w-4 h-4 text-purple-500" />
+          <Eye className="w-4 h-4 text-purple-600 dark:text-purple-400" />
         )}
         {content.type === 'ders-videolari' ? 'İzle' : 'Önizle'}
       </motion.button>
@@ -126,7 +126,7 @@ function ContentCard({
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
           onClick={() => onDownload(content)}
-          className="col-span-1 flex w-full items-center justify-center gap-2 rounded-2xl px-4 py-2.5 sm:py-3 text-xs sm:text-sm font-semibold transition-all sm:w-auto sm:px-5 bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none"
+          className="col-span-1 flex w-full items-center justify-center gap-2 rounded-2xl px-4 py-2.5 sm:py-3 text-xs sm:text-sm font-bold transition-all sm:w-auto sm:px-5 bg-emerald-500 hover:bg-emerald-600 text-white dark:text-slate-950 dark:bg-emerald-400 dark:hover:bg-emerald-300 shadow-md shadow-emerald-500/20 hover:-translate-y-0.5 active:translate-y-0.5"
         >
           <Download className="w-4 h-4" /> İndir
         </motion.button>

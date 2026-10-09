@@ -31,6 +31,7 @@ import {
   FileSpreadsheet,
   MessageCircle,
   HardDrive,
+  Sparkles,
 } from 'lucide-react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import dynamic from 'next/dynamic';
@@ -1762,7 +1763,14 @@ export default function TestsPage({
   }
 
   return (
-    <main className="testler-page min-h-screen gradient-bg pb-20">
+    <main className="testler-page min-h-screen gradient-bg pb-20 relative">
+      {/* Ambient Glow Mesh */}
+      <div className="pointer-events-none fixed inset-0 -z-10 overflow-hidden" aria-hidden="true">
+        <div className="absolute -top-32 -left-32 h-96 w-96 rounded-full bg-indigo-500/10 dark:bg-indigo-500/5 blur-3xl" />
+        <div className="absolute top-48 -right-32 h-96 w-96 rounded-full bg-rose-500/10 dark:bg-rose-500/5 blur-3xl" />
+        <div className="absolute bottom-10 left-1/3 h-96 w-96 rounded-full bg-amber-500/10 dark:bg-amber-500/5 blur-3xl" />
+      </div>
+
       <nav className="fixed top-0 left-0 right-0 z-50 glass py-3 sm:py-4 px-4 sm:px-6 pt-[max(0.75rem,env(safe-area-inset-top))] pl-[max(1rem,env(safe-area-inset-left))] pr-[max(1rem,env(safe-area-inset-right))]">
         <div className="container mx-auto flex justify-between items-center gap-3">
           <Link href="/" className="flex items-center gap-2.5 min-w-0">
@@ -1799,11 +1807,15 @@ export default function TestsPage({
           )}
           <div className="mb-8 flex flex-col sm:flex-row sm:items-center justify-between gap-4 animate-fade-up">
             <div>
-              <h1 className="text-3xl sm:text-4xl font-bold text-slate-900 dark:text-white mb-2">
-                Online Testler
+              <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-indigo-500/30 bg-indigo-50/80 dark:bg-indigo-950/40 px-3.5 py-1 text-xs font-bold text-indigo-700 dark:text-indigo-300 backdrop-blur-md shadow-xs">
+                <Sparkles className="h-3.5 w-3.5 text-indigo-600 dark:text-indigo-400" />
+                <span>MEB & LGS Kazanım Testleri · Anlık Analiz & Telafi</span>
+              </div>
+              <h1 className="text-3xl sm:text-5xl font-black tracking-tight text-primary font-display mb-2">
+                Online Testler & Denemeler
               </h1>
-              <p className="text-slate-600 dark:text-slate-400">
-                Bilginizi test edin ve kendinizi geliştirin
+              <p className="text-sm sm:text-base text-secondary">
+                Konu testleri ve denemelerle kendini dene; çözümlerle pekiştir.
               </p>
             </div>
             <div className="flex flex-wrap items-center gap-2 self-start sm:self-auto">

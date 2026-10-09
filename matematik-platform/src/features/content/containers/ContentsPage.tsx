@@ -14,6 +14,7 @@ import {
   FolderOpen,
   Layers3,
   Plus,
+  Sparkles,
 } from 'lucide-react';
 import { useToast } from '@/components/Toast';
 import { getErrorMessage } from '@/lib/error-utils';
@@ -1431,7 +1432,14 @@ function ContentsPageInner({
   const profileHref = user?.isAdmin ? '/admin' : user ? '/profil' : '/giris';
 
   return (
-    <main className="page-surface icerikler-page min-h-screen gradient-bg pb-20">
+    <main className="page-surface icerikler-page min-h-screen gradient-bg pb-20 relative">
+      {/* Ambient Glow Mesh */}
+      <div className="pointer-events-none fixed inset-0 -z-10 overflow-hidden" aria-hidden="true">
+        <div className="absolute -top-32 -left-32 h-96 w-96 rounded-full bg-cyan-500/10 dark:bg-cyan-500/5 blur-3xl" />
+        <div className="absolute top-48 -right-32 h-96 w-96 rounded-full bg-emerald-500/10 dark:bg-emerald-500/5 blur-3xl" />
+        <div className="absolute bottom-10 left-1/3 h-96 w-96 rounded-full bg-purple-500/10 dark:bg-purple-500/5 blur-3xl" />
+      </div>
+
       <Suspense fallback={null}>
         <ContentUrlFilters onChange={setSearchParams} />
       </Suspense>
@@ -1470,7 +1478,11 @@ function ContentsPageInner({
             className="mb-8 flex flex-col md:flex-row justify-between items-start md:items-center gap-4"
           >
             <div>
-              <h1 className="text-2xl sm:text-4xl font-bold tracking-tight text-primary mb-2">
+              <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-sky-500/30 bg-sky-50/80 dark:bg-sky-950/40 px-3.5 py-1 text-xs font-bold text-sky-700 dark:text-sky-300 backdrop-blur-md shadow-xs">
+                <Sparkles className="h-3.5 w-3.5 text-sky-600 dark:text-sky-400" />
+                <span>MEB 2026-2027 Müfredat Arşivi · %100 Ücretsiz & Çözümlü</span>
+              </div>
+              <h1 className="text-3xl sm:text-5xl font-black tracking-tight text-primary font-display mb-2">
                 {getContentPageTitle(selectedType)}
               </h1>
               <p className="text-sm sm:text-base text-secondary max-w-2xl leading-relaxed">

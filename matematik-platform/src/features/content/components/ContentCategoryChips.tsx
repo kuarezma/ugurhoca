@@ -8,26 +8,25 @@ type ContentCategoryChipsProps = {
   isLight?: boolean;
 };
 
-const GRADE_OPTIONS = [
+const GRADE_OPTIONS: { id: string; label: string; dot?: string }[] = [
   { id: 'all', label: 'Tüm Sınıflar' },
-  { id: '5', label: '5. Sınıf' },
-  { id: '6', label: '6. Sınıf' },
-  { id: '7', label: '7. Sınıf' },
-  { id: '8', label: '8. Sınıf (LGS)' },
-  { id: '9', label: '9. Sınıf' },
-  { id: '10', label: '10. Sınıf' },
-  { id: '11', label: '11. Sınıf' },
-  { id: '12', label: '12. Sınıf (YKS)' },
-  { id: 'Mezun', label: 'Mezun' },
+  { id: '5', label: '5. Sınıf', dot: 'bg-cyan-500' },
+  { id: '6', label: '6. Sınıf', dot: 'bg-amber-500' },
+  { id: '7', label: '7. Sınıf', dot: 'bg-purple-500' },
+  { id: '8', label: '8. Sınıf (LGS)', dot: 'bg-rose-500' },
+  { id: '9', label: '9. Sınıf', dot: 'bg-blue-500' },
+  { id: '10', label: '10. Sınıf', dot: 'bg-emerald-500' },
+  { id: '11', label: '11. Sınıf', dot: 'bg-indigo-500' },
+  { id: '12', label: '12. Sınıf (YKS)', dot: 'bg-orange-500' },
+  { id: 'Mezun', label: 'Mezun', dot: 'bg-slate-400' },
 ];
 
-
-const TYPE_OPTIONS = [
+const TYPE_OPTIONS: { id: string; label: string; emoji?: string }[] = [
   { id: 'all', label: 'Tüm Türler' },
-  { id: 'yaprak-test', label: 'Yaprak Testler' },
-  { id: 'ders-notu', label: 'Ders Notları' },
-  { id: 'deneme-sinavi', label: 'Denemeler' },
-  { id: 'video', label: 'Videolar' },
+  { id: 'yaprak-test', label: 'Yaprak Testler', emoji: '📄' },
+  { id: 'ders-notu', label: 'Ders Notları', emoji: '📚' },
+  { id: 'deneme-sinavi', label: 'Denemeler', emoji: '⏱️' },
+  { id: 'video', label: 'Videolar', emoji: '🎬' },
 ];
 
 export function ContentCategoryChips({
@@ -55,13 +54,20 @@ export function ContentCategoryChips({
                 key={g.id}
                 type="button"
                 onClick={() => onSelectGrade(g.id)}
-                className={`shrink-0 rounded-full px-4 py-2 text-xs font-semibold transition-all duration-200 ${
+                className={`group shrink-0 inline-flex items-center gap-2 rounded-full px-3.5 py-1.5 text-xs font-bold transition-all duration-200 active:scale-95 ${
                   isSelected
-                    ? 'shadow-lg shadow-brand-primary/25 border-0 scale-[1.02] bg-brand-primary text-slate-950 dark:text-slate-950'
-                    : 'border border-default dark:border-slate-400 bg-surface-2/70 text-secondary hover:bg-surface-3 hover:text-primary hover:border-slate-600'
+                    ? 'bg-slate-900 text-white dark:bg-white dark:text-slate-900 shadow-md scale-[1.02]'
+                    : 'border border-slate-200/90 dark:border-slate-800 bg-white/90 dark:bg-slate-900/70 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white hover:-translate-y-0.5 shadow-xs'
                 }`}
               >
-                {g.label}
+                {g.dot && (
+                  <span
+                    className={`h-2 w-2 rounded-full ${g.dot} ${
+                      isSelected ? 'ring-2 ring-white/50 dark:ring-slate-900/50' : 'opacity-80 group-hover:opacity-100'
+                    }`}
+                  />
+                )}
+                <span>{g.label}</span>
               </button>
             );
           })}
@@ -84,13 +90,14 @@ export function ContentCategoryChips({
                 key={t.id}
                 type="button"
                 onClick={() => onSelectType(t.id)}
-                className={`shrink-0 rounded-full px-4 py-2 text-xs font-semibold transition-all duration-200 ${
+                className={`group shrink-0 inline-flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-xs font-bold transition-all duration-200 active:scale-95 ${
                   isSelected
-                    ? 'shadow-lg shadow-brand-primary/25 border-0 scale-[1.02] bg-brand-primary text-slate-950 dark:text-slate-950'
-                    : 'border border-default dark:border-slate-400 bg-surface-2/70 text-secondary hover:bg-surface-3 hover:text-primary hover:border-slate-600'
+                    ? 'bg-slate-900 text-white dark:bg-white dark:text-slate-900 shadow-md scale-[1.02]'
+                    : 'border border-slate-200/90 dark:border-slate-800 bg-white/90 dark:bg-slate-900/70 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white hover:-translate-y-0.5 shadow-xs'
                 }`}
               >
-                {t.label}
+                {t.emoji && <span className="text-xs">{t.emoji}</span>}
+                <span>{t.label}</span>
               </button>
             );
           })}
