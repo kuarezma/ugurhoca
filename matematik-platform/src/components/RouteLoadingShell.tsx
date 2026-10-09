@@ -1,6 +1,6 @@
 export default function RouteLoadingShell() {
   return (
-    <main className="relative min-h-screen bg-[var(--bg)] transition-colors duration-200">
+    <main className="relative min-h-screen bg-[var(--bg)] transition-colors duration-200 [animation:fade-in_0.25s_ease-out_150ms_both]">
       <div className="pointer-events-none fixed inset-0 z-0 overflow-hidden opacity-30">
         <div className="absolute left-[10%] top-[15%] h-20 w-20 rounded-full bg-indigo-500/15 blur-xl" />
         <div className="absolute right-[12%] top-[40%] h-16 w-16 rounded-full bg-purple-500/10 blur-xl" />
