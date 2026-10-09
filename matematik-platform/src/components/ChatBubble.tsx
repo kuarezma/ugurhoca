@@ -871,20 +871,16 @@ export default function ChatBubble() {
         aria-haspopup="dialog"
         aria-expanded={open}
       >
-        {!currentUser?.isAdmin ? (
-          <div className="relative flex h-full w-full items-center justify-center">
-            <Image
-              src="/ugur.jpeg"
-              alt="Uğur Hoca"
-              width={48}
-              height={48}
-              className="h-11 w-11 sm:h-12 sm:w-12 rounded-full object-cover border-2 border-white/90 shadow-sm"
-            />
-            <span className="absolute bottom-1 right-1 h-3.5 w-3.5 rounded-full border-2 border-slate-900 bg-emerald-500" />
-          </div>
-        ) : (
-          <MessageCircle className="h-6 w-6 sm:h-7 sm:w-7" strokeWidth={2.2} />
-        )}
+        <div className="relative flex h-full w-full items-center justify-center">
+          <Image
+            src="/ugur.jpeg"
+            alt="Uğur Hoca"
+            width={48}
+            height={48}
+            className="h-11 w-11 sm:h-12 sm:w-12 rounded-full object-cover border-2 border-[#58cc02] shadow-sm ring-2 ring-[#d7ffb8]"
+          />
+          <span className="absolute bottom-1 right-1 h-3.5 w-3.5 rounded-full border-2 border-slate-900 bg-emerald-500" />
+        </div>
 
         {unreadCountBadge > 0 && (
           <span className="absolute -right-1 -top-1 flex h-5 min-w-[1.25rem] animate-pulse items-center justify-center rounded-full bg-red-500 px-1 text-[11px] font-bold shadow-md text-slate-950 dark:text-slate-950">
@@ -934,7 +930,7 @@ export default function ChatBubble() {
                 </div>
 
                 <div className="my-auto space-y-4">
-                  <div className="relative mx-auto h-20 w-20 overflow-hidden rounded-full border-2 border-purple-500 p-0.5 shadow-lg">
+                  <div className="relative mx-auto h-20 w-20 overflow-hidden rounded-full border-2 border-[#58cc02] p-0.5 shadow-lg shadow-emerald-500/20 ring-4 ring-[#d7ffb8]">
                     <Image
                       src="/ugur.jpeg"
                       alt="Uğur Hoca"
