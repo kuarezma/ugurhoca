@@ -25,6 +25,7 @@ describe('Navbar Stores Singleton & Caching', () => {
     vi.clearAllMocks();
     delete (globalThis as Record<string, unknown>).__ugurhoca_notification_stores__;
     delete (globalThis as Record<string, unknown>).__ugurhoca_message_stores__;
+    delete (globalThis as Record<string, unknown>).__ugurhoca_navbar_rows__;
 
     const dummyChannel = {
       on: vi.fn().mockReturnThis(),
@@ -60,6 +61,19 @@ describe('Navbar Stores Singleton & Caching', () => {
     expect(mockChannel).toHaveBeenCalledTimes(1);
     // Notification select query should only be called once, not twice
     expect(mockFrom).toHaveBeenCalledTimes(1);
+  });
+
+  it('zil ve mesaj hook\'ları birlikte açıldığında tek bildirim sorgusu atar', async () => {
+    const { result: bell } = renderHook(() => useNavbarNotifications('user-test-3'));
+    const { result: messages } = renderHook(() => useNavbarMessages('user-test-3'));
+
+    await waitFor(() => {
+      expect(bell.current.loading).toBe(false);
+      expect(messages.current.loading).toBe(false);
+    });
+
+    expect(mockFrom).toHaveBeenCalledTimes(1);
+    expect(mockLimit).toHaveBeenCalledWith(80);
   });
 
   it('shares singleton store between multiple useNavbarMessages instances', async () => {

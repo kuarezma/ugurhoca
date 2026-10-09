@@ -7,6 +7,7 @@ import {
   getStudentMessagesChannelName,
 } from '@/lib/realtime/studentMessagesChannel';
 import type { DashboardNotification } from '@/types/dashboard';
+import { loadNavbarRows } from '@/features/home/hooks/navbarRows';
 
 const MESSAGE_LIMIT = 80;
 const MESSAGE_TYPES = ['admin-message', 'sent-message'] as const;
@@ -16,6 +17,17 @@ const sortAsc = (items: DashboardNotification[]) =>
     (left, right) =>
       new Date(left.created_at).getTime() -
       new Date(right.created_at).getTime(),
+  );
+
+// `rows` en yeniden eskiye sıralı tüm bildirimler; mesaj türleri süzülüp
+// en yeni MESSAGE_LIMIT tanesi alınır.
+const selectMessages = (rows: DashboardNotification[]) =>
+  sortAsc(
+    rows
+      .filter((row) =>
+        (MESSAGE_TYPES as readonly string[]).includes(row.type),
+      )
+      .slice(0, MESSAGE_LIMIT),
   );
 
 const parseBroadcastPayload = (
@@ -162,15 +174,9 @@ export const useNavbarMessages = (userId: string | null | undefined) => {
       store.loading = store.messages.length === 0;
       store.fetchPromise = (async () => {
         try {
-          const { data } = await supabase
-            .from('notifications')
-            .select('*')
-            .eq('user_id', userId)
-            .in('type', MESSAGE_TYPES as unknown as string[])
-            .order('created_at', { ascending: false })
-            .limit(MESSAGE_LIMIT);
+          const rows = await loadNavbarRows(userId);
 
-          store.messages = sortAsc((data ?? []) as DashboardNotification[]);
+          store.messages = selectMessages(rows);
           store.lastFetchedAt = Date.now();
         } finally {
           store.loading = false;
@@ -212,15 +218,9 @@ export const useNavbarMessages = (userId: string | null | undefined) => {
     store.loading = true;
     notifyMessageStoreListeners(store);
     try {
-      const { data } = await supabase
-        .from('notifications')
-        .select('*')
-        .eq('user_id', userId)
-        .in('type', MESSAGE_TYPES as unknown as string[])
-        .order('created_at', { ascending: false })
-        .limit(MESSAGE_LIMIT);
+      const rows = await loadNavbarRows(userId, true);
 
-      store.messages = sortAsc((data ?? []) as DashboardNotification[]);
+      store.messages = selectMessages(rows);
       store.lastFetchedAt = Date.now();
     } finally {
       store.loading = false;

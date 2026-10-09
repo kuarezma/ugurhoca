@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabase/client';
 import type { DashboardNotification } from '@/types/dashboard';
+import { loadNavbarRows } from '@/features/home/hooks/navbarRows';
 
 const NOTIFICATION_LIMIT = 20;
 
@@ -131,14 +132,9 @@ export const useNavbarNotifications = (userId: string | null | undefined) => {
       store.loading = store.notifications.length === 0;
       store.fetchPromise = (async () => {
         try {
-          const { data } = await supabase
-            .from('notifications')
-            .select('*')
-            .eq('user_id', userId)
-            .order('created_at', { ascending: false })
-            .limit(NOTIFICATION_LIMIT);
+          const rows = await loadNavbarRows(userId);
 
-          store.notifications = sortDesc((data ?? []) as DashboardNotification[]);
+          store.notifications = sortDesc(rows.slice(0, NOTIFICATION_LIMIT));
           store.lastFetchedAt = Date.now();
         } finally {
           store.loading = false;
