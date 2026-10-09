@@ -178,43 +178,6 @@ const WORKSHEET_GRADE_CARD_STYLES: Record<
   },
 };
 
-const WORKSHEET_UNIT_LABELS: Record<number, Record<string, string>> = {
-  5: {
-    'MAT.5.1': 'Sayılar ve Nicelikler',
-    'MAT.5.2': 'İşlemlerle Cebirsel Düşünme',
-    'MAT.5.3': 'Geometrik Şekiller',
-    'MAT.5.4': 'Geometrik Nicelikler',
-    'MAT.5.5': 'İstatistiksel Araştırma Süreci',
-    'MAT.5.6': 'Veriden Olasılığa',
-  },
-  6: {
-    'MAT.6.1': 'Sayılar ve Nicelikler',
-    'MAT.6.2': 'İşlemlerle Cebirsel Düşünme ve Değişimler',
-    'MAT.6.3': 'Geometrik Şekiller',
-    'MAT.6.4': 'Geometrik Nicelikler',
-    'MAT.6.5': 'İstatistiksel Araştırma Süreci',
-    'MAT.6.6': 'Veriden Olasılığa',
-  },
-  7: {
-    'M.7.1': 'Sayılar ve İşlemler',
-    'M.7.2': 'Cebir',
-    'M.7.3': 'Geometri ve Ölçme',
-    'M.7.4': 'Veri İşleme',
-  },
-  8: {
-    'M.8.1': 'Sayılar ve İşlemler',
-    'M.8.2': 'Cebir',
-    'M.8.3': 'Geometri ve Ölçme',
-    'M.8.4': 'Veri Analizi',
-    'M.8.5': 'Olasılık',
-  },
-};
-
-const getWorksheetUnitPrefix = (code: string) => {
-  const match = code.match(/^([A-Z]+(?:\.[0-9]+){2})\./i);
-  return match?.[1] || null;
-};
-
 const splitWorksheetOutcomeHeading = (outcome: string) => {
   const match = outcome.match(/^([A-Z]+\.[0-9]+(?:\.[0-9]+)+\.?)\s*(.*)$/i);
 
@@ -333,7 +296,6 @@ function ContentsPageInner({
   const [selectedWorksheetOutcome, setSelectedWorksheetOutcome] = useState<
     string | null
   >(null);
-  const [onlyWithTests, setOnlyWithTests] = useState(false);
   const [hasMore, setHasMore] = useState(
     initialDocuments.length < initialTotalCount,
   );
@@ -1376,67 +1338,17 @@ function ContentsPageInner({
       return left.outcome.localeCompare(right.outcome, 'tr');
     });
 
-  const totalOutcomesCount = worksheetOutcomeEntries.length;
-  const outcomesWithTestsCount = worksheetOutcomeEntries.filter(
-    (e) => e.count > 0,
-  ).length;
-
-  const displayedWorksheetOutcomeEntries = onlyWithTests
-    ? worksheetOutcomeEntries.filter((entry) => entry.count > 0)
-    : worksheetOutcomeEntries;
-
-  const worksheetOutcomeGroups = displayedWorksheetOutcomeEntries.reduce<
-    Array<{
-      entries: typeof worksheetOutcomeEntries;
-      key: string;
-      title: string;
-    }>
-  >((groups, entry) => {
-    const grade =
-      typeof selectedWorksheetGrade === 'number' ? selectedWorksheetGrade : null;
-    const prefix = entry.catalogItem
-      ? getWorksheetUnitPrefix(entry.catalogItem.code)
-      : null;
-    const title =
-      grade && prefix
-        ? WORKSHEET_UNIT_LABELS[grade]?.[prefix] || prefix
-        : 'Diğer Kazanımlar';
-    const key = prefix || 'other';
-
-    // Diğer Kazanımlar grubunda test yoksa arayüzü kirletme
-    if (key === 'other' && entry.count === 0) {
-      return groups;
-    }
-
-    const existingGroup = groups.find((group) => group.key === key);
-
-    if (existingGroup) {
-      existingGroup.entries.push(entry);
-      return groups;
-    }
-
-    groups.push({
-      entries: [entry],
-      key,
-      title,
-    });
-
-    return groups;
-  }, []);
-
   const filteredWorksheetTests = sortWorksheetDocuments(
     matchingWorksheetDocuments.filter((document) => {
-      if (!selectedWorksheetOutcome) {
-        return false;
-      }
+      if (selectedWorksheetOutcome) {
+        const docOutcome = resolveWorksheetOutcome({
+          ...document,
+          grade: document.grade || (typeof selectedWorksheetGrade === 'number' ? [selectedWorksheetGrade] : null),
+        });
 
-      const docOutcome = resolveWorksheetOutcome({
-        ...document,
-        grade: document.grade || (typeof selectedWorksheetGrade === 'number' ? [selectedWorksheetGrade] : null),
-      });
-
-      if (docOutcome !== selectedWorksheetOutcome) {
-        return false;
+        if (docOutcome !== selectedWorksheetOutcome) {
+          return false;
+        }
       }
 
       if (!searchTerm.trim() || curriculumWorksheetTopic) {
@@ -1450,19 +1362,15 @@ function ContentsPageInner({
   );
 
   const searchPlaceholder = isWorksheetBrowser
-    ? selectedWorksheetOutcome
-      ? 'Test ara...'
-      : selectedWorksheetGrade
-        ? 'Kazanım ara...'
-        : 'Sınıf düzeyi ara...'
+    ? selectedWorksheetGrade
+      ? 'Test veya içerik ara...'
+      : 'Sınıf düzeyi ara...'
     : 'İçerik ara...';
 
   const resultLabel = isWorksheetBrowser
-    ? selectedWorksheetOutcome
-      ? `${filteredWorksheetTests.length} test bulundu`
-      : selectedWorksheetGrade
-        ? `${worksheetOutcomeEntries.length} kazanım bulundu`
-        : `${filteredWorksheetGrades.length} sınıf düzeyi bulundu`
+    ? selectedWorksheetGrade
+      ? `${filteredWorksheetTests.length} içerik bulundu`
+      : `${filteredWorksheetGrades.length} sınıf düzeyi bulundu`
     : `${filteredContents.length} içerik bulundu`;
 
   const worksheetGradeLabel =
@@ -1731,218 +1639,144 @@ function ContentsPageInner({
                   </div>
                 ))}
               </div>
-            ) : !selectedWorksheetOutcome ? (
-              worksheetOutcomeEntries.length > 0 ? (
-                <div className="space-y-6">
-                  {/* Kazanım Hızlı Filtre Barı */}
-                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 rounded-2xl border border-default bg-surface-1 p-3.5 sm:p-4 shadow-xs">
-                    <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
-                      <span className="text-xs sm:text-sm font-bold text-secondary">
-                        Kazanım Görünümü:
-                      </span>
-                      <div className="flex items-center gap-1.5 bg-surface-2 p-1 rounded-xl border border-default">
-                        <button
-                          type="button"
-                          onClick={() => setOnlyWithTests(false)}
-                          className={`flex-1 sm:flex-initial px-3 py-1.5 rounded-lg text-xs font-bold transition-all text-center ${
-                            !onlyWithTests
-                              ? 'bg-brand-accent text-slate-900 shadow-xs'
-                              : 'text-secondary hover:text-primary'
-                          }`}
-                        >
-                          Tüm Müfredat ({totalOutcomesCount})
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => setOnlyWithTests(true)}
-                          className={`flex-1 sm:flex-initial px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1.5 text-center ${
-                            onlyWithTests
-                              ? 'bg-emerald-600 dark:bg-emerald-500 text-white shadow-xs'
-                              : 'text-secondary hover:text-primary'
-                          }`}
-                        >
-                          <Sparkles className="h-3.5 w-3.5 text-emerald-200 dark:text-emerald-100" />
-                          Testi Yayında Olanlar ({outcomesWithTestsCount})
-                        </button>
-                      </div>
-                    </div>
-                    <div className="text-xs font-semibold text-secondary">
-                      <span className="font-bold text-emerald-700 dark:text-emerald-400">{outcomesWithTestsCount}</span> kazanıma ait yaprak test hazır
-                    </div>
+            ) : (
+              <div className="space-y-6">
+                {/* Kazanım Hızlı Filtre Çipleri */}
+                {worksheetOutcomeEntries.length > 0 && (
+                  <div className="flex flex-wrap items-center gap-2 rounded-2xl border border-default bg-surface-1 p-3.5 sm:p-4 shadow-xs">
+                    <span className="text-xs sm:text-sm font-bold text-secondary mr-1">
+                      Kazanım:
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setSelectedWorksheetOutcome(null);
+                        updateWorksheetBrowserUrl(selectedWorksheetGrade, null);
+                      }}
+                      className={`rounded-full px-3.5 py-1.5 text-xs font-bold transition-all border ${
+                        !selectedWorksheetOutcome
+                          ? 'bg-brand-accent text-slate-900 border-brand-accent shadow-xs'
+                          : 'bg-surface-2 text-secondary hover:text-primary border-default'
+                      }`}
+                    >
+                      Tüm İçerikler ({matchingWorksheetDocuments.length})
+                    </button>
+                    {worksheetOutcomeEntries
+                      .filter(
+                        (entry) =>
+                          entry.count > 0 ||
+                          (searchTerm.trim() &&
+                            entry.outcome
+                              .toLowerCase()
+                              .includes(searchTerm.trim().toLowerCase())),
+                      )
+                      .map((entry) => {
+                        const isSelected = selectedWorksheetOutcome === entry.outcome;
+                        const heading = splitWorksheetOutcomeHeading(entry.outcome);
+                        const label = heading.code
+                          ? `${heading.code} ${heading.label}`
+                          : entry.outcome;
+
+                        return (
+                          <button
+                            key={entry.outcome}
+                            type="button"
+                            onClick={() => {
+                              const nextOutcome = isSelected ? null : entry.outcome;
+                              setSelectedWorksheetOutcome(nextOutcome);
+                              updateWorksheetBrowserUrl(
+                                selectedWorksheetGrade,
+                                nextOutcome,
+                              );
+                            }}
+                            className={`flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-xs font-semibold transition-all border ${
+                              isSelected
+                                ? 'bg-brand-primary/15 border-brand-primary text-tone-success-fg dark:text-brand-primary-soft shadow-xs font-bold'
+                                : 'bg-surface-2 hover:bg-surface-3 border-default text-secondary hover:text-primary'
+                            }`}
+                          >
+                            <span className="truncate max-w-[280px] sm:max-w-xs">{label}</span>
+                            <span
+                              className={`rounded-full px-1.5 py-0.5 text-[10px] font-bold ${
+                                isSelected
+                                  ? 'bg-brand-primary text-white'
+                                  : 'bg-surface-3 text-secondary'
+                              }`}
+                            >
+                              {entry.count}
+                            </span>
+                          </button>
+                        );
+                      })}
                   </div>
+                )}
 
-                  {displayedWorksheetOutcomeEntries.length === 0 ? (
-                    <EmptyState
-                      tone="soft"
-                      icon={<FolderOpen className="h-6 w-6" aria-hidden="true" />}
-                      title="Seçili filtreye uygun kazanım bulunamadı"
-                      description="Tüm müfredatı görüntülemek için 'Tüm Müfredat' butonuna tıklayabilirsiniz."
-                    />
-                  ) : (
-                    <div className="space-y-8">
-                      {worksheetOutcomeGroups.map((group, groupIndex) => (
-                        <div key={group.key} className="space-y-3">
-                          <div className="rounded-2xl border border-default bg-surface-2 px-4 py-3">
-                            <div className="flex items-center gap-3">
-                              <div className="worksheet-unit-line h-px flex-1 bg-gradient-to-r from-accent-fg/40 to-transparent" />
-                              <p className="shrink-0 text-sm font-extrabold uppercase tracking-[0.24em] text-accent-fg sm:text-base">
-                                {group.title}
-                              </p>
-                              <div className="worksheet-unit-line h-px flex-1 bg-gradient-to-l from-accent-fg/40 to-transparent" />
-                            </div>
-                          </div>
-                          <div className="space-y-3">
-                            {group.entries.map((entry, entryIndex) => {
-                              const outcomeHeading = splitWorksheetOutcomeHeading(
-                                entry.outcome,
-                              );
-                              const hasTests = entry.count > 0;
-
-                              return (
-                                <motion.button
-                                  key={entry.outcome}
-                                  initial={{ opacity: 0, y: 12 }}
-                                  animate={{ opacity: 1, y: 0 }}
-                                  transition={{
-                                    delay: Math.min(groupIndex * 0.04 + entryIndex * 0.02, 0.3),
-                                  }}
-                                  onClick={() => {
-                                    setSelectedWorksheetOutcome(entry.outcome);
-                                    updateWorksheetBrowserUrl(
-                                      selectedWorksheetGrade,
-                                      entry.outcome,
-                                    );
-                                  }}
-                                  className={`group flex w-full items-center gap-4 rounded-2xl border px-4 py-4 text-left transition-all sm:px-5 ${
-                                    hasTests
-                                      ? 'border-emerald-500/40 bg-emerald-500/[0.04] dark:bg-emerald-950/20 hover:border-emerald-500 hover:bg-emerald-500/10 shadow-xs'
-                                      : 'border-default bg-surface-1 hover:border-accent-fg/40 hover:bg-surface-2'
-                                  }`}
-                                >
-                                  <div
-                                    className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl ${
-                                      hasTests
-                                        ? 'bg-gradient-to-br from-emerald-500 to-teal-600 shadow-sm shadow-emerald-500/20'
-                                        : 'bg-gradient-to-br from-slate-400 to-slate-600 opacity-60'
-                                    }`}
-                                  >
-                                    {hasTests ? (
-                                      <Sparkles className="h-6 w-6 text-white dark:text-white" />
-                                    ) : (
-                                      <FolderOpen className="h-6 w-6 text-white dark:text-white" />
-                                    )}
-                                  </div>
-                                  <div className="min-w-0 flex-1">
-                                    <h3 className="worksheet-outcome-title text-sm font-semibold leading-relaxed text-primary transition-colors group-hover:text-accent-fg sm:text-base">
-                                      {outcomeHeading.code ? (
-                                        <>
-                                          <span className="font-bold text-sky-700 dark:text-sky-400">
-                                            {outcomeHeading.code}
-                                          </span>{' '}
-                                          <span>{outcomeHeading.label}</span>
-                                        </>
-                                      ) : (
-                                        entry.outcome
-                                      )}
-                                    </h3>
-                                  </div>
-                                  <div className="ml-auto flex shrink-0 items-center gap-3">
-                                    {hasTests ? (
-                                      <span className="inline-flex items-center gap-1.5 rounded-full border border-emerald-500/40 bg-emerald-500/15 px-3 py-1 text-xs font-bold text-emerald-800 dark:text-emerald-200 shadow-xs">
-                                        <span className="h-2 w-2 rounded-full bg-emerald-500 animate-ping" />
-                                        {entry.count} Test Yayında
-                                      </span>
-                                    ) : (
-                                      <span className="rounded-full border border-default bg-surface-2 px-2.5 py-0.5 text-xs font-medium text-secondary">
-                                        Henüz test yok
-                                      </span>
-                                    )}
-                                    <ChevronRight
-                                      className={`h-5 w-5 transition-transform group-hover:translate-x-0.5 ${
-                                        hasTests ? 'text-emerald-700 dark:text-emerald-400' : 'text-secondary group-hover:text-accent-fg'
-                                      }`}
-                                    />
-                                  </div>
-                                </motion.button>
-                              );
-                            })}
-                          </div>
-                        </div>
+                {/* İçerik Listesi */}
+                {filteredWorksheetTests.length > 0 ? (
+                  viewMode === 'grid' ? (
+                    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-7">
+                      {filteredWorksheetTests.map((content, index) => (
+                        <ContentCard
+                          key={content.id}
+                          content={content}
+                          index={index}
+                          isCompleted={isCompleted(content.id)}
+                          isFavorite={isFavorite(content.id)}
+                          isLiked={likedDocs.has(content.id)}
+                          onDelete={handleDeleteDocument}
+                          onDownload={handleDownloadDocument}
+                          onEdit={handleOpenEdit}
+                          onOpenComments={handleOpenComments}
+                          onPreview={handleOpenPreview}
+                          onToggleCompleted={toggleCompleted}
+                          onToggleFavorite={toggleFavorite}
+                          onToggleLike={handleToggleLike}
+                          user={user}
+                          viewMode="grid"
+                        />
                       ))}
                     </div>
-                  )}
-                </div>
-              ) : (
-                <EmptyState
-                  tone="soft"
-                  icon={<FolderOpen className="h-6 w-6" aria-hidden="true" />}
-                  title={`${worksheetGradeLabel} için kazanım bulunamadı`}
-                  description="Bu sınıf düzeyine henüz yaprak test yüklenmemiş."
-                />
-              )
-            ) : viewMode === 'grid' ? (
-              filteredWorksheetTests.length > 0 ? (
-                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-7">
-                  {filteredWorksheetTests.map((content, index) => (
-                    <ContentCard
-                      key={content.id}
-                      content={content}
-                      index={index}
-                      isCompleted={isCompleted(content.id)}
-                      isFavorite={isFavorite(content.id)}
-                      isLiked={likedDocs.has(content.id)}
-                      onDelete={handleDeleteDocument}
-                      onDownload={handleDownloadDocument}
-                      onEdit={handleOpenEdit}
-                      onOpenComments={handleOpenComments}
-                      onPreview={handleOpenPreview}
-                      onToggleCompleted={toggleCompleted}
-                      onToggleFavorite={toggleFavorite}
-                      onToggleLike={handleToggleLike}
-                      user={user}
-                      viewMode="grid"
-                    />
-                  ))}
-                </div>
-              ) : (
-                <EmptyState
-                  tone="soft"
-                  icon={<FolderOpen className="h-6 w-6" aria-hidden="true" />}
-                  title="Bu kazanımda test bulunamadı"
-                  description="Uygun test yüklendiğinde burada listelenecek."
-                />
-              )
-            ) : filteredWorksheetTests.length > 0 ? (
-              <div className="space-y-4">
-                {filteredWorksheetTests.map((content, index) => (
-                  <ContentCard
-                    key={content.id}
-                    content={content}
-                    index={index}
-                    isCompleted={isCompleted(content.id)}
-                    isFavorite={isFavorite(content.id)}
-                    isLiked={likedDocs.has(content.id)}
-                    onDelete={handleDeleteDocument}
-                    onDownload={handleDownloadDocument}
-                    onEdit={handleOpenEdit}
-                    onOpenComments={handleOpenComments}
-                    onPreview={handleOpenPreview}
-                    onToggleCompleted={toggleCompleted}
-                    onToggleFavorite={toggleFavorite}
-                    onToggleLike={handleToggleLike}
-                    user={user}
-                    viewMode="list"
+                  ) : (
+                    <div className="space-y-4">
+                      {filteredWorksheetTests.map((content, index) => (
+                        <ContentCard
+                          key={content.id}
+                          content={content}
+                          index={index}
+                          isCompleted={isCompleted(content.id)}
+                          isFavorite={isFavorite(content.id)}
+                          isLiked={likedDocs.has(content.id)}
+                          onDelete={handleDeleteDocument}
+                          onDownload={handleDownloadDocument}
+                          onEdit={handleOpenEdit}
+                          onOpenComments={handleOpenComments}
+                          onPreview={handleOpenPreview}
+                          onToggleCompleted={toggleCompleted}
+                          onToggleFavorite={toggleFavorite}
+                          onToggleLike={handleToggleLike}
+                          user={user}
+                          viewMode="list"
+                        />
+                      ))}
+                    </div>
+                  )
+                ) : (
+                  <EmptyState
+                    tone="soft"
+                    icon={<FolderOpen className="h-6 w-6" aria-hidden="true" />}
+                    title={
+                      selectedWorksheetOutcome
+                        ? 'Bu kazanımda test bulunamadı'
+                        : `${worksheetGradeLabel} için içerik bulunamadı`
+                    }
+                    description={
+                      selectedWorksheetOutcome
+                        ? 'Tüm içerikleri görmek için "Tüm İçerikler" filtresine tıklayabilirsiniz.'
+                        : 'Bu sınıf düzeyine henüz yaprak test yüklenmemiş.'
+                    }
                   />
-                ))}
+                )}
               </div>
-
-            ) : (
-              <EmptyState
-                tone="soft"
-                icon={<FolderOpen className="h-6 w-6" aria-hidden="true" />}
-                title="Bu kazanımda test bulunamadı"
-                description="Uygun test yüklendiğinde burada listelenecek."
-              />
             )
           ) : loading && documents.length === 0 ? (
             <div
