@@ -57,7 +57,7 @@ export default function ContentFilterBar({
       <button
         type="button"
         onClick={() => setMobileOpen((prev) => !prev)}
-        className="flex w-full items-center justify-between rounded-2xl border border-default dark:border-white/[0.08] bg-surface-2/80 px-4 py-3 text-sm font-semibold text-primary backdrop-blur-md transition-colors hover:bg-surface-3 md:hidden"
+        className="flex w-full items-center justify-between rounded-2xl border border-default dark:border-slate-500 bg-surface-2/80 px-4 py-3 text-sm font-semibold text-primary backdrop-blur-md transition-colors hover:bg-surface-3 md:hidden"
       >
         <span>Filtre ve Arama Seçenekleri</span>
         <span className="text-xs font-bold text-sky-800 dark:text-sky-300">
