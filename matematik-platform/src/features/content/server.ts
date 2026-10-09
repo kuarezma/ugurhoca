@@ -29,6 +29,9 @@ export const getInitialContentGradeFilter =
     return normalizeContentGrade(snapshot.grade);
   };
 
+// Supabase yanıt vermezse build/ISR 60 sn'lik üretim sınırına takılmasın.
+const CONTENT_QUERY_TIMEOUT_MS = 10_000;
+
 export const loadInitialContentDocuments = async (
   page: number,
   pageSize: number,
@@ -45,7 +48,8 @@ export const loadInitialContentDocuments = async (
   try {
     let countQuery = serverSupabase
       .from('documents')
-      .select('*', { count: 'exact', head: true });
+      .select('*', { count: 'exact', head: true })
+      .abortSignal(AbortSignal.timeout(CONTENT_QUERY_TIMEOUT_MS));
 
     if (gradeFilter !== 'all') {
       countQuery = countQuery.contains('grade', [gradeFilter]);
@@ -61,7 +65,8 @@ export const loadInitialContentDocuments = async (
     let dataQuery = serverSupabase
       .from('documents')
       .select('*')
-      .order('created_at', { ascending: false });
+      .order('created_at', { ascending: false })
+      .abortSignal(AbortSignal.timeout(CONTENT_QUERY_TIMEOUT_MS));
 
     if (gradeFilter !== 'all') {
       dataQuery = dataQuery.contains('grade', [gradeFilter]);
