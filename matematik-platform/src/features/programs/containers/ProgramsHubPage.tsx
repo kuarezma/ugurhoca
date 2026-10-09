@@ -283,7 +283,7 @@ export default function ProgramsHubPage() {
           <button
             type="button"
             onClick={() => setIsFlashcardsOpen(true)}
-            className="inline-flex items-center gap-2 rounded-xl px-4 py-2 text-xs sm:text-sm font-bold transition hover:scale-[1.02] active:scale-[0.98] bg-emerald-500 hover:bg-emerald-600 text-white dark:bg-emerald-400 dark:hover:bg-emerald-300 dark:text-slate-950 shadow-md shadow-emerald-500/20 active:translate-y-0.5"
+            className="inline-flex items-center gap-2 rounded-xl px-4 py-2 text-xs sm:text-sm font-bold transition hover:scale-[1.02] active:scale-[0.98] bg-emerald-700 hover:bg-emerald-800 text-white dark:bg-emerald-400 dark:hover:bg-emerald-300 dark:text-slate-950 shadow-md shadow-emerald-500/20 active:translate-y-0.5"
           >
             <BookOpen className="h-4 w-4" />
             Formül & Bilgi Kartları
@@ -368,7 +368,7 @@ export default function ProgramsHubPage() {
                     <button
                       type="button"
                       onClick={tool.onClick}
-                      className="mt-6 inline-flex items-center gap-2 rounded-xl px-5 py-2.5 text-sm font-bold transition hover:scale-[1.02] bg-emerald-500 hover:bg-emerald-600 text-white dark:bg-emerald-400 dark:hover:bg-emerald-300 dark:text-slate-950 shadow-md shadow-emerald-500/20 active:translate-y-0.5"
+                      className="mt-6 inline-flex items-center gap-2 rounded-xl px-5 py-2.5 text-sm font-bold transition hover:scale-[1.02] bg-emerald-700 hover:bg-emerald-800 text-white dark:bg-emerald-400 dark:hover:bg-emerald-300 dark:text-slate-950 shadow-md shadow-emerald-500/20 active:translate-y-0.5"
                       aria-label={`${tool.title} aracını aç`}
                     >
                       {tool.ctaLabel || 'Aracı Aç'}
@@ -377,7 +377,7 @@ export default function ProgramsHubPage() {
                   ) : (
                     <Link
                       href={tool.href || '#'}
-                      className="mt-6 inline-flex items-center gap-2 rounded-xl px-5 py-2.5 text-sm font-bold transition hover:scale-[1.02] bg-emerald-500 hover:bg-emerald-600 text-white dark:bg-emerald-400 dark:hover:bg-emerald-300 dark:text-slate-950 shadow-md shadow-emerald-500/20 active:translate-y-0.5"
+                      className="mt-6 inline-flex items-center gap-2 rounded-xl px-5 py-2.5 text-sm font-bold transition hover:scale-[1.02] bg-emerald-700 hover:bg-emerald-800 text-white dark:bg-emerald-400 dark:hover:bg-emerald-300 dark:text-slate-950 shadow-md shadow-emerald-500/20 active:translate-y-0.5"
                       aria-label={`${tool.title} sihirbazını aç`}
                     >
                       {tool.ctaLabel || 'Sihirbazı Aç'}

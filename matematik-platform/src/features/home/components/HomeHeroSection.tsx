@@ -156,7 +156,7 @@ export function HomeHeroSection({
                 <div className="flex h-12 w-12 sm:h-16 sm:w-16 shrink-0 items-center justify-center rounded-xl sm:rounded-2xl bg-gradient-to-br from-sky-500 via-sky-600 to-blue-700 text-white dark:text-white shadow-lg sm:shadow-xl shadow-sky-500/30 ring-2 sm:ring-4 ring-sky-500/10 group-hover:scale-105 group-hover:rotate-1 transition-all duration-300">
                   <FileSignature className="h-6 w-6 sm:h-8 sm:w-8" />
                 </div>
-                <span className="rounded-full bg-sky-600 dark:bg-sky-500 text-white dark:text-white text-[10px] sm:text-[11px] font-black uppercase tracking-wider px-2.5 py-1 sm:px-3.5 sm:py-1.5 shadow-xs">
+                <span className="rounded-full bg-sky-800 dark:bg-sky-900 text-white dark:text-sky-100 text-[10px] sm:text-[11px] font-black uppercase tracking-wider px-2.5 py-1 sm:px-3.5 sm:py-1.5 shadow-xs">
                   Müfredat 2026-2027
                 </span>
               </div>
@@ -214,7 +214,7 @@ export function HomeHeroSection({
                 <div className="flex h-12 w-12 sm:h-16 sm:w-16 shrink-0 items-center justify-center rounded-xl sm:rounded-2xl bg-gradient-to-br from-emerald-500 via-emerald-600 to-teal-700 text-white dark:text-white shadow-lg sm:shadow-xl shadow-emerald-500/30 ring-2 sm:ring-4 ring-emerald-500/10 group-hover:scale-105 group-hover:rotate-1 transition-all duration-300">
                   <Gamepad2 className="h-6 w-6 sm:h-8 sm:w-8" />
                 </div>
-                <span className="rounded-full bg-emerald-600 dark:bg-emerald-500 text-white dark:text-white text-[10px] sm:text-[11px] font-black uppercase tracking-wider px-2.5 py-1 sm:px-3.5 sm:py-1.5 shadow-xs">
+                <span className="rounded-full bg-emerald-800 dark:bg-emerald-900 text-white dark:text-emerald-100 text-[10px] sm:text-[11px] font-black uppercase tracking-wider px-2.5 py-1 sm:px-3.5 sm:py-1.5 shadow-xs">
                   19 Eğlenceli Oyun
                 </span>
               </div>
@@ -265,11 +265,11 @@ export function HomeHeroSection({
                 <GraduationCap className="h-6 w-6 text-sky-600 dark:text-sky-400" />
                 Sınıfını Seç ve İçeriğe Ulaş
               </h2>
-              <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 font-medium mt-1">
+              <p className="text-xs sm:text-sm text-slate-700 dark:text-slate-300 font-semibold mt-1">
                 MEB müfredatına göre ünitelere ayrılmış kazanım föyleri ve yaprak testler
               </p>
             </div>
-            <SafeLink href="/icerikler" className="text-xs sm:text-sm font-bold text-sky-700 dark:text-sky-400 hover:text-sky-900 dark:hover:text-sky-300 transition-colors">
+            <SafeLink href="/icerikler" className="text-xs sm:text-sm font-bold text-sky-800 dark:text-sky-300 hover:text-sky-950 dark:hover:text-sky-200 transition-colors">
               Tüm Kütüphane →
             </SafeLink>
           </div>
@@ -317,7 +317,7 @@ export function HomeHeroSection({
               <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-amber-400 to-orange-500 opacity-80" />
               <div>
                 <div className="flex items-center justify-between mb-4">
-                  <div className="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-amber-500 to-orange-600 text-white font-display text-xl font-black shadow-md shadow-amber-500/25 group-hover:scale-105 transition-transform">
+                  <div className="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-amber-600 to-orange-700 text-white font-display text-xl font-black shadow-md shadow-amber-500/25 group-hover:scale-105 transition-transform">
                     6
                   </div>
                   <span className="text-[11px] font-bold text-amber-800 dark:text-amber-200 bg-amber-50 dark:bg-amber-950/60 px-2.5 py-1 rounded-full border border-amber-200/80 dark:border-amber-800/50">
@@ -430,11 +430,11 @@ export function HomeHeroSection({
                 <Gamepad2 className="h-6 w-6 text-emerald-600 dark:text-emerald-400" />
                 Popüler Matematik Oyunları
               </h2>
-              <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 font-medium mt-1">
+              <p className="text-xs sm:text-sm text-slate-700 dark:text-slate-300 font-semibold mt-1">
                 Refleks, strateji ve zihinden işlem becerilerini zirveye taşıyan interaktif oyunlar
               </p>
             </div>
-            <SafeLink href="/oyunlar" className="text-xs sm:text-sm font-bold text-emerald-700 dark:text-emerald-400 hover:text-emerald-900 dark:hover:text-emerald-300 transition-colors">
+            <SafeLink href="/oyunlar" className="text-xs sm:text-sm font-bold text-emerald-800 dark:text-emerald-300 hover:text-emerald-950 dark:hover:text-emerald-200 transition-colors">
               Tüm Oyunları Gör (19 Oyun) →
             </SafeLink>
           </div>
@@ -534,7 +534,7 @@ export function HomeHeroSection({
               <Zap className="h-6 w-6 text-amber-500" />
               Matematik Başarı Atölyesi
             </h2>
-            <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 font-medium mt-1">
+            <p className="text-xs sm:text-sm text-slate-700 dark:text-slate-300 font-semibold mt-1">
               Ders çalışırken, test çözerken ve sınavlara hazırlanırken elinin altında olması gereken akıllı araçlar
             </p>
           </div>
@@ -545,7 +545,7 @@ export function HomeHeroSection({
             <button
               type="button"
               onClick={() => onOpenCalculator?.('lgs')}
-              className="group relative flex items-start gap-4 rounded-3xl border border-slate-200/90 dark:border-slate-800 bg-white/95 dark:bg-slate-900/90 p-5 text-left hover:border-sky-400 dark:hover:border-sky-500/50 hover:bg-sky-50/30 dark:hover:bg-slate-800/50 hover:shadow-xl hover:shadow-sky-500/5 hover:-translate-y-1 transition-all duration-300 active:scale-[0.99] shadow-xs"
+              className="group relative flex items-start gap-4 rounded-3xl border border-default dark:border-slate-600 bg-white/95 dark:bg-slate-900/90 p-5 text-left hover:border-sky-400 dark:hover:border-sky-500/50 hover:bg-sky-50/30 dark:hover:bg-slate-800/50 hover:shadow-xl hover:shadow-sky-500/5 hover:-translate-y-1 transition-all duration-300 active:scale-[0.99] shadow-xs"
             >
               <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-sky-100 dark:bg-sky-950/60 text-sky-700 dark:text-sky-300 group-hover:scale-105 transition-transform shadow-xs">
                 <Calculator className="h-6 w-6" />
@@ -567,7 +567,7 @@ export function HomeHeroSection({
             <button
               type="button"
               onClick={() => onOpenPomodoro?.()}
-              className="group relative flex items-start gap-4 rounded-3xl border border-slate-200/90 dark:border-slate-800 bg-white/95 dark:bg-slate-900/90 p-5 text-left hover:border-rose-400 dark:hover:border-rose-500/50 hover:bg-rose-50/30 dark:hover:bg-slate-800/50 hover:shadow-xl hover:shadow-rose-500/5 hover:-translate-y-1 transition-all duration-300 active:scale-[0.99] shadow-xs"
+              className="group relative flex items-start gap-4 rounded-3xl border border-default dark:border-slate-600 bg-white/95 dark:bg-slate-900/90 p-5 text-left hover:border-rose-400 dark:hover:border-rose-500/50 hover:bg-rose-50/30 dark:hover:bg-slate-800/50 hover:shadow-xl hover:shadow-rose-500/5 hover:-translate-y-1 transition-all duration-300 active:scale-[0.99] shadow-xs"
             >
               <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-rose-100 dark:bg-rose-950/60 text-rose-700 dark:text-rose-300 group-hover:scale-105 transition-transform shadow-xs">
                 <Timer className="h-6 w-6" />
@@ -589,7 +589,7 @@ export function HomeHeroSection({
             <button
               type="button"
               onClick={() => onOpenScratchpad?.()}
-              className="group relative flex items-start gap-4 rounded-3xl border border-slate-200/90 dark:border-slate-800 bg-white/95 dark:bg-slate-900/90 p-5 text-left hover:border-emerald-400 dark:hover:border-emerald-500/50 hover:bg-emerald-50/30 dark:hover:bg-slate-800/50 hover:shadow-xl hover:shadow-emerald-500/5 hover:-translate-y-1 transition-all duration-300 active:scale-[0.99] shadow-xs"
+              className="group relative flex items-start gap-4 rounded-3xl border border-default dark:border-slate-600 bg-white/95 dark:bg-slate-900/90 p-5 text-left hover:border-emerald-400 dark:hover:border-emerald-500/50 hover:bg-emerald-50/30 dark:hover:bg-slate-800/50 hover:shadow-xl hover:shadow-emerald-500/5 hover:-translate-y-1 transition-all duration-300 active:scale-[0.99] shadow-xs"
             >
               <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 group-hover:scale-105 transition-transform shadow-xs">
                 <PenTool className="h-6 w-6" />
@@ -611,7 +611,7 @@ export function HomeHeroSection({
             <button
               type="button"
               onClick={() => onOpenCheatSheet ? onOpenCheatSheet() : onOpenFlashcards?.()}
-              className="group relative flex items-start gap-4 rounded-3xl border border-slate-200/90 dark:border-slate-800 bg-white/95 dark:bg-slate-900/90 p-5 text-left hover:border-amber-400 dark:hover:border-amber-500/50 hover:bg-amber-50/30 dark:hover:bg-slate-800/50 hover:shadow-xl hover:shadow-amber-500/5 hover:-translate-y-1 transition-all duration-300 active:scale-[0.99] shadow-xs"
+              className="group relative flex items-start gap-4 rounded-3xl border border-default dark:border-slate-600 bg-white/95 dark:bg-slate-900/90 p-5 text-left hover:border-amber-400 dark:hover:border-amber-500/50 hover:bg-amber-50/30 dark:hover:bg-slate-800/50 hover:shadow-xl hover:shadow-amber-500/5 hover:-translate-y-1 transition-all duration-300 active:scale-[0.99] shadow-xs"
             >
               <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-amber-100 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300 group-hover:scale-105 transition-transform shadow-xs">
                 <Lightbulb className="h-6 w-6" />
@@ -633,7 +633,7 @@ export function HomeHeroSection({
             <button
               type="button"
               onClick={() => onOpenProofs?.()}
-              className="group relative flex items-start gap-4 rounded-3xl border border-slate-200/90 dark:border-slate-800 bg-white/95 dark:bg-slate-900/90 p-5 text-left hover:border-indigo-400 dark:hover:border-indigo-500/50 hover:bg-indigo-50/30 dark:hover:bg-slate-800/50 hover:shadow-xl hover:shadow-indigo-500/5 hover:-translate-y-1 transition-all duration-300 active:scale-[0.99] shadow-xs"
+              className="group relative flex items-start gap-4 rounded-3xl border border-default dark:border-slate-600 bg-white/95 dark:bg-slate-900/90 p-5 text-left hover:border-indigo-400 dark:hover:border-indigo-500/50 hover:bg-indigo-50/30 dark:hover:bg-slate-800/50 hover:shadow-xl hover:shadow-indigo-500/5 hover:-translate-y-1 transition-all duration-300 active:scale-[0.99] shadow-xs"
             >
               <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-indigo-100 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300 group-hover:scale-105 transition-transform shadow-xs">
                 <Compass className="h-6 w-6" />
@@ -655,7 +655,7 @@ export function HomeHeroSection({
             <button
               type="button"
               onClick={() => onOpenGlossary?.()}
-              className="group relative flex items-start gap-4 rounded-3xl border border-slate-200/90 dark:border-slate-800 bg-white/95 dark:bg-slate-900/90 p-5 text-left hover:border-purple-400 dark:hover:border-purple-500/50 hover:bg-purple-50/30 dark:hover:bg-slate-800/50 hover:shadow-xl hover:shadow-purple-500/5 hover:-translate-y-1 transition-all duration-300 active:scale-[0.99] shadow-xs"
+              className="group relative flex items-start gap-4 rounded-3xl border border-default dark:border-slate-600 bg-white/95 dark:bg-slate-900/90 p-5 text-left hover:border-purple-400 dark:hover:border-purple-500/50 hover:bg-purple-50/30 dark:hover:bg-slate-800/50 hover:shadow-xl hover:shadow-purple-500/5 hover:-translate-y-1 transition-all duration-300 active:scale-[0.99] shadow-xs"
             >
               <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-purple-100 dark:bg-purple-950/60 text-purple-700 dark:text-purple-300 group-hover:scale-105 transition-transform shadow-xs">
                 <BookOpen className="h-6 w-6" />

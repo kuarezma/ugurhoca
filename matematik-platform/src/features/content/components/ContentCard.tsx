@@ -115,7 +115,7 @@ function ContentCard({
         whileHover={{ scale: 1.02 }}
         whileTap={{ scale: 0.98 }}
         onClick={() => onPreview(content)}
-        className={`col-span-1 flex w-full items-center justify-center gap-2 rounded-2xl border border-purple-200/90 dark:border-purple-800/80 bg-purple-50/70 dark:bg-purple-950/40 hover:bg-purple-100/90 dark:hover:bg-purple-900/50 px-4 py-2.5 sm:py-3 text-xs sm:text-sm font-bold text-purple-900 dark:text-purple-200 transition-all duration-200 backdrop-blur-md shadow-xs hover:border-purple-400 hover:-translate-y-0.5 sm:flex-1 ${
+        className={`col-span-1 flex w-full items-center justify-center gap-2 rounded-2xl border border-purple-700 dark:border-purple-400 bg-purple-50/70 dark:bg-purple-950/40 hover:bg-purple-100/90 dark:hover:bg-purple-900/50 px-4 py-2.5 sm:py-3 text-xs sm:text-sm font-bold text-purple-900 dark:text-purple-200 transition-all duration-200 backdrop-blur-md shadow-xs hover:border-purple-500 hover:-translate-y-0.5 sm:flex-1 ${
           !content.file_url ? 'col-span-2' : ''
         } ${viewMode === 'grid' ? 'sm:min-w-[130px]' : 'sm:min-w-[160px]'}`}
       >
@@ -131,7 +131,7 @@ function ContentCard({
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
           onClick={() => onDownload(content)}
-          className="col-span-1 flex w-full items-center justify-center gap-2 rounded-2xl px-4 py-2.5 sm:py-3 text-xs sm:text-sm font-bold transition-all sm:w-auto sm:px-5 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white dark:text-slate-950 dark:from-emerald-400 dark:to-teal-400 dark:hover:from-emerald-300 dark:hover:to-teal-300 shadow-md shadow-emerald-500/25 hover:-translate-y-0.5 active:translate-y-0.5"
+          className="col-span-1 flex w-full items-center justify-center gap-2 rounded-2xl px-4 py-2.5 sm:py-3 text-xs sm:text-sm font-bold transition-all sm:w-auto sm:px-5 bg-gradient-to-r from-emerald-700 to-teal-800 hover:from-emerald-800 hover:to-teal-900 text-white dark:text-slate-950 dark:from-emerald-400 dark:to-teal-400 dark:hover:from-emerald-300 dark:hover:to-teal-300 shadow-md shadow-emerald-700/25 hover:-translate-y-0.5 active:translate-y-0.5"
         >
           <Download className="w-4 h-4" /> İndir
         </motion.button>
@@ -229,8 +229,8 @@ function ContentCard({
           title="Favori"
           className={`flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs transition-all duration-200 ${
             isFavorite
-              ? 'border-2 border-amber-500 bg-amber-500/25 text-amber-900 dark:text-amber-100 font-extrabold shadow-xs'
-              : 'border-2 border-amber-300/90 dark:border-amber-700/60 bg-white dark:bg-slate-800 text-amber-900 dark:text-amber-200 font-bold hover:bg-amber-50 dark:hover:bg-amber-950/40'
+              ? 'border-2 border-amber-700 bg-amber-500/25 text-amber-900 dark:text-amber-100 font-extrabold shadow-xs'
+              : 'border-2 border-amber-700 dark:border-amber-400 bg-white dark:bg-slate-800 text-amber-900 dark:text-amber-200 font-bold hover:bg-amber-50 dark:hover:bg-amber-950/40'
           }`}
         >
           <Star className={`w-3.5 h-3.5 ${isFavorite ? 'fill-current text-amber-500' : 'text-amber-600'}`} />
@@ -245,8 +245,8 @@ function ContentCard({
             title={isCompleted ? 'Çözüldü işaretini kaldır' : 'Çözüldü olarak işaretle'}
             className={`flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs transition-all duration-200 ${
               isCompleted
-                ? 'border-2 border-emerald-500 bg-emerald-500/25 text-emerald-900 dark:text-emerald-100 font-extrabold shadow-xs'
-                : 'border-2 border-emerald-300/90 dark:border-emerald-700/60 bg-white dark:bg-slate-800 text-emerald-900 dark:text-emerald-200 font-bold hover:bg-emerald-50 dark:hover:bg-emerald-950/40'
+                ? 'border-2 border-emerald-700 bg-emerald-500/25 text-emerald-900 dark:text-emerald-100 font-extrabold shadow-xs'
+                : 'border-2 border-emerald-700 dark:border-emerald-400 bg-white dark:bg-slate-800 text-emerald-900 dark:text-emerald-200 font-bold hover:bg-emerald-50 dark:hover:bg-emerald-950/40'
             }`}
           >
             <CheckCircle2 className={`w-3.5 h-3.5 ${isCompleted ? 'fill-emerald-400/20 text-emerald-600 dark:text-emerald-400' : 'text-emerald-600'}`} />
@@ -261,8 +261,8 @@ function ContentCard({
           title="Bağlantıyı Kopyala"
           className={`flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs transition-all duration-200 ${
             copiedLink
-              ? 'border-2 border-purple-500 bg-purple-500/25 text-purple-900 dark:text-purple-100 font-extrabold shadow-xs'
-              : 'border-2 border-purple-300/90 dark:border-purple-700/60 bg-white dark:bg-slate-800 text-purple-900 dark:text-purple-200 font-bold hover:bg-purple-50 dark:hover:bg-purple-950/40'
+              ? 'border-2 border-purple-700 bg-purple-500/25 text-purple-900 dark:text-purple-100 font-extrabold shadow-xs'
+              : 'border-2 border-purple-700 dark:border-purple-400 bg-white dark:bg-slate-800 text-purple-900 dark:text-purple-200 font-bold hover:bg-purple-50 dark:hover:bg-purple-950/40'
           }`}
         >
           {copiedLink ? (
@@ -345,7 +345,7 @@ function ContentCard({
 
           {outcomeLabel && (
             <div className="inline-flex max-w-full items-center gap-1.5 rounded-xl border-2 border-sky-400/60 bg-gradient-to-r from-sky-500/20 via-blue-500/15 to-transparent px-3 py-1.5 text-[11px] font-bold text-sky-950 dark:text-sky-100 shadow-2xs">
-              <span className="font-black text-sky-700 dark:text-sky-400 shrink-0">🎯 Kazanım:</span>
+              <span className="font-black text-sky-950 dark:text-sky-200 shrink-0">🎯 Kazanım:</span>
               <span className="truncate">{outcomeLabel}</span>
             </div>
           )}
@@ -361,7 +361,7 @@ function ContentCard({
               <Users className="w-4 h-4 text-purple-600 dark:text-purple-400 shrink-0" />
               <span className="truncate">{getContentAuthorLabel(content)}</span>
             </div>
-            <span className="text-purple-300 dark:text-purple-700">•</span>
+            <span className="text-purple-700 dark:text-purple-300 font-black">•</span>
             <div className="flex items-center gap-1.5 shrink-0">
               <Calendar className="w-4 h-4 text-purple-600 dark:text-purple-400 shrink-0" />
               <span>{formatContentDate(content.created_at)}</span>
@@ -448,7 +448,7 @@ function ContentCard({
 
           {outcomeLabel && (
             <div className="mb-2.5 inline-flex max-w-full items-center gap-1.5 rounded-xl border-2 border-sky-400/60 bg-gradient-to-r from-sky-500/20 via-blue-500/15 to-transparent px-3 py-1.5 text-[11px] font-bold text-sky-950 dark:text-sky-100 shadow-2xs">
-              <span className="font-black text-sky-700 dark:text-sky-400 shrink-0">🎯 Kazanım:</span>
+              <span className="font-black text-sky-950 dark:text-sky-200 shrink-0">🎯 Kazanım:</span>
               <span className="truncate">{outcomeLabel}</span>
             </div>
           )}
@@ -463,7 +463,7 @@ function ContentCard({
               <Users className="w-4 h-4 text-purple-600 dark:text-purple-400 shrink-0" />
               <span className="truncate">{getContentAuthorLabel(content)}</span>
             </div>
-            <span className="text-purple-300 dark:text-purple-700">•</span>
+            <span className="text-purple-700 dark:text-purple-300 font-black">•</span>
             <div className="flex items-center gap-1.5 shrink-0">
               <Calendar className="w-4 h-4 text-purple-600 dark:text-purple-400 shrink-0" />
               <span>{formatContentDate(content.created_at)}</span>

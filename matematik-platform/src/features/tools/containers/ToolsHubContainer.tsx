@@ -195,13 +195,13 @@ export function ToolsHubContainer() {
           <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
             <Link
               href="/testler"
-              className="rounded-xl px-5 py-2.5 text-xs sm:text-sm font-bold transition bg-emerald-500 hover:bg-emerald-600 text-white dark:bg-emerald-400 dark:hover:bg-emerald-300 dark:text-slate-950 shadow-md shadow-emerald-500/20 hover:-translate-y-0.5 active:translate-y-0.5"
+              className="rounded-xl px-5 py-2.5 text-xs sm:text-sm font-bold transition bg-emerald-700 hover:bg-emerald-800 text-white dark:bg-emerald-400 dark:hover:bg-emerald-300 dark:text-slate-950 shadow-md shadow-emerald-500/20 hover:-translate-y-0.5 active:translate-y-0.5"
             >
               Ücretsiz Test Çöz
             </Link>
             <Link
               href="/programlar"
-              className="rounded-xl border border-slate-200/90 dark:border-slate-800 bg-white/90 dark:bg-slate-900/80 px-5 py-2.5 text-xs sm:text-sm font-bold text-primary transition hover:bg-slate-100 dark:hover:bg-slate-800 hover:-translate-y-0.5"
+              className="rounded-xl border border-default dark:border-slate-600 bg-white/90 dark:bg-slate-900/80 px-5 py-2.5 text-xs sm:text-sm font-bold text-primary transition hover:bg-slate-100 dark:hover:bg-slate-800 hover:-translate-y-0.5"
             >
               LGS & YKS Tercih Sihirbazı
             </Link>

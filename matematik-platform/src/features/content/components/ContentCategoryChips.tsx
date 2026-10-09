@@ -57,7 +57,7 @@ export function ContentCategoryChips({
                 className={`group shrink-0 inline-flex items-center gap-2 rounded-full px-3.5 py-1.5 text-xs font-bold transition-all duration-200 active:scale-95 ${
                   isSelected
                     ? 'bg-slate-900 text-white dark:bg-white dark:text-slate-900 shadow-md scale-[1.02]'
-                    : 'border border-slate-200/90 dark:border-slate-800 bg-white/90 dark:bg-slate-900/70 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white hover:-translate-y-0.5 shadow-xs'
+                    : 'border border-default dark:border-slate-600 bg-white/90 dark:bg-slate-900/70 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white hover:-translate-y-0.5 shadow-xs'
                 }`}
               >
                 {g.dot && (
@@ -93,7 +93,7 @@ export function ContentCategoryChips({
                 className={`group shrink-0 inline-flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-xs font-bold transition-all duration-200 active:scale-95 ${
                   isSelected
                     ? 'bg-slate-900 text-white dark:bg-white dark:text-slate-900 shadow-md scale-[1.02]'
-                    : 'border border-slate-200/90 dark:border-slate-800 bg-white/90 dark:bg-slate-900/70 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white hover:-translate-y-0.5 shadow-xs'
+                    : 'border border-default dark:border-slate-600 bg-white/90 dark:bg-slate-900/70 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white hover:-translate-y-0.5 shadow-xs'
                 }`}
               >
                 {t.emoji && <span className="text-xs">{t.emoji}</span>}
