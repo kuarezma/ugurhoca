@@ -46,7 +46,7 @@ export default function CookieBanner() {
             if (exiting && event.target === event.currentTarget)
               setVisible(false);
           }}
-          className={`${exiting ? styles.exit : styles.enter} fixed inset-x-3 bottom-3 z-[1000] sm:inset-x-auto sm:right-4 sm:bottom-4 sm:max-w-md`}
+          className={`${exiting ? styles.exit : styles.enter} fixed inset-x-3 bottom-[calc(5rem+env(safe-area-inset-bottom))] z-[1000] sm:inset-x-auto sm:right-4 sm:bottom-4 sm:max-w-md`}
         >
           <div className="relative overflow-hidden rounded-3xl border border-default bg-surface-1/95 p-5 shadow-2xl backdrop-blur">
             <div

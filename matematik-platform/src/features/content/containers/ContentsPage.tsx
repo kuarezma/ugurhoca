@@ -265,7 +265,8 @@ function ContentsPageInner({
   const pathname = usePathname();
   const [searchParams, setSearchParams] = useState(() => new URLSearchParams());
   const { showToast } = useToast();
-  const requestedTypeFromUrl = searchParams.get('type') || 'all';
+  const requestedTypeFromUrl =
+    searchParams.get('type') || searchParams.get('category') || 'all';
   const typeFromUrl =
     CONTENT_TYPE_MAPPING[requestedTypeFromUrl] || requestedTypeFromUrl;
   const worksheetGradeFromUrl = searchParams.get('grade');
@@ -1460,7 +1461,7 @@ function ContentsPageInner({
   const profileHref = user?.isAdmin ? '/admin' : user ? '/profil' : '/giris';
 
   return (
-    <main className="page-surface icerikler-page min-h-screen gradient-bg pb-20 relative">
+    <main className="page-surface icerikler-page min-h-screen gradient-bg pb-[max(6rem,calc(env(safe-area-inset-bottom)+5.5rem))] relative">
       {/* Ambient Glow Mesh */}
       <div className="pointer-events-none fixed inset-0 -z-10 overflow-hidden" aria-hidden="true">
         <div className="absolute -top-32 -left-32 h-96 w-96 rounded-full bg-cyan-500/10 dark:bg-cyan-500/5 blur-3xl" />
@@ -1554,35 +1555,6 @@ function ContentsPageInner({
               totalResults={filteredContents.length}
               viewMode={viewMode}
             />
-
-            {isWorksheetBrowser && (
-              <div className="mt-4 flex gap-2 flex-wrap">
-                {selectedWorksheetGrade && (
-                  <button
-                    onClick={() => {
-                      resetWorksheetHierarchy();
-                      updateWorksheetBrowserUrl(null);
-                      setSearchTerm('');
-                    }}
-                    className="px-4 py-2 rounded-full border border-default dark:border-slate-400 bg-surface-2/70 text-xs sm:text-sm font-semibold text-secondary transition-colors hover:text-primary"
-                  >
-                    Sınıf Kartları
-                  </button>
-                )}
-                {selectedWorksheetOutcome && (
-                  <button
-                    onClick={() => {
-                      setSelectedWorksheetOutcome(null);
-                      updateWorksheetBrowserUrl(selectedWorksheetGrade);
-                      setSearchTerm('');
-                    }}
-                    className="px-4 py-2 rounded-full border border-purple-600 dark:border-purple-400 bg-purple-500/15 text-xs sm:text-sm font-semibold text-purple-800 dark:text-purple-100 transition-colors hover:bg-purple-500/25"
-                  >
-                    Kazanımlara Dön
-                  </button>
-                )}
-              </div>
-            )}
 
             {!isWorksheetBrowser && (
               <div className="mt-5 border-t border-default dark:border-white/[0.08] pt-4">
@@ -1716,8 +1688,8 @@ function ContentsPageInner({
               worksheetOutcomeEntries.length > 0 ? (
                 <div className="space-y-6">
                   {/* Kazanım Hızlı Filtre Barı */}
-                  <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-default bg-surface-1 p-3 sm:p-4 shadow-xs">
-                    <div className="flex items-center gap-2">
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 rounded-2xl border border-default bg-surface-1 p-3.5 sm:p-4 shadow-xs">
+                    <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
                       <span className="text-xs sm:text-sm font-bold text-secondary">
                         Kazanım Görünümü:
                       </span>
@@ -1725,7 +1697,7 @@ function ContentsPageInner({
                         <button
                           type="button"
                           onClick={() => setOnlyWithTests(false)}
-                          className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
+                          className={`flex-1 sm:flex-initial px-3 py-1.5 rounded-lg text-xs font-bold transition-all text-center ${
                             !onlyWithTests
                               ? 'bg-brand-accent text-slate-900 shadow-xs'
                               : 'text-secondary hover:text-primary'
@@ -1736,13 +1708,13 @@ function ContentsPageInner({
                         <button
                           type="button"
                           onClick={() => setOnlyWithTests(true)}
-                          className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 ${
+                          className={`flex-1 sm:flex-initial px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1.5 text-center ${
                             onlyWithTests
-                              ? 'bg-emerald-500 text-white shadow-xs'
+                              ? 'bg-emerald-600 dark:bg-emerald-500 text-white shadow-xs'
                               : 'text-secondary hover:text-primary'
                           }`}
                         >
-                          <Sparkles className="h-3.5 w-3.5 text-emerald-400" />
+                          <Sparkles className="h-3.5 w-3.5 text-emerald-200 dark:text-emerald-100" />
                           Testi Yayında Olanlar ({outcomesWithTestsCount})
                         </button>
                       </div>

@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import {
   ArrowUpDown,
   BookOpen,
@@ -49,16 +50,23 @@ export default function ContentFilterBar({
   totalResults,
   viewMode,
 }: ContentFilterBarProps) {
+  const [mobileOpen, setMobileOpen] = useState(false);
+
   return (
     <div className="space-y-4">
-      <details className="group md:contents">
-        <summary className="flex cursor-pointer list-none items-center justify-between rounded-2xl border border-default dark:border-white/[0.08] bg-surface-2/80 px-4 py-3 text-sm font-semibold text-primary backdrop-blur-md transition-colors hover:bg-surface-3 md:hidden">
-          Filtrele
-          <span className="text-xs font-medium text-purple-600 dark:text-purple-400 group-open:hidden">Aç</span>
-          <span className="hidden text-xs font-medium text-purple-600 dark:text-purple-400 group-open:inline">Kapat</span>
-        </summary>
-        <div className="hidden space-y-4 group-open:block md:block">
-          {/* Search and Sort row */}
+      <button
+        type="button"
+        onClick={() => setMobileOpen((prev) => !prev)}
+        className="flex w-full items-center justify-between rounded-2xl border border-default dark:border-white/[0.08] bg-surface-2/80 px-4 py-3 text-sm font-semibold text-primary backdrop-blur-md transition-colors hover:bg-surface-3 md:hidden"
+      >
+        <span>Filtre ve Arama Seçenekleri</span>
+        <span className="text-xs font-bold text-sky-800 dark:text-sky-300">
+          {mobileOpen ? 'Kapat' : 'Aç'}
+        </span>
+      </button>
+
+      <div className={`${mobileOpen ? 'block' : 'hidden'} space-y-4 md:block`}>
+        {/* Search and Sort row */}
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             {/* Search Input */}
             <div className="relative flex-1 group">
@@ -209,7 +217,6 @@ export default function ContentFilterBar({
             </div>
           )}
         </div>
-      </details>
-    </div>
+      </div>
   );
 }
