@@ -81,10 +81,6 @@ export function HomeHeroSection({
 
             {/* Hızlı Sınıf Atlama Butonları (Quick Jump Pills) */}
             <div className="pt-1 sm:pt-2 flex flex-wrap items-center gap-1.5 sm:gap-2.5">
-              <span className="text-[11px] sm:text-xs font-bold text-slate-500 dark:text-slate-400 mr-1 flex items-center gap-1.5">
-                <span className="h-1.5 w-1.5 rounded-full bg-slate-400 animate-ping" />
-                Hızlı Sınıf Seçimi:
-              </span>
               <SafeLink
                 href="/icerikler?grade=5"
                 className="group inline-flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3.5 py-1 sm:py-1.5 rounded-full text-[11px] sm:text-xs font-bold bg-white dark:bg-slate-800/90 border border-slate-200 dark:border-slate-700 text-sky-800 dark:text-sky-200 hover:bg-sky-50 dark:hover:bg-sky-950/60 hover:border-sky-400 transition-all shadow-xs hover:shadow-md hover:-translate-y-0.5 active:scale-95"
