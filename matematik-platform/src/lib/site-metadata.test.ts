@@ -44,4 +44,36 @@ describe('site-metadata', () => {
       index: false,
     });
   });
+
+  it('formats home page title and social preview titles correctly', () => {
+    const defaultHomeMeta = createPageMetadata({
+      title: 'Ana sayfa',
+      description: 'Platform',
+      path: '/',
+    });
+    expect(defaultHomeMeta.title).toEqual({
+      absolute: 'Uğur Hoca Matematik | 5, 6, 7, 8. Sınıf & LGS Öğrenme Platformu',
+    });
+    expect(defaultHomeMeta.openGraph?.title).toBe(
+      'Uğur Hoca Matematik | 5, 6, 7, 8. Sınıf & LGS Öğrenme Platformu',
+    );
+
+    const customHomeMeta = createPageMetadata({
+      title: 'Uğur Hoca Matematik - Özel',
+      description: 'Platform',
+      path: '',
+    });
+    expect(customHomeMeta.title).toEqual({
+      absolute: 'Uğur Hoca Matematik - Özel',
+    });
+
+    const subpageMeta = createPageMetadata({
+      title: 'Oyunlar',
+      description: 'Matematik oyunları',
+      path: '/oyunlar',
+    });
+    expect(subpageMeta.title).toBe('Oyunlar');
+    expect(subpageMeta.openGraph?.title).toBe('Oyunlar | Uğur Hoca Matematik');
+  });
 });
+

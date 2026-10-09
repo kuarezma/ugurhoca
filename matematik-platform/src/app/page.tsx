@@ -6,9 +6,9 @@ import { loadInitialHomeFeed } from '@/features/home/server/loadHomeFeed';
 import { createPageMetadata } from '@/lib/site-metadata';
 
 export const metadata: Metadata = createPageMetadata({
-  title: 'Ana sayfa',
+  title: 'Uğur Hoca Matematik | 5, 6, 7, 8. Sınıf & LGS',
   description:
-    'Çalışma kağıtları, testler, oyunlar ve daha fazlasıyla matematik öğrenmeyi keşfet!',
+    '5, 6, 7 ve 8. sınıf öğrencileri için MEB müfredatına uygun yeni nesil çalışma kağıtları, yaprak testler, eğitici matematik oyunları ve LGS hazırlık içerikleri. Tamamen ücretsiz!',
   path: '/',
 });
 

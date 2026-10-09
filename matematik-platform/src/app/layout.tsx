@@ -42,11 +42,21 @@ function getSupabasePreconnectOrigin(): string | null {
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: `${SITE_NAME} - Matematik Öğrenme Platformu`,
+    default: `${SITE_NAME} - Ortaokul & LGS Matematik Platformu`,
     template: `%s | ${SITE_NAME}`,
   },
-  description: "Çalışma kağıtları, testler, oyunlar ve daha fazlasıyla matematik öğrenmeyi keşfet!",
-  keywords: ["matematik", "ders", "test", "sorular", "lgs", "yks", "çözüm", "eğitim", "uğur hoca"],
+  description:
+    '5, 6, 7 ve 8. sınıf öğrencileri için MEB müfredatına uygun yeni nesil çalışma kağıtları, yaprak testler, eğitici matematik oyunları ve LGS hazırlık. Tamamen ücretsiz!',
+  keywords: [
+    'matematik',
+    'ortaokul matematik',
+    'lgs matematik',
+    'çalışma kağıtları',
+    'yaprak test',
+    'matematik oyunları',
+    'uğur hoca',
+    'meb müfredatı',
+  ],
   authors: [{ name: "Uğur Hoca" }],
   formatDetection: {
     address: false,

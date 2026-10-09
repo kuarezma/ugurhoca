@@ -29,9 +29,20 @@ export function createPageMetadata({
   noIndex?: boolean;
 }): Metadata {
   const url = buildCanonicalUrl(path);
+  const isHome = path === '/' || path === '';
+  const displayTitle =
+    isHome && title === 'Ana sayfa'
+      ? `${SITE_NAME} | 5, 6, 7, 8. Sınıf & LGS Öğrenme Platformu`
+      : title;
+  const socialTitle = displayTitle.includes(SITE_NAME)
+    ? displayTitle
+    : `${displayTitle} | ${SITE_NAME}`;
 
   return {
-    title,
+    title:
+      isHome || displayTitle.includes(SITE_NAME)
+        ? { absolute: displayTitle }
+        : displayTitle,
     description,
     alternates: { canonical: url },
     robots: noIndex
@@ -45,7 +56,7 @@ export function createPageMetadata({
         }
       : undefined,
     openGraph: {
-      title,
+      title: socialTitle,
       description,
       url,
       siteName: SITE_NAME,
@@ -62,9 +73,10 @@ export function createPageMetadata({
     },
     twitter: {
       card: 'summary_large_image',
-      title,
+      title: socialTitle,
       description,
       images: [defaultOgImage],
     },
   };
 }
+
