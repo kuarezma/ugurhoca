@@ -3,8 +3,8 @@ import { hydrateRoot } from 'react-dom/client';
 import { renderToString } from 'react-dom/server';
 import { render, screen, waitFor } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { ThemeProvider, useTheme } from './ThemeProvider';
-import { THEME_STORAGE_KEY, PALETTE_STORAGE_KEY } from './theme-constants';
+import { ThemeProvider, useTheme, applyInitialThemeMigration } from './ThemeProvider';
+import { THEME_STORAGE_KEY, THEME_LIGHT_MIGRATION_KEY, PALETTE_STORAGE_KEY } from './theme-constants';
 
 function ThemeProbe({ seen }: { seen?: string[] }) {
   const { theme } = useTheme();
@@ -134,5 +134,31 @@ describe('ThemeProvider', () => {
     expect(document.documentElement.dataset.palette).toBe('ocean');
     expect(window.localStorage.getItem(PALETTE_STORAGE_KEY)).toBe('ocean');
     await waitFor(() => expect(screen.getByTestId('palette')).toHaveTextContent('ocean'));
+  });
+
+  it('önceden koyu temada olan kullanıcıları tek seferlik açık temaya taşır ve bayrağı kaydeder', () => {
+    window.localStorage.setItem(THEME_STORAGE_KEY, 'dark');
+    document.documentElement.dataset.theme = 'dark';
+
+    applyInitialThemeMigration();
+
+    expect(window.localStorage.getItem(THEME_STORAGE_KEY)).toBe('light');
+    expect(window.localStorage.getItem(THEME_LIGHT_MIGRATION_KEY)).toBe('1');
+    expect(document.documentElement.dataset.theme).toBe('light');
+    expect(document.documentElement.classList.contains('light')).toBe(true);
+    expect(document.documentElement.classList.contains('dark')).toBe(false);
+  });
+
+  it('tek seferlik geçiş yapıldıktan sonra kullanıcının koyu temayı seçmesine izin verir', () => {
+    // Migration bayrağı önceden set edilmiş
+    window.localStorage.setItem(THEME_LIGHT_MIGRATION_KEY, '1');
+    window.localStorage.setItem(THEME_STORAGE_KEY, 'dark');
+    document.documentElement.dataset.theme = 'dark';
+
+    // Yeniden çağrıldığında kullanıcının dark tercihini ezmemeli
+    applyInitialThemeMigration();
+
+    expect(window.localStorage.getItem(THEME_STORAGE_KEY)).toBe('dark');
+    expect(document.documentElement.dataset.theme).toBe('dark');
   });
 });

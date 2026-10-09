@@ -1,4 +1,5 @@
 export const THEME_STORAGE_KEY = 'ugurhoca-theme';
+export const THEME_LIGHT_MIGRATION_KEY = 'ugurhoca-theme-migrated-light-v1';
 export const PALETTE_STORAGE_KEY = 'ugurhoca-palette';
 export const DESIGN_MODE_STORAGE_KEY = 'ugurhoca-design-mode';
 

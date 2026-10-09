@@ -1,8 +1,9 @@
 'use client';
 
-import { createContext, useCallback, useContext, useMemo, useSyncExternalStore, type ReactNode } from 'react';
+import { createContext, useCallback, useContext, useEffect, useMemo, useSyncExternalStore, type ReactNode } from 'react';
 import {
   THEME_STORAGE_KEY,
+  THEME_LIGHT_MIGRATION_KEY,
   PALETTE_STORAGE_KEY,
   DESIGN_MODE_STORAGE_KEY,
   type ThemePalette,
@@ -64,10 +65,32 @@ const subscribeToTheme = (onChange: () => void) => {
   return () => observer.disconnect();
 };
 
+export function applyInitialThemeMigration(): void {
+  if (typeof window === 'undefined') return;
+  try {
+    if (!window.localStorage.getItem(THEME_LIGHT_MIGRATION_KEY)) {
+      const current = window.localStorage.getItem(THEME_STORAGE_KEY);
+      if (current === 'dark') {
+        window.localStorage.setItem(THEME_STORAGE_KEY, 'light');
+        if (typeof document !== 'undefined') {
+          applyTheme('light');
+        }
+      }
+      window.localStorage.setItem(THEME_LIGHT_MIGRATION_KEY, '1');
+    }
+  } catch {
+    // localStorage erişim kısıtlamalarını yut
+  }
+}
+
 export function ThemeProvider({ children }: { children: ReactNode }) {
   const theme = useSyncExternalStore(subscribeToTheme, readTheme, readServerTheme);
   const palette = useSyncExternalStore(subscribeToTheme, readPalette, readServerPalette);
   const designMode = useSyncExternalStore(subscribeToTheme, readDesignMode, readServerDesignMode);
+
+  useEffect(() => {
+    applyInitialThemeMigration();
+  }, []);
 
   const setTheme = useCallback((nextTheme: Theme) => {
     const update = () => {
