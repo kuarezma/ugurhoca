@@ -38,11 +38,13 @@ describe('loadInitialHomeFeed', () => {
         mockSelect(table, ...args);
         return {
           order: () => ({
-            limit: () =>
-              Promise.resolve({
-                data: table === 'announcements' ? announcementRows : [],
-                error: null,
-              }),
+            limit: () => ({
+              abortSignal: () =>
+                Promise.resolve({
+                  data: table === 'announcements' ? announcementRows : [],
+                  error: null,
+                }),
+            }),
           }),
         };
       },

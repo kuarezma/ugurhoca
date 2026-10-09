@@ -6,6 +6,9 @@ import { resolveYandexPublicDownloadUrl } from '@/lib/yandex-public-download';
 import type { HomeInitialFeed } from '@/features/home/home-initial-feed';
 import type { Announcement } from '@/types';
 
+// Supabase yanıt vermezse build/ISR 60 sn'lik üretim sınırına takılmasın.
+const ANNOUNCEMENTS_QUERY_TIMEOUT_MS = 10_000;
+
 async function fetchAnnouncementsServer(
   supabase: ReturnType<typeof createCachedPublicSupabaseClient>,
 ) {
@@ -13,7 +16,8 @@ async function fetchAnnouncementsServer(
     .from('announcements')
     .select('*')
     .order('created_at', { ascending: false })
-    .limit(4);
+    .limit(4)
+    .abortSignal(AbortSignal.timeout(ANNOUNCEMENTS_QUERY_TIMEOUT_MS));
 
   const sorted = [...(data || [])]
     .sort(
