@@ -97,7 +97,9 @@ export default function ScratchpadModal({
   title = 'Karalama & İşlem Tahtası',
   questionContext,
 }: ScratchpadModalProps) {
-  const modalRef = useAccessibleModal<HTMLDivElement>(isOpen, onClose);
+  const modalRef = useAccessibleModal<HTMLDivElement>(isOpen, onClose, {
+    enableHistoryBack: false,
+  });
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const [isLight, setIsLight] = useState(false);
   const [activeTool, setActiveTool] = useState<ToolType>('pen');
@@ -334,7 +336,11 @@ export default function ScratchpadModal({
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
-    canvas.setPointerCapture(e.pointerId);
+    try {
+      canvas.setPointerCapture(e.pointerId);
+    } catch {
+      // ignore
+    }
     const rect = canvas.getBoundingClientRect();
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
@@ -390,7 +396,14 @@ export default function ScratchpadModal({
     ctx.stroke();
   };
 
-  const handlePointerUp = () => {
+  const handlePointerUp = (e?: ReactPointerEvent<HTMLCanvasElement>) => {
+    if (e && canvasRef.current) {
+      try {
+        canvasRef.current.releasePointerCapture(e.pointerId);
+      } catch {
+        // ignore
+      }
+    }
     if (isDrawing) {
       setIsDrawing(false);
       setLineStart(null);
@@ -399,42 +412,78 @@ export default function ScratchpadModal({
     }
   };
 
-  const handleUndo = () => {
+  const handleUndo = (e?: React.MouseEvent) => {
+    e?.stopPropagation();
     if (history.length <= 1) return;
     const canvas = canvasRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
-    const currentState = history[history.length - 1];
-    const newHistory = history.slice(0, -1);
-    const previousState = newHistory[newHistory.length - 1];
-    ctx.putImageData(previousState, 0, 0);
-    setHistory(newHistory);
-    setRedoHistory((prev) => [...prev, currentState]);
-    if (cacheKey) {
-      scratchpadCache.set(cacheKey, previousState);
+    try {
+      const currentState = history[history.length - 1];
+      const newHistory = history.slice(0, -1);
+      const previousState = newHistory[newHistory.length - 1];
+      if (previousState) {
+        ctx.putImageData(previousState, 0, 0);
+        setHistory(newHistory);
+        setRedoHistory((prev) => [...prev, currentState]);
+        if (cacheKey) {
+          scratchpadCache.set(cacheKey, previousState);
+        }
+      }
+    } catch (err) {
+      console.warn('Undo error:', err);
     }
   };
 
-  const handleRedo = () => {
+  const handleRedo = (e?: React.MouseEvent) => {
+    e?.stopPropagation();
     if (redoHistory.length === 0) return;
     const canvas = canvasRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
-    const nextState = redoHistory[redoHistory.length - 1];
-    const newRedo = redoHistory.slice(0, -1);
-    ctx.putImageData(nextState, 0, 0);
-    setHistory((prev) => [...prev, nextState]);
-    setRedoHistory(newRedo);
-    if (cacheKey) {
-      scratchpadCache.set(cacheKey, nextState);
+    try {
+      const nextState = redoHistory[redoHistory.length - 1];
+      const newRedo = redoHistory.slice(0, -1);
+      if (nextState) {
+        ctx.putImageData(nextState, 0, 0);
+        setHistory((prev) => [...prev, nextState]);
+        setRedoHistory(newRedo);
+        if (cacheKey) {
+          scratchpadCache.set(cacheKey, nextState);
+        }
+      }
+    } catch (err) {
+      console.warn('Redo error:', err);
     }
   };
 
-  const handleSelectPattern = (targetPattern: BackgroundPattern) => {
+  useEffect(() => {
+    if (!isOpen) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'z') {
+        e.preventDefault();
+        e.stopPropagation();
+        if (e.shiftKey) {
+          handleRedo();
+        } else {
+          handleUndo();
+        }
+      } else if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'y') {
+        e.preventDefault();
+        e.stopPropagation();
+        handleRedo();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isOpen, history, redoHistory]);
+
+  const handleSelectPattern = (targetPattern: BackgroundPattern, e?: React.MouseEvent) => {
+    e?.stopPropagation();
     setBackgroundPattern(targetPattern);
     setShowPatternMenu(false);
 
@@ -461,14 +510,16 @@ export default function ScratchpadModal({
     }
   };
 
-  const handlePatternToggle = () => {
+  const handlePatternToggle = (e?: React.MouseEvent) => {
+    e?.stopPropagation();
     const patternOrder: BackgroundPattern[] = ['grid', 'dot', 'lined', 'isometric', 'coordinate', 'dark'];
     const currentIndex = patternOrder.indexOf(backgroundPattern);
     const nextPattern = patternOrder[(currentIndex + 1) % patternOrder.length];
-    handleSelectPattern(nextPattern);
+    handleSelectPattern(nextPattern, e);
   };
 
-  const handleClear = () => {
+  const handleClear = (e?: React.MouseEvent) => {
+    e?.stopPropagation();
     const canvas = canvasRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
@@ -482,7 +533,8 @@ export default function ScratchpadModal({
     }
   };
 
-  const handleDownload = () => {
+  const handleDownload = (e?: React.MouseEvent) => {
+    e?.stopPropagation();
     const canvas = canvasRef.current;
     if (!canvas) return;
     const imageUri = canvas.toDataURL('image/png');
@@ -720,7 +772,10 @@ export default function ScratchpadModal({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-[150] flex items-center justify-center p-2 sm:p-4">
+    <div
+      className="fixed inset-0 z-[150] flex items-center justify-center p-2 sm:p-4"
+      onClick={(e) => e.stopPropagation()}
+    >
       <button
         type="button"
         aria-label="Pencereyi kapat"
@@ -733,6 +788,7 @@ export default function ScratchpadModal({
         role="dialog"
         aria-modal="true"
         aria-label={title}
+        onClick={(e) => e.stopPropagation()}
         className={`relative z-10 flex h-full max-h-[94vh] w-full max-w-6xl flex-col overflow-hidden rounded-3xl border shadow-2xl ${
           isLight ? 'border-slate-200 bg-white text-slate-900 shadow-xl' : 'border-white/15 bg-slate-900 text-white shadow-2xl'
         }`}

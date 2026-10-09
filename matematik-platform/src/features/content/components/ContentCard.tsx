@@ -23,6 +23,8 @@ import {
   getContentTypeLabel,
 } from '@/features/content/constants';
 import { Chip } from '@/components/ui/Chip';
+import { useToast } from '@/components/Toast';
+import { copyToClipboard } from '@/lib/clipboard';
 import {
   formatContentDate,
   getContentAuthorLabel,
@@ -79,6 +81,7 @@ function ContentCard({
   user,
   viewMode,
 }: ContentCardProps) {
+  const { showToast } = useToast();
   const [thumbnailFailed, setThumbnailFailed] = useState(false);
   const [copiedLink, setCopiedLink] = useState(false);
   const visibleDescription = getWorksheetVisibleDescription(content);
@@ -99,13 +102,18 @@ function ContentCard({
 
   const handleCopyLink = async (e: React.MouseEvent) => {
     e.stopPropagation();
-    try {
-      const url = `${window.location.origin}/icerikler?id=${content.id}`;
-      await navigator.clipboard.writeText(url);
+    const url = `${window.location.origin}/icerikler?id=${content.id}`;
+    const success = await copyToClipboard(url);
+    if (success) {
       setCopiedLink(true);
       setTimeout(() => setCopiedLink(false), 2000);
-    } catch {
-      // ignore
+      showToast(
+        'share',
+        `"${content.title}" bağlantısı kopyalandı! Artık dilediğin yerde paylaşabilirsin.`,
+        { title: 'Bağlantı Kopyalandı' },
+      );
+    } else {
+      showToast('error', 'Bağlantı kopyalanamadı. Lütfen tekrar deneyin.');
     }
   };
 

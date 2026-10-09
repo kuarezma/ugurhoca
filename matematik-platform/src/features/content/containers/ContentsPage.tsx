@@ -194,6 +194,28 @@ const splitWorksheetOutcomeHeading = (outcome: string) => {
   };
 };
 
+const getWorksheetOutcomeColorClass = (code: string) => {
+  const parts = code.split('.').filter(Boolean);
+  const unit = parts[2];
+  switch (unit) {
+    case '1':
+      return 'bg-sky-100 text-sky-800 border-sky-300 dark:bg-sky-950/80 dark:text-sky-300 dark:border-sky-700/60';
+    case '2':
+      return 'bg-purple-100 text-purple-800 border-purple-300 dark:bg-purple-950/80 dark:text-purple-300 dark:border-purple-700/60';
+    case '3':
+      return 'bg-emerald-100 text-emerald-800 border-emerald-300 dark:bg-emerald-950/80 dark:text-emerald-300 dark:border-emerald-700/60';
+    case '4':
+      return 'bg-amber-100 text-amber-900 border-amber-300 dark:bg-amber-950/80 dark:text-amber-300 dark:border-amber-700/60';
+    case '5':
+      return 'bg-rose-100 text-rose-800 border-rose-300 dark:bg-rose-950/80 dark:text-rose-300 dark:border-rose-700/60';
+    case '6':
+      return 'bg-teal-100 text-teal-800 border-teal-300 dark:bg-teal-950/80 dark:text-teal-300 dark:border-teal-700/60';
+    default:
+      return 'bg-indigo-100 text-indigo-800 border-indigo-300 dark:bg-indigo-950/80 dark:text-indigo-300 dark:border-indigo-700/60';
+  }
+};
+
+
 const SUPPORTED_WORKSHEET_QUICK_ADD_GRADES: readonly number[] = [5, 6, 7, 8];
 
 const normalizeWorksheetQuickAddGrade = (grade?: GradeValue | null) =>
@@ -1644,23 +1666,25 @@ function ContentsPageInner({
                 {/* Kazanım Hızlı Filtre Çipleri */}
                 {worksheetOutcomeEntries.length > 0 && (
                   <div className="flex flex-wrap items-center gap-2 rounded-2xl border border-default bg-surface-1 p-3.5 sm:p-4 shadow-xs">
-                    <span className="text-xs sm:text-sm font-bold text-secondary mr-1">
-                      Kazanım:
-                    </span>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setSelectedWorksheetOutcome(null);
-                        updateWorksheetBrowserUrl(selectedWorksheetGrade, null);
-                      }}
-                      className={`rounded-full px-3.5 py-1.5 text-xs font-bold transition-all border ${
-                        !selectedWorksheetOutcome
-                          ? 'bg-brand-accent text-slate-900 border-brand-accent shadow-xs'
-                          : 'bg-surface-2 text-secondary hover:text-primary border-default'
-                      }`}
-                    >
-                      Tüm İçerikler ({matchingWorksheetDocuments.length})
-                    </button>
+                    <div className="flex w-full sm:w-auto items-center justify-start gap-2 pb-1 sm:pb-0">
+                      <span className="text-xs sm:text-sm font-bold text-secondary mr-1">
+                        Kazanım:
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setSelectedWorksheetOutcome(null);
+                          updateWorksheetBrowserUrl(selectedWorksheetGrade, null);
+                        }}
+                        className={`rounded-full px-3.5 py-1.5 text-xs font-bold transition-all border ${
+                          !selectedWorksheetOutcome
+                            ? 'bg-brand-accent text-slate-900 border-brand-accent shadow-xs'
+                            : 'bg-surface-2 text-secondary hover:text-primary border-default'
+                        }`}
+                      >
+                        Tüm İçerikler ({matchingWorksheetDocuments.length})
+                      </button>
+                    </div>
                     {worksheetOutcomeEntries
                       .filter(
                         (entry) =>
@@ -1673,9 +1697,7 @@ function ContentsPageInner({
                       .map((entry) => {
                         const isSelected = selectedWorksheetOutcome === entry.outcome;
                         const heading = splitWorksheetOutcomeHeading(entry.outcome);
-                        const label = heading.code
-                          ? `${heading.code} ${heading.label}`
-                          : entry.outcome;
+                        const label = heading.label || entry.outcome;
 
                         return (
                           <button
@@ -1689,15 +1711,28 @@ function ContentsPageInner({
                                 nextOutcome,
                               );
                             }}
-                            className={`flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-xs font-semibold transition-all border ${
+                            className={`w-full sm:w-auto flex items-center justify-between gap-2.5 rounded-full px-3.5 py-2 sm:py-1.5 text-xs font-semibold transition-all border ${
                               isSelected
                                 ? 'bg-brand-primary/15 border-brand-primary text-tone-success-fg dark:text-brand-primary-soft shadow-xs font-bold'
                                 : 'bg-surface-2 hover:bg-surface-3 border-default text-secondary hover:text-primary'
                             }`}
                           >
-                            <span className="truncate max-w-[280px] sm:max-w-xs">{label}</span>
+                            <div className="flex items-center gap-2 min-w-0 flex-1">
+                              {heading.code ? (
+                                <span
+                                  className={`inline-flex items-center px-1.5 py-0.5 rounded-md text-[11px] font-black font-mono tracking-tight shrink-0 border ${getWorksheetOutcomeColorClass(
+                                    heading.code,
+                                  )}`}
+                                >
+                                  {heading.code}
+                                </span>
+                              ) : null}
+                              <span className="truncate min-w-0 flex-1 text-left sm:max-w-xs">
+                                {label}
+                              </span>
+                            </div>
                             <span
-                              className={`rounded-full px-1.5 py-0.5 text-[10px] font-bold ${
+                              className={`rounded-full px-2 py-0.5 text-[10px] font-bold shrink-0 ${
                                 isSelected
                                   ? 'bg-brand-primary text-white'
                                   : 'bg-surface-3 text-secondary'

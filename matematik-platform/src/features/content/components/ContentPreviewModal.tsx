@@ -22,6 +22,8 @@ const ScratchpadModal = dynamic(
 import { getDriveId, getYouTubeId } from '@/features/content/utils';
 import { getWorksheetVisibleDescription } from '@/features/content/worksheet-display';
 import { useAccessibleModal } from '@/hooks/useAccessibleModal';
+import { useToast } from '@/components/Toast';
+import { copyToClipboard } from '@/lib/clipboard';
 import type { ContentDocument } from '@/types';
 
 type ContentPreviewModalProps = {
@@ -44,6 +46,7 @@ export default function ContentPreviewModal({
   previewDoc,
   showAnswerKey,
 }: ContentPreviewModalProps) {
+  const { showToast } = useToast();
   const [copiedLink, setCopiedLink] = useState(false);
   const [isScratchpadOpen, setIsScratchpadOpen] = useState(false);
   // Geçmiş girdisini ContentsPage yönetiyor (`?id=` parametresi). Modal ikinci bir
@@ -59,13 +62,18 @@ export default function ContentPreviewModal({
   const driveId = previewDoc.file_url ? getDriveId(previewDoc.file_url) : null;
 
   const handleCopyLink = async () => {
-    try {
-      const url = `${window.location.origin}/icerikler?id=${previewDoc.id}`;
-      await navigator.clipboard.writeText(url);
+    const url = `${window.location.origin}/icerikler?id=${previewDoc.id}`;
+    const success = await copyToClipboard(url);
+    if (success) {
       setCopiedLink(true);
       setTimeout(() => setCopiedLink(false), 2000);
-    } catch {
-      // ignore
+      showToast(
+        'share',
+        `"${previewDoc.title}" bağlantısı kopyalandı! Artık dilediğin yerde paylaşabilirsin.`,
+        { title: 'Bağlantı Kopyalandı' },
+      );
+    } else {
+      showToast('error', 'Bağlantı kopyalanamadı. Lütfen tekrar deneyin.');
     }
   };
 
@@ -79,13 +87,14 @@ export default function ContentPreviewModal({
 
 
   return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-3 backdrop-blur-sm sm:p-6"
-      onClick={onClose}
-    >
+    <>
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-3 backdrop-blur-sm sm:p-6"
+        onClick={onClose}
+      >
       <motion.div
         initial={{ scale: 0.9, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
@@ -299,14 +308,15 @@ export default function ContentPreviewModal({
           </motion.div>
         )}
       </motion.div>
-
-      {isScratchpadOpen && (
-        <ScratchpadModal
-          isOpen={isScratchpadOpen}
-          onClose={() => setIsScratchpadOpen(false)}
-          title={`${previewDoc.title} — Karalama & İşlem Tahtası`}
-        />
-      )}
     </motion.div>
-  );
+
+    {isScratchpadOpen && (
+      <ScratchpadModal
+        isOpen={isScratchpadOpen}
+        onClose={() => setIsScratchpadOpen(false)}
+        title={`${previewDoc.title} — Karalama & İşlem Tahtası`}
+      />
+    )}
+  </>
+);
 }

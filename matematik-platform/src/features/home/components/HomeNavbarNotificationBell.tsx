@@ -273,7 +273,7 @@ export function HomeNavbarNotificationBell({
     });
   }, [notifications, filterTab, showOnlyUnread]);
 
-  const buttonClasses = `relative inline-flex h-11 w-11 items-center justify-center rounded-xl transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary light:text-slate-600 light:hover:bg-slate-100 light:hover:text-slate-900 dark:text-slate-300 dark:hover:bg-white/5 dark:hover:text-white`;
+  const buttonClasses = `relative inline-flex h-11 w-11 items-center justify-center rounded-xl transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary text-slate-600 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-300 dark:hover:bg-white/5 dark:hover:text-white`;
 
   return (
     <div ref={containerRef} className="relative">
@@ -305,36 +305,36 @@ export function HomeNavbarNotificationBell({
             exit={{ opacity: 0, y: -4, scale: 0.98 }}
             transition={{ duration: 0.15 }}
             role="menu"
-            className="fixed left-4 right-4 top-[calc(3.5rem+0.25rem+env(safe-area-inset-top))] z-50 max-h-[75vh] overflow-hidden rounded-2xl border shadow-2xl sm:absolute sm:left-auto sm:right-0 sm:top-auto sm:mt-2 sm:w-[420px] light:border-slate-200 light:bg-white dark:border-slate-700 dark:bg-slate-900"
+            className="fixed left-4 right-4 top-[calc(3.5rem+0.25rem+env(safe-area-inset-top))] z-[110] max-h-[75vh] overflow-hidden rounded-2xl border bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 shadow-2xl sm:absolute sm:left-auto sm:right-0 sm:top-auto sm:mt-2 sm:w-[420px]"
           >
             {/* Header */}
             <div
-              className="flex items-center justify-between border-b px-4 py-3 light:border-slate-200 dark:border-slate-700"
+              className="flex items-center justify-between border-b px-4 py-3 border-slate-200 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-900/80 gap-2"
             >
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 min-w-0 shrink">
                 <h3
-                  className="font-bold text-sm light:text-slate-900 dark:text-white"
+                  className="font-bold text-sm text-slate-900 dark:text-white whitespace-nowrap"
                 >
                   Bildirim Merkezi
                 </h3>
                 {unreadCount > 0 && (
-                  <span className="rounded-full bg-red-500/15 px-2 py-0.5 text-[11px] font-bold text-red-500">
+                  <span className="shrink-0 whitespace-nowrap rounded-full bg-red-500/15 px-2 py-0.5 text-[11px] font-bold text-red-600 dark:text-red-400">
                     {unreadCount} yeni
                   </span>
                 )}
               </div>
-              <div className="flex items-center gap-1.5">
+              <div className="flex items-center gap-1 shrink-0">
                 <button
                   type="button"
                   onClick={toggleSound}
                   title={soundMuted ? 'Sesi Aç' : 'Sesi Kapat'}
                   aria-label={soundMuted ? 'Sesi Aç' : 'Sesi Kapat'}
-                  className="rounded-lg p-1.5 transition-colors light:text-slate-500 light:hover:bg-slate-100 light:hover:text-slate-900 dark:text-slate-400 dark:hover:bg-white/5 dark:hover:text-white"
+                  className="rounded-lg p-1.5 transition-colors text-slate-500 hover:bg-slate-200/60 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-white/5 dark:hover:text-white shrink-0"
                 >
                   {soundMuted ? (
                     <VolumeX className="h-4 w-4 text-slate-400" />
                   ) : (
-                    <Volume2 className="h-4 w-4 text-indigo-500" />
+                    <Volume2 className="h-4 w-4 text-indigo-500 dark:text-indigo-400" />
                   )}
                 </button>
                 {unreadCount > 0 && (
@@ -343,84 +343,86 @@ export function HomeNavbarNotificationBell({
                     onClick={() => {
                       void markAllAsRead();
                     }}
-                    className="inline-flex items-center gap-1 rounded-lg px-2 py-1 text-[11px] font-medium transition-colors light:text-slate-500 light:hover:bg-slate-100 light:hover:text-slate-900 dark:text-slate-400 dark:hover:bg-white/5 dark:hover:text-white"
+                    title="Tümünü okundu işaretle"
+                    aria-label="Tümünü oku"
+                    className="inline-flex items-center gap-1 rounded-lg p-1.5 sm:px-2.5 sm:py-1 text-[11px] font-semibold whitespace-nowrap transition-colors text-indigo-600 hover:bg-indigo-50 hover:text-indigo-700 dark:text-indigo-400 dark:hover:bg-indigo-950/50 dark:hover:text-indigo-300 shrink-0"
                   >
-                    <CheckCheck className="h-3.5 w-3.5" aria-hidden="true" />
-                    Tümünü oku
+                    <CheckCheck className="h-4 w-4 shrink-0 sm:h-3.5 sm:w-3.5" aria-hidden="true" />
+                    <span className="hidden sm:inline">Tümünü oku</span>
                   </button>
                 )}
                 <button
                   type="button"
                   onClick={() => setOpen(false)}
                   aria-label="Kapat"
-                  className="rounded-lg p-1.5 transition-colors light:text-slate-500 light:hover:bg-slate-100 light:hover:text-slate-900 dark:text-slate-400 dark:hover:bg-white/5 dark:hover:text-white"
+                  className="rounded-lg p-1.5 transition-colors text-slate-500 hover:bg-slate-200/60 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-white/5 dark:hover:text-white shrink-0"
                 >
                   <X className="h-4 w-4" aria-hidden="true" />
                 </button>
               </div>
             </div>
 
-            {/* Filtre Sekmeleri & Okunmamış Toggle */}
+            {/* Filtre Sekmeleri & Okunmamış Toggle (Akıcı Yatay Kaydırma) */}
             <div
-              className="flex items-center justify-between border-b px-3 py-2 gap-2 text-xs light:border-slate-100 light:bg-slate-50/70 dark:border-slate-800 dark:bg-slate-950/40"
+              className="flex items-center gap-1.5 border-b px-3 py-2 text-xs border-slate-200/80 bg-slate-50/80 dark:border-slate-800 dark:bg-slate-950/40 overflow-x-auto scrollbar-none"
             >
-              <div className="flex items-center gap-1 overflow-x-auto scrollbar-none">
-                <button
-                  type="button"
-                  onClick={() => setFilterTab('all')}
-                  className={`px-2.5 py-1 rounded-lg font-medium transition-colors whitespace-nowrap text-xs ${
-                    filterTab === 'all'
-                      ? 'bg-brand-primary font-semibold shadow-xs text-slate-950 dark:text-slate-950'
-                      : 'light:text-slate-600 light:hover:bg-slate-200/60 dark:text-slate-300 dark:hover:bg-white/10'
-                  }`}
-                >
-                  Tümü
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setFilterTab('assignments')}
-                  className={`flex items-center gap-1 px-2.5 py-1 rounded-lg font-medium transition-colors whitespace-nowrap text-xs ${
-                    filterTab === 'assignments'
-                      ? 'bg-brand-primary font-semibold shadow-xs text-slate-950 dark:text-slate-950'
-                      : 'light:text-slate-600 light:hover:bg-slate-200/60 dark:text-slate-300 dark:hover:bg-white/10'
-                  }`}
-                >
-                  <BookOpen className="h-3 w-3" />
-                  Ödevler
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setFilterTab('classes')}
-                  className={`flex items-center gap-1 px-2.5 py-1 rounded-lg font-medium transition-colors whitespace-nowrap text-xs ${
-                    filterTab === 'classes'
-                      ? 'bg-brand-primary font-semibold shadow-xs text-slate-950 dark:text-slate-950'
-                      : 'light:text-slate-600 light:hover:bg-slate-200/60 dark:text-slate-300 dark:hover:bg-white/10'
-                  }`}
-                >
-                  <Radio className="h-3 w-3" />
-                  Dersler
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setFilterTab('messages')}
-                  className={`flex items-center gap-1 px-2.5 py-1 rounded-lg font-medium transition-colors whitespace-nowrap text-xs ${
-                    filterTab === 'messages'
-                      ? 'bg-brand-primary font-semibold shadow-xs text-slate-950 dark:text-slate-950'
-                      : 'light:text-slate-600 light:hover:bg-slate-200/60 dark:text-slate-300 dark:hover:bg-white/10'
-                  }`}
-                >
-                  <MessageCircle className="h-3 w-3" />
-                  Mesajlar
-                </button>
-              </div>
+              <button
+                type="button"
+                onClick={() => setFilterTab('all')}
+                className={`shrink-0 px-2.5 py-1 rounded-lg font-medium transition-colors whitespace-nowrap text-xs ${
+                  filterTab === 'all'
+                    ? 'bg-brand-primary font-bold shadow-xs text-slate-950 dark:text-slate-950'
+                    : 'text-slate-600 hover:bg-slate-200/60 hover:text-slate-900 dark:text-slate-300 dark:hover:bg-white/10 dark:hover:text-white'
+                }`}
+              >
+                Tümü
+              </button>
+              <button
+                type="button"
+                onClick={() => setFilterTab('assignments')}
+                className={`shrink-0 flex items-center gap-1 px-2.5 py-1 rounded-lg font-medium transition-colors whitespace-nowrap text-xs ${
+                  filterTab === 'assignments'
+                    ? 'bg-brand-primary font-bold shadow-xs text-slate-950 dark:text-slate-950'
+                    : 'text-slate-600 hover:bg-slate-200/60 hover:text-slate-900 dark:text-slate-300 dark:hover:bg-white/10 dark:hover:text-white'
+                }`}
+              >
+                <BookOpen className="h-3 w-3 shrink-0" />
+                Ödevler
+              </button>
+              <button
+                type="button"
+                onClick={() => setFilterTab('classes')}
+                className={`shrink-0 flex items-center gap-1 px-2.5 py-1 rounded-lg font-medium transition-colors whitespace-nowrap text-xs ${
+                  filterTab === 'classes'
+                    ? 'bg-brand-primary font-bold shadow-xs text-slate-950 dark:text-slate-950'
+                    : 'text-slate-600 hover:bg-slate-200/60 hover:text-slate-900 dark:text-slate-300 dark:hover:bg-white/10 dark:hover:text-white'
+                }`}
+              >
+                <Radio className="h-3 w-3 shrink-0" />
+                Dersler
+              </button>
+              <button
+                type="button"
+                onClick={() => setFilterTab('messages')}
+                className={`shrink-0 flex items-center gap-1 px-2.5 py-1 rounded-lg font-medium transition-colors whitespace-nowrap text-xs ${
+                  filterTab === 'messages'
+                    ? 'bg-brand-primary font-bold shadow-xs text-slate-950 dark:text-slate-950'
+                    : 'text-slate-600 hover:bg-slate-200/60 hover:text-slate-900 dark:text-slate-300 dark:hover:bg-white/10 dark:hover:text-white'
+                }`}
+              >
+                <MessageCircle className="h-3 w-3 shrink-0" />
+                Mesajlar
+              </button>
+
+              <div className="h-4 w-px bg-slate-300 dark:bg-slate-700 shrink-0 mx-0.5" />
 
               <button
                 type="button"
                 onClick={() => setShowOnlyUnread((prev) => !prev)}
-                className={`shrink-0 px-2 py-1 rounded-lg font-medium transition border text-[11px] ${
+                className={`shrink-0 px-2.5 py-1 rounded-lg font-medium transition border text-[11px] whitespace-nowrap ${
                   showOnlyUnread
                     ? 'border-brand-primary bg-brand-primary/10 text-tone-success-fg dark:text-brand-primary-soft font-semibold'
-                    : 'light:border-slate-200 light:text-slate-500 light:hover:bg-slate-100 dark:border-slate-700 dark:text-slate-400 dark:hover:bg-slate-800'
+                    : 'border-slate-200 bg-white hover:bg-slate-100 text-slate-600 hover:text-slate-900 dark:border-slate-700 dark:bg-slate-800/60 dark:text-slate-300 dark:hover:bg-slate-800'
                 }`}
               >
                 {showOnlyUnread ? '● Sadece Okunmamış' : 'Tüm Durumlar'}
@@ -429,7 +431,7 @@ export function HomeNavbarNotificationBell({
 
             {desktopPermission === 'default' && (
               <div
-                className="flex items-center justify-between px-3.5 py-2 border-b text-[11px] light:bg-indigo-50/70 light:border-indigo-100 light:text-indigo-900 dark:bg-indigo-950/40 dark:border-indigo-900/40 dark:text-indigo-200"
+                className="flex items-center justify-between px-3.5 py-2 border-b text-[11px] bg-indigo-50/80 border-indigo-100 text-indigo-950 dark:bg-indigo-950/40 dark:border-indigo-900/40 dark:text-indigo-200"
               >
                 <span>Ödev ve ders uyarılarını masaüstünde al</span>
                 <button
@@ -449,7 +451,7 @@ export function HomeNavbarNotificationBell({
                     <Bell className="h-5 w-5 opacity-40" />
                   </div>
                   <p
-                    className="text-sm font-medium light:text-slate-600 dark:text-slate-400"
+                    className="text-sm font-medium text-slate-600 dark:text-slate-400"
                   >
                     {showOnlyUnread
                       ? 'Harika! Okunmamış yeni bildiriminiz yok.'
@@ -458,7 +460,7 @@ export function HomeNavbarNotificationBell({
                 </div>
               ) : (
                 <ul
-                  className="divide-y light:divide-slate-100 dark:divide-slate-800"
+                  className="divide-y divide-slate-100 dark:divide-slate-800"
                 >
                   {filteredNotifications.map((notification) => {
                     const style = getNotificationStyle(notification);
@@ -476,30 +478,35 @@ export function HomeNavbarNotificationBell({
                           }}
                           className={`flex w-full items-start gap-3 px-4 py-3 text-left transition-colors pr-10 ${
                             notification.is_read
-                              ? 'light:hover:bg-slate-50 dark:hover:bg-slate-800/60'
-                              : 'light:bg-indigo-50/60 light:hover:bg-indigo-100/70 dark:bg-indigo-500/10 dark:hover:bg-indigo-500/20'
+                              ? 'hover:bg-slate-50 dark:hover:bg-slate-800/60'
+                              : 'bg-indigo-50/60 hover:bg-indigo-100/70 dark:bg-indigo-500/10 dark:hover:bg-indigo-500/20'
                           }`}
                         >
-                          <div
-                            className={`flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-xl ${style.iconWrap}`}
-                          >
-                            <Icon className="h-4 w-4" aria-hidden="true" />
+                          <div className="relative flex-shrink-0">
+                            <div
+                              className={`flex h-9 w-9 items-center justify-center rounded-xl ${style.iconWrap}`}
+                            >
+                              <Icon className="h-4 w-4" aria-hidden="true" />
+                            </div>
+                            {!notification.is_read && (
+                              <span className="absolute -top-1 -right-1 flex h-3 w-3 items-center justify-center">
+                                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-red-400 opacity-75" />
+                                <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-red-500 ring-2 ring-white dark:ring-slate-900" />
+                              </span>
+                            )}
                           </div>
-                          <div className="min-w-0 flex-1">
+                          <div className="min-w-0 flex-1 pr-2">
                             <div className="flex items-start justify-between gap-2">
                               <p
-                                className="truncate text-sm font-semibold light:text-slate-900 dark:text-white"
+                                className="truncate text-sm font-semibold text-slate-900 dark:text-white"
                               >
                                 {notification.title}
                               </p>
-                              {!notification.is_read && (
-                                <span className="mt-1 h-2 w-2 flex-shrink-0 rounded-full bg-red-500 ring-4 ring-red-500/20" />
-                              )}
                             </div>
                             {notification.type !== 'message-read' &&
                             notification.message ? (
                               <p
-                                className="mt-0.5 line-clamp-2 text-xs light:text-slate-600 dark:text-slate-300"
+                                className="mt-0.5 line-clamp-2 text-xs text-slate-600 dark:text-slate-300"
                               >
                                 {notification.message}
                               </p>
@@ -507,15 +514,15 @@ export function HomeNavbarNotificationBell({
                             <div className="mt-1 flex items-center gap-2 text-[11px] text-slate-400">
                               <span>{formatRelativeTime(notification.created_at)}</span>
                               <span>•</span>
-                              <span className="capitalize font-medium text-indigo-500 dark:text-indigo-400">
+                              <span className="capitalize font-semibold text-indigo-600 dark:text-indigo-400">
                                 {notification.type === 'assignment'
-                                  ? 'Ödev'
-                                  : notification.type === 'live-lesson'
-                                    ? 'Canlı Ders'
-                                    : notification.type === 'message' ||
-                                        notification.type === 'admin-message'
-                                      ? 'Mesaj'
-                                      : 'Duyuru'}
+                                    ? 'Ödev'
+                                    : notification.type === 'live-lesson'
+                                      ? 'Canlı Ders'
+                                      : notification.type === 'message' ||
+                                          notification.type === 'admin-message'
+                                        ? 'Mesaj'
+                                        : 'Duyuru'}
                               </span>
                             </div>
                           </div>
@@ -530,7 +537,7 @@ export function HomeNavbarNotificationBell({
                           }}
                           aria-label="Bildirimi sil"
                           title="Bildirimi sil"
-                          className="absolute right-3 top-3.5 z-10 rounded-lg p-1.5 text-slate-400 opacity-0 group-hover:opacity-100 hover:bg-red-500/10 hover:text-red-500 transition focus:opacity-100 focus:outline-none"
+                          className="absolute right-3 top-3.5 z-10 rounded-lg p-1.5 text-slate-400 opacity-60 sm:opacity-0 sm:group-hover:opacity-100 hover:opacity-100 hover:bg-red-500/10 hover:text-red-500 transition focus:opacity-100 focus:outline-none"
                         >
                           <Trash2 className="h-3.5 w-3.5" aria-hidden="true" />
                         </button>
@@ -542,12 +549,12 @@ export function HomeNavbarNotificationBell({
             </div>
 
             <div
-              className="border-t px-4 py-2 text-center light:border-slate-200 dark:border-slate-700"
+              className="border-t px-4 py-2.5 text-center border-slate-200 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-900/80"
             >
               <SafeLink
                 href="/profil"
                 onClick={() => setOpen(false)}
-                className="inline-flex items-center gap-1 text-xs font-medium transition-colors light:text-indigo-600 light:hover:text-indigo-700 dark:text-indigo-300 dark:hover:text-indigo-200"
+                className="inline-flex items-center gap-1 text-xs font-semibold transition-colors text-indigo-600 hover:text-indigo-700 dark:text-indigo-400 dark:hover:text-indigo-300"
               >
                 Tümünü Gör
                 <ChevronRight className="h-3.5 w-3.5" aria-hidden="true" />
