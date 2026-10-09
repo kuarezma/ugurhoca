@@ -27,7 +27,6 @@ import {
 import { useRouter } from 'next/navigation';
 import { signOutClient } from '@/lib/auth-client';
 import { useTheme } from '@/components/ThemeProvider';
-import { HomeNavbarMessagesButton } from '@/features/home/components/HomeNavbarMessagesButton';
 import NotesSection from '@/components/NotesSection';
 import DashboardHero from '@/components/dashboard/DashboardHero';
 import MessageSummaryCard from '@/components/dashboard/MessageSummaryCard';
@@ -592,14 +591,6 @@ export default function ProfilePage({ initialData }: ProfilePageProps) {
           </Link>
 
           <div className="flex items-center gap-2 sm:gap-3">
-            {!user.isAdmin && (
-              <HomeNavbarMessagesButton
-                userId={user.id}
-                userName={user.name || ''}
-                userEmail={user.email || ''}
-                isLight={isLightNav}
-              />
-            )}
             {!user.isAdmin && (
               <button
                 type="button"

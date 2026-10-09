@@ -1,11 +1,56 @@
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { supabase } from '@/lib/supabase/client';
 import type { DashboardNotification } from '@/types/dashboard';
 import { loadNavbarRows } from '@/features/home/hooks/navbarRows';
 
 const NOTIFICATION_LIMIT = 20;
+
+/**
+ * Bildirim çanında sadece Yaprak Test ve Ödev bildirimleri gösterilir.
+ * Sohbet mesajları bağımsız Sohbet Balonuna (ChatBubble) aittir.
+ * Canlı ders veya diğer genel duyurular zili tetiklemez.
+ */
+export function isBellNotification(notification: DashboardNotification): boolean {
+  const type = notification.type;
+
+  // Mesaj/sohbet bildirimleri kesinlikle zilde gösterilmez (sohbet balonu yönetir)
+  if (
+    type === 'message' ||
+    type === 'admin-message' ||
+    type === 'message-read' ||
+    type === 'sent-message'
+  ) {
+    return false;
+  }
+
+  // Canlı ders bildirimleri zilde gösterilmez
+  if (type === 'live-lesson') {
+    return false;
+  }
+
+  const title = (notification.title || '').toLowerCase();
+  const message = (notification.message || '').toLowerCase();
+
+  // 1. Ödev bildirimleri
+  if (type === 'assignment' || title.includes('ödev') || message.includes('ödev')) {
+    return true;
+  }
+
+  // 2. Yaprak test / test bildirimleri
+  if (
+    type === 'document' ||
+    title.includes('yaprak test') ||
+    message.includes('yaprak test') ||
+    title.includes('test') ||
+    message.includes('test')
+  ) {
+    return true;
+  }
+
+  return false;
+}
 
 const sortDesc = (items: DashboardNotification[]) =>
   [...items].sort(
@@ -71,8 +116,17 @@ export const useNavbarNotifications = (userId: string | null | undefined) => {
     store.refCount += 1;
 
     if (!store.channel) {
+      const channelName = `navbar-notifications-${userId}`;
+      if (typeof supabase.getChannels === 'function') {
+        const existing = supabase
+          .getChannels()
+          .find((c) => c.topic === `realtime:${channelName}` || c.topic === channelName);
+        if (existing) {
+          void supabase.removeChannel(existing);
+        }
+      }
       store.channel = supabase
-        .channel(`navbar-notifications-${userId}`)
+        .channel(channelName)
         .on(
           'postgres_changes',
           {
@@ -178,7 +232,7 @@ export const useNavbarNotifications = (userId: string | null | undefined) => {
   const markAllAsRead = useCallback(async () => {
     if (!store) return;
     const unreadIds = store.notifications
-      .filter((item) => !item.is_read)
+      .filter((item) => isBellNotification(item) && !item.is_read)
       .map((item) => item.id);
 
     if (unreadIds.length === 0) return;
@@ -205,7 +259,11 @@ export const useNavbarNotifications = (userId: string | null | undefined) => {
     [store],
   );
 
-  const notifications = store ? store.notifications : [];
+  const rawNotifications = store ? store.notifications : [];
+  const notifications = useMemo(
+    () => rawNotifications.filter(isBellNotification),
+    [rawNotifications],
+  );
   const loading = store ? store.loading : false;
   const unreadCount = notifications.filter((item) => !item.is_read).length;
 

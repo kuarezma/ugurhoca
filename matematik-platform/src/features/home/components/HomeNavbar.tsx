@@ -6,7 +6,6 @@ import { LogOut, Menu, X } from 'lucide-react';
 import { useState } from 'react';
 import { SafeLink } from '@/components/SafeLink';
 import { ThemeToggle } from '@/components/ThemeToggle';
-import { HomeNavbarMessagesButton } from '@/features/home/components/HomeNavbarMessagesButton';
 import { HomeNavbarNotificationBell } from '@/features/home/components/HomeNavbarNotificationBell';
 import type { AppUser } from '@/types';
 
@@ -21,7 +20,6 @@ export function HomeNavbar({ onLogout, user }: HomeNavbarProps) {
   const isHomePage = pathname === '/';
   const profileHref = user?.isAdmin ? '/admin' : '/profil';
   const showBell = Boolean(user?.id);
-  const showMessages = Boolean(user?.id);
 
   return (
     <nav
@@ -94,13 +92,6 @@ export function HomeNavbar({ onLogout, user }: HomeNavbarProps) {
 
           <div className="hidden shrink-0 items-center gap-2 lg:flex">
             <ThemeToggle compact />
-            {showMessages && user?.id ? (
-              <HomeNavbarMessagesButton
-                userId={user.id}
-                userName={user.name || ''}
-                userEmail={user.email || ''}
-              />
-            ) : null}
             {showBell && user?.id ? (
               <HomeNavbarNotificationBell userId={user.id} />
             ) : null}
@@ -147,13 +138,6 @@ export function HomeNavbar({ onLogout, user }: HomeNavbarProps) {
 
           <div className="ml-auto flex shrink-0 items-center gap-1 lg:hidden">
             <ThemeToggle compact />
-            {showMessages && user?.id ? (
-              <HomeNavbarMessagesButton
-                userId={user.id}
-                userName={user.name || ''}
-                userEmail={user.email || ''}
-              />
-            ) : null}
             {showBell && user?.id ? (
               <HomeNavbarNotificationBell userId={user.id} />
             ) : null}

@@ -5,13 +5,9 @@ import {
   Bell,
   CheckCheck,
   ChevronRight,
-  Trash2,
-  Volume2,
-  VolumeX,
   X,
   BookOpen,
-  Radio,
-  MessageCircle,
+  FileText,
 } from 'lucide-react';
 import { SafeLink } from '@/components/SafeLink';
 import { useRouter } from 'next/navigation';
@@ -24,7 +20,7 @@ type HomeNavbarNotificationBellProps = {
   userId: string;
 };
 
-type NotificationFilterTab = 'all' | 'assignments' | 'classes' | 'messages';
+type NotificationFilterTab = 'all' | 'unread' | 'assignments' | 'worksheets';
 
 function formatRelativeTime(isoDate: string): string {
   try {
@@ -43,63 +39,40 @@ function formatRelativeTime(isoDate: string): string {
   }
 }
 
-export function resolveNotificationTarget(notification: DashboardNotification): {
-  path?: string;
-  openChat?: boolean;
-} {
+export function isAssignmentNotification(notification: DashboardNotification): boolean {
   const type = notification.type;
   const title = (notification.title || '').toLowerCase();
   const msg = (notification.message || '').toLowerCase();
+  return type === 'assignment' || title.includes('ödev') || msg.includes('ödev');
+}
 
-  // 1. Mesajlar -> Sohbet Balonunu Aç
-  if (
-    type === 'message' ||
-    type === 'admin-message' ||
-    title.includes('mesaj') ||
-    msg.includes('mesaj')
-  ) {
-    return { openChat: true };
-  }
+export function isWorksheetNotification(notification: DashboardNotification): boolean {
+  if (isAssignmentNotification(notification)) return false;
+  const type = notification.type;
+  const title = (notification.title || '').toLowerCase();
+  const msg = (notification.message || '').toLowerCase();
+  return (
+    type === 'document' ||
+    title.includes('yaprak test') ||
+    msg.includes('yaprak test') ||
+    title.includes('test') ||
+    msg.includes('test')
+  );
+}
 
-  // 2. Canlı Dersler
-  if (
-    type === 'live-lesson' ||
-    title.includes('canlı ders') ||
-    msg.includes('canlı ders')
-  ) {
-    const roomId = (notification.metadata as { room_id?: string })?.room_id;
-    return { path: roomId ? `/canli-ders/d/${roomId}` : '/canli-ders' };
-  }
-
-  // 3. Ödevler
-  if (
-    type === 'assignment' ||
-    title.includes('ödev') ||
-    msg.includes('ödev')
-  ) {
+export function resolveNotificationTarget(notification: DashboardNotification): {
+  path: string;
+} {
+  if (isAssignmentNotification(notification)) {
     return { path: '/odevler' };
   }
 
-  // 4. İçerikler / Dokümanlar / Kitaplar
-  if (
-    type === 'document' ||
-    title.includes('yaprak test') ||
-    title.includes('kitap') ||
-    title.includes('doküman')
-  ) {
-    return { path: '/icerikler' };
+  const metaHref = (notification.metadata as { href?: string })?.href;
+  if (metaHref) {
+    return { path: metaHref };
   }
 
-  // 5. Testler / Sınavlar
-  if (
-    title.includes('test') ||
-    title.includes('deneme') ||
-    title.includes('sınav')
-  ) {
-    return { path: '/testler' };
-  }
-
-  return { path: '/profil' };
+  return { path: '/icerikler' };
 }
 
 export function HomeNavbarNotificationBell({
@@ -107,7 +80,6 @@ export function HomeNavbarNotificationBell({
 }: HomeNavbarNotificationBellProps) {
   const router = useRouter();
   const {
-    deleteNotification,
     markAllAsRead,
     markAsRead,
     notifications,
@@ -115,98 +87,7 @@ export function HomeNavbarNotificationBell({
   } = useNavbarNotifications(userId);
   const [open, setOpen] = useState(false);
   const [filterTab, setFilterTab] = useState<NotificationFilterTab>('all');
-  const [showOnlyUnread, setShowOnlyUnread] = useState(false);
-  const [soundMuted, setSoundMuted] = useState(false);
   const containerRef = useRef<HTMLDivElement | null>(null);
-
-  useEffect(() => {
-    try {
-      const saved = localStorage.getItem('notification_sound_muted');
-      if (saved === 'true') setSoundMuted(true);
-    } catch {
-      // ignore
-    }
-  }, []);
-
-  const toggleSound = useCallback(() => {
-    setSoundMuted((prev) => {
-      const next = !prev;
-      try {
-        localStorage.setItem('notification_sound_muted', String(next));
-      } catch {
-        // ignore
-      }
-      return next;
-    });
-  }, []);
-
-  const playBellChime = useCallback(() => {
-    if (soundMuted) return;
-    try {
-      const AudioCtx =
-        window.AudioContext ||
-        (window as unknown as { webkitAudioContext: typeof AudioContext })
-          .webkitAudioContext;
-      if (!AudioCtx) return;
-      const ctx = new AudioCtx();
-      const now = ctx.currentTime;
-
-      const osc = ctx.createOscillator();
-      const gain = ctx.createGain();
-      osc.type = 'sine';
-      osc.frequency.setValueAtTime(659.25, now); // E5
-      gain.gain.setValueAtTime(0.07, now);
-      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.2);
-      osc.connect(gain);
-      gain.connect(ctx.destination);
-      osc.start(now);
-      osc.stop(now + 0.2);
-    } catch {
-      // ignore
-    }
-  }, [soundMuted]);
-
-  const [desktopPermission, setDesktopPermission] =
-    useState<NotificationPermission | null>(null);
-
-  useEffect(() => {
-    if (typeof window !== 'undefined' && 'Notification' in window) {
-      setDesktopPermission(Notification.permission);
-    }
-  }, []);
-
-  const requestDesktopPermission = useCallback(async () => {
-    if (typeof window !== 'undefined' && 'Notification' in window) {
-      const perm = await Notification.requestPermission();
-      setDesktopPermission(perm);
-    }
-  }, []);
-
-  const prevUnreadRef = useRef(unreadCount);
-  useEffect(() => {
-    if (unreadCount > prevUnreadRef.current) {
-      playBellChime();
-      if (
-        typeof window !== 'undefined' &&
-        'Notification' in window &&
-        Notification.permission === 'granted' &&
-        document.hidden
-      ) {
-        const latest = notifications[0];
-        if (latest) {
-          try {
-            new Notification(latest.title || 'Uğur Hoca Matematik Platformu', {
-              body: latest.message || 'Yeni bir bildiriminiz var.',
-              icon: '/ugur.jpeg',
-            });
-          } catch {
-            // ignore
-          }
-        }
-      }
-    }
-    prevUnreadRef.current = unreadCount;
-  }, [notifications, playBellChime, unreadCount]);
 
   useEffect(() => {
     if (!open) return;
@@ -236,15 +117,13 @@ export function HomeNavbarNotificationBell({
   }, [open]);
 
   const handleNotificationClick = useCallback(
-    async (notification: DashboardNotification) => {
-      if (!notification.is_read) {
-        await markAsRead(notification.id);
-      }
+    (notification: DashboardNotification) => {
       setOpen(false);
+      if (!notification.is_read) {
+        void markAsRead(notification.id);
+      }
       const target = resolveNotificationTarget(notification);
-      if (target.openChat) {
-        window.dispatchEvent(new CustomEvent('open-chat-bubble'));
-      } else if (target.path) {
+      if (target.path) {
         router.push(target.path);
       }
     },
@@ -253,25 +132,18 @@ export function HomeNavbarNotificationBell({
 
   const filteredNotifications = useMemo(() => {
     return notifications.filter((n) => {
-      if (showOnlyUnread && n.is_read) return false;
+      if (filterTab === 'unread') {
+        return !n.is_read;
+      }
       if (filterTab === 'assignments') {
-        return (n.type === 'assignment' || n.title.toLowerCase().includes('ödev'));
+        return isAssignmentNotification(n);
       }
-      if (filterTab === 'classes') {
-        return (
-          n.type === 'live-lesson' || n.title.toLowerCase().includes('canlı ders')
-        );
-      }
-      if (filterTab === 'messages') {
-        return (
-          n.type === 'message' ||
-          n.type === 'admin-message' ||
-          n.title.toLowerCase().includes('mesaj')
-        );
+      if (filterTab === 'worksheets') {
+        return isWorksheetNotification(n);
       }
       return true;
     });
-  }, [notifications, filterTab, showOnlyUnread]);
+  }, [notifications, filterTab]);
 
   const buttonClasses = `relative inline-flex h-11 w-11 items-center justify-center rounded-xl transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary text-slate-600 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-300 dark:hover:bg-white/5 dark:hover:text-white`;
 
@@ -315,7 +187,7 @@ export function HomeNavbarNotificationBell({
                 <h3
                   className="font-bold text-sm text-slate-900 dark:text-white whitespace-nowrap"
                 >
-                  Bildirim Merkezi
+                  Bildirimler
                 </h3>
                 {unreadCount > 0 && (
                   <span className="shrink-0 whitespace-nowrap rounded-full bg-red-500/15 px-2 py-0.5 text-[11px] font-bold text-red-600 dark:text-red-400">
@@ -323,20 +195,7 @@ export function HomeNavbarNotificationBell({
                   </span>
                 )}
               </div>
-              <div className="flex items-center gap-1 shrink-0">
-                <button
-                  type="button"
-                  onClick={toggleSound}
-                  title={soundMuted ? 'Sesi Aç' : 'Sesi Kapat'}
-                  aria-label={soundMuted ? 'Sesi Aç' : 'Sesi Kapat'}
-                  className="rounded-lg p-1.5 transition-colors text-slate-500 hover:bg-slate-200/60 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-white/5 dark:hover:text-white shrink-0"
-                >
-                  {soundMuted ? (
-                    <VolumeX className="h-4 w-4 text-slate-400" />
-                  ) : (
-                    <Volume2 className="h-4 w-4 text-indigo-500 dark:text-indigo-400" />
-                  )}
-                </button>
+              <div className="flex items-center gap-1.5 shrink-0">
                 {unreadCount > 0 && (
                   <button
                     type="button"
@@ -345,10 +204,10 @@ export function HomeNavbarNotificationBell({
                     }}
                     title="Tümünü okundu işaretle"
                     aria-label="Tümünü oku"
-                    className="inline-flex items-center gap-1 rounded-lg p-1.5 sm:px-2.5 sm:py-1 text-[11px] font-semibold whitespace-nowrap transition-colors text-indigo-600 hover:bg-indigo-50 hover:text-indigo-700 dark:text-indigo-400 dark:hover:bg-indigo-950/50 dark:hover:text-indigo-300 shrink-0"
+                    className="inline-flex items-center gap-1 rounded-lg px-2.5 py-1 text-xs font-semibold whitespace-nowrap transition-colors text-indigo-600 hover:bg-indigo-50 hover:text-indigo-700 dark:text-indigo-400 dark:hover:bg-indigo-950/50 dark:hover:text-indigo-300 shrink-0"
                   >
-                    <CheckCheck className="h-4 w-4 shrink-0 sm:h-3.5 sm:w-3.5" aria-hidden="true" />
-                    <span className="hidden sm:inline">Tümünü oku</span>
+                    <CheckCheck className="h-4 w-4 shrink-0" aria-hidden="true" />
+                    <span>Tümünü oku</span>
                   </button>
                 )}
                 <button
@@ -362,7 +221,7 @@ export function HomeNavbarNotificationBell({
               </div>
             </div>
 
-            {/* Filtre Sekmeleri & Okunmamış Toggle (Akıcı Yatay Kaydırma) */}
+            {/* Filtre Sekmeleri */}
             <div
               className="flex items-center gap-1.5 border-b px-3 py-2 text-xs border-slate-200/80 bg-slate-50/80 dark:border-slate-800 dark:bg-slate-950/40 overflow-x-auto scrollbar-none"
             >
@@ -379,6 +238,28 @@ export function HomeNavbarNotificationBell({
               </button>
               <button
                 type="button"
+                onClick={() => setFilterTab('unread')}
+                className={`shrink-0 flex items-center gap-1.5 px-2.5 py-1 rounded-lg font-medium transition-colors whitespace-nowrap text-xs ${
+                  filterTab === 'unread'
+                    ? 'bg-brand-primary font-bold shadow-xs text-slate-950 dark:text-slate-950'
+                    : 'text-slate-600 hover:bg-slate-200/60 hover:text-slate-900 dark:text-slate-300 dark:hover:bg-white/10 dark:hover:text-white'
+                }`}
+              >
+                <span>Okunmamış</span>
+                {unreadCount > 0 && (
+                  <span
+                    className={`inline-flex items-center justify-center px-1.5 py-0.5 text-[10px] font-bold rounded-full ${
+                      filterTab === 'unread'
+                        ? 'bg-slate-950 text-white'
+                        : 'bg-red-500 text-white'
+                    }`}
+                  >
+                    {unreadCount}
+                  </span>
+                )}
+              </button>
+              <button
+                type="button"
                 onClick={() => setFilterTab('assignments')}
                 className={`shrink-0 flex items-center gap-1 px-2.5 py-1 rounded-lg font-medium transition-colors whitespace-nowrap text-xs ${
                   filterTab === 'assignments'
@@ -386,63 +267,22 @@ export function HomeNavbarNotificationBell({
                     : 'text-slate-600 hover:bg-slate-200/60 hover:text-slate-900 dark:text-slate-300 dark:hover:bg-white/10 dark:hover:text-white'
                 }`}
               >
-                <BookOpen className="h-3 w-3 shrink-0" />
+                <BookOpen className="h-3.5 w-3.5 shrink-0" />
                 Ödevler
               </button>
               <button
                 type="button"
-                onClick={() => setFilterTab('classes')}
+                onClick={() => setFilterTab('worksheets')}
                 className={`shrink-0 flex items-center gap-1 px-2.5 py-1 rounded-lg font-medium transition-colors whitespace-nowrap text-xs ${
-                  filterTab === 'classes'
+                  filterTab === 'worksheets'
                     ? 'bg-brand-primary font-bold shadow-xs text-slate-950 dark:text-slate-950'
                     : 'text-slate-600 hover:bg-slate-200/60 hover:text-slate-900 dark:text-slate-300 dark:hover:bg-white/10 dark:hover:text-white'
                 }`}
               >
-                <Radio className="h-3 w-3 shrink-0" />
-                Dersler
-              </button>
-              <button
-                type="button"
-                onClick={() => setFilterTab('messages')}
-                className={`shrink-0 flex items-center gap-1 px-2.5 py-1 rounded-lg font-medium transition-colors whitespace-nowrap text-xs ${
-                  filterTab === 'messages'
-                    ? 'bg-brand-primary font-bold shadow-xs text-slate-950 dark:text-slate-950'
-                    : 'text-slate-600 hover:bg-slate-200/60 hover:text-slate-900 dark:text-slate-300 dark:hover:bg-white/10 dark:hover:text-white'
-                }`}
-              >
-                <MessageCircle className="h-3 w-3 shrink-0" />
-                Mesajlar
-              </button>
-
-              <div className="h-4 w-px bg-slate-300 dark:bg-slate-700 shrink-0 mx-0.5" />
-
-              <button
-                type="button"
-                onClick={() => setShowOnlyUnread((prev) => !prev)}
-                className={`shrink-0 px-2.5 py-1 rounded-lg font-medium transition border text-[11px] whitespace-nowrap ${
-                  showOnlyUnread
-                    ? 'border-brand-primary bg-brand-primary/10 text-tone-success-fg dark:text-brand-primary-soft font-semibold'
-                    : 'border-slate-200 bg-white hover:bg-slate-100 text-slate-600 hover:text-slate-900 dark:border-slate-700 dark:bg-slate-800/60 dark:text-slate-300 dark:hover:bg-slate-800'
-                }`}
-              >
-                {showOnlyUnread ? '● Sadece Okunmamış' : 'Tüm Durumlar'}
+                <FileText className="h-3.5 w-3.5 shrink-0" />
+                Yaprak Testler
               </button>
             </div>
-
-            {desktopPermission === 'default' && (
-              <div
-                className="flex items-center justify-between px-3.5 py-2 border-b text-[11px] bg-indigo-50/80 border-indigo-100 text-indigo-950 dark:bg-indigo-950/40 dark:border-indigo-900/40 dark:text-indigo-200"
-              >
-                <span>Ödev ve ders uyarılarını masaüstünde al</span>
-                <button
-                  type="button"
-                  onClick={requestDesktopPermission}
-                  className="rounded-lg px-2 py-0.5 font-semibold transition bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none"
-                >
-                  İzin Ver
-                </button>
-              </div>
-            )}
 
             <div className="max-h-[55vh] overflow-y-auto sm:max-h-96">
               {filteredNotifications.length === 0 ? (
@@ -453,9 +293,13 @@ export function HomeNavbarNotificationBell({
                   <p
                     className="text-sm font-medium text-slate-600 dark:text-slate-400"
                   >
-                    {showOnlyUnread
+                    {filterTab === 'unread'
                       ? 'Harika! Okunmamış yeni bildiriminiz yok.'
-                      : 'Bu kategoride henüz bir bildirim bulunmuyor.'}
+                      : filterTab === 'assignments'
+                        ? 'Henüz yeni bir ödeviniz bulunmuyor.'
+                        : filterTab === 'worksheets'
+                          ? 'Henüz yeni bir yaprak test bulunmuyor.'
+                          : 'Henüz yeni bir ödev veya yaprak test bulunmuyor.'}
                   </p>
                 </div>
               ) : (
@@ -469,14 +313,14 @@ export function HomeNavbarNotificationBell({
                     return (
                       <li
                         key={notification.id}
-                        className="group relative flex items-center justify-between"
+                        className="relative"
                       >
                         <button
                           type="button"
                           onClick={() => {
-                            void handleNotificationClick(notification);
+                            handleNotificationClick(notification);
                           }}
-                          className={`flex w-full items-start gap-3 px-4 py-3 text-left transition-colors pr-10 ${
+                          className={`flex w-full items-start gap-3 px-4 py-3 text-left transition-colors ${
                             notification.is_read
                               ? 'hover:bg-slate-50 dark:hover:bg-slate-800/60'
                               : 'bg-indigo-50/60 hover:bg-indigo-100/70 dark:bg-indigo-500/10 dark:hover:bg-indigo-500/20'
@@ -495,7 +339,7 @@ export function HomeNavbarNotificationBell({
                               </span>
                             )}
                           </div>
-                          <div className="min-w-0 flex-1 pr-2">
+                          <div className="min-w-0 flex-1">
                             <div className="flex items-start justify-between gap-2">
                               <p
                                 className="truncate text-sm font-semibold text-slate-900 dark:text-white"
@@ -515,31 +359,12 @@ export function HomeNavbarNotificationBell({
                               <span>{formatRelativeTime(notification.created_at)}</span>
                               <span>•</span>
                               <span className="capitalize font-semibold text-indigo-600 dark:text-indigo-400">
-                                {notification.type === 'assignment'
-                                    ? 'Ödev'
-                                    : notification.type === 'live-lesson'
-                                      ? 'Canlı Ders'
-                                      : notification.type === 'message' ||
-                                          notification.type === 'admin-message'
-                                        ? 'Mesaj'
-                                        : 'Duyuru'}
+                                {isAssignmentNotification(notification)
+                                  ? 'Ödev'
+                                  : 'Yaprak Test'}
                               </span>
                             </div>
                           </div>
-                        </button>
-
-                        {/* Tekil Bildirim Silme Butonu */}
-                        <button
-                          type="button"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            void deleteNotification(notification.id);
-                          }}
-                          aria-label="Bildirimi sil"
-                          title="Bildirimi sil"
-                          className="absolute right-3 top-3.5 z-10 rounded-lg p-1.5 text-slate-400 opacity-60 sm:opacity-0 sm:group-hover:opacity-100 hover:opacity-100 hover:bg-red-500/10 hover:text-red-500 transition focus:opacity-100 focus:outline-none"
-                        >
-                          <Trash2 className="h-3.5 w-3.5" aria-hidden="true" />
                         </button>
                       </li>
                     );

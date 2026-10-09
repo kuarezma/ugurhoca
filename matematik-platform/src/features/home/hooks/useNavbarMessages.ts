@@ -120,8 +120,17 @@ export const useNavbarMessages = (userId: string | null | undefined) => {
     };
 
     if (!store.channel) {
+      const channelName = getStudentMessagesChannelName(userId);
+      if (typeof supabase.getChannels === 'function') {
+        const existing = supabase
+          .getChannels()
+          .find((c) => c.topic === `realtime:${channelName}` || c.topic === channelName);
+        if (existing) {
+          void supabase.removeChannel(existing);
+        }
+      }
       store.channel = supabase
-        .channel(getStudentMessagesChannelName(userId))
+        .channel(channelName)
         .on(
           'broadcast',
           { event: ADMIN_MESSAGE_BROADCAST_EVENT },

@@ -30,20 +30,12 @@ const dummyNotifications: DashboardNotification[] = [
   {
     id: 'notif-2',
     user_id: 'user-1',
-    title: 'Canlı Ders Başlıyor',
-    message: 'LGS Matematik Kampı 1. Oturum yayında.',
-    type: 'live-lesson',
+    title: 'Yeni Yaprak Test Eklendi',
+    message: '8. Sınıf Üslü İfadeler yaprak test yayında.',
+    type: 'document',
     is_read: true,
+    metadata: { href: '/icerikler?grade=8&type=yaprak-test' },
     created_at: new Date(Date.now() - 2 * 3600 * 1000).toISOString(), // 2 sa önce
-  },
-  {
-    id: 'notif-3',
-    user_id: 'user-1',
-    title: 'Uğur Hoca sana mesaj yazdı',
-    message: 'Sorunun çözümünü inceledim.',
-    type: 'message',
-    is_read: true,
-    created_at: new Date(Date.now() - 24 * 3600 * 1000).toISOString(), // Dün
   },
 ];
 
@@ -72,11 +64,11 @@ describe('HomeNavbarNotificationBell Component', () => {
 
     fireEvent.click(bellBtn);
 
-    expect(screen.getByText('Bildirim Merkezi')).toBeInTheDocument();
+    expect(screen.getByText('Bildirimler')).toBeInTheDocument();
     expect(screen.getByText('Tümü')).toBeInTheDocument();
+    expect(screen.getByText('Okunmamış')).toBeInTheDocument();
     expect(screen.getByText('Ödevler')).toBeInTheDocument();
-    expect(screen.getByText('Dersler')).toBeInTheDocument();
-    expect(screen.getByText('Mesajlar')).toBeInTheDocument();
+    expect(screen.getByText('Yaprak Testler')).toBeInTheDocument();
   });
 
   it('sekmeler arasında filtreleme yapar', () => {
@@ -84,12 +76,40 @@ describe('HomeNavbarNotificationBell Component', () => {
     fireEvent.click(screen.getByRole('button', { name: /Bildirimler/i }));
 
     expect(screen.getByText('Yeni Ödev: Çarpanlar ve Katlar')).toBeInTheDocument();
-    expect(screen.getByText('Canlı Ders Başlıyor')).toBeInTheDocument();
+    expect(screen.getByText('Yeni Yaprak Test Eklendi')).toBeInTheDocument();
 
     // Sadece Ödevler sekmesine tıkla
     fireEvent.click(screen.getByRole('button', { name: /Ödevler/i }));
     expect(screen.getByText('Yeni Ödev: Çarpanlar ve Katlar')).toBeInTheDocument();
-    expect(screen.queryByText('Canlı Ders Başlıyor')).not.toBeInTheDocument();
+    expect(screen.queryByText('Yeni Yaprak Test Eklendi')).not.toBeInTheDocument();
+
+    // Sadece Yaprak Testler sekmesine tıkla
+    fireEvent.click(screen.getByRole('button', { name: /Yaprak Testler/i }));
+    expect(screen.getByText('Yeni Yaprak Test Eklendi')).toBeInTheDocument();
+    expect(screen.queryByText('Yeni Ödev: Çarpanlar ve Katlar')).not.toBeInTheDocument();
+  });
+
+  it('okunmamış sekmesine tıklandığında yalnızca okunmamışları listeler', () => {
+    render(<HomeNavbarNotificationBell userId="user-1" />);
+    fireEvent.click(screen.getByRole('button', { name: /Bildirimler/i }));
+
+    expect(screen.getByText('Yeni Ödev: Çarpanlar ve Katlar')).toBeInTheDocument();
+    expect(screen.getByText('Yeni Yaprak Test Eklendi')).toBeInTheDocument();
+
+    fireEvent.click(screen.getByText('Okunmamış'));
+    expect(screen.getByText('Yeni Ödev: Çarpanlar ve Katlar')).toBeInTheDocument();
+    expect(screen.queryByText('Yeni Yaprak Test Eklendi')).not.toBeInTheDocument();
+  });
+
+  it('tümünü oku butonuna tıklandığında markAllAsRead servisini tetikler', () => {
+    render(<HomeNavbarNotificationBell userId="user-1" />);
+    fireEvent.click(screen.getByRole('button', { name: /Bildirimler/i }));
+
+    const markAllBtn = screen.getByRole('button', { name: /Tümünü oku/i });
+    expect(markAllBtn).toBeInTheDocument();
+
+    fireEvent.click(markAllBtn);
+    expect(mockMarkAllAsRead).toHaveBeenCalledTimes(1);
   });
 
   it('bildirime tıklandığında akıllı yönlendirmeyi (deep linking) çalıştırır', async () => {
@@ -103,17 +123,6 @@ describe('HomeNavbarNotificationBell Component', () => {
       expect(mockMarkAsRead).toHaveBeenCalledWith('notif-1');
       expect(mockPush).toHaveBeenCalledWith('/odevler');
     });
-  });
-
-  it('tekil bildirim silme butonuna tıklandığında deleteNotification servisini tetikler', () => {
-    render(<HomeNavbarNotificationBell userId="user-1" />);
-    fireEvent.click(screen.getByRole('button', { name: /Bildirimler/i }));
-
-    const deleteBtns = screen.getAllByRole('button', { name: /Bildirimi sil/i });
-    expect(deleteBtns.length).toBeGreaterThan(0);
-
-    fireEvent.click(deleteBtns[0]);
-    expect(mockDeleteNotification).toHaveBeenCalledWith('notif-1');
   });
 
   it('resolveNotificationTarget doğru rotaları ve hedefleri belirler', () => {
@@ -132,26 +141,26 @@ describe('HomeNavbarNotificationBell Component', () => {
     expect(
       resolveNotificationTarget({
         id: '2',
-        type: 'live-lesson',
-        title: 'Canlı Ders',
+        type: 'document',
+        title: 'Yeni Yaprak Test',
         message: '',
         is_read: false,
         created_at: '',
         user_id: 'u1',
-        metadata: { room_id: 'room-abc' },
+        metadata: { href: '/icerikler?grade=8&type=yaprak-test' },
       }),
-    ).toEqual({ path: '/canli-ders/d/room-abc' });
+    ).toEqual({ path: '/icerikler?grade=8&type=yaprak-test' });
 
     expect(
       resolveNotificationTarget({
         id: '3',
-        type: 'message',
-        title: 'Hocadan Mesaj',
+        type: 'document',
+        title: 'Genel Doküman',
         message: '',
         is_read: false,
         created_at: '',
         user_id: 'u1',
       }),
-    ).toEqual({ openChat: true });
+    ).toEqual({ path: '/icerikler' });
   });
 });

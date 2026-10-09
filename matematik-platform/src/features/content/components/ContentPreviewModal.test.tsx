@@ -1,6 +1,7 @@
 import { describe, expect, it, vi } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import ContentPreviewModal from './ContentPreviewModal';
+import { ToastProvider } from '@/components/Toast';
 import type { ContentDocument } from '@/types';
 
 const mockDoc: ContentDocument = {
@@ -15,6 +16,8 @@ const mockDoc: ContentDocument = {
   likes: 5,
 };
 
+const renderModal = (ui: React.ReactElement) => render(ui, { wrapper: ToastProvider });
+
 describe('ContentPreviewModal', () => {
   it('renders title and closes when close button is clicked', () => {
     const onClose = vi.fn();
@@ -22,7 +25,7 @@ describe('ContentPreviewModal', () => {
     const onToggleAnswerKey = vi.fn();
     const onToggleCompleted = vi.fn();
 
-    render(
+    renderModal(
       <ContentPreviewModal
         isCompleted={false}
         onClose={onClose}
@@ -46,7 +49,7 @@ describe('ContentPreviewModal', () => {
   it('triggers onClose when backdrop is clicked', () => {
     const onClose = vi.fn();
 
-    const { container } = render(
+    const { container } = renderModal(
       <ContentPreviewModal
         isCompleted={false}
         onClose={onClose}
@@ -66,7 +69,7 @@ describe('ContentPreviewModal', () => {
   it('does not trigger onClose when dialog body is clicked', () => {
     const onClose = vi.fn();
 
-    render(
+    renderModal(
       <ContentPreviewModal
         isCompleted={false}
         onClose={onClose}
@@ -84,7 +87,7 @@ describe('ContentPreviewModal', () => {
   });
 
   it('renders İşlem Tahtası (Scratchpad) button', () => {
-    render(
+    renderModal(
       <ContentPreviewModal
         isCompleted={false}
         onClose={vi.fn()}

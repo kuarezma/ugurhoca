@@ -1,6 +1,7 @@
 import { describe, expect, it, vi } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { ContentCard } from './ContentCard';
+import { ToastProvider } from '@/components/Toast';
 import type { ContentDocument } from '@/types';
 
 const mockContent: ContentDocument = {
@@ -20,6 +21,8 @@ const mockContent: ContentDocument = {
   author: 'Uğur Hoca',
 };
 
+const renderCard = (ui: React.ReactElement) => render(ui, { wrapper: ToastProvider });
+
 describe('ContentCard', () => {
   it('renders grid view correctly with title, metadata, stats, and action buttons', () => {
     const onPreview = vi.fn();
@@ -31,7 +34,7 @@ describe('ContentCard', () => {
     const onEdit = vi.fn();
     const onOpenComments = vi.fn();
 
-    render(
+    renderCard(
       <ContentCard
         content={mockContent}
         index={0}
@@ -95,7 +98,7 @@ describe('ContentCard', () => {
     const onEdit = vi.fn();
     const onDelete = vi.fn();
 
-    render(
+    renderCard(
       <ContentCard
         content={mockContent}
         index={0}
@@ -130,7 +133,7 @@ describe('ContentCard', () => {
   });
 
   it('renders list view without crashing', () => {
-    render(
+    renderCard(
       <ContentCard
         content={mockContent}
         index={0}
