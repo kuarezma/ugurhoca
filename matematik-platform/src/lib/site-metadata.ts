@@ -8,9 +8,8 @@ export const SITE_URL =
   'https://ugurhoca.com';
 export const SITE_NAME = 'Uğur Hoca Matematik';
 
-// 1200x630 sosyal önizleme: src/app/opengraph-image.tsx (edge ImageResponse).
-// Eskiden /icon-512.png kullanılıyordu — summary_large_image kartlarda küçük
-// ve özensiz görünüyordu.
+// 1200x630 sosyal önizleme görseli (src/app/opengraph-image.png).
+// next.config.js üzerinden /opengraph-image -> /opengraph-image.png yönlendirilir.
 const defaultOgImage = `${SITE_URL}/opengraph-image`;
 
 export function buildCanonicalUrl(path: string) {

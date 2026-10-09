@@ -83,6 +83,15 @@ const nextConfig = {
       'canvas-confetti',
     ],
   },
+  async redirects() {
+    return [
+      {
+        source: '/opengraph-image',
+        destination: '/opengraph-image.png',
+        permanent: false,
+      },
+    ];
+  },
   async headers() {
     return [
       {
