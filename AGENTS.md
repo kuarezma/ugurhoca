@@ -9,3 +9,6 @@ Uygulama kodu `matematik-platform/` altındadır. Kural önceliği:
 5. `task.md` — görev günlüğü (sayılar için diske bak: `find matematik-platform/src -name "*.test.*"`)
 
 Güvenlik sınırları: yetki her zaman server'da (`requireAdmin` / `getVerifiedServerUser` + RLS); middleware çerezi UX kısayoludur. `supabase/migrations/` tek şema kaynağıdır (`docs/archive-supabase-setup.legacy.sql` çalıştırılmaz).
+
+## Otonom Git ve Dağıtım Protokolü
+Her tamamlanan işten sonra (geliştirme, hata düzeltme, refactor veya mekanik doğrulama sonrasında) tüm değişiklikler onay beklenmeksizin otomatik olarak sahneye alınır (`git add .`), konvansiyonel anlamlı bir commit mesajıyla commit edilir ve derhal uzak depoya push edilir (`git push origin <branch>`).
