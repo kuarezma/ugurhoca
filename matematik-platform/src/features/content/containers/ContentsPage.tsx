@@ -585,12 +585,6 @@ function ContentsPageInner({
         }
 
         setUser(resolvedUser);
-        // Açık URL filtresi, öğrencinin varsayılan sınıfından önce gelir.
-        if (!new URLSearchParams(window.location.search).get('grade')) {
-          setSelectedGrade(
-            resolvedUser.isAdmin ? 'all' : normalizeContentGrade(resolvedUser.grade),
-          );
-        }
       } finally {
         if (!disposed) setAuthResolved(true);
       }
@@ -1402,7 +1396,7 @@ function ContentsPageInner({
         ? `${selectedWorksheetGrade}. Sınıf`
         : null;
 
-  const profileHref = user?.isAdmin ? '/admin' : user ? '/profil' : '/giris';
+  const profileHref = user?.isAdmin ? '/admin' : user ? '/profil' : '/';
 
   return (
     <main className="page-surface icerikler-page min-h-screen gradient-bg pb-[max(6rem,calc(env(safe-area-inset-bottom)+5.5rem))] relative">
@@ -1438,7 +1432,7 @@ function ContentsPageInner({
             className="text-secondary hover:text-primary flex items-center gap-1.5 text-xs sm:text-base shrink-0"
           >
             <ArrowLeft className="w-4 h-4 sm:w-5 sm:h-5" />
-            <span>{user?.isAdmin ? 'Admin Panel' : 'Profil'}</span>
+            <span>{user?.isAdmin ? 'Admin Panel' : user ? 'Profil' : 'Ana Sayfa'}</span>
           </Link>
         </div>
       </nav>

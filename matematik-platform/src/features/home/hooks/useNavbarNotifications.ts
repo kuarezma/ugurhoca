@@ -259,10 +259,9 @@ export const useNavbarNotifications = (userId: string | null | undefined) => {
     [store],
   );
 
-  const rawNotifications = store ? store.notifications : [];
   const notifications = useMemo(
-    () => rawNotifications.filter(isBellNotification),
-    [rawNotifications],
+    () => (store ? store.notifications.filter(isBellNotification) : []),
+    [store],
   );
   const loading = store ? store.loading : false;
   const unreadCount = notifications.filter((item) => !item.is_read).length;

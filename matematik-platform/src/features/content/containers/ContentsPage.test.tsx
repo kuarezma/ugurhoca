@@ -111,8 +111,8 @@ describe('ContentsPage static feed and client filters', () => {
     [null, 'Tüm sınıflar için içerikler', 'all'],
     [
       { id: 'student', grade: 7, isAdmin: false },
-      '7. sınıf için tüm içerikler',
-      7,
+      'Tüm sınıflar için içerikler',
+      'all',
     ],
     [
       { id: 'admin', grade: 7, isAdmin: true },
@@ -120,7 +120,7 @@ describe('ContentsPage static feed and client filters', () => {
       'all',
     ],
   ] as const)(
-    'kullanıcının varsayılan sınıfını istemcide uygular: %j',
+    'tüm kullanıcılar için varsayılan olarak tüm içerikleri gösterir: %j',
     async (user, text, grade) => {
       vi.mocked(resolveContentUser).mockResolvedValue(user as never);
       render(<ContentsPage />);
@@ -164,8 +164,8 @@ describe('ContentsPage static feed and client filters', () => {
   it.each([0, 1])(
     'aynı sınıf ve kategori için geçerli SSR seedini tekrar çekmez (count=%i)',
     async (count) => {
-      window.history.replaceState({}, '', '/icerikler?type=kitaplar');
-      navigation.params = new URLSearchParams('type=kitaplar');
+      window.history.replaceState({}, '', '/icerikler?type=kitaplar&grade=7');
+      navigation.params = new URLSearchParams('type=kitaplar&grade=7');
       vi.mocked(resolveContentUser).mockResolvedValue({
         id: 'student',
         grade: 7,

@@ -1,6 +1,5 @@
 import 'server-only';
 
-import { getServerAuthSnapshot } from '@/lib/auth-snapshot.server';
 import { hasSupabasePublicEnv } from '@/lib/env.server';
 import { createCachedPublicSupabaseClient } from '@/lib/supabase/server';
 import type { ContentDocument } from '@/types';
@@ -9,24 +8,12 @@ import {
   CONTENT_TYPE_MAPPING,
   getContentTypeQueryTypes,
 } from '@/features/content/constants';
-import {
-  normalizeContentGrade,
-  sortContentDocumentsByNewest,
-} from '@/features/content/utils';
+import { sortContentDocumentsByNewest } from '@/features/content/utils';
 
 export const getInitialContentGradeFilter =
   async (): Promise<ContentGradeFilter> => {
-    // Bilinçli olarak imzasız snapshot: yalnızca herkese açık belgelerin
-    // (token'sız, önbellekli istemciyle) varsayılan sınıf filtresini seçen bir
-    // UX ipucu. Sahte çerez yalnız başka sınıfın açık içeriğini önce gösterir;
-    // kişisel veri çekilmez, bu yüzden istek başına doğrulama maliyeti eklenmez.
-    const snapshot = await getServerAuthSnapshot();
-
-    if (!snapshot || snapshot.isAdmin) {
-      return 'all';
-    }
-
-    return normalizeContentGrade(snapshot.grade);
+    // Tüm içerikler sınıflar arası kısıtlama olmaksızın herkese açıktır.
+    return 'all';
   };
 
 export const loadInitialContentDocuments = async (
