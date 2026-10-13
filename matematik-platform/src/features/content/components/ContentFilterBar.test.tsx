@@ -49,7 +49,7 @@ describe('ContentFilterBar', () => {
     fireEvent.click(listBtn);
     expect(onViewModeChange).toHaveBeenCalledWith('list');
 
-    const packsBtn = screen.getByTitle('Konu Paketleri');
+    const packsBtn = screen.getByTitle('Konu Setleri');
     fireEvent.click(packsBtn);
     expect(onViewModeChange).toHaveBeenCalledWith('packs');
 
