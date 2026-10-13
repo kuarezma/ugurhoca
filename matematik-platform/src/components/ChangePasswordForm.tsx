@@ -11,6 +11,7 @@ type ChangePasswordFormProps = {
 export default function ChangePasswordForm({
   isLight = false,
 }: ChangePasswordFormProps) {
+  const [showCurrent, setShowCurrent] = useState(false);
   const [showNew, setShowNew] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
   const [currentPassword, setCurrentPassword] = useState("");
@@ -131,15 +132,29 @@ export default function ChangePasswordForm({
         >
           Mevcut Şifre
         </label>
-        <input
-          id={currentPasswordId}
-          type="password"
-          value={currentPassword}
-          onChange={(e) => setCurrentPassword(e.target.value)}
-          placeholder="Mevcut şifreniz"
-          autoComplete="current-password"
-          className={inputClass}
-        />
+        <div className="relative">
+          <input
+            id={currentPasswordId}
+            type={showCurrent ? "text" : "password"}
+            value={currentPassword}
+            onChange={(e) => setCurrentPassword(e.target.value)}
+            placeholder="Mevcut şifreniz"
+            autoComplete="current-password"
+            className={inputClass}
+          />
+          <button
+            type="button"
+            onClick={() => setShowCurrent(!showCurrent)}
+            aria-label={showCurrent ? "Mevcut şifreyi gizle" : "Mevcut şifreyi göster"}
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400"
+          >
+            {showCurrent ? (
+              <EyeOff className="w-4 h-4" />
+            ) : (
+              <Eye className="w-4 h-4" />
+            )}
+          </button>
+        </div>
       </div>
 
       <div>
