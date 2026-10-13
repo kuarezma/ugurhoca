@@ -1,10 +1,8 @@
-import {
-  createServerSupabaseClient,
-  createServiceRoleClient,
-} from '@/lib/supabase/server';
-import { isAdminEmail } from '@/lib/admin';
+import { z } from 'zod';
+import { requireAdmin } from '@/lib/api-auth';
 import { createLogger } from '@/lib/logger';
 import { apiError, apiOk } from '@/lib/api-response';
+import { enforceRateLimit } from '@/lib/rate-limit';
 import { mergeAdminThread } from '@/features/messages/mapNotificationsToThread';
 import { parseSupportPayload } from '@/features/messages/supportChatUtils';
 
@@ -12,46 +10,45 @@ const log = createLogger('admin-conversation-thread');
 
 const FETCH_LIMIT = 200;
 
+const studentIdSchema = z
+  .string()
+  .trim()
+  .min(1, 'student_id parametresi gerekli.');
+
 export async function GET(request: Request) {
-  const authHeader = request.headers.get('authorization');
-  const accessToken = authHeader?.startsWith('Bearer ')
-    ? authHeader.slice(7).trim()
-    : '';
-
-  if (!accessToken) {
-    return apiError('Oturum açmanız gerekiyor.', 401, 'missing_access_token');
-  }
-
-  const authClient = createServerSupabaseClient(accessToken);
-  const {
-    data: { user },
-    error: userError,
-  } = await authClient.auth.getUser(accessToken);
-
-  if (userError || !user?.email) {
-    return apiError('Oturum açmanız gerekiyor.', 401, 'invalid_session');
-  }
-
-  if (!isAdminEmail(user.email)) {
-    return apiError('Bu işlem için yetkiniz yok.', 403, 'not_admin');
-  }
-
-  const url = new URL(request.url);
-  const studentId = url.searchParams.get('student_id')?.trim();
-
-  if (!studentId) {
-    return apiError('student_id parametresi gerekli.', 400, 'missing_student_id');
-  }
-
-  let service: ReturnType<typeof createServiceRoleClient>;
+  let auth: Awaited<ReturnType<typeof requireAdmin>>;
   try {
-    service = createServiceRoleClient();
+    auth = await requireAdmin(request);
   } catch (envError) {
     log.error('Service role client oluşturulamadı', envError);
     return apiError('Sunucu yapılandırması eksik.', 500, 'service_unavailable');
   }
 
-  const adminUserId = user.id;
+  if (auth.error) {
+    return auth.error;
+  }
+
+  const limited = await enforceRateLimit(
+    'admin-conversation-thread',
+    auth.user.id,
+    { limit: 60, windowSeconds: 60 },
+  );
+  if (limited) {
+    return limited;
+  }
+
+  const url = new URL(request.url);
+  const parsedStudentId = studentIdSchema.safeParse(
+    url.searchParams.get('student_id') ?? '',
+  );
+
+  if (!parsedStudentId.success) {
+    return apiError('student_id parametresi gerekli.', 400, 'missing_student_id');
+  }
+
+  const studentId = parsedStudentId.data;
+  const service = auth.serviceRole;
+  const adminUserId = auth.user.id;
 
   const [inboxRes, repliesRes] = await Promise.all([
     service

@@ -2,6 +2,7 @@ import { apiError, apiOk } from '@/lib/api-response';
 import { requireAdmin } from '@/lib/api-auth';
 import { parseAnnualPlanFile } from '@/lib/annual-plan-import';
 import { createLogger } from '@/lib/logger';
+import { enforceRateLimit } from '@/lib/rate-limit';
 
 const log = createLogger('admin-annual-plan-import');
 const MAX_PLAN_FILE_BYTES = 5 * 1024 * 1024;
@@ -25,6 +26,15 @@ export async function POST(request: Request) {
 
   if ('error' in auth) {
     return auth.error;
+  }
+
+  const limited = await enforceRateLimit(
+    'admin-annual-plan-import',
+    auth.user.id,
+    { limit: 10, windowSeconds: 60 },
+  );
+  if (limited) {
+    return limited;
   }
 
   try {

@@ -11,6 +11,7 @@ import {
   Calculator,
 } from 'lucide-react';
 import MathText from '@/components/MathText';
+import { useAccessibleModal } from '@/hooks/useAccessibleModal';
 
 interface FormulaItem {
   id: string;
@@ -177,6 +178,7 @@ export function QuickFormulaCheatSheetModal({
   onClose,
   isLight = false,
 }: QuickFormulaCheatSheetModalProps) {
+  const modalRef = useAccessibleModal<HTMLDivElement>(isOpen, onClose);
   const [activeTab, setActiveTab] = useState<'lgs' | 'yks'>('lgs');
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -204,10 +206,12 @@ export function QuickFormulaCheatSheetModal({
 
   return (
     <div
+      ref={modalRef}
+      tabIndex={-1}
       role="dialog"
       aria-modal="true"
       aria-label="Hızlı Formül Cep Notu"
-      className="fixed inset-0 z-[160] flex items-center justify-center bg-black/70 p-2 sm:p-4 backdrop-blur-md animate-fade-in"
+      className="fixed inset-0 z-[160] flex items-center justify-center bg-black/70 p-2 sm:p-4 backdrop-blur-md animate-fade-in outline-none"
     >
       <div
         className={`w-full max-w-4xl max-h-[90vh] flex flex-col rounded-3xl border shadow-2xl overflow-hidden transition-all ${

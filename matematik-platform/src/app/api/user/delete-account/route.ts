@@ -1,7 +1,10 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
+import { getBearerOrCookieAccessToken } from '@/lib/api-auth';
 import { enforceRateLimit, getClientIp } from '@/lib/rate-limit';
-import { logger } from '@/lib/logger';
+import { createLogger } from '@/lib/logger';
+
+const log = createLogger('api:delete-account');
 
 export const runtime = 'nodejs';
 
@@ -16,15 +19,14 @@ export async function POST(request: Request) {
   }
 
   try {
-    const authHeader = request.headers.get('authorization');
-    if (!authHeader?.startsWith('Bearer ')) {
+    const token = await getBearerOrCookieAccessToken(request);
+    if (!token) {
       return NextResponse.json(
         { error: 'Yetkilendirme başlığı (Bearer token) gerekli.' },
         { status: 401 },
       );
     }
 
-    const token = authHeader.replace('Bearer ', '').trim();
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
     const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
     const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
@@ -33,6 +35,14 @@ export async function POST(request: Request) {
       return NextResponse.json(
         { error: 'Sunucu Supabase yapılandırması eksik.' },
         { status: 500 },
+      );
+    }
+
+    if (!serviceRoleKey) {
+      log.error('SUPABASE_SERVICE_ROLE_KEY eksik: hesap silme servisi yapılandırılmamış');
+      return NextResponse.json(
+        { error: 'Hesap silme servisi şu anda yapılandırılmamış.' },
+        { status: 503 },
       );
     }
 
@@ -51,13 +61,12 @@ export async function POST(request: Request) {
     }
 
     const userId = user.id;
-    logger.info('Kullanıcı self-servis hesap silme talebi aldı', { userId });
+    log.info('Kullanıcı self-servis hesap silme talebi aldı', { userId });
 
-    // 2. Service Role veya Admin client ile kullanıcı verilerini temizle
-    if (serviceRoleKey) {
-      const adminClient = createClient(supabaseUrl, serviceRoleKey, {
-        auth: { autoRefreshToken: false, persistSession: false },
-      });
+    // 2. Service Role client ile kullanıcı verilerini temizle
+    const adminClient = createClient(supabaseUrl, serviceRoleKey, {
+      auth: { autoRefreshToken: false, persistSession: false },
+    });
 
       // Kullanıcıya ait veri tutan tüm tablolar. Bazıları artık DB seviyesinde
       // ON DELETE CASCADE ile de korunuyor (bkz. migration
@@ -92,7 +101,7 @@ export async function POST(request: Request) {
         );
 
       if (failures.length > 0) {
-        logger.error('Hesap verisi silinirken bazı tablolar başarısız oldu', {
+        log.error('Hesap verisi silinirken bazı tablolar başarısız oldu', undefined, {
           userId,
           failedTables: failures.map(({ table, result }) => ({
             table,
@@ -116,7 +125,7 @@ export async function POST(request: Request) {
         .delete()
         .eq('id', userId);
       if (profileDeleteError) {
-        logger.error('Hesap silme: profil silinemedi', { error: profileDeleteError.message, userId });
+        log.error('Hesap silme: profil silinemedi', profileDeleteError, { userId });
         return NextResponse.json(
           {
             error:
@@ -129,7 +138,7 @@ export async function POST(request: Request) {
       // Veri temizliği tamamlandı — şimdi auth.users'dan tamamen sil.
       const { error: deleteUserError } = await adminClient.auth.admin.deleteUser(userId);
       if (deleteUserError) {
-        logger.error('auth.admin.deleteUser hatası', { error: deleteUserError.message, userId });
+        log.error('auth.admin.deleteUser hatası', deleteUserError, { userId });
         return NextResponse.json(
           {
             error:
@@ -138,30 +147,13 @@ export async function POST(request: Request) {
           { status: 500 },
         );
       }
-    } else {
-      // Service role key yoksa kullanıcı kendi profilini anonimleştirir/temizler
-      const { error: profileError } = await userClient
-        .from('profiles')
-        .delete()
-        .eq('id', userId);
-
-      if (profileError) {
-        logger.error('Kullanıcı profili silinemedi', { error: profileError.message, userId });
-        return NextResponse.json(
-          { error: 'Profiliniz silinemedi. Lütfen tekrar deneyin.' },
-          { status: 500 },
-        );
-      }
-    }
 
     return NextResponse.json({
       success: true,
       message: 'Hesabınız ve tüm ilişkili verileriniz başarıyla silindi.',
     });
   } catch (error) {
-    logger.error('Hesap silme işleminde beklenmeyen hata', {
-      error: error instanceof Error ? error.message : String(error),
-    });
+    log.error('Hesap silme işleminde beklenmeyen hata', error);
     return NextResponse.json(
       { error: 'Hesap silinirken bir sunucu hatası oluştu.' },
       { status: 500 },

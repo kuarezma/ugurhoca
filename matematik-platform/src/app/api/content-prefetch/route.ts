@@ -1,5 +1,6 @@
 import { apiError, apiOk } from '@/lib/api-response';
 import { createLogger } from '@/lib/logger';
+import { enforceRateLimit, getClientIp } from '@/lib/rate-limit';
 import { CONTENT_PAGE_SIZE } from '@/features/content/constants';
 import {
   getInitialContentGradeFilter,
@@ -10,6 +11,15 @@ import type { ContentPrefetchPayload } from '@/features/content/types';
 const log = createLogger('content-prefetch');
 
 export async function GET(request: Request) {
+  const limited = await enforceRateLimit(
+    'content-prefetch',
+    getClientIp(request),
+    { limit: 60, windowSeconds: 60 },
+  );
+  if (limited) {
+    return limited;
+  }
+
   try {
     const { searchParams } = new URL(request.url);
     const typeParam = searchParams.get('type');

@@ -1,3 +1,7 @@
+import { createLogger } from '@/lib/logger';
+
+const log = createLogger('portfolio:storage');
+
 export type PortfolioCategory = 'solution' | 'project' | 'exam' | 'reflection';
 
 export interface PortfolioItem {
@@ -69,7 +73,7 @@ export function savePortfolioItem(item: PortfolioItem): boolean {
     localStorage.setItem(PORTFOLIO_STORAGE_KEY, JSON.stringify(items));
     return true;
   } catch (error) {
-    console.error('Failed to save portfolio item:', error);
+    log.error('Failed to save portfolio item', error);
     return false;
   }
 }
@@ -81,7 +85,7 @@ export function removePortfolioItem(itemId: string): boolean {
     localStorage.setItem(PORTFOLIO_STORAGE_KEY, JSON.stringify(items));
     return true;
   } catch (error) {
-    console.error('Failed to remove portfolio item:', error);
+    log.error('Failed to remove portfolio item', error);
     return false;
   }
 }

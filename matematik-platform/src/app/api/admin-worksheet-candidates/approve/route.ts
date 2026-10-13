@@ -3,6 +3,7 @@ import { apiError, apiOk } from '@/lib/api-response';
 import { isAdminEmail } from '@/lib/admin';
 import { requireAdmin } from '@/lib/api-auth';
 import { createLogger } from '@/lib/logger';
+import { enforceRateLimit } from '@/lib/rate-limit';
 import {
   downloadPdfForDriveUpload,
   getGoogleDriveOAuthConfig,
@@ -41,6 +42,15 @@ export async function POST(request: Request) {
 
   if ('error' in auth) {
     return auth.error;
+  }
+
+  const limited = await enforceRateLimit(
+    'admin-worksheet-approve',
+    auth.user.id,
+    { limit: 20, windowSeconds: 60 },
+  );
+  if (limited) {
+    return limited;
   }
 
   const body = await request.json().catch(() => null);

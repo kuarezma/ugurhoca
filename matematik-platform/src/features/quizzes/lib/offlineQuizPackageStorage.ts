@@ -1,4 +1,7 @@
 import type { QuizQuestion } from '@/types/quiz';
+import { createLogger } from '@/lib/logger';
+
+const log = createLogger('quizzes:offline-package-storage');
 
 export interface OfflineQuizPackage {
   id: string;
@@ -20,7 +23,7 @@ export function getOfflinePackages(): OfflineQuizPackage[] {
     if (!raw) return [];
     return JSON.parse(raw) as OfflineQuizPackage[];
   } catch (error) {
-    console.error('Failed to load offline quiz packages:', error);
+    log.error('Failed to load offline quiz packages', error);
     return [];
   }
 }
@@ -38,7 +41,7 @@ export function saveOfflinePackage(pkg: OfflineQuizPackage): boolean {
     localStorage.setItem(OFFLINE_PACKAGES_STORAGE_KEY, JSON.stringify(packages));
     return true;
   } catch (error) {
-    console.error('Failed to save offline quiz package:', error);
+    log.error('Failed to save offline quiz package', error);
     return false;
   }
 }
@@ -50,7 +53,7 @@ export function removeOfflinePackage(packageId: string): boolean {
     localStorage.setItem(OFFLINE_PACKAGES_STORAGE_KEY, JSON.stringify(packages));
     return true;
   } catch (error) {
-    console.error('Failed to remove offline quiz package:', error);
+    log.error('Failed to remove offline quiz package', error);
     return false;
   }
 }

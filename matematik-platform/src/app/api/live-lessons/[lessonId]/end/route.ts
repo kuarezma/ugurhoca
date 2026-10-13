@@ -1,5 +1,6 @@
 import { RoomServiceClient } from 'livekit-server-sdk';
 import { NextResponse } from 'next/server';
+import { z } from 'zod';
 import {
   isLiveLessonAdmin,
   requireLiveLessonUser,
@@ -8,12 +9,20 @@ import {
 } from '@/features/live-lessons/server/liveLessons';
 import { getLiveKitServiceHost } from '@/features/live-lessons/lib/lesson-auth';
 import { logger } from '@/lib/logger';
+import { enforceRateLimit } from '@/lib/rate-limit';
 
 export const runtime = 'nodejs';
 
 type RouteContext = {
   params: Promise<{ lessonId: string }>;
 };
+
+const endLessonBodySchema = z
+  .object({
+    status: z.enum(['ended', 'cancelled']).optional(),
+  })
+  .nullable()
+  .optional();
 
 export async function POST(request: Request, context: RouteContext) {
   const auth = await requireLiveLessonUser();
@@ -22,9 +31,20 @@ export async function POST(request: Request, context: RouteContext) {
     return NextResponse.json({ error: 'Bu işlem için admin yetkisi gerekir.' }, { status: 403 });
   }
 
+  const limited = await enforceRateLimit(
+    'live-lesson-end',
+    auth.user.id,
+    { limit: 20, windowSeconds: 60 },
+  );
+  if (limited) return limited;
+
   const { lessonId } = await context.params;
-  const body = (await request.json().catch(() => null)) as { status?: string } | null;
-  const status = body?.status === 'cancelled' ? 'cancelled' : 'ended';
+  const rawBody = await request.json().catch(() => null);
+  const parsedBody = endLessonBodySchema.safeParse(rawBody);
+  if (!parsedBody.success) {
+    return NextResponse.json({ error: 'Geçersiz ders durumu.' }, { status: 400 });
+  }
+  const status = parsedBody.data?.status === 'cancelled' ? 'cancelled' : 'ended';
 
   try {
     const lesson = await updateLiveLessonStatus({ lessonId, status });

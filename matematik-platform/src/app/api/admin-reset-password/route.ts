@@ -1,11 +1,7 @@
 import { NextResponse } from 'next/server';
-import { isAdminEmail } from '@/lib/admin';
+import { requireAdmin } from '@/lib/api-auth';
 import { createLogger } from '@/lib/logger';
 import { adminResetPasswordSchema } from '@/lib/route-schemas';
-import {
-  createServerSupabaseClient,
-  createServiceRoleClient,
-} from '@/lib/supabase/server';
 import { enforceRateLimit } from '@/lib/rate-limit';
 
 const log = createLogger('admin-reset-password');
@@ -14,34 +10,12 @@ export const runtime = 'nodejs';
 
 export async function POST(request: Request) {
   try {
-    const authHeader = request.headers.get('authorization');
-    const accessToken = authHeader?.startsWith('Bearer ')
-      ? authHeader.slice(7).trim()
-      : '';
-
-    if (!accessToken) {
-      return NextResponse.json(
-        { error: 'Oturum açmanız gerekiyor.' },
-        { status: 401 },
-      );
+    const auth = await requireAdmin(request);
+    if (auth.error) {
+      return auth.error;
     }
 
-    const authSupabase = createServerSupabaseClient(accessToken);
-    const {
-      data: { user },
-      error: userError,
-    } = await authSupabase.auth.getUser(accessToken);
-
-    if (userError || !user?.email) {
-      return NextResponse.json(
-        { error: 'Oturum açmanız gerekiyor.' },
-        { status: 401 },
-      );
-    }
-
-    if (!isAdminEmail(user.email)) {
-      return NextResponse.json({ error: 'Yetkiniz yok.' }, { status: 403 });
-    }
+    const { user, serviceRole: adminClient } = auth;
 
     const limited = await enforceRateLimit('admin-reset-password', user.id, {
       limit: 10,
@@ -64,19 +38,6 @@ export async function POST(request: Request) {
     }
 
     const { student_id, new_password } = parsed.data;
-
-    let adminClient: ReturnType<typeof createServiceRoleClient>;
-    try {
-      adminClient = createServiceRoleClient();
-    } catch (serviceError) {
-      log.error('Service role client oluşturulamadı', serviceError);
-      return NextResponse.json(
-        {
-          error: 'İşlem şu anda tamamlanamadı. Lütfen daha sonra tekrar deneyin.',
-        },
-        { status: 500 },
-      );
-    }
 
     const { data: updatedUser, error: updateError } =
       await adminClient.auth.admin.updateUserById(student_id, {

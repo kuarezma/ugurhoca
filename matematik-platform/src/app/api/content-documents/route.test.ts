@@ -21,6 +21,7 @@ vi.mock('@/lib/rate-limit', () => ({
 
 vi.mock('@/lib/api-auth', () => ({
   getBearerOrCookieAccessToken: mockGetAccessToken,
+  requireAdmin: vi.fn(),
 }));
 
 vi.mock('@/lib/supabase/server', () => ({

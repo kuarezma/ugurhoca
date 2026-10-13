@@ -710,7 +710,7 @@ export default function YksWizardPage() {
                     className="w-full rounded-xl border border-default dark:border-slate-400 bg-surface-0 px-3 py-2 text-sm font-semibold text-primary outline-none transition focus:border-accent focus:ring-2 focus:ring-accent/20"
                   >
                     <option value="all">Burs Durumu (Hepsi)</option>
-                    <option value="none">Ücretli / Burs Yok</option>
+                    <option value="none">Burssuz</option>
                     <option value="partial">Kısmi Burs</option>
                     <option value="full">Tam Burs</option>
                   </select>

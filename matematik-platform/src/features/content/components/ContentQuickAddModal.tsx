@@ -1,7 +1,10 @@
+'use client';
+
 import { motion } from 'framer-motion';
-import type { ChangeEvent, FormEvent } from 'react';
+import { useId, type ChangeEvent, type FormEvent } from 'react';
 import { Check, Upload, X } from 'lucide-react';
 import ContentDocumentForm from '@/features/content/components/ContentDocumentForm';
+import { useAccessibleModal } from '@/hooks/useAccessibleModal';
 import type { ContentFormState } from '@/features/content/types';
 
 type ContentQuickAddModalProps = {
@@ -23,6 +26,9 @@ export default function ContentQuickAddModal({
   onSubmit,
   success,
 }: ContentQuickAddModalProps) {
+  const titleId = useId();
+  const modalRef = useAccessibleModal<HTMLDivElement>(true, onClose);
+
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -32,14 +38,19 @@ export default function ContentQuickAddModal({
       onClick={onClose}
     >
       <motion.div
+        ref={modalRef}
+        tabIndex={-1}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby={titleId}
         initial={{ scale: 0.9, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         exit={{ scale: 0.9, opacity: 0 }}
         onClick={(event) => event.stopPropagation()}
-        className="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-2xl rounded-3xl p-8 w-full max-w-2xl max-h-[90vh] overflow-y-auto relative"
+        className="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-2xl rounded-3xl p-8 w-full max-w-2xl max-h-[90vh] overflow-y-auto relative outline-none"
       >
         <div className="flex items-center justify-between mb-6">
-          <h2 className="text-2xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
+          <h2 id={titleId} className="text-2xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
             <Upload className="w-6 h-6 text-purple-600 dark:text-purple-400" />
             Yeni İçerik Ekle
           </h2>

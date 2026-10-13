@@ -5,8 +5,18 @@ vi.mock('@/lib/rate-limit', () => ({
   getClientIp: vi.fn().mockReturnValue('127.0.0.1'),
 }));
 
+vi.mock('@/lib/auth-snapshot.server', () => ({
+  getServerAccessToken: vi.fn().mockResolvedValue(null),
+}));
+
 vi.mock('@/lib/logger', () => ({
-  logger: { info: vi.fn(), error: vi.fn(), warn: vi.fn() },
+  logger: { info: vi.fn(), error: vi.fn(), warn: vi.fn(), debug: vi.fn() },
+  createLogger: () => ({
+    info: vi.fn(),
+    error: vi.fn(),
+    warn: vi.fn(),
+    debug: vi.fn(),
+  }),
 }));
 
 type DeleteResult = { error: { message: string } | null };
@@ -101,6 +111,19 @@ describe('POST /api/user/delete-account', () => {
     );
 
     expect(res.status).toBe(401);
+    expect(calls).toEqual([]);
+  });
+
+  it('SUPABASE_SERVICE_ROLE_KEY yoksa hiçbir şey silmeden 503 döner', async () => {
+    vi.stubEnv('SUPABASE_SERVICE_ROLE_KEY', '');
+
+    const res = await POST(request());
+
+    expect(res.status).toBe(503);
+    const body = await res.json();
+    expect(body).toEqual({
+      error: 'Hesap silme servisi şu anda yapılandırılmamış.',
+    });
     expect(calls).toEqual([]);
   });
 });

@@ -5,10 +5,13 @@ import {
   buildGoogleDriveAuthUrl,
   getGoogleDriveOAuthConfig,
 } from '@/lib/google-drive-oauth';
+import { createLogger } from '@/lib/logger';
 import {
   GOOGLE_DRIVE_OAUTH_STATE_COOKIE,
   requireGoogleDriveAdmin,
 } from '@/app/api/admin-google-drive/_shared';
+
+const log = createLogger('admin-google-drive-auth-url');
 
 export async function GET(request: Request) {
   const auth = await requireGoogleDriveAdmin(request);
@@ -34,10 +37,9 @@ export async function GET(request: Request) {
 
     return response;
   } catch (error) {
+    log.error('Google Drive OAuth URL oluşturulamadı', error);
     return apiError(
-      error instanceof Error
-        ? error.message
-        : 'Google Drive bağlantı ayarları eksik.',
+      'Google Drive bağlantı ayarları eksik.',
       500,
       'google_drive_oauth_config_missing',
     );

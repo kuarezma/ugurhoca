@@ -49,6 +49,7 @@ export function MistakeNotebookModal({
   const [reasonFilter, setReasonFilter] = useState<MistakeReason | 'all'>('all');
   const [isWorksheetOpen, setIsWorksheetOpen] = useState(false);
   const [isSyncing, setIsSyncing] = useState(false);
+  const [confirmingClearAll, setConfirmingClearAll] = useState(false);
   const modalRef = useAccessibleModal<HTMLDivElement>(isOpen, onClose);
 
   const reloadMistakes = useCallback(() => {
@@ -196,10 +197,9 @@ export function MistakeNotebookModal({
   };
 
   const handleClearAll = () => {
-    if (window.confirm('Tüm hata defterini temizlemek istediğine emin misin?')) {
-      clearAllMistakes();
-      reloadMistakes();
-    }
+    clearAllMistakes();
+    setConfirmingClearAll(false);
+    reloadMistakes();
   };
 
   const handleAdvanceReview = (questionText: string, correct: boolean) => {
@@ -493,13 +493,32 @@ export function MistakeNotebookModal({
             </div>
 
             {stats.total > 0 && (
-              <button
-                type="button"
-                onClick={handleClearAll}
-                className="text-slate-400 hover:text-red-500 transition-colors font-medium text-[11px]"
-              >
-                Defteri Boşalt
-              </button>
+              confirmingClearAll ? (
+                <div className="flex items-center gap-2 text-[11px]">
+                  <button
+                    type="button"
+                    onClick={handleClearAll}
+                    className="rounded-lg border border-red-500/30 bg-red-500/15 px-2.5 py-1 font-bold text-red-700 dark:text-red-300 hover:bg-red-500/25 transition-colors"
+                  >
+                    Emin misin? Evet, Temizle
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setConfirmingClearAll(false)}
+                    className="rounded-lg px-2 py-1 font-medium text-slate-500 dark:text-slate-400 hover:bg-slate-200/60 dark:hover:bg-white/10 transition-colors"
+                  >
+                    Vazgeç
+                  </button>
+                </div>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => setConfirmingClearAll(true)}
+                  className="text-slate-400 hover:text-red-500 transition-colors font-medium text-[11px]"
+                >
+                  Defteri Boşalt
+                </button>
+              )
             )}
           </div>
 

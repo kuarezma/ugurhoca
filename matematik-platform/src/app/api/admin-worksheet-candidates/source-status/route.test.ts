@@ -8,6 +8,7 @@ vi.mock('@/lib/auth-snapshot.server', () => ({
 
 vi.mock('@/lib/supabase/server', () => ({
   createServerSupabaseClient: vi.fn(),
+  createServiceRoleClient: vi.fn(),
 }));
 
 const originalSourceUrls = process.env.WORKSHEET_CANDIDATE_SOURCE_URLS;

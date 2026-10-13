@@ -97,6 +97,11 @@ export function LiveLessonsPage({ initialLessons, students, user }: Props) {
   );
   const [saving, setSaving] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
+  const [actionError, setActionError] = useState<string | null>(null);
+  const [pendingLessonAction, setPendingLessonAction] = useState<{
+    lesson: LiveLesson;
+    status: 'cancelled' | 'ended';
+  } | null>(null);
 
   const handleLogout = async () => {
     await signOutClient();
@@ -121,6 +126,7 @@ export function LiveLessonsPage({ initialLessons, students, user }: Props) {
   // Hızlı Ders Başlat (Quick Launch)
   const handleQuickLaunch = async () => {
     setQuickStarting(true);
+    setActionError(null);
     try {
       const now = new Date();
       const defaultTitle = `Hemen Canlı Ders (${new Intl.DateTimeFormat('tr-TR', {
@@ -148,14 +154,14 @@ export function LiveLessonsPage({ initialLessons, students, user }: Props) {
       } | null;
 
       if (!res.ok || !data?.lesson) {
-        alert(data?.error || 'Ders başlatılamadı.');
+        setActionError(data?.error || 'Ders başlatılamadı.');
         return;
       }
 
       setLessons((prev) => [data.lesson!, ...prev]);
       router.push(`/canli-ders/d/${data.lesson.room_id}`);
     } catch {
-      alert('Ağ hatası oluştu.');
+      setActionError('Ağ hatası oluştu.');
     } finally {
       setQuickStarting(false);
     }
@@ -229,40 +235,40 @@ export function LiveLessonsPage({ initialLessons, students, user }: Props) {
   };
 
   // Dersi İptal Et
-  const handleCancelLesson = async (lesson: LiveLesson) => {
-    if (!confirm(`"${lesson.title}" dersini iptal etmek istediğinize emin misiniz?`)) {
-      return;
-    }
-
-    const res = await fetch(`/api/live-lessons/${lesson.id}/end`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      credentials: 'same-origin',
-      body: JSON.stringify({ status: 'cancelled' }),
-    });
-
-    const payload = (await res.json().catch(() => null)) as { lesson?: LiveLesson ;} | null;
-    if (res.ok && payload?.lesson) {
-      setLessons((prev) => prev.map((l) => (l.id === lesson.id ? payload.lesson! : l)));
-    }
+  const handleCancelLesson = (lesson: LiveLesson) => {
+    setPendingLessonAction({ lesson, status: 'cancelled' });
   };
 
   // Dersi Bitir (Tamamla)
-  const handleEndLesson = async (lesson: LiveLesson) => {
-    if (!confirm(`"${lesson.title}" dersini tamamlandı olarak sonlandırmak istiyor musunuz?`)) {
-      return;
-    }
+  const handleEndLesson = (lesson: LiveLesson) => {
+    setPendingLessonAction({ lesson, status: 'ended' });
+  };
 
-    const res = await fetch(`/api/live-lessons/${lesson.id}/end`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      credentials: 'same-origin',
-      body: JSON.stringify({ status: 'ended' }),
-    });
+  const confirmPendingLessonAction = async () => {
+    if (!pendingLessonAction) return;
+    const { lesson, status } = pendingLessonAction;
+    setPendingLessonAction(null);
+    setActionError(null);
 
-    const payload = (await res.json().catch(() => null)) as { lesson?: LiveLesson ;} | null;
-    if (res.ok && payload?.lesson) {
-      setLessons((prev) => prev.map((l) => (l.id === lesson.id ? payload.lesson! : l)));
+    try {
+      const res = await fetch(`/api/live-lessons/${lesson.id}/end`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'same-origin',
+        body: JSON.stringify({ status }),
+      });
+
+      const payload = (await res.json().catch(() => null)) as {
+        lesson?: LiveLesson;
+        error?: string;
+      } | null;
+      if (res.ok && payload?.lesson) {
+        setLessons((prev) => prev.map((l) => (l.id === lesson.id ? payload.lesson! : l)));
+      } else {
+        setActionError(payload?.error || 'Ders durumu güncellenemedi.');
+      }
+    } catch {
+      setActionError('Ağ hatası oluştu.');
     }
   };
 
@@ -474,6 +480,52 @@ export function LiveLessonsPage({ initialLessons, students, user }: Props) {
             </div>
           </div>
         </section>
+
+        {actionError && (
+          <div
+            role="alert"
+            className="mt-4 flex items-center justify-between gap-3 rounded-2xl border border-red-500/30 bg-red-500/10 px-4 py-3 text-xs sm:text-sm font-semibold text-red-600 dark:text-red-400"
+          >
+            <span>{actionError}</span>
+            <button
+              type="button"
+              onClick={() => setActionError(null)}
+              className="rounded-lg px-2 py-1 text-xs font-bold hover:bg-red-500/15 transition-colors"
+            >
+              Kapat
+            </button>
+          </div>
+        )}
+
+        {pendingLessonAction && (
+          <div
+            role="alertdialog"
+            aria-label="Ders durumu onayı"
+            className="mt-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 rounded-2xl border border-amber-500/30 bg-amber-500/10 px-4 py-3 text-xs sm:text-sm"
+          >
+            <span className="font-semibold text-amber-800 dark:text-amber-200">
+              {pendingLessonAction.status === 'cancelled'
+                ? `"${pendingLessonAction.lesson.title}" dersini iptal etmek istediğinize emin misiniz?`
+                : `"${pendingLessonAction.lesson.title}" dersini tamamlandı olarak sonlandırmak istiyor musunuz?`}
+            </span>
+            <div className="flex items-center gap-2 shrink-0">
+              <button
+                type="button"
+                onClick={confirmPendingLessonAction}
+                className="rounded-xl border border-red-500/30 bg-red-500/15 px-3 py-1.5 text-xs font-bold text-red-700 dark:text-red-300 hover:bg-red-500/25 transition-colors"
+              >
+                {pendingLessonAction.status === 'cancelled' ? 'Evet, İptal Et' : 'Evet, Sonlandır'}
+              </button>
+              <button
+                type="button"
+                onClick={() => setPendingLessonAction(null)}
+                className="rounded-xl border border-border px-3 py-1.5 text-xs font-medium text-foreground/80 hover:bg-foreground/5 transition-colors"
+              >
+                Vazgeç
+              </button>
+            </div>
+          </div>
+        )}
 
         {/* Öğretmen İçin Açılır Katlanabilir Ders Planlama Formu */}
         {user.isAdmin && isPlanFormOpen && (

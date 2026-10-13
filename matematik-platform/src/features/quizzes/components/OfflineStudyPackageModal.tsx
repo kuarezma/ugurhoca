@@ -27,7 +27,7 @@ const SAMPLE_PRESET_PACKAGES: OfflineQuizPackage[] = [
     title: 'LGS Çarpanlar ve Katlar Çevrimdışı Soru Seti',
     topic: 'CarpanlarVeKatlar',
     grade: '8',
-    questionsCount: 15,
+    questionsCount: 2,
     downloadedAt: new Date().toISOString(),
     sizeKb: 180,
     questions: [
@@ -58,7 +58,7 @@ const SAMPLE_PRESET_PACKAGES: OfflineQuizPackage[] = [
     title: 'LGS Kareköklü İfadeler Hızlı Tekrar Seti',
     topic: 'KarekokluIfadeler',
     grade: '8',
-    questionsCount: 20,
+    questionsCount: 1,
     downloadedAt: new Date().toISOString(),
     sizeKb: 210,
     questions: [
@@ -79,7 +79,7 @@ const SAMPLE_PRESET_PACKAGES: OfflineQuizPackage[] = [
     title: 'LGS Üçgenler ve Pisagor Bağıntısı Özel Seti',
     topic: 'Ucgenler',
     grade: '8',
-    questionsCount: 12,
+    questionsCount: 1,
     downloadedAt: new Date().toISOString(),
     sizeKb: 165,
     questions: [
@@ -112,6 +112,7 @@ export function OfflineStudyPackageModal({
   const modalRef = useAccessibleModal<HTMLDivElement>(isOpen, onClose);
   const [packages, setPackages] = useState<OfflineQuizPackage[]>([]);
   const [isOnline, setIsOnline] = useState<boolean>(true);
+  const [confirmingClear, setConfirmingClear] = useState(false);
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -132,11 +133,15 @@ export function OfflineStudyPackageModal({
   useEffect(() => {
     if (isOpen) {
       setPackages(getOfflinePackages());
+      setConfirmingClear(false);
     }
   }, [isOpen]);
 
   const handleDownloadPreset = (preset: OfflineQuizPackage) => {
-    saveOfflinePackage(preset);
+    saveOfflinePackage({
+      ...preset,
+      questionsCount: preset.questions.length,
+    });
     setPackages(getOfflinePackages());
   };
 
@@ -146,10 +151,9 @@ export function OfflineStudyPackageModal({
   };
 
   const handleClearAll = () => {
-    if (confirm('Tüm çevrimdışı çalışma setlerini cihazınızdan silmek istediğinize emin misiniz?')) {
-      clearAllOfflinePackages();
-      setPackages([]);
-    }
+    clearAllOfflinePackages();
+    setPackages([]);
+    setConfirmingClear(false);
   };
 
   if (!isOpen) return null;
@@ -165,7 +169,8 @@ export function OfflineStudyPackageModal({
     >
       <div
         ref={modalRef}
-        className="relative flex flex-col w-full max-w-2xl max-h-[90vh] rounded-3xl border border-slate-200 dark:border-white/10 bg-white dark:bg-slate-900 text-slate-900 dark:text-white shadow-2xl overflow-hidden"
+        tabIndex={-1}
+        className="relative flex flex-col w-full max-w-2xl max-h-[90vh] rounded-3xl border border-slate-200 dark:border-white/10 bg-white dark:bg-slate-900 text-slate-900 dark:text-white shadow-2xl overflow-hidden outline-none"
       >
         {/* Başlık */}
         <div className="flex items-center justify-between border-b border-slate-200 dark:border-white/10 px-5 py-4 bg-slate-50 dark:bg-slate-900/90">
@@ -224,13 +229,35 @@ export function OfflineStudyPackageModal({
           </div>
 
           {packages.length > 0 && (
-            <button
-              type="button"
-              onClick={handleClearAll}
-              className="text-xs text-rose-600 dark:text-rose-400 hover:text-rose-500 transition underline underline-offset-2"
-            >
-              Hepsini Temizle
-            </button>
+            confirmingClear ? (
+              <div className="flex items-center gap-2">
+                <span className="text-[11px] font-semibold text-rose-600 dark:text-rose-400">
+                  Tüm setler silinsin mi?
+                </span>
+                <button
+                  type="button"
+                  onClick={handleClearAll}
+                  className="rounded-lg bg-rose-600 px-2.5 py-1 text-[11px] font-bold text-white dark:text-white hover:bg-rose-700 transition"
+                >
+                  Evet, Temizle
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setConfirmingClear(false)}
+                  className="rounded-lg border border-slate-300 dark:border-white/15 px-2.5 py-1 text-[11px] font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-white/10 transition"
+                >
+                  Vazgeç
+                </button>
+              </div>
+            ) : (
+              <button
+                type="button"
+                onClick={() => setConfirmingClear(true)}
+                className="text-xs text-rose-600 dark:text-rose-400 hover:text-rose-500 transition underline underline-offset-2"
+              >
+                Hepsini Temizle
+              </button>
+            )
           )}
         </div>
 

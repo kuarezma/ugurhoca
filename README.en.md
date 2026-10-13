@@ -17,10 +17,30 @@ With its clean and distraction-free design, the platform keeps the focus entirel
 - 💡 **Step-by-Step Hint Ladder:** Intelligent pedagogical hints that guide students through problem-solving steps without spoiling the answer.
 - 🗂️ **Spaced Repetition & Formula Flashcards:** A smart review system that systematically reinforces math formulas and concepts into long-term memory.
 - 📊 **Monthly Growth Report & Certificate of Achievement:** Monthly progress reports highlighting study time and topic mastery, accompanied by a printable official Certificate of Achievement.
-- 🎮 **18 Educational Math Games:** Engaging games designed to build mental math speed, coordinate geometry, fractions, and factor recognition.
+- 🎮 **19 Educational Math Games:** Engaging games designed to build mental math speed, coordinate geometry, fractions, and factor recognition.
 - 📝 **Homework Tracking & Printable Worksheets:** Easy submission and tracking of assignments, alongside 1-click printable A4 worksheets with answer keys.
 - 💬 **Enhanced Chat Bubble & 1-on-1 Teacher Messaging:** Real-time typing indicators, WhatsApp-style read receipts (✓✓), formula and question quote/reply support, 60-second voice note recording with integrated audio player, multi-image and PDF worksheet attachments, in-chat search, and student quick question templates.
 - 📱 **Seamless on All Devices:** Optimized for desktop, tablet, and mobile with 1-tap installation to home screens.
+
+---
+
+## Installation & Development
+
+The application source code resides inside `matematik-platform/`.
+
+```bash
+# Install dependencies
+npm --prefix matematik-platform install
+
+# Start development server (http://localhost:3000)
+npm --prefix matematik-platform run dev
+
+# Run typecheck, lint, unit tests, and production build
+npm --prefix matematik-platform run typecheck
+npm --prefix matematik-platform run lint
+npm --prefix matematik-platform run test:fast
+npm --prefix matematik-platform run build
+```
 
 ---
 
@@ -36,4 +56,3 @@ Student privacy and well-being are paramount on the platform:
 ## Contact
 
 - **Website:** [ugurhoca.com](https://ugurhoca.com)
-

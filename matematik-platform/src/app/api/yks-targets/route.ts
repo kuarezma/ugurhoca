@@ -1,7 +1,17 @@
 import { apiError, apiOk } from '@/lib/api-response';
+import { enforceRateLimit, getClientIp } from '@/lib/rate-limit';
 import { loadYksProgramPageData } from '@/features/programs/server';
 
 export async function GET(request: Request) {
+  const limited = await enforceRateLimit(
+    'yks-targets',
+    getClientIp(request),
+    { limit: 60, windowSeconds: 60 },
+  );
+  if (limited) {
+    return limited;
+  }
+
   const yearParam = new URL(request.url).searchParams.get('year');
   const year = yearParam === null ? 2026 : Number(yearParam);
   if (!Number.isInteger(year) || year < 2000 || year > 2100) {

@@ -10,6 +10,10 @@ const scripts = [
   'supabase/migrations/20261004130000_single_admin_email.sql',
   'supabase/migrations/20261004170000_lock_down_public_reads.sql',
   'supabase/migrations/20261004215357_admin_site_statistics.sql',
+  'supabase/migrations/20261009010000_comments_privacy_own_or_admin.sql',
+  'supabase/migrations/20261009020000_assignments_privacy_grade_or_owner.sql',
+  'supabase/migrations/20261009030000_anon_least_privilege.sql',
+  'supabase/migrations/20261013195000_shared_documents_delete_own.sql',
   'supabase/tests/student_privacy_rls.sql',
   'supabase/tests/admin_site_statistics.sql',
 ];

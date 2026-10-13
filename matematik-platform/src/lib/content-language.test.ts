@@ -23,13 +23,14 @@ const prohibitedPatterns = [
   'abonelik',
   'odeme',
   'ödeme',
-  'paket',
+  'paket(i|ler|leri)?',
   'premium',
   'satin al',
   'satın al',
   'ucretli plan',
   'ücretli plan',
-  'veli',
+  'ücretli',
+  'veli(ler|ye|nin)?',
 ].map((term) => ({
   pattern: new RegExp(
     `(^|[^${WORD_CHARS}])${term.replace(/\s+/g, '\\s+')}([^${WORD_CHARS}]|$)`,

@@ -46,7 +46,7 @@ function GameCardInner({ game, onClick }: GameCardProps) {
         <div className="absolute inset-0 flex items-center justify-center">
           <game.icon className="h-20 w-20 text-white/95 drop-shadow-md group-hover:scale-110 transition-transform duration-300" aria-hidden="true" />
         </div>
-        <div className="absolute right-3.5 top-3.5 rounded-full bg-black/50 px-3 py-1 text-xs font-bold text-white backdrop-blur-md shadow-xs border border-white/20">
+        <div className="absolute right-3.5 top-3.5 rounded-full bg-black/50 px-3 py-1 text-xs font-bold text-white dark:text-white backdrop-blur-md shadow-xs border border-white/20">
           {game.grade}. Sınıf
         </div>
       </div>

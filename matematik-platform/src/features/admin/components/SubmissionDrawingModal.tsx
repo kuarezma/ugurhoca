@@ -10,6 +10,7 @@ import {
   Palette,
   Eraser,
 } from 'lucide-react';
+import { useAccessibleModal } from '@/hooks/useAccessibleModal';
 
 type SubmissionDrawingModalProps = {
   isOpen: boolean;
@@ -33,6 +34,7 @@ export function SubmissionDrawingModal({
   studentName = 'Öğrenci',
   onSaveFeedback,
 }: SubmissionDrawingModalProps) {
+  const modalRef = useAccessibleModal<HTMLDivElement>(isOpen, onClose);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const [isDrawing, setIsDrawing] = useState(false);
   const [currentColor, setCurrentColor] = useState('#ef4444');
@@ -149,10 +151,12 @@ export function SubmissionDrawingModal({
 
   return (
     <div
+      ref={modalRef}
+      tabIndex={-1}
       role="dialog"
       aria-modal="true"
       aria-label="Ödev Çizim ve İnceleme Paneli"
-      className="fixed inset-0 z-[160] flex items-center justify-center bg-slate-950/85 dark:bg-slate-950/85 p-2 sm:p-4 backdrop-blur-md"
+      className="fixed inset-0 z-[160] flex items-center justify-center bg-slate-950/85 dark:bg-slate-950/85 p-2 sm:p-4 backdrop-blur-md outline-none"
     >
       <div className="relative flex flex-col w-full max-w-5xl max-h-[94vh] bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700/80 rounded-3xl shadow-2xl overflow-hidden text-slate-900 dark:text-slate-100">
         {/* HEADER */}

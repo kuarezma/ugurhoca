@@ -15,6 +15,7 @@ import {
   CheckCircle2,
 } from 'lucide-react';
 import type { UserBadge } from '@/features/progress/types';
+import { useAccessibleModal } from '@/hooks/useAccessibleModal';
 import { BadgeCelebrationModal, type CelebrationBadge } from './BadgeCelebrationModal';
 
 type BadgesShowcaseModalProps = {
@@ -184,6 +185,7 @@ export function BadgesShowcaseModal({
   isLight = false,
 }: BadgesShowcaseModalProps) {
   const titleId = useId();
+  const modalRef = useAccessibleModal<HTMLDivElement>(isOpen, onClose);
   const [celebratingBadge, setCelebratingBadge] = useState<CelebrationBadge | null>(null);
 
   const earnedBadgeIds = useMemo(() => {
@@ -221,6 +223,8 @@ export function BadgesShowcaseModal({
         />
 
         <motion.div
+          ref={modalRef}
+          tabIndex={-1}
           initial={{ opacity: 0, scale: 0.95, y: 16 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.95, y: 16 }}

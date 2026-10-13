@@ -16,8 +16,9 @@ import {
   Sparkles,
 } from 'lucide-react';
 import { useToast } from '@/components/Toast';
+import { useAccessibleModal } from '@/hooks/useAccessibleModal';
 
-export type ParentReportModalProps = {
+export type GrowthReportModalProps = {
   isOpen: boolean;
   onClose: () => void;
   studentName: string;
@@ -30,7 +31,9 @@ export type ParentReportModalProps = {
   focusTopic?: string | null;
 };
 
-export default function ParentReportModal({
+export type ParentReportModalProps = GrowthReportModalProps;
+
+export function GrowthReportModal({
   isOpen,
   onClose,
   studentName,
@@ -41,8 +44,9 @@ export default function ParentReportModal({
   averageScore = null,
   strongTopic = null,
   focusTopic = null,
-}: ParentReportModalProps) {
+}: GrowthReportModalProps) {
   const titleId = useId();
+  const modalRef = useAccessibleModal<HTMLDivElement>(isOpen, onClose);
   const { showToast } = useToast();
   const [copied, setCopied] = useState(false);
   const [isExportingPdf, setIsExportingPdf] = useState(false);
@@ -97,7 +101,7 @@ export default function ParentReportModal({
     try {
       const { generatePDF } = await import('@/lib/pdf-export');
       await generatePDF(
-        'parent-report-card',
+        'growth-report-card',
         `Ugur-Hoca-Gelisim-Raporu-${studentName.replace(/\s+/g, '-')}.pdf`,
         { background: '#090d16', scale: 2 }
       );
@@ -121,13 +125,15 @@ export default function ParentReportModal({
         />
 
         <motion.div
+          ref={modalRef}
+          tabIndex={-1}
           initial={{ scale: 0.95, opacity: 0, y: 10 }}
           animate={{ scale: 1, opacity: 1, y: 0 }}
           exit={{ scale: 0.95, opacity: 0, y: 10 }}
           role="dialog"
           aria-modal="true"
           aria-labelledby={titleId}
-          className="relative flex max-h-[92vh] w-full max-w-2xl flex-col overflow-hidden rounded-3xl border border-slate-200 dark:border-white/10 bg-white dark:bg-slate-900 shadow-2xl"
+          className="relative flex max-h-[92vh] w-full max-w-2xl flex-col overflow-hidden rounded-3xl border border-slate-200 dark:border-white/10 bg-white dark:bg-slate-900 shadow-2xl outline-none"
         >
           {/* Header */}
           <div className="flex items-center justify-between border-b border-slate-200 dark:border-white/10 px-6 py-4 bg-slate-50 dark:bg-slate-950/60">
@@ -158,7 +164,7 @@ export default function ParentReportModal({
           <div className="flex-1 overflow-y-auto p-5 sm:p-6 space-y-6">
             {/* Printable Preview Card */}
             <div
-              id="parent-report-card"
+              id="growth-report-card"
               className="rounded-3xl border border-emerald-500/30 p-6 sm:p-8 text-slate-900 dark:text-white shadow-xl bg-surface-1 dark:bg-surface-1"
             >
               {/* Report Header */}
@@ -266,5 +272,6 @@ export default function ParentReportModal({
   );
 }
 
-export const StudentReportModal = ParentReportModal;
-
+export default GrowthReportModal;
+export const ParentReportModal = GrowthReportModal;
+export const StudentReportModal = GrowthReportModal;

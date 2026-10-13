@@ -1,3 +1,7 @@
+import { createLogger } from '@/lib/logger';
+
+const log = createLogger('authoring:storage');
+
 export interface StudentAuthoredQuestion {
   id: string;
   studentId: string;
@@ -86,7 +90,7 @@ export function saveStudentAuthoredQuestion(question: StudentAuthoredQuestion): 
     localStorage.setItem(STUDENT_AUTHORING_STORAGE_KEY, JSON.stringify(questions));
     return true;
   } catch (error) {
-    console.error('Failed to save authored question:', error);
+    log.error('Failed to save authored question', error);
     return false;
   }
 }
@@ -108,7 +112,7 @@ export function updateAuthoredQuestionStatus(
     localStorage.setItem(STUDENT_AUTHORING_STORAGE_KEY, JSON.stringify(questions));
     return true;
   } catch (error) {
-    console.error('Failed to update question status:', error);
+    log.error('Failed to update question status', error);
     return false;
   }
 }

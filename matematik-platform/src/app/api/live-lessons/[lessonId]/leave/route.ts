@@ -1,4 +1,6 @@
 import { NextResponse } from 'next/server';
+import { z } from 'zod';
+import { enforceRateLimit } from '@/lib/rate-limit';
 import { createServiceRoleClient } from '@/lib/supabase/server';
 import { requireLiveLessonUser } from '@/features/live-lessons/server/liveLessons';
 
@@ -8,10 +10,26 @@ type RouteContext = {
   params: Promise<{ lessonId: string }>;
 };
 
+const leaveParamsSchema = z.object({
+  lessonId: z.string().trim().min(1),
+});
+
 export async function POST(_request: Request, context: RouteContext) {
   const auth = await requireLiveLessonUser();
   if (!auth.ok) return auth.response;
-  const { lessonId } = await context.params;
+
+  const limited = await enforceRateLimit(
+    'live-lesson-leave',
+    auth.user.id,
+    { limit: 30, windowSeconds: 60 },
+  );
+  if (limited) return limited;
+
+  const parsedParams = leaveParamsSchema.safeParse(await context.params);
+  if (!parsedParams.success) {
+    return NextResponse.json({ error: 'Geçersiz ders kimliği.' }, { status: 400 });
+  }
+  const { lessonId } = parsedParams.data;
   const supabase = createServiceRoleClient();
   const leftAt = new Date().toISOString();
 

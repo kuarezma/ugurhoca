@@ -11,3 +11,8 @@ if (process.env.NEXT_PUBLIC_SENTRY_DSN) {
     setTimeout(start, 2000);
   }
 }
+
+export const onRouterTransitionStart = () => {
+  // Sentry idle-load tamamlandığında navigasyon izlemesi aktifleşir;
+  // ilk yükleme paketini şişirmemek için senkron SDK import edilmez.
+};

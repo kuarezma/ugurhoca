@@ -1,3 +1,7 @@
+import { createLogger } from '@/lib/logger';
+
+const log = createLogger('profile:time-capsule-storage');
+
 export interface TimeCapsuleGoal {
   id: string;
   studentId: string;
@@ -49,7 +53,7 @@ export function saveTimeCapsule(capsule: TimeCapsuleGoal): boolean {
     localStorage.setItem(TIME_CAPSULE_STORAGE_KEY, JSON.stringify(capsule));
     return true;
   } catch (error) {
-    console.error('Failed to save time capsule:', error);
+    log.error('Failed to save time capsule', error);
     return false;
   }
 }

@@ -1,8 +1,9 @@
 'use client';
 
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo } from 'react';
 import { Send, Users, X, AlertCircle, Link as LinkIcon, Image as ImageIcon } from 'lucide-react';
 import { useToast } from '@/components/Toast';
+import { useAccessibleModal } from '@/hooks/useAccessibleModal';
 import type { AdminUser } from '@/features/admin/types';
 
 interface AdminBroadcastModalProps {
@@ -25,6 +26,7 @@ export const AdminBroadcastModal: React.FC<AdminBroadcastModalProps> = ({
   onClose,
   students,
 }) => {
+  const modalRef = useAccessibleModal<HTMLDivElement>(isOpen, onClose);
   const { showToast } = useToast();
   const [targetGrade, setTargetGrade] = useState<string>('all');
   const [title, setTitle] = useState('');
@@ -33,16 +35,6 @@ export const AdminBroadcastModal: React.FC<AdminBroadcastModalProps> = ({
   const [imageUrl, setImageUrl] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
-
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && isOpen) {
-        onClose();
-      }
-    };
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isOpen, onClose]);
 
   const recipientCount = useMemo(() => {
     if (!students || students.length === 0) return 0;
@@ -122,10 +114,12 @@ export const AdminBroadcastModal: React.FC<AdminBroadcastModalProps> = ({
       />
 
       <div
+        ref={modalRef}
+        tabIndex={-1}
         role="dialog"
         aria-modal="true"
         aria-labelledby="broadcast-modal-title"
-        className="relative z-10 w-full max-w-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh] animate-in fade-in zoom-in-95 duration-200"
+        className="relative z-10 w-full max-w-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh] animate-in fade-in zoom-in-95 duration-200 outline-none"
       >
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/80">

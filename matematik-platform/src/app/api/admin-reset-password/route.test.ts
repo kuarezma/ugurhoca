@@ -5,6 +5,10 @@ vi.mock('@/lib/admin', () => ({
   isAdminEmail: vi.fn(),
 }));
 
+vi.mock('@/lib/auth-snapshot.server', () => ({
+  getServerAccessToken: vi.fn().mockResolvedValue(null),
+}));
+
 vi.mock('@/lib/rate-limit', () => ({
   enforceRateLimit: vi.fn().mockResolvedValue(null),
 }));

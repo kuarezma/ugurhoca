@@ -90,30 +90,33 @@ export const SAMPLE_RECORDED_LESSONS: RecordedLesson[] = [
   },
 ];
 
-type LessonReplayArchiveModalProps = {
+export type LessonReplayArchiveModalProps = {
   isOpen: boolean;
   onClose: () => void;
   gradeFilter?: string;
+  lessons?: RecordedLesson[];
 };
 
 export function LessonReplayArchiveModal({
   isOpen,
   onClose,
   gradeFilter = 'all',
+  lessons = [],
 }: LessonReplayArchiveModalProps) {
   const modalRef = useAccessibleModal<HTMLDivElement>(isOpen, onClose);
-  const [selectedLesson, setSelectedLesson] = useState<RecordedLesson>(
-    SAMPLE_RECORDED_LESSONS[0]
+  const [selectedLessonId, setSelectedLessonId] = useState<string | null>(
+    lessons[0]?.id ?? null
   );
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentSeconds, setCurrentSeconds] = useState(0);
   const [playbackSpeed, setPlaybackSpeed] = useState<number>(1);
   const [searchQuery, setSearchQuery] = useState('');
   const [activeGradeTab, setActiveGradeTab] = useState(gradeFilter);
+  const [notesInfoMessage, setNotesInfoMessage] = useState<string | null>(null);
 
   if (!isOpen) return null;
 
-  const filteredLessons = SAMPLE_RECORDED_LESSONS.filter((lesson) => {
+  const filteredLessons = lessons.filter((lesson) => {
     if (activeGradeTab !== 'all' && activeGradeTab !== 'all_filter') {
       if (lesson.grade !== activeGradeTab) return false;
     }
@@ -126,6 +129,12 @@ export function LessonReplayArchiveModal({
     }
     return true;
   });
+
+  const selectedLesson =
+    lessons.find((l) => l.id === selectedLessonId) ??
+    filteredLessons[0] ??
+    lessons[0] ??
+    null;
 
   const handleJumpToChapter = (seconds: number) => {
     setCurrentSeconds(seconds);
@@ -180,227 +189,239 @@ export function LessonReplayArchiveModal({
           </button>
         </div>
 
-        {/* Ana Sahne & Oynatıcı Paneli */}
-        <div className="flex-1 overflow-y-auto grid grid-cols-1 lg:grid-cols-3 divide-y lg:divide-y-0 lg:divide-x divide-slate-200 dark:divide-white/10">
-          {/* Sol / Ana Alan: Video Oynatıcı & Zaman Damgalı Bölümler (2 Kolon) */}
-          <div className="lg:col-span-2 p-4 sm:p-6 space-y-5">
-            {/* Simüle Edilmiş Video Oynatıcı Sahnesi */}
-            <div className="relative rounded-2xl overflow-hidden bg-slate-950 dark:bg-slate-950 border border-white/15 aspect-video flex flex-col justify-between p-4 shadow-inner">
-              {/* Oynatıcı Üst Bar */}
-              <div className="flex items-center justify-between text-xs text-white/80 z-10">
-                <span className="rounded-lg bg-black/60 px-2.5 py-1 font-bold backdrop-blur-md">
-                  {selectedLesson.grade}. Sınıf • {selectedLesson.title}
-                </span>
-                <span className="rounded-lg bg-rose-500/20 text-rose-300 border border-rose-500/30 px-2 py-0.5 text-[10px] font-bold">
-                  Ders Kaydı (1080p HD)
-                </span>
+        {lessons.length === 0 || !selectedLesson ? (
+          <div className="flex-1 flex flex-col items-center justify-center p-8 text-center space-y-3">
+            <Video className="h-12 w-12 text-rose-500/50" />
+            <p className="text-sm font-semibold text-slate-700 dark:text-slate-300 max-w-md">
+              Henüz kaydedilmiş canlı ders arşivi bulunmuyor. Canlı dersler tamamlandığında kayıtlar ve ders notları burada listelenecektir.
+            </p>
+          </div>
+        ) : (
+          /* Ana Sahne & Oynatıcı Paneli */
+          <div className="flex-1 overflow-y-auto grid grid-cols-1 lg:grid-cols-3 divide-y lg:divide-y-0 lg:divide-x divide-slate-200 dark:divide-white/10">
+            {/* Sol / Ana Alan: Video Oynatıcı & Zaman Damgalı Bölümler (2 Kolon) */}
+            <div className="lg:col-span-2 p-4 sm:p-6 space-y-5">
+              {/* Simüle Edilmiş Video Oynatıcı Sahnesi */}
+              <div className="relative rounded-2xl overflow-hidden bg-slate-950 dark:bg-slate-950 border border-white/15 aspect-video flex flex-col justify-between p-4 shadow-inner">
+                {/* Oynatıcı Üst Bar */}
+                <div className="flex items-center justify-between text-xs text-white/80 z-10">
+                  <span className="rounded-lg bg-black/60 px-2.5 py-1 font-bold backdrop-blur-md">
+                    {selectedLesson.grade}. Sınıf • {selectedLesson.title}
+                  </span>
+                  <span className="rounded-lg bg-rose-500/20 text-rose-300 border border-rose-500/30 px-2 py-0.5 text-[10px] font-bold">
+                    Ders Kaydı (1080p HD)
+                  </span>
+                </div>
+
+                {/* Oynatıcı Orta Aksiyon */}
+                <div className="my-auto flex flex-col items-center justify-center z-10">
+                  <button
+                    type="button"
+                    onClick={() => setIsPlaying((p) => !p)}
+                    aria-label={isPlaying ? 'Dersi Duraklat' : 'Dersi Oynat'}
+                    className="flex h-16 w-16 items-center justify-center rounded-full bg-rose-500/90 hover:bg-rose-500 text-white dark:text-white shadow-2xl shadow-rose-500/50 hover:scale-110 transition-transform"
+                  >
+                    {isPlaying ? (
+                      <Pause className="h-8 w-8 fill-white" />
+                    ) : (
+                      <Play className="h-8 w-8 fill-white ml-1" />
+                    )}
+                  </button>
+                  <div className="mt-3 text-xs font-semibold text-slate-300">
+                    {isPlaying ? 'Ders Oynatılıyor' : 'İzlemek İçin Başlat'}
+                  </div>
+                </div>
+
+                {/* Oynatıcı Alt Kontroller */}
+                <div className="z-10 space-y-2 bg-black/60 p-2.5 rounded-xl backdrop-blur-md border border-white/10">
+                  {/* İlerleme Çubuğu */}
+                  <div className="w-full bg-white/20 h-1.5 rounded-full overflow-hidden cursor-pointer">
+                    <div
+                      className="bg-rose-500 h-full rounded-full transition-all"
+                      style={{
+                        width: `${Math.min(
+                          100,
+                          (currentSeconds / (selectedLesson.durationMinutes * 60)) * 100
+                        )}%`,
+                      }}
+                    />
+                  </div>
+
+                  <div className="flex items-center justify-between text-xs text-slate-300">
+                    <div className="flex items-center gap-2 font-mono text-[11px]">
+                      <Clock className="h-3.5 w-3.5 text-rose-400" />
+                      <span>
+                        {formatSeconds(currentSeconds)} / {' '}{selectedLesson.durationMinutes}:00
+                      </span>
+                    </div>
+
+                    {/* Oynatma Hızı Kontrolü */}
+                    <div className="flex items-center gap-1">
+                      <FastForward className="h-3 w-3 text-slate-400" />
+                      {[1, 1.25, 1.5, 2].map((speed) => (
+                        <button
+                          key={speed}
+                          type="button"
+                          onClick={() => setPlaybackSpeed(speed)}
+                          className={`rounded px-1.5 py-0.5 text-[10px] font-bold transition ${
+                            playbackSpeed === speed
+                              ? 'bg-brand-primary text-slate-950 dark:text-slate-950'
+                              : 'bg-white/10 text-slate-400 hover:text-white'
+                          }`}
+                        >
+                          {speed}x
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                </div>
               </div>
 
-              {/* Oynatıcı Orta Aksiyon */}
-              <div className="my-auto flex flex-col items-center justify-center z-10">
+              {/* Zaman Damgalı Bölümler (Chapters) */}
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <h3 className="text-xs sm:text-sm font-bold text-slate-900 dark:text-white flex items-center gap-1.5">
+                    <Bookmark className="h-4 w-4 text-indigo-500 dark:text-indigo-400" />
+                    <span>Ders Zaman Damgaları & Konu Başlıkları</span>
+                  </h3>
+                  <span className="text-[11px] text-slate-500 dark:text-slate-400">Tıkla ve ilgili dakikaya atla</span>
+                </div>
+
+                <div className="space-y-2">
+                  {selectedLesson.chapters.map((ch, idx) => (
+                    <button
+                      key={idx}
+                      type="button"
+                      onClick={() => handleJumpToChapter(ch.timeSeconds)}
+                      className="w-full flex items-center justify-between rounded-xl border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-white/5 hover:bg-slate-100 dark:hover:bg-white/10 p-2.5 sm:p-3 text-left transition group"
+                    >
+                      <div className="flex items-center gap-3">
+                        <span className="font-mono text-xs font-bold text-amber-700 dark:text-amber-300 rounded bg-amber-500/10 px-2 py-1 border border-amber-500/20 group-hover:bg-amber-500/20">
+                          {ch.timeFormatted}
+                        </span>
+                        <span className="text-xs font-semibold text-slate-800 dark:text-slate-200 group-hover:text-slate-950 dark:group-hover:text-white">
+                          {ch.title}
+                        </span>
+                      </div>
+                      <span className="text-[10px] font-bold text-indigo-700 dark:text-indigo-300 rounded bg-indigo-50 dark:bg-indigo-500/15 px-2 py-0.5 border border-indigo-200 dark:border-indigo-500/25">
+                        {ch.topicTag}
+                      </span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Tahta Notları & PDF İndirme Şeridi */}
+              <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-indigo-200 dark:border-indigo-500/30 bg-indigo-50/70 dark:bg-indigo-950/30 p-3.5 text-xs">
+                <div className="flex items-center gap-2 text-indigo-900 dark:text-indigo-200">
+                  <FileText className="h-4 w-4 text-indigo-600 dark:text-indigo-400" />
+                  <span>
+                    {notesInfoMessage || 'Bu derste karalama tahtasında çözülen tüm soru ve notlar'}
+                  </span>
+                </div>
+
                 <button
                   type="button"
-                  onClick={() => setIsPlaying((p) => !p)}
-                  aria-label={isPlaying ? 'Dersi Duraklat' : 'Dersi Oynat'}
-                  className="flex h-16 w-16 items-center justify-center rounded-full bg-rose-500/90 hover:bg-rose-500 text-white dark:text-white shadow-2xl shadow-rose-500/50 hover:scale-110 transition-transform"
+                  onClick={() => {
+                    setNotesInfoMessage('Tahta notları PDF olarak hazırlanıyor.');
+                  }}
+                  className="inline-flex items-center gap-1.5 rounded-xl px-3 py-1.5 font-bold transition bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none"
                 >
-                  {isPlaying ? (
-                    <Pause className="h-8 w-8 fill-white" />
-                  ) : (
-                    <Play className="h-8 w-8 fill-white ml-1" />
-                  )}
+                  <Download className="h-3.5 w-3.5" />
+                  <span>Tahta Notlarını İndir (PDF)</span>
                 </button>
-                <div className="mt-3 text-xs font-semibold text-slate-300">
-                  {isPlaying ? 'Ders Oynatılıyor' : 'İzlemek İçin Başlat'}
-                </div>
-              </div>
-
-              {/* Oynatıcı Alt Kontroller */}
-              <div className="z-10 space-y-2 bg-black/60 p-2.5 rounded-xl backdrop-blur-md border border-white/10">
-                {/* İlerleme Çubuğu */}
-                <div className="w-full bg-white/20 h-1.5 rounded-full overflow-hidden cursor-pointer">
-                  <div
-                    className="bg-rose-500 h-full rounded-full transition-all"
-                    style={{
-                      width: `${Math.min(
-                        100,
-                        (currentSeconds / (selectedLesson.durationMinutes * 60)) * 100
-                      )}%`,
-                    }}
-                  />
-                </div>
-
-                <div className="flex items-center justify-between text-xs text-slate-300">
-                  <div className="flex items-center gap-2 font-mono text-[11px]">
-                    <Clock className="h-3.5 w-3.5 text-rose-400" />
-                    <span>
-                      {formatSeconds(currentSeconds)} / {' '}{selectedLesson.durationMinutes}:00
-                    </span>
-                  </div>
-
-                  {/* Oynatma Hızı Kontrolü */}
-                  <div className="flex items-center gap-1">
-                    <FastForward className="h-3 w-3 text-slate-400" />
-                    {[1, 1.25, 1.5, 2].map((speed) => (
-                      <button
-                        key={speed}
-                        type="button"
-                        onClick={() => setPlaybackSpeed(speed)}
-                        className={`rounded px-1.5 py-0.5 text-[10px] font-bold transition ${
-                          playbackSpeed === speed
-                            ? 'bg-brand-primary text-slate-950 dark:text-slate-950'
-                            : 'bg-white/10 text-slate-400 hover:text-white'
-                        }`}
-                      >
-                        {speed}x
-                      </button>
-                    ))}
-                  </div>
-                </div>
               </div>
             </div>
 
-            {/* Zaman Damgalı Bölümler (Chapters) */}
-            <div className="space-y-3">
-              <div className="flex items-center justify-between">
+            {/* Sağ Kolon: Arşivdeki Tüm Dersler Listesi */}
+            <div className="p-4 sm:p-6 space-y-4">
+              <div>
                 <h3 className="text-xs sm:text-sm font-bold text-slate-900 dark:text-white flex items-center gap-1.5">
-                  <Bookmark className="h-4 w-4 text-indigo-500 dark:text-indigo-400" />
-                  <span>Ders Zaman Damgaları & Konu Başlıkları</span>
+                  <Video className="h-4 w-4 text-rose-500 dark:text-rose-400" />
+                  <span>Arşivdeki Kayıtlar ({filteredLessons.length})</span>
                 </h3>
-                <span className="text-[11px] text-slate-500 dark:text-slate-400">Tıkla ve ilgili dakikaya atla</span>
+                <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">İzlemek istediğin dersi seç</p>
               </div>
 
-              <div className="space-y-2">
-                {selectedLesson.chapters.map((ch, idx) => (
+              {/* Sınıf Filtresi */}
+              <div className="flex items-center gap-1 rounded-xl bg-slate-100 dark:bg-white/5 p-1 border border-slate-200 dark:border-white/10 overflow-x-auto text-[11px]">
+                {['all', '8', 'Mezun'].map((g) => (
                   <button
-                    key={idx}
+                    key={g}
                     type="button"
-                    onClick={() => handleJumpToChapter(ch.timeSeconds)}
-                    className="w-full flex items-center justify-between rounded-xl border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-white/5 hover:bg-slate-100 dark:hover:bg-white/10 p-2.5 sm:p-3 text-left transition group"
+                    onClick={() => setActiveGradeTab(g)}
+                    className={`rounded-lg px-2.5 py-1 font-bold whitespace-nowrap transition ${
+                      activeGradeTab === g
+                        ? 'bg-brand-primary text-slate-950 dark:text-slate-950'
+                        : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                    }`}
                   >
-                    <div className="flex items-center gap-3">
-                      <span className="font-mono text-xs font-bold text-amber-700 dark:text-amber-300 rounded bg-amber-500/10 px-2 py-1 border border-amber-500/20 group-hover:bg-amber-500/20">
-                        {ch.timeFormatted}
-                      </span>
-                      <span className="text-xs font-semibold text-slate-800 dark:text-slate-200 group-hover:text-slate-950 dark:group-hover:text-white">
-                        {ch.title}
-                      </span>
-                    </div>
-                    <span className="text-[10px] font-bold text-indigo-700 dark:text-indigo-300 rounded bg-indigo-50 dark:bg-indigo-500/15 px-2 py-0.5 border border-indigo-200 dark:border-indigo-500/25">
-                      {ch.topicTag}
-                    </span>
+                    {g === 'all' ? 'Tümü' : g === '8' ? '8. Sınıf LGS' : 'YKS / TYT'}
                   </button>
                 ))}
               </div>
-            </div>
 
-            {/* Tahta Notları & PDF İndirme Şeridi */}
-            <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-indigo-200 dark:border-indigo-500/30 bg-indigo-50/70 dark:bg-indigo-950/30 p-3.5 text-xs">
-              <div className="flex items-center gap-2 text-indigo-900 dark:text-indigo-200">
-                <FileText className="h-4 w-4 text-indigo-600 dark:text-indigo-400" />
-                <span>Bu derste karalama tahtasında çözülen tüm soru ve notlar</span>
+              {/* Arama */}
+              <div className="relative">
+                <Search className="absolute left-3 top-2.5 h-3.5 w-3.5 text-slate-400" />
+                <input
+                  type="search"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="Ders veya konu ara..."
+                  className="w-full rounded-xl border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-white/5 pl-8 pr-3 py-1.5 text-xs text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 outline-none focus:border-brand-primary"
+                />
               </div>
 
-              <button
-                type="button"
-                onClick={() => {
-                  alert('Tahta notları PDF olarak indiriliyor.');
-                }}
-                className="inline-flex items-center gap-1.5 rounded-xl px-3 py-1.5 font-bold transition bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none"
-              >
-                <Download className="h-3.5 w-3.5" />
-                <span>Tahta Notlarını İndir (PDF)</span>
-              </button>
+              {/* Kayıt Kartları */}
+              <div className="space-y-2.5 max-h-[450px] overflow-y-auto pr-1">
+                {filteredLessons.map((lesson) => {
+                  const isSelected = selectedLesson.id === lesson.id;
+                  return (
+                    <button
+                      key={lesson.id}
+                      type="button"
+                      onClick={() => {
+                        setSelectedLessonId(lesson.id);
+                        setCurrentSeconds(0);
+                        setIsPlaying(false);
+                        setNotesInfoMessage(null);
+                      }}
+                      className={`w-full rounded-2xl border p-3 text-left transition ${
+                        isSelected
+                          ? 'border-brand-primary/60 bg-brand-primary/10 shadow-lg'
+                          : 'border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-white/5 hover:bg-slate-100 dark:hover:bg-white/10'
+                      }`}
+                    >
+                      <div className="flex items-center justify-between text-[11px] mb-1">
+                        <span className="font-bold text-rose-600 dark:text-rose-400">{lesson.grade}. Sınıf</span>
+                        <span className="text-slate-500 dark:text-slate-400 flex items-center gap-1">
+                          <Calendar className="h-3 w-3" />
+                          {lesson.dateStr}
+                        </span>
+                      </div>
+
+                      <div className="font-bold text-xs text-slate-900 dark:text-white leading-snug line-clamp-2">
+                        {lesson.title}
+                      </div>
+
+                      <div className="mt-2 flex items-center justify-between text-[10px] text-slate-500 dark:text-slate-400 border-t border-slate-200 dark:border-white/5 pt-2">
+                        <span className="flex items-center gap-1">
+                          <Clock className="h-3 w-3" />
+                          {lesson.durationMinutes} dakika
+                        </span>
+                        <span className="flex items-center gap-1">
+                          <Users className="h-3 w-3" />
+                          {lesson.attendeesCount} öğrenci
+                        </span>
+                      </div>
+                    </button>
+                  );
+                })}
+              </div>
             </div>
           </div>
-
-          {/* Sağ Kolon: Arşivdeki Tüm Dersler Listesi */}
-          <div className="p-4 sm:p-6 space-y-4">
-            <div>
-              <h3 className="text-xs sm:text-sm font-bold text-slate-900 dark:text-white flex items-center gap-1.5">
-                <Video className="h-4 w-4 text-rose-500 dark:text-rose-400" />
-                <span>Arşivdeki Kayıtlar ({filteredLessons.length})</span>
-              </h3>
-              <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">İzlemek istediğin dersi seç</p>
-            </div>
-
-            {/* Sınıf Filtresi */}
-            <div className="flex items-center gap-1 rounded-xl bg-slate-100 dark:bg-white/5 p-1 border border-slate-200 dark:border-white/10 overflow-x-auto text-[11px]">
-              {['all', '8', 'Mezun'].map((g) => (
-                <button
-                  key={g}
-                  type="button"
-                  onClick={() => setActiveGradeTab(g)}
-                  className={`rounded-lg px-2.5 py-1 font-bold whitespace-nowrap transition ${
-                    activeGradeTab === g
-                      ? 'bg-brand-primary text-slate-950 dark:text-slate-950'
-                      : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
-                  }`}
-                >
-                  {g === 'all' ? 'Tümü' : g === '8' ? '8. Sınıf LGS' : 'YKS / TYT'}
-                </button>
-              ))}
-            </div>
-
-            {/* Arama */}
-            <div className="relative">
-              <Search className="absolute left-3 top-2.5 h-3.5 w-3.5 text-slate-400" />
-              <input
-                type="search"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Ders veya konu ara..."
-                className="w-full rounded-xl border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-white/5 pl-8 pr-3 py-1.5 text-xs text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 outline-none focus:border-brand-primary"
-              />
-            </div>
-
-            {/* Kayıt Kartları */}
-            <div className="space-y-2.5 max-h-[450px] overflow-y-auto pr-1">
-              {filteredLessons.map((lesson) => {
-                const isSelected = selectedLesson.id === lesson.id;
-                return (
-                  <button
-                    key={lesson.id}
-                    type="button"
-                    onClick={() => {
-                      setSelectedLesson(lesson);
-                      setCurrentSeconds(0);
-                      setIsPlaying(false);
-                    }}
-                    className={`w-full rounded-2xl border p-3 text-left transition ${
-                      isSelected
-                        ? 'border-brand-primary/60 bg-brand-primary/10 shadow-lg'
-                        : 'border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-white/5 hover:bg-slate-100 dark:hover:bg-white/10'
-                    }`}
-                  >
-                    <div className="flex items-center justify-between text-[11px] mb-1">
-                      <span className="font-bold text-rose-600 dark:text-rose-400">{lesson.grade}. Sınıf</span>
-                      <span className="text-slate-500 dark:text-slate-400 flex items-center gap-1">
-                        <Calendar className="h-3 w-3" />
-                        {lesson.dateStr}
-                      </span>
-                    </div>
-
-                    <div className="font-bold text-xs text-slate-900 dark:text-white leading-snug line-clamp-2">
-                      {lesson.title}
-                    </div>
-
-                    <div className="mt-2 flex items-center justify-between text-[10px] text-slate-500 dark:text-slate-400 border-t border-slate-200 dark:border-white/5 pt-2">
-                      <span className="flex items-center gap-1">
-                        <Clock className="h-3 w-3" />
-                        {lesson.durationMinutes} dakika
-                      </span>
-                      <span className="flex items-center gap-1">
-                        <Users className="h-3 w-3" />
-                        {lesson.attendeesCount} öğrenci
-                      </span>
-                    </div>
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-        </div>
+        )}
       </div>
     </div>
   );

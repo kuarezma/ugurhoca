@@ -7,15 +7,17 @@ describe('OfflineStudyPackageModal Component', () => {
     localStorage.clear();
   });
 
-  it('renders correctly when open', () => {
+  it('renders correctly when open and displays honest question counts', () => {
     const onClose = vi.fn();
     render(<OfflineStudyPackageModal isOpen={true} onClose={onClose} />);
 
     expect(screen.getByText('Çevrimdışı Çalışma Modu')).toBeInTheDocument();
     expect(screen.getByText('Henüz indirilmiş bir soru seti yok')).toBeInTheDocument();
+    expect(screen.getByText('2 Soru & Çözüm Notu')).toBeInTheDocument();
+    expect(screen.getAllByText('1 Soru & Çözüm Notu')).toHaveLength(2);
   });
 
-  it('allows downloading a preset package to device storage', () => {
+  it('allows downloading a preset package to device storage and clearing with two-step confirmation', () => {
     const onClose = vi.fn();
     render(<OfflineStudyPackageModal isOpen={true} onClose={onClose} />);
 
@@ -26,6 +28,16 @@ describe('OfflineStudyPackageModal Component', () => {
     // Now it should show in downloaded packages
     expect(screen.getByText('Cihazınızda Hazır Soru Setleri')).toBeInTheDocument();
     expect(screen.getByText('Çözmeye Başla')).toBeInTheDocument();
+
+    // Two-step clear all
+    const clearBtn = screen.getByRole('button', { name: /Hepsini Temizle/i });
+    fireEvent.click(clearBtn);
+
+    expect(screen.getByText('Tüm setler silinsin mi?')).toBeInTheDocument();
+    const confirmBtn = screen.getByRole('button', { name: /Evet, Temizle/i });
+    fireEvent.click(confirmBtn);
+
+    expect(screen.getByText('Henüz indirilmiş bir soru seti yok')).toBeInTheDocument();
   });
 
   it('calls onStartOfflineQuiz when start button is clicked', () => {

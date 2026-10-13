@@ -33,6 +33,9 @@ import MathText from '@/components/MathText';
 import Image from 'next/image';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
 import ProtractorOverlay from '@/components/ProtractorOverlay';
+import { createLogger } from '@/lib/logger';
+
+const log = createLogger('scratchpad-modal');
 
 export type ScratchpadQuestionContext = {
   questionText: string;
@@ -412,7 +415,7 @@ export default function ScratchpadModal({
     }
   };
 
-  const handleUndo = (e?: React.MouseEvent) => {
+  const handleUndo = useCallback((e?: React.MouseEvent) => {
     e?.stopPropagation();
     if (history.length <= 1) return;
     const canvas = canvasRef.current;
@@ -433,11 +436,11 @@ export default function ScratchpadModal({
         }
       }
     } catch (err) {
-      console.warn('Undo error:', err);
+      log.warn('Undo error', { error: err });
     }
-  };
+  }, [history, cacheKey]);
 
-  const handleRedo = (e?: React.MouseEvent) => {
+  const handleRedo = useCallback((e?: React.MouseEvent) => {
     e?.stopPropagation();
     if (redoHistory.length === 0) return;
     const canvas = canvasRef.current;
@@ -457,9 +460,9 @@ export default function ScratchpadModal({
         }
       }
     } catch (err) {
-      console.warn('Redo error:', err);
+      log.warn('Redo error', { error: err });
     }
-  };
+  }, [redoHistory, cacheKey]);
 
   useEffect(() => {
     if (!isOpen) return;
@@ -480,7 +483,7 @@ export default function ScratchpadModal({
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isOpen, history, redoHistory]);
+  }, [isOpen, handleUndo, handleRedo]);
 
   const handleSelectPattern = (targetPattern: BackgroundPattern, e?: React.MouseEvent) => {
     e?.stopPropagation();
@@ -772,10 +775,7 @@ export default function ScratchpadModal({
   if (!isOpen) return null;
 
   return (
-    <div
-      className="fixed inset-0 z-[150] flex items-center justify-center p-2 sm:p-4"
-      onClick={(e) => e.stopPropagation()}
-    >
+    <div className="fixed inset-0 z-[150] flex items-center justify-center p-2 sm:p-4">
       <button
         type="button"
         aria-label="Pencereyi kapat"
@@ -788,7 +788,6 @@ export default function ScratchpadModal({
         role="dialog"
         aria-modal="true"
         aria-label={title}
-        onClick={(e) => e.stopPropagation()}
         className={`relative z-10 flex h-full max-h-[94vh] w-full max-w-6xl flex-col overflow-hidden rounded-3xl border shadow-2xl ${
           isLight ? 'border-slate-200 bg-white text-slate-900 shadow-xl' : 'border-white/15 bg-slate-900 text-white shadow-2xl'
         }`}

@@ -11,6 +11,7 @@ import {
   ListChecks,
   Printer,
 } from 'lucide-react';
+import { useAccessibleModal } from '@/hooks/useAccessibleModal';
 import { GRADE_TOPIC_OPTIONS, getTopicNames } from '@/features/progress/constants';
 
 type TopicStatus = {
@@ -49,6 +50,7 @@ export function TopicChecklistModal({
   initialGrade,
 }: TopicChecklistModalProps) {
   const titleId = useId();
+  const modalRef = useAccessibleModal<HTMLDivElement>(isOpen, onClose);
   const [selectedGrade, setSelectedGrade] = useState<string>(initialGrade || defaultGrade || '8');
   const [checklist, setChecklist] = useState<AllGradesChecklist>({});
 
@@ -172,6 +174,8 @@ export function TopicChecklistModal({
         aria-hidden="true"
       />
       <div
+        ref={modalRef}
+        tabIndex={-1}
         role="dialog"
         aria-modal="true"
         aria-labelledby={titleId}

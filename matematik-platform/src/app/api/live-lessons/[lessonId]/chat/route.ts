@@ -1,4 +1,6 @@
 import { NextResponse } from 'next/server';
+import { z } from 'zod';
+import { enforceRateLimit } from '@/lib/rate-limit';
 import { createServiceRoleClient } from '@/lib/supabase/server';
 import {
   canUserAccessLiveLesson,
@@ -13,9 +15,25 @@ type RouteContext = {
   params: Promise<{ lessonId: string }>;
 };
 
+const chatMessageBodySchema = z.object({
+  message: z
+    .string()
+    .trim()
+    .min(1, 'Mesaj 1-500 karakter olmalı.')
+    .max(500, 'Mesaj 1-500 karakter olmalı.'),
+});
+
 export async function GET(_request: Request, context: RouteContext) {
   const auth = await requireLiveLessonUser();
   if (!auth.ok) return auth.response;
+
+  const limited = await enforceRateLimit(
+    'live-lesson-chat-get',
+    auth.user.id,
+    { limit: 60, windowSeconds: 60 },
+  );
+  if (limited) return limited;
+
   const { lessonId } = await context.params;
   const supabase = createServiceRoleClient();
 
@@ -46,12 +64,21 @@ export async function GET(_request: Request, context: RouteContext) {
 export async function POST(request: Request, context: RouteContext) {
   const auth = await requireLiveLessonUser();
   if (!auth.ok) return auth.response;
+
+  const limited = await enforceRateLimit(
+    'live-lesson-chat-post',
+    auth.user.id,
+    { limit: 30, windowSeconds: 60 },
+  );
+  if (limited) return limited;
+
   const { lessonId } = await context.params;
-  const body = (await request.json().catch(() => null)) as { message?: string } | null;
-  const message = body?.message?.trim() || '';
-  if (message.length < 1 || message.length > 500) {
+  const body = await request.json().catch(() => null);
+  const parsed = chatMessageBodySchema.safeParse(body);
+  if (!parsed.success) {
     return NextResponse.json({ error: 'Mesaj 1-500 karakter olmalı.' }, { status: 400 });
   }
+  const { message } = parsed.data;
 
   const supabase = createServiceRoleClient();
 

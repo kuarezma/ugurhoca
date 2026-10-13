@@ -1,22 +1,14 @@
-import { apiError, apiOk } from '@/lib/api-response';
-import { isAdminEmail } from '@/lib/admin';
-import { getServerAccessToken } from '@/lib/auth-snapshot.server';
+import { requireAdmin } from '@/lib/api-auth';
+import { apiOk } from '@/lib/api-response';
+import { createLogger } from '@/lib/logger';
+import { enforceRateLimit } from '@/lib/rate-limit';
 import {
   isPublicWorksheetSourceUrl,
   parseAllowedHosts,
   parseSourceUrls,
 } from '@/lib/worksheet-candidate-discovery';
-import { createServerSupabaseClient } from '@/lib/supabase/server';
 
-const getAccessToken = async (request: Request) => {
-  const authHeader = request.headers.get('authorization');
-
-  if (!authHeader?.startsWith('Bearer ')) {
-    return (await getServerAccessToken()) ?? '';
-  }
-
-  return authHeader.slice(7).trim();
-};
+const log = createLogger('admin-worksheet-source-status');
 
 const parseConfiguredAllowedHosts = (raw: string | undefined) =>
   (raw ?? '')
@@ -45,9 +37,9 @@ const checkSourceUrl = async (sourceUrl: string) => {
       url: sourceUrl,
     };
   } catch (error) {
+    log.warn('Kaynak URL kontrolü başarısız oldu', { error, url: sourceUrl });
     return {
-      message:
-        error instanceof Error ? error.message : 'Kaynağa ulaşılamadı.',
+      message: 'Kaynağa ulaşılamadı.',
       ok: false,
       url: sourceUrl,
     };
@@ -55,24 +47,19 @@ const checkSourceUrl = async (sourceUrl: string) => {
 };
 
 export async function GET(request: Request) {
-  const accessToken = await getAccessToken(request);
+  const auth = await requireAdmin(request);
 
-  if (!accessToken) {
-    return apiError('Oturum açmanız gerekiyor.', 401, 'missing_access_token');
+  if (auth.error) {
+    return auth.error;
   }
 
-  const supabase = createServerSupabaseClient(accessToken);
-  const {
-    data: { user },
-    error,
-  } = await supabase.auth.getUser(accessToken);
-
-  if (error || !user?.id) {
-    return apiError('Oturum açmanız gerekiyor.', 401, 'invalid_session');
-  }
-
-  if (!isAdminEmail(user.email)) {
-    return apiError('Bu işlem için yetkiniz yok.', 403, 'not_admin');
+  const limited = await enforceRateLimit(
+    'admin-worksheet-source-status',
+    auth.user.id,
+    { limit: 30, windowSeconds: 60 },
+  );
+  if (limited) {
+    return limited;
   }
 
   const sourceUrls = parseSourceUrls(process.env.WORKSHEET_CANDIDATE_SOURCE_URLS);

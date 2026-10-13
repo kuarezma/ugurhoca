@@ -16,6 +16,9 @@ import {
 import MathText from '@/components/MathText';
 import type { Quiz, QuizQuestion } from '@/types/quiz';
 import { generateQRCodeSVG } from '@/lib/qr-generator';
+import { createLogger } from '@/lib/logger';
+
+const log = createLogger('printable-worksheet-modal');
 
 export type WorkspaceMode = 'compact' | 'standard' | 'large' | 'grid';
 
@@ -73,7 +76,7 @@ export function PrintableWorksheetModal({
         orientation: 'portrait',
       });
     } catch (err) {
-      console.error('PDF export error:', err);
+      log.error('PDF export error', err);
     } finally {
       setIsExporting(false);
     }

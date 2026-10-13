@@ -1,4 +1,7 @@
 import { supabase } from '@/lib/supabase/client';
+import { createLogger } from '@/lib/logger';
+
+const log = createLogger('analytics:track-activity');
 
 type ActivityEventInput = {
   entityId?: string | null;
@@ -48,9 +51,9 @@ export const trackStudentActivityEvent = async ({
     });
 
     if (error && !isMissingSchemaError(error)) {
-      console.warn('Activity event kaydedilemedi', error);
+      log.warn('Activity event kaydedilemedi', { error });
     }
   } catch (error) {
-    console.warn('Activity event kaydedilemedi', error);
+    log.warn('Activity event kaydedilemedi', { error });
   }
 };

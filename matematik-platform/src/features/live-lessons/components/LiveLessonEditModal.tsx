@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from 'react';
 import { X, Search, Check, AlertCircle } from 'lucide-react';
+import { useAccessibleModal } from '@/hooks/useAccessibleModal';
 import type { LiveLesson } from '@/features/live-lessons/types';
 import type { AppUser } from '@/types';
 
@@ -45,6 +46,7 @@ function LiveLessonEditModalContent({
   onSuccess,
   students,
 }: ContentProps) {
+  const modalRef = useAccessibleModal<HTMLDivElement>(true, onClose);
   const [title, setTitle] = useState(lesson.title);
   const [description, setDescription] = useState(lesson.description || '');
   const [startsAt, setStartsAt] = useState(() => toLocalInputValue(lesson.starts_at));
@@ -132,6 +134,8 @@ function LiveLessonEditModalContent({
 
   return (
     <div
+      ref={modalRef}
+      tabIndex={-1}
       role="dialog"
       aria-modal="true"
       aria-labelledby="edit-lesson-modal-title"

@@ -1,4 +1,7 @@
 import { supabase } from '@/lib/supabase/client';
+import { createLogger } from '@/lib/logger';
+
+const log = createLogger('admin:student-groups');
 
 export type StudentGroup = {
   id: string;
@@ -63,13 +66,13 @@ export async function fetchStudentGroups(): Promise<StudentGroup[]> {
       .order('name', { ascending: true });
 
     if (error) {
-      console.warn('Gruplar çekilemedi:', error.message);
+      log.warn('Gruplar çekilemedi', { error: error.message });
       return [];
     }
 
     return (data || []) as StudentGroup[];
   } catch (err) {
-    console.warn('Gruplar çekilirken istisna oluştu:', err);
+    log.warn('Gruplar çekilirken istisna oluştu', { error: err });
     return [];
   }
 }
@@ -85,7 +88,7 @@ export async function fetchGroupMemberIds(groupId: string): Promise<string[]> {
       .eq('group_id', groupId);
 
     if (error) {
-      console.warn('Grup üyeleri çekilemedi:', error.message);
+      log.warn('Grup üyeleri çekilemedi', { error: error.message });
       return [];
     }
 

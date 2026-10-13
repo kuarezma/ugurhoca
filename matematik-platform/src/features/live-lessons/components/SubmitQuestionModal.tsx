@@ -7,6 +7,7 @@ import {
   HelpCircle,
   CheckCircle2
 } from 'lucide-react';
+import { useAccessibleModal } from '@/hooks/useAccessibleModal';
 import type { LiveLesson } from '@/features/live-lessons/types';
 import {
   submitStudentQuestion,
@@ -28,6 +29,7 @@ export function SubmitQuestionModal({
   lessons = [],
   defaultStudentName = '',
 }: SubmitQuestionModalProps) {
+  const modalRef = useAccessibleModal<HTMLDivElement>(isOpen, onClose);
   const [studentName, setStudentName] = useState(defaultStudentName || 'Öğrenci');
   const [selectedLessonId, setSelectedLessonId] = useState<string>('');
   const [topic, setTopic] = useState('');
@@ -79,6 +81,8 @@ export function SubmitQuestionModal({
 
   return (
     <div
+      ref={modalRef}
+      tabIndex={-1}
       role="dialog"
       aria-modal="true"
       aria-label="Canlı Derse Soru Gönder"

@@ -16,11 +16,31 @@ Sade ve ferah tasarımıyla öğrencinin dikkatini dağıtmadan yalnızca öğre
 - ⏱️ **Sınav & Tempo Koçu:** LGS ve YKS hazırlığında soruları ideal sürede çözmeyi öğreten canlı tempo göstergesi, turlama taktiği ve sınav sonu süre analizi.
 - 💡 **Kademeli İpucu Desteği:** Test çözerken cevabı doğrudan vermek yerine öğrenciyi adım adım düşünmeye yönlendiren pedagojik ipucu merdiveni.
 - 🗂️ **Aralıklı Tekrar & Formül Kartları:** Formülleri unutulmaz kılan akıllı tekrar kartları sistemiyle kalıcı matematik hafızası.
-- 📊 **Aylık Gelişim Karnesi & Başarı Belgesi:** Öğrencinin çalışma süresini, konu hakimiyetini gösteren aylık raporlar ve başarıyı taçlandıran resmi başarı sertifikası.
-- 🎮 **18 Eğitici Matematik Oyunu:** Zihinden işlem, koordinat bulma, kesirler ve çarpanları eğlenerek pekiştiren özgün matematik oyunları.
+- 📊 **Aylık Gelişim Karnesi & Başarı Belgesi:** Öğrencinin çalışma süresini ve konu hakimiyetini gösteren aylık raporlar ile başarıyı taçlandıran yazdırılabilir başarı sertifikası.
+- 🎮 **19 Eğitici Matematik Oyunu:** Zihinden işlem, koordinat bulma, kesirler ve çarpanları eğlenerek pekiştiren özgün matematik oyunları.
 - 📝 **Ödev Takibi & Çalışma Kağıtları:** Öğretmenin verdiği ödevleri tek ekrandan takip etme, sisteme yükleme ve tek tıkla yazdırılabilir A4 çalışma kağıtları.
-- 💬 **Gelişmiş Sohbet Balonu & 1-e-1 Eğitmen İletişimi:** Gerçek zamanlı "yazıyor..." göstergesi, WhatsApp tarzı iletildi/okundu (✓✓) teyidi, formül ve soru alıntılama (reply/quote), 60 saniyelik sesli not gönderme ve dahili ses oynatıcısı, çoklu görsel ve PDF soru föyü yükleme, sohbet içi arama ve tek tıkla öğrenci hızlı soru şablonları.
+- 💬 **Gelişmiş Sohbet Balonu & 1-e-1 Eğitmen İletişimi:** Gerçek zamanlı "yazıyor..." göstergesi, iletildi/okundu (✓✓) teyidi, formül ve soru alıntılama (reply/quote), 60 saniyelik sesli not gönderme ve dahili ses oynatıcısı, çoklu görsel ve PDF soru föyü yükleme, sohbet içi arama ve tek tıkla öğrenci hızlı soru şablonları.
 - 📱 **Tüm Cihazlarda Kusursuz:** Bilgisayar, tablet ve akıllı telefonlarda rahat kullanım; tek tıkla ana ekrana uygulama gibi ekleme kolaylığı.
+
+---
+
+## Kurulum ve Geliştirme
+
+Uygulama kaynak kodu `matematik-platform/` dizini altındadır.
+
+```bash
+# Bağımlılıkları yükle
+npm --prefix matematik-platform install
+
+# Geliştirme sunucusunu başlat (http://localhost:3000)
+npm --prefix matematik-platform run dev
+
+# Tip kontrolü, lint, birim testleri ve üretim derlemesi
+npm --prefix matematik-platform run typecheck
+npm --prefix matematik-platform run lint
+npm --prefix matematik-platform run test:fast
+npm --prefix matematik-platform run build
+```
 
 ---
 
@@ -36,10 +56,3 @@ Platformda öğrenci gizliliği en üst düzeyde korunur:
 ## İletişim
 
 - **Web Sitesi:** [ugurhoca.com](https://ugurhoca.com)
-
----
-
-## Değişiklik Notları
-
-- **2026-09-08:** Komut paleti kullanıcı niyetine, sohbet balonu tarayıcının boşta kalmasına ertelendi; tekrar eden ön yüklemeler kaldırıldı, giriş gerektiren rotalar tahmini ön getirmeden çıkarıldı ve eski E2E akışları güncel yönlendirme davranışıyla eşleştirildi.
-- **2026-09-08:** Ana sayfadaki hero içeriği, duyuru servisinin yanıtını beklemeden gösterilecek şekilde hızlandırıldı; duyuru kartları ve detay penceresi bağımsız olarak yüklenirken mevcut görünüm ve işlevler korundu.

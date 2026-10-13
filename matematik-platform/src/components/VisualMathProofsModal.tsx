@@ -6,14 +6,16 @@ import {
   Compass,
   Lightbulb
 } from 'lucide-react';
+import { useAccessibleModal } from '@/hooks/useAccessibleModal';
 
 export type VisualProofTab = |'pythagoras' | 'difference_of_squares' | 'trig_identity' | 'pascal_binomial' | 'circle_sector';
 
-type VisualMathProofsModalProps = {
+export type VisualMathProofsModalProps = {
   isOpen: boolean;
   onClose: () => void;
   isLight?: boolean;
   initialTab?: VisualProofTab;
+  studentName?: string;
 };
 
 export function VisualMathProofsModal({
@@ -22,6 +24,7 @@ export function VisualMathProofsModal({
   isLight = false,
   initialTab = 'pythagoras',
 }: VisualMathProofsModalProps) {
+  const modalRef = useAccessibleModal<HTMLDivElement>(isOpen, onClose);
   const [activeTab, setActiveTab] = useState<VisualProofTab>(initialTab);
 
   // 1. Pisagor Kontrolleri
@@ -99,10 +102,12 @@ export function VisualMathProofsModal({
 
   return (
     <div
+      ref={modalRef}
+      tabIndex={-1}
       role="dialog"
       aria-modal="true"
-      aria-label="İnteraktif Görsel Formül İspatları"
-      className="fixed inset-0 z-[120] flex items-center justify-center bg-black/70 p-2 sm:p-4 backdrop-blur-md overflow-y-auto"
+      aria-label="Görsel Matematik İspatları"
+      className="fixed inset-0 z-[120] flex items-center justify-center bg-black/70 p-2 sm:p-4 backdrop-blur-md overflow-y-auto outline-none"
     >
       <div
         className={`relative flex w-full max-w-5xl flex-col overflow-hidden rounded-3xl border shadow-2xl transition-all my-auto max-h-[95vh] ${

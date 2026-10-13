@@ -1,5 +1,7 @@
 import { RoomServiceClient } from 'livekit-server-sdk';
 import { NextResponse } from 'next/server';
+import { z } from 'zod';
+import { enforceRateLimit } from '@/lib/rate-limit';
 import { createServiceRoleClient } from '@/lib/supabase/server';
 import { createLogger } from '@/lib/logger';
 import { isLiveLessonAdmin, requireLiveLessonUser } from '@/features/live-lessons/server/liveLessons';
@@ -16,9 +18,28 @@ type RouteContext = {
 
 const studentIdentityPrefix = 'student_';
 
+const approvalBodySchema = z.object({
+  targetIdentity: z
+    .string()
+    .trim()
+    .min(1)
+    .max(64)
+    .refine((value) => value.startsWith(studentIdentityPrefix), {
+      message: 'Öğrenci kimliği geçersiz.',
+    }),
+});
+
 export async function GET(_request: Request, context: RouteContext) {
   const auth = await requireLiveLessonUser();
   if (!auth.ok) return auth.response;
+
+  const limited = await enforceRateLimit(
+    'live-lesson-approval-get',
+    auth.user.id,
+    { limit: 60, windowSeconds: 60 },
+  );
+  if (limited) return limited;
+
   if (isLiveLessonAdmin(auth.user)) return NextResponse.json({ approved: true });
 
   const { lessonId } = await context.params;
@@ -52,12 +73,20 @@ export async function POST(request: Request, context: RouteContext) {
     return NextResponse.json({ error: 'Bu işlem için admin yetkisi gerekir.' }, { status: 403 });
   }
 
+  const limited = await enforceRateLimit(
+    'live-lesson-approval-post',
+    auth.user.id,
+    { limit: 30, windowSeconds: 60 },
+  );
+  if (limited) return limited;
+
   const { lessonId } = await context.params;
-  const body = (await request.json().catch(() => null)) as { targetIdentity?: string } | null;
-  const targetIdentity = body?.targetIdentity?.trim() ?? '';
-  if (!targetIdentity.startsWith(studentIdentityPrefix) || targetIdentity.length > 64) {
+  const body = await request.json().catch(() => null);
+  const parsed = approvalBodySchema.safeParse(body);
+  if (!parsed.success) {
     return NextResponse.json({ error: 'Öğrenci kimliği geçersiz.' }, { status: 400 });
   }
+  const { targetIdentity } = parsed.data;
 
   const supabase = createServiceRoleClient();
   const { data: lesson } = await supabase

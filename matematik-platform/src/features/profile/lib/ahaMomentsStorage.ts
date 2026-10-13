@@ -1,3 +1,7 @@
+import { createLogger } from '@/lib/logger';
+
+const log = createLogger('profile:aha-moments-storage');
+
 export interface AhaMomentItem {
   id: string;
   studentId: string;
@@ -75,7 +79,7 @@ export function saveAhaMoment(item: AhaMomentItem): boolean {
     localStorage.setItem(AHA_MOMENTS_STORAGE_KEY, JSON.stringify(moments));
     return true;
   } catch (error) {
-    console.error('Failed to save Aha moment:', error);
+    log.error('Failed to save Aha moment', error);
     return false;
   }
 }

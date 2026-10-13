@@ -1,7 +1,6 @@
 import { revalidatePath, revalidateTag } from 'next/cache';
-import { getBearerOrCookieAccessToken } from '@/lib/api-auth';
+import { getBearerOrCookieAccessToken, requireAdmin } from '@/lib/api-auth';
 import { apiError, apiOk } from '@/lib/api-response';
-import { isAdminEmail } from '@/lib/admin';
 import { createLogger } from '@/lib/logger';
 import { enforceRateLimit, getClientIp } from '@/lib/rate-limit';
 import {
@@ -19,27 +18,18 @@ const log = createLogger('content-documents');
 
 export async function POST(request: Request) {
   try {
-    const authHeader = request.headers.get('authorization');
-    const accessToken = authHeader?.startsWith('Bearer ')
-      ? authHeader.slice(7).trim()
-      : '';
-
-    if (!accessToken) {
-      return apiError('Oturum açmanız gerekiyor.', 401, 'missing_session');
+    const auth = await requireAdmin(request);
+    if (auth.error) {
+      return auth.error;
     }
 
-    const authSupabase = createServerSupabaseClient(accessToken);
-    const {
-      data: { user },
-      error: userError,
-    } = await authSupabase.auth.getUser(accessToken);
-
-    if (userError || !user?.email) {
-      return apiError('Oturum açmanız gerekiyor.', 401, 'invalid_session');
-    }
-
-    if (!isAdminEmail(user.email)) {
-      return apiError('Yetkiniz yok.', 403, 'forbidden');
+    const limited = await enforceRateLimit(
+      'content-document-create',
+      auth.user.id,
+      { limit: 30, windowSeconds: 60 },
+    );
+    if (limited) {
+      return limited;
     }
 
     const body = await request.json().catch(() => null);
@@ -50,7 +40,7 @@ export async function POST(request: Request) {
     const documentPayload = parsed.data.document;
 
     const persistedPayload = buildContentDocumentPersistPayload(documentPayload);
-    const adminClient = createServiceRoleClient();
+    const adminClient = auth.serviceRole;
     const { data, error } = await adminClient
       .from('documents')
       .insert([

@@ -28,6 +28,7 @@ export default function NotesSection({ userId }: NotesSectionProps) {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [selectedTag, setSelectedTag] = useState<string | null>(null);
+  const [pendingDeleteId, setPendingDeleteId] = useState<string | null>(null);
 
   const [formData, setFormData] = useState({
     title: '',
@@ -156,10 +157,9 @@ export default function NotesSection({ userId }: NotesSectionProps) {
   };
 
   const handleDelete = async (id: string) => {
-    if (confirm('Notu silmek istediğinize emin misiniz?')) {
-      await supabase.from('notes').delete().eq('id', id);
-      loadData();
-    }
+    await supabase.from('notes').delete().eq('id', id);
+    setPendingDeleteId(null);
+    loadData();
   };
 
   const handleTogglePin = async (note: Note) => {
@@ -272,31 +272,51 @@ export default function NotesSection({ userId }: NotesSectionProps) {
                 <h3 className="text-slate-900 dark:text-white font-semibold truncate flex-1">
                   {note.title || 'Başlıksız Not'}
                 </h3>
-                <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                  <button
-                    onClick={() => handleTogglePin(note)}
-                    className="p-1.5 hover:bg-slate-100 dark:hover:bg-white/10 rounded-lg transition-colors"
-                    title={note.is_pinned ? 'Sabitlemeyi kaldır' : 'Sabitle'}
-                  >
-                    {note.is_pinned ? (
-                      <PinOff className="w-4 h-4 text-amber-500 dark:text-amber-400" />
-                    ) : (
-                      <Pin className="w-4 h-4 text-slate-400" />
-                    )}
-                  </button>
-                  <button
-                    onClick={() => handleOpenModal(note)}
-                    className="p-1.5 hover:bg-slate-100 dark:hover:bg-white/10 rounded-lg transition-colors"
-                  >
-                    <Edit2 className="w-4 h-4 text-slate-500 dark:text-slate-400" />
-                  </button>
-                  <button
-                    onClick={() => handleDelete(note.id)}
-                    className="p-1.5 hover:bg-red-500/20 rounded-lg transition-colors"
-                  >
-                    <Trash2 className="w-4 h-4 text-red-500 dark:text-red-400" />
-                  </button>
-                </div>
+                {pendingDeleteId === note.id ? (
+                  <div className="flex items-center gap-1 rounded-lg border border-red-500/30 bg-red-500/10 px-2 py-0.5 text-xs">
+                    <span className="font-semibold text-red-600 dark:text-red-400">Sil?</span>
+                    <button
+                      type="button"
+                      onClick={() => handleDelete(note.id)}
+                      className="rounded px-1.5 py-0.5 font-bold text-red-700 dark:text-red-300 hover:bg-red-500/20 transition-colors"
+                    >
+                      Evet
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setPendingDeleteId(null)}
+                      className="rounded px-1.5 py-0.5 font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-white/10 transition-colors"
+                    >
+                      İptal
+                    </button>
+                  </div>
+                ) : (
+                  <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <button
+                      onClick={() => handleTogglePin(note)}
+                      className="p-1.5 hover:bg-slate-100 dark:hover:bg-white/10 rounded-lg transition-colors"
+                      title={note.is_pinned ? 'Sabitlemeyi kaldır' : 'Sabitle'}
+                    >
+                      {note.is_pinned ? (
+                        <PinOff className="w-4 h-4 text-amber-500 dark:text-amber-400" />
+                      ) : (
+                        <Pin className="w-4 h-4 text-slate-400" />
+                      )}
+                    </button>
+                    <button
+                      onClick={() => handleOpenModal(note)}
+                      className="p-1.5 hover:bg-slate-100 dark:hover:bg-white/10 rounded-lg transition-colors"
+                    >
+                      <Edit2 className="w-4 h-4 text-slate-500 dark:text-slate-400" />
+                    </button>
+                    <button
+                      onClick={() => setPendingDeleteId(note.id)}
+                      className="p-1.5 hover:bg-red-500/20 rounded-lg transition-colors"
+                    >
+                      <Trash2 className="w-4 h-4 text-red-500 dark:text-red-400" />
+                    </button>
+                  </div>
+                )}
               </div>
 
               {note.category && (

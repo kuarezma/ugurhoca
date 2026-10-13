@@ -16,6 +16,7 @@ import {
   Megaphone,
   Send,
 } from 'lucide-react';
+import { useAccessibleModal } from '@/hooks/useAccessibleModal';
 import type {
   AdminActiveTab,
   AdminDocument,
@@ -49,6 +50,7 @@ export default function AdminSpotlightModal({
   onOpenModal,
   onOpenBroadcast,
 }: AdminSpotlightModalProps) {
+  const modalRef = useAccessibleModal<HTMLDivElement>(isOpen, onClose);
   const [query, setQuery] = useState('');
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -58,17 +60,6 @@ export default function AdminSpotlightModal({
       setTimeout(() => inputRef.current?.focus(), 50);
     }
   }, [isOpen]);
-
-  // Global Escape handling
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && isOpen) {
-        onClose();
-      }
-    };
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isOpen, onClose]);
 
   const normalizedQuery = query.trim().toLocaleLowerCase('tr-TR');
 
@@ -209,13 +200,15 @@ export default function AdminSpotlightModal({
     <AnimatePresence>
       <div className="fixed inset-0 z-50 flex items-start justify-center pt-16 sm:pt-24 px-4 bg-black/70 backdrop-blur-sm animate-in fade-in duration-150">
         <motion.div
+          ref={modalRef}
+          tabIndex={-1}
           initial={{ opacity: 0, scale: 0.96, y: -10 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.96, y: -10 }}
           role="dialog"
           aria-modal="true"
           aria-label="Admin Spotlight Evrensel Arama"
-          className="relative w-full max-w-2xl overflow-hidden rounded-2xl border border-slate-200 dark:border-white/15 bg-white dark:bg-slate-900 shadow-2xl shadow-slate-900/10 dark:shadow-black/80"
+          className="relative w-full max-w-2xl overflow-hidden rounded-2xl border border-slate-200 dark:border-white/15 bg-white dark:bg-slate-900 shadow-2xl shadow-slate-900/10 dark:shadow-black/80 outline-none"
         >
           {/* Arama Input Çubuğu */}
           <div className="flex items-center gap-3 border-b border-slate-200 dark:border-white/10 px-4 py-3.5 bg-slate-50 dark:bg-slate-950/60">

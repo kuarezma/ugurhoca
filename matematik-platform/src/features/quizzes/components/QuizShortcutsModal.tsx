@@ -1,6 +1,7 @@
 'use client';
 
 import { X, Keyboard } from 'lucide-react';
+import { useAccessibleModal } from '@/hooks/useAccessibleModal';
 
 type QuizShortcutsModalProps = {
   isOpen: boolean;
@@ -61,10 +62,14 @@ export function QuizShortcutsModal({
   onClose,
   isLight = false,
 }: QuizShortcutsModalProps) {
+  const modalRef = useAccessibleModal<HTMLDivElement>(isOpen, onClose);
+
   if (!isOpen) return null;
 
   return (
     <div
+      ref={modalRef}
+      tabIndex={-1}
       role="dialog"
       aria-modal="true"
       aria-label="Test Klavye Kısayolları"

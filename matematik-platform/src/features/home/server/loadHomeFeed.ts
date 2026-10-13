@@ -3,8 +3,11 @@ import 'server-only';
 import { hasSupabasePublicEnv } from '@/lib/env.server';
 import { createCachedPublicSupabaseClient } from '@/lib/supabase/server';
 import { resolveYandexPublicDownloadUrl } from '@/lib/yandex-public-download';
+import { createLogger } from '@/lib/logger';
 import type { HomeInitialFeed } from '@/features/home/home-initial-feed';
 import type { Announcement } from '@/types';
+
+const log = createLogger('home:load-feed');
 
 // Supabase yanıt vermezse build/ISR 60 sn'lik üretim sınırına takılmasın.
 const ANNOUNCEMENTS_QUERY_TIMEOUT_MS = 10_000;
@@ -79,7 +82,7 @@ export async function loadInitialHomeFeed(): Promise<HomeInitialFeed> {
     };
   } catch {
     // Duyuru kaynağındaki geçici hata ana sayfanın üretimini durdurmamalı.
-    console.warn('[loadInitialHomeFeed] Duyurular yüklenemedi.');
+    log.warn('Duyurular yüklenemedi');
     return { announcements: [] };
   }
 }

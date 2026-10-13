@@ -1,7 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useId } from 'react';
 import { X, Sparkles, BookOpen, Layers, Check, ArrowRight } from 'lucide-react';
+import { useAccessibleModal } from '@/hooks/useAccessibleModal';
 import { EXIT_TICKET_TEMPLATES } from '../lib/exitTicketTemplates';
 import { createExitTicketSession } from '../lib/exitTicketStorage';
 import type { ExitTicketSession } from '../types';
@@ -17,6 +18,8 @@ export function ExitTicketCreateModal({
   onClose,
   onSessionCreated,
 }: ExitTicketCreateModalProps) {
+  const titleId = useId();
+  const modalRef = useAccessibleModal<HTMLDivElement>(isOpen, onClose);
   const [selectedTemplateId, setSelectedTemplateId] = useState<string>(
     EXIT_TICKET_TEMPLATES[0].id,
   );
@@ -39,7 +42,14 @@ export function ExitTicketCreateModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm animate-in fade-in duration-200">
-      <div className="w-full max-w-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
+      <div
+        ref={modalRef}
+        tabIndex={-1}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby={titleId}
+        className="w-full max-w-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh] outline-none"
+      >
         {/* Modal Başlık */}
         <div className="p-5 sm:p-6 border-b border-slate-200 dark:border-white/10 bg-slate-50/80 dark:bg-slate-950/80 flex items-center justify-between">
           <div className="flex items-center gap-3">
@@ -47,7 +57,7 @@ export function ExitTicketCreateModal({
               <Sparkles className="w-5 h-5" />
             </div>
             <div>
-              <h3 className="text-lg sm:text-xl font-bold text-slate-900 dark:text-white">
+              <h3 id={titleId} className="text-lg sm:text-xl font-bold text-slate-900 dark:text-white">
                 Yeni Çıkış Bileti Oturumu Başlat
               </h3>
               <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400">
@@ -58,6 +68,7 @@ export function ExitTicketCreateModal({
           <button
             type="button"
             onClick={onClose}
+            aria-label="Kapat"
             className="p-2 rounded-xl text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/10 transition"
           >
             <X className="w-5 h-5" />

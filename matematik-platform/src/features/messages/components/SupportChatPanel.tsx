@@ -413,6 +413,7 @@ export function SupportChatPanel({
 
   const [isRecording, setIsRecording] = useState(false);
   const [recordingSeconds, setRecordingSeconds] = useState(0);
+  const [recordingError, setRecordingError] = useState<string | null>(null);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const audioChunksRef = useRef<Blob[]>([]);
   const recordTimerRef = useRef<NodeJS.Timeout | null>(null);
@@ -437,12 +438,13 @@ export function SupportChatPanel({
 
   // Ses kaydı başlatma
   const startRecording = async () => {
+    setRecordingError(null);
     try {
       if (
         typeof navigator === 'undefined' ||
         !navigator.mediaDevices?.getUserMedia
       ) {
-        alert('Tarayıcınız mikrofon erişimini desteklemiyor.');
+        setRecordingError('Tarayıcınız mikrofon erişimini desteklemiyor.');
         return;
       }
 
@@ -475,7 +477,7 @@ export function SupportChatPanel({
         });
       }, 1000);
     } catch {
-      alert('Mikrofon erişim izni verilmedi.');
+      setRecordingError('Mikrofon erişim izni verilmedi.');
     }
   };
 
@@ -996,8 +998,10 @@ export function SupportChatPanel({
         onSubmit={handleFormSubmit}
         className={`shrink-0 border-t px-3 py-2.5 transition-colors ${formBorder}`}
       >
-        {error ? (
-          <p className="mb-1.5 text-[11px] font-medium text-red-500">{error}</p>
+        {error || recordingError ? (
+          <p role="alert" className="mb-1.5 text-[11px] font-medium text-red-500">
+            {error || recordingError}
+          </p>
         ) : null}
 
         {/* Öğrenci Hızlı Soru Şablonları */}

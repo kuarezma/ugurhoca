@@ -9,6 +9,9 @@ import {
   getContentTypeQueryTypes,
 } from '@/features/content/constants';
 import { sortContentDocumentsByNewest } from '@/features/content/utils';
+import { createLogger } from '@/lib/logger';
+
+const log = createLogger('content:server');
 
 export const getInitialContentGradeFilter =
   async (): Promise<ContentGradeFilter> => {
@@ -67,10 +70,7 @@ export const loadInitialContentDocuments = async (
       await Promise.all([countQuery, dataQuery.range(from, to)]);
 
     if (countError || dataError) {
-      console.warn(
-        '[loadInitialContentDocuments] Supabase query error:',
-        countError || dataError,
-      );
+      log.warn('Supabase query error', { error: countError || dataError });
       return { count: 0, documents: [], isHydrated: false };
     }
 
@@ -84,7 +84,7 @@ export const loadInitialContentDocuments = async (
 
     return payload;
   } catch (err) {
-    console.warn('[loadInitialContentDocuments] Unexpected error:', err);
+    log.warn('Unexpected error loading initial content documents', { error: err });
     return { count: 0, documents: [], isHydrated: false };
   }
 };

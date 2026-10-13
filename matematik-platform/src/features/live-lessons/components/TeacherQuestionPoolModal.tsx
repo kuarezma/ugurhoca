@@ -10,6 +10,7 @@ import {
   Layers,
   Sparkles,
 } from 'lucide-react';
+import { useAccessibleModal } from '@/hooks/useAccessibleModal';
 import {
   getStudentQuestions,
   updateStudentQuestionStatus,
@@ -33,6 +34,7 @@ export function TeacherQuestionPoolModal({
   isLight = false,
   onProjectQuestion,
 }: TeacherQuestionPoolModalProps) {
+  const modalRef = useAccessibleModal<HTMLDivElement>(isOpen, onClose);
   const [questions, setQuestions] = useState<StudentSubmittedQuestion[]>([]);
   const [filter, setFilter] = useState<'all' | 'pending' | 'resolved'>('all');
   const [copiedId, setCopiedId] = useState<string | null>(null);
@@ -85,6 +87,8 @@ export function TeacherQuestionPoolModal({
 
   return (
     <div
+      ref={modalRef}
+      tabIndex={-1}
       role="dialog"
       aria-modal="true"
       aria-label="Öğrenci Soru Havuzu Masası"

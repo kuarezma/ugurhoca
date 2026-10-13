@@ -60,7 +60,7 @@ const WelcomeTour = dynamic(
   () => import('@/components/dashboard/WelcomeTour'),
   { ssr: false },
 );
-const ParentReportModal = dynamic(
+const GrowthReportModal = dynamic(
   () => import('@/features/profile/components/ParentReportModal'),
   { ssr: false },
 );
@@ -913,7 +913,7 @@ export default function ProfilePage({ initialData }: ProfilePageProps) {
                 currentAvatar={user.avatar_id}
               />
 
-              <ParentReportModal
+              <GrowthReportModal
                 isOpen={isParentReportOpen}
                 onClose={() => setIsParentReportOpen(false)}
                 studentName={user.name || user.email || 'Öğrenci'}

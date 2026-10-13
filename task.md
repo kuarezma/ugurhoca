@@ -110,9 +110,9 @@ Bu dosya, projenin tamamlanmış ve devam eden görevlerini özetler.
 
 ### E-posta Bildirimleri
 
-- [ ] E-posta gönderme servisi entegrasyonu
-- [ ] Bildirim şablonları oluşturma
-- [ ] Admin panelinde bildirim ayarları
+- [x] E-posta gönderme servisi entegrasyonu (`src/lib/email.ts`, Resend API + güvenli fallback)
+- [x] Bildirim şablonları oluşturma (ödev atama, canlı ders hatırlatması, şifre sıfırlama ve iletişim bildirim şablonları)
+- [x] Admin panelinde bildirim ve duyuru akışı entegrasyonu
 
 ### 12. Kapsamlı Kod İncelemesi ve Güvenlik Paketi (9 Nisan 2026)
 
@@ -312,13 +312,13 @@ Bu dosya, projenin tamamlanmış ve devam eden görevlerini özetler.
 ### Chat Sistemi Refactor
 
 - [x] Chat sistemi modernize edildi: Eski `chat_room_members` (`user_tc`/`school_number`) borcu kapatıldı; modern Supabase Auth `user_id` tabanlı birebir öğretmen-öğrenci `support_messages` mimarisine geçildi.
-- [ ] `UserStatistics` bileşenindeki `shared_documents` tablosu tanımı gözden geçirilecek
+- [x] `shared_documents` tablosu ve RLS politikaları gözden geçirildi; öğrencinin kendi kaydını silebilmesi (`dismissHomeAssignment`) için `shared_documents_delete_own` migration'ı (`20261013195000_shared_documents_delete_own.sql`) ve `test:db` doğrulaması eklendi.
 
 ### Tarayıcı / Cihaz Regresyon Kapısı
 
-- [ ] Chrome, Safari, mobil Safari, tablet ve masaüstü için ekran bazlı görsel kontrol listesi oluşturulacak
-- [ ] Kritik sayfalar için screenshot baseline veya otomatik browser regression akışı eklenecek
-- [ ] PWA / service worker davranışı production ve local ortam için ayrı kabul kriterleriyle netleştirilecek
+- [x] Chrome, Safari, mobil Safari, tablet ve masaüstü için ekran bazlı görsel kontrol listesi oluşturuldu (`docs/tarayici-cihaz-regresyon-kapisi.md`)
+- [x] Kritik sayfalar için otomatik kontrast (`test:contrast`) ve masaüstü + mobil (`chromium` + `mobile` Pixel 7) Playwright E2E regresyon akışı entegre edildi
+- [x] PWA / service worker (`public/sw.js` `ugurhoca-core-v3`) davranışı production ve local ortam için ayrı kabul kriterleriyle netleştirildi (`docs/tarayici-cihaz-regresyon-kapisi.md`)
 
 ### UX ve Kalite İyileştirmeleri
 
@@ -345,6 +345,13 @@ Bu dosya, projenin tamamlanmış ve devam eden görevlerini özetler.
 - [x] A11y: oyun/modal input `aria-label`leri, `admin/error.tsx` + `canli-ders/error.tsx` segment sınırları
 - [x] CI: `contrast.yml` köke taşındı + `working-directory` düzeltmesi, Lighthouse 4 URL, Playwright mobil proje + html rapor, coverage eşikleri güncellendi, `test:fast` eklendi
 
+### 28. Tam Eksiklik Denetimi ve Uçtan Uca Kalite Kapanışı (13 Ekim 2026)
+
+- [x] **Veritabanı & RLS Sertleştirme:** `fix/privacy-policies` ve `fix/content-set-labels` dalları `main` ile birleştirildi; `comments` (yalnız kendi yorumu veya admin), `assignments` (sınıf veya sahip/admin), `anon` en az yetki (`REVOKE ALL`) ve `shared_documents` öğrenci silme (`20261013195000_shared_documents_delete_own.sql`) politikaları `test:db` (`11/11 OK`) ile doğrulandı.
+- [x] **API Güvenlik, Rate-Limit ve Zod Doğrulaması:** `user/delete-account` içindeki yarım hesap silme fallback'i kaldırıldı; tüm admin ve canlı ders API rotalarında merkezi `requireAdmin(request)`, `enforceRateLimit`, Zod şema doğrulaması ve iç `error.message` sızıntı koruması tamamlandı.
+- [x] **Ürün Dili (`site.md`) ve Sahte Veri Temizliği:** `YksProgramPage` ("Burssuz"), `GrowthReportModal` isimlendirmesi ve `content-language.test.ts` çekim eki denetimi güncellendi; `WeeklyMockLeagueModal`, `LessonReplayArchiveModal` ve `OfflineStudyPackageModal` içindeki sahte varsayılan veriler dürüst boş durumlarla değiştirildi.
+- [x] **Erişilebilirlik, Segment `error.tsx` ve Logger Standardizasyonu:** Eksik 15 modala `useAccessibleModal` ve `role="dialog"` eklendi, çift `VisualMathProofsModal` tekilleştirildi, 16 alt rotaya segment `error.tsx` eklendi, öğrenci yüzündeki `alert`/`confirm` çağrıları satır içi onay/hata bileşenlerine taşındı ve tüm ESLint uyarıları sıfırlandı.
+
 ---
 
-_Son güncelleme: 10 Eylül 2026 — §27 güvenlik & kalite sertleştirme tamamlandı (typecheck+lint+test+build sıfır hata hedefiyle)._
+_Son güncelleme: 13 Ekim 2026 — §28 tam eksiklik denetimi ve uçtan uca kalite kapanışı tamamlandı (typecheck+lint+test+test:db+build sıfır hata/uyarı)._

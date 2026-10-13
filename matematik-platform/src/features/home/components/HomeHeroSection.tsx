@@ -281,7 +281,7 @@ export function HomeHeroSection({
               <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-sky-400 to-blue-500 opacity-80" />
               <div>
                 <div className="flex items-center justify-between mb-4">
-                  <div className="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-sky-500 to-blue-600 text-white font-display text-xl font-black shadow-md shadow-sky-500/25 group-hover:scale-105 transition-transform">
+                  <div className="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-sky-500 to-blue-600 text-white dark:text-white font-display text-xl font-black shadow-md shadow-sky-500/25 group-hover:scale-105 transition-transform">
                     5
                   </div>
                   <span className="text-[11px] font-bold text-sky-800 dark:text-sky-200 bg-sky-50 dark:bg-sky-950/60 px-2.5 py-1 rounded-full border border-sky-200/80 dark:border-sky-800/50">
@@ -317,7 +317,7 @@ export function HomeHeroSection({
               <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-amber-400 to-orange-500 opacity-80" />
               <div>
                 <div className="flex items-center justify-between mb-4">
-                  <div className="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-amber-600 to-orange-700 text-white font-display text-xl font-black shadow-md shadow-amber-500/25 group-hover:scale-105 transition-transform">
+                  <div className="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-amber-600 to-orange-700 text-white dark:text-white font-display text-xl font-black shadow-md shadow-amber-500/25 group-hover:scale-105 transition-transform">
                     6
                   </div>
                   <span className="text-[11px] font-bold text-amber-800 dark:text-amber-200 bg-amber-50 dark:bg-amber-950/60 px-2.5 py-1 rounded-full border border-amber-200/80 dark:border-amber-800/50">
@@ -353,7 +353,7 @@ export function HomeHeroSection({
               <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-purple-400 to-indigo-500 opacity-80" />
               <div>
                 <div className="flex items-center justify-between mb-4">
-                  <div className="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-purple-500 to-indigo-600 text-white font-display text-xl font-black shadow-md shadow-purple-500/25 group-hover:scale-105 transition-transform">
+                  <div className="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-purple-500 to-indigo-600 text-white dark:text-white font-display text-xl font-black shadow-md shadow-purple-500/25 group-hover:scale-105 transition-transform">
                     7
                   </div>
                   <span className="text-[11px] font-bold text-purple-800 dark:text-purple-200 bg-purple-50 dark:bg-purple-950/60 px-2.5 py-1 rounded-full border border-purple-200/80 dark:border-purple-800/50">
@@ -389,7 +389,7 @@ export function HomeHeroSection({
               <div className="absolute inset-x-0 top-0 h-1.5 bg-gradient-to-r from-rose-500 to-red-600" />
               <div>
                 <div className="flex items-center justify-between mb-4">
-                  <div className="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-rose-500 to-red-600 text-white font-display text-xl font-black shadow-md shadow-rose-500/30 group-hover:scale-105 transition-transform">
+                  <div className="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-rose-500 to-red-600 text-white dark:text-white font-display text-xl font-black shadow-md shadow-rose-500/30 group-hover:scale-105 transition-transform">
                     8
                   </div>
                   <span className="text-[11px] font-black text-rose-800 dark:text-rose-200 bg-rose-50 dark:bg-rose-950/60 px-3 py-1 rounded-full border border-rose-300 dark:border-rose-800/60">
@@ -414,7 +414,7 @@ export function HomeHeroSection({
               </div>
               <SafeLink
                 href="/icerikler?grade=8"
-                className="w-full rounded-xl bg-gradient-to-r from-rose-600 to-red-600 text-white border border-rose-600 py-2.5 text-center text-xs font-bold hover:from-rose-700 hover:to-red-700 transition-all shadow-sm"
+                className="w-full rounded-xl bg-gradient-to-r from-rose-600 to-red-600 text-white dark:text-white border border-rose-600 py-2.5 text-center text-xs font-bold hover:from-rose-700 hover:to-red-700 transition-all shadow-sm"
               >
                 8. Sınıf (LGS) Özel Sayfası →
               </SafeLink>

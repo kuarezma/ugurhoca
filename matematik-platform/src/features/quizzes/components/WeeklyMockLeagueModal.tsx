@@ -11,7 +11,7 @@ import {
 } from 'lucide-react';
 import { useAccessibleModal } from '@/hooks/useAccessibleModal';
 
-type LeagueParticipant = {
+export type LeagueParticipant = {
   rank: number;
   alias: string;
   avatarBg: string;
@@ -22,79 +22,29 @@ type LeagueParticipant = {
   isSelf?: boolean;
 };
 
-const MOCK_LEAGUE_RANKINGS: LeagueParticipant[] = [
-  {
-    rank: 1,
-    alias: 'ArfMatematik 👑',
-    avatarBg: 'bg-amber-500',
-    correct: 20,
-    wrong: 0,
-    empty: 0,
-    netScore: 20.0,
-  },
-  {
-    rank: 2,
-    alias: 'PiGezgini ⚡',
-    avatarBg: 'bg-purple-500',
-    correct: 19,
-    wrong: 1,
-    empty: 0,
-    netScore: 18.67,
-  },
-  {
-    rank: 3,
-    alias: 'PisagorAvcısı 🏹',
-    avatarBg: 'bg-rose-500',
-    correct: 18,
-    wrong: 2,
-    empty: 0,
-    netScore: 17.33,
-  },
-  {
-    rank: 4,
-    alias: 'EulerÖğrencisi 🌟',
-    avatarBg: 'bg-indigo-500',
-    correct: 18,
-    wrong: 1,
-    empty: 1,
-    netScore: 17.67,
-  },
-  {
-    rank: 5,
-    alias: 'HarezmiGençlik 💡',
-    avatarBg: 'bg-cyan-500',
-    correct: 17,
-    wrong: 3,
-    empty: 0,
-    netScore: 16.0,
-  },
-  {
-    rank: 12,
-    alias: 'Sen (Öğrenci) 🎯',
-    avatarBg: 'bg-emerald-500',
-    correct: 16,
-    wrong: 3,
-    empty: 1,
-    netScore: 15.0,
-    isSelf: true,
-  },
-];
-
-type WeeklyMockLeagueModalProps = {
+export type WeeklyMockLeagueModalProps = {
   isOpen: boolean;
   onClose: () => void;
   onStartExam?: () => void;
+  participants?: LeagueParticipant[];
 };
 
 export function WeeklyMockLeagueModal({
   isOpen,
   onClose,
   onStartExam,
+  participants = [],
 }: WeeklyMockLeagueModalProps) {
   const [activeTab, setActiveTab] = useState<'leaderboard' | 'analysis'>('leaderboard');
   const containerRef = useAccessibleModal<HTMLDivElement>(isOpen, onClose);
 
   if (!isOpen) return null;
+
+  const hasParticipants = participants.length > 0;
+  const averageNet = hasParticipants
+    ? (participants.reduce((sum, p) => sum + p.netScore, 0) / participants.length).toFixed(2)
+    : null;
+  const selfParticipant = participants.find((p) => p.isSelf);
 
   return (
     <div className="fixed inset-0 z-[150] flex items-center justify-center bg-slate-950/80 dark:bg-slate-950/80 p-3 sm:p-5 backdrop-blur-md overflow-y-auto">
@@ -141,15 +91,21 @@ export function WeeklyMockLeagueModal({
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 p-4 sm:p-6 bg-slate-50 dark:bg-slate-800/40 border-b border-slate-200 dark:border-slate-800 text-xs">
           <div className="p-3 bg-white dark:bg-slate-800/60 rounded-xl border border-slate-200 dark:border-slate-700/50 shadow-sm dark:shadow-none">
             <div className="text-slate-500 dark:text-slate-400 font-medium">Katılımcı Sayısı</div>
-            <div className="text-lg font-black text-slate-900 dark:text-white mt-0.5">148 Öğrenci</div>
+            <div className="text-lg font-black text-slate-900 dark:text-white mt-0.5">
+              {hasParticipants ? `${participants.length} Öğrenci` : 'Henüz Yok'}
+            </div>
           </div>
           <div className="p-3 bg-white dark:bg-slate-800/60 rounded-xl border border-slate-200 dark:border-slate-700/50 shadow-sm dark:shadow-none">
             <div className="text-slate-500 dark:text-slate-400 font-medium">Ortalama Net</div>
-            <div className="text-lg font-black text-amber-600 dark:text-amber-400 mt-0.5">14.22 Net</div>
+            <div className="text-lg font-black text-amber-600 dark:text-amber-400 mt-0.5">
+              {averageNet ? `${averageNet} Net` : '—'}
+            </div>
           </div>
           <div className="p-3 bg-white dark:bg-slate-800/60 rounded-xl border border-slate-200 dark:border-slate-700/50 shadow-sm dark:shadow-none">
             <div className="text-slate-500 dark:text-slate-400 font-medium">Senin Sıralaman</div>
-            <div className="text-lg font-black text-accent-success-ink dark:text-emerald-400 mt-0.5">12. / 148</div>
+            <div className="text-lg font-black text-accent-success-ink dark:text-emerald-400 mt-0.5">
+              {selfParticipant ? `${selfParticipant.rank}. / ${participants.length}` : '—'}
+            </div>
           </div>
           <div className="p-3 bg-white dark:bg-slate-800/60 rounded-xl border border-slate-200 dark:border-slate-700/50 shadow-sm dark:shadow-none">
             <div className="text-slate-500 dark:text-slate-400 font-medium">Sonraki Deneme</div>
@@ -188,60 +144,82 @@ export function WeeklyMockLeagueModal({
         {/* TAB 1: LEADERBOARD */}
         {activeTab === 'leaderboard' && (
           <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-2.5">
-            <div className="text-xs text-slate-500 dark:text-slate-400 mb-2 flex justify-between px-3">
-              <span>Sıra & Öğrenci Rumuzu</span>
-              <span>Doğru / Yanlış / Net</span>
-            </div>
+            {!hasParticipants ? (
+              <div className="rounded-2xl border border-dashed border-slate-200 dark:border-slate-700 p-8 text-center space-y-4">
+                <Trophy className="w-10 h-10 text-amber-500/60 mx-auto" />
+                <p className="text-sm font-semibold text-slate-700 dark:text-slate-300 max-w-md mx-auto">
+                  Bu hafta için henüz lig sıralaması oluşmadı. Deneme sınavını tamamlayarak sıralamaya katılabilirsin!
+                </p>
+                <button
+                  type="button"
+                  onClick={() => {
+                    onStartExam?.();
+                    onClose();
+                  }}
+                  className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-xl text-xs font-black transition active:scale-95 bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none"
+                >
+                  <Play className="w-4 h-4 fill-current" />
+                  <span>Sınava Başla</span>
+                </button>
+              </div>
+            ) : (
+              <>
+                <div className="text-xs text-slate-500 dark:text-slate-400 mb-2 flex justify-between px-3">
+                  <span>Sıra & Öğrenci Rumuzu</span>
+                  <span>Doğru / Yanlış / Net</span>
+                </div>
 
-            {MOCK_LEAGUE_RANKINGS.map((p) => (
-              <div
-                key={p.rank}
-                className={`flex items-center justify-between p-3.5 rounded-2xl border transition-all ${
-                  p.isSelf
-                    ? 'bg-emerald-500/15 border-emerald-500/40 ring-1 ring-emerald-500/30'
-                    : 'bg-slate-50 dark:bg-slate-800/50 border-slate-200 dark:border-slate-700/60 hover:bg-slate-100 dark:hover:bg-slate-800'
-                }`}
-              >
-                <div className="flex items-center gap-3">
-                  <span
-                    className={`w-7 h-7 rounded-xl flex items-center justify-center font-black text-xs ${
-                      p.rank === 1
-                        ? 'bg-amber-500 text-slate-950 shadow-md shadow-amber-500/30'
-                        : p.rank === 2
-                        ? 'bg-slate-300 text-slate-950'
-                        : p.rank === 3
-                        ? 'bg-amber-700 text-white'
-                        : 'bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-400'
+                {participants.map((p) => (
+                  <div
+                    key={p.rank}
+                    className={`flex items-center justify-between p-3.5 rounded-2xl border transition-all ${
+                      p.isSelf
+                        ? 'bg-emerald-500/15 border-emerald-500/40 ring-1 ring-emerald-500/30'
+                        : 'bg-slate-50 dark:bg-slate-800/50 border-slate-200 dark:border-slate-700/60 hover:bg-slate-100 dark:hover:bg-slate-800'
                     }`}
                   >
-                    {p.rank}
-                  </span>
+                    <div className="flex items-center gap-3">
+                      <span
+                        className={`w-7 h-7 rounded-xl flex items-center justify-center font-black text-xs ${
+                          p.rank === 1
+                            ? 'bg-amber-500 text-slate-950 shadow-md shadow-amber-500/30'
+                            : p.rank === 2
+                            ? 'bg-slate-300 text-slate-950'
+                            : p.rank === 3
+                            ? 'bg-amber-700 text-white'
+                            : 'bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-400'
+                        }`}
+                      >
+                        {p.rank}
+                      </span>
 
-                  <div className="flex items-center gap-2">
-                    <div className={`w-8 h-8 rounded-lg ${p.avatarBg} text-white font-black text-xs flex items-center justify-center`}>
-                      {p.alias[0]}
+                      <div className="flex items-center gap-2">
+                        <div className={`w-8 h-8 rounded-lg ${p.avatarBg} text-white font-black text-xs flex items-center justify-center`}>
+                          {p.alias[0]}
+                        </div>
+                        <span className={`text-sm font-bold ${p.isSelf ? 'text-emerald-700 dark:text-emerald-300' : 'text-slate-900 dark:text-white'}`}>
+                          {p.alias}
+                        </span>
+                      </div>
                     </div>
-                    <span className={`text-sm font-bold ${p.isSelf ? 'text-emerald-700 dark:text-emerald-300' : 'text-slate-900 dark:text-white'}`}>
-                      {p.alias}
-                    </span>
-                  </div>
-                </div>
 
-                <div className="flex items-center gap-4 text-xs font-mono">
-                  <div className="hidden sm:flex items-center gap-2 text-slate-500 dark:text-slate-400">
-                    <span className="text-accent-success-ink dark:text-emerald-400 font-bold">{p.correct} D</span>
-                    <span>·</span>
-                    <span className="text-rose-600 dark:text-rose-400 font-bold">{p.wrong} Y</span>
-                    <span>·</span>
-                    <span>{p.empty} B</span>
-                  </div>
+                    <div className="flex items-center gap-4 text-xs font-mono">
+                      <div className="hidden sm:flex items-center gap-2 text-slate-500 dark:text-slate-400">
+                        <span className="text-accent-success-ink dark:text-emerald-400 font-bold">{p.correct} D</span>
+                        <span>·</span>
+                        <span className="text-rose-600 dark:text-rose-400 font-bold">{p.wrong} Y</span>
+                        <span>·</span>
+                        <span>{p.empty} B</span>
+                      </div>
 
-                  <div className="px-3 py-1 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 font-black text-amber-600 dark:text-amber-300 text-sm">
-                    {p.netScore.toFixed(2)} Net
+                      <div className="px-3 py-1 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 font-black text-amber-600 dark:text-amber-300 text-sm">
+                        {p.netScore.toFixed(2)} Net
+                      </div>
+                    </div>
                   </div>
-                </div>
-              </div>
-            ))}
+                ))}
+              </>
+            )}
           </div>
         )}
 

@@ -1,11 +1,7 @@
 import { NextResponse } from "next/server";
-import { isAdminEmail } from "@/lib/admin";
+import { requireAdmin } from "@/lib/api-auth";
 import { createLogger } from "@/lib/logger";
 import { adminMessageSchema } from "@/lib/route-schemas";
-import {
-  createServerSupabaseClient,
-  createServiceRoleClient,
-} from "@/lib/supabase/server";
 import {
   ADMIN_MESSAGE_BROADCAST_EVENT,
   getStudentMessagesChannelName,
@@ -16,34 +12,12 @@ const log = createLogger("admin-message");
 
 export async function POST(request: Request) {
   try {
-    const authHeader = request.headers.get("authorization");
-    const accessToken = authHeader?.startsWith("Bearer ")
-      ? authHeader.slice(7).trim()
-      : "";
-
-    if (!accessToken) {
-      return NextResponse.json(
-        { error: "Oturum açmanız gerekiyor." },
-        { status: 401 },
-      );
+    const auth = await requireAdmin(request);
+    if (auth.error) {
+      return auth.error;
     }
 
-    const authSupabase = createServerSupabaseClient(accessToken);
-    const {
-      data: { user },
-      error: userError,
-    } = await authSupabase.auth.getUser(accessToken);
-
-    if (userError || !user?.email) {
-      return NextResponse.json(
-        { error: "Oturum açmanız gerekiyor." },
-        { status: 401 },
-      );
-    }
-
-    if (!isAdminEmail(user.email)) {
-      return NextResponse.json({ error: "Yetkiniz yok." }, { status: 403 });
-    }
+    const { user, serviceRole: adminClient } = auth;
 
     const limited = await enforceRateLimit('admin-message', user.id, {
       limit: 20,
@@ -51,20 +25,6 @@ export async function POST(request: Request) {
     });
     if (limited) {
       return limited;
-    }
-
-    let adminClient: ReturnType<typeof createServiceRoleClient>;
-    try {
-      adminClient = createServiceRoleClient();
-    } catch (serviceError) {
-      log.error("Service role client oluşturulamadı", serviceError);
-      return NextResponse.json(
-        {
-          error:
-            "Sunucu yapılandırması eksik (SUPABASE_SERVICE_ROLE_KEY).",
-        },
-        { status: 500 },
-      );
     }
 
     const body = await request.json().catch(() => null);

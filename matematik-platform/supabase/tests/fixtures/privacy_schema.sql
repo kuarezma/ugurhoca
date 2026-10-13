@@ -40,7 +40,16 @@ CREATE TABLE public.notifications (
 );
 CREATE TABLE public.documents (id uuid PRIMARY KEY, downloads integer, views integer);
 CREATE TABLE public.notes (id uuid PRIMARY KEY, user_id uuid);
-CREATE TABLE public.assignments (id uuid PRIMARY KEY);
+CREATE TABLE public.assignments (
+  id uuid PRIMARY KEY,
+  grade integer,
+  student_id uuid REFERENCES public.profiles(id)
+);
+CREATE TABLE public.comments (
+  id uuid PRIMARY KEY,
+  user_id uuid REFERENCES public.profiles(id),
+  content text
+);
 CREATE TABLE public.quizzes (id uuid PRIMARY KEY);
 CREATE TABLE public.quiz_questions (id uuid PRIMARY KEY);
 CREATE TABLE public.chat_users (id uuid PRIMARY KEY);
@@ -49,16 +58,21 @@ CREATE TABLE storage.objects (bucket_id text, name text, owner_id text);
 ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.shared_documents ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.notifications ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.assignments ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.comments ENABLE ROW LEVEL SECURITY;
 ALTER TABLE storage.objects ENABLE ROW LEVEL SECURITY;
 
 -- Eski geniş politikalar, aşağıdaki gerçek migration'ların kaldırma davranışını da sınar.
 CREATE POLICY profiles_select_all ON public.profiles FOR SELECT USING (true);
 CREATE POLICY shared_documents_select ON public.shared_documents FOR SELECT USING (true);
+CREATE POLICY assignments_select ON public.assignments FOR SELECT USING (true);
+CREATE POLICY comments_select ON public.comments FOR SELECT USING (true);
 CREATE POLICY notifications_own_select ON public.notifications
   FOR SELECT TO authenticated USING (auth.uid() = user_id);
 
 GRANT SELECT, INSERT, UPDATE, DELETE ON public.profiles,
-  public.shared_documents, public.notifications TO authenticated;
-GRANT SELECT ON public.profiles, public.shared_documents TO anon;
+  public.shared_documents, public.notifications, public.assignments, public.comments TO authenticated;
+GRANT SELECT, INSERT, UPDATE, DELETE ON public.profiles, public.shared_documents, public.assignments, public.comments TO anon;
 GRANT SELECT ON public.profiles, public.shared_documents,
-  public.notifications, public.documents, public.notes, public.assignments TO service_role;
+  public.notifications, public.documents, public.notes, public.assignments, public.comments TO service_role;
+

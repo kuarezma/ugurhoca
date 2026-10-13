@@ -1,3 +1,7 @@
+import { createLogger } from '@/lib/logger';
+
+const log = createLogger('feynman:storage');
+
 export interface FeynmanRecording {
   id: string;
   studentId: string;
@@ -71,7 +75,7 @@ export function saveFeynmanRecording(recording: FeynmanRecording): boolean {
     localStorage.setItem(FEYNMAN_STORAGE_KEY, JSON.stringify(recordings));
     return true;
   } catch (error) {
-    console.error('Failed to save Feynman recording:', error);
+    log.error('Failed to save Feynman recording', error);
     return false;
   }
 }

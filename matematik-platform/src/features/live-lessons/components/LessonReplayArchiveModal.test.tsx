@@ -1,6 +1,9 @@
 import { describe, expect, it, vi } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
-import { LessonReplayArchiveModal } from './LessonReplayArchiveModal';
+import {
+  LessonReplayArchiveModal,
+  SAMPLE_RECORDED_LESSONS,
+} from './LessonReplayArchiveModal';
 
 describe('LessonReplayArchiveModal', () => {
   it('does not render when closed', () => {
@@ -10,9 +13,26 @@ describe('LessonReplayArchiveModal', () => {
     expect(container).toBeEmptyDOMElement();
   });
 
-  it('renders archive modal with recorded lesson details and chapters', () => {
+  it('renders honest empty state when lessons list is empty by default', () => {
+    render(<LessonReplayArchiveModal isOpen={true} onClose={vi.fn()} />);
+
+    expect(
+      screen.getByText(/Canlı Ders Kayıtları & Zaman Damgalı Arşiv/i)
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText(
+        'Henüz kaydedilmiş canlı ders arşivi bulunmuyor. Canlı dersler tamamlandığında kayıtlar ve ders notları burada listelenecektir.'
+      )
+    ).toBeInTheDocument();
+  });
+
+  it('renders archive modal with recorded lesson details and chapters when lessons are provided', () => {
     render(
-      <LessonReplayArchiveModal isOpen={true} onClose={vi.fn()} />
+      <LessonReplayArchiveModal
+        isOpen={true}
+        onClose={vi.fn()}
+        lessons={SAMPLE_RECORDED_LESSONS}
+      />
     );
 
     expect(
@@ -34,6 +54,11 @@ describe('LessonReplayArchiveModal', () => {
     // Jump to chapter
     const chapterBtn = screen.getByText('Tam Kare Özdeşlikleri ve Geometrik İspat');
     fireEvent.click(chapterBtn);
+
+    // Board notes info message (no native alert)
+    const notesBtn = screen.getByRole('button', { name: /Tahta Notlarını İndir/i });
+    fireEvent.click(notesBtn);
+    expect(screen.getByText('Tahta notları PDF olarak hazırlanıyor.')).toBeInTheDocument();
 
     // Filter by grade
     const ykstab = screen.getByRole('button', { name: /^YKS \/ TYT$/i });

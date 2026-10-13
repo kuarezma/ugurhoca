@@ -2,31 +2,39 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { VisualMathProofsModal } from './VisualMathProofsModal';
 
-describe('VisualMathProofsModal', () => {
+describe('VisualMathProofsModal (re-export)', () => {
   beforeEach(() => {
     localStorage.clear();
   });
 
-  it('açık olduğunda başlığı ve ilk ispatı gösterir', () => {
+  it('açık olduğunda başlığı ve ilk ispat sekmesini gösterir', () => {
     render(<VisualMathProofsModal isOpen={true} onClose={vi.fn()} />);
 
-    expect(screen.getByText(/Neden Doğru\?.*Matematiksel İspat Koleksiyonu/i)).toBeInTheDocument();
-    expect(screen.getByText(/Pisagor Bağıntısı İspatı/i)).toBeInTheDocument();
+    expect(
+      screen.getByRole('dialog', { name: 'Görsel Matematik İspatları' }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText('İnteraktif Görsel Formül İspatları'),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText(/Pisagor Özdeşliği Doğrulaması/i),
+    ).toBeInTheDocument();
   });
 
-  it('adımlar arasında gezinir', () => {
+  it('ispat sekmeleri arasında gezinir', () => {
     render(<VisualMathProofsModal isOpen={true} onClose={vi.fn()} />);
 
-    expect(screen.getByText(/Adım 1 \//i)).toBeInTheDocument();
+    const diffTab = screen.getByRole('button', { name: /İki Kare Farkı/i });
+    fireEvent.click(diffTab);
 
-    const nextBtn = screen.getByRole('button', { name: /Sonraki Adım/i });
-    fireEvent.click(nextBtn);
-
-    expect(screen.getByText(/Adım 2 \//i)).toBeInTheDocument();
+    expect(screen.getByText(/İki Kare Farkı Formülü:/i)).toBeInTheDocument();
   });
 
   it('kapalıyken hiçbir şey render etmez', () => {
-    const { container } = render(<VisualMathProofsModal isOpen={false} onClose={vi.fn()} />);
+    const { container } = render(
+      <VisualMathProofsModal isOpen={false} onClose={vi.fn()} />,
+    );
     expect(container).toBeEmptyDOMElement();
   });
 });
+
