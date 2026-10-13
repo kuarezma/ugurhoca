@@ -36,6 +36,38 @@ describe('annual plan import parser', () => {
     expect(result.errors[0]?.message).toContain('kazanim');
   });
 
+  it('preserves all topics sharing a weekly outcome without repeating topic names', () => {
+    const result = parseAnnualPlanRows([
+      ['sinif', 'hafta_baslangic', 'hafta_bitis', 'konu', 'kazanim'],
+      ['7', '2026-09-14', '2026-09-18', 'Tam Sayılar', 'MAT.7.1.1'],
+      [
+        '7',
+        '2026-09-14',
+        '2026-09-18',
+        'Rasyonel Sayılar ve Farklı Temsilleri',
+        'MAT.7.1.1',
+      ],
+      ['7', '2026-09-14', '2026-09-18', 'tam sayılar', 'MAT.7.1.1'],
+      [
+        '7',
+        '2026-09-21',
+        '2026-09-25',
+        'Rasyonel Sayılar ve Farklı Temsilleri',
+        'MAT.7.1.1',
+      ],
+    ]);
+
+    expect(result.errors).toEqual([]);
+    expect(result.skippedDuplicates).toBe(2);
+    expect(result.rows).toHaveLength(2);
+    expect(result.rows[0].subject).toBe(
+      'Tam Sayılar\nRasyonel Sayılar ve Farklı Temsilleri',
+    );
+    expect(result.rows[1].subject).toBe(
+      'Rasyonel Sayılar ve Farklı Temsilleri',
+    );
+  });
+
   it('rejects invalid grade, dates and empty subject fields', () => {
     const result = parseAnnualPlanRows([
       ['sinif', 'hafta_baslangic', 'hafta_bitis', 'konu', 'kazanim'],

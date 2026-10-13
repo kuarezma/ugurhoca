@@ -1,0 +1,17 @@
+{
+  "academic_year": "2026-2027",
+  "accepted_on": "2026-10-10",
+  "authority": "Kullanıcının en güncel olarak belirttiği yıllık plan",
+  "original_filename": "MATEMATİK (5-8. SINIF) TASLAK ÇERÇEVE YILLIK PLAN+++ 2.xlsx",
+  "sha256": "0a38a19827130fe35e72353e2f4eb0d0b2338ce7fbe088115e0fff83fc241ce2",
+  "sheets": ["5.Sınıf", "6.Sınıf", "7.Sınıf", "8.Sınıf"],
+  "file": "2026-2027.xlsx",
+  "derived_csv": "../../../yillik-plan-2026-2027.csv",
+  "topic_week_rows_by_grade": {
+    "5": 41,
+    "6": 45,
+    "7": 50,
+    "8": 42
+  },
+  "derived_csv_sha256": "34b4690d66b28c886adaf2e3291fa9f018e98e7a51e3deee8c3cffc350689446"
+}

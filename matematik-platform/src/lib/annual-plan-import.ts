@@ -211,7 +211,10 @@ export function parseAnnualPlanRows(
 
   const resultRows: AnnualPlanImportRow[] = [];
   const errors: AnnualPlanImportError[] = [];
-  const seenKeys = new Set<string>();
+  const seenKeys = new Map<
+    string,
+    { row: AnnualPlanImportRow; subjects: Set<string> }
+  >();
   let skippedDuplicates = 0;
 
   // Kötü niyetli dosyadaki on binlerce satırı işlememek için üst sınır.
@@ -314,20 +317,32 @@ export function parseAnnualPlanRows(
     }
 
     const key = `${grade}|${weekStart}|${normalizeKey(learningOutcome)}`;
-    if (seenKeys.has(key)) {
+    const existing = seenKeys.get(key);
+    if (existing) {
+      // Bir kazanım aynı haftada birden çok konuya ait olabilir (ör. MAT.7.1.1).
+      // Veritabanının tekil anahtarını korurken ikinci konu adını kaybetme.
+      const subjectKey = normalizeKey(subject);
+      if (!existing.subjects.has(subjectKey)) {
+        existing.subjects.add(subjectKey);
+        existing.row.subject += `\n${subject}`;
+      }
       skippedDuplicates += 1;
       continue;
     }
-    seenKeys.add(key);
 
-    resultRows.push({
+    const item: AnnualPlanImportRow = {
       description: description || null,
       grade,
       learning_outcome: learningOutcome,
       subject,
       week_end: weekEnd,
       week_start: weekStart,
+    };
+    seenKeys.set(key, {
+      row: item,
+      subjects: new Set([normalizeKey(subject)]),
     });
+    resultRows.push(item);
   }
 
   if (truncated) {

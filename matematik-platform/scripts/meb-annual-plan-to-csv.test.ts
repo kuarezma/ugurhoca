@@ -2,6 +2,8 @@
 import { describe, expect, it } from 'vitest';
 import ExcelJS from 'exceljs';
 import { readFile, writeFile } from 'node:fs/promises';
+import { createHash } from 'node:crypto';
+import { fileURLToPath } from 'node:url';
 import {
   annualPlanCsv,
   convertMebWorkbook,
@@ -23,6 +25,65 @@ const addRow = (
 ) => sheet.addRow(['', week, 5, 'Tema', topic, outcome, 'Açıklama']);
 
 describe('MEB annual plan conversion', () => {
+  it('keeps the accepted 2026-2027 source and generated project CSV in sync', async () => {
+    const sourceDirectory = new URL('../data/annual-plan/', import.meta.url);
+    const source = JSON.parse(
+      await readFile(new URL('source.json', sourceDirectory), 'utf8'),
+    );
+    const sourceFile = new URL(source.file, sourceDirectory);
+    const csv = await readFile(
+      new URL(source.derived_csv, sourceDirectory),
+      'utf8',
+    );
+    expect(
+      createHash('sha256')
+        .update(await readFile(sourceFile))
+        .digest('hex'),
+    ).toBe(source.sha256);
+    expect(createHash('sha256').update(csv).digest('hex')).toBe(
+      source.derived_csv_sha256,
+    );
+
+    const workbook = new ExcelJS.Workbook();
+    await workbook.xlsx.readFile(fileURLToPath(sourceFile));
+    const rows = convertMebWorkbook(workbook);
+    expect(workbook.worksheets.map((sheet) => sheet.name)).toEqual(
+      source.sheets,
+    );
+    expect(annualPlanCsv(rows)).toBe(csv);
+    for (const grade of [5, 6, 7, 8]) {
+      expect(rows.filter((row) => row.grade === grade)).toHaveLength(
+        source.topic_week_rows_by_grade[grade],
+      );
+    }
+    const firstWeekGrade7 = rows.filter(
+      (row) => row.grade === 7 && row.week_start === '2026-09-14',
+    );
+    expect(firstWeekGrade7.map((row) => row.topic)).toContain(
+      'Rasyonel Sayılar ve Farklı Temsilleri',
+    );
+    expect(
+      firstWeekGrade7.every((row) => row.outcomes[0].startsWith('MAT.7.1.1.')),
+    ).toBe(true);
+    const parsed = await parseCsv(csv);
+    expect(parsed.errors).toEqual([]);
+    for (const row of rows) {
+      expect(
+        parsed.rows.some(
+          (item) =>
+            item.grade === row.grade &&
+            item.week_start === row.week_start &&
+            item.subject.split('\n').includes(row.topic),
+        ),
+      ).toBe(true);
+    }
+    expect(
+      parsed.rows.find(
+        (row) => row.grade === 7 && row.week_start === '2026-09-14',
+      )?.subject,
+    ).toBe('Tam Sayılar\nRasyonel Sayılar ve Farklı Temsilleri');
+  });
+
   it.each([
     ['3. Hafta:\n28 Eylül-02 Ekim', '2026-09-28', '2026-10-02'],
     ['15. Hafta:\n28 Aralık-01 Ocak', '2026-12-28', '2027-01-01'],
