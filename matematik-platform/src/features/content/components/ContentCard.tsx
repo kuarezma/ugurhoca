@@ -289,12 +289,12 @@ function ContentCard({
   if (viewMode === 'list') {
     return (
       <motion.div
-        initial={{ opacity: 0, x: -20 }}
+        initial={{ opacity: 0, x: -12 }}
         animate={{ opacity: 1, x: 0 }}
-        transition={{ delay: index * 0.05 }}
-        className="group relative overflow-hidden rounded-3xl border-2 border-purple-400/90 dark:border-purple-600/70 bg-gradient-to-br from-white via-indigo-50/35 to-purple-50/45 dark:from-slate-900 dark:via-slate-900/95 dark:to-purple-950/30 backdrop-blur-xl p-5 sm:p-6 shadow-lg shadow-purple-500/10 hover:shadow-2xl hover:shadow-purple-500/20 hover:border-purple-500 dark:hover:border-purple-500 transition-all duration-300 defer-card-list"
+        transition={{ duration: 0.2, delay: Math.min(index * 0.025, 0.2) }}
+        className="group relative overflow-hidden rounded-3xl border-2 border-purple-400/90 dark:border-purple-600/70 bg-gradient-to-br from-white via-indigo-50/35 to-purple-50/45 dark:from-slate-900 dark:via-slate-900/95 dark:to-purple-950/30 p-5 sm:p-6 shadow-lg shadow-purple-500/10 hover:shadow-2xl hover:shadow-purple-500/20 hover:border-purple-500 dark:hover:border-purple-500 transition-[transform,box-shadow,border-color] duration-200 ease-out defer-card-list"
       >
-        <div className="absolute top-0 inset-x-0 h-2 bg-gradient-to-r from-violet-600 via-fuchsia-500 to-amber-400 group-hover:h-2.5 transition-all duration-300" />
+        <div className="absolute top-0 inset-x-0 h-2 bg-gradient-to-r from-violet-600 via-fuchsia-500 to-amber-400 group-hover:h-2.5 transition-all duration-200" />
         <div className="space-y-4">
           <div className="flex items-start justify-between gap-3 sm:gap-4">
             <div className="flex items-center gap-3 sm:gap-4 min-w-0">
@@ -385,13 +385,13 @@ function ContentCard({
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
+      initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: index * 0.05 }}
-      className="group relative flex flex-col justify-between overflow-hidden rounded-3xl border-2 border-purple-400/90 dark:border-purple-600/70 bg-gradient-to-br from-white via-indigo-50/35 to-purple-50/45 dark:from-slate-900 dark:via-slate-900/95 dark:to-purple-950/30 backdrop-blur-xl shadow-lg shadow-purple-500/10 hover:shadow-2xl hover:shadow-purple-500/20 hover:border-purple-500 dark:hover:border-purple-500 hover:-translate-y-1 transition-all duration-300 defer-card"
+      transition={{ duration: 0.2, delay: Math.min(index * 0.025, 0.2) }}
+      className="group relative flex flex-col justify-between overflow-hidden rounded-3xl border-2 border-purple-400/90 dark:border-purple-600/70 bg-gradient-to-br from-white via-indigo-50/35 to-purple-50/45 dark:from-slate-900 dark:via-slate-900/95 dark:to-purple-950/30 shadow-lg shadow-purple-500/10 hover:shadow-2xl hover:shadow-purple-500/20 hover:border-purple-500 dark:hover:border-purple-500 hover:-translate-y-1 transition-[transform,box-shadow,border-color] duration-200 ease-out defer-card"
     >
       {/* Ambient glowing top accent line */}
-      <div className="absolute top-0 inset-x-0 h-2 bg-gradient-to-r from-violet-600 via-fuchsia-500 to-amber-400 group-hover:h-2.5 transition-all duration-300" />
+      <div className="absolute top-0 inset-x-0 h-2 bg-gradient-to-r from-violet-600 via-fuchsia-500 to-amber-400 group-hover:h-2.5 transition-all duration-200" />
 
       {/* Subtle corner light glow */}
       <div className="pointer-events-none absolute -top-20 -right-20 h-44 w-44 rounded-full bg-gradient-to-br from-purple-500/20 via-pink-500/15 to-transparent blur-3xl group-hover:scale-125 transition-transform duration-500" />

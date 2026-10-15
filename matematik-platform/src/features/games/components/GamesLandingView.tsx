@@ -4,7 +4,7 @@ import Image from 'next/image';
 
 import { motion } from 'framer-motion';
 import { ArrowLeft, Trophy, Volume2, VolumeX, Sparkles } from 'lucide-react';
-import Link from 'next/link';
+import { SafeLink as Link } from '@/components/SafeLink';
 import { useGameSoundMute } from '@/features/games/hooks/useGameSoundMute';
 import type { AppUser } from '@/types';
 import {
@@ -56,6 +56,7 @@ export function GamesLandingView({
                 alt="Uğur Hoca"
                 width={44}
                 height={44}
+                priority
                 className="h-full w-full rounded-xl object-cover"
               />
             </div>

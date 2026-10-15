@@ -1809,8 +1809,14 @@ html[data-theme='light'] .ui-chip[data-tone='slate'] {
   border-radius: 9999px;
   pointer-events: none;
   will-change: transform;
-  filter: blur(95px);
-  -webkit-filter: blur(95px);
+  contain: layout style paint;
+  filter: blur(64px);
+  -webkit-filter: blur(64px);
+}
+
+a[data-pending='true'] {
+  opacity: 0.82;
+  transition: opacity 80ms ease-out;
 }
 
 .aurora-orb-1 {

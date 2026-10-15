@@ -4,7 +4,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import dynamic from 'next/dynamic';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
-import Link from 'next/link';
+import { SafeLink as Link } from '@/components/SafeLink';
 import {
   ArrowLeft,
   Bell,
@@ -579,6 +579,7 @@ export default function ProfilePage({ initialData }: ProfilePageProps) {
                 alt="Uğur Hoca"
                 width={40}
                 height={40}
+                priority
                 className="h-full w-full rounded-[10px] object-cover"
               />
             </div>

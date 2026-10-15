@@ -37,7 +37,7 @@ export function HomeSupportForm({
       <div>
         <label
           htmlFor={messageId}
-          className="block mb-2 text-sm light:text-slate-700 dark:text-slate-300"
+          className="block mb-2 text-sm font-medium text-secondary"
         >
           Mesajın
         </label>
@@ -47,14 +47,14 @@ export function HomeSupportForm({
           value={supportMessage}
           onChange={(event) => onSupportMessageChange(event.target.value)}
           placeholder="Uğur Hoca, ..."
-          className="w-full rounded-2xl px-4 py-3 focus:outline-none light:focus:border-indigo-500 dark:focus:border-indigo-500 transition-colors resize-none light:bg-white border light:border-slate-300 light:text-slate-900 placeholder:text-slate-400 dark:bg-slate-800/60 dark:border-slate-700 dark:text-white"
+          className="w-full rounded-2xl border border-default bg-surface-1 px-4 py-3 text-primary placeholder:text-tertiary focus:outline-none focus:border-indigo-500 transition-colors resize-none"
         />
       </div>
 
       <div>
         <label
           htmlFor={uploadId}
-          className="block mb-2 text-sm light:text-slate-700 dark:text-slate-300"
+          className="block mb-2 text-sm font-medium text-secondary"
         >
           Fotoğraf Ekle
         </label>
@@ -77,7 +77,7 @@ export function HomeSupportForm({
         />
         <label
           htmlFor={uploadId}
-          className="flex items-center justify-center gap-2 w-full rounded-2xl border border-dashed px-4 py-5 transition-colors cursor-pointer light:border-slate-300 light:bg-slate-50 light:text-slate-700 light:hover:bg-slate-100 light:hover:border-indigo-500 dark:hover:border-indigo-500 dark:border-slate-700 dark:bg-slate-800/50 dark:text-slate-300 dark:hover:bg-slate-800"
+          className="flex items-center justify-center gap-2 w-full rounded-2xl border border-dashed border-default bg-surface-2/70 text-secondary hover:bg-surface-3 hover:text-primary hover:border-indigo-500 px-4 py-5 transition-colors cursor-pointer"
         >
           <Upload className="w-5 h-5" />
           Fotoğraf seç
@@ -91,7 +91,7 @@ export function HomeSupportForm({
 
       <div className="flex flex-col sm:flex-row sm:items-center gap-3 justify-between">
         <p
-          className="text-xs light:text-slate-600 dark:text-slate-400"
+          className="text-xs text-secondary"
         >
           Gönderdiğin mesaj anında bildirim olarak iletilir.
         </p>
@@ -106,7 +106,7 @@ export function HomeSupportForm({
       </div>
 
       {supportSent && (
-        <div className="rounded-2xl border border-emerald-500/20 bg-emerald-500/10 px-4 py-3 text-emerald-300 text-sm">
+        <div className="rounded-2xl border border-tone-success-border bg-tone-success-bg px-4 py-3 text-tone-success-fg text-sm font-semibold">
           Mesajın gönderildi.
         </div>
       )}

@@ -62,25 +62,36 @@ export function HomeNavbar({ onLogout, user }: HomeNavbarProps) {
           <div className="hidden lg:flex items-center gap-1.5 xl:gap-2">
             <SafeLink
               href="/icerikler?type=yaprak-test"
-              className="inline-flex items-center gap-1.5 rounded-xl px-3.5 py-2 text-sm font-bold text-slate-700 dark:text-slate-300 transition-all hover:bg-slate-100 dark:hover:bg-white/10 hover:text-slate-900 dark:hover:text-white"
+              className="inline-flex items-center gap-1.5 rounded-xl px-3.5 py-2 text-sm font-bold text-slate-700 dark:text-slate-300 transition-colors duration-150 hover:bg-slate-100 dark:hover:bg-white/10 hover:text-slate-900 dark:hover:text-white"
             >
               <span>📄 Yaprak Testler</span>
             </SafeLink>
             <SafeLink
               href="/oyunlar"
-              className="inline-flex items-center gap-1.5 rounded-xl px-3.5 py-2 text-sm font-bold text-slate-700 dark:text-slate-300 transition-all hover:bg-slate-100 dark:hover:bg-white/10 hover:text-slate-900 dark:hover:text-white"
+              aria-current={pathname?.startsWith('/oyunlar') ? 'page' : undefined}
+              className={`inline-flex items-center gap-1.5 rounded-xl px-3.5 py-2 text-sm font-bold transition-colors duration-150 ${
+                pathname?.startsWith('/oyunlar')
+                  ? 'bg-emerald-500/15 text-emerald-800 dark:text-emerald-300'
+                  : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-white/10 hover:text-slate-900 dark:hover:text-white'
+              }`}
             >
               <span>🎮 Oyunlar</span>
             </SafeLink>
             <SafeLink
               href="/icerikler"
-              className="inline-flex items-center gap-1.5 rounded-xl px-3.5 py-2 text-sm font-bold text-slate-700 dark:text-slate-300 transition-all hover:bg-slate-100 dark:hover:bg-white/10 hover:text-slate-900 dark:hover:text-white"
+              aria-current={pathname?.startsWith('/icerikler') ? 'page' : undefined}
+              className={`inline-flex items-center gap-1.5 rounded-xl px-3.5 py-2 text-sm font-bold transition-colors duration-150 ${
+                pathname?.startsWith('/icerikler')
+                  ? 'bg-sky-500/15 text-sky-800 dark:text-sky-300'
+                  : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-white/10 hover:text-slate-900 dark:hover:text-white'
+              }`}
             >
               <span>📚 Konular & Sınıflar</span>
             </SafeLink>
             <SafeLink
               href="/canli-ders"
-              className="inline-flex items-center gap-1.5 rounded-xl px-3.5 py-2 text-sm font-bold text-tone-danger-fg bg-tone-danger-bg/50 border border-tone-danger-border transition-all hover:bg-tone-danger-bg"
+              aria-current={pathname?.startsWith('/canli-ders') ? 'page' : undefined}
+              className="inline-flex items-center gap-1.5 rounded-xl px-3.5 py-2 text-sm font-bold text-tone-danger-fg bg-tone-danger-bg/50 border border-tone-danger-border transition-colors duration-150 hover:bg-tone-danger-bg"
             >
               <span className="relative flex h-2 w-2">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75"></span>
@@ -143,7 +154,7 @@ export function HomeNavbar({ onLogout, user }: HomeNavbarProps) {
             ) : null}
             <button
               type="button"
-              className="inline-flex h-11 w-11 items-center justify-center rounded-xl transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary text-slate-700 hover:bg-slate-100 dark:text-white dark:hover:bg-white/5"
+              className="inline-flex h-11 w-11 items-center justify-center rounded-xl transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary text-secondary hover:bg-surface-2 hover:text-primary"
               onClick={() => setIsOpen(!isOpen)}
               aria-expanded={isOpen}
               aria-controls="mobile-navigation"
@@ -158,27 +169,27 @@ export function HomeNavbar({ onLogout, user }: HomeNavbarProps) {
       {isOpen && (
         <div
           id="mobile-navigation"
-          className="animate-fade-in border-t max-h-[calc(100dvh-4.5rem-env(safe-area-inset-top))] overflow-y-auto pb-[calc(1.5rem+env(safe-area-inset-bottom))] lg:hidden border-slate-200/80 bg-white/95 dark:border-white/10 dark:bg-slate-950/95 backdrop-blur-xl"
+          className="animate-fade-in border-t max-h-[calc(100dvh-4.5rem-env(safe-area-inset-top))] overflow-y-auto pb-[calc(1.5rem+env(safe-area-inset-bottom))] lg:hidden border-default bg-surface-1/95 backdrop-blur-xl"
         >
           <div className="space-y-1.5 px-4 py-4">
             <SafeLink
               href="/icerikler?type=yaprak-test"
               onClick={() => setIsOpen(false)}
-              className="flex items-center gap-3 rounded-xl px-3.5 py-2.5 text-sm font-bold text-slate-800 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-white/10"
+              className="flex items-center gap-3 rounded-xl px-3.5 py-2.5 text-sm font-bold text-primary hover:bg-surface-2"
             >
               <span className="text-lg">📄</span> Yaprak Testler & İçerikler
             </SafeLink>
             <SafeLink
               href="/oyunlar"
               onClick={() => setIsOpen(false)}
-              className="flex items-center gap-3 rounded-xl px-3.5 py-2.5 text-sm font-bold text-slate-800 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-white/10"
+              className="flex items-center gap-3 rounded-xl px-3.5 py-2.5 text-sm font-bold text-primary hover:bg-surface-2"
             >
               <span className="text-lg">🎮</span> Matematik Oyunları
             </SafeLink>
             <SafeLink
               href="/icerikler"
               onClick={() => setIsOpen(false)}
-              className="flex items-center gap-3 rounded-xl px-3.5 py-2.5 text-sm font-bold text-slate-800 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-white/10"
+              className="flex items-center gap-3 rounded-xl px-3.5 py-2.5 text-sm font-bold text-primary hover:bg-surface-2"
             >
               <span className="text-lg">📚</span> Konular ve Sınıflar
             </SafeLink>
@@ -189,9 +200,9 @@ export function HomeNavbar({ onLogout, user }: HomeNavbarProps) {
             >
               <span className="text-lg">🔴</span> Canlı Ders Odası
             </SafeLink>
-            <div className="mt-3 border-t pt-3 border-slate-200 dark:border-white/10">
+            <div className="mt-3 border-t pt-3 border-subtle">
               <div className="mb-3 flex items-center justify-between px-2">
-                <span className="text-xs font-bold text-slate-600 dark:text-slate-400">Görünüm</span>
+                <span className="text-xs font-bold text-secondary">Görünüm</span>
                 <ThemeToggle />
               </div>
               {user ? (
@@ -199,7 +210,7 @@ export function HomeNavbar({ onLogout, user }: HomeNavbarProps) {
                   <SafeLink
                     href={profileHref}
                     onClick={() => setIsOpen(false)}
-                    className="block rounded-xl px-3.5 py-2.5 text-sm font-semibold light:text-slate-700 light:hover:bg-slate-100 light:hover:text-slate-900 dark:text-slate-300 dark:hover:bg-white/10 dark:hover:text-white"
+                    className="block rounded-xl px-3.5 py-2.5 text-sm font-semibold text-secondary hover:bg-surface-2 hover:text-primary"
                   >
                     {user.isAdmin ? 'Admin Paneli' : 'Öğrenci Profili'}
                   </SafeLink>
@@ -207,7 +218,7 @@ export function HomeNavbar({ onLogout, user }: HomeNavbarProps) {
                     <SafeLink
                       href="/profil"
                       onClick={() => setIsOpen(false)}
-                      className="block rounded-xl px-3.5 py-2.5 text-sm font-semibold light:text-slate-700 light:hover:bg-slate-100 light:hover:text-slate-900 dark:text-slate-300 dark:hover:bg-white/10 dark:hover:text-white"
+                      className="block rounded-xl px-3.5 py-2.5 text-sm font-semibold text-secondary hover:bg-surface-2 hover:text-primary"
                     >
                       Kullanıcı / Öğrenci Profili
                     </SafeLink>
@@ -218,7 +229,7 @@ export function HomeNavbar({ onLogout, user }: HomeNavbarProps) {
                       setIsOpen(false);
                       onLogout();
                     }}
-                    className="flex w-full min-h-[44px] items-center rounded-xl px-3.5 py-2 text-left text-sm font-semibold text-red-400 hover:bg-red-500/10 hover:text-red-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary"
+                    className="flex w-full min-h-[44px] items-center rounded-xl px-3.5 py-2 text-left text-sm font-semibold text-rose-600 dark:text-red-400 hover:bg-red-500/10 hover:text-rose-700 dark:hover:text-red-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary"
                   >
                     Çıkış Yap
                   </button>

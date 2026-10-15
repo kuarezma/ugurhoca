@@ -21,18 +21,19 @@ export function HomeSupportAttachmentList({
       {attachments.map((file, index) => (
         <div
           key={`${file.url}-${index}`}
-          className="flex items-center gap-2 px-3 py-2 rounded-xl border text-sm light:bg-slate-50 light:border-slate-200 light:text-slate-700 dark:bg-white/5 dark:border-white/10 dark:text-slate-200"
+          className="flex items-center gap-2 px-3 py-2 rounded-xl border border-default bg-surface-2 text-sm text-primary"
         >
           {file.kind === 'image' ? (
-            <ImageIcon className="w-4 h-4 text-purple-300" />
+            <ImageIcon className="w-4 h-4 text-purple-600 dark:text-purple-300" />
           ) : (
-            <FileDoc className="w-4 h-4 text-sky-300" />
+            <FileDoc className="w-4 h-4 text-sky-600 dark:text-sky-300" />
           )}
           <span className="max-w-[180px] truncate">{file.name}</span>
           <button
             type="button"
             onClick={() => onRemove(index)}
-            className="text-slate-400 hover:text-white"
+            aria-label={`${file.name} dosyasını kaldır`}
+            className="text-secondary hover:text-tone-danger-fg transition-colors px-1"
           >
             ×
           </button>

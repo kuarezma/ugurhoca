@@ -1,6 +1,6 @@
 'use client';
 
-import { forwardRef, useCallback, useState, type ButtonHTMLAttributes, type MouseEvent, type ReactNode } from 'react';
+import { forwardRef, useCallback, type ButtonHTMLAttributes, type MouseEvent, type ReactNode } from 'react';
 import { Loader2 } from 'lucide-react';
 import { cn } from '@/lib/cn';
 
@@ -66,20 +66,6 @@ const SIZES: Record<ButtonSize, string> = {
   lg: 'h-13 px-7 font-display text-lg min-w-[2.75rem]',
 };
 
-function createRipple(event: MouseEvent<HTMLButtonElement>) {
-  const button = event.currentTarget;
-  const rect = button.getBoundingClientRect();
-  const size = Math.max(rect.width, rect.height);
-  const ripple = document.createElement('span');
-  ripple.className = 'ripple-span';
-  ripple.style.width = `${size}px`;
-  ripple.style.height = `${size}px`;
-  ripple.style.left = `${event.clientX - rect.left - size / 2}px`;
-  ripple.style.top = `${event.clientY - rect.top - size / 2}px`;
-  button.appendChild(ripple);
-  setTimeout(() => ripple.remove(), 650);
-}
-
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button(
   {
     className,
@@ -90,7 +76,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button
     leadingIcon,
     trailingIcon,
     fullWidth = false,
-    ripple = true,
+    ripple: _ripple = true,
     onClick,
     children,
     type = 'button',
@@ -98,18 +84,12 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button
   },
   ref,
 ) {
-  const [rippling, setRippling] = useState(false);
-
   const handleClick = useCallback(
     (event: MouseEvent<HTMLButtonElement>) => {
-      if (ripple && !disabled && !loading) {
-        createRipple(event);
-        setRippling(true);
-        setTimeout(() => setRippling(false), 220);
-      }
+      if (disabled || loading) return;
       onClick?.(event);
     },
-    [disabled, loading, onClick, ripple],
+    [disabled, loading, onClick],
   );
 
   return (
@@ -124,7 +104,6 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button
         VARIANTS[variant],
         SIZES[size],
         fullWidth && 'w-full',
-        rippling && 'animate-pop',
         className,
       )}
       {...rest}

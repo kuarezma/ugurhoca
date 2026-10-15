@@ -257,7 +257,7 @@ export function QuickFormulaCheatSheetModal({
               type="button"
               onClick={onClose}
               aria-label="Pencereyi kapat"
-              className="rounded-xl p-1.5 text-slate-400 hover:text-white hover:bg-white/10 transition"
+              className="rounded-xl p-1.5 text-slate-500 hover:text-slate-900 hover:bg-slate-200/70 dark:text-slate-400 dark:hover:text-white dark:hover:bg-white/10 transition-colors"
             >
               <X className="h-5 w-5" />
             </button>
@@ -265,16 +265,16 @@ export function QuickFormulaCheatSheetModal({
         </div>
 
         {/* Sekmeler & Arama */}
-        <div className="p-4 border-b border-white/10 flex flex-col sm:flex-row items-center justify-between gap-3 shrink-0">
+        <div className="p-4 border-b border-slate-200 dark:border-white/10 flex flex-col sm:flex-row items-center justify-between gap-3 shrink-0">
           {/* LGS / YKS Sekmeleri */}
-          <div className="flex items-center p-1 rounded-2xl bg-black/20 border border-white/10 w-full sm:w-auto">
+          <div className="flex items-center p-1 rounded-2xl bg-slate-200/70 dark:bg-black/20 border border-slate-300/80 dark:border-white/10 w-full sm:w-auto">
             <button
               type="button"
               onClick={() => setActiveTab('lgs')}
-              className={`flex-1 sm:flex-none flex items-center justify-center gap-1.5 px-4 py-1.5 rounded-xl text-xs font-bold transition ${
+              className={`flex-1 sm:flex-none flex items-center justify-center gap-1.5 px-4 py-1.5 rounded-xl text-xs font-bold transition-colors ${
                 activeTab === 'lgs'
                   ? 'bg-brand-primary shadow-md text-slate-950 dark:text-slate-950'
-                  : 'text-slate-400 hover:text-white'
+                  : 'text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white'
               }`}
             >
               <Sparkles className="h-3.5 w-3.5" />
@@ -283,10 +283,10 @@ export function QuickFormulaCheatSheetModal({
             <button
               type="button"
               onClick={() => setActiveTab('yks')}
-              className={`flex-1 sm:flex-none flex items-center justify-center gap-1.5 px-4 py-1.5 rounded-xl text-xs font-bold transition ${
+              className={`flex-1 sm:flex-none flex items-center justify-center gap-1.5 px-4 py-1.5 rounded-xl text-xs font-bold transition-colors ${
                 activeTab === 'yks'
                   ? 'bg-brand-primary shadow-md text-slate-950 dark:text-slate-950'
-                  : 'text-slate-400 hover:text-white'
+                  : 'text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white'
               }`}
             >
               <GraduationCap className="h-3.5 w-3.5" />

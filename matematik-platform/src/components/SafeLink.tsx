@@ -48,6 +48,7 @@ export function SafeLink({
   onClick,
   onPointerEnter,
   onTouchStart,
+  onFocus,
   target,
   rel,
   ...props
@@ -88,6 +89,13 @@ export function SafeLink({
     }
   };
 
+  const handleFocus = (event: React.FocusEvent<HTMLAnchorElement>) => {
+    onFocus?.(event);
+    if (!target && href.startsWith('/') && !href.startsWith('//')) {
+      prefetchRoute(href);
+    }
+  };
+
   const handleClick = (event: React.MouseEvent<HTMLAnchorElement>) => {
     onClick?.(event);
 
@@ -121,6 +129,7 @@ export function SafeLink({
       rel={target === '_blank' && !rel ? 'noopener noreferrer' : rel}
       onPointerEnter={handlePointerEnter}
       onTouchStart={handleTouchStart}
+      onFocus={handleFocus}
       onClick={handleClick}
       data-pending={isPending ? 'true' : undefined}
       aria-busy={isPending ? 'true' : undefined}

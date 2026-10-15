@@ -5,7 +5,7 @@ import Image from 'next/image';
 import { useState, useEffect, useCallback, Suspense, useRef, startTransition } from 'react';
 import dynamic from 'next/dynamic';
 import { AnimatePresence, motion } from 'framer-motion';
-import Link from 'next/link';
+import { SafeLink as Link } from '@/components/SafeLink';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import {
   ArrowLeft,
@@ -1419,6 +1419,7 @@ function ContentsPageInner({
                 alt="Uğur Hoca"
                 width={44}
                 height={44}
+                priority
                 className="h-full w-full rounded-xl object-cover"
               />
             </div>
@@ -1439,10 +1440,8 @@ function ContentsPageInner({
 
       <div className="pt-[calc(4.5rem+env(safe-area-inset-top))] sm:pt-24 px-4 sm:px-6 xl:px-8">
         <div className="max-w-[1760px] mx-auto">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="mb-8 flex flex-col md:flex-row justify-between items-start md:items-center gap-4"
+          <div
+            className="mb-8 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 animate-fade-in"
           >
             <div>
               <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-sky-500/30 bg-sky-50/80 dark:bg-sky-950/40 px-3.5 py-1 text-xs font-bold text-sky-700 dark:text-sky-300 backdrop-blur-md shadow-xs">
@@ -1467,13 +1466,10 @@ function ContentsPageInner({
                 Hızlı İçerik Ekle
               </motion.button>
             )}
-          </motion.div>
+          </div>
 
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
-            className="relative overflow-hidden rounded-3xl p-5 sm:p-7 mb-8 border border-default dark:border-white/[0.08] bg-surface-1/90 shadow-2xl backdrop-blur-2xl"
+          <div
+            className="relative overflow-hidden rounded-3xl p-5 sm:p-7 mb-8 border border-default dark:border-white/[0.08] bg-surface-1/95 shadow-2xl backdrop-blur-md"
           >
             {/* Top ambient aura */}
             <div className="absolute top-0 inset-x-0 h-[2px] bg-brand-secondary" />
@@ -1543,7 +1539,7 @@ function ContentsPageInner({
                 />
               </div>
             )}
-          </motion.div>
+          </div>
 
 
 

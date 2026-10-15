@@ -113,9 +113,7 @@ type HomePageProps = {
 
 export default function HomePage({ announcementsSlot }: HomePageProps) {
   const { theme } = useTheme();
-  // Only the tool modals below read this; they mount after a click, when the
-  // JS theme already matches data-theme. Page sections pick theme classes in CSS.
-  const isLight = theme === 'light' || true;
+  const isLight = theme === 'light';
   const [isFlashcardsOpen, setIsFlashcardsOpen] = useState(false);
   const [flashcardSubject, setFlashcardSubject] = useState<string | undefined>();
   const [isSpeedDrillOpen, setIsSpeedDrillOpen] = useState(false);

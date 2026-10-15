@@ -288,10 +288,29 @@ export function SiteBackground() {
       }
     };
 
-    // Animasyon döngüsü (CPU koruma ile)
+    // Animasyon döngüsü (Kaydırma sırasında GPU önceliği ve 30 FPS idle koruma ile)
+    let isScrolling = false;
+    let scrollTimer: ReturnType<typeof setTimeout> | null = null;
+    let lastDrawnTime = 0;
+
+    const handleScroll = () => {
+      isScrolling = true;
+      if (scrollTimer) clearTimeout(scrollTimer);
+      scrollTimer = setTimeout(() => {
+        isScrolling = false;
+        lastTime = performance.now();
+      }, 120);
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+
     const loop = (time: number) => {
-      drawFrame(time);
       animId = requestAnimationFrame(loop);
+      if (isScrolling) return;
+      const frameBudget = mouseRef.current.active ? 16 : 32;
+      if (time - lastDrawnTime < frameBudget) return;
+      lastDrawnTime = time;
+      drawFrame(time);
     };
 
     if (prefersReducedMotion) {
@@ -315,7 +334,9 @@ export function SiteBackground() {
     return () => {
       cancelAnimationFrame(animId);
       if (glowFrame) cancelAnimationFrame(glowFrame);
+      if (scrollTimer) clearTimeout(scrollTimer);
       window.removeEventListener('resize', handleResize);
+      window.removeEventListener('scroll', handleScroll);
       window.removeEventListener('mousemove', handlePointerMove);
       document.removeEventListener('mouseleave', handlePointerLeave);
       document.removeEventListener('visibilitychange', handleVisibilityChange);

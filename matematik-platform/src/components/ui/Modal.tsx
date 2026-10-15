@@ -70,19 +70,18 @@ export function Modal({
             transition={{ duration: 0.2, ease: [0.2, 0.8, 0.2, 1] }}
             className={cn(
               'relative flex max-h-[calc(100dvh-max(2rem,env(safe-area-inset-top)+env(safe-area-inset-bottom)))] w-full flex-col overflow-hidden rounded-3xl border shadow-2xl outline-none sm:max-h-[calc(100dvh-3rem)]',
-              'bg-white text-slate-900 border-slate-200',
-              'dark:bg-slate-900 dark:text-white dark:border-white/10',
+              'bg-surface-1 text-primary border-default',
               SIZE[size],
               className,
             )}
           >
             {(title || !hideCloseButton) && (
-              <div className="flex shrink-0 items-start justify-between gap-3 p-5 sm:p-6 border-b border-slate-200/70 dark:border-white/10">
+              <div className="flex shrink-0 items-start justify-between gap-3 p-5 sm:p-6 border-b border-subtle">
                 <div className="min-w-0">
                   {title ? (
                     <h2
                       id={labelId}
-                      className="font-display text-xl sm:text-2xl font-bold leading-tight"
+                      className="font-display text-xl sm:text-2xl font-bold leading-tight text-primary"
                     >
                       {title}
                     </h2>
@@ -90,7 +89,7 @@ export function Modal({
                   {description ? (
                     <p
                       id={descriptionId}
-                      className="mt-1 text-sm text-slate-600 dark:text-slate-400"
+                      className="mt-1 text-sm text-secondary"
                     >
                       {description}
                     </p>
@@ -101,7 +100,7 @@ export function Modal({
                     type="button"
                     onClick={onClose}
                     aria-label="Kapat"
-                    className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-xl text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-white/10 dark:hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary"
+                    className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-xl text-secondary transition-colors hover:bg-surface-2 hover:text-primary focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary"
                   >
                     <X className="h-5 w-5" aria-hidden="true" />
                   </button>
@@ -112,7 +111,7 @@ export function Modal({
               {children}
             </div>
             {footer ? (
-              <div className="flex shrink-0 flex-col-reverse gap-2 border-t border-slate-200/70 bg-slate-50/60 p-4 sm:flex-row sm:justify-end sm:p-5 dark:border-white/10 dark:bg-slate-950/40">
+              <div className="flex shrink-0 flex-col-reverse gap-2 border-t border-subtle bg-surface-2/60 p-4 sm:flex-row sm:justify-end sm:p-5">
                 {footer}
               </div>
             ) : null}

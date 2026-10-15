@@ -143,17 +143,17 @@ export function HomeHeroSection({
           <SafeLink
             href="/icerikler?type=yaprak-test"
             aria-label="Yaprak Testler ve Ders İçerikleri"
-            className="group relative flex flex-col justify-between overflow-hidden rounded-2xl sm:rounded-3xl p-4 sm:p-9 transition-all duration-300 hover:-translate-y-2 bg-gradient-to-br from-sky-50/90 via-white to-blue-50/70 dark:from-sky-950/50 dark:via-slate-900/95 dark:to-blue-950/40 border-2 border-sky-200/90 dark:border-sky-500/30 shadow-md sm:shadow-lg shadow-sky-500/5 hover:shadow-2xl hover:shadow-sky-500/15 hover:border-sky-400 dark:hover:border-sky-400/60"
+            className="group relative flex flex-col justify-between overflow-hidden rounded-2xl sm:rounded-3xl p-4 sm:p-9 transition-[transform,box-shadow,border-color,background-color] duration-200 ease-out hover:-translate-y-2 bg-gradient-to-br from-sky-50/90 via-white to-blue-50/70 dark:from-sky-950/50 dark:via-slate-900/95 dark:to-blue-950/40 border-2 border-sky-200/90 dark:border-sky-500/30 shadow-md sm:shadow-lg shadow-sky-500/5 hover:shadow-2xl hover:shadow-sky-500/15 hover:border-sky-400 dark:hover:border-sky-400/60"
           >
             {/* Kart İçi Dekoratif Radyal Işık */}
             <div
               aria-hidden="true"
-              className="pointer-events-none absolute -right-20 -top-20 h-56 w-56 rounded-full bg-sky-400/10 blur-2xl group-hover:bg-sky-400/20 transition-all duration-300"
+              className="pointer-events-none absolute -right-20 -top-20 h-56 w-56 rounded-full bg-sky-400/10 blur-2xl group-hover:bg-sky-400/20 transition-[transform,box-shadow,border-color,background-color] duration-200 ease-out"
             />
 
             <div className="relative">
               <div className="flex items-center justify-between gap-3 mb-3 sm:mb-6">
-                <div className="flex h-12 w-12 sm:h-16 sm:w-16 shrink-0 items-center justify-center rounded-xl sm:rounded-2xl bg-gradient-to-br from-sky-500 via-sky-600 to-blue-700 text-white dark:text-white shadow-lg sm:shadow-xl shadow-sky-500/30 ring-2 sm:ring-4 ring-sky-500/10 group-hover:scale-105 group-hover:rotate-1 transition-all duration-300">
+                <div className="flex h-12 w-12 sm:h-16 sm:w-16 shrink-0 items-center justify-center rounded-xl sm:rounded-2xl bg-gradient-to-br from-sky-500 via-sky-600 to-blue-700 text-white dark:text-white shadow-lg sm:shadow-xl shadow-sky-500/30 ring-2 sm:ring-4 ring-sky-500/10 group-hover:scale-105 group-hover:rotate-1 transition-[transform,box-shadow,border-color,background-color] duration-200 ease-out">
                   <FileSignature className="h-6 w-6 sm:h-8 sm:w-8" />
                 </div>
                 <span className="rounded-full bg-sky-800 dark:bg-sky-900 text-white dark:text-sky-100 text-[10px] sm:text-[11px] font-black uppercase tracking-wider px-2.5 py-1 sm:px-3.5 sm:py-1.5 shadow-xs">
@@ -191,7 +191,7 @@ export function HomeHeroSection({
                 <BookOpen className="h-4 w-4 sm:h-5 sm:w-5 text-sky-600 dark:text-sky-400" />
                 Yaprak Test İçeriklerini Aç
               </span>
-              <div className="flex h-7 w-7 sm:h-9 sm:w-9 items-center justify-center rounded-lg sm:rounded-xl bg-white dark:bg-slate-800 text-sky-700 dark:text-sky-300 shadow-xs sm:shadow-sm border border-slate-200/80 dark:border-slate-700 group-hover:bg-sky-600 group-hover:text-white group-hover:border-sky-600 group-hover:translate-x-1.5 sm:group-hover:translate-x-2 transition-all duration-300">
+              <div className="flex h-7 w-7 sm:h-9 sm:w-9 items-center justify-center rounded-lg sm:rounded-xl bg-white dark:bg-slate-800 text-sky-700 dark:text-sky-300 shadow-xs sm:shadow-sm border border-slate-200/80 dark:border-slate-700 group-hover:bg-sky-600 group-hover:text-white group-hover:border-sky-600 group-hover:translate-x-1.5 sm:group-hover:translate-x-2 transition-[transform,box-shadow,border-color,background-color] duration-200 ease-out">
                 <ArrowRight className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
               </div>
             </div>
@@ -201,17 +201,17 @@ export function HomeHeroSection({
           <SafeLink
             href="/oyunlar"
             aria-label="Matematik Oyunları Dünyası"
-            className="group relative flex flex-col justify-between overflow-hidden rounded-2xl sm:rounded-3xl p-4 sm:p-9 transition-all duration-300 hover:-translate-y-2 bg-gradient-to-br from-emerald-50/90 via-white to-teal-50/70 dark:from-emerald-950/50 dark:via-slate-900/95 dark:to-teal-950/40 border-2 border-emerald-200/90 dark:border-emerald-500/30 shadow-md sm:shadow-lg shadow-emerald-500/5 hover:shadow-2xl hover:shadow-emerald-500/15 hover:border-emerald-400 dark:hover:border-emerald-400/60"
+            className="group relative flex flex-col justify-between overflow-hidden rounded-2xl sm:rounded-3xl p-4 sm:p-9 transition-[transform,box-shadow,border-color,background-color] duration-200 ease-out hover:-translate-y-2 bg-gradient-to-br from-emerald-50/90 via-white to-teal-50/70 dark:from-emerald-950/50 dark:via-slate-900/95 dark:to-teal-950/40 border-2 border-emerald-200/90 dark:border-emerald-500/30 shadow-md sm:shadow-lg shadow-emerald-500/5 hover:shadow-2xl hover:shadow-emerald-500/15 hover:border-emerald-400 dark:hover:border-emerald-400/60"
           >
             {/* Kart İçi Dekoratif Radyal Işık */}
             <div
               aria-hidden="true"
-              className="pointer-events-none absolute -right-20 -top-20 h-56 w-56 rounded-full bg-emerald-400/10 blur-2xl group-hover:bg-emerald-400/20 transition-all duration-300"
+              className="pointer-events-none absolute -right-20 -top-20 h-56 w-56 rounded-full bg-emerald-400/10 blur-2xl group-hover:bg-emerald-400/20 transition-[transform,box-shadow,border-color,background-color] duration-200 ease-out"
             />
 
             <div className="relative">
               <div className="flex items-center justify-between gap-3 mb-3 sm:mb-6">
-                <div className="flex h-12 w-12 sm:h-16 sm:w-16 shrink-0 items-center justify-center rounded-xl sm:rounded-2xl bg-gradient-to-br from-emerald-500 via-emerald-600 to-teal-700 text-white dark:text-white shadow-lg sm:shadow-xl shadow-emerald-500/30 ring-2 sm:ring-4 ring-emerald-500/10 group-hover:scale-105 group-hover:rotate-1 transition-all duration-300">
+                <div className="flex h-12 w-12 sm:h-16 sm:w-16 shrink-0 items-center justify-center rounded-xl sm:rounded-2xl bg-gradient-to-br from-emerald-500 via-emerald-600 to-teal-700 text-white dark:text-white shadow-lg sm:shadow-xl shadow-emerald-500/30 ring-2 sm:ring-4 ring-emerald-500/10 group-hover:scale-105 group-hover:rotate-1 transition-[transform,box-shadow,border-color,background-color] duration-200 ease-out">
                   <Gamepad2 className="h-6 w-6 sm:h-8 sm:w-8" />
                 </div>
                 <span className="rounded-full bg-emerald-800 dark:bg-emerald-900 text-white dark:text-emerald-100 text-[10px] sm:text-[11px] font-black uppercase tracking-wider px-2.5 py-1 sm:px-3.5 sm:py-1.5 shadow-xs">
@@ -249,7 +249,7 @@ export function HomeHeroSection({
                 <Zap className="h-4 w-4 sm:h-5 sm:w-5 text-emerald-600 dark:text-emerald-400" />
                 Oyun Alanına Giriş Yap
               </span>
-              <div className="flex h-7 w-7 sm:h-9 sm:w-9 items-center justify-center rounded-lg sm:rounded-xl bg-white dark:bg-slate-800 text-emerald-700 dark:text-emerald-300 shadow-xs sm:shadow-sm border border-slate-200/80 dark:border-slate-700 group-hover:bg-emerald-600 group-hover:text-white group-hover:border-emerald-600 group-hover:translate-x-1.5 sm:group-hover:translate-x-2 transition-all duration-300">
+              <div className="flex h-7 w-7 sm:h-9 sm:w-9 items-center justify-center rounded-lg sm:rounded-xl bg-white dark:bg-slate-800 text-emerald-700 dark:text-emerald-300 shadow-xs sm:shadow-sm border border-slate-200/80 dark:border-slate-700 group-hover:bg-emerald-600 group-hover:text-white group-hover:border-emerald-600 group-hover:translate-x-1.5 sm:group-hover:translate-x-2 transition-[transform,box-shadow,border-color,background-color] duration-200 ease-out">
                 <ArrowRight className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
               </div>
             </div>
@@ -277,7 +277,7 @@ export function HomeHeroSection({
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
             
             {/* 5. Sınıf */}
-            <div className="group relative overflow-hidden rounded-3xl border border-slate-200/90 dark:border-slate-800 bg-white/95 dark:bg-slate-900/90 p-6 shadow-sm hover:border-sky-400 dark:hover:border-sky-500/50 hover:shadow-2xl hover:shadow-sky-500/10 hover:-translate-y-1.5 transition-all duration-300 flex flex-col justify-between">
+            <div className="group relative overflow-hidden rounded-3xl border border-slate-200/90 dark:border-slate-800 bg-white/95 dark:bg-slate-900/90 p-6 shadow-sm hover:border-sky-400 dark:hover:border-sky-500/50 hover:shadow-2xl hover:shadow-sky-500/10 hover:-translate-y-1.5 transition-[transform,box-shadow,border-color,background-color] duration-200 ease-out flex flex-col justify-between">
               <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-sky-400 to-blue-500 opacity-80" />
               <div>
                 <div className="flex items-center justify-between mb-4">
@@ -313,7 +313,7 @@ export function HomeHeroSection({
             </div>
 
             {/* 6. Sınıf */}
-            <div className="group relative overflow-hidden rounded-3xl border border-slate-200/90 dark:border-slate-800 bg-white/95 dark:bg-slate-900/90 p-6 shadow-sm hover:border-amber-400 dark:hover:border-amber-500/50 hover:shadow-2xl hover:shadow-amber-500/10 hover:-translate-y-1.5 transition-all duration-300 flex flex-col justify-between">
+            <div className="group relative overflow-hidden rounded-3xl border border-slate-200/90 dark:border-slate-800 bg-white/95 dark:bg-slate-900/90 p-6 shadow-sm hover:border-amber-400 dark:hover:border-amber-500/50 hover:shadow-2xl hover:shadow-amber-500/10 hover:-translate-y-1.5 transition-[transform,box-shadow,border-color,background-color] duration-200 ease-out flex flex-col justify-between">
               <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-amber-400 to-orange-500 opacity-80" />
               <div>
                 <div className="flex items-center justify-between mb-4">
@@ -349,7 +349,7 @@ export function HomeHeroSection({
             </div>
 
             {/* 7. Sınıf */}
-            <div className="group relative overflow-hidden rounded-3xl border border-slate-200/90 dark:border-slate-800 bg-white/95 dark:bg-slate-900/90 p-6 shadow-sm hover:border-purple-400 dark:hover:border-purple-500/50 hover:shadow-2xl hover:shadow-purple-500/10 hover:-translate-y-1.5 transition-all duration-300 flex flex-col justify-between">
+            <div className="group relative overflow-hidden rounded-3xl border border-slate-200/90 dark:border-slate-800 bg-white/95 dark:bg-slate-900/90 p-6 shadow-sm hover:border-purple-400 dark:hover:border-purple-500/50 hover:shadow-2xl hover:shadow-purple-500/10 hover:-translate-y-1.5 transition-[transform,box-shadow,border-color,background-color] duration-200 ease-out flex flex-col justify-between">
               <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-purple-400 to-indigo-500 opacity-80" />
               <div>
                 <div className="flex items-center justify-between mb-4">
@@ -385,7 +385,7 @@ export function HomeHeroSection({
             </div>
 
             {/* 8. Sınıf LGS */}
-            <div className="group relative overflow-hidden rounded-3xl border-2 border-rose-300 dark:border-rose-500/40 bg-white/95 dark:bg-slate-900/90 p-6 shadow-sm hover:border-rose-500 dark:hover:border-rose-400 hover:shadow-2xl hover:shadow-rose-500/15 hover:-translate-y-1.5 transition-all duration-300 flex flex-col justify-between">
+            <div className="group relative overflow-hidden rounded-3xl border-2 border-rose-300 dark:border-rose-500/40 bg-white/95 dark:bg-slate-900/90 p-6 shadow-sm hover:border-rose-500 dark:hover:border-rose-400 hover:shadow-2xl hover:shadow-rose-500/15 hover:-translate-y-1.5 transition-[transform,box-shadow,border-color,background-color] duration-200 ease-out flex flex-col justify-between">
               <div className="absolute inset-x-0 top-0 h-1.5 bg-gradient-to-r from-rose-500 to-red-600" />
               <div>
                 <div className="flex items-center justify-between mb-4">
@@ -444,7 +444,7 @@ export function HomeHeroSection({
             {/* Oyun 1: Çarpım Yarışı */}
             <SafeLink
               href="/oyunlar"
-              className="group rounded-3xl border border-slate-200/90 dark:border-slate-800 bg-white/95 dark:bg-slate-900/90 p-5 text-center hover:border-emerald-400 dark:hover:border-emerald-500/50 hover:shadow-xl hover:shadow-emerald-500/10 hover:-translate-y-1.5 transition-all duration-300 flex flex-col items-center justify-between"
+              className="group rounded-3xl border border-slate-200/90 dark:border-slate-800 bg-white/95 dark:bg-slate-900/90 p-5 text-center hover:border-emerald-400 dark:hover:border-emerald-500/50 hover:shadow-xl hover:shadow-emerald-500/10 hover:-translate-y-1.5 transition-[transform,box-shadow,border-color,background-color] duration-200 ease-out flex flex-col items-center justify-between"
             >
               <div>
                 <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-emerald-50 dark:bg-emerald-950/50 border border-emerald-200/70 dark:border-emerald-800/50 text-3xl mb-3.5 group-hover:scale-110 group-hover:-rotate-3 transition-transform duration-300 shadow-2xs">
@@ -465,7 +465,7 @@ export function HomeHeroSection({
             {/* Oyun 2: Kesir Pizzacısı */}
             <SafeLink
               href="/oyunlar"
-              className="group rounded-3xl border border-slate-200/90 dark:border-slate-800 bg-white/95 dark:bg-slate-900/90 p-5 text-center hover:border-amber-400 dark:hover:border-amber-500/50 hover:shadow-xl hover:shadow-amber-500/10 hover:-translate-y-1.5 transition-all duration-300 flex flex-col items-center justify-between"
+              className="group rounded-3xl border border-slate-200/90 dark:border-slate-800 bg-white/95 dark:bg-slate-900/90 p-5 text-center hover:border-amber-400 dark:hover:border-amber-500/50 hover:shadow-xl hover:shadow-amber-500/10 hover:-translate-y-1.5 transition-[transform,box-shadow,border-color,background-color] duration-200 ease-out flex flex-col items-center justify-between"
             >
               <div>
                 <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-amber-50 dark:bg-amber-950/50 border border-amber-200/70 dark:border-amber-800/50 text-3xl mb-3.5 group-hover:scale-110 group-hover:-rotate-3 transition-transform duration-300 shadow-2xs">
@@ -486,7 +486,7 @@ export function HomeHeroSection({
             {/* Oyun 3: Sayı Düellosu */}
             <SafeLink
               href="/oyunlar"
-              className="group rounded-3xl border border-slate-200/90 dark:border-slate-800 bg-white/95 dark:bg-slate-900/90 p-5 text-center hover:border-purple-400 dark:hover:border-purple-500/50 hover:shadow-xl hover:shadow-purple-500/10 hover:-translate-y-1.5 transition-all duration-300 flex flex-col items-center justify-between"
+              className="group rounded-3xl border border-slate-200/90 dark:border-slate-800 bg-white/95 dark:bg-slate-900/90 p-5 text-center hover:border-purple-400 dark:hover:border-purple-500/50 hover:shadow-xl hover:shadow-purple-500/10 hover:-translate-y-1.5 transition-[transform,box-shadow,border-color,background-color] duration-200 ease-out flex flex-col items-center justify-between"
             >
               <div>
                 <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-purple-50 dark:bg-purple-950/50 border border-purple-200/70 dark:border-purple-800/50 text-3xl mb-3.5 group-hover:scale-110 group-hover:-rotate-3 transition-transform duration-300 shadow-2xs">
@@ -507,7 +507,7 @@ export function HomeHeroSection({
             {/* Oyun 4: Balon Patlatma */}
             <SafeLink
               href="/oyunlar"
-              className="group rounded-3xl border border-slate-200/90 dark:border-slate-800 bg-white/95 dark:bg-slate-900/90 p-5 text-center hover:border-rose-400 dark:hover:border-rose-500/50 hover:shadow-xl hover:shadow-rose-500/10 hover:-translate-y-1.5 transition-all duration-300 flex flex-col items-center justify-between"
+              className="group rounded-3xl border border-slate-200/90 dark:border-slate-800 bg-white/95 dark:bg-slate-900/90 p-5 text-center hover:border-rose-400 dark:hover:border-rose-500/50 hover:shadow-xl hover:shadow-rose-500/10 hover:-translate-y-1.5 transition-[transform,box-shadow,border-color,background-color] duration-200 ease-out flex flex-col items-center justify-between"
             >
               <div>
                 <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-rose-50 dark:bg-rose-950/50 border border-rose-200/70 dark:border-rose-800/50 text-3xl mb-3.5 group-hover:scale-110 group-hover:-rotate-3 transition-transform duration-300 shadow-2xs">
@@ -545,7 +545,7 @@ export function HomeHeroSection({
             <button
               type="button"
               onClick={() => onOpenCalculator?.('lgs')}
-              className="group relative flex items-start gap-4 rounded-3xl border border-default dark:border-slate-600 bg-white/95 dark:bg-slate-900/90 p-5 text-left hover:border-sky-400 dark:hover:border-sky-500/50 hover:bg-sky-50/30 dark:hover:bg-slate-800/50 hover:shadow-xl hover:shadow-sky-500/5 hover:-translate-y-1 transition-all duration-300 active:scale-[0.99] shadow-xs"
+              className="group relative flex items-start gap-4 rounded-3xl border border-default dark:border-slate-600 bg-white/95 dark:bg-slate-900/90 p-5 text-left hover:border-sky-400 dark:hover:border-sky-500/50 hover:bg-sky-50/30 dark:hover:bg-slate-800/50 hover:shadow-xl hover:shadow-sky-500/5 hover:-translate-y-1 transition-[transform,box-shadow,border-color,background-color] duration-200 ease-out active:scale-[0.99] shadow-xs"
             >
               <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-sky-100 dark:bg-sky-950/60 text-sky-700 dark:text-sky-300 group-hover:scale-105 transition-transform shadow-xs">
                 <Calculator className="h-6 w-6" />
@@ -567,7 +567,7 @@ export function HomeHeroSection({
             <button
               type="button"
               onClick={() => onOpenPomodoro?.()}
-              className="group relative flex items-start gap-4 rounded-3xl border border-default dark:border-slate-600 bg-white/95 dark:bg-slate-900/90 p-5 text-left hover:border-rose-400 dark:hover:border-rose-500/50 hover:bg-rose-50/30 dark:hover:bg-slate-800/50 hover:shadow-xl hover:shadow-rose-500/5 hover:-translate-y-1 transition-all duration-300 active:scale-[0.99] shadow-xs"
+              className="group relative flex items-start gap-4 rounded-3xl border border-default dark:border-slate-600 bg-white/95 dark:bg-slate-900/90 p-5 text-left hover:border-rose-400 dark:hover:border-rose-500/50 hover:bg-rose-50/30 dark:hover:bg-slate-800/50 hover:shadow-xl hover:shadow-rose-500/5 hover:-translate-y-1 transition-[transform,box-shadow,border-color,background-color] duration-200 ease-out active:scale-[0.99] shadow-xs"
             >
               <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-rose-100 dark:bg-rose-950/60 text-rose-700 dark:text-rose-300 group-hover:scale-105 transition-transform shadow-xs">
                 <Timer className="h-6 w-6" />
@@ -589,7 +589,7 @@ export function HomeHeroSection({
             <button
               type="button"
               onClick={() => onOpenScratchpad?.()}
-              className="group relative flex items-start gap-4 rounded-3xl border border-default dark:border-slate-600 bg-white/95 dark:bg-slate-900/90 p-5 text-left hover:border-emerald-400 dark:hover:border-emerald-500/50 hover:bg-emerald-50/30 dark:hover:bg-slate-800/50 hover:shadow-xl hover:shadow-emerald-500/5 hover:-translate-y-1 transition-all duration-300 active:scale-[0.99] shadow-xs"
+              className="group relative flex items-start gap-4 rounded-3xl border border-default dark:border-slate-600 bg-white/95 dark:bg-slate-900/90 p-5 text-left hover:border-emerald-400 dark:hover:border-emerald-500/50 hover:bg-emerald-50/30 dark:hover:bg-slate-800/50 hover:shadow-xl hover:shadow-emerald-500/5 hover:-translate-y-1 transition-[transform,box-shadow,border-color,background-color] duration-200 ease-out active:scale-[0.99] shadow-xs"
             >
               <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 group-hover:scale-105 transition-transform shadow-xs">
                 <PenTool className="h-6 w-6" />
@@ -611,7 +611,7 @@ export function HomeHeroSection({
             <button
               type="button"
               onClick={() => onOpenCheatSheet ? onOpenCheatSheet() : onOpenFlashcards?.()}
-              className="group relative flex items-start gap-4 rounded-3xl border border-default dark:border-slate-600 bg-white/95 dark:bg-slate-900/90 p-5 text-left hover:border-amber-400 dark:hover:border-amber-500/50 hover:bg-amber-50/30 dark:hover:bg-slate-800/50 hover:shadow-xl hover:shadow-amber-500/5 hover:-translate-y-1 transition-all duration-300 active:scale-[0.99] shadow-xs"
+              className="group relative flex items-start gap-4 rounded-3xl border border-default dark:border-slate-600 bg-white/95 dark:bg-slate-900/90 p-5 text-left hover:border-amber-400 dark:hover:border-amber-500/50 hover:bg-amber-50/30 dark:hover:bg-slate-800/50 hover:shadow-xl hover:shadow-amber-500/5 hover:-translate-y-1 transition-[transform,box-shadow,border-color,background-color] duration-200 ease-out active:scale-[0.99] shadow-xs"
             >
               <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-amber-100 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300 group-hover:scale-105 transition-transform shadow-xs">
                 <Lightbulb className="h-6 w-6" />
@@ -633,7 +633,7 @@ export function HomeHeroSection({
             <button
               type="button"
               onClick={() => onOpenProofs?.()}
-              className="group relative flex items-start gap-4 rounded-3xl border border-default dark:border-slate-600 bg-white/95 dark:bg-slate-900/90 p-5 text-left hover:border-indigo-400 dark:hover:border-indigo-500/50 hover:bg-indigo-50/30 dark:hover:bg-slate-800/50 hover:shadow-xl hover:shadow-indigo-500/5 hover:-translate-y-1 transition-all duration-300 active:scale-[0.99] shadow-xs"
+              className="group relative flex items-start gap-4 rounded-3xl border border-default dark:border-slate-600 bg-white/95 dark:bg-slate-900/90 p-5 text-left hover:border-indigo-400 dark:hover:border-indigo-500/50 hover:bg-indigo-50/30 dark:hover:bg-slate-800/50 hover:shadow-xl hover:shadow-indigo-500/5 hover:-translate-y-1 transition-[transform,box-shadow,border-color,background-color] duration-200 ease-out active:scale-[0.99] shadow-xs"
             >
               <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-indigo-100 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300 group-hover:scale-105 transition-transform shadow-xs">
                 <Compass className="h-6 w-6" />
@@ -655,7 +655,7 @@ export function HomeHeroSection({
             <button
               type="button"
               onClick={() => onOpenGlossary?.()}
-              className="group relative flex items-start gap-4 rounded-3xl border border-default dark:border-slate-600 bg-white/95 dark:bg-slate-900/90 p-5 text-left hover:border-purple-400 dark:hover:border-purple-500/50 hover:bg-purple-50/30 dark:hover:bg-slate-800/50 hover:shadow-xl hover:shadow-purple-500/5 hover:-translate-y-1 transition-all duration-300 active:scale-[0.99] shadow-xs"
+              className="group relative flex items-start gap-4 rounded-3xl border border-default dark:border-slate-600 bg-white/95 dark:bg-slate-900/90 p-5 text-left hover:border-purple-400 dark:hover:border-purple-500/50 hover:bg-purple-50/30 dark:hover:bg-slate-800/50 hover:shadow-xl hover:shadow-purple-500/5 hover:-translate-y-1 transition-[transform,box-shadow,border-color,background-color] duration-200 ease-out active:scale-[0.99] shadow-xs"
             >
               <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-purple-100 dark:bg-purple-950/60 text-purple-700 dark:text-purple-300 group-hover:scale-105 transition-transform shadow-xs">
                 <BookOpen className="h-6 w-6" />
