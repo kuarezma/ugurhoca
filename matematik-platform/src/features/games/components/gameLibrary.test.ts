@@ -2,12 +2,12 @@ import { describe, expect, it } from 'vitest';
 import { games } from './gameLibrary';
 
 describe('gameLibrary', () => {
-  it('contains 19 registered games with unique ids', () => {
-    expect(games.length).toBe(19);
+  it('contains 25 registered games with unique ids', () => {
+    expect(games.length).toBe(25);
     const ids = games.map((g) => g.id);
     const uniqueIds = new Set(ids);
-    expect(uniqueIds.size).toBe(19);
-    expect(ids).toEqual(Array.from({ length: 19 }, (_, i) => i + 1));
+    expect(uniqueIds.size).toBe(25);
+    expect(ids).toEqual(Array.from({ length: 25 }, (_, i) => i + 1));
   });
 
   it('ensures all games have valid metadata and components', () => {
@@ -31,13 +31,19 @@ describe('gameLibrary', () => {
       'Koordinat Korsanı',
       'Sayı Kulesi',
       'Matematik Düellosu',
+      'Penaltı Şampiyonu',
+      'İksir Laboratuvarı',
+      'Dinozor Macerası',
+      'Meteor Savunması',
+      'Gizli Ajan: Kasa Şifresi',
+      'Okçu Şampiyonu',
     ];
 
     expectedTitles.forEach((title) => {
       const found = games.find((g) => g.title === title);
       expect(found).toBeDefined();
       expect(found?.id).toBeGreaterThanOrEqual(13);
-      expect(found?.id).toBeLessThanOrEqual(19);
+      expect(found?.id).toBeLessThanOrEqual(25);
     });
   });
 });

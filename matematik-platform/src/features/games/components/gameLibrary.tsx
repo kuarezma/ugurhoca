@@ -15,7 +15,19 @@ import {
   WholeWord,
 } from 'lucide-react';
 import dynamic from 'next/dynamic';
-import { Boxes, Car, ChefHat, Compass, Hammer } from 'lucide-react';
+import {
+  Boxes,
+  Car,
+  ChefHat,
+  Compass,
+  FlaskConical,
+  Footprints,
+  Hammer,
+  KeyRound,
+  Shield,
+  Target,
+  Trophy,
+} from 'lucide-react';
 import { FloatingParticles } from './FloatingParticles';
 import { GameCard } from './GameCard';
 import type { GameDefinition } from '../types';
@@ -39,6 +51,12 @@ const SpeedRacer = dynamic(() => import('./games/SpeedRacer').then(m => ({ defau
 const TowerBlock = dynamic(() => import('./games/TowerBlock').then(m => ({ default: m.TowerBlock })), { ssr: false });
 const TreasurePirate = dynamic(() => import('./games/TreasurePirate').then(m => ({ default: m.TreasurePirate })), { ssr: false });
 const MathDuel = dynamic(() => import('./games/MathDuel').then(m => ({ default: m.MathDuel })), { ssr: false });
+const PenaltyShootout = dynamic(() => import('./games/PenaltyShootout').then(m => ({ default: m.PenaltyShootout })), { ssr: false });
+const PotionLab = dynamic(() => import('./games/PotionLab').then(m => ({ default: m.PotionLab })), { ssr: false });
+const DinoRunner = dynamic(() => import('./games/DinoRunner').then(m => ({ default: m.DinoRunner })), { ssr: false });
+const MeteorDefense = dynamic(() => import('./games/MeteorDefense').then(m => ({ default: m.MeteorDefense })), { ssr: false });
+const SecretAgent = dynamic(() => import('./games/SecretAgent').then(m => ({ default: m.SecretAgent })), { ssr: false });
+const GeometryArcher = dynamic(() => import('./games/GeometryArcher').then(m => ({ default: m.GeometryArcher })), { ssr: false });
 
 export { FloatingParticles, GameCard };
 export type {
@@ -256,5 +274,71 @@ export const games: GameDefinition[] = [
     color: 'from-amber-500 to-rose-500',
     icon: Swords,
     component: MathDuel,
+  },
+  {
+    id: 20,
+    title: 'Penaltı Şampiyonu',
+    description: 'İşlemi çöz, doğru köşeye şut çek ve kaleciyi ters köşeye yatır!',
+    grade: '5-8',
+    rating: 5.0,
+    difficulty: 'Kolay',
+    color: 'from-emerald-500 to-green-600',
+    icon: Trophy,
+    component: PenaltyShootout,
+  },
+  {
+    id: 21,
+    title: 'İksir Laboratuvarı',
+    description: 'Büyülü tarifteki kesir ve oranları hesapla, doğru iksiri kazana dök!',
+    grade: '5-8',
+    rating: 4.9,
+    difficulty: 'Orta',
+    color: 'from-purple-500 to-fuchsia-600',
+    icon: FlaskConical,
+    component: PotionLab,
+  },
+  {
+    id: 22,
+    title: 'Dinozor Macerası',
+    description: 'T-Rex ile engellerin üzerinden zıpla, altın dinozor yumurtalarını topla!',
+    grade: '5-8',
+    rating: 4.9,
+    difficulty: 'Kolay',
+    color: 'from-lime-500 to-emerald-600',
+    icon: Footprints,
+    component: DinoRunner,
+  },
+  {
+    id: 23,
+    title: 'Meteor Savunması',
+    description: 'Uzay üssüne yaklaşan alevli meteorları doğru lazer frekansıyla patlat!',
+    grade: '5-8',
+    rating: 4.9,
+    difficulty: 'Orta',
+    color: 'from-orange-500 to-red-600',
+    icon: Shield,
+    component: MeteorDefense,
+  },
+  {
+    id: 24,
+    title: 'Gizli Ajan: Kasa Şifresi',
+    description: 'İpuçlarını ve işlem zincirlerini takip et, elmas kasasının şifresini kır!',
+    grade: '5-8',
+    rating: 4.9,
+    difficulty: 'Orta',
+    color: 'from-amber-500 to-indigo-600',
+    icon: KeyRound,
+    component: SecretAgent,
+  },
+  {
+    id: 25,
+    title: 'Okçu Şampiyonu',
+    description: 'Açı, çevre ve alan hedeflerini tam 12’den vur, altın oku kazan!',
+    grade: '5-8',
+    rating: 4.9,
+    difficulty: 'Orta',
+    color: 'from-teal-500 to-cyan-600',
+    icon: Target,
+    component: GeometryArcher,
   },
 ];

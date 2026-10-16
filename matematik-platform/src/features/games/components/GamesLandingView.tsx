@@ -106,7 +106,7 @@ export function GamesLandingView({
           >
             <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-emerald-500/30 bg-emerald-50/80 dark:bg-emerald-950/40 px-3.5 py-1 text-xs font-bold text-emerald-700 dark:text-emerald-300 backdrop-blur-md shadow-xs">
               <Sparkles className="h-3.5 w-3.5 text-emerald-600 dark:text-emerald-400" />
-              <span>19 Eğlenceli Matematik Oyunu · Puan Topla & Yarış</span>
+              <span>{games.length} Eğlenceli Matematik Oyunu · Puan Topla & Yarış</span>
             </div>
             <h1 className="text-3xl sm:text-5xl font-black text-primary font-display mb-2">
               Matematik Oyun Dünyası
