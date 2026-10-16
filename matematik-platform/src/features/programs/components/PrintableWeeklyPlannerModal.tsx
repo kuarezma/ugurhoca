@@ -337,7 +337,7 @@ export function PrintableWeeklyPlannerModal({
 
                     {/* Çözülen Soru (Boş doldurma kutusu) */}
                     <td className="border border-slate-300 dark:border-slate-700 print:border-black px-3 py-2 text-center">
-                      <div className="h-6 w-full rounded border border-dashed border-slate-300 dark:border-slate-600 print:border-black flex items-center justify-center text-[10px] text-slate-300 print:text-slate-400">
+                      <div className="h-6 w-full rounded border border-dashed border-slate-300 dark:border-slate-600 print:border-black flex items-center justify-center text-[10px] text-secondary dark:text-slate-400 print:text-slate-400">
                         [ _____ ]
                       </div>
                     </td>

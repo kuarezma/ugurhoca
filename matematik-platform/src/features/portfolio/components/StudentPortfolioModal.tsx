@@ -135,7 +135,7 @@ export function StudentPortfolioModal({
             <button
               type="button"
               onClick={handlePrint}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 text-slate-200 text-xs font-bold transition"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-surface-2 hover:bg-surface-3 dark:bg-white/10 dark:hover:bg-white/20 text-primary dark:text-slate-200 text-xs font-bold transition"
               title="A4 Rapor Olarak Yazdır / PDF İndir"
             >
               <Printer className="w-3.5 h-3.5" />
@@ -146,7 +146,7 @@ export function StudentPortfolioModal({
               type="button"
               onClick={onClose}
               aria-label="Kapat"
-              className="flex h-9 w-9 items-center justify-center rounded-xl text-slate-400 hover:bg-white/10 hover:text-white transition"
+              className="flex h-9 w-9 items-center justify-center rounded-xl text-secondary hover:text-primary dark:text-slate-400 dark:hover:text-white hover:bg-surface-2 dark:hover:bg-white/10 transition"
             >
               <X className="h-5 w-5" />
             </button>
@@ -177,7 +177,7 @@ export function StudentPortfolioModal({
                 className={`px-3 py-1 rounded-xl text-xs font-semibold whitespace-nowrap transition ${
                   activeCategory === cat.id
                     ? 'bg-brand-primary shadow-sm text-slate-950 dark:text-slate-950'
-                    : 'bg-white/5 text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                    : 'bg-surface-2 dark:bg-white/5 text-secondary dark:text-slate-400 hover:text-primary dark:hover:text-white hover:bg-surface-3'
                 }`}
               >
                 {cat.label}
@@ -259,10 +259,10 @@ export function StudentPortfolioModal({
         {/* Çalışma Listesi */}
         <div className="flex-1 overflow-y-auto p-4 sm:p-5 space-y-4 print:p-6 print:space-y-6">
           {filteredItems.length === 0 ? (
-            <div className="p-8 text-center rounded-2xl border border-dashed border-white/10">
-              <BookOpen className="w-8 h-8 text-slate-500 mx-auto mb-2" />
-              <p className="text-sm font-semibold text-slate-300">Bu kategoride henüz bir portfolyo çalışması yok</p>
-              <p className="text-xs text-slate-500 mt-1">
+            <div className="p-8 text-center rounded-2xl border border-dashed border-default dark:border-white/10">
+              <BookOpen className="w-8 h-8 text-slate-400 mx-auto mb-2" />
+              <p className="text-sm font-semibold text-primary dark:text-slate-300">Bu kategoride henüz bir portfolyo çalışması yok</p>
+              <p className="text-xs text-secondary dark:text-slate-400 mt-1">
                 Yukarıdaki &quot;Yeni Çalışma Ekle&quot; butonuna basarak ilk matematik çalışmanızı kaydedebilirsiniz.
               </p>
             </div>
@@ -270,16 +270,16 @@ export function StudentPortfolioModal({
             filteredItems.map((item) => (
               <div
                 key={item.id}
-                className="p-4 rounded-2xl bg-white/5 border border-white/10 space-y-3 print:bg-slate-50 print:border-slate-300 print:text-black"
+                className="p-4 rounded-2xl bg-surface-2/60 dark:bg-white/5 border border-default dark:border-white/10 space-y-3 print:bg-slate-50 print:border-slate-300 print:text-black"
               >
                 <div className="flex items-start justify-between gap-3">
                   <div>
                     <div className="flex items-center gap-2 mb-1">
-                      <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-indigo-500/20 text-indigo-300 print:border print:border-indigo-300">
+                      <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-indigo-500/20 text-indigo-800 dark:text-indigo-300 print:border print:border-indigo-300">
                         {item.topic}
                       </span>
                       {item.score !== undefined && (
-                        <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500/20 text-emerald-300 flex items-center gap-1">
+                        <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500/20 text-emerald-800 dark:text-emerald-300 flex items-center gap-1">
                           <Star className="w-3 h-3 text-accent-success-ink fill-current" /> {' '}
                           {item.score} Puan
                         </span>
@@ -303,21 +303,21 @@ export function StudentPortfolioModal({
 
                 {/* Öğrenci Yansıması */}
                 <div className="p-3 rounded-xl bg-slate-100/60 dark:bg-slate-950/40 border border-slate-200 dark:border-white/5 space-y-1 print:bg-white print:border-slate-200">
-                  <p className="text-[10px] font-bold text-indigo-300 uppercase tracking-wider flex items-center gap-1">
+                  <p className="text-[10px] font-bold text-indigo-800 dark:text-indigo-300 uppercase tracking-wider flex items-center gap-1">
                     <BookOpen className="w-3 h-3" /> Öğrenci Öz-Değerlendirmesi
                   </p>
-                  <p className="text-xs text-slate-300 italic print:text-slate-800 leading-relaxed">
+                  <p className="text-xs text-secondary dark:text-slate-300 italic print:text-slate-800 leading-relaxed">
                     &quot;{item.studentReflection}&quot;
                   </p>
                 </div>
 
                 {/* Öğretmen Geri Bildirimi */}
                 {item.teacherFeedback && (
-                  <div className="p-3 rounded-xl bg-emerald-950/30 border border-emerald-500/20 space-y-1 print:bg-emerald-50 print:border-emerald-200">
+                  <div className="p-3 rounded-xl bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-500/30 dark:border-emerald-500/20 space-y-1 print:bg-emerald-50 print:border-emerald-200">
                     <p className="text-[10px] font-bold text-accent-success-ink uppercase tracking-wider flex items-center gap-1">
                       <Award className="w-3 h-3" /> Uğur Hoca&apos;nın Pedagojik Değerlendirmesi
                     </p>
-                    <p className="text-xs text-emerald-200 print:text-emerald-900 leading-relaxed">
+                    <p className="text-xs text-emerald-900 dark:text-emerald-200 print:text-emerald-900 leading-relaxed">
                       {item.teacherFeedback}
                     </p>
                   </div>
@@ -329,7 +329,7 @@ export function StudentPortfolioModal({
                     {item.tags.map((tag) => (
                       <span
                         key={tag}
-                        className="px-2 py-0.5 rounded-lg bg-white/5 border border-white/5 text-[10px] text-slate-400 print:text-slate-600 print:border-slate-300"
+                        className="px-2 py-0.5 rounded-lg bg-surface-2 dark:bg-white/5 border border-default dark:border-white/5 text-[10px] text-secondary dark:text-slate-400 print:text-slate-600 print:border-slate-300"
                       >
                         #{tag}
                       </span>

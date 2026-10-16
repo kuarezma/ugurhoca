@@ -114,7 +114,7 @@ export function UserDataBackupModal({
         }`}
       >
         {/* Başlık */}
-        <div className="flex items-center justify-between pb-4 border-b border-white/10 mb-5">
+        <div className="flex items-center justify-between pb-4 border-b border-default dark:border-white/10 mb-5">
           <div className="flex items-center gap-3">
             <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-indigo-500/20 text-indigo-400">
               <Database className="h-5 w-5" />
@@ -131,7 +131,7 @@ export function UserDataBackupModal({
             type="button"
             onClick={onClose}
             aria-label="Pencereyi kapat"
-            className="rounded-xl p-1.5 text-slate-400 hover:text-white hover:bg-white/10 transition"
+            className="rounded-xl p-1.5 text-secondary hover:text-primary dark:text-slate-400 dark:hover:text-white hover:bg-surface-2 dark:hover:bg-white/10 transition"
           >
             <X className="h-5 w-5" />
           </button>

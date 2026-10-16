@@ -1443,7 +1443,7 @@ export default function TestsPage({
 
               {/* Cevaba Güven Derecesi Seçimi (Metakognisyon) */}
               {selectedAnswer !== null && (
-                <div className="flex flex-wrap items-center justify-between gap-2 p-3 rounded-2xl bg-white/5 border border-white/10 text-xs animate-fade-in">
+                <div className="flex flex-wrap items-center justify-between gap-2 p-3 rounded-2xl bg-surface-2/70 dark:bg-white/5 border border-default dark:border-white/10 text-xs animate-fade-in">
                   <span className="text-slate-400 font-medium">Cevabından ne kadar eminsin?</span>
                   <div className="flex items-center gap-1.5">
                     <button
@@ -1454,7 +1454,7 @@ export default function TestsPage({
                       className={`px-3 py-1 rounded-xl font-bold transition ${
                         confidenceRatings[currentQuestion] === 'sure'
                           ? 'bg-brand-primary shadow-sm text-slate-950 dark:text-slate-950'
-                          : 'bg-white/10 text-slate-300 hover:bg-white/15'
+                          : 'bg-surface-2 dark:bg-white/10 text-secondary dark:text-slate-300 hover:bg-surface-3 dark:hover:bg-white/15'
                       }`}
                     >
                       🎯 Eminim
@@ -1467,7 +1467,7 @@ export default function TestsPage({
                       className={`px-3 py-1 rounded-xl font-bold transition ${
                         confidenceRatings[currentQuestion] === 'unsure'
                           ? 'bg-brand-primary shadow-sm text-slate-950 dark:text-slate-950'
-                          : 'bg-white/10 text-slate-300 hover:bg-white/15'
+                          : 'bg-surface-2 dark:bg-white/10 text-secondary dark:text-slate-300 hover:bg-surface-3 dark:hover:bg-white/15'
                       }`}
                     >
                       🤔 Kararsızım
@@ -1480,7 +1480,7 @@ export default function TestsPage({
                       className={`px-3 py-1 rounded-xl font-bold transition ${
                         confidenceRatings[currentQuestion] === 'guess'
                           ? 'bg-brand-primary shadow-sm text-slate-950 dark:text-slate-950'
-                          : 'bg-white/10 text-slate-300 hover:bg-white/15'
+                          : 'bg-surface-2 dark:bg-white/10 text-secondary dark:text-slate-300 hover:bg-surface-3 dark:hover:bg-white/15'
                       }`}
                     >
                       🎲 Tahmin Ettim
@@ -1502,7 +1502,7 @@ export default function TestsPage({
               {isSmartboardMode && (
                 <div className="p-4 rounded-2xl bg-amber-500/10 border border-amber-500/30 text-left animate-fade-in">
                   <div className="flex items-center justify-between">
-                    <span className="text-xs font-bold text-amber-300 flex items-center gap-1.5">
+                    <span className="text-xs font-bold text-amber-800 dark:text-amber-300 flex items-center gap-1.5">
                       <MonitorPlay className="w-4 h-4" />
                       <span>Akıllı Tahta: Öğretmen Çözüm Paneli</span>
                     </span>
@@ -1515,13 +1515,13 @@ export default function TestsPage({
                     </button>
                   </div>
                   {showSmartboardSolution && (
-                    <div className="mt-3 pt-3 border-t border-amber-500/20 text-sm text-slate-200 space-y-2">
+                    <div className="mt-3 pt-3 border-t border-amber-500/20 text-sm text-primary dark:text-slate-200 space-y-2">
                       <div className="font-bold text-accent-success-ink">
                         Doğru Cevap: {' '}
                           {String.fromCharCode(65 + question.correct_index)}) {' '}{question.options[question.correct_index]}
                       </div>
                       {question.explanation && (
-                        <div className="text-xs sm:text-sm leading-relaxed text-slate-300 bg-slate-950/60 dark:bg-slate-950/60 p-3 rounded-xl border border-white/5">
+                        <div className="text-xs sm:text-sm leading-relaxed text-secondary dark:text-slate-300 bg-surface-2 dark:bg-slate-950/60 p-3 rounded-xl border border-default dark:border-white/5">
                           <MathText>{question.explanation}</MathText>
                         </div>
                       )}

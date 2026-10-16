@@ -44,7 +44,7 @@ export default function AdminEditDocumentForm({
   return (
     <form onSubmit={onSubmit} className="space-y-5">
       {isWorksheet ? (
-        <div className="rounded-2xl border border-cyan-400/20 bg-cyan-500/10 px-4 py-3 text-sm text-cyan-100">
+        <div className="rounded-2xl border border-cyan-400/20 bg-cyan-500/10 px-4 py-3 text-sm text-cyan-900 dark:text-cyan-100">
           Yaprak test başlığı otomatik sıraya göre verilir.
         </div>
       ) : (

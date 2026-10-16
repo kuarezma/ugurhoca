@@ -153,7 +153,7 @@ export function TeacherQuestionPoolModal({
               className={`px-3 py-1 rounded-lg font-bold transition ${
                 filter === f
                   ? 'bg-brand-primary shadow text-slate-950 dark:text-slate-950'
-                  : 'text-slate-400 hover:text-white hover:bg-white/5'
+                  : 'text-secondary hover:text-primary hover:bg-surface-2 dark:text-slate-400 dark:hover:text-white dark:hover:bg-white/5'
               }`}
             >
               {f === 'all' ? 'Tümü' : f === 'pending' ? 'Bekleyenler' : 'Çözülenler'}
@@ -195,7 +195,7 @@ export function TeacherQuestionPoolModal({
                         👤 {q.student_name}
                       </span>
                       <span className="text-xs text-slate-400">•</span>
-                      <span className="text-xs font-semibold text-slate-300">
+                      <span className="text-xs font-semibold text-secondary dark:text-slate-300">
                         {q.topic}
                       </span>
                       <span
@@ -227,7 +227,7 @@ export function TeacherQuestionPoolModal({
                   </div>
 
                   {/* Soru Metni */}
-                  <p className="text-xs sm:text-sm font-medium leading-relaxed text-slate-200 mb-3 whitespace-pre-wrap">
+                  <p className="text-xs sm:text-sm font-medium leading-relaxed text-primary dark:text-slate-200 mb-3 whitespace-pre-wrap">
                     {q.question_text}
                   </p>
 
@@ -245,7 +245,7 @@ export function TeacherQuestionPoolModal({
                   )}
 
                   {/* Aksiyon Butonları */}
-                  <div className="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-white/5">
+                  <div className="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-subtle dark:border-white/5">
                     <span className="text-[10px] text-slate-400">
                       {new Date(q.created_at).toLocaleTimeString('tr-TR', {
                         hour: '2-digit',

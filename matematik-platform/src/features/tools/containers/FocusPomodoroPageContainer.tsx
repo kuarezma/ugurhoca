@@ -452,7 +452,7 @@ export function FocusPomodoroPageContainer() {
                   </>
                 ) : (
                   <>
-                    <Play className="h-5 w-5 fill-white" />
+                    <Play className="h-5 w-5 fill-current" />
                     <span>{timeLeft < totalDuration ? "Devam Et" : "Başlat"}</span>
                   </>
                 )}

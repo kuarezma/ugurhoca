@@ -31,20 +31,20 @@ export default function AdminNotificationsPanel({
   const incomingNotifications = notifications.filter(isIncomingAdminMessage);
 
   return (
-    <div className="fixed top-20 right-4 left-4 sm:left-auto sm:w-[450px] z-50 max-h-[75vh] flex flex-col rounded-3xl border border-slate-700/60 bg-[#0f172a]/95 backdrop-blur-2xl shadow-[0_10px_40px_rgba(0,0,0,0.5)] animate-fade-up">
-      <div className="p-5 border-b border-white/5 bg-gradient-to-r from-indigo-500/10 to-purple-500/10 flex items-center justify-between shadow-sm">
+    <div className="fixed top-20 right-4 left-4 sm:left-auto sm:w-[450px] z-50 max-h-[75vh] flex flex-col rounded-3xl border border-default dark:border-slate-700/60 bg-surface-1/95 dark:bg-[#0f172a]/95 backdrop-blur-2xl shadow-[0_10px_40px_rgba(0,0,0,0.5)] animate-fade-up">
+      <div className="p-5 border-b border-subtle dark:border-white/5 bg-gradient-to-r from-indigo-500/10 to-purple-500/10 flex items-center justify-between shadow-sm">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-2xl flex items-center justify-center shadow-lg shadow-indigo-500/20 bg-brand-secondary">
             <BellRing className="w-5 h-5 text-slate-950 dark:text-slate-950" />
           </div>
           <div>
-            <h3 className="text-white dark:text-white font-bold text-lg">Bildirimler</h3>
-            <p className="text-indigo-200/60 text-xs font-medium">
+            <h3 className="text-primary font-bold text-lg">Bildirimler</h3>
+            <p className="text-indigo-700 dark:text-indigo-200/60 text-xs font-medium">
               Öğrenci mesajları ve istekler
             </p>
           </div>
         </div>
-        <div className="bg-indigo-500/20 border border-indigo-500/30 px-3 py-1 rounded-full text-indigo-300 text-xs font-bold shadow-inner">
+        <div className="bg-indigo-500/20 border border-indigo-500/30 px-3 py-1 rounded-full text-indigo-800 dark:text-indigo-300 text-xs font-bold shadow-inner">
           {unreadCount} Okunmamış
         </div>
       </div>
@@ -53,7 +53,7 @@ export default function AdminNotificationsPanel({
         {incomingNotifications.length === 0 ? (
           <div className="flex flex-col items-center justify-center p-12 text-center opacity-70">
             <BellOff className="w-16 h-16 text-slate-500 mb-4" />
-            <p className="text-slate-300 font-medium text-lg">Tertemiz!</p>
+            <p className="text-secondary font-medium text-lg">Tertemiz!</p>
             <p className="text-slate-500 text-sm mt-1">
               Sistemde mesaj veya bildirim bulunmuyor.
             </p>
@@ -81,7 +81,7 @@ export default function AdminNotificationsPanel({
                   onClick={() => onSelectNotification(notification)}
                   className={`relative w-full text-left p-4 rounded-2xl transition-all duration-300 border ${
                     !isNew
-                      ? 'bg-slate-800/10 border-transparent hover:bg-slate-800/40 text-slate-400'
+                      ? 'bg-surface-2 hover:bg-surface-3 dark:bg-slate-800/10 dark:hover:bg-slate-800/40 text-secondary'
                       : 'bg-indigo-500/5 hover:bg-indigo-500/10 border-indigo-500/20 shadow-sm'
                   }`}
                 >
@@ -93,16 +93,16 @@ export default function AdminNotificationsPanel({
                     <div
                       className={`w-12 h-12 rounded-2xl flex items-center justify-center flex-shrink-0 border shadow-inner ${
                         !isNew
-                          ? 'bg-slate-800 border-slate-700/50 text-slate-500'
+                          ? 'bg-surface-2 dark:bg-slate-800 border-default dark:border-slate-700/50 text-tertiary'
                           : isReply
                             ? 'bg-emerald-500/20 border-emerald-500/30 text-accent-success-ink shadow-emerald-500/10'
                             : isReadReceipt
-                              ? 'bg-blue-500/20 border-blue-500/30 text-blue-400 shadow-blue-500/10'
+                              ? 'bg-blue-500/20 border-blue-500/30 text-blue-600 dark:text-blue-400 shadow-blue-500/10'
                               : isSubmission
-                                ? 'bg-cyan-500/20 border-cyan-500/30 text-cyan-400 shadow-cyan-500/10'
+                                ? 'bg-cyan-500/20 border-cyan-500/30 text-cyan-600 dark:text-cyan-400 shadow-cyan-500/10'
                                 : isMessage
-                                  ? 'bg-purple-500/20 border-purple-500/30 text-purple-400 shadow-purple-500/10'
-                                  : 'bg-indigo-500/20 border-indigo-500/30 text-indigo-400 shadow-indigo-500/10'
+                                  ? 'bg-purple-500/20 border-purple-500/30 text-purple-600 dark:text-purple-400 shadow-purple-500/10'
+                                  : 'bg-indigo-500/20 border-indigo-500/30 text-indigo-600 dark:text-indigo-400 shadow-indigo-500/10'
                       }`}
                     >
                       {isReadReceipt ? (
@@ -122,13 +122,13 @@ export default function AdminNotificationsPanel({
                       <div className="flex items-start justify-between gap-3 mb-1">
                         <p
                           className={`font-semibold text-sm truncate ${
-                            !isNew ? 'text-slate-400' : 'text-white'
+                            !isNew ? 'text-secondary' : 'text-primary'
                           }`}
                         >
                           {notification.title}
                         </p>
                         {isNew ? (
-                          <span className="px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 text-[10px] font-bold mt-0.5 shadow-sm border border-amber-500/10">
+                          <span className="px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-800 dark:text-amber-300 text-[10px] font-bold mt-0.5 shadow-sm border border-amber-500/10">
                             Yeni
                           </span>
                         ) : (
@@ -139,13 +139,13 @@ export default function AdminNotificationsPanel({
                       </div>
                       <p
                         className={`text-xs line-clamp-2 leading-relaxed ${
-                          !isNew ? 'text-slate-500' : 'text-slate-300'
+                          !isNew ? 'text-tertiary' : 'text-secondary'
                         }`}
                       >
                         {getNotificationBody(notification)}
                       </p>
                       {isNew && (
-                        <span className="text-[10px] text-indigo-400/80 font-medium whitespace-nowrap mt-2 block">
+                        <span className="text-[10px] text-indigo-600 dark:text-indigo-400/80 font-medium whitespace-nowrap mt-2 block">
                           {formatRelativeTime(notification.created_at)}
                         </span>
                       )}

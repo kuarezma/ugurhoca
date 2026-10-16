@@ -67,7 +67,7 @@ export default function AdminSubmissionsModal({
         tabIndex={-1}
         className="relative w-full max-w-4xl max-h-[90vh] glass rounded-3xl p-6 sm:p-8 flex flex-col overflow-hidden animate-fade-up"
       >
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 pb-4 border-b border-white/10">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 pb-4 border-b border-default dark:border-white/10">
           <div className="flex items-center gap-4">
             <div className="w-12 h-12 bg-indigo-500 rounded-2xl flex items-center justify-center shrink-0">
               <ClipboardList className="w-6 h-6 text-white dark:text-white" />
@@ -76,7 +76,7 @@ export default function AdminSubmissionsModal({
               <h2 className="text-2xl font-bold text-primary leading-tight">
                 {assignment.title}
               </h2>
-              <div className="flex items-center gap-2 text-slate-400 text-xs sm:text-sm mt-0.5">
+              <div className="flex items-center gap-2 text-secondary text-xs sm:text-sm mt-0.5">
                 <span>Teslim Edilen: {submissions.length}</span>
                 <span>•</span>
                 <span className="text-accent-success-ink font-medium">
@@ -88,14 +88,14 @@ export default function AdminSubmissionsModal({
 
           <div className="flex items-center gap-2 self-end sm:self-center">
             {submissions.length > 0 && (
-              <div className="flex items-center bg-white/5 p-1 rounded-xl border border-white/10">
+              <div className="flex items-center bg-surface-2 dark:bg-white/5 p-1 rounded-xl border border-default dark:border-white/10">
                 <button
                   type="button"
                   onClick={() => setViewMode('list')}
                   className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
                     viewMode === 'list'
                       ? 'bg-brand-primary shadow-sm text-slate-950 dark:text-slate-950'
-                      : 'text-slate-400 hover:text-white'
+                      : 'text-secondary hover:text-primary dark:text-slate-400 dark:hover:text-white'
                   }`}
                 >
                   <List className="w-3.5 h-3.5" />
@@ -107,7 +107,7 @@ export default function AdminSubmissionsModal({
                   className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
                     viewMode === 'speedGrader'
                       ? 'font-bold shadow-sm bg-brand-primary text-slate-950 dark:text-slate-950'
-                      : 'text-slate-400 hover:text-white'
+                      : 'text-secondary hover:text-primary dark:text-slate-400 dark:hover:text-white'
                   }`}
                 >
                   <Zap className="w-3.5 h-3.5" />
@@ -120,7 +120,7 @@ export default function AdminSubmissionsModal({
               type="button"
               onClick={onClose}
               aria-label="Kapat"
-              className="p-2 text-slate-400 hover:text-white transition-colors"
+              className="p-2 text-secondary hover:text-primary dark:text-slate-400 dark:hover:text-white transition-colors"
             >
               <X className="w-6 h-6" />
             </button>
@@ -128,16 +128,16 @@ export default function AdminSubmissionsModal({
         </div>
 
         {submissions.length === 0 ? (
-          <div className="text-center py-20 bg-white/5 rounded-3xl border border-white/5">
-            <Clock className="w-12 h-12 mx-auto mb-4 text-slate-600" />
-            <p className="text-slate-400">Henüz teslimat yapılmadı</p>
+          <div className="text-center py-20 bg-surface-2/60 dark:bg-white/5 rounded-3xl border border-default dark:border-white/5">
+            <Clock className="w-12 h-12 mx-auto mb-4 text-slate-400 dark:text-slate-600" />
+            <p className="text-secondary dark:text-slate-400">Henüz teslimat yapılmadı</p>
           </div>
         ) : viewMode === 'speedGrader' ? (
           <div className="flex-1 flex flex-col min-h-0 space-y-4">
             {/* Speed Grader Controller */}
-            <div className="flex items-center justify-between bg-white/5 border border-white/10 rounded-2xl p-3 px-4">
+            <div className="flex items-center justify-between bg-surface-2 dark:bg-white/5 border border-default dark:border-white/10 rounded-2xl p-3 px-4">
               <div className="flex items-center gap-3">
-                <span className="text-xs font-bold text-amber-400 uppercase tracking-wider">
+                <span className="text-xs font-bold text-amber-700 dark:text-amber-400 uppercase tracking-wider">
                   Öğrenci {currentIndex + 1} / {submissions.length}
                 </span>
                 <span className="text-sm font-semibold text-primary">
@@ -187,8 +187,8 @@ export default function AdminSubmissionsModal({
                       isSelected
                         ? 'bg-brand-primary font-bold ring-2 ring-brand-primary text-slate-950 dark:text-slate-950'
                         : isGraded
-                          ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 hover:bg-emerald-500/30'
-                          : 'bg-white/5 text-slate-400 border border-white/10 hover:bg-white/10 hover:text-white'
+                          ? 'bg-emerald-100 dark:bg-emerald-500/20 text-emerald-900 dark:text-emerald-300 border border-emerald-500/40 dark:border-emerald-500/30'
+                          : 'bg-surface-2 dark:bg-white/5 text-secondary border border-default dark:border-white/10 hover:bg-surface-3 dark:hover:bg-white/10 hover:text-primary dark:hover:text-white'
                     }`}
                   >
                     {idx + 1}. {sub.student_name || 'Öğrenci'}

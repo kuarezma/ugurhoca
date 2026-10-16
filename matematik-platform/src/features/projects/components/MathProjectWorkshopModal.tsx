@@ -89,7 +89,7 @@ export function MathProjectWorkshopModal({
             type="button"
             onClick={onClose}
             aria-label="Kapat"
-            className="flex h-9 w-9 items-center justify-center rounded-xl text-slate-400 hover:bg-white/10 hover:text-white transition"
+            className="flex h-9 w-9 items-center justify-center rounded-xl text-secondary hover:text-primary dark:text-slate-400 dark:hover:text-white hover:bg-surface-2 dark:hover:bg-white/10 transition"
           >
             <X className="h-5 w-5" />
           </button>
@@ -116,15 +116,15 @@ export function MathProjectWorkshopModal({
                   className={`w-full text-left p-3 rounded-2xl border transition ${
                     isSelected
                       ? 'border-brand-primary/60 bg-brand-primary/10 shadow-lg'
-                      : 'border-white/5 bg-white/5 hover:bg-white/10'
+                      : 'border-default dark:border-white/5 bg-surface-2 dark:bg-white/5 hover:bg-surface-3 dark:hover:bg-white/10'
                   }`}
                 >
                   <div className="flex items-center justify-between text-[10px] text-slate-400 mb-1">
-                    <span className="font-bold text-amber-400">{proj.grade}. Sınıf</span>
-                    <span className="px-1.5 py-0.5 rounded bg-white/5">{proj.difficulty}</span>
+                    <span className="font-bold text-amber-500 dark:text-amber-400">{proj.grade}. Sınıf</span>
+                    <span className="px-1.5 py-0.5 rounded bg-surface-2 dark:bg-white/5">{proj.difficulty}</span>
                   </div>
                   <h4 className="text-xs font-bold text-slate-900 dark:text-white leading-snug line-clamp-2">{proj.title}</h4>
-                  <div className="flex items-center justify-between text-[11px] text-slate-400 mt-2 pt-2 border-t border-white/5">
+                  <div className="flex items-center justify-between text-[11px] text-slate-400 mt-2 pt-2 border-t border-default dark:border-white/5">
                     <span>{proj.durationWeeks} Hafta</span>
                     <span className="text-accent-success-ink font-semibold">{pCount}/{proj.milestones.length} Aşama</span>
                   </div>
@@ -185,7 +185,7 @@ export function MathProjectWorkshopModal({
                       className={`w-full flex items-start gap-3 p-3 rounded-xl border text-left transition ${
                         isDone
                           ? 'border-emerald-500/40 bg-emerald-500/10'
-                          : 'border-white/5 bg-white/5 hover:bg-white/10'
+                          : 'border-default dark:border-white/5 bg-surface-2 dark:bg-white/5 hover:bg-surface-3 dark:hover:bg-white/10'
                       }`}
                     >
                       <div

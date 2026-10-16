@@ -294,7 +294,7 @@ export default function AdminSubmissionReviewCard({
                     className={`w-5 h-5 transition-colors ${
                       isFilled
                         ? "text-amber-400 fill-amber-400"
-                        : "text-slate-300 dark:text-slate-600"
+                        : "text-slate-400 dark:text-slate-600"
                     }`}
                   />
                 </button>

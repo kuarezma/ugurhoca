@@ -38,11 +38,11 @@ export default function AdminQuestionImportFields({
           <section className="rounded-2xl border border-cyan-500/30 bg-cyan-500/10 p-5">
             <div className="mb-4 flex items-start gap-3">
               <div className="rounded-xl bg-cyan-400/15 p-3">
-                <FileArchive className="h-5 w-5 text-cyan-300" />
+                <FileArchive className="h-5 w-5 text-cyan-800 dark:text-cyan-300" />
               </div>
               <div>
                 <h3 className="font-semibold text-primary">PDF/Drive ZIP yükle</h3>
-                <p className="mt-1 text-sm leading-6 text-slate-400">
+                <p className="mt-1 text-sm leading-6 text-secondary dark:text-slate-400">
                   1. Converter app ile PDF&apos;yi işle
                   <br />
                   2. Oluşan ZIP&apos;i burada yükle
@@ -153,8 +153,8 @@ export default function AdminQuestionImportFields({
                 <span
                   className={`rounded-full px-3 py-1 text-xs font-semibold ${
                     isBundle
-                      ? 'bg-cyan-500/15 text-cyan-300'
-                      : 'bg-emerald-500/15 text-emerald-300'
+                      ? 'bg-cyan-500/15 text-cyan-800 dark:text-cyan-300'
+                      : 'bg-emerald-500/15 text-emerald-800 dark:text-emerald-300'
                   }`}
                 >
                   {isBundle ? 'ZIP bundle' : 'Excel'}
@@ -167,10 +167,10 @@ export default function AdminQuestionImportFields({
 
             {importResult.errors.length > 0 && (
               <div className="rounded-xl border border-red-500/30 bg-red-500/10 p-4">
-                <p className="mb-2 text-sm font-medium text-red-400">
+                <p className="mb-2 text-sm font-medium text-red-700 dark:text-red-400">
                   {importResult.errors.length} hata bulundu:
                 </p>
-                <ul className="space-y-1 text-xs text-red-300">
+                <ul className="space-y-1 text-xs text-red-700 dark:text-red-300">
                   {importResult.errors.map((error, index) => (
                     <li key={index}>
                       Satır {error.row}: {error.message}
@@ -195,7 +195,7 @@ export default function AdminQuestionImportFields({
                   >
                     <div className="flex items-start justify-between gap-3">
                       <div className="min-w-0 flex-1">
-                        <p className="truncate text-sm font-medium text-slate-100">
+                        <p className="truncate text-sm font-medium text-primary dark:text-slate-100">
                           {index + 1}. {question.question}
                         </p>
                         <p className="mt-2 text-xs text-accent-success-ink">
@@ -204,7 +204,7 @@ export default function AdminQuestionImportFields({
                       </div>
                       {(questionPreview || optionPreviewCount > 0) && (
                         <div className="flex shrink-0 items-center gap-2 rounded-full bg-surface-3 dark:bg-slate-900/60 px-3 py-1 text-[11px] text-secondary dark:text-slate-300">
-                          <ImageIcon className="h-3.5 w-3.5 text-cyan-300" />
+                          <ImageIcon className="h-3.5 w-3.5 text-cyan-800 dark:text-cyan-300" />
                           {questionPreview ? 'Soru görseli' : `${optionPreviewCount} şık görseli`}
                         </div>
                       )}

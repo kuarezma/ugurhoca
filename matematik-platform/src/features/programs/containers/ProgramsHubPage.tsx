@@ -19,6 +19,7 @@ import {
 } from 'lucide-react';
 import dynamic from 'next/dynamic';
 import { PenTool, Mic } from 'lucide-react';
+import { useTheme } from '@/components/ThemeProvider';
 
 const FormulaFlashcardsModal = dynamic(
   () =>
@@ -93,6 +94,8 @@ type ProgramTool = {
 };
 
 export default function ProgramsHubPage() {
+  const { theme } = useTheme();
+  const isLight = theme === 'light';
   const [isFlashcardsOpen, setIsFlashcardsOpen] = useState(false);
   const [isCalculatorOpen, setIsCalculatorOpen] = useState(false);
   const [isChecklistOpen, setIsChecklistOpen] = useState(false);
@@ -414,6 +417,7 @@ export default function ProgramsHubPage() {
       <MathGlossaryModal
         isOpen={isGlossaryOpen}
         onClose={() => setIsGlossaryOpen(false)}
+        isLight={isLight}
       />
       <MathProjectWorkshopModal
         isOpen={isProjectWorkshopOpen}
@@ -422,6 +426,7 @@ export default function ProgramsHubPage() {
       <VisualMathProofsModal
         isOpen={isProofsOpen}
         onClose={() => setIsProofsOpen(false)}
+        isLight={isLight}
       />
       <StudentQuestionAuthoringModal
         isOpen={isAuthoringOpen}

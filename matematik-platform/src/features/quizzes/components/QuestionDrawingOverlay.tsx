@@ -274,7 +274,7 @@ export function QuestionDrawingOverlay({
       />
 
       {/* Yüzen Kontrol Çubuğu (Floating Toolbar) */}
-      <div className="absolute top-3 right-3 z-40 pointer-events-auto flex flex-wrap items-center gap-1.5 rounded-2xl border border-white/20 bg-slate-900/90 dark:bg-slate-900/90 p-1.5 shadow-2xl backdrop-blur-xl transition-all">
+      <div className="absolute top-3 right-3 z-40 pointer-events-auto flex flex-wrap items-center gap-1.5 rounded-2xl border border-default dark:border-white/20 bg-surface-1/95 dark:bg-slate-900/90 p-1.5 shadow-2xl backdrop-blur-xl transition-all">
         {/* Kalem Modu */}
         <button
           type="button"
@@ -287,7 +287,7 @@ export function QuestionDrawingOverlay({
           className={`flex h-8 w-8 items-center justify-center rounded-xl transition ${
             tool === 'pen' && !isPassthrough
               ? 'bg-brand-primary font-bold shadow-md scale-105 text-slate-950 dark:text-slate-950'
-              : 'text-slate-300 hover:bg-white/10 hover:text-white'
+              : 'text-secondary dark:text-slate-300 hover:bg-surface-2 dark:hover:bg-white/10 hover:text-primary dark:hover:text-white'
           }`}
         >
           <PenTool className="h-4 w-4" />
@@ -305,7 +305,7 @@ export function QuestionDrawingOverlay({
           className={`flex h-8 w-8 items-center justify-center rounded-xl transition ${
             tool === 'highlighter' && !isPassthrough
               ? 'bg-brand-primary text-slate-950 dark:text-slate-950 font-bold shadow-md scale-105'
-              : 'text-slate-300 hover:bg-white/10 hover:text-white'
+              : 'text-secondary dark:text-slate-300 hover:bg-surface-2 dark:hover:bg-white/10 hover:text-primary dark:hover:text-white'
           }`}
         >
           <Highlighter className="h-4 w-4" />
@@ -323,13 +323,13 @@ export function QuestionDrawingOverlay({
           className={`flex h-8 w-8 items-center justify-center rounded-xl transition ${
             tool === 'eraser' && !isPassthrough
               ? 'bg-brand-primary font-bold shadow-md scale-105 text-slate-950 dark:text-slate-950'
-              : 'text-slate-300 hover:bg-white/10 hover:text-white'
+              : 'text-secondary dark:text-slate-300 hover:bg-surface-2 dark:hover:bg-white/10 hover:text-primary dark:hover:text-white'
           }`}
         >
           <Eraser className="h-4 w-4" />
         </button>
 
-        <div className="h-5 w-[1px] bg-white/15 mx-0.5" />
+        <div className="h-5 w-[1px] bg-slate-300 dark:bg-white/15 mx-0.5" />
 
         {/* Renk Seçiciler (Yalnızca Kalem modundayken) */}
         {tool === 'pen' && !isPassthrough && (
@@ -343,13 +343,13 @@ export function QuestionDrawingOverlay({
                 aria-label={`Renk: ${c.label}`}
                 className={`h-5 w-5 rounded-full transition transform ${
                   penColor === c.color
-                    ? 'ring-2 ring-white scale-110 shadow-sm'
+                    ? 'ring-2 ring-indigo-500 dark:ring-white scale-110 shadow-sm'
                     : 'opacity-70 hover:opacity-100 hover:scale-105'
                 }`}
                 style={{ backgroundColor: c.color }}
               />
             ))}
-            <div className="h-5 w-[1px] bg-white/15 mx-0.5" />
+            <div className="h-5 w-[1px] bg-slate-300 dark:bg-white/15 mx-0.5" />
           </div>
         )}
 
@@ -366,7 +366,7 @@ export function QuestionDrawingOverlay({
           className={`flex items-center gap-1 px-2 py-1 rounded-xl text-xs font-semibold transition ${
             isPassthrough
               ? 'bg-brand-primary font-bold shadow-md text-slate-950 dark:text-slate-950'
-              : 'text-slate-300 hover:bg-white/10 hover:text-white'
+              : 'text-secondary dark:text-slate-300 hover:bg-surface-2 dark:hover:bg-white/10 hover:text-primary dark:hover:text-white'
           }`}
         >
           <MousePointer className="h-3.5 w-3.5" />
@@ -382,7 +382,7 @@ export function QuestionDrawingOverlay({
           title="Geri Al"
           aria-label="Geri Al"
           disabled={!canUndo}
-          className="flex h-8 w-8 items-center justify-center rounded-xl text-slate-300 hover:bg-white/10 hover:text-white disabled:opacity-30 disabled:pointer-events-none transition"
+          className="flex h-8 w-8 items-center justify-center rounded-xl text-secondary dark:text-slate-300 hover:bg-surface-2 dark:hover:bg-white/10 hover:text-primary dark:hover:text-white disabled:opacity-30 disabled:pointer-events-none transition"
         >
           <RotateCcw className="h-3.5 w-3.5" />
         </button>
@@ -394,12 +394,12 @@ export function QuestionDrawingOverlay({
           title="Tüm Çizimi Temizle"
           aria-label="Tüm Çizimi Temizle"
           disabled={!hasDrawn}
-          className="flex h-8 w-8 items-center justify-center rounded-xl text-slate-300 hover:bg-rose-500/20 hover:text-rose-300 disabled:opacity-30 disabled:pointer-events-none transition"
+          className="flex h-8 w-8 items-center justify-center rounded-xl text-secondary dark:text-slate-300 hover:bg-rose-500/20 hover:text-rose-600 dark:hover:text-rose-300 disabled:opacity-30 disabled:pointer-events-none transition"
         >
           <Trash2 className="h-3.5 w-3.5" />
         </button>
 
-        <div className="h-5 w-[1px] bg-white/15 mx-0.5" />
+        <div className="h-5 w-[1px] bg-slate-300 dark:bg-white/15 mx-0.5" />
 
         {/* Çizim Katmanını Kapat */}
         <button
@@ -410,7 +410,7 @@ export function QuestionDrawingOverlay({
           }}
           title="Çizim Modundan Çık"
           aria-label="Çizim Modundan Çık"
-          className="flex h-8 w-8 items-center justify-center rounded-xl text-slate-400 hover:bg-rose-500 hover:text-white transition"
+          className="flex h-8 w-8 items-center justify-center rounded-xl text-secondary dark:text-slate-400 hover:bg-rose-500 hover:text-white transition"
         >
           <X className="h-4 w-4" />
         </button>
@@ -418,13 +418,13 @@ export function QuestionDrawingOverlay({
 
       {/* Passthrough Modu Bilgi Rozeti */}
       {isPassthrough && (
-        <div className="absolute bottom-3 left-1/2 -translate-x-1/2 z-40 flex items-center gap-2 rounded-full border border-emerald-500/30 bg-emerald-950/80 px-4 py-1 text-xs font-semibold text-emerald-300 shadow-xl backdrop-blur-md animate-fade-in pointer-events-auto">
+        <div className="absolute bottom-3 left-1/2 -translate-x-1/2 z-40 flex items-center gap-2 rounded-full border border-emerald-500/40 bg-emerald-100 dark:bg-emerald-950/80 px-4 py-1 text-xs font-semibold text-emerald-900 dark:text-emerald-300 shadow-xl backdrop-blur-md animate-fade-in pointer-events-auto">
           <Sparkles className="h-3.5 w-3.5" />
           <span>Şık seçebilirsiniz; çizimleriniz korunuyor.</span>
           <button
             type="button"
             onClick={() => setIsPassthrough(false)}
-            className="ml-1 text-xs font-bold underline hover:text-white"
+            className="ml-1 text-xs font-bold underline hover:text-primary dark:hover:text-white"
           >
             Çizime Dön
           </button>

@@ -219,9 +219,9 @@ export default function AdminUsersTab({
   );
 
   const renderEmptyState = () => (
-    <div className="glass rounded-2xl p-12 text-center border border-white/10">
-      <Users className="w-16 h-16 mx-auto mb-4 text-slate-500" />
-      <p className="text-slate-400">{emptyMessage}</p>
+    <div className="glass rounded-2xl p-12 text-center border border-default dark:border-white/10">
+      <Users className="w-16 h-16 mx-auto mb-4 text-slate-400 dark:text-slate-500" />
+      <p className="text-secondary dark:text-slate-400">{emptyMessage}</p>
       {hasActiveFilters && (
         <button
           onClick={resetFilters}
@@ -352,7 +352,7 @@ export default function AdminUsersTab({
         <div id="admin-student-list-pdf" className="space-y-5">
           {favoriteStudents.length > 0 && studentFilter !== 'favorites' && (
             <section className="rounded-2xl border border-amber-400/20 bg-amber-400/10 p-4">
-              <div className="mb-3 flex items-center gap-2 text-amber-200">
+              <div className="mb-3 flex items-center gap-2 text-amber-900 dark:text-amber-200">
                 <Star className="h-4 w-4 fill-current" />
                 <h3 className="text-sm font-bold">Favori Öğrenciler</h3>
               </div>
@@ -361,12 +361,12 @@ export default function AdminUsersTab({
                   <button
                     key={student.id}
                     onClick={() => onViewProfile(student)}
-                    className="min-w-0 rounded-xl border border-amber-400/20 bg-slate-950/40 px-3 py-2 text-left transition-colors hover:bg-slate-900/70"
+                    className="min-w-0 rounded-xl border border-amber-400/20 bg-surface-1/90 dark:bg-slate-950/40 px-3 py-2 text-left transition-colors hover:bg-surface-2 dark:hover:bg-slate-900/70"
                   >
-                    <p className="truncate text-sm font-semibold text-white">
+                    <p className="truncate text-sm font-semibold text-primary dark:text-white">
                       {student.name || 'İsimsiz'}
                     </p>
-                    <p className="truncate text-xs text-amber-100/70">
+                    <p className="truncate text-xs text-amber-800 dark:text-amber-100/70">
                       {student.grade
                         ? gradeLabel(student.grade)
                         : 'Belirtilmemiş'}

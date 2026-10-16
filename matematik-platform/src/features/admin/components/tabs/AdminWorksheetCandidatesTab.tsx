@@ -52,9 +52,9 @@ const FILTERS: Array<{
 ];
 
 const STATUS_STYLE: Record<string, string> = {
-  approved: "border-emerald-400/30 bg-emerald-500/10 text-emerald-200",
-  pending: "border-amber-400/30 bg-amber-500/10 text-amber-200",
-  rejected: "border-red-400/30 bg-red-500/10 text-red-200",
+  approved: "border-emerald-400/30 bg-emerald-500/10 text-emerald-800 dark:text-emerald-200",
+  pending: "border-amber-400/30 bg-amber-500/10 text-amber-800 dark:text-amber-200",
+  rejected: "border-red-400/30 bg-red-500/10 text-red-800 dark:text-red-200",
 };
 
 const STATUS_LABEL: Record<string, string> = {
@@ -69,7 +69,7 @@ const getSourcePanelStyle = (
 ) => {
   if (!sourceStatus?.configured) {
     return {
-      badge: "border-red-400/20 bg-red-500/10 text-red-200",
+      badge: "border-red-400/20 bg-red-500/10 text-red-800 dark:text-red-200",
       icon: "error" as const,
       panel: "border-red-400/20 bg-red-500/10",
       title: "Tarama kaynakları eksik",
@@ -78,7 +78,7 @@ const getSourcePanelStyle = (
 
   if (unreachableSourceCount > 0) {
     return {
-      badge: "border-amber-400/20 bg-amber-500/10 text-amber-200",
+      badge: "border-amber-400/20 bg-amber-500/10 text-amber-800 dark:text-amber-200",
       icon: "warning" as const,
       panel: "border-amber-400/20 bg-amber-500/10",
       title: "Bazı kaynaklara ulaşılamıyor",
@@ -86,7 +86,7 @@ const getSourcePanelStyle = (
   }
 
   return {
-    badge: "border-emerald-400/20 bg-emerald-500/10 text-emerald-200",
+    badge: "border-emerald-400/20 bg-emerald-500/10 text-emerald-800 dark:text-emerald-200",
     icon: "ok" as const,
     panel: "border-emerald-400/20 bg-emerald-500/10",
     title: "Tarama kaynakları hazır",
@@ -203,7 +203,7 @@ export default function AdminWorksheetCandidatesTab({
       <div className="glass rounded-2xl p-4 sm:p-6">
         <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
           <div>
-            <div className="mb-2 inline-flex items-center gap-2 rounded-full border border-amber-400/20 bg-amber-500/10 px-3 py-1 text-xs font-semibold text-amber-200">
+            <div className="mb-2 inline-flex items-center gap-2 rounded-full border border-amber-400/20 bg-amber-500/10 px-3 py-1 text-xs font-semibold text-amber-800 dark:text-amber-200">
               <FileSearch className="h-3.5 w-3.5" />
               Test Adayları
             </div>
@@ -253,8 +253,8 @@ export default function AdminWorksheetCandidatesTab({
           <div
             className={`mt-4 rounded-xl border px-4 py-3 text-sm ${
               lastWeekScanResult.failures.length > 0
-                ? "border-red-400/20 bg-red-500/10 text-red-100"
-                : "border-amber-400/20 bg-amber-500/10 text-amber-100"
+                ? "border-red-400/20 bg-red-500/10 text-red-900 dark:text-red-100"
+                : "border-amber-400/20 bg-amber-500/10 text-amber-900 dark:text-amber-100"
             }`}
           >
             <div className="flex flex-wrap items-center gap-2">
@@ -287,7 +287,7 @@ export default function AdminWorksheetCandidatesTab({
                   ))}
                 </ul>
                 {lastWeekScanResult.failures.length > 3 && (
-                  <p className="text-xs text-red-100/80">
+                  <p className="text-xs text-red-800 dark:text-red-100/80">
                     İlk 3 hata gösteriliyor.
                   </p>
                 )}
@@ -537,7 +537,7 @@ export default function AdminWorksheetCandidatesTab({
                   </a>
                   {candidate.status === "rejected" ? (
                     <button
-                      className="inline-flex items-center justify-center gap-2 rounded-xl border border-amber-400/20 bg-amber-500/10 px-3 py-2 text-sm font-semibold text-amber-100 transition hover:bg-amber-500/20"
+                      className="inline-flex items-center justify-center gap-2 rounded-xl border border-amber-400/20 bg-amber-500/10 px-3 py-2 text-sm font-semibold text-amber-800 dark:text-amber-100 transition hover:bg-amber-500/20"
                       onClick={() => onUpdateStatus(candidate, "pending")}
                       type="button"
                     >
@@ -546,7 +546,7 @@ export default function AdminWorksheetCandidatesTab({
                     </button>
                   ) : (
                     <button
-                      className="inline-flex items-center justify-center gap-2 rounded-xl border border-red-400/20 bg-red-500/10 px-3 py-2 text-sm font-semibold text-red-100 transition hover:bg-red-500/20 disabled:cursor-not-allowed disabled:opacity-50"
+                      className="inline-flex items-center justify-center gap-2 rounded-xl border border-red-400/20 bg-red-500/10 px-3 py-2 text-sm font-semibold text-red-800 dark:text-red-100 transition hover:bg-red-500/20 disabled:cursor-not-allowed disabled:opacity-50"
                       disabled={
                         candidate.status === "approved" ||
                         approvingCandidateId === candidate.id
@@ -560,7 +560,7 @@ export default function AdminWorksheetCandidatesTab({
                   )}
                   {candidate.status === "pending" && (
                     <button
-                      className="inline-flex items-center justify-center gap-2 rounded-xl border border-emerald-400/20 bg-emerald-500/10 px-3 py-2 text-sm font-semibold text-emerald-100 transition hover:bg-emerald-500/20 disabled:cursor-not-allowed disabled:opacity-50"
+                      className="inline-flex items-center justify-center gap-2 rounded-xl border border-emerald-400/20 bg-emerald-500/10 px-3 py-2 text-sm font-semibold text-emerald-800 dark:text-emerald-100 transition hover:bg-emerald-500/20 disabled:cursor-not-allowed disabled:opacity-50"
                       disabled={
                         !driveConnection?.connected ||
                         approvingCandidateId !== null
@@ -578,7 +578,7 @@ export default function AdminWorksheetCandidatesTab({
                     <>
                       {candidate.drive_file_url && (
                         <a
-                          className="inline-flex items-center justify-center gap-2 rounded-xl border border-sky-400/20 bg-sky-500/10 px-3 py-2 text-sm font-semibold text-sky-100 transition hover:bg-sky-500/20"
+                          className="inline-flex items-center justify-center gap-2 rounded-xl border border-sky-400/20 bg-sky-500/10 px-3 py-2 text-sm font-semibold text-sky-800 dark:text-sky-100 transition hover:bg-sky-500/20"
                           href={candidate.drive_file_url}
                           rel="noreferrer"
                           target="_blank"
@@ -588,7 +588,7 @@ export default function AdminWorksheetCandidatesTab({
                         </a>
                       )}
                       <a
-                        className="inline-flex items-center justify-center gap-2 rounded-xl border border-emerald-400/20 bg-emerald-500/10 px-3 py-2 text-sm font-semibold text-emerald-100 transition hover:bg-emerald-500/20"
+                        className="inline-flex items-center justify-center gap-2 rounded-xl border border-emerald-400/20 bg-emerald-500/10 px-3 py-2 text-sm font-semibold text-emerald-800 dark:text-emerald-100 transition hover:bg-emerald-500/20"
                         href={getWorksheetContentHref(candidate)}
                         target="_blank"
                       >

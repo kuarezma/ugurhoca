@@ -73,7 +73,7 @@ export function AssignmentSubmissionModal({
           type="button"
           onClick={onClose}
           aria-label="Kapat"
-          className="absolute right-4 top-4 p-2 text-slate-400 hover:text-white"
+          className="absolute right-4 top-4 p-2 text-secondary hover:text-primary dark:text-slate-400 dark:hover:text-white rounded-xl transition hover:bg-surface-2 dark:hover:bg-white/10"
         >
           <X className="h-6 w-6" />
         </button>
@@ -168,7 +168,7 @@ export function AssignmentSubmissionModal({
                 placeholder="Ödevle ilgili eklemek istediğin bir şey var mı?"
                 value={comment}
                 onChange={(e) => onCommentChange(e.target.value)}
-                className="h-24 w-full resize-none rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-slate-900 dark:text-white transition-colors focus:border-indigo-500 focus:outline-none"
+                className="h-24 w-full resize-none rounded-2xl border border-default dark:border-white/10 bg-surface-2 dark:bg-white/5 px-4 py-3 text-slate-900 dark:text-white transition-colors focus:border-indigo-500 focus:outline-none"
               />
               <div className="mt-1.5">
                 <MathInputToolbar onInsertSymbol={(sym) => onCommentChange(comment ? `${comment} ${sym}` : sym)} />
@@ -195,7 +195,7 @@ export function AssignmentSubmissionModal({
                     ? 'pointer-events-none border-indigo-500/30 opacity-80'
                     : isDragging
                       ? 'scale-[1.02] border-indigo-500 bg-indigo-500/10'
-                      : 'border-slate-700 hover:border-indigo-500/50 hover:bg-slate-800/50'
+                      : 'border-default dark:border-slate-700 hover:border-indigo-500/50 hover:bg-surface-2 dark:hover:bg-slate-800/50'
                 }`}
               >
                 {uploadProgress !== null && (
@@ -209,7 +209,7 @@ export function AssignmentSubmissionModal({
                   className={`z-10 flex h-14 w-14 items-center justify-center rounded-2xl transition-all duration-300 ${
                     isDragging
                       ? 'scale-110 bg-indigo-500 shadow-lg shadow-indigo-500/30'
-                      : 'border border-slate-700 bg-slate-800'
+                      : 'border border-default dark:border-slate-700 bg-surface-2 dark:bg-slate-800'
                   }`}
                 >
                   {uploading ? (
@@ -229,13 +229,13 @@ export function AssignmentSubmissionModal({
                     </div>
                   ) : (
                     <Upload
-                      className={`h-6 w-6 ${isDragging ? 'text-white' : 'text-slate-300'}`}
+                      className={`h-6 w-6 ${isDragging ? 'text-white' : 'text-secondary dark:text-slate-300'}`}
                     />
                   )}
                 </div>
                 <div className="z-10 text-center">
                   <p
-                    className={`mb-1 font-bold ${isDragging ? 'text-base text-indigo-400' : 'text-sm text-white'}`}
+                    className={`mb-1 font-bold ${isDragging ? 'text-base text-indigo-400' : 'text-sm text-primary dark:text-white'}`}
                   >
                     {uploading
                       ? `Yükleniyor... ${Math.round(uploadProgress || 0)}%`

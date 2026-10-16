@@ -111,7 +111,7 @@ export function ExamCountdownCard({
         aria-hidden="true"
       />
 
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-white/10">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-default dark:border-white/10">
         <div className="flex items-center gap-3">
           <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl shadow-lg shadow-indigo-500/20 bg-brand-secondary text-slate-950 dark:text-slate-950">
             <Flame className="h-5 w-5" />
@@ -132,7 +132,7 @@ export function ExamCountdownCard({
         </div>
 
         {/* Exam Switcher Tabs */}
-        <div className="flex items-center gap-1 bg-white/5 border border-white/10 rounded-xl p-1 self-start sm:self-center">
+        <div className="flex items-center gap-1 bg-surface-2 dark:bg-white/5 border border-default dark:border-white/10 rounded-xl p-1 self-start sm:self-center">
           {featuredExams.map((exam) => (
             <button
               key={exam.id}
@@ -141,7 +141,7 @@ export function ExamCountdownCard({
               className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
                 selectedExamId === exam.id
                   ? 'shadow-sm bg-brand-primary text-slate-950 dark:text-slate-950'
-                  : 'text-slate-400 hover:text-white'
+                  : 'text-secondary hover:text-primary dark:text-slate-400 dark:hover:text-white'
               }`}
             >
               {exam.id.includes('lgs') ? 'LGS' : 'YKS'}
@@ -151,29 +151,29 @@ export function ExamCountdownCard({
       </div>
 
       {timeLeft.isCompleted ? (
-        <div className="my-4 rounded-2xl border border-emerald-400/20 bg-emerald-500/10 p-4 text-sm text-emerald-100">
+        <div className="my-4 rounded-2xl border border-emerald-400/20 bg-emerald-500/10 p-4 text-sm text-emerald-900 dark:text-emerald-100">
           Bu yılın sınavı tamamlandı. Yeni tarih duyurulduğunda geri sayım otomatik olarak burada başlayacak.
         </div>
       ) : (
       <div className="grid grid-cols-3 gap-3 my-4">
-        <div className="rounded-2xl border border-white/10 bg-white/5 p-3 text-center">
-          <div className="text-2xl sm:text-3xl font-black bg-gradient-to-br from-white to-slate-300 bg-clip-text text-transparent">
+        <div className="rounded-2xl border border-default dark:border-white/10 bg-surface-2/60 dark:bg-white/5 p-3 text-center">
+          <div className="text-2xl sm:text-3xl font-black bg-gradient-to-br from-slate-900 to-indigo-700 dark:from-white dark:to-slate-300 bg-clip-text text-transparent">
             {timeLeft.days}
           </div>
           <div className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider mt-0.5">
             Gün
           </div>
         </div>
-        <div className="rounded-2xl border border-white/10 bg-white/5 p-3 text-center">
-          <div className="text-2xl sm:text-3xl font-black bg-gradient-to-br from-white to-slate-300 bg-clip-text text-transparent">
+        <div className="rounded-2xl border border-default dark:border-white/10 bg-surface-2/60 dark:bg-white/5 p-3 text-center">
+          <div className="text-2xl sm:text-3xl font-black bg-gradient-to-br from-slate-900 to-indigo-700 dark:from-white dark:to-slate-300 bg-clip-text text-transparent">
             {timeLeft.hours}
           </div>
           <div className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider mt-0.5">
             Saat
           </div>
         </div>
-        <div className="rounded-2xl border border-white/10 bg-white/5 p-3 text-center">
-          <div className="text-2xl sm:text-3xl font-black bg-gradient-to-br from-white to-slate-300 bg-clip-text text-transparent">
+        <div className="rounded-2xl border border-default dark:border-white/10 bg-surface-2/60 dark:bg-white/5 p-3 text-center">
+          <div className="text-2xl sm:text-3xl font-black bg-gradient-to-br from-slate-900 to-indigo-700 dark:from-white dark:to-slate-300 bg-clip-text text-transparent">
             {timeLeft.minutes}
           </div>
           <div className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider mt-0.5">
@@ -184,10 +184,10 @@ export function ExamCountdownCard({
       )}
 
       {/* Motivational Motto & Target Net Footer */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-3 border-t border-white/10">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-3 border-t border-default dark:border-white/10">
         <div className="flex items-start gap-2 max-w-lg">
           <Sparkles className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
-          <p className="text-xs text-slate-300 italic leading-relaxed">
+          <p className="text-xs text-secondary dark:text-slate-300 italic leading-relaxed">
             {motto}
           </p>
         </div>

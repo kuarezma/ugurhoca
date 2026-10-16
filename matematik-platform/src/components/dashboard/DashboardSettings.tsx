@@ -5,10 +5,13 @@ import { motion } from "framer-motion";
 import { Settings, Database, ArrowRight, Trash2, AlertTriangle } from "lucide-react";
 import ChangePasswordForm from "@/components/ChangePasswordForm";
 import { ThemeSelector } from "@/components/ThemeSelector";
+import { useTheme } from "@/components/ThemeProvider";
 import { UserDataBackupModal } from "@/features/profile/components/UserDataBackupModal";
 import { DeleteAccountModal } from "@/features/profile/components/DeleteAccountModal";
 
 export default function DashboardSettings() {
+  const { theme } = useTheme();
+  const isLight = theme === 'light';
   const [isBackupModalOpen, setIsBackupModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
@@ -111,6 +114,7 @@ export default function DashboardSettings() {
       <UserDataBackupModal
         isOpen={isBackupModalOpen}
         onClose={() => setIsBackupModalOpen(false)}
+        isLight={isLight}
       />
 
       <DeleteAccountModal

@@ -381,13 +381,13 @@ export function QuestionHintLadder({
   };
 
   const renderMistakeBookmarkCard = () => (
-    <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2.5 rounded-xl border border-white/10 bg-slate-900/80 dark:bg-slate-900/80 p-3">
+    <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2.5 rounded-xl border border-default dark:border-white/10 bg-surface-2 dark:bg-slate-900/80 p-3">
       <div className="space-y-0.5">
-        <div className="flex items-center gap-1.5 text-xs font-semibold text-slate-200">
-          <BookmarkPlus className="h-3.5 w-3.5 text-amber-400" />
+        <div className="flex items-center gap-1.5 text-xs font-semibold text-primary dark:text-slate-200">
+          <BookmarkPlus className="h-3.5 w-3.5 text-amber-500 dark:text-amber-400" />
           <span>Bu soruyu aralıklı tekrara eklemek ister misin?</span>
         </div>
-        <p className="text-[11px] text-slate-400 leading-tight">
+        <p className="text-[11px] text-muted dark:text-slate-400 leading-tight">
           {isSavedToMistakes
             ? 'Soru Hata Defterine eklendi. Leitner aralıklı tekrar algoritmasıyla karşına çıkacak.'
             : 'Zorlandığın veya ipucu aldığın soruları Hata Defterine ekleyerek unutmanın önüne geçebilirsin.'}
@@ -399,8 +399,8 @@ export function QuestionHintLadder({
         disabled={isSavedToMistakes}
         className={`shrink-0 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold transition ${
           isSavedToMistakes
-            ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 cursor-default'
-            : 'bg-amber-500/20 text-amber-300 hover:bg-amber-500/30 border border-amber-500/40 hover:text-white'
+            ? 'bg-emerald-500/20 text-emerald-800 dark:text-emerald-300 border border-emerald-500/30 cursor-default'
+            : 'bg-amber-500/20 text-amber-800 dark:text-amber-300 hover:bg-amber-500/30 border border-amber-500/40 hover:text-primary dark:hover:text-white'
         }`}
       >
         {isSavedToMistakes ? (
@@ -410,7 +410,7 @@ export function QuestionHintLadder({
           </>
         ) : (
           <>
-            <BookmarkPlus className="h-3.5 w-3.5 text-amber-400" />
+            <BookmarkPlus className="h-3.5 w-3.5 text-amber-500 dark:text-amber-400" />
             <span>Hata Defterine Ekle</span>
           </>
         )}
@@ -424,13 +424,13 @@ export function QuestionHintLadder({
         <button
           type="button"
           onClick={handleToggleOpen}
-          className="flex items-center gap-2 text-xs sm:text-sm font-bold text-amber-300 hover:text-amber-200 transition focus:outline-none"
+          className="flex items-center gap-2 text-xs sm:text-sm font-bold text-amber-800 dark:text-amber-300 hover:text-amber-700 dark:hover:text-amber-200 transition focus:outline-none"
         >
-          <div className="flex h-7 w-7 items-center justify-center rounded-xl bg-amber-500/20 text-amber-400">
+          <div className="flex h-7 w-7 items-center justify-center rounded-xl bg-amber-500/20 text-amber-500 dark:text-amber-400">
             <Lightbulb className="h-4 w-4" />
           </div>
           <span>Kademeli İpucu Sistemi</span>
-          <span className="rounded-full bg-amber-500/20 px-2 py-0.5 text-[10px] font-semibold text-amber-300">
+          <span className="rounded-full bg-amber-500/20 px-2 py-0.5 text-[10px] font-semibold text-amber-800 dark:text-amber-300">
             {unlockedLevel > 0 ? `${unlockedLevel}/3 Kademe` : '3 Seviye'}
           </span>
         </button>
@@ -443,7 +443,7 @@ export function QuestionHintLadder({
               className={`hidden sm:inline-flex items-center gap-1 rounded-xl px-2.5 py-1 text-xs font-semibold transition ${
                 activeMode === 'socratic'
                   ? 'bg-brand-primary/20 text-brand-ink border border-brand-primary/30'
-                  : 'bg-white/5 text-slate-300 border border-white/10 hover:text-white'
+                  : 'bg-surface-2 dark:bg-white/5 text-secondary dark:text-slate-300 border border-default dark:border-white/10 hover:text-primary dark:hover:text-white'
               }`}
             >
               <BrainCircuit className="h-3.5 w-3.5" />
@@ -454,7 +454,7 @@ export function QuestionHintLadder({
           <button
             type="button"
             onClick={handleToggleOpen}
-            className="rounded-lg p-1 text-slate-400 hover:text-white transition"
+            className="rounded-lg p-1 text-secondary hover:text-primary dark:text-slate-400 dark:hover:text-white transition"
             aria-label={isOpen ? 'İpuçlarını daralt' : 'İpuçlarını genişlet'}
           >
             {isOpen ? (<ChevronUp className="h-4 w-4" /> ): (<ChevronDown className="h-4 w-4" />)}
@@ -471,14 +471,14 @@ export function QuestionHintLadder({
             className="overflow-hidden pt-3 space-y-3"
           >
             {/* Sekme Değiştirici */}
-            <div className="flex rounded-xl bg-slate-950/40 dark:bg-slate-950/40 p-1 border border-white/10">
+            <div className="flex rounded-xl bg-surface-2 dark:bg-slate-950/40 p-1 border border-default dark:border-white/10">
               <button
                 type="button"
                 onClick={() => setActiveMode('ladder')}
                 className={`flex flex-1 items-center justify-center gap-1.5 rounded-lg py-1.5 text-xs font-semibold transition ${
                   activeMode === 'ladder'
                     ? 'bg-brand-primary/20 text-brand-ink shadow'
-                    : 'text-slate-400 hover:text-white'
+                    : 'text-secondary dark:text-slate-400 hover:text-primary dark:hover:text-white'
                 }`}
               >
                 <BookOpen className="h-3.5 w-3.5" />
@@ -490,7 +490,7 @@ export function QuestionHintLadder({
                 className={`flex flex-1 items-center justify-center gap-1.5 rounded-lg py-1.5 text-xs font-semibold transition ${
                   activeMode === 'socratic'
                     ? 'bg-brand-primary/20 text-brand-ink shadow'
-                    : 'text-slate-400 hover:text-white'
+                    : 'text-secondary dark:text-slate-400 hover:text-primary dark:hover:text-white'
                 }`}
               >
                 <BrainCircuit className="h-3.5 w-3.5" />
@@ -501,9 +501,9 @@ export function QuestionHintLadder({
             {activeMode === 'ladder' ? (
               <div className="space-y-3">
                 {/* 1. Kademe: Temel Kural & Formül */}
-                <div className="rounded-xl border border-white/10 bg-slate-900/60 dark:bg-slate-900/60 p-3 space-y-2">
+                <div className="rounded-xl border border-default dark:border-white/10 bg-surface-2 dark:bg-slate-900/60 p-3 space-y-2">
                   <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-1.5 text-xs font-bold text-amber-300">
+                    <div className="flex items-center gap-1.5 text-xs font-bold text-amber-800 dark:text-amber-300">
                       <BookOpen className="h-3.5 w-3.5" />
                       <span>1. Kademe: Temel Kural & Formül</span>
                     </div>
@@ -513,14 +513,14 @@ export function QuestionHintLadder({
                       className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-lg text-[10px] font-semibold transition ${
                         puzzledSteps[1]
                           ? 'bg-rose-500/20 text-rose-300 border border-rose-500/40'
-                          : 'text-slate-400 hover:text-rose-300 hover:bg-white/5'
+                          : 'text-secondary dark:text-slate-400 hover:text-rose-600 dark:hover:text-rose-300 hover:bg-surface-2 dark:hover:bg-white/5'
                       }`}
                     >
                       <HelpCircle className="w-3 h-3" />
                       <span>{puzzledSteps[1] ? 'Anlaşılmadı (İşaretlendi)' : 'Burayı Anlamadım 🤔'}</span>
                     </button>
                   </div>
-                  <div className="text-xs text-slate-300 leading-relaxed pl-5">
+                  <div className="text-xs text-secondary dark:text-slate-300 leading-relaxed pl-5">
                     <MathText>{hints.level1}</MathText>
                   </div>
                   {puzzledSteps[1] && (
@@ -548,14 +548,14 @@ export function QuestionHintLadder({
                         className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-lg text-[10px] font-semibold transition ${
                           puzzledSteps[2]
                             ? 'bg-rose-500/20 text-rose-300 border border-rose-500/40'
-                            : 'text-slate-400 hover:text-rose-300 hover:bg-white/5'
+                            : 'text-secondary dark:text-slate-400 hover:text-rose-600 dark:hover:text-rose-300 hover:bg-surface-2 dark:hover:bg-white/5'
                         }`}
                       >
                         <HelpCircle className="w-3 h-3" />
                         <span>{puzzledSteps[2] ? 'Anlaşılmadı (İşaretlendi)' : 'Burayı Anlamadım 🤔'}</span>
                       </button>
                     </div>
-                    <div className="text-xs text-slate-300 leading-relaxed pl-5">
+                    <div className="text-xs text-secondary dark:text-slate-300 leading-relaxed pl-5">
                       <MathText>{hints.level2}</MathText>
                     </div>
                     {puzzledSteps[2] && (
@@ -568,9 +568,9 @@ export function QuestionHintLadder({
                   <button
                     type="button"
                     onClick={() => setUnlockedLevel(2)}
-                    className="w-full flex items-center justify-center gap-1.5 rounded-xl border border-dashed border-white/15 py-2 text-xs font-semibold text-slate-400 hover:border-indigo-500/40 hover:text-indigo-300 transition"
+                    className="w-full flex items-center justify-center gap-1.5 rounded-xl border border-dashed border-default dark:border-white/15 py-2 text-xs font-semibold text-secondary dark:text-slate-400 hover:border-indigo-500/40 hover:text-indigo-600 dark:hover:text-indigo-300 transition"
                   >
-                    <Sparkles className="h-3.5 w-3.5 text-indigo-400" />
+                    <Sparkles className="h-3.5 w-3.5 text-indigo-500 dark:text-indigo-400" />
                     <span>2. Kademe İpucunu Aç (İlk Hamle)</span>
                   </button>
                 )}
@@ -593,14 +593,14 @@ export function QuestionHintLadder({
                         className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-lg text-[10px] font-semibold transition ${
                           puzzledSteps[3]
                             ? 'bg-rose-500/20 text-rose-300 border border-rose-500/40'
-                            : 'text-slate-400 hover:text-rose-300 hover:bg-white/5'
+                            : 'text-secondary dark:text-slate-400 hover:text-rose-600 dark:hover:text-rose-300 hover:bg-surface-2 dark:hover:bg-white/5'
                         }`}
                       >
                         <HelpCircle className="w-3 h-3" />
                         <span>{puzzledSteps[3] ? 'Anlaşılmadı (İşaretlendi)' : 'Burayı Anlamadım 🤔'}</span>
                       </button>
                     </div>
-                    <div className="text-xs text-slate-300 leading-relaxed pl-5">
+                    <div className="text-xs text-secondary dark:text-slate-300 leading-relaxed pl-5">
                       <MathText>{hints.level3}</MathText>
                     </div>
                     {puzzledSteps[3] && (
@@ -613,9 +613,9 @@ export function QuestionHintLadder({
                   <button
                     type="button"
                     onClick={() => setUnlockedLevel(3)}
-                    className="w-full flex items-center justify-center gap-1.5 rounded-xl border border-dashed border-white/15 py-2 text-xs font-semibold text-slate-400 hover:border-purple-500/40 hover:text-purple-300 transition"
+                    className="w-full flex items-center justify-center gap-1.5 rounded-xl border border-dashed border-default dark:border-white/15 py-2 text-xs font-semibold text-secondary dark:text-slate-400 hover:border-purple-500/40 hover:text-purple-600 dark:hover:text-purple-300 transition"
                   >
-                    <Sparkles className="h-3.5 w-3.5 text-purple-400" />
+                    <Sparkles className="h-3.5 w-3.5 text-purple-500 dark:text-purple-400" />
                     <span>3. Kademe İpucunu Aç (Çözüm Stratejisi)</span>
                   </button>
                 ) : null}

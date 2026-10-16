@@ -172,7 +172,7 @@ export function MathGraphVisualizerModal({
               )}
             >
             {/* Üst Başlık Şeridi */}
-          <div className="flex items-center justify-between border-b border-white/10 px-5 py-4 sm:px-6">
+          <div className="flex items-center justify-between border-b border-default dark:border-white/10 px-5 py-4 sm:px-6">
             <div className="flex items-center gap-3">
               <div className="flex h-10 w-10 items-center justify-center rounded-2xl shadow-md shadow-indigo-500/30 bg-brand-secondary text-slate-950 dark:text-slate-950">
                 <Activity className="h-5 w-5" />
@@ -190,7 +190,7 @@ export function MathGraphVisualizerModal({
             <button
               onClick={onClose}
               type="button"
-              className="rounded-xl p-2 text-slate-400 transition hover:bg-white/10 hover:text-white"
+              className="rounded-xl p-2 text-secondary hover:text-primary dark:text-slate-400 dark:hover:text-white hover:bg-surface-2 dark:hover:bg-white/10 transition"
               aria-label="Kapat"
             >
               <X className="h-5 w-5" />
@@ -198,14 +198,14 @@ export function MathGraphVisualizerModal({
           </div>
 
           {/* Sekme Seçiciler */}
-          <div className="flex border-b border-white/10 px-4 sm:px-6 bg-white/[0.02]">
+          <div className="flex border-b border-default dark:border-white/10 px-4 sm:px-6 bg-surface-2/40 dark:bg-white/[0.02]">
             <button
               type="button"
               onClick={() => setActiveTab('linear')}
               className={`flex items-center gap-2 border-b-2 py-3 px-4 text-xs sm:text-sm font-semibold transition ${
                 activeTab === 'linear'
                   ? 'border-brand-primary text-brand-ink'
-                  : 'border-transparent text-slate-400 hover:text-slate-200'
+                  : 'border-transparent text-secondary dark:text-slate-400 hover:text-primary dark:hover:text-slate-200'
               }`}
             >
               <TrendingUp className="h-4 w-4" />
@@ -217,7 +217,7 @@ export function MathGraphVisualizerModal({
               className={`flex items-center gap-2 border-b-2 py-3 px-4 text-xs sm:text-sm font-semibold transition ${
                 activeTab === 'quadratic'
                   ? 'border-brand-primary text-brand-ink'
-                  : 'border-transparent text-slate-400 hover:text-slate-200'
+                  : 'border-transparent text-secondary dark:text-slate-400 hover:text-primary dark:hover:text-slate-200'
               }`}
             >
               <Sparkles className="h-4 w-4" />
@@ -229,7 +229,7 @@ export function MathGraphVisualizerModal({
               className={`flex items-center gap-2 border-b-2 py-3 px-4 text-xs sm:text-sm font-semibold transition ${
                 activeTab === 'trig'
                   ? 'border-brand-primary text-brand-ink'
-                  : 'border-transparent text-slate-400 hover:text-slate-200'
+                  : 'border-transparent text-secondary dark:text-slate-400 hover:text-primary dark:hover:text-slate-200'
               }`}
             >
               <Compass className="h-4 w-4" />
@@ -422,7 +422,7 @@ export function MathGraphVisualizerModal({
             {/* Sağ Sütun: Kontroller & Pedagojik Analiz (6 Kolon) */}
             <div className="lg:col-span-6 flex flex-col justify-between space-y-5">
               {/* Kaydırıcı Kontrolleri */}
-              <div className="space-y-4 rounded-2xl border border-white/10 p-4 bg-white/[0.02]">
+              <div className="space-y-4 rounded-2xl border border-default dark:border-white/10 p-4 bg-surface-2/40 dark:bg-white/[0.02]">
                 <div className="flex items-center justify-between">
                   <span className="text-xs font-bold uppercase tracking-wider text-slate-400">Katsayılar & Değişkenler</span>
                   <button
@@ -432,7 +432,7 @@ export function MathGraphVisualizerModal({
                       if (activeTab === 'quadratic') { setA(1); setQuadB(0); setC(-4); }
                       if (activeTab === 'trig') { setAngleDeg(45); }
                     }}
-                    className="flex items-center gap-1 text-[11px] text-slate-400 hover:text-white transition"
+                    className="flex items-center gap-1 text-[11px] text-secondary hover:text-primary dark:text-slate-400 dark:hover:text-white transition"
                   >
                     <RotateCcw className="h-3 w-3" />
                     Sıfırla
@@ -561,21 +561,21 @@ export function MathGraphVisualizerModal({
                       <button
                         type="button"
                         onClick={() => { setM(2); setB(-1); }}
-                        className="rounded-xl border border-white/10 bg-white/5 px-2.5 py-1 text-xs font-medium hover:bg-white/10 transition"
+                        className="rounded-xl border border-default dark:border-white/10 bg-surface-2 dark:bg-white/5 text-secondary dark:text-slate-300 hover:text-primary dark:hover:text-white px-2.5 py-1 text-xs font-medium hover:bg-surface-3 dark:hover:bg-white/10 transition"
                       >
                         y = 2x - 1 (Artan)
                       </button>
                       <button
                         type="button"
                         onClick={() => { setM(-1); setB(3); }}
-                        className="rounded-xl border border-white/10 bg-white/5 px-2.5 py-1 text-xs font-medium hover:bg-white/10 transition"
+                        className="rounded-xl border border-default dark:border-white/10 bg-surface-2 dark:bg-white/5 text-secondary dark:text-slate-300 hover:text-primary dark:hover:text-white px-2.5 py-1 text-xs font-medium hover:bg-surface-3 dark:hover:bg-white/10 transition"
                       >
                         y = -x + 3 (Azalan)
                       </button>
                       <button
                         type="button"
                         onClick={() => { setM(0); setB(4); }}
-                        className="rounded-xl border border-white/10 bg-white/5 px-2.5 py-1 text-xs font-medium hover:bg-white/10 transition"
+                        className="rounded-xl border border-default dark:border-white/10 bg-surface-2 dark:bg-white/5 text-secondary dark:text-slate-300 hover:text-primary dark:hover:text-white px-2.5 py-1 text-xs font-medium hover:bg-surface-3 dark:hover:bg-white/10 transition"
                       >
                         y = 4 (Sabit Fonk.)
                       </button>
@@ -587,21 +587,21 @@ export function MathGraphVisualizerModal({
                       <button
                         type="button"
                         onClick={() => { setA(1); setQuadB(0); setC(-4); }}
-                        className="rounded-xl border border-white/10 bg-white/5 px-2.5 py-1 text-xs font-medium hover:bg-white/10 transition"
+                        className="rounded-xl border border-default dark:border-white/10 bg-surface-2 dark:bg-white/5 text-secondary dark:text-slate-300 hover:text-primary dark:hover:text-white px-2.5 py-1 text-xs font-medium hover:bg-surface-3 dark:hover:bg-white/10 transition"
                       >
                         y = x² - 4 (İki Reel Kök)
                       </button>
                       <button
                         type="button"
                         onClick={() => { setA(-1); setQuadB(2); setC(3); }}
-                        className="rounded-xl border border-white/10 bg-white/5 px-2.5 py-1 text-xs font-medium hover:bg-white/10 transition"
+                        className="rounded-xl border border-default dark:border-white/10 bg-surface-2 dark:bg-white/5 text-secondary dark:text-slate-300 hover:text-primary dark:hover:text-white px-2.5 py-1 text-xs font-medium hover:bg-surface-3 dark:hover:bg-white/10 transition"
                       >
                         y = -x² + 2x + 3 (Kollar Aşağı)
                       </button>
                       <button
                         type="button"
                         onClick={() => { setA(1); setQuadB(-4); setC(4); }}
-                        className="rounded-xl border border-white/10 bg-white/5 px-2.5 py-1 text-xs font-medium hover:bg-white/10 transition"
+                        className="rounded-xl border border-default dark:border-white/10 bg-surface-2 dark:bg-white/5 text-secondary dark:text-slate-300 hover:text-primary dark:hover:text-white px-2.5 py-1 text-xs font-medium hover:bg-surface-3 dark:hover:bg-white/10 transition"
                       >
                         y = (x-2)² (Teğet / Çakışık)
                       </button>
@@ -613,28 +613,28 @@ export function MathGraphVisualizerModal({
                       <button
                         type="button"
                         onClick={() => setAngleDeg(30)}
-                        className="rounded-xl border border-white/10 bg-white/5 px-2.5 py-1 text-xs font-medium hover:bg-white/10 transition"
+                        className="rounded-xl border border-default dark:border-white/10 bg-surface-2 dark:bg-white/5 text-secondary dark:text-slate-300 hover:text-primary dark:hover:text-white px-2.5 py-1 text-xs font-medium hover:bg-surface-3 dark:hover:bg-white/10 transition"
                       >
                         30° (π/6)
                       </button>
                       <button
                         type="button"
                         onClick={() => setAngleDeg(45)}
-                        className="rounded-xl border border-white/10 bg-white/5 px-2.5 py-1 text-xs font-medium hover:bg-white/10 transition"
+                        className="rounded-xl border border-default dark:border-white/10 bg-surface-2 dark:bg-white/5 text-secondary dark:text-slate-300 hover:text-primary dark:hover:text-white px-2.5 py-1 text-xs font-medium hover:bg-surface-3 dark:hover:bg-white/10 transition"
                       >
                         45° (π/4)
                       </button>
                       <button
                         type="button"
                         onClick={() => setAngleDeg(60)}
-                        className="rounded-xl border border-white/10 bg-white/5 px-2.5 py-1 text-xs font-medium hover:bg-white/10 transition"
+                        className="rounded-xl border border-default dark:border-white/10 bg-surface-2 dark:bg-white/5 text-secondary dark:text-slate-300 hover:text-primary dark:hover:text-white px-2.5 py-1 text-xs font-medium hover:bg-surface-3 dark:hover:bg-white/10 transition"
                       >
                         60° (π/3)
                       </button>
                       <button
                         type="button"
                         onClick={() => setAngleDeg(120)}
-                        className="rounded-xl border border-white/10 bg-white/5 px-2.5 py-1 text-xs font-medium hover:bg-white/10 transition"
+                        className="rounded-xl border border-default dark:border-white/10 bg-surface-2 dark:bg-white/5 text-secondary dark:text-slate-300 hover:text-primary dark:hover:text-white px-2.5 py-1 text-xs font-medium hover:bg-surface-3 dark:hover:bg-white/10 transition"
                       >
                         120° (2. Bölge)
                       </button>
@@ -651,7 +651,7 @@ export function MathGraphVisualizerModal({
                 </div>
 
                 {activeTab === 'linear' && (
-                  <ul className="text-xs text-slate-300 space-y-1.5 list-disc pl-4">
+                  <ul className="text-xs text-secondary dark:text-slate-300 space-y-1.5 list-disc pl-4">
                     <li>
                       <strong>Eğim Durumu:</strong> {' '}
                           {linearMetrics.isIncreasing ? 'm > 0 olduğundan fonksiyon daima ARTANDIR.' : linearMetrics.isDecreasing ? 'm < 0 olduğundan fonksiyon daima AZALANDIR.' : 'm = 0 olduğundan x eksenine PARALEL sabit doğrudur.'}
@@ -666,7 +666,7 @@ export function MathGraphVisualizerModal({
                 )}
 
                 {activeTab === 'quadratic' && (
-                  <ul className="text-xs text-slate-300 space-y-1.5 list-disc pl-4">
+                  <ul className="text-xs text-secondary dark:text-slate-300 space-y-1.5 list-disc pl-4">
                     <li>
                       <strong>Tepe Noktası T(r, k):</strong> T({quadMetrics.r.toFixed(2)}, {quadMetrics.k.toFixed(2)}) noktasıdır. Parabolün en {' '}
                           {quadMetrics.armsUp ? 'küçük (minimum)' : 'büyük (maksimum)'}{' '} değeri k = {quadMetrics.k.toFixed(2)} olur.
@@ -684,7 +684,7 @@ export function MathGraphVisualizerModal({
                 )}
 
                 {activeTab === 'trig' && (
-                  <ul className="text-xs text-slate-300 space-y-1.5 list-disc pl-4">
+                  <ul className="text-xs text-secondary dark:text-slate-300 space-y-1.5 list-disc pl-4">
                     <li>
                       <strong>Bölge:</strong> {trigMetrics.region}. Bölge
                     </li>
@@ -706,7 +706,7 @@ export function MathGraphVisualizerModal({
           </div>
 
           {/* Alt Kapatma Çubuğu */}
-          <div className="flex justify-end border-t border-white/10 px-5 py-3.5 sm:px-6 bg-white/[0.02]">
+          <div className="flex justify-end border-t border-default dark:border-white/10 px-5 py-3.5 sm:px-6 bg-surface-2/40 dark:bg-white/[0.02]">
             <button
               type="button"
               onClick={onClose}

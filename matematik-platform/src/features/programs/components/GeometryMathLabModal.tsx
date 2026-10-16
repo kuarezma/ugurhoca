@@ -471,7 +471,7 @@ export function GeometryMathLabModal({
         }`}
       >
         {/* Header */}
-        <div className="flex items-center justify-between border-b border-white/10 px-5 py-4 sm:px-6">
+        <div className="flex items-center justify-between border-b border-default dark:border-white/10 px-5 py-4 sm:px-6">
           <div className="flex items-center gap-3">
             <div className="flex h-10 w-10 items-center justify-center rounded-2xl shadow-md bg-brand-secondary text-slate-950 dark:text-slate-950">
               <Compass className="h-5 w-5" />
@@ -506,7 +506,7 @@ export function GeometryMathLabModal({
         </div>
 
         {/* Tab Navigation */}
-        <div className="flex overflow-x-auto border-b border-white/10 px-4 py-2 gap-1.5 scrollbar-none">
+        <div className="flex overflow-x-auto border-b border-default dark:border-white/10 px-4 py-2 gap-1.5 scrollbar-none">
           <button
             type="button"
             onClick={() => setActiveTab('pythagoras')}
@@ -573,7 +573,7 @@ export function GeometryMathLabModal({
           {/* TAB 1: PYTHAGORAS */}
           {activeTab === 'pythagoras' && (
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-              <div className="lg:col-span-7 flex flex-col items-center justify-center rounded-2xl border border-white/10 bg-slate-950/40 dark:bg-slate-950/40 p-3 shadow-inner">
+              <div className="lg:col-span-7 flex flex-col items-center justify-center rounded-2xl border border-default dark:border-white/10 bg-surface-2/40 dark:bg-slate-950/40 p-3 shadow-inner">
                 <canvas
                   ref={pythagorasCanvasRef}
                   width={420}
@@ -629,7 +629,7 @@ export function GeometryMathLabModal({
                   <div className="text-sm font-mono font-bold">
                     a² + b² = c²
                   </div>
-                  <div className="text-xs text-slate-300 font-mono">
+                  <div className="text-xs text-secondary dark:text-slate-300 font-mono">
                     {sideA}² + {sideB}² = {sideA * sideA} + {sideB * sideB} = {' '}
                     {sideA * sideA + sideB * sideB}
                   </div>
@@ -651,7 +651,7 @@ export function GeometryMathLabModal({
           {/* TAB 2: CIRCLE & TRIGONOMETRY */}
           {activeTab === 'circle' && (
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-              <div className="lg:col-span-7 flex flex-col items-center justify-center rounded-2xl border border-white/10 bg-slate-950/40 dark:bg-slate-950/40 p-3 shadow-inner">
+              <div className="lg:col-span-7 flex flex-col items-center justify-center rounded-2xl border border-default dark:border-white/10 bg-surface-2/40 dark:bg-slate-950/40 p-3 shadow-inner">
                 <canvas
                   ref={circleCanvasRef}
                   width={420}
@@ -686,7 +686,7 @@ export function GeometryMathLabModal({
                         className={`px-2 py-0.5 text-[11px] font-bold rounded-lg border transition ${
                           angleDeg === deg
                             ? 'bg-brand-primary border-brand-primary text-slate-950 dark:text-slate-950'
-                            : 'border-white/10 hover:bg-white/10 text-slate-300'
+                            : 'border-default dark:border-white/10 hover:bg-surface-2 dark:hover:bg-white/10 text-secondary dark:text-slate-300'
                         }`}
                       >
                         {deg}°
@@ -713,8 +713,8 @@ export function GeometryMathLabModal({
                   </div>
                 </div>
 
-                <div className="rounded-xl border border-white/10 bg-white/5 p-3 text-xs">
-                  <div className="font-bold text-slate-200 mb-1 flex items-center gap-1.5">
+                <div className="rounded-xl border border-default dark:border-white/10 bg-surface-2 dark:bg-white/5 p-3 text-xs">
+                  <div className="font-bold text-primary dark:text-slate-200 mb-1 flex items-center gap-1.5">
                     <Info className="h-3.5 w-3.5 text-sky-400" />
                     Bölge Özellikleri:
                   </div>
@@ -727,7 +727,7 @@ export function GeometryMathLabModal({
           {/* TAB 3: PARABOLA */}
           {activeTab === 'parabola' && (
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-              <div className="lg:col-span-7 flex flex-col items-center justify-center rounded-2xl border border-white/10 bg-slate-950/40 dark:bg-slate-950/40 p-3 shadow-inner">
+              <div className="lg:col-span-7 flex flex-col items-center justify-center rounded-2xl border border-default dark:border-white/10 bg-surface-2/40 dark:bg-slate-950/40 p-3 shadow-inner">
                 <canvas
                   ref={parabolaCanvasRef}
                   width={420}
@@ -822,7 +822,7 @@ export function GeometryMathLabModal({
           {/* TAB 4: SLOPE & LINE */}
           {activeTab === 'slope' && (
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-              <div className="lg:col-span-7 flex flex-col items-center justify-center rounded-2xl border border-white/10 bg-slate-950/40 dark:bg-slate-950/40 p-3 shadow-inner">
+              <div className="lg:col-span-7 flex flex-col items-center justify-center rounded-2xl border border-default dark:border-white/10 bg-surface-2/40 dark:bg-slate-950/40 p-3 shadow-inner">
                 <canvas
                   ref={slopeCanvasRef}
                   width={420}

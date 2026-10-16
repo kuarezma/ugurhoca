@@ -60,7 +60,6 @@ const SHORTCUTS = [
 export function QuizShortcutsModal({
   isOpen,
   onClose,
-  isLight = false,
 }: QuizShortcutsModalProps) {
   const modalRef = useAccessibleModal<HTMLDivElement>(isOpen, onClose);
 
@@ -76,21 +75,17 @@ export function QuizShortcutsModal({
       className="fixed inset-0 z-[160] flex items-center justify-center bg-slate-950/80 dark:bg-slate-950/80 p-4 backdrop-blur-md"
     >
       <div
-        className={`w-full max-w-md rounded-3xl border shadow-2xl p-6 transition-all ${
-          isLight
-            ? 'bg-white border-slate-200 text-slate-900'
-            : 'bg-slate-900 border-white/15 text-white'
-        }`}
+        className="w-full max-w-md rounded-3xl border shadow-2xl p-6 transition-all bg-surface-1 dark:bg-slate-900 border-default dark:border-white/15 text-primary dark:text-white"
       >
         {/* Başlık */}
-        <div className="flex items-center justify-between pb-4 border-b border-white/10 mb-4">
+        <div className="flex items-center justify-between pb-4 border-b border-default dark:border-white/10 mb-4">
           <div className="flex items-center gap-2.5">
             <div className="flex h-9 w-9 items-center justify-center rounded-2xl bg-indigo-500/20 text-indigo-400">
               <Keyboard className="h-5 w-5" />
             </div>
             <div>
               <h3 className="font-display font-bold text-base">Test Klavye Kısayolları</h3>
-              <p className={`text-xs ${isLight ? 'text-slate-500' : 'text-slate-400'}`}>
+              <p className="text-xs text-secondary dark:text-slate-400">
                 Fareye dokunmadan hızlıca test çöz.
               </p>
             </div>
@@ -100,7 +95,7 @@ export function QuizShortcutsModal({
             type="button"
             onClick={onClose}
             aria-label="Pencereyi kapat"
-            className="rounded-xl p-1.5 text-slate-400 hover:text-white hover:bg-white/10 transition"
+            className="rounded-xl p-1.5 text-secondary hover:text-primary dark:text-slate-400 dark:hover:text-white hover:bg-surface-2 dark:hover:bg-white/10 transition"
           >
             <X className="h-5 w-5" />
           </button>
@@ -111,15 +106,13 @@ export function QuizShortcutsModal({
           {SHORTCUTS.map((item, idx) => (
             <div
               key={idx}
-              className={`flex items-center justify-between p-2.5 rounded-2xl border ${
-                isLight ? 'bg-slate-50 border-slate-200' : 'bg-white/5 border-white/5'
-              }`}
+              className="flex items-center justify-between p-2.5 rounded-2xl border border-default dark:border-white/5 bg-surface-2/60 dark:bg-white/5"
             >
               <div className="flex items-center gap-1.5">
                 {item.keys.map((k) => (
                   <kbd
                     key={k}
-                    className="flex h-6 min-w-[24px] items-center justify-center rounded-lg border border-white/20 bg-slate-800 dark:bg-slate-800 px-1.5 font-mono text-xs font-bold text-amber-300 shadow-sm"
+                    className="flex h-6 min-w-[24px] items-center justify-center rounded-lg border border-default dark:border-white/20 bg-surface-2 dark:bg-slate-800 px-1.5 font-mono text-xs font-bold text-amber-800 dark:text-amber-300 shadow-sm"
                   >
                     {k}
                   </kbd>
@@ -130,7 +123,7 @@ export function QuizShortcutsModal({
                     {item.altKeys.slice(0, 3).map((k) => (
                       <kbd
                         key={k}
-                        className="flex h-6 min-w-[20px] items-center justify-center rounded-lg border border-white/10 bg-slate-800/80 dark:bg-slate-800/80 px-1 font-mono text-[11px] text-slate-300"
+                        className="flex h-6 min-w-[20px] items-center justify-center rounded-lg border border-default dark:border-white/10 bg-surface-2 dark:bg-slate-800/80 px-1 font-mono text-[11px] text-secondary dark:text-slate-300"
                       >
                         {k}
                       </kbd>
@@ -140,7 +133,7 @@ export function QuizShortcutsModal({
                 )}
               </div>
 
-              <span className={`text-xs font-medium text-right ml-2 ${isLight ? 'text-slate-600' : 'text-slate-300'}`}>
+              <span className="text-xs font-medium text-right ml-2 text-secondary dark:text-slate-300">
                 {item.description}
               </span>
             </div>

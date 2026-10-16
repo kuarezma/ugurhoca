@@ -33,8 +33,8 @@ export default function Loading() {
       <div className="px-4 pt-24 sm:px-6 xl:px-8">
         <div className="mx-auto max-w-[1760px]">
           <div className="mb-8 space-y-3">
-            <div className="h-10 w-64 animate-pulse rounded-xl bg-white/10" />
-            <div className="h-5 w-full max-w-xl animate-pulse rounded-xl bg-white/5" />
+            <div className="h-10 w-64 animate-pulse rounded-xl bg-slate-200/80 dark:bg-white/10" />
+            <div className="h-5 w-full max-w-xl animate-pulse rounded-xl bg-slate-200/50 dark:bg-white/5" />
           </div>
 
           <div className="glass mb-8 rounded-2xl p-4 sm:p-6">
@@ -48,7 +48,7 @@ export default function Loading() {
                 <div className="h-12 w-36 animate-pulse rounded-xl bg-slate-200/50 dark:bg-slate-800/50" />
                 <div className="h-12 w-36 animate-pulse rounded-xl bg-slate-200/50 dark:bg-slate-800/50" />
                 <div className="glass flex rounded-xl overflow-hidden">
-                  <div className="flex h-12 w-12 items-center justify-center border-r border-white/10 text-slate-500">
+                  <div className="flex h-12 w-12 items-center justify-center border-r border-default dark:border-white/10 text-slate-500">
                     <Grid className="h-5 w-5" />
                   </div>
                   <div className="flex h-12 w-12 items-center justify-center text-slate-500">
@@ -68,7 +68,7 @@ export default function Loading() {
             {SKELETON_CARDS.map((_, index) => (
               <div
                 key={index}
-                className="glass overflow-hidden rounded-3xl border border-white/10"
+                className="glass overflow-hidden rounded-3xl border border-default dark:border-white/10"
               >
                 <div className="h-2 animate-pulse bg-slate-200 dark:bg-slate-700" />
                 <div className="space-y-4 p-4 sm:p-6">
