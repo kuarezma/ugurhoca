@@ -47,6 +47,7 @@ describe('content category constants', () => {
 
   it('defines sort options for content filtering', () => {
     const ids = CONTENT_SORT_OPTIONS.map((o) => o.id);
+    expect(ids).toContain('curriculum');
     expect(ids).toContain('newest');
     expect(ids).toContain('downloads');
     expect(ids).toContain('views');

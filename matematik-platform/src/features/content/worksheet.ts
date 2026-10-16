@@ -566,23 +566,18 @@ export const getNextWorksheetOrder = (
     return Math.max(maxOrder, getWorksheetOrder(document));
   }, 0) + 1;
 
-export const sortWorksheetDocuments = (documents: ContentDocument[]) =>
-  [...documents].sort((left, right) => {
-    const leftOrder = getWorksheetOrder(left);
-    const rightOrder = getWorksheetOrder(right);
-    const leftHasOrder = leftOrder > 0;
-    const rightHasOrder = rightOrder > 0;
+import {
+  getWorksheetOutcomeCatalogIndex,
+  sortWorksheetDocuments as sortWorksheetDisplayDocuments,
+} from '@/features/content/worksheet-display';
+import type { ContentSortOrder } from '@/features/content/types';
 
-    if (leftHasOrder && rightHasOrder && leftOrder !== rightOrder) {
-      return leftOrder - rightOrder;
-    }
+export { getWorksheetOutcomeCatalogIndex };
 
-    if (leftHasOrder !== rightHasOrder) {
-      return leftHasOrder ? -1 : 1;
-    }
-
-    return left.title.localeCompare(right.title, 'tr');
-  });
+export const sortWorksheetDocuments = (
+  documents: ContentDocument[],
+  sortBy: ContentSortOrder = 'curriculum',
+) => sortWorksheetDisplayDocuments(documents, sortBy);
 
 export const prepareWorksheetDocumentPayload = async <
   T extends {

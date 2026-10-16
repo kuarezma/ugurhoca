@@ -13,8 +13,16 @@ import {
 } from 'lucide-react';
 import ContentCard from '@/features/content/components/ContentCard';
 import { getWorksheetTitleTopic } from '@/features/content/worksheet';
-import { getWorksheetOutcomeLabel } from '@/features/content/worksheet-display';
-import type { ContentPageUser } from '@/features/content/types';
+import {
+  getWorksheetGradeValue,
+  getWorksheetOutcomeCatalogIndex,
+  getWorksheetOutcomeLabel,
+  sortWorksheetDocuments,
+} from '@/features/content/worksheet-display';
+import type {
+  ContentPageUser,
+  ContentSortOrder,
+} from '@/features/content/types';
 import type { ContentDocument } from '@/types';
 
 type ContentTopicPacksProps = {
@@ -30,12 +38,15 @@ type ContentTopicPacksProps = {
   onToggleCompleted: (content: ContentDocument) => void | Promise<void>;
   onToggleFavorite: (docId: string) => void;
   onToggleLike: (content: ContentDocument) => void | Promise<void>;
+  sortBy?: ContentSortOrder;
   user: ContentPageUser | null;
 };
 
 type TopicGroup = {
+  catalogIndex: number;
   completedCount: number;
   documents: ContentDocument[];
+  latestTime: number;
   testsCount: number;
   topicName: string;
   videosCount: number;
@@ -55,6 +66,7 @@ export default function ContentTopicPacks({
   onToggleCompleted,
   onToggleFavorite,
   onToggleLike,
+  sortBy = 'curriculum',
   user,
 }: ContentTopicPacksProps) {
   const [expandedTopics, setExpandedTopics] = useState<Set<string>>(new Set());
@@ -76,28 +88,57 @@ export default function ContentTopicPacks({
       map.set(topic, existing);
     }
 
-    return Array.from(map.entries()).map(([topicName, docs]) => {
-      const worksheetsCount = docs.filter(
+    const groups = Array.from(map.entries()).map(([topicName, docs]) => {
+      const sortedDocs = sortWorksheetDocuments(docs, sortBy);
+      const worksheetsCount = sortedDocs.filter(
         (d) => d.type === 'yaprak-test' || d.type === 'ders-notlari',
       ).length;
-      const videosCount = docs.filter(
+      const videosCount = sortedDocs.filter(
         (d) => d.type === 'ders-videolari' || Boolean(d.video_url),
       ).length;
-      const testsCount = docs.filter((d) =>
+      const testsCount = sortedDocs.filter((d) =>
         ['deneme-sinav', 'deneme', 'sinav', 'test'].includes(d.type),
       ).length;
-      const completedCount = docs.filter((d) => isCompleted(d.id)).length;
+      const completedCount = sortedDocs.filter((d) => isCompleted(d.id)).length;
+      const catalogIndex = sortedDocs.reduce((minIdx, d) => {
+        const g = getWorksheetGradeValue(d.grade);
+        const out = getWorksheetOutcomeLabel(d);
+        return Math.min(minIdx, getWorksheetOutcomeCatalogIndex(g, out));
+      }, 9999);
+      const latestTime = sortedDocs.reduce((maxT, d) => {
+        const t = d.created_at ? new Date(d.created_at).getTime() : 0;
+        return Math.max(maxT, t);
+      }, 0);
 
       return {
+        catalogIndex,
         completedCount,
-        documents: docs,
+        documents: sortedDocs,
+        latestTime,
         testsCount,
         topicName,
         videosCount,
         worksheetsCount,
       };
     });
-  }, [documents, isCompleted]);
+
+    return groups.sort((left, right) => {
+      if (sortBy === 'newest') {
+        if (Math.abs(right.latestTime - left.latestTime) > 60_000) {
+          return right.latestTime - left.latestTime;
+        }
+        if (left.catalogIndex !== right.catalogIndex) {
+          return right.catalogIndex - left.catalogIndex;
+        }
+      }
+
+      if (left.catalogIndex !== right.catalogIndex) {
+        return left.catalogIndex - right.catalogIndex;
+      }
+
+      return left.topicName.localeCompare(right.topicName, 'tr');
+    });
+  }, [documents, isCompleted, sortBy]);
 
   const toggleExpand = (topicName: string) => {
     setExpandedTopics((current) => {

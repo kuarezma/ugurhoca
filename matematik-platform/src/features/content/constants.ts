@@ -43,7 +43,8 @@ export const CONTENT_TYPE_MAPPING: Record<string, string> = {
 };
 
 export const CONTENT_SORT_OPTIONS = [
-  { id: 'newest', label: 'En Yeni' },
+  { id: 'curriculum', label: 'Konu / Müfredat Sırası' },
+  { id: 'newest', label: 'Tarih Sırası (En Yeni)' },
   { id: 'downloads', label: 'En Çok İndirilen' },
   { id: 'views', label: 'En Çok İncelenen' },
   { id: 'likes', label: 'En Çok Beğenilen' },

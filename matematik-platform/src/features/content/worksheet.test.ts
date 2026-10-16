@@ -168,6 +168,49 @@ describe('worksheet helpers', () => {
     );
   });
 
+  it('sorts worksheet documents across outcomes by curriculum order or by newest date', () => {
+    const laterTopicDoc: ContentDocument = {
+      created_at: '2026-10-17T08:00:00.000Z',
+      description: buildWorksheetDescription({
+        description: 'Çokgenler',
+        order: 1,
+        outcome:
+          'MAT.5.3.6. Çokgenlerin özellikleri ile ilgili edindiği deneyimleri yansıtabilme',
+      }),
+      grade: [5],
+      id: 'week-6',
+      title: '5. Sınıf Matematik - Çokgenler ve Çember - Yaprak Test 01',
+      type: 'yaprak-test',
+    };
+    const earlierTopicDoc: ContentDocument = {
+      created_at: '2026-09-15T08:00:00.000Z',
+      description: buildWorksheetDescription({
+        description: 'Geometrik Çizimler',
+        order: 2,
+        outcome:
+          'MAT.5.3.1. Temel geometrik çizimler için matematiksel araç ve teknolojiden yararlanabilme',
+      }),
+      grade: [5],
+      id: 'week-1',
+      title: '5. Sınıf Matematik - Temel Geometrik Çizimler - Yaprak Test 02',
+      type: 'yaprak-test',
+    };
+
+    // Müfredat / konu sırasına göre: MAT.5.3.1 (order 2 bile olsa) MAT.5.3.6'dan önce gelir
+    expect(
+      sortWorksheetDocuments([laterTopicDoc, earlierTopicDoc], 'curriculum').map(
+        (d) => d.id,
+      ),
+    ).toEqual(['week-1', 'week-6']);
+
+    // Tarih sırasına göre (en yeni): son yüklenen 6. hafta testi en üstte gelir
+    expect(
+      sortWorksheetDocuments([earlierTopicDoc, laterTopicDoc], 'newest').map(
+        (d) => d.id,
+      ),
+    ).toEqual(['week-6', 'week-1']);
+  });
+
   it('maps known legacy topics to official worksheet outcomes', () => {
     expect(
       getWorksheetOutcomeLabel({

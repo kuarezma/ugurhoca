@@ -91,22 +91,21 @@ export default function ContentFilterBar({
 
             {/* Sort and View Mode */}
             <div className="flex items-center gap-2">
-              {!isWorksheetBrowser && (
-                <div className="relative flex items-center">
-                  <ArrowUpDown className="pointer-events-none absolute left-3.5 h-4 w-4 text-secondary" />
-                  <select
-                    value={sortBy}
-                    onChange={(e) => onSortChange(e.target.value as ContentSortOrder)}
-                    className="appearance-none rounded-2xl border border-default dark:border-slate-400 bg-surface-2/60 py-3 pl-9 pr-8 text-xs sm:text-sm font-semibold text-primary backdrop-blur-md transition-all hover:bg-surface-3 focus:border-purple-500/50 focus:outline-none focus:ring-2 focus:ring-purple-500/20"
-                  >
-                    {CONTENT_SORT_OPTIONS.map((opt) => (
-                      <option key={opt.id} value={opt.id} className="bg-surface-1 text-primary">
-                        {opt.label}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-              )}
+              <div className="relative flex items-center">
+                <ArrowUpDown className="pointer-events-none absolute left-3.5 h-4 w-4 text-secondary" />
+                <select
+                  value={sortBy}
+                  onChange={(e) => onSortChange(e.target.value as ContentSortOrder)}
+                  aria-label="Sıralama ölçütü"
+                  className="appearance-none rounded-2xl border border-default dark:border-slate-400 bg-surface-2/60 py-3 pl-9 pr-8 text-xs sm:text-sm font-semibold text-primary backdrop-blur-md transition-all hover:bg-surface-3 focus:border-purple-500/50 focus:outline-none focus:ring-2 focus:ring-purple-500/20"
+                >
+                  {CONTENT_SORT_OPTIONS.map((opt) => (
+                    <option key={opt.id} value={opt.id} className="bg-surface-1 text-primary">
+                      {opt.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
 
               {/* View Mode Switcher */}
               <div className="flex items-center rounded-2xl border border-default dark:border-slate-400 bg-surface-2/60 p-1 backdrop-blur-md shadow-xs">
@@ -132,26 +131,24 @@ export default function ContentFilterBar({
                 >
                   <List className="h-4 w-4 sm:h-5 sm:w-5" />
                 </button>
-                {!isWorksheetBrowser && (
-                  <button
-                    onClick={() => onViewModeChange('packs')}
-                    title="Konu Setleri"
-                    className={`flex items-center gap-1.5 rounded-xl px-2.5 py-2 text-xs font-semibold transition-all ${
-                      viewMode === 'packs'
-                        ? 'shadow-md shadow-brand-primary/25 bg-brand-primary text-slate-950 dark:text-slate-950'
-                        : 'text-secondary hover:text-primary hover:bg-surface-3/50'
-                    }`}
-                  >
-                    <FolderTree className="h-4 w-4" />
-                    <span className="hidden md:inline">Setler</span>
-                  </button>
-                )}
+                <button
+                  onClick={() => onViewModeChange('packs')}
+                  title="Konu Setleri"
+                  className={`flex items-center gap-1.5 rounded-xl px-2.5 py-2 text-xs font-semibold transition-all ${
+                    viewMode === 'packs'
+                      ? 'shadow-md shadow-brand-primary/25 bg-brand-primary text-slate-950 dark:text-slate-950'
+                      : 'text-secondary hover:text-primary hover:bg-surface-3/50'
+                  }`}
+                >
+                  <FolderTree className="h-4 w-4" />
+                  <span className="hidden md:inline">Setler</span>
+                </button>
               </div>
             </div>
           </div>
 
           {/* Quick Filters Row */}
-          {!isWorksheetBrowser && viewMode !== 'packs' && (
+          {viewMode !== 'packs' && (
             <div className="flex flex-wrap items-center justify-between gap-2.5 pt-1">
               <div className="flex flex-wrap items-center gap-2">
                 <button

@@ -278,10 +278,113 @@ export const getWorksheetOutcomeLabel = (
   return resolveWorksheetOutcome(document);
 };
 
-export const sortWorksheetDocuments = (documents: ContentDocument[]) =>
+import type { ContentSortOrder } from '@/features/content/types';
+
+export const getWorksheetOutcomeCatalogIndex = (
+  grade: GradeValue | null,
+  outcome: string,
+): number => {
+  if (typeof grade !== 'number' || !WORKSHEET_OUTCOME_CATALOG[grade]) {
+    return 9999;
+  }
+
+  const catalog = WORKSHEET_OUTCOME_CATALOG[grade];
+  const normalized = outcome.trim().toLocaleLowerCase('tr');
+  const directIdx = catalog.findIndex(
+    (item) => item.full.toLocaleLowerCase('tr') === normalized,
+  );
+  if (directIdx !== -1) {
+    return directIdx;
+  }
+
+  const codeMatch = outcome.match(/(MAT\.\d+\.\d+\.\d+|M\.\d+\.\d+\.\d+\.\d+)/i);
+  if (codeMatch) {
+    const code = codeMatch[1].toUpperCase();
+    const codeIdx = catalog.findIndex(
+      (item) => item.code.replace(/\.?$/, '').toUpperCase() === code,
+    );
+    if (codeIdx !== -1) {
+      return codeIdx;
+    }
+  }
+
+  return 9999;
+};
+
+const getComparableGradeNumber = (grade: GradeValue | null): number => {
+  if (typeof grade === 'number' && Number.isFinite(grade)) {
+    return grade;
+  }
+  if (grade === 'Mezun') {
+    return 13;
+  }
+  return 99;
+};
+
+export const sortWorksheetDocuments = (
+  documents: ContentDocument[],
+  sortBy: ContentSortOrder = 'curriculum',
+) =>
   [...documents].sort((left, right) => {
+    const leftGrade = getWorksheetGradeValue(left.grade);
+    const rightGrade = getWorksheetGradeValue(right.grade);
+    const leftOutcome = resolveWorksheetOutcome({
+      ...left,
+      grade: left.grade,
+    });
+    const rightOutcome = resolveWorksheetOutcome({
+      ...right,
+      grade: right.grade,
+    });
+    const leftOutcomeIdx = getWorksheetOutcomeCatalogIndex(leftGrade, leftOutcome);
+    const rightOutcomeIdx = getWorksheetOutcomeCatalogIndex(rightGrade, rightOutcome);
     const leftOrder = getWorksheetOrder(left);
     const rightOrder = getWorksheetOrder(right);
+
+    if (sortBy === 'newest') {
+      const leftTime = left.created_at ? new Date(left.created_at).getTime() : 0;
+      const rightTime = right.created_at ? new Date(right.created_at).getTime() : 0;
+
+      // 60 saniyeden fazla fark varsa doğrudan yüklenme tarihine göre (en yeni üstte) sırala
+      if (Math.abs(rightTime - leftTime) > 60_000) {
+        return rightTime - leftTime;
+      }
+
+      // Aynı toplu yüklemede eklenen testlerde ileri hafta/kazanım ve yüksek test numarası üstte olsun
+      if (leftOutcomeIdx !== rightOutcomeIdx && leftOutcomeIdx < 9999 && rightOutcomeIdx < 9999) {
+        return rightOutcomeIdx - leftOutcomeIdx;
+      }
+
+      if (leftOrder !== rightOrder) {
+        return rightOrder - leftOrder;
+      }
+
+      if (rightTime !== leftTime) {
+        return rightTime - leftTime;
+      }
+    }
+
+    if (sortBy === 'downloads' || sortBy === 'views' || sortBy === 'likes') {
+      const metricDiff = (right[sortBy] || 0) - (left[sortBy] || 0);
+      if (metricDiff !== 0) {
+        return metricDiff;
+      }
+    }
+
+    const gradeDiff =
+      getComparableGradeNumber(leftGrade) - getComparableGradeNumber(rightGrade);
+    if (gradeDiff !== 0) {
+      return gradeDiff;
+    }
+
+    if (leftOutcomeIdx !== rightOutcomeIdx) {
+      return leftOutcomeIdx - rightOutcomeIdx;
+    }
+
+    if (leftOutcome !== rightOutcome) {
+      return leftOutcome.localeCompare(rightOutcome, 'tr');
+    }
+
     const leftHasOrder = leftOrder > 0;
     const rightHasOrder = rightOrder > 0;
 
@@ -295,3 +398,4 @@ export const sortWorksheetDocuments = (documents: ContentDocument[]) =>
 
     return left.title.localeCompare(right.title, 'tr');
   });
+

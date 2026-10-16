@@ -1,7 +1,12 @@
 import type { AppUser, Comment, ContentDocument, GradeValue } from '@/types';
 
 export type ContentGradeFilter = number | 'all' | 'Mezun';
-export type ContentSortOrder = 'newest' | 'downloads' | 'views' | 'likes';
+export type ContentSortOrder =
+  | 'curriculum'
+  | 'newest'
+  | 'downloads'
+  | 'views'
+  | 'likes';
 export type ContentQuickFilter =
   | 'all'
   | 'favorites'

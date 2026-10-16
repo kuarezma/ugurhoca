@@ -60,6 +60,30 @@ export const normalizeNumericGrade = (grade?: GradeValue | string | null) => {
   return Number.isFinite(numericGrade) ? numericGrade : null;
 };
 
+const extractOutcomeCodes = (value?: string | null): string[] => {
+  if (!value) return [];
+  const matches = value.match(/(MAT\.\d+\.\d+\.\d+|M\.\d+\.\d+\.\d+\.\d+)/gi) || [];
+  return matches.map((code) => code.replace(/\.?$/, '').toUpperCase());
+};
+
+const matchesPlanOutcome = (
+  documentOutcome: string,
+  planOutcome: string,
+): boolean => {
+  if (documentOutcome === planOutcome) {
+    return true;
+  }
+
+  const docCodes = extractOutcomeCodes(documentOutcome);
+  const planCodes = new Set(extractOutcomeCodes(planOutcome));
+
+  if (docCodes.length > 0 && planCodes.size > 0) {
+    return docCodes.some((code) => planCodes.has(code));
+  }
+
+  return false;
+};
+
 export const selectWeeklyWorksheetSuggestion = ({
   documents,
   grade,
@@ -95,7 +119,10 @@ export const selectWeeklyWorksheetSuggestion = ({
       (document) =>
         document.type === 'yaprak-test' &&
         getWorksheetGradeValue(document.grade) === numericGrade &&
-        getWorksheetOutcomeLabel(document) === currentPlanItem.learning_outcome,
+        matchesPlanOutcome(
+          getWorksheetOutcomeLabel(document),
+          currentPlanItem.learning_outcome,
+        ),
     ),
   )[0];
 
@@ -104,7 +131,7 @@ export const selectWeeklyWorksheetSuggestion = ({
   }
 
   return {
-    description: `${currentPlanItem.subject} konusu için yayınlanan yaprak testi hazır.`,
+    description: `${currentPlanItem.subject.replace(/\n+/g, ' · ')} konusu için yayınlanan yaprak testi hazır.`,
     documentId: matchingDocument.id,
     fileUrl: matchingDocument.file_url || null,
     grade: numericGrade,

@@ -269,6 +269,8 @@ function ContentsPageInner({
   useEffect(() => { setSearchTerm(searchFromUrl); }, [searchFromUrl]);
   const [debouncedSearch, setDebouncedSearch] = useState('');
   const [sortBy, setSortBy] = useState<ContentSortOrder>('newest');
+  const [worksheetSortBy, setWorksheetSortBy] =
+    useState<ContentSortOrder>('curriculum');
   const [quickFilter, setQuickFilter] = useState<ContentQuickFilter>('all');
   const [selectedGrade, setSelectedGrade] =
     useState<ContentGradeFilter>(initialGrade);
@@ -1258,7 +1260,7 @@ function ContentsPageInner({
     }
   }, [deleteCandidate, removeDocumentFromState, showToast]);
 
-  const filteredContents = documents.filter((content) => {
+  const rawFilteredContents = documents.filter((content) => {
     if (quickFilter === 'favorites' && !isFavorite(content.id)) {
       return false;
     }
@@ -1291,6 +1293,11 @@ function ContentsPageInner({
       )
     );
   });
+
+  const filteredContents =
+    sortBy === 'curriculum'
+      ? sortWorksheetDocuments(rawFilteredContents, 'curriculum')
+      : rawFilteredContents;
 
 
   const filteredWorksheetGrades = WORKSHEET_GRADE_OPTIONS.filter((grade) => {
@@ -1334,7 +1341,10 @@ function ContentsPageInner({
     .map((outcome) => ({
       catalogItem: worksheetCatalogOutcomeMap.get(outcome) || null,
       count: worksheetDocumentGroups[outcome]?.length || 0,
-      documents: sortWorksheetDocuments(worksheetDocumentGroups[outcome] || []),
+      documents: sortWorksheetDocuments(
+        worksheetDocumentGroups[outcome] || [],
+        worksheetSortBy,
+      ),
       outcome,
     }))
     .filter(({ outcome, count }) =>
@@ -1356,6 +1366,27 @@ function ContentsPageInner({
 
   const filteredWorksheetTests = sortWorksheetDocuments(
     matchingWorksheetDocuments.filter((document) => {
+      if (quickFilter === 'favorites' && !isFavorite(document.id)) {
+        return false;
+      }
+      if (quickFilter === 'completed' && !isCompleted(document.id)) {
+        return false;
+      }
+      if (
+        quickFilter === 'with_solution' &&
+        !document.solution_url &&
+        !document.answer_key_text
+      ) {
+        return false;
+      }
+      if (
+        quickFilter === 'with_video' &&
+        !document.video_url &&
+        document.type !== 'ders-videolari'
+      ) {
+        return false;
+      }
+
       if (selectedWorksheetOutcome) {
         const docOutcome = resolveWorksheetOutcome({
           ...document,
@@ -1371,10 +1402,13 @@ function ContentsPageInner({
         return true;
       }
 
-      return document.title
-        .toLowerCase()
-        .includes(searchTerm.trim().toLowerCase());
+      const term = searchTerm.trim().toLowerCase();
+      return (
+        document.title.toLowerCase().includes(term) ||
+        Boolean(document.description && document.description.toLowerCase().includes(term))
+      );
     }),
+    worksheetSortBy,
   );
 
   const searchPlaceholder = isWorksheetBrowser
@@ -1388,6 +1422,12 @@ function ContentsPageInner({
       ? `${filteredWorksheetTests.length} içerik bulundu`
       : `${filteredWorksheetGrades.length} sınıf düzeyi bulundu`
     : `${filteredContents.length} içerik bulundu`;
+
+  const activeTotalResults = isWorksheetBrowser
+    ? selectedWorksheetGrade
+      ? filteredWorksheetTests.length
+      : filteredWorksheetGrades.length
+    : filteredContents.length;
 
   const worksheetGradeLabel =
     selectedWorksheetGrade === 'Mezun'
@@ -1513,32 +1553,46 @@ function ContentsPageInner({
               onClearSearch={() => setSearchTerm('')}
               onQuickFilterChange={setQuickFilter}
               onSearchChange={setSearchTerm}
-              onSortChange={setSortBy}
+              onSortChange={isWorksheetBrowser ? setWorksheetSortBy : setSortBy}
               onViewModeChange={setViewMode}
               quickFilter={quickFilter}
               searchPlaceholder={searchPlaceholder}
               searchTerm={searchTerm}
-              sortBy={sortBy}
-              totalResults={filteredContents.length}
+              sortBy={isWorksheetBrowser ? worksheetSortBy : sortBy}
+              totalResults={activeTotalResults}
               viewMode={viewMode}
             />
 
-            {!isWorksheetBrowser && (
-              <div className="mt-5 border-t border-default dark:border-white/[0.08] pt-4">
-                <ContentCategoryChips
-                  selectedGrade={String(selectedGrade)}
-                  selectedType={selectedType}
-                  onSelectGrade={(g) => {
-                    startTransition(() => {
-                      if (g === 'all') setSelectedGrade('all');
-                      else if (g === 'Mezun') setSelectedGrade('Mezun');
-                      else setSelectedGrade(Number(g));
-                    });
-                  }}
-                  onSelectType={(t) => handleTypeChange(t)}
-                />
-              </div>
-            )}
+            <div className="mt-5 border-t border-default dark:border-white/[0.08] pt-4">
+              <ContentCategoryChips
+                selectedGrade={
+                  isWorksheetBrowser
+                    ? String(selectedWorksheetGrade ?? 'all')
+                    : String(selectedGrade)
+                }
+                selectedType={selectedType}
+                onSelectGrade={(g) => {
+                  if (isWorksheetBrowser) {
+                    if (g === 'all') {
+                      resetWorksheetHierarchy();
+                      updateWorksheetBrowserUrl(null);
+                    } else {
+                      const nextGrade =
+                        g === 'Mezun' ? 'Mezun' : (Number(g) as WorksheetGradeSelection);
+                      updateWorksheetBrowserUrl(nextGrade);
+                      void loadWorksheetGradeDocuments(nextGrade);
+                    }
+                    return;
+                  }
+                  startTransition(() => {
+                    if (g === 'all') setSelectedGrade('all');
+                    else if (g === 'Mezun') setSelectedGrade('Mezun');
+                    else setSelectedGrade(Number(g));
+                  });
+                }}
+                onSelectType={(t) => handleTypeChange(t)}
+              />
+            </div>
           </div>
 
 
@@ -1549,47 +1603,80 @@ function ContentsPageInner({
               initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.15 }}
-              className="mb-6 flex flex-wrap items-center gap-2 text-sm text-secondary"
+              className="mb-6 flex flex-wrap items-center justify-between gap-3 text-sm text-secondary"
             >
-              <button
-                onClick={() => {
-                  resetWorksheetHierarchy();
-                  updateWorksheetBrowserUrl(null);
-                  setSearchTerm('');
-                }}
-                className={`rounded-full border px-4 py-2 transition-colors ${
-                  selectedWorksheetGrade
-                    ? 'border-default dark:border-slate-400 bg-surface-2 text-secondary hover:text-primary'
-                    : 'border-brand-primary dark:border-brand-primary bg-brand-primary/15 text-tone-success-fg dark:text-brand-primary-soft'
-                }`}
-              >
-                Sınıf Düzeyleri
-              </button>
-              {worksheetGradeLabel && (
-                <>
-                  <ChevronRight className="w-4 h-4 text-secondary" />
+              <div className="flex flex-wrap items-center gap-2">
+                <button
+                  onClick={() => {
+                    resetWorksheetHierarchy();
+                    updateWorksheetBrowserUrl(null);
+                    setSearchTerm('');
+                  }}
+                  className={`rounded-full border px-4 py-2 transition-colors ${
+                    selectedWorksheetGrade
+                      ? 'border-default dark:border-slate-400 bg-surface-2 text-secondary hover:text-primary'
+                      : 'border-brand-primary dark:border-brand-primary bg-brand-primary/15 text-tone-success-fg dark:text-brand-primary-soft'
+                  }`}
+                >
+                  Sınıf Düzeyleri
+                </button>
+                {worksheetGradeLabel && (
+                  <>
+                    <ChevronRight className="w-4 h-4 text-secondary" />
+                    <button
+                      onClick={() => {
+                        setSelectedWorksheetOutcome(null);
+                        updateWorksheetBrowserUrl(selectedWorksheetGrade);
+                      }}
+                      className={`rounded-full border px-4 py-2 transition-colors ${
+                        selectedWorksheetOutcome
+                          ? 'border-default dark:border-slate-400 bg-surface-2 text-secondary hover:text-primary'
+                          : 'border-brand-primary dark:border-brand-primary bg-brand-primary/15 text-tone-success-fg dark:text-brand-primary-soft'
+                      }`}
+                    >
+                      {worksheetGradeLabel}
+                    </button>
+                  </>
+                )}
+                {selectedWorksheetOutcome && (
+                  <>
+                    <ChevronRight className="w-4 h-4 text-secondary" />
+                    <span className="rounded-full border border-purple-500/30 bg-purple-500/15 px-4 py-2 text-purple-800 dark:text-purple-100">
+                      {selectedWorksheetOutcome}
+                    </span>
+                  </>
+                )}
+              </div>
+
+              {selectedWorksheetGrade && (
+                <div
+                  role="group"
+                  aria-label="Yaprak test listeleme sırası"
+                  className="inline-flex items-center rounded-2xl border border-default bg-surface-1 p-1 shadow-xs"
+                >
                   <button
-                    onClick={() => {
-                      setSelectedWorksheetOutcome(null);
-                      updateWorksheetBrowserUrl(selectedWorksheetGrade);
-                    }}
-                    className={`rounded-full border px-4 py-2 transition-colors ${
-                      selectedWorksheetOutcome
-                        ? 'border-default dark:border-slate-400 bg-surface-2 text-secondary hover:text-primary'
-                        : 'border-brand-primary dark:border-brand-primary bg-brand-primary/15 text-tone-success-fg dark:text-brand-primary-soft'
+                    type="button"
+                    onClick={() => setWorksheetSortBy('curriculum')}
+                    className={`rounded-xl px-3 py-1.5 text-xs font-bold transition-all ${
+                      worksheetSortBy === 'curriculum'
+                        ? 'bg-brand-primary text-slate-950 dark:text-slate-950 shadow-xs'
+                        : 'text-secondary hover:text-primary'
                     }`}
                   >
-                    {worksheetGradeLabel}
+                    Konu Sırasına Göre
                   </button>
-                </>
-              )}
-              {selectedWorksheetOutcome && (
-                <>
-                  <ChevronRight className="w-4 h-4 text-secondary" />
-                  <span className="rounded-full border border-purple-500/30 bg-purple-500/15 px-4 py-2 text-purple-800 dark:text-purple-100">
-                    {selectedWorksheetOutcome}
-                  </span>
-                </>
+                  <button
+                    type="button"
+                    onClick={() => setWorksheetSortBy('newest')}
+                    className={`rounded-xl px-3 py-1.5 text-xs font-bold transition-all ${
+                      worksheetSortBy === 'newest'
+                        ? 'bg-brand-primary text-slate-950 dark:text-slate-950 shadow-xs'
+                        : 'text-secondary hover:text-primary'
+                    }`}
+                  >
+                    Tarih Sırasına Göre (En Yeni)
+                  </button>
+                </div>
               )}
             </motion.div>
           )}
@@ -1738,7 +1825,24 @@ function ContentsPageInner({
 
                 {/* İçerik Listesi */}
                 {filteredWorksheetTests.length > 0 ? (
-                  viewMode === 'grid' ? (
+                  viewMode === 'packs' ? (
+                    <ContentTopicPacks
+                      documents={filteredWorksheetTests}
+                      isCompleted={isCompleted}
+                      isFavorite={isFavorite}
+                      isLiked={(id) => likedDocs.has(id)}
+                      onDelete={handleDeleteDocument}
+                      onDownload={handleDownloadDocument}
+                      onEdit={handleOpenEdit}
+                      onOpenComments={handleOpenComments}
+                      onPreview={handleOpenPreview}
+                      onToggleCompleted={toggleCompleted}
+                      onToggleFavorite={toggleFavorite}
+                      onToggleLike={handleToggleLike}
+                      sortBy={worksheetSortBy}
+                      user={user}
+                    />
+                  ) : viewMode === 'grid' ? (
                     <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-7">
                       {filteredWorksheetTests.map((content, index) => (
                         <ContentCard
@@ -1863,6 +1967,7 @@ function ContentsPageInner({
               onToggleCompleted={toggleCompleted}
               onToggleFavorite={toggleFavorite}
               onToggleLike={handleToggleLike}
+              sortBy={sortBy}
               user={user}
             />
           ) : viewMode === 'grid' ? (
