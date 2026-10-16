@@ -127,6 +127,14 @@ describe('worksheet helpers', () => {
       }),
     ).toBe('Doğal Sayılar');
     expect(getWorksheetVisibleDescription({ description })).toBe('Kısa açıklama');
+    expect(
+      buildWorksheetStandardTitle({
+        grade: 5,
+        order: 2,
+        outcome: 'Doğal Sayılar',
+        subject: description,
+      }),
+    ).toBe('5. Sınıf Matematik - Kısa açıklama - Yaprak Test 02');
   });
 
   it('sorts worksheet documents by sequence', () => {

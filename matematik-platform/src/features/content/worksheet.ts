@@ -85,7 +85,7 @@ export const getWorksheetTitleTopic = (options: {
 };
 
 const cleanWorksheetTitleTopic = (value?: string | null) => {
-  const normalized = value?.trim().replace(/\s+/g, ' ') || '';
+  const normalized = stripWorksheetMetaPrefix(value).trim().replace(/\s+/g, ' ') || '';
   const withoutCode = normalized
     .replace(/^M(?:AT)?\.\d+(?:\.\d+){1,4}\.?\s*/i, '')
     .replace(/\s*>\s*.*/, '')
