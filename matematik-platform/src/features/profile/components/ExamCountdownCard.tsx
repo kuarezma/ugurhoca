@@ -47,9 +47,11 @@ export function ExamCountdownCard({
 }: ExamCountdownCardProps) {
   const defaultExamId = useMemo(() => {
     const gradeNum = Number(userGrade);
-    if (gradeNum === 8) return 'lgs-2026';
-    if (gradeNum >= 10) return 'yks-2026';
-    return 'lgs-2026';
+    const lgsId = featuredExams.find((e) => e.id.includes('lgs'))?.id || 'lgs-2027';
+    const yksId = featuredExams.find((e) => e.id.includes('yks'))?.id || 'yks-2027';
+    if (gradeNum === 8) return lgsId;
+    if (gradeNum >= 10) return yksId;
+    return lgsId;
   }, [userGrade]);
 
   const [selectedExamId, setSelectedExamId] = useState<string>(defaultExamId);

@@ -109,7 +109,7 @@ export function LgsTacticsCorner({ isLight = false }: { isLight?: boolean }) {
   const [appliedTactics, setAppliedTactics] = useState<Set<number>>(new Set());
 
   // Days left to LGS
-  const lgsExam = featuredExams.find((e) => e.id === 'lgs-2026');
+  const lgsExam = featuredExams.find((e) => e.id.includes('lgs'));
   const daysLeft = useMemo(() => {
     if (!lgsExam) return null;
     const target = new Date(lgsExam.targetDate).getTime();
