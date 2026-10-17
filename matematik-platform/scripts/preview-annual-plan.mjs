@@ -3,6 +3,19 @@ import path from 'node:path';
 import ExcelJS from 'exceljs';
 import JSZip from 'jszip';
 
+const NON_INSTRUCTIONAL_PLAN_KEYWORDS = [
+  'ara tatil',
+  'bayram',
+  'egitim ogretim yili sonu',
+  'kurban bayrami',
+  'ramazan bayrami',
+  'resmi tatil',
+  'sosyal etkinlik',
+  'tatil',
+  'yariyil tatili',
+  'yil sonu',
+];
+
 const filePath = process.argv[2];
 
 if (!filePath) {
@@ -79,6 +92,24 @@ async function readRows(fileBuffer, lowerName) {
     const tables = Array.from(documentXml.matchAll(/<w:tbl[\s\S]*?<\/w:tbl>/g))
       .map((match) => parseDocxRowsFromTable(match[0]))
       .filter((tableRows) => tableRows.length > 0);
+
+    const planTables = tables.filter((table) => {
+      const firstRowText = normalizeKey((table[0] || []).join(' '));
+      return (
+        firstRowText.includes('tarih') &&
+        (firstRowText.includes('hafta') ||
+          firstRowText.includes('ogrenme') ||
+          firstRowText.includes('kazanim'))
+      );
+    });
+
+    if (planTables.length > 1) {
+      const combined = [planTables[0][0]];
+      for (const t of planTables) {
+        combined.push(...t.slice(1));
+      }
+      return combined;
+    }
 
     return [...tables].sort((left, right) => right.length - left.length)[0] ?? [];
   }
@@ -187,10 +218,24 @@ function parseRowsForPreview(rows, originalFileName) {
       headers.hafta_bitis === undefined
         ? dateRange?.weekEnd
         : parseDateCell(row[headers.hafta_bitis]);
-    const subject = cleanImportedText(row[headers.konu]);
+    const descriptionIndex = headers.aciklama;
+    const description =
+      descriptionIndex === undefined
+        ? ''
+        : String(row[descriptionIndex] || '').trim();
+    const themeIndex = headers.tema;
+    const theme =
+      themeIndex === undefined
+        ? ''
+        : String(row[themeIndex] || '').trim();
+    const subject =
+      cleanImportedText(row[headers.konu]) ||
+      (theme ? cleanImportedText(theme) : '') ||
+      (description ? cleanImportedText(description) : '');
     const learningOutcome = cleanImportedText(row[headers.kazanim]);
 
     if (!subject && !learningOutcome) continue;
+    if (isNonInstructionalPlanRow(subject, learningOutcome)) continue;
 
     if (!grade) errors.push({ row: index + 1, message: 'Geçersiz sınıf.' });
     if (!weekStart) errors.push({ row: index + 1, message: 'Geçersiz hafta başlangıç tarihi.' });
@@ -229,25 +274,39 @@ function mapHeaders(row) {
     konu: [
       'konu',
       'konuicerikcercevesi',
-      'ogrenmealani',
-      'ogrenmealanı',
+      'icerikcercevesi',
       'altogrenmealani',
       'altogrenmealanı',
+      'ogrenmealani',
+      'ogrenmealanı',
       'subject',
       'tema',
       'unite',
       'ünite',
     ],
     sinif: ['sinif', 'sinifduzeyi', 'grade', 'class'],
+    tema: ['tema', 'unite', 'ünite'],
   };
   const headers = {};
 
   row.forEach((cell, index) => {
     const normalized = normalizeHeader(cell);
-    const match = Object.entries(aliases).find(([, values]) =>
-      values.includes(normalized),
-    );
-    if (match) headers[match[0]] = index;
+    for (const [key, values] of Object.entries(aliases)) {
+      const aliasIndex = values.indexOf(normalized);
+      if (aliasIndex !== -1) {
+        const currentCol = headers[key];
+        if (currentCol === undefined) {
+          headers[key] = index;
+        } else {
+          const currentAliasIndex = values.indexOf(
+            normalizeHeader(row[currentCol]),
+          );
+          if (aliasIndex < currentAliasIndex) {
+            headers[key] = index;
+          }
+        }
+      }
+    }
   });
 
   return headers;
@@ -345,16 +404,59 @@ function parseDateRangeCell(value, academicStartYear) {
   const sameMonthMatch = text.match(
     /(\d{1,2})\s*[-–]\s*(\d{1,2})\s+(ocak|şubat|subat|mart|nisan|mayıs|mayis|haziran|temmuz|ağustos|agustos|eylül|eylul|ekim|kasım|kasim|aralık|aralik)(?:\s+(\d{4}))?/i,
   );
-  if (!sameMonthMatch) return null;
+  if (sameMonthMatch) {
+    const month = parseTurkishMonth(sameMonthMatch[3]);
+    const year = sameMonthMatch[4]
+      ? Number(sameMonthMatch[4])
+      : inferAcademicYearForMonth(month, academicStartYear);
+    const weekStart = buildDateString(year, month, Number(sameMonthMatch[1]));
+    const weekEnd = buildDateString(year, month, Number(sameMonthMatch[2]));
 
-  const month = parseTurkishMonth(sameMonthMatch[3]);
-  const year = sameMonthMatch[4]
-    ? Number(sameMonthMatch[4])
-    : inferAcademicYearForMonth(month, academicStartYear);
-  const weekStart = buildDateString(year, month, Number(sameMonthMatch[1]));
-  const weekEnd = buildDateString(year, month, Number(sameMonthMatch[2]));
+    return weekStart && weekEnd ? { weekEnd, weekStart } : null;
+  }
 
-  return weekStart && weekEnd ? { weekEnd, weekStart } : null;
+  const twoMonthMatch = text.match(
+    /(\d{1,2})\s+(ocak|şubat|subat|mart|nisan|mayıs|mayis|haziran|temmuz|ağustos|agustos|eylül|eylul|ekim|kasım|kasim|aralık|aralik)\s*[-–]\s*(\d{1,2})\s+(ocak|şubat|subat|mart|nisan|mayıs|mayis|haziran|temmuz|ağustos|agustos|eylül|eylul|ekim|kasım|kasim|aralık|aralik)(?:\s+(\d{4}))?/i,
+  );
+  if (twoMonthMatch) {
+    const startMonth = parseTurkishMonth(twoMonthMatch[2]);
+    const endMonth = parseTurkishMonth(twoMonthMatch[4]);
+    const startYear = twoMonthMatch[5]
+      ? Number(twoMonthMatch[5])
+      : inferAcademicYearForMonth(startMonth, academicStartYear);
+    const endYear = twoMonthMatch[5]
+      ? Number(twoMonthMatch[5])
+      : inferAcademicYearForMonth(endMonth, academicStartYear);
+    const weekStart = buildDateString(
+      startYear,
+      startMonth,
+      Number(twoMonthMatch[1]),
+    );
+    const weekEnd = buildDateString(
+      endYear,
+      endMonth,
+      Number(twoMonthMatch[3]),
+    );
+
+    return weekStart && weekEnd ? { weekEnd, weekStart } : null;
+  }
+
+  return null;
+}
+
+function isNonInstructionalPlanRow(subject, learningOutcome) {
+  const normalizedText = normalizeKey(`${subject} ${learningOutcome}`)
+    .replace(/[^a-z0-9\s]/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+
+  if (!normalizedText) {
+    return false;
+  }
+
+  return NON_INSTRUCTIONAL_PLAN_KEYWORDS.some((keyword) =>
+    normalizedText.includes(keyword),
+  );
 }
 
 function parseTurkishMonth(value) {

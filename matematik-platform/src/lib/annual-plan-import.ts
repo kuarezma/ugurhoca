@@ -30,16 +30,18 @@ const HEADER_ALIASES: Record<string, string[]> = {
   konu: [
     'konu',
     'konuicerikcercevesi',
-    'ogrenmealani',
-    'ogrenmealanı',
+    'icerikcercevesi',
     'altogrenmealani',
     'altogrenmealanı',
+    'ogrenmealani',
+    'ogrenmealanı',
     'subject',
     'tema',
     'unite',
     'ünite',
   ],
   sinif: ['sinif', 'sinifduzeyi', 'grade', 'class'],
+  tema: ['tema', 'unite', 'ünite'],
 };
 
 export type AnnualPlanImportRow = {
@@ -256,13 +258,21 @@ export function parseAnnualPlanRows(
       headers.hafta_bitis === undefined
         ? dateRange?.weekEnd
         : parseDateCell(row[headers.hafta_bitis]);
-    const subject = cleanImportedText(row[headers.konu!]);
-    const learningOutcome = cleanImportedText(row[headers.kazanim!]);
     const descriptionIndex = headers.aciklama;
     const description =
       descriptionIndex === undefined
         ? ''
         : toCellText(row[descriptionIndex]).trim();
+    const themeIndex = headers.tema;
+    const theme =
+      themeIndex === undefined
+        ? ''
+        : toCellText(row[themeIndex]).trim();
+    const subject =
+      cleanImportedText(row[headers.konu!]) ||
+      (theme ? cleanImportedText(theme) : '') ||
+      (description ? cleanImportedText(description) : '');
+    const learningOutcome = cleanImportedText(row[headers.kazanim!]);
 
     if (!subject && !learningOutcome) {
       continue;
@@ -464,6 +474,24 @@ async function parseDocxTableRows(buffer: ArrayBuffer): Promise<RawCell[][]> {
     return [];
   }
 
+  const planTables = tables.filter((table) => {
+    const firstRowText = normalizeKey((table[0] || []).join(' '));
+    return (
+      firstRowText.includes('tarih') &&
+      (firstRowText.includes('hafta') ||
+        firstRowText.includes('ogrenme') ||
+        firstRowText.includes('kazanim'))
+    );
+  });
+
+  if (planTables.length > 1) {
+    const combined: RawCell[][] = [planTables[0][0]];
+    for (const t of planTables) {
+      combined.push(...t.slice(1));
+    }
+    return combined;
+  }
+
   return [...tables].sort((left, right) => right.length - left.length)[0] ?? [];
 }
 
@@ -505,12 +533,21 @@ function mapHeaders(row: RawCell[]) {
 
   row.forEach((cell, index) => {
     const normalized = normalizeHeader(toCellText(cell));
-    const match = Object.entries(HEADER_ALIASES).find(([, aliases]) =>
-      aliases.includes(normalized),
-    );
-
-    if (match) {
-      headers[match[0] as keyof typeof HEADER_ALIASES] = index;
+    for (const [key, aliases] of Object.entries(HEADER_ALIASES)) {
+      const aliasIndex = aliases.indexOf(normalized);
+      if (aliasIndex !== -1) {
+        const currentCol = headers[key as keyof typeof HEADER_ALIASES];
+        if (currentCol === undefined) {
+          headers[key as keyof typeof HEADER_ALIASES] = index;
+        } else {
+          const currentAliasIndex = aliases.indexOf(
+            normalizeHeader(toCellText(row[currentCol])),
+          );
+          if (aliasIndex < currentAliasIndex) {
+            headers[key as keyof typeof HEADER_ALIASES] = index;
+          }
+        }
+      }
     }
   });
 
@@ -779,9 +816,12 @@ function normalizeExcelCellValue(value: ExcelJS.CellValue): RawCell {
 const NON_INSTRUCTIONAL_PLAN_KEYWORDS = [
   'ara tatil',
   'bayram',
+  'egitim ogretim yili sonu',
   'kurban bayrami',
   'ramazan bayrami',
   'resmi tatil',
+  'sosyal etkinlik',
   'tatil',
   'yariyil tatili',
+  'yil sonu',
 ];

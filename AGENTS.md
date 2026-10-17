@@ -1,6 +1,6 @@
 # Uğur Hoca — repo kuralları
 
-Güncel 5–8. sınıf yıllık plan kaynağı: `matematik-platform/data/annual-plan/GUNCEL_KAYNAK.md`. Kullanıcının 10 Ekim 2026'da güncel olarak belirttiği Excel esas alınır.
+Güncel 5–8. sınıf yıllık plan kaynağı: `matematik-platform/data/annual-plan/GUNCEL_KAYNAK.md`. Kullanıcının 17 Ekim 2026'da güncel olarak belirttiği Öğretmen Evrak resmi Word (.docx) planları ve çerçeve Excel esas alınır.
 
 Uygulama kodu `matematik-platform/` altındadır. Kural önceliği:
 

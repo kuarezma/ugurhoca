@@ -1,6 +1,7 @@
 {
   "academic_year": "2026-2027",
   "accepted_on": "2026-10-10",
+  "updated_on": "2026-10-17",
   "authority": "Kullanıcının en güncel olarak belirttiği yıllık plan",
   "original_filename": "MATEMATİK (5-8. SINIF) TASLAK ÇERÇEVE YILLIK PLAN+++ 2.xlsx",
   "sha256": "0a38a19827130fe35e72353e2f4eb0d0b2338ce7fbe088115e0fff83fc241ce2",
@@ -13,5 +14,35 @@
     "7": 50,
     "8": 42
   },
-  "derived_csv_sha256": "34b4690d66b28c886adaf2e3291fa9f018e98e7a51e3deee8c3cffc350689446"
+  "derived_csv_sha256": "34b4690d66b28c886adaf2e3291fa9f018e98e7a51e3deee8c3cffc350689446",
+  "official_docx": {
+    "accepted_on": "2026-10-17",
+    "authority": "Öğretmen Evrak (Uğur Yaşayan - Alparslan Ortaokulu, 17.10.2026)",
+    "files": {
+      "5": {
+        "filename": "5-sinif-matematik-maarif-m-yillik-plan-ogretmenevrak-1792259133.docx",
+        "sha256": "9e4f6b8763894748715c9b2448fdb2185169dc7cd592954eb7cd44e87714710e",
+        "teaching_weeks": 36,
+        "total_rows": 41
+      },
+      "6": {
+        "filename": "6-sinif-matematik-maarif-m-yillik-plan-ogretmenevrak-1792259200.docx",
+        "sha256": "08b687178d7781679e154106222384e364410572fa4798b0aff46605eb74fb9d",
+        "teaching_weeks": 36,
+        "total_rows": 41
+      },
+      "7": {
+        "filename": "7-sinif-matematik-maarif-m-yillik-plan-ogretmenevrak-1792259221.docx",
+        "sha256": "fb661d3b058efb9081a51bc8ef710dfbdc458b383e2aa01aced585913c393704",
+        "teaching_weeks": 36,
+        "total_rows": 41
+      },
+      "8": {
+        "filename": "8-sinif-matematik-ugur-yasayan-yillik-plan-ogretmenevrak-1792259249.docx",
+        "sha256": "b1162c768ff9420eddf1002247dba42ce11d912004fc79a1d41ef7e82ee6535a",
+        "teaching_weeks": 36,
+        "total_rows": 41
+      }
+    }
+  }
 }

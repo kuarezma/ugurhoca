@@ -265,6 +265,43 @@ describe('annual plan import parser', () => {
     expect(result.rows).toEqual([]);
     expect(result.errors[0]?.message).toBe('Dosyada başlık satırı bulunamadı.');
   });
+
+  it('combines multi-table Maarif docx plans and skips end-of-year banner rows', async () => {
+    const zip = new JSZip();
+    zip.file(
+      'word/document.xml',
+      `<?xml version="1.0" encoding="UTF-8"?>
+      <w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
+        <w:body>
+          <w:tbl>
+            ${buildDocxRow(['TYMM TEMA BİLGİ TABLOSU', ''])}
+            ${buildDocxRow(['Tema', '1. TEMA: SAYILAR'])}
+          </w:tbl>
+          <w:tbl>
+            ${buildDocxRow(['TARİH', 'HAFTA', 'SAAT', 'TEMA', 'İÇERİK ÇERÇEVESİ', 'ÖĞRENME ÇIKTILARI'])}
+            ${buildDocxRow(['14-18 Eylül', '1. Hafta', '5 Saat', '1.TEMA', 'Doğal Sayılar', 'MAT.5.1.1. Sayıları okur'])}
+          </w:tbl>
+          <w:tbl>
+            ${buildDocxRow(['TYMM TEMA BİLGİ TABLOSU', ''])}
+            ${buildDocxRow(['Tema', '2. TEMA: GEOMETRİ'])}
+          </w:tbl>
+          <w:tbl>
+            ${buildDocxRow(['TARİH', 'HAFTA', 'SAAT', 'TEMA', 'İÇERİK ÇERÇEVESİ', 'ÖĞRENME ÇIKTILARI'])}
+            ${buildDocxRow(['21-25 Eylül', '2. Hafta', '5 Saat', '2.TEMA', 'Açılar', 'MAT.5.2.1. Açıları ölçer'])}
+            ${buildDocxRow(['2026-2027 Eğitim-Öğretim Yılı Sonu', '', '', '', '', ''])}
+          </w:tbl>
+        </w:body>
+      </w:document>`,
+    );
+
+    const buffer = await zip.generateAsync({ type: 'arraybuffer' });
+    const result = await parseAnnualPlanFile(buffer, '5-sinif-yillik-plan.docx');
+
+    expect(result.errors).toEqual([]);
+    expect(result.rows).toHaveLength(2);
+    expect(result.rows[0]?.subject).toBe('Doğal Sayılar');
+    expect(result.rows[1]?.subject).toBe('Açılar');
+  });
 });
 
 function buildDocxRow(cells: string[]) {
