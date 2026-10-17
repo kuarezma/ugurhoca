@@ -61,13 +61,26 @@ function checkPdfPrivacy(pdfPath) {
   }
 }
 
-function getDriveItemId(filePath, retries = 15) {
+function ensureDriveAppRunning() {
+  try {
+    execFileSync("pgrep", ["-f", "Google Drive"], { stdio: "ignore" });
+  } catch {
+    try {
+      execFileSync("open", ["-a", "Google Drive"], { stdio: "ignore" });
+    } catch {
+      // ignore if app launch fails
+    }
+  }
+}
+
+function getDriveItemId(filePath, retries = 25) {
+  ensureDriveAppRunning();
   for (let i = 0; i < retries; i++) {
     try {
       const id = execFileSync(
         "xattr",
         ["-p", "com.google.drivefs.item-id#S", filePath],
-        { encoding: "utf8" }
+        { encoding: "utf8", stdio: ["ignore", "pipe", "ignore"] }
       ).trim();
       if (id && !id.startsWith("local-")) return id;
     } catch {
@@ -113,45 +126,50 @@ async function main() {
       continue;
     }
 
-    const files = fs.readdirSync(srcDir);
-    const studentPdf = files.find((f) => f.endsWith("_Ogrenci.pdf"));
-    const teacherPdf = files.find((f) => f.endsWith("_Ogretmen_Cozumlu.pdf"));
+    const files = fs.readdirSync(srcDir).sort();
+    const studentPdfs = files.filter((f) => f.endsWith("_Yaprak_Test_Ogrenci.pdf"));
 
-    if (!studentPdf) {
+    if (studentPdfs.length === 0) {
       console.warn(`[${grade}. Sınıf] Öğrenci PDF bulunamadı: ${srcDir}`);
       continue;
     }
 
-    const studentSrc = path.join(srcDir, studentPdf);
-    checkPdfPrivacy(studentSrc);
+    for (const studentPdf of studentPdfs) {
+      const prefix = studentPdf.replace(/_Ogrenci\.pdf$/, "");
+      const teacherCandidate = `${prefix}_Ogretmen_Cozumlu.pdf`;
+      const teacherPdf = files.includes(teacherCandidate) ? teacherCandidate : null;
 
-    let teacherSrc = null;
-    if (teacherPdf) {
-      teacherSrc = path.join(srcDir, teacherPdf);
-      checkPdfPrivacy(teacherSrc);
+      const studentSrc = path.join(srcDir, studentPdf);
+      checkPdfPrivacy(studentSrc);
+
+      let teacherSrc = null;
+      if (teacherPdf) {
+        teacherSrc = path.join(srcDir, teacherPdf);
+        checkPdfPrivacy(teacherSrc);
+      }
+
+      console.log(`[${grade}. Sınıf] Gizlilik denetimi BAŞARILI: ${studentPdf}`);
+
+      if (dryRun) continue;
+
+      const destDir = path.join(DRIVE_BASE, `${grade}. Sınıf`);
+      fs.mkdirSync(destDir, { recursive: true });
+
+      const studentDest = path.join(destDir, studentPdf);
+      fs.copyFileSync(studentSrc, studentDest);
+      const studentDriveId = getDriveItemId(studentDest);
+
+      let teacherDriveId = null;
+      if (teacherSrc && teacherPdf) {
+        const teacherDest = path.join(destDir, teacherPdf);
+        fs.copyFileSync(teacherSrc, teacherDest);
+        teacherDriveId = getDriveItemId(teacherDest);
+      }
+
+      console.log(
+        `[${grade}. Sınıf] (${studentPdf}) Drive ID -> Öğrenci: ${studentDriveId}, Çözümlü: ${teacherDriveId ?? "-"}`
+      );
     }
-
-    console.log(`[${grade}. Sınıf] Gizlilik denetimi BAŞARILI: ${studentPdf}`);
-
-    if (dryRun) continue;
-
-    const destDir = path.join(DRIVE_BASE, `${grade}. Sınıf`);
-    fs.mkdirSync(destDir, { recursive: true });
-
-    const studentDest = path.join(destDir, studentPdf);
-    fs.copyFileSync(studentSrc, studentDest);
-    const studentDriveId = getDriveItemId(studentDest);
-
-    let teacherDriveId = null;
-    if (teacherSrc && teacherPdf) {
-      const teacherDest = path.join(destDir, teacherPdf);
-      fs.copyFileSync(teacherSrc, teacherDest);
-      teacherDriveId = getDriveItemId(teacherDest);
-    }
-
-    console.log(
-      `[${grade}. Sınıf] Drive ID -> Öğrenci: ${studentDriveId}, Çözümlü: ${teacherDriveId ?? "-"}`
-    );
   }
 }
 
