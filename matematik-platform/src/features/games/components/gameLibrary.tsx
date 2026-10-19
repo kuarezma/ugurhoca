@@ -347,10 +347,10 @@ export const games: GameDefinition[] = [
   {
     id: 26,
     title: 'TOGG & Süper Garaj Yarışı',
-    description: 'TOGG T10X veya süper aracını garajdan seç, işlemleri çözüp Trugo nitro ile rakipleri solla!',
+    description: 'TOGG T10X veya süper aracını garajdan seç, trafiği solla, Trugo nitro ateşle ve rekor puan topla!',
     grade: '5-8',
     rating: 5.0,
-    difficulty: 'Orta',
+    difficulty: 'Kolay',
     color: 'from-rose-600 to-cyan-600',
     icon: Car,
     component: ToggCyberRacer,
@@ -358,7 +358,7 @@ export const games: GameDefinition[] = [
   {
     id: 27,
     title: 'Pac-Matik: Ok Labirenti',
-    description: 'Soru ekranını çöz, parlayan ok koridorlarını takip edip Pac-Matik ile doğru cevaba ulaş!',
+    description: 'Ekrandaki ok kombolarını yakala, neon labirentte yemleri ve kirazları toplayıp hayaletleri avla!',
     grade: '5-8',
     rating: 5.0,
     difficulty: 'Kolay',

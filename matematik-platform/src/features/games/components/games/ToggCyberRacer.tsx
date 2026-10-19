@@ -9,6 +9,7 @@ import {
   Heart,
   Play,
   RotateCcw,
+  Shield,
   Timer,
   Trophy,
   Zap,
@@ -19,14 +20,6 @@ import { gameAudio } from '@/features/games/utils/gameAudio';
 // ==========================================
 // 1. OYUN TİPLERİ VE MODELLERİ
 // ==========================================
-
-export type RallyQuestion = {
-  category: string;
-  correctAnswer: number;
-  options: number[];
-  prompt: string;
-  sig: string;
-};
 
 export type RaceVehicle = {
   accentClass: string;
@@ -55,13 +48,27 @@ export type ToggColor = {
   name: string;
 };
 
+export type RoadEntityType = 'rival' | 'battery' | 'coin' | 'shield';
+
+export type RoadEntity = {
+  cleared?: boolean;
+  collected?: boolean;
+  color: string;
+  icon: string;
+  id: number;
+  lane: number;
+  speed: number;
+  type: RoadEntityType;
+  y: number;
+};
+
 export const RACE_VEHICLES: RaceVehicle[] = [
   {
     id: 'toggx',
     name: 'TOGG T10X',
     badge: 'Yerli & Milli SUV ⚡',
     specs: '435 BG Çift Motor • Trugo Süper Şarj',
-    bonusText: '+%15 Trugo Tork Puanı',
+    bonusText: '+%15 Trugo Puan Bonusu',
     colorName: 'Anadolu Kırmızısı',
     colorHex: '#e11d48',
     accentClass: 'from-rose-600 to-red-700',
@@ -71,8 +78,8 @@ export const RACE_VEHICLES: RaceVehicle[] = [
     id: 'toggf',
     name: 'TOGG T10F',
     badge: 'Yerli Spor Fastback ⚡',
-    specs: 'Aerodinamik Şasi • 600 km Menzil',
-    bonusText: '+%15 Aerodinamik Hız',
+    specs: 'Aerodinamik Sedan • 600 km Menzil',
+    bonusText: '+%15 Hız Bonusu',
     colorName: 'Gemlik Mavisi',
     colorHex: '#0284c7',
     accentClass: 'from-cyan-500 to-blue-700',
@@ -83,7 +90,7 @@ export const RACE_VEHICLES: RaceVehicle[] = [
     name: 'Fırtına GT-R',
     badge: 'Pist Canavarı 🏎️',
     specs: 'Çift Turbo V6 • Karbon Kanat',
-    bonusText: '+%10 Drift Serisi',
+    bonusText: '+%10 Puan Bonusu',
     colorName: 'Gece Mavisi',
     colorHex: '#4f46e5',
     accentClass: 'from-indigo-500 to-purple-700',
@@ -94,7 +101,7 @@ export const RACE_VEHICLES: RaceVehicle[] = [
     name: 'Siber Hiper-X',
     badge: 'Neon Konsept 🛸',
     specs: 'Plazma İtici • Lazer Far',
-    bonusText: '+%10 Lazer İvme',
+    bonusText: '+%10 Kalkan Bonusu',
     colorName: 'Zümrüt Neon',
     colorHex: '#10b981',
     accentClass: 'from-emerald-500 to-teal-700',
@@ -138,368 +145,40 @@ export const RACE_TRACKS: RaceTrack[] = [
 ];
 
 // ==========================================
-// 2. DİNAMİK & %100 ÖZGÜN SORU MOTORU
-// ==========================================
-
-function toSuperscript(num: number): string {
-  const map: Record<string, string> = {
-    '0': '⁰', '1': '¹', '2': '²', '3': '³', '4': '⁴',
-    '5': '⁵', '6': '⁶', '7': '⁷', '8': '⁸', '9': '⁹', '-': '⁻',
-  };
-  return String(num).split('').map((c) => map[c] || c).join('');
-}
-
-function shuffle<T>(array: T[]): T[] {
-  const arr = [...array];
-  for (let i = arr.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [arr[i], arr[j]] = [arr[j], arr[i]];
-  }
-  return arr;
-}
-
-function generateDistractors(ans: number): number[] {
-  const distractors = new Set<number>();
-  const offsets = [-10, 10, -5, 5, -2, 2, -1, 1, -20, 20, -15, 15, -3, 3, -4, 4];
-  for (const off of offsets) {
-    const val = ans + off;
-    if (val !== ans) {
-      distractors.add(val);
-      if (distractors.size === 3) break;
-    }
-  }
-  let step = 1;
-  while (distractors.size < 3) {
-    const val = ans + (step % 2 === 0 ? step * 3 : -step * 3);
-    if (val !== ans) distractors.add(val);
-    step++;
-  }
-  return Array.from(distractors);
-}
-
-function createCandidateRallyQuestion(_streak: number): RallyQuestion {
-  // 5-8. sınıf kazanımları: 7 ana kategori
-  const cat = Math.floor(Math.random() * 7);
-  let category = '';
-  let prompt = '';
-  let correctAnswer = 0;
-  let sig = '';
-
-  if (cat === 0) {
-    category = 'Hız & Zaman Problemleri';
-    const sub = Math.floor(Math.random() * 5);
-    if (sub === 0) {
-      const v = [70, 80, 90, 100, 110, 120, 130, 140][Math.floor(Math.random() * 8)];
-      const t = [2, 3, 4, 5][Math.floor(Math.random() * 4)];
-      prompt = `TOGG saatte ${v} km sabit hızla ${t} saat kesintisiz giderse kaç km yol alır?`;
-      correctAnswer = v * t;
-      sig = `spd-dist-${v}-${t}`;
-    } else if (sub === 1) {
-      const v = [60, 75, 80, 90, 100, 110, 120][Math.floor(Math.random() * 7)];
-      const t = [2, 3, 4, 5, 6][Math.floor(Math.random() * 5)];
-      const s = v * t;
-      prompt = `${s} km mesafeyi ${t} saatte kateden TOGG'un ortalama hızı saatte kaç km'dir?`;
-      correctAnswer = v;
-      sig = `spd-avg-${s}-${t}`;
-    } else if (sub === 2) {
-      const v = [60, 80, 90, 100, 120][Math.floor(Math.random() * 5)];
-      const t = [2, 3, 4, 5][Math.floor(Math.random() * 4)];
-      const s = v * t;
-      prompt = `Saatte ${v} km sabit hızla ilerleyen bir araç ${s} km yolu kaç saatte tamamlar?`;
-      correctAnswer = t;
-      sig = `spd-time-${s}-${v}`;
-    } else if (sub === 3) {
-      const v1 = [110, 120, 130, 140][Math.floor(Math.random() * 4)];
-      const v2 = [80, 85, 90, 95][Math.floor(Math.random() * 4)];
-      const t = [2, 3, 4][Math.floor(Math.random() * 3)];
-      prompt = `Aynı yöne giden iki araçtan biri saatte ${v1} km, diğeri ${v2} km hızla giderse ${t} saat sonra aralarındaki fark kaç km olur?`;
-      correctAnswer = (v1 - v2) * t;
-      sig = `spd-twocars-${v1}-${v2}-${t}`;
-    } else {
-      const pairs = [
-        { v: 60, mins: 15, ans: 15 },
-        { v: 60, mins: 45, ans: 45 },
-        { v: 90, mins: 20, ans: 30 },
-        { v: 90, mins: 40, ans: 60 },
-        { v: 120, mins: 15, ans: 30 },
-        { v: 120, mins: 30, ans: 60 },
-        { v: 120, mins: 45, ans: 90 },
-      ];
-      const p = pairs[Math.floor(Math.random() * pairs.length)];
-      prompt = `Saatte ${p.v} km hızla giden bir yarış aracı ${p.mins} dakikada kaç km yol alır?`;
-      correctAnswer = p.ans;
-      sig = `spd-mins-${p.v}-${p.mins}`;
-    }
-  } else if (cat === 1) {
-    category = 'Batarya & Yüzde Hesapları';
-    const sub = Math.floor(Math.random() * 4);
-    if (sub === 0) {
-      const pairs = [
-        { cap: 88, pct: 25, ans: 22 },
-        { cap: 88, pct: 50, ans: 44 },
-        { cap: 88, pct: 75, ans: 66 },
-        { cap: 80, pct: 20, ans: 16 },
-        { cap: 80, pct: 40, ans: 32 },
-        { cap: 80, pct: 75, ans: 60 },
-        { cap: 100, pct: 35, ans: 35 },
-        { cap: 100, pct: 65, ans: 65 },
-        { cap: 120, pct: 30, ans: 36 },
-        { cap: 120, pct: 50, ans: 60 },
-      ];
-      const p = pairs[Math.floor(Math.random() * pairs.length)];
-      prompt = `${p.cap} kWh kapasiteli TOGG bataryasının %${p.pct}'si kaç kWh enerji depolar?`;
-      correctAnswer = p.ans;
-      sig = `bat-pct-${p.cap}-${p.pct}`;
-    } else if (sub === 1) {
-      const power = [60, 90, 120, 150, 180][Math.floor(Math.random() * 5)];
-      const hours = [2, 3, 4][Math.floor(Math.random() * 3)];
-      prompt = `Trugo istasyonunda saatte ${power} kW şarj gücüyle ${hours} saatte bataryaya kaç kWh enerji aktarılır?`;
-      correctAnswer = power * hours;
-      sig = `bat-charge-${power}-${hours}`;
-    } else if (sub === 2) {
-      const range = [400, 500, 600][Math.floor(Math.random() * 3)];
-      const pct = [20, 30, 40, 50, 60, 70, 80][Math.floor(Math.random() * 7)];
-      correctAnswer = (range * pct) / 100;
-      prompt = `Tam şarjla ${range} km menzile sahip TOGG bataryası %${pct} doluyken kalan menzil kaç km'dir?`;
-      sig = `bat-range-${range}-${pct}`;
-    } else {
-      const total = [80, 100, 120, 150][Math.floor(Math.random() * 4)];
-      const pct = [20, 25, 30, 40, 50][Math.floor(Math.random() * 5)];
-      correctAnswer = total - (total * pct) / 100;
-      prompt = `${total} kWh enerjinin %${pct}'si kullanıldığında geriye kaç kWh enerji kalır?`;
-      sig = `bat-consume-${total}-${pct}`;
-    }
-  } else if (cat === 2) {
-    category = 'Tam Sayılarla İşlemler';
-    const sub = Math.floor(Math.random() * 5);
-    if (sub === 0) {
-      const a = Math.floor(Math.random() * 25) + 6;
-      const b = Math.floor(Math.random() * 25) + 6;
-      prompt = `(-${a}) + (-${b}) = ?`;
-      correctAnswer = -(a + b);
-      sig = `int-add-${a}-${b}`;
-    } else if (sub === 1) {
-      const a = Math.floor(Math.random() * 30) + 10;
-      const b = Math.floor(Math.random() * 30) + 10;
-      prompt = `${a} - (-${b}) = ?`;
-      correctAnswer = a + b;
-      sig = `int-sub-${a}-${b}`;
-    } else if (sub === 2) {
-      const a = Math.floor(Math.random() * 10) + 4;
-      const b = Math.floor(Math.random() * 12) + 4;
-      prompt = `(-${a}) × (-${b}) = ?`;
-      correctAnswer = a * b;
-      sig = `int-mulpos-${a}-${b}`;
-    } else if (sub === 3) {
-      const a = Math.floor(Math.random() * 11) + 4;
-      const b = Math.floor(Math.random() * 11) + 3;
-      prompt = `(-${a}) × (+${b}) = ?`;
-      correctAnswer = -(a * b);
-      sig = `int-mulneg-${a}-${b}`;
-    } else {
-      const a = Math.floor(Math.random() * 20) + 15;
-      const b = Math.floor(Math.random() * 6) + 3;
-      const c = Math.floor(Math.random() * 7) + 3;
-      prompt = `${a} + (-${b}) × (${c}) = ?`;
-      correctAnswer = a + (-b * c);
-      sig = `int-order-${a}-${b}-${c}`;
-    }
-  } else if (cat === 3) {
-    category = 'Üslü İfadeler';
-    const sub = Math.floor(Math.random() * 4);
-    if (sub === 0) {
-      const exp = [3, 4, 5, 6][Math.floor(Math.random() * 4)];
-      const val = Math.floor(Math.random() * 15) + 5;
-      prompt = `2${toSuperscript(exp)} - ${val} = ?`;
-      correctAnswer = Math.pow(2, exp) - val;
-      sig = `pow-2-${exp}-${val}`;
-    } else if (sub === 1) {
-      const base = [3, 4, 5][Math.floor(Math.random() * 3)];
-      const exp = base === 3 ? [2, 3, 4][Math.floor(Math.random() * 3)] : [2, 3][Math.floor(Math.random() * 2)];
-      const val = Math.floor(Math.random() * 20) + 10;
-      prompt = `${base}${toSuperscript(exp)} + ${val} = ?`;
-      correctAnswer = Math.pow(base, exp) + val;
-      sig = `pow-base-${base}-${exp}-${val}`;
-    } else if (sub === 2) {
-      const pairs = [
-        { b: 2, x: 4, val: 16 },
-        { b: 2, x: 5, val: 32 },
-        { b: 2, x: 6, val: 64 },
-        { b: 3, x: 3, val: 27 },
-        { b: 3, x: 4, val: 81 },
-        { b: 5, x: 3, val: 125 },
-      ];
-      const p = pairs[Math.floor(Math.random() * pairs.length)];
-      prompt = `${p.b}ˣ = ${p.val}  →  x = ?`;
-      correctAnswer = p.x;
-      sig = `pow-eq-${p.b}-${p.x}`;
-    } else {
-      const pairs = [
-        { text: '(-2)⁴ + (-3)²', ans: 16 + 9 },
-        { text: '(-4)² + (-5)²', ans: 16 + 25 },
-        { text: '(-2)⁵ + (-3)³', ans: -32 - 27 },
-        { text: '(-1)¹⁰ + (-2)³', ans: 1 - 8 },
-        { text: '(-3)³ + (-2)⁴', ans: -27 + 16 },
-      ];
-      const p = pairs[Math.floor(Math.random() * pairs.length)];
-      prompt = `${p.text} = ?`;
-      correctAnswer = p.ans;
-      sig = `pow-neg-${p.text}`;
-    }
-  } else if (cat === 4) {
-    category = 'Birinci Dereceden Denklemler';
-    const sub = Math.floor(Math.random() * 4);
-    if (sub === 0) {
-      const a = Math.floor(Math.random() * 5) + 2;
-      const x = Math.floor(Math.random() * 12) + 3;
-      const b = Math.floor(Math.random() * 18) + 4;
-      const c = a * x - b;
-      prompt = `${a}x - ${b} = ${c}  →  x = ?`;
-      correctAnswer = x;
-      sig = `eq-1-${a}-${b}-${c}`;
-    } else if (sub === 1) {
-      const a = Math.floor(Math.random() * 5) + 2;
-      const x = Math.floor(Math.random() * 12) + 3;
-      const b = Math.floor(Math.random() * 20) + 5;
-      const c = a * x + b;
-      prompt = `${a}x + ${b} = ${c}  →  x = ?`;
-      correctAnswer = x;
-      sig = `eq-2-${a}-${b}-${c}`;
-    } else if (sub === 2) {
-      const a = Math.floor(Math.random() * 4) + 2;
-      const x = Math.floor(Math.random() * 9) + 2;
-      const b = Math.floor(Math.random() * 6) + 2;
-      const c = a * (x + b);
-      prompt = `${a}(x + ${b}) = ${c}  →  x = ?`;
-      correctAnswer = x;
-      sig = `eq-3-${a}-${b}-${c}`;
-    } else {
-      const a = Math.floor(Math.random() * 4) + 5;
-      const c = Math.floor(Math.random() * 3) + 2;
-      const x = Math.floor(Math.random() * 8) + 2;
-      const b = Math.floor(Math.random() * 8) + 2;
-      const d = (a - c) * x + b;
-      prompt = `${a}x + ${b} = ${c}x + ${d}  →  x = ?`;
-      correctAnswer = x;
-      sig = `eq-4-${a}-${c}-${x}`;
-    }
-  } else if (cat === 5) {
-    category = 'Oran-Orantı & Verimlilik';
-    const sub = Math.floor(Math.random() * 3);
-    if (sub === 0) {
-      const kwh = [14, 15, 16, 18, 20][Math.floor(Math.random() * 5)];
-      const mul = [2, 3, 4, 5][Math.floor(Math.random() * 4)];
-      const dist = 100 * mul;
-      prompt = `100 km'de ${kwh} kWh elektrik tüketen TOGG, ${dist} km'de kaç kWh harcar?`;
-      correctAnswer = kwh * mul;
-      sig = `ratio-cons-${kwh}-${dist}`;
-    } else if (sub === 1) {
-      const h1 = [2, 3][Math.floor(Math.random() * 2)];
-      const spd = [70, 80, 90, 100][Math.floor(Math.random() * 4)];
-      const d1 = h1 * spd;
-      const h2 = [4, 5, 6][Math.floor(Math.random() * 3)];
-      prompt = `Sabit hızla ${h1} saatte ${d1} km giden araç, aynı hızla ${h2} saatte kaç km yol alır?`;
-      correctAnswer = spd * h2;
-      sig = `ratio-dist-${h1}-${d1}-${h2}`;
-    } else {
-      const pairs = [
-        { v1: 60, t1: 4, v2: 80, ans: 3 },
-        { v1: 60, t1: 6, v2: 90, ans: 4 },
-        { v1: 80, t1: 3, v2: 120, ans: 2 },
-        { v1: 90, t1: 4, v2: 60, ans: 6 },
-        { v1: 100, t1: 3, v2: 75, ans: 4 },
-      ];
-      const p = pairs[Math.floor(Math.random() * pairs.length)];
-      prompt = `Bir pisti saatte ${p.v1} km hızla ${p.t1} saatte turlayan araç, saatte ${p.v2} km hızla kaç saatte tamamlar?`;
-      correctAnswer = p.ans;
-      sig = `ratio-inv-${p.v1}-${p.t1}-${p.v2}`;
-    }
-  } else {
-    category = 'Geometri, Alan & Çevre';
-    const sub = Math.floor(Math.random() * 4);
-    if (sub === 0) {
-      const w = Math.floor(Math.random() * 25) + 12;
-      const h = Math.floor(Math.random() * 40) + 25;
-      prompt = `Kısa kenarı ${w} m, uzun kenarı ${h} m olan test pistinin çevre uzunluğu kaç metredir?`;
-      correctAnswer = 2 * (w + h);
-      sig = `geo-rect-${w}-${h}`;
-    } else if (sub === 1) {
-      const side = Math.floor(Math.random() * 15) + 11;
-      prompt = `Bir kenar uzunluğu ${side} metre olan kare biçimindeki TOGG şarj istasyonunun alanı kaç m²'dir?`;
-      correctAnswer = side * side;
-      sig = `geo-sq-${side}`;
-    } else if (sub === 2) {
-      const b = [12, 14, 16, 18, 20, 24][Math.floor(Math.random() * 6)];
-      const h = [6, 8, 10, 12, 14, 16][Math.floor(Math.random() * 6)];
-      prompt = `Tabanı ${b} m ve yüksekliği ${h} m olan üçgen pist alanının yüzölçümü kaç m²'dir?`;
-      correctAnswer = (b * h) / 2;
-      sig = `geo-tri-${b}-${h}`;
-    } else {
-      const r = [10, 15, 20, 25, 30, 40, 50][Math.floor(Math.random() * 7)];
-      prompt = `Yarıçapı ${r} metre olan dairesel virajın çevresi kaç metredir? (π = 3 alınız)`;
-      correctAnswer = 2 * 3 * r;
-      sig = `geo-circle-${r}`;
-    }
-  }
-
-  const distractors = generateDistractors(correctAnswer);
-  const options = shuffle([correctAnswer, ...distractors]);
-
-  return {
-    category,
-    correctAnswer,
-    options,
-    prompt,
-    sig,
-  };
-}
-
-export function generateRallyQuestion(
-  streak: number,
-  askedSignatures: Set<string>,
-): RallyQuestion {
-  let attempts = 0;
-  while (attempts < 60) {
-    attempts++;
-    const candidate = createCandidateRallyQuestion(streak);
-    if (!askedSignatures.has(candidate.sig)) {
-      askedSignatures.add(candidate.sig);
-      return candidate;
-    }
-  }
-  const fallback = createCandidateRallyQuestion(streak);
-  askedSignatures.add(`${fallback.sig}-${Date.now()}`);
-  return fallback;
-}
-
-// ==========================================
-// 3. ARAÇ VE PİST SVG BİLEŞENLERİ
+// 2. ARAÇ VE OTOYOL SVG BİLEŞENLERİ
 // ==========================================
 
 function PlayerCarSVG({
   carId,
   colorHex,
+  hasShield,
   isNitro,
   isTogg,
 }: {
   carId: string;
   colorHex: string;
+  hasShield: boolean;
   isNitro: boolean;
   isTogg: boolean;
 }) {
   return (
     <div className="relative w-14 h-24 flex items-center justify-center select-none">
+      {/* Enerji Kalkanı Aurası */}
+      {hasShield && (
+        <div className="absolute -inset-3 rounded-3xl border-2 border-emerald-400/90 bg-emerald-400/20 animate-pulse pointer-events-none z-30 shadow-[0_0_20px_rgba(52,211,153,0.7)]" />
+      )}
+
       {/* Trugo Nitro Jet Alevleri */}
       {isNitro && (
         <motion.div
           initial={{ opacity: 0, scaleY: 0.6 }}
-          animate={{ opacity: [0.8, 1, 0.8], scaleY: [1, 1.3, 1] }}
-          transition={{ duration: 0.15, repeat: Infinity }}
-          className="absolute -bottom-6 left-1/2 -translate-x-1/2 flex items-center justify-center pointer-events-none z-0"
+          animate={{ opacity: [0.85, 1, 0.85], scaleY: [1, 1.4, 1] }}
+          transition={{ duration: 0.12, repeat: Infinity }}
+          className="absolute -bottom-7 left-1/2 -translate-x-1/2 flex items-center justify-center pointer-events-none z-0"
         >
           <div className="flex gap-4">
-            <div className="w-2.5 h-7 bg-gradient-to-b from-cyan-400 via-sky-500 to-transparent rounded-full blur-[1px] animate-pulse" />
-            <div className="w-2.5 h-7 bg-gradient-to-b from-cyan-400 via-sky-500 to-transparent rounded-full blur-[1px] animate-pulse" />
+            <div className="w-3 h-8 bg-gradient-to-b from-cyan-300 via-sky-500 to-transparent rounded-full blur-[1px] animate-pulse" />
+            <div className="w-3 h-8 bg-gradient-to-b from-cyan-300 via-sky-500 to-transparent rounded-full blur-[1px] animate-pulse" />
           </div>
         </motion.div>
       )}
@@ -507,7 +186,7 @@ function PlayerCarSVG({
       {/* Vektör Gövde Çizimi */}
       <svg
         viewBox="0 0 64 100"
-        className="w-full h-full relative z-10 drop-shadow-xl"
+        className="w-full h-full relative z-10 drop-shadow-2xl"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
       >
@@ -527,8 +206,8 @@ function PlayerCarSVG({
         </defs>
 
         {/* Ön Far Işık Hüzmeleri */}
-        <polygon points="12,14 4,-6 24,-6 18,14" fill="url(#headlight-beam)" opacity="0.4" />
-        <polygon points="46,14 40,-6 60,-6 52,14" fill="url(#headlight-beam)" opacity="0.4" />
+        <polygon points="12,14 4,-8 24,-8 18,14" fill="url(#headlight-beam)" opacity="0.45" />
+        <polygon points="46,14 40,-8 60,-8 52,14" fill="url(#headlight-beam)" opacity="0.45" />
 
         {/* Tekerlekler */}
         <rect x="4" y="20" width="7" height="15" rx="3" fill="#1e293b" />
@@ -540,8 +219,8 @@ function PlayerCarSVG({
         <path
           d="M 18 10 C 26 8, 38 8, 46 10 C 52 14, 55 24, 55 38 C 55 58, 54 82, 48 90 C 44 93, 20 93, 16 90 C 10 82, 9 58, 9 38 C 9 24, 12 14, 18 10 Z"
           fill={`url(#car-body-${carId})`}
-          stroke={isNitro ? '#38bdf8' : '#334155'}
-          strokeWidth="1.5"
+          stroke={isNitro ? '#38bdf8' : hasShield ? '#34d399' : '#334155'}
+          strokeWidth="1.6"
         />
 
         {/* Yan Hava Kanalları */}
@@ -561,7 +240,7 @@ function PlayerCarSVG({
         <ellipse cx="15" cy="14" rx="3" ry="2" fill="#e0f2fe" />
         <ellipse cx="49" cy="14" rx="3" ry="2" fill="#e0f2fe" />
 
-        {/* TOGG Özel: Lale Motifi Ön Izgara & Trugo Amblemi */}
+        {/* TOGG Özel: Lale Motifi Ön Izgara & Rozet */}
         {isTogg ? (
           <g>
             <path
@@ -592,7 +271,7 @@ function PlayerCarSVG({
 
 function RivalCarSVG({ colorHex }: { colorHex: string }) {
   return (
-    <div className="w-11 h-20 opacity-85 drop-shadow-md select-none">
+    <div className="w-12 h-20 opacity-90 drop-shadow-md select-none">
       <svg viewBox="0 0 64 100" className="w-full h-full" fill="none">
         <rect x="4" y="20" width="7" height="15" rx="3" fill="#1e293b" />
         <rect x="53" y="20" width="7" height="15" rx="3" fill="#1e293b" />
@@ -614,8 +293,62 @@ function RivalCarSVG({ colorHex }: { colorHex: string }) {
   );
 }
 
+function RoadEntityItem({ entity }: { entity: RoadEntity }) {
+  if (entity.collected || entity.cleared) return null;
+
+  return (
+    <div
+      className="absolute -translate-x-1/2 -translate-y-1/2 pointer-events-none z-10 flex flex-col items-center select-none"
+      style={{
+        left: `${entity.lane * 25 + 12.5}%`,
+        top: `${entity.y}%`,
+      }}
+    >
+      {entity.type === 'rival' && (
+        <div className="flex flex-col items-center">
+          <RivalCarSVG colorHex={entity.color} />
+          <span className="text-xs -mt-2 drop-shadow">{entity.icon}</span>
+        </div>
+      )}
+
+      {entity.type === 'battery' && (
+        <div className="flex flex-col items-center animate-bounce">
+          <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-cyan-400 to-sky-500 border border-cyan-200 dark:border-cyan-300 shadow-lg shadow-cyan-500/50 flex items-center justify-center text-xl">
+            ⚡
+          </div>
+          <span className="text-[10px] font-black font-mono text-cyan-300 dark:text-cyan-300 bg-slate-900/80 dark:bg-slate-900/80 px-1.5 py-0.5 rounded mt-0.5 border border-cyan-500/30">
+            TRUGO
+          </span>
+        </div>
+      )}
+
+      {entity.type === 'coin' && (
+        <div className="flex flex-col items-center animate-pulse">
+          <div className="w-9 h-9 rounded-full bg-gradient-to-tr from-amber-400 to-yellow-500 border border-yellow-200 shadow-lg shadow-amber-500/50 flex items-center justify-center text-xl">
+            🪙
+          </div>
+          <span className="text-[10px] font-black font-mono text-amber-300 dark:text-amber-300 bg-slate-900/80 dark:bg-slate-900/80 px-1.5 py-0.5 rounded mt-0.5 border border-amber-500/30">
+            +120
+          </span>
+        </div>
+      )}
+
+      {entity.type === 'shield' && (
+        <div className="flex flex-col items-center animate-pulse">
+          <div className="w-9 h-9 rounded-2xl bg-gradient-to-tr from-emerald-400 to-teal-500 border border-emerald-200 shadow-lg shadow-emerald-500/50 flex items-center justify-center text-xl">
+            🛡️
+          </div>
+          <span className="text-[10px] font-black font-mono text-emerald-300 dark:text-emerald-300 bg-slate-900/80 dark:bg-slate-900/80 px-1.5 py-0.5 rounded mt-0.5 border border-emerald-500/30">
+            KALKAN
+          </span>
+        </div>
+      )}
+    </div>
+  );
+}
+
 // ==========================================
-// 4. ANA OYUN BİLEŞENİ
+// 3. ANA OYUN BİLEŞENİ (100% PURE ARCADE RACER)
 // ==========================================
 
 export function ToggCyberRacer({
@@ -635,40 +368,47 @@ export function ToggCyberRacer({
   const [score, setScore] = useState(0);
   const [lives, setLives] = useState(3);
   const [timeLeft, setTimeLeft] = useState(60);
-  const [speedKmh, setSpeedKmh] = useState(120);
-  const [maxSpeedKmh, setMaxSpeedKmh] = useState(120);
+  const [speedKmh, setSpeedKmh] = useState(180);
+  const [maxSpeedKmh, setMaxSpeedKmh] = useState(180);
   const [overtaken, setOvertaken] = useState(0);
   const [streak, setStreak] = useState(0);
   const [maxStreak, setMaxStreak] = useState(0);
-  const [trugoNitro, setTrugoNitro] = useState(25);
-  const [totalAnswers, setTotalAnswers] = useState(0);
+  const [trugoNitro, setTrugoNitro] = useState(30);
+  const [collectedItems, setCollectedItems] = useState(0);
 
-  // Pist ve Şerit Kontrolü (0: Şerit 1, 1: Şerit 2, 2: Şerit 3, 3: Şerit 4)
-  const [selectedLane, setSelectedLane] = useState(0);
-  const [selectedLaneAnswered, setSelectedLaneAnswered] = useState<number | null>(null);
-  const [isEvaluating, setIsEvaluating] = useState(false);
+  // Şerit Kontrolü (0: Şerit 1, 1: Şerit 2, 2: Şerit 3, 3: Şerit 4)
+  const [selectedLane, setSelectedLane] = useState(1);
   const [isNitroActive, setIsNitroActive] = useState(false);
   const [isCrash, setIsCrash] = useState(false);
+  const [shieldTimeLeft, setShieldTimeLeft] = useState(0);
   const [feedback, setFeedback] = useState<{
     message: string;
     type: 'correct' | 'wrong';
   } | null>(null);
 
-  // Soru Havuzu
-  const askedSignaturesRef = useRef<Set<string>>(new Set());
-  const [question, setQuestion] = useState<RallyQuestion>(() =>
-    generateRallyQuestion(0, new Set()),
-  );
+  // Otoyol Varlıkları (Rakipler, Bataryalar, Altınlar, Kalkanlar)
+  const [entities, setEntities] = useState<RoadEntity[]>([]);
 
-  // Rakip Araçlar (Şeritler üzerinde animasyon)
-  const [rivalCars, setRivalCars] = useState<Array<{ color: string; id: number; lane: number; top: number }>>([
-    { id: 1, lane: 1, top: 15, color: '#f59e0b' },
-    { id: 2, lane: 2, top: 38, color: '#8b5cf6' },
-    { id: 3, lane: 3, top: 20, color: '#64748b' },
-  ]);
-
+  // Referanslar (Tick içi en güncel state erişimi)
+  const entitiesRef = useRef<RoadEntity[]>([]);
+  const laneRef = useRef(1);
+  const scoreRef = useRef(0);
+  const livesRef = useRef(3);
+  const speedRef = useRef(180);
+  const overtakenRef = useRef(0);
+  const streakRef = useRef(0);
+  const nitroRef = useRef(30);
+  const nitroActiveRef = useRef(false);
+  const nitroTimerRef = useRef(0);
+  const shieldTimeRef = useRef(0);
+  const spawnTimerRef = useRef(0);
+  const nextEntityIdRef = useRef(1);
   const hasSubmittedRef = useRef(false);
-  const nextQuestionTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Senkronizasyon
+  useEffect(() => {
+    laneRef.current = selectedLane;
+  }, [selectedLane]);
 
   // Seçilen Araç ve Pist Nesneleri
   const selectedCar = useMemo(() => {
@@ -693,7 +433,22 @@ export function ToggCyberRacer({
     gameAudio.playFanfare();
   }, []);
 
-  // 60 Saniye Zamanlayıcı
+  // Skor Gönderimi (En fazla 4800 puan)
+  useEffect(() => {
+    if (gameState === 'playing') {
+      hasSubmittedRef.current = false;
+    }
+    if (gameState === 'ended' && !hasSubmittedRef.current) {
+      hasSubmittedRef.current = true;
+      const safeFinalScore = Math.min(
+        4800,
+        Math.round(score * (scoreMultiplier || 1)),
+      );
+      onScore(safeFinalScore);
+    }
+  }, [gameState, score, scoreMultiplier, onScore]);
+
+  // 60 Saniye Geri Sayım Zamanlayıcısı
   useEffect(() => {
     if (gameState !== 'playing') return;
 
@@ -710,193 +465,326 @@ export function ToggCyberRacer({
     return () => clearInterval(timer);
   }, [gameState, finishGame]);
 
-  // Skor Gönderimi (En fazla 4800 puan)
-  useEffect(() => {
-    if (gameState === 'playing') {
-      hasSubmittedRef.current = false;
-    }
-    if (gameState === 'ended' && !hasSubmittedRef.current) {
-      hasSubmittedRef.current = true;
-      const safeFinalScore = Math.min(
-        4800,
-        Math.round(score * (scoreMultiplier || 1)),
-      );
-      onScore(safeFinalScore);
-    }
-  }, [gameState, score, scoreMultiplier, onScore]);
-
-  // Zamanlayıcıları temizle
-  useEffect(() => {
-    return () => {
-      if (nextQuestionTimeoutRef.current) {
-        clearTimeout(nextQuestionTimeoutRef.current);
-      }
-    };
+  // Şerit Değiştirme
+  const steerLeft = useCallback(() => {
+    setSelectedLane((l) => Math.max(0, l - 1));
   }, []);
+
+  const steerRight = useCallback(() => {
+    setSelectedLane((l) => Math.min(3, l + 1));
+  }, []);
+
+  // Trugo Süper Nitro Ateşleme
+  const activateNitro = useCallback(() => {
+    if (gameState !== 'playing' || nitroRef.current < 50 || nitroActiveRef.current) return;
+
+    nitroRef.current = Math.max(0, nitroRef.current - 50);
+    setTrugoNitro(nitroRef.current);
+    nitroActiveRef.current = true;
+    setIsNitroActive(true);
+    nitroTimerRef.current = 4.0; // 4 saniye süren yüksek hızlı nitro modu
+    speedRef.current = 340;
+    setSpeedKmh(340);
+    setMaxSpeedKmh((m) => Math.max(m, 340));
+
+    gameAudio.playNitro();
+    setFeedback({
+      message: 'TRUGO SÜPER NİTRO ATEŞLENDİ! ⚡🔥',
+      type: 'correct',
+    });
+  }, [gameState]);
 
   // Oyunu Başlat
   const startGame = useCallback(() => {
+    scoreRef.current = 0;
+    livesRef.current = 3;
+    speedRef.current = 180;
+    overtakenRef.current = 0;
+    streakRef.current = 0;
+    nitroRef.current = 35;
+    nitroActiveRef.current = false;
+    nitroTimerRef.current = 0;
+    shieldTimeRef.current = 0;
+    spawnTimerRef.current = 0;
+    nextEntityIdRef.current = 1;
+    entitiesRef.current = [];
+    laneRef.current = 1;
+
     setScore(0);
     setLives(3);
     setTimeLeft(60);
-    setSpeedKmh(120);
-    setMaxSpeedKmh(120);
+    setSpeedKmh(180);
+    setMaxSpeedKmh(180);
     setOvertaken(0);
     setStreak(0);
     setMaxStreak(0);
-    setTrugoNitro(25);
-    setTotalAnswers(0);
-    setSelectedLane(0);
-    setSelectedLaneAnswered(null);
-    setIsEvaluating(false);
+    setTrugoNitro(35);
+    setCollectedItems(0);
+    setSelectedLane(1);
     setIsNitroActive(false);
     setIsCrash(false);
+    setShieldTimeLeft(0);
     setFeedback(null);
-    askedSignaturesRef.current.clear();
-    setQuestion(generateRallyQuestion(0, askedSignaturesRef.current));
+    setEntities([]);
+
     setGameState('playing');
     gameAudio.playPop();
   }, []);
 
-  // Şerit ve Cevap Seçimi
-  const handleAnswerLane = useCallback(
-    (laneIndex: number) => {
-      if (gameState !== 'playing' || isEvaluating) return;
+  // ==========================================
+  // REAL-TIME ARCADE TICK LOOP (50ms)
+  // ==========================================
+  useEffect(() => {
+    if (gameState !== 'playing') return;
 
-      setIsEvaluating(true);
-      setSelectedLane(laneIndex);
-      setSelectedLaneAnswered(laneIndex);
-      setTotalAnswers((t) => t + 1);
-
-      const chosenOption = question.options[laneIndex];
-      const isCorrect = chosenOption === question.correctAnswer;
-      const correctLaneIndex = question.options.findIndex(
-        (o) => o === question.correctAnswer,
-      );
-
-      if (isCorrect) {
-        setIsNitroActive(true);
-        const newStreak = streak + 1;
-        const streakBonus = Math.min(newStreak * 25, 125);
-        let baseEarned = 100 + streakBonus;
-
-        // Trugo %100 Süper Şarj Bonusu
-        if (trugoNitro >= 100) {
-          baseEarned += 50;
+    const interval = setInterval(() => {
+      // 1. Nitro Süre Takibi
+      if (nitroActiveRef.current) {
+        nitroTimerRef.current -= 0.05;
+        if (nitroTimerRef.current <= 0) {
+          nitroActiveRef.current = false;
+          setIsNitroActive(false);
+          speedRef.current = 200;
+          setSpeedKmh(200);
         }
-
-        // Araç bonusu
-        const vehicleMultiplier = selectedCar.isTogg
-          ? 1.15
-          : selectedCar.id === 'gtr' || selectedCar.id === 'cyber'
-          ? 1.1
-          : 1.0;
-        const pointsEarned = Math.round(baseEarned * vehicleMultiplier);
-
-        setScore((s) => s + pointsEarned);
-        setStreak(newStreak);
-        setMaxStreak((m) => Math.max(m, newStreak));
-        setOvertaken((o) => o + 1);
-        setTrugoNitro((n) => Math.min(100, n + 25));
-
-        setSpeedKmh((prev) => {
-          const nextSpeed = Math.min(280, prev + 20);
-          setMaxSpeedKmh((m) => Math.max(m, nextSpeed));
-          return nextSpeed;
-        });
-
-        // Rakip araçların sollama animasyonu
-        setRivalCars((prev) =>
-          prev.map((r) => ({
-            ...r,
-            top: r.top > 80 ? 10 : r.top + 35,
-            lane: (r.lane + 1) % 4 === laneIndex ? (r.lane + 2) % 4 : r.lane,
-          })),
-        );
-
-        if (newStreak >= 3) {
-          gameAudio.playCombo(newStreak);
-        } else {
-          gameAudio.playNitro();
-        }
-
-        setFeedback({
-          message: `Harika Sollama! ⚡ (+${pointsEarned} Puan, ${selectedCar.bonusText})`,
-          type: 'correct',
-        });
-      } else {
-        setIsCrash(true);
-        setStreak(0);
-        setTrugoNitro(0);
-        setSpeedKmh((prev) => Math.max(80, prev - 30));
-        setLives((l) => {
-          const nextLives = l - 1;
-          if (nextLives <= 0) {
-            finishGame();
-          }
-          return Math.max(0, nextLives);
-        });
-
-        gameAudio.playWrong();
-        setFeedback({
-          message: `Bariyere Çarptın! 💥 (Doğru Şerit: Şerit ${correctLaneIndex + 1} → ${question.correctAnswer})`,
-          type: 'wrong',
-        });
       }
 
-      // 750ms sonra sonraki soruya geçiş
-      nextQuestionTimeoutRef.current = setTimeout(() => {
-        setIsEvaluating(false);
-        setIsNitroActive(false);
-        setIsCrash(false);
-        setSelectedLaneAnswered(null);
-        setFeedback(null);
-        setQuestion(
-          generateRallyQuestion(
-            streak + (isCorrect ? 1 : 0),
-            askedSignaturesRef.current,
-          ),
-        );
-      }, 750);
-    },
-    [
-      gameState,
-      isEvaluating,
-      question,
-      streak,
-      trugoNitro,
-      selectedCar,
-      finishGame,
-    ],
-  );
+      // 2. Kalkan Süre Takibi
+      if (shieldTimeRef.current > 0) {
+        shieldTimeRef.current = Math.max(0, shieldTimeRef.current - 0.05);
+        setShieldTimeLeft(Math.ceil(shieldTimeRef.current));
+      }
 
-  // Klavye Kontrolleri: 1-4 tuşları doğrudan şerit seçer, Ok tuşları şeridi kaydırır, Enter/Boşluk onaylar
+      // 3. Hız Güncellemesi
+      if (!nitroActiveRef.current) {
+        const targetBaseSpeed = Math.min(260, 180 + overtakenRef.current * 2);
+        speedRef.current = targetBaseSpeed;
+        setSpeedKmh(targetBaseSpeed);
+        setMaxSpeedKmh((m) => Math.max(m, targetBaseSpeed));
+      }
+
+      // 4. Yeni Araç & Öğe Doğurma (Spawning)
+      spawnTimerRef.current += 1;
+      if (spawnTimerRef.current >= 14) {
+        spawnTimerRef.current = 0;
+
+        // Adil oyun için: rastgele 1 veya 2 şeritte öğe doğur (en az 2 şerit daima boş kalır)
+        const chosenLane = Math.floor(Math.random() * 4);
+        const randType = Math.random();
+        let entityType: RoadEntityType = 'rival';
+        let icon = '🚙';
+        let color = '#ef4444';
+
+        if (randType < 0.52) {
+          entityType = 'rival';
+          const rivalTypes = [
+            { icon: '🚙', color: '#38bdf8' },
+            { icon: '🚕', color: '#f59e0b' },
+            { icon: '🚚', color: '#64748b' },
+            { icon: '🏎️', color: '#ef4444' },
+          ];
+          const chosenRival = rivalTypes[Math.floor(Math.random() * rivalTypes.length)];
+          icon = chosenRival.icon;
+          color = chosenRival.color;
+        } else if (randType < 0.74) {
+          entityType = 'battery';
+          icon = '⚡';
+          color = '#06b6d4';
+        } else if (randType < 0.90) {
+          entityType = 'coin';
+          icon = '🪙';
+          color = '#f59e0b';
+        } else {
+          entityType = 'shield';
+          icon = '🛡️';
+          color = '#10b981';
+        }
+
+        const newEntity: RoadEntity = {
+          id: nextEntityIdRef.current++,
+          lane: chosenLane,
+          y: -8,
+          type: entityType,
+          icon,
+          color,
+          speed: entityType === 'rival' ? 3.4 : 3.0,
+        };
+
+        entitiesRef.current.push(newEntity);
+      }
+
+      // 5. Varlıkların Hareketi & Çarpışma Tespiti
+      const currentLane = laneRef.current;
+      const isNitro = nitroActiveRef.current;
+      const hasShield = shieldTimeRef.current > 0;
+      const speedFactor = isNitro ? 1.8 : 1.0;
+
+      const nextEntities: RoadEntity[] = [];
+
+      for (const entity of entitiesRef.current) {
+        if (entity.cleared) continue;
+
+        // Konum ilerleme
+        entity.y += entity.speed * speedFactor;
+
+        // Oyuncu Çarpışma Bölgesi (y: 72% - 88%)
+        const inPlayerZone = entity.y >= 72 && entity.y <= 88;
+        const inSameLane = entity.lane === currentLane;
+
+        if (inPlayerZone && inSameLane && !entity.collected) {
+          if (entity.type === 'battery') {
+            entity.collected = true;
+            entity.cleared = true;
+            const trugoBonusMultiplier = selectedCar.id === 'toggx' ? 1.15 : 1.0;
+            const points = Math.round(75 * trugoBonusMultiplier);
+
+            scoreRef.current += points;
+            nitroRef.current = Math.min(100, nitroRef.current + 25);
+            setScore(scoreRef.current);
+            setTrugoNitro(nitroRef.current);
+            setCollectedItems((c) => c + 1);
+
+            gameAudio.playCorrect();
+            setFeedback({
+              message: `+${points} Trugo Bataryası Toplandı! ⚡`,
+              type: 'correct',
+            });
+          } else if (entity.type === 'coin') {
+            entity.collected = true;
+            entity.cleared = true;
+            const points = 120;
+
+            scoreRef.current += points;
+            setScore(scoreRef.current);
+            setCollectedItems((c) => c + 1);
+
+            gameAudio.playCombo();
+            setFeedback({
+              message: `+${points} Altın Kupa Kazanıldı! 🪙`,
+              type: 'correct',
+            });
+          } else if (entity.type === 'shield') {
+            entity.collected = true;
+            entity.cleared = true;
+            shieldTimeRef.current = 5.0;
+            setShieldTimeLeft(5);
+
+            scoreRef.current += 50;
+            setScore(scoreRef.current);
+            setCollectedItems((c) => c + 1);
+
+            gameAudio.playLevelUp();
+            setFeedback({
+              message: 'Enerji Kalkanı Aktif! 🛡️ (5 Saniye)',
+              type: 'correct',
+            });
+          } else if (entity.type === 'rival') {
+            entity.collected = true;
+            entity.cleared = true;
+
+            if (hasShield) {
+              scoreRef.current += 50;
+              setScore(scoreRef.current);
+              gameAudio.playPop();
+              setFeedback({
+                message: 'Kalkan ile Çarpışma Savuşturuldu! 🛡️ (+50)',
+                type: 'correct',
+              });
+            } else if (isNitro) {
+              scoreRef.current += 80;
+              overtakenRef.current += 1;
+              streakRef.current += 1;
+
+              setScore(scoreRef.current);
+              setOvertaken(overtakenRef.current);
+              setStreak(streakRef.current);
+              setMaxStreak((m) => Math.max(m, streakRef.current));
+
+              gameAudio.playSlice();
+              setFeedback({
+                message: 'Nitro Şoku! Araç Havaya Uçtu! 💥 (+80)',
+                type: 'correct',
+              });
+            } else {
+              livesRef.current -= 1;
+              streakRef.current = 0;
+
+              setLives(livesRef.current);
+              setStreak(0);
+              setIsCrash(true);
+              setTimeout(() => setIsCrash(false), 400);
+
+              gameAudio.playWhack();
+              setFeedback({
+                message: 'Trafik Kazası! -1 Can 💥',
+                type: 'wrong',
+              });
+
+              if (livesRef.current <= 0) {
+                finishGame();
+                return;
+              }
+            }
+          }
+        }
+
+        // Oyuncuyu Geçen Araçlar (Overtaken - Sollama Puanı)
+        if (entity.type === 'rival' && entity.y > 90 && !entity.collected && !entity.cleared) {
+          entity.cleared = true;
+          overtakenRef.current += 1;
+          streakRef.current += 1;
+          const points = 40;
+
+          scoreRef.current += points;
+          setScore(scoreRef.current);
+          setOvertaken(overtakenRef.current);
+          setStreak(streakRef.current);
+          setMaxStreak((m) => Math.max(m, streakRef.current));
+
+          if (streakRef.current % 5 === 0) {
+            gameAudio.playCombo();
+          }
+        }
+
+        // Ekran dışına çıkanları temizle
+        if (entity.y <= 108 && !entity.cleared) {
+          nextEntities.push(entity);
+        }
+      }
+
+      entitiesRef.current = nextEntities;
+      setEntities([...nextEntities]);
+    }, 50);
+
+    return () => clearInterval(interval);
+  }, [gameState, selectedCar, finishGame]);
+
+  // Klavye Kontrolleri: [1, 2, 3, 4], [←, →], [A, D], [Boşluk, W, ↑]
   useEffect(() => {
     if (gameState !== 'playing') return;
 
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === '1' || e.key === '2' || e.key === '3' || e.key === '4') {
-        const lane = parseInt(e.key, 10) - 1;
-        handleAnswerLane(lane);
-      } else if (e.key === 'ArrowLeft') {
-        setSelectedLane((prev) => Math.max(0, prev - 1));
-      } else if (e.key === 'ArrowRight') {
-        setSelectedLane((prev) => Math.min(3, prev + 1));
-      } else if (e.key === 'Enter' || e.key === ' ') {
+        const targetLane = parseInt(e.key, 10) - 1;
+        setSelectedLane(targetLane);
+      } else if (e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A') {
+        steerLeft();
+      } else if (e.key === 'ArrowRight' || e.key === 'd' || e.key === 'D') {
+        steerRight();
+      } else if (
+        e.key === ' ' ||
+        e.key === 'ArrowUp' ||
+        e.key === 'w' ||
+        e.key === 'W'
+      ) {
         e.preventDefault();
-        handleAnswerLane(selectedLane);
+        activateNitro();
       }
     };
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [gameState, selectedLane, handleAnswerLane]);
-
-  // İsabet oranı hesabı
-  const accuracy = useMemo(() => {
-    if (totalAnswers === 0) return 0;
-    return Math.round((overtaken / totalAnswers) * 100);
-  }, [totalAnswers, overtaken]);
+  }, [gameState, steerLeft, steerRight, activateNitro]);
 
   return (
     <div className="w-full max-w-4xl mx-auto p-4 sm:p-6 bg-white/95 dark:bg-slate-900/90 backdrop-blur-md rounded-2xl border border-slate-200 dark:border-slate-700/60 shadow-2xl text-slate-900 dark:text-slate-100 min-h-[580px] flex flex-col justify-between select-none">
@@ -914,7 +802,7 @@ export function ToggCyberRacer({
               </span>
             </h2>
             <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400">
-              Şeritlerdeki matematik engellerini çöz, rakipleri solla ve Trugo süper torku yakala!
+              Trafikten sıyrıl, Trugo bataryaları ve altınları topla, nitro ile rekor kır!
             </p>
           </div>
         </div>
@@ -973,6 +861,28 @@ export function ToggCyberRacer({
       {/* 2. BAŞLANGIÇ EKRANI (IDLE - GARAJ & PİST SEÇİMİ) */}
       {gameState === 'idle' && (
         <div className="py-6 sm:py-8 flex flex-col items-center text-center space-y-6">
+          {/* BİRİNCİL BAŞLAT BUTONU (DOM İÇİNDEKİ İLK BUTON - Testler screen.getAllByRole('button')[0] ile tıklar) */}
+          <div className="w-full flex flex-col sm:flex-row items-center justify-center gap-3 pb-2">
+            <button
+              type="button"
+              onClick={startGame}
+              className="flex items-center justify-center gap-2 px-10 py-4 rounded-xl font-black text-lg transition-all transform active:scale-95 bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none min-w-[220px]"
+            >
+              <Play className="w-6 h-6 fill-current" />
+              Yarışa Başla
+            </button>
+
+            {onExit && (
+              <button
+                type="button"
+                onClick={onExit}
+                className="px-6 py-4 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 hover:text-slate-900 dark:bg-slate-800 dark:hover:bg-slate-700 dark:text-slate-300 dark:hover:text-white font-bold transition-all border border-slate-200 dark:border-transparent"
+              >
+                Garajdan Çık
+              </button>
+            )}
+          </div>
+
           <div className="relative">
             <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-3xl bg-gradient-to-tr from-rose-600 via-red-600 to-amber-500 flex items-center justify-center shadow-2xl shadow-rose-600/30 text-5xl">
               ⚡
@@ -987,12 +897,12 @@ export function ToggCyberRacer({
               Süper Garaja Hoş Geldin!
             </h3>
             <p className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
-              Aracını ve yarış pistini seç. 4 şeritli otoyolda doğru matematik şeridine geçerek rakipleri solla,
-              Trugo süper şarj ile maksimum torku elde et!
+              Aracını ve yarış pistini seç. 4 şeritli otoyolda trafiği solla, Trugo bataryalarını ve altın kupaları topla,
+              Süper Nitro ateşleyerek en yüksek skora ulaş!
             </p>
           </div>
 
-          {/* ARAÇ SEÇİM KARTLARI (div role="radio" - testlerin start butonunu bulması için ilk button Start olmalıdır) */}
+          {/* ARAÇ SEÇİM KARTLARI (div role="radio" ile erişilebilir kartlar) */}
           <div className="w-full max-w-2xl text-left space-y-2">
             <div className="text-xs font-black uppercase tracking-wider text-slate-500 dark:text-slate-400">
               Yarış Aracını Seç
@@ -1038,6 +948,7 @@ export function ToggCyberRacer({
                       <PlayerCarSVG
                         carId={vehicle.id}
                         colorHex={vehicle.colorHex}
+                        hasShield={false}
                         isNitro={false}
                         isTogg={vehicle.isTogg}
                       />
@@ -1048,7 +959,7 @@ export function ToggCyberRacer({
             </div>
           </div>
 
-          {/* TOGG RENK PALETİ SEÇİMİ (Yalnızca TOGG seçiliyse) */}
+          {/* TOGG RENK PALETİ SEÇİMİ (Yalnızca TOGG modellerinde) */}
           {selectedCar.isTogg && (
             <div className="w-full max-w-2xl text-left space-y-2">
               <div className="text-xs font-black uppercase tracking-wider text-slate-500 dark:text-slate-400">
@@ -1124,32 +1035,10 @@ export function ToggCyberRacer({
               })}
             </div>
           </div>
-
-          {/* BİRİNCİL BAŞLAT BUTONU (DOM içindeki İLK buton! Testler screen.getAllByRole('button')[0] ile tıklar) */}
-          <div className="pt-2 flex flex-col sm:flex-row items-center gap-3">
-            <button
-              type="button"
-              onClick={startGame}
-              className="flex items-center gap-2 px-10 py-4 rounded-xl font-black text-lg transition-all transform active:scale-95 bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none"
-            >
-              <Play className="w-6 h-6 fill-current" />
-              Yarışa Başla
-            </button>
-
-            {onExit && (
-              <button
-                type="button"
-                onClick={onExit}
-                className="px-6 py-4 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 hover:text-slate-900 dark:bg-slate-800 dark:hover:bg-slate-700 dark:text-slate-300 dark:hover:text-white font-bold transition-all border border-slate-200 dark:border-transparent"
-              >
-                Garajdan Çık
-              </button>
-            )}
-          </div>
         </div>
       )}
 
-      {/* 3. OYUN ALANI (PLAYING) */}
+      {/* 3. OYUN ALANI (PLAYING - PURE ARCADE HIGHWAY) */}
       {gameState === 'playing' && (
         <div className="py-2 space-y-3">
           {/* TELEMETRİ VE TRUGO SÜPER ŞARJ ÇUBUĞU */}
@@ -1180,7 +1069,7 @@ export function ToggCyberRacer({
               <div className="w-full h-2.5 rounded-full bg-slate-200 dark:bg-slate-700 overflow-hidden relative">
                 <motion.div
                   className={`h-full rounded-full transition-all ${
-                    trugoNitro >= 100
+                    trugoNitro >= 50
                       ? 'bg-gradient-to-r from-cyan-400 via-sky-500 to-amber-400 animate-pulse'
                       : 'bg-gradient-to-r from-cyan-500 to-blue-600'
                   }`}
@@ -1189,112 +1078,94 @@ export function ToggCyberRacer({
               </div>
             </div>
 
-            {streak >= 2 && (
+            {/* Kalkan Göstergesi */}
+            {shieldTimeLeft > 0 && (
+              <div className="flex items-center gap-1 px-3 py-1 rounded-full bg-emerald-500/10 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 border border-emerald-500/30 text-xs font-black animate-pulse">
+                <Shield className="w-3.5 h-3.5 fill-emerald-500 dark:fill-emerald-400" />
+                Kalkan: {shieldTimeLeft}s
+              </div>
+            )}
+
+            {/* Sollama Serisi */}
+            {streak >= 3 && (
               <div className="flex items-center gap-1 px-3 py-1 rounded-full bg-amber-500/10 dark:bg-amber-500/20 text-amber-700 dark:text-amber-300 border border-amber-500/30 text-xs font-black animate-pulse">
                 <Flame className="w-3.5 h-3.5 fill-amber-500 dark:fill-amber-400" />
-                {streak} Sollama Serisi!
+                {streak} Seri!
               </div>
             )}
           </div>
 
-          {/* MATEMATİK SORU KARTI */}
-          <div className="p-4 sm:p-5 bg-gradient-to-r from-blue-500/10 via-cyan-500/10 to-indigo-500/10 dark:bg-slate-800/90 rounded-2xl border border-cyan-200 dark:border-cyan-800/50 text-center shadow-inner relative overflow-hidden">
-            <div className="flex items-center justify-center gap-2 mb-1">
-              <span className="text-xs font-black px-2.5 py-0.5 rounded-md bg-cyan-500/20 text-cyan-800 dark:text-cyan-200 font-mono uppercase tracking-wide">
-                {question.category}
-              </span>
-            </div>
-
-            <h3 className="text-xl sm:text-2xl font-black tracking-wide text-slate-900 dark:text-white font-mono my-1 select-none">
-              {question.prompt}
-            </h3>
-
-            {/* Geri Bildirim Bildirimi */}
-            <div className="h-6 mt-1 flex items-center justify-center">
-              <AnimatePresence mode="wait">
-                {feedback && (
-                  <motion.div
-                    key={feedback.message}
-                    initial={{ opacity: 0, scale: 0.85 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    exit={{ opacity: 0, scale: 0.85 }}
-                    className={`text-sm sm:text-base font-black ${
-                      feedback.type === 'correct'
-                        ? 'text-emerald-600 dark:text-emerald-400'
-                        : 'text-rose-600 dark:text-rose-400'
-                    }`}
-                  >
-                    {feedback.message}
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </div>
+          {/* GERİ BİLDİRİM / AKSİYON BİLDİRİMİ */}
+          <div className="h-6 flex items-center justify-center">
+            <AnimatePresence mode="wait">
+              {feedback && (
+                <motion.div
+                  key={feedback.message}
+                  initial={{ opacity: 0, scale: 0.85 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.85 }}
+                  className={`text-sm sm:text-base font-black ${
+                    feedback.type === 'correct'
+                      ? 'text-emerald-600 dark:text-emerald-400'
+                      : 'text-rose-600 dark:text-rose-400'
+                  }`}
+                >
+                  {feedback.message}
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
 
           {/* 4 ŞERİTLİ OTOYOL SİMÜLASYONU */}
           <div
-            className={`relative w-full h-[220px] sm:h-[260px] rounded-2xl overflow-hidden border-2 ${selectedTrack.borderGlow} shadow-2xl flex flex-col justify-end p-2 ${selectedTrack.asphaltBg}`}
+            className={`relative w-full h-[260px] sm:h-[300px] rounded-2xl overflow-hidden border-2 ${selectedTrack.borderGlow} shadow-2xl flex flex-col justify-end p-2 ${selectedTrack.asphaltBg}`}
           >
-            {/* Şerit Çizgileri ve Zemin */}
+            {/* Şerit Çizgileri ve Asfalt Akış Efekti */}
             <div className="absolute inset-0 flex justify-between px-3 pointer-events-none">
-              {/* 3 Kesikli Yol Çizgisi (4 şeridi böler) */}
               <div className="w-1/4 border-r-2 border-dashed border-white/20 dark:border-white/20 h-full relative overflow-hidden">
                 <motion.div
                   className="w-full h-full bg-[linear-gradient(to_bottom,transparent_50%,rgba(255,255,255,0.4)_50%)] bg-[length:100%_40px]"
                   animate={{ backgroundPositionY: ['0px', '40px'] }}
-                  transition={{ repeat: Infinity, ease: 'linear', duration: Math.max(0.18, 0.7 - speedKmh / 400) }}
+                  transition={{ repeat: Infinity, ease: 'linear', duration: isNitroActive ? 0.12 : 0.28 }}
                 />
               </div>
               <div className="w-1/4 border-r-2 border-dashed border-white/20 dark:border-white/20 h-full relative overflow-hidden">
                 <motion.div
                   className="w-full h-full bg-[linear-gradient(to_bottom,transparent_50%,rgba(255,255,255,0.4)_50%)] bg-[length:100%_40px]"
                   animate={{ backgroundPositionY: ['0px', '40px'] }}
-                  transition={{ repeat: Infinity, ease: 'linear', duration: Math.max(0.18, 0.7 - speedKmh / 400) }}
+                  transition={{ repeat: Infinity, ease: 'linear', duration: isNitroActive ? 0.12 : 0.28 }}
                 />
               </div>
               <div className="w-1/4 border-r-2 border-dashed border-white/20 dark:border-white/20 h-full relative overflow-hidden">
                 <motion.div
                   className="w-full h-full bg-[linear-gradient(to_bottom,transparent_50%,rgba(255,255,255,0.4)_50%)] bg-[length:100%_40px]"
                   animate={{ backgroundPositionY: ['0px', '40px'] }}
-                  transition={{ repeat: Infinity, ease: 'linear', duration: Math.max(0.18, 0.7 - speedKmh / 400) }}
+                  transition={{ repeat: Infinity, ease: 'linear', duration: isNitroActive ? 0.12 : 0.28 }}
                 />
               </div>
               <div className="w-1/4 h-full relative overflow-hidden">
                 <motion.div
                   className="w-full h-full bg-[linear-gradient(to_bottom,transparent_50%,rgba(255,255,255,0.4)_50%)] bg-[length:100%_40px]"
                   animate={{ backgroundPositionY: ['0px', '40px'] }}
-                  transition={{ repeat: Infinity, ease: 'linear', duration: Math.max(0.18, 0.7 - speedKmh / 400) }}
+                  transition={{ repeat: Infinity, ease: 'linear', duration: isNitroActive ? 0.12 : 0.28 }}
                 />
               </div>
             </div>
 
-            {/* Şerit İsimleri & Ön Kapı Göstergeleri (Yol üstünde uçuşan değerler) */}
+            {/* Şerit İsimleri & Ön Göstergeleri */}
             <div className="absolute top-2 inset-x-0 grid grid-cols-4 px-2 text-center pointer-events-none z-10">
-              {question.options.map((opt, idx) => (
-                <div key={idx} className="flex flex-col items-center">
+              {[1, 2, 3, 4].map((num) => (
+                <div key={num} className="flex flex-col items-center">
                   <span className="text-[10px] font-mono font-bold text-cyan-300 dark:text-cyan-300 bg-slate-900/80 dark:bg-slate-900/80 px-2 py-0.5 rounded-full border border-cyan-500/30">
-                    Şerit {idx + 1}
+                    Şerit {num}
                   </span>
                 </div>
               ))}
             </div>
 
-            {/* RAKİP ARAÇLAR (Sollanırken aşağı doğru kayarlar) */}
-            {rivalCars.map((rival) => (
-              <motion.div
-                key={rival.id}
-                className="absolute -translate-x-1/2 pointer-events-none z-10"
-                style={{
-                  left: `${rival.lane * 25 + 12.5}%`,
-                  top: `${rival.top}%`,
-                }}
-                animate={{
-                  top: isNitroActive ? '120%' : `${rival.top}%`,
-                }}
-                transition={{ duration: 0.55, ease: 'easeInOut' }}
-              >
-                <RivalCarSVG colorHex={rival.color} />
-              </motion.div>
+            {/* OTOYOL VARLIKLARI (Rakipler, Trugo Bataryaları, Altınlar, Kalkanlar) */}
+            {entities.map((entity) => (
+              <RoadEntityItem key={entity.id} entity={entity} />
             ))}
 
             {/* OYUNCU ARACI (Seçilen şeride doğru yumuşak yaylanarak geçer) */}
@@ -1307,71 +1178,89 @@ export function ToggCyberRacer({
                 y: isNitroActive ? [-3, 3, -3] : 0,
               }}
               transition={{
-                left: { type: 'spring', stiffness: 420, damping: 30 },
+                left: { type: 'spring', stiffness: 440, damping: 28 },
                 x: { duration: 0.35 },
-                y: { repeat: Infinity, duration: 0.15 },
+                y: { repeat: Infinity, duration: 0.12 },
               }}
             >
               <PlayerCarSVG
                 carId={selectedCar.id}
                 colorHex={currentColorHex}
+                hasShield={shieldTimeLeft > 0}
                 isNitro={isNitroActive}
                 isTogg={selectedCar.isTogg}
               />
             </motion.div>
           </div>
 
-          {/* 4 ŞERİT CEVAP BUTONLARI (Klavye [1], [2], [3], [4] ile uyumlu) */}
+          {/* 4 ŞERİT DİREKT GEÇİŞ BUTONLARI (Klavye [1], [2], [3], [4] ile uyumlu) */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 sm:gap-3">
-            {question.options.map((option, idx) => {
-              const isTargetLane = selectedLane === idx;
-              const isThisChosen = selectedLaneAnswered === idx;
-              const isThisCorrect = option === question.correctAnswer;
-
-              let btnBorder = 'border-slate-200 dark:border-slate-700/80';
-              let btnBg = 'bg-white dark:bg-slate-800/80 hover:bg-slate-50 dark:hover:bg-slate-800';
-
-              if (isThisChosen) {
-                if (isThisCorrect) {
-                  btnBorder = 'border-emerald-500 ring-2 ring-emerald-500/40';
-                  btnBg = 'bg-emerald-50 dark:bg-emerald-950/40';
-                } else {
-                  btnBorder = 'border-rose-500 ring-2 ring-rose-500/40';
-                  btnBg = 'bg-rose-50 dark:bg-rose-950/40';
-                }
-              } else if (isTargetLane) {
-                btnBorder = 'border-cyan-500 ring-2 ring-cyan-500/30';
-                btnBg = 'bg-cyan-50/60 dark:bg-cyan-950/30';
-              }
-
+            {[0, 1, 2, 3].map((laneIdx) => {
+              const isCurrent = selectedLane === laneIdx;
               return (
                 <button
-                  key={`${question.prompt}-${idx}-${option}`}
+                  key={laneIdx}
                   type="button"
-                  onClick={() => handleAnswerLane(idx)}
-                  disabled={isEvaluating}
-                  className={`p-3 sm:p-3.5 rounded-2xl border-2 transition-all transform active:scale-95 flex flex-col items-center justify-between min-h-[92px] shadow-sm disabled:cursor-not-allowed ${btnBorder} ${btnBg}`}
+                  onClick={() => setSelectedLane(laneIdx)}
+                  className={`p-3 rounded-2xl border-2 transition-all transform active:scale-95 flex flex-col items-center justify-between min-h-[72px] shadow-sm ${
+                    isCurrent
+                      ? 'border-cyan-500 bg-cyan-500/10 dark:bg-cyan-950/40 ring-2 ring-cyan-500/40 text-cyan-700 dark:text-cyan-300 font-black'
+                      : 'border-slate-200 dark:border-slate-700/80 bg-white dark:bg-slate-800/80 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300'
+                  }`}
                 >
                   <div className="w-full flex items-center justify-between text-[11px] font-bold text-slate-500 dark:text-slate-400">
                     <span className="px-1.5 py-0.5 rounded-md bg-slate-200 dark:bg-slate-700 text-slate-800 dark:text-slate-200 font-mono">
-                      [{idx + 1}]
+                      [{laneIdx + 1}]
                     </span>
-                    <span>Şerit {idx + 1}</span>
+                    <span>Hızlı Geçiş</span>
                   </div>
 
-                  <div className="my-1">
-                    <span className="text-xl sm:text-2xl font-black font-mono tracking-tight text-slate-900 dark:text-white">
-                      {option}
-                    </span>
+                  <div className="text-base font-black">
+                    Şerit {laneIdx + 1}
                   </div>
 
-                  <div className="text-[10px] font-bold text-slate-400 dark:text-slate-500 flex items-center gap-1">
-                    <Zap className="w-3 h-3 text-cyan-500" />
-                    <span>Tork Şeridi</span>
+                  <div className="text-[10px] text-slate-400 dark:text-slate-500 flex items-center gap-1 font-semibold">
+                    <Car className="w-3 h-3 text-cyan-500" />
+                    <span>{isCurrent ? 'Aktif Şerit 🚗' : 'Şeride Geç'}</span>
                   </div>
                 </button>
               );
             })}
+          </div>
+
+          {/* ARCADE DİREKSİYON & AKSİYON KONTROL ÇUBUĞU */}
+          <div className="grid grid-cols-3 gap-2 sm:gap-3 pt-1">
+            <button
+              type="button"
+              onClick={steerLeft}
+              className="py-3 px-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 font-black text-sm sm:text-base flex items-center justify-center gap-1.5 active:scale-95 transition-transform"
+            >
+              <span>⬅️</span>
+              <span>Sola Kır</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={activateNitro}
+              disabled={trugoNitro < 50 || isNitroActive}
+              className={`py-3 px-2 rounded-xl font-black text-xs sm:text-sm flex items-center justify-center gap-1.5 active:scale-95 transition-all shadow-md ${
+                trugoNitro >= 50 && !isNitroActive
+                  ? 'bg-gradient-to-r from-amber-500 via-rose-500 to-cyan-500 text-white dark:text-white animate-pulse shadow-rose-500/30'
+                  : 'bg-slate-200 dark:bg-slate-800 text-slate-400 dark:text-slate-500 cursor-not-allowed border border-slate-300 dark:border-slate-700'
+              }`}
+            >
+              <Zap className="w-4 h-4 fill-current" />
+              <span>{isNitroActive ? 'NİTRO AKTİF! 🔥' : `TRUGO NİTRO (%${trugoNitro})`}</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={steerRight}
+              className="py-3 px-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 font-black text-sm sm:text-base flex items-center justify-center gap-1.5 active:scale-95 transition-transform"
+            >
+              <span>Sağa Kır</span>
+              <span>➡️</span>
+            </button>
           </div>
         </div>
       )}
@@ -1385,9 +1274,9 @@ export function ToggCyberRacer({
             </div>
 
             <h3 className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white">
-              {overtaken >= 15
+              {overtaken >= 20
                 ? '🏆 Pistin Şampiyonu & Hız Efsanesi!'
-                : overtaken >= 8
+                : overtaken >= 10
                 ? '⚡ Süper Sürücü & Milli Teknoloji!'
                 : '🏁 Yarış Tamamlandı!'}
             </h3>
@@ -1422,9 +1311,9 @@ export function ToggCyberRacer({
               </div>
             </div>
             <div className="p-3 bg-white dark:bg-slate-800/80 rounded-xl border border-slate-200 dark:border-slate-700/60 shadow-xs col-span-2 sm:col-span-1">
-              <div className="text-xs text-slate-500 dark:text-slate-400">İsabet Oranı</div>
+              <div className="text-xs text-slate-500 dark:text-slate-400">Toplanan Öğe</div>
               <div className="text-xl font-black text-emerald-600 dark:text-emerald-400 font-mono">
-                %{accuracy}
+                {collectedItems}
               </div>
             </div>
           </div>
@@ -1460,7 +1349,7 @@ export function ToggCyberRacer({
 
       {/* 5. ALT BİLGİ & KONTROL REHBERİ */}
       <div className="pt-4 border-t border-slate-200 dark:border-slate-700/60 flex flex-wrap items-center justify-between text-xs text-slate-500 dark:text-slate-400 gap-2">
-        <span>Klavye: [1, 2, 3, 4] tuşları veya [← / →] ile şerit değiştir, [Boşluk / Enter] ile solla.</span>
+        <span>Klavye: [1, 2, 3, 4] veya [← / → / A / D] ile şerit değiştir, [Boşluk / W / ↑] ile Trugo Nitro ateşle.</span>
         <span>Çarpan: x{scoreMultiplier}</span>
       </div>
     </div>

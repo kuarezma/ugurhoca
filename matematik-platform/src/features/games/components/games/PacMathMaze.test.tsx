@@ -1,6 +1,11 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { render, screen, fireEvent, act } from '@testing-library/react';
-import { PacMathMaze, generateMazeQuestion } from './PacMathMaze';
+import {
+  PacMathMaze,
+  generateArrowCombo,
+  CHARACTERS,
+  DIRECTIONS,
+} from './PacMathMaze';
 import { gameAudio } from '@/features/games/utils/gameAudio';
 
 vi.mock('@/features/games/utils/gameAudio', () => ({
@@ -17,7 +22,7 @@ vi.mock('@/features/games/utils/gameAudio', () => ({
   },
 }));
 
-describe('PacMathMaze Component', () => {
+describe('PacMathMaze Pure Arcade Component', () => {
   beforeEach(() => {
     vi.useFakeTimers();
     vi.clearAllMocks();
@@ -28,22 +33,49 @@ describe('PacMathMaze Component', () => {
     vi.useRealTimers();
   });
 
-  it('renders idle screen with title and start button as primary button', () => {
+  it('renders idle screen with title and "Labirente Gir" as primary button', () => {
     const onScore = vi.fn();
-    const { unmount } = render(<PacMathMaze onScore={onScore} scoreMultiplier={1} />);
+    const { unmount } = render(
+      <PacMathMaze onScore={onScore} scoreMultiplier={1} />,
+    );
 
     expect(screen.getByText('Pac-Matik: Ok Labirenti')).toBeInTheDocument();
-    expect(screen.getByText('Oklarla Labirent & Matematik Avı')).toBeInTheDocument();
+    expect(
+      screen.getByText('Arcade Pac-Man & Ok Refleksi'),
+    ).toBeInTheDocument();
 
     const buttons = screen.getAllByRole('button');
     expect(buttons[0]).toHaveTextContent('Labirente Gir');
+
+    // 4 cute characters with role="radio"
+    const radioItems = screen.getAllByRole('radio');
+    expect(radioItems).toHaveLength(4);
+
+    unmount();
+  });
+
+  it('allows selecting different characters in idle state', () => {
+    const onScore = vi.fn();
+    const { unmount } = render(
+      <PacMathMaze onScore={onScore} scoreMultiplier={1} />,
+    );
+
+    const radioItems = screen.getAllByRole('radio');
+    expect(radioItems[0]).toHaveAttribute('aria-checked', 'true');
+
+    // Click on Princess Pink
+    fireEvent.click(radioItems[1]);
+    expect(radioItems[1]).toHaveAttribute('aria-checked', 'true');
+    expect(radioItems[0]).toHaveAttribute('aria-checked', 'false');
 
     unmount();
   });
 
   it('starts game when "Labirente Gir" is clicked and renders at least 4 direction buttons', () => {
     const onScore = vi.fn();
-    const { unmount } = render(<PacMathMaze onScore={onScore} scoreMultiplier={1} />);
+    const { unmount } = render(
+      <PacMathMaze onScore={onScore} scoreMultiplier={1} />,
+    );
 
     const startBtn = screen.getAllByRole('button')[0];
     fireEvent.click(startBtn);
@@ -54,12 +86,20 @@ describe('PacMathMaze Component', () => {
     const buttons = screen.getAllByRole('button');
     expect(buttons.length).toBeGreaterThanOrEqual(4);
 
+    // Verify arrow buttons by accessible role and name
+    expect(screen.getByRole('button', { name: /Yukarı/i })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /Sol/i })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /Aşağı/i })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /Sağ/i })).toBeInTheDocument();
+
     unmount();
   });
 
-  it('handles keyboard navigation and plays audio on answer selection', () => {
+  it('handles keyboard navigation and on-screen button clicks', () => {
     const onScore = vi.fn();
-    const { unmount } = render(<PacMathMaze onScore={onScore} scoreMultiplier={1} />);
+    const { unmount } = render(
+      <PacMathMaze onScore={onScore} scoreMultiplier={1} />,
+    );
 
     // Start game
     fireEvent.click(screen.getAllByRole('button')[0]);
@@ -68,40 +108,62 @@ describe('PacMathMaze Component', () => {
     act(() => {
       window.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowUp' }));
     });
-
     expect(gameAudio.playPop).toHaveBeenCalled();
 
-    // Advance timer past corridor step (220ms) and evaluate
+    // Press W
     act(() => {
-      vi.advanceTimersByTime(250);
+      window.dispatchEvent(new KeyboardEvent('keydown', { key: 'w' }));
     });
+    expect(gameAudio.playPop).toHaveBeenCalled();
 
-    // Advance timer past reset (750ms)
-    act(() => {
-      vi.advanceTimersByTime(800);
-    });
+    // Click on "Sağ" on-screen button
+    const rightBtn = screen.getByRole('button', { name: /Sağ/i });
+    fireEvent.click(rightBtn);
+    expect(gameAudio.playPop).toHaveBeenCalled();
 
     unmount();
   });
 
-  it('generateMazeQuestion produces questions with 4 unique directional options', () => {
-    const askedSignatures = new Set<string>();
-    const q1 = generateMazeQuestion(0, askedSignatures);
+  it('completes game after timer expires and calls onScore once', () => {
+    const onScore = vi.fn();
+    const { unmount } = render(
+      <PacMathMaze onScore={onScore} scoreMultiplier={1.5} />,
+    );
 
-    expect(q1.options).toHaveLength(4);
-    const directions = q1.options.map((o) => o.dir);
-    expect(directions).toContain('UP');
-    expect(directions).toContain('RIGHT');
-    expect(directions).toContain('LEFT');
-    expect(directions).toContain('DOWN');
+    // Start game
+    fireEvent.click(screen.getAllByRole('button')[0]);
 
-    const correctOpts = q1.options.filter((o) => o.isCorrect);
-    expect(correctOpts).toHaveLength(1);
-    expect(askedSignatures.size).toBeGreaterThanOrEqual(1);
+    // Advance 60 seconds
+    act(() => {
+      vi.advanceTimersByTime(61000);
+    });
 
-    // Generate another question and ensure askedSignatures tracks it
-    const q2 = generateMazeQuestion(3, askedSignatures);
-    expect(q2.options).toHaveLength(4);
-    expect(askedSignatures.size).toBeGreaterThanOrEqual(2);
+    expect(gameAudio.playFanfare).toHaveBeenCalled();
+    expect(onScore).toHaveBeenCalledTimes(1);
+    expect(
+      screen.getByText(/Labirent Macerası Tamamlandı!/),
+    ).toBeInTheDocument();
+    expect(screen.getByText('Yeniden Oyna')).toBeInTheDocument();
+
+    unmount();
+  });
+
+  it('generateArrowCombo produces valid sequences of specified length', () => {
+    const combo = generateArrowCombo(3);
+    expect(combo).toHaveLength(3);
+    for (const dir of combo) {
+      expect(DIRECTIONS).toContain(dir);
+    }
+
+    const longerCombo = generateArrowCombo(5);
+    expect(longerCombo).toHaveLength(5);
+  });
+
+  it('has 4 cute characters defined', () => {
+    expect(CHARACTERS).toHaveLength(4);
+    expect(CHARACTERS[0].name).toContain('Pac-Man');
+    expect(CHARACTERS[1].name).toContain('Prenses');
+    expect(CHARACTERS[2].name).toContain('Unicorn');
+    expect(CHARACTERS[3].name).toContain('Pati');
   });
 });
