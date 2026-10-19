@@ -22,6 +22,7 @@ import {
   Compass,
   FlaskConical,
   Footprints,
+  Ghost,
   Hammer,
   KeyRound,
   Shield,
@@ -57,6 +58,8 @@ const DinoRunner = dynamic(() => import('./games/DinoRunner').then(m => ({ defau
 const MeteorDefense = dynamic(() => import('./games/MeteorDefense').then(m => ({ default: m.MeteorDefense })), { ssr: false });
 const SecretAgent = dynamic(() => import('./games/SecretAgent').then(m => ({ default: m.SecretAgent })), { ssr: false });
 const GeometryArcher = dynamic(() => import('./games/GeometryArcher').then(m => ({ default: m.GeometryArcher })), { ssr: false });
+const ToggCyberRacer = dynamic(() => import('./games/ToggCyberRacer').then(m => ({ default: m.ToggCyberRacer })), { ssr: false });
+const PacMathMaze = dynamic(() => import('./games/PacMathMaze').then(m => ({ default: m.PacMathMaze })), { ssr: false });
 
 export { FloatingParticles, GameCard };
 export type {
@@ -340,5 +343,27 @@ export const games: GameDefinition[] = [
     color: 'from-teal-500 to-cyan-600',
     icon: Target,
     component: GeometryArcher,
+  },
+  {
+    id: 26,
+    title: 'TOGG & Süper Garaj Yarışı',
+    description: 'TOGG T10X veya süper aracını garajdan seç, işlemleri çözüp Trugo nitro ile rakipleri solla!',
+    grade: '5-8',
+    rating: 5.0,
+    difficulty: 'Orta',
+    color: 'from-rose-600 to-cyan-600',
+    icon: Car,
+    component: ToggCyberRacer,
+  },
+  {
+    id: 27,
+    title: 'Pac-Matik: Ok Labirenti',
+    description: 'Soru ekranını çöz, parlayan ok koridorlarını takip edip Pac-Matik ile doğru cevaba ulaş!',
+    grade: '5-8',
+    rating: 5.0,
+    difficulty: 'Kolay',
+    color: 'from-fuchsia-500 to-amber-500',
+    icon: Ghost,
+    component: PacMathMaze,
   },
 ];

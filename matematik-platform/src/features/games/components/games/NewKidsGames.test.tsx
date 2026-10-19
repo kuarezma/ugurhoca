@@ -6,6 +6,8 @@ import { DinoRunner } from './DinoRunner';
 import { MeteorDefense } from './MeteorDefense';
 import { SecretAgent } from './SecretAgent';
 import { GeometryArcher } from './GeometryArcher';
+import { ToggCyberRacer } from './ToggCyberRacer';
+import { PacMathMaze } from './PacMathMaze';
 
 vi.mock('@/features/games/utils/gameAudio', () => ({
   gameAudio: {
@@ -21,7 +23,7 @@ vi.mock('@/features/games/utils/gameAudio', () => ({
   },
 }));
 
-describe('New Kids Games (20-25)', () => {
+describe('New Kids Games (20-27)', () => {
   beforeEach(() => {
     vi.useFakeTimers();
   });
@@ -85,6 +87,26 @@ describe('New Kids Games (20-25)', () => {
     const onScore = vi.fn();
     const { unmount } = render(<GeometryArcher onScore={onScore} scoreMultiplier={1} />);
     expect(screen.getByText('Okçu Şampiyonu')).toBeInTheDocument();
+    const startBtn = screen.getAllByRole('button')[0];
+    fireEvent.click(startBtn);
+    expect(screen.getAllByRole('button').length).toBeGreaterThanOrEqual(4);
+    unmount();
+  });
+
+  it('renders and starts ToggCyberRacer (26)', () => {
+    const onScore = vi.fn();
+    const { unmount } = render(<ToggCyberRacer onScore={onScore} scoreMultiplier={1} />);
+    expect(screen.getByText('TOGG & Süper Garaj Yarışı')).toBeInTheDocument();
+    const startBtn = screen.getAllByRole('button')[0];
+    fireEvent.click(startBtn);
+    expect(screen.getAllByRole('button').length).toBeGreaterThanOrEqual(4);
+    unmount();
+  });
+
+  it('renders and starts PacMathMaze (27)', () => {
+    const onScore = vi.fn();
+    const { unmount } = render(<PacMathMaze onScore={onScore} scoreMultiplier={1} />);
+    expect(screen.getByText('Pac-Matik: Ok Labirenti')).toBeInTheDocument();
     const startBtn = screen.getAllByRole('button')[0];
     fireEvent.click(startBtn);
     expect(screen.getAllByRole('button').length).toBeGreaterThanOrEqual(4);
