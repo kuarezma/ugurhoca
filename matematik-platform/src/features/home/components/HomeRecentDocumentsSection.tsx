@@ -27,7 +27,7 @@ type HomeGradeFilter = 'all' | SupportedHomeGrade;
 
 const SUPPORTED_GRADES: readonly SupportedHomeGrade[] = [5, 6, 7, 8];
 const WORKSHEET_META_PREFIX = '__WS_META__';
-const MAX_VISIBLE_CARDS = 8;
+const MAX_VISIBLE_CARDS = 6;
 
 type ParsedHomeDocMeta = {
   cleanDescription: string;

@@ -327,4 +327,20 @@ describe('HomeRecentDocumentsSection', () => {
       outcome: null,
     });
   });
+
+  it('6 adetten fazla yeni içerik geldiğinde en fazla 6 içerik kartı gösterir', () => {
+    const eightDocs: ContentDocument[] = Array.from({ length: 8 }, (_, idx) => ({
+      ...mockDocs[idx % mockDocs.length],
+      id: `doc-limit-${idx + 1}`,
+      title: `Yeni İçerik Kartı #${idx + 1}`,
+    }));
+
+    render(<HomeRecentDocumentsSection documents={eightDocs} />);
+
+    for (let i = 1; i <= 6; i += 1) {
+      expect(screen.getByText(`Yeni İçerik Kartı #${i}`)).toBeInTheDocument();
+    }
+    expect(screen.queryByText('Yeni İçerik Kartı #7')).not.toBeInTheDocument();
+    expect(screen.queryByText('Yeni İçerik Kartı #8')).not.toBeInTheDocument();
+  });
 });
