@@ -159,14 +159,16 @@ export const resolveYandexImageUrl = async (url: string) => {
   }
 };
 
-export const fetchHomeDocuments = async () => {
+export const fetchHomeDocuments = async (limit = 16) => {
   const { data } = await supabase
     .from('documents')
     .select('*')
     .order('created_at', { ascending: false })
-    .limit(5);
+    .limit(limit);
 
-  return (data || []) as ContentDocument[];
+  return ((data || []) as ContentDocument[]).filter(
+    (doc) => !doc.is_admin_only,
+  );
 };
 
 export const fetchAnnouncements = async () => {

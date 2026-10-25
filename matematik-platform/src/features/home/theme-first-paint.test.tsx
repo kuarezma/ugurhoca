@@ -11,8 +11,9 @@ import { HomeMoreLinksSection } from '@/features/home/components/HomeMoreLinksSe
 import { HomeNavbar } from '@/features/home/components/HomeNavbar';
 import { HomeNavbarMessagesButton } from '@/features/home/components/HomeNavbarMessagesButton';
 import { HomeNavbarNotificationBell } from '@/features/home/components/HomeNavbarNotificationBell';
+import { HomeRecentDocumentsSection } from '@/features/home/components/HomeRecentDocumentsSection';
 import { HomeSupportSection } from '@/features/home/components/HomeSupportSection';
-import type { Announcement, AppUser } from '@/types';
+import type { Announcement, AppUser, ContentDocument } from '@/types';
 
 // Theme classes must come from CSS (`light:` / `dark:` variants on data-theme),
 // not from the JS theme state: the server and the first client render do not
@@ -108,6 +109,20 @@ const announcements: Announcement[] = [
   } as Announcement,
 ];
 
+const documents: ContentDocument[] = [
+  {
+    id: 'doc-1',
+    title: '7. Sınıf Rasyonel Sayılar Yaprak Test',
+    grade: [7],
+    type: 'yaprak-test',
+    created_at: '2026-10-20T10:00:00.000Z',
+    file_url: 'https://example.com/test.pdf',
+    solution_url: 'https://example.com/cozum.pdf',
+    description: '__WS_META__{"outcome":"M.7.1.1.1"}\nEl yazısı çözümlü test föyü',
+    is_admin_only: false,
+  } as ContentDocument,
+];
+
 type Theme = 'light' | 'dark';
 
 function renderInTheme(theme: Theme, ui: ReactElement, interact?: () => void) {
@@ -186,6 +201,12 @@ describe('ana sayfa tema sınıfları ilk boyamada CSS’ten gelir', () => {
   it('HomeAnnouncementsSection iki temada aynı işaretlemeyi üretir', () => {
     expectThemeIndependentMarkup(() => (
       <HomeAnnouncementsSection announcements={announcements} onSelectAnnouncement={vi.fn()} />
+    ));
+  });
+
+  it('HomeRecentDocumentsSection iki temada aynı işaretlemeyi üretir', () => {
+    expectThemeIndependentMarkup(() => (
+      <HomeRecentDocumentsSection documents={documents} userGrade={7} />
     ));
   });
 

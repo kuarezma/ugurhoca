@@ -8,6 +8,7 @@ import { HomeExamCountdownSection } from '@/features/home/components/HomeExamCou
 import { HomeFooter } from '@/features/home/components/HomeFooter';
 import { HomeHeroSection } from '@/features/home/components/HomeHeroSection';
 import { HomeNavbar } from '@/features/home/components/HomeNavbar';
+import { HomeUserContext } from '@/features/home/components/HomeRecentDocumentsSection';
 import { HomeSupportSection } from '@/features/home/components/HomeSupportSection';
 import { useHomePageData } from '@/features/home/hooks/useHomePageData';
 import { ActiveLiveLessonBadge } from '@/features/live-lessons/components/ActiveLiveLessonBadge';
@@ -104,14 +105,14 @@ const FormulaSpeedDrillModal = dynamic(
 type HomePageProps = {
   /** Duyurular kendi Suspense sınırında stream edilir; hero bu sorguyu beklemez. */
   announcementsSlot?: ReactNode;
-  /**
-   * Aktif canlı ders rozeti. Sunucuda `<Suspense>` içinde stream edilen bir
-   * slot olarak geçilir; böylece rozetin gerektirdiği kimlik doğrulama
-   * (auth.getUser + profiles) ana sayfanın ilk boyamasını bekletmez.
-   */
+  /** Son eklenen içerikler kendi Suspense sınırında stream edilir; hero bu sorguyu beklemez. */
+  recentDocumentsSlot?: ReactNode;
 };
 
-export default function HomePage({ announcementsSlot }: HomePageProps) {
+export default function HomePage({
+  announcementsSlot,
+  recentDocumentsSlot,
+}: HomePageProps) {
   const { theme } = useTheme();
   const isLight = theme === 'light';
   const [isFlashcardsOpen, setIsFlashcardsOpen] = useState(false);
@@ -191,16 +192,18 @@ export default function HomePage({ announcementsSlot }: HomePageProps) {
   const { handleLogout, user } = useHomePageData();
 
   return (
-    <main
-      className="home-page relative min-h-screen overflow-x-clip bg-transparent light-atmosphere"
-    >
-      <HomeNavbar user={user} onLogout={handleLogout} />
-      <ActiveLiveLessonBadge userId={user?.id} />
-      <div className="pt-[calc(4.5rem+env(safe-area-inset-top))] md:pt-20">
-        {/* 1. Sade Açık Tema Karşılama, Yaprak Test & Oyunlar Hub'ı */}
-        <HomeHeroSection
-          user={user}
-          onOpenFlashcards={() => setIsFlashcardsOpen(true)}
+    <HomeUserContext.Provider value={user}>
+      <main
+        className="home-page relative min-h-screen overflow-x-clip bg-transparent light-atmosphere"
+      >
+        <HomeNavbar user={user} onLogout={handleLogout} />
+        <ActiveLiveLessonBadge userId={user?.id} />
+        <div className="pt-[calc(4.5rem+env(safe-area-inset-top))] md:pt-20">
+          {/* 1. Sade Açık Tema Karşılama, Yaprak Test & Oyunlar Hub'ı */}
+          <HomeHeroSection
+            user={user}
+            recentDocumentsSlot={recentDocumentsSlot}
+            onOpenFlashcards={() => setIsFlashcardsOpen(true)}
           onOpenScratchpad={() => setIsScratchpadOpen(true)}
           onOpenCalculator={(tab) =>
             setCalculatorState({ isOpen: true, tab: tab || 'lgs' })
@@ -321,6 +324,7 @@ export default function HomePage({ announcementsSlot }: HomePageProps) {
           }}
         />
       ) : null}
-    </main>
+      </main>
+    </HomeUserContext.Provider>
   );
 }

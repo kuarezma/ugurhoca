@@ -1,8 +1,12 @@
 import type { Metadata } from 'next';
 import { Suspense } from 'react';
 import { HomeAnnouncementsFeed } from '@/features/home/components/HomeAnnouncementsFeed';
+import { HomeRecentDocumentsSection } from '@/features/home/components/HomeRecentDocumentsSection';
 import HomePage from '@/features/home/containers/HomePage';
-import { loadInitialHomeFeed } from '@/features/home/server/loadHomeFeed';
+import {
+  loadInitialHomeFeed,
+  loadRecentHomeDocuments,
+} from '@/features/home/server/loadHomeFeed';
 import { createPageMetadata } from '@/lib/site-metadata';
 
 export const metadata: Metadata = createPageMetadata({
@@ -20,9 +24,20 @@ async function HomeAnnouncementsSlot() {
   return <HomeAnnouncementsFeed announcements={initialFeed.announcements} />;
 }
 
+async function HomeRecentDocumentsSlot() {
+  const documents = await loadRecentHomeDocuments();
+
+  return <HomeRecentDocumentsSection documents={documents} />;
+}
+
 export default function Home() {
   return (
     <HomePage
+      recentDocumentsSlot={
+        <Suspense fallback={null}>
+          <HomeRecentDocumentsSlot />
+        </Suspense>
+      }
       announcementsSlot={
         <Suspense fallback={null}>
           <HomeAnnouncementsSlot />

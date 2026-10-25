@@ -1,5 +1,6 @@
 'use client';
 
+import type { ReactNode } from 'react';
 import {
   ArrowRight,
   BookOpen,
@@ -19,6 +20,7 @@ import type { AppUser } from '@/types';
 
 type HomeHeroSectionProps = {
   user?: AppUser | null;
+  recentDocumentsSlot?: ReactNode;
   onOpenFlashcards?: () => void;
   onOpenScratchpad?: () => void;
   onOpenCalculator?: (tab?: 'lgs' | 'yks') => void;
@@ -35,6 +37,7 @@ type HomeHeroSectionProps = {
 
 export function HomeHeroSection({
   user,
+  recentDocumentsSlot,
   onOpenFlashcards,
   onOpenScratchpad,
   onOpenCalculator,
@@ -256,6 +259,9 @@ export function HomeHeroSection({
           </SafeLink>
 
         </div>
+
+        {/* 3.5. Yeni Eklenen İçerikler & Çözümlü Yaprak Testler Vitrini */}
+        {recentDocumentsSlot}
 
         {/* 4. Sınıflara Göre Matematik (DersMatematik Yapısı) */}
         <div>

@@ -5,12 +5,13 @@ import { createCachedPublicSupabaseClient } from '@/lib/supabase/server';
 import { resolveYandexPublicDownloadUrl } from '@/lib/yandex-public-download';
 import { createLogger } from '@/lib/logger';
 import type { HomeInitialFeed } from '@/features/home/home-initial-feed';
-import type { Announcement } from '@/types';
+import type { Announcement, ContentDocument } from '@/types';
 
 const log = createLogger('home:load-feed');
 
 // Supabase yanıt vermezse build/ISR 60 sn'lik üretim sınırına takılmasın.
 const ANNOUNCEMENTS_QUERY_TIMEOUT_MS = 10_000;
+const RECENT_DOCUMENTS_DEFAULT_LIMIT = 16;
 
 async function fetchAnnouncementsServer(
   supabase: ReturnType<typeof createCachedPublicSupabaseClient>,
@@ -84,5 +85,39 @@ export async function loadInitialHomeFeed(): Promise<HomeInitialFeed> {
     // Duyuru kaynağındaki geçici hata ana sayfanın üretimini durdurmamalı.
     log.warn('Duyurular yüklenemedi');
     return { announcements: [] };
+  }
+}
+
+export async function loadRecentHomeDocuments(
+  limit = RECENT_DOCUMENTS_DEFAULT_LIMIT,
+): Promise<ContentDocument[]> {
+  if (!hasSupabasePublicEnv()) {
+    return [];
+  }
+
+  const supabase = createCachedPublicSupabaseClient('home-recent-documents');
+
+  try {
+    const { data, error } = await supabase
+      .from('documents')
+      .select('*')
+      .order('created_at', { ascending: false })
+      .limit(limit)
+      .abortSignal(AbortSignal.timeout(ANNOUNCEMENTS_QUERY_TIMEOUT_MS));
+
+    if (error || !data) {
+      return [];
+    }
+
+    return [...(data as ContentDocument[])]
+      .filter((doc) => !doc.is_admin_only)
+      .sort((a, b) => {
+        const timeA = a.created_at ? new Date(a.created_at).getTime() : 0;
+        const timeB = b.created_at ? new Date(b.created_at).getTime() : 0;
+        return timeB - timeA;
+      });
+  } catch {
+    log.warn('Son eklenen içerikler yüklenemedi');
+    return [];
   }
 }
