@@ -27,7 +27,7 @@ type HomeGradeFilter = 'all' | SupportedHomeGrade;
 
 const SUPPORTED_GRADES: readonly SupportedHomeGrade[] = [5, 6, 7, 8];
 const WORKSHEET_META_PREFIX = '__WS_META__';
-const MAX_VISIBLE_CARDS = 6;
+const MAX_VISIBLE_CARDS = 8;
 
 type ParsedHomeDocMeta = {
   cleanDescription: string;
@@ -458,7 +458,7 @@ export function HomeRecentDocumentsSection({
                       </a>
                     )}
 
-                    {doc.solution_url && (
+                    {doc.solution_url && doc.solution_url !== doc.file_url && (
                       <a
                         href={doc.solution_url}
                         target="_blank"
