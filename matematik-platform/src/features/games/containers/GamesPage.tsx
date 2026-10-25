@@ -155,7 +155,7 @@ export default function GamesPage() {
 
   if (loading || !user) {
     return (
-      <div className="page-surface min-h-screen pt-20 dark:bg-surface-0">
+      <div className="page-surface min-h-screen pt-20 pb-20 dark:bg-surface-0">
         <div className="mx-auto max-w-6xl px-4 py-10">
           <div className="mb-8 flex items-center gap-3" aria-hidden="true">
             <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-brand-primary/20 text-brand-ink">
@@ -163,7 +163,7 @@ export default function GamesPage() {
             </div>
             <div className="flex-1 space-y-2">
               <Skeleton className="h-7 w-60" />
-              <Skeleton className="h-4 w-80" />
+              <Skeleton className="h-4 w-80 max-w-full" />
             </div>
           </div>
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">

@@ -99,21 +99,21 @@ export function InteractiveMathCanvas({
   }, [animating]);
 
   return (
-    <div className={`relative flex flex-col items-center justify-center p-4 rounded-xl bg-slate-900 border border-slate-800 text-slate-100 ${className}`}>
+    <div className={`relative flex flex-col items-center justify-center p-4 rounded-xl bg-surface-1 dark:bg-slate-900 border border-border-subtle dark:border-slate-800 text-primary dark:text-slate-100 ${className}`}>
       <div className="flex items-center justify-between w-full mb-3">
-        <h3 className="text-sm font-semibold tracking-wide text-slate-300">
+        <h3 className="text-sm font-semibold tracking-wide text-secondary dark:text-slate-300">
           Harmonik Eğri & Web Worker İzolasyonu
         </h3>
         <span
-          className={`text-xs px-2 py-0.5 rounded-full font-medium ${
-            isOffscreenSupported ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' : 'bg-amber-500/10 text-amber-400 border border-amber-500/20'
+          className={`text-xs px-2 py-0.5 rounded-full font-medium border ${
+            isOffscreenSupported ? 'bg-tone-success-bg text-tone-success-fg border-tone-success-border' : 'bg-tone-warn-bg text-tone-warn-fg border-tone-warn-border'
           }`}
         >
           {isOffscreenSupported ? 'OffscreenCanvas Aktif' : 'Standart Mod'}
         </span>
       </div>
 
-      <div className="relative overflow-hidden rounded-lg bg-slate-950 dark:bg-slate-950 border border-slate-800 dark:border-slate-800 shadow-inner flex items-center justify-center">
+      <div className="relative overflow-hidden rounded-lg bg-surface-0 dark:bg-slate-950/60 border border-border-subtle dark:border-slate-800/80 shadow-inner flex items-center justify-center">
         <canvas
           ref={canvasRef}
           width={width}
@@ -137,15 +137,15 @@ export function InteractiveMathCanvas({
             type="button"
             onClick={handleCalculatePrimes}
             disabled={!isWorkerReady || isCalculating}
-            className="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 disabled:opacity-50 text-slate-200 border border-slate-700 font-medium transition-colors"
+            className="px-3 py-1.5 rounded-lg bg-surface-2 hover:bg-surface-3 dark:bg-slate-800 dark:hover:bg-slate-700 disabled:opacity-50 text-primary dark:text-slate-200 border border-border-default dark:border-slate-700 font-medium transition-colors"
           >
             {isCalculating ? 'Hesaplanıyor...' : '100k Asal Sayı Bul'}
           </button>
         </div>
 
         {primeCount !== null && (
-          <span className="text-slate-400">
-            Sonuç: {' '}<strong className="text-blue-400 font-semibold">{primeCount.toLocaleString('tr-TR')}</strong> {' '}adet asal sayı
+          <span className="text-secondary dark:text-slate-400">
+            Sonuç: {' '}<strong className="text-accent-fg dark:text-emerald-400 font-semibold">{primeCount.toLocaleString('tr-TR')}</strong> {' '}adet asal sayı
           </span>
         )}
       </div>

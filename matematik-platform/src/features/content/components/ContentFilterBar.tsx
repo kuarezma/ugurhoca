@@ -37,7 +37,6 @@ type ContentFilterBarProps = {
 };
 
 export default function ContentFilterBar({
-  isWorksheetBrowser,
   onClearSearch,
   onQuickFilterChange,
   onSearchChange,

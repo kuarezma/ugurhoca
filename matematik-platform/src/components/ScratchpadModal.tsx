@@ -118,6 +118,38 @@ export default function ScratchpadModal({
   const [eliminatedOptions, setEliminatedOptions] = useState<Set<number>>(new Set());
   const [showProtractor, setShowProtractor] = useState(false);
   const [showPatternMenu, setShowPatternMenu] = useState(false);
+  const [shapeMenuOpen, setShapeMenuOpen] = useState(false);
+  const shapeMenuRef = useRef<HTMLDivElement | null>(null);
+  const shapeMenuButtonRef = useRef<HTMLButtonElement | null>(null);
+
+  useEffect(() => {
+    if (!isOpen) {
+      setShapeMenuOpen(false);
+      return;
+    }
+    if (!shapeMenuOpen) return;
+
+    const handlePointerDown = (event: PointerEvent) => {
+      if (!shapeMenuRef.current?.contains(event.target as Node)) {
+        setShapeMenuOpen(false);
+      }
+    };
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key !== 'Escape') return;
+      // İlk Escape yalnız menüyü kapatır; üst modal açık kalır.
+      event.preventDefault();
+      event.stopPropagation();
+      setShapeMenuOpen(false);
+      shapeMenuButtonRef.current?.focus();
+    };
+
+    document.addEventListener('pointerdown', handlePointerDown);
+    document.addEventListener('keydown', handleKeyDown, true);
+    return () => {
+      document.removeEventListener('pointerdown', handlePointerDown);
+      document.removeEventListener('keydown', handleKeyDown, true);
+    };
+  }, [isOpen, shapeMenuOpen]);
 
   const cacheKey = questionContext?.questionId || (questionContext?.questionText ? questionContext.questionText.trim().slice(0, 100) : null);
 
@@ -962,10 +994,14 @@ export default function ScratchpadModal({
                 <span className="hidden sm:inline">Açıölçer</span>
               </button>
 
-              <div className="relative group">
+              <div ref={shapeMenuRef} className="relative">
                 <button
+                  ref={shapeMenuButtonRef}
                   type="button"
                   title="Geometrik Şekil Ekle"
+                  aria-label="Geometrik Şekil Ekle"
+                  aria-expanded={shapeMenuOpen}
+                  onClick={() => setShapeMenuOpen((prev) => !prev)}
                   className={`inline-flex h-8 items-center gap-1 rounded-lg px-2 text-xs font-semibold transition ${
                     isLight
                       ? 'text-indigo-700 hover:bg-indigo-100 hover:text-indigo-900'
@@ -975,32 +1011,51 @@ export default function ScratchpadModal({
                   <Shapes className="h-3.5 w-3.5 text-purple-600 dark:text-purple-400" />
                   <span className="hidden sm:inline">Şekil</span>
                 </button>
-                <div className={`absolute left-0 top-full mt-1 hidden group-hover:flex flex-col gap-1 rounded-xl border p-1.5 shadow-xl z-50 min-w-[130px] ${
-                  isLight ? 'border-slate-200 bg-white text-slate-900' : 'border-white/10 bg-slate-900 text-white'
-                }`}>
+                <div
+                  className={`absolute left-0 top-full mt-1 ${shapeMenuOpen ? 'flex' : 'hidden'} flex-col gap-1 rounded-xl border p-1.5 shadow-xl z-50 min-w-[130px] ${
+                    isLight
+                      ? 'border-slate-200 bg-white text-slate-900'
+                      : 'border-white/10 bg-surface-1 text-primary'
+                  }`}
+                >
                   <button
                     type="button"
-                    onClick={() => drawGeometricShape('triangle')}
+                    onClick={() => {
+                      drawGeometricShape('triangle');
+                      setShapeMenuOpen(false);
+                    }}
                     className={`flex items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs text-left font-medium ${
-                      isLight ? 'text-slate-700 hover:bg-slate-100 hover:text-slate-900' : 'text-slate-200 hover:bg-white/10 hover:text-white'
+                      isLight
+                        ? 'text-slate-700 hover:bg-slate-100 hover:text-slate-900'
+                        : 'text-slate-200 hover:bg-white/10 hover:text-white'
                     }`}
                   >
                     <span>📐 Dik Üçgen</span>
                   </button>
                   <button
                     type="button"
-                    onClick={() => drawGeometricShape('circle')}
+                    onClick={() => {
+                      drawGeometricShape('circle');
+                      setShapeMenuOpen(false);
+                    }}
                     className={`flex items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs text-left font-medium ${
-                      isLight ? 'text-slate-700 hover:bg-slate-100 hover:text-slate-900' : 'text-slate-200 hover:bg-white/10 hover:text-white'
+                      isLight
+                        ? 'text-slate-700 hover:bg-slate-100 hover:text-slate-900'
+                        : 'text-slate-200 hover:bg-white/10 hover:text-white'
                     }`}
                   >
                     <span>⭕ Çember (r)</span>
                   </button>
                   <button
                     type="button"
-                    onClick={() => drawGeometricShape('rectangle')}
+                    onClick={() => {
+                      drawGeometricShape('rectangle');
+                      setShapeMenuOpen(false);
+                    }}
                     className={`flex items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs text-left font-medium ${
-                      isLight ? 'text-slate-700 hover:bg-slate-100 hover:text-slate-900' : 'text-slate-200 hover:bg-white/10 hover:text-white'
+                      isLight
+                        ? 'text-slate-700 hover:bg-slate-100 hover:text-slate-900'
+                        : 'text-slate-200 hover:bg-white/10 hover:text-white'
                     }`}
                   >
                     <span>▭ Dikdörtgen</span>
@@ -1266,7 +1321,7 @@ export default function ScratchpadModal({
                           >
                             {optLabel}
                           </span>
-                          <span className="flex-1 truncate">
+                          <span className="min-w-0 flex-1 overflow-x-auto break-words">
                             <MathText>{opt}</MathText>
                           </span>
                           {isEliminated && (<X className="h-3.5 w-3.5 text-rose-500 shrink-0" />)}

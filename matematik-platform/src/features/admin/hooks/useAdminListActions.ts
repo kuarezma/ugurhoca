@@ -3,6 +3,7 @@
 import { useRef, type Dispatch, type SetStateAction } from "react";
 import { useToast } from "@/components/Toast";
 import { ADMIN_EMAIL } from "@/lib/admin";
+import { createLogger } from "@/lib/logger";
 import {
   advanceAdminUserGrades,
   deleteAdminEntity,
@@ -20,6 +21,8 @@ import type {
   AdminSharedDocument,
   AdminUser,
 } from "@/features/admin/types";
+
+const log = createLogger("admin-list-actions");
 
 type UseAdminListActionsOptions = {
   allUsers: AdminUser[];
@@ -255,16 +258,23 @@ export function useAdminListActions({
     }
 
     setIsSubmitting(true);
-    const currentYear = new Date().getFullYear();
-    await advanceAdminUserGrades(allUsers);
 
-    if (typeof window !== "undefined") {
-      localStorage.setItem("lastGradeUpdate", `${currentYear} - Temmuz`);
+    try {
+      const currentYear = new Date().getFullYear();
+      await advanceAdminUserGrades(allUsers);
+
+      if (typeof window !== "undefined") {
+        localStorage.setItem("lastGradeUpdate", `${currentYear} - Temmuz`);
+      }
+
+      await loadData();
+      showToast("success", "Sınıflar başarıyla güncellendi.");
+    } catch (error) {
+      log.error("Sınıflar güncellenemedi", error);
+      showToast("error", "Sınıflar güncellenemedi. Lütfen tekrar deneyin.");
+    } finally {
+      setIsSubmitting(false);
     }
-
-    await loadData();
-    setIsSubmitting(false);
-    showToast("success", "Sınıflar başarıyla güncellendi.");
   };
 
   return {

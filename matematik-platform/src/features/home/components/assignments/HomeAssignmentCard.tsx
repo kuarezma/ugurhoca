@@ -69,7 +69,7 @@ export function HomeAssignmentCard({
           </div>
         </div>
       </button>
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-2 shrink-0">
         {assignment.file_url && (
           <span className="px-2 py-1 bg-green-500/20 text-tone-success-fg text-xs font-medium rounded-lg flex items-center gap-1">
             <Download className="w-3 h-3" />

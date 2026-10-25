@@ -164,6 +164,8 @@ export default function ChatBubble() {
   const [peerTyping, setPeerTyping] = useState(false);
   const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const broadcastTypingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const typingChannelRef = useRef<ReturnType<typeof supabase.channel> | null>(null);
+  const lastTypingBroadcastRef = useRef<number | null>(null);
 
   // Öğrenci mesaj hook'u (sadece öğrenci ise aktif)
   const studentUserId = currentUser && !currentUser.isAdmin ? currentUser.id : '';
@@ -481,47 +483,53 @@ export default function ChatBubble() {
     : currentUser?.id;
 
   useEffect(() => {
-    if (!activeStudentIdForChannel || !open) {
-      setPeerTyping(false);
-      return;
-    }
+    setPeerTyping(false);
+    if (!activeStudentIdForChannel || !open) return;
 
     const channelName = getStudentMessagesChannelName(activeStudentIdForChannel);
     const channel = supabase.channel(channelName);
+    typingChannelRef.current = channel;
 
     channel
-      .on(
-        'broadcast',
-        { event: TYPING_BROADCAST_EVENT },
-        (payload) => {
-          const data = payload?.payload as TypingPayload | undefined;
-          if (data && data.senderId !== currentUser?.id) {
-            setPeerTyping(Boolean(data.isTyping));
-            if (typingTimeoutRef.current) clearTimeout(typingTimeoutRef.current);
-            if (data.isTyping) {
-              typingTimeoutRef.current = setTimeout(() => {
-                setPeerTyping(false);
-              }, 3000);
-            }
+      .on('broadcast', { event: TYPING_BROADCAST_EVENT }, (payload) => {
+        const data = payload?.payload as TypingPayload | undefined;
+        if (typingChannelRef.current !== channel) return;
+        if (data && data.senderId !== currentUser?.id) {
+          setPeerTyping(Boolean(data.isTyping));
+          if (typingTimeoutRef.current) clearTimeout(typingTimeoutRef.current);
+          if (data.isTyping) {
+            typingTimeoutRef.current = setTimeout(() => {
+              setPeerTyping(false);
+            }, 3000);
           }
         }
-      )
+      })
       .subscribe();
 
     return () => {
       if (typingTimeoutRef.current) clearTimeout(typingTimeoutRef.current);
+      if (broadcastTypingTimeoutRef.current)
+        clearTimeout(broadcastTypingTimeoutRef.current);
+      typingTimeoutRef.current = null;
+      broadcastTypingTimeoutRef.current = null;
+      typingChannelRef.current = null;
+      lastTypingBroadcastRef.current = null;
       void supabase.removeChannel(channel);
     };
   }, [activeStudentIdForChannel, currentUser?.id, open]);
 
   // Kullanıcı klavyede yazarken Realtime "yazıyor..." yayını
   const handleTriggerTyping = useCallback(() => {
-    if (!activeStudentIdForChannel || !currentUser) return;
-    const channel = supabase.channel(
-      getStudentMessagesChannelName(activeStudentIdForChannel),
-    );
+    const channel = typingChannelRef.current;
+    if (!channel || !currentUser || !open) return;
 
-    if (typeof channel?.send === 'function') {
+    const now = Date.now();
+    if (
+      typeof channel.send === 'function' &&
+      (lastTypingBroadcastRef.current === null ||
+        now - lastTypingBroadcastRef.current >= 800)
+    ) {
+      lastTypingBroadcastRef.current = now;
       void channel.send({
         event: TYPING_BROADCAST_EVENT,
         payload: {
@@ -537,7 +545,10 @@ export default function ChatBubble() {
       clearTimeout(broadcastTypingTimeoutRef.current);
     }
     broadcastTypingTimeoutRef.current = setTimeout(() => {
-      if (typeof channel?.send === 'function') {
+      if (typingChannelRef.current !== channel) return;
+      broadcastTypingTimeoutRef.current = null;
+      lastTypingBroadcastRef.current = null;
+      if (typeof channel.send === 'function') {
         void channel.send({
           event: TYPING_BROADCAST_EVENT,
           payload: {
@@ -549,7 +560,7 @@ export default function ChatBubble() {
         });
       }
     }, 2500);
-  }, [activeStudentIdForChannel, currentUser]);
+  }, [currentUser, open]);
 
   // ESC ve dışarı tıklama ile kapatma
   useEffect(() => {

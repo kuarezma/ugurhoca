@@ -303,7 +303,7 @@ export default function IlerlemePage({ initialData }: ProgressPageProps) {
             <Skeleton className="h-10 w-56" />
             <Skeleton className="h-10 w-36" rounded="lg" />
           </div>
-          <Skeleton className="h-4 w-80" />
+          <Skeleton className="h-4 w-80 max-w-full" />
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <Skeleton className="col-span-1 md:col-span-2 h-40" rounded="lg" />
             <Skeleton className="h-40" rounded="lg" />
@@ -366,16 +366,9 @@ export default function IlerlemePage({ initialData }: ProgressPageProps) {
     fullMark: 100,
   }));
 
-  // Eğre yetersiz veri varsa Dummy radar
+  // Radar en az 3 konu ister; yetersiz veride uydurma veri basılmaz.
   const displayRadarData: RadarChartPoint[] =
-    radarData.length > 2
-      ? radarData
-      : [
-          { subject: 'Çarpanlar', A: 20, fullMark: 100 },
-          { subject: 'Üslü', A: 40, fullMark: 100 },
-          { subject: 'Köklü', A: 10, fullMark: 100 },
-          { subject: 'Olasılık', A: 0, fullMark: 100 },
-        ];
+    radarData.length > 2 ? radarData : [];
 
   const handleDownloadProgressPdf = async () => {
     setPdfLoading(true);

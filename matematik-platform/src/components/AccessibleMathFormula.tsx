@@ -36,7 +36,7 @@ export function AccessibleMathFormula({
 
   return (
     <span
-      className={`${isBlock ? 'my-3 flex items-center justify-center p-2 rounded-lg bg-slate-800/40 border border-slate-700/50' : 'inline-flex items-center'} font-mono text-slate-100 ${className}`}
+      className={`${isBlock ? 'my-3 flex items-center justify-center p-2 rounded-lg bg-surface-2 border border-border-subtle' : 'inline-flex items-center'} font-mono text-primary ${className}`}
       role="math"
       aria-label={speechLabel}
     >

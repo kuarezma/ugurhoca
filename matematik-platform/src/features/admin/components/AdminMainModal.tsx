@@ -5,6 +5,7 @@ import type { ChangeEvent, Dispatch, SetStateAction } from 'react';
 import { X } from 'lucide-react';
 import { useToast } from '@/components/Toast';
 import { getErrorMessage } from '@/lib/error-utils';
+import { createLogger } from '@/lib/logger';
 import { useAccessibleModal } from '@/hooks/useAccessibleModal';
 import { supabase } from '@/lib/supabase/client';
 import AdminEditDocumentForm from '@/features/admin/components/modal/AdminEditDocumentForm';
@@ -25,6 +26,8 @@ import type {
   AdminModalType,
   AdminUser,
 } from '@/features/admin/types';
+
+const log = createLogger('admin-main-modal');
 
 type AdminMainModalProps = {
   adminMsgImagePreview: string | null;
@@ -213,25 +216,31 @@ export default function AdminMainModal({
     if (!file) return;
 
     setIsSubmitting(true);
-    const fileName = `${Date.now()}_${file.name}`;
-    const { error } = await supabase.storage
-      .from('documents')
-      .upload(fileName, file);
 
-    if (error) {
-      showToast('error', `Dosya yüklenemedi: ${error.message}`);
+    try {
+      const fileName = `${Date.now()}_${file.name}`;
+      const { error } = await supabase.storage
+        .from('documents')
+        .upload(fileName, file);
+
+      if (error) {
+        showToast('error', `Dosya yüklenemedi: ${error.message}`);
+        return;
+      }
+
+      const { data: urlData } = supabase.storage
+        .from('documents')
+        .getPublicUrl(fileName);
+      updateFormData({
+        file_name: file.name,
+        file_url: urlData.publicUrl,
+      });
+    } catch (error) {
+      log.error('Belge yüklenemedi', error);
+      showToast('error', `Dosya yüklenemedi: ${getErrorMessage(error)}`);
+    } finally {
       setIsSubmitting(false);
-      return;
     }
-
-    const { data: urlData } = supabase.storage
-      .from('documents')
-      .getPublicUrl(fileName);
-    updateFormData({
-      file_name: file.name,
-      file_url: urlData.publicUrl,
-    });
-    setIsSubmitting(false);
   };
 
   const toggleDocumentGrade = (grade: number | 'Mezun', checked: boolean) => {
@@ -339,14 +348,14 @@ export default function AdminMainModal({
         className="glass rounded-3xl p-8 w-full max-w-2xl max-h-[90vh] overflow-y-auto"
       >
         <div className="flex items-center justify-between mb-6">
-          <h2 id="admin-main-modal-title" className="text-2xl font-bold text-primary">
+          <h2 id="admin-main-modal-title" className="min-w-0 text-2xl font-bold text-primary">
             {getModalTitle(modalType)}
           </h2>
           <button
             type="button"
             onClick={onClose}
             aria-label="Kapat"
-            className="text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white"
+            className="shrink-0 text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white"
           >
             <X className="w-6 h-6" />
           </button>

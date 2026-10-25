@@ -179,16 +179,16 @@ export default function ContentTopicPacks({
               onClick={() => toggleExpand(group.topicName)}
               className="flex w-full flex-col gap-4 p-5 text-left transition-colors hover:bg-slate-50 dark:hover:bg-white/[0.02] sm:flex-row sm:items-center sm:justify-between sm:p-6"
             >
-              <div className="flex items-start gap-4">
+              <div className="flex items-start gap-4 min-w-0">
                 <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl shadow-lg shadow-purple-500/20 bg-brand-secondary text-slate-950 dark:text-slate-950">
                   <FolderTree className="h-6 w-6" />
                 </div>
-                <div>
-                  <div className="flex items-center gap-2">
-                    <h3 className="text-lg sm:text-xl font-bold text-slate-900 dark:text-white group-hover:text-purple-600 dark:group-hover:text-purple-300">
+                <div className="min-w-0">
+                  <div className="flex items-center gap-2 min-w-0">
+                    <h3 className="min-w-0 break-words text-lg sm:text-xl font-bold text-slate-900 dark:text-white group-hover:text-purple-600 dark:group-hover:text-purple-300">
                       {group.topicName}
                     </h3>
-                    <span className="rounded-full border border-purple-400/30 bg-purple-50 text-purple-700 dark:bg-purple-500/15 dark:text-purple-200 px-2.5 py-0.5 text-xs font-semibold">
+                    <span className="shrink-0 rounded-full border border-purple-400/30 bg-purple-50 text-purple-700 dark:bg-purple-500/15 dark:text-purple-200 px-2.5 py-0.5 text-xs font-semibold">
                       {totalDocs} Doküman
                     </span>
                   </div>

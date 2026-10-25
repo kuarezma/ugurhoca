@@ -126,16 +126,16 @@ export function QuizMistakeReviewModal({
                         <span className="font-bold">
                           {String.fromCharCode(65 + optIdx)})
                         </span>
-                        <div className="flex-1 truncate">
+                        <div className="min-w-0 flex-1 overflow-x-auto break-words">
                           <MathText>{opt}</MathText>
                         </div>
                         {isCorrectChoice && (
-                          <span className="text-[10px] uppercase tracking-wider text-accent-success-ink dark:text-emerald-400 font-bold">
+                          <span className="shrink-0 text-[10px] uppercase tracking-wider text-accent-success-ink dark:text-emerald-400 font-bold">
                             Doğru
                           </span>
                         )}
                         {isUserChoice && !isCorrectChoice && (
-                          <span className="text-[10px] uppercase tracking-wider text-rose-600 dark:text-rose-400 font-bold">
+                          <span className="shrink-0 text-[10px] uppercase tracking-wider text-rose-600 dark:text-rose-400 font-bold">
                             Seçimin
                           </span>
                         )}

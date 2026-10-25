@@ -24,16 +24,16 @@ export function HomeSupportAttachmentList({
           className="flex items-center gap-2 px-3 py-2 rounded-xl border border-default bg-surface-2 text-sm text-primary"
         >
           {file.kind === 'image' ? (
-            <ImageIcon className="w-4 h-4 text-purple-600 dark:text-purple-300" />
+            <ImageIcon className="w-4 h-4 shrink-0 text-purple-600 dark:text-purple-300" />
           ) : (
-            <FileDoc className="w-4 h-4 text-sky-600 dark:text-sky-300" />
+            <FileDoc className="w-4 h-4 shrink-0 text-sky-600 dark:text-sky-300" />
           )}
           <span className="max-w-[180px] truncate">{file.name}</span>
           <button
             type="button"
             onClick={() => onRemove(index)}
             aria-label={`${file.name} dosyasını kaldır`}
-            className="text-secondary hover:text-tone-danger-fg transition-colors px-1"
+            className="shrink-0 text-secondary hover:text-tone-danger-fg transition-colors px-1"
           >
             ×
           </button>

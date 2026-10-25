@@ -5,6 +5,7 @@ import { useToast } from "@/components/Toast";
 import { ADMIN_EMAIL } from "@/lib/admin";
 import { getClientSession } from "@/lib/auth-client";
 import { getErrorMessage } from "@/lib/error-utils";
+import { createLogger } from "@/lib/logger";
 import {
   createAdminAnnouncement,
   createAdminAssignment,
@@ -29,6 +30,8 @@ import type {
   AdminSharedDocument,
   AdminUser,
 } from "@/features/admin/types";
+
+const log = createLogger("admin-modal-submit");
 
 type UseAdminModalSubmitHandlersOptions = {
   adminMsgImageUrl: string;
@@ -373,49 +376,64 @@ export function useAdminModalSubmitHandlers({
     event.preventDefault();
     setIsSubmitting(true);
 
-    if (editingUser) {
-      const { error } = await updateAdminUser(editingUser.id, {
-        grade: formData.grade,
-        name: formData.name,
-      });
+    try {
+      if (editingUser) {
+        const { error } = await updateAdminUser(editingUser.id, {
+          grade: formData.grade,
+          name: formData.name,
+        });
 
-      if (!error) {
+        if (error) {
+          throw error;
+        }
+
         await loadData();
-        setIsSubmitting(false);
         scheduleModalSuccessReset();
-        return;
       }
+    } catch (error) {
+      log.error("Kullanıcı güncellenemedi", error);
+      showToast(
+        "error",
+        `Kullanıcı güncellenemedi: ${getErrorMessage(error)}`,
+      );
+    } finally {
+      setIsSubmitting(false);
     }
-
-    setIsSubmitting(false);
   };
 
   const handleSendDocSubmit = async (event: FormEvent) => {
     event.preventDefault();
     setIsSubmitting(true);
 
-    const selectedStudentUser = studentUsers.find(
-      (currentUser) => currentUser.id === formData.student_id,
-    );
+    try {
+      const selectedStudentUser = studentUsers.find(
+        (currentUser) => currentUser.id === formData.student_id,
+      );
 
-    const { data, error } = await createAdminSharedDocument({
-      document_id: selectedDoc?.id || formData.document_id,
-      document_title: selectedDoc?.title || formData.document_title,
-      document_type: selectedDoc?.type || "document",
-      file_url: selectedDoc?.file_url || formData.file_url,
-      student_email: selectedStudentUser?.email || "",
-      student_id: formData.student_id,
-      student_name: selectedStudentUser?.name || "Öğrenci",
-    });
+      const { data, error } = await createAdminSharedDocument({
+        document_id: selectedDoc?.id || formData.document_id,
+        document_title: selectedDoc?.title || formData.document_title,
+        document_type: selectedDoc?.type || "document",
+        file_url: selectedDoc?.file_url || formData.file_url,
+        student_email: selectedStudentUser?.email || "",
+        student_id: formData.student_id,
+        student_name: selectedStudentUser?.name || "Öğrenci",
+      });
 
-    if (!error && data) {
-      setSharedDocs([data, ...sharedDocs]);
+      if (error) {
+        throw error;
+      }
+
+      if (data) {
+        setSharedDocs([data, ...sharedDocs]);
+        scheduleModalSuccessReset();
+      }
+    } catch (error) {
+      log.error("Belge gönderilemedi", error);
+      showToast("error", `Belge gönderilemedi: ${getErrorMessage(error)}`);
+    } finally {
       setIsSubmitting(false);
-      scheduleModalSuccessReset();
-      return;
     }
-
-    setIsSubmitting(false);
   };
 
   const handleAdminMessageSubmit = async (event: FormEvent) => {
@@ -469,25 +487,28 @@ export function useAdminModalSubmitHandlers({
     event.preventDefault();
     setIsSubmitting(true);
 
-    if (!editingDoc) {
-      setIsSubmitting(false);
-      return;
-    }
+    try {
+      if (!editingDoc) {
+        return;
+      }
 
-    const { error } = await updateAdminDocument(editingDoc.id, {
-      answer_key_text: formData.answer_key_text || null,
-      description: formData.description,
-      file_url: formData.file_url,
-      grade: formData.grades,
-      learning_outcome: formData.learning_outcome || null,
-      solution_url: formData.solution_url || null,
-      title: formData.title,
-      type: formData.type,
-      video_url: formData.video_url,
-      worksheet_order: formData.worksheet_order || null,
-    });
+      const { error } = await updateAdminDocument(editingDoc.id, {
+        answer_key_text: formData.answer_key_text || null,
+        description: formData.description,
+        file_url: formData.file_url,
+        grade: formData.grades,
+        learning_outcome: formData.learning_outcome || null,
+        solution_url: formData.solution_url || null,
+        title: formData.title,
+        type: formData.type,
+        video_url: formData.video_url,
+        worksheet_order: formData.worksheet_order || null,
+      });
 
-    if (!error) {
+      if (error) {
+        throw error;
+      }
+
       setDocuments(
         documents.map((document) =>
           document.id === editingDoc.id
@@ -512,12 +533,13 @@ export function useAdminModalSubmitHandlers({
             : document,
         ),
       );
-      setIsSubmitting(false);
       scheduleModalSuccessReset();
-      return;
+    } catch (error) {
+      log.error("Belge güncellenemedi", error);
+      showToast("error", `Belge güncellenemedi: ${getErrorMessage(error)}`);
+    } finally {
+      setIsSubmitting(false);
     }
-
-    setIsSubmitting(false);
   };
 
   return {

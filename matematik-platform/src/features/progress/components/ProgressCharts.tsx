@@ -140,41 +140,50 @@ export function ProgressCharts({
         </div>
 
         <div className="h-64 w-full flex-1">
-          <ResponsiveContainer width="100%" height="100%">
-            <RadarChart cx="50%" cy="50%" outerRadius="70%" data={displayRadarData}>
-              <PolarGrid stroke={isLight ? '#e2e8f0' : '#334155'} />
-              <PolarAngleAxis
-                dataKey="subject"
-                tick={{
-                  fill: isLight ? '#475569' : '#94a3b8',
-                  fontSize: 10,
-                  fontWeight: 600,
-                }}
-              />
-              <PolarRadiusAxis
-                angle={30}
-                domain={[0, 100]}
-                tick={false}
-                axisLine={false}
-              />
-              <Radar
-                name="Yetkinlik"
-                dataKey="A"
-                stroke="#8b5cf6"
-                strokeWidth={2}
-                fill="#8b5cf6"
-                fillOpacity={isLight ? 0.3 : 0.4}
-              />
-              <Tooltip
-                wrapperStyle={{ outline: 'none' }}
-                contentStyle={{
-                  backgroundColor: isLight ? '#fff' : '#0f172a',
-                  border: 'none',
-                  borderRadius: '12px',
-                }}
-              />
-            </RadarChart>
-          </ResponsiveContainer>
+          {displayRadarData.length === 0 ? (
+            <div className="flex h-full flex-col items-center justify-center rounded-2xl border border-dashed border-default px-4 text-center">
+              <Brain className="mb-2 h-8 w-8 text-purple-500/60 dark:text-purple-400/60" />
+              <p className="text-sm font-medium text-secondary">
+                Konu dağılımı grafiği için en az 3 farklı konuda çalışma veya test tamamlamalısın.
+              </p>
+            </div>
+          ) : (
+            <ResponsiveContainer width="100%" height="100%">
+              <RadarChart cx="50%" cy="50%" outerRadius="70%" data={displayRadarData}>
+                <PolarGrid stroke={isLight ? '#e2e8f0' : '#334155'} />
+                <PolarAngleAxis
+                  dataKey="subject"
+                  tick={{
+                    fill: isLight ? '#475569' : '#94a3b8',
+                    fontSize: 10,
+                    fontWeight: 600,
+                  }}
+                />
+                <PolarRadiusAxis
+                  angle={30}
+                  domain={[0, 100]}
+                  tick={false}
+                  axisLine={false}
+                />
+                <Radar
+                  name="Yetkinlik"
+                  dataKey="A"
+                  stroke="#8b5cf6"
+                  strokeWidth={2}
+                  fill="#8b5cf6"
+                  fillOpacity={isLight ? 0.3 : 0.4}
+                />
+                <Tooltip
+                  wrapperStyle={{ outline: 'none' }}
+                  contentStyle={{
+                    backgroundColor: isLight ? '#fff' : '#0f172a',
+                    border: 'none',
+                    borderRadius: '12px',
+                  }}
+                />
+              </RadarChart>
+            </ResponsiveContainer>
+          )}
         </div>
       </motion.div>
 

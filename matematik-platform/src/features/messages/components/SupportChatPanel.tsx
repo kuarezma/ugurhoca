@@ -1199,7 +1199,7 @@ export function SupportChatPanel({
                     />
                   </button>
                 ) : (
-                  <FileText className="h-5 w-5 text-indigo-500" />
+                  <FileText className="h-5 w-5 shrink-0 text-indigo-500" />
                 )}
                 <span className="max-w-[120px] truncate text-[11px] font-medium text-slate-700 dark:text-slate-200">
                   {att.name}
@@ -1208,9 +1208,9 @@ export function SupportChatPanel({
                   type="button"
                   onClick={() => onAttachmentRemove?.(idx)}
                   aria-label="Eki kaldır"
-                  className="rounded-lg p-1 text-slate-400 transition hover:bg-black/10 hover:text-slate-700 dark:hover:bg-white/10 dark:hover:text-white"
+                  className="shrink-0 rounded-lg p-1 text-slate-400 transition hover:bg-black/10 hover:text-slate-700 dark:hover:bg-white/10 dark:hover:text-white"
                 >
-                  <X className="h-3.5 w-3.5" aria-hidden="true" />
+                  <X className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
                 </button>
               </div>
             ))}

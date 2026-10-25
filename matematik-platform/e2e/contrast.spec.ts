@@ -290,12 +290,12 @@ async function measureRoute(
 
 async function measureTheme(browser: Browser, theme: Theme, baseURL: string) {
   const context = await browser.newContext();
-  // CI'da gerçek oturum yok: sahte çerez istemci tarafında yönlendirme zincirine
-  // yol açıyordu. Anonim ziyaretçi olarak ölçülür; korumalı rotalar /giris'e
-  // yönlenip izinli atlama sayılır. Yerelde admin oturumuyla tam kapsam korunur.
+  // Sahte çerez (contrast-gate-token) gerçek bir Supabase oturumu olmadığı için
+  // istemci tarafında gecikmeli /giris yönlendirme zincirine yol açar ve sonraki
+  // rotanın (ör. /araclar) gezinmesini yarıda keser. Yalnızca açıkça istenirse eklenir.
   try {
     const parsedBase = new URL(baseURL);
-    if (!process.env.CI) await context.addCookies([
+    if (process.env.CONTRAST_FAKE_AUTH === '1') await context.addCookies([
       {
         name: 'ugurhoca_access_token',
         value: 'contrast-gate-token',

@@ -78,7 +78,7 @@ export default function ContentCommentsModal({
                       : '-'}
                   </span>
                 </div>
-                <p className="text-slate-600 dark:text-slate-300 text-sm">{comment.content}</p>
+                <p className="text-slate-600 dark:text-slate-300 text-sm break-words">{comment.content}</p>
               </div>
             ))
           )}

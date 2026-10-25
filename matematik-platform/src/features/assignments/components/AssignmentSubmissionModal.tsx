@@ -149,7 +149,7 @@ export function AssignmentSubmissionModal({
             <button
               type="button"
               onClick={onClose}
-              className="w-full rounded-2xl bg-slate-800 py-4 font-bold text-white transition-colors hover:bg-slate-700"
+              className="w-full rounded-2xl border border-default bg-surface-2 py-4 font-bold text-primary transition-colors hover:bg-surface-3"
             >
               Kapat
             </button>
@@ -159,7 +159,7 @@ export function AssignmentSubmissionModal({
             <div>
               <label
                 htmlFor={commentId}
-                className="mb-2 block text-sm font-bold uppercase tracking-wider text-slate-400"
+                className="mb-2 block text-sm font-bold uppercase tracking-wider text-slate-600 dark:text-slate-400"
               >
                 Hocana Not (Opsiyonel)
               </label>

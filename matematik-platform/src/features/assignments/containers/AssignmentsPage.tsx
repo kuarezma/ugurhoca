@@ -314,7 +314,7 @@ export default function OdevlerPage({
       <main className={`page-surface min-h-screen ${isLight ? 'bg-transparent' : 'dark:bg-slate-900'} pb-20`}>
         <div className="max-w-5xl mx-auto px-4 py-10 space-y-6" aria-busy="true" aria-live="polite">
           <Skeleton className="h-10 w-64" />
-          <Skeleton className="h-4 w-96" />
+          <Skeleton className="h-4 w-96 max-w-full" />
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {Array.from({ length: 4 }).map((_, i) => (
               <div

@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback, useMemo, useRef, startTransition } from 'react';
 import { toStoredGrade } from '@/lib/grade';
+import { pickLeagueQuiz } from '@/features/quizzes/lib/pick-league-quiz';
 import Image from 'next/image';
 import { SafeLink as Link } from '@/components/SafeLink';
 import {
@@ -460,6 +461,7 @@ export default function TestsPage({
 
     return quizzes.filter((quiz) => quiz.grade === toStoredGrade(user.grade));
   }, [quizzes, user]);
+  const leagueQuiz = pickLeagueQuiz(visibleQuizzes, user?.isAdmin ? undefined : user?.grade);
 
   useEffect(() => {
     if (isHydrated && initialUser) {
@@ -474,6 +476,7 @@ export default function TestsPage({
   }, [initialUser, isHydrated, router]);
 
   useEffect(() => {
+    let active = true;
     const loadQuizzes = async () => {
       if (!user) return;
       if (isHydrated && currentUserKey === initialUserKey) {
@@ -494,16 +497,21 @@ export default function TestsPage({
 
         const { data, error: quizError } = await query;
 
+        if (!active) return;
         if (quizError) throw quizError;
         if (data) setQuizzes(data);
       } catch (err) {
+        if (!active) return;
         log.error('Testler yüklenirken hata', err);
         setError('Testler yüklenemedi. Lütfen sayfayı yenileyin.');
       } finally {
-        setLoading(false);
+        if (active) setLoading(false);
       }
     };
-    loadQuizzes();
+    void loadQuizzes();
+    return () => {
+      active = false;
+    };
   }, [currentUserKey, initialUserKey, isHydrated, user]);
 
   const loadQuizQuestions = useCallback(async (quizId: string) => {
@@ -1074,7 +1082,7 @@ export default function TestsPage({
                   Testten Çık
                 </button>
 
-                <div className="flex items-center gap-2">
+                <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
                   {/* Soru Üzerine Çizim Modu Butonu */}
                   <button
                     type="button"
@@ -2030,6 +2038,7 @@ export default function TestsPage({
       <WeeklyMockLeagueModal
         isOpen={isLeagueModalOpen}
         onClose={() => setIsLeagueModalOpen(false)}
+        onStartExam={leagueQuiz ? () => startQuiz(leagueQuiz) : undefined}
       />
       <ExamPacingStrategyModal
         isOpen={isPacingStrategyModalOpen}

@@ -1,86 +1,198 @@
 import { describe, expect, it, vi } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
-import { WeeklyMockLeagueModal, type LeagueParticipant } from './WeeklyMockLeagueModal';
+import {
+  WeeklyMockLeagueModal,
+  type LeagueParticipant,
+} from './WeeklyMockLeagueModal';
 
-describe('WeeklyMockLeagueModal Component', () => {
-  it('renders honest empty state when participants list is empty by default', () => {
-    const onClose = vi.fn();
-    render(<WeeklyMockLeagueModal isOpen={true} onClose={onClose} />);
+const participants: LeagueParticipant[] = [
+  {
+    rank: 1,
+    alias: 'ArfMatematik 👑',
+    avatarBg: 'bg-amber-500',
+    correct: 20,
+    wrong: 0,
+    empty: 0,
+    netScore: 20,
+  },
+  {
+    rank: 2,
+    alias: 'Sen (Öğrenci) 🎯',
+    avatarBg: 'bg-emerald-500',
+    correct: 16,
+    wrong: 3,
+    empty: 1,
+    netScore: 15,
+    isSelf: true,
+  },
+];
+
+const expectNoFabricatedClaims = () => {
+  for (const claim of [
+    /Lig #4/i,
+    /Sonraki Deneme/i,
+    /Pazar 10:00/i,
+    /20 soruluk LGS matematik denemesi/i,
+    /%78 Başarı/i,
+    /%54 Başarı/i,
+    /%26 Başarı/i,
+    /Soru 14 \(Eğim ve Doğrusal Denklem\)/i,
+    /Sıralama her pazar/i,
+    /Öğrencilerin %46/i,
+  ]) {
+    expect(screen.queryByText(claim)).not.toBeInTheDocument();
+  }
+};
+
+describe('WeeklyMockLeagueModal', () => {
+  it('renders an honest empty state and hides start buttons without an available exam', () => {
+    render(<WeeklyMockLeagueModal isOpen onClose={vi.fn()} />);
 
     expect(screen.getByText('Haftalık LGS Deneme Ligi')).toBeInTheDocument();
     expect(
-      screen.getByText(
-        'Bu hafta için henüz lig sıralaması oluşmadı. Deneme sınavını tamamlayarak sıralamaya katılabilirsin!',
-      ),
+      screen.getByText('Bu hafta için henüz lig sıralaması oluşmadı.'),
     ).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /Sınava Başla/i })).toBeInTheDocument();
-    expect(screen.queryByText('148 Öğrenci')).toBeNull();
-    expect(screen.queryByText('14.22 Net')).toBeNull();
+    expect(screen.getByText('Henüz Yok')).toBeInTheDocument();
+    expect(
+      screen.queryByRole('button', {
+        name: /Sınava Başla|Deneme Sınavına Katıl/i,
+      }),
+    ).not.toBeInTheDocument();
+    expectNoFabricatedClaims();
   });
 
-  it('renders participants and calculated stats when participants are provided', () => {
-    const sampleParticipants: LeagueParticipant[] = [
-      {
-        rank: 1,
-        alias: 'ArfMatematik 👑',
-        avatarBg: 'bg-amber-500',
-        correct: 20,
-        wrong: 0,
-        empty: 0,
-        netScore: 20.0,
-      },
-      {
-        rank: 2,
-        alias: 'Sen (Öğrenci) 🎯',
-        avatarBg: 'bg-emerald-500',
-        correct: 16,
-        wrong: 3,
-        empty: 1,
-        netScore: 15.0,
-        isSelf: true,
-      },
-    ];
-
+  it('renders only supplied participants and calculated stats', () => {
     render(
       <WeeklyMockLeagueModal
-        isOpen={true}
+        isOpen
         onClose={vi.fn()}
-        participants={sampleParticipants}
+        participants={participants}
       />,
     );
 
     expect(screen.getByText('2 Öğrenci')).toBeInTheDocument();
     expect(screen.getByText('17.50 Net')).toBeInTheDocument();
+    expect(screen.getByText('2. / 2')).toBeInTheDocument();
     expect(screen.getByText('ArfMatematik 👑')).toBeInTheDocument();
     expect(screen.getByText('Sen (Öğrenci) 🎯')).toBeInTheDocument();
+    expect(
+      screen.queryByRole('button', { name: /Deneme Sınavına Katıl/i }),
+    ).not.toBeInTheDocument();
+    expectNoFabricatedClaims();
   });
 
-  it('switches to question and difficulty analysis tab', () => {
-    render(<WeeklyMockLeagueModal isOpen={true} onClose={vi.fn()} />);
+  it.each([{ list: [] }, { list: participants }])(
+    'shows an honest analysis placeholder even with leaderboard data (%#)',
+    ({ list }) => {
+      render(
+        <WeeklyMockLeagueModal isOpen onClose={vi.fn()} participants={list} />,
+      );
+      fireEvent.click(
+        screen.getByRole('button', { name: /Soru & Zorluk Analizi/i }),
+      );
 
-    const analysisTab = screen.getByRole('button', { name: /Soru & Zorluk Analizi/i });
-    fireEvent.click(analysisTab);
+      expect(
+        screen.getByText(
+          'Deneme sınavı tamamlandığında soru dağılımı ve kazanım analizi burada görüntülenir.',
+        ),
+      ).toBeInTheDocument();
+      expect(
+        screen.queryByText(
+          /Kolay Sorular|Orta Seviye Yeni Nesil|Seçici \/ Zor Sorular/i,
+        ),
+      ).not.toBeInTheDocument();
+      expectNoFabricatedClaims();
+      fireEvent.click(
+        screen.getByRole('button', { name: /Sıralama Listesi/i }),
+      );
+      expect(
+        screen.queryByText(
+          'Deneme sınavı tamamlandığında soru dağılımı ve kazanım analizi burada görüntülenir.',
+        ),
+      ).not.toBeInTheDocument();
+    },
+  );
 
-    expect(screen.getByText('Deneme Zorluk Dağılımı')).toBeInTheDocument();
-    expect(screen.getByText(/Kolay Sorular/i)).toBeInTheDocument();
-    expect(screen.getByText(/Seçici \/ Zor Sorular/i)).toBeInTheDocument();
-  });
+  it.each(['Sınava Başla', 'Deneme Sınavına Katıl'])(
+    'starts the exam before closing when %s is clicked',
+    (label) => {
+      const onStartExam = vi.fn();
+      const onClose = vi.fn();
+      render(
+        <WeeklyMockLeagueModal
+          isOpen
+          onClose={onClose}
+          onStartExam={onStartExam}
+        />,
+      );
 
-  it('calls onStartExam when Denemeye Başla button is clicked', () => {
-    const onStart = vi.fn();
+      fireEvent.click(screen.getByRole('button', { name: label }));
+
+      expect(onStartExam).toHaveBeenCalledTimes(1);
+      expect(onClose).toHaveBeenCalledTimes(1);
+      expect(onStartExam.mock.invocationCallOrder[0]).toBeLessThan(
+        onClose.mock.invocationCallOrder[0],
+      );
+    },
+  );
+
+  it('can start an available exam from the analysis tab with participants', () => {
+    const onStartExam = vi.fn();
     const onClose = vi.fn();
     render(
       <WeeklyMockLeagueModal
-        isOpen={true}
+        isOpen
         onClose={onClose}
-        onStartExam={onStart}
+        onStartExam={onStartExam}
+        participants={participants}
       />,
     );
+    fireEvent.click(
+      screen.getByRole('button', { name: /Soru & Zorluk Analizi/i }),
+    );
+    fireEvent.click(
+      screen.getByRole('button', { name: 'Deneme Sınavına Katıl' }),
+    );
+    expect(onStartExam).toHaveBeenCalledTimes(1);
+    expect(onClose).toHaveBeenCalledTimes(1);
+  });
 
-    const startBtn = screen.getByRole('button', { name: /Denemeye Başla/i });
-    fireEvent.click(startBtn);
+  it('keeps row keys unique for tied ranks and repeated aliases', () => {
+    const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+    try {
+      render(
+        <WeeklyMockLeagueModal
+          isOpen
+          onClose={vi.fn()}
+          participants={[participants[0], { ...participants[0], netScore: 18 }]}
+        />,
+      );
+      expect(screen.getAllByText(participants[0].alias)).toHaveLength(2);
+      expect(errorSpy.mock.calls.flat().join(' ')).not.toMatch(
+        /same key|unique.*key/i,
+      );
+    } finally {
+      errorSpy.mockRestore();
+    }
+  });
 
-    expect(onStart).toHaveBeenCalled();
-    expect(onClose).toHaveBeenCalled();
+  it('does not start an exam when dismissed', () => {
+    const onStartExam = vi.fn();
+    const onClose = vi.fn();
+    render(
+      <WeeklyMockLeagueModal
+        isOpen
+        onClose={onClose}
+        onStartExam={onStartExam}
+      />,
+    );
+    fireEvent.click(screen.getAllByRole('button', { name: 'Kapat' })[0]);
+    expect(onClose).toHaveBeenCalledTimes(1);
+    expect(onStartExam).not.toHaveBeenCalled();
+  });
+
+  it('renders nothing while closed', () => {
+    render(<WeeklyMockLeagueModal isOpen={false} onClose={vi.fn()} />);
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
   });
 });

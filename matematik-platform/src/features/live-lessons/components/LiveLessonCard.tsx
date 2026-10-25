@@ -181,16 +181,16 @@ export function LiveLessonCard({
 
         {/* Oda ID ve Hızlı Paylaşım */}
         <div className="mt-4 flex flex-wrap items-center justify-between gap-2 rounded-xl border border-border/70 bg-foreground/[0.02] px-3 py-2 text-xs text-foreground/70">
-          <div className="flex items-center gap-1.5 truncate">
-            <span className="font-medium text-foreground/50">Oda No:</span>
-            <span className="font-mono font-semibold text-foreground/90">{lesson.room_id}</span>
+          <div className="flex items-center gap-1.5 min-w-0">
+            <span className="shrink-0 font-medium text-foreground/50">Oda No:</span>
+            <span className="min-w-0 truncate font-mono font-semibold text-foreground/90">{lesson.room_id}</span>
           </div>
 
           <button
             type="button"
             onClick={copyRoomLink}
             aria-label="Ders linkini panoya kopyala"
-            className="inline-flex items-center gap-1 rounded-lg px-2 py-1 text-xs font-medium text-foreground/80 transition hover:bg-foreground/10 hover:text-foreground"
+            className="shrink-0 inline-flex items-center gap-1 rounded-lg px-2 py-1 text-xs font-medium text-foreground/80 transition hover:bg-foreground/10 hover:text-foreground"
           >
             {copied ? (
               <>

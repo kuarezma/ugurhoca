@@ -206,24 +206,31 @@ export default function ProfilePage({ initialData }: ProfilePageProps) {
   const [isFeynmanModalOpen, setIsFeynmanModalOpen] = useState(false);
 
   useEffect(() => {
+    let active = true;
+
     try {
       const list = getSavedMistakes();
       setPendingMistakesCount(list.filter((m) => !m.mastered).length);
       const dueList = getDueMistakes();
       setDueMistakesCount(dueList.length);
 
-      void syncMistakesWithCloud(user?.id).then((res) => {
-        if (res.success && res.mistakes) {
+      void syncMistakesWithCloud(user?.id)
+        .then((res) => {
+          if (!active || !res.success || !res.mistakes) return;
           setPendingMistakesCount(res.mistakes.filter((m) => !m.mastered).length);
           const today = new Date().toISOString().split('T')[0];
           setDueMistakesCount(
             res.mistakes.filter((m) => !m.mastered && (!m.nextReviewDate || m.nextReviewDate <= today)).length,
           );
-        }
-      });
+        })
+        .catch(() => {});
     } catch {
       // ignore
     }
+
+    return () => {
+      active = false;
+    };
   }, [user?.id]);
 
   const {

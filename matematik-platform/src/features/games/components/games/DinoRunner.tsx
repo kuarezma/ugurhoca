@@ -11,9 +11,7 @@ import {
   Heart,
   Play,
   RotateCcw,
-  Sparkles,
   Timer,
-  Zap,
 } from 'lucide-react';
 import type { GameComponentProps } from '@/features/games/types';
 import { gameAudio } from '@/features/games/utils/gameAudio';
@@ -175,7 +173,6 @@ export function DinoRunner({
   const [eggsCollected, setEggsCollected] = useState(0);
   const [lives, setLives] = useState(3);
   const [streak, setStreak] = useState(0);
-  const [maxStreak, setMaxStreak] = useState(0);
   const [totalJumps, setTotalJumps] = useState(0);
   const [timeLeft, setTimeLeft] = useState(60);
 
@@ -235,9 +232,11 @@ export function DinoRunner({
 
   // Unmount anında zamanlayıcıları temizle
   useEffect(() => {
+    const jumpRef = jumpTimeoutRef;
+    const resetRef = resetTimeoutRef;
     return () => {
-      if (jumpTimeoutRef.current) clearTimeout(jumpTimeoutRef.current);
-      if (resetTimeoutRef.current) clearTimeout(resetTimeoutRef.current);
+      if (jumpRef.current) clearTimeout(jumpRef.current);
+      if (resetRef.current) clearTimeout(resetRef.current);
     };
   }, []);
 
@@ -247,7 +246,6 @@ export function DinoRunner({
     setEggsCollected(0);
     setLives(3);
     setStreak(0);
-    setMaxStreak(0);
     setTotalJumps(0);
     setTimeLeft(60);
     setIsJumping(false);
@@ -278,7 +276,6 @@ export function DinoRunner({
         setEggsCollected((e) => e + 1);
         setDistance((d) => d + 50);
         setStreak(newStreak);
-        setMaxStreak((prev) => Math.max(prev, newStreak));
         setScore((s) => s + pointsEarned);
 
         if (newStreak >= 3) {
@@ -576,7 +573,7 @@ export function DinoRunner({
                 transition={{ duration: 0.8, repeat: isHit ? 0 : Infinity }}
               >
                 <span>{question.obstacle.icon}</span>
-                <span className="text-[10px] font-black tracking-tight text-white dark:text-white bg-slate-900/80 px-2 py-0.5 rounded-full border border-white/20">
+                <span className="text-[10px] font-black tracking-tight text-white dark:text-white bg-slate-900/80 dark:bg-slate-900/80 px-2 py-0.5 rounded-full border border-white/20">
                   {question.obstacle.name}
                 </span>
               </motion.div>

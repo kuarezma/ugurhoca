@@ -71,7 +71,7 @@ export function AdventureTopHUD({
               <span>Günün Macera Görevi</span>
             </div>
 
-            <h1 className="font-display text-lg sm:text-xl lg:text-2xl font-black text-primary leading-tight truncate">
+            <h1 className="font-display text-lg sm:text-xl lg:text-2xl font-black text-primary leading-tight line-clamp-2 break-words">
               Hoş geldin,{' '}
               <span className="text-blue-700 dark:text-blue-300">
                 {userName}

@@ -1,14 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import {
-  X,
-  Trophy,
-  BarChart3,
-  TrendingUp,
-  AlertCircle,
-  Play,
-} from 'lucide-react';
+import { X, Trophy, BarChart3, Play } from 'lucide-react';
 import { useAccessibleModal } from '@/hooks/useAccessibleModal';
 
 export type LeagueParticipant = {
@@ -35,14 +28,19 @@ export function WeeklyMockLeagueModal({
   onStartExam,
   participants = [],
 }: WeeklyMockLeagueModalProps) {
-  const [activeTab, setActiveTab] = useState<'leaderboard' | 'analysis'>('leaderboard');
+  const [activeTab, setActiveTab] = useState<'leaderboard' | 'analysis'>(
+    'leaderboard',
+  );
   const containerRef = useAccessibleModal<HTMLDivElement>(isOpen, onClose);
 
   if (!isOpen) return null;
 
   const hasParticipants = participants.length > 0;
   const averageNet = hasParticipants
-    ? (participants.reduce((sum, p) => sum + p.netScore, 0) / participants.length).toFixed(2)
+    ? (
+        participants.reduce((sum, p) => sum + p.netScore, 0) /
+        participants.length
+      ).toFixed(2)
     : null;
   const selfParticipant = participants.find((p) => p.isSelf);
 
@@ -67,12 +65,9 @@ export function WeeklyMockLeagueModal({
                 <h3 className="font-black text-lg sm:text-xl text-slate-900 dark:text-white">
                   Haftalık LGS Deneme Ligi
                 </h3>
-                <span className="px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-amber-500/15 text-amber-700 dark:text-amber-300 border border-amber-500/25">
-                  Lig #4
-                </span>
               </div>
               <p className="text-xs text-slate-500 dark:text-slate-400">
-                Pazar denemesi sonuçları, net analizi ve platform başarı sıralaması
+                Deneme sonuçları ve platform başarı sıralaması
               </p>
             </div>
           </div>
@@ -88,28 +83,32 @@ export function WeeklyMockLeagueModal({
         </div>
 
         {/* STATS BANNER */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 p-4 sm:p-6 bg-slate-50 dark:bg-slate-800/40 border-b border-slate-200 dark:border-slate-800 text-xs">
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 p-4 sm:p-6 bg-slate-50 dark:bg-slate-800/40 border-b border-slate-200 dark:border-slate-800 text-xs">
           <div className="p-3 bg-white dark:bg-slate-800/60 rounded-xl border border-slate-200 dark:border-slate-700/50 shadow-sm dark:shadow-none">
-            <div className="text-slate-500 dark:text-slate-400 font-medium">Katılımcı Sayısı</div>
+            <div className="text-slate-500 dark:text-slate-400 font-medium">
+              Katılımcı Sayısı
+            </div>
             <div className="text-lg font-black text-slate-900 dark:text-white mt-0.5">
               {hasParticipants ? `${participants.length} Öğrenci` : 'Henüz Yok'}
             </div>
           </div>
           <div className="p-3 bg-white dark:bg-slate-800/60 rounded-xl border border-slate-200 dark:border-slate-700/50 shadow-sm dark:shadow-none">
-            <div className="text-slate-500 dark:text-slate-400 font-medium">Ortalama Net</div>
+            <div className="text-slate-500 dark:text-slate-400 font-medium">
+              Ortalama Net
+            </div>
             <div className="text-lg font-black text-amber-600 dark:text-amber-400 mt-0.5">
               {averageNet ? `${averageNet} Net` : '—'}
             </div>
           </div>
           <div className="p-3 bg-white dark:bg-slate-800/60 rounded-xl border border-slate-200 dark:border-slate-700/50 shadow-sm dark:shadow-none">
-            <div className="text-slate-500 dark:text-slate-400 font-medium">Senin Sıralaman</div>
-            <div className="text-lg font-black text-accent-success-ink dark:text-emerald-400 mt-0.5">
-              {selfParticipant ? `${selfParticipant.rank}. / ${participants.length}` : '—'}
+            <div className="text-slate-500 dark:text-slate-400 font-medium">
+              Senin Sıralaman
             </div>
-          </div>
-          <div className="p-3 bg-white dark:bg-slate-800/60 rounded-xl border border-slate-200 dark:border-slate-700/50 shadow-sm dark:shadow-none">
-            <div className="text-slate-500 dark:text-slate-400 font-medium">Sonraki Deneme</div>
-            <div className="text-lg font-black text-cyan-600 dark:text-cyan-400 mt-0.5">Pazar 10:00</div>
+            <div className="text-lg font-black text-accent-success-ink dark:text-emerald-400 mt-0.5">
+              {selfParticipant
+                ? `${selfParticipant.rank}. / ${participants.length}`
+                : '—'}
+            </div>
           </div>
         </div>
 
@@ -148,19 +147,21 @@ export function WeeklyMockLeagueModal({
               <div className="rounded-2xl border border-dashed border-slate-200 dark:border-slate-700 p-8 text-center space-y-4">
                 <Trophy className="w-10 h-10 text-amber-500/60 mx-auto" />
                 <p className="text-sm font-semibold text-slate-700 dark:text-slate-300 max-w-md mx-auto">
-                  Bu hafta için henüz lig sıralaması oluşmadı. Deneme sınavını tamamlayarak sıralamaya katılabilirsin!
+                  Bu hafta için henüz lig sıralaması oluşmadı.
                 </p>
-                <button
-                  type="button"
-                  onClick={() => {
-                    onStartExam?.();
-                    onClose();
-                  }}
-                  className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-xl text-xs font-black transition active:scale-95 bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none"
-                >
-                  <Play className="w-4 h-4 fill-current" />
-                  <span>Sınava Başla</span>
-                </button>
+                {onStartExam && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      onStartExam();
+                      onClose();
+                    }}
+                    className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-xl text-xs font-black transition active:scale-95 bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none"
+                  >
+                    <Play className="w-4 h-4 fill-current" />
+                    <span>Sınava Başla</span>
+                  </button>
+                )}
               </div>
             ) : (
               <>
@@ -169,9 +170,9 @@ export function WeeklyMockLeagueModal({
                   <span>Doğru / Yanlış / Net</span>
                 </div>
 
-                {participants.map((p) => (
+                {participants.map((p, index) => (
                   <div
-                    key={p.rank}
+                    key={`${p.alias}-${index}`}
                     className={`flex items-center justify-between p-3.5 rounded-2xl border transition-all ${
                       p.isSelf
                         ? 'bg-emerald-500/15 border-emerald-500/40 ring-1 ring-emerald-500/30'
@@ -184,20 +185,24 @@ export function WeeklyMockLeagueModal({
                           p.rank === 1
                             ? 'bg-amber-500 text-slate-950 shadow-md shadow-amber-500/30'
                             : p.rank === 2
-                            ? 'bg-slate-300 text-slate-950'
-                            : p.rank === 3
-                            ? 'bg-amber-700 text-white'
-                            : 'bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-400'
+                              ? 'bg-slate-300 text-slate-950'
+                              : p.rank === 3
+                                ? 'bg-amber-700 text-white dark:text-white'
+                                : 'bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-400'
                         }`}
                       >
                         {p.rank}
                       </span>
 
                       <div className="flex items-center gap-2">
-                        <div className={`w-8 h-8 rounded-lg ${p.avatarBg} text-white font-black text-xs flex items-center justify-center`}>
+                        <div
+                          className={`w-8 h-8 rounded-lg ${p.avatarBg} text-white dark:text-white font-black text-xs flex items-center justify-center`}
+                        >
                           {p.alias[0]}
                         </div>
-                        <span className={`text-sm font-bold ${p.isSelf ? 'text-emerald-700 dark:text-emerald-300' : 'text-slate-900 dark:text-white'}`}>
+                        <span
+                          className={`text-sm font-bold ${p.isSelf ? 'text-emerald-700 dark:text-emerald-300' : 'text-slate-900 dark:text-white'}`}
+                        >
                           {p.alias}
                         </span>
                       </div>
@@ -205,9 +210,13 @@ export function WeeklyMockLeagueModal({
 
                     <div className="flex items-center gap-4 text-xs font-mono">
                       <div className="hidden sm:flex items-center gap-2 text-slate-500 dark:text-slate-400">
-                        <span className="text-accent-success-ink dark:text-emerald-400 font-bold">{p.correct} D</span>
+                        <span className="text-accent-success-ink dark:text-emerald-400 font-bold">
+                          {p.correct} D
+                        </span>
                         <span>·</span>
-                        <span className="text-rose-600 dark:text-rose-400 font-bold">{p.wrong} Y</span>
+                        <span className="text-rose-600 dark:text-rose-400 font-bold">
+                          {p.wrong} Y
+                        </span>
                         <span>·</span>
                         <span>{p.empty} B</span>
                       </div>
@@ -225,66 +234,18 @@ export function WeeklyMockLeagueModal({
 
         {/* TAB 2: ANALYSIS */}
         {activeTab === 'analysis' && (
-          <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-4 text-xs">
-            <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 space-y-3">
-              <h4 className="font-bold text-sm text-slate-900 dark:text-white flex items-center gap-2">
-                <TrendingUp className="w-4 h-4 text-amber-500 dark:text-amber-400" />
-                Deneme Zorluk Dağılımı
-              </h4>
-              <p className="text-slate-500 dark:text-slate-400">
-                20 soruluk LGS matematik denemesindeki soru tiplerinin platform ortalaması başarı yüzdesi:
+          <div className="flex-1 overflow-y-auto p-4 sm:p-6 text-xs">
+            <div className="rounded-2xl border border-dashed border-border-default bg-surface-1 p-8 text-center">
+              <p className="text-secondary">
+                Deneme sınavı tamamlandığında soru dağılımı ve kazanım analizi
+                burada görüntülenir.
               </p>
-
-              <div className="space-y-2 pt-1">
-                <div>
-                  <div className="flex justify-between font-semibold mb-1">
-                    <span className="text-accent-success-ink dark:text-emerald-400">Kolay Sorular (7 Soru)</span>
-                    <span className="text-slate-700 dark:text-slate-300">%78 Başarı</span>
-                  </div>
-                  <div className="h-2 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
-                    <div className="bg-emerald-500 h-full rounded-full" style={{ width: '78%' }} />
-                  </div>
-                </div>
-
-                <div>
-                  <div className="flex justify-between font-semibold mb-1">
-                    <span className="text-amber-600 dark:text-amber-400">Orta Seviye Yeni Nesil (9 Soru)</span>
-                    <span className="text-slate-700 dark:text-slate-300">%54 Başarı</span>
-                  </div>
-                  <div className="h-2 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
-                    <div className="bg-amber-500 h-full rounded-full" style={{ width: '54%' }} />
-                  </div>
-                </div>
-
-                <div>
-                  <div className="flex justify-between font-semibold mb-1">
-                    <span className="text-rose-600 dark:text-rose-400">Seçici / Zor Sorular (4 Soru)</span>
-                    <span className="text-slate-700 dark:text-slate-300">%26 Başarı</span>
-                  </div>
-                  <div className="h-2 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
-                    <div className="bg-rose-500 h-full rounded-full" style={{ width: '26%' }} />
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div className="p-4 rounded-2xl bg-amber-50 dark:bg-amber-500/10 border border-amber-200 dark:border-amber-500/20 flex items-start gap-3">
-              <AlertCircle className="w-5 h-5 text-amber-500 dark:text-amber-400 shrink-0 mt-0.5" />
-              <div className="space-y-1">
-                <span className="font-bold text-amber-800 dark:text-amber-300">En Çok Elenen Soru: Soru 14 (Eğim ve Doğrusal Denklem)</span>
-                <p className="text-slate-700 dark:text-slate-300 leading-relaxed">
-                  Öğrencilerin %46'sı dikey uzunluk yerine yatay uzunluğu paya yazarak işlem hatası yaptı. Eğim kuralını (m = dikey / yatay) daima zihninde tut!
-                </p>
-              </div>
             </div>
           </div>
         )}
 
         {/* FOOTER */}
-        <div className="flex items-center justify-between p-4 sm:p-5 border-t border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950/60 text-xs">
-          <span className="text-slate-500 dark:text-slate-400">
-            Sıralama her pazar saat 18:00&apos;de güncellenir.
-          </span>
+        <div className="flex flex-wrap items-center justify-end gap-2 p-4 sm:p-5 border-t border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950/60 text-xs">
           <div className="flex items-center gap-2">
             <button
               type="button"
@@ -303,7 +264,7 @@ export function WeeklyMockLeagueModal({
                 className="flex items-center gap-1.5 px-5 py-2 rounded-xl font-black transition active:scale-95 bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none"
               >
                 <Play className="w-4 h-4 fill-current" />
-                <span>Denemeye Başla</span>
+                <span>Deneme Sınavına Katıl</span>
               </button>
             )}
           </div>

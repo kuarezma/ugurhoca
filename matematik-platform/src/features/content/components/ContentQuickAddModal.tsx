@@ -49,12 +49,12 @@ export default function ContentQuickAddModal({
         onClick={(event) => event.stopPropagation()}
         className="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-2xl rounded-3xl p-8 w-full max-w-2xl max-h-[90vh] overflow-y-auto relative outline-none"
       >
-        <div className="flex items-center justify-between mb-6">
-          <h2 id={titleId} className="text-2xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
-            <Upload className="w-6 h-6 text-purple-600 dark:text-purple-400" />
-            Yeni İçerik Ekle
+        <div className="flex items-center justify-between gap-4 mb-6">
+          <h2 id={titleId} className="min-w-0 text-2xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
+            <Upload className="w-6 h-6 shrink-0 text-purple-600 dark:text-purple-400" />
+            <span className="truncate">Yeni İçerik Ekle</span>
           </h2>
-          <button onClick={onClose} aria-label="Kapat" className="text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors">
+          <button onClick={onClose} aria-label="Kapat" className="shrink-0 text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors">
             <X className="w-6 h-6" />
           </button>
         </div>

@@ -64,16 +64,25 @@ export function MistakeNotebookModal({
   }, [filter]);
 
   useEffect(() => {
-    if (isOpen) {
-      reloadMistakes();
-      setIsSyncing(true);
-      void syncMistakesWithCloud().then((res) => {
-        setIsSyncing(false);
-        if (res.success && res.mistakes) {
+    if (!isOpen) return;
+
+    let active = true;
+    reloadMistakes();
+    setIsSyncing(true);
+    void syncMistakesWithCloud()
+      .then((res) => {
+        if (active && res.success && res.mistakes) {
           setMistakes(res.mistakes);
         }
+      })
+      .catch(() => {})
+      .finally(() => {
+        if (active) setIsSyncing(false);
       });
-    }
+
+    return () => {
+      active = false;
+    };
   }, [isOpen, reloadMistakes]);
 
   const stats = useMemo(() => {

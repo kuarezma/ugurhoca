@@ -6,6 +6,8 @@ import SafeHtml from '@/components/SafeHtml';
 import { Modal } from '@/components/ui/Modal';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
+import { useToast } from '@/components/Toast';
+import { createLogger } from '@/lib/logger';
 import { sanitizeRichTextHtml } from '@/lib/html-sanitize';
 import {
   StickyNote, Plus, Search, X, Edit2, Trash2, Pin, PinOff,
@@ -19,7 +21,11 @@ interface NotesSectionProps {
   userId: string;
 }
 
+const log = createLogger('notes-section');
+
 export default function NotesSection({ userId }: NotesSectionProps) {
+  const { showToast } = useToast();
+  const [saving, setSaving] = useState(false);
   const [notes, setNotes] = useState<Note[]>([]);
   const [categories, setCategories] = useState<NoteCategory[]>([]);
   const [loading, setLoading] = useState(true);
@@ -52,14 +58,30 @@ export default function NotesSection({ userId }: NotesSectionProps) {
 
   const loadData = useCallback(async () => {
     setLoading(true);
-    const [notesRes, categoriesRes] = await Promise.all([
-      supabase.from('notes').select('*').eq('user_id', userId).order('is_pinned', { ascending: false }).order('updated_at', { ascending: false }),
-      supabase.from('note_categories').select('*').eq('user_id', userId).order('name'),
-    ]);
-    if (notesRes.data) setNotes(notesRes.data);
-    if (categoriesRes.data) setCategories(categoriesRes.data);
-    setLoading(false);
-  }, [userId]);
+    try {
+      const [notesRes, categoriesRes] = await Promise.all([
+        supabase.from('notes').select('*').eq('user_id', userId).order('is_pinned', { ascending: false }).order('updated_at', { ascending: false }),
+        supabase.from('note_categories').select('*').eq('user_id', userId).order('name'),
+      ]);
+      if (notesRes.error || categoriesRes.error) {
+        throw notesRes.error || categoriesRes.error;
+      }
+      if (notesRes.data) {
+        setNotes(
+          notesRes.data.map((note) => ({
+            ...note,
+            tags: Array.isArray(note.tags) ? note.tags : [],
+          })),
+        );
+      }
+      if (categoriesRes.data) setCategories(categoriesRes.data);
+    } catch (error) {
+      log.error('Notlar yüklenemedi', error);
+      showToast('error', 'Notlar yüklenemedi. Lütfen tekrar deneyin.');
+    } finally {
+      setLoading(false);
+    }
+  }, [userId, showToast]);
 
   useEffect(() => {
     loadData();
@@ -125,46 +147,83 @@ export default function NotesSection({ userId }: NotesSectionProps) {
   }, [showModal]);
 
   const handleSave = async () => {
+    if (saving) return;
     const content = editorRef.current?.innerHTML || '';
 
-    if (editingNote) {
-      await supabase.from('notes').update({
-        title: formData.title || null,
-        content,
-        category: formData.category || null,
-        tags: formData.tags,
-        updated_at: new Date().toISOString(),
-      }).eq('id', editingNote.id);
-    } else {
-      await supabase.from('notes').insert({
-        user_id: userId,
-        title: formData.title || null,
-        content,
-        category: formData.category || null,
-        tags: formData.tags,
-      });
-    }
+    setSaving(true);
+    try {
+      if (showCategoryInput && newCategory && !categories.find(c => c.name === newCategory)) {
+        const { error } = await supabase.from('note_categories').insert({
+          user_id: userId,
+          name: newCategory,
+        });
+        if (error) throw error;
+        setCategories(prev =>
+          prev.some(c => c.name === newCategory)
+            ? prev
+            : [
+                ...prev,
+                {
+                  id: `temp-${Date.now()}`,
+                  user_id: userId,
+                  name: newCategory,
+                  color: '#8b5cf6',
+                  created_at: new Date().toISOString(),
+                },
+              ],
+        );
+        setShowCategoryInput(false);
+        setNewCategory('');
+      }
 
-    if (showCategoryInput && newCategory && !categories.find(c => c.name === newCategory)) {
-      await supabase.from('note_categories').insert({
-        user_id: userId,
-        name: newCategory,
-      });
-    }
+      const noteResult = editingNote
+        ? await supabase.from('notes').update({
+            title: formData.title || null,
+            content,
+            category: formData.category || null,
+            tags: formData.tags,
+            updated_at: new Date().toISOString(),
+          }).eq('id', editingNote.id)
+        : await supabase.from('notes').insert({
+            user_id: userId,
+            title: formData.title || null,
+            content,
+            category: formData.category || null,
+            tags: formData.tags,
+          });
+      if (noteResult.error) throw noteResult.error;
 
-    handleCloseModal();
-    loadData();
+      handleCloseModal();
+      void loadData();
+    } catch (error) {
+      log.error('Not kaydedilemedi', error);
+      showToast('error', 'Not kaydedilemedi. Lütfen tekrar deneyin.');
+    } finally {
+      setSaving(false);
+    }
   };
 
   const handleDelete = async (id: string) => {
-    await supabase.from('notes').delete().eq('id', id);
-    setPendingDeleteId(null);
-    loadData();
+    try {
+      const { error } = await supabase.from('notes').delete().eq('id', id);
+      if (error) throw error;
+      setPendingDeleteId(null);
+      void loadData();
+    } catch (error) {
+      log.error('Not silinemedi', error);
+      showToast('error', 'Not silinemedi. Lütfen tekrar deneyin.');
+    }
   };
 
   const handleTogglePin = async (note: Note) => {
-    await supabase.from('notes').update({ is_pinned: !note.is_pinned }).eq('id', note.id);
-    loadData();
+    try {
+      const { error } = await supabase.from('notes').update({ is_pinned: !note.is_pinned }).eq('id', note.id);
+      if (error) throw error;
+      void loadData();
+    } catch (error) {
+      log.error('Not sabitleme durumu güncellenemedi', error);
+      showToast('error', 'Not güncellenemedi. Lütfen tekrar deneyin.');
+    }
   };
 
   const addTag = () => {
@@ -269,11 +328,11 @@ export default function NotesSection({ userId }: NotesSectionProps) {
               className="bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl p-4 hover:border-purple-500/40 dark:hover:bg-white/10 shadow-sm dark:shadow-none transition-all group"
             >
               <div className="flex items-start justify-between gap-2 mb-2">
-                <h3 className="text-slate-900 dark:text-white font-semibold truncate flex-1">
+                <h3 className="min-w-0 text-slate-900 dark:text-white font-semibold truncate flex-1">
                   {note.title || 'Başlıksız Not'}
                 </h3>
                 {pendingDeleteId === note.id ? (
-                  <div className="flex items-center gap-1 rounded-lg border border-red-500/30 bg-red-500/10 px-2 py-0.5 text-xs">
+                  <div className="flex shrink-0 items-center gap-1 rounded-lg border border-red-500/30 bg-red-500/10 px-2 py-0.5 text-xs">
                     <span className="font-semibold text-red-600 dark:text-red-400">Sil?</span>
                     <button
                       type="button"
@@ -291,7 +350,7 @@ export default function NotesSection({ userId }: NotesSectionProps) {
                     </button>
                   </div>
                 ) : (
-                  <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <div className="flex shrink-0 items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                     <button
                       onClick={() => handleTogglePin(note)}
                       className="p-1.5 hover:bg-slate-100 dark:hover:bg-white/10 rounded-lg transition-colors"
@@ -570,7 +629,8 @@ export default function NotesSection({ userId }: NotesSectionProps) {
                 </button>
                 <button
                   onClick={handleSave}
-                  className="px-6 py-2 rounded-xl transition-colors font-medium bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none"
+                  disabled={saving}
+                  className="px-6 py-2 rounded-xl transition-colors font-medium disabled:opacity-50 bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none"
                 >
                   {editingNote ? 'Güncelle' : 'Kaydet'}
                 </button>

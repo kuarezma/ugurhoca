@@ -335,7 +335,7 @@ export function GoalTimeCapsuleModal({
                     <Sparkles className="w-3.5 h-3.5 text-indigo-500" />
                     <span>Aşılacak Korku</span>
                   </div>
-                  <div className="text-xs font-semibold text-slate-800 dark:text-slate-200 truncate">
+                  <div className="text-xs font-semibold text-slate-800 dark:text-slate-200 line-clamp-2 break-words">
                     {capsule.fearToOvercome || 'Belirtilmedi'}
                   </div>
                 </div>
@@ -345,7 +345,7 @@ export function GoalTimeCapsuleModal({
                     <FileText className="w-3.5 h-3.5 text-accent-success-ink" />
                     <span>Çalışma Taahhüdü</span>
                   </div>
-                  <div className="text-xs font-semibold text-slate-800 dark:text-slate-200 truncate">
+                  <div className="text-xs font-semibold text-slate-800 dark:text-slate-200 line-clamp-2 break-words">
                     {capsule.personalPledge || 'Belirtilmedi'}
                   </div>
                 </div>

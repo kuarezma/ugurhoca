@@ -6,6 +6,8 @@ import { Cookie, X } from 'lucide-react';
 import styles from './CookieBanner.module.css';
 
 const STORAGE_KEY = 'ugurhoca:cookie-consent';
+// onAnimationEnd hiç gelmezse (arka plan sekmesi, reduced-motion) banner yine de kapanır.
+const EXIT_FALLBACK_MS = 500;
 
 type ConsentValue = 'accepted' | 'rejected';
 
@@ -26,11 +28,21 @@ export default function CookieBanner() {
     }
   }, []);
 
+  useEffect(() => {
+    if (!exiting) return;
+    const t = window.setTimeout(() => setVisible(false), EXIT_FALLBACK_MS);
+    return () => window.clearTimeout(t);
+  }, [exiting]);
+
   const persist = (value: ConsentValue) => {
     try {
       window.localStorage.setItem(STORAGE_KEY, value);
     } catch {
       // storage may be disabled
+    }
+    if (window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) {
+      setVisible(false);
+      return;
     }
     setExiting(true);
   };

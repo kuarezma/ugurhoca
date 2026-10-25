@@ -12,6 +12,7 @@
     "test": "vitest run --coverage",
     "test:db": "node scripts/test-database.mjs",
     "test:fast": "vitest run",
+    "test:contrast": "playwright test e2e/contrast.spec.ts",
     "test:e2e": "playwright test",
     "start": "next start",
     "setup:env": "bash scripts/bootstrap-env.sh",

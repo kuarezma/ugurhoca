@@ -49,16 +49,32 @@ export const useGamesPageData = (router: RouterLike) => {
   }, [leaderboardPeriod, refreshLeaderboard, user]);
 
   useEffect(() => {
+    let active = true;
+
     const loadUser = async () => {
-      const nextUser = await loadGamesPageUser(router);
-      setUser(nextUser);
-      if (nextUser) {
-        setGameAlias(await loadGameAlias(nextUser.id));
+      try {
+        const nextUser = await loadGamesPageUser(router);
+        if (!active) return;
+        setUser(nextUser);
+        if (nextUser) {
+          const nextAlias = await loadGameAlias(nextUser.id);
+          if (!active) return;
+          setGameAlias(nextAlias);
+        }
+      } catch {
+        // Hata durumunda güvenli şekilde yükleniyor durumunu kapat
+      } finally {
+        if (active) {
+          setLoading(false);
+        }
       }
-      setLoading(false);
     };
 
     void loadUser();
+
+    return () => {
+      active = false;
+    };
   }, [router]);
 
   const submitAlias = useCallback(

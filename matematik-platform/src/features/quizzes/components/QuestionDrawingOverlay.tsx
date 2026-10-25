@@ -274,7 +274,7 @@ export function QuestionDrawingOverlay({
       />
 
       {/* Yüzen Kontrol Çubuğu (Floating Toolbar) */}
-      <div className="absolute top-3 right-3 z-40 pointer-events-auto flex flex-wrap items-center gap-1.5 rounded-2xl border border-default dark:border-white/20 bg-surface-1/95 dark:bg-slate-900/90 p-1.5 shadow-2xl backdrop-blur-xl transition-all">
+      <div className="absolute top-3 right-3 z-40 pointer-events-auto flex max-w-[calc(100%-1.5rem)] flex-nowrap overflow-x-auto scrollbar-none [&>*]:shrink-0 items-center gap-1.5 rounded-2xl border border-default dark:border-white/20 bg-surface-1/95 dark:bg-slate-900/90 p-1.5 shadow-2xl backdrop-blur-xl transition-all">
         {/* Kalem Modu */}
         <button
           type="button"
@@ -418,7 +418,7 @@ export function QuestionDrawingOverlay({
 
       {/* Passthrough Modu Bilgi Rozeti */}
       {isPassthrough && (
-        <div className="absolute bottom-3 left-1/2 -translate-x-1/2 z-40 flex items-center gap-2 rounded-full border border-emerald-500/40 bg-emerald-100 dark:bg-emerald-950/80 px-4 py-1 text-xs font-semibold text-emerald-900 dark:text-emerald-300 shadow-xl backdrop-blur-md animate-fade-in pointer-events-auto">
+        <div className="absolute bottom-3 left-1/2 -translate-x-1/2 z-40 flex max-w-[calc(100%-1.5rem)] flex-wrap min-w-0 items-center gap-2 rounded-full border border-emerald-500/40 bg-emerald-100 dark:bg-emerald-950/80 px-4 py-1 text-xs font-semibold text-emerald-900 dark:text-emerald-300 shadow-xl backdrop-blur-md animate-fade-in pointer-events-auto">
           <Sparkles className="h-3.5 w-3.5" />
           <span>Şık seçebilirsiniz; çizimleriniz korunuyor.</span>
           <button

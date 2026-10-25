@@ -11,48 +11,67 @@ export function useLgsSchoolTargets(preferredYear = 2026) {
   const [schools, setSchools] = useState<LgsSchoolPageData['schools']>([]);
 
   useEffect(() => {
-    let active = true;
+    const controller = new AbortController();
 
     const loadSchools = async () => {
       setLoading(true);
       setError('');
 
-      const response = await fetch('/api/lgs-targets');
+      try {
+        const response = await fetch('/api/lgs-targets', {
+          signal: controller.signal,
+        });
 
-      const payload = (await response.json().catch(() => null)) as {
-        data?: LgsSchoolPageData;
-        error?: { message?: string };
-      } | null;
+        const payload = (await response.json().catch(() => null)) as {
+          data?: LgsSchoolPageData;
+          error?: { message?: string };
+        } | null;
 
-      const result = payload?.data;
+        const result = payload?.data;
 
-      if (!active) {
-        return;
-      }
+        if (controller.signal.aborted) {
+          return;
+        }
 
-      if (!response.ok || !result) {
+        if (!response.ok || !result) {
+          setSchools([]);
+          setDataYear(preferredYear);
+          setError(
+            payload?.error?.message ||
+              'LGS okul verileri yüklenemedi. Lütfen tekrar deneyin.',
+          );
+          setHistoryYears([]);
+          return;
+        }
+
+        setSchools(result.schools);
+        setDataYear(result.dataYear);
+        setError(result.error);
+        setHistoryYears(result.historyYears || []);
+      } catch (fetchError) {
+        if (
+          controller.signal.aborted ||
+          (fetchError instanceof DOMException && fetchError.name === 'AbortError')
+        ) {
+          return;
+        }
         setSchools([]);
         setDataYear(preferredYear);
-        setError(
-          payload?.error?.message ||
-            'LGS okul verileri yüklenemedi. Lütfen tekrar deneyin.',
-        );
         setHistoryYears([]);
-        setLoading(false);
-        return;
+        setError(
+          'LGS okul verileri yüklenemedi. İnternet bağlantını kontrol edip tekrar dene.',
+        );
+      } finally {
+        if (!controller.signal.aborted) {
+          setLoading(false);
+        }
       }
-
-      setSchools(result.schools);
-      setDataYear(result.dataYear);
-      setError(result.error);
-      setHistoryYears(result.historyYears || []);
-      setLoading(false);
     };
 
     void loadSchools();
 
     return () => {
-      active = false;
+      controller.abort();
     };
   }, [preferredYear]);
 

@@ -8,7 +8,6 @@ import {
   Heart,
   Play,
   RotateCcw,
-  Shield,
   Target,
   Timer,
   Trophy,
@@ -579,7 +578,7 @@ export function PenaltyShootout({
               <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-gradient-to-tr from-amber-500 to-rose-500 flex items-center justify-center text-3xl sm:text-4xl shadow-xl border-2 border-white/80 dark:border-white/90">
                 🧤
               </div>
-              <span className="text-[10px] font-black tracking-tight text-white dark:text-white bg-slate-950/70 px-2 py-0.5 rounded-full mt-1 border border-white/20">
+              <span className="text-[10px] font-black tracking-tight text-white dark:text-white bg-slate-950/70 dark:bg-slate-950/70 px-2 py-0.5 rounded-full mt-1 border border-white/20">
                 Kaleci
               </span>
             </div>
