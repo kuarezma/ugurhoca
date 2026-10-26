@@ -30,17 +30,19 @@ export function HomeAnnouncementsFeed({
   }
 
   return (
-    <div className="defer-section">
-      <HomeAnnouncementsSection
-        announcements={announcements}
-        onSelectAnnouncement={setSelectedAnnouncement}
-      />
+    <>
+      <div className="defer-section">
+        <HomeAnnouncementsSection
+          announcements={announcements}
+          onSelectAnnouncement={setSelectedAnnouncement}
+        />
+      </div>
       {selectedAnnouncement ? (
         <HomeAnnouncementModal
           announcement={selectedAnnouncement}
           onClose={() => setSelectedAnnouncement(null)}
         />
       ) : null}
-    </div>
+    </>
   );
 }

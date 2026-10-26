@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { createPortal } from 'react-dom';
 import Image from 'next/image';
 import { AnimatePresence, motion } from 'framer-motion';
 import {
@@ -22,6 +23,9 @@ type HomeAnnouncementModalProps = {
   announcement: Announcement | null;
   onClose: () => void;
 };
+
+const hasRichStructuredContent = (content?: string | null) =>
+  Boolean(content && (/^###\s+/m.test(content) || /^\|.+\|$/m.test(content)));
 
 const renderAnnouncementLinkIcon = (url?: string | null) => {
   if (!url) {
@@ -84,13 +88,18 @@ const renderRichAnnouncementContent = (content?: string | null) => {
         elements.push(
           <div
             key={`table-${elements.length}`}
-            className="overflow-x-auto rounded-xl border border-slate-200 dark:border-slate-700 my-3"
+            className="overflow-x-auto rounded-xl border border-slate-200 dark:border-slate-700 my-3 shadow-xs"
           >
             <table className="w-full text-left text-xs sm:text-sm border-collapse">
               <thead className="bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200 font-semibold border-b border-slate-200 dark:border-slate-700">
                 <tr>
                   {headerCells.map((h, hi) => (
-                    <th key={hi} className="p-2 sm:px-3 sm:py-2">
+                    <th
+                      key={hi}
+                      className={`p-2.5 sm:px-4 sm:py-3 ${
+                        hi === headerCells.length - 1 ? 'text-center w-20' : ''
+                      }`}
+                    >
                       {h}
                     </th>
                   ))}
@@ -105,10 +114,17 @@ const renderRichAnnouncementContent = (content?: string | null) => {
                   return (
                     <tr
                       key={ri}
-                      className="hover:bg-slate-50/50 dark:hover:bg-slate-800/40"
+                      className="hover:bg-slate-50/70 dark:hover:bg-slate-800/40"
                     >
                       {cells.map((cell, ci) => (
-                        <td key={ci} className="p-2 sm:px-3 sm:py-2">
+                        <td
+                          key={ci}
+                          className={`p-2.5 sm:px-4 sm:py-2.5 ${
+                            ci === cells.length - 1
+                              ? 'text-center font-bold text-purple-700 dark:text-purple-300'
+                              : ''
+                          }`}
+                        >
                           {cell}
                         </td>
                       ))}
@@ -128,7 +144,7 @@ const renderRichAnnouncementContent = (content?: string | null) => {
       elements.push(
         <h3
           key={`h3-${elements.length}`}
-          className="mt-6 mb-2 text-base sm:text-lg font-bold text-slate-900 dark:text-white"
+          className="mt-6 mb-2 pt-4 border-t border-slate-200/80 dark:border-slate-800 first:border-t-0 first:pt-0 text-base sm:text-lg font-bold text-slate-900 dark:text-white"
         >
           {line.replace(/^###\s+/, '')}
         </h3>,
@@ -137,8 +153,35 @@ const renderRichAnnouncementContent = (content?: string | null) => {
       continue;
     }
 
+    // Standalone image line ![Alt](url)
+    const imgMatch = line.match(/^!\[(.*?)\]\(((?:https?:\/\/|\/)[^\s)]+)\)$/);
+    if (imgMatch) {
+      const [, alt, url] = imgMatch;
+      elements.push(
+        <a
+          key={`img-${elements.length}`}
+          href={proxiedImageSrc(url)}
+          target="_blank"
+          rel="noreferrer"
+          className="relative block h-56 sm:h-72 w-full overflow-hidden rounded-xl bg-white p-2 my-3 border border-slate-200 dark:border-slate-700 transition-opacity hover:opacity-95 shadow-xs"
+          title="Tam boyutta açmak için tıklayın"
+        >
+          <Image
+            src={proxiedImageSrc(url)}
+            alt={alt || 'Konu soru dağılım tablosu'}
+            fill
+            className="object-contain p-1"
+            sizes="(max-width: 768px) 100vw, 800px"
+            unoptimized
+          />
+        </a>,
+      );
+      i++;
+      continue;
+    }
+
     // Standalone link line [Label](url)
-    const linkMatch = line.match(/^\[(.*?)\]\((https?:\/\/[^\s)]+)\)$/);
+    const linkMatch = line.match(/^\[(.*?)\]\(((?:https?:\/\/|\/)[^\s)]+)\)$/);
     if (linkMatch) {
       const [, label, url] = linkMatch;
       elements.push(
@@ -147,11 +190,11 @@ const renderRichAnnouncementContent = (content?: string | null) => {
             href={url}
             target="_blank"
             rel="noreferrer"
-            className="inline-flex items-center gap-2 mt-2 mb-4 px-3.5 py-2 rounded-xl bg-purple-600/10 hover:bg-purple-600/20 text-purple-700 dark:text-purple-300 border border-purple-500/30 text-xs sm:text-sm font-semibold transition-colors"
+            className="inline-flex items-center gap-2 mt-1 mb-3 px-4 py-2 rounded-xl bg-purple-600/10 hover:bg-purple-600/20 text-purple-700 dark:text-purple-300 border border-purple-500/30 text-xs sm:text-sm font-semibold transition-colors"
           >
-            <FileDoc className="w-4 h-4" />
+            <FileDoc className="w-4 h-4 shrink-0" />
             {label}
-            <ChevronRight className="w-4 h-4" />
+            <ChevronRight className="w-4 h-4 shrink-0" />
           </a>
         </div>,
       );
@@ -244,8 +287,9 @@ export function HomeAnnouncementModal({
   }, [announcement]);
 
   const images = resolvedImages.length > 0 ? resolvedImages : rawImages;
+  const isRich = hasRichStructuredContent(announcement?.content);
 
-  return (
+  const modalContent = (
     <AnimatePresence>
       {announcement && (
         <motion.div
@@ -268,63 +312,103 @@ export function HomeAnnouncementModal({
             aria-labelledby="duyuru-baslik"
             tabIndex={-1}
           >
-            {images.length > 0 ? (
-              <div className="grid md:grid-cols-2 gap-0">
-                <div className="bg-slate-100 dark:bg-slate-950 p-2 sm:p-3">
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                    {images.length > 1 ? (
-                      <>
-                        <a
-                          href={proxiedImageSrc(images[0])}
-                          target="_blank"
-                          rel="noreferrer"
-                          className="sm:col-span-2 relative block h-52 w-full overflow-hidden rounded-xl transition-opacity hover:opacity-90 shadow-xs"
-                        >
-                          <Image
-                            src={proxiedImageSrc(images[0])}
-                            alt={`${announcement.title} — kapak`}
-                            fill
-                            className="object-cover"
-                            sizes="(max-width: 768px) 100vw, 500px"
-                            unoptimized
-                          />
-                        </a>
+            {images.length > 0 && isRich ? (
+              <div>
+                <div className="relative h-48 sm:h-64 w-full overflow-hidden bg-slate-950">
+                  <Image
+                    src={proxiedImageSrc(images[0])}
+                    alt={announcement.title}
+                    fill
+                    className="object-cover"
+                    sizes="(max-width: 1024px) 100vw, 1024px"
+                    unoptimized
+                  />
+                  <button
+                    type="button"
+                    onClick={onClose}
+                    className="absolute top-4 right-4 z-10 rounded-full bg-black/60 p-2 text-white hover:bg-black/80 transition-colors"
+                    aria-label="Kapat"
+                  >
+                    <X className="w-5 h-5" />
+                  </button>
+                </div>
+                <div className="p-6 sm:p-8">
+                  <div className="flex items-center justify-between mb-3">
+                    <span className="px-3 py-1 rounded-full bg-purple-500/20 text-purple-600 dark:text-purple-300 text-xs font-semibold">
+                      Haber
+                    </span>
+                    <span className="text-slate-500 dark:text-slate-400 text-xs sm:text-sm">
+                      {new Date(announcement.created_at).toLocaleDateString(
+                        'tr-TR',
+                      )}
+                    </span>
+                  </div>
+                  <h2
+                    id="duyuru-baslik"
+                    className="text-xl sm:text-3xl font-bold text-slate-900 dark:text-white mb-4"
+                  >
+                    {announcement.title}
+                  </h2>
+                  <div className="text-slate-700 dark:text-slate-300 leading-relaxed">
+                    {renderRichAnnouncementContent(announcement.content)}
+                  </div>
+                  {images.length > 1 &&
+                    !/^!\[.*?\]\(/m.test(announcement.content || '') && (
+                    <div className="mt-6 pt-6 border-t border-slate-200 dark:border-slate-800">
+                      <h3 className="text-sm sm:text-base font-bold text-slate-900 dark:text-white mb-3">
+                        Resmi Konu & Soru Dağılım Tablosu Görselleri (Büyütmek için tıklayın)
+                      </h3>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                         {images.slice(1).map((image, index) => (
                           <a
                             key={index + 1}
                             href={proxiedImageSrc(image)}
                             target="_blank"
                             rel="noreferrer"
-                            className="relative block h-48 w-full overflow-hidden rounded-xl bg-white p-1 border border-slate-200 dark:border-slate-800 transition-opacity hover:opacity-90"
+                            className="relative block h-56 w-full overflow-hidden rounded-xl bg-white p-2 border border-slate-200 dark:border-slate-700 transition-opacity hover:opacity-90 shadow-xs"
                           >
                             <Image
                               src={proxiedImageSrc(image)}
-                              alt={`${announcement.title} — görsel ${index + 2}`}
+                              alt={`${announcement.title} — tablo ${index + 1}`}
                               fill
                               className="object-contain p-1"
-                              sizes="(max-width: 768px) 50vw, 250px"
+                              sizes="(max-width: 768px) 100vw, 460px"
                               unoptimized
                             />
                           </a>
                         ))}
-                      </>
-                    ) : (
-                      <a
-                        href={proxiedImageSrc(images[0])}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="sm:col-span-2 relative block h-64 sm:h-80 w-full overflow-hidden rounded-xl transition-opacity hover:opacity-90"
-                      >
-                        <Image
-                          src={proxiedImageSrc(images[0])}
-                          alt={announcement.title}
-                          fill
-                          className="object-cover"
-                          sizes="(max-width: 768px) 100vw, 500px"
-                          unoptimized
-                        />
-                      </a>
-                    )}
+                      </div>
+                    </div>
+                  )}
+                  {renderAnnouncementLink(announcement)}
+                </div>
+              </div>
+            ) : images.length > 0 ? (
+              <div className="grid md:grid-cols-2 gap-0">
+                <div className="bg-slate-100 dark:bg-slate-950 p-2 sm:p-3">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                    {images
+                      .filter(
+                        (image): image is string => typeof image === 'string',
+                      )
+                      .map((image, index) => (
+                        <a
+                          key={index}
+                          href={proxiedImageSrc(image)}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="relative block h-56 w-full overflow-hidden rounded-xl transition-opacity hover:opacity-90"
+                        >
+                          <Image
+                            src={proxiedImageSrc(image)}
+                            alt={`${announcement.title} — görsel ${index + 1}`}
+                            fill
+                            className="object-cover"
+                            sizes="(max-width: 768px) 100vw, 400px"
+                            unoptimized
+                          />
+                        </a>
+                      ))}
                   </div>
                 </div>
                 <div className="p-6 sm:p-8">
@@ -395,4 +479,10 @@ export function HomeAnnouncementModal({
       )}
     </AnimatePresence>
   );
+
+  if (typeof document !== 'undefined') {
+    return createPortal(modalContent, document.body);
+  }
+
+  return modalContent;
 }
