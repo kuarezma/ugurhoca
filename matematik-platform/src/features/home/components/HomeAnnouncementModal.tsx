@@ -163,15 +163,15 @@ const renderRichAnnouncementContent = (content?: string | null) => {
           href={proxiedImageSrc(url)}
           target="_blank"
           rel="noreferrer"
-          className="relative block h-56 sm:h-72 w-full overflow-hidden rounded-xl bg-white p-2 my-3 border border-slate-200 dark:border-slate-700 transition-opacity hover:opacity-95 shadow-xs"
+          className="block w-full overflow-hidden rounded-xl bg-white p-2 my-3 border border-slate-200 dark:border-slate-700 transition-opacity hover:opacity-95 shadow-xs"
           title="Tam boyutta açmak için tıklayın"
         >
           <Image
             src={proxiedImageSrc(url)}
             alt={alt || 'Konu soru dağılım tablosu'}
-            fill
-            className="object-contain p-1"
-            sizes="(max-width: 768px) 100vw, 800px"
+            width={1200}
+            height={620}
+            className="w-full h-auto block rounded-lg"
             unoptimized
           />
         </a>,
@@ -318,9 +318,9 @@ export function HomeAnnouncementModal({
                   <Image
                     src={proxiedImageSrc(images[0])}
                     alt={announcement.title}
-                    fill
-                    className="object-cover"
-                    sizes="(max-width: 1024px) 100vw, 1024px"
+                    width={1280}
+                    height={720}
+                    className="h-48 sm:h-64 w-full object-cover block"
                     unoptimized
                   />
                   <button
