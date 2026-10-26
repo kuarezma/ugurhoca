@@ -1,8 +1,9 @@
 'use client';
 
 import dynamic from 'next/dynamic';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { HomeAnnouncementsSection } from '@/features/home/components/HomeAnnouncementsSection';
+import { isNewContent } from '@/features/home/queries';
 import type { Announcement } from '@/types';
 
 const HomeAnnouncementModal = dynamic(
@@ -24,6 +25,19 @@ export function HomeAnnouncementsFeed({
 }: HomeAnnouncementsFeedProps) {
   const [selectedAnnouncement, setSelectedAnnouncement] =
     useState<Announcement | null>(null);
+  const autoOpenedIdRef = useRef<string | null>(null);
+
+  useEffect(() => {
+    const latest = announcements[0];
+    if (
+      latest &&
+      isNewContent(latest.created_at) &&
+      autoOpenedIdRef.current !== latest.id
+    ) {
+      autoOpenedIdRef.current = latest.id;
+      setSelectedAnnouncement(latest);
+    }
+  }, [announcements]);
 
   if (announcements.length === 0) {
     return null;

@@ -67,4 +67,19 @@ describe('HomeAnnouncementsFeed', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Kapat' }));
     expect(screen.queryByText('Modal: Yeni duyuru')).not.toBeInTheDocument();
   });
+
+  it('güncel (yeni) bir duyuru varsa siteye girerken otomatik pop-up olarak açar', () => {
+    const freshAnnouncement: Announcement = {
+      ...announcement,
+      id: 'announcement-fresh',
+      title: 'Sınav Senaryoları Duyurusu',
+      created_at: new Date().toISOString(),
+    };
+
+    render(<HomeAnnouncementsFeed announcements={[freshAnnouncement]} />);
+
+    expect(
+      screen.getByText('Modal: Sınav Senaryoları Duyurusu'),
+    ).toBeInTheDocument();
+  });
 });
