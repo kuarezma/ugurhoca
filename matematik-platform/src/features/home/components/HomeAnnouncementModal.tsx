@@ -148,9 +148,12 @@ export function HomeAnnouncementModal({
                         (image): image is string => typeof image === 'string',
                       )
                       .map((image, index) => (
-                        <div
+                        <a
                           key={index}
-                          className="relative h-56 w-full overflow-hidden rounded-xl"
+                          href={proxiedImageSrc(image)}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="relative block h-56 w-full overflow-hidden rounded-xl transition-opacity hover:opacity-90"
                         >
                           <Image
                             src={proxiedImageSrc(image)}
@@ -160,7 +163,7 @@ export function HomeAnnouncementModal({
                             sizes="(max-width: 768px) 100vw, 400px"
                             unoptimized
                           />
-                        </div>
+                        </a>
                       ))}
                   </div>
                 </div>
