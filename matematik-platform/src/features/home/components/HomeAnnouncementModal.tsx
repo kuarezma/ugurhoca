@@ -45,6 +45,135 @@ const renderAnnouncementLinkIcon = (url?: string | null) => {
   return <ExternalLink className="w-4 h-4" />;
 };
 
+const renderRichAnnouncementContent = (content?: string | null) => {
+  if (!content) return null;
+
+  const lines = content.split('\n');
+  const elements: React.ReactNode[] = [];
+  let i = 0;
+
+  while (i < lines.length) {
+    const rawLine = lines[i];
+    const line = rawLine.trim();
+
+    if (!line) {
+      i++;
+      continue;
+    }
+
+    // Markdown Table
+    if (line.startsWith('|') && line.endsWith('|')) {
+      const tableLines: string[] = [];
+      while (
+        i < lines.length &&
+        lines[i].trim().startsWith('|') &&
+        lines[i].trim().endsWith('|')
+      ) {
+        tableLines.push(lines[i].trim());
+        i++;
+      }
+
+      if (tableLines.length >= 2) {
+        const headerCells = tableLines[0]
+          .slice(1, -1)
+          .split('|')
+          .map((c) => c.trim());
+        const isSeparator = (str: string) => /^[\s|:-]+$/.test(str);
+        const dataRows = tableLines.slice(1).filter((l) => !isSeparator(l));
+
+        elements.push(
+          <div
+            key={`table-${elements.length}`}
+            className="overflow-x-auto rounded-xl border border-slate-200 dark:border-slate-700 my-3"
+          >
+            <table className="w-full text-left text-xs sm:text-sm border-collapse">
+              <thead className="bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200 font-semibold border-b border-slate-200 dark:border-slate-700">
+                <tr>
+                  {headerCells.map((h, hi) => (
+                    <th key={hi} className="p-2 sm:px-3 sm:py-2">
+                      {h}
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-100 dark:divide-slate-800 bg-white dark:bg-slate-900/60 text-slate-700 dark:text-slate-300">
+                {dataRows.map((row, ri) => {
+                  const cells = row
+                    .slice(1, -1)
+                    .split('|')
+                    .map((c) => c.trim());
+                  return (
+                    <tr
+                      key={ri}
+                      className="hover:bg-slate-50/50 dark:hover:bg-slate-800/40"
+                    >
+                      {cells.map((cell, ci) => (
+                        <td key={ci} className="p-2 sm:px-3 sm:py-2">
+                          {cell}
+                        </td>
+                      ))}
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>,
+        );
+        continue;
+      }
+    }
+
+    // Header 3 (### )
+    if (line.startsWith('### ')) {
+      elements.push(
+        <h3
+          key={`h3-${elements.length}`}
+          className="mt-6 mb-2 text-base sm:text-lg font-bold text-slate-900 dark:text-white"
+        >
+          {line.replace(/^###\s+/, '')}
+        </h3>,
+      );
+      i++;
+      continue;
+    }
+
+    // Standalone link line [Label](url)
+    const linkMatch = line.match(/^\[(.*?)\]\((https?:\/\/[^\s)]+)\)$/);
+    if (linkMatch) {
+      const [, label, url] = linkMatch;
+      elements.push(
+        <div key={`link-${elements.length}`}>
+          <a
+            href={url}
+            target="_blank"
+            rel="noreferrer"
+            className="inline-flex items-center gap-2 mt-2 mb-4 px-3.5 py-2 rounded-xl bg-purple-600/10 hover:bg-purple-600/20 text-purple-700 dark:text-purple-300 border border-purple-500/30 text-xs sm:text-sm font-semibold transition-colors"
+          >
+            <FileDoc className="w-4 h-4" />
+            {label}
+            <ChevronRight className="w-4 h-4" />
+          </a>
+        </div>,
+      );
+      i++;
+      continue;
+    }
+
+    // Normal paragraph
+    elements.push(
+      <p
+        key={`p-${elements.length}`}
+        className="text-slate-700 dark:text-slate-300 leading-relaxed mb-3"
+      >
+        {line}
+      </p>,
+    );
+    i++;
+  }
+
+  return <div>{elements}</div>;
+};
+
 const renderAnnouncementLink = (announcement: Announcement) => {
   if (!announcement.link_url) {
     return null;
@@ -141,30 +270,61 @@ export function HomeAnnouncementModal({
           >
             {images.length > 0 ? (
               <div className="grid md:grid-cols-2 gap-0">
-                <div className="bg-slate-100 dark:bg-slate-950 p-2">
+                <div className="bg-slate-100 dark:bg-slate-950 p-2 sm:p-3">
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                    {images
-                      .filter(
-                        (image): image is string => typeof image === 'string',
-                      )
-                      .map((image, index) => (
+                    {images.length > 1 ? (
+                      <>
                         <a
-                          key={index}
-                          href={proxiedImageSrc(image)}
+                          href={proxiedImageSrc(images[0])}
                           target="_blank"
                           rel="noreferrer"
-                          className="relative block h-56 w-full overflow-hidden rounded-xl transition-opacity hover:opacity-90"
+                          className="sm:col-span-2 relative block h-52 w-full overflow-hidden rounded-xl transition-opacity hover:opacity-90 shadow-xs"
                         >
                           <Image
-                            src={proxiedImageSrc(image)}
-                            alt={`${announcement.title} — görsel ${index + 1}`}
+                            src={proxiedImageSrc(images[0])}
+                            alt={`${announcement.title} — kapak`}
                             fill
                             className="object-cover"
-                            sizes="(max-width: 768px) 100vw, 400px"
+                            sizes="(max-width: 768px) 100vw, 500px"
                             unoptimized
                           />
                         </a>
-                      ))}
+                        {images.slice(1).map((image, index) => (
+                          <a
+                            key={index + 1}
+                            href={proxiedImageSrc(image)}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="relative block h-48 w-full overflow-hidden rounded-xl bg-white p-1 border border-slate-200 dark:border-slate-800 transition-opacity hover:opacity-90"
+                          >
+                            <Image
+                              src={proxiedImageSrc(image)}
+                              alt={`${announcement.title} — görsel ${index + 2}`}
+                              fill
+                              className="object-contain p-1"
+                              sizes="(max-width: 768px) 50vw, 250px"
+                              unoptimized
+                            />
+                          </a>
+                        ))}
+                      </>
+                    ) : (
+                      <a
+                        href={proxiedImageSrc(images[0])}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="sm:col-span-2 relative block h-64 sm:h-80 w-full overflow-hidden rounded-xl transition-opacity hover:opacity-90"
+                      >
+                        <Image
+                          src={proxiedImageSrc(images[0])}
+                          alt={announcement.title}
+                          fill
+                          className="object-cover"
+                          sizes="(max-width: 768px) 100vw, 500px"
+                          unoptimized
+                        />
+                      </a>
+                    )}
                   </div>
                 </div>
                 <div className="p-6 sm:p-8">
@@ -187,9 +347,9 @@ export function HomeAnnouncementModal({
                   >
                     {announcement.title}
                   </h2>
-                  <p className="text-slate-700 dark:text-slate-300 leading-relaxed whitespace-pre-line">
-                    {announcement.content}
-                  </p>
+                  <div className="text-slate-700 dark:text-slate-300 leading-relaxed">
+                    {renderRichAnnouncementContent(announcement.content)}
+                  </div>
                   {renderAnnouncementLink(announcement)}
                   <p className="text-slate-500 dark:text-slate-400 text-sm mt-6">
                     {new Date(announcement.created_at).toLocaleDateString(
@@ -219,9 +379,9 @@ export function HomeAnnouncementModal({
                 >
                   {announcement.title}
                 </h2>
-                <p className="whitespace-pre-line leading-relaxed text-slate-700 dark:text-slate-300">
-                  {announcement.content}
-                </p>
+                <div className="text-slate-700 dark:text-slate-300 leading-relaxed">
+                  {renderRichAnnouncementContent(announcement.content)}
+                </div>
                 {renderAnnouncementLink(announcement)}
                 <p className="mt-6 text-sm text-slate-500 dark:text-slate-400">
                   {new Date(announcement.created_at).toLocaleDateString(

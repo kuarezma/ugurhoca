@@ -80,7 +80,7 @@ export function HomeAnnouncementsSection({
                     {item.title}
                   </h3>
                   <p className="text-xs sm:text-sm line-clamp-2 text-secondary">
-                    {item.content}
+                    {item.content?.split('\n')[0] || item.content}
                   </p>
                 </div>
               </button>
