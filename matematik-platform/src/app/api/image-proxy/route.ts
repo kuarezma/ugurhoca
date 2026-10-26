@@ -8,6 +8,7 @@ const MAX_IMAGE_BYTES = 8 * 1024 * 1024;
 const DEFAULT_IMAGE_PROXY_ALLOWED_HOSTS = [
   'drive.google.com',
   '.googleusercontent.com',
+  '.supabase.co',
   'i.ibb.co',
   'ibb.co',
   'imgur.com',

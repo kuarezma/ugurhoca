@@ -87,11 +87,19 @@ export const contentDocumentMetricUpdateSchema = z.object({
   metric: z.enum(['views', 'downloads', 'likes']),
 });
 
+const urlOrRelativePathSchema = z
+  .string()
+  .trim()
+  .refine(
+    (val) => val.startsWith('/') || /^https?:\/\//i.test(val),
+    'Geçerli bir URL veya dosya yolu giriniz.',
+  );
+
 const adminAnnouncementPayloadSchema = z.object({
   content: z.string().trim().nullable().optional(),
-  image_url: z.string().trim().url().optional(),
-  image_urls: z.array(z.string().trim().url()).default([]),
-  link_url: z.string().trim().url().optional(),
+  image_url: urlOrRelativePathSchema.optional(),
+  image_urls: z.array(urlOrRelativePathSchema).default([]),
+  link_url: urlOrRelativePathSchema.optional(),
   title: z.string().trim().min(1, 'Duyuru başlığı gerekli.'),
 });
 

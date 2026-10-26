@@ -10,6 +10,7 @@ const IMAGE_EXTENSION_PATTERN =
   /\.(avif|bmp|gif|ico|jpe?g|png|svg|webp)(?:[?#].*)?$/i;
 
 const DIRECT_IMAGE_HOST_PATTERNS = [
+  /(^|\.)supabase\.co$/i,
   /(^|\.)i\.ibb\.co$/i,
   /(^|\.)ibb\.co$/i,
   /(^|\.)imgur\.com$/i,

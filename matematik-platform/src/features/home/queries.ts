@@ -453,7 +453,7 @@ export const proxiedImageSrc = (url?: string | null) => {
     return '';
   }
 
-  if (!/^https?:\/\//i.test(url)) {
+  if (!/^https?:\/\//i.test(url) || /^https?:\/\/[^/]+\.supabase\.co\//i.test(url)) {
     return getRemoteImageSrc(url);
   }
 
