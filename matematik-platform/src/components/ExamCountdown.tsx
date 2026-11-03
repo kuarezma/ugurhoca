@@ -188,7 +188,7 @@ export function ExamCountdown({
             </span>
             {remainingWeeks > 0 && (
               <span
-                className="inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-bold bg-amber-50 text-amber-800 border border-amber-200 dark:bg-amber-500/15 dark:text-amber-300 dark:border-amber-500/30"
+                className="inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-bold bg-amber-50 text-amber-800 border border-amber-200 dark:bg-amber-950/70 dark:text-amber-200 dark:border-amber-700/60"
               >
                 ⏳ {remainingWeeks} Hafta Kaldı
               </span>
@@ -255,14 +255,14 @@ export function ExamCountdown({
               <button
                 type="button"
                 onClick={() => onOpenCalculator(exam.id.includes('lgs') ? 'lgs' : 'yks')}
-                className="shrink-0 inline-flex min-h-[38px] items-center gap-1.5 rounded-xl px-3 py-1.5 text-xs font-bold transition-all bg-accent-bg text-accent-fg border border-subtle hover:bg-surface-3"
+                className="shrink-0 inline-flex min-h-[38px] items-center gap-1.5 rounded-xl px-3 py-1.5 text-xs font-bold transition-all bg-[var(--accent-brand)] text-[var(--on-brand)] hover:opacity-90"
               >
                 Net & Puan Hesapla →
               </button>
             ) : (
               <Link
                 href={exam.toolHref}
-                className="shrink-0 inline-flex min-h-[38px] items-center gap-1.5 rounded-xl px-3 py-1.5 text-xs font-bold transition-all bg-accent-bg text-accent-fg border border-subtle hover:bg-surface-3"
+                className="shrink-0 inline-flex min-h-[38px] items-center gap-1.5 rounded-xl px-3 py-1.5 text-xs font-bold transition-all bg-[var(--accent-brand)] text-[var(--on-brand)] hover:opacity-90"
               >
                 Puan Hesapla →
               </Link>

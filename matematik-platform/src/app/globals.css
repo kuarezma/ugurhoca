@@ -63,7 +63,7 @@
   --border-default: #7C8AA3;
   --border-strong: #9AA7BA;
   --accent-fg: var(--brand-primary-ink);
-  --accent-bg: var(--brand-primary);
+  --accent-bg: rgba(16, 185, 129, 0.18);
   --tone-success-fg: #bbf7d0;
   --tone-success-bg: rgba(88, 204, 2, 0.18);
   --tone-success-border: #46a302;
@@ -228,7 +228,7 @@ html[data-theme='light'] {
   --border-default: #8C8270;
   --border-strong: #6F6656;
   --accent-fg: var(--brand-primary-ink);
-  --accent-bg: var(--brand-primary);
+  --accent-bg: #E2F5EC;
   --tone-success-fg: #065F46;
   --tone-success-bg: #E6F2EC;
   --tone-success-border: #047857;
@@ -334,7 +334,7 @@ html[data-palette='ocean'] {
   --brand-primary-soft: rgb(var(--brand-primary-soft-rgb));
   --brand-primary-deep: rgb(var(--brand-primary-deep-rgb));
   --accent-fg: var(--brand-primary-ink);
-  --accent-bg: var(--brand-primary);
+  --accent-bg: var(--accent-brand-tint);
   --accent-brand: #3b82f6;
   --accent-brand-ink: #93c5fd;
   --accent-brand-tint: rgba(59, 130, 246, 0.12);
@@ -401,7 +401,7 @@ html[data-palette='emerald'] {
   --brand-primary-soft: rgb(var(--brand-primary-soft-rgb));
   --brand-primary-deep: rgb(var(--brand-primary-deep-rgb));
   --accent-fg: var(--brand-primary-ink);
-  --accent-bg: var(--brand-primary);
+  --accent-bg: var(--accent-brand-tint);
   --accent-brand: #10b981;
   --accent-brand-ink: #6ee7b7;
   --accent-brand-tint: rgba(16, 185, 129, 0.12);
@@ -470,7 +470,7 @@ html[data-palette='sunset'] {
   --brand-primary-soft: rgb(var(--brand-primary-soft-rgb));
   --brand-primary-deep: rgb(var(--brand-primary-deep-rgb));
   --accent-fg: var(--brand-primary-ink);
-  --accent-bg: var(--brand-primary);
+  --accent-bg: var(--accent-brand-tint);
   --accent-brand: #f59e0b;
   --accent-brand-ink: #fde68a;
   --accent-brand-tint: rgba(245, 158, 11, 0.12);
@@ -539,7 +539,7 @@ html[data-palette='midnight'] {
   --brand-primary-soft: rgb(var(--brand-primary-soft-rgb));
   --brand-primary-deep: rgb(var(--brand-primary-deep-rgb));
   --accent-fg: var(--brand-primary-ink);
-  --accent-bg: var(--brand-primary);
+  --accent-bg: var(--accent-brand-tint);
   --accent-brand: #6366f1;
   --accent-brand-ink: #c7d2fe;
   --accent-brand-tint: rgba(99, 102, 241, 0.15);

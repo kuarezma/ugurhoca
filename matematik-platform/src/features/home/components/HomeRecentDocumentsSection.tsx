@@ -113,27 +113,27 @@ const GRADE_STYLES: Record<
   }
 > = {
   5: {
-    badge: 'bg-surface-2 text-secondary border-subtle',
-    pillActive: 'bg-accent-bg text-accent-fg border-default',
-    pillDot: 'bg-[var(--accent-brand)]',
+    badge: 'bg-sky-50 text-sky-900 border-sky-200/90 dark:bg-sky-950/50 dark:text-sky-200 dark:border-sky-800/60',
+    pillActive: 'bg-sky-100 text-sky-900 border-sky-300 dark:bg-sky-950/70 dark:text-sky-200 dark:border-sky-700/60',
+    pillDot: 'bg-sky-600 dark:bg-sky-400',
     label: '5. Sınıf',
   },
   6: {
-    badge: 'bg-surface-2 text-secondary border-subtle',
-    pillActive: 'bg-accent-bg text-accent-fg border-default',
-    pillDot: 'bg-[var(--accent-brand)]',
+    badge: 'bg-amber-50 text-amber-900 border-amber-200/90 dark:bg-amber-950/50 dark:text-amber-200 dark:border-amber-800/60',
+    pillActive: 'bg-amber-100 text-amber-900 border-amber-300 dark:bg-amber-950/70 dark:text-amber-200 dark:border-amber-700/60',
+    pillDot: 'bg-amber-600 dark:bg-amber-400',
     label: '6. Sınıf',
   },
   7: {
-    badge: 'bg-surface-2 text-secondary border-subtle',
-    pillActive: 'bg-accent-bg text-accent-fg border-default',
-    pillDot: 'bg-[var(--accent-brand)]',
+    badge: 'bg-violet-50 text-violet-900 border-violet-200/90 dark:bg-violet-950/50 dark:text-violet-200 dark:border-violet-800/60',
+    pillActive: 'bg-violet-100 text-violet-900 border-violet-300 dark:bg-violet-950/70 dark:text-violet-200 dark:border-violet-700/60',
+    pillDot: 'bg-violet-600 dark:bg-violet-400',
     label: '7. Sınıf',
   },
   8: {
-    badge: 'bg-surface-2 text-secondary border-subtle',
-    pillActive: 'bg-accent-bg text-accent-fg border-default',
-    pillDot: 'bg-[var(--accent-brand)]',
+    badge: 'bg-emerald-50 text-emerald-900 border-emerald-200/90 dark:bg-emerald-950/50 dark:text-emerald-200 dark:border-emerald-800/60',
+    pillActive: 'bg-emerald-100 text-emerald-900 border-emerald-300 dark:bg-emerald-950/70 dark:text-emerald-200 dark:border-emerald-700/60',
+    pillDot: 'bg-emerald-600 dark:bg-emerald-400',
     label: '8. Sınıf (LGS)',
   },
 };
@@ -277,9 +277,7 @@ export function HomeRecentDocumentsSection({
                 }`}
               >
                 <span
-                  className={`h-2 w-2 rounded-full ${
-                    isSelected ? 'bg-[var(--accent-brand)]' : style.pillDot
-                  }`}
+                  className={`h-2 w-2 rounded-full ${style.pillDot}`}
                 />
                 <span>{style.label}</span>
                 {isUserGrade && (
@@ -420,7 +418,7 @@ export function HomeRecentDocumentsSection({
                   <div className="flex flex-wrap items-center gap-2">
                     <SafeLink
                       href={`/icerikler?id=${doc.id}`}
-                      className="flex-1 inline-flex items-center justify-center gap-1.5 rounded-xl border border-subtle bg-accent-bg hover:bg-surface-3 px-3 py-2 text-xs font-bold text-accent-fg transition-colors"
+                      className="flex-1 inline-flex items-center justify-center gap-1.5 rounded-xl border border-default bg-accent-bg hover:opacity-90 px-3 py-2 text-xs font-bold text-accent-fg transition-colors"
                     >
                       <Eye className="h-3.5 w-3.5 shrink-0" />
                       <span>İncele</span>
@@ -443,7 +441,7 @@ export function HomeRecentDocumentsSection({
                         href={doc.solution_url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="flex-1 inline-flex items-center justify-center gap-1.5 rounded-xl bg-accent-bg text-accent-fg hover:bg-surface-3 border border-subtle px-3 py-2 text-xs font-bold shadow-xs transition-all"
+                        className="flex-1 inline-flex items-center justify-center gap-1.5 rounded-xl bg-accent-bg text-accent-fg hover:opacity-90 border border-default px-3 py-2 text-xs font-bold shadow-xs transition-all"
                       >
                         <FileCheck2 className="h-3.5 w-3.5 shrink-0" />
                         <span>Çözüm PDF</span>
