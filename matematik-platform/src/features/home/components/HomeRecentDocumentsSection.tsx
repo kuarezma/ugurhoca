@@ -113,30 +113,69 @@ const GRADE_STYLES: Record<
   }
 > = {
   5: {
-    badge: 'bg-sky-50 text-sky-900 border-sky-200/90 dark:bg-sky-950/50 dark:text-sky-200 dark:border-sky-800/60',
-    pillActive: 'bg-sky-100 text-sky-900 border-sky-300 dark:bg-sky-950/70 dark:text-sky-200 dark:border-sky-700/60',
+    badge: 'bg-sky-100 text-sky-950 border-sky-300 dark:bg-sky-950/80 dark:text-sky-200 dark:border-sky-700',
+    pillActive: 'bg-sky-100 text-sky-950 border-sky-400 dark:bg-sky-950/80 dark:text-sky-200 dark:border-sky-600',
     pillDot: 'bg-sky-600 dark:bg-sky-400',
     label: '5. Sınıf',
   },
   6: {
-    badge: 'bg-amber-50 text-amber-900 border-amber-200/90 dark:bg-amber-950/50 dark:text-amber-200 dark:border-amber-800/60',
-    pillActive: 'bg-amber-100 text-amber-900 border-amber-300 dark:bg-amber-950/70 dark:text-amber-200 dark:border-amber-700/60',
+    badge: 'bg-amber-100 text-amber-950 border-amber-300 dark:bg-amber-950/80 dark:text-amber-200 dark:border-amber-700',
+    pillActive: 'bg-amber-100 text-amber-950 border-amber-400 dark:bg-amber-950/80 dark:text-amber-200 dark:border-amber-600',
     pillDot: 'bg-amber-600 dark:bg-amber-400',
     label: '6. Sınıf',
   },
   7: {
-    badge: 'bg-violet-50 text-violet-900 border-violet-200/90 dark:bg-violet-950/50 dark:text-violet-200 dark:border-violet-800/60',
-    pillActive: 'bg-violet-100 text-violet-900 border-violet-300 dark:bg-violet-950/70 dark:text-violet-200 dark:border-violet-700/60',
+    badge: 'bg-violet-100 text-violet-950 border-violet-300 dark:bg-violet-950/80 dark:text-violet-200 dark:border-violet-700',
+    pillActive: 'bg-violet-100 text-violet-950 border-violet-400 dark:bg-violet-950/80 dark:text-violet-200 dark:border-violet-600',
     pillDot: 'bg-violet-600 dark:bg-violet-400',
     label: '7. Sınıf',
   },
   8: {
-    badge: 'bg-emerald-50 text-emerald-900 border-emerald-200/90 dark:bg-emerald-950/50 dark:text-emerald-200 dark:border-emerald-800/60',
-    pillActive: 'bg-emerald-100 text-emerald-900 border-emerald-300 dark:bg-emerald-950/70 dark:text-emerald-200 dark:border-emerald-700/60',
+    badge: 'bg-emerald-100 text-emerald-950 border-emerald-300 dark:bg-emerald-950/80 dark:text-emerald-200 dark:border-emerald-700',
+    pillActive: 'bg-emerald-100 text-emerald-950 border-emerald-400 dark:bg-emerald-950/80 dark:text-emerald-200 dark:border-emerald-600',
     pillDot: 'bg-emerald-600 dark:bg-emerald-400',
     label: '8. Sınıf (LGS)',
   },
 };
+
+const CARD_ACCENTS = [
+  {
+    card: 'border-sky-200/90 bg-sky-50/45 hover:border-sky-400 dark:border-sky-800/60 dark:bg-sky-950/25 dark:hover:border-sky-600',
+    topBar: 'bg-sky-500 dark:bg-sky-400',
+    outcome: 'border-sky-200 bg-sky-100/75 text-sky-950 dark:border-sky-800/70 dark:bg-sky-950/65 dark:text-sky-200',
+    divider: 'border-sky-200/70 dark:border-sky-800/50',
+  },
+  {
+    card: 'border-emerald-200/90 bg-emerald-50/45 hover:border-emerald-400 dark:border-emerald-800/60 dark:bg-emerald-950/25 dark:hover:border-emerald-600',
+    topBar: 'bg-emerald-500 dark:bg-emerald-400',
+    outcome: 'border-emerald-200 bg-emerald-100/75 text-emerald-950 dark:border-emerald-800/70 dark:bg-emerald-950/65 dark:text-emerald-200',
+    divider: 'border-emerald-200/70 dark:border-emerald-800/50',
+  },
+  {
+    card: 'border-violet-200/90 bg-violet-50/45 hover:border-violet-400 dark:border-violet-800/60 dark:bg-violet-950/25 dark:hover:border-violet-600',
+    topBar: 'bg-violet-500 dark:bg-violet-400',
+    outcome: 'border-violet-200 bg-violet-100/75 text-violet-950 dark:border-violet-800/70 dark:bg-violet-950/65 dark:text-violet-200',
+    divider: 'border-violet-200/70 dark:border-violet-800/50',
+  },
+  {
+    card: 'border-amber-200/90 bg-amber-50/45 hover:border-amber-400 dark:border-amber-800/60 dark:bg-amber-950/25 dark:hover:border-amber-600',
+    topBar: 'bg-amber-500 dark:bg-amber-400',
+    outcome: 'border-amber-200 bg-amber-100/75 text-amber-950 dark:border-amber-800/70 dark:bg-amber-950/65 dark:text-amber-200',
+    divider: 'border-amber-200/70 dark:border-amber-800/50',
+  },
+  {
+    card: 'border-rose-200/90 bg-rose-50/45 hover:border-rose-400 dark:border-rose-800/60 dark:bg-rose-950/25 dark:hover:border-rose-600',
+    topBar: 'bg-rose-500 dark:bg-rose-400',
+    outcome: 'border-rose-200 bg-rose-100/75 text-rose-950 dark:border-rose-800/70 dark:bg-rose-950/65 dark:text-rose-200',
+    divider: 'border-rose-200/70 dark:border-rose-800/50',
+  },
+  {
+    card: 'border-indigo-200/90 bg-indigo-50/45 hover:border-indigo-400 dark:border-indigo-800/60 dark:bg-indigo-950/25 dark:hover:border-indigo-600',
+    topBar: 'bg-indigo-500 dark:bg-indigo-400',
+    outcome: 'border-indigo-200 bg-indigo-100/75 text-indigo-950 dark:border-indigo-800/70 dark:bg-indigo-950/65 dark:text-indigo-200',
+    divider: 'border-indigo-200/70 dark:border-indigo-800/50',
+  },
+] as const;
 
 export type HomeRecentDocumentsSectionProps = {
   documents: ContentDocument[];
@@ -214,13 +253,13 @@ export function HomeRecentDocumentsSection({
   return (
     <div
       data-testid="home-recent-documents-section"
-      className="rounded-2xl border border-subtle bg-surface-2 p-4 sm:p-7 shadow-sm font-sans"
+      className="rounded-3xl border border-subtle bg-surface-1 p-5 sm:p-8 shadow-sm font-sans"
     >
       {/* Üst Başlık ve Sınıf Filtre Sekmeleri */}
-      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pb-5 border-b border-subtle">
-        <div className="space-y-1">
-          <div className="inline-flex items-center gap-1.5 rounded-full bg-accent-bg border border-subtle px-3 py-1 text-xs font-black text-accent-fg uppercase tracking-wider">
-            <Sparkles className="h-3.5 w-3.5 text-accent-fg" />
+      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pb-6 border-b border-subtle">
+        <div className="space-y-1.5">
+          <div className="inline-flex items-center gap-1.5 rounded-full bg-accent-bg border border-subtle px-3.5 py-1 text-xs font-black text-accent-fg uppercase tracking-wider">
+            <Sparkles className="h-3.5 w-3.5 text-accent-fg shrink-0" />
             <span>Yeni Yüklenen İçerikler & Çözümlü Testler</span>
           </div>
           <h2 className="font-display text-xl sm:text-2xl font-bold text-primary flex items-center gap-2.5">
@@ -236,7 +275,7 @@ export function HomeRecentDocumentsSection({
         <div
           role="tablist"
           aria-label="Sınıf düzeyine göre yeni içerikleri filtrele"
-          className="flex flex-wrap items-center gap-1.5 sm:gap-2"
+          className="flex flex-wrap items-center gap-2"
         >
           <button
             type="button"
@@ -246,7 +285,7 @@ export function HomeRecentDocumentsSection({
               setHasManualSelection(true);
               setSelectedGrade('all');
             }}
-            className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-bold border transition-all ${
+            className={`inline-flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-xs font-bold border transition-all ${
               selectedGrade === 'all'
                 ? 'bg-accent-bg text-accent-fg border-default'
                 : 'bg-surface-1 text-secondary border-default hover:border-strong'
@@ -270,7 +309,7 @@ export function HomeRecentDocumentsSection({
                   setHasManualSelection(true);
                   setSelectedGrade(grade);
                 }}
-                className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-bold border transition-all ${
+                className={`inline-flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-xs font-bold border transition-all ${
                   isSelected
                     ? style.pillActive
                     : 'bg-surface-1 text-secondary border-default hover:border-strong'
@@ -291,9 +330,9 @@ export function HomeRecentDocumentsSection({
         </div>
       </div>
 
-      {/* İçerik Kartları Grid'i */}
+      {/* İçerik Kartları Grid'i (Ferah 2 Sütunlu Bento Düzeni) */}
       {filteredDocuments.length === 0 ? (
-        <div className="py-8 text-center space-y-3">
+        <div className="py-10 text-center space-y-3">
           <p className="text-sm font-semibold text-secondary">
             Bu sınıf düzeyi için son eklenenler listesinde içerik bulunamadı.
           </p>
@@ -302,14 +341,15 @@ export function HomeRecentDocumentsSection({
             className="inline-flex items-center gap-2 rounded-xl bg-accent-bg hover:bg-surface-3 text-accent-fg border border-subtle px-4 py-2.5 text-xs font-bold transition-colors shadow-xs"
           >
             <span>Tüm Kütüphaneyi Aç</span>
-            <ArrowRight className="h-4 w-4" />
+            <ArrowRight className="h-4 w-4 shrink-0" />
           </SafeLink>
         </div>
       ) : (
-        <div className="mt-5 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
-          {filteredDocuments.map((doc) => {
+        <div className="mt-6 grid grid-cols-1 lg:grid-cols-2 gap-5 sm:gap-6">
+          {filteredDocuments.map((doc, index) => {
             const primaryGrade = getPrimarySupportedGrade(doc.grade);
             const gradeStyle = primaryGrade ? GRADE_STYLES[primaryGrade] : null;
+            const accent = CARD_ACCENTS[index % CARD_ACCENTS.length];
             const gradeLabel = gradeStyle
               ? gradeStyle.label
               : Array.isArray(doc.grade) && doc.grade.length > 0
@@ -333,120 +373,126 @@ export function HomeRecentDocumentsSection({
             return (
               <article
                 key={doc.id}
-                className="group relative flex flex-col justify-between overflow-hidden bg-surface-1 border border-subtle hover:border-strong rounded-2xl shadow-sm p-4 sm:p-5 transition-all"
+                className={`group relative flex flex-col justify-between overflow-hidden border-2 rounded-2xl shadow-sm transition-colors ${accent.card}`}
               >
+                {/* Üst Renkli Akademik Şerit */}
+                <div className={`h-1.5 w-full ${accent.topBar}`} />
 
-                <div>
-                  {/* Rozetler Satırı */}
-                  <div className="flex flex-wrap items-center justify-between gap-1.5 mb-3">
-                    <div className="flex flex-wrap items-center gap-1.5">
-                      <span
-                        className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-black ${
-                          gradeStyle
-                            ? gradeStyle.badge
-                            : 'bg-surface-2 text-secondary border-subtle'
-                        }`}
-                      >
-                        {gradeLabel}
-                      </span>
-
-                      <span className="inline-flex items-center rounded-full border border-subtle bg-surface-2 px-2.5 py-0.5 text-xs font-bold text-secondary">
-                        {getContentTypeLabel(doc.type)}
-                      </span>
-                    </div>
-
-                    <div className="flex flex-wrap items-center gap-1">
-                      {isFresh && (
-                        <span className="inline-flex items-center rounded-full bg-accent-bg text-accent-fg px-2 py-0.5 text-xs font-black uppercase tracking-wide shadow-2xs">
-                          Yeni
+                <div className="flex flex-1 flex-col justify-between p-5 sm:p-6">
+                  <div>
+                    {/* Rozetler Satırı */}
+                    <div className="flex flex-wrap items-center justify-between gap-2 mb-3.5">
+                      <div className="flex flex-wrap items-center gap-2">
+                        <span
+                          className={`inline-flex items-center rounded-full border px-3 py-1 text-xs font-black ${
+                            gradeStyle
+                              ? gradeStyle.badge
+                              : 'bg-surface-2 text-secondary border-subtle'
+                          }`}
+                        >
+                          {gradeLabel}
                         </span>
-                      )}
 
-                      {(hasSolutionPdf || hasAnswerKey) && (
-                        <span className="inline-flex items-center gap-1 rounded-full border border-teal-300 dark:border-teal-700/60 bg-teal-50 dark:bg-teal-950/70 text-teal-900 dark:text-teal-200 px-2 py-0.5 text-xs font-black">
-                          <CheckCircle2 className="h-3 w-3 text-teal-600 dark:text-teal-400" />
-                          <span>
-                            {isHandwrittenSolution
-                              ? 'El Yazısı Çözümlü'
-                              : hasSolutionPdf
-                                ? 'Çözüm PDF'
-                                : 'Cevap Anahtarlı'}
+                        <span className="inline-flex items-center rounded-full border border-violet-300 dark:border-violet-700/70 bg-violet-100/90 dark:bg-violet-950/75 px-3 py-1 text-xs font-bold text-violet-950 dark:text-violet-200">
+                          {getContentTypeLabel(doc.type)}
+                        </span>
+                      </div>
+
+                      <div className="flex flex-wrap items-center gap-1.5">
+                        {isFresh && (
+                          <span className="inline-flex items-center rounded-full border border-amber-300 dark:border-amber-700/70 bg-amber-100 dark:bg-amber-950/80 text-amber-950 dark:text-amber-200 px-2.5 py-0.5 text-xs font-black uppercase tracking-wide">
+                            ✨ Yeni
                           </span>
-                        </span>
-                      )}
+                        )}
+
+                        {(hasSolutionPdf || hasAnswerKey) && (
+                          <span className="inline-flex items-center gap-1 rounded-full border border-teal-300 dark:border-teal-700/70 bg-teal-100/90 dark:bg-teal-950/80 text-teal-950 dark:text-teal-200 px-2.5 py-1 text-xs font-black">
+                            <CheckCircle2 className="h-3.5 w-3.5 shrink-0 text-teal-700 dark:text-teal-300" />
+                            <span>
+                              {isHandwrittenSolution
+                                ? 'El Yazısı Çözümlü'
+                                : hasSolutionPdf
+                                  ? 'Çözüm PDF'
+                                  : 'Cevap Anahtarlı'}
+                            </span>
+                          </span>
+                        )}
+                      </div>
                     </div>
-                  </div>
 
-                  {/* Başlık */}
-                  <SafeLink
-                    href={`/icerikler?id=${doc.id}`}
-                    className="block group-hover:text-sky-600 dark:group-hover:text-sky-400 transition-colors"
-                  >
-                    <h3 className="font-display text-sm sm:text-base font-bold text-primary line-clamp-2 leading-snug mb-2">
-                      {doc.title}
-                    </h3>
-                  </SafeLink>
-
-                  {/* Kazanım Etiketi */}
-                  {outcome && (
-                    <div className="mb-2 inline-flex max-w-full items-center gap-1.5 rounded-lg border border-sky-200/90 dark:border-sky-800/60 bg-sky-50/80 dark:bg-sky-950/50 px-2.5 py-1 text-xs font-bold text-sky-900 dark:text-sky-200">
-                      <span className="font-black shrink-0">🎯 Kazanım:</span>
-                      <span className="truncate">{outcome}</span>
-                    </div>
-                  )}
-
-                  {/* Açıklama */}
-                  {cleanDescription && (
-                    <p className="text-xs text-secondary font-medium line-clamp-2 leading-relaxed mb-3">
-                      {cleanDescription}
-                    </p>
-                  )}
-                </div>
-
-                {/* Alt Tarih & Hızlı Eylem Butonları */}
-                <div className="pt-3 border-t border-subtle/80 space-y-2.5">
-                  <div className="flex items-center justify-between text-xs font-semibold text-tertiary">
-                    <span className="inline-flex items-center gap-1">
-                      <Calendar className="h-3.5 w-3.5 shrink-0 text-sky-600 dark:text-sky-400" />
-                      <span>{formatContentDate(doc.created_at)}</span>
-                    </span>
-                    <span className="text-secondary font-bold">
-                      Uğur Hoca
-                    </span>
-                  </div>
-
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                    {/* Başlık */}
                     <SafeLink
                       href={`/icerikler?id=${doc.id}`}
-                      className="inline-flex items-center justify-center gap-1.5 rounded-xl border border-default bg-accent-bg hover:opacity-90 px-3 py-2 text-xs font-bold text-accent-fg transition-colors"
+                      className="block group-hover:text-sky-700 dark:group-hover:text-sky-300 transition-colors"
                     >
-                      <Eye className="h-3.5 w-3.5 shrink-0" />
-                      <span>İncele</span>
+                      <h3 className="font-display text-base sm:text-lg font-extrabold text-primary line-clamp-2 leading-snug mb-3">
+                        {doc.title}
+                      </h3>
                     </SafeLink>
 
-                    {doc.file_url && (
-                      <a
-                        href={doc.file_url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-flex items-center justify-center gap-1.5 rounded-xl border border-subtle bg-surface-2 hover:bg-surface-3 px-3 py-2 text-xs font-bold text-primary transition-colors"
+                    {/* Kazanım Etiketi */}
+                    {outcome && (
+                      <div
+                        className={`mb-3 inline-flex max-w-full items-center gap-2 rounded-xl border px-3 py-1.5 text-xs font-bold ${accent.outcome}`}
                       >
-                        <FileText className="h-3.5 w-3.5 shrink-0 text-sky-600 dark:text-sky-400" />
-                        <span>Öğrenci PDF</span>
-                      </a>
+                        <span className="font-black shrink-0">🎯 Kazanım:</span>
+                        <span className="truncate">{outcome}</span>
+                      </div>
                     )}
 
-                    {doc.solution_url && doc.solution_url !== doc.file_url && (
-                      <a
-                        href={doc.solution_url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-flex items-center justify-center gap-1.5 rounded-xl bg-accent-bg text-accent-fg hover:opacity-90 border border-default px-3 py-2 text-xs font-bold shadow-xs transition-all"
-                      >
-                        <FileCheck2 className="h-3.5 w-3.5 shrink-0" />
-                        <span>Çözüm PDF</span>
-                      </a>
+                    {/* Açıklama */}
+                    {cleanDescription && (
+                      <p className="text-xs sm:text-sm text-secondary font-medium line-clamp-2 leading-relaxed mb-4">
+                        {cleanDescription}
+                      </p>
                     )}
+                  </div>
+
+                  {/* Alt Tarih & Hızlı Eylem Butonları */}
+                  <div className={`pt-4 border-t ${accent.divider} space-y-3`}>
+                    <div className="flex items-center justify-between text-xs font-semibold text-secondary">
+                      <span className="inline-flex items-center gap-1.5">
+                        <Calendar className="h-3.5 w-3.5 shrink-0 text-sky-700 dark:text-sky-400" />
+                        <span>{formatContentDate(doc.created_at)}</span>
+                      </span>
+                      <span className="text-primary font-bold">
+                        Uğur Hoca
+                      </span>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+                      <SafeLink
+                        href={`/icerikler?id=${doc.id}`}
+                        className="inline-flex items-center justify-center gap-1.5 rounded-xl border border-indigo-300 dark:border-indigo-700 bg-indigo-100/90 dark:bg-indigo-950/80 hover:bg-indigo-200/80 dark:hover:bg-indigo-900 px-3.5 py-2.5 text-xs font-bold text-indigo-950 dark:text-indigo-200 transition-colors"
+                      >
+                        <Eye className="h-4 w-4 shrink-0" />
+                        <span>İncele</span>
+                      </SafeLink>
+
+                      {doc.file_url && (
+                        <a
+                          href={doc.file_url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center justify-center gap-1.5 rounded-xl border border-sky-300 dark:border-sky-700 bg-sky-100/90 dark:bg-sky-950/80 hover:bg-sky-200/80 dark:hover:bg-sky-900 px-3.5 py-2.5 text-xs font-bold text-sky-950 dark:text-sky-200 transition-colors"
+                        >
+                          <FileText className="h-4 w-4 shrink-0 text-sky-700 dark:text-sky-300" />
+                          <span>Öğrenci PDF</span>
+                        </a>
+                      )}
+
+                      {doc.solution_url && doc.solution_url !== doc.file_url && (
+                        <a
+                          href={doc.solution_url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center justify-center gap-1.5 rounded-xl bg-[var(--accent-brand)] text-[var(--on-brand)] hover:opacity-90 border border-transparent px-3.5 py-2.5 text-xs font-bold shadow-xs transition-all"
+                        >
+                          <FileCheck2 className="h-4 w-4 shrink-0" />
+                          <span>Çözüm PDF</span>
+                        </a>
+                      )}
+                    </div>
                   </div>
                 </div>
               </article>
@@ -456,20 +502,20 @@ export function HomeRecentDocumentsSection({
       )}
 
       {/* Alt Tümünü Gör Bağlantısı */}
-      <div className="mt-5 pt-4 border-t border-subtle flex flex-col sm:flex-row items-center justify-between gap-3">
-        <p className="text-xs font-semibold text-secondary">
+      <div className="mt-6 pt-5 border-t border-subtle flex flex-col sm:flex-row items-center justify-between gap-3">
+        <p className="text-xs sm:text-sm font-semibold text-secondary">
           Tüm sınıflara ait yaprak testler, çalışma kağıtları ve el yazısı çözümlü öğretmen föyleri kütüphanede.
         </p>
         <SafeLink
           href={allLibraryHref}
-          className="inline-flex items-center gap-2 rounded-xl bg-surface-1 hover:bg-surface-3 border border-subtle px-4 py-2 text-xs font-bold text-primary transition-colors shrink-0"
+          className="inline-flex items-center gap-2 rounded-xl bg-accent-bg hover:opacity-90 border border-default px-4 py-2.5 text-xs sm:text-sm font-bold text-accent-fg transition-colors shrink-0"
         >
           <span>
             {selectedGrade === 'all'
               ? 'Tüm İçerikleri ve Yaprak Testleri Gör'
               : `${GRADE_STYLES[selectedGrade].label} Tüm Testleri Gör`}
           </span>
-          <ArrowRight className="h-4 w-4" />
+          <ArrowRight className="h-4 w-4 shrink-0" />
         </SafeLink>
       </div>
     </div>
