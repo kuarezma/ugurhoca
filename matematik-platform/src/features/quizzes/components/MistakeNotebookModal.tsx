@@ -273,7 +273,7 @@ export function MistakeNotebookModal({
       <button
         type="button"
         aria-label="Pencereyi kapat"
-        className="fixed inset-0 -z-10 bg-slate-950/80 backdrop-blur-md no-print"
+        className="fixed inset-0 bg-slate-950/80 backdrop-blur-md no-print"
         onClick={onClose}
       />
       <div
@@ -281,7 +281,7 @@ export function MistakeNotebookModal({
         role="dialog"
         aria-modal="true"
         aria-labelledby={titleId}
-        className="print-mistake-analysis-area flex max-h-[92vh] w-full max-w-4xl flex-col overflow-hidden rounded-3xl border border-slate-200/80 dark:border-white/10 bg-white dark:bg-slate-900 shadow-2xl transition-all"
+        className="print-mistake-analysis-area relative z-10 flex max-h-[92vh] w-full max-w-4xl flex-col overflow-hidden rounded-3xl border border-slate-200/80 dark:border-white/10 bg-white dark:bg-slate-900 shadow-2xl transition-all"
       >
         {/* A4 Yazdırma Görünümü (Yalnızca print esnasında görünür) */}
         <div className="print-only mb-6 border-b-2 border-black pb-4 text-black">

@@ -1,8 +1,23 @@
 import { describe, it, expect, vi } from 'vitest';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, within } from '@testing-library/react';
 import { ExamScoreCalculatorModal } from './ExamScoreCalculatorModal';
 
 describe('ExamScoreCalculatorModal', () => {
+  it('girdi değişirken pencereyi açık tutar ve neti günceller', () => {
+    const onClose = vi.fn();
+    render(<ExamScoreCalculatorModal isOpen={true} onClose={onClose} initialTab="lgs" />);
+
+    expect(screen.getByRole('dialog')).toHaveClass('relative', 'z-10');
+    const correct = screen.getByLabelText('Türkçe doğru sayısı');
+    const row = correct.parentElement?.parentElement;
+    expect(row).not.toBeNull();
+    fireEvent.change(correct, { target: { value: '15' } });
+    fireEvent.change(screen.getByLabelText('Türkçe yanlış sayısı'), { target: { value: '3' } });
+
+    expect(within(row as HTMLElement).getByText('14.00')).toBeInTheDocument();
+    expect(onClose).not.toHaveBeenCalled();
+  });
+
   it('renders LGS tab by default and allows switching to YKS', () => {
     const onClose = vi.fn();
     render(

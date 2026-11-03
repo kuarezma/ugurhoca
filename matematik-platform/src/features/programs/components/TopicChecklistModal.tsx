@@ -169,7 +169,7 @@ export function TopicChecklistModal({
         }
       `}} />
       <div
-        className="no-print fixed inset-0 -z-10 bg-black/70 backdrop-blur-md"
+        className="no-print fixed inset-0 bg-black/70 backdrop-blur-md"
         onClick={onClose}
         aria-hidden="true"
       />
@@ -179,7 +179,7 @@ export function TopicChecklistModal({
         role="dialog"
         aria-modal="true"
         aria-labelledby={titleId}
-        className="print-checklist-area flex max-h-[92vh] w-full max-w-4xl flex-col overflow-hidden rounded-3xl border border-slate-200/80 dark:border-white/10 bg-white dark:bg-slate-900 shadow-2xl transition-all"
+        className="print-checklist-area relative z-10 flex max-h-[92vh] w-full max-w-4xl flex-col overflow-hidden rounded-3xl border border-slate-200/80 dark:border-white/10 bg-white dark:bg-slate-900 shadow-2xl transition-all"
       >
         {/* Yazdırmaya Özel Başlık */}
         <div className="print-only mb-6 border-b-2 border-black pb-4 text-black">

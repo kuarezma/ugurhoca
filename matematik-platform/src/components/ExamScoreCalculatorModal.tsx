@@ -363,7 +363,7 @@ export function ExamScoreCalculatorModal({
         role="dialog"
         aria-modal="true"
         aria-labelledby={titleId}
-        className="print-exam-score-area flex max-h-[calc(100dvh-max(1.5rem,env(safe-area-inset-top)+env(safe-area-inset-bottom)))] w-full max-w-4xl flex-col overflow-hidden rounded-3xl border border-slate-200/80 dark:border-white/10 bg-white dark:bg-slate-900 shadow-2xl transition-all"
+        className="print-exam-score-area relative z-10 flex max-h-[calc(100dvh-max(1.5rem,env(safe-area-inset-top)+env(safe-area-inset-bottom)))] w-full max-w-4xl flex-col overflow-hidden rounded-3xl border border-slate-200/80 dark:border-white/10 bg-white dark:bg-slate-900 shadow-2xl transition-all"
       >
         {/* A4 Yazdırılabilir Deneme Karnesi & Eylem Planı (Yalnızca Print Görünümünde) */}
         <div className="print-only mb-6 border-b-2 border-black pb-4 text-black font-sans">
