@@ -34,15 +34,15 @@ const DOCUMENTS_TO_PUBLISH = [
     file_url: '/documents/yazili-hazirlik-2026-1-1/5_Sinif_1_Donem_1_Yaziliya_Hazirlik_Ogrenci.pdf',
     solution_url: '/documents/yazili-hazirlik-2026-1-1/5_Sinif_1_Donem_1_Yaziliya_Hazirlik_Cozumlu.pdf',
     description:
-      'MEB Senaryo 2 konu soru dağılım tablosuna tam uyumlu, 7 açık uçlu klasik soru içeren 100 puanlık 1. dönem 1. yazılıya hazırlık sınavı. Kapsanan kazanımlar: MAT.5.3.1 (Açılar ve İletki), MAT.5.3.2 (Açı Çeşitleri ve Gönye), MAT.5.3.3 (Komşu, Tümler, Bütünler, Ters Açılar), MAT.5.1.1 (Doğal Sayılar ve Basamak Değeri), MAT.5.3.4 (Üçgen ve Dörtgenlerde Açılar), MAT.5.1.3 (Dört İşlem Problemleri).',
+      'MEB Senaryo 2 konu soru dağılım tablosuna tam uyumlu, 7 açık uçlu klasik soru içeren 100 puanlık 1. dönem 1. yazılıya hazırlık sınavı. Kapsanan kazanımlar: MAT.5.3.1 (Temel Geometrik Çizimler: Doğru, Doğru Parçası, Işın, Paralel ve Diklik), MAT.5.3.2 (Gönye ve Cetvelle Dikme İnşası), MAT.5.3.3 (İletki ile Açı Ölçme ve Açı Çeşitleri), MAT.5.3.4 (Kesişen Doğrular, Doğru Açı ve Ters Açılar), MAT.5.3.5 (Çokgen Kavramı ve Temel Elemanları), MAT.5.3.6 (Üçgen ve Paralelkenarın Açı/Kenar Özellikleri).',
     answer_key_text:
-      'Soru 1 (15 P): a) Dar açı (65°), b) Geniş açı (130°), c) Dik açı (90°).\n' +
-      'Soru 2 (15 P): a) BOA ve AOC açıları komşudur; ortak köşe [O] ve ortak ışın [OB). b) m(BOC) = 68° (Dar açı).\n' +
-      'Soru 3 (15 P): a) m(BOD) = 90° (Dik açı), b) m(DOE) = 55° (Dar açı).\n' +
-      'Soru 4 (15 P): x = 74°.\n' +
-      'Soru 5 (15 P): 89 542 376; 4\'ün basamak değeri = 40.000, 7\'nin basamak değeri = 70; Fark = 39.930.\n' +
-      'Soru 6 (15 P): m(CAD) = 38°.\n' +
-      'Soru 7 (10 P): 4 kutu cıvata artar.',
+      'Soru 1 (15 P): a) d doğrusu (KL doğrusu), b) [ST ışını, c) [MN] doğru parçası, |MN| = 4 birim, d) d // [MN], e) [PR] ⊥ [MN] ve [PR] ⊥ d.\n' +
+      'Soru 2 (10 P): 4. Adım hatalıdır; eğik kenar (hipotenüs) yerine A noktasından geçen diğer dik kenar boyunca çizilmelidir.\n' +
+      'Soru 3 (15 P): a) s(AOB) = 40° (Dar açı), b) s(AOC) = 90° (Dik açı), c) s(AOD) = 135° (Geniş açı), d) s(AOE) = 180° (Doğru açı), e) s(BOD) = 95° (Geniş açı).\n' +
+      'Soru 4 (15 P): a) 58° + x + 48° = 180° -> x = 74°, b) Ters açılar eşitliğinden y = 74°, c) x + y = 148°.\n' +
+      'Soru 5 (15 P): a) 1. bölge açık şekil, 2. bölge eğri kenarlı, 3. bölge kenarları kesişen şekil olduğu için çokgen değildir. b) 4. bölge ABCDE Beşgeni; Köşeler: A, B, C, D, E; Kenarlar: [AB], [BC], [CD], [DE], [EA]; A\'dan çizilen köşegenler: [AC] ve [AD].\n' +
+      'Soru 6 (15 P): a) s(ABC) = s(ACB) = 68°, b) s(ACD) = 112°, c) s(CAD) = 30°.\n' +
+      'Soru 7 (15 P): a) |MN| = 35 cm, |KN| = 22 cm, Çevre = 114 cm, b) s(LMN) = 65°, c) s(KLM) = 115°.',
     is_admin_only: false,
     is_new: true,
     downloads: 0,
@@ -59,16 +59,16 @@ const DOCUMENTS_TO_PUBLISH = [
     file_url: '/documents/yazili-hazirlik-2026-1-1/6_Sinif_1_Donem_1_Yaziliya_Hazirlik_Ogrenci.pdf',
     solution_url: '/documents/yazili-hazirlik-2026-1-1/6_Sinif_1_Donem_1_Yaziliya_Hazirlik_Cozumlu.pdf',
     description:
-      'MEB Ülke Geneli Ortak Yazılı Sınav konu soru dağılım tablosuna tam uyumlu, 8 açık uçlu klasik soru içeren 100 puanlık 1. dönem 1. yazılıya hazırlık sınavı. Kapsanan kazanımlar: M.6.1.2.2 (Bölünebilme Kuralları), M.6.1.2.3 (Asal Sayılar), M.6.1.2.4 (Asal Çarpanlar), M.6.1.2.5 (Ortak Bölenler ve Katlar), M.6.1.3.1 (Kümeler ve Sembolik Gösterim), M.6.1.3.2 (Kümelerde Kesişim ve Birleşim), M.6.1.1.1 (Üslü İfadeler), M.6.1.1.4 (Dört İşlem Problemleri).',
+      'MEB Ülke Geneli Ortak Yazılı Sınav konu soru dağılım tablosuna tam uyumlu, 8 açık uçlu klasik soru içeren 100 puanlık 1. dönem 1. yazılıya hazırlık sınavı. Kapsanan kazanımlar: MAT.6.1.1 (Çarpanlar ve Katlar), MAT.6.1.2 (2, 3, 4, 5, 6, 9 ve 10 ile Bölünebilme Kuralları), MAT.6.1.3 (Asal Sayılar ve Asal Çarpanlar), MAT.6.1.4 (Ortak Bölen ve Ortak Kat Problemleri), MAT.6.6.1 (Deneysel Olasılık), MAT.6.1.5 (Ondalık Gösterimlerde Basamak Çözümlemesi), MAT.6.1.6 (Kesir-Bölme İlişkisi ve Ondalık Karşılaştırma), MAT.6.1.7 (Kesir, Ondalık ve Yüzde Problemleri).',
     answer_key_text:
-      'Soru 1 (10 P): 15 asal sayı değildir; çünkü 1 ve kendisi dışında 3 ve 5 bölenleri vardır (15 = 3 x 5).\n' +
-      'Soru 2 (15 P): B = 4 veya B = 8; A\'nın alabileceği değerler toplamı = 3 + 8 = 11.\n' +
-      'Soru 3 (10 P): 180 = 2² x 3² x 5¹; a = 2, b = 2, c = 1 -> a + b + c = 5.\n' +
-      'Soru 4 (15 P): a) En büyük kare kenarı = 6 cm. b) En az kare sayısı = (48/6) x (30/6) = 8 x 5 = 40 adet.\n' +
-      'Soru 5 (10 P): a) K = {12, 18, 24, 30, 36, 42, 48}. b) s(K) = 7.\n' +
-      'Soru 6 (15 P): a) A ∩ B = {a, l, i}, s(A ∩ B) = 3. b) A ∪ B = {k, a, n, d, i, l, y}, s(A ∪ B) = 7.\n' +
-      'Soru 7 (10 P): a) A grubu hacmi = 2³ = 8 cm³, B grubu hacmi = 3² = 9 cm³. b) A grubu toplam kil = 24 cm³, B grubu toplam kil = 18 cm³. c) Birer küp karşılaştırmasında B grubu küpünde daha fazla kil kullanılmıştır (9 cm³ > 8 cm³).\n' +
-      'Soru 8 (15 P): Toplam ödenen tutar = 5820 TL.',
+      'Soru 1 (10 P): 5 ile 25 arasındaki sıra sayıları: (6, 14), (7, 12), (12, 7), (14, 6), (21, 4) olmak üzere 5 farklı sahne düzeni.\n' +
+      'Soru 2 (10 P): B ∈ {4, 8} (5\'e bölünemediği için B ≠ 0). B = 4 için 7344 -> A = 3, A + B = 7; B = 8 için 7848 -> A = 8, A + B = 16.\n' +
+      'Soru 3 (15 P): a) A = 5, B = 7, b) 210 = 2¹ × 3¹ × 5¹ × 7¹, c) Farklı asal çarpanlar toplamı = 2 + 3 + 5 + 7 = 17.\n' +
+      'Soru 4 (15 P): a) EKOK(18, 24) = 72 dk (1 sa 12 dk), b) 3. birlikte çalma saati = 11.24, c) Ortak bölenler: 1, 2, 3, 6.\n' +
+      'Soru 5 (10 P): İstenen durum = 20 + 14 = 34; a) Kesir: 34/80 = 17/40, b) Ondalık: 0,425, c) Yüzde: %42,5.\n' +
+      'Soru 6 (10 P): a) Derin: (2×10) + (4×1) + (3×1/10) + (8×1/1000), b) Kaan: 24,075 sn, c) 24,075 < 24,308 olduğundan yarışı Kaan daha önce bitirmiştir.\n' +
+      'Soru 7 (10 P): a) 1. grup küp = 27/4 = 6,75 kg, b) 2. grup küp = 34/5 = 6,80 kg, c) 2. gruptaki birer küpte 0,05 kg daha fazla kil kullanılmıştır.\n' +
+      'Soru 8 (20 P): Bağış = 240 adet, Kalan = 360 adet, Kütüphane = 126 adet, Satılan = 234 adet; Toplam gelir = 234 × 42,5 = 9945 TL.',
     is_admin_only: false,
     is_new: true,
     downloads: 0,
@@ -85,15 +85,15 @@ const DOCUMENTS_TO_PUBLISH = [
     file_url: '/documents/yazili-hazirlik-2026-1-1/7_Sinif_1_Donem_1_Yaziliya_Hazirlik_Ogrenci.pdf',
     solution_url: '/documents/yazili-hazirlik-2026-1-1/7_Sinif_1_Donem_1_Yaziliya_Hazirlik_Cozumlu.pdf',
     description:
-      'MEB Senaryo 3 konu soru dağılım tablosuna tam uyumlu, 7 açık uçlu klasik soru içeren 100 puanlık 1. dönem 1. yazılıya hazırlık sınavı. Kapsanan kazanımlar: M.7.1.1.1 (Tam Sayılarla Toplama ve Çıkarma), M.7.1.1.2 (Tam Sayılarla Çarpma ve Bölme), M.7.1.1.3 (Tam Sayıların Kendisiyle Tekrarlı Çarpımı), M.7.1.1.4 (Tam Sayı Problemleri), M.7.1.2.1 (Rasyonel Sayıları Tanıma ve Sayı Doğrusunda Gösterme), M.7.1.2.2 (Rasyonel Sayıların Ondalık Gösterimi).',
+      'MEB Senaryo 3 konu soru dağılım tablosuna tam uyumlu, 7 açık uçlu klasik soru içeren 100 puanlık 1. dönem 1. yazılıya hazırlık sınavı. Kapsanan kazanımlar: MAT.7.1.1 (Rasyonel Sayıları Tanıma ve Sayı Doğrusunda Gösterme), MAT.7.1.2 (Rasyonel Sayıların Sonlu ve Devirli Ondalık Gösterimleri), MAT.7.1.3 (Rasyonel Sayıları Karşılaştırma ve Sıralama), MAT.7.1.4 (Rasyonel Sayılarla Çok Adımlı Gerçek Yaşam Problemleri).',
     answer_key_text:
-      'Soru 1 (15 P): B (-7/3 = -2 1/3) < A (-2 1/4) < C (-5/4 = -1 1/4) < 0 < D (+3/2 = +1 1/2). Sayı doğrusunda doğru işaretleme.\n' +
-      'Soru 2 (15 P): a) 7/20 = 0,35. b) -11/8 = -1,375. c) 5/9 = 0,555... = 0,5 (devirli).\n' +
-      'Soru 3 (10 P): a) (-3)⁴ = +81. b) -2⁶ = -64. c) (-5)³ = -125.\n' +
-      'Soru 4 (15 P): A = -2, B = -18 -> A - B = (-2) - (-18) = +16.\n' +
-      'Soru 5 (15 P): [(-3) x (-8)] ÷ (-4) - (+5) = 24 ÷ (-4) - 5 = -6 - 5 = -11.\n' +
-      'Soru 6 (15 P): Başlangıç: -8°C. Son sıcaklık: -8 + 12 - 9 = -5°C.\n' +
-      'Soru 7 (15 P): a) (-15) + [(+22) + (-8)] = (-15) + (+14) = -1. b) [(-12) + (+12)] + (-7) = 0 + (-7) = -7.',
+      'Soru 1 (10 P): Sayı doğrusunda B (-7/3 = -2,33...), A (-2 1/4 = -2,25), C (-5/4 = -1,25) ve D (+3/2 = +1,5) konumları; hepsi Q elemanıdır, tam bölünmedikleri için Z elemanı değildir.\n' +
+      'Soru 2 (15 P): A = -3 tam 3/4 = -15/4, B = -2 tam 5/6 = -17/6, C = -1 tam 1/2 = -3/2, D = +1 tam 3/4 = +7/4.\n' +
+      'Soru 3 (15 P): 11/8 = 1375/1000 = 1,375; 17/25 = 68/100 = 0,68; -9/16 = -5625/10000 = -0,5625.\n' +
+      'Soru 4 (15 P): a) 7/12 = 0,58333... (3 devirli), 11/12 = 0,91666... (6 devirli), 16/45 = 0,3555... (5 devirli). b) 25. basamaktaki rakamlar sırasıyla 3, 6 ve 5\'tir.\n' +
+      'Soru 5 (15 P): -1,45 < -13/9 < -7/5 = -1,4 < +9/8 (Derya < Boran < Cemil = Ece < Emre).\n' +
+      'Soru 6 (15 P): Payda 36\'da eşitlenir: -11/12 < -5/6 < -7/9 < -13/18. En çok kayıp: Çamlıdere (-11/12), En az kayıp: Demirköprü (-13/18).\n' +
+      'Soru 7 (15 P): a) 1. aşamada harcanan = 1 L, 2. aşamada harcanan = 3/2 L (1,5 L), b) Su eklendikten sonra toplam sıvı = 1 + 3/4 = 7/4 L = 1 tam 3/4 L.',
     is_admin_only: false,
     is_new: true,
     downloads: 0,
@@ -110,17 +110,17 @@ const DOCUMENTS_TO_PUBLISH = [
     file_url: '/documents/yazili-hazirlik-2026-1-1/8_Sinif_1_Donem_1_Yaziliya_Hazirlik_Ogrenci.pdf',
     solution_url: '/documents/yazili-hazirlik-2026-1-1/8_Sinif_1_Donem_1_Yaziliya_Hazirlik_Cozumlu.pdf',
     description:
-      'MEB Senaryo 6 konu soru dağılım tablosuna tam uyumlu, 9 açık uçlu klasik soru içeren 100 puanlık 1. dönem 1. yazılıya hazırlık sınavı. Kapsanan kazanımlar: M.8.1.1.1 (Çarpanlar ve Katlar), M.8.1.1.2 (EBOB ve EKOK), M.8.1.1.3 (Aralarında Asal Sayılar), M.8.1.2.1 (Tam Sayıların Tam Sayı Kuvvetleri), M.8.1.2.2 (Üslü İfadelerle Temel Kurallar ve İşlemler), M.8.1.2.3 (Sayıların Ondalık Gösterimlerini Çözümleme), M.8.1.2.4 (Çok Büyük ve Çok Küçük Sayılar), M.8.1.2.5 (Bilimsel Gösterim).',
+      'MEB Senaryo 6 konu soru dağılım tablosuna tam uyumlu, 9 açık uçlu klasik soru içeren 100 puanlık 1. dönem 1. yazılıya hazırlık sınavı. Kapsanan kazanımlar: M.8.1.1.1 (Asal Çarpanlar ve Üslü Çarpım Gösterimi), M.8.1.1.2 (EBOB ve EKOK Problemleri), M.8.1.1.3 (Aralarında Asal Sayılar), M.8.1.2.1 (Tam Sayıların Tam Sayı Kuvvetleri), M.8.1.2.2 (Üslü İfadelerle İşlemler ve Denk İfadeler), M.8.1.2.4 (10\'un Tam Sayı Kuvvetleriyle İfade Etme), M.8.1.2.5 (Çok Büyük ve Çok Küçük Sayıların Bilimsel Gösterimi).',
     answer_key_text:
-      'Soru 1 (10 P): 72\'nin pozitif tam sayı çarpanları: 1, 2, 3, 4, 6, 8, 9, 12, 18, 24, 36, 72 (12 adet).\n' +
-      'Soru 2 (15 P): EBOB(120, 168) = 24 cm. En az kare sayısı = (120/24) x (168/24) = 5 x 7 = 35 adet.\n' +
-      'Soru 3 (10 P): EKOK(30, 45) = 90 dk (1 saat 30 dk). Birlikte hareket saati: 08.00 + 01.30 = 09.30.\n' +
-      'Soru 4 (10 P): (12, 25) aralarında asaldır çünkü EBOB(12, 25) = 1\'dir. (18, 27) aralarında asal değildir çünkü ortak bölenleri (3 ve 9) vardır.\n' +
-      'Soru 5 (10 P): 3⁻⁴ = 1/81; (-2)⁻⁵ = -1/32; (-4)⁻² = 1/16.\n' +
-      'Soru 6 (15 P): İşlem sonucu = 2¹¹ = 2048.\n' +
-      'Soru 7 (10 P): Sayı = 504,078.\n' +
-      'Soru 8 (10 P): 0,000035 x 10⁸ = 3,5 x 10⁻⁵ x 10⁸ = 3,5 x 10³ = 3500.\n' +
-      'Soru 9 (10 P): 28.000.000.000 = 2,8 x 10¹⁰ (1 <= 2,8 < 10 şartını sağlar).',
+      'Soru 1 (10 P): a) 360 = 2³ × 3² × 5¹, 540 = 2² × 3³ × 5¹, b) İkisinin de pozitif çarpan sayısı = 24, asal olmayan pozitif çarpan sayısı = 24 - 3 = 21.\n' +
+      'Soru 2 (15 P): a) EBOB(168, 210) = 42 cm, b) Toplam fotoğraf sayısı = (168 ÷ 42) × (210 ÷ 42) = 4 × 5 = 20 adet.\n' +
+      'Soru 3 (15 P): EKOK(45, 60) = 180 dk = 3 saat. İlk geçiş 08.15\'ten sonra 20.00\'ye kadar 11.15, 14.15 ve 17.15\'te olmak üzere 3 kez daha birlikte geçerler.\n' +
+      'Soru 4 (10 P): a) 36/84 = 3/7 = 15/35 -> 2x + 3 = 15 -> x = 6, b) EBOB(6, 18) = 6 ≠ 1 olduğundan 6 ile 18 aralarında asal değildir.\n' +
+      'Soru 5 (10 P): a) A = +64, B = -81, C = 1/16, D = -125, b) (64 - 81) + 16 + (-125) = -126.\n' +
+      'Soru 6 (10 P): Toplam veri = 8⁶ × 16⁴ = 2¹⁸ × 2¹⁶ = 2³⁴ bayt; bir sunucudaki veri = 2³⁴ ÷ 4⁵ = 2³⁴ ÷ 2¹⁰ = 2²⁴ bayt.\n' +
+      'Soru 7 (10 P): a) 9⁴ = 3⁸, 27³ = 3⁹, 81² = 3⁸ (1. ve 3. kareler birbirine denktir), b) Çarpım = 3⁸ × 3⁹ × 3⁸ = 3²⁵.\n' +
+      'Soru 8 (10 P): a) a = -5, b = -3, b) a + b = -8 ve a - b = -2.\n' +
+      'Soru 9 (10 P): a) 1 <= 2,5 < 10 ve üs -9 tam sayı olduğu için bilimsel gösterimdir, b) 149 600 000 km = 1,496 × 10¹¹ m, c) Kuvvetler farkı = 11 - (-9) = 20.',
     is_admin_only: false,
     is_new: true,
     downloads: 0,
