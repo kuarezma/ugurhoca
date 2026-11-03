@@ -16,7 +16,7 @@ describe('useAccessibleModal hook', () => {
   });
 
   it('açıldığında body scroll lock uygular ve kapandığında kaldırır', () => {
-    const { unmount } = renderHook(() => useAccessibleModal(true, onCloseMock));
+    const { unmount } = renderHook(() => useAccessibleModal(true, onCloseMock, { enableHistoryBack: false }));
 
     expect(document.body.style.overflow).toBe('hidden');
 
@@ -26,7 +26,7 @@ describe('useAccessibleModal hook', () => {
   });
 
   it('Escape tuşuna basıldığında onClose fonksiyonunu çağırır', () => {
-    const { result } = renderHook(() => useAccessibleModal<HTMLDivElement>(true, onCloseMock));
+    const { result } = renderHook(() => useAccessibleModal<HTMLDivElement>(true, onCloseMock, { enableHistoryBack: false }));
 
     const container = document.createElement('div');
     document.body.appendChild(container);
@@ -66,6 +66,7 @@ describe('useAccessibleModal hook', () => {
   });
 
   it('kullanıcı popstate olmadan kapattığında history.back() ile state temizlenir', () => {
+    vi.useFakeTimers();
     const backSpy = vi.spyOn(window.history, 'back').mockImplementation(() => {});
 
     const { unmount } = renderHook(() =>
@@ -75,5 +76,21 @@ describe('useAccessibleModal hook', () => {
     unmount();
 
     expect(backSpy).toHaveBeenCalledTimes(1);
+    act(() => vi.runAllTimers());
+    vi.useRealTimers();
   });
+  it('önceki modalın programatik geri dönüşü yeni modalı kapatmaz', () => {
+    vi.spyOn(window.history, 'back').mockImplementation(() => {});
+    const first = renderHook(() => useAccessibleModal(true, vi.fn()));
+    first.unmount();
+    const nextClose = vi.fn();
+    const next = renderHook(() => useAccessibleModal(true, nextClose));
+
+    act(() => window.dispatchEvent(new PopStateEvent('popstate')));
+    expect(nextClose).not.toHaveBeenCalled();
+    act(() => window.dispatchEvent(new PopStateEvent('popstate')));
+    expect(nextClose).toHaveBeenCalledTimes(1);
+    next.unmount();
+  });
+
 });

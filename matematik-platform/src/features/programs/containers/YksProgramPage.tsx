@@ -10,6 +10,7 @@ import {
   MapPin,
   Target,
 } from 'lucide-react';
+import { applyAnswerChange } from '@/lib/examInputs';
 import { useTheme } from '@/components/ThemeProvider';
 import { ProgramBackLink } from '@/features/programs/components/ProgramBackLink';
 import { ProgramMetricCard } from '@/features/programs/components/ProgramMetricCard';
@@ -297,29 +298,10 @@ export default function YksWizardPage() {
     const meta = yksSubjects.find((subject) => subject.key === subjectKey);
     if (!meta) return;
 
-    const parsed = Number.parseInt(rawValue || '0', 10);
-    const value = Number.isNaN(parsed) ? 0 : parsed;
-
-    setInputs((prev) => {
-      const current = prev[subjectKey];
-      const next = { ...current };
-
-      if (field === 'correct') {
-        next.correct = clampProgramValue(value, 0, meta.questions);
-        next.wrong = clampProgramValue(
-          next.wrong,
-          0,
-          meta.questions - next.correct,
-        );
-      } else {
-        next.wrong = clampProgramValue(value, 0, meta.questions - next.correct);
-      }
-
-      return {
-        ...prev,
-        [subjectKey]: next,
-      };
-    });
+    setInputs((prev) => ({
+      ...prev,
+      [subjectKey]: applyAnswerChange(prev[subjectKey], field, rawValue, meta.questions),
+    }));
   };
 
   const steps: ProgramStep[] = [

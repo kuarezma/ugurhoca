@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { applyAnswerChange } from '@/lib/examInputs';
 import Link from 'next/link';
 import {
   School,
@@ -45,25 +46,13 @@ export function LgsCalculatorContainer() {
   const handleInputChange = (
     key: LgsSubjectKey,
     field: 'correct' | 'wrong',
-    val: number
+    rawValue: string | number
   ) => {
     const maxQ = lgsSubjects.find((s) => s.key === key)?.questions || 20;
-    const clampedVal = Math.max(0, Math.min(maxQ, val || 0));
-
-    setInputs((prev) => {
-      const current = prev[key];
-      const nextObj = { ...current, [field]: clampedVal };
-
-      if (nextObj.correct + nextObj.wrong > maxQ) {
-        if (field === 'correct') {
-          nextObj.wrong = maxQ - nextObj.correct;
-        } else {
-          nextObj.correct = maxQ - nextObj.wrong;
-        }
-      }
-
-      return { ...prev, [key]: nextObj };
-    });
+    setInputs((prev) => ({
+      ...prev,
+      [key]: applyAnswerChange(prev[key], field, rawValue, maxQ),
+    }));
   };
 
   const handleReset = () => {
@@ -170,7 +159,7 @@ export function LgsCalculatorContainer() {
                           value={item.correct || ''}
                           placeholder="0"
                           onChange={(e) =>
-                            handleInputChange(sub.key, 'correct', parseInt(e.target.value, 10))
+                            handleInputChange(sub.key, 'correct', e.target.value)
                           }
                           aria-label={`${sub.label} doğru`}
                           className="h-9 w-12 rounded-xl border border-emerald-500/40 bg-surface-1 text-center font-mono font-bold text-accent-success-ink dark:text-emerald-300 focus:outline-none focus:ring-2 focus:ring-emerald-500"
@@ -183,7 +172,7 @@ export function LgsCalculatorContainer() {
                           value={item.wrong || ''}
                           placeholder="0"
                           onChange={(e) =>
-                            handleInputChange(sub.key, 'wrong', parseInt(e.target.value, 10))
+                            handleInputChange(sub.key, 'wrong', e.target.value)
                           }
                           aria-label={`${sub.label} yanlış`}
                           className="h-9 w-12 rounded-xl border border-rose-500/40 bg-surface-1 text-center font-mono font-bold text-rose-600 dark:text-rose-300 focus:outline-none focus:ring-2 focus:ring-rose-500"

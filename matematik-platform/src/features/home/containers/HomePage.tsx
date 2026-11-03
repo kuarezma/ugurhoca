@@ -121,8 +121,9 @@ export default function HomePage({
   const [isScratchpadOpen, setIsScratchpadOpen] = useState(false);
   const [calculatorState, setCalculatorState] = useState<{
     isOpen: boolean;
+    hasOpened: boolean;
     tab: 'lgs' | 'yks';
-  }>({ isOpen: false, tab: 'lgs' });
+  }>({ isOpen: false, hasOpened: false, tab: 'lgs' });
   const [isPomodoroOpen, setIsPomodoroOpen] = useState(false);
   const [isChecklistOpen, setIsChecklistOpen] = useState(false);
   const [isGraphOpen, setIsGraphOpen] = useState(false);
@@ -137,9 +138,11 @@ export default function HomePage({
       const customEvent = e as CustomEvent<{ tool: string; tab?: 'lgs' | 'yks' }>;
       const tool = customEvent.detail?.tool;
       if (tool === 'calculator') {
+        const nextTab = customEvent.detail?.tab === 'yks' ? 'yks' : 'lgs';
         setCalculatorState({
           isOpen: true,
-          tab: customEvent.detail?.tab || 'lgs',
+          hasOpened: true,
+          tab: nextTab,
         });
       } else if (tool === 'pomodoro') {
         setIsPomodoroOpen(true);
@@ -172,7 +175,8 @@ export default function HomePage({
       const params = new URLSearchParams(window.location.search);
       const toolParam = params.get('tool');
       if (toolParam === 'calculator') {
-        setCalculatorState({ isOpen: true, tab: (params.get('tab') as 'lgs' | 'yks') || 'lgs' });
+        const nextTab = params.get('tab') === 'yks' ? 'yks' : 'lgs';
+        setCalculatorState({ isOpen: true, hasOpened: true, tab: nextTab });
       } else if (toolParam === 'pomodoro') {
         setIsPomodoroOpen(true);
       } else if (toolParam === 'checklist') {
@@ -206,7 +210,11 @@ export default function HomePage({
             onOpenFlashcards={() => setIsFlashcardsOpen(true)}
             onOpenScratchpad={() => setIsScratchpadOpen(true)}
             onOpenCalculator={(tab) =>
-              setCalculatorState({ isOpen: true, tab: tab || 'lgs' })
+              setCalculatorState({
+                isOpen: true,
+                hasOpened: true,
+                tab: tab === 'yks' ? 'yks' : 'lgs',
+              })
             }
             onOpenPomodoro={() => setIsPomodoroOpen(true)}
             onOpenChecklist={() => setIsChecklistOpen(true)}
@@ -224,7 +232,13 @@ export default function HomePage({
 
         {/* 3. LGS ve YKS Sayacı */}
         <HomeExamCountdownSection
-          onOpenCalculator={(tab) => setCalculatorState({ isOpen: true, tab })}
+          onOpenCalculator={(tab) =>
+            setCalculatorState({
+              isOpen: true,
+              hasOpened: true,
+              tab: tab === 'yks' ? 'yks' : 'lgs',
+            })
+          }
           userGrade={user?.grade}
         />
 
@@ -256,7 +270,7 @@ export default function HomePage({
           onClose={() => setIsScratchpadOpen(false)}
         />
       ) : null}
-      {calculatorState.isOpen ? (
+      {calculatorState.hasOpened ? (
         <ExamScoreCalculatorModal
           isOpen={calculatorState.isOpen}
           initialTab={calculatorState.tab}

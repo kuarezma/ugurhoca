@@ -32,6 +32,16 @@ describe('ExamScoreCalculatorModal', () => {
     expect(onClose).toHaveBeenCalled();
   });
 
+  it('doğru sayısı artınca yanlış sayısını otomatik azaltır', () => {
+    render(<ExamScoreCalculatorModal isOpen={true} onClose={vi.fn()} />);
+    const correct = screen.getByLabelText('Türkçe doğru sayısı');
+    const wrong = screen.getByLabelText('Türkçe yanlış sayısı');
+    fireEvent.change(wrong, { target: { value: '10' } });
+    fireEvent.change(correct, { target: { value: '15' } });
+    expect(correct).toHaveValue(15);
+    expect(wrong).toHaveValue(5);
+  });
+
   it('renders A4 printable diagnostic report card layout and allows printing', () => {
     const printSpy = vi.spyOn(window, 'print').mockImplementation(() => {});
     render(<ExamScoreCalculatorModal isOpen={true} onClose={vi.fn()} initialTab="lgs" />);

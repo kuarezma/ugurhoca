@@ -19,6 +19,7 @@ import {
   Flame,
   Printer,
 } from 'lucide-react';
+import { applyAnswerChange } from '@/lib/examInputs';
 import { useAccessibleModal } from '@/hooks/useAccessibleModal';
 import {
   getSavedExamTrials,
@@ -76,6 +77,10 @@ export function ExamScoreCalculatorModal({
   const [activeTab, setActiveTab] = useState<'lgs' | 'yks'>(initialTab);
   const titleId = useId();
 
+  useEffect(() => {
+    setActiveTab(initialTab);
+  }, [initialTab]);
+
   // LGS State
   const [lgsInputs, setLgsInputs] = useState<LgsInputs>(createInitialLgsInputs);
 
@@ -97,9 +102,14 @@ export function ExamScoreCalculatorModal({
   }, [activeTab]);
 
   useEffect(() => {
-    if (isOpen) {
-      reloadTrials();
-    }
+    if (!isOpen) return;
+    reloadTrials();
+    window.addEventListener('ugurhoca:exam-trials-updated', reloadTrials);
+    window.addEventListener('storage', reloadTrials);
+    return () => {
+      window.removeEventListener('ugurhoca:exam-trials-updated', reloadTrials);
+      window.removeEventListener('storage', reloadTrials);
+    };
   }, [isOpen, reloadTrials]);
 
   // LGS Calculations
@@ -174,47 +184,25 @@ export function ExamScoreCalculatorModal({
   const handleLgsChange = (
     subject: LgsSubjectKey,
     field: 'correct' | 'wrong',
-    value: number,
+    value: string | number,
     maxQuestions: number,
   ) => {
-    setLgsInputs((prev) => {
-      const current = prev[subject] || { correct: 0, wrong: 0 };
-      const nextVal = Math.max(0, Math.min(maxQuestions, Number.isNaN(value) ? 0 : value));
-      const otherVal = field === 'correct' ? current.wrong : current.correct;
-
-      // Toplam doğru + yanlış soru sayısını aşamaz
-      const clampedNext = nextVal + otherVal > maxQuestions ? maxQuestions - otherVal : nextVal;
-
-      return {
-        ...prev,
-        [subject]: {
-          ...current,
-          [field]: Math.max(0, clampedNext),
-        },
-      };
-    });
+    setLgsInputs((prev) => ({
+      ...prev,
+      [subject]: applyAnswerChange(prev[subject], field, value, maxQuestions),
+    }));
   };
 
   const handleYksChange = (
     subject: YksSubjectKey,
     field: 'correct' | 'wrong',
-    value: number,
+    value: string | number,
     maxQuestions: number,
   ) => {
-    setYksInputs((prev) => {
-      const current = prev[subject] || { correct: 0, wrong: 0 };
-      const nextVal = Math.max(0, Math.min(maxQuestions, Number.isNaN(value) ? 0 : value));
-      const otherVal = field === 'correct' ? current.wrong : current.correct;
-      const clampedNext = nextVal + otherVal > maxQuestions ? maxQuestions - otherVal : nextVal;
-
-      return {
-        ...prev,
-        [subject]: {
-          ...current,
-          [field]: Math.max(0, clampedNext),
-        },
-      };
-    });
+    setYksInputs((prev) => ({
+      ...prev,
+      [subject]: applyAnswerChange(prev[subject], field, value, maxQuestions),
+    }));
   };
 
   const peakTrial = useMemo(() => {
@@ -441,7 +429,7 @@ export function ExamScoreCalculatorModal({
                 {activeTab === 'lgs' ? 'Tahmini Yüzdelik' : 'Başarı Sırası'}
               </div>
               <div className="mt-1 text-2xl font-black text-emerald-700">
-                {activeTab === 'lgs' ? `%${lgsResult.estimatedPercentile}` : yksResult.activeRow.placementRank.toLocaleString('tr-TR')}
+                {activeTab === 'lgs' ? lgsResult.estimatedPercentile : yksResult.activeRow.placementRank.toLocaleString('tr-TR')}
               </div>
               <div className="text-[9px] text-gray-500">
                 {activeTab === 'lgs' ? lgsResult.targetBand : 'Tahmini Sıralama'}
@@ -910,7 +898,7 @@ export function ExamScoreCalculatorModal({
                             value={current.correct || ''}
                             placeholder="0"
                             aria-label={`${sub.label} doğru sayısı`}
-                            onChange={(e) => handleLgsChange(sub.key, 'correct', parseInt(e.target.value, 10), sub.questions)}
+                            onChange={(e) => handleLgsChange(sub.key, 'correct', e.target.value, sub.questions)}
                             className="w-full min-w-0 rounded-lg sm:rounded-xl border border-slate-200 dark:border-white/10 bg-white dark:bg-slate-800 px-1 sm:px-2 py-1 sm:py-1.5 text-center text-xs sm:text-sm font-bold text-slate-900 dark:text-white focus:border-indigo-500 focus:outline-none"
                           />
                         </div>
@@ -922,7 +910,7 @@ export function ExamScoreCalculatorModal({
                             value={current.wrong || ''}
                             placeholder="0"
                             aria-label={`${sub.label} yanlış sayısı`}
-                            onChange={(e) => handleLgsChange(sub.key, 'wrong', parseInt(e.target.value, 10), sub.questions)}
+                            onChange={(e) => handleLgsChange(sub.key, 'wrong', e.target.value, sub.questions)}
                             className="w-full min-w-0 rounded-lg sm:rounded-xl border border-slate-200 dark:border-white/10 bg-white dark:bg-slate-800 px-1 sm:px-2 py-1 sm:py-1.5 text-center text-xs sm:text-sm font-bold text-red-500 focus:border-red-500 focus:outline-none"
                           />
                         </div>
@@ -1259,8 +1247,8 @@ export function ExamScoreCalculatorModal({
                               placeholder="D"
                               aria-label={`${meta?.label || 'Test'} doğru sayısı`}
                               value={current.correct || ''}
-                              onChange={(e) => handleYksChange(key, 'correct', parseInt(e.target.value, 10), meta?.questions || 40)}
-                              className="w-10 sm:w-12 rounded-lg border border-slate-200 dark:border-white/10 bg-white dark:bg-slate-800 p-1 text-center font-bold text-xs"
+                              onChange={(e) => handleYksChange(key, 'correct', e.target.value, meta?.questions || 40)}
+                              className="w-10 sm:w-12 rounded-lg border border-slate-200 dark:border-white/10 bg-white dark:bg-slate-800 p-1 text-center font-bold text-xs text-slate-900 dark:text-white"
                             />
                             <input
                               type="number"
@@ -1269,7 +1257,7 @@ export function ExamScoreCalculatorModal({
                               placeholder="Y"
                               aria-label={`${meta?.label || 'Test'} yanlış sayısı`}
                               value={current.wrong || ''}
-                              onChange={(e) => handleYksChange(key, 'wrong', parseInt(e.target.value, 10), meta?.questions || 40)}
+                              onChange={(e) => handleYksChange(key, 'wrong', e.target.value, meta?.questions || 40)}
                               className="w-10 sm:w-12 rounded-lg border border-slate-200 dark:border-white/10 bg-white dark:bg-slate-800 p-1 text-center font-bold text-red-500 text-xs"
                             />
                             <span className="w-10 sm:w-12 text-right font-bold text-indigo-600 dark:text-indigo-400 text-xs">
@@ -1306,8 +1294,8 @@ export function ExamScoreCalculatorModal({
                               placeholder="D"
                               aria-label={`${meta?.label || 'Test'} doğru sayısı`}
                               value={current.correct || ''}
-                              onChange={(e) => handleYksChange(key, 'correct', parseInt(e.target.value, 10), meta?.questions || 40)}
-                              className="w-10 sm:w-12 rounded-lg border border-slate-200 dark:border-white/10 bg-white dark:bg-slate-800 p-1 text-center font-bold text-xs"
+                              onChange={(e) => handleYksChange(key, 'correct', e.target.value, meta?.questions || 40)}
+                              className="w-10 sm:w-12 rounded-lg border border-slate-200 dark:border-white/10 bg-white dark:bg-slate-800 p-1 text-center font-bold text-xs text-slate-900 dark:text-white"
                             />
                             <input
                               type="number"
@@ -1316,7 +1304,7 @@ export function ExamScoreCalculatorModal({
                               placeholder="Y"
                               aria-label={`${meta?.label || 'Test'} yanlış sayısı`}
                               value={current.wrong || ''}
-                              onChange={(e) => handleYksChange(key, 'wrong', parseInt(e.target.value, 10), meta?.questions || 40)}
+                              onChange={(e) => handleYksChange(key, 'wrong', e.target.value, meta?.questions || 40)}
                               className="w-10 sm:w-12 rounded-lg border border-slate-200 dark:border-white/10 bg-white dark:bg-slate-800 p-1 text-center font-bold text-red-500 text-xs"
                             />
                             <span className="w-10 sm:w-12 text-right font-bold text-purple-600 dark:text-purple-400 text-xs">

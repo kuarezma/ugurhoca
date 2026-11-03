@@ -2,6 +2,10 @@
 
 import { useEffect, useRef } from 'react';
 
+let pendingProgrammaticBackCount = 0;
+const programmaticPopEvents = new WeakSet<Event>();
+const pendingBackTokens = new Set<object>();
+
 const FOCUSABLE_SELECTOR = [
   'a[href]',
   'button:not([disabled])',
@@ -110,13 +114,21 @@ export const useAccessibleModal = <T extends HTMLElement>(
     acquireBodyScrollLock();
 
     // Mobil geri tuşu ve tarayıcı back senkronizasyonu
-    const handlePopState = () => {
+    const stateId = `modal_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`;
+    const handlePopState = (event: PopStateEvent) => {
+      if (programmaticPopEvents.has(event)) return;
+      if (pendingProgrammaticBackCount > 0) {
+        const token = pendingBackTokens.values().next().value;
+        if (token) pendingBackTokens.delete(token);
+        pendingProgrammaticBackCount -= 1;
+        programmaticPopEvents.add(event);
+        return;
+      }
       isPushedRef.current = false;
       onCloseRef.current();
     };
 
     if (enableHistoryBack && typeof window !== 'undefined') {
-      const stateId = `modal_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`;
       try {
         window.history.pushState({ modalState: stateId }, '', window.location.href);
         isPushedRef.current = true;
@@ -180,12 +192,27 @@ export const useAccessibleModal = <T extends HTMLElement>(
         window.removeEventListener('popstate', handlePopState);
         // Eğer kullanıcı geri tuşuyla değil, buton/Escape/backdrop ile kapattıysa
         // tarayıcı geçmişinde fazladan duran kaydı geri al
-        if (isPushedRef.current) {
+        if (isPushedRef.current &&
+          (!window.history.state?.modalState || window.history.state.modalState === stateId)) {
           isPushedRef.current = false;
           try {
+            const token = {};
+            pendingBackTokens.add(token);
+            pendingProgrammaticBackCount += 1;
+            // Olay gelmezse yalnızca bu geri dönüşün sayacını temizle.
+            const resetPending = () => {
+              setTimeout(() => {
+                if (pendingBackTokens.delete(token)) pendingProgrammaticBackCount -= 1;
+              }, 0);
+            };
+            window.addEventListener('popstate', resetPending, { once: true });
+            setTimeout(() => {
+              window.removeEventListener('popstate', resetPending);
+              if (pendingBackTokens.delete(token)) pendingProgrammaticBackCount -= 1;
+            }, 1000);
             window.history.back();
           } catch {
-            // ignore
+            // Sayaç zaman aşımında temizlenir.
           }
         }
       }

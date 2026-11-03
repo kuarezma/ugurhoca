@@ -60,7 +60,8 @@ export function ProgramSubjectInputCard({
               type="number"
               min={0}
               max={maxQuestions}
-              value={value.correct}
+              value={value.correct || ''}
+              placeholder="0"
               onChange={(event) => onChange('correct', event.target.value)}
               className={fieldClassName}
             />
@@ -76,8 +77,9 @@ export function ProgramSubjectInputCard({
               id={`${idPrefix}-${subjectKey}-wrong`}
               type="number"
               min={0}
-              max={maxQuestions - value.correct}
-              value={value.wrong}
+              max={maxQuestions}
+              value={value.wrong || ''}
+              placeholder="0"
               onChange={(event) => onChange('wrong', event.target.value)}
               className={fieldClassName}
             />
