@@ -89,7 +89,7 @@ export default function AdminMessageForm({
             <img
               src={adminMsgImagePreview}
               alt="Önizleme"
-              className="max-h-32 rounded-lg border border-slate-200 dark:border-white/10"
+              className="aspect-video w-56 max-w-full max-h-32 object-contain rounded-lg border border-slate-200 dark:border-white/10"
             />
             <button
               type="button"

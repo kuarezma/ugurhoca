@@ -63,7 +63,7 @@
   --border-default: #7C8AA3;
   --border-strong: #9AA7BA;
   --accent-fg: var(--brand-primary-ink);
-  --accent-bg: rgba(16, 185, 129, 0.18);
+  --accent-bg: rgba(16, 185, 129, 0.14);
   --tone-success-fg: #bbf7d0;
   --tone-success-bg: rgba(88, 204, 2, 0.18);
   --tone-success-border: #46a302;
@@ -1071,8 +1071,9 @@ input[type='number']::-webkit-inner-spin-button {
 }
 
 .defer-section {
-  content-visibility: auto;
-  contain-intrinsic-size: 1px 720px;
+  /* content-visibility: auto 720px intrinsic-size kaldırıldı: 52px-280px yüksekliğindeki
+     bölümlerde kaydırma sırasında 500px+ layout shift (zıplama) ve ekran dışı
+     HomeFooter tema geçiş gecikmesi yaratıyordu. */
 }
 
 .defer-card {

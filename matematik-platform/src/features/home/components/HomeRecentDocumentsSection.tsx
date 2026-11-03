@@ -249,7 +249,7 @@ export function HomeRecentDocumentsSection({
             className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-bold border transition-all ${
               selectedGrade === 'all'
                 ? 'bg-accent-bg text-accent-fg border-default'
-                : 'bg-surface-1 text-secondary border-subtle hover:border-strong'
+                : 'bg-surface-1 text-secondary border-default hover:border-strong'
             }`}
           >
             <span>Tümü</span>
@@ -273,7 +273,7 @@ export function HomeRecentDocumentsSection({
                 className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-bold border transition-all ${
                   isSelected
                     ? style.pillActive
-                    : 'bg-surface-1 text-secondary border-subtle hover:border-strong'
+                    : 'bg-surface-1 text-secondary border-default hover:border-strong'
                 }`}
               >
                 <span
@@ -407,7 +407,7 @@ export function HomeRecentDocumentsSection({
                 <div className="pt-3 border-t border-subtle/80 space-y-2.5">
                   <div className="flex items-center justify-between text-xs font-semibold text-tertiary">
                     <span className="inline-flex items-center gap-1">
-                      <Calendar className="h-3.5 w-3.5 text-sky-600 dark:text-sky-400" />
+                      <Calendar className="h-3.5 w-3.5 shrink-0 text-sky-600 dark:text-sky-400" />
                       <span>{formatContentDate(doc.created_at)}</span>
                     </span>
                     <span className="text-secondary font-bold">
@@ -415,10 +415,10 @@ export function HomeRecentDocumentsSection({
                     </span>
                   </div>
 
-                  <div className="flex flex-wrap items-center gap-2">
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
                     <SafeLink
                       href={`/icerikler?id=${doc.id}`}
-                      className="flex-1 inline-flex items-center justify-center gap-1.5 rounded-xl border border-default bg-accent-bg hover:opacity-90 px-3 py-2 text-xs font-bold text-accent-fg transition-colors"
+                      className="inline-flex items-center justify-center gap-1.5 rounded-xl border border-default bg-accent-bg hover:opacity-90 px-3 py-2 text-xs font-bold text-accent-fg transition-colors"
                     >
                       <Eye className="h-3.5 w-3.5 shrink-0" />
                       <span>İncele</span>
@@ -429,7 +429,7 @@ export function HomeRecentDocumentsSection({
                         href={doc.file_url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="flex-1 inline-flex items-center justify-center gap-1.5 rounded-xl border border-subtle bg-surface-2 hover:bg-surface-3 px-3 py-2 text-xs font-bold text-primary transition-colors"
+                        className="inline-flex items-center justify-center gap-1.5 rounded-xl border border-subtle bg-surface-2 hover:bg-surface-3 px-3 py-2 text-xs font-bold text-primary transition-colors"
                       >
                         <FileText className="h-3.5 w-3.5 shrink-0 text-sky-600 dark:text-sky-400" />
                         <span>Öğrenci PDF</span>
@@ -441,7 +441,7 @@ export function HomeRecentDocumentsSection({
                         href={doc.solution_url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="flex-1 inline-flex items-center justify-center gap-1.5 rounded-xl bg-accent-bg text-accent-fg hover:opacity-90 border border-default px-3 py-2 text-xs font-bold shadow-xs transition-all"
+                        className="inline-flex items-center justify-center gap-1.5 rounded-xl bg-accent-bg text-accent-fg hover:opacity-90 border border-default px-3 py-2 text-xs font-bold shadow-xs transition-all"
                       >
                         <FileCheck2 className="h-3.5 w-3.5 shrink-0" />
                         <span>Çözüm PDF</span>

@@ -296,7 +296,7 @@ export default function ProgramsHubPage() {
         <motion.section
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
-          className="rounded-3xl border border-slate-200/90 dark:border-white/10 bg-white/95 dark:bg-slate-900/90 p-6 sm:p-8 shadow-xl backdrop-blur-xl relative overflow-hidden"
+          className="rounded-3xl border border-slate-200/90 dark:border-white/10 bg-surface-1 p-6 sm:p-8 shadow-xl backdrop-blur-xl relative overflow-hidden"
         >
           <div className="flex items-start justify-between gap-4">
             <div>

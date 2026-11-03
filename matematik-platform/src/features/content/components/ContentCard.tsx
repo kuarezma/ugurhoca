@@ -128,9 +128,9 @@ function ContentCard({
         } ${viewMode === 'grid' ? 'sm:min-w-[130px]' : 'sm:min-w-[160px]'}`}
       >
         {content.type === 'ders-videolari' ? (
-          <Play className="w-4 h-4 text-purple-600 dark:text-purple-400" />
+          <Play className="shrink-0 w-4 h-4 text-purple-600 dark:text-purple-400" />
         ) : (
-          <Eye className="w-4 h-4 text-purple-600 dark:text-purple-400" />
+          <Eye className="shrink-0 w-4 h-4 text-purple-600 dark:text-purple-400" />
         )}
         {content.type === 'ders-videolari' ? 'İzle' : 'Önizle'}
       </motion.button>
@@ -141,7 +141,7 @@ function ContentCard({
           onClick={() => onDownload(content)}
           className="col-span-1 flex w-full items-center justify-center gap-2 rounded-2xl px-4 py-2.5 sm:py-3 text-xs sm:text-sm font-bold transition-all sm:w-auto sm:px-5 bg-gradient-to-r from-emerald-700 to-teal-800 hover:from-emerald-800 hover:to-teal-900 text-white dark:text-slate-950 dark:from-emerald-400 dark:to-teal-400 dark:hover:from-emerald-300 dark:hover:to-teal-300 shadow-md shadow-emerald-700/25 hover:-translate-y-0.5 active:translate-y-0.5"
         >
-          <Download className="w-4 h-4" /> İndir
+          <Download className="shrink-0 w-4 h-4" /> İndir
         </motion.button>
       )}
       {user?.isAdmin && (
@@ -153,7 +153,7 @@ function ContentCard({
             title="Düzenle"
             className="flex-1 sm:flex-none flex items-center justify-center rounded-2xl border border-sky-200 dark:border-sky-800/60 bg-sky-50/80 dark:bg-sky-950/30 p-2.5 text-sky-700 dark:text-sky-300 transition-all hover:bg-sky-600 hover:border-sky-500 hover:text-white"
           >
-            <Edit3 className="w-4 h-4" />
+            <Edit3 className="shrink-0 w-4 h-4" />
           </motion.button>
           <motion.button
             whileHover={{ scale: 1.05 }}
@@ -162,7 +162,7 @@ function ContentCard({
             title="Sil"
             className="flex-1 sm:flex-none flex items-center justify-center rounded-2xl border border-red-200 dark:border-red-800/60 bg-red-50/80 dark:bg-red-950/30 p-2.5 text-red-700 dark:text-red-300 transition-all hover:bg-red-600 hover:border-red-600 hover:text-white"
           >
-            <Trash2 className="w-4 h-4" />
+            <Trash2 className="shrink-0 w-4 h-4" />
           </motion.button>
         </div>
       )}
@@ -182,7 +182,7 @@ function ContentCard({
           title="Görüntülenme sayısı"
           className="flex items-center gap-1.5 transition-colors hover:text-purple-600 dark:hover:text-purple-400"
         >
-          <Eye className="w-4 h-4 text-purple-600 dark:text-purple-400" />
+          <Eye className="shrink-0 w-4 h-4 text-purple-600 dark:text-purple-400" />
           <span>{content.views || 0}</span>
         </button>
 
@@ -219,12 +219,12 @@ function ContentCard({
             title="İndirme sayısı"
             className="flex items-center gap-1.5 transition-colors hover:text-emerald-600 dark:hover:text-emerald-400"
           >
-            <Download className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
+            <Download className="shrink-0 w-4 h-4 text-emerald-600 dark:text-emerald-400" />
             <span>{content.downloads || 0}</span>
           </button>
         ) : (
           <div className="flex items-center gap-1.5">
-            <Download className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
+            <Download className="shrink-0 w-4 h-4 text-emerald-600 dark:text-emerald-400" />
             <span>{content.downloads || 0}</span>
           </div>
         )}
@@ -274,9 +274,9 @@ function ContentCard({
           }`}
         >
           {copiedLink ? (
-            <Check className="w-3.5 h-3.5 text-purple-600 dark:text-purple-300" />
+            <Check className="shrink-0 w-3.5 h-3.5 text-purple-600 dark:text-purple-300" />
           ) : (
-            <Share2 className="w-3.5 h-3.5 text-purple-600 dark:text-purple-400" />
+            <Share2 className="shrink-0 w-3.5 h-3.5 text-purple-600 dark:text-purple-400" />
           )}
           <span className="text-xs">
             {copiedLink ? 'Kopyalandı!' : 'Paylaş'}

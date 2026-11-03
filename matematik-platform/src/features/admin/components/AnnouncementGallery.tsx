@@ -49,7 +49,7 @@ export function AnnouncementGallery({
         src={getRemoteImageSrc(resolvedImages[current] || images[current])}
         alt={title}
         fill
-        sizes="100vw"
+        sizes="(max-width: 768px) 100vw, 800px"
         className="absolute inset-0 h-full w-full object-cover"
         unoptimized
       />

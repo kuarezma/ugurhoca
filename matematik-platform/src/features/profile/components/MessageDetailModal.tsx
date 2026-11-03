@@ -64,7 +64,7 @@ export default function MessageDetailModal({
               alt="Mesaj resmi"
               loading="lazy"
               decoding="async"
-              className="max-h-64 rounded-lg border border-slate-200 dark:border-white/10"
+              className="aspect-video w-full max-w-[448px] max-h-64 object-contain rounded-lg border border-slate-200 dark:border-white/10"
             />
           </div>
         ) : null}

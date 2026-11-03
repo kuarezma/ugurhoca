@@ -190,7 +190,7 @@ const renderRichAnnouncementContent = (content?: string | null) => {
             href={url}
             target="_blank"
             rel="noreferrer"
-            className="inline-flex items-center gap-2 mt-1 mb-3 px-4 py-2 rounded-xl bg-purple-600/10 hover:bg-purple-600/20 text-purple-700 dark:text-purple-300 border border-purple-500/30 text-xs sm:text-sm font-semibold transition-colors"
+            className="inline-flex items-center gap-2 mt-1 mb-3 px-4 py-2 rounded-xl bg-accent-bg hover:opacity-90 text-accent-fg border border-default text-xs sm:text-sm font-semibold transition-colors"
           >
             <FileDoc className="w-4 h-4 shrink-0" />
             {label}
@@ -306,7 +306,7 @@ export function HomeAnnouncementModal({
             exit={{ scale: 0.95, opacity: 0, y: 20 }}
             onClick={(event) => event.stopPropagation()}
             ref={modalRef}
-            className="w-full max-w-5xl max-h-[90vh] overflow-y-auto rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 shadow-2xl"
+            className="w-full max-w-5xl max-h-[90vh] overflow-y-auto rounded-3xl bg-surface-1 border border-default shadow-2xl"
             role="dialog"
             aria-modal="true"
             aria-labelledby="duyuru-baslik"
@@ -314,7 +314,7 @@ export function HomeAnnouncementModal({
           >
             {images.length > 0 && isRich ? (
               <div>
-                <div className="relative h-48 sm:h-64 w-full overflow-hidden bg-slate-950">
+                <div className="relative h-48 sm:h-64 w-full overflow-hidden bg-surface-2">
                   <Image
                     src={proxiedImageSrc(images[0])}
                     alt={announcement.title}

@@ -51,7 +51,7 @@ export function HomeNavbar({ onLogout, user }: HomeNavbarProps) {
               <span className="font-display text-base sm:text-xl font-bold leading-tight truncate text-primary">
                 Uğur Hoca
               </span>
-              <span className="text-xs sm:text-xs font-black text-secondary uppercase tracking-wider truncate">
+              <span className="hidden sm:block text-xs font-black text-secondary uppercase tracking-wider truncate">
                 Matematik Maceraları
               </span>
             </div>

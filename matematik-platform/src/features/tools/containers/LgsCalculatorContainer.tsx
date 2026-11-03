@@ -155,14 +155,14 @@ export function LgsCalculatorContainer() {
                       key={sub.key}
                       className="flex items-center justify-between gap-2 rounded-2xl border border-default bg-surface-2 p-3 text-xs"
                     >
-                      <div className="flex-1">
-                        <span className="font-bold text-primary block">{sub.label}</span>
+                      <div className="flex-1 min-w-0">
+                        <span className="font-bold text-primary block break-words">{sub.label}</span>
                         <span className="text-[10px] text-secondary">
                           {sub.questions} Soru · Katsayı: {sub.coefficient}x
                         </span>
                       </div>
 
-                      <div className="flex items-center gap-3">
+                      <div className="flex shrink-0 items-center gap-1.5 sm:gap-3">
                         <input
                           type="number"
                           min={0}

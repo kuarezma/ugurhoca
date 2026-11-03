@@ -140,7 +140,7 @@ export function ToolsHubContainer() {
               <Link
                 key={tool.id}
                 href={tool.href}
-                className="group relative flex flex-col justify-between rounded-3xl border border-slate-200/90 dark:border-white/10 bg-white/95 dark:bg-slate-900/90 p-6 sm:p-8 shadow-xl backdrop-blur-xl transition-all duration-300 hover:border-indigo-500/50 hover:shadow-2xl hover:-translate-y-1 overflow-hidden"
+                className="group relative flex flex-col justify-between rounded-3xl border border-slate-200/90 dark:border-white/10 bg-surface-1 p-6 sm:p-8 shadow-xl backdrop-blur-xl transition-all duration-300 hover:border-indigo-500/50 hover:shadow-2xl hover:-translate-y-1 overflow-hidden"
               >
                 {/* Top accent gradient line */}
                 <div className={`absolute inset-x-0 top-0 h-1 bg-gradient-to-r ${tool.gradient}`} />
@@ -178,7 +178,7 @@ export function ToolsHubContainer() {
         </div>
 
         {/* Bottom Platform Invitation Banner */}
-        <div className="mt-12 rounded-3xl border border-slate-200/90 dark:border-white/10 bg-white/95 dark:bg-slate-900/90 p-6 sm:p-8 text-center backdrop-blur-xl shadow-xl relative overflow-hidden">
+        <div className="mt-12 rounded-3xl border border-slate-200/90 dark:border-white/10 bg-surface-1 p-6 sm:p-8 text-center backdrop-blur-xl shadow-xl relative overflow-hidden">
           <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/5 to-purple-500/5 pointer-events-none" />
           <div className="flex justify-center mb-3">
             <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-indigo-500/15 text-indigo-600 dark:text-indigo-400 shadow-xs">

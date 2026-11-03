@@ -12,7 +12,7 @@ type HomeFooterProps = {
 export function HomeFooter(_props: HomeFooterProps) {
   return (
     <footer
-      className="border-t border-subtle mt-12 px-4 pt-12 pb-[calc(5rem+env(safe-area-inset-bottom))] md:pb-12 bg-surface-2 font-sans transition-colors duration-300"
+      className="border-t border-subtle mt-12 px-4 pt-12 pb-[calc(5rem+env(safe-area-inset-bottom))] md:pb-12 bg-surface-2 font-sans"
     >
       <div className="mx-auto max-w-6xl">
         <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4 pb-8 border-b border-subtle">
@@ -51,32 +51,32 @@ export function HomeFooter(_props: HomeFooterProps) {
             </h4>
             <ul className="space-y-1.5 text-xs text-secondary">
               <li>
-                <SafeLink href="/icerikler" className="hover:text-brand-ink transition">
+                <SafeLink href="/icerikler" className="hover:text-primary transition">
                   Ders Notları & PDF'ler
                 </SafeLink>
               </li>
               <li>
-                <SafeLink href="/testler" className="hover:text-brand-ink transition">
+                <SafeLink href="/testler" className="hover:text-primary transition">
                   İnteraktif Testler
                 </SafeLink>
               </li>
               <li>
-                <SafeLink href="/programlar" className="hover:text-brand-ink transition">
+                <SafeLink href="/programlar" className="hover:text-primary transition">
                   LGS & YKS Rehberliği
                 </SafeLink>
               </li>
               <li>
-                <SafeLink href="/araclar" className="hover:text-brand-ink transition">
+                <SafeLink href="/araclar" className="hover:text-primary transition">
                   Matematik & Sınav Araçları
                 </SafeLink>
               </li>
               <li>
-                <SafeLink href="/oyunlar" className="hover:text-brand-ink transition">
+                <SafeLink href="/oyunlar" className="hover:text-primary transition">
                   Matematik Oyunları
                 </SafeLink>
               </li>
               <li>
-                <SafeLink href="/canli-ders" className="hover:text-brand-ink transition">
+                <SafeLink href="/canli-ders" className="hover:text-primary transition">
                   Canlı Ders Salonu
                 </SafeLink>
               </li>
@@ -90,24 +90,24 @@ export function HomeFooter(_props: HomeFooterProps) {
             </h4>
             <ul className="space-y-1.5 text-xs text-secondary">
               <li>
-                <SafeLink href="/gizlilik" className="hover:text-brand-ink transition">
+                <SafeLink href="/gizlilik" className="hover:text-primary transition">
                   Gizlilik Politikası
                 </SafeLink>
               </li>
               <li>
-                <SafeLink href="/kvkk" className="hover:text-brand-ink transition">
+                <SafeLink href="/kvkk" className="hover:text-primary transition">
                   KVKK Aydınlatma Metni
                 </SafeLink>
               </li>
               <li>
-                <SafeLink href="/gizlilik#cerezler" className="hover:text-brand-ink transition">
+                <SafeLink href="/gizlilik#cerezler" className="hover:text-primary transition">
                   Çerez Tercihleri
                 </SafeLink>
               </li>
               <li>
                 <a
                   href="mailto:yasayanugur@gmail.com"
-                  className="hover:text-brand-ink transition"
+                  className="hover:text-primary transition"
                 >
                   Doğrudan İletişim (E-Posta)
                 </a>

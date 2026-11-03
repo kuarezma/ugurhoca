@@ -307,11 +307,11 @@ export function HomeHeroSection({
                 className={`${cardClassName} ${accent} flex flex-col gap-5 p-5 sm:p-7`}
               >
                 <span
-                  className={`flex h-12 w-12 items-center justify-center rounded-2xl shadow-sm ${iconStyle}`}
+                  className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl shadow-sm ${iconStyle}`}
                 >
-                  <Icon aria-hidden="true" className="h-6 w-6" />
+                  <Icon aria-hidden="true" className="h-6 w-6 shrink-0" />
                 </span>
-                <div className="space-y-2">
+                <div className="min-w-0 space-y-2">
                   <h2 className="font-display text-2xl font-extrabold text-primary sm:text-3xl">
                     {title}
                   </h2>
@@ -367,9 +367,9 @@ export function HomeHeroSection({
                   <span
                     className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${iconStyle}`}
                   >
-                    <Icon aria-hidden="true" className="h-5 w-5" />
+                    <Icon aria-hidden="true" className="h-5 w-5 shrink-0" />
                   </span>
-                  <div>
+                  <div className="min-w-0">
                     <h3 className="font-semibold text-primary">{title}</h3>
                     <p className="mt-1 text-xs leading-relaxed text-tertiary">
                       {description}
@@ -395,14 +395,14 @@ export function HomeHeroSection({
                 type="button"
                 onClick={onOpen}
                 disabled={!onOpen}
-                className={`${cardClassName} border-subtle bg-surface-1 hover:border-default hover:bg-surface-2 flex min-h-20 items-center gap-3 p-4 text-left disabled:cursor-not-allowed disabled:opacity-50`}
+                className="rounded-2xl border border-default bg-surface-1 shadow-sm font-sans transition-colors hover:border-strong hover:bg-surface-2 flex min-h-20 items-center gap-3 p-4 text-left disabled:cursor-not-allowed disabled:opacity-50"
               >
                 <span
                   className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${toolIconStyles[index % toolIconStyles.length]}`}
                 >
-                  <Icon aria-hidden="true" className="h-5 w-5" />
+                  <Icon aria-hidden="true" className="h-5 w-5 shrink-0" />
                 </span>
-                <span className="text-sm font-semibold leading-relaxed text-primary">
+                <span className="min-w-0 text-sm font-semibold leading-relaxed text-primary break-words">
                   {title}
                 </span>
               </button>

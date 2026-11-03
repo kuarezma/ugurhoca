@@ -89,14 +89,14 @@ export default function ContentFilterBar({
             </div>
 
             {/* Sort and View Mode */}
-            <div className="flex items-center gap-2">
-              <div className="relative flex items-center">
+            <div className="flex flex-wrap sm:flex-nowrap items-center gap-2">
+              <div className="relative flex flex-1 min-w-[170px] sm:flex-initial items-center">
                 <ArrowUpDown className="pointer-events-none absolute left-3.5 h-4 w-4 text-secondary" />
                 <select
                   value={sortBy}
                   onChange={(e) => onSortChange(e.target.value as ContentSortOrder)}
                   aria-label="Sıralama ölçütü"
-                  className="appearance-none rounded-2xl border border-default dark:border-slate-400 bg-surface-2/60 py-3 pl-9 pr-8 text-xs sm:text-sm font-semibold text-primary backdrop-blur-md transition-all hover:bg-surface-3 focus:border-purple-500/50 focus:outline-none focus:ring-2 focus:ring-purple-500/20"
+                  className="w-full sm:w-auto appearance-none rounded-2xl border border-default dark:border-slate-400 bg-surface-2/60 py-3 pl-9 pr-8 text-xs sm:text-sm font-semibold text-primary backdrop-blur-md transition-all hover:bg-surface-3 focus:border-purple-500/50 focus:outline-none focus:ring-2 focus:ring-purple-500/20"
                 >
                   {CONTENT_SORT_OPTIONS.map((opt) => (
                     <option key={opt.id} value={opt.id} className="bg-surface-1 text-primary">

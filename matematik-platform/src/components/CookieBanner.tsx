@@ -110,7 +110,7 @@ export default function CookieBanner() {
               <button
                 type="button"
                 onClick={() => persist('accepted')}
-                className="flex-1 rounded-2xl border border-purple-400/80 dark:border-purple-300/80 px-4 py-2.5 text-sm font-bold transition hover:brightness-110 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-fg bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none"
+                className="flex-1 rounded-2xl border border-default px-4 py-2.5 text-sm font-bold transition hover:brightness-110 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-fg bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none"
               >
                 Tümünü kabul et
               </button>

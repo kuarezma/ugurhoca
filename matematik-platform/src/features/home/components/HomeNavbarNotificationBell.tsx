@@ -181,7 +181,7 @@ export function HomeNavbarNotificationBell({
           >
             {/* Header */}
             <div
-              className="flex items-center justify-between border-b px-4 py-3 border-slate-200 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-900/80 gap-2"
+              className="flex flex-wrap items-center justify-between border-b px-4 py-3 border-slate-200 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-900/80 gap-1.5"
             >
               <div className="flex items-center gap-2 min-w-0 shrink">
                 <h3

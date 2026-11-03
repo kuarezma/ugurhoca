@@ -613,12 +613,12 @@ export default function LgsWizardPage() {
                               className={`rounded-2xl border p-4 ${tone.card}`}
                             >
                               <div className="flex items-start justify-between gap-3">
-                                <div>
+                                <div className="min-w-0">
                                   <h3 className="text-sm font-black text-primary sm:text-base">
                                     {school.school_name}
                                   </h3>
                                   <p className="mt-1 inline-flex items-center gap-1 text-xs text-secondary">
-                                    <MapPin className="h-3.5 w-3.5" />
+                                    <MapPin className="h-3.5 w-3.5 shrink-0" />
                                     {formatProgramOptionLabel(
                                       school.province,
                                     )}{' '}
