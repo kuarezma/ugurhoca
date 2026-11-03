@@ -12,14 +12,14 @@ type HomeFooterProps = {
 export function HomeFooter(_props: HomeFooterProps) {
   return (
     <footer
-      className="border-t-2 sm:border-t-3 border-default mt-12 px-4 pt-12 pb-[calc(5rem+env(safe-area-inset-bottom))] md:pb-12 bg-surface-1 transition-colors duration-300"
+      className="border-t border-subtle mt-12 px-4 pt-12 pb-[calc(5rem+env(safe-area-inset-bottom))] md:pb-12 bg-surface-2 font-sans transition-colors duration-300"
     >
       <div className="mx-auto max-w-6xl">
-        <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4 pb-8 border-b-2 border-default">
+        <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4 pb-8 border-b border-subtle">
           {/* Marka & Misyon */}
           <div className="space-y-3 lg:col-span-2">
             <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-[#d7ffb8] border-2 border-[#58cc02] shadow-[0_3px_0_#46a302] overflow-hidden p-0.5 select-none">
+              <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-surface-1 border border-subtle overflow-hidden p-0.5 select-none">
                 <Image
                   src="/ugur.jpeg"
                   alt="Uğur Hoca"
@@ -28,7 +28,7 @@ export function HomeFooter(_props: HomeFooterProps) {
                   className="h-full w-full rounded-[14px] object-cover"
                 />
               </div>
-              <span className="font-display text-xl font-black text-primary">
+              <span className="font-display text-xl font-bold text-primary">
                 Uğur Hoca Matematik
               </span>
             </div>
@@ -38,7 +38,7 @@ export function HomeFooter(_props: HomeFooterProps) {
               yaprak testler ve interaktif çalışma ortamı sunar.
             </p>
 
-            <div className="inline-flex items-center gap-1.5 rounded-full bg-[#d7ffb8] dark:bg-emerald-950/40 border border-[#46a302]/40 px-3.5 py-1 text-xs font-black text-[#276700] dark:text-[#a7f3d0]">
+            <div className="inline-flex items-center gap-1.5 rounded-full bg-accent-bg border border-subtle px-3.5 py-1 text-xs font-black text-accent-fg">
               <Shield className="h-3.5 w-3.5" />
               <span>💚 %100 Ücretsiz & Reklamsız</span>
             </div>
@@ -49,7 +49,7 @@ export function HomeFooter(_props: HomeFooterProps) {
             <h4 className="font-display text-xs font-bold uppercase tracking-wider text-primary">
               Eğitim Modülleri
             </h4>
-            <ul className="space-y-1.5 text-xs text-slate-600 dark:text-slate-400">
+            <ul className="space-y-1.5 text-xs text-secondary">
               <li>
                 <SafeLink href="/icerikler" className="hover:text-brand-ink transition">
                   Ders Notları & PDF'ler
@@ -88,7 +88,7 @@ export function HomeFooter(_props: HomeFooterProps) {
             <h4 className="font-display text-xs font-bold uppercase tracking-wider text-primary">
               Kurumsal & Destek
             </h4>
-            <ul className="space-y-1.5 text-xs text-slate-600 dark:text-slate-400">
+            <ul className="space-y-1.5 text-xs text-secondary">
               <li>
                 <SafeLink href="/gizlilik" className="hover:text-brand-ink transition">
                   Gizlilik Politikası
@@ -117,7 +117,7 @@ export function HomeFooter(_props: HomeFooterProps) {
         </div>
 
         {/* Alt Telif Şeridi */}
-        <div className="mt-8 flex flex-wrap items-center justify-between gap-3 text-xs text-slate-600 dark:text-slate-400">
+        <div className="mt-8 flex flex-wrap items-center justify-between gap-3 text-xs text-secondary">
           <p>© 2026 Uğur Hoca Matematik Platformu. Tüm hakları saklıdır.</p>
           <div className="flex items-center gap-1">
             <span>Öğrenciler için sevgiyle geliştirildi</span>

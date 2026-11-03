@@ -71,20 +71,12 @@ function HomeDailyQuoteInner() {
       className="mx-auto mt-8 w-full max-w-6xl px-4 sm:mt-10"
     >
       <div
-        className="relative overflow-hidden rounded-3xl border p-6 sm:p-8 light:border-slate-200 light:bg-white light:shadow-sm dark:border-white/10 dark:backdrop-blur dark:bg-surface-1"
+        className="bg-surface-2 border border-subtle border-l-4 border-l-[var(--accent-brand)] rounded-2xl p-6 font-sans"
       >
-        <div
-          className="pointer-events-none absolute -right-16 -top-16 h-48 w-48 rounded-full blur-3xl bg-brand-accent/30"
-          aria-hidden="true"
-        />
-        <div
-          className="pointer-events-none absolute -bottom-20 -left-16 h-48 w-48 rounded-full bg-gradient-to-br from-cyan-400/25 to-blue-500/25 blur-3xl"
-          aria-hidden="true"
-        />
 
         <div className="relative flex flex-col gap-5 sm:flex-row sm:items-start">
           <div
-            className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl text-slate-900 shadow-lg bg-brand-accent"
+            className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl text-accent-fg bg-accent-bg"
             aria-hidden="true"
           >
             <Quote className="h-7 w-7" />
@@ -92,18 +84,18 @@ function HomeDailyQuoteInner() {
 
           <div className="flex-1">
             <div
-              className="mb-2 inline-flex items-center gap-2 rounded-full px-3 py-1 text-[11px] font-black uppercase tracking-[0.2em] light:bg-amber-100 light:text-amber-700 dark:bg-amber-400/20 dark:text-amber-200"
+              className="mb-2 inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-bold uppercase tracking-[0.2em] bg-accent-bg text-accent-fg"
             >
               <Sparkles className="h-3.5 w-3.5" aria-hidden="true" />
               <span id="daily-quote-heading">Günün Sözü</span>
             </div>
             <p
-              className="font-display text-lg font-bold leading-snug sm:text-2xl light:text-slate-900 dark:text-white"
+              className="font-display text-lg font-bold leading-snug sm:text-2xl text-primary"
             >
               “{quote.text}”
             </p>
             <p
-              className="mt-3 text-sm font-semibold light:text-slate-500 dark:text-slate-300"
+              className="mt-3 text-sm font-semibold text-secondary"
             >
               — {quote.author}
             </p>

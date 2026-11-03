@@ -27,23 +27,23 @@ export function HomeExamCountdownSection({
             onClick={() => setIsMobileOpen((prev) => !prev)}
             aria-expanded={isMobileOpen}
             aria-controls="mobile-countdown-content"
-            className="w-full flex items-center justify-between rounded-2xl border border-default dark:border-slate-600 bg-white/95 dark:bg-slate-900/90 px-4 py-3 shadow-xs backdrop-blur-md text-left transition-all active:scale-[0.99]"
+            className="w-full flex items-center justify-between rounded-2xl border border-subtle bg-surface-1 px-4 py-3 shadow-sm text-left transition-all active:scale-[0.99]"
           >
             <div className="flex items-center gap-2.5 min-w-0 flex-1">
-              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-amber-500/10 text-amber-600 dark:text-amber-400">
+              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-accent-bg text-accent-fg">
                 <Clock className="h-4 w-4" />
               </div>
               <div className="min-w-0">
-                <div className="text-xs font-black text-slate-900 dark:text-white truncate">
+                <div className="font-display text-xs font-bold text-primary truncate">
                   ⏱️ Sınav Sayaçları (LGS & YKS)
                 </div>
-                <div className="text-[10px] text-slate-500 dark:text-slate-400 font-semibold truncate">
+                <div className="text-xs text-secondary font-semibold truncate">
                   {isMobileOpen ? 'Sayaçları gizlemek için dokunun' : 'Kalan süre ve hedef netleri gör'}
                 </div>
               </div>
             </div>
             <ChevronDown
-              className={`h-4 w-4 shrink-0 text-slate-400 transition-transform duration-300 ${
+              className={`h-4 w-4 shrink-0 text-tertiary transition-transform duration-300 ${
                 isMobileOpen ? 'rotate-180' : ''
               }`}
             />

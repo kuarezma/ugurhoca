@@ -106,9 +106,16 @@ Sonraki adımlar: Lighthouse / gerçek cihaz ölçümü, diğer sayfalarda `img`
 
 ## Karar kaydı (10 Eylül 2026)
 
-- **Tasarım yasağı devam**: opus.md Faz1 (yeniden tasarım: palet/font/maskot değişimi) uygulanMAyacak. Bu dosyanın §"Sizin kriterleriniz" §2 bağlayıcı kalır — yalnızca teknik optimizasyon.
+- **Tasarım yasağı devam (3 Kasım 2026'da kaldırıldı — bkz. alt bölüm)**: opus.md Faz1 (yeniden tasarım: palet/font/maskot değişimi) uygulanMAyacak. Bu dosyanın §"Sizin kriterleriniz" §2 bağlayıcı kalır — yalnızca teknik optimizasyon.
 - **CSP üretimde zorlamada**: `next.config.js` `Content-Security-Policy` başlığı gönderir (değişken adı `cspEnforced`).
 - **Sitemap `lastModified` kaldırıldı**: her build `new Date()` yazıyordu; gerçek tarih boru hattı kurulana kadar alan boş.
 - **OG görseli**: `src/app/opengraph-image.tsx` (1200x630) + `NEXT_PUBLIC_SITE_URL` override (`.env.example`).
 - **Contrast workflow konumu**: kök `.github/workflows/contrast.yml` (app altındaki ölü kopya taşındı).
 - **Tailwind v4 yükseltmesi ertelendi**: v3 çalışıyor; ayrı görevde ele alınacak.
+
+## Karar kaydı (3 Kasım 2026 — Sıcak Kağıt & Mürekkep Akademik Tasarım + Baloo 2 / Outfit)
+
+- **Tasarım dondurması kaldırıldı**: Kullanıcı açık talebiyle §2'deki "font/renk/tema/düzen değişmez" kısıtı kaldırıldı ve aşağıdaki yeni tasarım sistemi onaylandı:
+  - **Tipografi**: Başlıklar (`--font-display`) `Baloo_2` olarak korunurken, gövde/UI/soru/rakam fontu (`--font-poppins` değişken adı korunarak) `Quicksand` yerine **`Outfit`** (`400`, `500`, `600`, `700`, `latin` + `latin-ext`) olarak güncellendi.
+  - **Renk Paleti & Tema (Sıcak Kağıt & Mürekkep Akademik Tema)**: Açık temada soğuk gri (`#f4f7fb`) yerine sıcak kağıt/fildişi zemin (`#FAF8F5`, `--surface-0-rgb: 250 248 245`), saf beyaz kart yüzeyi (`#FFFFFF`), sıcak krem ikincil yüzeyler (`#F4F0E8`, `#EAE4D7`), derin lacivert mürekkep metinler (`#0F172A`, `#334155`, `#475569`), sıcak taş kenarlıklar (`#E5DFD3`, `#8C8270`, `#6F6656`) ve akademik zümrüt (`#065F46`) / kobalt (`#1D4ED8`) vurgular benimsendi. Koyu tema derin gece çalışma masası (`#0C1222` / `#141D31`) olarak uyarlandı.
+  - **Düzen (Odaklı Bento & Hızlı Erişim)**: Ana sayfada (`HomeNavbar`, `HomeHeroSection`, `HomeExamCountdownSection`, `HomeDailyQuote`, `HomeSupportSection`, `HomeFooter`) gökkuşağı gradyanları, blur yumakları ve süs emojileri kaldırılarak yüksek okunabilirlikli Sıcak Kağıt Bento düzenine geçildi.

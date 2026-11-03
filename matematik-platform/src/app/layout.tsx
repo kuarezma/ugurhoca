@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Quicksand, Baloo_2 } from "next/font/google";
+import { Outfit, Baloo_2 } from "next/font/google";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Providers } from "@/components/Providers";
 import { SiteBackground } from "@/components/SiteBackground";
@@ -13,7 +13,7 @@ import { SITE_URL, SITE_NAME } from "@/lib/site-metadata";
 // gerekli. Artik ilgili chunk'lariyla birlikte yukleniyorlar.
 import "./globals.css";
 
-const quicksand = Quicksand({
+const outfit = Outfit({
   subsets: ["latin", "latin-ext"],
   weight: ["400", "500", "600", "700"],
   variable: "--font-poppins",
@@ -112,8 +112,8 @@ export const viewport: Viewport = {
   viewportFit: "cover",
   interactiveWidget: "resizes-visual",
   themeColor: [
-    { media: "(prefers-color-scheme: dark)", color: "#0f172a" },
-    { media: "(prefers-color-scheme: light)", color: "#ffffff" },
+    { media: "(prefers-color-scheme: dark)", color: "#0C1222" },
+    { media: "(prefers-color-scheme: light)", color: "#FAF8F5" },
   ],
 };
 
@@ -172,7 +172,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       data-design-mode="classic"
       suppressHydrationWarning
       data-scroll-behavior="smooth"
-      className={`${quicksand.variable} ${baloo.variable} light`}
+      className={`${outfit.variable} ${baloo.variable} light`}
     >
       <head>
         {/* Güvenlik & Referrer Politikaları */}

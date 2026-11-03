@@ -23,7 +23,7 @@ export function HomeNavbar({ onLogout, user }: HomeNavbarProps) {
 
   return (
     <nav
-      className="fixed left-0 right-0 top-0 z-50 border-b-2 sm:border-b-3 border-default bg-surface-1/95 backdrop-blur-xl transition-all duration-300 pt-[env(safe-area-inset-top)] shadow-xs"
+      className="fixed left-0 right-0 top-0 z-50 border-b border-subtle bg-surface-1/95 font-sans backdrop-blur-xl transition-all duration-300 pt-[env(safe-area-inset-top)] shadow-xs"
     >
       <div className="mx-auto max-w-6xl px-4 pl-[max(1rem,env(safe-area-inset-left))] pr-[max(1rem,env(safe-area-inset-right))]">
         <div className="flex h-16 w-full items-center justify-between gap-3 sm:gap-4">
@@ -37,7 +37,7 @@ export function HomeNavbar({ onLogout, user }: HomeNavbarProps) {
             }}
             className="group flex min-w-0 shrink items-center gap-2.5 sm:gap-3"
           >
-            <div className="relative flex h-10 w-10 sm:h-11 sm:w-11 shrink-0 items-center justify-center rounded-2xl bg-[#d7ffb8] border-2 border-[#58cc02] shadow-[0_3px_0_#46a302] text-xl sm:text-2xl transition-transform duration-200 group-hover:scale-105 select-none overflow-hidden p-0.5">
+            <div className="relative flex h-10 w-10 sm:h-11 sm:w-11 shrink-0 items-center justify-center rounded-2xl bg-surface-2 border border-subtle text-xl sm:text-2xl transition-transform duration-200 group-hover:scale-105 select-none overflow-hidden p-0.5">
               <Image
                 src="/ugur.jpeg"
                 alt="Uğur Hoca"
@@ -48,10 +48,10 @@ export function HomeNavbar({ onLogout, user }: HomeNavbarProps) {
               />
             </div>
             <div className="flex flex-col min-w-0">
-              <span className="font-display text-base sm:text-xl font-black leading-tight truncate text-primary">
+              <span className="font-display text-base sm:text-xl font-bold leading-tight truncate text-primary">
                 Uğur Hoca
               </span>
-              <span className="text-[10px] sm:text-[11px] font-black text-green-ink dark:text-[#61e002] uppercase tracking-wider truncate">
+              <span className="text-xs sm:text-xs font-black text-secondary uppercase tracking-wider truncate">
                 Matematik Maceraları
               </span>
             </div>
@@ -62,7 +62,7 @@ export function HomeNavbar({ onLogout, user }: HomeNavbarProps) {
           <div className="hidden lg:flex items-center gap-1.5 xl:gap-2">
             <SafeLink
               href="/icerikler?type=yaprak-test"
-              className="inline-flex items-center gap-1.5 rounded-xl px-3.5 py-2 text-sm font-bold text-slate-700 dark:text-slate-300 transition-colors duration-150 hover:bg-slate-100 dark:hover:bg-white/10 hover:text-slate-900 dark:hover:text-white"
+              className="inline-flex items-center gap-1.5 rounded-xl px-3.5 py-2 text-sm font-bold text-secondary transition-colors duration-150 hover:bg-surface-2 hover:text-primary"
             >
               <span>📄 Yaprak Testler</span>
             </SafeLink>
@@ -71,8 +71,8 @@ export function HomeNavbar({ onLogout, user }: HomeNavbarProps) {
               aria-current={pathname?.startsWith('/oyunlar') ? 'page' : undefined}
               className={`inline-flex items-center gap-1.5 rounded-xl px-3.5 py-2 text-sm font-bold transition-colors duration-150 ${
                 pathname?.startsWith('/oyunlar')
-                  ? 'bg-emerald-500/15 text-emerald-800 dark:text-emerald-300'
-                  : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-white/10 hover:text-slate-900 dark:hover:text-white'
+                  ? 'bg-accent-bg text-accent-fg'
+                  : 'text-secondary hover:bg-surface-2 hover:text-primary'
               }`}
             >
               <span>🎮 Oyunlar</span>
@@ -82,8 +82,8 @@ export function HomeNavbar({ onLogout, user }: HomeNavbarProps) {
               aria-current={pathname?.startsWith('/icerikler') ? 'page' : undefined}
               className={`inline-flex items-center gap-1.5 rounded-xl px-3.5 py-2 text-sm font-bold transition-colors duration-150 ${
                 pathname?.startsWith('/icerikler')
-                  ? 'bg-sky-500/15 text-sky-800 dark:text-sky-300'
-                  : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-white/10 hover:text-slate-900 dark:hover:text-white'
+                  ? 'bg-accent-bg text-accent-fg'
+                  : 'text-secondary hover:bg-surface-2 hover:text-primary'
               }`}
             >
               <span>📚 Konular & Sınıflar</span>
@@ -110,9 +110,9 @@ export function HomeNavbar({ onLogout, user }: HomeNavbarProps) {
               <>
                 <SafeLink
                   href={profileHref}
-                  className="flex items-center gap-2.5 rounded-2xl border-2 border-default bg-surface-2 px-3.5 py-1.5 shadow-[0_3px_0_var(--border-default)] transition-all hover:bg-surface-3 active:translate-y-0.5 active:shadow-none text-primary"
+                  className="flex items-center gap-2.5 rounded-2xl border border-subtle bg-surface-2 px-3.5 py-1.5 transition-all hover:bg-surface-3 active:translate-y-0.5 active:shadow-none text-primary"
                 >
-                  <div className="flex h-7 w-7 items-center justify-center rounded-xl bg-[#58cc02] text-xs font-black text-slate-950 dark:text-slate-950 shadow-xs">
+                  <div className="flex h-7 w-7 items-center justify-center rounded-xl bg-[var(--accent-brand)] text-xs font-bold text-[var(--on-brand)] shadow-xs">
                     {user.name?.[0] || '?'}
                   </div>
                   <span className="font-bold text-xs xl:inline">
@@ -133,13 +133,13 @@ export function HomeNavbar({ onLogout, user }: HomeNavbarProps) {
               <div className="flex items-center gap-2">
                 <SafeLink
                   href="/giris"
-                  className="btn-3d btn-white btn-sm"
+                  className="inline-flex min-h-10 items-center justify-center rounded-xl border border-subtle bg-surface-1 px-4 text-sm font-bold text-primary hover:bg-surface-2"
                 >
                   Giriş
                 </SafeLink>
                 <SafeLink
                   href="/kayit"
-                  className="btn-3d btn-green btn-sm"
+                  className="inline-flex min-h-10 items-center justify-center rounded-xl border border-transparent bg-[var(--accent-brand)] px-4 text-sm font-bold text-[var(--on-brand)] hover:opacity-90"
                 >
                   Ücretsiz Katıl! 🌟
                 </SafeLink>
@@ -196,7 +196,7 @@ export function HomeNavbar({ onLogout, user }: HomeNavbarProps) {
             <SafeLink
               href="/canli-ders"
               onClick={() => setIsOpen(false)}
-              className="flex items-center gap-3 rounded-xl px-3.5 py-2.5 text-sm font-bold text-rose-700 bg-rose-50 hover:bg-rose-100 dark:bg-rose-950/40 dark:text-rose-300 dark:hover:bg-rose-950/60"
+              className="flex items-center gap-3 rounded-xl px-3.5 py-2.5 text-sm font-bold text-tone-danger-fg bg-tone-danger-bg hover:bg-surface-2"
             >
               <span className="text-lg">🔴</span> Canlı Ders Odası
             </SafeLink>
@@ -239,14 +239,14 @@ export function HomeNavbar({ onLogout, user }: HomeNavbarProps) {
                   <SafeLink
                     href="/giris"
                     onClick={() => setIsOpen(false)}
-                    className="btn-3d btn-white btn-sm"
+                    className="inline-flex min-h-10 items-center justify-center rounded-xl border border-subtle bg-surface-1 px-4 text-sm font-bold text-primary hover:bg-surface-2"
                   >
                     Giriş
                   </SafeLink>
                   <SafeLink
                     href="/kayit"
                     onClick={() => setIsOpen(false)}
-                    className="btn-3d btn-green btn-sm"
+                    className="inline-flex min-h-10 items-center justify-center rounded-xl border border-transparent bg-[var(--accent-brand)] px-4 text-sm font-bold text-[var(--on-brand)] hover:opacity-90"
                   >
                     Ücretsiz Katıl! 🌟
                   </SafeLink>

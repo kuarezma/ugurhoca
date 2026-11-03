@@ -106,7 +106,6 @@ function matchesGradeFilter(
 const GRADE_STYLES: Record<
   SupportedHomeGrade,
   {
-    accentBar: string;
     badge: string;
     pillActive: string;
     pillDot: string;
@@ -114,39 +113,27 @@ const GRADE_STYLES: Record<
   }
 > = {
   5: {
-    accentBar: 'from-sky-400 via-sky-500 to-blue-600',
-    badge:
-      'bg-sky-50 dark:bg-sky-950/70 text-sky-900 dark:text-sky-200 border-sky-300/90 dark:border-sky-700/60',
-    pillActive:
-      'bg-sky-600 dark:bg-sky-500 text-white dark:text-slate-950 border-sky-600 dark:border-sky-400 shadow-sm shadow-sky-500/20',
-    pillDot: 'bg-sky-500',
+    badge: 'bg-surface-2 text-secondary border-subtle',
+    pillActive: 'bg-accent-bg text-accent-fg border-default',
+    pillDot: 'bg-[var(--accent-brand)]',
     label: '5. Sınıf',
   },
   6: {
-    accentBar: 'from-amber-400 via-amber-500 to-orange-600',
-    badge:
-      'bg-amber-50 dark:bg-amber-950/70 text-amber-900 dark:text-amber-200 border-amber-300/90 dark:border-amber-700/60',
-    pillActive:
-      'bg-amber-600 dark:bg-amber-500 text-white dark:text-slate-950 border-amber-600 dark:border-amber-400 shadow-sm shadow-amber-500/20',
-    pillDot: 'bg-amber-500',
+    badge: 'bg-surface-2 text-secondary border-subtle',
+    pillActive: 'bg-accent-bg text-accent-fg border-default',
+    pillDot: 'bg-[var(--accent-brand)]',
     label: '6. Sınıf',
   },
   7: {
-    accentBar: 'from-purple-500 via-indigo-500 to-violet-600',
-    badge:
-      'bg-purple-50 dark:bg-purple-950/70 text-purple-900 dark:text-purple-200 border-purple-300/90 dark:border-purple-700/60',
-    pillActive:
-      'bg-purple-600 dark:bg-purple-500 text-white dark:text-slate-950 border-purple-600 dark:border-purple-400 shadow-sm shadow-purple-500/20',
-    pillDot: 'bg-purple-500',
+    badge: 'bg-surface-2 text-secondary border-subtle',
+    pillActive: 'bg-accent-bg text-accent-fg border-default',
+    pillDot: 'bg-[var(--accent-brand)]',
     label: '7. Sınıf',
   },
   8: {
-    accentBar: 'from-rose-500 via-red-500 to-pink-600',
-    badge:
-      'bg-rose-50 dark:bg-rose-950/70 text-rose-900 dark:text-rose-200 border-rose-300/90 dark:border-rose-700/60',
-    pillActive:
-      'bg-rose-600 dark:bg-rose-500 text-white dark:text-slate-950 border-rose-600 dark:border-rose-400 shadow-sm shadow-rose-500/20',
-    pillDot: 'bg-rose-500',
+    badge: 'bg-surface-2 text-secondary border-subtle',
+    pillActive: 'bg-accent-bg text-accent-fg border-default',
+    pillDot: 'bg-[var(--accent-brand)]',
     label: '8. Sınıf (LGS)',
   },
 };
@@ -227,16 +214,16 @@ export function HomeRecentDocumentsSection({
   return (
     <div
       data-testid="home-recent-documents-section"
-      className="rounded-3xl border border-slate-200/90 dark:border-slate-800 bg-white/95 dark:bg-slate-900/90 p-4 sm:p-7 shadow-sm backdrop-blur-md"
+      className="rounded-2xl border border-subtle bg-surface-2 p-4 sm:p-7 shadow-sm font-sans"
     >
       {/* Üst Başlık ve Sınıf Filtre Sekmeleri */}
-      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pb-5 border-b border-slate-200/80 dark:border-slate-800">
+      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pb-5 border-b border-subtle">
         <div className="space-y-1">
-          <div className="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-300/80 dark:border-emerald-700/50 px-3 py-1 text-[11px] font-black text-emerald-900 dark:text-emerald-200 uppercase tracking-wider">
-            <Sparkles className="h-3.5 w-3.5 text-emerald-600 dark:text-emerald-400" />
+          <div className="inline-flex items-center gap-1.5 rounded-full bg-accent-bg border border-subtle px-3 py-1 text-xs font-black text-accent-fg uppercase tracking-wider">
+            <Sparkles className="h-3.5 w-3.5 text-accent-fg" />
             <span>Yeni Yüklenen İçerikler & Çözümlü Testler</span>
           </div>
-          <h2 className="font-display text-xl sm:text-2xl font-black text-primary flex items-center gap-2.5">
+          <h2 className="font-display text-xl sm:text-2xl font-bold text-primary flex items-center gap-2.5">
             <FileSignature className="h-6 w-6 text-sky-600 dark:text-sky-400 shrink-0" />
             <span>Son Eklenen Yaprak Testler ve Çalışma Kağıtları</span>
           </h2>
@@ -261,8 +248,8 @@ export function HomeRecentDocumentsSection({
             }}
             className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-bold border transition-all ${
               selectedGrade === 'all'
-                ? 'bg-sky-700 dark:bg-sky-400 text-white dark:text-slate-950 border-sky-700 dark:border-sky-400 shadow-xs'
-                : 'bg-slate-50 dark:bg-slate-800/90 text-slate-700 dark:text-slate-200 border-slate-200 dark:border-slate-700 hover:border-sky-400'
+                ? 'bg-accent-bg text-accent-fg border-default'
+                : 'bg-surface-1 text-secondary border-subtle hover:border-strong'
             }`}
           >
             <span>Tümü</span>
@@ -286,17 +273,17 @@ export function HomeRecentDocumentsSection({
                 className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-bold border transition-all ${
                   isSelected
                     ? style.pillActive
-                    : 'bg-slate-50 dark:bg-slate-800/90 text-slate-700 dark:text-slate-200 border-slate-200 dark:border-slate-700 hover:border-slate-400 dark:hover:border-slate-500'
+                    : 'bg-surface-1 text-secondary border-subtle hover:border-strong'
                 }`}
               >
                 <span
                   className={`h-2 w-2 rounded-full ${
-                    isSelected ? 'bg-white dark:bg-slate-950' : style.pillDot
+                    isSelected ? 'bg-[var(--accent-brand)]' : style.pillDot
                   }`}
                 />
                 <span>{style.label}</span>
                 {isUserGrade && (
-                  <span className="ml-0.5 rounded-full bg-black/15 dark:bg-white/20 px-1.5 py-0.2 text-[10px] font-black">
+                  <span className="ml-0.5 rounded-full bg-surface-3 px-1.5 py-0.2 text-xs font-black">
                     Sınıfın
                   </span>
                 )}
@@ -314,7 +301,7 @@ export function HomeRecentDocumentsSection({
           </p>
           <SafeLink
             href={allLibraryHref}
-            className="inline-flex items-center gap-2 rounded-xl bg-sky-600 hover:bg-sky-700 text-white dark:text-white px-4 py-2.5 text-xs font-bold transition-colors shadow-xs"
+            className="inline-flex items-center gap-2 rounded-xl bg-accent-bg hover:bg-surface-3 text-accent-fg border border-subtle px-4 py-2.5 text-xs font-bold transition-colors shadow-xs"
           >
             <span>Tüm Kütüphaneyi Aç</span>
             <ArrowRight className="h-4 w-4" />
@@ -348,44 +335,37 @@ export function HomeRecentDocumentsSection({
             return (
               <article
                 key={doc.id}
-                className="group relative flex flex-col justify-between overflow-hidden rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-950/50 p-4 sm:p-5 hover:bg-white dark:hover:bg-slate-900 hover:border-sky-400/80 dark:hover:border-sky-500/50 hover:shadow-xl hover:shadow-sky-500/5 hover:-translate-y-1 transition-all duration-200"
+                className="group relative flex flex-col justify-between overflow-hidden bg-surface-1 border border-subtle hover:border-strong rounded-2xl shadow-sm p-4 sm:p-5 transition-all"
               >
-                {/* Üst Renkli Sınıf Şeridi */}
-                <div
-                  className={`
-                    absolute inset-x-0 top-0 h-1 bg-gradient-to-r
-                    ${gradeStyle ? gradeStyle.accentBar : 'from-sky-500 to-indigo-600'}
-                  `}
-                />
 
                 <div>
                   {/* Rozetler Satırı */}
                   <div className="flex flex-wrap items-center justify-between gap-1.5 mb-3">
                     <div className="flex flex-wrap items-center gap-1.5">
                       <span
-                        className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-[11px] font-black ${
+                        className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-black ${
                           gradeStyle
                             ? gradeStyle.badge
-                            : 'bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200 border-slate-300 dark:border-slate-700'
+                            : 'bg-surface-2 text-secondary border-subtle'
                         }`}
                       >
                         {gradeLabel}
                       </span>
 
-                      <span className="inline-flex items-center rounded-full border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800/90 px-2.5 py-0.5 text-[11px] font-bold text-slate-700 dark:text-slate-300">
+                      <span className="inline-flex items-center rounded-full border border-subtle bg-surface-2 px-2.5 py-0.5 text-xs font-bold text-secondary">
                         {getContentTypeLabel(doc.type)}
                       </span>
                     </div>
 
                     <div className="flex flex-wrap items-center gap-1">
                       {isFresh && (
-                        <span className="inline-flex items-center rounded-full bg-emerald-600 dark:bg-emerald-500 text-white dark:text-slate-950 px-2 py-0.5 text-[10px] font-black uppercase tracking-wide shadow-2xs">
+                        <span className="inline-flex items-center rounded-full bg-accent-bg text-accent-fg px-2 py-0.5 text-xs font-black uppercase tracking-wide shadow-2xs">
                           Yeni
                         </span>
                       )}
 
                       {(hasSolutionPdf || hasAnswerKey) && (
-                        <span className="inline-flex items-center gap-1 rounded-full border border-teal-300 dark:border-teal-700/60 bg-teal-50 dark:bg-teal-950/70 text-teal-900 dark:text-teal-200 px-2 py-0.5 text-[10px] font-black">
+                        <span className="inline-flex items-center gap-1 rounded-full border border-teal-300 dark:border-teal-700/60 bg-teal-50 dark:bg-teal-950/70 text-teal-900 dark:text-teal-200 px-2 py-0.5 text-xs font-black">
                           <CheckCircle2 className="h-3 w-3 text-teal-600 dark:text-teal-400" />
                           <span>
                             {isHandwrittenSolution
@@ -404,14 +384,14 @@ export function HomeRecentDocumentsSection({
                     href={`/icerikler?id=${doc.id}`}
                     className="block group-hover:text-sky-600 dark:group-hover:text-sky-400 transition-colors"
                   >
-                    <h3 className="font-display text-sm sm:text-base font-black text-slate-900 dark:text-white line-clamp-2 leading-snug mb-2">
+                    <h3 className="font-display text-sm sm:text-base font-bold text-primary line-clamp-2 leading-snug mb-2">
                       {doc.title}
                     </h3>
                   </SafeLink>
 
                   {/* Kazanım Etiketi */}
                   {outcome && (
-                    <div className="mb-2 inline-flex max-w-full items-center gap-1.5 rounded-lg border border-sky-200/90 dark:border-sky-800/60 bg-sky-50/80 dark:bg-sky-950/50 px-2.5 py-1 text-[11px] font-bold text-sky-900 dark:text-sky-200">
+                    <div className="mb-2 inline-flex max-w-full items-center gap-1.5 rounded-lg border border-sky-200/90 dark:border-sky-800/60 bg-sky-50/80 dark:bg-sky-950/50 px-2.5 py-1 text-xs font-bold text-sky-900 dark:text-sky-200">
                       <span className="font-black shrink-0">🎯 Kazanım:</span>
                       <span className="truncate">{outcome}</span>
                     </div>
@@ -419,20 +399,20 @@ export function HomeRecentDocumentsSection({
 
                   {/* Açıklama */}
                   {cleanDescription && (
-                    <p className="text-xs text-slate-600 dark:text-slate-300 font-medium line-clamp-2 leading-relaxed mb-3">
+                    <p className="text-xs text-secondary font-medium line-clamp-2 leading-relaxed mb-3">
                       {cleanDescription}
                     </p>
                   )}
                 </div>
 
                 {/* Alt Tarih & Hızlı Eylem Butonları */}
-                <div className="pt-3 border-t border-slate-200/80 dark:border-slate-800/80 space-y-2.5">
-                  <div className="flex items-center justify-between text-[11px] font-semibold text-slate-500 dark:text-slate-400">
+                <div className="pt-3 border-t border-subtle/80 space-y-2.5">
+                  <div className="flex items-center justify-between text-xs font-semibold text-tertiary">
                     <span className="inline-flex items-center gap-1">
                       <Calendar className="h-3.5 w-3.5 text-sky-600 dark:text-sky-400" />
                       <span>{formatContentDate(doc.created_at)}</span>
                     </span>
-                    <span className="text-slate-600 dark:text-slate-300 font-bold">
+                    <span className="text-secondary font-bold">
                       Uğur Hoca
                     </span>
                   </div>
@@ -440,7 +420,7 @@ export function HomeRecentDocumentsSection({
                   <div className="flex flex-wrap items-center gap-2">
                     <SafeLink
                       href={`/icerikler?id=${doc.id}`}
-                      className="flex-1 inline-flex items-center justify-center gap-1.5 rounded-xl border border-sky-300 dark:border-sky-700/70 bg-sky-50/90 dark:bg-sky-950/50 hover:bg-sky-600 hover:text-white dark:hover:bg-sky-500 dark:hover:text-slate-950 hover:border-sky-600 px-3 py-2 text-xs font-bold text-sky-900 dark:text-sky-200 transition-colors"
+                      className="flex-1 inline-flex items-center justify-center gap-1.5 rounded-xl border border-subtle bg-accent-bg hover:bg-surface-3 px-3 py-2 text-xs font-bold text-accent-fg transition-colors"
                     >
                       <Eye className="h-3.5 w-3.5 shrink-0" />
                       <span>İncele</span>
@@ -451,7 +431,7 @@ export function HomeRecentDocumentsSection({
                         href={doc.file_url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="flex-1 inline-flex items-center justify-center gap-1.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800/90 hover:bg-slate-100 dark:hover:bg-slate-700 px-3 py-2 text-xs font-bold text-slate-800 dark:text-slate-200 transition-colors"
+                        className="flex-1 inline-flex items-center justify-center gap-1.5 rounded-xl border border-subtle bg-surface-2 hover:bg-surface-3 px-3 py-2 text-xs font-bold text-primary transition-colors"
                       >
                         <FileText className="h-3.5 w-3.5 shrink-0 text-sky-600 dark:text-sky-400" />
                         <span>Öğrenci PDF</span>
@@ -463,7 +443,7 @@ export function HomeRecentDocumentsSection({
                         href={doc.solution_url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="flex-1 inline-flex items-center justify-center gap-1.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-700 hover:from-emerald-700 hover:to-teal-800 text-white dark:text-white px-3 py-2 text-xs font-bold shadow-xs transition-all"
+                        className="flex-1 inline-flex items-center justify-center gap-1.5 rounded-xl bg-accent-bg text-accent-fg hover:bg-surface-3 border border-subtle px-3 py-2 text-xs font-bold shadow-xs transition-all"
                       >
                         <FileCheck2 className="h-3.5 w-3.5 shrink-0" />
                         <span>Çözüm PDF</span>
@@ -478,13 +458,13 @@ export function HomeRecentDocumentsSection({
       )}
 
       {/* Alt Tümünü Gör Bağlantısı */}
-      <div className="mt-5 pt-4 border-t border-slate-200/80 dark:border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-3">
+      <div className="mt-5 pt-4 border-t border-subtle flex flex-col sm:flex-row items-center justify-between gap-3">
         <p className="text-xs font-semibold text-secondary">
           Tüm sınıflara ait yaprak testler, çalışma kağıtları ve el yazısı çözümlü öğretmen föyleri kütüphanede.
         </p>
         <SafeLink
           href={allLibraryHref}
-          className="inline-flex items-center gap-2 rounded-xl bg-slate-100 dark:bg-slate-800/90 hover:bg-sky-600 hover:text-white dark:hover:bg-sky-500 dark:hover:text-slate-950 border border-slate-200 dark:border-slate-700 px-4 py-2 text-xs font-bold text-slate-800 dark:text-slate-200 transition-colors shrink-0"
+          className="inline-flex items-center gap-2 rounded-xl bg-surface-1 hover:bg-surface-3 border border-subtle px-4 py-2 text-xs font-bold text-primary transition-colors shrink-0"
         >
           <span>
             {selectedGrade === 'all'

@@ -48,20 +48,20 @@
   --palette-slate-400: #94a3b8;
   --palette-slate-100: #f1f5f9;
 
-  --surface-0-rgb: 15 23 42;
-  --surface-1-rgb: 30 41 59;
-  --surface-2-rgb: 39 53 73;
-  --surface-3-rgb: 51 65 85;
+  --surface-0-rgb: 12 18 34;
+  --surface-1-rgb: 20 29 49;
+  --surface-2-rgb: 28 39 64;
+  --surface-3-rgb: 39 52 79;
   --surface-0: rgb(var(--surface-0-rgb));
   --surface-1: rgb(var(--surface-1-rgb));
   --surface-2: rgb(var(--surface-2-rgb));
   --surface-3: rgb(var(--surface-3-rgb));
-  --text-primary: #f8fafc;
-  --text-secondary: #cbd5e1;
-  --text-tertiary: #94a3b8;
-  --border-subtle: rgba(255, 255, 255, 0.08);
-  --border-default: #7b8ba1;
-  --border-strong: var(--border-default);
+  --text-primary: #F4F1EA;
+  --text-secondary: #CBD5E1;
+  --text-tertiary: #9AA7BA;
+  --border-subtle: rgba(244, 241, 234, 0.10);
+  --border-default: #7C8AA3;
+  --border-strong: #9AA7BA;
   --accent-fg: var(--brand-primary-ink);
   --accent-bg: var(--brand-primary);
   --tone-success-fg: #bbf7d0;
@@ -77,14 +77,14 @@
   --tone-info-bg: rgba(28, 176, 246, 0.18);
   --tone-info-border: #1899d6;
 
-  --brand-primary-rgb: 88 204 2;
+  --brand-primary-rgb: 52 211 153;
   /* Metin mürekkebi, marka zemin renginden bağımsızdır. */
-  --green-ink-rgb: 105 224 2;
+  --green-ink-rgb: 52 211 153;
   --brand-primary-ink-rgb: var(--green-ink-rgb);
-  --brand-primary-soft-rgb: 105 224 2;
-  --brand-primary-deep-rgb: 70 163 2;
-  --brand-secondary-rgb: 28 176 246;
-  --brand-secondary-soft-rgb: 51 190 255;
+  --brand-primary-soft-rgb: 110 231 183;
+  --brand-primary-deep-rgb: 5 150 105;
+  --brand-secondary-rgb: 147 180 255;
+  --brand-secondary-soft-rgb: 191 208 255;
   --brand-accent-rgb: 255 200 0;
   --brand-accent-soft-rgb: 255 212 38;
   --brand-success-rgb: 88 204 2;
@@ -113,18 +113,18 @@
   /* Eski adlar, kademeli göç süresince semantic rollerin alias'ıdır. */
   --bg: var(--surface-0);
   --bg-elevated: var(--surface-2);
-  --bg-soft: rgba(15, 23, 42, 0.72);
+  --bg-soft: rgba(12, 18, 34, 0.72);
   --bg-muted: rgba(255, 255, 255, 0.08);
   --text: var(--text-primary);
-  --text-strong: #ffffff;
+  --text-strong: #F4F1EA;
   --text-muted: var(--text-tertiary);
-  --text-soft: #64748b;
+  --text-soft: #9AA7BA;
   --border: var(--border-default);
   --border-soft: var(--border-subtle);
   --border-strong-light: var(--border-strong);
   --shadow: rgba(15, 23, 42, 0.35);
-  --scrollbar-track: #1e293b;
-  --scrollbar-thumb-start: #7c3aed;
+  --scrollbar-track: #141D31;
+  --scrollbar-thumb-start: #7C8AA3;
   --ring: rgb(var(--brand-primary-rgb) / 0.55);
 
   /* Katman & Yüzey: bg-white/x yerine overlay ve hairline token'ları */
@@ -136,24 +136,24 @@
   --scrim: rgba(0, 0, 0, 0.40);
 
   /* Aksan ve Zemin Üstü Metin */
-  --on-brand: #ffffff;
+  --on-brand: #06281E;
   --on-tint: #f8fafc;
   --on-tint-muted: #cbd5e1;
 
   /* Koyu Temada Ek Yüzey */
-  --surface-4: #241d3d;
+  --surface-4: #1C2740;
 
   /* 6 Semantik Rol: canlı / mürekkep (-ink) / zemin (-tint) */
-  --accent-brand: #8b5cf6;
-  --accent-brand-ink: #c4b5fd;
-  --accent-brand-tint: rgba(139, 92, 246, 0.12);
+  --accent-brand: #34D399;
+  --accent-brand-ink: #34D399;
+  --accent-brand-tint: rgba(52, 211, 153, 0.12);
 
-  --accent-info: #06b6d4;
-  --accent-info-ink: #67e8f9;
-  --accent-info-tint: rgba(6, 182, 212, 0.12);
+  --accent-info: #93B4FF;
+  --accent-info-ink: #93B4FF;
+  --accent-info-tint: rgba(147, 180, 255, 0.12);
 
-  --accent-success: #10b981;
-  --accent-success-ink: #6ee7b7;
+  --accent-success: #10B981;
+  --accent-success-ink: #6EE7B7;
   --accent-success-tint: rgba(16, 185, 129, 0.12);
 
   --accent-warning: #f59e0b;
@@ -217,37 +217,37 @@ html[data-theme='light'] {
   --palette-slate-400: #94a3b8;
   --palette-slate-100: #f1f5f9;
 
-  --surface-0-rgb: 244 247 251;
+  --surface-0-rgb: 250 248 245;
   --surface-1-rgb: 255 255 255;
-  --surface-2-rgb: 248 250 252;
-  --surface-3-rgb: 241 245 249;
-  --text-primary: #1e293b;
-  --text-secondary: #3c4858;
-  --text-tertiary: #4f5f76;
-  --border-subtle: #edf2f7;
-  --border-default: #6f7f96;
-  --border-strong: var(--border-default);
+  --surface-2-rgb: 247 244 238;
+  --surface-3-rgb: 244 241 234;
+  --text-primary: #0F172A;
+  --text-secondary: #334155;
+  --text-tertiary: #475569;
+  --border-subtle: #E5DFD3;
+  --border-default: #8C8270;
+  --border-strong: #6F6656;
   --accent-fg: var(--brand-primary-ink);
   --accent-bg: var(--brand-primary);
-  --tone-success-fg: #276700;
-  --tone-success-bg: #d7ffb8;
-  --tone-success-border: #46a302;
-  --tone-warn-fg: #8a5800;
-  --tone-warn-bg: #fff5cc;
-  --tone-warn-border: #e5b400;
-  --tone-danger-fg: #b91c1c;
-  --tone-danger-bg: #ffdfe0;
-  --tone-danger-border: #ea2b2b;
-  --tone-info-fg: #0c6999;
-  --tone-info-bg: #ddf4ff;
-  --tone-info-border: #1899d6;
+  --tone-success-fg: #065F46;
+  --tone-success-bg: #E6F2EC;
+  --tone-success-border: #047857;
+  --tone-warn-fg: #92400E;
+  --tone-warn-bg: #F8EFD9;
+  --tone-warn-border: #B45309;
+  --tone-danger-fg: #B91C1C;
+  --tone-danger-bg: #F9E8E6;
+  --tone-danger-border: #B91C1C;
+  --tone-info-fg: #1D4ED8;
+  --tone-info-bg: #E8EEFB;
+  --tone-info-border: #1D4ED8;
 
-  --brand-primary-rgb: 88 204 2;
-  --green-ink-rgb: 39 103 0;
-  --brand-primary-soft-rgb: 105 224 2;
-  --brand-primary-deep-rgb: 70 163 2;
-  --brand-secondary-rgb: 28 176 246;
-  --brand-secondary-soft-rgb: 51 190 255;
+  --brand-primary-rgb: 16 185 129;
+  --green-ink-rgb: 6 95 70;
+  --brand-primary-soft-rgb: 52 211 153;
+  --brand-primary-deep-rgb: 6 95 70;
+  --brand-secondary-rgb: 29 78 216;
+  --brand-secondary-soft-rgb: 37 99 235;
   --brand-accent-rgb: 255 200 0;
   --brand-accent-soft-rgb: 255 212 38;
   --brand-success-rgb: 88 204 2;
@@ -256,57 +256,57 @@ html[data-theme='light'] {
   --brand-pink-rgb: 206 130 255;
   --brand-orange-rgb: 255 150 0;
   --brand-indigo-rgb: 28 176 246;
-  --brand-gradient-middle: #46a302;
+  --brand-gradient-middle: #065F46;
 
-  --bg: #f4f7fb;
-  --bg-elevated: #ffffff;
-  --bg-soft: #ffffff;
-  --bg-muted: #f1f5f9;
+  --bg: var(--surface-0);
+  --bg-elevated: #FFFFFF;
+  --bg-soft: #FFFFFF;
+  --bg-muted: #F4F0E8;
   --text: var(--text-primary);
-  --text-strong: #1e293b;
+  --text-strong: #0F172A;
   --text-muted: var(--text-tertiary);
-  --text-soft: #778ca3;
-  --surface-4: #fff9db;
+  --text-soft: #475569;
+  --surface-4: #F4F0E8;
   --border: var(--border-default);
   --border-soft: var(--border-subtle);
   --border-strong-light: var(--border-strong);
-  --shadow: rgba(15, 23, 42, 0.08);
-  --scrollbar-track: #f1f5f9;
-  --scrollbar-thumb-start: #4338ca;
-  --ring: rgb(var(--brand-primary-rgb) / 0.35);
+  --shadow: rgba(15, 23, 42, 0.06);
+  --scrollbar-track: #F4F0E8;
+  --scrollbar-thumb-start: #8C8270;
+  --ring: #1D4ED8;
 
   /* Katman & Yüzey: Açık temada dokunsal kağıt ve mürekkep alfası */
   --overlay-1: rgba(15, 23, 42, 0.02);
   --overlay-2: rgba(15, 23, 42, 0.04);
   --overlay-3: rgba(15, 23, 42, 0.07);
-  --hairline: rgba(226, 232, 240, 0.9);
-  --hairline-strong: rgba(203, 213, 225, 0.9);
+  --hairline: rgba(229, 223, 211, 0.9);
+  --hairline-strong: rgba(140, 130, 112, 0.55);
   --scrim: rgba(15, 23, 42, 0.45);
 
   /* Aksan ve Zemin Üstü Metin */
-  --on-brand: #ffffff;
+  --on-brand: #FFFFFF;
   --on-tint: #090d16;
   --on-tint-muted: #334155;
 
   /* 6 Semantik Rol: mürekkep 700 basamağında (≥ 4.5:1), zemin rafine pastel tonlarda */
-  --accent-brand: #6366f1;
-  --accent-brand-ink: #4338ca;
-  --accent-brand-tint: rgba(99, 102, 241, 0.08);
+  --accent-brand: #065F46;
+  --accent-brand-ink: #065F46;
+  --accent-brand-tint: rgba(5, 150, 105, 0.08);
 
-  --accent-info: #0284c7;
-  --accent-info-ink: #0369a1;
-  --accent-info-tint: rgba(2, 132, 199, 0.08);
+  --accent-info: #1D4ED8;
+  --accent-info-ink: #1D4ED8;
+  --accent-info-tint: rgba(29, 78, 216, 0.08);
 
   --accent-success: #059669;
-  --accent-success-ink: #065f46;
+  --accent-success-ink: #065F46;
   --accent-success-tint: rgba(5, 150, 105, 0.08);
 
-  --accent-warning: #d97706;
-  --accent-warning-ink: #b45309;
+  --accent-warning: #B45309;
+  --accent-warning-ink: #92400E;
   --accent-warning-tint: rgba(217, 119, 6, 0.09);
 
-  --accent-danger: #e11d48;
-  --accent-danger-ink: #be123c;
+  --accent-danger: #B91C1C;
+  --accent-danger-ink: #B91C1C;
   --accent-danger-tint: rgba(225, 29, 72, 0.08);
 
   --accent-play: var(--brand-pink);
@@ -1288,43 +1288,8 @@ html[data-theme='light'] .bento-interactive:hover {
 .light-atmosphere {
   position: relative;
   overflow-x: clip;
-}
-
-.light-atmosphere::before,
-.light-atmosphere::after {
-  content: '';
-  position: absolute;
-  pointer-events: none;
-  z-index: 0;
-}
-
-.light-atmosphere::before {
-  width: 28rem;
-  height: 28rem;
-  top: -8rem;
-  left: -8rem;
-  background: radial-gradient(
-    circle,
-    rgba(99, 102, 241, 0.12) 0%,
-    rgba(99, 102, 241, 0) 68%
-  );
-}
-
-.light-atmosphere::after {
-  width: 26rem;
-  height: 26rem;
-  top: 8rem;
-  right: -8rem;
-  background: radial-gradient(
-    circle,
-    rgba(236, 72, 153, 0.1) 0%,
-    rgba(236, 72, 153, 0) 70%
-  );
-}
-
-html[data-theme='dark'] .light-atmosphere::before,
-html[data-theme='dark'] .light-atmosphere::after {
-  display: none;
+  background: var(--surface-0);
+  color: var(--text-primary);
 }
 
 /* Theme-scoped so components can keep the class in both themes and let

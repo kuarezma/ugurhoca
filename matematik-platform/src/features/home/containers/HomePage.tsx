@@ -204,19 +204,20 @@ export default function HomePage({
             user={user}
             recentDocumentsSlot={recentDocumentsSlot}
             onOpenFlashcards={() => setIsFlashcardsOpen(true)}
-          onOpenScratchpad={() => setIsScratchpadOpen(true)}
-          onOpenCalculator={(tab) =>
-            setCalculatorState({ isOpen: true, tab: tab || 'lgs' })
-          }
-          onOpenPomodoro={() => setIsPomodoroOpen(true)}
-          onOpenGraph={() => setIsGraphOpen(true)}
-          onOpenProofs={() => setIsProofsOpen(true)}
-          onOpenCheatSheet={() => setIsCheatSheetOpen(true)}
-          onOpenGlossary={() => setIsGlossaryOpen(true)}
-          onOpenTopicWeights={() => setIsTopicWeightsOpen(true)}
-          onOpenWeeklyPlanner={() => setIsWeeklyPlannerOpen(true)}
-          onOpenSpeedDrill={() => setIsSpeedDrillOpen(true)}
-        />
+            onOpenScratchpad={() => setIsScratchpadOpen(true)}
+            onOpenCalculator={(tab) =>
+              setCalculatorState({ isOpen: true, tab: tab || 'lgs' })
+            }
+            onOpenPomodoro={() => setIsPomodoroOpen(true)}
+            onOpenChecklist={() => setIsChecklistOpen(true)}
+            onOpenGraph={() => setIsGraphOpen(true)}
+            onOpenProofs={() => setIsProofsOpen(true)}
+            onOpenCheatSheet={() => setIsCheatSheetOpen(true)}
+            onOpenGlossary={() => setIsGlossaryOpen(true)}
+            onOpenTopicWeights={() => setIsTopicWeightsOpen(true)}
+            onOpenWeeklyPlanner={() => setIsWeeklyPlannerOpen(true)}
+            onOpenSpeedDrill={() => setIsSpeedDrillOpen(true)}
+          />
 
         {/* 2. Duyurular */}
         {announcementsSlot}
