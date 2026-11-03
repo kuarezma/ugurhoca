@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 380 145" width="100%" height="100%">
+  <defs>
+    <marker id="arr53" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+      <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="#0f766e"/>
+    </marker>
+  </defs>
+  <!-- İletki Gövdesi: Merkez (190, 125), R=105 -->
+  <path d="M 85 125 A 105 105 0 0 1 295 125 Z" fill="#f0fdfa" stroke="#0d9488" stroke-width="1.4"/>
+  <path d="M 130 125 A 60 60 0 0 1 250 125" fill="none" stroke="#99f6e4" stroke-width="1" stroke-dasharray="2 2"/>
+  <line x1="75" y1="125" x2="305" y2="125" stroke="#0f766e" stroke-width="1.6"/>
+
+  <!-- Işınlar: Merkez (190, 125) -->
+  <!-- OA: 0° -->
+  <line x1="190" y1="125" x2="297" y2="125" stroke="#0f766e" stroke-width="1.8" marker-end="url(#arr53)"/>
+  <circle cx="283" cy="125" r="2.8" fill="#0f766e"/>
+  <text x="312" y="129" font-family="PT Sans, sans-serif" font-size="9.5" font-weight="bold" fill="#0f766e">A (0°)</text>
+
+  <!-- OB: 40° -->
+  <line x1="190" y1="125" x2="271" y2="57" stroke="#0f766e" stroke-width="1.8" marker-end="url(#arr53)"/>
+  <circle cx="261" cy="65" r="2.8" fill="#0f766e"/>
+  <text x="274" y="52" font-family="PT Sans, sans-serif" font-size="9" font-weight="bold" fill="#0f766e">B (40°)</text>
+
+  <!-- OC: 90° -->
+  <line x1="190" y1="125" x2="190" y2="19" stroke="#0f766e" stroke-width="1.8" marker-end="url(#arr53)"/>
+  <circle cx="190" cy="31" r="2.8" fill="#0f766e"/>
+  <text x="190" y="12" font-family="PT Sans, sans-serif" font-size="9" font-weight="bold" fill="#0f766e" text-anchor="middle">C (90°)</text>
+
+  <!-- OD: 135° -->
+  <line x1="190" y1="125" x2="113" y2="48" stroke="#0f766e" stroke-width="1.8" marker-end="url(#arr53)"/>
+  <circle cx="123" cy="58" r="2.8" fill="#0f766e"/>
+  <text x="88" y="44" font-family="PT Sans, sans-serif" font-size="9" font-weight="bold" fill="#0f766e">D (135°)</text>
+
+  <!-- OE: 180° (Ok ucuyla çakışma tamamen önlendi, etiket x=72 solunda) -->
+  <line x1="190" y1="125" x2="83" y2="125" stroke="#0f766e" stroke-width="1.8" marker-end="url(#arr53)"/>
+  <circle cx="97" cy="125" r="2.8" fill="#0f766e"/>
+  <text x="68" y="129" font-family="PT Sans, sans-serif" font-size="9.5" font-weight="bold" fill="#0f766e" text-anchor="end">E (180°)</text>
+
+  <!-- Merkez O -->
+  <circle cx="190" cy="125" r="3.5" fill="#042f2e"/>
+  <text x="190" y="137" font-family="PT Sans, sans-serif" font-size="10" font-weight="bold" fill="#042f2e" text-anchor="middle">O</text>
+</svg>

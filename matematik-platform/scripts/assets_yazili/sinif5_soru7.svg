@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 280 95" width="100%" height="100%">
+  <polygon points="30,80 180,80 230,20 80,20" fill="#fefce8" stroke="#ca8a04" stroke-width="1.8"/>
+  <circle cx="30" cy="80" r="3" fill="#854d0e"/>
+  <text x="20" y="92" font-family="PT Sans, sans-serif" font-size="10" font-weight="bold" fill="#854d0e">K</text>
+  <circle cx="180" cy="80" r="3" fill="#854d0e"/>
+  <text x="188" y="92" font-family="PT Sans, sans-serif" font-size="10" font-weight="bold" fill="#854d0e">L</text>
+  <circle cx="230" cy="20" r="3" fill="#854d0e"/>
+  <text x="238" y="20" font-family="PT Sans, sans-serif" font-size="10" font-weight="bold" fill="#854d0e">M</text>
+  <circle cx="80" cy="20" r="3" fill="#854d0e"/>
+  <text x="70" y="20" font-family="PT Sans, sans-serif" font-size="10" font-weight="bold" fill="#854d0e">N</text>
+
+  <text x="105" y="93" font-family="PT Sans, sans-serif" font-size="9" font-weight="bold" fill="#a16207" text-anchor="middle">|KL| = 35 cm</text>
+  <text x="216" y="56" font-family="PT Sans, sans-serif" font-size="9" font-weight="bold" fill="#a16207">22 cm</text>
+
+  <path d="M 48 80 A 18 18 0 0 1 42 66" fill="none" stroke="#dc2626" stroke-width="1.6"/>
+  <text x="50" y="72" font-family="PT Sans, sans-serif" font-size="9" font-weight="bold" fill="#dc2626">65°</text>
+</svg>

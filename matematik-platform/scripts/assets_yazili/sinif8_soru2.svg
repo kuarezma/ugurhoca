@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 280 125" width="100%" height="100%">
+  <!-- Pano: x=65, y=20, width=175, height=84 -->
+  <rect x="65" y="20" width="175" height="84" fill="#fef2f2" stroke="#b91c1c" stroke-width="1.8" rx="2"/>
+
+  <!-- İç Izgara (5x4) -->
+  <line x1="100" y1="20" x2="100" y2="104" stroke="#fca5a5" stroke-width="0.9"/>
+  <line x1="135" y1="20" x2="135" y2="104" stroke="#fca5a5" stroke-width="0.9"/>
+  <line x1="170" y1="20" x2="170" y2="104" stroke="#fca5a5" stroke-width="0.9"/>
+  <line x1="205" y1="20" x2="205" y2="104" stroke="#fca5a5" stroke-width="0.9"/>
+
+  <line x1="65" y1="41" x2="240" y2="41" stroke="#fca5a5" stroke-width="0.9"/>
+  <line x1="65" y1="62" x2="240" y2="62" stroke="#fca5a5" stroke-width="0.9"/>
+  <line x1="65" y1="83" x2="240" y2="83" stroke="#fca5a5" stroke-width="0.9"/>
+
+  <!-- Birinci Kare Vurgusu -->
+  <rect x="65" y="20" width="35" height="21" fill="#fee2e2" stroke="#dc2626" stroke-width="1.2"/>
+  <text x="82" y="33" font-family="PT Sans, sans-serif" font-size="7" font-weight="bold" fill="#b91c1c" text-anchor="middle">Kare Foto</text>
+
+  <!-- Ölçüler: Üst 210 cm -->
+  <line x1="65" y1="12" x2="240" y2="12" stroke="#475569" stroke-width="1"/>
+  <line x1="65" y1="9" x2="65" y2="15" stroke="#475569" stroke-width="1"/>
+  <line x1="240" y1="9" x2="240" y2="15" stroke="#475569" stroke-width="1"/>
+  <text x="152" y="9" font-family="PT Sans, sans-serif" font-size="9" font-weight="bold" fill="#334155" text-anchor="middle">210 cm</text>
+
+  <!-- Ölçüler: Sol 168 cm (x=50'de end-anchor, solda bol boşluk var, 1 tam okunur) -->
+  <line x1="56" y1="20" x2="56" y2="104" stroke="#475569" stroke-width="1"/>
+  <line x1="53" y1="20" x2="59" y2="20" stroke="#475569" stroke-width="1"/>
+  <line x1="53" y1="104" x2="59" y2="104" stroke="#475569" stroke-width="1"/>
+  <text x="50" y="65" font-family="PT Sans, sans-serif" font-size="9" font-weight="bold" fill="#334155" text-anchor="end">168 cm</text>
+</svg>

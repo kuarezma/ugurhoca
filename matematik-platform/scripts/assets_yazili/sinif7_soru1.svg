@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 60" width="100%" height="100%">
+  <defs>
+    <marker id="arr71" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+      <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="#334155"/>
+    </marker>
+  </defs>
+  <line x1="18" y1="30" x2="386" y2="30" stroke="#334155" stroke-width="1.8" marker-start="url(#arr71)" marker-end="url(#arr71)"/>
+
+  <line x1="48" y1="24" x2="48" y2="36" stroke="#334155" stroke-width="1.6"/>
+  <text x="48" y="48" font-family="PT Sans, sans-serif" font-size="10" font-weight="bold" fill="#334155" text-anchor="middle">-3</text>
+  <line x1="115" y1="24" x2="115" y2="36" stroke="#334155" stroke-width="1.6"/>
+  <text x="115" y="48" font-family="PT Sans, sans-serif" font-size="10" font-weight="bold" fill="#334155" text-anchor="middle">-2</text>
+  <line x1="182" y1="24" x2="182" y2="36" stroke="#334155" stroke-width="1.6"/>
+  <text x="182" y="48" font-family="PT Sans, sans-serif" font-size="10" font-weight="bold" fill="#334155" text-anchor="middle">-1</text>
+  <line x1="249" y1="22" x2="249" y2="38" stroke="#0f172a" stroke-width="2"/>
+  <text x="249" y="49" font-family="PT Sans, sans-serif" font-size="11" font-weight="bold" fill="#0f172a" text-anchor="middle">0</text>
+  <line x1="316" y1="24" x2="316" y2="36" stroke="#334155" stroke-width="1.6"/>
+  <text x="316" y="48" font-family="PT Sans, sans-serif" font-size="10" font-weight="bold" fill="#334155" text-anchor="middle">+1</text>
+  <line x1="383" y1="24" x2="383" y2="36" stroke="#334155" stroke-width="1.6"/>
+  <text x="383" y="48" font-family="PT Sans, sans-serif" font-size="10" font-weight="bold" fill="#334155" text-anchor="middle">+2</text>
+
+  <circle cx="93" cy="30" r="3.5" fill="#dc2626"/>
+  <text x="93" y="15" font-family="PT Sans, sans-serif" font-size="8.5" font-weight="bold" fill="#dc2626" text-anchor="middle">Batık B (-7/3)</text>
+  <circle cx="165" cy="30" r="3.5" fill="#d97706"/>
+  <text x="165" y="15" font-family="PT Sans, sans-serif" font-size="8.5" font-weight="bold" fill="#d97706" text-anchor="middle">Batık C (-5/4)</text>
+  <circle cx="350" cy="30" r="3.5" fill="#059669"/>
+  <text x="350" y="15" font-family="PT Sans, sans-serif" font-size="8.5" font-weight="bold" fill="#059669" text-anchor="middle">Şamandıra D (+3/2)</text>
+</svg>

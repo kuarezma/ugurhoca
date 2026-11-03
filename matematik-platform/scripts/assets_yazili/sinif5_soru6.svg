@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 340 125" width="100%" height="100%">
+  <!-- Zemin Çizgisi: B, C, D Doğrusal -->
+  <line x1="20" y1="100" x2="320" y2="100" stroke="#64748b" stroke-width="1.6"/>
+
+  <!-- Üçgenler: B(35, 100), C(160, 100), D(305, 100), A(97, 22) -->
+  <polygon points="35,100 160,100 97,22" fill="#f0fdfa" stroke="#0d9488" stroke-width="1.8"/>
+  <polygon points="160,100 305,100 97,22" fill="#f8fafc" stroke="#0284c7" stroke-width="1.6"/>
+
+  <!-- Köşeler -->
+  <circle cx="97" cy="22" r="3" fill="#0f766e"/>
+  <text x="97" y="14" font-family="PT Sans, sans-serif" font-size="10" font-weight="bold" fill="#0f766e" text-anchor="middle">A</text>
+  <circle cx="35" cy="100" r="3" fill="#0f766e"/>
+  <text x="26" y="112" font-family="PT Sans, sans-serif" font-size="10" font-weight="bold" fill="#0f766e">B</text>
+  <circle cx="160" cy="100" r="3" fill="#0f766e"/>
+  <text x="160" y="114" font-family="PT Sans, sans-serif" font-size="10" font-weight="bold" fill="#0f766e" text-anchor="middle">C</text>
+  <circle cx="305" cy="100" r="3" fill="#0369a1"/>
+  <text x="312" y="112" font-family="PT Sans, sans-serif" font-size="10" font-weight="bold" fill="#0369a1">D</text>
+
+  <!-- |AB| = |AC| Eşitlik İşaretleri -->
+  <line x1="63" y1="58" x2="69" y2="64" stroke="#0d9488" stroke-width="1.8"/>
+  <line x1="66" y1="55" x2="72" y2="61" stroke="#0d9488" stroke-width="1.8"/>
+  <line x1="126" y1="64" x2="132" y2="58" stroke="#0d9488" stroke-width="1.8"/>
+  <line x1="129" y1="61" x2="135" y2="55" stroke="#0d9488" stroke-width="1.8"/>
+
+  <!-- 44° Açısı -->
+  <path d="M 89 34 A 16 16 0 0 0 105 34" fill="none" stroke="#e11d48" stroke-width="1.5"/>
+  <text x="97" y="47" font-family="PT Sans, sans-serif" font-size="9" font-weight="bold" fill="#e11d48" text-anchor="middle">44°</text>
+
+  <!-- ? Açısı (CAD üçgeninin iç boşluğunda, çizgiye hiç değmez) -->
+  <path d="M 107 35 A 22 22 0 0 1 122 43" fill="none" stroke="#7c3aed" stroke-width="1.6"/>
+  <text x="146" y="58" font-family="PT Sans, sans-serif" font-size="12" font-weight="bold" fill="#7c3aed">?</text>
+
+  <!-- 38° Açısı (D köşesinin sol iç boşluğunda, zemin ve AD çizgisine değmez) -->
+  <path d="M 270 100 A 35 35 0 0 1 280 87" fill="none" stroke="#0284c7" stroke-width="1.5"/>
+  <text x="252" y="96" font-family="PT Sans, sans-serif" font-size="9.5" font-weight="bold" fill="#0284c7">38°</text>
+</svg>

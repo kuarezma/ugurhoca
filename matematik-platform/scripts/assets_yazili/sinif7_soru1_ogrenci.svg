@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 65" width="100%" height="100%">
+  <defs>
+    <marker id="arr71o" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+      <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="#334155"/>
+    </marker>
+  </defs>
+  <line x1="18" y1="30" x2="402" y2="30" stroke="#334155" stroke-width="1.8" marker-start="url(#arr71o)" marker-end="url(#arr71o)"/>
+
+  <!-- Tam Sayılar: -3(48), -2(118), -1(188), 0(258), +1(328), +2(398) (dx=70) -->
+  <line x1="48" y1="22" x2="48" y2="38" stroke="#334155" stroke-width="1.8"/>
+  <text x="48" y="52" font-family="PT Sans, sans-serif" font-size="10.5" font-weight="bold" fill="#334155" text-anchor="middle">-3</text>
+
+  <line x1="118" y1="22" x2="118" y2="38" stroke="#334155" stroke-width="1.8"/>
+  <text x="118" y="52" font-family="PT Sans, sans-serif" font-size="10.5" font-weight="bold" fill="#334155" text-anchor="middle">-2</text>
+
+  <line x1="188" y1="22" x2="188" y2="38" stroke="#334155" stroke-width="1.8"/>
+  <text x="188" y="52" font-family="PT Sans, sans-serif" font-size="10.5" font-weight="bold" fill="#334155" text-anchor="middle">-1</text>
+
+  <line x1="258" y1="20" x2="258" y2="40" stroke="#0f172a" stroke-width="2.2"/>
+  <text x="258" y="52" font-family="PT Sans, sans-serif" font-size="11" font-weight="bold" fill="#0f172a" text-anchor="middle">0 (Deniz Seviyesi)</text>
+
+  <line x1="328" y1="22" x2="328" y2="38" stroke="#334155" stroke-width="1.8"/>
+  <text x="328" y="52" font-family="PT Sans, sans-serif" font-size="10.5" font-weight="bold" fill="#334155" text-anchor="middle">+1</text>
+
+  <line x1="398" y1="22" x2="398" y2="38" stroke="#334155" stroke-width="1.8"/>
+  <text x="398" y="52" font-family="PT Sans, sans-serif" font-size="10.5" font-weight="bold" fill="#334155" text-anchor="middle">+2</text>
+
+  <!-- Küçük Yardımcı Çentikler (Öğrencinin bölmesi için) -->
+  <!-- -2 ile -3 arası: 1/4 ve 1/3 kılavuzları -->
+  <line x1="100.5" y1="26" x2="100.5" y2="34" stroke="#cbd5e1" stroke-width="1"/>
+  <line x1="83" y1="26" x2="83" y2="34" stroke="#cbd5e1" stroke-width="1"/>
+  <line x1="65.5" y1="26" x2="65.5" y2="34" stroke="#cbd5e1" stroke-width="1"/>
+  <!-- -1 ile -2 arası: 1/4'ler -->
+  <line x1="170.5" y1="26" x2="170.5" y2="34" stroke="#cbd5e1" stroke-width="1"/>
+  <line x1="153" y1="26" x2="153" y2="34" stroke="#cbd5e1" stroke-width="1"/>
+  <line x1="135.5" y1="26" x2="135.5" y2="34" stroke="#cbd5e1" stroke-width="1"/>
+  <!-- +1 ile +2 arası: orta nokta -->
+  <line x1="363" y1="26" x2="363" y2="34" stroke="#cbd5e1" stroke-width="1"/>
+</svg>
