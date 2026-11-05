@@ -1,5 +1,9 @@
 import { z } from 'zod';
 
+// CSP script-src has no 'unsafe-eval'; without this Zod probes Function("") and
+// every page load files a csp-violation report.
+z.config({ jitless: true });
+
 const turkishNamePattern = /^[A-Za-zÇĞİÖŞÜçğıöşü\s-']+$/;
 
 export const fullNameSchema = z
