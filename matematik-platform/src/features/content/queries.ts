@@ -203,6 +203,13 @@ export const loadContentDocuments = async (
     const queryTypes = getContentTypeQueryTypes(normalizedTypeFilter);
 
     const topic = options?.searchTerm?.trim() || '';
+    // OR içindeki virgül, parantez ve tırnaklar arama değerinin parçası kalmalı.
+    const searchPattern = topic
+      ? '"%' + topic.replace(/\\/g, '\\\\').replace(/"/g, '\\"') + '%"'
+      : null;
+    const searchFilter = searchPattern
+      ? 'title.ilike.' + searchPattern + ',description.ilike.' + searchPattern
+      : null;
     if (
       typeof gradeFilter === 'number' &&
       isCurriculumTopic(gradeFilter, topic) &&
@@ -267,9 +274,8 @@ export const loadContentDocuments = async (
           : countQuery.in('type', queryTypes);
     }
 
-    if (options?.searchTerm?.trim()) {
-      const term = `%${options.searchTerm.trim()}%`;
-      countQuery = countQuery.or(`title.ilike.${term},description.ilike.${term}`);
+    if (searchFilter) {
+      countQuery = countQuery.or(searchFilter);
     }
 
     if (options?.onlyVideo) {
@@ -280,9 +286,7 @@ export const loadContentDocuments = async (
       countQuery = countQuery.or('solution_url.neq.,answer_key_text.neq.');
     }
 
-    let dataQuery = supabase
-      .from('documents')
-      .select('*');
+    let dataQuery = supabase.from('documents').select('*');
 
     if (gradeFilter !== 'all') {
       dataQuery = dataQuery.contains('grade', [gradeFilter]);
@@ -295,9 +299,8 @@ export const loadContentDocuments = async (
           : dataQuery.in('type', queryTypes);
     }
 
-    if (options?.searchTerm?.trim()) {
-      const term = `%${options.searchTerm.trim()}%`;
-      dataQuery = dataQuery.or(`title.ilike.${term},description.ilike.${term}`);
+    if (searchFilter) {
+      dataQuery = dataQuery.or(searchFilter);
     }
 
     if (options?.onlyVideo) {

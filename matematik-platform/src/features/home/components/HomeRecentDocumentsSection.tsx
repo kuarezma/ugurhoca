@@ -191,9 +191,17 @@ export function HomeRecentDocumentsSection({
     useState<ContentDocument[]>(initialDocuments);
   const [selectedGrade, setSelectedGrade] = useState<HomeGradeFilter>('all');
   const [hasManualSelection, setHasManualSelection] = useState(false);
+  const [gradeDocuments, setGradeDocuments] = useState<
+    Partial<Record<SupportedHomeGrade, ContentDocument[]>>
+  >({});
+  const [loadingGrade, setLoadingGrade] = useState(false);
+  const [gradeError, setGradeError] = useState(false);
+  const [refreshVersion, setRefreshVersion] = useState(0);
+  const [retryVersion, setRetryVersion] = useState(0);
 
   useEffect(() => {
     setDocuments(initialDocuments);
+    setGradeDocuments({});
   }, [initialDocuments]);
 
   const resolvedUserGrade = useMemo((): SupportedHomeGrade | null => {
@@ -210,38 +218,77 @@ export function HomeRecentDocumentsSection({
       return;
     }
 
-    const hasDocsForUserGrade = documents.some((doc) =>
-      matchesGradeFilter(doc, resolvedUserGrade),
-    );
-    if (hasDocsForUserGrade) {
-      setSelectedGrade(resolvedUserGrade);
-    }
-  }, [documents, hasManualSelection, resolvedUserGrade]);
+    setSelectedGrade(resolvedUserGrade);
+  }, [hasManualSelection, resolvedUserGrade]);
 
   useEffect(() => {
     const handleUpdated = () => {
-      void fetchHomeDocuments(16)
-        .then((fresh) => {
-          if (fresh.length > 0) {
-            setDocuments(fresh);
-          }
-        })
-        .catch(() => undefined);
+      setGradeDocuments({});
+      setRefreshVersion((version) => version + 1);
     };
-
     window.addEventListener(HOME_DOCUMENTS_UPDATED_EVENT, handleUpdated);
     return () =>
       window.removeEventListener(HOME_DOCUMENTS_UPDATED_EVENT, handleUpdated);
   }, []);
 
-  const filteredDocuments = useMemo(() => {
-    return documents
-      .filter((doc) => !doc.is_admin_only)
-      .filter((doc) => matchesGradeFilter(doc, selectedGrade))
-      .slice(0, MAX_VISIBLE_CARDS);
-  }, [documents, selectedGrade]);
+  useEffect(() => {
+    if (refreshVersion === 0) return;
+    let cancelled = false;
+    void fetchHomeDocuments(16)
+      .then((fresh) => {
+        if (!cancelled) setDocuments(fresh);
+      })
+      .catch(() => undefined);
+    return () => {
+      cancelled = true;
+    };
+  }, [refreshVersion]);
 
-  if (documents.length === 0) {
+  useEffect(() => {
+    if (
+      selectedGrade === 'all' ||
+      gradeDocuments[selectedGrade] !== undefined
+    ) {
+      setLoadingGrade(false);
+      setGradeError(false);
+      return;
+    }
+    let cancelled = false;
+    setLoadingGrade(true);
+    setGradeError(false);
+    void fetchHomeDocuments(MAX_VISIBLE_CARDS, selectedGrade)
+      .then((fresh) => {
+        if (!cancelled) {
+          setLoadingGrade(false);
+          setGradeDocuments((previous) => ({
+            ...previous,
+            [selectedGrade]: fresh,
+          }));
+        }
+      })
+      .catch(() => {
+        if (!cancelled) {
+          setGradeError(true);
+          setLoadingGrade(false);
+        }
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [selectedGrade, gradeDocuments, refreshVersion, retryVersion]);
+
+  const filteredDocuments = useMemo(() => {
+    const source =
+      selectedGrade === 'all'
+        ? documents
+        : (gradeDocuments[selectedGrade] ??
+          documents.filter((doc) => matchesGradeFilter(doc, selectedGrade)));
+    return source
+      .filter((doc) => !doc.is_admin_only)
+      .slice(0, MAX_VISIBLE_CARDS);
+  }, [documents, gradeDocuments, selectedGrade]);
+
+  if (documents.length === 0 && selectedGrade === 'all') {
     return null;
   }
 
@@ -331,7 +378,22 @@ export function HomeRecentDocumentsSection({
       </div>
 
       {/* İçerik Kartları Grid'i (Ferah 2 Sütunlu Bento Düzeni) */}
-      {filteredDocuments.length === 0 ? (
+      {filteredDocuments.length === 0 && loadingGrade ? (
+        <p className="py-10 text-center text-sm text-secondary" role="status">
+          İçerikler yükleniyor...
+        </p>
+      ) : filteredDocuments.length === 0 && gradeError ? (
+        <div className="py-10 text-center space-y-3" role="alert">
+          <p className="text-sm text-secondary">İçerikler yüklenemedi.</p>
+          <button
+            type="button"
+            className="rounded-xl bg-accent-bg text-accent-fg px-4 py-2 text-sm font-bold"
+            onClick={() => setRetryVersion((version) => version + 1)}
+          >
+            Tekrar dene
+          </button>
+        </div>
+      ) : filteredDocuments.length === 0 ? (
         <div className="py-10 text-center space-y-3">
           <p className="text-sm font-semibold text-secondary">
             Bu sınıf düzeyi için son eklenenler listesinde içerik bulunamadı.

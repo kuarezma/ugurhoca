@@ -1,5 +1,14 @@
-import { describe, expect, it, vi } from 'vitest';
-import { fireEvent, render, screen, within } from '@testing-library/react';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+import {
+  act,
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+  within,
+} from '@testing-library/react';
+import { fetchHomeDocuments } from '@/features/home/queries';
+import { HOME_DOCUMENTS_UPDATED_EVENT } from '@/features/home/home-documents-events';
 import type { AppUser, ContentDocument } from '@/types';
 import {
   HomeRecentDocumentsSection,
@@ -16,6 +25,10 @@ vi.mock('@/features/home/queries', () => ({
   fetchHomeDocuments: vi.fn().mockResolvedValue([]),
   isNewContent: vi.fn(() => false),
 }));
+
+beforeEach(() => {
+  vi.mocked(fetchHomeDocuments).mockReset().mockResolvedValue([]);
+});
 
 const mockDocs: ContentDocument[] = [
   {
@@ -68,9 +81,7 @@ const mockDocs: ContentDocument[] = [
 
 describe('HomeRecentDocumentsSection', () => {
   it('boş documents listesinde null render eder (hiçbir DOM elemanı basmaz)', () => {
-    const { container } = render(
-      <HomeRecentDocumentsSection documents={[]} />,
-    );
+    const { container } = render(<HomeRecentDocumentsSection documents={[]} />);
 
     expect(container).toBeEmptyDOMElement();
     expect(
@@ -114,9 +125,7 @@ describe('HomeRecentDocumentsSection', () => {
       screen.getByText('M.7.1.1.1 Tam Sayılarla Toplama ve Çıkarma'),
     ).toBeInTheDocument();
     expect(
-      screen.getByText(
-        'M.8.1.1.1 Pozitif tam sayıların çarpanlarını bulur.',
-      ),
+      screen.getByText('M.8.1.1.1 Pozitif tam sayıların çarpanlarını bulur.'),
     ).toBeInTheDocument();
 
     // Temizlenmiş açıklamalar render edilirken ham __WS_META__ asla render edilmemelidir
@@ -238,7 +247,7 @@ describe('HomeRecentDocumentsSection', () => {
     ).toBeInTheDocument();
   });
 
-  it('seçili sınıfta doküman yoksa boş durum mesajını ve kütüphane bağlantısını gösterir', () => {
+  it('seçili sınıfta doküman yoksa boş durum mesajını ve kütüphane bağlantısını gösterir', async () => {
     const onlyGrade5Docs: ContentDocument[] = [mockDocs[0]];
     render(<HomeRecentDocumentsSection documents={onlyGrade5Docs} />);
 
@@ -246,7 +255,7 @@ describe('HomeRecentDocumentsSection', () => {
     fireEvent.click(screen.getByRole('tab', { name: '8. Sınıf (LGS)' }));
 
     expect(
-      screen.getByText(
+      await screen.findByText(
         'Bu sınıf düzeyi için son eklenenler listesinde içerik bulunamadı.',
       ),
     ).toBeInTheDocument();
@@ -260,9 +269,7 @@ describe('HomeRecentDocumentsSection', () => {
   });
 
   it('userGrade={7} verildiğinde otomatik olarak 7. Sınıf sekmesine odaklanır ve Sınıfın rozetini gösterir', () => {
-    render(
-      <HomeRecentDocumentsSection documents={mockDocs} userGrade={7} />,
-    );
+    render(<HomeRecentDocumentsSection documents={mockDocs} userGrade={7} />);
 
     const tab7 = screen.getByRole('tab', { name: /7\. Sınıf/i });
     expect(tab7).toHaveAttribute('aria-selected', 'true');
@@ -329,11 +336,14 @@ describe('HomeRecentDocumentsSection', () => {
   });
 
   it('6 adetten fazla yeni içerik geldiğinde en fazla 6 içerik kartı gösterir', () => {
-    const eightDocs: ContentDocument[] = Array.from({ length: 8 }, (_, idx) => ({
-      ...mockDocs[idx % mockDocs.length],
-      id: `doc-limit-${idx + 1}`,
-      title: `Yeni İçerik Kartı #${idx + 1}`,
-    }));
+    const eightDocs: ContentDocument[] = Array.from(
+      { length: 8 },
+      (_, idx) => ({
+        ...mockDocs[idx % mockDocs.length],
+        id: `doc-limit-${idx + 1}`,
+        title: `Yeni İçerik Kartı #${idx + 1}`,
+      }),
+    );
 
     render(<HomeRecentDocumentsSection documents={eightDocs} />);
 
@@ -342,5 +352,88 @@ describe('HomeRecentDocumentsSection', () => {
     }
     expect(screen.queryByText('Yeni İçerik Kartı #7')).not.toBeInTheDocument();
     expect(screen.queryByText('Yeni İçerik Kartı #8')).not.toBeInTheDocument();
+  });
+});
+
+describe('sınıfa özel içerik yükleme', () => {
+  it('kullanıcı sınıfı ilk listede olmasa da otomatik seçer ve getirir', async () => {
+    vi.mocked(fetchHomeDocuments).mockResolvedValue([mockDocs[0]]);
+    render(
+      <HomeRecentDocumentsSection documents={[mockDocs[3]]} userGrade={5} />,
+    );
+    expect(screen.getByRole('tab', { name: /5\. Sınıf/ })).toHaveAttribute(
+      'aria-selected',
+      'true',
+    );
+    expect(await screen.findByText(mockDocs[0].title)).toBeInTheDocument();
+    expect(fetchHomeDocuments).toHaveBeenCalledWith(6, 5);
+  });
+
+  it('başarılı sınıf sonucunu sekmeye dönünce tekrar sorgulamadan gösterir', async () => {
+    vi.mocked(fetchHomeDocuments).mockResolvedValue([mockDocs[0]]);
+    render(<HomeRecentDocumentsSection documents={[mockDocs[3]]} />);
+    fireEvent.click(screen.getByRole('tab', { name: '5. Sınıf' }));
+    await screen.findByText(mockDocs[0].title);
+    fireEvent.click(screen.getByRole('tab', { name: 'Tümü' }));
+    fireEvent.click(screen.getByRole('tab', { name: '5. Sınıf' }));
+    expect(screen.getByText(mockDocs[0].title)).toBeInTheDocument();
+    expect(fetchHomeDocuments).toHaveBeenCalledTimes(1);
+  });
+
+  it('hata sonrasında tekrar deneyince içerikleri gösterir', async () => {
+    vi.mocked(fetchHomeDocuments)
+      .mockRejectedValueOnce(new Error('Hata'))
+      .mockResolvedValueOnce([mockDocs[0]]);
+    render(<HomeRecentDocumentsSection documents={[mockDocs[3]]} />);
+    fireEvent.click(screen.getByRole('tab', { name: '5. Sınıf' }));
+    fireEvent.click(await screen.findByRole('button', { name: 'Tekrar dene' }));
+    expect(await screen.findByText(mockDocs[0].title)).toBeInTheDocument();
+    expect(fetchHomeDocuments).toHaveBeenCalledTimes(2);
+  });
+
+  it('genel listede bulunmayan eski sınıf içeriğini getirir', async () => {
+    vi.mocked(fetchHomeDocuments).mockResolvedValueOnce([mockDocs[0]]);
+    render(<HomeRecentDocumentsSection documents={[mockDocs[3]]} />);
+    fireEvent.click(screen.getByRole('tab', { name: '5. Sınıf' }));
+    expect(await screen.findByText(mockDocs[0].title)).toBeInTheDocument();
+    expect(fetchHomeDocuments).toHaveBeenCalledWith(6, 5);
+  });
+
+  it('geç gelen önceki sekme sonucunu seçili sekmede göstermez', async () => {
+    let resolveFive!: (docs: ContentDocument[]) => void;
+    vi.mocked(fetchHomeDocuments)
+      .mockImplementationOnce(
+        () =>
+          new Promise((resolve) => {
+            resolveFive = resolve;
+          }),
+      )
+      .mockResolvedValueOnce([mockDocs[1]]);
+    render(<HomeRecentDocumentsSection documents={mockDocs} />);
+    fireEvent.click(screen.getByRole('tab', { name: '5. Sınıf' }));
+    fireEvent.click(screen.getByRole('tab', { name: '6. Sınıf' }));
+    await screen.findByText(mockDocs[1].title);
+    await act(async () => resolveFive([mockDocs[0]]));
+    expect(screen.queryByText(mockDocs[0].title)).not.toBeInTheDocument();
+  });
+
+  it('güncellemede boş sonuç dönerse silinmiş kartı kaldırır', async () => {
+    vi.mocked(fetchHomeDocuments)
+      .mockResolvedValueOnce([mockDocs[0]])
+      .mockResolvedValue([]);
+    render(<HomeRecentDocumentsSection documents={mockDocs} />);
+    fireEvent.click(screen.getByRole('tab', { name: '5. Sınıf' }));
+    await screen.findByText(mockDocs[0].title);
+    await waitFor(() => expect(fetchHomeDocuments).toHaveBeenCalledTimes(1));
+    await act(async () =>
+      window.dispatchEvent(new Event(HOME_DOCUMENTS_UPDATED_EVENT)),
+    );
+    await waitFor(() =>
+      expect(screen.queryByText(mockDocs[0].title)).not.toBeInTheDocument(),
+    );
+    expect(fetchHomeDocuments).toHaveBeenCalledWith(16);
+    expect(
+      vi.mocked(fetchHomeDocuments).mock.calls.filter((args) => args[1] === 5),
+    ).toHaveLength(2);
   });
 });

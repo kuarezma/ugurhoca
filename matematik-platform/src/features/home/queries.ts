@@ -159,13 +159,16 @@ export const resolveYandexImageUrl = async (url: string) => {
   }
 };
 
-export const fetchHomeDocuments = async (limit = 16) => {
-  const { data } = await supabase
-    .from('documents')
-    .select('*')
-    .order('created_at', { ascending: false })
-    .limit(limit);
+export const fetchHomeDocuments = async (limit = 16, grade?: 5 | 6 | 7 | 8) => {
+  let query = supabase.from('documents').select('*');
+  if (grade) query = query.contains('grade', [grade]);
 
+  const { data, error } = await query
+    .order('created_at', { ascending: false })
+    .limit(limit)
+    .abortSignal(AbortSignal.timeout(10_000));
+
+  if (error) throw new Error('İçerikler yüklenemedi. Yeniden deneyin.');
   return ((data || []) as ContentDocument[]).filter(
     (doc) => !doc.is_admin_only,
   );

@@ -3,6 +3,7 @@ import {
   clearUserAssignmentsCache,
   compressSupportImageFile,
   fetchUserAssignments,
+  fetchHomeDocuments,
   uploadSupportFiles,
   validateSupportImageFile,
 } from '@/features/home/queries';
@@ -48,7 +49,9 @@ describe('home queries support image validation', () => {
   it('keeps already small images under the upload limit unchanged', async () => {
     const smallImage = createFile('image/jpeg', 1024, 'small.jpg');
 
-    await expect(compressSupportImageFile(smallImage)).resolves.toBe(smallImage);
+    await expect(compressSupportImageFile(smallImage)).resolves.toBe(
+      smallImage,
+    );
   });
 
   it('uploads support images only after enforcing the 1 MB limit', async () => {
@@ -136,5 +139,52 @@ describe('fetchUserAssignments caching and deduplication', () => {
     clearUserAssignmentsCache('user-abc');
     await fetchUserAssignments('user-abc');
     expect(mockFrom).toHaveBeenCalledTimes(4);
+  });
+});
+
+describe('fetchHomeDocuments', () => {
+  it('sınıf filtresini limit öncesinde uygular ve 10 saniyelik sinyal kullanır', async () => {
+    const signal = new AbortController().signal;
+    const timeout = vi.spyOn(AbortSignal, 'timeout').mockReturnValue(signal);
+    const builder = {
+      select: vi.fn(),
+      contains: vi.fn(),
+      order: vi.fn(),
+      limit: vi.fn(),
+      abortSignal: vi.fn(),
+    };
+    builder.select.mockReturnValue(builder);
+    builder.contains.mockReturnValue(builder);
+    builder.order.mockReturnValue(builder);
+    builder.limit.mockReturnValue(builder);
+    builder.abortSignal.mockResolvedValue({ data: [], error: null });
+    vi.mocked(supabase.from).mockReturnValue(builder as never);
+    await expect(fetchHomeDocuments(6, 5)).resolves.toEqual([]);
+    expect(builder.contains).toHaveBeenCalledWith('grade', [5]);
+    expect(builder.contains.mock.invocationCallOrder[0]).toBeLessThan(
+      builder.limit.mock.invocationCallOrder[0],
+    );
+    expect(builder.limit).toHaveBeenCalledWith(6);
+    expect(timeout).toHaveBeenCalledWith(10000);
+    expect(builder.abortSignal).toHaveBeenCalledWith(signal);
+    timeout.mockRestore();
+  });
+
+  it('sorgu veya zaman aşımı hatasını boş listeye dönüştürmez', async () => {
+    const builder = {
+      select: vi.fn(),
+      order: vi.fn(),
+      limit: vi.fn(),
+      abortSignal: vi.fn(),
+    };
+    builder.select.mockReturnValue(builder);
+    builder.order.mockReturnValue(builder);
+    builder.limit.mockReturnValue(builder);
+    builder.abortSignal.mockResolvedValue({
+      data: null,
+      error: { message: 'timeout' },
+    });
+    vi.mocked(supabase.from).mockReturnValue(builder as never);
+    await expect(fetchHomeDocuments()).rejects.toThrow('İçerikler yüklenemedi');
   });
 });
