@@ -72,6 +72,7 @@ export function HomeAnnouncementsSection({
                   <div className="flex items-center gap-2 mb-2 text-xs text-secondary">
                     <Bell className="w-4 h-4 text-purple-400" />
                     {new Date(item.created_at).toLocaleDateString('tr-TR', {
+                      timeZone: 'Europe/Istanbul',
                       day: 'numeric',
                       month: 'short',
                     })}

@@ -125,16 +125,7 @@ async function measureRoute(
   const requestedUrl = new URL(route.path, baseURL).toString();
   const pageErrors: string[] = [];
   const capturePageError = (error: Error) => {
-    const msg = error.message || '';
-    if (
-      msg.includes('Minified React error #418') ||
-      msg.includes('Minified React error #423') ||
-      msg.includes('Minified React error #425') ||
-      msg.includes('Hydration failed')
-    ) {
-      return;
-    }
-    pageErrors.push(msg);
+    pageErrors.push(error.message || 'Bilinmeyen tarayıcı hatası');
   };
   page.on('pageerror', capturePageError);
 

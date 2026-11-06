@@ -36,6 +36,7 @@ export const formatContentDate = (value?: string | null) => {
   if (!value) return '-';
 
   return new Date(value).toLocaleDateString('tr-TR', {
+    timeZone: 'Europe/Istanbul',
     day: '2-digit',
     month: 'short',
     year: 'numeric',

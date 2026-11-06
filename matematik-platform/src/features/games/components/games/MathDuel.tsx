@@ -113,11 +113,13 @@ function generateDuelQuestion(streak: number): Question {
       if (distractors.size === 3) break;
     }
   }
+  // Negatif sonuçlarda da seçenek üretimi mutlaka tamamlanmalı.
+  let fallbackCandidate = Math.max(0, correctAnswer - 5);
   while (distractors.size < 3) {
-    const candidate = Math.max(1, correctAnswer + Math.floor(Math.random() * 11) - 5);
-    if (candidate !== correctAnswer) {
-      distractors.add(candidate);
+    if (fallbackCandidate !== correctAnswer) {
+      distractors.add(fallbackCandidate);
     }
+    fallbackCandidate += 1;
   }
 
   const options = shuffle([correctAnswer, ...Array.from(distractors)]);

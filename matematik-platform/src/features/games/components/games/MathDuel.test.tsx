@@ -20,13 +20,16 @@ describe('MathDuel Component', () => {
     vi.useFakeTimers();
   });
   afterEach(() => {
+    vi.restoreAllMocks();
     vi.clearAllTimers();
     vi.useRealTimers();
   });
 
   it('renders initial idle view with game instructions and start button', () => {
     const onScore = vi.fn();
-    const { unmount } = render(<MathDuel onScore={onScore} scoreMultiplier={1} />);
+    const { unmount } = render(
+      <MathDuel onScore={onScore} scoreMultiplier={1} />,
+    );
 
     expect(screen.getByText('Matematik Düellosu')).toBeInTheDocument();
     expect(screen.getByText('1v1 Hızlı İşlem')).toBeInTheDocument();
@@ -39,7 +42,9 @@ describe('MathDuel Component', () => {
   });
 
   it('allows switching game mode between bot and solo blitz', () => {
-    const { unmount } = render(<MathDuel onScore={vi.fn()} scoreMultiplier={1} />);
+    const { unmount } = render(
+      <MathDuel onScore={vi.fn()} scoreMultiplier={1} />,
+    );
 
     const soloButton = screen.getByRole('button', { name: /Hız Antrenmanı/i });
     fireEvent.click(soloButton);
@@ -52,7 +57,9 @@ describe('MathDuel Component', () => {
 
   it('starts the game when start button is clicked and shows questions & answer options', () => {
     const onScore = vi.fn();
-    const { unmount } = render(<MathDuel onScore={onScore} scoreMultiplier={1} />);
+    const { unmount } = render(
+      <MathDuel onScore={onScore} scoreMultiplier={1} />,
+    );
 
     const startButton = screen.getByRole('button', {
       name: /Düelloyu Başlat/i,
@@ -66,7 +73,9 @@ describe('MathDuel Component', () => {
 
     // 4 multiple choice buttons should be displayed
     const buttons = screen.getAllByRole('button');
-    const optionButtons = buttons.filter((btn) => btn.textContent?.includes('['));
+    const optionButtons = buttons.filter((btn) =>
+      btn.textContent?.includes('['),
+    );
     expect(optionButtons.length).toBe(4);
 
     // Click first option button
@@ -75,10 +84,31 @@ describe('MathDuel Component', () => {
     });
 
     // Score or streak feedback should trigger
-    expect(
-      screen.getByText(/Doğru!|Yanlış!|Harika!/i),
-    ).toBeInTheDocument();
+    expect(screen.getByText(/Doğru!|Yanlış!|Harika!/i)).toBeInTheDocument();
 
     unmount();
+  });
+
+  it('negatif cevapta dört farklı seçenek üretir ve doğru seçenek seçilebilir', () => {
+    render(<MathDuel onScore={vi.fn()} scoreMultiplier={1} />);
+    const values = [0, 0.3, 0, 0.999];
+    let calls = 0;
+    vi.spyOn(Math, 'random').mockImplementation(() => {
+      if (++calls > 100) throw new Error('Çeldirici üretimi tamamlanmadı');
+      return values.shift() ?? 0.5;
+    });
+    fireEvent.click(screen.getByRole('button', { name: /Düelloyu Başlat/i }));
+    expect(screen.getByText('25 - 39 = ?')).toBeInTheDocument();
+    const options = screen
+      .getAllByRole('button')
+      .filter((button) => button.textContent?.includes('['));
+    expect(options).toHaveLength(4);
+    const answers = options.map((button) =>
+      button.textContent?.replace(/\[[^\]]+\]/, '').trim(),
+    );
+    expect(new Set(answers).size).toBe(4);
+    expect(answers.filter((answer) => answer === '-14')).toHaveLength(1);
+    fireEvent.click(options[answers.indexOf('-14')]);
+    expect(screen.getByText(/Doğru!|Harika!/i)).toBeInTheDocument();
   });
 });
