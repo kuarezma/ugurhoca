@@ -15,6 +15,7 @@ import {
 } from "@/features/live-lessons/lib/room-data";
 
 type Props = {
+  participantNames?: Record<string, string>;
   lessonId: string;
   teacherIdentity: string;
   requireStudentApproval: boolean;
@@ -26,6 +27,7 @@ function displayLabel(p: { name?: string; identity: string }): string {
 }
 
 export function TeacherModerationPanel({
+  participantNames = {},
   lessonId,
   teacherIdentity,
   requireStudentApproval,
@@ -212,12 +214,12 @@ export function TeacherModerationPanel({
     for (const p of remotes) {
       out.push({
         identity: p.identity,
-        label: displayLabel(p),
+        label: participantNames[p.identity] || displayLabel(p),
         self: false,
       });
     }
     return out.sort((a, b) => a.label.localeCompare(b.label, "tr"));
-  }, [localParticipant, remotes]);
+  }, [localParticipant, remotes, participantNames]);
 
   const pendingEntries = useMemo(
     () => Object.entries(pendingJoins),
@@ -291,7 +293,7 @@ export function TeacherModerationPanel({
                 key={id}
                 className="flex items-center justify-between gap-2 text-xs"
               >
-                <span className="min-w-0 truncate">{v.displayName}</span>
+                <span className="min-w-0 truncate">{participantNames[id] || v.displayName}</span>
                 <button
                   type="button"
                   onClick={() => void approveJoin(id)}
@@ -316,7 +318,7 @@ export function TeacherModerationPanel({
                 key={id}
                 className="flex items-center justify-between gap-2 text-xs"
               >
-                <span className="min-w-0 truncate">{v.displayName}</span>
+                <span className="min-w-0 truncate">{participantNames[id] || v.displayName}</span>
                 <span className="flex shrink-0 items-center gap-1">
                   <button
                     type="button"
@@ -354,7 +356,7 @@ export function TeacherModerationPanel({
                   <span className="w-4 h-4 rounded-full bg-amber-500 text-slate-950 font-bold text-[10px] flex items-center justify-center shrink-0">
                     {idx + 1}
                   </span>
-                  <span className="min-w-0 truncate font-medium">{v.displayName}</span>
+                  <span className="min-w-0 truncate font-medium">{participantNames[id] || v.displayName}</span>
                 </div>
                 <div className="flex items-center gap-1 shrink-0">
                   <button

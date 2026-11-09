@@ -8,7 +8,7 @@ if (SENTRY_DSN) {
     dsn: SENTRY_DSN,
     tracesSampleRate: process.env.NODE_ENV === 'production' ? 0.1 : 1.0,
     replaysOnErrorSampleRate: 1.0,
-    replaysSessionSampleRate: 0.05,
+    replaysSessionSampleRate: 0,
     environment: process.env.NODE_ENV,
     enabled: process.env.NODE_ENV === 'production',
     // Erişim token'ı ve diğer kimlik bilgileri Sentry'ye gitmesin (bkz. sentry-scrub.ts).

@@ -53,6 +53,7 @@ vi.mock('@supabase/supabase-js', () => ({
 }));
 
 import { POST } from './route';
+import { enforceRateLimit } from '@/lib/rate-limit';
 
 const request = () =>
   new Request('https://ugurhoca.com/api/user/delete-account', {
@@ -112,6 +113,20 @@ describe('POST /api/user/delete-account', () => {
 
     expect(res.status).toBe(401);
     expect(calls).toEqual([]);
+  });
+
+  it('enforceRateLimit çağrısını failClosed: true opsiyonuyla yapar', async () => {
+    await POST(request());
+
+    expect(enforceRateLimit).toHaveBeenCalledWith(
+      'user_delete_account',
+      '127.0.0.1',
+      expect.objectContaining({
+        limit: 3,
+        windowSeconds: 60,
+        failClosed: true,
+      }),
+    );
   });
 
   it('SUPABASE_SERVICE_ROLE_KEY yoksa hiçbir şey silmeden 503 döner', async () => {

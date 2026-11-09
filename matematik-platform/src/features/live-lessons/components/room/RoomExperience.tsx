@@ -31,6 +31,7 @@ import { TeacherModerationPanel } from '@/features/live-lessons/components/room/
 import { TeacherToolbar } from '@/features/live-lessons/components/room/TeacherToolbar';
 import { RoomLobbyPreview } from '@/features/live-lessons/components/room/RoomLobbyPreview';
 import { LivePollStudentOverlay } from '@/features/live-lessons/components/room/LivePollStudentOverlay';
+import { useParticipantNames } from '@/features/live-lessons/hooks/useParticipantNames';
 import { deriveLiveKitIdentity } from '@/features/live-lessons/lib/lesson-identity';
 import type { LiveLessonDisplaySettings } from '@/features/live-lessons/lib/room-data';
 import type { LiveLesson, LiveLessonRole } from '@/features/live-lessons/types';
@@ -66,6 +67,7 @@ export function RoomExperience({
   teacherProof,
   userId,
 }: Props) {
+  const participantNames = useParticipantNames(lesson.id, role === 'teacher');
   const roomId = lesson.room_id;
   const router = useRouter();
   const [identity] = useState(() => deriveLiveKitIdentity(role, userId));
@@ -483,6 +485,7 @@ export function RoomExperience({
             {activeTab === 'participants' && (
               role === 'teacher' ? (
                 <TeacherModerationPanel
+                  participantNames={participantNames}
                   teacherIdentity={identity}
                   lessonId={lesson.id}
                   requireStudentApproval={requireStudentApproval}
@@ -500,6 +503,7 @@ export function RoomExperience({
 
             {activeTab === 'quiz' && (
               <QuizPanel
+                participantNames={participantNames}
                 roomId={roomId}
                 role={role}
                 displayName={displayName}

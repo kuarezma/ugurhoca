@@ -14,6 +14,8 @@ const scripts = [
   'supabase/migrations/20261009020000_assignments_privacy_grade_or_owner.sql',
   'supabase/migrations/20261009030000_anon_least_privilege.sql',
   'supabase/migrations/20261013195000_shared_documents_delete_own.sql',
+  'supabase/migrations/20261110100000_guard_profile_student_updates.sql',
+  'supabase/migrations/20261110101000_private_live_lesson_names.sql',
   'supabase/tests/student_privacy_rls.sql',
   'supabase/tests/admin_site_statistics.sql',
 ];

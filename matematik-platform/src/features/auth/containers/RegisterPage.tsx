@@ -150,7 +150,7 @@ export default function RegisterPage() {
           email: fakeEmail,
           grade: gradeValue,
           created_at: new Date().toISOString(),
-        });
+        }, { onConflict: 'id', ignoreDuplicates: true });
         if (profileErr) throw profileErr;
       }
 

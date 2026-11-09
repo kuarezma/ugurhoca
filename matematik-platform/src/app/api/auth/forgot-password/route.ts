@@ -19,6 +19,7 @@ export async function POST(request: Request) {
     const rateLimited = await enforceRateLimit('forgot-password', ip, {
       limit: 5,
       windowSeconds: 60,
+      failClosed: true,
     });
     if (rateLimited) return rateLimited;
 
@@ -169,7 +170,7 @@ export async function POST(request: Request) {
       return NextResponse.json(
         {
           error:
-            'Şifre sıfırlama bağlantısı gönderilemedi: ' + resetError.message,
+            'Şifre sıfırlama bağlantısı gönderilemedi. Lütfen daha sonra tekrar deneyin.',
         },
         { status: 500 },
       );

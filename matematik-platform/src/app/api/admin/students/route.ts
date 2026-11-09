@@ -3,6 +3,7 @@ import { requireAdmin } from '@/lib/api-auth';
 import { getAdminEmailAllowlist } from '@/lib/admin';
 import { toDisplayGrade } from '@/lib/grade';
 import { createLogger } from '@/lib/logger';
+import { enforceRateLimit, getClientIp } from '@/lib/rate-limit';
 import type { AdminUser } from '@/features/admin/types';
 
 const log = createLogger('api:admin:students');
@@ -11,6 +12,12 @@ const PAGE_SIZE = 40;
 export async function GET(request: Request) {
   const auth = await requireAdmin(request);
   if ('error' in auth && auth.error) return auth.error;
+
+  const limited = await enforceRateLimit('admin-students', getClientIp(request), {
+    limit: 60,
+    windowSeconds: 60,
+  });
+  if (limited) return limited;
 
   const params = new URL(request.url).searchParams;
   const page = Number(params.get('page') ?? '0');

@@ -78,25 +78,31 @@ describe('Admin Reset Password Route (/api/admin-reset-password)', () => {
     });
     vi.mocked(isAdminEmail).mockReturnValue(true);
     mockUpdateUserById.mockResolvedValue({
-      data: { user: { id: 'stu-1' } },
+      data: { user: { id: 'a0000000-0000-4000-8000-000000000001' } },
       error: null,
     });
 
     const req = new Request('https://ugurhoca.com/api/admin-reset-password', {
       method: 'POST',
       headers: { authorization: 'Bearer valid-token' },
-      body: JSON.stringify({ student_id: 'stu-1', new_password: 'newpassword123' }),
+      body: JSON.stringify({
+        student_id: 'a0000000-0000-4000-8000-000000000001',
+        new_password: 'newpassword123',
+      }),
     });
     const res = await POST(req);
     expect(res.status).toBe(200);
     const data = await res.json();
     expect(data.success).toBe(true);
-    expect(mockUpdateUserById).toHaveBeenCalledWith('stu-1', {
-      password: 'newpassword123',
-    });
+    expect(mockUpdateUserById).toHaveBeenCalledWith(
+      'a0000000-0000-4000-8000-000000000001',
+      {
+        password: 'newpassword123',
+      },
+    );
   });
 
-  it('şifre 6 karakterden kısa ise 400 döner', async () => {
+  it('student_id UUID değilse 400 döner', async () => {
     mockGetUser.mockResolvedValue({
       data: { user: { email: 'admin@ugurhoca.com', id: 'admin-1' } },
       error: null,
@@ -106,10 +112,59 @@ describe('Admin Reset Password Route (/api/admin-reset-password)', () => {
     const req = new Request('https://ugurhoca.com/api/admin-reset-password', {
       method: 'POST',
       headers: { authorization: 'Bearer valid-token' },
-      body: JSON.stringify({ student_id: 'stu-1', new_password: '123' }),
+      body: JSON.stringify({
+        student_id: 'invalid-id',
+        new_password: 'newpassword123',
+      }),
     });
     const res = await POST(req);
     expect(res.status).toBe(400);
+    const data = await res.json();
+    expect(data.error).toBe('Geçerli bir öğrenci ID giriniz.');
+    expect(mockUpdateUserById).not.toHaveBeenCalled();
+  });
+
+  it('şifre 8 karakterden kısa ise 400 döner', async () => {
+    mockGetUser.mockResolvedValue({
+      data: { user: { email: 'admin@ugurhoca.com', id: 'admin-1' } },
+      error: null,
+    });
+    vi.mocked(isAdminEmail).mockReturnValue(true);
+
+    const req = new Request('https://ugurhoca.com/api/admin-reset-password', {
+      method: 'POST',
+      headers: { authorization: 'Bearer valid-token' },
+      body: JSON.stringify({
+        student_id: 'a0000000-0000-4000-8000-000000000001',
+        new_password: '1234abc',
+      }),
+    });
+    const res = await POST(req);
+    expect(res.status).toBe(400);
+    const data = await res.json();
+    expect(data.error).toBe('Şifre en az 8 karakter olmalıdır.');
+    expect(mockUpdateUserById).not.toHaveBeenCalled();
+  });
+
+  it('şifre rakam veya harf içermiyorsa 400 döner', async () => {
+    mockGetUser.mockResolvedValue({
+      data: { user: { email: 'admin@ugurhoca.com', id: 'admin-1' } },
+      error: null,
+    });
+    vi.mocked(isAdminEmail).mockReturnValue(true);
+
+    const req = new Request('https://ugurhoca.com/api/admin-reset-password', {
+      method: 'POST',
+      headers: { authorization: 'Bearer valid-token' },
+      body: JSON.stringify({
+        student_id: 'a0000000-0000-4000-8000-000000000001',
+        new_password: 'abcdefghij',
+      }),
+    });
+    const res = await POST(req);
+    expect(res.status).toBe(400);
+    const data = await res.json();
+    expect(data.error).toBe('Şifre en az bir rakam içermelidir.');
     expect(mockUpdateUserById).not.toHaveBeenCalled();
   });
 
@@ -127,7 +182,10 @@ describe('Admin Reset Password Route (/api/admin-reset-password)', () => {
     const req = new Request('https://ugurhoca.com/api/admin-reset-password', {
       method: 'POST',
       headers: { authorization: 'Bearer valid-token' },
-      body: JSON.stringify({ student_id: 'stu-1', new_password: 'newpassword123' }),
+      body: JSON.stringify({
+        student_id: 'a0000000-0000-4000-8000-000000000001',
+        new_password: 'newpassword123',
+      }),
     });
     const res = await POST(req);
     expect(res.status).toBe(500);

@@ -7,6 +7,8 @@ import {
   isLiveLessonAdmin,
   requireLiveLessonUser,
 } from '@/features/live-lessons/server/liveLessons';
+import type { VerifiedServerUser } from '@/lib/auth-verify.server';
+import type { LiveLessonChatMessage } from '@/features/live-lessons/types';
 import type { LiveLesson } from '@/features/live-lessons/types';
 
 export const runtime = 'nodejs';
@@ -23,15 +25,28 @@ const chatMessageBodySchema = z.object({
     .max(500, 'Mesaj 1-500 karakter olmalı.'),
 });
 
-export async function GET(_request: Request, context: RouteContext) {
+function sanitizeMessage(
+  row: LiveLessonChatMessage,
+  viewer: VerifiedServerUser,
+) {
+  if (
+    isLiveLessonAdmin(viewer) ||
+    row.user_id === viewer.id ||
+    row.role === 'teacher'
+  ) {
+    return row;
+  }
+  return { ...row, user_name: 'Öğrenci', user_id: null };
+}
+
+async function getMessages(_request: Request, context: RouteContext) {
   const auth = await requireLiveLessonUser();
   if (!auth.ok) return auth.response;
 
-  const limited = await enforceRateLimit(
-    'live-lesson-chat-get',
-    auth.user.id,
-    { limit: 60, windowSeconds: 60 },
-  );
+  const limited = await enforceRateLimit('live-lesson-chat-get', auth.user.id, {
+    limit: 60,
+    windowSeconds: 60,
+  });
   if (limited) return limited;
 
   const { lessonId } = await context.params;
@@ -47,8 +62,14 @@ export async function GET(_request: Request, context: RouteContext) {
     return NextResponse.json({ error: 'Ders bulunamadı.' }, { status: 404 });
   }
 
-  if (!isLiveLessonAdmin(auth.user) && !canUserAccessLiveLesson(lesson as LiveLesson, auth.user)) {
-    return NextResponse.json({ error: 'Bu dersin sohbetine erişim yetkiniz yok.' }, { status: 403 });
+  if (
+    !isLiveLessonAdmin(auth.user) &&
+    !canUserAccessLiveLesson(lesson as LiveLesson, auth.user)
+  ) {
+    return NextResponse.json(
+      { error: 'Bu dersin sohbetine erişim yetkiniz yok.' },
+      { status: 403 },
+    );
   }
 
   const { data } = await supabase
@@ -58,10 +79,12 @@ export async function GET(_request: Request, context: RouteContext) {
     .order('created_at', { ascending: true })
     .limit(100);
 
-  return NextResponse.json({ messages: data || [] });
+  return NextResponse.json({
+    messages: (data || []).map((row) => sanitizeMessage(row, auth.user)),
+  });
 }
 
-export async function POST(request: Request, context: RouteContext) {
+async function postMessage(request: Request, context: RouteContext) {
   const auth = await requireLiveLessonUser();
   if (!auth.ok) return auth.response;
 
@@ -76,7 +99,10 @@ export async function POST(request: Request, context: RouteContext) {
   const body = await request.json().catch(() => null);
   const parsed = chatMessageBodySchema.safeParse(body);
   if (!parsed.success) {
-    return NextResponse.json({ error: 'Mesaj 1-500 karakter olmalı.' }, { status: 400 });
+    return NextResponse.json(
+      { error: 'Mesaj 1-500 karakter olmalı.' },
+      { status: 400 },
+    );
   }
   const { message } = parsed.data;
 
@@ -89,11 +115,20 @@ export async function POST(request: Request, context: RouteContext) {
     .single();
 
   if (!lesson || lesson.status === 'ended' || lesson.status === 'cancelled') {
-    return NextResponse.json({ error: 'Ders aktif değil veya bulunamadı.' }, { status: 404 });
+    return NextResponse.json(
+      { error: 'Ders aktif değil veya bulunamadı.' },
+      { status: 404 },
+    );
   }
 
-  if (!isLiveLessonAdmin(auth.user) && !canUserAccessLiveLesson(lesson as LiveLesson, auth.user)) {
-    return NextResponse.json({ error: 'Bu dersin sohbetine mesaj gönderme yetkiniz yok.' }, { status: 403 });
+  if (
+    !isLiveLessonAdmin(auth.user) &&
+    !canUserAccessLiveLesson(lesson as LiveLesson, auth.user)
+  ) {
+    return NextResponse.json(
+      { error: 'Bu dersin sohbetine mesaj gönderme yetkiniz yok.' },
+      { status: 403 },
+    );
   }
   const role = isLiveLessonAdmin(auth.user) ? 'teacher' : 'student';
   const { data, error } = await supabase
@@ -109,8 +144,25 @@ export async function POST(request: Request, context: RouteContext) {
     .single();
 
   if (error) {
-    return NextResponse.json({ error: 'Mesaj gönderilemedi.' }, { status: 400 });
+    return NextResponse.json(
+      { error: 'Mesaj gönderilemedi.' },
+      { status: 400 },
+    );
   }
 
-  return NextResponse.json({ message: data });
+  return NextResponse.json({
+    message: data ? sanitizeMessage(data, auth.user) : null,
+  });
+}
+
+export async function GET(request: Request, context: RouteContext) {
+  const response = await getMessages(request, context);
+  response.headers.set('Cache-Control', 'private, no-store');
+  return response;
+}
+
+export async function POST(request: Request, context: RouteContext) {
+  const response = await postMessage(request, context);
+  response.headers.set('Cache-Control', 'private, no-store');
+  return response;
 }

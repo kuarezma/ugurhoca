@@ -31,7 +31,7 @@ const ACCESS_TOKEN_COOKIE_MAX_AGE = 60 * 60 * 24 * 30;
 const MAX_ACCESS_TOKEN_LENGTH = 3800;
 // Okul ağlarında bir sınıf tek NAT IP'sini paylaşır; limit yalnız toplu
 // token denemesini (Supabase getUser kahini olarak kötüye kullanımı) keser.
-const RATE_LIMIT = { limit: 60, windowSeconds: 60 };
+const RATE_LIMIT = { limit: 60, windowSeconds: 60, failClosed: true };
 
 const noStore = { 'Cache-Control': 'no-store' };
 

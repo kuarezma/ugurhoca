@@ -1,6 +1,7 @@
 import {
   adminAnnouncementUpdateSchema,
   adminMessageSchema,
+  adminResetPasswordSchema,
   contentDocumentCreateSchema,
   quizImportSchema,
   supportMessageSchema,
@@ -127,5 +128,51 @@ describe('route-schemas', () => {
       },
     });
     expect(valid.success).toBe(true);
+  });
+
+  describe('adminResetPasswordSchema', () => {
+    it('rejects non-uuid student_id', () => {
+      const parsed = adminResetPasswordSchema.safeParse({
+        student_id: 'not-a-uuid',
+        new_password: 'ValidPassword123',
+      });
+      expect(parsed.success).toBe(false);
+      expect(parsed.error?.issues[0]?.message).toBe('Geçerli bir öğrenci ID giriniz.');
+    });
+
+    it('rejects passwords shorter than 8 characters', () => {
+      const parsed = adminResetPasswordSchema.safeParse({
+        student_id: 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11',
+        new_password: 'Short1',
+      });
+      expect(parsed.success).toBe(false);
+      expect(parsed.error?.issues[0]?.message).toBe('Şifre en az 8 karakter olmalıdır.');
+    });
+
+    it('rejects passwords without letters', () => {
+      const parsed = adminResetPasswordSchema.safeParse({
+        student_id: 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11',
+        new_password: '12345678',
+      });
+      expect(parsed.success).toBe(false);
+      expect(parsed.error?.issues[0]?.message).toBe('Şifre en az bir harf içermelidir.');
+    });
+
+    it('rejects passwords without numbers', () => {
+      const parsed = adminResetPasswordSchema.safeParse({
+        student_id: 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11',
+        new_password: 'abcdefgh',
+      });
+      expect(parsed.success).toBe(false);
+      expect(parsed.error?.issues[0]?.message).toBe('Şifre en az bir rakam içermelidir.');
+    });
+
+    it('accepts valid UUID and strong password', () => {
+      const parsed = adminResetPasswordSchema.safeParse({
+        student_id: 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11',
+        new_password: 'ValidPassword123',
+      });
+      expect(parsed.success).toBe(true);
+    });
   });
 });

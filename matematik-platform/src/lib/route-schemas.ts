@@ -121,8 +121,17 @@ export const adminAnnouncementDeleteSchema = z.object({
 });
 
 export const adminResetPasswordSchema = z.object({
-  student_id: z.string().trim().min(1, 'Öğrenci ID zorunludur.'),
-  new_password: z.string().min(6, 'Şifre en az 6 karakter olmalıdır.'),
+  student_id: z.string().trim().uuid('Geçerli bir öğrenci ID giriniz.'),
+  new_password: z
+    .string()
+    .min(8, 'Şifre en az 8 karakter olmalıdır.')
+    .max(100, 'Şifre en fazla 100 karakter olabilir.')
+    .refine((val) => /[A-Za-zÇĞİÖŞÜçğıöşü]/.test(val), {
+      message: 'Şifre en az bir harf içermelidir.',
+    })
+    .refine((val) => /\d/.test(val), {
+      message: 'Şifre en az bir rakam içermelidir.',
+    }),
 });
 
 export const forgotPasswordSchema = z.object({

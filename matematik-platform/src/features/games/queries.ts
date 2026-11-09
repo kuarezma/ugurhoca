@@ -91,11 +91,11 @@ export const loadGamesLeaderboard = async (
         }>
       )
         .map((row, index) => ({
-          alias: row.alias || row.user_name || '',
+          alias: (row.alias || '').trim(),
           rank: index + 1,
           total_score: row.total_score || 0,
         }))
-        .filter((row) => row.alias.trim().length > 0);
+        .filter((row) => row.alias.length > 0);
     }
     throw error;
   }

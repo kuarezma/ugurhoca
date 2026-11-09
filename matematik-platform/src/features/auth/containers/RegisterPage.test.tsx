@@ -66,6 +66,7 @@ describe('register user errors', () => {
     await waitFor(() =>
       expect(mocks.upsert).toHaveBeenCalledWith(
         expect.objectContaining({ grade: 0, id: 'graduate' }),
+        { onConflict: 'id', ignoreDuplicates: true },
       ),
     );
     expect(mocks.signUp).toHaveBeenCalledWith(

@@ -112,7 +112,7 @@ export async function POST(request: Request) {
 
   const token = new AccessToken(apiKey, apiSecret, {
     identity,
-    name: auth.user.name || auth.user.email,
+    name: role === 'teacher' ? (auth.user.name || 'Öğretmen') : 'Öğrenci',
     ttl: role === 'teacher' ? '3h' : '2h',
   });
 

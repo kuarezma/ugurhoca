@@ -10,6 +10,7 @@ const token = process.env.UPSTASH_REDIS_REST_TOKEN;
 const redis = url && token ? new Redis({ url, token }) : null;
 
 let missingConfigWarned = false;
+let failClosedConfigErrored = false;
 
 /** Upstash Redis yapılandırılmış mı? Health-check / admin teşhis için. */
 export function isRateLimitConfigured(): boolean {
@@ -71,7 +72,11 @@ export function getClientIp(request: Request): string {
   return request.headers.get('x-real-ip') ?? 'unknown';
 }
 
-type RateLimitOptions = { limit: number; windowSeconds: number };
+type RateLimitOptions = {
+  limit: number;
+  windowSeconds: number;
+  failClosed?: boolean;
+};
 
 interface MemoryRateLimitEntry {
   count: number;
@@ -124,6 +129,23 @@ function buildRateLimitResponse(reset: number): NextResponse {
   );
 }
 
+function buildFailClosedResponse(): NextResponse {
+  return NextResponse.json(
+    {
+      error:
+        'Bu işlem şu anda geçici olarak kullanılamıyor. Lütfen daha sonra tekrar deneyin.',
+      code: 'RATE_LIMIT_UNAVAILABLE',
+    },
+    {
+      status: 503,
+      headers: {
+        'Retry-After': '300',
+        'Cache-Control': 'no-store',
+      },
+    },
+  );
+}
+
 /**
  * İstek limiti aşıldıysa hazır 429 yanıtı, aksi halde null döndürür.
  * Production modunda Upstash yoksa veya çalışma anında hata verirse bellek-içi sınırlayıcıya düşer.
@@ -142,6 +164,16 @@ export async function enforceRateLimit(
     if (!isProd) {
       return null;
     }
+    if (options.failClosed) {
+      if (!failClosedConfigErrored) {
+        failClosedConfigErrored = true;
+        logger.error(
+          '[rate-limit] Hassas rota Upstash yapılandırılmadığı için reddedildi (failClosed)',
+          { name },
+        );
+      }
+      return buildFailClosedResponse();
+    }
     const memoryResult = checkMemoryRateLimit(
       `${name}:${identifier}`,
       options.limit,
@@ -154,9 +186,25 @@ export async function enforceRateLimit(
   }
 
   try {
-    const { success, reset } = await limiter.limit(identifier);
-    if (!success) {
-      return buildRateLimitResponse(reset);
+    const result = await limiter.limit(identifier);
+    if ((result as { reason?: string }).reason === 'timeout') {
+      logger.warn(
+        '[rate-limit] Upstash zaman aşımına uğradı (timeout), bellek-içi sınırlayıcıya geçiliyor',
+        { name, identifier },
+      );
+      const memoryResult = checkMemoryRateLimit(
+        `${name}:${identifier}`,
+        options.limit,
+        options.windowSeconds,
+      );
+      if (!memoryResult.success) {
+        return buildRateLimitResponse(memoryResult.reset);
+      }
+      return null;
+    }
+
+    if (!result.success) {
+      return buildRateLimitResponse(result.reset);
     }
     return null;
   } catch (error) {

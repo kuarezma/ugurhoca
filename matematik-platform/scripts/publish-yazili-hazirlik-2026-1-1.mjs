@@ -4,26 +4,16 @@
  * Supabase public.documents Tablosuna İdempotent Kayıt / Güncelleme Betiği
  */
 
+import path from 'node:path';
 import { loadEnv, createAdminClient } from './import/utils.mjs';
+import {
+  assertTextPrivacy,
+  assertPdfPrivacy,
+  resolveWriteMode,
+} from './lib/privacy-guard.mjs';
 
 loadEnv();
 const supabase = createAdminClient();
-
-const FORBIDDEN_WORDS = [
-  /okul\s+müdürü/i,
-  /mustafa\s+özkan/i,
-  /ali\s+rıza\s+hacıoğlu/i,
-  /özel\s+ders/i,
-];
-
-function checkPrivacy(text) {
-  if (!text) return;
-  for (const pattern of FORBIDDEN_WORDS) {
-    if (pattern.test(text)) {
-      throw new Error(`Gizlilik kuralı ihlali tespit edildi (${pattern}): ${text}`);
-    }
-  }
-}
 
 const DOCUMENTS_TO_PUBLISH = [
   {
@@ -132,14 +122,38 @@ const DOCUMENTS_TO_PUBLISH = [
 ];
 
 async function main() {
+  const { dryRun } = resolveWriteMode(process.argv);
   console.log('--- 1. DÖNEM 1. YAZILIYA HAZIRLIK DOKÜMANLARI YAYINLAMA BETİĞİ ---');
+  console.log(
+    `Çalışma Modu: ${dryRun ? 'KURU ÇALIŞTIRMA (DRY-RUN - Veritabanına yazılmaz)' : 'CANLI ÇALIŞTIRMA (CONFIRMED - Veritabanına yazılır)'}`,
+  );
 
   const results = [];
 
   for (const doc of DOCUMENTS_TO_PUBLISH) {
-    checkPrivacy(doc.title);
-    checkPrivacy(doc.description);
-    checkPrivacy(doc.answer_key_text);
+    // 1. Metin gizlilik denetimi
+    assertTextPrivacy(doc.title, 'title');
+    assertTextPrivacy(doc.description, 'description');
+    assertTextPrivacy(doc.answer_key_text, 'answer_key_text');
+
+    // 2. PDF dosyaları gizlilik denetimi (pdftotext)
+    const studentPdfPath = path.resolve(
+      process.cwd(),
+      'public',
+      doc.file_url.replace(/^\//, ''),
+    );
+    const solutionPdfPath = path.resolve(
+      process.cwd(),
+      'public',
+      doc.solution_url.replace(/^\//, ''),
+    );
+
+    assertPdfPrivacy(studentPdfPath);
+    assertPdfPrivacy(solutionPdfPath);
+
+    console.log(
+      `[GİZLİLİK ONAYLANDI] Metinler ve PDF'ler temiz: ${doc.file_name}`,
+    );
 
     // Başlığa göre mevcut kaydı ara (idempotent kontrol)
     const { data: existing, error: searchError } = await supabase
@@ -149,11 +163,36 @@ async function main() {
       .maybeSingle();
 
     if (searchError) {
-      throw new Error(`Sorgulama hatası (${doc.title}): ${searchError.message}`);
+      throw new Error(
+        `Sorgulama hatası (${doc.title}): ${searchError.message}`,
+      );
+    }
+
+    if (dryRun) {
+      if (existing) {
+        console.log(
+          `[DRY-RUN GÜNCELLENECEK] Var olan kayıt bulundu: ID=${existing.id} | ${doc.title}`,
+        );
+        results.push({
+          action: 'DRY-RUN (UPDATE)',
+          document: { id: existing.id, ...doc },
+        });
+      } else {
+        console.log(
+          `[DRY-RUN EKLENECEK] Yeni kayıt oluşturulacak: ${doc.title}`,
+        );
+        results.push({
+          action: 'DRY-RUN (INSERT)',
+          document: { id: 'DRY-RUN-ID', ...doc },
+        });
+      }
+      continue;
     }
 
     if (existing) {
-      console.log(`[GÜNCELLENİYOR] Var olan kayıt bulundu: ID=${existing.id} | ${doc.title}`);
+      console.log(
+        `[GÜNCELLENİYOR] Var olan kayıt bulundu: ID=${existing.id} | ${doc.title}`,
+      );
       const { data: updated, error: updateError } = await supabase
         .from('documents')
         .update({
@@ -173,7 +212,9 @@ async function main() {
         .single();
 
       if (updateError) {
-        throw new Error(`Güncelleme hatası (${doc.title}): ${updateError.message}`);
+        throw new Error(
+          `Güncelleme hatası (${doc.title}): ${updateError.message}`,
+        );
       }
       results.push({ action: 'UPDATED', document: updated });
     } else {
@@ -197,12 +238,25 @@ async function main() {
   console.log('\n================== İŞLEM ÖZETİ ==================');
   for (const r of results) {
     console.log(
-      `[${r.action}] ID: ${r.document.id} | Sınıf: ${r.document.grade.join(',')} | ${r.document.title}`
+      `[${r.action}] ID: ${r.document.id} | Sınıf: ${r.document.grade.join(',')} | ${r.document.title}`,
     );
     console.log(`   Öğrenci URL: ${r.document.file_url}`);
     console.log(`   Çözümlü URL: ${r.document.solution_url}`);
   }
   console.log('=================================================\n');
+
+  if (dryRun) {
+    console.log(
+      '💡 [DRY-RUN BİTTİ] Tüm PDF ve metin gizlilik denetimleri BAŞARIYLA GEÇTİ.',
+    );
+    console.log(
+      '💡 Veritabanına yazmak için betiği "--confirm" bayrağı ile çalıştırın:',
+    );
+    console.log(
+      '   node scripts/publish-yazili-hazirlik-2026-1-1.mjs --confirm\n',
+    );
+    return;
+  }
 
   // Doğrulama sorgusu
   console.log('--- DOĞRULAMA: Supabase documents tablosu teyit sorgusu ---');
@@ -218,7 +272,9 @@ async function main() {
 
   console.log(`Doğrulanan toplam kayıt sayısı: ${verifiedRows.length}`);
   for (const row of verifiedRows) {
-    console.log(`- ${row.id}: ${row.title} (grade=${JSON.stringify(row.grade)})`);
+    console.log(
+      `- ${row.id}: ${row.title} (grade=${JSON.stringify(row.grade)})`,
+    );
   }
 }
 

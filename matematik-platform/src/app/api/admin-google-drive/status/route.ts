@@ -1,12 +1,21 @@
 import { apiOk } from '@/lib/api-response';
 import { requireGoogleDriveAdmin } from '@/app/api/admin-google-drive/_shared';
 import { getGoogleDriveOAuthConfigStatus } from '@/lib/google-drive-oauth';
+import { enforceRateLimit, getClientIp } from '@/lib/rate-limit';
 
 export async function GET(request: Request) {
   const auth = await requireGoogleDriveAdmin(request);
 
   if ('error' in auth) {
     return auth.error;
+  }
+
+  const limited = await enforceRateLimit('admin-google-drive-status', getClientIp(request), {
+    limit: 60,
+    windowSeconds: 60,
+  });
+  if (limited) {
+    return limited;
   }
 
   const { data } = await auth.serviceRole
@@ -29,6 +38,14 @@ export async function DELETE(request: Request) {
 
   if ('error' in auth) {
     return auth.error;
+  }
+
+  const limited = await enforceRateLimit('admin-google-drive-status', getClientIp(request), {
+    limit: 60,
+    windowSeconds: 60,
+  });
+  if (limited) {
+    return limited;
   }
 
   await auth.serviceRole

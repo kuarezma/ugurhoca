@@ -140,7 +140,11 @@ describe('/api/auth/session', () => {
     expect(mockEnforceRateLimit).toHaveBeenCalledWith(
       'auth-session',
       '203.0.113.7',
-      expect.objectContaining({ limit: expect.any(Number), windowSeconds: expect.any(Number) }),
+      expect.objectContaining({
+        limit: expect.any(Number),
+        windowSeconds: expect.any(Number),
+        failClosed: true,
+      }),
     );
     expect(mockGetUser).not.toHaveBeenCalled();
     expect(tokenCookie(res)).toBeUndefined();

@@ -19,13 +19,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { execFileSync } from "node:child_process";
-
-const FORBIDDEN_PATTERNS = [
-  /Okul\s+Müdürü/i,
-  /Mustafa\s+ÖZKAN/i,
-  /Ali\s+Rıza\s+HACIOĞLU/i,
-  /özel\s+ders/i,
-];
+import { assertPdfPrivacy, resolveWriteMode } from "./lib/privacy-guard.mjs";
 
 const OKUL_BASE = "/Users/ugurmac/Desktop/OKUL/2026-2027_Egitim_Ogretim_Yili";
 const DRIVE_BASE =
@@ -41,24 +35,6 @@ function loadEnv(envPath) {
     }
   }
   return env;
-}
-
-function checkPdfPrivacy(pdfPath) {
-  try {
-    const text = execFileSync("pdftotext", [pdfPath, "-"], {
-      encoding: "utf8",
-    });
-    for (const pattern of FORBIDDEN_PATTERNS) {
-      if (pattern.test(text)) {
-        throw new Error(
-          `Gizlilik ihlali tespit edildi (${pattern}): ${pdfPath}`
-        );
-      }
-    }
-  } catch (err) {
-    if (err.message?.startsWith("Gizlilik ihlali")) throw err;
-    throw new Error(`pdftotext çalıştırılamadı (${pdfPath}): ${err.message}`);
-  }
 }
 
 function ensureDriveAppRunning() {
@@ -94,11 +70,11 @@ function getDriveItemId(filePath, retries = 25) {
 async function main() {
   const args = process.argv.slice(2);
   const weekIdx = args.indexOf("--week");
-  const dryRun = args.includes("--dry-run");
+  const { dryRun, confirmed } = resolveWriteMode(process.argv);
 
   if (weekIdx === -1 || !args[weekIdx + 1]) {
     console.error(
-      'Kullanım: node scripts/sync-weekly-worksheets.mjs --week "19-23 Ekim Haftası" [--dry-run]'
+      'Kullanım: node scripts/sync-weekly-worksheets.mjs --week "19-23 Ekim Haftası" [--confirm]'
     );
     process.exit(1);
   }
@@ -112,7 +88,7 @@ async function main() {
     throw new Error(".env.local içinde NEXT_PUBLIC_SUPABASE_URL veya SUPABASE_SERVICE_ROLE_KEY eksik.");
   }
 
-  console.log(`Hafta taranıyor: ${weekFolder} (dryRun=${dryRun})`);
+  console.log(`Hafta taranıyor: ${weekFolder} (dryRun=${dryRun}, confirmed=${confirmed})`);
 
   for (const grade of [5, 6, 7, 8]) {
     const srcDir = path.join(
@@ -140,12 +116,12 @@ async function main() {
       const teacherPdf = files.includes(teacherCandidate) ? teacherCandidate : null;
 
       const studentSrc = path.join(srcDir, studentPdf);
-      checkPdfPrivacy(studentSrc);
+      assertPdfPrivacy(studentSrc);
 
       let teacherSrc = null;
       if (teacherPdf) {
         teacherSrc = path.join(srcDir, teacherPdf);
-        checkPdfPrivacy(teacherSrc);
+        assertPdfPrivacy(teacherSrc);
       }
 
       console.log(`[${grade}. Sınıf] Gizlilik denetimi BAŞARILI: ${studentPdf}`);
@@ -170,6 +146,12 @@ async function main() {
         `[${grade}. Sınıf] (${studentPdf}) Drive ID -> Öğrenci: ${studentDriveId}, Çözümlü: ${teacherDriveId ?? "-"}`
       );
     }
+  }
+
+  if (dryRun) {
+    console.log(
+      "\n💡 [DRY-RUN BİTTİ] Gizlilik kontrolleri tamamlandı. Dosyalar Google Drive'a kopyalanmadı. Uygulamak için '--confirm' ekleyin."
+    );
   }
 }
 

@@ -2,6 +2,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import AdminEditUserForm from './AdminEditUserForm';
 import type { AdminUser, AdminFormState } from '@/features/admin/types';
+import { adminResetPasswordSchema } from '@/lib/route-schemas';
 
 vi.mock('@/lib/supabase/client', () => ({
   supabase: {
@@ -69,6 +70,50 @@ describe('AdminEditUserForm', () => {
       /Yeni şifre/i,
     ) as HTMLInputElement;
     expect(passwordInput.value.length).toBe(8);
+  });
+
+  it('rastgele üretilen şifre adminResetPasswordSchema doğrulamasından başarıyla geçer', () => {
+    render(
+      <AdminEditUserForm
+        editingUser={dummyUser}
+        formData={dummyFormData}
+        isSubmitting={false}
+        onSubmit={vi.fn()}
+        updateFormData={vi.fn()}
+      />,
+    );
+
+    const randomBtn = screen.getByText('Rastgele Şifre Üret');
+    const passwordInput = screen.getByPlaceholderText(
+      /Yeni şifre \(en az 8 karakter/i,
+    ) as HTMLInputElement;
+
+    for (let i = 0; i < 20; i++) {
+      fireEvent.click(randomBtn);
+      const parseResult = adminResetPasswordSchema.safeParse({
+        student_id: 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11',
+        new_password: passwordInput.value,
+      });
+      expect(parseResult.success).toBe(true);
+    }
+  });
+
+  it('şifre 8 karakterden kısa olduğunda güncelleme butonu disabled kalır', () => {
+    render(
+      <AdminEditUserForm
+        editingUser={dummyUser}
+        formData={dummyFormData}
+        isSubmitting={false}
+        onSubmit={vi.fn()}
+        updateFormData={vi.fn()}
+      />,
+    );
+
+    const passwordInput = screen.getByPlaceholderText(/Yeni şifre/i);
+    fireEvent.change(passwordInput, { target: { value: '1234567' } }); // 7 karakter
+
+    const submitBtn = screen.getByText('Şifreyi Güncelle');
+    expect(submitBtn).toBeDisabled();
   });
 
   it('şifre sıfırlama isteğini başarıyla gönderir ve sonucu gösterir', async () => {

@@ -33,7 +33,6 @@ type LivePollStudentOverlayProps = {
 
 export function LivePollStudentOverlay({
   identity,
-  displayName,
   roomId,
   isTeacher = false,
   persistToken = null,
@@ -112,7 +111,7 @@ export function LivePollStudentOverlay({
       questionId: activeQuestion.id,
       choiceIndex,
       fromIdentity: identity,
-      displayName,
+      displayName: "Öğrenci",
     };
 
     try {

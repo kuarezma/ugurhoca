@@ -29,6 +29,7 @@ function csvCell(value: string): string {
 }
 
 export function QuizPanel({
+  participantNames = {},
   roomId,
   role,
   displayName,
@@ -36,6 +37,7 @@ export function QuizPanel({
   persistToken,
   interactionLocked = false,
 }: {
+  participantNames?: Record<string, string>;
   roomId: string;
   role: "teacher" | "student";
   displayName: string;
@@ -183,21 +185,23 @@ export function QuizPanel({
         questionId: active.id,
         choiceIndex,
         fromIdentity: identity,
-        displayName,
+        displayName: role === 'teacher' ? displayName : 'Öğrenci',
       };
       await publish(msg);
     },
-    [active, displayName, identity, publish],
+    [active, displayName, identity, publish, role],
   );
 
   const summary = useMemo(() => {
-    const rows = Object.entries(answers);
+    const rows = Object.entries(answers).map(([id, row]) => [id, { ...row,
+      displayName: role === 'teacher' ? (participantNames[id] || row.displayName) : 'Öğrenci',
+    }] as const);
     const counts: Record<number, number> = {};
     for (const [, v] of rows) {
       counts[v.choiceIndex] = (counts[v.choiceIndex] ?? 0) + 1;
     }
     return { rows, counts };
-  }, [answers]);
+  }, [answers, participantNames, role]);
 
   const buildQuestionCsv = useCallback(() => {
     if (!active) return "";

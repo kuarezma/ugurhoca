@@ -207,7 +207,9 @@ export const useAccessibleModal = <T extends HTMLElement>(
             };
             window.addEventListener('popstate', resetPending, { once: true });
             setTimeout(() => {
-              window.removeEventListener('popstate', resetPending);
+              if (typeof window !== 'undefined') {
+                window.removeEventListener('popstate', resetPending);
+              }
               if (pendingBackTokens.delete(token)) pendingProgrammaticBackCount -= 1;
             }, 1000);
             window.history.back();

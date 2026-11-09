@@ -23,7 +23,6 @@ type Props = {
 
 export function StudentEngagementBar({
   identity,
-  displayName,
   lessonId,
   requireStudentApproval,
   onLessonUnlocked,
@@ -71,11 +70,11 @@ export function StudentEngagementBar({
       encodeRoomDataMessage({
         kind: "join_request",
         fromIdentity: identity,
-        displayName,
+        displayName: "Öğrenci",
       }),
       { reliable: true },
     );
-  }, [connectionState, displayName, identity, requireStudentApproval, room]);
+  }, [connectionState, identity, requireStudentApproval, room]);
 
   useEffect(() => {
     if (!requireStudentApproval) return;
@@ -175,11 +174,11 @@ export function StudentEngagementBar({
         kind: "raise_hand",
         raised: next,
         fromIdentity: identity,
-        displayName,
+        displayName: "Öğrenci",
       }),
       { reliable: true },
     );
-  }, [displayName, identity, raised, room.localParticipant]);
+  }, [identity, raised, room.localParticipant]);
 
   const toggleMic = useCallback(async () => {
     if (!micAllowed) {
@@ -188,7 +187,7 @@ export function StudentEngagementBar({
         encodeRoomDataMessage({
           kind: "microphone_request",
           fromIdentity: identity,
-          displayName,
+          displayName: "Öğrenci",
         }),
         { reliable: true },
       );
@@ -196,7 +195,6 @@ export function StudentEngagementBar({
     }
     await setStudentMicrophone(!isMicrophoneEnabled);
   }, [
-    displayName,
     identity,
     isMicrophoneEnabled,
     micAllowed,

@@ -2,12 +2,19 @@ import { apiError, apiOk } from '@/lib/api-response';
 import { requireAdmin } from '@/lib/api-auth';
 import { getAdminEmailAllowlist } from '@/lib/admin';
 import { createLogger } from '@/lib/logger';
+import { enforceRateLimit, getClientIp } from '@/lib/rate-limit';
 
 const log = createLogger('api:admin:site-statistics');
 
 export async function GET(request: Request) {
   const auth = await requireAdmin(request);
   if ('error' in auth && auth.error) return auth.error;
+
+  const limited = await enforceRateLimit('admin-site-statistics', getClientIp(request), {
+    limit: 60,
+    windowSeconds: 60,
+  });
+  if (limited) return limited;
 
   const range = new URL(request.url).searchParams.get('range') ?? 'all';
   if (range !== 'week' && range !== 'month' && range !== 'all') {

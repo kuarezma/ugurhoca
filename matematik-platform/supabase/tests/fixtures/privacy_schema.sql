@@ -24,7 +24,13 @@ CREATE TABLE public.profiles (
   name_normalized text,
   email text,
   grade integer,
-  created_at timestamptz
+  created_at timestamptz,
+  is_private_student boolean DEFAULT false,
+  current_streak integer DEFAULT 0,
+  last_active_date date DEFAULT CURRENT_DATE,
+  avatar_id text,
+  welcome_tour_seen_at timestamptz,
+  is_favorite boolean DEFAULT false
 );
 CREATE TABLE public.shared_documents (
   id uuid PRIMARY KEY,
@@ -76,3 +82,22 @@ GRANT SELECT, INSERT, UPDATE, DELETE ON public.profiles, public.shared_documents
 GRANT SELECT ON public.profiles, public.shared_documents,
   public.notifications, public.documents, public.notes, public.assignments, public.comments TO service_role;
 
+
+CREATE POLICY profiles_update_self ON public.profiles FOR UPDATE TO authenticated
+  USING (id = auth.uid()) WITH CHECK (id = auth.uid());
+CREATE POLICY profiles_insert_self ON public.profiles FOR INSERT TO authenticated
+  WITH CHECK (id = auth.uid());
+
+CREATE TABLE public.live_lesson_chat_messages (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(), lesson_id uuid NOT NULL,
+  user_id uuid, user_name text NOT NULL, role text NOT NULL, message text NOT NULL
+);
+CREATE TABLE public.live_lesson_events (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(), lesson_id uuid NOT NULL,
+  user_id uuid, user_name text, event_type text NOT NULL, payload jsonb DEFAULT '{}'::jsonb
+);
+ALTER TABLE public.live_lesson_chat_messages ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.live_lesson_events ENABLE ROW LEVEL SECURITY;
+CREATE POLICY live_lesson_chat_select_scoped ON public.live_lesson_chat_messages FOR SELECT TO authenticated USING (true);
+CREATE POLICY live_lesson_events_select_scoped ON public.live_lesson_events FOR SELECT TO authenticated USING (true);
+GRANT SELECT ON public.live_lesson_chat_messages, public.live_lesson_events TO authenticated;

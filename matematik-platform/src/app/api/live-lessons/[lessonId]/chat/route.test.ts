@@ -14,6 +14,9 @@ vi.mock('@/lib/auth-verify.server', () => ({
 vi.mock('@/lib/supabase/server', () => ({
   createServiceRoleClient: () => ({ from: mockFrom }),
 }));
+vi.mock('@/lib/rate-limit', () => ({
+  enforceRateLimit: vi.fn().mockResolvedValue(null),
+}));
 vi.mock('next/cache', () => ({ revalidatePath: vi.fn() }));
 
 const admin: VerifiedServerUser = {
@@ -35,9 +38,11 @@ const student: VerifiedServerUser = {
 };
 
 let targetGrade: string;
+let messages: unknown[] = [];
 
 beforeEach(() => {
   vi.clearAllMocks();
+  messages = [];
   mockFrom.mockImplementation((table: string) => {
     if (table === 'live_lessons') {
       return {
@@ -56,7 +61,9 @@ beforeEach(() => {
     }
     return {
       select: () => ({
-        eq: () => ({ order: () => ({ limit: async () => ({ data: [] }) }) }),
+        eq: () => ({
+          order: () => ({ limit: async () => ({ data: messages }) }),
+        }),
       }),
       insert: mockInsert.mockImplementation((payload: unknown) => ({
         select: () => ({
@@ -114,6 +121,52 @@ describe.each(['5', '7'])('%s. sınıf sohbeti', (grade) => {
       expect(response.status).toBe(403);
       expect(mockFrom).not.toHaveBeenCalledWith('live_lesson_chat_messages');
       expect(mockInsert).not.toHaveBeenCalled();
+    },
+  );
+});
+
+describe('Sohbette ad gizliliği', () => {
+  const rows = [
+    { id: 'a', user_id: 'student', user_name: 'Ada Gerçek', role: 'student' },
+    { id: 'b', user_id: 'other', user_name: 'Bora Gerçek', role: 'student' },
+    { id: 't', user_id: 'admin', user_name: 'Uğur Öğretmen', role: 'teacher' },
+  ];
+
+  it('öğrenci kendi adını ve öğretmeni görür; diğer öğrencinin adı ve kimliği maskelenir', async () => {
+    targetGrade = '8';
+    messages = rows;
+    mockGetUser.mockResolvedValue(student);
+    const response = await GET(request('GET'), context());
+    expect(response.headers.get('Cache-Control')).toBe('private, no-store');
+    expect(await response.json()).toEqual({
+      messages: [
+        rows[0],
+        { ...rows[1], user_name: 'Öğrenci', user_id: null },
+        rows[2],
+      ],
+    });
+  });
+
+  it('admin tüm gerçek adları ve kimlikleri görür', async () => {
+    targetGrade = '8';
+    messages = rows;
+    mockGetUser.mockResolvedValue(admin);
+    const response = await GET(request('GET'), context());
+    expect(await response.json()).toEqual({ messages: rows });
+    expect(response.headers.get('Cache-Control')).toBe('private, no-store');
+  });
+
+  it.each([student, admin])(
+    'POST kendi gerçek adını korur ve önbelleğe alınmaz ($id)',
+    async (viewer) => {
+      targetGrade = '8';
+      mockGetUser.mockResolvedValue(viewer);
+      const response = await POST(request('POST'), context());
+      expect((await response.json()).message).toMatchObject({
+        user_id: viewer.id,
+        user_name: viewer.name,
+      });
+      expect(response.headers.get('Cache-Control')).toBe('private, no-store');
     },
   );
 });

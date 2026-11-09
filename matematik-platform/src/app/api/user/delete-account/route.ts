@@ -12,7 +12,7 @@ export async function POST(request: Request) {
   const rateLimitResponse = await enforceRateLimit(
     'user_delete_account',
     getClientIp(request),
-    { limit: 3, windowSeconds: 60 },
+    { limit: 3, windowSeconds: 60, failClosed: true },
   );
   if (rateLimitResponse) {
     return rateLimitResponse;

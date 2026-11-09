@@ -37,18 +37,28 @@ export default function AdminEditUserForm({
   const [resetMessage, setResetMessage] = useState("");
 
   const handleGenerateRandomPassword = () => {
-    const chars = "abcdefghjkmnpqrstuvwxyz23456789";
-    let generated = "";
-    for (let i = 0; i < 8; i++) {
-      generated += chars.charAt(Math.floor(Math.random() * chars.length));
+    const letters = "abcdefghjkmnpqrstuvwxyzABCDEFGHJKMNPQRSTUVWXYZ";
+    const digits = "23456789";
+    const allChars = "abcdefghjkmnpqrstuvwxyzABCDEFGHJKMNPQRSTUVWXYZ23456789";
+    const randomLetter = letters.charAt(Math.floor(Math.random() * letters.length));
+    const randomDigit = digits.charAt(Math.floor(Math.random() * digits.length));
+    let remaining = "";
+    for (let i = 0; i < 6; i++) {
+      remaining += allChars.charAt(Math.floor(Math.random() * allChars.length));
     }
+    const arr = [randomLetter, randomDigit, ...remaining.split("")];
+    for (let i = arr.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    const generated = arr.join("");
     setNewPassword(generated);
     setResetStatus("idle");
     setResetMessage("");
   };
 
   const handleResetPassword = async () => {
-    if (!editingUser || newPassword.length < 6) return;
+    if (!editingUser || newPassword.length < 8) return;
 
     setIsResetting(true);
     setResetStatus("idle");
@@ -168,13 +178,13 @@ export default function AdminEditUserForm({
               type="text"
               value={newPassword}
               onChange={(e) => setNewPassword(e.target.value)}
-              placeholder="Yeni şifre (en az 6 karakter)"
+              placeholder="Yeni şifre (en az 8 karakter, harf ve rakam)"
               className="flex-1 bg-white dark:bg-slate-800/80 border border-slate-300 dark:border-slate-700 rounded-xl px-4 py-2.5 text-slate-900 dark:text-white placeholder:text-slate-400 text-sm focus:outline-none focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 transition-all"
             />
             <button
               type="button"
               onClick={handleResetPassword}
-              disabled={isResetting || newPassword.length < 6}
+              disabled={isResetting || newPassword.length < 8}
               className="px-4 py-2.5 bg-amber-100 dark:bg-amber-500/20 border border-amber-300 dark:border-amber-500/40 text-amber-900 dark:text-amber-200 hover:bg-amber-200 dark:hover:bg-amber-500/30 hover:text-amber-950 dark:hover:text-white rounded-xl text-sm font-semibold transition-all disabled:opacity-50 whitespace-nowrap"
             >
               {isResetting ? "Sıfırlanıyor..." : "Şifreyi Güncelle"}

@@ -98,6 +98,29 @@ describe('games queries', () => {
     ]);
   });
 
+  it('global_leaderboard fallback sırasında rumuzu olmayan gerçek adları eler ve asla sızdırmaz', async () => {
+    vi.mocked(supabase.rpc).mockResolvedValue({
+      data: null,
+      error: { code: 'PGRST202' },
+    } as never);
+    const select = vi.fn().mockResolvedValue({
+      data: [
+        { user_name: 'Gerçek Öğrenci Adı', alias: null, total_score: 100 },
+        { user_name: 'Başka Öğrenci', alias: '   ', total_score: 80 },
+        { user_name: 'Gizli Öğrenci', alias: 'MatematikCanavari', total_score: 250 },
+      ],
+      error: null,
+    });
+    vi.mocked(supabase.from).mockReturnValue({ select } as never);
+
+    const result = await loadGamesLeaderboard('all');
+    expect(result).toEqual([
+      { alias: 'MatematikCanavari', rank: 3, total_score: 250 },
+    ]);
+    expect(JSON.stringify(result)).not.toContain('Gerçek Öğrenci Adı');
+    expect(JSON.stringify(result)).not.toContain('Başka Öğrenci');
+  });
+
   it('saves aliases through the validation RPC', async () => {
     const alias = {
       alias: 'SayiUstasi',
