@@ -7,6 +7,7 @@ import type {
   DashboardNotification,
   DashboardNotificationFilter,
 } from '@/types/dashboard';
+import { formatIstanbulDate } from '@/lib/date-format';
 
 interface DashboardMessageSummaryCardProps {
   notifications: DashboardNotification[];
@@ -150,9 +151,7 @@ export default function MessageSummaryCard({
               </div>
               <div className="flex shrink-0 items-center gap-2">
                 <span className="text-xs text-slate-500 dark:text-slate-400">
-                  {new Date(notification.created_at).toLocaleDateString(
-                    'tr-TR',
-                  )}
+                  {formatIstanbulDate(notification.created_at)}
                 </span>
                 <ChevronRight className="h-4 w-4 text-slate-400" />
               </div>

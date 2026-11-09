@@ -7,7 +7,6 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 import { AnimatePresence } from 'framer-motion';
 import { SafeLink as Link } from '@/components/SafeLink';
 import {
-
   LogOut,
   ArrowLeft,
   Plus,
@@ -95,6 +94,10 @@ import type {
   WorksheetCandidateWeekScanResult,
 } from '@/features/admin/types';
 import type { LiveLessonDashboardData } from '@/features/live-lessons/types';
+import {
+  AdminActionDialogHost,
+  promptAdminAction,
+} from '@/features/admin/components/AdminActionDialog';
 
 const AdminMainModal = dynamic(
   () => import('@/features/admin/components/AdminMainModal'),
@@ -251,11 +254,14 @@ export default function AdminPage() {
   const liveLessonActivityLoadedRef = useRef(false);
   const learningActivityRequestRef = useRef<Promise<void> | null>(null);
   const liveLessonActivityRequestRef = useRef<Promise<void> | null>(null);
-  const [activeStudentProfileId, setActiveStudentProfileId] = useState<string | null>(null);
+  const [activeStudentProfileId, setActiveStudentProfileId] = useState<
+    string | null
+  >(null);
   const [activeStudentProfileData, setActiveStudentProfileData] =
     useState<AdminStudentProfileData | null>(null);
-  const [activeStudentProfileError, setActiveStudentProfileError] =
-    useState<string | null>(null);
+  const [activeStudentProfileError, setActiveStudentProfileError] = useState<
+    string | null
+  >(null);
   const [activeStudentProfileLoading, setActiveStudentProfileLoading] =
     useState(false);
   const [pdfStudentsLoading, setPdfStudentsLoading] = useState(false);
@@ -311,7 +317,9 @@ export default function AdminPage() {
     setAllUsers(await refreshAdminUsersQuery());
   }, []);
   const activeStudentProfileUser = activeStudentProfileId
-    ? allUsers.find((currentUser) => currentUser.id === activeStudentProfileId) || null
+    ? allUsers.find(
+        (currentUser) => currentUser.id === activeStudentProfileId,
+      ) || null
     : null;
 
   const loadStudentProfile = useCallback(async (studentId: string) => {
@@ -322,14 +330,14 @@ export default function AdminPage() {
       const data = await loadAdminStudentProfile(studentId);
 
       if (!data) {
-        setActiveStudentProfileError("Öğrenci profili bulunamadı.");
+        setActiveStudentProfileError('Öğrenci profili bulunamadı.');
         setActiveStudentProfileData(null);
       } else {
         setActiveStudentProfileData(data);
       }
     } catch (error) {
       const message =
-        error instanceof Error ? error.message : "Profil verileri yüklenemedi.";
+        error instanceof Error ? error.message : 'Profil verileri yüklenemedi.';
       setActiveStudentProfileError(`Profil yüklenemedi: ${message}`);
       setActiveStudentProfileData(null);
     } finally {
@@ -375,14 +383,19 @@ export default function AdminPage() {
     setDashboardSubmissions(data.submissions);
     setDashboardQuizResults(data.quizResults);
     setDashboardStudyGoals(data.studyGoals);
-    setLiveLessons((current) => ({ ...current, lessons: data.liveLessons.lessons }));
+    setLiveLessons((current) => ({
+      ...current,
+      lessons: data.liveLessons.lessons,
+    }));
   }, []);
 
   const refreshLearningActivity = useCallback((): Promise<void> => {
-    if (learningActivityRequestRef.current) return learningActivityRequestRef.current;
+    if (learningActivityRequestRef.current)
+      return learningActivityRequestRef.current;
 
     const request = (async () => {
-      if (!learningActivityLoadedRef.current) setLearningActivityStatus('loading');
+      if (!learningActivityLoadedRef.current)
+        setLearningActivityStatus('loading');
       try {
         const data = await loadAdminLearningActivity();
         setActivityEvents(data.activityEvents);
@@ -391,7 +404,8 @@ export default function AdminPage() {
         setLearningActivityStatus('ready');
       } catch (error) {
         log.error('Öğrenci etkinlikleri yüklenemedi', error);
-        if (!learningActivityLoadedRef.current) setLearningActivityStatus('error');
+        if (!learningActivityLoadedRef.current)
+          setLearningActivityStatus('error');
       }
     })();
     learningActivityRequestRef.current = request;
@@ -402,10 +416,12 @@ export default function AdminPage() {
   }, []);
 
   const refreshLiveLessonActivity = useCallback((): Promise<void> => {
-    if (liveLessonActivityRequestRef.current) return liveLessonActivityRequestRef.current;
+    if (liveLessonActivityRequestRef.current)
+      return liveLessonActivityRequestRef.current;
 
     const request = (async () => {
-      if (!liveLessonActivityLoadedRef.current) setLiveLessonActivityStatus('loading');
+      if (!liveLessonActivityLoadedRef.current)
+        setLiveLessonActivityStatus('loading');
       try {
         const data = await loadAdminLiveLessonActivity();
         setLiveLessons((current) => ({ ...current, ...data }));
@@ -413,7 +429,8 @@ export default function AdminPage() {
         setLiveLessonActivityStatus('ready');
       } catch (error) {
         log.error('Canlı ders ayrıntıları yüklenemedi', error);
-        if (!liveLessonActivityLoadedRef.current) setLiveLessonActivityStatus('error');
+        if (!liveLessonActivityLoadedRef.current)
+          setLiveLessonActivityStatus('error');
       }
     })();
     liveLessonActivityRequestRef.current = request;
@@ -431,8 +448,12 @@ export default function AdminPage() {
       setDashboardVersion((version) => version + 1);
       setDashboardLoaded(true);
       await Promise.all([
-        learningActivityLoadedRef.current ? refreshLearningActivity() : Promise.resolve(),
-        liveLessonActivityLoadedRef.current ? refreshLiveLessonActivity() : Promise.resolve(),
+        learningActivityLoadedRef.current
+          ? refreshLearningActivity()
+          : Promise.resolve(),
+        liveLessonActivityLoadedRef.current
+          ? refreshLiveLessonActivity()
+          : Promise.resolve(),
       ]);
     },
     [applyDashboardData, refreshLearningActivity, refreshLiveLessonActivity],
@@ -446,31 +467,34 @@ export default function AdminPage() {
     }
   }, []);
 
-  const refreshWorksheetSourceStatus = useCallback(async (showFeedback = false) => {
-    try {
-      const status = await loadWorksheetCandidateSourceStatus();
-      setWorksheetSourceStatus(status);
+  const refreshWorksheetSourceStatus = useCallback(
+    async (showFeedback = false) => {
+      try {
+        const status = await loadWorksheetCandidateSourceStatus();
+        setWorksheetSourceStatus(status);
 
-      if (showFeedback) {
-        showToast(
-          status.configured ? 'success' : 'warning',
-          status.configured
-            ? 'Kaynak ayarları hazır.'
-            : 'Kaynak ayarları eksik.',
-        );
-      }
-    } catch {
-      setWorksheetSourceStatus({
-        allowedHosts: [],
-        configured: false,
-        sourceUrls: [],
-      });
+        if (showFeedback) {
+          showToast(
+            status.configured ? 'success' : 'warning',
+            status.configured
+              ? 'Kaynak ayarları hazır.'
+              : 'Kaynak ayarları eksik.',
+          );
+        }
+      } catch {
+        setWorksheetSourceStatus({
+          allowedHosts: [],
+          configured: false,
+          sourceUrls: [],
+        });
 
-      if (showFeedback) {
-        showToast('error', 'Kaynak ayarları kontrol edilemedi.');
+        if (showFeedback) {
+          showToast('error', 'Kaynak ayarları kontrol edilemedi.');
+        }
       }
-    }
-  }, [showToast]);
+    },
+    [showToast],
+  );
 
   const {
     applyModerationAction,
@@ -594,19 +618,34 @@ export default function AdminPage() {
     if (activeTab === 'tracking' || activeTab === 'classroom') {
       void refreshLearningActivity();
     }
-  }, [activeTab, dashboardLoaded, learningActivityStatus, refreshLearningActivity, user]);
+  }, [
+    activeTab,
+    dashboardLoaded,
+    learningActivityStatus,
+    refreshLearningActivity,
+    user,
+  ]);
 
   useEffect(() => {
-    if (!user || !dashboardLoaded || liveLessonActivityStatus !== 'idle') return;
+    if (!user || !dashboardLoaded || liveLessonActivityStatus !== 'idle')
+      return;
     if (activeTab === 'liveLessons') {
       void refreshLiveLessonActivity();
     }
-  }, [activeTab, dashboardLoaded, liveLessonActivityStatus, refreshLiveLessonActivity, user]);
+  }, [
+    activeTab,
+    dashboardLoaded,
+    liveLessonActivityStatus,
+    refreshLiveLessonActivity,
+    user,
+  ]);
 
   useEffect(() => {
     if (!user || typeof window === 'undefined') return;
 
-    const driveStatus = new URLSearchParams(window.location.search).get('drive');
+    const driveStatus = new URLSearchParams(window.location.search).get(
+      'drive',
+    );
     if (!driveStatus) return;
 
     const callbackMessage = GOOGLE_DRIVE_CALLBACK_MESSAGES[driveStatus] ?? {
@@ -679,11 +718,12 @@ export default function AdminPage() {
   const formatDate = (dateString?: string | null) => {
     if (!dateString) return 'Bilinmiyor';
     const date = new Date(dateString);
-    return date.toLocaleDateString('tr-TR', {
+    return new Intl.DateTimeFormat('tr-TR', {
+      timeZone: 'Europe/Istanbul',
       day: 'numeric',
       month: 'long',
       year: 'numeric',
-    });
+    }).format(date);
   };
 
   const getQuizFormState = (quiz: Quiz): AdminFormState => ({
@@ -789,17 +829,15 @@ export default function AdminPage() {
         result.notificationWarning
           ? result.notificationWarning
           : result.notifiedStudents > 0
-          ? `Aday test yayınlandı. ${result.notifiedStudents} öğrenciye bildirim gönderildi.`
-          : 'Aday test yayınlandı. Bu sınıfta bildirim gönderilecek öğrenci bulunamadı.',
+            ? `Aday test yayınlandı. ${result.notifiedStudents} öğrenciye bildirim gönderildi.`
+            : 'Aday test yayınlandı. Bu sınıfta bildirim gönderilecek öğrenci bulunamadı.',
       );
       await loadData(user?.id);
       broadcastHomeDocumentsUpdated();
     } catch (error) {
       showToast(
         'error',
-        error instanceof Error
-          ? error.message
-          : 'Aday test yayınlanamadı.',
+        error instanceof Error ? error.message : 'Aday test yayınlanamadı.',
       );
     }
   };
@@ -872,19 +910,19 @@ export default function AdminPage() {
   const handleCreateWeeklyPlan = async (student: AdminUser) => {
     if (!user) return;
 
-    const title =
-      window.prompt(
-        `${student.name || 'Öğrenci'} için haftalık plan başlığı`,
-        'Bu Haftaki Plan',
-      )?.trim() || '';
+    const titlePrompt = await promptAdminAction(
+      `${student.name || 'Öğrenci'} için haftalık plan başlığı`,
+      'Bu Haftaki Plan',
+    );
+    const title = titlePrompt?.trim() || '';
 
     if (!title) return;
 
-    const rawItems =
-      window.prompt(
-        'Plan maddelerini virgül veya satır satır yazın',
-        'Eksik konuyu tekrar et, 1 test çöz, Ödevleri kontrol et',
-      ) || '';
+    const rawItemsPrompt = await promptAdminAction(
+      'Plan maddelerini virgül veya satır satır yazın',
+      'Eksik konuyu tekrar et, 1 test çöz, Ödevleri kontrol et',
+    );
+    const rawItems = rawItemsPrompt || '';
     const itemTitles = rawItems
       .split(/\n|,/)
       .map((item) => item.trim())
@@ -923,7 +961,8 @@ export default function AdminPage() {
     try {
       // Hızlı etiket eklemek mevcut takip tarihini değiştirmemeli.
       const followUpAt = isLabelUpdate
-        ? adminStatuses.find((entry) => entry.student_id === student.id)?.follow_up_at ?? null
+        ? (adminStatuses.find((entry) => entry.student_id === student.id)
+            ?.follow_up_at ?? null)
         : status === 'normal'
           ? null
           : new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toISOString();
@@ -955,9 +994,10 @@ export default function AdminPage() {
 
   const handleAddStudentAdminNote = async (student: AdminUser) => {
     if (!user) return;
-    const body =
-      window.prompt(`${student.name || 'Öğrenci'} için admin notu`)?.trim() ||
-      '';
+    const bodyPrompt = await promptAdminAction(
+      `${student.name || 'Öğrenci'} için admin notu`,
+    );
+    const body = bodyPrompt?.trim() || '';
 
     if (!body) return;
 
@@ -991,7 +1031,7 @@ export default function AdminPage() {
             <div className="h-10 w-10 shrink-0 overflow-hidden rounded-2xl border-2 border-[#58cc02] bg-[#d7ffb8] p-0.5 shadow-[0_3px_0_#46a302]">
               <Image
                 src="/ugur.jpeg"
-                alt='Uğur Hoca'
+                alt="Uğur Hoca"
                 width={44}
                 height={44}
                 priority
@@ -1042,7 +1082,10 @@ export default function AdminPage() {
 
             <ThemeSelectorDropdown buttonClassName="h-9 px-3 rounded-xl border border-default bg-surface-2 text-secondary hover:text-primary hover:bg-surface-3" />
 
-            <ThemeToggle compact className="h-9 w-9 rounded-xl border-default bg-surface-2 hover:bg-surface-3 text-secondary hover:text-primary" />
+            <ThemeToggle
+              compact
+              className="h-9 w-9 rounded-xl border-default bg-surface-2 hover:bg-surface-3 text-secondary hover:text-primary"
+            />
 
             <button
               onClick={() => setShowNotifications((v) => !v)}
@@ -1128,29 +1171,47 @@ export default function AdminPage() {
                   Hoş Geldiniz, {user.name || 'Uğur Hoca'} 👋
                 </h1>
                 <p className="text-slate-600 dark:text-slate-300/80 text-sm sm:text-base mt-1.5 max-w-xl leading-relaxed">
-                  Öğrenci takibi, çalışma kağıtları, sınavlar ve canlı derslerinizi tek merkezden uyumla yönetin.
+                  Öğrenci takibi, çalışma kağıtları, sınavlar ve canlı
+                  derslerinizi tek merkezden uyumla yönetin.
                 </p>
               </div>
 
               {/* Quick KPI Counters */}
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 w-full lg:w-auto">
                 <div className="glass rounded-2xl p-3 sm:p-4 text-center border border-slate-200 dark:border-white/10 hover:border-violet-500/40 transition-colors bg-slate-50/80 dark:bg-white/5">
-                  <div className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white">{studentUsers.length}</div>
-                  <div className="text-xs text-slate-500 dark:text-slate-400 font-medium mt-0.5">Öğrenci</div>
+                  <div className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white">
+                    {studentUsers.length}
+                  </div>
+                  <div className="text-xs text-slate-500 dark:text-slate-400 font-medium mt-0.5">
+                    Öğrenci
+                  </div>
                 </div>
                 <div className="glass rounded-2xl p-3 sm:p-4 text-center border border-slate-200 dark:border-white/10 hover:border-blue-500/40 transition-colors bg-slate-50/80 dark:bg-white/5">
-                  <div className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white">{documents.length}</div>
-                  <div className="text-xs text-slate-500 dark:text-slate-400 font-medium mt-0.5">İçerik & Belge</div>
+                  <div className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white">
+                    {documents.length}
+                  </div>
+                  <div className="text-xs text-slate-500 dark:text-slate-400 font-medium mt-0.5">
+                    İçerik & Belge
+                  </div>
                 </div>
                 <div className="glass rounded-2xl p-3 sm:p-4 text-center border border-slate-200 dark:border-white/10 hover:border-purple-500/40 transition-colors bg-slate-50/80 dark:bg-white/5">
-                  <div className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white">{quizzes.length}</div>
-                  <div className="text-xs text-slate-500 dark:text-slate-400 font-medium mt-0.5">Test / Sınav</div>
+                  <div className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white">
+                    {quizzes.length}
+                  </div>
+                  <div className="text-xs text-slate-500 dark:text-slate-400 font-medium mt-0.5">
+                    Test / Sınav
+                  </div>
                 </div>
                 <div className="glass rounded-2xl p-3 sm:p-4 text-center border border-slate-200 dark:border-white/10 hover:border-amber-500/40 transition-colors bg-slate-50/80 dark:bg-white/5">
                   <div className="text-xl sm:text-2xl font-black text-amber-600 dark:text-amber-300">
-                    {worksheetCandidates.filter((c) => c.status === 'pending').length}
+                    {
+                      worksheetCandidates.filter((c) => c.status === 'pending')
+                        .length
+                    }
                   </div>
-                  <div className="text-xs text-slate-500 dark:text-slate-400 font-medium mt-0.5">Aday Test</div>
+                  <div className="text-xs text-slate-500 dark:text-slate-400 font-medium mt-0.5">
+                    Aday Test
+                  </div>
                 </div>
               </div>
             </div>
@@ -1211,8 +1272,13 @@ export default function AdminPage() {
           {/* System Diagnostics & Integration Status Card */}
           <AdminDiagnosticsCard
             driveConnected={Boolean(googleDriveConnection?.connected)}
-            pendingCandidatesCount={worksheetCandidates.filter((c) => c.status === 'pending').length}
-            unreadMessagesCount={notifications.filter((n) => !n.is_read && n.type === 'message').length}
+            pendingCandidatesCount={
+              worksheetCandidates.filter((c) => c.status === 'pending').length
+            }
+            unreadMessagesCount={
+              notifications.filter((n) => !n.is_read && n.type === 'message')
+                .length
+            }
             studentCount={studentUsers.length}
             onRefresh={() => {
               void loadData();
@@ -1241,7 +1307,9 @@ export default function AdminPage() {
                   }`}
                 >
                   {cat.label}
-                  <span className="ml-1.5 opacity-60 text-[10px]">({cat.count})</span>
+                  <span className="ml-1.5 opacity-60 text-[10px]">
+                    ({cat.count})
+                  </span>
                 </button>
               ))}
             </div>
@@ -1319,7 +1387,10 @@ export default function AdminPage() {
                   icon: Video,
                   color: 'from-sky-500 to-indigo-500',
                   category: 'education',
-                  badge: liveLessons.lessons.length > 0 ? liveLessons.lessons.length : null,
+                  badge:
+                    liveLessons.lessons.length > 0
+                      ? liveLessons.lessons.length
+                      : null,
                 },
                 {
                   id: 'contentCoverage',
@@ -1337,7 +1408,8 @@ export default function AdminPage() {
                   icon: CalendarDays,
                   color: 'from-emerald-500 to-teal-500',
                   category: 'curriculum',
-                  badge: annualPlanItems.length > 0 ? annualPlanItems.length : null,
+                  badge:
+                    annualPlanItems.length > 0 ? annualPlanItems.length : null,
                 },
                 {
                   id: 'worksheetCandidates',
@@ -1346,8 +1418,12 @@ export default function AdminPage() {
                   icon: Search,
                   color: 'from-amber-500 to-orange-500',
                   category: 'curriculum',
-                  badge: worksheetCandidates.filter((c) => c.status === 'pending').length || null,
-                  badgeAlert: worksheetCandidates.filter((c) => c.status === 'pending').length > 0,
+                  badge:
+                    worksheetCandidates.filter((c) => c.status === 'pending')
+                      .length || null,
+                  badgeAlert:
+                    worksheetCandidates.filter((c) => c.status === 'pending')
+                      .length > 0,
                 },
                 {
                   id: 'gradeUpdate',
@@ -1368,7 +1444,10 @@ export default function AdminPage() {
                   badge: announcements.length,
                 },
               ]
-                .filter((tab) => tabCategory === 'all' || tab.category === tabCategory)
+                .filter(
+                  (tab) =>
+                    tabCategory === 'all' || tab.category === tabCategory,
+                )
                 .map((tab) => (
                   <button
                     key={tab.id}
@@ -1419,7 +1498,9 @@ export default function AdminPage() {
                 <button
                   onClick={() =>
                     openModal(
-                      activeTab === 'announcements' ? 'announcement' : 'document',
+                      activeTab === 'announcements'
+                        ? 'announcement'
+                        : 'document',
                     )
                   }
                   className="btn-primary w-full sm:w-auto justify-center"
@@ -1499,14 +1580,21 @@ export default function AdminPage() {
             onImportAnnualPlan={handleImportAnnualPlan}
             onMigrateWorksheets={handleMigrateWorksheetDocuments}
             onRefreshDocumentCategories={handleRefreshDocumentCategories}
-            onRefreshWorksheetSourceStatus={() => refreshWorksheetSourceStatus(true)}
+            onRefreshWorksheetSourceStatus={() =>
+              refreshWorksheetSourceStatus(true)
+            }
             onRefreshUsers={loadData}
             onScanCurrentWeekCandidates={handleScanCurrentWeekCandidates}
             onSendAdminMessage={openAdminMessage}
             onShowSubmissions={handleOpenSubmissions}
             onToggleFavoriteStudent={handleToggleFavoriteStudent}
             onUpdateStudentStatus={(student, status, labels) =>
-              handleUpdateStudentStatus(student, status, labels, labels !== undefined)
+              handleUpdateStudentStatus(
+                student,
+                status,
+                labels,
+                labels !== undefined,
+              )
             }
             onUpdateGrades={handleUpdateGrades}
             onUpdateWorksheetCandidateStatus={
@@ -1600,6 +1688,8 @@ export default function AdminPage() {
         onClose={() => setIsBroadcastOpen(false)}
         students={studentUsers}
       />
+
+      <AdminActionDialogHost />
     </main>
   );
 }

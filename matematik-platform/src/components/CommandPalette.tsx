@@ -1,7 +1,15 @@
 'use client';
 
-import { useCallback, useEffect, useId, useMemo, useRef, useState } from 'react';
+import {
+  useCallback,
+  useEffect,
+  useId,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import { useRouter } from 'next/navigation';
+import { useAccessibleModal } from '@/hooks/useAccessibleModal';
 import {
   Activity,
   Award,
@@ -47,19 +55,31 @@ type CommandPaletteProps = {
   initiallyOpen?: boolean;
 };
 
-export default function CommandPalette({ initiallyOpen = false }: CommandPaletteProps) {
+export default function CommandPalette({
+  initiallyOpen = false,
+}: CommandPaletteProps) {
   const router = useRouter();
   const [open, setOpen] = useState(initiallyOpen);
   const [query, setQuery] = useState('');
   const [activeIndex, setActiveIndex] = useState(0);
   const inputRef = useRef<HTMLInputElement>(null);
   const listboxId = useId();
+  const modalRef = useAccessibleModal<HTMLDivElement>(
+    open,
+    () => setOpen(false),
+    { enableHistoryBack: false },
+  );
 
   const openTool = useCallback(
     (tool: string, fallbackPath = '/?tool=' + tool) => {
       if (typeof window !== 'undefined') {
-        window.dispatchEvent(new CustomEvent('ugurhoca:open-tool', { detail: { tool } }));
-        if (tool === 'mistakes' && !window.location.pathname.startsWith('/testler')) {
+        window.dispatchEvent(
+          new CustomEvent('ugurhoca:open-tool', { detail: { tool } }),
+        );
+        if (
+          tool === 'mistakes' &&
+          !window.location.pathname.startsWith('/testler')
+        ) {
           router.push('/testler?tool=mistakes');
           return;
         }
@@ -79,7 +99,16 @@ export default function CommandPalette({ initiallyOpen = false }: CommandPalette
         label: 'LGS & YKS Puan / Net Hesaplayıcı',
         category: 'Araç',
         hint: 'MEB/ÖSYM uyumlu anlık net ve puan hesapla',
-        keywords: ['hesapla', 'hesaplayici', 'puan', 'net', 'lgs', 'yks', 'tyt', 'ayt'],
+        keywords: [
+          'hesapla',
+          'hesaplayici',
+          'puan',
+          'net',
+          'lgs',
+          'yks',
+          'tyt',
+          'ayt',
+        ],
         icon: Calculator,
         action: () => openTool('calculator'),
       },
@@ -88,7 +117,15 @@ export default function CommandPalette({ initiallyOpen = false }: CommandPalette
         label: 'Matematik Odak & Pomodoro Sayacı',
         category: 'Araç',
         hint: '25/50 dk çalışma süreölçeri ve mola zili',
-        keywords: ['pomodoro', 'odak', 'sayac', 'sure', 'zaman', 'timer', 'kronometre'],
+        keywords: [
+          'pomodoro',
+          'odak',
+          'sayac',
+          'sure',
+          'zaman',
+          'timer',
+          'kronometre',
+        ],
         icon: Timer,
         action: () => openTool('pomodoro'),
       },
@@ -97,7 +134,16 @@ export default function CommandPalette({ initiallyOpen = false }: CommandPalette
         label: 'MEB Matematik Konu Takip Çizelgesi',
         category: 'Araç',
         hint: '5-12. sınıf müfredat kazanım takip listesi ve A4 yazdır',
-        keywords: ['cizelge', 'konu', 'takip', 'kazanim', 'mufredat', 'liste', 'checklist', 'yazdir'],
+        keywords: [
+          'cizelge',
+          'konu',
+          'takip',
+          'kazanim',
+          'mufredat',
+          'liste',
+          'checklist',
+          'yazdir',
+        ],
         icon: ListChecks,
         action: () => openTool('checklist'),
       },
@@ -115,7 +161,17 @@ export default function CommandPalette({ initiallyOpen = false }: CommandPalette
         label: '60 Saniye Formül Eşleştirme Antrenmanı',
         category: 'Araç',
         hint: '60 saniyede hızlı matematik formül eşleştirme pratiği',
-        keywords: ['formul', 'hiz', 'drill', 'eslestir', 'antrenman', 'sure', '60', 'kural', 'aktif'],
+        keywords: [
+          'formul',
+          'hiz',
+          'drill',
+          'eslestir',
+          'antrenman',
+          'sure',
+          '60',
+          'kural',
+          'aktif',
+        ],
         icon: Zap,
         action: () => openTool('speed-drill'),
       },
@@ -133,7 +189,14 @@ export default function CommandPalette({ initiallyOpen = false }: CommandPalette
         label: 'Karalama & İşlem Tahtası',
         category: 'Araç',
         hint: 'Geometrik şekiller ve serbest tuval çizimi',
-        keywords: ['karalama', 'cizim', 'tahta', 'tuval', 'scratchpad', 'geometri'],
+        keywords: [
+          'karalama',
+          'cizim',
+          'tahta',
+          'tuval',
+          'scratchpad',
+          'geometri',
+        ],
         icon: PenTool,
         action: () => openTool('scratchpad'),
       },
@@ -142,7 +205,15 @@ export default function CommandPalette({ initiallyOpen = false }: CommandPalette
         label: 'İnteraktif Fonksiyon & Grafik Görselleştirici',
         category: 'Araç',
         hint: 'Doğrusal fonksiyon, parabol ve birim çember simülasyonu',
-        keywords: ['grafik', 'fonksiyon', 'parabol', 'trigonometri', 'cember', 'egim', 'visualizer'],
+        keywords: [
+          'grafik',
+          'fonksiyon',
+          'parabol',
+          'trigonometri',
+          'cember',
+          'egim',
+          'visualizer',
+        ],
         icon: Activity,
         action: () => openTool('graph'),
       },
@@ -151,7 +222,16 @@ export default function CommandPalette({ initiallyOpen = false }: CommandPalette
         label: 'Etkileşimli Matematik & Geometri Laboratuvarı',
         category: 'Araç',
         hint: 'Pisagor, birim çember, trigonometri, parabol ve eğim canlı simülatörü',
-        keywords: ['geometri', 'pisagor', 'cember', 'trigonometri', 'parabol', 'egim', 'lab', 'simulator'],
+        keywords: [
+          'geometri',
+          'pisagor',
+          'cember',
+          'trigonometri',
+          'parabol',
+          'egim',
+          'lab',
+          'simulator',
+        ],
         icon: Compass,
         action: () => router.push('/programlar'),
       },
@@ -178,7 +258,17 @@ export default function CommandPalette({ initiallyOpen = false }: CommandPalette
         label: 'MEB & ÖSYM Çıkmış Soru Dağılım Matrisi',
         category: 'Araç',
         hint: 'Son 5 yıl LGS, TYT ve AYT konu ağırlıkları ve kritik kazanımlar',
-        keywords: ['matris', 'cikmis', 'soru', 'dagilim', 'agirlik', 'lgs', 'tyt', 'ayt', 'istatistik'],
+        keywords: [
+          'matris',
+          'cikmis',
+          'soru',
+          'dagilim',
+          'agirlik',
+          'lgs',
+          'tyt',
+          'ayt',
+          'istatistik',
+        ],
         icon: BarChart3,
         action: () => openTool('topic-weights'),
       },
@@ -187,7 +277,16 @@ export default function CommandPalette({ initiallyOpen = false }: CommandPalette
         label: 'A4 Masabaşı Haftalık Çalışma Çizelgesi',
         category: 'Araç',
         hint: 'Kişiselleştirilebilir soru hedefi, Pomodoro takibi ve A4 yazdır',
-        keywords: ['cizelge', 'haftalik', 'plan', 'planner', 'calisma', 'program', 'yazdir', 'a4'],
+        keywords: [
+          'cizelge',
+          'haftalik',
+          'plan',
+          'planner',
+          'calisma',
+          'program',
+          'yazdir',
+          'a4',
+        ],
         icon: ClipboardList,
         action: () => openTool('weekly-planner'),
       },
@@ -263,7 +362,12 @@ export default function CommandPalette({ initiallyOpen = false }: CommandPalette
         label: 'Çarpanlara Ayırma ve Özdeşlikler',
         category: 'Konu',
         hint: '(a+b)² ve a²-b² iki kare farkı kuralları',
-        keywords: ['carpanlara ayirma', 'ozdeslik', 'iki kare farki', 'tam kare'],
+        keywords: [
+          'carpanlara ayirma',
+          'ozdeslik',
+          'iki kare farki',
+          'tam kare',
+        ],
         icon: Sparkles,
         action: () => openTool('flashcards'),
       },
@@ -391,7 +495,17 @@ export default function CommandPalette({ initiallyOpen = false }: CommandPalette
         label: 'Ders Sonu Çıkış Bileti',
         category: 'Sayfa',
         hint: 'Akıllı tahta ve PIN ile 3 dakikalık anlık değerlendirme',
-        keywords: ['cikis', 'bileti', 'exit', 'ticket', 'akilli', 'tahta', 'pin', 'degerlendirme', 'sinif'],
+        keywords: [
+          'cikis',
+          'bileti',
+          'exit',
+          'ticket',
+          'akilli',
+          'tahta',
+          'pin',
+          'degerlendirme',
+          'sinif',
+        ],
         icon: Presentation,
         action: () => router.push('/cikis-bileti'),
       },
@@ -426,7 +540,9 @@ export default function CommandPalette({ initiallyOpen = false }: CommandPalette
       return commands;
     }
     return commands.filter((command) => {
-      const haystack = [command.label, command.hint ?? '', ...command.keywords].map(normalize).join(' ');
+      const haystack = [command.label, command.hint ?? '', ...command.keywords]
+        .map(normalize)
+        .join(' ');
       return haystack.includes(normalized);
     });
   }, [commands, query]);
@@ -438,7 +554,11 @@ export default function CommandPalette({ initiallyOpen = false }: CommandPalette
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
       const target = event.target as HTMLElement | null;
-      const inField = Boolean(target && typeof target.closest === 'function' && target.closest(ACTIONABLE_SELECTOR));
+      const inField = Boolean(
+        target &&
+        typeof target.closest === 'function' &&
+        target.closest(ACTIONABLE_SELECTOR),
+      );
       const isPaletteOpen = open;
 
       if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'k') {
@@ -486,6 +606,7 @@ export default function CommandPalette({ initiallyOpen = false }: CommandPalette
 
   return (
     <div
+      ref={modalRef}
       role="dialog"
       aria-modal="true"
       aria-label="Komut paleti"
@@ -508,10 +629,16 @@ export default function CommandPalette({ initiallyOpen = false }: CommandPalette
             onKeyDown={(event) => {
               if (event.key === 'ArrowDown') {
                 event.preventDefault();
-                setActiveIndex((prev) => filtered.length === 0 ? 0 : (prev + 1) % filtered.length,);
+                setActiveIndex((prev) =>
+                  filtered.length === 0 ? 0 : (prev + 1) % filtered.length,
+                );
               } else if (event.key === 'ArrowUp') {
                 event.preventDefault();
-                setActiveIndex((prev) => filtered.length === 0 ? 0 : (prev - 1 + filtered.length) % filtered.length,);
+                setActiveIndex((prev) =>
+                  filtered.length === 0
+                    ? 0
+                    : (prev - 1 + filtered.length) % filtered.length,
+                );
               } else if (event.key === 'Enter') {
                 event.preventDefault();
                 const target = filtered[activeIndex];
@@ -529,7 +656,12 @@ export default function CommandPalette({ initiallyOpen = false }: CommandPalette
             ESC
           </kbd>
         </div>
-        <ul id={listboxId} role="listbox" aria-label="Komutlar" className="max-h-[60vh] overflow-y-auto p-2">
+        <ul
+          id={listboxId}
+          role="listbox"
+          aria-label="Komutlar"
+          className="max-h-[60vh] overflow-y-auto p-2"
+        >
           {filtered.length === 0 ? (
             <li className="flex items-center gap-3 rounded-xl px-3 py-4 text-sm text-slate-500 dark:text-slate-400">
               <Sparkles className="h-4 w-4" aria-hidden="true" />

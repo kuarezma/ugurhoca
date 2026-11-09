@@ -6,6 +6,7 @@ import { ClipboardList, FileText, Upload, X } from 'lucide-react';
 import type { Assignment, Submission } from '@/types';
 import { useAccessibleModal } from '@/hooks/useAccessibleModal';
 import { MathInputToolbar } from '@/components/MathInputToolbar';
+import { formatIstanbulDateTime } from '@/lib/date-format';
 
 type AssignmentSubmissionModalProps = {
   assignment: Assignment;
@@ -87,7 +88,9 @@ export function AssignmentSubmissionModal({
           >
             {assignment.title}
           </h2>
-          <p className={`text-sm ${isLight ? 'text-slate-600' : 'text-slate-400'}`}>
+          <p
+            className={`text-sm ${isLight ? 'text-slate-600' : 'text-slate-400'}`}
+          >
             {assignment.description}
           </p>
         </div>
@@ -112,14 +115,14 @@ export function AssignmentSubmissionModal({
                 </a>
                 <span className="text-xs font-medium text-slate-400">
                   {activeSubmission.submitted_at
-                    ? new Date(activeSubmission.submitted_at).toLocaleString(
-                        'tr-TR',
-                      )
+                    ? formatIstanbulDateTime(activeSubmission.submitted_at)
                     : '-'}
                 </span>
               </div>
               {activeSubmission.comment ? (
-                <p className={`text-sm italic ${isLight ? 'text-slate-600' : 'text-slate-400'}`}>
+                <p
+                  className={`text-sm italic ${isLight ? 'text-slate-600' : 'text-slate-400'}`}
+                >
                   &quot;{activeSubmission.comment}&quot;
                 </p>
               ) : (
@@ -171,7 +174,11 @@ export function AssignmentSubmissionModal({
                 className="h-24 w-full resize-none rounded-2xl border border-default dark:border-white/10 bg-surface-2 dark:bg-white/5 px-4 py-3 text-slate-900 dark:text-white transition-colors focus:border-indigo-500 focus:outline-none"
               />
               <div className="mt-1.5">
-                <MathInputToolbar onInsertSymbol={(sym) => onCommentChange(comment ? `${comment} ${sym}` : sym)} />
+                <MathInputToolbar
+                  onInsertSymbol={(sym) =>
+                    onCommentChange(comment ? `${comment} ${sym}` : sym)
+                  }
+                />
               </div>
             </div>
 
@@ -243,15 +250,17 @@ export function AssignmentSubmissionModal({
                         ? 'Buraya Bırak'
                         : 'Dosyayı Sürükle veya Seç'}
                   </p>
-                  <p className="text-xs text-slate-400">PDF, JPG veya PNG (Max 5MB)</p>
+                  <p className="text-xs text-slate-400">
+                    PDF, JPG veya PNG (Max 5MB)
+                  </p>
                 </div>
               </label>
             </div>
 
             <p className="text-center text-[10px] uppercase leading-relaxed tracking-tighter text-slate-400">
-              Ödevi teslim ettiğinde Uğur Hoca&apos;ya bildirim gidecektir. Teslim
-              tarihinden sonra yüklediğin ödevler &quot;Gecikmiş&quot; olarak
-              işaretlenebilir.
+              Ödevi teslim ettiğinde Uğur Hoca&apos;ya bildirim gidecektir.
+              Teslim tarihinden sonra yüklediğin ödevler &quot;Gecikmiş&quot;
+              olarak işaretlenebilir.
             </p>
           </div>
         )}

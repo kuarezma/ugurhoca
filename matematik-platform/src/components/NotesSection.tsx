@@ -10,12 +10,28 @@ import { useToast } from '@/components/Toast';
 import { createLogger } from '@/lib/logger';
 import { sanitizeRichTextHtml } from '@/lib/html-sanitize';
 import {
-  StickyNote, Plus, Search, X, Edit2, Trash2, Pin, PinOff,
-  Bold, Italic, Underline, Heading1, List, ListOrdered, Link as LinkIcon, Folder, Clock
+  StickyNote,
+  Plus,
+  Search,
+  X,
+  Edit2,
+  Trash2,
+  Pin,
+  PinOff,
+  Bold,
+  Italic,
+  Underline,
+  Heading1,
+  List,
+  ListOrdered,
+  Link as LinkIcon,
+  Folder,
+  Clock,
 } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 import { supabase } from '@/lib/supabase/client';
 import { Note, NoteCategory } from '@/types/index';
+import { formatIstanbulDate } from '@/lib/date-format';
 
 interface NotesSectionProps {
   userId: string;
@@ -60,8 +76,17 @@ export default function NotesSection({ userId }: NotesSectionProps) {
     setLoading(true);
     try {
       const [notesRes, categoriesRes] = await Promise.all([
-        supabase.from('notes').select('*').eq('user_id', userId).order('is_pinned', { ascending: false }).order('updated_at', { ascending: false }),
-        supabase.from('note_categories').select('*').eq('user_id', userId).order('name'),
+        supabase
+          .from('notes')
+          .select('*')
+          .eq('user_id', userId)
+          .order('is_pinned', { ascending: false })
+          .order('updated_at', { ascending: false }),
+        supabase
+          .from('note_categories')
+          .select('*')
+          .eq('user_id', userId)
+          .order('name'),
       ]);
       if (notesRes.error || categoriesRes.error) {
         throw notesRes.error || categoriesRes.error;
@@ -87,12 +112,14 @@ export default function NotesSection({ userId }: NotesSectionProps) {
     loadData();
   }, [loadData]);
 
-  const allTags = [...new Set(notes.flatMap(n => n.tags))].filter(Boolean);
+  const allTags = [...new Set(notes.flatMap((n) => n.tags))].filter(Boolean);
 
-  const filteredNotes = notes.filter(note => {
-    const matchesSearch = note.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                          note.content.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesCategory = !selectedCategory || note.category === selectedCategory;
+  const filteredNotes = notes.filter((note) => {
+    const matchesSearch =
+      note.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      note.content.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesCategory =
+      !selectedCategory || note.category === selectedCategory;
     const matchesTag = !selectedTag || note.tags.includes(selectedTag);
     return matchesSearch && matchesCategory && matchesTag;
   });
@@ -152,14 +179,18 @@ export default function NotesSection({ userId }: NotesSectionProps) {
 
     setSaving(true);
     try {
-      if (showCategoryInput && newCategory && !categories.find(c => c.name === newCategory)) {
+      if (
+        showCategoryInput &&
+        newCategory &&
+        !categories.find((c) => c.name === newCategory)
+      ) {
         const { error } = await supabase.from('note_categories').insert({
           user_id: userId,
           name: newCategory,
         });
         if (error) throw error;
-        setCategories(prev =>
-          prev.some(c => c.name === newCategory)
+        setCategories((prev) =>
+          prev.some((c) => c.name === newCategory)
             ? prev
             : [
                 ...prev,
@@ -177,13 +208,16 @@ export default function NotesSection({ userId }: NotesSectionProps) {
       }
 
       const noteResult = editingNote
-        ? await supabase.from('notes').update({
-            title: formData.title || null,
-            content,
-            category: formData.category || null,
-            tags: formData.tags,
-            updated_at: new Date().toISOString(),
-          }).eq('id', editingNote.id)
+        ? await supabase
+            .from('notes')
+            .update({
+              title: formData.title || null,
+              content,
+              category: formData.category || null,
+              tags: formData.tags,
+              updated_at: new Date().toISOString(),
+            })
+            .eq('id', editingNote.id)
         : await supabase.from('notes').insert({
             user_id: userId,
             title: formData.title || null,
@@ -217,7 +251,10 @@ export default function NotesSection({ userId }: NotesSectionProps) {
 
   const handleTogglePin = async (note: Note) => {
     try {
-      const { error } = await supabase.from('notes').update({ is_pinned: !note.is_pinned }).eq('id', note.id);
+      const { error } = await supabase
+        .from('notes')
+        .update({ is_pinned: !note.is_pinned })
+        .eq('id', note.id);
       if (error) throw error;
       void loadData();
     } catch (error) {
@@ -234,7 +271,7 @@ export default function NotesSection({ userId }: NotesSectionProps) {
   };
 
   const removeTag = (tag: string) => {
-    setFormData({ ...formData, tags: formData.tags.filter(t => t !== tag) });
+    setFormData({ ...formData, tags: formData.tags.filter((t) => t !== tag) });
   };
 
   if (loading) {
@@ -250,7 +287,9 @@ export default function NotesSection({ userId }: NotesSectionProps) {
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
           <StickyNote className="w-6 h-6 text-purple-600 dark:text-purple-400" />
-          <h2 className="text-xl font-bold text-slate-900 dark:text-white">Notlarım</h2>
+          <h2 className="text-xl font-bold text-slate-900 dark:text-white">
+            Notlarım
+          </h2>
           <span className="px-2 py-0.5 bg-purple-500/20 text-purple-700 dark:text-purple-300 text-sm rounded-full">
             {filteredNotes.length}
           </span>
@@ -283,8 +322,10 @@ export default function NotesSection({ userId }: NotesSectionProps) {
             className="px-4 py-2 bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl text-slate-800 dark:text-white focus:outline-none focus:border-purple-500/50"
           >
             <option value="">Tüm Kategoriler</option>
-            {categories.map(cat => (
-              <option key={cat.id} value={cat.name}>{cat.name}</option>
+            {categories.map((cat) => (
+              <option key={cat.id} value={cat.name}>
+                {cat.name}
+              </option>
             ))}
           </select>
         )}
@@ -296,8 +337,10 @@ export default function NotesSection({ userId }: NotesSectionProps) {
             className="px-4 py-2 bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl text-slate-800 dark:text-white focus:outline-none focus:border-purple-500/50"
           >
             <option value="">Tüm Etiketler</option>
-            {allTags.map(tag => (
-              <option key={tag} value={tag}>{tag}</option>
+            {allTags.map((tag) => (
+              <option key={tag} value={tag}>
+                {tag}
+              </option>
             ))}
           </select>
         )}
@@ -307,7 +350,9 @@ export default function NotesSection({ userId }: NotesSectionProps) {
         <div className="text-center py-12">
           <StickyNote className="w-16 h-16 mx-auto mb-4 text-slate-400 dark:text-slate-600" />
           <p className="text-slate-500 dark:text-slate-400">
-            {searchQuery || selectedCategory || selectedTag ? 'Arama sonucu bulunamadı' : 'Henüz not eklemediniz'}
+            {searchQuery || selectedCategory || selectedTag
+              ? 'Arama sonucu bulunamadı'
+              : 'Henüz not eklemediniz'}
           </p>
           {!searchQuery && !selectedCategory && !selectedTag && (
             <button
@@ -320,7 +365,7 @@ export default function NotesSection({ userId }: NotesSectionProps) {
         </div>
       ) : (
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {filteredNotes.map(note => (
+          {filteredNotes.map((note) => (
             <motion.div
               key={note.id}
               initial={{ opacity: 0, y: 10 }}
@@ -333,7 +378,9 @@ export default function NotesSection({ userId }: NotesSectionProps) {
                 </h3>
                 {pendingDeleteId === note.id ? (
                   <div className="flex shrink-0 items-center gap-1 rounded-lg border border-red-500/30 bg-red-500/10 px-2 py-0.5 text-xs">
-                    <span className="font-semibold text-red-600 dark:text-red-400">Sil?</span>
+                    <span className="font-semibold text-red-600 dark:text-red-400">
+                      Sil?
+                    </span>
                     <button
                       type="button"
                       onClick={() => handleDelete(note.id)}
@@ -381,7 +428,9 @@ export default function NotesSection({ userId }: NotesSectionProps) {
               {note.category && (
                 <div className="flex items-center gap-1 mb-2">
                   <Folder className="w-3 h-3 text-purple-600 dark:text-purple-400" />
-                  <span className="text-xs text-purple-700 dark:text-purple-300 font-medium">{note.category}</span>
+                  <span className="text-xs text-purple-700 dark:text-purple-300 font-medium">
+                    {note.category}
+                  </span>
                 </div>
               )}
 
@@ -392,7 +441,7 @@ export default function NotesSection({ userId }: NotesSectionProps) {
 
               {note.tags.length > 0 && (
                 <div className="flex flex-wrap gap-1 mb-3">
-                  {note.tags.map(tag => (
+                  {note.tags.map((tag) => (
                     <span
                       key={tag}
                       className="px-2 py-0.5 bg-slate-100 dark:bg-slate-700/50 text-slate-700 dark:text-slate-300 text-xs rounded-full border border-slate-200 dark:border-transparent"
@@ -405,7 +454,7 @@ export default function NotesSection({ userId }: NotesSectionProps) {
 
               <div className="flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400">
                 <Clock className="w-3 h-3" />
-                {new Date(note.updated_at).toLocaleDateString('tr-TR')}
+                {formatIstanbulDate(note.updated_at)}
               </div>
             </motion.div>
           ))}
@@ -436,7 +485,10 @@ export default function NotesSection({ userId }: NotesSectionProps) {
               className="relative w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 shadow-2xl"
             >
               <div className="sticky top-0 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-700 p-4 flex items-center justify-between">
-                <h3 id="notes-modal-title" className="text-xl font-bold text-slate-900 dark:text-white">
+                <h3
+                  id="notes-modal-title"
+                  className="text-xl font-bold text-slate-900 dark:text-white"
+                >
                   {editingNote ? 'Notu Düzenle' : 'Yeni Not'}
                 </h3>
                 <button
@@ -460,7 +512,9 @@ export default function NotesSection({ userId }: NotesSectionProps) {
                     id={titleInputId}
                     type="text"
                     value={formData.title}
-                    onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                    onChange={(e) =>
+                      setFormData({ ...formData, title: e.target.value })
+                    }
                     placeholder="Not başlığı..."
                     className="w-full px-4 py-2 bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:border-purple-500/50"
                   />
@@ -468,7 +522,9 @@ export default function NotesSection({ userId }: NotesSectionProps) {
 
                 <div>
                   <label
-                    htmlFor={showCategoryInput ? newCategoryInputId : categorySelectId}
+                    htmlFor={
+                      showCategoryInput ? newCategoryInputId : categorySelectId
+                    }
                     className="block text-sm text-slate-600 dark:text-slate-400 mb-2 font-medium"
                   >
                     Kategori
@@ -506,12 +562,16 @@ export default function NotesSection({ userId }: NotesSectionProps) {
                       <select
                         id={categorySelectId}
                         value={formData.category}
-                        onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+                        onChange={(e) =>
+                          setFormData({ ...formData, category: e.target.value })
+                        }
                         className="flex-1 px-4 py-2 bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl text-slate-900 dark:text-white focus:outline-none focus:border-purple-500/50"
                       >
                         <option value="">Kategori seç...</option>
-                        {categories.map(cat => (
-                          <option key={cat.id} value={cat.name}>{cat.name}</option>
+                        {categories.map((cat) => (
+                          <option key={cat.id} value={cat.name}>
+                            {cat.name}
+                          </option>
                         ))}
                       </select>
                       <button
@@ -538,14 +598,38 @@ export default function NotesSection({ userId }: NotesSectionProps) {
                     className="border border-slate-200 dark:border-white/10 rounded-xl overflow-hidden"
                   >
                     <div className="flex flex-wrap gap-1 p-2 bg-slate-50 dark:bg-white/5 border-b border-slate-200 dark:border-white/10">
-                      <ToolbarButton icon={Bold} title="Kalın" onClick={() => execCommand('bold')} />
-                      <ToolbarButton icon={Italic} title="İtalik" onClick={() => execCommand('italic')} />
-                      <ToolbarButton icon={Underline} title="Altı çizili" onClick={() => execCommand('underline')} />
+                      <ToolbarButton
+                        icon={Bold}
+                        title="Kalın"
+                        onClick={() => execCommand('bold')}
+                      />
+                      <ToolbarButton
+                        icon={Italic}
+                        title="İtalik"
+                        onClick={() => execCommand('italic')}
+                      />
+                      <ToolbarButton
+                        icon={Underline}
+                        title="Altı çizili"
+                        onClick={() => execCommand('underline')}
+                      />
                       <div className="w-px h-6 bg-slate-200 dark:bg-white/10 mx-1" />
-                      <ToolbarButton icon={Heading1} title="Başlık" onClick={() => execCommand('formatBlock', 'h1')} />
+                      <ToolbarButton
+                        icon={Heading1}
+                        title="Başlık"
+                        onClick={() => execCommand('formatBlock', 'h1')}
+                      />
                       <div className="w-px h-6 bg-slate-200 dark:bg-white/10 mx-1" />
-                      <ToolbarButton icon={List} title="Liste" onClick={() => execCommand('insertUnorderedList')} />
-                      <ToolbarButton icon={ListOrdered} title="Numaralı Liste" onClick={() => execCommand('insertOrderedList')} />
+                      <ToolbarButton
+                        icon={List}
+                        title="Liste"
+                        onClick={() => execCommand('insertUnorderedList')}
+                      />
+                      <ToolbarButton
+                        icon={ListOrdered}
+                        title="Numaralı Liste"
+                        onClick={() => execCommand('insertOrderedList')}
+                      />
                       <div className="w-px h-6 bg-slate-200 dark:bg-white/10 mx-1" />
                       <ToolbarButton
                         icon={LinkIcon}
@@ -565,7 +649,12 @@ export default function NotesSection({ userId }: NotesSectionProps) {
                       ref={editorRef}
                       contentEditable
                       suppressContentEditableWarning
-                      onInput={(e) => setFormData({ ...formData, content: e.currentTarget.innerHTML })}
+                      onInput={(e) =>
+                        setFormData({
+                          ...formData,
+                          content: e.currentTarget.innerHTML,
+                        })
+                      }
                       className="min-h-[200px] p-4 bg-white dark:bg-slate-900 text-slate-900 dark:text-white focus:outline-none prose prose-sm dark:prose-invert max-w-none [&>h1]:text-2xl [&>h1]:font-bold [&>ul]:list-disc [&>ol]:list-decimal [&>li]:ml-4 [&>a]:text-purple-600 dark:[&>a]:text-purple-400 [&>a]:underline"
                       style={{ whiteSpace: 'pre-wrap' }}
                       dangerouslySetInnerHTML={{
@@ -585,7 +674,7 @@ export default function NotesSection({ userId }: NotesSectionProps) {
                     Etiketler
                   </label>
                   <div className="flex flex-wrap gap-2 mb-2">
-                    {formData.tags.map(tag => (
+                    {formData.tags.map((tag) => (
                       <span
                         key={tag}
                         className="flex items-center gap-1 px-2 py-1 bg-purple-500/20 text-purple-700 dark:text-purple-300 text-sm rounded-lg"
@@ -606,7 +695,9 @@ export default function NotesSection({ userId }: NotesSectionProps) {
                       type="text"
                       value={newTag}
                       onChange={(e) => setNewTag(e.target.value)}
-                      onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), addTag())}
+                      onKeyDown={(e) =>
+                        e.key === 'Enter' && (e.preventDefault(), addTag())
+                      }
                       placeholder="Etiket ekle..."
                       className="flex-1 px-4 py-2 bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:border-purple-500/50"
                     />

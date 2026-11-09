@@ -1,20 +1,24 @@
-"use client";
+'use client';
 
-import type { Dispatch, SetStateAction } from "react";
-import { useMemo, useState } from "react";
-import { useToast } from "@/components/Toast";
-import { isAdminEmail } from "@/lib/admin";
+import type { Dispatch, SetStateAction } from 'react';
+import { useMemo, useState } from 'react';
+import { useToast } from '@/components/Toast';
+import { isAdminEmail } from '@/lib/admin';
 import {
   applyAdminModerationAction,
   deleteAdminNotification,
   markAdminNotificationAsRead,
   sendAdminNotificationReply,
-} from "@/features/admin/queries";
+} from '@/features/admin/queries';
 import type {
   AdminNotification,
   AdminUser,
   ModerationPayload,
-} from "@/features/admin/types";
+} from '@/features/admin/types';
+import {
+  confirmAdminAction,
+  promptAdminAction,
+} from '@/features/admin/components/AdminActionDialog';
 
 type SenderActionStatus = {
   blocked: boolean;
@@ -41,7 +45,7 @@ export function useAdminNotifications({
   const [showNotifications, setShowNotifications] = useState(false);
   const [selectedNotification, setSelectedNotification] =
     useState<AdminNotification | null>(null);
-  const [replyText, setReplyText] = useState("");
+  const [replyText, setReplyText] = useState('');
 
   const parseMessagePayload = (
     notification: AdminNotification | null,
@@ -52,7 +56,7 @@ export function useAdminNotifications({
 
     try {
       const parsed = JSON.parse(notification.message);
-      if (parsed && typeof parsed === "object" && parsed.text) {
+      if (parsed && typeof parsed === 'object' && parsed.text) {
         return parsed as ModerationPayload;
       }
     } catch {}
@@ -63,7 +67,7 @@ export function useAdminNotifications({
   const parseModerationPayload = (
     notification: AdminNotification | null,
   ): ModerationPayload | null => {
-    if (!notification || notification.type !== "moderation") {
+    if (!notification || notification.type !== 'moderation') {
       return null;
     }
 
@@ -71,7 +75,7 @@ export function useAdminNotifications({
       const parsed = JSON.parse(notification.message);
       if (
         parsed &&
-        typeof parsed === "object" &&
+        typeof parsed === 'object' &&
         parsed.sender_id &&
         parsed.action
       ) {
@@ -85,14 +89,18 @@ export function useAdminNotifications({
   const adminTargetIds = useMemo(
     () =>
       new Set(
-        [currentUserId, ...users.filter((user) => isAdminEmail(user.email)).map((user) => user.id)]
-          .filter(Boolean),
+        [
+          currentUserId,
+          ...users
+            .filter((user) => isAdminEmail(user.email))
+            .map((user) => user.id),
+        ].filter(Boolean),
       ),
     [currentUserId, users],
   );
 
   const isIncomingAdminMessage = (notification: AdminNotification) => {
-    if (notification.type !== "message") {
+    if (notification.type !== 'message') {
       return false;
     }
 
@@ -104,12 +112,13 @@ export function useAdminNotifications({
   };
 
   const unreadNotifications = notifications.filter(
-    (notification) => isIncomingAdminMessage(notification) && !notification.is_read,
+    (notification) =>
+      isIncomingAdminMessage(notification) && !notification.is_read,
   );
 
   const formatRelativeTime = (dateStr: string | Date | number) => {
     if (!dateStr) {
-      return "";
+      return '';
     }
 
     const date = new Date(dateStr);
@@ -119,7 +128,7 @@ export function useAdminNotifications({
     );
 
     if (diffInMinutes < 1) {
-      return "Az önce";
+      return 'Az önce';
     }
 
     if (diffInMinutes < 60) {
@@ -133,27 +142,29 @@ export function useAdminNotifications({
 
     const diffInDays = Math.floor(diffInHours / 24);
     if (diffInDays === 1) {
-      return "Dün";
+      return 'Dün';
     }
 
     if (diffInDays < 7) {
       return `${diffInDays} gün önce`;
     }
 
-    return date.toLocaleDateString("tr-TR", { day: "numeric", month: "short" });
+    return new Intl.DateTimeFormat('tr-TR', {
+      timeZone: 'Europe/Istanbul',
+      day: 'numeric',
+      month: 'short',
+    }).format(date);
   };
 
   const getNotificationBody = (notification: AdminNotification | null) => {
     const payload = parseMessagePayload(notification);
-    return payload?.text || notification?.message || "";
+    return payload?.text || notification?.message || '';
   };
 
   const getMetadataText = (value: unknown) =>
-    typeof value === "string" && value.trim() ? value : "unknown";
+    typeof value === 'string' && value.trim() ? value : 'unknown';
 
-  const getSenderActionStatus = (
-    senderId?: string,
-  ): SenderActionStatus => {
+  const getSenderActionStatus = (senderId?: string): SenderActionStatus => {
     if (!senderId) {
       return { blocked: false, expires_at: null, muted: false };
     }
@@ -164,12 +175,12 @@ export function useAdminNotifications({
         continue;
       }
 
-      if (moderation.action === "block") {
+      if (moderation.action === 'block') {
         return { blocked: true, expires_at: null, muted: false };
       }
 
       if (
-        moderation.action === "mute" &&
+        moderation.action === 'mute' &&
         moderation.expires_at &&
         new Date(moderation.expires_at).getTime() > Date.now()
       ) {
@@ -202,26 +213,24 @@ export function useAdminNotifications({
 
     setSelectedNotification(notification);
     setShowNotifications(false);
-    setReplyText("");
+    setReplyText('');
   };
 
-  const applyModerationAction = async (
-    action: "block" | "mute" | "report",
-  ) => {
+  const applyModerationAction = async (action: 'block' | 'mute' | 'report') => {
     const payload = parseMessagePayload(selectedNotification);
     if (!selectedNotification || !payload?.sender_id || !currentUserId) {
       return;
     }
 
-    const reason =
-      prompt(
-        action === "report"
-          ? "Rapor notu (opsiyonel)"
-          : action === "mute"
-            ? "Sessize alma nedeni (opsiyonel)"
-            : "Engelleme nedeni (opsiyonel)",
-        "",
-      ) || "";
+    const reasonPrompt = await promptAdminAction(
+      action === 'report'
+        ? 'Rapor notu (opsiyonel)'
+        : action === 'mute'
+          ? 'Sessize alma nedeni (opsiyonel)'
+          : 'Engelleme nedeni (opsiyonel)',
+      '',
+    );
+    const reason = reasonPrompt || '';
 
     await applyAdminModerationAction({
       action,
@@ -235,12 +244,12 @@ export function useAdminNotifications({
 
     await loadData(currentUserId);
     showToast(
-      "success",
-      action === "report"
-        ? "Mesaj raporlandı."
-        : action === "mute"
-          ? "Öğrenci 7 gün sessize alındı."
-          : "Öğrenci engellendi.",
+      'success',
+      action === 'report'
+        ? 'Mesaj raporlandı.'
+        : action === 'mute'
+          ? 'Öğrenci 7 gün sessize alındı.'
+          : 'Öğrenci engellendi.',
     );
   };
 
@@ -251,18 +260,22 @@ export function useAdminNotifications({
     }
 
     await sendAdminNotificationReply(payload.sender_id, replyText);
-    setReplyText("");
-    showToast("success", "Cevap gönderildi.");
+    setReplyText('');
+    showToast('success', 'Cevap gönderildi.');
   };
 
   const deleteMessage = async (notificationId: string) => {
-    if (!confirm("Bu mesajı silmek istediğinize emin misiniz?")) {
+    const confirmed = await confirmAdminAction(
+      'Bu mesajı silmek istediğinize emin misiniz?',
+      { tone: 'danger' },
+    );
+    if (!confirmed) {
       return;
     }
 
     const { error } = await deleteAdminNotification(notificationId);
     if (error) {
-      showToast("error", "Mesaj silinemedi: " + error.message);
+      showToast('error', 'Mesaj silinemedi: ' + error.message);
       return;
     }
 

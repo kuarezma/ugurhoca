@@ -1,10 +1,11 @@
-"use client";
+'use client';
 
-import { memo } from "react";
-import { motion } from "framer-motion";
-import Link from "next/link";
-import { CheckCircle2, ChevronRight, FileText } from "lucide-react";
-import { DashboardQuizResult } from "@/types/dashboard";
+import { memo } from 'react';
+import { motion } from 'framer-motion';
+import Link from 'next/link';
+import { CheckCircle2, ChevronRight, FileText } from 'lucide-react';
+import { DashboardQuizResult } from '@/types/dashboard';
+import { formatIstanbulDate } from '@/lib/date-format';
 
 interface RecentResultsProps {
   results: DashboardQuizResult[];
@@ -20,7 +21,9 @@ function RecentResults({ results }: RecentResultsProps) {
     >
       <div className="mb-5 flex items-center justify-between gap-4">
         <div>
-          <h2 className="text-xl font-bold text-slate-900 dark:text-white">Son Test Sonuçların</h2>
+          <h2 className="text-xl font-bold text-slate-900 dark:text-white">
+            Son Test Sonuçların
+          </h2>
           <p className="mt-1 text-sm text-slate-600 dark:text-slate-400">
             Yakın zamanda çözdüğün testlerin kısa özeti.
           </p>
@@ -37,7 +40,9 @@ function RecentResults({ results }: RecentResultsProps) {
       {results.length === 0 ? (
         <div className="rounded-2xl border border-dashed border-slate-200 dark:border-slate-800 px-5 py-8 text-center">
           <FileText className="mx-auto h-10 w-10 text-slate-400 dark:text-slate-600" />
-          <p className="mt-3 font-semibold text-slate-900 dark:text-white">Henüz çözdüğün test görünmüyor.</p>
+          <p className="mt-3 font-semibold text-slate-900 dark:text-white">
+            Henüz çözdüğün test görünmüyor.
+          </p>
           <p className="mt-1 text-sm text-slate-600 dark:text-slate-400">
             İlk testini çözünce sonuçların burada listelenecek.
           </p>
@@ -54,16 +59,16 @@ function RecentResults({ results }: RecentResultsProps) {
               </div>
               <div className="flex-1">
                 <p className="font-medium text-slate-900 dark:text-white">
-                  {result.quizzes?.title || "Test"}
+                  {result.quizzes?.title || 'Test'}
                 </p>
                 <div className="mt-1 flex flex-wrap items-center gap-2 text-sm text-slate-600 dark:text-slate-400">
-                  <span className="font-semibold text-slate-900 dark:text-white">%{result.score}</span>
+                  <span className="font-semibold text-slate-900 dark:text-white">
+                    %{result.score}
+                  </span>
                   <span>•</span>
                   <span>{result.total_questions} soru</span>
                   <span>•</span>
-                  <span>
-                    {new Date(result.completed_at).toLocaleDateString("tr-TR")}
-                  </span>
+                  <span>{formatIstanbulDate(result.completed_at)}</span>
                 </div>
               </div>
             </div>

@@ -6,6 +6,7 @@ import type {
   ModerationPayload,
 } from '@/features/admin/types';
 import { useAccessibleModal } from '@/hooks/useAccessibleModal';
+import { formatIstanbulDate, formatIstanbulDateTime } from '@/lib/date-format';
 
 type SenderActionStatus = {
   blocked: boolean;
@@ -63,11 +64,14 @@ export default function AdminNotificationDetailModal({
             <p className="text-xs uppercase tracking-[0.2em] text-indigo-600 dark:text-indigo-300 mb-2">
               Öğrenci Mesajı
             </p>
-            <h3 id="admin-notification-title" className="text-2xl font-bold text-slate-900 dark:text-white">
+            <h3
+              id="admin-notification-title"
+              className="text-2xl font-bold text-slate-900 dark:text-white"
+            >
               {notification.title}
             </h3>
             <p className="text-slate-500 dark:text-slate-400 text-sm mt-1">
-              {new Date(notification.created_at).toLocaleDateString('tr-TR')}
+              {formatIstanbulDate(notification.created_at)}
             </p>
           </div>
           <div className="flex items-center gap-2">
@@ -101,9 +105,9 @@ export default function AdminNotificationDetailModal({
               </p>
               <p>
                 Zaman:{' '}
-                {new Date(
+                {formatIstanbulDateTime(
                   payload.created_at || notification.created_at,
-                ).toLocaleString('tr-TR')}
+                )}
               </p>
             </div>
           )}
@@ -116,15 +120,16 @@ export default function AdminNotificationDetailModal({
               )}
               {status.muted && status.expires_at && (
                 <span className="px-2 py-1 rounded-full text-[11px] bg-amber-500/20 text-amber-700 dark:text-amber-300">
-                  Sessizde (bitiş:{' '}
-                  {new Date(status.expires_at).toLocaleDateString('tr-TR')})
+                  Sessizde (bitiş: {formatIstanbulDate(status.expires_at)})
                 </span>
               )}
             </div>
           )}
           {(payload?.attachments?.length ?? 0) > 0 && (
             <div className="space-y-2">
-              <p className="text-sm font-semibold text-slate-900 dark:text-white">Ekler</p>
+              <p className="text-sm font-semibold text-slate-900 dark:text-white">
+                Ekler
+              </p>
               <div className="flex flex-wrap gap-2">
                 {payload?.attachments?.map((file) => (
                   <a

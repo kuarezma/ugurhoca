@@ -13,6 +13,7 @@ import {
   Edit3,
 } from 'lucide-react';
 import { useAccessibleModal } from '@/hooks/useAccessibleModal';
+import { formatIstanbulDate } from '@/lib/date-format';
 import {
   getTimeCapsule,
   saveTimeCapsule,
@@ -117,14 +118,18 @@ export function GoalTimeCapsuleModal({
               <Clock className="w-5 h-5" />
             </div>
             <div>
-              <h2 id={titleId} className="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
+              <h2
+                id={titleId}
+                className="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2"
+              >
                 Hedef Zaman Kapsülü
                 <span className="text-xs px-2.5 py-0.5 rounded-full bg-amber-50 dark:bg-amber-950/50 text-amber-600 dark:text-amber-400 border border-amber-200 dark:border-amber-800/50 font-medium">
                   Sene Başı ➔ Sene Sonu
                 </span>
               </h2>
               <p className="text-xs text-slate-500 dark:text-slate-400">
-                Gelecekteki kendine bir mektup ve hedefler bırak. Yıl sonunda açıp gelişiminle gurur duy.
+                Gelecekteki kendine bir mektup ve hedefler bırak. Yıl sonunda
+                açıp gelişiminle gurur duy.
               </p>
             </div>
           </div>
@@ -159,13 +164,18 @@ export function GoalTimeCapsuleModal({
                   Kapsülünü Mühürle ve Geleceğe Gönder!
                 </p>
                 <p>
-                  Yıl boyunca karşılaşacağın zorlukları düşün. Bugün koyduğun samimi hedefler ve kendine vereceğin cesaret mektubu, zorlandığın anlarda sana pusula olacak.
+                  Yıl boyunca karşılaşacağın zorlukları düşün. Bugün koyduğun
+                  samimi hedefler ve kendine vereceğin cesaret mektubu,
+                  zorlandığın anlarda sana pusula olacak.
                 </p>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label htmlFor="capsule-net-score" className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
+                  <label
+                    htmlFor="capsule-net-score"
+                    className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1"
+                  >
                     Hedef Matematik Neti (20 Soru Üzerinden)
                   </label>
                   <input
@@ -181,7 +191,10 @@ export function GoalTimeCapsuleModal({
                 </div>
 
                 <div>
-                  <label htmlFor="capsule-unlock-date" className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
+                  <label
+                    htmlFor="capsule-unlock-date"
+                    className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1"
+                  >
                     Kapsülün Açılacağı Tarih
                   </label>
                   <input
@@ -196,7 +209,10 @@ export function GoalTimeCapsuleModal({
               </div>
 
               <div>
-                <label htmlFor="capsule-target-goal" className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
+                <label
+                  htmlFor="capsule-target-goal"
+                  className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1"
+                >
                   En Büyük Matematiksel Hedefin
                 </label>
                 <input
@@ -212,7 +228,10 @@ export function GoalTimeCapsuleModal({
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label htmlFor="capsule-fear-overcome" className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
+                  <label
+                    htmlFor="capsule-fear-overcome"
+                    className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1"
+                  >
                     Yenmek İstediğin Korku / Önyargı
                   </label>
                   <input
@@ -226,7 +245,10 @@ export function GoalTimeCapsuleModal({
                 </div>
 
                 <div>
-                  <label htmlFor="capsule-pledge" className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
+                  <label
+                    htmlFor="capsule-pledge"
+                    className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1"
+                  >
                     Kendine Çalışma Taahhüdün
                   </label>
                   <input
@@ -241,7 +263,10 @@ export function GoalTimeCapsuleModal({
               </div>
 
               <div>
-                <label htmlFor="capsule-letter-self" className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
+                <label
+                  htmlFor="capsule-letter-self"
+                  className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1"
+                >
                   Gelecekteki Kendine Mektup
                 </label>
                 <textarea
@@ -277,25 +302,36 @@ export function GoalTimeCapsuleModal({
           ) : capsule ? (
             <div className="space-y-5">
               {/* Capsule Status Card */}
-              <div className={`p-6 rounded-3xl border ${
-                isUnlocked
-                  ? 'border-emerald-300 dark:border-emerald-800 bg-brand-primary/10'
-                  : 'border-amber-300 dark:border-amber-800 bg-brand-accent/10'
-              } flex flex-col sm:flex-row items-center justify-between gap-4`}>
+              <div
+                className={`p-6 rounded-3xl border ${
+                  isUnlocked
+                    ? 'border-emerald-300 dark:border-emerald-800 bg-brand-primary/10'
+                    : 'border-amber-300 dark:border-amber-800 bg-brand-accent/10'
+                } flex flex-col sm:flex-row items-center justify-between gap-4`}
+              >
                 <div className="flex items-center gap-4 text-center sm:text-left">
-                  <div className={`w-16 h-16 rounded-2xl flex items-center justify-center shadow-lg ${
-                    isUnlocked
-                      ? 'bg-emerald-600 text-slate-950'
-                      : 'bg-amber-600 text-white animate-pulse'
-                  }`}>
-                    {isUnlocked ? (<Unlock className="w-8 h-8" /> ): (<Lock className="w-8 h-8" />)}
+                  <div
+                    className={`w-16 h-16 rounded-2xl flex items-center justify-center shadow-lg ${
+                      isUnlocked
+                        ? 'bg-emerald-600 text-slate-950'
+                        : 'bg-amber-600 text-white animate-pulse'
+                    }`}
+                  >
+                    {isUnlocked ? (
+                      <Unlock className="w-8 h-8" />
+                    ) : (
+                      <Lock className="w-8 h-8" />
+                    )}
                   </div>
                   <div>
                     <h3 className="text-base font-bold text-slate-900 dark:text-white">
-                      {isUnlocked ? 'Zaman Kapsülü Kilidi Açıldı!' : 'Zaman Kapsülü Mühürlendi'}
+                      {isUnlocked
+                        ? 'Zaman Kapsülü Kilidi Açıldı!'
+                        : 'Zaman Kapsülü Mühürlendi'}
                     </h3>
                     <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-                      Hedef Açılış Tarihi: {capsule.unlockDate} • Oluşturulma: {' '}{new Date(capsule.createdAt).toLocaleDateString('tr-TR')}
+                      Hedef Açılış Tarihi: {capsule.unlockDate} • Oluşturulma:{' '}
+                      {formatIstanbulDate(capsule.createdAt)}
                     </p>
                   </div>
                 </div>
@@ -370,7 +406,8 @@ export function GoalTimeCapsuleModal({
                     Sene Sonu Değerlendirmesi ve Kazanılan Özgüven:
                   </h4>
                   <p className="text-xs text-emerald-800 dark:text-emerald-200">
-                    {capsule.reflectionNotes || 'Hedeflerine doğru kararlılıkla yürüdün. Bu gelişim portfolyosundaki her bir çalışma, soru ve anlatım senin başarının somut kanıtıdır.'}
+                    {capsule.reflectionNotes ||
+                      'Hedeflerine doğru kararlılıkla yürüdün. Bu gelişim portfolyosundaki her bir çalışma, soru ve anlatım senin başarının somut kanıtıdır.'}
                   </p>
                 </div>
               )}

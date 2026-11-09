@@ -1,13 +1,9 @@
 'use client';
 
 import { useState, useEffect, useMemo, useCallback } from 'react';
-import {
-  Calendar,
-  Flame,
-  TrendingUp,
-  Award,
-} from 'lucide-react';
+import { Calendar, Flame, TrendingUp, Award } from 'lucide-react';
 import { getDailyGoal, type DailyGoalData } from '@/lib/dailyGoalStorage';
+import { formatIstanbulDate } from '@/lib/date-format';
 
 export type StudyActivityHeatmapProps = {
   history?: Record<string, number>;
@@ -41,7 +37,7 @@ const MONTH_NAMES_TR = [
 ];
 
 function formatTrDate(date: Date): string {
-  return date.toLocaleDateString('tr-TR', {
+  return formatIstanbulDate(date, {
     day: 'numeric',
     month: 'long',
     weekday: 'long',
@@ -81,12 +77,13 @@ export default function StudyActivityHeatmap({
       }
     };
     window.addEventListener('ugurhoca:daily-goal-updated', handleUpdate);
-    return () => window.removeEventListener('ugurhoca:daily-goal-updated', handleUpdate);
+    return () =>
+      window.removeEventListener('ugurhoca:daily-goal-updated', handleUpdate);
   }, [loadData]);
 
   const history = useMemo(
     () => propHistory ?? data?.history ?? {},
-    [propHistory, data?.history]
+    [propHistory, data?.history],
   );
   const target = propTarget ?? data?.target ?? 20;
 
@@ -203,7 +200,8 @@ export default function StudyActivityHeatmap({
               </span>
             </h3>
             <p className="text-xs text-slate-500 dark:text-slate-400">
-              Düzenli pratik ve çalışma sürekliliğinin yıl boyunca kümülatif dağılımı
+              Düzenli pratik ve çalışma sürekliliğinin yıl boyunca kümülatif
+              dağılımı
             </p>
           </div>
         </div>
@@ -220,7 +218,9 @@ export default function StudyActivityHeatmap({
 
           <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-white/5 font-semibold">
             <Flame className="h-3.5 w-3.5 text-amber-500" />
-            <span className="text-slate-600 dark:text-slate-300">Aktif Gün:</span>
+            <span className="text-slate-600 dark:text-slate-300">
+              Aktif Gün:
+            </span>
             <strong className="text-amber-500 dark:text-amber-400 font-mono">
               {stats.activeDaysCount} Gün
             </strong>
@@ -274,7 +274,8 @@ export default function StudyActivityHeatmap({
               {weeks.map((week, wIdx) => (
                 <div key={`week-${wIdx}`} className="flex flex-col gap-[3px]">
                   {week.map((cell) => {
-                    const isSelected = activeDayForInfo?.dateStr === cell.dateStr;
+                    const isSelected =
+                      activeDayForInfo?.dateStr === cell.dateStr;
 
                     // Renk seviyeleri (5 kademe)
                     let bgClass = '';
@@ -340,7 +341,9 @@ export default function StudyActivityHeatmap({
                 {activeDayForInfo.count > 0 ? (
                   <>
                     {activeDayForInfo.count} soru çözüldü
-                    {activeDayForInfo.count >= target ? ' 🎯 (Hedef Tamamlandı)' : ''}
+                    {activeDayForInfo.count >= target
+                      ? ' 🎯 (Hedef Tamamlandı)'
+                      : ''}
                   </>
                 ) : (
                   'Bu gün soru çözümü kaydedilmedi'
@@ -357,11 +360,26 @@ export default function StudyActivityHeatmap({
         {/* 5 Kademeli Renk Lejantı */}
         <div className="flex items-center gap-1.5 text-[11px] text-slate-600 dark:text-slate-300">
           <span>Daha Az</span>
-          <span className="h-[10px] w-[10px] rounded-[2px] bg-slate-200 dark:bg-white/5 border border-slate-300 dark:border-white/10" title="0 Soru" />
-          <span className="h-[10px] w-[10px] rounded-[2px] bg-emerald-200 dark:bg-emerald-900/60 border border-emerald-300 dark:border-emerald-700/60" title="1-9 Soru" />
-          <span className="h-[10px] w-[10px] rounded-[2px] bg-emerald-400 dark:bg-emerald-700 border border-emerald-500" title="10-19 Soru" />
-          <span className="h-[10px] w-[10px] rounded-[2px] bg-emerald-600 dark:bg-emerald-500 border border-emerald-400" title="20-34 Soru" />
-          <span className="h-[10px] w-[10px] rounded-[2px] bg-teal-600 dark:bg-teal-400 border border-teal-300" title="35+ Soru" />
+          <span
+            className="h-[10px] w-[10px] rounded-[2px] bg-slate-200 dark:bg-white/5 border border-slate-300 dark:border-white/10"
+            title="0 Soru"
+          />
+          <span
+            className="h-[10px] w-[10px] rounded-[2px] bg-emerald-200 dark:bg-emerald-900/60 border border-emerald-300 dark:border-emerald-700/60"
+            title="1-9 Soru"
+          />
+          <span
+            className="h-[10px] w-[10px] rounded-[2px] bg-emerald-400 dark:bg-emerald-700 border border-emerald-500"
+            title="10-19 Soru"
+          />
+          <span
+            className="h-[10px] w-[10px] rounded-[2px] bg-emerald-600 dark:bg-emerald-500 border border-emerald-400"
+            title="20-34 Soru"
+          />
+          <span
+            className="h-[10px] w-[10px] rounded-[2px] bg-teal-600 dark:bg-teal-400 border border-teal-300"
+            title="35+ Soru"
+          />
           <span>Daha Çok</span>
         </div>
       </div>

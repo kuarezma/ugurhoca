@@ -23,6 +23,7 @@ import { createLogger } from '@/lib/logger';
 import { supabase } from '@/lib/supabase/client';
 import { Skeleton } from '@/components/ui/Skeleton';
 import { EmptyState } from '@/components/ui/EmptyState';
+import { formatIstanbulDate } from '@/lib/date-format';
 import { Badge } from '@/components/ui/Badge';
 
 const log = createLogger('assignments-page');
@@ -63,13 +64,14 @@ export default function OdevlerPage({
   const isLight = theme === 'light';
   const [user, setUser] = useState<AppUser | null>(initialUser);
   const [loading, setLoading] = useState(!isHydrated);
-  const [assignments, setAssignments] = useState<Assignment[]>(initialAssignments);
-  const [submissions, setSubmissions] = useState<Record<string, Submission>>(
-    initialSubmissions
-  );
+  const [assignments, setAssignments] =
+    useState<Assignment[]>(initialAssignments);
+  const [submissions, setSubmissions] =
+    useState<Record<string, Submission>>(initialSubmissions);
   const uploadInFlight = useRef(false);
   const [uploading, setUploading] = useState<string | null>(null);
-  const [selectedAssignment, setSelectedAssignment] = useState<Assignment | null>(null);
+  const [selectedAssignment, setSelectedAssignment] =
+    useState<Assignment | null>(null);
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
   const [comment, setComment] = useState('');
   const [isDragging, setIsDragging] = useState(false);
@@ -94,7 +96,11 @@ export default function OdevlerPage({
         .single();
 
       if (profile) {
-        const resolvedUser = { ...profile, grade: toDisplayGrade(profile.grade), email: session.user.email };
+        const resolvedUser = {
+          ...profile,
+          grade: toDisplayGrade(profile.grade),
+          email: session.user.email,
+        };
         setUser(resolvedUser);
 
         if (
@@ -109,7 +115,9 @@ export default function OdevlerPage({
           supabase
             .from('assignments')
             .select('*')
-            .or(`grade.eq.${toStoredGrade(profile.grade)},student_id.eq.${profile.id}`)
+            .or(
+              `grade.eq.${toStoredGrade(profile.grade)},student_id.eq.${profile.id}`,
+            )
             .order('created_at', { ascending: false }),
           supabase
             .from('assignment_submissions')
@@ -147,7 +155,9 @@ export default function OdevlerPage({
           supabase
             .from('assignments')
             .select('*')
-            .or(`grade.eq.${toStoredGrade(fallbackUser.grade)},student_id.eq.${fallbackUser.id}`)
+            .or(
+              `grade.eq.${toStoredGrade(fallbackUser.grade)},student_id.eq.${fallbackUser.id}`,
+            )
             .order('created_at', { ascending: false }),
           supabase
             .from('assignment_submissions')
@@ -179,9 +189,17 @@ export default function OdevlerPage({
       return;
     }
 
-    const allowedTypes = ['application/pdf', 'image/jpeg', 'image/png', 'image/jpg'];
+    const allowedTypes = [
+      'application/pdf',
+      'image/jpeg',
+      'image/png',
+      'image/jpg',
+    ];
     if (!allowedTypes.includes(file.type)) {
-      showToast('warning', 'Sadece PDF ve Görsel (JPG, PNG) dosyaları yüklenebilir.');
+      showToast(
+        'warning',
+        'Sadece PDF ve Görsel (JPG, PNG) dosyaları yüklenebilir.',
+      );
       return;
     }
 
@@ -201,7 +219,7 @@ export default function OdevlerPage({
 
     const notifyAlreadySubmitted = (submission: Submission | null) => {
       if (submission) {
-        setSubmissions(prev => ({ ...prev, [assignmentId]: submission }));
+        setSubmissions((prev) => ({ ...prev, [assignmentId]: submission }));
       }
       setUploadProgress(null);
       showToast('warning', 'Bu ödevi zaten teslim ettin.');
@@ -222,7 +240,9 @@ export default function OdevlerPage({
       // Fake progress animation for better UX
       setUploadProgress(10);
       progressInterval = setInterval(() => {
-        setUploadProgress(prev => prev && prev < 90 ? prev + Math.random() * 15 : prev);
+        setUploadProgress((prev) =>
+          prev && prev < 90 ? prev + Math.random() * 15 : prev,
+        );
       }, 300);
 
       const { error: uploadError } = await supabase.storage
@@ -234,9 +254,9 @@ export default function OdevlerPage({
 
       setUploadProgress(100);
 
-      const { data: { publicUrl } } = supabase.storage
-        .from('submissions')
-        .getPublicUrl(filePath);
+      const {
+        data: { publicUrl },
+      } = supabase.storage.from('submissions').getPublicUrl(filePath);
 
       const { data: submissionData, error: dbError } = await supabase
         .from('assignment_submissions')
@@ -258,7 +278,8 @@ export default function OdevlerPage({
         const { error: cleanupError } = await supabase.storage
           .from('submissions')
           .remove([filePath]);
-        if (cleanupError) log.error('Teslim dosyası temizlenemedi', cleanupError);
+        if (cleanupError)
+          log.error('Teslim dosyası temizlenemedi', cleanupError);
         const { data: existingSubmission, error: lookupError } =
           await readExistingSubmission();
         if (lookupError) log.error('Mevcut teslim okunamadı', lookupError);
@@ -268,13 +289,12 @@ export default function OdevlerPage({
       if (dbError) throw dbError;
 
       setTimeout(() => {
-        setSubmissions(prev => ({ ...prev, [assignmentId]: submissionData }));
+        setSubmissions((prev) => ({ ...prev, [assignmentId]: submissionData }));
         setSelectedAssignment(null);
         setComment('');
         setUploadProgress(null);
         showToast('success', 'Ödev başarıyla yüklendi.');
       }, 500);
-
     } catch (error) {
       log.error('Yükleme hatası', error);
       showToast(
@@ -311,8 +331,14 @@ export default function OdevlerPage({
 
   if (loading) {
     return (
-      <main className={`page-surface min-h-screen ${isLight ? 'bg-transparent' : 'dark:bg-slate-900'} pb-20`}>
-        <div className="max-w-5xl mx-auto px-4 py-10 space-y-6" aria-busy="true" aria-live="polite">
+      <main
+        className={`page-surface min-h-screen ${isLight ? 'bg-transparent' : 'dark:bg-slate-900'} pb-20`}
+      >
+        <div
+          className="max-w-5xl mx-auto px-4 py-10 space-y-6"
+          aria-busy="true"
+          aria-live="polite"
+        >
           <Skeleton className="h-10 w-64" />
           <Skeleton className="h-4 w-96 max-w-full" />
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -320,7 +346,9 @@ export default function OdevlerPage({
               <div
                 key={i}
                 className={`rounded-3xl p-6 border space-y-4 ${
-                  isLight ? 'bg-white border-slate-200' : 'bg-slate-800 border-slate-700'
+                  isLight
+                    ? 'bg-white border-slate-200'
+                    : 'bg-slate-800 border-slate-700'
                 }`}
               >
                 <div className="flex justify-between">
@@ -339,8 +367,12 @@ export default function OdevlerPage({
     );
   }
 
-  const computeDueStatus = (dueDate: string | null | undefined, submitted: boolean) => {
-    if (!dueDate) return { label: null as string | null, tone: 'neutral' as const };
+  const computeDueStatus = (
+    dueDate: string | null | undefined,
+    submitted: boolean,
+  ) => {
+    if (!dueDate)
+      return { label: null as string | null, tone: 'neutral' as const };
     const due = new Date(dueDate).getTime();
     const now = Date.now();
     const diffDays = Math.round((due - now) / (1000 * 60 * 60 * 24));
@@ -351,9 +383,12 @@ export default function OdevlerPage({
       const abs = Math.abs(diffDays);
       return { label: `${abs} gün geçti`, tone: 'danger' as const };
     }
-    if (diffDays === 0) return { label: 'Bugün son gün', tone: 'danger' as const };
-    if (diffDays <= 2) return { label: `${diffDays} gün kaldı`, tone: 'warning' as const };
-    if (diffDays <= 7) return { label: `${diffDays} gün kaldı`, tone: 'info' as const };
+    if (diffDays === 0)
+      return { label: 'Bugün son gün', tone: 'danger' as const };
+    if (diffDays <= 2)
+      return { label: `${diffDays} gün kaldı`, tone: 'warning' as const };
+    if (diffDays <= 7)
+      return { label: `${diffDays} gün kaldı`, tone: 'info' as const };
     return { label: `${diffDays} gün kaldı`, tone: 'success' as const };
   };
 
@@ -362,19 +397,30 @@ export default function OdevlerPage({
     : undefined;
 
   return (
-    <main className={`page-surface min-h-screen ${isLight ? 'bg-transparent' : 'dark:bg-slate-900'} pb-20`}>
+    <main
+      className={`page-surface min-h-screen ${isLight ? 'bg-transparent' : 'dark:bg-slate-900'} pb-20`}
+    >
       {/* Header */}
-      <header className={`sticky top-0 z-40 backdrop-blur-lg border-b pt-[env(safe-area-inset-top)] pl-[max(1rem,env(safe-area-inset-left))] pr-[max(1rem,env(safe-area-inset-right))] ${
-        isLight ? 'bg-white/85 border-slate-200/80 shadow-sm' : 'bg-slate-900/80 border-slate-800'
-      }`}>
+      <header
+        className={`sticky top-0 z-40 backdrop-blur-lg border-b pt-[env(safe-area-inset-top)] pl-[max(1rem,env(safe-area-inset-left))] pr-[max(1rem,env(safe-area-inset-right))] ${
+          isLight
+            ? 'bg-white/85 border-slate-200/80 shadow-sm'
+            : 'bg-slate-900/80 border-slate-800'
+        }`}
+      >
         <div className="max-w-5xl mx-auto px-4 h-16 flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-2 text-slate-400 hover:text-indigo-400 transition-colors">
+          <Link
+            href="/"
+            className="flex items-center gap-2 text-slate-400 hover:text-indigo-400 transition-colors"
+          >
             <ArrowLeft className="w-5 h-5" />
             <span className="font-medium">Geri Dön</span>
           </Link>
           <div className="flex items-center gap-4">
             <ThemeToggle compact />
-            <div className={`w-8 h-8 rounded-lg bg-indigo-500 flex items-center justify-center text-white dark:text-white font-bold text-sm`}>
+            <div
+              className={`w-8 h-8 rounded-lg bg-indigo-500 flex items-center justify-center text-white dark:text-white font-bold text-sm`}
+            >
               {user?.name?.[0] || 'Ö'}
             </div>
           </div>
@@ -384,9 +430,14 @@ export default function OdevlerPage({
       <div className="max-w-5xl mx-auto px-4 py-8">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
           <div>
-            <h1 className={`text-3xl font-bold mb-2 ${isLight ? 'text-slate-900' : 'text-white'}`}>Önemli Ödevlerin</h1>
+            <h1
+              className={`text-3xl font-bold mb-2 ${isLight ? 'text-slate-900' : 'text-white'}`}
+            >
+              Önemli Ödevlerin
+            </h1>
             <p className={isLight ? 'text-slate-600' : 'text-slate-400'}>
-              {isGraduateGrade(user?.grade) ? 'Mezun' : `${user?.grade}. Sınıf`} {' '}için atanan ödevlerini buradan takip edip teslim edebilirsin.
+              {isGraduateGrade(user?.grade) ? 'Mezun' : `${user?.grade}. Sınıf`}{' '}
+              için atanan ödevlerini buradan takip edip teslim edebilirsin.
             </p>
           </div>
           <button
@@ -418,17 +469,23 @@ export default function OdevlerPage({
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {assignments.map((assignment) => {
               const submission = submissions[assignment.id];
-              const isPastDue = assignment.due_date && new Date(assignment.due_date) < new Date();
+              const isPastDue =
+                assignment.due_date &&
+                new Date(assignment.due_date) < new Date();
               const isSubmitted = !!submission;
               const isReviewed = submission?.status === 'reviewed';
-              const dueStatus = computeDueStatus(assignment.due_date, isSubmitted);
-              const statusTone: 'success' | 'info' | 'danger' | 'warning' = isReviewed
-                ? 'success'
-                : isSubmitted
-                  ? 'info'
-                  : isPastDue
-                    ? 'danger'
-                    : 'warning';
+              const dueStatus = computeDueStatus(
+                assignment.due_date,
+                isSubmitted,
+              );
+              const statusTone: 'success' | 'info' | 'danger' | 'warning' =
+                isReviewed
+                  ? 'success'
+                  : isSubmitted
+                    ? 'info'
+                    : isPastDue
+                      ? 'danger'
+                      : 'warning';
               const statusLabel = isReviewed
                 ? 'İncelendi'
                 : isSubmitted
@@ -451,23 +508,32 @@ export default function OdevlerPage({
                   <div className="flex flex-wrap items-center gap-2 justify-between mb-4">
                     <Badge tone={statusTone}>{statusLabel}</Badge>
                     {dueStatus.label && (
-                      <Badge tone={dueStatus.tone} leadingIcon={<Clock className="h-3 w-3" aria-hidden="true" />}>
+                      <Badge
+                        tone={dueStatus.tone}
+                        leadingIcon={
+                          <Clock className="h-3 w-3" aria-hidden="true" />
+                        }
+                      >
                         {dueStatus.label}
                       </Badge>
                     )}
                   </div>
 
-                  <h3 className={`font-display text-xl font-bold mb-2 ${isLight ? 'text-slate-900' : 'text-white'}`}>
+                  <h3
+                    className={`font-display text-xl font-bold mb-2 ${isLight ? 'text-slate-900' : 'text-white'}`}
+                  >
                     {assignment.title}
                   </h3>
-                  <p className={`text-sm mb-5 line-clamp-2 ${isLight ? 'text-slate-600' : 'text-slate-400'}`}>
+                  <p
+                    className={`text-sm mb-5 line-clamp-2 ${isLight ? 'text-slate-600' : 'text-slate-400'}`}
+                  >
                     {assignment.description}
                   </p>
 
                   {assignment.due_date && (
                     <p className="mb-4 text-xs font-medium text-slate-500 dark:text-slate-400">
                       Son teslim:{' '}
-                      {new Date(assignment.due_date).toLocaleDateString('tr-TR', {
+                      {formatIstanbulDate(assignment.due_date, {
                         day: 'numeric',
                         month: 'long',
                         year: 'numeric',
@@ -480,7 +546,8 @@ export default function OdevlerPage({
                       <div className="flex items-center gap-2 text-accent-success-ink text-sm font-bold">
                         <CheckCircle2 className="w-5 h-5" aria-hidden="true" />
                         Puan:{' '}
-                        {submission.grade !== null && submission.grade !== undefined
+                        {submission.grade !== null &&
+                        submission.grade !== undefined
                           ? submission.grade
                           : 'Bekliyor'}
                       </div>
@@ -493,7 +560,11 @@ export default function OdevlerPage({
                     <button
                       type="button"
                       onClick={() => setSelectedAssignment(assignment)}
-                      aria-label={isSubmitted ? 'Teslim detaylarını gör' : 'Ödev teslim et'}
+                      aria-label={
+                        isSubmitted
+                          ? 'Teslim detaylarını gör'
+                          : 'Ödev teslim et'
+                      }
                       className={`inline-flex items-center gap-2 px-5 h-11 rounded-xl text-sm font-bold transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:ring-offset-2 ${
                         isSubmitted
                           ? 'bg-slate-100 text-slate-700 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 dark:text-white'

@@ -18,6 +18,7 @@ import {
   Download,
 } from 'lucide-react';
 import { isAdminEmail } from '@/lib/admin';
+import { formatIstanbulDate } from '@/lib/date-format';
 import {
   buildCoreWebVitalsSummary,
   buildTrackingPeriodTrends,
@@ -293,7 +294,7 @@ export default function AdminTrackingTab({
         escape(item.riskReasons.join('; ')),
         escape(
           item.lastActivityAt
-            ? new Date(item.lastActivityAt).toLocaleDateString('tr-TR')
+            ? formatIstanbulDate(item.lastActivityAt)
             : 'Hiç yok',
         ),
         escape(

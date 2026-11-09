@@ -6,6 +6,7 @@ import { Award, Download, X, Sparkles, CheckCircle2 } from 'lucide-react';
 import { fireConfetti } from '@/components/ConfettiBurst';
 import { gameAudio } from '@/features/games/utils/gameAudio';
 import { useAccessibleModal } from '@/hooks/useAccessibleModal';
+import { formatIstanbulDate } from '@/lib/date-format';
 
 export type CelebrationBadge = {
   id: string;
@@ -117,7 +118,7 @@ export function BadgeCelebrationModal({
     ctx.fillText(`Kazanım Şartı: ${badge.requirement}`, 600, 580);
 
     // Alt Bilgi Şeridi
-    const dateStr = new Date().toLocaleDateString('tr-TR', {
+    const dateStr = formatIstanbulDate(new Date(), {
       year: 'numeric',
       month: 'long',
       day: 'numeric',
@@ -188,7 +189,10 @@ export function BadgeCelebrationModal({
               <span>Yeni Rozet Açıldı!</span>
             </div>
 
-            <h2 id={titleId} className="font-display text-2xl font-black text-slate-900 dark:text-white mt-3">
+            <h2
+              id={titleId}
+              className="font-display text-2xl font-black text-slate-900 dark:text-white mt-3"
+            >
               {badge.name}
             </h2>
 

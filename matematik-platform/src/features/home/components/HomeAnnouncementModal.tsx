@@ -18,6 +18,7 @@ import {
   resolveYandexImageUrl,
 } from '@/features/home/queries';
 import { useAccessibleModal } from '@/hooks/useAccessibleModal';
+import { formatIstanbulDate } from '@/lib/date-format';
 
 type HomeAnnouncementModalProps = {
   announcement: Announcement | null;
@@ -338,9 +339,7 @@ export function HomeAnnouncementModal({
                       Haber
                     </span>
                     <span className="text-slate-500 dark:text-slate-400 text-xs sm:text-sm">
-                      {new Date(announcement.created_at).toLocaleDateString(
-                        'tr-TR',
-                      )}
+                      {formatIstanbulDate(announcement.created_at)}
                     </span>
                   </div>
                   <h2
@@ -354,32 +353,33 @@ export function HomeAnnouncementModal({
                   </div>
                   {images.length > 1 &&
                     !/^!\[.*?\]\(/m.test(announcement.content || '') && (
-                    <div className="mt-6 pt-6 border-t border-slate-200 dark:border-slate-800">
-                      <h3 className="text-sm sm:text-base font-bold text-slate-900 dark:text-white mb-3">
-                        Resmi Konu & Soru Dağılım Tablosu Görselleri (Büyütmek için tıklayın)
-                      </h3>
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                        {images.slice(1).map((image, index) => (
-                          <a
-                            key={index + 1}
-                            href={proxiedImageSrc(image)}
-                            target="_blank"
-                            rel="noreferrer"
-                            className="relative block h-56 w-full overflow-hidden rounded-xl bg-white p-2 border border-slate-200 dark:border-slate-700 transition-opacity hover:opacity-90 shadow-xs"
-                          >
-                            <Image
-                              src={proxiedImageSrc(image)}
-                              alt={`${announcement.title} — tablo ${index + 1}`}
-                              fill
-                              className="object-contain p-1"
-                              sizes="(max-width: 768px) 100vw, 460px"
-                              unoptimized
-                            />
-                          </a>
-                        ))}
+                      <div className="mt-6 pt-6 border-t border-slate-200 dark:border-slate-800">
+                        <h3 className="text-sm sm:text-base font-bold text-slate-900 dark:text-white mb-3">
+                          Resmi Konu & Soru Dağılım Tablosu Görselleri (Büyütmek
+                          için tıklayın)
+                        </h3>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                          {images.slice(1).map((image, index) => (
+                            <a
+                              key={index + 1}
+                              href={proxiedImageSrc(image)}
+                              target="_blank"
+                              rel="noreferrer"
+                              className="relative block h-56 w-full overflow-hidden rounded-xl bg-white p-2 border border-slate-200 dark:border-slate-700 transition-opacity hover:opacity-90 shadow-xs"
+                            >
+                              <Image
+                                src={proxiedImageSrc(image)}
+                                alt={`${announcement.title} — tablo ${index + 1}`}
+                                fill
+                                className="object-contain p-1"
+                                sizes="(max-width: 768px) 100vw, 460px"
+                                unoptimized
+                              />
+                            </a>
+                          ))}
+                        </div>
                       </div>
-                    </div>
-                  )}
+                    )}
                   {renderAnnouncementLink(announcement)}
                 </div>
               </div>
@@ -436,9 +436,7 @@ export function HomeAnnouncementModal({
                   </div>
                   {renderAnnouncementLink(announcement)}
                   <p className="text-slate-500 dark:text-slate-400 text-sm mt-6">
-                    {new Date(announcement.created_at).toLocaleDateString(
-                      'tr-TR',
-                    )}
+                    {formatIstanbulDate(announcement.created_at)}
                   </p>
                 </div>
               </div>
@@ -468,9 +466,7 @@ export function HomeAnnouncementModal({
                 </div>
                 {renderAnnouncementLink(announcement)}
                 <p className="mt-6 text-sm text-slate-500 dark:text-slate-400">
-                  {new Date(announcement.created_at).toLocaleDateString(
-                    'tr-TR',
-                  )}
+                  {formatIstanbulDate(announcement.created_at)}
                 </p>
               </div>
             )}

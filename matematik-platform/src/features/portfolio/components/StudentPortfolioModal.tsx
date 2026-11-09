@@ -13,6 +13,7 @@ import {
   Star,
 } from 'lucide-react';
 import { useAccessibleModal } from '@/hooks/useAccessibleModal';
+import { formatIstanbulDate } from '@/lib/date-format';
 import {
   getPortfolioItems,
   savePortfolioItem,
@@ -69,7 +70,8 @@ export function StudentPortfolioModal({
       category: newCategory,
       grade,
       studentReflection: newReflection.trim(),
-      teacherFeedback: 'Henüz incelenmedi. Öğretmenin kontrol ettiğinde buraya not düşecektir.',
+      teacherFeedback:
+        'Henüz incelenmedi. Öğretmenin kontrol ettiğinde buraya not düşecektir.',
       date: new Date().toISOString().split('T')[0],
       tags: tagsArr.length > 0 ? tagsArr : ['Gelişim'],
     };
@@ -118,7 +120,10 @@ export function StudentPortfolioModal({
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h2 id={titleId} className="text-base font-bold tracking-tight text-slate-900 dark:text-white">
+                <h2
+                  id={titleId}
+                  className="text-base font-bold tracking-tight text-slate-900 dark:text-white"
+                >
                   Matematik Gelişim Portfolyosu
                 </h2>
                 <span className="rounded-full bg-indigo-500/20 px-2 py-0.5 text-[10px] font-bold text-indigo-300">
@@ -129,7 +134,8 @@ export function StudentPortfolioModal({
                 </span>
               </div>
               <p className="text-xs text-slate-400">
-                Gurur duyduğun çözümleri, projelerini ve öz-yansımalarını biriktirdiğin kişisel gelişim arşivi.
+                Gurur duyduğun çözümleri, projelerini ve öz-yansımalarını
+                biriktirdiğin kişisel gelişim arşivi.
               </p>
             </div>
           </div>
@@ -158,10 +164,16 @@ export function StudentPortfolioModal({
 
         {/* Yazdırma Başlığı (Print View Only) */}
         <div className="hidden print:block p-6 border-b border-slate-300">
-          <h1 className="text-2xl font-bold text-slate-900">Uğur Hoca Matematik Platformu</h1>
-          <h2 className="text-lg font-semibold text-slate-700">Öğrenci Gelişim Portfolyosu & Dosyası</h2>
-          <p className="text-sm text-slate-600 mt-1">Öğrenci: {studentName} • {grade}. Sınıf • Tarih: {' '}
-            {new Date().toLocaleDateString('tr-TR')}</p>
+          <h1 className="text-2xl font-bold text-slate-900">
+            Uğur Hoca Matematik Platformu
+          </h1>
+          <h2 className="text-lg font-semibold text-slate-700">
+            Öğrenci Gelişim Portfolyosu & Dosyası
+          </h2>
+          <p className="text-sm text-slate-600 mt-1">
+            Öğrenci: {studentName} • {grade}. Sınıf • Tarih:{' '}
+            {formatIstanbulDate(new Date())}
+          </p>
         </div>
 
         {/* Araç Çubuğu: Kategori Filtresi & Yeni Ekle */}
@@ -200,9 +212,13 @@ export function StudentPortfolioModal({
 
         {/* Yeni Çalışma Ekleme Formu */}
         {isAddingNew && (
-          <form onSubmit={handleAddItem} className="p-4 border-b border-slate-200 dark:border-white/10 bg-indigo-950/30 space-y-3 print:hidden">
+          <form
+            onSubmit={handleAddItem}
+            className="p-4 border-b border-slate-200 dark:border-white/10 bg-indigo-950/30 space-y-3 print:hidden"
+          >
             <h4 className="text-xs font-bold text-indigo-300 uppercase tracking-wider flex items-center gap-1.5">
-              <Plus className="w-3.5 h-3.5" /> Portfolyoma Yeni Başarı / Çözüm Ekle
+              <Plus className="w-3.5 h-3.5" /> Portfolyoma Yeni Başarı / Çözüm
+              Ekle
             </h4>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
               <input
@@ -215,7 +231,9 @@ export function StudentPortfolioModal({
               />
               <select
                 value={newCategory}
-                onChange={(e) => setNewCategory(e.target.value as PortfolioCategory)}
+                onChange={(e) =>
+                  setNewCategory(e.target.value as PortfolioCategory)
+                }
                 className="w-full px-3 py-1.5 rounded-xl border border-slate-200 dark:border-white/10 bg-slate-100 dark:bg-slate-800 text-xs text-slate-900 dark:text-white focus:outline-none focus:border-indigo-500"
               >
                 <option value="solution">💡 Çözüm</option>
@@ -264,9 +282,12 @@ export function StudentPortfolioModal({
           {filteredItems.length === 0 ? (
             <div className="p-8 text-center rounded-2xl border border-dashed border-default dark:border-white/10">
               <BookOpen className="w-8 h-8 text-slate-400 mx-auto mb-2" />
-              <p className="text-sm font-semibold text-primary dark:text-slate-300">Bu kategoride henüz bir portfolyo çalışması yok</p>
+              <p className="text-sm font-semibold text-primary dark:text-slate-300">
+                Bu kategoride henüz bir portfolyo çalışması yok
+              </p>
               <p className="text-xs text-secondary dark:text-slate-400 mt-1">
-                Yukarıdaki &quot;Yeni Çalışma Ekle&quot; butonuna basarak ilk matematik çalışmanızı kaydedebilirsiniz.
+                Yukarıdaki &quot;Yeni Çalışma Ekle&quot; butonuna basarak ilk
+                matematik çalışmanızı kaydedebilirsiniz.
               </p>
             </div>
           ) : (
@@ -283,12 +304,14 @@ export function StudentPortfolioModal({
                       </span>
                       {item.score !== undefined && (
                         <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500/20 text-emerald-800 dark:text-emerald-300 flex items-center gap-1">
-                          <Star className="w-3 h-3 text-accent-success-ink fill-current" /> {' '}
+                          <Star className="w-3 h-3 text-accent-success-ink fill-current" />{' '}
                           {item.score} Puan
                         </span>
                       )}
                     </div>
-                    <h3 className="text-sm sm:text-base font-bold text-slate-900 dark:text-white print:text-black">{item.title}</h3>
+                    <h3 className="text-sm sm:text-base font-bold text-slate-900 dark:text-white print:text-black">
+                      {item.title}
+                    </h3>
                     <p className="text-[11px] text-slate-400 flex items-center gap-1 mt-0.5">
                       <Calendar className="w-3 h-3" /> {item.date}
                     </p>
@@ -318,7 +341,8 @@ export function StudentPortfolioModal({
                 {item.teacherFeedback && (
                   <div className="p-3 rounded-xl bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-500/30 dark:border-emerald-500/20 space-y-1 print:bg-emerald-50 print:border-emerald-200">
                     <p className="text-[10px] font-bold text-accent-success-ink uppercase tracking-wider flex items-center gap-1">
-                      <Award className="w-3 h-3" /> Uğur Hoca&apos;nın Pedagojik Değerlendirmesi
+                      <Award className="w-3 h-3" /> Uğur Hoca&apos;nın Pedagojik
+                      Değerlendirmesi
                     </p>
                     <p className="text-xs text-emerald-900 dark:text-emerald-200 print:text-emerald-900 leading-relaxed">
                       {item.teacherFeedback}

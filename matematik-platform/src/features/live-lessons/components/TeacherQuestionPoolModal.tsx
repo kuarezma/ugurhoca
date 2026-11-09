@@ -18,6 +18,7 @@ import {
   type StudentSubmittedQuestion,
 } from '@/features/live-lessons/lib/studentQuestionsStorage';
 import Image from 'next/image';
+import { formatIstanbulTime } from '@/lib/date-format';
 
 type TeacherQuestionPoolModalProps = {
   isOpen: boolean;
@@ -52,7 +53,11 @@ export function TeacherQuestionPoolModal({
       loadQuestions();
     };
     window.addEventListener('ugurhoca:student-questions-updated', handleUpdate);
-    return () => window.removeEventListener('ugurhoca:student-questions-updated', handleUpdate);
+    return () =>
+      window.removeEventListener(
+        'ugurhoca:student-questions-updated',
+        handleUpdate,
+      );
   }, [isOpen, loadQuestions]);
 
   const filteredQuestions = questions.filter((q) => {
@@ -64,7 +69,9 @@ export function TeacherQuestionPoolModal({
   const handleProject = (q: StudentSubmittedQuestion) => {
     // Panoya kopyala
     if (typeof navigator !== 'undefined' && navigator.clipboard) {
-      void navigator.clipboard.writeText(`[${q.topic} - ${q.student_name}]: ${q.question_text}`);
+      void navigator.clipboard.writeText(
+        `[${q.topic} - ${q.student_name}]: ${q.question_text}`,
+      );
       setCopiedId(q.id);
       setTimeout(() => setCopiedId(null), 2000);
     }
@@ -104,7 +111,9 @@ export function TeacherQuestionPoolModal({
         {/* Üst Başlık & Filtreler */}
         <div
           className={`flex flex-wrap items-center justify-between gap-3 border-b px-5 py-4 ${
-            isLight ? 'bg-slate-50 border-slate-200' : 'bg-slate-950/80 border-white/10'
+            isLight
+              ? 'bg-slate-50 border-slate-200'
+              : 'bg-slate-950/80 border-white/10'
           }`}
         >
           <div className="flex items-center gap-2.5">
@@ -120,8 +129,11 @@ export function TeacherQuestionPoolModal({
                   {questions.length} Soru
                 </span>
               </div>
-              <p className={`text-xs ${isLight ? 'text-slate-500' : 'text-slate-400'}`}>
-                Öğrencilerin derste çözülmesini istediği sorular tek tıkla tahtada.
+              <p
+                className={`text-xs ${isLight ? 'text-slate-500' : 'text-slate-400'}`}
+              >
+                Öğrencilerin derste çözülmesini istediği sorular tek tıkla
+                tahtada.
               </p>
             </div>
           </div>
@@ -131,7 +143,9 @@ export function TeacherQuestionPoolModal({
             onClick={onClose}
             aria-label="Pencereyi kapat"
             className={`rounded-xl p-2 transition ${
-              isLight ? 'hover:bg-slate-200 text-slate-600' : 'hover:bg-white/10 text-slate-300'
+              isLight
+                ? 'hover:bg-slate-200 text-slate-600'
+                : 'hover:bg-white/10 text-slate-300'
             }`}
           >
             <X className="h-5 w-5" />
@@ -141,7 +155,9 @@ export function TeacherQuestionPoolModal({
         {/* Filtre Barı */}
         <div
           className={`flex items-center gap-2 px-5 py-2.5 border-b text-xs ${
-            isLight ? 'bg-slate-100/60 border-slate-200' : 'bg-slate-950/40 border-white/10'
+            isLight
+              ? 'bg-slate-100/60 border-slate-200'
+              : 'bg-slate-950/40 border-white/10'
           }`}
         >
           <span className="text-slate-400 font-semibold">Filtrele:</span>
@@ -156,7 +172,11 @@ export function TeacherQuestionPoolModal({
                   : 'text-secondary hover:text-primary hover:bg-surface-2 dark:text-slate-400 dark:hover:text-white dark:hover:bg-white/5'
               }`}
             >
-              {f === 'all' ? 'Tümü' : f === 'pending' ? 'Bekleyenler' : 'Çözülenler'}
+              {f === 'all'
+                ? 'Tümü'
+                : f === 'pending'
+                  ? 'Bekleyenler'
+                  : 'Çözülenler'}
             </button>
           ))}
         </div>
@@ -166,9 +186,12 @@ export function TeacherQuestionPoolModal({
           {filteredQuestions.length === 0 ? (
             <div className="text-center py-12 space-y-2 text-slate-400">
               <HelpCircle className="h-10 w-10 mx-auto opacity-30" />
-              <p className="text-sm font-semibold">Henüz bu kategoride soru bulunmuyor.</p>
+              <p className="text-sm font-semibold">
+                Henüz bu kategoride soru bulunmuyor.
+              </p>
               <p className="text-xs max-w-sm mx-auto">
-                Öğrenciler Canlı Ders sayfasından soru gönderdiklerinde anında burada listelenir.
+                Öğrenciler Canlı Ders sayfasından soru gönderdiklerinde anında
+                burada listelenir.
               </p>
             </div>
           ) : (
@@ -183,10 +206,10 @@ export function TeacherQuestionPoolModal({
                     isResolved
                       ? 'bg-emerald-950/15 border-emerald-500/25 opacity-75'
                       : isProjected
-                      ? 'bg-amber-950/20 border-amber-500/30'
-                      : isLight
-                      ? 'bg-slate-50 border-slate-200'
-                      : 'bg-slate-800/60 border-white/10'
+                        ? 'bg-amber-950/20 border-amber-500/30'
+                        : isLight
+                          ? 'bg-slate-50 border-slate-200'
+                          : 'bg-slate-800/60 border-white/10'
                   }`}
                 >
                   <div className="flex flex-wrap items-center justify-between gap-2 mb-2">
@@ -203,8 +226,8 @@ export function TeacherQuestionPoolModal({
                           q.difficulty === 'Kolay'
                             ? 'bg-emerald-500/20 text-accent-success-ink'
                             : q.difficulty === 'Orta'
-                            ? 'bg-amber-500/20 text-amber-400'
-                            : 'bg-rose-500/20 text-rose-400'
+                              ? 'bg-amber-500/20 text-amber-400'
+                              : 'bg-rose-500/20 text-rose-400'
                         }`}
                       >
                         {q.difficulty}
@@ -247,10 +270,7 @@ export function TeacherQuestionPoolModal({
                   {/* Aksiyon Butonları */}
                   <div className="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-subtle dark:border-white/5">
                     <span className="text-[10px] text-slate-400">
-                      {new Date(q.created_at).toLocaleTimeString('tr-TR', {
-                        hour: '2-digit',
-                        minute: '2-digit',
-                      })}
+                      {formatIstanbulTime(q.created_at)}
                     </span>
 
                     <div className="flex items-center gap-2">
@@ -260,7 +280,9 @@ export function TeacherQuestionPoolModal({
                         className="px-3 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 transition bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none"
                       >
                         <Copy className="h-3 w-3" />
-                        <span>{copiedId === q.id ? 'Kopyalandı!' : 'Tahtaya Yansıt'}</span>
+                        <span>
+                          {copiedId === q.id ? 'Kopyalandı!' : 'Tahtaya Yansıt'}
+                        </span>
                       </button>
 
                       {!isResolved && (

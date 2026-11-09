@@ -3,6 +3,7 @@
 import { motion } from 'framer-motion';
 import { BellRing, ChevronRight, FileBadge2, FileText } from 'lucide-react';
 import type { DashboardUpdateItem } from '@/types/dashboard';
+import { formatIstanbulDate } from '@/lib/date-format';
 
 interface QuickUpdatesPanelProps {
   onSelectUpdate: (item: DashboardUpdateItem) => void;
@@ -72,13 +73,15 @@ export default function QuickUpdatesPanel({
                 </span>
               </div>
 
-              <h3 className="text-base font-bold text-slate-900 dark:text-white">{item.title}</h3>
+              <h3 className="text-base font-bold text-slate-900 dark:text-white">
+                {item.title}
+              </h3>
               <p className="mt-2 flex-1 text-sm leading-relaxed text-slate-600 dark:text-slate-400">
                 {item.description}
               </p>
               <div className="mt-4 flex items-center justify-between gap-3">
                 <span className="text-xs text-slate-500 dark:text-slate-400">
-                  {new Date(item.createdAt).toLocaleDateString('tr-TR')}
+                  {formatIstanbulDate(item.createdAt)}
                 </span>
                 <span className="inline-flex items-center gap-2 text-sm font-bold text-indigo-600 dark:text-white/85 transition-colors group-hover:text-indigo-700 dark:group-hover:text-white">
                   {item.actionLabel}

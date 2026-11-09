@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import { useState, type ReactNode } from "react";
-import { motion } from "framer-motion";
+import { useState, type ReactNode } from 'react';
+import { motion } from 'framer-motion';
 import {
   Award,
   BookOpen,
@@ -15,14 +15,15 @@ import {
   Target,
   Trophy,
   X,
-} from "lucide-react";
+} from 'lucide-react';
 import type {
   AdminStudentProfileData,
   AdminUser,
-} from "@/features/admin/types";
-import { buildAdminStudentProfileSummary } from "@/features/admin/utils/student-profile";
-import { useAccessibleModal } from "@/hooks/useAccessibleModal";
-import { StudentReportPrintView } from "./StudentReportPrintView";
+} from '@/features/admin/types';
+import { buildAdminStudentProfileSummary } from '@/features/admin/utils/student-profile';
+import { useAccessibleModal } from '@/hooks/useAccessibleModal';
+import { StudentReportPrintView } from './StudentReportPrintView';
+import { formatIstanbulDate } from '@/lib/date-format';
 
 type AdminStudentProfileDrawerProps = {
   data: AdminStudentProfileData | null;
@@ -34,51 +35,51 @@ type AdminStudentProfileDrawerProps = {
   onCreateWeeklyPlan?: (student: AdminUser) => Promise<void> | void;
   onUpdateStatus?: (
     student: AdminUser,
-    status: "normal" | "watch" | "risk" | string,
+    status: 'normal' | 'watch' | 'risk' | string,
     labels?: string[],
   ) => Promise<void> | void;
   student: AdminUser | null;
 };
 
 const formatGradeLabel = (grade?: string | number | null) => {
-  if (grade === "Mezun") {
-    return "Mezun";
+  if (grade === 'Mezun') {
+    return 'Mezun';
   }
 
-  return typeof grade === "number" ? `${grade}. Sınıf` : "Belirtilmemiş";
+  return typeof grade === 'number' ? `${grade}. Sınıf` : 'Belirtilmemiş';
 };
 
 const formatShortDate = (dateString?: string | null) => {
   if (!dateString) {
-    return "Bilinmiyor";
+    return 'Bilinmiyor';
   }
 
-  return new Date(dateString).toLocaleDateString("tr-TR", {
-    day: "numeric",
-    month: "short",
+  return formatIstanbulDate(dateString, {
+    day: 'numeric',
+    month: 'short',
   });
 };
 
 const getActivityTypeLabel = (activityType?: string | null) => {
   switch (activityType) {
-    case "test":
-      return "Test Çözümü";
-    case "video":
-      return "Video İzleme";
-    case "kitap":
-      return "Kitap Çalışması";
-    case "not":
-      return "Not Tekrarı";
+    case 'test':
+      return 'Test Çözümü';
+    case 'video':
+      return 'Video İzleme';
+    case 'kitap':
+      return 'Kitap Çalışması';
+    case 'not':
+      return 'Not Tekrarı';
     default:
-      return "Çalışma";
+      return 'Çalışma';
   }
 };
 
 const buildWeeklyStudyCurve = (
-  sessions: AdminStudentProfileData["studySessions"],
+  sessions: AdminStudentProfileData['studySessions'],
   targetMinutes: number,
 ) => {
-  const days = ["Pzt", "Sal", "Çar", "Per", "Cum", "Cmt", "Paz"];
+  const days = ['Pzt', 'Sal', 'Çar', 'Per', 'Cum', 'Cmt', 'Paz'];
   const today = new Date();
   const dayOfWeek = today.getDay() === 0 ? 6 : today.getDay() - 1;
   const startOfWeek = new Date(today);
@@ -109,7 +110,7 @@ const buildWeeklyStudyCurve = (
 };
 
 const getTopStudyTopics = (
-  sessions: AdminStudentProfileData["studySessions"],
+  sessions: AdminStudentProfileData['studySessions'],
 ) => {
   const totals = new Map<string, number>();
 
@@ -146,14 +147,18 @@ export default function AdminStudentProfileDrawer({
   ).length;
   const weeklyStudyCurve =
     data && summary
-      ? buildWeeklyStudyCurve(data.studySessions, summary.goalSnapshot.targetMinutes)
+      ? buildWeeklyStudyCurve(
+          data.studySessions,
+          summary.goalSnapshot.targetMinutes,
+        )
       : [];
   const maxCurveValue = Math.max(
     1,
     ...weeklyStudyCurve.flatMap((point) => [point.cumulative, point.target]),
   );
   const topStudyTopics = data ? getTopStudyTopics(data.studySessions) : [];
-  const effectiveStudent = student ?? (data?.student as AdminUser | null) ?? null;
+  const effectiveStudent =
+    student ?? (data?.student as AdminUser | null) ?? null;
   const latestPlan = data?.weeklyPlans?.[0] ?? null;
   const [isPrintReportOpen, setIsPrintReportOpen] = useState(false);
 
@@ -169,7 +174,7 @@ export default function AdminStudentProfileDrawer({
         initial={{ opacity: 0, x: 48 }}
         animate={{ opacity: 1, x: 0 }}
         exit={{ opacity: 0, x: 48 }}
-        transition={{ type: "spring", damping: 28, stiffness: 280 }}
+        transition={{ type: 'spring', damping: 28, stiffness: 280 }}
         onClick={(event) => event.stopPropagation()}
         ref={drawerRef}
         role="dialog"
@@ -184,15 +189,18 @@ export default function AdminStudentProfileDrawer({
               Öğrenci Profili
             </p>
             <h2 className="truncate text-2xl font-bold text-primary">
-              {student?.name || data?.student.name || "Öğrenci"}
+              {student?.name || data?.student.name || 'Öğrenci'}
             </h2>
             <div className="mt-2 flex flex-wrap items-center gap-2 text-sm text-secondary">
-              <span>{student?.email || data?.student.email || "-"}</span>
+              <span>{student?.email || data?.student.email || '-'}</span>
               <span>•</span>
-              <span>{formatGradeLabel(student?.grade || data?.student.grade)}</span>
+              <span>
+                {formatGradeLabel(student?.grade || data?.student.grade)}
+              </span>
             </div>
             <p className="mt-2 text-xs text-tertiary">
-              Kayıt: {' '}{formatDate(student?.created_at || data?.student.created_at)}
+              Kayıt:{' '}
+              {formatDate(student?.created_at || data?.student.created_at)}
             </p>
           </div>
           <div className="flex items-center gap-2">
@@ -232,31 +240,39 @@ export default function AdminStudentProfileDrawer({
             <div className="space-y-6">
               <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
                 <SummaryCard
-                  icon={<Flame className="h-5 w-5 text-orange-600 dark:text-orange-300" />}
+                  icon={
+                    <Flame className="h-5 w-5 text-orange-600 dark:text-orange-300" />
+                  }
                   label="Çalışma Serisi"
                   value={`${summary.currentStreak} gün`}
                   meta="Profil verisinden"
                 />
                 <SummaryCard
-                  icon={<Target className="h-5 w-5 text-cyan-700 dark:text-cyan-300" />}
+                  icon={
+                    <Target className="h-5 w-5 text-cyan-700 dark:text-cyan-300" />
+                  }
                   label="Haftalık Hedef"
                   value={`%${summary.goalSnapshot.progressPercent}`}
                   meta={`${summary.goalSnapshot.completedMinutes}/${summary.goalSnapshot.targetMinutes} dk`}
                 />
                 <SummaryCard
-                  icon={<Trophy className="h-5 w-5 text-emerald-700 dark:text-emerald-300" />}
+                  icon={
+                    <Trophy className="h-5 w-5 text-emerald-700 dark:text-emerald-300" />
+                  }
                   label="Güçlü Konu"
-                  value={summary.strongTopic || "Henüz yok"}
+                  value={summary.strongTopic || 'Henüz yok'}
                   meta="En yüksek hakimiyet"
                 />
                 <SummaryCard
-                  icon={<BookOpen className="h-5 w-5 text-amber-700 dark:text-amber-300" />}
+                  icon={
+                    <BookOpen className="h-5 w-5 text-amber-700 dark:text-amber-300" />
+                  }
                   label="Odak Konusu"
-                  value={summary.focusTopic || "Tekrar gerektiren konu yok"}
+                  value={summary.focusTopic || 'Tekrar gerektiren konu yok'}
                   meta={
                     summary.latestQuizScore !== null
                       ? `Son test: ${summary.latestQuizScore}`
-                      : "Henüz test sonucu yok"
+                      : 'Henüz test sonucu yok'
                   }
                 />
               </div>
@@ -275,21 +291,29 @@ export default function AdminStudentProfileDrawer({
                     <div className="flex flex-wrap gap-2">
                       <button
                         type="button"
-                        onClick={() => onUpdateStatus?.(effectiveStudent, "normal", [])}
+                        onClick={() =>
+                          onUpdateStatus?.(effectiveStudent, 'normal', [])
+                        }
                         className="rounded-xl border border-emerald-500/40 dark:border-emerald-400/30 bg-emerald-100 dark:bg-emerald-500/15 px-3 py-2 text-xs font-bold text-emerald-900 dark:text-emerald-200 transition hover:bg-emerald-200/80 dark:hover:bg-emerald-500/25"
                       >
                         Normal
                       </button>
                       <button
                         type="button"
-                        onClick={() => onUpdateStatus?.(effectiveStudent, "watch", ["takipte"])}
+                        onClick={() =>
+                          onUpdateStatus?.(effectiveStudent, 'watch', [
+                            'takipte',
+                          ])
+                        }
                         className="rounded-xl border border-amber-500/40 dark:border-amber-400/30 bg-amber-100 dark:bg-amber-500/15 px-3 py-2 text-xs font-bold text-amber-900 dark:text-amber-200 transition hover:bg-amber-200/80 dark:hover:bg-amber-500/25"
                       >
                         Takipte
                       </button>
                       <button
                         type="button"
-                        onClick={() => onUpdateStatus?.(effectiveStudent, "risk", ["risk"])}
+                        onClick={() =>
+                          onUpdateStatus?.(effectiveStudent, 'risk', ['risk'])
+                        }
                         className="rounded-xl border border-red-500/40 dark:border-red-400/30 bg-red-100 dark:bg-red-500/15 px-3 py-2 text-xs font-bold text-red-900 dark:text-red-200 transition hover:bg-red-200/80 dark:hover:bg-red-500/25"
                       >
                         Riskte
@@ -302,11 +326,11 @@ export default function AdminStudentProfileDrawer({
                   <MiniStat
                     label="Durum"
                     value={
-                      data.adminStatus?.status === "risk"
-                        ? "Risk"
-                        : data.adminStatus?.status === "watch"
-                          ? "Takip"
-                          : "Normal"
+                      data.adminStatus?.status === 'risk'
+                        ? 'Risk'
+                        : data.adminStatus?.status === 'watch'
+                          ? 'Takip'
+                          : 'Normal'
                     }
                   />
                   <MiniStat
@@ -314,18 +338,20 @@ export default function AdminStudentProfileDrawer({
                     value={
                       data.adminStatus?.follow_up_at
                         ? formatShortDate(data.adminStatus.follow_up_at)
-                        : "-"
+                        : '-'
                     }
                   />
                   <MiniStat
                     label="Etiket"
-                    value={data.adminStatus?.labels?.join(", ") || "-"}
+                    value={data.adminStatus?.labels?.join(', ') || '-'}
                   />
                 </div>
 
                 <div className="mt-4">
                   <div className="mb-3 flex items-center justify-between gap-3">
-                    <p className="text-sm font-bold text-primary">Admin Notları</p>
+                    <p className="text-sm font-bold text-primary">
+                      Admin Notları
+                    </p>
                     {effectiveStudent ? (
                       <button
                         type="button"
@@ -387,30 +413,43 @@ export default function AdminStudentProfileDrawer({
                   <div className="rounded-2xl border border-default dark:border-white/10 bg-surface-2 dark:bg-slate-900/60 p-4">
                     <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
                       <div>
-                        <p className="font-bold text-primary">{latestPlan.title}</p>
+                        <p className="font-bold text-primary">
+                          {latestPlan.title}
+                        </p>
                         <p className="text-xs text-tertiary">
-                          Hafta: {formatShortDate(latestPlan.week_start)} • Hedef: {latestPlan.target_minutes} dk
+                          Hafta: {formatShortDate(latestPlan.week_start)} •
+                          Hedef: {latestPlan.target_minutes} dk
                         </p>
                       </div>
                       <span className="rounded-full bg-cyan-100 dark:bg-cyan-500/10 px-3 py-1 text-xs font-bold text-cyan-900 dark:text-cyan-200">
-                        {latestPlan.student_weekly_plan_items?.filter((item) => item.completed_at).length || 0}/
-                        {latestPlan.student_weekly_plan_items?.length || 0}
+                        {latestPlan.student_weekly_plan_items?.filter(
+                          (item) => item.completed_at,
+                        ).length || 0}
+                        /{latestPlan.student_weekly_plan_items?.length || 0}
                       </span>
                     </div>
                     <div className="space-y-2">
-                      {(latestPlan.student_weekly_plan_items || []).map((item) => (
-                        <div
-                          key={item.id}
-                          className="flex items-center gap-2 rounded-xl bg-surface-1 dark:bg-white/5 px-3 py-2 text-sm"
-                        >
-                          <CheckCircle2
-                            className={`h-4 w-4 ${item.completed_at ? "text-emerald-700 dark:text-emerald-300" : "text-slate-500 dark:text-slate-600"}`}
-                          />
-                          <span className={item.completed_at ? "text-secondary line-through" : "text-primary dark:text-slate-200"}>
-                            {item.title}
-                          </span>
-                        </div>
-                      ))}
+                      {(latestPlan.student_weekly_plan_items || []).map(
+                        (item) => (
+                          <div
+                            key={item.id}
+                            className="flex items-center gap-2 rounded-xl bg-surface-1 dark:bg-white/5 px-3 py-2 text-sm"
+                          >
+                            <CheckCircle2
+                              className={`h-4 w-4 ${item.completed_at ? 'text-emerald-700 dark:text-emerald-300' : 'text-slate-500 dark:text-slate-600'}`}
+                            />
+                            <span
+                              className={
+                                item.completed_at
+                                  ? 'text-secondary line-through'
+                                  : 'text-primary dark:text-slate-200'
+                              }
+                            >
+                              {item.title}
+                            </span>
+                          </div>
+                        ),
+                      )}
                     </div>
                   </div>
                 )}
@@ -427,7 +466,8 @@ export default function AdminStudentProfileDrawer({
                     </p>
                   </div>
                   <span className="rounded-full border border-emerald-500/40 dark:border-emerald-400/30 bg-emerald-100 dark:bg-emerald-500/10 px-3 py-1 text-sm font-bold text-emerald-900 dark:text-emerald-300">
-                    {summary.goalSnapshot.completedMinutes}/{summary.goalSnapshot.targetMinutes} dk
+                    {summary.goalSnapshot.completedMinutes}/
+                    {summary.goalSnapshot.targetMinutes} dk
                   </span>
                 </div>
 
@@ -498,7 +538,9 @@ export default function AdminStudentProfileDrawer({
               <section className="rounded-3xl border border-default dark:border-white/10 bg-surface-2/50 dark:bg-white/5 p-5">
                 <div className="mb-4 flex items-center justify-between gap-3">
                   <div>
-                    <h3 className="text-lg font-bold text-primary">Son Çalışmalar</h3>
+                    <h3 className="text-lg font-bold text-primary">
+                      Son Çalışmalar
+                    </h3>
                     <p className="text-sm text-secondary">
                       Son 10 çalışma oturumu
                     </p>
@@ -514,7 +556,9 @@ export default function AdminStudentProfileDrawer({
                   <div className="space-y-3">
                     {data.studySessions.slice(0, 10).map((session) => (
                       <div
-                        key={session.id || `${session.date}:${session.duration}`}
+                        key={
+                          session.id || `${session.date}:${session.duration}`
+                        }
                         className="rounded-2xl border border-default dark:border-white/10 bg-surface-2 dark:bg-slate-900/60 px-4 py-3"
                       >
                         <div className="flex flex-wrap items-center justify-between gap-2">
@@ -523,7 +567,8 @@ export default function AdminStudentProfileDrawer({
                               {getActivityTypeLabel(session.activity_type)}
                             </p>
                             <p className="text-sm text-secondary">
-                              {session.topics?.join(", ") || "Konu belirtilmedi"}
+                              {session.topics?.join(', ') ||
+                                'Konu belirtilmedi'}
                             </p>
                           </div>
                           <div className="text-right">
@@ -544,7 +589,9 @@ export default function AdminStudentProfileDrawer({
               <section className="rounded-3xl border border-default dark:border-white/10 bg-surface-2/50 dark:bg-white/5 p-5">
                 <div className="mb-4 flex items-center gap-2">
                   <GraduationCap className="h-5 w-5 text-violet-700 dark:text-violet-300" />
-                  <h3 className="text-lg font-bold text-primary">Konu İlerlemesi</h3>
+                  <h3 className="text-lg font-bold text-primary">
+                    Konu İlerlemesi
+                  </h3>
                 </div>
 
                 {data.progressRows.length === 0 ? (
@@ -554,7 +601,9 @@ export default function AdminStudentProfileDrawer({
                     {data.progressRows.map((row) => (
                       <div key={row.id || `${row.user_id}:${row.topic}`}>
                         <div className="mb-1 flex items-center justify-between gap-3 text-sm">
-                          <span className="font-medium text-primary dark:text-slate-200">{row.topic}</span>
+                          <span className="font-medium text-primary dark:text-slate-200">
+                            {row.topic}
+                          </span>
                           <span className="font-semibold text-violet-800 dark:text-violet-300">
                             %{row.mastery_level}
                           </span>
@@ -562,7 +611,9 @@ export default function AdminStudentProfileDrawer({
                         <div className="h-2.5 rounded-full bg-surface-3 dark:bg-slate-800">
                           <div
                             className="h-2.5 rounded-full bg-gradient-to-r from-violet-500 to-purple-500"
-                            style={{ width: `${Math.max(0, Math.min(100, row.mastery_level))}%` }}
+                            style={{
+                              width: `${Math.max(0, Math.min(100, row.mastery_level))}%`,
+                            }}
                           />
                         </div>
                       </div>
@@ -575,7 +626,9 @@ export default function AdminStudentProfileDrawer({
                 <div className="rounded-3xl border border-default dark:border-white/10 bg-surface-2/50 dark:bg-white/5 p-5">
                   <div className="mb-4 flex items-center gap-2">
                     <CheckCircle2 className="h-5 w-5 text-emerald-700 dark:text-emerald-300" />
-                    <h3 className="text-lg font-bold text-primary">Son Test Sonuçları</h3>
+                    <h3 className="text-lg font-bold text-primary">
+                      Son Test Sonuçları
+                    </h3>
                   </div>
 
                   {summary.recentQuizResults.length === 0 ? (
@@ -590,7 +643,7 @@ export default function AdminStudentProfileDrawer({
                           <div className="flex items-center justify-between gap-3">
                             <div className="min-w-0">
                               <p className="truncate font-semibold text-primary">
-                                {result.quizzes?.title || "Test Sonucu"}
+                                {result.quizzes?.title || 'Test Sonucu'}
                               </p>
                               <p className="text-xs text-tertiary">
                                 {formatShortDate(result.completed_at)}
@@ -601,7 +654,12 @@ export default function AdminStudentProfileDrawer({
                                 {result.score}/{result.total_questions}
                               </p>
                               <p className="text-xs text-tertiary">
-                                %{Math.round((result.score / Math.max(result.total_questions, 1)) * 100)}
+                                %
+                                {Math.round(
+                                  (result.score /
+                                    Math.max(result.total_questions, 1)) *
+                                    100,
+                                )}
                               </p>
                             </div>
                           </div>
@@ -614,7 +672,9 @@ export default function AdminStudentProfileDrawer({
                 <div className="rounded-3xl border border-default dark:border-white/10 bg-surface-2/50 dark:bg-white/5 p-5">
                   <div className="mb-4 flex items-center gap-2">
                     <Award className="h-5 w-5 text-amber-700 dark:text-amber-300" />
-                    <h3 className="text-lg font-bold text-primary">Ödev Özeti</h3>
+                    <h3 className="text-lg font-bold text-primary">
+                      Ödev Özeti
+                    </h3>
                   </div>
 
                   <div className="mb-4 grid grid-cols-3 gap-3">
@@ -641,11 +701,12 @@ export default function AdminStudentProfileDrawer({
                                 {formatShortDate(submission.submitted_at)}
                               </p>
                               <p className="text-sm text-secondary line-clamp-2">
-                                {submission.feedback || "Geri bildirim bulunmuyor."}
+                                {submission.feedback ||
+                                  'Geri bildirim bulunmuyor.'}
                               </p>
                             </div>
                             <span className="rounded-full bg-emerald-100 dark:bg-emerald-500/10 px-3 py-1 text-sm font-semibold text-emerald-900 dark:text-emerald-300">
-                              {submission.grade ?? "-"}
+                              {submission.grade ?? '-'}
                             </span>
                           </div>
                         </div>
@@ -670,7 +731,9 @@ export default function AdminStudentProfileDrawer({
                         key={badge.id}
                         className="rounded-2xl border border-amber-500/30 dark:border-amber-500/20 bg-amber-100/80 dark:bg-amber-500/10 px-4 py-3"
                       >
-                        <p className="font-semibold text-amber-900 dark:text-amber-200">{badge.name}</p>
+                        <p className="font-semibold text-amber-900 dark:text-amber-200">
+                          {badge.name}
+                        </p>
                         <p className="text-xs text-amber-800 dark:text-amber-100/70">
                           {formatShortDate(badge.earnedAt)}
                         </p>
@@ -697,7 +760,7 @@ export default function AdminStudentProfileDrawer({
                 id: effectiveStudent.id,
                 name: effectiveStudent.name,
                 grade:
-                  typeof effectiveStudent.grade === "number"
+                  typeof effectiveStudent.grade === 'number'
                     ? effectiveStudent.grade
                     : undefined,
                 email: effectiveStudent.email,
@@ -742,13 +805,7 @@ function SummaryCard({
   );
 }
 
-function MiniStat({
-  label,
-  value
-}: {
-  label: string;
-  value: number | string
-}) {
+function MiniStat({ label, value }: { label: string; value: number | string }) {
   return (
     <div className="rounded-2xl border border-default dark:border-white/10 bg-surface-2 dark:bg-slate-900/60 px-3 py-3 text-center">
       <p className="text-xl font-bold text-primary">{value}</p>

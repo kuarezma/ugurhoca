@@ -1,14 +1,15 @@
-"use client";
+'use client';
 
-import Link from "next/link";
-import { useMemo, useState } from "react";
-import { PlayCircle, Download, FileText } from "lucide-react";
+import Link from 'next/link';
+import { useMemo, useState } from 'react';
+import { PlayCircle, Download, FileText } from 'lucide-react';
 import type {
   LiveLesson,
   LiveLessonDashboardData,
   LiveLessonParticipant,
-} from "@/features/live-lessons/types";
-import type { AdminUser } from "@/features/admin/types";
+} from '@/features/live-lessons/types';
+import type { AdminUser } from '@/features/admin/types';
+import { formatIstanbulDate } from '@/lib/date-format';
 
 type Props = {
   data: LiveLessonDashboardData;
@@ -28,35 +29,35 @@ type EditFormState = {
 };
 
 const gradeOptions = [
-  { label: "5. sınıf", value: "5" },
-  { label: "6. sınıf", value: "6" },
-  { label: "7. sınıf", value: "7" },
-  { label: "8. sınıf", value: "8" },
-  { label: "Mezun", value: "Mezun" },
-  { label: "Herkese açık", value: "all" },
-  { label: "Seçili öğrenciler", value: "selected" },
+  { label: '5. sınıf', value: '5' },
+  { label: '6. sınıf', value: '6' },
+  { label: '7. sınıf', value: '7' },
+  { label: '8. sınıf', value: '8' },
+  { label: 'Mezun', value: 'Mezun' },
+  { label: 'Herkese açık', value: 'all' },
+  { label: 'Seçili öğrenciler', value: 'selected' },
 ];
 
 function formatDate(value: string) {
-  return new Intl.DateTimeFormat("tr-TR", {
-    dateStyle: "medium",
-    timeStyle: "short",
-    timeZone: "Europe/Istanbul",
+  return new Intl.DateTimeFormat('tr-TR', {
+    dateStyle: 'medium',
+    timeStyle: 'short',
+    timeZone: 'Europe/Istanbul',
   }).format(new Date(value));
 }
 
 function formatTime(value?: string | null) {
-  if (!value) return "-";
-  return new Intl.DateTimeFormat("tr-TR", {
-    hour: "2-digit",
-    minute: "2-digit",
-    timeZone: "Europe/Istanbul",
+  if (!value) return '-';
+  return new Intl.DateTimeFormat('tr-TR', {
+    hour: '2-digit',
+    minute: '2-digit',
+    timeZone: 'Europe/Istanbul',
   }).format(new Date(value));
 }
 
 function toLocalInputValue(value: string) {
   const date = new Date(value);
-  const pad = (number: number) => String(number).padStart(2, "0");
+  const pad = (number: number) => String(number).padStart(2, '0');
   return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(
     date.getHours(),
   )}:${pad(date.getMinutes())}`;
@@ -64,41 +65,55 @@ function toLocalInputValue(value: string) {
 
 function formatDuration(joinedAt: string, leftAt?: string | null) {
   const end = leftAt ? new Date(leftAt).getTime() : Date.now();
-  const minutes = Math.max(0, Math.round((end - new Date(joinedAt).getTime()) / 60000));
-  return minutes < 60 ? `${minutes} dk` : `${Math.floor(minutes / 60)} sa ${minutes % 60} dk`;
+  const minutes = Math.max(
+    0,
+    Math.round((end - new Date(joinedAt).getTime()) / 60000),
+  );
+  return minutes < 60
+    ? `${minutes} dk`
+    : `${Math.floor(minutes / 60)} sa ${minutes % 60} dk`;
 }
 
-function formatGrade(value: AdminUser["grade"]) {
-  return value === "Mezun" ? "Mezun" : `${value}. sınıf`;
+function formatGrade(value: AdminUser['grade']) {
+  return value === 'Mezun' ? 'Mezun' : `${value}. sınıf`;
 }
 
-function countForLesson<T extends { lesson_id: string }>(items: T[], lessonId: string) {
+function countForLesson<T extends { lesson_id: string }>(
+  items: T[],
+  lessonId: string,
+) {
   return items.filter((item) => item.lesson_id === lessonId).length;
 }
 
 function formatAudience(lesson: LiveLesson, students: AdminUser[]) {
-  if (lesson.target_grade === "all") return "Herkese açık";
-  if (lesson.target_grade === "Mezun") return "Mezun";
-  if (lesson.target_grade !== "selected") return `${lesson.target_grade}. sınıf`;
+  if (lesson.target_grade === 'all') return 'Herkese açık';
+  if (lesson.target_grade === 'Mezun') return 'Mezun';
+  if (lesson.target_grade !== 'selected')
+    return `${lesson.target_grade}. sınıf`;
 
   const selectedCount = lesson.target_student_ids?.length || 0;
-  if (selectedCount === 0) return "Seçili öğrenci yok";
+  if (selectedCount === 0) return 'Seçili öğrenci yok';
 
-  const firstStudent = students.find((student) => student.id === lesson.target_student_ids?.[0]);
-  const firstName = firstStudent?.name || firstStudent?.email || "Seçili öğrenci";
-  return selectedCount === 1 ? firstName : `${firstName} + ${selectedCount - 1} öğrenci`;
+  const firstStudent = students.find(
+    (student) => student.id === lesson.target_student_ids?.[0],
+  );
+  const firstName =
+    firstStudent?.name || firstStudent?.email || 'Seçili öğrenci';
+  return selectedCount === 1
+    ? firstName
+    : `${firstName} + ${selectedCount - 1} öğrenci`;
 }
 
 function normalizeSearchText(value: string) {
-  return value.toLocaleLowerCase("tr-TR").trim();
+  return value.toLocaleLowerCase('tr-TR').trim();
 }
 
 function buildEditForm(lesson: LiveLesson): EditFormState {
   return {
-    description: lesson.description || "",
+    description: lesson.description || '',
     durationMinutes: lesson.duration_minutes,
-    materialsUrl: lesson.materials_url || "",
-    recordingUrl: lesson.recording_url || "",
+    materialsUrl: lesson.materials_url || '',
+    recordingUrl: lesson.recording_url || '',
     startsAt: toLocalInputValue(lesson.starts_at),
     targetGrade: lesson.target_grade,
     targetStudentIds: lesson.target_student_ids || [],
@@ -106,9 +121,13 @@ function buildEditForm(lesson: LiveLesson): EditFormState {
   };
 }
 
-function attendanceForLesson(participants: LiveLessonParticipant[], lessonId: string) {
+function attendanceForLesson(
+  participants: LiveLessonParticipant[],
+  lessonId: string,
+) {
   const rows = participants.filter(
-    (participant) => participant.lesson_id === lessonId && participant.role === "student",
+    (participant) =>
+      participant.lesson_id === lessonId && participant.role === 'student',
   );
   const byStudent = new Map<string, LiveLessonParticipant[]>();
 
@@ -119,7 +138,9 @@ function attendanceForLesson(participants: LiveLessonParticipant[], lessonId: st
 
   return [...byStudent.values()].map((studentRows) => {
     const sortedRows = studentRows.sort(
-      (left, right) => new Date(left.joined_at).getTime() - new Date(right.joined_at).getTime(),
+      (left, right) =>
+        new Date(left.joined_at).getTime() -
+        new Date(right.joined_at).getTime(),
     );
     const first = sortedRows[0];
     const last = sortedRows[sortedRows.length - 1];
@@ -133,7 +154,10 @@ function attendanceForLesson(participants: LiveLessonParticipant[], lessonId: st
   });
 }
 
-function exportAttendanceCsv(lesson: LiveLesson, rows: ReturnType<typeof attendanceForLesson>) {
+function exportAttendanceCsv(
+  lesson: LiveLesson,
+  rows: ReturnType<typeof attendanceForLesson>,
+) {
   const headers = [
     'Öğrenci Adı',
     'Ders Başlığı',
@@ -145,11 +169,12 @@ function exportAttendanceCsv(lesson: LiveLesson, rows: ReturnType<typeof attenda
   ];
 
   const csvRows = rows.map((r) => {
-    const escape = (val: unknown) => `"${String(val ?? "").replace(/"/g, '""')}"`;
+    const escape = (val: unknown) =>
+      `"${String(val ?? '').replace(/"/g, '""')}"`;
     return [
       escape(r.name),
       escape(lesson.title),
-      escape(new Date(lesson.starts_at).toLocaleDateString("tr-TR")),
+      escape(formatIstanbulDate(lesson.starts_at)),
       escape(formatTime(r.joinedAt)),
       escape(formatTime(r.leftAt)),
       escape(formatDuration(r.joinedAt, r.leftAt)),
@@ -157,12 +182,17 @@ function exportAttendanceCsv(lesson: LiveLesson, rows: ReturnType<typeof attenda
     ];
   });
 
-  const csvContent = '\uFEFF' + [headers.join(','), ...csvRows.map((r) => r.join(','))].join('\r\n');
+  const csvContent =
+    '\uFEFF' +
+    [headers.join(','), ...csvRows.map((r) => r.join(','))].join('\r\n');
   const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
   const url = URL.createObjectURL(blob);
   const link = document.createElement('a');
   link.href = url;
-  link.setAttribute('download', `yoklama-${lesson.id.slice(0, 8)}-${new Date().toISOString().slice(0, 10)}.csv`);
+  link.setAttribute(
+    'download',
+    `yoklama-${lesson.id.slice(0, 8)}-${new Date().toISOString().slice(0, 10)}.csv`,
+  );
   document.body.appendChild(link);
   link.click();
   document.body.removeChild(link);
@@ -182,13 +212,14 @@ function exportAllAttendanceCsv(data: LiveLessonDashboardData) {
   const lessonMap = new Map(data.lessons.map((l) => [l.id, l]));
 
   const rows = data.participants
-    .filter((p) => p.role === "student")
+    .filter((p) => p.role === 'student')
     .map((p) => {
       const lesson = lessonMap.get(p.lesson_id);
-      const escape = (val: unknown) => `"${String(val ?? "").replace(/"/g, '""')}"`;
+      const escape = (val: unknown) =>
+        `"${String(val ?? '').replace(/"/g, '""')}"`;
       return [
         escape(lesson?.title || 'Bilinmeyen Ders'),
-        escape(lesson ? new Date(lesson.starts_at).toLocaleDateString("tr-TR") : "-"),
+        escape(lesson ? formatIstanbulDate(lesson.starts_at) : '-'),
         escape(p.user_name),
         escape(formatTime(p.joined_at)),
         escape(formatTime(p.left_at)),
@@ -196,22 +227,31 @@ function exportAllAttendanceCsv(data: LiveLessonDashboardData) {
       ];
     });
 
-  const csvContent = '\uFEFF' + [headers.join(','), ...rows.map((r) => r.join(','))].join('\r\n');
+  const csvContent =
+    '\uFEFF' +
+    [headers.join(','), ...rows.map((r) => r.join(','))].join('\r\n');
   const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
   const url = URL.createObjectURL(blob);
   const link = document.createElement('a');
   link.href = url;
-  link.setAttribute('download', `tum-canli-ders-yoklama-${new Date().toISOString().slice(0, 10)}.csv`);
+  link.setAttribute(
+    'download',
+    `tum-canli-ders-yoklama-${new Date().toISOString().slice(0, 10)}.csv`,
+  );
   document.body.appendChild(link);
   link.click();
   document.body.removeChild(link);
   URL.revokeObjectURL(url);
 }
 
-export default function AdminLiveLessonsTab({ data, onRefresh, students }: Props) {
+export default function AdminLiveLessonsTab({
+  data,
+  onRefresh,
+  students,
+}: Props) {
   const [editingLessonId, setEditingLessonId] = useState<string | null>(null);
   const [editForm, setEditForm] = useState<EditFormState | null>(null);
-  const [editStudentSearchQuery, setEditStudentSearchQuery] = useState("");
+  const [editStudentSearchQuery, setEditStudentSearchQuery] = useState('');
   const [savingLessonId, setSavingLessonId] = useState<string | null>(null);
   const [editError, setEditError] = useState<string | null>(null);
 
@@ -220,23 +260,28 @@ export default function AdminLiveLessonsTab({ data, onRefresh, students }: Props
     if (!query) return students;
 
     return students.filter((student) =>
-      normalizeSearchText(`${student.name || ""} ${student.email || ""}`).includes(query),
+      normalizeSearchText(
+        `${student.name || ''} ${student.email || ''}`,
+      ).includes(query),
     );
   }, [editStudentSearchQuery, students]);
 
   const openEditForm = (lesson: LiveLesson) => {
     setEditingLessonId(lesson.id);
     setEditForm(buildEditForm(lesson));
-    setEditStudentSearchQuery("");
+    setEditStudentSearchQuery('');
     setEditError(null);
   };
 
-  const updateStatus = async (lesson: LiveLesson, status: "ended" | "cancelled") => {
+  const updateStatus = async (
+    lesson: LiveLesson,
+    status: 'ended' | 'cancelled',
+  ) => {
     await fetch(`/api/live-lessons/${lesson.id}/end`, {
       body: JSON.stringify({ status }),
-      credentials: "same-origin",
-      headers: { "Content-Type": "application/json" },
-      method: "POST",
+      credentials: 'same-origin',
+      headers: { 'Content-Type': 'application/json' },
+      method: 'POST',
     });
     await onRefresh();
   };
@@ -255,8 +300,11 @@ export default function AdminLiveLessonsTab({ data, onRefresh, students }: Props
 
   const saveEdit = async (lesson: LiveLesson) => {
     if (!editForm) return;
-    if (editForm.targetGrade === "selected" && editForm.targetStudentIds.length === 0) {
-      setEditError("En az bir öğrenci seçin.");
+    if (
+      editForm.targetGrade === 'selected' &&
+      editForm.targetStudentIds.length === 0
+    ) {
+      setEditError('En az bir öğrenci seçin.');
       return;
     }
 
@@ -271,16 +319,21 @@ export default function AdminLiveLessonsTab({ data, onRefresh, students }: Props
           recordingUrl: editForm.recordingUrl.trim() || null,
           startsAt: new Date(editForm.startsAt).toISOString(),
           targetGrade: editForm.targetGrade,
-          targetStudentIds: editForm.targetGrade === "selected" ? editForm.targetStudentIds : [],
+          targetStudentIds:
+            editForm.targetGrade === 'selected'
+              ? editForm.targetStudentIds
+              : [],
           title: editForm.title,
         }),
-        credentials: "same-origin",
-        headers: { "Content-Type": "application/json" },
-        method: "PATCH",
+        credentials: 'same-origin',
+        headers: { 'Content-Type': 'application/json' },
+        method: 'PATCH',
       });
-      const payload = (await response.json().catch(() => null)) as { error?: string ;} | null;
+      const payload = (await response.json().catch(() => null)) as {
+        error?: string;
+      } | null;
       if (!response.ok) {
-        setEditError(payload?.error || "Ders güncellenemedi.");
+        setEditError(payload?.error || 'Ders güncellenemedi.');
         return;
       }
       setEditingLessonId(null);
@@ -296,7 +349,9 @@ export default function AdminLiveLessonsTab({ data, onRefresh, students }: Props
       <div className="rounded-2xl border border-slate-200/80 dark:border-white/10 bg-white/80 dark:bg-slate-900/80 p-5 shadow-sm">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h2 className="text-2xl font-bold text-slate-900 dark:text-white">Canlı Dersler</h2>
+            <h2 className="text-2xl font-bold text-slate-900 dark:text-white">
+              Canlı Dersler
+            </h2>
             <p className="text-sm text-slate-600 dark:text-slate-400">
               Planlama, aktif dersler, yoklama ve soru cevap kayıtları.
             </p>
@@ -332,10 +387,14 @@ export default function AdminLiveLessonsTab({ data, onRefresh, students }: Props
           data.lessons.map((lesson) => {
             const participants = countForLesson(data.participants, lesson.id);
             const answers = data.events.filter(
-              (event) => event.lesson_id === lesson.id && event.event_type === "answer",
+              (event) =>
+                event.lesson_id === lesson.id && event.event_type === 'answer',
             ).length;
             const chats = countForLesson(data.chatMessages, lesson.id);
-            const attendanceRows = attendanceForLesson(data.participants, lesson.id);
+            const attendanceRows = attendanceForLesson(
+              data.participants,
+              lesson.id,
+            );
             const isEditing = editingLessonId === lesson.id && editForm;
 
             return (
@@ -345,13 +404,18 @@ export default function AdminLiveLessonsTab({ data, onRefresh, students }: Props
               >
                 <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
                   <div>
-                    <h3 className="text-lg font-bold text-slate-900 dark:text-white">{lesson.title}</h3>
+                    <h3 className="text-lg font-bold text-slate-900 dark:text-white">
+                      {lesson.title}
+                    </h3>
                     <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
-                      {formatDate(lesson.starts_at)} · {" "}{formatAudience(lesson, students)} ·{" "}
+                      {formatDate(lesson.starts_at)} ·{' '}
+                      {formatAudience(lesson, students)} ·{' '}
                       {lesson.duration_minutes} dk
                     </p>
                     {lesson.description ? (
-                      <p className="mt-2 text-sm text-slate-600 dark:text-slate-300">{lesson.description}</p>
+                      <p className="mt-2 text-sm text-slate-600 dark:text-slate-300">
+                        {lesson.description}
+                      </p>
                     ) : null}
                   </div>
                   <div className="flex flex-wrap items-center gap-2">
@@ -366,7 +430,7 @@ export default function AdminLiveLessonsTab({ data, onRefresh, students }: Props
                         <PlayCircle className="h-3 w-3" />
                         <span>Kayıt İzle</span>
                       </a>
-                    ) : lesson.status === "ended" ? (
+                    ) : lesson.status === 'ended' ? (
                       <span className="inline-flex items-center gap-1 rounded-full border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800/60 px-2.5 py-0.5 text-xs text-slate-600 dark:text-slate-400">
                         Kayıt Yok
                       </span>
@@ -387,37 +451,43 @@ export default function AdminLiveLessonsTab({ data, onRefresh, students }: Props
 
                     <span
                       className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-semibold ${
-                        lesson.status === "active"
-                          ? "bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 animate-pulse"
-                          : lesson.status === "scheduled"
-                            ? "bg-amber-500/20 text-amber-700 dark:text-amber-300"
-                            : lesson.status === "cancelled"
-                              ? "bg-red-500/20 text-red-700 dark:text-red-300"
-                              : "bg-slate-500/20 text-slate-700 dark:text-slate-300"
+                        lesson.status === 'active'
+                          ? 'bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 animate-pulse'
+                          : lesson.status === 'scheduled'
+                            ? 'bg-amber-500/20 text-amber-700 dark:text-amber-300'
+                            : lesson.status === 'cancelled'
+                              ? 'bg-red-500/20 text-red-700 dark:text-red-300'
+                              : 'bg-slate-500/20 text-slate-700 dark:text-slate-300'
                       }`}
                     >
-                      {lesson.status === "active"
-                        ? "Canlı"
-                        : lesson.status === "scheduled"
-                          ? "Planlandı"
-                          : lesson.status === "cancelled"
-                            ? "İptal"
-                            : "Bitti"}
+                      {lesson.status === 'active'
+                        ? 'Canlı'
+                        : lesson.status === 'scheduled'
+                          ? 'Planlandı'
+                          : lesson.status === 'cancelled'
+                            ? 'İptal'
+                            : 'Bitti'}
                     </span>
                   </div>
                 </div>
 
                 <div className="mt-4 grid grid-cols-3 gap-2 sm:max-w-md">
                   <div className="rounded-xl bg-slate-50 dark:bg-white/5 border border-slate-100 dark:border-transparent p-3">
-                    <p className="text-xs text-slate-500 dark:text-slate-400">Katılımcı</p>
+                    <p className="text-xs text-slate-500 dark:text-slate-400">
+                      Katılımcı
+                    </p>
                     <p className="text-xl font-bold">{participants}</p>
                   </div>
                   <div className="rounded-xl bg-slate-50 dark:bg-white/5 border border-slate-100 dark:border-transparent p-3">
-                    <p className="text-xs text-slate-500 dark:text-slate-400">Cevap</p>
+                    <p className="text-xs text-slate-500 dark:text-slate-400">
+                      Cevap
+                    </p>
                     <p className="text-xl font-bold">{answers}</p>
                   </div>
                   <div className="rounded-xl bg-slate-50 dark:bg-white/5 border border-slate-100 dark:border-transparent p-3">
-                    <p className="text-xs text-slate-500 dark:text-slate-400">Sohbet</p>
+                    <p className="text-xs text-slate-500 dark:text-slate-400">
+                      Sohbet
+                    </p>
                     <p className="text-xl font-bold">{chats}</p>
                   </div>
                 </div>
@@ -428,7 +498,9 @@ export default function AdminLiveLessonsTab({ data, onRefresh, students }: Props
                     {attendanceRows.length > 0 && (
                       <button
                         type="button"
-                        onClick={() => exportAttendanceCsv(lesson, attendanceRows)}
+                        onClick={() =>
+                          exportAttendanceCsv(lesson, attendanceRows)
+                        }
                         className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg border border-slate-300/60 dark:border-transparent bg-slate-200/80 hover:bg-slate-300/80 dark:bg-white/10 dark:hover:bg-white/20 text-xs font-semibold text-slate-700 dark:text-slate-200 transition-colors"
                         title="Bu dersin yoklamasını CSV olarak indir"
                       >
@@ -438,7 +510,9 @@ export default function AdminLiveLessonsTab({ data, onRefresh, students }: Props
                     )}
                   </div>
                   {attendanceRows.length === 0 ? (
-                    <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">Bu derse henüz öğrenci katılmadı.</p>
+                    <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">
+                      Bu derse henüz öğrenci katılmadı.
+                    </p>
                   ) : (
                     <div className="mt-3 grid gap-2">
                       {attendanceRows.map((row) => (
@@ -447,11 +521,17 @@ export default function AdminLiveLessonsTab({ data, onRefresh, students }: Props
                           className="grid gap-2 rounded-lg bg-white dark:bg-white/5 border border-slate-200/60 dark:border-transparent p-3 text-sm sm:grid-cols-4 shadow-xs"
                         >
                           <span className="font-semibold">{row.name}</span>
-                          <span className="text-slate-600 dark:text-slate-300">Giriş: {formatTime(row.joinedAt)}</span>
-                          <span className="text-slate-600 dark:text-slate-300">Çıkış: {formatTime(row.leftAt)}</span>
+                          <span className="text-slate-600 dark:text-slate-300">
+                            Giriş: {formatTime(row.joinedAt)}
+                          </span>
+                          <span className="text-slate-600 dark:text-slate-300">
+                            Çıkış: {formatTime(row.leftAt)}
+                          </span>
                           <span className="text-slate-600 dark:text-slate-300">
                             Süre: {formatDuration(row.joinedAt, row.leftAt)}
-                            {row.sessions > 1 ? ` · ${row.sessions} oturum` : ""}
+                            {row.sessions > 1
+                              ? ` · ${row.sessions} oturum`
+                              : ''}
                           </span>
                         </div>
                       ))}
@@ -463,21 +543,31 @@ export default function AdminLiveLessonsTab({ data, onRefresh, students }: Props
                   <div className="mt-4 rounded-xl border border-brand-primary/40 bg-slate-50/80 dark:bg-slate-950 p-4">
                     <div className="grid gap-3 md:grid-cols-2">
                       <label className="space-y-1">
-                        <span className="text-sm text-slate-700 dark:text-slate-300">Başlık</span>
+                        <span className="text-sm text-slate-700 dark:text-slate-300">
+                          Başlık
+                        </span>
                         <input
                           value={editForm.title}
                           onChange={(event) =>
-                            setEditForm({ ...editForm, title: event.target.value })
+                            setEditForm({
+                              ...editForm,
+                              title: event.target.value,
+                            })
                           }
                           className="min-h-11 w-full rounded-xl border border-slate-200 dark:border-white/10 bg-white dark:bg-slate-900 text-slate-900 dark:text-white px-3 outline-none focus:ring-2 focus:ring-brand-primary"
                         />
                       </label>
                       <label className="space-y-1">
-                        <span className="text-sm text-slate-700 dark:text-slate-300">Ders hedefi</span>
+                        <span className="text-sm text-slate-700 dark:text-slate-300">
+                          Ders hedefi
+                        </span>
                         <select
                           value={editForm.targetGrade}
                           onChange={(event) =>
-                            setEditForm({ ...editForm, targetGrade: event.target.value })
+                            setEditForm({
+                              ...editForm,
+                              targetGrade: event.target.value,
+                            })
                           }
                           className="min-h-11 w-full rounded-xl border border-slate-200 dark:border-white/10 bg-white dark:bg-slate-900 text-slate-900 dark:text-white px-3 outline-none focus:ring-2 focus:ring-brand-primary"
                         >
@@ -488,10 +578,12 @@ export default function AdminLiveLessonsTab({ data, onRefresh, students }: Props
                           ))}
                         </select>
                       </label>
-                      {editForm.targetGrade === "selected" ? (
+                      {editForm.targetGrade === 'selected' ? (
                         <div className="space-y-2 md:col-span-2">
                           <div className="flex flex-wrap items-center justify-between gap-2">
-                            <span className="text-sm text-slate-700 dark:text-slate-300">Öğrenci seç</span>
+                            <span className="text-sm text-slate-700 dark:text-slate-300">
+                              Öğrenci seç
+                            </span>
                             <span className="text-xs text-slate-500 dark:text-slate-400">
                               {editForm.targetStudentIds.length} öğrenci seçildi
                             </span>
@@ -499,7 +591,9 @@ export default function AdminLiveLessonsTab({ data, onRefresh, students }: Props
                           <input
                             type="search"
                             value={editStudentSearchQuery}
-                            onChange={(event) => setEditStudentSearchQuery(event.target.value)}
+                            onChange={(event) =>
+                              setEditStudentSearchQuery(event.target.value)
+                            }
                             placeholder="Öğrenci adı veya e-posta ara"
                             className="min-h-11 w-full rounded-xl border border-slate-200 dark:border-white/10 bg-white dark:bg-slate-900 text-slate-900 dark:text-white px-3 text-sm outline-none focus:ring-2 focus:ring-brand-primary"
                           />
@@ -515,45 +609,56 @@ export default function AdminLiveLessonsTab({ data, onRefresh, students }: Props
                             ) : (
                               <div className="grid gap-2 sm:grid-cols-2">
                                 {filteredEditStudents.map((student) => (
-                                <label
-                                  key={student.id}
-                                  className="flex min-h-12 cursor-pointer items-center gap-3 rounded-lg border border-slate-200 dark:border-white/10 px-3 py-2 text-sm hover:bg-slate-100 dark:hover:bg-white/5"
-                                >
-                                  <input
-                                    type="checkbox"
-                                    aria-label={`${student.name || student.email} öğrencisini seç`}
-                                    checked={editForm.targetStudentIds.includes(student.id)}
-                                    onChange={() => toggleEditStudent(student.id)}
-                                    className="h-4 w-4 accent-brand-primary"
-                                  />
-                                  <span className="min-w-0">
-                                    <span className="block truncate font-semibold">
-                                      {student.name || student.email}
+                                  <label
+                                    key={student.id}
+                                    className="flex min-h-12 cursor-pointer items-center gap-3 rounded-lg border border-slate-200 dark:border-white/10 px-3 py-2 text-sm hover:bg-slate-100 dark:hover:bg-white/5"
+                                  >
+                                    <input
+                                      type="checkbox"
+                                      aria-label={`${student.name || student.email} öğrencisini seç`}
+                                      checked={editForm.targetStudentIds.includes(
+                                        student.id,
+                                      )}
+                                      onChange={() =>
+                                        toggleEditStudent(student.id)
+                                      }
+                                      className="h-4 w-4 accent-brand-primary"
+                                    />
+                                    <span className="min-w-0">
+                                      <span className="block truncate font-semibold">
+                                        {student.name || student.email}
+                                      </span>
+                                      <span className="block truncate text-xs text-slate-500 dark:text-slate-400">
+                                        {formatGrade(student.grade)}
+                                      </span>
                                     </span>
-                                    <span className="block truncate text-xs text-slate-500 dark:text-slate-400">
-                                      {formatGrade(student.grade)}
-                                    </span>
-                                  </span>
-                                </label>
-                              ))}
+                                  </label>
+                                ))}
                               </div>
                             )}
                           </div>
                         </div>
                       ) : null}
                       <label className="space-y-1">
-                        <span className="text-sm text-slate-700 dark:text-slate-300">Tarih ve saat</span>
+                        <span className="text-sm text-slate-700 dark:text-slate-300">
+                          Tarih ve saat
+                        </span>
                         <input
                           type="datetime-local"
                           value={editForm.startsAt}
                           onChange={(event) =>
-                            setEditForm({ ...editForm, startsAt: event.target.value })
+                            setEditForm({
+                              ...editForm,
+                              startsAt: event.target.value,
+                            })
                           }
                           className="min-h-11 w-full rounded-xl border border-slate-200 dark:border-white/10 bg-white dark:bg-slate-900 text-slate-900 dark:text-white px-3 outline-none focus:ring-2 focus:ring-brand-primary"
                         />
                       </label>
                       <label className="space-y-1">
-                        <span className="text-sm text-slate-700 dark:text-slate-300">Süre</span>
+                        <span className="text-sm text-slate-700 dark:text-slate-300">
+                          Süre
+                        </span>
                         <input
                           type="number"
                           min={15}
@@ -569,41 +674,60 @@ export default function AdminLiveLessonsTab({ data, onRefresh, students }: Props
                         />
                       </label>
                       <label className="space-y-1 md:col-span-2">
-                        <span className="text-sm text-slate-700 dark:text-slate-300">Açıklama</span>
+                        <span className="text-sm text-slate-700 dark:text-slate-300">
+                          Açıklama
+                        </span>
                         <textarea
                           value={editForm.description}
                           onChange={(event) =>
-                            setEditForm({ ...editForm, description: event.target.value })
+                            setEditForm({
+                              ...editForm,
+                              description: event.target.value,
+                            })
                           }
                           className="min-h-20 w-full rounded-xl border border-slate-200 dark:border-white/10 bg-white dark:bg-slate-900 text-slate-900 dark:text-white px-3 py-2 outline-none focus:ring-2 focus:ring-brand-primary"
                         />
                       </label>
                       <label className="space-y-1">
-                        <span className="text-sm text-slate-700 dark:text-slate-300">Ders Kayıt Linki (YouTube / Drive)</span>
+                        <span className="text-sm text-slate-700 dark:text-slate-300">
+                          Ders Kayıt Linki (YouTube / Drive)
+                        </span>
                         <input
                           type="url"
                           placeholder="https://youtube.com/... veya video linki"
                           value={editForm.recordingUrl}
                           onChange={(event) =>
-                            setEditForm({ ...editForm, recordingUrl: event.target.value })
+                            setEditForm({
+                              ...editForm,
+                              recordingUrl: event.target.value,
+                            })
                           }
                           className="min-h-11 w-full rounded-xl border border-slate-200 dark:border-white/10 bg-white dark:bg-slate-900 text-slate-900 dark:text-white px-3 text-sm outline-none focus:ring-2 focus:ring-brand-primary"
                         />
                       </label>
                       <label className="space-y-1">
-                        <span className="text-sm text-slate-700 dark:text-slate-300">Ders Notu / PDF Materyal Linki</span>
+                        <span className="text-sm text-slate-700 dark:text-slate-300">
+                          Ders Notu / PDF Materyal Linki
+                        </span>
                         <input
                           type="url"
                           placeholder="https://... PDF veya doküman linki"
                           value={editForm.materialsUrl}
                           onChange={(event) =>
-                            setEditForm({ ...editForm, materialsUrl: event.target.value })
+                            setEditForm({
+                              ...editForm,
+                              materialsUrl: event.target.value,
+                            })
                           }
                           className="min-h-11 w-full rounded-xl border border-slate-200 dark:border-white/10 bg-white dark:bg-slate-900 text-slate-900 dark:text-white px-3 text-sm outline-none focus:ring-2 focus:ring-brand-primary"
                         />
                       </label>
                     </div>
-                    {editError ? (<p className="mt-3 text-sm text-red-500 dark:text-red-300">{editError}</p> ): null}
+                    {editError ? (
+                      <p className="mt-3 text-sm text-red-500 dark:text-red-300">
+                        {editError}
+                      </p>
+                    ) : null}
                     <div className="mt-4 flex flex-wrap gap-2">
                       <button
                         type="button"
@@ -611,7 +735,9 @@ export default function AdminLiveLessonsTab({ data, onRefresh, students }: Props
                         disabled={savingLessonId === lesson.id}
                         className="rounded-xl px-4 py-2 text-sm font-semibold disabled:opacity-50 bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none"
                       >
-                        {savingLessonId === lesson.id ? "Kaydediliyor..." : "Kaydet"}
+                        {savingLessonId === lesson.id
+                          ? 'Kaydediliyor...'
+                          : 'Kaydet'}
                       </button>
                       <button
                         type="button"
@@ -635,7 +761,7 @@ export default function AdminLiveLessonsTab({ data, onRefresh, students }: Props
                   >
                     Odaya gir
                   </Link>
-                  {lesson.status !== "cancelled" ? (
+                  {lesson.status !== 'cancelled' ? (
                     <>
                       <button
                         type="button"
@@ -644,18 +770,20 @@ export default function AdminLiveLessonsTab({ data, onRefresh, students }: Props
                       >
                         Düzenle
                       </button>
-                      {lesson.status !== "ended" ? (
+                      {lesson.status !== 'ended' ? (
                         <>
                           <button
                             type="button"
-                            onClick={() => void updateStatus(lesson, "ended")}
+                            onClick={() => void updateStatus(lesson, 'ended')}
                             className="rounded-xl border border-slate-200 dark:border-white/10 px-4 py-2 text-sm font-semibold text-slate-700 dark:text-white hover:bg-slate-100 dark:hover:bg-white/5"
                           >
                             Dersi bitir
                           </button>
                           <button
                             type="button"
-                            onClick={() => void updateStatus(lesson, "cancelled")}
+                            onClick={() =>
+                              void updateStatus(lesson, 'cancelled')
+                            }
                             className="rounded-xl border border-red-400/40 px-4 py-2 text-sm font-semibold text-red-600 dark:text-red-200 hover:bg-red-500/10"
                           >
                             İptal et

@@ -16,7 +16,10 @@ type ServiceWorkerModule = {
   CORE_ASSETS: string[];
   AUTH_ROUTES: string[];
   isAuthRoute: (pathname: string) => boolean;
-  isStaticAsset: (request: { destination?: string }, pathname: string) => boolean;
+  isStaticAsset: (
+    request: { destination?: string },
+    pathname: string,
+  ) => boolean;
 };
 
 const swPath = path.resolve(__dirname, '../../public/sw.js');
@@ -48,11 +51,13 @@ describe('Service Worker (public/sw.js) Birim ve Entegrasyon Testleri', () => {
       const publicDir = path.resolve(__dirname, '../../public');
 
       for (const assetPath of swModule.CORE_ASSETS) {
-        const relativePath = assetPath.startsWith('/') ? assetPath.slice(1) : assetPath;
+        const relativePath = assetPath.startsWith('/')
+          ? assetPath.slice(1)
+          : assetPath;
         const fullPath = path.join(publicDir, relativePath);
         expect(
           fs.existsSync(fullPath),
-          `CORE_ASSET diskte bulunamadı: ${assetPath} (aradığı yer: ${fullPath})`
+          `CORE_ASSET diskte bulunamadı: ${assetPath} (aradığı yer: ${fullPath})`,
         ).toBe(true);
       }
     });
@@ -63,7 +68,9 @@ describe('Service Worker (public/sw.js) Birim ve Entegrasyon Testleri', () => {
 
     it('CORE_ASSETS içinde /offline.html bulunmalıdır', () => {
       expect(swModule.CORE_ASSETS).toContain('/offline.html');
-      expect(fs.existsSync(path.resolve(__dirname, '../../public/offline.html'))).toBe(true);
+      expect(
+        fs.existsSync(path.resolve(__dirname, '../../public/offline.html')),
+      ).toBe(true);
     });
   });
 
@@ -76,7 +83,7 @@ describe('Service Worker (public/sw.js) Birim ve Entegrasyon Testleri', () => {
       for (const route of middlewareProtectedRoutes) {
         expect(
           swModule.AUTH_ROUTES,
-          `AUTH_ROUTES '${route}' rotasını içermelidir (middleware.ts ile senkron)`
+          `AUTH_ROUTES '${route}' rotasını içermelidir (middleware.ts ile senkron)`,
         ).toContain(route);
       }
     });
@@ -137,7 +144,9 @@ describe('Service Worker (public/sw.js) Birim ve Entegrasyon Testleri', () => {
       mockCaches = {
         open: vi.fn().mockResolvedValue(mockCacheInstance),
         match: vi.fn().mockResolvedValue(null),
-        keys: vi.fn().mockResolvedValue(['ugurhoca-core-v2', 'ugurhoca-core-v3']),
+        keys: vi
+          .fn()
+          .mockResolvedValue(['ugurhoca-core-v2', 'ugurhoca-core-v3']),
         delete: vi.fn().mockResolvedValue(true),
       };
       mockFetch = vi.fn();
@@ -175,7 +184,9 @@ describe('Service Worker (public/sw.js) Birim ve Entegrasyon Testleri', () => {
 
       await waitUntilPromise;
       expect(mockCaches.open).toHaveBeenCalledWith(swModule.CACHE_NAME);
-      expect(mockCacheInstance.addAll).toHaveBeenCalledWith(swModule.CORE_ASSETS);
+      expect(mockCacheInstance.addAll).toHaveBeenCalledWith(
+        swModule.CORE_ASSETS,
+      );
     });
 
     it('activate olayı eski önbellekleri silmeli ve güncel sürümü korumalıdır', async () => {
@@ -226,7 +237,10 @@ describe('Service Worker (public/sw.js) Birim ve Entegrasyon Testleri', () => {
     });
 
     it('oturum gerektiren rota ağ hatasında offline.html döndürmelidir', async () => {
-      const offlineHtmlResponse = { status: 200, text: () => Promise.resolve('Offline') };
+      const offlineHtmlResponse = {
+        status: 200,
+        text: () => Promise.resolve('Offline'),
+      };
       mockFetch.mockRejectedValueOnce(new Error('Ağ bağlantısı yok'));
       mockCaches.match.mockResolvedValueOnce(offlineHtmlResponse);
 
@@ -266,8 +280,9 @@ describe('Service Worker (public/sw.js) Birim ve Entegrasyon Testleri', () => {
       expect(event.respondWith).not.toHaveBeenCalled();
     });
 
-    it('statik varlıklar (/_next/static/...) Cache-First stratejisi kullanmalıdır', async () => {
+    it('statik varlıklar (/_next/static/...) Network-First ve çevrimdışı Cache-Fallback stratejisi kullanmalıdır', async () => {
       const cachedAsset = { status: 200 };
+      mockFetch.mockRejectedValueOnce(new Error('Offline'));
       mockCaches.match.mockResolvedValueOnce(cachedAsset);
 
       let respondWithPromise: Promise<unknown> | null = null;
@@ -286,13 +301,16 @@ describe('Service Worker (public/sw.js) Birim ve Entegrasyon Testleri', () => {
       fetchListener?.(event);
       const response = await respondWithPromise;
 
+      expect(mockFetch).toHaveBeenCalledWith(event.request);
       expect(response).toBe(cachedAsset);
-      expect(mockFetch).not.toHaveBeenCalled();
     });
 
     it('halka açık HTML sayfaları önbelleğe yazılmamalı, ağ hatasında offline.html sayfasına düşmelidir', async () => {
       mockFetch.mockRejectedValueOnce(new Error('Network error'));
-      mockCaches.match.mockResolvedValueOnce({ status: 200, isOfflinePage: true });
+      mockCaches.match.mockResolvedValueOnce({
+        status: 200,
+        isOfflinePage: true,
+      });
 
       let respondWithPromise: Promise<unknown> | null = null;
       const event: MockFetchEvent = {

@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import { useRef, type Dispatch, type SetStateAction } from "react";
-import { useToast } from "@/components/Toast";
-import { ADMIN_EMAIL } from "@/lib/admin";
-import { createLogger } from "@/lib/logger";
+import { useRef, type Dispatch, type SetStateAction } from 'react';
+import { useToast } from '@/components/Toast';
+import { ADMIN_EMAIL } from '@/lib/admin';
+import { createLogger } from '@/lib/logger';
 import {
   advanceAdminUserGrades,
   deleteAdminEntity,
@@ -12,7 +12,7 @@ import {
   updateAdminUser,
   updateAdminAssignment,
   updateAdminSharedDocument,
-} from "@/features/admin/queries";
+} from '@/features/admin/queries';
 import type {
   AdminAnnouncement,
   AdminAssignment,
@@ -20,9 +20,13 @@ import type {
   AdminQuiz,
   AdminSharedDocument,
   AdminUser,
-} from "@/features/admin/types";
+} from '@/features/admin/types';
+import {
+  confirmAdminAction,
+  promptAdminAction,
+} from '@/features/admin/components/AdminActionDialog';
 
-const log = createLogger("admin-list-actions");
+const log = createLogger('admin-list-actions');
 
 type UseAdminListActionsOptions = {
   allUsers: AdminUser[];
@@ -85,22 +89,22 @@ export function useAdminListActions({
             : currentUser,
         ),
       );
-      showToast("error", "Favori durumu güncellenemedi.");
+      showToast('error', 'Favori durumu güncellenemedi.');
       return;
     }
 
     showToast(
-      "success",
+      'success',
       nextFavorite
-        ? `${student.name || "Öğrenci"} favorilere eklendi.`
-        : `${student.name || "Öğrenci"} favorilerden çıkarıldı.`,
+        ? `${student.name || 'Öğrenci'} favorilere eklendi.`
+        : `${student.name || 'Öğrenci'} favorilerden çıkarıldı.`,
     );
   };
 
   const handleDownloadStudentsPdf = async () => {
     setPdfStudentsLoading(true);
     try {
-      const { downloadStudentListPDF } = await import("@/lib/pdf-export");
+      const { downloadStudentListPDF } = await import('@/lib/pdf-export');
       await downloadStudentListPDF();
     } finally {
       setPdfStudentsLoading(false);
@@ -108,17 +112,25 @@ export function useAdminListActions({
   };
 
   const deleteItem = async (type: string, id: string) => {
-    if (!confirm("Bu içeriği silmek istediğinizden emin misiniz?")) {
+    const confirmPromise = confirmAdminAction(
+      'Bu içeriği silmek istediğinizden emin misiniz?',
+      { tone: 'danger' },
+    );
+    const confirmed =
+      confirmPromise.syncValue !== undefined
+        ? confirmPromise.syncValue
+        : await confirmPromise;
+    if (!confirmed) {
       return;
     }
 
     const entityType =
-      type === "assignment" ||
-      type === "shared_document" ||
-      type === "announcement" ||
-      type === "quiz"
+      type === 'assignment' ||
+      type === 'shared_document' ||
+      type === 'announcement' ||
+      type === 'quiz'
         ? type
-        : "document";
+        : 'document';
     const key = `${entityType}:${id}`;
     if (deletingIds.current.has(key)) return;
     deletingIds.current.add(key);
@@ -147,29 +159,35 @@ export function useAdminListActions({
             return restored;
           });
         }
-        showToast("error", "İçerik silinemedi. Lütfen tekrar deneyin.");
+        showToast('error', 'İçerik silinemedi. Lütfen tekrar deneyin.');
       } finally {
         deletingIds.current.delete(key);
       }
     };
 
-    if (entityType === "assignment")
+    if (entityType === 'assignment')
       return removeItem(assignments, setAssignments);
-    if (entityType === "shared_document")
+    if (entityType === 'shared_document')
       return removeItem(sharedDocs, setSharedDocs);
-    if (entityType === "announcement")
+    if (entityType === 'announcement')
       return removeItem(announcements, setAnnouncements);
-    if (entityType === "quiz") return removeItem(quizzes, setQuizzes);
+    if (entityType === 'quiz') return removeItem(quizzes, setQuizzes);
     return removeItem(documents, setDocuments);
   };
 
   const editAssignment = async (assignment: AdminAssignment) => {
-    const title = prompt("Ödev başlığı", assignment.title || "");
+    const title = await promptAdminAction(
+      'Ödev başlığı',
+      assignment.title || '',
+    );
     if (title === null) {
       return;
     }
 
-    const description = prompt("Ödev açıklaması", assignment.description || "");
+    const description = await promptAdminAction(
+      'Ödev açıklaması',
+      assignment.description || '',
+    );
     if (description === null) {
       return;
     }
@@ -191,15 +209,18 @@ export function useAdminListActions({
   };
 
   const editSharedDocument = async (sharedDocument: AdminSharedDocument) => {
-    const document_title = prompt(
-      "Belge başlığı",
-      sharedDocument.document_title || "",
+    const document_title = await promptAdminAction(
+      'Belge başlığı',
+      sharedDocument.document_title || '',
     );
     if (document_title === null) {
       return;
     }
 
-    const file_url = prompt("Belge bağlantısı", sharedDocument.file_url || "");
+    const file_url = await promptAdminAction(
+      'Belge bağlantısı',
+      sharedDocument.file_url || '',
+    );
     if (file_url === null) {
       return;
     }
@@ -221,39 +242,39 @@ export function useAdminListActions({
   };
 
   const handleRefreshDocumentCategories = async () => {
-    if (
-      !confirm(
-        "Eski içeriklerin kategori türlerini güncellemek istediğinize emin misiniz?\n\n• worksheet → Yaprak Test\n• test → Deneme-Sınav\n• deneme → Deneme-Sınav\n• sinav → Deneme-Sınav\n• game → Oyunlar\n• document → Yaprak Test\n• writing → Ders Notları\n• ders-notuari-kitaplar → Ders Notları",
-      )
-    ) {
+    const confirmed = await confirmAdminAction(
+      'Eski içeriklerin kategori türlerini güncellemek istediğinize emin misiniz?\n\n• worksheet → Yaprak Test\n• test → Deneme-Sınav\n• deneme → Deneme-Sınav\n• sinav → Deneme-Sınav\n• game → Oyunlar\n• document → Yaprak Test\n• writing → Ders Notları\n• ders-notuari-kitaplar → Ders Notları',
+    );
+    if (!confirmed) {
       return;
     }
 
     const updated = await refreshAdminDocumentCategories();
-    showToast("success", `${updated} kategori güncellendi.`);
+    showToast('success', `${updated} kategori güncellendi.`);
     await loadData();
   };
 
   const handleMigrateWorksheetDocuments = async () => {
-    if (
-      !confirm(
-        "Eski yaprak test kayıtları kazanım klasörlerine göre düzenlensin mi?\n\nBu işlem başlıkları standart yaprak test formatına çeker, açıklamalara gizli kazanım bilgisi ekler ve sınıf alanındaki hatalı 0 değerlerini temizler.",
-      )
-    ) {
+    const confirmed = await confirmAdminAction(
+      'Eski yaprak test kayıtları kazanım klasörlerine göre düzenlensin mi?\n\nBu işlem başlıkları standart yaprak test formatına çeker, açıklamalara gizli kazanım bilgisi ekler ve sınıf alanındaki hatalı 0 değerlerini temizler.',
+    );
+    if (!confirmed) {
       return;
     }
 
     const updated = await migrateLegacyWorksheetDocuments(documents);
-    showToast("success", `${updated} yaprak test kaydı geçiş aracından geçirildi.`);
+    showToast(
+      'success',
+      `${updated} yaprak test kaydı geçiş aracından geçirildi.`,
+    );
     await loadData();
   };
 
   const handleUpdateGrades = async () => {
-    if (
-      !confirm(
-        "Tüm öğrencilerin sınıfını güncellemek istediğinizden emin misiniz?",
-      )
-    ) {
+    const confirmed = await confirmAdminAction(
+      'Tüm öğrencilerin sınıfını güncellemek istediğinizden emin misiniz?',
+    );
+    if (!confirmed) {
       return;
     }
 
@@ -263,15 +284,15 @@ export function useAdminListActions({
       const currentYear = new Date().getFullYear();
       await advanceAdminUserGrades(allUsers);
 
-      if (typeof window !== "undefined") {
-        localStorage.setItem("lastGradeUpdate", `${currentYear} - Temmuz`);
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('lastGradeUpdate', `${currentYear} - Temmuz`);
       }
 
       await loadData();
-      showToast("success", "Sınıflar başarıyla güncellendi.");
+      showToast('success', 'Sınıflar başarıyla güncellendi.');
     } catch (error) {
-      log.error("Sınıflar güncellenemedi", error);
-      showToast("error", "Sınıflar güncellenemedi. Lütfen tekrar deneyin.");
+      log.error('Sınıflar güncellenemedi', error);
+      showToast('error', 'Sınıflar güncellenemedi. Lütfen tekrar deneyin.');
     } finally {
       setIsSubmitting(false);
     }

@@ -13,6 +13,7 @@ import type {
   AdminSharedDocument,
 } from '@/features/admin/types';
 import { useAdminPagedRows } from '@/features/admin/hooks/useAdminPagedRows';
+import { formatIstanbulDate } from '@/lib/date-format';
 
 type AdminAssignmentsTabProps = {
   assignments: AdminAssignment[];
@@ -37,8 +38,14 @@ export default function AdminAssignmentsTab({
   onOpenSubmissions,
   sharedDocs,
 }: AdminAssignmentsTabProps) {
-  const sent = useAdminPagedRows<AdminSharedDocument>('shared_documents', sharedDocs);
-  const homework = useAdminPagedRows<AdminAssignment>('assignments', assignments);
+  const sent = useAdminPagedRows<AdminSharedDocument>(
+    'shared_documents',
+    sharedDocs,
+  );
+  const homework = useAdminPagedRows<AdminAssignment>(
+    'assignments',
+    assignments,
+  );
 
   return (
     <div className="space-y-6 animate-fade-up">
@@ -74,9 +81,17 @@ export default function AdminAssignmentsTab({
             Gönderilen Belgeler ({sent.total})
           </h3>
           {sent.error ? (
-            <button className="btn-secondary" onClick={sent.retry} type="button">Belgeler yüklenemedi. Yeniden dene</button>
+            <button
+              className="btn-secondary"
+              onClick={sent.retry}
+              type="button"
+            >
+              Belgeler yüklenemedi. Yeniden dene
+            </button>
           ) : sent.loading ? (
-            <p className="text-secondary" role="status">Belgeler yükleniyor...</p>
+            <p className="text-secondary" role="status">
+              Belgeler yükleniyor...
+            </p>
           ) : sent.rows.length === 0 ? (
             <p className="text-slate-400 text-center py-8">
               Henüz belge gönderilmedi
@@ -131,10 +146,29 @@ export default function AdminAssignmentsTab({
             </div>
           )}
           {!sent.error && !sent.loading && sent.total > sent.pageSize && (
-            <nav aria-label="Gönderilen belge sayfaları" className="mt-4 flex items-center justify-center gap-3 text-sm text-secondary">
-              <button className="btn-secondary" disabled={sent.page === 0} onClick={() => sent.setPage(sent.page - 1)} type="button">Önceki</button>
-              <span>{sent.page + 1} / {Math.ceil(sent.total / sent.pageSize)}</span>
-              <button className="btn-secondary" disabled={(sent.page + 1) * sent.pageSize >= sent.total} onClick={() => sent.setPage(sent.page + 1)} type="button">Sonraki</button>
+            <nav
+              aria-label="Gönderilen belge sayfaları"
+              className="mt-4 flex items-center justify-center gap-3 text-sm text-secondary"
+            >
+              <button
+                className="btn-secondary"
+                disabled={sent.page === 0}
+                onClick={() => sent.setPage(sent.page - 1)}
+                type="button"
+              >
+                Önceki
+              </button>
+              <span>
+                {sent.page + 1} / {Math.ceil(sent.total / sent.pageSize)}
+              </span>
+              <button
+                className="btn-secondary"
+                disabled={(sent.page + 1) * sent.pageSize >= sent.total}
+                onClick={() => sent.setPage(sent.page + 1)}
+                type="button"
+              >
+                Sonraki
+              </button>
             </nav>
           )}
         </div>
@@ -145,9 +179,17 @@ export default function AdminAssignmentsTab({
             Ödevler ({homework.total})
           </h3>
           {homework.error ? (
-            <button className="btn-secondary" onClick={homework.retry} type="button">Ödevler yüklenemedi. Yeniden dene</button>
+            <button
+              className="btn-secondary"
+              onClick={homework.retry}
+              type="button"
+            >
+              Ödevler yüklenemedi. Yeniden dene
+            </button>
           ) : homework.loading ? (
-            <p className="text-secondary" role="status">Ödevler yükleniyor...</p>
+            <p className="text-secondary" role="status">
+              Ödevler yükleniyor...
+            </p>
           ) : homework.rows.length === 0 ? (
             <p className="text-slate-400 text-center py-8">
               Henüz ödev verilmedi
@@ -170,9 +212,7 @@ export default function AdminAssignmentsTab({
                           : 'Genel'}{' '}
                         • Son:{' '}
                         {assignment.due_date
-                          ? new Date(assignment.due_date).toLocaleDateString(
-                              'tr-TR',
-                            )
+                          ? formatIstanbulDate(assignment.due_date)
                           : 'Belirtilmedi'}
                       </p>
                     </div>
@@ -206,13 +246,37 @@ export default function AdminAssignmentsTab({
               ))}
             </div>
           )}
-          {!homework.error && !homework.loading && homework.total > homework.pageSize && (
-            <nav aria-label="Ödev sayfaları" className="mt-4 flex items-center justify-center gap-3 text-sm text-secondary">
-              <button className="btn-secondary" disabled={homework.page === 0} onClick={() => homework.setPage(homework.page - 1)} type="button">Önceki</button>
-              <span>{homework.page + 1} / {Math.ceil(homework.total / homework.pageSize)}</span>
-              <button className="btn-secondary" disabled={(homework.page + 1) * homework.pageSize >= homework.total} onClick={() => homework.setPage(homework.page + 1)} type="button">Sonraki</button>
-            </nav>
-          )}
+          {!homework.error &&
+            !homework.loading &&
+            homework.total > homework.pageSize && (
+              <nav
+                aria-label="Ödev sayfaları"
+                className="mt-4 flex items-center justify-center gap-3 text-sm text-secondary"
+              >
+                <button
+                  className="btn-secondary"
+                  disabled={homework.page === 0}
+                  onClick={() => homework.setPage(homework.page - 1)}
+                  type="button"
+                >
+                  Önceki
+                </button>
+                <span>
+                  {homework.page + 1} /{' '}
+                  {Math.ceil(homework.total / homework.pageSize)}
+                </span>
+                <button
+                  className="btn-secondary"
+                  disabled={
+                    (homework.page + 1) * homework.pageSize >= homework.total
+                  }
+                  onClick={() => homework.setPage(homework.page + 1)}
+                  type="button"
+                >
+                  Sonraki
+                </button>
+              </nav>
+            )}
         </div>
       </div>
     </div>

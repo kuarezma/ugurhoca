@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import { useMemo, useState } from "react";
-import { motion } from "framer-motion";
+import { useMemo, useState } from 'react';
+import { motion } from 'framer-motion';
 import {
   Ban,
   CheckCircle2,
@@ -13,14 +13,15 @@ import {
   RotateCcw,
   Search,
   RefreshCw,
-} from "lucide-react";
+} from 'lucide-react';
 import type {
   GoogleDriveConnectionStatus,
   WorksheetCandidate,
   WorksheetCandidateSourceStatus,
   WorksheetCandidateStatus,
   WorksheetCandidateWeekScanResult,
-} from "@/features/admin/types";
+} from '@/features/admin/types';
+import { promptAdminAction } from '@/features/admin/components/AdminActionDialog';
 
 type AdminWorksheetCandidatesTabProps = {
   candidates: WorksheetCandidate[];
@@ -36,31 +37,33 @@ type AdminWorksheetCandidatesTabProps = {
   onScanCurrentWeek: () => Promise<void> | void;
   onUpdateStatus: (
     candidate: WorksheetCandidate,
-    status: Extract<WorksheetCandidateStatus, "pending" | "rejected">,
+    status: Extract<WorksheetCandidateStatus, 'pending' | 'rejected'>,
     rejectionReason?: string | null,
   ) => Promise<void> | void;
 };
 
 const FILTERS: Array<{
   label: string;
-  status: "all" | WorksheetCandidateStatus;
+  status: 'all' | WorksheetCandidateStatus;
 }> = [
-  { label: "Tümü", status: "all" },
-  { label: "Bekleyen", status: "pending" },
-  { label: "Onaylanan", status: "approved" },
-  { label: "Reddedilen", status: "rejected" },
+  { label: 'Tümü', status: 'all' },
+  { label: 'Bekleyen', status: 'pending' },
+  { label: 'Onaylanan', status: 'approved' },
+  { label: 'Reddedilen', status: 'rejected' },
 ];
 
 const STATUS_STYLE: Record<string, string> = {
-  approved: "border-emerald-400/30 bg-emerald-500/10 text-emerald-800 dark:text-emerald-200",
-  pending: "border-amber-400/30 bg-amber-500/10 text-amber-800 dark:text-amber-200",
-  rejected: "border-red-400/30 bg-red-500/10 text-red-800 dark:text-red-200",
+  approved:
+    'border-emerald-400/30 bg-emerald-500/10 text-emerald-800 dark:text-emerald-200',
+  pending:
+    'border-amber-400/30 bg-amber-500/10 text-amber-800 dark:text-amber-200',
+  rejected: 'border-red-400/30 bg-red-500/10 text-red-800 dark:text-red-200',
 };
 
 const STATUS_LABEL: Record<string, string> = {
-  approved: "Onaylandı",
-  pending: "Bekliyor",
-  rejected: "Reddedildi",
+  approved: 'Onaylandı',
+  pending: 'Bekliyor',
+  rejected: 'Reddedildi',
 };
 
 const getSourcePanelStyle = (
@@ -69,33 +72,35 @@ const getSourcePanelStyle = (
 ) => {
   if (!sourceStatus?.configured) {
     return {
-      badge: "border-red-400/20 bg-red-500/10 text-red-800 dark:text-red-200",
-      icon: "error" as const,
-      panel: "border-red-400/20 bg-red-500/10",
-      title: "Tarama kaynakları eksik",
+      badge: 'border-red-400/20 bg-red-500/10 text-red-800 dark:text-red-200',
+      icon: 'error' as const,
+      panel: 'border-red-400/20 bg-red-500/10',
+      title: 'Tarama kaynakları eksik',
     };
   }
 
   if (unreachableSourceCount > 0) {
     return {
-      badge: "border-amber-400/20 bg-amber-500/10 text-amber-800 dark:text-amber-200",
-      icon: "warning" as const,
-      panel: "border-amber-400/20 bg-amber-500/10",
-      title: "Bazı kaynaklara ulaşılamıyor",
+      badge:
+        'border-amber-400/20 bg-amber-500/10 text-amber-800 dark:text-amber-200',
+      icon: 'warning' as const,
+      panel: 'border-amber-400/20 bg-amber-500/10',
+      title: 'Bazı kaynaklara ulaşılamıyor',
     };
   }
 
   return {
-    badge: "border-emerald-400/20 bg-emerald-500/10 text-emerald-800 dark:text-emerald-200",
-    icon: "ok" as const,
-    panel: "border-emerald-400/20 bg-emerald-500/10",
-    title: "Tarama kaynakları hazır",
+    badge:
+      'border-emerald-400/20 bg-emerald-500/10 text-emerald-800 dark:text-emerald-200',
+    icon: 'ok' as const,
+    panel: 'border-emerald-400/20 bg-emerald-500/10',
+    title: 'Tarama kaynakları hazır',
   };
 };
 
 const formatShortDate = (value?: string | null) => {
-  if (!value) return "-";
-  const [year, month, day] = value.split("-");
+  if (!value) return '-';
+  const [year, month, day] = value.split('-');
   return year && month && day ? `${day}.${month}.${year}` : value;
 };
 
@@ -103,7 +108,7 @@ const getWorksheetContentHref = (candidate: WorksheetCandidate) => {
   const params = new URLSearchParams({
     grade: String(candidate.grade),
     outcome: candidate.learning_outcome,
-    type: "yaprak-test",
+    type: 'yaprak-test',
   });
 
   return `/icerikler?${params.toString()}`;
@@ -124,8 +129,8 @@ export default function AdminWorksheetCandidatesTab({
   onUpdateStatus,
 }: AdminWorksheetCandidatesTabProps) {
   const [activeFilter, setActiveFilter] = useState<
-    "all" | WorksheetCandidateStatus
-  >("pending");
+    'all' | WorksheetCandidateStatus
+  >('pending');
   const [approvingCandidateId, setApprovingCandidateId] = useState<
     string | null
   >(null);
@@ -133,7 +138,7 @@ export default function AdminWorksheetCandidatesTab({
     useState(false);
 
   const filteredCandidates = useMemo(() => {
-    if (activeFilter === "all") {
+    if (activeFilter === 'all') {
       return candidates;
     }
 
@@ -153,11 +158,20 @@ export default function AdminWorksheetCandidatesTab({
   );
 
   const handleReject = async (candidate: WorksheetCandidate) => {
-    const reason =
-      window.prompt("Ret nedeni", candidate.rejection_reason || "")?.trim() ||
-      "";
+    const rawReason = await promptAdminAction(
+      'Ret nedeni',
+      candidate.rejection_reason || '',
+      {
+        title: 'Adayı Reddet',
+        placeholder: 'Ret nedeni giriniz...',
+      },
+    );
+    if (rawReason === null) {
+      return;
+    }
+    const reason = rawReason.trim();
 
-    await onUpdateStatus(candidate, "rejected", reason || null);
+    await onUpdateStatus(candidate, 'rejected', reason || null);
   };
 
   const handleApprove = async (candidate: WorksheetCandidate) => {
@@ -183,9 +197,11 @@ export default function AdminWorksheetCandidatesTab({
     }
   };
   const sourcesReady = sourceStatus?.configured === true;
-  const invalidAllowedHostCount = sourceStatus?.invalidAllowedHosts?.length ?? 0;
+  const invalidAllowedHostCount =
+    sourceStatus?.invalidAllowedHosts?.length ?? 0;
   const invalidSourceCount = sourceStatus?.invalidSourceUrls?.length ?? 0;
-  const unreachableSourceCount = sourceStatus?.unreachableSourceUrls?.length ?? 0;
+  const unreachableSourceCount =
+    sourceStatus?.unreachableSourceUrls?.length ?? 0;
   const sourcePanelStyle = getSourcePanelStyle(
     sourceStatus,
     unreachableSourceCount,
@@ -226,10 +242,10 @@ export default function AdminWorksheetCandidatesTab({
             >
               <Search className="h-4 w-4" />
               {isWeekScanRunning
-                ? "Taranıyor"
+                ? 'Taranıyor'
                 : sourcesReady
-                  ? "Bu Haftayı Tara"
-                  : "Kaynak Ayarı Gerekli"}
+                  ? 'Bu Haftayı Tara'
+                  : 'Kaynak Ayarı Gerekli'}
             </button>
             <div className="flex flex-wrap gap-2">
               {FILTERS.map((filter) => (
@@ -238,7 +254,7 @@ export default function AdminWorksheetCandidatesTab({
                   className={`rounded-xl border px-3 py-2 text-sm font-semibold transition ${
                     activeFilter === filter.status
                       ? 'border-brand-primary/50 bg-brand-primary/20 text-tone-success-fg dark:text-brand-primary-soft'
-                      : "border-slate-200 dark:border-white/10 bg-slate-100 dark:bg-slate-900/70 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:border-white/20 dark:hover:text-white"
+                      : 'border-slate-200 dark:border-white/10 bg-slate-100 dark:bg-slate-900/70 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:border-white/20 dark:hover:text-white'
                   }`}
                   onClick={() => setActiveFilter(filter.status)}
                   type="button"
@@ -253,8 +269,8 @@ export default function AdminWorksheetCandidatesTab({
           <div
             className={`mt-4 rounded-xl border px-4 py-3 text-sm ${
               lastWeekScanResult.failures.length > 0
-                ? "border-red-400/20 bg-red-500/10 text-red-900 dark:text-red-100"
-                : "border-amber-400/20 bg-amber-500/10 text-amber-900 dark:text-amber-100"
+                ? 'border-red-400/20 bg-red-500/10 text-red-900 dark:text-red-100'
+                : 'border-amber-400/20 bg-amber-500/10 text-amber-900 dark:text-amber-100'
             }`}
           >
             <div className="flex flex-wrap items-center gap-2">
@@ -262,9 +278,9 @@ export default function AdminWorksheetCandidatesTab({
                 <AlertTriangle className="h-4 w-4" />
               )}
               <span>
-                Son tarama ({formatShortDate(lastWeekScanResult.today)}):{" "}
-                {lastWeekScanResult.planItems} plan satırı,{" "}
-                {lastWeekScanResult.inserted} yeni aday,{" "}
+                Son tarama ({formatShortDate(lastWeekScanResult.today)}):{' '}
+                {lastWeekScanResult.planItems} plan satırı,{' '}
+                {lastWeekScanResult.inserted} yeni aday,{' '}
                 {lastWeekScanResult.skipped} atlanan kayıt.
               </span>
             </div>
@@ -297,13 +313,15 @@ export default function AdminWorksheetCandidatesTab({
         )}
       </div>
 
-      <div className={`rounded-2xl border p-4 sm:p-6 ${sourcePanelStyle.panel}`}>
+      <div
+        className={`rounded-2xl border p-4 sm:p-6 ${sourcePanelStyle.panel}`}
+      >
         <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
           <div>
             <div
               className={`mb-2 inline-flex items-center gap-2 rounded-full border px-3 py-1 text-xs font-semibold ${sourcePanelStyle.badge}`}
             >
-              {sourcePanelStyle.icon === "ok" ? (
+              {sourcePanelStyle.icon === 'ok' ? (
                 <CheckCircle2 className="h-3.5 w-3.5" />
               ) : (
                 <AlertTriangle className="h-3.5 w-3.5" />
@@ -318,11 +336,11 @@ export default function AdminWorksheetCandidatesTab({
                 ? `${invalidSourceCount} kaynak URL geçersiz. Lütfen http/https bağlantılarını kontrol edin.`
                 : invalidAllowedHostCount > 0
                   ? `${invalidAllowedHostCount} izinli alan adı geçersiz. Alan adını protokolsüz yazın.`
-                : unreachableSourceCount > 0
-                  ? `${unreachableSourceCount} kaynak şu an erişilemiyor. Diğer kaynaklar hazırsa tarama devam eder.`
-                : sourceStatus?.configured
-                ? `${sourceStatus.sourceUrls.length} kaynak ve ${sourceStatus.allowedHosts.length} izinli alan adı tanımlı.`
-                : "Bu Haftayı Tara için WORKSHEET_CANDIDATE_SOURCE_URLS ayarlanmalı."}
+                  : unreachableSourceCount > 0
+                    ? `${unreachableSourceCount} kaynak şu an erişilemiyor. Diğer kaynaklar hazırsa tarama devam eder.`
+                    : sourceStatus?.configured
+                      ? `${sourceStatus.sourceUrls.length} kaynak ve ${sourceStatus.allowedHosts.length} izinli alan adı tanımlı.`
+                      : 'Bu Haftayı Tara için WORKSHEET_CANDIDATE_SOURCE_URLS ayarlanmalı.'}
             </p>
             {invalidSourceCount > 0 && (
               <p className="mt-2 text-xs text-red-600 dark:text-red-100/80">
@@ -336,20 +354,20 @@ export default function AdminWorksheetCandidatesTab({
             )}
             {unreachableSourceCount > 0 && (
               <p className="mt-2 text-xs text-amber-600 dark:text-amber-100/90">
-                İlk erişilemeyen kaynak: {" "}
+                İlk erişilemeyen kaynak:{' '}
                 {sourceStatus?.unreachableSourceUrls?.[0]}
               </p>
             )}
             {sourceStatus?.health && (
               <p className="mt-2 text-xs text-slate-500 dark:text-slate-300">
-                Kaynak özeti: {sourceStatus.health.validSources} geçerli,{" "}
-                {typeof sourceStatus.health.reachableSources === "number"
+                Kaynak özeti: {sourceStatus.health.validSources} geçerli,{' '}
+                {typeof sourceStatus.health.reachableSources === 'number'
                   ? `${sourceStatus.health.reachableSources} erişilebilir, `
-                  : ""}
-                {sourceStatus.health.invalidSources} geçersiz,{" "}
-                {typeof sourceStatus.health.unreachableSources === "number"
+                  : ''}
+                {sourceStatus.health.invalidSources} geçersiz,{' '}
+                {typeof sourceStatus.health.unreachableSources === 'number'
                   ? `${sourceStatus.health.unreachableSources} erişilemeyen, `
-                  : ""}
+                  : ''}
                 {sourceStatus.health.allowedHosts} izinli alan adı.
               </p>
             )}
@@ -368,13 +386,15 @@ export default function AdminWorksheetCandidatesTab({
                       )}
                       <span className="font-semibold">
                         {check.ok
-                          ? "Erişilebilir"
+                          ? 'Erişilebilir'
                           : check.statusCode
                             ? `HTTP ${check.statusCode}`
-                            : "Ulaşılamadı"}
+                            : 'Ulaşılamadı'}
                       </span>
                     </div>
-                    <p className="mt-1 truncate text-slate-500 dark:text-slate-400">{check.url}</p>
+                    <p className="mt-1 truncate text-slate-500 dark:text-slate-400">
+                      {check.url}
+                    </p>
                   </div>
                 ))}
               </div>
@@ -382,8 +402,8 @@ export default function AdminWorksheetCandidatesTab({
           </div>
           {sourceStatus?.configured && (
             <div className="max-w-xl text-xs text-emerald-700 dark:text-emerald-100/80 lg:text-right">
-              {sourceStatus.allowedHosts.slice(0, 4).join(", ")}
-              {sourceStatus.allowedHosts.length > 4 ? " ..." : ""}
+              {sourceStatus.allowedHosts.slice(0, 4).join(', ')}
+              {sourceStatus.allowedHosts.length > 4 ? ' ...' : ''}
             </div>
           )}
           <button
@@ -394,10 +414,12 @@ export default function AdminWorksheetCandidatesTab({
           >
             <RefreshCw
               className={`h-3.5 w-3.5 ${
-                isRefreshingSourceStatus ? "animate-spin" : ""
+                isRefreshingSourceStatus ? 'animate-spin' : ''
               }`}
             />
-            {isRefreshingSourceStatus ? "Kontrol Ediliyor" : "Tekrar Kontrol Et"}
+            {isRefreshingSourceStatus
+              ? 'Kontrol Ediliyor'
+              : 'Tekrar Kontrol Et'}
           </button>
         </div>
       </div>
@@ -411,21 +433,21 @@ export default function AdminWorksheetCandidatesTab({
             </div>
             <h3 className="text-lg font-bold text-slate-900 dark:text-white">
               {!driveConfigured
-                ? "Drive ayarları eksik"
+                ? 'Drive ayarları eksik'
                 : driveConnection?.connected
-                  ? "Drive hesabı bağlı"
-                  : "Drive hesabı bağlı değil"}
+                  ? 'Drive hesabı bağlı'
+                  : 'Drive hesabı bağlı değil'}
             </h3>
             <p className="mt-1 text-sm text-slate-600 dark:text-slate-400">
               {!driveConfigured
-                ? "GOOGLE_DRIVE_CLIENT_ID, GOOGLE_DRIVE_CLIENT_SECRET ve GOOGLE_DRIVE_REDIRECT_URI ayarlanmalı."
+                ? 'GOOGLE_DRIVE_CLIENT_ID, GOOGLE_DRIVE_CLIENT_SECRET ve GOOGLE_DRIVE_REDIRECT_URI ayarlanmalı.'
                 : driveConnection?.connected
-                  ? `${driveConnection.google_email || "Google hesabı"} bağlı. Yayınlanan PDF’ler Drive’a kopyalanacak.`
-                  : "PDF’leri Drive’a kopyalama için Google hesabınızı bağlayın."}
+                  ? `${driveConnection.google_email || 'Google hesabı'} bağlı. Yayınlanan PDF’ler Drive’a kopyalanacak.`
+                  : 'PDF’leri Drive’a kopyalama için Google hesabınızı bağlayın.'}
             </p>
             {!driveConfigured && driveConnection?.missingKeys?.length ? (
               <p className="mt-2 text-xs text-red-600 dark:text-red-200">
-                Eksik: {driveConnection.missingKeys.join(", ")}
+                Eksik: {driveConnection.missingKeys.join(', ')}
               </p>
             ) : null}
           </div>
@@ -445,7 +467,7 @@ export default function AdminWorksheetCandidatesTab({
               onClick={onConnectDrive}
               type="button"
             >
-              {driveConfigured ? "Google Drive Bağla" : "Ayar Gerekli"}
+              {driveConfigured ? 'Google Drive Bağla' : 'Ayar Gerekli'}
             </button>
           )}
         </div>
@@ -474,14 +496,14 @@ export default function AdminWorksheetCandidatesTab({
                         STATUS_STYLE[candidate.status] || STATUS_STYLE.pending
                       }`}
                     >
-                      {candidate.status === "approved" ? (
+                      {candidate.status === 'approved' ? (
                         <CheckCircle2 className="h-3.5 w-3.5" />
-                      ) : candidate.status === "rejected" ? (
+                      ) : candidate.status === 'rejected' ? (
                         <Ban className="h-3.5 w-3.5" />
                       ) : (
                         <Clock3 className="h-3.5 w-3.5" />
                       )}
-                      {STATUS_LABEL[candidate.status] || "Bekliyor"}
+                      {STATUS_LABEL[candidate.status] || 'Bekliyor'}
                     </span>
                     <span className="rounded-full border border-slate-200 dark:border-white/10 bg-slate-100 dark:bg-white/5 px-3 py-1 text-xs font-semibold text-slate-700 dark:text-slate-300">
                       {candidate.grade}. Sınıf
@@ -495,7 +517,7 @@ export default function AdminWorksheetCandidatesTab({
                     {candidate.title}
                   </h3>
                   <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
-                    {formatShortDate(candidate.week_start)} -{" "}
+                    {formatShortDate(candidate.week_start)} -{' '}
                     {formatShortDate(candidate.week_end)} · {candidate.subject}
                   </p>
                   <p className="mt-2 line-clamp-2 text-sm text-slate-600 dark:text-slate-300">
@@ -507,7 +529,7 @@ export default function AdminWorksheetCandidatesTab({
                     </p>
                   )}
                   <p className="mt-2 text-xs text-slate-500">
-                    Kaynak: {candidate.source_name || "İzinli kaynak"}
+                    Kaynak: {candidate.source_name || 'İzinli kaynak'}
                   </p>
                   {candidate.rejection_reason && (
                     <p className="mt-3 rounded-xl border border-red-200 dark:border-red-400/20 bg-red-50 dark:bg-red-500/10 px-3 py-2 text-sm text-red-700 dark:text-red-100">
@@ -535,10 +557,10 @@ export default function AdminWorksheetCandidatesTab({
                     <ExternalLink className="h-4 w-4" />
                     Kaynak
                   </a>
-                  {candidate.status === "rejected" ? (
+                  {candidate.status === 'rejected' ? (
                     <button
                       className="inline-flex items-center justify-center gap-2 rounded-xl border border-amber-400/20 bg-amber-500/10 px-3 py-2 text-sm font-semibold text-amber-800 dark:text-amber-100 transition hover:bg-amber-500/20"
-                      onClick={() => onUpdateStatus(candidate, "pending")}
+                      onClick={() => onUpdateStatus(candidate, 'pending')}
                       type="button"
                     >
                       <RotateCcw className="h-4 w-4" />
@@ -548,7 +570,7 @@ export default function AdminWorksheetCandidatesTab({
                     <button
                       className="inline-flex items-center justify-center gap-2 rounded-xl border border-red-400/20 bg-red-500/10 px-3 py-2 text-sm font-semibold text-red-800 dark:text-red-100 transition hover:bg-red-500/20 disabled:cursor-not-allowed disabled:opacity-50"
                       disabled={
-                        candidate.status === "approved" ||
+                        candidate.status === 'approved' ||
                         approvingCandidateId === candidate.id
                       }
                       onClick={() => handleReject(candidate)}
@@ -558,7 +580,7 @@ export default function AdminWorksheetCandidatesTab({
                       Reddet
                     </button>
                   )}
-                  {candidate.status === "pending" && (
+                  {candidate.status === 'pending' && (
                     <button
                       className="inline-flex items-center justify-center gap-2 rounded-xl border border-emerald-400/20 bg-emerald-500/10 px-3 py-2 text-sm font-semibold text-emerald-800 dark:text-emerald-100 transition hover:bg-emerald-500/20 disabled:cursor-not-allowed disabled:opacity-50"
                       disabled={
@@ -570,11 +592,11 @@ export default function AdminWorksheetCandidatesTab({
                     >
                       <CheckCircle2 className="h-4 w-4" />
                       {approvingCandidateId === candidate.id
-                        ? "Yayınlanıyor"
-                        : "Drive’a Yayınla"}
+                        ? 'Yayınlanıyor'
+                        : 'Drive’a Yayınla'}
                     </button>
                   )}
-                  {candidate.status === "approved" && (
+                  {candidate.status === 'approved' && (
                     <>
                       {candidate.drive_file_url && (
                         <a

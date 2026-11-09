@@ -16,6 +16,7 @@ import {
   Star,
 } from 'lucide-react';
 import type { StudyGoal, StudySession } from '@/features/progress/types';
+import { formatIstanbulDate } from '@/lib/date-format';
 
 export type TopicGrade = {
   topic: string;
@@ -58,12 +59,15 @@ export function MonthlyReportCardModal({
   const solvedQuestions = totalQuestionsSolved;
 
   const targetMinutes = goal ? goal.target_duration : 600;
-  const completionRate = Math.min(100, Math.round((totalMinutes / (targetMinutes * 4 || 1)) * 100));
+  const completionRate = Math.min(
+    100,
+    Math.round((totalMinutes / (targetMinutes * 4 || 1)) * 100),
+  );
 
   // Gerçek konu başarıları prop olarak verilmişse kullanılır, aksi halde sahte puan üretilmez
   const effectiveTopicGrades: TopicGrade[] = topicGrades ?? [];
 
-  const currentDateStr = new Date().toLocaleDateString('tr-TR', {
+  const currentDateStr = formatIstanbulDate(new Date(), {
     day: 'numeric',
     month: 'long',
     year: 'numeric',
@@ -77,7 +81,9 @@ export function MonthlyReportCardModal({
         onClick={onClose}
         className="fixed inset-0 bg-slate-950/85 backdrop-blur-md"
       />
-      <style dangerouslySetInnerHTML={{ __html: `
+      <style
+        dangerouslySetInnerHTML={{
+          __html: `
         @media print {
           body * { visibility: hidden !important; }
           .print-monthly-report, .print-monthly-report * { visibility: visible !important; }
@@ -99,7 +105,9 @@ export function MonthlyReportCardModal({
         @media screen {
           .print-only { display: none !important; }
         }
-      `}} />
+      `,
+        }}
+      />
 
       <div
         ref={modalRef}
@@ -199,8 +207,12 @@ export function MonthlyReportCardModal({
                     <Clock className="h-4 w-4 text-cyan-500 dark:text-cyan-400" />
                     <span>Toplam Çalışma</span>
                   </div>
-                  <div className="mt-2 text-2xl font-extrabold text-slate-900 dark:text-white">{totalHours} Saat</div>
-                  <span className="text-[11px] text-slate-500">Planlanan hedefin %{completionRate}'i</span>
+                  <div className="mt-2 text-2xl font-extrabold text-slate-900 dark:text-white">
+                    {totalHours} Saat
+                  </div>
+                  <span className="text-[11px] text-slate-500">
+                    Planlanan hedefin %{completionRate}'i
+                  </span>
                 </div>
 
                 <div className="rounded-2xl border border-slate-200 dark:border-white/10 bg-slate-50/80 dark:bg-white/5 p-3.5">
@@ -208,9 +220,13 @@ export function MonthlyReportCardModal({
                     <CheckCircle2 className="h-4 w-4 text-accent-success-ink dark:text-emerald-400" />
                     <span>Çözülen Soru</span>
                   </div>
-                  <div className="mt-2 text-2xl font-extrabold text-slate-900 dark:text-white">{solvedQuestions} Soru</div>
+                  <div className="mt-2 text-2xl font-extrabold text-slate-900 dark:text-white">
+                    {solvedQuestions} Soru
+                  </div>
                   <span className="text-[11px] text-accent-success-ink dark:text-emerald-400 font-semibold">
-                    {solvedQuestions > 0 ? `%${completionRate} Hedef Tamamlama` : 'Henüz Soru Çözülmedi'}
+                    {solvedQuestions > 0
+                      ? `%${completionRate} Hedef Tamamlama`
+                      : 'Henüz Soru Çözülmedi'}
                   </span>
                 </div>
 
@@ -219,8 +235,12 @@ export function MonthlyReportCardModal({
                     <Flame className="h-4 w-4 text-orange-500 dark:text-orange-400" />
                     <span>Çalışma Serisi</span>
                   </div>
-                  <div className="mt-2 text-2xl font-extrabold text-slate-900 dark:text-white">{streak} Gün</div>
-                  <span className="text-[11px] text-orange-600 dark:text-orange-300 font-semibold">Kesintisiz İstikrar</span>
+                  <div className="mt-2 text-2xl font-extrabold text-slate-900 dark:text-white">
+                    {streak} Gün
+                  </div>
+                  <span className="text-[11px] text-orange-600 dark:text-orange-300 font-semibold">
+                    Kesintisiz İstikrar
+                  </span>
                 </div>
 
                 <div className="rounded-2xl border border-slate-200 dark:border-white/10 bg-slate-50/80 dark:bg-white/5 p-3.5">
@@ -228,8 +248,12 @@ export function MonthlyReportCardModal({
                     <TrendingUp className="h-4 w-4 text-purple-500 dark:text-purple-400" />
                     <span>Aylık Seviye</span>
                   </div>
-                  <div className="mt-2 text-2xl font-extrabold text-slate-900 dark:text-white">İleri Düzey</div>
-                  <span className="text-[11px] text-purple-600 dark:text-purple-300 font-semibold">LGS Hedef Yolunda</span>
+                  <div className="mt-2 text-2xl font-extrabold text-slate-900 dark:text-white">
+                    İleri Düzey
+                  </div>
+                  <span className="text-[11px] text-purple-600 dark:text-purple-300 font-semibold">
+                    LGS Hedef Yolunda
+                  </span>
                 </div>
               </div>
 
@@ -240,7 +264,9 @@ export function MonthlyReportCardModal({
                     <BookOpen className="h-4 w-4 text-brand-ink" />
                     <span>Aylık Matematik Kazanım Başarı Çizelgesi</span>
                   </h3>
-                  <span className="text-xs text-slate-500 dark:text-slate-400">Öğrenci Not Skalası</span>
+                  <span className="text-xs text-slate-500 dark:text-slate-400">
+                    Öğrenci Not Skalası
+                  </span>
                 </div>
 
                 <div className="divide-y divide-slate-100 dark:divide-white/5">
@@ -250,8 +276,13 @@ export function MonthlyReportCardModal({
                     </div>
                   ) : (
                     effectiveTopicGrades.map((t, idx) => (
-                      <div key={idx} className="flex items-center justify-between py-2.5 text-xs">
-                        <div className="font-semibold text-slate-800 dark:text-slate-200">{t.topic}</div>
+                      <div
+                        key={idx}
+                        className="flex items-center justify-between py-2.5 text-xs"
+                      >
+                        <div className="font-semibold text-slate-800 dark:text-slate-200">
+                          {t.topic}
+                        </div>
                         <div className="flex items-center gap-3">
                           <div className="w-28 sm:w-36 bg-slate-200 dark:bg-slate-800 rounded-full h-2 overflow-hidden border border-slate-300 dark:border-white/10">
                             <div
@@ -259,7 +290,9 @@ export function MonthlyReportCardModal({
                               style={{ width: `${t.score}%` }}
                             />
                           </div>
-                          <span className="font-mono font-bold text-amber-600 dark:text-amber-300 w-8 text-right">%{t.score}</span>
+                          <span className="font-mono font-bold text-amber-600 dark:text-amber-300 w-8 text-right">
+                            %{t.score}
+                          </span>
                           <span className="rounded px-2 py-0.5 text-[10px] font-bold bg-slate-200/80 dark:bg-white/10 text-emerald-700 dark:text-emerald-300 w-16 text-center">
                             {t.status}
                           </span>
@@ -276,9 +309,16 @@ export function MonthlyReportCardModal({
                   <Star className="h-5 w-5 fill-indigo-600 dark:fill-indigo-300 text-indigo-600 dark:text-indigo-300" />
                 </div>
                 <div className="space-y-1">
-                  <div className="font-bold text-sm text-slate-900 dark:text-white">Uğur Hoca'nın Öğrenci Gelişim Notu:</div>
+                  <div className="font-bold text-sm text-slate-900 dark:text-white">
+                    Uğur Hoca'nın Öğrenci Gelişim Notu:
+                  </div>
                   <p className="text-slate-700 dark:text-slate-300">
-                    Sevgili {studentName}, bu ay gösterdiğin düzenli çalışma temposu ve yeni nesil soru analizlerindeki titizliğin takdire şayan. Problem çözme adımlarını karalama tahtasında planlayarak işlem hatası oranını belirgin şekilde azalttın. Gelecek ay özellikle geometri sorularında süre yönetimini pekiştirerek başarını zirveye taşıyacağız.
+                    Sevgili {studentName}, bu ay gösterdiğin düzenli çalışma
+                    temposu ve yeni nesil soru analizlerindeki titizliğin
+                    takdire şayan. Problem çözme adımlarını karalama tahtasında
+                    planlayarak işlem hatası oranını belirgin şekilde azalttın.
+                    Gelecek ay özellikle geometri sorularında süre yönetimini
+                    pekiştirerek başarını zirveye taşıyacağız.
                   </p>
                   <div className="pt-2 text-[11px] font-bold text-indigo-700 dark:text-indigo-300">
                     Uğur Hoca — Matematik Eğitim Koordinatörü
@@ -308,24 +348,42 @@ export function MonthlyReportCardModal({
                   <h1 className="mt-2 font-display text-2xl sm:text-4xl font-black text-slate-900 dark:text-white tracking-tight">
                     MATEMATİK ÜSTÜN GELİŞİM & BAŞARI BELGESİ
                   </h1>
-                  <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">Dönem: {selectedMonth}</p>
+                  <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
+                    Dönem: {selectedMonth}
+                  </p>
                 </div>
 
                 <div className="my-6 max-w-xl mx-auto border-y border-slate-200 dark:border-white/10 py-6 text-sm text-slate-700 dark:text-slate-200 leading-relaxed">
-                  Bu belge, {' '}<span className="font-black text-slate-900 dark:text-white text-lg underline decoration-amber-400">{studentName}</span> {' '}isimli öğrencimizin
-                  matematik derslerindeki üstün devamlılığı, {' '}{totalHours} saatlik disiplinli çalışma performansı ve hedeflerine ulaşmadaki kararlılığı vesilesiyle takdim edilmiştir.
+                  Bu belge,{' '}
+                  <span className="font-black text-slate-900 dark:text-white text-lg underline decoration-amber-400">
+                    {studentName}
+                  </span>{' '}
+                  isimli öğrencimizin matematik derslerindeki üstün devamlılığı,{' '}
+                  {totalHours} saatlik disiplinli çalışma performansı ve
+                  hedeflerine ulaşmadaki kararlılığı vesilesiyle takdim
+                  edilmiştir.
                 </div>
 
                 <div className="flex flex-col sm:flex-row items-center justify-between max-w-lg mx-auto pt-4 gap-6">
                   <div className="text-left">
-                    <div className="text-[11px] text-slate-500 font-semibold">Tarih</div>
-                    <div className="text-xs font-bold text-slate-800 dark:text-slate-300">{currentDateStr}</div>
+                    <div className="text-[11px] text-slate-500 font-semibold">
+                      Tarih
+                    </div>
+                    <div className="text-xs font-bold text-slate-800 dark:text-slate-300">
+                      {currentDateStr}
+                    </div>
                   </div>
 
                   <div className="text-right">
-                    <div className="text-xs font-bold text-amber-600 dark:text-amber-400 italic">Uğur Hoca</div>
-                    <div className="text-[11px] text-slate-500 dark:text-slate-400">Matematik Öğretmeni & Rehber</div>
-                    <div className="text-[10px] text-accent-success-ink dark:text-emerald-400 font-bold">✓ Sistem Tarafından Onaylandı</div>
+                    <div className="text-xs font-bold text-amber-600 dark:text-amber-400 italic">
+                      Uğur Hoca
+                    </div>
+                    <div className="text-[11px] text-slate-500 dark:text-slate-400">
+                      Matematik Öğretmeni & Rehber
+                    </div>
+                    <div className="text-[10px] text-accent-success-ink dark:text-emerald-400 font-bold">
+                      ✓ Sistem Tarafından Onaylandı
+                    </div>
                   </div>
                 </div>
               </div>

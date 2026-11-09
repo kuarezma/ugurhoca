@@ -22,6 +22,7 @@ import {
   X,
 } from 'lucide-react';
 import Image from 'next/image';
+import { formatIstanbulDateTime } from '@/lib/date-format';
 import {
   useCallback,
   useEffect,
@@ -70,7 +71,7 @@ export const MATH_QUICK_SYMBOLS = [
 ];
 
 const formatTime = (value: string) =>
-  new Date(value).toLocaleString('tr-TR', {
+  formatIstanbulDateTime(value, {
     day: 'numeric',
     hour: '2-digit',
     minute: '2-digit',
@@ -392,7 +393,9 @@ export function SupportChatPanel({
 }: SupportChatPanelProps) {
   const listRef = useRef<HTMLDivElement | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
-  const [activeLightboxImage, setActiveLightboxImage] = useState<string | null>(null);
+  const [activeLightboxImage, setActiveLightboxImage] = useState<string | null>(
+    null,
+  );
 
   // Yanıtlama (Quote / Reply) State
   const [replyingTo, setReplyingTo] = useState<ThreadMessage | null>(null);
@@ -520,8 +523,13 @@ export function SupportChatPanel({
       clearInterval(recordTimerRef.current);
       recordTimerRef.current = null;
     }
-    if (mediaRecorderRef.current && mediaRecorderRef.current.state !== 'inactive') {
-      mediaRecorderRef.current.stream.getTracks().forEach((track) => track.stop());
+    if (
+      mediaRecorderRef.current &&
+      mediaRecorderRef.current.state !== 'inactive'
+    ) {
+      mediaRecorderRef.current.stream
+        .getTracks()
+        .forEach((track) => track.stop());
       mediaRecorderRef.current.stop();
     }
     audioChunksRef.current = [];
@@ -681,7 +689,9 @@ export function SupportChatPanel({
           </div>
 
           <div className="min-w-0 flex-1">
-            <span className={`block truncate text-sm font-semibold ${titleClass}`}>
+            <span
+              className={`block truncate text-sm font-semibold ${titleClass}`}
+            >
               {peerDisplayName}
             </span>
             <div className="flex items-center gap-1.5">
@@ -751,7 +761,9 @@ export function SupportChatPanel({
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Mesajlarda ara..."
             className={`w-full bg-transparent text-xs focus:outline-none ${
-              isLight ? 'text-slate-900 placeholder:text-slate-400' : 'text-slate-100 placeholder:text-slate-500'
+              isLight
+                ? 'text-slate-900 placeholder:text-slate-400'
+                : 'text-slate-100 placeholder:text-slate-500'
             }`}
           />
           {searchQuery ? (
@@ -797,7 +809,9 @@ export function SupportChatPanel({
               <Calculator className="h-6 w-6" />
             </div>
             <p className={`text-sm font-semibold mb-1 ${titleClass}`}>
-              {searchQuery ? 'Eşleşen Mesaj Bulunamadı' : 'Uğur Hoca ile Matematik Sohbeti'}
+              {searchQuery
+                ? 'Eşleşen Mesaj Bulunamadı'
+                : 'Uğur Hoca ile Matematik Sohbeti'}
             </p>
             <p className={`text-xs max-w-xs ${subtitleClass}`}>
               {searchQuery
@@ -858,10 +872,13 @@ export function SupportChatPanel({
                     ) : null}
 
                     {/* Tekil veya Çoklu Görsel Eki */}
-                    {message.imageUrl && !message.attachments?.some((a) => a.kind === 'image') ? (
+                    {message.imageUrl &&
+                    !message.attachments?.some((a) => a.kind === 'image') ? (
                       <button
                         type="button"
-                        onClick={() => setActiveLightboxImage(message.imageUrl || null)}
+                        onClick={() =>
+                          setActiveLightboxImage(message.imageUrl || null)
+                        }
                         aria-label="Görseli tam ekran incele"
                         className="mb-1.5 block overflow-hidden rounded-xl cursor-zoom-in text-left transition hover:opacity-95 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400"
                       >
@@ -891,7 +908,7 @@ export function SupportChatPanel({
                               >
                                 <Image
                                   src={att.url}
-                                  alt={att.name || "Ek görsel"}
+                                  alt={att.name || 'Ek görsel'}
                                   width={260}
                                   height={190}
                                   className="h-auto w-full max-w-[260px] rounded-xl object-cover shadow-xs"
@@ -959,11 +976,21 @@ export function SupportChatPanel({
 
                       {/* WhatsApp Tarzı İletildi / Okundu Çift Tik */}
                       {isOwn && (
-                        <span title={message.status === 'read' ? 'Okundu' : 'İletildi'}>
+                        <span
+                          title={
+                            message.status === 'read' ? 'Okundu' : 'İletildi'
+                          }
+                        >
                           {message.status === 'read' ? (
-                            <CheckCheck className="h-3.5 w-3.5 text-sky-300" strokeWidth={2.4} />
+                            <CheckCheck
+                              className="h-3.5 w-3.5 text-sky-300"
+                              strokeWidth={2.4}
+                            />
                           ) : (
-                            <Check className="h-3 w-3 text-indigo-200/80" strokeWidth={2} />
+                            <Check
+                              className="h-3 w-3 text-indigo-200/80"
+                              strokeWidth={2}
+                            />
                           )}
                         </span>
                       )}
@@ -999,7 +1026,10 @@ export function SupportChatPanel({
         className={`shrink-0 border-t px-3 py-2.5 transition-colors ${formBorder}`}
       >
         {error || recordingError ? (
-          <p role="alert" className="mb-1.5 text-[11px] font-medium text-red-500">
+          <p
+            role="alert"
+            className="mb-1.5 text-[11px] font-medium text-red-500"
+          >
             {error || recordingError}
           </p>
         ) : null}
@@ -1042,7 +1072,9 @@ export function SupportChatPanel({
                 <button
                   key={tmpl}
                   type="button"
-                  onClick={() => onDraftChange(draft ? `${draft} ${tmpl}` : tmpl)}
+                  onClick={() =>
+                    onDraftChange(draft ? `${draft} ${tmpl}` : tmpl)
+                  }
                   className="shrink-0 rounded-lg border border-[var(--border)] bg-[var(--bg-soft)] px-2.5 py-1 text-[11px] font-medium text-[var(--text-strong)] hover:bg-[var(--bg-muted)] hover:border-indigo-400/40 transition shadow-sm"
                 >
                   {tmpl}
@@ -1082,7 +1114,11 @@ export function SupportChatPanel({
                   <button
                     key={sym.label}
                     type="button"
-                    onClick={() => onDraftChange(draft ? `${draft} ${sym.snippet}` : sym.snippet)}
+                    onClick={() =>
+                      onDraftChange(
+                        draft ? `${draft} ${sym.snippet}` : sym.snippet,
+                      )
+                    }
                     title={`${sym.label} ekle`}
                     className={`rounded-lg border px-2 py-0.5 text-xs font-medium transition shadow-2xs ${
                       appearance === 'navbar'
@@ -1122,7 +1158,11 @@ export function SupportChatPanel({
                 <button
                   key={sym.label}
                   type="button"
-                  onClick={() => onDraftChange(draft ? `${draft} ${sym.snippet}` : sym.snippet)}
+                  onClick={() =>
+                    onDraftChange(
+                      draft ? `${draft} ${sym.snippet}` : sym.snippet,
+                    )
+                  }
                   title={`${sym.label} ekle`}
                   className={`shrink-0 rounded-lg border px-2 py-0.5 text-xs font-medium transition shadow-2xs ${
                     appearance === 'navbar'
@@ -1156,7 +1196,9 @@ export function SupportChatPanel({
           <div className="mb-2 flex items-center justify-between gap-2 rounded-xl border-l-4 border-indigo-500 bg-indigo-500/10 p-2 text-xs">
             <div className="min-w-0 flex-1">
               <span className="block text-[10px] font-bold text-indigo-500">
-                {replyingTo.isOwn ? 'Kendi Mesajını Yanıtlıyorsun' : `${peerDisplayName}'ı Yanıtlıyorsun`}
+                {replyingTo.isOwn
+                  ? 'Kendi Mesajını Yanıtlıyorsun'
+                  : `${peerDisplayName}'ı Yanıtlıyorsun`}
               </span>
               <p className="line-clamp-1 italic text-slate-600 dark:text-slate-300">
                 {replyingTo.text || 'Ek dosya / Fotoğraf'}
@@ -1189,7 +1231,9 @@ export function SupportChatPanel({
                   >
                     <Image
                       src={att.url}
-                      alt={att.name ? `${att.name} önizlemesi` : 'Ek önizlemesi'}
+                      alt={
+                        att.name ? `${att.name} önizlemesi` : 'Ek önizlemesi'
+                      }
                       width={32}
                       height={32}
                       className="h-8 w-8 rounded-lg object-cover"
@@ -1225,7 +1269,9 @@ export function SupportChatPanel({
               <span className="font-mono text-xs font-bold">
                 {formatAudioDuration(recordingSeconds)} / 1:00
               </span>
-              <span className="text-[11px] font-medium ml-1">Ses kaydediliyor...</span>
+              <span className="text-[11px] font-medium ml-1">
+                Ses kaydediliyor...
+              </span>
             </div>
             <div className="flex items-center gap-1">
               <button
@@ -1350,4 +1396,3 @@ export function SupportChatPanel({
     </div>
   );
 }
-

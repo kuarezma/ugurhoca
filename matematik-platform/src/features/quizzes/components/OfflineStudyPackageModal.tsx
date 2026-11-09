@@ -13,6 +13,7 @@ import {
   Sparkles,
 } from 'lucide-react';
 import { useAccessibleModal } from '@/hooks/useAccessibleModal';
+import { formatIstanbulDate } from '@/lib/date-format';
 import {
   getOfflinePackages,
   removeOfflinePackage,
@@ -34,7 +35,7 @@ const SAMPLE_PRESET_PACKAGES: OfflineQuizPackage[] = [
       {
         id: 'off-q1',
         quiz_id: 'offline-carpanlar-8',
-        question: '72 ile 96 sayılarının EBOB\'u kaçtır?',
+        question: "72 ile 96 sayılarının EBOB'u kaçtır?",
         options: ['12', '16', '24', '48'],
         correct_index: 2,
         question_order: 1,
@@ -44,12 +45,14 @@ const SAMPLE_PRESET_PACKAGES: OfflineQuizPackage[] = [
       {
         id: 'off-q2',
         quiz_id: 'offline-carpanlar-8',
-        question: 'Aralarında asal iki sayının EKOK\'u 120 ise bu sayıların toplamı en az kaçtır?',
+        question:
+          "Aralarında asal iki sayının EKOK'u 120 ise bu sayıların toplamı en az kaçtır?",
         options: ['21', '23', '26', '62'],
         correct_index: 1,
         question_order: 2,
         created_at: '2026-09-06T12:00:00Z',
-        explanation: 'Aralarında asal iki sayının çarpımı EKOK\'tur. 15 * 8 = 120, aralarında asaldır. Toplam: 15 + 8 = 23.',
+        explanation:
+          "Aralarında asal iki sayının çarpımı EKOK'tur. 15 * 8 = 120, aralarında asaldır. Toplam: 15 + 8 = 23.",
       },
     ],
   },
@@ -65,7 +68,8 @@ const SAMPLE_PRESET_PACKAGES: OfflineQuizPackage[] = [
       {
         id: 'off-q3',
         quiz_id: 'offline-koklu-sayilar-8',
-        question: '√180 sayısı a√b şeklinde yazıldığında a + b değeri kaç olabilir?',
+        question:
+          '√180 sayısı a√b şeklinde yazıldığında a + b değeri kaç olabilir?',
         options: ['11', '14', '23', '28'],
         correct_index: 0,
         question_order: 1,
@@ -86,7 +90,8 @@ const SAMPLE_PRESET_PACKAGES: OfflineQuizPackage[] = [
       {
         id: 'off-q4',
         quiz_id: 'offline-ucgenler-8',
-        question: 'Dik kenar uzunlukları 9 cm ve 12 cm olan dik üçgenin hipotenüs uzunluğu kaç cm\'dir?',
+        question:
+          "Dik kenar uzunlukları 9 cm ve 12 cm olan dik üçgenin hipotenüs uzunluğu kaç cm'dir?",
         options: ['13', '14', '15', '18'],
         correct_index: 2,
         question_order: 1,
@@ -180,7 +185,10 @@ export function OfflineStudyPackageModal({
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h2 id={titleId} className="text-base font-bold tracking-tight text-slate-900 dark:text-white">
+                <h2
+                  id={titleId}
+                  className="text-base font-bold tracking-tight text-slate-900 dark:text-white"
+                >
                   Çevrimdışı Çalışma Modu
                 </h2>
                 <span
@@ -202,7 +210,8 @@ export function OfflineStudyPackageModal({
                 </span>
               </div>
               <p className="text-xs text-slate-500 dark:text-slate-400">
-                Testleri önceden indirin; internet bağlantınız olmadan çözün, bağlanınca otomatik senkronize edilsin.
+                Testleri önceden indirin; internet bağlantınız olmadan çözün,
+                bağlanınca otomatik senkronize edilsin.
               </p>
             </div>
           </div>
@@ -228,8 +237,8 @@ export function OfflineStudyPackageModal({
             </span>
           </div>
 
-          {packages.length > 0 && (
-            confirmingClear ? (
+          {packages.length > 0 &&
+            (confirmingClear ? (
               <div className="flex items-center gap-2">
                 <span className="text-[11px] font-semibold text-rose-600 dark:text-rose-400">
                   Tüm setler silinsin mi?
@@ -257,8 +266,7 @@ export function OfflineStudyPackageModal({
               >
                 Hepsini Temizle
               </button>
-            )
-          )}
+            ))}
         </div>
 
         {/* Liste & Hazır Öneriler */}
@@ -266,15 +274,19 @@ export function OfflineStudyPackageModal({
           {/* Cihazdaki İndirilmiş Setler */}
           <div className="space-y-3">
             <h3 className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
-              <CheckCircle2 className="w-4 h-4 text-accent-success-ink dark:text-emerald-400" /> {' '}Cihazınızda Hazır Soru Setleri
+              <CheckCircle2 className="w-4 h-4 text-accent-success-ink dark:text-emerald-400" />{' '}
+              Cihazınızda Hazır Soru Setleri
             </h3>
 
             {packages.length === 0 ? (
               <div className="rounded-2xl border border-dashed border-slate-200 dark:border-white/15 p-6 text-center">
                 <HardDrive className="w-8 h-8 text-slate-400 dark:text-slate-500 mx-auto mb-2" />
-                <p className="text-sm font-semibold text-slate-700 dark:text-slate-300">Henüz indirilmiş bir soru seti yok</p>
+                <p className="text-sm font-semibold text-slate-700 dark:text-slate-300">
+                  Henüz indirilmiş bir soru seti yok
+                </p>
                 <p className="text-xs text-slate-500 mt-1">
-                  Aşağıdaki önerilen soru setlerinden birini indirerek internetsiz çözmeye başlayabilirsiniz.
+                  Aşağıdaki önerilen soru setlerinden birini indirerek
+                  internetsiz çözmeye başlayabilirsiniz.
                 </p>
               </div>
             ) : (
@@ -289,11 +301,13 @@ export function OfflineStudyPackageModal({
                         <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500/10 text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-300">
                           {pkg.grade}. Sınıf
                         </span>
-                        <h4 className="text-xs sm:text-sm font-bold text-slate-900 dark:text-white">{pkg.title}</h4>
+                        <h4 className="text-xs sm:text-sm font-bold text-slate-900 dark:text-white">
+                          {pkg.title}
+                        </h4>
                       </div>
                       <p className="text-[11px] text-slate-500 dark:text-slate-400">
-                        {pkg.questionsCount} Soru • İndirilme: {' '}
-                        {new Date(pkg.downloadedAt).toLocaleDateString('tr-TR')}{' '} • {pkg.sizeKb} KB
+                        {pkg.questionsCount} Soru • İndirilme:{' '}
+                        {formatIstanbulDate(pkg.downloadedAt)} • {pkg.sizeKb} KB
                       </p>
                     </div>
 
@@ -330,7 +344,8 @@ export function OfflineStudyPackageModal({
           {/* Önerilen Çevrimdışı Soru Setleri (1 Tıkla İndir) */}
           <div className="space-y-3 border-t border-slate-200 dark:border-white/10 pt-4">
             <h3 className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
-              <Sparkles className="w-4 h-4 text-amber-500 dark:text-amber-400" /> {' '}Hızlı İndirilebilir Soru Seti Havuzu
+              <Sparkles className="w-4 h-4 text-amber-500 dark:text-amber-400" />{' '}
+              Hızlı İndirilebilir Soru Seti Havuzu
             </h3>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
@@ -344,11 +359,17 @@ export function OfflineStudyPackageModal({
                   >
                     <div>
                       <div className="flex items-center justify-between text-[10px] text-slate-500 dark:text-slate-400 mb-1">
-                        <span className="font-bold text-amber-600 dark:text-amber-400">{preset.grade}. Sınıf</span>
+                        <span className="font-bold text-amber-600 dark:text-amber-400">
+                          {preset.grade}. Sınıf
+                        </span>
                         <span>{preset.sizeKb} KB</span>
                       </div>
-                      <h4 className="text-xs font-semibold text-slate-900 dark:text-white leading-snug">{preset.title}</h4>
-                      <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-1">{preset.questionsCount} Soru & Çözüm Notu</p>
+                      <h4 className="text-xs font-semibold text-slate-900 dark:text-white leading-snug">
+                        {preset.title}
+                      </h4>
+                      <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-1">
+                        {preset.questionsCount} Soru & Çözüm Notu
+                      </p>
                     </div>
 
                     <button

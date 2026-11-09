@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import { ChevronRight } from 'lucide-react';
 import type { DashboardNotification } from '@/types/dashboard';
 import { getNotificationStyle } from '@/features/profile/utils/getNotificationStyle';
+import { formatIstanbulDate } from '@/lib/date-format';
 
 type ProfileNotificationsPanelProps = {
   notifications: DashboardNotification[];
@@ -23,12 +24,18 @@ export default function ProfileNotificationsPanel({
       className="fixed left-4 right-4 top-14 z-50 max-h-96 overflow-y-auto rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 shadow-2xl sm:left-auto sm:right-4 sm:w-80"
     >
       <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-700 p-4">
-        <h3 className="font-bold text-slate-900 dark:text-white">Bildirimler</h3>
-        <span className="text-xs text-slate-500 dark:text-slate-400">{unreadCount} okunmamış</span>
+        <h3 className="font-bold text-slate-900 dark:text-white">
+          Bildirimler
+        </h3>
+        <span className="text-xs text-slate-500 dark:text-slate-400">
+          {unreadCount} okunmamış
+        </span>
       </div>
 
       {notifications.length === 0 ? (
-        <p className="py-8 text-center text-slate-500 dark:text-slate-400">Henüz bildirim yok</p>
+        <p className="py-8 text-center text-slate-500 dark:text-slate-400">
+          Henüz bildirim yok
+        </p>
       ) : (
         <div className="divide-y divide-slate-100 dark:divide-slate-700">
           {notifications.map((notification) => {
@@ -66,9 +73,7 @@ export default function ProfileNotificationsPanel({
                       </p>
                     ) : null}
                     <p className="mt-2 text-xs text-slate-500 dark:text-slate-400">
-                      {new Date(notification.created_at).toLocaleDateString(
-                        'tr-TR',
-                      )}
+                      {formatIstanbulDate(notification.created_at)}
                     </p>
                   </div>
                   <ChevronRight

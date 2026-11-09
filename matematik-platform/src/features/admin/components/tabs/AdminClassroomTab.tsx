@@ -23,6 +23,7 @@ import type {
   AdminUser,
 } from '@/features/admin/types';
 import { useToast } from '@/components/Toast';
+import { formatIstanbulDate } from '@/lib/date-format';
 
 type AdminClassroomTabProps = {
   students: AdminUser[];
@@ -113,7 +114,10 @@ export default function AdminClassroomTab({
   // Sınıf ödevleri
   const classAssignments = useMemo(() => {
     return assignments
-      .filter((a) => !a.target_grade || String(a.target_grade) === String(selectedGrade))
+      .filter(
+        (a) =>
+          !a.target_grade || String(a.target_grade) === String(selectedGrade),
+      )
       .slice(0, 5);
   }, [assignments, selectedGrade]);
 
@@ -123,9 +127,15 @@ export default function AdminClassroomTab({
     const sevenDaysMs = 7 * 24 * 60 * 60 * 1000;
 
     return classStudents.map((student) => {
-      const studentResults = quizResults.filter((r) => r.user_id === student.id);
-      const studentSubmissions = submissions.filter((s) => s.student_id === student.id);
-      const studentSessions = studySessions.filter((s) => s.user_id === student.id);
+      const studentResults = quizResults.filter(
+        (r) => r.user_id === student.id,
+      );
+      const studentSubmissions = submissions.filter(
+        (s) => s.student_id === student.id,
+      );
+      const studentSessions = studySessions.filter(
+        (s) => s.user_id === student.id,
+      );
 
       // Toplam ve bu hafta çözülen sorular
       const totalQuestions = studentResults.reduce(
@@ -134,7 +144,9 @@ export default function AdminClassroomTab({
       );
 
       const weekQuestions = studentResults
-        .filter((r) => r.completed_at && new Date(r.completed_at) >= currentWeekStart)
+        .filter(
+          (r) => r.completed_at && new Date(r.completed_at) >= currentWeekStart,
+        )
         .reduce((sum, r) => sum + (r.total_questions || 0), 0);
 
       // Ortalama puan
@@ -148,9 +160,17 @@ export default function AdminClassroomTab({
 
       // Son aktivite zamanı
       const allDates: number[] = [];
-      studentResults.forEach((r) => r.completed_at && allDates.push(new Date(r.completed_at).getTime()));
-      studentSubmissions.forEach((s) => s.submitted_at && allDates.push(new Date(s.submitted_at).getTime()));
-      studentSessions.forEach((s) => s.date && allDates.push(new Date(s.date).getTime()));
+      studentResults.forEach(
+        (r) =>
+          r.completed_at && allDates.push(new Date(r.completed_at).getTime()),
+      );
+      studentSubmissions.forEach(
+        (s) =>
+          s.submitted_at && allDates.push(new Date(s.submitted_at).getTime()),
+      );
+      studentSessions.forEach(
+        (s) => s.date && allDates.push(new Date(s.date).getTime()),
+      );
 
       const lastActiveTime = allDates.length > 0 ? Math.max(...allDates) : null;
       const isInactive = !lastActiveTime || now - lastActiveTime > sevenDaysMs;
@@ -158,7 +178,9 @@ export default function AdminClassroomTab({
       // Son ödev durumu
       const latestAssignment = classAssignments[0];
       const latestSubmission = latestAssignment
-        ? studentSubmissions.find((s) => s.assignment_id === latestAssignment.id)
+        ? studentSubmissions.find(
+            (s) => s.assignment_id === latestAssignment.id,
+          )
         : null;
 
       return {
@@ -172,7 +194,14 @@ export default function AdminClassroomTab({
         submissionsCount: studentSubmissions.length,
       };
     });
-  }, [classStudents, quizResults, submissions, studySessions, currentWeekStart, classAssignments]);
+  }, [
+    classStudents,
+    quizResults,
+    submissions,
+    studySessions,
+    currentWeekStart,
+    classAssignments,
+  ]);
 
   // Filtrelenmiş Liste
   const filteredMetrics = useMemo(() => {
@@ -188,7 +217,8 @@ export default function AdminClassroomTab({
     if (viewMode === 'risk') {
       // Riskli öğrenciler: inaktif olanlar veya hiç soru çözmeyenler veya son ödevi eksik olanlar
       list = list.filter(
-        (item) => item.isInactive || item.weekQuestions === 0 || !item.latestSubmission,
+        (item) =>
+          item.isInactive || item.weekQuestions === 0 || !item.latestSubmission,
       );
     }
 
@@ -215,18 +245,24 @@ export default function AdminClassroomTab({
   );
 
   const atRiskCount = useMemo(
-    () => studentMetrics.filter((m) => m.isInactive || m.weekQuestions === 0).length,
+    () =>
+      studentMetrics.filter((m) => m.isInactive || m.weekQuestions === 0)
+        .length,
     [studentMetrics],
   );
 
   const topStudent = useMemo(() => {
     if (studentMetrics.length === 0) return null;
-    return [...studentMetrics].sort((a, b) => b.weekQuestions - a.weekQuestions)[0];
+    return [...studentMetrics].sort(
+      (a, b) => b.weekQuestions - a.weekQuestions,
+    )[0];
   }, [studentMetrics]);
 
   // Toplu Hatırlatma Gönder
   const handleSendBatchReminder = () => {
-    const missingCount = studentMetrics.filter((m) => !m.latestSubmission).length;
+    const missingCount = studentMetrics.filter(
+      (m) => !m.latestSubmission,
+    ).length;
     showToast(
       'info',
       `${selectedGrade}. Sınıfta son ödevi eksik olan ${missingCount} öğrenciye hatırlatma bildirimi planlandı.`,
@@ -251,13 +287,16 @@ export default function AdminClassroomTab({
               <span className="px-2.5 py-0.5 rounded-full text-xs font-bold uppercase tracking-wider bg-amber-500/20 text-amber-700 dark:text-amber-300 border border-amber-500/30">
                 Sınıf Rehberliği Masası
               </span>
-              <span className="text-xs text-slate-500 dark:text-slate-400">2026-2027 Eğitim Yılı</span>
+              <span className="text-xs text-slate-500 dark:text-slate-400">
+                2026-2027 Eğitim Yılı
+              </span>
             </div>
             <h2 className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white mt-1">
               {selectedGrade}. Sınıf Şube Yönetim & Takip Panosu
             </h2>
             <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 mt-0.5">
-              Öğrenci soru sayıları, ödev tamamlama karneleri ve birebir rehberlik takibi.
+              Öğrenci soru sayıları, ödev tamamlama karneleri ve birebir
+              rehberlik takibi.
             </p>
           </div>
         </div>
@@ -297,13 +336,18 @@ export default function AdminClassroomTab({
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <div className="rounded-3xl border border-slate-200/80 dark:border-white/10 bg-white/80 dark:bg-slate-900/60 p-5 backdrop-blur-md shadow-sm">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold text-slate-500 dark:text-slate-400">Sınıf Mevcudu</span>
+            <span className="text-xs font-semibold text-slate-500 dark:text-slate-400">
+              Sınıf Mevcudu
+            </span>
             <div className="p-2 rounded-xl bg-indigo-500/15 text-indigo-600 dark:text-indigo-400">
               <Users className="w-4 h-4" />
             </div>
           </div>
           <div className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white mt-2">
-            {classStudents.length} {' '}<span className="text-sm font-semibold text-slate-500 dark:text-slate-400">Öğrenci</span>
+            {classStudents.length}{' '}
+            <span className="text-sm font-semibold text-slate-500 dark:text-slate-400">
+              Öğrenci
+            </span>
           </div>
           <div className="flex items-center gap-1.5 text-xs text-accent-success-ink dark:text-emerald-400 mt-1">
             <CheckCircle2 className="w-3.5 h-3.5" />
@@ -313,28 +357,41 @@ export default function AdminClassroomTab({
 
         <div className="rounded-3xl border border-slate-200/80 dark:border-white/10 bg-white/80 dark:bg-slate-900/60 p-5 backdrop-blur-md shadow-sm">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold text-slate-500 dark:text-slate-400">Bu Hafta Çözülen Soru</span>
+            <span className="text-xs font-semibold text-slate-500 dark:text-slate-400">
+              Bu Hafta Çözülen Soru
+            </span>
             <div className="p-2 rounded-xl bg-amber-500/15 text-amber-600 dark:text-amber-400">
               <BookOpen className="w-4 h-4" />
             </div>
           </div>
           <div className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white mt-2">
-            {totalClassWeekQuestions.toLocaleString('tr-TR')} {' '}<span className="text-sm font-semibold text-slate-500 dark:text-slate-400">Soru</span>
+            {totalClassWeekQuestions.toLocaleString('tr-TR')}{' '}
+            <span className="text-sm font-semibold text-slate-500 dark:text-slate-400">
+              Soru
+            </span>
           </div>
           <p className="text-xs text-slate-600 dark:text-slate-400 mt-1">
-            Öğrenci başına ortalama: {' '}<strong className="text-amber-600 dark:text-amber-300">{avgWeekQuestions} soru</strong>
+            Öğrenci başına ortalama:{' '}
+            <strong className="text-amber-600 dark:text-amber-300">
+              {avgWeekQuestions} soru
+            </strong>
           </p>
         </div>
 
         <div className="rounded-3xl border border-slate-200/80 dark:border-white/10 bg-white/80 dark:bg-slate-900/60 p-5 backdrop-blur-md shadow-sm">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold text-slate-500 dark:text-slate-400">Destek / Risk Radarı</span>
+            <span className="text-xs font-semibold text-slate-500 dark:text-slate-400">
+              Destek / Risk Radarı
+            </span>
             <div className="p-2 rounded-xl bg-rose-500/15 text-rose-600 dark:text-rose-400">
               <AlertTriangle className="w-4 h-4" />
             </div>
           </div>
           <div className="text-2xl sm:text-3xl font-black text-rose-600 dark:text-rose-300 mt-2">
-            {atRiskCount}{' '} <span className="text-sm font-semibold text-slate-500 dark:text-slate-400">Öğrenci</span>
+            {atRiskCount}{' '}
+            <span className="text-sm font-semibold text-slate-500 dark:text-slate-400">
+              Öğrenci
+            </span>
           </div>
           <p className="text-xs text-slate-600 dark:text-slate-400 mt-1">
             Son 7 günde hareketsiz veya ödevi eksik
@@ -343,7 +400,9 @@ export default function AdminClassroomTab({
 
         <div className="rounded-3xl border border-slate-200/80 dark:border-white/10 bg-white/80 dark:bg-slate-900/60 p-5 backdrop-blur-md shadow-sm">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold text-slate-500 dark:text-slate-400">Haftanın Sınıf Yıldızı</span>
+            <span className="text-xs font-semibold text-slate-500 dark:text-slate-400">
+              Haftanın Sınıf Yıldızı
+            </span>
             <div className="p-2 rounded-xl bg-purple-500/15 text-purple-600 dark:text-purple-400">
               <Award className="w-4 h-4" />
             </div>
@@ -352,7 +411,9 @@ export default function AdminClassroomTab({
             {topStudent?.student.name || '—'}
           </div>
           <p className="text-xs text-purple-600 dark:text-purple-300 mt-1">
-            {topStudent ? `Bu hafta ${topStudent.weekQuestions} soru çözdü 🌟` : 'Henüz veri yok'}
+            {topStudent
+              ? `Bu hafta ${topStudent.weekQuestions} soru çözdü 🌟`
+              : 'Henüz veri yok'}
           </p>
         </div>
       </div>
@@ -442,19 +503,23 @@ export default function AdminClassroomTab({
               <tbody className="divide-y divide-slate-100 dark:divide-white/5">
                 {filteredMetrics.length === 0 ? (
                   <tr>
-                    <td colSpan={9} className="py-12 text-center text-slate-500 dark:text-slate-400">
+                    <td
+                      colSpan={9}
+                      className="py-12 text-center text-slate-500 dark:text-slate-400"
+                    >
                       Bu filtreye uygun öğrenci bulunamadı.
                     </td>
                   </tr>
                 ) : (
                   filteredMetrics.map((item, idx) => {
                     const student = item.student;
-                    const note = editingNotes[student.id] !== undefined
-                      ? editingNotes[student.id]
-                      : getSavedNote(student.id);
+                    const note =
+                      editingNotes[student.id] !== undefined
+                        ? editingNotes[student.id]
+                        : getSavedNote(student.id);
 
                     const lastActiveStr = item.lastActiveTime
-                      ? new Date(item.lastActiveTime).toLocaleDateString('tr-TR', {
+                      ? formatIstanbulDate(item.lastActiveTime, {
                           day: 'numeric',
                           month: 'short',
                           hour: '2-digit',
@@ -514,7 +579,9 @@ export default function AdminClassroomTab({
                               %{item.averageScore}
                             </span>
                           ) : (
-                            <span className="text-slate-400 dark:text-slate-500">—</span>
+                            <span className="text-slate-400 dark:text-slate-500">
+                              —
+                            </span>
                           )}
                         </td>
                         <td className="py-3 px-4">
@@ -537,7 +604,11 @@ export default function AdminClassroomTab({
                         </td>
                         <td className="py-3 px-4 text-slate-500 dark:text-slate-400">
                           <span
-                            className={item.isInactive ? 'text-rose-600 dark:text-rose-400 font-semibold' : ''}
+                            className={
+                              item.isInactive
+                                ? 'text-rose-600 dark:text-rose-400 font-semibold'
+                                : ''
+                            }
                           >
                             {lastActiveStr}
                           </span>
@@ -622,12 +693,20 @@ export default function AdminClassroomTab({
                   <th className="py-3 px-4 w-10">#</th>
                   <th className="py-3 px-4 min-w-[160px]">Öğrenci Adı</th>
                   {classAssignments.map((ass) => (
-                    <th key={ass.id} className="py-3 px-4 text-center min-w-[120px]">
-                      <div className="font-bold text-slate-900 dark:text-white truncate max-w-[140px]" title={ass.title}>
+                    <th
+                      key={ass.id}
+                      className="py-3 px-4 text-center min-w-[120px]"
+                    >
+                      <div
+                        className="font-bold text-slate-900 dark:text-white truncate max-w-[140px]"
+                        title={ass.title}
+                      >
                         {ass.title}
                       </div>
                       <div className="text-[10px] text-slate-500 dark:text-slate-400 font-normal">
-                        {ass.due_date ? new Date(ass.due_date).toLocaleDateString('tr-TR') : 'Süresiz'}
+                        {ass.due_date
+                          ? formatIstanbulDate(ass.due_date)
+                          : 'Süresiz'}
                       </div>
                     </th>
                   ))}
@@ -636,23 +715,40 @@ export default function AdminClassroomTab({
               </thead>
               <tbody className="divide-y divide-slate-100 dark:divide-white/5">
                 {classStudents.map((student, sIdx) => {
-                  const studentSubs = submissions.filter((s) => s.student_id === student.id);
+                  const studentSubs = submissions.filter(
+                    (s) => s.student_id === student.id,
+                  );
                   const deliveredCount = classAssignments.filter((ass) =>
                     studentSubs.some((s) => s.assignment_id === ass.id),
                   ).length;
-                  const ratio = classAssignments.length > 0 ? Math.round((deliveredCount / classAssignments.length) * 100) : 0;
+                  const ratio =
+                    classAssignments.length > 0
+                      ? Math.round(
+                          (deliveredCount / classAssignments.length) * 100,
+                        )
+                      : 0;
 
                   return (
-                    <tr key={student.id} className="hover:bg-slate-50/80 dark:hover:bg-white/5 transition-colors">
-                      <td className="py-2.5 px-4 font-bold text-slate-400 dark:text-slate-500">{sIdx + 1}</td>
-                      <td className="py-2.5 px-4 font-bold text-slate-900 dark:text-white">{student.name}</td>
+                    <tr
+                      key={student.id}
+                      className="hover:bg-slate-50/80 dark:hover:bg-white/5 transition-colors"
+                    >
+                      <td className="py-2.5 px-4 font-bold text-slate-400 dark:text-slate-500">
+                        {sIdx + 1}
+                      </td>
+                      <td className="py-2.5 px-4 font-bold text-slate-900 dark:text-white">
+                        {student.name}
+                      </td>
                       {classAssignments.map((ass) => {
-                        const sub = studentSubs.find((s) => s.assignment_id === ass.id);
+                        const sub = studentSubs.find(
+                          (s) => s.assignment_id === ass.id,
+                        );
                         return (
                           <td key={ass.id} className="py-2.5 px-4 text-center">
                             {sub ? (
                               <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 font-bold">
-                                ✓ {' '}{sub.grade !== null ? `${sub.grade}P` : 'Tamam'}
+                                ✓{' '}
+                                {sub.grade !== null ? `${sub.grade}P` : 'Tamam'}
                               </span>
                             ) : (
                               <span className="inline-flex items-center px-2 py-0.5 rounded-lg bg-rose-500/20 text-rose-600 dark:text-rose-400 font-bold">

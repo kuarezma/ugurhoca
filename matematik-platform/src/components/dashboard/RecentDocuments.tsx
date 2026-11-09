@@ -1,9 +1,10 @@
-"use client";
+'use client';
 
-import { memo } from "react";
-import { motion } from "framer-motion";
-import { Download, FileText } from "lucide-react";
-import { DashboardDocument } from "@/types/dashboard";
+import { memo } from 'react';
+import { motion } from 'framer-motion';
+import { Download, FileText } from 'lucide-react';
+import { DashboardDocument } from '@/types/dashboard';
+import { formatIstanbulDate } from '@/lib/date-format';
 
 interface RecentDocumentsProps {
   documents: DashboardDocument[];
@@ -18,7 +19,9 @@ function RecentDocuments({ documents }: RecentDocumentsProps) {
       className="rounded-3xl border border-slate-200/80 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-900 p-6"
     >
       <div className="mb-5">
-        <h2 className="text-xl font-bold text-slate-900 dark:text-white">Son Belgeler</h2>
+        <h2 className="text-xl font-bold text-slate-900 dark:text-white">
+          Son Belgeler
+        </h2>
         <p className="mt-1 text-sm text-slate-600 dark:text-slate-400">
           Uğur Hoca tarafından paylaşılan son belgeler.
         </p>
@@ -27,7 +30,9 @@ function RecentDocuments({ documents }: RecentDocumentsProps) {
       {documents.length === 0 ? (
         <div className="rounded-2xl border border-dashed border-slate-200 dark:border-slate-800 px-5 py-8 text-center">
           <FileText className="mx-auto h-10 w-10 text-slate-400 dark:text-slate-600" />
-          <p className="mt-3 font-semibold text-slate-900 dark:text-white">Henüz sana özel belge görünmüyor.</p>
+          <p className="mt-3 font-semibold text-slate-900 dark:text-white">
+            Henüz sana özel belge görünmüyor.
+          </p>
           <p className="mt-1 text-sm text-slate-600 dark:text-slate-400">
             Yeni belge paylaşıldığında burada kısa liste halinde yer alacak.
           </p>
@@ -44,12 +49,16 @@ function RecentDocuments({ documents }: RecentDocumentsProps) {
             >
               <div
                 className={`flex h-11 w-11 items-center justify-center rounded-xl ${
-                  doc.is_read ? "bg-slate-200 dark:bg-slate-700" : "bg-indigo-500/15"
+                  doc.is_read
+                    ? 'bg-slate-200 dark:bg-slate-700'
+                    : 'bg-indigo-500/15'
                 }`}
               >
                 <FileText
                   className={`h-5 w-5 ${
-                    doc.is_read ? "text-slate-500 dark:text-slate-400" : "text-indigo-600 dark:text-indigo-300"
+                    doc.is_read
+                      ? 'text-slate-500 dark:text-slate-400'
+                      : 'text-indigo-600 dark:text-indigo-300'
                   }`}
                 />
               </div>
@@ -58,7 +67,7 @@ function RecentDocuments({ documents }: RecentDocumentsProps) {
                   {doc.document_title}
                 </p>
                 <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
-                  {new Date(doc.created_at).toLocaleDateString("tr-TR")}
+                  {formatIstanbulDate(doc.created_at)}
                 </p>
               </div>
               <div className="flex flex-col items-end gap-2">

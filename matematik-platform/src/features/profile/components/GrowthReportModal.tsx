@@ -17,6 +17,7 @@ import {
 } from 'lucide-react';
 import { useToast } from '@/components/Toast';
 import { useAccessibleModal } from '@/hooks/useAccessibleModal';
+import { formatIstanbulDate } from '@/lib/date-format';
 
 export type GrowthReportModalProps = {
   isOpen: boolean;
@@ -51,7 +52,7 @@ export function GrowthReportModal({
 
   if (!isOpen) return null;
 
-  const todayStr = new Date().toLocaleDateString('tr-TR', {
+  const todayStr = formatIstanbulDate(new Date(), {
     day: 'numeric',
     month: 'long',
     year: 'numeric',
@@ -65,7 +66,9 @@ export function GrowthReportModal({
     '',
     `🎯 *Haftalık Hedef Tamamlama:* %${progressPercent}`,
     `🔥 *Kesintisiz Çalışma Serisi:* ${streakCount} Gün`,
-    totalQuizzesSolved > 0 ? `📝 *Çözülen Test:* ${totalQuizzesSolved} Adet` : '',
+    totalQuizzesSolved > 0
+      ? `📝 *Çözülen Test:* ${totalQuizzesSolved} Adet`
+      : '',
     averageScore !== null ? `⭐ *Ortalama Başarı:* %${averageScore}` : '',
     strongTopic ? `💪 *En Güçlü Konu:* ${strongTopic}` : '',
     focusTopic ? `🎯 *Gelişim Alanı:* ${focusTopic}` : '',
@@ -144,7 +147,10 @@ export function GrowthReportModal({
                   <span className="text-[10px] font-bold uppercase tracking-wider text-indigo-200">
                     Öğrenci Karnesi
                   </span>
-                  <h3 id={titleId} className="text-lg font-black tracking-tight flex items-center gap-1.5">
+                  <h3
+                    id={titleId}
+                    className="text-lg font-black tracking-tight flex items-center gap-1.5"
+                  >
                     Haftalık Gelişim Raporu
                     <Sparkles className="h-4 w-4 text-amber-300 fill-amber-300" />
                   </h3>
@@ -184,23 +190,39 @@ export function GrowthReportModal({
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-5">
                 <div className="rounded-2xl border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-white/5 p-4 text-center">
                   <Target className="h-5 w-5 text-accent-success-ink dark:text-emerald-400 mx-auto mb-1.5" />
-                  <p className="text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">Hedef Tamamlama</p>
-                  <p className="text-2xl font-black text-accent-success-ink dark:text-emerald-400">%{progressPercent}</p>
+                  <p className="text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                    Hedef Tamamlama
+                  </p>
+                  <p className="text-2xl font-black text-accent-success-ink dark:text-emerald-400">
+                    %{progressPercent}
+                  </p>
                 </div>
                 <div className="rounded-2xl border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-white/5 p-4 text-center">
                   <Flame className="h-5 w-5 text-amber-600 dark:text-amber-400 mx-auto mb-1.5" />
-                  <p className="text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">Çalışma Serisi</p>
-                  <p className="text-2xl font-black text-amber-600 dark:text-amber-400">{streakCount} Gün</p>
+                  <p className="text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                    Çalışma Serisi
+                  </p>
+                  <p className="text-2xl font-black text-amber-600 dark:text-amber-400">
+                    {streakCount} Gün
+                  </p>
                 </div>
                 <div className="rounded-2xl border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-white/5 p-4 text-center">
                   <GraduationCap className="h-5 w-5 text-cyan-600 dark:text-cyan-400 mx-auto mb-1.5" />
-                  <p className="text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">Çözülen Test</p>
-                  <p className="text-2xl font-black text-cyan-600 dark:text-cyan-400">{totalQuizzesSolved}</p>
+                  <p className="text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                    Çözülen Test
+                  </p>
+                  <p className="text-2xl font-black text-cyan-600 dark:text-cyan-400">
+                    {totalQuizzesSolved}
+                  </p>
                 </div>
                 <div className="rounded-2xl border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-white/5 p-4 text-center">
                   <Award className="h-5 w-5 text-purple-600 dark:text-purple-400 mx-auto mb-1.5" />
-                  <p className="text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">Ortalama Başarı</p>
-                  <p className="text-2xl font-black text-purple-600 dark:text-purple-400">{averageScore !== null ? `%${averageScore}` : 'Düzenli'}</p>
+                  <p className="text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                    Ortalama Başarı
+                  </p>
+                  <p className="text-2xl font-black text-purple-600 dark:text-purple-400">
+                    {averageScore !== null ? `%${averageScore}` : 'Düzenli'}
+                  </p>
                 </div>
               </div>
 
@@ -209,14 +231,22 @@ export function GrowthReportModal({
                 <div className="rounded-2xl border border-slate-200 dark:border-white/5 bg-slate-50/70 dark:bg-white/[0.03] p-4 space-y-2 text-xs">
                   {strongTopic && (
                     <div className="flex items-center justify-between">
-                      <span className="text-slate-500 dark:text-slate-400">💪 En Başarılı Konu:</span>
-                      <span className="font-bold text-accent-success-ink dark:text-emerald-300">{strongTopic}</span>
+                      <span className="text-slate-500 dark:text-slate-400">
+                        💪 En Başarılı Konu:
+                      </span>
+                      <span className="font-bold text-accent-success-ink dark:text-emerald-300">
+                        {strongTopic}
+                      </span>
                     </div>
                   )}
                   {focusTopic && (
                     <div className="flex items-center justify-between">
-                      <span className="text-slate-500 dark:text-slate-400">🎯 Pekiştirilecek Alan:</span>
-                      <span className="font-bold text-amber-600 dark:text-amber-300">{focusTopic}</span>
+                      <span className="text-slate-500 dark:text-slate-400">
+                        🎯 Pekiştirilecek Alan:
+                      </span>
+                      <span className="font-bold text-amber-600 dark:text-amber-300">
+                        {focusTopic}
+                      </span>
                     </div>
                   )}
                 </div>
@@ -239,7 +269,11 @@ export function GrowthReportModal({
                 onClick={handleCopy}
                 className="flex items-center justify-center gap-2 rounded-2xl border border-slate-200 dark:border-white/10 bg-slate-50 hover:bg-slate-100 dark:bg-white/5 dark:hover:bg-white/10 px-4 py-3 text-sm font-semibold text-slate-700 dark:text-slate-200 transition-all active:scale-95"
               >
-                {copied ? <Check className="h-4 w-4 text-accent-success-ink dark:text-emerald-400" /> : <Copy className="h-4 w-4" />}
+                {copied ? (
+                  <Check className="h-4 w-4 text-accent-success-ink dark:text-emerald-400" />
+                ) : (
+                  <Copy className="h-4 w-4" />
+                )}
                 <span>{copied ? 'Kopyalandı!' : 'Metni Kopyala'}</span>
               </button>
 
@@ -250,7 +284,9 @@ export function GrowthReportModal({
                 className="flex items-center justify-center gap-2 rounded-2xl border border-purple-500/30 bg-purple-50 hover:bg-purple-100 text-purple-700 dark:bg-purple-500/15 dark:hover:bg-purple-500/25 dark:text-purple-200 px-4 py-3 text-sm font-semibold transition-all active:scale-95 disabled:opacity-50"
               >
                 <Download className="h-4 w-4" />
-                <span>{isExportingPdf ? 'Hazırlanıyor...' : 'A4 PDF İndir'}</span>
+                <span>
+                  {isExportingPdf ? 'Hazırlanıyor...' : 'A4 PDF İndir'}
+                </span>
               </button>
             </div>
           </div>

@@ -5,19 +5,19 @@ Bu dosya, depo kökünde saklanan kalite yol haritasının kaynağıdır. Uygula
 ## Sizin kriterleriniz (bağlayıcı)
 
 1. **Hız**: Sayfaların hızlı açılması, etkileşimlerin gecikmeden tepki vermesi (Core Web Vitals ve algılanan performans).
-2. **Görsel tutarlılık**: **Font, renk, tema ve düzeni kasıtlı olarak değiştirmeden** yalnızca teknik optimizasyon (aynı font aileleri/ağırlıklar, `DeferredFloatingShapes` ile aynı dekor, vb.).
+2. **Görsel tutarlılık**: **3 Kasım 2026 Sıcak Kağıt (Warm Paper) tasarım sistemi yürürlüktedir** (`CLAUDE.md` ve sayfa sonundaki karar kaydı uyarınca tipografi ve renk sistemi Fraunces + Plus Jakarta Sans + JetBrains Mono, `#FAF8F5` açık zemin, `#065F46` zümrüt vurgu ve semantik tokenlarla güncellenmiştir). Bu semantik tasarım dili korunarak teknik optimizasyon sürdürülür.
 3. **Profesyonellik**: Ziyaretçinin ve öğrencinin güven duyacağı, hatasız ve öngörülebilir deneyim; arama motorları ve erişilebilirlikte “tamamlanmış ürün” hissi.
 
 ## Profesyonelliğin ölçülebilir karşılığı
 
-| Alan | Hedef (üretim, gerçek kullanıcı veya Lighthouse) |
-|------|--------------------------------------------------|
-| Performans | LCP iyi eşik; INP düşük; gereksiz JS az |
-| Güvenilirlik | Beklenmeyen hata yerine anlaşılır mesaj; boş veride kırık UI yok |
+| Alan            | Hedef (üretim, gerçek kullanıcı veya Lighthouse)                             |
+| --------------- | ---------------------------------------------------------------------------- |
+| Performans      | LCP iyi eşik; INP düşük; gereksiz JS az                                      |
+| Güvenilirlik    | Beklenmeyen hata yerine anlaşılır mesaj; boş veride kırık UI yok             |
 | Erişilebilirlik | WCAG 2.2 AA’ye yaklaşan kontrast ve klavye ile tam kullanım (odak, modaller) |
-| SEO | Doğru `metadata`, robots/sitemap uyumu, paylaşım önizlemesi tutarlılığı |
-| Güven | Gizlilik / veri kullanımı şeffaflığı (yasal metinler içerik onayıyla) |
-| Operasyon | Hatalar ve vitals üretimde görünür; CI kalite kapıları açık |
+| SEO             | Doğru `metadata`, robots/sitemap uyumu, paylaşım önizlemesi tutarlılığı      |
+| Güven           | Gizlilik / veri kullanımı şeffaflığı (yasal metinler içerik onayıyla)        |
+| Operasyon       | Hatalar ve vitals üretimde görünür; CI kalite kapıları açık                  |
 
 ## Teknik temel (repo)
 

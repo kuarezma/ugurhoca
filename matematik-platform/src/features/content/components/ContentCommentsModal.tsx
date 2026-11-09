@@ -1,11 +1,9 @@
 import { motion } from 'framer-motion';
 import type { FormEvent } from 'react';
 import { X } from 'lucide-react';
-import type {
-  ContentComment,
-  ContentPageUser
-} from '@/features/content/types';
+import type { ContentComment, ContentPageUser } from '@/features/content/types';
 import { useAccessibleModal } from '@/hooks/useAccessibleModal';
+import { formatIstanbulDate } from '@/lib/date-format';
 
 type ContentCommentsModalProps = {
   comments: ContentComment[];
@@ -47,7 +45,10 @@ export default function ContentCommentsModal({
         className="glass rounded-3xl p-6 w-full max-w-lg max-h-[80vh] overflow-hidden flex flex-col"
       >
         <div className="flex items-center justify-between mb-4">
-          <h3 id="content-comments-title" className="text-xl font-bold text-slate-900 dark:text-white">
+          <h3
+            id="content-comments-title"
+            className="text-xl font-bold text-slate-900 dark:text-white"
+          >
             Yorumlar
           </h3>
           <button
@@ -67,18 +68,23 @@ export default function ContentCommentsModal({
             </p>
           ) : (
             comments.map((comment) => (
-              <div key={comment.id} className="bg-slate-100 dark:bg-slate-800/50 rounded-lg p-3">
+              <div
+                key={comment.id}
+                className="bg-slate-100 dark:bg-slate-800/50 rounded-lg p-3"
+              >
                 <div className="flex items-center gap-2 mb-1">
                   <span className="text-slate-900 dark:text-white font-medium text-sm">
                     {comment.user_name || 'Anonim'}
                   </span>
                   <span className="text-slate-400 text-xs">
                     {comment.created_at
-                      ? new Date(comment.created_at).toLocaleDateString('tr-TR')
+                      ? formatIstanbulDate(comment.created_at)
                       : '-'}
                   </span>
                 </div>
-                <p className="text-slate-600 dark:text-slate-300 text-sm break-words">{comment.content}</p>
+                <p className="text-slate-600 dark:text-slate-300 text-sm break-words">
+                  {comment.content}
+                </p>
               </div>
             ))
           )}

@@ -4,6 +4,7 @@ import Image from 'next/image';
 import { Bell } from 'lucide-react';
 import type { Announcement } from '@/types';
 import { isNewContent, proxiedImageSrc } from '@/features/home/queries';
+import { formatIstanbulDate } from '@/lib/date-format';
 
 type HomeAnnouncementsSectionProps = {
   announcements: Announcement[];
@@ -20,9 +21,7 @@ export function HomeAnnouncementsSection({
 
   return (
     <section className="px-4 pt-2 pb-3 sm:py-6">
-      <div
-        className="max-w-6xl mx-auto light-section light:p-5 light:sm:p-6"
-      >
+      <div className="max-w-6xl mx-auto light-section light:p-5 light:sm:p-6">
         <div className="flex items-center justify-between mb-4">
           <div>
             <h2 className="text-lg sm:text-2xl font-bold text-primary">
@@ -71,8 +70,7 @@ export function HomeAnnouncementsSection({
                 <div className="p-3 sm:p-4">
                   <div className="flex items-center gap-2 mb-2 text-xs text-secondary">
                     <Bell className="w-4 h-4 text-purple-400" />
-                    {new Date(item.created_at).toLocaleDateString('tr-TR', {
-                      timeZone: 'Europe/Istanbul',
+                    {formatIstanbulDate(item.created_at, {
                       day: 'numeric',
                       month: 'short',
                     })}

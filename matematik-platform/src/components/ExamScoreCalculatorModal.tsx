@@ -21,6 +21,7 @@ import {
 } from 'lucide-react';
 import { applyAnswerChange } from '@/lib/examInputs';
 import { useAccessibleModal } from '@/hooks/useAccessibleModal';
+import { formatIstanbulDate } from '@/lib/date-format';
 import {
   getSavedExamTrials,
   saveExamTrial,
@@ -94,8 +95,12 @@ export function ExamScoreCalculatorModal({
   const [savedTrials, setSavedTrials] = useState<SavedExamTrial[]>([]);
   const [showHistory, setShowHistory] = useState(false);
   const [saveSuccess, setSaveSuccess] = useState(false);
-  const [selectedLgsTarget, setSelectedLgsTarget] = useState(LGS_TARGET_PRESETS[1].name);
-  const [selectedYksTarget, setSelectedYksTarget] = useState(YKS_TARGET_PRESETS[0].name);
+  const [selectedLgsTarget, setSelectedLgsTarget] = useState(
+    LGS_TARGET_PRESETS[1].name,
+  );
+  const [selectedYksTarget, setSelectedYksTarget] = useState(
+    YKS_TARGET_PRESETS[0].name,
+  );
 
   const reloadTrials = useCallback(() => {
     setSavedTrials(getSavedExamTrials(activeTab));
@@ -160,7 +165,8 @@ export function ExamScoreCalculatorModal({
   // YKS Calculations
   const yksResult = useMemo(() => {
     const table = calculateYksScoreTable(yksInputs, diplomaScore);
-    const activeRow = table.rows.find((r) => r.scoreType === selectedYksType) || table.rows[0];
+    const activeRow =
+      table.rows.find((r) => r.scoreType === selectedYksType) || table.rows[0];
 
     let tytNet = 0;
     for (const key of tytSubjectKeys) {
@@ -370,15 +376,24 @@ export function ExamScoreCalculatorModal({
           <div className="flex justify-between items-start border-b border-gray-400 pb-3">
             <div>
               <h1 className="text-xl font-bold tracking-tight">
-                Uğur Hoca Matematik — Deneme Sınavı Sonuç Karnesi & Stratejik Eylem Planı
+                Uğur Hoca Matematik — Deneme Sınavı Sonuç Karnesi & Stratejik
+                Eylem Planı
               </h1>
               <p className="mt-1 text-xs text-gray-700">
-                Sınav Türü: {' '}<span className="font-bold">{activeTab === 'lgs' ? 'LGS (8. Sınıf)' : `YKS (${selectedYksType} Puan Türü)`}</span> {' '}| Tarih: {new Date().toLocaleDateString('tr-TR')} | Kişisel Teşhis ve Gelişim Çıktısı
+                Sınav Türü:{' '}
+                <span className="font-bold">
+                  {activeTab === 'lgs'
+                    ? 'LGS (8. Sınıf)'
+                    : `YKS (${selectedYksType} Puan Türü)`}
+                </span>{' '}
+                | Tarih: {formatIstanbulDate(new Date())} | Kişisel Teşhis ve
+                Gelişim Çıktısı
               </p>
             </div>
             <div className="text-right">
               <span className="inline-block border border-black px-2.5 py-1 text-xs font-bold rounded">
-                Hedef: {' '}{activeTab === 'lgs' ? selectedLgsTarget : selectedYksTarget}
+                Hedef:{' '}
+                {activeTab === 'lgs' ? selectedLgsTarget : selectedYksTarget}
               </span>
             </div>
           </div>
@@ -390,7 +405,9 @@ export function ExamScoreCalculatorModal({
                 {activeTab === 'lgs' ? 'LGS Puanı' : 'Yerleştirme Puanı'}
               </div>
               <div className="mt-1 text-2xl font-black">
-                {activeTab === 'lgs' ? lgsResult.score : yksResult.activeRow.placementScore}
+                {activeTab === 'lgs'
+                  ? lgsResult.score
+                  : yksResult.activeRow.placementScore}
               </div>
               <div className="text-[9px] text-gray-500">
                 {activeTab === 'lgs' ? 'Maks: 500 Puan' : 'Maks: 560 Puan'}
@@ -398,29 +415,51 @@ export function ExamScoreCalculatorModal({
             </div>
 
             <div className="border border-gray-400 rounded-lg p-2.5 bg-gray-50">
-              <div className="text-[10px] font-bold uppercase text-gray-600">Toplam Net</div>
+              <div className="text-[10px] font-bold uppercase text-gray-600">
+                Toplam Net
+              </div>
               <div className="mt-1 text-2xl font-black text-indigo-700">
-                {activeTab === 'lgs' ? lgsResult.totalNet : Number((yksResult.tytNet + yksResult.aytNet).toFixed(2))}
+                {activeTab === 'lgs'
+                  ? lgsResult.totalNet
+                  : Number((yksResult.tytNet + yksResult.aytNet).toFixed(2))}
               </div>
               <div className="text-[9px] text-gray-500">
-                {activeTab === 'lgs' ? '90 Soru Üzerinden' : `${yksResult.tytNet} TYT + ${yksResult.aytNet} AYT`}
+                {activeTab === 'lgs'
+                  ? '90 Soru Üzerinden'
+                  : `${yksResult.tytNet} TYT + ${yksResult.aytNet} AYT`}
               </div>
             </div>
 
             <div className="border border-gray-400 rounded-lg p-2.5 bg-gray-50">
-              <div className="text-[10px] font-bold uppercase text-gray-600">Matematik Neti</div>
+              <div className="text-[10px] font-bold uppercase text-gray-600">
+                Matematik Neti
+              </div>
               <div className="mt-1 text-2xl font-black text-amber-700">
                 {activeTab === 'lgs'
-                  ? Math.max(0, (lgsInputs.matematik?.correct || 0) - (lgsInputs.matematik?.wrong || 0) / 3).toFixed(2)
+                  ? Math.max(
+                      0,
+                      (lgsInputs.matematik?.correct || 0) -
+                        (lgsInputs.matematik?.wrong || 0) / 3,
+                    ).toFixed(2)
                   : Number(
                       (
-                        Math.max(0, (yksInputs.tytMatematik?.correct || 0) - (yksInputs.tytMatematik?.wrong || 0) / 4) +
-                        Math.max(0, (yksInputs.aytMatematik?.correct || 0) - (yksInputs.aytMatematik?.wrong || 0) / 4)
+                        Math.max(
+                          0,
+                          (yksInputs.tytMatematik?.correct || 0) -
+                            (yksInputs.tytMatematik?.wrong || 0) / 4,
+                        ) +
+                        Math.max(
+                          0,
+                          (yksInputs.aytMatematik?.correct || 0) -
+                            (yksInputs.aytMatematik?.wrong || 0) / 4,
+                        )
                       ).toFixed(2),
                     )}
               </div>
               <div className="text-[9px] text-gray-500">
-                {activeTab === 'lgs' ? '20 Soru Üzerinden' : 'TYT + AYT Matematik'}
+                {activeTab === 'lgs'
+                  ? '20 Soru Üzerinden'
+                  : 'TYT + AYT Matematik'}
               </div>
             </div>
 
@@ -429,10 +468,14 @@ export function ExamScoreCalculatorModal({
                 {activeTab === 'lgs' ? 'Tahmini Yüzdelik' : 'Başarı Sırası'}
               </div>
               <div className="mt-1 text-2xl font-black text-emerald-700">
-                {activeTab === 'lgs' ? lgsResult.estimatedPercentile : yksResult.activeRow.placementRank.toLocaleString('tr-TR')}
+                {activeTab === 'lgs'
+                  ? lgsResult.estimatedPercentile
+                  : yksResult.activeRow.placementRank.toLocaleString('tr-TR')}
               </div>
               <div className="text-[9px] text-gray-500">
-                {activeTab === 'lgs' ? lgsResult.targetBand : 'Tahmini Sıralama'}
+                {activeTab === 'lgs'
+                  ? lgsResult.targetBand
+                  : 'Tahmini Sıralama'}
               </div>
             </div>
           </div>
@@ -445,12 +488,24 @@ export function ExamScoreCalculatorModal({
             <table className="w-full text-xs text-left border-collapse border border-gray-400">
               <thead>
                 <tr className="bg-gray-100 text-gray-800 border-b border-gray-400">
-                  <th className="p-1.5 border-r border-gray-300">Ders / Test</th>
-                  <th className="p-1.5 text-center border-r border-gray-300">Soru</th>
-                  <th className="p-1.5 text-center border-r border-gray-300">Doğru</th>
-                  <th className="p-1.5 text-center border-r border-gray-300">Yanlış</th>
-                  <th className="p-1.5 text-center border-r border-gray-300">Boş</th>
-                  <th className="p-1.5 text-center border-r border-gray-300 font-bold">Net</th>
+                  <th className="p-1.5 border-r border-gray-300">
+                    Ders / Test
+                  </th>
+                  <th className="p-1.5 text-center border-r border-gray-300">
+                    Soru
+                  </th>
+                  <th className="p-1.5 text-center border-r border-gray-300">
+                    Doğru
+                  </th>
+                  <th className="p-1.5 text-center border-r border-gray-300">
+                    Yanlış
+                  </th>
+                  <th className="p-1.5 text-center border-r border-gray-300">
+                    Boş
+                  </th>
+                  <th className="p-1.5 text-center border-r border-gray-300 font-bold">
+                    Net
+                  </th>
                   <th className="p-1.5 text-center">Başarı %</th>
                 </tr>
               </thead>
@@ -458,48 +513,102 @@ export function ExamScoreCalculatorModal({
                 {activeTab === 'lgs' ? (
                   <>
                     {lgsSubjects.map((sub) => {
-                      const inp = lgsInputs[sub.key] || { correct: 0, wrong: 0 };
-                      const empty = Math.max(0, sub.questions - (inp.correct + inp.wrong));
+                      const inp = lgsInputs[sub.key] || {
+                        correct: 0,
+                        wrong: 0,
+                      };
+                      const empty = Math.max(
+                        0,
+                        sub.questions - (inp.correct + inp.wrong),
+                      );
                       const net = Math.max(0, inp.correct - inp.wrong / 3);
                       const rate = Math.round((net / sub.questions) * 100);
                       return (
                         <tr key={sub.key} className="border-b border-gray-300">
-                          <td className="p-1.5 font-medium border-r border-gray-300">{sub.label}</td>
-                          <td className="p-1.5 text-center border-r border-gray-300">{sub.questions}</td>
-                          <td className="p-1.5 text-center border-r border-gray-300 text-emerald-800 font-semibold">{inp.correct}</td>
-                          <td className="p-1.5 text-center border-r border-gray-300 text-rose-800 font-semibold">{inp.wrong}</td>
-                          <td className="p-1.5 text-center border-r border-gray-300 text-gray-600">{empty}</td>
-                          <td className="p-1.5 text-center border-r border-gray-300 font-bold">{net.toFixed(2)}</td>
-                          <td className="p-1.5 text-center font-medium">%{rate}</td>
+                          <td className="p-1.5 font-medium border-r border-gray-300">
+                            {sub.label}
+                          </td>
+                          <td className="p-1.5 text-center border-r border-gray-300">
+                            {sub.questions}
+                          </td>
+                          <td className="p-1.5 text-center border-r border-gray-300 text-emerald-800 font-semibold">
+                            {inp.correct}
+                          </td>
+                          <td className="p-1.5 text-center border-r border-gray-300 text-rose-800 font-semibold">
+                            {inp.wrong}
+                          </td>
+                          <td className="p-1.5 text-center border-r border-gray-300 text-gray-600">
+                            {empty}
+                          </td>
+                          <td className="p-1.5 text-center border-r border-gray-300 font-bold">
+                            {net.toFixed(2)}
+                          </td>
+                          <td className="p-1.5 text-center font-medium">
+                            %{rate}
+                          </td>
                         </tr>
                       );
                     })}
                     <tr className="bg-gray-100 font-bold border-t-2 border-gray-400">
-                      <td className="p-1.5 border-r border-gray-300">LGS TOPLAMI</td>
-                      <td className="p-1.5 text-center border-r border-gray-300">90</td>
-                      <td className="p-1.5 text-center border-r border-gray-300">{lgsResult.totalCorrect}</td>
-                      <td className="p-1.5 text-center border-r border-gray-300">{lgsResult.totalWrong}</td>
-                      <td className="p-1.5 text-center border-r border-gray-300">{90 - (lgsResult.totalCorrect + lgsResult.totalWrong)}</td>
-                      <td className="p-1.5 text-center border-r border-gray-300 text-indigo-900">{lgsResult.totalNet.toFixed(2)}</td>
-                      <td className="p-1.5 text-center">%{Math.round((lgsResult.totalNet / 90) * 100)}</td>
+                      <td className="p-1.5 border-r border-gray-300">
+                        LGS TOPLAMI
+                      </td>
+                      <td className="p-1.5 text-center border-r border-gray-300">
+                        90
+                      </td>
+                      <td className="p-1.5 text-center border-r border-gray-300">
+                        {lgsResult.totalCorrect}
+                      </td>
+                      <td className="p-1.5 text-center border-r border-gray-300">
+                        {lgsResult.totalWrong}
+                      </td>
+                      <td className="p-1.5 text-center border-r border-gray-300">
+                        {90 - (lgsResult.totalCorrect + lgsResult.totalWrong)}
+                      </td>
+                      <td className="p-1.5 text-center border-r border-gray-300 text-indigo-900">
+                        {lgsResult.totalNet.toFixed(2)}
+                      </td>
+                      <td className="p-1.5 text-center">
+                        %{Math.round((lgsResult.totalNet / 90) * 100)}
+                      </td>
                     </tr>
                   </>
                 ) : (
                   <>
                     {yksSubjects.map((sub) => {
-                      const inp = yksInputs[sub.key] || { correct: 0, wrong: 0 };
-                      const empty = Math.max(0, sub.questions - (inp.correct + inp.wrong));
+                      const inp = yksInputs[sub.key] || {
+                        correct: 0,
+                        wrong: 0,
+                      };
+                      const empty = Math.max(
+                        0,
+                        sub.questions - (inp.correct + inp.wrong),
+                      );
                       const net = Math.max(0, inp.correct - inp.wrong / 4);
                       const rate = Math.round((net / sub.questions) * 100);
                       return (
                         <tr key={sub.key} className="border-b border-gray-300">
-                          <td className="p-1.5 font-medium border-r border-gray-300">{sub.label}</td>
-                          <td className="p-1.5 text-center border-r border-gray-300">{sub.questions}</td>
-                          <td className="p-1.5 text-center border-r border-gray-300 text-emerald-800 font-semibold">{inp.correct}</td>
-                          <td className="p-1.5 text-center border-r border-gray-300 text-rose-800 font-semibold">{inp.wrong}</td>
-                          <td className="p-1.5 text-center border-r border-gray-300 text-gray-600">{empty}</td>
-                          <td className="p-1.5 text-center border-r border-gray-300 font-bold">{net.toFixed(2)}</td>
-                          <td className="p-1.5 text-center font-medium">%{rate}</td>
+                          <td className="p-1.5 font-medium border-r border-gray-300">
+                            {sub.label}
+                          </td>
+                          <td className="p-1.5 text-center border-r border-gray-300">
+                            {sub.questions}
+                          </td>
+                          <td className="p-1.5 text-center border-r border-gray-300 text-emerald-800 font-semibold">
+                            {inp.correct}
+                          </td>
+                          <td className="p-1.5 text-center border-r border-gray-300 text-rose-800 font-semibold">
+                            {inp.wrong}
+                          </td>
+                          <td className="p-1.5 text-center border-r border-gray-300 text-gray-600">
+                            {empty}
+                          </td>
+                          <td className="p-1.5 text-center border-r border-gray-300 font-bold">
+                            {net.toFixed(2)}
+                          </td>
+                          <td className="p-1.5 text-center font-medium">
+                            %{rate}
+                          </td>
                         </tr>
                       );
                     })}
@@ -514,7 +623,8 @@ export function ExamScoreCalculatorModal({
             <div className="font-bold text-xs text-indigo-950 flex items-center justify-between">
               <span>🎯 Hedef Analizi & Stratejik Eylem Reçetesi</span>
               <span className="text-[11px] font-medium text-gray-700">
-                Hedef: {' '}{activeTab === 'lgs' ? selectedLgsTarget : selectedYksTarget}
+                Hedef:{' '}
+                {activeTab === 'lgs' ? selectedLgsTarget : selectedYksTarget}
               </span>
             </div>
             <p className="mt-1 text-xs text-gray-800 leading-relaxed">
@@ -544,9 +654,21 @@ export function ExamScoreCalculatorModal({
                 🎯 Gelecek Hafta Çözeceğim Telafi Soruları ve Odak Planım:
               </div>
               <div className="text-gray-600 mt-1.5 space-y-1">
-                <div>[ ] 1. .............................................................. (Hedef: ... Soru)</div>
-                <div>[ ] 2. .............................................................. (Hedef: ... Soru)</div>
-                <div>[ ] 3. .............................................................. (Hedef: ... Soru)</div>
+                <div>
+                  [ ] 1.
+                  ..............................................................
+                  (Hedef: ... Soru)
+                </div>
+                <div>
+                  [ ] 2.
+                  ..............................................................
+                  (Hedef: ... Soru)
+                </div>
+                <div>
+                  [ ] 3.
+                  ..............................................................
+                  (Hedef: ... Soru)
+                </div>
               </div>
             </div>
           </div>
@@ -554,7 +676,7 @@ export function ExamScoreCalculatorModal({
           {/* İmzalar */}
           <div className="mt-4 flex justify-between items-center text-[10px] text-gray-700 border-t border-gray-300 pt-2">
             <div>Öğrenci İmzası: ____________________</div>
-            <div>Tarih: {new Date().toLocaleDateString('tr-TR')}</div>
+            <div>Tarih: {formatIstanbulDate(new Date())}</div>
             <div>Öğretmen / Takip İmzası: ____________________</div>
           </div>
         </div>
@@ -566,11 +688,15 @@ export function ExamScoreCalculatorModal({
               <Calculator className="h-5 w-5" />
             </div>
             <div>
-              <h2 id={titleId} className="font-display text-base sm:text-lg font-bold text-slate-900 dark:text-white">
+              <h2
+                id={titleId}
+                className="font-display text-base sm:text-lg font-bold text-slate-900 dark:text-white"
+              >
                 İnteraktif Sınav Puanı & Net Hesaplayıcı
               </h2>
               <p className="text-xs text-slate-500 dark:text-slate-400">
-                Doğru ve yanlışlarını girerek MEB/ÖSYM formülüyle anında net ve puanını hesapla.
+                Doğru ve yanlışlarını girerek MEB/ÖSYM formülüyle anında net ve
+                puanını hesapla.
               </p>
             </div>
           </div>
@@ -665,7 +791,10 @@ export function ExamScoreCalculatorModal({
                   <div className="mt-1 font-display text-2xl font-extrabold text-purple-700 dark:text-purple-300">
                     {lgsResult.estimatedPercentile}
                   </div>
-                  <div className="mt-1 truncate text-[11px] text-slate-500 dark:text-slate-400" title={lgsResult.targetBand}>
+                  <div
+                    className="mt-1 truncate text-[11px] text-slate-500 dark:text-slate-400"
+                    title={lgsResult.targetBand}
+                  >
                     {lgsResult.targetBand}
                   </div>
                 </div>
@@ -683,8 +812,16 @@ export function ExamScoreCalculatorModal({
                         : 'active:scale-95 bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none'
                     }`}
                   >
-                    {saveSuccess ? (<Check className="h-4 w-4" /> ): (<BookmarkPlus className="h-4 w-4" />)}
-                    <span>{saveSuccess ? 'Deneme Kaydedildi!' : 'Bu Denemeyi Kaydet'}</span>
+                    {saveSuccess ? (
+                      <Check className="h-4 w-4" />
+                    ) : (
+                      <BookmarkPlus className="h-4 w-4" />
+                    )}
+                    <span>
+                      {saveSuccess
+                        ? 'Deneme Kaydedildi!'
+                        : 'Bu Denemeyi Kaydet'}
+                    </span>
                   </button>
 
                   <button
@@ -713,7 +850,9 @@ export function ExamScoreCalculatorModal({
                 {peakTrial && (
                   <div className="text-[11px] font-semibold text-slate-500 dark:text-slate-400 flex items-center gap-1">
                     <span>🏆 Zirve Denemen:</span>
-                    <strong className="text-amber-600 dark:text-amber-400">{peakTrial.score.toFixed(1)} Puan</strong>
+                    <strong className="text-amber-600 dark:text-amber-400">
+                      {peakTrial.score.toFixed(1)} Puan
+                    </strong>
                     <span>(Mat: {peakTrial.mathNet} Net)</span>
                   </div>
                 )}
@@ -742,13 +881,17 @@ export function ExamScoreCalculatorModal({
 
                   {savedTrials.length === 0 ? (
                     <p className="text-xs text-slate-500 dark:text-slate-400 py-3 text-center">
-                      Henüz kayıtlı deneme sınavı bulunmuyor. Yukarıdaki &quot;Bu Denemeyi Kaydet&quot; butonuna basarak ilk sonucunu ekleyebilirsin.
+                      Henüz kayıtlı deneme sınavı bulunmuyor. Yukarıdaki
+                      &quot;Bu Denemeyi Kaydet&quot; butonuna basarak ilk
+                      sonucunu ekleyebilirsin.
                     </p>
                   ) : (
                     <div className="space-y-2 max-h-60 overflow-y-auto pr-1 [scrollbar-width:thin]">
                       {savedTrials.map((trial, idx) => {
                         const nextTrial = savedTrials[idx + 1];
-                        const netDiff = nextTrial ? trial.totalNet - nextTrial.totalNet : null;
+                        const netDiff = nextTrial
+                          ? trial.totalNet - nextTrial.totalNet
+                          : null;
                         return (
                           <div
                             key={trial.id}
@@ -759,15 +902,21 @@ export function ExamScoreCalculatorModal({
                                 <span className="font-bold text-slate-900 dark:text-white truncate">
                                   {trial.title}
                                 </span>
-                                <span className="text-[10px] text-slate-400">{trial.date}</span>
+                                <span className="text-[10px] text-slate-400">
+                                  {trial.date}
+                                </span>
                               </div>
                               <div className="mt-1 flex items-center gap-3 text-[11px] text-slate-600 dark:text-slate-300">
                                 <span>
-                                  Puan: {' '}<strong className="text-indigo-600 dark:text-indigo-400">{trial.score}</strong>
+                                  Puan:{' '}
+                                  <strong className="text-indigo-600 dark:text-indigo-400">
+                                    {trial.score}
+                                  </strong>
                                 </span>
                                 <span>•</span>
                                 <span>
-                                  Matematik: {' '}<strong>{trial.mathNet} Net</strong>
+                                  Matematik:{' '}
+                                  <strong>{trial.mathNet} Net</strong>
                                 </span>
                                 <span>•</span>
                                 <span>
@@ -790,7 +939,12 @@ export function ExamScoreCalculatorModal({
                                   ) : (
                                     <ArrowDownRight className="h-3 w-3" />
                                   )}
-                                  <span>{netDiff >= 0 ? `+${netDiff.toFixed(2)}` : netDiff.toFixed(2)}{' '} Net</span>
+                                  <span>
+                                    {netDiff >= 0
+                                      ? `+${netDiff.toFixed(2)}`
+                                      : netDiff.toFixed(2)}{' '}
+                                    Net
+                                  </span>
                                 </span>
                               )}
 
@@ -822,7 +976,9 @@ export function ExamScoreCalculatorModal({
                   </div>
 
                   <div className="flex items-center gap-2">
-                    <span className="text-[11px] text-slate-500 dark:text-slate-400">Hedef Okul:</span>
+                    <span className="text-[11px] text-slate-500 dark:text-slate-400">
+                      Hedef Okul:
+                    </span>
                     <select
                       value={selectedLgsTarget}
                       onChange={(e) => setSelectedLgsTarget(e.target.value)}
@@ -849,7 +1005,10 @@ export function ExamScoreCalculatorModal({
                     <div className="flex items-center gap-2 font-bold">
                       <Sparkles className="h-4 w-4 text-accent-success-ink shrink-0" />
                       <span>
-                        🎉 Harika Gidiyorsun! Mevcut netlerin ({lgsResult.score.toFixed(2)} puan) {selectedLgsTarget} {' '}taban puanının ({lgsGapAnalysis.targetScore} puan) üzerinde.
+                        🎉 Harika Gidiyorsun! Mevcut netlerin (
+                        {lgsResult.score.toFixed(2)} puan) {selectedLgsTarget}{' '}
+                        taban puanının ({lgsGapAnalysis.targetScore} puan)
+                        üzerinde.
                       </span>
                     </div>
                   ) : (
@@ -857,11 +1016,19 @@ export function ExamScoreCalculatorModal({
                       <p className="font-bold flex items-center gap-1.5">
                         <Flame className="h-3.5 w-3.5 text-amber-600 dark:text-amber-400 shrink-0" />
                         <span>
-                          {selectedLgsTarget} ({lgsGapAnalysis.targetScore} {' '}Puan) İçin Kalan Fark: +{lgsGapAnalysis.delta} Puan
+                          {selectedLgsTarget} ({lgsGapAnalysis.targetScore}{' '}
+                          Puan) İçin Kalan Fark: +{lgsGapAnalysis.delta} Puan
                         </span>
                       </p>
                       <p className="text-[11px] opacity-90">
-                        💡 <strong>Aksiyon Reçetesi:</strong> Bu taban puan farkını kapatmak için kalan sürede: {' '}<strong>Matematikten +{lgsGapAnalysis.mathNeeded} net</strong> {' '}VEYA {' '}<strong>Fenden +{lgsGapAnalysis.fenNeeded} net</strong> {' '}artırman hedefe ulaşman için yeterli!
+                        💡 <strong>Aksiyon Reçetesi:</strong> Bu taban puan
+                        farkını kapatmak için kalan sürede:{' '}
+                        <strong>
+                          Matematikten +{lgsGapAnalysis.mathNeeded} net
+                        </strong>{' '}
+                        VEYA{' '}
+                        <strong>Fenden +{lgsGapAnalysis.fenNeeded} net</strong>{' '}
+                        artırman hedefe ulaşman için yeterli!
                       </p>
                     </div>
                   )}
@@ -871,24 +1038,42 @@ export function ExamScoreCalculatorModal({
               {/* Ders Giriş Tablosu */}
               <div className="rounded-2xl border border-slate-200 dark:border-white/10 overflow-hidden min-w-0">
                 <div className="grid grid-cols-12 bg-slate-100 dark:bg-white/5 px-2.5 sm:px-4 py-2 sm:py-2.5 text-[11px] sm:text-xs font-bold text-slate-600 dark:text-slate-300 border-b border-slate-200 dark:border-white/10">
-                  <div className="col-span-5 sm:col-span-4">Ders Adı (Soru)</div>
+                  <div className="col-span-5 sm:col-span-4">
+                    Ders Adı (Soru)
+                  </div>
                   <div className="col-span-2 text-center">Doğru</div>
                   <div className="col-span-2 text-center">Yanlış</div>
-                  <div className="col-span-1 text-center hidden sm:block">Boş</div>
+                  <div className="col-span-1 text-center hidden sm:block">
+                    Boş
+                  </div>
                   <div className="col-span-3 text-right">Net</div>
                 </div>
 
                 <div className="divide-y divide-slate-100 dark:divide-white/5">
                   {lgsSubjects.map((sub) => {
-                    const current = lgsInputs[sub.key] || { correct: 0, wrong: 0 };
-                    const empty = Math.max(0, sub.questions - (current.correct + current.wrong));
-                    const net = Math.max(0, current.correct - current.wrong / 3);
+                    const current = lgsInputs[sub.key] || {
+                      correct: 0,
+                      wrong: 0,
+                    };
+                    const empty = Math.max(
+                      0,
+                      sub.questions - (current.correct + current.wrong),
+                    );
+                    const net = Math.max(
+                      0,
+                      current.correct - current.wrong / 3,
+                    );
 
                     return (
-                      <div key={sub.key} className="grid grid-cols-12 items-center px-2 sm:px-4 py-2 sm:py-3 text-xs sm:text-sm hover:bg-slate-50/50 dark:hover:bg-white/5 transition-colors">
+                      <div
+                        key={sub.key}
+                        className="grid grid-cols-12 items-center px-2 sm:px-4 py-2 sm:py-3 text-xs sm:text-sm hover:bg-slate-50/50 dark:hover:bg-white/5 transition-colors"
+                      >
                         <div className="col-span-5 sm:col-span-4 font-semibold text-slate-800 dark:text-slate-200 truncate pr-1">
                           {sub.label}
-                          <span className="ml-1 text-[10px] sm:text-xs text-slate-400 font-normal">({sub.questions}s)</span>
+                          <span className="ml-1 text-[10px] sm:text-xs text-slate-400 font-normal">
+                            ({sub.questions}s)
+                          </span>
                         </div>
                         <div className="col-span-2 px-0.5 sm:px-1">
                           <input
@@ -898,7 +1083,14 @@ export function ExamScoreCalculatorModal({
                             value={current.correct || ''}
                             placeholder="0"
                             aria-label={`${sub.label} doğru sayısı`}
-                            onChange={(e) => handleLgsChange(sub.key, 'correct', e.target.value, sub.questions)}
+                            onChange={(e) =>
+                              handleLgsChange(
+                                sub.key,
+                                'correct',
+                                e.target.value,
+                                sub.questions,
+                              )
+                            }
                             className="w-full min-w-0 rounded-lg sm:rounded-xl border border-slate-200 dark:border-white/10 bg-white dark:bg-slate-800 px-1 sm:px-2 py-1 sm:py-1.5 text-center text-xs sm:text-sm font-bold text-slate-900 dark:text-white focus:border-indigo-500 focus:outline-none"
                           />
                         </div>
@@ -910,7 +1102,14 @@ export function ExamScoreCalculatorModal({
                             value={current.wrong || ''}
                             placeholder="0"
                             aria-label={`${sub.label} yanlış sayısı`}
-                            onChange={(e) => handleLgsChange(sub.key, 'wrong', e.target.value, sub.questions)}
+                            onChange={(e) =>
+                              handleLgsChange(
+                                sub.key,
+                                'wrong',
+                                e.target.value,
+                                sub.questions,
+                              )
+                            }
                             className="w-full min-w-0 rounded-lg sm:rounded-xl border border-slate-200 dark:border-white/10 bg-white dark:bg-slate-800 px-1 sm:px-2 py-1 sm:py-1.5 text-center text-xs sm:text-sm font-bold text-red-500 focus:border-red-500 focus:outline-none"
                           />
                         </div>
@@ -936,7 +1135,8 @@ export function ExamScoreCalculatorModal({
                   Değerleri Sıfırla
                 </button>
                 <div className="text-[11px] text-slate-400">
-                  MEB 2026 katsayılarına göre standart sapmasız yaklaşık hesaplamadır.
+                  MEB 2026 katsayılarına göre standart sapmasız yaklaşık
+                  hesaplamadır.
                 </div>
               </div>
             </div>
@@ -946,26 +1146,39 @@ export function ExamScoreCalculatorModal({
               {/* Puan Türü ve Diploma Notu Seçimi */}
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 rounded-2xl border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-white/5 p-3 sm:p-4">
                 <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
-                  <span className="text-xs font-bold text-slate-700 dark:text-slate-300 mr-1">Hedef Alan:</span>
-                  {(['SAY', 'EA', 'SOZ', 'TYT'] as YksScoreType[]).map((type) => (
-                    <button
-                      key={type}
-                      type="button"
-                      onClick={() => setSelectedYksType(type)}
-                      className={`rounded-xl px-2.5 sm:px-3 py-1 sm:py-1.5 text-[11px] sm:text-xs font-bold transition-all ${
-                        selectedYksType === type
-                          ? 'shadow-sm bg-brand-primary text-slate-950 dark:text-slate-950'
-                          : 'border border-slate-200 dark:border-white/10 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300'
-                      }`}
-                    >
-                      {type === 'SAY' ? 'Sayısal' : type === 'EA' ? 'Eşit Ağırlık' : type === 'SOZ' ? 'Sözel' : 'Sadece TYT'}
-                    </button>
-                  ))}
+                  <span className="text-xs font-bold text-slate-700 dark:text-slate-300 mr-1">
+                    Hedef Alan:
+                  </span>
+                  {(['SAY', 'EA', 'SOZ', 'TYT'] as YksScoreType[]).map(
+                    (type) => (
+                      <button
+                        key={type}
+                        type="button"
+                        onClick={() => setSelectedYksType(type)}
+                        className={`rounded-xl px-2.5 sm:px-3 py-1 sm:py-1.5 text-[11px] sm:text-xs font-bold transition-all ${
+                          selectedYksType === type
+                            ? 'shadow-sm bg-brand-primary text-slate-950 dark:text-slate-950'
+                            : 'border border-slate-200 dark:border-white/10 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300'
+                        }`}
+                      >
+                        {type === 'SAY'
+                          ? 'Sayısal'
+                          : type === 'EA'
+                            ? 'Eşit Ağırlık'
+                            : type === 'SOZ'
+                              ? 'Sözel'
+                              : 'Sadece TYT'}
+                      </button>
+                    ),
+                  )}
                 </div>
 
                 <div className="flex items-center gap-2 self-end sm:self-auto">
                   <GraduationCap className="h-4 w-4 text-indigo-500" />
-                  <label htmlFor="obp-input" className="text-xs font-bold text-slate-700 dark:text-slate-300">
+                  <label
+                    htmlFor="obp-input"
+                    className="text-xs font-bold text-slate-700 dark:text-slate-300"
+                  >
                     Diploma Notu (OBP):
                   </label>
                   <input
@@ -974,7 +1187,14 @@ export function ExamScoreCalculatorModal({
                     min="50"
                     max="100"
                     value={diplomaScore}
-                    onChange={(e) => setDiplomaScore(Math.max(50, Math.min(100, parseInt(e.target.value, 10) || 50)))}
+                    onChange={(e) =>
+                      setDiplomaScore(
+                        Math.max(
+                          50,
+                          Math.min(100, parseInt(e.target.value, 10) || 50),
+                        ),
+                      )
+                    }
                     className="w-16 rounded-xl border border-slate-200 dark:border-white/10 bg-white dark:bg-slate-800 px-2 py-1 text-center text-xs font-bold text-slate-900 dark:text-white"
                   />
                 </div>
@@ -989,7 +1209,9 @@ export function ExamScoreCalculatorModal({
                   <div className="mt-1 font-display text-2xl font-extrabold text-indigo-700 dark:text-indigo-300 tabular-nums">
                     {yksResult.activeRow.placementScore.toFixed(2)}
                   </div>
-                  <div className="text-[10px] text-slate-500 dark:text-slate-400">OBP Eklenmiş</div>
+                  <div className="text-[10px] text-slate-500 dark:text-slate-400">
+                    OBP Eklenmiş
+                  </div>
                 </div>
 
                 <div className="rounded-2xl border border-purple-200 dark:border-purple-500/20 bg-purple-50/50 dark:bg-purple-950/30 p-3.5">
@@ -997,9 +1219,13 @@ export function ExamScoreCalculatorModal({
                     Tahmini Sıralama
                   </div>
                   <div className="mt-1 font-display text-2xl font-extrabold text-purple-700 dark:text-purple-300 tabular-nums">
-                    {yksResult.activeRow.placementRank > 0 ? `~${yksResult.activeRow.placementRank.toLocaleString('tr-TR')}` : '—'}
+                    {yksResult.activeRow.placementRank > 0
+                      ? `~${yksResult.activeRow.placementRank.toLocaleString('tr-TR')}`
+                      : '—'}
                   </div>
-                  <div className="text-[10px] text-slate-500 dark:text-slate-400">Başarı Sırası Bandı</div>
+                  <div className="text-[10px] text-slate-500 dark:text-slate-400">
+                    Başarı Sırası Bandı
+                  </div>
                 </div>
 
                 <div className="rounded-2xl border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-white/5 p-3.5">
@@ -1009,7 +1235,9 @@ export function ExamScoreCalculatorModal({
                   <div className="mt-1 font-display text-2xl font-extrabold text-slate-900 dark:text-white tabular-nums">
                     {yksResult.tytNet}
                   </div>
-                  <div className="text-[10px] text-slate-500 dark:text-slate-400">120 soru üzerinden</div>
+                  <div className="text-[10px] text-slate-500 dark:text-slate-400">
+                    120 soru üzerinden
+                  </div>
                 </div>
 
                 <div className="rounded-2xl border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-white/5 p-3.5">
@@ -1019,7 +1247,9 @@ export function ExamScoreCalculatorModal({
                   <div className="mt-1 font-display text-2xl font-extrabold text-slate-900 dark:text-white tabular-nums">
                     {yksResult.aytNet}
                   </div>
-                  <div className="text-[10px] text-slate-500 dark:text-slate-400">Seçilen testler üzerinden</div>
+                  <div className="text-[10px] text-slate-500 dark:text-slate-400">
+                    Seçilen testler üzerinden
+                  </div>
                 </div>
               </div>
 
@@ -1035,8 +1265,16 @@ export function ExamScoreCalculatorModal({
                         : 'active:scale-95 bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none'
                     }`}
                   >
-                    {saveSuccess ? (<Check className="h-4 w-4" /> ): (<BookmarkPlus className="h-4 w-4" />)}
-                    <span>{saveSuccess ? 'Deneme Kaydedildi!' : 'Bu Denemeyi Kaydet'}</span>
+                    {saveSuccess ? (
+                      <Check className="h-4 w-4" />
+                    ) : (
+                      <BookmarkPlus className="h-4 w-4" />
+                    )}
+                    <span>
+                      {saveSuccess
+                        ? 'Deneme Kaydedildi!'
+                        : 'Bu Denemeyi Kaydet'}
+                    </span>
                   </button>
 
                   <button
@@ -1065,7 +1303,9 @@ export function ExamScoreCalculatorModal({
                 {peakTrial && (
                   <div className="text-[11px] font-semibold text-slate-500 dark:text-slate-400 flex items-center gap-1">
                     <span>🏆 Zirve YKS Skorun:</span>
-                    <strong className="text-purple-600 dark:text-purple-400">{peakTrial.score.toFixed(1)} Puan</strong>
+                    <strong className="text-purple-600 dark:text-purple-400">
+                      {peakTrial.score.toFixed(1)} Puan
+                    </strong>
                     <span>(Mat: {peakTrial.mathNet} Net)</span>
                   </div>
                 )}
@@ -1094,13 +1334,17 @@ export function ExamScoreCalculatorModal({
 
                   {savedTrials.length === 0 ? (
                     <p className="text-xs text-slate-500 dark:text-slate-400 py-3 text-center">
-                      Henüz kayıtlı deneme sınavı bulunmuyor. Yukarıdaki &quot;Bu Denemeyi Kaydet&quot; butonuna basarak ilk sonucunu ekleyebilirsin.
+                      Henüz kayıtlı deneme sınavı bulunmuyor. Yukarıdaki
+                      &quot;Bu Denemeyi Kaydet&quot; butonuna basarak ilk
+                      sonucunu ekleyebilirsin.
                     </p>
                   ) : (
                     <div className="space-y-2 max-h-60 overflow-y-auto pr-1 [scrollbar-width:thin]">
                       {savedTrials.map((trial, idx) => {
                         const nextTrial = savedTrials[idx + 1];
-                        const netDiff = nextTrial ? trial.totalNet - nextTrial.totalNet : null;
+                        const netDiff = nextTrial
+                          ? trial.totalNet - nextTrial.totalNet
+                          : null;
                         return (
                           <div
                             key={trial.id}
@@ -1111,15 +1355,21 @@ export function ExamScoreCalculatorModal({
                                 <span className="font-bold text-slate-900 dark:text-white truncate">
                                   {trial.title}
                                 </span>
-                                <span className="text-[10px] text-slate-400">{trial.date}</span>
+                                <span className="text-[10px] text-slate-400">
+                                  {trial.date}
+                                </span>
                               </div>
                               <div className="mt-1 flex items-center gap-3 text-[11px] text-slate-600 dark:text-slate-300">
                                 <span>
-                                  Puan: {' '}<strong className="text-purple-600 dark:text-purple-400">{trial.score}</strong>
+                                  Puan:{' '}
+                                  <strong className="text-purple-600 dark:text-purple-400">
+                                    {trial.score}
+                                  </strong>
                                 </span>
                                 <span>•</span>
                                 <span>
-                                  Mat Toplam: {' '}<strong>{trial.mathNet} Net</strong>
+                                  Mat Toplam:{' '}
+                                  <strong>{trial.mathNet} Net</strong>
                                 </span>
                                 <span>•</span>
                                 <span>
@@ -1142,7 +1392,12 @@ export function ExamScoreCalculatorModal({
                                   ) : (
                                     <ArrowDownRight className="h-3 w-3" />
                                   )}
-                                  <span>{netDiff >= 0 ? `+${netDiff.toFixed(2)}` : netDiff.toFixed(2)}{' '} Net</span>
+                                  <span>
+                                    {netDiff >= 0
+                                      ? `+${netDiff.toFixed(2)}`
+                                      : netDiff.toFixed(2)}{' '}
+                                    Net
+                                  </span>
                                 </span>
                               )}
 
@@ -1174,7 +1429,9 @@ export function ExamScoreCalculatorModal({
                   </div>
 
                   <div className="flex items-center gap-2">
-                    <span className="text-[11px] text-slate-500 dark:text-slate-400">Hedef:</span>
+                    <span className="text-[11px] text-slate-500 dark:text-slate-400">
+                      Hedef:
+                    </span>
                     <select
                       value={selectedYksTarget}
                       onChange={(e) => setSelectedYksTarget(e.target.value)}
@@ -1201,8 +1458,10 @@ export function ExamScoreCalculatorModal({
                     <div className="flex items-center gap-2 font-bold">
                       <Sparkles className="h-4 w-4 text-accent-success-ink shrink-0" />
                       <span>
-                        🎉 Harika Gidiyorsun! Yerleştirme puanın ({yksResult.activeRow.placementScore.toFixed(1)}) {' '}
-                        {selectedYksTarget} taban puanının ({yksGapAnalysis.targetScore}) üzerinde.
+                        🎉 Harika Gidiyorsun! Yerleştirme puanın (
+                        {yksResult.activeRow.placementScore.toFixed(1)}){' '}
+                        {selectedYksTarget} taban puanının (
+                        {yksGapAnalysis.targetScore}) üzerinde.
                       </span>
                     </div>
                   ) : (
@@ -1210,11 +1469,18 @@ export function ExamScoreCalculatorModal({
                       <p className="font-bold flex items-center gap-1.5">
                         <Flame className="h-3.5 w-3.5 text-purple-600 dark:text-purple-400 shrink-0" />
                         <span>
-                          {selectedYksTarget} ({yksGapAnalysis.targetScore} {' '}Puan) İçin Kalan Fark: +{yksGapAnalysis.delta} Puan
+                          {selectedYksTarget} ({yksGapAnalysis.targetScore}{' '}
+                          Puan) İçin Kalan Fark: +{yksGapAnalysis.delta} Puan
                         </span>
                       </p>
                       <p className="text-[11px] opacity-90">
-                        💡 <strong>Aksiyon Reçetesi:</strong> Bu taban puan farkını kapatmak için: {' '}<strong>AYT Matematikten yaklaşık +{yksGapAnalysis.aytMathNeeded} net</strong> {' '}artırman hedefe ulaşman için yeterli!
+                        💡 <strong>Aksiyon Reçetesi:</strong> Bu taban puan
+                        farkını kapatmak için:{' '}
+                        <strong>
+                          AYT Matematikten yaklaşık +
+                          {yksGapAnalysis.aytMathNeeded} net
+                        </strong>{' '}
+                        artırman hedefe ulaşman için yeterli!
                       </p>
                     </div>
                   )}
@@ -1232,10 +1498,19 @@ export function ExamScoreCalculatorModal({
                   <div className="divide-y divide-slate-100 dark:divide-white/5 text-xs">
                     {tytSubjectKeys.map((key) => {
                       const meta = yksSubjects.find((s) => s.key === key);
-                      const current = yksInputs[key] || { correct: 0, wrong: 0 };
-                      const net = Math.max(0, current.correct - current.wrong / 4);
+                      const current = yksInputs[key] || {
+                        correct: 0,
+                        wrong: 0,
+                      };
+                      const net = Math.max(
+                        0,
+                        current.correct - current.wrong / 4,
+                      );
                       return (
-                        <div key={key} className="flex items-center justify-between p-2 sm:p-2.5 gap-2">
+                        <div
+                          key={key}
+                          className="flex items-center justify-between p-2 sm:p-2.5 gap-2"
+                        >
                           <span className="font-semibold text-slate-800 dark:text-slate-200 truncate text-[11px] sm:text-xs">
                             {meta?.label} ({meta?.questions}s)
                           </span>
@@ -1247,7 +1522,14 @@ export function ExamScoreCalculatorModal({
                               placeholder="D"
                               aria-label={`${meta?.label || 'Test'} doğru sayısı`}
                               value={current.correct || ''}
-                              onChange={(e) => handleYksChange(key, 'correct', e.target.value, meta?.questions || 40)}
+                              onChange={(e) =>
+                                handleYksChange(
+                                  key,
+                                  'correct',
+                                  e.target.value,
+                                  meta?.questions || 40,
+                                )
+                              }
                               className="w-10 sm:w-12 rounded-lg border border-slate-200 dark:border-white/10 bg-white dark:bg-slate-800 p-1 text-center font-bold text-xs text-slate-900 dark:text-white"
                             />
                             <input
@@ -1257,7 +1539,14 @@ export function ExamScoreCalculatorModal({
                               placeholder="Y"
                               aria-label={`${meta?.label || 'Test'} yanlış sayısı`}
                               value={current.wrong || ''}
-                              onChange={(e) => handleYksChange(key, 'wrong', e.target.value, meta?.questions || 40)}
+                              onChange={(e) =>
+                                handleYksChange(
+                                  key,
+                                  'wrong',
+                                  e.target.value,
+                                  meta?.questions || 40,
+                                )
+                              }
                               className="w-10 sm:w-12 rounded-lg border border-slate-200 dark:border-white/10 bg-white dark:bg-slate-800 p-1 text-center font-bold text-red-500 text-xs"
                             />
                             <span className="w-10 sm:w-12 text-right font-bold text-indigo-600 dark:text-indigo-400 text-xs">
@@ -1279,10 +1568,19 @@ export function ExamScoreCalculatorModal({
                   <div className="divide-y divide-slate-100 dark:divide-white/5 text-xs">
                     {aytSubjectKeys.map((key) => {
                       const meta = yksSubjects.find((s) => s.key === key);
-                      const current = yksInputs[key] || { correct: 0, wrong: 0 };
-                      const net = Math.max(0, current.correct - current.wrong / 4);
+                      const current = yksInputs[key] || {
+                        correct: 0,
+                        wrong: 0,
+                      };
+                      const net = Math.max(
+                        0,
+                        current.correct - current.wrong / 4,
+                      );
                       return (
-                        <div key={key} className="flex items-center justify-between p-2 sm:p-2.5 gap-2">
+                        <div
+                          key={key}
+                          className="flex items-center justify-between p-2 sm:p-2.5 gap-2"
+                        >
                           <span className="font-semibold text-slate-800 dark:text-slate-200 truncate text-[11px] sm:text-xs">
                             {meta?.label} ({meta?.questions}s)
                           </span>
@@ -1294,7 +1592,14 @@ export function ExamScoreCalculatorModal({
                               placeholder="D"
                               aria-label={`${meta?.label || 'Test'} doğru sayısı`}
                               value={current.correct || ''}
-                              onChange={(e) => handleYksChange(key, 'correct', e.target.value, meta?.questions || 40)}
+                              onChange={(e) =>
+                                handleYksChange(
+                                  key,
+                                  'correct',
+                                  e.target.value,
+                                  meta?.questions || 40,
+                                )
+                              }
                               className="w-10 sm:w-12 rounded-lg border border-slate-200 dark:border-white/10 bg-white dark:bg-slate-800 p-1 text-center font-bold text-xs text-slate-900 dark:text-white"
                             />
                             <input
@@ -1304,7 +1609,14 @@ export function ExamScoreCalculatorModal({
                               placeholder="Y"
                               aria-label={`${meta?.label || 'Test'} yanlış sayısı`}
                               value={current.wrong || ''}
-                              onChange={(e) => handleYksChange(key, 'wrong', e.target.value, meta?.questions || 40)}
+                              onChange={(e) =>
+                                handleYksChange(
+                                  key,
+                                  'wrong',
+                                  e.target.value,
+                                  meta?.questions || 40,
+                                )
+                              }
                               className="w-10 sm:w-12 rounded-lg border border-slate-200 dark:border-white/10 bg-white dark:bg-slate-800 p-1 text-center font-bold text-red-500 text-xs"
                             />
                             <span className="w-10 sm:w-12 text-right font-bold text-purple-600 dark:text-purple-400 text-xs">
@@ -1328,7 +1640,8 @@ export function ExamScoreCalculatorModal({
                   Değerleri Sıfırla
                 </button>
                 <div className="text-[11px] text-slate-400">
-                  ÖSYM 2026 katsayılarına ve geçmiş yıl yığılım verilerine göre yaklaşık tahmindir.
+                  ÖSYM 2026 katsayılarına ve geçmiş yıl yığılım verilerine göre
+                  yaklaşık tahmindir.
                 </div>
               </div>
             </div>

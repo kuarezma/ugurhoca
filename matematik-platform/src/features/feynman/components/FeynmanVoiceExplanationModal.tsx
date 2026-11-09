@@ -16,6 +16,7 @@ import {
   MessageSquare,
 } from 'lucide-react';
 import { useAccessibleModal } from '@/hooks/useAccessibleModal';
+import { formatIstanbulDate } from '@/lib/date-format';
 import {
   getFeynmanRecordings,
   saveFeynmanRecording,
@@ -168,7 +169,10 @@ export function FeynmanVoiceExplanationModal({
               <Mic className="w-5 h-5" />
             </div>
             <div>
-              <h2 id={titleId} className="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2 flex-wrap">
+              <h2
+                id={titleId}
+                className="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2 flex-wrap"
+              >
                 60 Saniyede Feynman Anlatımı
                 <span className="text-xs px-2.5 py-0.5 rounded-full bg-rose-50 dark:bg-rose-950/50 text-rose-600 dark:text-rose-400 border border-rose-200 dark:border-rose-800/50 font-medium">
                   Metakognitif Pedagoji
@@ -178,7 +182,9 @@ export function FeynmanVoiceExplanationModal({
                 </span>
               </h2>
               <p className="text-xs text-slate-500 dark:text-slate-400">
-                &ldquo;Bir konuyu 12 yaşındaki birine en basit haliyle anlatabiliyorsan, gerçekten anlamışsındır.&rdquo; — Richard Feynman
+                &ldquo;Bir konuyu 12 yaşındaki birine en basit haliyle
+                anlatabiliyorsan, gerçekten anlamışsındır.&rdquo; — Richard
+                Feynman
               </p>
             </div>
           </div>
@@ -279,15 +285,25 @@ export function FeynmanVoiceExplanationModal({
                           className="w-9 h-9 rounded-full bg-rose-600 text-white dark:text-white flex items-center justify-center shadow-md hover:bg-rose-700 transition-colors"
                           aria-label={isPlaying ? 'Durdur' : 'Sesli Dinle'}
                         >
-                          {isPlaying ? (<Square className="w-4 h-4 fill-white" /> ): (<Play className="w-4 h-4 fill-white ml-0.5" />)}
+                          {isPlaying ? (
+                            <Square className="w-4 h-4 fill-white" />
+                          ) : (
+                            <Play className="w-4 h-4 fill-white ml-0.5" />
+                          )}
                         </button>
                         <div>
                           <div className="text-xs font-semibold text-slate-800 dark:text-slate-200 flex items-center gap-2">
-                            <span>{isPlaying ? 'Oynatılıyor...' : 'Ses Kaydı Dinle'}</span>
-                            <span className="text-[11px] text-slate-400">({rec.durationSeconds} sn)</span>
+                            <span>
+                              {isPlaying ? 'Oynatılıyor...' : 'Ses Kaydı Dinle'}
+                            </span>
+                            <span className="text-[11px] text-slate-400">
+                              ({rec.durationSeconds} sn)
+                            </span>
                           </div>
                           <div className="flex items-center gap-1 mt-1">
-                            {[40, 70, 90, 60, 30, 80, 100, 50, 75, 40, 85, 30].map((h, i) => (
+                            {[
+                              40, 70, 90, 60, 30, 80, 100, 50, 75, 40, 85, 30,
+                            ].map((h, i) => (
                               <div
                                 key={i}
                                 className={`w-1 rounded-full transition-all ${
@@ -304,7 +320,7 @@ export function FeynmanVoiceExplanationModal({
 
                       <div className="text-[11px] text-slate-400 flex items-center gap-1">
                         <Clock className="w-3.5 h-3.5" />
-                        {new Date(rec.createdAt).toLocaleDateString('tr-TR')}
+                        {formatIstanbulDate(rec.createdAt)}
                       </div>
                     </div>
 
@@ -313,7 +329,8 @@ export function FeynmanVoiceExplanationModal({
                       <div className="p-2.5 bg-amber-50/70 dark:bg-amber-950/30 border border-amber-100 dark:border-amber-900/40 rounded-xl text-xs text-amber-900 dark:text-amber-200 flex items-center gap-2">
                         <Award className="w-4 h-4 text-amber-600 dark:text-amber-400 shrink-0" />
                         <span>
-                          <strong>Uğur Hoca Rozet Notu:</strong> {' '}{rec.teacherNote}
+                          <strong>Uğur Hoca Rozet Notu:</strong>{' '}
+                          {rec.teacherNote}
                         </span>
                       </div>
                     )}
@@ -326,15 +343,23 @@ export function FeynmanVoiceExplanationModal({
               <div className="p-4 bg-rose-50/50 dark:bg-rose-950/30 border border-rose-100 dark:border-rose-900/50 rounded-2xl flex items-start gap-3">
                 <Lightbulb className="w-5 h-5 text-rose-600 dark:text-rose-400 shrink-0 mt-0.5" />
                 <div className="text-xs text-rose-950 dark:text-rose-200 space-y-1">
-                  <p className="font-bold">Feynman Kuralı: Karmaşık formüller yerine gündelik benzetmeler kullan!</p>
+                  <p className="font-bold">
+                    Feynman Kuralı: Karmaşık formüller yerine gündelik
+                    benzetmeler kullan!
+                  </p>
                   <p>
-                    Örneğin; negatif sayılarla çarpmayı &ldquo;düşmanımın düşmanı dostumdur&rdquo; gibi, karekökü ise bir karenin kenarını arayan bir dedektif gibi anlatabilirsin.
+                    Örneğin; negatif sayılarla çarpmayı &ldquo;düşmanımın
+                    düşmanı dostumdur&rdquo; gibi, karekökü ise bir karenin
+                    kenarını arayan bir dedektif gibi anlatabilirsin.
                   </p>
                 </div>
               </div>
 
               <div>
-                <label htmlFor="feynman-topic-select" className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
+                <label
+                  htmlFor="feynman-topic-select"
+                  className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1"
+                >
                   Anlatacağın Kavram veya Soru
                 </label>
                 <select
@@ -375,7 +400,11 @@ export function FeynmanVoiceExplanationModal({
                         : 'bg-rose-500 text-white hover:bg-rose-600'
                     }`}
                   >
-                    {isRecording ? (<MicOff className="w-8 h-8" /> ): (<Mic className="w-8 h-8" />)}
+                    {isRecording ? (
+                      <MicOff className="w-8 h-8" />
+                    ) : (
+                      <Mic className="w-8 h-8" />
+                    )}
                   </button>
                   {isRecording && (
                     <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-rose-500 animate-ping" />
@@ -384,20 +413,25 @@ export function FeynmanVoiceExplanationModal({
 
                 <div className="text-center">
                   <div className="text-2xl font-mono font-bold text-slate-900 dark:text-white">
-                    00:{recordSeconds < 10 ? `0${recordSeconds}` : recordSeconds} / 01:00
+                    00:
+                    {recordSeconds < 10 ? `0${recordSeconds}` : recordSeconds} /
+                    01:00
                   </div>
                   <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
                     {isRecording
                       ? 'Mikrofon aktif, anlatımını yapıyorsun. Bitince durdur düğmesine bas.'
                       : recordSeconds > 0
-                      ? `Kayıt tamamlandı (${recordSeconds} saniye). Beğenmediysen tekrar tıkla.`
-                      : 'Kırmızı mikrofona dokunarak 60 saniyelik ses kaydını başlat.'}
+                        ? `Kayıt tamamlandı (${recordSeconds} saniye). Beğenmediysen tekrar tıkla.`
+                        : 'Kırmızı mikrofona dokunarak 60 saniyelik ses kaydını başlat.'}
                   </p>
                 </div>
               </div>
 
               <div>
-                <label htmlFor="feynman-concept-summary" className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
+                <label
+                  htmlFor="feynman-concept-summary"
+                  className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1"
+                >
                   1 Cümlelik Yalın Benzetme / Özet Notu
                 </label>
                 <textarea

@@ -22,6 +22,7 @@ import {
   resolveCurrentGoal,
 } from '@/features/progress/utils';
 import type { WeeklyWorksheetSuggestion } from '@/features/profile/weekly-worksheet';
+import { formatIstanbulDate } from '@/lib/date-format';
 
 export type DashboardBadgeRow = {
   id: string;
@@ -156,7 +157,7 @@ const getRelativeDueLabel = (
     return `${diffDays} gün kaldı`;
   }
 
-  return new Date(dueDate).toLocaleDateString('tr-TR', {
+  return formatIstanbulDate(dueDate, {
     day: 'numeric',
     month: 'short',
   });
@@ -431,9 +432,7 @@ export const buildProfileDashboardViewModel = ({
         unreadImportantNotification.message ||
         'Dashboard içindeki güncellemeleri gözden geçir.',
       id: `notification:${unreadImportantNotification.id}`,
-      meta: new Date(unreadImportantNotification.created_at).toLocaleDateString(
-        'tr-TR',
-      ),
+      meta: formatIstanbulDate(unreadImportantNotification.created_at),
       title: unreadImportantNotification.title,
     });
   }

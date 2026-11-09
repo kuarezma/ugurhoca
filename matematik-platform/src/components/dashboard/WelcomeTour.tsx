@@ -12,6 +12,7 @@ import {
 } from 'lucide-react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { supabase } from '@/lib/supabase/client';
+import { useAccessibleModal } from '@/hooks/useAccessibleModal';
 
 type WelcomeTourProps = {
   userId?: string | null;
@@ -116,6 +117,16 @@ export default function WelcomeTour({ userId, userName }: WelcomeTourProps) {
     }
   }, []);
 
+  const dismiss = useCallback(() => {
+    setOpen(false);
+    if (!userId) return;
+    void persistSeen(userId);
+  }, [userId, persistSeen]);
+
+  const modalRef = useAccessibleModal<HTMLDivElement>(open, dismiss, {
+    enableHistoryBack: false,
+  });
+
   useEffect(() => {
     if (!userId) return;
 
@@ -156,12 +167,6 @@ export default function WelcomeTour({ userId, userName }: WelcomeTourProps) {
     };
   }, [userId, persistSeen]);
 
-  const dismiss = () => {
-    setOpen(false);
-    if (!userId) return;
-    void persistSeen(userId);
-  };
-
   if (!open) {
     return null;
   }
@@ -173,6 +178,7 @@ export default function WelcomeTour({ userId, userName }: WelcomeTourProps) {
   return (
     <AnimatePresence>
       <motion.div
+        ref={modalRef}
         key="welcome-tour"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
@@ -214,8 +220,11 @@ export default function WelcomeTour({ userId, userName }: WelcomeTourProps) {
                 </h2>
                 {userName && stepIndex === 0 ? (
                   <p className="mt-1 text-sm text-slate-700 dark:text-slate-200">
-                    Selam {' '}<strong className="text-slate-900 dark:text-white">{userName}</strong>,
-                    seni aramızda görmek güzel.
+                    Selam{' '}
+                    <strong className="text-slate-900 dark:text-white">
+                      {userName}
+                    </strong>
+                    , seni aramızda görmek güzel.
                   </p>
                 ) : null}
               </div>

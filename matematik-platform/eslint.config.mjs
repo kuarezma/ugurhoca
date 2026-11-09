@@ -245,6 +245,53 @@ const config = [
       'react/no-unescaped-entities': 'off',
       'theme-guard/no-unsafe-light-theme-utility': 'warn',
       'unused-imports/no-unused-imports': 'error',
+      'no-restricted-syntax': [
+        'error',
+        {
+          selector: "CallExpression[callee.property.name='toLocaleDateString']",
+          message:
+            "Çıplak toLocaleDateString() yerine '@/lib/date-format' içindeki formatIstanbulDate() yardımcısını kullanın.",
+        },
+        {
+          selector: "CallExpression[callee.property.name='toLocaleTimeString']",
+          message:
+            "Çıplak toLocaleTimeString() yerine '@/lib/date-format' içindeki formatIstanbulTime() yardımcısını kullanın.",
+        },
+        {
+          selector:
+            "CallExpression[callee.object.type='NewExpression'][callee.object.callee.name='Date'][callee.property.name='toLocaleString']",
+          message:
+            "Çıplak new Date().toLocaleString() yerine '@/lib/date-format' içindeki formatIstanbulDateTime() yardımcısını kullanın.",
+        },
+      ],
+    },
+  },
+  {
+    files: [
+      'src/lib/date-format.ts',
+      '**/*.test.ts',
+      '**/*.test.tsx',
+      'e2e/**',
+    ],
+    rules: {
+      'no-restricted-syntax': 'off',
+    },
+  },
+  {
+    files: [
+      'src/app/page.tsx',
+      'src/app/icerikler/loading.tsx',
+      'src/app/gizlilik/**/*.{ts,tsx}',
+      'src/app/kvkk/**/*.{ts,tsx}',
+      'src/app/cerez/**/*.{ts,tsx}',
+      'src/app/iletisim/**/*.{ts,tsx}',
+      'src/features/home/components/HomeHowItWorksSection.tsx',
+      'src/features/home/components/HomeFooter.tsx',
+      'src/features/profile/components/GrowthReportModal.tsx',
+      'src/features/admin/components/AdminActionDialog.tsx',
+    ],
+    rules: {
+      'theme-guard/no-unsafe-light-theme-utility': 'error',
     },
   },
   {

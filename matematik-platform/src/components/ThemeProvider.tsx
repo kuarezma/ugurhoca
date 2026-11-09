@@ -1,6 +1,15 @@
 'use client';
 
-import { createContext, useCallback, useContext, useEffect, useMemo, useSyncExternalStore, type ReactNode } from 'react';
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useSyncExternalStore,
+  type ReactNode,
+} from 'react';
+import { MotionConfig } from 'framer-motion';
 import {
   THEME_STORAGE_KEY,
   THEME_LIGHT_MIGRATION_KEY,
@@ -52,7 +61,8 @@ const readPalette = (): ThemePalette =>
 const readServerPalette = (): ThemePalette => DEFAULT_PALETTE;
 
 const readDesignMode = (): DesignMode =>
-  (document.documentElement.dataset.designMode as DesignMode) || DEFAULT_DESIGN_MODE;
+  (document.documentElement.dataset.designMode as DesignMode) ||
+  DEFAULT_DESIGN_MODE;
 
 const readServerDesignMode = (): DesignMode => DEFAULT_DESIGN_MODE;
 
@@ -84,9 +94,21 @@ export function applyInitialThemeMigration(): void {
 }
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
-  const theme = useSyncExternalStore(subscribeToTheme, readTheme, readServerTheme);
-  const palette = useSyncExternalStore(subscribeToTheme, readPalette, readServerPalette);
-  const designMode = useSyncExternalStore(subscribeToTheme, readDesignMode, readServerDesignMode);
+  const theme = useSyncExternalStore(
+    subscribeToTheme,
+    readTheme,
+    readServerTheme,
+  );
+  const palette = useSyncExternalStore(
+    subscribeToTheme,
+    readPalette,
+    readServerPalette,
+  );
+  const designMode = useSyncExternalStore(
+    subscribeToTheme,
+    readDesignMode,
+    readServerDesignMode,
+  );
 
   useEffect(() => {
     applyInitialThemeMigration();
@@ -99,7 +121,9 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     };
 
     if (typeof document !== 'undefined' && 'startViewTransition' in document) {
-      (document as unknown as { startViewTransition: (cb: () => void) => void }).startViewTransition(update);
+      (
+        document as unknown as { startViewTransition: (cb: () => void) => void }
+      ).startViewTransition(update);
     } else {
       update();
     }
@@ -112,7 +136,9 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     };
 
     if (typeof document !== 'undefined' && 'startViewTransition' in document) {
-      (document as unknown as { startViewTransition: (cb: () => void) => void }).startViewTransition(update);
+      (
+        document as unknown as { startViewTransition: (cb: () => void) => void }
+      ).startViewTransition(update);
     } else {
       update();
     }
@@ -125,7 +151,9 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     };
 
     if (typeof document !== 'undefined' && 'startViewTransition' in document) {
-      (document as unknown as { startViewTransition: (cb: () => void) => void }).startViewTransition(update);
+      (
+        document as unknown as { startViewTransition: (cb: () => void) => void }
+      ).startViewTransition(update);
     } else {
       update();
     }
@@ -150,10 +178,23 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
       setDesignMode,
       toggleDesignMode,
     }),
-    [setTheme, theme, toggleTheme, palette, setPalette, designMode, setDesignMode, toggleDesignMode]
+    [
+      setTheme,
+      theme,
+      toggleTheme,
+      palette,
+      setPalette,
+      designMode,
+      setDesignMode,
+      toggleDesignMode,
+    ],
   );
 
-  return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>;
+  return (
+    <ThemeContext.Provider value={value}>
+      <MotionConfig reducedMotion="user">{children}</MotionConfig>
+    </ThemeContext.Provider>
+  );
 }
 
 export function useTheme() {

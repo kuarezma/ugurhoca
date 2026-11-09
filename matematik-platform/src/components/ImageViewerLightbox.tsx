@@ -1,9 +1,16 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import Image from 'next/image';
-import { Download, RotateCw, X, ZoomIn, ZoomOut, RefreshCw } from 'lucide-react';
-import { acquireBodyScrollLock, releaseBodyScrollLock } from '@/hooks/useAccessibleModal';
+import {
+  Download,
+  RotateCw,
+  X,
+  ZoomIn,
+  ZoomOut,
+  RefreshCw,
+} from 'lucide-react';
+import { useAccessibleModal } from '@/hooks/useAccessibleModal';
 
 type ImageViewerLightboxProps = {
   src: string | null;
@@ -18,14 +25,9 @@ export default function ImageViewerLightbox({
 }: ImageViewerLightboxProps) {
   const [scale, setScale] = useState(1);
   const [rotation, setRotation] = useState(0);
-
-  useEffect(() => {
-    if (!src) return;
-    acquireBodyScrollLock();
-    return () => {
-      releaseBodyScrollLock();
-    };
-  }, [src]);
+  const modalRef = useAccessibleModal<HTMLDivElement>(Boolean(src), onClose, {
+    enableHistoryBack: false,
+  });
 
   if (!src) return null;
 
@@ -39,9 +41,10 @@ export default function ImageViewerLightbox({
 
   return (
     <div
+      ref={modalRef}
       role="dialog"
       aria-modal="true"
-      aria-label={alt}
+      aria-label={alt || 'Görsel önizleme'}
       style={{ overscrollBehavior: 'contain' }}
       className="fixed inset-0 z-[160] flex flex-col bg-black/90 backdrop-blur-md overscroll-contain"
     >

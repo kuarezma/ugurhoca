@@ -1,4 +1,5 @@
 import { createLogger } from '@/lib/logger';
+import { formatIstanbulDate } from '@/lib/date-format';
 
 const log = createLogger('pdf-export');
 
@@ -128,7 +129,7 @@ export async function generatePDF(
       pdf.setFontSize(8);
       pdf.setTextColor(120, 120, 140);
       pdf.text(
-        `Uğur Hoca Matematik Platformu  •  ugurhoca.com  •  ${new Date().toLocaleDateString('tr-TR')}`,
+        `Uğur Hoca Matematik Platformu  •  ugurhoca.com  •  ${formatIstanbulDate(new Date())}`,
         margin,
         pageHeight - 4,
       );
@@ -159,7 +160,7 @@ export function downloadQuizPDF(quizTitle: string) {
 export function downloadProgressPDF() {
   return generatePDF(
     'ilerleme-pdf-content',
-    `ugur-hoca-gelisim-raporu-${new Date().toLocaleDateString('tr-TR').replace(/\./g, '-')}.pdf`,
+    `ugur-hoca-gelisim-raporu-${formatIstanbulDate(new Date()).replace(/\./g, '-')}.pdf`,
     { background: '#0f172a' },
   );
 }
@@ -168,7 +169,7 @@ export function downloadProgressPDF() {
 export function downloadStudentListPDF() {
   return generatePDF(
     'admin-student-list-pdf',
-    `ugur-hoca-ogrenci-listesi-${new Date().toLocaleDateString('tr-TR').replace(/\./g, '-')}.pdf`,
+    `ugur-hoca-ogrenci-listesi-${formatIstanbulDate(new Date()).replace(/\./g, '-')}.pdf`,
     { background: '#0f172a', orientation: 'landscape' },
   );
 }

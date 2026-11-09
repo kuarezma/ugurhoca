@@ -17,6 +17,7 @@ import {
   MousePointer,
   Sparkles,
 } from 'lucide-react';
+import { useAccessibleModal } from '@/hooks/useAccessibleModal';
 
 export type QuestionDrawingOverlayProps = {
   isActive: boolean;
@@ -47,6 +48,9 @@ export function QuestionDrawingOverlay({
   containerRef,
 }: QuestionDrawingOverlayProps) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const overlayRef = useAccessibleModal<HTMLDivElement>(isActive, onClose, {
+    enableHistoryBack: false,
+  });
   const [tool, setTool] = useState<ToolMode>('pen');
   const [penColor, setPenColor] = useState<string>('#ef4444');
   const [isPassthrough, setIsPassthrough] = useState<boolean>(false);
@@ -62,7 +66,8 @@ export function QuestionDrawingOverlay({
     if (!canvas || !container) return;
 
     const rect = container.getBoundingClientRect();
-    const dpr = typeof window !== 'undefined' ? window.devicePixelRatio || 1 : 1;
+    const dpr =
+      typeof window !== 'undefined' ? window.devicePixelRatio || 1 : 1;
 
     let existingDataUrl = '';
     if (canvas.width > 0 && canvas.height > 0) {
@@ -245,7 +250,8 @@ export function QuestionDrawingOverlay({
     if (!ctx) return;
 
     saveHistoryStep();
-    const dpr = typeof window !== 'undefined' ? window.devicePixelRatio || 1 : 1;
+    const dpr =
+      typeof window !== 'undefined' ? window.devicePixelRatio || 1 : 1;
     ctx.clearRect(0, 0, canvas.width / dpr, canvas.height / dpr);
     questionDrawingCache.delete(questionIndex);
     setHasDrawn(false);
@@ -255,8 +261,11 @@ export function QuestionDrawingOverlay({
 
   return (
     <div
+      ref={overlayRef}
+      role="dialog"
+      aria-modal="true"
       className="absolute inset-0 z-30 pointer-events-none rounded-3xl overflow-hidden"
-      aria-label="Soru üzerine çizim katmanı"
+      aria-label="Soru çözüm karalama alanı"
       data-testid="question-drawing-overlay"
     >
       {/* Çizim Canvas'ı */}
@@ -268,7 +277,9 @@ export function QuestionDrawingOverlay({
         onPointerUp={handlePointerUp}
         onPointerCancel={handlePointerUp}
         className={`absolute inset-0 w-full h-full touch-none ${
-          isPassthrough ? 'pointer-events-none' : 'pointer-events-auto cursor-crosshair'
+          isPassthrough
+            ? 'pointer-events-none'
+            : 'pointer-events-auto cursor-crosshair'
         }`}
         style={{ touchAction: 'none' }}
       />

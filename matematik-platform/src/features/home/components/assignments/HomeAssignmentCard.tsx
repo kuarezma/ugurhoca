@@ -2,6 +2,7 @@
 
 import { Download, FileText, X } from 'lucide-react';
 import { useToast } from '@/components/Toast';
+import { formatIstanbulDate } from '@/lib/date-format';
 import type { SharedDocumentAssignment } from '@/types';
 
 type HomeAssignmentCardProps = {
@@ -77,7 +78,7 @@ export function HomeAssignmentCard({
           </span>
         )}
         <span className="text-slate-400 text-xs">
-          {new Date(assignment.created_at).toLocaleDateString('tr-TR', {
+          {formatIstanbulDate(assignment.created_at, {
             day: 'numeric',
             month: 'short',
           })}

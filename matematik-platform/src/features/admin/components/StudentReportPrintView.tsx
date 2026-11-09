@@ -2,6 +2,7 @@
 
 import { Printer, X, Award, Clock, FileText, CheckCircle2 } from 'lucide-react';
 import type { StudentAdminStatus } from '@/features/admin/types';
+import { formatIstanbulDate } from '@/lib/date-format';
 
 type StudentReportPrintViewProps = {
   isOpen: boolean;
@@ -30,7 +31,7 @@ export function StudentReportPrintView({
     window.print();
   };
 
-  const currentDate = new Date().toLocaleDateString('tr-TR', {
+  const currentDate = formatIstanbulDate(new Date(), {
     day: 'numeric',
     month: 'long',
     year: 'numeric',
@@ -43,7 +44,10 @@ export function StudentReportPrintView({
       aria-label="Öğrenci Gelişim ve Takip Raporu"
       className="fixed inset-0 z-[160] flex items-center justify-center bg-slate-950/80 dark:bg-slate-950/80 p-4 backdrop-blur-md print:p-0 print:bg-white"
     >
-      <div id="printable-worksheet-content" className="flex max-h-[92vh] w-full max-w-3xl flex-col overflow-hidden rounded-3xl border border-default dark:border-white/15 bg-surface-1 dark:bg-slate-900 shadow-2xl print:max-h-none print:w-full print:border-none print:bg-white print:text-black print:shadow-none">
+      <div
+        id="printable-worksheet-content"
+        className="flex max-h-[92vh] w-full max-w-3xl flex-col overflow-hidden rounded-3xl border border-default dark:border-white/15 bg-surface-1 dark:bg-slate-900 shadow-2xl print:max-h-none print:w-full print:border-none print:bg-white print:text-black print:shadow-none"
+      >
         {/* Header - Ekranda görünen, baskıda gizlenen */}
         <div className="flex items-center justify-between border-b border-default dark:border-white/10 bg-surface-2 dark:bg-slate-950/80 px-6 py-4 print:hidden">
           <div>
@@ -96,13 +100,17 @@ export function StudentReportPrintView({
           {/* Öğrenci Bilgileri */}
           <div className="grid grid-cols-2 gap-4 rounded-2xl bg-surface-2 dark:bg-white/5 p-4 text-xs print:bg-slate-50 print:border print:border-slate-200">
             <div>
-              <span className="text-secondary dark:text-slate-400 print:text-slate-500 block">Öğrenci Adı Soyadı</span>
+              <span className="text-secondary dark:text-slate-400 print:text-slate-500 block">
+                Öğrenci Adı Soyadı
+              </span>
               <span className="font-bold text-primary dark:text-white print:text-black text-base">
                 {student.name}
               </span>
             </div>
             <div>
-              <span className="text-secondary dark:text-slate-400 print:text-slate-500 block">Sınıf Seviyesi</span>
+              <span className="text-secondary dark:text-slate-400 print:text-slate-500 block">
+                Sınıf Seviyesi
+              </span>
               <span className="font-bold text-primary dark:text-white print:text-black text-base">
                 {student.grade ? `${student.grade}. Sınıf` : 'Belirtilmedi'}
               </span>
@@ -159,15 +167,18 @@ export function StudentReportPrintView({
             </h3>
             <div className="min-h-[6rem] rounded-xl border border-dashed border-default dark:border-white/15 p-3 text-xs text-secondary dark:text-slate-300 print:border-slate-300 print:text-slate-700">
               <p className="italic">
-                Öğrenci platformdaki ders notlarını ve testleri düzenli olarak takip etmektedir.
-                Kazanım eksiklikleri soru tekrar havuzunda pekiştirilmektedir.
+                Öğrenci platformdaki ders notlarını ve testleri düzenli olarak
+                takip etmektedir. Kazanım eksiklikleri soru tekrar havuzunda
+                pekiştirilmektedir.
               </p>
             </div>
           </div>
 
           {/* Rapor Alt Bilgi */}
           <div className="border-t border-default dark:border-white/10 pt-4 flex items-center justify-between text-[11px] text-secondary dark:text-slate-400 print:border-slate-300 print:text-slate-600">
-            <span>Uğur Hoca Matematik Platformu © {new Date().getFullYear()}</span>
+            <span>
+              Uğur Hoca Matematik Platformu © {new Date().getFullYear()}
+            </span>
             <span>ugurhoca.com — Öğrenci Gelişim Takip Sistemi</span>
           </div>
         </div>

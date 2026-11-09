@@ -15,6 +15,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { DashboardNotification } from '@/types/dashboard';
 import { getNotificationStyle } from '@/features/profile/utils/getNotificationStyle';
 import { useNavbarNotifications } from '@/features/home/hooks/useNavbarNotifications';
+import { formatIstanbulDate } from '@/lib/date-format';
 
 type HomeNavbarNotificationBellProps = {
   userId: string;
@@ -30,7 +31,7 @@ function formatRelativeTime(isoDate: string): string {
     if (diff < 86400) return `${Math.floor(diff / 3600)} sa önce`;
     if (diff < 172800) return 'Dün';
     if (diff < 604800) return `${Math.floor(diff / 86400)} gün önce`;
-    return new Date(isoDate).toLocaleDateString('tr-TR', {
+    return formatIstanbulDate(isoDate, {
       day: 'numeric',
       month: 'short',
     });
@@ -39,14 +40,20 @@ function formatRelativeTime(isoDate: string): string {
   }
 }
 
-export function isAssignmentNotification(notification: DashboardNotification): boolean {
+export function isAssignmentNotification(
+  notification: DashboardNotification,
+): boolean {
   const type = notification.type;
   const title = (notification.title || '').toLowerCase();
   const msg = (notification.message || '').toLowerCase();
-  return type === 'assignment' || title.includes('ödev') || msg.includes('ödev');
+  return (
+    type === 'assignment' || title.includes('ödev') || msg.includes('ödev')
+  );
 }
 
-export function isWorksheetNotification(notification: DashboardNotification): boolean {
+export function isWorksheetNotification(
+  notification: DashboardNotification,
+): boolean {
   if (isAssignmentNotification(notification)) return false;
   const type = notification.type;
   const title = (notification.title || '').toLowerCase();
@@ -60,7 +67,9 @@ export function isWorksheetNotification(notification: DashboardNotification): bo
   );
 }
 
-export function resolveNotificationTarget(notification: DashboardNotification): {
+export function resolveNotificationTarget(
+  notification: DashboardNotification,
+): {
   path: string;
 } {
   if (isAssignmentNotification(notification)) {
@@ -79,12 +88,8 @@ export function HomeNavbarNotificationBell({
   userId,
 }: HomeNavbarNotificationBellProps) {
   const router = useRouter();
-  const {
-    markAllAsRead,
-    markAsRead,
-    notifications,
-    unreadCount,
-  } = useNavbarNotifications(userId);
+  const { markAllAsRead, markAsRead, notifications, unreadCount } =
+    useNavbarNotifications(userId);
   const [open, setOpen] = useState(false);
   const [filterTab, setFilterTab] = useState<NotificationFilterTab>('all');
   const containerRef = useRef<HTMLDivElement | null>(null);
@@ -180,13 +185,9 @@ export function HomeNavbarNotificationBell({
             className="fixed left-4 right-4 top-[calc(3.5rem+0.25rem+env(safe-area-inset-top))] z-[110] max-h-[75vh] overflow-hidden rounded-2xl border bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 shadow-2xl sm:absolute sm:left-auto sm:right-0 sm:top-auto sm:mt-2 sm:w-[420px]"
           >
             {/* Header */}
-            <div
-              className="flex flex-wrap items-center justify-between border-b px-4 py-3 border-slate-200 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-900/80 gap-1.5"
-            >
+            <div className="flex flex-wrap items-center justify-between border-b px-4 py-3 border-slate-200 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-900/80 gap-1.5">
               <div className="flex items-center gap-2 min-w-0 shrink">
-                <h3
-                  className="font-bold text-sm text-slate-900 dark:text-white whitespace-nowrap"
-                >
+                <h3 className="font-bold text-sm text-slate-900 dark:text-white whitespace-nowrap">
                   Bildirimler
                 </h3>
                 {unreadCount > 0 && (
@@ -206,7 +207,10 @@ export function HomeNavbarNotificationBell({
                     aria-label="Tümünü oku"
                     className="inline-flex items-center gap-1 rounded-lg px-2.5 py-1 text-xs font-semibold whitespace-nowrap transition-colors text-indigo-600 hover:bg-indigo-50 hover:text-indigo-700 dark:text-indigo-400 dark:hover:bg-indigo-950/50 dark:hover:text-indigo-300 shrink-0"
                   >
-                    <CheckCheck className="h-4 w-4 shrink-0" aria-hidden="true" />
+                    <CheckCheck
+                      className="h-4 w-4 shrink-0"
+                      aria-hidden="true"
+                    />
                     <span>Tümünü oku</span>
                   </button>
                 )}
@@ -222,9 +226,7 @@ export function HomeNavbarNotificationBell({
             </div>
 
             {/* Filtre Sekmeleri */}
-            <div
-              className="flex items-center gap-1.5 border-b px-3 py-2 text-xs border-slate-200/80 bg-slate-50/80 dark:border-slate-800 dark:bg-slate-950/40 overflow-x-auto scrollbar-none"
-            >
+            <div className="flex items-center gap-1.5 border-b px-3 py-2 text-xs border-slate-200/80 bg-slate-50/80 dark:border-slate-800 dark:bg-slate-950/40 overflow-x-auto scrollbar-none">
               <button
                 type="button"
                 onClick={() => setFilterTab('all')}
@@ -290,9 +292,7 @@ export function HomeNavbarNotificationBell({
                   <div className="mx-auto mb-2 flex h-10 w-10 items-center justify-center rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-400">
                     <Bell className="h-5 w-5 opacity-40" />
                   </div>
-                  <p
-                    className="text-sm font-medium text-slate-600 dark:text-slate-400"
-                  >
+                  <p className="text-sm font-medium text-slate-600 dark:text-slate-400">
                     {filterTab === 'unread'
                       ? 'Harika! Okunmamış yeni bildiriminiz yok.'
                       : filterTab === 'assignments'
@@ -303,18 +303,13 @@ export function HomeNavbarNotificationBell({
                   </p>
                 </div>
               ) : (
-                <ul
-                  className="divide-y divide-slate-100 dark:divide-slate-800"
-                >
+                <ul className="divide-y divide-slate-100 dark:divide-slate-800">
                   {filteredNotifications.map((notification) => {
                     const style = getNotificationStyle(notification);
                     const Icon = style.icon;
 
                     return (
-                      <li
-                        key={notification.id}
-                        className="relative"
-                      >
+                      <li key={notification.id} className="relative">
                         <button
                           type="button"
                           onClick={() => {
@@ -341,22 +336,20 @@ export function HomeNavbarNotificationBell({
                           </div>
                           <div className="min-w-0 flex-1">
                             <div className="flex items-start justify-between gap-2">
-                              <p
-                                className="truncate text-sm font-semibold text-slate-900 dark:text-white"
-                              >
+                              <p className="truncate text-sm font-semibold text-slate-900 dark:text-white">
                                 {notification.title}
                               </p>
                             </div>
                             {notification.type !== 'message-read' &&
                             notification.message ? (
-                              <p
-                                className="mt-0.5 line-clamp-2 text-xs text-slate-600 dark:text-slate-300"
-                              >
+                              <p className="mt-0.5 line-clamp-2 text-xs text-slate-600 dark:text-slate-300">
                                 {notification.message}
                               </p>
                             ) : null}
                             <div className="mt-1 flex items-center gap-2 text-[11px] text-slate-400">
-                              <span>{formatRelativeTime(notification.created_at)}</span>
+                              <span>
+                                {formatRelativeTime(notification.created_at)}
+                              </span>
                               <span>•</span>
                               <span className="capitalize font-semibold text-indigo-600 dark:text-indigo-400">
                                 {isAssignmentNotification(notification)
@@ -373,9 +366,7 @@ export function HomeNavbarNotificationBell({
               )}
             </div>
 
-            <div
-              className="border-t px-4 py-2.5 text-center border-slate-200 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-900/80"
-            >
+            <div className="border-t px-4 py-2.5 text-center border-slate-200 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-900/80">
               <SafeLink
                 href="/profil"
                 onClick={() => setOpen(false)}

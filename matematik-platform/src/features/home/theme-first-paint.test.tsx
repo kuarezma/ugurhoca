@@ -30,7 +30,9 @@ vi.mock('framer-motion', () => {
     span: ({ children, ...props }: ComponentPropsWithoutRef<'span'>) => (
       <span {...props}>{children}</span>
     ),
-    p: ({ children, ...props }: ComponentPropsWithoutRef<'p'>) => <p {...props}>{children}</p>,
+    p: ({ children, ...props }: ComponentPropsWithoutRef<'p'>) => (
+      <p {...props}>{children}</p>
+    ),
     section: ({ children, ...props }: ComponentPropsWithoutRef<'section'>) => (
       <section {...props}>{children}</section>
     ),
@@ -39,6 +41,7 @@ vi.mock('framer-motion', () => {
   return {
     AnimatePresence: ({ children }: { children: ReactNode }) => <>{children}</>,
     LazyMotion: ({ children }: { children: ReactNode }) => <>{children}</>,
+    MotionConfig: ({ children }: { children: ReactNode }) => <>{children}</>,
     domAnimation: {},
     motion: elements,
     m: elements,
@@ -118,7 +121,8 @@ const documents: ContentDocument[] = [
     created_at: '2026-10-20T10:00:00.000Z',
     file_url: 'https://example.com/test.pdf',
     solution_url: 'https://example.com/cozum.pdf',
-    description: '__WS_META__{"outcome":"M.7.1.1.1"}\nEl yazısı çözümlü test föyü',
+    description:
+      '__WS_META__{"outcome":"M.7.1.1.1"}\nEl yazısı çözümlü test föyü',
     is_admin_only: false,
   } as ContentDocument,
 ];
@@ -136,7 +140,10 @@ function renderInTheme(theme: Theme, ui: ReactElement, interact?: () => void) {
   return html;
 }
 
-function expectThemeIndependentMarkup(ui: () => ReactElement, interact?: () => void) {
+function expectThemeIndependentMarkup(
+  ui: () => ReactElement,
+  interact?: () => void,
+) {
   const light = renderInTheme('light', ui(), interact);
   const dark = renderInTheme('dark', ui(), interact);
   expect(light).toBe(dark);
@@ -168,7 +175,9 @@ describe('ana sayfa tema sınıfları ilk boyamada CSS’ten gelir', () => {
   });
 
   it('HomeNavbar (oturum açık) iki temada aynı işaretlemeyi üretir', () => {
-    expectThemeIndependentMarkup(() => <HomeNavbar user={user} onLogout={vi.fn()} />);
+    expectThemeIndependentMarkup(() => (
+      <HomeNavbar user={user} onLogout={vi.fn()} />
+    ));
   });
 
   it('HomeHeroSection iki temada aynı işaretlemeyi üretir ve başlığı varyantla renklendirir', () => {
@@ -194,13 +203,20 @@ describe('ana sayfa tema sınıfları ilk boyamada CSS’ten gelir', () => {
 
   it('HomeNavbarMessagesButton iki temada aynı işaretlemeyi üretir', () => {
     expectThemeIndependentMarkup(() => (
-      <HomeNavbarMessagesButton userId="user-1" userName="Ayşe" userEmail="ayse@example.com" />
+      <HomeNavbarMessagesButton
+        userId="user-1"
+        userName="Ayşe"
+        userEmail="ayse@example.com"
+      />
     ));
   });
 
   it('HomeAnnouncementsSection iki temada aynı işaretlemeyi üretir', () => {
     expectThemeIndependentMarkup(() => (
-      <HomeAnnouncementsSection announcements={announcements} onSelectAnnouncement={vi.fn()} />
+      <HomeAnnouncementsSection
+        announcements={announcements}
+        onSelectAnnouncement={vi.fn()}
+      />
     ));
   });
 
@@ -211,7 +227,9 @@ describe('ana sayfa tema sınıfları ilk boyamada CSS’ten gelir', () => {
   });
 
   it('HomeExamCountdownSection iki temada aynı işaretlemeyi üretir', () => {
-    expectThemeIndependentMarkup(() => <HomeExamCountdownSection userGrade={8} />);
+    expectThemeIndependentMarkup(() => (
+      <HomeExamCountdownSection userGrade={8} />
+    ));
   });
 
   it('HomeDailyQuote iki temada aynı işaretlemeyi üretir', () => {

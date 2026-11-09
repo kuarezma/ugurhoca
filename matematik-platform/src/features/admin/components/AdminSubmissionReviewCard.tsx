@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef } from 'react';
 import {
   CheckCircle2,
   FileText,
@@ -12,12 +12,13 @@ import {
   Star,
   BookOpen,
   Layers,
-} from "lucide-react";
-import type { AdminSubmission } from "@/features/admin/types";
-import { SubmissionDrawingModal } from "./SubmissionDrawingModal";
+} from 'lucide-react';
+import type { AdminSubmission } from '@/features/admin/types';
+import { SubmissionDrawingModal } from './SubmissionDrawingModal';
 import TeacherFeedbackLibraryModal, {
   type FeedbackTemplateItem,
-} from "./TeacherFeedbackLibraryModal";
+} from './TeacherFeedbackLibraryModal';
+import { formatIstanbulDateTime } from '@/lib/date-format';
 
 type AdminSubmissionReviewCardProps = {
   onUpdateSubmission: (
@@ -30,24 +31,24 @@ type AdminSubmissionReviewCardProps = {
 
 const FEEDBACK_TEMPLATES = [
   {
-    label: "🌟 Kusursuz",
+    label: '🌟 Kusursuz',
     grade: 100,
-    text: "Tebrikler! İşlem basamakların eksiksiz ve çok temiz.",
+    text: 'Tebrikler! İşlem basamakların eksiksiz ve çok temiz.',
   },
   {
-    label: "⚠️ İşlem Hatası",
+    label: '⚠️ İşlem Hatası',
     grade: 80,
-    text: "Gidiş yolu doğru ancak adımlarda işlem/işaret hatası var, tekrar kontrol et.",
+    text: 'Gidiş yolu doğru ancak adımlarda işlem/işaret hatası var, tekrar kontrol et.',
   },
   {
-    label: "💡 Kuralı İncele",
+    label: '💡 Kuralı İncele',
     grade: 65,
-    text: "Konu kuralını tekrar gözden geçirip soruyu bir kez daha denemeni öneririm.",
+    text: 'Konu kuralını tekrar gözden geçirip soruyu bir kez daha denemeni öneririm.',
   },
   {
-    label: "⏳ Süre & Hız",
+    label: '⏳ Süre & Hız',
     grade: 90,
-    text: "Eline sağlık! Bir sonraki ödevde süreyi biraz daha optimize edebilirsin.",
+    text: 'Eline sağlık! Bir sonraki ödevde süreyi biraz daha optimize edebilirsin.',
   },
 ];
 
@@ -55,7 +56,7 @@ export default function AdminSubmissionReviewCard({
   onUpdateSubmission,
   submission,
 }: AdminSubmissionReviewCardProps) {
-  const [feedback, setFeedback] = useState(submission.feedback || "");
+  const [feedback, setFeedback] = useState(submission.feedback || '');
   const [grade, setGrade] = useState(submission.grade || 100);
   const [isDrawingOpen, setIsDrawingOpen] = useState(false);
   const [isLibraryOpen, setIsLibraryOpen] = useState(false);
@@ -101,15 +102,15 @@ export default function AdminSubmissionReviewCard({
 
   const handleSelectFromLibrary = (
     tmpl: FeedbackTemplateItem,
-    mode: "append" | "replace",
+    mode: 'append' | 'replace',
   ) => {
     if (tmpl.grade !== undefined) {
       setGrade(tmpl.grade);
     }
-    const prefix = selectedStep || tmpl.stepPrefix || "";
+    const prefix = selectedStep || tmpl.stepPrefix || '';
     const textToAdd = prefix ? `${prefix} ${tmpl.text}` : tmpl.text;
 
-    if (mode === "replace") {
+    if (mode === 'replace') {
       setFeedback(textToAdd);
     } else {
       setFeedback((prev) =>
@@ -125,16 +126,16 @@ export default function AdminSubmissionReviewCard({
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-xl flex items-center justify-center font-bold bg-brand-secondary text-slate-950 dark:text-slate-950">
-            {submission.student_name?.[0] || "Ö"}
+            {submission.student_name?.[0] || 'Ö'}
           </div>
           <div>
             <p className="text-slate-900 dark:text-white font-bold">
-              {submission.student_name || "Öğrenci"}
+              {submission.student_name || 'Öğrenci'}
             </p>
             <p className="text-slate-500 dark:text-slate-400 text-[10px]">
               {submission.submitted_at
-                ? new Date(submission.submitted_at).toLocaleString("tr-TR")
-                : "Tarih yok"}
+                ? formatIstanbulDateTime(submission.submitted_at)
+                : 'Tarih yok'}
             </p>
           </div>
         </div>
@@ -165,14 +166,14 @@ export default function AdminSubmissionReviewCard({
 
           <span
             className={`px-3 py-1.5 rounded-lg text-xs font-bold ${
-              submission.status === "reviewed"
-                ? "bg-emerald-500/20 text-emerald-700 dark:text-emerald-400"
-                : "bg-amber-500/20 text-amber-700 dark:text-amber-400"
+              submission.status === 'reviewed'
+                ? 'bg-emerald-500/20 text-emerald-700 dark:text-emerald-400'
+                : 'bg-amber-500/20 text-amber-700 dark:text-amber-400'
             }`}
           >
-            {submission.status === "reviewed"
+            {submission.status === 'reviewed'
               ? `Puan: ${submission.grade}`
-              : "Bekliyor"}
+              : 'Bekliyor'}
           </span>
         </div>
       </div>
@@ -182,7 +183,9 @@ export default function AdminSubmissionReviewCard({
           <p className="text-xs text-slate-500 mb-1 font-bold uppercase tracking-wider">
             Öğrenci Notu
           </p>
-          <p className="text-sm text-slate-700 dark:text-slate-300 italic">"{submission.comment}"</p>
+          <p className="text-sm text-slate-700 dark:text-slate-300 italic">
+            "{submission.comment}"
+          </p>
         </div>
       )}
 
@@ -226,10 +229,13 @@ export default function AdminSubmissionReviewCard({
             Adıma Not İliştir:
           </span>
           {[
-            { label: "1. Adım", prefix: "[1. Adım: Verilenleri Belirleme]" },
-            { label: "2. Adım", prefix: "[2. Adım: Formül / Denklem Kurma]" },
-            { label: "3. Adım", prefix: "[3. Adım: Dört İşlem / Sadeleştirme]" },
-            { label: "Sonuç", prefix: "[Sonuç: Doğrulama & Birim Kontrolü]" },
+            { label: '1. Adım', prefix: '[1. Adım: Verilenleri Belirleme]' },
+            { label: '2. Adım', prefix: '[2. Adım: Formül / Denklem Kurma]' },
+            {
+              label: '3. Adım',
+              prefix: '[3. Adım: Dört İşlem / Sadeleştirme]',
+            },
+            { label: 'Sonuç', prefix: '[Sonuç: Doğrulama & Birim Kontrolü]' },
           ].map((step) => (
             <button
               key={step.label}
@@ -262,15 +268,15 @@ export default function AdminSubmissionReviewCard({
             onClick={toggleRecording}
             className={`p-2.5 rounded-xl border transition flex items-center gap-1.5 shrink-0 text-xs font-bold mt-0.5 ${
               isRecording
-                ? "bg-rose-500 text-white border-rose-400 animate-pulse"
-                : "bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:bg-slate-200 dark:hover:bg-slate-700"
+                ? 'bg-rose-500 text-white border-rose-400 animate-pulse'
+                : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:bg-slate-200 dark:hover:bg-slate-700'
             }`}
-            title={isRecording ? "Kaydı bitir" : "Sesli not kaydet"}
+            title={isRecording ? 'Kaydı bitir' : 'Sesli not kaydet'}
           >
             {isRecording ? (
               <>
                 <MicOff className="w-4 h-4 text-white dark:text-white" />
-                <span>0:{recordingSeconds.toString().padStart(2, "0")}</span>
+                <span>0:{recordingSeconds.toString().padStart(2, '0')}</span>
               </>
             ) : (
               <Mic className="w-4 h-4 text-slate-500 dark:text-slate-400" />
@@ -293,8 +299,8 @@ export default function AdminSubmissionReviewCard({
                   <Star
                     className={`w-5 h-5 transition-colors ${
                       isFilled
-                        ? "text-amber-400 fill-amber-400"
-                        : "text-slate-400 dark:text-slate-600"
+                        ? 'text-amber-400 fill-amber-400'
+                        : 'text-slate-400 dark:text-slate-600'
                     }`}
                   />
                 </button>
@@ -327,7 +333,7 @@ export default function AdminSubmissionReviewCard({
           isOpen={isDrawingOpen}
           onClose={() => setIsDrawingOpen(false)}
           imageUrl={submission.file_url}
-          studentName={submission.student_name ?? "Öğrenci"}
+          studentName={submission.student_name ?? 'Öğrenci'}
           onSaveFeedback={(notes) => {
             setFeedback((prev) => (prev ? `${prev} - ${notes}` : notes));
           }}

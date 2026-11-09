@@ -1,5 +1,6 @@
 import type { ContentGradeFilter } from '@/features/content/types';
 import type { ContentDocument } from '@/types';
+import { formatIstanbulDate } from '@/lib/date-format';
 
 export const normalizeContentGrade = (
   value: number | string | null | undefined,
@@ -35,8 +36,7 @@ export const getDriveId = (url: string) => {
 export const formatContentDate = (value?: string | null) => {
   if (!value) return '-';
 
-  return new Date(value).toLocaleDateString('tr-TR', {
-    timeZone: 'Europe/Istanbul',
+  return formatIstanbulDate(value, {
     day: '2-digit',
     month: 'short',
     year: 'numeric',
@@ -57,7 +57,9 @@ export const getContentAuthorLabel = (content: ContentDocument) =>
 export const sortContentDocumentsByNewest = (documents: ContentDocument[]) =>
   [...documents].sort((left, right) => {
     const leftTime = left.created_at ? new Date(left.created_at).getTime() : 0;
-    const rightTime = right.created_at ? new Date(right.created_at).getTime() : 0;
+    const rightTime = right.created_at
+      ? new Date(right.created_at).getTime()
+      : 0;
 
     if (leftTime !== rightTime) {
       return rightTime - leftTime;
