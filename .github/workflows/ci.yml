@@ -33,6 +33,14 @@ jobs:
 
     steps:
       - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: Gizli anahtar taraması (Gitleaks)
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        continue-on-error: true
 
       # Secrets doğrudan job if koşulunda kullanılamaz; yalnız varlık bilgisini aktar.
       - name: E2E secret varlığını kontrol et
@@ -52,6 +60,20 @@ jobs:
           cache-dependency-path: matematik-platform/package-lock.json
 
       - run: npm ci
+      - name: Kod formatı kontrolü (Prettier - Değişen Dosyalar)
+        run: |
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            CHANGED_FILES=$(git diff --name-only origin/${{ github.base_ref }}...HEAD -- '*.{ts,tsx,js,mjs,json,css}' 'src/**/*.{ts,tsx,js,mjs,json,css}' 2>/dev/null || true)
+          else
+            CHANGED_FILES=$(git diff --name-only HEAD~1 HEAD -- '*.{ts,tsx,js,mjs,json,css}' 'src/**/*.{ts,tsx,js,mjs,json,css}' 2>/dev/null || true)
+          fi
+          if [ -n "$CHANGED_FILES" ]; then
+            echo "Format kontrolü yapılan dosyalar:"
+            echo "$CHANGED_FILES"
+            npx prettier --check $CHANGED_FILES
+          else
+            echo "Kontrol edilecek değişen dosya bulunamadı veya ilk commit."
+          fi
       # Engelleyen kapı yalnız production bağımlılıkları: dev araçlarındaki
       # (tailwind/eslint → braces) yamasız açıklar üretim paketine girmez.
       - run: npm audit --omit=dev --audit-level=high

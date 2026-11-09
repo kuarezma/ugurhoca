@@ -2,6 +2,17 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { DeleteAccountModal } from './DeleteAccountModal';
 
+const mockPush = vi.fn();
+const mockReplace = vi.fn();
+
+vi.mock('next/navigation', () => ({
+  useRouter: () => ({
+    push: mockPush,
+    replace: mockReplace,
+    refresh: vi.fn(),
+  }),
+}));
+
 describe('DeleteAccountModal', () => {
   const onCloseMock = vi.fn();
 
@@ -17,10 +28,18 @@ describe('DeleteAccountModal', () => {
   });
 
   it('doğru onay metni yazılana kadar sil butonunu devre dışı tutar', () => {
-    render(<DeleteAccountModal isOpen={true} onClose={onCloseMock} userEmail="test@ogrenci.com" />);
+    render(
+      <DeleteAccountModal
+        isOpen={true}
+        onClose={onCloseMock}
+        userEmail="test@ogrenci.com"
+      />,
+    );
 
     expect(screen.getByText('Hesabımı Kalıcı Olarak Sil')).toBeInTheDocument();
-    const deleteBtn = screen.getByRole('button', { name: /Hesabı Kalıcı Sil/i });
+    const deleteBtn = screen.getByRole('button', {
+      name: /Hesabı Kalıcı Sil/i,
+    });
     expect(deleteBtn).toBeDisabled();
 
     const input = screen.getByPlaceholderText('HESABIMI SİL');

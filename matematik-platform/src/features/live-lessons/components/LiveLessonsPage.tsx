@@ -88,7 +88,9 @@ export function LiveLessonsPage({ initialLessons, students, user }: Props) {
     toLocalInputValue(new Date(Date.now() + 60 * 60 * 1000)),
   );
   const [durationMinutes, setDurationMinutes] = useState(60);
-  const [targetGrade, setTargetGrade] = useState(String(toDisplayGrade(user.grade)));
+  const [targetGrade, setTargetGrade] = useState(
+    String(toDisplayGrade(user.grade)),
+  );
   const [selectedStudentIds, setSelectedStudentIds] = useState<string[]>([]);
   const [studentSearchQuery, setStudentSearchQuery] = useState('');
   const [repeatWeekly, setRepeatWeekly] = useState(false);
@@ -105,7 +107,7 @@ export function LiveLessonsPage({ initialLessons, students, user }: Props) {
 
   const handleLogout = async () => {
     await signOutClient();
-    window.location.href = '/giris';
+    router.push('/giris');
   };
 
   // Öğrenci arama listesi
@@ -129,10 +131,13 @@ export function LiveLessonsPage({ initialLessons, students, user }: Props) {
     setActionError(null);
     try {
       const now = new Date();
-      const defaultTitle = `Hemen Canlı Ders (${new Intl.DateTimeFormat('tr-TR', {
-        hour: '2-digit',
-        minute: '2-digit',
-      }).format(now)})`;
+      const defaultTitle = `Hemen Canlı Ders (${new Intl.DateTimeFormat(
+        'tr-TR',
+        {
+          hour: '2-digit',
+          minute: '2-digit',
+        },
+      ).format(now)})`;
 
       const res = await fetch('/api/live-lessons', {
         method: 'POST',
@@ -206,7 +211,8 @@ export function LiveLessonsPage({ initialLessons, students, user }: Props) {
           repeatWeeklyUntil: repeatEnd ? repeatEnd.toISOString() : null,
           startsAt: startDate.toISOString(),
           targetGrade,
-          targetStudentIds: targetGrade === 'selected' ? selectedStudentIds : [],
+          targetStudentIds:
+            targetGrade === 'selected' ? selectedStudentIds : [],
           title: title.trim(),
         }),
       });
@@ -263,7 +269,9 @@ export function LiveLessonsPage({ initialLessons, students, user }: Props) {
         error?: string;
       } | null;
       if (res.ok && payload?.lesson) {
-        setLessons((prev) => prev.map((l) => (l.id === lesson.id ? payload.lesson! : l)));
+        setLessons((prev) =>
+          prev.map((l) => (l.id === lesson.id ? payload.lesson! : l)),
+        );
       } else {
         setActionError(payload?.error || 'Ders durumu güncellenemedi.');
       }
@@ -302,9 +310,16 @@ export function LiveLessonsPage({ initialLessons, students, user }: Props) {
     });
 
     // Geçmiştekiler: en son biten en başta
-    past.sort((a, b) => new Date(b.starts_at).getTime() - new Date(a.starts_at).getTime());
+    past.sort(
+      (a, b) =>
+        new Date(b.starts_at).getTime() - new Date(a.starts_at).getTime(),
+    );
 
-    return { upcomingLessons: upcoming, pastLessons: past, activeLesson: active };
+    return {
+      upcomingLessons: upcoming,
+      pastLessons: past,
+      activeLesson: active,
+    };
   }, [lessons]);
 
   // Arama ve Sınıf Filtresi Uygulama
@@ -315,14 +330,20 @@ export function LiveLessonsPage({ initialLessons, students, user }: Props) {
     return sourceList.filter((lesson) => {
       // Sınıf Filtresi
       if (selectedGrade !== 'all_filter') {
-        if (lesson.target_grade !== selectedGrade && lesson.target_grade !== 'all') {
+        if (
+          lesson.target_grade !== selectedGrade &&
+          lesson.target_grade !== 'all'
+        ) {
           return false;
         }
       }
 
       // Arama Filtresi
       if (q) {
-        const text = `${lesson.title} ${lesson.description || ''}`.toLocaleLowerCase('tr-TR');
+        const text =
+          `${lesson.title} ${lesson.description || ''}`.toLocaleLowerCase(
+            'tr-TR',
+          );
         if (!text.includes(q)) return false;
       }
 
@@ -331,7 +352,10 @@ export function LiveLessonsPage({ initialLessons, students, user }: Props) {
   }, [activeTab, pastLessons, searchQuery, selectedGrade, upcomingLessons]);
 
   // İstatistikler
-  const totalUpcomingMinutes = upcomingLessons.reduce((acc, l) => acc + (l.duration_minutes || 60), 0);
+  const totalUpcomingMinutes = upcomingLessons.reduce(
+    (acc, l) => acc + (l.duration_minutes || 60),
+    0,
+  );
   const totalHoursFormatted = `${Math.round((totalUpcomingMinutes / 60) * 10) / 10} saat`;
 
   const appUser = user as unknown as AppUser;
@@ -357,7 +381,8 @@ export function LiveLessonsPage({ initialLessons, students, user }: Props) {
                 Canlı Dersler
               </h1>
               <p className="max-w-2xl text-sm leading-relaxed text-foreground/70 sm:text-base">
-                İnteraktif ekran paylaşımı, soru çözümleri, anlık quiz ve birebir rehberlikle matematik derslerini kaçırma.
+                İnteraktif ekran paylaşımı, soru çözümleri, anlık quiz ve
+                birebir rehberlikle matematik derslerini kaçırma.
               </p>
             </div>
 
@@ -401,7 +426,9 @@ export function LiveLessonsPage({ initialLessons, students, user }: Props) {
                     className="inline-flex min-h-11 items-center gap-2 rounded-xl px-4 py-2.5 text-xs sm:text-sm font-bold transition-all duration-200 hover:brightness-110 active:scale-95 disabled:opacity-50 bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none"
                   >
                     <Zap className="h-4 w-4 fill-white" />
-                    <span>{quickStarting ? 'Başlatılıyor...' : 'Hızlı Ders Başlat'}</span>
+                    <span>
+                      {quickStarting ? 'Başlatılıyor...' : 'Hızlı Ders Başlat'}
+                    </span>
                   </button>
 
                   <button
@@ -411,7 +438,11 @@ export function LiveLessonsPage({ initialLessons, students, user }: Props) {
                   >
                     <Plus className="h-4 w-4" />
                     <span>Ders Planla</span>
-                    {isPlanFormOpen ? (<ChevronUp className="h-4 w-4" /> ): (<ChevronDown className="h-4 w-4" />)}
+                    {isPlanFormOpen ? (
+                      <ChevronUp className="h-4 w-4" />
+                    ) : (
+                      <ChevronDown className="h-4 w-4" />
+                    )}
                   </button>
                 </>
               )}
@@ -423,12 +454,16 @@ export function LiveLessonsPage({ initialLessons, students, user }: Props) {
             {/* 1. Canlı Durumu */}
             <div className="rounded-2xl border border-border/60 bg-foreground/[0.02] p-4 transition-transform hover:scale-[1.02]">
               <div className="flex items-center gap-2 text-xs font-semibold text-foreground/60">
-                <Radio className={`h-4 w-4 ${activeLesson ? 'text-rose-500 animate-pulse' : 'text-foreground/40'}`} />
+                <Radio
+                  className={`h-4 w-4 ${activeLesson ? 'text-rose-500 animate-pulse' : 'text-foreground/40'}`}
+                />
                 <span>Canlı Durumu</span>
               </div>
               <p className="mt-2 text-lg font-black tracking-tight text-foreground sm:text-xl">
                 {activeLesson ? (
-                  <span className="text-rose-600 dark:text-rose-400">Şu An Canlıda!</span>
+                  <span className="text-rose-600 dark:text-rose-400">
+                    Şu An Canlıda!
+                  </span>
                 ) : (
                   'Beklemede'
                 )}
@@ -452,7 +487,9 @@ export function LiveLessonsPage({ initialLessons, students, user }: Props) {
               <p className="mt-2 text-xl font-black text-foreground sm:text-2xl">
                 {upcomingLessons.length}
               </p>
-              <span className="text-[11px] text-foreground/50">Planlanmış oturum</span>
+              <span className="text-[11px] text-foreground/50">
+                Planlanmış oturum
+              </span>
             </div>
 
             {/* 3. Toplam Süre */}
@@ -464,7 +501,9 @@ export function LiveLessonsPage({ initialLessons, students, user }: Props) {
               <p className="mt-2 text-xl font-black text-foreground sm:text-2xl">
                 {totalHoursFormatted}
               </p>
-              <span className="text-[11px] text-foreground/50">Yaklaşan ders toplamı</span>
+              <span className="text-[11px] text-foreground/50">
+                Yaklaşan ders toplamı
+              </span>
             </div>
 
             {/* 4. Öğrenci Seviyesi */}
@@ -474,9 +513,17 @@ export function LiveLessonsPage({ initialLessons, students, user }: Props) {
                 <span>Sınıf / Rol</span>
               </div>
               <p className="mt-2 text-lg font-black text-foreground sm:text-xl truncate">
-                {user.isAdmin ? 'Öğretmen' : isGraduateGrade(user.grade) ? 'Mezun' : user.grade ? `${user.grade}. Sınıf` : 'Öğrenci'}
+                {user.isAdmin
+                  ? 'Öğretmen'
+                  : isGraduateGrade(user.grade)
+                    ? 'Mezun'
+                    : user.grade
+                      ? `${user.grade}. Sınıf`
+                      : 'Öğrenci'}
               </p>
-              <span className="text-[11px] text-foreground/50">{user.name}</span>
+              <span className="text-[11px] text-foreground/50">
+                {user.name}
+              </span>
             </div>
           </div>
         </section>
@@ -514,7 +561,9 @@ export function LiveLessonsPage({ initialLessons, students, user }: Props) {
                 onClick={confirmPendingLessonAction}
                 className="rounded-xl border border-red-500/30 bg-red-500/15 px-3 py-1.5 text-xs font-bold text-red-700 dark:text-red-300 hover:bg-red-500/25 transition-colors"
               >
-                {pendingLessonAction.status === 'cancelled' ? 'Evet, İptal Et' : 'Evet, Sonlandır'}
+                {pendingLessonAction.status === 'cancelled'
+                  ? 'Evet, İptal Et'
+                  : 'Evet, Sonlandır'}
               </button>
               <button
                 type="button"
@@ -533,7 +582,9 @@ export function LiveLessonsPage({ initialLessons, students, user }: Props) {
             <div className="flex items-center justify-between border-b border-border pb-4">
               <div className="flex items-center gap-2">
                 <Sparkles className="h-5 w-5 text-brand-ink" />
-                <h2 className="text-lg font-bold text-foreground">Yeni Canlı Ders Planla</h2>
+                <h2 className="text-lg font-bold text-foreground">
+                  Yeni Canlı Ders Planla
+                </h2>
               </div>
               <button
                 type="button"
@@ -553,7 +604,10 @@ export function LiveLessonsPage({ initialLessons, students, user }: Props) {
 
               <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                 <div>
-                  <label htmlFor="plan-title" className="block text-xs font-semibold text-foreground/80">
+                  <label
+                    htmlFor="plan-title"
+                    className="block text-xs font-semibold text-foreground/80"
+                  >
                     Ders Başlığı *
                   </label>
                   <input
@@ -568,7 +622,10 @@ export function LiveLessonsPage({ initialLessons, students, user }: Props) {
                 </div>
 
                 <div>
-                  <label htmlFor="plan-grade" className="block text-xs font-semibold text-foreground/80">
+                  <label
+                    htmlFor="plan-grade"
+                    className="block text-xs font-semibold text-foreground/80"
+                  >
                     Ders Hedef Kitlesi *
                   </label>
                   <select
@@ -590,7 +647,9 @@ export function LiveLessonsPage({ initialLessons, students, user }: Props) {
               {targetGrade === 'selected' && (
                 <div className="rounded-2xl border border-border p-4 bg-foreground/[0.02] space-y-3">
                   <div className="flex items-center justify-between">
-                    <span className="text-xs font-semibold text-foreground/90">Öğrencileri Seç</span>
+                    <span className="text-xs font-semibold text-foreground/90">
+                      Öğrencileri Seç
+                    </span>
                     <span className="text-xs text-brand-ink font-bold">
                       {selectedStudentIds.length} öğrenci seçildi
                     </span>
@@ -620,7 +679,9 @@ export function LiveLessonsPage({ initialLessons, students, user }: Props) {
                         >
                           <span className="truncate">{s.name || s.email}</span>
                           <span className="text-[10px] opacity-60">
-                            {s.grade === 'Mezun' ? 'Mezun' : `${s.grade}. sınıf`}
+                            {s.grade === 'Mezun'
+                              ? 'Mezun'
+                              : `${s.grade}. sınıf`}
                           </span>
                         </button>
                       );
@@ -631,7 +692,10 @@ export function LiveLessonsPage({ initialLessons, students, user }: Props) {
 
               <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                 <div>
-                  <label htmlFor="plan-starts-at" className="block text-xs font-semibold text-foreground/80">
+                  <label
+                    htmlFor="plan-starts-at"
+                    className="block text-xs font-semibold text-foreground/80"
+                  >
                     Başlangıç Tarihi ve Saati *
                   </label>
                   <input
@@ -645,7 +709,10 @@ export function LiveLessonsPage({ initialLessons, students, user }: Props) {
                 </div>
 
                 <div>
-                  <label htmlFor="plan-duration" className="block text-xs font-semibold text-foreground/80">
+                  <label
+                    htmlFor="plan-duration"
+                    className="block text-xs font-semibold text-foreground/80"
+                  >
                     Planlanan Süre (Dakika) *
                   </label>
                   <input
@@ -677,7 +744,10 @@ export function LiveLessonsPage({ initialLessons, students, user }: Props) {
 
                 {repeatWeekly && (
                   <div className="pt-2 animate-in fade-in">
-                    <label htmlFor="plan-repeat-until" className="block text-xs font-semibold text-foreground/80">
+                    <label
+                      htmlFor="plan-repeat-until"
+                      className="block text-xs font-semibold text-foreground/80"
+                    >
                       Tekrar Bitiş Tarihi
                     </label>
                     <input
@@ -695,7 +765,10 @@ export function LiveLessonsPage({ initialLessons, students, user }: Props) {
               </div>
 
               <div>
-                <label htmlFor="plan-description" className="block text-xs font-semibold text-foreground/80">
+                <label
+                  htmlFor="plan-description"
+                  className="block text-xs font-semibold text-foreground/80"
+                >
                   Ders Açıklaması / Kazanım ve Notlar
                 </label>
                 <textarea
@@ -718,7 +791,11 @@ export function LiveLessonsPage({ initialLessons, students, user }: Props) {
                 </button>
                 <button
                   type="submit"
-                  disabled={saving || (targetGrade === 'selected' && selectedStudentIds.length === 0)}
+                  disabled={
+                    saving ||
+                    (targetGrade === 'selected' &&
+                      selectedStudentIds.length === 0)
+                  }
                   className="rounded-xl px-6 py-2.5 text-xs sm:text-sm font-bold disabled:opacity-50 bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none"
                 >
                   {saving ? 'Planlanıyor...' : 'Dersi Takvime Ekle'}
@@ -818,10 +895,16 @@ export function LiveLessonsPage({ initialLessons, students, user }: Props) {
           {displayedLessons.length === 0 ? (
             <div className="flex flex-col items-center justify-center rounded-3xl border border-dashed border-border p-12 text-center bg-card/40">
               <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-foreground/5 text-foreground/40">
-                {activeTab === 'upcoming' ? (<Calendar className="h-7 w-7" /> ): (<History className="h-7 w-7" />)}
+                {activeTab === 'upcoming' ? (
+                  <Calendar className="h-7 w-7" />
+                ) : (
+                  <History className="h-7 w-7" />
+                )}
               </div>
               <h3 className="mt-4 text-base font-bold text-foreground">
-                {activeTab === 'upcoming' ? 'Yaklaşan Ders Bulunmuyor' : 'Geçmiş Ders Kaydı Yok'}
+                {activeTab === 'upcoming'
+                  ? 'Yaklaşan Ders Bulunmuyor'
+                  : 'Geçmiş Ders Kaydı Yok'}
               </h3>
               <p className="mt-1 max-w-sm text-xs text-foreground/60">
                 {activeTab === 'upcoming'

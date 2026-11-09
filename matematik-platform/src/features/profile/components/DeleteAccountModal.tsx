@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { AlertTriangle, Trash2, X, Loader2 } from 'lucide-react';
 import { useAccessibleModal } from '@/hooks/useAccessibleModal';
 import { supabase } from '@/lib/supabase/client';
@@ -16,6 +17,7 @@ export function DeleteAccountModal({
   onClose,
   userEmail,
 }: DeleteAccountModalProps) {
+  const router = useRouter();
   const containerRef = useAccessibleModal<HTMLDivElement>(isOpen, onClose);
   const [confirmText, setConfirmText] = useState('');
   const [isDeleting, setIsDeleting] = useState(false);
@@ -63,7 +65,7 @@ export function DeleteAccountModal({
         // ignore
       }
 
-      window.location.href = '/?deleted=true';
+      router.replace('/?deleted=true');
     } catch (err) {
       setErrorMessage(err instanceof Error ? err.message : 'Bir hata oluştu.');
       setIsDeleting(false);
@@ -87,10 +89,15 @@ export function DeleteAccountModal({
               <AlertTriangle className="h-5 w-5" />
             </div>
             <div>
-              <h3 id="delete-account-title" className="font-display font-bold text-lg text-slate-900 dark:text-white">
+              <h3
+                id="delete-account-title"
+                className="font-display font-bold text-lg text-slate-900 dark:text-white"
+              >
                 Hesabımı Kalıcı Olarak Sil
               </h3>
-              <p className="text-xs text-rose-600 dark:text-rose-300">Bu işlem geri alınamaz (KVKK)</p>
+              <p className="text-xs text-rose-600 dark:text-rose-300">
+                Bu işlem geri alınamaz (KVKK)
+              </p>
             </div>
           </div>
 
@@ -108,19 +115,34 @@ export function DeleteAccountModal({
         {/* Uyarı Açıklaması */}
         <div className="text-xs text-slate-700 dark:text-slate-300 space-y-2 mb-5 leading-relaxed bg-rose-500/10 p-3.5 rounded-2xl border border-rose-500/20">
           <p>
-            Hesabınızı sildiğinizde <strong>tüm sınav geçmişiniz, çözülen testler, hata defteri, rozetler ve çalışma verileriniz</strong> geri getirilemeyecek şekilde kalıcı olarak silinecektir.
+            Hesabınızı sildiğinizde{' '}
+            <strong>
+              tüm sınav geçmişiniz, çözülen testler, hata defteri, rozetler ve
+              çalışma verileriniz
+            </strong>{' '}
+            geri getirilemeyecek şekilde kalıcı olarak silinecektir.
           </p>
           {userEmail && (
             <p className="text-[11px] text-slate-500 dark:text-slate-400">
-              İlişkili hesap: <span className="text-slate-900 dark:text-white font-mono">{userEmail}</span>
+              İlişkili hesap:{' '}
+              <span className="text-slate-900 dark:text-white font-mono">
+                {userEmail}
+              </span>
             </p>
           )}
         </div>
 
         {/* Güvenlik Doğrulaması */}
         <div className="mb-5">
-          <label htmlFor="confirm-delete-input" className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-2">
-            Onaylamak için aşağıdaki kutuya <span className="text-rose-600 dark:text-rose-400 font-mono">HESABIMI SİL</span> yazın:
+          <label
+            htmlFor="confirm-delete-input"
+            className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-2"
+          >
+            Onaylamak için aşağıdaki kutuya{' '}
+            <span className="text-rose-600 dark:text-rose-400 font-mono">
+              HESABIMI SİL
+            </span>{' '}
+            yazın:
           </label>
           <input
             id="confirm-delete-input"

@@ -12,18 +12,17 @@ export default defineConfig({
         'src/test/**',
         '**/*.d.ts',
         '**/*.test.{ts,tsx}',
-        'src/features/games/components/games/**',
         'src/features/games/utils/gameAudio.ts',
         'src/features/games/utils/ambientAudio.ts',
       ],
       thresholds: {
-        // Ölçülen (2026-09): branches ~54, functions ~60, lines ~64, statements ~62.6.
-        // Eşikler bilerek ölçümün altında: gerilemeyi yakalar,
-        // v8 dalgalanmasında CI'ı kırmaz (statements marjı ince olduğundan 61).
-        branches: 52,
-        functions: 58,
-        lines: 62,
-        statements: 61,
+        // Ölçülen (2026-11, oyunlar dahil - ses hariç):
+        // branches ~59.95%, functions ~64.34%, lines ~69.17%, statements ~67.29%.
+        // Eşikler gerilemeyi yakalar, v8 dalgalanmasında güvenlik marjı bırakır.
+        branches: 55,
+        functions: 60,
+        lines: 65,
+        statements: 63,
       },
       provider: 'v8',
       reporter: ['text', 'html'],
