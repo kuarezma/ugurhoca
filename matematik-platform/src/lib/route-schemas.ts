@@ -28,11 +28,41 @@ export const quizImportSchema = z.object({
     .max(30, 'Maksimum 30 soru yüklenebilir.'),
 });
 
-export const supportAttachmentSchema = z.object({
-  kind: z.enum(['image', 'file', 'audio']),
-  name: z.string().trim().min(1),
-  url: z.string().trim().url(),
-});
+const SUPPORT_IMAGE_EXT_REGEX = /\.(jpe?g|png|webp)$/i;
+
+const hasAllowedImageExtension = (filenameOrUrl: string) => {
+  try {
+    const rawPath =
+      filenameOrUrl.startsWith('http://') || filenameOrUrl.startsWith('https://')
+        ? new URL(filenameOrUrl).pathname
+        : filenameOrUrl.split('?')[0];
+    return SUPPORT_IMAGE_EXT_REGEX.test(rawPath || '');
+  } catch {
+    return SUPPORT_IMAGE_EXT_REGEX.test(filenameOrUrl.split('?')[0] || '');
+  }
+};
+
+export const supportAttachmentSchema = z
+  .object({
+    kind: z.enum(['image', 'audio']),
+    name: z.string().trim().min(1),
+    url: z.string().trim().url(),
+  })
+  .refine(
+    (attachment) => {
+      if (attachment.kind === 'image') {
+        return (
+          hasAllowedImageExtension(attachment.name) &&
+          hasAllowedImageExtension(attachment.url)
+        );
+      }
+      return true;
+    },
+    {
+      message: 'Sadece JPG, PNG veya WebP görsel eklenebilir.',
+      path: ['name'],
+    },
+  );
 
 export const supportMessageSchema = z
   .object({

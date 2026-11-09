@@ -61,7 +61,7 @@ const WelcomeTour = dynamic(
   { ssr: false },
 );
 const GrowthReportModal = dynamic(
-  () => import('@/features/profile/components/ParentReportModal'),
+  () => import('@/features/profile/components/GrowthReportModal'),
   { ssr: false },
 );
 const StudentPortfolioModal = dynamic(

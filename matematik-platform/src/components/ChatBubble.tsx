@@ -148,13 +148,13 @@ export default function ChatBubble() {
   const [inboxMessages, setInboxMessages] = useState<InboxMessage[]>([]);
   const [selectedStudentId, setSelectedStudentId] = useState<string | null>(null);
 
-  // Form & Ekler state (Çoklu dosya / PDF destekli)
+  // Form & Ekler state (Görsel JPG, PNG, WebP)
   const [draft, setDraft] = useState('');
   const [sending, setSending] = useState(false);
   const [sendError, setSendError] = useState<string | null>(null);
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [attachmentPreviews, setAttachmentPreviews] = useState<
-    Array<{ name: string; url: string; kind: 'image' | 'file'; size?: number }>
+    Array<{ name: string; url: string; kind: 'image'; size?: number }>
   >([]);
   const bubbleRef = useRef<HTMLDivElement | null>(null);
   const panelRef = useRef<HTMLDivElement | null>(null);
@@ -328,7 +328,7 @@ export default function ChatBubble() {
     const addedPreviews: Array<{
       name: string;
       url: string;
-      kind: 'image' | 'file';
+      kind: 'image';
       size?: number;
     }> = [];
 
@@ -347,18 +347,9 @@ export default function ChatBubble() {
           setSendError(err instanceof Error ? err.message : 'Fotoğraf geçersiz.');
           return;
         }
-      } else if (file.type === 'application/pdf' || file.name.endsWith('.pdf')) {
-        if (file.size > 5 * 1024 * 1024) {
-          setSendError('PDF dosyası maksimum 5 MB olabilir.');
-          return;
-        }
-        addedFiles.push(file);
-        addedPreviews.push({
-          kind: 'file',
-          name: file.name,
-          size: file.size,
-          url: URL.createObjectURL(file),
-        });
+      } else {
+        setSendError('Sadece JPG, PNG veya WebP görsel eklenebilir.');
+        return;
       }
     }
 

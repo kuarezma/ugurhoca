@@ -19,8 +19,34 @@ describe('route-schemas', () => {
     expect(parsed.error?.issues[0]?.message).toBe('Mesaj içeriği eksik.');
   });
 
-  it('accepts image, file, and audio attachments and rejects unknown kinds', () => {
-    const valid = supportMessageSchema.safeParse({
+  it('accepts image and audio attachments and rejects file or pdf attachment', () => {
+    const validImage = supportMessageSchema.safeParse({
+      attachments: [
+        {
+          kind: 'image',
+          name: 'soru.png',
+          url: 'https://example.com/soru.png',
+        },
+      ],
+      sender_id: 'student-1',
+      text: '',
+    });
+    expect(validImage.success).toBe(true);
+
+    const validAudio = supportMessageSchema.safeParse({
+      attachments: [
+        {
+          kind: 'audio',
+          name: 'ses.webm',
+          url: 'https://example.com/ses.webm',
+        },
+      ],
+      sender_id: 'student-1',
+      text: '',
+    });
+    expect(validAudio.success).toBe(true);
+
+    const invalidFile = supportMessageSchema.safeParse({
       attachments: [
         {
           kind: 'file',
@@ -31,9 +57,61 @@ describe('route-schemas', () => {
       sender_id: 'student-1',
       text: '',
     });
-    expect(valid.success).toBe(true);
+    expect(invalidFile.success).toBe(false);
 
-    const invalid = supportMessageSchema.safeParse({
+    const invalidImageWithPdfName = supportMessageSchema.safeParse({
+      attachments: [
+        {
+          kind: 'image',
+          name: 'odev.pdf',
+          url: 'https://example.com/odev.pdf',
+        },
+      ],
+      sender_id: 'student-1',
+      text: '',
+    });
+    expect(invalidImageWithPdfName.success).toBe(false);
+
+    const invalidGif = supportMessageSchema.safeParse({
+      attachments: [
+        {
+          kind: 'image',
+          name: 'animasyon.gif',
+          url: 'https://example.com/animasyon.gif',
+        },
+      ],
+      sender_id: 'student-1',
+      text: '',
+    });
+    expect(invalidGif.success).toBe(false);
+
+    const invalidSvg = supportMessageSchema.safeParse({
+      attachments: [
+        {
+          kind: 'image',
+          name: 'resim.svg',
+          url: 'https://example.com/resim.svg',
+        },
+      ],
+      sender_id: 'student-1',
+      text: '',
+    });
+    expect(invalidSvg.success).toBe(false);
+
+    const validJpg = supportMessageSchema.safeParse({
+      attachments: [
+        {
+          kind: 'image',
+          name: 'soru.jpg',
+          url: 'https://example.com/soru.jpg?token=123',
+        },
+      ],
+      sender_id: 'student-1',
+      text: '',
+    });
+    expect(validJpg.success).toBe(true);
+
+    const invalidVideo = supportMessageSchema.safeParse({
       attachments: [
         {
           kind: 'video',
@@ -44,7 +122,7 @@ describe('route-schemas', () => {
       sender_id: 'student-1',
       text: '',
     });
-    expect(invalid.success).toBe(false);
+    expect(invalidVideo.success).toBe(false);
   });
 
   it('accepts a valid quiz import payload', () => {

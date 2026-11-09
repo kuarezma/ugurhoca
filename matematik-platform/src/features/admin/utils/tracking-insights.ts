@@ -17,6 +17,7 @@ const DAY_MS = 24 * 60 * 60 * 1000;
 export type TrackingInsight = {
   activityStatus: 'today' | 'week' | 'inactive';
   currentWeekPlan?: StudentWeeklyPlan;
+  followUpStatus: 'overdue' | 'today' | 'upcoming' | 'none';
   inactiveDays: number;
   lastActivityAt: string | null;
   latestQuizPercent: number | null;
@@ -70,6 +71,19 @@ const assignmentAppliesToStudent = (
 const getQuizPercent = (result?: AdminQuizResultRow | null) => {
   if (!result) return null;
   return Math.round((result.score / Math.max(result.total_questions, 1)) * 100);
+};
+
+export const getFollowUpStatus = (
+  followUpAt: string | null | undefined,
+  todayStart: Date,
+): 'overdue' | 'today' | 'upcoming' | 'none' => {
+  if (!followUpAt) return 'none';
+  const date = new Date(followUpAt);
+  if (Number.isNaN(date.getTime())) return 'none';
+  const nextDayStart = new Date(todayStart.getTime() + DAY_MS);
+  if (date.getTime() < todayStart.getTime()) return 'overdue';
+  if (date.getTime() < nextDayStart.getTime()) return 'today';
+  return 'upcoming';
 };
 
 export const buildTrackingInsights = ({
@@ -210,6 +224,7 @@ export const buildTrackingInsights = ({
     return {
       activityStatus,
       currentWeekPlan,
+      followUpStatus: getFollowUpStatus(status?.follow_up_at, todayStart),
       inactiveDays,
       lastActivityAt,
       latestQuizPercent,
@@ -238,4 +253,43 @@ export const buildTrackingDashboard = (insights: TrackingInsight[]) => {
   );
 
   return { activeToday, highRisk, inactive, unreadMessages };
+};
+
+export type FollowUpFilter = 'all' | 'overdue' | 'today' | 'upcoming' | 'any';
+
+export const matchesFollowUpFilter = (
+  insight: TrackingInsight,
+  filter: FollowUpFilter,
+): boolean => {
+  if (filter === 'all') return true;
+  if (filter === 'any') return insight.followUpStatus !== 'none';
+  return insight.followUpStatus === filter;
+};
+
+export const appendUniqueStudentLabel = (
+  existingLabels: string[] | null | undefined,
+  newLabel: string,
+): string[] => {
+  const trimmedNew = newLabel.trim();
+  const result: string[] = [];
+  const seen = new Set<string>();
+
+  for (const label of existingLabels ?? []) {
+    const clean = label.trim();
+    if (!clean) continue;
+    const key = clean.toLocaleLowerCase('tr-TR');
+    if (!seen.has(key)) {
+      seen.add(key);
+      result.push(clean);
+    }
+  }
+
+  if (trimmedNew) {
+    const newKey = trimmedNew.toLocaleLowerCase('tr-TR');
+    if (!seen.has(newKey) && result.length < 12) {
+      result.push(trimmedNew);
+    }
+  }
+
+  return result.slice(0, 12);
 };

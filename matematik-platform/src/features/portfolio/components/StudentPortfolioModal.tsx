@@ -124,6 +124,9 @@ export function StudentPortfolioModal({
                 <span className="rounded-full bg-indigo-500/20 px-2 py-0.5 text-[10px] font-bold text-indigo-300">
                   {studentName} • {grade}. Sınıf
                 </span>
+                <span className="rounded-md bg-amber-500/10 border border-amber-500/20 px-2 py-0.5 text-[10px] font-medium text-amber-700 dark:text-amber-300">
+                  Bu veriler yalnızca bu cihazda (tarayıcıda) saklanır.
+                </span>
               </div>
               <p className="text-xs text-slate-400">
                 Gurur duyduğun çözümleri, projelerini ve öz-yansımalarını biriktirdiğin kişisel gelişim arşivi.

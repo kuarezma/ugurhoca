@@ -19,39 +19,13 @@ export interface PortfolioItem {
 
 export const PORTFOLIO_STORAGE_KEY = 'ugurhoca_student_portfolio_items';
 
-export const DEFAULT_PORTFOLIO_ITEMS: PortfolioItem[] = [
-  {
-    id: 'port-1',
-    title: 'Çarpanlara Ayırma Model Tasarımı',
-    topic: 'Özdeşlikler & Geometrik Modelleme',
-    category: 'solution',
-    grade: '8',
-    studentReflection: 'Karton ve renkli kağıtlarla (a+b)² geometrik ispatını yaptım. Formülü ezberlemek yerine alan mantığını tam anladım.',
-    teacherFeedback: 'Harika bir somutlaştırma örneği! Cebirsel ifadenin alan karşılığını çok net anlatmışsın.',
-    score: 100,
-    date: '2026-09-02',
-    tags: ['LGS', 'Geometrik İspat', 'Cebir'],
-  },
-  {
-    id: 'port-2',
-    title: 'Üçgen Eşitsizliği Şehir Planı Analizi',
-    topic: 'Üçgenler & Pisagor',
-    category: 'project',
-    grade: '8',
-    studentReflection: 'Harita üzerinde üç farklı nokta seçip en kısa yol hesaplamalarında üçgen eşitsizliği kuralını uyguladım.',
-    teacherFeedback: 'Gerçek hayatla matematiği ilişkilendiren harika bir proje.',
-    score: 95,
-    date: '2026-08-25',
-    tags: ['Proje', 'Pisagor', 'Optimizasyon'],
-  },
-];
+export const DEFAULT_PORTFOLIO_ITEMS: PortfolioItem[] = [];
 
 export function getPortfolioItems(): PortfolioItem[] {
   if (typeof window === 'undefined') return DEFAULT_PORTFOLIO_ITEMS;
   try {
     const raw = localStorage.getItem(PORTFOLIO_STORAGE_KEY);
     if (!raw) {
-      localStorage.setItem(PORTFOLIO_STORAGE_KEY, JSON.stringify(DEFAULT_PORTFOLIO_ITEMS));
       return DEFAULT_PORTFOLIO_ITEMS;
     }
     return JSON.parse(raw) as PortfolioItem[];

@@ -7,11 +7,12 @@ describe('MathProjectWorkshopModal Component', () => {
     localStorage.clear();
   });
 
-  it('renders correctly when open and displays projects and rubric', () => {
+  it('renders correctly when open and displays projects, rubric and local storage notice', () => {
     const onClose = vi.fn();
     render(<MathProjectWorkshopModal isOpen={true} onClose={onClose} />);
 
     expect(screen.getByText('Matematik Proje Atölyesi')).toBeInTheDocument();
+    expect(screen.getByText(/Bu veriler yalnızca bu cihazda \(tarayıcıda\) saklanır\./i)).toBeInTheDocument();
     expect(screen.getAllByText(/Evimizin Enerji Verimliliği & Doğrusal Fonksiyonlar/i).length).toBeGreaterThan(0);
     expect(screen.getByText(/Değerlendirme Rubriği \(100 Puan\)/i)).toBeInTheDocument();
     expect(screen.getByText(/Proje Adımları & Teslim Takvimi/i)).toBeInTheDocument();

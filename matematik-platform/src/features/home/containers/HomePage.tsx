@@ -6,6 +6,7 @@ import { useTheme } from '@/components/ThemeProvider';
 import { HomeDailyQuote } from '@/features/home/components/HomeDailyQuote';
 import { HomeExamCountdownSection } from '@/features/home/components/HomeExamCountdownSection';
 import { HomeFooter } from '@/features/home/components/HomeFooter';
+import { HomeHowItWorksSection } from '@/features/home/components/HomeHowItWorksSection';
 import { HomeHeroSection } from '@/features/home/components/HomeHeroSection';
 import { HomeNavbar } from '@/features/home/components/HomeNavbar';
 import { HomeUserContext } from '@/features/home/components/HomeRecentDocumentsSection';
@@ -226,6 +227,8 @@ export default function HomePage({
             onOpenWeeklyPlanner={() => setIsWeeklyPlannerOpen(true)}
             onOpenSpeedDrill={() => setIsSpeedDrillOpen(true)}
           />
+
+        <HomeHowItWorksSection />
 
         {/* 2. Duyurular */}
         {announcementsSlot}

@@ -7,13 +7,15 @@ describe('StudentPortfolioModal Component', () => {
     localStorage.clear();
   });
 
-  it('renders correctly when open and displays default portfolio items', () => {
+  it('renders correctly when open and displays honest empty state and local storage notice', () => {
     const onClose = vi.fn();
     render(<StudentPortfolioModal isOpen={true} onClose={onClose} studentName="Ali" grade="8" />);
 
     expect(screen.getByText('Matematik Gelişim Portfolyosu')).toBeInTheDocument();
     expect(screen.getAllByText(/Ali • 8\. Sınıf/i).length).toBeGreaterThan(0);
-    expect(screen.getByText('Çarpanlara Ayırma Model Tasarımı')).toBeInTheDocument();
+    expect(screen.getByText(/Bu veriler yalnızca bu cihazda \(tarayıcıda\) saklanır\./i)).toBeInTheDocument();
+    expect(screen.getByText('Bu kategoride henüz bir portfolyo çalışması yok')).toBeInTheDocument();
+    expect(screen.queryByText('Çarpanlara Ayırma Model Tasarımı')).not.toBeInTheDocument();
   });
 
   it('allows adding a new portfolio item and renders it', () => {

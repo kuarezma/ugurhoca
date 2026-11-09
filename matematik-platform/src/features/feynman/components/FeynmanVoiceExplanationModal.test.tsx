@@ -7,10 +7,11 @@ describe('FeynmanVoiceExplanationModal', () => {
     localStorage.clear();
   });
 
-  it('açık olduğunda başlığı ve vitrin kartlarını gösterir', () => {
+  it('açık olduğunda başlığı, vitrin kartlarını ve yerel saklama uyarısını gösterir', () => {
     render(<FeynmanVoiceExplanationModal isOpen={true} onClose={vi.fn()} />);
 
     expect(screen.getByText('60 Saniyede Feynman Anlatımı')).toBeInTheDocument();
+    expect(screen.getByText(/Bu veriler yalnızca bu cihazda \(tarayıcıda\) saklanır\./i)).toBeInTheDocument();
     expect(screen.getByText(/Anlatım Vitrini/)).toBeInTheDocument();
   });
 

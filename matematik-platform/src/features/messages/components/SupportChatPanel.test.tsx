@@ -209,4 +209,31 @@ describe('SupportChatPanel Component', () => {
     fireEvent.click(screen.getByText('Kapat'));
     expect(screen.getByText('Sembol:')).toBeInTheDocument();
   });
+
+  it('dosya yükleme alanında sadece JPG, PNG ve WebP kabul eder ve PDF içermez', () => {
+    const handleAttachmentSelect = vi.fn();
+
+    const { container } = render(
+      <SupportChatPanel
+        appearance="navbar"
+        draft=""
+        error={null}
+        messages={dummyMessages}
+        onAttachmentSelect={handleAttachmentSelect}
+        onDraftChange={vi.fn()}
+        onSubmit={vi.fn()}
+        peerDisplayName="Uğur Hoca"
+        sending={false}
+      />,
+    );
+
+    const fileInput = container.querySelector('input[type="file"]') as HTMLInputElement | null;
+    expect(fileInput).not.toBeNull();
+    expect(fileInput?.getAttribute('accept')).toBe('image/jpeg,image/png,image/webp');
+    expect(fileInput?.getAttribute('accept')).not.toContain('application/pdf');
+
+    const attachBtn = screen.getByRole('button', { name: /görsel ekle/i });
+    expect(attachBtn).toBeInTheDocument();
+    expect(attachBtn.getAttribute('aria-label')).not.toContain('PDF');
+  });
 });

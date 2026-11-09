@@ -225,4 +225,78 @@ describe('buildTrackingInsights', () => {
       'universal-assignment',
     );
   });
+
+  describe('followUpStatus and FollowUpFilter', () => {
+    it('correctly calculates overdue, today, upcoming and none follow-up statuses', () => {
+      // now: 2026-04-30T12:00:00Z, todayStart: 2026-04-30T00:00:00Z
+      const insights = build({
+        adminStatuses: [
+          { student_id: 's-overdue', status: 'watch', follow_up_at: '2026-04-29T10:00:00Z', labels: [] },
+          { student_id: 's-today', status: 'contact_needed', follow_up_at: '2026-04-30T15:00:00Z', labels: [] },
+          { student_id: 's-upcoming', status: 'watch', follow_up_at: '2026-05-02T10:00:00Z', labels: [] },
+          { student_id: 's-none', status: 'normal', follow_up_at: null, labels: [] },
+        ],
+        students: [
+          student('s-overdue', 'Gecikmiş Öğrenci'),
+          student('s-today', 'Bugünkü Öğrenci'),
+          student('s-upcoming', 'Gelecek Öğrenci'),
+          student('s-none', 'Takipsiz Öğrenci'),
+        ],
+      });
+
+      const overdueInsight = insights.find((i) => i.student.id === 's-overdue')!;
+      const todayInsight = insights.find((i) => i.student.id === 's-today')!;
+      const upcomingInsight = insights.find((i) => i.student.id === 's-upcoming')!;
+      const noneInsight = insights.find((i) => i.student.id === 's-none')!;
+
+      expect(overdueInsight.followUpStatus).toBe('overdue');
+      expect(todayInsight.followUpStatus).toBe('today');
+      expect(upcomingInsight.followUpStatus).toBe('upcoming');
+      expect(noneInsight.followUpStatus).toBe('none');
+    });
+
+    it('filters insights based on FollowUpFilter criteria', async () => {
+      const { matchesFollowUpFilter } = await import('@/features/admin/utils/tracking-insights');
+
+      const mockInsight = (followUpStatus: 'overdue' | 'today' | 'upcoming' | 'none') =>
+        ({ followUpStatus }) as ReturnType<typeof buildTrackingInsights>[number];
+
+      const overdue = mockInsight('overdue');
+      const today = mockInsight('today');
+      const upcoming = mockInsight('upcoming');
+      const none = mockInsight('none');
+
+      expect(matchesFollowUpFilter(overdue, 'all')).toBe(true);
+      expect(matchesFollowUpFilter(none, 'all')).toBe(true);
+
+      expect(matchesFollowUpFilter(overdue, 'any')).toBe(true);
+      expect(matchesFollowUpFilter(today, 'any')).toBe(true);
+      expect(matchesFollowUpFilter(none, 'any')).toBe(false);
+
+      expect(matchesFollowUpFilter(overdue, 'overdue')).toBe(true);
+      expect(matchesFollowUpFilter(today, 'overdue')).toBe(false);
+
+      expect(matchesFollowUpFilter(today, 'today')).toBe(true);
+      expect(matchesFollowUpFilter(upcoming, 'today')).toBe(false);
+
+      expect(matchesFollowUpFilter(upcoming, 'upcoming')).toBe(true);
+      expect(matchesFollowUpFilter(overdue, 'upcoming')).toBe(false);
+    });
+  });
+
+  describe('appendUniqueStudentLabel', () => {
+    it('appends trimmed new label without duplicates case-insensitively and respects 12 limit', async () => {
+      const { appendUniqueStudentLabel } = await import('@/features/admin/utils/tracking-insights');
+
+      expect(appendUniqueStudentLabel(['LGS', 'Deneme'], 'Ödev')).toEqual(['LGS', 'Deneme', 'Ödev']);
+      expect(appendUniqueStudentLabel(['LGS', 'Deneme'], ' lgs ')).toEqual(['LGS', 'Deneme']);
+      expect(appendUniqueStudentLabel(['LGS'], '   ')).toEqual(['LGS']);
+      expect(appendUniqueStudentLabel(null, 'Hedef')).toEqual(['Hedef']);
+
+      const twelveLabels = Array.from({ length: 12 }, (_, i) => `Etiket-${i + 1}`);
+      const result = appendUniqueStudentLabel(twelveLabels, 'Yeni Etiket');
+      expect(result).toHaveLength(12);
+      expect(result).not.toContain('Yeni Etiket');
+    });
+  });
 });

@@ -30,3 +30,6 @@ try {
 } finally {
   await database.close();
 }
+
+// Minimal gizlilik fixture’ından bağımsız, boş veritabanında tam zincir.
+await import('./test-migration-chain.mjs');

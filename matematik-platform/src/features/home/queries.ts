@@ -328,11 +328,11 @@ export const uploadSupportFiles = async (
   const uploads = await Promise.all(
     Array.from(files).map(async (file) => {
       let uploadFile = file;
-      if (options.imagesOnly) {
-        validateSupportImageFile(file);
+      if (options.imagesOnly || !uploadFile.type.startsWith('audio/')) {
+        validateSupportImageFile(uploadFile);
       }
-      if (file.type.startsWith('image/')) {
-        uploadFile = await compressSupportImageFile(file);
+      if (uploadFile.type.startsWith('image/')) {
+        uploadFile = await compressSupportImageFile(uploadFile);
       }
 
       const safeName = uploadFile.name.replace(/[^a-zA-Z0-9._-]/g, '_');
@@ -351,9 +351,7 @@ export const uploadSupportFiles = async (
 
       const kind: SupportAttachment['kind'] = uploadFile.type.startsWith('audio/')
         ? 'audio'
-        : uploadFile.type.startsWith('image/')
-          ? 'image'
-          : 'file';
+        : 'image';
 
       return { kind, name: uploadFile.name, url: urlData.publicUrl };
     }),

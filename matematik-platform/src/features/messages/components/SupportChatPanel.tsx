@@ -1254,7 +1254,7 @@ export function SupportChatPanel({
                 <input
                   ref={fileInputRef}
                   type="file"
-                  accept="image/jpeg,image/png,image/webp,application/pdf"
+                  accept="image/jpeg,image/png,image/webp"
                   multiple
                   className="sr-only"
                   onChange={handleAttachmentChange}
@@ -1263,8 +1263,8 @@ export function SupportChatPanel({
                   type="button"
                   onClick={() => fileInputRef.current?.click()}
                   disabled={sending || inputDisabled}
-                  aria-label="Fotoğraf veya PDF ekle"
-                  title="Fotoğraf veya PDF ekle"
+                  aria-label="Görsel ekle (JPG, PNG, WebP)"
+                  title="Görsel ekle (JPG, PNG, WebP)"
                   className={`inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border transition-colors disabled:cursor-not-allowed disabled:opacity-50 ${
                     appearance === 'navbar'
                       ? isLight

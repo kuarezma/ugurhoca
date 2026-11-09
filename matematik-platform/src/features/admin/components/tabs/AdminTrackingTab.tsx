@@ -18,8 +18,15 @@ import {
   Download,
 } from 'lucide-react';
 import { isAdminEmail } from '@/lib/admin';
-import { buildTrackingActivityAnalytics } from '@/features/admin/utils/tracking-analytics';
 import {
+  buildCoreWebVitalsSummary,
+  buildTrackingPeriodTrends,
+  buildTrackingActivityAnalytics,
+} from '@/features/admin/utils/tracking-analytics';
+import {
+  type FollowUpFilter,
+  appendUniqueStudentLabel,
+  matchesFollowUpFilter,
   buildTrackingDashboard,
   buildTrackingInsights,
 } from '@/features/admin/utils/tracking-insights';
@@ -98,6 +105,18 @@ export default function AdminTrackingTab({
   const [favoriteFilter, setFavoriteFilter] = useState<FavoriteFilter>('all');
   const [gradeFilter, setGradeFilter] = useState('all');
   const [labelFilter, setLabelFilter] = useState('');
+  const [followUpFilter, setFollowUpFilter] = useState<
+    Exclude<FollowUpFilter, 'any'> | 'scheduled'
+  >('all');
+  const hasActiveFilters = Boolean(
+    searchQuery ||
+    labelFilter ||
+    riskFilter !== 'all' ||
+    activityFilter !== 'all' ||
+    favoriteFilter !== 'all' ||
+    gradeFilter !== 'all' ||
+    followUpFilter !== 'all',
+  );
   const weekStart = useMemo(() => getCurrentWeekStart(), []);
   const todayStart = useMemo(() => {
     const start = new Date();
@@ -106,12 +125,17 @@ export default function AdminTrackingTab({
   }, []);
 
   const studentUsers = useMemo(
-    () => students.filter((student) => !student.isAdmin && !isAdminEmail(student.email)),
+    () =>
+      students.filter(
+        (student) => !student.isAdmin && !isAdminEmail(student.email),
+      ),
     [students],
   );
 
   const gradeOptions = useMemo(() => {
-    const grades = new Set(studentUsers.map((student) => String(student.grade)));
+    const grades = new Set(
+      studentUsers.map((student) => String(student.grade)),
+    );
     return Array.from(grades).sort((left, right) => {
       if (left === 'Mezun') return 1;
       if (right === 'Mezun') return -1;
@@ -159,12 +183,16 @@ export default function AdminTrackingTab({
       .filter((insight) => {
         const matchesSearch =
           !normalizedQuery ||
-          (insight.student.name || '').toLocaleLowerCase('tr-TR').includes(normalizedQuery);
-        const matchesRisk = riskFilter === 'all' || insight.riskLevel === riskFilter;
+          (insight.student.name || '')
+            .toLocaleLowerCase('tr-TR')
+            .includes(normalizedQuery);
+        const matchesRisk =
+          riskFilter === 'all' || insight.riskLevel === riskFilter;
         const matchesActivity =
           activityFilter === 'all' || insight.activityStatus === activityFilter;
         const matchesGrade =
-          gradeFilter === 'all' || String(insight.student.grade) === gradeFilter;
+          gradeFilter === 'all' ||
+          String(insight.student.grade) === gradeFilter;
         const matchesFavorite =
           favoriteFilter === 'all' || Boolean(insight.student.is_favorite);
         const matchesLabel =
@@ -174,6 +202,10 @@ export default function AdminTrackingTab({
           );
 
         return (
+          matchesFollowUpFilter(
+            insight,
+            followUpFilter === 'scheduled' ? 'any' : followUpFilter,
+          ) &&
           matchesSearch &&
           matchesRisk &&
           matchesActivity &&
@@ -184,7 +216,8 @@ export default function AdminTrackingTab({
       })
       .sort((left, right) => {
         const riskOrder = { high: 0, medium: 1, low: 2 };
-        const riskDelta = riskOrder[left.riskLevel] - riskOrder[right.riskLevel];
+        const riskDelta =
+          riskOrder[left.riskLevel] - riskOrder[right.riskLevel];
         if (riskDelta !== 0) return riskDelta;
 
         const favoriteDelta =
@@ -198,6 +231,7 @@ export default function AdminTrackingTab({
         );
       });
   }, [
+    followUpFilter,
     activityFilter,
     favoriteFilter,
     gradeFilter,
@@ -212,6 +246,16 @@ export default function AdminTrackingTab({
   const activityAnalytics = useMemo(
     () => buildTrackingActivityAnalytics(activityEvents, documents),
     [activityEvents, documents],
+  );
+
+  const periodTrends = useMemo(
+    () =>
+      buildTrackingPeriodTrends({ quizResults, submissions, studySessions }),
+    [quizResults, submissions, studySessions],
+  );
+  const webVitals = useMemo(
+    () => buildCoreWebVitalsSummary(activityEvents),
+    [activityEvents],
   );
 
   const handleExportCsv = () => {
@@ -233,7 +277,8 @@ export default function AdminTrackingTab({
     ];
 
     const rows = filteredInsights.map((item) => {
-      const escape = (val: unknown) => `"${String(val ?? '').replace(/"/g, '""')}"`;
+      const escape = (val: unknown) =>
+        `"${String(val ?? '').replace(/"/g, '""')}"`;
       return [
         escape(item.student.name || 'İsimsiz'),
         escape(item.student.email),
@@ -251,8 +296,14 @@ export default function AdminTrackingTab({
             ? new Date(item.lastActivityAt).toLocaleDateString('tr-TR')
             : 'Hiç yok',
         ),
-        escape(item.inactiveDays === Number.POSITIVE_INFINITY ? '-' : item.inactiveDays),
-        escape(item.latestQuizPercent !== null ? `%${item.latestQuizPercent}` : '-'),
+        escape(
+          item.inactiveDays === Number.POSITIVE_INFINITY
+            ? '-'
+            : item.inactiveDays,
+        ),
+        escape(
+          item.latestQuizPercent !== null ? `%${item.latestQuizPercent}` : '-',
+        ),
         escape(item.weeklyMinutes),
         escape(item.targetMinutes),
         escape(`%${item.weeklyProgress}`),
@@ -274,7 +325,7 @@ export default function AdminTrackingTab({
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
-URL.revokeObjectURL(url);
+    URL.revokeObjectURL(url);
   };
 
   return (
@@ -286,7 +337,9 @@ URL.revokeObjectURL(url);
               <ShieldCheck className="h-4 w-4" />
               Canlı Dashboard
             </div>
-            <h2 className="text-2xl font-bold text-slate-900 dark:text-white">Takip Merkezi</h2>
+            <h2 className="text-2xl font-bold text-slate-900 dark:text-white">
+              Takip Merkezi
+            </h2>
             <p className="mt-1 text-sm text-slate-600 dark:text-slate-400">
               Risk, pasiflik, ödev, test, hedef ve mesaj sinyalleri tek ekranda.
             </p>
@@ -298,7 +351,9 @@ URL.revokeObjectURL(url);
                 title="Filtrelenen öğrenci takip listesini Excel/CSV olarak indir"
               >
                 <Download className="h-3.5 w-3.5" />
-                <span>Excel / CSV Raporu İndir ({filteredInsights.length})</span>
+                <span>
+                  Excel / CSV Raporu İndir ({filteredInsights.length})
+                </span>
               </button>
             </div>
           </div>
@@ -311,8 +366,90 @@ URL.revokeObjectURL(url);
         </div>
       </section>
 
+      <section
+        aria-label="Dönem eğilimleri ve site performansı"
+        className="grid gap-4 md:grid-cols-2 xl:grid-cols-3"
+      >
+        {([7, 30] as const).map((days) => (
+          <section
+            key={days}
+            aria-label={`${days} günlük eğilim`}
+            className="rounded-2xl border border-subtle bg-surface-1 p-5 text-primary"
+          >
+            <h3 className="mb-3 font-bold">{days} günlük eğilim</h3>
+            <dl className="space-y-2 text-sm">
+              {[
+                [
+                  'Aktif öğrenci',
+                  days === 7
+                    ? periodTrends.activeStudents7d
+                    : periodTrends.activeStudents30d,
+                ],
+                [
+                  'Çözülen test',
+                  days === 7
+                    ? periodTrends.quiz7dCount
+                    : periodTrends.quiz30dCount,
+                ],
+                [
+                  'Test ortalaması',
+                  `%${days === 7 ? periodTrends.quiz7dAvgPercent : periodTrends.quiz30dAvgPercent}`,
+                ],
+                [
+                  'Ödev teslimi',
+                  days === 7
+                    ? periodTrends.submission7dCount
+                    : periodTrends.submission30dCount,
+                ],
+                [
+                  'Çalışma süresi',
+                  `${days === 7 ? periodTrends.study7dMinutes : periodTrends.study30dMinutes} dk`,
+                ],
+              ].map(([label, value]) => (
+                <div key={label} className="flex justify-between gap-3">
+                  <dt className="text-secondary">{label}</dt>
+                  <dd className="font-semibold">{value}</dd>
+                </div>
+              ))}
+            </dl>
+          </section>
+        ))}
+        <section
+          aria-label="Core Web Vitals özeti"
+          className="rounded-2xl border border-subtle bg-surface-1 p-5 text-primary md:col-span-2 xl:col-span-1"
+        >
+          <h3 className="font-bold">Core Web Vitals</h3>
+          <p className="mb-3 text-xs text-secondary">
+            {webVitals.totalSamples} ölçüm · Ortalama değerler
+          </p>
+          {webVitals.totalSamples === 0 && (
+            <p className="text-sm text-secondary">
+              Henüz performans ölçümü yok.
+            </p>
+          )}
+          <dl className="space-y-2 text-sm">
+            {(['LCP', 'INP', 'CLS', 'FCP', 'TTFB'] as const).map((name) => {
+              const metric = webVitals[name];
+              return (
+                <div
+                  key={name}
+                  className="flex flex-wrap justify-between gap-2"
+                >
+                  <dt>{name}</dt>
+                  <dd className="text-secondary">
+                    {metric.count === 0
+                      ? 'Ölçüm yok'
+                      : `${metric.average}${name === 'CLS' ? '' : ' ms'} · ${{ good: 'İyi', 'needs-improvement': 'İyileştirilmeli', poor: 'Zayıf' }[metric.status]} (${metric.count} ölçüm)`}
+                  </dd>
+                </div>
+              );
+            })}
+          </dl>
+        </section>
+      </section>
+
       <section className="rounded-2xl border border-slate-200/80 dark:border-white/10 bg-white/80 dark:bg-white/5 p-4 shadow-sm">
-        <div className="grid gap-3 lg:grid-cols-[minmax(0,1fr)_auto_auto_auto_auto_auto]">
+        <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
           <label className="relative block">
             <span className="sr-only">Öğrenci ara</span>
             <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400 dark:text-slate-500" />
@@ -323,7 +460,10 @@ URL.revokeObjectURL(url);
               className="w-full rounded-xl border border-slate-200 dark:border-white/10 bg-white dark:bg-slate-950/60 py-2.5 pl-10 pr-3 text-sm text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 outline-none focus:border-cyan-500 dark:focus:border-cyan-400/60 focus:ring-2 focus:ring-cyan-500/20"
             />
           </label>
-          <Select value={riskFilter} onChange={(value) => setRiskFilter(value as RiskFilter)}>
+          <Select
+            value={riskFilter}
+            onChange={(value) => setRiskFilter(value as RiskFilter)}
+          >
             <option value="all">Tüm riskler</option>
             <option value="high">Yüksek risk</option>
             <option value="medium">Takipte</option>
@@ -337,6 +477,19 @@ URL.revokeObjectURL(url);
             <option value="today">Bugün aktif</option>
             <option value="week">Bu hafta aktif</option>
             <option value="inactive">Pasif</option>
+          </Select>
+          <Select
+            aria-label="Takip tarihi filtresi"
+            value={followUpFilter}
+            onChange={(value) =>
+              setFollowUpFilter(value as typeof followUpFilter)
+            }
+          >
+            <option value="all">Tüm takip tarihleri</option>
+            <option value="overdue">Takip tarihi geçen</option>
+            <option value="today">Bugün takip</option>
+            <option value="upcoming">Yaklaşan takip</option>
+            <option value="scheduled">Takip tarihi olan</option>
           </Select>
           <Select value={gradeFilter} onChange={setGradeFilter}>
             <option value="all">Tüm sınıflar</option>
@@ -364,6 +517,23 @@ URL.revokeObjectURL(url);
             />
           </label>
         </div>
+        {hasActiveFilters && (
+          <button
+            type="button"
+            className="mt-3 rounded-xl border border-subtle px-4 py-2 text-sm text-primary"
+            onClick={() => {
+              setSearchQuery('');
+              setLabelFilter('');
+              setRiskFilter('all');
+              setActivityFilter('all');
+              setFavoriteFilter('all');
+              setGradeFilter('all');
+              setFollowUpFilter('all');
+            }}
+          >
+            Filtreyi Sıfırla
+          </button>
+        )}
       </section>
 
       <section className="grid gap-4 xl:grid-cols-[0.75fr_1fr_1fr]">
@@ -373,7 +543,10 @@ URL.revokeObjectURL(url);
           </h3>
           <div className="grid grid-cols-2 gap-3">
             <Metric label="7 gün event" value={activityAnalytics.last7Count} />
-            <Metric label="30 gün event" value={activityAnalytics.last30Count} />
+            <Metric
+              label="30 gün event"
+              value={activityAnalytics.last30Count}
+            />
           </div>
           <div className="mt-4 space-y-2">
             {activityAnalytics.topTypes.length === 0 ? (
@@ -384,8 +557,12 @@ URL.revokeObjectURL(url);
                   key={item.type}
                   className="flex items-center justify-between rounded-xl bg-slate-100 dark:bg-slate-950/45 px-3 py-2 text-sm"
                 >
-                  <span className="text-slate-700 dark:text-slate-300">{item.type}</span>
-                  <span className="font-bold text-cyan-700 dark:text-cyan-200">{item.count}</span>
+                  <span className="text-slate-700 dark:text-slate-300">
+                    {item.type}
+                  </span>
+                  <span className="font-bold text-cyan-700 dark:text-cyan-200">
+                    {item.count}
+                  </span>
                 </div>
               ))
             )}
@@ -411,7 +588,9 @@ URL.revokeObjectURL(url);
                     <p className="truncate text-sm font-semibold text-slate-900 dark:text-white">
                       {item.title}
                     </p>
-                    <p className="text-xs text-slate-500 dark:text-slate-400">{item.type}</p>
+                    <p className="text-xs text-slate-500 dark:text-slate-400">
+                      {item.type}
+                    </p>
                   </div>
                   <span className="rounded-full bg-cyan-100 dark:bg-cyan-400/10 px-3 py-1 text-xs font-bold text-cyan-700 dark:text-cyan-200">
                     {item.count}
@@ -441,7 +620,9 @@ URL.revokeObjectURL(url);
                     <p className="truncate text-sm font-semibold text-slate-900 dark:text-white">
                       {item.title}
                     </p>
-                    <p className="text-xs text-slate-500 dark:text-slate-400">{item.type}</p>
+                    <p className="text-xs text-slate-500 dark:text-slate-400">
+                      {item.type}
+                    </p>
                   </div>
                   <span className="rounded-full bg-amber-100 dark:bg-amber-400/10 px-3 py-1 text-xs font-bold text-amber-700 dark:text-amber-200">
                     {item.count}
@@ -511,6 +692,18 @@ URL.revokeObjectURL(url);
                     {insight.student.email}
                   </p>
 
+                  <QuickLabelForm
+                    studentName={insight.student.name || 'İsimsiz öğrenci'}
+                    labels={insight.status?.labels ?? []}
+                    onSave={(nextLabels) =>
+                      onUpdateStatus(
+                        insight.student,
+                        insight.status?.status ??
+                          (insight.riskLevel === 'high' ? 'risk' : 'watch'),
+                        nextLabels,
+                      )
+                    }
+                  />
                   <div className="mt-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
                     <MiniSignal
                       icon={<Clock3 className="h-4 w-4" />}
@@ -610,16 +803,19 @@ URL.revokeObjectURL(url);
 }
 
 function Select({
+  'aria-label': ariaLabel,
   children,
   onChange,
   value,
 }: {
+  'aria-label'?: string;
   children: ReactNode;
   onChange: (value: string) => void;
   value: string;
 }) {
   return (
     <select
+      aria-label={ariaLabel}
       value={value}
       onChange={(event) => onChange(event.target.value)}
       className="w-full rounded-xl border border-slate-200 dark:border-white/10 bg-white dark:bg-slate-950/60 px-3 py-2.5 text-sm text-slate-900 dark:text-white outline-none focus:border-cyan-500 dark:focus:border-cyan-400/60 focus:ring-2 focus:ring-cyan-500/20 lg:w-40"
@@ -632,8 +828,12 @@ function Select({
 function Metric({ label, value }: { label: string; value: number }) {
   return (
     <div className="rounded-xl border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-slate-950/50 px-4 py-3">
-      <p className="text-2xl font-black text-slate-900 dark:text-white">{value}</p>
-      <p className="text-xs font-semibold text-slate-500 dark:text-slate-400">{label}</p>
+      <p className="text-2xl font-black text-slate-900 dark:text-white">
+        {value}
+      </p>
+      <p className="text-xs font-semibold text-slate-500 dark:text-slate-400">
+        {label}
+      </p>
     </div>
   );
 }
@@ -655,8 +855,81 @@ function MiniSignal({
         {icon}
         <span className="text-xs font-semibold">{label}</span>
       </div>
-      <p className="text-base font-bold text-slate-900 dark:text-white">{value}</p>
-      {meta ? <p className="text-xs text-slate-500 dark:text-slate-400">{meta}</p> : null}
+      <p className="text-base font-bold text-slate-900 dark:text-white">
+        {value}
+      </p>
+      {meta ? (
+        <p className="text-xs text-slate-500 dark:text-slate-400">{meta}</p>
+      ) : null}
     </div>
+  );
+}
+
+function QuickLabelForm({
+  studentName,
+  labels,
+  onSave,
+}: {
+  studentName: string;
+  labels: string[];
+  onSave: (labels: string[]) => Promise<void> | void;
+}) {
+  const [draftLabel, setDraftLabel] = useState('');
+  const [saving, setSaving] = useState(false);
+  const [feedback, setFeedback] = useState('');
+  return (
+    <form
+      className="mt-3 space-y-2"
+      aria-label={`${studentName} etiket ekleme`}
+      onSubmit={async (event) => {
+        event.preventDefault();
+        if (saving || !draftLabel.trim()) return;
+        const nextLabels = appendUniqueStudentLabel(labels, draftLabel);
+        if (
+          nextLabels.length === labels.length &&
+          nextLabels.every((label, index) => label === labels[index])
+        ) {
+          setFeedback('Bu etiket zaten var veya 12 etiket sınırına ulaşıldı.');
+          return;
+        }
+        setSaving(true);
+        setFeedback('');
+        try {
+          await onSave(nextLabels);
+          setDraftLabel('');
+          setFeedback('Etiket eklendi.');
+        } catch {
+          setFeedback('Etiket eklenemedi. Lütfen tekrar dene.');
+        } finally {
+          setSaving(false);
+        }
+      }}
+    >
+      <div className="flex flex-wrap gap-2">
+        <input
+          aria-label={`${studentName} için yeni etiket`}
+          value={draftLabel}
+          disabled={saving}
+          onChange={(event) => {
+            setDraftLabel(event.target.value);
+            setFeedback('');
+          }}
+          placeholder="Yeni etiket"
+          className="min-w-0 flex-1 rounded-xl border border-subtle bg-surface-1 px-3 py-2 text-sm text-primary"
+        />
+        <button
+          type="submit"
+          disabled={saving || !draftLabel.trim()}
+          className="rounded-xl border border-subtle bg-surface-2 px-3 py-2 text-sm font-semibold text-primary disabled:opacity-50"
+        >
+          {saving ? 'Ekleniyor…' : 'Etiket ekle'}
+        </button>
+      </div>
+      {feedback && (
+        <p role="status" className="text-xs text-secondary">
+          {feedback}
+        </p>
+      )}
+    </form>
   );
 }

@@ -4,7 +4,6 @@ import type {
   QuestionDistribution,
   ExitTicketQuestion,
 } from '../types';
-import { EXIT_TICKET_TEMPLATES } from './exitTicketTemplates';
 
 const SESSIONS_STORAGE_KEY = 'ugurhoca_exit_ticket_sessions_v1';
 
@@ -43,28 +42,7 @@ export const getSessionByCode = (code: string): ExitTicketSession | null => {
   const normalized = code.trim();
   const sessions = getSavedSessions();
   const found = sessions.find((s) => s.code === normalized);
-  if (found) return found;
-
-  // Eğer localde yoksa şablonlardan örnek oturum fallback'i sağla (Demo ve test için)
-  const template = EXIT_TICKET_TEMPLATES[0];
-  if (normalized === '123456' || normalized === '888888') {
-    const demoSession: ExitTicketSession = {
-      id: `session_demo_${normalized}`,
-      code: normalized,
-      title: template.title,
-      grade: template.grade,
-      status: 'in_progress',
-      currentQuestionIndex: 0,
-      showDistribution: false,
-      questions: template.questions,
-      responses: [],
-      createdAt: new Date().toISOString(),
-    };
-    saveSession(demoSession);
-    return demoSession;
-  }
-
-  return null;
+  return found || null;
 };
 
 export const createExitTicketSession = (

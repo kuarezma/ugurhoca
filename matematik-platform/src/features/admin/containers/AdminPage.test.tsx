@@ -1,7 +1,13 @@
-import { act, fireEvent, render, screen, waitFor } from '@testing-library/react';
+import {
+  act,
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+} from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import AdminPage from './AdminPage';
-import type { AdminDashboardData } from '@/features/admin/types';
+import type { AdminDashboardData, AdminUser } from '@/features/admin/types';
 import {
   loadAdminDashboardData,
   loadAdminLearningActivity,
@@ -10,19 +16,38 @@ import {
   loadWorksheetCandidateSourceStatus,
   refreshAdminUsers,
   resolveAdminAuth,
+  upsertStudentAdminStatus,
 } from '@/features/admin/queries';
 
 const ui = vi.hoisted(() => ({
+  updateStatus: undefined as
+    | undefined
+    | ((
+        student: AdminUser,
+        status: string,
+        labels?: string[],
+      ) => Promise<void>),
   router: { push: vi.fn() },
   showToast: vi.fn(),
 }));
 vi.mock('next/navigation', () => ({ useRouter: () => ui.router }));
-vi.mock('next/dynamic', () => ({ default: () => () => null }));
+vi.mock('next/dynamic', () => ({
+  default: (loader: () => unknown) =>
+    function MockDynamic(props: {
+      onUpdateStudentStatus?: typeof ui.updateStatus;
+    }) {
+      if (String(loader).includes('AdminTabPanels'))
+        ui.updateStatus = props.onUpdateStudentStatus;
+      return null;
+    },
+}));
 vi.mock('@/components/Toast', () => ({
   useToast: () => ({ showToast: ui.showToast }),
 }));
 vi.mock('@/components/ThemeToggle', () => ({ ThemeToggle: () => null }));
-vi.mock('@/components/ThemeSelectorDropdown', () => ({ ThemeSelectorDropdown: () => null }));
+vi.mock('@/components/ThemeSelectorDropdown', () => ({
+  ThemeSelectorDropdown: () => null,
+}));
 vi.mock('@/features/admin/queries', () => ({
   loadAdminDashboardData: vi.fn(),
   loadAdminLearningActivity: vi.fn(),
@@ -31,6 +56,7 @@ vi.mock('@/features/admin/queries', () => ({
   loadWorksheetCandidateSourceStatus: vi.fn(),
   refreshAdminUsers: vi.fn(),
   resolveAdminAuth: vi.fn(),
+  upsertStudentAdminStatus: vi.fn(),
 }));
 
 const emptyDashboard: AdminDashboardData = {
@@ -54,6 +80,7 @@ const emptyDashboard: AdminDashboardData = {
 describe('Admin initial data flow', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    ui.updateStatus = undefined;
     window.history.replaceState({}, '', '/admin');
     vi.spyOn(document, 'visibilityState', 'get').mockReturnValue('visible');
     vi.mocked(resolveAdminAuth).mockResolvedValue({
@@ -86,6 +113,55 @@ describe('Admin initial data flow', () => {
     vi.restoreAllMocks();
   });
 
+  it('etiket eklerken mevcut takip tarihini korur ve kayıt hatasını forma iletir', async () => {
+    const student: AdminUser = {
+      id: 's1',
+      name: 'Ada',
+      email: 'ada@example.com',
+      grade: 8,
+    };
+    const followUpAt = '2026-11-20T10:00:00Z';
+    vi.mocked(loadAdminDashboardData).mockResolvedValue({
+      ...emptyDashboard,
+      allUsers: [student],
+      adminStatuses: [
+        {
+          student_id: 's1',
+          status: 'watch',
+          labels: ['Kontrol'],
+          follow_up_at: followUpAt,
+        },
+      ],
+    });
+    vi.mocked(upsertStudentAdminStatus).mockResolvedValue({
+      student_id: 's1',
+      status: 'watch',
+      labels: ['Kontrol', 'Yeni'],
+      follow_up_at: followUpAt,
+    });
+    render(<AdminPage />);
+    await waitFor(() => expect(ui.updateStatus).toBeTypeOf('function'));
+    await act(async () => {
+      await ui.updateStatus!(student, 'watch', ['Kontrol', 'Yeni']);
+    });
+    expect(upsertStudentAdminStatus).toHaveBeenCalledWith({
+      adminId: 'admin',
+      followUpAt,
+      labels: ['Kontrol', 'Yeni'],
+      status: 'watch',
+      studentId: 's1',
+    });
+    vi.mocked(upsertStudentAdminStatus).mockRejectedValue(
+      new Error('Kayıt hatası'),
+    );
+    await act(async () => {
+      await expect(
+        ui.updateStatus!(student, 'watch', ['Kontrol', 'Yeni']),
+      ).rejects.toThrow('Kayıt hatası');
+    });
+    expect(ui.showToast).toHaveBeenCalledWith('error', 'Kayıt hatası');
+  });
+
   it('dashboard tamamlanmadan Drive ve kaynak çağrılarını başlatır; auth state değişimi yeniden yükletmez', async () => {
     const dashboard = Promise.withResolvers<AdminDashboardData>();
     vi.mocked(loadAdminDashboardData).mockReturnValue(dashboard.promise);
@@ -110,11 +186,15 @@ describe('Admin initial data flow', () => {
     expect(loadAdminLiveLessonActivity).not.toHaveBeenCalled();
 
     fireEvent.click(screen.getByRole('button', { name: /Takip Merkezi/ }));
-    await waitFor(() => expect(loadAdminLearningActivity).toHaveBeenCalledOnce());
+    await waitFor(() =>
+      expect(loadAdminLearningActivity).toHaveBeenCalledOnce(),
+    );
     expect(loadAdminLiveLessonActivity).not.toHaveBeenCalled();
 
     fireEvent.click(screen.getByRole('button', { name: /Canlı Dersler/ }));
-    await waitFor(() => expect(loadAdminLiveLessonActivity).toHaveBeenCalledOnce());
+    await waitFor(() =>
+      expect(loadAdminLiveLessonActivity).toHaveBeenCalledOnce(),
+    );
 
     fireEvent.click(screen.getByRole('button', { name: /Sınıfım/ }));
     expect(loadAdminLearningActivity).toHaveBeenCalledOnce();
@@ -130,11 +210,15 @@ describe('Admin initial data flow', () => {
     await waitFor(() => expect(loadAdminDashboardData).toHaveBeenCalledOnce());
 
     fireEvent.click(screen.getByRole('button', { name: /Takip Merkezi/ }));
-    await waitFor(() => expect(loadAdminLearningActivity).toHaveBeenCalledOnce());
+    await waitFor(() =>
+      expect(loadAdminLearningActivity).toHaveBeenCalledOnce(),
+    );
     fireEvent.click(screen.getByRole('button', { name: /Sınıfım/ }));
     expect(loadAdminLearningActivity).toHaveBeenCalledOnce();
 
-    await act(async () => learning.resolve({ activityEvents: [], studySessions: [] }));
+    await act(async () =>
+      learning.resolve({ activityEvents: [], studySessions: [] }),
+    );
   });
 
   it('polling 120 saniyede yeniler; gizli sekmede sorgulamaz ve dönüşte yeniler', async () => {

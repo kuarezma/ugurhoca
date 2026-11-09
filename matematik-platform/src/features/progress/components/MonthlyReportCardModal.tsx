@@ -17,6 +17,12 @@ import {
 } from 'lucide-react';
 import type { StudyGoal, StudySession } from '@/features/progress/types';
 
+export type TopicGrade = {
+  topic: string;
+  score: number;
+  status: string;
+};
+
 export type MonthlyReportCardModalProps = {
   isOpen: boolean;
   onClose: () => void;
@@ -25,6 +31,8 @@ export type MonthlyReportCardModalProps = {
   streak?: number;
   sessions?: StudySession[];
   goal?: StudyGoal | null;
+  topicGrades?: TopicGrade[];
+  totalQuestionsSolved?: number;
 };
 
 export function MonthlyReportCardModal({
@@ -35,6 +43,8 @@ export function MonthlyReportCardModal({
   streak = 0,
   sessions = [],
   goal = null,
+  topicGrades,
+  totalQuestionsSolved = 0,
 }: MonthlyReportCardModalProps) {
   const modalRef = useAccessibleModal<HTMLDivElement>(isOpen, onClose);
   const [activeTab, setActiveTab] = useState<'card' | 'certificate'>('card');
@@ -45,24 +55,13 @@ export function MonthlyReportCardModal({
   // Hesaplamalar
   const totalMinutes = sessions.reduce((acc, s) => acc + (s.duration || 0), 0);
   const totalHours = (totalMinutes / 60).toFixed(1);
-  const solvedQuestions = sessions.reduce((acc, s) => {
-    if (s.activity_type === 'test') {
-      return acc + Math.round((s.duration || 30) * 0.75);
-    }
-    return acc;
-  }, 0) || 184;
+  const solvedQuestions = totalQuestionsSolved;
 
   const targetMinutes = goal ? goal.target_duration : 600;
-  const completionRate = Math.min(100, Math.round((totalMinutes / (targetMinutes * 4 || 1)) * 100)) || 86;
+  const completionRate = Math.min(100, Math.round((totalMinutes / (targetMinutes * 4 || 1)) * 100));
 
-  // Örnek konu bazlı kazanım başarıları
-  const topicGrades = [
-    { topic: 'Çarpanlara Ayırma & Özdeşlikler', score: 88, status: 'Pekiyi' },
-    { topic: 'Kareköklü & Üslü İfadeler', score: 84, status: 'Pekiyi' },
-    { topic: 'Doğrusal Denklemler & Eğim', score: 78, status: 'İyi' },
-    { topic: 'Üçgenler & Pisagor Teoremi', score: 72, status: 'İyi' },
-    { topic: 'Olasılık & Veri Analizi', score: 92, status: 'Mükemmel' },
-  ];
+  // Gerçek konu başarıları prop olarak verilmişse kullanılır, aksi halde sahte puan üretilmez
+  const effectiveTopicGrades: TopicGrade[] = topicGrades ?? [];
 
   const currentDateStr = new Date().toLocaleDateString('tr-TR', {
     day: 'numeric',
@@ -210,7 +209,9 @@ export function MonthlyReportCardModal({
                     <span>Çözülen Soru</span>
                   </div>
                   <div className="mt-2 text-2xl font-extrabold text-slate-900 dark:text-white">{solvedQuestions} Soru</div>
-                  <span className="text-[11px] text-accent-success-ink dark:text-emerald-400 font-semibold">%86 Ortalama Başarı</span>
+                  <span className="text-[11px] text-accent-success-ink dark:text-emerald-400 font-semibold">
+                    {solvedQuestions > 0 ? `%${completionRate} Hedef Tamamlama` : 'Henüz Soru Çözülmedi'}
+                  </span>
                 </div>
 
                 <div className="rounded-2xl border border-slate-200 dark:border-white/10 bg-slate-50/80 dark:bg-white/5 p-3.5">
@@ -243,23 +244,29 @@ export function MonthlyReportCardModal({
                 </div>
 
                 <div className="divide-y divide-slate-100 dark:divide-white/5">
-                  {topicGrades.map((t, idx) => (
-                    <div key={idx} className="flex items-center justify-between py-2.5 text-xs">
-                      <div className="font-semibold text-slate-800 dark:text-slate-200">{t.topic}</div>
-                      <div className="flex items-center gap-3">
-                        <div className="w-28 sm:w-36 bg-slate-200 dark:bg-slate-800 rounded-full h-2 overflow-hidden border border-slate-300 dark:border-white/10">
-                          <div
-                            className="h-full bg-gradient-to-r from-indigo-500 to-emerald-400 rounded-full"
-                            style={{ width: `${t.score}%` }}
-                          />
-                        </div>
-                        <span className="font-mono font-bold text-amber-600 dark:text-amber-300 w-8 text-right">%{t.score}</span>
-                        <span className="rounded px-2 py-0.5 text-[10px] font-bold bg-slate-200/80 dark:bg-white/10 text-emerald-700 dark:text-emerald-300 w-16 text-center">
-                          {t.status}
-                        </span>
-                      </div>
+                  {effectiveTopicGrades.length === 0 ? (
+                    <div className="py-6 text-center text-xs text-slate-500 dark:text-slate-400">
+                      Henüz bu ay için konu bazlı test verisi oluşmadı
                     </div>
-                  ))}
+                  ) : (
+                    effectiveTopicGrades.map((t, idx) => (
+                      <div key={idx} className="flex items-center justify-between py-2.5 text-xs">
+                        <div className="font-semibold text-slate-800 dark:text-slate-200">{t.topic}</div>
+                        <div className="flex items-center gap-3">
+                          <div className="w-28 sm:w-36 bg-slate-200 dark:bg-slate-800 rounded-full h-2 overflow-hidden border border-slate-300 dark:border-white/10">
+                            <div
+                              className="h-full bg-gradient-to-r from-indigo-500 to-emerald-400 rounded-full"
+                              style={{ width: `${t.score}%` }}
+                            />
+                          </div>
+                          <span className="font-mono font-bold text-amber-600 dark:text-amber-300 w-8 text-right">%{t.score}</span>
+                          <span className="rounded px-2 py-0.5 text-[10px] font-bold bg-slate-200/80 dark:bg-white/10 text-emerald-700 dark:text-emerald-300 w-16 text-center">
+                            {t.status}
+                          </span>
+                        </div>
+                      </div>
+                    ))
+                  )}
                 </div>
               </div>
 

@@ -236,6 +236,30 @@ export default function LoginPage() {
               </Button>
             </form>
 
+            <nav
+              aria-label="Gizlilik ve veri kullanımı"
+              className="mt-4 flex flex-wrap justify-center gap-x-4 gap-y-2 text-center text-xs text-secondary"
+            >
+              <Link
+                href="/gizlilik"
+                className="underline underline-offset-4 hover:text-primary"
+              >
+                Gizlilik Politikası
+              </Link>
+              <Link
+                href="/kvkk"
+                className="underline underline-offset-4 hover:text-primary"
+              >
+                KVKK Aydınlatma Metni
+              </Link>
+              <Link
+                href="/cerez"
+                className="underline underline-offset-4 hover:text-primary"
+              >
+                Çerez Politikası
+              </Link>
+            </nav>
+
             <div className="mt-4 rounded-xl border border-default bg-surface-2 p-3 text-center text-xs text-secondary">
               <span className="font-medium text-primary">🔑 Şifreni mi unuttun?</span>{' '}
               <Link

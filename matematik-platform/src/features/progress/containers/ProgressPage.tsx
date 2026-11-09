@@ -137,6 +137,21 @@ export default function IlerlemePage({ initialData }: ProgressPageProps) {
     return progressData.reduce((acc, row) => acc + (row.practice_count || 0), 0);
   }, [progressData]);
 
+  const monthlyTopicGrades = useMemo(() => {
+    return progressData
+      .filter((row) => (row.practice_count || 0) > 0 || (row.mastery_level || 0) > 0)
+      .map((row) => {
+        const score = Math.min(100, Math.max(0, Math.round(row.mastery_level || 0)));
+        const status =
+          score >= 85 ? 'Pekiyi' : score >= 70 ? 'İyi' : score >= 50 ? 'Gelişiyor' : 'Başlangıç';
+        return {
+          score,
+          status,
+          topic: row.topic,
+        };
+      });
+  }, [progressData]);
+
   const loadDashboardData = useCallback(async () => {
     const session = await requireClientSession({ router });
     if (!session) {
@@ -715,6 +730,8 @@ export default function IlerlemePage({ initialData }: ProgressPageProps) {
         streak={user?.current_streak || 0}
         sessions={sessions}
         goal={goal}
+        topicGrades={monthlyTopicGrades}
+        totalQuestionsSolved={totalQuestionsSolved}
       />
     </main>
   );

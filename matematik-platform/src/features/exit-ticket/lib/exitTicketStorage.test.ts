@@ -57,4 +57,9 @@ describe('exitTicketStorage', () => {
     expect(dist.correctCount).toBe(3);
     expect(dist.correctPercentage).toBe(75);
   });
+
+  it('does not return fake demo session for hardcoded PINs like 123456 or 888888 when no session exists', () => {
+    expect(getSessionByCode('123456')).toBeNull();
+    expect(getSessionByCode('888888')).toBeNull();
+  });
 });

@@ -31,8 +31,6 @@ export type GrowthReportModalProps = {
   focusTopic?: string | null;
 };
 
-export type ParentReportModalProps = GrowthReportModalProps;
-
 export function GrowthReportModal({
   isOpen,
   onClose,
@@ -72,9 +70,6 @@ export function GrowthReportModal({
     strongTopic ? `💪 *En Güçlü Konu:* ${strongTopic}` : '',
     focusTopic ? `🎯 *Gelişim Alanı:* ${focusTopic}` : '',
     '',
-    '🌟 *Öğretmen Değerlendirmesi:*',
-    'Öğrencimiz bu hafta matematik çalışmalarında harika bir disiplin gösterdi. Düzenli soru çözümü ve konu tekrarlarıyla başarısını pekiştiriyor. Tebrikler! 👏',
-    '',
     '🔗 https://ugurhoca.com',
   ]
     .filter(Boolean)
@@ -83,6 +78,7 @@ export function GrowthReportModal({
   const handleCopy = async () => {
     try {
       await navigator.clipboard.writeText(whatsappMessage);
+      setCopied(false);
       setCopied(true);
       showToast('success', 'Gelişim raporu metni kopyalandı!');
       setTimeout(() => setCopied(false), 2500);
@@ -101,13 +97,12 @@ export function GrowthReportModal({
     try {
       const { generatePDF } = await import('@/lib/pdf-export');
       await generatePDF(
-        'growth-report-card',
-        `Ugur-Hoca-Gelisim-Raporu-${studentName.replace(/\s+/g, '-')}.pdf`,
-        { background: '#090d16', scale: 2 }
+        'pdf-report-container',
+        `${studentName.replace(/\s+/g, '_')}_Gelisim_Raporu_${new Date().toISOString().split('T')[0]}.pdf`,
       );
-      showToast('success', 'Gelişim karnesi PDF dosyası hazırlandı!');
+      showToast('success', 'PDF başarıyla indirildi!');
     } catch {
-      showToast('error', 'PDF oluşturulurken bir sorun oluştu.');
+      showToast('error', 'PDF oluşturulurken bir hata oluştu.');
     } finally {
       setIsExportingPdf(false);
     }
@@ -115,78 +110,78 @@ export function GrowthReportModal({
 
   return (
     <AnimatePresence>
-      <div className="fixed inset-0 z-[60] flex items-center justify-center p-3 sm:p-6">
+      <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+        {/* Backdrop */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="fixed inset-0 bg-black/80 backdrop-blur-md"
+          className="fixed inset-0 bg-black/60 backdrop-blur-sm"
           onClick={onClose}
         />
 
+        {/* Modal Window */}
         <motion.div
           ref={modalRef}
-          tabIndex={-1}
-          initial={{ scale: 0.95, opacity: 0, y: 10 }}
-          animate={{ scale: 1, opacity: 1, y: 0 }}
-          exit={{ scale: 0.95, opacity: 0, y: 10 }}
           role="dialog"
           aria-modal="true"
           aria-labelledby={titleId}
-          className="relative flex max-h-[92vh] w-full max-w-2xl flex-col overflow-hidden rounded-3xl border border-slate-200 dark:border-white/10 bg-white dark:bg-slate-900 shadow-2xl outline-none"
+          tabIndex={-1}
+          initial={{ opacity: 0, scale: 0.95, y: 10 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          exit={{ opacity: 0, scale: 0.95, y: 10 }}
+          className="relative w-full max-w-lg overflow-hidden rounded-3xl border border-slate-200 dark:border-white/10 bg-white dark:bg-slate-900 shadow-2xl z-10"
         >
-          {/* Header */}
-          <div className="flex items-center justify-between border-b border-slate-200 dark:border-white/10 px-6 py-4 bg-slate-50 dark:bg-slate-950/60">
-            <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-600 text-slate-950 dark:text-slate-950 shadow-md">
-                <FileSpreadsheet className="h-5 w-5" />
+          {/* Header Banner */}
+          <div className="relative overflow-hidden bg-gradient-to-br from-indigo-600 via-indigo-700 to-purple-800 p-6 text-white dark:text-white">
+            <div className="absolute -right-6 -top-6 h-28 w-28 rounded-full bg-white/10 blur-xl pointer-events-none" />
+            <div className="flex items-center justify-between relative z-10">
+              <div className="flex items-center gap-2.5">
+                <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-white/15 backdrop-blur-md border border-white/20">
+                  <FileSpreadsheet className="h-5 w-5 text-indigo-200" />
+                </div>
+                <div>
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-indigo-200">
+                    Öğrenci Karnesi
+                  </span>
+                  <h3 id={titleId} className="text-lg font-black tracking-tight flex items-center gap-1.5">
+                    Haftalık Gelişim Raporu
+                    <Sparkles className="h-4 w-4 text-amber-300 fill-amber-300" />
+                  </h3>
+                </div>
               </div>
-              <div>
-                <h2 id={titleId} className="text-base sm:text-lg font-bold text-slate-900 dark:text-white">
-                  Haftalık Gelişim Raporu & Karne
-                </h2>
-                <p className="text-xs text-slate-500 dark:text-slate-400">
-                  Öğrencinin haftalık başarı karnesini WhatsApp ile paylaş veya PDF indir.
+
+              <button
+                type="button"
+                onClick={onClose}
+                className="rounded-full p-2 text-white/80 hover:bg-white/20 hover:text-white transition-colors"
+                aria-label="Kapat"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+
+            {/* Student ID Badge */}
+            <div className="mt-4 flex items-center gap-3 bg-white/10 rounded-2xl p-3 border border-white/10">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white text-indigo-700 font-black text-sm shadow-sm">
+                {studentName.charAt(0).toUpperCase()}
+              </div>
+              <div className="min-w-0">
+                <h4 className="font-bold text-sm truncate">{studentName}</h4>
+                <p className="text-xs text-indigo-100 flex items-center gap-1">
+                  <span>{studentGrade}. Sınıf Öğrencisi</span>
+                  <span>•</span>
+                  <span>{todayStr}</span>
                 </p>
               </div>
             </div>
-            <button
-              type="button"
-              onClick={onClose}
-              className="rounded-full p-2 text-slate-400 hover:bg-slate-100 dark:hover:bg-white/10 hover:text-slate-900 dark:hover:text-white transition-colors"
-              aria-label="Kapat"
-            >
-              <X className="h-5 w-5" />
-            </button>
           </div>
 
           {/* Body Content */}
-          <div className="flex-1 overflow-y-auto p-5 sm:p-6 space-y-6">
-            {/* Printable Preview Card */}
-            <div
-              id="growth-report-card"
-              className="rounded-3xl border border-emerald-500/30 p-6 sm:p-8 text-slate-900 dark:text-white shadow-xl bg-surface-1 dark:bg-surface-1"
-            >
-              {/* Report Header */}
-              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-slate-200 dark:border-white/10 pb-5">
-                <div>
-                  <div className="inline-flex items-center gap-1.5 rounded-full bg-emerald-500/10 dark:bg-emerald-500/20 px-3 py-1 text-xs font-bold text-emerald-700 dark:text-emerald-300 mb-2">
-                    <Sparkles className="h-3.5 w-3.5" />
-                    Uğur Hoca Matematik
-                  </div>
-                  <h3 className="text-xl sm:text-2xl font-black tracking-tight text-slate-900 dark:text-white">
-                    Haftalık Gelişim Karnesi
-                  </h3>
-                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">{todayStr}</p>
-                </div>
-                <div className="text-left sm:text-right">
-                  <p className="text-base sm:text-lg font-bold text-slate-900 dark:text-white">{studentName}</p>
-                  <p className="text-xs font-semibold text-accent-success-ink dark:text-emerald-400">{studentGrade}. Sınıf Öğrencisi</p>
-                </div>
-              </div>
-
-              {/* Metrics Grid */}
-              <div className="grid grid-cols-2 gap-3 sm:gap-4 my-6">
+          <div className="p-6">
+            <div id="pdf-report-container" className="mb-6">
+              {/* Core Metrics Grid */}
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-5">
                 <div className="rounded-2xl border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-white/5 p-4 text-center">
                   <Target className="h-5 w-5 text-accent-success-ink dark:text-emerald-400 mx-auto mb-1.5" />
                   <p className="text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">Hedef Tamamlama</p>
@@ -211,7 +206,7 @@ export function GrowthReportModal({
 
               {/* Topic Highlights */}
               {(strongTopic || focusTopic) && (
-                <div className="rounded-2xl border border-slate-200 dark:border-white/5 bg-slate-50/70 dark:bg-white/[0.03] p-4 mb-5 space-y-2 text-xs">
+                <div className="rounded-2xl border border-slate-200 dark:border-white/5 bg-slate-50/70 dark:bg-white/[0.03] p-4 space-y-2 text-xs">
                   {strongTopic && (
                     <div className="flex items-center justify-between">
                       <span className="text-slate-500 dark:text-slate-400">💪 En Başarılı Konu:</span>
@@ -226,13 +221,6 @@ export function GrowthReportModal({
                   )}
                 </div>
               )}
-
-              {/* Teacher Note */}
-              <div className="rounded-2xl border border-emerald-500/20 bg-emerald-50 dark:bg-emerald-500/10 p-4">
-                <p className="text-xs font-semibold text-emerald-900 dark:text-emerald-200 leading-relaxed">
-                  💬 {' '}<strong className="text-slate-900 dark:text-white font-bold">Öğretmen Notu:</strong> {' '}Öğrencimiz bu hafta gösterdiği istikrarlı çalışma disiplini ve gayreti ile tebrikleri hak ediyor. Başarılarının devamını dilerim!
-                </p>
-              </div>
             </div>
 
             {/* Quick Actions Panel */}
@@ -251,7 +239,7 @@ export function GrowthReportModal({
                 onClick={handleCopy}
                 className="flex items-center justify-center gap-2 rounded-2xl border border-slate-200 dark:border-white/10 bg-slate-50 hover:bg-slate-100 dark:bg-white/5 dark:hover:bg-white/10 px-4 py-3 text-sm font-semibold text-slate-700 dark:text-slate-200 transition-all active:scale-95"
               >
-                {copied ? (<Check className="h-4 w-4 text-accent-success-ink dark:text-emerald-400" /> ): (<Copy className="h-4 w-4" />)}
+                {copied ? <Check className="h-4 w-4 text-accent-success-ink dark:text-emerald-400" /> : <Copy className="h-4 w-4" />}
                 <span>{copied ? 'Kopyalandı!' : 'Metni Kopyala'}</span>
               </button>
 
@@ -273,5 +261,3 @@ export function GrowthReportModal({
 }
 
 export default GrowthReportModal;
-export const ParentReportModal = GrowthReportModal;
-export const StudentReportModal = GrowthReportModal;

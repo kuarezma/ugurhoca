@@ -24,10 +24,9 @@ describe('portfolioStorage', () => {
     tags: ['Fraktal', 'Geometri'],
   };
 
-  it('retrieves default portfolio items when storage is empty', () => {
+  it('retrieves empty array when storage is empty', () => {
     const items = getPortfolioItems();
-    expect(items.length).toBeGreaterThan(0);
-    expect(items[0].title).toContain('Çarpanlara Ayırma');
+    expect(items).toEqual([]);
   });
 
   it('saves new portfolio item', () => {

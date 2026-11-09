@@ -356,14 +356,17 @@ export default function RegisterPage() {
               mesajların, ödevlerin ve çalışma verilerin başka öğrencilerle
               paylaşılmaz.
             </p>
-            <p className="mt-4 text-center text-xs text-secondary">
+            <p className="mt-4 text-center text-xs leading-relaxed text-secondary">
               Devam ederek{' '}
               <Link href="/gizlilik" className="text-accent-fg underline-offset-4 hover:text-primary hover:underline">
                 Gizlilik Politikası
+              </Link>,{' '}
+              <Link href="/kvkk" className="text-accent-fg underline-offset-4 hover:text-primary hover:underline">
+                KVKK Aydınlatma Metni
               </Link>{' '}
               ve{' '}
-              <Link href="/kvkk" className="text-accent-fg underline-offset-4 hover:text-primary hover:underline">
-                KVKK
+              <Link href="/cerez" className="text-accent-fg underline-offset-4 hover:text-primary hover:underline">
+                Çerez Politikası
               </Link>{' '}
               metinlerini kabul etmiş olursun.
             </p>

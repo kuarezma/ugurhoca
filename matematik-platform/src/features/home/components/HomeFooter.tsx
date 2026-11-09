@@ -100,8 +100,13 @@ export function HomeFooter(_props: HomeFooterProps) {
                 </SafeLink>
               </li>
               <li>
-                <SafeLink href="/gizlilik#cerezler" className="hover:text-primary transition">
-                  Çerez Tercihleri
+                <SafeLink href="/cerez" className="hover:text-primary transition">
+                  Çerez Politikası
+                </SafeLink>
+              </li>
+              <li>
+                <SafeLink href="/iletisim" className="hover:text-primary transition">
+                  İletişim
                 </SafeLink>
               </li>
               <li>

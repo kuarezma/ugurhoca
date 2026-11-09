@@ -38,6 +38,12 @@ describe('home queries support image validation', () => {
     ).toThrow('Sadece JPG, PNG veya WebP görsel eklenebilir.');
   });
 
+  it('rejects PDF or non-image files in uploadSupportFiles by default', async () => {
+    await expect(
+      uploadSupportFiles([createFile('application/pdf', 1024, 'test.pdf')]),
+    ).rejects.toThrow('Sadece JPG, PNG veya WebP görsel eklenebilir.');
+  });
+
   it('allows large images so they can be compressed before upload', () => {
     expect(() =>
       validateSupportImageFile(

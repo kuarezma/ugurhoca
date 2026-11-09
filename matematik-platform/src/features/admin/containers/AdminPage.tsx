@@ -916,12 +916,15 @@ export default function AdminPage() {
     student: AdminUser,
     status: StudentAdminStatus['status'],
     labels?: string[],
+    isLabelUpdate = false,
   ) => {
     if (!user) return;
 
     try {
-      const followUpAt =
-        status === 'normal'
+      // Hızlı etiket eklemek mevcut takip tarihini değiştirmemeli.
+      const followUpAt = isLabelUpdate
+        ? adminStatuses.find((entry) => entry.student_id === student.id)?.follow_up_at ?? null
+        : status === 'normal'
           ? null
           : new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toISOString();
 
@@ -945,6 +948,8 @@ export default function AdminPage() {
         'error',
         error instanceof Error ? error.message : 'Takip durumu kaydedilemedi.',
       );
+      // Etiket formu hatada taslağı koruyabilsin; diğer çağrıların davranışı sürer.
+      if (isLabelUpdate) throw error;
     }
   };
 
@@ -1500,7 +1505,9 @@ export default function AdminPage() {
             onSendAdminMessage={openAdminMessage}
             onShowSubmissions={handleOpenSubmissions}
             onToggleFavoriteStudent={handleToggleFavoriteStudent}
-            onUpdateStudentStatus={handleUpdateStudentStatus}
+            onUpdateStudentStatus={(student, status, labels) =>
+              handleUpdateStudentStatus(student, status, labels, labels !== undefined)
+            }
             onUpdateGrades={handleUpdateGrades}
             onUpdateWorksheetCandidateStatus={
               handleUpdateWorksheetCandidateStatus

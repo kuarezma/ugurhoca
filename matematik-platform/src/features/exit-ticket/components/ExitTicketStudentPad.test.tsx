@@ -9,13 +9,15 @@ describe('ExitTicketStudentPad', () => {
     localStorage.clear();
   });
 
-  it('renders PIN and name inputs initially', () => {
+  it('renders PIN and name inputs initially with local storage notice and no demo PIN hint', () => {
     render(<ExitTicketStudentPad />);
 
     expect(screen.getByText('Çıkış Bileti Öğrenci Girişi')).toBeInTheDocument();
     expect(screen.getByLabelText(/Katılım Kodu/i)).toBeInTheDocument();
     expect(screen.getByLabelText(/Adınız/i)).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /Derse Bağlan/i })).toBeInTheDocument();
+    expect(screen.getByText(/Bu veriler yalnızca bu cihazda \(tarayıcıda\) saklanır\./i)).toBeInTheDocument();
+    expect(screen.queryByText(/Örnek demo test oturumu için PIN kodu/i)).not.toBeInTheDocument();
   });
 
   it('shows error if PIN is less than 6 digits or name is empty', () => {

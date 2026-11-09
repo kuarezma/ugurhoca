@@ -71,12 +71,15 @@ export function MathProjectWorkshopModal({
               <Compass className="h-5 w-5" />
             </div>
             <div>
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 flex-wrap">
                 <h2 id={titleId} className="text-base font-bold tracking-tight text-slate-900 dark:text-white">
                   Matematik Proje Atölyesi
                 </h2>
                 <span className="rounded-full bg-amber-500/20 px-2 py-0.5 text-[10px] font-bold text-amber-300">
                   Gerçek Hayat & Araştırma
+                </span>
+                <span className="rounded-md bg-amber-500/10 border border-amber-500/20 px-2 py-0.5 text-[10px] font-medium text-amber-700 dark:text-amber-300">
+                  Bu veriler yalnızca bu cihazda (tarayıcıda) saklanır.
                 </span>
               </div>
               <p className="text-xs text-slate-400">

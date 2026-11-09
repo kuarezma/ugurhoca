@@ -221,4 +221,29 @@ describe('ChatBubble Component', () => {
     expect(textarea.value).toContain('Üslü İfadeler');
     expect(textarea.value).toContain('Soru #3');
   });
+
+  it('sohbete PDF dosyası seçildiğinde reddedip hata mesajı gösterir', async () => {
+    mockGetClientSession.mockResolvedValue({
+      user: {
+        id: 'student-123',
+        email: 'ogrenci@ugurhoca.local',
+        user_metadata: { name: 'Ahmet Yılmaz' },
+      },
+    });
+
+    const { container } = render(<ChatBubble />);
+
+    const triggerBtn = await screen.findByRole('button', {
+      name: /Uğur Hoca'ya mesaj yaz/i,
+    });
+    fireEvent.click(triggerBtn);
+
+    const fileInput = container.querySelector('input[type="file"]') as HTMLInputElement;
+    expect(fileInput).not.toBeNull();
+
+    const pdfFile = new File(['%PDF-1.4'], 'odev.pdf', { type: 'application/pdf' });
+    fireEvent.change(fileInput, { target: { files: [pdfFile] } });
+
+    expect(await screen.findByText('Sadece JPG, PNG veya WebP görsel eklenebilir.')).toBeInTheDocument();
+  });
 });

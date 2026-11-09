@@ -43,6 +43,16 @@ describe('register user errors', () => {
     mocks.from.mockReturnValue({ upsert: mocks.upsert });
     mocks.upsert.mockResolvedValue({ error: null });
   });
+  it('gizlilik, KVKK ve çerez sayfalarına bağlantı sunar', () => {
+    render(<RegisterPage />);
+    for (const [name, href] of [
+      ['Gizlilik Politikası', '/gizlilik'],
+      ['KVKK Aydınlatma Metni', '/kvkk'],
+      ['Çerez Politikası', '/cerez'],
+    ]) {
+      expect(screen.getByRole('link', { name })).toHaveAttribute('href', href);
+    }
+  });
   it('does not expose an English signup error', async () => {
     mocks.signUp.mockResolvedValue({
       error: {

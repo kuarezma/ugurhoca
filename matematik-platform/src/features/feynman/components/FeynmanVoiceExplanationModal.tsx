@@ -168,10 +168,13 @@ export function FeynmanVoiceExplanationModal({
               <Mic className="w-5 h-5" />
             </div>
             <div>
-              <h2 id={titleId} className="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
+              <h2 id={titleId} className="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2 flex-wrap">
                 60 Saniyede Feynman Anlatımı
                 <span className="text-xs px-2.5 py-0.5 rounded-full bg-rose-50 dark:bg-rose-950/50 text-rose-600 dark:text-rose-400 border border-rose-200 dark:border-rose-800/50 font-medium">
                   Metakognitif Pedagoji
+                </span>
+                <span className="rounded-md bg-amber-500/10 border border-amber-500/20 px-2 py-0.5 text-[10px] font-medium text-amber-700 dark:text-amber-300">
+                  Bu veriler yalnızca bu cihazda (tarayıcıda) saklanır.
                 </span>
               </h2>
               <p className="text-xs text-slate-500 dark:text-slate-400">

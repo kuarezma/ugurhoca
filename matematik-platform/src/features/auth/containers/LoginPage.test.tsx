@@ -40,6 +40,16 @@ describe('login redirect and errors', () => {
     render(<LoginPage />);
     await waitFor(() => expect(mocks.push).toHaveBeenCalledWith('/'));
   });
+  it('gizlilik, KVKK ve çerez sayfalarına bağlantı sunar', () => {
+    render(<LoginPage />);
+    for (const [name, href] of [
+      ['Gizlilik Politikası', '/gizlilik'],
+      ['KVKK Aydınlatma Metni', '/kvkk'],
+      ['Çerez Politikası', '/cerez'],
+    ]) {
+      expect(screen.getByRole('link', { name })).toHaveAttribute('href', href);
+    }
+  });
   it('preserves a safe local target after password login', async () => {
     window.history.replaceState(
       {},
