@@ -18,7 +18,7 @@ jobs:
       NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
     steps:
       - name: Depoyu al
-        uses: actions/checkout@v5
+        uses: actions/checkout@v7
 
       - name: Gerekli secret değerlerini doğrula
         shell: bash
