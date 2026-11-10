@@ -8,90 +8,33 @@ import {
   type PointerEvent as ReactPointerEvent,
 } from 'react';
 import { useAccessibleModal } from '@/hooks/useAccessibleModal';
-import {
-  Eraser,
-  PenTool,
-  RotateCcw,
-  RotateCw,
-  Trash2,
-  X,
-  Minus,
-  Plus,
-  Highlighter,
-  Ruler,
-  Grid,
-  Download,
-  Eye,
-  EyeOff,
-  Compass,
-  Shapes,
-  Check,
-  ChevronDown,
-  CircleDot,
-} from 'lucide-react';
-import MathText from '@/components/MathText';
-import Image from 'next/image';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
 import ProtractorOverlay from '@/components/ProtractorOverlay';
 import { createLogger } from '@/lib/logger';
 
+import {
+  hexToRgba,
+  type ToolType,
+  type BackgroundPattern,
+  type ScratchpadQuestionContext,
+  type ScratchpadModalProps,
+} from './ScratchpadModal/types';
+import { drawBackground } from './ScratchpadModal/canvasBackgrounds';
+import {
+  drawCoordinatePlaneOnCanvas,
+  drawNumberLineOnCanvas,
+  drawGeometricShapeOnCanvas,
+} from './ScratchpadModal/geometricTools';
+import { ScratchpadQuestionPanel } from './ScratchpadModal/ScratchpadQuestionPanel';
+import { ScratchpadToolbar } from './ScratchpadModal/ScratchpadToolbar';
+
+export type {
+  ScratchpadQuestionContext,
+  ScratchpadModalProps,
+  BackgroundPattern,
+};
+
 const log = createLogger('scratchpad-modal');
-
-export type ScratchpadQuestionContext = {
-  questionText: string;
-  options?: string[];
-  imageUrl?: string | null;
-  questionId?: string;
-};
-
-export type ScratchpadModalProps = {
-  isOpen: boolean;
-  onClose: () => void;
-  title?: string;
-  questionContext?: ScratchpadQuestionContext;
-};
-
-type ToolType = 'pen' | 'highlighter' | 'line' | 'eraser';
-export type BackgroundPattern = |'dark' | 'grid' | 'dot' | 'lined' | 'isometric' | 'coordinate';
-
-const PATTERN_NAMES: Record<BackgroundPattern, string> = {
-  grid: 'Kareli',
-  dot: 'Noktalı (Geoboard)',
-  lined: 'Çizgili',
-  isometric: 'İzometrik 3D',
-  coordinate: 'Koordinat',
-  dark: 'Düz Tahta',
-};
-
-const DARK_PALETTE = [
-  { id: 'yellow', label: 'Sarı', value: '#facc15' },
-  { id: 'white', label: 'Beyaz', value: '#f8fafc' },
-  { id: 'cyan', label: 'Turkuaz', value: '#06b6d4' },
-  { id: 'pink', label: 'Pembe', value: '#ec4899' },
-  { id: 'emerald', label: 'Yeşil', value: '#22c55e' },
-  { id: 'purple', label: 'Mor', value: '#a78bfa' },
-];
-
-const LIGHT_PALETTE = [
-  { id: 'ink', label: 'Lacivert', value: '#1e3a8a' },
-  { id: 'black', label: 'Mürekkep Siyah', value: '#0f172a' },
-  { id: 'blue', label: 'Mavi Kalem', value: '#2563eb' },
-  { id: 'red', label: 'Kırmızı Kalem', value: '#dc2626' },
-  { id: 'emerald', label: 'Zümrüt Yeşili', value: '#16a34a' },
-  { id: 'purple', label: 'Mor Kalem', value: '#7c3aed' },
-];
-
-function hexToRgba(hex: string, alpha: number): string {
-  const cleanHex = hex.replace('#', '');
-  if (cleanHex.length === 6) {
-    const r = parseInt(cleanHex.substring(0, 2), 16);
-    const g = parseInt(cleanHex.substring(2, 4), 16);
-    const b = parseInt(cleanHex.substring(4, 6), 16);
-    return `rgba(${r}, ${g}, ${b}, ${alpha})`;
-  }
-  return hex;
-}
-
 const scratchpadCache = new Map<string, ImageData>();
 
 export default function ScratchpadModal({
@@ -108,208 +51,53 @@ export default function ScratchpadModal({
   const [activeTool, setActiveTool] = useState<ToolType>('pen');
   const [color, setColor] = useState('#facc15');
   const [lineWidth, setLineWidth] = useState(3);
-  const [backgroundPattern, setBackgroundPattern] = useState<BackgroundPattern>('grid');
+  const [backgroundPattern, setBackgroundPattern] =
+    useState<BackgroundPattern>('grid');
   const [isDrawing, setIsDrawing] = useState(false);
-  const [lineStart, setLineStart] = useState<{ x: number; y: number } | null>(null);
+  const [lineStart, setLineStart] = useState<{ x: number; y: number } | null>(
+    null,
+  );
   const [preLineState, setPreLineState] = useState<ImageData | null>(null);
   const [history, setHistory] = useState<ImageData[]>([]);
   const [redoHistory, setRedoHistory] = useState<ImageData[]>([]);
-  const [showQuestionPanel, setShowQuestionPanel] = useState(Boolean(questionContext));
-  const [eliminatedOptions, setEliminatedOptions] = useState<Set<number>>(new Set());
+  const [showQuestionPanel, setShowQuestionPanel] = useState(
+    Boolean(questionContext),
+  );
+  const [eliminatedOptions, setEliminatedOptions] = useState<Set<number>>(
+    new Set(),
+  );
   const [showProtractor, setShowProtractor] = useState(false);
   const [showPatternMenu, setShowPatternMenu] = useState(false);
-  const [shapeMenuOpen, setShapeMenuOpen] = useState(false);
-  const shapeMenuRef = useRef<HTMLDivElement | null>(null);
-  const shapeMenuButtonRef = useRef<HTMLButtonElement | null>(null);
+  const [showShapesMenu, setShowShapesMenu] = useState(false);
+
+  const cacheKey = questionContext?.questionId || 'default-scratchpad';
 
   useEffect(() => {
-    if (!isOpen) {
-      setShapeMenuOpen(false);
-      return;
+    if (isLight && color === '#f8fafc') {
+      setColor('#0f172a');
+    } else if (!isLight && color === '#0f172a') {
+      setColor('#f8fafc');
     }
-    if (!shapeMenuOpen) return;
-
-    const handlePointerDown = (event: PointerEvent) => {
-      if (!shapeMenuRef.current?.contains(event.target as Node)) {
-        setShapeMenuOpen(false);
-      }
-    };
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key !== 'Escape') return;
-      // İlk Escape yalnız menüyü kapatır; üst modal açık kalır.
-      event.preventDefault();
-      event.stopPropagation();
-      setShapeMenuOpen(false);
-      shapeMenuButtonRef.current?.focus();
-    };
-
-    document.addEventListener('pointerdown', handlePointerDown);
-    document.addEventListener('keydown', handleKeyDown, true);
-    return () => {
-      document.removeEventListener('pointerdown', handlePointerDown);
-      document.removeEventListener('keydown', handleKeyDown, true);
-    };
-  }, [isOpen, shapeMenuOpen]);
-
-  const cacheKey = questionContext?.questionId || (questionContext?.questionText ? questionContext.questionText.trim().slice(0, 100) : null);
+  }, [isLight, color]);
 
   useEffect(() => {
-    if (typeof document !== 'undefined') {
-      const light = document.documentElement.getAttribute('data-theme') === 'light';
-      setIsLight(light);
-      if (light && color === '#facc15') {
-        setColor('#1e3a8a');
-      } else if (!light && color === '#1e3a8a') {
-        setColor('#facc15');
-      }
+    if (isOpen) {
+      setShowQuestionPanel(Boolean(questionContext));
+      setEliminatedOptions(new Set());
     }
-  }, [isOpen, color]);
+  }, [isOpen, questionContext]);
 
-  // Background pattern painter
-  const drawBackground = useCallback((ctx: CanvasRenderingContext2D, width: number, height: number, pattern: BackgroundPattern, lightMode = false) => {
-    ctx.fillStyle = lightMode ? '#ffffff' : '#090d16';
-    ctx.fillRect(0, 0, width, height);
-
-    const strokeColor = lightMode ? 'rgba(15, 23, 42, 0.08)' : 'rgba(255, 255, 255, 0.07)';
-
-    if (pattern === 'grid') {
-      ctx.strokeStyle = strokeColor;
-      ctx.lineWidth = 1;
-      const step = 28;
-      ctx.beginPath();
-      for (let x = step; x < width; x += step) {
-        ctx.moveTo(x, 0);
-        ctx.lineTo(x, height);
+  const toggleEliminateOption = (idx: number) => {
+    setEliminatedOptions((prev) => {
+      const next = new Set(prev);
+      if (next.has(idx)) {
+        next.delete(idx);
+      } else {
+        next.add(idx);
       }
-      for (let y = step; y < height; y += step) {
-        ctx.moveTo(0, y);
-        ctx.lineTo(width, y);
-      }
-      ctx.stroke();
-    } else if (pattern === 'dot') {
-      ctx.fillStyle = lightMode ? 'rgba(15, 23, 42, 0.22)' : 'rgba(255, 255, 255, 0.22)';
-      const step = 28;
-      const dotRadius = 1.5;
-      for (let x = step; x < width; x += step) {
-        for (let y = step; y < height; y += step) {
-          ctx.beginPath();
-          ctx.arc(x, y, dotRadius, 0, Math.PI * 2);
-          ctx.fill();
-        }
-      }
-    } else if (pattern === 'lined') {
-      ctx.strokeStyle = strokeColor;
-      ctx.lineWidth = 1;
-      const step = 32;
-      ctx.beginPath();
-      for (let y = step; y < height; y += step) {
-        ctx.moveTo(0, y);
-        ctx.lineTo(width, y);
-      }
-      ctx.stroke();
-    } else if (pattern === 'isometric') {
-      ctx.strokeStyle = lightMode ? 'rgba(15, 23, 42, 0.08)' : 'rgba(255, 255, 255, 0.08)';
-      ctx.lineWidth = 1;
-      const step = 32;
-      const slope = Math.tan(Math.PI / 6); // 30 derece izometrik açı (~0.577)
-
-      ctx.beginPath();
-      // 1. Dikey çizgiler (90°)
-      for (let x = 0; x <= width; x += step) {
-        ctx.moveTo(x, 0);
-        ctx.lineTo(x, height);
-      }
-      // 2. +30° eğimli çizgiler
-      for (let y0 = -width * slope; y0 <= height; y0 += step * 0.866) {
-        ctx.moveTo(0, y0);
-        ctx.lineTo(width, y0 + width * slope);
-      }
-      // 3. -30° eğimli çizgiler
-      for (let y0 = 0; y0 <= height + width * slope; y0 += step * 0.866) {
-        ctx.moveTo(0, y0);
-        ctx.lineTo(width, y0 - width * slope);
-      }
-      ctx.stroke();
-    } else if (pattern === 'coordinate') {
-      // 1. İnce arka plan ızgarası
-      ctx.strokeStyle = lightMode ? 'rgba(15, 23, 42, 0.05)' : 'rgba(255, 255, 255, 0.05)';
-      ctx.lineWidth = 1;
-      const step = 35;
-      const cx = Math.round(width / 2);
-      const cy = Math.round(height / 2);
-
-      ctx.beginPath();
-      for (let x = cx % step; x < width; x += step) {
-        ctx.moveTo(x, 0);
-        ctx.lineTo(x, height);
-      }
-      for (let y = cy % step; y < height; y += step) {
-        ctx.moveTo(0, y);
-        ctx.lineTo(width, y);
-      }
-      ctx.stroke();
-
-      // 2. Belirgin Kartezyen X-Y Eksenleri
-      ctx.save();
-      const axisColor = lightMode ? '#2563eb' : '#38bdf8';
-      ctx.strokeStyle = axisColor;
-      ctx.fillStyle = axisColor;
-      ctx.lineWidth = 1.5;
-      ctx.font = '11px ui-monospace, SFMono-Regular, monospace';
-
-      // X Ekseni ve Ok
-      ctx.beginPath();
-      ctx.moveTo(25, cy);
-      ctx.lineTo(width - 25, cy);
-      ctx.lineTo(width - 33, cy - 5);
-      ctx.moveTo(width - 25, cy);
-      ctx.lineTo(width - 33, cy + 5);
-      ctx.stroke();
-      ctx.fillText('x', width - 20, cy - 8);
-
-      // Y Ekseni ve Ok
-      ctx.beginPath();
-      ctx.moveTo(cx, height - 25);
-      ctx.lineTo(cx, 25);
-      ctx.lineTo(cx - 5, 33);
-      ctx.moveTo(cx, 25);
-      ctx.lineTo(cx + 5, 33);
-      ctx.stroke();
-      ctx.fillText('y', cx + 10, 25);
-
-      // Eksen Çentikleri ve Sayı Değerleri
-      for (let x = cx + step, val = 1; x < width - 40; x += step, val++) {
-        ctx.beginPath();
-        ctx.moveTo(x, cy - 3);
-        ctx.lineTo(x, cy + 3);
-        ctx.stroke();
-        ctx.fillText(String(val), x - 4, cy + 15);
-      }
-      for (let x = cx - step, val = -1; x > 40; x -= step, val--) {
-        ctx.beginPath();
-        ctx.moveTo(x, cy - 3);
-        ctx.lineTo(x, cy + 3);
-        ctx.stroke();
-        ctx.fillText(String(val), x - 7, cy + 15);
-      }
-      for (let y = cy - step, val = 1; y > 40; y -= step, val++) {
-        ctx.beginPath();
-        ctx.moveTo(cx - 3, y);
-        ctx.lineTo(cx + 3, y);
-        ctx.stroke();
-        ctx.fillText(String(val), cx + 7, y + 4);
-      }
-      for (let y = cy + step, val = -1; y < height - 40; y += step, val--) {
-        ctx.beginPath();
-        ctx.moveTo(cx - 3, y);
-        ctx.lineTo(cx + 3, y);
-        ctx.stroke();
-        ctx.fillText(String(val), cx + 7, y + 4);
-      }
-      ctx.fillText('0', cx - 10, cy + 14);
-      ctx.restore();
-    }
-  }, []);
+      return next;
+    });
+  };
 
   const setupCanvas = useCallback(() => {
     const canvas = canvasRef.current;
@@ -340,83 +128,113 @@ export default function ScratchpadModal({
     }
 
     drawBackground(ctx, rect.width, rect.height, backgroundPattern, isLight);
-    const initial = ctx.getImageData(0, 0, canvas.width, canvas.height);
-    setHistory([initial]);
-    setRedoHistory([]);
-  }, [backgroundPattern, cacheKey, drawBackground, isLight]);
+    try {
+      const initial = ctx.getImageData(0, 0, canvas.width, canvas.height);
+      setHistory([initial]);
+      setRedoHistory([]);
+    } catch (e) {
+      log.warn('Canvas initial state yakalanamadı', { error: e });
+    }
+  }, [backgroundPattern, isLight, cacheKey]);
 
   useEffect(() => {
-    if (isOpen) {
-      const timer = setTimeout(setupCanvas, 60);
-      return () => clearTimeout(timer);
-    }
+    if (!isOpen) return;
+    const timer = setTimeout(setupCanvas, 60);
+    window.addEventListener('resize', setupCanvas);
+    return () => {
+      clearTimeout(timer);
+      window.removeEventListener('resize', setupCanvas);
+    };
   }, [isOpen, setupCanvas]);
+
+  useEffect(() => {
+    if (!isOpen) return;
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+    const rect = canvas.getBoundingClientRect();
+
+    if (history.length <= 1) {
+      drawBackground(ctx, rect.width, rect.height, backgroundPattern, isLight);
+      try {
+        const initial = ctx.getImageData(0, 0, canvas.width, canvas.height);
+        setHistory([initial]);
+      } catch {}
+    }
+  }, [backgroundPattern, isLight, isOpen, history.length]);
 
   const saveState = useCallback(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
-    const data = ctx.getImageData(0, 0, canvas.width, canvas.height);
-    setHistory((prev) => [...prev.slice(-15), data]);
-    setRedoHistory([]);
-    if (cacheKey) {
-      scratchpadCache.set(cacheKey, data);
+    try {
+      const img = ctx.getImageData(0, 0, canvas.width, canvas.height);
+      setHistory((prev) => {
+        const next = [...prev.slice(-25), img];
+        if (cacheKey) {
+          scratchpadCache.set(cacheKey, img);
+        }
+        return next;
+      });
+      setRedoHistory([]);
+    } catch (e) {
+      log.warn('Canvas state kaydedilemedi', { error: e });
     }
   }, [cacheKey]);
 
   const handlePointerDown = (e: ReactPointerEvent<HTMLCanvasElement>) => {
     const canvas = canvasRef.current;
     if (!canvas) return;
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
-
-    try {
-      canvas.setPointerCapture(e.pointerId);
-    } catch {
-      // ignore
-    }
+    canvas.setPointerCapture(e.pointerId);
     const rect = canvas.getBoundingClientRect();
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
 
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
     if (activeTool === 'line') {
-      setLineStart({ x, y });
-      setPreLineState(ctx.getImageData(0, 0, canvas.width, canvas.height));
       setIsDrawing(true);
+      setLineStart({ x, y });
+      try {
+        setPreLineState(ctx.getImageData(0, 0, canvas.width, canvas.height));
+      } catch {}
       return;
     }
 
+    setIsDrawing(true);
     ctx.beginPath();
     ctx.moveTo(x, y);
 
     if (activeTool === 'eraser') {
+      ctx.globalCompositeOperation = 'source-over';
       ctx.strokeStyle = isLight ? '#ffffff' : '#090d16';
       ctx.lineWidth = lineWidth * 5;
     } else if (activeTool === 'highlighter') {
+      ctx.globalCompositeOperation = 'source-over';
       ctx.strokeStyle = hexToRgba(color, 0.35);
-      ctx.lineWidth = lineWidth * 4;
+      ctx.lineWidth = lineWidth * 3.5;
     } else {
+      ctx.globalCompositeOperation = 'source-over';
       ctx.strokeStyle = color;
       ctx.lineWidth = lineWidth;
     }
-
-    setIsDrawing(true);
   };
 
   const handlePointerMove = (e: ReactPointerEvent<HTMLCanvasElement>) => {
     if (!isDrawing) return;
     const canvas = canvasRef.current;
     if (!canvas) return;
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
-
     const rect = canvas.getBoundingClientRect();
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
 
-    if (activeTool === 'line') {
-      if (!lineStart || !preLineState) return;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    if (activeTool === 'line' && lineStart && preLineState) {
       ctx.putImageData(preLineState, 0, 0);
       ctx.beginPath();
       ctx.moveTo(lineStart.x, lineStart.y);
@@ -431,85 +249,91 @@ export default function ScratchpadModal({
     ctx.stroke();
   };
 
-  const handlePointerUp = (e?: ReactPointerEvent<HTMLCanvasElement>) => {
-    if (e && canvasRef.current) {
-      try {
-        canvasRef.current.releasePointerCapture(e.pointerId);
-      } catch {
-        // ignore
-      }
+  const handlePointerUp = (e: ReactPointerEvent<HTMLCanvasElement>) => {
+    if (!isDrawing) return;
+    const canvas = canvasRef.current;
+    if (canvas && canvas.hasPointerCapture(e.pointerId)) {
+      canvas.releasePointerCapture(e.pointerId);
     }
-    if (isDrawing) {
-      setIsDrawing(false);
-      setLineStart(null);
-      setPreLineState(null);
-      saveState();
-    }
+    setIsDrawing(false);
+    setLineStart(null);
+    setPreLineState(null);
+    saveState();
   };
 
-  const handleUndo = useCallback((e?: React.MouseEvent) => {
-    e?.stopPropagation();
+  const handleUndo = useCallback(() => {
     if (history.length <= 1) return;
     const canvas = canvasRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
-    try {
-      const currentState = history[history.length - 1];
-      const newHistory = history.slice(0, -1);
-      const previousState = newHistory[newHistory.length - 1];
-      if (previousState) {
-        ctx.putImageData(previousState, 0, 0);
-        setHistory(newHistory);
-        setRedoHistory((prev) => [...prev, currentState]);
-        if (cacheKey) {
-          scratchpadCache.set(cacheKey, previousState);
-        }
+    const current = history[history.length - 1];
+    const prev = history[history.length - 2];
+    ctx.putImageData(prev, 0, 0);
+    setRedoHistory((r) => [current, ...r]);
+    setHistory((h) => {
+      const next = h.slice(0, -1);
+      if (cacheKey && next.length > 0) {
+        scratchpadCache.set(cacheKey, next[next.length - 1]);
       }
-    } catch (err) {
-      log.warn('Undo error', { error: err });
-    }
+      return next;
+    });
   }, [history, cacheKey]);
 
-  const handleRedo = useCallback((e?: React.MouseEvent) => {
-    e?.stopPropagation();
+  const handleRedo = useCallback(() => {
     if (redoHistory.length === 0) return;
     const canvas = canvasRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
-    try {
-      const nextState = redoHistory[redoHistory.length - 1];
-      const newRedo = redoHistory.slice(0, -1);
-      if (nextState) {
-        ctx.putImageData(nextState, 0, 0);
-        setHistory((prev) => [...prev, nextState]);
-        setRedoHistory(newRedo);
-        if (cacheKey) {
-          scratchpadCache.set(cacheKey, nextState);
-        }
+    const next = redoHistory[0];
+    ctx.putImageData(next, 0, 0);
+    setHistory((h) => {
+      const updated = [...h, next];
+      if (cacheKey) {
+        scratchpadCache.set(cacheKey, next);
       }
-    } catch (err) {
-      log.warn('Redo error', { error: err });
-    }
+      return updated;
+    });
+    setRedoHistory((r) => r.slice(1));
   }, [redoHistory, cacheKey]);
 
+  const handleClear = () => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+    const rect = canvas.getBoundingClientRect();
+    drawBackground(ctx, rect.width, rect.height, backgroundPattern, isLight);
+    saveState();
+  };
+
+  const handleExportPNG = () => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    try {
+      const dataUrl = canvas.toDataURL('image/png');
+      const link = document.createElement('a');
+      link.download = `ugur-hoca-karalama-${Date.now()}.png`;
+      link.href = dataUrl;
+      link.click();
+    } catch (e) {
+      log.error('Çözüm görseli indirilemedi', { error: e });
+    }
+  };
+
+  // Kısayollar: Ctrl+Z, Ctrl+Y
   useEffect(() => {
     if (!isOpen) return;
     const handleKeyDown = (e: KeyboardEvent) => {
-      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'z') {
+      if ((e.ctrlKey || e.metaKey) && e.key === 'z') {
         e.preventDefault();
-        e.stopPropagation();
-        if (e.shiftKey) {
-          handleRedo();
-        } else {
-          handleUndo();
-        }
-      } else if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'y') {
+        if (e.shiftKey) handleRedo();
+        else handleUndo();
+      } else if ((e.ctrlKey || e.metaKey) && e.key === 'y') {
         e.preventDefault();
-        e.stopPropagation();
         handleRedo();
       }
     };
@@ -517,291 +341,27 @@ export default function ScratchpadModal({
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [isOpen, handleUndo, handleRedo]);
 
-  const handleSelectPattern = (targetPattern: BackgroundPattern, e?: React.MouseEvent) => {
-    e?.stopPropagation();
-    setBackgroundPattern(targetPattern);
-    setShowPatternMenu(false);
-
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
-    const rect = canvas.getBoundingClientRect();
-
-    if (history.length > 1) {
-      const temp = document.createElement('canvas');
-      temp.width = canvas.width;
-      temp.height = canvas.height;
-      const tempCtx = temp.getContext('2d');
-      if (tempCtx) {
-        tempCtx.drawImage(canvas, 0, 0);
-        drawBackground(ctx, rect.width, rect.height, targetPattern, isLight);
-        ctx.drawImage(temp, 0, 0, rect.width, rect.height);
-        saveState();
-      }
-    } else {
-      drawBackground(ctx, rect.width, rect.height, targetPattern, isLight);
-      saveState();
-    }
+  const handleDrawCoordinatePlane = () => {
+    if (!canvasRef.current) return;
+    drawCoordinatePlaneOnCanvas(canvasRef.current, color, lineWidth, saveState);
   };
 
-  const handlePatternToggle = (e?: React.MouseEvent) => {
-    e?.stopPropagation();
-    const patternOrder: BackgroundPattern[] = ['grid', 'dot', 'lined', 'isometric', 'coordinate', 'dark'];
-    const currentIndex = patternOrder.indexOf(backgroundPattern);
-    const nextPattern = patternOrder[(currentIndex + 1) % patternOrder.length];
-    handleSelectPattern(nextPattern, e);
+  const handleDrawNumberLine = () => {
+    if (!canvasRef.current) return;
+    drawNumberLineOnCanvas(canvasRef.current, color, lineWidth, saveState);
   };
 
-  const handleClear = (e?: React.MouseEvent) => {
-    e?.stopPropagation();
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
-    const rect = canvas.getBoundingClientRect();
-    drawBackground(ctx, rect.width, rect.height, backgroundPattern, isLight);
-    setRedoHistory([]);
-    saveState();
-    if (cacheKey) {
-      scratchpadCache.delete(cacheKey);
-    }
-  };
-
-  const handleDownload = (e?: React.MouseEvent) => {
-    e?.stopPropagation();
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const imageUri = canvas.toDataURL('image/png');
-    const link = document.createElement('a');
-    link.download = `karalama-${Date.now()}.png`;
-    link.href = imageUri;
-    link.click();
-  };
-
-  const toggleEliminateOption = (idx: number) => {
-    setEliminatedOptions((prev) => {
-      const next = new Set(prev);
-      if (next.has(idx)) {
-        next.delete(idx);
-      } else {
-        next.add(idx);
-      }
-      return next;
-    });
-  };
-
-  const drawCoordinatePlane = () => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
-    const rect = canvas.getBoundingClientRect();
-    const width = rect.width;
-    const height = rect.height;
-    const cx = Math.round(width / 2);
-    const cy = Math.round(height / 2);
-
-    ctx.save();
-    ctx.strokeStyle = color;
-    ctx.fillStyle = color;
-    ctx.lineWidth = Math.max(1.5, lineWidth);
-    ctx.font = '12px ui-monospace, SFMono-Regular, monospace';
-
-    // X Ekseni
-    ctx.beginPath();
-    ctx.moveTo(25, cy);
-    ctx.lineTo(width - 25, cy);
-    // X oku
-    ctx.lineTo(width - 33, cy - 5);
-    ctx.moveTo(width - 25, cy);
-    ctx.lineTo(width - 33, cy + 5);
-    ctx.stroke();
-    ctx.fillText('x', width - 20, cy - 8);
-
-    // Y Ekseni
-    ctx.beginPath();
-    ctx.moveTo(cx, height - 25);
-    ctx.lineTo(cx, 25);
-    // Y oku
-    ctx.lineTo(cx - 5, 33);
-    ctx.moveTo(cx, 25);
-    ctx.lineTo(cx + 5, 33);
-    ctx.stroke();
-    ctx.fillText('y', cx + 10, 25);
-
-    // Çentikler
-    const step = 35;
-    for (let x = cx + step, val = 1; x < width - 40; x += step, val++) {
-      ctx.beginPath();
-      ctx.moveTo(x, cy - 4);
-      ctx.lineTo(x, cy + 4);
-      ctx.stroke();
-      ctx.fillText(String(val), x - 4, cy + 16);
-    }
-    for (let x = cx - step, val = -1; x > 40; x -= step, val--) {
-      ctx.beginPath();
-      ctx.moveTo(x, cy - 4);
-      ctx.lineTo(x, cy + 4);
-      ctx.stroke();
-      ctx.fillText(String(val), x - 8, cy + 16);
-    }
-    for (let y = cy - step, val = 1; y > 40; y -= step, val++) {
-      ctx.beginPath();
-      ctx.moveTo(cx - 4, y);
-      ctx.lineTo(cx + 4, y);
-      ctx.stroke();
-      ctx.fillText(String(val), cx + 8, y + 4);
-    }
-    for (let y = cy + step, val = -1; y < height - 40; y += step, val--) {
-      ctx.beginPath();
-      ctx.moveTo(cx - 4, y);
-      ctx.lineTo(cx + 4, y);
-      ctx.stroke();
-      ctx.fillText(String(val), cx + 8, y + 4);
-    }
-    // Orijin
-    ctx.fillText('0', cx - 12, cy + 14);
-    ctx.restore();
-    saveState();
-  };
-
-  const drawNumberLine = () => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
-    const rect = canvas.getBoundingClientRect();
-    const width = rect.width;
-    const height = rect.height;
-    const cx = Math.round(width / 2);
-    const cy = Math.round(height / 2);
-
-    ctx.save();
-    ctx.strokeStyle = color;
-    ctx.fillStyle = color;
-    ctx.lineWidth = Math.max(2, lineWidth);
-    ctx.font = '12px ui-monospace, SFMono-Regular, monospace';
-
-    // Sayı Doğrusu Ana Çizgi
-    ctx.beginPath();
-    ctx.moveTo(35, cy);
-    ctx.lineTo(width - 35, cy);
-    // Sol ok
-    ctx.moveTo(35, cy);
-    ctx.lineTo(45, cy - 6);
-    ctx.moveTo(35, cy);
-    ctx.lineTo(45, cy + 6);
-    // Sağ ok
-    ctx.moveTo(width - 35, cy);
-    ctx.lineTo(width - 45, cy - 6);
-    ctx.moveTo(width - 35, cy);
-    ctx.lineTo(width - 45, cy + 6);
-    ctx.stroke();
-
-    const step = 45;
-    const count = Math.min(5, Math.floor((width - 120) / (2 * step)));
-    for (let i = -count; i <= count; i++) {
-      const x = cx + i * step;
-      ctx.beginPath();
-      ctx.moveTo(x, cy - 6);
-      ctx.lineTo(x, cy + 6);
-      ctx.stroke();
-      ctx.fillText(String(i), x - (i < 0 ? 8 : 4), cy + 22);
-    }
-    ctx.restore();
-    saveState();
-  };
-
-  const drawGeometricShape = (shape: 'triangle' | 'circle' | 'rectangle') => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
-    const rect = canvas.getBoundingClientRect();
-    const width = rect.width;
-    const height = rect.height;
-    const cx = Math.round(width / 2);
-    const cy = Math.round(height / 2);
-
-    ctx.save();
-    ctx.strokeStyle = color;
-    ctx.fillStyle = color;
-    ctx.lineWidth = Math.max(2, lineWidth);
-    ctx.font = '12px ui-monospace, SFMono-Regular, monospace';
-
-    if (shape === 'triangle') {
-      // Dik Üçgen
-      const x1 = cx - 90;
-      const y1 = cy + 70;
-      const x2 = cx + 90;
-      const y2 = cy + 70;
-      const x3 = cx - 90;
-      const y3 = cy - 70;
-
-      ctx.beginPath();
-      ctx.moveTo(x1, y1);
-      ctx.lineTo(x2, y2);
-      ctx.lineTo(x3, y3);
-      ctx.closePath();
-      ctx.stroke();
-
-      // Dik açı simgesi (90°)
-      const s = 14;
-      ctx.beginPath();
-      ctx.moveTo(x1 + s, y1);
-      ctx.lineTo(x1 + s, y1 - s);
-      ctx.lineTo(x1, y1 - s);
-      ctx.stroke();
-      // Nokta
-      ctx.beginPath();
-      ctx.arc(x1 + s / 2, y1 - s / 2, 2, 0, Math.PI * 2);
-      ctx.fill();
-
-      // Köşe Harfleri
-      ctx.fillText('A', x3 - 15, y3);
-      ctx.fillText('B', x1 - 15, y1 + 5);
-      ctx.fillText('C', x2 + 8, y2 + 5);
-    } else if (shape === 'circle') {
-      // Çember & Yarıçap
-      const radius = Math.min(width, height) * 0.22;
-      ctx.beginPath();
-      ctx.arc(cx, cy, radius, 0, Math.PI * 2);
-      ctx.stroke();
-
-      // Merkez Noktası
-      ctx.beginPath();
-      ctx.arc(cx, cy, 3, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.fillText('M', cx - 14, cy - 8);
-
-      // Yarıçap çizgisi
-      ctx.beginPath();
-      ctx.setLineDash([4, 4]);
-      ctx.moveTo(cx, cy);
-      ctx.lineTo(cx + radius, cy);
-      ctx.stroke();
-      ctx.setLineDash([]);
-      ctx.fillText('r', cx + radius / 2 - 4, cy - 6);
-    } else if (shape === 'rectangle') {
-      // Dikdörtgen
-      const rw = 200;
-      const rh = 120;
-      const rx = cx - rw / 2;
-      const ry = cy - rh / 2;
-      ctx.beginPath();
-      ctx.rect(rx, ry, rw, rh);
-      ctx.stroke();
-
-      // Köşe Harfleri
-      ctx.fillText('A', rx - 14, ry);
-      ctx.fillText('B', rx + rw + 6, ry);
-      ctx.fillText('C', rx + rw + 6, ry + rh + 12);
-      ctx.fillText('D', rx - 14, ry + rh + 12);
-    }
-
-    ctx.restore();
-    saveState();
+  const handleDrawGeometricShape = (
+    shape: 'triangle' | 'circle' | 'rectangle',
+  ) => {
+    if (!canvasRef.current) return;
+    drawGeometricShapeOnCanvas(
+      canvasRef.current,
+      shape,
+      color,
+      lineWidth,
+      saveState,
+    );
   };
 
   if (!isOpen) return null;
@@ -811,23 +371,24 @@ export default function ScratchpadModal({
       <button
         type="button"
         aria-label="Pencereyi kapat"
-        onClick={onClose}
         className="fixed inset-0 bg-slate-900/60 dark:bg-slate-950/85 backdrop-blur-md"
+        onClick={onClose}
       />
+
       <div
         ref={modalRef}
-        tabIndex={-1}
         role="dialog"
         aria-modal="true"
         aria-label={title}
-        className={`relative z-10 flex h-full max-h-[94vh] w-full max-w-6xl flex-col overflow-hidden rounded-3xl border shadow-2xl ${
-          isLight ? 'border-slate-200 bg-white text-slate-900 shadow-xl' : 'border-white/15 bg-slate-900 text-white shadow-2xl'
-        }`}
+        tabIndex={-1}
+        className="relative z-10 flex h-[95vh] w-full max-w-7xl flex-col overflow-hidden rounded-3xl border border-slate-200/80 dark:border-white/10 bg-white dark:bg-slate-900 shadow-2xl transition-all"
       >
         <ErrorBoundary
           fallback={({ reset }) => (
-            <div className="flex flex-1 flex-col items-center justify-center p-8 text-center text-slate-600 dark:text-slate-300 gap-4">
-              <p className="text-sm">Karalama tahtası yüklenirken beklenmedik bir durum oluştu.</p>
+            <div className="flex h-full w-full flex-col items-center justify-center gap-3 p-6 text-center text-slate-700 dark:text-slate-300">
+              <p className="text-sm">
+                Karalama tahtası yüklenirken beklenmedik bir durum oluştu.
+              </p>
               <div className="flex gap-2">
                 <button
                   type="button"
@@ -847,526 +408,72 @@ export default function ScratchpadModal({
             </div>
           )}
         >
-        {/* Header & Araç Çubuğu */}
-        <div className={`flex flex-wrap items-center justify-between gap-2 border-b px-3 sm:px-4 py-2 sm:py-3 ${
-          isLight ? 'border-slate-200 bg-slate-50' : 'border-white/10 bg-slate-950/90'
-        }`}>
-          <div className="flex items-center gap-2 min-w-0">
-            <div className="flex h-7 w-7 sm:h-8 sm:w-8 shrink-0 items-center justify-center rounded-xl bg-amber-500/20 text-amber-500 dark:text-amber-300">
-              <PenTool className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-            </div>
-            <span className={`font-display text-xs sm:text-sm font-bold truncate ${isLight ? 'text-slate-900' : 'text-white'}`}>
-              {title}
-            </span>
+          {/* Header & Araç Çubuğu */}
+          <ScratchpadToolbar
+            title={title}
+            isLight={isLight}
+            activeTool={activeTool}
+            setActiveTool={setActiveTool}
+            color={color}
+            setColor={setColor}
+            lineWidth={lineWidth}
+            setLineWidth={setLineWidth}
+            backgroundPattern={backgroundPattern}
+            setBackgroundPattern={setBackgroundPattern}
+            showPatternMenu={showPatternMenu}
+            setShowPatternMenu={setShowPatternMenu}
+            showShapesMenu={showShapesMenu}
+            setShowShapesMenu={setShowShapesMenu}
+            showProtractor={showProtractor}
+            setShowProtractor={setShowProtractor}
+            historyLength={history.length}
+            redoHistoryLength={redoHistory.length}
+            onUndo={handleUndo}
+            onRedo={handleRedo}
+            onClear={handleClear}
+            onExport={handleExportPNG}
+            onToggleLight={() => setIsLight((prev) => !prev)}
+            onClose={onClose}
+            questionContext={questionContext}
+            showQuestionPanel={showQuestionPanel}
+            setShowQuestionPanel={setShowQuestionPanel}
+            onDrawCoordinatePlane={handleDrawCoordinatePlane}
+            onDrawNumberLine={handleDrawNumberLine}
+            onDrawGeometricShape={handleDrawGeometricShape}
+          />
 
-            {questionContext && (
-              <button
-                type="button"
-                onClick={() => setShowQuestionPanel((prev) => !prev)}
-                className={`hidden md:inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-semibold border transition ${
-                  showQuestionPanel
-                    ? 'bg-brand-primary/20 border-brand-primary/30 text-tone-success-fg dark:text-brand-primary-soft'
-                    : isLight
-                    ? 'bg-white border-slate-200 text-slate-700 hover:bg-slate-100'
-                    : 'bg-white/5 border-white/10 text-slate-300 hover:text-white'
-                }`}
-                title="Soru panelini aç/kapat"
-              >
-                {showQuestionPanel ? (<EyeOff className="h-3 w-3" /> ): (<Eye className="h-3 w-3" />)}
-                <span>{showQuestionPanel ? 'Soruyu Gizle' : 'Soruyu Gör'}</span>
-              </button>
-            )}
-          </div>
-
-          <div className="flex flex-wrap items-center gap-1 sm:gap-2">
-            {/* Araç Seçimi: Kalem, Fosforlu, Çizgi, Silgi */}
-            <div className={`flex items-center rounded-xl p-0.5 border ${
-              isLight ? 'bg-slate-100 border-slate-200' : 'bg-white/5 border-white/10'
-            }`}>
-              <button
-                type="button"
-                onClick={() => setActiveTool('pen')}
-                title="Kalem"
-                className={`inline-flex h-8 items-center gap-1 rounded-lg px-2.5 text-xs font-semibold transition ${
-                  activeTool === 'pen'
-                    ? 'bg-brand-primary font-bold shadow-md text-slate-950 dark:text-slate-950'
-                    : isLight
-                    ? 'text-slate-700 hover:text-slate-900'
-                    : 'text-slate-300 hover:text-white'
-                }`}
-              >
-                <PenTool className="h-3.5 w-3.5" />
-                <span className="hidden sm:inline">Kalem</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => setActiveTool('highlighter')}
-                title="Fosforlu Kalem"
-                className={`inline-flex h-8 items-center gap-1 rounded-lg px-2.5 text-xs font-semibold transition ${
-                  activeTool === 'highlighter'
-                    ? 'bg-brand-primary/90 text-slate-950 font-bold shadow-md'
-                    : isLight
-                    ? 'text-slate-700 hover:text-slate-900'
-                    : 'text-slate-300 hover:text-white'
-                }`}
-              >
-                <Highlighter className="h-3.5 w-3.5" />
-                <span className="hidden sm:inline">Fosforlu</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => setActiveTool('line')}
-                title="Düz Çizgi / Cetvel"
-                className={`inline-flex h-8 items-center gap-1 rounded-lg px-2.5 text-xs font-semibold transition ${
-                  activeTool === 'line'
-                    ? 'bg-brand-primary font-bold shadow-md text-slate-950 dark:text-slate-950'
-                    : isLight
-                    ? 'text-slate-700 hover:text-slate-900'
-                    : 'text-slate-300 hover:text-white'
-                }`}
-              >
-                <Ruler className="h-3.5 w-3.5" />
-                <span className="hidden sm:inline">Çizgi</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => setActiveTool('eraser')}
-                title="Silgi"
-                className={`inline-flex h-8 items-center gap-1 rounded-lg px-2.5 text-xs font-semibold transition ${
-                  activeTool === 'eraser'
-                    ? 'bg-brand-primary font-bold shadow-md text-slate-950 dark:text-slate-950'
-                    : isLight
-                    ? 'text-slate-700 hover:text-slate-900'
-                    : 'text-slate-300 hover:text-white'
-                }`}
-              >
-                <Eraser className="h-3.5 w-3.5" />
-                <span className="hidden sm:inline">Silgi</span>
-              </button>
-            </div>
-
-            {/* Matematik Şablon & Araç Seti */}
-            <div className="flex items-center gap-1 rounded-xl bg-indigo-500/10 p-0.5 border border-indigo-500/30">
-              <button
-                type="button"
-                onClick={drawCoordinatePlane}
-                title="Kartezyen Koordinat Düzlemi Ekle (x, y eksenleri)"
-                className={`inline-flex h-8 items-center gap-1 rounded-lg px-2 text-xs font-semibold transition ${
-                  isLight
-                    ? 'text-indigo-700 hover:bg-indigo-100 hover:text-indigo-900'
-                    : 'text-indigo-300 hover:bg-indigo-500/20 hover:text-white'
-                }`}
-              >
-                <Compass className="h-3.5 w-3.5 text-cyan-600 dark:text-cyan-400" />
-                <span className="hidden sm:inline">Koordinat</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={drawNumberLine}
-                title="Sayı Doğrusu Ekle"
-                className={`inline-flex h-8 items-center gap-1 rounded-lg px-2 text-xs font-semibold transition ${
-                  isLight
-                    ? 'text-indigo-700 hover:bg-indigo-100 hover:text-indigo-900'
-                    : 'text-indigo-300 hover:bg-indigo-500/20 hover:text-white'
-                }`}
-              >
-                <Minus className="h-3.5 w-3.5 text-amber-600 dark:text-amber-400" />
-                <span className="hidden sm:inline">Sayı Doğrusu</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => setShowProtractor((prev) => !prev)}
-                title={showProtractor ? 'Açıölçeri Gizle' : 'Açıölçer (İletki) Aç'}
-                className={`inline-flex h-8 items-center gap-1 rounded-lg px-2 text-xs font-semibold transition ${
-                  showProtractor
-                    ? 'bg-brand-primary font-bold shadow-md text-slate-950 dark:text-slate-950'
-                    : isLight
-                    ? 'text-indigo-700 hover:bg-indigo-100 hover:text-indigo-900'
-                    : 'text-indigo-300 hover:bg-indigo-500/20 hover:text-white'
-                }`}
-              >
-                <Compass className="h-3.5 w-3.5 text-amber-600 dark:text-amber-400" />
-                <span className="hidden sm:inline">Açıölçer</span>
-              </button>
-
-              <div ref={shapeMenuRef} className="relative">
-                <button
-                  ref={shapeMenuButtonRef}
-                  type="button"
-                  title="Geometrik Şekil Ekle"
-                  aria-label="Geometrik Şekil Ekle"
-                  aria-expanded={shapeMenuOpen}
-                  onClick={() => setShapeMenuOpen((prev) => !prev)}
-                  className={`inline-flex h-8 items-center gap-1 rounded-lg px-2 text-xs font-semibold transition ${
-                    isLight
-                      ? 'text-indigo-700 hover:bg-indigo-100 hover:text-indigo-900'
-                      : 'text-indigo-300 hover:bg-indigo-500/20 hover:text-white'
-                  }`}
-                >
-                  <Shapes className="h-3.5 w-3.5 text-purple-600 dark:text-purple-400" />
-                  <span className="hidden sm:inline">Şekil</span>
-                </button>
-                <div
-                  className={`absolute left-0 top-full mt-1 ${shapeMenuOpen ? 'flex' : 'hidden'} flex-col gap-1 rounded-xl border p-1.5 shadow-xl z-50 min-w-[130px] ${
-                    isLight
-                      ? 'border-slate-200 bg-white text-slate-900'
-                      : 'border-white/10 bg-surface-1 text-primary'
-                  }`}
-                >
-                  <button
-                    type="button"
-                    onClick={() => {
-                      drawGeometricShape('triangle');
-                      setShapeMenuOpen(false);
-                    }}
-                    className={`flex items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs text-left font-medium ${
-                      isLight
-                        ? 'text-slate-700 hover:bg-slate-100 hover:text-slate-900'
-                        : 'text-slate-200 hover:bg-white/10 hover:text-white'
-                    }`}
-                  >
-                    <span>📐 Dik Üçgen</span>
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      drawGeometricShape('circle');
-                      setShapeMenuOpen(false);
-                    }}
-                    className={`flex items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs text-left font-medium ${
-                      isLight
-                        ? 'text-slate-700 hover:bg-slate-100 hover:text-slate-900'
-                        : 'text-slate-200 hover:bg-white/10 hover:text-white'
-                    }`}
-                  >
-                    <span>⭕ Çember (r)</span>
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      drawGeometricShape('rectangle');
-                      setShapeMenuOpen(false);
-                    }}
-                    className={`flex items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs text-left font-medium ${
-                      isLight
-                        ? 'text-slate-700 hover:bg-slate-100 hover:text-slate-900'
-                        : 'text-slate-200 hover:bg-white/10 hover:text-white'
-                    }`}
-                  >
-                    <span>▭ Dikdörtgen</span>
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            {/* Renk Paleti */}
-            {activeTool !== 'eraser' && (
-              <div className={`flex items-center gap-1 rounded-xl p-1 border ${
-                isLight ? 'bg-slate-100 border-slate-300' : 'bg-white/5 border-white/10'
-              }`}>
-                {(isLight ? LIGHT_PALETTE : DARK_PALETTE).map((c) => (
-                  <button
-                    key={c.id}
-                    type="button"
-                    title={c.label}
-                    onClick={() => setColor(c.value)}
-                    className={`h-5 w-5 sm:h-6 sm:w-6 rounded-lg transition-transform ${
-                      color === c.value
-                        ? `scale-125 ring-2 shadow-sm ${
-                            isLight
-                              ? 'ring-slate-900 ring-offset-1 ring-offset-white'
-                              : 'ring-white ring-offset-1 ring-offset-slate-900'
-                          }`
-                        : 'opacity-70 hover:opacity-100'
-                    }`}
-                    style={{ backgroundColor: c.value }}
-                  />
-                ))}
-              </div>
-            )}
-
-            {/* Çizgi Kalınlığı */}
-            <div className={`flex items-center gap-1 rounded-xl px-2 py-1 border text-xs ${
-              isLight ? 'bg-slate-100 border-slate-200 text-slate-700' : 'bg-white/5 border-white/10 text-slate-300'
-            }`}>
-              <button
-                type="button"
-                onClick={() => setLineWidth((prev) => Math.max(1, prev - 1))}
-                aria-label="Kalınlığı azalt"
-                className={`rounded p-1 ${isLight ? 'hover:bg-slate-200' : 'hover:bg-white/10'}`}
-              >
-                <Minus className="h-3 w-3" />
-              </button>
-              <span className="w-3 text-center font-bold text-[11px]">{lineWidth}</span>
-              <button
-                type="button"
-                onClick={() => setLineWidth((prev) => Math.min(12, prev + 1))}
-                aria-label="Kalınlığı artır"
-                className={`rounded p-1 ${isLight ? 'hover:bg-slate-200' : 'hover:bg-white/10'}`}
-              >
-                <Plus className="h-3 w-3" />
-              </button>
-            </div>
-
-            {/* Arka Plan Deseni & Doğrudan Zemin Seçici */}
-            <div className={`relative flex items-center rounded-xl p-0.5 border ${
-              isLight ? 'bg-slate-100 border-slate-200' : 'bg-white/5 border-white/10'
-            }`}>
-              <button
-                type="button"
-                onClick={handlePatternToggle}
-                title={`Zemin Deseni: ${PATTERN_NAMES[backgroundPattern]}`}
-                className={`inline-flex h-8 items-center gap-1 px-2 text-xs font-semibold ${
-                  isLight ? 'text-slate-700 hover:text-slate-900' : 'text-slate-300 hover:text-white'
-                }`}
-              >
-                {backgroundPattern === 'dot' ? (
-                  <CircleDot className="h-3.5 w-3.5 text-indigo-500 dark:text-indigo-400" />
-                ) : (
-                  <Grid className="h-3.5 w-3.5" />
-                )}
-                <span className="capitalize text-[11px]">{PATTERN_NAMES[backgroundPattern]}</span>
-              </button>
-              <button
-                type="button"
-                onClick={() => setShowPatternMenu((prev) => !prev)}
-                title="Zemin Menüsünü Aç"
-                aria-label="Zemin Menüsünü Aç"
-                className={`h-8 px-1 rounded-r-lg border-l transition-colors ${
-                  isLight
-                    ? 'text-slate-500 hover:text-slate-900 hover:bg-slate-200 border-slate-200'
-                    : 'text-slate-400 hover:text-white hover:bg-white/10 border-white/10'
-                }`}
-              >
-                <ChevronDown className="h-3 w-3" />
-              </button>
-
-              {/* Zemin Hızlı Seçim Popover */}
-              {showPatternMenu && (
-                <div className={`absolute top-full mt-1.5 left-0 z-50 w-44 rounded-2xl border p-1.5 shadow-2xl backdrop-blur-xl animate-in fade-in zoom-in-95 ${
-                  isLight ? 'border-slate-200 bg-white/95 text-slate-900' : 'border-slate-700/80 bg-slate-900/95 text-white'
-                }`}>
-                  <div className={`px-2 py-1 text-[10px] font-bold uppercase tracking-wider border-b mb-1 ${
-                    isLight ? 'text-slate-500 border-slate-200' : 'text-slate-400 border-white/10'
-                  }`}>
-                    Zemin Şablonu Seç
-                  </div>
-                  {(
-                    [
-                      { id: 'grid', label: 'Kareli', desc: 'Geometri & Cebir' },
-                      { id: 'dot', label: 'Noktalı (Geoboard)', desc: 'Noktalı Zemin & Şekil' },
-                      { id: 'lined', label: 'Çizgili', desc: 'İşlem & Açıklama' },
-                      { id: 'isometric', label: 'İzometrik 3D', desc: 'Katı Cisim & Prizma' },
-                      { id: 'coordinate', label: 'Koordinat', desc: 'X-Y Fonksiyon Grafiği' },
-                      { id: 'dark', label: 'Düz Tahta', desc: 'Serbest Çizim' },
-                    ] as const
-                  ).map((item) => (
-                    <button
-                      key={item.id}
-                      type="button"
-                      onClick={() => handleSelectPattern(item.id)}
-                      className={`w-full flex items-center justify-between rounded-xl px-2.5 py-1.5 text-left text-xs transition-all ${
-                        backgroundPattern === item.id
-                          ? 'bg-brand-primary font-bold shadow-sm text-slate-950 dark:text-slate-950'
-                          : isLight
-                          ? 'text-slate-700 hover:bg-slate-100 hover:text-slate-900'
-                          : 'text-slate-300 hover:bg-white/10 hover:text-white'
-                      }`}
-                    >
-                      <div>
-                        <div className="font-semibold">{item.label}</div>
-                        <div className="text-[9px] opacity-75">{item.desc}</div>
-                      </div>
-                      {backgroundPattern === item.id && (<Check className="h-3.5 w-3.5" />)}
-                    </button>
-                  ))}
-                </div>
-              )}
-            </div>
-
-            {/* Geri Al */}
-            <button
-              type="button"
-              onClick={handleUndo}
-              disabled={history.length <= 1}
-              title="Geri al"
-              aria-label="Geri al"
-              className={`inline-flex h-8 w-8 items-center justify-center rounded-xl disabled:opacity-40 transition ${
-                isLight ? 'bg-slate-100 text-slate-700 hover:bg-slate-200 hover:text-slate-900' : 'bg-white/5 text-slate-300 hover:bg-white/10 hover:text-white'
-              }`}
-            >
-              <RotateCcw className="h-3.5 w-3.5" />
-            </button>
-
-            {/* İleri Al */}
-            <button
-              type="button"
-              onClick={handleRedo}
-              disabled={redoHistory.length === 0}
-              title="İleri al"
-              aria-label="İleri al"
-              className={`inline-flex h-8 w-8 items-center justify-center rounded-xl disabled:opacity-40 transition ${
-                isLight ? 'bg-slate-100 text-slate-700 hover:bg-slate-200 hover:text-slate-900' : 'bg-white/5 text-slate-300 hover:bg-white/10 hover:text-white'
-              }`}
-            >
-              <RotateCw className="h-3.5 w-3.5" />
-            </button>
-
-            {/* İndir PNG */}
-            <button
-              type="button"
-              onClick={handleDownload}
-              title="Çizimi PNG Olarak İndir"
-              aria-label="Çizimi PNG Olarak İndir"
-              className={`hidden sm:inline-flex h-8 w-8 items-center justify-center rounded-xl transition ${
-                isLight ? 'bg-slate-100 text-slate-700 hover:bg-slate-200 hover:text-slate-900' : 'bg-white/5 text-slate-300 hover:bg-white/10 hover:text-white'
-              }`}
-            >
-              <Download className="h-3.5 w-3.5" />
-            </button>
-
-            {/* Temizle */}
-            <button
-              type="button"
-              onClick={handleClear}
-              title="Tümünü temizle"
-              aria-label="Tümünü temizle"
-              className="inline-flex h-8 w-8 items-center justify-center rounded-xl bg-rose-500/15 text-rose-700 dark:text-rose-300 hover:bg-rose-500/25 transition"
-            >
-              <Trash2 className="h-3.5 w-3.5" />
-            </button>
-
-            {/* Kapat */}
-            <button
-              type="button"
-              onClick={onClose}
-              aria-label="Karalama tahtasını kapat"
-              className={`inline-flex h-8 w-8 items-center justify-center rounded-xl transition ${
-                isLight ? 'bg-slate-100 text-slate-500 hover:bg-slate-200 hover:text-slate-900' : 'bg-white/10 text-slate-300 hover:bg-white/20 hover:text-white'
-              }`}
-            >
-              <X className="h-4 w-4" />
-            </button>
-          </div>
-        </div>
-
-        {/* Gövde: Soru Bölmesi + Çizim Alanı */}
-        <div className="relative flex flex-1 overflow-hidden">
-          {/* Sol Soru Paneli (Varsa ve açıksa) */}
-          {questionContext && showQuestionPanel && (
-            <div className={`w-full md:w-80 lg:w-96 shrink-0 border-r p-4 overflow-y-auto hidden md:flex flex-col gap-4 ${
-              isLight ? 'border-slate-200 bg-slate-50 text-slate-800' : 'border-white/10 bg-slate-950/70 text-slate-200'
-            }`}>
-              <div className="flex items-center justify-between">
-                <span className="text-xs font-bold uppercase tracking-wider text-amber-500 dark:text-amber-400">
-                  Aktif Soru Metni
-                </span>
-                <span className="text-[11px] text-slate-500 dark:text-slate-400">Şıklara tıklayarak eleyebilirsin</span>
-              </div>
-
-              <div className={`rounded-2xl border p-4 text-sm font-medium leading-relaxed ${
-                isLight ? 'border-slate-200 bg-white text-slate-900 shadow-sm' : 'border-white/10 bg-slate-900/80 text-white'
-              }`}>
-                <MathText>{questionContext.questionText}</MathText>
-              </div>
-
-              {questionContext.imageUrl && (
-                <div className={`relative h-36 w-full overflow-hidden rounded-xl border ${
-                  isLight ? 'border-slate-200 bg-white' : 'border-white/10 bg-slate-900'
-                }`}>
-                  <Image
-                    src={questionContext.imageUrl}
-                    alt="Soru Görseli"
-                    fill
-                    sizes="20rem"
-                    className="object-contain p-2"
-                  />
-                </div>
-              )}
-
-              {/* Şıklar ve Eleme */}
-              {questionContext.options && questionContext.options.length > 0 && (
-                <div className="space-y-2">
-                  <span className="text-xs font-bold text-slate-500 dark:text-slate-400">Şıklar & Eleme:</span>
-                  <div className="space-y-1.5">
-                    {questionContext.options.map((opt, idx) => {
-                      const optLabel = String.fromCharCode(65 + idx);
-                      const isEliminated = eliminatedOptions.has(idx);
-                      return (
-                        <button
-                          key={idx}
-                          type="button"
-                          onClick={() => toggleEliminateOption(idx)}
-                          className={`w-full flex items-center gap-2.5 p-2 rounded-xl text-left text-xs transition border ${
-                            isEliminated
-                              ? 'bg-rose-50 dark:bg-rose-950/25 border-rose-200 dark:border-rose-500/30 text-rose-600 dark:text-rose-300/60 line-through'
-                              : isLight
-                              ? 'bg-white border-slate-200 text-slate-800 hover:bg-slate-100 shadow-sm'
-                              : 'bg-white/5 border-white/10 text-slate-200 hover:bg-white/10'
-                          }`}
-                        >
-                          <span
-                            className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-lg text-[11px] font-bold ${
-                              isEliminated
-                                ? 'bg-rose-500/20 text-rose-500'
-                                : isLight
-                                ? 'bg-slate-100 text-slate-700'
-                                : 'bg-white/10 text-slate-300'
-                            }`}
-                          >
-                            {optLabel}
-                          </span>
-                          <span className="min-w-0 flex-1 overflow-x-auto break-words">
-                            <MathText>{opt}</MathText>
-                          </span>
-                          {isEliminated && (<X className="h-3.5 w-3.5 text-rose-500 shrink-0" />)}
-                        </button>
-                      );
-                    })}
-                  </div>
-                </div>
-              )}
-            </div>
-          )}
-
-          {/* Canvas Çizim Alanı */}
-          <div className={`relative flex-1 cursor-crosshair touch-none transition-colors ${
-            isLight ? 'bg-white' : 'bg-[#090d16]'
-          }`}>
-            <canvas
-              ref={canvasRef}
-              onPointerDown={handlePointerDown}
-              onPointerMove={handlePointerMove}
-              onPointerUp={handlePointerUp}
-              onPointerCancel={handlePointerUp}
-              className="h-full w-full block"
-            />
-
-            <ProtractorOverlay
-              isOpen={showProtractor}
-              onClose={() => setShowProtractor(false)}
+          {/* Gövde: Soru Bölmesi + Çizim Alanı */}
+          <div className="relative flex flex-1 overflow-hidden">
+            <ScratchpadQuestionPanel
+              questionContext={questionContext!}
+              showQuestionPanel={Boolean(questionContext && showQuestionPanel)}
               isLight={isLight}
+              eliminatedOptions={eliminatedOptions}
+              onToggleEliminateOption={toggleEliminateOption}
             />
-          </div>
-        </div>
 
-        {/* Alt Bilgi */}
-        <div className={`flex flex-col sm:flex-row items-center justify-between gap-1 border-t px-3 sm:px-4 py-2 text-[11px] text-center sm:text-left ${
-          isLight ? 'border-slate-200 bg-slate-50 text-slate-600' : 'border-white/10 bg-slate-950/80 text-slate-400'
-        }`}>
-          <div className="flex items-center gap-2">
-            <span>Kalem, fosforlu kalem ve düz cetvel ile işlemlerini yapabilirsin.</span>
-            {questionContext && (
-              <span className="text-amber-600 dark:text-amber-400 font-medium">Sol panelde şıkları eleyebilirsin.</span>
-            )}
+            {/* Canvas Çizim Alanı */}
+            <div
+              className={`relative flex-1 cursor-crosshair touch-none transition-colors ${
+                isLight ? 'bg-white' : 'bg-[#090d16]'
+              }`}
+            >
+              <canvas
+                ref={canvasRef}
+                onPointerDown={handlePointerDown}
+                onPointerMove={handlePointerMove}
+                onPointerUp={handlePointerUp}
+                onPointerCancel={handlePointerUp}
+                className="h-full w-full block"
+              />
+
+              <ProtractorOverlay
+                isOpen={showProtractor}
+                onClose={() => setShowProtractor(false)}
+                isLight={isLight}
+              />
+            </div>
           </div>
-          <span className="font-semibold text-slate-700 dark:text-slate-300 hidden sm:inline">Soruyu çözerken tahtayı kapatıp açabilirsin.</span>
-        </div>
         </ErrorBoundary>
       </div>
     </div>

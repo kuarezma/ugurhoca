@@ -2,33 +2,16 @@
 
 import { useMemo, useState } from 'react';
 import { motion } from 'framer-motion';
-import {
-  ChevronRight,
-  ExternalLink,
-  Filter,
-  Info,
-  MapPin,
-  Target,
-} from 'lucide-react';
-import { applyAnswerChange } from '@/lib/examInputs';
 import { useTheme } from '@/components/ThemeProvider';
 import { ProgramBackLink } from '@/features/programs/components/ProgramBackLink';
-import { ProgramMetricCard } from '@/features/programs/components/ProgramMetricCard';
 import { ProgramStepTabs } from '@/features/programs/components/ProgramStepTabs';
-import { ProgramSubjectInputCard } from '@/features/programs/components/ProgramSubjectInputCard';
 import { ProgramWizardHeader } from '@/features/programs/components/ProgramWizardHeader';
-import { YksScoreTable } from '@/features/programs/components/YksScoreTable';
 import { useYksProgramTargets } from '@/features/programs/hooks/useYksProgramTargets';
 import type {
   ProgramLocationScope,
-  ProgramStep,
   ProgramTargetLevel,
 } from '@/features/programs/types';
 import {
-  clampProgramValue,
-  formatProgramOptionLabel,
-  getProgramLevelBadgeLabel,
-  getProgramLevelTone,
   isInternationalProgramLocation,
   matchesProgramLocationScope,
 } from '@/features/programs/utils';
@@ -36,23 +19,17 @@ import {
   calculateYksScore,
   classifyYksTarget,
   createInitialYksInputs,
-  formatRank,
   resolveYksPreferenceRank,
-  aytSubjectKeys,
-  tytSubjectKeys,
   yksSubjects,
   type YksScoreType,
   type YksSubjectKey,
 } from '@/lib/examCalculators';
-
-const levelSectionLabels: Record<ProgramTargetLevel, string> = {
-  iddiali: 'İddialı Hedefler',
-  dengeli: 'Dengeli Hedefler',
-  guvenli: 'Güvenli Hedefler',
-};
-
-const buildSourceLinkClassName = (_isLight: boolean) =>
-  `inline-flex items-center gap-1.5 rounded-xl border border-default dark:border-slate-400 bg-surface-1 px-3 py-2 text-xs font-bold text-primary hover:border-accent transition-colors`;
+import { applyAnswerChange } from '@/lib/examInputs';
+import { normalizeObp, steps } from './YksProgramPage/helpers';
+import type { EvaluatedYksProgram } from './YksProgramPage/YksProgramCard';
+import { YksStepPreferenceFilters } from './YksProgramPage/YksStepPreferenceFilters';
+import { YksStepProgramRecommendations } from './YksProgramPage/YksStepProgramRecommendations';
+import { YksStepScoreCalculation } from './YksProgramPage/YksStepScoreCalculation';
 
 export default function YksWizardPage() {
   const { theme } = useTheme();
@@ -81,16 +58,7 @@ export default function YksWizardPage() {
     'all' | ProgramTargetLevel
   >('all');
 
-  const parseObpInput = (value: string) => {
-    const normalized = value.replace(',', '.').trim();
-    if (!normalized) return Number.NaN;
-    return Number.parseFloat(normalized);
-  };
-
-  const obp = useMemo(() => {
-    const parsed = parseObpInput(obpInput);
-    return Number.isNaN(parsed) ? 50 : clampProgramValue(parsed, 50, 100);
-  }, [obpInput]);
+  const obp = useMemo(() => normalizeObp(obpInput), [obpInput]);
 
   const yksResult = useMemo(
     () => calculateYksScore(inputs, scoreType, obp, placedLastYear),
@@ -106,6 +74,7 @@ export default function YksWizardPage() {
     yksResult.estimatedRank,
     normalizedManualRank,
   );
+
   const subjectsByKey = useMemo(
     () => new Map(yksSubjects.map((subject) => [subject.key, subject])),
     [],
@@ -222,7 +191,7 @@ export default function YksWizardPage() {
       return true;
     });
 
-    const withLevels = filtered.map((program) => {
+    const withLevels: EvaluatedYksProgram[] = filtered.map((program) => {
       const levelData = classifyYksTarget({
         userScore: yksResult.estimatedScore,
         userRank: activeRank,
@@ -300,15 +269,14 @@ export default function YksWizardPage() {
 
     setInputs((prev) => ({
       ...prev,
-      [subjectKey]: applyAnswerChange(prev[subjectKey], field, rawValue, meta.questions),
+      [subjectKey]: applyAnswerChange(
+        prev[subjectKey],
+        field,
+        rawValue,
+        meta.questions,
+      ),
     }));
   };
-
-  const steps: ProgramStep[] = [
-    { id: 1 as const, title: 'Puan Hesapla' },
-    { id: 2 as const, title: 'Tercih Filtreleri' },
-    { id: 3 as const, title: 'Program Önerileri' },
-  ];
 
   return (
     <main className="programlar-page min-h-screen gradient-bg px-4 pb-12 pt-16 sm:px-6 sm:pt-20">
@@ -343,629 +311,72 @@ export default function YksWizardPage() {
           />
 
           {step === 1 && (
-            <div className="space-y-5">
-              <div className="rounded-3xl border border-default bg-surface-2 p-4">
-                <div className="grid gap-3 lg:grid-cols-[1fr_1fr_1.2fr]">
-                  <div>
-                    <label
-                      htmlFor="yks-obp"
-                      className="mb-1 block text-[11px] font-bold uppercase tracking-[0.18em] text-secondary"
-                    >
-                      Diploma Notu
-                    </label>
-                    <input
-                      id="yks-obp"
-                      type="number"
-                      min={50}
-                      max={100}
-                      value={obpInput}
-                      onChange={(event) => setObpInput(event.target.value)}
-                      onBlur={() => {
-                        setObpInput((current) => {
-                          const parsed = Number.parseFloat(current);
-                          if (Number.isNaN(parsed)) return '50';
-                          return String(clampProgramValue(parsed, 50, 100));
-                        });
-                      }}
-                      className="w-full rounded-xl border border-default dark:border-slate-400 bg-surface-0 px-3 py-2 text-sm font-semibold text-primary tabular-nums outline-none transition focus:border-accent focus:ring-2 focus:ring-accent/20"
-                    />
-                  </div>
-
-                  <div>
-                    <label
-                      htmlFor="yks-score-type"
-                      className="mb-1 block text-[11px] font-bold uppercase tracking-[0.18em] text-secondary"
-                    >
-                      Tercih Puan Türü
-                    </label>
-                    <select
-                      id="yks-score-type"
-                      value={scoreType}
-                      onChange={(event) =>
-                        setScoreType(event.target.value as YksScoreType)
-                      }
-                      className="w-full rounded-xl border border-default dark:border-slate-400 bg-surface-0 px-3 py-2 text-sm font-semibold text-primary outline-none transition focus:border-accent focus:ring-2 focus:ring-accent/20"
-                    >
-                      <option value="TYT">TYT</option>
-                      <option value="SAY">SAY</option>
-                      <option value="EA">EA</option>
-                      <option value="SOZ">SÖZ</option>
-                    </select>
-                  </div>
-
-                  <fieldset>
-                    <legend className="mb-1 block text-[11px] font-bold uppercase tracking-[0.18em] text-secondary">
-                      Önceki Sene Yerleşme
-                    </legend>
-                    <div className="grid grid-cols-2 overflow-hidden rounded-xl border border-default dark:border-slate-400 text-sm font-bold bg-surface-0">
-                      <button
-                        type="button"
-                        onClick={() => setPlacedLastYear(false)}
-                        className={`px-3 py-2 transition ${!placedLastYear ? 'bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none' : 'text-secondary hover:text-primary'}`}
-                      >
-                        Yerleşmedim
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => setPlacedLastYear(true)}
-                        className={`px-3 py-2 transition ${placedLastYear ? 'bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none' : 'text-secondary hover:text-primary'}`}
-                      >
-                        Yerleştim
-                      </button>
-                    </div>
-                  </fieldset>
-                </div>
-              </div>
-
-              <section className="space-y-3">
-                <div className="flex items-center justify-between gap-3">
-                  <h2 className="text-base font-black text-primary">
-                    TYT Puan Hesaplama
-                  </h2>
-                  <span className="rounded-full px-3 py-1 text-xs font-bold border border-cyan-200 dark:border-cyan-300/20 bg-cyan-50 dark:bg-cyan-300/10 text-cyan-800 dark:text-cyan-100">
-                    4 yanlış 1 doğruyu götürür
-                  </span>
-                </div>
-                <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-                  {tytSubjectKeys.map((subjectKey) => {
-                    const subject = subjectsByKey.get(subjectKey);
-                    if (!subject) return null;
-
-                    return (
-                      <ProgramSubjectInputCard
-                        key={subject.key}
-                        accentClassName="bg-gradient-to-r from-cyan-600 to-blue-600"
-                        helperText={`${subject.questions} soru`}
-                        idPrefix="yks"
-                        isLight={isLight}
-                        maxQuestions={subject.questions}
-                        net={
-                          yksResult.tytNets[
-                            subject.key as keyof typeof yksResult.tytNets
-                          ]
-                        }
-                        onChange={(field, value) =>
-                          updateSubjectInput(subject.key, field, value)
-                        }
-                        subjectKey={subject.key}
-                        title={subject.label}
-                        value={inputs[subject.key]}
-                      />
-                    );
-                  })}
-                </div>
-              </section>
-
-              <section className="space-y-3">
-                <div className="flex items-center justify-between gap-3">
-                  <h2 className="text-base font-black text-primary">
-                    AYT Puan Hesaplama
-                  </h2>
-                  <span className="rounded-full px-3 py-1 text-xs font-bold border border-purple-200 dark:border-purple-300/20 bg-purple-50 dark:bg-purple-300/10 text-purple-800 dark:text-purple-100">
-                    Puan türüne göre ağırlıklandırılır
-                  </span>
-                </div>
-                <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-                  {aytSubjectKeys.map((subjectKey) => {
-                    const subject = subjectsByKey.get(subjectKey);
-                    if (!subject) return null;
-
-                    return (
-                      <ProgramSubjectInputCard
-                        key={subject.key}
-                        accentClassName="bg-gradient-to-r from-purple-600 to-purple-600"
-                        helperText={`${subject.questions} soru`}
-                        idPrefix="yks"
-                        isLight={isLight}
-                        maxQuestions={subject.questions}
-                        net={
-                          yksResult.aytNets[
-                            subject.key as keyof typeof yksResult.aytNets
-                          ]
-                        }
-                        onChange={(field, value) =>
-                          updateSubjectInput(subject.key, field, value)
-                        }
-                        subjectKey={subject.key}
-                        title={subject.label}
-                        value={inputs[subject.key]}
-                      />
-                    );
-                  })}
-                </div>
-              </section>
-
-              <div className="grid gap-3 sm:grid-cols-3">
-                <div className="rounded-2xl border border-default dark:border-slate-400 bg-surface-1 p-4">
-                  <div className="text-[11px] font-bold uppercase tracking-[0.18em] text-secondary">
-                    OBP Katkısı
-                  </div>
-                  <div className="mt-1 text-3xl font-black text-primary">
-                    {yksResult.obpContribution}
-                  </div>
-                  <div className="mt-1 text-xs text-secondary">
-                    {placedLastYear
-                      ? 'Önceki yıl yerleştiğin için yarım katkı.'
-                      : 'Tam OBP katkısı uygulanıyor.'}
-                  </div>
-                </div>
-
-                <div className="rounded-2xl border border-default dark:border-slate-400 bg-surface-1 p-4">
-                  <label
-                    htmlFor="yks-manual-rank"
-                    className="mb-1 block text-[11px] font-bold uppercase tracking-[0.18em] text-secondary"
-                  >
-                    Manuel Sıralama (Opsiyonel)
-                  </label>
-                  <input
-                    id="yks-manual-rank"
-                    type="number"
-                    min={1}
-                    value={manualRank}
-                    onChange={(event) => {
-                      const digitsOnly = event.target.value.replace(/\D/g, '');
-                      setManualRank(digitsOnly);
-                    }}
-                    onBlur={() => {
-                      setManualRank((current) => {
-                        const normalized = current.replace(/\D/g, '');
-                        if (!normalized) return '';
-                        const parsed = Number.parseInt(normalized, 10);
-                        return Number.isNaN(parsed) || parsed < 1
-                          ? ''
-                          : String(parsed);
-                      });
-                    }}
-                    placeholder={formatRank(yksResult.estimatedRank)}
-                    className="w-full rounded-xl border border-default dark:border-slate-400 bg-surface-0 px-3 py-2 text-sm font-semibold text-primary tabular-nums outline-none transition focus:border-accent focus:ring-2 focus:ring-accent/20"
-                  />
-                </div>
-              </div>
-
-              <YksScoreTable
-                activeScoreType={scoreType}
-                isLight={isLight}
-                onScoreTypeChange={setScoreType}
-                rows={yksResult.rows}
-              />
-
-              <div className="rounded-3xl border border-default bg-surface-2 p-5">
-                <div className="grid gap-3 sm:grid-cols-3">
-                  <ProgramMetricCard
-                    isLight={isLight}
-                    label={`Yerleştirme Puanı (${scoreType})`}
-                    tone="fuchsia"
-                    value={yksResult.estimatedScore}
-                  />
-                  <ProgramMetricCard
-                    isLight={isLight}
-                    label="Tercih Sıralaması"
-                    tone="cyan"
-                    value={formatRank(activeRank)}
-                  />
-                  <ProgramMetricCard
-                    isLight={isLight}
-                    label="Ham Puan"
-                    tone="indigo"
-                    value={yksResult.rawScore}
-                  />
-                </div>
-
-                <button
-                  type="button"
-                  onClick={() => setStep(2)}
-                  className="mt-4 inline-flex items-center gap-2 rounded-xl border border-purple-600/80 dark:border-purple-300/80 px-4 py-2 text-sm font-bold transition hover:scale-[1.01] active:scale-[0.99] bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none"
-                >
-                  Tercih Filtrelerine Geç
-                  <ChevronRight className="h-4 w-4" />
-                </button>
-              </div>
-            </div>
+            <YksStepScoreCalculation
+              obpInput={obpInput}
+              setObpInput={setObpInput}
+              scoreType={scoreType}
+              setScoreType={setScoreType}
+              placedLastYear={placedLastYear}
+              setPlacedLastYear={setPlacedLastYear}
+              manualRank={manualRank}
+              setManualRank={setManualRank}
+              inputs={inputs}
+              updateSubjectInput={updateSubjectInput}
+              subjectsByKey={subjectsByKey}
+              yksResult={yksResult}
+              activeRank={activeRank}
+              isLight={isLight}
+              onNext={() => setStep(2)}
+            />
           )}
 
           {step === 2 && (
-            <div className="space-y-5">
-              <div className="rounded-3xl border border-default bg-surface-1 p-5 shadow-sm">
-                <div className="mb-4 flex items-center gap-2">
-                  <Filter className="h-5 w-5 text-accent-fg" />
-                  <h2 className="text-lg font-bold text-primary">
-                    Üniversite Tercih Filtreleri
-                  </h2>
-                </div>
-
-                <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-                  <input
-                    value={query}
-                    onChange={(event) => setQuery(event.target.value)}
-                    placeholder="Üniversite veya bölüm ara"
-                    className="w-full rounded-xl border border-default dark:border-slate-400 bg-surface-0 px-3 py-2 text-sm font-semibold text-primary outline-none transition focus:border-accent focus:ring-2 focus:ring-accent/20"
-                  />
-
-                  <select
-                    value={level}
-                    onChange={(event) =>
-                      setLevel(
-                        event.target.value as 'all' | 'lisans' | 'onlisans',
-                      )
-                    }
-                    className="w-full rounded-xl border border-default dark:border-slate-400 bg-surface-0 px-3 py-2 text-sm font-semibold text-primary outline-none transition focus:border-accent focus:ring-2 focus:ring-accent/20"
-                  >
-                    <option value="all">Lisans + Ön Lisans</option>
-                    <option value="lisans">Lisans</option>
-                    <option value="onlisans">Ön Lisans</option>
-                  </select>
-
-                  <select
-                    value={locationScope}
-                    onChange={(event) => {
-                      setLocationScope(
-                        event.target.value as ProgramLocationScope,
-                      );
-                      setCity('all');
-                    }}
-                    className="w-full rounded-xl border border-default dark:border-slate-400 bg-surface-0 px-3 py-2 text-sm font-semibold text-primary outline-none transition focus:border-accent focus:ring-2 focus:ring-accent/20"
-                  >
-                    <option value="all">Tüm Konumlar</option>
-                    <option value="domestic">Türkiye</option>
-                    <option value="international">Yurt Dışı</option>
-                  </select>
-
-                  <select
-                    value={city}
-                    onChange={(event) => setCity(event.target.value)}
-                    className="w-full rounded-xl border border-default dark:border-slate-400 bg-surface-0 px-3 py-2 text-sm font-semibold text-primary outline-none transition focus:border-accent focus:ring-2 focus:ring-accent/20"
-                  >
-                    <option value="all">Tüm Şehirler</option>
-                    {cities.map((item) => (
-                      <option key={item} value={item}>
-                        {formatProgramOptionLabel(item)}
-                      </option>
-                    ))}
-                  </select>
-
-                  <select
-                    value={universityType}
-                    onChange={(event) => setUniversityType(event.target.value)}
-                    className="w-full rounded-xl border border-default dark:border-slate-400 bg-surface-0 px-3 py-2 text-sm font-semibold text-primary outline-none transition focus:border-accent focus:ring-2 focus:ring-accent/20"
-                  >
-                    <option value="all">Tüm Üniversite Tipleri</option>
-                    {universityTypes.map((item) => (
-                      <option key={item} value={item}>
-                        {formatProgramOptionLabel(item)}
-                      </option>
-                    ))}
-                  </select>
-
-                  <select
-                    value={teachingType}
-                    onChange={(event) => setTeachingType(event.target.value)}
-                    className="w-full rounded-xl border border-default dark:border-slate-400 bg-surface-0 px-3 py-2 text-sm font-semibold text-primary outline-none transition focus:border-accent focus:ring-2 focus:ring-accent/20"
-                  >
-                    <option value="all">Tüm Öğretim Türleri</option>
-                    {teachingTypes.map((item) => (
-                      <option key={item} value={item}>
-                        {formatProgramOptionLabel(item)}
-                      </option>
-                    ))}
-                  </select>
-
-                  <select
-                    value={language}
-                    onChange={(event) => setLanguage(event.target.value)}
-                    className="w-full rounded-xl border border-default dark:border-slate-400 bg-surface-0 px-3 py-2 text-sm font-semibold text-primary outline-none transition focus:border-accent focus:ring-2 focus:ring-accent/20"
-                  >
-                    <option value="all">Tüm Diller</option>
-                    {languages.map((item) => (
-                      <option key={item} value={item}>
-                        {formatProgramOptionLabel(item)}
-                      </option>
-                    ))}
-                  </select>
-
-                  <select
-                    value={scholarship}
-                    onChange={(event) =>
-                      setScholarship(
-                        event.target.value as |'all' | 'none' | 'partial' | 'full',
-                      )
-                    }
-                    className="w-full rounded-xl border border-default dark:border-slate-400 bg-surface-0 px-3 py-2 text-sm font-semibold text-primary outline-none transition focus:border-accent focus:ring-2 focus:ring-accent/20"
-                  >
-                    <option value="all">Burs Durumu (Hepsi)</option>
-                    <option value="none">Burssuz</option>
-                    <option value="partial">Kısmi Burs</option>
-                    <option value="full">Tam Burs</option>
-                  </select>
-
-                  <select
-                    value={preferredLevel}
-                    onChange={(event) =>
-                      setPreferredLevel(
-                        event.target.value as 'all' | ProgramTargetLevel,
-                      )
-                    }
-                    className="w-full rounded-xl border border-default dark:border-slate-400 bg-surface-0 px-3 py-2 text-sm font-semibold text-primary outline-none transition focus:border-accent focus:ring-2 focus:ring-accent/20"
-                  >
-                    <option value="all">Hedef Seviyesi (Hepsi)</option>
-                    <option value="iddiali">İddialı</option>
-                    <option value="dengeli">Dengeli</option>
-                    <option value="guvenli">Güvenli</option>
-                  </select>
-                </div>
-
-                <div className="mt-4 rounded-2xl border border-default bg-surface-2 p-3 text-sm text-secondary">
-                  Filtreye uygun program sayısı:{' '}
-                  <span className="font-bold text-primary">{evaluatedPrograms.length}</span>
-                </div>
-
-                <div className="mt-3 rounded-2xl border border-indigo-200 dark:border-indigo-500/30 bg-indigo-50 dark:bg-indigo-500/10 p-3 text-sm text-indigo-900 dark:text-indigo-200">
-                  Veritabanı kapsamı:{' '}
-                  <span className="font-bold text-primary">
-                    {domesticCityCount} Türkiye şehri
-                  </span>
-                  ,{' '}
-                  <span className="font-bold text-primary">
-                    {internationalLocationCount} yurt dışı konumu
-                  </span>
-                  ,{' '}
-                  <span className="font-bold text-primary">{universityCount} üniversite</span>,{' '}
-                  <span className="font-bold text-primary">{programs.length} program</span>
-                </div>
-
-                <div className="mt-4 flex flex-wrap gap-2">
-                  <button
-                    type="button"
-                    onClick={() => setStep(1)}
-                    className="rounded-xl border border-default dark:border-slate-400 bg-surface-1 px-4 py-2 text-sm font-semibold text-primary hover:bg-surface-2 transition"
-                  >
-                    Geri Dön
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setStep(3)}
-                    className="inline-flex items-center gap-2 rounded-xl border border-purple-600/80 dark:border-purple-300/80 px-4 py-2 text-sm font-bold transition hover:scale-[1.01] active:scale-[0.99] bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none"
-                  >
-                    Önerileri Göster
-                    <ChevronRight className="h-4 w-4" />
-                  </button>
-                </div>
-              </div>
-            </div>
+            <YksStepPreferenceFilters
+              query={query}
+              setQuery={setQuery}
+              level={level}
+              setLevel={setLevel}
+              locationScope={locationScope}
+              setLocationScope={setLocationScope}
+              city={city}
+              setCity={setCity}
+              cities={cities}
+              universityType={universityType}
+              setUniversityType={setUniversityType}
+              universityTypes={universityTypes}
+              teachingType={teachingType}
+              setTeachingType={setTeachingType}
+              teachingTypes={teachingTypes}
+              language={language}
+              setLanguage={setLanguage}
+              languages={languages}
+              scholarship={scholarship}
+              setScholarship={setScholarship}
+              preferredLevel={preferredLevel}
+              setPreferredLevel={setPreferredLevel}
+              evaluatedCount={evaluatedPrograms.length}
+              domesticCityCount={domesticCityCount}
+              internationalLocationCount={internationalLocationCount}
+              universityCount={universityCount}
+              totalProgramCount={programs.length}
+              onPrev={() => setStep(1)}
+              onNext={() => setStep(3)}
+            />
           )}
 
           {step === 3 && (
-            <div className="space-y-4">
-              <div className="rounded-3xl border border-default bg-surface-2 p-4">
-                <div className="flex flex-wrap items-center justify-between gap-3">
-                  <div>
-                    <div className="text-[11px] font-bold uppercase tracking-[0.18em] text-secondary">
-                      Tahmini Puan / Sıralama
-                    </div>
-                    <div className="text-2xl font-black tabular-nums text-primary">
-                      {yksResult.estimatedScore.toFixed(2)} / {' '}{formatRank(activeRank)}
-                    </div>
-                  </div>
-                  <div className="text-sm text-secondary">
-                    Filtreye uygun toplam program:{' '}
-                    <span className="font-bold text-primary">
-                      {evaluatedPrograms.length}
-                    </span>
-                  </div>
-                </div>
-              </div>
-
-              {loading && (
-                <div className="rounded-3xl border border-default bg-surface-1 p-5 text-sm text-secondary">
-                  Program verileri yükleniyor...
-                </div>
-              )}
-              {!loading && error && (
-                <div className="rounded-3xl border border-rose-300 dark:border-rose-500/30 bg-rose-50 dark:bg-rose-500/10 p-5 text-sm text-rose-800 dark:text-rose-200">
-                  {error}
-                </div>
-              )}
-
-              {!loading && !error && !evaluatedPrograms.length && (
-                <div className="rounded-3xl border border-default bg-surface-1 p-6">
-                  <p className="text-secondary">
-                    Seçilen filtrelere uygun program bulunamadı.
-                  </p>
-                </div>
-              )}
-
-              {!loading &&
-                !error &&
-                evaluatedPrograms.length > 0 &&
-                (preferredLevel === 'all'
-                  ? (['iddiali', 'dengeli', 'guvenli'] as ProgramTargetLevel[])
-                  : [preferredLevel]
-                ).map((targetLevel) => {
-                  const items = grouped[targetLevel];
-                  if (!items?.length) return null;
-
-                  const levelTone = getProgramLevelTone(targetLevel, isLight);
-
-                  return (
-                    <section key={targetLevel} className="space-y-3">
-                      <div className="flex items-center justify-between">
-                        <h2 className="text-lg font-bold text-primary">
-                          {levelSectionLabels[targetLevel]}
-                        </h2>
-                        <span
-                          className={`rounded-full px-3 py-1 text-xs font-bold ${levelTone.badge}`}
-                        >
-                          {items.length} program
-                        </span>
-                      </div>
-
-                      <div className="grid gap-3 md:grid-cols-2">
-                        {items.map((program) => {
-                          const tone = getProgramLevelTone(
-                            program.targetLevel,
-                            isLight,
-                          );
-
-                          return (
-                            <article
-                              key={program.id}
-                              className={`rounded-2xl border p-4 ${tone.card}`}
-                            >
-                              <div className="flex items-start justify-between gap-3">
-                                <div>
-                                  <h3 className="text-sm font-black text-primary sm:text-base">
-                                    {program.university_name}
-                                  </h3>
-                                  <p className="mt-1 text-sm font-semibold text-secondary">
-                                    {program.program_name}
-                                  </p>
-                                  <p className="mt-1 inline-flex items-center gap-1 text-xs text-secondary">
-                                    <MapPin className="h-3.5 w-3.5" />
-                                    {formatProgramOptionLabel(program.city)}
-                                  </p>
-                                </div>
-
-                                <span
-                                  className={`rounded-full px-2 py-1 text-[11px] font-bold ${tone.badge}`}
-                                >
-                                  {getProgramLevelBadgeLabel(
-                                    program.targetLevel,
-                                  )}
-                                </span>
-                              </div>
-
-                              <div className="mt-3 grid grid-cols-2 gap-2 text-xs sm:text-sm">
-                                <div className="rounded-xl border border-default dark:border-slate-400 bg-surface-1 px-3 py-2">
-                                  <div className="text-secondary">
-                                    Taban Sıralama
-                                  </div>
-                                  <div className="font-black tabular-nums text-primary">
-                                    {formatRank(program.base_rank)}
-                                  </div>
-                                </div>
-                                <div className="rounded-xl border border-default dark:border-slate-400 bg-surface-1 px-3 py-2">
-                                  <div className="text-secondary">
-                                    Taban Puan
-                                  </div>
-                                  <div className="font-black tabular-nums text-primary">
-                                    {program.base_score
-                                      ? program.base_score.toFixed(2)
-                                      : '-'}
-                                  </div>
-                                </div>
-                              </div>
-
-                              <div className="mt-3 flex flex-wrap gap-2 text-[11px] text-secondary">
-                                <span className="rounded-full px-2 py-1 border border-default dark:border-slate-400 bg-surface-1 font-semibold text-primary">
-                                  {program.score_type}
-                                </span>
-                                <span className="rounded-full px-2 py-1 border border-default dark:border-slate-400 bg-surface-1 font-semibold text-primary">
-                                  {program.level === 'lisans'
-                                    ? 'Lisans'
-                                    : 'Ön Lisans'}
-                                </span>
-                                <span className="rounded-full px-2 py-1 border border-default dark:border-slate-400 bg-surface-1 font-semibold text-primary">
-                                  {formatProgramOptionLabel(
-                                    program.university_type,
-                                  )}
-                                </span>
-                                <span className="rounded-full px-2 py-1 border border-default dark:border-slate-400 bg-surface-1 font-semibold text-primary">
-                                  Burs: %{program.scholarship_rate || 0}
-                                </span>
-                                {program.quota_total ? (
-                                  <span className="rounded-full px-2 py-1 border border-default dark:border-slate-400 bg-surface-1 font-semibold text-primary">
-                                    Kontenjan: {program.quota_total}
-                                  </span>
-                                ) : null}
-                              </div>
-
-                              {program.source_url_osym ||
-                              program.source_url_yokatlas ? (
-                                <div className="mt-3 flex flex-wrap gap-2">
-                                  {program.source_url_osym ? (
-                                    <a
-                                      href={program.source_url_osym}
-                                      target="_blank"
-                                      rel="noopener noreferrer"
-                                      className={buildSourceLinkClassName(
-                                        isLight,
-                                      )}
-                                    >
-                                      ÖSYM kaynağı
-                                      <ExternalLink className="h-3.5 w-3.5" />
-                                    </a>
-                                  ) : null}
-                                  {program.source_url_yokatlas ? (
-                                    <a
-                                      href={program.source_url_yokatlas}
-                                      target="_blank"
-                                      rel="noopener noreferrer"
-                                      className={buildSourceLinkClassName(
-                                        isLight,
-                                      )}
-                                    >
-                                      YÖK Atlas
-                                      <ExternalLink className="h-3.5 w-3.5" />
-                                    </a>
-                                  ) : null}
-                                </div>
-                              ) : null}
-                            </article>
-                          );
-                        })}
-                      </div>
-                    </section>
-                  );
-                })}
-
-              <div className="rounded-2xl border border-indigo-200 dark:border-indigo-500/30 bg-indigo-50 dark:bg-indigo-500/10 p-3 text-xs text-indigo-900 dark:text-indigo-200">
-                <div className="flex items-start gap-2">
-                  <Info className="mt-0.5 h-4 w-4 shrink-0" />
-                  <p>
-                    Bu araç sonuç kaydetmez. Öneriler anlık puan/sıralama ve
-                    filtrelere göre üretilir. Resmi tercih öncesi mutlaka ÖSYM
-                    kılavuzu ve YÖK Atlas verilerini tekrar kontrol et.
-                  </p>
-                </div>
-              </div>
-
-              <div className="flex flex-wrap gap-2">
-                <button
-                  type="button"
-                  onClick={() => setStep(2)}
-                  className="rounded-xl border border-default dark:border-slate-400 bg-surface-1 px-4 py-2 text-sm font-semibold text-primary hover:bg-surface-2 transition"
-                >
-                  Filtreleri Düzenle
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setStep(1)}
-                  className="inline-flex items-center gap-2 rounded-xl border border-purple-600/80 dark:border-purple-300/80 px-4 py-2 text-sm font-bold transition hover:scale-[1.01] active:scale-[0.99] bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none"
-                >
-                  Netleri Güncelle
-                  <Target className="h-4 w-4" />
-                </button>
-              </div>
-            </div>
+            <YksStepProgramRecommendations
+              estimatedScore={yksResult.estimatedScore}
+              activeRank={activeRank}
+              evaluatedPrograms={evaluatedPrograms}
+              loading={loading}
+              error={error}
+              preferredLevel={preferredLevel}
+              grouped={grouped}
+              isLight={isLight}
+              onEditFilters={() => setStep(2)}
+              onUpdateNets={() => setStep(1)}
+            />
           )}
         </motion.section>
       </div>

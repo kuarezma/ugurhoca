@@ -1,21 +1,8 @@
 'use client';
 
-import { useState, type ReactNode } from 'react';
+import { useState } from 'react';
 import { motion } from 'framer-motion';
-import {
-  Award,
-  BookOpen,
-  CalendarClock,
-  CheckCircle2,
-  Clock3,
-  Flame,
-  GraduationCap,
-  MessageSquarePlus,
-  Printer,
-  Target,
-  Trophy,
-  X,
-} from 'lucide-react';
+import { BookOpen, Flame, Printer, Target, Trophy, X } from 'lucide-react';
 import type {
   AdminStudentProfileData,
   AdminUser,
@@ -23,7 +10,23 @@ import type {
 import { buildAdminStudentProfileSummary } from '@/features/admin/utils/student-profile';
 import { useAccessibleModal } from '@/hooks/useAccessibleModal';
 import { StudentReportPrintView } from './StudentReportPrintView';
-import { formatIstanbulDate } from '@/lib/date-format';
+import {
+  buildWeeklyStudyCurve,
+  formatGradeLabel,
+  getTopStudyTopics,
+  SummaryCard,
+} from './AdminStudentProfileDrawer/helpers';
+import {
+  StudentStudyCurveSection,
+  StudentTrackingSection,
+  StudentWeeklyPlanSection,
+} from './AdminStudentProfileDrawer/StudentStudySections';
+import {
+  StudentBadgesSection,
+  StudentQuizAndAssignmentSection,
+  StudentRecentSessionsSection,
+  StudentTopicProgressSection,
+} from './AdminStudentProfileDrawer/StudentAcademicSections';
 
 type AdminStudentProfileDrawerProps = {
   data: AdminStudentProfileData | null;
@@ -39,91 +42,6 @@ type AdminStudentProfileDrawerProps = {
     labels?: string[],
   ) => Promise<void> | void;
   student: AdminUser | null;
-};
-
-const formatGradeLabel = (grade?: string | number | null) => {
-  if (grade === 'Mezun') {
-    return 'Mezun';
-  }
-
-  return typeof grade === 'number' ? `${grade}. Sınıf` : 'Belirtilmemiş';
-};
-
-const formatShortDate = (dateString?: string | null) => {
-  if (!dateString) {
-    return 'Bilinmiyor';
-  }
-
-  return formatIstanbulDate(dateString, {
-    day: 'numeric',
-    month: 'short',
-  });
-};
-
-const getActivityTypeLabel = (activityType?: string | null) => {
-  switch (activityType) {
-    case 'test':
-      return 'Test Çözümü';
-    case 'video':
-      return 'Video İzleme';
-    case 'kitap':
-      return 'Kitap Çalışması';
-    case 'not':
-      return 'Not Tekrarı';
-    default:
-      return 'Çalışma';
-  }
-};
-
-const buildWeeklyStudyCurve = (
-  sessions: AdminStudentProfileData['studySessions'],
-  targetMinutes: number,
-) => {
-  const days = ['Pzt', 'Sal', 'Çar', 'Per', 'Cum', 'Cmt', 'Paz'];
-  const today = new Date();
-  const dayOfWeek = today.getDay() === 0 ? 6 : today.getDay() - 1;
-  const startOfWeek = new Date(today);
-  startOfWeek.setDate(today.getDate() - dayOfWeek);
-  startOfWeek.setHours(0, 0, 0, 0);
-
-  const daily = days.map((name) => ({ minutes: 0, name }));
-
-  for (const session of sessions) {
-    const sessionDate = new Date(session.date);
-    if (sessionDate >= startOfWeek) {
-      const index = sessionDate.getDay() === 0 ? 6 : sessionDate.getDay() - 1;
-      if (index >= 0 && index < daily.length) {
-        daily[index].minutes += session.duration;
-      }
-    }
-  }
-
-  let cumulative = 0;
-  return daily.map((day, index) => {
-    cumulative += day.minutes;
-    return {
-      ...day,
-      cumulative,
-      target: Math.round((targetMinutes / 7) * (index + 1)),
-    };
-  });
-};
-
-const getTopStudyTopics = (
-  sessions: AdminStudentProfileData['studySessions'],
-) => {
-  const totals = new Map<string, number>();
-
-  for (const session of sessions) {
-    for (const topic of session.topics || []) {
-      totals.set(topic, (totals.get(topic) || 0) + session.duration);
-    }
-  }
-
-  return Array.from(totals.entries())
-    .map(([topic, minutes]) => ({ minutes, topic }))
-    .sort((left, right) => right.minutes - left.minutes)
-    .slice(0, 5);
 };
 
 export default function AdminStudentProfileDrawer({
@@ -277,471 +195,37 @@ export default function AdminStudentProfileDrawer({
                 />
               </div>
 
-              <section className="rounded-3xl border border-default dark:border-white/10 bg-surface-2/50 dark:bg-white/5 p-5">
-                <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-                  <div>
-                    <h3 className="text-lg font-bold text-primary">
-                      Takip Durumu
-                    </h3>
-                    <p className="text-sm text-secondary">
-                      Admin notları, etiketler ve takip tarihi.
-                    </p>
-                  </div>
-                  {effectiveStudent ? (
-                    <div className="flex flex-wrap gap-2">
-                      <button
-                        type="button"
-                        onClick={() =>
-                          onUpdateStatus?.(effectiveStudent, 'normal', [])
-                        }
-                        className="rounded-xl border border-emerald-500/40 dark:border-emerald-400/30 bg-emerald-100 dark:bg-emerald-500/15 px-3 py-2 text-xs font-bold text-emerald-900 dark:text-emerald-200 transition hover:bg-emerald-200/80 dark:hover:bg-emerald-500/25"
-                      >
-                        Normal
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() =>
-                          onUpdateStatus?.(effectiveStudent, 'watch', [
-                            'takipte',
-                          ])
-                        }
-                        className="rounded-xl border border-amber-500/40 dark:border-amber-400/30 bg-amber-100 dark:bg-amber-500/15 px-3 py-2 text-xs font-bold text-amber-900 dark:text-amber-200 transition hover:bg-amber-200/80 dark:hover:bg-amber-500/25"
-                      >
-                        Takipte
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() =>
-                          onUpdateStatus?.(effectiveStudent, 'risk', ['risk'])
-                        }
-                        className="rounded-xl border border-red-500/40 dark:border-red-400/30 bg-red-100 dark:bg-red-500/15 px-3 py-2 text-xs font-bold text-red-900 dark:text-red-200 transition hover:bg-red-200/80 dark:hover:bg-red-500/25"
-                      >
-                        Riskte
-                      </button>
-                    </div>
-                  ) : null}
-                </div>
+              <StudentTrackingSection
+                data={data}
+                effectiveStudent={effectiveStudent}
+                onAddAdminNote={onAddAdminNote}
+                onUpdateStatus={onUpdateStatus}
+              />
 
-                <div className="grid gap-3 sm:grid-cols-3">
-                  <MiniStat
-                    label="Durum"
-                    value={
-                      data.adminStatus?.status === 'risk'
-                        ? 'Risk'
-                        : data.adminStatus?.status === 'watch'
-                          ? 'Takip'
-                          : 'Normal'
-                    }
-                  />
-                  <MiniStat
-                    label="Takip Tarihi"
-                    value={
-                      data.adminStatus?.follow_up_at
-                        ? formatShortDate(data.adminStatus.follow_up_at)
-                        : '-'
-                    }
-                  />
-                  <MiniStat
-                    label="Etiket"
-                    value={data.adminStatus?.labels?.join(', ') || '-'}
-                  />
-                </div>
+              <StudentWeeklyPlanSection
+                effectiveStudent={effectiveStudent}
+                latestPlan={latestPlan}
+                onCreateWeeklyPlan={onCreateWeeklyPlan}
+              />
 
-                <div className="mt-4">
-                  <div className="mb-3 flex items-center justify-between gap-3">
-                    <p className="text-sm font-bold text-primary">
-                      Admin Notları
-                    </p>
-                    {effectiveStudent ? (
-                      <button
-                        type="button"
-                        onClick={() => onAddAdminNote?.(effectiveStudent)}
-                        className="inline-flex items-center gap-2 rounded-xl border border-default dark:border-white/10 bg-surface-2 dark:bg-white/10 px-3 py-2 text-xs font-bold text-primary dark:text-white transition hover:bg-surface-3 dark:hover:bg-white/15"
-                      >
-                        <MessageSquarePlus className="h-4 w-4" />
-                        Not Ekle
-                      </button>
-                    ) : null}
-                  </div>
-                  {data.adminNotes.length === 0 ? (
-                    <EmptyState text="Henüz admin notu yok." />
-                  ) : (
-                    <div className="space-y-2">
-                      {data.adminNotes.slice(0, 5).map((note) => (
-                        <div
-                          key={note.id}
-                          className="rounded-2xl border border-default dark:border-white/10 bg-surface-2 dark:bg-slate-900/60 px-4 py-3"
-                        >
-                          <p className="whitespace-pre-wrap text-sm text-primary dark:text-slate-200">
-                            {note.body}
-                          </p>
-                          <p className="mt-2 text-xs text-tertiary">
-                            {formatShortDate(note.created_at)}
-                          </p>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              </section>
+              <StudentStudyCurveSection
+                completedMinutes={summary.goalSnapshot.completedMinutes}
+                targetMinutes={summary.goalSnapshot.targetMinutes}
+                maxCurveValue={maxCurveValue}
+                topStudyTopics={topStudyTopics}
+                weeklyStudyCurve={weeklyStudyCurve}
+              />
 
-              <section className="rounded-3xl border border-default dark:border-white/10 bg-surface-2/50 dark:bg-white/5 p-5">
-                <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-                  <div>
-                    <h3 className="text-lg font-bold text-primary">
-                      Haftalık Plan
-                    </h3>
-                    <p className="text-sm text-secondary">
-                      Öğrenci yalnızca kendi planını görür.
-                    </p>
-                  </div>
-                  {effectiveStudent ? (
-                    <button
-                      type="button"
-                      onClick={() => onCreateWeeklyPlan?.(effectiveStudent)}
-                      className="inline-flex items-center justify-center gap-2 rounded-xl border border-cyan-500/40 dark:border-cyan-400/30 bg-cyan-100 dark:bg-cyan-500/15 px-4 py-2 text-sm font-bold text-cyan-900 dark:text-cyan-200 transition hover:bg-cyan-200/80 dark:hover:bg-cyan-500/25"
-                    >
-                      <CalendarClock className="h-4 w-4" />
-                      Plan Oluştur
-                    </button>
-                  ) : null}
-                </div>
+              <StudentRecentSessionsSection sessions={data.studySessions} />
 
-                {!latestPlan ? (
-                  <EmptyState text="Bu öğrenci için haftalık plan yok." />
-                ) : (
-                  <div className="rounded-2xl border border-default dark:border-white/10 bg-surface-2 dark:bg-slate-900/60 p-4">
-                    <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
-                      <div>
-                        <p className="font-bold text-primary">
-                          {latestPlan.title}
-                        </p>
-                        <p className="text-xs text-tertiary">
-                          Hafta: {formatShortDate(latestPlan.week_start)} •
-                          Hedef: {latestPlan.target_minutes} dk
-                        </p>
-                      </div>
-                      <span className="rounded-full bg-cyan-100 dark:bg-cyan-500/10 px-3 py-1 text-xs font-bold text-cyan-900 dark:text-cyan-200">
-                        {latestPlan.student_weekly_plan_items?.filter(
-                          (item) => item.completed_at,
-                        ).length || 0}
-                        /{latestPlan.student_weekly_plan_items?.length || 0}
-                      </span>
-                    </div>
-                    <div className="space-y-2">
-                      {(latestPlan.student_weekly_plan_items || []).map(
-                        (item) => (
-                          <div
-                            key={item.id}
-                            className="flex items-center gap-2 rounded-xl bg-surface-1 dark:bg-white/5 px-3 py-2 text-sm"
-                          >
-                            <CheckCircle2
-                              className={`h-4 w-4 ${item.completed_at ? 'text-emerald-700 dark:text-emerald-300' : 'text-slate-500 dark:text-slate-600'}`}
-                            />
-                            <span
-                              className={
-                                item.completed_at
-                                  ? 'text-secondary line-through'
-                                  : 'text-primary dark:text-slate-200'
-                              }
-                            >
-                              {item.title}
-                            </span>
-                          </div>
-                        ),
-                      )}
-                    </div>
-                  </div>
-                )}
-              </section>
+              <StudentTopicProgressSection progressRows={data.progressRows} />
 
-              <section className="rounded-3xl border border-default dark:border-white/10 bg-surface-2/50 dark:bg-white/5 p-5">
-                <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
-                  <div>
-                    <h3 className="text-lg font-bold text-primary">
-                      Haftalık Çalışma Eğrisi
-                    </h3>
-                    <p className="text-sm text-secondary">
-                      600 dk hedefe göre toplam çalışma ilerlemesi
-                    </p>
-                  </div>
-                  <span className="rounded-full border border-emerald-500/40 dark:border-emerald-400/30 bg-emerald-100 dark:bg-emerald-500/10 px-3 py-1 text-sm font-bold text-emerald-900 dark:text-emerald-300">
-                    {summary.goalSnapshot.completedMinutes}/
-                    {summary.goalSnapshot.targetMinutes} dk
-                  </span>
-                </div>
+              <StudentQuizAndAssignmentSection
+                completedAssignments={completedAssignments}
+                summary={summary}
+              />
 
-                <div className="grid gap-4 lg:grid-cols-[1fr_220px]">
-                  <div className="flex h-40 items-end gap-2 rounded-2xl border border-default dark:border-white/10 bg-surface-2 dark:bg-slate-900/60 p-4">
-                    {weeklyStudyCurve.map((point) => (
-                      <div
-                        key={point.name}
-                        className="flex h-full flex-1 flex-col justify-end gap-2"
-                      >
-                        <div className="relative flex flex-1 items-end justify-center">
-                          <div
-                            className="absolute bottom-0 w-2 rounded-t-full bg-surface-3 dark:bg-slate-700"
-                            style={{
-                              height: `${Math.max(8, (point.target / maxCurveValue) * 100)}%`,
-                            }}
-                            title={`Hedef: ${point.target} dk`}
-                          />
-                          <div
-                            className="relative z-10 w-5 rounded-t-xl bg-gradient-to-t from-emerald-500 to-cyan-300 shadow-lg shadow-emerald-500/20"
-                            style={{
-                              height: `${Math.max(point.cumulative > 0 ? 10 : 4, (point.cumulative / maxCurveValue) * 100)}%`,
-                            }}
-                            title={`${point.cumulative} dk`}
-                          />
-                        </div>
-                        <span className="text-center text-[11px] font-semibold text-tertiary">
-                          {point.name}
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-
-                  <div className="rounded-2xl border border-default dark:border-white/10 bg-surface-2 dark:bg-slate-900/60 p-4">
-                    <p className="mb-3 text-sm font-bold text-primary">
-                      En Çok Çalışılan Konular
-                    </p>
-                    {topStudyTopics.length === 0 ? (
-                      <p className="text-sm text-tertiary">Henüz konu yok.</p>
-                    ) : (
-                      <div className="space-y-3">
-                        {topStudyTopics.map((topic) => (
-                          <div key={topic.topic}>
-                            <div className="mb-1 flex justify-between gap-2 text-xs">
-                              <span className="truncate text-secondary">
-                                {topic.topic}
-                              </span>
-                              <span className="font-semibold text-cyan-800 dark:text-cyan-300">
-                                {topic.minutes} dk
-                              </span>
-                            </div>
-                            <div className="h-2 rounded-full bg-surface-3 dark:bg-slate-800">
-                              <div
-                                className="h-2 rounded-full bg-gradient-to-r from-cyan-500 to-emerald-400"
-                                style={{
-                                  width: `${Math.min(100, (topic.minutes / Math.max(topStudyTopics[0]?.minutes || 1, 1)) * 100)}%`,
-                                }}
-                              />
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </section>
-
-              <section className="rounded-3xl border border-default dark:border-white/10 bg-surface-2/50 dark:bg-white/5 p-5">
-                <div className="mb-4 flex items-center justify-between gap-3">
-                  <div>
-                    <h3 className="text-lg font-bold text-primary">
-                      Son Çalışmalar
-                    </h3>
-                    <p className="text-sm text-secondary">
-                      Son 10 çalışma oturumu
-                    </p>
-                  </div>
-                  <span className="text-sm font-semibold text-cyan-800 dark:text-cyan-300">
-                    {data.studySessions.length} kayıt
-                  </span>
-                </div>
-
-                {data.studySessions.length === 0 ? (
-                  <EmptyState text="Henüz çalışma oturumu kaydı yok." />
-                ) : (
-                  <div className="space-y-3">
-                    {data.studySessions.slice(0, 10).map((session) => (
-                      <div
-                        key={
-                          session.id || `${session.date}:${session.duration}`
-                        }
-                        className="rounded-2xl border border-default dark:border-white/10 bg-surface-2 dark:bg-slate-900/60 px-4 py-3"
-                      >
-                        <div className="flex flex-wrap items-center justify-between gap-2">
-                          <div>
-                            <p className="font-semibold text-primary">
-                              {getActivityTypeLabel(session.activity_type)}
-                            </p>
-                            <p className="text-sm text-secondary">
-                              {session.topics?.join(', ') ||
-                                'Konu belirtilmedi'}
-                            </p>
-                          </div>
-                          <div className="text-right">
-                            <p className="font-semibold text-cyan-800 dark:text-cyan-300">
-                              {session.duration} dk
-                            </p>
-                            <p className="text-xs text-tertiary">
-                              {formatShortDate(session.date)}
-                            </p>
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </section>
-
-              <section className="rounded-3xl border border-default dark:border-white/10 bg-surface-2/50 dark:bg-white/5 p-5">
-                <div className="mb-4 flex items-center gap-2">
-                  <GraduationCap className="h-5 w-5 text-violet-700 dark:text-violet-300" />
-                  <h3 className="text-lg font-bold text-primary">
-                    Konu İlerlemesi
-                  </h3>
-                </div>
-
-                {data.progressRows.length === 0 ? (
-                  <EmptyState text="Henüz konu ilerleme verisi yok." />
-                ) : (
-                  <div className="space-y-3">
-                    {data.progressRows.map((row) => (
-                      <div key={row.id || `${row.user_id}:${row.topic}`}>
-                        <div className="mb-1 flex items-center justify-between gap-3 text-sm">
-                          <span className="font-medium text-primary dark:text-slate-200">
-                            {row.topic}
-                          </span>
-                          <span className="font-semibold text-violet-800 dark:text-violet-300">
-                            %{row.mastery_level}
-                          </span>
-                        </div>
-                        <div className="h-2.5 rounded-full bg-surface-3 dark:bg-slate-800">
-                          <div
-                            className="h-2.5 rounded-full bg-gradient-to-r from-violet-500 to-purple-500"
-                            style={{
-                              width: `${Math.max(0, Math.min(100, row.mastery_level))}%`,
-                            }}
-                          />
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </section>
-
-              <section className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-                <div className="rounded-3xl border border-default dark:border-white/10 bg-surface-2/50 dark:bg-white/5 p-5">
-                  <div className="mb-4 flex items-center gap-2">
-                    <CheckCircle2 className="h-5 w-5 text-emerald-700 dark:text-emerald-300" />
-                    <h3 className="text-lg font-bold text-primary">
-                      Son Test Sonuçları
-                    </h3>
-                  </div>
-
-                  {summary.recentQuizResults.length === 0 ? (
-                    <EmptyState text="Henüz tamamlanmış test sonucu yok." />
-                  ) : (
-                    <div className="space-y-3">
-                      {summary.recentQuizResults.map((result) => (
-                        <div
-                          key={result.id}
-                          className="rounded-2xl border border-default dark:border-white/10 bg-surface-2 dark:bg-slate-900/60 px-4 py-3"
-                        >
-                          <div className="flex items-center justify-between gap-3">
-                            <div className="min-w-0">
-                              <p className="truncate font-semibold text-primary">
-                                {result.quizzes?.title || 'Test Sonucu'}
-                              </p>
-                              <p className="text-xs text-tertiary">
-                                {formatShortDate(result.completed_at)}
-                              </p>
-                            </div>
-                            <div className="text-right">
-                              <p className="font-semibold text-emerald-800 dark:text-emerald-300">
-                                {result.score}/{result.total_questions}
-                              </p>
-                              <p className="text-xs text-tertiary">
-                                %
-                                {Math.round(
-                                  (result.score /
-                                    Math.max(result.total_questions, 1)) *
-                                    100,
-                                )}
-                              </p>
-                            </div>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
-
-                <div className="rounded-3xl border border-default dark:border-white/10 bg-surface-2/50 dark:bg-white/5 p-5">
-                  <div className="mb-4 flex items-center gap-2">
-                    <Award className="h-5 w-5 text-amber-700 dark:text-amber-300" />
-                    <h3 className="text-lg font-bold text-primary">
-                      Ödev Özeti
-                    </h3>
-                  </div>
-
-                  <div className="mb-4 grid grid-cols-3 gap-3">
-                    <MiniStat label="Toplam" value={summary.totalAssignments} />
-                    <MiniStat label="Teslim" value={completedAssignments} />
-                    <MiniStat
-                      label="Bekleyen"
-                      value={summary.pendingAssignments.length}
-                    />
-                  </div>
-
-                  {summary.reviewedSubmissions.length === 0 ? (
-                    <EmptyState text="Henüz değerlendirilmiş ödev yok." />
-                  ) : (
-                    <div className="space-y-3">
-                      {summary.reviewedSubmissions.map((submission) => (
-                        <div
-                          key={submission.id}
-                          className="rounded-2xl border border-default dark:border-white/10 bg-surface-2 dark:bg-slate-900/60 px-4 py-3"
-                        >
-                          <div className="flex items-center justify-between gap-3">
-                            <div className="min-w-0">
-                              <p className="font-semibold text-primary">
-                                {formatShortDate(submission.submitted_at)}
-                              </p>
-                              <p className="text-sm text-secondary line-clamp-2">
-                                {submission.feedback ||
-                                  'Geri bildirim bulunmuyor.'}
-                              </p>
-                            </div>
-                            <span className="rounded-full bg-emerald-100 dark:bg-emerald-500/10 px-3 py-1 text-sm font-semibold text-emerald-900 dark:text-emerald-300">
-                              {submission.grade ?? '-'}
-                            </span>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              </section>
-
-              <section className="rounded-3xl border border-default dark:border-white/10 bg-surface-2/50 dark:bg-white/5 p-5">
-                <div className="mb-4 flex items-center gap-2">
-                  <Clock3 className="h-5 w-5 text-sky-700 dark:text-sky-300" />
-                  <h3 className="text-lg font-bold text-primary">Rozetler</h3>
-                </div>
-
-                {data.badges.length === 0 ? (
-                  <EmptyState text="Henüz rozet kazanılmamış." />
-                ) : (
-                  <div className="flex flex-wrap gap-3">
-                    {data.badges.map((badge) => (
-                      <div
-                        key={badge.id}
-                        className="rounded-2xl border border-amber-500/30 dark:border-amber-500/20 bg-amber-100/80 dark:bg-amber-500/10 px-4 py-3"
-                      >
-                        <p className="font-semibold text-amber-900 dark:text-amber-200">
-                          {badge.name}
-                        </p>
-                        <p className="text-xs text-amber-800 dark:text-amber-100/70">
-                          {formatShortDate(badge.earnedAt)}
-                        </p>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </section>
+              <StudentBadgesSection badges={data.badges} />
             </div>
           ) : (
             <div className="rounded-3xl border border-default dark:border-white/10 bg-surface-2 dark:bg-white/5 p-5 text-secondary">
@@ -757,67 +241,25 @@ export default function AdminStudentProfileDrawer({
         student={
           effectiveStudent
             ? {
-                id: effectiveStudent.id,
-                name: effectiveStudent.name,
+                averageScore: summary?.latestQuizScore ?? 85,
+                completedAssignments: data?.submissions?.length || 0,
+                completedQuizzes: data?.quizResults?.length || 0,
+                email: effectiveStudent.email,
                 grade:
                   typeof effectiveStudent.grade === 'number'
                     ? effectiveStudent.grade
                     : undefined,
-                email: effectiveStudent.email,
+                id: effectiveStudent.id,
+                name: effectiveStudent.name,
                 status:
                   typeof effectiveStudent.status === 'string'
                     ? effectiveStudent.status
                     : undefined,
                 totalMinutes: summary?.goalSnapshot.targetMinutes,
-                completedQuizzes: data?.quizResults?.length || 0,
-                completedAssignments: data?.submissions?.length || 0,
-                averageScore: summary?.latestQuizScore ?? 85,
               }
             : null
         }
       />
     </motion.div>
-  );
-}
-
-function SummaryCard({
-  icon,
-  label,
-  meta,
-  value,
-}: {
-  icon: ReactNode;
-  label: string;
-  meta: string;
-  value: string;
-}) {
-  return (
-    <div className="rounded-3xl border border-default dark:border-white/10 bg-surface-2/60 dark:bg-white/5 p-4">
-      <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-2xl bg-surface-3 dark:bg-white/10">
-        {icon}
-      </div>
-      <p className="text-xs font-semibold uppercase tracking-[0.16em] text-tertiary">
-        {label}
-      </p>
-      <p className="mt-2 text-lg font-bold text-primary">{value}</p>
-      <p className="mt-1 text-xs text-secondary">{meta}</p>
-    </div>
-  );
-}
-
-function MiniStat({ label, value }: { label: string; value: number | string }) {
-  return (
-    <div className="rounded-2xl border border-default dark:border-white/10 bg-surface-2 dark:bg-slate-900/60 px-3 py-3 text-center">
-      <p className="text-xl font-bold text-primary">{value}</p>
-      <p className="text-xs text-tertiary">{label}</p>
-    </div>
-  );
-}
-
-function EmptyState({ text }: { text: string }) {
-  return (
-    <div className="rounded-2xl border border-dashed border-default dark:border-white/10 bg-surface-2/40 dark:bg-slate-900/40 px-4 py-6 text-center text-sm text-secondary">
-      {text}
-    </div>
   );
 }

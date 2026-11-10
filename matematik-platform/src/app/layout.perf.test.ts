@@ -30,14 +30,17 @@ describe('kök layout kritik yol', () => {
 
   it('SupportChatPanel her sayfada yüklenen chunk’lara statik girmez', () => {
     // ChatBubble kök layout üzerinden her sayfada yükleniyor. SupportChatPanel
-    // (1300+ satır) MathText üzerinden KaTeX'i de beraberinde getirdiği için
+    // MathText üzerinden KaTeX'i de beraberinde getirdiği için
     // statik import edilirse panel hiç açılmasa bile bu ağırlık ödenir.
-    for (const file of [
-      'src/components/ChatBubble.tsx',
+    const chatBubbleCombined =
+      read('src/components/ChatBubble.tsx') +
+      '\n' +
+      read('src/components/ChatBubble/ChatBubbleModal.tsx');
+    const navbarButton = read(
       'src/features/home/components/HomeNavbarMessagesButton.tsx',
-    ]) {
-      const source = read(file);
+    );
 
+    for (const source of [chatBubbleCombined, navbarButton]) {
       expect(source).not.toMatch(
         /^import \{[^}]*SupportChatPanel[^}]*\} from/m,
       );
@@ -48,10 +51,17 @@ describe('kök layout kritik yol', () => {
   });
 
   it('test lobisi KaTeX kullanan çözüm ve ipucu modüllerini statik yüklemez', () => {
-    const source = read('src/features/quizzes/containers/TestsPage.tsx');
+    const source =
+      read('src/features/quizzes/containers/TestsPage.tsx') +
+      '\n' +
+      read('src/features/quizzes/containers/TestsPage/lazy.tsx');
     for (const name of ['MathText', 'QuestionHintLadder', 'QuizResultsView']) {
-      expect(source).not.toMatch(new RegExp(`^import .*${name}.* from`, 'm'));
-      expect(source).toMatch(new RegExp(`const ${name} = dynamic\\(`));
+      expect(source).not.toMatch(
+        new RegExp(`^import .*${name}.* from ['"](?!\\./lazy['"])`, 'm'),
+      );
+      expect(source).toMatch(
+        new RegExp(`(?:export\\s+)?const ${name} = dynamic\\(`),
+      );
     }
   });
 

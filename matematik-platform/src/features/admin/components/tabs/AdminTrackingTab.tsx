@@ -1,22 +1,7 @@
 'use client';
 
 import { useMemo, useState } from 'react';
-import type { ReactNode } from 'react';
-import {
-  AlertTriangle,
-  CalendarClock,
-  CheckCircle2,
-  Clock3,
-  Filter,
-  MessageCircle,
-  Search,
-  Send,
-  ShieldCheck,
-  Star,
-  Target,
-  UserRound,
-  Download,
-} from 'lucide-react';
+import { Download, Filter, Search, ShieldCheck } from 'lucide-react';
 import { isAdminEmail } from '@/lib/admin';
 import { formatIstanbulDate } from '@/lib/date-format';
 import {
@@ -26,7 +11,6 @@ import {
 } from '@/features/admin/utils/tracking-analytics';
 import {
   type FollowUpFilter,
-  appendUniqueStudentLabel,
   matchesFollowUpFilter,
   buildTrackingDashboard,
   buildTrackingInsights,
@@ -44,6 +28,16 @@ import type {
   StudentAdminStatus,
   StudentWeeklyPlan,
 } from '@/features/admin/types';
+import {
+  getCurrentWeekStart,
+  Metric,
+  Select,
+  type ActivityFilter,
+  type FavoriteFilter,
+  type RiskFilter,
+} from './AdminTrackingTab/helpers';
+import { TrackingAnalyticsSection } from './AdminTrackingTab/TrackingAnalyticsSection';
+import { TrackingStudentCard } from './AdminTrackingTab/TrackingStudentCard';
 
 type AdminTrackingTabProps = {
   activityEvents: StudentActivityEvent[];
@@ -66,22 +60,6 @@ type AdminTrackingTabProps = {
   submissions: AdminSubmission[];
   weeklyPlans: StudentWeeklyPlan[];
 };
-
-type RiskFilter = 'all' | 'high' | 'medium' | 'low';
-type ActivityFilter = 'all' | 'today' | 'week' | 'inactive';
-type FavoriteFilter = 'all' | 'favorites';
-
-const getCurrentWeekStart = () => {
-  const today = new Date();
-  const dayOfWeek = today.getDay() === 0 ? 6 : today.getDay() - 1;
-  const start = new Date(today);
-  start.setDate(today.getDate() - dayOfWeek);
-  start.setHours(0, 0, 0, 0);
-  return start;
-};
-
-const formatGrade = (grade: AdminUser['grade']) =>
-  grade === 'Mezun' ? 'Mezun' : `${grade}. Sınıf`;
 
 export default function AdminTrackingTab({
   activityEvents,
@@ -367,87 +345,11 @@ export default function AdminTrackingTab({
         </div>
       </section>
 
-      <section
-        aria-label="Dönem eğilimleri ve site performansı"
-        className="grid gap-4 md:grid-cols-2 xl:grid-cols-3"
-      >
-        {([7, 30] as const).map((days) => (
-          <section
-            key={days}
-            aria-label={`${days} günlük eğilim`}
-            className="rounded-2xl border border-subtle bg-surface-1 p-5 text-primary"
-          >
-            <h3 className="mb-3 font-bold">{days} günlük eğilim</h3>
-            <dl className="space-y-2 text-sm">
-              {[
-                [
-                  'Aktif öğrenci',
-                  days === 7
-                    ? periodTrends.activeStudents7d
-                    : periodTrends.activeStudents30d,
-                ],
-                [
-                  'Çözülen test',
-                  days === 7
-                    ? periodTrends.quiz7dCount
-                    : periodTrends.quiz30dCount,
-                ],
-                [
-                  'Test ortalaması',
-                  `%${days === 7 ? periodTrends.quiz7dAvgPercent : periodTrends.quiz30dAvgPercent}`,
-                ],
-                [
-                  'Ödev teslimi',
-                  days === 7
-                    ? periodTrends.submission7dCount
-                    : periodTrends.submission30dCount,
-                ],
-                [
-                  'Çalışma süresi',
-                  `${days === 7 ? periodTrends.study7dMinutes : periodTrends.study30dMinutes} dk`,
-                ],
-              ].map(([label, value]) => (
-                <div key={label} className="flex justify-between gap-3">
-                  <dt className="text-secondary">{label}</dt>
-                  <dd className="font-semibold">{value}</dd>
-                </div>
-              ))}
-            </dl>
-          </section>
-        ))}
-        <section
-          aria-label="Core Web Vitals özeti"
-          className="rounded-2xl border border-subtle bg-surface-1 p-5 text-primary md:col-span-2 xl:col-span-1"
-        >
-          <h3 className="font-bold">Core Web Vitals</h3>
-          <p className="mb-3 text-xs text-secondary">
-            {webVitals.totalSamples} ölçüm · Ortalama değerler
-          </p>
-          {webVitals.totalSamples === 0 && (
-            <p className="text-sm text-secondary">
-              Henüz performans ölçümü yok.
-            </p>
-          )}
-          <dl className="space-y-2 text-sm">
-            {(['LCP', 'INP', 'CLS', 'FCP', 'TTFB'] as const).map((name) => {
-              const metric = webVitals[name];
-              return (
-                <div
-                  key={name}
-                  className="flex flex-wrap justify-between gap-2"
-                >
-                  <dt>{name}</dt>
-                  <dd className="text-secondary">
-                    {metric.count === 0
-                      ? 'Ölçüm yok'
-                      : `${metric.average}${name === 'CLS' ? '' : ' ms'} · ${{ good: 'İyi', 'needs-improvement': 'İyileştirilmeli', poor: 'Zayıf' }[metric.status]} (${metric.count} ölçüm)`}
-                  </dd>
-                </div>
-              );
-            })}
-          </dl>
-        </section>
-      </section>
+      <TrackingAnalyticsSection
+        activityAnalytics={activityAnalytics}
+        periodTrends={periodTrends}
+        webVitals={webVitals}
+      />
 
       <section className="rounded-2xl border border-slate-200/80 dark:border-white/10 bg-white/80 dark:bg-white/5 p-4 shadow-sm">
         <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
@@ -537,104 +439,6 @@ export default function AdminTrackingTab({
         )}
       </section>
 
-      <section className="grid gap-4 xl:grid-cols-[0.75fr_1fr_1fr]">
-        <div className="rounded-2xl border border-slate-200/80 dark:border-white/10 bg-white/80 dark:bg-white/5 p-5 shadow-sm">
-          <h3 className="mb-4 text-base font-bold text-slate-900 dark:text-white">
-            Canlı Ölçüm
-          </h3>
-          <div className="grid grid-cols-2 gap-3">
-            <Metric label="7 gün event" value={activityAnalytics.last7Count} />
-            <Metric
-              label="30 gün event"
-              value={activityAnalytics.last30Count}
-            />
-          </div>
-          <div className="mt-4 space-y-2">
-            {activityAnalytics.topTypes.length === 0 ? (
-              <p className="text-sm text-slate-500">Henüz ölçüm kaydı yok.</p>
-            ) : (
-              activityAnalytics.topTypes.map((item) => (
-                <div
-                  key={item.type}
-                  className="flex items-center justify-between rounded-xl bg-slate-100 dark:bg-slate-950/45 px-3 py-2 text-sm"
-                >
-                  <span className="text-slate-700 dark:text-slate-300">
-                    {item.type}
-                  </span>
-                  <span className="font-bold text-cyan-700 dark:text-cyan-200">
-                    {item.count}
-                  </span>
-                </div>
-              ))
-            )}
-          </div>
-        </div>
-
-        <div className="rounded-2xl border border-slate-200/80 dark:border-white/10 bg-white/80 dark:bg-white/5 p-5 shadow-sm">
-          <h3 className="mb-4 text-base font-bold text-slate-900 dark:text-white">
-            En Çok Kullanılan İçerikler
-          </h3>
-          {activityAnalytics.topContent.length === 0 ? (
-            <p className="rounded-xl border border-dashed border-slate-200 dark:border-white/10 px-4 py-8 text-center text-sm text-slate-400 dark:text-slate-500">
-              İçerik kullanım kaydı birikince burada listelenecek.
-            </p>
-          ) : (
-            <div className="space-y-2">
-              {activityAnalytics.topContent.map((item) => (
-                <div
-                  key={item.id}
-                  className="flex items-center justify-between gap-3 rounded-xl bg-slate-50 dark:bg-slate-950/45 border border-slate-200/60 dark:border-transparent px-3 py-2"
-                >
-                  <div className="min-w-0">
-                    <p className="truncate text-sm font-semibold text-slate-900 dark:text-white">
-                      {item.title}
-                    </p>
-                    <p className="text-xs text-slate-500 dark:text-slate-400">
-                      {item.type}
-                    </p>
-                  </div>
-                  <span className="rounded-full bg-cyan-100 dark:bg-cyan-400/10 px-3 py-1 text-xs font-bold text-cyan-700 dark:text-cyan-200">
-                    {item.count}
-                  </span>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-
-        <div className="rounded-2xl border border-slate-200/80 dark:border-white/10 bg-white/80 dark:bg-white/5 p-5 shadow-sm">
-          <h3 className="mb-4 text-base font-bold text-slate-900 dark:text-white">
-            Az Kullanılan İçerikler
-          </h3>
-          {activityAnalytics.lowContent.length === 0 ? (
-            <p className="rounded-xl border border-dashed border-slate-200 dark:border-white/10 px-4 py-8 text-center text-sm text-slate-400 dark:text-slate-500">
-              İçerik eklenince burada kullanım açığı görülecek.
-            </p>
-          ) : (
-            <div className="space-y-2">
-              {activityAnalytics.lowContent.map((item) => (
-                <div
-                  key={item.id}
-                  className="flex items-center justify-between gap-3 rounded-xl bg-slate-50 dark:bg-slate-950/45 border border-slate-200/60 dark:border-transparent px-3 py-2"
-                >
-                  <div className="min-w-0">
-                    <p className="truncate text-sm font-semibold text-slate-900 dark:text-white">
-                      {item.title}
-                    </p>
-                    <p className="text-xs text-slate-500 dark:text-slate-400">
-                      {item.type}
-                    </p>
-                  </div>
-                  <span className="rounded-full bg-amber-100 dark:bg-amber-400/10 px-3 py-1 text-xs font-bold text-amber-700 dark:text-amber-200">
-                    {item.count}
-                  </span>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-      </section>
-
       {filteredInsights.length === 0 ? (
         <div className="rounded-2xl border border-dashed border-slate-200 dark:border-white/10 bg-white/80 dark:bg-white/5 p-10 text-center text-slate-500 dark:text-slate-400">
           {studentUsers.length === 0
@@ -644,293 +448,17 @@ export default function AdminTrackingTab({
       ) : (
         <div className="space-y-4">
           {filteredInsights.map((insight) => (
-            <article
+            <TrackingStudentCard
               key={insight.student.id}
-              className="rounded-2xl border border-slate-200/80 dark:border-white/10 bg-white/80 dark:bg-slate-950/55 p-4 shadow-sm dark:shadow-lg dark:shadow-black/10"
-            >
-              <div className="flex flex-col gap-4 xl:flex-row xl:items-start xl:justify-between">
-                <div className="min-w-0 flex-1">
-                  <div className="mb-3 flex flex-wrap items-center gap-2">
-                    <span
-                      className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-bold ${
-                        insight.riskLevel === 'high'
-                          ? 'bg-red-500/15 text-red-700 dark:text-red-200'
-                          : insight.riskLevel === 'medium'
-                            ? 'bg-amber-500/15 text-amber-700 dark:text-amber-200'
-                            : 'bg-emerald-500/15 text-emerald-700 dark:text-emerald-200'
-                      }`}
-                    >
-                      <AlertTriangle className="h-3.5 w-3.5" />
-                      {insight.riskLevel === 'high'
-                        ? 'Yüksek risk'
-                        : insight.riskLevel === 'medium'
-                          ? 'Takipte'
-                          : 'Normal'}
-                    </span>
-                    <span className="rounded-full bg-slate-100 dark:bg-white/5 px-2.5 py-1 text-xs font-semibold text-slate-700 dark:text-slate-300">
-                      {formatGrade(insight.student.grade)}
-                    </span>
-                    {insight.student.is_favorite ? (
-                      <span className="inline-flex items-center gap-1 rounded-full border border-amber-300/25 bg-amber-300/10 px-2.5 py-1 text-xs font-semibold text-amber-600 dark:text-amber-200">
-                        <Star className="h-3.5 w-3.5 fill-current" />
-                        Favori
-                      </span>
-                    ) : null}
-                    {insight.status?.labels?.map((label) => (
-                      <span
-                        key={label}
-                        className="rounded-full border border-cyan-400/20 bg-cyan-400/10 px-2.5 py-1 text-xs font-semibold text-cyan-700 dark:text-cyan-200"
-                      >
-                        {label}
-                      </span>
-                    ))}
-                  </div>
-
-                  <h3 className="truncate text-lg font-bold text-slate-900 dark:text-white">
-                    {insight.student.name || 'İsimsiz öğrenci'}
-                  </h3>
-                  <p className="mt-1 break-all text-sm text-slate-500">
-                    {insight.student.email}
-                  </p>
-
-                  <QuickLabelForm
-                    studentName={insight.student.name || 'İsimsiz öğrenci'}
-                    labels={insight.status?.labels ?? []}
-                    onSave={(nextLabels) =>
-                      onUpdateStatus(
-                        insight.student,
-                        insight.status?.status ??
-                          (insight.riskLevel === 'high' ? 'risk' : 'watch'),
-                        nextLabels,
-                      )
-                    }
-                  />
-                  <div className="mt-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-                    <MiniSignal
-                      icon={<Clock3 className="h-4 w-4" />}
-                      label="Son aktivite"
-                      value={
-                        insight.lastActivityAt
-                          ? `${insight.inactiveDays} gün önce`
-                          : 'Yok'
-                      }
-                    />
-                    <MiniSignal
-                      icon={<Target className="h-4 w-4" />}
-                      label="Haftalık hedef"
-                      value={`%${Math.min(100, insight.weeklyProgress)}`}
-                      meta={`${insight.weeklyMinutes}/${insight.targetMinutes} dk`}
-                    />
-                    <MiniSignal
-                      icon={<CheckCircle2 className="h-4 w-4" />}
-                      label="Son test"
-                      value={
-                        insight.latestQuizPercent === null
-                          ? 'Yok'
-                          : `%${insight.latestQuizPercent}`
-                      }
-                    />
-                    <MiniSignal
-                      icon={<CalendarClock className="h-4 w-4" />}
-                      label="Haftalık plan"
-                      value={insight.currentWeekPlan ? 'Hazır' : 'Yok'}
-                    />
-                  </div>
-
-                  <div className="mt-4 flex flex-wrap gap-2">
-                    {insight.riskReasons.length === 0 ? (
-                      <span className="rounded-full border border-emerald-500/20 bg-emerald-500/10 px-3 py-1 text-xs font-semibold text-emerald-700 dark:text-emerald-200">
-                        Kritik sinyal yok
-                      </span>
-                    ) : (
-                      insight.riskReasons.map((reason) => (
-                        <span
-                          key={reason}
-                          className="rounded-full border border-red-500/20 bg-red-500/10 px-3 py-1 text-xs font-semibold text-red-700 dark:text-red-200"
-                        >
-                          {reason}
-                        </span>
-                      ))
-                    )}
-                  </div>
-                </div>
-
-                <div className="grid min-w-[14rem] gap-2 sm:grid-cols-2 xl:grid-cols-1">
-                  <button
-                    type="button"
-                    onClick={() => onViewProfile(insight.student)}
-                    className="inline-flex items-center justify-center gap-2 rounded-xl border border-cyan-500/20 bg-cyan-500/15 px-4 py-2.5 text-sm font-bold text-cyan-700 dark:text-cyan-200 transition hover:bg-cyan-500/25 active:scale-95"
-                  >
-                    <UserRound className="h-4 w-4" />
-                    Profil Aç
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => onSendMessage(insight.student)}
-                    className="inline-flex items-center justify-center gap-2 rounded-xl border border-violet-500/20 bg-violet-500/15 px-4 py-2.5 text-sm font-bold text-violet-700 dark:text-violet-200 transition hover:bg-violet-500/25 active:scale-95"
-                  >
-                    <Send className="h-4 w-4" />
-                    Mesaj Gönder
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => onCreateWeeklyPlan(insight.student)}
-                    className="inline-flex items-center justify-center gap-2 rounded-xl border border-emerald-500/20 bg-emerald-500/15 px-4 py-2.5 text-sm font-bold text-emerald-700 dark:text-emerald-200 transition hover:bg-emerald-500/25 active:scale-95"
-                  >
-                    <CalendarClock className="h-4 w-4" />
-                    Plan Oluştur
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() =>
-                      onUpdateStatus(
-                        insight.student,
-                        insight.riskLevel === 'high' ? 'risk' : 'watch',
-                      )
-                    }
-                    className="inline-flex items-center justify-center gap-2 rounded-xl border border-amber-500/20 bg-amber-500/15 px-4 py-2.5 text-sm font-bold text-amber-700 dark:text-amber-200 transition hover:bg-amber-500/25 active:scale-95"
-                  >
-                    <MessageCircle className="h-4 w-4" />
-                    Takibe Al
-                  </button>
-                </div>
-              </div>
-            </article>
+              insight={insight}
+              onViewProfile={onViewProfile}
+              onSendMessage={onSendMessage}
+              onCreateWeeklyPlan={onCreateWeeklyPlan}
+              onUpdateStatus={onUpdateStatus}
+            />
           ))}
         </div>
       )}
     </div>
-  );
-}
-
-function Select({
-  'aria-label': ariaLabel,
-  children,
-  onChange,
-  value,
-}: {
-  'aria-label'?: string;
-  children: ReactNode;
-  onChange: (value: string) => void;
-  value: string;
-}) {
-  return (
-    <select
-      aria-label={ariaLabel}
-      value={value}
-      onChange={(event) => onChange(event.target.value)}
-      className="w-full rounded-xl border border-slate-200 dark:border-white/10 bg-white dark:bg-slate-950/60 px-3 py-2.5 text-sm text-slate-900 dark:text-white outline-none focus:border-cyan-500 dark:focus:border-cyan-400/60 focus:ring-2 focus:ring-cyan-500/20 lg:w-40"
-    >
-      {children}
-    </select>
-  );
-}
-
-function Metric({ label, value }: { label: string; value: number }) {
-  return (
-    <div className="rounded-xl border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-slate-950/50 px-4 py-3">
-      <p className="text-2xl font-black text-slate-900 dark:text-white">
-        {value}
-      </p>
-      <p className="text-xs font-semibold text-slate-500 dark:text-slate-400">
-        {label}
-      </p>
-    </div>
-  );
-}
-
-function MiniSignal({
-  icon,
-  label,
-  meta,
-  value,
-}: {
-  icon: ReactNode;
-  label: string;
-  meta?: string;
-  value: string;
-}) {
-  return (
-    <div className="rounded-xl border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-white/5 px-3 py-3">
-      <div className="mb-2 flex items-center gap-2 text-slate-500 dark:text-slate-400">
-        {icon}
-        <span className="text-xs font-semibold">{label}</span>
-      </div>
-      <p className="text-base font-bold text-slate-900 dark:text-white">
-        {value}
-      </p>
-      {meta ? (
-        <p className="text-xs text-slate-500 dark:text-slate-400">{meta}</p>
-      ) : null}
-    </div>
-  );
-}
-
-function QuickLabelForm({
-  studentName,
-  labels,
-  onSave,
-}: {
-  studentName: string;
-  labels: string[];
-  onSave: (labels: string[]) => Promise<void> | void;
-}) {
-  const [draftLabel, setDraftLabel] = useState('');
-  const [saving, setSaving] = useState(false);
-  const [feedback, setFeedback] = useState('');
-  return (
-    <form
-      className="mt-3 space-y-2"
-      aria-label={`${studentName} etiket ekleme`}
-      onSubmit={async (event) => {
-        event.preventDefault();
-        if (saving || !draftLabel.trim()) return;
-        const nextLabels = appendUniqueStudentLabel(labels, draftLabel);
-        if (
-          nextLabels.length === labels.length &&
-          nextLabels.every((label, index) => label === labels[index])
-        ) {
-          setFeedback('Bu etiket zaten var veya 12 etiket sınırına ulaşıldı.');
-          return;
-        }
-        setSaving(true);
-        setFeedback('');
-        try {
-          await onSave(nextLabels);
-          setDraftLabel('');
-          setFeedback('Etiket eklendi.');
-        } catch {
-          setFeedback('Etiket eklenemedi. Lütfen tekrar dene.');
-        } finally {
-          setSaving(false);
-        }
-      }}
-    >
-      <div className="flex flex-wrap gap-2">
-        <input
-          aria-label={`${studentName} için yeni etiket`}
-          value={draftLabel}
-          disabled={saving}
-          onChange={(event) => {
-            setDraftLabel(event.target.value);
-            setFeedback('');
-          }}
-          placeholder="Yeni etiket"
-          className="min-w-0 flex-1 rounded-xl border border-subtle bg-surface-1 px-3 py-2 text-sm text-primary"
-        />
-        <button
-          type="submit"
-          disabled={saving || !draftLabel.trim()}
-          className="rounded-xl border border-subtle bg-surface-2 px-3 py-2 text-sm font-semibold text-primary disabled:opacity-50"
-        >
-          {saving ? 'Ekleniyor…' : 'Etiket ekle'}
-        </button>
-      </div>
-      {feedback && (
-        <p role="status" className="text-xs text-secondary">
-          {feedback}
-        </p>
-      )}
-    </form>
   );
 }

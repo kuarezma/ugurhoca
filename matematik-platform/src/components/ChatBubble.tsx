@@ -8,128 +8,30 @@ import {
   useState,
   type FormEvent,
 } from 'react';
-import dynamic from 'next/dynamic';
-import Image from 'next/image';
-import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { AnimatePresence, motion } from 'framer-motion';
-import { MessageCircle, X, LogIn, UserPlus } from 'lucide-react';
 import { supabase } from '@/lib/supabase/client';
 import { isAdminEmail } from '@/lib/admin';
 import { getClientSession } from '@/lib/auth-client';
 import {
   sendSupportMessage,
   uploadSupportFiles,
-  validateSupportImageFile,
 } from '@/features/home/queries';
 import { useNavbarMessages } from '@/features/home/hooks/useNavbarMessages';
 import { useScrollContainment } from '@/hooks/useScrollContainment';
 import { useAdminStudentThread } from '@/features/messages/hooks/useAdminStudentThread';
 import { mapStudentNotificationsToThread } from '@/features/messages/mapNotificationsToThread';
 import type { DashboardNotification } from '@/types/dashboard';
+import type { InboxMessage } from './ChatBubble/types';
 import {
-  parseSupportPayload,
-  type ParsedSupportPayload,
-} from '@/features/messages/supportChatUtils';
-import {
-  getStudentMessagesChannelName,
-  TYPING_BROADCAST_EVENT,
-  type TypingPayload,
-} from '@/lib/realtime/studentMessagesChannel';
-
-// SupportChatPanel 1300+ satir ve MathText uzerinden KaTeX'i de beraberinde
-// getiriyor. Statik import edildiginde bu agirlik, panel hic acilmasa bile her
-// sayfada yuklenen chunk'a giriyordu. Panel yalnizca sohbet acildiginda render
-// edildigi icin dinamik import ediliyor.
-const SupportChatPanel = dynamic(
-  () =>
-    import('@/features/messages/components/SupportChatPanel').then((m) => ({
-      default: m.SupportChatPanel,
-    })),
-  { ssr: false },
-);
-
-type InboxMessage = {
-  id: string;
-  title: string;
-  message: string;
-  is_read: boolean;
-  created_at: string;
-  parsed: ParsedSupportPayload | null;
-};
-
-type ConversationPreview = {
-  studentId: string;
-  studentName: string;
-  lastSnippet: string;
-  lastAt: string;
-  unreadCount: number;
-};
-
-function parseInboxPayload(raw: string): ParsedSupportPayload | null {
-  return parseSupportPayload(raw);
-}
-
-function buildConversations(messages: InboxMessage[]): ConversationPreview[] {
-  const byStudent = new Map<string, ConversationPreview>();
-
-  for (const m of messages) {
-    const sid = m.parsed?.sender_id;
-    const sname = m.parsed?.sender_name || 'Öğrenci';
-    if (!sid) continue;
-
-    const existing = byStudent.get(sid);
-    const unread = !m.is_read ? 1 : 0;
-    const snippet = m.parsed?.text || m.title || '';
-
-    if (!existing) {
-      byStudent.set(sid, {
-        studentId: sid,
-        studentName: sname,
-        lastSnippet: snippet,
-        lastAt: m.created_at,
-        unreadCount: unread,
-      });
-    } else {
-      existing.unreadCount += unread;
-      if (new Date(m.created_at) > new Date(existing.lastAt)) {
-        existing.lastAt = m.created_at;
-        existing.lastSnippet = snippet;
-        existing.studentName = sname;
-      }
-    }
-  }
-
-  return Array.from(byStudent.values()).sort(
-    (a, b) => new Date(b.lastAt).getTime() - new Date(a.lastAt).getTime(),
-  );
-}
-
-function useSafeTheme(): boolean {
-  const [isLight, setIsLight] = useState(false);
-
-  useEffect(() => {
-    const checkIsLight = () => {
-      if (typeof document !== 'undefined') {
-        return !document.documentElement.classList.contains('dark');
-      }
-      return false;
-    };
-    setIsLight(checkIsLight());
-
-    const observer = new MutationObserver(() => {
-      setIsLight(checkIsLight());
-    });
-    observer.observe(document.documentElement, {
-      attributes: true,
-      attributeFilter: ['class'],
-    });
-
-    return () => observer.disconnect();
-  }, []);
-
-  return isLight;
-}
+  buildConversations,
+  parseInboxPayload,
+  playNotificationChime,
+  useSafeTheme,
+} from './ChatBubble/utils';
+import { ChatBubbleTrigger } from './ChatBubble/ChatBubbleTrigger';
+import { ChatBubbleModal } from './ChatBubble/ChatBubbleModal';
+import { useChatBubbleTyping } from './ChatBubble/useChatBubbleTyping';
+import { useChatBubbleAttachments } from './ChatBubble/useChatBubbleAttachments';
 
 export default function ChatBubble() {
   const pathname = usePathname();
@@ -146,29 +48,37 @@ export default function ChatBubble() {
 
   // Admin state
   const [inboxMessages, setInboxMessages] = useState<InboxMessage[]>([]);
-  const [selectedStudentId, setSelectedStudentId] = useState<string | null>(null);
+  const [selectedStudentId, setSelectedStudentId] = useState<string | null>(
+    null,
+  );
 
-  // Form & Ekler state (Görsel JPG, PNG, WebP)
+  // Form & Ekler state
   const [draft, setDraft] = useState('');
   const [sending, setSending] = useState(false);
   const [sendError, setSendError] = useState<string | null>(null);
-  const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
-  const [attachmentPreviews, setAttachmentPreviews] = useState<
-    Array<{ name: string; url: string; kind: 'image'; size?: number }>
-  >([]);
   const bubbleRef = useRef<HTMLDivElement | null>(null);
   const panelRef = useRef<HTMLDivElement | null>(null);
   useScrollContainment(panelRef, { enabled: open });
 
-  // Realtime Canlı Yazıyor (Typing) State
-  const [peerTyping, setPeerTyping] = useState(false);
-  const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-  const broadcastTypingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-  const typingChannelRef = useRef<ReturnType<typeof supabase.channel> | null>(null);
-  const lastTypingBroadcastRef = useRef<number | null>(null);
+  // Ek dosya hook'u
+  const {
+    selectedFiles,
+    attachmentPreviews,
+    clearAttachments,
+    handleAttachmentRemove,
+    handleAttachmentSelect,
+  } = useChatBubbleAttachments({ open, setSendError });
+
+  // Realtime Canlı Yazıyor (Typing) Hook'u
+  const { peerTyping, triggerTyping } = useChatBubbleTyping({
+    currentUser,
+    open,
+    selectedStudentId,
+  });
 
   // Öğrenci mesaj hook'u (sadece öğrenci ise aktif)
-  const studentUserId = currentUser && !currentUser.isAdmin ? currentUser.id : '';
+  const studentUserId =
+    currentUser && !currentUser.isAdmin ? currentUser.id : '';
   const {
     appendMessage: appendStudentMessage,
     markAllAsRead: markAllStudentAsRead,
@@ -252,149 +162,6 @@ export default function ChatBubble() {
     };
   }, [checkAuth]);
 
-  // Ek dosya temizliği
-  useEffect(() => {
-    return () => {
-      attachmentPreviews.forEach((item) => {
-        URL.revokeObjectURL(item.url);
-      });
-    };
-  }, [attachmentPreviews]);
-
-  const clearAttachments = useCallback(() => {
-    attachmentPreviews.forEach((item) => {
-      URL.revokeObjectURL(item.url);
-    });
-    setSelectedFiles([]);
-    setAttachmentPreviews([]);
-  }, [attachmentPreviews]);
-
-  const handleAttachmentRemove = useCallback(
-    (index?: number) => {
-      if (typeof index !== 'number') {
-        clearAttachments();
-        return;
-      }
-      setSelectedFiles((prev) => prev.filter((_, i) => i !== index));
-      setAttachmentPreviews((prev) => {
-        const item = prev[index];
-        if (item) URL.revokeObjectURL(item.url);
-        return prev.filter((_, i) => i !== index);
-      });
-    },
-    [clearAttachments],
-  );
-
-  // Web Audio ile yumuşak bildirim tonu
-  const playNotificationChime = useCallback(() => {
-    try {
-      const AudioCtx =
-        window.AudioContext ||
-        (window as unknown as { webkitAudioContext: typeof AudioContext })
-          .webkitAudioContext;
-      if (!AudioCtx) return;
-      const ctx = new AudioCtx();
-      const now = ctx.currentTime;
-
-      const osc1 = ctx.createOscillator();
-      const gain1 = ctx.createGain();
-      osc1.type = 'sine';
-      osc1.frequency.setValueAtTime(587.33, now); // D5
-      gain1.gain.setValueAtTime(0.08, now);
-      gain1.gain.exponentialRampToValueAtTime(0.001, now + 0.15);
-      osc1.connect(gain1);
-      gain1.connect(ctx.destination);
-      osc1.start(now);
-      osc1.stop(now + 0.15);
-
-      const osc2 = ctx.createOscillator();
-      const gain2 = ctx.createGain();
-      osc2.type = 'sine';
-      osc2.frequency.setValueAtTime(880, now + 0.08); // A5
-      gain2.gain.setValueAtTime(0.08, now + 0.08);
-      gain2.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
-      osc2.connect(gain2);
-      gain2.connect(ctx.destination);
-      osc2.start(now + 0.08);
-      osc2.stop(now + 0.25);
-    } catch {
-      // Ses izni yoksa sessiz kal
-    }
-  }, []);
-
-  const handleAttachmentSelect = useCallback((files: FileList | null) => {
-    if (!files || files.length === 0) return;
-    const addedFiles: File[] = [];
-    const addedPreviews: Array<{
-      name: string;
-      url: string;
-      kind: 'image';
-      size?: number;
-    }> = [];
-
-    for (const file of Array.from(files)) {
-      if (file.type.startsWith('image/')) {
-        try {
-          validateSupportImageFile(file);
-          addedFiles.push(file);
-          addedPreviews.push({
-            kind: 'image',
-            name: file.name,
-            size: file.size,
-            url: URL.createObjectURL(file),
-          });
-        } catch (err) {
-          setSendError(err instanceof Error ? err.message : 'Fotoğraf geçersiz.');
-          return;
-        }
-      } else {
-        setSendError('Sadece JPG, PNG veya WebP görsel eklenebilir.');
-        return;
-      }
-    }
-
-    setSelectedFiles((prev) => [...prev, ...addedFiles]);
-    setAttachmentPreviews((prev) => [...prev, ...addedPreviews]);
-    setSendError(null);
-  }, []);
-
-  // Panodan görsel yapıştırma (Ctrl+V / Cmd+V)
-  useEffect(() => {
-    if (!open) return;
-    const handlePaste = (e: ClipboardEvent) => {
-      const items = e.clipboardData?.items;
-      if (!items) return;
-      for (const item of Array.from(items)) {
-        if (item.type.startsWith('image/')) {
-          const file = item.getAsFile();
-          if (file) {
-            try {
-              validateSupportImageFile(file);
-              setSelectedFiles((prev) => [...prev, file]);
-              setAttachmentPreviews((prev) => [
-                ...prev,
-                {
-                  kind: 'image',
-                  name: file.name,
-                  size: file.size,
-                  url: URL.createObjectURL(file),
-                },
-              ]);
-              setSendError(null);
-            } catch (err) {
-              setSendError(
-                err instanceof Error ? err.message : 'Fotoğraf eklenemedi.',
-              );
-            }
-            break;
-          }
-        }
-      }
-    };
-    window.addEventListener('paste', handlePaste);
-    return () => window.removeEventListener('paste', handlePaste);
-  }, [open]);
-
   // Test ve Yanlış Defteri ekranlarından "Hocama Sor" butonuyla tetikleme
   useEffect(() => {
     const handleOpenWithQuestion = (event: Event) => {
@@ -466,98 +233,16 @@ export default function ChatBubble() {
     return () => {
       void supabase.removeChannel(channel);
     };
-  }, [currentUser, loadAdminMessages, mounted, playNotificationChime]);
-
-  // Realtime Canlı Yazıyor (Typing) Kanalı
-  const activeStudentIdForChannel = currentUser?.isAdmin
-    ? selectedStudentId
-    : currentUser?.id;
-
-  useEffect(() => {
-    setPeerTyping(false);
-    if (!activeStudentIdForChannel || !open) return;
-
-    const channelName = getStudentMessagesChannelName(activeStudentIdForChannel);
-    const channel = supabase.channel(channelName);
-    typingChannelRef.current = channel;
-
-    channel
-      .on('broadcast', { event: TYPING_BROADCAST_EVENT }, (payload) => {
-        const data = payload?.payload as TypingPayload | undefined;
-        if (typingChannelRef.current !== channel) return;
-        if (data && data.senderId !== currentUser?.id) {
-          setPeerTyping(Boolean(data.isTyping));
-          if (typingTimeoutRef.current) clearTimeout(typingTimeoutRef.current);
-          if (data.isTyping) {
-            typingTimeoutRef.current = setTimeout(() => {
-              setPeerTyping(false);
-            }, 3000);
-          }
-        }
-      })
-      .subscribe();
-
-    return () => {
-      if (typingTimeoutRef.current) clearTimeout(typingTimeoutRef.current);
-      if (broadcastTypingTimeoutRef.current)
-        clearTimeout(broadcastTypingTimeoutRef.current);
-      typingTimeoutRef.current = null;
-      broadcastTypingTimeoutRef.current = null;
-      typingChannelRef.current = null;
-      lastTypingBroadcastRef.current = null;
-      void supabase.removeChannel(channel);
-    };
-  }, [activeStudentIdForChannel, currentUser?.id, open]);
-
-  // Kullanıcı klavyede yazarken Realtime "yazıyor..." yayını
-  const handleTriggerTyping = useCallback(() => {
-    const channel = typingChannelRef.current;
-    if (!channel || !currentUser || !open) return;
-
-    const now = Date.now();
-    if (
-      typeof channel.send === 'function' &&
-      (lastTypingBroadcastRef.current === null ||
-        now - lastTypingBroadcastRef.current >= 800)
-    ) {
-      lastTypingBroadcastRef.current = now;
-      void channel.send({
-        event: TYPING_BROADCAST_EVENT,
-        payload: {
-          isTyping: true,
-          senderId: currentUser.id,
-          senderName: currentUser.name,
-        },
-        type: 'broadcast',
-      });
-    }
-
-    if (broadcastTypingTimeoutRef.current) {
-      clearTimeout(broadcastTypingTimeoutRef.current);
-    }
-    broadcastTypingTimeoutRef.current = setTimeout(() => {
-      if (typingChannelRef.current !== channel) return;
-      broadcastTypingTimeoutRef.current = null;
-      lastTypingBroadcastRef.current = null;
-      if (typeof channel.send === 'function') {
-        void channel.send({
-          event: TYPING_BROADCAST_EVENT,
-          payload: {
-            isTyping: false,
-            senderId: currentUser.id,
-            senderName: currentUser.name,
-          },
-          type: 'broadcast',
-        });
-      }
-    }, 2500);
-  }, [currentUser, open]);
+  }, [currentUser, loadAdminMessages, mounted]);
 
   // ESC ve dışarı tıklama ile kapatma
   useEffect(() => {
     if (!open) return;
     const handleClickOutside = (event: MouseEvent) => {
-      if (bubbleRef.current && !bubbleRef.current.contains(event.target as Node)) {
+      if (
+        bubbleRef.current &&
+        !bubbleRef.current.contains(event.target as Node)
+      ) {
         setOpen(false);
       }
     };
@@ -617,7 +302,7 @@ export default function ChatBubble() {
       playNotificationChime();
     }
     prevStudentUnreadRef.current = studentUnreadCount;
-  }, [playNotificationChime, studentUnreadCount]);
+  }, [studentUnreadCount]);
 
   // Öğrenci balonu açıldığında okunmamışları sıfırlama ve yenileme
   useEffect(() => {
@@ -626,7 +311,13 @@ export default function ChatBubble() {
     if (studentUnreadCount > 0) {
       void markAllStudentAsRead();
     }
-  }, [currentUser, markAllStudentAsRead, open, refetchStudentMessages, studentUnreadCount]);
+  }, [
+    currentUser,
+    markAllStudentAsRead,
+    open,
+    refetchStudentMessages,
+    studentUnreadCount,
+  ]);
 
   // Admin: Seçilen öğrenci konuşma geçmişi
   const adminConversations = useMemo(
@@ -660,7 +351,8 @@ export default function ChatBubble() {
   const handleSendAdmin = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const text = draft.trim();
-    if ((!text && selectedFiles.length === 0) || !selectedStudentId || sending) return;
+    if ((!text && selectedFiles.length === 0) || !selectedStudentId || sending)
+      return;
 
     setSending(true);
     setSendError(null);
@@ -669,11 +361,11 @@ export default function ChatBubble() {
       if (!session?.access_token) {
         throw new Error('Oturum açmanız gerekiyor.');
       }
-      const attachments = selectedFiles.length > 0
-        ? await uploadSupportFiles(selectedFiles)
-        : [];
+      const attachments =
+        selectedFiles.length > 0 ? await uploadSupportFiles(selectedFiles) : [];
       const imageUrl =
-        attachments.find((attachment) => attachment.kind === 'image')?.url || null;
+        attachments.find((attachment) => attachment.kind === 'image')?.url ||
+        null;
 
       const response = await fetch('/api/admin-message', {
         body: JSON.stringify({
@@ -714,7 +406,8 @@ export default function ChatBubble() {
   const handleSendStudent = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const text = draft.trim();
-    if ((!text && selectedFiles.length === 0) || sending || !currentUser) return;
+    if ((!text && selectedFiles.length === 0) || sending || !currentUser)
+      return;
 
     setSending(true);
     setSendError(null);
@@ -724,9 +417,8 @@ export default function ChatBubble() {
         throw new Error('Oturum açmanız gerekiyor.');
       }
 
-      const attachments = selectedFiles.length > 0
-        ? await uploadSupportFiles(selectedFiles)
-        : [];
+      const attachments =
+        selectedFiles.length > 0 ? await uploadSupportFiles(selectedFiles) : [];
 
       const sentRow = await sendSupportMessage(
         {
@@ -748,9 +440,7 @@ export default function ChatBubble() {
           is_read: true,
           message:
             text ||
-            (attachments[0]?.name
-              ? `[Ek: ${attachments[0].name}]`
-              : ''),
+            (attachments[0]?.name ? `[Ek: ${attachments[0].name}]` : ''),
           metadata: attachments.length ? { attachments } : undefined,
           title: "Uğur Hoca'ya Mesajınız",
           type: 'sent-message',
@@ -858,311 +548,44 @@ export default function ChatBubble() {
   return (
     <div ref={bubbleRef}>
       {/* Floating Trigger Button */}
-      <motion.button
-        type="button"
-        initial={false}
-        whileHover={{ scale: 1.06 }}
-        whileTap={{ scale: 0.94 }}
-        onClick={() => setOpen((o) => !o)}
-        className="fixed bottom-[calc(1rem+env(safe-area-inset-bottom,0px))] sm:bottom-6 right-4 sm:right-6 z-40 flex h-14 w-14 sm:h-[60px] sm:w-[60px] items-center justify-center rounded-full focus:outline-none focus-visible:ring-4 focus-visible:ring-purple-400 bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none"
-        aria-label={
-          currentUser?.isAdmin
-            ? 'Öğrenci mesajları'
-            : "Uğur Hoca'ya mesaj yaz"
-        }
-        aria-haspopup="dialog"
-        aria-expanded={open}
-      >
-        <div className="relative flex h-full w-full items-center justify-center">
-          <Image
-            src="/ugur.jpeg"
-            alt="Uğur Hoca"
-            width={48}
-            height={48}
-            className="h-11 w-11 sm:h-12 sm:w-12 rounded-full object-cover border-2 border-[#58cc02] shadow-sm ring-2 ring-[#d7ffb8]"
-          />
-          <span className="absolute bottom-1 right-1 h-3.5 w-3.5 rounded-full border-2 border-slate-900 bg-emerald-500" />
-        </div>
+      <ChatBubbleTrigger
+        open={open}
+        onToggle={() => setOpen((o) => !o)}
+        isAdmin={Boolean(currentUser?.isAdmin)}
+        unreadCount={unreadCountBadge}
+      />
 
-        {unreadCountBadge > 0 && (
-          <span className="absolute -right-1 -top-1 flex h-5 min-w-[1.25rem] animate-pulse items-center justify-center rounded-full bg-red-500 px-1 text-[11px] font-bold shadow-md text-slate-950 dark:text-slate-950">
-            {unreadCountBadge > 9 ? '9+' : unreadCountBadge}
-          </span>
-        )}
-      </motion.button>
-
-      {/* Floating Chat Panel */}
-      <AnimatePresence>
-        {open && (
-          <motion.div
-            ref={panelRef}
-            initial={{ opacity: 0, y: 20, scale: 0.95 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 16, scale: 0.95 }}
-            transition={{ type: 'spring', stiffness: 350, damping: 26 }}
-            role="dialog"
-            aria-modal="true"
-            aria-label="Uğur Hoca ile Sohbet"
-            style={{ overscrollBehavior: 'contain' }}
-            className={`fixed bottom-[calc(5rem+env(safe-area-inset-bottom,0px))] sm:bottom-24 right-3 sm:right-6 z-40 flex h-[min(600px,calc(100dvh-6rem-env(safe-area-inset-bottom,0px)))] min-h-0 w-[calc(100vw-1.5rem)] sm:w-[420px] flex-col overflow-hidden overscroll-contain rounded-3xl border shadow-2xl backdrop-blur-2xl transition-colors ${
-              isLight
-                ? 'border-slate-200/90 bg-white/95 text-slate-800 shadow-indigo-950/15'
-                : 'border-slate-700/80 bg-slate-900/95 text-slate-100 shadow-black/50'
-            }`}
-          >
-            {/* 1. Senaryo: Giriş Yapmamış Ziyaretçi */}
-            {!currentUser ? (
-              <div
-                className="flex h-full flex-col justify-between p-6 text-center overscroll-contain"
-                style={{ overscrollBehavior: 'contain' }}
-              >
-                <div className="flex justify-end">
-                  <button
-                    type="button"
-                    onClick={() => setOpen(false)}
-                    className={`rounded-xl p-1.5 transition-colors ${
-                      isLight
-                        ? 'text-slate-400 hover:bg-slate-100 hover:text-slate-800'
-                        : 'text-slate-400 hover:bg-slate-800 hover:text-white'
-                    }`}
-                    aria-label="Kapat"
-                  >
-                    <X className="h-5 w-5" />
-                  </button>
-                </div>
-
-                <div className="my-auto space-y-4">
-                  <div className="relative mx-auto h-20 w-20 overflow-hidden rounded-full border-2 border-[#58cc02] p-0.5 shadow-lg shadow-emerald-500/20 ring-4 ring-[#d7ffb8]">
-                    <Image
-                      src="/ugur.jpeg"
-                      alt="Uğur Hoca"
-                      width={80}
-                      height={80}
-                      className="h-full w-full rounded-full object-cover"
-                    />
-                  </div>
-                  <div>
-                    <h3
-                      className={`font-display text-xl font-bold ${
-                        isLight ? 'text-slate-900' : 'text-white'
-                      }`}
-                    >
-                      Uğur Hoca ile Sohbet
-                    </h3>
-                    <p
-                      className={`mt-2 text-sm ${
-                        isLight ? 'text-slate-600' : 'text-slate-300'
-                      }`}
-                    >
-                      Doğrudan benimle mesajlaşmak, sorularını iletmek veya ders takibi yapmak için giriş yapabilirsin.
-                    </p>
-                  </div>
-                  <div className="pt-2 flex flex-col gap-2.5">
-                    <Link
-                      href="/giris"
-                      onClick={() => setOpen(false)}
-                      className="flex items-center justify-center gap-2 rounded-xl px-4 py-3 text-sm font-semibold transition-all bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none"
-                    >
-                      <LogIn className="h-4 w-4" /> Giriş Yap
-                    </Link>
-                    <Link
-                      href="/kayit"
-                      onClick={() => setOpen(false)}
-                      className={`flex items-center justify-center gap-2 rounded-xl border px-4 py-3 text-sm font-semibold transition-all ${
-                        isLight
-                          ? 'border-slate-300 bg-slate-100/90 text-slate-800 hover:bg-slate-200'
-                          : 'border-slate-700 bg-slate-800/80 text-slate-200 hover:bg-slate-800 hover:text-white'
-                      }`}
-                    >
-                      <UserPlus className="h-4 w-4" /> Ücretsiz Hesap Oluştur
-                    </Link>
-                  </div>
-                </div>
-
-                <p className="text-[11px] text-slate-500">
-                  Öğrenciler sadece öğretmenle 1-e-1 güvenli iletişim kurar.
-                </p>
-              </div>
-            ) : currentUser.isAdmin ? (
-              /* 2. Senaryo: Admin (Uğur Hoca) Paneli */
-              !selectedStudentId ? (
-                <>
-                  <div
-                    className={`flex shrink-0 items-center gap-2 border-b px-4 py-3.5 ${
-                      isLight
-                        ? 'border-slate-200 bg-white'
-                        : 'border-slate-800 bg-slate-900'
-                    }`}
-                  >
-                    <h2
-                      className={`text-sm font-bold ${
-                        isLight ? 'text-slate-900' : 'text-white'
-                      }`}
-                    >
-                      Öğrenci Sohbetleri
-                    </h2>
-                    {adminTotalUnread > 0 && (
-                      <span className="rounded-full bg-red-500/20 border border-red-500/40 px-2 py-0.5 text-[11px] font-bold text-red-500 dark:text-red-400">
-                        {adminTotalUnread} yeni
-                      </span>
-                    )}
-                    <div className="ml-auto flex items-center gap-1">
-                      <button
-                        type="button"
-                        onClick={() => currentUser.id && loadAdminMessages(currentUser.id)}
-                        className={`rounded-lg px-2 py-1 text-[11px] font-medium transition-colors ${
-                          isLight
-                            ? 'text-slate-500 hover:bg-slate-100 hover:text-slate-900'
-                            : 'text-slate-400 hover:bg-slate-800 hover:text-white'
-                        }`}
-                      >
-                        Yenile
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setOpen(false);
-                          setSelectedStudentId(null);
-                          setDraft('');
-                          setSendError(null);
-                          clearAttachments();
-                        }}
-                        className={`rounded-lg p-1.5 transition ${
-                          isLight
-                            ? 'text-slate-400 hover:bg-slate-100 hover:text-slate-800'
-                            : 'text-slate-400 hover:bg-slate-800 hover:text-white'
-                        }`}
-                        aria-label="Kapat"
-                      >
-                        <X className="h-4 w-4" />
-                      </button>
-                    </div>
-                  </div>
-
-                  <div
-                    className="min-h-0 flex-1 overflow-y-auto overflow-x-hidden overscroll-contain"
-                    style={{ overscrollBehavior: 'contain' }}
-                  >
-                    {adminConversations.length === 0 ? (
-                      <div className="flex flex-col items-center justify-center gap-3 py-16 text-center px-4">
-                        <MessageCircle className="h-10 w-10 text-slate-400 dark:text-slate-600" />
-                        <p className="text-sm text-slate-500 dark:text-slate-400">
-                          Henüz öğrenci mesajı bulunmuyor.
-                        </p>
-                      </div>
-                    ) : (
-                      adminConversations.map((c) => (
-                        <button
-                          key={c.studentId}
-                          type="button"
-                          onClick={() => {
-                            setSelectedStudentId(c.studentId);
-                            setDraft('');
-                            setSendError(null);
-                            clearAttachments();
-                          }}
-                          className={`flex w-full items-start gap-3 border-b px-4 py-3.5 text-left transition-colors ${
-                            isLight
-                              ? 'border-slate-100 hover:bg-slate-50'
-                              : 'border-slate-800/80 hover:bg-slate-800/50'
-                          }`}
-                        >
-                          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-sm font-bold shadow-sm bg-brand-secondary text-slate-950 dark:text-slate-950">
-                            {(c.studentName[0] || '?').toUpperCase()}
-                          </div>
-                          <div className="min-w-0 flex-1">
-                            <div className="flex items-center gap-2">
-                              <span
-                                className={`truncate text-sm font-semibold ${
-                                  isLight ? 'text-slate-900' : 'text-white'
-                                }`}
-                              >
-                                {c.studentName}
-                              </span>
-                              {c.unreadCount > 0 && (
-                                <span className="rounded-full bg-red-500/20 border border-red-500/30 px-1.5 py-0.5 text-[10px] font-bold text-red-500 dark:text-red-300">
-                                  {c.unreadCount}
-                                </span>
-                              )}
-                            </div>
-                            <p className="truncate text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-                              {c.lastSnippet || 'Ek veya mesaj'}
-                            </p>
-                          </div>
-                        </button>
-                      ))
-                    )}
-                  </div>
-                </>
-              ) : adminThreadLoading ? (
-                <div className="flex flex-1 items-center justify-center py-16 text-sm text-slate-400">
-                  Yükleniyor…
-                </div>
-              ) : (
-                <SupportChatPanel
-                  appearance="admin"
-                  attachmentPreviews={attachmentPreviews}
-                  draft={draft}
-                  error={sendError}
-                  inputDisabled={false}
-                  isLight={isLight}
-                  messages={adminThreadMessages}
-                  onAttachmentRemove={handleAttachmentRemove}
-                  onAttachmentSelect={handleAttachmentSelect}
-                  onBack={() => {
-                    setSelectedStudentId(null);
-                    setDraft('');
-                    setSendError(null);
-                    clearAttachments();
-                    if (currentUser) void loadAdminMessages(currentUser.id);
-                  }}
-                  onClose={() => {
-                    setOpen(false);
-                    setSelectedStudentId(null);
-                    setDraft('');
-                    setSendError(null);
-                    clearAttachments();
-                  }}
-                  onDraftChange={setDraft}
-                  onSubmit={handleSendAdmin}
-                  onTyping={handleTriggerTyping}
-                  onVoiceRecordComplete={handleVoiceRecordComplete}
-                  peerAvatarSrc={undefined}
-                  peerDisplayName={selectedPeerName}
-                  peerSubtitle="Öğrenci"
-                  peerTyping={peerTyping}
-                  placeholder="Öğrenciye yanıt yaz..."
-                  sending={sending}
-                />
-              )
-            ) : (
-              /* 3. Senaryo: Öğrenci (SADECE UĞUR HOCA İLE 1-E-1 SOHBET) */
-              <SupportChatPanel
-                appearance="navbar"
-                attachmentPreviews={attachmentPreviews}
-                draft={draft}
-                error={sendError}
-                isLight={isLight}
-                messages={studentThreadMessages}
-                onAttachmentRemove={handleAttachmentRemove}
-                onAttachmentSelect={handleAttachmentSelect}
-                onClose={() => setOpen(false)}
-                onDraftChange={setDraft}
-                onSubmit={handleSendStudent}
-                onTyping={handleTriggerTyping}
-                onVoiceRecordComplete={handleVoiceRecordComplete}
-                peerAvatarSrc="/ugur.jpeg"
-                peerDisplayName="Uğur Hoca"
-                peerSubtitle="Çevrim içi • Aktif"
-                peerTyping={peerTyping}
-                placeholder="Uğur Hoca'ya mesaj yaz veya soru sor..."
-                sending={sending}
-              />
-            )}
-          </motion.div>
-        )}
-      </AnimatePresence>
+      {/* Floating Chat Panel Modal */}
+      <ChatBubbleModal
+        open={open}
+        panelRef={panelRef}
+        isLight={isLight}
+        currentUser={currentUser}
+        selectedStudentId={selectedStudentId}
+        setSelectedStudentId={setSelectedStudentId}
+        adminTotalUnread={adminTotalUnread}
+        adminConversations={adminConversations}
+        loadAdminMessages={loadAdminMessages}
+        adminThreadLoading={adminThreadLoading}
+        adminThreadMessages={adminThreadMessages}
+        studentThreadMessages={studentThreadMessages}
+        attachmentPreviews={attachmentPreviews}
+        draft={draft}
+        setDraft={setDraft}
+        sendError={sendError}
+        setSendError={setSendError}
+        clearAttachments={clearAttachments}
+        handleAttachmentRemove={handleAttachmentRemove}
+        handleAttachmentSelect={handleAttachmentSelect}
+        setOpen={setOpen}
+        handleSendAdmin={handleSendAdmin}
+        handleSendStudent={handleSendStudent}
+        handleTriggerTyping={triggerTyping}
+        handleVoiceRecordComplete={handleVoiceRecordComplete}
+        selectedPeerName={selectedPeerName}
+        peerTyping={peerTyping}
+        sending={sending}
+      />
     </div>
   );
 }
-

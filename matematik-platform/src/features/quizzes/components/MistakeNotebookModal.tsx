@@ -1,21 +1,8 @@
 'use client';
 
 import { useState, useEffect, useId, useMemo, useCallback } from 'react';
-import {
-  X,
-  BookOpen,
-  CheckCircle2,
-  Trash2,
-  Play,
-  Printer,
-  Sparkles,
-  RotateCcw,
-  Activity,
-  MessageCircle,
-} from 'lucide-react';
+import { CheckCircle2 } from 'lucide-react';
 import { toLocalDateKey } from '@/lib/localDate';
-import { formatIstanbulDate } from '@/lib/date-format';
-import MathText from '@/components/MathText';
 import type { QuizQuestion } from '@/types/quiz';
 import {
   getSavedMistakes,
@@ -27,17 +14,21 @@ import {
   getSpacedReviewStats,
   type SavedMistakeQuestion,
   type MistakeReason,
-  MISTAKE_REASON_LABELS,
 } from '@/features/quizzes/lib/mistakeStorage';
 import { syncMistakesWithCloud } from '@/features/quizzes/lib/mistakeSync';
 import { PrintableWorksheetModal } from './PrintableWorksheetModal';
 import { useAccessibleModal } from '@/hooks/useAccessibleModal';
-
-type MistakeNotebookModalProps = {
-  isOpen: boolean;
-  onClose: () => void;
-  onStartRetakeQuiz?: (questions: QuizQuestion[]) => void;
-};
+import type {
+  MistakeNotebookModalProps,
+  FilterType,
+  ReasonBreakdown,
+} from './MistakeNotebookModal/types';
+import { MistakePrintSection } from './MistakeNotebookModal/MistakePrintSection';
+import { MistakeNotebookHeader } from './MistakeNotebookModal/MistakeNotebookHeader';
+import { MistakeFilterTabs } from './MistakeNotebookModal/MistakeFilterTabs';
+import { MistakeRootCauseAnalysis } from './MistakeNotebookModal/MistakeRootCauseAnalysis';
+import { LeitnerStatsBar } from './MistakeNotebookModal/LeitnerStatsBar';
+import { MistakeCard } from './MistakeNotebookModal/MistakeCard';
 
 export function MistakeNotebookModal({
   isOpen,
@@ -46,9 +37,7 @@ export function MistakeNotebookModal({
 }: MistakeNotebookModalProps) {
   const titleId = useId();
   const [mistakes, setMistakes] = useState<SavedMistakeQuestion[]>([]);
-  const [filter, setFilter] = useState<'due' | 'pending' | 'mastered' | 'all'>(
-    'due',
-  );
+  const [filter, setFilter] = useState<FilterType>('due');
   const [reasonFilter, setReasonFilter] = useState<MistakeReason | 'all'>(
     'all',
   );
@@ -60,7 +49,6 @@ export function MistakeNotebookModal({
   const reloadMistakes = useCallback(() => {
     const list = getSavedMistakes();
     setMistakes(list);
-    // Eğer bugün tekrar edilecek yoksa ve ilk açılışsa bekleyenlere geç
     const today = toLocalDateKey();
     const dueCount = list.filter(
       (m) => !m.mastered && (!m.nextReviewDate || m.nextReviewDate <= today),
@@ -105,7 +93,7 @@ export function MistakeNotebookModal({
 
   const spacedStats = useMemo(() => getSpacedReviewStats(mistakes), [mistakes]);
 
-  const reasonBreakdown = useMemo(() => {
+  const reasonBreakdown = useMemo<ReasonBreakdown | null>(() => {
     const total = mistakes.length;
     if (total === 0) return null;
     const careless = mistakes.filter((m) => m.reason === 'careless').length;
@@ -266,7 +254,6 @@ export function MistakeNotebookModal({
             ? mistakes.filter((m) => !m.mastered)
             : mistakes.filter((m) => m.mastered);
 
-    // Önceliklendirme: Kazanım açığı (concept) ve dikkat hataları (attention) en başa
     pool = [...pool].sort((a, b) => {
       if (a.reason === 'concept' && b.reason !== 'concept') return -1;
       if (b.reason === 'concept' && a.reason !== 'concept') return 1;
@@ -282,6 +269,23 @@ export function MistakeNotebookModal({
       onStartRetakeQuiz(questionsToSolve);
       onClose();
     }
+  };
+
+  const handleAskTeacher = (
+    index: number,
+    questionText: string,
+    quizTitle?: string,
+  ) => {
+    onClose();
+    window.dispatchEvent(
+      new CustomEvent('open-teacher-chat-with-question', {
+        detail: {
+          questionIndex: index,
+          questionText,
+          quizTitle: quizTitle || 'Yanlış Defteri',
+        },
+      }),
+    );
   };
 
   return (
@@ -323,518 +327,39 @@ export function MistakeNotebookModal({
         aria-labelledby={titleId}
         className="print-mistake-analysis-area relative z-10 flex max-h-[92vh] w-full max-w-4xl flex-col overflow-hidden rounded-3xl border border-slate-200/80 dark:border-white/10 bg-white dark:bg-slate-900 shadow-2xl transition-all"
       >
-        {/* A4 Yazdırma Görünümü (Yalnızca print esnasında görünür) */}
-        <div className="print-only mb-6 border-b-2 border-black pb-4 text-black">
-          <div className="flex justify-between items-center">
-            <div>
-              <h1 className="text-xl font-bold">
-                Uğur Hoca Matematik — Kişisel Hata Defteri & Odak Telafi Föyü
-              </h1>
-              <p className="mt-1 text-xs text-gray-700">
-                Tarih: {formatIstanbulDate(new Date())} | Toplam{' '}
-                {filteredList.length} Soru | Kişisel Teşhis & Telafi Çalışması
-              </p>
-            </div>
-            <div className="text-right">
-              <span className="text-xs font-bold border border-black px-2.5 py-1 rounded-md">
-                LGS & YKS Matematik
-              </span>
-            </div>
-          </div>
+        <MistakePrintSection
+          filteredList={filteredList}
+          reasonBreakdown={reasonBreakdown}
+        />
 
-          {/* Kök Neden Dağılımı Özeti */}
-          <div className="mt-3 grid grid-cols-4 gap-2 text-center text-xs border border-gray-400 rounded-lg p-2.5 bg-gray-50">
-            <div className="border-r border-gray-300">
-              <span className="block font-bold text-red-700">
-                🔴 İşlem Hatası
-              </span>
-              <span className="text-sm font-extrabold">
-                {reasonBreakdown?.careless || 0} Soru
-              </span>
-            </div>
-            <div className="border-r border-gray-300">
-              <span className="block font-bold text-amber-700">
-                🟡 Kural Eksikliği
-              </span>
-              <span className="text-sm font-extrabold">
-                {reasonBreakdown?.concept || 0} Soru
-              </span>
-            </div>
-            <div className="border-r border-gray-300">
-              <span className="block font-bold text-blue-700">
-                🔵 Yanlış Okuma
-              </span>
-              <span className="text-sm font-extrabold">
-                {reasonBreakdown?.reading || 0} Soru
-              </span>
-            </div>
-            <div>
-              <span className="block font-bold text-purple-700">
-                🟣 Süre Baskısı
-              </span>
-              <span className="text-sm font-extrabold">
-                {reasonBreakdown?.time || 0} Soru
-              </span>
-            </div>
-          </div>
+        <MistakeNotebookHeader
+          titleId={titleId}
+          isSyncing={isSyncing}
+          stats={stats}
+          hasFilteredItems={filteredList.length > 0}
+          onStartPractice={handleStartPractice}
+          onOpenWorksheet={() => setIsWorksheetOpen(true)}
+          onClose={onClose}
+        />
 
-          {/* Soru Listesi ve Çözüm/Düzeltme Alanları */}
-          <div className="mt-4 space-y-4">
-            {filteredList.map((item, idx) => (
-              <div
-                key={item.id || idx}
-                className="border border-gray-400 rounded-xl p-3.5 break-inside-avoid text-xs"
-              >
-                <div className="flex justify-between items-center mb-2 border-b border-gray-200 pb-1.5">
-                  <span className="font-bold text-sm">
-                    Soru #{idx + 1}{' '}
-                    {item.quizTitle ? `• ${item.quizTitle}` : ''}
-                  </span>
-                  <span className="font-semibold px-2 py-0.5 border border-gray-400 rounded text-[11px]">
-                    {item.reason
-                      ? MISTAKE_REASON_LABELS[item.reason].label
-                      : 'Teşhis Bekleniyor'}
-                  </span>
-                </div>
-                <div className="my-2.5 leading-relaxed text-black font-medium text-sm">
-                  {item.question.question}
-                </div>
-                {item.question.options && item.question.options.length > 0 && (
-                  <div className="grid grid-cols-2 gap-2 my-2 text-gray-800">
-                    {item.question.options.map((opt, optIdx) => (
-                      <div
-                        key={optIdx}
-                        className="border border-gray-300 rounded px-2.5 py-1 text-xs"
-                      >
-                        <strong className="mr-1">
-                          {String.fromCharCode(65 + optIdx)})
-                        </strong>{' '}
-                        {opt}
-                      </div>
-                    ))}
-                  </div>
-                )}
-                {/* Öğrenci Çözüm ve Analiz Kutusu */}
-                <div className="mt-3 border-2 border-dashed border-gray-400 rounded-lg p-3 min-h-[95px] bg-white">
-                  <div className="flex justify-between items-center text-[10px] text-gray-500 font-bold uppercase mb-1">
-                    <span>✍️ Nerede Yanıldım? & Doğru Çözüm Adımlarım</span>
-                    <span className="border border-gray-400 px-2 py-0.5 rounded text-gray-700">
-                      [ ] Doğru Çözdüm & Kavradım
-                    </span>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
+        <MistakeFilterTabs
+          filter={filter}
+          setFilter={setFilter}
+          reasonFilter={reasonFilter}
+          setReasonFilter={setReasonFilter}
+          stats={stats}
+          mistakes={mistakes}
+          confirmingClearAll={confirmingClearAll}
+          setConfirmingClearAll={setConfirmingClearAll}
+          onClearAll={handleClearAll}
+        />
 
-        {/* Başlık (Ekran Görünümü) */}
-        <div className="no-print flex flex-col gap-3 border-b border-slate-200/80 dark:border-white/10 bg-slate-50/80 dark:bg-slate-950/80 px-5 py-4 sm:flex-row sm:items-center sm:justify-between">
-          <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-amber-500 to-rose-600 text-white dark:text-white shadow-md">
-              <BookOpen className="h-5 w-5" />
-            </div>
-            <div>
-              <div className="flex items-center gap-2">
-                <h2
-                  id={titleId}
-                  className="font-display text-base sm:text-lg font-bold text-slate-900 dark:text-white"
-                >
-                  Akıllı Hata Defterim 📓
-                </h2>
-                <span className="inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-bold bg-emerald-500/10 text-accent-success-ink dark:text-emerald-400">
-                  {isSyncing ? 'Bulut Eşitleniyor...' : 'Bulut Senkronize ✓'}
-                </span>
-              </div>
-              <p className="text-xs text-slate-500 dark:text-slate-400">
-                Aralıklı tekrar algoritmasıyla (1-3-7 gün) yanlış yaptığın
-                soruları kalıcı öğrenmeye dönüştür.
-              </p>
-            </div>
-          </div>
-
-          <div className="flex flex-wrap items-center gap-2">
-            {stats.due > 0 && (
-              <button
-                type="button"
-                onClick={() => handleStartPractice(undefined, true)}
-                className="inline-flex items-center gap-1.5 rounded-xl px-3.5 py-2 text-xs font-bold bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none transition hover:scale-[1.02] active:scale-[0.98]"
-              >
-                <Sparkles className="h-3.5 w-3.5 fill-white" />
-                <span>Bugünkü Tekrarları Çöz ({stats.due})</span>
-              </button>
-            )}
-
-            {stats.pending > 0 ? (
-              <>
-                {stats.pending > 5 && (
-                  <button
-                    type="button"
-                    onClick={() => handleStartPractice(5)}
-                    className="inline-flex items-center gap-1.5 rounded-xl border border-amber-300 dark:border-amber-500/40 bg-amber-50 dark:bg-amber-500/10 px-3 py-2 text-xs font-bold text-amber-800 dark:text-amber-300 shadow-sm transition hover:bg-amber-100 dark:hover:bg-amber-500/20 active:scale-[0.98]"
-                  >
-                    <Play className="h-3 w-3 fill-amber-700 dark:fill-amber-300 text-amber-700 dark:text-amber-300" />
-                    <span>5 Soruluk Telafi</span>
-                  </button>
-                )}
-                <button
-                  type="button"
-                  onClick={() => handleStartPractice()}
-                  className="inline-flex items-center gap-1.5 rounded-xl bg-slate-900 dark:bg-white/10 px-3.5 py-2 text-xs font-bold text-white shadow-md transition hover:bg-slate-800 dark:hover:bg-white/20 active:scale-[0.98]"
-                >
-                  <Play className="h-3.5 w-3.5 fill-white" />
-                  <span>Hatalarımdan Test Çöz ({stats.pending})</span>
-                </button>
-              </>
-            ) : null}
-
-            {filteredList.length > 0 && (
-              <>
-                <button
-                  type="button"
-                  onClick={() => {
-                    if (typeof window !== 'undefined') window.print();
-                  }}
-                  title="Hatalı Sorularını Çözüm ve Kök Neden Alanlarıyla A4 Analiz Föyü Olarak Yazdır"
-                  className="inline-flex items-center gap-1.5 rounded-xl border border-amber-500/40 bg-amber-50 dark:bg-amber-500/10 px-3 py-2 text-xs font-bold text-amber-800 dark:text-amber-300 shadow-sm transition hover:bg-amber-100 dark:hover:bg-amber-500/20 active:scale-[0.98]"
-                >
-                  <Printer className="h-3.5 w-3.5 text-amber-600 dark:text-amber-400" />
-                  <span className="hidden sm:inline">A4 Hata Analiz Föyü</span>
-                  <span className="sm:hidden">Analiz Föyü</span>
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => setIsWorksheetOpen(true)}
-                  title="Hatalarından A4 Yaprak Test Oluştur & Yazdır"
-                  className="inline-flex items-center gap-1.5 rounded-xl border border-slate-300 dark:border-white/10 bg-white dark:bg-slate-800 px-3 py-2 text-xs font-bold text-slate-700 dark:text-slate-300 shadow-sm transition hover:bg-slate-100 dark:hover:bg-slate-700 active:scale-[0.98]"
-                >
-                  <Printer className="h-3.5 w-3.5 text-indigo-500 dark:text-indigo-400" />
-                  <span className="hidden sm:inline">A4 Yaprak Test / PDF</span>
-                  <span className="sm:hidden">Yazdır / PDF</span>
-                </button>
-              </>
-            )}
-
-            <button
-              type="button"
-              onClick={onClose}
-              aria-label="Kapat"
-              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl text-slate-400 hover:bg-slate-100 dark:hover:bg-white/10 hover:text-slate-700 dark:hover:text-white transition-colors"
-            >
-              <X className="h-5 w-5" />
-            </button>
-          </div>
-        </div>
-
-        {/* Sayaç ve Filtre Şeridi */}
-        <div className="no-print flex flex-col gap-2.5 border-b border-slate-100 dark:border-white/5 bg-slate-50/50 dark:bg-white/[0.02] px-5 py-3 text-xs">
-          <div className="flex flex-wrap items-center justify-between gap-3">
-            <div className="flex items-center gap-2">
-              <button
-                type="button"
-                onClick={() => setFilter('due')}
-                className={`rounded-lg px-2.5 py-1 font-bold transition-all ${
-                  filter === 'due'
-                    ? 'bg-brand-primary shadow-sm text-slate-950 dark:text-slate-950'
-                    : 'bg-slate-200/70 dark:bg-white/10 text-slate-700 dark:text-slate-300'
-                }`}
-              >
-                🧠 Bugün Tekrar ({stats.due})
-              </button>
-              <button
-                type="button"
-                onClick={() => setFilter('pending')}
-                className={`rounded-lg px-2.5 py-1 font-bold transition-all ${
-                  filter === 'pending'
-                    ? 'bg-brand-primary shadow-sm text-slate-950 dark:text-slate-950'
-                    : 'bg-slate-200/70 dark:bg-white/10 text-slate-700 dark:text-slate-300'
-                }`}
-              >
-                Bekleyen ({stats.pending})
-              </button>
-              <button
-                type="button"
-                onClick={() => setFilter('mastered')}
-                className={`rounded-lg px-2.5 py-1 font-bold transition-all ${
-                  filter === 'mastered'
-                    ? 'bg-brand-primary shadow-sm text-slate-950 dark:text-slate-950'
-                    : 'bg-slate-200/70 dark:bg-white/10 text-slate-700 dark:text-slate-300'
-                }`}
-              >
-                Öğrenilenler ({stats.mastered})
-              </button>
-              <button
-                type="button"
-                onClick={() => setFilter('all')}
-                className={`rounded-lg px-2.5 py-1 font-bold transition-all ${
-                  filter === 'all'
-                    ? 'bg-brand-primary shadow-sm text-slate-950 dark:text-slate-950'
-                    : 'bg-slate-200/70 dark:bg-white/10 text-slate-700 dark:text-slate-300'
-                }`}
-              >
-                Tümü ({stats.total})
-              </button>
-            </div>
-
-            {stats.total > 0 &&
-              (confirmingClearAll ? (
-                <div className="flex items-center gap-2 text-[11px]">
-                  <button
-                    type="button"
-                    onClick={handleClearAll}
-                    className="rounded-lg border border-red-500/30 bg-red-500/15 px-2.5 py-1 font-bold text-red-700 dark:text-red-300 hover:bg-red-500/25 transition-colors"
-                  >
-                    Emin misin? Evet, Temizle
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setConfirmingClearAll(false)}
-                    className="rounded-lg px-2 py-1 font-medium text-slate-500 dark:text-slate-400 hover:bg-slate-200/60 dark:hover:bg-white/10 transition-colors"
-                  >
-                    Vazgeç
-                  </button>
-                </div>
-              ) : (
-                <button
-                  type="button"
-                  onClick={() => setConfirmingClearAll(true)}
-                  className="text-slate-400 hover:text-red-500 transition-colors font-medium text-[11px]"
-                >
-                  Defteri Boşalt
-                </button>
-              ))}
-          </div>
-
-          {/* Hata Nedeni Filtresi */}
-          <div className="flex flex-wrap items-center gap-1.5 pt-2 border-t border-slate-200/50 dark:border-white/5 text-[11px]">
-            <span className="text-slate-500 dark:text-slate-400 font-semibold mr-1">
-              Neden Filtresi:
-            </span>
-            <button
-              type="button"
-              onClick={() => setReasonFilter('all')}
-              className={`px-2 py-0.5 rounded-md font-medium transition-all ${
-                reasonFilter === 'all'
-                  ? 'bg-slate-800 dark:bg-white/20 text-white font-bold'
-                  : 'text-slate-500 hover:bg-slate-200/60 dark:hover:bg-white/5'
-              }`}
-            >
-              Tümü
-            </button>
-            {(
-              ['careless', 'concept', 'reading', 'time'] as MistakeReason[]
-            ).map((rKey) => {
-              const meta = MISTAKE_REASON_LABELS[rKey];
-              const count = mistakes.filter((m) => m.reason === rKey).length;
-              return (
-                <button
-                  key={rKey}
-                  type="button"
-                  onClick={() =>
-                    setReasonFilter(reasonFilter === rKey ? 'all' : rKey)
-                  }
-                  className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-md font-medium transition-all ${
-                    reasonFilter === rKey
-                      ? 'bg-brand-primary shadow-sm font-bold text-slate-950 dark:text-slate-950'
-                      : 'bg-slate-100 dark:bg-white/5 text-slate-600 dark:text-slate-300 hover:bg-slate-200/60'
-                  }`}
-                >
-                  <span>{meta.emoji}</span>
-                  <span>
-                    {meta.shortLabel} ({count})
-                  </span>
-                </button>
-              );
-            })}
-          </div>
-        </div>
-
-        {/* Kök Neden Analizi & Teşhis Çubuğu */}
         {mistakes.length > 0 && reasonBreakdown && (
-          <div className="no-print border-b border-slate-200/80 dark:border-white/10 bg-slate-50/70 dark:bg-slate-900/60 px-5 py-3">
-            <div className="flex flex-col gap-2">
-              <div className="flex items-center justify-between text-xs">
-                <div className="flex items-center gap-1.5 font-bold text-slate-800 dark:text-slate-200">
-                  <Activity className="h-3.5 w-3.5 text-indigo-500 dark:text-indigo-400" />
-                  <span>Kök Neden Analiz Çubuğu</span>
-                </div>
-                <span className="text-[11px] text-slate-500 dark:text-slate-400">
-                  {reasonBreakdown.total} kayıtlı hatanın dağılımı
-                </span>
-              </div>
-
-              {/* Segmented Progress Bar */}
-              <div
-                role="progressbar"
-                aria-label="Hata Kök Neden Dağılımı"
-                className="flex h-3 w-full overflow-hidden rounded-full bg-slate-200 dark:bg-white/10 p-0.5 gap-0.5"
-              >
-                {reasonBreakdown.carelessPct > 0 && (
-                  <div
-                    style={{ width: `${reasonBreakdown.carelessPct}%` }}
-                    className="h-full rounded-full bg-rose-500 transition-all"
-                    title={`İşlem Hatası: %${reasonBreakdown.carelessPct} (${reasonBreakdown.careless} soru)`}
-                  />
-                )}
-                {reasonBreakdown.conceptPct > 0 && (
-                  <div
-                    style={{ width: `${reasonBreakdown.conceptPct}%` }}
-                    className="h-full rounded-full bg-amber-500 transition-all"
-                    title={`Kural / Konu Eksikliği: %${reasonBreakdown.conceptPct} (${reasonBreakdown.concept} soru)`}
-                  />
-                )}
-                {reasonBreakdown.readingPct > 0 && (
-                  <div
-                    style={{ width: `${reasonBreakdown.readingPct}%` }}
-                    className="h-full rounded-full bg-sky-500 transition-all"
-                    title={`Soru Kökünü Yanlış Okuma: %${reasonBreakdown.readingPct} (${reasonBreakdown.reading} soru)`}
-                  />
-                )}
-                {reasonBreakdown.timePct > 0 && (
-                  <div
-                    style={{ width: `${reasonBreakdown.timePct}%` }}
-                    className="h-full rounded-full bg-purple-500 transition-all"
-                    title={`Süre Baskısı: %${reasonBreakdown.timePct} (${reasonBreakdown.time} soru)`}
-                  />
-                )}
-                {reasonBreakdown.untaggedPct > 0 && (
-                  <div
-                    style={{ width: `${reasonBreakdown.untaggedPct}%` }}
-                    className="h-full rounded-full bg-slate-400/40 transition-all"
-                    title={`Etiketsiz: %${reasonBreakdown.untaggedPct} (${reasonBreakdown.untagged} soru)`}
-                  />
-                )}
-              </div>
-
-              {/* Etiket Dağılım Rozetleri */}
-              <div className="flex flex-wrap items-center gap-2.5 text-[11px]">
-                <span className="inline-flex items-center gap-1 font-medium text-slate-700 dark:text-slate-300">
-                  <span className="h-2 w-2 rounded-full bg-rose-500" />
-                  İşlem (%{reasonBreakdown.carelessPct})
-                </span>
-                <span className="inline-flex items-center gap-1 font-medium text-slate-700 dark:text-slate-300">
-                  <span className="h-2 w-2 rounded-full bg-amber-500" />
-                  Konu/Kural (%{reasonBreakdown.conceptPct})
-                </span>
-                <span className="inline-flex items-center gap-1 font-medium text-slate-700 dark:text-slate-300">
-                  <span className="h-2 w-2 rounded-full bg-sky-500" />
-                  Okuma (%{reasonBreakdown.readingPct})
-                </span>
-                <span className="inline-flex items-center gap-1 font-medium text-slate-700 dark:text-slate-300">
-                  <span className="h-2 w-2 rounded-full bg-purple-500" />
-                  Süre (%{reasonBreakdown.timePct})
-                </span>
-                {reasonBreakdown.untagged > 0 && (
-                  <span className="inline-flex items-center gap-1 font-medium text-slate-500 dark:text-slate-400">
-                    <span className="h-2 w-2 rounded-full bg-slate-400/40" />
-                    Etiketsiz ({reasonBreakdown.untagged})
-                  </span>
-                )}
-              </div>
-
-              {/* Pedagojik Reçete Kartı */}
-              {reasonBreakdown.advice && (
-                <div className="mt-1 flex items-start gap-2.5 rounded-xl border border-indigo-200/80 dark:border-indigo-500/20 bg-indigo-50/80 dark:bg-indigo-950/30 p-2.5 text-xs">
-                  <span className="text-base shrink-0 select-none">
-                    {reasonBreakdown.advice.icon}
-                  </span>
-                  <div className="min-w-0 flex-1">
-                    <p className="font-bold text-indigo-950 dark:text-indigo-200">
-                      {reasonBreakdown.advice.title}
-                    </p>
-                    <p className="mt-0.5 text-indigo-900/80 dark:text-indigo-300/80 text-[11px] leading-relaxed">
-                      {reasonBreakdown.advice.desc}
-                    </p>
-                  </div>
-                </div>
-              )}
-            </div>
-          </div>
+          <MistakeRootCauseAnalysis reasonBreakdown={reasonBreakdown} />
         )}
 
-        {/* Leitner 5-Kutulu Tekrar Takvimi & Dağılım Şeridi */}
-        {mistakes.length > 0 && (
-          <div className="no-print border-b border-slate-200/80 dark:border-white/10 bg-slate-50/50 dark:bg-white/[0.02] px-5 py-2.5">
-            <div className="flex flex-col gap-2">
-              <div className="flex flex-wrap items-center justify-between gap-2 text-xs">
-                <div className="flex items-center gap-1.5 font-bold text-slate-800 dark:text-slate-200">
-                  <span>🗃️ 5-Kutulu Leitner Tekrar Takvimi</span>
-                  <span className="text-[10px] font-normal text-slate-500 dark:text-slate-400">
-                    (Ebbinghaus Kalıcı Hafıza Sistemi)
-                  </span>
-                </div>
-                <div className="flex items-center gap-2 text-[11px] font-semibold">
-                  <span className="text-rose-600 dark:text-rose-400 font-bold">
-                    Bugün: {spacedStats.dueToday}
-                  </span>
-                  <span className="text-slate-300 dark:text-slate-600">•</span>
-                  <span className="text-amber-600 dark:text-amber-400">
-                    Yarın: {spacedStats.dueTomorrow}
-                  </span>
-                  <span className="text-slate-300 dark:text-slate-600">•</span>
-                  <span className="text-indigo-600 dark:text-indigo-400">
-                    Bu Hafta: {spacedStats.dueThisWeek}
-                  </span>
-                </div>
-              </div>
+        {mistakes.length > 0 && <LeitnerStatsBar spacedStats={spacedStats} />}
 
-              {/* 5 Kutu + Kalıcı Hafıza Dağılım Kartları */}
-              <div className="grid grid-cols-3 sm:grid-cols-6 gap-1.5 text-center text-xs">
-                <div className="rounded-xl border border-amber-200 dark:border-amber-500/20 bg-amber-50/60 dark:bg-amber-950/20 p-1.5">
-                  <div className="text-[10px] font-bold text-amber-700 dark:text-amber-300">
-                    1. Kutu (1g)
-                  </div>
-                  <div className="mt-0.5 text-sm font-extrabold text-slate-800 dark:text-white">
-                    {spacedStats.box1}
-                  </div>
-                </div>
-                <div className="rounded-xl border border-blue-200 dark:border-blue-500/20 bg-blue-50/60 dark:bg-blue-950/20 p-1.5">
-                  <div className="text-[10px] font-bold text-blue-700 dark:text-blue-300">
-                    2. Kutu (3g)
-                  </div>
-                  <div className="mt-0.5 text-sm font-extrabold text-slate-800 dark:text-white">
-                    {spacedStats.box2}
-                  </div>
-                </div>
-                <div className="rounded-xl border border-purple-200 dark:border-purple-500/20 bg-purple-50/60 dark:bg-purple-950/20 p-1.5">
-                  <div className="text-[10px] font-bold text-purple-700 dark:text-purple-300">
-                    3. Kutu (7g)
-                  </div>
-                  <div className="mt-0.5 text-sm font-extrabold text-slate-800 dark:text-white">
-                    {spacedStats.box3}
-                  </div>
-                </div>
-                <div className="rounded-xl border border-indigo-200 dark:border-indigo-500/20 bg-indigo-50/60 dark:bg-indigo-950/20 p-1.5">
-                  <div className="text-[10px] font-bold text-indigo-700 dark:text-indigo-300">
-                    4. Kutu (14g)
-                  </div>
-                  <div className="mt-0.5 text-sm font-extrabold text-slate-800 dark:text-white">
-                    {spacedStats.box4}
-                  </div>
-                </div>
-                <div className="rounded-xl border border-cyan-200 dark:border-cyan-500/20 bg-cyan-50/60 dark:bg-cyan-950/20 p-1.5">
-                  <div className="text-[10px] font-bold text-cyan-700 dark:text-cyan-300">
-                    5. Kutu (30g)
-                  </div>
-                  <div className="mt-0.5 text-sm font-extrabold text-slate-800 dark:text-white">
-                    {spacedStats.box5}
-                  </div>
-                </div>
-                <div className="rounded-xl border border-emerald-200 dark:border-emerald-500/20 bg-emerald-50/60 dark:bg-emerald-950/20 p-1.5">
-                  <div className="text-[10px] font-bold text-emerald-700 dark:text-emerald-300">
-                    Kalıcı 🏆
-                  </div>
-                  <div className="mt-0.5 text-sm font-extrabold text-emerald-700 dark:text-emerald-400">
-                    {spacedStats.mastered}
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Soru Listesi (Kaydırılabilir) */}
         <div className="no-print flex-1 overflow-y-auto p-4 sm:p-6 space-y-4 [scrollbar-width:thin]">
           {filteredList.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-12 text-center">
@@ -852,278 +377,18 @@ export function MistakeNotebookModal({
               </p>
             </div>
           ) : (
-            filteredList.map((item, index) => {
-              const q = item.question;
-              const today = toLocalDateKey();
-              const stage = item.reviewStage ?? 0;
-              const isDue =
-                !item.mastered &&
-                (!item.nextReviewDate || item.nextReviewDate <= today);
-
-              const stageMeta = [
-                {
-                  label: '1. Kutu (1 gün)',
-                  icon: '🌱',
-                  bg: 'bg-amber-500/15 text-amber-700 dark:text-amber-300 border-amber-500/30',
-                },
-                {
-                  label: '2. Kutu (3 gün)',
-                  icon: '🌿',
-                  bg: 'bg-blue-500/15 text-blue-700 dark:text-blue-300 border-blue-500/30',
-                },
-                {
-                  label: '3. Kutu (7 gün)',
-                  icon: '🌳',
-                  bg: 'bg-purple-500/15 text-purple-700 dark:text-purple-300 border-purple-500/30',
-                },
-                {
-                  label: '4. Kutu (14 gün)',
-                  icon: '🛡️',
-                  bg: 'bg-indigo-500/15 text-indigo-700 dark:text-indigo-300 border-indigo-500/30',
-                },
-                {
-                  label: '5. Kutu (30 gün)',
-                  icon: '💎',
-                  bg: 'bg-cyan-500/15 text-cyan-700 dark:text-cyan-300 border-cyan-500/30',
-                },
-                {
-                  label: 'Kalıcı Öğrenildi',
-                  icon: '🏆',
-                  bg: 'bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border-emerald-500/30',
-                },
-              ];
-              const currentStage = stageMeta[Math.min(stage, 5)];
-
-              return (
-                <div
-                  key={item.id || index}
-                  className={`rounded-2xl border p-4 transition-all ${
-                    item.mastered
-                      ? 'border-emerald-200 dark:border-emerald-500/20 bg-emerald-50/30 dark:bg-emerald-950/15'
-                      : isDue
-                        ? 'border-rose-300 dark:border-rose-500/30 bg-rose-50/20 dark:bg-rose-950/10'
-                        : 'border-slate-200 dark:border-white/10 bg-slate-50/60 dark:bg-white/5'
-                  }`}
-                >
-                  <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-2.5 mb-2">
-                    <div className="flex flex-wrap items-center gap-2">
-                      <span className="flex h-6 w-6 items-center justify-center rounded-lg bg-slate-200 dark:bg-white/10 text-xs font-bold">
-                        {index + 1}
-                      </span>
-                      {item.quizTitle && (
-                        <span className="text-[11px] font-semibold text-slate-500 dark:text-slate-400">
-                          {item.quizTitle}
-                        </span>
-                      )}
-                      {/* Aralıklı Tekrar Aşama Rozeti */}
-                      <span
-                        className={`inline-flex items-center gap-1 rounded-md px-2 py-0.5 text-[10px] font-bold border ${currentStage.bg}`}
-                        title="Aralıklı Tekrar Aşaması (Leitner Kutusu)"
-                      >
-                        <span>{currentStage.icon}</span>
-                        <span>{currentStage.label}</span>
-                      </span>
-
-                      {isDue && (
-                        <span className="inline-flex items-center gap-1 rounded-md bg-rose-500/15 text-rose-700 dark:text-rose-300 border border-rose-500/30 px-1.5 py-0.5 text-[10px] font-bold animate-pulse">
-                          🚨 Bugün Tekrarı
-                        </span>
-                      )}
-                      {!isDue && item.nextReviewDate && !item.mastered && (
-                        <span className="text-[10px] font-medium text-slate-400">
-                          🗓️ Sonraki: {item.nextReviewDate}
-                        </span>
-                      )}
-                    </div>
-
-                    <div className="flex flex-wrap items-center gap-1.5">
-                      {!item.mastered && (
-                        <>
-                          <button
-                            type="button"
-                            onClick={() =>
-                              handleAdvanceReview(q.question, true)
-                            }
-                            title="Bu soruyu doğru hatırladım, sonraki aralıklı aşamaya ilerlet"
-                            className="flex h-7 px-2 items-center gap-1 rounded-lg text-xs font-semibold bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 hover:bg-emerald-500/25 transition-colors"
-                          >
-                            <Sparkles className="h-3.5 w-3.5" />
-                            <span>Hatırladım</span>
-                          </button>
-                          <button
-                            type="button"
-                            onClick={() =>
-                              handleAdvanceReview(q.question, false)
-                            }
-                            title="Bu soruda zorlandım, aralıklı tekrarı yarına baştan başlat"
-                            className="flex h-7 px-2 items-center gap-1 rounded-lg text-xs font-semibold bg-rose-500/10 text-rose-700 dark:text-rose-300 hover:bg-rose-500/20 transition-colors"
-                          >
-                            <RotateCcw className="h-3 w-3" />
-                            <span className="hidden sm:inline">Zorlandım</span>
-                          </button>
-                        </>
-                      )}
-
-                      <button
-                        type="button"
-                        onClick={() =>
-                          handleToggleMastered(q.question, item.mastered)
-                        }
-                        title={
-                          item.mastered
-                            ? 'Bekleyene Al'
-                            : 'Öğrenildi Olarak İşaretle'
-                        }
-                        className={`flex h-7 px-2.5 items-center gap-1 rounded-lg text-xs font-semibold transition-colors ${
-                          item.mastered
-                            ? 'bg-slate-200 dark:bg-white/10 text-slate-600 dark:text-slate-300'
-                            : 'bg-slate-200/70 dark:bg-white/10 text-slate-700 dark:text-slate-300 hover:bg-slate-300 dark:hover:bg-white/15'
-                        }`}
-                      >
-                        <CheckCircle2 className="h-3.5 w-3.5" />
-                        <span>
-                          {item.mastered ? 'Tekrar Aç' : 'Tamamlandı'}
-                        </span>
-                      </button>
-
-                      <button
-                        type="button"
-                        onClick={() => {
-                          onClose();
-                          window.dispatchEvent(
-                            new CustomEvent('open-teacher-chat-with-question', {
-                              detail: {
-                                questionIndex: index,
-                                questionText: q.question,
-                                quizTitle: item.quizTitle || 'Yanlış Defteri',
-                              },
-                            }),
-                          );
-                        }}
-                        title="Bu soruyu Uğur Hoca'ya sor"
-                        className="flex h-7 px-2 items-center gap-1 rounded-lg text-xs font-semibold bg-indigo-500/15 text-indigo-700 dark:text-indigo-300 hover:bg-indigo-500/25 transition-colors"
-                      >
-                        <MessageCircle className="h-3.5 w-3.5" />
-                        <span className="hidden sm:inline">Hocama Sor</span>
-                      </button>
-
-                      <button
-                        type="button"
-                        onClick={() => handleRemove(q.question)}
-                        title="Defterden Sil"
-                        className="flex h-7 w-7 items-center justify-center rounded-lg text-slate-400 hover:bg-red-500/10 hover:text-red-500 transition-colors"
-                      >
-                        <Trash2 className="h-3.5 w-3.5" />
-                      </button>
-                    </div>
-                  </div>
-
-                  {/* Soru Metni */}
-                  <div className="text-sm font-medium text-slate-800 dark:text-slate-100 py-1">
-                    <MathText>{q.question}</MathText>
-                  </div>
-
-                  {/* Seçenekler */}
-                  <div className="mt-3 grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
-                    {q.options.map((opt, optIdx) => {
-                      const isCorrect = optIdx === q.correct_index;
-                      return (
-                        <div
-                          key={optIdx}
-                          className={`flex items-center gap-2 rounded-xl p-2.5 border ${
-                            isCorrect
-                              ? 'border-emerald-500/50 bg-emerald-50 dark:bg-emerald-500/15 text-emerald-800 dark:text-emerald-200 font-bold'
-                              : 'border-slate-200/80 dark:border-white/10 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-400'
-                          }`}
-                        >
-                          <span
-                            className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-[10px] font-bold ${
-                              isCorrect
-                                ? 'bg-emerald-500 text-slate-950'
-                                : 'bg-slate-100 dark:bg-white/10'
-                            }`}
-                          >
-                            {String.fromCharCode(65 + optIdx)}
-                          </span>
-                          <span className="flex-1">
-                            <MathText>{opt}</MathText>
-                          </span>
-                          {isCorrect && (
-                            <span className="text-[10px] font-bold text-accent-success-ink dark:text-emerald-400">
-                              Doğru Cevap
-                            </span>
-                          )}
-                        </div>
-                      );
-                    })}
-                  </div>
-
-                  {/* Kavram Yanılgısı Teşhisi (varsa) */}
-                  {item.userSelectedOption !== undefined &&
-                    item.userSelectedOption !== q.correct_index &&
-                    q.distractor_explanations?.[item.userSelectedOption] && (
-                      <div className="mt-3 rounded-xl bg-rose-50/80 dark:bg-rose-950/20 border border-rose-200 dark:border-rose-500/30 p-3 text-xs text-rose-900 dark:text-rose-200 flex items-start gap-2">
-                        <div>
-                          <span className="font-bold block text-rose-700 dark:text-rose-400">
-                            💡 Kavram Yanılgısı Teşhisi (
-                            {String.fromCharCode(65 + item.userSelectedOption)}{' '}
-                            Şıkkı):
-                          </span>
-                          <p className="mt-0.5 leading-relaxed text-slate-700 dark:text-slate-300">
-                            {q.distractor_explanations[item.userSelectedOption]}
-                          </p>
-                        </div>
-                      </div>
-                    )}
-
-                  {/* Çözüm Açıklaması (varsa) */}
-                  {q.explanation && (
-                    <div className="mt-3 rounded-xl bg-amber-50/70 dark:bg-amber-950/20 border border-amber-200/60 dark:border-amber-500/20 p-2.5 text-xs text-amber-900 dark:text-amber-200">
-                      <span className="font-bold">Çözüm İpucu: </span>
-                      <MathText>{q.explanation}</MathText>
-                    </div>
-                  )}
-
-                  {/* Hata Nedeni Etiketleme */}
-                  <div className="mt-3 pt-2.5 border-t border-slate-200/60 dark:border-white/5 flex flex-wrap items-center gap-1.5 text-xs">
-                    <span className="text-[11px] font-semibold text-slate-500 dark:text-slate-400 mr-1">
-                      Hata Nedeni:
-                    </span>
-                    {(
-                      [
-                        'careless',
-                        'concept',
-                        'reading',
-                        'time',
-                      ] as MistakeReason[]
-                    ).map((rKey) => {
-                      const isSelected = item.reason === rKey;
-                      const meta = MISTAKE_REASON_LABELS[rKey];
-                      return (
-                        <button
-                          key={rKey}
-                          type="button"
-                          onClick={() =>
-                            handleSetReason(
-                              q.question,
-                              isSelected ? undefined : rKey,
-                            )
-                          }
-                          className={`inline-flex items-center gap-1 rounded-lg px-2 py-0.5 text-[11px] font-medium transition-all ${
-                            isSelected
-                              ? 'bg-brand-primary shadow-sm font-bold scale-[1.02] text-slate-950 dark:text-slate-950'
-                              : 'bg-slate-100 dark:bg-white/5 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-white/10'
-                          }`}
-                        >
-                          <span>{meta.emoji}</span>
-                          <span>{meta.shortLabel}</span>
-                        </button>
-                      );
-                    })}
-                  </div>
-                </div>
-              );
-            })
+            filteredList.map((item, index) => (
+              <MistakeCard
+                key={item.id || index}
+                item={item}
+                index={index}
+                onAdvanceReview={handleAdvanceReview}
+                onToggleMastered={handleToggleMastered}
+                onRemove={handleRemove}
+                onSetReason={handleSetReason}
+                onAskTeacher={handleAskTeacher}
+              />
+            ))
           )}
         </div>
       </div>

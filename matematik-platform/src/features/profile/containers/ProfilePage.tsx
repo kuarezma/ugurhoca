@@ -2,107 +2,19 @@
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import dynamic from 'next/dynamic';
-import { motion } from 'framer-motion';
-import Image from 'next/image';
-import { SafeLink as Link } from '@/components/SafeLink';
-import {
-  ArrowLeft,
-  Bell,
-  BookOpen,
-  CalendarClock,
-  CheckCircle2,
-  FileSpreadsheet,
-  FolderKanban,
-  LogOut,
-  Settings,
-  Shield,
-  LayoutDashboard,
-  StickyNote,
-  Sliders,
-  Lightbulb,
-  Clock,
-  PenTool,
-  Mic,
-} from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { signOutClient } from '@/lib/auth-client';
 import { useTheme } from '@/components/ThemeProvider';
 import NotesSection from '@/components/NotesSection';
 import DashboardHero from '@/components/dashboard/DashboardHero';
-import MessageSummaryCard from '@/components/dashboard/MessageSummaryCard';
-import MotivationPanel from '@/components/dashboard/MotivationPanel';
-import ProgressOverview from '@/components/dashboard/ProgressOverview';
-import QuickActionGrid, {
-  quickActionIcons,
-} from '@/components/dashboard/QuickActionGrid';
-import QuickUpdatesPanel from '@/components/dashboard/QuickUpdatesPanel';
-import RecentDocuments from '@/components/dashboard/RecentDocuments';
-import RecentResults from '@/components/dashboard/RecentResults';
-import TodayPlanCard from '@/components/dashboard/TodayPlanCard';
+import { quickActionIcons } from '@/components/dashboard/QuickActionGrid';
 import DashboardSettings from '@/components/dashboard/DashboardSettings';
 import { Skeleton } from '@/components/ui/Skeleton';
-
-const DeferredDashboardCard = () => <Skeleton className="h-72 rounded-3xl" />;
-
-const AvatarSelectionModal = dynamic(
-  () => import('@/components/dashboard/AvatarSelectionModal'),
-  { ssr: false },
-);
-const AssignmentDetailModal = dynamic(
-  () => import('@/features/profile/components/AssignmentDetailModal'),
-  { ssr: false },
-);
-const MessageDetailModal = dynamic(
-  () => import('@/features/profile/components/MessageDetailModal'),
-  { ssr: false },
-);
-const WelcomeTour = dynamic(
-  () => import('@/components/dashboard/WelcomeTour'),
-  { ssr: false },
-);
-const GrowthReportModal = dynamic(
-  () => import('@/features/profile/components/GrowthReportModal'),
-  { ssr: false },
-);
-const StudentPortfolioModal = dynamic(
-  () => import('@/features/portfolio/components/StudentPortfolioModal'),
-  { ssr: false },
-);
-const MathAhaMomentsModal = dynamic(
-  () => import('@/features/profile/components/MathAhaMomentsModal').then(m => ({ default: m.MathAhaMomentsModal })),
-  { ssr: false },
-);
-const GoalTimeCapsuleModal = dynamic(
-  () => import('@/features/profile/components/GoalTimeCapsuleModal').then(m => ({ default: m.GoalTimeCapsuleModal })),
-  { ssr: false },
-);
-const StudentQuestionAuthoringModal = dynamic(
-  () => import('@/features/authoring/components/StudentQuestionAuthoringModal').then(m => ({ default: m.StudentQuestionAuthoringModal })),
-  { ssr: false },
-);
-const FeynmanVoiceExplanationModal = dynamic(
-  () => import('@/features/feynman/components/FeynmanVoiceExplanationModal').then(m => ({ default: m.FeynmanVoiceExplanationModal })),
-  { ssr: false },
-);
 import ProfileNotificationsPanel from '@/features/profile/components/ProfileNotificationsPanel';
-const StudyActivityHeatmap = dynamic(
-  () => import('@/features/profile/components/StudyActivityHeatmap'),
-  { loading: DeferredDashboardCard, ssr: false },
-);
-const ExamTrendChart = dynamic(
-  () => import('@/features/profile/components/ExamTrendChart'),
-  { loading: DeferredDashboardCard, ssr: false },
-);
-const TargetSchoolGapCard = dynamic(
-  () => import('@/features/profile/components/TargetSchoolGapCard'),
-  { loading: DeferredDashboardCard, ssr: false },
-);
-const ExamCountdownCard = dynamic(
-  () => import('@/features/profile/components/ExamCountdownCard').then((module) => ({ default: module.ExamCountdownCard })),
-  { loading: DeferredDashboardCard, ssr: false },
-);
-import { StudyPrescriptionCard } from '@/features/quizzes/components/StudyPrescriptionCard';
-import { getSavedMistakes, getDueMistakes } from '@/features/quizzes/lib/mistakeStorage';
+import {
+  getSavedMistakes,
+  getDueMistakes,
+} from '@/features/quizzes/lib/mistakeStorage';
 import { syncMistakesWithCloud } from '@/features/quizzes/lib/mistakeSync';
 import { useDailyStreakTouch } from '@/features/profile/hooks/useDailyStreakTouch';
 import { useProfileDashboardData } from '@/features/profile/hooks/useProfileDashboardData';
@@ -113,7 +25,6 @@ import {
 } from '@/features/profile/queries';
 import type {
   InitialProfileDashboardData,
-  ProfileWeeklyPlan,
   ProfileWeeklyPlanItem,
 } from '@/features/profile/types';
 import { buildProfileDashboardViewModel } from '@/features/profile/utils/dashboard-view-model';
@@ -123,22 +34,23 @@ import type {
   DashboardNotification,
   DashboardUpdateItem,
 } from '@/types/dashboard';
+import { ProfileNav } from './ProfilePage/ProfileNav';
+import { AdminProfileHero } from './ProfilePage/AdminProfileHero';
+import {
+  ProfileTabButtons,
+  type ProfileTab,
+} from './ProfilePage/ProfileTabButtons';
+import { ProfileOverviewTab } from './ProfilePage/ProfileOverviewTab';
+import { ProfileFeatureModals } from './ProfilePage/ProfileFeatureModals';
+
+const WelcomeTour = dynamic(
+  () => import('@/components/dashboard/WelcomeTour'),
+  { ssr: false },
+);
 
 type ProfilePageProps = {
   initialData?: InitialProfileDashboardData;
 };
-
-type ProfileTab = 'overview' | 'notes' | 'settings';
-
-const PROFILE_TABS: Array<{
-  id: ProfileTab;
-  label: string;
-  icon: typeof LayoutDashboard;
-}> = [
-  { id: 'overview', label: 'Genel Bakış', icon: LayoutDashboard },
-  { id: 'notes', label: 'Notlar', icon: StickyNote },
-  { id: 'settings', label: 'Ayarlar', icon: Sliders },
-];
 
 export default function ProfilePage({ initialData }: ProfilePageProps) {
   const [showNotifications, setShowNotifications] = useState(false);
@@ -160,9 +72,11 @@ export default function ProfilePage({ initialData }: ProfilePageProps) {
       return next;
     });
   }, [activeTab]);
+
   const router = useRouter();
   const { theme } = useTheme();
   const isLightNav = theme === 'light';
+
   const {
     assignments,
     availableQuizzes,
@@ -217,10 +131,15 @@ export default function ProfilePage({ initialData }: ProfilePageProps) {
       void syncMistakesWithCloud(user?.id)
         .then((res) => {
           if (!active || !res.success || !res.mistakes) return;
-          setPendingMistakesCount(res.mistakes.filter((m) => !m.mastered).length);
+          setPendingMistakesCount(
+            res.mistakes.filter((m) => !m.mastered).length,
+          );
           const today = new Date().toISOString().split('T')[0];
           setDueMistakesCount(
-            res.mistakes.filter((m) => !m.mastered && (!m.nextReviewDate || m.nextReviewDate <= today)).length,
+            res.mistakes.filter(
+              (m) =>
+                !m.mastered && (!m.nextReviewDate || m.nextReviewDate <= today),
+            ).length,
           );
         })
         .catch(() => {});
@@ -577,61 +496,12 @@ export default function ProfilePage({ initialData }: ProfilePageProps) {
 
   return (
     <main className="profil-page page-surface min-h-screen">
-      <nav className="fixed left-0 right-0 top-0 z-50 border-b border-default bg-surface-1/90 backdrop-blur-xl transition-all duration-300 pt-[env(safe-area-inset-top)] pl-[max(1rem,env(safe-area-inset-left))] pr-[max(1rem,env(safe-area-inset-right))]">
-        <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 sm:px-6">
-          <Link href="/" className="group flex items-center gap-3">
-            <div className="relative flex h-10 w-10 items-center justify-center overflow-hidden rounded-xl p-0.5 shadow-md transition-transform duration-300 group-hover:scale-105 bg-brand-primary">
-              <Image
-                src="/ugur.jpeg"
-                alt="Uğur Hoca"
-                width={40}
-                height={40}
-                priority
-                className="h-full w-full rounded-[10px] object-cover"
-              />
-            </div>
-            <div className="flex flex-col">
-              <span className="font-display text-base font-extrabold tracking-tight text-primary">
-                Uğur Hoca
-              </span>
-              <span className="text-[10px] font-bold text-secondary">Öğrenci Paneli</span>
-            </div>
-          </Link>
-
-          <div className="flex items-center gap-2 sm:gap-3">
-            {!user.isAdmin && (
-              <button
-                type="button"
-                onClick={() => setShowNotifications((prev) => !prev)}
-                className="relative flex h-9 w-9 items-center justify-center rounded-xl border border-default bg-surface-2 text-secondary transition-colors hover:bg-overlay-2 hover:text-primary"
-                aria-label="Bildirimler"
-              >
-                <Bell className="h-4.5 w-4.5" />
-                {unreadCount > 0 && (
-                  <span className="absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-600 text-[10px] font-bold text-white dark:text-white">
-                    {unreadCount}
-                  </span>
-                )}
-              </button>
-            )}
-            <Link
-              href="/"
-              className="flex items-center gap-1.5 rounded-xl border border-default bg-surface-2 px-3 py-1.5 text-xs font-semibold text-secondary transition-colors hover:bg-overlay-2 hover:text-primary sm:text-sm"
-            >
-              <ArrowLeft className="h-4 w-4" />
-              <span className="hidden sm:inline">Ana Sayfa</span>
-            </Link>
-            <button
-              type="button"
-              onClick={handleLogout}
-              className="flex h-9 w-9 items-center justify-center rounded-xl border border-default bg-surface-2 text-secondary transition-colors hover:bg-red-500/20 hover:text-red-400"
-              aria-label="Çıkış Yap"
-            >
-              <LogOut className="h-4.5 w-4.5" />
-            </button>
-          </div>
-        </div>
-      </nav>
+      <ProfileNav
+        isAdmin={Boolean(user.isAdmin)}
+        unreadCount={unreadCount}
+        onToggleNotifications={() => setShowNotifications((prev) => !prev)}
+        onLogout={handleLogout}
+      />
 
       {!user.isAdmin ? (
         <WelcomeTour userId={user.id} userName={user.name} />
@@ -650,39 +520,7 @@ export default function ProfilePage({ initialData }: ProfilePageProps) {
       <div className="px-4 pb-12 pt-[calc(4.5rem+env(safe-area-inset-top))] sm:pt-20">
         <div className="mx-auto max-w-6xl">
           {user.isAdmin ? (
-            <motion.section
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="rounded-3xl border border-default bg-surface-1 p-8"
-            >
-              <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
-                <div className="flex items-center gap-5">
-                  <div className="flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-br from-orange-500 to-red-500 text-3xl font-bold text-white dark:text-white">
-                    {user.name?.[0] || '?'}
-                  </div>
-                  <div>
-                    <h1 className="text-2xl font-bold text-primary">
-                      {user.name}
-                    </h1>
-                    <p className="mt-1 text-sm text-secondary">{user.email}</p>
-                    <div className="mt-3 inline-flex items-center gap-2 rounded-full border border-hairline bg-accent-warning-tint px-4 py-1.5">
-                      <Shield className="h-4 w-4 text-accent-warning-ink" />
-                      <span className="text-sm font-semibold text-accent-warning-ink">
-                        Yönetici
-                      </span>
-                    </div>
-                  </div>
-                </div>
-
-                <Link
-                  href="/admin"
-                  className="inline-flex items-center gap-2 rounded-2xl border border-default bg-surface-2 px-5 py-3 font-semibold text-primary transition-colors hover:bg-overlay-2"
-                >
-                  <Settings className="h-5 w-5" />
-                  Admin Paneline Git
-                </Link>
-              </div>
-            </motion.section>
+            <AdminProfileHero name={user.name} email={user.email} />
           ) : (
             <div className="w-full max-w-full space-y-8 overflow-hidden">
               <DashboardHero
@@ -701,193 +539,58 @@ export default function ProfilePage({ initialData }: ProfilePageProps) {
                 user={user}
               />
 
-              <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                <div
-                  role="tablist"
-                  aria-label="Profil bölümleri"
-                  className="flex flex-1 gap-2 overflow-x-auto rounded-2xl border border-default bg-surface-1 p-1.5 backdrop-blur"
-                >
-                  {PROFILE_TABS.map((tab) => {
-                    const TabIcon = tab.icon;
-                    const isActive = activeTab === tab.id;
-                    return (
-                      <button
-                        key={tab.id}
-                        type="button"
-                        role="tab"
-                        aria-selected={isActive}
-                        id={`profile-tab-${tab.id}`}
-                        aria-controls={`profile-panel-${tab.id}`}
-                        onClick={() => setActiveTab(tab.id)}
-                        className={`relative flex flex-1 items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-accent ${
-                          isActive
-                            ? 'shadow-lg bg-brand-primary text-slate-950 dark:text-slate-950'
-                            : 'text-secondary hover:bg-overlay-2 hover:text-primary'
-                        }`}
-                      >
-                        <TabIcon className="h-4 w-4" />
-                        <span className="whitespace-nowrap">{tab.label}</span>
-                      </button>
-                    );
-                  })}
-                </div>
-                <button
-                  type="button"
-                  onClick={() => setIsParentReportOpen(true)}
-                  className="inline-flex shrink-0 items-center justify-center gap-2 rounded-2xl border border-default bg-surface-2 px-4 py-2.5 text-sm font-semibold text-primary transition-all hover:bg-overlay-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent"
-                  title="WhatsApp gelişim özeti ve karne PDF'i oluştur"
-                >
-                  <FileSpreadsheet className="h-4 w-4 text-accent-success-ink" />
-                  <span className="whitespace-nowrap">Gelişim Raporu</span>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setIsPortfolioOpen(true)}
-                  className="inline-flex shrink-0 items-center justify-center gap-2 rounded-2xl border border-default bg-surface-2 px-4 py-2.5 text-sm font-semibold text-primary transition-all hover:bg-overlay-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent"
-                  title="Öğrenci matematik gelişim dosyası ve portfolyosu"
-                >
-                  <FolderKanban className="h-4 w-4 text-accent-brand-ink" />
-                  <span className="whitespace-nowrap">Gelişim Portfolyosu</span>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setIsAhaModalOpen(true)}
-                  className="inline-flex shrink-0 items-center justify-center gap-2 rounded-2xl border border-default bg-surface-2 px-4 py-2.5 text-sm font-semibold text-primary transition-all hover:bg-overlay-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent"
-                  title="Aha! Anları ve Matematik Keşif Günlüğü"
-                >
-                  <Lightbulb className="h-4 w-4 text-accent-warning-ink" />
-                  <span className="whitespace-nowrap">Aha! Keşif Günlüğü</span>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setIsTimeCapsuleOpen(true)}
-                  className="inline-flex shrink-0 items-center justify-center gap-2 rounded-2xl border border-default bg-surface-2 px-4 py-2.5 text-sm font-semibold text-primary transition-all hover:bg-overlay-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent"
-                  title="Sene başı - sene sonu hedef zaman kapsülü"
-                >
-                  <Clock className="h-4 w-4 text-accent-info-ink" />
-                  <span className="whitespace-nowrap">Hedef Zaman Kapsülü</span>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setIsAuthoringModalOpen(true)}
-                  className="inline-flex shrink-0 items-center justify-center gap-2 rounded-2xl border border-default bg-surface-2 px-4 py-2.5 text-sm font-semibold text-primary transition-all hover:bg-overlay-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent"
-                  title="Kendi matematik sorularını yaz ve çeldiricilerini kurgula"
-                >
-                  <PenTool className="h-4 w-4 text-accent-brand-ink" />
-                  <span className="whitespace-nowrap">Soru Yazarlık</span>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setIsFeynmanModalOpen(true)}
-                  className="inline-flex shrink-0 items-center justify-center gap-2 rounded-2xl border border-default bg-surface-2 px-4 py-2.5 text-sm font-semibold text-primary transition-all hover:bg-overlay-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent"
-                  title="60 saniyede sesli Feynman anlatımı"
-                >
-                  <Mic className="h-4 w-4 text-accent-danger-ink" />
-                  <span className="whitespace-nowrap">Feynman Anlatımı</span>
-                </button>
-              </div>
+              <ProfileTabButtons
+                activeTab={activeTab}
+                onTabChange={setActiveTab}
+                onOpenParentReport={() => setIsParentReportOpen(true)}
+                onOpenPortfolio={() => setIsPortfolioOpen(true)}
+                onOpenAhaModal={() => setIsAhaModalOpen(true)}
+                onOpenTimeCapsule={() => setIsTimeCapsuleOpen(true)}
+                onOpenAuthoringModal={() => setIsAuthoringModalOpen(true)}
+                onOpenFeynmanModal={() => setIsFeynmanModalOpen(true)}
+              />
 
               <div
                 id="profile-panel-overview"
                 role="tabpanel"
                 aria-labelledby="profile-tab-overview"
-                className={activeTab === 'overview' ? 'space-y-8 block' : 'hidden'}
+                className={
+                  activeTab === 'overview' ? 'space-y-8 block' : 'hidden'
+                }
               >
                 {visitedTabs.has('overview') && (
-                  <>
-                    <div className="mx-auto w-full max-w-full">
-                      <QuickActionGrid items={quickActionItems} />
-                    </div>
-
-                    {pendingMistakesCount > 0 && (
-                      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 rounded-3xl border border-tone-warn-border bg-tone-warn-bg p-5 shadow-xl backdrop-blur-xl">
-                        <div className="flex items-center gap-3.5">
-                          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-amber-500 to-rose-600 text-white dark:text-white shadow-lg shadow-amber-500/20">
-                            <BookOpen className="h-5 w-5" />
-                          </div>
-                          <div>
-                            <h3 className="text-sm sm:text-base font-bold text-primary">
-                              Akıllı Hata Defteri: {pendingMistakesCount} Soru Pekiştirilmeyi Bekliyor
-                            </h3>
-                            <p className="text-xs text-secondary">
-                              Geçmiş testlerde yanlış yaptığın soruları telafi ederek eksik kazanımlarını kapat.
-                            </p>
-                          </div>
-                        </div>
-                        <Link
-                          href="/testler?mode=mistakes"
-                          className="shrink-0 rounded-xl px-4 py-2.5 text-xs sm:text-sm font-bold transition-all hover:brightness-110 active:scale-95 bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none"
-                        >
-                          Hataları Tekrar Çöz ➔
-                        </Link>
-                      </div>
-                    )}
-
-                    <StudyPrescriptionCard
-                      isLight={isLightNav}
-                      onStartQuiz={(_questions, topic) => {
-                        router.push(
-                          `/testler?mode=prescription&topic=${encodeURIComponent(topic)}`,
-                        );
-                      }}
-                    />
-
-                    <WeeklyPlanCard
-                      plan={activeWeeklyPlan}
-                      onToggleItem={handleWeeklyPlanItemToggle}
-                    />
-
-                    <div className="mx-auto w-full max-w-full space-y-6">
-                      <StudyActivityHeatmap isLight={isLightNav} />
-                      <ExamTrendChart isLight={isLightNav} />
-                      <TargetSchoolGapCard isLight={isLightNav} />
-                      <ExamCountdownCard userGrade={user?.grade} isLight={isLightNav} />
-                    </div>
-
-                    <div className="grid gap-6 xl:grid-cols-[0.95fr_1.05fr]">
-                      <TodayPlanCard
-                        tasks={tasks}
-                        onSelectTask={(task) =>
-                          handleDashboardAction(task.action)
-                        }
-                      />
-                      <ProgressOverview
-                        detailHref="/ilerleme"
-                        focusTopic={focusTopic}
-                        goalSnapshot={goalSnapshot}
-                        latestScore={latestQuizScore}
-                        strongTopic={strongTopic}
-                      />
-                    </div>
-
-                    <div className="grid gap-6 lg:grid-cols-2">
-                      <MotivationPanel
-                        badges={recentBadges}
-                        latestScore={latestQuizScore}
-                        message={motivationMessage}
-                        streak={user.current_streak || 0}
-                      />
-                      <MessageSummaryCard
-                        notifications={notifications}
-                        onMarkAllAsRead={markAllAsRead}
-                        onOpenNotification={(notification) => {
-                          void handleNotificationClick(notification);
-                        }}
-                        onOpenPanel={() => setShowNotifications(true)}
-                        unreadCount={unreadCount}
-                      />
-                    </div>
-
-                    <QuickUpdatesPanel
-                      updates={updates}
-                      onSelectUpdate={handleUpdateSelect}
-                    />
-
-                    <div className="grid gap-6 lg:grid-cols-2">
-                      <RecentResults results={quizResults} />
-                      <RecentDocuments documents={sharedDocs} />
-                    </div>
-                  </>
+                  <ProfileOverviewTab
+                    isLightNav={isLightNav}
+                    user={user}
+                    quickActionItems={quickActionItems}
+                    pendingMistakesCount={pendingMistakesCount}
+                    activeWeeklyPlan={activeWeeklyPlan}
+                    onWeeklyPlanItemToggle={handleWeeklyPlanItemToggle}
+                    tasks={tasks}
+                    onSelectTask={handleDashboardAction}
+                    focusTopic={focusTopic}
+                    strongTopic={strongTopic}
+                    goalSnapshot={goalSnapshot}
+                    latestQuizScore={latestQuizScore}
+                    recentBadges={recentBadges}
+                    motivationMessage={motivationMessage}
+                    notifications={notifications}
+                    unreadCount={unreadCount}
+                    onMarkAllAsRead={markAllAsRead}
+                    onOpenNotification={(notification) => {
+                      void handleNotificationClick(notification);
+                    }}
+                    onOpenPanel={() => setShowNotifications(true)}
+                    updates={updates}
+                    onSelectUpdate={handleUpdateSelect}
+                    quizResults={quizResults}
+                    sharedDocs={sharedDocs}
+                    onStartPrescriptionQuiz={(topic) => {
+                      router.push(
+                        `/testler?mode=prescription&topic=${encodeURIComponent(topic)}`,
+                      );
+                    }}
+                  />
                 )}
               </div>
 
@@ -897,9 +600,7 @@ export default function ProfilePage({ initialData }: ProfilePageProps) {
                 aria-labelledby="profile-tab-notes"
                 className={activeTab === 'notes' ? 'block' : 'hidden'}
               >
-                {visitedTabs.has('notes') &&
-                  <NotesSection userId={user.id} />
-                }
+                {visitedTabs.has('notes') && <NotesSection userId={user.id} />}
               </div>
 
               <div
@@ -908,173 +609,41 @@ export default function ProfilePage({ initialData }: ProfilePageProps) {
                 aria-labelledby="profile-tab-settings"
                 className={activeTab === 'settings' ? 'block' : 'hidden'}
               >
-                {visitedTabs.has('settings') &&
-                  <DashboardSettings />
-                }
+                {visitedTabs.has('settings') && <DashboardSettings />}
               </div>
 
-              <AvatarSelectionModal
-                isOpen={isAvatarModalOpen}
-                onClose={() => setIsAvatarModalOpen(false)}
-                onSelect={handleAvatarSelect}
-                onUpload={handleAvatarUpload}
-                currentAvatar={user.avatar_id}
-              />
-
-              <GrowthReportModal
-                isOpen={isParentReportOpen}
-                onClose={() => setIsParentReportOpen(false)}
-                studentName={user.name || user.email || 'Öğrenci'}
-                studentGrade={user.grade ?? 'Belirtilmedi'}
-                streakCount={user.current_streak || 0}
-                progressPercent={goalSnapshot.progressPercent || 0}
-                totalQuizzesSolved={quizResults?.length || 0}
-                averageScore={latestQuizScore}
-                strongTopic={progressRows.find((r) => r.mastery_level >= 75)?.topic ?? null}
-                focusTopic={progressRows.find((r) => r.mastery_level < 60)?.topic ?? null}
-              />
-
-              <StudentPortfolioModal
-                isOpen={isPortfolioOpen}
-                onClose={() => setIsPortfolioOpen(false)}
-                studentName={user.name || user.email || 'Öğrenci'}
-                grade={String(user.grade ?? '8')}
-              />
-
-              <MathAhaMomentsModal
-                isOpen={isAhaModalOpen}
-                onClose={() => setIsAhaModalOpen(false)}
-                studentName={user.name || user.email || 'Öğrenci'}
-                studentId={user.id}
-              />
-
-              <GoalTimeCapsuleModal
-                isOpen={isTimeCapsuleOpen}
-                onClose={() => setIsTimeCapsuleOpen(false)}
-                studentName={user.name || user.email || 'Öğrenci'}
-                studentId={user.id}
-              />
-
-              <StudentQuestionAuthoringModal
-                isOpen={isAuthoringModalOpen}
-                onClose={() => setIsAuthoringModalOpen(false)}
-                studentName={user.name || user.email || 'Öğrenci'}
-                studentId={user.id}
-                grade={String(user.grade ?? '8')}
-              />
-
-              <FeynmanVoiceExplanationModal
-                isOpen={isFeynmanModalOpen}
-                onClose={() => setIsFeynmanModalOpen(false)}
-                studentName={user.name || user.email || 'Öğrenci'}
-                studentId={user.id}
-                grade={String(user.grade ?? '8')}
+              <ProfileFeatureModals
+                user={user}
+                goalSnapshot={goalSnapshot}
+                quizResults={quizResults}
+                latestQuizScore={latestQuizScore}
+                progressRows={progressRows}
+                isAvatarModalOpen={isAvatarModalOpen}
+                onCloseAvatarModal={() => setIsAvatarModalOpen(false)}
+                onAvatarSelect={handleAvatarSelect}
+                onAvatarUpload={handleAvatarUpload}
+                isParentReportOpen={isParentReportOpen}
+                onCloseParentReport={() => setIsParentReportOpen(false)}
+                isPortfolioOpen={isPortfolioOpen}
+                onClosePortfolio={() => setIsPortfolioOpen(false)}
+                isAhaModalOpen={isAhaModalOpen}
+                onCloseAhaModal={() => setIsAhaModalOpen(false)}
+                isTimeCapsuleOpen={isTimeCapsuleOpen}
+                onCloseTimeCapsule={() => setIsTimeCapsuleOpen(false)}
+                isAuthoringModalOpen={isAuthoringModalOpen}
+                onCloseAuthoringModal={() => setIsAuthoringModalOpen(false)}
+                isFeynmanModalOpen={isFeynmanModalOpen}
+                onCloseFeynmanModal={() => setIsFeynmanModalOpen(false)}
+                selectedAssignment={selectedAssignment}
+                onCloseAssignment={() => setSelectedAssignment(null)}
+                onOpenAssignments={() => router.push('/odevler')}
+                selectedMessage={selectedMessage}
+                onCloseMessage={() => setSelectedMessage(null)}
               />
             </div>
           )}
         </div>
       </div>
-
-      {selectedAssignment && (
-        <AssignmentDetailModal
-          assignment={selectedAssignment}
-          onClose={() => setSelectedAssignment(null)}
-          onOpenAssignments={() => router.push('/odevler')}
-        />
-      )}
-
-      {selectedMessage && (
-        <MessageDetailModal
-          message={selectedMessage}
-          onClose={() => setSelectedMessage(null)}
-        />
-      )}
     </main>
-  );
-}
-
-function WeeklyPlanCard({
-  onToggleItem,
-  plan,
-}: {
-  onToggleItem: (item: ProfileWeeklyPlanItem) => Promise<void> | void;
-  plan: ProfileWeeklyPlan | null;
-}) {
-  const items = plan?.student_weekly_plan_items || [];
-  const completedCount = items.filter((item) => item.completed_at).length;
-
-  return (
-    <motion.section
-      initial={{ opacity: 0, y: 16 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: 0.06 }}
-      className="rounded-3xl border border-default bg-surface-1 p-6 sm:p-8 shadow-sm"
-    >
-      <div className="mb-5 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-        <div>
-          <div className="mb-2 inline-flex items-center gap-2 rounded-full border border-hairline bg-accent-info-tint px-3 py-1 text-[11px] font-bold uppercase tracking-[0.18em] text-accent-info-ink">
-            <CalendarClock className="h-3.5 w-3.5" />
-            Bu Haftaki Plan
-          </div>
-          <h2 className="text-2xl font-bold text-primary">
-            {plan?.title || 'Bu Haftaki Plan'}
-          </h2>
-          <p className="mt-1 text-sm text-secondary">
-            Planını sadece sen ve Uğur Hoca görebilir.
-          </p>
-        </div>
-        <div className="rounded-2xl border border-default bg-surface-2 px-4 py-2 text-right">
-          <p className="text-xs uppercase tracking-[0.18em] text-secondary">
-            Tamamlanan
-          </p>
-          <p className="text-xl font-black text-primary">
-            {completedCount}/{items.length}
-          </p>
-        </div>
-      </div>
-
-      {!plan ? (
-        <div className="rounded-2xl border border-dashed border-default px-5 py-7 text-center text-sm text-secondary">
-          Bu hafta için özel plan henüz eklenmedi.
-        </div>
-      ) : items.length === 0 ? (
-        <div className="rounded-2xl border border-dashed border-default px-5 py-7 text-center text-sm text-secondary">
-          Plan başlığı hazır, maddeler eklendiğinde burada görünecek.
-        </div>
-      ) : (
-        <div className="grid gap-3 md:grid-cols-2">
-          {items.map((item) => {
-            const completed = Boolean(item.completed_at);
-            return (
-              <button
-                key={item.id}
-                type="button"
-                onClick={() => onToggleItem(item)}
-                className={`flex min-h-16 items-center gap-3 rounded-2xl border px-4 py-3 text-left transition ${
-                  completed
-                    ? 'border-tone-success-border bg-tone-success-bg'
-                    : 'border-default bg-surface-2 hover:border-accent hover:bg-surface-3'
-                }`}
-              >
-                <CheckCircle2
-                  className={`h-5 w-5 shrink-0 ${
-                    completed ? 'text-accent-success-ink' : 'text-secondary'
-                  }`}
-                />
-                <span
-                  className={`text-sm font-semibold ${
-                    completed
-                      ? 'text-accent-success-ink line-through'
-                      : 'text-primary'
-                  }`}
-                >
-                  {item.title}
-                </span>
-              </button>
-            );
-          })}
-        </div>
-      )}
-    </motion.section>
   );
 }

@@ -1,43 +1,21 @@
 'use client';
 
 import { useState, useId, useMemo, useCallback, useEffect } from 'react';
-import {
-  X,
-  Calculator,
-  RotateCcw,
-  Sparkles,
-  TrendingUp,
-  Award,
-  GraduationCap,
-  History,
-  Target,
-  Trash2,
-  Check,
-  ArrowUpRight,
-  ArrowDownRight,
-  BookmarkPlus,
-  Flame,
-  Printer,
-} from 'lucide-react';
+import { Calculator, Printer, X } from 'lucide-react';
 import { applyAnswerChange } from '@/lib/examInputs';
 import { useAccessibleModal } from '@/hooks/useAccessibleModal';
-import { formatIstanbulDate } from '@/lib/date-format';
 import {
   getSavedExamTrials,
   saveExamTrial,
   deleteExamTrial,
   type SavedExamTrial,
 } from '@/lib/examHistoryStorage';
-import ExamTrendChart from '@/features/profile/components/ExamTrendChart';
 import {
   calculateLgsScore,
   calculateYksScoreTable,
   createInitialLgsInputs,
   createInitialYksInputs,
   lgsSubjects,
-  tytSubjectKeys,
-  aytSubjectKeys,
-  yksSubjects,
   type LgsInputs,
   type LgsSubjectKey,
   type YksInputs,
@@ -45,24 +23,19 @@ import {
   type YksSubjectKey,
 } from '@/lib/examCalculators';
 
-export const LGS_TARGET_PRESETS = [
-  { name: 'Galatasaray Lisesi', score: 498.0 },
-  { name: 'Ankara Fen Lisesi', score: 494.5 },
-  { name: 'İzmir Fen Lisesi', score: 491.2 },
-  { name: 'Kabataş Erkek Lisesi', score: 489.0 },
-  { name: 'Kadıköy Anadolu Lisesi', score: 476.5 },
-  { name: 'Nitelikli Fen Lisesi', score: 460.0 },
-  { name: 'Köklü Anadolu Lisesi', score: 420.0 },
-];
+import {
+  LGS_TARGET_PRESETS,
+  YKS_TARGET_PRESETS,
+  type LgsResultData,
+  type LgsGapAnalysis,
+  type YksGapAnalysis,
+} from './ExamScoreCalculatorModal/types';
+import { PrintReportSection } from './ExamScoreCalculatorModal/PrintReportSection';
+import { LgsCalculatorTab } from './ExamScoreCalculatorModal/LgsCalculatorTab';
+import { YksCalculatorTab } from './ExamScoreCalculatorModal/YksCalculatorTab';
+import { ExamTrialHistorySection } from './ExamScoreCalculatorModal/ExamTrialHistorySection';
 
-export const YKS_TARGET_PRESETS = [
-  { name: 'Tıp Fakültesi (Devlet)', score: 490.0, type: 'SAY' as const },
-  { name: 'Mühendislik (İTÜ / ODTÜ)', score: 455.0, type: 'SAY' as const },
-  { name: 'Hukuk Fakültesi (Ankara / İst)', score: 425.0, type: 'EA' as const },
-  { name: 'İktisat / İşletme (Boğaziçi)', score: 440.0, type: 'EA' as const },
-  { name: 'Mimarlık / Temel Bilimler', score: 390.0, type: 'SAY' as const },
-  { name: 'Eğitim Fakültesi (Öğretmenlik)', score: 360.0, type: 'EA' as const },
-];
+export { LGS_TARGET_PRESETS, YKS_TARGET_PRESETS };
 
 type ExamScoreCalculatorModalProps = {
   isOpen: boolean;
@@ -118,7 +91,7 @@ export function ExamScoreCalculatorModal({
   }, [isOpen, reloadTrials]);
 
   // LGS Calculations
-  const lgsResult = useMemo(() => {
+  const lgsResult: LgsResultData = useMemo(() => {
     const lgsCalc = calculateLgsScore(lgsInputs);
     const score = lgsCalc.estimatedScore;
     let totalNet = 0;
@@ -148,8 +121,8 @@ export function ExamScoreCalculatorModal({
       estimatedPercentile = '%6.1 - %14.0';
       targetBand = 'Proje Anadolu & İmam Hatip Liseleri';
     } else if (score >= 300) {
-      estimatedPercentile = '%14.1 - %25.0';
-      targetBand = 'Anadolu Liseleri';
+      estimatedPercentile = '%14.1 - %30.0';
+      targetBand = 'Sınavla Alan Anadolu Liseleri';
     }
 
     return {
@@ -165,69 +138,56 @@ export function ExamScoreCalculatorModal({
   // YKS Calculations
   const yksResult = useMemo(() => {
     const table = calculateYksScoreTable(yksInputs, diplomaScore);
-    const activeRow =
-      table.rows.find((r) => r.scoreType === selectedYksType) || table.rows[0];
+    const activeRow = table.rows.find((r) => r.scoreType === selectedYksType) ||
+      table.rows[0] || {
+        scoreType: 'SAY' as YksScoreType,
+        rawScore: 0,
+        placementScore: 0,
+        rawRank: 0,
+        placementRank: 0,
+      };
+
+    const tytMat = Math.max(
+      0,
+      (yksInputs.tytMatematik?.correct || 0) -
+        (yksInputs.tytMatematik?.wrong || 0) / 4,
+    );
+    const aytMat = Math.max(
+      0,
+      (yksInputs.aytMatematik?.correct || 0) -
+        (yksInputs.aytMatematik?.wrong || 0) / 4,
+    );
 
     let tytNet = 0;
-    for (const key of tytSubjectKeys) {
-      const inp = yksInputs[key] || { correct: 0, wrong: 0 };
-      tytNet += Math.max(0, inp.correct - inp.wrong / 4);
-    }
-
     let aytNet = 0;
-    for (const key of aytSubjectKeys) {
-      const inp = yksInputs[key] || { correct: 0, wrong: 0 };
-      aytNet += Math.max(0, inp.correct - inp.wrong / 4);
+    for (const key of Object.keys(yksInputs) as YksSubjectKey[]) {
+      const inp = yksInputs[key];
+      if (!inp) continue;
+      const net = Math.max(0, inp.correct - inp.wrong / 4);
+      if (key.startsWith('tyt')) {
+        tytNet += net;
+      } else {
+        aytNet += net;
+      }
     }
 
     return {
+      rows: table.rows,
       activeRow,
-      tytNet: Number(tytNet.toFixed(2)),
-      aytNet: Number(aytNet.toFixed(2)),
+      tytMatNet: Number(tytMat.toFixed(1)),
+      aytMatNet: Number(aytMat.toFixed(1)),
+      tytNet: Number(tytNet.toFixed(1)),
+      aytNet: Number(aytNet.toFixed(1)),
     };
   }, [yksInputs, diplomaScore, selectedYksType]);
 
-  const handleLgsChange = (
-    subject: LgsSubjectKey,
-    field: 'correct' | 'wrong',
-    value: string | number,
-    maxQuestions: number,
-  ) => {
-    setLgsInputs((prev) => ({
-      ...prev,
-      [subject]: applyAnswerChange(prev[subject], field, value, maxQuestions),
-    }));
-  };
-
-  const handleYksChange = (
-    subject: YksSubjectKey,
-    field: 'correct' | 'wrong',
-    value: string | number,
-    maxQuestions: number,
-  ) => {
-    setYksInputs((prev) => ({
-      ...prev,
-      [subject]: applyAnswerChange(prev[subject], field, value, maxQuestions),
-    }));
-  };
-
-  const peakTrial = useMemo(() => {
-    if (!savedTrials.length) return null;
-    return [...savedTrials].sort((a, b) => b.score - a.score)[0];
-  }, [savedTrials]);
-
-  const currentLgsTarget = useMemo(() => {
-    return (
+  // Hedef Lise Gap Analizi
+  const lgsGapAnalysis: LgsGapAnalysis = useMemo(() => {
+    const preset =
       LGS_TARGET_PRESETS.find((p) => p.name === selectedLgsTarget) ||
-      LGS_TARGET_PRESETS[1]
-    );
-  }, [selectedLgsTarget]);
-
-  const lgsGapAnalysis = useMemo(() => {
-    const targetScore = currentLgsTarget.score;
-    const currentScore = lgsResult.score;
-    const delta = targetScore - currentScore;
-    const isReached = delta <= 0;
+      LGS_TARGET_PRESETS[0];
+    const diff = Number((preset.score - lgsResult.score).toFixed(2));
+    const isReached = diff <= 0;
 
     const mathInput = lgsInputs.matematik || { correct: 0, wrong: 0 };
     const currentMathNet = Math.max(0, mathInput.correct - mathInput.wrong / 3);
@@ -237,42 +197,62 @@ export function ExamScoreCalculatorModal({
     const currentFenNet = Math.max(0, fenInput.correct - fenInput.wrong / 3);
     const fenHeadroom = Math.max(0, 20 - currentFenNet);
 
-    const neededNet = isReached ? 0 : Math.ceil(delta / 4.34);
+    const neededNet = isReached ? 0 : Math.ceil(diff / 4.34);
     const mathNeeded = Math.min(mathHeadroom, neededNet);
     const fenNeeded = Math.min(fenHeadroom, neededNet);
 
     return {
-      targetScore,
-      delta: Number(delta.toFixed(2)),
+      targetScore: preset.score,
+      diff,
       isReached,
       mathNeeded,
       fenNeeded,
     };
-  }, [currentLgsTarget, lgsResult, lgsInputs]);
+  }, [lgsInputs, lgsResult.score, selectedLgsTarget]);
 
-  const currentYksTarget = useMemo(() => {
-    return (
+  // Hedef Üniversite Gap Analizi
+  const yksGapAnalysis: YksGapAnalysis = useMemo(() => {
+    const preset =
       YKS_TARGET_PRESETS.find((p) => p.name === selectedYksTarget) ||
-      YKS_TARGET_PRESETS[0]
-    );
-  }, [selectedYksTarget]);
-
-  const yksGapAnalysis = useMemo(() => {
-    const targetScore = currentYksTarget.score;
+      YKS_TARGET_PRESETS[0];
     const currentScore = yksResult.activeRow.placementScore;
-    const delta = targetScore - currentScore;
-    const isReached = delta <= 0;
-
-    const aytMathNeeded = isReached ? 0 : Math.ceil(delta / 3.0);
+    const diff = Number((preset.score - currentScore).toFixed(1));
+    const isReached = diff <= 0;
+    const aytMathNeeded = Math.max(0, Math.ceil(Math.max(0, diff) / 3.0));
 
     return {
-      targetScore,
-      delta: Number(delta.toFixed(2)),
+      targetScore: preset.score,
+      diff,
       isReached,
       aytMathNeeded,
     };
-  }, [currentYksTarget, yksResult]);
+  }, [yksResult.activeRow.placementScore, selectedYksTarget]);
 
+  // Handler LGS
+  const handleLgsChange = (
+    subject: LgsSubjectKey,
+    field: 'correct' | 'wrong',
+    val: number,
+  ) => {
+    const maxQ = lgsSubjects.find((s) => s.key === subject)?.questions || 20;
+    const current = lgsInputs[subject] || { correct: 0, wrong: 0 };
+    const updated = applyAnswerChange(current, field, val, maxQ);
+    setLgsInputs((prev) => ({ ...prev, [subject]: updated }));
+  };
+
+  // Handler YKS
+  const handleYksChange = (
+    subject: YksSubjectKey,
+    field: 'correct' | 'wrong',
+    val: number,
+    maxQuestions: number,
+  ) => {
+    const current = yksInputs[subject] || { correct: 0, wrong: 0 };
+    const updated = applyAnswerChange(current, field, val, maxQuestions);
+    setYksInputs((prev) => ({ ...prev, [subject]: updated }));
+  };
+
+  // Deneme Kaydetme Handlers
   const handleSaveLgsTrial = () => {
     const mathInput = lgsInputs.matematik || { correct: 0, wrong: 0 };
     const mathNet = Math.max(0, mathInput.correct - mathInput.wrong / 3);
@@ -288,41 +268,37 @@ export function ExamScoreCalculatorModal({
         wrongCount: lgsResult.totalWrong,
       },
     });
-    reloadTrials();
     setSaveSuccess(true);
-    setTimeout(() => setSaveSuccess(false), 2000);
+    setTimeout(() => setSaveSuccess(false), 2500);
+    reloadTrials();
   };
 
   const handleSaveYksTrial = () => {
-    const mathTyt = yksInputs.tytMatematik || { correct: 0, wrong: 0 };
-    const mathAyt = yksInputs.aytMatematik || { correct: 0, wrong: 0 };
-    const tytMathNet = Math.max(0, mathTyt.correct - mathTyt.wrong / 4);
-    const aytMathNet = Math.max(0, mathAyt.correct - mathAyt.wrong / 4);
-    const totalMathNet = tytMathNet + aytMathNet;
     const trialCount = savedTrials.length + 1;
-
     saveExamTrial({
       examType: 'yks',
       title: `YKS (${selectedYksType}) Deneme #${trialCount}`,
       score: yksResult.activeRow.placementScore,
-      mathNet: totalMathNet,
-      totalNet: yksResult.tytNet + yksResult.aytNet,
+      totalNet: Number((yksResult.tytNet + yksResult.aytNet).toFixed(1)),
+      mathNet: Number((yksResult.tytMatNet + yksResult.aytMatNet).toFixed(1)),
       details: {
-        subNets: {
-          tytNet: yksResult.tytNet,
-          aytNet: yksResult.aytNet,
-        },
+        subNets: { [selectedYksType]: yksResult.activeRow.placementScore },
       },
     });
-    reloadTrials();
     setSaveSuccess(true);
-    setTimeout(() => setSaveSuccess(false), 2000);
+    setTimeout(() => setSaveSuccess(false), 2500);
+    reloadTrials();
   };
 
   const handleDeleteTrial = (id: string) => {
     deleteExamTrial(id);
     reloadTrials();
   };
+
+  const peakTrial = useMemo(() => {
+    if (savedTrials.length === 0) return null;
+    return [...savedTrials].sort((a, b) => b.score - a.score)[0];
+  }, [savedTrials]);
 
   const handleResetLgs = () => setLgsInputs(createInitialLgsInputs());
   const handleResetYks = () => {
@@ -358,12 +334,14 @@ export function ExamScoreCalculatorModal({
           .print-only { display: none !important; }
         }
       `}</style>
+
       <button
         type="button"
         aria-label="Pencereyi kapat"
         className="fixed inset-0 bg-slate-950/80 backdrop-blur-md no-print"
         onClick={onClose}
       />
+
       <div
         ref={modalRef}
         role="dialog"
@@ -371,315 +349,19 @@ export function ExamScoreCalculatorModal({
         aria-labelledby={titleId}
         className="print-exam-score-area relative z-10 flex max-h-[calc(100dvh-max(1.5rem,env(safe-area-inset-top)+env(safe-area-inset-bottom)))] w-full max-w-4xl flex-col overflow-hidden rounded-3xl border border-slate-200/80 dark:border-white/10 bg-white dark:bg-slate-900 shadow-2xl transition-all"
       >
-        {/* A4 Yazdırılabilir Deneme Karnesi & Eylem Planı (Yalnızca Print Görünümünde) */}
-        <div className="print-only mb-6 border-b-2 border-black pb-4 text-black font-sans">
-          <div className="flex justify-between items-start border-b border-gray-400 pb-3">
-            <div>
-              <h1 className="text-xl font-bold tracking-tight">
-                Uğur Hoca Matematik — Deneme Sınavı Sonuç Karnesi & Stratejik
-                Eylem Planı
-              </h1>
-              <p className="mt-1 text-xs text-gray-700">
-                Sınav Türü:{' '}
-                <span className="font-bold">
-                  {activeTab === 'lgs'
-                    ? 'LGS (8. Sınıf)'
-                    : `YKS (${selectedYksType} Puan Türü)`}
-                </span>{' '}
-                | Tarih: {formatIstanbulDate(new Date())} | Kişisel Teşhis ve
-                Gelişim Çıktısı
-              </p>
-            </div>
-            <div className="text-right">
-              <span className="inline-block border border-black px-2.5 py-1 text-xs font-bold rounded">
-                Hedef:{' '}
-                {activeTab === 'lgs' ? selectedLgsTarget : selectedYksTarget}
-              </span>
-            </div>
-          </div>
-
-          {/* Ana Metrikler Bento Grid */}
-          <div className="mt-4 grid grid-cols-4 gap-2.5 text-center">
-            <div className="border border-gray-400 rounded-lg p-2.5 bg-gray-50">
-              <div className="text-[10px] font-bold uppercase text-gray-600">
-                {activeTab === 'lgs' ? 'LGS Puanı' : 'Yerleştirme Puanı'}
-              </div>
-              <div className="mt-1 text-2xl font-black">
-                {activeTab === 'lgs'
-                  ? lgsResult.score
-                  : yksResult.activeRow.placementScore}
-              </div>
-              <div className="text-[9px] text-gray-500">
-                {activeTab === 'lgs' ? 'Maks: 500 Puan' : 'Maks: 560 Puan'}
-              </div>
-            </div>
-
-            <div className="border border-gray-400 rounded-lg p-2.5 bg-gray-50">
-              <div className="text-[10px] font-bold uppercase text-gray-600">
-                Toplam Net
-              </div>
-              <div className="mt-1 text-2xl font-black text-indigo-700">
-                {activeTab === 'lgs'
-                  ? lgsResult.totalNet
-                  : Number((yksResult.tytNet + yksResult.aytNet).toFixed(2))}
-              </div>
-              <div className="text-[9px] text-gray-500">
-                {activeTab === 'lgs'
-                  ? '90 Soru Üzerinden'
-                  : `${yksResult.tytNet} TYT + ${yksResult.aytNet} AYT`}
-              </div>
-            </div>
-
-            <div className="border border-gray-400 rounded-lg p-2.5 bg-gray-50">
-              <div className="text-[10px] font-bold uppercase text-gray-600">
-                Matematik Neti
-              </div>
-              <div className="mt-1 text-2xl font-black text-amber-700">
-                {activeTab === 'lgs'
-                  ? Math.max(
-                      0,
-                      (lgsInputs.matematik?.correct || 0) -
-                        (lgsInputs.matematik?.wrong || 0) / 3,
-                    ).toFixed(2)
-                  : Number(
-                      (
-                        Math.max(
-                          0,
-                          (yksInputs.tytMatematik?.correct || 0) -
-                            (yksInputs.tytMatematik?.wrong || 0) / 4,
-                        ) +
-                        Math.max(
-                          0,
-                          (yksInputs.aytMatematik?.correct || 0) -
-                            (yksInputs.aytMatematik?.wrong || 0) / 4,
-                        )
-                      ).toFixed(2),
-                    )}
-              </div>
-              <div className="text-[9px] text-gray-500">
-                {activeTab === 'lgs'
-                  ? '20 Soru Üzerinden'
-                  : 'TYT + AYT Matematik'}
-              </div>
-            </div>
-
-            <div className="border border-gray-400 rounded-lg p-2.5 bg-gray-50">
-              <div className="text-[10px] font-bold uppercase text-gray-600">
-                {activeTab === 'lgs' ? 'Tahmini Yüzdelik' : 'Başarı Sırası'}
-              </div>
-              <div className="mt-1 text-2xl font-black text-emerald-700">
-                {activeTab === 'lgs'
-                  ? lgsResult.estimatedPercentile
-                  : yksResult.activeRow.placementRank.toLocaleString('tr-TR')}
-              </div>
-              <div className="text-[9px] text-gray-500">
-                {activeTab === 'lgs'
-                  ? lgsResult.targetBand
-                  : 'Tahmini Sıralama'}
-              </div>
-            </div>
-          </div>
-
-          {/* Ders Bazlı Net Döküm Tablosu */}
-          <div className="mt-4">
-            <h3 className="text-xs font-bold uppercase tracking-wider mb-1.5 border-b border-gray-300 pb-1">
-              Ders Bazlı Doğru, Yanlış ve Net Tablosu
-            </h3>
-            <table className="w-full text-xs text-left border-collapse border border-gray-400">
-              <thead>
-                <tr className="bg-gray-100 text-gray-800 border-b border-gray-400">
-                  <th className="p-1.5 border-r border-gray-300">
-                    Ders / Test
-                  </th>
-                  <th className="p-1.5 text-center border-r border-gray-300">
-                    Soru
-                  </th>
-                  <th className="p-1.5 text-center border-r border-gray-300">
-                    Doğru
-                  </th>
-                  <th className="p-1.5 text-center border-r border-gray-300">
-                    Yanlış
-                  </th>
-                  <th className="p-1.5 text-center border-r border-gray-300">
-                    Boş
-                  </th>
-                  <th className="p-1.5 text-center border-r border-gray-300 font-bold">
-                    Net
-                  </th>
-                  <th className="p-1.5 text-center">Başarı %</th>
-                </tr>
-              </thead>
-              <tbody>
-                {activeTab === 'lgs' ? (
-                  <>
-                    {lgsSubjects.map((sub) => {
-                      const inp = lgsInputs[sub.key] || {
-                        correct: 0,
-                        wrong: 0,
-                      };
-                      const empty = Math.max(
-                        0,
-                        sub.questions - (inp.correct + inp.wrong),
-                      );
-                      const net = Math.max(0, inp.correct - inp.wrong / 3);
-                      const rate = Math.round((net / sub.questions) * 100);
-                      return (
-                        <tr key={sub.key} className="border-b border-gray-300">
-                          <td className="p-1.5 font-medium border-r border-gray-300">
-                            {sub.label}
-                          </td>
-                          <td className="p-1.5 text-center border-r border-gray-300">
-                            {sub.questions}
-                          </td>
-                          <td className="p-1.5 text-center border-r border-gray-300 text-emerald-800 font-semibold">
-                            {inp.correct}
-                          </td>
-                          <td className="p-1.5 text-center border-r border-gray-300 text-rose-800 font-semibold">
-                            {inp.wrong}
-                          </td>
-                          <td className="p-1.5 text-center border-r border-gray-300 text-gray-600">
-                            {empty}
-                          </td>
-                          <td className="p-1.5 text-center border-r border-gray-300 font-bold">
-                            {net.toFixed(2)}
-                          </td>
-                          <td className="p-1.5 text-center font-medium">
-                            %{rate}
-                          </td>
-                        </tr>
-                      );
-                    })}
-                    <tr className="bg-gray-100 font-bold border-t-2 border-gray-400">
-                      <td className="p-1.5 border-r border-gray-300">
-                        LGS TOPLAMI
-                      </td>
-                      <td className="p-1.5 text-center border-r border-gray-300">
-                        90
-                      </td>
-                      <td className="p-1.5 text-center border-r border-gray-300">
-                        {lgsResult.totalCorrect}
-                      </td>
-                      <td className="p-1.5 text-center border-r border-gray-300">
-                        {lgsResult.totalWrong}
-                      </td>
-                      <td className="p-1.5 text-center border-r border-gray-300">
-                        {90 - (lgsResult.totalCorrect + lgsResult.totalWrong)}
-                      </td>
-                      <td className="p-1.5 text-center border-r border-gray-300 text-indigo-900">
-                        {lgsResult.totalNet.toFixed(2)}
-                      </td>
-                      <td className="p-1.5 text-center">
-                        %{Math.round((lgsResult.totalNet / 90) * 100)}
-                      </td>
-                    </tr>
-                  </>
-                ) : (
-                  <>
-                    {yksSubjects.map((sub) => {
-                      const inp = yksInputs[sub.key] || {
-                        correct: 0,
-                        wrong: 0,
-                      };
-                      const empty = Math.max(
-                        0,
-                        sub.questions - (inp.correct + inp.wrong),
-                      );
-                      const net = Math.max(0, inp.correct - inp.wrong / 4);
-                      const rate = Math.round((net / sub.questions) * 100);
-                      return (
-                        <tr key={sub.key} className="border-b border-gray-300">
-                          <td className="p-1.5 font-medium border-r border-gray-300">
-                            {sub.label}
-                          </td>
-                          <td className="p-1.5 text-center border-r border-gray-300">
-                            {sub.questions}
-                          </td>
-                          <td className="p-1.5 text-center border-r border-gray-300 text-emerald-800 font-semibold">
-                            {inp.correct}
-                          </td>
-                          <td className="p-1.5 text-center border-r border-gray-300 text-rose-800 font-semibold">
-                            {inp.wrong}
-                          </td>
-                          <td className="p-1.5 text-center border-r border-gray-300 text-gray-600">
-                            {empty}
-                          </td>
-                          <td className="p-1.5 text-center border-r border-gray-300 font-bold">
-                            {net.toFixed(2)}
-                          </td>
-                          <td className="p-1.5 text-center font-medium">
-                            %{rate}
-                          </td>
-                        </tr>
-                      );
-                    })}
-                  </>
-                )}
-              </tbody>
-            </table>
-          </div>
-
-          {/* Hedef Açığı ve Stratejik Eylem Reçetesi */}
-          <div className="mt-3.5 border border-indigo-300 rounded-lg p-2.5 bg-indigo-50/50">
-            <div className="font-bold text-xs text-indigo-950 flex items-center justify-between">
-              <span>🎯 Hedef Analizi & Stratejik Eylem Reçetesi</span>
-              <span className="text-[11px] font-medium text-gray-700">
-                Hedef:{' '}
-                {activeTab === 'lgs' ? selectedLgsTarget : selectedYksTarget}
-              </span>
-            </div>
-            <p className="mt-1 text-xs text-gray-800 leading-relaxed">
-              {activeTab === 'lgs'
-                ? lgsGapAnalysis.isReached
-                  ? `Mevcut netlerin (${lgsResult.score.toFixed(2)} puan) ${selectedLgsTarget} taban puanının üzerinde. Harika bir tempoyla devam ediyorsun!`
-                  : `Hedeflenen ${selectedLgsTarget} taban puanına ulaşmak için: Matematikten yaklaşık +${lgsGapAnalysis.mathNeeded} net veya Fen Bilimlerinden yaklaşık +${lgsGapAnalysis.fenNeeded} net artırmak yeterlidir.`
-                : yksGapAnalysis.isReached
-                  ? `Mevcut yerleştirme puanın (${yksResult.activeRow.placementScore.toFixed(1)}) ${selectedYksTarget} taban puanının üzerinde. Başarılı bir gidişat!`
-                  : `Hedeflenen ${selectedYksTarget} taban puanı için AYT Matematikten yaklaşık +${yksGapAnalysis.aytMathNeeded} net artırmak hedefe taşır.`}
-            </p>
-          </div>
-
-          {/* Öğrenci Öz Değerlendirme & Haftalık Eylem Planı Çizgili Alanları */}
-          <div className="mt-3.5 grid grid-cols-2 gap-3 text-xs">
-            <div className="border border-gray-400 rounded-lg p-2.5">
-              <div className="font-bold text-[11px] text-gray-900 mb-1">
-                📌 Bu Denemede Hata Yaptığım veya Zorlandığım Konular:
-              </div>
-              <div className="border-b border-dashed border-gray-400 h-5 mt-2"></div>
-              <div className="border-b border-dashed border-gray-400 h-5 mt-2"></div>
-              <div className="border-b border-dashed border-gray-400 h-5 mt-2"></div>
-            </div>
-
-            <div className="border border-gray-400 rounded-lg p-2.5">
-              <div className="font-bold text-[11px] text-gray-900 mb-1">
-                🎯 Gelecek Hafta Çözeceğim Telafi Soruları ve Odak Planım:
-              </div>
-              <div className="text-gray-600 mt-1.5 space-y-1">
-                <div>
-                  [ ] 1.
-                  ..............................................................
-                  (Hedef: ... Soru)
-                </div>
-                <div>
-                  [ ] 2.
-                  ..............................................................
-                  (Hedef: ... Soru)
-                </div>
-                <div>
-                  [ ] 3.
-                  ..............................................................
-                  (Hedef: ... Soru)
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* İmzalar */}
-          <div className="mt-4 flex justify-between items-center text-[10px] text-gray-700 border-t border-gray-300 pt-2">
-            <div>Öğrenci İmzası: ____________________</div>
-            <div>Tarih: {formatIstanbulDate(new Date())}</div>
-            <div>Öğretmen / Takip İmzası: ____________________</div>
-          </div>
-        </div>
+        {/* A4 Yazdırılabilir Deneme Karnesi */}
+        <PrintReportSection
+          activeTab={activeTab}
+          selectedYksType={selectedYksType}
+          selectedLgsTarget={selectedLgsTarget}
+          selectedYksTarget={selectedYksTarget}
+          lgsResult={lgsResult}
+          yksResult={yksResult}
+          lgsInputs={lgsInputs}
+          yksInputs={yksInputs}
+          lgsGapAnalysis={lgsGapAnalysis}
+          yksGapAnalysis={yksGapAnalysis}
+        />
 
         {/* Başlık ve Sekmeler */}
         <div className="no-print flex flex-col gap-3 border-b border-slate-200/80 dark:border-white/10 bg-slate-50/80 dark:bg-slate-950/80 px-5 py-4 sm:flex-row sm:items-center sm:justify-between">
@@ -702,7 +384,6 @@ export function ExamScoreCalculatorModal({
           </div>
 
           <div className="flex items-center gap-2">
-            {/* A4 Karne Yazdır Butonu */}
             <button
               type="button"
               onClick={() => window.print()}
@@ -713,7 +394,6 @@ export function ExamScoreCalculatorModal({
               <span className="hidden sm:inline">A4 Karne Yazdır</span>
             </button>
 
-            {/* Sekme Seçici */}
             <div className="flex rounded-xl bg-slate-200/80 dark:bg-white/10 p-1">
               <button
                 type="button"
@@ -750,900 +430,59 @@ export function ExamScoreCalculatorModal({
           </div>
         </div>
 
-        {/* İçerik Alanı (Kaydırılabilir) */}
+        {/* İçerik Alanı */}
         <div className="no-print flex-1 overflow-y-auto p-4 sm:p-6 [scrollbar-width:thin]">
           {activeTab === 'lgs' ? (
-            /* LGS HESAPLAMA PANELİ */
             <div className="space-y-6">
-              {/* Sonuç Özeti Bento Kartı */}
-              <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
-                <div className="rounded-2xl border border-indigo-200/80 dark:border-indigo-500/20 bg-indigo-50/50 dark:bg-indigo-950/30 p-4">
-                  <div className="flex items-center gap-2 text-indigo-600 dark:text-indigo-400 text-xs font-bold uppercase tracking-wider">
-                    <Sparkles className="h-4 w-4" />
-                    <span>LGS Puanı</span>
-                  </div>
-                  <div className="mt-1 font-display text-3xl font-extrabold text-indigo-700 dark:text-indigo-300 tabular-nums">
-                    {lgsResult.score.toFixed(2)}
-                  </div>
-                  <div className="mt-1 text-[11px] text-slate-500 dark:text-slate-400">
-                    500 tam puan üzerinden
-                  </div>
-                </div>
+              <ExamTrialHistorySection
+                examType="lgs"
+                savedTrials={savedTrials}
+                showHistory={showHistory}
+                setShowHistory={setShowHistory}
+                saveSuccess={saveSuccess}
+                onSaveTrial={handleSaveLgsTrial}
+                onDeleteTrial={handleDeleteTrial}
+                peakTrial={peakTrial}
+                targetNet={15}
+              />
 
-                <div className="rounded-2xl border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-white/5 p-4">
-                  <div className="flex items-center gap-2 text-slate-700 dark:text-slate-300 text-xs font-bold uppercase tracking-wider">
-                    <TrendingUp className="h-4 w-4 text-accent-success-ink" />
-                    <span>Toplam Net</span>
-                  </div>
-                  <div className="mt-1 font-display text-3xl font-extrabold text-slate-900 dark:text-white tabular-nums">
-                    {lgsResult.totalNet}
-                  </div>
-                  <div className="mt-1 text-[11px] text-slate-500 dark:text-slate-400">
-                    90 soru arasından (3 yanlış 1 doğruyu götürür)
-                  </div>
-                </div>
-
-                <div className="rounded-2xl border border-purple-200/80 dark:border-purple-500/20 bg-purple-50/50 dark:bg-purple-950/30 p-4">
-                  <div className="flex items-center gap-2 text-purple-600 dark:text-purple-400 text-xs font-bold uppercase tracking-wider">
-                    <Award className="h-4 w-4" />
-                    <span>Tahmini Dilim</span>
-                  </div>
-                  <div className="mt-1 font-display text-2xl font-extrabold text-purple-700 dark:text-purple-300">
-                    {lgsResult.estimatedPercentile}
-                  </div>
-                  <div
-                    className="mt-1 truncate text-[11px] text-slate-500 dark:text-slate-400"
-                    title={lgsResult.targetBand}
-                  >
-                    {lgsResult.targetBand}
-                  </div>
-                </div>
-              </div>
-
-              {/* Aksiyon Barı: Deneme Kaydet & Geçmiş Gelişim */}
-              <div className="flex flex-wrap items-center justify-between gap-2.5 p-1">
-                <div className="flex items-center gap-2">
-                  <button
-                    type="button"
-                    onClick={handleSaveLgsTrial}
-                    className={`inline-flex items-center gap-1.5 rounded-xl px-3.5 py-2 text-xs font-bold transition-all shadow-sm ${
-                      saveSuccess
-                        ? 'bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none'
-                        : 'active:scale-95 bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none'
-                    }`}
-                  >
-                    {saveSuccess ? (
-                      <Check className="h-4 w-4" />
-                    ) : (
-                      <BookmarkPlus className="h-4 w-4" />
-                    )}
-                    <span>
-                      {saveSuccess
-                        ? 'Deneme Kaydedildi!'
-                        : 'Bu Denemeyi Kaydet'}
-                    </span>
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={() => setShowHistory(!showHistory)}
-                    className={`inline-flex items-center gap-1.5 rounded-xl border px-3 py-2 text-xs font-bold transition-all ${
-                      showHistory
-                        ? 'border-indigo-500 bg-indigo-50 dark:bg-indigo-500/20 text-indigo-700 dark:text-indigo-200'
-                        : 'border-slate-200 dark:border-white/10 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-50'
-                    }`}
-                  >
-                    <History className="h-3.5 w-3.5" />
-                    <span>Deneme Gelişim Çizelgesi ({savedTrials.length})</span>
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={() => window.print()}
-                    className="inline-flex items-center gap-1.5 rounded-xl border border-slate-200 dark:border-white/10 bg-white dark:bg-slate-800 px-3 py-2 text-xs font-bold text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 shadow-sm transition-all"
-                  >
-                    <Printer className="h-3.5 w-3.5 text-indigo-500 dark:text-indigo-400" />
-                    <span>Karnemi Yazdır (A4)</span>
-                  </button>
-                </div>
-
-                {peakTrial && (
-                  <div className="text-[11px] font-semibold text-slate-500 dark:text-slate-400 flex items-center gap-1">
-                    <span>🏆 Zirve Denemen:</span>
-                    <strong className="text-amber-600 dark:text-amber-400">
-                      {peakTrial.score.toFixed(1)} Puan
-                    </strong>
-                    <span>(Mat: {peakTrial.mathNet} Net)</span>
-                  </div>
-                )}
-              </div>
-
-              {/* Deneme Gelişim Çizelgesi & Net Artış Eğrisi */}
-              {showHistory && (
-                <div className="rounded-2xl border border-indigo-200/80 dark:border-indigo-500/20 bg-indigo-50/40 dark:bg-indigo-950/20 p-4 space-y-3">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <History className="h-4 w-4 text-indigo-600 dark:text-indigo-400" />
-                      <h4 className="font-display text-xs font-bold text-slate-900 dark:text-white">
-                        Kayıtlı LGS Deneme Geçmişi ({savedTrials.length})
-                      </h4>
-                    </div>
-                  </div>
-
-                  {/* İnteraktif LGS Net Gelişim Grafiği */}
-                  <ExamTrendChart
-                    trials={savedTrials}
-                    examType="lgs"
-                    targetNet={15}
-                    isLight={false}
-                    className="border-none !p-0 !bg-transparent shadow-none"
-                  />
-
-                  {savedTrials.length === 0 ? (
-                    <p className="text-xs text-slate-500 dark:text-slate-400 py-3 text-center">
-                      Henüz kayıtlı deneme sınavı bulunmuyor. Yukarıdaki
-                      &quot;Bu Denemeyi Kaydet&quot; butonuna basarak ilk
-                      sonucunu ekleyebilirsin.
-                    </p>
-                  ) : (
-                    <div className="space-y-2 max-h-60 overflow-y-auto pr-1 [scrollbar-width:thin]">
-                      {savedTrials.map((trial, idx) => {
-                        const nextTrial = savedTrials[idx + 1];
-                        const netDiff = nextTrial
-                          ? trial.totalNet - nextTrial.totalNet
-                          : null;
-                        return (
-                          <div
-                            key={trial.id}
-                            className="flex items-center justify-between rounded-xl border border-slate-200/80 dark:border-white/10 bg-white dark:bg-slate-800/80 p-3 text-xs"
-                          >
-                            <div className="min-w-0 flex-1">
-                              <div className="flex items-center gap-2">
-                                <span className="font-bold text-slate-900 dark:text-white truncate">
-                                  {trial.title}
-                                </span>
-                                <span className="text-[10px] text-slate-400">
-                                  {trial.date}
-                                </span>
-                              </div>
-                              <div className="mt-1 flex items-center gap-3 text-[11px] text-slate-600 dark:text-slate-300">
-                                <span>
-                                  Puan:{' '}
-                                  <strong className="text-indigo-600 dark:text-indigo-400">
-                                    {trial.score}
-                                  </strong>
-                                </span>
-                                <span>•</span>
-                                <span>
-                                  Matematik:{' '}
-                                  <strong>{trial.mathNet} Net</strong>
-                                </span>
-                                <span>•</span>
-                                <span>
-                                  Toplam: <strong>{trial.totalNet} Net</strong>
-                                </span>
-                              </div>
-                            </div>
-
-                            <div className="flex items-center gap-2.5 shrink-0">
-                              {netDiff !== null && (
-                                <span
-                                  className={`inline-flex items-center gap-0.5 rounded-md px-2 py-0.5 text-[11px] font-bold ${
-                                    netDiff >= 0
-                                      ? 'bg-emerald-500/15 text-emerald-700 dark:text-emerald-300'
-                                      : 'bg-rose-500/15 text-rose-700 dark:text-rose-300'
-                                  }`}
-                                >
-                                  {netDiff >= 0 ? (
-                                    <ArrowUpRight className="h-3 w-3" />
-                                  ) : (
-                                    <ArrowDownRight className="h-3 w-3" />
-                                  )}
-                                  <span>
-                                    {netDiff >= 0
-                                      ? `+${netDiff.toFixed(2)}`
-                                      : netDiff.toFixed(2)}{' '}
-                                    Net
-                                  </span>
-                                </span>
-                              )}
-
-                              <button
-                                type="button"
-                                onClick={() => handleDeleteTrial(trial.id)}
-                                title="Bu denemeyi sil"
-                                className="p-1 text-slate-400 hover:text-rose-500 transition-colors"
-                              >
-                                <Trash2 className="h-3.5 w-3.5" />
-                              </button>
-                            </div>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  )}
-                </div>
-              )}
-
-              {/* Hedef Lise & Tersine Net İhtiyacı Simülatörü */}
-              <div className="rounded-2xl border border-indigo-200/80 dark:border-indigo-500/20 bg-slate-50/70 dark:bg-slate-800/40 p-4 space-y-3">
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-                  <div className="flex items-center gap-2">
-                    <Target className="h-4 w-4 text-indigo-600 dark:text-indigo-400" />
-                    <h4 className="font-display text-xs font-bold text-slate-900 dark:text-white">
-                      Hedef Lise & Tersine Net Simülatörü
-                    </h4>
-                  </div>
-
-                  <div className="flex items-center gap-2">
-                    <span className="text-[11px] text-slate-500 dark:text-slate-400">
-                      Hedef Okul:
-                    </span>
-                    <select
-                      value={selectedLgsTarget}
-                      onChange={(e) => setSelectedLgsTarget(e.target.value)}
-                      className="rounded-lg border border-slate-200 dark:border-white/10 bg-white dark:bg-slate-800 px-2.5 py-1 text-xs font-semibold text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-1 focus:ring-indigo-500"
-                    >
-                      {LGS_TARGET_PRESETS.map((preset) => (
-                        <option key={preset.name} value={preset.name}>
-                          {preset.name} ({preset.score} Puan)
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                </div>
-
-                {/* Reçete Çıktısı */}
-                <div
-                  className={`rounded-xl border p-3 text-xs leading-relaxed ${
-                    lgsGapAnalysis.isReached
-                      ? 'border-emerald-200 bg-emerald-50/70 dark:border-emerald-500/20 dark:bg-emerald-950/30 text-emerald-950 dark:text-emerald-200'
-                      : 'border-amber-200 bg-amber-50/70 dark:border-amber-500/20 dark:bg-amber-950/30 text-amber-950 dark:text-amber-200'
-                  }`}
-                >
-                  {lgsGapAnalysis.isReached ? (
-                    <div className="flex items-center gap-2 font-bold">
-                      <Sparkles className="h-4 w-4 text-accent-success-ink shrink-0" />
-                      <span>
-                        🎉 Harika Gidiyorsun! Mevcut netlerin (
-                        {lgsResult.score.toFixed(2)} puan) {selectedLgsTarget}{' '}
-                        taban puanının ({lgsGapAnalysis.targetScore} puan)
-                        üzerinde.
-                      </span>
-                    </div>
-                  ) : (
-                    <div className="space-y-1">
-                      <p className="font-bold flex items-center gap-1.5">
-                        <Flame className="h-3.5 w-3.5 text-amber-600 dark:text-amber-400 shrink-0" />
-                        <span>
-                          {selectedLgsTarget} ({lgsGapAnalysis.targetScore}{' '}
-                          Puan) İçin Kalan Fark: +{lgsGapAnalysis.delta} Puan
-                        </span>
-                      </p>
-                      <p className="text-[11px] opacity-90">
-                        💡 <strong>Aksiyon Reçetesi:</strong> Bu taban puan
-                        farkını kapatmak için kalan sürede:{' '}
-                        <strong>
-                          Matematikten +{lgsGapAnalysis.mathNeeded} net
-                        </strong>{' '}
-                        VEYA{' '}
-                        <strong>Fenden +{lgsGapAnalysis.fenNeeded} net</strong>{' '}
-                        artırman hedefe ulaşman için yeterli!
-                      </p>
-                    </div>
-                  )}
-                </div>
-              </div>
-
-              {/* Ders Giriş Tablosu */}
-              <div className="rounded-2xl border border-slate-200 dark:border-white/10 overflow-hidden min-w-0">
-                <div className="grid grid-cols-12 bg-slate-100 dark:bg-white/5 px-2.5 sm:px-4 py-2 sm:py-2.5 text-[11px] sm:text-xs font-bold text-slate-600 dark:text-slate-300 border-b border-slate-200 dark:border-white/10">
-                  <div className="col-span-5 sm:col-span-4">
-                    Ders Adı (Soru)
-                  </div>
-                  <div className="col-span-2 text-center">Doğru</div>
-                  <div className="col-span-2 text-center">Yanlış</div>
-                  <div className="col-span-1 text-center hidden sm:block">
-                    Boş
-                  </div>
-                  <div className="col-span-3 text-right">Net</div>
-                </div>
-
-                <div className="divide-y divide-slate-100 dark:divide-white/5">
-                  {lgsSubjects.map((sub) => {
-                    const current = lgsInputs[sub.key] || {
-                      correct: 0,
-                      wrong: 0,
-                    };
-                    const empty = Math.max(
-                      0,
-                      sub.questions - (current.correct + current.wrong),
-                    );
-                    const net = Math.max(
-                      0,
-                      current.correct - current.wrong / 3,
-                    );
-
-                    return (
-                      <div
-                        key={sub.key}
-                        className="grid grid-cols-12 items-center px-2 sm:px-4 py-2 sm:py-3 text-xs sm:text-sm hover:bg-slate-50/50 dark:hover:bg-white/5 transition-colors"
-                      >
-                        <div className="col-span-5 sm:col-span-4 font-semibold text-slate-800 dark:text-slate-200 truncate pr-1">
-                          {sub.label}
-                          <span className="ml-1 text-[10px] sm:text-xs text-slate-400 font-normal">
-                            ({sub.questions}s)
-                          </span>
-                        </div>
-                        <div className="col-span-2 px-0.5 sm:px-1">
-                          <input
-                            type="number"
-                            min="0"
-                            max={sub.questions}
-                            value={current.correct || ''}
-                            placeholder="0"
-                            aria-label={`${sub.label} doğru sayısı`}
-                            onChange={(e) =>
-                              handleLgsChange(
-                                sub.key,
-                                'correct',
-                                e.target.value,
-                                sub.questions,
-                              )
-                            }
-                            className="w-full min-w-0 rounded-lg sm:rounded-xl border border-slate-200 dark:border-white/10 bg-white dark:bg-slate-800 px-1 sm:px-2 py-1 sm:py-1.5 text-center text-xs sm:text-sm font-bold text-slate-900 dark:text-white focus:border-indigo-500 focus:outline-none"
-                          />
-                        </div>
-                        <div className="col-span-2 px-0.5 sm:px-1">
-                          <input
-                            type="number"
-                            min="0"
-                            max={sub.questions}
-                            value={current.wrong || ''}
-                            placeholder="0"
-                            aria-label={`${sub.label} yanlış sayısı`}
-                            onChange={(e) =>
-                              handleLgsChange(
-                                sub.key,
-                                'wrong',
-                                e.target.value,
-                                sub.questions,
-                              )
-                            }
-                            className="w-full min-w-0 rounded-lg sm:rounded-xl border border-slate-200 dark:border-white/10 bg-white dark:bg-slate-800 px-1 sm:px-2 py-1 sm:py-1.5 text-center text-xs sm:text-sm font-bold text-red-500 focus:border-red-500 focus:outline-none"
-                          />
-                        </div>
-                        <div className="col-span-1 text-center font-medium text-slate-400 text-xs hidden sm:block">
-                          {empty}
-                        </div>
-                        <div className="col-span-3 text-right font-display font-extrabold text-xs sm:text-sm text-indigo-600 dark:text-indigo-400 tabular-nums">
-                          {net.toFixed(2)}
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-
-              <div className="flex items-center justify-between pt-2">
-                <button
-                  type="button"
-                  onClick={handleResetLgs}
-                  className="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white transition-colors"
-                >
-                  <RotateCcw className="h-3.5 w-3.5" />
-                  Değerleri Sıfırla
-                </button>
-                <div className="text-[11px] text-slate-400">
-                  MEB 2026 katsayılarına göre standart sapmasız yaklaşık
-                  hesaplamadır.
-                </div>
-              </div>
+              <LgsCalculatorTab
+                lgsInputs={lgsInputs}
+                lgsResult={lgsResult}
+                lgsGapAnalysis={lgsGapAnalysis}
+                selectedLgsTarget={selectedLgsTarget}
+                setSelectedLgsTarget={setSelectedLgsTarget}
+                onInputChange={handleLgsChange}
+                onReset={handleResetLgs}
+              />
             </div>
           ) : (
-            /* YKS HESAPLAMA PANELİ */
             <div className="space-y-6">
-              {/* Puan Türü ve Diploma Notu Seçimi */}
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 rounded-2xl border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-white/5 p-3 sm:p-4">
-                <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
-                  <span className="text-xs font-bold text-slate-700 dark:text-slate-300 mr-1">
-                    Hedef Alan:
-                  </span>
-                  {(['SAY', 'EA', 'SOZ', 'TYT'] as YksScoreType[]).map(
-                    (type) => (
-                      <button
-                        key={type}
-                        type="button"
-                        onClick={() => setSelectedYksType(type)}
-                        className={`rounded-xl px-2.5 sm:px-3 py-1 sm:py-1.5 text-[11px] sm:text-xs font-bold transition-all ${
-                          selectedYksType === type
-                            ? 'shadow-sm bg-brand-primary text-slate-950 dark:text-slate-950'
-                            : 'border border-slate-200 dark:border-white/10 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300'
-                        }`}
-                      >
-                        {type === 'SAY'
-                          ? 'Sayısal'
-                          : type === 'EA'
-                            ? 'Eşit Ağırlık'
-                            : type === 'SOZ'
-                              ? 'Sözel'
-                              : 'Sadece TYT'}
-                      </button>
-                    ),
-                  )}
-                </div>
+              <ExamTrialHistorySection
+                examType="yks"
+                savedTrials={savedTrials}
+                showHistory={showHistory}
+                setShowHistory={setShowHistory}
+                saveSuccess={saveSuccess}
+                onSaveTrial={handleSaveYksTrial}
+                onDeleteTrial={handleDeleteTrial}
+                peakTrial={peakTrial}
+                targetNet={30}
+              />
 
-                <div className="flex items-center gap-2 self-end sm:self-auto">
-                  <GraduationCap className="h-4 w-4 text-indigo-500" />
-                  <label
-                    htmlFor="obp-input"
-                    className="text-xs font-bold text-slate-700 dark:text-slate-300"
-                  >
-                    Diploma Notu (OBP):
-                  </label>
-                  <input
-                    id="obp-input"
-                    type="number"
-                    min="50"
-                    max="100"
-                    value={diplomaScore}
-                    onChange={(e) =>
-                      setDiplomaScore(
-                        Math.max(
-                          50,
-                          Math.min(100, parseInt(e.target.value, 10) || 50),
-                        ),
-                      )
-                    }
-                    className="w-16 rounded-xl border border-slate-200 dark:border-white/10 bg-white dark:bg-slate-800 px-2 py-1 text-center text-xs font-bold text-slate-900 dark:text-white"
-                  />
-                </div>
-              </div>
-
-              {/* YKS Sonuç Özeti Bento */}
-              <div className="grid grid-cols-1 gap-3 sm:grid-cols-4">
-                <div className="rounded-2xl border border-indigo-200 dark:border-indigo-500/20 bg-indigo-50/50 dark:bg-indigo-950/30 p-3.5">
-                  <div className="text-[11px] font-bold uppercase text-indigo-600 dark:text-indigo-400">
-                    Yerleştirme Puanı
-                  </div>
-                  <div className="mt-1 font-display text-2xl font-extrabold text-indigo-700 dark:text-indigo-300 tabular-nums">
-                    {yksResult.activeRow.placementScore.toFixed(2)}
-                  </div>
-                  <div className="text-[10px] text-slate-500 dark:text-slate-400">
-                    OBP Eklenmiş
-                  </div>
-                </div>
-
-                <div className="rounded-2xl border border-purple-200 dark:border-purple-500/20 bg-purple-50/50 dark:bg-purple-950/30 p-3.5">
-                  <div className="text-[11px] font-bold uppercase text-purple-600 dark:text-purple-400">
-                    Tahmini Sıralama
-                  </div>
-                  <div className="mt-1 font-display text-2xl font-extrabold text-purple-700 dark:text-purple-300 tabular-nums">
-                    {yksResult.activeRow.placementRank > 0
-                      ? `~${yksResult.activeRow.placementRank.toLocaleString('tr-TR')}`
-                      : '—'}
-                  </div>
-                  <div className="text-[10px] text-slate-500 dark:text-slate-400">
-                    Başarı Sırası Bandı
-                  </div>
-                </div>
-
-                <div className="rounded-2xl border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-white/5 p-3.5">
-                  <div className="text-[11px] font-bold uppercase text-slate-600 dark:text-slate-300">
-                    TYT Toplam Net
-                  </div>
-                  <div className="mt-1 font-display text-2xl font-extrabold text-slate-900 dark:text-white tabular-nums">
-                    {yksResult.tytNet}
-                  </div>
-                  <div className="text-[10px] text-slate-500 dark:text-slate-400">
-                    120 soru üzerinden
-                  </div>
-                </div>
-
-                <div className="rounded-2xl border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-white/5 p-3.5">
-                  <div className="text-[11px] font-bold uppercase text-slate-600 dark:text-slate-300">
-                    AYT Toplam Net
-                  </div>
-                  <div className="mt-1 font-display text-2xl font-extrabold text-slate-900 dark:text-white tabular-nums">
-                    {yksResult.aytNet}
-                  </div>
-                  <div className="text-[10px] text-slate-500 dark:text-slate-400">
-                    Seçilen testler üzerinden
-                  </div>
-                </div>
-              </div>
-
-              {/* Aksiyon Barı: YKS Deneme Kaydet & Geçmiş Gelişim */}
-              <div className="flex flex-wrap items-center justify-between gap-2.5 p-1">
-                <div className="flex items-center gap-2">
-                  <button
-                    type="button"
-                    onClick={handleSaveYksTrial}
-                    className={`inline-flex items-center gap-1.5 rounded-xl px-3.5 py-2 text-xs font-bold transition-all shadow-sm ${
-                      saveSuccess
-                        ? 'bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none'
-                        : 'active:scale-95 bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none'
-                    }`}
-                  >
-                    {saveSuccess ? (
-                      <Check className="h-4 w-4" />
-                    ) : (
-                      <BookmarkPlus className="h-4 w-4" />
-                    )}
-                    <span>
-                      {saveSuccess
-                        ? 'Deneme Kaydedildi!'
-                        : 'Bu Denemeyi Kaydet'}
-                    </span>
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={() => setShowHistory(!showHistory)}
-                    className={`inline-flex items-center gap-1.5 rounded-xl border px-3 py-2 text-xs font-bold transition-all ${
-                      showHistory
-                        ? 'border-purple-500 bg-purple-50 dark:bg-purple-500/20 text-purple-700 dark:text-purple-200'
-                        : 'border-slate-200 dark:border-white/10 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-50'
-                    }`}
-                  >
-                    <History className="h-3.5 w-3.5" />
-                    <span>YKS Deneme Çizelgesi ({savedTrials.length})</span>
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={() => window.print()}
-                    className="inline-flex items-center gap-1.5 rounded-xl border border-slate-200 dark:border-white/10 bg-white dark:bg-slate-800 px-3 py-2 text-xs font-bold text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 shadow-sm transition-all"
-                  >
-                    <Printer className="h-3.5 w-3.5 text-purple-500 dark:text-purple-400" />
-                    <span>Karnemi Yazdır (A4)</span>
-                  </button>
-                </div>
-
-                {peakTrial && (
-                  <div className="text-[11px] font-semibold text-slate-500 dark:text-slate-400 flex items-center gap-1">
-                    <span>🏆 Zirve YKS Skorun:</span>
-                    <strong className="text-purple-600 dark:text-purple-400">
-                      {peakTrial.score.toFixed(1)} Puan
-                    </strong>
-                    <span>(Mat: {peakTrial.mathNet} Net)</span>
-                  </div>
-                )}
-              </div>
-
-              {/* YKS Deneme Gelişim Çizelgesi */}
-              {showHistory && (
-                <div className="rounded-2xl border border-purple-200/80 dark:border-purple-500/20 bg-purple-50/40 dark:bg-purple-950/20 p-4 space-y-3">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <History className="h-4 w-4 text-purple-600 dark:text-purple-400" />
-                      <h4 className="font-display text-xs font-bold text-slate-900 dark:text-white">
-                        Kayıtlı YKS Deneme Geçmişi ({savedTrials.length})
-                      </h4>
-                    </div>
-                  </div>
-
-                  {/* İnteraktif YKS Net Gelişim Grafiği */}
-                  <ExamTrendChart
-                    trials={savedTrials}
-                    examType="yks"
-                    targetNet={30}
-                    isLight={false}
-                    className="border-none !p-0 !bg-transparent shadow-none"
-                  />
-
-                  {savedTrials.length === 0 ? (
-                    <p className="text-xs text-slate-500 dark:text-slate-400 py-3 text-center">
-                      Henüz kayıtlı deneme sınavı bulunmuyor. Yukarıdaki
-                      &quot;Bu Denemeyi Kaydet&quot; butonuna basarak ilk
-                      sonucunu ekleyebilirsin.
-                    </p>
-                  ) : (
-                    <div className="space-y-2 max-h-60 overflow-y-auto pr-1 [scrollbar-width:thin]">
-                      {savedTrials.map((trial, idx) => {
-                        const nextTrial = savedTrials[idx + 1];
-                        const netDiff = nextTrial
-                          ? trial.totalNet - nextTrial.totalNet
-                          : null;
-                        return (
-                          <div
-                            key={trial.id}
-                            className="flex items-center justify-between rounded-xl border border-slate-200/80 dark:border-white/10 bg-white dark:bg-slate-800/80 p-3 text-xs"
-                          >
-                            <div className="min-w-0 flex-1">
-                              <div className="flex items-center gap-2">
-                                <span className="font-bold text-slate-900 dark:text-white truncate">
-                                  {trial.title}
-                                </span>
-                                <span className="text-[10px] text-slate-400">
-                                  {trial.date}
-                                </span>
-                              </div>
-                              <div className="mt-1 flex items-center gap-3 text-[11px] text-slate-600 dark:text-slate-300">
-                                <span>
-                                  Puan:{' '}
-                                  <strong className="text-purple-600 dark:text-purple-400">
-                                    {trial.score}
-                                  </strong>
-                                </span>
-                                <span>•</span>
-                                <span>
-                                  Mat Toplam:{' '}
-                                  <strong>{trial.mathNet} Net</strong>
-                                </span>
-                                <span>•</span>
-                                <span>
-                                  Genel: <strong>{trial.totalNet} Net</strong>
-                                </span>
-                              </div>
-                            </div>
-
-                            <div className="flex items-center gap-2.5 shrink-0">
-                              {netDiff !== null && (
-                                <span
-                                  className={`inline-flex items-center gap-0.5 rounded-md px-2 py-0.5 text-[11px] font-bold ${
-                                    netDiff >= 0
-                                      ? 'bg-emerald-500/15 text-emerald-700 dark:text-emerald-300'
-                                      : 'bg-rose-500/15 text-rose-700 dark:text-rose-300'
-                                  }`}
-                                >
-                                  {netDiff >= 0 ? (
-                                    <ArrowUpRight className="h-3 w-3" />
-                                  ) : (
-                                    <ArrowDownRight className="h-3 w-3" />
-                                  )}
-                                  <span>
-                                    {netDiff >= 0
-                                      ? `+${netDiff.toFixed(2)}`
-                                      : netDiff.toFixed(2)}{' '}
-                                    Net
-                                  </span>
-                                </span>
-                              )}
-
-                              <button
-                                type="button"
-                                onClick={() => handleDeleteTrial(trial.id)}
-                                title="Bu denemeyi sil"
-                                className="p-1 text-slate-400 hover:text-rose-500 transition-colors"
-                              >
-                                <Trash2 className="h-3.5 w-3.5" />
-                              </button>
-                            </div>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  )}
-                </div>
-              )}
-
-              {/* YKS Hedef Üniversite Simülatörü */}
-              <div className="rounded-2xl border border-purple-200/80 dark:border-purple-500/20 bg-slate-50/70 dark:bg-slate-800/40 p-4 space-y-3">
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-                  <div className="flex items-center gap-2">
-                    <Target className="h-4 w-4 text-purple-600 dark:text-purple-400" />
-                    <h4 className="font-display text-xs font-bold text-slate-900 dark:text-white">
-                      Hedef Üniversite Programı & Net Simülatörü
-                    </h4>
-                  </div>
-
-                  <div className="flex items-center gap-2">
-                    <span className="text-[11px] text-slate-500 dark:text-slate-400">
-                      Hedef:
-                    </span>
-                    <select
-                      value={selectedYksTarget}
-                      onChange={(e) => setSelectedYksTarget(e.target.value)}
-                      className="rounded-lg border border-slate-200 dark:border-white/10 bg-white dark:bg-slate-800 px-2.5 py-1 text-xs font-semibold text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-1 focus:ring-purple-500"
-                    >
-                      {YKS_TARGET_PRESETS.map((preset) => (
-                        <option key={preset.name} value={preset.name}>
-                          {preset.name} ({preset.score} Puan - {preset.type})
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                </div>
-
-                {/* YKS Reçete Çıktısı */}
-                <div
-                  className={`rounded-xl border p-3 text-xs leading-relaxed ${
-                    yksGapAnalysis.isReached
-                      ? 'border-emerald-200 bg-emerald-50/70 dark:border-emerald-500/20 dark:bg-emerald-950/30 text-emerald-950 dark:text-emerald-200'
-                      : 'border-purple-200 bg-purple-50/70 dark:border-purple-500/20 dark:bg-purple-950/30 text-purple-950 dark:text-purple-200'
-                  }`}
-                >
-                  {yksGapAnalysis.isReached ? (
-                    <div className="flex items-center gap-2 font-bold">
-                      <Sparkles className="h-4 w-4 text-accent-success-ink shrink-0" />
-                      <span>
-                        🎉 Harika Gidiyorsun! Yerleştirme puanın (
-                        {yksResult.activeRow.placementScore.toFixed(1)}){' '}
-                        {selectedYksTarget} taban puanının (
-                        {yksGapAnalysis.targetScore}) üzerinde.
-                      </span>
-                    </div>
-                  ) : (
-                    <div className="space-y-1">
-                      <p className="font-bold flex items-center gap-1.5">
-                        <Flame className="h-3.5 w-3.5 text-purple-600 dark:text-purple-400 shrink-0" />
-                        <span>
-                          {selectedYksTarget} ({yksGapAnalysis.targetScore}{' '}
-                          Puan) İçin Kalan Fark: +{yksGapAnalysis.delta} Puan
-                        </span>
-                      </p>
-                      <p className="text-[11px] opacity-90">
-                        💡 <strong>Aksiyon Reçetesi:</strong> Bu taban puan
-                        farkını kapatmak için:{' '}
-                        <strong>
-                          AYT Matematikten yaklaşık +
-                          {yksGapAnalysis.aytMathNeeded} net
-                        </strong>{' '}
-                        artırman hedefe ulaşman için yeterli!
-                      </p>
-                    </div>
-                  )}
-                </div>
-              </div>
-
-              {/* YKS Ders Giriş Tablosu */}
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-                {/* TYT Bölümü */}
-                <div className="rounded-2xl border border-slate-200 dark:border-white/10 overflow-hidden">
-                  <div className="bg-indigo-600 text-white dark:text-white px-4 py-2 text-xs font-bold flex justify-between items-center">
-                    <span>TYT Testleri (120 Soru)</span>
-                    <span>Net: {yksResult.tytNet}</span>
-                  </div>
-                  <div className="divide-y divide-slate-100 dark:divide-white/5 text-xs">
-                    {tytSubjectKeys.map((key) => {
-                      const meta = yksSubjects.find((s) => s.key === key);
-                      const current = yksInputs[key] || {
-                        correct: 0,
-                        wrong: 0,
-                      };
-                      const net = Math.max(
-                        0,
-                        current.correct - current.wrong / 4,
-                      );
-                      return (
-                        <div
-                          key={key}
-                          className="flex items-center justify-between p-2 sm:p-2.5 gap-2"
-                        >
-                          <span className="font-semibold text-slate-800 dark:text-slate-200 truncate text-[11px] sm:text-xs">
-                            {meta?.label} ({meta?.questions}s)
-                          </span>
-                          <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
-                            <input
-                              type="number"
-                              min="0"
-                              max={meta?.questions || 40}
-                              placeholder="D"
-                              aria-label={`${meta?.label || 'Test'} doğru sayısı`}
-                              value={current.correct || ''}
-                              onChange={(e) =>
-                                handleYksChange(
-                                  key,
-                                  'correct',
-                                  e.target.value,
-                                  meta?.questions || 40,
-                                )
-                              }
-                              className="w-10 sm:w-12 rounded-lg border border-slate-200 dark:border-white/10 bg-white dark:bg-slate-800 p-1 text-center font-bold text-xs text-slate-900 dark:text-white"
-                            />
-                            <input
-                              type="number"
-                              min="0"
-                              max={meta?.questions || 40}
-                              placeholder="Y"
-                              aria-label={`${meta?.label || 'Test'} yanlış sayısı`}
-                              value={current.wrong || ''}
-                              onChange={(e) =>
-                                handleYksChange(
-                                  key,
-                                  'wrong',
-                                  e.target.value,
-                                  meta?.questions || 40,
-                                )
-                              }
-                              className="w-10 sm:w-12 rounded-lg border border-slate-200 dark:border-white/10 bg-white dark:bg-slate-800 p-1 text-center font-bold text-red-500 text-xs"
-                            />
-                            <span className="w-10 sm:w-12 text-right font-bold text-indigo-600 dark:text-indigo-400 text-xs">
-                              {net.toFixed(1)}
-                            </span>
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-
-                {/* AYT Bölümü */}
-                <div className="rounded-2xl border border-slate-200 dark:border-white/10 overflow-hidden">
-                  <div className="bg-purple-600 text-white dark:text-white px-4 py-2 text-xs font-bold flex justify-between items-center">
-                    <span>AYT Testleri (Seçilenler)</span>
-                    <span>Net: {yksResult.aytNet}</span>
-                  </div>
-                  <div className="divide-y divide-slate-100 dark:divide-white/5 text-xs">
-                    {aytSubjectKeys.map((key) => {
-                      const meta = yksSubjects.find((s) => s.key === key);
-                      const current = yksInputs[key] || {
-                        correct: 0,
-                        wrong: 0,
-                      };
-                      const net = Math.max(
-                        0,
-                        current.correct - current.wrong / 4,
-                      );
-                      return (
-                        <div
-                          key={key}
-                          className="flex items-center justify-between p-2 sm:p-2.5 gap-2"
-                        >
-                          <span className="font-semibold text-slate-800 dark:text-slate-200 truncate text-[11px] sm:text-xs">
-                            {meta?.label} ({meta?.questions}s)
-                          </span>
-                          <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
-                            <input
-                              type="number"
-                              min="0"
-                              max={meta?.questions || 40}
-                              placeholder="D"
-                              aria-label={`${meta?.label || 'Test'} doğru sayısı`}
-                              value={current.correct || ''}
-                              onChange={(e) =>
-                                handleYksChange(
-                                  key,
-                                  'correct',
-                                  e.target.value,
-                                  meta?.questions || 40,
-                                )
-                              }
-                              className="w-10 sm:w-12 rounded-lg border border-slate-200 dark:border-white/10 bg-white dark:bg-slate-800 p-1 text-center font-bold text-xs text-slate-900 dark:text-white"
-                            />
-                            <input
-                              type="number"
-                              min="0"
-                              max={meta?.questions || 40}
-                              placeholder="Y"
-                              aria-label={`${meta?.label || 'Test'} yanlış sayısı`}
-                              value={current.wrong || ''}
-                              onChange={(e) =>
-                                handleYksChange(
-                                  key,
-                                  'wrong',
-                                  e.target.value,
-                                  meta?.questions || 40,
-                                )
-                              }
-                              className="w-10 sm:w-12 rounded-lg border border-slate-200 dark:border-white/10 bg-white dark:bg-slate-800 p-1 text-center font-bold text-red-500 text-xs"
-                            />
-                            <span className="w-10 sm:w-12 text-right font-bold text-purple-600 dark:text-purple-400 text-xs">
-                              {net.toFixed(1)}
-                            </span>
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-              </div>
-
-              <div className="flex items-center justify-between pt-2">
-                <button
-                  type="button"
-                  onClick={handleResetYks}
-                  className="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white transition-colors"
-                >
-                  <RotateCcw className="h-3.5 w-3.5" />
-                  Değerleri Sıfırla
-                </button>
-                <div className="text-[11px] text-slate-400">
-                  ÖSYM 2026 katsayılarına ve geçmiş yıl yığılım verilerine göre
-                  yaklaşık tahmindir.
-                </div>
-              </div>
+              <YksCalculatorTab
+                yksInputs={yksInputs}
+                diplomaScore={diplomaScore}
+                setDiplomaScore={setDiplomaScore}
+                selectedYksType={selectedYksType}
+                setSelectedYksType={setSelectedYksType}
+                selectedYksTarget={selectedYksTarget}
+                setSelectedYksTarget={setSelectedYksTarget}
+                yksResult={yksResult}
+                yksGapAnalysis={yksGapAnalysis}
+                onInputChange={handleYksChange}
+                onReset={handleResetYks}
+              />
             </div>
           )}
         </div>

@@ -2,319 +2,46 @@
 
 import { useState, useEffect } from 'react';
 import { useAccessibleModal } from '@/hooks/useAccessibleModal';
-import {
-  X,
-  ChevronLeft,
-  ChevronRight,
-  Shuffle,
-  RotateCw,
-  Sparkles,
-  CheckCircle,
-  Printer,
-  Star,
-  Zap,
-  Volume2,
-  VolumeX,
-} from 'lucide-react';
-import MathText from '@/components/MathText';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
 import FormulaSpeedDrillModal from './FormulaSpeedDrillModal';
 import { useFormulaSpeech } from '../utils/mathSpeechSynthesizer';
+import type {
+  Flashcard,
+  LeitnerBoxLevel,
+  CardLeitnerState,
+  FormulaFlashcardsModalProps,
+} from './FormulaFlashcardsModal/types';
+import {
+  LEITNER_INTERVALS,
+  LEITNER_STORAGE_KEY,
+  STARRED_FORMULAS_KEY,
+  LEARNED_FORMULAS_KEY,
+  getStarredFormulaIds,
+  getLearnedFormulaIds,
+  getLeitnerStates,
+  saveCardLeitnerState,
+} from './FormulaFlashcardsModal/flashcardStorage';
+import { FLASHCARDS_DATA } from './FormulaFlashcardsModal/flashcardData';
+import { FlashcardPrintSection } from './FormulaFlashcardsModal/FlashcardPrintSection';
+import { FlashcardHeader } from './FormulaFlashcardsModal/FlashcardHeader';
+import {
+  FlashcardCategoryNav,
+  type CategoryFilterType,
+} from './FormulaFlashcardsModal/FlashcardCategoryNav';
+import { FlashcardViewer } from './FormulaFlashcardsModal/FlashcardViewer';
 
-export type Flashcard = {
-  id: string;
-  category: 'lgs' | 'yks';
-  subject: string;
-  title: string;
-  frontText: string;
-  formula: string;
-  tip: string;
-  example?: string;
-};
-
-export type LeitnerBoxLevel = 1 | 2 | 3 | 4 | 5;
-
-export type CardLeitnerState = {
-  box: LeitnerBoxLevel;
-  lastReviewedAt: string;
-  nextReviewAt: string;
-  reviewCount: number;
-};
-
-export const LEITNER_INTERVALS: Record<LeitnerBoxLevel, number> = {
-  1: 1,  // 1 gün
-  2: 3,  // 3 gün
-  3: 7,  // 7 gün
-  4: 14, // 14 gün
-  5: 30, // 30 gün (kalıcı)
-};
-
-export const LEITNER_STORAGE_KEY = 'ugurhoca_leitner_box_v1';
-export const STARRED_FORMULAS_KEY = 'ugurhoca_starred_formulas_v1';
-export const LEARNED_FORMULAS_KEY = 'ugurhoca_learned_formulas_v1';
-
-export function getStarredFormulaIds(): string[] {
-  if (typeof window === 'undefined') return [];
-  try {
-    const raw = localStorage.getItem(STARRED_FORMULAS_KEY);
-    return raw ? JSON.parse(raw) : [];
-  } catch {
-    return [];
-  }
-}
-
-export function getLearnedFormulaIds(): string[] {
-  if (typeof window === 'undefined') return [];
-  try {
-    const raw = localStorage.getItem(LEARNED_FORMULAS_KEY);
-    return raw ? JSON.parse(raw) : [];
-  } catch {
-    return [];
-  }
-}
-
-export function getLeitnerStates(): Record<string, CardLeitnerState> {
-  if (typeof window === 'undefined') return {};
-  try {
-    const raw = localStorage.getItem(LEITNER_STORAGE_KEY);
-    return raw ? JSON.parse(raw) : {};
-  } catch {
-    return {};
-  }
-}
-
-export function saveCardLeitnerState(
-  cardId: string,
-  result: 'forgot' | 'hard' | 'known'
-): CardLeitnerState {
-  const all = getLeitnerStates();
-  const current = all[cardId] || {
-    box: 1,
-    lastReviewedAt: new Date().toISOString(),
-    nextReviewAt: new Date().toISOString(),
-    reviewCount: 0,
-  };
-
-  let newBox: LeitnerBoxLevel = current.box;
-  if (result === 'forgot') {
-    newBox = 1;
-  } else if (result === 'hard') {
-    newBox = current.box;
-  } else if (result === 'known') {
-    newBox = Math.min(5, current.box + 1) as LeitnerBoxLevel;
-  }
-
-  const intervalDays = LEITNER_INTERVALS[newBox];
-  const nextDate = new Date();
-  nextDate.setDate(nextDate.getDate() + intervalDays);
-
-  const updated: CardLeitnerState = {
-    box: newBox,
-    lastReviewedAt: new Date().toISOString(),
-    nextReviewAt: nextDate.toISOString(),
-    reviewCount: (current.reviewCount || 0) + 1,
-  };
-
-  all[cardId] = updated;
-  try {
-    localStorage.setItem(LEITNER_STORAGE_KEY, JSON.stringify(all));
-  } catch {
-    // ignore
-  }
-  return updated;
-}
-
-export const FLASHCARDS_DATA: Flashcard[] = [
-  // LGS
-  {
-    id: 'lgs-1',
-    category: 'lgs',
-    subject: 'Çarpanlara Ayırma',
-    title: 'Tam Kare Özdeşlikleri',
-    frontText: '(a + b)² ve (a - b)² açılımları nasıldır?',
-    formula: '$$(a + b)^2 = a^2 + 2ab + b^2$$\n$$(a - b)^2 = a^2 - 2ab + b^2$$',
-    tip: 'Birincinin karesi, birinciyle ikincinin çarpımının iki katı, ikincinin karesi!',
-    example: '$(x + 3)^2 = x^2 + 6x + 9$',
-  },
-  {
-    id: 'lgs-2',
-    category: 'lgs',
-    subject: 'Çarpanlara Ayırma',
-    title: 'İki Kare Farkı Özdeşliği',
-    frontText: 'a² - b² ifadesi nasıl çarpanlarına ayrılır?',
-    formula: '$$a^2 - b^2 = (a - b)(a + b)$$',
-    tip: 'İki terimin farkı ile toplamının çarpımıdır.',
-    example: '$x^2 - 16 = (x - 4)(x + 4)$',
-  },
-  {
-    id: 'lgs-3',
-    category: 'lgs',
-    subject: 'Geometri / Üçgenler',
-    title: 'Pisagor Bağıntısı',
-    frontText: 'Dik üçgende hipotenüs ve dik kenarlar arasındaki ilişki nedir?',
-    formula: '$$a^2 + b^2 = c^2$$',
-    tip: 'c hipotenüstür (90° nin karşısı). Popüler özel üçgenler: 3-4-5, 5-12-13, 8-15-17, 7-24-25.',
-  },
-  {
-    id: 'lgs-4',
-    category: 'lgs',
-    subject: 'Üslü İfadeler',
-    title: 'Üslerin Kuvveti ve Çarpımı',
-    frontText: 'Tabanları aynı üslü sayılar çarpılırken üsler ne yapılır?',
-    formula: '$$a^x \\cdot a^y = a^{x+y}, \\quad \\frac{a^x}{a^y} = a^{x-y}, \\quad (a^x)^y = a^{x \\cdot y}$$',
-    tip: 'Çarpmada üsler toplanır, bölmede çıkarılır, üssün üssünde çarpılır.',
-  },
-  {
-    id: 'lgs-5',
-    category: 'lgs',
-    subject: 'Kareköklü İfadeler',
-    title: 'Karekökte Çarpma ve Bölme',
-    frontText: 'Kareköklü sayılarda çarpma ve bölme kuralları nasıldır?',
-    formula: '$$\\sqrt{a} \\cdot \\sqrt{b} = \\sqrt{a \\cdot b}, \\quad \\frac{\\sqrt{a}}{\\sqrt{b}} = \\sqrt{\\frac{a}{b}}$$',
-    tip: 'Toplama ve çıkarma yaparken kök içlerinin birebir aynı olması gerekir ($a\\sqrt{x} + b\\sqrt{x} = (a+b)\\sqrt{x}$).',
-  },
-  {
-    id: 'lgs-6',
-    category: 'lgs',
-    subject: 'Çarpanlar ve Katlar',
-    title: 'EBOB - EKOK Çarpım Kuralı',
-    frontText: 'İki pozitif tam sayının çarpımı ile EBOB ve EKOK çarpımı arasındaki bağıntı nedir?',
-    formula: '$$\\text{EBOB}(a, b) \\cdot \\text{EKOK}(a, b) = a \\cdot b$$',
-    tip: 'Yalnızca iki sayı için geçerlidir. Aralarında asal sayılarda EBOB = 1 ve EKOK = a · b olur.',
-  },
-  {
-    id: 'lgs-7',
-    category: 'lgs',
-    subject: 'Doğrusal Denklemler',
-    title: 'İki Noktadan Geçen Doğrunun Eğimi',
-    frontText: 'A(x₁, y₁) ve B(x₂, y₂) noktalarından geçen doğrunun eğimi nasıl bulunur?',
-    formula: '$$m = \\frac{y_2 - y_1}{x_2 - x_1} = \\frac{\\Delta y}{\\Delta x}$$',
-    tip: 'Eğim dikey değişimin yatay değişime oranıdır. Sağa yatık doğruların eğimi pozitif, sola yatıkların negatiftir.',
-  },
-  {
-    id: 'lgs-8',
-    category: 'lgs',
-    subject: 'Daire ve Geometri',
-    title: 'Daire Diliminin Alanı',
-    frontText: 'Merkez açısı α olan r yarıçaplı daire diliminin alanı nasıl hesaplanır?',
-    formula: '$$\\text{Alan} = \\frac{\\alpha}{360^\\circ} \\cdot \\pi r^2$$',
-    tip: 'Tüm daire alanını açının 360° ye oranıyla çarparız.',
-  },
-  {
-    id: 'lgs-9',
-    category: 'lgs',
-    subject: 'Geometri / Benzerlik',
-    title: 'Benzerlik ve Alan Oranı',
-    frontText: 'Benzer iki şeklin çevreleri ve alanları oranı benzerlik oranı (k) ile nasıl ilişkilidir?',
-    formula: '$$\\text{Çevre Oranı} = k, \\quad \\text{Alan Oranı} = k^2$$',
-    tip: 'Benzerlik oranı k ise alanların oranı k² dir. Hacimlerin oranı ise k³ olur.',
-  },
-  {
-    id: 'lgs-10',
-    category: 'lgs',
-    subject: 'Olasılık',
-    title: 'Basit Olayların Olasılığı',
-    frontText: 'Bir olayın olma olasılığı nasıl formüle edilir?',
-    formula: '$$P(A) = \\frac{\\text{İstenen Olası Durum Sayısı}}{\\text{Tüm Olası Durumların Sayısı}}$$',
-    tip: 'İmkânsız olayın olasılığı 0, kesin olayın olasılığı 1 dir. Daima 0 ≤ P(A) ≤ 1.',
-  },
-  // YKS
-  {
-    id: 'yks-1',
-    category: 'yks',
-    subject: 'Trigonometri',
-    title: 'Temel Trigonometrik Özdeşlik',
-    frontText: 'sin²x ve cos²x toplamı neye eşittir?',
-    formula: '$$\\sin^2(x) + \\cos^2(x) = 1, \\quad \\tan(x) = \\frac{\\sin(x)}{\\cos(x)}, \\quad 1 + \\tan^2(x) = \\sec^2(x)$$',
-    tip: 'Birim çember üzerindeki her nokta $(x, y) = (\\cos\\theta, \\sin\\theta)$ dir.',
-  },
-  {
-    id: 'yks-2',
-    category: 'yks',
-    subject: 'Trigonometri',
-    title: 'Yarım Açı Formülleri',
-    frontText: 'sin(2x) ve cos(2x) açılımları nelerdir?',
-    formula: '$$\\sin(2x) = 2\\sin(x)\\cos(x)$$\n$$\\cos(2x) = \\cos^2(x) - \\sin^2(x) = 2\\cos^2(x) - 1 = 1 - 2\\sin^2(x)$$',
-    tip: 'İntegral ve türev sorularında dereceden kurtulmak için cos(2x) formülleri hayat kurtarır!',
-  },
-  {
-    id: 'yks-3',
-    category: 'yks',
-    subject: 'Logaritma',
-    title: 'Logaritma Temel Özellikleri',
-    frontText: 'Logaritmada çarpım, bölüm ve üs taban değiştirme kuralları nasıldır?',
-    formula: '$$\\log_a(x \\cdot y) = \\log_a(x) + \\log_a(y)$$\n$$\\log_a\\left(\\frac{x}{y}\\right) = \\log_a(x) - \\log_a(y)$$\n$$\\log_{a^n}(x^m) = \\frac{m}{n}\\log_a(x), \\quad \\log_a(b) = \\frac{\\ln(b)}{\\ln(a)}$$',
-    tip: 'Tanım aralığı: $a > 0, a \\neq 1$ ve $x > 0$ olmalıdır.',
-  },
-  {
-    id: 'yks-4',
-    category: 'yks',
-    subject: 'Türev',
-    title: 'Çarpım ve Bölümün Türevi',
-    frontText: '(f · g)\' ve (f / g)\' türevleri nasıl alınır?',
-    formula: '$$(f \\cdot g)\' = f\' \\cdot g + f \\cdot g\'$$\n$$\\left(\\frac{f}{g}\\right)\' = \\frac{f\' \\cdot g - f \\cdot g\'}{g^2}$$',
-    tip: 'Bölümün türevinde paydada $g^2$ olduğunu ve aradaki işaretin eksi olduğunu unutma.',
-  },
-  {
-    id: 'yks-5',
-    category: 'yks',
-    subject: 'İntegral',
-    title: 'Belirli İntegral & Alan Hesabı',
-    frontText: 'Eğri altında kalan alan integralle nasıl hesaplanır?',
-    formula: '$$\\text{Alan} = \\int_{a}^{b} [f(x) - g(x)] \\, dx$$\n$$\\int x^n \\, dx = \\frac{x^{n+1}}{n+1} + C \\quad (n \\neq -1)$$',
-    tip: 'Üstteki fonksiyondan alttaki fonksiyon çıkarılarak integral alınır.',
-  },
-  {
-    id: 'yks-6',
-    category: 'yks',
-    subject: 'İkinci Dereceden Denklemler',
-    title: 'Diskriminant (Δ) ve Kökler Formülü',
-    frontText: 'ax² + bx + c = 0 denkleminin kökleri diskriminant ile nasıl bulunur?',
-    formula: '$$\\Delta = b^2 - 4ac, \\quad x_{1,2} = \\frac{-b \\pm \\sqrt{\\Delta}}{2a}$$',
-    tip: 'Δ > 0 ise iki farklı gerçek kök, Δ = 0 ise çakışık çift kök, Δ < 0 ise gerçek kök yoktur.',
-  },
-  {
-    id: 'yks-7',
-    category: 'yks',
-    subject: 'İkinci Dereceden Denklemler',
-    title: 'Kökler Toplamı ve Çarpımı',
-    frontText: 'ax² + bx + c = 0 denkleminde kökler toplamı ve çarpımı katsayılarla nasıl ifade edilir?',
-    formula: '$$x_1 + x_2 = -\\frac{b}{a}, \\quad x_1 \\cdot x_2 = \\frac{c}{a}$$',
-    tip: 'Kökleri tek tek bulmadan toplam veya çarpım sorularını anında çözmeni sağlar.',
-  },
-  {
-    id: 'yks-8',
-    category: 'yks',
-    subject: 'Kombinatorik',
-    title: 'Kombinasyon ve Permütasyon Formülleri',
-    frontText: 'n elemanın r li sıralanışı (P) ve seçimi (C) formülleri nelerdir?',
-    formula: '$$P(n, r) = \\frac{n!}{(n-r)!}, \\quad C(n, r) = \\binom{n}{r} = \\frac{n!}{r!(n-r)!}$$',
-    tip: 'Permütasyonda sıra önemlidir (sıralama), kombinasyonda sıra önemsizdir (grup seçimi).',
-  },
-  {
-    id: 'yks-9',
-    category: 'yks',
-    subject: 'Diziler',
-    title: 'Aritmetik Dizi Genel Terimi ve Toplamı',
-    frontText: 'Ortak farkı d olan aritmetik dizinin n. terimi ve ilk n terim toplamı nasıldır?',
-    formula: '$$a_n = a_1 + (n-1)d, \\quad S_n = \\frac{n}{2}(a_1 + a_n)$$',
-    tip: 'Her ardışık terim arasındaki fark sabittir. İlk ve son terim ortalamasının terim sayısıyla çarpımıdır.',
-  },
-  {
-    id: 'yks-10',
-    category: 'yks',
-    subject: 'Diziler',
-    title: 'Geometrik Dizi Genel Terimi',
-    frontText: 'Ortak çarpanı r olan geometrik dizinin n. terimi ve ilk n terim toplamı nasıldır?',
-    formula: '$$a_n = a_1 \\cdot r^{n-1}, \\quad S_n = a_1 \\frac{1 - r^n}{1 - r} \\quad (r \\neq 1)$$',
-    tip: 'Her terim bir önceki terimin sabit r katıdır.',
-  },
-];
-
-type FormulaFlashcardsModalProps = {
-  initialSubject?: string;
-  isOpen: boolean;
-  onClose: () => void;
+export type { Flashcard, LeitnerBoxLevel, CardLeitnerState };
+export {
+  LEITNER_INTERVALS,
+  LEITNER_STORAGE_KEY,
+  STARRED_FORMULAS_KEY,
+  LEARNED_FORMULAS_KEY,
+  getStarredFormulaIds,
+  getLearnedFormulaIds,
+  getLeitnerStates,
+  saveCardLeitnerState,
+  FLASHCARDS_DATA,
 };
 
 export function FormulaFlashcardsModal({
@@ -323,13 +50,16 @@ export function FormulaFlashcardsModal({
   onClose,
 }: FormulaFlashcardsModalProps) {
   const modalRef = useAccessibleModal<HTMLDivElement>(isOpen, onClose);
-  const [categoryFilter, setCategoryFilter] = useState<'all' | 'due' | 'starred' | 'learned' | 'lgs' | 'yks'>('all');
+  const [categoryFilter, setCategoryFilter] =
+    useState<CategoryFilterType>('all');
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isFlipped, setIsFlipped] = useState(false);
   const [isSpeedDrillOpen, setIsSpeedDrillOpen] = useState(false);
   const [starredCards, setStarredCards] = useState<Set<string>>(new Set());
   const [learnedCards, setLearnedCards] = useState<Set<string>>(new Set());
-  const [leitnerStates, setLeitnerStates] = useState<Record<string, CardLeitnerState>>({});
+  const [leitnerStates, setLeitnerStates] = useState<
+    Record<string, CardLeitnerState>
+  >({});
 
   const {
     isSpeaking,
@@ -357,7 +87,10 @@ export function FormulaFlashcardsModal({
         next.add(id);
       }
       try {
-        localStorage.setItem(STARRED_FORMULAS_KEY, JSON.stringify(Array.from(next)));
+        localStorage.setItem(
+          STARRED_FORMULAS_KEY,
+          JSON.stringify(Array.from(next)),
+        );
       } catch {
         // ignore
       }
@@ -374,7 +107,10 @@ export function FormulaFlashcardsModal({
         next.add(id);
       }
       try {
-        localStorage.setItem(LEARNED_FORMULAS_KEY, JSON.stringify(Array.from(next)));
+        localStorage.setItem(
+          LEARNED_FORMULAS_KEY,
+          JSON.stringify(Array.from(next)),
+        );
       } catch {
         // ignore
       }
@@ -386,7 +122,6 @@ export function FormulaFlashcardsModal({
 
   const now = new Date();
 
-  // Tekrarı gelen kartlar: Henüz hiç çalışılmamış veya nextReviewAt zamanı dolmuş olanlar
   const isDueCard = (card: Flashcard) => {
     const st = leitnerStates[card.id];
     if (!st) return true;
@@ -400,12 +135,22 @@ export function FormulaFlashcardsModal({
     if (categoryFilter === 'all') return true;
     if (categoryFilter === 'due') return isDueCard(card);
     if (categoryFilter === 'starred') return starredCards.has(card.id);
-    if (categoryFilter === 'learned') return (learnedCards.has(card.id) || (leitnerStates[card.id]?.box || 1) >= 4);
+    if (categoryFilter === 'learned')
+      return (
+        learnedCards.has(card.id) || (leitnerStates[card.id]?.box || 1) >= 4
+      );
     return card.category === categoryFilter;
   });
 
   const currentCard = filteredCards[currentIndex] || filteredCards[0];
-  const currentLeitner = currentCard ? leitnerStates[currentCard.id] || { box: 1, lastReviewedAt: '', nextReviewAt: '', reviewCount: 0 } : null;
+  const currentLeitner = currentCard
+    ? leitnerStates[currentCard.id] || {
+        box: 1,
+        lastReviewedAt: '',
+        nextReviewAt: '',
+        reviewCount: 0,
+      }
+    : null;
 
   const handleNext = () => {
     stopSpeech();
@@ -416,7 +161,10 @@ export function FormulaFlashcardsModal({
   const handlePrev = () => {
     stopSpeech();
     setIsFlipped(false);
-    setCurrentIndex((prev) => (prev - 1 + (filteredCards.length || 1)) % (filteredCards.length || 1));
+    setCurrentIndex(
+      (prev) =>
+        (prev - 1 + (filteredCards.length || 1)) % (filteredCards.length || 1),
+    );
   };
 
   const handleShuffle = () => {
@@ -426,25 +174,29 @@ export function FormulaFlashcardsModal({
     setCurrentIndex(rand);
   };
 
-  const handleLeitnerReview = (cardId: string, result: 'forgot' | 'hard' | 'known') => {
+  const handleLeitnerReview = (
+    cardId: string,
+    result: 'forgot' | 'hard' | 'known',
+  ) => {
     const updated = saveCardLeitnerState(cardId, result);
     setLeitnerStates((prev) => ({ ...prev, [cardId]: updated }));
     if (result === 'known' && updated.box >= 4) {
       setLearnedCards((prev) => {
         const next = new Set(prev).add(cardId);
         try {
-          localStorage.setItem(LEARNED_FORMULAS_KEY, JSON.stringify(Array.from(next)));
+          localStorage.setItem(
+            LEARNED_FORMULAS_KEY,
+            JSON.stringify(Array.from(next)),
+          );
         } catch {
           // ignore
         }
         return next;
       });
     }
-    // Otomatik sonraki karta geçiş
     handleNext();
   };
 
-  // Kutu bazlı istatistikler
   const boxCounts = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
   FLASHCARDS_DATA.forEach((c) => {
     const b = leitnerStates[c.id]?.box || 1;
@@ -459,7 +211,9 @@ export function FormulaFlashcardsModal({
         onClick={onClose}
         className="fixed inset-0 bg-slate-900/60 dark:bg-slate-950/85 backdrop-blur-md"
       />
-      <style dangerouslySetInnerHTML={{ __html: `
+      <style
+        dangerouslySetInnerHTML={{
+          __html: `
         @media print {
           body * { visibility: hidden !important; }
           .print-flashcards-area, .print-flashcards-area * { visibility: visible !important; }
@@ -481,7 +235,9 @@ export function FormulaFlashcardsModal({
         @media screen {
           .print-only { display: none !important; }
         }
-      `}} />
+      `,
+        }}
+      />
 
       <div
         ref={modalRef}
@@ -494,7 +250,9 @@ export function FormulaFlashcardsModal({
         <ErrorBoundary
           fallback={({ reset }) => (
             <div className="flex flex-1 flex-col items-center justify-center p-8 text-center text-slate-600 dark:text-slate-300 gap-4">
-              <p className="text-sm">Formül kartları yüklenirken beklenmedik bir durum oluştu.</p>
+              <p className="text-sm">
+                Formül kartları yüklenirken beklenmedik bir durum oluştu.
+              </p>
               <div className="flex gap-2">
                 <button
                   type="button"
@@ -514,409 +272,111 @@ export function FormulaFlashcardsModal({
             </div>
           )}
         >
-        {/* A4 Yazdırma Görünümü (Yalnızca print esnasında görünür) */}
-        <div className="print-only mb-6 border-b-2 border-black pb-4 text-black">
-          <div className="flex justify-between items-center">
-            <div>
-              <h1 className="text-xl font-bold">Uğur Hoca Matematik — Formül & Bilgi Cep Kitapçığı</h1>
-              <p className="mt-1 text-xs text-gray-700">Kategori: {' '}
-                  {categoryFilter === 'all' ? 'Tüm Konular (LGS & YKS)' : categoryFilter.toUpperCase()}{' '} | Öğrenci Çalışma Notu</p>
-            </div>
-            <div className="text-right">
-              <span className="text-xs font-bold text-gray-600">Toplam {filteredCards.length} Formül Kartı</span>
-            </div>
-          </div>
-          <div className="mt-4 grid grid-cols-2 gap-3 text-xs">
-            {filteredCards.map((card, idx) => (
-              <div key={card.id || idx} className="rounded-lg border border-gray-400 p-2.5 break-inside-avoid">
-                <div className="flex justify-between items-center text-[10px] font-bold text-gray-600 uppercase mb-1">
-                  <span>{card.subject}</span>
-                  <span>{card.category.toUpperCase()}</span>
-                </div>
-                <div className="font-bold text-sm text-black mb-1">{card.title}</div>
-                <div className="font-mono text-xs bg-gray-100 p-1.5 rounded border border-gray-300 text-black mb-1">
-                  <MathText>{card.formula}</MathText>
-                </div>
-                <div className="text-[11px] text-gray-800">{card.frontText}</div>
-                {card.tip && (
-                  <div className="mt-1 text-[10px] italic text-gray-600">💡 {card.tip}</div>
-                )}
-              </div>
-            ))}
-          </div>
-        </div>
+          <FlashcardPrintSection
+            categoryFilter={categoryFilter}
+            filteredCards={filteredCards}
+          />
 
-        {/* Header */}
-        <div className="no-print flex items-center justify-between gap-2.5 border-b border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-slate-950/80 px-4 sm:px-6 py-3 sm:py-4">
-          <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
-            <div className="flex h-9 w-9 sm:h-10 sm:w-10 shrink-0 items-center justify-center rounded-2xl shadow-md bg-brand-secondary text-slate-950 dark:text-slate-950">
-              <Sparkles className="h-4 w-4 sm:h-5 sm:w-5" />
-            </div>
-            <div className="min-w-0">
-              <h2 className="font-display text-sm sm:text-lg font-bold text-slate-900 dark:text-white truncate">
-                Formül & Bilgi Kartları
-              </h2>
-              <p className="text-[11px] sm:text-xs text-slate-500 dark:text-slate-400 truncate">
-                Leitner aralıklı tekrar sistemiyle kalıcı matematik hafızası
-              </p>
-            </div>
-          </div>
+          <FlashcardHeader
+            onOpenSpeedDrill={() => setIsSpeedDrillOpen(true)}
+            onShuffle={handleShuffle}
+            onClose={onClose}
+          />
 
-          <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
-            <button
-              type="button"
-              onClick={() => setIsSpeedDrillOpen(true)}
-              title="60 Saniye Hızlı Formül Eşleştirme Antrenmanı"
-              className="inline-flex items-center gap-1.5 rounded-xl bg-amber-500/20 border border-amber-500/30 px-2.5 py-1.5 text-xs font-semibold text-amber-700 dark:text-amber-300 hover:bg-amber-500/30 hover:text-amber-800 dark:hover:text-amber-200 transition-colors"
-            >
-              <Zap className="h-4 w-4 text-amber-500 dark:text-amber-400" />
-              <span className="hidden sm:inline">60s Hız Antrenmanı</span>
-            </button>
-            <button
-              type="button"
-              onClick={() => typeof window !== 'undefined' && window.print()}
-              aria-label="A4 Formül Kitapçığı Yazdır"
-              title="Tüm formülleri A4 formatında yazdır veya PDF al"
-              className="inline-flex items-center gap-1.5 rounded-xl bg-slate-100 dark:bg-white/5 px-2.5 py-1.5 text-xs font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-white/10 hover:text-slate-900 dark:hover:text-white transition-colors"
-            >
-              <Printer className="h-4 w-4 text-slate-500 dark:text-slate-400" />
-              <span className="hidden sm:inline">A4 Yazdır</span>
-            </button>
-            <button
-              type="button"
-              onClick={handleShuffle}
-              aria-label="Kartları karıştır"
-              title="Rastgele kart seç"
-              className="inline-flex h-9 w-9 items-center justify-center rounded-xl bg-slate-100 dark:bg-white/5 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-white/10 hover:text-slate-900 dark:hover:text-white"
-            >
-              <Shuffle className="h-4 w-4" />
-            </button>
-            <button
-              type="button"
-              onClick={onClose}
-              aria-label="Kapat"
-              className="inline-flex h-9 w-9 items-center justify-center rounded-xl bg-slate-100 dark:bg-white/10 text-slate-500 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-white/20 hover:text-slate-900 dark:hover:text-white"
-            >
-              <X className="h-4 w-4" />
-            </button>
-          </div>
-        </div>
+          <FlashcardCategoryNav
+            categoryFilter={categoryFilter}
+            setCategoryFilter={setCategoryFilter}
+            totalCardsCount={FLASHCARDS_DATA.length}
+            dueCount={dueCount}
+            starredCount={starredCards.size}
+            learnedCount={learnedCards.size}
+            filteredCount={filteredCards.length}
+            currentIndex={currentIndex}
+            onResetPage={() => {
+              setCurrentIndex(0);
+              setIsFlipped(false);
+            }}
+          />
 
-        {/* Filtre Çipleri */}
-        <div className="no-print flex flex-wrap sm:flex-nowrap items-center justify-between gap-2 border-b border-slate-200 dark:border-white/10 bg-slate-100/70 dark:bg-slate-950/40 px-4 sm:px-6 py-2 sm:py-2.5">
-          <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
+          <FlashcardViewer
+            currentCard={currentCard}
+            currentLeitner={currentLeitner}
+            isFlipped={isFlipped}
+            setIsFlipped={setIsFlipped}
+            isSpeaking={isSpeaking}
+            isSpeechSupported={isSpeechSupported}
+            toggleSpeech={toggleSpeech}
+            starredCards={starredCards}
+            toggleStarred={toggleStarred}
+            learnedCards={learnedCards}
+            toggleLearned={toggleLearned}
+            onLeitnerReview={handleLeitnerReview}
+          />
+
+          {/* Alt Navigasyon & Leitner Dağılımı */}
+          <div className="no-print flex items-center justify-between border-t border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-slate-950/80 px-3 sm:px-6 py-3 sm:py-4 gap-2">
             <button
               type="button"
-              onClick={() => {
-                setCategoryFilter('all');
-                setCurrentIndex(0);
-                setIsFlipped(false);
-              }}
-              className={`rounded-xl px-3 py-1 text-xs font-semibold transition ${
-                categoryFilter === 'all'
-                  ? 'bg-brand-primary text-slate-950 dark:text-slate-950'
-                  : 'bg-white dark:bg-white/5 text-slate-600 dark:text-slate-300 hover:bg-slate-200/60 dark:hover:bg-white/10 border border-slate-200 dark:border-transparent'
-              }`}
+              onClick={handlePrev}
+              aria-label="Önceki Kart"
+              disabled={filteredCards.length === 0}
+              className="inline-flex items-center gap-1.5 rounded-xl bg-slate-100 dark:bg-white/5 px-3 sm:px-4 py-2 sm:py-2.5 text-xs font-bold text-slate-800 dark:text-white hover:bg-slate-200 dark:hover:bg-white/10 disabled:opacity-40 shrink-0"
             >
-              Tümü ({FLASHCARDS_DATA.length})
-            </button>
-            <button
-              type="button"
-              onClick={() => {
-                setCategoryFilter('due');
-                setCurrentIndex(0);
-                setIsFlipped(false);
-              }}
-              className={`rounded-xl px-3 py-1 text-xs font-semibold transition flex items-center gap-1 ${
-                categoryFilter === 'due'
-                  ? 'bg-brand-primary font-bold text-slate-950 dark:text-slate-950'
-                  : 'bg-amber-50 dark:bg-white/5 text-amber-700 dark:text-amber-300 hover:bg-amber-100 dark:hover:bg-white/10 border border-amber-200 dark:border-transparent'
-              }`}
-            >
-              <span>Tekrar Vakti</span>
-              <span className="rounded-full bg-amber-400/30 px-1.5 py-0.2 text-[10px] font-bold">
-                {dueCount}
+              <ChevronLeft className="h-4 w-4" />
+              <span>
+                Önceki <span className="hidden sm:inline">Kart</span>
               </span>
             </button>
-            <button
-              type="button"
-              onClick={() => {
-                setCategoryFilter('starred');
-                setCurrentIndex(0);
-                setIsFlipped(false);
-              }}
-              className={`rounded-xl px-3 py-1 text-xs font-semibold transition flex items-center gap-1 ${
-                categoryFilter === 'starred'
-                  ? 'bg-brand-primary font-bold text-slate-950 dark:text-slate-950'
-                  : 'bg-amber-50 dark:bg-white/5 text-amber-700 dark:text-amber-300 hover:bg-amber-100 dark:hover:bg-white/10 border border-amber-200 dark:border-transparent'
-              }`}
-            >
-              <Star className="h-3 w-3 fill-amber-300 text-amber-300" />
-              <span>Yıldızlılar</span>
-              <span className="rounded-full bg-amber-400/30 px-1.5 py-0.2 text-[10px] font-bold">
-                {starredCards.size}
+
+            <div className="flex items-center gap-1 sm:gap-2 text-[10px] sm:text-xs text-slate-500 dark:text-slate-400 font-mono">
+              <span className="text-slate-500 font-sans hidden sm:inline">
+                Hafıza Kutuları:
               </span>
-            </button>
-            <button
-              type="button"
-              onClick={() => {
-                setCategoryFilter('learned');
-                setCurrentIndex(0);
-                setIsFlipped(false);
-              }}
-              className={`rounded-xl px-3 py-1 text-xs font-semibold transition flex items-center gap-1 ${
-                categoryFilter === 'learned'
-                  ? 'bg-brand-primary font-bold text-slate-950 dark:text-slate-950'
-                  : 'bg-emerald-50 dark:bg-white/5 text-emerald-700 dark:text-emerald-300 hover:bg-emerald-100 dark:hover:bg-white/10 border border-emerald-200 dark:border-transparent'
-              }`}
-            >
-              <CheckCircle className="h-3 w-3" />
-              <span>Öğrenilenler</span>
-              <span className="rounded-full bg-emerald-400/30 px-1.5 py-0.2 text-[10px] font-bold">
-                {learnedCards.size}
+              <span
+                className="px-1.5 py-0.5 rounded bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 text-slate-700 dark:text-slate-300"
+                title="Kutu 1: Günlük"
+              >
+                K1:{boxCounts[1]}
               </span>
-            </button>
+              <span
+                className="px-1.5 py-0.5 rounded bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 text-slate-700 dark:text-slate-300"
+                title="Kutu 2: 3 Günlük"
+              >
+                K2:{boxCounts[2]}
+              </span>
+              <span
+                className="px-1.5 py-0.5 rounded bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 text-slate-700 dark:text-slate-300"
+                title="Kutu 3: 7 Günlük"
+              >
+                K3:{boxCounts[3]}
+              </span>
+              <span
+                className="px-1.5 py-0.5 rounded bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 text-slate-700 dark:text-slate-300"
+                title="Kutu 4: 14 Günlük"
+              >
+                K4:{boxCounts[4]}
+              </span>
+              <span
+                className="px-1.5 py-0.5 rounded bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 text-accent-success-ink dark:text-emerald-400"
+                title="Kutu 5: Kalıcı (30 Gün)"
+              >
+                K5:{boxCounts[5]}
+              </span>
+            </div>
+
             <button
               type="button"
-              onClick={() => {
-                setCategoryFilter('lgs');
-                setCurrentIndex(0);
-                setIsFlipped(false);
-              }}
-              className={`rounded-xl px-3 py-1 text-xs font-semibold transition ${
-                categoryFilter === 'lgs'
-                  ? 'bg-brand-primary font-bold text-slate-950 dark:text-slate-950'
-                  : 'bg-white dark:bg-white/5 text-slate-600 dark:text-slate-300 hover:bg-slate-200/60 dark:hover:bg-white/10 border border-slate-200 dark:border-transparent'
-              }`}
+              onClick={handleNext}
+              aria-label="Sonraki Kart"
+              disabled={filteredCards.length === 0}
+              className="inline-flex items-center gap-1.5 rounded-xl px-3 sm:px-4 py-2 sm:py-2.5 text-xs font-bold disabled:opacity-40 shrink-0 bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none"
             >
-              LGS (8. Sınıf)
-            </button>
-            <button
-              type="button"
-              onClick={() => {
-                setCategoryFilter('yks');
-                setCurrentIndex(0);
-                setIsFlipped(false);
-              }}
-              className={`rounded-xl px-3 py-1 text-xs font-semibold transition ${
-                categoryFilter === 'yks'
-                  ? 'bg-brand-primary font-bold text-slate-950 dark:text-slate-950'
-                  : 'bg-white dark:bg-white/5 text-slate-600 dark:text-slate-300 hover:bg-slate-200/60 dark:hover:bg-white/10 border border-slate-200 dark:border-transparent'
-              }`}
-            >
-              YKS (TYT / AYT)
+              <span>
+                Sonraki <span className="hidden sm:inline">Kart</span>
+              </span>
+              <ChevronRight className="h-4 w-4" />
             </button>
           </div>
-
-          <span className="text-xs font-medium text-slate-500 dark:text-slate-400">
-            {filteredCards.length > 0 ? `${currentIndex + 1} / ${filteredCards.length}` : '0 / 0'}
-          </span>
-        </div>
-
-        {/* Kart Sahnesi */}
-        <div className="no-print flex flex-1 flex-col items-center justify-center p-4 sm:p-6 bg-slate-100/40 dark:bg-slate-950/20">
-          {currentCard ? (
-            <div
-              role="button"
-              tabIndex={0}
-              aria-label={currentCard.title}
-              onClick={() => setIsFlipped((prev) => !prev)}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter' || e.key === ' ') {
-                  e.preventDefault();
-                  setIsFlipped((prev) => !prev);
-                }
-              }}
-              className="group relative flex min-h-[300px] w-full max-w-lg cursor-pointer flex-col justify-between rounded-3xl border border-slate-200 dark:border-white/15 bg-white p-5 sm:p-6 text-center shadow-lg dark:shadow-2xl transition-all duration-300 hover:border-brand-primary/50 hover:shadow-brand-glow focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary dark:bg-surface-1"
-            >
-              {/* Üst Bilgi */}
-              <div className="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400">
-                <div className="flex items-center gap-1.5">
-                  <span className="rounded-lg bg-white/10 px-2.5 py-1 font-semibold text-brand-ink">
-                    {currentCard.subject}
-                  </span>
-                  {currentLeitner && (
-                    <span className="rounded-lg border border-amber-500/30 bg-amber-500/10 px-2 py-0.5 text-[10px] font-bold text-amber-300">
-                      Kutu {currentLeitner.box} ({LEITNER_INTERVALS[currentLeitner.box]} Gün)
-                    </span>
-                  )}
-                </div>
-                <div className="flex items-center gap-2">
-                  {isSpeechSupported && (
-                    <button
-                      type="button"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        if (isFlipped) {
-                          toggleSpeech(`${currentCard.title}. ${currentCard.formula}. ${currentCard.tip || ''}`);
-                        } else {
-                          toggleSpeech(`${currentCard.title}. ${currentCard.frontText}`);
-                        }
-                      }}
-                      className={`p-1.5 rounded-xl transition ${
-                        isSpeaking
-                          ? 'text-cyan-500 dark:text-cyan-400 bg-cyan-500/20 animate-pulse'
-                          : 'text-slate-400 hover:text-slate-700 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/10'
-                      }`}
-                      title={isSpeaking ? 'Seslendirmeyi durdur' : 'Formülü sesli dinle'}
-                      aria-label={isSpeaking ? 'Seslendirmeyi durdur' : 'Formülü sesli dinle'}
-                    >
-                      {isSpeaking ? (<VolumeX className="h-4 w-4" /> ): (<Volume2 className="h-4 w-4" />)}
-                    </button>
-                  )}
-                  <button
-                    type="button"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      toggleStarred(currentCard.id);
-                    }}
-                    className={`p-1.5 rounded-xl transition ${
-                      starredCards.has(currentCard.id)
-                        ? 'text-amber-500 dark:text-amber-400 bg-amber-500/20 hover:bg-amber-500/30'
-                        : 'text-slate-400 hover:text-slate-700 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/10'
-                    }`}
-                    title={starredCards.has(currentCard.id) ? 'Yıldızı kaldır' : 'Kritik formül olarak yıldızla'}
-                    aria-label={starredCards.has(currentCard.id) ? 'Yıldızı kaldır' : 'Yıldızla'}
-                  >
-                    <Star className={`h-4 w-4 ${starredCards.has(currentCard.id) ? 'fill-amber-400 text-amber-500 dark:text-amber-400' : ''}`} />
-                  </button>
-                  <span className="flex items-center gap-1 text-[11px] text-slate-500 dark:text-slate-400 group-hover:text-slate-800 dark:group-hover:text-white">
-                    <RotateCw className="h-3 w-3" />
-                    {isFlipped ? 'Ön yüze dön' : 'Cevap için tıkla'}
-                  </span>
-                </div>
-              </div>
-
-              {/* Kart Gövdesi */}
-              <div className="my-auto py-4">
-                {!isFlipped ? (
-                  <div className="space-y-3">
-                    <h3 className="font-display text-xl font-bold text-slate-900 dark:text-white sm:text-2xl">
-                      {currentCard.title}
-                    </h3>
-                    <p className="text-sm leading-relaxed text-slate-600 dark:text-slate-300 sm:text-base">
-                      {currentCard.frontText}
-                    </p>
-                  </div>
-                ) : (
-                  <div className="space-y-3 animate-fade-in">
-                    <div className="text-base sm:text-lg font-bold text-amber-700 dark:text-amber-300">
-                      <MathText>{currentCard.formula}</MathText>
-                    </div>
-                    {currentCard.tip && (
-                      <p className="rounded-xl border border-emerald-500/30 bg-emerald-500/10 p-2.5 text-xs text-emerald-800 dark:text-emerald-200">
-                        💡 {currentCard.tip}
-                      </p>
-                    )}
-                    {currentCard.example && (
-                      <p className="text-xs text-slate-600 dark:text-slate-300 font-mono">
-                        Örn: <MathText>{currentCard.example}</MathText>
-                      </p>
-                    )}
-
-                    {/* Leitner Puanlama Aksiyonları (Arka Yüz) */}
-                    <div className="mt-4 pt-3 border-t border-slate-200 dark:border-white/10">
-                      <div className="text-[11px] text-slate-600 dark:text-slate-400 mb-2 font-semibold">Bu formülü ne kadar hatırladın?</div>
-                      <div className="grid grid-cols-3 gap-2">
-                        <button
-                          type="button"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleLeitnerReview(currentCard.id, 'forgot');
-                          }}
-                          className="rounded-xl border border-rose-500/30 bg-rose-500/15 py-1.5 px-2 text-[11px] font-bold text-rose-700 dark:text-rose-300 hover:bg-rose-500/25 transition"
-                          title="Kutu 1'e geri dön (1 gün sonra tekrar)"
-                        >
-                          Unuttum (K1)
-                        </button>
-                        <button
-                          type="button"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleLeitnerReview(currentCard.id, 'hard');
-                          }}
-                          className="rounded-xl border border-amber-500/30 bg-amber-500/15 py-1.5 px-2 text-[11px] font-bold text-amber-700 dark:text-amber-300 hover:bg-amber-500/25 transition"
-                          title="Aynı kutuda kal (yarın tekrar)"
-                        >
-                          Zorlandım
-                        </button>
-                        <button
-                          type="button"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleLeitnerReview(currentCard.id, 'known');
-                          }}
-                          className="rounded-xl border border-emerald-500/30 bg-emerald-500/15 py-1.5 px-2 text-[11px] font-bold text-emerald-700 dark:text-emerald-300 hover:bg-emerald-500/25 transition"
-                          title="Sonraki kutuya ilerlet"
-                        >
-                          Biliyorum (+1)
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                )}
-              </div>
-
-              {/* Alt Bilgi */}
-              <div className="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400 border-t border-slate-200 dark:border-white/5 pt-3">
-                <button
-                  type="button"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    toggleLearned(currentCard.id);
-                  }}
-                  className={`inline-flex items-center gap-1 rounded-lg px-2.5 py-1 transition ${
-                    learnedCards.has(currentCard.id)
-                      ? 'bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 font-bold'
-                      : 'hover:bg-slate-100 dark:hover:bg-white/10 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
-                  }`}
-                >
-                  <CheckCircle className="h-3.5 w-3.5" />
-                  {learnedCards.has(currentCard.id) ? 'Öğrenildi' : 'Öğrendim olarak işaretle'}
-                </button>
-                <span className="text-[11px] text-slate-400 dark:text-slate-500">Kartı çevirmek için tıkla</span>
-              </div>
-            </div>
-          ) : (
-            <div className="text-center py-12">
-              <p className="text-sm font-semibold text-slate-600 dark:text-slate-300">Bu filtrede gösterilecek kart bulunamadı.</p>
-            </div>
-          )}
-        </div>
-
-        {/* Alt Navigasyon & Leitner Dağılımı */}
-        <div className="no-print flex items-center justify-between border-t border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-slate-950/80 px-3 sm:px-6 py-3 sm:py-4 gap-2">
-          <button
-            type="button"
-            onClick={handlePrev}
-            aria-label="Önceki Kart"
-            disabled={filteredCards.length === 0}
-            className="inline-flex items-center gap-1.5 rounded-xl bg-slate-100 dark:bg-white/5 px-3 sm:px-4 py-2 sm:py-2.5 text-xs font-bold text-slate-800 dark:text-white hover:bg-slate-200 dark:hover:bg-white/10 disabled:opacity-40 shrink-0"
-          >
-            <ChevronLeft className="h-4 w-4" />
-            <span>Önceki <span className="hidden sm:inline">Kart</span></span>
-          </button>
-
-          <div className="flex items-center gap-1 sm:gap-2 text-[10px] sm:text-xs text-slate-500 dark:text-slate-400 font-mono">
-            <span className="text-slate-500 font-sans hidden sm:inline">Hafıza Kutuları:</span>
-            <span className="px-1.5 py-0.5 rounded bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 text-slate-700 dark:text-slate-300" title="Kutu 1: Günlük">K1:{boxCounts[1]}</span>
-            <span className="px-1.5 py-0.5 rounded bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 text-slate-700 dark:text-slate-300" title="Kutu 2: 3 Günlük">K2:{boxCounts[2]}</span>
-            <span className="px-1.5 py-0.5 rounded bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 text-slate-700 dark:text-slate-300" title="Kutu 3: 7 Günlük">K3:{boxCounts[3]}</span>
-            <span className="px-1.5 py-0.5 rounded bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 text-slate-700 dark:text-slate-300" title="Kutu 4: 14 Günlük">K4:{boxCounts[4]}</span>
-            <span className="px-1.5 py-0.5 rounded bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 text-accent-success-ink dark:text-emerald-400" title="Kutu 5: Kalıcı (30 Gün)">K5:{boxCounts[5]}</span>
-          </div>
-
-          <button
-            type="button"
-            onClick={handleNext}
-            aria-label="Sonraki Kart"
-            disabled={filteredCards.length === 0}
-            className="inline-flex items-center gap-1.5 rounded-xl px-3 sm:px-4 py-2 sm:py-2.5 text-xs font-bold disabled:opacity-40 shrink-0 bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none"
-          >
-            <span>Sonraki <span className="hidden sm:inline">Kart</span></span>
-            <ChevronRight className="h-4 w-4" />
-          </button>
-        </div>
         </ErrorBoundary>
       </div>
 

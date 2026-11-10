@@ -243,7 +243,7 @@ const config = [
       'react-hooks/purity': 'off',
       'react-hooks/set-state-in-effect': 'off',
       'react/no-unescaped-entities': 'off',
-      'theme-guard/no-unsafe-light-theme-utility': 'warn',
+      'theme-guard/no-unsafe-light-theme-utility': 'error',
       'unused-imports/no-unused-imports': 'error',
       'no-restricted-syntax': [
         'error',
@@ -278,20 +278,9 @@ const config = [
     },
   },
   {
-    files: [
-      'src/app/page.tsx',
-      'src/app/icerikler/loading.tsx',
-      'src/app/gizlilik/**/*.{ts,tsx}',
-      'src/app/kvkk/**/*.{ts,tsx}',
-      'src/app/cerez/**/*.{ts,tsx}',
-      'src/app/iletisim/**/*.{ts,tsx}',
-      'src/features/home/components/HomeHowItWorksSection.tsx',
-      'src/features/home/components/HomeFooter.tsx',
-      'src/features/profile/components/GrowthReportModal.tsx',
-      'src/features/admin/components/AdminActionDialog.tsx',
-    ],
+    files: ['src/features/games/**/*.{ts,tsx}'],
     rules: {
-      'theme-guard/no-unsafe-light-theme-utility': 'error',
+      'theme-guard/no-unsafe-light-theme-utility': 'off',
     },
   },
   {

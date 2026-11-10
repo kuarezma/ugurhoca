@@ -41,7 +41,7 @@ export default function Loading() {
             <div className="h-5 w-full max-w-xl animate-pulse rounded-xl bg-surface-2/60" />
           </div>
 
-          <div className="card-surface mb-8 rounded-2xl p-4 sm:p-6 border border-default">
+          <div className="bg-surface-1 mb-8 rounded-2xl p-4 sm:p-6 border border-border-default">
             <div className="flex flex-col gap-4 lg:flex-row">
               <div className="relative flex-1">
                 <Search className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-tertiary" />
@@ -51,8 +51,8 @@ export default function Loading() {
               <div className="flex flex-wrap gap-3">
                 <div className="h-12 w-36 animate-pulse rounded-xl bg-surface-2" />
                 <div className="h-12 w-36 animate-pulse rounded-xl bg-surface-2" />
-                <div className="card-surface flex rounded-xl overflow-hidden border border-default">
-                  <div className="flex h-12 w-12 items-center justify-center border-r border-default text-tertiary">
+                <div className="bg-surface-1 flex rounded-xl overflow-hidden border border-border-default">
+                  <div className="flex h-12 w-12 items-center justify-center border-r border-border-default text-tertiary">
                     <Grid className="h-5 w-5" />
                   </div>
                   <div className="flex h-12 w-12 items-center justify-center text-tertiary">
@@ -72,7 +72,7 @@ export default function Loading() {
             {SKELETON_CARDS.map((_, index) => (
               <div
                 key={index}
-                className="card-surface overflow-hidden rounded-3xl border border-default"
+                className="bg-surface-1 overflow-hidden rounded-3xl border border-border-default"
               >
                 <div className="h-2 animate-pulse bg-surface-2" />
                 <div className="space-y-4 p-4 sm:p-6">
