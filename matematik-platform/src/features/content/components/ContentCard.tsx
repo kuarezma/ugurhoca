@@ -182,7 +182,7 @@ function ContentCard({
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
           onClick={() => onDownload(content)}
-          className="col-span-1 flex w-full items-center justify-center gap-2 rounded-2xl px-4 py-2.5 sm:py-3 text-xs sm:text-sm font-bold transition-all sm:w-auto sm:px-5 bg-gradient-to-r from-emerald-700 to-teal-800 hover:from-emerald-800 hover:to-teal-900 text-on-accent dark:text-slate-950 dark:from-emerald-400 dark:to-teal-400 dark:hover:from-emerald-300 dark:hover:to-teal-300 shadow-md shadow-emerald-700/25 hover:-translate-y-0.5 active:translate-y-0.5"
+          className="col-span-1 flex w-full items-center justify-center gap-2 rounded-2xl px-4 py-2.5 sm:py-3 text-xs sm:text-sm font-bold transition-all sm:w-auto sm:px-5 bg-gradient-to-r from-emerald-700 to-teal-800 hover:from-emerald-800 hover:to-teal-900 text-on-brand dark:text-slate-950 dark:from-emerald-400 dark:to-teal-400 dark:hover:from-emerald-300 dark:hover:to-teal-300 shadow-md shadow-emerald-700/25 hover:-translate-y-0.5 active:translate-y-0.5"
         >
           <Download className="shrink-0 w-4 h-4" /> İndir
         </motion.button>
@@ -194,7 +194,7 @@ function ContentCard({
             whileTap={{ scale: 0.95 }}
             onClick={() => onEdit(content)}
             title="Düzenle"
-            className="flex-1 sm:flex-none flex items-center justify-center rounded-2xl border border-sky-200 dark:border-sky-800/60 bg-sky-50/80 dark:bg-sky-950/30 p-2.5 text-sky-700 dark:text-sky-300 transition-all hover:bg-sky-600 hover:border-sky-500 hover:text-on-accent"
+            className="flex-1 sm:flex-none flex items-center justify-center rounded-2xl border border-sky-200 dark:border-sky-800/60 bg-sky-50/80 dark:bg-sky-950/30 p-2.5 text-sky-700 dark:text-sky-300 transition-all hover:bg-sky-600 hover:border-sky-500 hover:text-on-brand dark:hover:text-white"
           >
             <Edit3 className="shrink-0 w-4 h-4" />
           </motion.button>
@@ -203,7 +203,7 @@ function ContentCard({
             whileTap={{ scale: 0.95 }}
             onClick={() => onDelete(content)}
             title="Sil"
-            className="flex-1 sm:flex-none flex items-center justify-center rounded-2xl border border-red-200 dark:border-red-800/60 bg-red-50/80 dark:bg-red-950/30 p-2.5 text-red-700 dark:text-red-300 transition-all hover:bg-red-600 hover:border-red-600 hover:text-on-accent"
+            className="flex-1 sm:flex-none flex items-center justify-center rounded-2xl border border-red-200 dark:border-red-800/60 bg-red-50/80 dark:bg-red-950/30 p-2.5 text-red-700 dark:text-red-300 transition-all hover:bg-red-600 hover:border-red-600 hover:text-on-brand dark:hover:text-white"
           >
             <Trash2 className="shrink-0 w-4 h-4" />
           </motion.button>

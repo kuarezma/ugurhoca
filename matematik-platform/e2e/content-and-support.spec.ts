@@ -229,7 +229,7 @@ test.describe('4. İçerik Arama/Filtreleme, Destek Sohbeti ve Yasal Sayfalar', 
 
     await page.goto('/iletisim');
     await expect(
-      page.getByRole('heading', { name: /İletişim/i }),
+      page.getByRole('heading', { name: 'İletişim', level: 1 }),
     ).toBeVisible();
   });
 });

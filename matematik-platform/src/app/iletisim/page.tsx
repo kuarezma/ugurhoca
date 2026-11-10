@@ -73,7 +73,7 @@ export default function IletisimPage() {
           <div className="rounded-2xl border border-default bg-surface-2/60 p-5 space-y-2">
             <div className="flex items-center gap-2 font-bold text-primary text-base">
               <Mail className="h-5 w-5 text-accent-fg" />
-              <h3>Doğrudan E-Posta İletişimi</h3>
+              <h3>Doğrudan E-Posta Adresi</h3>
             </div>
             <p>
               Platforma henüz giriş yapmamış ziyaretçilerimiz, şifre sıfırlama

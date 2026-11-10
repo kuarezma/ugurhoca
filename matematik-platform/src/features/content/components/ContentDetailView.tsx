@@ -90,7 +90,7 @@ export function ContentDetailView({
                   Ana Sayfa
                 </Link>
               </li>
-              <li aria-hidden="true" className="text-muted">
+              <li aria-hidden="true" className="text-tertiary">
                 /
               </li>
               <li>
@@ -103,7 +103,7 @@ export function ContentDetailView({
               </li>
               {primaryGrade && (
                 <>
-                  <li aria-hidden="true" className="text-muted">
+                  <li aria-hidden="true" className="text-tertiary">
                     /
                   </li>
                   <li>
@@ -116,7 +116,7 @@ export function ContentDetailView({
                   </li>
                 </>
               )}
-              <li aria-hidden="true" className="text-muted">
+              <li aria-hidden="true" className="text-tertiary">
                 /
               </li>
               <li className="font-bold text-primary truncate max-w-[200px] sm:max-w-[320px]">
@@ -261,7 +261,7 @@ export function ContentDetailView({
                   />
                 ) : (
                   <div className="p-8 text-center">
-                    <FileText className="mx-auto h-16 w-16 text-muted mb-3" />
+                    <FileText className="mx-auto h-16 w-16 text-tertiary mb-3" />
                     <p className="text-sm font-semibold text-secondary mb-4">
                       Bu içerik doğrudan tarayıcıda önizlenemiyor.
                     </p>
@@ -270,7 +270,7 @@ export function ContentDetailView({
                         href={doc.file_url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex items-center gap-2 rounded-2xl bg-accent-solid px-5 py-2.5 text-xs font-bold text-on-accent transition-transform hover:-translate-y-0.5"
+                        className="inline-flex items-center gap-2 rounded-2xl bg-accent-brand px-5 py-2.5 text-xs font-bold text-on-brand transition-transform hover:-translate-y-0.5"
                       >
                         <Download className="h-4 w-4" />
                         Dosyayı İndir
@@ -294,7 +294,7 @@ export function ContentDetailView({
                     href={doc.file_url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex w-full items-center justify-center gap-2 rounded-2xl bg-accent-solid px-4 py-3 text-xs sm:text-sm font-bold text-on-accent transition-all hover:opacity-95 shadow-md shadow-accent/10 hover:-translate-y-0.5 active:translate-y-0.5"
+                    className="flex w-full items-center justify-center gap-2 rounded-2xl bg-accent-brand px-4 py-3 text-xs sm:text-sm font-bold text-on-brand transition-all hover:opacity-95 shadow-md shadow-accent/10 hover:-translate-y-0.5 active:translate-y-0.5"
                   >
                     <Download className="h-4 w-4" />
                     Dokümanı İndir (PDF)
@@ -321,7 +321,7 @@ export function ContentDetailView({
                   Kütüphanede Etkileşimli Aç
                 </Link>
 
-                <p className="text-[11px] text-muted text-center pt-2 leading-relaxed">
+                <p className="text-[11px] text-tertiary text-center pt-2 leading-relaxed">
                   İşlem tahtası, cevap anahtarı ve tamamlandı işaretleme
                   özellikleri için kütüphane görünümünü kullanabilirsiniz.
                 </p>
@@ -358,7 +358,7 @@ export function ContentDetailView({
                       <h3 className="text-xs font-bold text-primary truncate mb-1">
                         {item.title}
                       </h3>
-                      <div className="flex items-center gap-2 text-[10px] text-muted font-medium">
+                      <div className="flex items-center gap-2 text-[10px] text-tertiary font-medium">
                         <span>{getContentTypeLabel(item.type)}</span>
                         <span>•</span>
                         <span>{item.downloads || 0} indirme</span>

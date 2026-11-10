@@ -149,7 +149,7 @@ export function HomeNavbar({ onLogout, user }: HomeNavbarProps) {
               type="button"
               onClick={handleOpenCommandPalette}
               aria-label="Hızlı arama aç"
-              className="inline-flex items-center gap-1.5 rounded-xl border border-subtle bg-surface-2/80 px-2.5 py-1.5 text-xs font-semibold text-secondary transition-colors duration-150 hover:border-default hover:bg-surface-2 hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-info"
+              className="inline-flex items-center gap-1.5 rounded-xl border border-strong bg-surface-2/80 px-2.5 py-1.5 text-xs font-semibold text-secondary transition-colors duration-150 hover:border-strong hover:bg-surface-2 hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-info"
             >
               <Search className="h-4 w-4 shrink-0" aria-hidden="true" />
               <span className="hidden xl:inline">Ara</span>
@@ -207,7 +207,7 @@ export function HomeNavbar({ onLogout, user }: HomeNavbarProps) {
               type="button"
               onClick={handleOpenCommandPalette}
               aria-label="Hızlı arama aç"
-              className="inline-flex h-9 w-9 items-center justify-center rounded-xl border border-subtle bg-surface-2 transition-colors hover:bg-surface-3 text-secondary hover:text-primary focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-info"
+              className="inline-flex h-9 w-9 items-center justify-center rounded-xl border border-strong bg-surface-2 transition-colors hover:bg-surface-3 text-secondary hover:text-primary focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-info"
             >
               <Search className="h-4 w-4" aria-hidden="true" />
             </button>
@@ -245,7 +245,7 @@ export function HomeNavbar({ onLogout, user }: HomeNavbarProps) {
                 setIsOpen(false);
                 handleOpenCommandPalette();
               }}
-              className="flex w-full items-center justify-between rounded-xl border border-subtle bg-surface-2 px-3.5 py-2.5 text-sm font-bold text-primary hover:bg-surface-3"
+              className="flex w-full items-center justify-between rounded-xl border border-strong bg-surface-2 px-3.5 py-2.5 text-sm font-bold text-primary hover:bg-surface-3"
             >
               <span className="flex items-center gap-2.5">
                 <Search className="h-4 w-4 text-accent-fg" aria-hidden="true" />
