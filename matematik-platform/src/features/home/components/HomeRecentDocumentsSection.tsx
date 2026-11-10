@@ -140,39 +140,39 @@ const GRADE_STYLES: Record<
 
 const CARD_ACCENTS = [
   {
-    card: 'border-sky-200/90 bg-sky-50/45 hover:border-sky-400 dark:border-sky-800/60 dark:bg-sky-950/25 dark:hover:border-sky-600',
-    topBar: 'bg-sky-500 dark:bg-sky-400',
-    outcome: 'border-sky-200 bg-sky-100/75 text-sky-950 dark:border-sky-800/70 dark:bg-sky-950/65 dark:text-sky-200',
+    card: 'border-sky-200/80 bg-surface-1/80 dark:border-sky-400/20 shadow-[inset_0_1px_0_rgba(255,255,255,0.9),0_12px_28px_-10px_rgba(14,165,233,0.15)] dark:shadow-[inset_0_1px_0_rgba(255,255,255,0.08),0_16px_36px_-12px_rgba(2,6,23,0.5)] hover:border-sky-400/80 hover:-translate-y-1 transition-all duration-300',
+    topBar: 'bg-gradient-to-r from-sky-400 via-cyan-400 to-blue-500',
+    outcome: 'border-sky-200/80 bg-sky-50/80 text-sky-950 dark:border-sky-800/70 dark:bg-sky-950/65 dark:text-sky-200 backdrop-blur-md',
     divider: 'border-sky-200/70 dark:border-sky-800/50',
   },
   {
-    card: 'border-emerald-200/90 bg-emerald-50/45 hover:border-emerald-400 dark:border-emerald-800/60 dark:bg-emerald-950/25 dark:hover:border-emerald-600',
-    topBar: 'bg-emerald-500 dark:bg-emerald-400',
-    outcome: 'border-emerald-200 bg-emerald-100/75 text-emerald-950 dark:border-emerald-800/70 dark:bg-emerald-950/65 dark:text-emerald-200',
+    card: 'border-emerald-200/80 bg-surface-1/80 dark:border-emerald-400/20 shadow-[inset_0_1px_0_rgba(255,255,255,0.9),0_12px_28px_-10px_rgba(16,185,129,0.15)] dark:shadow-[inset_0_1px_0_rgba(255,255,255,0.08),0_16px_36px_-12px_rgba(2,6,23,0.5)] hover:border-emerald-400/80 hover:-translate-y-1 transition-all duration-300',
+    topBar: 'bg-gradient-to-r from-emerald-400 via-teal-400 to-cyan-500',
+    outcome: 'border-emerald-200/80 bg-emerald-50/80 text-emerald-950 dark:border-emerald-800/70 dark:bg-emerald-950/65 dark:text-emerald-200 backdrop-blur-md',
     divider: 'border-emerald-200/70 dark:border-emerald-800/50',
   },
   {
-    card: 'border-violet-200/90 bg-violet-50/45 hover:border-violet-400 dark:border-violet-800/60 dark:bg-violet-950/25 dark:hover:border-violet-600',
-    topBar: 'bg-violet-500 dark:bg-violet-400',
-    outcome: 'border-violet-200 bg-violet-100/75 text-violet-950 dark:border-violet-800/70 dark:bg-violet-950/65 dark:text-violet-200',
+    card: 'border-violet-200/80 bg-surface-1/80 dark:border-violet-400/20 shadow-[inset_0_1px_0_rgba(255,255,255,0.9),0_12px_28px_-10px_rgba(139,92,246,0.15)] dark:shadow-[inset_0_1px_0_rgba(255,255,255,0.08),0_16px_36px_-12px_rgba(2,6,23,0.5)] hover:border-violet-400/80 hover:-translate-y-1 transition-all duration-300',
+    topBar: 'bg-gradient-to-r from-violet-400 via-purple-400 to-indigo-500',
+    outcome: 'border-violet-200/80 bg-violet-50/80 text-violet-950 dark:border-violet-800/70 dark:bg-violet-950/65 dark:text-violet-200 backdrop-blur-md',
     divider: 'border-violet-200/70 dark:border-violet-800/50',
   },
   {
-    card: 'border-amber-200/90 bg-amber-50/45 hover:border-amber-400 dark:border-amber-800/60 dark:bg-amber-950/25 dark:hover:border-amber-600',
-    topBar: 'bg-amber-500 dark:bg-amber-400',
-    outcome: 'border-amber-200 bg-amber-100/75 text-amber-950 dark:border-amber-800/70 dark:bg-amber-950/65 dark:text-amber-200',
+    card: 'border-amber-200/80 bg-surface-1/80 dark:border-amber-400/20 shadow-[inset_0_1px_0_rgba(255,255,255,0.9),0_12px_28px_-10px_rgba(245,158,11,0.15)] dark:shadow-[inset_0_1px_0_rgba(255,255,255,0.08),0_16px_36px_-12px_rgba(2,6,23,0.5)] hover:border-amber-400/80 hover:-translate-y-1 transition-all duration-300',
+    topBar: 'bg-gradient-to-r from-amber-400 via-orange-400 to-yellow-500',
+    outcome: 'border-amber-200/80 bg-amber-50/80 text-amber-950 dark:border-amber-800/70 dark:bg-amber-950/65 dark:text-amber-200 backdrop-blur-md',
     divider: 'border-amber-200/70 dark:border-amber-800/50',
   },
   {
-    card: 'border-rose-200/90 bg-rose-50/45 hover:border-rose-400 dark:border-rose-800/60 dark:bg-rose-950/25 dark:hover:border-rose-600',
-    topBar: 'bg-rose-500 dark:bg-rose-400',
-    outcome: 'border-rose-200 bg-rose-100/75 text-rose-950 dark:border-rose-800/70 dark:bg-rose-950/65 dark:text-rose-200',
+    card: 'border-rose-200/80 bg-surface-1/80 dark:border-rose-400/20 shadow-[inset_0_1px_0_rgba(255,255,255,0.9),0_12px_28px_-10px_rgba(244,63,94,0.15)] dark:shadow-[inset_0_1px_0_rgba(255,255,255,0.08),0_16px_36px_-12px_rgba(2,6,23,0.5)] hover:border-rose-400/80 hover:-translate-y-1 transition-all duration-300',
+    topBar: 'bg-gradient-to-r from-rose-400 via-pink-400 to-purple-500',
+    outcome: 'border-rose-200/80 bg-rose-50/80 text-rose-950 dark:border-rose-800/70 dark:bg-rose-950/65 dark:text-rose-200 backdrop-blur-md',
     divider: 'border-rose-200/70 dark:border-rose-800/50',
   },
   {
-    card: 'border-indigo-200/90 bg-indigo-50/45 hover:border-indigo-400 dark:border-indigo-800/60 dark:bg-indigo-950/25 dark:hover:border-indigo-600',
-    topBar: 'bg-indigo-500 dark:bg-indigo-400',
-    outcome: 'border-indigo-200 bg-indigo-100/75 text-indigo-950 dark:border-indigo-800/70 dark:bg-indigo-950/65 dark:text-indigo-200',
+    card: 'border-indigo-200/80 bg-surface-1/80 dark:border-indigo-400/20 shadow-[inset_0_1px_0_rgba(255,255,255,0.9),0_12px_28px_-10px_rgba(99,102,241,0.15)] dark:shadow-[inset_0_1px_0_rgba(255,255,255,0.08),0_16px_36px_-12px_rgba(2,6,23,0.5)] hover:border-indigo-400/80 hover:-translate-y-1 transition-all duration-300',
+    topBar: 'bg-gradient-to-r from-indigo-400 via-sky-400 to-cyan-500',
+    outcome: 'border-indigo-200/80 bg-indigo-50/80 text-indigo-950 dark:border-indigo-800/70 dark:bg-indigo-950/65 dark:text-indigo-200 backdrop-blur-md',
     divider: 'border-indigo-200/70 dark:border-indigo-800/50',
   },
 ] as const;
@@ -300,12 +300,15 @@ export function HomeRecentDocumentsSection({
   return (
     <div
       data-testid="home-recent-documents-section"
-      className="rounded-3xl border border-subtle bg-surface-1 p-5 sm:p-8 shadow-sm font-sans"
+      className="relative overflow-hidden rounded-3xl border border-sky-200/75 dark:border-sky-400/20 bg-surface-1/80 backdrop-blur-2xl p-5 sm:p-8 shadow-[inset_0_1px_0_rgba(255,255,255,0.9),0_18px_45px_-15px_rgba(14,165,233,0.12)] dark:shadow-[inset_0_1px_0_rgba(255,255,255,0.1),0_20px_50px_-15px_rgba(2,6,23,0.65)] font-sans"
     >
+      {/* Üst Prizmatik Işık Kırılım Çizgisi */}
+      <div className="absolute inset-x-0 top-0 h-[2px] bg-gradient-to-r from-sky-400 via-indigo-400 to-emerald-400" />
+
       {/* Üst Başlık ve Sınıf Filtre Sekmeleri */}
       <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pb-6 border-b border-subtle">
         <div className="space-y-1.5">
-          <div className="inline-flex items-center gap-1.5 rounded-full bg-accent-bg border border-subtle px-3.5 py-1 text-xs font-black text-accent-fg uppercase tracking-wider">
+          <div className="inline-flex items-center gap-1.5 rounded-full bg-accent-bg border border-sky-300/40 dark:border-sky-400/20 px-3.5 py-1 text-xs font-black text-accent-fg uppercase tracking-wider backdrop-blur-md shadow-xs">
             <Sparkles className="h-3.5 w-3.5 text-accent-fg shrink-0" />
             <span>Yeni Yüklenen İçerikler & Çözümlü Testler</span>
           </div>
@@ -334,8 +337,8 @@ export function HomeRecentDocumentsSection({
             }}
             className={`inline-flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-xs font-bold border transition-all ${
               selectedGrade === 'all'
-                ? 'bg-accent-bg text-accent-fg border-default'
-                : 'bg-surface-1 text-secondary border-default hover:border-strong'
+                ? 'bg-accent-bg text-accent-fg border-sky-300/50 dark:border-sky-400/30 shadow-xs'
+                : 'bg-surface-1/90 text-secondary border-default hover:border-strong'
             }`}
           >
             <span>Tümü</span>
@@ -359,7 +362,7 @@ export function HomeRecentDocumentsSection({
                 className={`inline-flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-xs font-bold border transition-all ${
                   isSelected
                     ? style.pillActive
-                    : 'bg-surface-1 text-secondary border-default hover:border-strong'
+                    : 'bg-surface-1/90 text-secondary border-default hover:border-strong'
                 }`}
               >
                 <span
@@ -435,9 +438,9 @@ export function HomeRecentDocumentsSection({
             return (
               <article
                 key={doc.id}
-                className={`group relative flex flex-col justify-between overflow-hidden border-2 rounded-2xl shadow-sm transition-colors ${accent.card}`}
+                className={`group relative flex flex-col justify-between overflow-hidden rounded-3xl border transition-all duration-300 backdrop-blur-xl ${accent.card}`}
               >
-                {/* Üst Renkli Akademik Şerit */}
+                {/* Üst Renkli Kristal Prizma Şeridi */}
                 <div className={`h-1.5 w-full ${accent.topBar}`} />
 
                 <div className="flex flex-1 flex-col justify-between p-5 sm:p-6">
@@ -446,7 +449,7 @@ export function HomeRecentDocumentsSection({
                     <div className="flex flex-wrap items-center justify-between gap-2 mb-3.5">
                       <div className="flex flex-wrap items-center gap-2">
                         <span
-                          className={`inline-flex items-center rounded-full border px-3 py-1 text-xs font-black ${
+                          className={`inline-flex items-center rounded-full border px-3 py-1 text-xs font-black backdrop-blur-md ${
                             gradeStyle
                               ? gradeStyle.badge
                               : 'bg-surface-2 text-secondary border-subtle'
@@ -455,20 +458,20 @@ export function HomeRecentDocumentsSection({
                           {gradeLabel}
                         </span>
 
-                        <span className="inline-flex items-center rounded-full border border-violet-300 dark:border-violet-700/70 bg-violet-100/90 dark:bg-violet-950/75 px-3 py-1 text-xs font-bold text-violet-950 dark:text-violet-200">
+                        <span className="inline-flex items-center rounded-full border border-violet-300/80 dark:border-violet-700/70 bg-violet-100/90 dark:bg-violet-950/75 px-3 py-1 text-xs font-bold text-violet-950 dark:text-violet-200 backdrop-blur-md">
                           {getContentTypeLabel(doc.type)}
                         </span>
                       </div>
 
                       <div className="flex flex-wrap items-center gap-1.5">
                         {isFresh && (
-                          <span className="inline-flex items-center rounded-full border border-amber-300 dark:border-amber-700/70 bg-amber-100 dark:bg-amber-950/80 text-amber-950 dark:text-amber-200 px-2.5 py-0.5 text-xs font-black uppercase tracking-wide">
+                          <span className="inline-flex items-center rounded-full border border-amber-300/80 dark:border-amber-700/70 bg-amber-100 dark:bg-amber-950/80 text-amber-950 dark:text-amber-200 px-2.5 py-0.5 text-xs font-black uppercase tracking-wide backdrop-blur-md">
                             ✨ Yeni
                           </span>
                         )}
 
                         {(hasSolutionPdf || hasAnswerKey) && (
-                          <span className="inline-flex items-center gap-1 rounded-full border border-teal-300 dark:border-teal-700/70 bg-teal-100/90 dark:bg-teal-950/80 text-teal-950 dark:text-teal-200 px-2.5 py-1 text-xs font-black">
+                          <span className="inline-flex items-center gap-1 rounded-full border border-teal-300/80 dark:border-teal-700/70 bg-teal-100/90 dark:bg-teal-950/80 text-teal-950 dark:text-teal-200 px-2.5 py-1 text-xs font-black backdrop-blur-md">
                             <CheckCircle2 className="h-3.5 w-3.5 shrink-0 text-teal-700 dark:text-teal-300" />
                             <span>
                               {isHandwrittenSolution
@@ -525,7 +528,7 @@ export function HomeRecentDocumentsSection({
                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
                       <SafeLink
                         href={`/icerikler?id=${doc.id}`}
-                        className="inline-flex items-center justify-center gap-1.5 rounded-xl border border-indigo-300 dark:border-indigo-700 bg-indigo-100/90 dark:bg-indigo-950/80 hover:bg-indigo-200/80 dark:hover:bg-indigo-900 px-3.5 py-2.5 text-xs font-bold text-indigo-950 dark:text-indigo-200 transition-colors"
+                        className="inline-flex items-center justify-center gap-1.5 rounded-2xl border border-indigo-300/80 dark:border-indigo-700/80 bg-indigo-50/80 dark:bg-indigo-950/60 hover:bg-indigo-100/90 dark:hover:bg-indigo-900/60 px-3.5 py-2.5 text-xs font-bold text-indigo-950 dark:text-indigo-200 backdrop-blur-md transition-all shadow-xs"
                       >
                         <Eye className="h-4 w-4 shrink-0" />
                         <span>İncele</span>
@@ -536,7 +539,7 @@ export function HomeRecentDocumentsSection({
                           href={doc.file_url}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="inline-flex items-center justify-center gap-1.5 rounded-xl border border-sky-300 dark:border-sky-700 bg-sky-100/90 dark:bg-sky-950/80 hover:bg-sky-200/80 dark:hover:bg-sky-900 px-3.5 py-2.5 text-xs font-bold text-sky-950 dark:text-sky-200 transition-colors"
+                          className="inline-flex items-center justify-center gap-1.5 rounded-2xl border border-sky-300/80 dark:border-sky-700/80 bg-sky-50/80 dark:bg-sky-950/60 hover:bg-sky-100/90 dark:hover:bg-sky-900/60 px-3.5 py-2.5 text-xs font-bold text-sky-950 dark:text-sky-200 backdrop-blur-md transition-all shadow-xs"
                         >
                           <FileText className="h-4 w-4 shrink-0 text-sky-700 dark:text-sky-300" />
                           <span>Öğrenci PDF</span>
@@ -548,7 +551,7 @@ export function HomeRecentDocumentsSection({
                           href={doc.solution_url}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="inline-flex items-center justify-center gap-1.5 rounded-xl bg-[var(--accent-brand)] text-[var(--on-brand)] hover:opacity-90 border border-transparent px-3.5 py-2.5 text-xs font-bold shadow-xs transition-all"
+                          className="inline-flex items-center justify-center gap-1.5 rounded-2xl bg-gradient-to-r from-emerald-700 to-teal-800 text-[var(--on-brand)] dark:from-emerald-400 dark:to-teal-400 dark:text-slate-950 hover:opacity-95 border border-transparent px-3.5 py-2.5 text-xs font-bold shadow-md shadow-emerald-600/20 transition-all"
                         >
                           <FileCheck2 className="h-4 w-4 shrink-0" />
                           <span>Çözüm PDF</span>

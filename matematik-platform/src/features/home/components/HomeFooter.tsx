@@ -11,13 +11,16 @@ type HomeFooterProps = {
 
 export function HomeFooter(_props: HomeFooterProps) {
   return (
-    <footer className="border-t border-subtle mt-12 px-4 pt-12 pb-12 bg-surface-2 font-sans">
+    <footer className="relative border-t border-sky-200/60 dark:border-sky-400/20 mt-12 px-4 pt-12 pb-12 bg-surface-1/80 backdrop-blur-2xl font-sans">
+      {/* Üst Prizmatik Işık Kırılım Çizgisi */}
+      <div className="absolute inset-x-0 top-0 h-[1.5px] bg-gradient-to-r from-sky-400/50 via-indigo-400/50 to-emerald-400/50" />
+
       <div className="mx-auto max-w-6xl">
         <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4 pb-8 border-b border-subtle">
           {/* Marka & Misyon */}
           <div className="space-y-3 lg:col-span-2">
             <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-surface-1 border border-subtle overflow-hidden p-0.5 select-none">
+              <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-surface-2 border border-sky-300/60 dark:border-sky-400/30 overflow-hidden p-0.5 select-none shadow-xs">
                 <Image
                   src="/ugur.jpeg"
                   alt="Uğur Hoca"
@@ -37,7 +40,7 @@ export function HomeFooter(_props: HomeFooterProps) {
               ortamı sunar.
             </p>
 
-            <div className="inline-flex items-center gap-1.5 rounded-full bg-accent-bg border border-subtle px-3.5 py-1 text-xs font-black text-accent-fg">
+            <div className="inline-flex items-center gap-1.5 rounded-full bg-accent-bg border border-sky-300/40 dark:border-sky-400/20 px-3.5 py-1 text-xs font-black text-accent-fg shadow-xs">
               <Shield className="h-3.5 w-3.5" />
               <span>💚 %100 Ücretsiz & Reklamsız</span>
             </div>

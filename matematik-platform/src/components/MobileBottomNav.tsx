@@ -45,7 +45,7 @@ export function MobileBottomNav() {
       className="fixed bottom-0 left-0 right-0 z-40 block md:hidden pointer-events-none"
     >
       <div className="mx-auto max-w-md px-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] pt-2 pointer-events-auto">
-        <div className="flex items-center justify-around rounded-3xl border-2 sm:border-3 border-default bg-surface-1/95 px-2 py-2 shadow-[0_4px_0_var(--border-default)] backdrop-blur-xl transition-all duration-200">
+        <div className="flex items-center justify-around rounded-full border border-subtle crystal-nav-pill px-3 py-1.5 transition-all duration-300">
           {NAV_ITEMS.map((item) => {
             const isRouteActive =
               item.href === '/'
@@ -71,14 +71,14 @@ export function MobileBottomNav() {
                 }}
                 className={`relative flex min-h-[46px] min-w-[54px] flex-col items-center justify-center rounded-2xl px-2 py-1.5 font-display text-[11px] font-bold transition-all duration-150 active:scale-95 select-none ${
                   isActive
-                    ? 'text-green-ink dark:text-[#61e002] font-black'
+                    ? 'text-sky-600 dark:text-sky-400 font-extrabold'
                     : 'text-secondary hover:text-primary'
                 }`}
               >
                 {isActive && (
                   <span
                     aria-hidden="true"
-                    className="absolute inset-x-3 -top-1.5 h-1 rounded-full bg-[#58cc02]"
+                    className="absolute inset-x-3 -top-1 h-1 rounded-full bg-gradient-to-r from-sky-400 via-cyan-400 to-emerald-400 shadow-[0_0_8px_rgba(56,189,248,0.6)]"
                   />
                 )}
                 <Icon

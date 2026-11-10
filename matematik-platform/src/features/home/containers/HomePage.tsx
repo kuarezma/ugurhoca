@@ -217,7 +217,7 @@ export default function HomePage({
       <main className="home-page relative min-h-screen overflow-x-clip bg-transparent light-atmosphere">
         <HomeNavbar user={user} onLogout={handleLogout} />
         <ActiveLiveLessonBadge userId={user?.id} />
-        <div className="pt-[calc(4.5rem+env(safe-area-inset-top))] md:pt-20">
+        <div className="pt-[calc(5.25rem+env(safe-area-inset-top))] md:pt-24">
           {/* 1. Sade Açık Tema Karşılama, Yaprak Test & Oyunlar Hub'ı */}
           <HomeHeroSection
             user={user}

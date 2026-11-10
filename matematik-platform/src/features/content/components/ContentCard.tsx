@@ -167,14 +167,14 @@ function ContentCard({
         whileHover={{ scale: 1.02 }}
         whileTap={{ scale: 0.98 }}
         onClick={() => onPreview(content)}
-        className={`col-span-1 flex w-full items-center justify-center gap-2 rounded-2xl border border-purple-700 dark:border-purple-400 bg-purple-50/70 dark:bg-purple-950/40 hover:bg-purple-100/90 dark:hover:bg-purple-900/50 px-4 py-2.5 sm:py-3 text-xs sm:text-sm font-bold text-purple-900 dark:text-purple-200 transition-all duration-200 backdrop-blur-md shadow-xs hover:border-purple-500 hover:-translate-y-0.5 sm:flex-1 ${
+        className={`col-span-1 flex w-full items-center justify-center gap-2 rounded-2xl border border-sky-300/80 dark:border-sky-700/80 bg-sky-50/80 dark:bg-sky-950/50 hover:bg-sky-100/90 dark:hover:bg-sky-900/60 px-4 py-2.5 sm:py-3 text-xs sm:text-sm font-bold text-sky-950 dark:text-sky-200 transition-all duration-200 backdrop-blur-md shadow-xs hover:border-sky-500 hover:-translate-y-0.5 sm:flex-1 ${
           !content.file_url ? 'col-span-2' : ''
         } ${viewMode === 'grid' ? 'sm:min-w-[130px]' : 'sm:min-w-[160px]'}`}
       >
         {content.type === 'ders-videolari' ? (
-          <Play className="shrink-0 w-4 h-4 text-purple-600 dark:text-purple-400" />
+          <Play className="shrink-0 w-4 h-4 text-sky-600 dark:text-sky-400" />
         ) : (
-          <Eye className="shrink-0 w-4 h-4 text-purple-600 dark:text-purple-400" />
+          <Eye className="shrink-0 w-4 h-4 text-sky-600 dark:text-sky-400" />
         )}
         {content.type === 'ders-videolari' ? 'İzle' : 'Önizle'}
       </motion.button>
@@ -183,7 +183,7 @@ function ContentCard({
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
           onClick={() => onDownload(content)}
-          className="col-span-1 flex w-full items-center justify-center gap-2 rounded-2xl px-4 py-2.5 sm:py-3 text-xs sm:text-sm font-bold transition-all sm:w-auto sm:px-5 bg-gradient-to-r from-emerald-700 to-teal-800 hover:from-emerald-800 hover:to-teal-900 text-on-brand dark:text-slate-950 dark:from-emerald-400 dark:to-teal-400 dark:hover:from-emerald-300 dark:hover:to-teal-300 shadow-md shadow-emerald-700/25 hover:-translate-y-0.5 active:translate-y-0.5"
+          className="col-span-1 flex w-full items-center justify-center gap-2 rounded-2xl px-4 py-2.5 sm:py-3 text-xs sm:text-sm font-bold transition-all sm:w-auto sm:px-5 bg-gradient-to-r from-emerald-700 to-teal-800 hover:from-emerald-800 hover:to-teal-900 text-[var(--on-brand)] dark:text-slate-950 dark:from-emerald-400 dark:to-teal-400 dark:hover:from-emerald-300 dark:hover:to-teal-300 shadow-md shadow-emerald-600/25 hover:-translate-y-0.5 active:translate-y-0.5"
         >
           <Download className="shrink-0 w-4 h-4" /> İndir
         </motion.button>
@@ -195,7 +195,7 @@ function ContentCard({
             whileTap={{ scale: 0.95 }}
             onClick={() => onEdit(content)}
             title="Düzenle"
-            className="flex-1 sm:flex-none flex items-center justify-center rounded-2xl border border-sky-200 dark:border-sky-800/60 bg-sky-50/80 dark:bg-sky-950/30 p-2.5 text-sky-700 dark:text-sky-300 transition-all hover:bg-sky-600 hover:border-sky-500 hover:text-on-brand dark:hover:text-white"
+            className="flex-1 sm:flex-none flex items-center justify-center rounded-2xl border border-sky-200 dark:border-sky-800/60 bg-sky-50/80 dark:bg-sky-950/30 p-2.5 text-sky-700 dark:text-sky-300 transition-all hover:bg-sky-600 hover:border-sky-500 hover:text-[var(--on-brand)] dark:hover:text-slate-100"
           >
             <Edit3 className="shrink-0 w-4 h-4" />
           </motion.button>
@@ -204,7 +204,7 @@ function ContentCard({
             whileTap={{ scale: 0.95 }}
             onClick={() => onDelete(content)}
             title="Sil"
-            className="flex-1 sm:flex-none flex items-center justify-center rounded-2xl border border-red-200 dark:border-red-800/60 bg-red-50/80 dark:bg-red-950/30 p-2.5 text-red-700 dark:text-red-300 transition-all hover:bg-red-600 hover:border-red-600 hover:text-on-brand dark:hover:text-white"
+            className="flex-1 sm:flex-none flex items-center justify-center rounded-2xl border border-red-200 dark:border-red-800/60 bg-red-50/80 dark:bg-red-950/30 p-2.5 text-red-700 dark:text-red-300 transition-all hover:bg-red-600 hover:border-red-600 hover:text-[var(--on-brand)] dark:hover:text-slate-100"
           >
             <Trash2 className="shrink-0 w-4 h-4" />
           </motion.button>
@@ -282,7 +282,7 @@ function ContentCard({
           className={`flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs transition-all duration-200 ${
             isFavorite
               ? 'border-2 border-amber-700 bg-amber-500/25 text-amber-900 dark:text-amber-100 font-extrabold shadow-xs'
-              : 'border-2 border-amber-700 dark:border-amber-400 bg-white dark:bg-slate-800 text-amber-900 dark:text-amber-200 font-bold hover:bg-amber-50 dark:hover:bg-amber-950/40'
+              : 'border-2 border-amber-700 dark:border-amber-400 bg-surface-1/90 text-amber-900 dark:text-amber-200 font-bold hover:bg-amber-50 dark:hover:bg-amber-950/40 backdrop-blur-md'
           }`}
         >
           <Star
@@ -302,7 +302,7 @@ function ContentCard({
             className={`flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs transition-all duration-200 ${
               isCompleted
                 ? 'border-2 border-emerald-700 bg-emerald-500/25 text-emerald-900 dark:text-emerald-100 font-extrabold shadow-xs'
-                : 'border-2 border-emerald-700 dark:border-emerald-400 bg-white dark:bg-slate-800 text-emerald-900 dark:text-emerald-200 font-bold hover:bg-emerald-50 dark:hover:bg-emerald-950/40'
+                : 'border-2 border-emerald-700 dark:border-emerald-400 bg-surface-1/90 text-emerald-900 dark:text-emerald-200 font-bold hover:bg-emerald-50 dark:hover:bg-emerald-950/40 backdrop-blur-md'
             }`}
           >
             <CheckCircle2
@@ -320,7 +320,7 @@ function ContentCard({
           className={`flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs transition-all duration-200 ${
             copiedLink
               ? 'border-2 border-purple-700 bg-purple-500/25 text-purple-900 dark:text-purple-100 font-extrabold shadow-xs'
-              : 'border-2 border-purple-700 dark:border-purple-400 bg-white dark:bg-slate-800 text-purple-900 dark:text-purple-200 font-bold hover:bg-purple-50 dark:hover:bg-purple-950/40'
+              : 'border-2 border-purple-700 dark:border-purple-400 bg-surface-1/90 text-purple-900 dark:text-purple-200 font-bold hover:bg-purple-50 dark:hover:bg-purple-950/40 backdrop-blur-md'
           }`}
         >
           {copiedLink ? (
@@ -342,14 +342,14 @@ function ContentCard({
         initial={{ opacity: 0, x: -12 }}
         animate={{ opacity: 1, x: 0 }}
         transition={{ duration: 0.2, delay: Math.min(index * 0.025, 0.2) }}
-        className="group relative overflow-hidden rounded-3xl border-2 border-purple-400/90 dark:border-purple-600/70 bg-gradient-to-br from-white via-indigo-50/35 to-purple-50/45 dark:from-slate-900 dark:via-slate-900/95 dark:to-purple-950/30 p-5 sm:p-6 shadow-lg shadow-purple-500/10 hover:shadow-2xl hover:shadow-purple-500/20 hover:border-purple-500 dark:hover:border-purple-500 transition-[transform,box-shadow,border-color] duration-200 ease-out defer-card-list"
+        className="group relative overflow-hidden rounded-3xl border border-sky-200/80 dark:border-sky-400/20 bg-surface-1/85 backdrop-blur-2xl p-5 sm:p-6 shadow-[inset_0_1px_0_rgba(255,255,255,0.9),0_12px_28px_-10px_rgba(14,165,233,0.12)] dark:shadow-[inset_0_1px_0_rgba(255,255,255,0.08),0_16px_36px_-12px_rgba(2,6,23,0.5)] hover:border-sky-400/80 hover:shadow-xl transition-[transform,box-shadow,border-color] duration-200 ease-out defer-card-list"
       >
-        <div className="absolute top-0 inset-x-0 h-2 bg-gradient-to-r from-violet-600 via-fuchsia-500 to-amber-400 group-hover:h-2.5 transition-all duration-200" />
+        <div className="absolute top-0 inset-x-0 h-1.5 bg-gradient-to-r from-sky-400 via-indigo-400 to-emerald-400 transition-all duration-200" />
         <div className="space-y-4">
           <div className="flex items-start justify-between gap-3 sm:gap-4">
             <div className="flex items-center gap-3 sm:gap-4 min-w-0">
               {showDriveThumbnail ? (
-                <div className="relative h-12 w-12 sm:h-14 sm:w-14 flex-shrink-0 overflow-hidden rounded-2xl border-2 border-purple-300 dark:border-purple-700 shadow-md ring-2 ring-purple-500/20 group-hover:scale-105 transition-transform duration-300">
+                <div className="relative h-12 w-12 sm:h-14 sm:w-14 flex-shrink-0 overflow-hidden rounded-2xl border border-sky-300 dark:border-sky-700 shadow-md ring-2 ring-sky-500/20 group-hover:scale-105 transition-transform duration-300">
                   {!thumbnailLoaded && (
                     <AcademicSheetCover content={content} size="sm" />
                   )}
@@ -372,7 +372,7 @@ function ContentCard({
                 <AcademicSheetCover content={content} size="sm" />
               )}
               <div className="min-w-0">
-                <h3 className="text-base sm:text-xl font-black leading-snug text-purple-900 dark:text-purple-200 group-hover:text-purple-600 dark:group-hover:text-purple-300 transition-colors truncate">
+                <h3 className="text-base sm:text-xl font-black leading-snug text-primary group-hover:text-sky-600 dark:group-hover:text-sky-400 transition-colors truncate">
                   <Link
                     href={`/icerikler/${documentSlug}`}
                     className="hover:underline focus:outline-hidden"
@@ -380,31 +380,31 @@ function ContentCard({
                     {content.title}
                   </Link>
                 </h3>
-                <p className="text-xs sm:text-sm text-purple-700/80 dark:text-purple-300/80 font-bold">
+                <p className="text-xs sm:text-sm text-secondary font-bold">
                   {getContentTypeLabel(content.type)}
                 </p>
               </div>
             </div>
             <div className="flex max-w-[52%] flex-wrap justify-end gap-1.5 sm:max-w-none sm:items-center sm:gap-2">
               {content.isNew && (
-                <span className="px-2.5 sm:px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-900 dark:text-emerald-100 text-[11px] sm:text-xs font-black border-2 border-emerald-400/40 shadow-xs">
+                <span className="px-2.5 sm:px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-900 dark:text-emerald-100 text-[11px] sm:text-xs font-black border border-emerald-400/40 shadow-xs backdrop-blur-md">
                   Yeni
                 </span>
               )}
               {isCompleted && (
-                <span className="flex items-center gap-1 px-2.5 sm:px-3 py-1 rounded-full bg-teal-500/20 text-teal-900 dark:text-teal-100 text-[11px] sm:text-xs font-black border-2 border-teal-400/40 shadow-xs">
+                <span className="flex items-center gap-1 px-2.5 sm:px-3 py-1 rounded-full bg-teal-500/20 text-teal-900 dark:text-teal-100 text-[11px] sm:text-xs font-black border border-teal-400/40 shadow-xs backdrop-blur-md">
                   <CheckCircle2 className="w-3.5 h-3.5 text-teal-600 dark:text-teal-400" />
                   Çözüldü
                 </span>
               )}
               {hasSolution && (
-                <span className="px-2.5 sm:px-3 py-1 rounded-full bg-cyan-500/20 text-cyan-900 dark:text-cyan-100 text-[11px] sm:text-xs font-black border-2 border-cyan-400/40 shadow-xs">
+                <span className="px-2.5 sm:px-3 py-1 rounded-full bg-cyan-500/20 text-cyan-900 dark:text-cyan-100 text-[11px] sm:text-xs font-black border border-cyan-400/40 shadow-xs backdrop-blur-md">
                   ÇÖZÜMLÜ
                 </span>
               )}
               <Chip
                 tone={gradeBadgeTone}
-                className="ml-auto rounded-full px-3.5 py-1 text-xs font-black shadow-xs border-2"
+                className="ml-auto rounded-full px-3.5 py-1 text-xs font-black shadow-xs border"
               >
                 {getContentPrimaryGradeLabel(content)}
               </Chip>
@@ -412,7 +412,7 @@ function ContentCard({
           </div>
 
           {outcomeLabel && (
-            <div className="inline-flex max-w-full items-center gap-1.5 rounded-xl border-2 border-sky-400/60 bg-gradient-to-r from-sky-500/20 via-blue-500/15 to-transparent px-3 py-1.5 text-[11px] font-bold text-sky-950 dark:text-sky-100 shadow-2xs">
+            <div className="inline-flex max-w-full items-center gap-1.5 rounded-xl border border-sky-400/50 bg-sky-50/70 dark:bg-sky-950/50 px-3 py-1.5 text-[11px] font-bold text-sky-950 dark:text-sky-100 shadow-2xs backdrop-blur-md">
               <span className="font-black text-sky-950 dark:text-sky-200 shrink-0">
                 🎯 Kazanım:
               </span>
@@ -421,21 +421,21 @@ function ContentCard({
           )}
 
           {visibleDescription ? (
-            <p className="text-slate-700 dark:text-slate-300 text-xs sm:text-sm font-semibold line-clamp-2 leading-relaxed">
+            <p className="text-secondary text-xs sm:text-sm font-semibold line-clamp-2 leading-relaxed">
               {visibleDescription}
             </p>
           ) : null}
 
-          <div className="flex flex-wrap items-center gap-3 sm:gap-4 text-xs font-bold text-slate-700 dark:text-slate-300">
+          <div className="flex flex-wrap items-center gap-3 sm:gap-4 text-xs font-bold text-secondary">
             <div className="flex items-center gap-1.5 min-w-0">
-              <Users className="w-4 h-4 text-purple-600 dark:text-purple-400 shrink-0" />
+              <Users className="w-4 h-4 text-sky-600 dark:text-sky-400 shrink-0" />
               <span className="truncate">{getContentAuthorLabel(content)}</span>
             </div>
-            <span className="text-purple-700 dark:text-purple-300 font-black">
+            <span className="text-tertiary font-black">
               •
             </span>
             <div className="flex items-center gap-1.5 shrink-0">
-              <Calendar className="w-4 h-4 text-purple-600 dark:text-purple-400 shrink-0" />
+              <Calendar className="w-4 h-4 text-sky-600 dark:text-sky-400 shrink-0" />
               <span>{formatContentDate(content.created_at)}</span>
             </div>
           </div>
@@ -452,17 +452,17 @@ function ContentCard({
       initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.2, delay: Math.min(index * 0.025, 0.2) }}
-      className="group relative flex flex-col justify-between overflow-hidden rounded-3xl border-2 border-purple-400/90 dark:border-purple-600/70 bg-gradient-to-br from-white via-indigo-50/35 to-purple-50/45 dark:from-slate-900 dark:via-slate-900/95 dark:to-purple-950/30 shadow-lg shadow-purple-500/10 hover:shadow-2xl hover:shadow-purple-500/20 hover:border-purple-500 dark:hover:border-purple-500 hover:-translate-y-1 transition-[transform,box-shadow,border-color] duration-200 ease-out defer-card"
+      className="group relative flex flex-col justify-between overflow-hidden rounded-3xl border border-sky-200/80 dark:border-sky-400/20 bg-surface-1/85 backdrop-blur-2xl shadow-[inset_0_1px_0_rgba(255,255,255,0.9),0_14px_32px_-10px_rgba(14,165,233,0.14)] dark:shadow-[inset_0_1px_0_rgba(255,255,255,0.08),0_18px_40px_-12px_rgba(2,6,23,0.5)] hover:border-sky-400/80 hover:-translate-y-1 transition-[transform,box-shadow,border-color] duration-200 ease-out defer-card"
     >
-      <div className="absolute top-0 inset-x-0 h-2 bg-gradient-to-r from-violet-600 via-fuchsia-500 to-amber-400 group-hover:h-2.5 transition-all duration-200" />
+      <div className="absolute top-0 inset-x-0 h-1.5 bg-gradient-to-r from-sky-400 via-indigo-400 to-emerald-400 transition-all duration-200" />
 
-      <div className="pointer-events-none absolute -top-20 -right-20 h-44 w-44 rounded-full bg-gradient-to-br from-purple-500/20 via-pink-500/15 to-transparent blur-3xl group-hover:scale-125 transition-transform duration-500" />
+      <div className="pointer-events-none absolute -top-20 -right-20 h-44 w-44 rounded-full bg-gradient-to-br from-sky-400/15 via-indigo-400/10 to-transparent blur-3xl group-hover:scale-125 transition-transform duration-500" />
 
       <div className="p-5 sm:p-6 flex flex-col h-full justify-between gap-4">
         <div>
           <div className="flex items-start justify-between gap-3 mb-4">
             {showDriveThumbnail ? (
-              <div className="relative h-13 w-13 sm:h-14 sm:w-14 shrink-0 overflow-hidden rounded-2xl border-2 border-purple-300 dark:border-purple-700 shadow-md ring-2 ring-purple-500/20 group-hover:scale-105 transition-transform duration-300">
+              <div className="relative h-13 w-13 sm:h-14 sm:w-14 shrink-0 overflow-hidden rounded-2xl border border-sky-300 dark:border-sky-700 shadow-md ring-2 ring-sky-500/20 group-hover:scale-105 transition-transform duration-300">
                 {!thumbnailLoaded && (
                   <AcademicSheetCover content={content} size="md" />
                 )}
@@ -486,36 +486,36 @@ function ContentCard({
             )}
 
             <div className="flex max-w-[65%] flex-wrap items-center justify-end gap-1.5">
-              <span className="px-2.5 py-1 rounded-full bg-amber-500/20 text-amber-900 dark:text-amber-100 text-[11px] font-black border-2 border-amber-400/40 shadow-xs">
+              <span className="px-2.5 py-1 rounded-full bg-amber-500/20 text-amber-900 dark:text-amber-100 text-[11px] font-black border border-amber-400/40 shadow-xs backdrop-blur-md">
                 {getContentTypeLabel(content.type)}
               </span>
               {content.isNew && (
-                <span className="px-2.5 py-1 rounded-full bg-emerald-500/20 text-emerald-900 dark:text-emerald-100 text-[11px] font-black border-2 border-emerald-400/40 shadow-xs">
+                <span className="px-2.5 py-1 rounded-full bg-emerald-500/20 text-emerald-900 dark:text-emerald-100 text-[11px] font-black border border-emerald-400/40 shadow-xs backdrop-blur-md">
                   Yeni
                 </span>
               )}
               {isCompleted && (
-                <span className="flex items-center gap-1 px-2.5 py-1 rounded-full bg-teal-500/20 text-teal-900 dark:text-teal-100 text-[11px] font-black border-2 border-teal-400/40 shadow-xs">
+                <span className="flex items-center gap-1 px-2.5 py-1 rounded-full bg-teal-500/20 text-teal-900 dark:text-teal-100 text-[11px] font-black border border-teal-400/40 shadow-xs backdrop-blur-md">
                   <CheckCircle2 className="w-3.5 h-3.5 text-teal-600 dark:text-teal-400" />
                   Çözüldü
                 </span>
               )}
               {hasSolution && (
-                <span className="px-2.5 py-1 rounded-full bg-cyan-500/20 text-cyan-900 dark:text-cyan-100 text-[11px] font-black border-2 border-cyan-400/40 shadow-xs">
+                <span className="px-2.5 py-1 rounded-full bg-cyan-500/20 text-cyan-900 dark:text-cyan-100 text-[11px] font-black border border-cyan-400/40 shadow-xs backdrop-blur-md">
                   ÇÖZÜMLÜ
                 </span>
               )}
 
               <Chip
                 tone={gradeBadgeTone}
-                className="rounded-full px-3 py-1 text-xs font-black shadow-xs border-2"
+                className="rounded-full px-3 py-1 text-xs font-black shadow-xs border"
               >
                 {getContentPrimaryGradeLabel(content)}
               </Chip>
             </div>
           </div>
 
-          <h3 className="text-base sm:text-lg font-black leading-snug text-purple-900 dark:text-purple-200 mb-2 line-clamp-2 group-hover:text-purple-600 dark:group-hover:text-purple-300 transition-colors">
+          <h3 className="text-base sm:text-lg font-black leading-snug text-primary mb-2 line-clamp-2 group-hover:text-sky-600 dark:group-hover:text-sky-400 transition-colors">
             <Link
               href={`/icerikler/${documentSlug}`}
               className="hover:underline focus:outline-hidden"
@@ -525,7 +525,7 @@ function ContentCard({
           </h3>
 
           {outcomeLabel && (
-            <div className="mb-2.5 inline-flex max-w-full items-center gap-1.5 rounded-xl border-2 border-sky-400/60 bg-gradient-to-r from-sky-500/20 via-blue-500/15 to-transparent px-3 py-1.5 text-[11px] font-bold text-sky-950 dark:text-sky-100 shadow-2xs">
+            <div className="mb-2.5 inline-flex max-w-full items-center gap-1.5 rounded-xl border border-sky-400/50 bg-sky-50/70 dark:bg-sky-950/50 px-3 py-1.5 text-[11px] font-bold text-sky-950 dark:text-sky-100 shadow-2xs backdrop-blur-md">
               <span className="font-black text-sky-950 dark:text-sky-200 shrink-0">
                 🎯 Kazanım:
               </span>
@@ -533,20 +533,20 @@ function ContentCard({
             </div>
           )}
 
-          <p className="text-slate-700 dark:text-slate-300 text-xs sm:text-sm font-semibold line-clamp-2 leading-relaxed mb-4 min-h-[2.5rem]">
+          <p className="text-secondary text-xs sm:text-sm font-semibold line-clamp-2 leading-relaxed mb-4 min-h-[2.5rem]">
             {visibleDescription || getContentTypeLabel(content.type)}
           </p>
 
-          <div className="flex items-center gap-3 text-xs font-bold text-slate-700 dark:text-slate-300 pt-3 border-t border-purple-200/80 dark:border-purple-800/40">
+          <div className="flex items-center gap-3 text-xs font-bold text-secondary pt-3 border-t border-sky-200/60 dark:border-sky-800/40">
             <div className="flex items-center gap-1.5 min-w-0">
-              <Users className="w-4 h-4 text-purple-600 dark:text-purple-400 shrink-0" />
+              <Users className="w-4 h-4 text-sky-600 dark:text-sky-400 shrink-0" />
               <span className="truncate">{getContentAuthorLabel(content)}</span>
             </div>
-            <span className="text-purple-700 dark:text-purple-300 font-black">
+            <span className="text-tertiary font-black">
               •
             </span>
             <div className="flex items-center gap-1.5 shrink-0">
-              <Calendar className="w-4 h-4 text-purple-600 dark:text-purple-400 shrink-0" />
+              <Calendar className="w-4 h-4 text-sky-600 dark:text-sky-400 shrink-0" />
               <span>{formatContentDate(content.created_at)}</span>
             </div>
           </div>

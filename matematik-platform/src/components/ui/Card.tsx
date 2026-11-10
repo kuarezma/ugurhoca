@@ -33,12 +33,12 @@ export const Card = forwardRef<HTMLDivElement, CardProps>(function Card(
     <div
       ref={ref}
       className={cn(
-        'relative transition-all duration-200',
-        'rounded-3xl border-3 border-default bg-surface-1 shadow-[0_6px_0_var(--border-default)]',
+        'relative rounded-3xl border border-subtle crystal-panel text-primary transition-all duration-300',
         isBento && 'bento-card',
-        glow && 'shadow-[0_8px_0_var(--border-default)]',
+        glow &&
+          'shadow-[0_0_24px_rgba(56,189,248,0.22)] dark:shadow-[0_0_28px_rgba(56,189,248,0.28)] border-sky-400/40',
         interactive &&
-          'cursor-pointer hover:-translate-y-1 hover:shadow-[0_10px_0_var(--border-default)] active:translate-y-0.5 active:shadow-[0_2px_0_var(--border-default)]',
+          'cursor-pointer crystal-card-interactive hover:-translate-y-1 hover:border-sky-400/50 hover:shadow-[0_14px_32px_-8px_rgba(56,189,248,0.25)] active:translate-y-0 active:scale-[0.99]',
         PADDING[padding],
         className,
       )}

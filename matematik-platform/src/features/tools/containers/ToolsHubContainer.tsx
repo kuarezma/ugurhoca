@@ -104,7 +104,7 @@ export function ToolsHubContainer() {
         <div className="mb-6">
           <Link
             href="/"
-            className="inline-flex items-center gap-2 text-sm font-semibold transition-colors text-secondary hover:text-primary"
+            className="inline-flex items-center gap-2 text-sm font-bold transition-colors text-secondary hover:text-primary rounded-full border border-subtle bg-surface-1/80 backdrop-blur-md px-3.5 py-1.5 shadow-xs"
           >
             <ArrowLeft className="h-4 w-4" />
             Ana Sayfa
@@ -151,7 +151,7 @@ export function ToolsHubContainer() {
               <Link
                 key={tool.id}
                 href={tool.href}
-                className="group relative flex flex-col justify-between rounded-3xl border border-default bg-surface-1 p-6 sm:p-8 shadow-xl backdrop-blur-xl transition-all duration-300 hover:border-border-strong hover:shadow-2xl hover:-translate-y-1 overflow-hidden"
+                className="group relative flex flex-col justify-between rounded-3xl border border-sky-200/80 dark:border-sky-400/20 bg-surface-1/80 backdrop-blur-2xl p-6 sm:p-8 shadow-[inset_0_1px_0_rgba(255,255,255,0.9),0_16px_36px_-12px_rgba(14,165,233,0.14)] dark:shadow-[inset_0_1px_0_rgba(255,255,255,0.08),0_20px_45px_-15px_rgba(2,6,23,0.65)] hover:border-sky-400/80 hover:-translate-y-1 transition-all duration-300 overflow-hidden"
               >
                 {/* Top accent gradient line */}
                 <div
@@ -161,12 +161,12 @@ export function ToolsHubContainer() {
                 <div>
                   <div className="flex items-center justify-between mb-5">
                     <div
-                      className={`flex h-13 w-13 items-center justify-center rounded-2xl bg-gradient-to-br ${tool.gradient} text-white shadow-lg group-hover:scale-105 transition-transform`}
+                      className={`flex h-13 w-13 items-center justify-center rounded-2xl bg-gradient-to-br ${tool.gradient} text-[var(--on-brand)] shadow-lg group-hover:scale-105 transition-transform`}
                     >
                       <Icon className="h-6 w-6" />
                     </div>
                     <span
-                      className={`rounded-full border px-3 py-1 text-xs font-bold ${tool.badgeColor}`}
+                      className={`rounded-full border px-3 py-1 text-xs font-bold backdrop-blur-md ${tool.badgeColor}`}
                     >
                       {tool.tag}
                     </span>
@@ -191,7 +191,9 @@ export function ToolsHubContainer() {
         </div>
 
         {/* Bottom Platform Invitation Banner */}
-        <div className="mt-12 rounded-3xl border border-default bg-surface-1 p-6 sm:p-8 text-center backdrop-blur-xl shadow-xl relative overflow-hidden">
+        <div className="mt-12 rounded-3xl border border-sky-200/75 dark:border-sky-400/20 bg-surface-1/80 backdrop-blur-2xl p-6 sm:p-8 text-center shadow-[inset_0_1px_0_rgba(255,255,255,0.9),0_18px_45px_-15px_rgba(14,165,233,0.12)] dark:shadow-[inset_0_1px_0_rgba(255,255,255,0.1),0_20px_50px_-15px_rgba(2,6,23,0.65)] relative overflow-hidden">
+          {/* Üst Prizmatik Işık Kırılım Çizgisi */}
+          <div className="absolute inset-x-0 top-0 h-[2px] bg-gradient-to-r from-sky-400 via-indigo-400 to-emerald-400" />
           <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/5 to-purple-500/5 pointer-events-none" />
           <div className="flex justify-center mb-3">
             <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-indigo-500/15 text-indigo-600 dark:text-indigo-400 shadow-xs">
@@ -208,13 +210,13 @@ export function ToolsHubContainer() {
           <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
             <Link
               href="/testler"
-              className="rounded-xl px-5 py-2.5 text-xs sm:text-sm font-bold transition bg-emerald-700 hover:bg-emerald-800 text-white dark:bg-emerald-400 dark:hover:bg-emerald-300 dark:text-slate-950 shadow-md shadow-emerald-500/20 hover:-translate-y-0.5 active:translate-y-0.5"
+              className="rounded-2xl px-5 py-2.5 text-xs sm:text-sm font-bold transition bg-gradient-to-r from-emerald-700 to-teal-800 hover:opacity-95 text-[var(--on-brand)] dark:from-emerald-400 dark:to-teal-400 dark:text-slate-950 shadow-md shadow-emerald-500/20 hover:-translate-y-0.5 active:translate-y-0.5"
             >
               Ücretsiz Test Çöz
             </Link>
             <Link
               href="/programlar"
-              className="rounded-xl border border-default bg-surface-2 px-5 py-2.5 text-xs sm:text-sm font-bold text-primary transition hover:bg-surface-3 hover:-translate-y-0.5"
+              className="rounded-2xl border border-default bg-surface-2/80 px-5 py-2.5 text-xs sm:text-sm font-bold text-primary transition hover:bg-surface-3 hover:-translate-y-0.5"
             >
               LGS & YKS Tercih Sihirbazı
             </Link>

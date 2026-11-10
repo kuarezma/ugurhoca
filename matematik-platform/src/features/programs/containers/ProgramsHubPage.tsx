@@ -286,7 +286,7 @@ export default function ProgramsHubPage() {
           <button
             type="button"
             onClick={() => setIsFlashcardsOpen(true)}
-            className="inline-flex items-center gap-2 rounded-xl px-4 py-2 text-xs sm:text-sm font-bold transition hover:scale-[1.02] active:scale-[0.98] bg-emerald-700 hover:bg-emerald-800 text-white dark:bg-emerald-400 dark:hover:bg-emerald-300 dark:text-slate-950 shadow-md shadow-emerald-500/20 active:translate-y-0.5"
+            className="inline-flex items-center gap-2 rounded-full px-4 py-2 text-xs sm:text-sm font-bold transition hover:scale-[1.02] active:scale-[0.98] bg-accent-brand text-on-brand shadow-md shadow-sky-500/20 active:translate-y-0.5"
           >
             <BookOpen className="h-4 w-4" />
             Formül & Bilgi Kartları
@@ -296,12 +296,16 @@ export default function ProgramsHubPage() {
         <motion.section
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
-          className="rounded-3xl border border-slate-200/90 dark:border-white/10 bg-surface-1 p-6 sm:p-8 shadow-xl backdrop-blur-xl relative overflow-hidden"
+          className="rounded-3xl border border-sky-200/75 dark:border-sky-400/20 bg-surface-1/75 p-6 sm:p-8 shadow-[0_20px_54px_-18px_rgba(14,116,144,0.16),inset_0_1px_0_rgba(255,255,255,0.88)] dark:shadow-[0_24px_60px_-18px_rgba(2,6,23,0.72),inset_0_1px_0_rgba(255,255,255,0.08)] backdrop-blur-2xl relative overflow-hidden"
         >
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-x-0 top-0 h-[2.5px] bg-gradient-to-r from-sky-500 via-indigo-500 to-emerald-500"
+          />
           <div className="flex items-start justify-between gap-4">
             <div>
-              <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-indigo-500/30 bg-indigo-50/80 dark:bg-indigo-950/40 px-3.5 py-1 text-xs font-bold text-indigo-700 dark:text-indigo-300 backdrop-blur-md shadow-xs">
-                <Sparkles className="h-3.5 w-3.5 text-indigo-600 dark:text-indigo-400" />
+              <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-sky-400/35 bg-tone-info-bg px-3.5 py-1 text-xs font-bold text-tone-info-fg backdrop-blur-md shadow-xs">
+                <Sparkles className="h-3.5 w-3.5 text-tone-info-fg" />
                 <span>Akıllı Rehberlik & Tercih Laboratuvarı</span>
               </div>
               <h1 className="text-3xl sm:text-5xl font-black text-primary font-display mb-2">
@@ -314,7 +318,7 @@ export default function ProgramsHubPage() {
               </p>
             </div>
 
-            <div className="hidden rounded-2xl border border-slate-200/90 dark:border-white/10 bg-surface-2 p-3 sm:block shadow-xs">
+            <div className="hidden rounded-2xl border border-sky-200/75 dark:border-sky-400/20 bg-surface-2/80 p-3 sm:block shadow-xs backdrop-blur-md">
               <Calculator className="h-8 w-8 text-accent-fg" />
             </div>
           </div>
@@ -327,10 +331,10 @@ export default function ProgramsHubPage() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.1 + index * 0.08 }}
                 whileHover={{ y: -4 }}
-                className="tilt-on-hover group relative overflow-hidden rounded-3xl border border-slate-200/90 dark:border-white/10 bg-white/90 dark:bg-slate-900/80 p-5 sm:p-7 shadow-lg hover:shadow-2xl hover:border-indigo-500/40 backdrop-blur-md transition-all duration-300"
+                className="tilt-on-hover group relative overflow-hidden rounded-3xl border border-sky-200/75 dark:border-sky-400/20 bg-surface-1/78 p-5 sm:p-7 shadow-[0_14px_34px_-16px_rgba(14,116,144,0.14),inset_0_1px_0_rgba(255,255,255,0.88)] dark:shadow-[0_18px_42px_-16px_rgba(2,6,23,0.68),inset_0_1px_0_rgba(255,255,255,0.08)] hover:border-sky-400/50 dark:hover:border-sky-400/35 backdrop-blur-2xl transition-all duration-300"
               >
                 <div
-                  className={`absolute inset-x-0 top-0 h-1 bg-gradient-to-r ${tool.gradient}`}
+                  className={`absolute inset-x-0 top-0 h-[3px] bg-gradient-to-r ${tool.gradient}`}
                 />
                 <div
                   className={`absolute -right-10 -top-10 h-28 w-28 rounded-full bg-gradient-to-br ${tool.gradient} opacity-20 blur-3xl transition-opacity duration-500 group-hover:opacity-40`}
@@ -339,14 +343,14 @@ export default function ProgramsHubPage() {
                 <div className="relative">
                   <div className="mb-4 flex items-start justify-between gap-3">
                     <div
-                      className={`inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br ${tool.gradient} shadow-lg text-white group-hover:scale-105 transition-transform`}
+                      className={`inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br ${tool.gradient} shadow-lg text-on-brand group-hover:scale-105 transition-transform`}
                     >
-                      <tool.icon className="h-6 w-6 text-white dark:text-white" />
+                      <tool.icon className="h-6 w-6 text-on-brand" />
                     </div>
                     <Target className="h-5 w-5 text-secondary" />
                   </div>
 
-                  <h2 className="text-lg font-bold sm:text-xl text-primary group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
+                  <h2 className="text-lg font-bold sm:text-xl text-primary group-hover:text-accent-fg transition-colors">
                     {tool.title}
                   </h2>
                   <p className="mt-2 text-sm text-secondary">
@@ -371,7 +375,7 @@ export default function ProgramsHubPage() {
                     <button
                       type="button"
                       onClick={tool.onClick}
-                      className="mt-6 inline-flex items-center gap-2 rounded-xl px-5 py-2.5 text-sm font-bold transition hover:scale-[1.02] bg-emerald-700 hover:bg-emerald-800 text-white dark:bg-emerald-400 dark:hover:bg-emerald-300 dark:text-slate-950 shadow-md shadow-emerald-500/20 active:translate-y-0.5"
+                      className="mt-6 inline-flex items-center gap-2 rounded-xl px-5 py-2.5 text-sm font-bold transition hover:scale-[1.02] bg-accent-brand hover:opacity-95 text-on-brand shadow-md shadow-sky-500/15 active:translate-y-0.5"
                       aria-label={`${tool.title} aracını aç`}
                     >
                       {tool.ctaLabel || 'Aracı Aç'}
@@ -380,7 +384,7 @@ export default function ProgramsHubPage() {
                   ) : (
                     <Link
                       href={tool.href || '#'}
-                      className="mt-6 inline-flex items-center gap-2 rounded-xl px-5 py-2.5 text-sm font-bold transition hover:scale-[1.02] bg-emerald-700 hover:bg-emerald-800 text-white dark:bg-emerald-400 dark:hover:bg-emerald-300 dark:text-slate-950 shadow-md shadow-emerald-500/20 active:translate-y-0.5"
+                      className="mt-6 inline-flex items-center gap-2 rounded-xl px-5 py-2.5 text-sm font-bold transition hover:scale-[1.02] bg-accent-brand hover:opacity-95 text-on-brand shadow-md shadow-sky-500/15 active:translate-y-0.5"
                       aria-label={`${tool.title} sihirbazını aç`}
                     >
                       {tool.ctaLabel || 'Sihirbazı Aç'}

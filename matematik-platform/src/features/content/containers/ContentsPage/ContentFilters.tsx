@@ -85,9 +85,9 @@ export function ContentFilters({
   handleTypeChange,
 }: ContentFiltersProps) {
   return (
-    <div className="relative overflow-hidden rounded-3xl p-5 sm:p-7 mb-8 border border-border-default dark:border-border-default bg-surface-1/95 shadow-2xl backdrop-blur-md">
-      {/* Top ambient aura */}
-      <div className="absolute top-0 inset-x-0 h-[2px] bg-accent-bg" />
+    <div className="relative overflow-hidden rounded-3xl p-5 sm:p-7 mb-8 border border-sky-200/75 dark:border-sky-400/20 bg-surface-1/75 shadow-[0_18px_46px_-18px_rgba(14,116,144,0.16),inset_0_1px_0_rgba(255,255,255,0.88)] dark:shadow-[0_22px_52px_-18px_rgba(2,6,23,0.7),inset_0_1px_0_rgba(255,255,255,0.08)] backdrop-blur-2xl">
+      {/* Top prismatic refraction */}
+      <div className="absolute top-0 inset-x-0 h-[2.5px] bg-gradient-to-r from-sky-500 via-indigo-500 to-emerald-500" />
 
       {contentLoadError && (
         <div className="mb-3 flex flex-wrap items-center gap-3">

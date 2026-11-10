@@ -54,7 +54,7 @@ export function Modal({
             exit={{ opacity: 0 }}
             transition={{ duration: 0.18 }}
             onClick={disableBackdropClose ? undefined : onClose}
-            className="absolute inset-0 bg-black/70 backdrop-blur-sm"
+            className="absolute inset-0 bg-[var(--scrim)] backdrop-blur-md"
             aria-hidden="true"
           />
           <motion.div
@@ -69,8 +69,7 @@ export function Modal({
             exit={{ opacity: 0, scale: 0.96, y: 8 }}
             transition={{ duration: 0.2, ease: [0.2, 0.8, 0.2, 1] }}
             className={cn(
-              'relative flex max-h-[calc(100dvh-max(2rem,env(safe-area-inset-top)+env(safe-area-inset-bottom)))] w-full flex-col overflow-hidden rounded-3xl border shadow-2xl outline-none sm:max-h-[calc(100dvh-3rem)]',
-              'bg-surface-1 text-primary border-default',
+              'relative flex max-h-[calc(100dvh-max(2rem,env(safe-area-inset-top)+env(safe-area-inset-bottom)))] w-full flex-col overflow-hidden rounded-3xl border border-subtle crystal-panel text-primary shadow-2xl outline-none sm:max-h-[calc(100dvh-3rem)]',
               SIZE[size],
               className,
             )}

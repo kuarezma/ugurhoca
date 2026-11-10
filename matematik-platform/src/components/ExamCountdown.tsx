@@ -169,8 +169,12 @@ export function ExamCountdown({
 
   return (
     <div
-      className="exam-countdown relative overflow-hidden rounded-2xl border border-subtle bg-surface-1 shadow-sm p-4 sm:p-5 font-sans"
+      className="exam-countdown relative overflow-hidden rounded-3xl border border-sky-200/75 dark:border-sky-400/20 bg-surface-1/75 backdrop-blur-2xl shadow-[inset_0_1px_0_rgba(255,255,255,0.88),0_14px_34px_-10px_rgba(14,165,233,0.12)] dark:shadow-[inset_0_1px_0_rgba(255,255,255,0.12),0_18px_42px_-12px_rgba(2,6,23,0.6)] p-4 sm:p-5 font-sans transition-all"
     >
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-x-0 top-0 h-[2px] bg-gradient-to-r from-sky-400 via-indigo-400 to-emerald-400 opacity-85"
+      />
       {/* Başlık ve Durum Alanı */}
       <div className="relative flex items-start justify-between gap-3">
         <div className="min-w-0">
@@ -218,7 +222,7 @@ export function ExamCountdown({
         {countdownItems.map((item) => (
           <div
             key={item.label}
-            className="rounded-2xl border border-subtle bg-surface-2 p-2.5 sm:p-3 text-center transition-transform"
+            className="rounded-2xl border border-sky-200/70 dark:border-sky-400/20 bg-surface-2/75 backdrop-blur-md shadow-[inset_0_1px_0_rgba(255,255,255,0.75)] dark:shadow-[inset_0_1px_0_rgba(255,255,255,0.08)] p-2.5 sm:p-3 text-center transition-transform hover:-translate-y-0.5"
           >
             <div
               className="font-display font-bold tabular-nums text-primary text-xl sm:text-3xl leading-none"

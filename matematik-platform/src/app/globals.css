@@ -48,22 +48,22 @@
   --palette-slate-400: #94a3b8;
   --palette-slate-100: #f1f5f9;
 
-  --surface-0-rgb: 12 18 34;
-  --surface-1-rgb: 20 29 49;
-  --surface-2-rgb: 28 39 64;
-  --surface-3-rgb: 39 52 79;
+  --surface-0-rgb: 6 11 25;
+  --surface-1-rgb: 13 22 43;
+  --surface-2-rgb: 20 33 61;
+  --surface-3-rgb: 30 47 84;
   --surface-0: rgb(var(--surface-0-rgb));
   --surface-1: rgb(var(--surface-1-rgb));
   --surface-2: rgb(var(--surface-2-rgb));
   --surface-3: rgb(var(--surface-3-rgb));
-  --text-primary: #F4F1EA;
-  --text-secondary: #CBD5E1;
-  --text-tertiary: #9AA7BA;
-  --border-subtle: rgba(244, 241, 234, 0.10);
-  --border-default: #7C8AA3;
-  --border-strong: #9AA7BA;
-  --accent-fg: var(--brand-primary-ink);
-  --accent-bg: rgba(16, 185, 129, 0.14);
+  --text-primary: #F4F8FF;
+  --text-secondary: #CBD8F0;
+  --text-tertiary: #94A9CE;
+  --border-subtle: rgba(148, 192, 255, 0.18);
+  --border-default: #6E85AD;
+  --border-strong: #93ABD2;
+  --accent-fg: #7DD3FC;
+  --accent-bg: rgba(56, 189, 248, 0.14);
   --tone-success-fg: #bbf7d0;
   --tone-success-bg: rgba(88, 204, 2, 0.18);
   --tone-success-border: #46a302;
@@ -74,17 +74,17 @@
   --tone-danger-bg: rgba(255, 75, 75, 0.18);
   --tone-danger-border: #ea2b2b;
   --tone-info-fg: #bae6fd;
-  --tone-info-bg: rgba(28, 176, 246, 0.18);
-  --tone-info-border: #1899d6;
+  --tone-info-bg: rgba(56, 189, 248, 0.18);
+  --tone-info-border: #0284c7;
 
-  --brand-primary-rgb: 52 211 153;
+  --brand-primary-rgb: 56 189 248;
   /* Metin mürekkebi, marka zemin renginden bağımsızdır. */
-  --green-ink-rgb: 52 211 153;
+  --green-ink-rgb: 56 189 248;
   --brand-primary-ink-rgb: var(--green-ink-rgb);
-  --brand-primary-soft-rgb: 110 231 183;
-  --brand-primary-deep-rgb: 5 150 105;
-  --brand-secondary-rgb: 147 180 255;
-  --brand-secondary-soft-rgb: 191 208 255;
+  --brand-primary-soft-rgb: 125 211 252;
+  --brand-primary-deep-rgb: 2 132 199;
+  --brand-secondary-rgb: 129 140 248;
+  --brand-secondary-soft-rgb: 165 180 252;
   --brand-accent-rgb: 255 200 0;
   --brand-accent-soft-rgb: 255 212 38;
   --brand-success-rgb: 88 204 2;
@@ -92,10 +92,10 @@
   --brand-warning-rgb: 255 150 0;
   --brand-pink-rgb: 206 130 255;
   --brand-orange-rgb: 255 150 0;
-  --brand-indigo-rgb: 28 176 246;
+  --brand-indigo-rgb: 56 189 248;
   --brand-gradient-middle: var(--brand-pink);
-  --primary-shade-fg: #020617;
-  --brand-primary-ink: rgb(var(--brand-primary-ink-rgb));
+  --primary-shade-fg: #041326;
+  --brand-primary-ink: #7DD3FC;
   --brand-primary: rgb(var(--brand-primary-rgb));
   --brand-primary-soft: rgb(var(--brand-primary-soft-rgb));
   --brand-primary-deep: rgb(var(--brand-primary-deep-rgb));
@@ -113,40 +113,40 @@
   /* Eski adlar, kademeli göç süresince semantic rollerin alias'ıdır. */
   --bg: var(--surface-0);
   --bg-elevated: var(--surface-2);
-  --bg-soft: rgba(12, 18, 34, 0.72);
+  --bg-soft: rgba(13, 22, 43, 0.72);
   --bg-muted: rgba(255, 255, 255, 0.08);
   --text: var(--text-primary);
-  --text-strong: #F4F1EA;
+  --text-strong: #F4F8FF;
   --text-muted: var(--text-tertiary);
-  --text-soft: #9AA7BA;
+  --text-soft: #94A9CE;
   --border: var(--border-default);
   --border-soft: var(--border-subtle);
   --border-strong-light: var(--border-strong);
-  --shadow: rgba(15, 23, 42, 0.35);
-  --scrollbar-track: #141D31;
-  --scrollbar-thumb-start: #7C8AA3;
+  --shadow: rgba(2, 6, 23, 0.45);
+  --scrollbar-track: #0D162B;
+  --scrollbar-thumb-start: #6E85AD;
   --ring: rgb(var(--brand-primary-rgb) / 0.55);
 
   /* Katman & Yüzey: bg-white/x yerine overlay ve hairline token'ları */
   --overlay-1: rgba(255, 255, 255, 0.05);
   --overlay-2: rgba(255, 255, 255, 0.10);
   --overlay-3: rgba(255, 255, 255, 0.15);
-  --hairline: rgba(255, 255, 255, 0.10);
-  --hairline-strong: rgba(255, 255, 255, 0.20);
-  --scrim: rgba(0, 0, 0, 0.40);
+  --hairline: rgba(148, 192, 255, 0.14);
+  --hairline-strong: rgba(148, 192, 255, 0.28);
+  --scrim: rgba(2, 6, 23, 0.55);
 
   /* Aksan ve Zemin Üstü Metin */
-  --on-brand: #06281E;
+  --on-brand: #041326;
   --on-tint: #f8fafc;
   --on-tint-muted: #cbd5e1;
 
   /* Koyu Temada Ek Yüzey */
-  --surface-4: #1C2740;
+  --surface-4: #1E2F54;
 
   /* 6 Semantik Rol: canlı / mürekkep (-ink) / zemin (-tint) */
-  --accent-brand: #34D399;
-  --accent-brand-ink: #34D399;
-  --accent-brand-tint: rgba(52, 211, 153, 0.12);
+  --accent-brand: #38BDF8;
+  --accent-brand-ink: #7DD3FC;
+  --accent-brand-tint: rgba(56, 189, 248, 0.14);
 
   --accent-info: #93B4FF;
   --accent-info-ink: #93B4FF;
@@ -217,37 +217,37 @@ html[data-theme='light'] {
   --palette-slate-400: #94a3b8;
   --palette-slate-100: #f1f5f9;
 
-  --surface-0-rgb: 250 248 245;
+  --surface-0-rgb: 242 247 254;
   --surface-1-rgb: 255 255 255;
-  --surface-2-rgb: 247 244 238;
-  --surface-3-rgb: 244 241 234;
-  --text-primary: #0F172A;
-  --text-secondary: #334155;
-  --text-tertiary: #475569;
-  --border-subtle: #E5DFD3;
-  --border-default: #8C8270;
-  --border-strong: #6F6656;
-  --accent-fg: var(--brand-primary-ink);
-  --accent-bg: #E2F5EC;
-  --tone-success-fg: #065F46;
-  --tone-success-bg: #E6F2EC;
-  --tone-success-border: #047857;
+  --surface-2-rgb: 235 243 253;
+  --surface-3-rgb: 224 235 250;
+  --text-primary: #091326;
+  --text-secondary: #283854;
+  --text-tertiary: #465878;
+  --border-subtle: rgba(148, 168, 204, 0.38);
+  --border-default: #64748B;
+  --border-strong: #475569;
+  --accent-fg: #0369A1;
+  --accent-bg: rgba(14, 165, 233, 0.11);
+  --tone-success-fg: #0369A1;
+  --tone-success-bg: #E0F2FE;
+  --tone-success-border: #0284C7;
   --tone-warn-fg: #92400E;
   --tone-warn-bg: #F8EFD9;
   --tone-warn-border: #B45309;
   --tone-danger-fg: #B91C1C;
   --tone-danger-bg: #F9E8E6;
   --tone-danger-border: #B91C1C;
-  --tone-info-fg: #1D4ED8;
-  --tone-info-bg: #E8EEFB;
-  --tone-info-border: #1D4ED8;
+  --tone-info-fg: #0369A1;
+  --tone-info-bg: #E0F2FE;
+  --tone-info-border: #0284C7;
 
-  --brand-primary-rgb: 16 185 129;
-  --green-ink-rgb: 6 95 70;
-  --brand-primary-soft-rgb: 52 211 153;
-  --brand-primary-deep-rgb: 6 95 70;
-  --brand-secondary-rgb: 29 78 216;
-  --brand-secondary-soft-rgb: 37 99 235;
+  --brand-primary-rgb: 3 105 161;
+  --green-ink-rgb: 3 105 161;
+  --brand-primary-soft-rgb: 56 189 248;
+  --brand-primary-deep-rgb: 7 89 133;
+  --brand-secondary-rgb: 79 70 229;
+  --brand-secondary-soft-rgb: 99 102 241;
   --brand-accent-rgb: 255 200 0;
   --brand-accent-soft-rgb: 255 212 38;
   --brand-success-rgb: 88 204 2;
@@ -255,47 +255,47 @@ html[data-theme='light'] {
   --brand-warning-rgb: 255 150 0;
   --brand-pink-rgb: 206 130 255;
   --brand-orange-rgb: 255 150 0;
-  --brand-indigo-rgb: 28 176 246;
-  --brand-gradient-middle: #065F46;
+  --brand-indigo-rgb: 2 132 199;
+  --brand-gradient-middle: #0284C7;
 
   --bg: var(--surface-0);
   --bg-elevated: #FFFFFF;
-  --bg-soft: #FFFFFF;
-  --bg-muted: #F4F0E8;
+  --bg-soft: rgba(255, 255, 255, 0.88);
+  --bg-muted: #EBF3FD;
   --text: var(--text-primary);
-  --text-strong: #0F172A;
+  --text-strong: #091326;
   --text-muted: var(--text-tertiary);
-  --text-soft: #475569;
-  --surface-4: #F4F0E8;
+  --text-soft: #465878;
+  --surface-4: #E0EBFA;
   --border: var(--border-default);
   --border-soft: var(--border-subtle);
   --border-strong-light: var(--border-strong);
-  --shadow: rgba(15, 23, 42, 0.06);
-  --scrollbar-track: #F4F0E8;
-  --scrollbar-thumb-start: #8C8270;
-  --ring: #1D4ED8;
+  --shadow: rgba(14, 116, 144, 0.08);
+  --scrollbar-track: #EBF3FD;
+  --scrollbar-thumb-start: #64748B;
+  --ring: #0284C7;
 
   /* Katman & Yüzey: Açık temada dokunsal kağıt ve mürekkep alfası */
-  --overlay-1: rgba(15, 23, 42, 0.02);
-  --overlay-2: rgba(15, 23, 42, 0.04);
-  --overlay-3: rgba(15, 23, 42, 0.07);
-  --hairline: rgba(229, 223, 211, 0.9);
-  --hairline-strong: rgba(140, 130, 112, 0.55);
-  --scrim: rgba(15, 23, 42, 0.45);
+  --overlay-1: rgba(9, 19, 38, 0.02);
+  --overlay-2: rgba(9, 19, 38, 0.04);
+  --overlay-3: rgba(9, 19, 38, 0.07);
+  --hairline: rgba(148, 168, 204, 0.35);
+  --hairline-strong: rgba(100, 116, 139, 0.55);
+  --scrim: rgba(9, 19, 38, 0.45);
 
   /* Aksan ve Zemin Üstü Metin */
   --on-brand: #FFFFFF;
-  --on-tint: #090d16;
-  --on-tint-muted: #334155;
+  --on-tint: #091326;
+  --on-tint-muted: #283854;
 
   /* 6 Semantik Rol: mürekkep 700 basamağında (≥ 4.5:1), zemin rafine pastel tonlarda */
-  --accent-brand: #065F46;
-  --accent-brand-ink: #065F46;
-  --accent-brand-tint: rgba(5, 150, 105, 0.08);
+  --accent-brand: #0369A1;
+  --accent-brand-ink: #0369A1;
+  --accent-brand-tint: rgba(2, 132, 199, 0.10);
 
-  --accent-info: #1D4ED8;
-  --accent-info-ink: #1D4ED8;
-  --accent-info-tint: rgba(29, 78, 216, 0.08);
+  --accent-info: #0284C7;
+  --accent-info-ink: #0369A1;
+  --accent-info-tint: rgba(2, 132, 199, 0.10);
 
   --accent-success: #059669;
   --accent-success-ink: #065F46;
@@ -1146,20 +1146,20 @@ html[data-theme='light'] .gradient-bg {
   background: transparent;
 }
 
-html[data-theme='light'] nav.fixed.top-0.left-0.right-0.z-50 {
-  background: rgba(255, 255, 255, 0.88);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border-bottom: 1px solid rgba(226, 232, 240, 0.85);
-  box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.04);
+html[data-theme='light'] nav.fixed.top-0.left-0.right-0.z-50:not([class*="rounded-"]):not(.pointer-events-none) {
+  background: rgba(242, 247, 254, 0.82);
+  backdrop-filter: blur(20px) saturate(170%);
+  -webkit-backdrop-filter: blur(20px) saturate(170%);
+  border-bottom: 1px solid rgba(148, 168, 204, 0.35);
+  box-shadow: 0 4px 24px -2px rgba(14, 116, 144, 0.06);
 }
 
 .glass {
   background: var(--bg-soft);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid var(--border);
-  box-shadow: 0 12px 36px var(--shadow);
+  backdrop-filter: blur(20px) saturate(170%);
+  -webkit-backdrop-filter: blur(20px) saturate(170%);
+  border: 1px solid var(--border-subtle);
+  box-shadow: 0 14px 36px var(--shadow);
 }
 
 .home-page .glass {
@@ -1169,20 +1169,21 @@ html[data-theme='light'] nav.fixed.top-0.left-0.right-0.z-50 {
 }
 
 html[data-theme='light'] .glass {
-  background: rgba(255, 255, 255, 0.92);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(226, 232, 240, 0.95);
-  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04), 0 10px 24px -4px rgba(15, 23, 42, 0.04);
+  background: rgba(255, 255, 255, 0.78);
+  backdrop-filter: blur(20px) saturate(170%);
+  -webkit-backdrop-filter: blur(20px) saturate(170%);
+  border: 1px solid rgba(148, 168, 204, 0.45);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.92), 0 14px 32px -8px rgba(14, 116, 144, 0.08);
 }
 
 .bento-card {
   border-radius: 1.5rem;
-  border: 1px solid var(--border);
-  background: var(--bg-soft);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  border: 1px solid var(--border-subtle);
+  background: rgba(13, 22, 43, 0.72);
+  backdrop-filter: blur(20px) saturate(170%);
+  -webkit-backdrop-filter: blur(20px) saturate(170%);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12), 0 16px 36px -10px rgba(2, 6, 23, 0.58);
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.25s ease;
 }
 
 .bento-interactive {
@@ -1190,20 +1191,20 @@ html[data-theme='light'] .glass {
 }
 
 .bento-interactive:hover {
-  border-color: rgba(99, 102, 241, 0.35);
+  border-color: rgba(56, 189, 248, 0.42);
   transform: translateY(-2px);
-  box-shadow: 0 14px 32px -6px rgba(15, 23, 42, 0.22);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 20px 42px -10px rgba(56, 189, 248, 0.18);
 }
 
 html[data-theme='light'] .bento-card {
-  background: #ffffff;
-  border-color: rgba(226, 232, 240, 0.95);
-  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04), 0 10px 24px -4px rgba(15, 23, 42, 0.04);
+  background: rgba(255, 255, 255, 0.78);
+  border-color: rgba(148, 168, 204, 0.42);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.95), 0 14px 32px -8px rgba(14, 116, 144, 0.08);
 }
 
 html[data-theme='light'] .bento-interactive:hover {
-  border-color: rgba(99, 102, 241, 0.4);
-  box-shadow: 0 14px 30px -4px rgba(99, 102, 241, 0.12), 0 2px 6px -1px rgba(15, 23, 42, 0.04);
+  border-color: rgba(2, 132, 199, 0.42);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 1), 0 18px 36px -6px rgba(2, 132, 199, 0.14);
   transform: translateY(-2px);
 }
 
@@ -1416,7 +1417,7 @@ html[data-theme='dark'] .btn-secondary:hover {
 /* Tema bağımsız ortak yüzeyler: sayfalar yalnızca bu semantic sınıfa bağlanır. */
 .page-surface {
   min-height: 100vh;
-  background-color: rgba(15, 23, 42, 0.65);
+  background-color: transparent;
   color: var(--text-primary);
 }
 
@@ -1828,12 +1829,12 @@ a[data-pending='true'] {
 .light-gradient-mesh {
   background: linear-gradient(
     -45deg,
-    #eef2ff 0%,
-    #fdf4ff 20%,
-    #f0fdfa 40%,
-    #fdf2f8 60%,
+    #eef6ff 0%,
+    #ecfeff 20%,
+    #f0fdf4 40%,
+    #eef2ff 60%,
     #f5f3ff 80%,
-    #eff6ff 100%
+    #e0f2fe 100%
   );
   background-size: 260% 260%;
   animation: lightGradientFlow 22s ease-in-out infinite;
@@ -1928,23 +1929,96 @@ body.in-lesson-mode main {
    OYUNSU & SEVİMLİ TASARIM DİLİ (Duolingo Tarzı 3D Butonlar, Kartlar, Rozetler)
    ========================================================================== */
 
-/* Arka plan dot dokusu */
-html[data-theme='light'] body {
+/* Prizmatik Kristal Atmosfer Zemin */
+html[data-theme='light'] body,
+html[data-theme='dark'] body,
+body {
   background-color: var(--bg);
-  background-image:
-    radial-gradient(#dce4ee 1.5px, transparent 1.5px),
-    radial-gradient(#dce4ee 1.5px, #f4f7fb 1.5px);
-  background-size: 32px 32px;
-  background-position: 0 0, 16px 16px;
+  background-image: none;
 }
 
-html[data-theme='dark'] body {
-  background-color: var(--bg);
-  background-image:
-    radial-gradient(rgba(255, 255, 255, 0.05) 1.5px, transparent 1.5px),
-    radial-gradient(rgba(255, 255, 255, 0.05) 1.5px, #0f172a 1.5px);
-  background-size: 32px 32px;
-  background-position: 0 0, 16px 16px;
+/* ==========================================================================
+   KRİSTAL PRİZMA TASARIM SİSTEMİ (Luminous Crystal Glass & Prismatic Aurora)
+   ========================================================================== */
+
+.crystal-panel {
+  background: rgba(13, 22, 43, 0.72);
+  backdrop-filter: blur(20px) saturate(170%);
+  -webkit-backdrop-filter: blur(20px) saturate(170%);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.14), 0 18px 42px -12px rgba(2, 6, 23, 0.65);
+}
+
+html[data-theme='light'] .crystal-panel {
+  background: rgba(255, 255, 255, 0.76);
+  backdrop-filter: blur(20px) saturate(170%);
+  -webkit-backdrop-filter: blur(20px) saturate(170%);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.92), 0 14px 36px -10px rgba(14, 116, 144, 0.10);
+}
+
+.crystal-card {
+  border-radius: 1.5rem;
+  border: 1px solid var(--border-subtle);
+  background: rgba(13, 22, 43, 0.72);
+  backdrop-filter: blur(20px) saturate(170%);
+  -webkit-backdrop-filter: blur(20px) saturate(170%);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12), 0 16px 36px -10px rgba(2, 6, 23, 0.60);
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.25s ease;
+}
+
+html[data-theme='light'] .crystal-card {
+  background: rgba(255, 255, 255, 0.78);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.95), 0 14px 32px -8px rgba(14, 116, 144, 0.08);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .crystal-card.crystal-card-interactive:hover,
+  .crystal-card-interactive:hover {
+    transform: translateY(-3px);
+    border-color: rgba(56, 189, 248, 0.45);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.22), 0 22px 46px -10px rgba(56, 189, 248, 0.18);
+  }
+
+  html[data-theme='light'] .crystal-card.crystal-card-interactive:hover,
+  html[data-theme='light'] .crystal-card-interactive:hover {
+    border-color: rgba(2, 132, 199, 0.40);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 1), 0 20px 42px -8px rgba(2, 132, 199, 0.16);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .crystal-card,
+  .crystal-card-interactive {
+    transition: none !important;
+    transform: none !important;
+  }
+}
+
+.crystal-nav-pill {
+  background: rgba(13, 22, 43, 0.82);
+  backdrop-filter: blur(22px) saturate(180%);
+  -webkit-backdrop-filter: blur(22px) saturate(180%);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.16), 0 14px 34px -8px rgba(2, 6, 23, 0.70);
+  border: 1px solid var(--border-subtle);
+}
+
+html[data-theme='light'] .crystal-nav-pill {
+  background: rgba(255, 255, 255, 0.84);
+  backdrop-filter: blur(22px) saturate(180%);
+  -webkit-backdrop-filter: blur(22px) saturate(180%);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.95), 0 12px 30px -6px rgba(14, 116, 144, 0.12);
+  border: 1px solid rgba(148, 168, 204, 0.38);
+}
+
+@media (forced-colors: active) {
+  .crystal-panel,
+  .crystal-card,
+  .crystal-nav-pill,
+  .glass,
+  .bento-card {
+    border: 1px solid CanvasText;
+    background: Canvas;
+    color: CanvasText;
+  }
 }
 
 /* DUOLINGO STYLE 3D BUTTONS */

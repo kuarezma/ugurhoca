@@ -70,13 +70,14 @@ function HomeDailyQuoteInner() {
       aria-labelledby="daily-quote-heading"
       className="mx-auto mt-8 w-full max-w-6xl px-4 sm:mt-10"
     >
-      <div
-        className="bg-surface-2 border border-subtle border-l-4 border-l-[var(--accent-brand)] rounded-2xl p-6 font-sans"
-      >
+      <div className="relative overflow-hidden rounded-3xl border border-sky-200/75 dark:border-sky-400/20 bg-surface-1/80 backdrop-blur-2xl p-6 sm:p-8 shadow-[inset_0_1px_0_rgba(255,255,255,0.9),0_18px_45px_-15px_rgba(14,165,233,0.12)] dark:shadow-[inset_0_1px_0_rgba(255,255,255,0.1),0_20px_50px_-15px_rgba(2,6,23,0.65)] font-sans">
+        {/* Üst Prizmatik Işık Kırılım Çizgisi */}
+        <div className="absolute inset-x-0 top-0 h-[2px] bg-gradient-to-r from-sky-400 via-indigo-400 to-emerald-400" />
+        <div className="pointer-events-none absolute -right-20 -top-20 h-48 w-48 rounded-full bg-gradient-to-br from-indigo-400/10 via-sky-400/10 to-transparent blur-2xl" />
 
         <div className="relative flex flex-col gap-5 sm:flex-row sm:items-start">
           <div
-            className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl text-accent-fg bg-accent-bg"
+            className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-sky-500 to-indigo-600 text-[var(--on-brand)] dark:from-sky-400 dark:to-indigo-500 dark:text-slate-950 shadow-md shadow-sky-500/25"
             aria-hidden="true"
           >
             <Quote className="h-7 w-7" />
@@ -84,7 +85,7 @@ function HomeDailyQuoteInner() {
 
           <div className="flex-1">
             <div
-              className="mb-2 inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-bold uppercase tracking-[0.2em] bg-accent-bg text-accent-fg"
+              className="mb-2.5 inline-flex items-center gap-2 rounded-full border border-sky-300/40 dark:border-sky-400/20 px-3.5 py-1 text-xs font-black uppercase tracking-[0.2em] bg-accent-bg text-accent-fg backdrop-blur-md shadow-xs"
             >
               <Sparkles className="h-3.5 w-3.5" aria-hidden="true" />
               <span id="daily-quote-heading">Günün Sözü</span>

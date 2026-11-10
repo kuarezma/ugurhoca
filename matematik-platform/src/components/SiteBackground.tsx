@@ -199,24 +199,25 @@ export function SiteBackground() {
         ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
         if (palette === 'ocean') {
           ctx.fillStyle = isLight
-            ? `rgba(37, 99, 235, ${p.baseAlpha * 0.75})`
-            : `rgba(96, 165, 250, ${p.baseAlpha})`;
+            ? `rgba(2, 132, 199, ${p.baseAlpha * 0.75})`
+            : `rgba(56, 189, 248, ${p.baseAlpha})`;
         } else if (palette === 'emerald') {
           ctx.fillStyle = isLight
-            ? `rgba(5, 150, 105, ${p.baseAlpha * 0.75})`
-            : `rgba(52, 211, 153, ${p.baseAlpha})`;
+            ? `rgba(13, 148, 136, ${p.baseAlpha * 0.75})`
+            : `rgba(45, 212, 191, ${p.baseAlpha})`;
         } else if (palette === 'sunset') {
           ctx.fillStyle = isLight
             ? `rgba(217, 119, 6, ${p.baseAlpha * 0.75})`
             : `rgba(251, 191, 36, ${p.baseAlpha})`;
         } else {
+          // Varsayılan Kristal Prizma: Buzul Cyan & İris-Gök Mavisi
           ctx.fillStyle = isLight
-            ? `rgba(79, 70, 229, ${p.baseAlpha * 0.75})`
-            : `rgba(167, 139, 250, ${p.baseAlpha})`;
+            ? `rgba(2, 132, 199, ${p.baseAlpha * 0.8})`
+            : `rgba(56, 189, 248, ${p.baseAlpha * 0.95})`;
         }
         ctx.fill();
 
-        // 2. Komşu partiküller arası geometrik kafes çizgileri (Delaunay/Truss estetiği)
+        // 2. Komşu partiküller arası geometrik kafes çizgileri (Kristal Prizma Ağı)
         const maxDistSq = maxDist * maxDist;
         for (let j = i + 1; j < particles.length; j++) {
           const p2 = particles[j];
@@ -225,26 +226,27 @@ export function SiteBackground() {
           const distSq = dx * dx + dy * dy;
           if (distSq < maxDistSq) {
             const dist = Math.sqrt(distSq);
-            const alpha = (1 - dist / maxDist) * (isLight ? 0.18 : 0.22);
+            const alpha = (1 - dist / maxDist) * (isLight ? 0.16 : 0.22);
             ctx.beginPath();
             ctx.moveTo(p.x, p.y);
             ctx.lineTo(p2.x, p2.y);
             if (palette === 'ocean') {
               ctx.strokeStyle = isLight
-                ? `rgba(37, 99, 235, ${alpha})`
-                : `rgba(59, 130, 246, ${alpha})`;
+                ? `rgba(2, 132, 199, ${alpha})`
+                : `rgba(56, 189, 248, ${alpha})`;
             } else if (palette === 'emerald') {
               ctx.strokeStyle = isLight
-                ? `rgba(5, 150, 105, ${alpha})`
-                : `rgba(16, 185, 129, ${alpha})`;
+                ? `rgba(13, 148, 136, ${alpha})`
+                : `rgba(45, 212, 191, ${alpha})`;
             } else if (palette === 'sunset') {
               ctx.strokeStyle = isLight
                 ? `rgba(217, 119, 6, ${alpha})`
                 : `rgba(245, 158, 11, ${alpha})`;
             } else {
+              // Varsayılan Kristal Prizma: İris-İndigo & Camgöbeği
               ctx.strokeStyle = isLight
-                ? `rgba(99, 102, 241, ${alpha})`
-                : `rgba(139, 92, 246, ${alpha})`;
+                ? `rgba(79, 70, 229, ${alpha})`
+                : `rgba(129, 140, 248, ${alpha})`;
             }
             ctx.lineWidth = 0.85;
             ctx.stroke();
@@ -355,44 +357,44 @@ export function SiteBackground() {
       ) : palette === 'midnight' ? (
         <div className="absolute inset-0 bg-black" />
       ) : (
-        <div className="absolute inset-0 bg-surface-1" />
+        <div className="absolute inset-0 bg-[#060B19]" />
       )}
 
       {/* KATMAN 1: Donanım Hızlandırmalı Akıcı Aurora Küreleri (GPU CSS) */}
       <div className="absolute inset-0 overflow-hidden">
-        {/* Küre 1: Sol Üst / İndigo-Mor Parıltı */}
+        {/* Küre 1: Sol Üst / Kristal Gök Mavisi & Cyan Kırılımı */}
         <div
           className={`aurora-orb aurora-orb-1 -top-24 -left-24 h-[36rem] w-[36rem] sm:h-[52rem] sm:w-[52rem] ${
             isLight
-              ? 'bg-brand-secondary/25'
-              : 'bg-brand-secondary/[0.22]'
+              ? 'bg-sky-400/25'
+              : 'bg-cyan-400/[0.22]'
           }`}
         />
 
-        {/* Küre 2: Sağ Üst / Camgöbeği-Gök Mavisi Işıma */}
+        {/* Küre 2: Sağ Üst / Zümrüt & Turkuaz Kristal Prizma */}
         <div
           className={`aurora-orb aurora-orb-2 -top-20 -right-20 h-[34rem] w-[34rem] sm:h-[48rem] sm:w-[48rem] ${
             isLight
-              ? 'bg-brand-secondary/[0.22]'
-              : 'bg-brand-secondary/20'
+              ? 'bg-emerald-400/[0.20]'
+              : 'bg-teal-400/[0.18]'
           }`}
         />
 
-        {/* Küre 3: Orta-Alt / Sıcak Gül-Lavanta Işıma */}
+        {/* Küre 3: Orta-Alt / İris & İndigo Derinlik Işığı */}
         <div
           className={`aurora-orb aurora-orb-3 top-1/2 left-1/3 -translate-x-1/2 h-[32rem] w-[32rem] sm:h-[46rem] sm:w-[46rem] ${
             isLight
-              ? 'bg-brand-danger/20'
-              : 'bg-brand-pink/[0.16]'
+              ? 'bg-indigo-400/20'
+              : 'bg-violet-400/[0.18]'
           }`}
         />
 
-        {/* Küre 4: Sağ Alt / İris-Mavi Işıma */}
+        {/* Küre 4: Sağ Alt / Prizmatik Safir & Spektral Fuşya */}
         <div
           className={`aurora-orb aurora-orb-4 -bottom-24 -right-16 h-[30rem] w-[30rem] sm:h-[42rem] sm:w-[42rem] ${
             isLight
-              ? 'bg-brand-pink/20'
-              : 'bg-brand-pink/[0.18]'
+              ? 'bg-fuchsia-400/15'
+              : 'bg-sky-400/[0.16]'
           }`}
         />
 
